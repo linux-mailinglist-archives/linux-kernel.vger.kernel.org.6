@@ -1,121 +1,101 @@
-Return-Path: <linux-kernel+bounces-202725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13EAA8FD008
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:51:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AEE88FD012
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25D4F1C245CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:51:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CD8A298D0A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032B7194A6D;
-	Wed,  5 Jun 2024 13:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A6B195392;
+	Wed,  5 Jun 2024 13:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="mbxf/831"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FlfAMr8Q"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDB9194A65;
-	Wed,  5 Jun 2024 13:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8B118F2CD
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 13:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717594680; cv=none; b=ZP2RP5B/s9qBrz6I6kGVnQ24hIWO7WQsr4Nb+s3036LHaV5OxAgGsVG/66/7+nU62TC7s1LQqcrjtoA+DiP5/PMnThNCKvp956dinl+4JGF8MU34P7hgSWEuh7ydu0IZ/kq3h6MC6O4X41hKxs1MP1YJjX9t2wVqcMLdf0UgS+I=
+	t=1717594788; cv=none; b=jIsBhyLLMAtKvaj3/Y9pmlvhfB7cV0TbDrzr2Z2Koiao3GsvcN8hS0q1yTgoX73lwA6Uv7WP/vEXRwTnpeZ+aF6BvdEPgCvRR5Sxv4n9Ke8Ye/VsX6BT979dwA0NM20jbamzuDaM5i4Rr2zdm6/pvz755QPp2uRXvOgULmSKSnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717594680; c=relaxed/simple;
-	bh=HpQsgsyp5lfIf8J9S9f8ea/9SbGsXblH8vUfH669E8k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rONJ4pAd51eNBBodsyaXuVkvZl/AfNMyx08cXsVrH/4UqfQw0YilPmIqtuQwHkvTyCdPHEvk8RHMRvCdJtiFQQmeHCSZrxumD2+Ld+Lz2uMQuhWqlNquwYNF/NSrGtROjLm2WlZkUhY8x4WzPFL17nEvxAYprGqolp7ekkn4Rug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=mbxf/831; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 0CB1CA0771;
-	Wed,  5 Jun 2024 15:37:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=So/Ya7Og+X+sYxPIpOm9
-	KuvI4HQUxRWAE6tooiOs/d8=; b=mbxf/831nm3FzwIp+Wkrz7bP/zpqAo7/1AQU
-	0L9VwdKd6zCQ1elsiQGTn6QN0GtLgexEVZzmthhlhfkb6lpZIiHvlW9xJDfrJkv2
-	1pM/h5iuJcKsBJS9jpMxxBIgQgcfonjExLIE1YF/iAVqdtwfVEAD0x2TaZpviv4U
-	qXkXRRskqCv32TU0jH17GLUTRc3xB5PP+WNDtvG3+MDbuKQnKa6POPzyiikY2O3z
-	2dNYfrgfcDOCRbevXzNiMCEHZf3dr/iy1+bEaATIAxBmKFiB4887UQRGrlIA08RZ
-	Ms6ugZfhhFwzvwvJA9SZf6LgOWoXlnVDrFjj3lQfPon9IzmrPUEw4wnO7L6h3cw+
-	4K0Ow8A0UgDdMZd8UmcyhEo3aXcLvHzgIjVCqMLX8oGvFEK54IP4hgnTbiLUTyGk
-	uOX42xmtV0WJsBw+Vj8n/rN7t0T46X8KMq1IrsFirIDGGPQ8AAMu+5Fke+HFaepY
-	9n8F/0fi/WSJkEZNI4bVAkqZYBHjSl6VhizyGzF/jAuz3C9nlGlBe7RDqCzRnvsn
-	Do+aRw9+yUPBSL0CQ/IOGLCPt/WypLqHnENWti6wOQ3ao/2oB8JcGDamCgVEnnXr
-	k5dENtmHqZjNAhuezHx18vKs49sdW7E6yD4BD83A/Yp+prl48garEEPx/5CNa63L
-	f+s/rAg=
-Message-ID: <3f9b6129-e81e-4cc1-93ff-9d4cc6ffc035@prolan.hu>
-Date: Wed, 5 Jun 2024 15:37:51 +0200
+	s=arc-20240116; t=1717594788; c=relaxed/simple;
+	bh=KXUlGvJxH76Dw1mprNtT8VriPC1GoqJaANXsGiwAP1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ll5kb9SFdeoaQbrpxXTEzNsBJv9iyjb4PbsEZRHzilYM4z9cLHP+WivYgWlhi4ZIYMPun/LoXVJzw2SbvrDnmMO6GC0gtr/7f1fdsOUk3lJ1aduCdO5eoex5eXVXrnPe6xdUjf5nBQAdUlluqWVWFdt+flIDmjv77NDOJOmvDJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FlfAMr8Q; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717594786;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8Hq5dFgzzvJ7XxAlZCAf3SVqsfwdgE9gzlqrR94U8+M=;
+	b=FlfAMr8Qr9Pvjh9xqvrGra1fID1ZgM1ezrNuLdx/CuEJx3+oJJwWWdhCRS6bsbF2tPWZN7
+	LbUVfZkyBUqbH0qbByM+qCmKF38/tJhcZLuLWnMcj3GAkLamhvhgemsffqe7SP0/SUF5/X
+	vLP5w4kMyGGt1RNRc/nu2BQBp0SIOXA=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-651-TesUs7_COgSJTGxJHerPAQ-1; Wed, 05 Jun 2024 09:39:39 -0400
+X-MC-Unique: TesUs7_COgSJTGxJHerPAQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3E8AC800076;
+	Wed,  5 Jun 2024 13:39:38 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.50])
+	by smtp.corp.redhat.com (Postfix) with SMTP id 5D8C31C0005E;
+	Wed,  5 Jun 2024 13:39:35 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed,  5 Jun 2024 15:38:09 +0200 (CEST)
+Date: Wed, 5 Jun 2024 15:38:05 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dave Hansen <dave@sr71.net>, Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uros Bizjak <ubizjak@gmail.com>
+Subject: Re: [PATCH 2/3] x86/fpu: Remove the thread::fpu pointer
+Message-ID: <20240605133805.GB25006@redhat.com>
+References: <20240605083557.2051480-1-mingo@kernel.org>
+ <20240605083557.2051480-3-mingo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/2] net: include: mii: Refactor: Define LPA_* in
- terms of ADVERTISE_*
-To: Andrew Lunn <andrew@lunn.ch>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<trivial@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
-	<linux@armlinux.org.uk>
-References: <20240605121648.69779-1-csokas.bence@prolan.hu>
- <331930db-f5a1-4ad7-947f-7aaf5618c646@lunn.ch>
-Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <331930db-f5a1-4ad7-947f-7aaf5618c646@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2945A12957627661
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605083557.2051480-3-mingo@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
 
-Hi!
+On 06/05, Ingo Molnar wrote:
+>
+> @@ -591,13 +591,11 @@ int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
+>  	 * This is safe because task_struct size is a multiple of cacheline size.
+>  	 */
+>  	struct fpu *dst_fpu = (void *)dst + sizeof(*dst);
+> -	struct fpu *src_fpu = current->thread.fpu;
+> +	struct fpu *src_fpu = x86_task_fpu(current);
 
-On 6/5/24 14:51, Andrew Lunn wrote:
-> On Wed, Jun 05, 2024 at 02:16:47PM +0200, Csókás, Bence wrote:
->> Ethernet specification mandates that these bits will be equal.
->> To reduce the amount of magix hex'es in the code, just define
->> them in terms of each other.
-> 
-> Are magic hexes in this context actually bad?
+I think this patch can also change
 
-Yes, as if it ever needs to be changed (for instance in the 2/2 of the 
-series, when I replaced them with BIT() macros), it needs to be changed 
-twice in the file.
+	struct fpu *dst_fpu = (void *)dst + sizeof(*dst);
 
-> In .c files i would
-> agree. But what you have in effect done is force me into jump another
-> hoop to find the actual hex value so i can manually decode a register
-> value.
+above to use x86_task_fpu(dst).
 
-True. I expected this concern, hence why I tagged this as RFC. However, 
-I believe that from a maintainability perspective, it's best to only 
-have one definition, and since these #define's are right under one 
-another, the "jumping around" is minimal anyways.
-
-> And you have made the compile slightly slower.
-
-C'mon, that's negligible. The time it takes to load the header file from 
-disk will probably take longer than it does to resolve an extra layer of 
-simple #define's.
-
-> These defines have been like this since the beginning of the git
-> history. Is there a good reason to change them after all that time?
-
-Just because something was "always like this" doesn't mean that it 
-cannot be changed. Especially since this patch is 100% 
-backwards-compatible, just maybe slightly more future-proof.
-
-> 	Andrew
-> 
-
-Bence
+Oleg.
 
 
