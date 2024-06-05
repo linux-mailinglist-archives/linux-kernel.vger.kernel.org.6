@@ -1,140 +1,189 @@
-Return-Path: <linux-kernel+bounces-202557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BE508FCE63
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:07:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DD508FCE05
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4520B23A53
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:57:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 891BE1F24704
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A3C196D91;
-	Wed,  5 Jun 2024 12:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D790D1AD9D2;
+	Wed,  5 Jun 2024 12:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AWKkrD6k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hgdgZBP0"
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854B2196C73
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 12:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921F4197533
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 12:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717589508; cv=none; b=W0Rl/EWDCnvQGl2UVxQ4AFOmhsDcbrH69VmXaNHvWzDwIgYMXn80bAOxMZJ4ewa/SpzAzociaE3/aIi/lijHTEseMgLTy+yWtjt3IvSwWQ0mHzGYvH9zOfJsRSTLqTvLExPZsSGzhpMBSMawKD2eoKDHlA66OXNRWHxhuCoPbss=
+	t=1717589595; cv=none; b=JvP7CVnZuoPISCv1XwF9BOER07VrY430XRbarFrycD7gWlHPEx9Ft0hx0Dql4MfdBSW2/Mgr8CtljwbmmH1AnQo1mm1CXTlGt+sOMQ3zoHYgB7Ay1m6eLjvhF6XpJmZ+ZYem8tM4rFod0gKK2IU+1WHxc919/WWHZlsxw9bnglA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717589508; c=relaxed/simple;
-	bh=cwTJba3C8Qwz1ZLeDncLpCLV7/mbQe8fxcLPmmDJQto=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FoZNejn4E9LTOH0EEn7zzUsbXgz3Xu9vglTVOL2ixzZd3JVT8UYQfdL80H4zaDKj6xM7DzyEz3K4QEO1szv3uHmhZ12ROxq8kbcDs8EXFv5Q/H9YMlis3RevjulnmNRy/MiaYPwQc4H4Bvps1xQsqoNMeS43sG3fb6lclr4BJOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AWKkrD6k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6728EC32781;
-	Wed,  5 Jun 2024 12:11:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717589508;
-	bh=cwTJba3C8Qwz1ZLeDncLpCLV7/mbQe8fxcLPmmDJQto=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AWKkrD6kulejFb9Jcnx/Dpfk8fUAEF1BuapcvVUBFriLJ64IFO7T9o///SetkdC5j
-	 hRKoiH9NdxNg3aWmre+8+wZmMSGTuK5HXW1KCxtIptk3CEUWU17SjrLLVGUUrCy+Kx
-	 UZfx1egKTnttA1GOKyR/uhJIde6qZdSM/Hp5o3joj2v2s+Ldp2VCMSo4LZmb6cNCWI
-	 zf9hyiyq5gbMOJqPVWCA7Pg1gvRniuj6o4xgez74OtfbEXTIfDvJQCM/Lan5dNpZ0y
-	 MGxKcrKXmXXES50RTevVcy9X0okES53ldURt4qnI+BM8ZUpxlVGQSvyBll9rZr74Ea
-	 XvpEKlfHy9zCg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sEpUc-0000000079R-06fM;
-	Wed, 05 Jun 2024 14:11:50 +0200
-Date: Wed, 5 Jun 2024 14:11:50 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Johan Hovold <johan+linaro@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Sanyog Kale <sanyog.r.kale@intel.com>, alsa-devel@alsa-project.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] soundwire: bus: clean up probe warnings
-Message-ID: <ZmBWBrJDRjPn6TpA@hovoldconsulting.com>
-References: <20240604075213.20815-1-johan+linaro@kernel.org>
- <20240604075213.20815-4-johan+linaro@kernel.org>
- <8dd7cadc-138c-4ef5-b06f-7177550b1215@linux.intel.com>
- <Zl7boEkMpQaELARP@hovoldconsulting.com>
- <970501b1-09ae-4f2c-a078-2b4f23fe460e@linux.intel.com>
- <Zl8iUmOfrjw3gWVX@hovoldconsulting.com>
- <0d15954f-0158-4a56-afef-f0d043135146@linux.intel.com>
+	s=arc-20240116; t=1717589595; c=relaxed/simple;
+	bh=oNENrc6D4XwwwZI6By/y92Euehfjzy0JVbr//ofqX7Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CnjSfwYoigr172OYUJQFb2u7RottpNTvpTdzlNjJ2Fn8ehJvSqkv8YCwGBIoUSOMjdCsVm+hTWwYN0GK76+dpoVTqCHPGdtLbGeTr9XpoxL30CzGiZitaBzlDDgLokilXggdC/mmvL8+vJvj2Pdqwn53eavrSjnkCkTU6BOjTXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hgdgZBP0; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3d1fd55081fso1096032b6e.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 05:13:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717589591; x=1718194391; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vv6aPAuNaYZlDMSXJn51nV9wTtfWkMjnR+7Ws6E03wA=;
+        b=hgdgZBP0OnNoJ7BMAIlcgNpwYdtQ+nXtbBZjbSgG3IDYo89qtffXYjqk6HWmG6b3WB
+         OTPG0bTy/ttRTKyAGbqWEYa69gNw9dSIaBWopLDnWePgcSkbTyk/14lbiFvt4xPFsmcN
+         sdof5FkkvghIdELmMbesgN3MdnSumCBL9zL44i5/Sa5J97K67s8Lb75KmSm6Wr+NX/5k
+         dU0owgbnajzlXQYfX14HDogJljs1eB4SPagvDfAKNvhMbedchYYnw7BWp3/MhpvX70+3
+         LLmYaSdUxTFb39pCQk56c3K9UqSi8TeMfN0dFzETLAnNdiJFJT+v0ZcMoN3WnEZCEEz2
+         lWlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717589591; x=1718194391;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vv6aPAuNaYZlDMSXJn51nV9wTtfWkMjnR+7Ws6E03wA=;
+        b=DIQdQVOwUiIznza7es1/0vrCAg1e6hXAKnV5AW3PjpZiRjgyfdywvVA1pHZ5Sst9yx
+         ya0MuCejZtlgEakh03aU3hbJuxAsX3qDZigJUHmCVCTAvb51Q8SYJx88iGzcNulgW5eF
+         lGePUtQTrN3LuFTQapDccuRE6TvTFYHci7RmEYLynpI+gtDiBxoRMh86mxcNfEyCMv9l
+         xTat+TxerqWUBPwsskzWST6g+4YxLVevEOrcLtcKHMLeBmUT/0s5DkmgySM9pVoasW/H
+         lNeqvEvDKiDcxKniq/YB/5OBxk6EZk2Gsc1LQtMmZBclDthnE7SOozdVmh5EzL7KM0JD
+         DKrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcnBeQtQdWv3cBE7HLvuiSNRPfVHIeEKYc2tBY6RUoMIlhwAqO3NoUgHSWkltvVYF8+VYZTGhJZNQysbpUPN7z0VppB2gpM5Fs+fpz
+X-Gm-Message-State: AOJu0YwFG52QyPwnuuy3Vv0K7e79OBUXIcrRM2waT3AAH9SlTOhv/ECr
+	HGrxj4XZOfe42z2iOWUtem3LsXGY7epP/ZtRWCpnX+PqbNPECf4uT6rKnZxZ5pAk+XxBtirWeyY
+	/B0eyXAVM4qHcUYk9Ia2lbWY6j0BQCMdKviLH
+X-Google-Smtp-Source: AGHT+IGtZqhTfCbUt9zM3f3XIcPwffh8lxbIKMBjvEjq+FRLVr9q1hYV69f7Jkej1TuC5cCI0H3t53Vjep/wzK915pI=
+X-Received: by 2002:a05:6808:b35:b0:3c9:7aef:403 with SMTP id
+ 5614622812f47-3d20439b1bcmr2294917b6e.26.1717589591268; Wed, 05 Jun 2024
+ 05:13:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0d15954f-0158-4a56-afef-f0d043135146@linux.intel.com>
+References: <20240605-kvm-arm64-fix-pkvm-sve-vl-v1-0-680d6b43b4c1@kernel.org> <20240605-kvm-arm64-fix-pkvm-sve-vl-v1-3-680d6b43b4c1@kernel.org>
+In-Reply-To: <20240605-kvm-arm64-fix-pkvm-sve-vl-v1-3-680d6b43b4c1@kernel.org>
+From: Fuad Tabba <tabba@google.com>
+Date: Wed, 5 Jun 2024 13:12:34 +0100
+Message-ID: <CA+EHjTxrCOv44T8uq1e2Vvm0SooRKix1zwhFqQF6=GN2H1iB2g@mail.gmail.com>
+Subject: Re: [PATCH 3/4] KVM: arm64: Fix FFR offset calculation for pKVM host
+ state save and restore
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kvmarm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 04, 2024 at 05:07:39PM +0200, Pierre-Louis Bossart wrote:
-> \
-> >>>>> @@ -123,7 +123,7 @@ static int sdw_drv_probe(struct device *dev)
-> >>>>>  	/* init the dynamic sysfs attributes we need */
-> >>>>>  	ret = sdw_slave_sysfs_dpn_init(slave);
-> >>>>>  	if (ret < 0)
-> >>>>> -		dev_warn(dev, "Slave sysfs init failed:%d\n", ret);
-> >>>>> +		dev_warn(dev, "failed to initialise sysfs: %d\n", ret);
-> >>>>>  
-> >>>>>  	/*
-> >>>>>  	 * Check for valid clk_stop_timeout, use DisCo worst case value of
-> >>>>> @@ -147,7 +147,7 @@ static int sdw_drv_probe(struct device *dev)
-> >>>>>  	if (drv->ops && drv->ops->update_status) {
-> >>>>>  		ret = drv->ops->update_status(slave, slave->status);
-> >>>>>  		if (ret < 0)
-> >>>>> -			dev_warn(dev, "%s: update_status failed with status %d\n", __func__, ret);
-> >>>>> +			dev_warn(dev, "failed to update status: %d\n", ret);
-> >>>>
-> >>>> the __func__ does help IMHO, 'failed to update status' is way too general...
-> >>>
-> >>> Error messages printed with dev_warn will include the device and driver
-> >>> names so this message will be quite specific still.
-> >>
-> >> The goal isn't to be 'quite specific' but rather 'completely
-> >> straightforward'. Everyone can lookup a function name in a xref tool and
-> >>  quickly find out what happened. Doing 'git grep' on message logs isn't
-> >> great really, and over time logs tend to be copy-pasted. Just look at
-> >> the number of patches where we had to revisit the dev_err logs to make
-> >> then really unique/useful.
-> > 
-> > Error message should be self-contained and give user's some idea of what
-> > went wrong and not leak implementation details like function names (and
-> > be greppable, which "%s:" is not).
-> 
-> "Failed to update status" doesn't sound terribly self-contained to me.
-> 
-> It's actually a great example of making the logs less clear with good
-> intentions. How many people know that the SoundWire bus exposes an
-> 'update_status' callback, and that callback can be invoked from two
-> completely different places (probe or on device attachment)?
-> 
-> /* Ensure driver knows that peripheral unattached */
-> ret = sdw_update_slave_status(slave, status[i]);
-> if (ret < 0)
-> 	dev_warn(&slave->dev, "Update Slave status failed:%d\n", ret);
-> 
-> You absolutely want to know which of these two cases failed, but with
-> your changes they now look rather identical except for the order of
-> words. one would be 'failed to update status' and the other 'update
-> status failed'.
-> 
-> What is much better is to know WHEN this failure happens, then folks
-> looking at logs to fix a problem don't need to worry about precise
-> wording or word order.
-> 
-> It's a constant battle to get meaningful messages that are useful for
-> validation/integration folks, and my take is that it's a
-> windmill-fighting endeavor. The function name is actually more useful,
-> it's not an implementation detail, it's what you're looking for when
-> reverse-engineering problematic sequences from a series of CI logs.
+Hi Mark,
 
-Just add "at probe" to differentiate the two cases if you really think
-this is an issue:
+On Wed, Jun 5, 2024 at 12:50=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> When saving and restoring the SVE state for the host we configure the
+> hardware for the maximum VL it supports, but when calculating offsets in
+> memory we use the maximum usable VL for the host. Since these two values
+> may not be the same this may result in data corruption.  We can just
+> read the current VL from the hardware with an instruction so do that
+> instead of a saved value.
+>
+> Fixes: b5b9955617bc ("KVM: arm64: Eagerly restore host fpsimd/sve state i=
+n pKVM")
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  arch/arm64/include/asm/kvm_hyp.h        | 1 +
+>  arch/arm64/kvm/hyp/fpsimd.S             | 5 +++++
+>  arch/arm64/kvm/hyp/include/hyp/switch.h | 2 +-
+>  arch/arm64/kvm/hyp/nvhe/hyp-main.c      | 2 +-
+>  4 files changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm64/include/asm/kvm_hyp.h b/arch/arm64/include/asm/kv=
+m_hyp.h
+> index b05bceca3385..7510383d78a6 100644
+> --- a/arch/arm64/include/asm/kvm_hyp.h
+> +++ b/arch/arm64/include/asm/kvm_hyp.h
+> @@ -113,6 +113,7 @@ void __fpsimd_save_state(struct user_fpsimd_state *fp=
+_regs);
+>  void __fpsimd_restore_state(struct user_fpsimd_state *fp_regs);
+>  void __sve_save_state(void *sve_pffr, u32 *fpsr, int save_ffr);
+>  void __sve_restore_state(void *sve_pffr, u32 *fpsr, int restore_ffr);
+> +int __sve_get_vl(void);
+>
+>  u64 __guest_enter(struct kvm_vcpu *vcpu);
+>
+> diff --git a/arch/arm64/kvm/hyp/fpsimd.S b/arch/arm64/kvm/hyp/fpsimd.S
+> index e950875e31ce..d272dbf36da8 100644
+> --- a/arch/arm64/kvm/hyp/fpsimd.S
+> +++ b/arch/arm64/kvm/hyp/fpsimd.S
+> @@ -31,3 +31,8 @@ SYM_FUNC_START(__sve_save_state)
+>         sve_save 0, x1, x2, 3
+>         ret
+>  SYM_FUNC_END(__sve_save_state)
+> +
+> +SYM_FUNC_START(__sve_get_vl)
+> +       _sve_rdvl       0, 1
+> +       ret
+> +SYM_FUNC_END(__sve_get_vl)
+> diff --git a/arch/arm64/kvm/hyp/include/hyp/switch.h b/arch/arm64/kvm/hyp=
+/include/hyp/switch.h
+> index 0c4de44534b7..06efcca765cc 100644
+> --- a/arch/arm64/kvm/hyp/include/hyp/switch.h
+> +++ b/arch/arm64/kvm/hyp/include/hyp/switch.h
+> @@ -327,7 +327,7 @@ static inline void __hyp_sve_save_host(void)
+>
+>         sve_state->zcr_el1 =3D read_sysreg_el1(SYS_ZCR);
+>         write_sysreg_s(ZCR_ELx_LEN_MASK, SYS_ZCR_EL2);
+> -       __sve_save_state(sve_state->sve_regs + sve_ffr_offset(kvm_host_sv=
+e_max_vl),
+> +       __sve_save_state(sve_state->sve_regs + sve_ffr_offset(__sve_get_v=
+l()),
+>                          &sve_state->fpsr,
+>                          true);
+>  }
 
-	dev_warn(dev, "failed to update status at probe: %d\n", ret);
+If my understanding of the spec is correct (which more often than not
+it isn't), I don't think we have an issue as long as we use the same
+value in the offset on saving/restoring, and that that value
+represents the maximum possible value.
 
-Johan
+On the other hand, if my understanding is wrong, then we might need to
+also fix __efi_fpsimd_begin()/__efi_fpsimd_end() in
+arch/arm64/kernel/fpsimd.c, as well as vcpu_sve_pffr() in
+arch/arm64/include/asm/kvm_host.h
+
+What do you think?
+/fuad
+
+
+> diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe=
+/hyp-main.c
+> index f43d845f3c4e..bd8f671e848c 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> @@ -49,7 +49,7 @@ static void __hyp_sve_restore_host(void)
+>          * supported by the system (or limited at EL3).
+>          */
+>         write_sysreg_s(ZCR_ELx_LEN_MASK, SYS_ZCR_EL2);
+> -       __sve_restore_state(sve_state->sve_regs + sve_ffr_offset(kvm_host=
+_sve_max_vl),
+> +       __sve_restore_state(sve_state->sve_regs + sve_ffr_offset(__sve_ge=
+t_vl()),
+>                             &sve_state->fpsr,
+>                             true);
+>         write_sysreg_el1(sve_state->zcr_el1, SYS_ZCR);
+>
+> --
+> 2.39.2
+>
 
