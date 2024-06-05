@@ -1,153 +1,173 @@
-Return-Path: <linux-kernel+bounces-202175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 754278FC8BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:14:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F19178FC8B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:12:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06EB01F239CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:14:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14D3D1C20EFE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E8C19006D;
-	Wed,  5 Jun 2024 10:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1004190069;
+	Wed,  5 Jun 2024 10:11:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="S7eWnebj"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FI6ulCea"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCA714A4F4;
-	Wed,  5 Jun 2024 10:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51297BE5A;
+	Wed,  5 Jun 2024 10:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717582435; cv=none; b=pPfSoLw2PtFkamRxTdfC829Wi4d5aSJMXD0l++IcJdXM1KOULIYN92mg6D3rrGmTyDWZxleiyLSFS66vAYpbumPiBepz5t86kbcFTx6KhdpZ1cdFVmyIQTFt7bEQlUUs58Q9VDeA4irO4lYGR2wGdY8YFuBq17+ao49DKQPFVQc=
+	t=1717582317; cv=none; b=C1Lqty+URPIGQ2K4uqcA5qblZNaaRYpXZXX2bITAQRbNSXkNurHZGK7n8k6uLUgZrwWfrfpB9AQf2NOPbEYYMH7U97yGsI9Gp+CxMoMBWVVB5tR9zNApRaVCekf9i2dXGrzEfucp5lrqaKfTtIPATcANMtpO7d5itg4p+oKp01w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717582435; c=relaxed/simple;
-	bh=ik7O5D1/zfrU5PaNGdXm7WqPHSu6IAEY0lgHj8rkt14=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M9uOVym77G5N4FX5s7BtMRjF4/cQQOy2KPlSmuAzeNXylBgv3LWNV/kgBIts6DMJf/f4ZkmrlV67LE0xGUWBLNlIGSTQssiSvMzEr41s4o5roRygUiASoLL9TJJbYHNZwHqAVDwEwhaPk1xiaGmHor3iFOjKyeRq+1QmureoHRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=S7eWnebj; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id 97472100003;
-	Wed,  5 Jun 2024 13:13:24 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1717582404; bh=0/SSnP2FmJDTn4D/XDM1bjJhKm4OlkcBcXnMVeCu4GU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=S7eWnebj243qAdwLvX/2889sWAI05xibP/b6g+UGGNXeb1Vhia9+L058lm2o5z9qJ
-	 2WwDEj5su5BMfpHf1/jnm3NYEoNNC/4E50DYgGgBfgFfSuZiD36jCvpumIhUOlBSml
-	 PRmufnT2JVUr/yjU7OPibisWWPl047oAhYakJEYhOCrAS71uFYA35o6v4ISb4kq6Lc
-	 Uf7IT7y4kZJyF6Tc7MFxkVT+mJzWyTkb0WOUOd3Z8HgM6sSS8j79HF/CoQRVAV6B5A
-	 ebPMHHEYnIh+5ro8qF+lfEAF0doNqiTu5u7s73K2HSIbVXbF/ivJUGandRh7f7/acD
-	 MMP++fzDP/vJw==
-Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Wed,  5 Jun 2024 13:12:03 +0300 (MSK)
-Received: from localhost.localdomain (172.17.215.6) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Jun 2024
- 13:11:42 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: "David S. Miller" <davem@davemloft.net>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Simon Horman <horms@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Kees Cook <keescook@chromium.org>, Justin Stitt
-	<justinstitt@google.com>, Felix Manlunas <felix.manlunas@cavium.com>,
-	Satanand Burla <satananda.burla@cavium.com>, Raghu Vatsavayi
-	<raghu.vatsavayi@cavium.com>, Vijaya Mohan Guvva <vijaya.guvva@cavium.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH net v3] liquidio: Adjust a NULL pointer handling path in lio_vf_rep_copy_packet
-Date: Wed, 5 Jun 2024 13:11:35 +0300
-Message-ID: <20240605101135.11199-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1717582317; c=relaxed/simple;
+	bh=oFJxlZFjj3Jn2dbeE5l6hjEsMDGGXCv5/naNuZE41UY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=OqCxKnXQ6MAgOWVW8dQyxcOcGMg1ib8gNbp6tfH2byhXmWCdAmqH5wUo5+eJgvW4/KSUJ3QgQu0iQBTe/J7tpDhPAczZ+sHflTgyNpQDPUDvlSQs2zKQ4u1LU6DSJtgo5g/GaymM051ZfAsw8NTxfJob4xIcCHrxclJ3myNcqys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FI6ulCea; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717582313;
+	bh=oFJxlZFjj3Jn2dbeE5l6hjEsMDGGXCv5/naNuZE41UY=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=FI6ulCeaae5oi8t3k9x8v4hHVXmpnQgo066sVXpN+frVP9OLZbcAmOQEv1P08D8ED
+	 heHY/zQ9zKVYfnjVR98gMHcmcMqE0gd35D1SYRhxuK0QKuGAiXQcZHNrnBlw4Zd53S
+	 Qx7HrpJjs2p9Rf6vOT1IsSwzJ0DHQSlSTmJIwJN/vt2EKQwrKMkp9EE7E17p3GRubG
+	 vfceAPMvc//1GDDAc1AFvmYDPWlg8vUA9obvP29yNnPPCkTrd1Nwz59Sag3I1zyDLg
+	 Ssneevvrr8v9TygU1knrHfleOM23E1L5+rc4/8Fs+C9DjvPc44duSh+BZnwnnT2VkQ
+	 Sdat6IQrS/fyw==
+Received: from [100.115.223.179] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 79CFE378020A;
+	Wed,  5 Jun 2024 10:11:51 +0000 (UTC)
+Message-ID: <304b4602-8722-4ed0-a555-8dada573ee79@collabora.com>
+Date: Wed, 5 Jun 2024 13:11:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185735 [Jun 05 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, t-argos.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;lore.kernel.org:7.1.1;mx1.t-argos.ru.ru:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/06/05 09:22:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/06/05 07:06:00 #25449783
-X-KSMG-AntiVirus-Status: Clean, skipped
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/14] drm/bridge: synopsys: Add DW HDMI QP TX controller
+ driver
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, kernel@collabora.com,
+ Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
+ Algea Cao <algea.cao@rock-chips.com>
+References: <20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com>
+ <20240601-b4-rk3588-bridge-upstream-v1-13-f6203753232b@collabora.com>
+ <20240601143226.GA2003970@ravnborg.org>
+ <59519381-2729-4839-9882-65a981a0c551@collabora.com>
+ <20240604204110.GA84949@ravnborg.org>
+ <f656c72e-fac8-4345-9b65-1031ebe81c25@collabora.com>
+Content-Language: en-US
+In-Reply-To: <f656c72e-fac8-4345-9b65-1031ebe81c25@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-In lio_vf_rep_copy_packet() pg_info->page is compared to a NULL value,
-but then it is unconditionally passed to skb_add_rx_frag() which looks
-strange and could lead to null pointer dereference.
+On 6/5/24 12:34 AM, Cristian Ciocaltea wrote:
+> On 6/4/24 11:41 PM, Sam Ravnborg wrote:
+>> Hi Cristian.
+>>
+>> On Tue, Jun 04, 2024 at 10:32:04PM +0300, Cristian Ciocaltea wrote:
+>>> Hi Sam,
+>>>
+>>> On 6/1/24 5:32 PM, Sam Ravnborg wrote:
+>>>> Hi Cristian,
+>>>>
+>>>> a few drive-by comments below.
+>>>>
+>>>> 	Sam
+>>>>
+>>>>
+>>>>> +
+>>>>> +static const struct drm_connector_funcs dw_hdmi_qp_connector_funcs = {
+>>>>> +	.fill_modes = drm_helper_probe_single_connector_modes,
+>>>>> +	.detect = dw_hdmi_connector_detect,
+>>>>> +	.destroy = drm_connector_cleanup,
+>>>>> +	.force = dw_hdmi_qp_connector_force,
+>>>>> +	.reset = drm_atomic_helper_connector_reset,
+>>>>> +	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+>>>>> +	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+>>>>> +};
+>>>>> +
+>>>>> +static int dw_hdmi_qp_bridge_attach(struct drm_bridge *bridge,
+>>>>> +				    enum drm_bridge_attach_flags flags)
+>>>>> +{
+>>>>> +	struct dw_hdmi *hdmi = bridge->driver_private;
+>>>>> +
+>>>>> +	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR)
+>>>>> +		return drm_bridge_attach(bridge->encoder, hdmi->next_bridge,
+>>>>> +					 bridge, flags);
+>>>>> +
+>>>>> +	return dw_hdmi_connector_create(hdmi, &dw_hdmi_qp_connector_funcs);
+>>>>> +}
+>>>>
+>>>> Are there any users left that requires the display driver to create the
+>>>> connector?
+>>>> In other words - could this driver fail if DRM_BRIDGE_ATTACH_NO_CONNECTOR
+>>>> is not passed and drop dw_hdmi_connector_create()?
+>>>>
+>>>> I did not try to verify this - just a naive question.
+>>>
+>>> I've just tested this and it doesn't work - dw_hdmi_connector_create()
+>>> is still needed.
+>>
+>> Hmm, seems the display driver or some other bridge driver fails to
+>> support "DRM_BRIDGE_ATTACH_NO_CONNECTOR".
+>> what other drivers are involved?
+> 
+> Could it be related to the glue driver (updated in the next patch) which
+> is also responsible for setting up the encoder?
+> 
+>> Note that my comments here should be seen as potential future
+>> improvements, and do not block the patch from being used.
+> 
+> Thanks for the heads up! Will try to get back to this soon and investigate.
+ 
+IIUC, modern bridges should not create the connector but rely on display
+drivers to take care of, which in this case is the VOP2 driver. However,
+it also handles some of the older SoCs relying on the non-QP variant of
+DW HDMI IP. Hence the existing dw-hdmi driver would be also impacted in
+order to come up with a proper solution.
 
-lio_vf_rep_copy_packet() call trace looks like:
-	octeon_droq_process_packets
-	 octeon_droq_fast_process_packets
-	  octeon_droq_dispatch_pkt
-	   octeon_create_recv_info
-	    ...search in the dispatch_list...
-	     ->disp_fn(rdisp->rinfo, ...)
-	      lio_vf_rep_pkt_recv(struct octeon_recv_info *recv_info, ...)
-In this path there is no code which sets pg_info->page to NULL.
-So this check looks unneeded and doesn't solve potential problem.
-But I guess the author had reason to add a check and I have no such card
-and can't do real test.
-In addition, the code in the function liquidio_push_packet() in
-liquidio/lio_core.c does exactly the same.
+A quick check shows there are several users of this IP:
 
-Based on this, I consider the most acceptable compromise solution to
-adjust this issue by moving skb_add_rx_frag() into conditional scope.
+$ git grep -E '= dw_hdmi_(bind|probe)\('
+drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c:    hdmi->dw_hdmi = dw_hdmi_probe(pdev, plat_data);
+drivers/gpu/drm/bridge/synopsys/dw-hdmi.c:      hdmi = dw_hdmi_probe(pdev, plat_data);
+drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c:        hdmi->hdmi = dw_hdmi_probe(pdev, match->data);
+drivers/gpu/drm/ingenic/ingenic-dw-hdmi.c:      hdmi = dw_hdmi_probe(pdev, &ingenic_dw_hdmi_plat_data);
+drivers/gpu/drm/meson/meson_dw_hdmi.c:  meson_dw_hdmi->hdmi = dw_hdmi_probe(pdev, &meson_dw_hdmi->dw_plat_data);
+drivers/gpu/drm/renesas/rcar-du/rcar_dw_hdmi.c: hdmi = dw_hdmi_probe(pdev, &rcar_dw_hdmi_plat_data);
+drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c:            hdmi->hdmi = dw_hdmi_bind(pdev, encoder, plat_data);
+drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c:  hdmi->hdmi = dw_hdmi_bind(pdev, encoder, plat_data);
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+I didn't check which display drivers would be involved, I'd guess there
+are quite a few of them as well. So it seems this ends up being a pretty
+complex task.
 
-Fixes: 1f233f327913 ("liquidio: switchdev support for LiquidIO NIC")
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
-Reviewed-by: Simon Horman <horms@kernel.org>
----
-v1->v2: Fix incorrect 'Fixes' tag format
-v2->v3: Add explanation why this should be fixed,
- add Reviewed-by: Simon Horman <horms@kernel.org>
- (https://lore.kernel.org/all/20240308201911.GB603911@kernel.org/)
-
- drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c b/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
-index aa6c0dfb6f1c..e26b4ed33dc8 100644
---- a/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
-+++ b/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
-@@ -272,13 +272,12 @@ lio_vf_rep_copy_packet(struct octeon_device *oct,
- 				pg_info->page_offset;
- 			memcpy(skb->data, va, MIN_SKB_SIZE);
- 			skb_put(skb, MIN_SKB_SIZE);
-+			skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags,
-+					pg_info->page,
-+					pg_info->page_offset + MIN_SKB_SIZE,
-+					len - MIN_SKB_SIZE,
-+					LIO_RXBUFFER_SZ);
- 		}
--
--		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags,
--				pg_info->page,
--				pg_info->page_offset + MIN_SKB_SIZE,
--				len - MIN_SKB_SIZE,
--				LIO_RXBUFFER_SZ);
- 	} else {
- 		struct octeon_skb_page_info *pg_info =
- 			((struct octeon_skb_page_info *)(skb->cb));
--- 
-2.30.2
-
+Cristian
 
