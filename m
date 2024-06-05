@@ -1,168 +1,106 @@
-Return-Path: <linux-kernel+bounces-201852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409028FC441
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:15:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DE3A8FC444
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2B781F2269A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:15:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15AFD1C24A2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324FE18C35E;
-	Wed,  5 Jun 2024 07:15:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iJs0sVJ0"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D8E3DABE1;
+	Wed,  5 Jun 2024 07:15:21 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CAE190490;
-	Wed,  5 Jun 2024 07:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D062318C336
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 07:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717571714; cv=none; b=ubf8pgyrvVbtJQ+OfQdSdJekIeEQs0QwRLR7qiR6mebQLSrGDty3/utU2psA9NpueT3LqC+xH5S9NdBz0kGSswpUrd2JzTqSlH5Cf84KEidWQZWN8wLwzkIl+OMNG+x6/amGLuVQ5b2y4KUBKAq0Gz0HbJU7bC9IZTJ57fEZIt8=
+	t=1717571721; cv=none; b=aMHneuQt/rSwB+FzNK//Q6oyXOuLrlj+ddIn6lkUMAnZ85qxhPBJqtTZtUagUF2k1klRZivMWCXEwsiWcceJfz414kWUuTrl9uatntcQReHq3hcTvyzKT5x7DPyYRcW2OJbLbBIpKc2dYlhQj7bZ8b4hZx+e1o2fj+halKAuHK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717571714; c=relaxed/simple;
-	bh=UwC2NvmMXo1nvJ7sYDl1XaOJLxwWFoTpX03WqyuJ8Lk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r0pWz7wzwb1J+v6b9gr5/E5CMhIrOdQRyusY94EDQYVU5OwS8AQWqZKFGZEgC6pH8bInSOrcOBiNOfV0wjp6qAQmjGdXTN9kD7intcOuMssxTnFal2gZ3HwzHxcLosPEup94IRuf4eSKiD1CnBJgwTfPPAFjur45ZmMx+KR+fSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iJs0sVJ0; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2eaafda3b90so38589301fa.0;
-        Wed, 05 Jun 2024 00:15:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717571711; x=1718176511; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KzWuhHATgvXynxY1bc2YJTiUpWzS/lVHAC/1FvnI+g0=;
-        b=iJs0sVJ022lgN0fF8S0+2yHHKnQsxMrfji4fg618Je7W8amLnw7KmsYoHFY6OUNWbm
-         43PwwfuXmmtDzxyqSH2Q0+YwCpMf3AfqjLGyk/z3yumr56styI4x925Mjn0RsYzID4C0
-         BbITJYkRmvTkzKiNkfJ+/VhE5VtrHpjGd6kgjeQZzAXw65fyEptW5XMDubxXeiDUU1ui
-         5ZqtxigZhHDiyWoFeYY0yHIxR/oCfJ0KGL3yx8VAq8ljxbUg37TJHIcF7U/cUai1JLLc
-         GGd4GqebTKK7PRmu922+3+chQfD1PTSVSFbjSGmrHxmJLLjcFIecmRZFxpLohW4vK/Fz
-         2fhw==
+	s=arc-20240116; t=1717571721; c=relaxed/simple;
+	bh=zuHsmG2l54lzUFiaM1B5Ld/DwoAs3onN3TyvEE8C2QU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=h7fcoFPw0YWOAw9TowJrFSBvaIW+OZiHLFZLiIE09DOfU9/WEP26Wr1zlDlfP0aNyIMfo0NVt570phRdvgZa1KbvAH6Wa0DUpjIQIrILY6L2vvf5poSKR814s63QpIjGjJmV/i7IVeuMcSAPWiVW9gymtc8C8R00g1HWyinGGK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3746147204eso68295395ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 00:15:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717571711; x=1718176511;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KzWuhHATgvXynxY1bc2YJTiUpWzS/lVHAC/1FvnI+g0=;
-        b=slIIYXucTOa3FWKaJIX1lnPPRwAyFDrq1KIqHkgakrhHCDODYEmZeW/OcCmXHJyc6n
-         Q5Lf2ydRKkpVAqHwB5WY2YcosQSP2ZT/56RqgmwBKWPg5EfDz4VWUPN0IfMeQtI37HRP
-         ssLhq9t44CggXAW0GCorbsyIEOXBskTZZ8/vyuvYja1d1W7Mp597vp/yuTBMC6q8I605
-         OigG7Lgims08WNYnArOrasuKW5bJ/zlU6jyHnoxKxTZfx/8sNW2n2tTd7VPBHSAFVVaJ
-         qf+d1Uy0559ztnegA8t7gJ7FVNen1QnqqX6+tLjFoF9JrXBQYp0MfOmdXsP1BLEHt+hW
-         STZw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2HyzAJUhDU8z/qHjIyzjD2ztjwkZC7EElIhhfzIG19o0Il8LSqXmwPMxRQpWGCK4qRYydsW/UX5j8NaHtkMjhUO8c8S6AgTKMa9Gwpg0ir5Z3LEr+TF33nzMX6pgNZGxgc6eazX6LpiAZ45qu8Q==
-X-Gm-Message-State: AOJu0YywAHWM+1eqb3EQMj647ESCtldnY+097Ix6nDfpS2hRnYbU66Zf
-	NBtdR4971MNDHTWobcuArBkpgR4KoVfAlS5BenWOz+e3dbuefhfp
-X-Google-Smtp-Source: AGHT+IGlBRC9qXybD9x/nDoFbJGpEgecRh/IyGjdJoiPKBMtj7h2rl0lqKvW4kl0WnhQN6cVNZg3BQ==
-X-Received: by 2002:ac2:4d9a:0:b0:52b:81de:1126 with SMTP id 2adb3069b0e04-52bab4f5e5bmr1031680e87.49.1717571710383;
-        Wed, 05 Jun 2024 00:15:10 -0700 (PDT)
-Received: from gmail.com (1F2EF2F4.nat.pool.telekom.hu. [31.46.242.244])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a5b1f9855sm6085125a12.70.2024.06.05.00.15.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 00:15:09 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Wed, 5 Jun 2024 09:15:08 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: Makefile.perf:1149: *** Missing bpftool input for generating
- vmlinux.h. Stop.
-Message-ID: <ZmAQfJ9C5fFQdjQM@gmail.com>
-References: <ZjssGrj+abyC6mYP@gmail.com>
- <CAP-5=fUvLiCDVDFFfJ78ng4T1FZ8j2N9Yt1sGTeGsupkbFEEug@mail.gmail.com>
- <ZkG4LWr7w11wQ/PR@gmail.com>
- <CAP-5=fVHrKcqwczoU1uMD4tP5DTVhfQ1T_hXnm_y5Ji3M6K_ag@mail.gmail.com>
- <ZkJK3x3zQ9a4wp8E@gmail.com>
- <CAP-5=fUh+GoqERAF-qf8zx4kwq2uzwR2Ugop5XOkPexYGAqF3A@mail.gmail.com>
- <CAP-5=fWXDPfNqLz6DHYe9+dev_e6X5TcTe_xzOOz27yDkT7o7A@mail.gmail.com>
- <CAM9d7ch5HTr+k+_GpbMrX0HUo5BZ11byh1xq0Two7B7RQACuNw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1717571719; x=1718176519;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zuHsmG2l54lzUFiaM1B5Ld/DwoAs3onN3TyvEE8C2QU=;
+        b=R+Glko43A9/+d7BGTxKXnziNolpkkWywLChfsxEBqUSQ8gCPs2mrrpqU8RMu/Q+PON
+         xEkf+aL+E9i2bwkE9yyBSdfye7RxZYAEj8iTlPJfs8+1jnH5okNCxfUgyg7cZnlWjgMv
+         gterGxurj471U3E+DhHgEoJHre7tjNNg4dq0+dmq8WOtoEBFbHS9/i9bJLs7167qAxKm
+         epGtlCWdF/vLYGcjvLxJx2y21bXFImuMWO5nUKlCJ1srHluUOUVtanHgV9gGg78wnFLP
+         yiUY25THsDS/3XCiph9bL+CB+0LFwgFk8znbbPTXX/aL/Xamp7TkmqfFrxs3OZLMhW/y
+         lv+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUtKLdNjq609XSuuGEeaoDQmlZkcoI7IC09D02+r2KM9OB5WVMhc2HKyG1CjJ6rY+5maf40eiTFsGUNL+Ay8ebLxLMFWHHgiG4LCLWU
+X-Gm-Message-State: AOJu0YzdVU6PZKBNlxtVsHHoG3QLQCvPhMGsKsqpJ36P7LsJ49M8jLBQ
+	Z/6keOrLv4mmuPzsGkuxROTdBdWBov0TJkxhISr/YfBWVcPGhIKea5hZcNKr9Xf5Tbvvg6jgzE3
+	e8JRPz+G0q1EyQZs6wI+PjgtnI3knRbKDriXz33pIhZcDlr3RD3ym87Y=
+X-Google-Smtp-Source: AGHT+IEXUYB9yPdeAKPB5kS6y9F3dWejMcY+PLrrOr1cr9rP+smavalbHIGbQYB6JccbQRBN3EioxR6Ty4lMAVOTE6s+agrv5VAx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAM9d7ch5HTr+k+_GpbMrX0HUo5BZ11byh1xq0Two7B7RQACuNw@mail.gmail.com>
+X-Received: by 2002:a05:6e02:168c:b0:374:9c23:a043 with SMTP id
+ e9e14a558f8ab-374b1e0bb47mr1047315ab.0.1717571718590; Wed, 05 Jun 2024
+ 00:15:18 -0700 (PDT)
+Date: Wed, 05 Jun 2024 00:15:18 -0700
+In-Reply-To: <PN2PR01MB48914D23BDE5FC72CD96A469FCF92@PN2PR01MB4891.INDPRD01.PROD.OUTLOOK.COM>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000029c3f3061a1f54dd@google.com>
+Subject: Re: 000000000000fcfa6406141cc8ac@google.com
+From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
+To: wojciech.gladysz@infogain.com
+Cc: wojciech.gladysz@infogain.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+> #syz testhttps://github.com/torvalds/linux.gite377d803b65ee4130213b3c041f=
+c25fdfec1bd90
 
-* Namhyung Kim <namhyung@kernel.org> wrote:
+unknown command "testhttps://github.com/torvalds/linux.gite377d803b65ee4130=
+213b3c041fc25fdfec1bd90"
 
-> Hi Ian and Ingo,
-> 
-> The failure happens when you don't have vmlinux.h or vmlinux with BTF.
-> 
-> ifeq ($(VMLINUX_H),)
->   ifeq ($(VMLINUX_BTF),)
->     $(error Missing bpftool input for generating vmlinux.h)
->   endif
-> endif
-> 
-> VMLINUX_BTF can be empty if you didn't build a kernel or
-> it doesn't have a BTF section and the current kernel also
-> has no BTF.  This is totally ok.
-> 
-> But VMLINUX_H should be set to the minimal version in
-> the source tree (unless you overwrite it manually) when you
-> don't pass GEN_VMLINUX_H=1 (which requires VMLINUX_BTF
-> should not be empty).  The problem is that it's defined in
-> Makefile.config which is not included for `make clean`.
-> 
-> Can you please verify if the below patch fixes it?
-> 
-> Thanks,
-> Namhyung
-> 
-> ---8<---
-> 
-> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-> index 5c35c0d89306..e6d56b555369 100644
-> --- a/tools/perf/Makefile.perf
-> +++ b/tools/perf/Makefile.perf
-> @@ -214,6 +214,7 @@ NON_CONFIG_TARGETS := clean python-clean TAGS tags
-> cscope help
-> 
->  ifdef MAKECMDGOALS
->  ifeq ($(filter-out $(NON_CONFIG_TARGETS),$(MAKECMDGOALS)),)
-> +  VMLINUX_H=$(src-perf)/util/bpf_skel/vmlinux/vmlinux.h
->    config := 0
->  endif
->  endif
-
-Yeah, this appears to be doing the trick here - judging by a couple of 
-tries of interrupted builds:
-
-   Tested-by: Ingo Molnar <mingo@kernel.org>
-
-There's a new issue btw: see the 'invalid escape sequence' warnings below. 
-This is on a pretty stock Unbuntu 24.04 desktop.
-
-Thanks,
-
-	Ingo
-
-<unknown>:1: SyntaxWarning: invalid escape sequence '\S'
-  ASCIIDOC perf-config.xml
-<unknown>:1: SyntaxWarning: invalid escape sequence '\S'
-<unknown>:1: SyntaxWarning: invalid escape sequence '\S'
-<unknown>:1: SyntaxWarning: invalid escape sequence '\S'
-<unknown>:1: SyntaxWarning: invalid escape sequence '\S'
-  ASCIIDOC perf-daemon.xml
-<unknown>:1: SyntaxWarning: invalid escape sequence '\S'
-<unknown>:1: SyntaxWarning: invalid escape sequence '\S'
-  ASCIIDOC perf-data.xml
-  ASCIIDOC perf-diff.xml
-
+> ________________________________
+> From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
+> Sent: Wednesday, June 5, 2024 09:06
+> To: Wojciech Gladysz <Wojciech.Gladysz@infogain.com>
+> Cc: Wojciech Gladysz <Wojciech.Gladysz@infogain.com>; linux-kernel@vger.k=
+ernel.org <linux-kernel@vger.kernel.org>; syzkaller-bugs@googlegroups.com <=
+syzkaller-bugs@googlegroups.com>
+> Subject: Re: 000000000000fcfa6406141cc8ac@google.com
+>
+> EXTERNAL: This message was sent from outside of Infogain. Please do not c=
+lick links or open attachments unless you know the content is safe.
+>
+>> #syz test https://linux.googlesource.com/linux/kernel/git/torvalds/linux=
+<https://linux.googlesource.com/linux/kernel/git/torvalds/linux<https://lin=
+ux.googlesource.com/linux/kernel/git/torvalds/linux>> e377d803b65ee4130213b=
+3c041fc25fdfec1bd90
+>
+> "https://linux.googlesource.com/linux/kernel/git/torvalds/linux<https://l=
+inux.googlesource.com/linux/kernel/git/torvalds/linux<https://linux.googles=
+ource.com/linux/kernel/git/torvalds/linux>>" does not look like a valid git=
+ repo address.
+>
+>>
+>> The information in this email is confidential and may be legally privile=
+ged. It is intended solely for the addressee and access to it by anyone els=
+e is unauthorized. If you are not the intended recipient, any disclosure, c=
+opying, distribution or any action taken or omitted to be taken based on it=
+, is strictly prohibited and may be unlawful.
 
