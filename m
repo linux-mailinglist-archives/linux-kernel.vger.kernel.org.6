@@ -1,108 +1,178 @@
-Return-Path: <linux-kernel+bounces-202790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B17168FD11A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:48:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF7FA8FD170
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 011F8B25D76
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:48:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C36A1F25CEF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15361381D5;
-	Wed,  5 Jun 2024 14:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="tcfuyKhV"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A52C3D548;
+	Wed,  5 Jun 2024 15:15:55 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4296A125BA;
-	Wed,  5 Jun 2024 14:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56F817BCC;
+	Wed,  5 Jun 2024 15:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717598855; cv=none; b=fK2KJS/zGrEqHmY1xh2zP94EnBa5b5cjmdHYb2XBcSbgmFAVlFcca9/C1Y4eXw5fNoWOlt3LzgF3jL0VW1sX3s5QzbB0PW0aj0fmyXaHiAAeQBriX94o6J/fgN/dRB7yrgcH4vL8IBAvLHor5t72PKl2YU3KCs0uW8kWeTZA0Oo=
+	t=1717600554; cv=none; b=jp8pmtLZg4cvpXj6l4PWKBUykKmPQkF8+lnRzF4ftDx+ipmAXlvjezZjPWCHOBkWCXgwiI3SIAXwZwBn/XPson5NQmXkHd0yx3akoiEzfQbtzNdDyDbHxQn0U94r9p14//LUT9SSU5rWGGkTJ0M5TE3af3qvFzfsDuA0aC36DRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717598855; c=relaxed/simple;
-	bh=PXB2GCAHy4AXeES+/s42eyr/C+ckbgTV2vZzTuEb1/A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sQOQQ99byzt1HFGOgp/u4EFkX0RhheQQz8GxDgL6c007X8ABYAHIyQpC3cMeExK7k3/ay0C4N3e1q7l9XIUTblrL0177AfdRvancAXOZPwc36gfjVnrn86zwMqBYeJhcFKkJiQOyDnkBrHVUwkIjR8abzQNGkSFrHchxp0Rk9Eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=tcfuyKhV; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id E87A5A0790;
-	Wed,  5 Jun 2024 16:47:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=yHugVKhDEFMDE/eZEfLI
-	Bc5qQ57hrk9iNIoSwhUNJLk=; b=tcfuyKhVcRguuQNo46SAlaD0FlIQvRDrF7ZK
-	vIFiROmjYHioynBcUn9Cfy07HvZf/457e1G/sky+RcyneEqP76d0oGDE9qjmC47/
-	Rokdx6uAahKDAjhnFPbxXyJO11FGRElI+p7UFaw1GX4rsvqTkzIVlJmGynOTn/kp
-	q6Mn4e5puJtbfcgH+N3NC1apXtbrU94OQhlGxOw4aKUf035bgdO0bYR60VwjqJuC
-	kBh9VdVCVt+RF6FJO8ObX6pwDWJqnmHcvrqmBdnE7ETp2zbD+TXXJFECrCqt4g0Q
-	BddyZyfT0Xs5JgIsGSOzKIxKmjPl3nXWv30fM4SbVgLpj29AKnGx+Gz7bRIlzEl+
-	yG7UDiyHzjD6rhOMXcOeZp6aMkCjM2hNhkBpySLcbSrqLo59oHh27C3K3O7dV4S+
-	ew/YM5ZpzyE/ad6tlY+og8qBLZlVDleSjeBA25vZrWkw1IQFTNQYicmsHxum4I3w
-	eT4fEE/zfIGZZ6VIVc+rwhJGHtGe93ujoWvBsT0Jvra/QlvJd81YQaqadcX0X3BA
-	gsaLJV3tdfiereYCQG/acn5NvfvZEj1MDnofbamKcHcqCheAAK4nV3O4kurBB8d4
-	FhTKt8Iy/BtkU9eeZFMFjHre41XVicR7anoPEn584rGcX97v+XPLldA1FcU5Lczo
-	yDzFzxk=
-Message-ID: <52b9e3f4-8dd4-4696-9a47-0dc4eb59c013@prolan.hu>
-Date: Wed, 5 Jun 2024 16:47:27 +0200
+	s=arc-20240116; t=1717600554; c=relaxed/simple;
+	bh=1zLA6mPxYnEPg/t/Lk/WBlBXqXpEMxnonQ2kaErlsns=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rLiQuQg7ugNHAT+rkneQvWaM5r1aP7FqAMOA4YtlXoD02kblyV+Utd3PQQVS43ycCYKfRCzfTHetj9SK6uIMx7u1FoJrABigySKYwtozvujgWVxq2zoyy6llkI8L2K1zS6muVIqhnM+yuavDRnD4TmBlAjx78sn0q+E6lCK77dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875b65.versanet.de ([83.135.91.101] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sErwP-00012r-Mi; Wed, 05 Jun 2024 16:48:41 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, kernel@collabora.com,
+ Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
+ Algea Cao <algea.cao@rock-chips.com>
+Subject:
+ Re: [PATCH 13/14] drm/bridge: synopsys: Add DW HDMI QP TX controller driver
+Date: Wed, 05 Jun 2024 16:48:40 +0200
+Message-ID: <2554679.TLnPLrj5Ze@diego>
+In-Reply-To:
+ <20240601-b4-rk3588-bridge-upstream-v1-13-f6203753232b@collabora.com>
+References:
+ <20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com>
+ <20240601-b4-rk3588-bridge-upstream-v1-13-f6203753232b@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/2] net: include: mii: Refactor: Use BIT() for
- ADVERTISE_* bits
-To: Vladimir Oltean <olteanv@gmail.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<trivial@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit
-	<hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>
-References: <20240605121648.69779-1-csokas.bence@prolan.hu>
- <20240605121648.69779-1-csokas.bence@prolan.hu>
- <20240605121648.69779-2-csokas.bence@prolan.hu>
- <20240605121648.69779-2-csokas.bence@prolan.hu>
- <20240605141342.262wgddrf4xjbbeu@skbuf>
-Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <20240605141342.262wgddrf4xjbbeu@skbuf>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2945A12957627661
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Hi!
-
-On 6/5/24 16:13, Vladimir Oltean wrote:
-> On Wed, Jun 05, 2024 at 02:16:49PM +0200, Csókás, Bence wrote:
->> Replace hex values with BIT() and GENMASK() for readability
->>
->> Cc: trivial@kernel.org
->>
->> Signed-off-by: "Csókás, Bence" <csokas.bence@prolan.hu>
->> ---
+Am Samstag, 1. Juni 2024, 15:12:35 CEST schrieb Cristian Ciocaltea:
+> The Synopsys DesignWare HDMI 2.1 Quad-Pixel (QP) TX controller supports
+> the following features, among others:
 > 
-> You can't use BIT() and GENMASK() in headers exported to user space.
+> * Fixed Rate Link (FRL)
+> * 4K@120Hz and 8K@60Hz video modes
+> * Variable Refresh Rate (VRR) including Quick Media Switching (QMS), aka
+>   Cinema VRR
+> * Fast Vactive (FVA), aka Quick Frame Transport (QFT)
+> * SCDC I2C DDC access
+> * TMDS Scrambler enabling 2160p@60Hz with RGB/YCbCr4:4:4
+> * YCbCr4:2:0 enabling 2160p@60Hz at lower HDMI link speeds
+> * Multi-stream audio
+> * Enhanced Audio Return Channel (EARC)
 > 
-> I mean you can, but the BIT() and GENMASK() macros themselves aren't
-> exported to user space, and you would break any application which used
-> values dependent on them.
+> Add driver to enable basic support, i.e. RGB output up to 4K@60Hz,
+> without audio, CEC or any HDMI 2.1 specific features.
 > 
+> Co-developed-by: Algea Cao <algea.cao@rock-chips.com>
+> Signed-off-by: Algea Cao <algea.cao@rock-chips.com>
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> ---
+>  drivers/gpu/drm/bridge/synopsys/Makefile     |   2 +-
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c | 787 +++++++++++++++++++++++++
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.h | 831 +++++++++++++++++++++++++++
+>  include/drm/bridge/dw_hdmi.h                 |   8 +
+>  4 files changed, 1627 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/synopsys/Makefile b/drivers/gpu/drm/bridge/synopsys/Makefile
+> index ce715562e9e5..8354e4879f70 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/Makefile
+> +++ b/drivers/gpu/drm/bridge/synopsys/Makefile
 
-I thought the vDSO headers (which currently hold the definition for 
-`BIT()`) *are* exported. Though `GENMASK()`, and the headers which would 
-normally include vdso/bits.h, might not be... But then again, is 
-uapi/linux/mii.h itself even exported? And if so, why aren't these 
-macros? Is there any reason _not_ to export the entire linux/bits.h?
+> +static int dw_hdmi_qp_i2c_read(struct dw_hdmi *hdmi,
+> +			       unsigned char *buf, unsigned int length)
+> +{
+> +	struct dw_hdmi_i2c *i2c = hdmi->i2c;
+> +	int stat;
+> +
+> +	if (!i2c->is_regaddr) {
+> +		dev_dbg(hdmi->dev, "set read register address to 0\n");
+> +		i2c->slave_reg = 0x00;
+> +		i2c->is_regaddr = true;
+> +	}
+> +
+> +	while (length--) {
+> +		reinit_completion(&i2c->cmp);
+> +
+> +		dw_hdmi_qp_mod(hdmi, i2c->slave_reg++ << 12, I2CM_ADDR,
+> +			       I2CM_INTERFACE_CONTROL0);
+> +
+> +		dw_hdmi_qp_mod(hdmi, I2CM_FM_READ, I2CM_WR_MASK,
+> +			       I2CM_INTERFACE_CONTROL0);
 
-Bence
+Somehow the segment handling is present in the rest of the i2c code here, but
+not the actual handling for reads.
+
+The vendor-kernel does:
+
+-               dw_hdmi_qp_mod(hdmi, I2CM_FM_READ, I2CM_WR_MASK,
+-                              I2CM_INTERFACE_CONTROL0);
++               if (i2c->is_segment)
++                       dw_hdmi_qp_mod(hdmi, I2CM_EXT_READ, I2CM_WR_MASK,
++                                      I2CM_INTERFACE_CONTROL0);
++               else
++                       dw_hdmi_qp_mod(hdmi, I2CM_FM_READ, I2CM_WR_MASK,
++                                      I2CM_INTERFACE_CONTROL0);
+
+Without this change, connecting to a DVI display does not work, and
+reading the EDID ends in the "i2c read error" below.
+
+Adding the segment handling as above makes the DVI connection
+work (as it does in the vendor-kernel).
+
+So it would be nice if you could maybe incorporate this in the next version?
+
+
+Thanks
+Heiko
+
+
+> +
+> +		stat = wait_for_completion_timeout(&i2c->cmp, HZ / 10);
+> +		if (!stat) {
+> +			dev_err(hdmi->dev, "i2c read timed out\n");
+> +			dw_hdmi_qp_write(hdmi, 0x01, I2CM_CONTROL0);
+> +			return -EAGAIN;
+> +		}
+> +
+> +		/* Check for error condition on the bus */
+> +		if (i2c->stat & I2CM_NACK_RCVD_IRQ) {
+> +			dev_err(hdmi->dev, "i2c read error\n");
+> +			dw_hdmi_qp_write(hdmi, 0x01, I2CM_CONTROL0);
+> +			return -EIO;
+> +		}
+> +
+> +		*buf++ = dw_hdmi_qp_read(hdmi, I2CM_INTERFACE_RDDATA_0_3) & 0xff;
+> +		dw_hdmi_qp_mod(hdmi, 0, I2CM_WR_MASK, I2CM_INTERFACE_CONTROL0);
+> +	}
+> +
+> +	i2c->is_segment = false;
+> +
+> +	return 0;
+> +}
+
+
 
 
