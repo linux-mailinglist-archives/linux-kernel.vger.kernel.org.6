@@ -1,154 +1,117 @@
-Return-Path: <linux-kernel+bounces-203302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F8BB8FD923
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:36:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA0D38FD92F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E710282424
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:36:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47EAA1F216A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F168115FA7A;
-	Wed,  5 Jun 2024 21:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70FF15FA69;
+	Wed,  5 Jun 2024 21:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tB52Sk6k"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="eEGbfY6F"
+Received: from forward204b.mail.yandex.net (forward204b.mail.yandex.net [178.154.239.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8804327701
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 21:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CCF15F3FF;
+	Wed,  5 Jun 2024 21:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717623256; cv=none; b=aLYyKumDLQAAZEqQwTuptaUHUrytQHVmog7oK7A6A62OWjhzep8zkeqNsIsfuANxpQBnAiTPKDLaIgyAzMLDX6cLtVKa+fD5P5cE5P+kUSCq/zsjJDb2qajg2W4nqSPca2PaZRM+5Z3Q1aB0KuL1qBSpAjZu/qf0gz8mRwmSgz4=
+	t=1717623441; cv=none; b=ZBGaXM0907G1wkSt6gaeoHpmvW4bdEHRngrTEsObmGlkvmCtdV3leSEoeuzAe/dtMsqVUmp2qU8l/RGPueKF2xS2EvxeUDHRWGGxSa7J4TN3YbWwVRgQTXk/cRkjNRUY4Ti7C7ZHd0SZz246yWkRtgEPezvY/mineK+0ahUi774=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717623256; c=relaxed/simple;
-	bh=gqBOns9NjUOwlItHcv+NKheaglPGkc3CfqGXO/RBcVs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z80sH4qu/otmHiYRfUKKVqy1oiTBgw03hFmIlVRvE/Nss5YX9Q4NaXnm2SJxnOk2pbkpmVdR+19ZAoY0XseuSFSX5TeTXziyUF/bkLZn4NRRw/AHeJ9SBUHHwbaXkM+9C1khv9eU5n2AYBQNIAqPw5PqgUmCzkVhydLxqrimoEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tB52Sk6k; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2eaa80cb573so2938031fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 14:34:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717623253; x=1718228053; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gqBOns9NjUOwlItHcv+NKheaglPGkc3CfqGXO/RBcVs=;
-        b=tB52Sk6kmsPVIJ0rEdztut/FyDKAPnkuxmTbyyQdzDfrv0VMlVa/xaiTui2XHrSQMM
-         nLLRCPszWUtIPYZ5N3A69/iCcq5eNWe1NsmAmkQdQ5loRbce/Z/F84S6eKR164pQP6G3
-         X2Nr5d5NRuoHltONmWhwoGwjWu1ZD4SxCwBhl57JGl6uVRv3nJTdLB4pKge7Kv/K6jFq
-         ckWwSQ/JW5N4/Gtcqe3I8o6Ey6NrPYUyIBAoXALxnqKfoolTCFwneRPmc8lCIrwrGFgi
-         CSlG7Iq2P2+RRE5oN0lPg+M8QiKpOE7daM2G3jwkAHSNmLLYbaVYs+UHOOkMblL2B45C
-         dOrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717623253; x=1718228053;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gqBOns9NjUOwlItHcv+NKheaglPGkc3CfqGXO/RBcVs=;
-        b=FaKZtUBA1fdXSJBLtYyATsmYvFhWG65oxazPwIje4du0Zfj0csqM7DxzZTGCmIiVJ2
-         lSuiqgIOVJ69SS7WiplT+M6BirSRIB6rMxzhcJE22DwoxoJO7nlJqhd6SUpVdARYpaAK
-         7ze6hmy627LBBKzBoEcmcTiyUCPhh89UmMEjpfXzkNkdJuOpEcOCPTxkbzemhXQRwy7X
-         3bJmJ4taBSPopk7wB6cmBxxK0wBTE5CS410+ICLrCxy6kX0t8mCF6rMAJaq0iVwgiFTs
-         YYAN/H3P/DwQnd877ik7WeQPsvMhcwu72wpw4qkQI1sVa5doAqcYFE8hXp6xxJNXVx2r
-         6hBw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0M0IPmuFQFtUDqnrnIJFpJ4U7WbhNx+BtCl/Foqkuoo9kqnNXFvmZTKJVzxfD3CJir5QtmMDFLp8ELIllbfew9RGAmYWxmIbK/ICy
-X-Gm-Message-State: AOJu0Yzi3YU5gKPlUc9Axm4Chs/IVmjrhPe9k9XC8I2+H1zhO5OL35x1
-	4SGCiOEufepWjTii4XQExhon4KJMAkSoiBh7XkeLHcWXK6YygsRjj9+26szw84cFI88ibKhWNpq
-	GzBjQBD6ydtV8JAqjh0HmhRD4E07/flzCXAzA
-X-Google-Smtp-Source: AGHT+IEdOZb+muxjYVFTWY+aXKl9l3o8/b/myC7ur8bwb93sdKO2CQP6FMP/O90RUPwrcXgQ4CKHzfyeI1VCz7Y62vw=
-X-Received: by 2002:a2e:8891:0:b0:2ea:7d0f:f6ed with SMTP id
- 38308e7fff4ca-2eac7a53ff7mr21497191fa.33.1717623252490; Wed, 05 Jun 2024
- 14:34:12 -0700 (PDT)
+	s=arc-20240116; t=1717623441; c=relaxed/simple;
+	bh=I1MC/J9J5wZTsyCTVV7/Js6exyl5QJIVotMGCkz7gHE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gCysgjTVeTLTHcxCvECj/7+XNDkwmVdsc5Hjh9iZPlJfn0rZ12RsIPDZGvXzwYInCObAxnM0yYbUmHlmvW/fs2gY4UFoPLqhRnMeKXXnEuJYFtTFh8iI3J8y5Q5jDq5dJcR2RfEBL8mJtVoGx4oKJHVl1fwYPtcqwYyMSiOg120=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=eEGbfY6F; arc=none smtp.client-ip=178.154.239.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from forward103c.mail.yandex.net (forward103c.mail.yandex.net [IPv6:2a02:6b8:c03:500:1:45:d181:d103])
+	by forward204b.mail.yandex.net (Yandex) with ESMTPS id A7FF36677C;
+	Thu,  6 Jun 2024 00:34:42 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-90.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-90.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:4486:0:640:b366:0])
+	by forward103c.mail.yandex.net (Yandex) with ESMTPS id 56F26608E1;
+	Thu,  6 Jun 2024 00:34:34 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-90.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id VYgH11SMo8c0-8YgXmBOX;
+	Thu, 06 Jun 2024 00:34:33 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1717623273; bh=JvVC7BaTilq9Ww7g4mw3O5T4PPv3xf2DesSD7h+cHxQ=;
+	h=Message-Id:Date:Cc:Subject:To:From;
+	b=eEGbfY6FDHA/a4AYVa9egz65CoedLqMAD0KicAFtGcohEDS7vLrVtcIBYSa1d/o64
+	 KYw/NwsCGJzEocE9uqbi4vYJRCUoFJYqt6F7edcUSidRwinI52zL3WLD3gh3BOtjL3
+	 +tEI8vrLVZ81XoHSrRIfr4Gh262osk7RrVhiZ71s=
+Authentication-Results: mail-nwsmtp-smtp-production-main-90.myt.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+From: Mikhail Ukhin <mish.uxin2012@yandex.ru>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: Mikhail Ukhin <mish.uxin2012@yandex.ru>,
+	stable@vger.kernel.org,
+	linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pavel Koshutin <koshutin.pavel@yandex.ru>,
+	lvc-project@linuxtesting.org,
+	Artem Sadovnikov <ancowi69@gmail.com>,
+	Mikhail Ivanov <iwanov-23@bk.ru>
+Subject: [PATCH v3 5.10/5.15] ata: libata-scsi: check cdb length for VARIABLE_LENGTH_CMD commands
+Date: Thu,  6 Jun 2024 00:34:28 +0300
+Message-Id: <20240605213428.4040-1-mish.uxin2012@yandex.ru>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231212204647.2170650-1-sagis@google.com> <ce967287157e830303fdd3d4a37e7d62a1698747.camel@intel.com>
- <CAAhR5DFmT0n9KWRMtO=FkWbm9_tXy1gP-mpbyF05mmLUph2dPA@mail.gmail.com>
- <59652393edbf94a8ac7bf8d069d15ecb826867e1.camel@intel.com>
- <7c3abac8c28310916651a25c30277fc1efbad56f.camel@intel.com>
- <CAAhR5DH79H2+riwtu_+cw-OpdRm02ELdbVt6T_5TQG3t4qAs2Q@mail.gmail.com> <e161c300e9c91237c5585fab084101a8f46768e2.camel@intel.com>
-In-Reply-To: <e161c300e9c91237c5585fab084101a8f46768e2.camel@intel.com>
-From: Sagi Shahar <sagis@google.com>
-Date: Wed, 5 Jun 2024 16:34:01 -0500
-Message-ID: <CAAhR5DF=wAVsshyX-JqcPhhrVp8rEF11uJkB-OSEUM-B-oEZoQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v5 00/29] TDX KVM selftests
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "Verma, Vishal L" <vishal.l.verma@intel.com>, "vipinsh@google.com" <vipinsh@google.com>, 
-	"Aktas, Erdem" <erdemaktas@google.com>, "shuah@kernel.org" <shuah@kernel.org>, 
-	"Xu, Haibo1" <haibo1.xu@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"Afranji, Ryan" <afranji@google.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"Yamahata, Isaku" <isaku.yamahata@intel.com>, 
-	"ackerleytng@google.com" <ackerleytng@google.com>, "dmatlack@google.com" <dmatlack@google.com>, 
-	"jmattson@google.com" <jmattson@google.com>, "Annapurve, Vishal" <vannapurve@google.com>, 
-	"runanwang@google.com" <runanwang@google.com>, 
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, 
-	"chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>, "pgonda@google.com" <pgonda@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 5, 2024 at 3:56=E2=80=AFPM Edgecombe, Rick P
-<rick.p.edgecombe@intel.com> wrote:
->
-> On Wed, 2024-06-05 at 15:42 -0500, Sagi Shahar wrote:
-> > > > Hm you're right, I was looking more narrowly because of the kvm-coc=
-o-
-> > > > queue conflicts, for some of which even v19 might be too old. The M=
-MU
-> > > > prep series uses a much more recent kvm-coco-queue baseline.
-> > > >
-> > > > Rick, can we post a branch with /everything/ on this MMU prep basel=
-ine
-> > > > for this selftest refresh?
-> > >
-> > > Actually I see the branch below does contain everything, not just the
-> > > MMU prep patches. Sagi, is this fine for a baseline?
-> > >
-> > Maybe for internal development but I don't think I can post an
-> > upstream patchset based on an internal Intel development branch.
-> > Do you know if there's a plan to post a patch series based on that bran=
-ch
-> > soon?
->
-> We don't currently have plans to post a whole ~130 patch series. Instead =
-we plan
-> to post subsections out of the series as they slowly move into a maintain=
-er
-> branch.
+No upstream commit exists for this patch.
 
-So this means that we won't be able to post an updated version of the
-selftests for a while unless we lock it to the V19 patchset which is
-based on v6.8-rc5
-Do you have an estimate on when the TDX patches get to the point where
-they could support the basic lifecycle selftest?
->
-> We are trying to use the selftests as part of the development of the base=
- TDX
-> base series. So we need to be able to run them on development branches to=
- catch
-> regressions and such. For this purpose, we wouldn't need updates to be po=
-sted to
-> the mailing list. It probably needs either some sort of co-development, o=
-r
-> otherwise we will need to maintain an internal fork of the selftests.
->
-> We also need to add some specific tests that can cover gaps in our curren=
-t
-> testing. Probably we could contribute those back to the series.
->
-> What do you think?
+Fuzzing of 5.10 stable branch reports a slab-out-of-bounds error in
+ata_scsi_pass_thru.
 
-I will take a look at rebasing the selftests on top of the Intel
-development branch and I can post it on our github branch. We can talk
-about co-development offline. We already have some code that was
-suggested by Isaku as part of our tests.
+The error is fixed in 5.18 by commit ce70fd9a551a ("scsi: core: Remove the
+cmd field from struct scsi_request") upstream.
+Backporting this commit would require significant changes to the code so
+it is bettter to use a simple fix for that particular error.
+
+The problem is that the length of the received SCSI command is not
+validated if scsi_op == VARIABLE_LENGTH_CMD. It can lead to out-of-bounds
+reading if the user sends a request with SCSI command of length less than
+32.
+
+Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+
+Signed-off-by: Artem Sadovnikov <ancowi69@gmail.com>
+Signed-off-by: Mikhail Ivanov <iwanov-23@bk.ru>
+Signed-off-by: Mikhail Ukhin <mish.uxin2012@yandex.ru>
+---
+ v2: The new addresses were added and the text was updated.
+ v3: Checking has been moved to the function ata_scsi_var_len_cdb_xlat at
+ the request of Damien Le Moal
+ drivers/ata/libata-scsi.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+index dfa090ccd21c..38488bd813d1 100644
+--- a/drivers/ata/libata-scsi.c
++++ b/drivers/ata/libata-scsi.c
+@@ -3948,7 +3948,11 @@ static unsigned int ata_scsi_var_len_cdb_xlat(struct ata_queued_cmd *qc)
+ 	struct scsi_cmnd *scmd = qc->scsicmd;
+ 	const u8 *cdb = scmd->cmnd;
+ 	const u16 sa = get_unaligned_be16(&cdb[8]);
++	u8 scsi_op = scmd->cmnd[0];
+ 
++	if (scsi_op == VARIABLE_LENGTH_CMD && scmd->cmd_len < 32)
++        	return 1;
++	
+ 	/*
+ 	 * if service action represents a ata pass-thru(32) command,
+ 	 * then pass it to ata_scsi_pass_thru handler.
+-- 
+2.25.1
+
 
