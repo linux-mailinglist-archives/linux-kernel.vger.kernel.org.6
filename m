@@ -1,97 +1,133 @@
-Return-Path: <linux-kernel+bounces-202850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F61C8FD1DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:41:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29EFE8FD1EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C44A928222C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:41:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB6821F25FC2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3DF13B7A7;
-	Wed,  5 Jun 2024 15:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FDA31494BD;
+	Wed,  5 Jun 2024 15:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TaLvBuJ0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N+yKihqw"
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B0D19D891;
-	Wed,  5 Jun 2024 15:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1221319D8B5;
+	Wed,  5 Jun 2024 15:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717602075; cv=none; b=h1veebhe2ioHlBi75InhRQw0sgV4F7LsNoLD6rcTKiNDUvxumCddahENnNEyZXpopE5VygOPTxdMU3ov3iNKqRf/64SEeVUpeEdjw5ckVynbqnBDNTCisuDFY4fDzDAvaGRpthJv8DyIBSPzAxZvD5+SHeCbnl9Mzw7QLdsjpT4=
+	t=1717602211; cv=none; b=g6NLKwsSEh51TK1kFyso+cAUIz3npvQFaOnePDu9yFmlCBixLbds0R2ca+cQ+LTqk3X65+HpfYW01nDuLj3G3a6Yz0bPkM74uD824na0w6kPEKMuFaAeVmuic8bsOWmiMe6mxb1ynx6NsT5S0DxBXhHq03+zRS01kzlCsbCzPfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717602075; c=relaxed/simple;
-	bh=+5xjWbK4wagRPFFLOdl1Jb03kxWLjGziaouuSjpqiBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J57Bir2+evWKyIhtktUl0Se+Oh6fBGhP7DJoxUPkbwjpVyIO5aCbhc0lBCSfl9Y9sGOJSJT6GDZiQrQOZbrXxvG6RHa/j8SIfu56LqLYueV0OUukOjNmF8/qqryLFkrR5Cu/JbEkOhF7UaetSmAxesTJV6JIjo2NeYV2eZ9eNEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TaLvBuJ0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C56CAC3277B;
-	Wed,  5 Jun 2024 15:41:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717602075;
-	bh=+5xjWbK4wagRPFFLOdl1Jb03kxWLjGziaouuSjpqiBI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TaLvBuJ0YemhiNjgKHdEbhunt+/E95Gn7MIOhYOcWyHEjWYQ2/vN/UBcYT28RgeJf
-	 U5dz/vJmj6r3N3jvt68BW7JzjeiFoKGy8uOBeOBYuZbxo1KTxQbLtmdQMjr/qeFM2T
-	 KVeK9TM/YvEA8ynKgH0H/dIcqTR9KmrLBt8vO6IJ4tkrvy+rdxEG/bP+1Ki4tjZRGV
-	 rwOi8qgI20KWJS7drePpxZARAnwgDP+HzWUI1QAgIANKdHM8RRpPgIOBlzQ8Q1azGr
-	 IRzc4mjk3x9+zVFCKqxTR6K30HzBc7LO8ix3z+1srY45iF+pkx0DGziY1cXidKRaWn
-	 CkHnKbG6I3x8A==
-Date: Wed, 5 Jun 2024 09:41:12 -0600
-From: Rob Herring <robh@kernel.org>
-To: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
-Cc: nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, linux@armlinux.org.uk,
-	vadim.fedorenko@linux.dev, andrew@lunn.ch, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	git@amd.com
-Subject: Re: [PATCH net-next v3 4/4] dt-bindings: net: cdns,macb: Deprecate
- magic-packet property
-Message-ID: <20240605154112.GA3197137-robh@kernel.org>
-References: <20240605102457.4050539-1-vineeth.karumanchi@amd.com>
- <20240605102457.4050539-5-vineeth.karumanchi@amd.com>
+	s=arc-20240116; t=1717602211; c=relaxed/simple;
+	bh=L9Xf6PXsxrK28lKVkxl+Fbpc9v74XyBLrtMzS4Zf/eU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ncsYJu2nqFvhy0OlicjgbUAeHwtnaywMJa9n3cdAITtu22LPNYlCKRjsIH0a77c5EY4+xiO1SptEnOeWNX8ZC7fylZXHxOZ6uGaPsSWTzLiqGUBrk+isNHvVGzKijI5gUvhop4+uT9iDAu8uVxjK4ZhzPd5He5feSh2tGo73Duo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N+yKihqw; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-4eafded3c66so1253e0c.0;
+        Wed, 05 Jun 2024 08:43:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717602209; x=1718207009; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L9Xf6PXsxrK28lKVkxl+Fbpc9v74XyBLrtMzS4Zf/eU=;
+        b=N+yKihqw7vBYAZzJr76IeTZzyuPpA+ecvUsvlrDDDkP3rt1djEi9g1CXtf0kt516J8
+         uGCcaPKwH5zw6OerukWDDcAKzPCy+yLe5ljeaOlHX4GP6ugckdn5e3MrQWyyH8V+4Z6/
+         DH8d/M4BXmFqfkCupzFfahrQO18pHPQATKKrDLorXUVyvxJ5kluI6v22Q1W+auV+Tg8Z
+         36TUkV/BnrXbbReDdHFZ6kVVYQIuL9YumYN3eGlTvvt4pkXWodT2IKNok3/q845eEchx
+         KWWca1bG4cs63lEALWH4ScaYDHuPP/ZqBV12MBt6Jd47kKqJdT+RPuIYEzZYjXfuwGDI
+         3Paw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717602209; x=1718207009;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L9Xf6PXsxrK28lKVkxl+Fbpc9v74XyBLrtMzS4Zf/eU=;
+        b=ncJjUZZsZasNWL48A022ZcEtN7mObNC1/lFwKkn/fMyJ0SCge60KtwLye3oPSCdQM1
+         KXuOPGfXYMH8L0ZX+iw/4QZe7cHSclMdsFcOWtsnpJhJynA0xpNPi73Z9haP9m9rXmpc
+         iPPZICBRngbxTEfHGk2NCh9cbmm07qyFhA8O+LEVLzX7K69nvJ/mxRGWAMywwfMzS0d8
+         4cpTB/AurP74GR+FO5HBM+uy05jADXnhebZw/ekMoAUPuLsD8EP+BTRkDpRP+HQwr+HI
+         nKA2bPcCd7cdJwzc+vINxjEgmOg7A3eZCsAkD2Ayg5KSRbSn3uhhwNRsyri+Kc591b7M
+         Mt4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWtr1NcJgRsXteFn1gR9U5dCmhFqtqojIYmfcMfH1sCm9eYdMyQ2/eE21qmOFRoUb4M8IfBCj+OEETXusIkSjuNgdowEOG5MmPjNp9Di2GteJbE26Ksd9j/+PfHqRWLsYSUywdrgHGQ/kuO8v0f8K0h+VUp7zJ8uY4wqIx10VxtWM47uZnaRcm4ISWQLDNJtikeWuE47GB86g6K2HjVjN1MyjQmvcexaw==
+X-Gm-Message-State: AOJu0YzfABnnlo4A5QpcdCE3jMVTV4BJHUIqQBgdj7iGHWG+NDfvO0gd
+	yzI97sXsPlz/HqdteJ0MK4ChwCpvA7MsvGB4N9h6tvrtOCTMPZUcgP9xbfuDmrhWYn/Dng1YU0R
+	Hs+GnzjIYakP9RegtWa1Lu6+qfek=
+X-Google-Smtp-Source: AGHT+IFbKVGpxnWyLukW0L51CPBZAE2I91fvGI5gnu4wKwcHZDQJqT47u6gvVpFdG9lysjKyfMMpNCv7OK8tnXQewdk=
+X-Received: by 2002:a05:6122:2669:b0:4e4:ecf6:c7fa with SMTP id
+ 71dfb90a1353d-4eb3a51434fmr2555298e0c.15.1717602207449; Wed, 05 Jun 2024
+ 08:43:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240605102457.4050539-5-vineeth.karumanchi@amd.com>
+References: <20240530173857.164073-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240530173857.164073-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdX2F=PzmPhPyGFs_kZZBuTYjBQ-n88pEqo3aQh4=-oHiA@mail.gmail.com>
+In-Reply-To: <CAMuHMdX2F=PzmPhPyGFs_kZZBuTYjBQ-n88pEqo3aQh4=-oHiA@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 5 Jun 2024 16:42:59 +0100
+Message-ID: <CA+V-a8t5SO-iGJA5CT8ZY_C0z8yYoiRiCNBEiBHLWuA5dDem5g@mail.gmail.com>
+Subject: Re: [PATCH v3 02/15] pinctrl: renesas: pinctrl-rzg2l: Rename B0WI to BOWI
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Paul Barker <paul.barker.ct@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 05, 2024 at 03:54:57PM +0530, Vineeth Karumanchi wrote:
-> WOL modes such as magic-packet should be an OS policy.
-> By default, advertise supported modes and use ethtool to activate
-> the required mode.
-> 
-> Suggested-by: Andrew Lunn <andrew@lunn.ch>
-> Signed-off-by: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
-> ---
->  Documentation/devicetree/bindings/net/cdns,macb.yaml | 1 +
->  1 file changed, 1 insertion(+)
+Hi Geert,
 
-You forgot Krzysztof's ack.
+Thank you for the review.
 
-> 
-> diff --git a/Documentation/devicetree/bindings/net/cdns,macb.yaml b/Documentation/devicetree/bindings/net/cdns,macb.yaml
-> index 2c71e2cf3a2f..3c30dd23cd4e 100644
-> --- a/Documentation/devicetree/bindings/net/cdns,macb.yaml
-> +++ b/Documentation/devicetree/bindings/net/cdns,macb.yaml
-> @@ -146,6 +146,7 @@ patternProperties:
->  
->        magic-packet:
->          type: boolean
-> +        deprecated: true
->          description:
->            Indicates that the hardware supports waking up via magic packet.
->  
-> -- 
-> 2.34.1
-> 
+On Wed, Jun 5, 2024 at 12:39=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Thu, May 30, 2024 at 7:41=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
+.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Fix the typo B0WI -> BOWI to match with the RZ/G2L HW manual.
+> >
+> > Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v2->v3
+> > - New patch
+>
+> Thanks for your patch!
+>
+> I had a deeper look, as the name "B0WI" (with zero) is also present
+> in drivers/pinctrl/renesas/pinctrl-rza2.c, and because Section 41.4.2
+> ("Operation for Peripheral Function") in the RZ/G2L Group Hardware
+> User's Manual does talk about the "B0WI" (with zero) bit.
+>
+> Apparently Rev. 0.51 of the RZ/A2M Group Hardware User's Manual used
+> both variants. Later (Rev. 1.00) revisions replaced the O-based
+> variant by the zero-based variant. So it looks like "B0WI" (with
+> zero) is correct, and the RZ/G2L, RZ/V2L, RZ/G2UL, and RZ/Five HW
+> manuals should be fixed instead. The RZ/G3S manual already uses
+> the correct naming.
+>
+Ok I'll drop this patch and create a request with the HW manual team
+to correct it.
+
+Cheers,
+Prabhakar
 
