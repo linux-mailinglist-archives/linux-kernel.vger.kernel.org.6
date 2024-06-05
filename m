@@ -1,130 +1,156 @@
-Return-Path: <linux-kernel+bounces-201734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D4148FC27C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:56:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 466B78FC27D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:59:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAC92B21D95
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 03:56:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 056DE282964
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 03:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB513763F8;
-	Wed,  5 Jun 2024 03:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7B57346F;
+	Wed,  5 Jun 2024 03:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GrqcoXaD"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TdQLKgOq"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97315FB9A;
-	Wed,  5 Jun 2024 03:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DF7C2E3
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 03:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717559809; cv=none; b=iRPft7EaKgipoy11WIVO7TPmldkX6wMdLHSwI0huNQv2Jwdlzy9Nb3hyAWpg9hCy59Y74EQ94FdWhplL/36L6niw9Sy3Zuh31GAiJqqd8TiPVzTrZLnUg6e+d8irJsNY6fl7+pXn8/XsmG4NOwtMTtg6hUaRl/hjjT8GBNTvkUA=
+	t=1717559941; cv=none; b=WoCm5YLbR/fq/R1Q6aTXfniwky1H6exChdptoyUHg7qBForwkd9YeVpRhA8QZ9mmJUbKotKeJ2uVvjtcorxcH5mv4oW5fgZhWNqWK17a09x3kdSfpDk2mqHWNrZQYGyPSp1e5W36N/GEMa9wWEROqAdQbPGdqeTervgRUOq8vBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717559809; c=relaxed/simple;
-	bh=hk2D7uwshbmL4rDfcux+sm8te1C9QlmOzV5aEvO5Nm4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X5/QHd5VHY1Ow9LRbj+nqF4icnGba8tMuTVA4TdD2eHIhMDI7E06th5L+1W4pQgMBQfsKwChf17oKthjIpHUjW34wm6OC6R+SNTtJcVfTzDYzKXVRiVCM9VjDDRh40Va/sxfhQyOwzR0VZHbo3fwZbU53lZkie6V7LY8a9vzeXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GrqcoXaD; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4553uKoi130041;
-	Tue, 4 Jun 2024 22:56:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717559781;
-	bh=CUnhddB1rjYEYRpo+VZpm5Fj/lCuN3+PrpS8Kuc0p0E=;
-	h=From:To:CC:Subject:Date;
-	b=GrqcoXaDNPWsiZKW4PrHPHvHGB4F6MJagIrw1lX14DCpsaeFxd0yU9X4gsHgDy0Ai
-	 4+rmHgC2VeNu8IXBWlz25poO3kdZGTxwOBAiQx/2xl9fQTbJ/2WGWmtRwms7KHTSTl
-	 37PFyZujUgzSc/gPAiMBjZOcJ6CY5Uvjx4Ty83/E=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4553uKMA113620
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 4 Jun 2024 22:56:20 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
- Jun 2024 22:56:20 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 4 Jun 2024 22:56:20 -0500
-Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4553uK7t121579;
-	Tue, 4 Jun 2024 22:56:20 -0500
-Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 4553uJFf017369;
-	Tue, 4 Jun 2024 22:56:20 -0500
-From: MD Danish Anwar <danishanwar@ti.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Diogo Ivo
-	<diogo.ivo@siemens.com>, Andrew Lunn <andrew@lunn.ch>,
-        Roger Quadros
-	<rogerq@kernel.org>,
-        MD Danish Anwar <danishanwar@ti.com>, Paolo Abeni
-	<pabeni@redhat.com>,
-        Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
-	<edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, <srk@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        kernel test robot <lkp@intel.com>,
-        Thorsten Leemhuis <linux@leemhuis.info>
-Subject: [PATCH net-next] net: ethernet: ti: Makefile: Add icssg_queues.o in TI_ICSSG_PRUETH_SR1
-Date: Wed, 5 Jun 2024 09:26:17 +0530
-Message-ID: <20240605035617.2189393-1-danishanwar@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717559941; c=relaxed/simple;
+	bh=NP5Aw2nMjZMgodnMxQn6guUitfuYWAkiyDxssP1ovzY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hu3hXNho+jIl48F53rDj0+66PNsF0PMhWbSH2xoEPeXpaZKCbYPl20qxAP6yPP9nD44HxTpbgtfD6PKAQfby765t+eql/EH1JhB9sSUTu6mPcBrWOkTGdFewmnvWp5VhBkOaQ/v/VKI45sr+WVHO1W41Xax4p+EnhuHjZ/PozDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TdQLKgOq; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f48b825d8cso15968945ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 20:59:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717559940; x=1718164740; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=54k4JVJ2VfsnpnXkzAM0LcBwi0z2trB1l7d+zq3pvf4=;
+        b=TdQLKgOqlyecmfyiRsITIFV60Y1oUNsPZFW502JI/6xQr6No5gcv9A+Sl77+10s92f
+         0CDj1KRaBKmeVO09TWzGWhm/JgNYjLRC6zGFobm5lks19ePWrYnpBTF6VXbPcuK0Ld68
+         6nJUOJXUcYi0Ghf8GMPHFuy6MgMMyRGSWtzI/2PZ5xUlETjPNaC7yv3G+dpSV4IfAcBJ
+         7tQnw1E5bJ2uO27eo/ONQN2khTX5AwPjVsJqqVX4QA6TL+Fr/cJJ5vn+n514nQmPGbC7
+         KmEv2MxrRdq2V38LZOME7DOyd2EiVWw0lZ3AOjHuTPEyreZDYQv0feIcNgCyHUiyFCQp
+         REaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717559940; x=1718164740;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=54k4JVJ2VfsnpnXkzAM0LcBwi0z2trB1l7d+zq3pvf4=;
+        b=swdtC+QreCQr/8YBtvVk+/SoUWRenqvZO11kbsf84WrRdG4NOMCqu3AuxuQSyBGvA8
+         HpKQ5qyd9X5kmu9gzdc36VQgfTGm9PVt3jh9u6obeU4loj8cwtDRm2kbZzx6skVXWA3h
+         6RsLpxPcOb5EGGMLC+vYB5gNOBHDruOI9D3o1cw9Ch/LMQgAkVWDae5n13z/TjLMJJ/K
+         uFyGHwMv/cgyKPmrtyzbgToMOWrS79Sfias2BfnVRY/3Gthf8/7EwTA4xRX2A+Q20dM3
+         LUboT+mDaThVQibgBy/Nk8BI38BrJjt9VMCoan17FURv0A7nRY9Ig5tatkOOVKXjs0x5
+         BPdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXH+rvgR3E1ORr8suv+MyV3ymKzn+VCo72d+n+qCC980Cw1miqTfzKcYDhKXSsem2tG+pPO92PMrmj6doPDtkz1Jo2kYAp216sczMZN
+X-Gm-Message-State: AOJu0YyewykF9N2StgHN+CIq7IHOZ8DRhGAHBdRxduaWLXYp1VkhWIcO
+	SeCUtOrfi0IRo/3eJ4OfkjWJ14ZYYCclu8nyEhNUm+Rn+D6iqHTa
+X-Google-Smtp-Source: AGHT+IE3tPaE85dvArgrwiDJsTFKRfY975PcDsEMBCKjm98mHDhrWWgCegkkSL7nEGU4MgFPgy/16Q==
+X-Received: by 2002:a17:903:2446:b0:1f6:6591:67ad with SMTP id d9443c01a7336-1f6a5a26e4bmr17151125ad.34.1717559939630;
+        Tue, 04 Jun 2024 20:58:59 -0700 (PDT)
+Received: from [192.168.255.10] ([43.132.141.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f632379db9sm91096445ad.110.2024.06.04.20.58.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 20:58:59 -0700 (PDT)
+Message-ID: <cf5a0d4a-5291-4d4c-92e5-9340dfa4e8ac@gmail.com>
+Date: Wed, 5 Jun 2024 11:58:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/10] mm/ksm: skip subpages of compound pages
+To: David Hildenbrand <david@redhat.com>, alexs@kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, izik.eidus@ravellosystems.com,
+ willy@infradead.org, aarcange@redhat.com, chrisw@sous-sol.org,
+ hughd@google.com
+References: <20240604042454.2012091-1-alexs@kernel.org>
+ <20240604042454.2012091-3-alexs@kernel.org>
+ <8d3a60d5-06c5-4df4-aeda-2fbec45a8ae0@redhat.com>
+ <b3e242b5-c589-47fd-9a02-1e488bed9d15@gmail.com>
+ <00dcd224-6333-4f1e-9087-bdb5024ac236@redhat.com>
+ <9f4f6f0e-81e8-4bd0-9f20-412a543a452d@gmail.com>
+ <3d2ad8a3-30c6-41d6-841b-e8c376d01da3@redhat.com>
+Content-Language: en-US
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <3d2ad8a3-30c6-41d6-841b-e8c376d01da3@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-icssg_config.c uses some APIs that are defined in icssg_queue.c.
-TI_ICSSG_PRUETH_SR1 uses icssg_config.o but not icssg_queues.o as a
-result the below build error is seen
 
-ERROR: modpost: "icssg_queue_pop"
-[drivers/net/ethernet/ti/icssg-prueth-sr1.ko] undefined!
-ERROR: modpost: "icssg_queue_push"
-[drivers/net/ethernet/ti/icssg-prueth-sr1.ko] undefined!
 
-Fix this by adding icssg_queues.o in TI_ICSSG_PRUETH_SR1
+On 6/4/24 9:14 PM, David Hildenbrand wrote:
+> On 04.06.24 15:10, Alex Shi wrote:
+>>
+>>
+>> On 6/4/24 6:43 PM, David Hildenbrand wrote:
+>>>>>>
+>>>>>> @@ -2680,7 +2685,7 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
+>>>>>>                 }
+>>>>>>     next_page:
+>>>>>>                 put_page(*page);
+>>>>>> -            ksm_scan.address += PAGE_SIZE;
+>>>>>> +            ksm_scan.address += nr * PAGE_SIZE;
+>>>>>>                 cond_resched();
+>>>>>>             }
+>>>>>>         }
+>>>>>
+>>>>> You might be jumping over pages that don't belong to that folio. What you would actually want to do is somehow use folio_pte_batch() to really know the PTEs point at the same folio, so you can skip them. But that's not that easy when using follow_page() ...
+>>>>>
+>>>>> So I suggest dropping this change for now.
+>>>>>
+>>>>
+>>>> Hi David,
+>>>>
+>>>> Forgive my stupidity, where I jump over normal page that not to belong to the folio?
+>>>
+>>> IIUC, you assume that the folio is fully mapped by all PTEs that could span it, and that follow_page() would give you the head page, correct?
+>>>
+>>> As a simple example, assume only a single page of a large folio is still mapped, which could be any tail page. You couldn't jump over any PTEs.
+>>>
+>>> Or am I missing something?
+>>
+>> Uh, thanks for explanations. for what's we concerned, the following code could take care of the FULL or ERR pages. And it still keep the step of single page.
+>>                          page = follow_page(vma, ksm_scan.address, FOLL_GET);
+>>                          if (IS_ERR_OR_NULL(page)) {
+>>                                  ksm_scan.address += PAGE_SIZE;
+>>                                  cond_resched();
+>>                                  continue;
+>>                          }
+>> And after the above code, step folio_nr_pages on address should be safe, isn't it?
+> 
+> Not sure if I follow. Let me try explaining once again:
+> 
+> Assume a PTE maps some tail page of the large anonymous folio. The other PTEs around it map some other anonymous folios, not pages of that large anonymous folio.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202405182038.ncf1mL7Z-lkp@intel.com/
-Fixes: 487f7323f39a ("net: ti: icssg-prueth: Add helper functions to configure FDB")
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
----
-Cc: Thorsten Leemhuis <linux@leemhuis.info>
 
-NOTE: This is only applicable on net-next but not on net as the patch that
-introduced this dependency is part of net-next.
+Sorry, David,
 
- drivers/net/ethernet/ti/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+Do you meaning there are 2 folio pages, in a same vma, in their address, 'ksm_scan.address', would be overlapped in a folio size space?
+If so, that do out of my expect. I do have no idea of this thing. Could you give me more hints of this problem or how things work on it in current kernel?
 
-diff --git a/drivers/net/ethernet/ti/Makefile b/drivers/net/ethernet/ti/Makefile
-index 59cd20a38267..79464ad6f1e8 100644
---- a/drivers/net/ethernet/ti/Makefile
-+++ b/drivers/net/ethernet/ti/Makefile
-@@ -45,6 +45,7 @@ obj-$(CONFIG_TI_ICSSG_PRUETH_SR1) += icssg-prueth-sr1.o
- icssg-prueth-sr1-y := icssg/icssg_prueth_sr1.o \
- 		      icssg/icssg_common.o \
- 		      icssg/icssg_classifier.o \
-+		      icssg/icssg_queues.o \
- 		      icssg/icssg_config.o \
- 		      icssg/icssg_mii_cfg.o \
- 		      icssg/icssg_stats.o \
-
-base-commit: cd0057ad75116bacf16fea82e48c1db642971136
--- 
-2.34.1
-
+Thanks a lot!
+Alex
+ 
+> 
+> Without looking at the other PTEs you don't know how much you can skip.
+ 
+> 
 
