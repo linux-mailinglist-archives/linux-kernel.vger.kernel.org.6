@@ -1,148 +1,95 @@
-Return-Path: <linux-kernel+bounces-203296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12DEF8FD910
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:34:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E87198FD914
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FE261C21192
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:34:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 671861F21CAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B7C1667E6;
-	Wed,  5 Jun 2024 21:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B06169376;
+	Wed,  5 Jun 2024 21:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="G+Ui53eo"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B5pD0t5O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626814962E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 21:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04ADA4962E;
+	Wed,  5 Jun 2024 21:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717623015; cv=none; b=SGmQn/im9zUSTYuRP1NelG0JIudJvn4fSy+2+JGtfGrXbWY2gApxHct+RhJhM1FukVIyvao/OWT4zAjgv7TUlpsvNVzoeqjGa+bqqgldjWPsOhbXGS+NA+04bwc7X3QENfhK4xnwEy/Ig5QIEtz1KJhcGZSOS3hVATFq940+Kyg=
+	t=1717623032; cv=none; b=Y6c46dRH8iyB+/lS7gx20bMfWgL4A3sm7sxCKiEL0MgudXVPzDk/CR2vxr2+EBx2C1bxmzRkeCCMLb1wQgBa+taFmsq3ycWdzBdGKnamCpgX9dQW+HDB7c9SmTCuN8Bux557TFkE0YMo0ecTqlSfxs1vJYdmwfIpAeGwO8muxac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717623015; c=relaxed/simple;
-	bh=KxTYCer4B2FidGGwLUIWfVVB28RPkGPyzNPIAfGR75w=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=UQr69Wk0CDpVKjrB4iwyCMPGgpwlYMNNe/takvN+A6vwgOTnrvhleWG3OLi/lUKP7SyHtQFCLU9iG5yVVEOR7Hknnm6vEVEi0Lwvwzfp7PJ3JLwKinlx9v3VbRdFHzlyUM2ZiKWfZr5Kuz//NxZARiK2Fm5QOx7/uaGSPTbpevs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=G+Ui53eo; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 448852C03DE;
-	Thu,  6 Jun 2024 09:30:10 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1717623010;
-	bh=KxTYCer4B2FidGGwLUIWfVVB28RPkGPyzNPIAfGR75w=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=G+Ui53eo69nOIYUHTwpOFSiYzKrqI6bvI+IGrJRydR+sopRVzaUfJL2Qwi79ln0WB
-	 5pEOHupZuzHWwLgDa2exPW6u4RPNdI4Vf4GU1ZTRykBHJvbLaKfuWYJZj9j6UTuKEe
-	 P7rpMzsWfYY+lrLOiW20YVaVbkRah8b1mLiOcOenLy2jIvY8KlM4cNH7qmKqmXhqkL
-	 liUw/aZg+ooL8nXQ3YxHkCFvulWSQyU/A1qzrCCNWnOMh8cwXBqS/Qb06i8S1Kmvmn
-	 aV9O3YveQXYWtk6fqTSbzbuExj1WoMAGnXWGa+EzJ+WIoEodDSS5XaYciRRMxDuxw8
-	 zmoM+hoQK5LkQ==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B6660d8e20001>; Thu, 06 Jun 2024 09:30:10 +1200
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 6 Jun 2024 09:30:09 +1200
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Thu, 6 Jun 2024 09:30:09 +1200
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Jacob Keller <jacob.e.keller@intel.com>, Jackie Jone
-	<Jackie.Jone@alliedtelesis.co.nz>, "davem@davemloft.net"
-	<davem@davemloft.net>
-CC: "jesse.brandeburg@intel.com" <jesse.brandeburg@intel.com>,
-	"anthony.l.nguyen@intel.com" <anthony.l.nguyen@intel.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "intel-wired-lan@lists.osuosl.org"
-	<intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] igb: Add MII write support
-Thread-Topic: [PATCH] igb: Add MII write support
-Thread-Index: AQHatiy8/IRPYuJPYUO9rw9qJEjE7LG43r0AgAAFPYCAAAHagIAAA7yA
-Date: Wed, 5 Jun 2024 21:30:09 +0000
-Message-ID: <48b5cd5f-0613-4198-abfe-1f3297bb9c7e@alliedtelesis.co.nz>
-References: <20240604031020.2313175-1-jackie.jone@alliedtelesis.co.nz>
- <ad56235d-d267-4477-9c35-210309286ff4@intel.com>
- <dce11b71-724c-4c5f-bc95-1b59e7cc7844@alliedtelesis.co.nz>
- <4f9af0e9-5ce0-4b76-a2cd-cbd37331d869@intel.com>
-In-Reply-To: <4f9af0e9-5ce0-4b76-a2cd-cbd37331d869@intel.com>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
+	s=arc-20240116; t=1717623032; c=relaxed/simple;
+	bh=QwvAko4zpRbQR4SDkAviF8HJEOiuHXqiAOvLvCo/Bds=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=sIh6Sun1JhNYizxsFDrWIaGbu4iFTfy/+4eU9PpmmNpmMcL7TJWBa0/i25yWaqNFvwCDfmwZtffj5G3hoEpZ9I5Nid3vGO8zB0Mr/GmoA1Tb/D+OjTJVV8q8ecu00mJDyd/1zm81eJ5cBLhTIgu7jCmYG08r4En87jYiMyu261U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B5pD0t5O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 82FBFC32782;
+	Wed,  5 Jun 2024 21:30:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717623031;
+	bh=QwvAko4zpRbQR4SDkAviF8HJEOiuHXqiAOvLvCo/Bds=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=B5pD0t5OThSfVYlbpjHSj9j9I4KAU1eHkpD6EuZ11w18FuvfvXQzbR5XGZ+qyUBUa
+	 iZY+FSYz7DzWM03W9cdHPcZ4eL+lM2xulhJk81QVC1rZa2vYVzUcsTGtO4Mg2+ufjX
+	 a+KDTs/hF3lxzknhvZwrwrrMF5kGKBCahtnDeyg1QGNStjCkQ+C/ZT7tZlk928UI+N
+	 phiQCn/xuDyR7k6oW0zjQUntooeHwJUoI+greKeL41pYOg2tABvP4bHSA5G/1rNHfx
+	 anZ/MdphWwVBWqF+cTJRcZypyRF5NqSM5euJB8GIXUqNiof+5jzr76JiNbrxdeyEhl
+	 XDGPy7Adw3nfA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6DCA4D3E997;
+	Wed,  5 Jun 2024 21:30:31 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <E3805CB0DC3F0A429FA223C3CCF8182D@atlnz.lc>
-Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=F9L0dbhN c=1 sm=1 tr=0 ts=6660d8e2 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=TP2Coi8AN2xbl7mVpYUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net/mlx5: Fix tainted pointer delete is case of flow
+ rules creation fail
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171762303144.24326.14850911837497875775.git-patchwork-notify@kernel.org>
+Date: Wed, 05 Jun 2024 21:30:31 +0000
+References: <20240604100552.25201-1-amishin@t-argos.ru>
+In-Reply-To: <20240604100552.25201-1-amishin@t-argos.ru>
+To: Aleksandr Mishin <amishin@t-argos.ru>
+Cc: mbloch@nvidia.com, saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ maorg@nvidia.com, jacob.e.keller@intel.com, shayd@nvidia.com,
+ jianbol@nvidia.com, ruanjinjie@huawei.com, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org
 
-DQpPbiA2LzA2LzI0IDA5OjE2LCBKYWNvYiBLZWxsZXIgd3JvdGU6DQo+DQo+IE9uIDYvNS8yMDI0
-IDI6MTAgUE0sIENocmlzIFBhY2toYW0gd3JvdGU6DQo+PiBPbiA2LzA2LzI0IDA4OjUxLCBKYWNv
-YiBLZWxsZXIgd3JvdGU6DQo+Pj4gT24gNi8zLzIwMjQgODoxMCBQTSwgamFja2llLmpvbmVAYWxs
-aWVkdGVsZXNpcy5jby5ueiB3cm90ZToNCj4+Pj4gRnJvbTogSmFja2llIEpvbmUgPGphY2tpZS5q
-b25lQGFsbGllZHRlbGVzaXMuY28ubno+DQo+Pj4+DQo+Pj4+IFRvIGZhY2lsaXRhdGUgcnVubmlu
-ZyBQSFkgcGFyYW1ldHJpYyB0ZXN0cywgYWRkIHN1cHBvcnQgZm9yIHRoZSBTSU9DU01JSVJFRw0K
-Pj4+PiBpb2N0bC4gVGhpcyBhbGxvd3MgYSB1c2Vyc3BhY2UgYXBwbGljYXRpb24gdG8gd3JpdGUg
-dG8gdGhlIFBIWSByZWdpc3RlcnMNCj4+Pj4gdG8gZW5hYmxlIHRoZSB0ZXN0IG1vZGVzLg0KPj4+
-Pg0KPj4+PiBTaWduZWQtb2ZmLWJ5OiBKYWNraWUgSm9uZSA8amFja2llLmpvbmVAYWxsaWVkdGVs
-ZXNpcy5jby5uej4NCj4+Pj4gLS0tDQo+Pj4+ICAgIGRyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVs
-L2lnYi9pZ2JfbWFpbi5jIHwgNCArKysrDQo+Pj4+ICAgIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2Vy
-dGlvbnMoKykNCj4+Pj4NCj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L2lu
-dGVsL2lnYi9pZ2JfbWFpbi5jIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50ZWwvaWdiL2lnYl9t
-YWluLmMNCj4+Pj4gaW5kZXggMDNhNGRhNmExNDQ3Li43ZmJmY2YwMWZiZjkgMTAwNjQ0DQo+Pj4+
-IC0tLSBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2lnYi9pZ2JfbWFpbi5jDQo+Pj4+ICsr
-KyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2lnYi9pZ2JfbWFpbi5jDQo+Pj4+IEBAIC04
-OTc3LDYgKzg5NzcsMTAgQEAgc3RhdGljIGludCBpZ2JfbWlpX2lvY3RsKHN0cnVjdCBuZXRfZGV2
-aWNlICpuZXRkZXYsIHN0cnVjdCBpZnJlcSAqaWZyLCBpbnQgY21kKQ0KPj4+PiAgICAJCQlyZXR1
-cm4gLUVJTzsNCj4+Pj4gICAgCQlicmVhazsNCj4+Pj4gICAgCWNhc2UgU0lPQ1NNSUlSRUc6DQo+
-Pj4+ICsJCWlmIChpZ2Jfd3JpdGVfcGh5X3JlZygmYWRhcHRlci0+aHcsIGRhdGEtPnJlZ19udW0g
-JiAweDFGLA0KPj4+PiArCQkJCSAgICAgZGF0YS0+dmFsX2luKSkNCj4+Pj4gKwkJCXJldHVybiAt
-RUlPOw0KPj4+PiArCQlicmVhazsNCj4+PiBBIGhhbmRmdWwgb2YgZHJpdmVycyBzZWVtIHRvIGV4
-cG9zZSB0aGlzLiBXaGF0IGFyZSB0aGUgY29uc2VxdWVuY2VzIG9mDQo+Pj4gZXhwb3NpbmcgdGhp
-cyBpb2N0bD8gV2hhdCBjYW4gdXNlciBzcGFjZSBkbyB3aXRoIGl0Pw0KPj4+DQo+Pj4gSXQgbG9v
-a3MgbGlrZSBhIGZldyBkcml2ZXJzIGFsc28gY2hlY2sgc29tZXRoaW5nIGxpa2UgQ0FQX05FVF9B
-RE1JTiB0bw0KPj4+IGF2b2lkIGFsbG93aW5nIHdyaXRlIGFjY2VzcyB0byBhbGwgdXNlcnMuIElz
-IHRoYXQgZW5mb3JjZWQgc29tZXdoZXJlIGVsc2U/DQo+PiBDQVBfTkVUX0FETUlOIGlzIGVuZm9y
-Y2VkIHZpYSBkZXZfaW9jdGwoKSBzbyBpdCBzaG91bGQgYWxyZWFkeSBiZQ0KPj4gcmVzdHJpY3Rl
-ZCB0byB1c2VycyB3aXRoIHRoYXQgY2FwYWJpbGl0eS4NCj4gT2sgZ29vZC4gVGhhdCBhdCBsZWFz
-dCBsaW1pdHMgdGhpcyBzbyB0aGF0IHJhbmRvbSB1c2VycyBjYW4ndCBjYXVzZSBhbnkNCj4gc2lk
-ZSBlZmZlY3RzLg0KPg0KPiBJJ20gbm90IHN1cGVyIGZhbWlsaWFyIHdpdGggd2hhdCBjYW4gYmUg
-YWZmZWN0ZWQgYnkgd3JpdGluZyB0aGUgTUlJDQo+IHJlZ2lzdGVycy4gSSdtIGFsc28gbm90IHN1
-cmUgd2hhdCB0aGUgY29tbXVuaXR5IHRoaW5rcyBvZiBleHBvc2luZyBzdWNoDQo+IGFjY2VzcyBk
-aXJlY3RseS4NCj4NCj4gIEZyb20gdGhlIGRlc2NyaXB0aW9uIHRoaXMgaXMgaW50ZW5kZWQgdG8g
-dXNlIGZvciBkZWJ1Z2dpbmcgYW5kIHRlc3RpbmcNCj4gcHVycG9zZXM/DQoNClRoZSBpbW1lZGlh
-dGUgbmVlZCBpcyB0byBwcm92aWRlIGFjY2VzcyB0byBzb21lIHRlc3QgbW9kZSByZWdpc3RlcnMg
-dGhhdCANCm1ha2UgdGhlIFBIWSBvdXRwdXQgc3BlY2lmaWMgdGVzdCBwYXR0ZXJucyB0aGF0IGNh
-biBiZSBvYnNlcnZlZCB3aXRoIGFuIA0Kb3NjaWxsb3Njb3BlLiBPdXIgaGFyZHdhcmUgY29sbGVh
-Z3VlcyB1c2UgdGhlc2UgdG8gdmFsaWRhdGUgbmV3IGhhcmR3YXJlIA0KZGVzaWducy4gT24gb3Ro
-ZXIgcHJvZHVjdHMgd2UgaGF2ZSBiZWVuIHVzaW5nIHRob3NlICJoYW5kZnVsIG9mIGRyaXZlcnMi
-IA0KdGhhdCBhbHJlYWR5IHN1cHBvcnQgdGhpcywgdGhpcyBpcyB0aGUgZmlyc3QgZGVzaWduIHdl
-J3JlIHdlJ3ZlIG5lZWRlZCANCml0IHdpdGggaWdiLg0KDQpUaGVyZSBpcyBvZiBjb3Vyc2UgdGhl
-IGFsdGVybmF0aXZlIG9mIGV4cG9zaW5nIHRob3NlIHRlc3QgbW9kZXMgc29tZSANCm90aGVyIHdh
-eSBidXQgdGhlbiB3ZSBuZWVkIHRvIHN0YXJ0IGVudW1lcmF0aW5nIHdoYXQgUEhZcyBzdXBwb3J0
-IHdoaWNoIA0KdGVzdCBtb2Rlcy4gU29tZSBvZiB0aGVzZSBhcmUgZGVmaW5lZCBpbiA4MDIuMyBi
-dXQgdGhlcmUgYXJlIHBsZW50eSBvZiANCnZlbmRvciBleHRlbnNpb25zLg0KDQpPbmUgYmVuZWZp
-dCBJIHNlZSBpbiB0aGlzIGlzIHRoYXQgZG9lcyBhbGxvdyB1c2VybGFuZCBhY2Nlc3MgdG8gYW4g
-TUlJIA0KZGV2aWNlLiBJJ3ZlIHVzZWQgaXQgdG8gZGVidWcgbm9uLVBIWSBkZXZpY2VzIGxpa2Ug
-dGhlIG12ODhlNnh4eCBMMiANCnN3aXRjaCB3aGljaCBoYXMgYSBtYW5hZ2VtZW50IGludGVyZmFj
-ZSBvdmVyIE1ESU8uIFRoZXJlJ3MgYW4gaW4ta2VybmVsIA0KZHJpdmVyIGZvciB0aGlzIG5vdyBz
-byB0aGF0IHNwZWNpZmljIHVzYWdlIGlzbid0IHJlcXVpcmVkIGJ1dCBJIGJyaW5nIGl0IA0KdXAg
-YXMgYW4gZXhhbXBsZSBvZiBhIGRldmljZSB0aGF0IHNwZWFrcyBNRElPIGJ1dCBpc24ndCBhIFBI
-WS4gV2hldGhlciANCnRoaXMgaXMgYSByZWFsIGFkdmFudGFnZSBvciBub3QgbWlnaHQgZGVwZW5k
-IG9uIGhvdyB5b3UgZmVlbCBhYm91dCANCnVzZXJsYW5kIGRyaXZlcnMuDQo=
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 4 Jun 2024 13:05:52 +0300 you wrote:
+> In case of flow rule creation fail in mlx5_lag_create_port_sel_table(),
+> instead of previously created rules, the tainted pointer is deleted
+> deveral times.
+> Fix this bug by using correct flow rules pointers.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net] net/mlx5: Fix tainted pointer delete is case of flow rules creation fail
+    https://git.kernel.org/netdev/net/c/229bedbf62b1
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
