@@ -1,129 +1,131 @@
-Return-Path: <linux-kernel+bounces-201845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9BC48FC42D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:10:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71AF68FC431
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A3E31F234DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:10:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC244B29EF2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B8218F2C2;
-	Wed,  5 Jun 2024 07:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EABF18C337;
+	Wed,  5 Jun 2024 07:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XV3WmlQc"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MKdxgNQi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C25818C358;
-	Wed,  5 Jun 2024 07:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF9660263;
+	Wed,  5 Jun 2024 07:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717571386; cv=none; b=BahedciPErmU7ebwx5+Bf62HhJL3MPrPiwfbXhGdwW0Wnme/9viCe3NMs0/LIsQHhb/jCr817nU3D/Oo7XUlKfEY48M3ELvDHh/2t1ZOTELFttm12J8wALNw9Z/duh0YH/92YlbQ5MzrZ8KPFqWpW6L5hkNBA/VwnjgY42gWgUA=
+	t=1717571450; cv=none; b=ESJbKs5wTiDS0R7CNCy8U2fwzvbuOq73V+kiBIfRoJMabt58QGuhQYs/YFjNf1wrVQ3ui+r/HBnCSTEIDxCGqyeqatHde4JsUg0ylDvq3lyllQ8E1f0Ozp7OL63RKABWy5nfEN22ZLrkBCtgARji6QSiQaZrrs4gcCaH54mvAbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717571386; c=relaxed/simple;
-	bh=3M0GTq5JlMYDdq9jvAZyw0hxA5KJ1tDF0oBT0jEW/14=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SJaiFOUZ+R8AD0+aTHTxYGHDO0keJy9q/Ku9Q6y/Y33+r533bykPJW8CMktAAxxHUywHT2nlrnfn3gw/HBbolnA+7eNwKJwD+MxGy+ECEjkjm2sBEaNeHRa7sI1Xgp9/AK06BSvMbTYBQlwWc3P/DvyaFmeqye03B1L2qnHcmuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XV3WmlQc; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a68f10171bdso390001566b.0;
-        Wed, 05 Jun 2024 00:09:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717571383; x=1718176183; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vf8WXRz3mghAyg61mToRoi3mY1JcwBbyp3d5uTmlT04=;
-        b=XV3WmlQcFrVSJNTOTd6sMvj3iN1JpXhZj1gY5U4k01I25Jqb5Et1yFlUo/pTBJV2US
-         7AlXVDVDpD1EsB4RBxByuCk0SALfjDML2zJvkuP6BB7kH8ibi3U3A0WoMWTGWm4QpkoQ
-         No2Qjz2CM719qS5NX/R6SS4iNV81kanDIzqbBw7Hh/QvfzCjie1mV+YQCLvTTjhrWr+W
-         SoXMznrZifdnDsRnWDdLLUS0L+EvAyz1eeJ+d+YZ36aWpb4QjTVs+6NaHLvlhePqMi9E
-         uf8/V00sqI04noQ8NrJOH2F12oGn/O9eSv3aoX7yhBNsVHp4fYVnMC3b40sXS5MgkLt/
-         0ubw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717571383; x=1718176183;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vf8WXRz3mghAyg61mToRoi3mY1JcwBbyp3d5uTmlT04=;
-        b=rvmC7DCRyaWJbps5aYmdvbUO0/yhZ8B7r0PR7DUaa/W622NnLcXXWyaDSoQtJGo+kb
-         PbJ0UkJ3w6nxLSRKXkbocWoZzGZFXCWT1gWiHIBAUCgQ89CebKNXtULQKXpaxOWAlYCc
-         Vyh4/Q7ZFa6FsyKJ7UqwwS+cI6IXTuGrjfvAbjg48UIQGkEee+chWnxiOhMKHmOqKH7t
-         FJrlONM67/nTsfDCL42Zt6fuQLKrcH3Txg9KiiD0gM/OSMijLyZAcWuPkJK0B84gJ+Bv
-         1zPwSHjk9VKE7ZBl2knS40GHTUbG8/gWr1a3tI0QgbDv/V2+OI866I1K7v6nIPPsPn0q
-         VDDw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsWNnMGKIoY2Pcjv4JomlVGmW7iP2cKrkoKFPWnEiGYcVwIfZ97osxahGgK/4hLM4yVDzloy80yAeffhEbPxMA6SQZnJegn0e9ps8WLF/WnP/Se77PREPfH15e4KZGayrZrHpcbsPcZt0O9xhW0A==
-X-Gm-Message-State: AOJu0Yzg4AGxaE38N++W+LvBGdUn/SDNypYbyn8/++po3ZnDKNHLzdK/
-	bKIZ+B15pkPOx+4sWkSUZ197xSJedeyNf/vNOvIigRwNUJUBvcPT0+jaq7NB
-X-Google-Smtp-Source: AGHT+IEohwK0j/DRj5fwblj3eVtFAQ8csC+QlmfrL1fzVbQgSSLk3+tjFNGh7oJcjwnzyFN8rslNtw==
-X-Received: by 2002:a17:906:7191:b0:a65:c143:b3d3 with SMTP id a640c23a62f3a-a699f3639bamr120143166b.3.1717571382293;
-        Wed, 05 Jun 2024 00:09:42 -0700 (PDT)
-Received: from gmail.com (1F2EF2F4.nat.pool.telekom.hu. [31.46.242.244])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68f56506dcsm469396666b.57.2024.06.05.00.09.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 00:09:41 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Wed, 5 Jun 2024 09:09:39 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: Makefile.perf:1149: *** Missing bpftool input for generating
- vmlinux.h. Stop.
-Message-ID: <ZmAPM27gkBNVinMT@gmail.com>
-References: <ZjssGrj+abyC6mYP@gmail.com>
- <CAP-5=fUvLiCDVDFFfJ78ng4T1FZ8j2N9Yt1sGTeGsupkbFEEug@mail.gmail.com>
- <ZkG4LWr7w11wQ/PR@gmail.com>
- <CAP-5=fVHrKcqwczoU1uMD4tP5DTVhfQ1T_hXnm_y5Ji3M6K_ag@mail.gmail.com>
- <ZkJK3x3zQ9a4wp8E@gmail.com>
+	s=arc-20240116; t=1717571450; c=relaxed/simple;
+	bh=Cys+VR21HFwMU+hFWbogOsAR/iljYS/prKcGZpy+JHk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=dpXnErg3I3wyRlPYuk3SxixJrfkt+VurrMfTiHBEWcLVATGHLKV3GLKWprcGiJ60JyPNTsQOsyanFUW6v9wWCJYgqMDFu1FERnEYzMy1TXwQ8TEEckp7t/Q4m4IKZWP0lBA+zKxp0dGZeUS41uUheiF6DdRrVdyWBZB0zrO5Xg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MKdxgNQi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC15FC32781;
+	Wed,  5 Jun 2024 07:10:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717571449;
+	bh=Cys+VR21HFwMU+hFWbogOsAR/iljYS/prKcGZpy+JHk=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=MKdxgNQi/AkanOQYSm+0WQCqoHfI24zU8v6BLU4aIgAmnypM94US9zKmVis1UfVUt
+	 4vaGlvWkAZEb31eUS/6jvV1/AuST23Mbf8kvzke+MexWS7KvQrk0gPpT5tbbUBaB58
+	 vE1mcQrsg2OsKVL5j75K/+ZRNWR11pBvZknluYznreCiP27yxUFrwGvhYn2+wedww5
+	 LhXFng8laDgbneEL3vKLn4P6iZvPUf/ewfWGqfuJMsPPpyaDch7f5WWcAcyX+IQvlo
+	 JFit2pFHoK3sj3NLUlU9aVvaCl7RfhBSLWih0i8gtv3+W+rO2+oJE6fRnvLdXMo4SD
+	 PB8FR9sJHqYJA==
+Message-ID: <63ef25dd-3cbd-4de7-bde4-87456ef2e9c5@kernel.org>
+Date: Wed, 5 Jun 2024 09:10:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZkJK3x3zQ9a4wp8E@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] drivers: iio: frequency: adf4350: add clk provider
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240603112447.23308-1-antoniu.miclaus@analog.com>
+ <20240603112447.23308-2-antoniu.miclaus@analog.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240603112447.23308-2-antoniu.miclaus@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-* Ingo Molnar <mingo@kernel.org> wrote:
-
+On 03/06/2024 13:24, Antoniu Miclaus wrote:
+> Add clk provider feature for the adf4350.
 > 
-> * Ian Rogers <irogers@google.com> wrote:
+> Even though the driver was sent as an IIO driver in most cases the
+> device is actually seen as a clock provider.
 > 
-> > > Was this regression fix propagated to v6.9 in time?
-> > 
-> > We switched to using the handwritten file in v6.4:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/tools/perf/util/bpf_skel/vmlinux.h?id=a887466562b425bd6183bf75b523c1477c9fd22d
+> This patch aims to cover actual usecases requested by users in order to
+> completely control the output frequencies from userspace.
 > 
-> So there must be some different regression then, as this is readily 
-> reproducible for me on v6.9, as per the build log below - I simply 
-> Ctrl-C-ed a build, and the next build results in:
-> 
->   kepler:~/tip/tools/perf> make clean install
->   Makefile.perf:1149: *** Missing bpftool input for generating vmlinux.h.  Stop.
->   make: *** [Makefile:90: clean] Error 2
->   kepler:~/tip/tools/perf> 
 
-This happens easily on latest upstream v6.10-rc1 as well:
+Please do not use subject prefixes from your downstream tree, but use
+upstream convention. This applies to multiple of Analog submissions, so
+I would prefer if you create internal guideline and check it internally
+before posting.
 
-  kepler:~/tip> perfi
-  Makefile.perf:1173: *** Missing bpftool input for generating vmlinux.h.  Stop.
-  make: *** [Makefile:90: clean] Error 2
-  kepler:~/tip> 
+There is basically never a "drivers" prefix.
 
-What's going on here?
+Best regards,
+Krzysztof
 
-Thanks,
-
-	Ingo
 
