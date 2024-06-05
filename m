@@ -1,206 +1,142 @@
-Return-Path: <linux-kernel+bounces-201628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB3E38FC0EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:48:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 338068FC0F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 413001F23E5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:48:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB38AB257DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181B04409;
-	Wed,  5 Jun 2024 00:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862174A22;
+	Wed,  5 Jun 2024 00:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k+V603xb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MrP0zECe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BD4B661;
-	Wed,  5 Jun 2024 00:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DF2163;
+	Wed,  5 Jun 2024 00:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717548474; cv=none; b=vAHwtzt4AWab+HNCeWg6LTQ39SpX4wcyWvsyDnp4XJBFWZ7wMsvzYlxf8cqWk6gtj1ZaBfh4NSSlu+PzGUqwzUG2A+nYn/rkBA6vtATxxYWSAqrQ82KMdqkFh7vVCn7UbvJDdoNV0a6AWG889r44dLh7pv9eNO/dcMY2AbRI4IU=
+	t=1717548561; cv=none; b=T5lWdtdAhE52P9sDejCuhzC30cb1MtfhASHL0Eey8bJPEoCDWc70pPfC2LcSR1uO96oHPQpNxNXhjKh2LE5hmFdOh12D9kHGbPu43lcgwfszzrfseD/UWdwo4t0c0fGeEq+V8fbHH2DFsOMmb5+bglTIfPRUXyvejf+1bqdbEt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717548474; c=relaxed/simple;
-	bh=Rb9fRs1fRY7PqLEr1a5tc51LjHlXxZPxJzCWtBE+cjQ=;
+	s=arc-20240116; t=1717548561; c=relaxed/simple;
+	bh=CR+MCqNdStHiS0XLFyUo6nxzn/REAjoufJhdXky59KA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E4cLj5E7tWwpOW7nVEbm6lk6IafyB0+v4x08DKO8XaP+jV8pcjBwbhr4B4PA+u0WoAfoHvgGr3dmCqwuIsvKIjNRdDS0a+4C2GSRa1KTObtZ1u9RyPQxoE8eSXrLxBcS5RVPVSOuskVnJxJnArOOKlQ5euNojkc5AdxDc8+u1Ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k+V603xb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63AD1C2BBFC;
-	Wed,  5 Jun 2024 00:47:53 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=srM3Y+UVCszaaEsPw7MQ99wnNGOxenGmXvh9PuwEJr6mvW1dBNws5wKEUFGN1iq7t4d10cFmba7/67jsJTnaBtTQ12CSHaAUa0Zr+a3nMRVP8ptUronIj6GB5kJJXXk/IOB4+aIDOI0OuH9Ag6mfm/+A1zoGNfy8nbbvxzrtbvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MrP0zECe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75901C2BBFC;
+	Wed,  5 Jun 2024 00:49:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717548473;
-	bh=Rb9fRs1fRY7PqLEr1a5tc51LjHlXxZPxJzCWtBE+cjQ=;
+	s=k20201202; t=1717548561;
+	bh=CR+MCqNdStHiS0XLFyUo6nxzn/REAjoufJhdXky59KA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k+V603xbXy+ddD5x4x1akuQF+GoMV3wdY0TZxFtoA5yCcnv5hqmFmuhXzT6ChlyZq
-	 BIgpe3obArTAsWIswIcFbRgbLYjR5Ca6kSJ82dXyeb7KsJHgqNks45t3/aIp4kpSHp
-	 ENLZPm+c7KIRgrkERQW8ViF06uDJyRvchbomkNS2A1SSNdskEm/eISpYNxlDcSd/E6
-	 DEZSrb03VWTfcPYPysej2db2BecBpZFWE2ni7yIsT4IVNyMDYqPpmU5etcqDvdBjj9
-	 TvTqP4FS0XZnGgRvehEFv777yWJYWK+BYhdbLHx11c0Rh6KKAFb28f/QVJfsmbeMy5
-	 gpzQd7tVW17PA==
-Date: Tue, 4 Jun 2024 17:47:51 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 2/4] perf hist: Simplify __hpp_fmt() using hpp_fmt_data
-Message-ID: <Zl-1t3t-3eUwDcdI@google.com>
-References: <20240603224412.1910049-1-namhyung@kernel.org>
- <20240603224412.1910049-3-namhyung@kernel.org>
- <Zl8wVwNaKDXLTWbq@x1>
+	b=MrP0zECelgyKwrURJfgOosDnxpIQQ5F5AK1p/r00kffo/Mgut/vP1+QwIgHoCtlYg
+	 VLgMqlp2VbEdHQnyVdddKLExUxaZQHSOObBXvsKo/O3dZf9aafy/JJCliTn3rqiDEr
+	 58va7PeALemCo5HmhjUJcE32TjpUGEeYenj+LIjpv/LaaZTFxAfdc9HxSgg+Hgfm1p
+	 vVBe7wojcXtK3JR9K6E0CgkXP231fblNe/4/bvWy8+cvaeaEdcfMndba79P1/YpXUA
+	 2p4T7ckStMD2as5t+zPkOF1g/TGq4y+CyxfKIShA2rwvn3BwTFsjDWdYNG75C9r0vT
+	 7zTEzC8+/5VyQ==
+Date: Tue, 4 Jun 2024 17:49:20 -0700
+From: Kees Cook <kees@kernel.org>
+To: Tycho Andersen <tycho@tycho.pizza>
+Cc: Simon Horman <horms@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	jvoisin <julien.voisin@dustri.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+	"GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
+	Xiu Jianfeng <xiujianfeng@huawei.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Jann Horn <jannh@google.com>, Matteo Rizzo <matteorizzo@google.com>,
+	Thomas Graf <tgraf@suug.ch>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] mm/slab: Introduce kmem_buckets_create() and
+ family
+Message-ID: <202406041749.27CAE270@keescook>
+References: <20240531191304.it.853-kees@kernel.org>
+ <20240531191458.987345-4-kees@kernel.org>
+ <20240604150228.GS491852@kernel.org>
+ <Zl+RjJDOX45DH6gR@tycho.pizza>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zl8wVwNaKDXLTWbq@x1>
+In-Reply-To: <Zl+RjJDOX45DH6gR@tycho.pizza>
 
-On Tue, Jun 04, 2024 at 12:18:47PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Mon, Jun 03, 2024 at 03:44:10PM -0700, Namhyung Kim wrote:
-> > The struct hpp_fmt_data is to keep the values for each group members so
-> > it doesn't need to check the event index in the group.
+On Tue, Jun 04, 2024 at 04:13:32PM -0600, Tycho Andersen wrote:
+> On Tue, Jun 04, 2024 at 04:02:28PM +0100, Simon Horman wrote:
+> > On Fri, May 31, 2024 at 12:14:56PM -0700, Kees Cook wrote:
+> > > +	for (idx = 0; idx < ARRAY_SIZE(kmalloc_caches[KMALLOC_NORMAL]); idx++) {
+> > > +		char *short_size, *cache_name;
+> > > +		unsigned int cache_useroffset, cache_usersize;
+> > > +		unsigned int size;
+> > > +
+> > > +		if (!kmalloc_caches[KMALLOC_NORMAL][idx])
+> > > +			continue;
+> > > +
+> > > +		size = kmalloc_caches[KMALLOC_NORMAL][idx]->object_size;
+> > > +		if (!size)
+> > > +			continue;
+> > > +
+> > > +		short_size = strchr(kmalloc_caches[KMALLOC_NORMAL][idx]->name, '-');
+> > > +		if (WARN_ON(!short_size))
+> > > +			goto fail;
+> > > +
+> > > +		cache_name = kasprintf(GFP_KERNEL, "%s-%s", name, short_size + 1);
+> > > +		if (WARN_ON(!cache_name))
+> > > +			goto fail;
+> > > +
+> > > +		if (useroffset >= size) {
+> > > +			cache_useroffset = 0;
+> > > +			cache_usersize = 0;
+> > > +		} else {
+> > > +			cache_useroffset = useroffset;
+> > > +			cache_usersize = min(size - cache_useroffset, usersize);
+> > > +		}
+> > > +		(*b)[idx] = kmem_cache_create_usercopy(cache_name, size,
+> > > +					align, flags, cache_useroffset,
+> > > +					cache_usersize, ctor);
+> > > +		kfree(cache_name);
+> > > +		if (WARN_ON(!(*b)[idx]))
+> > > +			goto fail;
+> > > +	}
+> > > +
+> > > +	return b;
+> > > +
+> > > +fail:
+> > > +	for (idx = 0; idx < ARRAY_SIZE(kmalloc_caches[KMALLOC_NORMAL]); idx++) {
+> > > +		if ((*b)[idx])
+> > > +			kmem_cache_destroy((*b)[idx]);
 > > 
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > ---
-> >  tools/perf/ui/hist.c | 75 +++++++++++++++++++++-----------------------
-> >  1 file changed, 36 insertions(+), 39 deletions(-)
-> > 
-> > diff --git a/tools/perf/ui/hist.c b/tools/perf/ui/hist.c
-> > index e30fcb1e87e7..539978c95cfd 100644
-> > --- a/tools/perf/ui/hist.c
-> > +++ b/tools/perf/ui/hist.c
-> > @@ -46,65 +46,62 @@ static int __hpp__fmt_print(struct perf_hpp *hpp, struct hists *hists, u64 val,
-> >  	return hpp__call_print_fn(hpp, print_fn, fmt, len, val);
-> >  }
-> >  
-> > +struct hpp_fmt_data {
-> > +	struct hists *hists;
-> > +	u64 val;
-> > +	int samples;
-> > +};
+> > nit: I don't think it is necessary to guard this with a check for NULL.
 > 
-> Can we try to avoid vague terms like 'data' and use a hopefully more
-> clear 'hpp_fmt_value' instead?
+> Isn't it? What if a kasprintf() fails halfway through the loop?
 
-Sure, I can do that.  I thought 'data' was better since it contains more
-than a value like a pointer to hist and number of samples.  But it's not
-a big deal, and I can make the change.
+He means that kmem_cache_destroy() already checks for NULL. Quite right!
 
-> 
-> >  static int __hpp__fmt(struct perf_hpp *hpp, struct hist_entry *he,
-> >  		      hpp_field_fn get_field, const char *fmt, int len,
-> >  		      hpp_snprint_fn print_fn, enum perf_hpp_fmt_type fmtype)
-> >  {
-> > -	int ret;
-> > +	int ret = 0;
-> >  	struct hists *hists = he->hists;
-> >  	struct evsel *evsel = hists_to_evsel(hists);
-> > +	struct evsel *pos;
-> >  	char *buf = hpp->buf;
-> >  	size_t size = hpp->size;
-> > +	int i, nr_members = 1;
-> > +	struct hpp_fmt_data *data;
-> 
-> Here we then use:
-> 
-> 	struct hpp_fmt_value *values;
+void kmem_cache_destroy(struct kmem_cache *s)
+{
+        int err = -EBUSY;
+        bool rcu_set;
 
-Yep, will change in v3.
+        if (unlikely(!s) || !kasan_check_byte(s))
+                return;
 
-Thanks,
-Namhyung
 
-> 
-> > +
-> > +	if (evsel__is_group_event(evsel))
-> > +		nr_members = evsel->core.nr_members;
-> > +
-> > +	data = calloc(nr_members, sizeof(*data));
-> > +	if (data == NULL)
-> > +		return 0;
-> 
-> 
-> > +
-> > +	i = 0;
-> > +	for_each_group_evsel(pos, evsel)
-> > +		data[i++].hists = evsel__hists(pos);
-> >  
-> > -	ret = __hpp__fmt_print(hpp, hists, get_field(he), he->stat.nr_events,
-> > -			       fmt, len, print_fn, fmtype);
-> > +	data[0].val = get_field(he);
-> > +	data[0].samples = he->stat.nr_events;
-> >  
-> >  	if (evsel__is_group_event(evsel)) {
-> > -		int prev_idx, idx_delta;
-> >  		struct hist_entry *pair;
-> > -		int nr_members = evsel->core.nr_members;
-> > -
-> > -		prev_idx = evsel__group_idx(evsel);
-> >  
-> >  		list_for_each_entry(pair, &he->pairs.head, pairs.node) {
-> > -			u64 period = get_field(pair);
-> > -			u64 total = hists__total_period(pair->hists);
-> > -			int nr_samples = pair->stat.nr_events;
-> > -
-> > -			if (!total)
-> > -				continue;
-> > +			for (i = 0; i < nr_members; i++) {
-> > +				if (data[i].hists != pair->hists)
-> > +					continue;
-> >  
-> > -			evsel = hists_to_evsel(pair->hists);
-> > -			idx_delta = evsel__group_idx(evsel) - prev_idx - 1;
-> > -
-> > -			while (idx_delta--) {
-> > -				/*
-> > -				 * zero-fill group members in the middle which have
-> > -				 * no samples, pair->hists is not correct but it's
-> > -				 * fine since the value is 0.
-> > -				 */
-> > -				ret += __hpp__fmt_print(hpp, pair->hists, 0, 0,
-> > -							fmt, len, print_fn, fmtype);
-> > +				data[i].val = get_field(pair);
-> > +				data[i].samples = pair->stat.nr_events;
-> > +				break;
-> >  			}
-> > -
-> > -			ret += __hpp__fmt_print(hpp, pair->hists, period, nr_samples,
-> > -						fmt, len, print_fn, fmtype);
-> > -
-> > -			prev_idx = evsel__group_idx(evsel);
-> >  		}
-> > +	}
-> >  
-> > -		idx_delta = nr_members - prev_idx - 1;
-> > -
-> > -		while (idx_delta--) {
-> > -			/*
-> > -			 * zero-fill group members at last which have no sample.
-> > -			 * the hists is not correct but it's fine like above.
-> > -			 */
-> > -			ret += __hpp__fmt_print(hpp, evsel__hists(evsel), 0, 0,
-> > -						fmt, len, print_fn, fmtype);
-> > -		}
-> > +	for (i = 0; i < nr_members; i++) {
-> > +		ret += __hpp__fmt_print(hpp, data[i].hists, data[i].val,
-> > +					data[i].samples, fmt, len,
-> > +					print_fn, fmtype);
-> >  	}
-> >  
-> > +	free(data);
-> > +
-> >  	/*
-> >  	 * Restore original buf and size as it's where caller expects
-> >  	 * the result will be saved.
-> > -- 
-> > 2.45.1.288.g0e0cd299f1-goog
+-- 
+Kees Cook
 
