@@ -1,118 +1,211 @@
-Return-Path: <linux-kernel+bounces-202620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B4C58FCEBC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:15:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BE688FCEDE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D18591F27491
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:15:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 573F21C250A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF7C199250;
-	Wed,  5 Jun 2024 12:39:23 +0000 (UTC)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD840192B98;
-	Wed,  5 Jun 2024 12:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9C219EEA1;
+	Wed,  5 Jun 2024 12:39:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAA719E7F8;
+	Wed,  5 Jun 2024 12:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717591163; cv=none; b=FXXLmCQctBXIsgKfvy6MAaKCx7xXQ7zVpQtkveC5yQ+ODhZmlDzTw7+jzMW7eaIC81NNCx1kXVf1NY4lSBHJlOs9Uu/M5uid8ihYKDKOw8R3UYX4UULGM5PDhNZY/KsFFoq25IAKhU1hJ59wiUrAkLmbGDJ2/QtE6y2hVC86/hw=
+	t=1717591195; cv=none; b=afJpjQMSU+Wo4urlig1soTmlwTtafRuBXwGqIvbut/wI74MqmWVTsa/STfcI1wLBc4esdVO1x3VQ4+RacvAZ5e/k9zpCtBq2WFLz7CcJRm70w3GKNXd9XZS/erH4e3NUH6Bk77uPlH6fgAKras8fCENQmYciVB6cdPmn0JTv3XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717591163; c=relaxed/simple;
-	bh=fECiDaMb4F1kMdlJ53fEzmA/KWwVjlDq+a1cu8tfqZc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fho8fxBzYk93/k1Jsj5n7tNgdDIS3ruZLt7I7zZ6Vfnj4siBIhLDWyOoTKa3zBrDuQo/SBENxjEkEwV50nLpy7GE0vGfy3Vgz2NPnybCkrdIcKd3Kt6qVzL0DUBSu0FUC74WmNptG9MX/MbuNuSU6tsyWvQhH4dwj6+0HntTEdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-62a145e0bb2so66578657b3.0;
-        Wed, 05 Jun 2024 05:39:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717591160; x=1718195960;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F4h29fdB+cnJRLBhs8OVkcXiYefk6YXDuyr3Sq5hSqc=;
-        b=iF27VcF7FTzWeB/RFf1MeiIP6PohIc8pWZ8M4zjvmH7s7CqrpjRTq3jpQekKa+8XWc
-         AHQ1+kxuuFE6KRRq3FA91xSPvSohkIQiY4uUG91Pql8iE+Pk3TodhN7+2vqYERGYoW4a
-         sSRlnnLiE+iCn0k7k52VuTITiS1XsnYYDzsbLqcKDAt/qhVVSAZZdXKExx74KrdimqFQ
-         k6MTzhZjnApzzkzSiQvBOYxyHEJq8lKvTQ6Q47UkQmTQrNTBAVXwNPNvcxd1SXnt8kA3
-         ci4xOsXYI/V6SezS19oJcURr1IlRYLVaCEsf0QcBao5c5NvcMR9zWhyNB5GTQSLrCJ/J
-         o4/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVPDcsLaRJnIw7WSqB9UyUrf/kqPu9GNsyR0S/qbbqx3YBLgCC2eO897Xea/lPIRqjvonM3Cz8uqFVuG1nB+dRepxQBFFQEP+S0L1FAcUgPS1Jff+PngGfoJwueBQeKhpe9InsZ0OwQOxEGfSjaxg6inY19qh1UPbVnDk/mrI8kXJfXydMTV7WbBiuC+LmCwGHI7ZI/wwIOIEAqiZJPJOfMD2EdiyIgaw==
-X-Gm-Message-State: AOJu0YyBcAC39fzkvhkoCH9M09uf19AxhScT2tMRoLMJRBXF8ktoicHK
-	wltqdFj5a8mRGmtJENhLD4+1jUub9rkOFHeq3Rq4zt1HdCdZfDpgLwAP9Z1m
-X-Google-Smtp-Source: AGHT+IGRGEmazPxZajP7SNGEMm4USOakuizHfYTBsD0XeiL8mFCI4UYH0L9bHZ67vQl1O/ISKYwzqg==
-X-Received: by 2002:a81:c604:0:b0:615:10f8:124a with SMTP id 00721157ae682-62cbb510b16mr21269527b3.29.1717591159670;
-        Wed, 05 Jun 2024 05:39:19 -0700 (PDT)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c765b8c28sm22024947b3.28.2024.06.05.05.39.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 05:39:19 -0700 (PDT)
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dfa5b9274feso7351607276.2;
-        Wed, 05 Jun 2024 05:39:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVEIs2CIIMKPpKf2qhjYiURPDkPPtcyo7To1uEITvOETkuMcFdJmXW/JuDhIZ0f+3FRKJChTEjP3Aug0sP6jlZItPlx0wpibK1uCHdi9pA8jV3fQ86avo7h3vrv4k1uQnH7vuX/HBOvk/VFcSRK3AXqW/ICq/12zDPn/lS+1YmU+Hdab1Sf77TZtQi0zf7TpLPTQ5swa7DKd2ZLv+EQAUfRcgsVCPU8Xw==
-X-Received: by 2002:a25:d8c3:0:b0:dfa:5a2f:9e56 with SMTP id
- 3f1490d57ef6-dfacab2efefmr2435803276.6.1717591159339; Wed, 05 Jun 2024
- 05:39:19 -0700 (PDT)
+	s=arc-20240116; t=1717591195; c=relaxed/simple;
+	bh=otSmJ0pkdmSbTtHg9x3aGkUGNLGMhSXxt63d9ZAtoAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uTvpCNt/AzPdRnRKx/0eHwrDg33JqiH+msMRcpLuDXQuGAWhFwaydxx1DF35xsoy4+B8GtjnSKI8i2bNepono7SHQ55/v+JDwzS9EhdUd6lOPChgircSoyoRW5GBVen9VBh9rj5ZO0eIOyvPxyLcLXuVJ/93Gr4Mvbjz6Exu2+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E3BB9339;
+	Wed,  5 Jun 2024 05:40:16 -0700 (PDT)
+Received: from [10.57.39.129] (unknown [10.57.39.129])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 39FE93F762;
+	Wed,  5 Jun 2024 05:39:48 -0700 (PDT)
+Message-ID: <b7f7403b-142a-4914-a787-f92292069d6d@arm.com>
+Date: Wed, 5 Jun 2024 13:39:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530173857.164073-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240530173857.164073-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240530173857.164073-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Jun 2024 14:39:07 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXbDiP6g5CvHj+LJqcP+1yMzWADz0eZ50-jZbNqogiXxw@mail.gmail.com>
-Message-ID: <CAMuHMdXbDiP6g5CvHj+LJqcP+1yMzWADz0eZ50-jZbNqogiXxw@mail.gmail.com>
-Subject: Re: [PATCH v3 15/15] pinctrl: renesas: pinctrl-rzg2l: Add support for
- RZ/V2H SoC
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Paul Barker <paul.barker.ct@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] drm/panfrost: Add support for Mali on the MT8188
+ SoC
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ boris.brezillon@collabora.com
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20240604123922.331469-1-angelogioacchino.delregno@collabora.com>
+ <20240604123922.331469-3-angelogioacchino.delregno@collabora.com>
+ <f44611fd-523a-4b4d-accd-20fdfbac178a@arm.com>
+ <6dee4870-3ca2-46d7-a30b-014a7d34135a@collabora.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <6dee4870-3ca2-46d7-a30b-014a7d34135a@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 30, 2024 at 7:42=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add pinctrl driver support for RZ/V2H(P) SoC.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v2->v3
-> - Renamed PIN_CFG_OPEN_DRAIN->PIN_CFG_NOD
-> - Renamed PIN_CFG_SCHMIT_CTRL->PIN_CFG_SMT
-> - Introduced PWPR_REGWE_A instead of using PWPR_PFCWE
-> - Dropped using pwpr_lock
-> - Optimized rzv2h_pin_to_oen_bit()
+On 05/06/2024 12:43, AngeloGioacchino Del Regno wrote:
+> Il 05/06/24 11:18, Steven Price ha scritto:
+>> On 04/06/2024 13:39, AngeloGioacchino Del Regno wrote:
+>>> MediaTek MT8188 has a Mali-G57 MC3 (Valhall-JM): add a new
+>>> compatible and platform data using the same supplies and the
+>>> same power domain lists as MT8183 (one regulator, three power
+>>> domains).
+>>>
+>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>> ---
+>>>   drivers/gpu/drm/panfrost/panfrost_drv.c | 9 +++++++++
+>>>   1 file changed, 9 insertions(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+>>> index ef9f6c0716d5..4e2d9f671a0d 100644
+>>> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+>>> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+>>> @@ -777,6 +777,14 @@ static const struct panfrost_compatible mediatek_mt8186_data = {
+>>>   	.pm_features = BIT(GPU_PM_CLK_DIS) | BIT(GPU_PM_VREG_OFF),
+>>>   };
+>>>   
+>>> +static const struct panfrost_compatible mediatek_mt8188_data = {
+>>> +	.num_supplies = ARRAY_SIZE(mediatek_mt8183_b_supplies) - 1,
+>>> +	.supply_names = mediatek_mt8183_b_supplies,
+>>
+>> I think this is a little confusing. Ideally we'd drop the existing
+>> mediatek_xxx_supplies which are the same as default_supplies and just
+>> use that instead.
+>>
+>>> +	.num_pm_domains = ARRAY_SIZE(mediatek_mt8183_pm_domains),
+>>> +	.pm_domain_names = mediatek_mt8183_pm_domains,
+>>
+>> We'd want at least a comment explaining that this isn't a typo (i.e. /*
+>> mt8188 uses the same pm domains as mt8183 */). But I'm also wondering if
+>> it would be sensible to simply have one domain list, something like:
+>>
+>> --->8---
+>> static const char * const mediatek_pm_domains[] = { "core0", "core1",
+>> 						    "core2", "core3",
+>> 						    "core4" };
+>>
+>> static const struct panfrost_compatible mediatek_mt8183_data = {
+>> 	...
+>> 	.num_pm_domains = 3,
+>> 	.pm_domain_names = mediatek_pm_domains,
+>> };
+>> ...
+>> static const struct panfrost_compatible mediatek_mt8186_data = {
+>> 	...
+>> 	.num_pm_domains = 2,
+>> 	.pm_domain_names = mediatek_pm_domains,
+>> };
+>> ...
+>> static const struct panfrost_compatible mediatek_mt8188_data = {
+>> 	...
+>> 	.num_pm_domains = 3,
+>> 	.pm_domain_names = mediatek_pm_domains,
+>> };
+>> ...
+>> static const struct panfrost_compatible mediatek_mt8192_data = {
+>> 	...
+>> 	.num_pm_domains = 5,
+>> 	.pm_domain_names = mediatek_pm_domains,
+>> };
+>> --->8---
+>>
+>> OTOH what you've got it no worse than what we already had, so it's up to
+>> you whether you want to tidy this up or just add a comment so it doesn't
+>> look like there's a typo.
+>>
+> 
+> I didn't disclose my plan, but you've already shown part of it, so seeing that
+> you preventively agree with at least part of that is fun :-)
+> 
+> I surely won't be able to do what I want to do for *this* cycle as I'm mostly
+> sure that I won't have time for this in the next 3 weeks - but anyway....
+> 
+> What I was thinking is that we should either look for a number of power domains
+> limited by a max power domains definition (that should already be present somewhere
+> in panfrost if I recall correctly) without even caring about the actual power
+> domain names, or we should look for a number of PDs having any name matching,
+> in a for loop, snprintf(*something, sizeof(something), "core%d", i).
+> 
+> This means that, with the snprintf idea, we don't even have to set any
+> pm_domain_names list anymore, at all, and we can either reuse num_pm_domains
+> or just get the number of PDs limited by the binding - but that's a problem for
+> the future me/us I guess...
+> 
+> But since we're there...
+> 
+> Please, I'd like to hear your opinion about the core%d idea :-)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I was tempted to suggest something like it... ;) But two things made me
+wary:
 
-Gr{oetje,eeting}s,
+ * It's a bigger change, and I didn't want to suggest such a large
+refactor - let's get this patch in first.
 
-                        Geert
+ * There is no technical reason why designs will have a power domain per
+core. In particular there is the concept of 'stacks' added in later GPUs
+(so for these GPUs it should be "stack%d"). We also don't want the
+bindings being decided based on the driver, so if there's an integration
+which has e.g. "core01", "core23", etc we should support that rather
+than encouraging people to invent different names just to make the
+bindings easier.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Having said that, we could have special handling for
+pm_domain_names==NULL where "core%d" is assumed, leaving the current
+approach for any 'weird' GPU integrations that might crop up in the future.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> Anyway, I think that for now I'm choosing the "comment shortcut" for this patch.
+
+Agreed - there's no point holding up adding support for a new GPU for
+this clean up.
+
+> P.S.: Thanks for the feedback!
+
+No problem.
+
+Thanks,
+
+Steve
+
+> Cheers,
+> Angelo
+> 
+>> Steve
+>>
+>>> +	.pm_features = BIT(GPU_PM_CLK_DIS) | BIT(GPU_PM_VREG_OFF),
+>>> +};
+>>> +
+>>>   static const char * const mediatek_mt8192_supplies[] = { "mali", NULL };
+>>>   static const char * const mediatek_mt8192_pm_domains[] = { "core0", "core1", "core2",
+>>>   							   "core3", "core4" };
+>>> @@ -808,6 +816,7 @@ static const struct of_device_id dt_match[] = {
+>>>   	{ .compatible = "mediatek,mt8183-mali", .data = &mediatek_mt8183_data },
+>>>   	{ .compatible = "mediatek,mt8183b-mali", .data = &mediatek_mt8183_b_data },
+>>>   	{ .compatible = "mediatek,mt8186-mali", .data = &mediatek_mt8186_data },
+>>> +	{ .compatible = "mediatek,mt8188-mali", .data = &mediatek_mt8188_data },
+>>>   	{ .compatible = "mediatek,mt8192-mali", .data = &mediatek_mt8192_data },
+>>>   	{}
+>>>   };
+>>
+> 
+> 
+> 
+
 
