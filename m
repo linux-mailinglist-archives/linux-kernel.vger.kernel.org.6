@@ -1,95 +1,142 @@
-Return-Path: <linux-kernel+bounces-202948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 544378FD371
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:00:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 794628FD374
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E97A9288843
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:00:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E87E1C24CEB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AAEF18FC8F;
-	Wed,  5 Jun 2024 16:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0EE193091;
+	Wed,  5 Jun 2024 16:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n5KRPFLC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pWkTqIZq";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8vuKAK6J"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75AA1CD25;
-	Wed,  5 Jun 2024 16:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4EA192B83;
+	Wed,  5 Jun 2024 16:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717606717; cv=none; b=T4bim64hRdfV3h8bEfBfOuHzhmdNL+JG3AUrcN9/XtSggtVefzrtZ+rwugFmZvy6gY+MtwZHJT7PwDUpbO5k4qJpkASKXcRziBrgv9M3yGzS6AcMIPMC3dzunodCCdr3lUGZzwE74vp9GfmAIA5R39xU0dT3fGiNYQtOE/6t39E=
+	t=1717606781; cv=none; b=HFBgXzTH+7pXqKEVi4Kvj3VFGb3vD5EKWbjU2XwzfoqsmVyQIPUf6LrSRiND6euG2mT5N9wtAI3EVHmK+g86CR3S9BMsWVJNw/F8NUUDjWxCIBFYOY8r38JYzVKg/OL9oCFL5xCrw7uds6NhU0BGr3lTwSDtk6P8Ulhri0cmVwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717606717; c=relaxed/simple;
-	bh=y1dZJ8vNM9lhOuh+/XbBtRYjaxOHJLUue9NVr17fWL8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sJcV5tB961Uapkhi1vPA51bgfw2aXRIBdif73QwyFxfDTKNNLZNfVdD7eBUw3LO44gQ0eqnimcCnz58gCoInzqb0m3BFV2RLtUxsPwlibLjTzK25nJzF/e/N8rBHcudwwoBRZn4ptSpUotGSnZ0AiKD5DjpoGllWmZiv/UD01CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n5KRPFLC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 885C0C2BD11;
-	Wed,  5 Jun 2024 16:58:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717606717;
-	bh=y1dZJ8vNM9lhOuh+/XbBtRYjaxOHJLUue9NVr17fWL8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n5KRPFLCWESpqX/8tx55LSPg//Y/NY+cG+D3FaYcI9ay7NlTrE65pQiH86kN9S5Im
-	 kIalpke02BuBB2/Sz8NXAKUYxRx2xij9PWRtucJsxhf2RbCa6tp0pswi1m3H+M7Rb5
-	 IWFldkIZm8DkUbcAHM+45MEyOpv5gFAdCdpttPVslHvWCwi+1tEfl9aF9QJYciE5ly
-	 zldCd/+tOuLZV0uM7DFN579svDBE1zTk6Kwfvt8pyjtpQMta3SX4qKDYPOD77ieEeg
-	 3UDEuVbRNILs4m5pYF0pCyN+JnnVug6e345fZ8GVmDy8cFTC/DkYsKIodDSyqkmCor
-	 QNST7qnkb2KQw==
-Date: Wed, 5 Jun 2024 17:58:32 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: iio: adc: amlogic,meson-saradc: add
- optional power-domains
-Message-ID: <20240605-abdomen-starch-4fd4d7ead431@spud>
-References: <20240605-topic-amlogic-upstream-bindings-fixes-power-domains-sardac-v1-1-40a8de6baa59@linaro.org>
+	s=arc-20240116; t=1717606781; c=relaxed/simple;
+	bh=eQXyZD9pmqMvGRBpSI6MNY1HqWLS/4h1EVScywOXKA0=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=avlLGLmGOD1gMotOgIMGo7PjueXa5EzZHszZxdRwA0uxhO0NLitNBlvvQZNup1a6bkn9KzhszMhgbgenUUVPTVMRJbpMNn+VTov33gmS9ar15MBOwNwUK6Hb6d3wUmaqmrfeUtrm0Ov/E0iBUvtvKUJbW+5qCaVFiY86tLMkOLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pWkTqIZq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8vuKAK6J; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 05 Jun 2024 16:59:37 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717606778;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NV19RTCPMPJpWOa3r269jrwlwDwRM929PFXsDZWfVDk=;
+	b=pWkTqIZqILOUM3rJsWH71NASOPQiIvOSqu/axGzX4RoGgX2i16SPXr20VDKcsdlSVioppe
+	0oGP1KN3WnsWMUERmHadXFWjxPr7Fv/vXlItFYTMRbqy9MPTFFu2dcPJBgzx/vUvUEdfXZ
+	ZYrUzXxPN6oVIgMdNgUwVRAKHavOaQixfWsn32FlzeyWO9q1naFj9g9ZEh1oX1fSBNu8dH
+	EL53AJh7dLE13gs/DPJxwxj9JmcdxzRCUeo677r5Bz9Xjuz4Q/Gqq/A+x9rH8hQEypaviQ
+	kBnJ5GY89ici4JkfDubtH1QrFa0AC4+NWTp8puxRcpNpTYdaMOklnwIjS6Qt/w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717606778;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NV19RTCPMPJpWOa3r269jrwlwDwRM929PFXsDZWfVDk=;
+	b=8vuKAK6JVZUySAvEOvQKnPbCU43kXRaH9kFMh008nrRxaeVufePgvwT176wnfN2JaZs1fk
+	kP1KvITlYFh0CJAQ==
+From: "tip-bot2 for Lad Prabhakar" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/core] dt-bindings: interrupt-controller:
+ renesas,rzg2l-irqc: Document RZ/Five SoC
+Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20240604173710.534132-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240604173710.534132-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="WFIeevaQAu8dnksl"
-Content-Disposition: inline
-In-Reply-To: <20240605-topic-amlogic-upstream-bindings-fixes-power-domains-sardac-v1-1-40a8de6baa59@linaro.org>
+Message-ID: <171760677786.10875.15852018813600963983.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the irq/core branch of tip:
 
---WFIeevaQAu8dnksl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Commit-ID:     372487b295557b6c0c7ba3583fb34a65c574ff9f
+Gitweb:        https://git.kernel.org/tip/372487b295557b6c0c7ba3583fb34a65c574ff9f
+Author:        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+AuthorDate:    Tue, 04 Jun 2024 18:37:09 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 05 Jun 2024 18:56:53 +02:00
 
-On Wed, Jun 05, 2024 at 11:37:08AM +0200, Neil Armstrong wrote:
-> On newer SoCs, the SAR ADC hardware can require a power-domain to operate,
-> add it as optional.
+dt-bindings: interrupt-controller: renesas,rzg2l-irqc: Document RZ/Five SoC
 
-What about the older socs that don't have power domains, the property is
-now usable there?
+Document RZ/Five (R9A07G043F) IRQC bindings. The IRQC block on the RZ/Five
+SoC is almost identical to the one found on the RZ/G2L SoC, with the only
+difference being that it has additional mask control registers for
+NMI/IRQ/TINT.
 
---WFIeevaQAu8dnksl
-Content-Type: application/pgp-signature; name="signature.asc"
+Hence new compatible string "renesas,r9a07g043f-irqc" is added for RZ/Five
+SoC.
 
------BEGIN PGP SIGNATURE-----
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Link: https://lore.kernel.org/r/20240604173710.534132-2-prabhakar.mahadev-lad.rj@bp.renesas.com
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmCZOAAKCRB4tDGHoIJi
-0p9tAP9Q1Lzbf5N1VQfKderTZKLcQY8ND6Nvcw+SgZ1tiYKD9QD/bp3ABMjrpCdn
-Z4LvNlFSOpdYuSZJGBv9gcVsHJlUJQQ=
-=Idog
------END PGP SIGNATURE-----
+---
+ Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
---WFIeevaQAu8dnksl--
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
+index daef4ee..44b6ae5 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
+@@ -21,13 +21,16 @@ description: |
+ 
+ properties:
+   compatible:
+-    items:
+-      - enum:
+-          - renesas,r9a07g043u-irqc   # RZ/G2UL
+-          - renesas,r9a07g044-irqc    # RZ/G2{L,LC}
+-          - renesas,r9a07g054-irqc    # RZ/V2L
+-          - renesas,r9a08g045-irqc    # RZ/G3S
+-      - const: renesas,rzg2l-irqc
++    oneOf:
++      - items:
++          - enum:
++              - renesas,r9a07g043u-irqc    # RZ/G2UL
++              - renesas,r9a07g044-irqc     # RZ/G2{L,LC}
++              - renesas,r9a07g054-irqc     # RZ/V2L
++              - renesas,r9a08g045-irqc     # RZ/G3S
++          - const: renesas,rzg2l-irqc
++
++      - const: renesas,r9a07g043f-irqc     # RZ/Five
+ 
+   '#interrupt-cells':
+     description: The first cell should contain a macro RZG2L_{NMI,IRQX} included in the
 
