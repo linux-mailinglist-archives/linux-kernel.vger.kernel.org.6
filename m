@@ -1,64 +1,73 @@
-Return-Path: <linux-kernel+bounces-201885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DED648FC49E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:33:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0761C8FC4AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93A3C1F221A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:33:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A8D51C20DC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE02B18C322;
-	Wed,  5 Jun 2024 07:33:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1BC18C348;
+	Wed,  5 Jun 2024 07:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="1REWpAQW"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="kn5bhPLw"
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE3C1922DD;
-	Wed,  5 Jun 2024 07:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1827818C335
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 07:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717572830; cv=none; b=PDZkb/oQGYGZ9wOnEjiGJHs+l0Z8sEXjJXuHqbiZmQ4keiJlBpOs997nEXaht7RATNfUi/BWf/NAnpBsxb1I0jk89RAKOsG05MK9qz4hArJmI52l80cJHp5nLyOfix815lM9O+DdX+ZUvA8dOd/NrL5s/7KBNfxgpI9nj2NdPVI=
+	t=1717573035; cv=none; b=QujVMC2/WVo3n4jsANEXYLsUF0oZiRiy2r/F9Hl69pBQfi88x1UAMu7oa8ZOyzuiOb8RxCcPeZwwoffVuSJ5UEfpOUk/P8zCfU2xnYgkFwYMXJN6cdIKDjnm4s76Uk+DZ1738j0wSPcT82H/0BseVowa79fAMYX1NVAvV7Lp5N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717572830; c=relaxed/simple;
-	bh=mEWFdK4wEb44Lkk5CxVRECsXbd6T/yzdhjXLOv+LiiQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=frHtKVAbUbkm6nu5i1xqe//oleb11ONugdqLwPh7WDTzDBAsVCyMDs+w1gNuoKdoYlI6b4gzD4Jo2uoeYRGnM2U0gJIhfbAm0S/xFRORBYWED96HSBnZrPmTpCvOMVMabVbZkYdDjUv3/u2dquCfnqGQO1uSYvkbRX/b1qSagaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=1REWpAQW; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4556wo3X011636;
-	Wed, 5 Jun 2024 09:33:30 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	A92N7DPum6K04dYwwSpN0JFQag+xU5B+2EfbUCGJxNg=; b=1REWpAQWm2p2T0On
-	KccqSPZclAb+9kHh80SD9w4iLaDLQ2TuUka/m0AIabxG74+gLuQDQ0OT4pGZY1sk
-	L5XlRBnq52WYRNk/8eaHWpzNFlhB6hYJhDuY2OQWzx2W//u2esWmnnJJMqqsxM0b
-	Ub4Bw77wb5TNg170CZY1AOErIjKgnTRS9R+x+pMiNJOB0wIpSPbX3IJyowN4uwSK
-	1bYhYFiwUv6s9BML8joNzmKas+BtcSxjhWa1AZVNq+PAsSGPfX7QY36Fp5wKXLFy
-	wKtCh1RnkUF1QVWeoSmjAFikzD+UcGaXcfjopxLbIAI1eQt3nd8dvYl0CkKiBycn
-	R20jqw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yg7r06bm8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Jun 2024 09:33:30 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9CE2540045;
-	Wed,  5 Jun 2024 09:33:25 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7D8FE2115E2;
-	Wed,  5 Jun 2024 09:32:36 +0200 (CEST)
-Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 5 Jun
- 2024 09:32:35 +0200
-Message-ID: <314f1f33-7f6b-4b10-a05e-f9e0d5456e31@foss.st.com>
-Date: Wed, 5 Jun 2024 09:32:35 +0200
+	s=arc-20240116; t=1717573035; c=relaxed/simple;
+	bh=0bcrLTQX65w3+uAqgRwFhD9W+5+9d04Rnllfp2Q7OBY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r+f/wqUy5p5jX4OabSFXW34v2Vw52QTl1erFppZIdyV2nEN1Xdvoa4NGwc2it0gw5A1bizzJ86NPfgCIP2A/Tla0RFv5tGr/dxfQ0vZmIBbm1lO+IX4M5Gn6A+VqQXLNC0Bmi3hxhowdpgTULnsuVl0JEj7DQ1c3BBV2biHRTzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=kn5bhPLw; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-6f9234e4261so2243738a34.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 00:37:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1717573033; x=1718177833; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZPvDAH+YMalqInPfm8+iSZEqqgczyWUOtqvg5GoEtYE=;
+        b=kn5bhPLw+5ax4LDVdlIBwEVbiI5Piwp6e4JTSEzHBMwUkgXwGWKMwavD/JVuudpyJf
+         VvrJEmNWXalKvUHvidYPVXp/mYuyzRRBMgzPX9fAsIKsEIZ1eI3CvQ5JYGw5tGGqL3VH
+         4H1zN4yYkGVQnYaLGZGmVyCw8XDmoOCleiZFR/Htj5LDm53ezR0+Mmh/+WwOOmElbZd6
+         84K7Y/3XbpGfx7q92hO1XKt7iONYaL+OnDCwwOh4Sjhkq5S+48C0U8k13pTX/JQ6u/U6
+         FFdP2qDRvl9e/XPmINcwTimDEE+T09HNPnXrE9LlsInOooz6pxNgn5zic89MLi8US5ap
+         OUuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717573033; x=1718177833;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ZPvDAH+YMalqInPfm8+iSZEqqgczyWUOtqvg5GoEtYE=;
+        b=JNYwuhV3E0DiI/ffqyM9k7UjlHbFGTwGhWLxpJhFcZavL8COphWV0P2aLALVyBoUry
+         u0Jve43smG4z4xP9DvLA6kSi5Rpaw5RQ6pbZfrBl/xsvxMkHmgJq5UBIy8D73sWtznDF
+         4hx6a8THZFu6eIIgS5ka3WqxpAGlkzkwnPf3GuM2tI/7HiOulD5DQxg3Rb+z4MosvuXy
+         B9bKttTyzgFN3IRPmW7Ydg+9uu8ked2ZlPPBL8CIseqjViqdJLPUjtymSPtVqEr8LI34
+         WfjrDWwxQcRACRTSd2nkH1vDEg47mb7poqPF5ZShF5SCxxGiF1FjT7wAGVZCDnT490G/
+         YxSA==
+X-Forwarded-Encrypted: i=1; AJvYcCVx6iq6pm79fS17nBN7JNxK23kDfhXxQNeqZ09a6bY4qjgchxISzmGS77Wo3aA068yytL6QcpaaIFx+var2uHGpVlTtAaDozQrXXo8/
+X-Gm-Message-State: AOJu0YxTPuGBZ/Y/tYSt8H5D/8fqApPYcrzkM14LAc44GqE467WgikVF
+	vPLyattxZ0WJackY05JZNVoonmiSOxFhIsKeaVaINtZpogmOCGHNUEYgCHoCNUk=
+X-Google-Smtp-Source: AGHT+IHOM+Hm4FbbQZQFmS6lBFh9A0mBVXXYXd6sNx2AlIYuuH2UdvbbngptVM/wrFldErC1pE/3+g==
+X-Received: by 2002:a05:6870:169e:b0:24f:d4b4:698f with SMTP id 586e51a60fabf-25121c77f82mr2124416fac.1.1717573032990;
+        Wed, 05 Jun 2024 00:37:12 -0700 (PDT)
+Received: from [10.68.123.4] ([203.208.167.149])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242c245absm8044149b3a.200.2024.06.05.00.37.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 00:37:12 -0700 (PDT)
+Message-ID: <06bb3780-7ba0-4d88-b212-5e5b7a1b92cb@bytedance.com>
+Date: Wed, 5 Jun 2024 15:37:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,62 +75,249 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] arm64: dts: st: enable STM32 access controller for
- RCC
-To: <gabriel.fernandez@foss.st.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime
- Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Maxime Ripard
-	<mripard@kernel.org>,
-        Dan Carpenter <dan.carpenter@linaro.or6g>
-CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20240529131310.260954-1-gabriel.fernandez@foss.st.com>
- <20240529131310.260954-4-gabriel.fernandez@foss.st.com>
-Content-Language: en-US
-From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
-In-Reply-To: <20240529131310.260954-4-gabriel.fernandez@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-04_11,2024-06-05_01,2024-05-17_01
+Subject: Re: Re: [PATCH bpf-next] bpf: tcp: Improve bpf write tcp opt
+ performance
+To: Jakub Sitnicki <jakub@cloudflare.com>
+Cc: edumazet@google.com, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@google.com, haoluo@google.com, jolsa@kernel.org, davem@davemloft.net,
+ dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com,
+ laoar.shao@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, yangzhenze@bytedance.com, wangdongdong.6@bytedance.com
+References: <20240515081901.91058-1-zhoufeng.zf@bytedance.com>
+ <87seyjwgme.fsf@cloudflare.com>
+ <1803b7c0-bc56-46d6-835f-f3802b8b7e00@bytedance.com>
+ <87wmnty8yd.fsf@cloudflare.com>
+ <d66d58f1-219e-450a-91fc-bd08337db77d@bytedance.com>
+ <875xuuxntc.fsf@cloudflare.com>
+From: Feng Zhou <zhoufeng.zf@bytedance.com>
+In-Reply-To: <875xuuxntc.fsf@cloudflare.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Gabriel
-
-On 5/29/24 15:13, gabriel.fernandez@foss.st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+在 2024/5/31 18:45, Jakub Sitnicki 写道:
+> On Fri, May 17, 2024 at 03:27 PM +08, Feng Zhou wrote:
+>> 在 2024/5/17 01:15, Jakub Sitnicki 写道:
+>>> On Thu, May 16, 2024 at 11:15 AM +08, Feng Zhou wrote:
+>>>> 在 2024/5/15 17:48, Jakub Sitnicki 写道:
 > 
-> Use an STM32 access controller to filter the registration of clocks.
+> [...]
 > 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> ---
->   arch/arm64/boot/dts/st/stm32mp251.dtsi | 1 +
->   1 file changed, 1 insertion(+)
+>>> If it's not the BPF prog, which you have ruled out, then where are we
+>>> burining cycles? Maybe that is something that can be improved.
+>>> Also, in terms on quantifying the improvement - it is 20% in terms of
+>>> what? Throughput, pps, cycles? And was that a single data point? For
+>>> multiple measurements there must be some variance (+/- X pp).
+>>> Would be great to see some data to back it up.
+>>> [...]
+>>>
+>>
+>> Pressure measurement method:
+>>
+>> server: sockperf sr --tcp -i x.x.x.x -p 7654 --daemonize
+>> client: taskset -c 8 sockperf tp --tcp -i x.x.x.x -p 7654 -m 1200 -t 30
+>>
+>> Default mode, no bpf prog:
+>>
+>> taskset -c 8 sockperf tp --tcp -i x.x.x.x -p 7654 -m 1200 -t 30
+>> sockperf: == version #3.10-23.gited92afb185e6 ==
+>> sockperf[CLIENT] send on:
+>> [ 0] IP = x.x.x.x    PORT =  7654 # TCP
+>> sockperf: Warmup stage (sending a few dummy messages)...
+>> sockperf: Starting test...
+>> sockperf: Test end (interrupted by timer)
+>> sockperf: Test ended
+>> sockperf: Total of 71520808 messages sent in 30.000 sec
+>>
+>> sockperf: NOTE: test was performed, using msg-size=1200. For getting maximum
+>> throughput consider using --msg-size=1472
+>> sockperf: Summary: Message Rate is 2384000 [msg/sec]
+>> sockperf: Summary: BandWidth is 2728.271 MBps (21826.172 Mbps)
+>>
+>> perf record --call-graph fp -e cycles:k -C 8 -- sleep 10
+>> perf report
+>>
+>> 80.88%--sock_sendmsg
+>>   79.53%--tcp_sendmsg
+>>    42.48%--tcp_sendmsg_locked
+>>     16.23%--_copy_from_iter
+>>     4.24%--tcp_send_mss
+>>      3.25%--tcp_current_mss
+>>
+>>
+>> perf top -C 8
+>>
+>> 19.13%  [kernel]            [k] _raw_spin_lock_bh
+>> 11.75%  [kernel]            [k] copy_user_enhanced_fast_string
+>>   9.86%  [kernel]            [k] tcp_sendmsg_locked
+>>   4.44%  sockperf            [.]
+>>   _Z14client_handlerI10IoRecvfrom9SwitchOff13PongModeNeverEviii
+>>   4.16%  libpthread-2.28.so  [.] __libc_sendto
+>>   3.85%  [kernel]            [k] syscall_return_via_sysret
+>>   2.70%  [kernel]            [k] _copy_from_iter
+>>   2.48%  [kernel]            [k] entry_SYSCALL_64
+>>   2.33%  [kernel]            [k] native_queued_spin_lock_slowpath
+>>   1.89%  [kernel]            [k] __virt_addr_valid
+>>   1.77%  [kernel]            [k] __check_object_size
+>>   1.75%  [kernel]            [k] __sys_sendto
+>>   1.74%  [kernel]            [k] entry_SYSCALL_64_after_hwframe
+>>   1.42%  [kernel]            [k] __fget_light
+>>   1.28%  [kernel]            [k] tcp_push
+>>   1.01%  [kernel]            [k] tcp_established_options
+>>   0.97%  [kernel]            [k] tcp_send_mss
+>>   0.94%  [kernel]            [k] syscall_exit_to_user_mode_prepare
+>>   0.94%  [kernel]            [k] tcp_sendmsg
+>>   0.86%  [kernel]            [k] tcp_current_mss
+>>
+>> Having bpf prog to write tcp opt in all pkts:
+>>
+>> taskset -c 8 sockperf tp --tcp -i x.x.x.x -p 7654 -m 1200 -t 30
+>> sockperf: == version #3.10-23.gited92afb185e6 ==
+>> sockperf[CLIENT] send on:
+>> [ 0] IP = x.x.x.x    PORT =  7654 # TCP
+>> sockperf: Warmup stage (sending a few dummy messages)...
+>> sockperf: Starting test...
+>> sockperf: Test end (interrupted by timer)
+>> sockperf: Test ended
+>> sockperf: Total of 60636218 messages sent in 30.000 sec
+>>
+>> sockperf: NOTE: test was performed, using msg-size=1200. For getting maximum
+>> throughput consider using --msg-size=1472
+>> sockperf: Summary: Message Rate is 2021185 [msg/sec]
+>> sockperf: Summary: BandWidth is 2313.063 MBps (18504.501 Mbps)
+>>
+>> perf record --call-graph fp -e cycles:k -C 8 -- sleep 10
+>> perf report
+>>
+>> 80.30%--sock_sendmsg
+>>   79.02%--tcp_sendmsg
+>>    54.14%--tcp_sendmsg_locked
+>>     12.82%--_copy_from_iter
+>>     12.51%--tcp_send_mss
+>>      11.77%--tcp_current_mss
+>>       10.10%--tcp_established_options
+>>        8.75%--bpf_skops_hdr_opt_len.isra.54
+>>         5.71%--__cgroup_bpf_run_filter_sock_ops
+>>          3.32%--bpf_prog_e7ccbf819f5be0d0_tcpopt
+>>    6.61%--__tcp_push_pending_frames
+>>     6.60%--tcp_write_xmit
+>>      5.89%--__tcp_transmit_skb
+>>
+>> perf top -C 8
+>>
+>> 10.98%  [kernel]                           [k] _raw_spin_lock_bh
+>>   9.04%  [kernel]                           [k] copy_user_enhanced_fast_string
+>>   7.78%  [kernel]                           [k] tcp_sendmsg_locked
+>>   3.91%  sockperf                           [.]
+>>   _Z14client_handlerI10IoRecvfrom9SwitchOff13PongModeNeverEviii
+>>   3.46%  libpthread-2.28.so                 [.] __libc_sendto
+>>   3.35%  [kernel]                           [k] syscall_return_via_sysret
+>>   2.86%  [kernel]                           [k] bpf_skops_hdr_opt_len.isra.54
+>>   2.16%  [kernel]                           [k] __htab_map_lookup_elem
+>>   2.11%  [kernel]                           [k] _copy_from_iter
+>>   2.09%  [kernel]                           [k] entry_SYSCALL_64
+>>   1.97%  [kernel]                           [k] __virt_addr_valid
+>>   1.95%  [kernel]                           [k] __cgroup_bpf_run_filter_sock_ops
+>>   1.95%  [kernel]                           [k] lookup_nulls_elem_raw
+>>   1.89%  [kernel]                           [k] __fget_light
+>>   1.42%  [kernel]                           [k] __sys_sendto
+>>   1.41%  [kernel]                           [k] entry_SYSCALL_64_after_hwframe
+>>   1.31%  [kernel]                           [k] native_queued_spin_lock_slowpath
+>>   1.22%  [kernel]                           [k] __check_object_size
+>>   1.18%  [kernel]                           [k] tcp_established_options
+>>   1.04%  bpf_prog_e7ccbf819f5be0d0_tcpopt   [k] bpf_prog_e7ccbf819f5be0d0_tcpopt
+>>
+>> Compare the above test results, fill up a CPU, you can find that
+>> the upper limit of qps or BandWidth has a loss of nearly 18-20%.
+>> Then CPU occupancy, you can find that "tcp_send_mss" has increased
+>> significantly.
 > 
-> diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-> index dcd0656d67a8..602d02efc202 100644
-> --- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
-> +++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-> @@ -441,6 +441,7 @@ rcc: clock-controller@44200000 {
->   				<&scmi_clk CK_SCMI_TIMG2>,
->   				<&scmi_clk CK_SCMI_PLL3>,
->   				<&clk_dsi_txbyte>;
-> +				access-controllers = <&rifsc 156>;
->   		};
->   
->   		exti1: interrupt-controller@44220000 {
+> This helps prove the point, but what I actually had in mind is to check
+> "perf annotate bpf_skops_hdr_opt_len" and see if there any low hanging
+> fruit there which we can optimize.
+> 
+> For instance, when I benchmark it in a VM, I see we're spending cycles
+> mostly memset()/rep stos. I have no idea where the cycles are spent in
+> your case.
+> 
+>>
 
-Applied on stm32-next.
+How do you do your pressure test? Can you send it to me for a try? Or 
+you can try my pressure test method. Have you checked the calling 
+frequency of bpf_skops_hdr_opt_len and bpf_skops_write_hdr_opt?
 
-cheers
-Alex
+>>>>>> diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+>>>>>> index 90706a47f6ff..f2092de1f432 100644
+>>>>>> --- a/tools/include/uapi/linux/bpf.h
+>>>>>> +++ b/tools/include/uapi/linux/bpf.h
+>>>>>> @@ -6892,8 +6892,14 @@ enum {
+>>>>>>     	 * options first before the BPF program does.
+>>>>>>     	 */
+>>>>>>     	BPF_SOCK_OPS_WRITE_HDR_OPT_CB_FLAG = (1<<6),
+>>>>>> +	/* Fast path to reserve space in a skb under
+>>>>>> +	 * sock_ops->op == BPF_SOCK_OPS_HDR_OPT_LEN_CB.
+>>>>>> +	 * opt length doesn't change often, so it can save in the tcp_sock. And
+>>>>>> +	 * set BPF_SOCK_OPS_HDR_OPT_LEN_CACHE_CB_FLAG to no bpf call.
+>>>>>> +	 */
+>>>>>> +	BPF_SOCK_OPS_HDR_OPT_LEN_CACHE_CB_FLAG = (1<<7),
+>>>>> Have you considered a bpf_reserve_hdr_opt() flag instead?
+>>>>> An example or test coverage would to show this API extension in action
+>>>>> would help.
+>>>>>
+>>>>
+>>>> bpf_reserve_hdr_opt () flag can't finish this. I want to optimize
+>>>> that bpf prog will not be triggered frequently before TSO. Provide
+>>>> a way for users to not trigger bpf prog when opt len is unchanged.
+>>>> Then when writing opt, if len changes, clear the flag, and then
+>>>> change opt len in the next package.
+>>> I haven't seen a sample using the API extenstion that you're proposing,
+>>> so I can only guess. But you probably have something like:
+>>> SEC("sockops")
+>>> int sockops_prog(struct bpf_sock_ops *ctx)
+>>> {
+>>> 	if (ctx->op == BPF_SOCK_OPS_HDR_OPT_LEN_CB &&
+>>> 	    ctx->args[0] == BPF_WRITE_HDR_TCP_CURRENT_MSS) {
+>>> 		bpf_reserve_hdr_opt(ctx, N, 0);
+>>> 		bpf_sock_ops_cb_flags_set(ctx,
+>>> 					  ctx->bpf_sock_ops_cb_flags |
+>>> 					  MY_NEW_FLAG);
+>>> 		return 1;
+>>> 	}
+>>> }
+>>
+>> Yes, that's what I expected.
+>>
+>>> I don't understand why you're saying it can't be transformed into:
+>>> int sockops_prog(struct bpf_sock_ops *ctx)
+>>> {
+>>> 	if (ctx->op == BPF_SOCK_OPS_HDR_OPT_LEN_CB &&
+>>> 	    ctx->args[0] == BPF_WRITE_HDR_TCP_CURRENT_MSS) {
+>>> 		bpf_reserve_hdr_opt(ctx, N, MY_NEW_FLAG);
+>>> 		return 1;
+>>> 	}
+>>> }
+>>
+>> "bpf_reserve_hdr_opt (ctx, N, MY_NEW_FLAG);"
+>>
+>> I don't know what I can do to pass the flag parameter, let
+>> "bpf_reserve_hdr_opt" return quickly? But this is not useful,
+>> because the loss caused by the triggering of bpf prog is very
+>> expensive, and it is still on the hotspot function of sending
+>> packets, and the TSO has not been completed yet.
+>>
+>>> [...]
+> 
+> This is not what I'm suggesting.
+> 
+> bpf_reserve_hdr_opt() has access to bpf_sock_ops_kern and even the
+> sock. You could either signal through bpf_sock_ops_kern to
+> bpf_skops_hdr_opt_len() that it should not be called again
+> 
+> Or even configure the tcp_sock directly from bpf_reserve_hdr_opt()
+> because it has access to it via bpf_sock_ops_kern{}.sk.
+
+Oh, I see what you mean, this will achieve the goal.
+
+
 
