@@ -1,144 +1,203 @@
-Return-Path: <linux-kernel+bounces-203130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72E738FD6D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:57:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F14D8FD6DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11CF52841BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:57:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65B0E1C22641
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1622515534D;
-	Wed,  5 Jun 2024 19:57:09 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ECA415535E;
+	Wed,  5 Jun 2024 19:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="R0DrYBez"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403CE15533F
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 19:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239EB282FE
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 19:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717617428; cv=none; b=rcdutkQG+NjY8SQugnjVwx8QTQhlfIB1P2/6LStGgplFUC8Kego8NDPqcTPFSzVMo/pqTTDFZsuRILxugi9xj+Uv7a3ieUmLVgSC0hQkgkAF+Z4O/uz7EXNUAOjhMEdIl6nakEcuFgn1fF9jv3vwBdEsEIKCPfrZAb0+0vFxDDs=
+	t=1717617478; cv=none; b=TfE1AN6aKiav9E+1hQC9R+AwOysbsNhrEi36UKYCFU7LJnW6C7LHyQxQMhiWiuLEKCq9wuluArK4imUOSu1WLbPL4F/TikVIlizkoZNHdQV5eseAgkuYYRp/vHV4c7H8zoQ34Wb8LrUEPNBpxrULO91sJ3QT2+S1V4r84d9sAsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717617428; c=relaxed/simple;
-	bh=sM9zCmAOcCQhPm+eD27qIhnuXgIcxV/Y1JO2HIcW+kg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gN9s3nPWjONbGq6WPK9R2bzyLR9OkpOR2a6xMkALObBR26H0i/U5CdZf0GWNoGhYerA4V4AVdENCoQ1/VCGgFTzpwmTBquIrBrVcXJfxVhumV7QN3JAllJFiR7viqdeES/JIjm3ViBZWPGcpKcLwtlA6vYtQYsziKdHws4ocx6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vvd7y6sZXz9v7Hk
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 03:39:26 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id CA2F3140A2F
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 03:56:48 +0800 (CST)
-Received: from [10.81.202.105] (unknown [10.81.202.105])
-	by APP2 (Coremail) with SMTP id GxC2BwDXESbywmBmNyOaCQ--.2850S2;
-	Wed, 05 Jun 2024 20:56:48 +0100 (CET)
-Message-ID: <5be2fcc0-0fd7-49d8-bc4b-12bf3e90a677@huaweicloud.com>
-Date: Wed, 5 Jun 2024 21:56:31 +0200
+	s=arc-20240116; t=1717617478; c=relaxed/simple;
+	bh=fYJBLJlZl9zT4F1JeeL+BHFvL4WZ1tU5L3j8W45umK0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=jil5bZ5lEfsR4CJTGree6OxKkIcijLwy5yKhbEYYply0zewaTyDQqcu4Ca53/Sqwh4wYOH+nCck0/bvkTotEx9bi4E7Kb/BzCn4wqvBosF8kmEW5+n5duk2cuaKgELEi1kZcYPLoNliiEku0YXvMaX/ArK5Cs5mhUT4E3pKeyd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=R0DrYBez; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-702555eb23bso147841b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 12:57:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717617476; x=1718222276; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ISuOcjK6nJKqnAu/IEdqzzoElkUOKEX7y0pHx2W7vds=;
+        b=R0DrYBezj1DrCUZivcdEiMqYKArw/kREkiKTGJk28xvWf2PNLzMFhzb6W92Z4peH77
+         SqSDYfEr4yN8gyxwJ1v9dpOusnvL2yjD6TGf0fpcff5Y+po8kxQ8o7kLXnTK0A9mIxh4
+         2CrTkmXV5npUp46Fo3jfbqicrANmUupltoh9VeWwhstSvbGwRqlRDSbU5npT1GVBFzWM
+         HnJpQQg/3HSjNfJ3smhpZA4B4eqTSTEMS8et1L3ZIsq1YxVnoTsECIvIg8PNVLwI5hja
+         1YXDTZYP6cj/0RXmJCnTlGDjd1zlZdbYBjlPrOENQxSkPZnNAlyy2kbfAp8S2TA0W0W5
+         8YFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717617476; x=1718222276;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ISuOcjK6nJKqnAu/IEdqzzoElkUOKEX7y0pHx2W7vds=;
+        b=LesW8C368bmQ1lTxOUBSPNCOWdkR3QMa1+MooJuI9LxLpLPRxryuo1C4wOlTY3v3m9
+         +4alGne6HsUh7rWCuVXcAkbTITcqSnzhXxfr2Wa6sKhFM738DQlJQHsDVoQokSAptP20
+         RkgPhZg0Mpn/FEER/O9x7MCQ6VQhsVxO0SlgSdQjFURr7BY7w6X4blko6fD/YVmVPgsX
+         64dQy3KtKA1vC9KgIgvOoYl4KQvhAxj096Sg0KRAs/4XLmxHMz8ADG1l87XaaHMm607q
+         ticwNNRmj2g70rjLxTKULoN8VS1RKCJFQdIbG+LjB6OqyHp8wsWjMj8j56G0XKLDcSQf
+         ObmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXrOF1dEPfAHiqe0C6/K6GEc+X3JbLqTq1SBushWNX6QsLR65cHvwngqii0IPbrmaJQWr8DexOQsKJUFmVjRvdmWTlyZw42knlRJuTQ
+X-Gm-Message-State: AOJu0Yx88toeFUJ8V9W3+ddnO/VohcHwcsno0A4rDAyTZDUyde6e6zjP
+	EA/I5evdv6ymIJO09AiLR/5iKbsosKRKC3mT7XuaIQy3+SXfMTN18fXJedvoDgY=
+X-Google-Smtp-Source: AGHT+IHCjuOWDjOPKFWsNkX8yL3PSDZTll04mMQb3hcxhcJpvd1lGdIxeYB8M2evG2kMCM9zEi8BsQ==
+X-Received: by 2002:a05:6a20:9492:b0:1b1:f0d4:71b6 with SMTP id adf61e73a8af0-1b2b7186cf0mr3529279637.54.1717617476365;
+        Wed, 05 Jun 2024 12:57:56 -0700 (PDT)
+Received: from tjeznach.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70244900ee9sm8664209b3a.124.2024.06.05.12.57.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 12:57:55 -0700 (PDT)
+From: Tomasz Jeznach <tjeznach@rivosinc.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Nick Kossifidis <mick@ics.forth.gr>,
+	Sebastien Boeuf <seb@rivosinc.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	iommu@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux@rivosinc.com,
+	Tomasz Jeznach <tjeznach@rivosinc.com>
+Subject: [PATCH v7 0/7] Linux RISC-V IOMMU Support
+Date: Wed,  5 Jun 2024 12:57:42 -0700
+Message-Id: <cover.1717612298.git.tjeznach@rivosinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 3/4] tools/memory-model: Define effect of Mb tags on
- RMWs in tools/...
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: paulmck@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
- will@kernel.org, peterz@infradead.org, npiggin@gmail.com,
- dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
- akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
- urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
- linux-kernel@vger.kernel.org, Viktor Vafeiadis <viktor@mpi-sws.org>
-References: <20240604152922.495908-1-jonas.oberhauser@huaweicloud.com>
- <20240604160440.498332-1-jonas.oberhauser@huaweicloud.com>
- <Zl_pehpjHVt2z95p@Boquns-Mac-mini.home>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <Zl_pehpjHVt2z95p@Boquns-Mac-mini.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:GxC2BwDXESbywmBmNyOaCQ--.2850S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ArWUJFyrGrWUtw1kGr1rWFg_yoW8KFy5pr
-	Z0g3W5Kr4vqry7u3Z7Z3ZxXFyrWayfKF43GF1fJr93urW3urW7ZFyag3ZYqF9Ivw42ka4j
-	yr4jq3Wvk34kAFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This patch series introduces support for RISC-V IOMMU architected
+hardware into the Linux kernel.
+
+The RISC-V IOMMU specification, which this series is based on, is
+ratified and available at GitHub/riscv-non-isa [1].
+
+At a high level, the RISC-V IOMMU specification defines:
+
+1) Data structures:
+  - Device-context: Associates devices with address spaces and holds
+    per-device parameters for address translations.
+  - Process-contexts: Associates different virtual address spaces based
+    on device-provided process identification numbers.
+  - MSI page table configuration used to direct an MSI to a guest
+    interrupt file in an IMSIC.
+2) In-memory queue interface:
+  - Command-queue for issuing commands to the IOMMU.
+  - Fault/event queue for reporting faults and events.
+  - Page-request queue for reporting "Page Request" messages received
+    from PCIe devices.
+  - Message-signaled and wire-signaled interrupt mechanisms.
+3) Memory-mapped programming interface:
+  - Mandatory and optional register layout and description.
+  - Software guidelines for device initialization and capabilities discovery.
 
 
+This series introduces RISC-V IOMMU hardware initialization and complete
+single-stage translation with paging domain support.
 
-Am 6/5/2024 um 6:28 AM schrieb Boqun Feng:
-> On Tue, Jun 04, 2024 at 06:04:40PM +0200, Jonas Oberhauser wrote:
->> Herd7 transforms successful RMW with Mb tags by inserting smp_mb() fences
->> around them. We emulate this by considering imaginary po-edges before the
->> RMW read and before the RMW write, and extending the smp_mb() ordering
->> rule, which currently only applies to real po edges that would be found
->> around a really inserted smp_mb(), also to cases of the only imagined po
->> edges.
->>
->> Reported-by: Viktor Vafeiadis <viktor@mpi-sws.org>
->> Suggested-by: Alan Stern <stern@rowland.harvard.edu>
->> Signed-off-by: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
->> ---
->>   tools/memory-model/linux-kernel.cat | 10 ++++++++++
->>   1 file changed, 10 insertions(+)
->>
->> diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
->> index adf3c4f41229..d7e7bf13c831 100644
->> --- a/tools/memory-model/linux-kernel.cat
->> +++ b/tools/memory-model/linux-kernel.cat
->> @@ -34,6 +34,16 @@ let R4rmb = R \ Noreturn	(* Reads for which rmb works *)
->>   let rmb = [R4rmb] ; fencerel(Rmb) ; [R4rmb]
->>   let wmb = [W] ; fencerel(Wmb) ; [W]
->>   let mb = ([M] ; fencerel(Mb) ; [M]) |
->> +	(*
->> +	 * full-barrier RMWs (successful cmpxchg(), xchg(), etc.) act as
->> +	 * though there were enclosed by smp_mb().
->> +	 * The effect of these virtual smp_mb() is formalized by adding
->> +	 * Mb tags to the read and write of the operation, and providing
->> +	 * the same ordering as though there were additional po edges
->> +	 * between the Mb tag and the read resp. write.
->> +	 *)
->> +	([M] ; po ; [Mb & R]) |
->> +	([Mb & W] ; po ; [M]) |
-> 
-> I couldn't help suggestting:
-> 
-> 	([M] ; po ; [Mb & domain(rmw)]) |
-> 	([Mb & range(rmw)] ; po ; [M]) |
-> 
-> , it's a bit more clear to me, but maybe the comment above is good
-> enough?
+The patches are organized as follows:
 
-Hm, maybe clarity is in the eye of the beholder in this case.
+Patch 1: Introduces minimal required device tree bindings for the driver.
+Patch 2: Defines RISC-V IOMMU data structures, hardware programming interface
+         registers layout, and minimal initialization code for enabling global
+         pass-through for all connected masters.
+Patch 3: Implements the device driver for PCIe implementation of RISC-V IOMMU
+         architected hardware.
+Patch 4: Introduces IOMMU interfaces to the kernel subsystem.
+Patch 5: Implements device directory management with discovery sequences for
+         I/O mapped or in-memory device directory table location, hardware
+         capabilities discovery, and device to domain attach implementation.
+Patch 6: Implements command and fault queue, and introduces directory cache
+         invalidation sequences.
+Patch 7: Implements paging domain, using highest page-table mode advertised
+         by the hardware. This series enables only 4K mappings; complete support
+         for large page mappings will be introduced in follow-up patch series.
 
-Actually looking at your suggestion makes me think of smp_store_mb(), 
-which although represented as Once;F[Mb] could be (mis)understood also 
-as Mb&W. And it indeed does the same thing
-   ([Mb & W] ; po ; [M])
-would suggest.
+Follow-up patch series, providing large page support and updated walk cache
+management based on the revised specification, and complete ATS/PRI/SVA support,
+will be posted to GitHub [2].
 
-(btw I think it is confusing that smp_store_mb is not strictly stronger 
-than smp_store_release. Of course there are places where you want a 
-relaxed store followed by an mb, but usually the mb versions are 
-strictly stronger.).
+Changes from v6:
+- rebase on v6.10-rc2
+- editorial changes in iommu-bits.h addressing Drew's comments
+- fix IOVA length check in riscv_iommu_iotlb_inval()
 
-Best wishes,
-   jonas
+Best regards,
+ Tomasz Jeznach
+
+[1] link: https://github.com/riscv-non-isa/riscv-iommu
+[2] link: https://github.com/tjeznach/linux
+v6 link:  https://lore.kernel.org/linux-iommu/cover.1716578450.git.tjeznach@rivosinc.com/
+v5 link:  https://lore.kernel.org/linux-iommu/cover.1715708679.git.tjeznach@rivosinc.com/
+v4 link:  https://lore.kernel.org/linux-iommu/cover.1714752293.git.tjeznach@rivosinc.com/
+v3 link:  https://lore.kernel.org/linux-iommu/cover.1714494653.git.tjeznach@rivosinc.com/
+v2 link:  https://lore.kernel.org/linux-iommu/cover.1713456597.git.tjeznach@rivosinc.com/
+v1 link:  https://lore.kernel.org/linux-iommu/cover.1689792825.git.tjeznach@rivosinc.com/
+
+Tomasz Jeznach (7):
+  dt-bindings: iommu: riscv: Add bindings for RISC-V IOMMU
+  iommu/riscv: Add RISC-V IOMMU platform device driver
+  iommu/riscv: Add RISC-V IOMMU PCIe device driver
+  iommu/riscv: Enable IOMMU registration and device probe.
+  iommu/riscv: Device directory management.
+  iommu/riscv: Command and fault queue support
+  iommu/riscv: Paging domain support
+
+ .../bindings/iommu/riscv,iommu.yaml           |  147 ++
+ MAINTAINERS                                   |    8 +
+ drivers/iommu/Kconfig                         |    1 +
+ drivers/iommu/Makefile                        |    2 +-
+ drivers/iommu/riscv/Kconfig                   |   20 +
+ drivers/iommu/riscv/Makefile                  |    3 +
+ drivers/iommu/riscv/iommu-bits.h              |  784 ++++++++
+ drivers/iommu/riscv/iommu-pci.c               |  119 ++
+ drivers/iommu/riscv/iommu-platform.c          |   92 +
+ drivers/iommu/riscv/iommu.c                   | 1677 +++++++++++++++++
+ drivers/iommu/riscv/iommu.h                   |   88 +
+ 11 files changed, 2940 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/iommu/riscv,iommu.yaml
+ create mode 100644 drivers/iommu/riscv/Kconfig
+ create mode 100644 drivers/iommu/riscv/Makefile
+ create mode 100644 drivers/iommu/riscv/iommu-bits.h
+ create mode 100644 drivers/iommu/riscv/iommu-pci.c
+ create mode 100644 drivers/iommu/riscv/iommu-platform.c
+ create mode 100644 drivers/iommu/riscv/iommu.c
+ create mode 100644 drivers/iommu/riscv/iommu.h
+
+
+base-commit: c3f38fa61af77b49866b006939479069cd451173
+-- 
+2.34.1
 
 
