@@ -1,138 +1,156 @@
-Return-Path: <linux-kernel+bounces-202968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADD7F8FD3C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:20:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D448FD3BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2215B287873
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:20:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B48201F2679B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8779713A26F;
-	Wed,  5 Jun 2024 17:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="X65T6mVX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B73C1384B3;
+	Wed,  5 Jun 2024 17:18:52 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D94E79DE;
-	Wed,  5 Jun 2024 17:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01D479DE;
+	Wed,  5 Jun 2024 17:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717607993; cv=none; b=eNv3BUvlgmKpGGv2N+x4PpIqeEvph5Lv+yetsKc2u3Hl47NA0RKFiDJABolnGaCdrS0sLETZ7/NWUB5pglzedSXIEUEfKrw1KdSHVPwanySKLbihHOsXH7nPMW4W3DNMkQaDFYVTdI803DmcGvkumRIZ5TRQcTQOG/no0pyIGEk=
+	t=1717607932; cv=none; b=E72XI37a8O+5tRSh63rTS32pbTxk0aYqCwBjyCdCkKIo8lRwHEVF1pkibRBTl0Kds2I5jo8bMYwWF4FVoMO6C/HM2UOZwi8ezFiPaFu1GycrDqAetbCespXW3HSjir35yV7CvrB+zDOJKA4Wjc+rO5mD+ngUzIKS+7HDlV0crZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717607993; c=relaxed/simple;
-	bh=KoPDujt1xMD1rMjbCLSpQKDTwNo7Sp1vSRZVeW5Uy6s=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kZLjJucrax6DGM4DN05f64Rz4EKSlZ1hkfLFtcEKWFJ/+YvQi2pekqwqDtCYMBnPjYNDTLnHzEQY/glfAX5p96WONUWD1qsuqQLBgBXfFDKC7L7XMFk2hwlWdYeZBre7pXmSt1r5dwQi690duELgxN0GJAXpZCffTX3dKErbnfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=X65T6mVX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 455DGfD8014486;
-	Wed, 5 Jun 2024 17:17:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=sNJniB11qHa4cbo7LPak+xXf
-	Ula5GuPjPcZNiVZTXdQ=; b=X65T6mVXXXVOqXlwsjcwOBZpbijhV+XkQzQsQ5SR
-	p+BedcH67osUcAIBA3PcLM4lEvG6cVRmcLmbUaZ33bmofSAaVieupgsruwJtse+z
-	zGq2QBbr3uSnSDHLEInKj+0xgCg27JnjYiYPLgM1idQGP9i48nfjD3Y3QpBMAKOE
-	g7OC8B2I/Yj0ZArMuGtCJCsZyyYm1Rfv065sfCncU+l+ZlFFuXkOH1yuL9QZh/95
-	uGk2tunv1W/oDmoAREOTpmEtUbo2fr43U2n+JQ0FE+aoEKgkz+pwiu4y+k8Vz3EL
-	GjIDyvsM6jtwRJwBTgk2bZIb7SSZxEdAUEecpm8r8vhoTg==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yj7urasd5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Jun 2024 17:17:26 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 455HHNiC008319
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 5 Jun 2024 17:17:23 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 5 Jun 2024 10:17:23 -0700
-Date: Wed, 5 Jun 2024 10:17:22 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: Simon Glass <sjg@chromium.org>
-CC: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Amrit Anand <quic_amrianan@quicinc.com>,
-        "Peter
- Griffin" <peter.griffin@linaro.org>,
-        Caleb Connolly
-	<caleb.connolly@linaro.org>,
-        Andy Gross <agross@kernel.org>, Doug Anderson
-	<dianders@chromium.org>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Julius Werner
-	<jwerner@chromium.org>,
-        "Humphreys, Jonathan" <j-humphreys@ti.com>,
-        "Sumit
- Garg" <sumit.garg@linaro.org>,
-        Jon Hunter <jonathanh@nvidia.org>,
-        Michal
- Simek <michal.simek@amd.com>,
-        <boot-architecture@lists.linaro.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH RFC v3 0/9] dt-bindings: hwinfo: Introduce board-id
-Message-ID: <20240605100246481-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <20240521-board-ids-v3-0-e6c71d05f4d2@quicinc.com>
- <CAFLszTjexpNEjo1sGVs67L0CAgGZLNkyn9RGfHRD7iHak_mtmg@mail.gmail.com>
+	s=arc-20240116; t=1717607932; c=relaxed/simple;
+	bh=CfOaJg5zpEDxXsvOH7x53ahefWZN6KU6Mu/FJ8+Hmjw=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=tsgnMawKfX5dskO9YPQeLRJmJyslkK8zLJw1A8u3bXoCftUY9ra2hg7NyZe1XdBOKU/cpWPw33efSIYJDjfR/yWhpTOIPZYBXWunJ6AoBkm35vNWfSuIe1QjCU3TqDmyQv1gm5PLSqyplXY/Ov7SSz+/GmdgLJna4aMxQynd324=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.1.105] (31.173.84.195) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 5 Jun
+ 2024 20:18:38 +0300
+Subject: Re: [net-next PATCH v4 7/7] net: ravb: Allocate RX buffers via page
+ pool
+To: Paul Barker <paul.barker.ct@bp.renesas.com>, Simon Horman
+	<horms@kernel.org>
+CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>, Biju Das
+	<biju.das.jz@bp.renesas.com>, Claudiu Beznea
+	<claudiu.beznea.uj@bp.renesas.com>, Yoshihiro Shimoda
+	<yoshihiro.shimoda.uh@renesas.com>, <netdev@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240528150339.6791-1-paul.barker.ct@bp.renesas.com>
+ <20240528150339.6791-8-paul.barker.ct@bp.renesas.com>
+ <20240601101300.GA491852@kernel.org>
+ <6165a9a3-15ec-4a40-901a-17c2be64daf1@bp.renesas.com>
+ <20240603120757.GX491852@kernel.org>
+ <3eeff8ed-231c-4810-ba99-371524db2f90@bp.renesas.com>
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <444f035e-cd07-842d-aacd-b8f720c172da@omp.ru>
+Date: Wed, 5 Jun 2024 20:18:38 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAFLszTjexpNEjo1sGVs67L0CAgGZLNkyn9RGfHRD7iHak_mtmg@mail.gmail.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: rUOAnfgLEEt-4ffMEwQQ78zA6aJnT_VQ
-X-Proofpoint-GUID: rUOAnfgLEEt-4ffMEwQQ78zA6aJnT_VQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-05_02,2024-06-05_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- malwarescore=0 mlxscore=0 bulkscore=0 clxscore=1015 priorityscore=1501
- suspectscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406050130
+In-Reply-To: <3eeff8ed-231c-4810-ba99-371524db2f90@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 06/05/2024 16:56:56
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 185750 [Jun 05 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.0.4
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 20 0.3.20
+ 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.84.195 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info:
+	31.173.84.195:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;www.kernel.org:7.1.1;127.0.0.199:7.1.2;patchwork.kernel.org:7.1.1;omp.ru:7.1.1;lore.kernel.org:7.1.1
+X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.84.195
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 06/05/2024 17:00:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 6/5/2024 11:45:00 AM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Wed, Jun 05, 2024 at 07:17:35AM -0600, Simon Glass wrote:
-> Hi Elliot,
+On 6/3/24 3:15 PM, Paul Barker wrote:
+[...]
+
+>>>>> @@ -298,13 +269,14 @@ static void ravb_ring_free(struct net_device *ndev, int q)
+>>>>>  		priv->tx_ring[q] = NULL;
+>>>>>  	}
+>>>>>  
+>>>>> -	/* Free RX skb ringbuffer */
+>>>>> -	if (priv->rx_skb[q]) {
+>>>>> -		for (i = 0; i < priv->num_rx_ring[q]; i++)
+>>>>> -			dev_kfree_skb(priv->rx_skb[q][i]);
+>>>>> +	/* Free RX buffers */
+>>>>> +	for (i = 0; i < priv->num_rx_ring[q]; i++) {
+>>>>> +		if (priv->rx_buffers[q][i].page)
+>>>>> +			page_pool_put_page(priv->rx_pool[q], priv->rx_buffers[q][i].page, 0, true);
+>>>>
+>>>> nit: Networking still prefers code to be 80 columns wide or less.
+>>>>      It looks like that can be trivially achieved here.
+>>>>
+>>>>      Flagged by checkpatch.pl --max-line-length=80
+>>>
+>>> Sergey has asked me to wrap to 100 cols [1]. I can only find a reference
+>>> to 80 in the docs though [2], so I guess you may be right.
+>>>
+>>> [1]: https://lore.kernel.org/all/611a49b8-ecdb-6b91-9d3e-262bf3851f5b@omp.ru/
+>>> [2]: https://www.kernel.org/doc/html/latest/process/coding-style.html
+>>
+>> Hi Paul,
+>>
+>> If Sergey prefers 100 then I won't argue :)
+>>
+>> FWIIW, think what has happened here relates to the Kernel, at some point,
+>> going from 80 to 100 columns as the preferred maximum width, while Networking
+>> stuck with 80.
 > 
-> I am just picking up the discussion here, which was started on another thread.
+> I saw that netdevbpf patchwork is configured for 80 cols and it has
+> warnings for v4 of this patch [1], so I've already re-wrapped the
+> changes in this series to 80 cols (excluding a couple of lines where
+> using slightly more than 80 cols significantly improves readability).
+> I'm planning to send that in the next hour or so, assuming my tests
+> pass.
 > 
-> I can't see why this new feature is needed. We should be able to use
-> compatible strings, as we do now. I added a 'usage' section to the FIT
-> spec [1] which might help. I also incorporated the board revision and
-> variant information and some notes on how to add to the available
-> suffixes.
-> 
-> Does that handle your use case?
+> [1]: https://patchwork.kernel.org/project/netdevbpf/patch/20240528150339.6791-8-paul.barker.ct@bp.renesas.com/
 
--rev and -sku don't fit the versioning scheme for QTI devices, so this
-isn't a generic enough approach. Patch 5 in this series describes the
-versioning scheme for us.
+   Sorry for misinforming you about 100 coulmns -- I had no idea netdev stuck
+to 80! :-)
 
-In the other thread, we had talked about using some regex based approach
-for matching the root node compatible. I haven't had chance to work on
-that proposal and will try to get to it in the next couple weeks.
-
-Thanks,
-Elliot
-
+MBR, Sergey
 
