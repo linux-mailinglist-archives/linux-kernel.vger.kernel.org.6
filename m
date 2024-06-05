@@ -1,248 +1,94 @@
-Return-Path: <linux-kernel+bounces-201626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4BD18FC0E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:43:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 958BF8FC0ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA49F1F231BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:43:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49EAF1F23483
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573922F44;
-	Wed,  5 Jun 2024 00:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DF04409;
+	Wed,  5 Jun 2024 00:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C4FKaKEA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="kP8qrqGF"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7815F184E;
-	Wed,  5 Jun 2024 00:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12197163;
+	Wed,  5 Jun 2024 00:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717548172; cv=none; b=eMe61sfmp7LPj/qmjCF4ckv/P78CLfHFRUKEwz4NDc0mpkHdDzrq8E3knw3XHMXe73WTTgixmjnWMQq4Ysr4Xvopsfwak3Rnm/mAM2uPtQOTE7/iwgVmGbPO/76e0RKdaX0jX8A8jH3HAprpUnAzh6DjN2HqGg6eUds3mINa4uc=
+	t=1717548440; cv=none; b=oKGr+1rJvRiY6l3eq5rDaOwTiZk8XJ7k4KlI/bFNXvz5HFj8fJU+rX8TWxS9qw/1ncwVJHvz0QkvEzf6tUEllBaMk41RemePCURQxgVLG3iCnnRKNvZs55+gzK+3N/a8/65wIZSbx4jH6iOaD9M0FkBSDv4Z6wzdq03fNoS+U0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717548172; c=relaxed/simple;
-	bh=o/9XA293ztzQotVbWDuq6SEmoKfFMzc7jf77BFoaTdQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aluhuzm+gfTAfMwWvrp6LobbTzPzzRfasY09/r0ajP48IAeYbi/63sJBJok4eqOHx05210WQsv9J6701C1tJIzhSD7BBNbKd8sI2Cb2G1e3TklDTd4jug9Z4w+jzWLhr1AEWyN65zcfgQFGkjFmb7Fgme9ksQtQKpLx9+FtHRw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C4FKaKEA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 984A1C2BBFC;
-	Wed,  5 Jun 2024 00:42:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717548171;
-	bh=o/9XA293ztzQotVbWDuq6SEmoKfFMzc7jf77BFoaTdQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C4FKaKEAK9jHS1pp+wRVnlGZ9SuZA24j/+tIvrhulO+YhDlHuceOhw+4wPiSenAJS
-	 x6L4TCuXFHeA33qBGMmuiIC6ULqQp3Kj7wTyyxNHQw/CWWtAh6NmtI1NGK9uNND1M4
-	 aFzTizTCvaAzelYADYQJ+NBDYPl6jkFVQvF0xZCBJj/J452dmYkmxcd/ykrNNSBBDv
-	 2qRRjKlZ1M9kZIAAC7zm0ycFg0E7XgS9WXySvJd+z1D2bYhx1yhRm80AGa7RgMaZ32
-	 CjzdQJjlGsY0UUHAaWh9JgkxiRi59Uj3qEsoYSppmNqiATJp2xu74ml05QnCIK24GO
-	 w2jY8CIgfgm9w==
-Date: Tue, 4 Jun 2024 17:42:50 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 1/4] perf hist: Factor out __hpp__fmt_print()
-Message-ID: <Zl-0igwvs8EuzOMs@google.com>
-References: <20240603224412.1910049-1-namhyung@kernel.org>
- <20240603224412.1910049-2-namhyung@kernel.org>
- <Zl8tvVPEfLM8_T_z@x1>
+	s=arc-20240116; t=1717548440; c=relaxed/simple;
+	bh=ANXb6zc3UuSOyX6FxuEvTkWNM9eC6npStLm/IruWE68=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=D+YClYPMo1F1K5HyXBK+BhMStvG9q8llgc8Nuh4rOIlkY+srFx5/Lp/bI6K0kSUFwvRMMRkbC3sWXGkdkILGKcKL17IE+y0Uhg9Mi1lPUI98xwbyulh9h06TDNr6A2CeCdwRqoGhENOHChWpqbxpQQqJCsei8ogpyy10pZfVyrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=kP8qrqGF; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Received: from [192.168.68.112] (ppp118-210-171-248.adl-adc-lon-bras34.tpg.internode.on.net [118.210.171.248])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id DBD032009F;
+	Wed,  5 Jun 2024 08:47:13 +0800 (AWST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1717548435;
+	bh=ANXb6zc3UuSOyX6FxuEvTkWNM9eC6npStLm/IruWE68=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=kP8qrqGFDNRLThPf7QY2mccgHy7qaTo0F9H6onVvhw3Bll10+LvUt/xZHTaGwhRFd
+	 FkCyVVh2EZ4k/nTG0FgLSkZhXqMDmNP81hUXuZWMN9qgiEL1724OhCIioAvYGBf5tJ
+	 ol61Gx0duyW5kbktYsE/UQ2jdzS0KCKAJuFU9UyjqrBavlAV8K/CPUlkHCAo7zlG8L
+	 DheyAK0GqUPhpqqQ0cO0BgVW7khE0vzcO2AEMiy4n4vrQiOvTA4TBaneVkkUlMJ8nc
+	 nLriEZvSjEeUtCCUvFf/TWjsI4F3aXkYfNCOFlhve96arT+AcfBZJZkgS4PUKrAOGi
+	 tOtafZ0wA/TqQ==
+Message-ID: <0908995dfd2181e687181bd1b075c4cb27624e94.camel@codeconstruct.com.au>
+Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: aspeed: Use block syntax for
+ function and groups
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Rob Herring <robh@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley
+ <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Wed, 05 Jun 2024 10:17:13 +0930
+In-Reply-To: <20240604192755.GA1065421-robh@kernel.org>
+References: 
+	<20240531-dt-warnings-gpio-ast2600-pinctrl-funcs-groups-v1-0-a6fe2281a1b8@codeconstruct.com.au>
+	 <20240531-dt-warnings-gpio-ast2600-pinctrl-funcs-groups-v1-1-a6fe2281a1b8@codeconstruct.com.au>
+	 <20240604192755.GA1065421-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Zl8tvVPEfLM8_T_z@x1>
 
-On Tue, Jun 04, 2024 at 12:07:41PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Mon, Jun 03, 2024 at 03:44:09PM -0700, Namhyung Kim wrote:
-> > Split the logic to print the histogram values according to the format
-> > string.  This was used in 3 different places so it's better to move out
-> > the logic into a function.
-> 
-> But are all really equivalent? I had difficulty following it, perhaps it
-> would be better to introduce the function and then go on making one by
-> one use it instead of doing it all at once?
+On Tue, 2024-06-04 at 14:27 -0500, Rob Herring wrote:
+> On Fri, May 31, 2024 at 12:32:47PM +0930, Andrew Jeffery wrote:
+> > The expansion makes the documents a lot longer, but it's easier to
+> > review changes to functions and groups when we're not having to deal
+> > with line wrapping.
+>=20
+> Do you really expect to be updating this frequently? I would leave it=20
+> as-is, but whatever you decide.
 
-Sorry, I agree the code looks confusing.  But they are equivalent and
-just to print the value in a different way.
+I don't expect to be updating it frequently. However it's happened
+occasionally in the past and the diff chaos irks me. So I prefer we
+explode it.
 
-> 
-> So in the end we have:
-> 
-> static int __hpp__fmt_print(struct perf_hpp *hpp, struct hists *hists, u64 val,
-> 			    int nr_samples, const char *fmt, int len,
-> 			    hpp_snprint_fn print_fn, enum perf_hpp_fmt_type fmtype)
-> {
-> 	if (fmtype == PERF_HPP_FMT_TYPE__PERCENT) {
-> 		double percent = 0.0;
-> 		u64 total = hists__total_period(hists);
-> 
-> 		if (total)
-> 			percent = 100.0 * val / total;
-> 
-> 		return hpp__call_print_fn(hpp, print_fn, fmt, len, percent);
-> 	}
-> 	if (fmtype == PERF_HPP_FMT_TYPE__AVERAGE) {
-> 		double avg = nr_samples ? (1.0 * val / nr_samples) : 0;
-> 
-> 		return hpp__call_print_fn(hpp, print_fn, fmt, len, avg);
-> 	}
-> 
-> 	return hpp__call_print_fn(hpp, print_fn, fmt, len, val);
-> }
-> 
-> I.e. we do something with the last arg for hpp__call_print_fn() for the
-> PERF_HPP_FMT_TYPE__PERCENT and PERF_HPP_FMT_TYPE__AVERAGE fmtype's, but
-> we don't check for those fmtypes on each of the places that we now call
-> __hpp__fmt_print(), right?
-> 
-> That while (idx_delta--) cases is only interested in !=PERF_HPP_FMT_TYPE__RAW...
-> 
-> Nah, after trying to describe the confusion I think I clarified it,
-> probably leave it as you did :-\
+>=20
+> > Signed-off-by: Andrew Jeffery <andrew@codeconstruct.com.au>
+> > ---
+>=20
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-:)
+Thanks.
 
-The 'while (idx_delta--)' part is just to fill the gap for entries
-without samples.  The value is always 0, so it only cares the data type
-(double or u64) in the format string.  RAW needs u64 while PERCENT and
-AVERAGE need double.
-
-Thanks,
-Namhyung
-
-  
-> > +++ b/tools/perf/ui/hist.c
-> > @@ -23,35 +23,42 @@
-> >  	__ret;							\
-> >  })
-> >  
-> > -static int __hpp__fmt(struct perf_hpp *hpp, struct hist_entry *he,
-> > -		      hpp_field_fn get_field, const char *fmt, int len,
-> > -		      hpp_snprint_fn print_fn, enum perf_hpp_fmt_type fmtype)
-> > +static int __hpp__fmt_print(struct perf_hpp *hpp, struct hists *hists, u64 val,
-> > +			    int nr_samples, const char *fmt, int len,
-> > +			    hpp_snprint_fn print_fn, enum perf_hpp_fmt_type fmtype)
-> >  {
-> > -	int ret;
-> > -	struct hists *hists = he->hists;
-> > -	struct evsel *evsel = hists_to_evsel(hists);
-> > -	char *buf = hpp->buf;
-> > -	size_t size = hpp->size;
-> > -
-> >  	if (fmtype == PERF_HPP_FMT_TYPE__PERCENT) {
-> >  		double percent = 0.0;
-> >  		u64 total = hists__total_period(hists);
-> >  
-> >  		if (total)
-> > -			percent = 100.0 * get_field(he) / total;
-> > +			percent = 100.0 * val / total;
-> >  
-> > -		ret = hpp__call_print_fn(hpp, print_fn, fmt, len, percent);
-> > -	} else if (fmtype == PERF_HPP_FMT_TYPE__AVERAGE) {
-> > -		double average = 0;
-> > +		return hpp__call_print_fn(hpp, print_fn, fmt, len, percent);
-> > +	}
-> >  
-> > -		if (he->stat.nr_events)
-> > -			average = 1.0 * get_field(he) / he->stat.nr_events;
-> > +	if (fmtype == PERF_HPP_FMT_TYPE__AVERAGE) {
-> > +		double avg = nr_samples ? (1.0 * val / nr_samples) : 0;
-> >  
-> > -		ret = hpp__call_print_fn(hpp, print_fn, fmt, len, average);
-> > -	} else {
-> > -		ret = hpp__call_print_fn(hpp, print_fn, fmt, len, get_field(he));
-> > +		return hpp__call_print_fn(hpp, print_fn, fmt, len, avg);
-> >  	}
-> >  
-> > +	return hpp__call_print_fn(hpp, print_fn, fmt, len, val);
-> > +}
-> > +
-> > +static int __hpp__fmt(struct perf_hpp *hpp, struct hist_entry *he,
-> > +		      hpp_field_fn get_field, const char *fmt, int len,
-> > +		      hpp_snprint_fn print_fn, enum perf_hpp_fmt_type fmtype)
-> > +{
-> > +	int ret;
-> > +	struct hists *hists = he->hists;
-> > +	struct evsel *evsel = hists_to_evsel(hists);
-> > +	char *buf = hpp->buf;
-> > +	size_t size = hpp->size;
-> > +
-> > +	ret = __hpp__fmt_print(hpp, hists, get_field(he), he->stat.nr_events,
-> > +			       fmt, len, print_fn, fmtype);
-> > +
-> >  	if (evsel__is_group_event(evsel)) {
-> >  		int prev_idx, idx_delta;
-> >  		struct hist_entry *pair;
-> > @@ -72,30 +79,16 @@ static int __hpp__fmt(struct perf_hpp *hpp, struct hist_entry *he,
-> >  
-> >  			while (idx_delta--) {
-> >  				/*
-> > -				 * zero-fill group members in the middle which
-> > -				 * have no sample
-> > +				 * zero-fill group members in the middle which have
-> > +				 * no samples, pair->hists is not correct but it's
-> > +				 * fine since the value is 0.
-> >  				 */
-> > -				if (fmtype != PERF_HPP_FMT_TYPE__RAW) {
-> > -					ret += hpp__call_print_fn(hpp, print_fn,
-> > -								  fmt, len, 0.0);
-> > -				} else {
-> > -					ret += hpp__call_print_fn(hpp, print_fn,
-> > -								  fmt, len, 0ULL);
-> > -				}
-> > +				ret += __hpp__fmt_print(hpp, pair->hists, 0, 0,
-> > +							fmt, len, print_fn, fmtype);
-> >  			}
-> >  
-> > -			if (fmtype == PERF_HPP_FMT_TYPE__PERCENT) {
-> > -				ret += hpp__call_print_fn(hpp, print_fn, fmt, len,
-> > -							  100.0 * period / total);
-> > -			} else if (fmtype == PERF_HPP_FMT_TYPE__AVERAGE) {
-> > -				double avg = nr_samples ? (period / nr_samples) : 0;
-> > -
-> > -				ret += hpp__call_print_fn(hpp, print_fn, fmt,
-> > -							  len, avg);
-> > -			} else {
-> > -				ret += hpp__call_print_fn(hpp, print_fn, fmt,
-> > -							  len, period);
-> > -			}
-> > +			ret += __hpp__fmt_print(hpp, pair->hists, period, nr_samples,
-> > +						fmt, len, print_fn, fmtype);
-> >  
-> >  			prev_idx = evsel__group_idx(evsel);
-> >  		}
-> > @@ -104,15 +97,11 @@ static int __hpp__fmt(struct perf_hpp *hpp, struct hist_entry *he,
-> >  
-> >  		while (idx_delta--) {
-> >  			/*
-> > -			 * zero-fill group members at last which have no sample
-> > +			 * zero-fill group members at last which have no sample.
-> > +			 * the hists is not correct but it's fine like above.
-> >  			 */
-> > -			if (fmtype != PERF_HPP_FMT_TYPE__RAW) {
-> > -				ret += hpp__call_print_fn(hpp, print_fn,
-> > -							  fmt, len, 0.0);
-> > -			} else {
-> > -				ret += hpp__call_print_fn(hpp, print_fn,
-> > -							  fmt, len, 0ULL);
-> > -			}
-> > +			ret += __hpp__fmt_print(hpp, evsel__hists(evsel), 0, 0,
-> > +						fmt, len, print_fn, fmtype);
-> >  		}
-> >  	}
-> >  
-> > -- 
-> > 2.45.1.288.g0e0cd299f1-goog
+Andrew
 
