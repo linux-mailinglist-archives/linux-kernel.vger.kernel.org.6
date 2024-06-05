@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-201589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 697B48FC086
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:25:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9C428FC088
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:25:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC95E1F219BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:25:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C0B41F21934
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA77AF503;
-	Wed,  5 Jun 2024 00:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEF7125CC;
+	Wed,  5 Jun 2024 00:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Bon46oDt"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="B2FO8N5t"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2C9DDCB
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 00:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900DFEAFA
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 00:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717547065; cv=none; b=DuC4uY01qK21BPhRxaJanlws8n17jnIaIObojjZtIusXe0nv9E9nKPgkyNScRv+bAZph5/QdrnUx/PbTiaNmNspquGYjiQ/jtAH7+FnaKj1YKWglOGl8UG1+qBs1usSRwVLmDKc3mBEX3kCn0UqjGHOA2vd3wUALak+8C6y4vQI=
+	t=1717547066; cv=none; b=aEemLnrBE99jzdDp7+Cc6ZXMGUCco8PuLfyTOJclDYSb+or/5pnm/ORqj5ZmoBEZpcAubE+ViClUFftV5ScmxFwhqrna9fasvwuO5waNSORpq1U2bHVGjSm4zS4ZSidqERyUn1xro4juHnY59fTeNGnS5joXxzn97gcRTkewCLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717547065; c=relaxed/simple;
-	bh=D0NAyK1OqDOveZZt1LmhU8rHOg6ppveTM9A/nwy9/4k=;
+	s=arc-20240116; t=1717547066; c=relaxed/simple;
+	bh=PuPvW9S3Ct7nj+DWpsKp/UBw0BJInGtZwK+xlTrUxiM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Dxfsfcg/Tq5VNNUVhZy5bN+V+ulwW3kgxZGkqVUnCTJd+yYhdyPvvD1vESFHKtyaslMEKGyA52TJKWPYZtBWdWtmcjXiEC6kHx65wiFSf8A3DxiF/2/SFtuHacSC+lPqGJyoLiyNafPboGmbDbRHRjTAuUXLU/Sf/lMw2tG1F9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Bon46oDt; arc=none smtp.client-ip=209.85.214.172
+	 MIME-Version; b=Vbrx/QJZHAAU8p1lxjNchPSb3edD8W3dguiKf/B1vv5cFBZV5wuX2XLv0ztsaJANJ5BOVxZ8piss9MhDfsQmf8NcLwCfzXL7hLr0Xh2WaqOAaU+t/aOxNSGE7jd68VUvBJ08Ke3/MQe2RvCVS7+KJWuKWiGVa+gzbh3dLVzsnhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=B2FO8N5t; arc=none smtp.client-ip=209.85.215.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f692d6e990so16283105ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 17:24:23 -0700 (PDT)
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-6d4bf8eb8e2so771549a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 17:24:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717547063; x=1718151863; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1717547065; x=1718151865; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bzvwGuJ+WTCRog8EdqXF+Obfr3JYyQtoUfl83gDvzVE=;
-        b=Bon46oDt5tLyGsoUuB98dBH6L6HlqRawDCoYbzjepULVmqZT7hFP/ZyRoUTW+5WmRl
-         GBQTIZbZ0pJbEhR2MxHyZ6Xfqxj2rlrmJvm56qgprX/0AfiecvvDhtCzjHQyu11F+2q8
-         69j/9/ySh4SC4y7WYGgr0vo6tgP6Tao0vsFhQ=
+        bh=B1A9rs7TtWcsH1JSfCCKsqVamskJmPgnyBU2yqNCV6s=;
+        b=B2FO8N5tCcpcN3EitYUgwZUfs+5dtaK1c7t0EJM3wqkLcQbcQ25TZY9JmT2OEqFqpZ
+         e1M1SMJPgReX5d37tlMEKG9JY8lasyKNCXsRXFZ4HqozeHJFCYFrAD/oiX9VYgWNKVt4
+         /e3OPRpbCM/DrGDe2AsVvRXVgXLksoBtqxXPY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717547063; x=1718151863;
+        d=1e100.net; s=20230601; t=1717547065; x=1718151865;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bzvwGuJ+WTCRog8EdqXF+Obfr3JYyQtoUfl83gDvzVE=;
-        b=VF3SPl/5XImko7Kj9dQJSahX905DFfBlLto49RT5zrmR5ueixDbjq91vZi5m4b32H+
-         3o9BVRyb94xMZB6DP5RM/20n/ZyFRlPOR86I/T0igrsdbGjUQIsskMrG9+94/5lpMGVO
-         KBx9sdoKP5C7H+AJksvoYjsyKzxEMbtojqBc6IAZRuN5OTVfnXTxxG63cnHWusD3FqGL
-         Trep+YFWc5nr0dx9/E+yC/GHAoGFwS6zczHlBCDikaOQ4G/CosO//qiiLIVkG/VTBnya
-         xUt6RHWnHmVK/uXIHvXotF6hjJ9SHPQ5ZkQtEN1ID2315sNMaQTgGMUYB78wuGu5+ATV
-         j21w==
-X-Forwarded-Encrypted: i=1; AJvYcCXNI7xxyKLsvP0LPsUybw7aKQQmrQrnKGVr/fhEqTVK3ObinqHrnHMoWtvzhJx57MHtNNVOX5+Z/3VX6bYU4THviPq4I19odlinowBD
-X-Gm-Message-State: AOJu0YzprVztCM7dqiVgI81comiS8SJGJyZLahnIFV68Sr8Tkd4UefZU
-	HklXpzG+XN5q+uNY1Zk9nlrpWRF8g6GvNPnK6bP8Tc4+kMt0BGaetVAtawPAGw==
-X-Google-Smtp-Source: AGHT+IElsoNXkv7mUljM8/UDK3zzl3IwJ2DQTSHMSmNYHfMB/j0jhxzWAT3nNtc8jJhxnwRjLD3uqA==
-X-Received: by 2002:a17:902:cec4:b0:1f6:7f8f:65c6 with SMTP id d9443c01a7336-1f6a5a10295mr15071235ad.24.1717547062977;
-        Tue, 04 Jun 2024 17:24:22 -0700 (PDT)
+        bh=B1A9rs7TtWcsH1JSfCCKsqVamskJmPgnyBU2yqNCV6s=;
+        b=VTFVcZCADzUt4cAMKJFpwpp1WdJ1CHQnZXqtCjk4KbsHzUXnRo+jvFaFmwNQERrkSm
+         gPP3/ZH0DvVV5Xaa7ZRH1Lrm/vkoj7nfk5NJfMq66zl0McicF+xKEuP7vNe59vZklHfG
+         4/C6hxW6kobZpduorZ04lY8UzH5o8/m3KdnTHgrxrjIZ1q6MfN5XiKKgm5JqcFJeqsQR
+         dHF/fWOOy7ujc8twq4RmavDO6w3lPoGcxB28pPQ0y4G9JN2qNth8dgbzPRY3FZNDX4be
+         WBZ88uOS+53qhi4I5JGoYljIL9gCOK2S1glzWexc8x8pXUaHbrST0ZkoKs6uv4h5L6Q9
+         5rFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMAdWBlthIUZ8Dofdo2YYJLn+eY+F/a8PbOiKNlgi1LmBmQV99t60Z+nZyeu6OvsnEa9twEEWURYaI8e3r0Nk+CjZeaDdGhpbJFuYa
+X-Gm-Message-State: AOJu0YxUhxx8MFcXZhcGGw9QXRM6noN+wUSEXuxsIXyF7pMEsk3xOuld
+	H8odB7msyb6No3EAmpkMdWee3wkChiAF3RPh5tO/23T5t570pRcXVqj+JLSQmg==
+X-Google-Smtp-Source: AGHT+IGG+wEJhjmnOFnR17XFhvwO5ykeAXaDODSuz04Uiik7Ku3I2gOkgMKqETtCi2Cc8JKNST2MxA==
+X-Received: by 2002:a17:90a:db81:b0:2b6:7e55:2aad with SMTP id 98e67ed59e1d1-2c27daf65c1mr1092784a91.7.1717547064767;
+        Tue, 04 Jun 2024 17:24:24 -0700 (PDT)
 Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:3609:ff79:4625:8a71])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323dd862sm89032025ad.147.2024.06.04.17.24.20
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323dd862sm89032025ad.147.2024.06.04.17.24.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 17:24:22 -0700 (PDT)
+        Tue, 04 Jun 2024 17:24:24 -0700 (PDT)
 From: Douglas Anderson <dianders@chromium.org>
 To: dri-devel@lists.freedesktop.org,
 	Maxime Ripard <mripard@kernel.org>
@@ -78,9 +78,9 @@ Cc: Linus Walleij <linus.walleij@linaro.org>,
 	Stefan Mavrodiev <stefan@olimex.com>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 05/24] drm/panel: olimex-lcd-olinuxino: Stop tracking prepared/enabled
-Date: Tue,  4 Jun 2024 17:22:51 -0700
-Message-ID: <20240604172305.v3.5.I6a96d762be98321e02f56b5864359258d65d9da8@changeid>
+Subject: [PATCH v3 06/24] drm/panel: olimex-lcd-olinuxino: Don't call unprepare+disable at remove
+Date: Tue,  4 Jun 2024 17:22:52 -0700
+Message-ID: <20240604172305.v3.6.I4c79deffb7551ecfb0378302f8dee1275fd1c060@changeid>
 X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
 In-Reply-To: <20240605002401.2848541-1-dianders@chromium.org>
 References: <20240605002401.2848541-1-dianders@chromium.org>
@@ -92,12 +92,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As talked about in commit d2aacaf07395 ("drm/panel: Check for already
-prepared/enabled in drm_panel"), we want to remove needless code from
-panel drivers that was storing and double-checking the
-prepared/enabled state. Even if someone was relying on the
-double-check before, that double-check is now in the core and not
-needed in individual drivers.
+It's the responsibility of a correctly written DRM modeset driver to
+call drm_atomic_helper_shutdown() at shutdown time and that should be
+disabling / unpreparing the panel if needed. Panel drivers shouldn't
+be calling these functions themselves.
+
+A recent effort was made to fix as many DRM modeset drivers as
+possible [1] [2] [3] and most drivers are fixed now.
+
+Unfortunately, grepping mainline for this panel's compatible string
+shows no hits, so we can't be 100% sure if the DRM modeset driver used
+with this panel has been fixed. If it is found that the DRM modeset
+driver hasn't been fixed then this patch could be temporarily reverted
+until it is.
+
+[1] https://lore.kernel.org/r/20230901234015.566018-1-dianders@chromium.org
+[2] https://lore.kernel.org/r/20230901234202.566951-1-dianders@chromium.org
+[3] https://lore.kernel.org/r/20230921192749.1542462-1-dianders@chromium.org
 
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
 Acked-by: Maxime Ripard <mripard@kernel.org>
@@ -110,103 +121,23 @@ Changes in v2:
 - Only handle 1 panel per patch.
 - Split removal of prepared/enabled from handling of remove/shutdown.
 
- .../drm/panel/panel-olimex-lcd-olinuxino.c    | 41 -------------------
- 1 file changed, 41 deletions(-)
+ drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c b/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
-index 4819ada69482..8a687d3ba236 100644
+index 8a687d3ba236..94ae8c8270b8 100644
 --- a/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
 +++ b/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
-@@ -64,9 +64,6 @@ struct lcd_olinuxino {
- 	struct i2c_client *client;
- 	struct mutex mutex;
+@@ -251,9 +251,6 @@ static void lcd_olinuxino_remove(struct i2c_client *client)
+ 	struct lcd_olinuxino *panel = i2c_get_clientdata(client);
  
--	bool prepared;
--	bool enabled;
+ 	drm_panel_remove(&panel->panel);
 -
- 	struct regulator *supply;
- 	struct gpio_desc *enable_gpio;
- 
-@@ -78,30 +75,13 @@ static inline struct lcd_olinuxino *to_lcd_olinuxino(struct drm_panel *panel)
- 	return container_of(panel, struct lcd_olinuxino, panel);
+-	drm_panel_disable(&panel->panel);
+-	drm_panel_unprepare(&panel->panel);
  }
  
--static int lcd_olinuxino_disable(struct drm_panel *panel)
--{
--	struct lcd_olinuxino *lcd = to_lcd_olinuxino(panel);
--
--	if (!lcd->enabled)
--		return 0;
--
--	lcd->enabled = false;
--
--	return 0;
--}
--
- static int lcd_olinuxino_unprepare(struct drm_panel *panel)
- {
- 	struct lcd_olinuxino *lcd = to_lcd_olinuxino(panel);
- 
--	if (!lcd->prepared)
--		return 0;
--
- 	gpiod_set_value_cansleep(lcd->enable_gpio, 0);
- 	regulator_disable(lcd->supply);
- 
--	lcd->prepared = false;
--
- 	return 0;
- }
- 
-@@ -110,27 +90,11 @@ static int lcd_olinuxino_prepare(struct drm_panel *panel)
- 	struct lcd_olinuxino *lcd = to_lcd_olinuxino(panel);
- 	int ret;
- 
--	if (lcd->prepared)
--		return 0;
--
- 	ret = regulator_enable(lcd->supply);
- 	if (ret < 0)
- 		return ret;
- 
- 	gpiod_set_value_cansleep(lcd->enable_gpio, 1);
--	lcd->prepared = true;
--
--	return 0;
--}
--
--static int lcd_olinuxino_enable(struct drm_panel *panel)
--{
--	struct lcd_olinuxino *lcd = to_lcd_olinuxino(panel);
--
--	if (lcd->enabled)
--		return 0;
--
--	lcd->enabled = true;
- 
- 	return 0;
- }
-@@ -195,10 +159,8 @@ static int lcd_olinuxino_get_modes(struct drm_panel *panel,
- }
- 
- static const struct drm_panel_funcs lcd_olinuxino_funcs = {
--	.disable = lcd_olinuxino_disable,
- 	.unprepare = lcd_olinuxino_unprepare,
- 	.prepare = lcd_olinuxino_prepare,
--	.enable = lcd_olinuxino_enable,
- 	.get_modes = lcd_olinuxino_get_modes,
- };
- 
-@@ -264,9 +226,6 @@ static int lcd_olinuxino_probe(struct i2c_client *client)
- 		lcd->eeprom.num_modes = 4;
- 	}
- 
--	lcd->enabled = false;
--	lcd->prepared = false;
--
- 	lcd->supply = devm_regulator_get(dev, "power");
- 	if (IS_ERR(lcd->supply))
- 		return PTR_ERR(lcd->supply);
+ static const struct of_device_id lcd_olinuxino_of_ids[] = {
 -- 
 2.45.1.288.g0e0cd299f1-goog
 
