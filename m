@@ -1,115 +1,143 @@
-Return-Path: <linux-kernel+bounces-202178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEAE48FC8BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:15:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E5A88FC8BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46BDAB22E98
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:15:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC6EBB22AB5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2F519048D;
-	Wed,  5 Jun 2024 10:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34451419B3;
+	Wed,  5 Jun 2024 10:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="P+S9AzXT"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pxVqLWi/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RWOe6OyL"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3857A190076
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 10:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8944719006E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 10:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717582510; cv=none; b=nNgAgqrrXoPWnLIfRR2a4+FeZy+KQyeznQh1ihCN1xBz8S9jaIkHnE1fITDVf+G4zhBc2jjS90lVYMtNiGZJWKmPJF3GpVhciEaDY2cLbyRmmYlePVgfaGohBCb+ZcGbnfAmJfoLfuMptgbeqQpOscQArZ2R1ssBjV4WbcVJXr0=
+	t=1717582510; cv=none; b=EIxDVbTjPcVdnLT1kVdTEEGPeW/cZJdBH5CB/+5RvLuz21YPIfbFjqKeCabtpeAiSaFsQV9vHr2DeFJeS6QOPaGpQmBe+olOXOkCITsmy93HeL0YRyLqVINeywAmTGO/wJeFGtKijLz4PDywzdvLgSrN+9619KOdBAwq+cOfVvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717582510; c=relaxed/simple;
-	bh=HtGAESEB5A4ifQnCilFXSr6+jFmp7L7fR5ovmv6VOLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ai4hAGUsdcMN8XyzGn5hhptmvYjOTe0bxKZxllCU3w07fWodAc+DOnu8ts9RRww1QcNuGYMhEGx0k4+f8khFJBPPRxEy3QvewDZeENY1gE/dTakxwHayZi+3CzVi4TntXLSxMDyDmEwT+qoLbu0fmzIWwadMc5s7g1hWRchukPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=P+S9AzXT; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-35dceef429bso404905f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 03:15:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1717582506; x=1718187306; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KxyCUVpRxT9r4WcxUsE/s7yKzpPU3+jmGl5p/EECmd8=;
-        b=P+S9AzXT4qUzdg3Q8sFz20HLKR3Y48m0Cjf4GiZLRdtHEAB1cSed60Wcm0N83kSpMR
-         snoi6SRAc18AOnjuBZBdxS46x1Q3KYD7ZRr9wZQY/ipa/4WaXjWYJ4Z2tRnrTqkYIhTd
-         PbT5uIASqHG3c0+xpX12vLEVfzoF0jubg1I2opMfsNu6TJ/+XAtLjFONE10t7eM7eZtt
-         5364hpudXMjzX+v3KGI9fcNcJHIe3nxhH5HUcFQLmh9Y4lnHCr52MdEgQYNhZJ1uwe6t
-         sprBOlsxX7RXWOIj/yZ9IBEG0QqpYpb0UpRp2YHvKCFG3egK+8VC/AqMIl037TvgF2Cb
-         duvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717582506; x=1718187306;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KxyCUVpRxT9r4WcxUsE/s7yKzpPU3+jmGl5p/EECmd8=;
-        b=B7bVb/46/C+oPTarLKvLQGsVzS/b3r/3rDEus3e2O23dhE7+VuSgU3GBiegWo1B7e6
-         j1EgmlxQ3v6OeDkunRZNbG+q6dFgQtO66mPVwX3uvqQuYqIp5dFkNIsp34EsqpYx3jvg
-         KpadYEOmUxkcTp5joc4WK1jz/No72glLG3yitwo0z6Ipfkag/iSwHZnva0oAexlJN2h2
-         vOwODBIqnSSC6nptwnG+0NCltfTzJVuFhh5Rrqcnlb4ANyd3RJXU71+KzRvWUusUZUKJ
-         tnbSje59kqqVZOAz4ZSG3o40YtjWD1guGiYmCGFSP7a7lxQpitftpbQNIgwhHrjEjwZZ
-         dToQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVgS7r9ut02ZTeY4zFakQuLJhjy31ABy1cZPZJWTnQ/jFzzuIzR6+0FkzEpKugeTU88cZWd9WUxINwuDCMxJCJIwlQPqIDocETrjVme
-X-Gm-Message-State: AOJu0YzCh9TrFrqZi9fPCTi3hNRjo9GinrR0BlNKLSnDuC7mvulXHeJj
-	XWtLQH++WIVUkquFTFnWO/6R4uAaM4mpx/F74qn0O+8YkSYlpVlVEI0RAEr0KsnwYLOXhj9+tAG
-	W
-X-Google-Smtp-Source: AGHT+IHlsyaSK+z56mrklM5jykYlSjK8tWb2sNaVuZk0ryedcd43/wbhrOlsz6C5ljOByT6CxIWoQQ==
-X-Received: by 2002:adf:fcca:0:b0:35a:e093:7682 with SMTP id ffacd0b85a97d-35e7c591326mr4996354f8f.30.1717582506511;
-        Wed, 05 Jun 2024 03:15:06 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703599758b6sm1426482b3a.173.2024.06.05.03.15.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 03:15:06 -0700 (PDT)
-Date: Wed, 5 Jun 2024 12:14:56 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-	John Ogness <john.ogness@linutronix.de>
-Subject: Re: [PATCH linux-next] printk: nbcon: Fix
- nbcon_cpu_emergency_flush() when preemptible
-Message-ID: <ZmA6oGrO1YVF-IYj@pathway.suse.cz>
-References: <87zfrzvhsp.fsf@jogness.linutronix.de>
- <ZmA5oIkImclKM0vx@pathway.suse.cz>
+	bh=5FYlycc80OiaHBAK250WvdCEOOgG9oY85Bi0+i+GUhU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=SxlzqzFNaSy0LkVfkZwUzpIftxZfcgn/Bm6ZRvjLX2C0EGWOqBllVH9IQ/U9noobwh8Bx0qOjCNSlpPmWVIAKwVL9lKnfvsTHOmrkzHrVwzjcLyhhFMOrZyHW5uSc0iO3V4lpCDyFlFfa0Y6z6RgPUJfq4HDf6dIihjTKoDHRwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pxVqLWi/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RWOe6OyL; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Anna-Maria Behnsen <anna-maria@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717582500;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0AGW4NPcPgZ+kllaz1iPcGGi2RTc/mz6X+/BfY/cPz0=;
+	b=pxVqLWi/Yb7a/LrLOJggqlpcYlf6UrMtTLNLpDVqZg0QlLi+CTc0XfTb+/poAi/GcXDmkX
+	qvlJ3Yl5BQKDGI32Nd8o+YhOMGQ/XndHUKh+d2DYC5Pu2GwfbzVmYGTZ1WH3hyB7QB0iAY
+	S8nsQLC/dLKtYjn8fM5RsbSdkNV+bi+j53TIy4pom4FcmR5s+KU8rTKPzZRMijtjWMDru1
+	NmrFibIHB/mHOx/FWvEn/5kt43i0ysP+D3XfrkHsOfVA1thz/y5Ev/ksq+FgO+SeFb3gXa
+	cSSbbAxDmekJ2wvP/X8M96gzV828929XUtrHOrSKMh+1krLdObJGggLC+m5Vog==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717582500;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0AGW4NPcPgZ+kllaz1iPcGGi2RTc/mz6X+/BfY/cPz0=;
+	b=RWOe6OyLnPQkqmEDbUsgM6r2SGakTwisP2BQzYobq5K7UJMFKqbw24F9h3+s5zRwnAWpvp
+	b/FKYIujy4Of3oAA==
+To: Phil Chang <phil.chang@mediatek.com>, phil.chang@mediatek.com
+Cc: frederic@kernel.org, tglx@linutronix.de, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, jy.ho@mediatek.com,
+ alix.wu@mediatk.com
+Subject: Re: [PATCH] hrtimer: check hrtimer with a NULL function
+In-Reply-To: <20240605084149.6420-1-phil.chang@mediatek.com>
+References: <20240605084149.6420-1-phil.chang@mediatek.com>
+Date: Wed, 05 Jun 2024 12:15:00 +0200
+Message-ID: <87plsvvgpn.fsf@somnus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmA5oIkImclKM0vx@pathway.suse.cz>
+Content-Type: text/plain
 
-On Wed 2024-06-05 12:10:50, Petr Mladek wrote:
-> On Wed 2024-06-05 11:57:34, John Ogness wrote:
-> > nbcon_cpu_emergency_flush() can be called in a preemptible
-> > context. In that case the CPU is not in an emergency state.
-> > However, in order to see that the CPU is not in an emergency
-> > state (accessing the per-cpu variable), preemption must be
-> > disabled.
-> > 
-> > Disable preemption when checking the CPU state.
-> > 
-> > Reported-by: Juri Lelli <juri.lelli@redhat.com>
-> > Closes: https://lore.kernel.org/aqkcpca4vgadxc3yzcu74xwq3grslj5m43f3eb5fcs23yo2gy4@gcsnqcts5tos
-> > Fixes: 46a1379208b7 ("printk: nbcon: Implement emergency sections")
-> > Signed-off-by: John Ogness <john.ogness@linutronix.de>
-> 
-> Great catch!
-> 
-> Reviewed-by: Petr Mladek <pmladek@suse.com>
-> 
-> I am going to push it...
+Hi,
 
-Juri, should/could I add your Tested-by ?
+Phil Chang <phil.chang@mediatek.com> writes:
 
-Best Regards,
-Petr
+> simillar with timers, check for timer->function == NULL.
+> If the pointer is NULL, discard the request silently.
+
+Can you please explain, why this change is required?
+
+The statement "similar to timers" is not a valid explaination as timer
+list timers and hrtimers are two different things. The function pointer
+for timer list timers is explicitly set to NULL in shutdown path to
+prevent unwanted rearming of the timer. For hrtimers there is no
+shutdown function implemented and function is never set to NULL by
+hrtimer code.
+
+> Signed-off-by: Phil Chang <phil.chang@mediatek.com>
+> ---
+>  kernel/time/hrtimer.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+> index 492c14aac642..72d6e7bc9cd9 100644
+> --- a/kernel/time/hrtimer.c
+> +++ b/kernel/time/hrtimer.c
+> @@ -1297,9 +1297,13 @@ void hrtimer_start_range_ns(struct hrtimer *timer, ktime_t tim,
+>  
+>  	base = lock_hrtimer_base(timer, &flags);
+>  
+> +	if (!timer->function)
+> +		goto out;
+
+When this happens, user of hrtimers do not follow the semantics of
+hrtimers which means this is a bug.
+
+> +
+>  	if (__hrtimer_start_range_ns(timer, tim, delta_ns, mode, base))
+>  		hrtimer_reprogram(timer, true);
+>  
+> +out:
+>  	unlock_hrtimer_base(timer, &flags);
+>  }
+>  EXPORT_SYMBOL_GPL(hrtimer_start_range_ns);
+> @@ -1667,6 +1671,11 @@ static void __run_hrtimer(struct hrtimer_cpu_base *cpu_base,
+>  	__remove_hrtimer(timer, base, HRTIMER_STATE_INACTIVE, 0);
+>  	fn = timer->function;
+>  
+> +	if (WARN_ON_ONCE(!fn)) {
+> +		/* Should never happen. */
+
+...same as above...
+
+> +		goto out;
+> +	}
+> +
+>  	/*
+>  	 * Clear the 'is relative' flag for the TIME_LOW_RES case. If the
+>  	 * timer is restarted with a period then it becomes an absolute
+> @@ -1710,6 +1719,7 @@ static void __run_hrtimer(struct hrtimer_cpu_base *cpu_base,
+>  	 * hrtimer_active() cannot observe base->running.timer == NULL &&
+>  	 * timer->state == INACTIVE.
+>  	 */
+> +out:
+>  	raw_write_seqcount_barrier(&base->seq);
+>  
+>  	WARN_ON_ONCE(base->running != timer);
+
+
+Thanks,
+
+	Anna-Maria
 
