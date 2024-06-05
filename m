@@ -1,118 +1,101 @@
-Return-Path: <linux-kernel+bounces-203334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43E7B8FD9A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 00:10:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 419638FD9A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 00:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 449141C222CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:10:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39F831C23FF4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C7815FA93;
-	Wed,  5 Jun 2024 22:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC3915FA78;
+	Wed,  5 Jun 2024 22:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="q0vBTPpB";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XjjhP+xH"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cxDr7PEj"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243C5154BE3;
-	Wed,  5 Jun 2024 22:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63623C28;
+	Wed,  5 Jun 2024 22:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717625404; cv=none; b=BZJXu56jn3kFVh0KG6nO6/ur7HUvMOB0xHKhOhusN2dXIRp/pR+/xgg2MQcYYv7GAEtpElLL4zQEAbXINUwe0HDRAVAc/nSdlDTZQcnrU7FN+KZd717Ye0SQjbwUEqnVjRGAogAj8nHZkxwc5jQIA2miPHHlFdsvxgbyQRAKGtg=
+	t=1717625419; cv=none; b=gnC+zZzoQegk6M3EIbGKY3BlI9scW+W2HC94OToZ4go+YSf0gSbI+3m+UKPvuFlfzPbSokUyZXx6Vo8yYaa/lqltcDYdu+71Jwp9+0+F1WXStxYRYJvqlHrJnidoYTujx0GXYo6GPG0JoCPaMlanuA9F5jGJhNPhiMwtkIWHXD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717625404; c=relaxed/simple;
-	bh=vm8NGhNASzRMkMaOMS4EF7ZBloPunZLMUUGqmPO/lHA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=F2yIw17hWVz4ZxyNeH5mtgg6/ieib2KIEtPSSEf1DZXSukaX80Pbc/KM7UWWiOPxnFiDly5Bwewwun7tuxrjAjzbK5QWTI1Dq9WeReoNB7s+YzgIB0H8EDJ820cTU+vWTtyVQ6wWW8GxFrJMVncOuYRhAG7HO/9z6UmlZzFswq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=q0vBTPpB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XjjhP+xH; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717625401;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c2R7l22UwY9yFUyciye1CZnuK81vaGKmVtMpyhY7fNc=;
-	b=q0vBTPpBnwtmF96XmlDkIlLdL9k3q/4F+8KN9VBJYQFohbydX/XM3NqRqDXlXYkzQkBGsh
-	GuhfK8kAFHKTiAhpp3WVibbaC9Dp4eJ5TVuS+MptAv1aG2fpZBaHKFPFIkYXJbdP7qjX/v
-	zj8l0/WtwrhTx+s2B8FYlV2QDERsmXKXZBCrt5g/u9v35jK+8x5T6d3sgeQdNms7l5eqkj
-	XC3f6mMwYOLFeOJIRkyIzn2+phLKa1JxXnfvry9cJbAYpdN7wjo47wxjzoDSYrWNdCkPm5
-	WulzyYoT4swk4DDfPukQFsPJ/O9ymePIVGRjnhSZFHxNOvpIwoXhZ9Oi3A8v4g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717625401;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c2R7l22UwY9yFUyciye1CZnuK81vaGKmVtMpyhY7fNc=;
-	b=XjjhP+xHuaQz77lvLGuBDqKymLfoK3Trc9n5qavwAXrGCMtMeuaYL36SFUf4DrlDJMYKCP
-	vAg+mTjVrptTHtCg==
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
- patches@lists.linux.dev
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-crypto@vger.kernel.org,
- linux-api@vger.kernel.org, x86@kernel.org, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Adhemerval Zanella Netto
- <adhemerval.zanella@linaro.org>, Carlos O'Donell <carlos@redhat.com>,
- Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Jann
- Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>, David
- Hildenbrand <dhildenb@redhat.com>
-Subject: Re: [PATCH v16 4/5] random: introduce generic vDSO getrandom()
- implementation
-In-Reply-To: <874ja73xx7.ffs@tglx>
-References: <874ja73xx7.ffs@tglx>
-Date: Thu, 06 Jun 2024 00:10:00 +0200
-Message-ID: <87v82n2g93.ffs@tglx>
+	s=arc-20240116; t=1717625419; c=relaxed/simple;
+	bh=4MtmmxRMBlxfNJ305JevlhUwnKyFWYAIWelpGhZ8Xhw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=IcHGz327ehQumCPhd7weSvwd2u7YENYTbEZlVsTpUK21/usbq4qpYHJfER2KC/kyfzz5bhcpTdHkuHfAos3zXF9XYmiU6eZYWZDiZHk8g3Udt4MXrbbGJI410tBD2YRRm1RSL/VC3ZI3BadmpqfUsgFyXVzAfu+C8aDClNtL5rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cxDr7PEj; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f44b594deeso2426525ad.2;
+        Wed, 05 Jun 2024 15:10:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717625417; x=1718230217; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iJJ1Il1hEBNHAhh0aQyG/BXiplrVKkTrWLDaHYRJumM=;
+        b=cxDr7PEj3OWN/Zdcry00kzuKWJ8wXEqwlZx0xDhGVCbVmI8PqGDiHEE/cu3208E2gW
+         d+7ZplvkEfeb/sDHGwWhGyh4IGul7B/T73qDUIhragF5drDEYz9BegZWUMgp4doB8cxf
+         3csIvs7OzMvUH2Wsyyy0Wx2qKDpnpuAsj3VZ+zXwuWIGNCxESqZLox859DmvczP1ELLU
+         dYXInkPVZTw02h3e9sfq6D/rFWYjosvSxX8ee5yrsqvi3+HO86y8cBFYTXHiNXQl+Ho/
+         XZWvlyR5vQBYkw1JLBxij38XbD7YCSFMVHCVJorCOSrCdpqbgjF2/ehhcm8WGY7bOTls
+         Qpxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717625417; x=1718230217;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iJJ1Il1hEBNHAhh0aQyG/BXiplrVKkTrWLDaHYRJumM=;
+        b=FNIwT5KhQI9RdLFwYyvMmjjIRWJNJGc8DKbImdeZ3BJpghR14mEFqECat0p4OMuVR/
+         GiQJSj4jEuM01GLuNRRXzIhuWYwZTIzOHEug4vJb0CE+JX/LJEkXmE3XxWJ+vXGLz3qr
+         ajzug1Ph0NIr2RozLDh8iwUUcKpncT9v8dmMXfW6adx/9YiVmpoE4QeWkgaZeswmbMBy
+         yrKQYfBHEBSmcBblKZ/hchLM9I16DltyJ2zyupmFbATjC/b4hU9GTRnFrXV/pP7fAJjh
+         czlk6vaBzoy6PnbnAG0tac7NSIlFiNpIiMrWLUJ1MZBfcBf37eLmuJF/sW2Y8tnrRHXt
+         DuCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQh4Sqd455GE5wq7U5GnuRyBqtSKJDToizBkDlZJXS2Lxznk99VPcecbxa4R0lj0tE1PAWIU6b3Cl/ZQn8Ghi9BDYRSQYIT6NclVt83pJR2sUwM5xhhaLk7ptMCzpMXmDrvjR4ljODFPdK8GOq
+X-Gm-Message-State: AOJu0YwFLVV6c3Vydw8rTHQBEs83enrICxG7bjfDwNNLmk1kURgeeGJP
+	FourESZrwpj1qUQ4b/VSR/OBtbxuaDpj0Yp4p0nOiYgtsYYTkReD
+X-Google-Smtp-Source: AGHT+IHRXnPN0u7Ps/6G42PH3KCbpcG6/xDZesLl4G01pVNLBwdTragYtQjUCPK7uxG6hIgrhxC+Qw==
+X-Received: by 2002:a17:902:fa4c:b0:1e0:bae4:48f9 with SMTP id d9443c01a7336-1f6a5a13943mr35800775ad.32.1717625417010;
+        Wed, 05 Jun 2024 15:10:17 -0700 (PDT)
+Received: from dev0.. ([49.43.162.143])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd75f14csm374425ad.21.2024.06.05.15.10.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 15:10:16 -0700 (PDT)
+From: Abhinav Jain <jain.abhinav177@gmail.com>
+To: keescook@chromium.org
+Cc: gpiccoli@igalia.com,
+	jain.abhinav177@gmail.com,
+	javier.carrasco.cruz@gmail.com,
+	julia.lawall@inria.fr,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	tony.luck@intel.com
+Subject: Re: [PATCH] pstore/ram: Replace of_node_put with __free() for automatic cleanup
+Date: Wed,  5 Jun 2024 22:10:10 +0000
+Message-Id: <20240605221010.22262-1-jain.abhinav177@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <202404241639.3F455ECCD@keescook>
+References: <202404241639.3F455ECCD@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Jason!
+On Wed, 24 Apr 2024, Kees Cook wrote:
+> Please don't move variable definitions into the middle of the function
+> body. :)
 
-On Wed, Jun 05 2024 at 23:03, Thomas Gleixner wrote:
-> On Tue, May 28 2024 at 14:19, Jason A. Donenfeld wrote:
->> + */
->> +#ifdef CONFIG_64BIT
->> +typedef u64 vdso_kernel_ulong;
->> +#else
->> +typedef u32 vdso_kernel_ulong;
->> +#endif
->
-> All of this is pointless because if a 32-bit application runs on a
-> 64-bit kernel it has to use the 64-bit 'generation'. So why on earth do
-> we need magic here for a 32-bit kernel?
->
-> Just use u64 for both and spare all this voodoo. We're seriously not
-> "optimizing" for 32-bit kernels.
+I have moved the parent_node declaration back to the top of the function body.
 
-All what happens on a 32-bit kernel is that the RNG will store the
-unsigned long (32bit) generation into a 64bit variable:
-
-	smp_store_release(&_vdso_rng_data.generation, next_gen + 1);
-
-As the upper 32bit are always zero, there is no issue vs. load store
-tearing at all. So there is zero benefit for this aside of slightly
-"better" user space code when running on a 32-bit kernel. Who cares?
-
-While staring at this I wonder where the corresponding
-smp_load_acquire() is. I haven't found one in the VDSO code.
-READ_ONCE() is only equivalent on a few architectures.
-
-But, what does that store_release() buy at all? There is zero ordering
-vs. anything in the kernel and neither against user space.
-
-If that smp_store_release() serves a purpose then it really has to be
-extensively documented especially as the kernel itself simply uses
-WRITE/READ_ONCE() for base_rng.generation.
-
-Thanks,
-
-         tglx
+Patch v2: 
+https://lore.kernel.org/all/20240605214944.22113-1-jain.abhinav177@gmail.com/
 
