@@ -1,113 +1,161 @@
-Return-Path: <linux-kernel+bounces-203197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 312898FD7C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:49:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C347B8FD7C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F7891C20A96
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:49:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62D54285267
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF9F15F304;
-	Wed,  5 Jun 2024 20:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F12E15F31F;
+	Wed,  5 Jun 2024 20:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aMfLYeEu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AXGTHy/Z"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A634913A897;
-	Wed,  5 Jun 2024 20:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D5E14A082;
+	Wed,  5 Jun 2024 20:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717620548; cv=none; b=IG1tw2oGZ3Al1Jn3LBADNnYODiGdaakBuQG5V0dBbKibvFLoksqxTcaRCEGs1PKey6dRtguYIQnPnxnTFWsYKb2T7gG/5NLa/V7/ynXcx6AC5nDw6ioEDWGuOyQuD9rr3xsd5AZTmXZZ2QF/jQ/goyHnojg/oHznQaePU9s/Nuw=
+	t=1717620614; cv=none; b=o3RANy3ojfn8hfPoEcjeKUhIXFkOCfYKNosn9iAsJaeIiUbqqRSJJNUEDS23nLdfqDDsV5oEdRLkPYsz7BXNB4opRcR5aK4QcIYI+CAobzRdmHWz6SZtRBxw/TSbesK7zvM9zCtoUW3HjUEHoygwdg0gljv/5gJNSwZcqAjGPXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717620548; c=relaxed/simple;
-	bh=iooQD+slmT5/eWMAszFqIGNDD4xIV6olB6rXYeIs3mY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mAYdol1aQaL1buXe9B24XIbE1uCe8AHNOPxnapDbjblfQA+jy5AebMxrNOD5STxG66oaPv1a2e3egA0Xzp2wlVlGBLWYZc0awrwqLgUoiecDr0WOwpUBWW1xJGEmx/H3+IQGGB9ygCpmna41XVuFiAUu4licXyK4+67aHHBdArg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aMfLYeEu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73D9BC2BD11;
-	Wed,  5 Jun 2024 20:49:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717620548;
-	bh=iooQD+slmT5/eWMAszFqIGNDD4xIV6olB6rXYeIs3mY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aMfLYeEuBubeoqkdrxTGu8FGk8qrxsWuUD1ofvn5w07AN0a7jqA2lD3VFU1b5kl0R
-	 ErO0KxJ76uD3JoBs9pb2kQGKKXZC2Ucpbs6ARKc8uO33tS2cDRuaw0pB2NgzFHF2Wg
-	 5H1/HWBh0ui2bl9MEVa4KPBY3bZ99RpECqF8vJtGaR7xchr8ElmQUa0cih6PqEaTgN
-	 0jeq2pn1dhgol6hiwVd+VZrahUlUB8yOupYOefRmnQenw9AoJLXODQuoYTIuOrCX1n
-	 R7SF4mdRMj+fK0OBbX6PWDInRrNSa/EbYwwze9bWEF9v8M8x5rIzzOK98OBhUGhoX2
-	 GJAymk0oCumYQ==
-Date: Wed, 5 Jun 2024 21:48:54 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [Bug Report] selftests: arm64: build errors
-Message-ID: <079b5dfc-b77e-4808-831a-c0d38c4923b4@sirena.org.uk>
-References: <5ec0f2f3-5259-41a9-a25d-5baf1680dd10@collabora.com>
- <7b7f4dd1-bc13-4827-84d6-20ebed7119b6@sirena.org.uk>
- <8e1e2f1d-a578-43c0-ad55-fb593967ac5e@collabora.com>
+	s=arc-20240116; t=1717620614; c=relaxed/simple;
+	bh=nFqzopE4yIBU+n0lvWvqybJhFArNaPc2r8aTMdrpla8=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bN1qyYJSgMhxo2EPpJVyNsZ5dJcUSP/xZYL1rmklwJqqKZ+yBw10gJpIW/EHEhZ50lpfxY1RPsPcJEmZYDerxHQ9cLsX+06Y+nUvtKCUJPdS4hZsmljymrwyjvdQAJsCBZjpvHYQaQdrzD9iVl+d78UOW0ablX+Wh61pBSqQXqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AXGTHy/Z; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a683868f463so26430666b.0;
+        Wed, 05 Jun 2024 13:50:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717620611; x=1718225411; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YLuQSn22Q0XbzYMrmg3FlopJe7yv4Si8pGo0Hy2H0g4=;
+        b=AXGTHy/ZZtXvT5ln8g0Crzfwm3BkKdd571BEIKt4WLWFs/E2ulucMCZK3aIyAVfZAs
+         0m7hKpwE2IzO1/H7WMeU2fF0G3g0uogoutvDIkFcQ/3FZ5I8r9PKWCSl2rYbVGbuzDtY
+         aOR2uAB/m4f3etA6W7PnsAFjT6q4v8CUQG6eBsCwJKmtomat2gCp3pRg8+UwDZ70jdk4
+         viHQY3NqiU2smPhBpBAEEjEq89/nccz0KHWpJpa4oZj0SlTMpDRiBGXSnkHujzHWvdqv
+         FK46b1Rf9kTDQ1PqHc6n9CCm5dgqDWGRaVOvRiyB+4YYkFhLTJXRBRpT1shAYIZhkegb
+         B+fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717620611; x=1718225411;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YLuQSn22Q0XbzYMrmg3FlopJe7yv4Si8pGo0Hy2H0g4=;
+        b=VmtKdu75toY+Myi4BBFFQB7TBW9oVWP3/11oMY2BF8sG5Al8O2xhl2Je4Enmty0G3m
+         18Kd6I6VehFWmCKcB2x/m2+XZKEUrJ6Pj8nnhjz+VPZzuDIkr4+deEEd6L0l019h09R+
+         Xw7kSBrbuJk7mTNgLz4kQcYOkux8VV4jWgniRXpi7oH9PEL+Xxj9UJJ7X1SS0PuHHMAe
+         lt65/mcupteK+UCZ5LFKzrlWqQLV7PNLL4zSd09oEsim3JfbdVkoHV3E0PU5iMGaIvmZ
+         zFf7q3K8m/oXToNMNPHggX552PCpOmR8KKvLwn9sw5Xam8QV7tWvtaZ/YgydZyKTO9fb
+         mrBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUagUSLodPVvw7OrSysj+qL6jzFpKUXrjom/qvGSWQnHvk/GfLc62sAo0yAcux4UkS+pwSZxYANWN8R0v7If6Wa1nhGaeRuY4WOPGLuthM6zWf7QnYSJCUXu5l7KC5aG7QJFgdbiT9hLIrEiO5q6a3S8jeHqDl83btpBdcZZcReUUuoWfhv
+X-Gm-Message-State: AOJu0Yy54A4t9a3KQP3Kgq4ZRosOotjoXcl1yhHZaR0Ox0OqqioI5mW+
+	yiMDMNR54874yb6Kp0j0dKnlBsLJtAP/9+zoGVmedKsKOwB3ydrH
+X-Google-Smtp-Source: AGHT+IF8cE1+5XhbMdO8HMQL7oNYqClJi3lw8FCpx+dmiOec2u+4Kd1Br9QIWGuYo31IHdqZOhwbWw==
+X-Received: by 2002:a17:906:840a:b0:a68:e1a8:9d2b with SMTP id a640c23a62f3a-a69a024f584mr230170466b.68.1717620610955;
+        Wed, 05 Jun 2024 13:50:10 -0700 (PDT)
+Received: from krava ([83.240.63.158])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68ba7fd6besm679871766b.190.2024.06.05.13.50.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 13:50:10 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 5 Jun 2024 22:50:08 +0200
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [RFC bpf-next 01/10] uprobe: Add session callbacks to
+ uprobe_consumer
+Message-ID: <ZmDPQH2uiPYTA_df@krava>
+References: <20240604200221.377848-1-jolsa@kernel.org>
+ <20240604200221.377848-2-jolsa@kernel.org>
+ <CAEf4BzbzgTzvnPRJ24gdhuxN02_w8iNNFn4URh0vEp-t69oPnA@mail.gmail.com>
+ <20240605175619.GH25006@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="JhYnV4hMM1CPNckb"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8e1e2f1d-a578-43c0-ad55-fb593967ac5e@collabora.com>
-X-Cookie: Simulated picture.
+In-Reply-To: <20240605175619.GH25006@redhat.com>
 
+On Wed, Jun 05, 2024 at 07:56:19PM +0200, Oleg Nesterov wrote:
+> On 06/05, Andrii Nakryiko wrote:
+> >
+> > so any such
+> > limitations will cause problems, issue reports, investigation, etc.
+> 
+> Agreed...
+> 
+> > As one possible solution, what if we do
+> >
+> > struct return_instance {
+> >     ...
+> >     u64 session_cookies[];
+> > };
+> >
+> > and allocate sizeof(struct return_instance) + 8 *
+> > <num-of-session-consumers> and then at runtime pass
+> > &session_cookies[i] as data pointer to session-aware callbacks?
+> 
+> I too thought about this, but I guess it is not that simple.
+> 
+> Just for example. Suppose we have 2 session-consumers C1 and C2.
+> What if uprobe_unregister(C1) comes before the probed function
+> returns?
+> 
+> We need something like map_cookie_to_consumer().
 
---JhYnV4hMM1CPNckb
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I guess we could have hash table in return_instance that gets 'consumer -> cookie' ?
 
-On Tue, Jun 04, 2024 at 01:13:45PM +0500, Muhammad Usama Anjum wrote:
-> On 6/3/24 6:31 PM, Mark Brown wrote:
-> > On Mon, Jun 03, 2024 at 06:28:16PM +0500, Muhammad Usama Anjum wrote:
+return instance is freed after the consumers' return handlers are executed,
+so there's no leak if some consumer gets unregistered before that
 
-> >> test.c: In function =E2=80=98handler=E2=80=99:
-> >> test.c:85:50: error: =E2=80=98PSR_BTYPE_MASK=E2=80=99 undeclared (firs=
-t use in this
-> >> function); did you mean =E2=80=98PSR_MODE_MASK=E2=80=99?
-> >>    85 |  write(1, &"00011011"[((uc->uc_mcontext.pstate & PSR_BTYPE_MAS=
-K)
+> 
+> > > +       /* The handler_session callback return value controls execution of
+> > > +        * the return uprobe and ret_handler_session callback.
+> > > +        *  0 on success
+> > > +        *  1 on failure, DO NOT install/execute the return uprobe
+> > > +        *    console warning for anything else
+> > > +        */
+> > > +       int (*handler_session)(struct uprobe_consumer *self, struct pt_regs *regs,
+> > > +                              unsigned long *data);
+> > > +       int (*ret_handler_session)(struct uprobe_consumer *self, unsigned long func,
+> > > +                                  struct pt_regs *regs, unsigned long *data);
+> > > +
+> >
+> > We should try to avoid an alternative set of callbacks, IMO. Let's
+> > extend existing ones with `unsigned long *data`,
+> 
+> Oh yes, agreed.
+> 
+> And the comment about the return value looks confusing too. I mean, the
+> logic doesn't differ from the ret-code from ->handler().
+> 
+> "DO NOT install/execute the return uprobe" is not true if another
+> non-session-consumer returns 0.
 
-> >> I've GCC 8 installed. I'm not expecting the errors because of a little
-> >> older compiler. Any more ideas about the failures?
+well they are meant to be exclusive, so there'd be no other non-session-consumer
 
-> > You need to run headers_install IIRC.
-
-> I'm running:
-> make headers && make -C tools/testing/selftests
-
-> I've tried gcc 12 as well.
-
-It's your system headers (or not finding the kernel ones anyway) rather
-that the compiler.  For PSR_BTYPE_MASK it's ptrace.h that's needed.
-
---JhYnV4hMM1CPNckb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZgzzUACgkQJNaLcl1U
-h9BxAgf/Wo+3F59fFxKwN2tfRUMG4wnzDNqfDur6Y3HdCHPXkeFySk5KbH9DJaKH
-rymjsMabTp2Tjq9eCeU1ceTa2jAiBLuOJxD83SblQXdyRWcnSy6+7PYYVzvdWrgP
-oJidYigkUWPSwCM8p/1B/ogwilVm9SY3eLY1n5vA5YRYXrdxVtvCOFRc/O7OB2NM
-pL6Odp9jippLJMUyBkyixv+e959tnPenBBQ1RGFqA01WWT/ytrZk8sanc4BMFwfb
-sc7Gk7gVrzKGjGcuoTPX3bU4EhBl2hFJ9JG38d07bkX60UpmKc9D8S84EvnqZW6F
-PynqM4Rgo9QJPf6m9leKtyayWn6LpA==
-=BwgQ
------END PGP SIGNATURE-----
-
---JhYnV4hMM1CPNckb--
+jirka
 
