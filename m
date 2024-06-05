@@ -1,189 +1,115 @@
-Return-Path: <linux-kernel+bounces-203360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA4F38FD9F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 00:37:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB88C8FD9EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 00:36:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A2A028688F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:37:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CCEB1F24892
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870E015FA7B;
-	Wed,  5 Jun 2024 22:37:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E89015FA89;
+	Wed,  5 Jun 2024 22:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFNBiP+0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dgme9dCS"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDE015ECC6;
-	Wed,  5 Jun 2024 22:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E22136E1F
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 22:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717627031; cv=none; b=cNGkWxfvHLxDWUMt9FsRjDJ1MVYXpKfyjIwLCfR7wJrpN3jm3Dp1z6AlmkDFYOUPsjxUubvbont2Me7XaxFuZ9dnyO1YzdNm2rmJstLymaOH5qDZECeyAuIr+/T0F0wUG5hUmKtp6d0lbTKZMYXQgOUxfdor/uvZk0lZQIe9RLs=
+	t=1717627010; cv=none; b=pEDIIyw8aO0y4h9s1FktwSXsQM/dHpQNXY3s3GwsjTlyMd12L8ZbRkxZglNnvQjIIKmp0OxqQzo/O7usrRYnqEqT1Hq6GvtfvjlK1hvUzW86exB2fq9tPIrJXvy+FLLN9HLOpNjZmTI6llMJGWS6kNvkA03h5dSZ3+KMRXOAltA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717627031; c=relaxed/simple;
-	bh=dVVjuhrnk9rcVfTcckSF8nLr2PRkHx3HB+XsjZZpYsM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=n6022leXRx+Y6o1pZg9tW8/4QNl4WaFqgScRiGnepFfwbNSG17mHWvI6Nsyi2uUkO32oGswqz0ol53Z3OC1Hshwd82wVAVuym8S+k5pX7rZKCEK29C6UPDNOpRrclPIg8DB8gqMPDV/aFWurg0G84Zl2t8AfNF7TQVVP8OZmzyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jFNBiP+0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6B20C2BD11;
-	Wed,  5 Jun 2024 22:37:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717627031;
-	bh=dVVjuhrnk9rcVfTcckSF8nLr2PRkHx3HB+XsjZZpYsM=;
-	h=From:Date:Subject:To:Cc:From;
-	b=jFNBiP+0gNWI3mAtVSdDqJoB/4RQB/VGMHi6gTI7OPrtjkTcttXv9KwJ5PMZ9RVTJ
-	 XG6qNJ4pu1qHMIz1TefEqYX1CgK5NE4jIfzOPcR71DSLWVMNNr1IxSzU0zPYH/z0BP
-	 gIONW7IaVGoU1Cv/5vpWo8bYVkQ1A8SeU9g5Dwh21+TqFRmp2e4HDiqBQCPDXH9o0o
-	 xu5DDBZktkrkagHNTtH/PGPP0CxigN0hRcxQyFATU2kbh7zXassKbOnUFRB4Vnr6Jy
-	 zksN1gVNaDfMzFzb0nmV0ANhEOcKDYQ5X7/N8DFjpV74lBTwPm5GXWhYk6ahfxpayA
-	 8nHMkz6Ph1Dxg==
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 05 Jun 2024 23:36:12 +0100
-Subject: [PATCH] selftests: mm: Make map_fixed_noreplace test names stable
+	s=arc-20240116; t=1717627010; c=relaxed/simple;
+	bh=FAxq/WJA3jAwur4ufatkzAyl90jSZN079xQn1B8hIQo=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=sD61TkOrqrf/38R0xoGmHN4RnjDZy4BgSG8v4+WooUaiiBM7T0pmF4DX8bsRJ+2f1V3zFNYjypG+VZSGxwUhWWs+obvASGa69tWzt315KSQxnECLIfzcETROMQV4ej8PGWR/2zFV//olnROp9+PU2q8IfY0hFn9O9eEuqIYZFvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dgme9dCS; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62a08273919so4280147b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 15:36:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717627008; x=1718231808; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UDMXqeIeVKqn4Qjsv0IGaXMAVsD6Gi7Ax4kHrxCoB1Q=;
+        b=dgme9dCS7bxFo79XggJO1kNtpxaKsww73MwHScbgnSVRhbu+P6wHnFe5TJcY6QpNIt
+         WMnNKSwrveL3ZNJC8WT5mIR5cBhzN/a7Z+wGiR7zRM+HuH5/0iRqJozcUUqnmrun6pPq
+         FRjWM3YpziB1wzNcAjNbLqHf9/nHr7p74CNDogTCBWtX102Ui564OqPWNLz6lpP0+CIy
+         XrWm0IdBAJTLMsAgE7suGqH+uFx270W26lQBjWR0mepLDJLdZArHw75hgZoD6xMuoNP5
+         jgvWQM5SRNLxcBFgf7c5EmXcVR+csM2PMY4UmaOwz2ddwxxB5cHnYtHqvwDkwqmMjQin
+         ceTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717627008; x=1718231808;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UDMXqeIeVKqn4Qjsv0IGaXMAVsD6Gi7Ax4kHrxCoB1Q=;
+        b=h+TZxXT0JJMcugGzfWJ0o6nrgSR1Jf2RSGeM5UnH4OLdd3Euuh3uF/tmoXl2zSTyTj
+         Uu4VqbZqAvWRBVQC6ZkHIPqOExgxHJMdjtBk6Rd/lhlo1GO/2842pAMjSC9OQ9C90v/E
+         p6Q0OjDwnnN7wHi13RRp4ArWmSFKccugykgtPCgt2Uxu7aJIKKXKFu/12GdT3PcmpPqn
+         FkEdSBwI4zYei8jc30oe59LUIosQIOS27vnMIPwTsMJbJcC6XofYxJWe+ilu6/gNGwuh
+         YktHkK7U1zwOwUz7Rnp7timahlcNzD8WjYyAmnve6lFqtyif8C0deO3SkoQP6zjfD0/a
+         wWRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXP8GM/9CUAZKB7lfZUEodKGWDhK4Nai9+foOA9Bavxi3j5/78pAnJCGEhUWd0JrA/gFJJ8KEDL+gvUcu7OwnCNfcMZggoYtGHBciQO
+X-Gm-Message-State: AOJu0Yx99fD+3WHBleL4Bq3lmdrhH0rRHWnuzBHolFLVcQt0y7CvSiFD
+	+UY0ODrM3grE7U4AcI1T0MHl+810hWBscN3G/7ntO+BM4d2/tsadDtLlICtWlzKpGmBhNe90AxJ
+	hiA==
+X-Google-Smtp-Source: AGHT+IFVehH9WFewQGik+Dl0yz205/vF46via66nugJeD3HwTwVLDF4W27JfIYCAwQuhN1N8YQzQilb3Kio=
+X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
+ (user=edliaw job=sendgmr) by 2002:a05:690c:38c:b0:627:a961:caee with SMTP id
+ 00721157ae682-62cbb4cd151mr5405207b3.4.1717627008528; Wed, 05 Jun 2024
+ 15:36:48 -0700 (PDT)
+Date: Wed,  5 Jun 2024 22:36:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240605-kselftest-mm-fixed-noreplace-v1-1-a235db8b9be9@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAFvoYGYC/xXMQQqDMBBG4avIrB2IkqTFq4iLEP+0QzVKRkpBv
- Hvj8oPHO0lRBEpDc1LBV1S2XNG1DcV3yC+wzNXUm94abxx/FEs6oAevKyf5Yea8FexLiGBr8YB
- z8em7QHWxF9zJvR+n6/oDN+K3yG4AAAA=
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Shuah Khan <shuah@kernel.org>, 
- Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, linux-mm@kvack.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.14-dev-d4707
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4850; i=broonie@kernel.org;
- h=from:subject:message-id; bh=dVVjuhrnk9rcVfTcckSF8nLr2PRkHx3HB+XsjZZpYsM=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmYOiUCt0+i/NP4Ix1ci7NExxF8e79RLps0+Fa+d71
- 5yBnE46JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZmDolAAKCRAk1otyXVSH0F56B/
- 9+XCV+81OEz6Gnn6s5XC8fRlmAChtPCuWw2nbJKMi6EU2jycWSs+/C5eUzRrFLWZ2F+8x4ub6CGsrY
- j2hSaL0z78nnEkf0dN/BT+Seggg5aJyY1IUjlScKrUTdY0TuZ3l4eUcnJlv7OQcjJmQKDaTOP0uuMw
- 2qHCOTwF1BagPNuAckJYgZ4c6V9JNNgdq6fN2Rb0d/4RlTuniG7zzafhn4K6KXhJvwuxmdsaxG37E0
- H4FxxJ3Eap2IClToMNoclf5DizIBQg4eTVPrSmTGS5Xp88b7i2OvxWDerUaxXuDJ3VUUcgxN/v3osU
- W//sDueyMuBF/tw+G+m8W91t3UOcl8
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.1.467.gbab1589fc0-goog
+Message-ID: <20240605223637.1374969-1-edliaw@google.com>
+Subject: [PATCH v1 0/2] selftests/mm: thuge-gen defines
+From: Edward Liaw <edliaw@google.com>
+To: shuah@kernel.org, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>
+Cc: cmllamas@google.com, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kernel-team@android.com, 
+	Edward Liaw <edliaw@google.com>, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-KTAP parsers interpret the output of ksft_test_result_*() as being the
-name of the test.  The map_fixed_noreplace test uses a dynamically
-allocated base address for the mmap()s that it tests and currently
-includes this in the test names that it logs so the test names that are
-logged are not stable between runs.  It also uses multiples of PAGE_SIZE
-which mean that runs for kernels with different PAGE_SIZE configurations
-can't be directly compared.  Both these factors cause issues for CI
-systems when interpreting and displaying results.
+When compiling with Android bionic, the MAP_HUGE_* and SHM_HUGE_* macros
+are redefined because they are included from the uapi by sys/mman.h and
+sys/shm.h:
 
-Fix this by replacing the current test names with fixed strings
-describing the intent of the mappings that are logged, the existing
-messages with the actual addresses and sizes are retained as diagnostic
-prints to aid in debugging.
+INFO: From Compiling common/tools/testing/selftests/mm/thuge-gen.c:
+common/tools/testing/selftests/mm/thuge-gen.c:32:9: warning: 'MAP_HUGE_2MB' macro redefined [-Wmacro-redefined]
+   32 | #define MAP_HUGE_2MB    (21 << MAP_HUGE_SHIFT)
+      |         ^
+external/_main~_repo_rules~prebuilt_ndk/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/linux/mman.h:38:9: note: previous definition is here
+   38 | #define MAP_HUGE_2MB HUGETLB_FLAG_ENCODE_2MB
+      |         ^
+common/tools/testing/selftests/mm/thuge-gen.c:33:9: warning: 'MAP_HUGE_1GB' macro redefined [-Wmacro-redefined]
+   33 | #define MAP_HUGE_1GB    (30 << MAP_HUGE_SHIFT)
+      |         ^
+external/_main~_repo_rules~prebuilt_ndk/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/linux/mman.h:44:9: note: previous definition is here
 
-Fixes: 4838cf70e539 ("selftests/mm: map_fixed_noreplace: conform test to TAP format output")
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/mm/map_fixed_noreplace.c | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+This test should probably use the uapi definitions instead of redefining
+them.  However, glibc gets struct redefinitions when including sys/shm.h
+and linux/shm.h together.  So, add guards for the SHM_HUGE_* macros
+instead.
 
-diff --git a/tools/testing/selftests/mm/map_fixed_noreplace.c b/tools/testing/selftests/mm/map_fixed_noreplace.c
-index b74813fdc951..d53de2486080 100644
---- a/tools/testing/selftests/mm/map_fixed_noreplace.c
-+++ b/tools/testing/selftests/mm/map_fixed_noreplace.c
-@@ -67,7 +67,8 @@ int main(void)
- 		dump_maps();
- 		ksft_exit_fail_msg("Error: munmap failed!?\n");
- 	}
--	ksft_test_result_pass("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-+	ksft_print_msg("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-+	ksft_test_result_pass("mmap() 5*PAGE_SIZE at base\n");
- 
- 	addr = base_addr + page_size;
- 	size = 3 * page_size;
-@@ -76,7 +77,8 @@ int main(void)
- 		dump_maps();
- 		ksft_exit_fail_msg("Error: first mmap() failed unexpectedly\n");
- 	}
--	ksft_test_result_pass("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-+	ksft_print_msg("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-+	ksft_test_result_pass("mmap() 3*PAGE_SIZE at base+PAGE_SIZE\n");
- 
- 	/*
- 	 * Exact same mapping again:
-@@ -93,7 +95,8 @@ int main(void)
- 		dump_maps();
- 		ksft_exit_fail_msg("Error:1: mmap() succeeded when it shouldn't have\n");
- 	}
--	ksft_test_result_pass("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-+	ksft_print_msg("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-+	ksft_test_result_pass("mmap() 5*PAGE_SIZE at base\n");
- 
- 	/*
- 	 * Second mapping contained within first:
-@@ -111,7 +114,8 @@ int main(void)
- 		dump_maps();
- 		ksft_exit_fail_msg("Error:2: mmap() succeeded when it shouldn't have\n");
- 	}
--	ksft_test_result_pass("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-+	ksft_print_msg("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-+	ksft_test_result_pass("mmap() 2*PAGE_SIZE at base+PAGE_SIZE\n");
- 
- 	/*
- 	 * Overlap end of existing mapping:
-@@ -128,7 +132,8 @@ int main(void)
- 		dump_maps();
- 		ksft_exit_fail_msg("Error:3: mmap() succeeded when it shouldn't have\n");
- 	}
--	ksft_test_result_pass("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-+	ksft_print_msg("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-+	ksft_test_result_pass("mmap() 2*PAGE_SIZE  at base+(3*PAGE_SIZE)\n");
- 
- 	/*
- 	 * Overlap start of existing mapping:
-@@ -145,7 +150,8 @@ int main(void)
- 		dump_maps();
- 		ksft_exit_fail_msg("Error:4: mmap() succeeded when it shouldn't have\n");
- 	}
--	ksft_test_result_pass("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-+	ksft_print_msg("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-+	ksft_test_result_pass("mmap() 2*PAGE_SIZE bytes at base\n");
- 
- 	/*
- 	 * Adjacent to start of existing mapping:
-@@ -162,7 +168,8 @@ int main(void)
- 		dump_maps();
- 		ksft_exit_fail_msg("Error:5: mmap() failed when it shouldn't have\n");
- 	}
--	ksft_test_result_pass("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-+	ksft_print_msg("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-+	ksft_test_result_pass("mmap() PAGE_SIZE at base\n");
- 
- 	/*
- 	 * Adjacent to end of existing mapping:
-@@ -179,7 +186,8 @@ int main(void)
- 		dump_maps();
- 		ksft_exit_fail_msg("Error:6: mmap() failed when it shouldn't have\n");
- 	}
--	ksft_test_result_pass("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-+	ksft_print_msg("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-+	ksft_test_result_pass("mmap() PAGE_SIZE at base+(4*PAGE_SIZE)\n");
- 
- 	addr = base_addr;
- 	size = 5 * page_size;
+Edward Liaw (2):
+  selftests/mm: Include linux/mman.h
+  selftests/mm: Guard defines from shm
 
----
-base-commit: c3f38fa61af77b49866b006939479069cd451173
-change-id: 20240605-kselftest-mm-fixed-noreplace-44e7e55c861a
+ tools/testing/selftests/mm/thuge-gen.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
+--
+2.45.1.467.gbab1589fc0-goog
 
 
