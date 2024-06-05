@@ -1,116 +1,123 @@
-Return-Path: <linux-kernel+bounces-203226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A278FD80E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:02:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 539DB8FD7FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:01:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC0F928751F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:02:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69C561C23266
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4379A15F3E0;
-	Wed,  5 Jun 2024 21:02:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1977315F3F0;
+	Wed,  5 Jun 2024 21:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QdJ49FRS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gKFwiyE6"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AF16A325
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 21:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE6D3F8E2;
+	Wed,  5 Jun 2024 21:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717621353; cv=none; b=QQYIvaEsadm6RHro/Rl2YZtA4vZJcN7rP435FQPseMohWauK4CUDBXaal9F4jawsLrd6YSfkGzZCGql9Gl27fxRock+sgqu6EhDdQL2bZA+0CY2FU3Z1LxSfVeXrSioZE6BeU6qEFBLwlWpEvwM5kefK1A/6BanEF2GGt9BiLNo=
+	t=1717621254; cv=none; b=mcIgl8V/QNisZi8dxkVC5WXLSaQbt2W2fPohrVqxv1u6+hBuZ24GdD+WnTHFyZr9q7BwEILzgwqVChMD8QE2gZLoIJMNsgNqEaYwyMF3kz+LyFmcrwFAEwHGSHX2/VBgGBPyUwQq1cB3mEWCrm2pxqoG+M4JI4W9fIlnVZHvprQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717621353; c=relaxed/simple;
-	bh=CR6hmo3BYLol4OkDTrDKGhawRzyHwi1OkF6+XlGrv3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bBoARUJUZOk6U+3SMP+geB9ratFwzw+lWsytLy6ca+MwVMYE6ArP9ECiohkXSczj2GMtZTgS/0XyKZO7Xpv4GZO3N8laFEEZUbKzX24BFtxquD+HXmys0XP6/xkVP3kaVdGLBrPEX15kltIMP+sfiYzqqVJrjAcrRWLElVc7hUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QdJ49FRS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717621350;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CR6hmo3BYLol4OkDTrDKGhawRzyHwi1OkF6+XlGrv3w=;
-	b=QdJ49FRStmltlNCCrX72/COOnj/msNmIBq5ehQqHfZfpBZTqag3wiElA2CtKm3kuxOI2b/
-	ydztvnGBfvL0U/WGaF9vsANK+zH+/o6pADBhj8zimPYKhWpKTIO2pj+m1zyDF2A+SXym1k
-	LS6IewVFKVn43VlBkvcely1632LBkDw=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-682-UlRffepYNUy40V6cIxvZ3w-1; Wed,
- 05 Jun 2024 17:02:23 -0400
-X-MC-Unique: UlRffepYNUy40V6cIxvZ3w-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BAF671953955;
-	Wed,  5 Jun 2024 21:02:20 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.62])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 80A511956055;
-	Wed,  5 Jun 2024 21:02:13 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed,  5 Jun 2024 23:00:52 +0200 (CEST)
-Date: Wed, 5 Jun 2024 23:00:43 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [RFC bpf-next 01/10] uprobe: Add session callbacks to
- uprobe_consumer
-Message-ID: <20240605210043.GB19139@redhat.com>
-References: <20240604200221.377848-1-jolsa@kernel.org>
- <20240604200221.377848-2-jolsa@kernel.org>
- <CAEf4BzbzgTzvnPRJ24gdhuxN02_w8iNNFn4URh0vEp-t69oPnA@mail.gmail.com>
- <20240605175619.GH25006@redhat.com>
- <ZmDPQH2uiPYTA_df@krava>
+	s=arc-20240116; t=1717621254; c=relaxed/simple;
+	bh=SLWqVrVFKIkmiTUZHJG8FYp74OJNI53OWPPhHkDFqyQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u+uS6MnCAAYE8VvwdjNX8yn0sUlZ9mYuiTNWmXhimIY6DxpSvn9w7EI5LFi+UvWxQVAAchP9ivuZKkeaGYQ+2MbADwLvAoQ8a4M51q73nCK1I+NxgOLOtjoDoCog8WM2cmgibp8+Iwch+eVdgf6WCoyS+XBGfMUIXdwHNFDTahE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gKFwiyE6; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-35a264cb831so252372f8f.2;
+        Wed, 05 Jun 2024 14:00:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717621251; x=1718226051; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GEz1de1uXTIeqqebkZztUoW9m4tZyjUe1SpkIZLWTwI=;
+        b=gKFwiyE6gYjRwpTMGwuIwSzgPw1fgTLntJXMqFL8fKYILt0WkmRvWIREV/tKnStitO
+         EfCwp0b17OlvSK8i2h9kjE2JykVzsI0Ks1AsRZbnFVokCivclb6gf1hRS1UxBi+w1Kz0
+         m4C64ZVoV0vRkKGHb4w6VAAtyJUgsMCGyujpRy1JqBkCyZat9GmY1fwU6CiAs8Utb2dE
+         9RrZhNLxAmlIe+JbKQPamoUsIMY2KL1jnUHkorL8eMTycPg3rG7dCUfs4u8jNdavafcC
+         sHm6g1FA74NWFrlLbWxq7R4Sys5CU5WfO5Rlf4+jywrCyJzCxGWWdENj0Kw3yRL3jAI0
+         Z7bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717621251; x=1718226051;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GEz1de1uXTIeqqebkZztUoW9m4tZyjUe1SpkIZLWTwI=;
+        b=h/7u5yWE7I2+8iNLquOGsHO2c9oIJNv/lAZEcWy6UuIo32wn9TpJoI5dKh0AlGtPho
+         CY0R4g+8Cb/YxtnswwPZqhuKzOvsYnEhsG5iuj+t1RzgxVWdOAlzMkEIP1Cnf1NT9Ve3
+         s6Ox/5RCTtHqtZBTRymCDqlK4vMAa325uXcFYJCXwxCZfAPYWGMw77x7U9FFPuqrAJnw
+         26Ghng7wFkoKbar20L3CGMgZtKaONBA58lFPsC4Ox6fDMSvkTnhDMnmJX8aLWyYdjlXu
+         NUsXbNt6l2wInIr1l9aicK7CbNwB9oIgChGZPeUoG5OPNwK0nkgoOVAshUXAP8JaeSUV
+         LF7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW2bJmthbAyM8efx562G2tgrnwQTaHo7sTT3sbX5XfpCi6lYoW9AZ6bgHwcEldICt8lkk+/gpGk0yhRnIUOmXpPGO4hAIETXl/zPZ1n7Zz7BEVeu7OiLKXBpBQasBzFDO+C9/GKBipJya754F21n0riHILRz59HIRC2aI3eqCJ8dGTDOg==
+X-Gm-Message-State: AOJu0Yx6WU+WAwde8gmPcFP/3K59aTJhXqEuHeM7HUMbW/URd/kPeA4d
+	tC+pH/69eCr+Q0uz4k3MfaKPkTN5QOqpFaIVXvIaFKVt8e8AU2LaMWvr
+X-Google-Smtp-Source: AGHT+IH9LL99z0MTv1+jQF9F2sePDzl73lNh17BbV9ZjLHWp7Mick2PRDD0mTpfpJyEfuh1jNHOhNg==
+X-Received: by 2002:a5d:5547:0:b0:351:c2c1:3682 with SMTP id ffacd0b85a97d-35e8ef88819mr2810501f8f.62.1717621250945;
+        Wed, 05 Jun 2024 14:00:50 -0700 (PDT)
+Received: from U4.lan ([2a02:810b:f40:4600:5211:58fe:dfef:c48c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04c0d77sm15955721f8f.5.2024.06.05.14.00.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 14:00:50 -0700 (PDT)
+From: Alex Bee <knaerzche@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Alex Bee <knaerzche@gmail.com>
+Subject: [PATCH v2 0/5 RESEND] Add SFC support for RK3128
+Date: Wed,  5 Jun 2024 23:00:44 +0200
+Message-ID: <20240605210049.232284-1-knaerzche@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmDPQH2uiPYTA_df@krava>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Transfer-Encoding: 8bit
 
-On 06/05, Jiri Olsa wrote:
->
-> > And the comment about the return value looks confusing too. I mean, the
-> > logic doesn't differ from the ret-code from ->handler().
-> >
-> > "DO NOT install/execute the return uprobe" is not true if another
-> > non-session-consumer returns 0.
->
-> well they are meant to be exclusive, so there'd be no other non-session-consumer
+This series adds support for the Serial Flash Controller (SFC) found in
+RK3128 SoCs.
 
-OK. (but may be the changelog can explain more clearly why they can't
-co-exist with the non-session-consumers).
+As without using some "id holes" we would run out clock ids in the binding
+and would have to touch the ABI, I added patches which removes the
+CLK_NR_CLKS macro and uses the recently introduced
+rockchip_clk_find_max_clk_id helper instead to find the highest clock id.
 
-But again, this doesn't differ from the the ret-code from the
-non-session-consumer->handler().
+changes since v1:
+ - added patches to remove CLK_NR_CLKS (Connor)
 
-If it returns 1 == UPROBE_HANDLER_REMOVE, then without other consumers
-prepare_uretprobe() won't be called.
+Link to v1:
+https://lore.kernel.org/all/20240605172154.193047-1-knaerzche@gmail.com/
 
-Oleg.
+Alex Bee (5):
+  clk: rockchip: rk3128: Drop CLK_NR_CLKS usage
+  dt-bindings: clock: rk3128: Drop CLK_NR_CLKS
+  dt-bindings: clock: rk3128: Add HCLK_SFC
+  clk: rockchip: Add HCLK_SFC for RK3128
+  ARM: dts: rockchip: Add SFC for RK3128
+
+ arch/arm/boot/dts/rockchip/rk3128.dtsi | 35 ++++++++++++++++++++++++++
+ drivers/clk/rockchip/clk-rk3128.c      | 21 +++++++++++++---
+ include/dt-bindings/clock/rk3128-cru.h |  2 +-
+ 3 files changed, 53 insertions(+), 5 deletions(-)
+
+
+base-commit: 234cb065ad82915ff8d06ce01e01c3e640b674d2
+-- 
+2.45.2
 
 
