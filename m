@@ -1,161 +1,128 @@
-Return-Path: <linux-kernel+bounces-203069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F6168FD5E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:40:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 225E78FD5F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF630B22069
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:40:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B014BB210C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A911013AA3C;
-	Wed,  5 Jun 2024 18:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2161313AA2F;
+	Wed,  5 Jun 2024 18:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nUnhafkL"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ed9oEX/I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939E9DF78
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 18:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B182F2B;
+	Wed,  5 Jun 2024 18:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717612825; cv=none; b=VCiiuzMmdR3xkll7oUkLhKCdYYyMPJvuBH9NTgMO2gW/P8nJRQuDfFKiJzUOns/6DAeD4zICVEPWT7sjo5c9IxTo9gPQkviErXHaX3zvqdq6pVftgzIkz0PNZFctph58hQS0J5Z9hcBODQTYuDVDtV685BySdngI23EKQjyKZvs=
+	t=1717612964; cv=none; b=d25cY7NEPFgzmsWIp4kw5sEkMaLTJ5hMcjwbJrkBZbQ6GJARnvgMDciUqy824WWeypTcaA3cdzMb6Bm7lLyvFPwskHQ9ZZNBjgnq1Voj4hoI2l3ZonyazPhzoEYA6Mg+lD+7hyclW4cSv0x5stfx6Mm47yNTK0tRSJvPUrERNsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717612825; c=relaxed/simple;
-	bh=HDAlcS57GK25baYDQl/y1dFbksUihFMOcZW+n2UCDzc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F01tfFwpyHSiwYBRKl5aeihWSECuCVePTwRAVmJ6Zzpf/ur2L/Z4AKEyNEUQdzYO++VeiwAQgyQMlDpTzOY4GUWCo3xyN4M4XO4KTNGm2tUZRwAhs7bDLPUOlDTWlEf/+TiuwDx1a3qJMZYtv6oNQI3bkmJaTnjWDDWPITfKjHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nUnhafkL; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-6f93d757f29so42902a34.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 11:40:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717612822; x=1718217622; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=01CW9viXfpn/hTRJYVVBrZV+RhXTgdyAXCGw5dC1AEw=;
-        b=nUnhafkLUu4MaEJOeFsLoY9MNwGlFOepbpfURA61lv7lb5bHu1EwN5qHjNIZgstS3E
-         pUMo1cgjXcHzeL9axSnhSb/sGV7SBUW0PsArjywhLqS2oM0uUmWVL4dXwhYRIr6YyHHH
-         9RjY4rqCk18RfPHcykf3WVfYh38AHOcrWc1HPLwLxfofw9tzZpfv4h8gbTXHrDf8tdKa
-         LGhlS8PcQCdvwoz5v+KRMmi1GNh0+fOCiMRHlJ1DrLn3jS5IO8JugbSMj3GvKuqCWeRU
-         J3wED2KqsIhJ2wVPeI/yEKt6zCdt/z/5w2bOmj1b1Wg/pmeOwInxtu96e57Wy6RnDSNy
-         +YnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717612822; x=1718217622;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=01CW9viXfpn/hTRJYVVBrZV+RhXTgdyAXCGw5dC1AEw=;
-        b=hDhylHyNR0DUh1GdcXrfveOizc4S2Nt0y3PWJZnMidOs/2t/jTwTHdTUWawHoH5Ut1
-         m3raQxdOzllTcGFgXw9Q0k7KyW0YDOHdsGIyBuecHJUGdArs4UHfqLeS+b4bMr45nXca
-         5JqxjK8N5ZNdTQUK7RxYHUIkSYxPfOMum84ktX9ax+ghfVNPepL6qq/oEZDC2ICe5rGN
-         NWCbRJmAtszDpPTv7s+2BqEGSW9lPeDEYwHl/PKWv1pUw+joBDu1nL0zUy4bBeZeMwkM
-         ArflAI1idny9KNjtysl+OAL54oMHamFdMo00OwooSfog/X2IFa6YEMv/4bGaapruD2JJ
-         2YGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhmEQlDPp6Y9wyoANZsD6lT4mRYo6D8xaWIfvkyh7fBMuPG4vzZi3wwEyDutqkcJtaDa4evqblp68eiL+ts8aXbNwwwYW363GqBd6S
-X-Gm-Message-State: AOJu0YzNHedtTVTcxPpbApEHUWg+WW2gr9HZWsfVf+RnQXMgccqFSqjP
-	TtwIkcKpmflgPCQQbW8B/F0klkb8/8RTeE/uEgLyzOw20O6xo3RKplBiK9ux4Zw=
-X-Google-Smtp-Source: AGHT+IE4D+jAv58+0GgCMXisqeGuZCKz+lY2iWITk+8FkqB8ggzQmLPTu1JtIQBnacx4nGSjj3PhJw==
-X-Received: by 2002:a9d:5c07:0:b0:6f0:616f:f186 with SMTP id 46e09a7af769-6f9436b051emr3526455a34.29.1717612821607;
-        Wed, 05 Jun 2024 11:40:21 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f937b7acc0sm982915a34.80.2024.06.05.11.40.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 11:40:21 -0700 (PDT)
-Message-ID: <8450bd9a-c39d-4d24-8a42-f86041d16081@baylibre.com>
-Date: Wed, 5 Jun 2024 13:40:20 -0500
+	s=arc-20240116; t=1717612964; c=relaxed/simple;
+	bh=/eZfIyfihyogUFjSawME/VcZ/BywkwBNTOKUunyvRAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SLR0SXH5htRvVFgaHOYP12bZTpJphHQBq996T9BLiPlYEr79fULnBanMAKS5v5foG98uB3NesoZIug9pnVKMvdbbVOeESMucrYo5p1CTq/dDDYzy9Bq8S9cuU6/oJyBBB0vhtASDt4VkK033Dk/OufRQZtpLheRPP5O3tZbTE8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ed9oEX/I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7035C2BD11;
+	Wed,  5 Jun 2024 18:42:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717612963;
+	bh=/eZfIyfihyogUFjSawME/VcZ/BywkwBNTOKUunyvRAE=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=ed9oEX/IKoED3WZmFrayKOe+q3fNpHaDTLqpuzu6qrBvuLkxjBG7vcbi/ZiMDGxPQ
+	 7BFnXSqy+hUNg+1Et8gJDFC64bA6TpGn7e/B7BNPXmIE68mm0udjMFUpw+fMqLznXy
+	 m6xDztdqRgJSYNV6Nbzax+yk2oSGUPVl4Env/dqcG98gZtZZmwc3GD9g4N33EO8WXD
+	 Rg862Y0RYImOF140+wHp7pZ3xc8N0oXJbkwllU7iXWitX1b4/abUnmiKEhFSNOTpdS
+	 CNTr6AIiN06ltpAlmqfT6/R0VBTYNafwZni89RmMrCqD7vZxdx4GOlJaQ4q6tyg6pV
+	 UAZRYWbweXfow==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 76A39CE0A73; Wed,  5 Jun 2024 11:42:43 -0700 (PDT)
+Date: Wed, 5 Jun 2024 11:42:43 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	Uladzislau Rezki <urezki@gmail.com>
+Subject: Re: [PATCH rcu 3/9] rcu/tree: Reduce wake up for synchronize_rcu()
+ common case
+Message-ID: <def68906-9140-4d80-8676-654154559be9@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
+ <20240604222355.2370768-3-paulmck@kernel.org>
+ <ZmCTvMVlOMFv0-zd@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 7/9] iio: adc: ad7173: refactor device info structs
-To: dumitru.ceclan@analog.com
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Dumitru Ceclan <mitrutzceclan@gmail.com>
-References: <20240603-ad4111-v5-0-9a9c54d9ac78@analog.com>
- <20240603-ad4111-v5-7-9a9c54d9ac78@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20240603-ad4111-v5-7-9a9c54d9ac78@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZmCTvMVlOMFv0-zd@localhost.localdomain>
 
-On 6/3/24 11:23 AM, Dumitru Ceclan via B4 Relay wrote:
-> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+On Wed, Jun 05, 2024 at 06:35:08PM +0200, Frederic Weisbecker wrote:
+> Le Tue, Jun 04, 2024 at 03:23:49PM -0700, Paul E. McKenney a écrit :
+> > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> > 
+> > In the synchronize_rcu() common case, we will have less than
+> > SR_MAX_USERS_WAKE_FROM_GP number of users per GP. Waking up the kworker
+> > is pointless just to free the last injected wait head since at that point,
+> > all the users have already been awakened.
+> > 
+> > Introduce a new counter to track this and prevent the wakeup in the
+> > common case.
+> > 
+> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > ---
+> >  kernel/rcu/tree.c | 35 ++++++++++++++++++++++++++++++-----
+> >  kernel/rcu/tree.h |  1 +
+> >  2 files changed, 31 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > index 6ba36d9c09bde..2fe08e6186b4d 100644
+> > --- a/kernel/rcu/tree.c
+> > +++ b/kernel/rcu/tree.c
+> > @@ -96,6 +96,7 @@ static struct rcu_state rcu_state = {
+> >  	.ofl_lock = __ARCH_SPIN_LOCK_UNLOCKED,
+> >  	.srs_cleanup_work = __WORK_INITIALIZER(rcu_state.srs_cleanup_work,
+> >  		rcu_sr_normal_gp_cleanup_work),
+> > +	.srs_cleanups_pending = ATOMIC_INIT(0),
+> >  };
+> >  
+> >  /* Dump rcu_node combining tree at boot to verify correct setup. */
+> > @@ -1633,8 +1634,11 @@ static void rcu_sr_normal_gp_cleanup_work(struct work_struct *work)
+> >  	 * the done tail list manipulations are protected here.
+> >  	 */
+> >  	done = smp_load_acquire(&rcu_state.srs_done_tail);
+> > -	if (!done)
+> > +	if (!done) {
+> > +		/* See comments below. */
+> > +		atomic_dec_return_release(&rcu_state.srs_cleanups_pending);
 > 
-> Drop array of device info structs and use individual structs for all;
-> drop models enum as no longer needed. This improves readability as the
-> structs are pointed directly.
+> This condition is not supposed to happen. If the work is scheduled,
+> there has to be a wait_queue in rcu_state.srs_done_tail. And decrementing
+> may make things worse.
 > 
-> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
-> ---
-
-...
-
->  static const char *const ad7173_ref_sel_str[] = {
-> @@ -1191,32 +1185,25 @@ static int ad7173_probe(struct spi_device *spi)
->  }
->  
->  static const struct of_device_id ad7173_of_match[] = {
-> -	{ .compatible = "adi,ad7172-2",
-> -	  .data = &ad7173_device_info[ID_AD7172_2]},
-> -	{ .compatible = "adi,ad7172-4",
-> -	  .data = &ad7173_device_info[ID_AD7172_4]},
-> -	{ .compatible = "adi,ad7173-8",
-> -	  .data = &ad7173_device_info[ID_AD7173_8]},
-> -	{ .compatible = "adi,ad7175-2",
-> -	  .data = &ad7173_device_info[ID_AD7175_2]},
-> -	{ .compatible = "adi,ad7175-8",
-> -	  .data = &ad7173_device_info[ID_AD7175_8]},
-> -	{ .compatible = "adi,ad7176-2",
-> -	  .data = &ad7173_device_info[ID_AD7176_2]},
-> -	{ .compatible = "adi,ad7177-2",
-> -	  .data = &ad7173_device_info[ID_AD7177_2]},
-> +	{ .compatible = "adi,ad7172-2", .data = &ad7172_2_device_info},
-> +	{ .compatible = "adi,ad7172-4", .data = &ad7172_4_device_info},
-> +	{ .compatible = "adi,ad7173-8", .data = &ad7173_8_device_info},
-> +	{ .compatible = "adi,ad7175-2", .data = &ad7175_2_device_info},
-> +	{ .compatible = "adi,ad7175-8", .data = &ad7175_8_device_info},
-> +	{ .compatible = "adi,ad7176-2", .data = &ad7176_2_device_info},
-> +	{ .compatible = "adi,ad7177-2", .data = &ad7177_2_device_info},
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, ad7173_of_match);
->  
->  static const struct spi_device_id ad7173_id_table[] = {
-> -	{ "ad7172-2", (kernel_ulong_t)&ad7173_device_info[ID_AD7172_2]},
-> -	{ "ad7172-4", (kernel_ulong_t)&ad7173_device_info[ID_AD7172_4]},
-> -	{ "ad7173-8", (kernel_ulong_t)&ad7173_device_info[ID_AD7173_8]},
-> -	{ "ad7175-2", (kernel_ulong_t)&ad7173_device_info[ID_AD7175_2]},
-> -	{ "ad7175-8", (kernel_ulong_t)&ad7173_device_info[ID_AD7175_8]},
-> -	{ "ad7176-2", (kernel_ulong_t)&ad7173_device_info[ID_AD7176_2]},
-> -	{ "ad7177-2", (kernel_ulong_t)&ad7173_device_info[ID_AD7177_2]},
-> +	{ "ad7172-2", (kernel_ulong_t)&ad7172_2_device_info},
-> +	{ "ad7172-4", (kernel_ulong_t)&ad7172_4_device_info},
-> +	{ "ad7173-8", (kernel_ulong_t)&ad7173_8_device_info},
-> +	{ "ad7175-2", (kernel_ulong_t)&ad7175_2_device_info},
-> +	{ "ad7175-8", (kernel_ulong_t)&ad7175_8_device_info},
-> +	{ "ad7176-2", (kernel_ulong_t)&ad7176_2_device_info},
-> +	{ "ad7177-2", (kernel_ulong_t)&ad7177_2_device_info},
-
-nit: I would leave a space before the trailing } to match the space
-after the leading { here and in the _of_ table.
-
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(spi, ad7173_id_table);
+> So this should be:
 > 
+> if (WARN_ON_ONCE(!done))
+>    return;
 
+Or just this:
+
+	WARN_ON_ONCE(!smp_load_acquire(&rcu_state.srs_done_tail));
+
+Uladzislau, thoughts?  Is there some corner case where we really can
+see that smp_load_acquire() hand back a NULL pointer, perhaps during boot?
+
+							Thanx, Paul
 
