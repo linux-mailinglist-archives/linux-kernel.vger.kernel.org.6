@@ -1,116 +1,156 @@
-Return-Path: <linux-kernel+bounces-203048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F17C8FD595
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:15:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36ACE8FD5A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94D7FB21C1A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:15:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C420A1F24861
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCA22030B;
-	Wed,  5 Jun 2024 18:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3BC25777;
+	Wed,  5 Jun 2024 18:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ZqwD01Hy"
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Cl6cyqJR"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171A8C15D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 18:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D59879F0;
+	Wed,  5 Jun 2024 18:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717611261; cv=none; b=mGPz0HE6IJjemtaxo6SYI/albxtaG9QsASntpOOG62DTXVznnlKxwtFaAXuDjtVPy6kt35vzo/n7xgx/c+RgpcHzf5xB7QuBYsQiq3afYX18mBmeMOSdEB5FJbTX2uQAwnUwmTMB2Z5QaFOZPVYXWYLqkRKy4wkz8ipGSAbVsC4=
+	t=1717611507; cv=none; b=IkXkP7svfrhesnW6puCNVlvlfBA7bLPLbD1n0YaRlKrflks8wh3KhayNTkcSLVUpR7IX4QSIiB2kLOrvy/s/+/LiWFq0VG8VUX8MpE6GTWt8PYRjZGMHRSK4n01n/gOaieOTwpkpeSzXVsy4vz8NFjiihCA0evxQWpzr1whQRvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717611261; c=relaxed/simple;
-	bh=XlaBgIk03gwg9hXViHjBnESCujBmUxLENhKIfLNL8Xw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=UOsPpRl5SgdxsG19C9R5iYYolkhMqM39qRaSXD4oHz6EXX+HCnZuK7IpQDtzD9EPaxmXt0udZJIQzofdxGL52Aq6eLz5xrGRSxqmSMUwXaXL9KSB/l96rWThaiY15LYeYJG5h3S+XDMuD9mjHty0P9E56o/Fn94C5BzzY5sYwUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ZqwD01Hy; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-250932751b9so4104fac.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 11:14:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717611258; x=1718216058; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oSVIp5tH0Fdf6LZyEl2CHXsReyyORLHTvKvZ7WJfPCg=;
-        b=ZqwD01HypASHFhJ+pcja4rsJC4HnYDvOeViMjtHeSwl0sAeVMno/reK2nUKaUGK2YW
-         3qT/KG2R+F8YLIK1ifGcw1GuJTx6YZSYurxRkYi1UFQrIhK11bHoWzcTHFvoIRdVYGdK
-         yFrAK1OeHW82H7d5TcwdiNWxu698TGXIaG1dHHaWZV5h9sCG+lzlZPXHIHxAUR1fMezY
-         YKaLUIYj0ew+1NVNPbE1/zCJ3K4SQKXNkS4aSk6w1O5fZJJfdxD2c+5SOBKxnwn5RPsD
-         iW9MFPkf4YrpTEYQY4VREf1C0cKrpalFgKOBWBVtzWAkuKZjaLf8TBVXMWDPuzGvPDsl
-         Kx0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717611258; x=1718216058;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oSVIp5tH0Fdf6LZyEl2CHXsReyyORLHTvKvZ7WJfPCg=;
-        b=oh63rvXntG2dJG+h7cBy6YBjzgAuzvhRm9HkDrmoOIg1GN+rh/cAump1LJhZ8weFck
-         0JAqF4byNnOnvCyC4MeB6Zy8oCXob02ViZuS5kLzlPoa8NNw/EGpbgMh0LoHHYScytef
-         sFJPoKc84/ntatC+DGKezR/XMc5N5Qe7MbfFWqc3euhTwdW44rpPRAbxPSXnQJdZh7gS
-         zvK3PHjhvk+JwBsFhM5Zyn8an220gSb/5EsJT03b6NGG728RACAOBVshrY0jVqYqDquD
-         Jyuhr5wg35ikysGFa9OhYaPMpqtD/H+BsHkkByEztM06+9IzcOc7Eslq1QL0Q07/Dh05
-         SIdA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7GsEGofgDqXzLhTunBkX5ePTQThEa0NbgQ7y7XcYNlPa9haTkJ+veaLqlVwjDZo7BzSp1fNgThwu7vNHs7MvkE3bp3IEHdMfuZXSs
-X-Gm-Message-State: AOJu0YwdApUJ8iO/MmVXX/dqo5rJO3kVqWNSt0bRTg2L4ehVx0OHR1Yc
-	wm9iwfONLQidE/gCYX63RQDMrb5nRLH4l8dKLYI577Bl+u7VzXvBTpPlI3FO6io=
-X-Google-Smtp-Source: AGHT+IH3rTwst3rxHfabtcaxMo9YJRolfNWPOCLPBsmQkznjrFlkHCCWS0vObDUTUJlxOHzHgjR8hA==
-X-Received: by 2002:a05:6870:ec94:b0:250:7928:6550 with SMTP id 586e51a60fabf-2512236d536mr3634384fac.3.1717611258005;
-        Wed, 05 Jun 2024 11:14:18 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-250852250fdsm4082020fac.44.2024.06.05.11.14.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 11:14:17 -0700 (PDT)
-Message-ID: <cc2bd808-194e-431d-b733-4aa7bd410da3@kernel.dk>
-Date: Wed, 5 Jun 2024 12:14:16 -0600
+	s=arc-20240116; t=1717611507; c=relaxed/simple;
+	bh=8sTJIVQ52+X8F++jmSiEhrEDb4f6AaeHfQHDVk5yDVo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=MTO9e2YquS380Bhg+j3aOZp5rsEedu+8EBPNmfp6X96hVeooWzz6OIM7XA8VlXTm+5Xb+XGVDduS07iHSJ+aQ6ApDz1XUBCARYHyn9NWAsCPFBkg+Ymp52gwdzeqFFyQKly7oJ8ZE1eHDNP/rqXDP191/jrNxq9JKef1JZe/Bh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Cl6cyqJR; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 455B1Pqf024220;
+	Wed, 5 Jun 2024 18:18:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=EeAIyYy7hus9zRleyPaibC
+	zwpRLBWIZ4rIY8qiJkg18=; b=Cl6cyqJRetsMZb2UWYwXUFIdiLOG7dVF9ZTlNY
+	Tsrp1y6daBJ6KeVttPW8PoHojVojBLzIjvihDaYzNkc+ikrYb7vdhwlk0gWZnmm6
+	IkXQKiMuOcXoJpJKDt1vkkUIj+EOZ3dF2L0MAh2r9Z8nk0RVOPTku/VtXRAJgI1m
+	g86kR972KjKXRfrwV/X8gX6vgRJznwYI+nqyVazn/rluQHCiW/4vWkFxo6wN88E/
+	zN0gqGZC3LVtRxgePR/oLgyUc2sAxCmkjil8u1RcaIpHU52FtIhw8XliKrK3POpK
+	akkRwc2qNoc1LWs2hKGUFabX2pVNwCbQfBfjxrsEqCc9GuZg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjabgtkyr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Jun 2024 18:18:21 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 455IIJFL006684
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 5 Jun 2024 18:18:19 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Jun 2024
+ 11:18:19 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Wed, 5 Jun 2024 11:18:18 -0700
+Subject: [PATCH] PM/devfreq: governor: add missing MODULE_DESCRIPTION()
+ macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] block: fix request.queuelist usage in flush
-From: Jens Axboe <axboe@kernel.dk>
-To: ming.lei@redhat.com, hch@lst.de, f.weber@proxmox.com, bvanassche@acm.org,
- Chengming Zhou <chengming.zhou@linux.dev>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- zhouchengming@bytedance.com
-References: <20240604064745.808610-1-chengming.zhou@linux.dev>
- <171751063844.375344.3358896610081062168.b4-ty@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <171751063844.375344.3358896610081062168.b4-ty@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20240605-md-drivers-devfreq-v1-1-d01ae91b907e@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAOmrYGYC/x3MwQrCMAyA4VcZORtoSyfMVxEP6Zq5gKuazDIYe
+ 3erx+/w/zsYq7DBpdtBuYrJszT4UwfjTOXOKLkZggvRnV2PS8asUlkNM9dJ+Y0xJD+k0A+RPLT
+ wpTzJ9p9eb82JjDEplXH+rR5SPhsuZCsrHMcXe1dECIMAAAA=
+To: MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park
+	<kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: KcYaJ_w0HbtbxK4_OpQHrGGMyWwV-842
+X-Proofpoint-ORIG-GUID: KcYaJ_w0HbtbxK4_OpQHrGGMyWwV-842
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-05_02,2024-06-05_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ bulkscore=0 malwarescore=0 phishscore=0 clxscore=1011 adultscore=0
+ priorityscore=1501 mlxlogscore=924 impostorscore=0 mlxscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406050138
 
-On 6/4/24 8:17 AM, Jens Axboe wrote:
-> 
-> On Tue, 04 Jun 2024 14:47:45 +0800, Chengming Zhou wrote:
->> Friedrich Weber reported a kernel crash problem and bisected to commit
->> 81ada09cc25e ("blk-flush: reuse rq queuelist in flush state machine").
->>
->> The root cause is that we use "list_move_tail(&rq->queuelist, pending)"
->> in the PREFLUSH/POSTFLUSH sequences. But rq->queuelist.next == xxx since
->> it's popped out from plug->cached_rq in __blk_mq_alloc_requests_batch().
->> We don't initialize its queuelist just for this first request, although
->> the queuelist of all later popped requests will be initialized.
->>
->> [...]
-> 
-> Applied, thanks!
-> 
-> [1/1] block: fix request.queuelist usage in flush
->       commit: a315b96155e4c0362742aa3c3b3aebe2ec3844bd
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_simpleondemand.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_performance.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_powersave.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_userspace.o
 
-Given the pending investigation into crashes potentially caused by this
-patch, I've dropped it from the 6.10 tree for now.
+Add all missing invocations of the MODULE_DESCRIPTION() macro.
 
--- 
-Jens Axboe
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/devfreq/governor_performance.c    | 1 +
+ drivers/devfreq/governor_powersave.c      | 1 +
+ drivers/devfreq/governor_simpleondemand.c | 1 +
+ drivers/devfreq/governor_userspace.c      | 1 +
+ 4 files changed, 4 insertions(+)
+
+diff --git a/drivers/devfreq/governor_performance.c b/drivers/devfreq/governor_performance.c
+index 5dbc1e56ec08..2e4e981446fa 100644
+--- a/drivers/devfreq/governor_performance.c
++++ b/drivers/devfreq/governor_performance.c
+@@ -58,4 +58,5 @@ static void __exit devfreq_performance_exit(void)
+ 	return;
+ }
+ module_exit(devfreq_performance_exit);
++MODULE_DESCRIPTION("DEVFREQ Performance governor");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/devfreq/governor_powersave.c b/drivers/devfreq/governor_powersave.c
+index 4746af2435b0..f059e8814804 100644
+--- a/drivers/devfreq/governor_powersave.c
++++ b/drivers/devfreq/governor_powersave.c
+@@ -58,4 +58,5 @@ static void __exit devfreq_powersave_exit(void)
+ 	return;
+ }
+ module_exit(devfreq_powersave_exit);
++MODULE_DESCRIPTION("DEVFREQ Powersave governor");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/devfreq/governor_simpleondemand.c b/drivers/devfreq/governor_simpleondemand.c
+index d57b82a2b570..c23435736367 100644
+--- a/drivers/devfreq/governor_simpleondemand.c
++++ b/drivers/devfreq/governor_simpleondemand.c
+@@ -140,4 +140,5 @@ static void __exit devfreq_simple_ondemand_exit(void)
+ 	return;
+ }
+ module_exit(devfreq_simple_ondemand_exit);
++MODULE_DESCRIPTION("DEVFREQ Simple On-demand governor");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/devfreq/governor_userspace.c b/drivers/devfreq/governor_userspace.c
+index d69672ccacc4..d1aa6806b683 100644
+--- a/drivers/devfreq/governor_userspace.c
++++ b/drivers/devfreq/governor_userspace.c
+@@ -153,4 +153,5 @@ static void __exit devfreq_userspace_exit(void)
+ 	return;
+ }
+ module_exit(devfreq_userspace_exit);
++MODULE_DESCRIPTION("DEVFREQ Userspace governor");
+ MODULE_LICENSE("GPL");
+
+---
+base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+change-id: 20240605-md-drivers-devfreq-42b19b2594a1
 
 
