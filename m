@@ -1,124 +1,112 @@
-Return-Path: <linux-kernel+bounces-201727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A20F68FC23F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:42:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D06C8FC241
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:44:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 178C61F24802
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 03:42:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE2151C21A48
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 03:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A3F73478;
-	Wed,  5 Jun 2024 03:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CDF87346E;
+	Wed,  5 Jun 2024 03:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EWO6naKT"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMJ19d0k"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A0C2207A;
-	Wed,  5 Jun 2024 03:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658AD2207A
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 03:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717558917; cv=none; b=dXCW/1gbZbHnMXyohPkChRUZzIiPIzYwJwVlqqGP1wEtRHx7VG9yKQQ/dsprD5Z4T9JW1XzllkmOkD7L39B13Zd8sITUtMfpS7xJof8PF5xImAcmQdg/fDXqvu33CckzOXk+FJPc9v1uJ/ixy2CLBw4yQXb8+9Lc1kxmFpgHV0w=
+	t=1717559070; cv=none; b=bmOK28WODKeqlIL67zwLypJ9dBztK6KPksEKMbSkNvDkbCOkQ25+vRzg4hFlYRfjUf3+EzdprBtqQazrBOR1rLhSRpkTb22dvQuxiuY0zg8aTfj5oyWHSc70yTUF1DxK1DT2veQmntgy65NX3//HBgnEYHD5xr9tBe02hYnu6mE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717558917; c=relaxed/simple;
-	bh=9c0gjMYAqxvtQn7aLIFBQnVk1OkShMwoxZgNanIbVts=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ng1SGxAONOeMfZy6tFNduI4EgbO7I3lMwxcdMB6ybD9GQnS9RNg3yrmVFBWBSxZtof9J9DJWAjPUQTjwE4Ny9M5DGXf/gr1Mi57AeMMBbGwcXtqYrOObCf6okOUKrP+Bqxl7UKSkRYv6hdDke0UlM8FEICpfNkwRJf9KbC8FLfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EWO6naKT; arc=none smtp.client-ip=209.85.215.178
+	s=arc-20240116; t=1717559070; c=relaxed/simple;
+	bh=XDa1ZZWfChpEvNEp16xs3nCmWlD7jDaE5vvWTP/5iBs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=lR0S5+nxxvrYOu2w5X/7A1fKwg+uLlAYcA+NzK/S7EAfuiMxlMQe7CvNJfNiweSInZGxuYVVOFVJ2UOBQzbojPv7l0qiUU9pHCxRubTIhntLW5b1UKWH6qPRBmxjHrhjhFj9VAJQv/zp3KNMDqwPgibl8jcPbLBNTLoHBNEeYoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RMJ19d0k; arc=none smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-656d8b346d2so4516567a12.2;
-        Tue, 04 Jun 2024 20:41:56 -0700 (PDT)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2bfdae7997aso5071948a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 20:44:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717558916; x=1718163716; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=j063GnbcnSiG+5t9I1lfB7FjoGarg4y5JgKSos4DqMw=;
-        b=EWO6naKTH95j8xnKK+py37N0mdPJxGyghd/CbuvczrnAR/RAuL7JJVvwV9rca6afl6
-         ibh9nlT+sb3qYqFGdbH7gXYhKBv7UX3Lx4a9U/pjPdovFY5ueaAaq0GTMtbMgHHp+its
-         9ZAc/hvZHkCeRGI5E03VvEptd29MY189N55wD0rC4cLhSsWsYMgdEEDPtuK1VXjuTz8c
-         HkUfQ55WWryJxwm2f2cV95OXP5zjIcpOeHjtSZ2PJSRyWv2jRWQR78oqlInDgxZqZc5T
-         JSq7Hc4+byOIIyvhT9UAaBfAuUhGZahyc3RZruCObQdbOBLx/3CpQbr68N7Kz9S7YO0J
-         qVuw==
+        d=gmail.com; s=20230601; t=1717559069; x=1718163869; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=SbD49E78cddouoifsf5mdpBCw/xwoRr3LLz54+H5tYg=;
+        b=RMJ19d0kq+75rLEhhmS0qfxnhM1e0HUip3iUFFtWA2L+zTc0J5xht5js8Wl02PfwqQ
+         fSt/riynbFvXBwZGGSLtcV25qLmiPyfHl2fqFBtnAkJNmxW0HyjOKM7+NZ5wQMmpLLDl
+         rdCQuIczy+LEDSaCYBD2aEVyvjgBbIVS2A0FcX6+0+JFjDF6ePcd4WwMy24hJuReFCxW
+         oeYF8nbYCUdkS1cJJCqPk7a1CMner9lnTlPPugGuN6PiFh/+fa/TcOaKw2BhBkm32FY5
+         uJeJ6xglq7qsr99EktDt5neXzI9rf14Zh3cCBVZdWUtFIBvlvWir8F3ImbHB7Wlo8j7e
+         i8KA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717558916; x=1718163716;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j063GnbcnSiG+5t9I1lfB7FjoGarg4y5JgKSos4DqMw=;
-        b=pLzTHgD9932ETknWIL/FPeKTkfXcMsNVrjdHqSOfx1gK/UwOR3e5xHEEJkAr0Pg3vl
-         Z1cjmB3kfZYBxdIaX88S2oaAMeZbf0ko2ecVAJ10PyI0obL87GE3YXSDU+z2lkMCdSeV
-         2Asjev7ydXDi60gMbhWypJAYd3t205k//5y+IDE4BT/e9attyu2mijd0pfuDoKw3i4oc
-         qrKDNHSXKN7oagx2bW+n8punertzOiNtQ2jC40yb5fG7jieiuvaMixOUN7bh6ozqUPqI
-         9KaaJfxtUG15JFSjcfqOddAUihUSSHPI6x1a7DgicmElTD5e/QIOt/69svJ1JK74Ux7U
-         iHrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTjBagTVxFimb7OzsWI9SRoYkqN2D5obUS0fdJyc5G6JD2Sn2SoH9bdbZWK4cMnVZx36WDkFdpSPETT0CikWaHHbCb2OIEBsk3AAXMfqXIb66CFHLDRC6zGbMuDu8qUcIBS6knlovCiZ6m
-X-Gm-Message-State: AOJu0YwRK5YbAusixGPEnQVefLNY0InjSRqpMoA8aznxgdD6GP2S+U9S
-	lGBLFc0Z1QN3yoTzZB0DtU6nBKKRbBZEQmJJ5ZPBWp7z0UqDMkU6s5PWoVkR
-X-Google-Smtp-Source: AGHT+IHR44CKnHUCQpTwDPAtiiHMVa9hZW7rkg4ZIG+Lu+JbdjIj5DMIAwQZv38pNCnkq/ROgXgh3g==
-X-Received: by 2002:a05:6a21:6da9:b0:1af:a37e:367e with SMTP id adf61e73a8af0-1b2b6f81145mr2068514637.15.1717558915569;
-        Tue, 04 Jun 2024 20:41:55 -0700 (PDT)
-Received: from mari.. ([2804:431:cfd3:42f5:5d7e:7952:2a52:2cb2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f632416a1esm93861225ad.284.2024.06.04.20.41.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 20:41:55 -0700 (PDT)
-From: Marilene A Garcia <marilene.agarcia@gmail.com>
-To: Coly Li <colyli@suse.de>,
-	Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Marilene A Garcia <marilene.agarcia@gmail.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	linux-bcache@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] bcache: Fix compiler warnings
-Date: Wed,  5 Jun 2024 00:40:57 -0300
-Message-Id: <20240605034057.2671663-1-marilene.agarcia@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1717559069; x=1718163869;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SbD49E78cddouoifsf5mdpBCw/xwoRr3LLz54+H5tYg=;
+        b=wqxKrDaBV5trpX9d26Tvuc1qFyYBIPNDUuCCw9MJG1mDSIW5+9AAWgTq9dYx+ZHqMw
+         I1rz4mgZnEyeL3blJt+ENO3dxniZT+Nedo4hOjSM+KYoZdm8JbA3PYtYCh7d3sOMXThY
+         +bhKgZPnEzvuYSYG4h0CUV/Wy3L6JYhOj4khp7OoHdFQVbQV5R4RVfNRqpbQb9NBv0+K
+         JO9+B/OKVlgk+Qo+87VM2kMuWRhKkx/l8O7STJ7iNlW2QbckailiAH26OepTInk073aC
+         Xsmmziu83to7MIyZXv3pSTYARcOawH82KyThitOXjNRf2zImbwOG6GqhdnDfIUgXlHjp
+         Zguw==
+X-Forwarded-Encrypted: i=1; AJvYcCXl9fWHwFcD4IvP9ZKNvu1suSwk3okhut+QRSBxjDdy/DMQPyrMiLBMGiRsUwlEi1yX3KyS/1LzmE81XCIE/oe5QkVwHQ6c8NPrWqe6
+X-Gm-Message-State: AOJu0YzM1OAbmQcp9v3CQerCGR+Otvm2CIF+W4gY9WofXiuUlG5e2rA7
+	Nko6CyQhqVXo4RZBbZW1nimoRYBXu8+pbhhz0Ahei0vXSppSTrm9
+X-Google-Smtp-Source: AGHT+IF6ouiokiVEyFL/FkVwCikSYFZ+WjrqZx3MbtO/OSdFIf0J9kZ/NtSEdTkFp9kIx9hLWh3+/A==
+X-Received: by 2002:a17:90a:fe04:b0:2c1:ea2e:20b2 with SMTP id 98e67ed59e1d1-2c27db57d16mr1342743a91.30.1717559068626;
+        Tue, 04 Jun 2024 20:44:28 -0700 (PDT)
+Received: from [192.168.255.10] ([43.132.141.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c2806d1be2sm302326a91.55.2024.06.04.20.44.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 20:44:28 -0700 (PDT)
+Message-ID: <0a6603c4-ac05-460c-8bad-66813570b426@gmail.com>
+Date: Wed, 5 Jun 2024 11:44:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/10] mm/ksm: calc_checksum for folio
+To: David Hildenbrand <david@redhat.com>, alexs@kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, izik.eidus@ravellosystems.com,
+ willy@infradead.org, aarcange@redhat.com, chrisw@sous-sol.org,
+ hughd@google.com
+References: <20240604042454.2012091-1-alexs@kernel.org>
+ <20240604042454.2012091-10-alexs@kernel.org>
+ <ddb33c85-35e4-47c5-8a81-13a2012aac5e@redhat.com>
+Content-Language: en-US
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <ddb33c85-35e4-47c5-8a81-13a2012aac5e@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-It fixes the following compiler warnings by
-using "/*" instead of "/**" in the comments
 
-drivers/md/bcache/request.c:309: warning:
-Function parameter or struct member 'bch_data_insert'
-not described in 'CLOSURE_CALLBACK'
 
-drivers/md/bcache/request.c:309: warning: expecting
-prototype for bch_data_insert(). Prototype was for
-CLOSURE_CALLBACK() instead
+On 6/4/24 9:18 PM, David Hildenbrand wrote:
+>> @@ -2369,7 +2371,7 @@ static void cmp_and_merge_page(struct page *page, struct ksm_rmap_item *rmap_ite
+>>        * don't want to insert it in the unstable tree, and we don't want
+>>        * to waste our time searching for something identical to it there.
+>>        */
+>> -    checksum = calc_checksum(page);
+>> +    checksum = calc_checksum(folio);
+> 
+> So for a large folio you suddenly checksum more than a single page? That's wrong.
+> 
+> Or am I missing something?
 
-Signed-off-by: Marilene A Garcia <marilene.agarcia@gmail.com>
----
-Hello,
-These warnings happen using GCC compiler the command 'make W=1'.
+I am not sure if this change are good too, anyway, comparing the whole folio may have it advantages on efficiency, but more splitting do save more pages.
 
-Thank you.
+Anyway, this change could be dropped.
 
- drivers/md/bcache/request.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-index af345dc6fde1..457b9605aff9 100644
---- a/drivers/md/bcache/request.c
-+++ b/drivers/md/bcache/request.c
-@@ -285,7 +285,7 @@ static CLOSURE_CALLBACK(bch_data_insert_start)
- 	}
- }
- 
--/**
-+/*
-  * bch_data_insert - stick some data in the cache
-  * @cl: closure pointer.
-  *
--- 
-2.34.1
-
+Thanks!
 
