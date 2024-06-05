@@ -1,108 +1,234 @@
-Return-Path: <linux-kernel+bounces-202768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE4358FD0B0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:19:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F23358FD0B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B5D0288220
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:19:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D23E1F213C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91ACB1D524;
-	Wed,  5 Jun 2024 14:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F071A291;
+	Wed,  5 Jun 2024 14:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2inVvOWu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1hc7ph2l"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dd3MNYXs"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504EC17BCD;
-	Wed,  5 Jun 2024 14:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8878D19D88A
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 14:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717597178; cv=none; b=Bdex5Ceng0E8YD5ZsrKGEAiPSkB6MQi6nXKCHisVgdTQhx2O24FVptlPM7vGy1qD6iah3BnpTr411okE/lXQUnyc05Xye/mna8ECruF8G42+7pvvIbJZiQ7I9hXggpgB1CWs41s1+cP7cmchrHBhoGV75QIQLMqxBqHgkB11td0=
+	t=1717597255; cv=none; b=nILH3VmiMuIsrqlHcmwWcKqgNE++U+6caKyQxXD71aZvfzmKCCX8sCuVDgel3eilzRx9pepv3DMuthbaVp66DDqQH5BpcMJh2CDqYh1EjjquVQ81KzAyI5r/428/9kr0cbYX/F4/5fcsr0AWb+pF7sj3vk24sqx2eN3uqDZ+sY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717597178; c=relaxed/simple;
-	bh=6URTEerfkdzLvqFcLf0HfIhwY4ccOG/H9zSR0R5rh18=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dPEy1dPagDxBJFAHkpfS7Q0Go1WecIkwpL5Xxi7ULTto2SXNJEyTd0EJ5expvW1KtBR2/eACgkMcVQT07q0b6PPhzUfjhYqB470j09PXjmxJu9GyhN71e8kZFKc5/lnJbiS7MPE1lqV5ZLvG3wBtgE2dhPH9BLmr/SncEpzmOXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2inVvOWu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1hc7ph2l; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717597173;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t0o5pyoMUAS+Hj4ypHyiKCTLmAk7b8HOBNFgUfxaG+0=;
-	b=2inVvOWu3HafMPDKsb+qpF7AzcwPeqf+JH+8bF9kRSdqDzzaaku3ordzvLSUIWDvdfcEoj
-	SPaeek8iNZF8xz/3ZfaME/ZUVxpuqcaypIs1CzrRizlEU/i02qTJYH0S8XcDTLiu+JbCHq
-	ZrrPyEn1xY3N0QsZJxMPeIPTySHdC1M/7eiTpZIBCNM92mz3kqIs6ZcPqQP4ep6XPDEG/9
-	RykbrOlFQtdrI+tl3ju5PWpdJW8JQ8psPivXVdTF6lsxdYKKTTTt6FUk0Ahr4oxW1ySkSI
-	ocetbrzCRqfAO0gHv1rWrvd4iwKcyiFCMTZn6ZjbXbcDz5BvnGT6IE77Ej4S/Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717597173;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t0o5pyoMUAS+Hj4ypHyiKCTLmAk7b8HOBNFgUfxaG+0=;
-	b=1hc7ph2lzRvvkR/40ZQ5c0U6Xp36HKvb3qaHbKRSkMdKXAKUOWynQr6Xh4YfQxYICLEVyg
-	nsrwj93w2GG5ZmCQ==
-To: Michael Kelley <mhklinux@outlook.com>, "kys@microsoft.com"
- <kys@microsoft.com>, "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>, "decui@microsoft.com"
- <decui@microsoft.com>, "mingo@redhat.com" <mingo@redhat.com>,
- "bp@alien8.de" <bp@alien8.de>, "dave.hansen@linux.intel.com"
- <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>,
- "hpa@zytor.com" <hpa@zytor.com>, "lpieralisi@kernel.org"
- <lpieralisi@kernel.org>, "kw@linux.com" <kw@linux.com>, "robh@kernel.org"
- <robh@kernel.org>, "bhelgaas@google.com" <bhelgaas@google.com>,
- "James.Bottomley@HansenPartnership.com"
- <James.Bottomley@HansenPartnership.com>, "martin.petersen@oracle.com"
- <martin.petersen@oracle.com>, "arnd@arndb.de" <arnd@arndb.de>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-Cc: "maz@kernel.org" <maz@kernel.org>, "den@valinux.co.jp"
- <den@valinux.co.jp>, "jgowans@amazon.com" <jgowans@amazon.com>,
- "dawei.li@shingroup.cn" <dawei.li@shingroup.cn>
-Subject: RE: [RFC 06/12] genirq: Add per-cpu flow handler with conditional
- IRQ stats
-In-Reply-To: <SN6PR02MB415706390CB0E8FD599B6494D4F92@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20240604050940.859909-1-mhklinux@outlook.com>
- <20240604050940.859909-7-mhklinux@outlook.com> <87h6e860f8.ffs@tglx>
- <SN6PR02MB415737FF6F7B40A1CD20C4A9D4F82@SN6PR02MB4157.namprd02.prod.outlook.com>
- <87zfrz4jce.ffs@tglx>
- <SN6PR02MB415706390CB0E8FD599B6494D4F92@SN6PR02MB4157.namprd02.prod.outlook.com>
-Date: Wed, 05 Jun 2024 16:19:33 +0200
-Message-ID: <87cyov4glm.ffs@tglx>
+	s=arc-20240116; t=1717597255; c=relaxed/simple;
+	bh=rwzRMqBnuvWkjZ3Mx6xR3M/0Dew3Q2Uw/R41CRqfrw4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G5+eHNDpYp3eCpj2CCvTPgSGAztO4C9yxb6h9UQ7Z/JcPgN3CPws52WnPZeoo9vEE0+o/BobhT1bZlGaSm27sBeNckxWgg4yJ5DxDo+PLz/qWnYG19oJdAlCbkky36O/ijhWHHYG8jemWuQZPr62O3L8CnANDPbjytz4mwSH/YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dd3MNYXs; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52b83225088so6769445e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 07:20:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717597252; x=1718202052; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f6/nFcvo4Plib4eYfTDh6OIq6sf+MB/iDA/4kpOYR+k=;
+        b=Dd3MNYXscgN49lUo+2+UCsdOMpyEyaLMFcWoz9Giz4ROJDEzoSDdfR+tEMggqtcfbq
+         SKQXj6cAnunJS6Huo3IQylSW/9TzQ/YNyyErV+p1YUvdmFjuNsoQP2hEyM0tBg6lIH5C
+         LwMq3Bp8zx4K1ycbBsWdcvbgISErhz7U4WgjxG3q0OpEnAxBhgTw2JvcTYdVYcN5rIYD
+         SAGMyQvO4QnvQhLfbaDw1FRpgABKGiFJ6uOOPTMtiBKvQsk6sZQruQ9I2PkaytkJdr7Y
+         QWRjg5vsjOu9FjZzk0/aPWl9gnjt1UiojWl7AeWUQRUNSQBSdJQSyjmkrwUIjWMsRH5g
+         F2rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717597252; x=1718202052;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f6/nFcvo4Plib4eYfTDh6OIq6sf+MB/iDA/4kpOYR+k=;
+        b=LCe1XFE3nGuqfgVwPcCwcFo0d9u/sYGtNS9xA4JShuaZ/v+zbYX33zAn9aBCVeN47b
+         uw3SUquNdBo1p1f12DbW8DG+RUUxhMzU06ecl8OY2EnWzmEd+APsyWnRmnTU91jNIxkL
+         lALsPMGYekgyLRMcy6ucaqlsohs4nXKSmG4URoVAWAPybzkqmLvSwLj2UDuODW8r3zlq
+         17DKspfMYq8baTCFx+It0Fv5f8QDyOwTjo8qZh+LB6PK8C/xgS/z3OhuHm9xgT7RjUTy
+         +7PZLT+BK50PrKuGHz4aLaR7+Qlc44H3DZJ8MQr8gNDJnWZMGn0RkUulPATDZ9Dpov+Q
+         4Peg==
+X-Forwarded-Encrypted: i=1; AJvYcCVc5ckc6aaC5/jsanRV6rJ3/d5cAV+ZR4tD1LP/txd7pG/qtPROligN5JrNfV5DV5KeeyEjl0Byy1/zl1PGjwPdyQNo0ooGsqgxD4db
+X-Gm-Message-State: AOJu0Yye43cwg5hjsXDqmjAxFDl/xFUiUu8h00ZxJvZnAwFB3SFmnAWp
+	NsJ3izXpXUfKupw9NLK8KemhRKI1Phe7LYNoqouRVGZs8mEPmEpNyamWDgkYOhMyUoAZnJ+ew70
+	icEn88Y2l9UPZ+ZaGmffRnS9kaOY=
+X-Google-Smtp-Source: AGHT+IEclwAhv2Gs76M218qecK/f9MCwW8rrRU378XIhtJLYeZe+NoqxXepfOxLbW0F6m2D9FYleT8L7sWbciSpknMc=
+X-Received: by 2002:a05:6512:4891:b0:52b:af6b:7b4c with SMTP id
+ 2adb3069b0e04-52baf6b7bffmr1031490e87.30.1717597251361; Wed, 05 Jun 2024
+ 07:20:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240521040244.48760-1-ioworker0@gmail.com> <20240521040244.48760-3-ioworker0@gmail.com>
+ <fd16b219-bc46-484a-8581-a21240440fa6@redhat.com>
+In-Reply-To: <fd16b219-bc46-484a-8581-a21240440fa6@redhat.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Wed, 5 Jun 2024 22:20:39 +0800
+Message-ID: <CAK1f24kwf4gDwK=8X4z1bM9-H6_M9QKy6-ko9pTUZij-W=40wg@mail.gmail.com>
+Subject: Re: [PATCH v6 2/3] mm/rmap: integrate PMD-mapped folio splitting into
+ pagewalk loop
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org, 
+	baolin.wang@linux.alibaba.com, maskray@google.com, ziy@nvidia.com, 
+	ryan.roberts@arm.com, 21cnbao@gmail.com, mhocko@suse.com, 
+	fengwei.yin@intel.com, zokeefe@google.com, shy828301@gmail.com, 
+	xiehuan09@gmail.com, libang.li@antgroup.com, wangkefeng.wang@huawei.com, 
+	songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 05 2024 at 13:45, Michael Kelley wrote:
-> From: Thomas Gleixner <tglx@linutronix.de> Sent: Wednesday, June 5, 2024 6:20 AM
+Hi David,
+
+On Wed, Jun 5, 2024 at 8:46=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
 >
-> In /proc/interrupts, the double-counting isn't a problem, and is
-> potentially helpful as you say. But /proc/stat, for example, shows a total
-> interrupt count, which will be roughly double what it was before. That
-> /proc/stat value then shows up in user space in vmstat, for example.
-> That's what I was concerned about, though it's not a huge problem in
-> the grand scheme of things.
+> On 21.05.24 06:02, Lance Yang wrote:
+> > In preparation for supporting try_to_unmap_one() to unmap PMD-mapped
+> > folios, start the pagewalk first, then call split_huge_pmd_address() to
+> > split the folio.
+> >
+> > Since TTU_SPLIT_HUGE_PMD will no longer perform immediately, we might
+> > encounter a PMD-mapped THP missing the mlock in the VM_LOCKED range dur=
+ing
+> > the page walk. It=E2=80=99s probably necessary to mlock this THP to pre=
+vent it from
+> > being picked up during page reclaim.
+> >
+> > Suggested-by: David Hildenbrand <david@redhat.com>
+> > Suggested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
+> > ---
+>
+> [...] again, sorry for the late review.
 
-That's trivial to solve. We can mark interrupts to be excluded from
-/proc/stat accounting.
+No worries at all, thanks for taking time to review!
 
-Thanks,
+>
+> > diff --git a/mm/rmap.c b/mm/rmap.c
+> > index ddffa30c79fb..08a93347f283 100644
+> > --- a/mm/rmap.c
+> > +++ b/mm/rmap.c
+> > @@ -1640,9 +1640,6 @@ static bool try_to_unmap_one(struct folio *folio,=
+ struct vm_area_struct *vma,
+> >       if (flags & TTU_SYNC)
+> >               pvmw.flags =3D PVMW_SYNC;
+> >
+> > -     if (flags & TTU_SPLIT_HUGE_PMD)
+> > -             split_huge_pmd_address(vma, address, false, folio);
+> > -
+> >       /*
+> >        * For THP, we have to assume the worse case ie pmd for invalidat=
+ion.
+> >        * For hugetlb, it could be much worse if we need to do pud
+> > @@ -1668,20 +1665,35 @@ static bool try_to_unmap_one(struct folio *foli=
+o, struct vm_area_struct *vma,
+> >       mmu_notifier_invalidate_range_start(&range);
+> >
+> >       while (page_vma_mapped_walk(&pvmw)) {
+> > -             /* Unexpected PMD-mapped THP? */
+> > -             VM_BUG_ON_FOLIO(!pvmw.pte, folio);
+> > -
+> >               /*
+> >                * If the folio is in an mlock()d vma, we must not swap i=
+t out.
+> >                */
+> >               if (!(flags & TTU_IGNORE_MLOCK) &&
+> >                   (vma->vm_flags & VM_LOCKED)) {
+> >                       /* Restore the mlock which got missed */
+> > -                     if (!folio_test_large(folio))
+> > +                     if (!folio_test_large(folio) ||
+> > +                         (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)))
+> >                               mlock_vma_folio(folio, vma);
+>
+> Can you elaborate why you think this would be required? If we would have
+> performed the  split_huge_pmd_address() beforehand, we would still be
+> left with a large folio, no?
 
-        tglx
+Yep, there would still be a large folio, but it wouldn't be PMD-mapped.
+
+After Weifeng's series[1], the kernel supports mlock for PTE-mapped large
+folio, but there are a few scenarios where we don't mlock a large folio, su=
+ch
+as when it crosses a VM_LOCKed VMA boundary.
+
+ -                     if (!folio_test_large(folio))
+ +                     if (!folio_test_large(folio) ||
+ +                         (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)))
+
+And this check is just future-proofing and likely unnecessary. If encounter=
+ing a
+PMD-mapped THP missing the mlock for some reason, we can mlock this
+THP to prevent it from being picked up during page reclaim, since it is ful=
+ly
+mapped and doesn't cross the VMA boundary, IIUC.
+
+What do you think?
+I would appreciate any suggestions regarding this check ;)
+
+[1] https://lore.kernel.org/all/20230918073318.1181104-3-fengwei.yin@intel.=
+com/T/#mdab40248cf3705581d8bfb64e1ebf2d9cd81c095
+
+>
+> >                       goto walk_done_err;
+> >               }
+> >
+> > +             if (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)) {
+> > +                     /*
+> > +                      * We temporarily have to drop the PTL and start =
+once
+> > +                      * again from that now-PTE-mapped page table.
+> > +                      */
+> > +                     split_huge_pmd_locked(vma, range.start, pvmw.pmd,=
+ false,
+> > +                                           folio);
+>
+> Using range.start here is a bit weird. Wouldn't this be pvmw.address?
+> [did not check]
+
+Hmm... we may adjust range.start before the page walk, but pvmw.address
+does not.
+
+At least for now, pvmw.address seems better. Will adjust as you suggested.
+
+>
+> > +                     pvmw.pmd =3D NULL;
+> > +                     spin_unlock(pvmw.ptl);
+> > +                     pvmw.ptl =3D NULL;
+>
+>
+> Would we want a
+>
+> page_vma_mapped_walk_restart() that is exactly for that purpose?
+
+Nice, let's add page_vma_mapped_walk_restart() for that purpose :)
+
+Thanks again for your time!
+
+Lance
+
+>
+> > +                     flags &=3D ~TTU_SPLIT_HUGE_PMD;
+> > +                     continue;
+> > +             }
+> > +
+> > +             /* Unexpected PMD-mapped THP? */
+> > +             VM_BUG_ON_FOLIO(!pvmw.pte, folio);
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
