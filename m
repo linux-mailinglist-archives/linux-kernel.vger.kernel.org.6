@@ -1,129 +1,127 @@
-Return-Path: <linux-kernel+bounces-201884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A723E8FC496
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:32:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DED648FC49E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AE0A1F21A55
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:32:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93A3C1F221A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0EF169381;
-	Wed,  5 Jun 2024 07:32:11 +0000 (UTC)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE02B18C322;
+	Wed,  5 Jun 2024 07:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="1REWpAQW"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11CD138C;
-	Wed,  5 Jun 2024 07:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE3C1922DD;
+	Wed,  5 Jun 2024 07:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717572730; cv=none; b=CodvWOc7NyEf0HxsLGvOrtKvnzq/nBijhq/J1N7alkqMsuDWLMza9QhuUsHhoTdBiTQja5FMJfzoMApwgW2tTf69MEuWJpQLjrT1rwH1x0rcnzk3zBd3NM3pExDZqup1DngD6OAeEncudvS/q2h+7HufgpRsgbfoedjOjcHOr5M=
+	t=1717572830; cv=none; b=PDZkb/oQGYGZ9wOnEjiGJHs+l0Z8sEXjJXuHqbiZmQ4keiJlBpOs997nEXaht7RATNfUi/BWf/NAnpBsxb1I0jk89RAKOsG05MK9qz4hArJmI52l80cJHp5nLyOfix815lM9O+DdX+ZUvA8dOd/NrL5s/7KBNfxgpI9nj2NdPVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717572730; c=relaxed/simple;
-	bh=L7felvgTDTE09ggPSnDZ0q3MJbdTQWtdAg9r/F9GJCY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l1fh0aFLFM/CRRdi89XXYjFT9OfLZP+n5jFU2rH4o4MmWs7NBhTSAD11KtgFmm/7Z+gji7a8xjtPEutlWRUD0ipgsoaaRNdYThnU/ASKj+EyK0xSJ45Mhxy3j8uAR9hFReHwpQhth+maliCoCMpot9lQBjYUFJEyyQdD3ETYUHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-62a08091c2bso70318417b3.0;
-        Wed, 05 Jun 2024 00:32:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717572727; x=1718177527;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4PbSG6kROXGWqIVI9Do+T1m9UykpgRSg/ltc8bSc+ps=;
-        b=mXQkRZoC/lEBUkiBOB2pdhXFLCUcTuxXNw2n7AE+pWIdJ2GIFKjy3FltZxrrGGJq43
-         WpjsQFRYcmOEAHD/TsoFlnlWogk7xpN9ia2QH8wB+rmMfjDXzT+KNvCu+gis7K0dsQJn
-         UoFopAptA3vi2DJTuJsmO3uvylGUPMWLXzv/i8vm8a762FCH3K0QC1ZUYj/cTiGIf+8o
-         lxih1aasG8TIxVANavs6UfhfrMeSUKzDa/WUomNOpQ7H4HOVpTHv4BKk12Du1BmBoK9n
-         QqQHOEKpsmoEWvtVd9nHOA+G0dzvgOvB1dliF7T8fyh809GrkOFCLkRBUAL1k4m8wd1E
-         97yg==
-X-Forwarded-Encrypted: i=1; AJvYcCXPGACfa4QW+DohVR8bF52BfMTIEaJBTcupTFPT9HMA6yWV4TFDMtWUfr6Gw84SnwRQAbDDvo89qzg55uZ2Jol2yMHfUCAaCDMPNnxv8ac8Rs/8jxG3hEog2HZqDeo49f9K57lNroXkbKTWYPBN70k9hgeTtGKA/xcDx0oy9MfXq6kM3JzLqu1wdV6X+dl6vMiJoR2HlXYXjGOV/iAHa4D6mXGpaPOSiggl
-X-Gm-Message-State: AOJu0YzETCh65CipwMqzHR4oSQ8+W0J4xBBnCp2c9i03dYAqQWXNP63K
-	fJl8q+6KrrPLsZLSr0ETkIYBvcswDVz/G3KZYXud283ko0Al6O/FCco+Jvr/
-X-Google-Smtp-Source: AGHT+IHhb5USEURkf/NEn1JZyFqHRnUBmdMa4dZ51guZsp5nhRbvocVkqJOKh282PLyDPenEJSdgMw==
-X-Received: by 2002:a81:f003:0:b0:627:dfbd:89e with SMTP id 00721157ae682-62cbb4a936fmr16219117b3.11.1717572727436;
-        Wed, 05 Jun 2024 00:32:07 -0700 (PDT)
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c765e63fasm21483307b3.32.2024.06.05.00.32.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 00:32:07 -0700 (PDT)
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dfa4ad7f6dfso6048184276.1;
-        Wed, 05 Jun 2024 00:32:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW3noEfFBn+eBjfTYNQSXM0jCNDaQ9duPvz+GSwdIWFdQPOrVjvBKmr1Y9luYhcxPgAtJj7BkUy2630LvaXSgEIil8DS8mZ7Oj/JYiuU731WSJ3Izy5RQhoRFeoAktdAXu5Gba6+xByQIYIah63FakyXh1ZyZT8jxspx+uF9OUGJe13vVTxUz2OvHWxYwtv+G3/CEWJx0v27oOTROM2uzKzPZNy57ZbZk8R
-X-Received: by 2002:a25:b2a5:0:b0:dfa:57e4:2df8 with SMTP id
- 3f1490d57ef6-dfacac33113mr1782340276.23.1717572727091; Wed, 05 Jun 2024
- 00:32:07 -0700 (PDT)
+	s=arc-20240116; t=1717572830; c=relaxed/simple;
+	bh=mEWFdK4wEb44Lkk5CxVRECsXbd6T/yzdhjXLOv+LiiQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=frHtKVAbUbkm6nu5i1xqe//oleb11ONugdqLwPh7WDTzDBAsVCyMDs+w1gNuoKdoYlI6b4gzD4Jo2uoeYRGnM2U0gJIhfbAm0S/xFRORBYWED96HSBnZrPmTpCvOMVMabVbZkYdDjUv3/u2dquCfnqGQO1uSYvkbRX/b1qSagaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=1REWpAQW; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4556wo3X011636;
+	Wed, 5 Jun 2024 09:33:30 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	A92N7DPum6K04dYwwSpN0JFQag+xU5B+2EfbUCGJxNg=; b=1REWpAQWm2p2T0On
+	KccqSPZclAb+9kHh80SD9w4iLaDLQ2TuUka/m0AIabxG74+gLuQDQ0OT4pGZY1sk
+	L5XlRBnq52WYRNk/8eaHWpzNFlhB6hYJhDuY2OQWzx2W//u2esWmnnJJMqqsxM0b
+	Ub4Bw77wb5TNg170CZY1AOErIjKgnTRS9R+x+pMiNJOB0wIpSPbX3IJyowN4uwSK
+	1bYhYFiwUv6s9BML8joNzmKas+BtcSxjhWa1AZVNq+PAsSGPfX7QY36Fp5wKXLFy
+	wKtCh1RnkUF1QVWeoSmjAFikzD+UcGaXcfjopxLbIAI1eQt3nd8dvYl0CkKiBycn
+	R20jqw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yg7r06bm8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Jun 2024 09:33:30 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9CE2540045;
+	Wed,  5 Jun 2024 09:33:25 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7D8FE2115E2;
+	Wed,  5 Jun 2024 09:32:36 +0200 (CEST)
+Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 5 Jun
+ 2024 09:32:35 +0200
+Message-ID: <314f1f33-7f6b-4b10-a05e-f9e0d5456e31@foss.st.com>
+Date: Wed, 5 Jun 2024 09:32:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240604170513.522631-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240604170513.522631-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240604170513.522631-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Jun 2024 09:31:55 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXsGLrgAfe=5VsL1F_sTjG1jxzU36s5iHaSeW3Nb3qwgA@mail.gmail.com>
-Message-ID: <CAMuHMdXsGLrgAfe=5VsL1F_sTjG1jxzU36s5iHaSeW3Nb3qwgA@mail.gmail.com>
-Subject: Re: [PATCH v5 5/5] serial: sh-sci: Add support for RZ/V2H(P) SoC
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] arm64: dts: st: enable STM32 access controller for
+ RCC
+To: <gabriel.fernandez@foss.st.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Maxime Ripard
+	<mripard@kernel.org>,
+        Dan Carpenter <dan.carpenter@linaro.or6g>
+CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+References: <20240529131310.260954-1-gabriel.fernandez@foss.st.com>
+ <20240529131310.260954-4-gabriel.fernandez@foss.st.com>
+Content-Language: en-US
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20240529131310.260954-4-gabriel.fernandez@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-04_11,2024-06-05_01,2024-05-17_01
 
-Hu Prabhakar,
+Hi Gabriel
 
-On Tue, Jun 4, 2024 at 7:05=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.co=
-m> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add serial support for RZ/V2H(P) SoC with earlycon.
->
-> The SCIF interface in the Renesas RZ/V2H(P) is similar to that available
-> in the RZ/G2L (R9A07G044) SoC, with the following differences:
->
-> - RZ/V2H(P) SoC has three additional interrupts: one for Tx end/Rx ready
->   and two for Rx and Tx buffer full, all of which are edge-triggered.
-> - RZ/V2H(P) supports asynchronous mode, whereas RZ/G2L supports both
->   synchronous and asynchronous modes.
-> - There are differences in the configuration of certain registers such
->   as SCSMR, SCFCR, and SCSPTR between the two SoCs.
->
-> To handle these differences on RZ/V2H(P) SoC SCIx_RZV2H_SCIF_REGTYPE
-> is added.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On 5/29/24 15:13, gabriel.fernandez@foss.st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> 
+> Use an STM32 access controller to filter the registration of clocks.
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 > ---
-> Hi Geert, Ive restored your RB tag after rebase (as the changes were triv=
-al)
-> hope that's OK.
+>   arch/arm64/boot/dts/st/stm32mp251.dtsi | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> index dcd0656d67a8..602d02efc202 100644
+> --- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> +++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> @@ -441,6 +441,7 @@ rcc: clock-controller@44200000 {
+>   				<&scmi_clk CK_SCMI_TIMG2>,
+>   				<&scmi_clk CK_SCMI_PLL3>,
+>   				<&clk_dsi_txbyte>;
+> +				access-controllers = <&rifsc 156>;
+>   		};
+>   
+>   		exti1: interrupt-controller@44220000 {
 
-Thanks, LGTM!
+Applied on stm32-next.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+cheers
+Alex
 
