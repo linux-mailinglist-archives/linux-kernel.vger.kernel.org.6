@@ -1,92 +1,134 @@
-Return-Path: <linux-kernel+bounces-202431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C6FA8FCC8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:23:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88FF68FCC51
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:17:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D51A028812D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:23:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6A99B252EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83141BD508;
-	Wed,  5 Jun 2024 11:56:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABE91BD4EC;
-	Wed,  5 Jun 2024 11:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A40198E96;
+	Wed,  5 Jun 2024 11:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQIKvC9e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF615198E87;
+	Wed,  5 Jun 2024 11:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717588581; cv=none; b=cDp4VjD23JVgKffN+jdrjhV3tcMRMU9Geu7A1mI7IgQNxjVu/o4EGcNwUyR6veX87zTYgIdfPAEJPGrs7LPlq9HXFLzp2jFqTkEMHh04ES7i/IYw1bTIqO777dVv0CyImz32KaFEab7EevFwzm5TgbVH12hWXKwsIIfxoJGsi+c=
+	t=1717588506; cv=none; b=cRNrjwmsPkzp9ZwQvnBEwGJEOLM7oyYemQCGdHszUdW0HAPYnVWNlYElq8yIaIMsBOC4QJisCgen0w0PW0dervuiXQ4H/huO3MPec7affFOEkLGVhVCuUgf//AYzguh6tEYYwd4anEd/pZurQ1/wMim1xgK+aS6nnKtTQDOwpJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717588581; c=relaxed/simple;
-	bh=Zy9IzQB3ejrKR2POqOn3wcMgHH1MCGBVI1V+s+78v5U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PcN3o1WtBX1hrvpfeUvrXizyfoig3yzhTRkpMw1g3ociTeEP2cbqT4lctnmNVP2SlGvGr4/bTpbd1cxdIp46FBrZwLXc2JBuq2oO/lU5BV3OEI35ueB3848inTNetYbXiWgXDpIpeC/nncMRH0h2AwU0y9tHKojBvoFqPNkp6Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 37701339;
-	Wed,  5 Jun 2024 04:56:42 -0700 (PDT)
-Received: from e116581.blr.arm.com (e116581.arm.com [10.162.40.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 625493F762;
-	Wed,  5 Jun 2024 04:56:14 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: linux-arm-kernel@lists.infradead.org,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	shuah@kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	broonie@kernel.org,
-	suzuki.poulose@arm.com,
-	Anshuman.Khandual@arm.com,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH] selftests: arm64: Fix redundancy of a testcase
-Date: Wed,  5 Jun 2024 17:24:48 +0530
-Message-Id: <20240605115448.640717-1-dev.jain@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717588506; c=relaxed/simple;
+	bh=keKYWfzN1djD6KLmxuPPa4XdGqVyHQTp9UFTeJAwljs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aI6vOrqN0q4erkrDEVf9JsYS1Ob6bAxVUnxDNAknPO7lrccC5YmY1tLPFLKwIZtHU6zbEvc28Bx2BJYkP3gUy7E5GE6hEDS/WBxm05tcyYZ0P2+RTSdu9u1UHlI4CbQdJDVMAitkhH6rHFxvxj3pBvgUQVHxOoIM9Haghk0ZRHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eQIKvC9e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 041DCC32781;
+	Wed,  5 Jun 2024 11:55:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717588505;
+	bh=keKYWfzN1djD6KLmxuPPa4XdGqVyHQTp9UFTeJAwljs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eQIKvC9e+hKIF6kevzVmirJR3Nu8X9xqoH5WiIBeaWXGj3m11mExxTA2ccA+6koT+
+	 H0FJ3FpeoddhLw+oQEq48URUVGIrKRFzKYXnL+pz/gT5tWbc6arJoEFoGOB9jGOUcP
+	 gGsl1dt9pkeVv8E1Y6SqEVY/jTonWGTKGeuYWsGkWwNM5g7zyAJTttR+HmNaSelNxZ
+	 bqR2RjwN2+OpwEidb9AqEEd6kv0QpTy5ZUL8QoqnpZDPzR28iG2vV8BKsKOOprjfqc
+	 gdK440Cgb4ywqhkZVKDPpZ/5tlQONxwl3Xdxhjjub4zAw/BKdGtQuTa4DM7RDV+JAz
+	 /pnlqPfJQtkKA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Alex Henrie <alexhenrie24@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sasha Levin <sashal@kernel.org>,
+	sudipm.mukherjee@gmail.com,
+	linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 1/5] usb: misc: uss720: check for incompatible versions of the Belkin F5U002
+Date: Wed,  5 Jun 2024 07:54:54 -0400
+Message-ID: <20240605115504.2964549-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.4.277
 Content-Transfer-Encoding: 8bit
 
-Currently, we are writing the same value as we read, into the TLS
-register; hence, we cannot confirm updation of the register, making the
-testcase "verify_tpidr_one" redundant. Fix this; while at it, do a style
-change.
+From: Alex Henrie <alexhenrie24@gmail.com>
 
-Signed-off-by: Dev Jain <dev.jain@arm.com>
+[ Upstream commit 3295f1b866bfbcabd625511968e8a5c541f9ab32 ]
+
+The incompatible device in my possession has a sticker that says
+"F5U002 Rev 2" and "P80453-B", and lsusb identifies it as
+"050d:0002 Belkin Components IEEE-1284 Controller". There is a bug
+report from 2007 from Michael Trausch who was seeing the exact same
+errors that I saw in 2024 trying to use this cable.
+
+Link: https://lore.kernel.org/all/46DE5830.9060401@trausch.us/
+Signed-off-by: Alex Henrie <alexhenrie24@gmail.com>
+Link: https://lore.kernel.org/r/20240326150723.99939-5-alexhenrie24@gmail.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/arm64/abi/ptrace.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/misc/uss720.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/tools/testing/selftests/arm64/abi/ptrace.c b/tools/testing/selftests/arm64/abi/ptrace.c
-index abe4d58d731d..c105703442f9 100644
---- a/tools/testing/selftests/arm64/abi/ptrace.c
-+++ b/tools/testing/selftests/arm64/abi/ptrace.c
-@@ -47,7 +47,7 @@ static void test_tpidr(pid_t child)
+diff --git a/drivers/usb/misc/uss720.c b/drivers/usb/misc/uss720.c
+index 0be8efcda15d5..d972c09629397 100644
+--- a/drivers/usb/misc/uss720.c
++++ b/drivers/usb/misc/uss720.c
+@@ -677,7 +677,7 @@ static int uss720_probe(struct usb_interface *intf,
+ 	struct parport_uss720_private *priv;
+ 	struct parport *pp;
+ 	unsigned char reg;
+-	int i;
++	int ret;
  
- 	/* ...write a new value.. */
- 	write_iov.iov_len = sizeof(uint64_t);
--	write_val[0] = read_val[0]++;
-+	write_val[0] = read_val[0] + 1;
- 	ret = ptrace(PTRACE_SETREGSET, child, NT_ARM_TLS, &write_iov);
- 	ksft_test_result(ret == 0, "write_tpidr_one\n");
+ 	dev_dbg(&intf->dev, "probe: vendor id 0x%x, device id 0x%x\n",
+ 		le16_to_cpu(usbdev->descriptor.idVendor),
+@@ -688,8 +688,8 @@ static int uss720_probe(struct usb_interface *intf,
+ 		usb_put_dev(usbdev);
+ 		return -ENODEV;
+ 	}
+-	i = usb_set_interface(usbdev, intf->altsetting->desc.bInterfaceNumber, 2);
+-	dev_dbg(&intf->dev, "set interface result %d\n", i);
++	ret = usb_set_interface(usbdev, intf->altsetting->desc.bInterfaceNumber, 2);
++	dev_dbg(&intf->dev, "set interface result %d\n", ret);
  
-@@ -108,7 +108,7 @@ static void test_tpidr(pid_t child)
- 		/* Writing only TPIDR... */
- 		write_iov.iov_len = sizeof(uint64_t);
- 		memcpy(write_val, read_val, sizeof(read_val));
--		write_val[0] += 1;
-+		++write_val[0];
- 		ret = ptrace(PTRACE_SETREGSET, child, NT_ARM_TLS, &write_iov);
+ 	interface = intf->cur_altsetting;
  
- 		if (ret == 0) {
+@@ -725,12 +725,18 @@ static int uss720_probe(struct usb_interface *intf,
+ 	set_1284_register(pp, 7, 0x00, GFP_KERNEL);
+ 	set_1284_register(pp, 6, 0x30, GFP_KERNEL);  /* PS/2 mode */
+ 	set_1284_register(pp, 2, 0x0c, GFP_KERNEL);
+-	/* debugging */
+-	get_1284_register(pp, 0, &reg, GFP_KERNEL);
++
++	/* The Belkin F5U002 Rev 2 P80453-B USB parallel port adapter shares the
++	 * device ID 050d:0002 with some other device that works with this
++	 * driver, but it itself does not. Detect and handle the bad cable
++	 * here. */
++	ret = get_1284_register(pp, 0, &reg, GFP_KERNEL);
+ 	dev_dbg(&intf->dev, "reg: %7ph\n", priv->reg);
++	if (ret < 0)
++		return ret;
+ 
+-	i = usb_find_last_int_in_endpoint(interface, &epd);
+-	if (!i) {
++	ret = usb_find_last_int_in_endpoint(interface, &epd);
++	if (!ret) {
+ 		dev_dbg(&intf->dev, "epaddr %d interval %d\n",
+ 				epd->bEndpointAddress, epd->bInterval);
+ 	}
 -- 
-2.39.2
+2.43.0
 
 
