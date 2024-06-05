@@ -1,139 +1,134 @@
-Return-Path: <linux-kernel+bounces-203123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F1AA8FD6C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:51:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B46C18FD6C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 351191C228D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:51:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D074B1C229C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EE6154448;
-	Wed,  5 Jun 2024 19:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A7A15445E;
+	Wed,  5 Jun 2024 19:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IaqxZLI+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hk35WUGP"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E36154436;
-	Wed,  5 Jun 2024 19:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636D21527AA;
+	Wed,  5 Jun 2024 19:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717617083; cv=none; b=T6UM2mD1+W+RSzgGN3n1UG0sNN2GODdBg1oM9IRmSTvPZGtOWpDM/3mUSeYcmX4bluBGuoIJz9xwGiMpzSdyg1IJ/nUFsFauqu/ik0IJxnVUM6q1pLgMTkPnlUqm/3uq/KkFTutVHAH7+zl4FVrhUW89iGiF6YlNLSv5A4FCJSM=
+	t=1717617107; cv=none; b=OoPAYR6kXidhsBIgBzRVMEVg48UDO510g9ZtNpd4bok/PBxWYYBR5BRwIuJkIR5b4xjF6w56Vk14cV0gSj6jCrEzT1TfjqMoGQ83J046Pvzxb9lHR7fgaT7gW8YawtXCW9eUxtinp5W7wFF+HfizAh0xF2AE0aUXjIyPaOrUK7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717617083; c=relaxed/simple;
-	bh=41iLXtRakTOZqv2vBnh0hQcqUw/AeJryNuhiaoedJ2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iONyMQu8JOldhXx4b2TnNTAvSLBYeWxDPKOkvEnJBaavH5vw3jwTGw12vvt0NYZKj4nsz7lEYKCqbPD5eQHy6q0Pa6YaXPiLfCYkMR1ueV05C5dZFOsUOFMmXihiO3u5NpZ1rF+scEvP6DYuZOS0x8g8IJqWOZisskUVTQRhubU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IaqxZLI+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B281C2BD11;
-	Wed,  5 Jun 2024 19:51:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717617083;
-	bh=41iLXtRakTOZqv2vBnh0hQcqUw/AeJryNuhiaoedJ2U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IaqxZLI+2cB24EwHJTLJbXiihQiwYcxhN5QYLFPVeXsxCPAh7xv185XcWVOUoYHax
-	 3UT5mJDBVRO44xUCjiPIaPpugGOIGLEFLR0do+4FaFIDOD2o+MaRGodvBdq95hZ+dE
-	 9Yg3yRVrd3f+M3grquR+Awyd0QiZx2y+3+Lq0xRUVodMS87bc5khz28kk/FUUPwlD1
-	 iiSIdvgCB1IoZcW3VrmEK3EvAE6hBTFSNtUHZNdZwZ2Y6p5yABoeRDAehXVnMgaiLG
-	 dZkl04UBnywnZyzoo7IsOBis0HqVhb/s8vgwhaIw1YMemDBfSdFGVByAd4hh1dI8rZ
-	 DireAE1JRzXkw==
-Date: Wed, 5 Jun 2024 20:51:17 +0100
-From: Simon Horman <horms@kernel.org>
-To: Adrian Moreno <amorenoz@redhat.com>
-Cc: netdev@vger.kernel.org, aconole@redhat.com, echaudro@redhat.com,
-	i.maximets@ovn.org, dev@openvswitch.org,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Pravin B Shelar <pshelar@ovn.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 5/9] net: openvswitch: add emit_sample action
-Message-ID: <20240605195117.GY791188@kernel.org>
-References: <20240603185647.2310748-1-amorenoz@redhat.com>
- <20240603185647.2310748-6-amorenoz@redhat.com>
+	s=arc-20240116; t=1717617107; c=relaxed/simple;
+	bh=13pNVGD9Kxcf1hFGXjLsg/bvuyKWmCGBqbVx1C7p2fw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UvjUtPojd3Cf8CjgyyKAiwD6RckhYEN/X8c64xguO3m+KWdDYfW2bU72jXLIqTNxelIpnAb5SHo7ECJ4Gkr2gSgovbBDYn32bCTQP2Qy3GbmeqyGt2Q7uRn2nCaxalFK09lTRSmMPE7+tbdTBTLTh6KAlDk1mR1c79bp1sPKupI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hk35WUGP; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f630e35a01so2140385ad.1;
+        Wed, 05 Jun 2024 12:51:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717617106; x=1718221906; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rK84/e0NpWu6xN5WA2vo2qIrm/0cYRoieZimvFEhelM=;
+        b=hk35WUGPKOdVLWFXDpQ4LtSg2JKT5ME5H/WGKLmdvtJmwXoHYvCFL8oLcfquZ8uQj4
+         1xNO4L7yQxtru0slwJ/bMRNzSP3SjoUKMPJ33QJFpvB3GQtVCylFxrCsCju6ePL+YFh8
+         TYK6U7DLqEscLMKoiddPmK6B/E4IAb9s6g4KEhA5+tSaXbdijBQw7XLy1scsuAWoHMFH
+         mqSnMUd5skl39RKUmwBUYgs3IzPhfbHMUD9Xioj83LapAf+QgfiVqSF9rpEfKAfaK5gl
+         8k6vdaFF5nJqcTMDj60PcF2oh4TNfZHXJZ2nwnVRt6A/u/1vZX0hobKU/GPerkapRtMR
+         ijFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717617106; x=1718221906;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rK84/e0NpWu6xN5WA2vo2qIrm/0cYRoieZimvFEhelM=;
+        b=wOGBuq2Q6omF44wtfHL+tA++0VN2h/shgX+D2Wm+2M16q5vL+ZwbY5M/sGyN0iUCVV
+         682AKcoWOnblTNMLqyvILk9lv5zR8aBRDxso959qzBYeFYj3jymKGdVeT5Y9UFUBrOe6
+         O6hxN0n5xVpv3UhwRMHPZXmC+iSy0Prj7SGaFOnQEiv9CXoQHae6TMnGrGYb8c4NIjyr
+         QUpjac32icOJWwBabxXgq9NVMrpwt6rw5omXjjQUcVYwinF4eFt3B7DXCBu5CKfXN7jY
+         srDwG8cKy1RER9EVJ1MYSWhVmcoLQKbjeugsCmke97A6pSZUKwZjE4QOvufCXsHBJBaL
+         heHA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHmrHidoClds/KFRP4/Pi4/8PBRIKG+sFEZ+ucIw8HDKUVwQcYQzj4lmK/HzPBRaBr7LQQ2T0k2wQfoo5h+kEsQxytamFbngNuCVRU8CORYx7vF0wFyOi/ofyc/sKUmpY63KEOthPaWuHPkaY=
+X-Gm-Message-State: AOJu0YyW4ayHGhyT30/tm4Zc+hWhjiiu/8NdPaXthOhstiE5hgFZX6Y1
+	n4NWdfi4IxfdL2KuSPCxkbfWwYl9xsKFfA3HuH8D5syz2VlibMEw+KHzlojjL88=
+X-Google-Smtp-Source: AGHT+IG7ECbu4hu8GiJMC/+yTrvM3XzzHcS363edQPc1JVWRsN+LUfSOgqhk9H80IDZhhkTS5m2+xQ==
+X-Received: by 2002:a17:903:2292:b0:1f4:64ba:af9f with SMTP id d9443c01a7336-1f6a5a69a3dmr40243265ad.48.1717617105510;
+        Wed, 05 Jun 2024 12:51:45 -0700 (PDT)
+Received: from localhost.localdomain ([177.21.143.243])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323dde56sm109141285ad.165.2024.06.05.12.51.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 12:51:45 -0700 (PDT)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: miriam.rachel.korenblit@intel.com,
+	kvalo@kernel.org,
+	rafael.j.wysocki@intel.com,
+	daniel.lezcano@linaro.org,
+	johannes.berg@intel.com,
+	dmantipov@yandex.ru
+Cc: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] iwlwifi: mvm: adding check if the thermal firmware is running
+Date: Wed,  5 Jun 2024 16:51:28 -0300
+Message-ID: <20240605195129.89353-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240603185647.2310748-6-amorenoz@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 03, 2024 at 08:56:39PM +0200, Adrian Moreno wrote:
-> Add support for a new action: emit_sample.
-> 
-> This action accepts a u32 group id and a variable-length cookie and uses
-> the psample multicast group to make the packet available for
-> observability.
-> 
-> The maximum length of the user-defined cookie is set to 16, same as
-> tc_cookie, to discourage using cookies that will not be offloadable.
-> 
-> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+In the dmesg is showing the message "failed to read out thermal zone"
+as if the temperature read is failed by don't find the thermal zone.
 
-Hi Adrian,
+After researching and debugging, I see that this specific error is
+occurrenced because the thermal try read the temperature when is started,
+but the firmware is not running yet.
 
-Some minor nits from my side.
+For more legibiliti i change the tt.c for return EAGAIN when this was occurrence.
+After this change, in my computer I compile and install kernel in /boot
+and in my dmesg the message "failed to read out thermal zone" is not show
+any more.
 
-...
+I would like to thanks for Rafael Wysocki <refael.j.wysocki@intel.com> ,
+Kalle Valo <kvalo@kernel.org> and Johannes Berg <johannes@sipsolutions.net>
+for your suggestions in my previous patch.
 
-> diff --git a/include/uapi/linux/openvswitch.h b/include/uapi/linux/openvswitch.h
-> index efc82c318fa2..a0e9dde0584a 100644
-> --- a/include/uapi/linux/openvswitch.h
-> +++ b/include/uapi/linux/openvswitch.h
-> @@ -914,6 +914,30 @@ struct check_pkt_len_arg {
->  };
->  #endif
->  
-> +#define OVS_EMIT_SAMPLE_COOKIE_MAX_SIZE 16
-> +/**
-> + * enum ovs_emit_sample_attr - Attributes for %OVS_ACTION_ATTR_EMIT_SAMPLE
-> + * action.
-> + *
-> + * @OVS_EMIT_SAMPLE_ATTR_GROUP: 32-bit number to identify the source of the
-> + * sample.
-> + * @OVS_EMIT_SAMPLE_ATTR_COOKIE: A variable-length binary cookie that contains
-> + * user-defined metadata. The maximum length is 16 bytes.
-> + *
-> + * Sends the packet to the psample multicast group with the specified group and
-> + * cookie. It is possible to combine this action with the
-> + * %OVS_ACTION_ATTR_TRUNC action to limit the size of the packet being emitted.
-> + */
-> +enum ovs_emit_sample_attr {
-> +	OVS_EMIT_SAMPLE_ATTR_UNPSEC,
-> +	OVS_EMIT_SAMPLE_ATTR_GROUP,	/* u32 number. */
-> +	OVS_EMIT_SAMPLE_ATTR_COOKIE,	/* Optional, user specified cookie. */
-> +	__OVS_EMIT_SAMPLE_ATTR_MAX
-> +};
-> +
-> +#define OVS_EMIT_SAMPLE_ATTR_MAX (__OVS_EMIT_SAMPLE_ATTR_MAX - 1)
-> +
-> +
+Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+---
+ drivers/net/wireless/intel/iwlwifi/mvm/tt.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-nit: One blank line is enough.
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+index 8083c4b2ab6b..9aa9e3be39b8 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+@@ -620,8 +620,14 @@ static int iwl_mvm_tzone_get_temp(struct thermal_zone_device *device,
+ 
+ 	mutex_lock(&mvm->mutex);
+ 
+-	if (!iwl_mvm_firmware_running(mvm) ||
+-	    mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
++	int res = iwl_mvm_firmware_running(mvm);
++
++	if (!res) {
++		ret = -EAGAIN;
++		goto out;
++	}
++
++	if (mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
+ 		ret = -ENODATA;
+ 		goto out;
+ 	}
+-- 
+2.45.2
 
-     Flagged by checkpatch.pl
-
->  /**
->   * enum ovs_action_attr - Action types.
->   *
-> @@ -1004,6 +1028,7 @@ enum ovs_action_attr {
->  	OVS_ACTION_ATTR_ADD_MPLS,     /* struct ovs_action_add_mpls. */
->  	OVS_ACTION_ATTR_DEC_TTL,      /* Nested OVS_DEC_TTL_ATTR_*. */
->  	OVS_ACTION_ATTR_DROP,         /* u32 error code. */
-> +	OVS_ACTION_ATTR_EMIT_SAMPLE,  /* Nested OVS_EMIT_SAMPLE_ATTR_*. */
-
-nit: Please add OVS_ACTION_ATTR_EMIT_SAMPLE to the Kenrel doc
-     for this structure.
-
->  
->  	__OVS_ACTION_ATTR_MAX,	      /* Nothing past this will be accepted
->  				       * from userspace. */
-
-...
 
