@@ -1,261 +1,137 @@
-Return-Path: <linux-kernel+bounces-202734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 707518FD021
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:54:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C87658FD026
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7301C1C251C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:54:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDCCA1C240B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7073A8C0;
-	Wed,  5 Jun 2024 13:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CD1481D3;
+	Wed,  5 Jun 2024 13:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bKBP8ozb"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D8p0owIR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4136249FF;
-	Wed,  5 Jun 2024 13:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B52539FC5;
+	Wed,  5 Jun 2024 13:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717595373; cv=none; b=NIHsQuPMR8q1IAmqD2+Ul7bQs4nZBt1QQDAwVo1iR8LEQCuNr4jgZopZgdZK+bONTxVv3Cpdn5XJB128atTa2Tkc3GR7FzF8xeMPcnh91WXz0AU+Y9MfmPWOW7n5hLCos4QPHgkRbCn1TjlpoTN6weA/0LsjySN8rFp44GfGLRg=
+	t=1717595436; cv=none; b=AGqP4XvahFcoo/+P5PVKhe9wuQ3i++E7BDAjWp9P6mMnWRMqU8nJUDtdv0zc+y5tUKXlYKF1ByFM+Zn8v5UWZKwXGp1jGELqPG+B2NjaWVddaQv/36bzqL3YIcOpulDay7PQaEZjE300ZL5CQTFM27JZsYYrI3jel+AUHCCq0Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717595373; c=relaxed/simple;
-	bh=AsDFqKY6j1IUFcQ5abR5Se2CR4lHkYcVFPogT9g5F/8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pqu3XKMwnJlrnwV4pggWduvuTDTXIovH228iLem1kpUaDuGTov4crQ3nZbqRZ//4V4hK0chD5X2+7litffoX/mqSR6tLxEkDM/t5lclYrpCF9KVFDF6Ga18131EHGKyL3Pbqta5nqtV13WD5bGkTnusykO51NORgPpLi++ca9qM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bKBP8ozb; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-354be94c874so5839663f8f.3;
-        Wed, 05 Jun 2024 06:49:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717595369; x=1718200169; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hGjCGSATkxFOWmlKkLsqqwxsslX0Utr8SiqRZMgElAY=;
-        b=bKBP8ozbwraRgSUVvqnXxRYipHGyiuZWcgAmb6eZgXgrS7XIyTZbuRgHrohkiTu7xY
-         jzer5cRxKFNs0bjeFJhFJwMzQPK+62M1Cabh8z3yXssBHkPkxb/TIlMq5QDQGihFDTEE
-         JOdoQhAF7KL3MxF+IBm7LuBpkQe5u6rjElWpA6Sr0jdghq+cjp/yoGHaKyeCXv5Yj/Qp
-         g/SYYeDLtyjBPy17XQ24WRRHhfvikOn9ckNADX/+JbMofELgFaG/CST43b+IK/e2FTOo
-         z8fvxDXwkdmPu55TzI/3PhuIF6GMBSmngBSpiV66zN6LZltqysmNLcw3Rg8mOq58azIN
-         Xqog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717595369; x=1718200169;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hGjCGSATkxFOWmlKkLsqqwxsslX0Utr8SiqRZMgElAY=;
-        b=b93c2SFw0PHUYe8rDUEfvSA7SIvzYXPlSDGYVFdf3vycikXvNayXIVOYiiPN/hXM0u
-         KEjlHYztj1L+0lw4c+DAalBr1ECzoX3Hut3jgd1kIfb+EsPDugbLs3NeQoLLGIO1DUUt
-         HTnHE5d9H+mecEwoh1eCAc9ZSAqJLCaK48zUTPr+a3dZC6O+koejcaSe58cjWyEhd3E0
-         2xiD+SQ8isR1jlB1n57mIBUi7t0gurGcxVdRkcqda3g6SnKneYzuBT7vzWspfTsdCqkV
-         Fgy/GA9U9M3SwPLgYmbnGMG0I7w87J7uje5MmI+0L/qUmt50Oy+7eJCT7okN/MMHPAXI
-         u9rg==
-X-Forwarded-Encrypted: i=1; AJvYcCX6O6yJO8QONDq+n4ZStPlhTN/Kjxyi+6srO20OAtmYZ7PHLovVTFA0dG1tPuZcTSzNGXXtq9iJbpQfvQ1xhz068P181qZCIO+dLw==
-X-Gm-Message-State: AOJu0YwqBZ7SDDCNemp01VBFzmCe8r4PgniPIS/kdtB2rukfbQB3+arA
-	6NTMeVgTb6c6pOKeNamPiuVbgAxktYfciWx2c3juYkI/1Je2y4V/
-X-Google-Smtp-Source: AGHT+IGdCxTgPrw5WUTGx19uKTtqj4he0UOPapPewY4cNxCdW+DGt6wGld6OTvEeGG0xx8mrZorzeA==
-X-Received: by 2002:a05:6000:400f:b0:35e:ec9c:f78f with SMTP id ffacd0b85a97d-35eec9cf8cdmr1477033f8f.19.1717595368913;
-        Wed, 05 Jun 2024 06:49:28 -0700 (PDT)
-Received: from andrea.wind3.hub ([151.76.32.59])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd066ff17sm14539284f8f.116.2024.06.05.06.49.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 06:49:28 -0700 (PDT)
-From: Andrea Parri <parri.andrea@gmail.com>
-To: stern@rowland.harvard.edu,
-	will@kernel.org,
-	peterz@infradead.org,
-	boqun.feng@gmail.com,
-	npiggin@gmail.com,
-	dhowells@redhat.com,
-	j.alglave@ucl.ac.uk,
-	luc.maranget@inria.fr,
-	paulmck@kernel.org,
-	akiyks@gmail.com,
-	dlustig@nvidia.com,
-	joel@joelfernandes.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	hernan.poncedeleon@huaweicloud.com,
-	jonas.oberhauser@huaweicloud.com,
-	Andrea Parri <parri.andrea@gmail.com>
-Subject: [PATCH v2] tools/memory-model: Document herd7 (abstract) representation
-Date: Wed,  5 Jun 2024 15:49:18 +0200
-Message-Id: <20240605134918.365579-1-parri.andrea@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717595436; c=relaxed/simple;
+	bh=THHBlGMAWjBLIyLgqNnLwR6wpLdgEYjBZqkS4AZkOjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nCEUw269B9wSLbTxo24a2PjBpJNTq2sltedz1RzefduAeAx2sTOTjKyJ+E7uJrwSxRRtiVhEdjlU4qZkJhXodjz6YuUwO/8dR5a/WemlBq3Y0AHjvE0VUz9MPUUT9q8p2MtvVFrZpczitiUEv0BLDbH92JN2SwbEc4umfxANwUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D8p0owIR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9D80C2BD11;
+	Wed,  5 Jun 2024 13:50:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717595436;
+	bh=THHBlGMAWjBLIyLgqNnLwR6wpLdgEYjBZqkS4AZkOjg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D8p0owIRpfWAL1ARg/L89LmAj7ogSBMECcOR4CTT0yLWi+ujkQviYKSDVcLHpcy7B
+	 7uKjUCXsGp0I9pmaO3F2xN23u1McCNxgk6YXX731U9bui0uwJhZSxpc2MnJWWvQvM9
+	 0BSSsv2nVL8NpimXBm0aaa6IZcDi9mylXq7Kd4hyvAetpGFaAV5BYmcPvlFuU1+M9g
+	 +nRCbn73lBpreB+FNTnXiC4q/QvyHDj+oStaea+H8gl2ps7V98fWIs3BygmLg9CfID
+	 gWtwIg/oqTcprkbGx8Bu52Nc3usAD6lcKBoJazdMXwdVWb8DseGdOOVOQ2dHvFqVap
+	 NUrdNA6SIaDaw==
+Date: Wed, 5 Jun 2024 07:50:33 -0600
+From: Rob Herring <robh@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Abel Vesa <abel.vesa@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: PCI: qcom: Fix register maps items and add
+ 3.3V supply
+Message-ID: <20240605135033.GA2468218-robh@kernel.org>
+References: <20240604-x1e80100-pci-bindings-fix-v1-1-f4e20251b3d0@linaro.org>
+ <20240604235806.GA1903493-robh@kernel.org>
+ <20240605054928.GB2417@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605054928.GB2417@thinkpad>
 
-tools/memory-model/ and herdtool7 are closely linked: the latter is
-responsible for (pre)processing each C-like macro of a litmus test,
-and for providing the LKMM with a set of events, or "representation",
-corresponding to the given macro.  Provide herd-representation.txt
-to document the representations of the concurrency macros, following
-their "classification" in Documentation/atomic_t.txt.
+On Wed, Jun 05, 2024 at 11:19:28AM +0530, Manivannan Sadhasivam wrote:
+> On Tue, Jun 04, 2024 at 05:58:06PM -0600, Rob Herring wrote:
+> > On Tue, Jun 04, 2024 at 07:05:12PM +0300, Abel Vesa wrote:
+> > > All PCIe controllers found on X1E80100 have MHI register region and
+> > > VDDPE supplies. Add them to the schema as well.
+> > > 
+> > > Fixes: 692eadd51698 ("dt-bindings: PCI: qcom: Document the X1E80100 PCIe Controller")
+> > > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > > ---
+> > > This patchset fixes the following warning:
+> > > https://lore.kernel.org/all/171751454535.785265.18156799252281879515.robh@kernel.org/
+> > > 
+> > > Also fixes a MHI reg region warning that will be triggered by the following patch:
+> > > https://lore.kernel.org/all/20240604-x1e80100-dts-fixes-pcie6a-v2-1-0b4d8c6256e5@linaro.org/
+> > > ---
+> > >  Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml | 6 ++++--
+> > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
+> > > index 1074310a8e7a..7ceba32c4cf9 100644
+> > > --- a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
+> > > +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
+> > > @@ -19,11 +19,10 @@ properties:
+> > >      const: qcom,pcie-x1e80100
+> > >  
+> > >    reg:
+> > > -    minItems: 5
+> > > +    minItems: 6
+> > >      maxItems: 6
+> > >  
+> > >    reg-names:
+> > > -    minItems: 5
+> > >      items:
+> > >        - const: parf # Qualcomm specific registers
+> > >        - const: dbi # DesignWare PCIe registers
+> > > @@ -71,6 +70,9 @@ properties:
+> > >        - const: pci # PCIe core reset
+> > >        - const: link_down # PCIe link down reset
+> > >  
+> > > +  vddpe-3v3-supply:
+> > > +    description: A phandle to the PCIe endpoint power supply
+> > 
+> > TBC, this is a rail on the host side provided to a card? If so, we have 
+> > standard properties for standard PCI voltage rails.
+> 
+> There is a 'vpcie3v3-supply' property and it should satisfy the requirement. But
+> 'vddpe-3v3-supply' is already used on multiple Qcom SoCs. So changing the name
+> in dts warrants the driver to support both supplies for backwards compatibility,
+> but that should be fine.
 
-Suggested-by: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
-Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
----
-Changes since v1[1]:
-  - add legenda/notations
-  - add some SRCU, locking macros
-  - update formatting of failure cases
-  - update README file
+Ideally, we would have a 'enable slot' or 'power on slot' function that 
+turns on all the standard slot supplies and wiggles PERST# (and 
+perhaps link state management) all following the timing defined in the 
+PCI spec. Then the host drivers wouldn't have to do anything other than 
+perhaps opt-in to use that.
 
-[1] https://lore.kernel.org/lkml/20240524151356.236071-1-parri.andrea@gmail.com/
+> > It is also preferred that you put them in a root port node rather than the
+> > host bridge.
+> 
+> Even though the resource split between root port and host bridge is not clear in
+> Qcom SoCs, I think from logical stand point it makes sense.
 
- tools/memory-model/Documentation/README       |   7 +-
- .../Documentation/herd-representation.txt     | 107 ++++++++++++++++++
- 2 files changed, 113 insertions(+), 1 deletion(-)
- create mode 100644 tools/memory-model/Documentation/herd-representation.txt
+Yeah, since it's typically 1:1 that's been blurred.
 
-diff --git a/tools/memory-model/Documentation/README b/tools/memory-model/Documentation/README
-index db90a26dbdf40..1f73014cc48a3 100644
---- a/tools/memory-model/Documentation/README
-+++ b/tools/memory-model/Documentation/README
-@@ -33,7 +33,8 @@ o	You are familiar with Linux-kernel concurrency and the use of
- 
- o	You are familiar with Linux-kernel concurrency and the use
- 	of LKMM, and would like to learn about LKMM's requirements,
--	rationale, and implementation:	explanation.txt
-+	rationale, and implementation:	explanation.txt and
-+	herd-representation.txt
- 
- o	You are interested in the publications related to LKMM, including
- 	hardware manuals, academic literature, standards-committee
-@@ -57,6 +58,10 @@ control-dependencies.txt
- explanation.txt
- 	Detailed description of the memory model.
- 
-+herd-representation.txt
-+	The (abstract) representation of the Linux-kernel concurrency
-+	primitives in terms of events.
-+
- litmus-tests.txt
- 	The format, features, capabilities, and limitations of the litmus
- 	tests that LKMM can evaluate.
-diff --git a/tools/memory-model/Documentation/herd-representation.txt b/tools/memory-model/Documentation/herd-representation.txt
-new file mode 100644
-index 0000000000000..1860995a3d5a5
---- /dev/null
-+++ b/tools/memory-model/Documentation/herd-representation.txt
-@@ -0,0 +1,107 @@
-+#
-+# Legenda:
-+#	R,	a Load event
-+#	W,	a Store event
-+#	F,	a Fence event
-+#	LKR,	a Lock-Read event
-+#	LKW,	a Lock-Write event
-+#	UL,	an Unlock event
-+#	LF,	a Lock-Fail event
-+#	RL,	a Read-Locked event
-+#	RU,	a Read-Unlocked event
-+#	R*,	a Load event included in RMW
-+#	W*,	a Store event included in RMW
-+#	SRCU,	a Sleepable-Read-Copy-Update event
-+#
-+#	po,	a Program-Order link
-+#	rmw,	a Read-Modify-Write link
-+#	lk-rmw,	a Lock-Read-Modify-Write link
-+#
-+# By convention, a blank entry/representation means "same as the preceding entry".
-+#
-+    ------------------------------------------------------------------------------
-+    |                        C macro | Events                                    |
-+    ------------------------------------------------------------------------------
-+    |                    Non-RMW ops |                                           |
-+    ------------------------------------------------------------------------------
-+    |                      READ_ONCE | R[once]                                   |
-+    |                    atomic_read |                                           |
-+    |                     WRITE_ONCE | W[once]                                   |
-+    |                     atomic_set |                                           |
-+    |               smp_load_acquire | R[acquire]                                |
-+    |            atomic_read_acquire |                                           |
-+    |              smp_store_release | W[release]                                |
-+    |             atomic_set_release |                                           |
-+    |                   smp_store_mb | W[once] ->po F[mb]                        |
-+    |                         smp_mb | F[mb]                                     |
-+    |                        smp_rmb | F[rmb]                                    |
-+    |                        smp_wmb | F[wmb]                                    |
-+    |          smp_mb__before_atomic | F[before-atomic]                          |
-+    |           smp_mb__after_atomic | F[after-atomic]                           |
-+    |                    spin_unlock | UL                                        |
-+    |                 spin_is_locked | On success: RL                            |
-+    |                                | On failure: RU                            |
-+    |         smp_mb__after_spinlock | F[after-spinlock]                         |
-+    |      smp_mb__after_unlock_lock | F[after-unlock-lock]                      |
-+    |                  rcu_read_lock | F[rcu-lock]                               |
-+    |                rcu_read_unlock | F[rcu-unlock]                             |
-+    |                synchronize_rcu | F[sync-rcu]                               |
-+    |                rcu_dereference | R[once]                                   |
-+    |             rcu_assign_pointer | W[release]                                |
-+    |                 srcu_read_lock | R[srcu-lock]                              |
-+    |                 srcu_down_read |                                           |
-+    |               srcu_read_unlock | W[srcu-unlock]                            |
-+    |                   srcu_up_read |                                           |
-+    |               synchronize_srcu | SRCU[sync-srcu]                           |
-+    | smp_mb__after_srcu_read_unlock | F[after-srcu-read-unlock]                 |
-+    ------------------------------------------------------------------------------
-+    |       RMW ops w/o return value |                                           |
-+    ------------------------------------------------------------------------------
-+    |                     atomic_add | R*[noreturn] ->rmw W*[once]               |
-+    |                     atomic_and |                                           |
-+    |                      spin_lock | LKR ->lk-rmw LKW                          |
-+    ------------------------------------------------------------------------------
-+    |        RMW ops w/ return value |                                           |
-+    ------------------------------------------------------------------------------
-+    |              atomic_add_return | F[mb] ->po R*[once]                       |
-+    |                                |     ->rmw W*[once] ->po F[mb]             |
-+    |               atomic_fetch_add |                                           |
-+    |               atomic_fetch_and |                                           |
-+    |                    atomic_xchg |                                           |
-+    |                           xchg |                                           |
-+    |            atomic_add_negative |                                           |
-+    |      atomic_add_return_relaxed | R*[once] ->rmw W*[once]                   |
-+    |       atomic_fetch_add_relaxed |                                           |
-+    |       atomic_fetch_and_relaxed |                                           |
-+    |            atomic_xchg_relaxed |                                           |
-+    |                   xchg_relaxed |                                           |
-+    |    atomic_add_negative_relaxed |                                           |
-+    |      atomic_add_return_acquire | R*[acquire] ->rmw W*[once]                |
-+    |       atomic_fetch_add_acquire |                                           |
-+    |       atomic_fetch_and_acquire |                                           |
-+    |            atomic_xchg_acquire |                                           |
-+    |                   xchg_acquire |                                           |
-+    |    atomic_add_negative_acquire |                                           |
-+    |      atomic_add_return_release | R*[once] ->rmw W*[release]                |
-+    |       atomic_fetch_add_release |                                           |
-+    |       atomic_fetch_and_release |                                           |
-+    |            atomic_xchg_release |                                           |
-+    |                   xchg_release |                                           |
-+    |    atomic_add_negative_release |                                           |
-+    ------------------------------------------------------------------------------
-+    |            Conditional RMW ops |                                           |
-+    ------------------------------------------------------------------------------
-+    |                 atomic_cmpxchg | On success: F[mb] ->po R*[once]           |
-+    |                                |                 ->rmw W*[once] ->po F[mb] |
-+    |                                | On failure: R*[once]                      |
-+    |                        cmpxchg |                                           |
-+    |              atomic_add_unless |                                           |
-+    |         atomic_cmpxchg_relaxed | On success: R*[once] ->rmw W*[once]       |
-+    |                                | On failure: R*[once]                      |
-+    |         atomic_cmpxchg_acquire | On success: R*[acquire] ->rmw W*[once]    |
-+    |                                | On failure: R*[once]                      |
-+    |         atomic_cmpxchg_release | On success: R*[once] ->rmw W*[release]    |
-+    |                                | On failure: R*[once]                      |
-+    |                   spin_trylock | On success: LKR ->lk-rmw LKW              |
-+    |                                | On failure: LF                            |
-+    ------------------------------------------------------------------------------
--- 
-2.34.1
-
+Rob
 
