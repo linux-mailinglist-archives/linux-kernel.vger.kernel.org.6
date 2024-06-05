@@ -1,210 +1,134 @@
-Return-Path: <linux-kernel+bounces-202840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C90C8FD1C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:36:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E3F38FD1CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:38:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6649C1C22F2C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:36:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32FAAB21540
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9EE6A347;
-	Wed,  5 Jun 2024 15:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A58614374C;
+	Wed,  5 Jun 2024 15:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="ypV8qNl2"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FFK3K9Xm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C1347F41
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 15:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1572F6A347;
+	Wed,  5 Jun 2024 15:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717601757; cv=none; b=ejueW2eSvtGS1Lj1/7/2C/o6qAQXkOSSHd1dZYTvlz1ZHKT6LAxrLMRIkrt+n8EYgol5S6XXBDnmtJhAFPV5BXUFrKhoz4GlWIOQn8Sz6XBbicdRvNQY4tbpwU5hmMV6TFLxit2DhquJM8LknbE2Kc0K3B7lL9NbYqH2Bz7bH7g=
+	t=1717601772; cv=none; b=kPSdGozJJlt0jZ5TZx7VhA7oQafZyRoxdgUwSM8v6V+T0FrOoH0a8qzEMpI+y9BF9fh5B7unoHkttP1GSkfTi1q0QJPVXgbGxxmpbdGTCVtv0AIKcRGc8OprxyJuds3BLGohiEOO2FjuXoIfIG5kVFoWeDV1/xuNeomHc7Qd7Ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717601757; c=relaxed/simple;
-	bh=+OZm5/y3/uFdNftvyg7ho7vFKppQZBuz2dYEwop/gSg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ts0b309w4tTstk6II5XU1qZXrd7REUZlRGFncU1olzKNKqmkeqx2ivobnYtnj71OL2q8fIAe+8itpDxom3qud3G8637BeFo8H09JzaFsNhbtBcMANBk13nE+1bjgedjE/bPcxnEk67wzQdmC6Wrt9Eo1TTFSPxqvV5o/0E1ReKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=ypV8qNl2; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f44b42d1caso54167155ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 08:35:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1717601755; x=1718206555; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nAk75/rNTsxI/8Vj4jK+Zvdo2XN9iI9bePNHVmD2D10=;
-        b=ypV8qNl24BWzflq56OYyGSsH/4P2yxkb18K91z3/fDdt+mY0Ie7ee2LgReVSsoBVZ4
-         FKbHDnGvYPC0ZKNb99Rjnu6Mb5MnRhALqUvZ5XVymdRXWoi7IsOMsamqERT1nhoC8PyJ
-         75KCy7WnGLPODVnLXKv7iT7g3Pc0H9RmK8XxSN9Ta9Xhdca4XzzQwvv3TLlOoPxr92fx
-         KoWK5qxGjJ8FPrrUPcKReTHP6Do4zWiQ7uZg3T6Dm8jJOpp9wjekB7y4mBcY1NZCXqHo
-         dv8FFIUWrv1xmKwXfL+YLq7vEMw+yC9lAgD/5NeDU8KF/QEBneZpwadwQYiHZI/eBpTs
-         paMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717601755; x=1718206555;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nAk75/rNTsxI/8Vj4jK+Zvdo2XN9iI9bePNHVmD2D10=;
-        b=gJtwywKWZEglROLkBHkGjH8kvlEVDCSY42/LIZKqxaaeD52ycLtz1PzQBugXt8cx1k
-         fzh4QPDJrFgkKFvizjqoibVYCSwFSW7RdtNV1afUsnb7p0K/XRyxeRPUgsoP9V3khUpU
-         +Kyex0W2HxBI36WvTIET2dF1reIKzMYOVenoyOgOhu3ZBDp3LFWmn7jc0P2HVJx93eap
-         xazrbXdZX7aHTfP5xS7HEZDglT4d5KDuUbChDB1FinL/umHCLp54VML7k5wkAtzBYZZJ
-         Qp6iTsB/10jdbJ8HU8k7DM/5qYhdj8PpRdd5BmbjJBVR26gb9CojHWb6DMt+w/9nqlJW
-         nDRg==
-X-Forwarded-Encrypted: i=1; AJvYcCVA9ygiOqDtTi3tbAO7NgMGHDrC9lCILilwVRbIYe+hsLoiBfCcKw2A9KmlHk5bc5cDYNNnNyCApBahXINCdiICZkkPL+p6UXMgy1OK
-X-Gm-Message-State: AOJu0YxFPBfY7d5dQOKGJb4mB2eqk1FqShN0sHrHOchTCZha4jzTO5Dj
-	bKFV+fgg3TFQYt7IMusfDCC+SJ/PowYsstd4KVOlaiteGDigt/ax5lBPQxc2CYU=
-X-Google-Smtp-Source: AGHT+IGDBGJ8ZJCOCV4o7bc6YmUIzOf8ghMtygf47Fad9OJyRtHeX7zioK4Rcra76/1jvDQUwhrw+w==
-X-Received: by 2002:a17:902:da8d:b0:1f3:4d2:7025 with SMTP id d9443c01a7336-1f6a5a6ab9cmr36668345ad.49.1717601754632;
-        Wed, 05 Jun 2024 08:35:54 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:600::1:eaa0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323570f5sm103535245ad.75.2024.06.05.08.35.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 08:35:54 -0700 (PDT)
-Date: Wed, 5 Jun 2024 11:35:52 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Jingbo Xu <jefflexu@linux.alibaba.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	lege.wang@jaguarmicro.com,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [HELP] FUSE writeback performance bottleneck
-Message-ID: <20240605153552.GB21567@localhost.localdomain>
-References: <bd49fcba-3eb6-4e84-a0f0-e73bce31ddb2@linux.alibaba.com>
- <CAJfpegsfF77SV96wvaxn9VnRkNt5FKCnA4mJ0ieFsZtwFeRuYw@mail.gmail.com>
- <ffca9534-cb75-4dc6-9830-fe8e84db2413@linux.alibaba.com>
- <2f834b5c-d591-43c5-86ba-18509d77a865@fastmail.fm>
- <CAJfpegt_mEYOeeTo2bWS3iJfC38t5bf29mzrxK68dhMptrgamg@mail.gmail.com>
- <21741978-a604-4054-8af9-793085925c82@fastmail.fm>
- <20240604165319.GG3413@localhost.localdomain>
- <6853a389-031b-4bd6-a300-dea878979d8c@fastmail.fm>
- <20240604221654.GA17503@localhost.localdomain>
- <CAOQ4uxjTb=ja-fe6qqKjEo96m_AU6ikpERh1putSM9e_-6Y01g@mail.gmail.com>
+	s=arc-20240116; t=1717601772; c=relaxed/simple;
+	bh=q/8zO9CB4UAgFF1iUYVAX5n56NxMBBdgp8FtVEk6dIY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OduknJF+t0ImkFl6VDg+AWp3/XMh2kLZiIixcQ1KY4gVMylOSLTAeyZosOkPYuDnifJqYHSkAaZUJf2ndGMpl+YZaGi/hxqk1jwfjrbvIrh8y+XV9YsGCyXEwriKwQn/Vi3oeYfsbU9SqzxEzdiUIy7P294D72WVQqZaLBZRKQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FFK3K9Xm; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717601771; x=1749137771;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=q/8zO9CB4UAgFF1iUYVAX5n56NxMBBdgp8FtVEk6dIY=;
+  b=FFK3K9Xmu9WAtweDzG04GcuHELJ8he3vTQhPN0XRrvQCeKXBQCEnCIDY
+   eNaCTuNP4J1OwYx1M2WNqzCXpwwC3s4l0vTkxQ21BW4RdQKdptA2w5ogH
+   xYBIcgLPcrnGHg5yz/7FI/w/cPiLECg2A15rcv6dOOlmLUriA4Jse7Ogn
+   gXHbKd8qRBsZ9oO0gIFMrg3k+ACy8k3kLeg26KFQ7ZwoS//+SI//5qk29
+   6OJhGsl6H9/3duSnb9uzHn1Rm8yRlbA6DN9DncuR3AzezU+LMzabAqih+
+   o7WSH1eVSOM0I9nLaIz3fcd/DrJKbBnJ+50HDoOz/m2YpCm5Wg1LzAWVR
+   A==;
+X-CSE-ConnectionGUID: h71F3IOERfWMa/V5nLWBdQ==
+X-CSE-MsgGUID: Vn2N7j8PTpepqmBgc5ibAA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="14106022"
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="14106022"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 08:36:10 -0700
+X-CSE-ConnectionGUID: EkZu9SQeS/q6x7wPH/QBjg==
+X-CSE-MsgGUID: zXxz2OjYRUWLWVvV+kR8iQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="37765307"
+Received: from inlubt0316.iind.intel.com ([10.191.20.213])
+  by fmviesa009.fm.intel.com with ESMTP; 05 Jun 2024 08:36:05 -0700
+From: lakshmi.sowjanya.d@intel.com
+To: tglx@linutronix.de,
+	giometti@enneenne.com,
+	corbet@lwn.net,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Cc: gregkh@linuxfoundation.org,
+	andriy.shevchenko@linux.intel.com,
+	eddie.dong@intel.com,
+	christopher.s.hall@intel.com,
+	pandith.n@intel.com,
+	subramanian.mohan@intel.com,
+	thejesh.reddy.t.r@intel.com,
+	lakshmi.sowjanya.d@intel.com
+Subject: [PATCH v9 2/3] Documentation: driver-api: pps: Add Intel Timed I/O PPS generator
+Date: Wed,  5 Jun 2024 21:05:53 +0530
+Message-Id: <20240605153554.11584-3-lakshmi.sowjanya.d@intel.com>
+X-Mailer: git-send-email 2.35.3
+In-Reply-To: <20240605153554.11584-1-lakshmi.sowjanya.d@intel.com>
+References: <20240605153554.11584-1-lakshmi.sowjanya.d@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxjTb=ja-fe6qqKjEo96m_AU6ikpERh1putSM9e_-6Y01g@mail.gmail.com>
 
-On Wed, Jun 05, 2024 at 08:49:48AM +0300, Amir Goldstein wrote:
-> On Wed, Jun 5, 2024 at 1:17 AM Josef Bacik <josef@toxicpanda.com> wrote:
-> >
-> > On Tue, Jun 04, 2024 at 11:39:17PM +0200, Bernd Schubert wrote:
-> > >
-> > >
-> > > On 6/4/24 18:53, Josef Bacik wrote:
-> > > > On Tue, Jun 04, 2024 at 04:13:25PM +0200, Bernd Schubert wrote:
-> > > >>
-> > > >>
-> > > >> On 6/4/24 12:02, Miklos Szeredi wrote:
-> > > >>> On Tue, 4 Jun 2024 at 11:32, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
-> > > >>>
-> > > >>>> Back to the background for the copy, so it copies pages to avoid
-> > > >>>> blocking on memory reclaim. With that allocation it in fact increases
-> > > >>>> memory pressure even more. Isn't the right solution to mark those pages
-> > > >>>> as not reclaimable and to avoid blocking on it? Which is what the tmp
-> > > >>>> pages do, just not in beautiful way.
-> > > >>>
-> > > >>> Copying to the tmp page is the same as marking the pages as
-> > > >>> non-reclaimable and non-syncable.
-> > > >>>
-> > > >>> Conceptually it would be nice to only copy when there's something
-> > > >>> actually waiting for writeback on the page.
-> > > >>>
-> > > >>> Note: normally the WRITE request would be copied to userspace along
-> > > >>> with the contents of the pages very soon after starting writeback.
-> > > >>> After this the contents of the page no longer matter, and we can just
-> > > >>> clear writeback without doing the copy.
-> > > >>>
-> > > >>> But if the request gets stuck in the input queue before being copied
-> > > >>> to userspace, then deadlock can still happen if the server blocks on
-> > > >>> direct reclaim and won't continue with processing the queue.   And
-> > > >>> sync(2) will also block in that case.>
-> > > >>> So we'd somehow need to handle stuck WRITE requests.   I don't see an
-> > > >>> easy way to do this "on demand", when something actually starts
-> > > >>> waiting on PG_writeback.  Alternatively the page copy could be done
-> > > >>> after a timeout, which is ugly, but much easier to implement.
-> > > >>
-> > > >> I think the timeout method would only work if we have already allocated
-> > > >> the pages, under memory pressure page allocation might not work well.
-> > > >> But then this still seems to be a workaround, because we don't take any
-> > > >> less memory with these copied pages.
-> > > >> I'm going to look into mm/ if there isn't a better solution.
-> > > >
-> > > > I've thought a bit about this, and I still don't have a good solution, so I'm
-> > > > going to throw out my random thoughts and see if it helps us get to a good spot.
-> > > >
-> > > > 1. Generally we are moving away from GFP_NOFS/GFP_NOIO to instead use
-> > > >    memalloc_*_save/memalloc_*_restore, so instead the process is marked being in
-> > > >    these contexts.  We could do something similar for FUSE, tho this gets hairy
-> > > >    with things that async off request handling to other threads (which is all of
-> > > >    the FUSE file systems we have internally).  We'd need to have some way to
-> > > >    apply this to an entire process group, but this could be a workable solution.
-> > > >
-> > >
-> > > I'm not sure how either of of both (GFP_ and memalloc_) would work for
-> > > userspace allocations.
-> > > Wouldn't we basically need to have a feature to disable memory
-> > > allocations for fuse userspace tasks? Hmm, maybe through mem_cgroup.
-> > > Although even then, the file system might depend on other kernel
-> > > resources (backend file system or block device or even network) that
-> > > might do allocations on their own without the knowledge of the fuse server.
-> > >
-> >
-> > Basically that only in the case that we're handling a request from memory
-> > pressure we would invoke this, and then any allocation would automatically have
-> > gfp_nofs protection because it's flagged at the task level.
-> >
-> > Again there's a lot of problems with this, like how do we set it for the task,
-> > how does it work for threads etc.
-> >
-> > > > 2. Per-request timeouts.  This is something we're planning on tackling for other
-> > > >    reasons, but it could fit nicely here to say "if this fuse fs has a
-> > > >    per-request timeout, skip the copy".  That way we at least know we're upper
-> > > >    bound on how long we would be "deadlocked".  I don't love this approach
-> > > >    because it's still a deadlock until the timeout elapsed, but it's an idea.
-> > >
-> > > Hmm, how do we know "this fuse fs has a per-request timeout"? I don't
-> > > think we could trust initialization flags set by userspace.
-> > >
-> >
-> > It would be controlled by the kernel.  So at init time the fuse file system says
-> > "my command timeout is 30 minutes."  Then the kernel enforces this by having a
-> > per-request timeout, and once that 30 minutes elapses we cancel the request and
-> > EIO it.  User space doesn't do anything beyond telling the kernel what it's
-> > timeout is, so this would be safe.
-> >
-> 
-> Maybe that would be better to configure by mounter, similar to nfs -otimeo
-> and maybe consider opt-in to returning ETIMEDOUT in this case.
-> At least nfsd will pass that error to nfs client and nfs client will retry.
-> 
-> Different applications (or network protocols) handle timeouts differently,
-> so the timeout and error seems like a decision for the admin/mounter not
-> for the fuse server, although there may be a fuse fs that would want to
-> set the default timeout, as if to request the kernel to be its watchdog
-> (i.e. do not expect me to take more than 30 min to handle any request).
+From: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
 
-Oh yeah for sure, I'm just saying for the purposes of allowing the FUSE daemon
-to be a little riskier with system resources we base it off of wether it opts in
-to command timeouts.
+Add Intel Timed I/O PPS usage instructions.
 
-My plans are to have it be able to be set by the fuse daemon, or externally by a
-sysadmin via sysfs.  Thanks,
+Co-developed-by: Pandith N <pandith.n@intel.com>
+Signed-off-by: Pandith N <pandith.n@intel.com>
+Signed-off-by: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Rodolfo Giometti <giometti@enneenne.com>
+---
+ Documentation/driver-api/pps.rst | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-Josef
+diff --git a/Documentation/driver-api/pps.rst b/Documentation/driver-api/pps.rst
+index 78dded03e5d8..c812d1cb760e 100644
+--- a/Documentation/driver-api/pps.rst
++++ b/Documentation/driver-api/pps.rst
+@@ -246,3 +246,25 @@ delay between assert and clear edge as small as possible to reduce system
+ latencies. But if it is too small slave won't be able to capture clear edge
+ transition. The default of 30us should be good enough in most situations.
+ The delay can be selected using 'delay' pps_gen_parport module parameter.
++
++
++Intel Timed I/O PPS signal generator
++------------------------------------
++
++Intel Timed I/O is a high precision device, present on 2019 and newer Intel
++CPUs, that can generate PPS signals.
++
++Timed I/O and system time are both driven by same hardware clock. The signal
++is generated with a precision of ~20 nanoseconds. The generated PPS signal
++is used to synchronize an external device with system clock. For example,
++it can be used to share your clock with a device that receives PPS signal,
++generated by Timed I/O device. There are dedicated Timed I/O pins to deliver
++the PPS signal to an external device.
++
++Usage of Intel Timed I/O as PPS generator:
++
++Start generating PPS signal::
++        $echo 1 > /sys/devices/platform/INTCxxxx\:00/enable
++
++Stop generating PPS signal::
++        $echo 0 > /sys/devices/platform/INTCxxxx\:00/enable
+-- 
+2.35.3
+
 
