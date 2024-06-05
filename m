@@ -1,64 +1,59 @@
-Return-Path: <linux-kernel+bounces-202735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C87658FD026
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:54:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32FEA8FD028
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDCCA1C240B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:54:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7F671F2231E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CD1481D3;
-	Wed,  5 Jun 2024 13:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58FE814D71B;
+	Wed,  5 Jun 2024 13:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D8p0owIR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YoX3e5Cb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B52539FC5;
-	Wed,  5 Jun 2024 13:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8082BB1C;
+	Wed,  5 Jun 2024 13:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717595436; cv=none; b=AGqP4XvahFcoo/+P5PVKhe9wuQ3i++E7BDAjWp9P6mMnWRMqU8nJUDtdv0zc+y5tUKXlYKF1ByFM+Zn8v5UWZKwXGp1jGELqPG+B2NjaWVddaQv/36bzqL3YIcOpulDay7PQaEZjE300ZL5CQTFM27JZsYYrI3jel+AUHCCq0Es=
+	t=1717595471; cv=none; b=M61AfHsF0wjIZaqQdfVCmBDSUJasGUn8CsIKTWBKaFoqpbAl+F1LabfFTCDgoVZvf9zwcZY6LQF5kzWtcsF8qZFO7N95WO0q9ms5V9eBq+82zZkCFkSAaOr6E4qRcKVJCXIbwwgmngAcMW31ojqHaGkYBFXGAsEK5y9VFf24BuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717595436; c=relaxed/simple;
-	bh=THHBlGMAWjBLIyLgqNnLwR6wpLdgEYjBZqkS4AZkOjg=;
+	s=arc-20240116; t=1717595471; c=relaxed/simple;
+	bh=5LyhUxJv0s2KRQRgg7PUVSJAFVVaLDS/b7y7t0U5DFI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nCEUw269B9wSLbTxo24a2PjBpJNTq2sltedz1RzefduAeAx2sTOTjKyJ+E7uJrwSxRRtiVhEdjlU4qZkJhXodjz6YuUwO/8dR5a/WemlBq3Y0AHjvE0VUz9MPUUT9q8p2MtvVFrZpczitiUEv0BLDbH92JN2SwbEc4umfxANwUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D8p0owIR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9D80C2BD11;
-	Wed,  5 Jun 2024 13:50:35 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=DhXNqlelT+OWgKfNgeyuE+tBbiMO5/gaLd8WqsRObdLGLy/BHQoLPy38tDGHAcHpJ7eNClT3dabVbXwlVdaW4FTZeFGzM+aBnfdPqfp1WMezOaM0wvYJYIMS33dsWyjliCFGOxDINNR+5GmI3miDeA33ot11wg+1/ia+BdbcYCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YoX3e5Cb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A89EC2BD11;
+	Wed,  5 Jun 2024 13:51:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717595436;
-	bh=THHBlGMAWjBLIyLgqNnLwR6wpLdgEYjBZqkS4AZkOjg=;
+	s=k20201202; t=1717595471;
+	bh=5LyhUxJv0s2KRQRgg7PUVSJAFVVaLDS/b7y7t0U5DFI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D8p0owIRpfWAL1ARg/L89LmAj7ogSBMECcOR4CTT0yLWi+ujkQviYKSDVcLHpcy7B
-	 7uKjUCXsGp0I9pmaO3F2xN23u1McCNxgk6YXX731U9bui0uwJhZSxpc2MnJWWvQvM9
-	 0BSSsv2nVL8NpimXBm0aaa6IZcDi9mylXq7Kd4hyvAetpGFaAV5BYmcPvlFuU1+M9g
-	 +nRCbn73lBpreB+FNTnXiC4q/QvyHDj+oStaea+H8gl2ps7V98fWIs3BygmLg9CfID
-	 gWtwIg/oqTcprkbGx8Bu52Nc3usAD6lcKBoJazdMXwdVWb8DseGdOOVOQ2dHvFqVap
-	 NUrdNA6SIaDaw==
-Date: Wed, 5 Jun 2024 07:50:33 -0600
-From: Rob Herring <robh@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Abel Vesa <abel.vesa@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: PCI: qcom: Fix register maps items and add
- 3.3V supply
-Message-ID: <20240605135033.GA2468218-robh@kernel.org>
-References: <20240604-x1e80100-pci-bindings-fix-v1-1-f4e20251b3d0@linaro.org>
- <20240604235806.GA1903493-robh@kernel.org>
- <20240605054928.GB2417@thinkpad>
+	b=YoX3e5CbLu3Vh2K52jF0o7iUh0XgHM3xiwkUiIczpFEgzBYnBrV1exKU7n5R62ZvB
+	 TFAAPScBsQng/ne8I/871js+odlAFOC0CnObl80gGq1rWiBYzwDTg5pIYhAq2EAPUO
+	 ZnuYlS5RqF0Ilf0n5MA/i/5c6fUj4Dqp0Foz9mAM26weGWPzcJZqDyWOsi1gCV+w1P
+	 TZ2UbA+8ynvoivP4VCm7BPUp7k7LcW+ftvhH+CV92UAD8b75rC2o1ZQQMZrg+T8+13
+	 GJ7kxSAVU2kjTFR1gwtrAyW+bYLMSGCHhascswDdOO5uU8cJg1diXzDCUPx/fkOt8H
+	 gjQPIg5z+UDZQ==
+Date: Wed, 5 Jun 2024 14:51:06 +0100
+From: Simon Horman <horms@kernel.org>
+To: Ronak Doshi <ronak.doshi@broadcom.com>
+Cc: netdev@vger.kernel.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 net-next 2/4] vmxnet3: add latency measurement support
+ in vmxnet3
+Message-ID: <20240605135106.GM791188@kernel.org>
+References: <20240531193050.4132-1-ronak.doshi@broadcom.com>
+ <20240531193050.4132-3-ronak.doshi@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,71 +62,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240605054928.GB2417@thinkpad>
+In-Reply-To: <20240531193050.4132-3-ronak.doshi@broadcom.com>
 
-On Wed, Jun 05, 2024 at 11:19:28AM +0530, Manivannan Sadhasivam wrote:
-> On Tue, Jun 04, 2024 at 05:58:06PM -0600, Rob Herring wrote:
-> > On Tue, Jun 04, 2024 at 07:05:12PM +0300, Abel Vesa wrote:
-> > > All PCIe controllers found on X1E80100 have MHI register region and
-> > > VDDPE supplies. Add them to the schema as well.
-> > > 
-> > > Fixes: 692eadd51698 ("dt-bindings: PCI: qcom: Document the X1E80100 PCIe Controller")
-> > > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > > ---
-> > > This patchset fixes the following warning:
-> > > https://lore.kernel.org/all/171751454535.785265.18156799252281879515.robh@kernel.org/
-> > > 
-> > > Also fixes a MHI reg region warning that will be triggered by the following patch:
-> > > https://lore.kernel.org/all/20240604-x1e80100-dts-fixes-pcie6a-v2-1-0b4d8c6256e5@linaro.org/
-> > > ---
-> > >  Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml | 6 ++++--
-> > >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
-> > > index 1074310a8e7a..7ceba32c4cf9 100644
-> > > --- a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
-> > > +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
-> > > @@ -19,11 +19,10 @@ properties:
-> > >      const: qcom,pcie-x1e80100
-> > >  
-> > >    reg:
-> > > -    minItems: 5
-> > > +    minItems: 6
-> > >      maxItems: 6
-> > >  
-> > >    reg-names:
-> > > -    minItems: 5
-> > >      items:
-> > >        - const: parf # Qualcomm specific registers
-> > >        - const: dbi # DesignWare PCIe registers
-> > > @@ -71,6 +70,9 @@ properties:
-> > >        - const: pci # PCIe core reset
-> > >        - const: link_down # PCIe link down reset
-> > >  
-> > > +  vddpe-3v3-supply:
-> > > +    description: A phandle to the PCIe endpoint power supply
-> > 
-> > TBC, this is a rail on the host side provided to a card? If so, we have 
-> > standard properties for standard PCI voltage rails.
+On Fri, May 31, 2024 at 12:30:47PM -0700, Ronak Doshi wrote:
+> This patch enhances vmxnet3 to support latency measurement.
+> This support will help to track the latency in packet processing
+> between guest virtual nic driver and host. For this purpose, we
+> introduce a new timestamp ring in vmxnet3 which will be per Tx/Rx
+> queue. This ring will be used to carry timestamp of the packets
+> which will be used to calculate the latency.
 > 
-> There is a 'vpcie3v3-supply' property and it should satisfy the requirement. But
-> 'vddpe-3v3-supply' is already used on multiple Qcom SoCs. So changing the name
-> in dts warrants the driver to support both supplies for backwards compatibility,
-> but that should be fine.
-
-Ideally, we would have a 'enable slot' or 'power on slot' function that 
-turns on all the standard slot supplies and wiggles PERST# (and 
-perhaps link state management) all following the timing defined in the 
-PCI spec. Then the host drivers wouldn't have to do anything other than 
-perhaps opt-in to use that.
-
-> > It is also preferred that you put them in a root port node rather than the
-> > host bridge.
+> User can enable latency measurement using realtime knob in vnic
+> setting in VCenter.
 > 
-> Even though the resource split between root port and host bridge is not clear in
-> Qcom SoCs, I think from logical stand point it makes sense.
+> Signed-off-by: Ronak Doshi <ronak.doshi@broadcom.com>
+> Acked-by: Guolin Yang <guolin.yang@broadcom.com>
 
-Yeah, since it's typically 1:1 that's been blurred.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Rob
 
