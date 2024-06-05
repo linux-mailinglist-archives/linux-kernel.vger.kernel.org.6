@@ -1,305 +1,85 @@
-Return-Path: <linux-kernel+bounces-202786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE0C18FD10F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:45:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DA008FD113
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:47:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4C331C22D94
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:45:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4746AB22F17
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A314326AF9;
-	Wed,  5 Jun 2024 14:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b+HGNOjL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5021426C;
-	Wed,  5 Jun 2024 14:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6151F5F5;
+	Wed,  5 Jun 2024 14:47:12 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 4900319D8A7
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 14:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717598734; cv=none; b=Md/0cvos77wrZfAJ2dTDkttPMNiie0BXrT8wZKp+Sgg21Ne6FNbzl9ndDE3W9Cj7ZmdIRML3oRzMpqopbDrxcYsvavbOmYa7gvCqi9Qenp1FOUTIC5A4Nbv7cgQ/c2oKbHmpwKqqlLonVOWPoeqQ0fk/VhedMrG23nSnOAs0XFw=
+	t=1717598831; cv=none; b=YDJ42EGXdHT3Yjj1KREm47sAt+4/URSO1ApZT9e90/qB9M6YJxRszsLXrZKZgVJ2Ceg6U1ej+McSrsbexPQ4JXD/kE8JH6AU2zZN0DVxaLndC6W4+U6yJ5eBbGlDzoABbHc3dlqhWaLITkfntHByZsiA6mhqhAEv7nOz+5QDxAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717598734; c=relaxed/simple;
-	bh=mHx8HVUaCOXB9TNFRsb/Kr5+jRe8xYJtJCTxzswwyL8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UEj5FZaWpVBeeFARmGiGRHpZOhMpe7p/jUeKSVUGKb4j/hattQ66/B/7p6f+5D/1p52fBQbluPHT5HTWwEUu9zEFEkKTbLytq/qwn2MLbX653oz9SMWOFIBsbyp0BffJpUS17dotjDwauqs5MR9NWcPTdLzGkym3fmeZQXRM0zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b+HGNOjL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5BC0C2BD11;
-	Wed,  5 Jun 2024 14:45:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717598734;
-	bh=mHx8HVUaCOXB9TNFRsb/Kr5+jRe8xYJtJCTxzswwyL8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b+HGNOjLTmLvbLanSFpFvA22GtGdn4J0i3MW2C5W4vRitwIq5oiSsfak1fBtzSLLr
-	 eTB/yjYVnzdgcPNUn7xbSGXexZSgk4GVvGRR0A5mhG9xTe5Hnh5X1gDP9owkFQYKbs
-	 1EFC0SX8fgXlR/LRX7/yh925kcgccJU9pzYnO43yQBilSDoet1YyRanpsZRCbH3uwn
-	 jkPqU8K2EvZAgER8jcR7EXLDmfUh1AgoTw9Vl3TgA0du0pWTJcG8ebTPkFyXZYfpoT
-	 OBXDbACxvLYopLguh082VMxKZEFA8+YvKYBi8J1z9vDxfOFKUXqoCwkNDF7L9tSbXT
-	 GiDej3pcclA8g==
-Date: Wed, 5 Jun 2024 08:45:31 -0600
-From: Rob Herring <robh@kernel.org>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Paul Kocialkowski <contact@paulk.fr>,
-	=?iso-8859-1?Q?Herv=E9?= Codina <herve.codina@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH v2 1/5] dt-bindings: connector: add GE SUNH hotplug addon
- connector
-Message-ID: <20240605144531.GA2642279-robh@kernel.org>
-References: <20240510-hotplug-drm-bridge-v2-0-ec32f2c66d56@bootlin.com>
- <20240510-hotplug-drm-bridge-v2-1-ec32f2c66d56@bootlin.com>
- <20240510163625.GA336987-robh@kernel.org>
- <20240514185125.58225238@booty>
+	s=arc-20240116; t=1717598831; c=relaxed/simple;
+	bh=26Mmd5wjZFDXiPuulTYjpvu+4ei/osZxeFNfc9g6u/c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=gnk+7qEgbPV6Hca0vfi2FW/s+Yhg5hshla9lAiW4GUqyIipMG65ZYSJgtBq092i0/z1TbkTu8120/UuJHNd5JnS4oHf4SNNbHpz6ISgecTj+XBLHi+X8UhuPvea6MDK3i+Fm08YpnmDkuMoo88x/Cf0VRtvuxCfzc39OaLkXXgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 198843 invoked by uid 1000); 5 Jun 2024 10:47:03 -0400
+Date: Wed, 5 Jun 2024 10:47:03 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Andrea Parri <parri.andrea@gmail.com>, will@kernel.org,
+  peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+  dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+  akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+  linux-kernel@vger.kernel.org, hernan.poncedeleon@huaweicloud.com,
+  jonas.oberhauser@huaweicloud.com
+Subject: New locking test for the paulmckrcu/litmus github archive
+Message-ID: <a8c06694-098d-4b95-845c-96b40cd3ff2d@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240514185125.58225238@booty>
 
-On Tue, May 14, 2024 at 06:51:25PM +0200, Luca Ceresoli wrote:
-> Hello Rob,
-> 
-> +cc Srinivas and Miquèl for the NVMEM cell discussion below
-> 
-> On Fri, 10 May 2024 11:36:25 -0500
-> Rob Herring <robh@kernel.org> wrote:
-> 
-> > On Fri, May 10, 2024 at 09:10:37AM +0200, Luca Ceresoli wrote:
-> > > Add bindings for the GE SUNH add-on connector. This is a physical,
-> > > hot-pluggable connector that allows to attach and detach at runtime an
-> > > add-on adding peripherals on non-discoverable busses.
-> > > 
-> > > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> 
-> [...]
-> 
-> > > +++ b/Documentation/devicetree/bindings/connector/ge,sunh-addon-connector.yaml
-> > > @@ -0,0 +1,197 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/connector/ge,sunh-addon-connector.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: GE SUNH hotplug add-on connector
-> > > +
-> > > +maintainers:
-> > > +  - Luca Ceresoli <luca.ceresoli@bootlin.com>
-> > > +
-> > > +description:
-> > > +  Represent the physical connector present on GE SUNH devices that allows
-> > > +  to attach and detach at runtime an add-on adding peripherals on
-> > > +  non-discoverable busses.
-> > > +
-> > > +  This connector has status GPIOs to notify the connection status to the
-> > > +  CPU and a reset GPIO to allow the CPU to reset all the peripherals on the
-> > > +  add-on. It also has a 4-lane MIPI DSI bus.
-> > > +
-> > > +  Add-on removal can happen at any moment under user control and without
-> > > +  prior notice to the CPU, making all of its components not usable
-> > > +  anymore. Later on, the same or a different add-on model can be connected.  
-> > 
-> > Is there any documentation for this connector?
-> > 
-> > Is the connector supposed to be generic in that any board with any SoC 
-> > could have it? If so, the connector needs to be able to remap things so 
-> > overlays aren't tied to the base dts, but only the connector. If not, 
-> > then doing that isn't required, but still a good idea IMO.
-> 
-> It is not generic. The connector pinout is very specific to this
-> product, and there is no public documentation.
-> 
-> > > +examples:
-> > > +  # Main DTS describing the "main" board up to the connector
-> > > +  - |
-> > > +    / {
-> > > +        #include <dt-bindings/gpio/gpio.h>
-> > > +
-> > > +        addon_connector: addon-connector {  
-> > 
-> > Just 'connector' for the node name.
-> 
-> OK
-> 
-> > > +            compatible = "ge,sunh-addon-connector";
-> > > +            reset-gpios = <&gpio1 1 GPIO_ACTIVE_LOW>;
-> > > +            plugged-gpios = <&gpio1 2 GPIO_ACTIVE_LOW>;
-> > > +            powergood-gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>;
-> > > +
-> > > +            ports {
-> > > +                #address-cells = <1>;
-> > > +                #size-cells = <0>;
-> > > +
-> > > +                port@0 {
-> > > +                    reg = <0>;
-> > > +
-> > > +                    hotplug_conn_dsi_in: endpoint {
-> > > +                        remote-endpoint = <&previous_bridge_out>;
-> > > +                    };
-> > > +                };
-> > > +
-> > > +                port@1 {
-> > > +                    reg = <1>;
-> > > +
-> > > +                    hotplug_conn_dsi_out: endpoint {
-> > > +                        // remote-endpoint to be added by overlay
-> > > +                    };
-> > > +                };
-> > > +            };
-> > > +        };
-> > > +    };
-> > > +
-> > > +  # "base" overlay describing the common components on every add-on that
-> > > +  # are required to read the model ID  
-> > 
-> > This is located on the add-on board, right?
-> 
-> Exactly. Each add-on has an EEPROM with the add-on model ID stored
-> along with other data.
-> 
-> > Is it really any better to have this as a separate overlay rather than 
-> > just making it an include? Better to have just 1 overlay per board 
-> > applied atomically than splitting it up.
-> 
-> (see below)
-> 
-> > > +  - |
-> > > +    &i2c1 {  
-> > 
-> > Generally, I think everything on an add-on board should be underneath 
-> > the connector node. For starters, that makes controlling probing and 
-> > removal of devices easier. For example, you'll want to handle 
-> > reset-gpios and powergood-gpios before any devices 'appear'. Otherwise, 
-> > you add devices on i2c1, start probing them, and then reset them at some 
-> > async time?
-> 
-> This is not a problem because the code is asserting reset before
-> loading the first overlay. From patch 5/5:
+Paul:
 
-What if the bootloader happened to load the overlay already? Or you 
-kexec into a new kernel?
+Below is a new litmus test for the manual/locked directory in your 
+github archive.  It is based on a suggestion from Andrea Parri, and it 
+demonstrates a bug in the current LKMM lock.cat file.  Patches to fix 
+that file will be sent shortly.
 
-Keeping things underneath a connector node makes managing the 
-dependencies easier. It also can allow us to have some control over what 
-overlays can and can't modify. It also reflects reality that these 
-devices sit behind the connector.
+Alan
 
-> 
->     static int sunh_conn_attach(struct sunh_conn *conn)
->     {
-> 	int err;
-> 
-> 	/* Reset the plugged board in order to start from a stable state */
-> 	sunh_conn_reset(conn, false);
-> 
-> 	err = sunh_conn_load_base_overlay(conn);
->         ...
->     }
-> 
-> > For i2c, it could look something like this:
-> > 
-> > connector {
-> >   i2c {
-> > 	i2c-parent = <&i2c1>;
-> > 
-> > 	eeprom@50 {...};
-> >   };
-> > };
-> 
-> I think this can be done, but I need to evaluate what is needed in the
-> driver code to support it.
-> 
-> > > +        #address-cells = <1>;
-> > > +        #size-cells = <0>;
-> > > +
-> > > +        eeprom@50 {
-> > > +            compatible = "atmel,24c64";
-> > > +            reg = <0x50>;
-> > > +
-> > > +            nvmem-layout {
-> > > +                compatible = "fixed-layout";
-> > > +                #address-cells = <1>;
-> > > +                #size-cells = <1>;
-> > > +
-> > > +                addon_model_id: addon-model-id@400 {
-> > > +                    reg = <0x400 0x1>;
-> > > +                };
-> > > +            };
-> > > +        };
-> > > +    };
-> > > +
-> > > +    &addon_connector {
-> > > +        nvmem-cells = <&addon_model_id>;
-> > > +        nvmem-cell-names = "id";
-> > > +    };  
-> > 
-> > It's kind of sad that an addon board has an eeprom to identify it, but 
-> > it's not itself discoverable...
-> 
-> Not sure I got what you mean exactly here, sorry.
+---
 
-Only that to be discoverable, you shouldn't need DT.
+C islocked+lock+islocked+unlock+islocked.litmus
 
-> The add-on board is discoverable in the sense that it has a GPIO
-> (actually two) to be notified of plug/unplug, and it has a way to
-> describe itself by reading a model ID. Conceptually this is what HDMI
-> monitors do: an HPD pin and an EEPROM at a fixed address with data at
-> fixed locations.
->
-> If you mean the addon_connector node might be avoided, then I kind of
-> agree, but this seems not what the NVMEM DT representation expects so
-> I'm not sure removing it would be correct in the first place.
-> 
-> Srinivas, do you have any insights to share about this? The topic is a
-> device tree overlay that describes a hotplug-removable add-on, and in
-> particular the EEPROM present on all add-ons to provide the add-on
-> model ID.
-> 
-> > Do you load the first overlay and then from it decide which 
-> > specific overlay to apply?
-> 
-> Exactly.
-> 
-> The first overlay (the example you quoted above) describes enough to
-> reach the model ID in the EEPROM, and this is identical for all add-on
-> models. The second add-on is model-specific, there is one for each
-> model, and the model ID allows to know which one to load.
+(*
+ * Result: Always
+ *
+ * This tests the memory model's implementation of spin_is_locked().
+ *)
 
-So you don't really need an overlay for this unless the EEPROM model 
-changes or the model-id offset changes.
+{}
 
-I suppose nvmem needs something in DT to register a region. That's 
-really nvmem's problem, but I guess what you have is fine.
+P0(spinlock_t *x)
+{
+        int r0;
+	int r1;
+	int r2;
 
-Rob
+	r0 = spin_is_locked(x);
+	spin_lock(x);
+	r1 = spin_is_locked(x);
+	spin_unlock(x);
+	r2 = spin_is_locked(x);
+}
+
+exists (0:r0=0 /\ 0:r1=1 /\ 0:r2=0)
 
