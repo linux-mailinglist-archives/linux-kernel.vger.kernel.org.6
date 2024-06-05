@@ -1,125 +1,161 @@
-Return-Path: <linux-kernel+bounces-203032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 841F58FD559
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:10:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563FE8FD562
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:10:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B3711F297D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:10:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BC041C21B8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863E51553A0;
-	Wed,  5 Jun 2024 18:04:08 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1D813C806;
+	Wed,  5 Jun 2024 18:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="MlehV81c"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A011B22615;
-	Wed,  5 Jun 2024 18:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDADB13AD22
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 18:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717610646; cv=none; b=Wa8vYrkpD1JUaxFQEOZ2aAZ9bStQQCIFd1facCM1dhwj0lzjEalruAe5LMIDlj7qaN9Kx+3ELoapexhQ61vPcwMpyS1i1NTVBTYSssfSIlN79HkZAD8WuaV0K13hor3i30K1IQyqaprA4A1HuEI1OARucSDaDfR1saTQdemUjFY=
+	t=1717610670; cv=none; b=H/xX3cbBAyrTVztSimYHiWSe1q9MCrX8v93YpCDdBTTugMdAuB2dBZCpOqL4gM6/J0piMeRs9yNYmO/LFL1+SkZLoYGJEBHqOumYIdIFBt3U1C5+2s9ncxwz5V+5JUuRJ7NgEJBEaIQJ+Q1sX4t4y+1z5M0E9fvkphyVWEodBOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717610646; c=relaxed/simple;
-	bh=2TJXagfC8pAu6tnAQ5vpaX2KJ7dFjjhqehXLDLvCGN4=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=b8LEy1oRrfOTjSvJNYX8a+4AhEUc4Yi7kz3JTbigmNNA3bo5Fo5p9YN7+c4/wqMGj+3UWaGLn1TmVAj766YjbBEq4Uk3gPJ9pjgFvLVTvCgZNEVf+fHFiGBUtuVT7e37SittIn8tQKexclfHgcVmGwUVTCcUJJ9obdUCQi8U+Og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BC74C4AF0D;
-	Wed,  5 Jun 2024 18:04:06 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.97)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1sEuzZ-00000000hYy-1L7v;
-	Wed, 05 Jun 2024 14:04:09 -0400
-Message-ID: <20240605180409.179520305@goodmis.org>
-User-Agent: quilt/0.68
-Date: Wed, 05 Jun 2024 14:03:39 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v2 5/5] ftrace: Add comments to ftrace_hash_move() and friends
-References: <20240605180334.090848865@goodmis.org>
+	s=arc-20240116; t=1717610670; c=relaxed/simple;
+	bh=s8KVP578g4tIAvF7jUKxEjt/8ys8vUdXttVcAIBlKWM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mq1q+h5vx2HtboYksCY6Lwa/iq1tTVMdgUsBeOuIkvbd9Eo9hYuv0Mib1Mr0H/HUfopNWuecYkhAyzd7XBSnKflCWs83ejrpqzKGjzqD7jQNnkfm3jQ17dX0KXzVluB3s3oxdfRyD0fhgezJUH5OvxBzJ1hvb5R/lqZoh8FZAUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=MlehV81c; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2eaafda3b90so1539761fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 11:04:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1717610667; x=1718215467; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ox0cTDoj9EAdvqJSQWodBv8pPoGx05u+NIZ/qY+c1Hw=;
+        b=MlehV81c+11vhzUjBsl7/PQu+rxcZy6u+ypfU2se7cXJWojH1uKKOsllA5AFp6Gt4Y
+         sMlf0tNoqFB374baOdRT6/Q8mb1nH8A9QDIsd9f4LPfMTttMR2MviXjLQhF+llWPtB1D
+         L4SmR4X+KRLqAWuBfrRnEnFhDn/QH6uH4ZZ+5Iipi5RObbqsWrPkZoagZysf50bQh29s
+         NJD1k4FMNIRVKMSSThaLRyWhIEwEZU8rTjTj05xtSN9H/LjOAEQn5OrIZnsxhTWZl1Ic
+         +U1R2dO5EV0KnDqDLrH7FgVOI8wP8VgwFhmGkXLFEBj+VE5AFDlTPhqev7Z0bnSMox0J
+         NAqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717610667; x=1718215467;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ox0cTDoj9EAdvqJSQWodBv8pPoGx05u+NIZ/qY+c1Hw=;
+        b=nZn6pWdh7wdtu3mOLqA0B8sYEfj01Mp9FmEq9zarej3F/mdSD18eZmhl6rg+UsRKa9
+         70qd9Nvv0KfoKBauyl/XiQiD0Mks6j4aWQoA5ixxmBhj/mt8KDL+iCuTmLVsiG3WNSxO
+         04aUQg2xoQ3Tku663VtoRK/b8Vjr+lfSdt4hi5Bu3qbrrCMSqEMjwsJwcrxlE8sbRwJu
+         YU8l0Y4Y0pTlWYq18caQYpqDLQ1mt8/zwpbxK34z/NXhYPUALLU4CWMNRdE33HYiOzh7
+         qWoBhu0rdPrj3i14/isWJYKDJ7sGPLMMCgC0/tvTp1+OPxp7JAD4iXCy1elsWY0+hkDf
+         D6sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXu0iKEM67glUb/nj4Q8YqkmyVWt2l3rcFq6oLyZwPdss71mwr+sZLsPo9vxwOggoUOtYSVpSyLj40LD1EJCiiQvjHeb+kM1x62R5pS
+X-Gm-Message-State: AOJu0Yx7Ub3uDGWHYujHkjCeYHyDXmVbr8ZH25kHZdI3f6q6MtaC9gli
+	FV1is38SqPsPhocXJVDHFlOr4dXWRKD/WweP6hoTABCawZcwW/aVq91W/r74nPAcadPQQoT3C0B
+	BQcjuWMUdl2c2M6ZTIAt/G8hzVtqD7d0FJQS7Sg==
+X-Google-Smtp-Source: AGHT+IHXq8dGpJoU2dr2zBFCKOEvbFdkmlsdgV/Jz6JlWy3+wkJEsY7up5jQ+fPM273H+nj67WDMFnp7tdG9g6BvQ40=
+X-Received: by 2002:a2e:b00a:0:b0:2ea:7726:4a77 with SMTP id
+ 38308e7fff4ca-2eac7a72b8emr19843541fa.35.1717610666844; Wed, 05 Jun 2024
+ 11:04:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <CAMRc=Mckab1QYoBuE3iSv0x+GEjFNBQS5Hw_Mry=r7h5XGHZEQ@mail.gmail.com>
+ <20240605174713.GA767261@bhelgaas>
+In-Reply-To: <20240605174713.GA767261@bhelgaas>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 5 Jun 2024 20:04:15 +0200
+Message-ID: <CAMRc=MehAkEGJmCXi1uad1f7jZAT60OQ2N0jX7AMka4rS9OjDg@mail.gmail.com>
+Subject: Re: [PATCH v8 16/17] PCI/pwrctl: add a PCI power control driver for
+ power sequenced devices
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, 
+	Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Srini Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Elliot Berman <quic_eberman@quicinc.com>, Caleb Connolly <caleb.connolly@linaro.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Alex Elder <elder@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	ath11k@lists.infradead.org, Jeff Johnson <quic_jjohnson@quicinc.com>, 
+	ath12k@lists.infradead.org, linux-pm@vger.kernel.org, 
+	linux-pci@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, kernel@quicinc.com, 
+	Amit Pundir <amit.pundir@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+On Wed, Jun 5, 2024 at 7:47=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org> w=
+rote:
+>
+> > >
+> > >   wifi@0 {
+> > >     compatible =3D "pci17cb,1101", "wlan-pwrseq";
+> >
+> > What even is "pwrseq" in the context of the hardware description? DT
+> > maintainers would like to have a word with you. :)
+>
+> There are "compatible" strings like "simple-bus", "simple-mfd", and
+> "syscon" that allow drivers to bind and provide generic functionality
+> when they don't need to know the exact hardware.
+>
 
-Describe what ftrace_hash_move() does and add some more comments to some
-other functions to make it easier to understand.
+There's a difference however: a "simple bus" is a thing. A "simple
+multifunction device" is also an actual thing. A "pwrseq" or
+"power-sequencer" is not a thing, it's a functionality. And we don't
+describe it in device-tree. Rob has said before that he regrets having
+merged the mmc pwrseq bindings back in the day and that he wouldn't do
+it again now because it describes what HW does and not what it is. In
+this case the PMU is simply a PMIC and the bindings I'm proposing
+describe it as such. But what you're proposing is even worse: this is
+the ath1x module of the larger chipset (power sequencee rather than
+sequencer) so naming it "wlan-pwrseq" makes absolutely no sense at
+all. It's a PCI device whose ID is 0x17cb1101 and the device tree
+describes it as such.
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/ftrace.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+> > > and pci_pwrctl_pwrseq_of_match[] had this:
+> > >
+> > >   { .compatible =3D "wlan-pwrseq", .data =3D "wlan", }
+> > >
+> > > Wouldn't this pci-pwrctl-pwrseq driver work the same?  I'm not a DT
+> > > whiz, so likely I'm missing something, but it would be nice if we
+> > > didn't have to update this very generic-looking driver to add every
+> > > device that needs it.
+>
+> Do you have any other ideas to reduce the churn in this file?  It just
+> seems weird to have to add an ID to this file without adding any
+> actual code or data related to it.
+>
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 83f23f8fc26d..ae1603e771c5 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -169,6 +169,7 @@ static inline void ftrace_ops_init(struct ftrace_ops *ops)
- #endif
- }
- 
-+/* Call this function for when a callback filters on set_ftrace_pid */
- static void ftrace_pid_func(unsigned long ip, unsigned long parent_ip,
- 			    struct ftrace_ops *op, struct ftrace_regs *fregs)
- {
-@@ -1317,7 +1318,7 @@ static struct ftrace_hash *alloc_ftrace_hash(int size_bits)
- 	return hash;
- }
- 
--
-+/* Used to save filters on functions for modules not loaded yet */
- static int ftrace_add_mod(struct trace_array *tr,
- 			  const char *func, const char *module,
- 			  int enable)
-@@ -1429,6 +1430,7 @@ static struct ftrace_hash *__move_hash(struct ftrace_hash *src, int size)
- 	return new_hash;
- }
- 
-+/* Move the @src entries to a newly allocated hash */
- static struct ftrace_hash *
- __ftrace_hash_move(struct ftrace_hash *src)
- {
-@@ -1443,6 +1445,26 @@ __ftrace_hash_move(struct ftrace_hash *src)
- 	return __move_hash(src, size);
- }
- 
-+/**
-+ * ftrace_hash_move - move a new hash to a filter and do updates
-+ * @ops: The ops with the hash that @dst points to
-+ * @enable: True if for the filter hash, false for the notrace hash
-+ * @dst: Points to the @ops hash that should be updated
-+ * @src: The hash to update @dst with
-+ *
-+ * This is called when an ftrace_ops hash is being updated and the
-+ * the kernel needs to reflect this. Note, this only updates the kernel
-+ * function callbacks if the @ops is enabled (not to be confused with
-+ * @enable above). If the @ops is enabled, its hash determines what
-+ * callbacks get called. This function gets called when the @ops hash
-+ * is updated and it requires new callbacks.
-+ *
-+ * On success the elements of @src is moved to @dst, and @dst is updated
-+ * properly, as well as the functions determined by the @ops hashes
-+ * are now calling the @ops callback function.
-+ *
-+ * Regardless of return type, @src should be freed with free_ftrace_hash().
-+ */
- static int
- ftrace_hash_move(struct ftrace_ops *ops, int enable,
- 		 struct ftrace_hash **dst, struct ftrace_hash *src)
--- 
-2.43.0
+Is it really that much churn though? You'd save 4 lines of code? I
+think this is premature optimization, we'll see about unifying it when
+we have several models supported, right now with two, I'd just leave
+it as is and not seek perfection.
 
+> We should probably also add a pattern to MAINTAINERS so
+> get_maintainers.pl on this file will show you as a maintainer.
+>
 
+Makes sense.
+
+Bartosz
+
+> Bjorn
 
