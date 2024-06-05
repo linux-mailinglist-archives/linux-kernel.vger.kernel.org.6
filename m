@@ -1,157 +1,100 @@
-Return-Path: <linux-kernel+bounces-202680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10F338FCF83
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:37:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7359D8FCF92
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:38:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 371111C23E4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:37:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12AFD1F25453
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B83194A52;
-	Wed,  5 Jun 2024 13:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE6F194AFA;
+	Wed,  5 Jun 2024 13:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pEDUb6r5"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mttoQBd0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1EBE1C3D;
-	Wed,  5 Jun 2024 13:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4A0194AC7;
+	Wed,  5 Jun 2024 13:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717593204; cv=none; b=TFvBUMttvFrjHSd46XbLY8PNlp/e6EVbpN89iKjO24Oh20pxBecvYE1tvQLFhihjOlvL7xvby8GZR8gt+WoKqJ9P0kx7GJ+aN1Ez8o6OhK7l/Hdz0RE4APloQq/Ej02xw5nhTLL8T5amOph7QhRDCHsoK5G3J1vGdRxxEauTMyA=
+	t=1717593364; cv=none; b=JfW2HJ5ukf4OOXYID7I9wNBHxqdSLcdEgjGe38511qJY9j5PCzCPjQsFNdlGaymxijQlVjaAmMjW4dT8QInlhPuUiMCrKlQR+Azt2Hu0p1Oc2Vd+wx/AflqP/xuzvuyFjzVn8iinskSvqilR8YZziZnipuU/MeuC6qkYPEdbKZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717593204; c=relaxed/simple;
-	bh=lcRT+tzoPV1CArKM26q9NGMNG0h6kkT7J9Luo9A0OA8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bv9hvoS4c01bgzbXoaWZTl2jDQVVehg9ptsqlO30GNghVE7Uj1MugfWf21ICzEu716q3bdjcpBA3o89uObQfHunn5khO/PXrJVJvEXl57BmjFOygaMWQ3P2XN1CkupIu+fkXhN7CZBf8i5XIJAsHOmtxFYSqRj9Jw8mcCHdCrbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pEDUb6r5; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 455D7Sdf019226;
-	Wed, 5 Jun 2024 13:13:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
- content-transfer-encoding : content-type : date : from : in-reply-to :
- message-id : mime-version : references : subject : to; s=pp1;
- bh=EwYCG4cYNmVGzMldoH8rmZ99WGkkfxZ/nkO7rj+J1CI=;
- b=pEDUb6r5h3Kq9KmN9g368eCe5Ynem6iWryLKZlisf7leTq0ncGjMmJQj72mvbLSk2bGl
- gsX1h5SQ7+Zi5k/5FrVMOdYxITaXWUugtQV7pd4gvUdoW4GX6XdpcLO5FzYascokVUhp
- hibn+RKhd84WMafZc0yjdKJABdSG0QszDVpxTffjyOGE7T5qkmyK0lSC5pmVf8qtarTY
- GYPwTgEij//EmCZAzUDWTbbsy8ySudwbDWeCF02CPZ+HdzBTQ+26k+mU0xhrtpog5flA
- 9rdL7lUu4jCJq9uEuiw+KaHsgkIYeOkIfyUWOpnc9svqX1AY8Ly9MS/2c+oYfiJhx2Yh ZQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yjrm9g0ps-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Jun 2024 13:13:12 +0000
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 455DDB0H028029;
-	Wed, 5 Jun 2024 13:13:12 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yjrm9g0pj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Jun 2024 13:13:11 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 455AdLmv026592;
-	Wed, 5 Jun 2024 13:13:10 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ygffn44pq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Jun 2024 13:13:10 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 455DD63R53477776
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 5 Jun 2024 13:13:08 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 84B4A2004B;
-	Wed,  5 Jun 2024 13:13:06 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1F50320040;
-	Wed,  5 Jun 2024 13:13:04 +0000 (GMT)
-Received: from [9.195.38.242] (unknown [9.195.38.242])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  5 Jun 2024 13:13:03 +0000 (GMT)
-Message-ID: <3dea8d70-9f04-4410-8063-d98c392c10c7@linux.ibm.com>
-Date: Wed, 5 Jun 2024 18:43:02 +0530
+	s=arc-20240116; t=1717593364; c=relaxed/simple;
+	bh=wvZt6kF9E4Zi2ofY87AAmrFmQ/4Dipo37U8X3H8nyNs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZTN92OTGg1J9/78ZyxNpm1tveXOVMEGtQNqV8NeDMzruaBEPFACZn9uGxjsUN0LuloAaUp6X/ksEe+v0Dv24RjBv20qk1oNja+H1DMj9majC+bJim1NIgogjpmQFdr7PFGp9ilLl7xEhoHF4dDWwYOuogr4ZCEwEQM5PGpIl3YA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=none smtp.mailfrom=ecsmtp.iind.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mttoQBd0; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ecsmtp.iind.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717593362; x=1749129362;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=wvZt6kF9E4Zi2ofY87AAmrFmQ/4Dipo37U8X3H8nyNs=;
+  b=mttoQBd00AX4rQ81GiQ85Z1LCXvrORBh/4fOHiw8P2YPaqU0601SaHJN
+   gaRKBFZ1tcL4IsEfiJSUgdZCqEcLyL6NgmY2tjgNqitrAErKlTEHCcOwf
+   iba38G4fMf35g56eVfgqpkl68y/W4SSFxBOXh/G0UHkfiij8nSCjxLZ3i
+   k+YB82TVnR6KVe6NoSqMjYVbnGmmkcpT+w/285z1mj7tLuZUsQ7soa/FD
+   wfKrcGqKoLP0stsfG96ASEFmroi5DytL6DbSkP+LXGXKjNjFhmtzYyvws
+   UO86CIvw/3mfYU03MD7KYXFQyVbV1NQkMKv2HJi/dVi4XmlqMHdVtfvjl
+   w==;
+X-CSE-ConnectionGUID: 4fTF3MhcQsCdJ8/qYMMIRA==
+X-CSE-MsgGUID: 1Li51909QlSsewU8cvZ3FQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="18048164"
+X-IronPort-AV: E=Sophos;i="6.08,216,1712646000"; 
+   d="scan'208";a="18048164"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 06:15:52 -0700
+X-CSE-ConnectionGUID: 9bINq45JTxWFir6fDvMQYA==
+X-CSE-MsgGUID: Pg7hOZHUQgqOEW4MFE1YGQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,216,1712646000"; 
+   d="scan'208";a="42549306"
+Received: from inesxmail01.iind.intel.com ([10.223.57.40])
+  by orviesa003.jf.intel.com with ESMTP; 05 Jun 2024 06:15:50 -0700
+Received: from inlubt0316.iind.intel.com (inlubt0316.iind.intel.com [10.191.20.213])
+	by inesxmail01.iind.intel.com (Postfix) with ESMTP id 652BD19AFC;
+	Wed,  5 Jun 2024 18:45:48 +0530 (IST)
+Received: by inlubt0316.iind.intel.com (Postfix, from userid 12101951)
+	id 5FC501600107; Wed,  5 Jun 2024 18:45:48 +0530 (IST)
+From: Raag Jadav <raag.jadav@intel.com>
+To: ukleinek@kernel.org,
+	jarkko.nikula@linux.intel.com,
+	mika.westerberg@linux.intel.com,
+	andriy.shevchenko@linux.intel.com
+Cc: linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Raag Jadav <raag.jadav@intel.com>
+Subject: [PATCH v2 0/2] LPSS PWM cleanups
+Date: Wed,  5 Jun 2024 18:45:31 +0530
+Message-Id: <20240605131533.20037-1-raag.jadav@intel.com>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] KVM: PPC: Book3S HV: Add one-reg interface for
- HASHKEYR register
-To: Nicholas Piggin <npiggin@gmail.com>, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: pbonzini@redhat.com, naveen.n.rao@linux.ibm.com,
-        christophe.leroy@csgroup.eu, corbet@lwn.net, mpe@ellerman.id.au,
-        namhyung@kernel.org, jniethe5@gmail.com, atrajeev@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org
-References: <171741323521.6631.11242552089199677395.stgit@linux.ibm.com>
- <171741330411.6631.10739157625274499060.stgit@linux.ibm.com>
- <D1R0AHN2MCOS.BPHUJKSV7YSO@gmail.com>
-Content-Language: en-US
-From: Shivaprasad G Bhat <sbhat@linux.ibm.com>
-In-Reply-To: <D1R0AHN2MCOS.BPHUJKSV7YSO@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: FhHe7XHzQiXgt5lBSKMgmOg4mits-tmi
-X-Proofpoint-GUID: 4E3K761OZvwEgk7TdIGzCeYmQTSeIE5n
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-05_02,2024-06-05_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 malwarescore=0 adultscore=0 spamscore=0 mlxscore=0
- clxscore=1015 lowpriorityscore=0 bulkscore=0 impostorscore=0
- mlxlogscore=626 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2405010000 definitions=main-2406050100
+Content-Transfer-Encoding: 8bit
 
-On 6/4/24 11:37, Nicholas Piggin wrote:
-> On Mon Jun 3, 2024 at 9:15 PM AEST, Shivaprasad G Bhat wrote:
->> The patch adds a one-reg register identifier which can be used to
->> read and set the virtual HASHKEYR for the guest during enter/exit
->> with KVM_REG_PPC_HASHKEYR. The specific SPR KVM API documentation
->> too updated.
->>
->> Signed-off-by: Shivaprasad G Bhat <sbhat@linux.ibm.com>
->> ---
->>   Documentation/virt/kvm/api.rst            |    1 +
->>   arch/powerpc/include/uapi/asm/kvm.h       |    1 +
->>   arch/powerpc/kvm/book3s_hv.c              |    6 ++++++
->>   tools/arch/powerpc/include/uapi/asm/kvm.h |    1 +
->>   4 files changed, 9 insertions(+)
->>
->> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
->> index 81077c654281..0c22cb4196d8 100644
->> --- a/Documentation/virt/kvm/api.rst
->> +++ b/Documentation/virt/kvm/api.rst
->> @@ -2439,6 +2439,7 @@ registers, find a list below:
->>     PPC     KVM_REG_PPC_PSSCR               64
->>     PPC     KVM_REG_PPC_DEC_EXPIRY          64
->>     PPC     KVM_REG_PPC_PTCR                64
->> +  PPC     KVM_REG_PPC_HASHKEYR            64
-> Just looking at the QEMU side of this change made me think... AFAIKS
-> we need to also set and get and migrate the HASHPKEY SPR.
+This series implements minor cleanups for LPSS PWM driver.
 
-Thanks Nick. I have posted the v2 with changes for HASHPKEYR
+Changes since v1:
+- Update commit message
 
-and your other suggestions at
+Raag Jadav (2):
+  pwm: lpss: use devm_pm_runtime_enable() helper
+  pwm: lpss: drop redundant runtime PM handles
 
-171759276071.1480.9356137231993600304.stgit@linux.ibm.com
+ drivers/pwm/pwm-lpss-pci.c      | 22 ----------------------
+ drivers/pwm/pwm-lpss-platform.c | 10 +---------
+ 2 files changed, 1 insertion(+), 31 deletions(-)
 
+-- 
+2.35.3
 
-Regards,
-
-Shivaprasad
-
->
-> The hashst/hashchk test cases might be "working" by chance if the SPR
-> is always zero :/
->
-> Thanks,
-> Nick
 
