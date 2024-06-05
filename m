@@ -1,79 +1,124 @@
-Return-Path: <linux-kernel+bounces-201702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A81EF8FC1F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 04:43:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CB538FC1FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 04:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58E7E1F232C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:43:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BEBD1C22BBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D9C61FF2;
-	Wed,  5 Jun 2024 02:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5EA97345B;
+	Wed,  5 Jun 2024 02:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ifI7cUBW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIy5GOnE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0E4184E;
-	Wed,  5 Jun 2024 02:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E983D184E;
+	Wed,  5 Jun 2024 02:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717555421; cv=none; b=hbyAz3mdqJ4unVygAb2fvddKLx77phHOT+CV+6tzO7JCFGcXFLmJIis9J7ImxGJezzG92QY/EpZ1FXUzrS2iWYc5rLhS8AHNx2VJuGBPzViYM5LziEopUJ+CMhS67ZzCI+0b1dRXW/k1XvChdgrDQkZ67E8Fn7QNN3DmF9FXA54=
+	t=1717555501; cv=none; b=op48QOgEI8A1A93ApHUVqnwpAWicCvZOxK7QCqyczz/4sZyO6Gr0kXLdtoXCkT0MhypE00da5iCizQqOYMEz6ODjZDHbEARhXrutmxbtDbBrCt3puU5ihwSjeCVPUrTXbHru2tb5TSQv1fzG4SyqcWJ8pUSM0NgXD5aKa0nTx3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717555421; c=relaxed/simple;
-	bh=s1xG9VyBsAWZB8EftOt/RZNgSlV2dMJAzrcx2jd1Mu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CyZkBkaKs0VPeyhipdruC2yombJlI5BKy0vchcivCHB4ijmVhLORaQkUB1eD0JHOHX+fvBtwruNK5vyrkD7WKjZjcf/GH91i4wGaYjVGvTzJl1XQPCTkinHrv8QzCuR7N5vUPhu8OC+rWdB/uYoxcy5rl47SyFgK7fo6rcpGEYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ifI7cUBW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCF4FC2BBFC;
-	Wed,  5 Jun 2024 02:43:38 +0000 (UTC)
+	s=arc-20240116; t=1717555501; c=relaxed/simple;
+	bh=cLv+hU1PT81IObLXKDBLkjzJCQUWh86T/crgT79hhdQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WUakWrZMtgh5GsKbmN/QJuEavbXUZ5eGj07a/upPgSWc4E3P4kJ0Lz0I750YxybYMLpuhMPEv4Q7u7m14Y3fE08E+CE2Ftf8BO89fgLi3k718Eq0sDAVoRbM0umn68huBLG/ygJSufrCat7dRguHj7h75ksljsbpXlJL7Kiq+3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIy5GOnE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6E640C2BBFC;
+	Wed,  5 Jun 2024 02:45:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717555420;
-	bh=s1xG9VyBsAWZB8EftOt/RZNgSlV2dMJAzrcx2jd1Mu4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ifI7cUBWyIMdju/27Qxq3NuXNYMOS/6Mvw9RGFG4lQgBSPt4xExt6FSY2e0kbQc4e
-	 r1cqDBp7MGvKXh+oXKB0T61nf6GB0YED5a95096XRNa0SoklD6vtYimrtxHE0GAv7m
-	 MWYodJLVG1wDLvnLGP88qrV9ekYk5p+x+xNddex81ghI7pmkPer17ohD2HmziEH/jB
-	 emypOBEEuSTYlERFyapvqpX9+4AEUi3hPBPC5MThkCXZwFm+I+C7wRczHcTSajUWJo
-	 UOpHX32sJlrtqef95fd2iQWhZCX3AGfsfUozVYdGdl3V05Lh4ZWCC3n9fKDan/Y81e
-	 N8Vjp0OiW1Mew==
-Date: Wed, 5 Jun 2024 02:43:36 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Daisuke Nojiri <dnojiri@chromium.org>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Reka Norman <rekanorman@chromium.org>,
-	Tzung-Bi Shih <tzungbi@chromium.org>,
-	Abhishek Pandit-Subedi <abhishekpandit@google.com>,
-	Gwendal Grignou <gwendal@chromium.org>,
-	Pavan Holla <pholla@chromium.org>,
-	Ching-Kang Yen <chingkang@chromium.org>,
-	Lukasz Majczak <lma@chromium.org>, chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] platform/chrome: Add struct
- ec_response_get_next_event_v3
-Message-ID: <Zl_Q2OrzKlN2mI80@google.com>
-References: <20240604005354.2294468-1-dnojiri@chromium.org>
- <20240604170552.2517189-1-dnojiri@chromium.org>
+	s=k20201202; t=1717555500;
+	bh=cLv+hU1PT81IObLXKDBLkjzJCQUWh86T/crgT79hhdQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=MIy5GOnEK6nKk2Ux3Q047E5CQBY+tDMZZtlT0TfWfIONIAtgrgT2dtEj4B0A0gXth
+	 ATnJJOmhR1L4P5k9B2zNPFqeW49DipSFPr5rQlt2AlDfmumwrB089HWregOGgnDo6N
+	 aw2WF3bfDIFP6ZLyI+GLV4a4tQbu3eamtY5Rw5e2vO03856Dzlu9X0FW3Xe3ZubyqU
+	 f7orPuu09sePvZgcG9M/nmlnQeTaCHTbdllWXDBwjCz4HpGxBltNw4gwRFyGTYbBZC
+	 Zgmii/NFKO0yr6Wf8d8lN0jBjvlzUMG4lW5Hbj/OWuqBzdzD7quKknB39WFLpc6pqT
+	 h/Z2t+gcntX8A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54219C27C54;
+	Wed,  5 Jun 2024 02:45:00 +0000 (UTC)
+From: Kelvin Zhang via B4 Relay <devnull+kelvin.zhang.amlogic.com@kernel.org>
+Subject: [PATCH v7 0/2] Add support for Amlogic S4 PWM
+Date: Wed, 05 Jun 2024 10:44:54 +0800
+Message-Id: <20240605-s4-pwm-v7-0-e822b271d7b0@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240604170552.2517189-1-dnojiri@chromium.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACfRX2YC/2XNTQ7CIBCG4as0rMVMp5SKK+9hXBAYWhL7EzBV0
+ /Tu0i6qsctvwvMysUjBU2TnbGKBRh9936VRHTJmGt3VxL1NmyGgAIGCR8GHZ8vRVqDUSRpNxNL
+ jIZDzrzV0vaXd+Pjow3vtjmK57hKj4MCJEMk5K8DCRbf3vvbmaPqWLZGx/MIS8w2WCYJRuSudL
+ tDYPZS/UG1QJogVOFmAUA7/fpzn+QNi2SjkEAEAAA==
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Kelvin Zhang <kelvin.zhang@amlogic.com>, 
+ Junyi Zhao <junyi.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717555496; l=1446;
+ i=kelvin.zhang@amlogic.com; s=20240329; h=from:subject:message-id;
+ bh=cLv+hU1PT81IObLXKDBLkjzJCQUWh86T/crgT79hhdQ=;
+ b=wMU0AqOpojggxkgYVyGOUVH5wqws3gXc/InRdro0/5QWNYeapYskxyO7vDK8TdYFIDz8lxoLx
+ /y4sXyNIrCXA+75/yXMzNRFBFodb0WC5XuzjZj7sbi+ABfEtmyLxcxL
+X-Developer-Key: i=kelvin.zhang@amlogic.com; a=ed25519;
+ pk=pgnle7HTNvnNTcOoGejvtTC7BJT30HUNXfMHRRXSylI=
+X-Endpoint-Received: by B4 Relay for kelvin.zhang@amlogic.com/20240329 with
+ auth_id=148
+X-Original-From: Kelvin Zhang <kelvin.zhang@amlogic.com>
+Reply-To: kelvin.zhang@amlogic.com
 
-On Tue, Jun 04, 2024 at 10:01:48AM -0700, Daisuke Nojiri wrote:
-> Add struct ec_response_get_next_event_v3 to upgrade
-> EC_CMD_GET_NEXT_EVENT to version 3.
+Add support for Amlogic S4 PWM, including the driver and DTS.
 
-Something wrong: it should provide a cover letter for the series and also it
-should be v2...
+Signed-off-by: Kelvin Zhang <kelvin.zhang@amlogic.com>
+---
+Changes in v7:
+- Put devm_add_action_or_reset() into the for loop.
+- Remove the error handling of meson_pwm_init_channels_s4().
+- Remove the repeated device node 'pwm-a-pins'.
+- Some minor fixes and improvements.
+- Link to v6: https://lore.kernel.org/r/20240529-s4-pwm-v6-0-270f63049f20@amlogic.com
 
-Anyway, the patches are clear to me.  Applied.
+Changes in v6:
+- Rename 'pwm_meson_s4_data' to 'pwm_s4_data'.
+- Rename 'meson_pwm_init_channels_meson_s4' to 'meson_pwm_init_channels_s4'.
+- Adjust the order of the device nodes according to their unit addresses.
+- Some minor improvements.
+- Link to v5: https://lore.kernel.org/r/20240521-s4-pwm-v5-0-0c91f5fa32cd@amlogic.com
+
+Changes in v5:
+- Add devm_add_action_or_reset for free clk when unloading.
+- Replace the underscores of node name with dashes.
+- Link to v4: https://lore.kernel.org/r/20240424-s4-pwm-v4-0-ee22effd40d0@amlogic.com
+
+---
+Junyi Zhao (2):
+      pwm: meson: Add support for Amlogic S4 PWM
+      arm64: dts: amlogic: Add Amlogic S4 PWM
+
+ arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 199 ++++++++++++++++++++++++++++++
+ drivers/pwm/pwm-meson.c                   |  36 ++++++
+ 2 files changed, 235 insertions(+)
+---
+base-commit: 9d99040b1bc8dbf385a8aa535e9efcdf94466e19
+change-id: 20240424-s4-pwm-2d709986caee
+
+Best regards,
+-- 
+Kelvin Zhang <kelvin.zhang@amlogic.com>
+
+
 
