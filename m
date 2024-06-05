@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-202101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1BCA8FC7D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:31:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1876B8FC7D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5077F1F23439
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:31:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C09BB1F23548
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FCB191476;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC3E191474;
 	Wed,  5 Jun 2024 09:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f71U6wE9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RdolMbhg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9BB190077;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE0F190078;
 	Wed,  5 Jun 2024 09:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717579830; cv=none; b=Z5fOxh2No6K2jSKsOwR7PU4zYXaAMm0rFhBBWnrWqSVm5dCSYoobSiO6cWxdYAekk52dJgIVhdJUxul4n+FBhqUE63tMMI535O/iF3OEh4k9Q9QRqVLC8xtEKe89WbP+K8b7d8lmZ5f0MsE5NqvzlvBJ2LVKeKSMjeXIzyBHHds=
+	t=1717579830; cv=none; b=m8ddJdwtIjP74EN5pqSK8zQZqNj5LA5JkwzVxr5G3QPy6iE3dAp/bCeFKuuCUN4/qezALGc/Mo8eKAkqkRGQi55csX1L+BpyEF8r8TMW9r3nV3A7tDBjwM8sbFFgm3tow2b5I4U4ir+Fn9tovi2gSbtktcF56b2N9+n9Riinim0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717579830; c=relaxed/simple;
-	bh=3ExdHi2EcPAbhVh+fX0Mk2fCc1d7uB5HSpw7KZhqE1E=;
+	bh=omvsGsm3VpH9I17E4mg2XxTtOxQUZz1UHTdriaN1Co8=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=fafhpZ/G9ajoJ895XVIbPr/agPRyQfSHOoRFFJ/q8dpZxE0NzLiWltTs2ixhX0UHJ7Zb7jb2OfkIvgwbaQMefOc/YbqQ6KWMnvYSfLHC4hzGNoCeONDWZhTdM+pzpkChi9EFuiMUM491p5JDLYh82XFjptsRWBQ5mpvpZnJ+WZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f71U6wE9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id EA23CC32781;
-	Wed,  5 Jun 2024 09:30:29 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=OPWOtSa+Ini35aTtoRMfWCEENb0YDOfVkPqMyUXbYtWLV7hPTRMhsIJzWyP0q3xf5Ifs30FG3bqS0e9I9fmsH+T2HcaHP+TD/RDYc/As0sbt/PDuTais2395AqGQ4E9F/3Dk1DSQJD7Am28zqocI+qUGjIPmUZ4jMvFv4FgFUGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RdolMbhg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 09B90C4AF08;
+	Wed,  5 Jun 2024 09:30:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1717579830;
-	bh=3ExdHi2EcPAbhVh+fX0Mk2fCc1d7uB5HSpw7KZhqE1E=;
+	bh=omvsGsm3VpH9I17E4mg2XxTtOxQUZz1UHTdriaN1Co8=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=f71U6wE9155145erk8/yM3e1rctd/naNfyyofN2BvO+2b28Kor25wngFsDapBuKpa
-	 swnkNIX+d7VV/G3wYjkZHQ9HGYNUBqgXe0qkzcXarB1AiG23r0wZIoKLGVVuJrUtSA
-	 Oom0H1hVAqtAb6rUqTiET5A2NsN8Ts3uK9gVJIdpfwI5gNw9B8XRzuKHzrEv1MujVB
-	 9piMrbcv5AtGm9W4o2dBjOSE+swUKpf1Ib/HWAXaWJ/T5BwDRQcr5/O74OZAc7fk6K
-	 Aic+Nx+2X7nCSPm6E4FMMYR5VDzTAHZRwvtoqRJsOPijbquttH/sa0NgJbH3KxNLVv
-	 RxOwXNsqV23dQ==
+	b=RdolMbhguQ9T19A+eueofKuufSDjOp+f9t3ODFi/1lk9/+JyEKz5O72HIYVxrqBSK
+	 Q2ABouDwiXW25Fw+2DF00yVElgvohdN+F6BIQE/6/+iumPWt2NnYjXi9/Ab5FbZY4R
+	 /C7fO0BSgDxlgvQPu2OPOwdLncaD33mvGS3CrhR6JOw7cgDGYWjKUe1QonfHDoZcvl
+	 vIBU3zxSwXTyRkOn2AOzo3INOlDd4tA25egSprPJhRNq5wAGZarCOudx2T5MpiccSJ
+	 YQM9EkljuNRsFCd52NFpR0ZdmmIJ5owDeJf984vLGqhjpcTPlO3aFB6HoavGSVnaaw
+	 6V4gUJFYOnxFw==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id DE508C4332C;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E7CB4D3E99A;
 	Wed,  5 Jun 2024 09:30:29 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,39 +51,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/2 net-next] devlink: Constify struct devlink_dpipe_table_ops
+Subject: Re: [net-next PATCH v3 1/2] net: phy: aquantia: move priv and hw stat to
+ header
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <171757982990.5772.13409397728959786812.git-patchwork-notify@kernel.org>
+ <171757982994.5772.18334468085942264665.git-patchwork-notify@kernel.org>
 Date: Wed, 05 Jun 2024 09:30:29 +0000
-References: <cover.1717337525.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1717337525.git.christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: idosch@nvidia.com, petrm@nvidia.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, jiri@resnulli.us,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
+References: <20240531233505.24903-1-ansuelsmth@gmail.com>
+In-Reply-To: <20240531233505.24903-1-ansuelsmth@gmail.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ robimarko@gmail.com, daniel@makrotopia.org, rmk+kernel@armlinux.org.uk,
+ frut3k7@gmail.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 
 Hello:
 
 This series was applied to netdev/net-next.git (main)
 by David S. Miller <davem@davemloft.net>:
 
-On Sun,  2 Jun 2024 16:18:51 +0200 you wrote:
-> Patch 1 updates devl_dpipe_table_register() and struct
-> devlink_dpipe_table to accept "const struct devlink_dpipe_table_ops".
+On Sat,  1 Jun 2024 01:35:02 +0200 you wrote:
+> In preparation for LEDs support, move priv and hw stat to header to
+> reference priv struct also in other .c outside aquantia.main
 > 
-> Then patch 2 updates the only user of this function.
-> 
-> This is compile tested only.
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+> Changes v2:
+> - Out of RFC
 > 
 > [...]
 
 Here is the summary with links:
-  - [1/2,net-next] devlink: Constify the 'table_ops' parameter of devl_dpipe_table_register()
-    https://git.kernel.org/netdev/net-next/c/82dc29b9737e
-  - [2/2,net-next] mlxsw: spectrum_router: Constify struct devlink_dpipe_table_ops
-    https://git.kernel.org/netdev/net-next/c/b072aa789918
+  - [net-next,v3,1/2] net: phy: aquantia: move priv and hw stat to header
+    https://git.kernel.org/netdev/net-next/c/c11d5dbbe73f
+  - [net-next,v3,2/2] net: phy: aquantia: add support for PHY LEDs
+    https://git.kernel.org/netdev/net-next/c/61578f679378
 
 You are awesome, thank you!
 -- 
