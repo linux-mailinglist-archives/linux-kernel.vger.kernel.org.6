@@ -1,174 +1,177 @@
-Return-Path: <linux-kernel+bounces-203193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21FFD8FD7BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:42:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E7F38FD7BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20DE61C2337C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:42:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A154283FD8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B4315F336;
-	Wed,  5 Jun 2024 20:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4C515F32D;
+	Wed,  5 Jun 2024 20:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D6nF7eOU"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BwAJAF2k"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D892115EFD0
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 20:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D777462;
+	Wed,  5 Jun 2024 20:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717620152; cv=none; b=OVlL2SsyMZZKdIlXFy+SVC0oasd9Tc6LJskziVIreSmr8LcaVUrxB/UPSgc4rmgLnhOgvDEnzYUGb8E20kxB4ezgv7JKguu4tHr0/11e+X0Q/bHW9iyaSZF7sptVKIQeqXJvhdztbTLkmUNB0ZRaErHTgm8PVHDqjtpi9Czb868=
+	t=1717620434; cv=none; b=bPYsW4n1mfUk6LV/1NRJsoq3p2FluqwzeKPX13eZLCxizR3s1QLvbyfcIOf9bI2N231k2M2qI9ooNhueAX+zztvKDErf9LxSNtLGzHaALFrBL41ogURC7TcIe8G2DlsOiiKa9iI1a3C7uTh5XWVt7/mk4k8yKQBVZAm9WPS0Ekw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717620152; c=relaxed/simple;
-	bh=mrcPVHvvCNX9pKlb1e9kvFdVYrO4YyHw/Sk2tS356ok=;
+	s=arc-20240116; t=1717620434; c=relaxed/simple;
+	bh=klYKjOnVknraFytFz7IL6PTVE75Fk90Z7bNkhzgsgS8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NRKYUTYNHSzWg1+b7Vw7EuoaOtk8xQ39BvsIDsWEExINiIjlENykJXiNMadoi4ODAkcz0WdftE/HTJ6+WRDvbtZ2FRvJnNxF+dXGCaTgEkEFGqMqQYzR2ugcO/NZT3cZbXwufAPLsAh5jGdcDDLrZR+/VstY0VNizVdKdNp6MSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D6nF7eOU; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52b912198a6so349645e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 13:42:29 -0700 (PDT)
+	 To:Cc:Content-Type; b=GiQL/nYdbgsv07xNLa24HVETeFj8wQUkorcuiomkmNa0auw+yr+5gisXNmEFd5LbNfVEPvuuUFErB1NMD+sg7D0ut7CfzAT7hxdGNrN4quUEZhfy5d8hKZdYXZWu7GLFSPO5k7683kAwJrEL2w3s4SkK+Vcqiz1iELl+uFCJkO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BwAJAF2k; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c2200dbdf7so225328a91.2;
+        Wed, 05 Jun 2024 13:47:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717620148; x=1718224948; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1717620433; x=1718225233; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mrcPVHvvCNX9pKlb1e9kvFdVYrO4YyHw/Sk2tS356ok=;
-        b=D6nF7eOUd+P3MFAcTNFjBZ9XEspzyHLGN33kZ1plO9v/AWX4dD2BKINpOEghOPiSUN
-         ch1rVIhXTkIZMuFk1QZzWJW5kcCOm4xRn1TTmKgaPwE1Obp+XoUtrhBFdXcvpAyot6ND
-         Hl+bjFw7Hi70VFS0PJHVbmId9dxCASWFnrrXjI0EUuztwKfP2wWkHnh6xFfYFkYn2he8
-         zpsxMLU1NoBqOiCAwIcB6HelXdPKVTs44db/L/78ZnPqKfMHDgeLjYQ+OZbFfjDvZwLE
-         z5/tAuOLdb+H258ijN++wQxx5sRydmZxEf43WSLpfbXQhNUwxBakPecNmvVgyImACRt1
-         kQLA==
+        bh=+Glm3mA8QnXBmJCA+vVErk08DMx6cbnQiMEf8o6LS5k=;
+        b=BwAJAF2kmBu86dX245iKgqOmOdGM9b9ThofwHlPf9ULxkCMYor18OnJCFj+yUAfpbI
+         PfGNNAfPnv6+o2OlmYNdOiDCRKyXR+G2K23Oz1omqtTxs3qPWUQRV33TBBKKKVVyRwSH
+         9X3DEIYSiI22TCDun2uuNYdJqRvT9jx+cjjt0iQMTqNSPo9QN1e/pbyqsdAncM01T0DP
+         2M+RMGPgIWHyF4J3JheCBq9J65KHdRnlIFy9WHv+nskKyMWcN7VSVxOSHhH1Fe78tO9r
+         DJIU5D5wZB+r7ED40QuQFztGJ1/rFwbx/Gb6zdtOzEkbiTPXr00SlwqXCnBGi//COzp7
+         rarw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717620148; x=1718224948;
+        d=1e100.net; s=20230601; t=1717620433; x=1718225233;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mrcPVHvvCNX9pKlb1e9kvFdVYrO4YyHw/Sk2tS356ok=;
-        b=T5UGFMxSlOjoJPYjyCgCNJR2mWQJHfTLDZwSZem2idFONI47gnYR0CuymXcvoNew6X
-         IK+3yQhEl3EGJyE2YDHYQ7EFqWxtA+rGFirOYSbVMBpz3CZcECt/TF9R83CXM08b5Bed
-         OLmOnMyVcL4ws1+Q8GgKuzER7xXvVyHreU7HkdCQSjh1vpi7awauyFa3VgFJLwrKUZpt
-         gmitL0+WSEnhT17b1/r30cGpdAbx2pG+EyjYZo6V+kBDmWvhG4IwAIgpr3MhQBqp7PI2
-         0CS+EcHimmo/QkaKVCP2/fcvXBuIv8uKzfupnxd3A1ObrbqiENmqJYDN6ierDTBb7I1W
-         GznA==
-X-Forwarded-Encrypted: i=1; AJvYcCVO90SU8hm4fWH7SG0T1jCvkamomSC/9tMJ3pD21pKnBDoJ/HMBwqu7rJ81N6y+eyGiCc00LlKW1hDtFInYGr3zwuHETrqzTexsear/
-X-Gm-Message-State: AOJu0Yy2SmF9Cwa5RWpcLCRg9UhxmqAGc/F/0MzMYS3XA8d4QK4MkSJ3
-	MzRlvoZJPc7KuhXN5DFLUhpisbSGi2E+8AgaONk+64t28p4uFXPozAnDhda+rI8UN705k2lX+e0
-	WdDeMuUqnd+idlm8bohut2uce+KhCVjGUcXdr
-X-Google-Smtp-Source: AGHT+IGmCpgKWs9HzI7BHjD0N+cxvlO675UiwlocG7NwR6PK+YVSsXxsmetDw/kfR1C4ad6r/GOAH4AIlHrJieXNb3c=
-X-Received: by 2002:a19:ca59:0:b0:523:8723:32de with SMTP id
- 2adb3069b0e04-52bab5078f6mr2278150e87.53.1717620147678; Wed, 05 Jun 2024
- 13:42:27 -0700 (PDT)
+        bh=+Glm3mA8QnXBmJCA+vVErk08DMx6cbnQiMEf8o6LS5k=;
+        b=gg9hSDPlBu8wNsgc2RttNANTYKN3omM9U+5m7mJkyY4vAATui6CWeC/lrLtaqxpJ6F
+         zkfdwLZ4I1PuWE2dOWOxvF2z2IgJeVhpStFSp5njsgDu5wHvMdetctTgNmWcam61Ykdt
+         pGm/9LXdzS+rnYRLAe5n0xTgFEP5VQs8qUZEhtzvuFaA25FlPmVWb7CxoY+0QjP/kBPB
+         O/DP0hGucoARHMdisE213G9yYVDdTyPO+ciyE1yoPRux6GnBg18UBBHXIWQGM3Z4YR4s
+         FwlWJd4f8FcFzr7h6x96XJ4ZafvE7oJxdMaEmbskSUS1Lv6HhRNpHTOxilUOKJKYuicb
+         1nRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcrHxVILeTRl+MqCJte6pl+MR8z3C623D8AbFXSe2WK+xxf6eSFAK08PNfuXkD9AUjsAUPa6EdR7sDeeScnVqC/G/UVEgrbielrg69239UHNyzjkkD5NKFFPCIOC0TpuzUsuigfHgyTE6O1+llQq5C6GpE7g4hrhlIkm9Uu+NwqQXXpUXg
+X-Gm-Message-State: AOJu0YyNsdUbma2F0tW+13nkaVDWyTtryq872Wi3sJ7zZ2KsDzkwH8z/
+	RWd5OlVqbkOhDq+/tL7Z2zuwAAVqTcqnBvcXW87DD0asjPfySHmcgO1mzTF54mH0IZKtVFNHx0D
+	fTFlr30U7S3sSBbbz2KyAyqbK+5s=
+X-Google-Smtp-Source: AGHT+IHt747T48icypSQULl9KHiWK2xqd3REFbVftukuXwX+yNOBcY3Zy1BesAnM7CAEa0QVPwChvGtipwyjytTpwzE=
+X-Received: by 2002:a17:90a:8d0c:b0:2c2:7dd6:97b with SMTP id
+ 98e67ed59e1d1-2c27dd6098cmr3312784a91.16.1717620432636; Wed, 05 Jun 2024
+ 13:47:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231212204647.2170650-1-sagis@google.com> <ce967287157e830303fdd3d4a37e7d62a1698747.camel@intel.com>
- <CAAhR5DFmT0n9KWRMtO=FkWbm9_tXy1gP-mpbyF05mmLUph2dPA@mail.gmail.com>
- <59652393edbf94a8ac7bf8d069d15ecb826867e1.camel@intel.com> <7c3abac8c28310916651a25c30277fc1efbad56f.camel@intel.com>
-In-Reply-To: <7c3abac8c28310916651a25c30277fc1efbad56f.camel@intel.com>
-From: Sagi Shahar <sagis@google.com>
-Date: Wed, 5 Jun 2024 15:42:16 -0500
-Message-ID: <CAAhR5DH79H2+riwtu_+cw-OpdRm02ELdbVt6T_5TQG3t4qAs2Q@mail.gmail.com>
-Subject: Re: [RFC PATCH v5 00/29] TDX KVM selftests
-To: "Verma, Vishal L" <vishal.l.verma@intel.com>
-Cc: "vipinsh@google.com" <vipinsh@google.com>, "Aktas, Erdem" <erdemaktas@google.com>, 
-	"shuah@kernel.org" <shuah@kernel.org>, "Xu, Haibo1" <haibo1.xu@intel.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Afranji, Ryan" <afranji@google.com>, 
-	"dmatlack@google.com" <dmatlack@google.com>, "seanjc@google.com" <seanjc@google.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"ackerleytng@google.com" <ackerleytng@google.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "jmattson@google.com" <jmattson@google.com>, 
-	"Annapurve, Vishal" <vannapurve@google.com>, "runanwang@google.com" <runanwang@google.com>, 
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, 
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, 
-	"chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>, "pgonda@google.com" <pgonda@google.com>
+References: <20240604200221.377848-1-jolsa@kernel.org> <20240604200221.377848-2-jolsa@kernel.org>
+ <CAEf4BzbzgTzvnPRJ24gdhuxN02_w8iNNFn4URh0vEp-t69oPnA@mail.gmail.com> <20240605175619.GH25006@redhat.com>
+In-Reply-To: <20240605175619.GH25006@redhat.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 5 Jun 2024 13:47:00 -0700
+Message-ID: <CAEf4Bzbz3vi6ahkUu7yABV-QhkzNCF-ROcRjUpGjt0FRjfDuKQ@mail.gmail.com>
+Subject: Re: [RFC bpf-next 01/10] uprobe: Add session callbacks to uprobe_consumer
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>, 
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, 
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 5, 2024 at 3:18=E2=80=AFPM Verma, Vishal L <vishal.l.verma@inte=
-l.com> wrote:
+On Wed, Jun 5, 2024 at 10:57=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wro=
+te:
 >
-> On Wed, 2024-06-05 at 20:15 +0000, Verma, Vishal L wrote:
-> > On Wed, 2024-06-05 at 15:10 -0500, Sagi Shahar wrote:
-> > > On Wed, Jun 5, 2024 at 1:38=E2=80=AFPM Verma, Vishal L <vishal.l.verm=
-a@intel.com> wrote:
-> > > >
-> > > > On Tue, 2023-12-12 at 12:46 -0800, Sagi Shahar wrote:
-> > > > > Hello,
-> > > > >
-> > > > > This is v4 of the patch series for TDX selftests.
-> > > > >
-> > > > > It has been updated for Intel=E2=80=99s v17 of the TDX host patch=
-es which was
-> > > > > proposed here:
-> > > > > https://lore.kernel.org/all/cover.1699368322.git.isaku.yamahata@i=
-ntel.com/
-> > > > >
-> > > > > The tree can be found at:
-> > > > > https://github.com/googleprodkernel/linux-cc/tree/tdx-selftests-r=
-fc-v5
-> > > >
-> > > > Hello,
-> > > >
-> > > > I wanted to check if there were any plans from Google to refresh th=
-is
-> > > > series for the current TDX patches and the kvm-coco-queue baseline?
-> > > >
-> > > I'm going to work on it soon and was planning on using Isaku's V19 of
-> > > the TDX host patches
+> On 06/05, Andrii Nakryiko wrote:
 > >
-> > That's great, thank you!
-> >
-> > >
-> > > > I'm setting up a CI system that the team is using to test updates t=
-o
-> > > > the different TDX patch series, and it currently runs the KVM Unit
-> > > > tests, and kvm selftests, and we'd like to be able to add these thr=
-ee
-> > > > new TDX tests to that as well.
-> > > >
-> > > > I tried to take a quick shot at rebasing it, but ran into several
-> > > > conflicts since kvm-coco-queue has in the meantime made changes e.g=
-. in
-> > > > tools/testing/selftests/kvm/lib/x86_64/processor.c vcpu_setup().
-> > > >
-> > > > If you can help rebase this, Rick's MMU prep series might be a good
-> > > > baseline to use:
-> > > > https://lore.kernel.org/all/20240530210714.364118-1-rick.p.edgecomb=
-e@intel.com/
-> > >
-> > > This patch series only includes the basic TDX MMU changes and is
-> > > missing a lot of the TDX support. Not sure how this can be used as a
-> > > baseline without the rest of the TDX patches. Are there other patch
-> > > series that were posted based on this series which provides the rest
-> > > of the TDX support?
-> >
-> > Hm you're right, I was looking more narrowly because of the kvm-coco-
-> > queue conflicts, for some of which even v19 might be too old. The MMU
-> > prep series uses a much more recent kvm-coco-queue baseline.
-> >
-> > Rick, can we post a branch with /everything/ on this MMU prep baseline
-> > for this selftest refresh?
+> > so any such
+> > limitations will cause problems, issue reports, investigation, etc.
 >
-> Actually I see the branch below does contain everything, not just the
-> MMU prep patches. Sagi, is this fine for a baseline?
+> Agreed...
 >
-Maybe for internal development but I don't think I can post an
-upstream patchset based on an internal Intel development branch.
-Do you know if there's a plan to post a patch series based on that branch s=
-oon?
+> > As one possible solution, what if we do
 > >
-> > > >
-> > > > This is also available in a tree at:
-> > > > https://github.com/intel/tdx/tree/tdx_kvm_dev-2024-05-30
-> > > >
-> > > > >
+> > struct return_instance {
+> >     ...
+> >     u64 session_cookies[];
+> > };
+> >
+> > and allocate sizeof(struct return_instance) + 8 *
+> > <num-of-session-consumers> and then at runtime pass
+> > &session_cookies[i] as data pointer to session-aware callbacks?
+>
+> I too thought about this, but I guess it is not that simple.
+>
+> Just for example. Suppose we have 2 session-consumers C1 and C2.
+> What if uprobe_unregister(C1) comes before the probed function
+> returns?
+>
+> We need something like map_cookie_to_consumer().
+
+Fair enough. The easy way to solve this is to have
+
+
+struct uprobe_session_cookie {
+    int consumer_id;
+    u64 cookie;
+};
+
+And add id to each new consumer when it is added to struct uprobe.
+Unfortunately, it's impossible to tell when a new consumer was added
+to the list (as a front item, but maybe we just change it to be
+appended instead of prepending) vs when the old consumer was removed,
+so in some cases we'd need to do a linear search.
+
+But the good news is that in the common case we wouldn't need to
+search and the next item in session_cookies[] array would be the one
+we need.
+
+WDYT? It's still fast, and it's simpler than the shadow stack idea, IMO.
+
+P.S. Regardless, maybe we should change the order in which we insert
+consumers to uprobe? Right now uprobe consumer added later will be
+executed first, which, while not wrong, is counter-intuitive. And also
+it breaks a nice natural order when we need to match it up with stuff
+like session_cookies[] as described above.
+
+>
+> > > +       /* The handler_session callback return value controls executi=
+on of
+> > > +        * the return uprobe and ret_handler_session callback.
+> > > +        *  0 on success
+> > > +        *  1 on failure, DO NOT install/execute the return uprobe
+> > > +        *    console warning for anything else
+> > > +        */
+> > > +       int (*handler_session)(struct uprobe_consumer *self, struct p=
+t_regs *regs,
+> > > +                              unsigned long *data);
+> > > +       int (*ret_handler_session)(struct uprobe_consumer *self, unsi=
+gned long func,
+> > > +                                  struct pt_regs *regs, unsigned lon=
+g *data);
+> > > +
+> >
+> > We should try to avoid an alternative set of callbacks, IMO. Let's
+> > extend existing ones with `unsigned long *data`,
+>
+> Oh yes, agreed.
+>
+> And the comment about the return value looks confusing too. I mean, the
+> logic doesn't differ from the ret-code from ->handler().
+>
+> "DO NOT install/execute the return uprobe" is not true if another
+> non-session-consumer returns 0.
+>
+> Oleg.
+>
 
