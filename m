@@ -1,102 +1,112 @@
-Return-Path: <linux-kernel+bounces-203066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D62C8FD5E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:38:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB8B08FD5E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 388CE1C23988
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:38:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58BF328339F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DB113AA37;
-	Wed,  5 Jun 2024 18:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944F513A898;
+	Wed,  5 Jun 2024 18:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lTn9fSEh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="siRgdmpA"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBF87345D;
-	Wed,  5 Jun 2024 18:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F7B19D8B8;
+	Wed,  5 Jun 2024 18:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717612731; cv=none; b=Np9Uw+Pr30mwz9S5F7oGZESiy7S+881S9EkEPskszHj2UJdTvFc0YnY0eFDs2NrVJiWsEj4vWE5Xv2vIGOQOuK5gcbLh7e/Q3i9lCHFryIEF31DsCjPQfL6EO6xVARri7pIBuOMxcDvmdKsOj3B4zLz462i0+tg8DEKOQBcMoGY=
+	t=1717612786; cv=none; b=RkYf7+AGS5FwpUrlQhjC2Kp3X7L8JYHfyxLYKsSlWIY7kAVRM6PXNoEFFQPdQQ9bC46d03XNpJgQgOgJz52CwB12V5eOtvG6LvVInX3sZIXGp8d3vc0ZgBwC0+ck5IkByB6ALbXgxMBGnwC1C28i7PxvRMsGkXn4C43FV9XCgSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717612731; c=relaxed/simple;
-	bh=rJZv5S1T81gAQR2GyAwP+apEECmT/s44XmdQwBJ6HAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n/UWCZKW2c6IMOCXW9yE57T0QnmXaVx5mzjX2/OKuLA+Hzw7qKFPs0rgJHjk88D0+TsBGbBM3wCep68Nc8DXa7pvDRkdoOQLoFPO2s1b9AQfGXhou0hMh5O5Yiu10PVyQkJRNGppcBLMXERE03WI7THh3r64eXdi9aH9NpAt3ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lTn9fSEh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0B60C2BD11;
-	Wed,  5 Jun 2024 18:38:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717612730;
-	bh=rJZv5S1T81gAQR2GyAwP+apEECmT/s44XmdQwBJ6HAQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=lTn9fSEhDboHizyyo0aTNVR+Rw1sp0gFplDnsg5DX6zWCEhPwaoctK0t1sMgCvtR/
-	 Dh8SCFvDkKmzrCIoX7qqnj15SOsZ3zLWALjT2sc8nV5ug7uTSgxnx9S6z4yvtFUxKL
-	 I6utdc5An8Kj847U0mOgCzDiyT4vS8GZz+eJfemqFcZbvJSHto8gDv6c32yuCaKM+8
-	 9BRs03mlRFjk/JZCSYdvAfTbwKqrhA0OY81s2G0Ix3/786mpFD/utBlCWciBUuoG0h
-	 C1688xCDXPnFloKQjy3s+H5Bjb1BgQDg/VL6IAwWQeWG9U7NJ8jhQhr43QHY3nTeiR
-	 gtL4JSL5dixog==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 88A1BCE0A73; Wed,  5 Jun 2024 11:38:50 -0700 (PDT)
-Date: Wed, 5 Jun 2024 11:38:50 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Subject: Re: [PATCH rcu 2/9] rcu: Reduce synchronize_rcu() delays when all
- wait heads are in use
-Message-ID: <c7d07e5d-34a0-4874-8e7e-1c576c14c8e6@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
- <20240604222355.2370768-2-paulmck@kernel.org>
- <ZmBVfpyEZeTIAHJn@localhost.localdomain>
+	s=arc-20240116; t=1717612786; c=relaxed/simple;
+	bh=ll7BJXBgyzFfVEbUvstry2CP0ImNl+s6mup20BRuXyU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=so8WHsAskyIQziTeYYdXhcClgF948fnbsSZgig9DfPyMbanRC7WybBrNnv7vg2DgXBQvBrpR/4RzWKjyzXN8hKqILbV//JZ+MIhUfZ05h5bNlKOGdSAP2qHqq3BqI36B4U5hvh5hvn3vDc5ivDIdT5gmnLVeJT3rwiPTqcDEM/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=siRgdmpA; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=y/VdjsL4ukypdzxZWoyFIbTeiY0cZ0qqJTSU7aQD81I=;
+	t=1717612784; x=1718822384; b=siRgdmpAjcjnZydxxmYuvGqTuioP5MknYzvFcCYy2cFcRfK
+	V7nTjzHkyrP+DUF70Tt1dGAnNwh11KdrYsL6GFkBTxvljTjmfD64g5R27IAsR3nLPyNa4gFY48vxb
+	gXGpEYUQTxVv6HVgMGLHO8bNWaM8wTa2SQ5iVhvp8CEIZtulTb7aVhGTqQLhjTqBQ8i8OkJnI+poR
+	60jWi2/hsrSx9XLLVE17Gwj5PVnOHY9g6Ka65+jPKXnhsOPclEJunwVkxHCnGXZaiYQBAfflfx4MY
+	hpsUCLjyDmwRGHTiHZSYaWw63CyMUyiUnmeO9QQh2K0gkLXoKV54rpiR4g/1Af6w==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1sEvXw-0000000EuRA-3zzb;
+	Wed, 05 Jun 2024 20:39:41 +0200
+Message-ID: <00555ae56b4193f47d32550440829d1c542534f6.camel@sipsolutions.net>
+Subject: Re: [RESEND PATCH v2] iwlwifi: mvm: adding check if the thermal
+ firmware is running
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>, 
+ miriam.rachel.korenblit@intel.com, kvalo@kernel.org,
+ rafael.j.wysocki@intel.com,  daniel.lezcano@linaro.org, dmantipov@yandex.ru
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 05 Jun 2024 20:39:39 +0200
+In-Reply-To: <20240605183710.66016-1-trintaeoitogc@gmail.com>
+References: <20240605183710.66016-1-trintaeoitogc@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZmBVfpyEZeTIAHJn@localhost.localdomain>
+X-malware-bazaar: not-scanned
 
-On Wed, Jun 05, 2024 at 02:09:34PM +0200, Frederic Weisbecker wrote:
-> Le Tue, Jun 04, 2024 at 03:23:48PM -0700, Paul E. McKenney a écrit :
-> > From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-> > 
-> > When all wait heads are in use, which can happen when
-> > rcu_sr_normal_gp_cleanup_work()'s callback processing
-> > is slow, any new synchronize_rcu() user's rcu_synchronize
-> > node's processing is deferred to future GP periods. This
-> > can result in long list of synchronize_rcu() invocations
-> > waiting for full grace period processing, which can delay
-> > freeing of memory. Mitigate this problem by using first
-> > node in the list as wait tail when all wait heads are in use.
-> > While methods to speed up callback processing would be needed
-> > to recover from this situation, allowing new nodes to complete
-> > their grace period can help prevent delays due to a fixed
-> > number of wait head nodes.
-> > 
-> > Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> 
-> IIRC we agreed that this patch could be a step too far that
-> made an already not so simple state machine even less simple,
-> breaking the wait_head based flow.
+On Wed, 2024-06-05 at 15:37 -0300, Guilherme Giacomo Simoes wrote:
+> In the dmesg is showing the message "failed to read out thermal zone"
+> as if the temperature read is failed by don't find the thermal zone.
+>=20
+> After researching and debugging, I see that this specific error is
+> occurrenced because the thermal try read the temperature when is started,
+> but the firmware is not running yet.
+>=20
+> For more legibiliti i change the tt.c for return EAGAIN when this was occ=
+urrence.
+> After this change, in my computer I compile and install kernel in /boot
+> and in my dmesg the message "failed to read out thermal zone" is not show
+> any more.
+>=20
+> I would like to thanks for Rafael Wysocki <refael.j.wysocki@intel.com> an=
+d
+> Kalle Valo <kvalo@kernel.org> for your suggestions in my first patch.
+>=20
+> Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+> ---
+>  drivers/net/wireless/intel/iwlwifi/mvm/tt.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c b/drivers/net/wi=
+reless/intel/iwlwifi/mvm/tt.c
+> index 8083c4b2ab6b..68ab9966330c 100644
+> --- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+> @@ -620,8 +620,14 @@ static int iwl_mvm_tzone_get_temp(struct thermal_zon=
+e_device *device,
+> =20
+>  	mutex_lock(&mvm->mutex);
+> =20
+> -	if (!iwl_mvm_firmware_running(mvm) ||
+> -	    mvm->fwrt.cur_fw_img !=3D IWL_UCODE_REGULAR) {
+> +	const int res =3D iwl_mvm_firmware_running(mvm);
 
-True, which is why we agreed not to submit it into the v6.10 merge window.
+const is useless, but you should not have variable declarations in the
+middle of the function (per kernel convention)
 
-And I don't recall us saying what merge window to send it to.
+johannes
 
-> Should we postpone this change until it is observed that a workqueue
-> not being scheduled for 5 grace periods is a real issue?
-
-Neeraj, thoughts?  Or, better yet, test results?  ;-)
-
-							Thanx, Paul
 
