@@ -1,114 +1,212 @@
-Return-Path: <linux-kernel+bounces-202252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F364E8FCA33
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:18:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC36D8FCA48
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A76331F26C9A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:18:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4EC1B22D6B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27BDE193063;
-	Wed,  5 Jun 2024 11:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD6F192B8C;
+	Wed,  5 Jun 2024 11:20:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mWj/NARp"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jdysX0/4"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE3A17C79;
-	Wed,  5 Jun 2024 11:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DEA19149D;
+	Wed,  5 Jun 2024 11:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717586294; cv=none; b=aZukQrWjVwNBgeq5biPdFx3URy/WEbgQozB2pLUF8DEdRiOcC1q0241kd8HEzxViS2Sra43SY573B5O/FmBbAabi6lvdWTe8+QO0XPtN6I0r7lJHeK6DvKLZoBwkCafimpRMOTl91/k1ROA9XJy6kgC4mvnV09J3/vsBOfDoK5U=
+	t=1717586410; cv=none; b=fgtAhTBfGgr1pclgyMGD/oeQHD5SLobyd7VKoiSXbUbLClw0UmFRK/iakhBeN6K70C3pFSc+L0sLqQFwIwRWz+1OKebCupUOvs9O/zNraVSKVT6Jqrc2IcIPKMbQ1jdAa/PWZNUfj6GaiHvbvN2VRJHtDyaSmWr1I2NuP0Wrr+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717586294; c=relaxed/simple;
-	bh=ceROS8yyd9DLlt9sItpiT1/+Xw1T+ut1aQgzVqy/LV0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ls82N6LR7/IrNPOE4Sna2Y5OLIBr3Wumu+SbvQTUd5X2K5TYc/RTH/MDil24I4LU6Oi23g6SctjbsdecBpOUaTOAmUbb1JNNNT+Kc/3u1dQbEUv0jxdnY3OekUGABUtYit30y892Rf+j8ThJv2XMlrkcnu54MTHE5yLgZH/7AOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mWj/NARp; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-702492172e3so2034503b3a.0;
-        Wed, 05 Jun 2024 04:18:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717586292; x=1718191092; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=AEIPnFs3OXFyH040kLJZpDX4Ff/OGTbFBy0D654/+yU=;
-        b=mWj/NARpuIsp5B8yiBBsBLv0cgjaeG5J+67sPi5T94vGIAxf9Z+MTZnFgdQQxlYU5r
-         8uvySip/RDoy74UQabpvn1coxEYspy66UwW6Mc7nxzgET57utWf91S4KikI8DfKHs4OA
-         7YdoBEqAlAAeksJySxqtiBR3yXVHhSyP6BJgAlLCn+3VdEq5f6XYMuyIHGROPp/2x4LS
-         SX/WZpqXJkDUxnrKb7ikdUMBVNohBX814L4en5mopSETG/Wh1Fufo+P1YUGg8XmKs6J3
-         Nk7+hQrL33xCw8qjIUSg1/GFZItI1wnxqV5OO1KVdUXGxuFlDJr6y3MBG8z/wfcoHbpu
-         q40Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717586292; x=1718191092;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AEIPnFs3OXFyH040kLJZpDX4Ff/OGTbFBy0D654/+yU=;
-        b=Qkl29wlUqtuaaZA81m8wt8B2CKtM4N3CwOsA+MAIKKmaVzKTKT5TVjJizpM2D2jbu+
-         o/s80smYKk7r50Eu3zF2mQ3BCrXKG+IGhmVS4xgCi/WeSI6cx5Jwm4dUZ+xui4kaFpE2
-         bOiNmhKX3C89v4wu6yiw+iBVQj01nGB5XI69jbZxlh9h3G78svu125EdO6szqvwLkqRV
-         lvZsy6dBDqWFPn/GDVp3hUQo27R9U8y6GXch7IXMBuyxai1EB+FYuZvd8H76C9ODUVrb
-         W3Ja1wm35X69j/3DIpNVN4FZbFKSYqL8StnkXTf0z7QKSHDKocf12EqK4r0RrHJgMFvM
-         UMZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEBiz0DaIB9PC/IcBWSQOH6aKiEI2P9hY855P3uVn9B9wy0pgTMMOsAvR/iJnOSU777Kewr9lrizW+yDOthpITvxzVR07lXrZVf1pPRvcrQ1olTnDxn6qEAViOx/5YpGzOGveKxpJdSCmgGHmMsvxqqOzwbmXDsgG/9E4WnuUSyc1QiiV+apweDq4WuE0lDQCeEmoz0CYcjtY6F1/WTQ==
-X-Gm-Message-State: AOJu0YyKjwRA2aFmnP6/Ut5PzACgwgwielRpbGo8L0655hDJfFt5gzc8
-	+6XwynrlBh+2S2VDffIjDCkSPYy/WBtSbfCS6FQtAp/IvLvzfpqB
-X-Google-Smtp-Source: AGHT+IH60wShLzZqwxcRl7Dp1uBnogAAVjYp7UnczKKT3vQbibKXgvdCJeYSWy3sG2ph43xTO5idWA==
-X-Received: by 2002:a05:6a20:3d87:b0:1af:b0be:4661 with SMTP id adf61e73a8af0-1b2b6f95856mr2991636637.19.1717586292244;
-        Wed, 05 Jun 2024 04:18:12 -0700 (PDT)
-Received: from localhost ([2804:30c:b6c:6f00:4a71:dbc2:c9bb:1cd3])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c28067a391sm1213945a91.19.2024.06.05.04.18.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 04:18:11 -0700 (PDT)
-Date: Wed, 5 Jun 2024 08:19:24 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
-	lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/6] Add support for AD4000 series of ADCs
-Message-ID: <ZmBJvFbq3nonrpjs@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1717539384.git.marcelo.schmitt@analog.com>
- <e396bacff372b34127de15d980dd903af48a9350.camel@gmail.com>
+	s=arc-20240116; t=1717586410; c=relaxed/simple;
+	bh=PwQ4nkZTr13w8UmaT1MKqhoIOXEfRekN9y/JnHclfHg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AJAsD+J7dPew8y3PF7NtRHm4vfftI38vuMLX9M6WVsSyx0xCrZh+5JxDnFIgy+o1w/DSHvmPKw51XxEvmOr4df6dADTuvf7uYlMhHRC7xPyFMn1GR+G1gxr0EftTl2D0qtedlWbIjNnoGwQ6WvPDxM6wX6fCRWa7F+MSeCH/oQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jdysX0/4; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717586407;
+	bh=PwQ4nkZTr13w8UmaT1MKqhoIOXEfRekN9y/JnHclfHg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jdysX0/4ybigksWBmqW//DS7kvXK9T6TJtlC12uc9ncXxCRwkj94WL/YGMZ3yI8yS
+	 cJSXO8PRfPYaH9PLkcypJ5Yk0LwdDq0mFjAKGGuMKJl1iNwumAWABsIa/38t7X9wA6
+	 Xg0rrmyxAo1I4+BzVymWmRvH1ayicWsyK1T7p5HrJAaV++FGn+88CBcvqVPuzZPie2
+	 u714gEXpF9+naABQI5EqL8w6d8KVvs0/kQLDNOezF3ivl83InzkOPbY4BWdzgpKemm
+	 JMHZU+ivgCir23aBkMui6jFnw8WxUrFyRPiu7c2zmeXrdT+DWn/IVYckYMWQDXr13g
+	 DNyBFclf4uQdQ==
+Received: from [100.115.223.179] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id A23DC3781139;
+	Wed,  5 Jun 2024 11:20:05 +0000 (UTC)
+Message-ID: <d17341c2-3f97-41d6-8125-bff838149798@collabora.com>
+Date: Wed, 5 Jun 2024 14:20:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/14] Add initial support for the Rockchip RK3588 HDMI TX
+ Controller
+To: Andy Yan <andyshrk@163.com>, Maxime Ripard <mripard@kernel.org>
+Cc: neil.armstrong@linaro.org, Heiko Stuebner <heiko@sntech.de>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Sandy Huang <hjc@rock-chips.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
+ Andy Yan <andy.yan@rock-chips.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>,
+ Luis de Arquer <ldearquer@gmail.com>, Algea Cao <algea.cao@rock-chips.com>
+References: <20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com>
+ <a4b22708-e85d-448a-8145-244b49bca053@linaro.org>
+ <ab0a6372-091b-4293-8907-a4b3ff4845c0@rock-chips.com>
+ <11359776.NyiUUSuA9g@phil> <ef60403f-078f-411a-867b-9b551e863f56@linaro.org>
+ <b8066150-c147-4eb6-9f7a-2bd0268c274e@collabora.com>
+ <4456bc5a.9b2d.18fe7b76790.Coremail.andyshrk@163.com>
+ <01bde68a-88a7-46eb-860c-1375aa730bec@linaro.org>
+ <20240605-logical-piculet-of-democracy-6bc732@houat>
+ <6328b7e5.a1dd.18fe7ce019d.Coremail.andyshrk@163.com>
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Content-Language: en-US
+In-Reply-To: <6328b7e5.a1dd.18fe7ce019d.Coremail.andyshrk@163.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e396bacff372b34127de15d980dd903af48a9350.camel@gmail.com>
 
-On 06/05, Nuno S� wrote:
-> Hi Marcelo,
+On 6/5/24 12:49 PM, Andy Yan wrote:
 > 
-> On Tue, 2024-06-04 at 19:40 -0300, Marcelo Schmitt wrote:
-> > This patch series extends the SPI bitbang, gpio, and spi-engine controllers to
-> > support configurable MOSI line idle state.
-> > It then introduces the ad4000 driver which makes use of the MOSI idle
-> > configuration to properly support AD4000 series of ADCs.
-> 
-> Not sure what happened but I'm not seeing the patch for ad4000...
+> Hi,
+> At 2024-06-05 17:39:48, "Maxime Ripard" <mripard@kernel.org> wrote:
+>> On Wed, Jun 05, 2024 at 11:28:41AM GMT, neil.armstrong@linaro.org wrote:
+>>> Hi,
+>>>
+>>> On 05/06/2024 11:25, Andy Yan wrote:
+>>>>
+>>>> Hi,
+>>>>
+>>>> At 2024-06-05 04:33:57, "Cristian Ciocaltea" <cristian.ciocaltea@collabora.com> wrote:
+>>>>> On 6/3/24 4:08 PM, neil.armstrong@linaro.org wrote:
+>>>>>> Hi,
+>>>>>>
+>>>>>> On 03/06/2024 15:03, Heiko Stuebner wrote:
+>>>>>>> Am Montag, 3. Juni 2024, 14:14:17 CEST schrieb Andy Yan:
+>>>>>>>> Hi Neil:
+>>>>>>>>
+>>>>>>>> On 6/3/24 16:55, Neil Armstrong wrote:
+>>>>>>>>> Hi Christian,
+>>>>>>>>>
+>>>>>>>>> On 01/06/2024 15:12, Cristian Ciocaltea wrote:
+>>>>>>>>>> The RK3588 SoC family integrates a Quad-Pixel (QP) variant of the
+>>>>>>>>>> Synopsys DesignWare HDMI TX controller used in the previous SoCs.
+>>>>>>>>>>
+>>>>>>>>>> It is HDMI 2.1 compliant and supports the following features, among
+>>>>>>>>>> others:
+>>>>>>>>>>
+>>>>>>>>> .
+>>>>>>>>>
+>>>>>>>>> ..
+>>>>>>>>>
+>>>>>>>>>> * SCDC I2C DDC access
+>>>>>>>>>> * TMDS Scrambler enabling 2160p@60Hz with RGB/YCbCr4:4:4
+>>>>>>>>>> * YCbCr4:2:0 enabling 2160p@60Hz at lower HDMI link speeds
+>>>>>>>>>> * Multi-stream audio
+>>>>>>>>>> * Enhanced Audio Return Channel (EARC)
+>>>>>>>>> -> Those features were already supported by the HDMI 2.0a compliant
+>>>>>>>>> HW, just
+>>>>>>>>> list the _new_ features for HDMI 2.1
+>>>>>>>>>
+>>>>>>>>> I did a quick review of your patchset and I don't understand why you
+>>>>>>>>> need
+>>>>>>>>> to add a separate dw-hdmi-qp.c since you only need simple variants
+>>>>>>>>> of the I2C
+>>>>>>>>> bus, infoframe and bridge setup.
+>>>>>>>>>
+>>>>>>>>> Can you elaborate further ? isn't this Quad-Pixel (QP) TX controller
+>>>>>>>>> version
+>>>>>>>>> detectable at runtime ?
+>>>>>>>>>
+>>>>>>>>> I would prefer to keep a single dw-hdmi driver if possible.
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> The QP HDMI controller is a completely different variant with totally
+>>>>>>>> different
+>>>>>>>> registers layout, see PATCH 13/14.
+>>>>>>>> I think make it a separate driver will be easier for development and
+>>>>>>>> maintenance.
+>>>>>>>
+>>>>>>> I'm with Andy here. Trying to navigate a driver for two IP blocks really
+>>>>>>> sounds taxing especially when both are so different.
+>>>>>
+>>>>> Thank you all for the valuable feedback!
+>>>>>
+>>>>>> I agree, I just wanted more details than "variant of the
+>>>>>> Synopsys DesignWare HDMI TX controller", if the register mapping is 100%
+>>>>>> different, and does not match at all with the old IP, then it's indeed time
+>>>>>> to make a brand new driver, but instead of doing a mix up, it's time to
+>>>>>> extract
+>>>>>> the dw-hdmi code that could be common helpers into a dw-hdmi-common module
+>>>>>> and use them.
+>>>>>
+>>>>> Sounds good, will handle this in v2.
+>>>>>
+>>>>>> As I see, no "driver" code can be shared, only DRM plumbings, so perhaps
+>>>>>> those
+>>>>>> plumbing code should go into the DRM core ?
+>>>>>>
+>>>>>> In any case, please add more details on the cover letter, including the
+>>>>>> detailed
+>>>>>> HW differrence and the design you chose so support this new IP.
+>>>>>
+>>>>> Andy, could you please help with a summary of the HW changes?
+>>>>> The information I could provide is rather limited, since I don't have
+>>>>> access to any DW IP datasheets and I'm also not familiar enough with the
+>>>>> old variant.
+>>>>>
+>>>>   Accurately, we should refer to it as an entirely new IP，it has nothing in common with
+>>>> the current mainline dw-hdmi。 The only  commonality is that they both come from
+>>>> Synopsys DesignWare：
+>>>> （1）It has a 100% different register mapping
+>>>> （2）It supports FRL and DSC
+>>>> （3）different configuration flow in many places。
+>>>>
+>>>> So I have the same feeling with Heiko and Maxime：
+>>>> The DW_HDMI_QP should have a  separate driver and with it's  own CONFIG  such as DRM_DW_HDMI_QP  in Kconfig.
+>>>> and the rockchip part should also be split from dw_hdmi-rockchip.c.
+>>>> I am sorry we mixed them in dw_hdmi-rockchip.c when we develop the bsp driver，but we really regretted this decision
+>>>> when  we repeatedly broke compatibility with dw-hdmi on other socs。
+>>>
+>>> Yes please, and as I say, if there's code common with the old dw-hdmi, please add a common
+>>> module if this code can't be moved in core bridge helpers.
+>>
+>> And chances are that the common code is actually there to deal with HDMI
+>> spec itself and not really the hardware, which is solved by moving both
+>> drivers to the HDMI helpers that just got merged.
 
-I thought patches were numbered up to 5 only and forgot to send the last one.
-Sent that one now.
+I will make use of the new HDMI helpers and see if there is anything
+else remaining in terms of common code.
+
+> Yes, +1.
+> I don't think we need to share some common code with dw-hdmi here.
+
+Ok, I will completely separate the new driver's code, including the
+Rockchip glue layer.
 
 Thanks,
-Marcelo
-
-> 
-> - Nuno S�
-> 
-> 
+Cristian
 
