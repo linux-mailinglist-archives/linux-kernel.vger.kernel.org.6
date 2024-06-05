@@ -1,121 +1,225 @@
-Return-Path: <linux-kernel+bounces-203236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCD3C8FD822
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:10:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABF898FD825
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AC1D1F270DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:10:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C50C61C25397
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C168A15F30F;
-	Wed,  5 Jun 2024 21:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC7815F3FC;
+	Wed,  5 Jun 2024 21:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="NnvFfH1j"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P4EuZVOl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156C74965B
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 21:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0374965B;
+	Wed,  5 Jun 2024 21:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717621820; cv=none; b=YleY8VY9DhjqVRFnE9+/2MtUHPApQSa86CxJaVeaKmDfkyO2ZvHBsRFjeMVJQ8FgJtwEY3KfXNXlvwWade+/+BOK/QYsIMuVC6nGXuXkgDYUirHbEnElzzZpJ2wAmwiX/7ln2abCiBcp2T5JGnMFLfkv4wqBGIaDmJiCNa37PMg=
+	t=1717621876; cv=none; b=fMYYZpOsRPX5u4iggoDmcBGui8eMFAbCpJOO8cPo/LOCd+z3O4EYYsk0mXy4E7mYeU98ulrSakddBDM6Jbp9C7bf+1doWDJeb9EUFrRzvw+wIpJmqt29zX8e22+qa2xDVGcyIQXaaiFSwI5NJY6fHtm1qHXnch0z3rgY7LEbKlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717621820; c=relaxed/simple;
-	bh=Zpts+FQi0ipqbvJ6Ta+GeOn3EOSf4V8EhYcEC0P8JfY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=pO7uKBDdnSmlsw4uv0I5SidWf1e2SFHYNilvogsLf2A4ICyp7W2XpzKR21Zq174UPd+1IyygGEqbSbAs7hxqlMUgDfizGXQw80+7eY2D35WoatNqcjBtRElJlKiFU9Ry1vfCVfu3Woyiffa8lJ2mGrDd8b79Pisi58eAP2q05Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=NnvFfH1j; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 94AD12C03DE;
-	Thu,  6 Jun 2024 09:10:10 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1717621810;
-	bh=Zpts+FQi0ipqbvJ6Ta+GeOn3EOSf4V8EhYcEC0P8JfY=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=NnvFfH1j7lUN/aRkfnglNwS1JVFajWIVRjZYXljWlKvLSRIdYjjPLHIsL+uscNChz
-	 roWN09hSZhKr94xEnSqL/3J053zoJ2Hf0ynZkGcukAjzOOXBDLHmcVm7Jm0vWqy4/D
-	 vOaa3jGeKilL2zcgcbirtgtNe0sHapzZLoga5ZEV3yAA3Cu+8KMpo6RA54+S/heT6Q
-	 WzX4fKJc8MJvVSxZSYC9OXTX26gEBQAYBTK72FP/GldUOxGaXAnZLyykzEz+WKsL5d
-	 Co2equ0L0FxW50k9EHhq+wlvAFpWOSv3cuW7O3Q0dNmNh1MWANFa+BySCGvQAgmsjJ
-	 iF21q0S/nWpvg==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B6660d4320001>; Thu, 06 Jun 2024 09:10:10 +1200
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Thu, 6 Jun 2024 09:10:10 +1200
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
- (TLS) id 15.0.1497.48; Thu, 6 Jun 2024 09:10:10 +1200
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Thu, 6 Jun 2024 09:10:10 +1200
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Jacob Keller <jacob.e.keller@intel.com>, Jackie Jone
-	<Jackie.Jone@alliedtelesis.co.nz>, "davem@davemloft.net"
-	<davem@davemloft.net>
-CC: "jesse.brandeburg@intel.com" <jesse.brandeburg@intel.com>,
-	"anthony.l.nguyen@intel.com" <anthony.l.nguyen@intel.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "intel-wired-lan@lists.osuosl.org"
-	<intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] igb: Add MII write support
-Thread-Topic: [PATCH] igb: Add MII write support
-Thread-Index: AQHatiy8/IRPYuJPYUO9rw9qJEjE7LG43r0AgAAFPYA=
-Date: Wed, 5 Jun 2024 21:10:10 +0000
-Message-ID: <dce11b71-724c-4c5f-bc95-1b59e7cc7844@alliedtelesis.co.nz>
-References: <20240604031020.2313175-1-jackie.jone@alliedtelesis.co.nz>
- <ad56235d-d267-4477-9c35-210309286ff4@intel.com>
-In-Reply-To: <ad56235d-d267-4477-9c35-210309286ff4@intel.com>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8F61B059D919A344858227565210CDD7@atlnz.lc>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1717621876; c=relaxed/simple;
+	bh=wZzPNrqVuLZwQrAHvo0+wEV3M1B5Giym8LAI8+pNTNQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=URMWhKdaNL3XrAd6gDpiQaxWgamJBsxuCwbMNutCEsm3+7HdMYymgoNrSuzc1FbF+P86oIKLSwGj7Cz7yWSWeCEBMVK32IivBssgIP9x17S1tQJ8GpIKpcM7EoOl+LUAIM3LJ3F/VdY5XC75qLJX4u+qPF/0ryCK6/v8dN1Q+ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P4EuZVOl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34FF0C32782;
+	Wed,  5 Jun 2024 21:11:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717621875;
+	bh=wZzPNrqVuLZwQrAHvo0+wEV3M1B5Giym8LAI8+pNTNQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=P4EuZVOlBj5OzFkbL9tg8GhIEyFUWBZ4laZp0oWFeyS3gR5zJMJhieUEMfl2JKci5
+	 OUDNB2B76jObgGDMm1TQfcoRSPz8voYRFBtdksaRVek009KvsclDOSYXnJ8zbo1vEz
+	 wrnUfaUhtb1Xuyf15ZJPXKwQPgpSS1Hg03FH1P5Il/1WClDDLcC6w55KgdYbuBSj9G
+	 tOU7G2ErlkxnCIHcn1cBlJXTVVJ+8BJnFOH1TQqlLlt9yBprnRJx+KYVS+MzBWpkrj
+	 T554imcxRI694A1jdkM1IF6P7LCNr27bNFwsEFqGfb0nqbt3hi5R3z66ABAi2oKLZw
+	 ONZ9KrapjbK2g==
+Date: Wed, 5 Jun 2024 16:11:11 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Sam Ravnborg <sam@ravnborg.org>, dakr@redhat.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v7 07/13] PCI: Move dev-enabled status bit to struct
+ pci_dev
+Message-ID: <20240605211111.GA779780@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=F9L0dbhN c=1 sm=1 tr=0 ts=6660d432 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=YbpwbkzvB5h8nOF6__AA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605081605.18769-9-pstanner@redhat.com>
 
-DQpPbiA2LzA2LzI0IDA4OjUxLCBKYWNvYiBLZWxsZXIgd3JvdGU6DQo+DQo+IE9uIDYvMy8yMDI0
-IDg6MTAgUE0sIGphY2tpZS5qb25lQGFsbGllZHRlbGVzaXMuY28ubnogd3JvdGU6DQo+PiBGcm9t
-OiBKYWNraWUgSm9uZSA8amFja2llLmpvbmVAYWxsaWVkdGVsZXNpcy5jby5uej4NCj4+DQo+PiBU
-byBmYWNpbGl0YXRlIHJ1bm5pbmcgUEhZIHBhcmFtZXRyaWMgdGVzdHMsIGFkZCBzdXBwb3J0IGZv
-ciB0aGUgU0lPQ1NNSUlSRUcNCj4+IGlvY3RsLiBUaGlzIGFsbG93cyBhIHVzZXJzcGFjZSBhcHBs
-aWNhdGlvbiB0byB3cml0ZSB0byB0aGUgUEhZIHJlZ2lzdGVycw0KPj4gdG8gZW5hYmxlIHRoZSB0
-ZXN0IG1vZGVzLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IEphY2tpZSBKb25lIDxqYWNraWUuam9u
-ZUBhbGxpZWR0ZWxlc2lzLmNvLm56Pg0KPj4gLS0tDQo+PiAgIGRyaXZlcnMvbmV0L2V0aGVybmV0
-L2ludGVsL2lnYi9pZ2JfbWFpbi5jIHwgNCArKysrDQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCA0IGlu
-c2VydGlvbnMoKykNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50
-ZWwvaWdiL2lnYl9tYWluLmMgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9pZ2IvaWdiX21h
-aW4uYw0KPj4gaW5kZXggMDNhNGRhNmExNDQ3Li43ZmJmY2YwMWZiZjkgMTAwNjQ0DQo+PiAtLS0g
-YS9kcml2ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9pZ2IvaWdiX21haW4uYw0KPj4gKysrIGIvZHJp
-dmVycy9uZXQvZXRoZXJuZXQvaW50ZWwvaWdiL2lnYl9tYWluLmMNCj4+IEBAIC04OTc3LDYgKzg5
-NzcsMTAgQEAgc3RhdGljIGludCBpZ2JfbWlpX2lvY3RsKHN0cnVjdCBuZXRfZGV2aWNlICpuZXRk
-ZXYsIHN0cnVjdCBpZnJlcSAqaWZyLCBpbnQgY21kKQ0KPj4gICAJCQlyZXR1cm4gLUVJTzsNCj4+
-ICAgCQlicmVhazsNCj4+ICAgCWNhc2UgU0lPQ1NNSUlSRUc6DQo+PiArCQlpZiAoaWdiX3dyaXRl
-X3BoeV9yZWcoJmFkYXB0ZXItPmh3LCBkYXRhLT5yZWdfbnVtICYgMHgxRiwNCj4+ICsJCQkJICAg
-ICBkYXRhLT52YWxfaW4pKQ0KPj4gKwkJCXJldHVybiAtRUlPOw0KPj4gKwkJYnJlYWs7DQo+IEEg
-aGFuZGZ1bCBvZiBkcml2ZXJzIHNlZW0gdG8gZXhwb3NlIHRoaXMuIFdoYXQgYXJlIHRoZSBjb25z
-ZXF1ZW5jZXMgb2YNCj4gZXhwb3NpbmcgdGhpcyBpb2N0bD8gV2hhdCBjYW4gdXNlciBzcGFjZSBk
-byB3aXRoIGl0Pw0KPg0KPiBJdCBsb29rcyBsaWtlIGEgZmV3IGRyaXZlcnMgYWxzbyBjaGVjayBz
-b21ldGhpbmcgbGlrZSBDQVBfTkVUX0FETUlOIHRvDQo+IGF2b2lkIGFsbG93aW5nIHdyaXRlIGFj
-Y2VzcyB0byBhbGwgdXNlcnMuIElzIHRoYXQgZW5mb3JjZWQgc29tZXdoZXJlIGVsc2U/DQoNCkNB
-UF9ORVRfQURNSU4gaXMgZW5mb3JjZWQgdmlhIGRldl9pb2N0bCgpIHNvIGl0IHNob3VsZCBhbHJl
-YWR5IGJlIA0KcmVzdHJpY3RlZCB0byB1c2VycyB3aXRoIHRoYXQgY2FwYWJpbGl0eS4NCg==
+On Wed, Jun 05, 2024 at 10:15:59AM +0200, Philipp Stanner wrote:
+> The bit describing whether the PCI device is currently enabled is stored
+> in struct pci_devres. Besides this struct being subject of a cleanup
+> process, struct pci_device is in general the right place to store this
+> information, since it is not devres-specific.
+> 
+> Move the 'enabled' boolean bit to struct pci_dev.
+
+I think this (and the similar 'pinned' patch) appeared in v6.
+
+It sounds plausible to have this in struct pci_dev, but it's confusing
+to have both:
+
+  pci_dev.enabled
+  pci_dev.enable_cnt, used by pci_is_enabled()
+
+I haven't looked hard enough to see whether both are required.  If
+they are, I think we should rename "enabled" to something descriptive
+enough to make it obviously different from "enable_cnt".
+
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> ---
+>  drivers/pci/devres.c | 11 ++++-------
+>  drivers/pci/pci.c    | 17 ++++++++++-------
+>  drivers/pci/pci.h    |  1 -
+>  include/linux/pci.h  |  1 +
+>  4 files changed, 15 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
+> index 572a4e193879..ea590caf8995 100644
+> --- a/drivers/pci/devres.c
+> +++ b/drivers/pci/devres.c
+> @@ -398,7 +398,7 @@ static void pcim_release(struct device *gendev, void *res)
+>  	if (this->restore_intx)
+>  		pci_intx(dev, this->orig_intx);
+>  
+> -	if (this->enabled && !this->pinned)
+> +	if (!this->pinned)
+>  		pci_disable_device(dev);
+>  }
+>  
+> @@ -441,14 +441,11 @@ int pcim_enable_device(struct pci_dev *pdev)
+>  	dr = get_pci_dr(pdev);
+>  	if (unlikely(!dr))
+>  		return -ENOMEM;
+> -	if (dr->enabled)
+> -		return 0;
+>  
+>  	rc = pci_enable_device(pdev);
+> -	if (!rc) {
+> +	if (!rc)
+>  		pdev->is_managed = 1;
+> -		dr->enabled = 1;
+> -	}
+> +
+>  	return rc;
+>  }
+>  EXPORT_SYMBOL(pcim_enable_device);
+> @@ -466,7 +463,7 @@ void pcim_pin_device(struct pci_dev *pdev)
+>  	struct pci_devres *dr;
+>  
+>  	dr = find_pci_dr(pdev);
+> -	WARN_ON(!dr || !dr->enabled);
+> +	WARN_ON(!dr || !pdev->enabled);
+>  	if (dr)
+>  		dr->pinned = 1;
+>  }
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 8dd711b9a291..04accdfab7ce 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -2011,6 +2011,9 @@ static int do_pci_enable_device(struct pci_dev *dev, int bars)
+>  	u16 cmd;
+>  	u8 pin;
+>  
+> +	if (dev->enabled)
+> +		return 0;
+> +
+>  	err = pci_set_power_state(dev, PCI_D0);
+>  	if (err < 0 && err != -EIO)
+>  		return err;
+> @@ -2025,7 +2028,7 @@ static int do_pci_enable_device(struct pci_dev *dev, int bars)
+>  	pci_fixup_device(pci_fixup_enable, dev);
+>  
+>  	if (dev->msi_enabled || dev->msix_enabled)
+> -		return 0;
+> +		goto success_out;
+>  
+>  	pci_read_config_byte(dev, PCI_INTERRUPT_PIN, &pin);
+>  	if (pin) {
+> @@ -2035,6 +2038,8 @@ static int do_pci_enable_device(struct pci_dev *dev, int bars)
+>  					      cmd & ~PCI_COMMAND_INTX_DISABLE);
+>  	}
+>  
+> +success_out:
+> +	dev->enabled = true;
+>  	return 0;
+>  }
+>  
+> @@ -2193,6 +2198,9 @@ static void do_pci_disable_device(struct pci_dev *dev)
+>  {
+>  	u16 pci_command;
+>  
+> +	if (!dev->enabled)
+> +		return;
+> +
+>  	pci_read_config_word(dev, PCI_COMMAND, &pci_command);
+>  	if (pci_command & PCI_COMMAND_MASTER) {
+>  		pci_command &= ~PCI_COMMAND_MASTER;
+> @@ -2200,6 +2208,7 @@ static void do_pci_disable_device(struct pci_dev *dev)
+>  	}
+>  
+>  	pcibios_disable_device(dev);
+> +	dev->enabled = false;
+>  }
+>  
+>  /**
+> @@ -2227,12 +2236,6 @@ void pci_disable_enabled_device(struct pci_dev *dev)
+>   */
+>  void pci_disable_device(struct pci_dev *dev)
+>  {
+> -	struct pci_devres *dr;
+> -
+> -	dr = find_pci_dr(dev);
+> -	if (dr)
+> -		dr->enabled = 0;
+> -
+>  	dev_WARN_ONCE(&dev->dev, atomic_read(&dev->enable_cnt) <= 0,
+>  		      "disabling already-disabled device");
+>  
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 9fd50bc99e6b..e223e0f7dada 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -823,7 +823,6 @@ static inline pci_power_t mid_pci_get_power_state(struct pci_dev *pdev)
+>   * then remove them from here.
+>   */
+>  struct pci_devres {
+> -	unsigned int enabled:1;
+>  	unsigned int pinned:1;
+>  	unsigned int orig_intx:1;
+>  	unsigned int restore_intx:1;
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 16493426a04f..110548f00b3b 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -367,6 +367,7 @@ struct pci_dev {
+>  					   this is D0-D3, D0 being fully
+>  					   functional, and D3 being off. */
+>  	u8		pm_cap;		/* PM capability offset */
+> +	unsigned int	enabled:1;	/* Whether this dev is enabled */
+>  	unsigned int	imm_ready:1;	/* Supports Immediate Readiness */
+>  	unsigned int	pme_support:5;	/* Bitmask of states from which PME#
+>  					   can be generated */
+> -- 
+> 2.45.0
+> 
 
