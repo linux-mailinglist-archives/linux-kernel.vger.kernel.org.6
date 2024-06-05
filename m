@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-202677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A5C78FCF7C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:36:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE688FCF7F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:37:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE29D1F22086
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:36:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDBB028B818
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334CA193085;
-	Wed,  5 Jun 2024 13:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311E71991BB;
+	Wed,  5 Jun 2024 13:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AxCXSDuI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BuYGKggv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695F9143722;
-	Wed,  5 Jun 2024 13:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57437143722;
+	Wed,  5 Jun 2024 13:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717593095; cv=none; b=bIGEx5xOvAilmazl3gZZL3QcC3DWgwWsJtaF+nS2nf+hft1kA9BRgcTIFB2Eb+OKVstZRbJmFTqaiWX7/yPheCMTYn3mM8DTRe2Q9O7BgUfObuvvE58ji/4qKrl+K5bNMhf2VggS1CGMrUjiqVykbMY2G4yc4VPijt4bs4zf85o=
+	t=1717593105; cv=none; b=iI992wRjlCStteSSM7BrvVD6Z20TKcWI/D3DQ1LLqKLZiuzJ3EfUkHVRgY4TCPBsQ4wrIlHNk0y4mOVKR3JH6b4oz0iail3pto5aPq5bHqSnwfTFgdrVZqOUhx8+jPJCoE8vtK+1QKHlEfEPQfSnCtaKjq1XmZOAjFzVM2eJ6S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717593095; c=relaxed/simple;
-	bh=p1Mf5DG1LhyqB8wXqkjnzUXqy6sag24Z+F1LZfH0pEQ=;
+	s=arc-20240116; t=1717593105; c=relaxed/simple;
+	bh=e82jWzNHBIQ5LuoLp5xTNCnL6iSD2so1skFOuLdRsK0=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=cLWofx8xOal5iu1EA4TVm1VhP++P5t3xxFX4qdETPA08VTGn3StZvBs1jeusYAl/UDBzyg1L1s8TD4bs6WJnWejpug5tQwOH3rQiGJZ0o1p1nUtFXDGd+9Quoolo9BUfFzpZm4HnjWUkdPLbvAqN5AkySEVIWxGp9wU1q6ZEzjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AxCXSDuI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2E70C3277B;
-	Wed,  5 Jun 2024 13:11:34 +0000 (UTC)
+	 Message-Id:Subject; b=fSiHvUA1obMsAeBhgngE4wNM88WHHrpACE7RDbA/W8ApL3svIlEKUilsQh2G9ny3PYYa/DT+nDZV8ZJRec7aNreNpWw6E5SV0fv4la6DL5jTJ//rjahyo03nVz0OHqO4MIu8Z285m+gaKE0743Ku2VfK2BmhJdhxUIpJNCGqOTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BuYGKggv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FEA6C32781;
+	Wed,  5 Jun 2024 13:11:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717593094;
-	bh=p1Mf5DG1LhyqB8wXqkjnzUXqy6sag24Z+F1LZfH0pEQ=;
+	s=k20201202; t=1717593104;
+	bh=e82jWzNHBIQ5LuoLp5xTNCnL6iSD2so1skFOuLdRsK0=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=AxCXSDuIbI9ABphc+MtPB9Swb+NEhUSK4Setoo6PWjDy2kz9THhj9T83HAtduj5zD
-	 zCb7UnP/FU46eA80JDJX5jkXO+nn4E+Bx5gFgXIi773vzBj0Q4uwRDSa39NAcb4zcA
-	 WuItGcB2a/CHQtIBreJsKho8GZV4Yu04JhhDzudISPRA2Z8BU2Kj0nAJ3X5GuWQhRa
-	 RzeMIxE5DmeFsvAh8g8wMpuQ9WbXCdJQDiv7ooeaQcSt91KfgSNxHbo4RNgi3Y+ArJ
-	 s+KEhHh4FIk/bEH++xMbh04Xy9iR/Ex2/0jNnHfbjehFDxgsAtwNOrmYN0WAVf8gHv
-	 qJ3E5DTkPFSUw==
-Date: Wed, 05 Jun 2024 07:11:32 -0600
+	b=BuYGKggvd03FxDubIx4921UbQ3+fwhHA2KMMPF7sX9KJCHYCmjUkAWUrqgiczOfh5
+	 eJygJLFA1I2kyqJZQ1QOg1dseA1fdbryODsBsEs6qMSEXD42yvTLb+9SH0DRHYkMYR
+	 mdyGUqSh2NErdJmVU+znPrJYpcOeLaekj5NrzpCNehShHEfn3mnafDufQF0jX7OOaX
+	 7w4ciIGZtPUh6wXoiDQrVqEBzLCpuckyrYJsEjltCLqJGsWSdnNvYRPGYXq9ZCEyLG
+	 wCA6+xU/YfynPCemAU/1ndfZ48OsGPCHo+2tce31Lz2Q8IxZtOTDaz/sqlN71503xR
+	 VgFng9QUDfxKg==
+Date: Wed, 05 Jun 2024 07:11:42 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,25 +50,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ninad Palsule <ninad@linux.ibm.com>
-Cc: andrew@codeconstruct.com.au, krzk+dt@kernel.org, conor+dt@kernel.org, 
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-aspeed@lists.ozlabs.org, joel@jms.id.au, eajames@linux.ibm.com, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240604215939.1967329-1-ninad@linux.ibm.com>
-References: <20240604215939.1967329-1-ninad@linux.ibm.com>
-Message-Id: <171759284804.2200781.9915039390039475490.robh@kernel.org>
-Subject: Re: [PATCH v1] ARM: dts: aspeed: System1: Updates to BMC board
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: devicetree@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
+ linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org
+In-Reply-To: <20240605122729.24283-1-brgl@bgdev.pl>
+References: <20240605122729.24283-1-brgl@bgdev.pl>
+Message-Id: <171759285132.2201422.6812393889473417095.robh@kernel.org>
+Subject: Re: [PATCH v9 0/4] arm64: dts: qcom: add WiFi modules for several
+ platforms
 
 
-On Tue, 04 Jun 2024 16:59:39 -0500, Ninad Palsule wrote:
-> - Added new power monitor device max5970
-> - Changed temperature sensor monitor chip from tmp423 to tmp432
+On Wed, 05 Jun 2024 14:27:25 +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> Signed-off-by: Ninad Palsule <ninad@linux.ibm.com>
-> ---
->  arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
+> Hi!
+> 
+> Here are the DTS changes for several Qualcomm boards from the
+> power-sequencing series. To keep the cover-letter short, I won't repeat
+> all the details, they can be found in the cover-letter for v8. Please
+> consider picking them up into the Qualcomm tree. They have all been
+> thorougly tested with the pwrseq series.
+> 
+> Changelog:
+> 
+> Since v8:
+> - split the DTS patches out into their own series
+> - Link to v8: https://lore.kernel.org/r/20240528-pwrseq-v8-0-d354d52b763c@linaro.org
+> 
+> Since v7:
+> - added DTS changes for sm8650-hdk
+> - added circular dependency detection for pwrseq units
+> - fixed a KASAN reported use-after-free error in remove path
+> - improve Kconfig descriptions
+> - fix typos in bindings and Kconfig
+> - fixed issues reported by smatch
+> - fix the unbind path in PCI pwrctl
+> - lots of minor improvements to the pwrseq core
+> 
+> Since v6:
+> - kernel doc fixes
+> - drop myself from the DT bindings maintainers list for ath12k
+> - wait until the PCI bridge device is fully added before creating the
+>   PCI pwrctl platform devices for its sub-nodes, otherwise we may see
+>   sysfs and procfs attribute failures (due to duplication, we're
+>   basically trying to probe the same device twice at the same time)
+> - I kept the regulators for QCA6390's ath11k as required as they only
+>   apply to this specific Qualcomm package
+> 
+> Since v5:
+> - unify the approach to modelling the WCN WLAN/BT chips by always exposing
+>   the PMU node on the device tree and making the WLAN and BT nodes become
+>   consumers of its power outputs; this includes a major rework of the DT
+>   sources, bindings and driver code; there's no more a separate PCI
+>   pwrctl driver for WCN7850, instead its power-up sequence was moved
+>   into the pwrseq driver common for all WCN chips
+> - don't set load_uA from new regulator consumers
+> - fix reported kerneldoc issues
+> - drop voltage ranges for PMU outputs from DT
+> - many minor tweaks and reworks
+> 
+> v1: Original RFC:
+> 
+> https://lore.kernel.org/lkml/20240104130123.37115-1-brgl@bgdev.pl/T/
+> 
+> v2: First real patch series (should have been PATCH v2) adding what I
+>     referred to back then as PCI power sequencing:
+> 
+> https://lore.kernel.org/linux-arm-kernel/2024021413-grumbling-unlivable-c145@gregkh/T/
+> 
+> v3: RFC for the DT representation of the PMU supplying the WLAN and BT
+>     modules inside the QCA6391 package (was largely separate from the
+>     series but probably should have been called PATCH or RFC v3):
+> 
+> https://lore.kernel.org/all/CAMRc=Mc+GNoi57eTQg71DXkQKjdaoAmCpB=h2ndEpGnmdhVV-Q@mail.gmail.com/T/
+> 
+> v4: Second attempt at the full series with changed scope (introduction of
+>     the pwrseq subsystem, should have been RFC v4)
+> 
+> https://lore.kernel.org/lkml/20240201155532.49707-1-brgl@bgdev.pl/T/
+> 
+> v5: Two different ways of handling QCA6390 and WCN7850:
+> 
+> https://lore.kernel.org/lkml/20240216203215.40870-1-brgl@bgdev.pl/
+> 
+> Bartosz Golaszewski (3):
+>   arm64: dts: qcom: sm8550-qrd: add the Wifi node
+>   arm64: dts: qcom: sm8650-qrd: add the Wifi node
+>   arm64: dts: qcom: qrb5165-rb5: add the Wifi node
+> 
+> Neil Armstrong (1):
+>   arm64: dts: qcom: sm8650-hdk: add the Wifi node
+> 
+>  arch/arm64/boot/dts/qcom/qrb5165-rb5.dts | 103 ++++++++++++++++++++---
+>  arch/arm64/boot/dts/qcom/sm8250.dtsi     |   2 +-
+>  arch/arm64/boot/dts/qcom/sm8550-qrd.dts  |  97 +++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/sm8550.dtsi     |   2 +-
+>  arch/arm64/boot/dts/qcom/sm8650-hdk.dts  |  89 ++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/sm8650-qrd.dts  |  89 ++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/sm8650.dtsi     |   2 +-
+>  7 files changed, 370 insertions(+), 14 deletions(-)
+> 
+> --
+> 2.40.1
+> 
+> 
 > 
 
 
@@ -86,14 +175,14 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y aspeed/aspeed-bmc-ibm-system1.dtb' for 20240604215939.1967329-1-ninad@linux.ibm.com:
+New warnings running 'make CHECK_DTBS=y qcom/qrb5165-rb5.dtb qcom/sm8550-qrd.dtb qcom/sm8650-hdk.dtb qcom/sm8650-qrd.dtb' for 20240605122729.24283-1-brgl@bgdev.pl:
 
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: power-monitor@3a: 'regulators' is a required property
-	from schema $id: http://devicetree.org/schemas/mfd/maxim,max5970.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: power-monitor@3a: 'vss1-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/mfd/maxim,max5970.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: power-monitor@3a: 'vss2-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/mfd/maxim,max5970.yaml#
+arch/arm64/boot/dts/qcom/qrb5165-rb5.dtb: bluetooth: 'vddbtcmx-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/sm8650-qrd.dtb: /wcn7850-pmu: failed to match any schema with compatible: ['qcom,wcn7850-pmu']
+arch/arm64/boot/dts/qcom/sm8650-hdk.dtb: /wcn7850-pmu: failed to match any schema with compatible: ['qcom,wcn7850-pmu']
+arch/arm64/boot/dts/qcom/sm8550-qrd.dtb: /wcn7850-pmu: failed to match any schema with compatible: ['qcom,wcn7850-pmu']
+arch/arm64/boot/dts/qcom/qrb5165-rb5.dtb: /qca6390-pmu: failed to match any schema with compatible: ['qcom,qca6390-pmu']
 
 
 
