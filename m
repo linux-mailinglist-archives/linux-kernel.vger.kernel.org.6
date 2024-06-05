@@ -1,164 +1,356 @@
-Return-Path: <linux-kernel+bounces-201803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83E858FC360
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:24:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79BAE8FC359
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41248283BF7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 06:24:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E73E71F2360D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 06:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC6221C19F;
-	Wed,  5 Jun 2024 06:23:59 +0000 (UTC)
-Received: from mx2.zhaoxin.com (mx2.zhaoxin.com [203.110.167.99])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFEB21C19A;
+	Wed,  5 Jun 2024 06:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WKtJTDu5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C3013AA4D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 06:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.110.167.99
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717568639; cv=none; b=CtAntl+oMK5Nk9g/4ZPJ/Y/v0KGVEtjyRm6nQSUX3ptnfAMBpADUFedgXh4ZY4hYPy7aJ/z3S+JJf1Cub50Dp9CH5VQxHrJ7r3WY/PBCJKmBZKyLru23hwCzyFVvZLui+HLjBsRgqErn+cf0NRjcz3RA8ps6ajKgiODTRcenzD8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717568639; c=relaxed/simple;
-	bh=D1FGYykQrnI/TmCi/edyw84RB2hRS16xw2RjxjfQM+o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XpINLvmw/pPHeMu6Pdtm+yh17J/7Xe/eaRq8WVmALUlZmx1sHA+9yo9+FqOcvCLokjWTAsUd6chyfP2+RGi5b1QSqofVEhdf1JBng9Ktx2RrVdFqO/+/IfDRsKQ9FdhOQBhwWsDYQAsHNGcb8a+jwXiB8PVJ+JtcIJzEFiztzYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=203.110.167.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
-X-ASG-Debug-ID: 1717568626-1eb14e157518a10001-xx1T2L
-Received: from ZXSHMBX3.zhaoxin.com (ZXSHMBX3.zhaoxin.com [10.28.252.165]) by mx2.zhaoxin.com with ESMTP id wzHAcNBuJgAVOrCV (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Wed, 05 Jun 2024 14:23:46 +0800 (CST)
-X-Barracuda-Envelope-From: TonyWWang-oc@zhaoxin.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.165
-Received: from ZXBJMBX03.zhaoxin.com (10.29.252.7) by ZXSHMBX3.zhaoxin.com
- (10.28.252.165) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 5 Jun
- 2024 14:23:45 +0800
-Received: from [10.32.65.162] (10.32.65.162) by ZXBJMBX03.zhaoxin.com
- (10.29.252.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.27; Wed, 5 Jun
- 2024 14:23:43 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.165
-Message-ID: <0aff3f62-a8a5-4358-ae3f-2ded339aface@zhaoxin.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.32.65.162
-Date: Wed, 5 Jun 2024 14:23:32 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB612BD0D
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 06:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717568416; cv=fail; b=F9PWBhLCGAViY4fZTF/wOu1QwwUvTlvGuKwB4j1XT7DMt1thYrc+fPgwyor97X57QYujPDnL1rycimTXGfMIXuQbm9TFpBjHL5T9uS9rbXAjVHMKJIiDmgbgsNMR53FCu435WzHddr7WE4+2uhKy2hpXhA5Jo9c8s6/svoua6ck=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717568416; c=relaxed/simple;
+	bh=e9B7+pxe0ivM7d1+E9GQfvIclz9hiPkszIfz5BHDecE=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=em4X2/lM8FdOAzGVDrbdO1DQ4FfWzofOhnfkXUdvl/OrYXVzBQAccf5DcNYUmwFDLGvpm+EyJYduIw7zdv/MDzKvxRQQRz7lIMs2DPkHHOKx+dOYQmNMfiwXB+sfKDFEMTnkCTOuGyy3ZAfUJETQDxb6Z3uTFQzy/84hFCq5csI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WKtJTDu5; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717568415; x=1749104415;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=e9B7+pxe0ivM7d1+E9GQfvIclz9hiPkszIfz5BHDecE=;
+  b=WKtJTDu5Jzab7Y/ZXrde3HeVZQE/vcOyQKr/UKgx5jekvegv1LIvWGrn
+   VvVf3iexPnBJBfpbIJFh2n+HTD78Dv+jb4Feyp5Omby0Y77XXe4DSeFrw
+   NZtddFPHSRz3e3kk8rotShwGMiNIhOKzzOVYbgbGayeXKC+MJNzrqalxk
+   QLuwUSQCcmfJEJX+3lN1/BXTTbdx92QFvmiL4QgVaj+KByEbafx/qM7Or
+   0stEfnkluOUshb0TWISQleHbrXBlEvY0TrGXJ074K98J2X/U63zablMC7
+   CBkkTBgHRqfR2tnwct59AXrxmVInrQIVPqWDB0ZiqQMzgAaSWLq7evfa9
+   Q==;
+X-CSE-ConnectionGUID: hAg+O0v6S2OyQSlt8zHG6w==
+X-CSE-MsgGUID: SmuSZ+6YT7alJByzNCRi9Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="36673373"
+X-IronPort-AV: E=Sophos;i="6.08,215,1712646000"; 
+   d="scan'208";a="36673373"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 23:20:14 -0700
+X-CSE-ConnectionGUID: F2q6EDUpRjCGIeks7k7VEg==
+X-CSE-MsgGUID: eazLnQKnTvyQOJ5hjBmaJg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,215,1712646000"; 
+   d="scan'208";a="37409025"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 04 Jun 2024 23:20:13 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 4 Jun 2024 23:20:13 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 4 Jun 2024 23:20:13 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.101)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 4 Jun 2024 23:20:12 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PlDb3yOGVrCTlBB+WqacqwU/xTTp9vod8zYedbZydnG8bUf5Hcx6HTDDFXDR6va+t+lD43AR7IzisjY7qLA7p+GI9L4HQoyjm3EgkszxTc1DSOWU5i40psoSf7J2tHXmXvyH8oATCsScVnrLq43O+hZor2gpwzJqGLUvsHvLalSxxhyX/m8e8ehIWzVrxUehTf+xZQoA+4bOQuV2BmMj5r/S8m8ErR+TehI2y6Eupw2oN4rryBj+RR/oD125vKuyoxPv2MJI63TegBxNCFsFN0l3kkF3ZKpnNhN/XVKSR/SIiwCDupBaSfclJciAxCcdLRwGkh18InhcOUKiuZ1xrQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NDS3kiMkTEiBSxJGfD2R1DtoiTWSysgMgDhoc2nBxP8=;
+ b=K6T38lGPly3hwaVDhRe2EZmGA+rglnYAe6VCJ+jy5wW1atmvSwvgqJtOEoE0IYhGXpafBzKeRLm0v+UT0IWbV9ZjeITynVzMzEZ4rpM9bJjr/TBv/NbVrqYBcq1P7EDxY0kccyGUmCQ2CIhGj09ez5fAjLcfLhabMd3cD1Xn2m8tTKW96NKP7III4lun2N2rOrHTQ57mrwjtlkfopxZpX5ufyayIYbHpKpkprDKZx/E+11sB6iPTP+BukeDBqDEqUvRxTdyXO9tlREMfcCl3CtOTW7PprkO9ObNlx+GSYhBHePqWuJe88/NMRzKolsxpyzn9iYCQh4HdYmgMJQzMaA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7529.namprd11.prod.outlook.com (2603:10b6:8:141::20)
+ by SN7PR11MB6994.namprd11.prod.outlook.com (2603:10b6:806:2ad::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.25; Wed, 5 Jun
+ 2024 06:20:01 +0000
+Received: from DS0PR11MB7529.namprd11.prod.outlook.com
+ ([fe80::d244:15cd:1060:941a]) by DS0PR11MB7529.namprd11.prod.outlook.com
+ ([fe80::d244:15cd:1060:941a%7]) with mapi id 15.20.7633.018; Wed, 5 Jun 2024
+ 06:20:01 +0000
+Message-ID: <b205bcfb-9972-4e03-9994-62419117d76f@intel.com>
+Date: Wed, 5 Jun 2024 14:23:56 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/22] iommu: Add iommu_user_domain_alloc() interface
+To: Baolu Lu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, "Will
+ Deacon" <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, "Jason
+ Gunthorpe" <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
+CC: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, "Kalle
+ Valo" <kvalo@kernel.org>, Bjorn Andersson <andersson@kernel.org>, "Mathieu
+ Poirier" <mathieu.poirier@linaro.org>, Alex Williamson
+	<alex.williamson@redhat.com>, <mst@redhat.com>, Jason Wang
+	<jasowang@redhat.com>, Thierry Reding <thierry.reding@gmail.com>, "Jonathan
+ Hunter" <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>,
+	<iommu@lists.linux.dev>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240604015134.164206-1-baolu.lu@linux.intel.com>
+ <20240604015134.164206-2-baolu.lu@linux.intel.com>
+ <445fae9f-ea1e-4864-9f0e-f348c51146a1@intel.com>
+ <91a42f46-060a-4430-a10a-7bfded67c4a9@linux.intel.com>
+Content-Language: en-US
+From: Yi Liu <yi.l.liu@intel.com>
+In-Reply-To: <91a42f46-060a-4430-a10a-7bfded67c4a9@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: TYBP286CA0043.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:404:10a::31) To DS0PR11MB7529.namprd11.prod.outlook.com
+ (2603:10b6:8:141::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/hpet: Read HPET directly if panic in progress
-To: Thomas Gleixner <tglx@linutronix.de>, Linus Torvalds
-	<torvalds@linux-foundation.org>
-X-ASG-Orig-Subj: Re: [PATCH] x86/hpet: Read HPET directly if panic in progress
-CC: Dave Hansen <dave.hansen@intel.com>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
-	<keescook@chromium.org>, <tony.luck@intel.com>, <gpiccoli@igalia.com>,
-	<mat.jonczyk@o2.pl>, <rdunlap@infradead.org>,
-	<alexandre.belloni@bootlin.com>, <mario.limonciello@amd.com>,
-	<yaolu@kylinos.cn>, <bhelgaas@google.com>, <justinstitt@google.com>,
-	<linux-kernel@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-	<CobeChen@zhaoxin.com>, <TimGuo@zhaoxin.com>, <LeoLiu-oc@zhaoxin.com>
-References: <20240528063836.5248-1-TonyWWang-oc@zhaoxin.com>
- <50fc1bd3-909e-41c4-a991-9d81e32ef92c@intel.com> <87wmnda8mc.ffs@tglx>
- <CAHk-=wgMoeOTL1V3wTO=o=U1OXn7xF8OWv2hB9NF9Z=G4KotfQ@mail.gmail.com>
- <87le3t9i8c.ffs@tglx>
-Content-Language: en-US
-From: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-In-Reply-To: <87le3t9i8c.ffs@tglx>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ZXSHCAS2.zhaoxin.com (10.28.252.162) To
- ZXBJMBX03.zhaoxin.com (10.29.252.7)
-X-Barracuda-Connect: ZXSHMBX3.zhaoxin.com[10.28.252.165]
-X-Barracuda-Start-Time: 1717568626
-X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
-X-Barracuda-URL: https://10.28.252.36:4443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at zhaoxin.com
-X-Barracuda-Scan-Msg-Size: 2578
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
-X-Barracuda-Spam-Score: -2.02
-X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.125820
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------------------------
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7529:EE_|SN7PR11MB6994:EE_
+X-MS-Office365-Filtering-Correlation-Id: a2bf3d0c-a711-4d61-c698-08dc85278826
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015|7416005;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Mk5hQWNoOG9JSG1aa2tmWXQ0enZOVGY1K2VjNnFHSURTWWJKMVVTa1FPNm1i?=
+ =?utf-8?B?SExpalYrYnoxOE5oRmpEaHkvVkl3VjVKdC8ycXpJMndYWFhQVVlmbDFGTWpT?=
+ =?utf-8?B?ZEtjbTFiOUYwSVI1WE04VFluS1VLUGE5ek5lNmhxbGlYdVAySEJwWGtiYW1v?=
+ =?utf-8?B?TTl4RGRCOVQxaEdFTXR3Y0dsWW9jeEszaTZTeTllU2hmZnZ4THdNbGtOYzMx?=
+ =?utf-8?B?bmxIZVdmVDhHczRaL0ZCT0J4WGtUcW95Ri95YUxFQ29tSmd1R08xS2Y2NFl5?=
+ =?utf-8?B?aUZQQ3RTMGlUS3lhMThlZDRXSzk0UjRqSTVBZHVYRE9lTVR1QWxEZkh4NmR1?=
+ =?utf-8?B?dnNSL3BsZm1PNHBsOThPT29DSkVKY0NORC9LM2lMcSsrYzAyQVB6eTk0Q2lT?=
+ =?utf-8?B?VW5TY2tDa2NkYUpjakdGL2J3R053RklnT0pMZUFPK2wrSG5aQUo2Qkt6RTVH?=
+ =?utf-8?B?OHZxbkhtSm9Bd1lRTWlOb1U2N093bnV0VFIwcTVBckV6T242ZUVQQis5VXlW?=
+ =?utf-8?B?eVdQK2JJbEMyamhEbG1tZDBuSll2WWRSRkNjdEl4c2RVejNkREpNOXg2WVNo?=
+ =?utf-8?B?c0s3MnUzOUh0T2F4a3EzeGQ2clR3MEZlWGJzT2RSZzZjQ3o3eHgzVVA4Szg4?=
+ =?utf-8?B?ZGkweU81aldNOENIcE9XMHYrZ3V0TTh2REw4UHJvazNETFA2cGFqaEdxd2Vu?=
+ =?utf-8?B?Z1VUYzZLYjFCcURGZEM3NDhEeXVLOFVVRithNmZpbUlnaDcwOS9GM2F1UWZK?=
+ =?utf-8?B?czRUM3dKOWpSbVcreUtNUmZ0RUlTUTlFR3VESUpOWGIzMGE4NUlXdWtGeTMx?=
+ =?utf-8?B?c3VVM0xWcHRPSFNnUVhBU1FZc0twQ0Qxa0JoWEk3emx5OS9xVy9QeitPeFJG?=
+ =?utf-8?B?S1BxTWozWUpFU0UwY283SWMrTUhVZWQzWWF2UTZ2dnVML2F5N3RaS2NEcHNF?=
+ =?utf-8?B?WXF1WFErWGMxYmhwcFhXMDh6em4xSGw4ZGpBOTdBOWdCOFY5TGFFUlZHalNY?=
+ =?utf-8?B?d1JpeTJUNkdsWHBVL3BGTXl1dUlFQS9FSjEvYTRweW1JanVZaTBnNnNHVXZS?=
+ =?utf-8?B?VzNvQytTbkRJL3FTa3VhYmdJZ2RNcWRTdXpmd3MwUFRWVnd0bjRRMEFiOENq?=
+ =?utf-8?B?UDRaakpQZjBEWWsybENrYjdRYnVLV29GaFBjai9Fd1BGcUY3bzIrOE1TTzRT?=
+ =?utf-8?B?UjNtbDVFZG5KdnFtQlBreXFaYndUWUx2UjdYSzdydm8wbFFiQUFvNy93WVpk?=
+ =?utf-8?B?YWQ2TVVrNTdnZGltRE5nTmwvL0FRT3A0dTdNRlREdVlHSTZYcEE0NGdDd2NI?=
+ =?utf-8?B?Q0dFV3p0MjR2MjZUek1SVmVQaG5QYi9OTFVHell3VFlCMWxRalI0aXkvZ29L?=
+ =?utf-8?B?aklEbTBhWWM0MFhpaDZVRzVWSVdBQU9URURvTkhYNFNVa0g5eGJjeUNSaU1G?=
+ =?utf-8?B?WDRtZjdJejlhWUtRWTVhNDA5L1VSS2N5L2xyTkZmUmZlUUp3WWl2Nyt6QzFO?=
+ =?utf-8?B?NEdKMURxTmo1ekd5TTVwN0JjUUVpUUdXSWZpdHVmOTI2VjRNaWhSZnFVMkpE?=
+ =?utf-8?B?T05DeGZiclI5UHNyY1A0amljeUFnTEtqUzVSbDBHc3RNVWVUZzZCN0tSVFJu?=
+ =?utf-8?B?QTdDNkF3MlhBcExDUTRLVXNLY21icVNxZitIcVVMSkJ0NVF6UE0ycnJyVTFV?=
+ =?utf-8?B?RXJCVGdpOVMyVlk5anhKMjgyWW1JT2FhaUJPbmphcGhtYUtoZDl3d2FBPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7529.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015)(7416005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NzVmZlVTU09GZjBXdis4K0VWaTNhYWF1RUplVUtwTVdIUHh5Z0xYYjdLMFk3?=
+ =?utf-8?B?ekFQVlV3MElOTUYwSzFvcGYyQnVpbW5aYnlUYlFCY2tyUnhHNjhMZG1GMFEz?=
+ =?utf-8?B?akEvLzNaeU0vM284MWxJNWh3T0s4YmlWZFJaaG42azFKanp4dE5mWkF0UjhX?=
+ =?utf-8?B?ZEJpUCtNeGk4VTl3dDVHUmxUbWJxTXNDZk1GWGVxNUllTDIrWjVuOGp2elJE?=
+ =?utf-8?B?VG9QQWZ4Y2NYL0t1bXNrUytRTmVXQ3hZMFJSc0ZaMUdOSmdNU2JGOVJUd0JT?=
+ =?utf-8?B?TW1Fd1FmSFFCdWIxem1sTG9WeGdBMHJiUlFCUjc1NUxNVkJaTE9QeWtqWkRS?=
+ =?utf-8?B?THREbGFqNVVuQ2JuN3hCVmdDeEpaaXBVL0pIMDlEWlltWitoNjJROHBwYzho?=
+ =?utf-8?B?aGQ5cFBZQ2V6UEU4cHF4dlA0QjRJYzJlblRvZUc0MS9ZTVhoM01rZWJhTVVD?=
+ =?utf-8?B?NEthMnRoK1h2OWRqdzdNSGhtMm9FUnJERU1lUWdUcEdYMEM2TDd0OERXMjRh?=
+ =?utf-8?B?RjF4RlM4bmJiMWpsUFFHNE1vcWJyS1lmSmlLYzBJNnBJT2h5RnUrZ255YW41?=
+ =?utf-8?B?ZFcwaEFyOVl1MDBDblhYRUkwaGY2Nk1meFg3Mm02SXlDY212N28ySmlwNFc1?=
+ =?utf-8?B?SUNCSFRraXNRb0xUNTBrZzd6YXNLUlZBSXYxcmt1UU9mNlEyU3lidlZGaDJS?=
+ =?utf-8?B?dTdRbjBEdFc1MjVuMWo2dyt3SzJMNllVM2Npa0NlcWxWN25KamNuZVd2Z0Nm?=
+ =?utf-8?B?RS9OZElxUnNWWmxKVnpWWTVPWlpXV1BUYXJzemxNd0pSKzliR2J6aWF5ZURQ?=
+ =?utf-8?B?ekRkSHpuTWkrckpiZVp1MnAybnJFVlFTbEUvNkQ0eDhxbk1FVXpHdUdKK1g3?=
+ =?utf-8?B?ZXNlVCtsRDV4cGY1YVJHdDZneEhUNXVkMGNmSWZnTDN1WHAxa3lTN2N4eWNn?=
+ =?utf-8?B?YzQ5SjM1cVg5ZmgyZldWWEwyRFJDVzNMUmk5eWRNTFZDWHh4SWxmZ1dZOFpE?=
+ =?utf-8?B?dDR0RVNsT29mUlZEc040QWtmeGROUW5UczJFdGxDM2pVenJyMi9TczVxaXps?=
+ =?utf-8?B?VUFacDAyZnZiRjA3Y2RkWVRiU0xwaTdhZllOYzNVWVplRG5rTDZjekxKNlA0?=
+ =?utf-8?B?MDdOUjhHbjlrR3RtekZPQXNKaCtTMVQrMTRQd1JuMHlIYlRCK0dnbmp4Q0Nx?=
+ =?utf-8?B?d0xOc3NoQlBOaVVnc0NMMlIrT0JkZmtYbzhoenNrdEExMDhUNDRXU2w4T3Z3?=
+ =?utf-8?B?cXIzNFppVmRjY1VaMFhoOFFGbkMwVy9tUWpBeVMwbU9vZ2dadmZkQzFyVlZw?=
+ =?utf-8?B?ZmM0S3R1cnJmNVJDUzFPWHllTDd2WTBlbGt4cm53a1ZYVDNnUFdNK2d3a293?=
+ =?utf-8?B?Mmp0SjNvVE84b3l3Y0FvZ0E1TTFWL2RGTXNGWFd6SElvQ3M2ckl0MWUzaXVh?=
+ =?utf-8?B?eUJwdlR0ZktVcGowRGtxNzV0ZFY2cDFpQjFEclZ2QldLRWlvY2o1QklRSlFP?=
+ =?utf-8?B?N3VHS0xuVitnY1RYVUNsM1M5VmpGK1pmOWtDZFpTQ29pZzlnQXlKRlhmcVFq?=
+ =?utf-8?B?S3Fud2h4b2IxNzhYMWI2bDdSV3dlczlaYUVBR1Ztc09sQTlsK3FVVzl2QURq?=
+ =?utf-8?B?UVBrbHhTYzMwaFJDZ1VlTTRzTHJzNm45TXNzWFphSkhHSkJMajVvMUhSL0p6?=
+ =?utf-8?B?b2xhak9GVVVlQWFxVmRlWmFIUFY5cDRVWEV2dVhpR0ExaUxNeVFrSzdVaEI3?=
+ =?utf-8?B?SHIrc0tJNHhHWTFCSFZFSGIyVjNwMmozSkhDWCtsN0U0T1pXaWdoWERTM2JT?=
+ =?utf-8?B?TU9BZ0Z0am82dWVBTE1ndVgraTdZaXd1VWlqSnprZHdPUjZ6enRYcGlVZ0tI?=
+ =?utf-8?B?MHlLMHNacEsrMUYwN2ZtU0xqM0U3eXlTdU11SEFmSUx5b1h4b3R3Wk8xZHZ1?=
+ =?utf-8?B?LzRoN1g3QnR3MVhvemVmTDVzazZyWVcrd245bjVlVHk2ZlN1aXZBMEdMaU5D?=
+ =?utf-8?B?TlZveHBJamN4THVyelVZVWhqQ2swSjVpNjk3eFFaMDJlWExyRktYeVhOaUs1?=
+ =?utf-8?B?VGNJeEVmYXAyV2RjTEJTK2RNWEpDNEdsT1MybnV3UTg3VnBXOUhHdEdkUGdT?=
+ =?utf-8?Q?SJ3OTv/gPGYnv9khpv8s6fpn6?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a2bf3d0c-a711-4d61-c698-08dc85278826
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7529.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2024 06:20:01.6772
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Jff8HfHOYDCc49ShrrPFeqcJcaIJabOLkBzND+PYQ91CGZQRgB6Cz/poQRYEzPS/O7dNanSUuTBCgr2VU7a5WQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6994
+X-OriginatorOrg: intel.com
 
-
-
-On 2024/5/29 15:42, Thomas Gleixner wrote:
-> 
-> 
-> [这封邮件来自外部发件人 谨防风险]
-> 
-> Linus!
-> 
-> On Tue, May 28 2024 at 16:22, Linus Torvalds wrote:
->> On Tue, 28 May 2024 at 15:12, Thomas Gleixner <tglx@linutronix.de> wrote:
->> I see the smiley, but yeah, I don't think we really care about it.
-> 
-> Indeed. But the same problem exists on other architectures as
-> well. drivers/clocksource alone has 4 examples aside of i8253
-> 
->>>    1) Should we provide a panic mode read callback for clocksources which
->>>       are affected by this?
+On 2024/6/5 10:00, Baolu Lu wrote:
+> On 6/4/24 4:03 PM, Yi Liu wrote:
+>> On 2024/6/4 09:51, Lu Baolu wrote:
+>>> Commit <909f4abd1097> ("iommu: Add new iommu op to create domains owned
+>>> by userspace") added a dedicated iommu op to allocate a user domain.
+>>> While IOMMUFD has already made use of this callback, other frameworks
+>>> like vfio/type1 and vDPA still use the paging domain allocation interface.
+>>>
+>>> Add a new interface named iommu_user_domain_alloc(), which indicates the
+>>> allocation of a domain for device DMA managed by user space driver. All
+>>> device passthrough frameworks could use this interface for their domain
+>>> allocation.
+>>>
+>>> Although it is expected that all iommu drivers could implement their own
+>>> domain_alloc_user ops, most drivers haven't implemented it yet. Rollback
+>>> to the paging domain allocation interface if the iommu driver hasn't
+>>> implemented this op yet.
+>>>
+>>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>>> ---
+>>>   include/linux/iommu.h |  6 ++++++
+>>>   drivers/iommu/iommu.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+>>>   2 files changed, 48 insertions(+)
+>>>
+>>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+>>> index 7bc8dff7cf6d..6648b2415474 100644
+>>> --- a/include/linux/iommu.h
+>>> +++ b/include/linux/iommu.h
+>>> @@ -780,6 +780,7 @@ extern bool iommu_present(const struct bus_type *bus);
+>>>   extern bool device_iommu_capable(struct device *dev, enum iommu_cap cap);
+>>>   extern bool iommu_group_has_isolated_msi(struct iommu_group *group);
+>>>   extern struct iommu_domain *iommu_domain_alloc(const struct bus_type 
+>>> *bus);
+>>> +struct iommu_domain *iommu_user_domain_alloc(struct device *dev, u32 
+>>> flags);
+>>>   extern void iommu_domain_free(struct iommu_domain *domain);
+>>>   extern int iommu_attach_device(struct iommu_domain *domain,
+>>>                      struct device *dev);
+>>> @@ -1086,6 +1087,11 @@ static inline struct iommu_domain 
+>>> *iommu_domain_alloc(const struct bus_type *bus
+>>>       return NULL;
+>>>   }
+>>> +static inline struct iommu_domain *iommu_user_domain_alloc(struct 
+>>> device *dev, u32 flags)
+>>> +{
+>>> +    return ERR_PTR(-ENODEV);
+>>> +}
+>>> +
+>>>   static inline void iommu_domain_free(struct iommu_domain *domain)
+>>>   {
+>>>   }
+>>> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+>>> index 9df7cc75c1bc..f1416892ef8e 100644
+>>> --- a/drivers/iommu/iommu.c
+>>> +++ b/drivers/iommu/iommu.c
+>>> @@ -2032,6 +2032,48 @@ struct iommu_domain *iommu_domain_alloc(const 
+>>> struct bus_type *bus)
+>>>   }
+>>>   EXPORT_SYMBOL_GPL(iommu_domain_alloc);
+>>> +/**
+>>> + * iommu_user_domain_alloc() - Allocate a user domain
+>>> + * @dev: device for which the domain is allocated
+>>> + * @flags: iommufd_hwpt_alloc_flags defined in uapi/linux/iommufd.h
+>>> + *
+>>> + * Allocate a user domain which will be managed by a userspace driver. 
+>>> Return
+>>> + * allocated domain if successful, or a ERR pointer for failure.
 >>
->> The current patch under discussion may be ugly, but looks workable.
->> Local ugliness isn't necessarily a show-stopper.
->>
->> So if the HPET is the *only* case which has this situation, I vote for
->> just doing the ugly thing.
->>
->> Now, if *other* cases exist, and can't be worked around in similar
->> ways, then that argues for a more "proper" fix.
->>
->> And no, I don't think i8253 is a strong enough argument. I don't
->> actually believe you can realistically find a machine that doesn't
->> have HPET or the TSC and really falls back on the i8253 any more. And
->> if you *do* find hw like that, is it SMP-capable? And can you find
->> somebody who cares?
+>> do you want to mention that this is for paging domain allocation?
 > 
-> Probably not.
-> 
->>>    2) Is it correct to claim that a MCE which hits user space and ends up in
->>>       mce_panic() is still just a regular exception or should we upgrade to
->>>       NMI class context when we enter mce_panic() or even go as far to
->>>       upgrade to NMI class context for any panic() invocation?
->>
+> You are worrying about its confusion with nesting domain allocation,
+> right?
 
-After MCE has occurred, it is possible for the MCE handler to execute 
-the add_taint() function without panic. For example, the fake_panic is 
-configured.
+yes. As I replied in last version, user_domain is a bit confusing since
+nested domain is also a user_domain. That's why we introduced the
+alloc_domain_user op.
 
-So the above patch method does not seem to be able to cover the printk 
-deadlock caused by the add_taint() function in the MCE handler when a 
-MCE occurs in user space.
+> My understanding is that if we want a common interface for
+> nesting domain allocation, we should make it in another interface. Here,
+> the user domain is a paging domain for GVA->HPA mapping, which is common
+> across iommufd, vfio, and vdpa.
 
-Sincerely
-TonyWWang-oc
+do you mean user_domain only includes paging domain?
 
->> I do think that an NMI in user space should be considered mostly just
->> a normal exception. From a kernel perspective, the NMI'ness just
->> doesn't matter.
-> 
-> That's correct. I don't want to change that at all especially not for
-> recoverable MCEs.
-> 
->> That said, I find your suggestion of making 'panic()' just basically
->> act as an NMI context intriguing. And cleaner than the
->> atomic_read(&panic_cpu) thing.
 >>
->> Are there any other situations than this odd HPET thing where that
->> would change semantics?
+>>> + */
+>>> +struct iommu_domain *iommu_user_domain_alloc(struct device *dev, u32 
+>>> flags)
+>>> +{
+>>> +    struct iommu_domain *domain;
+>>> +    const struct iommu_ops *ops;
+>>> +
+>>> +    if (!dev_has_iommu(dev))
+>>> +        return ERR_PTR(-ENODEV);
+>>> +
+>>> +    ops = dev_iommu_ops(dev);
+>>> +    if (ops->domain_alloc_user) {
+>>> +        domain = ops->domain_alloc_user(dev, flags, NULL, NULL);
+>>> +        if (IS_ERR(domain))
+>>> +            return domain;
+>>> +
+>>> +        domain->type = IOMMU_DOMAIN_UNMANAGED;
+>>> +        domain->owner = ops;
+>>> +        domain->pgsize_bitmap = ops->pgsize_bitmap;
+>>
+>> this seems to break the iommufd selftest as the mock driver sets extra
+>> bits in the domain->pgsize_bitmap in allocation. Override it may fail
+>> something in the testing. you may need to check if domain->pgsize_bitmap
+>> is set or use &=.
+>>
+>> static struct iommu_domain *mock_domain_alloc_paging(struct device *dev)
+>> {
+>>      struct mock_dev *mdev = container_of(dev, struct mock_dev, dev);
+>>      struct mock_iommu_domain *mock;
+>>
+>>      mock = kzalloc(sizeof(*mock), GFP_KERNEL);
+>>      if (!mock)
+>>          return NULL;
+>>      mock->domain.geometry.aperture_start = MOCK_APERTURE_START;
+>>      mock->domain.geometry.aperture_end = MOCK_APERTURE_LAST;
+>>      mock->domain.pgsize_bitmap = MOCK_IO_PAGE_SIZE;
+>>      if (dev && mdev->flags & MOCK_FLAGS_DEVICE_HUGE_IOVA)
+>>          mock->domain.pgsize_bitmap |= MOCK_HUGE_PAGE_SIZE;
+>>      mock->domain.ops = mock_ops.default_domain_ops;
+>>      mock->domain.type = IOMMU_DOMAIN_UNMANAGED;
+>>      xa_init(&mock->pfns);
+>>      return &mock->domain;
+>> }
 > 
-> I need to go and stare at this some more.
+> You are right. I should follow the code in __iommu_domain_alloc()
 > 
-> Thanks,
+>          /*
+>           * If not already set, assume all sizes by default; the driver
+>           * may override this later
+>           */
+>          if (!domain->pgsize_bitmap)
+>                  domain->pgsize_bitmap = ops->pgsize_bitmap;
 > 
->          tglx
+> Does it work?
+
+I think so. This should work.
+
+-- 
+Regards,
+Yi Liu
 
