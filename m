@@ -1,136 +1,123 @@
-Return-Path: <linux-kernel+bounces-203415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689998FDACC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:43:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA8FC8FDACF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 034521F2303F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:43:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42CF42877D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08360168C21;
-	Wed,  5 Jun 2024 23:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A74F167DB8;
+	Wed,  5 Jun 2024 23:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="NAPHVF8w"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1JOkIQt8"
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35097167268;
-	Wed,  5 Jun 2024 23:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B0315F400
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 23:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717631010; cv=none; b=e4oH+JbOBEO1k1Jb46W4ikDYLxmk0EG3eB41/S54A+JAU5es7GkgKkENwhbi0rBepoRmYNnmv4Jz++VpGY3zhC4w9FNefndVAgKjAhST1gUtH0xTe1BVplXd0GGvhwfHyI2dhT/wOYQ3gJ1iAthOr/tMMzBH/jXspfJZmnaJ4Qc=
+	t=1717631096; cv=none; b=TlPz1p139s6y74gdpKcwp1SFlWPVeD6g+JMA9tnOaGT1q6Lf9MWaDZS5hP8ht15U0DUJefEQ8FGcY45lupxLPaltx1TK/RbfLCprWRiNg03zCFO9sQjeb5CepQLI+ZU9yBzMKdzwUSJdVr0rbg8vbiogIytkU8wfO2e+0Lq7lsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717631010; c=relaxed/simple;
-	bh=iK3LAb+wliolnG3rKsU2JLIVpkEh3hwHDV0sMObCrZQ=;
+	s=arc-20240116; t=1717631096; c=relaxed/simple;
+	bh=7OjL+3GEtdjxh562vgCkkyQ+/dP20USij1K8LM2y+JQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qQgxASMRsFWd6zsvYw8DXgpHhhGyH//lkGt7vgnVEq5aoqvOlSHXbN2pDxnvGo/LVOsVweRFmgkydi/4pDu+mfKKzwH8t2os0g5HDpw+gu8jhCQ2JElph/oLn14HmPiQr1pSGHMbLutwroPWzmkUJYhM+fwgqpaksxgeQyWVUgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=NAPHVF8w; arc=none smtp.client-ip=156.67.10.101
+	 Content-Type:Content-Disposition:In-Reply-To; b=EiD9c5kJzBPqa0DJL02QmEFtW3POGOyJLP9TigL2OB0v3t/JjUN17XlJbaDvTqfDuEWbXF0wvpkIljD0HoKZl3o6a6quG7XYeeHAIl+vOH/PvcLLTrhJCjQajlPrMjX6HR//d+KNQso+of5+DqwskZkULwnW7joCKM902Bf6bLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=1JOkIQt8; arc=none smtp.client-ip=156.67.10.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=u2cpct7+XFJzG7wX3keUvQVf0CUO4FB1mefATz3+4Jw=; b=NAPHVF8wRn7aVlrTHb60+BQh3v
-	qp7CjSe3+zo1HV6qf8fWIjxPzGBsRU8KJzte+rHlB4+9yLfPT+Yj72wJXTItgfwJqHb9qUI8wkA6P
-	K6WQpQwKHLlOJjJcCVvkVPJqmh6pdoSwhOrFvoOM4rY9nOlRlhR/i1yyEkx27PxdM+go=;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=Ff7wJvQnINbudpdFG654dwQXX6KDWHFegXGS0vKRZZ0=; b=1J
+	OkIQt8aC1OFXD59PB2S36fjva8jd2QGMY9kPjaOtz0OzshDPg+KLp7PlY2N3NpMOquBD8UXsQkPdK
+	8RopAp4ljfY6l/83v6QYBFEEDLuBa6q9zd+ye0XEYLVAptuyETxmtuP0QnIv0dzw7jYZ03/jAHvOU
+	8DgC1Va0y86PDgE=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
 	(envelope-from <andrew@lunn.ch>)
-	id 1sF0HX-00GxVp-0T; Thu, 06 Jun 2024 01:43:03 +0200
-Date: Thu, 6 Jun 2024 01:43:02 +0200
+	id 1sF0JD-00GxWu-FD; Thu, 06 Jun 2024 01:44:47 +0200
+Date: Thu, 6 Jun 2024 01:44:47 +0200
 From: Andrew Lunn <andrew@lunn.ch>
-To: Selvamani Rajagopal <Selvamani.Rajagopal@onsemi.com>
-Cc: "Parthiban.Veerasooran@microchip.com" <Parthiban.Veerasooran@microchip.com>,
-	Piergiorgio Beruto <Pier.Beruto@onsemi.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"horms@kernel.org" <horms@kernel.org>,
-	"saeedm@nvidia.com" <saeedm@nvidia.com>,
-	"anthony.l.nguyen@intel.com" <anthony.l.nguyen@intel.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"Horatiu.Vultur@microchip.com" <Horatiu.Vultur@microchip.com>,
-	"ruanjinjie@huawei.com" <ruanjinjie@huawei.com>,
-	"Steen.Hegelund@microchip.com" <Steen.Hegelund@microchip.com>,
-	"vladimir.oltean@nxp.com" <vladimir.oltean@nxp.com>,
-	"UNGLinuxDriver@microchip.com" <UNGLinuxDriver@microchip.com>,
-	"Thorsten.Kummermehr@microchip.com" <Thorsten.Kummermehr@microchip.com>,
-	"Nicolas.Ferre@microchip.com" <Nicolas.Ferre@microchip.com>,
-	"benjamin.bigler@bernformulastudent.ch" <benjamin.bigler@bernformulastudent.ch>,
-	Viliam Vozar <Viliam.Vozar@onsemi.com>,
-	Arndt Schuebel <Arndt.Schuebel@onsemi.com>
-Subject: Re: [PATCH net-next v4 00/12] Add support for OPEN Alliance
- 10BASE-T1x MACPHY Serial Interface
-Message-ID: <732ce616-9ddc-4564-ab1f-ac7bbc591292@lunn.ch>
-References: <BYAPR02MB5958A4D667D13071E023B18F83F52@BYAPR02MB5958.namprd02.prod.outlook.com>
- <6e4c8336-2783-45dd-b907-6b31cf0dae6c@lunn.ch>
- <BY5PR02MB6786619C0A0FCB2BEDC2F90D9DF52@BY5PR02MB6786.namprd02.prod.outlook.com>
- <0581b64a-dd7a-43d7-83f7-657ae93cefe5@lunn.ch>
- <BY5PR02MB6786FC4808B2947CA03977429DF32@BY5PR02MB6786.namprd02.prod.outlook.com>
- <39a62649-813a-426c-a2a6-4991e66de36e@microchip.com>
- <585d7709-bcee-4a0e-9879-612bf798ed45@lunn.ch>
- <BY5PR02MB6786649AEE8D66E4472BB9679DFC2@BY5PR02MB6786.namprd02.prod.outlook.com>
- <cbe5043b-5bb5-4b9f-ac09-5c767ceced36@microchip.com>
- <BYAPR02MB5958BD922DAE2D31F18241B283F92@BYAPR02MB5958.namprd02.prod.outlook.com>
+To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
+Cc: Benjamin Schneider <bschnei@gmail.com>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Benjamin Schneider <ben@bens.haus>
+Subject: Re: [PATCH] cpufreq: enable 1200Mhz clock speed for armada-37xx
+Message-ID: <dce98e50-6b50-4d4e-abe2-8419a675d25e@lunn.ch>
+References: <20240603012804.122215-1-ben@bens.haus>
+ <20240603012804.122215-2-ben@bens.haus>
+ <20240605194422.klxtxgyljrrllkzy@pali>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <BYAPR02MB5958BD922DAE2D31F18241B283F92@BYAPR02MB5958.namprd02.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240605194422.klxtxgyljrrllkzy@pali>
 
-
-On Wed, Jun 05, 2024 at 09:40:12PM +0000, Selvamani Rajagopal wrote:
-> Parthiban/Andrew,
+On Wed, Jun 05, 2024 at 09:44:22PM +0200, Pali Rohár wrote:
+> On Sunday 02 June 2024 18:26:38 Benjamin Schneider wrote:
+> > This frequency was disabled because of unresolved stability problems.
+> > However, based on several months of testing, the source of the
+> > stability problems seems to be the bootloader, not the kernel.
+> > Marvell has recently merged changes to their bootloader source that
+> > addresses the stability issues when frequency scaling is enabled at
+> > all frequencies including 1.2Ghz.
+> > 
+> > Signed-off-by: Benjamin Schneider <ben@bens.haus>
+> > ---
+> >  drivers/cpufreq/armada-37xx-cpufreq.c | 6 +-----
+> >  1 file changed, 1 insertion(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/cpufreq/armada-37xx-cpufreq.c b/drivers/cpufreq/armada-37xx-cpufreq.c
+> > index bea41ccab..f28a4435f 100644
+> > --- a/drivers/cpufreq/armada-37xx-cpufreq.c
+> > +++ b/drivers/cpufreq/armada-37xx-cpufreq.c
+> > @@ -102,11 +102,7 @@ struct armada_37xx_dvfs {
+> >  };
+> >  
+> >  static struct armada_37xx_dvfs armada_37xx_dvfs[] = {
+> > -	/*
+> > -	 * The cpufreq scaling for 1.2 GHz variant of the SOC is currently
+> > -	 * unstable because we do not know how to configure it properly.
+> > -	 */
+> > -	/* {.cpu_freq_max = 1200*1000*1000, .divider = {1, 2, 4, 6} }, */
+> > +	{.cpu_freq_max = 1200*1000*1000, .divider = {1, 2, 4, 6} },
+> >  	{.cpu_freq_max = 1000*1000*1000, .divider = {1, 2, 4, 5} },
+> >  	{.cpu_freq_max = 800*1000*1000,  .divider = {1, 2, 3, 4} },
+> >  	{.cpu_freq_max = 600*1000*1000,  .divider = {2, 4, 5, 6} },
+> > -- 
+> > 2.45.1
 > 
-> Couple of requests / suggestions after completing the integration of our drivers to the current framework.
-
-Please configure your email client to wrap lines at about 78
-characters.
-
-
+> As without the updated firmware on 1.2 GHz variant of the SoC is kernel
+> already crashing, even with commented line for .cpu_freq_max = 1200,
+> this change makes sense.
 > 
-> 1) Can we move memory map selector definitions (OA_TC6_PHY_C45_PCS_MMS2 and other 4 definitions) to the header file
->      include/linux/oa_tc6.h?
->      Also, if possible, could we add the MMS0, MMS1?. Our driver is using them. Of course, we could add it when we submit our driver.
+> There is no reason to have 1.2 GHz line disabled as it does not solve
+> any issue (as was originally thought) and just prevent people with
+> updated firmware to use non-performance governor on that SoC.
+> (When cpufreq driver is not loaded then CPU frequency of the SoC is
+> locked at the max speed, which has observed behavior same as performance
+> cpufreq governor).
+> 
+> So, go ahead with this change with my
+> 
+> Reviewed-by: Pali Rohár <pali@kernel.org>
 
-Interesting. So you have vendor registers outside of MMS 10-15?
+I defer to your knowledge in this matter.
 
-Or do you need to access standard registers? I would prefer to see
-your use cases before deciding this. If you want to access standard
-registers, you are probably doing stuff other vendors also want to do,
-so we should add a helper in the framework.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-2) If it not too late to ask, Is it possible to move interrupt
-> handler to vendor's code?
-
-I would say no, not at the moment.
-
-What we can do in the future is allow a driver to register a function
-to handle the vendor interrupts, leaving the framework to handle the
-standard interrupts, and chain into the specific driver vendor
-interrupt handler when a vendor interrupt it indicated.
-
-> This way, it will provide vendors' code an ability to deal with some
-> of the interrupts. For example, our code deals with PHYINT bit.
-
-Please explain what you are doing here? What are you doing which the
-framework does not cover.
-
-	Andrew
+    Andrew
 
