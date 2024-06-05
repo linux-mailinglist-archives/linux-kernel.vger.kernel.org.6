@@ -1,135 +1,136 @@
-Return-Path: <linux-kernel+bounces-203043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 475398FD581
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:13:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CB358FD583
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B55F5B290ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:13:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBA7C1F26F16
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4144FD53F;
-	Wed,  5 Jun 2024 18:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403902E3FE;
+	Wed,  5 Jun 2024 18:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iL60tYX4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EI/h+pc/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C5118044
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 18:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E49F9CD;
+	Wed,  5 Jun 2024 18:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717611072; cv=none; b=U4ADeiYzMA2qmrALEoGOJOWYEi4Eq6VJ2gYkLN/yjO0/Vl7WdHuRGb4D/uOS+ODJ6gf8aiQdLDm73scqONNeqZph+x6/WmCkDdUS+HYXzRkgTpqf/4UB/ZlxFTrJUkkj8eoGi5VNfZjBUAuqHY3Lmv7Rpa1dtNtIj1XRkKdlzck=
+	t=1717611103; cv=none; b=Flw6KJlXCvfSnZdX/pPnhEP1Xq+trLfzB6d3OVpke+yfUoZK/Qu6Pg7s3lBWMFAcPSSWdTuL8gyy5CNs3/DXGgqq/r7G6u3221XAZv42VgI2plVZuvhm4visGIeGQij7cAmhS1PrC8EdCTqrhgEvkS225hWE8vG5N1PRaOyH4Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717611072; c=relaxed/simple;
-	bh=ZYgyqUm/nPx2BcoBYH3Ly9CGOsPM59EsgLll8G6q804=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bmOqluRT2nj8DnB8CEGRr8aPfJNqbarWqmZTviVoy8/HoYuirJkT2p2gmcgtCHUp/lZs9HhYL582CnZRa/zNbW1urmj/MURUjtV+UI+kYUzwFCs45BYM21/bbmGXogLHiPxHWcoShDEqoxqZFg1B8seI6OsWt2pGc7NtpxRtaFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iL60tYX4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717611070;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IJzYdd6GwtBpGYX5QCieg7CT2gtuFBe/DdwRoosPgwI=;
-	b=iL60tYX45OHmnq6mn8PGTyv/ypo0HTSJMxiel2W/xdYoKHzMETFlByazsUiGmXPILKb1Ip
-	ieq7HTiVxJcbOHkb7cXgBJEzm5BnVvqg1nDrJFVmFjNEqZZyRn58mJ2e36IY5jYN5Vqs8F
-	WwKZJNh1oRE3Pw8RvbRIHaiPWwYDSWA=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-125-Bhm5uhWMMuCD5eDPnf9L7w-1; Wed, 05 Jun 2024 14:11:08 -0400
-X-MC-Unique: Bhm5uhWMMuCD5eDPnf9L7w-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6aecef9ae19so673626d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 11:11:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717611068; x=1718215868;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IJzYdd6GwtBpGYX5QCieg7CT2gtuFBe/DdwRoosPgwI=;
-        b=eHN9Kma3SJOrYmVVo544Qsl5lopgpclP30Z4A8s1GaeyWTPuN/ADWZJdUJQRLobjm/
-         CuWMAO9r9rIpYsKeB0t9ZwIe8ZVYP6QuPK5dzLhoo6tFZh3+nfnQqtcDR21M959ntnl2
-         uN6BTXI11LMKIj1kuJ7iF+vu/vbXQUAmL114u+rMaH3Q+clEBB0/X5thFNh5MgqRaWx6
-         3xWKf9DxAYyjHUtPOv5iK8fPH9lrQveBBz+TZYtVhykHA6B8Lk94hzUeeFQo5wJT6SlM
-         fbjsO917FHYN7ibZTX5kqUiW+1e0tceiKSCjCbS+429LOzkHDHtpEL8410q81l779IWo
-         9DOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMhhRbIaAUqfo9idBXk2+jyeG4KTBCkgVnWFdEYHcvzD+OFa9HKmNcekSsIguiS/YsRVVOObPamk9zCrvLogu3vQsydOIZl3wtB4pQ
-X-Gm-Message-State: AOJu0YwoDuI9BWqRWUTnQJI7L/+l0tVGXdLUYgKCFurkXAlBQlfYdMYi
-	5yEaHwsMmAe3nNqOW5JEGXgFqmX1LFcm3Qnzp1jW+F1HVP2Q9CIw3a2V60x5HTWd1XgF1pqYplo
-	uLr/9rlLzDMMkLclBLoShM02YIhpjDEiI9j2/SDajeibCL+IlaezterRzrL6Vsw==
-X-Received: by 2002:a05:620a:5a5d:b0:792:a2b8:862 with SMTP id af79cd13be357-79523d4679bmr342771085a.20.1717611067904;
-        Wed, 05 Jun 2024 11:11:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IECmW2I1q2W/pebRVG08SxND366xmrLoztW+aqiCLBV0JNGdS/R308E5OyFndB6o8hRO4wijw==
-X-Received: by 2002:a05:620a:5a5d:b0:792:a2b8:862 with SMTP id af79cd13be357-79523d4679bmr342767385a.20.1717611067329;
-        Wed, 05 Jun 2024 11:11:07 -0700 (PDT)
-Received: from x1 (c-98-219-206-88.hsd1.pa.comcast.net. [98.219.206.88])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43ff2595290sm61941841cf.89.2024.06.05.11.11.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 11:11:06 -0700 (PDT)
-Date: Wed, 5 Jun 2024 14:11:05 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] lib/Kconfig.debug: document panic= command line option
- for PANIC_TIMEOUT
-Message-ID: <ZmCqOS8xgSAY7bRa@x1>
-References: <20240605174736.778321-1-bmasney@redhat.com>
- <87wmn3nu3g.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1717611103; c=relaxed/simple;
+	bh=f3jHF3DQLeniMwdJnPArbXhm6vAFBvlZF/ASACcvDG0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oQS9MXJUNgtHypJYPMWXwXLmOH9ckgKzGtuzn39JJHttsV+3Z8edchS6MhBaenu+uoWzi5HnEyKJ4A5SumYuYtsbJKoI2ESACf2FX5rSfm3Dk7IntMhA8Kvh1tjh273x7eddv/foyrNH6iZpTt3nwJa7gPYc/80mBWub9XfkUYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EI/h+pc/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5909C2BD11;
+	Wed,  5 Jun 2024 18:11:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717611103;
+	bh=f3jHF3DQLeniMwdJnPArbXhm6vAFBvlZF/ASACcvDG0=;
+	h=From:Date:Subject:To:Cc:From;
+	b=EI/h+pc/Rg+KltPi3ot0C9varPE+iPv6iQZ69G28l0NCIk0brWw1+DIaW/trDWkul
+	 8/QL1nBwGhmKDoUz9d5kvlLmNO5/tkdUfrBgqrAux2x6nyam3RRzj+5L10VscqbHf9
+	 YphVm66TICtmys6XX5hTet+trQOQmPiuHO5n+1xtJJxp0oI8Yckln0LZ6GDbl1lfa7
+	 ScgoIEUtCM3cnsOzdY2+7oT2ORx/8C9o1AxayJZNEZlE3VtCwUePdWDyBA9FxZGfyU
+	 GLK07x7ujHGC7+ghIJYj07p9G/596GF5hxxEV4nJjVJPiX8Qdt04ippVtPUFMcWpFx
+	 I337GdXWH7bZg==
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 05 Jun 2024 19:11:11 +0100
+Subject: [PATCH v2] KVM: arm64: Fix confusion in documentation for pKVM SME
+ assert
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87wmn3nu3g.fsf@minerva.mail-host-address-is-not-set>
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240605-kvm-arm64-sme-assert-v2-1-54391b0032f4@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAD6qYGYC/4WNQQ7CIBBFr9LM2jEUAdGV9zBdEJm2pLaYoSGah
+ ruLvYDL95P3/gaJOFCCa7MBUw4pxKWCPDTwGN0yEAZfGaSQShihcMozOp6NwjQTulT9FbXzZ62
+ 9IusMVPXF1If3nr13lceQ1sif/SW3v/VPMLfYovYXe1LWC9Hb20S80PMYeYCulPIFvQoHiLkAA
+ AA=
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ James Morse <james.morse@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Fuad Tabba <tabba@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.14-dev-d4707
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2300; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=f3jHF3DQLeniMwdJnPArbXhm6vAFBvlZF/ASACcvDG0=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmYKpb0eDhF689/ZULNIMjIg3Jlmh0IS4Dk4yvWVWF
+ Sya7rKOJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZmCqWwAKCRAk1otyXVSH0FGTB/
+ 40EvVWN5zHhCC9uLx/WVX+6lq5NuBFkNPwNYx74uaUnVph5pxMAS3ZQ3/1iYTu8yQ6gAyKP1vasUUC
+ uYDf9VvvrBBaNOUBxtwtpYPL+p2ug0E6Xgb5ihWPYL9rEHeICLDiyD1c9kuDBoLfV1opkJ37khTevq
+ I5kszGj2C09Is8FqtEK4iHzwBXPM+5Fr8XCvH0N2nmBtFTZSSquHLFmJm7Z9jyvs5bMVaDMMyIaWZB
+ KiGJGES70vn19yJl5NzEZ0RGg6U+srohuNBiI5qHtL2vdrPZYrkhT9jz4Z4w3lZ9Wr2FCzmcT5BXW0
+ PJW5lfa9yUWANqSI+m3skccILb5EaJ
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Wed, Jun 05, 2024 at 08:05:23PM +0200, Javier Martinez Canillas wrote:
-> Brian Masney <bmasney@redhat.com> writes:
-> 
-> Hello Brian,
-> 
-> > PANIC_TIMEOUT can also be controlled with the panic= kernel command line
-> > option, so let's reference it in the Kconfig help. This option is already
-> > documented in kernel-parameters.txt.
-> >
-> > Signed-off-by: Brian Masney <bmasney@redhat.com>
-> > ---
-> >  lib/Kconfig.debug | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> > index 59b6765d86b8..a6eb7425b888 100644
-> > --- a/lib/Kconfig.debug
-> > +++ b/lib/Kconfig.debug
-> > @@ -1043,7 +1043,8 @@ config PANIC_TIMEOUT
-> >  	  Set the timeout value (in seconds) until a reboot occurs when
-> >  	  the kernel panics. If n = 0, then we wait forever. A timeout
-> >  	  value n > 0 will wait n seconds before rebooting, while a timeout
-> > -	  value n < 0 will reboot immediately.
-> > +	  value n < 0 will reboot immediately. The kernel command line
-> > +	  option panic= may be used to override this option.
-> >  
-> 
-> Thanks for adding this, I wasn't aware of that panic= cmdline before.
-> 
-> Maybe it could also be mentioned that the timeout can be overriden by
-> user-space using the /proc/sys/kernel/panic sysfs entry too ?
-> 
-> Regardless, the patch looks good to me.
-> 
-> Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+As raised in the review comments for the original patch the assert and
+comment added in afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are
+disabled in protected mode") are bogus. The comments says that we check
+that we do not have SME enabled for a pKVM guest but the assert actually
+checks to see if the host has anything set in SVCR which is unrelated to
+the guest features or state, regardless of if those guests are protected
+or not. This check is also made in the hypervisor, it will refuse to run
+a guest if the check fails, so it appears that the assert here is
+intended to improve diagnostics.
 
-I can add that. I'll wait a few days send a v2 to see if there's any
-other feedback.
+Update the comment to reflect the check in the code, and to clarify that
+we do actually enforce this in the hypervisor. While we're here also
+update to use a WARN_ON_ONCE() to avoid log spam if this triggers.
 
-Brian
+Fixes: afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are disabled in protected mode")
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v2:
+- Commit message tweaks.
+- Change the assert to WARN_ON_ONCE().
+- Link to v1: https://lore.kernel.org/r/20240604-kvm-arm64-sme-assert-v1-1-5d98348d00f8@kernel.org
+---
+ arch/arm64/kvm/fpsimd.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm64/kvm/fpsimd.c b/arch/arm64/kvm/fpsimd.c
+index 521b32868d0d..820769567080 100644
+--- a/arch/arm64/kvm/fpsimd.c
++++ b/arch/arm64/kvm/fpsimd.c
+@@ -92,11 +92,14 @@ void kvm_arch_vcpu_load_fp(struct kvm_vcpu *vcpu)
+ 	}
+ 
+ 	/*
+-	 * If normal guests gain SME support, maintain this behavior for pKVM
+-	 * guests, which don't support SME.
++	 * The pKVM hypervisor does not yet understand how to save or
++	 * restore SME state for the host so double check that if we
++	 * are running with pKVM we have disabled SME.  The hypervisor
++	 * enforces this when the guest is run, this check is for
++	 * clearer diagnostics.
+ 	 */
+-	WARN_ON(is_protected_kvm_enabled() && system_supports_sme() &&
+-		read_sysreg_s(SYS_SVCR));
++	WARN_ON_ONCE(is_protected_kvm_enabled() && system_supports_sme() &&
++		     read_sysreg_s(SYS_SVCR));
+ }
+ 
+ /*
+
+---
+base-commit: afb91f5f8ad7af172d993a34fde1947892408f53
+change-id: 20240604-kvm-arm64-sme-assert-5ad755d4e8a6
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
 
 
