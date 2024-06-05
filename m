@@ -1,92 +1,91 @@
-Return-Path: <linux-kernel+bounces-203422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6048B8FDADF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:52:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7462A8FDAE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9D04284007
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:52:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D280C1F24916
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E988169AE9;
-	Wed,  5 Jun 2024 23:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A806C16C423;
+	Wed,  5 Jun 2024 23:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="IbaCDoD/";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="N8LOSN+f"
-Received: from wfhigh5-smtp.messagingengine.com (wfhigh5-smtp.messagingengine.com [64.147.123.156])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="GCm0nEee";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WQxoqwk5"
+Received: from wfout2-smtp.messagingengine.com (wfout2-smtp.messagingengine.com [64.147.123.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5FFB1607B9
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 23:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14C1168C21
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 23:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717631525; cv=none; b=iSOxgHD6GhBBzl4M7pyLXE1rvaAyumt5otbwVA9l6VKSGkXNZ2u/w6T+TNntDgK2pwUQJDgoxlnaFIH7DBupuMwSlXgwBQcEEcXhcg7goIaCZnYxm3hOMfwPF8mKAlzeV05sv6KN1MpQ27e2fYcnaBRRBLPRkTlNOgxJXqht9Fw=
+	t=1717631527; cv=none; b=COOfVfDBb26tfCrrUuoqaRy3+U7MfTbd+h1qE+LYxvRLGeZehGwi+w6F2Btr5hdU3mtEhOtQUB4lLGtMH0JVqkkjVv+Yfa8Q/nBbEi57+vAQWqNoXqBJOPTmWd6v9mNGUFsN6xPH1foip0O4bzrjEfNn2qPfao/1AvOtccBKnho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717631525; c=relaxed/simple;
-	bh=j+hFn2QjRtNbQi2JXNDC2xNSexaHta7Qh5NFU0AsFDY=;
+	s=arc-20240116; t=1717631527; c=relaxed/simple;
+	bh=9QOTyVMAdy8uCsXMMw3kF6ZJlcRvN7TSTx4DhNKqy1k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CvmDn0UwurClvysttSdCR9Vycs1xpU61xIdjKOMbbAhoisv48hblIuYEUvTiarumgbyJrIy9uo9JG5P/i+5I6mJ9GaolYn1pYkSQ1Hdw9WMk6pSx2WwlMrQDw+/LMuHuiUKYie/sLsCHozwUpterEvnAiyuY8BWeTVZZt5oCNO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=IbaCDoD/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=N8LOSN+f; arc=none smtp.client-ip=64.147.123.156
+	 MIME-Version; b=r3e5u6N0nDWwlyvW9lOcuM2j9lcyiQmaAHwixQf9znLqeP7cwu0AoOuya/YIDTphvSVH2kfX2jeF1NsosZrf1UwK8eVVQqk04d/pq+ynregGlNtwJZyc8pk5Gf1e0XenS40HpmWVgWJigrskBQIquK7XYrWgHOroUJDC7hgj+ZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=GCm0nEee; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WQxoqwk5; arc=none smtp.client-ip=64.147.123.145
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.west.internal (Postfix) with ESMTP id D2EE11800113;
-	Wed,  5 Jun 2024 19:52:02 -0400 (EDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfout.west.internal (Postfix) with ESMTP id DCA641C0005B;
+	Wed,  5 Jun 2024 19:52:04 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Wed, 05 Jun 2024 19:52:03 -0400
+  by compute4.internal (MEProxy); Wed, 05 Jun 2024 19:52:05 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1717631522; x=
-	1717717922; bh=RyBiXfJ2B/10rFRCmtbmj2xM5yya0ZOnplKlH9vtagY=; b=I
-	baCDoD/Tob1RlvGLAY4nbRB4goGZSe9pGPX4FIUH+bAbbHGf0B77XUZ/T1tsUvSP
-	fsnLWwsXz0dAutl3oP71JU4sbjf7mPRnvMMwg8RffR6483aL1kXJ3FgNsFDu3LQl
-	MiDnbvW2MErfUhqXXqTmPyH/iEPQWgCxdfx0nuXgNAKFMk0hyAmT8qMKYLoyPo8P
-	pNDBhK9/Of4GWRPPv0c62+oR5MRoaeQCyqHOgDJ4O3gtuxD6+hE5iXkTZqOecrdE
-	hUnqYFxvcmTy39DH1b7weGakUNwZsq7Y4A4qG4QsDtbf5x0WAQSugUm9QTH6el/7
-	afGERkWPcfMmhET6hfJCA==
+	:reply-to:subject:subject:to:to; s=fm1; t=1717631524; x=
+	1717717924; bh=1mJaF1de45yn5OE6CI3ft4NIkPoDExHyNENgh8KNRtk=; b=G
+	Cm0nEeeWOPVJJJarcYIdirZhBgmJOooYl5l++ptVObMeO+nG8NaFmhY0vNH0ocHA
+	Cjv5GEcNAXXQy4jID/B5kxNAc0DE9Z7axk8xgamfHjurv0kH/yAwTHiHeXc2GTcX
+	GHRqnXJ7B+L2Q0F4jdcv1J6rGEem45aUfINNH1leVkKB6hjVtmxVBeSwinUod23R
+	IfM/cP42W2E4Y07+2rJXLP04HMFZ8KfKBgTW9s5/Tu/RWOJcUl1JmRs8gtwYSQ/K
+	bwfrZjYuJKeqsW6GTkX1eUfcNnaP/dXlqYMZYbUER0zPRveacTDuXkjT5jNrYLKb
+	nJtXoQZZ9MfhLi46yw8uw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717631522; x=
-	1717717922; bh=RyBiXfJ2B/10rFRCmtbmj2xM5yya0ZOnplKlH9vtagY=; b=N
-	8LOSN+fV8lFXRvLfvp9P12GkZx/s3Km7TOR4S6CRHFR+Uq4XBGwUesZMv3vg4hav
-	Z7+RakzPbPL3glV7BBJGua6aJe//mV6OFktKLNNKNsuAAVeDUBBWD6bc80joZ6g/
-	oVGd6rpBz4U6ylvIvcjJaKrciLIGBsDes8dRK7mEEJdFdDS2FfBMLrj4UX/F88KR
-	Y2/KMq2fzvfYr9bn7vS1tF7R7KKoym7tb/fFFmlK0O36WHTc3uU+mv0406CfwRTr
-	j+AWNYlNi8JBVu8CGO79OAX56op3wy/OjH/rP4feJZ0xdgZX+okKz4Fk/t3QNOvi
-	YRYgnATeUGWuIwguU13UQ==
-X-ME-Sender: <xms:IvpgZn6FVDb948TvR1CRXpFQB_eA--wwrVLpnu16By8RyaPyQelfrg>
-    <xme:IvpgZs4mCq5A6-usZNRDEU7pbYd1FyqtgMBhlTrwwbXiUd7VL_kEmY85MfKaYAivt
-    5htwtSDNgUVwfsZX4g>
-X-ME-Received: <xmr:IvpgZufxd5pqdLVr_XTiiE980lb4ztMRZfzPzFFIrlrym5xucII4gNxS-LYO7Pfse94M8WcuNjlOrVvYzSDreDEVXQMVaHFKjW0J9YVTiPay6A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeljedgvdejucetufdoteggodetrfdotf
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717631524; x=
+	1717717924; bh=1mJaF1de45yn5OE6CI3ft4NIkPoDExHyNENgh8KNRtk=; b=W
+	Qxoqwk5y22n8p8hlDt4gEp3GsFNpNQNZxxqtZcCo9rmNeTQ7lfK0odLRAmrIZcr8
+	0CMZo7mJZ7eqXjrwqk2LF4gzKPkDe//O6IDoMRH8nwtRufhaNdXO26odTVoiZUyA
+	+NBy769xfHzpYnbJ0d7ig7AxVUKJKOm/RqZHwJDRX/oofFGqZv1Fol5GCShn9sYQ
+	apT5sdLeXK3NVYzQ3ILsqeFVxsko6YrjcjKDnTUh0+0uQk6VTHgkPT96on5DsZ9W
+	KImOaIJNaKzZkROXbmC16qyZqNzDXjO7EJJCN9ZiNgSPZRzgMEZ3od8/lvtC5Nyx
+	OtihRMZjy5mxGJAqdxQlQ==
+X-ME-Sender: <xms:JPpgZvWLC_0RVFjbyd6s5qBzS8JDgQhrETXCFLxRD_Epc-oqYK2AFQ>
+    <xme:JPpgZnnReuFCebseZZiiSvsOBnn2Q5lMSl8jUVUH-5LPNcbQBQ-eFUH0jBBr3dzGY
+    mTb1DfSAN7ELRGhjg0>
+X-ME-Received: <xmr:JPpgZrY-alrQIZtzjgiscpVg775RS3ET4PAdjm-JX55G5sabKXZGY35-nc0DW0vBdmIt8YROQZN2QmJYmlkSpn3yD4CWLeBuWwJzpATYXNqyLw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeljedgvdeiucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtke
     ertdertddtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghk
-    rghshhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeeugfevtd
-    efhfeffeeuudduhfekhffgveejfeeiiefftdethfduudevjeekveffleenucffohhmrghi
-    nhepthgvshhtrghnhihthhhinhhgrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhi
-    rdhjph
-X-ME-Proxy: <xmx:IvpgZoL1PiDEZ80W1um0FbXuP8RAlZYFpBAKt3XscX-71RJkyr8zPQ>
-    <xmx:IvpgZrIYfZfTLZH7uPdqPyehbKDZLFm0NkU1YcfOOnPWwamUsY7qfA>
-    <xmx:IvpgZhwMcoWp3kUuS4qzg0qZEaKhaODQYsClRgiFavfEAaWkU7IPkQ>
-    <xmx:IvpgZnLh3SyCMZbr0KGfR9QgNjSNSKprp7rfrSHUvml6JmyKLLKDXg>
-    <xmx:IvpgZiXK-xVWpfpYYL9S48Dc4XC_9CuiIgLYDRYD-1Z8_75SnHW-8MR5>
+    rghshhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpedvjefgje
+    euvdfguddukeelveetgfdtvefhtdfffeeigfevueetffeivdffkedvtdenucevlhhushht
+    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhise
+    hsrghkrghmohgttghhihdrjhhp
+X-ME-Proxy: <xmx:JPpgZqWjP9yh_T1m2RixB8J-m6HffDPA6mKm72RfpVUxPKhD-UP1_A>
+    <xmx:JPpgZpmvfiI8R_bjp8mwJG5SOmwBj5n8LMpc4Bu12erQ3JNGMUsQxw>
+    <xmx:JPpgZnfWppFsbQJRAw1l1O3QB-D8WmNb-c8f-1zJG2AujdTdO2KwOA>
+    <xmx:JPpgZjHMCUNoG0AFuMNLf-05EvTUHPZSehlndahGR0mwwZ0v0h216w>
+    <xmx:JPpgZuy2TEbM9-Yn_wU_U0UcKLU2lS471hCos_jAmoPoslPU_9L5Nw4G>
 Feedback-ID: ie8e14432:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 5 Jun 2024 19:52:01 -0400 (EDT)
+ 5 Jun 2024 19:52:03 -0400 (EDT)
 From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 To: linux1394-devel@lists.sourceforge.net
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 01/11] firewire: core: add enumerator of self ID sequences and its KUnit test
-Date: Thu,  6 Jun 2024 08:51:45 +0900
-Message-ID: <20240605235155.116468-2-o-takashi@sakamocchi.jp>
+Subject: [PATCH 02/11] firewire: core: add helper function to handle port status from self ID sequence and its KUnit test
+Date: Thu,  6 Jun 2024 08:51:46 +0900
+Message-ID: <20240605235155.116468-3-o-takashi@sakamocchi.jp>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240605235155.116468-1-o-takashi@sakamocchi.jp>
 References: <20240605235155.116468-1-o-takashi@sakamocchi.jp>
@@ -98,237 +97,164 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When the state of bus reset finishes, 1394 OHCI driver constructs self ID
-sequences, then it calls fw_core_handle_bus_reset() in core function. The
-core function enumerates the self ID sequences to build bus topology.
+The self ID sequence delivers the information about the state of port.
 
-This commit adds a structure and some helper functions for the enumeration,
-and adds a KUnit test suite to ensure its expected behaviour.
+This commit adds some enumerations to express the state of port, and
+some helper functions to handle the state. It adds a KUnit test for them,
+too.
 
 Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 ---
- drivers/firewire/.kunitconfig                 |  1 +
- drivers/firewire/Kconfig                      | 15 ++++
- drivers/firewire/Makefile                     |  1 +
- drivers/firewire/phy-packet-definitions.h     | 78 ++++++++++++++++++
- .../firewire/self-id-sequence-helper-test.c   | 79 +++++++++++++++++++
- 5 files changed, 174 insertions(+)
- create mode 100644 drivers/firewire/phy-packet-definitions.h
- create mode 100644 drivers/firewire/self-id-sequence-helper-test.c
+ drivers/firewire/phy-packet-definitions.h     | 43 +++++++++++
+ .../firewire/self-id-sequence-helper-test.c   | 73 +++++++++++++++++++
+ 2 files changed, 116 insertions(+)
 
-diff --git a/drivers/firewire/.kunitconfig b/drivers/firewire/.kunitconfig
-index 60d9e7c35417..74259204fcdd 100644
---- a/drivers/firewire/.kunitconfig
-+++ b/drivers/firewire/.kunitconfig
-@@ -4,3 +4,4 @@ CONFIG_FIREWIRE=y
- CONFIG_FIREWIRE_KUNIT_UAPI_TEST=y
- CONFIG_FIREWIRE_KUNIT_DEVICE_ATTRIBUTE_TEST=y
- CONFIG_FIREWIRE_KUNIT_PACKET_SERDES_TEST=y
-+CONFIG_FIREWIRE_KUNIT_SELF_ID_SEQUENCE_HELPER_TEST=y
-diff --git a/drivers/firewire/Kconfig b/drivers/firewire/Kconfig
-index 869598b20e3a..49ba692d17d8 100644
---- a/drivers/firewire/Kconfig
-+++ b/drivers/firewire/Kconfig
-@@ -66,6 +66,21 @@ config FIREWIRE_KUNIT_PACKET_SERDES_TEST
- 	  For more information on KUnit and unit tests in general, refer
- 	  to the KUnit documentation in Documentation/dev-tools/kunit/.
- 
-+config FIREWIRE_KUNIT_SELF_ID_SEQUENCE_HELPER_TEST
-+	tristate "KUnit tests for helpers of self ID sequence" if !KUNIT_ALL_TESTS
-+	depends on FIREWIRE && KUNIT
-+	default KUNIT_ALL_TESTS
-+	help
-+	  This builds the KUnit tests for helpers of self ID sequence.
-+
-+	  KUnit tests run during boot and output the results to the debug
-+	  log in TAP format (https://testanything.org/). Only useful for
-+	  kernel devs running KUnit test harness and are not for inclusion
-+	  into a production build.
-+
-+	  For more information on KUnit and unit tests in general, refer
-+	  to the KUnit documentation in Documentation/dev-tools/kunit/.
-+
- config FIREWIRE_OHCI
- 	tristate "OHCI-1394 controllers"
- 	depends on PCI && FIREWIRE && MMU
-diff --git a/drivers/firewire/Makefile b/drivers/firewire/Makefile
-index 75c47d046925..21b975e0a387 100644
---- a/drivers/firewire/Makefile
-+++ b/drivers/firewire/Makefile
-@@ -18,3 +18,4 @@ obj-$(CONFIG_PROVIDE_OHCI1394_DMA_INIT) += init_ohci1394_dma.o
- 
- obj-$(CONFIG_FIREWIRE_KUNIT_UAPI_TEST) += uapi-test.o
- obj-$(CONFIG_FIREWIRE_KUNIT_PACKET_SERDES_TEST) += packet-serdes-test.o
-+obj-$(CONFIG_FIREWIRE_KUNIT_SELF_ID_SEQUENCE_HELPER_TEST) += self-id-sequence-helper-test.o
 diff --git a/drivers/firewire/phy-packet-definitions.h b/drivers/firewire/phy-packet-definitions.h
-new file mode 100644
-index 000000000000..479bb3431afb
---- /dev/null
+index 479bb3431afb..4ba8b18aa993 100644
+--- a/drivers/firewire/phy-packet-definitions.h
 +++ b/drivers/firewire/phy-packet-definitions.h
-@@ -0,0 +1,78 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+//
-+// phy-packet-definitions.h - The definitions of phy packet for IEEE 1394.
-+//
-+// Copyright (c) 2024 Takashi Sakamoto
+@@ -15,6 +15,8 @@
+ #define SELF_ID_EXTENDED_SEQUENCE_MASK			0x00700000
+ #define SELF_ID_EXTENDED_SEQUENCE_SHIFT			20
+ 
++#define SELF_ID_PORT_STATUS_MASK			0x3
 +
-+#ifndef _FIREWIRE_PHY_PACKET_DEFINITIONS_H
-+#define _FIREWIRE_PHY_PACKET_DEFINITIONS_H
-+
-+#define SELF_ID_EXTENDED_MASK				0x00800000
-+#define SELF_ID_EXTENDED_SHIFT				23
-+#define SELF_ID_MORE_PACKETS_MASK			0x00000001
-+#define SELF_ID_MORE_PACKETS_SHIFT			0
-+
-+#define SELF_ID_EXTENDED_SEQUENCE_MASK			0x00700000
-+#define SELF_ID_EXTENDED_SEQUENCE_SHIFT			20
-+
-+#define SELF_ID_SEQUENCE_MAXIMUM_QUADLET_COUNT		4
-+
-+static inline bool phy_packet_self_id_get_extended(u32 quadlet)
-+{
-+	return (quadlet & SELF_ID_EXTENDED_MASK) >> SELF_ID_EXTENDED_SHIFT;
-+}
-+
-+static inline bool phy_packet_self_id_get_more_packets(u32 quadlet)
-+{
-+	return (quadlet & SELF_ID_MORE_PACKETS_MASK) >> SELF_ID_MORE_PACKETS_SHIFT;
-+}
-+
-+static inline unsigned int phy_packet_self_id_extended_get_sequence(u32 quadlet)
-+{
-+	return (quadlet & SELF_ID_EXTENDED_SEQUENCE_MASK) >> SELF_ID_EXTENDED_SEQUENCE_SHIFT;
-+}
-+
-+struct self_id_sequence_enumerator {
-+	const u32 *cursor;
-+	unsigned int quadlet_count;
+ #define SELF_ID_SEQUENCE_MAXIMUM_QUADLET_COUNT		4
+ 
+ static inline bool phy_packet_self_id_get_extended(u32 quadlet)
+@@ -75,4 +77,45 @@ static inline const u32 *self_id_sequence_enumerator_next(
+ 	return self_id_sequence;
+ }
+ 
++enum phy_packet_self_id_port_status {
++	PHY_PACKET_SELF_ID_PORT_STATUS_NONE = 0,
++	PHY_PACKET_SELF_ID_PORT_STATUS_NCONN = 1,
++	PHY_PACKET_SELF_ID_PORT_STATUS_PARENT = 2,
++	PHY_PACKET_SELF_ID_PORT_STATUS_CHILD = 3,
 +};
 +
-+static inline const u32 *self_id_sequence_enumerator_next(
-+		struct self_id_sequence_enumerator *enumerator, unsigned int *quadlet_count)
++static inline unsigned int self_id_sequence_get_port_capacity(unsigned int quadlet_count)
 +{
-+	const u32 *self_id_sequence, *cursor;
-+	u32 quadlet;
-+	unsigned int count;
-+	unsigned int sequence;
++	return quadlet_count * 8 - 5;
++}
 +
-+	if (enumerator->cursor == NULL || enumerator->quadlet_count == 0)
-+		return ERR_PTR(-ENODATA);
-+	cursor = enumerator->cursor;
-+	count = 1;
++static inline enum phy_packet_self_id_port_status self_id_sequence_get_port_status(
++		const u32 *self_id_sequence, unsigned int quadlet_count, unsigned int port_index)
++{
++	unsigned int index, shift;
 +
-+	quadlet = *cursor;
-+	sequence = 0;
-+	while (phy_packet_self_id_get_more_packets(quadlet)) {
-+		if (count >= enumerator->quadlet_count ||
-+		    count >= SELF_ID_SEQUENCE_MAXIMUM_QUADLET_COUNT)
-+			return ERR_PTR(-EPROTO);
-+		++cursor;
-+		++count;
-+		quadlet = *cursor;
++	index = (port_index + 5) / 8;
++	shift = 16 - ((port_index + 5) % 8) * 2;
 +
-+		if (!phy_packet_self_id_get_extended(quadlet) ||
-+		    sequence != phy_packet_self_id_extended_get_sequence(quadlet))
-+			return ERR_PTR(-EPROTO);
-+		++sequence;
++	if (index < quadlet_count && index < SELF_ID_SEQUENCE_MAXIMUM_QUADLET_COUNT)
++		return (self_id_sequence[index] >> shift) & SELF_ID_PORT_STATUS_MASK;
++
++	return PHY_PACKET_SELF_ID_PORT_STATUS_NONE;
++}
++
++static inline void self_id_sequence_set_port_status(u32 *self_id_sequence, unsigned int quadlet_count,
++						    unsigned int port_index,
++						    enum phy_packet_self_id_port_status status)
++{
++	unsigned int index, shift;
++
++	index = (port_index + 5) / 8;
++	shift = 16 - ((port_index + 5) % 8) * 2;
++
++	if (index < quadlet_count) {
++		self_id_sequence[index] &= ~(SELF_ID_PORT_STATUS_MASK << shift);
++		self_id_sequence[index] |= status << shift;
++	}
++}
++
+ #endif // _FIREWIRE_PHY_PACKET_DEFINITIONS_H
+diff --git a/drivers/firewire/self-id-sequence-helper-test.c b/drivers/firewire/self-id-sequence-helper-test.c
+index e8a435e20241..eed7a2294e64 100644
+--- a/drivers/firewire/self-id-sequence-helper-test.c
++++ b/drivers/firewire/self-id-sequence-helper-test.c
+@@ -63,9 +63,82 @@ static void test_self_id_sequence_enumerator_invalid(struct kunit *test)
+ 	KUNIT_EXPECT_EQ(test, PTR_ERR(entry), -EPROTO);
+ }
+ 
++static void test_self_id_sequence_get_port_status(struct kunit *test)
++{
++	static const u32 expected[] = {
++		0x000000e5,
++		0x00839e79,
++		0x0091e79d,
++		0x00a279e4,
++	};
++	u32 quadlets [] = {
++		0x00000001,
++		0x00800001,
++		0x00900001,
++		0x00a00000,
++	};
++	enum phy_packet_self_id_port_status port_status[28];
++	unsigned int port_capacity;
++	unsigned int port_index;
++
++	KUNIT_ASSERT_EQ(test, ARRAY_SIZE(expected), ARRAY_SIZE(quadlets));
++
++	// With an extra port.
++	port_capacity = self_id_sequence_get_port_capacity(ARRAY_SIZE(expected)) + 1;
++	KUNIT_ASSERT_EQ(test, port_capacity, ARRAY_SIZE(port_status));
++
++	for (port_index = 0; port_index < port_capacity; ++port_index) {
++		port_status[port_index] =
++			self_id_sequence_get_port_status(expected, ARRAY_SIZE(expected), port_index);
++		self_id_sequence_set_port_status(quadlets, ARRAY_SIZE(quadlets), port_index,
++						 port_status[port_index]);
 +	}
 +
-+	*quadlet_count = count;
-+	self_id_sequence = enumerator->cursor;
++	// Self ID zero.
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_CHILD, port_status[0]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_PARENT, port_status[1]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_NCONN, port_status[2]);
 +
-+	enumerator->cursor += count;
-+	enumerator->quadlet_count -= count;
++	// Self ID one.
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_CHILD, port_status[3]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_PARENT, port_status[4]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_NCONN, port_status[5]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_CHILD, port_status[6]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_PARENT, port_status[7]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_NCONN, port_status[8]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_CHILD, port_status[9]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_PARENT, port_status[10]);
 +
-+	return self_id_sequence;
++	// Self ID two.
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_NCONN, port_status[11]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_CHILD, port_status[12]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_PARENT, port_status[13]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_NCONN, port_status[14]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_CHILD, port_status[15]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_PARENT, port_status[16]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_NCONN, port_status[17]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_CHILD, port_status[18]);
++
++	// Self ID three.
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_PARENT, port_status[19]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_NCONN, port_status[20]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_CHILD, port_status[21]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_PARENT, port_status[22]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_NCONN, port_status[23]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_CHILD, port_status[24]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_PARENT, port_status[25]);
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_NCONN, port_status[26]);
++
++	// Our of order.
++	KUNIT_EXPECT_EQ(test, PHY_PACKET_SELF_ID_PORT_STATUS_NONE, port_status[27]);
++
++	KUNIT_EXPECT_MEMEQ(test, quadlets, expected, sizeof(expected));
 +}
 +
-+#endif // _FIREWIRE_PHY_PACKET_DEFINITIONS_H
-diff --git a/drivers/firewire/self-id-sequence-helper-test.c b/drivers/firewire/self-id-sequence-helper-test.c
-new file mode 100644
-index 000000000000..e8a435e20241
---- /dev/null
-+++ b/drivers/firewire/self-id-sequence-helper-test.c
-@@ -0,0 +1,79 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+//
-+// self-id-sequence-helper-test.c - An application of Kunit to test helpers of self ID sequence.
-+//
-+// Copyright (c) 2024 Takashi Sakamoto
-+
-+#include <kunit/test.h>
-+
-+#include "phy-packet-definitions.h"
-+
-+static void test_self_id_sequence_enumerator_valid(struct kunit *test)
-+{
-+	static const u32 valid_sequences[] = {
-+		0x00000000,
-+		0x00000001, 0x00800000,
-+		0x00000001, 0x00800001, 0x00900000,
-+		0x00000000,
-+	};
-+	struct self_id_sequence_enumerator enumerator;
-+	const u32 *entry;
-+	unsigned int quadlet_count;
-+
-+	enumerator.cursor = valid_sequences;
-+	enumerator.quadlet_count = ARRAY_SIZE(valid_sequences);
-+
-+	entry = self_id_sequence_enumerator_next(&enumerator, &quadlet_count);
-+	KUNIT_EXPECT_PTR_EQ(test, entry, &valid_sequences[0]);
-+	KUNIT_EXPECT_EQ(test, quadlet_count, 1);
-+	KUNIT_EXPECT_EQ(test, enumerator.quadlet_count, 6);
-+
-+	entry = self_id_sequence_enumerator_next(&enumerator, &quadlet_count);
-+	KUNIT_EXPECT_PTR_EQ(test, entry, &valid_sequences[1]);
-+	KUNIT_EXPECT_EQ(test, quadlet_count, 2);
-+	KUNIT_EXPECT_EQ(test, enumerator.quadlet_count, 4);
-+
-+	entry = self_id_sequence_enumerator_next(&enumerator, &quadlet_count);
-+	KUNIT_EXPECT_PTR_EQ(test, entry, &valid_sequences[3]);
-+	KUNIT_EXPECT_EQ(test, quadlet_count, 3);
-+	KUNIT_EXPECT_EQ(test, enumerator.quadlet_count, 1);
-+
-+	entry = self_id_sequence_enumerator_next(&enumerator, &quadlet_count);
-+	KUNIT_EXPECT_PTR_EQ(test, entry, &valid_sequences[6]);
-+	KUNIT_EXPECT_EQ(test, quadlet_count, 1);
-+	KUNIT_EXPECT_EQ(test, enumerator.quadlet_count, 0);
-+
-+	entry = self_id_sequence_enumerator_next(&enumerator, &quadlet_count);
-+	KUNIT_EXPECT_EQ(test, PTR_ERR(entry), -ENODATA);
-+}
-+
-+static void test_self_id_sequence_enumerator_invalid(struct kunit *test)
-+{
-+	static const u32 invalid_sequences[] = {
-+		0x00000001,
-+	};
-+	struct self_id_sequence_enumerator enumerator;
-+	const u32 *entry;
-+	unsigned int count;
-+
-+	enumerator.cursor = invalid_sequences;
-+	enumerator.quadlet_count = ARRAY_SIZE(invalid_sequences);
-+
-+	entry = self_id_sequence_enumerator_next(&enumerator, &count);
-+	KUNIT_EXPECT_EQ(test, PTR_ERR(entry), -EPROTO);
-+}
-+
-+static struct kunit_case self_id_sequence_helper_test_cases[] = {
-+	KUNIT_CASE(test_self_id_sequence_enumerator_valid),
-+	KUNIT_CASE(test_self_id_sequence_enumerator_invalid),
-+	{}
-+};
-+
-+static struct kunit_suite self_id_sequence_helper_test_suite = {
-+	.name = "self-id-sequence-helper",
-+	.test_cases = self_id_sequence_helper_test_cases,
-+};
-+kunit_test_suite(self_id_sequence_helper_test_suite);
-+
-+MODULE_DESCRIPTION("Unit test suite for helpers of self ID sequence");
-+MODULE_LICENSE("GPL");
+ static struct kunit_case self_id_sequence_helper_test_cases[] = {
+ 	KUNIT_CASE(test_self_id_sequence_enumerator_valid),
+ 	KUNIT_CASE(test_self_id_sequence_enumerator_invalid),
++	KUNIT_CASE(test_self_id_sequence_get_port_status),
+ 	{}
+ };
+ 
 -- 
 2.43.0
 
