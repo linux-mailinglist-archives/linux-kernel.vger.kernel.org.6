@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-203309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26C598FD938
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:38:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F08A28FD93A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:39:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5CE8B27806
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:38:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F7F32865BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DAC73C28;
-	Wed,  5 Jun 2024 21:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0443615FA8F;
+	Wed,  5 Jun 2024 21:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vLRhpOph"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ym/0kS/g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD6B15FA8F;
-	Wed,  5 Jun 2024 21:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414821607B5;
+	Wed,  5 Jun 2024 21:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717623495; cv=none; b=GaTKPlg5z5weyip7tCpsEu74cxkUoVruvqnuPvKFpSJosT5uwNmcAk/t5C8QKvc3NlawSfyEnpb9vEt1qB9CezKt8Vdm3iw7eAGLvQ248bQ9btDRHHYYADN9T5nqrklxPcGxx7M9Mzd18LUSYTbj+oT2PTWQV+vl4YouBrK0AnE=
+	t=1717623498; cv=none; b=SzTRdD7zeDm4HjVVpCLN9I7sMi9vscv46ALfNLQgY2XUJ7wdzJ9IDMx94CdlW39fHObMJhddXcjkcCkreo01d6olELvhqvI/OZFNr8idUIKEROk5LoKPkAXIZc1Jx7CKu3CYSRUZWyqGZwPYaVaRdjxiaEZT7528CZPx1nwYdIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717623495; c=relaxed/simple;
-	bh=D+XNwiT5oc5Dm3t9kYZHsZnZ+hfVu8uRIo4dcxzvk7c=;
+	s=arc-20240116; t=1717623498; c=relaxed/simple;
+	bh=rBGGoS167kQ+sG4t9OWK0GLv2EHAn8ZIL2hNB3Zfo8g=;
 	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ne8B6f4D/YJX4iOaXotCOjfbp1cz9NLcGr1VPDTSOW0M0gGUzkxA72yZkGP4l/G5727ZQ+NgI+ZGmt/kYQfqFOfdrkiIdyY5zKe5hMXTHls8h9spTajiLkEsWRETXdUFMI7MtNWXgB9kphaaQHiwOB3btntUhXZ9XsS9VpFkNbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vLRhpOph; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34EC6C4AF1B;
-	Wed,  5 Jun 2024 21:38:12 +0000 (UTC)
+	 MIME-Version:Content-Type; b=bIXS65VB8UhMAt93r5e4JK7Oy2aTlXYoWqiNgFYbB8Xybt9o86+77VoiU5fdcAcoONvC9+MOLwrFXE8RFqvhwkKXa/U3/VtxWUKN2W9JGxSYUdohvHnOBRSPyedStDEuelySNRlo9FDmTzX5+HhHZc3MNGI5pt+t2cvzDafjCmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ym/0kS/g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 910FCC2BD11;
+	Wed,  5 Jun 2024 21:38:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717623495;
-	bh=D+XNwiT5oc5Dm3t9kYZHsZnZ+hfVu8uRIo4dcxzvk7c=;
+	s=k20201202; t=1717623497;
+	bh=rBGGoS167kQ+sG4t9OWK0GLv2EHAn8ZIL2hNB3Zfo8g=;
 	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=vLRhpOphNGmBaQmxfLFjNesmRJ8CdhImZQC71upgsbQ9PPymnKlCzrlqFjLGIkzxY
-	 FIV7raA/XCMVmU5o+l3I5StSQvgAOUajlN6bNfywQwvMrirXHu609WSmlsKD4wM/BT
-	 MMxuQifeVDY7YfTfT0t28C7KmuTc3dUblWm+pkhhAiYha2eipBYX4fP1gE+E7wLHHn
-	 24ed61T32aZ9YM92xUTb6Xs5bFpJb8Onne/DVujNek8MEgDREqJtKyKFKnDcTuUDoX
-	 fm9vUtzVjbH0I2hRysdQTdmMrwMCnIUZgzEyk4o8mxNZyxqi55LcyecAw2wXk+2mIn
-	 7k2nMmp+sQIaA==
+	b=Ym/0kS/gmUDwepf+MPu7TmGfL+gfk1cslEIHcCOPxGquusgYywBZeceI8N0cq+2Mr
+	 Bp2OHxBEB0DfManTr/xmqxg+O3RMUIbnx+x8dVcJwOjoZygT+DDG2n3KCyALbAmhzm
+	 ECvYk7vKumMzGAa6HRCkJvcMN2f4flILzH5nmdub+Z1EHtYPoEQgcsMcAoDmDiS0YO
+	 DWsdEDaWrQR3TpMB9zQg20t/ixv3pCEb2TeEMkFdRZBF44U2r0jnZzbMHkZ6BdhA/8
+	 cgmNQdD7BF+VQuvfovsFQQMA5CvmJgrWhwJZo2yO5aAfNoIavc49GaMF5XIXMxTWZa
+	 KD5bpxppYKR7A==
 From: Mark Brown <broonie@kernel.org>
-To: lgirdwood@gmail.com, robh+dt@kernel.org, 
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
- shengjiu.wang@gmail.com, linux-sound@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Xiubo.Lee@gmail.com, festevam@gmail.com, nicoleotsuka@gmail.com, 
- perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org, 
- linuxppc-dev@lists.ozlabs.org, Shengjiu Wang <shengjiu.wang@nxp.com>
-In-Reply-To: <1715656329-8061-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1715656329-8061-1-git-send-email-shengjiu.wang@nxp.com>
-Subject: Re: [PATCH v2 0/2] ASoC: fsl_xcvr: Support i.MX95 platform
-Message-Id: <171762349194.565712.7362032139063923896.b4-ty@kernel.org>
-Date: Wed, 05 Jun 2024 22:38:11 +0100
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240523124808.42923-1-krzysztof.kozlowski@linaro.org>
+References: <20240523124808.42923-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] ASoC: codecs: wcd938x: Drop no-op ADC2_BCS Disable
+ Switch
+Message-Id: <171762349632.565712.2646435326229785795.b4-ty@kernel.org>
+Date: Wed, 05 Jun 2024 22:38:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,18 +61,12 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-d4707
 
-On Tue, 14 May 2024 11:12:07 +0800, Shengjiu Wang wrote:
-> On i.MX95 wakeup domain, there is one instance of Audio XCVR
-> supporting SPDIF mode with a connection to the Audio XCVR physical
-> interface.
+On Thu, 23 May 2024 14:48:08 +0200, Krzysztof Kozlowski wrote:
+> The "ADC2_BCS Disable Switch" control does basically nothing: sets field
+> in driver's private data structure which is never read again to
+> configure hardware.  Drop the control as it has no effect.
 > 
-> changes in v2:
-> - Merge patch 1&2, 3&4 from v1 together.
-> - Add more comments in commit message
-> - Add constaint for clocks used on i.mx95
-> - Add 'select SND_SOC_FSL_UTILS' for compiling issue.
 > 
-> [...]
 
 Applied to
 
@@ -82,10 +74,8 @@ Applied to
 
 Thanks!
 
-[1/2] ASoC: dt-bindings: fsl,xcvr: Add compatible string for i.MX95
-      commit: fc1277335ffa0d180c76ddccf5fe27fc75674e67
-[2/2] ASoC: fsl_xcvr: Add support for i.MX95 platform
-      commit: f13b349e3c70320ef5a86edfc888a6feb612abb0
+[1/1] ASoC: codecs: wcd938x: Drop no-op ADC2_BCS Disable Switch
+      commit: d8e5fa784867c4cd400afecc43aec57c51c10dc7
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
