@@ -1,180 +1,168 @@
-Return-Path: <linux-kernel+bounces-201850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EDAD8FC43E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:15:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 409028FC441
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6454B25C08
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:15:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2B781F2269A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C7A18C340;
-	Wed,  5 Jun 2024 07:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324FE18C35E;
+	Wed,  5 Jun 2024 07:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r8LqxX8Q"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iJs0sVJ0"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE4213AD26
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 07:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CAE190490;
+	Wed,  5 Jun 2024 07:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717571713; cv=none; b=hpQFBUtlAVLN9IoKGEQsNtzFRNcai+HHzHk49sGb+Wz0MWkaEfLjM6VS5f9SN38Tz89R4NzMuiPl+1xInmB6jCbx+jqnDAQt08pRUP4d6Tzu8dXchhU0d8A3orW9cSKpcjP8V9GoGB5eyi5u8noKvUwc2a1Tp5iyHFX8QK6+3cQ=
+	t=1717571714; cv=none; b=ubf8pgyrvVbtJQ+OfQdSdJekIeEQs0QwRLR7qiR6mebQLSrGDty3/utU2psA9NpueT3LqC+xH5S9NdBz0kGSswpUrd2JzTqSlH5Cf84KEidWQZWN8wLwzkIl+OMNG+x6/amGLuVQ5b2y4KUBKAq0Gz0HbJU7bC9IZTJ57fEZIt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717571713; c=relaxed/simple;
-	bh=858OyPmM75H2D7QTuvWzLji7fKApckbz5DLDsL1HIyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A5OdzIpaAwmgPqlQBkq5ty0splweoj1YIq4HHmzkL/8EYjSJMlWflphByx6Mz1ShAAI9BO6HDHSSvW3HDKFgQWh/DReymey+KNkmluvYq5v+qjHA4ukBWKFdAJwTcrNUTkncf8vTVGrBpnFacMKRxmWLO974mapVOm+9usBj/5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r8LqxX8Q; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-35e5c6600f0so2743479f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 00:15:11 -0700 (PDT)
+	s=arc-20240116; t=1717571714; c=relaxed/simple;
+	bh=UwC2NvmMXo1nvJ7sYDl1XaOJLxwWFoTpX03WqyuJ8Lk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r0pWz7wzwb1J+v6b9gr5/E5CMhIrOdQRyusY94EDQYVU5OwS8AQWqZKFGZEgC6pH8bInSOrcOBiNOfV0wjp6qAQmjGdXTN9kD7intcOuMssxTnFal2gZ3HwzHxcLosPEup94IRuf4eSKiD1CnBJgwTfPPAFjur45ZmMx+KR+fSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iJs0sVJ0; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2eaafda3b90so38589301fa.0;
+        Wed, 05 Jun 2024 00:15:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717571710; x=1718176510; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=FMC0+4pQET5/c7lWcOuUFJhOgUx2a3ondaZTGx3PBJs=;
-        b=r8LqxX8Q+fxuBOhu7ZRc8A7IMCA7pQCmYpSVn7ZdtpPvJSHY9NNbv6rn1Y320F2G73
-         dA7Xp+LFO9tDfscodlkirNxkwSF+JuEwArdRyRxI4eTkG1BtsaYIOvpCJ0NINzyVhAml
-         D3jogn0v4IxsCVf35V7q8bk3ObAy8zWhPGas6brbTLhtNbnRgUKPKyuGnLUDn3QOx5ud
-         wuypeSruaKTZyq5slJsEa7ecO+YXNyWTYjtubywb0VsJfwhDMJTiG9vO9B3C9uHrx1hV
-         qp4L2rMk6DCozEr4yLF+1/TrQrzG7PLSCiwccckwlElvD/KiKHrHN5dHgCN3wk/+LF9K
-         sNYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717571710; x=1718176510;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1717571711; x=1718176511; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FMC0+4pQET5/c7lWcOuUFJhOgUx2a3ondaZTGx3PBJs=;
-        b=TksMRh7oFCNJPKvZglXF36KbVQdIiQvPXy3ZX9kTWQ1rbtdAXrGDqtm5HyNVQtuEdn
-         UsXFXxNsgZkbyDCQ1V9tQJoPv/J8SLypVtuXEwPMNJtFjpxibztvCcshYg/nmCCBcROL
-         TloWmeQg1/nAI2YtCaY19yeiOFQqfBmba4gUE+Lh4OPeS4vSfsPXSniVAtgzONUiiQ3t
-         OJ9GjaM5bIqDs4x+cg+cpW6eoJ4oKXxzRDPhNb0LloTPVmMvOwVm3wKwY2xb2zojMECe
-         ykiqFvrowvGZsdbbs52lB49bsYZnF7JPuDmiIIXiSjAMp3YprIUCUh5eNjIiIfbxS/Uo
-         8yMg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+1e3gf1BXcOFKoclw2qG97v6avbv5WNOpTOZL8h/3iVO4/3lqa0Y4OqlrwaOztsW5V6o6TvSXd9wH4sPblmVY1qh+2CtE6uxcoVQ6
-X-Gm-Message-State: AOJu0Ywdk63BufLSHl2kejl7MCMyA69YcYBxQrqvIJ5hwfgZ5DKy3KxI
-	5opmq+ts8cwPKfY+Ii8Lb0Q8W59PoGJJ/vWqZ/1ukggE4vZSclKLiOg8BTK2HQ8=
-X-Google-Smtp-Source: AGHT+IEqTyNmKpZaS0kck5QcTQjNceczLCf1Wu0f9iUbY6veNVMUlZNzwAXN5TETBlbKBRDObvbAPQ==
-X-Received: by 2002:adf:b195:0:b0:355:3dc:1f26 with SMTP id ffacd0b85a97d-35e85a35edcmr1160246f8f.37.1717571709821;
+        bh=KzWuhHATgvXynxY1bc2YJTiUpWzS/lVHAC/1FvnI+g0=;
+        b=iJs0sVJ022lgN0fF8S0+2yHHKnQsxMrfji4fg618Je7W8amLnw7KmsYoHFY6OUNWbm
+         43PwwfuXmmtDzxyqSH2Q0+YwCpMf3AfqjLGyk/z3yumr56styI4x925Mjn0RsYzID4C0
+         BbITJYkRmvTkzKiNkfJ+/VhE5VtrHpjGd6kgjeQZzAXw65fyEptW5XMDubxXeiDUU1ui
+         5ZqtxigZhHDiyWoFeYY0yHIxR/oCfJ0KGL3yx8VAq8ljxbUg37TJHIcF7U/cUai1JLLc
+         GGd4GqebTKK7PRmu922+3+chQfD1PTSVSFbjSGmrHxmJLLjcFIecmRZFxpLohW4vK/Fz
+         2fhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717571711; x=1718176511;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KzWuhHATgvXynxY1bc2YJTiUpWzS/lVHAC/1FvnI+g0=;
+        b=slIIYXucTOa3FWKaJIX1lnPPRwAyFDrq1KIqHkgakrhHCDODYEmZeW/OcCmXHJyc6n
+         Q5Lf2ydRKkpVAqHwB5WY2YcosQSP2ZT/56RqgmwBKWPg5EfDz4VWUPN0IfMeQtI37HRP
+         ssLhq9t44CggXAW0GCorbsyIEOXBskTZZ8/vyuvYja1d1W7Mp597vp/yuTBMC6q8I605
+         OigG7Lgims08WNYnArOrasuKW5bJ/zlU6jyHnoxKxTZfx/8sNW2n2tTd7VPBHSAFVVaJ
+         qf+d1Uy0559ztnegA8t7gJ7FVNen1QnqqX6+tLjFoF9JrXBQYp0MfOmdXsP1BLEHt+hW
+         STZw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2HyzAJUhDU8z/qHjIyzjD2ztjwkZC7EElIhhfzIG19o0Il8LSqXmwPMxRQpWGCK4qRYydsW/UX5j8NaHtkMjhUO8c8S6AgTKMa9Gwpg0ir5Z3LEr+TF33nzMX6pgNZGxgc6eazX6LpiAZ45qu8Q==
+X-Gm-Message-State: AOJu0YywAHWM+1eqb3EQMj647ESCtldnY+097Ix6nDfpS2hRnYbU66Zf
+	NBtdR4971MNDHTWobcuArBkpgR4KoVfAlS5BenWOz+e3dbuefhfp
+X-Google-Smtp-Source: AGHT+IGlBRC9qXybD9x/nDoFbJGpEgecRh/IyGjdJoiPKBMtj7h2rl0lqKvW4kl0WnhQN6cVNZg3BQ==
+X-Received: by 2002:ac2:4d9a:0:b0:52b:81de:1126 with SMTP id 2adb3069b0e04-52bab4f5e5bmr1031680e87.49.1717571710383;
+        Wed, 05 Jun 2024 00:15:10 -0700 (PDT)
+Received: from gmail.com (1F2EF2F4.nat.pool.telekom.hu. [31.46.242.244])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a5b1f9855sm6085125a12.70.2024.06.05.00.15.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 05 Jun 2024 00:15:09 -0700 (PDT)
-Received: from [192.168.2.24] ([110.93.11.116])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04cafb8sm13416666f8f.37.2024.06.05.00.15.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 00:15:09 -0700 (PDT)
-Message-ID: <1bc38042-7034-4937-a2e6-2dcfd8c2d609@linaro.org>
-Date: Wed, 5 Jun 2024 09:15:07 +0200
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date: Wed, 5 Jun 2024 09:15:08 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: Makefile.perf:1149: *** Missing bpftool input for generating
+ vmlinux.h. Stop.
+Message-ID: <ZmAQfJ9C5fFQdjQM@gmail.com>
+References: <ZjssGrj+abyC6mYP@gmail.com>
+ <CAP-5=fUvLiCDVDFFfJ78ng4T1FZ8j2N9Yt1sGTeGsupkbFEEug@mail.gmail.com>
+ <ZkG4LWr7w11wQ/PR@gmail.com>
+ <CAP-5=fVHrKcqwczoU1uMD4tP5DTVhfQ1T_hXnm_y5Ji3M6K_ag@mail.gmail.com>
+ <ZkJK3x3zQ9a4wp8E@gmail.com>
+ <CAP-5=fUh+GoqERAF-qf8zx4kwq2uzwR2Ugop5XOkPexYGAqF3A@mail.gmail.com>
+ <CAP-5=fWXDPfNqLz6DHYe9+dev_e6X5TcTe_xzOOz27yDkT7o7A@mail.gmail.com>
+ <CAM9d7ch5HTr+k+_GpbMrX0HUo5BZ11byh1xq0Two7B7RQACuNw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: defconfig: Enable TI LP873X PMIC
-To: Nathan Morrisson <nmorrisson@phytec.com>, catalin.marinas@arm.com,
- will@kernel.org, quic_bjorande@quicinc.com, geert+renesas@glider.be,
- konrad.dybcio@linaro.org, shawnguo@kernel.org, neil.armstrong@linaro.org,
- arnd@arndb.de, m.szyprowski@samsung.com, nfraprado@collabora.com,
- u-kumar1@ti.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- upstream@lists.phytec.de, w.egorov@phytec.de
-References: <20240604233836.3628063-1-nmorrisson@phytec.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240604233836.3628063-1-nmorrisson@phytec.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAM9d7ch5HTr+k+_GpbMrX0HUo5BZ11byh1xq0Two7B7RQACuNw@mail.gmail.com>
 
-On 05/06/2024 01:38, Nathan Morrisson wrote:
-> Enable the TI LP873X PMIC configs.
 
-Why? No user of this, sorry. Please explain in commit msg why this
-should be done, e.g. which upstream user needs it.
+* Namhyung Kim <namhyung@kernel.org> wrote:
 
+> Hi Ian and Ingo,
 > 
-> Signed-off-by: Nathan Morrisson <nmorrisson@phytec.com>
-> ---
->  arch/arm64/configs/defconfig | 2 ++
->  1 file changed, 2 insertions(+)
+> The failure happens when you don't have vmlinux.h or vmlinux with BTF.
 > 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 57a9abe78ee4..24ea62a8fdbf 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -745,6 +745,7 @@ CONFIG_MFD_SEC_CORE=y
->  CONFIG_MFD_SL28CPLD=y
->  CONFIG_RZ_MTU3=y
->  CONFIG_MFD_TI_AM335X_TSCADC=m
-> +CONFIG_MFD_TI_LP873X=y
+> ifeq ($(VMLINUX_H),)
+>   ifeq ($(VMLINUX_BTF),)
+>     $(error Missing bpftool input for generating vmlinux.h)
+>   endif
+> endif
+> 
+> VMLINUX_BTF can be empty if you didn't build a kernel or
+> it doesn't have a BTF section and the current kernel also
+> has no BTF.  This is totally ok.
+> 
+> But VMLINUX_H should be set to the minimal version in
+> the source tree (unless you overwrite it manually) when you
+> don't pass GEN_VMLINUX_H=1 (which requires VMLINUX_BTF
+> should not be empty).  The problem is that it's defined in
+> Makefile.config which is not included for `make clean`.
+> 
+> Can you please verify if the below patch fixes it?
+> 
+> Thanks,
+> Namhyung
+> 
+> ---8<---
+> 
+> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+> index 5c35c0d89306..e6d56b555369 100644
+> --- a/tools/perf/Makefile.perf
+> +++ b/tools/perf/Makefile.perf
+> @@ -214,6 +214,7 @@ NON_CONFIG_TARGETS := clean python-clean TAGS tags
+> cscope help
+> 
+>  ifdef MAKECMDGOALS
+>  ifeq ($(filter-out $(NON_CONFIG_TARGETS),$(MAKECMDGOALS)),)
+> +  VMLINUX_H=$(src-perf)/util/bpf_skel/vmlinux/vmlinux.h
+>    config := 0
+>  endif
+>  endif
 
-Why this cannot be m?
+Yeah, this appears to be doing the trick here - judging by a couple of 
+tries of interrupted builds:
 
->  CONFIG_MFD_TPS65219=y
->  CONFIG_MFD_TPS6594_I2C=m
->  CONFIG_MFD_ROHM_BD718XX=y
-> @@ -760,6 +761,7 @@ CONFIG_REGULATOR_FAN53555=y
->  CONFIG_REGULATOR_GPIO=y
->  CONFIG_REGULATOR_HI6421V530=y
->  CONFIG_REGULATOR_HI655X=y
-> +CONFIG_REGULATOR_LP873X=y
+   Tested-by: Ingo Molnar <mingo@kernel.org>
 
-Why this cannot be m?
+There's a new issue btw: see the 'invalid escape sequence' warnings below. 
+This is on a pretty stock Unbuntu 24.04 desktop.
 
->  CONFIG_REGULATOR_MAX77620=y
->  CONFIG_REGULATOR_MAX8973=y
->  CONFIG_REGULATOR_MAX20411=m
+Thanks,
 
-Best regards,
-Krzysztof
+	Ingo
+
+<unknown>:1: SyntaxWarning: invalid escape sequence '\S'
+  ASCIIDOC perf-config.xml
+<unknown>:1: SyntaxWarning: invalid escape sequence '\S'
+<unknown>:1: SyntaxWarning: invalid escape sequence '\S'
+<unknown>:1: SyntaxWarning: invalid escape sequence '\S'
+<unknown>:1: SyntaxWarning: invalid escape sequence '\S'
+  ASCIIDOC perf-daemon.xml
+<unknown>:1: SyntaxWarning: invalid escape sequence '\S'
+<unknown>:1: SyntaxWarning: invalid escape sequence '\S'
+  ASCIIDOC perf-data.xml
+  ASCIIDOC perf-diff.xml
 
 
