@@ -1,62 +1,42 @@
-Return-Path: <linux-kernel+bounces-202591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89F708FCE59
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:07:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB1BC8FCE62
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91B0128B950
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:07:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CC2C1F22BF9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D23A13791C;
-	Wed,  5 Jun 2024 12:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eU4JHSLT"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E021BC080;
+	Wed,  5 Jun 2024 12:22:45 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A84519AA41;
-	Wed,  5 Jun 2024 12:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6C619A2AC;
+	Wed,  5 Jun 2024 12:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717590141; cv=none; b=c8VIkmwNWtc8jv1kiumV1nx1cXVZkxYd/XheM79+GSHz7bpmrfRDst33zsgiCcPSXt60rfY65IJ/zSUtyR3Ka0bZ40bvRvyTJboPaLgumtSi6vUVoTZ3K/xyJzbFO7h2tZaAOH58xs1PitWaslwyhYqsQv7nfnkxAGU+BVVgpD4=
+	t=1717590165; cv=none; b=BNCLUxjGR/A3prG7S0KDCqG0vpg8k11KhsW77YrzjUjtS+4BvZGb/JAYBNOmHus2+nPuq5Rwk2TrC6hjlHrM8yUHLUmPzKPnAwEX/j1tbc4wbAE12LbKt0KsFh8bTSyZ2yAYyzVVTbbDJJSu5yoC33KchvQPRQrw7HVWUpA4eXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717590141; c=relaxed/simple;
-	bh=5PIqmk04EpxPfoDzSvogVN9pWORgaXhjn7g+gykLrxI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lLDo1edFLZPQM1ZJZXQPAfP4hmQCLDXugceoCE6x58PK1T4ibJaYmve2I1m0krUMDOx0aM3Wkbil5g2/j83p3VgaBh1bwRgL/D5P+Kk8Nt8jP1footdSdjM2Eru9mYWGVkIzGLtW30NtbW1KW2s4ctB++3kxEJF+Ou1U4PiCF20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eU4JHSLT; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 455B1ZaR031042;
-	Wed, 5 Jun 2024 12:21:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	JlC8xCa5L983STcm1YpIefgILyOyCLHxYmIDVUr6YMI=; b=eU4JHSLT5sFSlugX
-	sOKllOhnabOfYJoi+LWSQJrXbUV8md/kja+WNIG5Up+wRRhRLB3LzUygii6tKO7K
-	BDxhj2h4xmUN6tEfLyHSYnHQNfuBymQLwtAXeOzwmQjj43o98nbjN6FsKXFwEbAe
-	9wooVXr5Y0qJqWiorXbvdlEth2Gm6+DcqIil9wTk6r34ZHRR22LDNE0bdGmdzAm8
-	jxtUMB1N4hiBAsJNBZB17GR/V/sjNJCrd8/WKk/1FbLuV6PlgEJF3KHO7t3UqXWy
-	loVysDm09gzjmQb/FBx558RjiR+IRq8LlRnM9/4OsMyLX1YjelzOrsP5dx7wk887
-	5teBiQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yj87rhy3w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Jun 2024 12:21:58 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 455CLv2d006945
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 5 Jun 2024 12:21:57 GMT
-Received: from [10.214.66.253] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Jun 2024
- 05:21:50 -0700
-Message-ID: <dc6efedd-5c0c-4e2c-b3b4-6661517beb6f@quicinc.com>
-Date: Wed, 5 Jun 2024 17:51:47 +0530
+	s=arc-20240116; t=1717590165; c=relaxed/simple;
+	bh=hRjmhe9Ngf0wmEAJSQe3o0q7qinQYcgJZNR83dg0CPM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IVT3m58Bf/FK0HAQQZYSVSAJ/XfogoyvfMpW7E2HDjcpyLlIh/MwmShKivm01yhcDT//Q4yAm/T4Ems1+dhnnIBpny6dMwnPBDbbX1iLcE8amSk3M62Sb60T+31T0X4iu8VrSdmh8xgS7dUvBDZHSLSPs0i3MoUnhvpT1IY0KYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.220.45] (g45.guest.molgen.mpg.de [141.14.220.45])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 91EE561E5FE05;
+	Wed,  5 Jun 2024 14:21:51 +0200 (CEST)
+Message-ID: <a5aa120d-8497-4ca8-9752-7d800240b999@molgen.mpg.de>
+Date: Wed, 5 Jun 2024 14:21:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,192 +44,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 4/5] iommu/arm-smmu: add ACTLR data and support for
- SM8550
-To: Rob Clark <robdclark@gmail.com>
-CC: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-        <dmitry.baryshkov@linaro.org>, <konrad.dybcio@linaro.org>,
-        <jsnitsel@redhat.com>, <quic_bjorande@quicinc.com>, <mani@kernel.org>,
-        <quic_eberman@quicinc.com>, <robdclark@chromium.org>,
-        <u.kleine-koenig@pengutronix.de>, <robh@kernel.org>,
-        <vladimir.oltean@nxp.com>, <quic_pkondeti@quicinc.com>,
-        <quic_molvera@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-        <linux-kernel@vger.kernel.org>
-References: <20240116150411.23876-1-quic_bibekkum@quicinc.com>
- <20240116150411.23876-5-quic_bibekkum@quicinc.com>
- <CAF6AEGsO+qxMPG8P5gPwt2KUvNscuUbLZ9OzHNGKJA_=bnoshw@mail.gmail.com>
+Subject: Re: [PATCH v4 5/6] i2c: smbus: Support DDR5 SPD EEPROMs
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ =?UTF-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Armin Wolf <W_Armin@gmx.de>, Stephen Horvath <s.horvath@outlook.com.au>
+References: <20240604040237.1064024-1-linux@roeck-us.net>
+ <20240604040237.1064024-6-linux@roeck-us.net>
 Content-Language: en-US
-From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-In-Reply-To: <CAF6AEGsO+qxMPG8P5gPwt2KUvNscuUbLZ9OzHNGKJA_=bnoshw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20240604040237.1064024-6-linux@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: -sNQRoRtfgk9xeJZRAdj0Pghzm4bSLvB
-X-Proofpoint-ORIG-GUID: -sNQRoRtfgk9xeJZRAdj0Pghzm4bSLvB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-05_02,2024-06-05_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 phishscore=0 impostorscore=0 malwarescore=0 bulkscore=0
- clxscore=1015 spamscore=0 mlxlogscore=999 adultscore=0 lowpriorityscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406050094
+
+Dear Guenter,
 
 
+Thank you so much for taking this on.
 
-On 6/4/2024 10:43 PM, Rob Clark wrote:
-> On Tue, Jan 16, 2024 at 7:06 AM Bibek Kumar Patro
-> <quic_bibekkum@quicinc.com> wrote:
->>
->> Add ACTLR data table for SM8550 along with support for
->> same including SM8550 specific implementation operations.
->>
->> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
->> ---
->>   drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 85 ++++++++++++++++++++++
->>   1 file changed, 85 insertions(+)
->>
->> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
->> index e6fad02aae92..26acfbdafd0f 100644
->> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
->> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
->> @@ -23,6 +23,12 @@
->>
->>   #define CPRE                   (1 << 1)
->>   #define CMTLB                  (1 << 0)
->> +#define PREFETCH_SHIFT         8
->> +#define PREFETCH_DEFAULT       0
->> +#define PREFETCH_SHALLOW       (1 << PREFETCH_SHIFT)
->> +#define PREFETCH_MODERATE      (2 << PREFETCH_SHIFT)
->> +#define PREFETCH_DEEP          (3 << PREFETCH_SHIFT)
->> +#define PREFETCH_SWITCH_GFX    (5 << 3)
+Am 04.06.24 um 06:02 schrieb Guenter Roeck:
+> Detect DDR5 memory and instantiate the SPD5118 driver automatically.
 > 
-> so, PREFETCH_SWITCH_GFX seems to actually be two things, b5 is
-> actually PRR_ENABLE and b3 is ??
+> Suggested-by: Thomas Weißschuh <linux@weissschuh.net>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+> v5: New patch
 > 
-
-only b5 is not prr related bit as I checked now, will drop b3
-and use this field for PRR bit only.
-
-Thanks & regards,
-Bibek
-
-> Probably you should drop the PRR_ENABLE, and perhaps give b3 a better name
->  > BR,
-> -R
+>   drivers/i2c/i2c-smbus.c | 4 ++++
+>   1 file changed, 4 insertions(+)
 > 
+> diff --git a/drivers/i2c/i2c-smbus.c b/drivers/i2c/i2c-smbus.c
+> index 97f338b123b1..8a0dab835761 100644
+> --- a/drivers/i2c/i2c-smbus.c
+> +++ b/drivers/i2c/i2c-smbus.c
+> @@ -382,6 +382,10 @@ void i2c_register_spd(struct i2c_adapter *adap)
+>   	case 0x1E:	/* LPDDR4 */
+>   		name = "ee1004";
+>   		break;
+> +	case 0x22:	/* DDR5 */
+> +	case 0x23:	/* LPDDR5 */
+> +		name = "spd5118";
+> +		break;
+>   	default:
+>   		dev_info(&adap->dev,
+>   			 "Memory type 0x%02x not supported yet, not instantiating SPD\n",
 
-Thanks & regards,
-Bibek
->>
->>   struct actlr_config {
->>          u16 sid;
->> @@ -30,6 +36,75 @@ struct actlr_config {
->>          u32 actlr;
->>   };
->>
->> +static const struct actlr_config sm8550_apps_actlr_cfg[] = {
->> +       { 0x18a0, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
->> +       { 0x18e0, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
->> +       { 0x0800, 0x0020, PREFETCH_DEFAULT | CMTLB },
->> +       { 0x1800, 0x00c0, PREFETCH_DEFAULT | CMTLB },
->> +       { 0x1820, 0x0000, PREFETCH_DEFAULT | CMTLB },
->> +       { 0x1860, 0x0000, PREFETCH_DEFAULT | CMTLB },
->> +       { 0x0c01, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x0c02, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x0c03, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x0c04, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x0c05, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x0c06, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x0c07, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x0c08, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x0c09, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x0c0c, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x0c0d, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x0c0e, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x0c0f, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x1961, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x1962, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x1963, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x1964, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x1965, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x1966, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x1967, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x1968, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x1969, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x196c, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x196d, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x196e, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x196f, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x19c1, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x19c2, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x19c3, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x19c4, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x19c5, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x19c6, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x19c7, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x19c8, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x19c9, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x19cc, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x19cd, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x19ce, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x19cf, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
->> +       { 0x1c00, 0x0002, PREFETCH_SHALLOW | CPRE | CMTLB },
->> +       { 0x1c01, 0x0000, PREFETCH_DEFAULT | CMTLB },
->> +       { 0x1920, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
->> +       { 0x1923, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
->> +       { 0x1924, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
->> +       { 0x1940, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
->> +       { 0x1941, 0x0004, PREFETCH_SHALLOW | CPRE | CMTLB },
->> +       { 0x1943, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
->> +       { 0x1944, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
->> +       { 0x1947, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
->> +};
->> +
->> +static const struct actlr_config sm8550_gfx_actlr_cfg[] = {
->> +       { 0x0000, 0x03ff, PREFETCH_SWITCH_GFX | PREFETCH_DEEP | CPRE | CMTLB },
->> +};
->> +
->> +static const struct actlr_variant sm8550_actlr[] = {
->> +       { .io_start = 0x15000000, .actlrcfg = sm8550_apps_actlr_cfg,
->> +                       .num_actlrcfg = ARRAY_SIZE(sm8550_apps_actlr_cfg) },
->> +       { .io_start = 0x03da0000, .actlrcfg = sm8550_gfx_actlr_cfg,
->> +                       .num_actlrcfg = ARRAY_SIZE(sm8550_gfx_actlr_cfg) },
->> +};
->> +
->>   static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smmu)
->>   {
->>          return container_of(smmu, struct qcom_smmu, smmu);
->> @@ -601,6 +676,15 @@ static const struct qcom_smmu_match_data sdm845_smmu_500_data = {
->>          /* Also no debug configuration. */
->>   };
->>
->> +
->> +static const struct qcom_smmu_match_data sm8550_smmu_500_impl0_data = {
->> +       .impl = &qcom_smmu_500_impl,
->> +       .adreno_impl = &qcom_adreno_smmu_500_impl,
->> +       .cfg = &qcom_smmu_impl0_cfg,
->> +       .actlrvar = sm8550_actlr,
->> +       .num_smmu = ARRAY_SIZE(sm8550_actlr),
->> +};
->> +
->>   static const struct qcom_smmu_match_data qcom_smmu_500_impl0_data = {
->>          .impl = &qcom_smmu_500_impl,
->>          .adreno_impl = &qcom_adreno_smmu_500_impl,
->> @@ -635,6 +719,7 @@ static const struct of_device_id __maybe_unused qcom_smmu_impl_of_match[] = {
->>          { .compatible = "qcom,sm8250-smmu-500", .data = &qcom_smmu_500_impl0_data },
->>          { .compatible = "qcom,sm8350-smmu-500", .data = &qcom_smmu_500_impl0_data },
->>          { .compatible = "qcom,sm8450-smmu-500", .data = &qcom_smmu_500_impl0_data },
->> +       { .compatible = "qcom,sm8550-smmu-500", .data = &sm8550_smmu_500_impl0_data },
->>          { .compatible = "qcom,smmu-500", .data = &qcom_smmu_500_impl0_data },
->>          { }
->>   };
->> --
->> 2.17.1
->>
->>
+Testing this on top of 6.10-rc2+ on a Supermicro X13SAE, Linux logs:
+
+     $ dmesg | grep -e "DMI:" -e "Linux version" -e i2c-0
+     [    0.000000] Linux version 
+6.10.0-rc2.mx64.461-00036-g151dfab265df 
+(pmenzel@foreveralone.molgen.mpg.de) (gcc (GCC) 12.3.0, GNU ld (GNU 
+Binutils) 2.41) #74 SMP PREEMPT_DYNAMIC Wed Jun  5 08:24:59 CEST 2024
+     [    0.000000] DMI: Supermicro Super Server/X13SAE, BIOS 2.0 10/17/2022
+     [    0.000000] DMI: Memory slots populated: 4/4
+     [    5.434488] i2c i2c-0: Successfully instantiated SPD at 0x50
+     [    5.443848] i2c i2c-0: Successfully instantiated SPD at 0x51
+     [    5.450033] i2c i2c-0: Successfully instantiated SPD at 0x52
+     [    5.459378] i2c i2c-0: Successfully instantiated SPD at 0x53
+
+Then with `sudo modprobe at24` and `sudo modprobe ee1004`, 
+`decode-dimms` shows:
+
+     $ sudo ./eeprom/decode-dimms
+     # decode-dimms version 4.3
+
+     Memory Serial Presence Detect Decoder
+     By Philip Edelbrock, Christian Zuckschwerdt, Burkart Lingner,
+     Jean Delvare, Trent Piepho and others
+
+
+     Number of SDRAM DIMMs detected and decoded: 0
+
+This might be expected, and `decode-dimms` also needs to be updated.
+
+
+Kind regards and thank you again for these patches,
+
+Paul
 
