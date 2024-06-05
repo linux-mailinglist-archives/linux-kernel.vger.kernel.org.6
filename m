@@ -1,114 +1,107 @@
-Return-Path: <linux-kernel+bounces-202612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BB328FCF10
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:23:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE2988FCEA9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:14:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA9A0B2B7B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:13:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 496E8287065
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E761953AC;
-	Wed,  5 Jun 2024 12:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA8C195FD0;
+	Wed,  5 Jun 2024 12:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DIl2tBBZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JNBTOBE9"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4813D1953A3;
-	Wed,  5 Jun 2024 12:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FA719D882;
+	Wed,  5 Jun 2024 12:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717590704; cv=none; b=OLMBUNgYZpLUjZs/XxMhS2Gd9FPf/cFSjHnYblOkPVAK3wfpUwVxdWdyl06LiEREaLcdtUh0yHsQGq7HtpXX0a38f8QW2Ru+w6FN0K7iRvfrOrnxrM/8nP9wcNRQVxZ0DDb3dLvu8C6YtPf2ggWMS2Q+XMoYBncCyuMSLHJ83Go=
+	t=1717590766; cv=none; b=nkjpk1ZyYl+Rc2lRXxthh7ttXg92UBUnB2HkmLi7accXkbbaEcmXMcQ1IhCJSBeLKDNHBZPP3xvXoOmckslYuVvdYrSEH7dXPg2vk6/f8/uoys9KiGKslAt9dpX41JpkiBx7u6nDpHxwGPCamNUf2vP5nHzXqNLfLlI+dihgC/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717590704; c=relaxed/simple;
-	bh=WqX/iaOAQS6MZ5oQl3ZCdSns0vW4s+x/vrm13fm7laY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZcBNz7EZ0UGm+fK18E4fgM4bw1MvikmP4R8RGCEyNN/hIRX0hPWl4SIpFWF75ss1tnVDZ6BT+G4A9NAyyyYjfjgckzlrpQw4DoaYMU1kHHBse/V+/v11wUhQL3IQ319LI6CgYoJyKKgWq9nO5gxDqPR9dR4FMS9b5VdYn8Gtlx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DIl2tBBZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE75BC3277B;
-	Wed,  5 Jun 2024 12:31:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717590703;
-	bh=WqX/iaOAQS6MZ5oQl3ZCdSns0vW4s+x/vrm13fm7laY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DIl2tBBZ6oihhI/f5/7BbeecgSbZ7aK+ZKiHZGsMPZkLUiGDSiY71IFcHbLIN+LHl
-	 /5SklmW8EF3ndFp5BSgUVb7d8wUzYF0kHDfD6BsiU9NVCl3J+Tigjr9gKz5pd0Njhp
-	 3OmzuekhB/C051H6yFE/fEYxeMXHSqSeaKD93UXoZdv8f1LOlZWXacU4kOHUt9FPdv
-	 2DWPxkGGjJLkIiiVeOoDMEiOJb8QLbnsaNQEf2swWOkU03v2EqLJOs/2A54L3S2Yp8
-	 EJVyvCl9xGJ1X49jit06Aepfj7KS0+Gpp4j1nEBvprW8V66jPGicwITi9cpqjoQG0a
-	 VKUQJs+Ta454A==
-Date: Wed, 5 Jun 2024 13:31:38 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev
-Subject: Re: [PATCH 2/4] arm64/fpsimd: Discover maximum vector length
- implemented by any CPU
-Message-ID: <1875ba4e-02c7-4331-b9c6-7ab68d2157b3@sirena.org.uk>
-References: <20240605-kvm-arm64-fix-pkvm-sve-vl-v1-0-680d6b43b4c1@kernel.org>
- <20240605-kvm-arm64-fix-pkvm-sve-vl-v1-2-680d6b43b4c1@kernel.org>
- <86bk4flh9b.wl-maz@kernel.org>
+	s=arc-20240116; t=1717590766; c=relaxed/simple;
+	bh=PfhQeGJITJTvs+p/Hge5SmZR5Iv7XJjDoRihZXn1CME=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uTi8NAvxQO432rURWQif52jmqJGjxRI67xjW3OIl7a2jcNTgmF25t4wPIaVYVzeaBRWpOU83YNZ0EsjuF+ffXCVO4fEccaBoXmUwK/G/8eQI2xNmbmoKzD5fxFap1S+YKIMYFhZwXsFPYnEQUZBuyPMNtL72iEGZG7qTLKcRZxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JNBTOBE9; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6BC19E0005;
+	Wed,  5 Jun 2024 12:32:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1717590756;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PbnUs0MSq2j9sy1LgeEvLYnILq+qylhWfc/HqlZBIlQ=;
+	b=JNBTOBE9C1+Jb/djiD05CcRKaJnyba3X338QbcyFU2V8rwpuVElD+sX3YHbWrh1Lgrrs8v
+	ClTridWJQLNPj4OmVMbF9oa+F2RhZdSDVxPOC8W2IGkb8RAKPdR3R6FGo1PzngjQBWURlv
+	8BzA+9asD/76DVv/aKBdszkLWnN8f2G2zin/rNNOl2a/diBZ9yguqhlLrmeKEtaidmrJCo
+	tLyrXjHT9qjF858YGk5EQR61zoYda/bjhT+/bVBAbii+H4jcsXszoiKjcMm48z8dR1Kfoj
+	J7N0fcbLwtyOUPy0NmOI0xeSAbjzTb86ErgD1laih6Ilc10aKUjEckvjh7edOQ==
+Message-ID: <26e9970c-7dbf-48ac-9832-58bf2952d350@bootlin.com>
+Date: Wed, 5 Jun 2024 14:32:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ysVZwPn+MwR2sALq"
-Content-Disposition: inline
-In-Reply-To: <86bk4flh9b.wl-maz@kernel.org>
-X-Cookie: Simulated picture.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: i2c: gpio: Add 'transition-delay-us'
+ property
+To: Rob Herring <robh@kernel.org>, Peter Rosin <peda@axentia.se>
+Cc: Andi Shyti <andi.shyti@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Korsgaard <peter.korsgaard@barco.com>,
+ Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Christopher Cordahi <christophercordahi@nanometrics.ca>
+References: <20240529091739.10808-1-bastien.curutchet@bootlin.com>
+ <20240529091739.10808-2-bastien.curutchet@bootlin.com>
+ <718d86a7-d70a-c38a-089d-5276bcc6e88b@axentia.se>
+ <20240603155810.GA509311-robh@kernel.org>
+Content-Language: en-US
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+In-Reply-To: <20240603155810.GA509311-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
+Hi Rob, Hi Peter,
 
---ysVZwPn+MwR2sALq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 6/3/24 17:58, Rob Herring wrote:
+> On Wed, May 29, 2024 at 02:13:37PM +0200, Peter Rosin wrote:
+>> Hi!
+>>
+>> 2024-05-29 at 11:17, Bastien Curutchet wrote:
+>>> I2C MUXes described by the i2c-gpio-mux sometimes need a significant
+>>> amount of time to switch from a bus to another. When a new bus is
+>>> selected, the first I2C transfer can fail if it occurs too early. There
+>>> is no way to describe this transition delay that has to be waited before
+>>> starting the first I2C transfer.
+>>>
+>>> Add a 'transition-delay-us' property that indicates the delay to be
+>>> respected before doing the first i2c transfer.
+>>
+>> The io-channel-mux has a property with very similar intent named
+>> settle-time-us [1]. I think we should use the same name here.
+>>
+>> [1] Documentation/devicetree/bindings/iio/multiplexer/io-channel-mux.yaml
+> 
+> Agreed. I knew we had something and went looking... I only checked the
+> base mux and i2c mux bindings.
+> 
 
-On Wed, Jun 05, 2024 at 01:13:20PM +0100, Marc Zyngier wrote:
-> Mark Brown <broonie@kernel.org> wrote:
+Ok I'll do this in V3, thank you.
 
-> > +	/*
-> > +	 * pKVM allocates and uses storage for host state based on the
-> > +	 * largest per-PE VL, reject new PEs with a larger maximum.
-> > +	 */
-> > +	if (is_protected_kvm_enabled()) {
-> > +		if (max_vl > info->max_cpu_vl) {
-> > +			pr_warn("%s: cpu%d: would increase maximum VL\n",
-> > +				info->name, smp_processor_id());
-> > +			return -EINVAL;
-> > +		}
-> > +	}
-
-> Once protected mode is enabled, no new CPU can be booted (see
-> psci_relay.c::psci_cpu_on()).
-
-Ah, that's a bit easier.  Might still be worth keeping the check just in
-case that changes or we acquire some further use of this value but it's
-not currently needed and the comment could be updated.
-
---ysVZwPn+MwR2sALq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZgWqkACgkQJNaLcl1U
-h9AyJQf+MY+KJBHvUdEZTyWsyWafn1JsdBv59+XpSqS/no1XW//XIGvcCvJvQ9/I
-/d+4iNDJO5KfECkTL2Zsp4w0k5ogpe14dxnNoSAk6coLY1C9O/QlVZveuR96VMEQ
-kFIqT86CC8zZ53FMJkiSPSvh4xCot2/jVaDEIZ7Hc6XTy4iAWZCcmt0NS4TYtIpf
-QtvfMeVCkKft6/Na8pjSWKlKkiNRxPbNxaXFBsKXdeltidzOuXdX/JS4J0QtANjo
-byDIxgwAy453h+6JGn5/9lqtVP/33/ZGAqqakPPhxVZRfg09C8+RuT/GVcs8r6Xz
-SAo4rWVbNS9hGnQxwuEOvSpQnnx/EQ==
-=kQnc
------END PGP SIGNATURE-----
-
---ysVZwPn+MwR2sALq--
+Best regards
+Bastien
 
