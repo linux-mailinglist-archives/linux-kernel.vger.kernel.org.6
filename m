@@ -1,160 +1,218 @@
-Return-Path: <linux-kernel+bounces-202782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 010208FD0FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:41:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E8AE8FD10B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:44:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA6EF28254C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:41:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC910B24586
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDA92232A;
-	Wed,  5 Jun 2024 14:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DC427702;
+	Wed,  5 Jun 2024 14:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uaOC7PXW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zp9/rEez";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uaOC7PXW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zp9/rEez"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hXnApwH1"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4509C1B5AA;
-	Wed,  5 Jun 2024 14:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5A419D8AB;
+	Wed,  5 Jun 2024 14:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717598451; cv=none; b=Y+AnlHs6huho+XqFoFSiJZMh2/Zelp65k2wkglUs/+hKAKVFxGsJ4t5FrJ5+l67YZ9x0/dEsls/pXwk95gJOG1315JTmEPZqwmdEjCTgfFAOVLHPMmJoaoDpCPxAuyPZwcu2K0luQ9tpeka3vCK7wPjtI0Jgoi3Uquki6tlz3mY=
+	t=1717598634; cv=none; b=hf67X1zeQQMVzmCCxau6yQ6oFoqZMOtDYyojgv7fZud3+2JF6Jfy2XmLHRt/xj18B7ayuvM+ALCiccw+YLWzFCydPKfq7dJYttAGXP0/kEOhUk9GfOwqGhP1fgvAUHp9Fxndg/aKb5CatHLUP7EtHKGQ+yqSaCqeyboDJ/kVYRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717598451; c=relaxed/simple;
-	bh=ObTS/I9Tkk/gUPd/NEOxNka9aQLTx59YfkQoxoNlccc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=W2uwJnhUZl5OloJ5sgc/q0W52tnM3drVknEBABQSuSfM71bj/ncRY86ynKvTEW75rMQOTVwf4iL2GHkxZKt1ox3K45NWQU6OudHE/JG08Keo67mNnN4YwbRpR/KRIczWNxe9o+guo2owPphYf5jUYoUqg7veSFO1oNyTlNjbc5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uaOC7PXW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zp9/rEez; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uaOC7PXW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zp9/rEez; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3BB571F824;
-	Wed,  5 Jun 2024 14:40:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717598447; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=atowc3f7IrAwqd5a+5vpkBZGm7Q8msOXF4I72q/jap8=;
-	b=uaOC7PXW6VshLyJIK7xPSQvhq2+8Cr0rJ/PGqhaMidKj5VLULYoi7AEoNIx722uXiFO+hQ
-	9fNH5tWZtfqI66VYGZPvOzGbZem7qnQnW28rL7CN33ZpXzf2lIpWTwbjnaEGrxfYM08uH6
-	sy6lk2toyRgl8I3Q63yzKbOCtQamNVE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717598447;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=atowc3f7IrAwqd5a+5vpkBZGm7Q8msOXF4I72q/jap8=;
-	b=zp9/rEezGtN9P2QC0uoFNVbXklj4oBZHoI6Y5pEPaiI3WQ9yyu0ELMcUI8ItLvJC5APbjv
-	pjLUlznuWsu7PVCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=uaOC7PXW;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="zp9/rEez"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717598447; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=atowc3f7IrAwqd5a+5vpkBZGm7Q8msOXF4I72q/jap8=;
-	b=uaOC7PXW6VshLyJIK7xPSQvhq2+8Cr0rJ/PGqhaMidKj5VLULYoi7AEoNIx722uXiFO+hQ
-	9fNH5tWZtfqI66VYGZPvOzGbZem7qnQnW28rL7CN33ZpXzf2lIpWTwbjnaEGrxfYM08uH6
-	sy6lk2toyRgl8I3Q63yzKbOCtQamNVE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717598447;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=atowc3f7IrAwqd5a+5vpkBZGm7Q8msOXF4I72q/jap8=;
-	b=zp9/rEezGtN9P2QC0uoFNVbXklj4oBZHoI6Y5pEPaiI3WQ9yyu0ELMcUI8ItLvJC5APbjv
-	pjLUlznuWsu7PVCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E305113A42;
-	Wed,  5 Jun 2024 14:40:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Vej+NO54YGZBNwAAD6G6ig
-	(envelope-from <iivanov@suse.de>); Wed, 05 Jun 2024 14:40:46 +0000
-From: "Ivan T. Ivanov" <iivanov@suse.de>
-To: gregkh@linuxfoundation.org
-Cc: cve@kernel.org,
-	linux-cve-announce@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: RE: pwm: Fix double shift bug
-Date: Wed,  5 Jun 2024 17:43:05 +0300
-Message-Id: <20240605144305.78002-1-iivanov@suse.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <2024052146-CVE-2023-52756-f694@gregkh>
-References: <2024052146-CVE-2023-52756-f694@gregkh>
+	s=arc-20240116; t=1717598634; c=relaxed/simple;
+	bh=Sb/jG58L9OQoNfoAxJYNWr5/aZrpNieBK/yrnVB4x4c=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ECBTDTLoB+SXtVNOOKXgCRjahwIynPYlnB6IQkmuwGrVHR7glba2e0kwXxe15mQ8rfWb1zKm2oP73FXkInWuZWbjcG36hUEZBZe2ZI05P2SJSFF0MkB3NhSaWQSZJTFKQTYtcHX/TgQMn+0+QrfeRHgzu6q9E2GAL1Unhtcodsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hXnApwH1; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a692130eb19so342413866b.2;
+        Wed, 05 Jun 2024 07:43:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717598631; x=1718203431; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qByNMwxXX4ivi26JfgBsfFLgqmTESa4XXOPqaCiIKWY=;
+        b=hXnApwH1E5aYU73u4t9CqeNi8PCHEdRq6FRKUl6nbSr5l78ES2bRK8xW0NLzJv8bKf
+         a9AcArjC7c+15KCHqdwYXlMcy7qWST8MjnlwekfbxNGvKgHV5ufweYAr4levlE7bBimO
+         26bz4ZaTme+wGAIZqLbJccSqCQm3mwvZ2hCK2rYnrI75Ss79V0lv7BY4UX5AZZDuXNfl
+         tk8AgF96zO43S8H9c++8PwiVLXCVY52YwPhb3KiqyeKjQmLfgMyTR6pLPQNxAXEc1ip3
+         fc16nY8fMArCqdjcSasujmzZsHJDrEfEFWYSN/MrO9jIt9qzD07XRwUHr8OXDuF+tfQu
+         wvQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717598631; x=1718203431;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qByNMwxXX4ivi26JfgBsfFLgqmTESa4XXOPqaCiIKWY=;
+        b=V14Yqx6UxnvC09j4CCCfo+DjI7N+0m1P1Ey6/8qeiU6dF0SgvqFNFRml0J1PG8briC
+         UUytGA51Qortij1BDwvND8IsvZ2Px1GNqttzJNQC0scZGZjp7/QUD6TA1CwMXMERFx18
+         +X4a/OTiUs2dMtAp0PAmgo+OqafK2zmw85PDHvgNNe8oHghG88Ah2WhkUq4wc0h5zONt
+         vS43lkxGQsErGM74b7lpcAMW2/tH+vRYvlXS2SVYQ76AhMh+br24e8kltGbPB6DSo+4l
+         d5Hjby949jnGhGIbAFgwztE4CAtux//xP74/oniAkShmlQXi+fLRQqxp1VBbSuDI3Mow
+         nFYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxNuUMDnaMh8p2yUGsaA8VsLv76GXNW9k9bBP+ceYVn4wQ5VlNHXeZ5wJCIgjo8miln6JeHIzSReP8f5aqZfOELo9lhKICQQk4hgSjnn6IIhRNNvZ5e2n54SkkbO7oM8lpxA1BWDIpm0gFyUfD53b7mtVbxPDASb4ZQcJSGi6L2BhgpsRv0NusTO4IRrp70QfHE1wEP35yvhAfSio+fkE+TqgFSnw=
+X-Gm-Message-State: AOJu0YwVC1LS3ROT0vWkrVEPy4W5i1dECN4Qn8NdFf26YstivhK6/+UI
+	jMVsRKUYJmJySrgHWlxVtXfY9jTixEM7hd4agWk7+Ma0ZkjYIdNnqLmLuw==
+X-Google-Smtp-Source: AGHT+IFagiMMgOracxl4APCyCa7Db8mxloo+5oQtHl11gJk6HqZyhy9pD4aiwLNxg/ZH+8cCM+248g==
+X-Received: by 2002:a17:907:2918:b0:a68:733b:d419 with SMTP id a640c23a62f3a-a699faa9909mr153408666b.7.1717598630698;
+        Wed, 05 Jun 2024 07:43:50 -0700 (PDT)
+Received: from [192.168.50.244] (83.8.128.191.ipv4.supernova.orange.pl. [83.8.128.191])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68e6b5cdf8sm564187666b.81.2024.06.05.07.43.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 07:43:50 -0700 (PDT)
+Message-ID: <9f88a533-cb99-4fa4-836d-9a8bd68992a2@gmail.com>
+Date: Wed, 5 Jun 2024 16:43:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 3BB571F824
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-2.50)[97.72%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
+User-Agent: Mozilla Thunderbird
+From: Artur Weber <aweber.kernel@gmail.com>
+Subject: Re: [PATCH RFC 06/11] power: supply: max77693: Set charge current
+ limits during init
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>,
+ Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>,
+ Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
+References: <20240530-max77693-charger-extcon-v1-0-dc2a9e5bdf30@gmail.com>
+ <20240530-max77693-charger-extcon-v1-6-dc2a9e5bdf30@gmail.com>
+ <d740ff64-2de6-424c-9fc0-f1064f8c4f8b@kernel.org>
+ <0b611c4b-23d2-4c33-a6be-c15a04e8b99a@gmail.com>
+ <311c13e0-2f14-4134-afb5-128bc82111e7@kernel.org>
+Content-Language: en-US
+In-Reply-To: <311c13e0-2f14-4134-afb5-128bc82111e7@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 31.05.2024 14:18, Krzysztof Kozlowski wrote:
+> On 31/05/2024 13:55, Artur Weber wrote:
+>> On 31.05.2024 11:47, Krzysztof Kozlowski wrote:
+>>> On 30/05/2024 10:55, Artur Weber wrote:
+>>>> There are two charger current limit registers:
+>>>>
+>>>> - Fast charge current limit (which controls current going from the
+>>>>     charger to the battery);
+>>>> - CHGIN input current limit (which controls current going into the
+>>>>     charger through the cable, and is managed by the CHARGER regulator).
+>>>>
+>>>> Add functions for setting both of the values, and set them to a
+>>>> safe default value of 500mA at initialization.
+>>>>
+>>>> The default value for the fast charge current limit can be modified
+>>>> by setting the maxim,fast-charge-current-microamp DT property; the
+>>>> CHGIN input current limit will be set up later in the charger detection
+>>>> mechanism.
+>>>>
+>>>> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+>>>> ---
+>>>>    drivers/power/supply/max77693_charger.c | 45 +++++++++++++++++++++++++++++++++
+>>>>    1 file changed, 45 insertions(+)
+>>>>
+>>>> diff --git a/drivers/power/supply/max77693_charger.c b/drivers/power/supply/max77693_charger.c
+>>>> index 894c35b750b3..d59b1524b0a4 100644
+>>>> --- a/drivers/power/supply/max77693_charger.c
+>>>> +++ b/drivers/power/supply/max77693_charger.c
+>>>> @@ -28,6 +28,7 @@ struct max77693_charger {
+>>>>    	u32 min_system_volt;
+>>>>    	u32 thermal_regulation_temp;
+>>>>    	u32 batttery_overcurrent;
+>>>> +	u32 fast_charge_current;
+>>>>    	u32 charge_input_threshold_volt;
+>>>>    };
+>>>>    
+>>>> @@ -591,6 +592,35 @@ static int max77693_set_batttery_overcurrent(struct max77693_charger *chg,
+>>>>    			CHG_CNFG_12_B2SOVRC_MASK, data);
+>>>>    }
+>>>>    
+>>>> +static int max77693_set_input_current_limit(struct max77693_charger *chg,
+>>>> +		unsigned int uamp)
+>>>> +{
+>>>> +	dev_dbg(chg->dev, "CHGIN input current limit: %u\n", uamp);
+>>>
+>>> That's quite useless debug. It duplicates
+>>> max77693_set_fast_charge_current(). Just drop entire wrapper.
+>>
+>> It doesn't duplicate max77693_set_fast_charge_current, they modify two
+>> separate registers. Quote from the commit message:
+> 
+> But it is the same uamp value. Debug messages should not be per register
+> write, because we are not debugging here registers...
+> 
+>>
+>>> There are two charger current limit registers:
+>>>
+>>> - Fast charge current limit (which controls current going from the
+>>>   charger to the battery);
+>>> - CHGIN input current limit (which controls current going into the
+>>>    charger through the cable, and is managed by the CHARGER regulator).
+>>
+>> max77693_set_fast_charge_current sets up the "fast charge current"
+>> register (in CNFG_02, CHG_CNFG_02_CC). The CHARGER regulators sets the
+>> CHGIN input current (in CNFG_09, CHG_CNFG_09_CHGIN_ILIM).
+>>
+>> (Apparently the CHARGER regulator is supposed to handle the fast
+>> charge current, but it does not; I wrote about this in the "CHARGER
+>> regulator" section of the patchset description.)
+>>
+>>>> +
+>>>> +	return regulator_set_current_limit(chg->regu, (int)uamp, (int)uamp);
+>>>> +}
+>>>> +
+>>>> +static int max77693_set_fast_charge_current(struct max77693_charger *chg,
+>>>> +		unsigned int uamp)
+>>>> +{
+>>>> +	unsigned int data;
+>>>> +
+>>>> +	data = (uamp / 1000) * 10 / 333; /* 0.1A/3 steps */
+>>>> +
+>>>> +	if (data > CHG_CNFG_02_CC_MASK) {
+>>>> +		dev_err(chg->dev, "Wrong value for fast charge current\n");
+>>>> +		return -EINVAL;
+>>>> +	}
+>>>> +
+>>>> +	data <<= CHG_CNFG_02_CC_SHIFT;
+>>>> +
+>>>> +	dev_dbg(chg->dev, "Fast charge current: %u (0x%x)\n", uamp, data);
+>>>> +
+>>>> +	return regmap_update_bits(chg->max77693->regmap,
+>>>> +			MAX77693_CHG_REG_CHG_CNFG_02,
+>>>> +			CHG_CNFG_02_CC_MASK, data);
+>>>
+>>> I am surprised that you set current limit via regulator but actual
+>>> charging current value here. I think both should go to regulator in such
+>>> case.
+>>
+>> As in, both fast charge current and input current should be set up by
+>> the CHARGER regulator? Sure, sounds good to me.
 
-I could argue that this is not CVE at all. It changes just bit positions.
+Now that I look at it, there's one small problem with moving this to the 
+CHARGER regulator - the CHGIN input limit and the fast charge current 
+limit have different ranges for values; CHGIN input limit accepts values 
+from 60mA to 2.58A, whereas fast charge current accepts values from 0mA 
+to ~2.1A. (This also means the limits I described for the fast charge 
+current property in [PATCH 2/11] are wrong...)
 
--	PWMF_REQUESTED = 1 << 0,
--	PWMF_EXPORTED = 1 << 1,
-+	PWMF_REQUESTED = 0,
-+	PWMF_EXPORTED = 1,
+Should we limit the CHARGER regulator to 2.1A (would require fixing 
+every DTS that defines the limits... though maybe they should be 
+hardcoded in the driver anyways?), or leave the limit as-is and cap the 
+fast charge current if the CHARGER current limit is set above 2.1A, or 
+something else entirely?
 
-ie. before fix they 1 and 2 and after the fix 0, 1.
-
-All call sites are using set/test_bit() on unsigned long flags.
-
-Yes, double shift do not look right, but I don't see how
-this could lead to malfunction, let alone a CVE.
-
-Regards,
-Ivan
-
+Best regards
+Artur
 
