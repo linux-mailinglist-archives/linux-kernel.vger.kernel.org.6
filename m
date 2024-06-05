@@ -1,294 +1,234 @@
-Return-Path: <linux-kernel+bounces-202758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F9318FD07C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:10:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D5678FD074
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:08:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF4522870A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:09:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10DB61F225A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3CE17559;
-	Wed,  5 Jun 2024 14:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E05519D88C;
+	Wed,  5 Jun 2024 14:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EaLsSoVb"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2081.outbound.protection.outlook.com [40.107.93.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="UQSDNqLe"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C7E17BCA
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 14:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717596590; cv=fail; b=Qz6J38pun/LikjZJQ0olfayTl/F9bVuCOV5JKdpSvnZa61GJXdAv6hzJQNtv9Ro8/desGgktuHRIjOEMEFoeTDuS8WItpmE29Fids4Mj0mxHVcjwqambHOTbO2h2t8Rju3bjdY9iJr0kb+ADsguoKxGKoxMIKWkz2Se+r9MnQHs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717596590; c=relaxed/simple;
-	bh=I8X1pbivgdoMbUPo/U4OEelX31PHJhNGUjVnXtHizf4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HUeY1+8xitGkOhS1XDkfQYbJv+mYqpJu4aWQvjBnVplAYNRIduIvHVv2Tm9kCTTp5WzWR2r4Hp52L6hXkS39UljIWcM7e1UuNcPCAmAnNhWjt12uAfwJmd0CsgMnJ4tlNVpBCUcoxhiu2E35mCU8qkwdqriJ541YJCQm8fbfZVs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EaLsSoVb; arc=fail smtp.client-ip=40.107.93.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IehODwUg2pPCGLuQxbfjqmiguLJBY6oCWBAqesO1k0iBe2nCedYNPCrWsOYf0RttvPxIuQBmdUxByF6DLDEa6u+AvjweUrAWWXBdx3u9e0hhxe/46L7twTqRjCIHa8IP3U+ImLfNu/kMuS8eJIrvnc08mX2Y+YrsosBQWr6WWHVOT2Ah6hM95GesFLeGTYAz0W7j61cIVD5FZzp8/R71wKprZNLllEbBfMLv6F9d+cNqrJORaI1dNkO9tdpryrzWjVd7D1z+2OAvmkszdFvtcWm4GQznhsEBLH2pC4d185cxvNqr8ZhOvC52SDQhtJ5MK7IxbSo3G/jRVsl9UlbqjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=X6Rdz3gLqP6jIJmp8YZDatHuTIMWf+FLNopTMnQ/Af8=;
- b=d40EHIjcy6TyOzihfsAaMXQB+31g2FnAIPCxWw55E6CFCdstTvn5wwQt6RSH71yWSScCKaFhol0+tH1NckUC+j7X4lcwkEMnjKKuJikjU+q3JdoYDDW9Va2HFu+xbe69IW2uBM1YjCePcymXWciGU3Yfd5KgSPtZ1gHs4quEoI95R6u7093GyoYFXHTiFyDt3fJ/REDZIr02sjIDn3CFbY/Uz6Sr95/JCFq/VlTdLx4SJiKdZb1UAUFPCc5cGa56rxJWl0cF3Hzv+cBcx8cExHSvp1YdQHM6BzvUWgIL/yKAYbNUgsdDUoj9Xqd+dYk9kD4z9xiAYzco3Wn8EE0+BA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=X6Rdz3gLqP6jIJmp8YZDatHuTIMWf+FLNopTMnQ/Af8=;
- b=EaLsSoVbmGkzmDtPGhMRtEVQ1+/Fi/PeofM+3Hx4COwsCh3QgE3kYSt7hmR/Hc+qWIm5Jr46GLbEO0bqMIS7OCNae+PTbFV9xLXse0DDvRWSN83OtVvBNu+Lk70BBHk/6Bjkt0GxONRHkmw4mktzxa0yy9Nm73I/FJxau8Sd5t8fJbTBm9582zg0BSkqgbD1/VZvM2kLRivW/ksNipTCnzNkzQj2y6eAS/2vvilQi/fenLlUkAB2O+GexFdK7rIGcTTsZM3PFFjybRXwqXbq4AcnhRQSojDOsMd4Y0BE9DSXu5FMLOZKgjs+vrqm9frXxHSaDIkDYktvE+7McY3MEg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB5744.namprd12.prod.outlook.com (2603:10b6:8:73::18) by
- LV3PR12MB9117.namprd12.prod.outlook.com (2603:10b6:408:195::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.25; Wed, 5 Jun
- 2024 14:09:25 +0000
-Received: from DS7PR12MB5744.namprd12.prod.outlook.com
- ([fe80::f018:13a9:e165:6b7e]) by DS7PR12MB5744.namprd12.prod.outlook.com
- ([fe80::f018:13a9:e165:6b7e%4]) with mapi id 15.20.7633.021; Wed, 5 Jun 2024
- 14:09:25 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: ran xiaokai <ranxiaokai627@163.com>
-Cc: 21cnbao@gmail.com, akpm@linux-foundation.org, david@redhat.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@kernel.org,
- v-songbaohua@oppo.com, xu.xin16@zte.com.cn, yang.yang29@zte.com.cn
-Subject: Re: [PATCH linux-next] mm: huge_memory: fix misused
- mapping_large_folio_support() for anon folios
-Date: Wed, 05 Jun 2024 07:08:31 -0700
-X-Mailer: MailMate (1.14r6030)
-Message-ID: <D667F08C-0CCE-4D5E-89A3-56674B0893DE@nvidia.com>
-In-Reply-To: <20240605095406.891512-1-ranxiaokai627@163.com>
-References: <CAGsJ_4wFyFBTDDfsBpi0sKs1WOH2jaKKoYWWj9Ln_PsNjP2uuA@mail.gmail.com>
- <20240605095406.891512-1-ranxiaokai627@163.com>
-Content-Type: multipart/signed;
- boundary="=_MailMate_781623F8-93FE-4E65-9300-2E2C849131AA_=";
- micalg=pgp-sha512; protocol="application/pgp-signature"
-X-ClientProxiedBy: CH0PR03CA0094.namprd03.prod.outlook.com
- (2603:10b6:610:cd::9) To DS7PR12MB5744.namprd12.prod.outlook.com
- (2603:10b6:8:73::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D111CB66E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 14:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717596529; cv=none; b=Q071IR0GEbShOlQiNVmiNCATD+Ay57JNAJHH2h0hOmUZ+YVDWICbMJKmELXHVxuo96cWw5YRY0CrstGELfpkhd0DdD7aKWLYoh+tpVJeny5Y+vVHtC18EwMmBRG1dIIV9eDIkeY/twPuwlF/20aZlOu8B2AwH6AjYW6C9m+WR4A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717596529; c=relaxed/simple;
+	bh=LiyeTVR61UKKdfGZzWXSIUzQsWrUlb7cMftBdtGQCdI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GH9IdyZ/ctT7f8uGwihnYB8ZvjVVPVc/LJzDd5aDg2tF2XK5sNBGyIRBuSE50D94z20xdPjRrvdZhHq2Bo0R+8x8nVKDhOzV6FHNFlcyPTwbBcrYei8q+vVlFsoQ39SkdaacS7LfKqiuXqfbMSqTBnckrWod0PkxH88GAfOSwXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=UQSDNqLe; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52b98fb5c32so5328007e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 07:08:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1717596525; x=1718201325; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZHSispro9byIbJJ27egkXQIvYlTCe/tBCT6tEz+/1ZA=;
+        b=UQSDNqLezPtezV0T7GLrpADklMNkI2daMF9cUJOZ7Dr163QK7Yyx6yKmNRPxgvM18/
+         MZjxtcIQIfTo8uOKrYF9cr7NdNMtALFIqSnd0sFoOdf5bRNvU8yz2gh/QJr93m1TI7ql
+         YQEOyVyaPObc7KI1f/KDp2jhmZy6ejgpWKJcU/rNTJe1TxfF3+uZ4XLG+4Dpfgg2BpmT
+         c+Go6TR7N8o+e+pSSb3+Wq5HB+Llxd1++j5J3xLpNwfPjFOCAb1Sbvv0Cu4KZy2QfeqX
+         2l2G7x4sSXAon6haMrWWRwNtcMi5Pv40DOFKFKgfg37maxSO+2l9ib5VyXlWS7J79H2t
+         X5mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717596525; x=1718201325;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZHSispro9byIbJJ27egkXQIvYlTCe/tBCT6tEz+/1ZA=;
+        b=Pq2uHH9i0Q3KtwFtNfEsGKmsnS75PFeMjvLIvoTs6sw7LFGw+6dgsXWgkOaUWouYSJ
+         76Rr3lYrcgx2feNcERITM55mjXwzt6wbmk9qDr//Zdbnl3TgFNFupELd39dXDfg4+KYs
+         okUdWhPttm6AkbC1xFxbYyJjlcVzEz+A7h5RRIbUJIQgFbR4BJxEkDX/qivdpan8Ik+1
+         HM6HF5nI0shGgDkhxOXjWexi42ARlqFvJZMtcF11LFcxC8S1dlDKhpEXASI1R6UfLjdX
+         6vODLPiCtXGz0pBPSLHXJ9DRfuAorZTc6vGB9tacqhcp/6FFR16DPXDLUbqUHp+KVAB9
+         WHPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgECO2CIqZdvgMFnHBzpc5tL9aET1WfSVcuYUxGEFsvz0BVZMDvju/yfoou+NQxlBYS/GjJCLfjpys2We7Iphywfy3pg71n3H1GAOC
+X-Gm-Message-State: AOJu0YyWU5fFnbw6qvexTOLqsDRqUXGmPKmoNAm0r0wQn1zsAJ9c+Vm9
+	5mNBifLgGfJS/4gQcMZ1qvtw3dqYnkzK4Ebzzi2XZlsFCsce0X4ZpRxwxejFmKwrVOA1JTz9LsK
+	YZ+iJaYoNKfFDtN/ibjQYSNDv2eyPAbOPE9OHiQ==
+X-Google-Smtp-Source: AGHT+IHVO+lSKQJ56xItpne0KixFpMYolI8f49B5HwH8eWN98yjpZ4Zaz6HR99APTQLC2bwhfkxQQ0OkpCA0PkyvYmw=
+X-Received: by 2002:a05:6512:31ca:b0:518:9ce1:a5bb with SMTP id
+ 2adb3069b0e04-52bab4fcbfbmr2613769e87.54.1717596524882; Wed, 05 Jun 2024
+ 07:08:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB5744:EE_|LV3PR12MB9117:EE_
-X-MS-Office365-Filtering-Correlation-Id: 05a60b7f-5ec3-44a9-f0b5-08dc85691ace
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|376005|366007|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WbF058qb+iKIkHgja+Ze7KHllAM+pBMOcC5VqRPigwzfG+0zhOKvAmmbM2S2?=
- =?us-ascii?Q?ZtJ0Xqkf8t4/zcxh99SQQKiJ4eRT1F9DPvOUmEDsnlC3Lyt8OiI/z8wE0MdK?=
- =?us-ascii?Q?CPW4dQl5Jhgi21PU4C1zwOav15wmPie8+zwjs8SzjC3GQVqJ/cvtGUQSa2VJ?=
- =?us-ascii?Q?Juq3m8fAOGzZDIbcwcApLkkGyKqI06wsgSiFluCt1o0hSiYYmwaZDsTaOd7c?=
- =?us-ascii?Q?CSzYUpKkubzWgise2R9ei9zar32ZePpsf97EZ2SP66Yb8onJRF6vaKndxH/3?=
- =?us-ascii?Q?LyKKSMbpEXPaVwbLWp/Mr3IutthyEAIsO0bjonn3HNk0q3xJ8IQUrwgYa4G1?=
- =?us-ascii?Q?sJeZv6z/BWLVDJ4O10TU+mYFJvbBAZJbOyy5BUkGPwV5OiJywaZI097mK3IA?=
- =?us-ascii?Q?mBm5nAueE0C17z7x4rb0Uu2eKZ4bu9dyt9H+RbLtMsegtxWHbiplTlM/BW15?=
- =?us-ascii?Q?0TcT0aY9LcqsTa1b6ehkg1DXbnDbTFA+fKPys4KK67BEKMQRf5iQrTfrqiiH?=
- =?us-ascii?Q?Dw/TS4T2subl1G0FrHD5W8ly/Ceznr4TxOek00TME5yO/NtTTLj227dLX9bL?=
- =?us-ascii?Q?gWI+nRTP7BS2hxTv6loT/Zk9OiLabD/GRqk6Y2qLcDs2QNnBngykXlwlwdt7?=
- =?us-ascii?Q?2up8TyU1d81cLuiKuJfVOBZ2Bq0omKSZ4L+ygi4ibn4BTppaHg9zqN2kqiF3?=
- =?us-ascii?Q?EfW8xw9F6Q3uBs/Lg7OFRddHSX+HJumWW8I1MFZmQOnsB3nuqqF6by7EkDUW?=
- =?us-ascii?Q?5TD3r2PkBJGL6AKESdvVCl/TYBt7tAwbc7VSLYMhHJMPPWvvWrnbo2m3ClPd?=
- =?us-ascii?Q?zB8YePol9cCIzIlDNFW39obQ7VlDJw2c7cTmn7rjiLRMUmNGUEGiEfSoxHt3?=
- =?us-ascii?Q?HdRrcoSX6/jDI6H1XG4kFZ7psfHCGeMN8ZL/2GnBxNhp/yS72Pte73IEyIkD?=
- =?us-ascii?Q?RAmXuBDO5CEpjaDvIcOoNv4zFVd4KpbtjMyN5wq9ezSnlqYLFFQaFdh34qCJ?=
- =?us-ascii?Q?kEQBiMWYfNgZPuSPNmcVajS50UOGpx0cEe2iCMGYy5Sh9kFw3U34fcimNWpJ?=
- =?us-ascii?Q?8bIcJVuUQRrJgjpuEmmwhswS0qa6HWR4fNMClqLecM/47ewFCCp6atwW7OJF?=
- =?us-ascii?Q?gc0gPo+pVZ7h/Hjd8Qexy1m7YppkVjvs6kyopyGyn6vD6gpL01W5aBXgYyNi?=
- =?us-ascii?Q?Obj54KeZMnj02O+S/EMhY4ZjalHEdxvHa21Z1cDidoficgw+4QZ+dncgeI6b?=
- =?us-ascii?Q?0uJWVSZdkpYKzdyUu96XLLlsm0SHBPVhDoDwZ3q8TBc9Xe56gDXYqmwCj+DU?=
- =?us-ascii?Q?7dxpaykYCS7U+e/HdAN5CHat?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB5744.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?U+0TnoCzjwbrUzqkp8snfg5e1uqmWYYAOaG7lr/XUPbxx9Sw2HqS3EpNGu9T?=
- =?us-ascii?Q?vszMfaVLCvKlyfj41Z5H1zMP21uz1CHmmIyriWCo9NK/XXG+CXS8RHP9+ke+?=
- =?us-ascii?Q?qrCVdLeNj4qHGoXQ8pj2TqG3RkcBLfUfO3suHfktdA+pRkfpu+YLzGbr1R2L?=
- =?us-ascii?Q?x58BSiIoXVdx74ap6wEFbBd7r+Q1b09+oOhNMfxDJzUaBSvyCO1GKf/kLv6/?=
- =?us-ascii?Q?3l6K7j5cBWcMQMGBjrqGmh4CoV2ZY68nca+pCasXGeceteOaQ5yelIUh1eoS?=
- =?us-ascii?Q?Ck0uykAgWQJa+X92fHPvAnek/K+bRIKPbCXI5j4uIqXhPnvSaGlOGQIrXvKM?=
- =?us-ascii?Q?ko3zwTsqC6xsILGNKnY3qvDXTr7iBnWmELrS6rOOgGk+9ulVx24vAxzmNiBR?=
- =?us-ascii?Q?MeTIysh+yEAUVYnSyoQhLKIr1hzsJ4XNBJfqzR7hnh3cYXeIIAE2OK5Q5b8U?=
- =?us-ascii?Q?xDSq2RKspf/tsNH+sDHFNDZysJdnNQ3CGQmO/K2gM9HN8ddwkcLPk7SFOsZn?=
- =?us-ascii?Q?klkt+i8C4GmnoCVUsPxSBuUH6/4HvOxGF5+BhrqcmU1DpRXn521IZkQ0cbUo?=
- =?us-ascii?Q?c7JDkHOgfKuDu+Ry8GGo5Yv2T7xDXv88HNtVAm2Wt2KEIYwPSCyMuLSSfQco?=
- =?us-ascii?Q?nbwNCaxKj+fPpQEZe9SWU1nWryygeHpnz+n+wt+9q2FcX5BuIwIlvT7Ol9F6?=
- =?us-ascii?Q?AAATgicw2AZREgY9hj/9XGrMw+gq+HJny0koggwCuUQRyjkCrU9771CP53jI?=
- =?us-ascii?Q?Jj9QTxOhH4/986bfFdZg/YxQ7SWOSJbeJs74UcrB33aaUFK3iUVTUAqphYam?=
- =?us-ascii?Q?Gjo8nwoV526aPmY99mPWrRxHE6SbANG3oI5E1LGrgtKMTEWDxJM4p2KVbNFL?=
- =?us-ascii?Q?VH+QUxM5xWL9xFYEtecl/RHqNqPqimLxgWWbujicuf8xmG75cdxDxxYAe6g8?=
- =?us-ascii?Q?nfPWglsdvHGkh5Ey4Txyd43uIcj7nCFbOiSJZHLAwrwwsnLnp3Un5H8gqjEN?=
- =?us-ascii?Q?7SEdNVWmUyP8psKrq6etDH9IuVe3RFcIKb9nxsGTDVyRArz9tDofheOMQrGp?=
- =?us-ascii?Q?2Y9Ac1wiFvaKfY0lPTiA2DbEyxOO3pyJeau8cOax/CYlu3R8rdaOkZ6Buidl?=
- =?us-ascii?Q?QQFvS8ZIgad/ZloUMjRjc1XZrvLoaHVp5noyAlflWKq213V4jQUcv8yd15Z4?=
- =?us-ascii?Q?he2iMhwGzpNwvlJ1y9TrYhnxjMAUMTFpPVs2Ix0hhBcvHW/JRqJ3mth8tvGN?=
- =?us-ascii?Q?3MqEJVd4azPDzlt3fSzBwga0cGrpDZOS6Om7LLfN7QM1hFJkIBklv8z/E0J+?=
- =?us-ascii?Q?2Vp+Ih8myic+qWsdref34p4IHFPtO+J44cmQoMZdwN7aKLfRu3vE+NqoHO8a?=
- =?us-ascii?Q?SwG19lXoFYyg3gjZqVVhLrEv6th3IOSSUVphIHMywBY3xWIa8OGIA9am/yXM?=
- =?us-ascii?Q?ct0LvjvbKsA80SptdJb8nzU5MC+OAmEJNnN4AyksgXgeSL4Z0dM4uUs012mi?=
- =?us-ascii?Q?nSSYxNbd/A0y7Yuse0tR9UXKy4KbM/3NsrVP+nQYmH1GSff/ldgcwbGuNpeQ?=
- =?us-ascii?Q?7gvZCp1GubD8trpVhYg=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05a60b7f-5ec3-44a9-f0b5-08dc85691ace
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB5744.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2024 14:09:24.9777
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: A0monpOIhOxp4yK6pQzgZs507VoLkNhc7dP7I61kHBCic+Y6A7N4iaxDljd/vCp1
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9117
-
---=_MailMate_781623F8-93FE-4E65-9300-2E2C849131AA_=
-Content-Type: text/plain
+References: <20240605122729.24283-1-brgl@bgdev.pl> <171759285132.2201422.6812393889473417095.robh@kernel.org>
+In-Reply-To: <171759285132.2201422.6812393889473417095.robh@kernel.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 5 Jun 2024 16:08:33 +0200
+Message-ID: <CAMRc=Me34aD=tfoh7YG9Zz1DM0h3DGZFcMonVF0+RDUCUTaNRQ@mail.gmail.com>
+Subject: Re: [PATCH v9 0/4] arm64: dts: qcom: add WiFi modules for several platforms
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On 5 Jun 2024, at 2:54, ran xiaokai wrote:
-
->> On Tue, Jun 4, 2024 at 5:47?PM <xu.xin16@zte.com.cn> wrote:
->>>
->>> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
->>>
->>> When I did a large folios split test, a WARNING
->>> "[ 5059.122759][  T166] Cannot split file folio to non-0 order"
->>> was triggered. But my test cases are only for anonmous folios.
->>> while mapping_large_folio_support() is only reasonable for page
->>> cache folios.
->>>
->>> In split_huge_page_to_list_to_order(), the folio passed to
->>> mapping_large_folio_support() maybe anonmous folio. The
->>> folio_test_anon() check is missing. So the split of the anonmous THP
->>> is failed. This is also the same for shmem_mapping(). We'd better add=
-
->>> a check for both. But the shmem_mapping() in __split_huge_page() is
->>> not involved, as for anonmous folios, the end parameter is set to -1,=
- so
->>> (head[i].index >=3D end) is always false. shmem_mapping() is not call=
-ed.
->>>
->>> Using /sys/kernel/debug/split_huge_pages to verify this, with this
->>> patch, large anon THP is successfully split and the warning is ceased=
-=2E
->>>
->>> Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
->>> Cc: xu xin <xu.xin16@zte.com.cn>
->>> Cc: Yang Yang <yang.yang29@zte.com.cn>
->>> ---
->>>  mm/huge_memory.c | 38 ++++++++++++++++++++------------------
->>>  1 file changed, 20 insertions(+), 18 deletions(-)
->>>
->>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>> index 317de2afd371..4c9c7e5ea20c 100644
->>> --- a/mm/huge_memory.c
->>> +++ b/mm/huge_memory.c
->>> @@ -3009,31 +3009,33 @@ int split_huge_page_to_list_to_order(struct p=
-age *page, struct list_head *list,
->>>         if (new_order >=3D folio_order(folio))
->>>                 return -EINVAL;
->>>
->>> -       /* Cannot split anonymous THP to order-1 */
->>> -       if (new_order =3D=3D 1 && folio_test_anon(folio)) {
->>> -               VM_WARN_ONCE(1, "Cannot split to order-1 folio");
->>> -               return -EINVAL;
->>> -       }
->>> -
->>>         if (new_order) {
->>>                 /* Only swapping a whole PMD-mapped folio is supporte=
-d */
->>>                 if (folio_test_swapcache(folio))
->>>                         return -EINVAL;
->>> -               /* Split shmem folio to non-zero order not supported =
-*/
->>> -               if (shmem_mapping(folio->mapping)) {
->>> -                       VM_WARN_ONCE(1,
->>> -                               "Cannot split shmem folio to non-0 or=
-der");
->>> -                       return -EINVAL;
->>> -               }
->>> -               /* No split if the file system does not support large=
- folio */
->>> -               if (!mapping_large_folio_support(folio->mapping)) {
->>> -                       VM_WARN_ONCE(1,
->>> -                               "Cannot split file folio to non-0 ord=
-er");
->>> -                       return -EINVAL;
->>> +
->>> +               if (folio_test_anon(folio)) {
->>> +                       /* Cannot split anonymous THP to order-1 */
->>> +                       if (new_order =3D=3D 1) {
->>> +                               VM_WARN_ONCE(1, "Cannot split to orde=
-r-1 folio");
->>> +                               return -EINVAL;
->>> +                       }
->>> +               } else {
->>> +                       /* Split shmem folio to non-zero order not su=
-pported */
->>> +                       if (shmem_mapping(folio->mapping)) {
->>> +                               VM_WARN_ONCE(1,
->>> +                                       "Cannot split shmem folio to =
-non-0 order");
->>> +                               return -EINVAL;
->>> +                       }
->>> +                       /* No split if the file system does not suppo=
-rt large folio */
->>> +                       if (!mapping_large_folio_support(folio->mappi=
-ng)) {
->>> +                               VM_WARN_ONCE(1,
->>> +                                       "Cannot split file folio to n=
-on-0 order");
->>> +                               return -EINVAL;
->>> +                       }
->>
->> Am I missing something? if file system doesn't support large folio,
->> how could the large folio start to exist from the first place while it=
-s
->> mapping points to a file which doesn't support large folio?
+On Wed, Jun 5, 2024 at 3:12=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org> =
+wrote:
 >
-> I think it is the CONFIG_READ_ONLY_THP_FOR_FS case.
-> khugepaged will try to collapse read-only file-backed pages to 2M THP.
+>
+> On Wed, 05 Jun 2024 14:27:25 +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Hi!
+> >
+> > Here are the DTS changes for several Qualcomm boards from the
+> > power-sequencing series. To keep the cover-letter short, I won't repeat
+> > all the details, they can be found in the cover-letter for v8. Please
+> > consider picking them up into the Qualcomm tree. They have all been
+> > thorougly tested with the pwrseq series.
+> >
+> > Changelog:
+> >
+> > Since v8:
+> > - split the DTS patches out into their own series
+> > - Link to v8: https://lore.kernel.org/r/20240528-pwrseq-v8-0-d354d52b76=
+3c@linaro.org
+> >
+> > Since v7:
+> > - added DTS changes for sm8650-hdk
+> > - added circular dependency detection for pwrseq units
+> > - fixed a KASAN reported use-after-free error in remove path
+> > - improve Kconfig descriptions
+> > - fix typos in bindings and Kconfig
+> > - fixed issues reported by smatch
+> > - fix the unbind path in PCI pwrctl
+> > - lots of minor improvements to the pwrseq core
+> >
+> > Since v6:
+> > - kernel doc fixes
+> > - drop myself from the DT bindings maintainers list for ath12k
+> > - wait until the PCI bridge device is fully added before creating the
+> >   PCI pwrctl platform devices for its sub-nodes, otherwise we may see
+> >   sysfs and procfs attribute failures (due to duplication, we're
+> >   basically trying to probe the same device twice at the same time)
+> > - I kept the regulators for QCA6390's ath11k as required as they only
+> >   apply to this specific Qualcomm package
+> >
+> > Since v5:
+> > - unify the approach to modelling the WCN WLAN/BT chips by always expos=
+ing
+> >   the PMU node on the device tree and making the WLAN and BT nodes beco=
+me
+> >   consumers of its power outputs; this includes a major rework of the D=
+T
+> >   sources, bindings and driver code; there's no more a separate PCI
+> >   pwrctl driver for WCN7850, instead its power-up sequence was moved
+> >   into the pwrseq driver common for all WCN chips
+> > - don't set load_uA from new regulator consumers
+> > - fix reported kerneldoc issues
+> > - drop voltage ranges for PMU outputs from DT
+> > - many minor tweaks and reworks
+> >
+> > v1: Original RFC:
+> >
+> > https://lore.kernel.org/lkml/20240104130123.37115-1-brgl@bgdev.pl/T/
+> >
+> > v2: First real patch series (should have been PATCH v2) adding what I
+> >     referred to back then as PCI power sequencing:
+> >
+> > https://lore.kernel.org/linux-arm-kernel/2024021413-grumbling-unlivable=
+-c145@gregkh/T/
+> >
+> > v3: RFC for the DT representation of the PMU supplying the WLAN and BT
+> >     modules inside the QCA6391 package (was largely separate from the
+> >     series but probably should have been called PATCH or RFC v3):
+> >
+> > https://lore.kernel.org/all/CAMRc=3DMc+GNoi57eTQg71DXkQKjdaoAmCpB=3Dh2n=
+dEpGnmdhVV-Q@mail.gmail.com/T/
+> >
+> > v4: Second attempt at the full series with changed scope (introduction =
+of
+> >     the pwrseq subsystem, should have been RFC v4)
+> >
+> > https://lore.kernel.org/lkml/20240201155532.49707-1-brgl@bgdev.pl/T/
+> >
+> > v5: Two different ways of handling QCA6390 and WCN7850:
+> >
+> > https://lore.kernel.org/lkml/20240216203215.40870-1-brgl@bgdev.pl/
+> >
+> > Bartosz Golaszewski (3):
+> >   arm64: dts: qcom: sm8550-qrd: add the Wifi node
+> >   arm64: dts: qcom: sm8650-qrd: add the Wifi node
+> >   arm64: dts: qcom: qrb5165-rb5: add the Wifi node
+> >
+> > Neil Armstrong (1):
+> >   arm64: dts: qcom: sm8650-hdk: add the Wifi node
+> >
+> >  arch/arm64/boot/dts/qcom/qrb5165-rb5.dts | 103 ++++++++++++++++++++---
+> >  arch/arm64/boot/dts/qcom/sm8250.dtsi     |   2 +-
+> >  arch/arm64/boot/dts/qcom/sm8550-qrd.dts  |  97 +++++++++++++++++++++
+> >  arch/arm64/boot/dts/qcom/sm8550.dtsi     |   2 +-
+> >  arch/arm64/boot/dts/qcom/sm8650-hdk.dts  |  89 ++++++++++++++++++++
+> >  arch/arm64/boot/dts/qcom/sm8650-qrd.dts  |  89 ++++++++++++++++++++
+> >  arch/arm64/boot/dts/qcom/sm8650.dtsi     |   2 +-
+> >  7 files changed, 370 insertions(+), 14 deletions(-)
+> >
+> > --
+> > 2.40.1
+> >
+> >
+> >
+>
+>
+> My bot found new DTB warnings on the .dts files added or changed in this
+> series.
+>
+> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+> are fixed by another series. Ultimately, it is up to the platform
+> maintainer whether these warnings are acceptable or not. No need to reply
+> unless the platform maintainer has comments.
+>
+> If you already ran DT checks and didn't see these error(s), then
+> make sure dt-schema is up to date:
+>
+>   pip3 install dtschema --upgrade
+>
+>
+> New warnings running 'make CHECK_DTBS=3Dy qcom/qrb5165-rb5.dtb qcom/sm855=
+0-qrd.dtb qcom/sm8650-hdk.dtb qcom/sm8650-qrd.dtb' for 20240605122729.24283=
+-1-brgl@bgdev.pl:
+>
+> arch/arm64/boot/dts/qcom/qrb5165-rb5.dtb: bluetooth: 'vddbtcmx-supply' do=
+es not match any of the regexes: 'pinctrl-[0-9]+'
+>         from schema $id: http://devicetree.org/schemas/net/bluetooth/qual=
+comm-bluetooth.yaml#
+> arch/arm64/boot/dts/qcom/sm8650-qrd.dtb: /wcn7850-pmu: failed to match an=
+y schema with compatible: ['qcom,wcn7850-pmu']
+> arch/arm64/boot/dts/qcom/sm8650-hdk.dtb: /wcn7850-pmu: failed to match an=
+y schema with compatible: ['qcom,wcn7850-pmu']
+> arch/arm64/boot/dts/qcom/sm8550-qrd.dtb: /wcn7850-pmu: failed to match an=
+y schema with compatible: ['qcom,wcn7850-pmu']
+> arch/arm64/boot/dts/qcom/qrb5165-rb5.dtb: /qca6390-pmu: failed to match a=
+ny schema with compatible: ['qcom,qca6390-pmu']
+>
+>
+>
+>
+>
 
-Can you add this information to the commit log in your next version?
+Bindings for this were sent separately to for the regulator tree.
 
-Best Regards,
-Yan, Zi
-
---=_MailMate_781623F8-93FE-4E65-9300-2E2C849131AA_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename=signature.asc
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAmZgcWAPHHppeUBudmlk
-aWEuY29tAAoJEJ2yUfNrYfqKhP0P/1CLIaYaV64XGPZzdAw+FS0dygPHkwxHDicv
-OLGxGPsGgq0KFqPUAtlNiSf8BRYFPfg2G+JHH6BEYj+EatH+szvlTJQSt/i1vmyG
-jotSQfY2jDTWKwlJ3X+u9UTiuMHDPHpCbo8lni8AjU3AYLOo4HXds9tvNkDwhXp3
-Hiu/A8j57cXU3Nxk0vmp9Uqf5Wh9ZTDLolgrW3DMqfqj81JJX5+NOr55qOo68tob
-9M7ZAIBwIjB1B5DmdNTuyletDPlyLsUQ7aNXtwITtsu+9jLNDtGKngZ+jGhxre62
-rPBgQo+TJyGdhXHhReTNWmwdT31TJiw0emVQ/BMOZDE2GsQEO8+aCJfmXDzq4C6x
-wPSUTdqbgwM7h33QzGN0pTfPHqfVC2YTPMio0EbvjJ/FVRHbtETAyNgujamgrePr
-3X7RWtax7I17mFponyfEsaIYCpDH/eveca3J4s1HXQ8M/qoyf+nJvy3tMzNJwRh+
-sDIbjm2sPPiVYedi6JKPx1fxyiEErxQNItFNWgXSgziTGN8xlKA5S2ZE+1Zev/uF
-RkV1ROVZ0psB3KLXUCV2D704R31ayVZkywswIF3+MsNNmCQlT2bCuAXUjFYNJ5nD
-t3l4i/cOLVkVOixXWMKpubyf+WzKqIuApTxH5e9vxAcqc5Q9z23FLyM9T0u/nI2P
-cfhAX/Gy
-=iCUo
------END PGP SIGNATURE-----
-
---=_MailMate_781623F8-93FE-4E65-9300-2E2C849131AA_=--
+Bartosz
 
