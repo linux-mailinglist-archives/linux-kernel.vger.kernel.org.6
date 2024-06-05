@@ -1,96 +1,175 @@
-Return-Path: <linux-kernel+bounces-202100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1876B8FC7D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:31:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA8E98FC7BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:27:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C09BB1F23548
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:31:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 317011F223D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC3E191474;
-	Wed,  5 Jun 2024 09:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA31718FC7B;
+	Wed,  5 Jun 2024 09:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RdolMbhg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fPSSQDl5"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE0F190078;
-	Wed,  5 Jun 2024 09:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619D5200CD;
+	Wed,  5 Jun 2024 09:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717579830; cv=none; b=m8ddJdwtIjP74EN5pqSK8zQZqNj5LA5JkwzVxr5G3QPy6iE3dAp/bCeFKuuCUN4/qezALGc/Mo8eKAkqkRGQi55csX1L+BpyEF8r8TMW9r3nV3A7tDBjwM8sbFFgm3tow2b5I4U4ir+Fn9tovi2gSbtktcF56b2N9+n9Riinim0=
+	t=1717579613; cv=none; b=cWaJ4qhkaHEP9VWM7c3Va+KhjprwgFUbJTOcOIL0Dc2Cy1g5JQoKJ7dU+lhpGrUCp/fYJQ0uU8W5c+K9+gMZZWmICqEdU78n4stNuvEqbHhvItOV3P/KBTP5oGujI5N5hRbQ+pHJsUdn9r9L3qMqIEBkv1MhNYc3+duJUoxcKmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717579830; c=relaxed/simple;
-	bh=omvsGsm3VpH9I17E4mg2XxTtOxQUZz1UHTdriaN1Co8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=OPWOtSa+Ini35aTtoRMfWCEENb0YDOfVkPqMyUXbYtWLV7hPTRMhsIJzWyP0q3xf5Ifs30FG3bqS0e9I9fmsH+T2HcaHP+TD/RDYc/As0sbt/PDuTais2395AqGQ4E9F/3Dk1DSQJD7Am28zqocI+qUGjIPmUZ4jMvFv4FgFUGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RdolMbhg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 09B90C4AF08;
-	Wed,  5 Jun 2024 09:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717579830;
-	bh=omvsGsm3VpH9I17E4mg2XxTtOxQUZz1UHTdriaN1Co8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=RdolMbhguQ9T19A+eueofKuufSDjOp+f9t3ODFi/1lk9/+JyEKz5O72HIYVxrqBSK
-	 Q2ABouDwiXW25Fw+2DF00yVElgvohdN+F6BIQE/6/+iumPWt2NnYjXi9/Ab5FbZY4R
-	 /C7fO0BSgDxlgvQPu2OPOwdLncaD33mvGS3CrhR6JOw7cgDGYWjKUe1QonfHDoZcvl
-	 vIBU3zxSwXTyRkOn2AOzo3INOlDd4tA25egSprPJhRNq5wAGZarCOudx2T5MpiccSJ
-	 YQM9EkljuNRsFCd52NFpR0ZdmmIJ5owDeJf984vLGqhjpcTPlO3aFB6HoavGSVnaaw
-	 6V4gUJFYOnxFw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E7CB4D3E99A;
-	Wed,  5 Jun 2024 09:30:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1717579613; c=relaxed/simple;
+	bh=Y7dorVYxePR9VWygFujvcqMnB0Us5J/pvoyDgyJ/vhQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gps3AOWJWNdOj56ndAbjsyQyNcu0nv5JxrDbOuayWefHLRFZ4ANLgqjH/Ha0RdODFHheYxR33dENIv42B2z++x3dCMSso6aPi9Gf1v37BherzCxdvlAw8026tFhvkZEtHcUlU4IqCYMlEL38XQwBq5g2jtGjzIFJMedfV65P31E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fPSSQDl5; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42139c66027so19066805e9.3;
+        Wed, 05 Jun 2024 02:26:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717579610; x=1718184410; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1UmSXewXk4xoFkR0JLkcRp552PFqHFEUhSIEEN2KqQc=;
+        b=fPSSQDl5gHxGN6DQi99Som9P/HOASwgUOkZeE1bJJ1RRVAtqtpycintEu8UXXOA/8e
+         pGXK4BNJlXcHUno7jwBJxCKF5QXOdcUpjlQMVC3FwziRbfLEIHwFKYmjnxUCx5eca59s
+         8cxA09RQnEGB1aUMxrzYjX2DiSNI6JjnBIn/55NIArTvtjG0WPoPNUU3sYWpjbr7V3le
+         tFVguuLc+bQ4tRaXSSpOd+39drjLEGz7Fqh5Hj3V3ZNQN6jgkGiXe2SuM2PUJgDqaTSv
+         wr14iV4uIR98zEIEy47Fwa17i2cv6p7AOs9/MMpARKzlndWEfNs5oSZzALDCZZ/7j3xa
+         nreA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717579610; x=1718184410;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1UmSXewXk4xoFkR0JLkcRp552PFqHFEUhSIEEN2KqQc=;
+        b=t8BYVZUBGKIqSViUaX0GEBYuiAh1LSN8/4AF1c1xPrLKKOwqNiS4Z2Az/YDoADXtBv
+         7ZN17y0X6CmNwbVMPw/srvddi9EM3SQPAXJNyT2N3e4a21CGXLkSeNrDxKoIwsuQuHSg
+         uyw0oNfBH4kaJNHtd/UqlpZwtauIOr9aYRgHhAthVzCJmAO2FLBpjTy0fxudCrphYmcA
+         ncqjOzM/H3tY3MlRAvMQruna72o2MivdFYErb6QM4sx8XDzuU0kbiJ3E1ob9my1TX2Di
+         P8E6uyOGGXw5DjAe5aQrPTIHMMndUD4TchsfEJsaJHsacrvr43XSVcSTnBIjGN6joEFR
+         vyRg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrFdjIWOS72wmrT/UAVNX5bg3r7BdVXoOMal2f5YDgoq37Zjd0My9ickDx2RrEAHObREtW35qpv5Rc9LGfHyRsy2BmUMmwYi+N8DfMKgPaHHiLaJD5CiunM4y2v715NWjzOiotkA6Hsv7JaV5nmJ9PDFCxTq0BYDEPcez5BMPfyc/3KQ==
+X-Gm-Message-State: AOJu0YyDlN6c6UhnJFnamGbQpnFBbrpwO3HkRJ+3wWXD3PQWQR/7gryD
+	F5EgqfTKRk3KiPjFj0PbeHcoIX+nwcBnwH6c5JgqIryKcBwwusxV
+X-Google-Smtp-Source: AGHT+IFH3qEuzhvOzWCxD89pSr5V0K6ubhue4nZnUzWyz+9pwcFpeOSdH2c41hWlgEUOrw3l/ZQVoQ==
+X-Received: by 2002:a05:600c:4ed2:b0:421:565b:e71c with SMTP id 5b1f17b1804b1-421565be9ecmr14133675e9.14.1717579609319;
+        Wed, 05 Jun 2024 02:26:49 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421581490c2sm13780065e9.37.2024.06.05.02.26.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 02:26:49 -0700 (PDT)
+Message-ID: <0c0d1b2030960cdc2840d84645538fe3a9c8b9a6.camel@gmail.com>
+Subject: Re: [PATCH v3 2/6] spi: bitbang: Implement support for MOSI idle
+ state configuration
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org, 
+ lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+  nuno.sa@analog.com, dlechner@baylibre.com, marcelo.schmitt1@gmail.com
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 05 Jun 2024 11:30:35 +0200
+In-Reply-To: <811a2771d93c16b48fb37286e648a03171c8d2bc.1717539384.git.marcelo.schmitt@analog.com>
+References: <cover.1717539384.git.marcelo.schmitt@analog.com>
+	 <811a2771d93c16b48fb37286e648a03171c8d2bc.1717539384.git.marcelo.schmitt@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [net-next PATCH v3 1/2] net: phy: aquantia: move priv and hw stat to
- header
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171757982994.5772.18334468085942264665.git-patchwork-notify@kernel.org>
-Date: Wed, 05 Jun 2024 09:30:29 +0000
-References: <20240531233505.24903-1-ansuelsmth@gmail.com>
-In-Reply-To: <20240531233505.24903-1-ansuelsmth@gmail.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- robimarko@gmail.com, daniel@makrotopia.org, rmk+kernel@armlinux.org.uk,
- frut3k7@gmail.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Sat,  1 Jun 2024 01:35:02 +0200 you wrote:
-> In preparation for LEDs support, move priv and hw stat to header to
-> reference priv struct also in other .c outside aquantia.main
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+On Tue, 2024-06-04 at 19:42 -0300, Marcelo Schmitt wrote:
+> Some SPI peripherals may require strict MOSI line state when the controll=
+er
+> is not clocking out data.
+> Implement support for MOSI idle state configuration (low or high) by
+> setting the data output line level on controller setup and after transfer=
+s.
+> Bitbang operations now call controller specific set_mosi_idle() call back
+> to set MOSI to its idle state.
+> The MOSI line is kept at its idle state if no tx buffer is provided.
+>=20
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
 > ---
-> Changes v2:
-> - Out of RFC
-> 
-> [...]
 
-Here is the summary with links:
-  - [net-next,v3,1/2] net: phy: aquantia: move priv and hw stat to header
-    https://git.kernel.org/netdev/net-next/c/c11d5dbbe73f
-  - [net-next,v3,2/2] net: phy: aquantia: add support for PHY LEDs
-    https://git.kernel.org/netdev/net-next/c/61578f679378
+Some minor nit below in case a re-spin is needed. Anyways,
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Acked-by: Nuno Sa <nuno.sa@analog.com>
+
+> =C2=A0drivers/spi/spi-bitbang.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 24 =
+++++++++++++++++++++++++
+> =C2=A0include/linux/spi/spi_bitbang.h |=C2=A0 1 +
+> =C2=A02 files changed, 25 insertions(+)
+>=20
+> diff --git a/drivers/spi/spi-bitbang.c b/drivers/spi/spi-bitbang.c
+> index ca5cc67555c5..3dee085d3570 100644
+> --- a/drivers/spi/spi-bitbang.c
+> +++ b/drivers/spi/spi-bitbang.c
+> @@ -63,21 +63,28 @@ static unsigned bitbang_txrx_8(
+> =C2=A0	unsigned flags
+> =C2=A0)
+> =C2=A0{
+> +	struct spi_bitbang	*bitbang;
+> =C2=A0	unsigned		bits =3D t->bits_per_word;
+> =C2=A0	unsigned		count =3D t->len;
+> =C2=A0	const u8		*tx =3D t->tx_buf;
+> =C2=A0	u8			*rx =3D t->rx_buf;
+> =C2=A0
+> +	bitbang =3D spi_controller_get_devdata(spi->controller);
+> =C2=A0	while (likely(count > 0)) {
+> =C2=A0		u8		word =3D 0;
+> =C2=A0
+> =C2=A0		if (tx)
+> =C2=A0			word =3D *tx++;
+> +		else
+> +			word =3D (spi->mode & SPI_MOSI_IDLE_HIGH) ? 0xFF : 0;
+
+no need for ()
+
+> =C2=A0		word =3D txrx_word(spi, ns, word, bits, flags);
+> =C2=A0		if (rx)
+> =C2=A0			*rx++ =3D word;
+> =C2=A0		count -=3D 1;
+> =C2=A0	}
+> +	if (bitbang->set_mosi_idle)
+> +		bitbang->set_mosi_idle(spi);
+> +
+> =C2=A0	return t->len - count;
+> =C2=A0}
+> =C2=A0
+> @@ -92,21 +99,28 @@ static unsigned bitbang_txrx_16(
+> =C2=A0	unsigned flags
+> =C2=A0)
+> =C2=A0{
+> +	struct spi_bitbang	*bitbang;
+> =C2=A0	unsigned		bits =3D t->bits_per_word;
+> =C2=A0	unsigned		count =3D t->len;
+> =C2=A0	const u16		*tx =3D t->tx_buf;
+> =C2=A0	u16			*rx =3D t->rx_buf;
+> =C2=A0
+> +	bitbang =3D spi_controller_get_devdata(spi->controller);
+> =C2=A0	while (likely(count > 1)) {
+> =C2=A0		u16		word =3D 0;
+> =C2=A0
+> =C2=A0		if (tx)
+> =C2=A0			word =3D *tx++;
+> +		else
+> +			word =3D (spi->mode & SPI_MOSI_IDLE_HIGH) ? 0xFFFF : 0;
+
+ditto (and for the txrx8 function)
 
 
+- Nuno S=C3=A1
 
