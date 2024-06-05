@@ -1,143 +1,194 @@
-Return-Path: <linux-kernel+bounces-203359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 842FD8FD9F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 00:37:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A10908FD9F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 00:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1263F285ECA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:37:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40D2F28A2F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A662161318;
-	Wed,  5 Jun 2024 22:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3309416088F;
+	Wed,  5 Jun 2024 22:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4lbkGThx"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="B6XjT51P"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521241607BD
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 22:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3EC15F3ED;
+	Wed,  5 Jun 2024 22:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717627015; cv=none; b=KqyRTslXy2kpsRY63FX4ZeVqUrsv8Kqh+Ihk4iQQo/G1cEQr0ISUNM1jcMD02xuV/HGyHg4NvjZ4hAuyFkmMaiK7NuKWfiJebOAAsPZ+QjkTN54EpMYk+EGgGOsvrkjFpAz1eFOwK1JhBx2ZC/l6NWraHqdaDWbhANfBfrJecRs=
+	t=1717627199; cv=none; b=KazWw+wTRxEykdX4HXFeaPBr0MNwEqeBtA7iVmpvzxDv+WaxlleqZBESIjRLmzDHzYLMrpNU2J5DcumsanRI1OIOaV3kPUnibVInTRyd4MkAkjIw+rcL7VzKbWazdLlVGMEQQyl8DP7tQv85ItlOxTVt2KJlyz3j+LG3rlFQ8WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717627015; c=relaxed/simple;
-	bh=9eIW5Nk9I4U8j48RPo1MRyDNbVsR5OYHwY3uM3dehXE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=FsGPH6qAHBGvwDmxnfu0B4O973MWbeLOlflN+WD5U2AD5SGZA7lkUnLKlZdIh4n7WKD/QBrWGuX/PSWM7xGWj0+TDgbA+pGdn4dvM9VyOg1jBWuigL74dDcK2xeVfn0INnktO3ufzvgK2YXPRzrj/0hnuxbwHKz8ZzFyvRGPo7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4lbkGThx; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62a088faef7so18481227b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 15:36:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717627013; x=1718231813; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HvR2KzRbeN2y+kQBsoY3woptqhul8uQMwsNjpEueFQI=;
-        b=4lbkGThxkiUpMN/0jwXCXsnJX3PCW4UQENIqDyWnmGotw02/rp5TiIapCC7+pqP/nn
-         EaNCX+m6x1uIQ1OS0qB9q+1feW16DiFlasAh6Yu+A1t143SClI5OL+mny+4YHSZDm/Qz
-         iDlpVVG4c9LjVKyRSX8Zphr352aFBj7rfg9tgukQ50EF97uPyMceZnjz+foFGoMjZsCV
-         65EqqkxAgsg8GyhAlTSNfYY5t4NuHkuuOQEd9Dil8SBn0FUZctsUuoYXr6Y1GTN/9Nyb
-         lmWmhL5eAfB/QsQKpjWkGQ0m2DlZoz7AeNn6QJTjdAVael8nbB5fSWsr0DThu56v1Y0+
-         WW8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717627013; x=1718231813;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HvR2KzRbeN2y+kQBsoY3woptqhul8uQMwsNjpEueFQI=;
-        b=WmugFlwRoQpaRV31ZppXmk4zS0rCzkf3QnlHIUKu6j+v0uOy3iUJMlDW0Xqpem7xh3
-         k4Wsq6NQKwM+qy77o63ed3lDc86DCjDJmawcTPl54UJKkBp/R1OaU/9IbsjNv57+DraH
-         eOpPvmyR4DGMFe7Xdcye1jbzJfamkNV3Ptp+Og+JDrQ9iEekOTBnfluVg34hi/OMwKmL
-         uUkyU3iYKCv/4AVtlnwHnNOeoyrRcdBePtR6IA5AMnaLVcD1FtjKDg6aooR3y9RTiIIH
-         WWiPgH4FbvOAXkEb7AWdzyfO1IuQUKI40lahUVbc1Avn4rzXvT19OKryF2cqZ230J0DX
-         kPQg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7/0oUGV5S+rIYGI/+L03HpgVA1PJTSBn6z75BFL5uKoQPfGffXTdZgs7ePONEw8MzRsLwjr/mxgWiGZpkHkhPT2baweEV0llVxNyu
-X-Gm-Message-State: AOJu0YyZjJMm1cDjl2i+UMTOFe3uIsmDysl0zT0LhwhE5UR+MlvIwQ3j
-	dlFAo/JKeYzB4Ck0z8siveVywdbRIoq/taqqQMVg+Ccelv/LrikaeeBqrnBdemV+oNj+0CuwC9R
-	Dxg==
-X-Google-Smtp-Source: AGHT+IHQMSg3BZwEdpTjqj45BkSGSDIqDJ5xpSLfVCjXGbqd16zv34TQGDGB9Qio8PSsr4E5OLx/pSf4zjw=
-X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
- (user=edliaw job=sendgmr) by 2002:a05:690c:6413:b0:620:32ea:e1d4 with SMTP id
- 00721157ae682-62cc6f92037mr2991207b3.0.1717627013381; Wed, 05 Jun 2024
- 15:36:53 -0700 (PDT)
-Date: Wed,  5 Jun 2024 22:36:35 +0000
-In-Reply-To: <20240605223637.1374969-1-edliaw@google.com>
+	s=arc-20240116; t=1717627199; c=relaxed/simple;
+	bh=IskKsFA2/LXUqW0Tacqnyr0ow3eiHrAKVwj5qkWYFz0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=hgmBXK+wGF3h9SHFDXIZBPS2yDLe7CTKMP3ouKH3NAn1S4DWrBEHMqNQUOIg99hhrH1kXAOXOnuC2lmx+RtO5QnmbvUaOBlRbojJcrB3DNuWJMX6VVLEV2AvKu+H7eqdLn32/53xWU2xo8Hv+y3lGlGlr0LTofj/Sv8yXNWkAnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=B6XjT51P; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 455L7NTJ016716;
+	Wed, 5 Jun 2024 22:39:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=IBSEFFyozq9AP7T7zCoic6
+	K0+Ab6heDxsdmmvN5PFPw=; b=B6XjT51P9u+kbYTJzFe+Mrs5LsvjlAFD9ZLhvW
+	Qt7+WPZK+GWEcnNR4iQGIqcXnCJllSIyKapSQfEWhf/Uiyzk+zFPvMrTtECDs/xi
+	8Vexs+0TAlGP4GkcXjvUTCCkCPCLGKI6lIeYBEKJyR4ZpV39uoOmMtAsKLKoHfiR
+	TmlKz3pRtVrKMs2KQvxRuNrKwv3HOzXH9zoGo6zwQuhjQAdJca9N7PgzIdNtEIm3
+	T1TrE6BUX3tvMTIfCSy1srodvwF5J3hIcSO/baCULFCMzXpUjlamhQ3ulcUdUw1H
+	c7oAli9MOt8EY+lLi8U1SbESvxtKRYKwPUeWQV/H8R4knUIA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjan2k1en-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Jun 2024 22:39:36 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 455MdZjb031482
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 5 Jun 2024 22:39:35 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Jun 2024
+ 15:39:35 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Wed, 5 Jun 2024 15:39:34 -0700
+Subject: [PATCH] fsi: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240605223637.1374969-1-edliaw@google.com>
-X-Mailer: git-send-email 2.45.1.467.gbab1589fc0-goog
-Message-ID: <20240605223637.1374969-3-edliaw@google.com>
-Subject: [PATCH v1 2/2] selftests/mm: Guard defines from shm
-From: Edward Liaw <edliaw@google.com>
-To: shuah@kernel.org, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: cmllamas@google.com, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kernel-team@android.com, 
-	Edward Liaw <edliaw@google.com>, llvm@lists.linux.dev, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240605-md-drivers-fsi-v1-1-fefc82d81b12@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIACXpYGYC/x3MQQqDQAxA0atI1g2MoxbpVaSLaGIN1FGSVgTx7
+ k67fIv/D3AxFYdHcYDJpq5LyihvBQwTpZegcjbEEOtwDw3OjGy6iTmOrhioqrmN1DZMkKPVZNT
+ 9P+ye2T25YG+Uhum3eWv67jiTf8TgPC/Xjxl4fwAAAA==
+To: Jeremy Kerr <jk@ozlabs.org>, Joel Stanley <joel@jms.id.au>,
+        Alistar Popple
+	<alistair@popple.id.au>,
+        Eddie James <eajames@linux.ibm.com>,
+        Andrew Jeffery
+	<andrew@codeconstruct.com.au>
+CC: <linux-fsi@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-aspeed@lists.ozlabs.org>, <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 4YyMX5gMIkxoGAUWDq0Ghiv32UuU6_8N
+X-Proofpoint-ORIG-GUID: 4YyMX5gMIkxoGAUWDq0Ghiv32UuU6_8N
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-05_02,2024-06-05_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 adultscore=0 spamscore=0 clxscore=1011 mlxscore=0
+ malwarescore=0 impostorscore=0 mlxlogscore=856 bulkscore=0 suspectscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406050170
 
-thuge-gen.c defines SHM_HUGE_* macros that are provided by the uapi
-since 4.14. These macros get redefined when compiling with Android's
-bionic because its sys/shm.h will import the uapi definitions.
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-core.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-hub.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-aspeed.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-gpio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-ast-cf.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-scom.o
 
-However if linux/shm.h is included, with glibc, sys/shm.h will clash on
-some struct definitions:
+Add the missing invocations of the MODULE_DESCRIPTION() macro, and fix the
+copy/paste of the module description comment in fsi-master-ast-cf.c.
 
-  /usr/include/linux/shm.h:26:8: error: redefinition of =E2=80=98struct shm=
-id_ds=E2=80=99
-     26 | struct shmid_ds {
-        |        ^~~~~~~~
-  In file included from /usr/include/x86_64-linux-gnu/bits/shm.h:45,
-                   from /usr/include/x86_64-linux-gnu/sys/shm.h:30:
-  /usr/include/x86_64-linux-gnu/bits/types/struct_shmid_ds.h:24:8: note: or=
-iginally defined here
-     24 | struct shmid_ds
-        |        ^~~~~~~~
-
-For now, guard the SHM_HUGE_* defines with ifndef to prevent
-redefinition warnings on Android bionic.
-
-Signed-off-by: Edward Liaw <edliaw@google.com>
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 ---
- tools/testing/selftests/mm/thuge-gen.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/fsi/fsi-core.c          | 1 +
+ drivers/fsi/fsi-master-aspeed.c | 1 +
+ drivers/fsi/fsi-master-ast-cf.c | 3 ++-
+ drivers/fsi/fsi-master-gpio.c   | 1 +
+ drivers/fsi/fsi-master-hub.c    | 1 +
+ drivers/fsi/fsi-scom.c          | 1 +
+ 6 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/mm/thuge-gen.c b/tools/testing/selftes=
-ts/mm/thuge-gen.c
-index 034635317935..d50dc71cac32 100644
---- a/tools/testing/selftests/mm/thuge-gen.c
-+++ b/tools/testing/selftests/mm/thuge-gen.c
-@@ -34,10 +34,18 @@
- #endif
-=20
- #define SHM_HUGETLB     04000   /* segment will use huge TLB pages */
-+#ifndef SHM_HUGE_SHIFT
- #define SHM_HUGE_SHIFT  26
-+#endif
-+#ifndef SHM_HUGE_MASK
- #define SHM_HUGE_MASK   0x3f
-+#endif
-+#ifndef SHM_HUGE_2MB
- #define SHM_HUGE_2MB    (21 << SHM_HUGE_SHIFT)
-+#endif
-+#ifndef SHM_HUGE_1GB
- #define SHM_HUGE_1GB    (30 << SHM_HUGE_SHIFT)
-+#endif
-=20
- #define NUM_PAGESIZES   5
- #define NUM_PAGES 4
---=20
-2.45.1.467.gbab1589fc0-goog
+diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
+index 097d5a780264..716a924269ee 100644
+--- a/drivers/fsi/fsi-core.c
++++ b/drivers/fsi/fsi-core.c
+@@ -1444,5 +1444,6 @@ static void fsi_exit(void)
+ }
+ module_exit(fsi_exit);
+ module_param(discard_errors, int, 0664);
++MODULE_DESCRIPTION("FSI core driver");
+ MODULE_LICENSE("GPL");
+ MODULE_PARM_DESC(discard_errors, "Don't invoke error handling on bus accesses");
+diff --git a/drivers/fsi/fsi-master-aspeed.c b/drivers/fsi/fsi-master-aspeed.c
+index f0a19cd451a0..b454587790a2 100644
+--- a/drivers/fsi/fsi-master-aspeed.c
++++ b/drivers/fsi/fsi-master-aspeed.c
+@@ -672,4 +672,5 @@ static struct platform_driver fsi_master_aspeed_driver = {
+ };
+ 
+ module_platform_driver(fsi_master_aspeed_driver);
++MODULE_DESCRIPTION("FSI master driver for AST2600");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/fsi/fsi-master-ast-cf.c b/drivers/fsi/fsi-master-ast-cf.c
+index 812dfa9a9140..85096559dda3 100644
+--- a/drivers/fsi/fsi-master-ast-cf.c
++++ b/drivers/fsi/fsi-master-ast-cf.c
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0+
+ // Copyright 2018 IBM Corp
+ /*
+- * A FSI master controller, using a simple GPIO bit-banging interface
++ * A FSI master based on Aspeed ColdFire coprocessor
+  */
+ 
+ #include <linux/crc4.h>
+@@ -1440,5 +1440,6 @@ static struct platform_driver fsi_master_acf = {
+ };
+ 
+ module_platform_driver(fsi_master_acf);
++MODULE_DESCRIPTION("A FSI master based on Aspeed ColdFire coprocessor");
+ MODULE_LICENSE("GPL");
+ MODULE_FIRMWARE(FW_FILE_NAME);
+diff --git a/drivers/fsi/fsi-master-gpio.c b/drivers/fsi/fsi-master-gpio.c
+index ed03da4f2447..d32dcc98e85b 100644
+--- a/drivers/fsi/fsi-master-gpio.c
++++ b/drivers/fsi/fsi-master-gpio.c
+@@ -894,4 +894,5 @@ static struct platform_driver fsi_master_gpio_driver = {
+ };
+ 
+ module_platform_driver(fsi_master_gpio_driver);
++MODULE_DESCRIPTION("A FSI master controller, using a simple GPIO bit-banging interface");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/fsi/fsi-master-hub.c b/drivers/fsi/fsi-master-hub.c
+index 6d8b6e8854e5..6568fed7db3c 100644
+--- a/drivers/fsi/fsi-master-hub.c
++++ b/drivers/fsi/fsi-master-hub.c
+@@ -295,4 +295,5 @@ static struct fsi_driver hub_master_driver = {
+ };
+ 
+ module_fsi_driver(hub_master_driver);
++MODULE_DESCRIPTION("FSI hub master driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/fsi/fsi-scom.c b/drivers/fsi/fsi-scom.c
+index 61dbda9dbe2b..411ddc018cd8 100644
+--- a/drivers/fsi/fsi-scom.c
++++ b/drivers/fsi/fsi-scom.c
+@@ -625,4 +625,5 @@ static void scom_exit(void)
+ 
+ module_init(scom_init);
+ module_exit(scom_exit);
++MODULE_DESCRIPTION("SCOM FSI Client device driver");
+ MODULE_LICENSE("GPL");
+
+---
+base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
+change-id: 20240605-md-drivers-fsi-0a34d82a85da
 
 
