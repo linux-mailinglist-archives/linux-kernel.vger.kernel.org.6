@@ -1,174 +1,157 @@
-Return-Path: <linux-kernel+bounces-202679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC4F58FCF81
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:37:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F338FCF83
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C07E28C061
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:37:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 371111C23E4B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E26D1991D6;
-	Wed,  5 Jun 2024 13:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B83194A52;
+	Wed,  5 Jun 2024 13:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="goC4xG1G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pEDUb6r5"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E751991BD;
-	Wed,  5 Jun 2024 13:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1EBE1C3D;
+	Wed,  5 Jun 2024 13:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717593107; cv=none; b=dsODV1eLm9JSFRenhJKfEFhs9uoJ727c37gy5vZaPP/rrMY4/jOa405OTH0B70XIA6yUpHtA0rBwJgLg2bv9ifAjB+63t9EznbL4RPIVlaVasrplQ2ArGoTqloJHO5Bf1pS9zLGF2PCYYh7WHHQyJxhgi6JpE7+Qi8KnbRmncuw=
+	t=1717593204; cv=none; b=TFvBUMttvFrjHSd46XbLY8PNlp/e6EVbpN89iKjO24Oh20pxBecvYE1tvQLFhihjOlvL7xvby8GZR8gt+WoKqJ9P0kx7GJ+aN1Ez8o6OhK7l/Hdz0RE4APloQq/Ej02xw5nhTLL8T5amOph7QhRDCHsoK5G3J1vGdRxxEauTMyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717593107; c=relaxed/simple;
-	bh=z3AyDz/cSs7NcIi7IsLYg5zkRvDfugi4f76S7UFbDnA=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=D+Bd2mAFUCiAv+KG4PRXKridzEBQysuZ6GBv3ZQw2jVRboyE+YN0kRWCZd8r63YojUq2S55nEpgtv39uA8e0DK2DIP93xeSHBGAdj/+m0ZfGVtYXgaodmF1mj22CleZxHV0QfIDeEMLNKnw0sB5qylfGr7m+l5Efatf3oVSJhXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=goC4xG1G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00227C4AF13;
-	Wed,  5 Jun 2024 13:11:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717593107;
-	bh=z3AyDz/cSs7NcIi7IsLYg5zkRvDfugi4f76S7UFbDnA=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=goC4xG1GK/8GuNy8O7WozvGlBYVktW4cpTOWHFSTwGBj46kPUHDD4MMGJ1QiShpU7
-	 HkSn1NjB4G9CsAnKd9BMlkjvbYg8Zd8phLOnFY6X8ZWBv13Ko7Q0AhkhCrCwck3QZk
-	 r0wNw2tcEY58xKL8mhBDTlqYZqBfoR7sdikmOA+jI/0xVkkNlhGToVDDb2QPdEzncB
-	 jYIz+TpxPndJ81QHvQ11fde5VN/4tdOH2a6fKEyb7qf9Ul1p+cqzSv+p8VWMOUZO5b
-	 3l2o2p2xZX5eFPfLX+VYp3FTIYGEuVKGL7x0yoJbL+YMNUnw1fYVCadJb5zS1LsrbZ
-	 2WFPmQUIKEzEw==
-Date: Wed, 05 Jun 2024 07:11:45 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1717593204; c=relaxed/simple;
+	bh=lcRT+tzoPV1CArKM26q9NGMNG0h6kkT7J9Luo9A0OA8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bv9hvoS4c01bgzbXoaWZTl2jDQVVehg9ptsqlO30GNghVE7Uj1MugfWf21ICzEu716q3bdjcpBA3o89uObQfHunn5khO/PXrJVJvEXl57BmjFOygaMWQ3P2XN1CkupIu+fkXhN7CZBf8i5XIJAsHOmtxFYSqRj9Jw8mcCHdCrbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pEDUb6r5; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 455D7Sdf019226;
+	Wed, 5 Jun 2024 13:13:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=pp1;
+ bh=EwYCG4cYNmVGzMldoH8rmZ99WGkkfxZ/nkO7rj+J1CI=;
+ b=pEDUb6r5h3Kq9KmN9g368eCe5Ynem6iWryLKZlisf7leTq0ncGjMmJQj72mvbLSk2bGl
+ gsX1h5SQ7+Zi5k/5FrVMOdYxITaXWUugtQV7pd4gvUdoW4GX6XdpcLO5FzYascokVUhp
+ hibn+RKhd84WMafZc0yjdKJABdSG0QszDVpxTffjyOGE7T5qkmyK0lSC5pmVf8qtarTY
+ GYPwTgEij//EmCZAzUDWTbbsy8ySudwbDWeCF02CPZ+HdzBTQ+26k+mU0xhrtpog5flA
+ 9rdL7lUu4jCJq9uEuiw+KaHsgkIYeOkIfyUWOpnc9svqX1AY8Ly9MS/2c+oYfiJhx2Yh ZQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yjrm9g0ps-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Jun 2024 13:13:12 +0000
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 455DDB0H028029;
+	Wed, 5 Jun 2024 13:13:12 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yjrm9g0pj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Jun 2024 13:13:11 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 455AdLmv026592;
+	Wed, 5 Jun 2024 13:13:10 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ygffn44pq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Jun 2024 13:13:10 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 455DD63R53477776
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 5 Jun 2024 13:13:08 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 84B4A2004B;
+	Wed,  5 Jun 2024 13:13:06 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1F50320040;
+	Wed,  5 Jun 2024 13:13:04 +0000 (GMT)
+Received: from [9.195.38.242] (unknown [9.195.38.242])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  5 Jun 2024 13:13:03 +0000 (GMT)
+Message-ID: <3dea8d70-9f04-4410-8063-d98c392c10c7@linux.ibm.com>
+Date: Wed, 5 Jun 2024 18:43:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- linux-arm-kernel@lists.infradead.org, 
- Alexander Stein <alexander.stein@ew.tq-group.com>, 
- Peng Fan <peng.fan@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
- linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Conor Dooley <conor.dooley@microchip.com>, imx@lists.linux.dev, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, devicetree@vger.kernel.org
-In-Reply-To: <20240605-imx95-dts-v3-v6-0-2ce275ed0e80@nxp.com>
-References: <20240605-imx95-dts-v3-v6-0-2ce275ed0e80@nxp.com>
-Message-Id: <171759285255.2201583.2972532239106295355.robh@kernel.org>
-Subject: Re: [PATCH v6 0/3] arm64: dts: add i.MX95 and EVK board
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] KVM: PPC: Book3S HV: Add one-reg interface for
+ HASHKEYR register
+To: Nicholas Piggin <npiggin@gmail.com>, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: pbonzini@redhat.com, naveen.n.rao@linux.ibm.com,
+        christophe.leroy@csgroup.eu, corbet@lwn.net, mpe@ellerman.id.au,
+        namhyung@kernel.org, jniethe5@gmail.com, atrajeev@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org
+References: <171741323521.6631.11242552089199677395.stgit@linux.ibm.com>
+ <171741330411.6631.10739157625274499060.stgit@linux.ibm.com>
+ <D1R0AHN2MCOS.BPHUJKSV7YSO@gmail.com>
+Content-Language: en-US
+From: Shivaprasad G Bhat <sbhat@linux.ibm.com>
+In-Reply-To: <D1R0AHN2MCOS.BPHUJKSV7YSO@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: FhHe7XHzQiXgt5lBSKMgmOg4mits-tmi
+X-Proofpoint-GUID: 4E3K761OZvwEgk7TdIGzCeYmQTSeIE5n
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-05_02,2024-06-05_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 malwarescore=0 adultscore=0 spamscore=0 mlxscore=0
+ clxscore=1015 lowpriorityscore=0 bulkscore=0 impostorscore=0
+ mlxlogscore=626 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2405010000 definitions=main-2406050100
+
+On 6/4/24 11:37, Nicholas Piggin wrote:
+> On Mon Jun 3, 2024 at 9:15 PM AEST, Shivaprasad G Bhat wrote:
+>> The patch adds a one-reg register identifier which can be used to
+>> read and set the virtual HASHKEYR for the guest during enter/exit
+>> with KVM_REG_PPC_HASHKEYR. The specific SPR KVM API documentation
+>> too updated.
+>>
+>> Signed-off-by: Shivaprasad G Bhat <sbhat@linux.ibm.com>
+>> ---
+>>   Documentation/virt/kvm/api.rst            |    1 +
+>>   arch/powerpc/include/uapi/asm/kvm.h       |    1 +
+>>   arch/powerpc/kvm/book3s_hv.c              |    6 ++++++
+>>   tools/arch/powerpc/include/uapi/asm/kvm.h |    1 +
+>>   4 files changed, 9 insertions(+)
+>>
+>> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+>> index 81077c654281..0c22cb4196d8 100644
+>> --- a/Documentation/virt/kvm/api.rst
+>> +++ b/Documentation/virt/kvm/api.rst
+>> @@ -2439,6 +2439,7 @@ registers, find a list below:
+>>     PPC     KVM_REG_PPC_PSSCR               64
+>>     PPC     KVM_REG_PPC_DEC_EXPIRY          64
+>>     PPC     KVM_REG_PPC_PTCR                64
+>> +  PPC     KVM_REG_PPC_HASHKEYR            64
+> Just looking at the QEMU side of this change made me think... AFAIKS
+> we need to also set and get and migrate the HASHPKEY SPR.
+
+Thanks Nick. I have posted the v2 with changes for HASHPKEYR
+
+and your other suggestions at
+
+171759276071.1480.9356137231993600304.stgit@linux.ibm.com
 
 
-On Wed, 05 Jun 2024 09:22:47 +0800, Peng Fan (OSS) wrote:
-> Add a minimal i.MX95 dtsi and EVK board dts.
-> i.MX95 has a M33 running SCMI firmware that supports
-> pinctrl/power/perf/clock and etc.
-> 
-> imx95-pinfunc.h will trigger checkpatch error, that is expected and same
-> as other i.MX platforms.
-> 
-> In v6, I added back a dependency on pinctrl, because [1] has got A-b/R-b
-> from Maintainers, so it would be soon got merged.
-> 
-> There will be dtbs_check error before [1] got landed. With [1] merged,
-> there will be no dtbs_check error.
-> 
-> [1] https://lore.kernel.org/all/20240521-pinctrl-scmi-imx95-v1-0-9a1175d735fd@nxp.com/
-> 
-> This patchset is just a minimal support for i.MX95. After this patchset
-> is accepted, a following patchset will include more nodes and features.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
-> Changes in v6:
-> - Add pinctrl nodes and pin settings
-> - Add imx95-pinfunc.h
-> - Drop fsl,cd-gpio-disable-wakeup which is downstream property
-> - Per i.MX M33 SCMI firmware, drop unused PERF entries in imx95-power.h
-> - Rebased to next-20240604
-> - Link to v5: https://lore.kernel.org/r/20240506-imx95-dts-v3-v5-0-5ec9b99cfb2f@nxp.com
-> 
-> Changes in v5:
-> - Drop unused regulator and alias for now.
-> - Fix CHECK_DTB warning.
-> - Link to v4: https://lore.kernel.org/r/20240503-imx95-dts-v3-v4-0-535ddc2bde73@nxp.com
-> 
-> Changes in v4:
-> - Sort nodes by address
-> - Drop coresight nodes
-> - Align clock rates for SDHC1-3
-> - Drop wdog3 board specific property
-> - Link to v3: https://lore.kernel.org/r/20240428-imx95-dts-v3-v3-0-765395f88b9f@nxp.com
-> 
-> Changes in v3:
-> - Drop irqsteer node because binding not accepted
-> - Pass dtbs_check
-> - Link to v2: https://lore.kernel.org/r/20240226-imx95-dts-v2-0-00e36637b07e@nxp.com
-> 
-> Changes in v2:
-> - Addressed Rob and Krzysztof's comments, and fix dts_check issue
->   To pass the dtbs_check, need apply:
->   https://lore.kernel.org/all/20240226070910.3379108-1-peng.fan@oss.nxp.com/
->   https://lore.kernel.org/all/20240226130243.3820915-1-peng.fan@oss.nxp.com/
->   https://lore.kernel.org/all/20240226130516.3821803-1-peng.fan@oss.nxp.com/
->   https://lore.kernel.org/all/20240226130826.3824251-1-peng.fan@oss.nxp.com/
->   https://lore.kernel.org/all/20240219-imx-mailbox-v8-1-75535a87794e@nxp.com/
-> 
-> - Link to v1: https://lore.kernel.org/r/20240218-imx95-dts-v1-0-2959f89f2018@nxp.com
-> 
-> ---
-> Peng Fan (3):
->       dt-bindings: arm: fsl: add i.MX95 19x19 EVK board
->       arm64: dts: freescale: add i.MX95 basic dtsi
->       arm64: dts: freescale: add i.MX95 19x19 EVK minimal board dts
-> 
->  Documentation/devicetree/bindings/arm/fsl.yaml    |    6 +
->  arch/arm64/boot/dts/freescale/Makefile            |    1 +
->  arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts |  200 ++++
->  arch/arm64/boot/dts/freescale/imx95-clock.h       |  187 ++++
->  arch/arm64/boot/dts/freescale/imx95-pinfunc.h     |  865 +++++++++++++++++
->  arch/arm64/boot/dts/freescale/imx95-power.h       |   47 +
->  arch/arm64/boot/dts/freescale/imx95.dtsi          | 1063 +++++++++++++++++++++
->  7 files changed, 2369 insertions(+)
-> ---
-> base-commit: a1bede4830147a5a29ea6443724837ee0b126fd9
-> change-id: 20240428-imx95-dts-v3-bee59f0e559b
-> 
-> Best regards,
-> --
-> Peng Fan <peng.fan@nxp.com>
-> 
-> 
-> 
+Regards,
 
+Shivaprasad
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y freescale/imx95-19x19-evk.dtb' for 20240605-imx95-dts-v3-v6-0-2ce275ed0e80@nxp.com:
-
-arch/arm64/boot/dts/freescale/imx95-19x19-evk.dtb: scmi: protocol@19: Unevaluated properties are not allowed ('regusdhc2vmmcgrp', 'uart1grp', 'usdhc1-100mhzgrp', 'usdhc1-200mhzgrp', 'usdhc1grp', 'usdhc2-100mhzgrp', 'usdhc2-200mhzgrp', 'usdhc2gpiogrp', 'usdhc2grp' were unexpected)
-	from schema $id: http://devicetree.org/schemas/firmware/arm,scmi.yaml#
-
-
-
-
-
+>
+> The hashst/hashchk test cases might be "working" by chance if the SPR
+> is always zero :/
+>
+> Thanks,
+> Nick
 
