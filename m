@@ -1,309 +1,181 @@
-Return-Path: <linux-kernel+bounces-202907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C068FD2CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:20:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A57DD8FD2D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:21:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A1041C241F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:20:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FA6D1F20C1A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FBB156F3D;
-	Wed,  5 Jun 2024 16:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20B0153561;
+	Wed,  5 Jun 2024 16:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="uBvvVeiO"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2092.outbound.protection.outlook.com [40.107.236.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TapXZmpy"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C148314D28E;
-	Wed,  5 Jun 2024 16:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717604401; cv=fail; b=b2pl9iWk3vv/EPhNtdvPsD5Yvbfmo/xTrreNCLyw4ch6v61ayaRyAjiv+YAcVBV5ijz3+XCNx9cTYMfxUKprx32apjbLVdGNwy4TV4stp6hLEf9BbPmSg8eOTeINi3swIFLR8Qvqj26iZM2YQGsi9Rh2pb+D8xylw4zZRrK9bt4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717604401; c=relaxed/simple;
-	bh=BoAPr8PtDuqHyugB9//aa6jZHCdotpCA3tkZfJQSjLo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=gyciPkROIGeVaI6JpxAJYGqW0v4dT9Vy4nk0GZApT1Ci6TOJE5czoNXoQaxTUzZWUCXcLJziWleXD1ra2pXc7ENvOKBazUXB4SKOMzWZOYjvxr2z4PQRGMeNbNV7jAxlQMpDkFzBgWURxInhmZkSy4l9zqWvs56n6Pmhnf6Ds6Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=uBvvVeiO; arc=fail smtp.client-ip=40.107.236.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cC9eNr1AdnBH7dhY9DDj8LJaJ5SyGA47K1Fuk9zCOxQYt1mPQoXRfP/7sjbYeD2M465UI0wGFLyYv+VprzpShX4ML68fRYVV7l3FgSoTt21jOcINm9zEkcjw8COrr8UEXfeiDh/p1T0lsRBmmaEZWTgh8PDOfR9zVMLUVQC/bEd0v09RnMi73lobSHjohD5Wv57lt9p/rru/akXf6UohNilOGrOqvaAcJBv8KDEFrLVG7Br/Q3qXeFMPqAs6ML5BxHESMuj6bQ+wAzdXNrusPe+u+29IHEEpwQrw4bnxpFC1rnOkV35P55MHRN8rNUpnHydV+KvdQUvv5JtsrLHkrQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pTWo67b4fkgQZBjK4Uxj0NJUzI5cHpqBf7YBhBcLUNo=;
- b=e5bNdVDma2I5/hQwtr8wjJcQ+ut/Ra4W1LVEEIzZQvVy3r0E0ZTJmked91kvUkxFisF+iKWx4UTHSbwTjWNOs7CdBP1AR2hlrtNsYNCtBSKHbQ+mZpCNui7zbsklo/gO04Tj7gXfJaR9KJv7EPSUU20vdKnGAJ8vzqpgkLrzT/pXg5bNtv0lSZJKfb9H2dpI/WO4gjhBsGcUAswPJq4hmmR7JUSRPntCkbCPybs8eJtwFvc2veKQewxMnmMALUyS6dM1rTP1KkMKLjTdaO4RbYjplh4BzwV57Cq2i+HFCo/kAKPy/txt7IMm+jxFx+ogecfuV7Bl8OZOh3vPlI2dmg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AD71527B5
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 16:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717604455; cv=none; b=ov8hXhkodsm2X0pVMlsaXJmzzI+UW5Z2riRuD5qw2vffOgnn8XZJfOfT2jURS8KhTvMGwNVcWrL/3e97ZbEZnJ8gsOjUxrvugshwAY5J5DAFaLNdiJO4Ks9REAfNaeJ6myWz3zm7gjGVEp+UJimJgqlzO0tLlElKETUH5qkg8s4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717604455; c=relaxed/simple;
+	bh=BVB9g1nRXbxU1lO4q1xV+zm4LTA+/Q8NvRX9HKaO8Dw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hMvudMLkaZ8Jf0b5TvSUisEl3U7Nhhb2rOkRwt5ZbCQIh3jj2w0QSNNAHKgfDbX8fhzb3DZL80E3HYgh7v4XgLgxN7lLiNm68YlYVHXdEVT9Zcxc/snrZnJY56xrdRC2igMPAEgsvE+gnKUWaEj6Fe0KbivrHoTgvLbZ0BtQXEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TapXZmpy; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-421572bb0f0so443855e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 09:20:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pTWo67b4fkgQZBjK4Uxj0NJUzI5cHpqBf7YBhBcLUNo=;
- b=uBvvVeiO9/yO+cn1wgfpnYGtV3R8EB1M2Skga7JhS8R40Ud0dkh92HhpSevSiHDL7yCGA7yWgVl04j2CDbWVjcV5wm9KksYla0lQyMZS73oGZeUxYBw0YXnp8OO/nRMYKlrCdprEWuqLG8YpGV2qeWb8TTQupTZ0mV1+6BCxfiU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from BYAPR01MB5463.prod.exchangelabs.com (2603:10b6:a03:11b::20) by
- PH7PR01MB7679.prod.exchangelabs.com (2603:10b6:510:1d6::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.22; Wed, 5 Jun 2024 16:19:54 +0000
-Received: from BYAPR01MB5463.prod.exchangelabs.com
- ([fe80::4984:7039:100:6955]) by BYAPR01MB5463.prod.exchangelabs.com
- ([fe80::4984:7039:100:6955%6]) with mapi id 15.20.7633.021; Wed, 5 Jun 2024
- 16:19:54 +0000
-Message-ID: <dd7f2213-df8b-4105-a20a-bbf1f9e0a0ac@os.amperecomputing.com>
-Date: Wed, 5 Jun 2024 09:19:50 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] mm: gup: do not call try_grab_folio() in slow path
-To: kernel test robot <lkp@intel.com>, peterx@redhat.com,
- oliver.sang@intel.com, paulmck@kernel.org, david@redhat.com,
- willy@infradead.org, riel@surriel.com, vivek.kasireddy@intel.com,
- cl@linux.com, akpm@linux-foundation.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20240604234858.948986-2-yang@os.amperecomputing.com>
- <202406051039.9m00gwIx-lkp@intel.com>
-Content-Language: en-US
-From: Yang Shi <yang@os.amperecomputing.com>
-In-Reply-To: <202406051039.9m00gwIx-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR13CA0191.namprd13.prod.outlook.com
- (2603:10b6:a03:2c3::16) To BYAPR01MB5463.prod.exchangelabs.com
- (2603:10b6:a03:11b::20)
+        d=linaro.org; s=google; t=1717604452; x=1718209252; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5sDg7XH+sw4rtqqZOSPVcua8cTURLbRBu83cbcLYlcM=;
+        b=TapXZmpy+YZpkk1j5NR8xjbV68eOmRrkKaZmj07jvM8/y6QKvftMXkQKeGUg0BbHoi
+         CkYewsuzj9iADwNM+OElzqrrDfMOyBb5UMAp9gXQ50yM3uCWdR13S+1ps199aYeeu2EK
+         RTA9ml8zbPVpkBeP08YDd88lAPulrOErAWxtZPVPrVRhPFx2DDUa19hwjNDOCSVx1J5Q
+         tjzoCmzu2pkXTIYLRMJDGHO1KzOJXrnWUe2B7rvhVmWvKwNU3llkiO1RyH9zd3XpmuHL
+         I3OJGWA6izBTlVF2w3vsq3+i7K8m9OUNE3e8kfNYZ90dDw0MzH9fRGgTS46w7Vxj27qR
+         9YOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717604452; x=1718209252;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5sDg7XH+sw4rtqqZOSPVcua8cTURLbRBu83cbcLYlcM=;
+        b=K40o6aw+GJ6ZVFJvqZFknVhZkajOkpD5QnIBWiXNqfEKYQuY6ivWwD+zlHqO1IqmsH
+         /84+OvwxU5HQL8L/qnB1LJImfUO7gYc9hXo552z6IyTai/c83d31jg3/asHXnVZhiQDu
+         jU4a5jG6L37A+5oYKQrQPb3PQ66CZFQmyReWRLFLtkoqQ5csICcH+syWVJzVe8fLzx6z
+         Ts/XSvJigkWGOc217xTEVOeeS+4v1oe5j46Cxb0NOb2UzPeMfbxv2rWZJl6OZ3iIQUB1
+         ngB+0LR1YUBWrb22A6Os5+nSG5tkYO6pf3+cn+5v5GCMlCR3smrLZaBLox2Fc8b5hb+t
+         K1jA==
+X-Forwarded-Encrypted: i=1; AJvYcCWVVelyyMf2uqOLjID3NF/pQd2My3bfG5nFyuQUqvUd4RiZRFQLwJQOJcHs7TMguz2KEXgtD8sqynE19DLhY2TvYHNoQiUppr+16gRq
+X-Gm-Message-State: AOJu0YxzfGdCxUY74UJllomrsttSnTG2aXKFLrFG7Tk1dIp4K11mEro1
+	Mr9e3D6GB97HAy2FZYYFRzISfu6hOaxRXRJ/jzgOuYjneMty1NxFnC4xqxdDgxg=
+X-Google-Smtp-Source: AGHT+IE6yOi8gqKoubeFSF5QOsNVzjvdV9WVKQEhRQutMQf4uGlI2l4PLnSNoOei/th7ig0Fl83STw==
+X-Received: by 2002:adf:a15a:0:b0:351:d2e6:9296 with SMTP id ffacd0b85a97d-35e8eeff649mr2128140f8f.41.1717604451858;
+        Wed, 05 Jun 2024 09:20:51 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04d9364sm15053643f8f.53.2024.06.05.09.20.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 09:20:51 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Date: Wed, 05 Jun 2024 18:20:50 +0200
+Subject: [PATCH] ASoC: dt-binding: convert spdif-receiver.txt to dt-schema
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR01MB5463:EE_|PH7PR01MB7679:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2e5cebe4-218d-4986-fd6a-08dc857b5585
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|366007|376005|1800799015|7416005|921011;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MGt0dVFSRERSUFRTTmZJTlZ4ZWtqMi9maHRPTjFDdUNnZnlWY2JQMG9KNkt6?=
- =?utf-8?B?TUg1RkNtSnNsTjdnT3NBWkY4M1RxRndMZXVLWC9YVnZlTnNSa1Z4U2ZNMEw2?=
- =?utf-8?B?b0RBWjdyTUZ5UWNtcWQzY0lNMmRPM3VtWThJajZhK1c2TW1iOE5Ld0tsOFBl?=
- =?utf-8?B?cENJa0VkNnY3ckFXSTJVL3poai9ZOTRMeWJzQ0NiS01WcVhPL0VQR1JCZUlt?=
- =?utf-8?B?NEQvQlRTOVorRUtEUFNLSnRIaVVHeVd4aDBwNzh0dHlkemY5YWdQTWljeEVB?=
- =?utf-8?B?cndGc1lQZ214bCt1WERKakFzY0xUYUhFRFg0MSs1OUhrSHlhNVZFVjE0Wmxu?=
- =?utf-8?B?RVV2WlhKT2tFWXNORVphRGtCazIrNno3c1dvSmFLamgrWSsyNVN2WjZHbUts?=
- =?utf-8?B?clRINTlyb3IxRnczUUtyT1ljY0ZsbTdGVDkvZTlCaFFxR3h4bTl1NFpwZnFC?=
- =?utf-8?B?ejFYME1XNWgyOFprYjNzWE5KU256QzZkQitZb0ViVDUxTCtJVEhRMy92V1NQ?=
- =?utf-8?B?Q05kb2dPSVRMZWtRNzBMVjByRDNqSURzRVlDUi9CMHlpWitQYy9JS3R4MGdB?=
- =?utf-8?B?Z3hidG5pZXhPRTlzbG1WZ2llRXhXbjlmRWllZTZLR1JQTVplVFNDMHdoVGdX?=
- =?utf-8?B?dHpJT0FCaVZEUzJma0U1c0s1UU1tVElXV1hPTm9lTzFXdHJzTjUyWHpIQm80?=
- =?utf-8?B?ZlFXc2FMa0x0UDFiemF4a3pnVTRIZUloYVBEOG1ZUFVxOEp1VDFlRHJES1dh?=
- =?utf-8?B?MjhMcHRYdkVtMGhRQVFjMlYvWkZTUmtmL0l2bXZFWTRhY1dYd2l5dmJEc1lk?=
- =?utf-8?B?TzZacXA2UERMREpZZHh6LytnVzZkK0k2ODA3djlBMDcyVjl4WHUyak9haUhN?=
- =?utf-8?B?Y2tPSVk0YUsvN2xNSHk1MnIrbDVyQTh6R3BucDdIWWlPRnBGQmNWQTJpcURv?=
- =?utf-8?B?VGhBaGJHRlBPSU1uNHdMbFpJRmhOM0RLaEpkdFEvZFJzVG9oSE9OdE11bGU4?=
- =?utf-8?B?M2RreStZK01pZjlNYzNTdDlEaXZCTkEvZG96Q3p4L1FKNlB4QUNMUUVEZmww?=
- =?utf-8?B?Sy91RnZja2VlWmVzUXZwcXAxY1JOb3dJbXg3SFVQODF2WEtaZnhBbU9lOXBz?=
- =?utf-8?B?UnpTZDN6VlRSMXJMTUdpWlRzVVpaaVl0ODJVZ0FTS1NWM3hBUEYzKzNuajE4?=
- =?utf-8?B?RnV5MURNeEhBU3JpM1ZpNTRUdVV3UytuQjdQWm5JbEtwR256U1pVcWVDazd1?=
- =?utf-8?B?WUY5clgwQjZ5ayt6anRpNE5nd3A1U3pkcVJRamJ6U2dZVFlSZ0hCWHVTUnBw?=
- =?utf-8?B?Y3ZzK2o5dk11SXVXZG94OTJuVHVwZGZGSUVpWW9mSU1ra2NUQTNadnF1OUta?=
- =?utf-8?B?ZVJpQmFTVWN4cGpjZENobzNES0U4aVpadG9JQU55ajAxdCtIUHp2c3p1UVRw?=
- =?utf-8?B?OVlKcGd1dDZySGluVk81dWorOERTMkJRZ2ZQVkpaVXMyaldzd29GZ0VudldQ?=
- =?utf-8?B?Qjg0UWRhOXBzSnNiUDdnZW5sZDd3czlTdmY2Qk9TcHZQVWRQWW9zakNYZzZM?=
- =?utf-8?B?TWJyNmx1WjVmbkxtU3VmcXdBQzZ2Rk8xcU1Yem41cDlhTmhaS1puaGQzbVdC?=
- =?utf-8?B?V2RrOERsL2hoa251NmdsZ01HRjMrSTJHTW1nNUpBUFZZamoxRVZhYVhzZHJi?=
- =?utf-8?B?VGcranpCdnMvc0kzYU5Zd3FFc25Bd2RsYzJYZDBtTEZxRE5VMDVuand3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR01MB5463.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(7416005)(921011);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RDVQNU5rSGZBbjU0dnFtRHNlU3VyMTAyMFhHaWRWbkJuYldjSXNCUTJheXR4?=
- =?utf-8?B?cVl5T3lraEN4cG16aUh1T21GWVNaNncwUXBkaDhGcVZIUGVZajZOczVNSkor?=
- =?utf-8?B?YTJsc1NVV2xDaGZ4VkJRVUF2UTlzZ3p2Yk9SMjRiL1ltNGQ0SnBhZGxDbjNT?=
- =?utf-8?B?Y2xpT0w0K1Q4dXZ3OEwvaG1Nbjc5OHg5R05KRDhzbFlIdUZzZlg1SE9mVWdr?=
- =?utf-8?B?ZXhMd1pickV4cG04VmxqdTY3RzlTR0MzbFVzQUF2UXRNZHlQdVlKZkVPSmg2?=
- =?utf-8?B?clBzNzhwMDcrZ0dKb2svZlhVcHd1SnJ3SFdyN1U0N0JDZmJDTFUzU3h4UUZ4?=
- =?utf-8?B?Y1dpTC8zdHdod2tRTFdoZHR0L09UVjVWNUU1TDltdlJDRm9UVlcyaUdpZDF6?=
- =?utf-8?B?RWtYLzlIUEJDcVNzNjFaU202MHdGdG9hVjEyaW0rbWVrL254cGs3Ukw5cTJh?=
- =?utf-8?B?M2MzL1VMZGVJWk5EbUN0anV6OHBUTnlSdzJBMURzSHg4VlZCeG1Mb1BiQk5C?=
- =?utf-8?B?dWNIa1drbWRNV0FYbjdnOFgySVhwdGp5eCtOVFo1SDdlM1pOSDFRSXFObkNF?=
- =?utf-8?B?alZHcTlPTUUvYjFNeUZvN2hmaHZWaU5KamdTTEtkZk1OTjJxaGJ2Ti8wemN3?=
- =?utf-8?B?WWxzSmFmWmxwbmZqZUhKdTkyRHl3Q3o1Z29JaEYzcHhtaXJqZXhlY3RrSVVo?=
- =?utf-8?B?MUtrb0RvWU1McWJSZWlBSWpyU2dvam5qTldJYzJUVEQ1em1WaC9KbzBlUGM4?=
- =?utf-8?B?dkZyVVlJMzdycEU5YTRqeFZlMWtCOWttZXc0Y3ppM09CZndXV1laUTl2Ty9u?=
- =?utf-8?B?UVNjTGg4RVlnRUhDL0JwcFJNSWt3dnhGSWVsWVFSS3BnMjdaUzVONlp4Tkpy?=
- =?utf-8?B?SVZnQjR4bUxvTjlNekYyTXRHVjU0N2phWHdzV00vNEdyY291cCszRXZDbTBx?=
- =?utf-8?B?cWVnTm1oWEdtL1BEc1FUZEFsRkk2S1l1V25LVXZxcHFZdTVWZnJ5cU1vaVRT?=
- =?utf-8?B?K3FVeURDMCt3Y0pYL2MrR1ZWYmxSSXBSL1ZDaXJHTU5ORFg4SGs1YjdIZ1FR?=
- =?utf-8?B?MlJSMHFYQ0JOT1hrWFlOc0RjanF2N09HYXR2elpWR1JqbWRnZm5XMU1tRGZB?=
- =?utf-8?B?eVVMQXg5aEQvQVVPZFpTS0NTd2poV1pXc1JxYjgxNVRpUjhWeTJLY2JjU1Nq?=
- =?utf-8?B?dURjKzgvREJ4RUV5OTBBa1UxRFM3ZE92R3VMdHd3UmtXMlBnTVZGVnNqTlp3?=
- =?utf-8?B?RitYNWNTK09ZYjFnWTJzcDhmMm40ZFRPa1FyWkRRTzFONVVkTm9yQUorNUxR?=
- =?utf-8?B?OFZ6OER3QjJVeC96N0xIMnZUcVNFOWZpNE5DanQrSTVjWFA5eEhjSFNwTE9V?=
- =?utf-8?B?L1BGQmJmNE54dnVxRWttSFlLVVhjcDZ0bDJDUE5ydklGZStOeWtEV3dOVXBR?=
- =?utf-8?B?czBpMFlHSlVmeE9WcWp4dHE3WHlrMlIwUzJsdFZGOVlJelM5SVdIam9jN3Br?=
- =?utf-8?B?L0dyRS9Bc3ZvUTVyUGlHUU1kQWQ3VDJ1U0NJUTZVVEVBZTMxSHpiVm1FcnMz?=
- =?utf-8?B?UStEekJ1cVd3bkJjelJqZjNtcjY0ZEgvQ1hWd0lOa0NSNzdFQjdGOWp1ckhS?=
- =?utf-8?B?d1Q3SlVkSkEwMVkzRXFzYTh4SlVFMUJTOHRUZWdmaXZTbW1nbjNlRVh0TE02?=
- =?utf-8?B?enJ6UjVBL3lrckYrMTN3OURDMnZoZ1piekxlMFlSOXVGUDd4clJBQ2tmVzRJ?=
- =?utf-8?B?WmhWUmliZ1VjL0YzSEROYmtDVDlLTHdzbFowT21RaXJhNmd4NHF4MU4vWkkx?=
- =?utf-8?B?Q0wzdmFveHhYR1R5NmNtUW5GR3pPbktneUNaR2ZzY1JPbzdKYzFZWGdoaTBr?=
- =?utf-8?B?OW1lbG5RZ0paaERnOFpucUh6QVNjYnZpY1FGVU9pRlF2MUgxdmxZWWpwMlcz?=
- =?utf-8?B?a1RHd0N5ZTZhMFRTVFQzUy80R3lHVGhPcTNlMkMySE5hVSsxY2xic1hYbU4r?=
- =?utf-8?B?SkV0dVpGcUNzeFJhekFYNjFZRDl5WGNpQ0ZnSG5ySTVLNi85c0E2YmZpRFVY?=
- =?utf-8?B?eDlVcGpWSFl0TE14ZEEyREJWQlVYcFFabWRvWUt4S3h0bUcwTWZyRFFmWnor?=
- =?utf-8?B?aCtrb1RFSlZiTnd2SFcybkxsSzVQZ1lSdFowSWZHOWFoNzZOMk9UenZScGlK?=
- =?utf-8?Q?JHCsUt5eBzZYYTpQo/26wUI=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2e5cebe4-218d-4986-fd6a-08dc857b5585
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR01MB5463.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2024 16:19:54.2718
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FUriDdethi0cJg4E8KyPvvqDEo7dvU1him1hgJk4Qe0w/b6YeLN56GLk//YTLpkt6Vnwdomqv0BRklAK9klRLuX32cDyb6HFZP00S3BSaR0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR01MB7679
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240605-topic-amlogic-upstream-bindings-convert-spdif-receiver-v1-1-262465adbac2@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAGGQYGYC/x3NQQrDIBCF4auEWXfAShukVyldxHG0A42KY0Ih5
+ O6Vrh7f5v0HKDdhhcd0QONdVEoeuF4moPeSE6OEYbDG3sxs7thLFcJl/ZQ0dqvaGy8reslBclK
+ kknduHbUGidiYWIaRXLAx+Nk58jDOa+Mo33/4+TrPHwSdUmCIAAAA
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2021;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=BVB9g1nRXbxU1lO4q1xV+zm4LTA+/Q8NvRX9HKaO8Dw=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBmYJBi0Poo0A9N6RiOwA403jPcyu6z+kNZ/o9krTJy
+ C7MM++2JAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZmCQYgAKCRB33NvayMhJ0T03EA
+ CXzdZk6QugZiahTLIlDl9oOe5Hnt/sU6YHMNDGawQwyIpCPltv8nBJlobK6/4T2asi4HpTAe9mtJ3h
+ x8zYFiYz0qJ1BixHlUBwC+0EMWvXpdES+T5I2WxylAKcbWm70KivaVUonO0UH1itUAgU722Qijl6Qj
+ FgKXz9CZAneOXZ25V4C25U+gbnQEVkobK/GtgWZGfaJypTrs+1+fXeKkGLxoDIMOaUSIPBwFI61BFZ
+ 0m4b3Mh+7+IkG+fGoHtP1K/2fI43/9VkWcRbbAKQaUmUGua7QS3TJPmo8xBYNZrHmtbIpPKC/t0FEQ
+ fR+7IiMrVxotfwJ/yYfSqm7hNzq/6gbBssPqgcKT+LaehSG82e/Di7tM0259yY/IHgC3AXJR4M6j/G
+ QUH0Wu62FTUFkOCooA93i+UZjanE7p+rUS67fai+Ozw7lg5uLHS5cXvh35v9JSF79x7YbAbNWCHQcp
+ D2a28O/3GaI30cXw0kZpVR44IHAow9ez4a78tlwkJiJeiSuUlbdTxpHWWlkVI2jcdtO/o3fxAtLZNu
+ yxTe44vncBIZw1MSpZJCLQ20LpsBxjr92pTIIkuIeBj2E7/1hXpZIqcFDamCdmC1dkOKb3wc21F9sG
+ F9lY/VLzHBZvtRA6ZRyE1EXNi7tIgj0VhQDS8pothNljCckro+En+asOE6oA==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
+Convert text bindings to dt-schema format for the Dummy SPDIF receiver
 
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+ .../devicetree/bindings/sound/linux,spdif-dir.yaml | 37 ++++++++++++++++++++++
+ .../devicetree/bindings/sound/spdif-receiver.txt   | 10 ------
+ 2 files changed, 37 insertions(+), 10 deletions(-)
 
-On 6/4/24 7:57 PM, kernel test robot wrote:
-> Hi Yang,
->
-> kernel test robot noticed the following build warnings:
->
-> [auto build test WARNING on akpm-mm/mm-everything]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Yang-Shi/mm-gup-do-not-call-try_grab_folio-in-slow-path/20240605-075027
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-> patch link:    https://lore.kernel.org/r/20240604234858.948986-2-yang%40os.amperecomputing.com
-> patch subject: [PATCH 2/2] mm: gup: do not call try_grab_folio() in slow path
-> config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20240605/202406051039.9m00gwIx-lkp@intel.com/config)
-> compiler: or1k-linux-gcc (GCC) 13.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240605/202406051039.9m00gwIx-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202406051039.9m00gwIx-lkp@intel.com/
->
-> All warnings (new ones prefixed by >>):
->
->>> mm/gup.c:131:22: warning: 'try_grab_folio_fast' defined but not used [-Wunused-function]
+diff --git a/Documentation/devicetree/bindings/sound/linux,spdif-dir.yaml b/Documentation/devicetree/bindings/sound/linux,spdif-dir.yaml
+new file mode 100644
+index 000000000000..ec8990c236f7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/linux,spdif-dir.yaml
+@@ -0,0 +1,37 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/linux,spdif-dir.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Dummy SPDIF Receiver
++
++maintainers:
++  - Mark Brown <broonie@kernel.org>
++
++allOf:
++  - $ref: dai-common.yaml#
++
++properties:
++  compatible:
++    const: linux,spdif-dir
++
++  "#sound-dai-cells":
++    const: 0
++
++  sound-name-prefix: true
++
++required:
++  - "#sound-dai-cells"
++  - compatible
++
++addirionalProperties: false
++
++examples:
++  - |
++    spdif-in {
++        #sound-dai-cells = <0>;
++        compatible = "linux,spdif-dir";
++    };
++
++...
+diff --git a/Documentation/devicetree/bindings/sound/spdif-receiver.txt b/Documentation/devicetree/bindings/sound/spdif-receiver.txt
+deleted file mode 100644
+index 80f807bf8a1d..000000000000
+--- a/Documentation/devicetree/bindings/sound/spdif-receiver.txt
++++ /dev/null
+@@ -1,10 +0,0 @@
+-Device-Tree bindings for dummy spdif receiver
+-
+-Required properties:
+-	- compatible: should be "linux,spdif-dir".
+-
+-Example node:
+-
+-	codec: spdif-receiver {
+-		compatible = "linux,spdif-dir";
+-	};
 
-Thanks for reporting the problem. It seems try_grab_folio_fast() 
-definition should be protected by CONFIG_HAVE_FAST_GUP, will fix it in v2.
+---
+base-commit: c3f38fa61af77b49866b006939479069cd451173
+change-id: 20240605-topic-amlogic-upstream-bindings-convert-spdif-receiver-c8d2fdb688cb
 
->       131 | static struct folio *try_grab_folio_fast(struct page *page, int refs,
->           |                      ^~~~~~~~~~~~~~~~~~~
->
->
-> vim +/try_grab_folio_fast +131 mm/gup.c
->
->     101	
->     102	/**
->     103	 * try_grab_folio_fast() - Attempt to get or pin a folio in fast path.
->     104	 * @page:  pointer to page to be grabbed
->     105	 * @refs:  the value to (effectively) add to the folio's refcount
->     106	 * @flags: gup flags: these are the FOLL_* flag values.
->     107	 *
->     108	 * "grab" names in this file mean, "look at flags to decide whether to use
->     109	 * FOLL_PIN or FOLL_GET behavior, when incrementing the folio's refcount.
->     110	 *
->     111	 * Either FOLL_PIN or FOLL_GET (or neither) must be set, but not both at the
->     112	 * same time. (That's true throughout the get_user_pages*() and
->     113	 * pin_user_pages*() APIs.) Cases:
->     114	 *
->     115	 *    FOLL_GET: folio's refcount will be incremented by @refs.
->     116	 *
->     117	 *    FOLL_PIN on large folios: folio's refcount will be incremented by
->     118	 *    @refs, and its pincount will be incremented by @refs.
->     119	 *
->     120	 *    FOLL_PIN on single-page folios: folio's refcount will be incremented by
->     121	 *    @refs * GUP_PIN_COUNTING_BIAS.
->     122	 *
->     123	 * Return: The folio containing @page (with refcount appropriately
->     124	 * incremented) for success, or NULL upon failure. If neither FOLL_GET
->     125	 * nor FOLL_PIN was set, that's considered failure, and furthermore,
->     126	 * a likely bug in the caller, so a warning is also emitted.
->     127	 *
->     128	 * It uses add ref unless zero to elevate the folio refcount and must be called
->     129	 * in fast path only.
->     130	 */
->   > 131	static struct folio *try_grab_folio_fast(struct page *page, int refs,
->     132						 unsigned int flags)
->     133	{
->     134		struct folio *folio;
->     135	
->     136		/* Raise warn if it is not called in fast GUP */
->     137		VM_WARN_ON_ONCE(!irqs_disabled());
->     138	
->     139		if (WARN_ON_ONCE((flags & (FOLL_GET | FOLL_PIN)) == 0))
->     140			return NULL;
->     141	
->     142		if (unlikely(!(flags & FOLL_PCI_P2PDMA) && is_pci_p2pdma_page(page)))
->     143			return NULL;
->     144	
->     145		if (flags & FOLL_GET)
->     146			return try_get_folio(page, refs);
->     147	
->     148		/* FOLL_PIN is set */
->     149	
->     150		/*
->     151		 * Don't take a pin on the zero page - it's not going anywhere
->     152		 * and it is used in a *lot* of places.
->     153		 */
->     154		if (is_zero_page(page))
->     155			return page_folio(page);
->     156	
->     157		folio = try_get_folio(page, refs);
->     158		if (!folio)
->     159			return NULL;
->     160	
->     161		/*
->     162		 * Can't do FOLL_LONGTERM + FOLL_PIN gup fast path if not in a
->     163		 * right zone, so fail and let the caller fall back to the slow
->     164		 * path.
->     165		 */
->     166		if (unlikely((flags & FOLL_LONGTERM) &&
->     167			     !folio_is_longterm_pinnable(folio))) {
->     168			if (!put_devmap_managed_folio_refs(folio, refs))
->     169				folio_put_refs(folio, refs);
->     170			return NULL;
->     171		}
->     172	
->     173		/*
->     174		 * When pinning a large folio, use an exact count to track it.
->     175		 *
->     176		 * However, be sure to *also* increment the normal folio
->     177		 * refcount field at least once, so that the folio really
->     178		 * is pinned.  That's why the refcount from the earlier
->     179		 * try_get_folio() is left intact.
->     180		 */
->     181		if (folio_test_large(folio))
->     182			atomic_add(refs, &folio->_pincount);
->     183		else
->     184			folio_ref_add(folio,
->     185					refs * (GUP_PIN_COUNTING_BIAS - 1));
->     186		/*
->     187		 * Adjust the pincount before re-checking the PTE for changes.
->     188		 * This is essentially a smp_mb() and is paired with a memory
->     189		 * barrier in folio_try_share_anon_rmap_*().
->     190		 */
->     191		smp_mb__after_atomic();
->     192	
->     193		node_stat_mod_folio(folio, NR_FOLL_PIN_ACQUIRED, refs);
->     194	
->     195		return folio;
->     196	}
->     197	
->
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
 
 
