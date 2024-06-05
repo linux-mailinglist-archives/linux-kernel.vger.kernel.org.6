@@ -1,173 +1,433 @@
-Return-Path: <linux-kernel+bounces-203092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0FAE8FD65A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:17:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B99B08FD65F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 540BB286D52
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:17:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6ED81F26B2D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7246A14A0AB;
-	Wed,  5 Jun 2024 19:17:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687D914D440;
+	Wed,  5 Jun 2024 19:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="DNZ1Pomi"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="3e4aV1ev"
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07391420BB;
-	Wed,  5 Jun 2024 19:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EAF13E03D
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 19:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717615051; cv=none; b=QML80XybCaaItizeiChEWcGLK3IKqU8y/zMBtl67JPVn/lkV7Q14Ws85mpfrI78PC8fKKnAfVi/CvkOmdc62KlFflu+Y+jnu2UWMNBoXjLJO3LzdEHnqOJv9w+0MBADAnvspSXSqr/BJUGIZOo0azTnU5r9+7vrMPb6aOWMOSqI=
+	t=1717615241; cv=none; b=H6cVcXTdMsCD2UskpGXy8fMN3Ux/0ebfu4OjH+3yrMqmbJ8kj0iv5IrXsg0G9XD9e5+4AccqWWyFi3CYUwtbQ8Xydd+0cZvDK73DpJamEpOYIHbF+y3Cj4JwWEe3s22pUi2tU6MLfKCZAQdSBsyZuw0Q6QTh8BitXkCzJ9QOddo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717615051; c=relaxed/simple;
-	bh=yYpHplzEsye8kf7WqC0u0zc6c/VEQwOHkTd7TJ2eSrE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fKLw25lzvsbqe/cbNfDqsFzRLh2W7TnFEHEdvKf2lny3oosQd07TUAyicMma1Fhm23Ikau8ffMrrkyh2T1WH+iv9o/N2BqE64h/s92MLf4XD3SsQCrX0G+aMA3GDL7uwA2EB3aWErGSZ2zrcC/4w+cNawylId32Cy2gJaqlzNb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=DNZ1Pomi reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.1.0)
- id 456ddfee378ce88f; Wed, 5 Jun 2024 21:17:22 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id ACEC8D512D3;
-	Wed,  5 Jun 2024 21:17:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1717615039;
-	bh=yYpHplzEsye8kf7WqC0u0zc6c/VEQwOHkTd7TJ2eSrE=;
-	h=From:To:Cc:Subject:Date;
-	b=DNZ1PomiVvIv0QpJaNUplGgDKrquROEVkQMWQx9T+vS925/pefnhDfSNDMGExVW9U
-	 mueLu1ifKRGI47/VHeKLOxd2fd/PdyRh3cYditPN7Tyx4jHJ0U/7LcidW1rdobEs6W
-	 1gK39zR2Wrh/CNk9VYJPvPKEaxtNBPk5h2+q4M98EPvzqlzAdWAvCDabEon8GVB4mS
-	 Vt3cDOHBFAq6T7rhwLGvzTzi//WiHgnBsWpmJCACKDVWD6oxYhMWPW//XJ5ly18i71
-	 OxUdXCsW6DPxw9ZRsNgzSbuVG3spmGpMNCBrT8oAH4pS3BEyQJA1We8nP2C/ICtd6G
-	 X8WkfMmmCggFw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Linux ACPI <linux-acpi@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- Laura Nao <laura.nao@collabora.com>
-Subject:
- [PATCH v1] thermal: core: Do not fail cdev registration because of invalid
- initial state
-Date: Wed, 05 Jun 2024 21:17:17 +0200
-Message-ID: <4569763.LvFx2qVVIh@kreacher>
+	s=arc-20240116; t=1717615241; c=relaxed/simple;
+	bh=m0A8Os4JRcrEklhstPH8+Wk4gcYcCylU3uB5smFRT9c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lSfivqtffm4aiq5DJmvRDJsRC8yG2lO+OpP6hj0YacYxjYF/oN6drgLwjI2LmkYrrYJTB4rGtEu8wHO9eVwiKsSckZo6NI3OZ90v0hLLdStmD19T1HKYIrggvIhfmxfQxq0ZznaivSpZW00QMcw+G4kxUXhy1EPPxoa/G6+wswY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=3e4aV1ev; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-24c9f628e71so84388fac.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 12:20:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717615237; x=1718220037; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=P7yPzmFt4narA62dyrwurUrMEHdNxvKzIrZhKVkzQzM=;
+        b=3e4aV1evTFTJK6XP/zgTMthReCO/s4cpimEhcYXj7QSqM67eQg8GHqducGSaIzA4SM
+         XuI8rOVYq9f7mG37GuxI2F/CoqXGasPq4Jz0v0xteX+QqAWNW+lN/XKN6KgdvllALgbA
+         36uqw2K1GtkCTzFMLF5aHMUqjm0GUz5VmPbtIQvOan7xeHNqSNAb8M8yLar4j0/MnrTJ
+         VwLrJfNS2oqAa0/rroiVUa8PC+6PX3/OTAnTSpIBGEV7Z5eTmmQKCzBHLayjxMPYOob5
+         hpBTDo2gpCQ6E0hVuFCbHjVU41ygT2dgzLJFXTiNBASIbQrAv15p11d5K+rLYRWlQ0B1
+         X0ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717615237; x=1718220037;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P7yPzmFt4narA62dyrwurUrMEHdNxvKzIrZhKVkzQzM=;
+        b=CXN0m74F3R7gBTey2naQ1wDIkJuvLFmakXoaMJvgPso5F0Ve9yk1vG8yJcdEoyZRc+
+         FKuAwu9ydRs7L7uVZNYsqUdWbNoBF/vjxgY4Khz6pwrsr/c2WsokeCKksm0nilUh9Hg+
+         XmB9DZ9W/0aNAxidjVbRwu87BZf8HvuLHjR2i/20x3x6Ywn0GJ171nBClm20IZg7x4Hf
+         0VC5AC8IFsKWRQR48O6aLMi6taC0SBYO/hriC+yoyoH7JrkgQhj16pI6ycxbo9eJ6Y+4
+         UwjoD94lT49ZvkYwiYX2b/0xFN2NGNPeVi+MTYlTyWRK2XFOGqhLUwvRoSWTMT4K17uL
+         8+4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW3bOYm7NrlBU+bsG5rbErO7TShHtyywdKSwxRxcvcFKFxQttVnSqbqDSgc2Lw/UC4OmqFDn4yh41Z6gQeI+u+8QgzNAl6oXhhVNVyS
+X-Gm-Message-State: AOJu0Yx0Syw4lOPHx5h3q9KZjiFu0LOnFi8b7Li2OcwscgaFNY+n6QU9
+	OB/M2jGo33hKOixWGgvzf38xp2abIujfQ5IOcjq2acOwUUEbTPve0g85Br++xaA=
+X-Google-Smtp-Source: AGHT+IFPbUU6YKE2BszN3PiBcsStVD6lNw4Ihlq5+1ZbpZCd1hStrGgyjam9r7NUR7cSC7E+Vq7DYA==
+X-Received: by 2002:a05:6871:54d:b0:24c:a8e6:34e7 with SMTP id 586e51a60fabf-251226fa10fmr4189542fac.26.1717615236881;
+        Wed, 05 Jun 2024 12:20:36 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-251fc4df2fasm206501fac.32.2024.06.05.12.20.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 12:20:36 -0700 (PDT)
+Message-ID: <80b27cb8-eb57-416e-aeeb-9975d299a30c@baylibre.com>
+Date: Wed, 5 Jun 2024 14:20:35 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrvdeliedgudefhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepkedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggr
- segrrhhmrdgtohhmpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=8 Fuz1=8 Fuz2=8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 9/9] iio: adc: ad7173: Add support for AD411x devices
+To: dumitru.ceclan@analog.com
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Dumitru Ceclan <mitrutzceclan@gmail.com>
+References: <20240603-ad4111-v5-0-9a9c54d9ac78@analog.com>
+ <20240603-ad4111-v5-9-9a9c54d9ac78@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20240603-ad4111-v5-9-9a9c54d9ac78@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 6/3/24 11:23 AM, Dumitru Ceclan via B4 Relay wrote:
+> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> 
+> Add support for AD4111/AD4112/AD4114/AD4115/AD4116.
+> 
+> The AD411X family encompasses a series of low power, low noise, 24-bit,
+> sigma-delta analog-to-digital converters that offer a versatile range of
+> specifications.
+> 
+> This family of ADCs integrates an analog front end suitable for processing
+> both fully differential and single-ended, bipolar voltage inputs
+> addressing a wide array of industrial and instrumentation requirements.
+> 
+> - All ADCs have inputs with a precision voltage divider with a division
+>   ratio of 10.
+> - AD4116 has 5 low level inputs without a voltage divider.
+> - AD4111 and AD4112 support current inputs (0 mA to 20 mA) using a 50ohm
+>   shunt resistor.
+> 
+> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> ---
+>  drivers/iio/adc/ad7173.c | 328 ++++++++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 296 insertions(+), 32 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+> index fb18acc83f39..45784e4bd27e 100644
+> --- a/drivers/iio/adc/ad7173.c
+> +++ b/drivers/iio/adc/ad7173.c
+> @@ -1,8 +1,9 @@
+>  // SPDX-License-Identifier: GPL-2.0+
+>  /*
+> - * AD717x family SPI ADC driver
+> + * AD717x and AD411x family SPI ADC driver
+>   *
+>   * Supported devices:
+> + *  AD4111/AD4112/AD4114/AD4115/AD4116
+>   *  AD7172-2/AD7172-4/AD7173-8/AD7175-2
+>   *  AD7175-8/AD7176-2/AD7177-2
+>   *
+> @@ -82,6 +83,11 @@
+>  #define AD7175_2_ID			0x0cd0
+>  #define AD7172_4_ID			0x2050
+>  #define AD7173_ID			0x30d0
+> +#define AD4111_ID			AD7173_ID
+> +#define AD4112_ID			AD7173_ID
+> +#define AD4114_ID			AD7173_ID
+> +#define AD4116_ID			0x34d0
+> +#define AD4115_ID			0x38d0
+>  #define AD7175_8_ID			0x3cd0
+>  #define AD7177_ID			0x4fd0
+>  #define AD7173_ID_MASK			GENMASK(15, 4)
+> @@ -112,6 +118,7 @@
+>  
+>  #define AD7173_GPO12_DATA(x)	BIT((x) + 0)
+>  #define AD7173_GPO23_DATA(x)	BIT((x) + 4)
+> +#define AD4111_GPO01_DATA(x)	BIT((x) + 6)
+>  #define AD7173_GPO_DATA(x)	((x) < 2 ? AD7173_GPO12_DATA(x) : AD7173_GPO23_DATA(x))
+>  
+>  #define AD7173_INTERFACE_DATA_STAT	BIT(6)
+> @@ -130,26 +137,52 @@
+>  #define AD7173_VOLTAGE_INT_REF_uV	2500000
+>  #define AD7173_TEMP_SENSIIVITY_uV_per_C	477
+>  #define AD7177_ODR_START_VALUE		0x07
+> +#define AD4111_SHUNT_RESISTOR_OHM	50
+> +#define AD4111_DIVIDER_RATIO		10
+> +#define AD4111_CURRENT_CHAN_CUTOFF	16
+> +#define AD4111_VINCOM_INPUT		0X10
 
-It is reported that commit 31a0fa0019b0 ("thermal/debugfs: Pass cooling
-device state to thermal_debug_cdev_add()") causes the ACPI fan driver
-to fail probing on some systems which turns out to be due to the _FST
-control method returning an invalid value until _FSL is first evaluated
-for the given fan.  If this happens, the .get_cur_state() cooling device
-callback returns an error and __thermal_cooling_device_register() fails
-as uses that callback after commit 31a0fa0019b0.
+nit: odd to have upper-case X in 0x10
 
-Arguably, _FST should not return an inavlid value even if it is
-evaluated before _FSL, so this may be regarded as a platform firmware
-issue, but at the same time it is not a good enough reason for failing
-the cooling device registration where the initial cooling device state
-is only needed to initialize a thermal debug facility.
+> +
+> +/* pin <  num_voltage_in is a normal voltage input */
+> +/* pin >= num_voltage_in_div is a voltge input without a divider */
 
-Accordingly, modify __thermal_cooling_device_register() to pass a
-negative state value to thermal_debug_cdev_add() instead of failing
-if the initial .get_cur_state() callback invocation fails and adjust
-the thermal debug code to ignore negative cooling device state values.
+spelling: voltage
 
-Fixes: 31a0fa0019b0 ("thermal/debugfs: Pass cooling device state to thermal_debug_cdev_add()")
-Closes: https://lore.kernel.org/linux-acpi/20240530153727.843378-1-laura.nao@collabora.com
-Reported-by: Laura Nao <laura.nao@collabora.com>
-Tested-by: Laura Nao <laura.nao@collabora.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/thermal_core.c    |   11 +++++++----
- drivers/thermal/thermal_debugfs.c |    7 ++++++-
- 2 files changed, 13 insertions(+), 5 deletions(-)
+> +#define AD4111_IS_VINCOM_MISMATCH(pin1, pin2) ((pin1) == AD4111_VINCOM_INPUT && \
+> +					       (pin2) < st->info->num_voltage_in && \
+> +					       (pin2) >= st->info->num_voltage_in_div)
+>  
+>  #define AD7173_FILTER_ODR0_MASK		GENMASK(5, 0)
+>  #define AD7173_MAX_CONFIGS		8
+>  
+> +enum ad4111_current_channels {
+> +	AD4111_CURRENT_IN0P_IN0N,
+> +	AD4111_CURRENT_IN1P_IN1N,
+> +	AD4111_CURRENT_IN2P_IN2N,
+> +	AD4111_CURRENT_IN3P_IN3N,
+> +};
 
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -964,7 +964,8 @@ __thermal_cooling_device_register(struct
- {
- 	struct thermal_cooling_device *cdev;
- 	struct thermal_zone_device *pos = NULL;
--	unsigned long current_state;
-+	unsigned long val;
-+	int current_state;
- 	int id, ret;
- 
- 	if (!ops || !ops->get_max_state || !ops->get_cur_state ||
-@@ -1002,9 +1003,11 @@ __thermal_cooling_device_register(struct
- 	if (ret)
- 		goto out_cdev_type;
- 
--	ret = cdev->ops->get_cur_state(cdev, &current_state);
--	if (ret)
--		goto out_cdev_type;
-+	ret = cdev->ops->get_cur_state(cdev, &val);
-+	if (!ret && val >= 0 && val <= INT_MAX)
-+		current_state = val;
-+	else
-+		current_state = -1;
- 
- 	thermal_cooling_device_setup_sysfs(cdev);
- 
-Index: linux-pm/drivers/thermal/thermal_debugfs.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_debugfs.c
-+++ linux-pm/drivers/thermal/thermal_debugfs.c
-@@ -421,6 +421,8 @@ void thermal_debug_cdev_state_update(con
- 	cdev_dbg = &thermal_dbg->cdev_dbg;
- 
- 	old_state = cdev_dbg->current_state;
-+	if (old_state < 0)
-+		goto unlock;
- 
- 	/*
- 	 * Get the old state information in the durations list. If
-@@ -463,6 +465,7 @@ void thermal_debug_cdev_state_update(con
- 
- 	cdev_dbg->total++;
- 
-+unlock:
- 	mutex_unlock(&thermal_dbg->lock);
- }
- 
-@@ -499,7 +502,9 @@ void thermal_debug_cdev_add(struct therm
- 	 * duration will be printed by cdev_dt_seq_show() as expected if it
- 	 * runs before the first state transition.
- 	 */
--	thermal_debugfs_cdev_record_get(thermal_dbg, cdev_dbg->durations, state);
-+	if (state >= 0)
-+		thermal_debugfs_cdev_record_get(thermal_dbg, cdev_dbg->durations,
-+						state);
- 
- 	debugfs_create_file("trans_table", 0400, thermal_dbg->d_top,
- 			    thermal_dbg, &tt_fops);
+Not sure this enum adds much since IN0 is 0, IN1 is 1, etc.
+and it is only used as the index in the array initializer.
+
+> +
+>  struct ad7173_device_info {
+>  	const unsigned int *sinc5_data_rates;
+>  	unsigned int num_sinc5_data_rates;
+>  	unsigned int odr_start_value;
+> +	/*
+> +	 * AD4116 has both inputs with a voltage divider and without.
+> +	 * These inputs cannot be mixed in the channel configuration.
+> +	 * Does not include the VINCOM input.
+> +	 */
+> +	unsigned int num_voltage_in_div;
+>  	unsigned int num_channels;
+>  	unsigned int num_configs;
+> -	unsigned int num_inputs;
+> +	unsigned int num_voltage_in;
+>  	unsigned int clock;
+>  	unsigned int id;
+>  	char *name;
+> +	bool has_current_inputs;
+> +	bool has_vincom_input;
+>  	bool has_temp;
+>  	/* ((AVDD1 − AVSS)/5) */
+>  	bool has_common_input;
+>  	bool has_input_buf;
+>  	bool has_int_ref;
+>  	bool has_ref2;
+> +	bool higher_gpio_bits;
+>  	u8 num_gpios;
+>  };
+>  
+
+...
+
+> +static int ad4111_validate_current_ain(struct ad7173_state *st,
+> +				       const unsigned int ain[AD7173_NO_AINS_PER_CHANNEL])
+> +{
+> +	struct device *dev = &st->sd.spi->dev;
+> +
+> +	if (!st->info->has_current_inputs)
+> +		return dev_err_probe(dev, -EINVAL,
+> +			"Model %s does not support current channels\n",
+> +			st->info->name);
+> +
+> +	if (ain[0] >= ARRAY_SIZE(ad4111_current_channel_config))
+
+I guess OK for now, but could be nice to have num_current_inputs in chip_info.
+
+> +		return dev_err_probe(dev, -EINVAL,
+> +			"For current channels single-channel must be <[0-3]>\n");
+> +
+> +	return 0;
+> +}
+> +
+>  static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
+>  					      unsigned int ain0, unsigned int ain1)
+>  {
+> @@ -944,16 +1149,31 @@ static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
+>  	bool special_input0, special_input1;
+>  
+>  	special_input0 = AD7173_IS_REF_INPUT(ain0) ||
+> -			(AD7173_IS_COM_INPUT(ain0) && st->info->has_common_input);
+> +			(AD7173_IS_COM_INPUT(ain0) && st->info->has_common_input) ||
+> +			ain0 == AD4111_VINCOM_INPUT;
+>  	special_input1 = AD7173_IS_REF_INPUT(ain1) ||
+> -			(AD7173_IS_COM_INPUT(ain1) && st->info->has_common_input);
+> +			(AD7173_IS_COM_INPUT(ain1) && st->info->has_common_input) ||
+> +			ain1 == AD4111_VINCOM_INPUT;
+
+Do we also need to check has_vincom_input here? Otherwise out of range
+check below might succeed for chips that don't have this pin.
+
+>  
+> -	if ((ain0 >= st->info->num_inputs && !special_input0) ||
+> -	    (ain1 >= st->info->num_inputs && !special_input1))
+> +	if (st->info->has_vincom_input)
+> +		if (AD4111_IS_VINCOM_MISMATCH(ain0, ain1) ||
+> +		    AD4111_IS_VINCOM_MISMATCH(ain1, ain0))
+> +			return dev_err_probe(dev, -EINVAL,
+> +				"VINCOM must be paired with inputs having divider.\n");
+> +
+> +	if ((ain0 >= st->info->num_voltage_in && !special_input0) ||
+> +	    (ain1 >= st->info->num_voltage_in && !special_input1))
+>  		return dev_err_probe(dev, -EINVAL,
+>  				     "Input pin number out of range for pair (%d %d).\n",
+>  				     ain0, ain1);
+>  
+> +	if (!special_input0 && !special_input1 &&
+> +	    ((ain0 >= st->info->num_voltage_in_div) !=
+> +	     (ain1 >= st->info->num_voltage_in_div)))
+> +		return dev_err_probe(dev, -EINVAL,
+> +			"Both inputs must either have a voltage divider or not have: (%d %d).\n",
+> +			ain0, ain1);
+> +
+>  	return 0;
+>  }
+>  
+> @@ -984,7 +1204,7 @@ static int ad7173_fw_parse_channel_config(struct iio_dev *indio_dev)
+>  	struct device *dev = indio_dev->dev.parent;
+>  	struct iio_chan_spec *chan_arr, *chan;
+>  	unsigned int ain[AD7173_NO_AINS_PER_CHANNEL], chan_index = 0;
+> -	int ref_sel, ret, num_channels;
+> +	int ref_sel, ret, is_current_chan, num_channels;
+>  
+>  	num_channels = device_get_child_node_count(dev);
+>  
+> @@ -1031,15 +1251,40 @@ static int ad7173_fw_parse_channel_config(struct iio_dev *indio_dev)
+>  
+>  	device_for_each_child_node_scoped(dev, child) {
+>  		chan = &chan_arr[chan_index];
+> +		*chan = ad7173_channel_template;
+>  		chan_st_priv = &chans_st_arr[chan_index];
+>  		ret = fwnode_property_read_u32_array(child, "diff-channels",
+>  						     ain, ARRAY_SIZE(ain));
+> -		if (ret)
+> -			return ret;
+> +		if (ret) {
+> +			ret = fwnode_property_read_u32_array(child, "single-channel",
+> +							     ain, 1);
+
+Should this just be fwnode_property_read_u32()?
+
+> +			if (ret)
+> +				return dev_err_probe(dev, ret,
+> +					"Channel must define one of diff-channels or single-channel.\n");
+>  
+> -		ret = ad7173_validate_voltage_ain_inputs(st, ain[0], ain[1]);
+> -		if (ret)
+> -			return ret;
+> +			is_current_chan = fwnode_property_read_bool(child, "adi,current-channel");
+> +		} else {
+> +			chan->differential = true;
+> +		}
+> +
+> +		if (is_current_chan) {
+> +			ret = ad4111_validate_current_ain(st, ain);
+> +			if (ret)
+> +				return ret;
+> +			is_current_chan = true;
+
+is_current_chan is already set, so this is redundant.
+
+> +		} else {
+> +			if (!chan->differential) {
+> +				ret = fwnode_property_read_u32_array(child,
+> +					"common-mode-channel", ain + 1, 1);
+
+And here fwnode_property_read_u32()?
+
+> +				if (ret)
+> +					return dev_err_probe(dev, ret,
+> +						"common-mode-channel must be defined for single-ended channels.\n");
+> +			}
+> +			ret = ad7173_validate_voltage_ain_inputs(st, ain[0], ain[1]);
+> +			if (ret)
+> +				return ret;
+> +			is_current_chan = false;
+
+Same here, reduandant is_current_chan.
+
+> +		}
+>  
+>  		ret = fwnode_property_match_property_string(child,
+>  							    "adi,reference-select",
+> @@ -1058,14 +1303,9 @@ static int ad7173_fw_parse_channel_config(struct iio_dev *indio_dev)
+>  			st->adc_mode |= AD7173_ADC_MODE_REF_EN;
+>  		chan_st_priv->cfg.ref_sel = ref_sel;
+>  
+> -		*chan = ad7173_channel_template;
+>  		chan->address = chan_index;
+>  		chan->scan_index = chan_index;
+>  		chan->channel = ain[0];
+> -		chan->channel2 = ain[1];
+> -		chan->differential = true;
+> -
+> -		chan_st_priv->ain = AD7173_CH_ADDRESS(ain[0], ain[1]);
+>  		chan_st_priv->chan_reg = chan_index;
+>  		chan_st_priv->cfg.input_buf = st->info->has_input_buf;
+>  		chan_st_priv->cfg.odr = 0;
+> @@ -1074,6 +1314,20 @@ static int ad7173_fw_parse_channel_config(struct iio_dev *indio_dev)
+>  		if (chan_st_priv->cfg.bipolar)
+>  			chan->info_mask_separate |= BIT(IIO_CHAN_INFO_OFFSET);
+>  
+> +		if (is_current_chan) {
+> +			chan->type = IIO_CURRENT;
+> +			chan->differential = false;
+> +			chan->channel2 = 0;
+> +			ain[1] = FIELD_GET(AD7173_CH_SETUP_AINNEG_MASK,
+> +					   ad4111_current_channel_config[ain[0]]);
+> +			ain[0] = FIELD_GET(AD7173_CH_SETUP_AINPOS_MASK,
+> +					   ad4111_current_channel_config[ain[0]]);
+
+Changing the meaning of ain here makes the code harder to understand.
+
+How about just:
+
+	chan_st_priv->ain = ad4111_current_channel_config[ain[0]];
+
+here and mode the chan_st_priv->ain = below inside the else?
 
 
+> +		} else {
+> +			chan_st_priv->cfg.input_buf = st->info->has_input_buf;
+> +			chan->channel2 = ain[1];
+> +		}
+> +		chan_st_priv->ain = AD7173_CH_ADDRESS(ain[0], ain[1]);
+> +
+>  		chan_index++;
+>  	}
+>  	return 0;
+> @@ -1200,6 +1454,11 @@ static int ad7173_probe(struct spi_device *spi)
+>  }
+>  
+>  static const struct of_device_id ad7173_of_match[] = {
+> +	{ .compatible = "ad4111",	.data = &ad4111_device_info},
+> +	{ .compatible = "ad4112",	.data = &ad4112_device_info},
+> +	{ .compatible = "ad4114",	.data = &ad4114_device_info},
+> +	{ .compatible = "ad4115",	.data = &ad4115_device_info},
+> +	{ .compatible = "ad4116",	.data = &ad4116_device_info},
+>  	{ .compatible = "adi,ad7172-2", .data = &ad7172_2_device_info},
+>  	{ .compatible = "adi,ad7172-4", .data = &ad7172_4_device_info},
+>  	{ .compatible = "adi,ad7173-8", .data = &ad7173_8_device_info},
+> @@ -1212,6 +1471,11 @@ static const struct of_device_id ad7173_of_match[] = {
+>  MODULE_DEVICE_TABLE(of, ad7173_of_match);
+>  
+>  static const struct spi_device_id ad7173_id_table[] = {
+> +	{ "ad4111",   (kernel_ulong_t)&ad4111_device_info},
+> +	{ "ad4112",   (kernel_ulong_t)&ad4112_device_info},
+> +	{ "ad4114",   (kernel_ulong_t)&ad4114_device_info},
+> +	{ "ad4115",   (kernel_ulong_t)&ad4115_device_info},
+> +	{ "ad4116",   (kernel_ulong_t)&ad4116_device_info},
+>  	{ "ad7172-2", (kernel_ulong_t)&ad7172_2_device_info},
+>  	{ "ad7172-4", (kernel_ulong_t)&ad7172_4_device_info},
+>  	{ "ad7173-8", (kernel_ulong_t)&ad7173_8_device_info},
+
+nit: Same as in the other patch, space before }
+
+> @@ -1236,5 +1500,5 @@ module_spi_driver(ad7173_driver);
+>  MODULE_IMPORT_NS(IIO_AD_SIGMA_DELTA);
+>  MODULE_AUTHOR("Lars-Peter Clausen <lars@metafo.de>");
+>  MODULE_AUTHOR("Dumitru Ceclan <dumitru.ceclan@analog.com>");
+> -MODULE_DESCRIPTION("Analog Devices AD7172/AD7173/AD7175/AD7176 ADC driver");
+> +MODULE_DESCRIPTION("Analog Devices AD7173 and similar ADC driver");
+>  MODULE_LICENSE("GPL");
+> 
 
 
