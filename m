@@ -1,114 +1,95 @@
-Return-Path: <linux-kernel+bounces-202745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 515F48FD049
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:59:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D689C8FD055
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68C751C222BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:59:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90BA62849D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F8EDF43;
-	Wed,  5 Jun 2024 13:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285C61754B;
+	Wed,  5 Jun 2024 14:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="IrsW0K7U"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SKZCc/ii"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44668BA37
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 13:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C53EDE;
+	Wed,  5 Jun 2024 14:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717595955; cv=none; b=KHDtOx+lVaLUyfKN9YMkl1j3oDIP5deS4AeUpqlvbYdafJWHgMZbmeiUgDUaoYOMpXdzIh1dq4iWv6fR3ljKyr/zq5QiCXcN1Kk/YnrftbDwW6VvpkD4iazOapp1BAlLxIDvth82jt2mf+bkMgNd9/lAOSJQOEKLBfJyAxOYJow=
+	t=1717596110; cv=none; b=coWqj92kuFLWlf5jEglE4Y7zZ5EPfeLsoh87MeJdfCKN+2h0rAfdYYrYH0M7cmdEa3awAWI2CPIwzK7qLOOgi2U/hWqIy9mc7LnKwPrL/ifg+fqdZbyfANlrVHe7Hs8MMSKa1zF2edWJjbQiT5H4kZdevopFzFuKTWxN9NZURDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717595955; c=relaxed/simple;
-	bh=WgVMfOwr+lb81KNfDZXODRkHqQvGZmUuRLDuLFM+IW8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=daxceWN0TQceKb1wDVPL6ofTPz97foAbK2+Nqe6mYw3WRrvMUQP51HmCQDdViCZK1ie+2IWKBXOXNm0dryVb7R5rlCHKSgqcOvM4uyLHgICSf6EJLcnTa6sv2a5uMGwKBFReJCm5NGAhYvsAXDdpKJwxXlZpoEHSJh1dh/zh+LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=IrsW0K7U; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6c70fdfa43so32778666b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 06:59:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1717595951; x=1718200751; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q3b6sb+dUnnbQYXNCjvucpa2vf6o7PmjgOhfbEICrVU=;
-        b=IrsW0K7UbEy5aPUUh6EYZDv4n/ECGLo8l7ALYkJyei4zRZbMTif/oKssfOIOhIails
-         cl++eyTqq/wZDJbwB4UMw0OPpGcM0ubwK4XP0bouEH2xQBrLdhrpfhbQmj4IIV8RkeRw
-         KMsc/bDLLCaLCw+yGwV2WDJe4C+FFfc+Y4ahRp3tmO64/fW/Ch9NRwnILItl6C+NUj7F
-         BGfEq4HJvKqMWs/NECNrGxrRYOSLy1oVmddU5UkJ3RCXoQ/6YdayBca6qpni+IzRcU4y
-         lyitMikxCgT+uMvBS27uqWP5WBiYvGKnl/4tv7SaV2MtE2zVgta2Ve/bXE3nZiokspDI
-         TbjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717595951; x=1718200751;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Q3b6sb+dUnnbQYXNCjvucpa2vf6o7PmjgOhfbEICrVU=;
-        b=SrjJRL5Q5Az662r36DR3Rkx9GlASuihbUFuMFlf03MVIducp7sJu8keonPbuGlKphv
-         o3rwzuSuc63WQiZkzUpoCGtZ1pw4DLr+pFi7YJwAUmhWVOQnmmhw74K/jfKWrwEhDBDW
-         PA5aKjh8efMktfDxU59188aeBya96FWr+tEmwmiuTMp61q/MGpAP0OSLlzHPnenohkLT
-         7jhxnQMo04T09NZb5kCHEOKevxFjNzj1mH2bHRvGktn7fPgWvodSAuDxHHO3D+uicH3Z
-         3epU6l/7Seoq2wumxSt0pHKoT7XAk+47SMG28nsMD0SkWkS9goi88LZmCBdM3YMx1ZMT
-         ZsTg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJzujA92NqkUjMOFARoupZa50ok9HzzUZP0G7BHoGtfqbWqkqAL03sCLL1MC88vnSVZq9wvlmGb1M5SozgxHqgD2yVVv36V32qoFPZ
-X-Gm-Message-State: AOJu0YwG9/Ano2f6QPdax6dPfpHFhXzzGvuRyXhY/wYIcEMpZBSLsqoU
-	avUPNp0HFpIAuh0iUqe+A1wmVTQjMTjmyZFLWxx23KWDdgIpQ2TV6X70DhXqXbU=
-X-Google-Smtp-Source: AGHT+IHmH5RsPYE1cbZ38d8c9INCJwl1umxTvg+kJxY6yNyYlnXMqCwnXzVeMObamPFKig8E4mdpvA==
-X-Received: by 2002:a17:906:b852:b0:a68:b49e:4745 with SMTP id a640c23a62f3a-a69a0266a6bmr173120666b.70.1717595951458;
-        Wed, 05 Jun 2024 06:59:11 -0700 (PDT)
-Received: from debian.fritz.box. (aftr-82-135-80-164.dynamic.mnet-online.de. [82.135.80.164])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67e73f9a81sm774163466b.71.2024.06.05.06.59.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 06:59:11 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: rafael@kernel.org
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] powercap: idle_inject: Simplify if condition
-Date: Wed,  5 Jun 2024 15:58:42 +0200
-Message-Id: <20240605135841.97446-1-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1717596110; c=relaxed/simple;
+	bh=jriMY1eGjZZJGc7/fbBZnLvt2Ng1NGbn0bR4NnYeCJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eqg7d3rTJYvccs2+PhuWrwhqiQEXva7CBJyK1/yB7+RjnDW5PuPgok9HNAlfcjF0AVl5BiuZfR4hnLFGB2wx2494txhiydUo+sMtZ/H9HsZd8OIU6xjXCAMB+7pn8CPAa9/qADfHTH4RHE0G6Ri/WVfKSzImWGweXTzCRp9Sx64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SKZCc/ii; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CC3DC3277B;
+	Wed,  5 Jun 2024 14:01:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717596109;
+	bh=jriMY1eGjZZJGc7/fbBZnLvt2Ng1NGbn0bR4NnYeCJ0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SKZCc/iiM6SihAawkOdZ7jQ0z8niwdvkaRmntAd44zO4nq1J5A/yYqBfCBxHcxv5C
+	 AZsGKNhFpLlUUq2uDwZgjusUxTcXRMt0G/6paETr+Ti1LQcjFMGhnuUZ068iUPhvDh
+	 KZoyRB0jsf426zCPtladva3yDG4khGSrsiHawGuyE6V5zWwULnkF/Ls/lxNI6+ACEY
+	 5zX4VGFGGgp/ZPz5a9CtcqRovDuHibOK/5WWnSzXGSkHyFOBNiXvl2H9vrHdXW49Ns
+	 qdSgPOVfVBz20VS6CP7BAymNG7zjbcqcqdJGJN4/4s2qk+8zzdK990oSrbizsYt68d
+	 agFVz79Mn3ZPw==
+Date: Wed, 5 Jun 2024 08:01:47 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-pci@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>
+Subject: Re: [PATCH v2] dt-bindings: PCI: qcom: x1e80100: Make the MHI reg
+ region mandatory
+Message-ID: <171759610335.2612101.16286259446773159357.robh@kernel.org>
+References: <20240605-x1e80100-pci-bindings-fix-v2-1-c465e87966fc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605-x1e80100-pci-bindings-fix-v2-1-c465e87966fc@linaro.org>
 
-The if condition !A || A && B can be simplified to !A || B.
 
-Fixes the following Coccinelle/coccicheck warning reported by
-excluded_middle.cocci:
+On Wed, 05 Jun 2024 11:19:01 +0300, Abel Vesa wrote:
+> All PCIe controllers found on X1E80100 have MHI register region.
+> So change the schema to reflect that.
+> 
+> Fixes: 692eadd51698 ("dt-bindings: PCI: qcom: Document the X1E80100 PCIe Controller")
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+> Note that this patch will trigger an MHI reg region
+> warning until the following patch will also be merged:
+> 
+> https://lore.kernel.org/all/20240604-x1e80100-dts-fixes-pcie6a-v2-1-0b4d8c6256e5@linaro.org/
+> ---
+> Changes in v2:
+> - Dropped the vddpe supply change as that will have to be reworked
+>   in a different way, maybe on multiple platforms.
+> - Added SoC name to the subject line
+> - Link to v1: https://lore.kernel.org/r/20240604-x1e80100-pci-bindings-fix-v1-1-f4e20251b3d0@linaro.org
+> ---
+>  Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
 
-	WARNING !A || A && B is equivalent to !A || B
-
-Compile-tested only.
-
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- drivers/powercap/idle_inject.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/powercap/idle_inject.c b/drivers/powercap/idle_inject.c
-index e18a2cc4e46a..bafc59904ed3 100644
---- a/drivers/powercap/idle_inject.c
-+++ b/drivers/powercap/idle_inject.c
-@@ -127,7 +127,7 @@ static enum hrtimer_restart idle_inject_timer_fn(struct hrtimer *timer)
- 	struct idle_inject_device *ii_dev =
- 		container_of(timer, struct idle_inject_device, timer);
- 
--	if (!ii_dev->update || (ii_dev->update && ii_dev->update()))
-+	if (!ii_dev->update || ii_dev->update())
- 		idle_inject_wakeup(ii_dev);
- 
- 	duration_us = READ_ONCE(ii_dev->run_duration_us);
--- 
-2.39.2
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
