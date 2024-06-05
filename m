@@ -1,115 +1,127 @@
-Return-Path: <linux-kernel+bounces-202886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 459108FD27B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:08:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 705538FD283
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EF5CB2745E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:08:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06E771F2A2B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE59114E2CA;
-	Wed,  5 Jun 2024 16:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CBE5153BF8;
+	Wed,  5 Jun 2024 16:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FgLFTgqo"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RvwX/4Si"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2906C2837A
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 16:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1ABE27450;
+	Wed,  5 Jun 2024 16:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717603710; cv=none; b=II/7geE17/aaLiL2iIw3xv/2zuTiWTyB5fOP/K7o0doPDuT0vejo8dutpmxZJaftaDqUdYF1zgwKu0R5V2dndnGE9KZNzpBZwI71Aqkjvg8wbeltkqAGLPBsSuwAmRDCWBeRhqiD0M01K9e5u+PzMJ40U6V34uMZKf9fCQRbnK0=
+	t=1717603821; cv=none; b=Ks7Z7GN+UQ1FUqoX9cnJ7tTA6UuJb7ljmbtOIVeI8RmbxQ3DLcZXOOLYhMV1mKKdjILcDiskEPDwawLEMpl6/HiBb/rVqPSKeMC+P9LmDuGVrkICPyh+0ucKDHCpUBVXgYFJibg7WSh8isXbQQrs44oWrjTcIkjWtQpD3a49ktg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717603710; c=relaxed/simple;
-	bh=H/FJ2N0FwApJ96TxD1B509Iuy8DXiL1iOz47w9oFOJo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WMPytfetiq7VOsCc1TtXNDshLu8lrrt8v9Xebd6MK3jfD2IghxWRtT1I7QcH2lChxCXtBOjAAqWiVtXZNm/gm2VhW8fA8Jq+JJsd1j9uOzHC3z8browoE+13pLsB8+kr816x/K/grjdi4tszvDgJikQjY7vCB3/ClvcFsmdBifI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FgLFTgqo; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a626919d19dso214808466b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 09:08:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1717603706; x=1718208506; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rjT+iRyc5GfiUIlZUEFmZp09PKDBzpzR2oZ+eeDSlg0=;
-        b=FgLFTgqo5yPGq6dfzPTTC/LKyh7Ldfc1GRxISTA1FbcaM/hiYp7Yo74MS+b3MVPmnF
-         w4H71a2QZzr5EoouXufBAUkfJ4T/WmORfTDrCILnmmoY8/HyNpk2msyT+Xj1enihGWlm
-         t5bmsWs/yp74srEeZ9Py79BrlyG2m/Qo1RcHs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717603706; x=1718208506;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rjT+iRyc5GfiUIlZUEFmZp09PKDBzpzR2oZ+eeDSlg0=;
-        b=PvsnXUheU4KPX7JBDDSe7t/UQGDwTemaidu5qG03yTIrmmQmWXY6+v4CMxIIg1QH/9
-         6+wrDNEgcMOmk1kQslwjg882C8Hu0ATaPZdHhCOwktZHzAFfcebhMfyDW4Aat7NmnVWA
-         64br9J44LQSPlqXSgEZ2kgXiKTkfSNVfrI4IzyeYjlbIRe3up1qFRYPO2OCMzirMtfSD
-         OeqBrZ+pp6YK68RQ4mjl0zvPeimYukj+t++RGk2TMUvfu01tUPVgPu59oqU0Ce2QqE0m
-         XP5Dgl5JTV2weDR8lTp7oIrAaVckpCN0iLKNgb5rStwsEjs8rLA6up/1f3U0wG3E2wfQ
-         06tA==
-X-Forwarded-Encrypted: i=1; AJvYcCVFvI2B/beHlQu27Mw4Sg4qEGaxxDQI0GCrilgtPz8CEL1hjf9rhudROrAxFFNq9radwM5e1zLEM9Ev43GPYEODADA0kSaGmFkuvXDe
-X-Gm-Message-State: AOJu0YyVfYC7Z0mFgm0nLcbRAWCOFJJidf0maK7A3EXNgYXAWV7CMc4a
-	0xvKGY/THhg5XMa5AgtLw4AbiIy1OUKAv9GFkssAWNTkTjHRLTxJgsdz6OUuFTwKbs8/83OEkls
-	AfiyYEGQo
-X-Google-Smtp-Source: AGHT+IG3mlurokBVkNGL1059OrqPmsYrYTEHH3IeG2MLJ9Of6kMrvRgptaRJR9A0dEbUrUnBZue++Q==
-X-Received: by 2002:a17:906:270d:b0:a68:f6b8:5239 with SMTP id a640c23a62f3a-a6c75fadd7dmr8605666b.13.1717603706234;
-        Wed, 05 Jun 2024 09:08:26 -0700 (PDT)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68ba7fd6besm649355266b.190.2024.06.05.09.08.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 09:08:25 -0700 (PDT)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6269885572so196033366b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 09:08:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWeWOvAdsCJs4NGUnlWqq9lUnIatpvCK13Sr5RSAV8u94WXtGXrksEimQe1A1k4L2l0a5QhurLa3/HHxl4baq+Hpe8SQRPdaKD2IWQB
-X-Received: by 2002:a17:906:dfe7:b0:a68:c70b:5555 with SMTP id
- a640c23a62f3a-a6c762bcb4cmr10056866b.17.1717603704589; Wed, 05 Jun 2024
- 09:08:24 -0700 (PDT)
+	s=arc-20240116; t=1717603821; c=relaxed/simple;
+	bh=3klxGnG3GkyhrDKSmcnlThuDuIl/9pv+mo2n6zzAz+o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FXXblESjcOO6Q7pTqJgneNvxGokUEJG1/aJ/bauFtPqfNdqzphNp7H3J9oK1p0Idd+votHPGJZyFvtu5MGNiS+5DKyncfdHljOzP1sPB1WT3BY5uoemUa3W0jb+wvZ30xSqM/lR4E9hxIPTKUi8Z/Q53zdfAKsodqC5D6lJ4ccI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RvwX/4Si; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717603820; x=1749139820;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3klxGnG3GkyhrDKSmcnlThuDuIl/9pv+mo2n6zzAz+o=;
+  b=RvwX/4Si+wYPxv9mzyj/ZkLyOvwOL+Wo3fpj49FcGY0UdqR52WiQcAem
+   NVSf6a3JlyVVxOm4WZ7KhVjwm/FcnhQzo/iQD69TUWO0mYQlxkHbrjAwd
+   r2m717NAAc4SkemvLzK7oWfras5Tr/jUYqq26Ia3qv72ZOdoVbGhMFQF4
+   QpgfsHZVrT5kwt73IWM1mEVvFdF3/pXE0+LlY+IMxNT//l6cuG7J3gh5b
+   S25I3ZNVvhUW162ZVmmT6kDccGk8gASVlgw2puZZSUQAaIlbDqQVYevrQ
+   Dcl1CfpDCqij3GROs0HxlOEZhSxoZfyDoNSg6MtWfiTS1rrIiQRG+0oZW
+   g==;
+X-CSE-ConnectionGUID: XXmzOSDpSMWr8JYqkntMMg==
+X-CSE-MsgGUID: +X2XEUlVTe6UC1VhwRlGRQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="25633485"
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="25633485"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 09:10:03 -0700
+X-CSE-ConnectionGUID: KMwrIFJPSKubjbNif9H/mg==
+X-CSE-MsgGUID: EyQtD6qpQxGjOaC/hL9sVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="38300791"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by orviesa007.jf.intel.com with ESMTP; 05 Jun 2024 09:10:03 -0700
+From: kan.liang@linux.intel.com
+To: acme@kernel.org,
+	namhyung@kernel.org,
+	irogers@google.com,
+	jolsa@kernel.org,
+	adrian.hunter@intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Kan Liang <kan.liang@linux.intel.com>,
+	"Khalil, Amiri" <amiri.khalil@intel.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] perf stat: Fix the hard-coded metrics calculation on the hybrid
+Date: Wed,  5 Jun 2024 09:08:48 -0700
+Message-Id: <20240605160848.4116061-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605083557.2051480-1-mingo@kernel.org> <20240605083557.2051480-4-mingo@kernel.org>
- <20240605141733.GC25006@redhat.com>
-In-Reply-To: <20240605141733.GC25006@redhat.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 5 Jun 2024 09:08:07 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi4773Ls82kqVbPmM1deghS2NXkHNCCzWPc270kcByXPA@mail.gmail.com>
-Message-ID: <CAHk-=wi4773Ls82kqVbPmM1deghS2NXkHNCCzWPc270kcByXPA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] x86/fpu: Remove init_task FPU state dependencies, add
- debugging warning
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, 
-	Andy Lutomirski <luto@amacapital.net>, Andrew Morton <akpm@linux-foundation.org>, 
-	Dave Hansen <dave@sr71.net>, Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Uros Bizjak <ubizjak@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 5 Jun 2024 at 07:19, Oleg Nesterov <oleg@redhat.com> wrote:
->
-> On 06/05, Ingo Molnar wrote:
-> >
-> > But the init task isn't supposed to be using the FPU in any case,
->
-> Afaics, the same is true for any PF_KTHREAD/USER_WORKER thread?
+From: Kan Liang <kan.liang@linux.intel.com>
 
-I don't think so. We have various users of kernel_fpu_begin()/end()
-that are very much about things like crypto and RAID xor memory copies
-etc that will be used by kernel worker threads.
+The hard-coded metrics is wrongly calculated on the hybrid machine.
 
-In fact, as far as I know, we'll use the FPU in the init_task too
-thanks to irq_fpu_usable(). Look up the  nft_pipapo_avx2_lookup()
-function.
+$ perf stat -e cycles,instructions -a sleep 1
 
-Maybe other patches removed that, I didn't check the context, but the
-"init_task doesn't use FPU" doesn't actually sound true to me.
+ Performance counter stats for 'system wide':
 
-                Linus
+        18,205,487      cpu_atom/cycles/
+         9,733,603      cpu_core/cycles/
+         9,423,111      cpu_atom/instructions/     #  0.52  insn per cycle
+         4,268,965      cpu_core/instructions/     #  0.23  insn per cycle
+
+The insn per cycle for cpu_core should be 4,268,965 / 9,733,603 = 0.44.
+
+When finding the metric events, the find_stat() doesn't take the PMU
+type into account. The cpu_atom/cycles/ is wrongly used to calculate
+the IPC of the cpu_core.
+
+Fixes: 0a57b910807a ("perf stat: Use counts rather than saved_value")
+Reported-by: "Khalil, Amiri" <amiri.khalil@intel.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Cc: stable@vger.kernel.org
+---
+ tools/perf/util/stat-shadow.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
+index 3466aa952442..4d0edc061f1a 100644
+--- a/tools/perf/util/stat-shadow.c
++++ b/tools/perf/util/stat-shadow.c
+@@ -176,6 +176,10 @@ static double find_stat(const struct evsel *evsel, int aggr_idx, enum stat_type
+ 		if (type != evsel__stat_type(cur))
+ 			continue;
+ 
++		/* Ignore if not the PMU we're looking for. */
++		if (evsel->pmu != cur->pmu)
++			continue;
++
+ 		aggr = &cur->stats->aggr[aggr_idx];
+ 		if (type == STAT_NSECS)
+ 			return aggr->counts.val;
+-- 
+2.35.1
+
 
