@@ -1,112 +1,126 @@
-Return-Path: <linux-kernel+bounces-202956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 974008FD38F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:06:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 129888FD39B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30EA11F2675F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:06:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D9461F2670A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA4B18C34D;
-	Wed,  5 Jun 2024 17:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0B618F2E4;
+	Wed,  5 Jun 2024 17:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJ6erTjX"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e6V95OJ1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1DB3211;
-	Wed,  5 Jun 2024 17:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9A714D6F6;
+	Wed,  5 Jun 2024 17:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717607153; cv=none; b=aTeHUd7n3ip/h3pA4sdxC22xa5XG2G0y+fAvPVMNnvyKKjW1I9MsPU65rohfn88ISsQM6JnSJ4smhxb8DMaZfSy6z7RW/Wiz9vXbwyebHrUEzU3nl4dfcxdgxybXIayVn7yB4YUQQfqU4MMBpzg402IHZeMRF689uIrnZeLq+bQ=
+	t=1717607261; cv=none; b=oNs8H/hF4BpzACssPt9T9mM6V4MYy1zr/yisHWOY/DMg1IdObep70nGf0dPHWnFueSFbdmtAc21Eied0yBlyGQZ8QLkpBlMYHUUJ8a3le3eAYfoZ7qMGLiLlOLwaindczaPDfIli+Ouo6Z3M2dZW7LPLeJGzRmW16j/k/hw4Wlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717607153; c=relaxed/simple;
-	bh=ppfVXkaZDara5XI4iOutK/rvFfYiOX7bKQQ9Goyz6Us=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e3C7Y3oC1JwLpTO1b8gt9r4CTPQWqI8rG2i1JbpnmFsUvuyBpd9mKgGibj+hPqsFgUkw+RmwcaU/lKUTH1WLUL32ZW3HAd17DpYQXTKtXIgZoULfw6TyWQvrXNBuCVqdO/hTcnXVOt1YkW+zWv+lmKsmjNJWWAGYjflDxBk+ftc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AJ6erTjX; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42155dfc484so556865e9.1;
-        Wed, 05 Jun 2024 10:05:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717607150; x=1718211950; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TKRxRsXITwcKcSFEnZCeS4yIdLc+hSCdiKd4uSyqC6s=;
-        b=AJ6erTjXJ3QI7Ykqzssps5LkH24ku0R+GBOgbLjai0gBVTRVyIruQIfURvppZLzXg1
-         yP5lp+R+wPaM0PrRlW6s/Oi4RKCVBkpPx/My/wmMSatFFY8SUlyOudT6o3jTwNtGQEqs
-         cCcxpl+dcyFMQywGo7n4j4gaioKihe81Tkk89FtBuJID0TCWLYSfsZpPDTaJ5EbR23Ry
-         0Q4usK+FREVps4meVbnY7xxs0m391OAgdKVSlLl+27y0frFTKgEVGB3XFvvn8aDPFRdL
-         v54QFaRAkPnCbf5ze5HJ5KXInyF+ADy6pu6oPywlNtwiMxxpQ9RqspWoD/z5VVbOutBP
-         yMyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717607150; x=1718211950;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TKRxRsXITwcKcSFEnZCeS4yIdLc+hSCdiKd4uSyqC6s=;
-        b=Yay4q+UZInyMyk8tvSlYYcSPZxBixkVxJaiNgSZaWM6SRkjvyjzhNMHE5k7XGlRqkv
-         lHara3qOpJjgfH6q5atnkq3Z6qTim0hifjXNk8rBlWrdOMB+qFZ6zE8wGPvSOUkUBoe4
-         yZowq0Fr8AJfD49csvICBcBcLviP+7XJBZuGCe+WEaOZ+6G3D5eBiJLvsNx/Mq08ZPEb
-         zaWoL7klZvTqA9z5PVFLtnD6jtL3Idg0IPt4QJp+mMcnKqNddS/F/07nnuyZMGnkt7Rr
-         qgBl/ZbBWnyQDoX3XnFpufOOb49hMk4W3YUE+KrShcm9ZGQPMhqAHn89phK4Z9rVMX3j
-         aEPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVgay/Fn1giF+dOl91icod3imYK0fHY48jtJh5uD6hnfsRzfgv5mskqzpx7vhjog+9WpUuwZN7NJDyRHRpF+FtIz61+q9Y4V/uE9Vc4qFoBCzqjd/vYb990xmVyMSqRjjcJmwYiX6XP6Q==
-X-Gm-Message-State: AOJu0Ywr4T0ehKAtk0EtwskKyHDNvBmEdUtO+M2hDGaC1bnWiJzrXwc6
-	7930ZisKFklFDANtjGIpG+V3lpPqsy1J852NuBPq10KgYK1UkZJ8
-X-Google-Smtp-Source: AGHT+IGPzNbwXlgB9VfrOAPXsykVeDz+8ofDpfOzeWmsF+Bm/cDOtiWDZ5dwMgFYYuCStxlydXFThA==
-X-Received: by 2002:a05:600c:5487:b0:420:2cbe:7efd with SMTP id 5b1f17b1804b1-42156338a6bmr28684595e9.31.1717607150174;
-        Wed, 05 Jun 2024 10:05:50 -0700 (PDT)
-Received: from andrea ([151.76.32.59])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35e7d399d15sm5861541f8f.63.2024.06.05.10.05.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 10:05:49 -0700 (PDT)
-Date: Wed, 5 Jun 2024 19:05:45 +0200
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
-	npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-	luc.maranget@inria.fr, paulmck@kernel.org, akiyks@gmail.com,
-	dlustig@nvidia.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	hernan.poncedeleon@huaweicloud.com,
-	jonas.oberhauser@huaweicloud.com
-Subject: Re: [PATCH] tools/memory-model: Document herd7 (internal)
- representation
-Message-ID: <ZmCa6UXON7bBDLwA@andrea>
-References: <20240524151356.236071-1-parri.andrea@gmail.com>
- <ZlC0IkzpQdeGj+a3@andrea>
- <cf81a3c2-9754-4130-a67e-67d475678829@rowland.harvard.edu>
- <ZlQ/Ks3I2BYybykD@andrea>
- <28bdcf4c-6903-4555-8cbc-a93704ec05f9@rowland.harvard.edu>
+	s=arc-20240116; t=1717607261; c=relaxed/simple;
+	bh=admCTi0dRN3e9uqsj0+Zv4ya/X1UvHIHHvEvMdzomKI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YKTbchw9tb1XLf9pXku5SReX9fcxbFJGYzyhkM0wYL+a2HOpMNRgBnlkzEqbVVkDk7KWla2fTC98XX2or2vStRT39QRJALoA3tzwM9/9BOE02guuKpZuS/qDYkuborbb9sY6SADdbvr5Jmbn76zM2eqVPmDb4kdplW9AJwP9Drk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e6V95OJ1; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717607260; x=1749143260;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=admCTi0dRN3e9uqsj0+Zv4ya/X1UvHIHHvEvMdzomKI=;
+  b=e6V95OJ11K1mq4MN/1E88wtlEEV4KB12DuG/ndnyZkirifbIUOkhwqPq
+   ol/pbEoxpPY3z4W/8bOnLjSdnvCab/Fi3gO5ShXQy5DsoFJLriaBCqwKw
+   oakmLnvQq2EVcjGHj9YYUcg3+2ctjx10VuWcU9uvJnOGbcqx4vuBJaJvK
+   gDomLCyxvAvO0pkVi90SVjYXp6fMOdStQIi8ctYleC4Z6v9BmoEjpkyiq
+   KEDeeH+bFLGWUKGYjWs91Ok1pm4by1+8XMnWWhddS7HA30OIeOmZlLrsP
+   C/4bxn5re90RwjjPr31ZhW2oE2zC2AOQ+zESIXdaPjSvTq2BVbh3k3tmI
+   g==;
+X-CSE-ConnectionGUID: 8pIqXb/3TguF9PNHF7tw9w==
+X-CSE-MsgGUID: gld8nkvsShG0YDXsJgDIaw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="31779190"
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="31779190"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 10:07:40 -0700
+X-CSE-ConnectionGUID: DzUyDe2QQBS/BgG3E97Bdw==
+X-CSE-MsgGUID: iYxnW/oiQv6PnFC3eWUcIQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="38224501"
+Received: from smulagon-mobl2.amr.corp.intel.com (HELO [10.212.148.106]) ([10.212.148.106])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 10:07:34 -0700
+Message-ID: <6c4a508382d7f485c87814152282679aff120f86.camel@linux.intel.com>
+Subject: Re: [tip: sched/core] sched/balance: Skip unnecessary updates to
+ idle load balancer's flags
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>, Chen Yu
+	 <yu.c.chen@intel.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	x86@kernel.org, Mohini Narkhede <mohini.narkhede@intel.com>
+Date: Wed, 05 Jun 2024 10:07:33 -0700
+In-Reply-To: <171759927306.10875.2450909647126184930.tip-bot2@tip-bot2>
+References: <20240531205452.65781-1-tim.c.chen@linux.intel.com>
+	 <171759927306.10875.2450909647126184930.tip-bot2@tip-bot2>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-3.fc36) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <28bdcf4c-6903-4555-8cbc-a93704ec05f9@rowland.harvard.edu>
 
-> > > A patch to fix the problem and reorganize the code a bit for greater 
-> > > readability is below.  I'd appreciate it if people could try it out on 
-> > > various locking litmus tests in our archives.
-> > 
-> > Thanks for the quick solution, Alan.  The results from our archives look
-> > good.
-> 
-> Here's a much smaller patch, suitable for the -stable kernels.  It fixes 
-> the bug without doing the larger code reorganization (which will go into 
-> a separate patch).  Can you test this one?
+On Wed, 2024-06-05 at 14:54 +0000, tip-bot2 for Tim Chen wrote:
+>=20
+> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Reviewed-by: Chen Yu <yu.c.chen@intel.com>
+> Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+> Link: https://lore.kernel.org/r/20240531205452.65781-1-tim.c.chen@linux.i=
+ntel.com
 
-Testing in progress..., first results are good.
+Peter,
 
-(+1 on splitting the patches)
+Thanks for putting the patch in tip.
 
-  Andrea
+Can you also also add=C2=A0
+
+Tested-by: Mohini Narkhede <mohini.narkhede@intel.com>
+
+Thanks.
+
+Tim
+
+> ---
+>  kernel/sched/fair.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>=20
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 63113dc..41b5838 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -11892,6 +11892,13 @@ static void kick_ilb(unsigned int flags)
+>  		return;
+> =20
+>  	/*
+> +	 * Don't bother if no new NOHZ balance work items for ilb_cpu,
+> +	 * i.e. all bits in flags are already set in ilb_cpu.
+> +	 */
+> +	if ((atomic_read(nohz_flags(ilb_cpu)) & flags) =3D=3D flags)
+> +		return;
+> +
+> +	/*
+>  	 * Access to rq::nohz_csd is serialized by NOHZ_KICK_MASK; he who sets
+>  	 * the first flag owns it; cleared by nohz_csd_func().
+>  	 */
+
 
