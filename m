@@ -1,73 +1,99 @@
-Return-Path: <linux-kernel+bounces-202010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D10E78FC680
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:34:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82EE18FC6C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 738D22856B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:34:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F1A4B23D0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A6B1946DA;
-	Wed,  5 Jun 2024 08:33:38 +0000 (UTC)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0781946C9;
+	Wed,  5 Jun 2024 08:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2GQrqcb3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uAhIBfIH";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Anz0bD87";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bvwICSPj"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14361946A6;
-	Wed,  5 Jun 2024 08:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733271946AA;
+	Wed,  5 Jun 2024 08:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717576418; cv=none; b=ect/AN0G0/lltsCup3+D3TCbPOq756EZXB2gGKUuTx3aC26mvgJ0W4SDuTH3Yjz2iMGt/7K5wmqgvwgvu0AwlOW19O18DTQ2dNVeJtZOP1BBECuNflygKQs/E3Nj6pRGOIJU/uBrULI1kp4oIUvIKX6EKNrzRslg6EZlcTgEzW4=
+	t=1717576549; cv=none; b=At7u+pivsQLj4QLesgcpB57+7852IZ2h9B3LvN7d+XD5BXpszLRfN3gNhwvdcBiWvKxuydv8z1zFtVQvyU5Kj+C/pnv4yNsM7PTz9gyQ/aVmNPr+lg+Z7nVh+R6Bru9qWDO4n6xMPyXpkd1zmeocEkcbqj+vmDhmoxHE4ZvhjkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717576418; c=relaxed/simple;
-	bh=0ki2g+VTCwzVsFNHek0KlzrsIdaBwLLZykPJAo3HDAg=;
+	s=arc-20240116; t=1717576549; c=relaxed/simple;
+	bh=kYH2yJi/HdTLkne42i/lQgVn2DMQeUge9VKw06RK4Mc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WQrZW+i9A7UbyBQLBlR7Qv00FmNE5Aybvy0FM2COudbzRJgBK8V0fwwmUMw2D9k1LlMOgP3h5ihbquM42GvaUkQQGpm4UC3KGwNZu1yMRIdd6GCMAFkIHCLcSAQ22pvJnlPtivy7eXOY8x/tgC6x81z9VuZJQ5iGI3gpMcVpsIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a68ee841138so395213666b.1;
-        Wed, 05 Jun 2024 01:33:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717576415; x=1718181215;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MgwvGbeQ51aSYhN/1Av3F23kdDADeU11qf5jY73T9Ig=;
-        b=nq8DmIWapq69t9aeJ9UOAaGDBdw/0YEQSz8QNyFiLoDvOcl23yGTs08TcAsJ5dZDpd
-         g5jG3mpGXz+jpVbyxFLa5qaaMpEx+M7SzAuRHDGfWL/ywqS28dRSviwJAp6TbrGJf7/u
-         HCbpunG7BoK9/03mOdGYTUoOty2+5lTYBU8akMLkBdVGPFSCX54/wvbmdfAThxdjhW9I
-         e2jlBCfuIRq3SwnLbdkXyclXjXCvD40olmb7vtGj8cT7P4LtbtyjKE2LkQv5rbttRjsG
-         7VQPgEjnIZvW50SOtoeuWjndr4vkw3ZVg0Br/Up2lVPgTKGMkPmtxVZ5OVoA1YwKke88
-         2foA==
-X-Forwarded-Encrypted: i=1; AJvYcCV95xsQRPi+AAoJCH178Mzoc5kN8RWAM4lSD6ezKSO1tTzbmKaShmrc684ttP5MnKi0kZzoOkgrPf5VMuoeQ8rdicnEV5aSCiNawnmd9DOeaSyk1e5YvGqFgJQDYUK7YLvPg2hY+tB5Gg==
-X-Gm-Message-State: AOJu0Yy0e4X3xan2h6CBywWAcW0mmd6fZkddchngR+Rqqjo+lukRmvZA
-	d7jkDSbUYhqGKxlJTmVL0vU77JHOBzdrL7WnjGu2cH/8uE/RFnKT2rl/LQ==
-X-Google-Smtp-Source: AGHT+IFhhK3cHNOzxeodK/r10BVtnQPMSBk/Ho3mnf7jPU6AFdAroZauygoZN8/FzYprLbC6102FbA==
-X-Received: by 2002:a17:907:9707:b0:a68:9ce3:c896 with SMTP id a640c23a62f3a-a699fa9bcf3mr130111166b.24.1717576414865;
-        Wed, 05 Jun 2024 01:33:34 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-009.fbsv.net. [2a03:2880:30ff:9::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68c99d5fa4sm563584566b.189.2024.06.05.01.33.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 01:33:34 -0700 (PDT)
-Date: Wed, 5 Jun 2024 01:33:32 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Sathya Prakash <sathya.prakash@broadcom.com>,
-	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>, leit@meta.com,
-	"open list:LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)" <MPT-FusionLinux.pdl@broadcom.com>,
-	"open list:LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)" <linux-scsi@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mpt3sas: Avoid test/set_bit() operating in non-allocated
- memory
-Message-ID: <ZmAi3DoEBuv4txOL@gmail.com>
-References: <20240531180055.950704-1-leitao@debian.org>
- <Zlo81SBdvflQ_38O@kbusch-mbp.dhcp.thefacebook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d9EfKwAQ745TNbZSXV+n8wNlIacollamytNnKKBzeKRjND3ndt1ZYIXB0cHOfKeKSoiptOmGaozzhk+S//QjgqMxDvm3iHVAJ4iU9M/t9pZmjkrmeU/GLrIPFtGwW2Tc7kobibX0BDAsWtjq6YI6oByWEgJF1gF4PA4kjDjGBeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2GQrqcb3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uAhIBfIH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Anz0bD87; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bvwICSPj; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 66072216E7;
+	Wed,  5 Jun 2024 08:35:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717576540; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a1FdvGcK/hiBia9Wy/QJQW13yM7Cwjgy8SdWOUF2qUU=;
+	b=2GQrqcb30fRAdH5pYPABN0yKafVhE9cs89GmLAhFAg9tJNmH0CtLmNMzsBG1o6DdDysxH9
+	skodYHy9Q6n363udOk1V0/K16ncZsRI3t8lJfKFyW0qVMSOn2SEhBK2bpgJu5xBSUK/urE
+	WkwJFzKWlBIKQ0DyQOYyI8EVyZrm4U4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717576540;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a1FdvGcK/hiBia9Wy/QJQW13yM7Cwjgy8SdWOUF2qUU=;
+	b=uAhIBfIHJOsBk2zAAZ1Vw+TZ9StWf6jFiIJgHf+4RVk6SK3ZJzJWikthS5IRa2bWZcDiQD
+	WUt61Fi9Q0hmpiCA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717576538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a1FdvGcK/hiBia9Wy/QJQW13yM7Cwjgy8SdWOUF2qUU=;
+	b=Anz0bD87U6W0gxGzMgRyUNLlcBPgwQxN/Y+bFFinJsZmqaao7iYBJYYHSzOVfRje8R6vHc
+	Qo0goBSPcdSFZJ1y6xSjhLuNXF1bluJhUEHcW+Y0EvoICqF7YQtj+35briTGwIooPtjyIU
+	s1r2VSnxpjEdtxOhDTEa2to92RwAS+0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717576538;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a1FdvGcK/hiBia9Wy/QJQW13yM7Cwjgy8SdWOUF2qUU=;
+	b=bvwICSPjcWaM4oxJH38m+qMCAgh0RMIAjA/BJe0d/tG6dSwCAyU/eeyZC+K7+E+mPcWqAy
+	dgPUnwOU18ftM2DQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 55FDC13AA1;
+	Wed,  5 Jun 2024 08:35:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id yhn4FFojYGZQOQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 05 Jun 2024 08:35:38 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 0286BA088A; Wed,  5 Jun 2024 10:35:33 +0200 (CEST)
+Date: Wed, 5 Jun 2024 10:35:33 +0200
+From: Jan Kara <jack@suse.cz>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>,
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] jbd2: add missing MODULE_DESCRIPTION()
+Message-ID: <20240605083533.qr3gmecrtdotxxxv@quack3>
+References: <20240526-md-fs-jbd2-v1-1-7bba6665327d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,31 +102,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zlo81SBdvflQ_38O@kbusch-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20240526-md-fs-jbd2-v1-1-7bba6665327d@quicinc.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.992];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On Fri, May 31, 2024 at 03:10:45PM -0600, Keith Busch wrote:
-> On Fri, May 31, 2024 at 11:00:54AM -0700, Breno Leitao wrote:
+On Sun 26-05-24 11:53:49, Jeff Johnson wrote:
+> Fix the 'make W=1' warning:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/jbd2/jbd2.o
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-> > @@ -8529,6 +8535,12 @@ mpt3sas_base_attach(struct MPT3SAS_ADAPTER *ioc)
-> >  	ioc->pend_os_device_add_sz = (ioc->facts.MaxDevHandle / 8);
-> >  	if (ioc->facts.MaxDevHandle % 8)
-> >  		ioc->pend_os_device_add_sz++;
-> > +
-> > +	/* pend_os_device_add_sz should have, at least, the minimal room
-> > +	 * for set_bit()/test_bit(), otherwise out-of-memory may occur
-> > +	 */
-> > +	ioc->pend_os_device_add_sz = ALIGN(ioc->pend_os_device_add_sz,
-> > +					   sizeof(unsigned long));
-> >  	ioc->pend_os_device_add = kzalloc(ioc->pend_os_device_add_sz,
-> >  	    GFP_KERNEL);
-> >  	if (!ioc->pend_os_device_add) {
+Thanks added to my tree.
 
-> Do we need similiar ALIGN for _base_check_ioc_facts_changes() too?
+								Honza
 
-Yes, that would help as well. Since it will protect
-->device_remove_in_progress and others from the same problem.
-
-Let me send a v2.
-
-Thanks!
+> ---
+>  fs/jbd2/journal.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index 03c4b9214f56..0d2825c131cc 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -3181,6 +3181,7 @@ static void __exit journal_exit(void)
+>  	jbd2_journal_destroy_caches();
+>  }
+>  
+> +MODULE_DESCRIPTION("Generic filesystem journal-writing module");
+>  MODULE_LICENSE("GPL");
+>  module_init(journal_init);
+>  module_exit(journal_exit);
+> 
+> ---
+> base-commit: 416ff45264d50a983c3c0b99f0da6ee59f9acd68
+> change-id: 20240526-md-fs-jbd2-bd0acb6527b8
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
