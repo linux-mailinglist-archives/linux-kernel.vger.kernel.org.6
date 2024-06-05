@@ -1,279 +1,174 @@
-Return-Path: <linux-kernel+bounces-202145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84E278FC84F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:49:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C40588FC852
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CBBD1C220DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:49:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35B8E1F2646A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51CE18FDC9;
-	Wed,  5 Jun 2024 09:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7643718FDD3;
+	Wed,  5 Jun 2024 09:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GhVI6W1T"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="neUR0Jq6"
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6678018FDAA
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 09:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B15E18FC94
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 09:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717580932; cv=none; b=ElOf9K8831VJXP1hvi9vb5Ee6vcsBsy5J46TPKC2t3mfAMH/jAag2nwITQy3yy6Ybb9suF3hb5Xb6k41S1EPAnR5wymEQqLqYc8SQw3BWoc6IAWDAhTpaQ/EOoK4RrMCbXEr6UsTfJ6So6WCnzMvl4D2OBxt104wP9otBxwNbnw=
+	t=1717580955; cv=none; b=sXXMvGUbUopnq+oqcHKYaYLWYi/nrEB7u/s8vuF1RhqKVPBp4pIupSPHcFPowjWLRZzihyWbcpwpvXyIvcIVXjox/I9tBB3aiOeBtoO98OrUn/mdmfas2CJS4KbWd3yHWidStUnSLuCTQFVohA2fts7IyRiNJK03irlNXWFnEUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717580932; c=relaxed/simple;
-	bh=G7a0iyS6sIqZYNGcKPVxXtpLjTv+OfZXcjKHAD84RvA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oeLRxFnKrt0DwRiYiOJAicExLUQjdVx1D6Y2GGX5MV3ld0OxxzsyurXDw3aVa6o7iqWFXBcGhFJMrVoLgPxPoik0j9tp6Drlm/id5TZ8/lNMFCj0lzymJOm9Q56xcUTrLFjnXdgBrRLodrW1SpuhEkxhAYbR6JLrqwFyN46iB6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GhVI6W1T; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-1f658800344so29186555ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 02:48:50 -0700 (PDT)
+	s=arc-20240116; t=1717580955; c=relaxed/simple;
+	bh=hOLNcDZCGKgSDU33PfDe6Z4+0rMSUeoTuhlzo6cZC6c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=B7eMJEyfMC4HD2lmr1aZ2lSxbv9Ea7UNfN8FmOBmHqAQRurVXdGjgVp7ydtqJlBn+ANzjEpCBG6DHdewgMHHFCwFmL/+RY68zu32AwYnSNG8QSvlNxAGK+Nk25zqJ7YVT+QZVZN2xLywyGUizuX7NNaP/6KW24fa9KgiyGgwSeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=neUR0Jq6; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5ba6c41e1a7so919019eaf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 02:49:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717580930; x=1718185730; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wm+wESSJ2b9azwGcOomilcFDsOy50vPKEGHCLBQ7j8A=;
-        b=GhVI6W1TCjOORT7U9/yF9YcbYeo966WTAcxEXJ1Ea9qZeJXwcU2cGcPLlF3kwv+1IQ
-         RgLCPk0NIakAU3Lo+Llzz6m5Ch8FV0sJjUdzYIr1FIOi5V5/FX4b4yN+14zln2BocSWv
-         Cumldye6rdXJQvZrAPgxrbZjaZpQ6L7PXgn3c=
+        d=gmail.com; s=20230601; t=1717580953; x=1718185753; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=gBpE7UiCHuApO7sKV5bJ6IlGQVWs8dFL+WzC3J5powo=;
+        b=neUR0Jq6whR8kObrrXfdZkwSQM7pUxsBLaMPON55bTDny5GwuzxredEnyny1uuWoHj
+         ulUUwZUIHl/i6A6SrhnRCBaoEHBpSL0rCR02Ve9FE0WR5GnFq9nV0EaJHj6lF3FsZQeE
+         mN7FXsvqpYFjDIKgSzSSXXGCsP/OpKI/c8NKAsXUqh9h6md04bzAxbQ5GeeoGP+IYu6W
+         aJ+mplUY6qtKHPrPPItI6NLYEVEWhTIJytFlRNi+GG5PYkmh8D5m2aKKngFsJMlZSxdS
+         yVelDpx1rCbj3E2MEUvAqe7sbNTNccvPsHbag0xOqcUsj+MQKNDfnviQut+lJ8ssoz0d
+         FdWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717580930; x=1718185730;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wm+wESSJ2b9azwGcOomilcFDsOy50vPKEGHCLBQ7j8A=;
-        b=hwHAQsBr3nbsYBO84iLUSxNhZBXFMabBWkkKXYB4K2mdvByXZdaJqH0i8sOKQ1mcab
-         6qxEVB/dESZL6FK8zO7HfLTDpa4S22V2nBSo4iP2Vg6N5qBceBGtmtbnnObGvGUdkBL8
-         HSKQoGYoBHWYNGUpOve4qjuL7rn5Nifaf8pfuLZZwdHhBOTNdVGOI8C+hByLC4x3apCS
-         xRyDDig6GH9OTP8vZQsXp56IMB7kTQ/9JFRlXMBzvvHJysjs21/Yw70vilnMHXTyIjY8
-         C5PfQEFSPd6d/pEeDsboD8Lwo6QrsiuvvlTUmyRYulul3ONmmfmcUcPp5nVTRPM4CfGq
-         dfKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQY8m//gehLFnbOdcVZkP4nmsvHYkk/3Bvj8nB+OC02zQz2EFOoG+H6AsHSEvFG/tmM0Ddni9Ff+NqyMY6AfUqvnQQ9JxX9ML/n+hx
-X-Gm-Message-State: AOJu0YzpIq1BWH4RyJfg7WQN0cB9n1nnWXQapCsmm1mtukdSHFzf2fWH
-	qGVk4B4PxcQTmuODPqgxfQkfggeMDXVDrn6zKcpivoGiqlJ1eE4J3pV1pUV1Lw==
-X-Google-Smtp-Source: AGHT+IGo6gOGLnvsTTt6FCOyv9gHObEwv++/4VTm9pVYpWLYqc/6KiMyvVg9DzZh7ncCFAv46cf5RQ==
-X-Received: by 2002:a17:902:d4c8:b0:1f6:78f7:1503 with SMTP id d9443c01a7336-1f6a5a698f7mr25207925ad.43.1717580929599;
-        Wed, 05 Jun 2024 02:48:49 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:201a:65c7:2b77:36db])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f63235a619sm97844445ad.69.2024.06.05.02.48.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 02:48:49 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Simon Glass <sjg@chromium.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org
-Subject: [PATCH] scripts/make_fit: Support decomposing DTBs
-Date: Wed,  5 Jun 2024 17:48:40 +0800
-Message-ID: <20240605094843.4141730-1-wenst@chromium.org>
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
+        d=1e100.net; s=20230601; t=1717580953; x=1718185753;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gBpE7UiCHuApO7sKV5bJ6IlGQVWs8dFL+WzC3J5powo=;
+        b=GyqVqvedGMAJsefc7ubpFUx6oZznuVg7az71dOHiiKMBK3Xb+qt3K8jys4xpzXWFi1
+         v74i2CAk+Lhc5qb/X/Zztb4vQhBfacp1nJnVyNVniJhlY8IMoXMzcWGUgi4ocHA8NIiA
+         NIhZhMNqt4jN8IGYXdchjkzim2minuetMDTpkCJCEVBmxWmy7yE7048SCBk/BxfQiO9Z
+         yKuQDDXn9Oi0/3NCIx9X74HRN01OFZOiuA8nr+N6JmsJyrbaB+O9kz/lNjuQWDxvcngK
+         sT/TJOlEjTq9O5X+NJC2vrFEZcojdc9GBUCipddCWYVGHNvcFHAtK236rCr7rRxyqaur
+         oUTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWi3aAh1wf2/aXjmM4eC4xAo+gn7NCqKvFiiVVQVa5ZPyANOC/eUZQ8a0xl4W3d0kejCbiOEmFvy1ufSjspgFQiVJK/u8A0QbECcrE
+X-Gm-Message-State: AOJu0Yw9abhzpU+MNW1Q4uDPZ0qhPwd/MggdDX3n1lM/DX1Tz8ffMl60
+	AqarywZiD9j5f416Ivzd6ypVAP+6/uVQBmXimgjBQRF9Gp5oVeX/
+X-Google-Smtp-Source: AGHT+IEcOXkFEFOaMDaacHQ5vyKJ033GOf8ZPTGEtTmQcafQv5JFPfsnd6BIPsj17eC1ydBaMu4tbQ==
+X-Received: by 2002:a05:6358:7e45:b0:196:ecaf:a54e with SMTP id e5c5f4694b2df-19c6ca12483mr217805455d.29.1717580952997;
+        Wed, 05 Jun 2024 02:49:12 -0700 (PDT)
+Received: from [192.168.255.10] ([43.132.141.20])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6c35a4b973csm7000813a12.79.2024.06.05.02.49.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 02:49:12 -0700 (PDT)
+Message-ID: <1a4f8984-e262-4611-81ec-6ea12fa5b20d@gmail.com>
+Date: Wed, 5 Jun 2024 17:49:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/10] mm/ksm: reduce the flush action for ksm merging
+ page
+To: David Hildenbrand <david@redhat.com>, alexs@kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, izik.eidus@ravellosystems.com,
+ willy@infradead.org, aarcange@redhat.com, chrisw@sous-sol.org,
+ hughd@google.com
+References: <20240604042454.2012091-1-alexs@kernel.org>
+ <20240604042454.2012091-2-alexs@kernel.org>
+ <9ca730ce-2b2f-42d2-8c7a-78735a995c64@redhat.com>
+ <4d299245-3166-4810-b22b-2a5b4f54a049@gmail.com>
+ <7c6ae2a3-8ec3-4c9b-81c3-125f6973f0f3@redhat.com>
+ <d059e397-beea-43dc-8c58-d7833b1d8bd4@gmail.com>
+ <59921e08-d0f1-4bc8-acee-368a978286a4@redhat.com>
+ <a3942479-764f-4e19-8b90-682fa56c8e20@gmail.com>
+ <41130a02-80cc-4ee4-89ab-e889844a35f7@redhat.com>
+Content-Language: en-US
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <41130a02-80cc-4ee4-89ab-e889844a35f7@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The kernel tree builds some "composite" DTBs, where the final DTB is the
-result of applying one or more DTB overlays on top of a base DTB with
-fdtoverlay.
 
-The FIT image specification already supports configurations having one
-base DTB and overlays applied on top. It is then up to the bootloader to
-apply said overlays and either use or pass on the final result. This
-allows the FIT image builder to reuse the same FDT images for multiple
-configurations, if such cases exist.
 
-The decomposition function depends on the kernel build system, reading
-back the .cmd files for the to-be-packaged DTB files to check for the
-fdtoverlay command being called. This will not work outside the kernel
-tree. The function is off by default to keep compatibility with possible
-existing users.
+On 6/5/24 5:14 PM, David Hildenbrand wrote:
+> On 05.06.24 11:10, Alex Shi wrote:
+>>
+>>
+>> On 6/5/24 3:26 PM, David Hildenbrand wrote:
+>>> On 04.06.24 15:02, Alex Shi wrote:
+>>>>
+>>>>
+>>>> On 6/4/24 6:45 PM, David Hildenbrand wrote:
+>>>>> On 04.06.24 12:26, Alex Shi wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 6/4/24 4:07 PM, David Hildenbrand wrote:
+>>>>>>> On 04.06.24 06:24, alexs@kernel.org wrote:
+>>>>>>>> From: "Alex Shi (tencent)" <alexs@kernel.org>
+>>>>>>>>
+>>>>>>>> We can put off the flush action util a merging is realy coming. That
+>>>>>>>> could reduce some unmerge page flushing.
+>>>>>>>> BTW, flushing only do at arm, mips and few other archs.
+>>>>>>>>
+>>>>>>>
+>>>>>>> I'm no expert on that flushing, but I thought we would have to do the flushing before accessing page content -- before calculating the checksum etc.
+>>>>>>>
+>>>>>>> Now you would only do it before the pages_identical() check, but not when calculating the checksum.
+>>>>>>>
+>>>>>>
+>>>>>> Hi David,
+>>>>>>
+>>>>>> Thanks a lot for comments!
+>>>>>>
+>>>>>> If calc_checksum() is wrong before pages_idential(), (that's just after page was write_protected, that's a real guarantee for page context secured) pages_identical could recheck and make thing right.
+>>>>>>
+>>>>>
+>>>>> Yes, but you would get more wrong checksums, resulting in more unnecessary pages_identical() checks.
+>>>>>
+>>>>> That is missing from the description, and why we want to change that behavior.
+>>>>>
+>>>>> What's the net win?
+>>>>>
+>>>>>> And as to 2 flush functions here, I didn't see the guarantee for other writer from any other place. So maybe we should remove these flush action?
+>>>>>
+>>>>> "I didn't see the guarantee for other writer from any other place" can you rephrase your comment?
+>>>>>
+>>>>> If you mean "the process could modify that page concurrently", then you are right. But that's different than "the process modified the page in the past and we are reading stale content because we missed a flush".
+>>>>
+>>>>
+>>>> Maybe moving the flush before checksum could relief some worries. :)
+>>>> But still no one knows what flush really help, since if page content only syncs to memory by the flush, the kernel or process can't be work with current code.
+>>>
+>>> Please explain to me why we care about moving the flushs at all :)
+>>>
+>>> If they are NOP on most architectures either way, why not simply leave them there and call it a day?
+>> Uh, 2 reasons:
+>> 1, it uses page and can't convert to folio now.
+>> 2, as you pointed, flush action w/o page reading seems just waste time.
+> 
+> Alex, I don't think the approach you take for coming up with the current set of patches is a good idea.
+> 
+> Please reconsider what you can actually convert to folios and what must stay pages for now due to support for large folios in that code.
+> 
+> Then, please explain properly why changes are required and why they are safe.
+> 
+> For example, for in scan_get_next_rmap_item() we really *need* the page and not just the folio. So just leave the flushing there and be done with it.
+> 
 
-To facilitate the decomposition and keep the code clean, the model and
-compatitble string extraction have been moved out of the output_dtb
-function. The FDT image description is replaced with the base file name
-of the included image.
+Hi David,
 
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
-This is a feature I alluded to in my replies to Simon's original
-submission of the make_fit.py script [1].
+Thanks a lot for your review.
+Though all patches are passed in kernel selftest, but if we do care the saving more than quick processing, the main purpose of this patchset is gone. I'll drop this series.
 
-This is again made a runtime argument as not all firmware out there
-that boot FIT images support applying overlays. Like my previous
-submission for disabling compression for included FDT images, the
-bootloader found in RK3399 and MT8173 Chromebooks do not support
-applying overlays. Another case of this is U-boot shipped by development
-board vendors in binary form (without upstream) in an image or in
-SPI flash on the board that were built with OF_LIBFDT_OVERLAY=n.
-These would fail to boot FIT images with DT overlays. One such
-example is my Hummingboard Pulse. In these cases the firmware is
-either not upgradable or very hard to upgrade.
-
-I believe there is value in supporting these cases. A common script
-shipped with the kernel source that can be shared by distros means
-the distro people don't have to reimplement this in their downstream
-repos or meta-packages. For ChromeOS this means reducing the amount
-of package code we have in shell script.
-
-[1] https://lore.kernel.org/linux-kbuild/20231207142723.GA3187877@google.com/
-[2]
-
- scripts/Makefile.lib |  1 +
- scripts/make_fit.py  | 70 ++++++++++++++++++++++++++++++--------------
- 2 files changed, 49 insertions(+), 22 deletions(-)
-
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index 9f06f6aaf7fc..d78b5d38beaa 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -522,6 +522,7 @@ quiet_cmd_fit = FIT     $@
-       cmd_fit = $(MAKE_FIT) -o $@ --arch $(UIMAGE_ARCH) --os linux \
- 		--name '$(UIMAGE_NAME)' \
- 		$(if $(findstring 1,$(KBUILD_VERBOSE)),-v) \
-+		$(if $(FIT_DECOMPOSE_DTBS),--decompose-dtbs) \
- 		--compress $(FIT_COMPRESSION) -k $< @$(word 2,$^)
- 
- # XZ
-diff --git a/scripts/make_fit.py b/scripts/make_fit.py
-index 263147df80a4..120f13e1323c 100755
---- a/scripts/make_fit.py
-+++ b/scripts/make_fit.py
-@@ -22,6 +22,11 @@ the entire FIT.
- Use -c to compress the data, using bzip2, gzip, lz4, lzma, lzo and
- zstd algorithms.
- 
-+Use -d to decompose "composite" DTBs into their base components and
-+deduplicate the resulting base DTBs and DTB overlays. This requires the
-+DTBs to be sourced from the kernel build directory, as the implementation
-+looks at the .cmd files produced by the kernel build.
-+
- The resulting FIT can be booted by bootloaders which support FIT, such
- as U-Boot, Linuxboot, Tianocore, etc.
- 
-@@ -64,6 +69,8 @@ def parse_args():
-           help='Specifies the architecture')
-     parser.add_argument('-c', '--compress', type=str, default='none',
-           help='Specifies the compression')
-+    parser.add_argument('-d', '--decompose-dtbs', action='store_true',
-+          help='Decompose composite DTBs into base DTB and overlays')
-     parser.add_argument('-E', '--external', action='store_true',
-           help='Convert the FIT to use external data')
-     parser.add_argument('-n', '--name', type=str, required=True,
-@@ -140,12 +147,12 @@ def finish_fit(fsw, entries):
-     fsw.end_node()
-     seq = 0
-     with fsw.add_node('configurations'):
--        for model, compat in entries:
-+        for model, compat, files in entries:
-             seq += 1
-             with fsw.add_node(f'conf-{seq}'):
-                 fsw.property('compatible', bytes(compat))
-                 fsw.property_string('description', model)
--                fsw.property_string('fdt', f'fdt-{seq}')
-+                fsw.property('fdt', b''.join([b'fdt-%d\x00' % x for x in files]))
-                 fsw.property_string('kernel', 'kernel')
-     fsw.end_node()
- 
-@@ -193,21 +200,9 @@ def output_dtb(fsw, seq, fname, arch, compress):
-         fname (str): Filename containing the DTB
-         arch: FIT architecture, e.g. 'arm64'
-         compress (str): Compressed algorithm, e.g. 'gzip'
--
--    Returns:
--        tuple:
--            str: Model name
--            bytes: Compatible stringlist
-     """
-     with fsw.add_node(f'fdt-{seq}'):
--        # Get the compatible / model information
--        with open(fname, 'rb') as inf:
--            data = inf.read()
--        fdt = libfdt.FdtRo(data)
--        model = fdt.getprop(0, 'model').as_str()
--        compat = fdt.getprop(0, 'compatible')
--
--        fsw.property_string('description', model)
-+        fsw.property_string('description', os.path.basename(fname))
-         fsw.property_string('type', 'flat_dt')
-         fsw.property_string('arch', arch)
-         fsw.property_string('compression', compress)
-@@ -215,7 +210,6 @@ def output_dtb(fsw, seq, fname, arch, compress):
-         with open(fname, 'rb') as inf:
-             compressed = compress_data(inf, compress)
-         fsw.property('data', compressed)
--    return model, compat
- 
- 
- def build_fit(args):
-@@ -235,6 +229,7 @@ def build_fit(args):
-     fsw = libfdt.FdtSw()
-     setup_fit(fsw, args.name)
-     entries = []
-+    fdts = collections.OrderedDict()
- 
-     # Handle the kernel
-     with open(args.kernel, 'rb') as inf:
-@@ -243,12 +238,43 @@ def build_fit(args):
-     write_kernel(fsw, comp_data, args)
- 
-     for fname in args.dtbs:
--        # Ignore overlay (.dtbo) files
--        if os.path.splitext(fname)[1] == '.dtb':
--            seq += 1
--            size += os.path.getsize(fname)
--            model, compat = output_dtb(fsw, seq, fname, args.arch, args.compress)
--            entries.append([model, compat])
-+        # Ignore non-DTB (*.dtb) files
-+        if os.path.splitext(fname)[1] != '.dtb':
-+            continue
-+
-+        # Get the compatible / model information
-+        with open(fname, 'rb') as inf:
-+            data = inf.read()
-+        fdt = libfdt.FdtRo(data)
-+        model = fdt.getprop(0, 'model').as_str()
-+        compat = fdt.getprop(0, 'compatible')
-+
-+        if args.decompose_dtbs:
-+            # Check if the DTB needs to be decomposed
-+            path, basename = os.path.split(fname)
-+            cmd_fname = os.path.join(path, f'.{basename}.cmd')
-+            with open(cmd_fname, 'r', encoding='ascii') as inf:
-+                cmd = inf.read()
-+
-+            if 'scripts/dtc/fdtoverlay' in cmd:
-+                # This depends on the structure of the composite DTB command
-+                files = cmd.split()
-+                files = files[files.index('-i')+1:]
-+            else:
-+                files = [fname]
-+        else:
-+            files = [fname]
-+
-+        for fn in files:
-+            if fn not in fdts:
-+                seq += 1
-+                size += os.path.getsize(fn)
-+                output_dtb(fsw, seq, fn, args.arch, args.compress)
-+                fdts[fn] = seq
-+
-+        files_seq = [fdts[fn] for fn in files]
-+
-+        entries.append([model, compat, files_seq])
- 
-     finish_fit(fsw, entries)
- 
--- 
-2.45.1.288.g0e0cd299f1-goog
-
+Thanks
+Alex
 
