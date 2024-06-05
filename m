@@ -1,49 +1,77 @@
-Return-Path: <linux-kernel+bounces-202190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E99D88FC8E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:22:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 181418FC8E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:25:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 166931C218C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:22:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85670283013
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7016A190490;
-	Wed,  5 Jun 2024 10:22:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7038D1946D2;
-	Wed,  5 Jun 2024 10:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C12190490;
+	Wed,  5 Jun 2024 10:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LourmeAb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060B31946D2
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 10:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717582969; cv=none; b=pBsujgHsRFjDCVNHmzGGFnHlthGvOwjmgtgXduPdw7z8gD2oqHHWFB9M7yW+Hs9kOJCIarXQjkCNpzg7KyztD8E94WWsmckJOnUeBdU8aMsp3xaSXF/3APAJCJ2UA+nEGXNw6pSHfSCb3biDTzeUDhbltiuPyYVGSmim6nZYAQM=
+	t=1717583097; cv=none; b=NxeCBkQSoETYbN1QAHXQTTwGqa6Yrs/9CeSsOR7Vv/O6cbTDcQoBjiNEpZlvXJsoS7Zf8qZhyrJBuVZC9vU2Y4fOtJFbyfXG2IQW/lwHBQPXbhJnHXMwhleG2dajUxW3uP7x407/7TxJOFPnGWCfVL+vZQu4c8DCC12snKdQfYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717582969; c=relaxed/simple;
-	bh=dFL1wIIssPf14bjH7g0WUoNEoezNOPiZY06hXBSjm/E=;
+	s=arc-20240116; t=1717583097; c=relaxed/simple;
+	bh=V5Vce6aPe2R4eGnAe8zIDJ2hB3Yq22pRZtmZz6caqQ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tm5GyfP2HQ5rz5liYpbfPw/4let42PtS7ChjGWDtuugF9ZHmWToS3nuE7w09uG2cRUoC1IEfQey4gCSntUka8Pu/HqwS4pNVu5kmTKkSXdF8xE7jR+lv5aEivnsJtaVB2gy06PYzOUZ4UTmZuiQOpVVHPu/AJM9guFzMm164aJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DCAD6339;
-	Wed,  5 Jun 2024 03:23:10 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4ED253F792;
-	Wed,  5 Jun 2024 03:22:45 -0700 (PDT)
-Date: Wed, 5 Jun 2024 11:22:42 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 4/5] ftrace: Convert "filter_hash" and "inc" to bool in
- ftrace_hash_rec_update_modify()
-Message-ID: <ZmA8cqXUxxSmHhQT@J2N7QTR9R3>
-References: <20240604212817.384103202@goodmis.org>
- <20240604212855.046127611@goodmis.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=exNCXZf4dOPZhVFfYtRw0Ygx+vfe3BbXMfvGwee8Q+hv1g+pEK3Ops0NCSDRNDf3zMxPdRuPUDSzGPT43os0RCpyND0vcVqRXt8WMHD2sK3j4RAHTIGNSwoNHWN7kYo8jSWgJY4fu34Je98fCH6KuvuVelu8SbEKnBGXfMmBUcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LourmeAb; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717583096; x=1749119096;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=V5Vce6aPe2R4eGnAe8zIDJ2hB3Yq22pRZtmZz6caqQ4=;
+  b=LourmeAbj4eJ163zWXvjBob/AQGl4nbzd9EdUnWCNssiP/+W31g9Cs7V
+   b3nqK2YCzjQvCM/fL2LC5mtaR+V4OsKTL0Iaw2Bp78I3h3qJZAGxnRFfa
+   Yre5audc9dMbrTHntsvqbHjzWb61kZsCWciZ/2M4lr3gpnn/RYc/WOFAp
+   ioNM7hXOCyqF2ZnOVDOZr76oQE8aGOERQSMlnrmCtT/STdE9gbF5pCZUo
+   hiGMpkFTGOVBjewYwoWJ2J5q776CM0CakpcScknZn3/vVzgNIwxLgKmgv
+   +kOqg6vkXe1l8qZb7FRG1HERYJDK8S3Xj7Sqh2LhLBTlXCWoxlM/YMRyh
+   w==;
+X-CSE-ConnectionGUID: hBmsBDAHTtaSKBWr9F90yQ==
+X-CSE-MsgGUID: vZIyuYWESTapee7aDPoQng==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="14022388"
+X-IronPort-AV: E=Sophos;i="6.08,216,1712646000"; 
+   d="scan'208";a="14022388"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 03:24:55 -0700
+X-CSE-ConnectionGUID: 7yZrZe7UR9y29FNt/A0DFg==
+X-CSE-MsgGUID: deO/vcaBSBusDec4WXFrqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,216,1712646000"; 
+   d="scan'208";a="37540817"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 03:24:53 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sEnp5-0000000DpNU-0CKg;
+	Wed, 05 Jun 2024 13:24:51 +0300
+Date: Wed, 5 Jun 2024 13:24:50 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chia-I Wu <olvaffe@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] resource: add a simple test for walk_iomem_res_desc()
+Message-ID: <ZmA88rFW1ZxbgJSh@smile.fi.intel.com>
+References: <20240604220128.682745-1-olvaffe@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,88 +80,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240604212855.046127611@goodmis.org>
+In-Reply-To: <20240604220128.682745-1-olvaffe@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Jun 04, 2024 at 05:28:21PM -0400, Steven Rostedt wrote:
-> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
-> 
-> The parameters "filter_hash" and "inc" in the function
-> ftrace_hash_rec_update_modify() are boolean. Change them to be such.
-> 
-> Also add documentation to what the function does.
-> 
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+On Tue, Jun 04, 2024 at 03:01:14PM -0700, Chia-I Wu wrote:
+> This mainly tests that find_next_iomem_res() does not miss resources.
 
-Aside from the issue with forward declarations that need to be updated,
-this looks good to me, so with that fixed:
+...
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
+It's better, but still hard to follow, see below what I meant
 
-Mark.
+> +	res[0] = DEFINE_RES_NAMED(root.start, SZ_1K, "SYSRAM 1",
+> +			IORESOURCE_SYSTEM_RAM);
+> +	res[1] = DEFINE_RES_NAMED(root.start + SZ_1K, SZ_1K, "OTHER", 0);
+> +
+> +	res[2] = DEFINE_RES_NAMED(root.start + SZ_1K * 3, SZ_1K, "NESTED", 0);
+> +	res[3] = DEFINE_RES_NAMED(root.start + SZ_1K * 3 + SZ_512, SZ_512,
+> +			"SYSRAM 2", IORESOURCE_SYSTEM_RAM);
+> +
+> +	res[4] = DEFINE_RES_NAMED(root.start + SZ_1K * 4, SZ_1K, "SYSRAM 3",
+> +			IORESOURCE_SYSTEM_RAM);
 
-> ---
->  kernel/trace/ftrace.c | 33 ++++++++++++++++++++++++++++-----
->  1 file changed, 28 insertions(+), 5 deletions(-)
-> 
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index de652201c86c..021024164938 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -1915,8 +1915,31 @@ static bool ftrace_hash_rec_enable(struct ftrace_ops *ops)
->  	return __ftrace_hash_rec_update(ops, true, 1);
->  }
->  
-> +/*
-> + * This function will update what functions @ops traces when its filter
-> + * changes. @filter_hash is set to true when modifying the filter_hash
-> + * and set to false when modifying the notrace_hash.
-> + *
-> + * For example, if the user does: echo schedule > set_ftrace_filter
-> + * that would call: ftrace_hash_rec_update_modify(ops, true, true);
-> + *
-> + * For: echo schedule >> set_ftrace_notrace
-> + * That would call: ftrace_hash_rec_enable(ops, false, true);
-> + *
-> + * The @inc states if the @ops callbacks are going to be added or removed.
-> + * The dyn_ftrace records are update via:
-> + *
-> + * ftrace_hash_rec_disable_modify(ops, filter_hash);
-> + * ops->hash = new_hash
-> + * ftrace_hash_rec_enable_modify(ops, filter_hash);
-> + *
-> + * Where the @ops is removed from all the records it is tracing using
-> + * its old hash. The @ops hash is updated to the new hash, and then
-> + * the @ops is added back to the records so that it is tracing all
-> + * the new functions.
-> + */
->  static void ftrace_hash_rec_update_modify(struct ftrace_ops *ops,
-> -					  int filter_hash, int inc)
-> +					  bool filter_hash, bool inc)
->  {
->  	struct ftrace_ops *op;
->  
-> @@ -1939,15 +1962,15 @@ static void ftrace_hash_rec_update_modify(struct ftrace_ops *ops,
->  }
->  
->  static void ftrace_hash_rec_disable_modify(struct ftrace_ops *ops,
-> -					   int filter_hash)
-> +					   bool filter_hash)
->  {
-> -	ftrace_hash_rec_update_modify(ops, filter_hash, 0);
-> +	ftrace_hash_rec_update_modify(ops, filter_hash, false);
->  }
->  
->  static void ftrace_hash_rec_enable_modify(struct ftrace_ops *ops,
-> -					  int filter_hash)
-> +					  bool filter_hash)
->  {
-> -	ftrace_hash_rec_update_modify(ops, filter_hash, 1);
-> +	ftrace_hash_rec_update_modify(ops, filter_hash, true);
->  }
->  
->  /*
-> -- 
-> 2.43.0
-> 
-> 
+	res[0] = DEFINE_RES_NAMED(root.start + 0x0000, 0x0400, "SYSRAM 1",
+				  IORESOURCE_SYSTEM_RAM);
+	res[1] = DEFINE_RES_NAMED(root.start + 0x0400, 0x0400, "OTHER", 0);
+
+	res[2] = DEFINE_RES_NAMED(root.start + 0x0c00, 0x0400, "NESTED", 0);
+	res[3] = DEFINE_RES_NAMED(root.start + 0x0e00, 0x0200, "SYSRAM 2",
+				  IORESOURCE_SYSTEM_RAM);
+
+	res[4] = DEFINE_RES_NAMED(root.start + 0x1000, 0x0400, "SYSRAM 3",
+				  IORESOURCE_SYSTEM_RAM);
+
+Also pay attention to indentation.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
