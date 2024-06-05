@@ -1,281 +1,193 @@
-Return-Path: <linux-kernel+bounces-202219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B257C8FC96A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:53:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8211A8FC972
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:54:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA40F1C21788
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:52:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A50C1C2390F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C975A19149A;
-	Wed,  5 Jun 2024 10:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDC91922C8;
+	Wed,  5 Jun 2024 10:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="R38xGkup"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qOy05tkp"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374541946D3;
-	Wed,  5 Jun 2024 10:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5BE4965F
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 10:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717584772; cv=none; b=eKmw6yqx3guhfqnF5r2eiARz5L4m0KAYgI6V/BsF7UZpOR47r44pNoAaepe6d2lDDQxzZnpplu+Pr/h04yhyDIf13L4qtjSTD9XKley3K3AHWAblx2XOtv1uZh6ZPsKcGy1ZviUyeqszsLBH/9Tx62Zuwa9LWLP3lIcAdUUPuXI=
+	t=1717584874; cv=none; b=lI8zsL9nBYS4l1EMB1rtgWi7XyrXw1SiEDWraZ+o/O9oesWp/bQIMEJBOahN0Ye48uhNngzb7xcdhN70dyXccjG+WdGE6YIIWYgy14HrlvJ8d24JFS1atP4HrFznNBK9G9Wu+ptUbLFym59ew3J0AubFIDJYaefCgWPpEp3cGXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717584772; c=relaxed/simple;
-	bh=7htvEWCotUmbZeaXgqHfgnS0af7cxO3nra+5pZMCWzM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hDvrp9M4lwfni9iueq3bIuw2CbdnkMTlSU0aNx09wNnslZk3gz1IbwVVRNnpIc2RT60fMeDHzmK7KDuMTP6TTUMZaxXxPkC+hXakWCV75ppszUMG2nn7Yut5j+/XKYQA64RuiwgJFFWI1aidMjIcLqJtnkPFsVe66KgtU6p0lrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=R38xGkup; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4555S25B030335;
-	Wed, 5 Jun 2024 10:52:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9EhPoHnYt237zWZ8cAWGIZLoyRyox/Qg3D+1HOJedcw=; b=R38xGkupZfm734jG
-	ADuVCYpu36X3HwanG8jmL3qQ5uQX19nGgcWbihQhk9ny0LwO8nZoi7JlPIenXm+u
-	BqVt4nMHzEh42CEAwJBWrob5ZY85s2yAfhDO06Eb5EzSXJzlN7nkBReY8KcnYpEr
-	rpbSDdrnnDpScJRysIMbIYa1pI4QU1TcflKp7D7rEQ5NvO/JgDGTnSzWiD4ThT9v
-	eaxLQyaveKA/+gNZJMrwAf8BD+FT1mTWx/RuLn4eKB3f6nq1tZpaq97xpgiLy1uE
-	LOQS5vpgqY4fTek5wNxLLSRZH9xyxG96K8KsckfAm7gB9dcHbqdhVMYFvWZZmBeT
-	0PCnpw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjhw0rrrd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Jun 2024 10:52:16 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 455AqEe6004196
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 5 Jun 2024 10:52:14 GMT
-Received: from [10.214.66.253] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Jun 2024
- 03:52:08 -0700
-Message-ID: <afb0698e-68a1-47b8-ba37-c9e413ca3ee3@quicinc.com>
-Date: Wed, 5 Jun 2024 16:22:04 +0530
+	s=arc-20240116; t=1717584874; c=relaxed/simple;
+	bh=FTgBRYYy6JQRexZRZJFjuNAFj4Osr8S9dZDMnD+Hpkg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aXX8k2HfDSrFrrkQAno93Sb4R3hwyILoAbWEXhgJk+mvkHbAgyqJfDewnAh/ATDsN03TXRx4OwzCPOOOfb5z/HDE0p2RceYTJNOYiGeX7E7Hr+Ep7qF2EA/97zk9DrvNQTcAKxBRCWigDW+vEaHt0Csf4wFrRncMjTWMYu5sLnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qOy05tkp; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dfa71ded97bso659136276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 03:54:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717584871; x=1718189671; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jwOYdBEP20eHqXfiLB/uZRRK7vGmn2sMRMDnSyVKlSw=;
+        b=qOy05tkp1Jh9xyTIiDfcWBORdVYV9xOpdRiBq5wfsDPG3C03dKc5lIEI9cgtiUDw97
+         79BOWCujxAwC42Ia9HJuq2CvetruFN1Qq3klniYjWPtZziiBVZwXkDiyu1bZ9NBpaLcv
+         6JR90CNU4nd3KyrUKWJRQJ9XnGk4xbt0KjoltJUCC+NpAqnfeFjBeB7g711/V8MVfRqy
+         l6pTVZ5fII/62FaGvHXWr87DRgtumoiP1M/gyccN6P6yV1e1U5OfFv1OGwJLpV6iFYNa
+         X5XIfjQBNF6tKb9wJDbvjfxyxgi52+59XVhrRIZYvKGru9tjjlS886D+XZHB8rOU9jIW
+         fFug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717584871; x=1718189671;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jwOYdBEP20eHqXfiLB/uZRRK7vGmn2sMRMDnSyVKlSw=;
+        b=qwq3uYl0L9mwvLCCVg46OLE1WVrDZKB9JjzLnXLxEqvN5DMWRdAh1JuT4Y69VZQXsW
+         w4OkFrA+JJ9murwJz4VH7cLJiYwXZtuOqJqwmUqVwshYPlOrKzxOr6ra8gw3J/aFUW8F
+         f0RQ1QU9R8/Bh9N3X/lJWjywSgevQfW7apcFWk0lusmuBE6YSdYGt96Vvwaac36SQIGh
+         /BfIyfN+7cLiaDcVFSkXJ3h//KTQkEysYwLjRYhzdMq0bGRtaBFzE7LdipQXip+ndzSe
+         kIkPcD+wm5E+pZN4s/UA6I2+GzTGxDWXWMlsiiY9NULFCLd8+a7SargCsuyizu0hmreL
+         cmRA==
+X-Forwarded-Encrypted: i=1; AJvYcCWkUMfu9c1cXN/QWuONdfghlszIgQIB2oQn8b8zEIckK0Xk60C5TV/pp6gFPL4lje2DZyBJ6x4c3PGg2orTw5WbJtUHzT6RUkoHOrDp
+X-Gm-Message-State: AOJu0Yyd2tP8K9VmCUkRcLDM2yATCmqFUWZZLy3sxHku2QLsFO+BVQjN
+	sE2rxcb4LJdxqlxT8v7RUeTtZg1JXUt/7jI5T080NkLxT7zsUp/H0PBie/RRHhjrV2gZUUarlwZ
+	wP894ATmjU2IpbX3TCjMOWE0dRLpMB18SOyw7vA==
+X-Google-Smtp-Source: AGHT+IFCIpk76VQM4IGtOzYy0kvzCqfdvB04uHsR5vs8p9fLuPGESGvnInQIi3EisoXfHVIM/A1cG1VKEJLdP84nFxo=
+X-Received: by 2002:a25:c102:0:b0:df4:d98d:3e4f with SMTP id
+ 3f1490d57ef6-dfab854c9c8mr4052568276.12.1717584871226; Wed, 05 Jun 2024
+ 03:54:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 3/5] iommu/arm-smmu: introduction of ACTLR for custom
- prefetcher settings
-To: Rob Clark <robdclark@gmail.com>
-CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>, <will@kernel.org>,
-        <robin.murphy@arm.com>, <joro@8bytes.org>, <jsnitsel@redhat.com>,
-        <quic_bjorande@quicinc.com>, <mani@kernel.org>,
-        <quic_eberman@quicinc.com>, <robdclark@chromium.org>,
-        <u.kleine-koenig@pengutronix.de>, <robh@kernel.org>,
-        <vladimir.oltean@nxp.com>, <quic_pkondeti@quicinc.com>,
-        <quic_molvera@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-        <linux-kernel@vger.kernel.org>
-References: <20240123144543.9405-1-quic_bibekkum@quicinc.com>
- <20240123144543.9405-4-quic_bibekkum@quicinc.com>
- <CAF6AEGs3_wBNo58EbGicFoQuq8--fDohTGv1JSFgoViygLS5Lg@mail.gmail.com>
- <f2222714-1e00-424e-946d-c314d55541b8@quicinc.com>
- <51b2bd40-888d-4ee4-956f-c5239c5be9e9@linaro.org>
- <0a867cd1-8d99-495e-ae7e-a097fc9c00e9@quicinc.com>
- <7140cdb8-eda4-4dcd-b5e3-c4acdd01befb@linaro.org>
- <omswcicgc2kqd6gp4bebd43sklfs2wqyaorhfyb2wumoeo6v74@gaay3p5m46xi>
- <CAF6AEGub2b5SRw7kDUGfKQQ35VSsMkQ9LNExSkyHHczdFa2T4Q@mail.gmail.com>
- <9992067e-51c5-4a55-8d66-55a102a001b6@quicinc.com>
- <CAF6AEGsxKwzX6it4vipggOdGqNVzPbwMj6a0h871a=GfwUp0Cg@mail.gmail.com>
-Content-Language: en-US
-From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-In-Reply-To: <CAF6AEGsxKwzX6it4vipggOdGqNVzPbwMj6a0h871a=GfwUp0Cg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: r6LXRxUn4HzyQNKmltphAen89s29Q2oI
-X-Proofpoint-GUID: r6LXRxUn4HzyQNKmltphAen89s29Q2oI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-05_01,2024-06-05_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
- phishscore=0 impostorscore=0 priorityscore=1501 mlxscore=0 mlxlogscore=999
- lowpriorityscore=0 suspectscore=0 malwarescore=0 spamscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406050082
+References: <cover.1716811405.git.geert+renesas@glider.be> <CAPDyKFpa4LZF3eN7x-NT+b9=dKB3Oe6RY8RAyetdRBSR1-LQoQ@mail.gmail.com>
+ <0a025885-ed95-45d3-bf76-d2a043baaed7@ideasonboard.com>
+In-Reply-To: <0a025885-ed95-45d3-bf76-d2a043baaed7@ideasonboard.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 5 Jun 2024 12:53:55 +0200
+Message-ID: <CAPDyKFrxUDhnUUfz5wHpGVQfNYssxoWO5Eb2wtmZMTcMYhEjxQ@mail.gmail.com>
+Subject: Re: [PATCH/RFC 0/3] pmdomain: renesas: rmobile-sysc: Remove serial
+ console handling
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Peng Fan <peng.fan@nxp.com>, linux-pm@vger.kernel.org, linux-serial@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/5/2024 12:19 AM, Rob Clark wrote:
-> On Thu, May 30, 2024 at 2:22 AM Bibek Kumar Patro
-> <quic_bibekkum@quicinc.com> wrote:
->>
->>
->>
->> On 5/28/2024 9:38 PM, Rob Clark wrote:
->>> On Tue, May 28, 2024 at 6:06 AM Dmitry Baryshkov
->>> <dmitry.baryshkov@linaro.org> wrote:
->>>>
->>>> On Tue, May 28, 2024 at 02:59:51PM +0200, Konrad Dybcio wrote:
->>>>>
->>>>>
->>>>> On 5/15/24 15:59, Bibek Kumar Patro wrote:
->>>>>>
->>>>>>
->>>>>> On 5/10/2024 6:32 PM, Konrad Dybcio wrote:
->>>>>>> On 10.05.2024 2:52 PM, Bibek Kumar Patro wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>> On 5/1/2024 12:30 AM, Rob Clark wrote:
->>>>>>>>> On Tue, Jan 23, 2024 at 7:00 AM Bibek Kumar Patro
->>>>>>>>> <quic_bibekkum@quicinc.com> wrote:
->>>>>>>>>>
->>>>>>>>>> Currently in Qualcomm  SoCs the default prefetch is set to 1 which allows
->>>>>>>>>> the TLB to fetch just the next page table. MMU-500 features ACTLR
->>>>>>>>>> register which is implementation defined and is used for Qualcomm SoCs
->>>>>>>>>> to have a custom prefetch setting enabling TLB to prefetch the next set
->>>>>>>>>> of page tables accordingly allowing for faster translations.
->>>>>>>>>>
->>>>>>>>>> ACTLR value is unique for each SMR (Stream matching register) and stored
->>>>>>>>>> in a pre-populated table. This value is set to the register during
->>>>>>>>>> context bank initialisation.
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
->>>>>>>>>> ---
->>>>>>>
->>>>>>> [...]
->>>>>>>
->>>>>>>>>> +
->>>>>>>>>> +               for_each_cfg_sme(cfg, fwspec, j, idx) {
->>>>>>>>>> +                       smr = &smmu->smrs[idx];
->>>>>>>>>> +                       if (smr_is_subset(smr, id, mask)) {
->>>>>>>>>> +                               arm_smmu_cb_write(smmu, cbndx, ARM_SMMU_CB_ACTLR,
->>>>>>>>>> +                                               actlrcfg[i].actlr);
->>>>>>>>>
->>>>>>>>> So, this makes ACTLR look like kind of a FIFO.  But I'm looking at
->>>>>>>>> downstream kgsl's PRR thing (which we'll need to implement vulkan
->>>>>>>>> sparse residency), and it appears to be wanting to set BIT(5) in ACTLR
->>>>>>>>> to enable PRR.
->>>>>>>>>
->>>>>>>>>             val = KGSL_IOMMU_GET_CTX_REG(ctx, KGSL_IOMMU_CTX_ACTLR);
->>>>>>>>>             val |= FIELD_PREP(KGSL_IOMMU_ACTLR_PRR_ENABLE, 1);
->>>>>>>>>             KGSL_IOMMU_SET_CTX_REG(ctx, KGSL_IOMMU_CTX_ACTLR, val);
->>>>>>>>>
->>>>>>>>> Any idea how this works?  And does it need to be done before or after
->>>>>>>>> the ACTLR programming done in this patch?
->>>>>>>>>
->>>>>>>>> BR,
->>>>>>>>> -R
->>>>>>>>>
->>>>>>>>
->>>>>>>> Hi Rob,
->>>>>>>>
->>>>>>>> Can you please help provide some more clarification on the FIFO part? By FIFO are you referring to the storing of ACTLR data in the table?
->>>>>>>>
->>>>>>>> Thanks for pointing to the downstream implementation of kgsl driver for
->>>>>>>> the PRR bit. Since kgsl driver is already handling this PRR bit's
->>>>>>>> setting, this makes setting the PRR BIT(5) by SMMU driver redundant.
->>>>>>>
->>>>>>> The kgsl driver is not present upstream.
->>>>>>>
->>>>>>
->>>>>> Right kgsl is not present upstream, it would be better to avoid configuring the PRR bit and can be handled by kgsl directly in downstream.
->>>>>
->>>>> No! Upstream is not a dumping ground to reduce your technical debt.
->>>>>
->>>>> There is no kgsl driver upstream, so this ought to be handled here, in
->>>>> the iommu driver (as poking at hardware A from driver B is usually not good
->>>>> practice).
->>>>
->>>> I'd second the request here. If another driver has to control the
->>>> behaviour of another driver, please add corresponding API for that.
->>>
->>> We have adreno_smmu_priv for this purpose ;-)
->>>
->>
->> Thanks Rob for pointing to this private interface structure between smmu
->> and gpu. I think it's similar to what you're trying to implement here
->> https://lore.kernel.org/all/CAF6AEGtm-KweFdMFvahH1pWmpOq7dW_p0Xe_13aHGWt0jSbg8w@mail.gmail.com/#t
->> I can add an api "set_actlr_prr()" with smmu_domain cookie, page pointer
->> as two parameters. This api then can be used by drm/msm driver to carry
->> out the prr implementation by simply calling this.
->> Would this be okay Rob,Konrad,Dmitry?
->> Let me know if any other suggestions you have in mind as well regarding
->> parameters and placement.
-> 
-> Hey Bibek, quick question.. is ACTLR preserved across a suspend/resume
-> cycle?  Or does it need to be reprogrammed on resume?  And same
-> question for these two PRR related regs:
-> 
->    /* Global SMMU register offsets */
->    #define KGSL_IOMMU_PRR_CFG_LADDR        0x6008
->    #define KGSL_IOMMU_PRR_CFG_UADDR        0x600c
-> 
-> (ie. high/low 32b of the PRR page)
-> 
+On Wed, 5 Jun 2024 at 12:41, Tomi Valkeinen
+<tomi.valkeinen@ideasonboard.com> wrote:
+>
+> Hi Ulf,
+>
+> On 05/06/2024 12:34, Ulf Hansson wrote:
+> > + Tomi
+> >
+> > On Mon, 27 May 2024 at 14:41, Geert Uytterhoeven
+> > <geert+renesas@glider.be> wrote:
+> >>
+> >>          Hi all,
+> >>
+> >> Since commit a47cf07f60dcb02d ("serial: core: Call
+> >> device_set_awake_path() for console port"), the serial driver properly
+> >> handles the case where the serial console is part of the awake path, and
+> >> it looked like we could start removing special serial console handling
+> >> from PM Domain drivers like the R-Mobile SYSC PM Domain driver.
+> >> Unfortunately the devil is in the details, as usual...
+> >>
+> >> Earlycon relies on the serial port to be initialized by the firmware
+> >> and/or bootloader.  Linux is not aware of any hardware dependencies that
+> >> must be met to keep the port working, and thus cannot guarantee they
+> >> stay met, until the full serial driver takes over.
+> >>
+> >> E.g. all unused clocks and unused PM Domains are disabled in a late
+> >> initcall.  As this happens after the full serial driver has taken over,
+> >> the serial port's clock and/or PM Domain are no longer deemed unused,
+> >> and this is typically not a problem.
+> >>
+> >> However, if the serial port's clock or PM Domain is shared with another
+> >> device, and that other device is runtime-suspended before the full
+> >> serial driver has probed, the serial port's clock and/or PM Domain will
+> >> be disabled inadvertently.  Any subsequent serial console output will
+> >> cause a crash or system lock-up.  E.g. on R/SH-Mobile SoCs, the serial
+> >> ports share their PM Domain with several other I/O devices.  After the
+> >> use of pwm (Armadillo-800-EVA) or i2c (KZM-A9-GT) during early boot,
+> >> before the full serial driver takes over, the PM Domain containing the
+> >> early serial port is powered down, causing a lock-up when booted with
+> >> "earlycon".
+> >
+> > Hi Geert,
+> >
+> > Thanks for the detailed description of the problem! As pointed out in
+> > regards to another similar recent patch [1], this is indeed a generic
+> > problem, not limited to the serial console handling.
+> >
+> > At Linaro Connect a few weeks ago I followed up with Saravana from the
+> > earlier discussions at LPC last fall. We now have a generic solution
+> > for genpd drafted on plain paper, based on fw_devlink and the
+> > ->sync_state() callback. I am currently working on the genpd series,
+> > while Saravana will re-spin the series (can't find the link to the
+> > last version) for the clock framework. Ideally, we want these things
+> > to work in a very similar way.
+> >
+> > That said, allow me to post the series for genpd in a week or two to
+> > see if it can solve your problem too, for the serial console.
+>
+> Both the genpd and the clock solutions will make suppliers depend on all
+> their consumers to be probed, right?
+>
+> I think it is a solution, and should be worked on, but it has the
+> drawback that suppliers that have consumers that will possibly never be
+> probed, will also never be able to turn off unused resources.
+>
+> This was specifically the case with the TI ti-sci pmdomain case I was
+> looking at: the genpd driver (ti_sci_pm_domains.c) provides a lot of
+> genpds for totally unrelated devices, and so if, e.g., you don't have or
+> don't want to load a driver for the GPU, all PDs are affected.
+>
+> Even here the solutions you mention will help: instead of things getting
+> broken because genpds get turned off while they are actually in use, the
+> genpds will be kept enabled, thus fixing the breakage. Unfortunately,
+> they'll be kept enabled forever.
+>
+> I've been ill for quite a while so I haven't had the chance to look at
+> this more, but before that I was hacking around a bit with something I
+> named .partial_sync_state(). .sync_state() gets called when all the
+> consumers have probed, but .partial_sync_state() gets called when _a_
+> consumer has been probed.
+>
+> For the .sync_state() things are easy for the driver, as it knows
+> everything related has been probed, but for .partial_sync_state() the
+> driver needs to track resources internally. .partial_sync_state() will
+> tell the driver that a consumer device has probed, the driver can then
+> find out which specific resources (genpds in my case) that consumer
+> refers to, and then... Well, that's how far I got with my hacks =).
+>
+> So, I don't know if this .partial_sync_state() can even work, but I
+> think we do need something more on top of the .sync_state().
 
-Hey Rob, In suspend/resume, the register space power rails are not in
-disabled state, so it won't go back to reset values and should retain
-it's value. Only in hibernation cycle the registers' value would get reset.
+Thanks for the update!
 
-So the hi/low address bit register for PRR page would also retain it's 
-value along with the ACTLR registers.
+You certainly have a point, but rather than implementing some platform
+specific method, I think we should be able enforce the call to
+->sync_state(), based upon some condition/timeout - and even if all
+consumers haven't been probed.
 
-> I was starting to type up a patch to add PRR configuration, but
-> depending on whether it interacts with suspend/resume, it might be
-> better form arm-smmu-qcom.c to just always enable and configure PRR
-> (including allocating a page to have an address to program into
-> PRR_CFG_LADDR/UADDR), and instead add an interface to return the PRR
-> page?  I think there is no harm in unconditionally configuring PRR for
-> gpu smmu.
+[...]
 
-Sounds okay though since this would not interact with suspend/resume path.
-But I think, suppose in-case this page would have some other references 
-as well before configuring the address to the registers for PRR 
-configuration, then  GPU would be dependent on arm-smmu-qcom for this page.
-So Instead an endpoint api in arm-smmu-qcom.c can recieve the just the 
-page-address, and bit set status from drm/msm driver and can set/reset 
-the bit along with any page-address they want ?
-It would mean the interface will be smmu's , but the choice of 
-configuration data to the registers' will be still with gpu.
-
-I wrote up a small patch with this implementation, would you like to 
-review that?
-Will send it in this v11 series as new patch.
-
-Thanks & regards,
-Bibek
-
-> 
-> BR,
-> -R
-> 
->> Thanks & regards,
->> Bibek
->>
->>> BR,
->>> -R
->>>
->>>>>
->>>>>>
->>>>>>>> Thanks for bringing up this point.
->>>>>>>> I will send v10 patch series removing this BIT(5) setting from the ACTLR
->>>>>>>> table.
->>>>>>>
->>>>>>> I think it's generally saner to configure the SMMU from the SMMU driver..
->>>>>>
->>>>>> Yes, agree on this. But since PRR bit is not directly related to SMMU
->>>>>> configuration so I think it would be better to remove this PRR bit
->>>>>> setting from SMMU driver based on my understanding.
->>>>>
->>>>> Why is it not related? We still don't know what it does.
->>>>>
->>>>> Konrad
->>>>
->>>> --
->>>> With best wishes
->>>> Dmitry
+Kind regards
+Uffe
 
