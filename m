@@ -1,208 +1,225 @@
-Return-Path: <linux-kernel+bounces-203180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 739B58FD788
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:30:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC748FD78B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7EB2B210FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:30:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A232A1F222BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44685153BC7;
-	Wed,  5 Jun 2024 20:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC93C15EFAC;
+	Wed,  5 Jun 2024 20:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="jYJ0bS7F";
-	dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="KoFkL2S0";
-	dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="Ebj0numf"
-Received: from e2i411.smtp2go.com (e2i411.smtp2go.com [103.2.141.155])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BrB2Wvnv"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2074.outbound.protection.outlook.com [40.107.95.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF4515EFAA
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 20:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.155
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717619448; cv=none; b=W3C0MUACTYFJDIuETqvIRMIzu2eCDNG9Dr0yPPBZ6+DvFbBudu8xccWr5hndUm7t8h7EF7LzeXT4/BJGc8F3i8r6Wntq4whFnXOKVtFKdYFNEF7aONMZkJKQB7Vowvz9U7YOjbMba6Ii+Ot+TMqIhsuIg6TFl2RxvkZO+1zlFqA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717619448; c=relaxed/simple;
-	bh=mdrU7IXXPrTDsyZxMk5347kg6bKIJX6oSNzN/UsIxz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ubx49kYQiBwuo4BcmaYLnpwW//j5YFrn3Bv86brTWrJP0F+l+EPZCohCOPvKT5H5SKewNpAs+PvVA3KTC1QDngqSoCdLnsJcbTqYs52IhJYM8LULKQb9bCNrsyp68VbjtndO20nQn+Z1tfj/JD4W0pyQJ7L283K4UnYvC+d/hAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=em1174286.fjasle.eu; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=jYJ0bS7F reason="unknown key version"; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=KoFkL2S0; dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=Ebj0numf; arc=none smtp.client-ip=103.2.141.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1174286.fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=smtpservice.net; s=mp6320.a1-4.dyn; x=1717620341; h=Feedback-ID:
-	X-Smtpcorp-Track:Message-ID:Subject:To:From:Date:Reply-To:Sender:
-	List-Unsubscribe:List-Unsubscribe-Post;
-	bh=l3p98x5jJGF8A39qDI7zM5bqnbdS9m3RepjjSWwE1i0=; b=jYJ0bS7FkJrzlo6OrMCaW55NGf
-	s0BhHeoHX5LC5fEusmbuESP9fQdKqRQ01rtpDDyxFs3g2dKOfrPG50zFMb3jZsDC2qVp+8mrYvg/n
-	0idwvfy5dNTGZNmzbK0HsSb6agU0+TMoDQmKMH0fCUWKLjnpK1Jj5pVPFGrSPLV7IQ4m3pv/2ciOH
-	8rZGKOCSBTnjkEZs44VJeKg+NIMqgx31bKa2GpiXjZUZ4XgjumOATPIzsEwN6k8PcvOTnyfu8/7Pv
-	xjbW2UvOS3uA+VScBP3XF9Cn+pH+pwKPyONiLgzCDMyjb3J4rF3ySZR+jeJG6PLQLXgAGdMfGIgO0
-	11dgWpbg==;
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjasle.eu;
- i=@fjasle.eu; q=dns/txt; s=s1174286; t=1717619441; h=from : subject :
- to : message-id : date;
- bh=l3p98x5jJGF8A39qDI7zM5bqnbdS9m3RepjjSWwE1i0=;
- b=KoFkL2S0F6QmTtneETM3CTDjD9/7sw0hCiOHMivDEygqUhTDeXSnBIRuhA/sAasDg+aPE
- eeoEb2EWELM7gkw0l76wD9lg3t7E4DGmSIOgLA7gbmu1V2LxkpMP95h8UXs5mIZgb1s84T7
- DCPFM8/hu1rcUrG15yFcUGylW4bjicgDRmVFNS+Li+bQlB0YT1tzXgfnykrZy7aQKercRZG
- oMNwhR7kjRxSi7jPtcnnqhva4g9JIzoZOTa1pTw6lTLoVBp0jKN+ARFxYN272fT91S2XqyG
- tcexwBBupiy5wkUw2mjg63WfpsY3Hn6nvpnN7l0vttYMlMOj+u8mCKWnRPZw==
-Received: from [10.176.58.103] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.94.2-S2G) (envelope-from <nicolas@fjasle.eu>)
- id 1sExGy-TRjx8l-Gw; Wed, 05 Jun 2024 20:30:16 +0000
-Received: from [10.85.249.164] (helo=leknes.fjasle.eu)
- by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.97.1-S2G) (envelope-from <nicolas@fjasle.eu>)
- id 1sExGx-4o5NDgrgOol-sOb6; Wed, 05 Jun 2024 20:30:16 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fjasle.eu; s=mail;
- t=1717619414; bh=mdrU7IXXPrTDsyZxMk5347kg6bKIJX6oSNzN/UsIxz8=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=Ebj0numflf5PFOF+vCHwFrP+z6qd9hYad1YcWXXNzlGoFTtW/GA2jL91z4JTQ/Lr2
- hCZm9xQthuX9qfNWenw4NhXopd87QccM9luPYfC8NfVJJH1gXkl7BN/ApCjNE0eFQW
- PAI2VL5ThSDs7XNpBB+RPbZJntVFzXaZPsDGdkJo=
-Received: by leknes.fjasle.eu (Postfix, from userid 1000)
- id D2D13449F3; Wed,  5 Jun 2024 22:30:14 +0200 (CEST)
-Date: Wed, 5 Jun 2024 22:30:14 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] kconfig: refactor conf_write_defconfig() to reduce
- indentation level
-Message-ID: <ZmDK1lCE8VRdWmWU@fjasle.eu>
-References: <20240602125416.976336-1-masahiroy@kernel.org>
- <20240602125416.976336-3-masahiroy@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19B27347A;
+	Wed,  5 Jun 2024 20:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717619562; cv=fail; b=hTK5zJZZFGgr5sXab+dXBnVLp009wzbCwzOfFVnoKbrzWS7UtsxLu4RzSscH0fgMrRzsBY1ZFiphWmuFyjOHNRKN0lxnPtdM4/dXDf/E2NorcZulSdZQs6HyadQ/OFHuu8IkoIG4UHc4h0aniQdxpHz9kbb6juh2IY2BBByjCCk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717619562; c=relaxed/simple;
+	bh=6SDlY6qfK3cD8NM13w8wV88qbAajROwxP2vMsB3ULbo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=DyXefWQQZwafzCCqWOY5KV1ByfpMmkZZIm4edhWwgM35mRoskxSx4IXNJ5gpsWLwk9mvKini3qqZzFHNDjowcR/jzS2biD7JBxhQSgxB/qzGktUSTK4X0vOCt3JuPmdnWe9eL6AvSJ0F7uOt2gV6ZsquITPMVh37o/9pChf4X38=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BrB2Wvnv; arc=fail smtp.client-ip=40.107.95.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=elcrhypYWQHrdETEpXibRf9zZFIAQ56QIOOV2MdLxB1xaK3SwAKdu645SnMB0JP0g0xLdAJHZ1JzQ184fNvH5CDIMwxacKly2FKQcOHmlanuFS2dB5UD/MUpEPnFDGax9ztpCJ9E61MuGYbdOdCzFdHr/ywIges6Kmlf+kelLR5ZY6K2dhG7IR7W+8yPnUJ2eyjpVo21M/s7nagCYhi/v/nqT4jvzT/qihqftZ+6qeFx5GyqnNqGm2T+1n6Oip5F+W55cy+o+BcAoSX5G2yI+O6pHtD+tdF6DwNgaI22id+dI7+kHvLKHiMajn4omHEDLT7ioK3QNXf2Qx1iwzwuFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZKF95yzeXkL/7sXgFjizzwVYc7MmYuBK2dWvQ0N34jA=;
+ b=jgBNO1qemvxQ9ZQ42UA5jdyUzOnVKzkP4bmlHsXcm9wnfbENrv9iobpddA5qMmeo0hQ3E+xoDkg8N11IR10C/G57ltBeZLzSXJxuXkYLFYOrAVzQQANrvElABhLCIDdELvz4MDV7WyLBWhU30FLOfx5QVrpw2lAgweJE6D3UqClPk9zgNuTNrhMffJskaj6KMVOfei8CW1sWZvp77rPaZMReaEC6zCCmcy1UUJwGkvNMnSOSdHhwlWzU7mvfhiVO9VlUi9jt8Kg2uA1C2wS446ac2VmZb40hNY4VLexBDKtOVT37IGNFK2lp1035OxvjvYDo2SfTz0+rNgn1KDYIHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZKF95yzeXkL/7sXgFjizzwVYc7MmYuBK2dWvQ0N34jA=;
+ b=BrB2WvnvvC5aOvo9mEJmewty8VJYxA048vmZbfbbn7yVveeS/UFLYXKoSD6Zx1lyytzT0pp2jHXSOGndHo5Q98BK6DIh4d6/EHwevI3ra4msAsSCKLkSZSIuQrTFo9h/XfyMF7zUac57tlUNIFvHl0x5PYEXyku4QH0nOH7NA9Q=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by SJ2PR12MB7868.namprd12.prod.outlook.com (2603:10b6:a03:4cd::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Wed, 5 Jun
+ 2024 20:32:36 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7633.018; Wed, 5 Jun 2024
+ 20:32:36 +0000
+Message-ID: <db20a640-5323-4866-9968-c57391fbb6bc@amd.com>
+Date: Wed, 5 Jun 2024 15:32:33 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] ChromeOS Embedded Controller charge control driver
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Dustin Howett <dustin@howett.net>
+Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>,
+ chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, Stephen Horvath <s.horvath@outlook.com.au>,
+ Rajas Paranjpe <paranjperajas@gmail.com>
+References: <20240528-cros_ec-charge-control-v2-0-81fb27e1cff4@weissschuh.net>
+ <CA+BfgNJByawxkZukaCXYcmOo_K9aQ0W1x8B6Y+Hyg_fZaJ4axw@mail.gmail.com>
+ <5baf3caf-dc09-4829-96db-2666fc902710@t-8ch.de>
+ <CA+BfgN+LE3YyF3te4m8sWbtH85tU+ERUDW7YR_BFecusVTAWWw@mail.gmail.com>
+ <a527a3fd-1458-43cc-aac0-0b360beeb349@t-8ch.de>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <a527a3fd-1458-43cc-aac0-0b360beeb349@t-8ch.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SN6PR08CA0024.namprd08.prod.outlook.com
+ (2603:10b6:805:66::37) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature"; boundary="hQIwDeXNxeCl02bX"
-Content-Disposition: inline
-In-Reply-To: <20240602125416.976336-3-masahiroy@kernel.org>
-X-Smtpcorp-Track: A9QiPRM17qaP.frfTRJgCMcHy.VgCe5Ql-pd8
-Feedback-ID: 1174286m:1174286a9YXZ7r:1174286sd201zyaj4
-X-Report-Abuse: Please forward a copy of this message, including all headers,
- to <abuse-report@smtp2go.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SJ2PR12MB7868:EE_
+X-MS-Office365-Filtering-Correlation-Id: f10d5edf-66d2-4453-6f78-08dc859ea2fa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|7416005|376005|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WERJQUNCSWkxUTRGTEczd3V3dDMrNW42OThiMlkwZEJWcFdwcEZLZy92MGth?=
+ =?utf-8?B?SmEvK2JKRnZhZkliekpUOEpiR0JuY1BUYlFWdHhaNk4wQTJBUkJIZVFIMU5V?=
+ =?utf-8?B?c04vMDR3bnZKSFlrT1VjZXJFcXg5YlhVQVJnMFFWM0w0L0NZcEZwZVBqSGpR?=
+ =?utf-8?B?SXdjMlVMZndGaWtxRUlROW9POFBsREVzUys1OGMwMTh4L2dDd1czNG1HcHRl?=
+ =?utf-8?B?WVNlamtTRkpoM1p4SUs3OWJUaDRXazFVRDhhSjBwUXFwZjA2NVFQY2I3VlZu?=
+ =?utf-8?B?aWhUdXRLaWs2ZU12Qm1ZaHl0MDc1M3dLeUNlUzZUcC9uRzBGd2hobU5na3Fr?=
+ =?utf-8?B?RW5rMElESzVOVDU5VC9WaUFOeTJWNHNQbU4xak9QbDM2NlVjdlEraVUxKzJm?=
+ =?utf-8?B?eFpRVGtOU0lIN2Q5aVpMSXR1L2hCNjR2TDJZclVpWjBKeFZ1dmRJMDFpckV0?=
+ =?utf-8?B?SGJoam8xUmIwbEJYOFMwcjU4Uk9nbWI1clJJWXZnYUEzZG5Ec2xJU2lhbXQ1?=
+ =?utf-8?B?QTIyUDJCUXg4UTRvZiszSWRXdXl4LzZDRDJkQjd3dkJlZTlQSUE3Njc4TXlV?=
+ =?utf-8?B?RGF2K2xabTlZYW5NbnZzUDA4RDAwY2RPTW1aU3dVWUE1K2VIQTBlcTVBRFly?=
+ =?utf-8?B?b3dBN2h0SUh5eE9PdFhLcUNwV0lYOEpxRlQwc0xZNTFIMEhVUUUvOHpNL2pU?=
+ =?utf-8?B?bXI0QTFZTmhkaDZaM1FvSmo0RXpPVDJKVXJtMzhLbFZneGpqaCticTNsQU5I?=
+ =?utf-8?B?R0F1cDZCL015UCsxNG1XT1RvOUJNLzR1amIxUHR3Wnl1ZkwzdlhCc3JCQ29P?=
+ =?utf-8?B?aVh6VDdaT2ljTkN0d0wxSnU4VmczWUU1SjRScmxITEVWRUgyYWNjVDArMldI?=
+ =?utf-8?B?REEzaFV3Wmt0Uy9BOHJaSTIvVXVUZ3lSQW9wbnF1RzRrdndiNUJzRUE1MkJX?=
+ =?utf-8?B?U25jaWtBcnpITUNrcldlc2FlZXQwdExXNDg5Zi85UzVJdjFDVHlHK3kxNElj?=
+ =?utf-8?B?ZmcrUmVGMHZ4MU4rOG9RcFFzSUxXV2hiMWMvcnQ3ekNPR1hRRHVWUzNPckw3?=
+ =?utf-8?B?aEhCamZJTXdRT216RHljNFo0NGM1TDNNWURWM2NqczJsYXNzdXEzMDh5MkRt?=
+ =?utf-8?B?dC9yQ2hybEVuaFZIRU8yVW1JUW5TK2dET3Y4bTlPMDkwMVpkZE9iRzkwUmZx?=
+ =?utf-8?B?T09PVW9seXFDdjh2dUhTNlk4Qm5TWEtvQnFGZGJFM01wUVQyUjNBK3l1dE56?=
+ =?utf-8?B?a1RpaHREL2RsekJrcElEU1U3bVhZaHNZOUltRm5NaW9PVE5SKzhFMkFSVUVw?=
+ =?utf-8?B?NWY2UVBwSjRTdXFSai9XNHc0MEZXR05PcmMvdXlDL1ZvdEU0WlI3ZmN2VjRq?=
+ =?utf-8?B?TUhHSC9uRVRUMm9WT2ZtRWhZV3Qxd3l2b09JTGxITVloaFFuVXlJUFlERnNU?=
+ =?utf-8?B?ZVRYdnM0STU4TittcFNYNytzWGszTmJkK0JrTENZR3dIMVNUb0RyQ0EyY2E3?=
+ =?utf-8?B?VVltRHh5ZnVybnZyNVpSZVZTcTNsU1VPdEVUZE9sUnRFd3gzNWsyQ3hURE9R?=
+ =?utf-8?B?cC9WR3Y5bU5rejZ0TGJZVjNIdW4wTkdTNVkvWlArWm1TNEpFMlE5cCt0R2pX?=
+ =?utf-8?B?YVJDNkJQay9OOGR5OFJ6OHYvaW4wMXNteHFVMTl5VGtjN3cxcCtXM0VmZXVy?=
+ =?utf-8?B?SktMdklSdDBXQ3V6VXpmLzlYQmVVanZVOFhnS2lhRE5BT2ErOGViTGk0S3F1?=
+ =?utf-8?Q?0Lp4YQEw06MR6O4/A9BhTFOmyRbED4pGqltaaDO?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(7416005)(376005)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eFg1a0k2Z1JGT1pJd1RIcFdOMGE4M29WMWdLcWJMeStlYmlVbnRKYitFSmwv?=
+ =?utf-8?B?Tm5weDBIRWJ3ajhjUTN1MTZwc0N3Y05kUlVTcEpoN09QUmFhU2pvMXlZdTdH?=
+ =?utf-8?B?TlBXYkJxR1BsOXRkVXd6S1d3a3JOdzM3OThZdTR6MmdRaUlOY0pCZUFKWGhq?=
+ =?utf-8?B?aTVvOVR6U25VektqR2huUXVTRjRzRy80SzkyY3RCZWxwRW9adEhHUDhMV0g2?=
+ =?utf-8?B?REdlanFKcGxXaThuekhCU0d3ZjZPUTU0Q1JaYURGRVZndmVxNVdqU0YxUGdu?=
+ =?utf-8?B?ekJXSzdBWkl0U0VQUDlQZmlzT0xreG56ejE2R3NZZjIyNDZiWjNybVN3N041?=
+ =?utf-8?B?NkpKYVIzK2tHRzI0cFYyZGpHNzhTU0RlMWdpRDZJUXZ4NllmZExYeUwrUk1u?=
+ =?utf-8?B?TXhyREZ1ZXF1SUN5Q0pHVk9lbVliK3JLOU0zRE5wTVp4aTZKaHdWbnpBajZN?=
+ =?utf-8?B?bTBzb3hrNW1lRUpyWHFSd3IyRmQ0OTF3ZmRTMld3VGJ5NXRqQVBtVHZTMjR3?=
+ =?utf-8?B?S1hzTjgycjVuYTZPbmdKYWhuRiszUnpIbEVodDRGQU9Oai85Rm5MK0VDcWFQ?=
+ =?utf-8?B?N2JTaXRQbSs1SEhueFp5SnozcERaZThxQ2lqZ1BGc1pIOW5wam9QUVBNY0Nn?=
+ =?utf-8?B?cVB6bzU5VlQwOXFZSSs1S3plNjlkamZZTGg2WncvalRuUmhpRlk1ZUxqd0Iv?=
+ =?utf-8?B?NXhuUGhISWNndVlJVG9USlQwM3V1Zko0T0szMXV4cTk4bE5nN2Z5TlpjMmta?=
+ =?utf-8?B?NDM5Z2FGcHJuKzF2RmNsTnl1UCtWRk54a3E4YWJVMG9VWDBHU3BPUVhIeDBp?=
+ =?utf-8?B?RXoyTzNqM3pZcGhQU09NcmhhenhYVWw0U0RML09DT0ttV3VWZjNOdklWSHhH?=
+ =?utf-8?B?eVF4WDVPNWkzZkxlWEp1am9tT1JZaGU2RjJLc1J1OGVPM0FYNzExR2htN1NQ?=
+ =?utf-8?B?QWhXT3I5UVhOdGRSeG5zUGtpUmNOZC9hU2RhSVRMUHJ6N2g3eityNktMUkdC?=
+ =?utf-8?B?UGxNck1qb3dKZWJ4S1pxYjAzTG43YUtRVEo5a0lQOWttaS9XTEdXRm1ZOHd0?=
+ =?utf-8?B?T3EzTVdxdFpnb1djODBZSlhPRGlza1MxSWxlN2VGREhGa1V2YnNadWJEa2hB?=
+ =?utf-8?B?N3I4cTFvbXZNcHJSSnlxU3Z2WDBnRlVBc1lQUkR6RytGSUJqaDRFVDRoS2RF?=
+ =?utf-8?B?eVhvNTFpQ3JoM1ZXaFl2K283WTgrcXRyV1FIelhIUDVlVkdUL00yRFMxVHIr?=
+ =?utf-8?B?TzlCUHhnSWU5Y0VsN1hyMmZzZ3RXd0FvYjRmMG1IWXRSV1FCWXJibnhZMGxu?=
+ =?utf-8?B?UkFJWHFPUGpBaCtxVFF4YUQ2bFJiNHFMVm9qZkFuZm5IN2Q3dVdCUytlOEF4?=
+ =?utf-8?B?TGUwZWwyNFQ4eTdCVWJvSmxDU1Fid1F3OCtkMzBZMUl3TkJqcG1IcTlHM3Iz?=
+ =?utf-8?B?ZTNLa1hTajVLZjN1S2JYUDUvVSt3SWQzTm9ydVFYeFpRNUl5Q084czhSY2tO?=
+ =?utf-8?B?aE43QWdSYXdzRDVPakRSSHdtQ2xOcjZkQ1VqbDVLUkwyL1loZGhDaXlPb0NF?=
+ =?utf-8?B?NzNhbGV3cXJLZk43YStFU0JKK0NnVExVckwrV0ZHT1AzekNjSEx1OWdwSG4v?=
+ =?utf-8?B?a1M0K1NaQ3FFTXpDcDhVME8xYkZDK2MyMmFHQy9KcmlxcDlITU1YZTcrbURl?=
+ =?utf-8?B?cDk0aDRhZWFFQkUyQ0NqYnpwM1ZVN2ZsUUhqdEZIZzYyUHlDQWlma0pVVk9P?=
+ =?utf-8?B?TkZGM1kzWE5FbEZONERLRmlKM2ZtbUF4c1FJSjNoK1VnaU9UcmVwOFJOK2xW?=
+ =?utf-8?B?TkQ3NHZTZU1sTVJxM00rMWlTZzNlUG5wRGFiZDdlWjFRTmp6V2IrN2R6c2J2?=
+ =?utf-8?B?Y1FJK2pTNldxbUpYZnpTVG5VbDFsYnpFWG9iOUd6aVpCc3NmL3ByZTZ2dWFu?=
+ =?utf-8?B?QmozeHlzdkh0cmZhOEdUVlJCWlFVbFU0ZUNuNGdWK2FXSjRHU2QxYVdLZkRm?=
+ =?utf-8?B?d3NtRUt4VTNjSk8wUmorMnQ2R3NHM3FWNWkvMEkxMkdiRVZzMzdaaWxWOFp4?=
+ =?utf-8?B?S0FJcWhFSTMrTWtFNkpUV2daQnFxLzRKQklzaDFJZUZEcS83M21aK3NXL0Na?=
+ =?utf-8?Q?JTRFw3ZPwXHZD7Zg9wXFwcECq?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f10d5edf-66d2-4453-6f78-08dc859ea2fa
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2024 20:32:36.6898
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: P68WWfWwrVfLGAbZpb8KxkrAFBbFAvS+WJk/1NY3CWjKk2r3PGbRlybvbB135lLM4QNXq81PqfUO3CrDpliY0w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7868
 
+On 6/5/2024 04:33, Thomas Weißschuh wrote:
+> On 2024-06-04 20:27:57+0000, Dustin Howett wrote:
+>> On Mon, Jun 3, 2024 at 3:59 PM Thomas Weißschuh <linux@weissschuh.net> wrote:
+>>>
+>>> Can you try disabling all of the Framework-specific charge control
+>>> settings and test again?
+>>> Probably the different, disparate logics in the Framework ECs are
+>>> conflicting with each other.
+>>
+>> Fascinating! This board does indeed support charge limiting through
+>> both interfaces. It looks like the most recently set one wins for a
+>> time.
+> 
+> If it is the most recent one, shouldn't the driver have worked?
+> What does "for a time" mean?
+> I'm using only the upstream EC command and that seems to work fine.
+> 
+>> The UEFI setup utility only sets the framework-specific charge limit value.
+>>
+>> We should probably find some way to converge them, for all of the
+>> supported Framework Laptop programs.
+> 
+> In the long term, Framework should align their implementation with
+> upstream CrOS EC and either drop their custom command or make it a thin
+> wrapper around the normal the upstream command.
+> 
+> (As you are familiar with EC programming maybe you want to tackle this?)
+> 
+> Until then I think we can detect at probe-time if the Framework APIs are
+> available and use them to disable the Framework-specific mechanism.
+> Then the CrOS EC commands should be usable.
+> 
+> The drawback is, that userspace using the Framework APIs will break
+> the driver. That userspace would need to migrate to the standard UAPI.
 
---hQIwDeXNxeCl02bX
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+How does userspace access the Framework APIs?  Surely it needs to go 
+through the kernel?  Could you "filter" the userspace calls to block them?
 
-On Sun, Jun 02, 2024 at 09:54:16PM +0900 Masahiro Yamada wrote:
-> Reduce the indentation level by continue'ing the loop earlier
-> if (!sym || sym_is_choice(sym)).
->=20
-> No functional change intended.
->=20
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
->=20
->  scripts/kconfig/confdata.c | 47 ++++++++++++++++++--------------------
->  1 file changed, 22 insertions(+), 25 deletions(-)
->=20
-> diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
-> index 25c327ae3c5c..1ac7fc9ad756 100644
-> --- a/scripts/kconfig/confdata.c
-> +++ b/scripts/kconfig/confdata.c
-> @@ -774,34 +774,31 @@ int conf_write_defconfig(const char *filename)
->  		struct menu *choice;
-> =20
->  		sym =3D menu->sym;
-> -		if (sym && !sym_is_choice(sym)) {
-> -			sym_calc_value(sym);
-> -			if (!(sym->flags & SYMBOL_WRITE))
-> -				continue;
-> -			sym->flags &=3D ~SYMBOL_WRITE;
-> -			/* If we cannot change the symbol - skip */
-> -			if (!sym_is_changeable(sym))
-> -				continue;
-> -			/* If symbol equals to default value - skip */
-> -			if (strcmp(sym_get_string_value(sym), sym_get_string_default(sym)) =
-=3D=3D 0)
-> -				continue;
-> =20
-> -			/*
-> -			 * If symbol is a choice value and equals to the
-> -			 * default for a choice - skip.
-> -			 */
-> -			choice =3D sym_get_choice_menu(sym);
-> -			if (choice) {
-> -				struct symbol *ds;
-> +		if (!sym || sym_is_choice(sym))
-> +			continue;
-> =20
-> -				ds =3D sym_choice_default(choice->sym);
-> -				if (sym =3D=3D ds) {
-> -					if (sym_get_tristate_value(sym) =3D=3D yes)
-> -						continue;
-> -				}
-> -			}
-> -			print_symbol_for_dotconfig(out, sym);
-> +		sym_calc_value(sym);
-> +		if (!(sym->flags & SYMBOL_WRITE))
-> +			continue;
-> +		sym->flags &=3D ~SYMBOL_WRITE;
-> +		/* Skip unchangeable symbols */
-> +		if (!sym_is_changeable(sym))
-> +			continue;
-> +		/* Skip symbols that are equal to the default */
-> +		if (!strcmp(sym_get_string_value(sym), sym_get_string_default(sym)))
-> +			continue;
-> +
-> +		/* Skip choice values that are equal to the default */
-> +		choice =3D sym_get_choice_menu(sym);
-> +		if (choice) {
-> +			struct symbol *ds;
-> +
-> +			ds =3D sym_choice_default(choice->sym);
-> +			if (sym =3D=3D ds && sym_get_tristate_value(sym) =3D=3D yes)
-> +				continue;
->  		}
-> +		print_symbol_for_dotconfig(out, sym);
->  	}
->  	fclose(out);
->  	return 0;
-> --=20
-> 2.40.1
->=20
->=20
+For example this is something that currently happens in the dell-pc 
+driver to block userspace from doing thermal calls and instead guide 
+people to the proper API that the driver exports.
 
-Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+> 
+> Also the settings set in the firmware would be ignored at that point.
+> 
+> I don't want to use the functionality of the Framework command because
+> it's less featureful and I really hope it will go away at some point.
 
---=20
-epost|xmpp: nicolas@fjasle.eu          irc://oftc.net/nsc
-=E2=86=B3 gpg: 18ed 52db e34f 860e e9fb  c82b 7d97 0932 55a0 ce7f
-     -- frykten for herren er opphav til kunnskap --
-
---hQIwDeXNxeCl02bX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEh0E3p4c3JKeBvsLGB1IKcBYmEmkFAmZgytYACgkQB1IKcBYm
-EmnPeRAAnUmonbGlYZfpAdixUvrePoFIE5BKpovbtT+Zt9L37gAXWNqpT5qEA4mY
-LbeCsSlHeckJXoSCbDI008J4zm7dGhXVRw7aukQWDMqEfVLtZ7jdOD9CwDQzVMGh
-tL/hI5HtJqSJtZHGW41cSFlmPG9We2CeP97zbuUCeY/6aiwyIgRYWsAqhTzL/Klz
-mxUEaeQLQQ3BC3RuFZnY9uBMqd2rHY+d03eEgTUaQl7ouGiCdH6vTXBxcAdFURDi
-b4olF87uZ8WekGCuycRWcisIylhWIS3PXfljkh57Wl7Hn/ItJC+5rSEaE01ZAmb4
-ukk9DUBSmDOKydcDyMlbCnL0yxd8ZAiAXakzyYHRxmayVSQkPUEB0c2OMIqAO6C9
-7Mm7720MYd44TpLIdDiAmN7OAPNdJrKlmIeIIVkaGR2QSa9pDoQVfQBhVanZxjrh
-GlN4WDPaiM+RBKDUmSwd6m/F+3/Wea60HsQqHwoKVWwAEUnuNhFmYKaus9ItZ7H5
-0bh7hnRP6m6qsfNzVpyEhMR1NZse0/xfZRtPd3iwleEDv0qR8gsbfQAnTyN8WIDF
-QLcQmsIaKAkwBb1oU/z7qVOs/a+CH9R9BucH50itPQLA40PK5Xo30hofY5ZQOZ2F
-/dny5wW2hLOSY/o9rzqeMx2ORDvm3mWOrHSVrq+VW4S5yALkRgo=
-=ikzb
------END PGP SIGNATURE-----
-
---hQIwDeXNxeCl02bX--
 
