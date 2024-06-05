@@ -1,113 +1,162 @@
-Return-Path: <linux-kernel+bounces-202257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9FC68FCA57
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:23:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49AD08FCA59
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17F461C24470
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:23:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 478992823E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3526193065;
-	Wed,  5 Jun 2024 11:23:08 +0000 (UTC)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28BCF192B9B;
+	Wed,  5 Jun 2024 11:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iWOssg0x"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566C8149C77;
-	Wed,  5 Jun 2024 11:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3468F6A;
+	Wed,  5 Jun 2024 11:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717586588; cv=none; b=s+orcvGg7w7CYVp24GDmMHkdJbSpr/o8eFAyoE8M8qNNOLCeUM8R0ahP9yBObyfR9+VFgno6KBLIqa3co12XhRbnsWGdQJR4vUSeYuyM3VPndszKBja5xJwDijQKbfafVt4K6uZP4epswYR1qoi59/809llhyyHeaVII0xsOb+8=
+	t=1717586604; cv=none; b=q6NjNtjjVL+ixUu9XzCFyH7Wsj2K9wVyAioavDVO11g+g45Lg54AwzG+sf7pnDxOyMGXOK6WJK0LRuYyp53leeM6TJrEza/tMysn0WNFHug5N4hEf6DlwLVQ7VOPooJr792WKuKClP6R9T5TACWA2wBCD5Fn243TUKMZAQ43RYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717586588; c=relaxed/simple;
-	bh=7ObVeTeA0dD6/sQgMz/ubf9tk/YPyeBAJzAjFIdThBA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eDJZkyBwyVTuyHJo4NPBDeI8quE2KycnNAi+6XbcLgbXShTpBWiToM/4SjwIvJ/n1Tiv9x6HTEA+NQ6IfKODSAdVyEdo7zjs98vOh0vk5pQ0HUWoGMq4+yeVuov4VTcSjZSXAx16lEjXNz+1QgbZim9ef8TvlxH/wpcqLnFVz/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1717586604; c=relaxed/simple;
+	bh=ulQWyHpv4zET4nAlFDTZoIUSCT3nKmoqAd0xhJpllkg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N8COsvLRQ0niiRfZ9u8lcGAuNxB+jXQ80RX30TxPeZwRG/6y09hz6C5ZuwYqVKkN45anjOjZ8fbJEzmIDv5hifSUAnkDpJpzY5VYm1ShkHjR55ZKJQ3iBu4YKvBLFHGtG82AhIS7BBofukoPp48r1Z/kfSFMAA4tGpfNSGaUGXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iWOssg0x; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dfa7790b11aso2152606276.3;
-        Wed, 05 Jun 2024 04:23:06 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f630e35a01so44109725ad.1;
+        Wed, 05 Jun 2024 04:23:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717586602; x=1718191402; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v8lBmo+de872z4HgxVCrHC0+rUnsK/Cm/QHFRT3M9h0=;
+        b=iWOssg0xojAnixwXgEbsfo2l6zirRteBj1e1YM/MqhJk0EzYTbFlz8ppX6M/laJ0nW
+         dBpZ4JodYX0YI2oVv5sliDGnqEKTeAjmliwcsD4eH8oAAxF5NcBah/T8XJ8ObgDjITzJ
+         +Zavp3txhDRC6AW/9X89o0uGWwkbJkHddQbfYI3GnHO01LNl8LS1NY8BgB7m/wbQqQOe
+         jvSBYSm3uVQBEA/dfDnGzNm3Bfwgf/ph8b+5iRQjnGQexNyTHwTgF7D4gqeEko1nnglQ
+         CHWlk4qz/hDpQyV3DcNlseq2wIAxS3vo7MT0cQZz2gorDTbmJHcEy9oW0B1a/vUeBEu3
+         pjrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717586583; x=1718191383;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fqH/8AmH+rAGXcpibS9tY55Hpn1vNNn2+9ZaGbdtidM=;
-        b=arsB1Bj+/NRks8C8/HhJDkLNYaHq85ocdyioF+GQTIkptQsdU2s3R2mXgwVl18vF3T
-         zvyX2wXQ3iuD8d+cXlGLcATDuFbtBrRjJFI2EprZzz6EBIUZ/UhCSOsoUHQNMZKQVca4
-         T1v7En5Rk2WQAAWL5IdGvRO7oY45LGi1GA8lQc8EIsIDH/n1e0YZ8cTm8/Tl6S0Rukkh
-         l5MkYVwCXJqt2wLYRMAoKR/dkIpEJHeK7eEwqfumsZArk1fLmGS4q+t3Mqov9o/MtFw/
-         B3bWM8W/JckxnbZbdSjmKOzTAYHX4yW/wu6iClkckntnxoFjZFB4Z/c06S/0vTR1pn0a
-         FKfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVoo5hHnoj+Lc2cB9l7oPGyNf99g2TGzUfnOt0h2Mu9yZ+kMknFSTepXCoETFgqaSHTmNuN6DQUVzqHiTiDvwcdTEX25uEBcPhoErpBeYqB6o1dLho0XS+lcMcaEQ223Xx65lzO4hmnShQl6YOVxHTIctE7Ef9231ih09XxEBgVNew5lDQwFRel7Opx5P2ZzCajESPojC6+nMM1sYCyTWRXpN3a7frslQ/hUM0=
-X-Gm-Message-State: AOJu0YyjwG7Aq9DtBeN1WmSUa/seXK29gR1IRvxlm4ofU6lpK8dnH79s
-	jkVFmq06K2yxhOS+bUztFawRV07NcpNnA9Rw9j9dGFDSlwXL8JaNYwsmWG6x
-X-Google-Smtp-Source: AGHT+IGJwFSpXqaIRNRMhXX9taQIoR9ixKZ0LA9vAUb9PicwKU/QtE/kWQwB/CfV2hOHRbN2eGFkZA==
-X-Received: by 2002:a05:6902:2081:b0:dfa:710e:83de with SMTP id 3f1490d57ef6-dfacac77885mr2252599276.54.1717586583404;
-        Wed, 05 Jun 2024 04:23:03 -0700 (PDT)
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dfa6f03c2e2sm2636553276.19.2024.06.05.04.23.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 04:23:03 -0700 (PDT)
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-df771b6cf71so2233070276.2;
-        Wed, 05 Jun 2024 04:23:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXJiq5pABUOCil74ETdBVUByvBXqlxNOteLdgKx+jHXMAo93Z3chgx++eNtw6UJAP1wkdjSUdHEvxcbNm3FGFkfhhBeCdtyqIQBCEnHS2YkEK9P1FrIPHZSv3gxL6OXHzP0k/VNA2lqFLvaYFMkmZq7E9R2aDKUVLDx/fYZBLS8h4+KuQsLDk7TJ5mG0EZWZZ50X16C+mVjJtoFR5vaar31OSrhSI0kaJ8bNm4=
-X-Received: by 2002:a05:6902:2188:b0:dfa:4e01:3bba with SMTP id
- 3f1490d57ef6-dfacac4c982mr2496671276.52.1717586582484; Wed, 05 Jun 2024
- 04:23:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717586602; x=1718191402;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v8lBmo+de872z4HgxVCrHC0+rUnsK/Cm/QHFRT3M9h0=;
+        b=jalggt5N6EHJECfDOwhwzxDlkB5kbX41RdWX8Pn6CGzTymmOPye63AP2GPUBteFGxX
+         BKYqz4wDA2et85IOGy4s6UKcosFOd2yGfaVRO4kacoRys6vw2fh4WvEaUoHWCXBzCLdo
+         LRMQWccKREVLOII0TFx1wpQVQf5/CjLK0aLAxj8U2aQJ1eENnREGURTBMii0yJQuRKT7
+         KWRgw5LBqYQo0PK0PPr8N65gB3hKsQYv0/kvNylSKtEQOo5RzhMwlwdDJ2cmslW2sQ+F
+         P4Xlrq5YmFzs9ZpRwqYI5MHO2eu5LAhTcDqwoP48duC3RH5p2Rj6MV8eh9vw2DGW1ErX
+         iBSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwHnfaCFYqbOKt3dRYtLjglMHDkSnMNf+H77OLTfb9taUlasBTit1yqOao8J54ibFa7o1w6t+VIf4uwMoT6SdQF9LJVSRo/lY9tnGlv63+nCXZaCEJd5nF5VQWSA8h1mflF7awc9RHndRRREHR48SJ1hLFz8I5fh+7VJEiixp12tXeQqYQ
+X-Gm-Message-State: AOJu0YzWpw4W3z1b6/gt2HH63UPqDQ7W0dzKblqiotUbkbU86RH5tpJF
+	eq9SEVZ/KAudFhgwmtzfAwqkFw7fBnrd3wR9i7PQLwyvSPfTz0LUkgq8uiNX/pw=
+X-Google-Smtp-Source: AGHT+IHkzDjzFHveJzOdoOOxAJAdaeEfu/ITXQnJJFI/PkEOl0kZbARGpPlkahBZfq5bftPE4Fs0CA==
+X-Received: by 2002:a17:903:2292:b0:1f4:64ba:af9f with SMTP id d9443c01a7336-1f6a5a69a3dmr24294085ad.48.1717586602201;
+        Wed, 05 Jun 2024 04:23:22 -0700 (PDT)
+Received: from fedora.one.one.one.one ([2405:201:6013:c0b2:ea4b:30e0:4e3a:ab56])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f63241d378sm99866595ad.301.2024.06.05.04.23.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 04:23:21 -0700 (PDT)
+From: Animesh Agarwal <animeshagarwal28@gmail.com>
+To: 
+Cc: animeshagarwal28@gmail.com,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: dt-bindings: linux,spdif-dir: Convert to dtschema
+Date: Wed,  5 Jun 2024 16:52:55 +0530
+Message-ID: <20240605112301.8171-1-animeshagarwal28@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240522055421.2842689-1-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdVN3O2O4VYmyXKAsUp=19-1=J8BU2NJ3PLaCYdgV98VyQ@mail.gmail.com> <20240605110008.eVmntWev@linutronix.de>
-In-Reply-To: <20240605110008.eVmntWev@linutronix.de>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Jun 2024 13:22:50 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXMnuDSs5fg7iuciqCDSKidJ7hUxo5VxzOaZrUwqSjvog@mail.gmail.com>
-Message-ID: <CAMuHMdXMnuDSs5fg7iuciqCDSKidJ7hUxo5VxzOaZrUwqSjvog@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: renesas: rzg2l: Use spin_{lock,unlock}_irq{save,restore}
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Claudiu <claudiu.beznea@tuxon.dev>, linus.walleij@linaro.org, 
-	didi.debian@cknow.org, efault@gmx.de, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rt-users@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Sebastian,
+Convert the dummy SPDIF receiver bindings to DT schema. Make bindings
+complete by adding property "#sound-dai-cells"
 
-On Wed, Jun 5, 2024 at 1:00=E2=80=AFPM Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
-> On 2024-05-22 11:27:55 [+0200], Geert Uytterhoeven wrote:
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > i.e. will queue in renesas-pinctrl-fixes for v6.10.
->
-> I picked this up for RT and see that it is not part of v6.10-rc2. I
-> assume that this will be applied within the v6.10 cycle once you have
-> more in your tree, right?
+Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>
+---
+ .../bindings/sound/linux,spdif-dir.yaml       | 34 +++++++++++++++++++
+ .../bindings/sound/spdif-receiver.txt         | 10 ------
+ 2 files changed, 34 insertions(+), 10 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/linux,spdif-dir.yaml
+ delete mode 100644 Documentation/devicetree/bindings/sound/spdif-receiver.txt
 
-I have already sent a pull request for it to LinusW, and it is now part
-of pinctrl/for-next.  I assume LinusW will send a PR to Linus(T ;-)
-in time later.
+diff --git a/Documentation/devicetree/bindings/sound/linux,spdif-dir.yaml b/Documentation/devicetree/bindings/sound/linux,spdif-dir.yaml
+new file mode 100644
+index 000000000000..61767873200f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/linux,spdif-dir.yaml
+@@ -0,0 +1,34 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/linux,spdif-dir.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Dummy SPDIF receiver
++
++maintainers:
++  - Liam Girdwood <lgirdwood@gmail.com>
++  - Mark Brown <broonie@kernel.org>
++
++allOf:
++  - $ref: dai-common.yaml#
++
++properties:
++  compatible:
++    const: linux,spdif-dir
++
++  "#sound-dai-cells":
++    const: 0
++
++required:
++  - compatible
++  - "#sound-dai-cells"
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    spdif-in {
++      compatible = "linux,spdif-dir";
++      #sound-dai-cells = <0>;
++    };
+diff --git a/Documentation/devicetree/bindings/sound/spdif-receiver.txt b/Documentation/devicetree/bindings/sound/spdif-receiver.txt
+deleted file mode 100644
+index 80f807bf8a1d..000000000000
+--- a/Documentation/devicetree/bindings/sound/spdif-receiver.txt
++++ /dev/null
+@@ -1,10 +0,0 @@
+-Device-Tree bindings for dummy spdif receiver
+-
+-Required properties:
+-	- compatible: should be "linux,spdif-dir".
+-
+-Example node:
+-
+-	codec: spdif-receiver {
+-		compatible = "linux,spdif-dir";
+-	};
+-- 
+2.45.1
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
