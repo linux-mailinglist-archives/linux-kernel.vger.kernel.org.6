@@ -1,268 +1,291 @@
-Return-Path: <linux-kernel+bounces-202902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E11B8FD2AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:17:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 339058FD2C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:19:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE2B4285C9C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:17:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C96F1F2626D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49BF14E2FD;
-	Wed,  5 Jun 2024 16:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D96C18FC77;
+	Wed,  5 Jun 2024 16:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UVdcynoV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="qWZX4tN5"
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2048.outbound.protection.outlook.com [40.107.7.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2FB819D899
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 16:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717604248; cv=none; b=fi/5Zf28LVPyhIlVsFIP7Djmq4Jkz/UBhF2/8WQn1zcEmApA2UzGtvatKAqdsfbQC4ymwQFij8SiMjHh7q8rdgLVMNt17nKF51WBlX/OU5s/EgIjm1GbyFRzT2X5e4VfOa0C9hpNA5MSFGz0Ooihf8Pgm0eDTJsNkfZM1i/TW90=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717604248; c=relaxed/simple;
-	bh=XCKqjztYR9+IKBnfTAp3qkdWxzvX3tjFJRwRcXyy0wU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bAtm5CRnlFbylHtzVSaS3NqWdz6UeWrZMYu5awhTSrRmK6we2yc+7mqlsUvqHtr/fRGMbvjjOgXZnXdDKE1hYaFKIGtlhM3xg03p1qfhCKAdz1PSH7HcvCT2z6GvgyMzqHncR34588buNsTFEK3L0Fqw/m1OJqwFnGVZvr6RhYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UVdcynoV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717604245;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=cWV8Lo8WLzhgwKW8jLwqp32oyRHSZADB4Op3hCnu5O4=;
-	b=UVdcynoVSUeS5TQd1QHm1TQVEARh3bDuNHf7zMphRJREYRMlItRHl17mR84scWRsem5zXs
-	lLYiz99oXCcEvKYy1+oPMvACgNC9woUqrP+YK4B3/zCss6OtL4xu1Xz0t/U0rpQRb9aBZA
-	Wvv2/INyv0940L7Nh+0+ZJaBztPdJyE=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-516-PkGIgM6YMnitWy1f_yomnQ-1; Wed, 05 Jun 2024 12:17:15 -0400
-X-MC-Unique: PkGIgM6YMnitWy1f_yomnQ-1
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2eaaae3e600so59971fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 09:17:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717604231; x=1718209031;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cWV8Lo8WLzhgwKW8jLwqp32oyRHSZADB4Op3hCnu5O4=;
-        b=oB/pIdxVJNd+jR0roVYYGcrVRGOnyp/oQx9HnKYkuWzE9xGk+1CF94qM73h9KMPCB+
-         wpikevVfRb/vw+w2PidvKUmueS/dhlyTppwPqnIP1o1C2P/4NKinPnkH3EI216OmWmHY
-         psUOaxspFpQNmbNA26wAL3BPdlhROqC1txv6sUrNcmujWD+emJVs+un0NZXkrZ8F8VZY
-         u4L+XR8Jwzu2h/iyt5TLPgsvjTBo+fNt49cMiGipMF687NViSNDsMKQ6NCT3reG8bwYU
-         fBr47ULmhYM8A2au786XUcBNfEx9Jdi41j9/veBREuYa601Eo5yV44g2fj1NDLMPx+/g
-         O7Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCUO8JOcacBztsYI5X9o2CJi7NKuegRdtW7rvVGPyxtR/7sUSQhIatOkb/P4azzNiH6dgLIM8VzVPkcXDgV5awJugNXGmT+AqLUuVj/t
-X-Gm-Message-State: AOJu0YzXKZlAaU/GjbX0VyuQE7AQyIqm908o8ROXKQPDW4jomNxabqOK
-	iqWX2u49xxHMpTb1uG7yLgejs9xsSKI4f99N6kYcY65dzgLPmyU5GLBPAjbfIDfrLBaB5u6w7rO
-	IvdGpZOAn+N2sSfr2qFWqUqSY9yYdlIoMiyecnR4q5QGqjvsjpCOzI4zcKt0ddg==
-X-Received: by 2002:a2e:9015:0:b0:2e2:a85f:f222 with SMTP id 38308e7fff4ca-2eac79bffd6mr21905211fa.10.1717604231459;
-        Wed, 05 Jun 2024 09:17:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE1/ptFn9F2AicH1L8mC8tPW6vXI9kcDGJgMU0weURGF8brg/KfPg9v0PpQcR+jiOzihyazkg==
-X-Received: by 2002:a2e:9015:0:b0:2e2:a85f:f222 with SMTP id 38308e7fff4ca-2eac79bffd6mr21904871fa.10.1717604230954;
-        Wed, 05 Jun 2024 09:17:10 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c706:3100:19a8:d898:8e69:6aff? (p200300cbc706310019a8d8988e696aff.dip0.t-ipconnect.de. [2003:cb:c706:3100:19a8:d898:8e69:6aff])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42158148f91sm28767755e9.30.2024.06.05.09.17.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 09:17:10 -0700 (PDT)
-Message-ID: <6089ccc4-1fb7-4934-b119-253aa246a2dd@redhat.com>
-Date: Wed, 5 Jun 2024 18:17:09 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D1519D899;
+	Wed,  5 Jun 2024 16:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.7.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717604349; cv=fail; b=q9qsTgddysmIxgGck5kr7g0bCOUmtD4Jox8Lppey8gUkQ2C3Za2IqheuoUsqlclgWnrtDRF1NGqgYYvPaahT3ZmAokmSjA+RnqEJ2D1KBXzEYxBX/yyB8EDI99WfYBqxvo8bkOfaHtG4W9Xpo1Y968ORES5D9nJlCOAUgW++2qc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717604349; c=relaxed/simple;
+	bh=9QsZlFd5a2img26Nqpg2+frudXhNxB45l+a3KaIKSJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=RWxDhHTEhZ4aPUtRKiq/wRJqMbsGSPzCFENzfsnrOOfG2yJ0LRQ6e6ydhm5SusJtTLOapGPkIVIXQ/bX1wJD6lR6raBZsMuF79HCktyW4RqJyBiAa96/ujocCuNE3MTdZXyPRh0SFZWrJmvFmICVEjcuFxpP4+thvkmd7l7ZhKQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=qWZX4tN5; arc=fail smtp.client-ip=40.107.7.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LaeqbfaFXmNzZU3f6xwPqu0KWVxYNyzQWmiB6CloT/KjFSQXbes0FUwOsdvF84D9Dg8cuSgsTbnaUGVYzKDmBn6UQhkj5yb+H7QYt1p2jTn7ImLCo95ctj8Jy7RKJ2eqm+eW6AquNqCCKTqAVqk7rqnL8q/D+BnK5VIKeyTqyISbUHuyPS0IvKth9GKI93yHUZsMOQ5k3XmvRqnk31oaUyYIxSp+NUO6WhV8zDFH1pieE2WatGl02gsU6Oc/y1uhILx0VUIkDvc1RnIRhwqJFBdFfLpEcy6GHJ/N0SQeJPzOwAvpIvyPgTuLn2u06Jk0E/ysA2QUjqpskbUl8teFcw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=f9ooCDpKSMR5pw7gptePDTzTu6wkMgDUht61u5fZc/c=;
+ b=CQrnhwJwmAGhxy0QKh2sQymAxtGTm8nEqxmWoI8gxHRDvD9B80CcEyLiBN+OtfGqZtsnsN+/XUBR7DzuH+wDnkS00UQotW8Kh3WMWkayWHlBu3e0XSazsdNm3p2CrIoDvKMUv99cTkn4hVCFPeszMsN5Jw2kP6DxvEcRiKLi/6oFTKSgUnA7PYPF/AmlkOIbv45GN9bowtJ3VpITPo526NcxBSVgNkPys0D1miMIdBQvTxXfg37nQmCKob5HBL9qwY9XwAxk2UKMMD3+rcuJV+MWyL/CpmvyfdM+GK+INtqHqCvf7xWNYVGF+qNSNsYiiOYDgCdI5U7lbA2n/R7erQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f9ooCDpKSMR5pw7gptePDTzTu6wkMgDUht61u5fZc/c=;
+ b=qWZX4tN5jbunM4W+QSuNcuSUU0FqZonGGaqwOY82nN6Vs8weFiAAqGTng4bC6mFPoz1H09nXvgcY3byMk97hwmoTM7zhWo11FLPZEfWoVuT4KRhGShQoPOJvrbjM2l9lrsR7EfDWYgHq0KZFj94XRuJ6OqX5HdJ0XngL3Lm9wQM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AM0PR04MB6787.eurprd04.prod.outlook.com (2603:10a6:208:18a::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.31; Wed, 5 Jun
+ 2024 16:19:03 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7633.021; Wed, 5 Jun 2024
+ 16:19:03 +0000
+Date: Wed, 5 Jun 2024 12:18:50 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Vinod Koul <vkoul@kernel.org>, Maxime Ripard <mripard@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Mark Brown <broonie@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Vladimir Murzin <vladimir.murzin@arm.com>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-mmc@vger.kernel.org, linux-spi@vger.kernel.org,
+	iommu@lists.linux.dev, linux-sound@vger.kernel.org,
+	Stefan Wahren <stefan.wahren@i2se.com>
+Subject: Re: [PATCH 05/18] dmaengine: bcm2835: move CB final extra info
+ generation into function
+Message-ID: <ZmCP6o+NgCtINEW4@lizhi-Precision-Tower-5810>
+References: <20240524182702.1317935-1-dave.stevenson@raspberrypi.com>
+ <20240524182702.1317935-6-dave.stevenson@raspberrypi.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240524182702.1317935-6-dave.stevenson@raspberrypi.com>
+X-ClientProxiedBy: SJ0PR05CA0017.namprd05.prod.outlook.com
+ (2603:10b6:a03:33b::22) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm: page_ref: remove folio_try_get_rcu()
-To: Yang Shi <yang@os.amperecomputing.com>, Peter Xu <peterx@redhat.com>
-Cc: oliver.sang@intel.com, paulmck@kernel.org, willy@infradead.org,
- riel@surriel.com, vivek.kasireddy@intel.com, cl@linux.com,
- akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20240604234858.948986-1-yang@os.amperecomputing.com>
- <ZmCDU5PMBqE-H-om@x1n>
- <58f249cf-c2a9-429b-871d-15584ed37956@os.amperecomputing.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <58f249cf-c2a9-429b-871d-15584ed37956@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM0PR04MB6787:EE_
+X-MS-Office365-Filtering-Correlation-Id: b4d600c2-a953-4dd6-b358-08dc857b3736
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|7416005|1800799015|52116005|366007|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Bs2Eo1EyP4H73Orf4Ca+69M/7f0+89ELzHs8y7+r/3rTUMX+aqW8rdYrbHMi?=
+ =?us-ascii?Q?2jyjdD1xTdai63jcXaDAB4SUjZoGvXRXgCxGvXn786YmTkmCin2sizCGRbgQ?=
+ =?us-ascii?Q?hFn6itTKIfLw6HosHwpe9gq7jIRaAIt7DiweteLoUgbbApLMtQK31shdZCsE?=
+ =?us-ascii?Q?WC93zXwi4qOHVOtzeW3ePtncivVA+1zG75Vd0Uh2bIwiuLde8OBqrhIX6PY7?=
+ =?us-ascii?Q?rSVqbFihqlWqt1JbRndc6ltaadNvCWNH2V6TiP71v3Y2VhJMDTt5+diCSGQG?=
+ =?us-ascii?Q?W3j6CxQhays/noDInAeeTVJ02t8bxzn1XM5cOXiwbouTmB9N3g0scP28GLf8?=
+ =?us-ascii?Q?e6oWGgnueOHh8UH55Bo7iWVDIe0Qpgopl1LkSgV6JM31cq4punioTYMA1Rgp?=
+ =?us-ascii?Q?H7Roih1B9pXAt8DnBMAJ1ACb3E8yX9cBv1QoSAbV29wXyssI63kg0rpSKfPG?=
+ =?us-ascii?Q?jvdDE8cI4tlXXQnMMTalVQdDgxjwRIwMtF6L3p1Rk6JkzMTjiWTGuIdITggo?=
+ =?us-ascii?Q?N0ieAJ9iM0ct9Ez5BzGkHY3OwPjk6FSoC2QbgmTuegSQYnx7nPF/wWfjvE67?=
+ =?us-ascii?Q?9yHnnnKo0sDIiR1X0/p3lpsJcDlveAGDZ8dFd+IRJr3CEbF19k6Lyj0I459/?=
+ =?us-ascii?Q?ooAwrJGpHXKdPm/xw/icWrnX2Ajk3uKwBmhzpLttkhUbpzIqBUK/LlM1ZBpx?=
+ =?us-ascii?Q?WdkJyYP4pdSwfvbidhFahWY6CwhH7NylHdzTIKa+FEYaGDbn0oKjh84eK9a9?=
+ =?us-ascii?Q?XdAZLVGn98XKbTuhY4jzRyc5de7zVUoE7B5sZFs8df2neNULIHktn2Dp9vci?=
+ =?us-ascii?Q?lVUou9e0XvpqBDeuB3DZMCx4fGSFuH5HEP/BYkcHsdwwFExFpiVe4YprPoY9?=
+ =?us-ascii?Q?oOSLR12nmTXOWIsHRDBGLG7hRrQ7i6lofiXN3A5FBOFRTPuLKkDYOE/GS8Tf?=
+ =?us-ascii?Q?xhwGLPOMPAOTBY+clvAwXBe5SU1PmhKXx0Fc+skGib/OXrofBFxk8jyPFbSe?=
+ =?us-ascii?Q?VzT2o8mYNPSM+/wONmKr4z0QYBv/JqFxW6k75zM5803h4zIAOvs80mp2A9Il?=
+ =?us-ascii?Q?DUUGbXFYQ6u3wggtJBoN+CNp9z+o1n8xIcEa3Hf1pA2Cc/uYoW/6yU1/cNuY?=
+ =?us-ascii?Q?EBwtoutLzXlr/z6XvgkaydUYZZER/i4Rf8vpp+asKCulnD74v/kEj+sug4Bx?=
+ =?us-ascii?Q?TYZfjQ7fvLb8SzfHmZ1xnhe01BB6cDeKxLVhtMrx67L/+J8tPCVzkztv2Mzc?=
+ =?us-ascii?Q?4YKMBFdd+ujhR8bo5CmEwkYWMoeaB06SccUvV+1IJ14WPGfchf6xc1F4n2xn?=
+ =?us-ascii?Q?iGiEBfxNz9FhW/CVJyw+HjYr4/bsAgiq+ZNA2dmjpiojT50SMc+0ThTFxZQq?=
+ =?us-ascii?Q?wUxZLVk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(52116005)(366007)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?jU26UDz3+X15otbTMRHYgWMys9HWYleAV9hOHEHmVhjn1l0pKmcQLjsh4JCP?=
+ =?us-ascii?Q?cdeWx+f+SlX8S5DQoTqkZFRuBmpKmodm7FSC2Rekg17mBDlveTAHQV1s8BAE?=
+ =?us-ascii?Q?cIo6xEeUH5s3d0ow8cW/1rcZlXe9h3FdyiLftVr+C1Ba2hIaeX1L8ylgWhPR?=
+ =?us-ascii?Q?y7o5pkjm6aD5iRZLK2fou24GM+Ny6IyKR9nS27pMrBA8XW9v9Ez8PnIdW97a?=
+ =?us-ascii?Q?uYEEMzHzAcumaNu+TdwoEzMxhPs77Jdufej3skPURSW5BNYIL4RrM75N6xN3?=
+ =?us-ascii?Q?jti+DdDk50kEAJRkgy0MVIEQEwPhz4U697/ufCICWiWv5cMTluDX9Ycv1s0l?=
+ =?us-ascii?Q?5u6Ojdkkb19CvBFL2fNDRdueidK1MHvGDoXEHdAQ+HPV7KFe30jkuolJ4QQS?=
+ =?us-ascii?Q?5E15SmeUan4jtwox70Az1e8p2Ybbqdb/L+1icCyH1/zPTFpAzwf8xM07SONz?=
+ =?us-ascii?Q?aSHsuCd4JoCZp7c0JhjiK8+bpkJcbRIjcPlwxW5PEVbIz7+EF6u6QCqm/mzL?=
+ =?us-ascii?Q?Fa/IyAWVMUd9jC32Uo8Jd4+I7jp4t/Nn3seZjjAdEDqn7TkQbhbTKSAY0qgr?=
+ =?us-ascii?Q?GOYOkK6X/ihnvMP8IhyBX1VWCM6ayb55hJDtv077HTY8YELwP+f7liLgDTz0?=
+ =?us-ascii?Q?KdVSux4r+n0/0ZpWlnrM1EjBGsg8qlN0P+btkJhlP89ZBRwrNzfb9hCOIWMN?=
+ =?us-ascii?Q?WlL53ohuqwQE6J56FEUqxfbvtUYi0RH0DDR2qfTsm/WpV/hK9OY83oXJSBM6?=
+ =?us-ascii?Q?cb2YtVfUgWr8PWEtCMsMEWS7axw5I41lqnRGRfc04MU708f9yEyyzhUPqaFX?=
+ =?us-ascii?Q?jf9vE8b1DGlHdo/2TCdrAO/gy5ih37C0jZ4Jz67gaWcG5ctjYWhciMJy8a2d?=
+ =?us-ascii?Q?Dd8bseajNKrgPbeLWuClAHdFC9b0C2mHA+Mw2QFLh3J5TMK92xgNODva9S6d?=
+ =?us-ascii?Q?yY2vo6ZUGc1t865RCB8Xojq8SptoDOfSLyTv1Ym9jYq5p8OIwSsuPjwa4PWz?=
+ =?us-ascii?Q?zby7d7MxRlxYFimNq1UXrusPKbXHD2ZnbykpxoK/bkwp9Sc2gZJNIGX+ZJaM?=
+ =?us-ascii?Q?pdUufzZdENMUOuXmqGWYUxmGcR8Z0/CJgC0uZBww/24spSIYuv8DaQ6CKQcn?=
+ =?us-ascii?Q?Ku0Z+CzLOFFzVW42emS4H6Xt0DIasCjdel/Qmzz+7boKgYqliW75TVOHua5D?=
+ =?us-ascii?Q?huEhu8eJE4qKbroNm8UR1G7qHEfQbDdtG16YOirOm1DkyT0VRlu+8V2qxXaA?=
+ =?us-ascii?Q?S8KFDvnCkUQ0CxyTGELn5d043NdJbnwx4aP/sCvmzQ5DO8BU8eY+GRTFzPrz?=
+ =?us-ascii?Q?f9/dj4PX9wo/9UTF0zcMMmIQJJQtVe9DUiJ7yVD5lne5kRnyDTa7qjytfgYr?=
+ =?us-ascii?Q?2eTkqRzMtgLBQkVmvOBl002RS1Nx8YUO0kGjYnnN1lajfbGehL/nwkQXoURw?=
+ =?us-ascii?Q?WjcZgjcD7lyUhhYqANHE8c8mkDmtDVMmv8lV1qJVsa7nSy+fBHx5o5cAR5U6?=
+ =?us-ascii?Q?Z+vUh5vFUDFeTU2pQdOOZ10m58SMS6um7y0JFn+5rdNLsK5pg9vsXyoGsm2k?=
+ =?us-ascii?Q?dw8n09hSN1IIL3ZWAsvw0UF8YSTb6ZxYvz51BEFE?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b4d600c2-a953-4dd6-b358-08dc857b3736
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2024 16:19:03.4559
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5NvWl/6nRXcesH1zuhZJnOyIMEON2AKaxKfbflEUAcjdyq207gx27YAaBISQQYDfUfNcdu8mBNGDHmuDUxOzkA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6787
 
-On 05.06.24 18:16, Yang Shi wrote:
+On Fri, May 24, 2024 at 07:26:49PM +0100, Dave Stevenson wrote:
+> From: Stefan Wahren <stefan.wahren@i2se.com>
 > 
+> Similar to the info generation, generate the final extra info with a
+> separate function. This is necessary to introduce other platforms
+> with different info bits.
+
+Each patch commit is independent. 
+
+Introduce common help function to generate the final extra info to reduce
+duplicate codes in each DMA operation.
+
+
 > 
-> On 6/5/24 8:25 AM, Peter Xu wrote:
->> On Tue, Jun 04, 2024 at 04:48:57PM -0700, Yang Shi wrote:
->>> The below bug was reported on a non-SMP kernel:
->>>
->>> [  275.267158][ T4335] ------------[ cut here ]------------
->>> [  275.267949][ T4335] kernel BUG at include/linux/page_ref.h:275!
->>> [  275.268526][ T4335] invalid opcode: 0000 [#1] KASAN PTI
->>> [  275.269001][ T4335] CPU: 0 PID: 4335 Comm: trinity-c3 Not tainted 6.7.0-rc4-00061-gefa7df3e3bb5 #1
->>> [  275.269787][ T4335] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
->>> [  275.270679][ T4335] RIP: 0010:try_get_folio (include/linux/page_ref.h:275 (discriminator 3) mm/gup.c:79 (discriminator 3))
->>> [  275.272813][ T4335] RSP: 0018:ffffc90005dcf650 EFLAGS: 00010202
->>> [  275.273346][ T4335] RAX: 0000000000000246 RBX: ffffea00066e0000 RCX: 0000000000000000
->>> [  275.274032][ T4335] RDX: fffff94000cdc007 RSI: 0000000000000004 RDI: ffffea00066e0034
->>> [  275.274719][ T4335] RBP: ffffea00066e0000 R08: 0000000000000000 R09: fffff94000cdc006
->>> [  275.275404][ T4335] R10: ffffea00066e0037 R11: 0000000000000000 R12: 0000000000000136
->>> [  275.276106][ T4335] R13: ffffea00066e0034 R14: dffffc0000000000 R15: ffffea00066e0008
->>> [  275.276790][ T4335] FS:  00007fa2f9b61740(0000) GS:ffffffff89d0d000(0000) knlGS:0000000000000000
->>> [  275.277570][ T4335] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> [  275.278143][ T4335] CR2: 00007fa2f6c00000 CR3: 0000000134b04000 CR4: 00000000000406f0
->>> [  275.278833][ T4335] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>> [  275.279521][ T4335] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>> [  275.280201][ T4335] Call Trace:
->>> [  275.280499][ T4335]  <TASK>
->>> [ 275.280751][ T4335] ? die (arch/x86/kernel/dumpstack.c:421 arch/x86/kernel/dumpstack.c:434 arch/x86/kernel/dumpstack.c:447)
->>> [ 275.281087][ T4335] ? do_trap (arch/x86/kernel/traps.c:112 arch/x86/kernel/traps.c:153)
->>> [ 275.281463][ T4335] ? try_get_folio (include/linux/page_ref.h:275 (discriminator 3) mm/gup.c:79 (discriminator 3))
->>> [ 275.281884][ T4335] ? try_get_folio (include/linux/page_ref.h:275 (discriminator 3) mm/gup.c:79 (discriminator 3))
->>> [ 275.282300][ T4335] ? do_error_trap (arch/x86/kernel/traps.c:174)
->>> [ 275.282711][ T4335] ? try_get_folio (include/linux/page_ref.h:275 (discriminator 3) mm/gup.c:79 (discriminator 3))
->>> [ 275.283129][ T4335] ? handle_invalid_op (arch/x86/kernel/traps.c:212)
->>> [ 275.283561][ T4335] ? try_get_folio (include/linux/page_ref.h:275 (discriminator 3) mm/gup.c:79 (discriminator 3))
->>> [ 275.283990][ T4335] ? exc_invalid_op (arch/x86/kernel/traps.c:264)
->>> [ 275.284415][ T4335] ? asm_exc_invalid_op (arch/x86/include/asm/idtentry.h:568)
->>> [ 275.284859][ T4335] ? try_get_folio (include/linux/page_ref.h:275 (discriminator 3) mm/gup.c:79 (discriminator 3))
->>> [ 275.285278][ T4335] try_grab_folio (mm/gup.c:148)
->>> [ 275.285684][ T4335] __get_user_pages (mm/gup.c:1297 (discriminator 1))
->>> [ 275.286111][ T4335] ? __pfx___get_user_pages (mm/gup.c:1188)
->>> [ 275.286579][ T4335] ? __pfx_validate_chain (kernel/locking/lockdep.c:3825)
->>> [ 275.287034][ T4335] ? mark_lock (kernel/locking/lockdep.c:4656 (discriminator 1))
->>> [ 275.287416][ T4335] __gup_longterm_locked (mm/gup.c:1509 mm/gup.c:2209)
->>> [ 275.288192][ T4335] ? __pfx___gup_longterm_locked (mm/gup.c:2204)
->>> [ 275.288697][ T4335] ? __pfx_lock_acquire (kernel/locking/lockdep.c:5722)
->>> [ 275.289135][ T4335] ? __pfx___might_resched (kernel/sched/core.c:10106)
->>> [ 275.289595][ T4335] pin_user_pages_remote (mm/gup.c:3350)
->>> [ 275.290041][ T4335] ? __pfx_pin_user_pages_remote (mm/gup.c:3350)
->>> [ 275.290545][ T4335] ? find_held_lock (kernel/locking/lockdep.c:5244 (discriminator 1))
->>> [ 275.290961][ T4335] ? mm_access (kernel/fork.c:1573)
->>> [ 275.291353][ T4335] process_vm_rw_single_vec+0x142/0x360
->>> [ 275.291900][ T4335] ? __pfx_process_vm_rw_single_vec+0x10/0x10
->>> [ 275.292471][ T4335] ? mm_access (kernel/fork.c:1573)
->>> [ 275.292859][ T4335] process_vm_rw_core+0x272/0x4e0
->>> [ 275.293384][ T4335] ? hlock_class (arch/x86/include/asm/bitops.h:227 arch/x86/include/asm/bitops.h:239 include/asm-generic/bitops/instrumented-non-atomic.h:142 kernel/locking/lockdep.c:228)
->>> [ 275.293780][ T4335] ? __pfx_process_vm_rw_core+0x10/0x10
->>> [ 275.294350][ T4335] process_vm_rw (mm/process_vm_access.c:284)
->>> [ 275.294748][ T4335] ? __pfx_process_vm_rw (mm/process_vm_access.c:259)
->>> [ 275.295197][ T4335] ? __task_pid_nr_ns (include/linux/rcupdate.h:306 (discriminator 1) include/linux/rcupdate.h:780 (discriminator 1) kernel/pid.c:504 (discriminator 1))
->>> [ 275.295634][ T4335] __x64_sys_process_vm_readv (mm/process_vm_access.c:291)
->>> [ 275.296139][ T4335] ? syscall_enter_from_user_mode (kernel/entry/common.c:94 kernel/entry/common.c:112)
->>> [ 275.296642][ T4335] do_syscall_64 (arch/x86/entry/common.c:51 (discriminator 1) arch/x86/entry/common.c:82 (discriminator 1))
->>> [ 275.297032][ T4335] ? __task_pid_nr_ns (include/linux/rcupdate.h:306 (discriminator 1) include/linux/rcupdate.h:780 (discriminator 1) kernel/pid.c:504 (discriminator 1))
->>> [ 275.297470][ T4335] ? lockdep_hardirqs_on_prepare (kernel/locking/lockdep.c:4300 kernel/locking/lockdep.c:4359)
->>> [ 275.297988][ T4335] ? do_syscall_64 (arch/x86/include/asm/cpufeature.h:171 arch/x86/entry/common.c:97)
->>> [ 275.298389][ T4335] ? lockdep_hardirqs_on_prepare (kernel/locking/lockdep.c:4300 kernel/locking/lockdep.c:4359)
->>> [ 275.298906][ T4335] ? do_syscall_64 (arch/x86/include/asm/cpufeature.h:171 arch/x86/entry/common.c:97)
->>> [ 275.299304][ T4335] ? do_syscall_64 (arch/x86/include/asm/cpufeature.h:171 arch/x86/entry/common.c:97)
->>> [ 275.299703][ T4335] ? do_syscall_64 (arch/x86/include/asm/cpufeature.h:171 arch/x86/entry/common.c:97)
->>> [ 275.300115][ T4335] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:129)
->>>
->>> This BUG is the VM_BUG_ON(!in_atomic() && !irqs_disabled()) assertion in
->>> folio_ref_try_add_rcu() for non-SMP kernel.
->>>
->>> The process_vm_readv() calls GUP to pin the THP. An optimization for
->>> pinning THP instroduced by commit 57edfcfd3419 ("mm/gup: accelerate thp
->>> gup even for "pages != NULL"") calls try_grab_folio() to pin the THP,
->>> but try_grab_folio() is supposed to be called in atomic context for
->>> non-SMP kernel, for example, irq disabled or preemption disabled, due to
->>> the optimization introduced by commit e286781d5f2e ("mm: speculative
->>> page references").
->>>
->>> The commit efa7df3e3bb5 ("mm: align larger anonymous mappings on THP
->>> boundaries") is not actually the root cause although it was bisected to.
->>> It just makes the problem exposed more likely.
->>>
->>> The follow up discussion suggested the optimization for non-SMP kernel
->>> may be out-dated and not worth it anymore [1].  So removing the
->>> optimization to silence the BUG.
->>>
->>> However calling try_grab_folio() in GUP slow path actually is
->>> unnecessary, so the following patch will clean this up.
->>>
->>> [1] https://lore.kernel.org/linux-mm/821cf1d6-92b9-4ac4-bacc-d8f2364ac14f@paulmck-laptop/
->>> Fixes: 57edfcfd3419 ("mm/gup: accelerate thp gup even for "pages != NULL"")
->>> Reported-by: kernel test robot <oliver.sang@intel.com>
->>> Cc: linux-stable <stable@vger.kernel.org> v6.6+
->>> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
->> Just to mention, IMHO it'll still be nicer if we keep the 1st fix patch
->> only have the folio_ref_try_add_rcu() changes, it'll be easier for
->> backport.
->>
->> Now this patch contains not only that but also logically a cleanup patch
->> that replaces old rcu calls to folio_try_get().  But squashing these may
->> mean we need explicit backport to 6.6 depending on whether those lines
->> changed, meanwhile the cleanup part may not be justfied to be backported in
->> the first place.  I'll leave that to you to decide, no strong feelings here.
+> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> ---
+>  drivers/dma/bcm2835-dma.c | 34 ++++++++++++++++++++++++++++------
+>  1 file changed, 28 insertions(+), 6 deletions(-)
 > 
-> Neither do I. But I slightly prefer have the patch as is for mainline
-> since removing the #ifdef and the clean up lead by it seems
-> self-contained and naturally integral. If it can not be applied to
-> stable tree without conflict, I can generate a separate patch for stable
-> tree with the removing #ifdef part. The effort should be trivial.
+> diff --git a/drivers/dma/bcm2835-dma.c b/drivers/dma/bcm2835-dma.c
+> index 7cef7ff89575..ef452ebb3c15 100644
+> --- a/drivers/dma/bcm2835-dma.c
+> +++ b/drivers/dma/bcm2835-dma.c
+> @@ -229,6 +229,29 @@ static u32 bcm2835_dma_prepare_cb_info(struct bcm2835_chan *c,
+>  	return result;
+>  }
+>  
+> +static u32 bcm2835_dma_prepare_cb_extra(struct bcm2835_chan *c,
+> +					enum dma_transfer_direction direction,
+> +					bool cyclic, bool final,
+> +					unsigned long flags)
+> +{
+> +	u32 result = 0;
+> +
+> +	if (cyclic) {
+> +		if (flags & DMA_PREP_INTERRUPT)
+> +			result |= BCM2835_DMA_INT_EN;
+> +	} else {
+> +		if (!final)
+> +			return 0;
+> +
+> +		result |= BCM2835_DMA_INT_EN;
+> +
+> +		if (direction == DMA_MEM_TO_MEM)
+> +			result |= BCM2835_DMA_WAIT_RESP;
+> +	}
 
-Agreed
 
-Acked-by: David Hildenbrand <david@redhat.com>
+move if (direction == DMA_MEM_TO_MEM) outof else branch. 
+DMA_MEM_TO_MEM is impossible for cyclic. Reduce if level can help
+easy to follow up.
 
--- 
-Cheers,
 
-David / dhildenb
+	if (cyclic)
+		...
+	else
+		...
 
+	if (direction == DMA_MEM_TO_MEM)
+		result |= BCM2835_DMA_WAIT_RESP; 
+
+
+
+> +
+> +	return result;
+> +}
+> +
+>  static void bcm2835_dma_free_cb_chain(struct bcm2835_desc *desc)
+>  {
+>  	size_t i;
+> @@ -644,7 +667,8 @@ static struct dma_async_tx_descriptor *bcm2835_dma_prep_dma_memcpy(
+>  	struct bcm2835_chan *c = to_bcm2835_dma_chan(chan);
+>  	struct bcm2835_desc *d;
+>  	u32 info = bcm2835_dma_prepare_cb_info(c, DMA_MEM_TO_MEM, false);
+> -	u32 extra = BCM2835_DMA_INT_EN | BCM2835_DMA_WAIT_RESP;
+> +	u32 extra = bcm2835_dma_prepare_cb_extra(c, DMA_MEM_TO_MEM, false,
+> +						 true, 0);
+>  	size_t max_len = bcm2835_dma_max_frame_length(c);
+>  	size_t frames;
+>  
+> @@ -675,7 +699,7 @@ static struct dma_async_tx_descriptor *bcm2835_dma_prep_slave_sg(
+>  	struct bcm2835_desc *d;
+>  	dma_addr_t src = 0, dst = 0;
+>  	u32 info = bcm2835_dma_prepare_cb_info(c, direction, false);
+> -	u32 extra = BCM2835_DMA_INT_EN;
+> +	u32 extra = bcm2835_dma_prepare_cb_extra(c, direction, false, true, 0);
+>  	size_t frames;
+>  
+>  	if (!is_slave_direction(direction)) {
+> @@ -723,7 +747,7 @@ static struct dma_async_tx_descriptor *bcm2835_dma_prep_dma_cyclic(
+>  	dma_addr_t src, dst;
+>  	u32 info = bcm2835_dma_prepare_cb_info(c, direction,
+>  					       buf_addr == od->zero_page);
+> -	u32 extra = 0;
+> +	u32 extra = bcm2835_dma_prepare_cb_extra(c, direction, true, true, 0);
+>  	size_t max_len = bcm2835_dma_max_frame_length(c);
+>  	size_t frames;
+>  
+> @@ -739,9 +763,7 @@ static struct dma_async_tx_descriptor *bcm2835_dma_prep_dma_cyclic(
+>  		return NULL;
+>  	}
+>  
+> -	if (flags & DMA_PREP_INTERRUPT)
+> -		extra |= BCM2835_DMA_INT_EN;
+> -	else
+> +	if (!(flags & DMA_PREP_INTERRUPT))
+>  		period_len = buf_len;
+>  
+>  	/*
+> -- 
+> 2.34.1
+> 
 
