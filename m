@@ -1,155 +1,149 @@
-Return-Path: <linux-kernel+bounces-202694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F153D8FCFA8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:41:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33D168FCFAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:42:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 887071F26AD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:41:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C54581F26838
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80F31957E4;
-	Wed,  5 Jun 2024 13:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3111957F2;
+	Wed,  5 Jun 2024 13:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="K/QYeyeS"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ddp9v8gK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cH5GaQgQ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5B719924D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 13:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8894A81F;
+	Wed,  5 Jun 2024 13:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717593500; cv=none; b=mqvaroFVInEoNinLmr3/3TRes5KcocWS/uGNk0LC9fMkJm59aXbjucOEYAaFyV0tqg/LaHdpyM6+Tq3R7Lxf+f4HJaJqzX7jYlnG5HPnRUgP4V/QtCikaoXulnUaxgRpJrGt7OfbHvxvLNnTQjK+cqSXhk6FJNPya3LoDaeXd78=
+	t=1717593623; cv=none; b=BK+EONIBME7vLuDzlG+1OHMTr4iYgw2S/ueMjeKw5hhQn/FkMNZ3EKwdFK5gwgGnIxXimh3r6+o5Coq32mY8UQg4KZ3q6/yg20t4IGfC/VBSFQQm6hCYuK2Y+tRSW+93PmfVCgnCU32hrS5cWLoXIVPBLgOtG19yBbwneEhGAfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717593500; c=relaxed/simple;
-	bh=aSGeY//DKOc9pUfHYgBFU7c6uqdrSP0BOyUSG+ubbnc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eItNdB7BXDgUCq4kU9fi2ESslBlHzKd6GgPdnpBr8JUHLJaBk03bgW+ywjN9nBvzOo8ps79oFIZrruB/pP44g+lKK4KxxL8icW7cuCrRwaJ6khFSeBbhHtEYprG5f9ILuFOM3k+fNTkuxNwLw8TOpRHvibYMnaxBCNmaHT0lbZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=K/QYeyeS; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1717593493;
-	bh=aSGeY//DKOc9pUfHYgBFU7c6uqdrSP0BOyUSG+ubbnc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=K/QYeyeSpUarJlYgGgAyIAl4Fd+JhbABsGC8TCH2Hn4w42JBjAcm37/+UPyjiPAiS
-	 FXqo2AgIrAo3JpeegFXyKyanW+LLvUOsnxx66xVFVXJVJCEME/Rclz++AQPGIMeI5U
-	 CkSNEPqyletl8w4nPPNuC6JwFEfS5d5LgrHDLEpE=
-Received: from [192.168.124.13] (unknown [113.140.11.124])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id E912F6760C;
-	Wed,  5 Jun 2024 09:18:08 -0400 (EDT)
-Message-ID: <444ec2031ef6ca016cbfa8dfedc51bddc8529ba7.camel@xry111.site>
-Subject: Re: [PATCH] loongarch: Only select HAVE_OBJTOOL and allow ORC
- unwinder if the inline assembler supports R_LARCH_{32,64}_PCREL
-From: Xi Ruoyao <xry111@xry111.site>
-To: Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>
-Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
- Tiezhu Yang <yangtiezhu@loongson.cn>, Nick Desaulniers
- <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
- <justinstitt@google.com>, Youling Tang <tangyouling@kylinos.cn>, Jinyang He
- <hejinyang@loongson.cn>,  loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
- mengqinggang@loongson.cn, cailulu@loongson.cn, wanglei@loongson.cn, 
- luweining@loongson.cn, Yujie Liu <yujie.liu@intel.com>, Heng Qi
- <hengqi@linux.alibaba.com>, Tejun Heo <tj@kernel.org>
-Date: Wed, 05 Jun 2024 21:18:06 +0800
-In-Reply-To: <f8ef61773b0119b8573fc0fed9ad0a8b43061efd.camel@xry111.site>
-References: <20240604150741.30252-1-xry111@xry111.site>
-	 <20240605054328.GA279426@thelio-3990X>
-	 <b55b8cb2c52f2c3701c83353586130b8dc237ee2.camel@xry111.site>
-	 <20240605062548.GF279426@thelio-3990X>
-	 <f8ef61773b0119b8573fc0fed9ad0a8b43061efd.camel@xry111.site>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1717593623; c=relaxed/simple;
+	bh=PvIoMHkKO8iSZkAT3rpcBtApwteKDRqqo/Ed2wXqyzA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RnbQerHwWy+nS11w+C0mORIVLzistJTBsKub+LO47YuV2dzi6NFMVoiq8I65Iri3OVeCUHhEZjr1k3Q+281ysLRcJOwYEJ+DA+9Ou/JwAsJw5aHD1jTZhFKKDv6m2sZh394HSLo+t0M8jqUmayYNKegsRSyuU1+Zhkua5MUIZ0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ddp9v8gK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cH5GaQgQ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717593617;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PYWn3g2LyW/uf5CwlkYzfpP0ISOJjU2c39/1Gv+YQ1g=;
+	b=Ddp9v8gKf7TG/yoHMTlRJdCgCbMuZDAoJdr03reGWGhqRvm2ms9ZIbXOhIRetGdvQAuHit
+	Rpu6WBl6bp7ywb+O9BHzEMOiD1prm3K3VJo4a33qcoseK3C/2wG1yBXXwrYQa0qr9RmCF/
+	edsncOPwwbAvi7DDICztg74fpmYSx2TRKcf5LN/yHxomd6vfiSbDhTqQ/naDcZaEL/isml
+	6+MAKpoATb3XOv9hXqflWq2CkCB4pzHHBZTMP1VQm6qEK2gsIDRYQStZnP6ob8V3m7hwhm
+	q8RXsbyzTLdssZw867eNDgVRsrI25lDKXCQ3SFwkI/JkuycQLAMJ8gzBsNhkdg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717593617;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PYWn3g2LyW/uf5CwlkYzfpP0ISOJjU2c39/1Gv+YQ1g=;
+	b=cH5GaQgQzNNMR/vz7Wvmo5cCMV1KcMVlvq8kiT1Lz51056P7AQt8WbRpgSxzTLxowrAd20
+	voHgBneHNJZdgKCA==
+To: Michael Kelley <mhklinux@outlook.com>, "kys@microsoft.com"
+ <kys@microsoft.com>, "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>, "decui@microsoft.com"
+ <decui@microsoft.com>, "mingo@redhat.com" <mingo@redhat.com>,
+ "bp@alien8.de" <bp@alien8.de>, "dave.hansen@linux.intel.com"
+ <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>,
+ "hpa@zytor.com" <hpa@zytor.com>, "lpieralisi@kernel.org"
+ <lpieralisi@kernel.org>, "kw@linux.com" <kw@linux.com>, "robh@kernel.org"
+ <robh@kernel.org>, "bhelgaas@google.com" <bhelgaas@google.com>,
+ "James.Bottomley@HansenPartnership.com"
+ <James.Bottomley@HansenPartnership.com>, "martin.petersen@oracle.com"
+ <martin.petersen@oracle.com>, "arnd@arndb.de" <arnd@arndb.de>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Cc: "maz@kernel.org" <maz@kernel.org>, "den@valinux.co.jp"
+ <den@valinux.co.jp>, "jgowans@amazon.com" <jgowans@amazon.com>,
+ "dawei.li@shingroup.cn" <dawei.li@shingroup.cn>
+Subject: RE: [RFC 06/12] genirq: Add per-cpu flow handler with conditional
+ IRQ stats
+In-Reply-To: <SN6PR02MB415737FF6F7B40A1CD20C4A9D4F82@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20240604050940.859909-1-mhklinux@outlook.com>
+ <20240604050940.859909-7-mhklinux@outlook.com> <87h6e860f8.ffs@tglx>
+ <SN6PR02MB415737FF6F7B40A1CD20C4A9D4F82@SN6PR02MB4157.namprd02.prod.outlook.com>
+Date: Wed, 05 Jun 2024 15:20:17 +0200
+Message-ID: <87zfrz4jce.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
 
-On Wed, 2024-06-05 at 18:57 +0800, Xi Ruoyao wrote:
-> On Tue, 2024-06-04 at 23:25 -0700, Nathan Chancellor wrote:
-> > On Wed, Jun 05, 2024 at 01:54:24PM +0800, Xi Ruoyao wrote:
-> > > On Tue, 2024-06-04 at 22:43 -0700, Nathan Chancellor wrote:
-> > > > For what it's worth, I have noticed some warnings with clang that I
-> > > > don't see with GCC but I only filed an issue on our GitHub and neve=
-r
-> > > > followed up on the mailing list, so sorry about that.
-> > > >=20
-> > > > https://github.com/ClangBuiltLinux/linux/issues/2024
-> > > >=20
-> > > > Might be tangential to this patch though but I felt it was worth
-> > > > mentioning.
-> > >=20
-> > > The warnings in GCC build is definitely the issue handled by this pat=
-ch.
-> > > But the warnings in Clang build should be a different issue.=C2=A0 Ca=
-n you
-> > > attach the kernel/events/core.o file from the Clang build for analysi=
-s?
-> > > I guess we need to disable more optimization...
-> >=20
-> > Sure thing. Let me know if there are any issues with the attachment.
->=20
-> Thanks!=C2=A0 I've simplified it and now even...
->=20
-> .global test
-> .type test,@function
-> test:
->=20
-> addi.d	$sp,$sp,-448
-> st.d	$ra,$sp,440
-> st.d	$fp,$sp,432
-> addi.d	$fp,$sp,448
->=20
-> # do something
->=20
-> addi.d	$sp,$fp,-448
-> ld.d	$fp,$sp,432
-> ld.d	$ra,$sp,440
-> addi.d	$sp,$sp,448
-> ret
->=20
-> .size test,.-test
->=20
-> is enough to trigger a objtool warning:
->=20
-> /home/xry111/t1.o: warning: objtool: test+0x20: return with modified stac=
-k frame
->=20
-> And to me this warning is bogus?
+On Tue, Jun 04 2024 at 23:03, Michael Kelley wrote:
+> From: Thomas Gleixner <tglx@linutronix.de> Sent: Tuesday, June 4, 2024 11:14 AM
+>>    1) Move the inner workings of handle_percpu_irq() out into
+>>       a static function which returns the 'handled' value and
+>>       share it between the two handler functions.
+>
+> The "inner workings" aren't quite the same in the two cases.
+> handle_percpu_irq() uses handle_irq_event_percpu() while
+> handle_percpu_demux_irq() uses __handle_irq_event_percpu().
+> The latter doesn't do add_interrupt_randomness() because the
+> demultiplexed IRQ handler will do it.  Doing add_interrupt_randomness()
+> twice doesn't break anything, but it's more overhead in the hard irq
+> path, which I'm trying to avoid.  The extra functionality in the
+> non-double-underscore version could be hoisted up to
+> handle_percpu_irq(), but that offsets gains from sharing the
+> inner workings.
 
-Minimal C reproducer:
+That's not rocket science to solve:
 
-struct x { _Alignas(64) char buf[128]; };
-
-void f(struct x *p);
-void g()
+static irqreturn_t helper(desc, func)
 {
-	struct x x =3D { .buf =3D "1145141919810" };
-	f(&x);
+	boiler_plate..
+        ret = func(desc)
+	boiler_plate..
+        return ret;
 }
 
-Then objtool is unhappy to the object file produced with "clang -c -O2"
-from this translation unit:
+No?
 
-/home/xry111/t2.o: warning: objtool: g+0x50: return with modified stack fra=
-me
+TBH, I still hate that conditional accounting :)
 
-It seems CFI_BP has a very specific semantic in objtool and Clang does
-not operates $fp in the expected way.  I'm not sure about my conclusion
-though.  Maybe Peter can explain it better.
+>>    2) Allocate a proper interrupt for the management mode and invoke it
+>>       via generic_handle_irq() just as any other demultiplex interrupt.
+>>       That spares all the special casing in the core code and just
+>>       works.
+>
+> Yes, this would work on x86, as the top-level interrupt isn't a Linux IRQ,
+> and the interrupt counting is done in Hyper-V specific code that could be
+> removed.  The demux'ed interrupt does the counting.
+>
+> But on arm64 the top-level interrupt *is* a Linux IRQ, so each
+> interrupt will get double-counted, which is a problem.
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+What is the problem?
+
+You have: toplevel, mgmt, device[], right?
+
+They are all accounted for seperately and each toplevel interrupt might
+result in demultiplexing one or more interrupts (mgmt, device[]), no?
+
+IMO accounting the toplevel interrupt seperately is informative because
+it allows you to figure out whether demultiplexing is clustered or not,
+but I lost that argument long ago. That's why most demultiplex muck
+installs a chained handler, which is a design fail on it's own.
+
+Thanks,
+
+        tglx
+
 
