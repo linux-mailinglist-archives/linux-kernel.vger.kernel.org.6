@@ -1,232 +1,454 @@
-Return-Path: <linux-kernel+bounces-201637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FDFF8FC125
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 03:14:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3170D8FC119
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 03:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B0D9285313
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 01:14:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C735B260F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 01:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C593DDC1;
-	Wed,  5 Jun 2024 01:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63CD75C82;
+	Wed,  5 Jun 2024 01:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HCugkmDA"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RxPmb3aH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4CED51C;
-	Wed,  5 Jun 2024 01:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424CB2F2B;
+	Wed,  5 Jun 2024 01:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717550016; cv=none; b=EZr9QnPzIMS8z+EWso0U6s7nmEbwRjjKdoTQZotDBqO659UuYxGLfcEuxF2lt5XRSZvGCCS9hCI38iveQIakUC2g04jd5Apq4KlwzmdKDNkGzd1W6zS/0y0nUWy8CxOPHi7anG0sdsW9k0ruD0s0f3W2gTe3X/GUpnc8H6utwpg=
+	t=1717549849; cv=none; b=D8HEJrIYJCdehg5wJoqKl9nw1BIj5cYvAACm/M3ohZg3l618Wb66/SZahKfWwxcCuVUuooeBLGGcNk0aq4kjO6m4u6uEKoK6Cv4yU8padSuNO7LAnoum1ea7dPBEsu9vsI4qYZOJxQDiw7CU4nsWxnxYgH3XoxpqrChX9mqtGh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717550016; c=relaxed/simple;
-	bh=aeTRylefGuQHaUtMZDE+X7LC3UE9fNWSsaXvqpbrIqQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=fcutyFI4Vhl3VOi5RfYtIDG94MyeiVRcicCufSxjbQLsATKwSD3KrGcUkxpyx8S6zWqKva2pGFENpf41i1sZGGA/KNZgh8BXj9aRX1U2GmcNwiFRlSKr24cn0nvPjeSIkO/w8AFXcRYbOQyjXkG40KdeHtngPPWdAP5nBgMbUK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HCugkmDA; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f44b594deeso45555925ad.2;
-        Tue, 04 Jun 2024 18:13:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717550014; x=1718154814; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tu6vsHCnxaPM2f2KKum/zLpiydGYEoGWT465e/02zAo=;
-        b=HCugkmDACu0fNsqFfXhekybmI/KjIJSAEHw/NzBhvHHTaXaO9V8CrS9VQXImHe9u0k
-         YWP/MZTbhvDArUcoJB71Z1YtnNG/BUW3sChKBd/uBW6Ei0JwbJ3k+eJdOHmy4JmHk6ha
-         DiufAr2/VxLtxWjRWAqEr7AdUfS/Tl+YY8PZ5FsqgK2W+0rTPJvxahKNnqZO5vy7O0g/
-         mdIgm+WRaUkqWpfcW3XcFsemPtfKhQObHWchRSnUrScRa1ZmkNWEqMl+J9zBzWMylsY9
-         jQ/uGYCkDXz7lYXWhKaFhR1Gg416AqbfDspDwGmiyk41HNkkKbymUAXdcbVsEeJJeGK+
-         r0iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717550014; x=1718154814;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Tu6vsHCnxaPM2f2KKum/zLpiydGYEoGWT465e/02zAo=;
-        b=tRI5vNiihJjQGhqFRkAKusRvNsO62KcR7rvpgn0STts+rLbG+9XCVwLfD0zthxw7AO
-         x3wcyirm0cHeAceOJ9qOL6ks491GDZtHDlRlqcgC7LSB60fpQIq/sakJ0MvD2+wb/LXn
-         fLa2wLrLC3dXMnjF1mABTMWv9ZFObL+ssxvgSKHfeuku+WYzwR5cwjJa2+qsaXzLxYEi
-         S8s9N2xOoy6eWW343cCJmAjmW8L7sqRoiwfb2JSjIoRbP9GVP2cOxAFAh2Qd9JaWnct5
-         abErDHYPND065y9ex5qPWIWRE31SVDiXmxaq2UMTL7MoyAqyw/suo7ZlPaYgJniWZedY
-         pLvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXtqT6Kg1KIjZAwiTMk1gMTE89OPei9nRwUOMoT2RVAvlQASxqvU+XwJ3HonHG6TejjBtPQpTVvjq9PwcJ0XGwSsJSUzULH2Qfq6+9HKatZO6ipIvrCg7x9nVZpP1iRUwD9CHRKpGx1Yi5B3p1KY/su876YDzVFOh92UOISCbSfZI4w
-X-Gm-Message-State: AOJu0YzApxl4kkfyCkM/F4cR2mam/8onvbbq/YQWYgBW1KQtzfrf4NhA
-	m/ATIuw2RcFcWkN2f5y+1DL79NQ6IMOQnsavRztE8LPOwfsjlXZF
-X-Google-Smtp-Source: AGHT+IGJgM+34V9qBDcdXOjRRC6HPnlatgP+2RACljuIkhwsYwWu5xrjOtUVR/Ipe0ykdmx38saDZA==
-X-Received: by 2002:a17:902:c94a:b0:1f4:9e69:a8f9 with SMTP id d9443c01a7336-1f6a5a7a27emr13895425ad.62.1717550013931;
-        Tue, 04 Jun 2024 18:13:33 -0700 (PDT)
-Received: from paran-QEMU-Virtual-Machine.. ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f63232dc75sm89997825ad.8.2024.06.04.18.13.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 18:13:33 -0700 (PDT)
-From: yskelg@gmail.com
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: SeongJae Park <sj@kernel.org>,
-	Jinwoo Park <pmnxis@gmail.com>,
-	Austin Kim <austindh.kim@gmail.com>,
-	shjy180909@gmail.com,
-	workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yunseong Kim <yskelg@gmail.com>
-Subject: [PATCH v5] Documentation: cve Korean translation
-Date: Wed,  5 Jun 2024 10:08:13 +0900
-Message-Id: <20240605010811.19445-1-yskelg@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717549849; c=relaxed/simple;
+	bh=cHc/0ZdmuHo5jRwZHm5Alo/p/rjYM9Aw1Ngf1OY3QAU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XqldClQ8d9bhr8ayTUF8GSo5HFKWtIoVKt6Ta+m3u8E3vd8S2THV09OCVzoKjBKT9Xgztf10s3zaIwkXlWPGE6DsWxvt/UPVUQ+QkBycNZv7GcbolBzmr419aYwa6l+2SfT6qHZjyfOCYgiDEREHD4SPNIvbmTNNk+le7+ygD1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RxPmb3aH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93EACC2BBFC;
+	Wed,  5 Jun 2024 01:10:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717549848;
+	bh=cHc/0ZdmuHo5jRwZHm5Alo/p/rjYM9Aw1Ngf1OY3QAU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RxPmb3aHfNTlO+izjpeTjqxODioDyba6worXTsVmVPja7m7QDJ7v/vJmwwTqZsDPD
+	 uximD3cjydeoB7GwsKIdRn0SaOX/Qmp6f5+PtIBEPsAytaEoseoxirMAOgsHAiftHG
+	 YF1a7OvovnsMD4AxvX/UtcYtsZdd62gn+mvjRw1rbYJcd9U83na20x1pDy2NvMdISZ
+	 qQY4r4LeBoVJ9Iu9IQaiTH969cD290OZ2NaLzhTCld9WvSKgvUHHsLgVEFsHX2vBcK
+	 OXd7deQzXtMpg5IZcwF3nGoSmYbCS63Y0tcVMMAB4BRHFGW2lHKSyrXq8KkUL3k2xY
+	 cfE/cp/hJpu9A==
+Date: Tue, 4 Jun 2024 18:10:47 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: "Steinar H. Gunderson" <sesse@google.com>
+Cc: acme@kernel.org, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, irogers@google.com
+Subject: Re: [PATCH v8 3/3] perf annotate: LLVM-based disassembler
+Message-ID: <Zl-7F4amEqiTj4mw@google.com>
+References: <20240602204208.735793-1-sesse@google.com>
+ <20240602204208.735793-3-sesse@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240602204208.735793-3-sesse@google.com>
 
-From: Yunseong Kim <yskelg@gmail.com>
+Hello,
 
-This is a Documentation/process/cve korean version.
+On Sun, Jun 02, 2024 at 10:42:08PM +0200, Steinar H. Gunderson wrote:
+> Support using LLVM as a disassembler method, allowing helperless
+> annotation in non-distro builds. (It is also much faster than
+> using libbfd or bfd objdump on binaries with a lot of debug
+> information.)
+> 
+> This is nearly identical to the output of llvm-objdump; there are
+> some very rare whitespace differences, some minor changes to demangling
+> (since we use perf's regular demangling and not LLVM's own) and
+> the occasional case where llvm-objdump makes a different choice
+> when multiple symbols share the same address. It should work across
+> all of LLVM's supported architectures, although I've only tested 64-bit
+> x86, and finding the right triple from perf's idea of machine
+> architecture can sometimes be a bit tricky. Ideally, we should have
+> some way of finding the triplet just from the file itself.
+> 
+> Signed-off-by: Steinar H. Gunderson <sesse@google.com>
 
-The following changes have been updated based on SeongJae Park’s feedback
-from the last v4 patch.
+I got a build error like this:
 
-Signed-off-by: Yunseong Kim <yskelg@gmail.com>
----
- Documentation/translations/ko_KR/index.rst    |   1 +
- .../translations/ko_KR/process/cve.rst        | 107 ++++++++++++++++++
- 2 files changed, 108 insertions(+)
- create mode 100644 Documentation/translations/ko_KR/process/cve.rst
+    CC      util/disasm.o
+  util/disasm.c:1615:10: fatal error: llvm-c/Disassembler.h: No such file or directory
+   1615 | #include <llvm-c/Disassembler.h>
+        |          ^~~~~~~~~~~~~~~~~~~~~~~
+  compilation terminated.
 
-diff --git a/Documentation/translations/ko_KR/index.rst b/Documentation/translations/ko_KR/index.rst
-index 4add6b2fe1f2..46cbaf5696f2 100644
---- a/Documentation/translations/ko_KR/index.rst
-+++ b/Documentation/translations/ko_KR/index.rst
-@@ -13,6 +13,7 @@
- 
-    howto
- 
-+   process/cve
- 
- 리눅스 커널 메모리 배리어
- -------------------------
-diff --git a/Documentation/translations/ko_KR/process/cve.rst b/Documentation/translations/ko_KR/process/cve.rst
-new file mode 100644
-index 000000000000..30f2fc0420d8
---- /dev/null
-+++ b/Documentation/translations/ko_KR/process/cve.rst
-@@ -0,0 +1,107 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+:원문: Documentation/process/cve.rst
-+:역자: 김윤성 <yskelg@gmail.com>
-+:감수: 박진우 <pmnxis@gmail.com>, 김동현 <austindh.kim@gmail.com>
-+
-+==========
-+CVE 항목들
-+==========
-+
-+공통 취약점 및 노출(CVE®) 번호는 공개적으로 발표된 보안 취약점을 식별, 정의 및
-+목록화하기 위한 명확한 방법으로 개발되었습니다. 시간이 지남에 따라 커널
-+프로젝트와 관련하여서는 그 유용성이 감소했으며, CVE 번호는 부적절한 방식과
-+부적절한 이유로 할당되는 경우가 매우 많았습니다. 이로 인하여 커널 개발
-+커뮤니티에서는 이를 기피하는 경향이 있었습니다. 그러나 커널 커뮤니티 외부의
-+개인과 회사가 CVE 및 기타 형태의 보안 식별자를 할당하라는 지속적인 압박과
-+지속적인 남용이 결합되면서 커널 커뮤니티가 이러한 할당에 대한 통제권을 가져야
-+한다는 것이 분명해졌습니다.
-+
-+Linux 커널 개발팀은 잠재적인 Linux 커널 보안 문제에 대해 CVE를 할당할 수
-+있는 권한이 있습니다. 여기서 할당은
-+:doc:`일반 Linux 커널 보안 버그 보고절차</process/security-bugs>`와는
-+별개입니다.
-+
-+Linux 커널에 할당된 모든 CVE 목록은
-+https://lore.kernel.org/linux-cve-announce/ 에 있는 Linux-CVE 메일링 리스트의
-+아카이브에서 확인할 수 있습니다. 할당된 CVE에 대한 알림을 받으려면 다음 메일링
-+리스트를 `구독<https://subspace.kernel.org/subscribing.html>`_ 하세요.
-+
-+절차
-+====
-+
-+일반적인 안정 릴리스 절차의 일부로, 잠재적으로 보안 문제가 될 수 있는 커널
-+변경 사항은 CVE 번호 할당 담당을 하는 개발자가 식별하여 CVE 번호를 자동으로
-+할당합니다. 이러한 할당은 linux-cve-announce 메일링 리스트에 공지사항으로
-+수시로 게시됩니다.
-+
-+리눅스 커널은 시스템의 최하단 계층에서 동작합니다. 때문에 거의 모든 버그가
-+커널 보안을 취약하게 만들 수 있습니다. 하지만 버그를 수정할 때 악용 가능성을
-+명확하게 파악하기 힘든 경우가 많습니다. 이 때문에 CVE 할당 팀은 지나치게
-+조심스러워 보일 수도 있는 방식으로 버그 수정이 확인되는 모든 버그에 CVE 번호를
-+할당합니다. 이것이 리눅스 커널 팀이 발행한 많은 수의 CVE를 설명합니다.
-+
-+사용자가 CVE를 지정해야 한다고 생각하는 특정 수정 사항을 CVE 할당 팀이 놓친
-+경우에는 <cve@kernel.org>로 이메일을 보내 주시면 커널 CVE 할당 팀에서 함께
-+작업할 것입니다. 이 별칭은 이미 릴리스된 커널 트리에 있는 수정 사항에 대한
-+CVE 할당 전용이므로 잠재적인 보안 문제는 이 메일 주소로 보내서는 안 됩니다.
-+수정되지 않은 보안 문제를 발견했다고 생각되면
-+:doc:`일반 Linux 커널 보안 버그 보고 절차</process/security-bugs>`를 따르세요.
-+
-+Linux 커널에서 수정되지 않은 보안 이슈에 대해서는 CVE가 자동으로 할당되지
-+않으며, 수정이 제공되고 stable 커널 트리에 적용된 후에만 자동으로 할당되며,
-+기존 수정의 git 커밋 ID로 추적할 수 있습니다. 커밋으로 문제가 해결되기 전에
-+CVE를 할당받고자 하는 사람은 커널 CVE 할당 팀<cve@kernel.org>에 문의하여
-+예약된 식별자 항목들에서 식별자를 할당받으시기 바랍니다.
-+
-+현재 Stable/LTS 커널 팀에서 지원하지 않는 커널 버전에서 발견된 문제에 대해서는
-+CVE가 할당되지 않습니다. 현재 지원되는 커널 브랜치 목록은
-+https://kernel.org/releases.html 에서 확인할 수 있습니다.
-+
-+CVE 항목들 할당 분쟁
-+====================
-+
-+리눅스 커널 변경 사항에 할당된 CVE에 이의를 제기하거나 수정할 권한은 영향을
-+받는 관련 하위 시스템의 관리자에게만 있습니다. 이 원칙은 취약점 보고의 정확성
-+및 책임감을 높이기 위해 존재합니다. 하위 시스템에 대한 깊은 전문 지식과 정확한
-+이해를 가진 사람만이 보고된 취약점의 유효성과 범위를 효과적으로 판단하고
-+적절한 CVE를 지정할 수 있습니다. 지정된 권한 외의 다른 사람이 CVE를 수정 또는
-+이의를 제기하려고 시도하면 혼란, 부정확한 보고, 그리고 궁극적으로는 시스템
-+손상으로 이어질 수 있습니다.
-+
-+유효하지 않은 CVE 항목들
-+========================
-+
-+개별 배포판에서만 지원되는 커널 버전의 보안 문제가 발견된 경우, 또는 개별
-+배포판에서 더 이상 kernel.org에서 지원하지 않는 커널 버전을 지원하고 있는
-+경우라면, 보안 문제가 발생하는 경우에 Linux 커널 CVE 팀에서 CVE를 할당할 수
-+없습니다. 변경된 사항을 적용한 개별 Linux 배포판에 직접 요청해야 합니다.
-+
-+적극적으로 지원되고 있는 커널 버전에 대해 리눅스 커널 CVE 팀 외의 다른 그룹이
-+CVE를 할당했다면, 이 CVE는 유효하지 않습니다. CNA 수정 절차를 통해 특정
-+배포판에서 적용한 항목을 무효화할 수 있도록 커널 CVE 할당 팀<cve@kernel.org>에
-+이메일을 통해 알려주시기 바랍니다.
-+
-+특정 CVE의 적용 범위
-+====================
-+
-+리눅스 커널은 다양한 방식으로 사용될 수 있으며, 외부 사용자가 커널에 접근하는
-+방법도 여러 가지이며, 전혀 접근하지 않을 수도 있습니다. 따라서 특정 CVE의 적용
-+범위는 리눅스 사용자가 결정해야 합니다. CVE 할당 팀은 이를 판단해줄 수
-+없습니다. 특정 CVE의 적용 범위를 확인하기 위해 우리 팀에 문의하지 않기를
-+바랍니다.
-+
-+또한 소스 트리는 매우 방대하고, 각 시스템은 소스 트리의 일부분만을 사용하기
-+때문에 많은 사용자들이 할당된 CVE 중 상당 부분이 자신의 시스템과 관련이 없다는
-+사실을 인지해야 합니다.
-+
-+즉, 우리는 사용자의 사용 사례를 알지 못하며 사용자가 커널의 어떤 부분을
-+사용하는지 알 수 없으므로 특정 CVE가 사용자의 시스템과 관련이 있는지 판단할 수
-+없습니다.
-+
-+여태까지 항상 그래왔듯이, 커뮤니티 구성원들의 통합된 테스트를 거친 전체 커널
-+변경 사항을 적용하는 것이 좋습니다. 개별적인 부분만 선택하여 적용하는 것을
-+권장하지 않습니다. 또한 많은 버그의 경우 전체적인 문제 해결은 단일 변경 사항이
-+아니라 여러 수정 사항의 누적을 통해 이루어집니다. 이상적으로는 모든 문제에
-+대한 모든 수정 사항에 CVE가 할당되지만, 때로는 누락될 수도 있습니다. 따라서
-+CVE가 할당되지 않은 일부 변경 사항도 시스템에 적용하는 것이 중요할 수 있습니다.
--- 
-2.34.1
+My LLVM version is 16.
 
+  $ llvm-config --version
+  16.0.6
+
+Thanks,
+Namhyung
+
+> ---
+>  tools/perf/util/disasm.c           | 193 +++++++++++++++++++++++++++++
+>  tools/perf/util/llvm-c-helpers.cpp |  62 +++++++++
+>  tools/perf/util/llvm-c-helpers.h   |  11 ++
+>  3 files changed, 266 insertions(+)
+> 
+> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
+> index c0dbb955e61a..4946e9ccf93b 100644
+> --- a/tools/perf/util/disasm.c
+> +++ b/tools/perf/util/disasm.c
+> @@ -43,6 +43,7 @@ static int call__scnprintf(struct ins *ins, char *bf, size_t size,
+>  
+>  static void ins__sort(struct arch *arch);
+>  static int disasm_line__parse(char *line, const char **namep, char **rawp);
+> +static char *expand_tabs(char *line, char **storage, size_t *storage_len);
+>  
+>  static __attribute__((constructor)) void symbol__init_regexpr(void)
+>  {
+> @@ -1378,7 +1379,9 @@ static int open_capstone_handle(struct annotate_args *args, bool is_64bit,
+>  
+>  	return 0;
+>  }
+> +#endif
+>  
+> +#if defined(HAVE_LIBCAPSTONE_SUPPORT) || defined(HAVE_LIBLLVM_SUPPORT)
+>  struct find_file_offset_data {
+>  	u64 ip;
+>  	u64 offset;
+> @@ -1442,7 +1445,9 @@ read_symbol(const char *filename, struct map *map, struct symbol *sym,
+>  	free(buf);
+>  	return NULL;
+>  }
+> +#endif
+>  
+> +#ifdef HAVE_LIBCAPSTONE_SUPPORT
+>  static void print_capstone_detail(cs_insn *insn, char *buf, size_t len,
+>  				  struct annotate_args *args, u64 addr)
+>  {
+> @@ -1606,6 +1611,189 @@ static int symbol__disassemble_capstone(char *filename, struct symbol *sym,
+>  }
+>  #endif
+>  
+> +#ifdef HAVE_LIBLLVM_SUPPORT
+> +#include <llvm-c/Disassembler.h>
+> +#include <llvm-c/Target.h>
+> +#include "util/llvm-c-helpers.h"
+> +
+> +struct symbol_lookup_storage {
+> +	u64 branch_addr;
+> +	u64 pcrel_load_addr;
+> +};
+> +
+> +/*
+> + * Whenever LLVM wants to resolve an address into a symbol, it calls this
+> + * callback. We don't ever actually _return_ anything (in particular, because
+> + * it puts quotation marks around what we return), but we use this as a hint
+> + * that there is a branch or PC-relative address in the expression that we
+> + * should add some textual annotation for after the instruction. The caller
+> + * will use this information to add the actual annotation.
+> + */
+> +static const char *
+> +symbol_lookup_callback(void *disinfo, uint64_t value,
+> +		       uint64_t *ref_type,
+> +		       uint64_t address __maybe_unused,
+> +		       const char **ref __maybe_unused)
+> +{
+> +	struct symbol_lookup_storage *storage = disinfo;
+> +
+> +	if (*ref_type == LLVMDisassembler_ReferenceType_In_Branch)
+> +		storage->branch_addr = value;
+> +	else if (*ref_type == LLVMDisassembler_ReferenceType_In_PCrel_Load)
+> +		storage->pcrel_load_addr = value;
+> +	*ref_type = LLVMDisassembler_ReferenceType_InOut_None;
+> +	return NULL;
+> +}
+> +
+> +static int symbol__disassemble_llvm(char *filename, struct symbol *sym,
+> +				    struct annotate_args *args)
+> +{
+> +	struct annotation *notes = symbol__annotation(sym);
+> +	struct map *map = args->ms.map;
+> +	struct dso *dso = map__dso(map);
+> +	u64 start = map__rip_2objdump(map, sym->start);
+> +	u8 *buf;
+> +	u64 len;
+> +	u64 pc;
+> +	bool is_64bit;
+> +	char triplet[64];
+> +	char disasm_buf[2048];
+> +	size_t disasm_len;
+> +	struct disasm_line *dl;
+> +	LLVMDisasmContextRef disasm = NULL;
+> +	struct symbol_lookup_storage storage;
+> +	char *line_storage = NULL;
+> +	size_t line_storage_len = 0;
+> +	int ret = -1;
+> +
+> +	if (args->options->objdump_path)
+> +		return -1;
+> +
+> +	LLVMInitializeAllTargetInfos();
+> +	LLVMInitializeAllTargetMCs();
+> +	LLVMInitializeAllDisassemblers();
+> +
+> +	buf = read_symbol(filename, map, sym, &len, &is_64bit);
+> +	if (buf == NULL)
+> +		return -1;
+> +
+> +	if (arch__is(args->arch, "x86")) {
+> +		if (is_64bit)
+> +			scnprintf(triplet, sizeof(triplet), "x86_64-pc-linux");
+> +		else
+> +			scnprintf(triplet, sizeof(triplet), "i686-pc-linux");
+> +	} else {
+> +		scnprintf(triplet, sizeof(triplet), "%s-linux-gnu",
+> +			  args->arch->name);
+> +	}
+> +
+> +	disasm = LLVMCreateDisasm(triplet, &storage, 0, NULL,
+> +				  symbol_lookup_callback);
+> +	if (disasm == NULL)
+> +		goto err;
+> +
+> +	if (args->options->disassembler_style &&
+> +	    !strcmp(args->options->disassembler_style, "intel"))
+> +		LLVMSetDisasmOptions(disasm,
+> +				     LLVMDisassembler_Option_AsmPrinterVariant);
+> +
+> +	/*
+> +	 * This needs to be set after AsmPrinterVariant, due to a bug in LLVM;
+> +	 * setting AsmPrinterVariant makes a new instruction printer, making it
+> +	 * forget about the PrintImmHex flag (which is applied before if both
+> +	 * are given to the same call).
+> +	 */
+> +	LLVMSetDisasmOptions(disasm, LLVMDisassembler_Option_PrintImmHex);
+> +
+> +	/* add the function address and name */
+> +	scnprintf(disasm_buf, sizeof(disasm_buf), "%#"PRIx64" <%s>:",
+> +		  start, sym->name);
+> +
+> +	args->offset = -1;
+> +	args->line = disasm_buf;
+> +	args->line_nr = 0;
+> +	args->fileloc = NULL;
+> +	args->ms.sym = sym;
+> +
+> +	dl = disasm_line__new(args);
+> +	if (dl == NULL)
+> +		goto err;
+> +
+> +	annotation_line__add(&dl->al, &notes->src->source);
+> +
+> +	pc = start;
+> +	for (u64 offset = 0; offset < len; ) {
+> +		unsigned int ins_len;
+> +
+> +		storage.branch_addr = 0;
+> +		storage.pcrel_load_addr = 0;
+> +
+> +		ins_len = LLVMDisasmInstruction(disasm, buf + offset,
+> +						len - offset, pc,
+> +						disasm_buf, sizeof(disasm_buf));
+> +		if (ins_len == 0)
+> +			goto err;
+> +		disasm_len = strlen(disasm_buf);
+> +
+> +		if (storage.branch_addr != 0) {
+> +			char *name = llvm_name_for_code(dso, filename,
+> +							storage.branch_addr);
+> +			if (name != NULL) {
+> +				disasm_len += scnprintf(disasm_buf + disasm_len,
+> +							sizeof(disasm_buf) -
+> +								disasm_len,
+> +							" <%s>", name);
+> +				free(name);
+> +			}
+> +		}
+> +		if (storage.pcrel_load_addr != 0) {
+> +			char *name = llvm_name_for_data(dso, filename,
+> +							storage.pcrel_load_addr);
+> +			disasm_len += scnprintf(disasm_buf + disasm_len,
+> +						sizeof(disasm_buf) - disasm_len,
+> +						"  # %#"PRIx64,
+> +						storage.pcrel_load_addr);
+> +			if (name) {
+> +				disasm_len += scnprintf(disasm_buf + disasm_len,
+> +							sizeof(disasm_buf) -
+> +							disasm_len,
+> +							" <%s>", name);
+> +				free(name);
+> +			}
+> +		}
+> +
+> +		args->offset = offset;
+> +		args->line = expand_tabs(disasm_buf, &line_storage,
+> +					 &line_storage_len);
+> +		args->line_nr = 0;
+> +		args->fileloc = NULL;
+> +		args->ms.sym = sym;
+> +
+> +		llvm_addr2line(filename, pc, &args->fileloc,
+> +			       (unsigned int *)&args->line_nr, false, NULL);
+> +
+> +		dl = disasm_line__new(args);
+> +		if (dl == NULL)
+> +			goto err;
+> +
+> +		annotation_line__add(&dl->al, &notes->src->source);
+> +
+> +		free(args->fileloc);
+> +		pc += ins_len;
+> +		offset += ins_len;
+> +	}
+> +
+> +	ret = 0;
+> +
+> +err:
+> +	LLVMDisasmDispose(disasm);
+> +	free(buf);
+> +	free(line_storage);
+> +	return ret;
+> +}
+> +#endif
+> +
+> +
+>  /*
+>   * Possibly create a new version of line with tabs expanded. Returns the
+>   * existing or new line, storage is updated if a new line is allocated. If
+> @@ -1730,6 +1918,11 @@ int symbol__disassemble(struct symbol *sym, struct annotate_args *args)
+>  		strcpy(symfs_filename, tmp);
+>  	}
+>  
+> +#ifdef HAVE_LIBLLVM_SUPPORT
+> +	err = symbol__disassemble_llvm(symfs_filename, sym, args);
+> +	if (err == 0)
+> +		goto out_remove_tmp;
+> +#endif
+>  #ifdef HAVE_LIBCAPSTONE_SUPPORT
+>  	err = symbol__disassemble_capstone(symfs_filename, sym, args);
+>  	if (err == 0)
+> diff --git a/tools/perf/util/llvm-c-helpers.cpp b/tools/perf/util/llvm-c-helpers.cpp
+> index 3cc967ec6f28..4070e2d5682f 100644
+> --- a/tools/perf/util/llvm-c-helpers.cpp
+> +++ b/tools/perf/util/llvm-c-helpers.cpp
+> @@ -8,6 +8,7 @@
+>  #pragma GCC diagnostic push
+>  #pragma GCC diagnostic ignored "-Wunused-parameter"  /* Needed for LLVM <= 15 */
+>  #include <llvm/DebugInfo/Symbolize/Symbolize.h>
+> +#include <llvm/Support/TargetSelect.h>
+>  #pragma GCC diagnostic pop
+>  
+>  #include <stdio.h>
+> @@ -19,6 +20,9 @@ extern "C" {
+>  #include "symbol_conf.h"
+>  #include "llvm-c-helpers.h"
+>  
+> +extern "C"
+> +char *dso__demangle_sym(struct dso *dso, int kmodule, const char *elf_name);
+> +
+>  using namespace llvm;
+>  using llvm::symbolize::LLVMSymbolizer;
+>  
+> @@ -132,3 +136,61 @@ int llvm_addr2line(const char *dso_name, u64 addr,
+>  		return extract_file_and_line(*res_or_err, file, line);
+>  	}
+>  }
+> +
+> +static char *
+> +make_symbol_relative_string(struct dso *dso, const char *sym_name,
+> +			    u64 addr, u64 base_addr)
+> +{
+> +	if (!strcmp(sym_name, "<invalid>"))
+> +		return NULL;
+> +
+> +	char *demangled = dso__demangle_sym(dso, 0, sym_name);
+> +	if (base_addr && base_addr != addr) {
+> +		char buf[256];
+> +		snprintf(buf, sizeof(buf), "%s+0x%lx",
+> +			 demangled ? demangled : sym_name, addr - base_addr);
+> +		free(demangled);
+> +		return strdup(buf);
+> +	} else {
+> +		if (demangled)
+> +			return demangled;
+> +		else
+> +			return strdup(sym_name);
+> +	}
+> +}
+> +
+> +extern "C"
+> +char *llvm_name_for_code(struct dso *dso, const char *dso_name, u64 addr)
+> +{
+> +	LLVMSymbolizer *symbolizer = get_symbolizer();
+> +	object::SectionedAddress sectioned_addr = {
+> +		addr,
+> +		object::SectionedAddress::UndefSection
+> +	};
+> +	Expected<DILineInfo> res_or_err =
+> +		symbolizer->symbolizeCode(dso_name, sectioned_addr);
+> +	if (!res_or_err) {
+> +		return NULL;
+> +	}
+> +	return make_symbol_relative_string(
+> +		dso, res_or_err->FunctionName.c_str(),
+> +		addr, res_or_err->StartAddress ? *res_or_err->StartAddress : 0);
+> +}
+> +
+> +extern "C"
+> +char *llvm_name_for_data(struct dso *dso, const char *dso_name, u64 addr)
+> +{
+> +	LLVMSymbolizer *symbolizer = get_symbolizer();
+> +	object::SectionedAddress sectioned_addr = {
+> +		addr,
+> +		object::SectionedAddress::UndefSection
+> +	};
+> +	Expected<DIGlobal> res_or_err =
+> +		symbolizer->symbolizeData(dso_name, sectioned_addr);
+> +	if (!res_or_err) {
+> +		return NULL;
+> +	}
+> +	return make_symbol_relative_string(
+> +		dso, res_or_err->Name.c_str(),
+> +		addr, res_or_err->Start);
+> +}
+> diff --git a/tools/perf/util/llvm-c-helpers.h b/tools/perf/util/llvm-c-helpers.h
+> index 19332dd98e14..d2b99637a28a 100644
+> --- a/tools/perf/util/llvm-c-helpers.h
+> +++ b/tools/perf/util/llvm-c-helpers.h
+> @@ -13,6 +13,8 @@
+>  extern "C" {
+>  #endif
+>  
+> +struct dso;
+> +
+>  struct llvm_a2l_frame {
+>    char* filename;
+>    char* funcname;
+> @@ -42,6 +44,15 @@ int llvm_addr2line(const char* dso_name,
+>                     bool unwind_inlines,
+>                     struct llvm_a2l_frame** inline_frames);
+>  
+> +/*
+> + * Simple symbolizers for addresses; will convert something like
+> + * 0x12345 to "func+0x123". Will return NULL if no symbol was found.
+> + *
+> + * The returned value must be freed by the caller, with free().
+> + */
+> +char *llvm_name_for_code(struct dso *dso, const char *dso_name, u64 addr);
+> +char *llvm_name_for_data(struct dso *dso, const char *dso_name, u64 addr);
+> +
+>  #ifdef __cplusplus
+>  }
+>  #endif
+> -- 
+> 2.45.1
+> 
 
