@@ -1,208 +1,158 @@
-Return-Path: <linux-kernel+bounces-203884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 254A18FE194
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:52:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C588FE1AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68FCEB2708E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:52:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A619FB27522
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CEDE13E3EE;
-	Thu,  6 Jun 2024 08:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57ADD13C913;
+	Thu,  6 Jun 2024 08:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="t6paUQZ/"
-Received: from jpms-ob02.noc.sony.co.jp (jpms-ob02.noc.sony.co.jp [211.125.140.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C5113E3E7
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.165
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="psrqJZSX"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532777347A
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717663810; cv=none; b=RmwWmRUvZ2OlASvyUmG0uynp8128eXSP1fA9sIWcEPLEciekCyKCYOK/KujeQxVrUso2q6ta8SGIGet3EljZ4GImnPWcQx48XCQnwjkvis+kzTswqFdmfkmJv7EBVVX2fF0E/egjLARLLsPY8hDkrZ78Qs8dA3VpDQ9nJKmveLc=
+	t=1717663931; cv=none; b=Lx97r59dhi8O0VQhCSf5Z3wYCfEPWRQ3wOOeOQ6x96i1XbWI0+XK79Fs5YwywnE1jaKZYyRkzFd/5RsRvrFdmyRaQbI3GrLIIZF2aI4XTjFFVarJuSt5x4yUirgW//WnaF8vnl+pywdk0RSLqYXkeKi0h/0Sc3X/PKCNcO6Nz08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717663810; c=relaxed/simple;
-	bh=JVZB6x+SODG8MuDAES9ShWZBRx4IP5Dzg24FRLyYQFI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rstYdf26oQbv7ZR0bMRRnEPq2WNld1ZJYoRoOXpFv9xEQEkwgpp/KVnIeP8BBVLjyLiD4dZ6ZfblKA6SfFDhI33MO8sNO8SoBdcF6js9BtjDMV0QzgUbsac/E1w3mbBSeXIUM66tTrK5aIJpFFy72wo05zVLVtcihK/K6wAZ7BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=t6paUQZ/; arc=none smtp.client-ip=211.125.140.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=sony.com; s=s1jp; t=1717663807; x=1749199807;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=fYlYZ47j26pnUCWre9m7xSqxIzLhvKrSkQ5G3+p3Xts=;
-  b=t6paUQZ/Xu2mPvgPlTjjGu7lH0jf57fmulceuNa2qugeKdOYwmOsZvvC
-   0JX2FZHIQBzrWN3geWsmPgMSUZe370QLnpwlkzoyZrJEr3PT6pa9MyK9U
-   LQrfVB29H6cPMoygnYURf9xV7VtrivVs6Z8kKJAcSlHWKPKkGw8dC3DY3
-   AgGvrB7XxVh/NNPPKadQYSHM0zhddd9A+P7xNzi7Stig8SKNFYU7P5K/W
-   ov7Ba43PhSgEXHhK2WkfQbqOGuczmQ6wDz1W3fCMONh2MGv0mT1NgJUnE
-   nxeuFmP+gvHRKvomkRRf6LguGYbIltLrmPYoPXKcxERHfsgKWu3wSDMyT
-   g==;
-Received: from unknown (HELO jpmta-ob1.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::6])
-  by jpms-ob02.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 17:50:05 +0900
-X-IronPort-AV: E=Sophos;i="6.08,218,1712588400"; 
-   d="scan'208";a="420660213"
-Received: from unknown (HELO LXJ00013166) ([IPv6:2001:cf8:2:f100:2ef0:5dff:fe04:1f0f])
-  by jpmta-ob1.noc.sony.co.jp with ESMTP; 06 Jun 2024 17:50:05 +0900
-Date: Thu, 6 Jun 2024 08:50:03 +0000
-From: Soumya Khasnis <soumya.khasnis@sony.com>
-To: gregkh@linuxfoundation.org, rafael@kernel.org,
-	linux-kernel@vger.kernel.org, daniel.lezcano@linaro.org,
-	festevam@denx.de, lee@kernel.org, benjamin.bara@skidata.com,
-	dmitry.osipenko@collabora.com, ldmldm05@gmail.com,
-	soumya.khasnis@sony.com, srinavasa.nagaraju@sony.com
-Cc: soumya.khasnis@sony.com, srinavasa.nagaraju@sony.com,
-	Madhusudan.Bobbili@sony.com, shingo.takeuchi@sony.com,
-	keita.aihara@sony.com, masaya.takahashi@sony.com
-Subject: [PATCH v3] driver core: Add timeout for device shutdown
-Message-ID: <20240606085003.GA118950@sony.com>
+	s=arc-20240116; t=1717663931; c=relaxed/simple;
+	bh=kFrzNHgtHCeKyReD6Xg4n3HRpvFtYIRgMS7Z8IXf+cM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bkZcyBhNmNMK8T58OM7SAdUF0Hi0zH8y7wlmPaO+ntval+RHmSH4yKwuhIOcjDtpXDAh4eFvNwPiiFGc2Tjtf4ZteaKBkxYtbVAOdcb0n2uComrAW9pcMxEyE+lUndgCP9sIQA6WT4nk2lr4lsibUHv1srTAhe2JudCXvbPioqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=psrqJZSX; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=/5nNd
+	xAHvn8XrVpENTsC9WADZwaWod7V36HzzLbSoTc=; b=psrqJZSXv4dSzC+cjOy1Y
+	DSL2U+wPy3MJD5VIpSzntUHwah7WbhEYWnAjD2IPLkTyXxomCG+HiqI/GpBWMNVh
+	t8/PqOOpJOwEtZ4ori0B2s2errC1yIpbpLUSMSaMtYyHSipQ+YbNKM+x8tnUwqk4
+	qzNulu9YcbhG3i6ACyesgE=
+Received: from localhost.localdomain (unknown [111.48.69.247])
+	by gzga-smtp-mta-g2-5 (Coremail) with SMTP id _____wDn77VGeGFmxpB0Dg--.65491S2;
+	Thu, 06 Jun 2024 16:50:15 +0800 (CST)
+From: oushixiong1025@163.com
+To: Xinliang Liu <xinliang.liu@linaro.org>
+Cc: Tian Tao <tiantao6@hisilicon.com>,
+	Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Yongqin Liu <yongqin.liu@linaro.org>,
+	John Stultz <jstultz@google.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Shixiong Ou <oushixiong@kylinos.cn>
+Subject: [PATCH] drm/hisilicon: Fix a NULL pointer access when call hibmc_unload
+Date: Thu,  6 Jun 2024 16:50:12 +0800
+Message-Id: <20240606085012.284167-1-oushixiong1025@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDn77VGeGFmxpB0Dg--.65491S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJF4kGryxGFy3XF4DGr4kZwb_yoW5Kw4UpF
+	W7XFW3tr4vq39xGF45JrW09FZ0ka1avayIkF1Sy3s3uws0kryDXF18JF4xCFy8XrWkCF95
+	Z3Z7Gr4UZr1UZw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UMCJdUUUUU=
+X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXRjyD2XAljx7NgABs7
 
-The device shutdown callbacks invoked during shutdown/reboot
-are prone to errors depending on the device state or mishandling
-by one or more driver. In order to prevent a device hang in such
-scenarios, we bail out after a timeout while dumping a meaningful
-call trace of the shutdown callback to kernel logs, which blocks
-the shutdown or reboot process.
+From: Shixiong Ou <oushixiong@kylinos.cn>
 
-Signed-off-by: Soumya Khasnis <soumya.khasnis@sony.com>
-Signed-off-by: Srinavasa Nagaraju <Srinavasa.Nagaraju@sony.com>
+If Calling hibmc_mm_init() failed in hibmc_load(), the hibmc_unload()
+will access a NULL pointer, as it don't call ww_mutex_init() to
+initialize mode_config.connection_mutex but try to lock it when
+calling drm_atomic_helper_shutdown() in hibmc_unload().
+
+[   50.939211][  0] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000018
+	......
+[   51.149882][  0] Call trace:
+[   51.152750][  0]  ww_mutex_lock+0xf0/0x1e0
+[   51.156829][  0]  drm_modeset_lock+0x184/0x2c0
+[   51.161254][  0]  drm_modeset_lock_all_ctx+0x98/0x188
+[   51.166284][  0]  drm_atomic_helper_shutdown+0xa4/0x128
+[   51.171487][  0]  hibmc_unload+0x50/0x2f0
+[   51.175479][  0]  hibmc_load+0x5d8/0x888
+[   51.179386][  0]  drm_dev_register+0x280/0x558
+[   51.183811][  0]  drm_get_pci_dev+0x140/0x3c8
+[   51.188150][  0]  hibmc_pci_probe+0x148/0x190
+[   51.192489][  0]  local_pci_probe+0xc4/0x180
+[   51.196742][  0]  pci_device_probe+0x328/0x530
+[   51.201167][  0]  really_probe+0x498/0x9a0
+[   51.205248][  0]  driver_probe_device+0x224/0x308
+[   51.209932][  0]  device_driver_attach+0xec/0x128
+[   51.214616][  0]  __driver_attach+0x144/0x280
+[   51.218955][  0]  bus_for_each_dev+0x120/0x1a0
+[   51.223380][  0]  driver_attach+0x48/0x60
+[   51.227372][  0]  bus_add_driver+0x328/0x578
+[   51.231625][  0]  driver_register+0x148/0x398
+[   51.235965][  0]  __pci_register_driver+0x15c/0x1c8
+[   51.240823][  0]  hibmc_init+0x2c/0x34
+[   51.244557][  0]  do_one_initcall+0xc8/0x4a8
+[   51.248810][  0]  kernel_init_freeable+0x678/0x75c
+[   51.253582][  0]  kernel_init+0x18/0x128
+[   51.257489][  0]  ret_from_fork+0x10/0x18
+
+Add a initialized flag to avoid this.
+
+Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
 ---
-Changes in v3:
-  -fix review comments
-  -updated commit message
+ drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c | 8 ++++++--
+ drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h | 1 +
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
- drivers/base/Kconfig | 18 ++++++++++++++++++
- drivers/base/base.h  |  8 ++++++++
- drivers/base/core.c  | 40 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 66 insertions(+)
-
-diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
-index 2b8fd6bb7da0..342d3f87a404 100644
---- a/drivers/base/Kconfig
-+++ b/drivers/base/Kconfig
-@@ -243,3 +243,21 @@ config FW_DEVLINK_SYNC_STATE_TIMEOUT
- 	  work on.
+diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+index 57c21ec452b7..343f64d66e75 100644
+--- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
++++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+@@ -99,6 +99,7 @@ static int hibmc_kms_init(struct hibmc_drm_private *priv)
+ 	ret = drmm_mode_config_init(dev);
+ 	if (ret)
+ 		return ret;
++	priv->mode_config_initialized = true;
  
- endmenu
-+
-+config DEVICE_SHUTDOWN_TIMEOUT
-+	bool "device shutdown timeout"
-+	default y
-+	help
-+	   Enable timeout for device shutdown. In case of device shutdown is
-+	   broken or device is not responding, system shutdown or restart may hang.
-+	   This timeout handles such situation and triggers emergency_restart or
-+	   machine_power_off. Also dumps call trace of shutdown process.
-+
-+
-+config DEVICE_SHUTDOWN_TIMEOUT_SEC
-+	int "device shutdown timeout in seconds"
-+	range 10 60
-+	default 10
-+	depends on DEVICE_SHUTDOWN_TIMEOUT
-+	help
-+	  sets time for device shutdown timeout in seconds
-diff --git a/drivers/base/base.h b/drivers/base/base.h
-index 0738ccad08b2..97eea57a8868 100644
---- a/drivers/base/base.h
-+++ b/drivers/base/base.h
-@@ -243,3 +243,11 @@ static inline int devtmpfs_delete_node(struct device *dev) { return 0; }
+ 	dev->mode_config.min_width = 0;
+ 	dev->mode_config.min_height = 0;
+@@ -240,9 +241,12 @@ static int hibmc_hw_init(struct hibmc_drm_private *priv)
+ static int hibmc_unload(struct drm_device *dev)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(dev->dev);
++	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
  
- void software_node_notify(struct device *dev);
- void software_node_notify_remove(struct device *dev);
-+
-+#ifdef CONFIG_DEVICE_SHUTDOWN_TIMEOUT
-+struct device_shutdown_timeout {
-+	struct timer_list timer;
-+	struct task_struct *task;
-+};
-+#define SHUTDOWN_TIMEOUT CONFIG_DEVICE_SHUTDOWN_TIMEOUT_SEC
-+#endif
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index b93f3c5716ae..dab455054a80 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -35,6 +35,12 @@
- #include "base.h"
- #include "physical_location.h"
- #include "power/power.h"
-+#include <linux/sched/debug.h>
-+#include <linux/reboot.h>
-+
-+#ifdef CONFIG_DEVICE_SHUTDOWN_TIMEOUT
-+struct device_shutdown_timeout devs_shutdown;
-+#endif
+-	drm_atomic_helper_shutdown(dev);
+-
++	if(priv->mode_config_initialized){
++		drm_atomic_helper_shutdown(dev);
++		priv->mode_config_initialized = false;
++	}
+ 	free_irq(pdev->irq, dev);
  
- /* Device links support. */
- static LIST_HEAD(deferred_sync);
-@@ -4799,6 +4805,38 @@ int device_change_owner(struct device *dev, kuid_t kuid, kgid_t kgid)
- }
- EXPORT_SYMBOL_GPL(device_change_owner);
+ 	pci_disable_msi(to_pci_dev(dev->dev));
+diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+index 207aa3f660b0..08fd7cb59bb5 100644
+--- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
++++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+@@ -37,6 +37,7 @@ struct hibmc_drm_private {
+ 	struct drm_crtc crtc;
+ 	struct drm_encoder encoder;
+ 	struct hibmc_connector connector;
++	bool mode_config_initialized;
+ };
  
-+#ifdef CONFIG_DEVICE_SHUTDOWN_TIMEOUT
-+static void device_shutdown_timeout_handler(struct timer_list *t)
-+{
-+	pr_emerg("**** device shutdown timeout ****\n");
-+	show_stack(devs_shutdown.task, NULL, KERN_EMERG);
-+	if (system_state == SYSTEM_RESTART)
-+		emergency_restart();
-+	else
-+		machine_power_off();
-+}
-+
-+static void device_shutdown_timer_set(void)
-+{
-+	devs_shutdown.task = current;
-+	timer_setup(&devs_shutdown.timer, device_shutdown_timeout_handler, 0);
-+	devs_shutdown.timer.expires = jiffies + SHUTDOWN_TIMEOUT * HZ;
-+	add_timer(&devs_shutdown.timer);
-+}
-+
-+static void device_shutdown_timer_clr(void)
-+{
-+	del_timer(&devs_shutdown.timer);
-+}
-+#else
-+static inline void device_shutdown_timer_set(void)
-+{
-+}
-+static inline void device_shutdown_timer_clr(void)
-+{
-+}
-+#endif
-+
- /**
-  * device_shutdown - call ->shutdown() on each device to shutdown.
-  */
-@@ -4810,6 +4848,7 @@ void device_shutdown(void)
- 	device_block_probing();
- 
- 	cpufreq_suspend();
-+	device_shutdown_timer_set();
- 
- 	spin_lock(&devices_kset->list_lock);
- 	/*
-@@ -4869,6 +4908,7 @@ void device_shutdown(void)
- 		spin_lock(&devices_kset->list_lock);
- 	}
- 	spin_unlock(&devices_kset->list_lock);
-+	device_shutdown_timer_clr();
- }
- 
- /*
+ static inline struct hibmc_connector *to_hibmc_connector(struct drm_connector *connector)
 -- 
-2.40.0
+2.25.1
 
 
