@@ -1,92 +1,148 @@
-Return-Path: <linux-kernel+bounces-204792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9D38FF39C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:23:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1C438FF39B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C859228319E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:23:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F2BC285C9D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2BC1991B9;
-	Thu,  6 Jun 2024 17:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D29D1990AB;
+	Thu,  6 Jun 2024 17:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oR5ddJOH"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="FPpehQCx"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1DD1990D0;
-	Thu,  6 Jun 2024 17:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D691F38FB9
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 17:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717694613; cv=none; b=q5tMCMJwWh1Szx+UCv3FB9ul4FuKMvv9k4xY1d/lf2TYCTFDWwwRG2/+/pqAO8s9E4qgLuHpqT0cpMfuMTkUHc+46MirAWLXNlUxCyZfUgxeAArxUEEyn+ukbjeXFHqdPzZCK6BbSvrM3oroieZIMqmSBGajqyX1spQe+jQUMvc=
+	t=1717694610; cv=none; b=Sftk6JV8gisOEtwOcJZLxk7qebyUO5VJhzyI0otixV+YPU0cFexIrcTwusvOtpDBZP6e4OygXupdUH4YS/nybSs3SqiGmnEbitT7l45iNzWdBi83QNPqcjOhVHk+/NFDMhm8pYfcBBOqJEkGqRCSQv/kMpd/Jaz2kf2/Mwg+IL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717694613; c=relaxed/simple;
-	bh=BkVdSWcMaP4bKZNlsAFZLTjHS7oS0wOPey3hYl53ABs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QEmUdb5t3kEIAHj9mcuM5tnd3NbGhNlKZHnqHlObbpoqSfdEumvc67ysYwlfrziSa89ih/IdB+3UFxA/4TWPUdqORZDYdyZEBQHT1ZprYD2+CU3BVHnLQiYJoEFIaUHOBgrg918mlYvJPiQp8YtUU5hhF6Mg+Fww0HJduKzN3UE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oR5ddJOH; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=BkVdSWcMaP4bKZNlsAFZLTjHS7oS0wOPey3hYl53ABs=; b=oR5ddJOHerSiDYJ+gd3K0Xg9W1
-	A7Yzel/1bd6ANztTCSYuEOrAovXm6W6rgEuyFz1Dt7KgnOTGXWIIzn55zwHpWYL7Sr80vAclaZXjG
-	dNKW4z04IU1ib9Au0ZpHjuXSIc/B6+zmwJn86dZrm9MH+MzvA7923gTHiFow+ZPEF+PzIL+Q1UziG
-	JXrKefgZ140gJOWPKy4AF6chUEjSbhmRX9S4c3og4ZMOTUAKuhXElsxK8kXsf5Jx/Jrp7/+chHw1I
-	QDbJ/D/Gu7hn+jgr93F/Xc8h7Uj/0WmeJCIcEIWKWpeuOKwpN9ZzlSXhNPCjHiDJkHR/90hFQJddD
-	onp7ZQLQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sFGpg-00000001fhM-1BiE;
-	Thu, 06 Jun 2024 17:23:24 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id F042C30047C; Thu,  6 Jun 2024 19:23:20 +0200 (CEST)
-Date: Thu, 6 Jun 2024 19:23:20 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] rust: add static_key_false
-Message-ID: <20240606172320.GF8774@noisy.programming.kicks-ass.net>
-References: <20240606-tracepoint-v1-0-6551627bf51b@google.com>
- <20240606-tracepoint-v1-2-6551627bf51b@google.com>
+	s=arc-20240116; t=1717694610; c=relaxed/simple;
+	bh=9fdDi/VIvNMFcoSPb0vjtLDb1QNbD08nrQuXSB8HujQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MPTXnNcQ2Q2nIO/D6Kk0rZ7qlab8ip6ze80CEICh0A65a5YOhREKRB406k0Cwvr+16BMVy0Wq3J+lmL5/CcHgtnfa4djDqUbcUFH6G4/R65694aa7UBGsB5bFkzZuC72RDRasA4NPpCNWogE/00Csx1T1Qrz6DJ1Nkui+Yl6UNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=FPpehQCx; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=FedF7oPNdqEHHuz3xwLH/2qCzL60HSgGzIWdOOictbg=; b=FPpehQCxUOysukHnwgSo9tnbW9
+	BCihYTPtfMSlFzboPjZijiIEGyz+GdYfLd/HrMnHchxFF/4hVPywBldgzxXt/ktfM1ZAoE3FI+Kzw
+	XmPkaIqI25ncKL6rVy2/wvF4f9W0XQqWOyu1bKY51xnVcFlEdS9cMP+lzaeS2cg3fV35y/LuWi1hu
+	9qPudxhAouqNt4/5qHMDrPWf9YHMrLIlU28EdRXbimH1Tbt2BinGwqO8ERIQCEuzKUqxrqgRZ2MVZ
+	PDyNHA7KJ0uKIZFKepEtLmYIJui+Z5sRhT0QSUaTcKAuzTzqW/gP80mHyPJfOKZ/EgOxzJASGIY/b
+	Sz+UKIwQ==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <esben@geanix.com>)
+	id 1sFGpl-0002rG-Mz; Thu, 06 Jun 2024 19:23:26 +0200
+Received: from [80.62.117.184] (helo=localhost)
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <esben@geanix.com>)
+	id 1sFGph-000MWE-31;
+	Thu, 06 Jun 2024 19:23:25 +0200
+From: Esben Haabendal <esben@geanix.com>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Pratyush Yadav <pratyush@kernel.org>,  Michael Walle
+ <mwalle@kernel.org>,  Miquel Raynal <miquel.raynal@bootlin.com>,  Richard
+ Weinberger <richard@nod.at>,  Vignesh Raghavendra <vigneshr@ti.com>,
+  linux-mtd@lists.infradead.org,  linux-kernel@vger.kernel.org,  Rasmus
+ Villemoes <rasmus.villemoes@prevas.dk>
+Subject: Re: [PATCH v2 2/2] mtd: spi-nor: macronix: enable quad/dual speed
+ for mx25l3205d chips
+In-Reply-To: <cdd6bc25-6282-4e43-9909-16ab918ed983@linaro.org> (Tudor
+	Ambarus's message of "Thu, 6 Jun 2024 14:33:16 +0100")
+References: <20240603-macronix-mx25l3205d-fixups-v2-0-ff98da26835c@geanix.com>
+	<20240603-macronix-mx25l3205d-fixups-v2-2-ff98da26835c@geanix.com>
+	<cdd6bc25-6282-4e43-9909-16ab918ed983@linaro.org>
+Date: Thu, 06 Jun 2024 19:23:25 +0200
+Message-ID: <87v82m9e9e.fsf@geanix.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606-tracepoint-v1-2-6551627bf51b@google.com>
+Content-Type: text/plain
+X-Authenticated-Sender: esben@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27298/Thu Jun  6 10:30:08 2024)
 
-On Thu, Jun 06, 2024 at 03:05:25PM +0000, Alice Ryhl wrote:
-> Add just enough support for static key so that we can use it from
-> tracepoints. Tracepoints rely on `static_key_false` even though it is
-> deprecated, so we add the same functionality to Rust.
+Tudor Ambarus <tudor.ambarus@linaro.org> writes:
 
-Urgh, more unreadable gibberish :-(
+> On 6/3/24 14:09, Esben Haabendal wrote:
+>> Macronix engineers apparantly do not understand the purpose of having
+>> an ID actually identify the chip and its capabilities. Sigh.
+>> 
+>> The original Macronix SPI NOR flash that identifies itself as 0xC22016
+>> with RDID was MX25L3205D. This chip does not support SFDP, but does
+>> support the 2READ command (1-2-2).
+>> 
+>> When Macronix announced EoL for MX25L3205D, the recommended
+>> replacement part was MX25L3206E, which conveniently also identifies
+>> itself as 0xC22016. It does not support 2READ, but supports DREAD
+>> (1-1-2) instead, and supports SFDP for discovering this.
+>> 
+>> When Macronix announced EoL for MX25L3206E, the recommended
+>> replacement part was MX25L3233F, which also identifies itself as
+>> 0xC22016. It supports DREAD, 2READ, and the quad modes QREAD (1-1-4)
+>> and 4READ (1-4-4). This also support SFDP.
+>> 
+>> So far, all of these chips have been handled the same way by the Linux
+>> driver. The SFDP information have not been read, and no dual and quad
+>> read modes have been enabled.
+>> 
+>> The trouble begins when we want to enable the faster read modes. The
+>> RDID command only return the same 3 bytes for all 3 chips, so that
+>> doesn't really help.
+>> 
+>> Instead, we can use the SPI_NOR_TRY_SFDP flag, which forces the spi-nor
+>> system to try using SFDP, but fallback to the parameters specified in
+>> struct flash_info.
+>> 
+>> This way, boards using MX25L3205D will continue as before this change.
+>> That is without taking advantage of the 1-2-2 that it supports.
+>> 
+>> For MX25L3206E and MX25L3233F, the SFDP parameters are used, and they will
+>> therefore be using the optimal dual or quad mode supported by the flash
+>> and the SPI controller it is attached to.
+>> 
+>> Signed-off-by: Esben Haabendal <esben@geanix.com>
+>> ---
+>>  drivers/mtd/spi-nor/macronix.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
+>> index ea6be95e75a5..090f28e05a5d 100644
+>> --- a/drivers/mtd/spi-nor/macronix.c
+>> +++ b/drivers/mtd/spi-nor/macronix.c
+>> @@ -61,7 +61,7 @@ static const struct flash_info macronix_nor_parts[] = {
+>>  		.id = SNOR_ID(0xc2, 0x20, 0x16),
+>>  		.name = "mx25l3205d",
+>>  		.size = SZ_4M,
+>> -		.no_sfdp_flags = SECT_4K,
+>> +		.no_sfdp_flags = SECT_4K | SPI_NOR_TRY_SFDP,
+>>  	}, {
+>
+> let's remove support for MX25L3205D. You'll then be able to drop the
+> flash entry altogether and instead rely on SFDP to discover the flash's
+> capabilities.
 
-Can we please get bindgen to translate asm/jump_table.h instead of
-randomly duplicating random bits.
+So anybody updating their Linux kernel for boards using MX25L3205D will
+get a bad surprise? While in the embedded world, upgrading Linux kernel
+is not the common case, it doesn't seem right to knowingly make it
+difficult to those few who actually tries to do the right thing.
 
-I really think that whoever created rust was an esoteric language freak.
-Hideous crap :-(.
+/Esben
 
