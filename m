@@ -1,95 +1,124 @@
-Return-Path: <linux-kernel+bounces-204900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3923E8FF4D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:40:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58CC88FF4CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:38:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FB971C24AE8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:40:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD7641F26124
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE64E4C618;
-	Thu,  6 Jun 2024 18:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UMz8MMFc"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9458147A6B;
+	Thu,  6 Jun 2024 18:38:15 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD158821;
-	Thu,  6 Jun 2024 18:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E78ED515;
+	Thu,  6 Jun 2024 18:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717699182; cv=none; b=W2qTYrTBYi6iZgt8tu1E41Q5v1gno5juguyLrbRGK00Q58C9lRrDA+ARztJxGVU0QftiosJ52IdUj6moUvwPVQH5NwZmwx6JUiV8AYQMGRXyKdxLDlq2XjsDd6czCs9DV/PQNLoowcQDYlFrsA+El0330gGz96JzzBuvv4xhn3k=
+	t=1717699095; cv=none; b=f+ecUDygTGAlxer+gzNg3eM51yjJkjjKPxOJBirk5ov0E5LM6Voz8G5hFZCTnM7jd9Tpjlh56r+WdN2AaxmRvDMAy3ovP+s/wphbFjt0x36BUFNS8RmduIGQcEGiztQ46tJEmSWtdAuvIjopTCUPBG/YANBfWLtYMKDzMS38+ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717699182; c=relaxed/simple;
-	bh=1NykNkolOVcEKW3E4P67NwS3NXZhiGMcNcek2ArRyaw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hIWAB1/YCzZZfhVMU1GhQ6WSeCXRb0l+THqbXH+9KVR+eYAnCG+ZF0i9YqB8HKr6gs7c37T1t+RIcRrQgOfD9OYehc0UthedMrwz/ugwQU9eKQw4ka/KK6OCqJKGYEfjm3Vxd0TAUqzehu+KA579y7q4cATJVS7nHNOnL3Gc5a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UMz8MMFc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89A94C32786;
-	Thu,  6 Jun 2024 18:39:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717699181;
-	bh=1NykNkolOVcEKW3E4P67NwS3NXZhiGMcNcek2ArRyaw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=UMz8MMFc/ChN6ra4FHUOuSOAPnsPpIOg0nX5PEQ+mbDqhNPpVWrPeiGJkJsVRj7MI
-	 PHLkp+cmUKkurThu34hALXRJUa4D3YEFujiqi/637YEfUr/7cjve9/S5CTB2pGNaUE
-	 +OGiHMOAm8fdjDEK1hQIQ+Q3/wnZyVax/1Bk3ws5UVdu1rx4U5ebzfzMv/VnWvXfvt
-	 i9RR7ZzcnaN9E692Le9jczrQrCER3GffGfXWAHHjLVjvL2WJVifj+iMFs8sVj0FPiq
-	 KpkBoIsc0YBIjvje3ZP1RwLZhxjhXuJu7fE2U5LRXWp4KKNUKPuhRWIs8ZGWiEcSqL
-	 hyP0LzFUSK+8Q==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Vincenzo Palazzo <vincenzopalazzodev@gmail.com>
-Subject: [PATCH] modpost: do not warn about missing MODULE_DESCRIPTION() for vmlinux.o
-Date: Fri,  7 Jun 2024 03:36:12 +0900
-Message-ID: <20240606183921.1128911-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1717699095; c=relaxed/simple;
+	bh=m4y07AqUVhllB8GdQjGhynxMK/W/hDUwql04aVzrTcI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LNZ8LOZPPYiogAdFfff/+rt/wVdrNWO7Sceb2vkKVtgkUvDRlYn9HWd+IOQNWAaPt2b+dkWZgcgC2IklmwjBo7CnCIHWj//a+fjSwa0r14S8SQ6L8vYrW3E1yE/3udBbDLQtSC9dJZpQgDTRRdLC1H0C34F78X2XE3Cs7tOEiOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F4CBC2BD10;
+	Thu,  6 Jun 2024 18:38:11 +0000 (UTC)
+Date: Thu, 6 Jun 2024 19:38:08 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Subject: Re: [PATCH v3 12/14] arm64: realm: Support nonsecure ITS emulation
+ shared
+Message-ID: <ZmICEN8JvWM7M9Ch@arm.com>
+References: <20240605093006.145492-1-steven.price@arm.com>
+ <20240605093006.145492-13-steven.price@arm.com>
+ <86a5jzld9g.wl-maz@kernel.org>
+ <4c363476-e5b5-42ff-9f30-a02a92b6751b@arm.com>
+ <867cf2l6in.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <867cf2l6in.wl-maz@kernel.org>
 
-Building with W=1 incorrectly emits the following warning:
+On Thu, Jun 06, 2024 at 11:17:36AM +0100, Marc Zyngier wrote:
+> On Wed, 05 Jun 2024 16:08:49 +0100,
+> Steven Price <steven.price@arm.com> wrote:
+> > 2. Use a special (global) memory allocator that does the
+> > set_memory_decrypted() dance on the pages that it allocates but allows
+> > packing the allocations. I'm not aware of an existing kernel API for
+> > this, so it's potentially quite a bit of code. The benefit is that it
+> > reduces memory consumption in a realm guest, although fragmentation
+> > still means we're likely to see a (small) growth.
+> > 
+> > Any thoughts on what you think would be best?
+> 
+> I would expect that something similar to kmem_cache could be of help,
+> only with the ability to deal with variable object sizes (in this
+> case: minimum of 256 bytes, in increments defined by the
+> implementation, and with a 256 byte alignment).
 
-  WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
+Hmm, that's doable but not that easy to make generic. We'd need a new
+class of kmalloc-* caches (e.g. kmalloc-decrypted-*) which use only
+decrypted pages together with a GFP_DECRYPTED flag or something to get
+the slab allocator to go for these pages and avoid merging with other
+caches. It would actually be the page allocator parsing this gfp flag,
+probably in post_alloc_hook() to set the page decrypted and re-encrypt
+it in free_pages_prepare(). A slight problem here is that free_pages()
+doesn't get the gfp flag, so we'd need to store some bit in the page
+flags. Maybe the flag is not that bad, do we have something like for
+page_to_phys() to give us the high IPA address for decrypted pages?
 
-This check should apply only to modules.
+Similarly if we go for a kmem_cache (or a few for multiple sizes). One
+can specify a constructor which could set the memory decrypted but
+there's no destructor (and also the constructor is per object, not per
+page, so we'd need some refcounting).
 
-Fixes: 1fffe7a34c89 ("script: modpost: emit a warning when the description is missing")
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+Another approach contained within the driver is to use mempool_create()
+with our own _alloc_fn/_free_fn that sets the memory decrypted/encrypted
+accordingly, though sub-page allocations need additional tracking. Also
+that's fairly similar to kmem_cache, fixed size.
 
- scripts/mod/modpost.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Yet another option would be to wire it somehow in the DMA API but the
+minimum allocation is already a page size, so we don't gain anything.
 
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 937294ff164f..f48d72d22dc2 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -1647,10 +1647,11 @@ static void read_symbols(const char *modname)
- 			namespace = get_next_modinfo(&info, "import_ns",
- 						     namespace);
- 		}
-+
-+		if (extra_warn && !get_modinfo(&info, "description"))
-+			warn("missing MODULE_DESCRIPTION() in %s\n", modname);
- 	}
- 
--	if (extra_warn && !get_modinfo(&info, "description"))
--		warn("missing MODULE_DESCRIPTION() in %s\n", modname);
- 	for (sym = info.symtab_start; sym < info.symtab_stop; sym++) {
- 		symname = remove_dot(info.strtab + sym->st_name);
- 
+What gets somewhat closer to what we need is gen_pool. It can track
+different sizes, we just need to populate the chunks as needed. I don't
+think this would work as a generic allocator but may be good enough
+within the ITS code.
+
+If there's a need for such generic allocations in other parts of the
+kernel, my preference would be something around kmalloc caches and a new
+GFP flag (first option; subject to the selling it to the mm folk). But
+that's more of a separate prototyping effort that may or may not
+succeed.
+
+Anyway, we could do some hacking around gen_pool as a temporary solution
+(maybe as a set of patches on top of this series to be easier to revert)
+and start investigating a proper decrypted page allocator in parallel.
+We just need to find a victim that has the page allocator fresh in mind
+(Ryan or Alexandru ;)).
+
 -- 
-2.43.0
-
+Catalin
 
