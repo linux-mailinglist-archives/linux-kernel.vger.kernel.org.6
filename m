@@ -1,185 +1,279 @@
-Return-Path: <linux-kernel+bounces-205145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9279D8FF803
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:16:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E04DA8FF806
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E53062840F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:16:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D344F1C242B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3341413C9AF;
-	Thu,  6 Jun 2024 23:16:30 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2238C13E03C;
+	Thu,  6 Jun 2024 23:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DsT53hOn"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7391BDEF
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 23:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C666D73451
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 23:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717715789; cv=none; b=hOVhwKyr48PYZQmSSKfXZEczurtK+dUaTSBhAZqdBclc1Gy3EsNNCMyZ4v02xuEOtRAMXpSBYLpdch/nBAufsWYtmCYDHGNxNg6XtvLN7JQfNES6rqpk5aUf1TnNbbvhXcp3jitauOo1DI6+TLgETz8Ra7i+ak5N/e3OeICAwhA=
+	t=1717715883; cv=none; b=DxUvgfI8CJbCWDCw/U7852vTuClVSYS/+Cs8pa+YvYU8D5o4g/sPxKaq7RlhMCh6v7NMMCboBd4miV+hb2LqHzPuBka7vnl2jqu7etg/hdXgyRK6Vz1k6OmVOrBMZmdZJec8cE8m+yeY02k3PeZYvhCwRkb4xZGs8+spwrI8IC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717715789; c=relaxed/simple;
-	bh=FWCCPGIAMK6M/6mP5Jink+JidsoswgvigMhhhyNl6PY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kxlPzqMiGhKau0ElIZRyeFBXbcbP5YfgY0cudZz5KoqrTSopzq2ArIjT+tg5yAL0vGF4j2EmHkt1zEguRYA/ASNzfjfzppHE6n4xFFpQkHckptIfcy6Di14IAHiPYyYQL3LDjbDMG505pyhInwAj0fbztr7auC4+B8FZIyZosJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3748be0ae92so14832265ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 16:16:27 -0700 (PDT)
+	s=arc-20240116; t=1717715883; c=relaxed/simple;
+	bh=19XaacNp8Kcu5Ti2DS4m8MBq16yvs29OoTKcO5yHFZk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ro0EXeTybfWDMpOJXYuoQoDpphgs5Hyglb1NZGRPQz/sFkqtZyVn7Lszc35oVVknp+7tTv9MO/9g/BSu0vB/BsKOYdba23O8bPGaZDkdHLccfS8Sk4o+vIaxB/s+coJfanQ12DA1wx5Iv6dOcFry3Ov/9Hwvy6naOozNqcxDPIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DsT53hOn; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1ee5f3123d8so28155ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 16:18:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717715881; x=1718320681; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/l8SdZWscT50XIJXXqQu2Ls5LcDQtk8S/Jn0vt/xS74=;
+        b=DsT53hOnkDHKVm85WY+FXC1BWLs4SGxZHsdbGq8o+qsbdixiN/CdxZM9kbGq0v9JeU
+         agmF+xPit7YMhDl+eWxdN9DAeyTTrz99P+oHve7muk8rsiJl4UmRQ+/1fcS13nMTKNm3
+         RvoWT5pGb/t17ZJvvtnGow8PaYypMHSBFmlyPgfP1t/+6B+hcQrGIDnvnhwf16VXj9AQ
+         KTajIs9f813hH+ftutYnwGMubsfcERbozB6UVhtsewLWCoEXG9T5aYXc9R3/qUsZzCm6
+         sT9SRWYkK7ip0b8sGE9rqP1CdI1PwiHt8ewoc6JTLmrCLH9x2JaUjzmVCgLHxRmWn8du
+         jR4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717715787; x=1718320587;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nzzWgP0ZmLdgtW3XF9qyaZlz5IHJvl99oQkSPQE0B4Y=;
-        b=pyR9FgiPMP8Izb4t2aNBOUm91MZQRqw1Rzd/wevkRN8S0PDt4NCCWOEPzVrUgWs4M0
-         Zru2lNA7Aayq6kU/YrE2x2AsPvW2m8tkmgf0NzjDjzjfTtBWGD67PAU+jJ2VmChnTI7V
-         DGeLaqKzQvZ7WQ/VsYGABtzNPJ6XuaETnR57DN2SqYZONDVOHOBemBmIcAabiS25xJ4p
-         ZnqiknpUxysYYwwqudzeYiZJLV9w9Q1ujOz1iPwSIlgrqHcl/uhyXvC/5mTb14o30NBu
-         0Ic332s5vCOo32AaaJz8zEeH0ZVkzVJ3DhzFacBgimXAEuRuWH1Pcja+6P9hd3312Sfm
-         6nzw==
-X-Forwarded-Encrypted: i=1; AJvYcCWeh7X4rCoAv+YepN0/JdrSd118ehjLAyf08TppxIGvbDItbqdY413GWCaJiOtkix4AasKMSrb4qjbWOzHZaVRh1/R444MnSjB6hb66
-X-Gm-Message-State: AOJu0YywYExnpmI4P1yffjN70/1vXQkRDjdnX8zDjufka2L74n4iogg6
-	drHO4WcK2ueVsa39Oxiv3KYgLvS5q4JYh4ohi3RWT/bK+32VFLYR1Rn94Lp6xWCZ/kV7/ExlZfz
-	xRck94yQwyOHrDvMk7V6Xwa+CeJaHt/QTxDgv4S7k3vE4+BRjSPwY80k=
-X-Google-Smtp-Source: AGHT+IFhnhfCw1n2rJcLVNmBNJm4B9GC765coDJOnt/74szYPAUcOvtw19Rj+G2PDPsGz3E4sBLswTRKVQa19oQOs9G/PBuTWMAS
+        d=1e100.net; s=20230601; t=1717715881; x=1718320681;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/l8SdZWscT50XIJXXqQu2Ls5LcDQtk8S/Jn0vt/xS74=;
+        b=enrWCPcYWXiyHJy55stJLo1vplikA0Bq3Pz5K69ya43EsQjEnhE+3y/1q8J7aSEOcM
+         CVZcemh9TUUgu/jKkZQwoM/CegL+pRCM1VqRTh/hEYAsLqdfMvOO66RrBDImND0V9dhW
+         QsQ+B1IG5R7ZXwMv99aaWT5kTP4ouzDxo2roDY+NPoaLbYJUx+07sbYI52AoozumLfci
+         r6ntPlwbw7vb0zrW0mL4UT4OQe7dIHaO0wezBduHsqyOHbP7onjXxWuGyGMDo/UT/ter
+         8s0Pf+VTtkaLl8srL6xWuks33ZCG0eoygxm+BLAL8rJtY0dtDrO+9gn7qlbpOL6gPhJK
+         asKg==
+X-Forwarded-Encrypted: i=1; AJvYcCX6CywXAM5q0Pkry1QKYpolZ0eAMcHAlmPPz6JNwYwPz4s7TXtDcojTOWOAMZC2BRCRpIGdauFT2ejJpp2QwFguDq3/Vn/nNv9stsLq
+X-Gm-Message-State: AOJu0YwVvnbwXpKx39hY3qmXFE07kvND5+SDzmAdlOBryMcIC6HsivpY
+	X+UapOzcR43kUZc7zPZGGMj7MNcB75wxlNF3HwnJV9xPDSbjzhNy+Ll0Nmy5r4o9HkO/EOXo45R
+	D9qfUqJPkHNZx5OeYKdluFnjXGmbkUpjt1ORz
+X-Google-Smtp-Source: AGHT+IH/xutXin8rqxWXABdip1JdHkR2hPTycF2hrEcY74OusUk2w+OhuEuyNKB3wiyM50A4wOlHuBU9pnXbR9oSs0U=
+X-Received: by 2002:a17:902:dac2:b0:1f6:7fce:5684 with SMTP id
+ d9443c01a7336-1f6bd339c13mr4741225ad.3.1717715875849; Thu, 06 Jun 2024
+ 16:17:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d92:b0:374:a422:ba7 with SMTP id
- e9e14a558f8ab-3758032daefmr616185ab.2.1717715787331; Thu, 06 Jun 2024
- 16:16:27 -0700 (PDT)
-Date: Thu, 06 Jun 2024 16:16:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000544d68061a40dfa5@google.com>
-Subject: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_xattr_invalid
-From: syzbot <syzbot+bf2bce2ed29ab7d6e95d@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <23879991.0LEYPuXRzz@milian-workstation> <Zl8bhWfHSXxs35r2@x1>
+ <Zl8g1LxRCYgTSxhy@x1> <CAP-5=fVJRr2Qgf88ugEJ2FGerzKNv_dD6XOT_dSuFyYp2ubwSw@mail.gmail.com>
+ <Zl9ksOlHJHnKM70p@x1> <ZmI2Gumx5yUwyFsT@google.com>
+In-Reply-To: <ZmI2Gumx5yUwyFsT@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 6 Jun 2024 16:17:43 -0700
+Message-ID: <CAP-5=fWD+PPCVCvyBFfd3vZzUajM0HAEWzJe8XmB9p_bfT4ATQ@mail.gmail.com>
+Subject: Re: perf 6.9-1 (archlinux) crashes during recording of cycles + raw_syscalls
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Milian Wolff <milian.wolff@kdab.com>, 
+	linux-perf-users@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, 
+	Arnaldo Carvalho de Melo <acme@kenel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Jun 6, 2024 at 3:20=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
+rote:
+>
+> On Tue, Jun 04, 2024 at 04:02:08PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Tue, Jun 04, 2024 at 11:48:09AM -0700, Ian Rogers wrote:
+> > > On Tue, Jun 4, 2024 at 7:12=E2=80=AFAM Arnaldo Carvalho de Melo <acme=
+@kernel.org> wrote:
+> > > > Can you please try with the attached and perhaps provide your Teste=
+d-by?
+> >
+> > > > From ab355e2c6b4cf641a9fff7af38059cf69ac712d5 Mon Sep 17 00:00:00 2=
+001
+> > > > From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > > > Date: Tue, 4 Jun 2024 11:00:22 -0300
+> > > > Subject: [PATCH 1/1] Revert "perf record: Reduce memory for recordi=
+ng
+> > > >  PERF_RECORD_LOST_SAMPLES event"
+> >
+> > > > This reverts commit 7d1405c71df21f6c394b8a885aa8a133f749fa22.
+> >
+> > > I think we should try to fight back reverts when possible. Reverts ar=
+e
+> > > removing something somebody poured time and attention into. When a
+> >
+> > While in the development phase, yeah, but when we find a regression and
+> > the revert makes it go away, that is the way to go.
+> >
+> > The person who poured time on the development gets notified and can
+> > decide if/when to try again.
+> >
+> > Millian had to pour time to figure out why something stopped working,
+> > was kind enough to provide the output from multiple tools to help in
+> > fixing the problem and I had to do the bisect to figure out when the
+> > problem happened and to check if reverting it we would have the tool
+> > working again.
+> >
+> > If we try to fix this for v6.10 we may end up adding yet another bug, s=
+o
+> > the safe thing to do at this point is to do the revert.
+> >
+> > We can try improving this once again for v6.11.
+>
+> I think I found a couple of problems with this issue. :(
+>
+>  1. perf_session__set_id_hdr_size() uses the first evsel in the session
+>     But I think it should pick the tracking event.  I guess we assume
+>     all events have the same set of sample_type wrt the sample_id_all
+>     but I'm not sure if it's correct.
+>
+>  2. With --call-graph dwarf, it seems to set unrelated sample type bits
+>     in the attr like ADDR and DATA_SRC.
+>
+>  3. For tracepoint events, evsel__newtp_idx() sets a couple of sample
+>     type regardless of the configuration.  This includes RAW, TIME and
+>     CPU.  This one changes the format of the id headers.
+>
+>  4. PERF_RECORD_LOST_SAMPLES is for the sampling event, so it should
+>     use the event's sample_type.  But the event parsing looks up the
+>     event using evlist->is_pos which is set for the first event.
+>
+>  5. I think we can remove some sample type (i.e. TID and CPU) from the
+>     tracking event in most cases.  ID(ENTIFIER) will be used for LOST_
+>     SAMPLES and TIME is needed anyway.  TID is might be used for SWITCH
+>     but others already contain necessary information in the type.  I
+>     wish we could add id field to PERF_RECORD_LOST_SAMPLES and tid/pid
+>     to PERF_RECORD_SWITCH.
 
-syzbot found the following issue on:
+Right, this is good. To clear up the immediate error we just need to
+increase the memory allocation size by 48 bytes to account for the
+sample ID being written. Here is a change doing that and removing the
+memory allocation altogether:
+```
+diff --git a/tools/lib/perf/include/perf/event.h
+b/tools/lib/perf/include/perf/event.h
+index ae64090184d3..a2dfaff26fb7 100644
+--- a/tools/lib/perf/include/perf/event.h
++++ b/tools/lib/perf/include/perf/event.h
+@@ -77,6 +77,8 @@ struct perf_record_lost_samples {
+       __u64                    lost;
+};
 
-HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=134886f2980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
-dashboard link: https://syzkaller.appspot.com/bug?extid=bf2bce2ed29ab7d6e95d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=123cd8bc980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15058c16980000
++#define PERF_RECORD_MAX_LOST_SAMPLE_AND_ID_SIZE \
++       (sizeof(struct perf_record_lost_samples) + 6 * sizeof(__u64))
+/*
+ * PERF_FORMAT_ENABLED | PERF_FORMAT_RUNNING | PERF_FORMAT_ID | PERF_FORMAT=
+_LOST
+ */
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 66a3de8ac661..1615a1723fb9 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -1926,7 +1926,10 @@ static void __record__save_lost_samples(struct
+record *rec, struct evsel *evs
+el,
+static void record__read_lost_samples(struct record *rec)
+{
+       struct perf_session *session =3D rec->session;
+-       struct perf_record_lost_samples *lost =3D NULL;
++       union {
++               struct perf_record_lost_samples lost;
++               char
+lost_and_sample_id[PERF_RECORD_MAX_LOST_SAMPLE_AND_ID_SIZE];
++       } lost;
+       struct evsel *evsel;
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/fcfd2383b337/mount_2.gz
+       /* there was an error during record__open */
+@@ -1951,20 +1954,13 @@ static void record__read_lost_samples(struct
+record *rec)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bf2bce2ed29ab7d6e95d@syzkaller.appspotmail.com
+                               if (perf_evsel__read(&evsel->core, x,
+y, &count) < 0) {
+                                       pr_debug("read LOST count failed\n")=
+;
+-                                       goto out;
++                                       return;
+                               }
 
-=====================================================
-BUG: KMSAN: uninit-value in bch2_xattr_invalid+0x3af/0x630 fs/bcachefs/xattr.c:82
- bch2_xattr_invalid+0x3af/0x630 fs/bcachefs/xattr.c:82
- bch2_bkey_val_invalid+0x24f/0x380 fs/bcachefs/bkey_methods.c:140
- bset_key_invalid fs/bcachefs/btree_io.c:831 [inline]
- validate_bset_keys+0x12d8/0x25d0 fs/bcachefs/btree_io.c:904
- validate_bset_for_write+0x1dd/0x340 fs/bcachefs/btree_io.c:1945
- __bch2_btree_node_write+0x4777/0x67c0 fs/bcachefs/btree_io.c:2138
- bch2_btree_node_write+0xa5/0x2e0 fs/bcachefs/btree_io.c:2288
- btree_node_write_if_need fs/bcachefs/btree_io.h:153 [inline]
- __btree_node_flush+0x4d0/0x640 fs/bcachefs/btree_trans_commit.c:229
- bch2_btree_node_flush0+0x35/0x60 fs/bcachefs/btree_trans_commit.c:238
- journal_flush_pins+0xce6/0x1780 fs/bcachefs/journal_reclaim.c:553
- __bch2_journal_reclaim+0xd88/0x1610 fs/bcachefs/journal_reclaim.c:685
- bch2_journal_reclaim_thread+0x18e/0x760 fs/bcachefs/journal_reclaim.c:727
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+                               if (count.lost) {
+-                                       if (!lost) {
+-                                               lost =3D zalloc(sizeof(*los=
+t) +
+-
+session->machines.host.id_hdr_size);
+-                                               if (!lost) {
+-
+pr_debug("Memory allocation failed\n");
+-                                                       return;
+-                                               }
+-                                               lost->header.type =3D
+PERF_RECORD_LOST_SAMPLES;
+-                                       }
+-
+__record__save_lost_samples(rec, evsel, lost,
++                                       memset(&lost, 0, sizeof(lost));
++                                       lost.lost.header.type =3D
+PERF_RECORD_LOST_SAMPLES;
++
+__record__save_lost_samples(rec, evsel, &lost.lost,
+                                                                   x,
+y, count.lost, 0);
+                               }
+                       }
+@@ -1972,21 +1968,12 @@ static void record__read_lost_samples(struct
+record *rec)
 
-Uninit was stored to memory at:
- memcpy_u64s_small fs/bcachefs/util.h:511 [inline]
- bkey_p_copy fs/bcachefs/bkey.h:46 [inline]
- bch2_sort_keys+0x1b4d/0x2cb0 fs/bcachefs/bkey_sort.c:194
- __bch2_btree_node_write+0x3acd/0x67c0 fs/bcachefs/btree_io.c:2100
- bch2_btree_node_write+0xa5/0x2e0 fs/bcachefs/btree_io.c:2288
- btree_node_write_if_need fs/bcachefs/btree_io.h:153 [inline]
- __btree_node_flush+0x4d0/0x640 fs/bcachefs/btree_trans_commit.c:229
- bch2_btree_node_flush0+0x35/0x60 fs/bcachefs/btree_trans_commit.c:238
- journal_flush_pins+0xce6/0x1780 fs/bcachefs/journal_reclaim.c:553
- __bch2_journal_reclaim+0xd88/0x1610 fs/bcachefs/journal_reclaim.c:685
- bch2_journal_reclaim_thread+0x18e/0x760 fs/bcachefs/journal_reclaim.c:727
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+               lost_count =3D perf_bpf_filter__lost_count(evsel);
+               if (lost_count) {
+-                       if (!lost) {
+-                               lost =3D zalloc(sizeof(*lost) +
+-
+session->machines.host.id_hdr_size);
+-                               if (!lost) {
+-                                       pr_debug("Memory allocation failed\=
+n");
+-                                       return;
+-                               }
+-                               lost->header.type =3D PERF_RECORD_LOST_SAMP=
+LES;
+-                       }
+-                       __record__save_lost_samples(rec, evsel, lost,
+0, 0, lost_count,
++                       memset(&lost, 0, sizeof(lost));
++                       lost.lost.header.type =3D PERF_RECORD_LOST_SAMPLES;
++                       __record__save_lost_samples(rec, evsel,
+&lost.lost, 0, 0, lost_count,
 
-Uninit was created at:
- __kmalloc_large_node+0x231/0x370 mm/slub.c:3994
- __do_kmalloc_node mm/slub.c:4027 [inline]
- __kmalloc_node+0xb10/0x10c0 mm/slub.c:4046
- kmalloc_node include/linux/slab.h:648 [inline]
- kvmalloc_node+0xc0/0x2d0 mm/util.c:634
- kvmalloc include/linux/slab.h:766 [inline]
- btree_bounce_alloc fs/bcachefs/btree_io.c:118 [inline]
- bch2_btree_node_read_done+0x4e68/0x75e0 fs/bcachefs/btree_io.c:1185
- btree_node_read_work+0x8a5/0x1eb0 fs/bcachefs/btree_io.c:1324
- bch2_btree_node_read+0x3d42/0x4b50
- __bch2_btree_root_read fs/bcachefs/btree_io.c:1748 [inline]
- bch2_btree_root_read+0xa6c/0x13d0 fs/bcachefs/btree_io.c:1772
- read_btree_roots+0x454/0xee0 fs/bcachefs/recovery.c:457
- bch2_fs_recovery+0x7b6a/0x93e0 fs/bcachefs/recovery.c:785
- bch2_fs_start+0x7b2/0xbd0 fs/bcachefs/super.c:1043
- bch2_fs_open+0x152a/0x15f0 fs/bcachefs/super.c:2105
- bch2_mount+0x90d/0x1d90 fs/bcachefs/fs.c:1906
- legacy_get_tree+0x114/0x290 fs/fs_context.c:662
- vfs_get_tree+0xa7/0x570 fs/super.c:1779
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3352
- path_mount+0x742/0x1f20 fs/namespace.c:3679
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x725/0x810 fs/namespace.c:3875
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:3875
- x64_sys_call+0x2bf4/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:166
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+PERF_RECORD_MISC_LOST_SAMPLES_BPF);
+               }
+       }
+-out:
+-       free(lost);
+}
 
-CPU: 1 PID: 5053 Comm: bch-reclaim/loo Not tainted 6.9.0-syzkaller-02707-g614da38e2f7a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-=====================================================
+static volatile sig_atomic_t workload_exec_errno;
+```
 
+Thanks,
+Ian
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> Thanks,
+> Namhyung
+>
+> >
+> > > regression has occurred then I think we should add the regression cas=
+e
+> > > as a test.
+> >
+> > Sure, I thought about that as well, will try and have one shell test
+> > with that, referring to this case, for v6.11.
+> >
+> > - Arnaldo
 
