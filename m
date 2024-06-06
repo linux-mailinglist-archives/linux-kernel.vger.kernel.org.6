@@ -1,96 +1,166 @@
-Return-Path: <linux-kernel+bounces-204964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A6B28FF595
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:58:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D21268FF59C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CFE91F2543C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:58:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49E42287EE3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA772745C0;
-	Thu,  6 Jun 2024 19:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B3973448;
+	Thu,  6 Jun 2024 20:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VOES39us"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SVVG3Zkx"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE74171743;
-	Thu,  6 Jun 2024 19:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C978347F6C;
+	Thu,  6 Jun 2024 20:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717703918; cv=none; b=nsGlSI55AkWjLlzmH5eBCtsywMidkQmSzx1yJMYGIl0pA2at7w/QtgMewYkBWUjEa7QMLHw/oo4KNhTIcWxM03epAZt71r3N8XUL8PoLDfTcgu7dY3E9OVuuXO9+g2S6vXJpQa1jo98jYmjwTtJBhyXxLvGKaOTVS0ZVXitb23o=
+	t=1717704017; cv=none; b=X8C+2l3AWmUoV13C/ffZXv3qZ6en8sGnQsd1q8nHUc52mD2VHI5G4kNpJCSNupy/l3K/f+TRM5Pg0w5jpmJg50ZJoRJf1qZ6Mb/Zleho43/vPBYTBw9Fl3E0MG4USF+y/l+ceGdYxcxZcKt+7HCDtMPKrMnyU9TjhE2Qqhoo0uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717703918; c=relaxed/simple;
-	bh=a41q0bUhTB2TfeDoXkXNBNdH5lct9YkYIl4SZkTdPoQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=PO7PBSEdd3PJSbgxQEA9afvtJG52CpQlbyYg7u5f7tnYDCnhz8cgg/We1nsUhsYMvM9d8fh9NUxJIjoR8wAh5UbrPuXraoCTLPlA5DpKxLwWlY31cM1rR0+bm/mWERHKZSYsJnGk1YAxPaXTaQ6jpOCnvSNj4YRX1db0jyNWMlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VOES39us; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58BD3C2BD10;
-	Thu,  6 Jun 2024 19:58:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717703917;
-	bh=a41q0bUhTB2TfeDoXkXNBNdH5lct9YkYIl4SZkTdPoQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=VOES39usLWYAA0XVRisqwwUHveB0zQXiDWdslluC3Ua17YfZxwEsZI0iqFKIoD/wI
-	 +dEEasTL8Xo5iE+LNlbnS7LXaYZ5I3ZeQ5vcNCvpjQcg69EfUEeNBY+7Cwgf1zoFHZ
-	 VUbjKYcJ3gKgjqhKU/y3vdQ3ihHj8JLnYVhHvCWuI3rxzi9PsvFrc23r3l8onexnii
-	 VvKYSecAoN6Yh3R3Inzdg+J8ehA8XVCMa5ZMEEKTMZjbZYh4CxZOCeZ9pJii4yFte8
-	 2JY+HcFumaK8Da2Pllay2FzvBJjsuvgvsvI9nUNfTt56PjfJqmfJfKF+Qls9Nqse5u
-	 zpj4AFW2rFDUg==
-Date: Thu, 6 Jun 2024 14:58:35 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux@treblig.org
-Cc: lpieralisi@kernel.org, robh@kernel.org, thierry.reding@gmail.com,
-	linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: tegra: remove unused struct 'tegra_pcie_soc'
-Message-ID: <20240606195835.GA816675@bhelgaas>
+	s=arc-20240116; t=1717704017; c=relaxed/simple;
+	bh=r0HycEYtsjvfDnG31XB6I1WnxKmQ18iLPI5NxGMDrHU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=hfggioW8uS6NuKocn3m7u7X3a8gHlLQ/m1/ANyfNyLyzUDO/LZqssxM0Vtn9+b/NXwrdfivrd4db82cPLni1hsE/SuZO43ZoLv8w2Me1r0j3o5s24dHnwIV9YxeqFdQJfFwK1SMlTmRN7Ioat/nUDv3v2XpqoODBWQWauGBnoYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SVVG3Zkx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 456Akb3J026749;
+	Thu, 6 Jun 2024 20:00:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Km97lP73CsYhkQfOtqG4O7
+	VDuPXW2wmATbHUzQ//8iI=; b=SVVG3ZkxJ+vpP+ySoqlQ4fItnOnwOBjUXBi76Y
+	dLsrnQGS3pLdr2Y4yeZ09cruUOiURG9C7QHuJhSnPnKnCvXSD2N2r3hlcjX3R1ji
+	T64A8vnG6FpSkBvsAEgor3UOC1hc5VHB02bJqwloEAwWzpaVOhRGHtR4nTtMAfIk
+	QbuGsdGlpqawlQKp2w5qa/D6jyQK2k4WfI5hFA3AdwCyhzkuCJzyn79K1eqcSTPr
+	GJ2hZiYKY4gQSSVAhKKYEKVmvSxLuuORFUkgrqYuepPYSMHh2+RUDzLBpn7H+Xs7
+	0J/qxbWFb+tk7h9s2VwcJhJGzZzoZ/z+Ta5024/RtF5tlmfA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjq2tm1kf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Jun 2024 20:00:09 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 456K08WS001766
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 6 Jun 2024 20:00:08 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 6 Jun 2024
+ 13:00:02 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 6 Jun 2024 13:00:01 -0700
+Subject: [PATCH v2] dmaengine: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240527160118.37069-1-linux@treblig.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-ID: <20240606-md-drivers-dma-v2-1-0770dfdf74dd@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAEAVYmYC/3WNyw6CMBBFf4V07ZhSeURX/odh0ccgk9iiU2gwh
+ H+3sHd5knvPWUVEJoziVqyCMVGkMWRQp0LYQYcnArnMQklVyUbW4B04poQcwXkNqpS1aU3Tq+o
+ i8unN2NNyCB9dZqMjgmEd7LBrXhTmBbyOE/I+HyhOI3+PfCr3099SKqEEY43t3dViK5v7ZyZLw
+ Z7t6EW3bdsP2aB2Xs0AAAA=
+To: Vinod Koul <vkoul@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>,
+        "Dave
+ Jiang" <dave.jiang@intel.com>,
+        Peter Ujfalusi <peter.ujfalusi@gmail.com>
+CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6E180usvlq6nDlfgIwMRz4EmPFCT9INs
+X-Proofpoint-ORIG-GUID: 6E180usvlq6nDlfgIwMRz4EmPFCT9INs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-06_16,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 impostorscore=0 clxscore=1015 spamscore=0 malwarescore=0
+ mlxlogscore=999 mlxscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406060138
 
-On Mon, May 27, 2024 at 05:01:18PM +0100, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> 'tegra_pcie_soc' has been unused since the initial
-> commit 56e15a238d92 ("PCI: tegra: Add Tegra194 PCIe support").
-> 
-> Remove it.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/idxd/idxd.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/ti/omap-dma.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/dmatest.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/ioat/ioatdma.o
 
-Applied with Niklas' reviewed-by to pci/controller/tegra194 for v6.11,
-thanks!
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-> ---
->  drivers/pci/controller/dwc/pcie-tegra194.c | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 93f5433c5c55..076f040ccc34 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -308,10 +308,6 @@ static inline u32 appl_readl(struct tegra_pcie_dw *pcie, const u32 reg)
->  	return readl_relaxed(pcie->appl_base + reg);
->  }
->  
-> -struct tegra_pcie_soc {
-> -	enum dw_pcie_device_mode mode;
-> -};
-> -
->  static void tegra_pcie_icc_set(struct tegra_pcie_dw *pcie)
->  {
->  	struct dw_pcie *pci = &pcie->pci;
-> -- 
-> 2.45.1
-> 
+Acked-by: Dave Jiang <dave.jiang@intel.com>
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+Changes in v2:
+- Updated drivers/dma/idxd/init.c with description from Dave Jiang
+- Updated drivers/dma/ti/omap-dma.c with description from Péter Ujfalusi
+- Link to v1: https://lore.kernel.org/r/20240605-md-drivers-dma-v1-1-bcbcfd9ce706@quicinc.com
+---
+ drivers/dma/dmatest.c     | 1 +
+ drivers/dma/idxd/init.c   | 1 +
+ drivers/dma/ioat/init.c   | 1 +
+ drivers/dma/ti/omap-dma.c | 1 +
+ 4 files changed, 4 insertions(+)
+
+diff --git a/drivers/dma/dmatest.c b/drivers/dma/dmatest.c
+index a4f608837849..1f201a542b37 100644
+--- a/drivers/dma/dmatest.c
++++ b/drivers/dma/dmatest.c
+@@ -1372,4 +1372,5 @@ static void __exit dmatest_exit(void)
+ module_exit(dmatest_exit);
+ 
+ MODULE_AUTHOR("Haavard Skinnemoen (Atmel)");
++MODULE_DESCRIPTION("DMA Engine test module");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
+index a7295943fa22..e37faa709d9b 100644
+--- a/drivers/dma/idxd/init.c
++++ b/drivers/dma/idxd/init.c
+@@ -22,6 +22,7 @@
+ #include "perfmon.h"
+ 
+ MODULE_VERSION(IDXD_DRIVER_VERSION);
++MODULE_DESCRIPTION("Intel Data Streaming Accelerator and In-Memory Analytics Accelerator common driver");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Intel Corporation");
+ MODULE_IMPORT_NS(IDXD);
+diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
+index 9c364e92cb82..d84d95321f43 100644
+--- a/drivers/dma/ioat/init.c
++++ b/drivers/dma/ioat/init.c
+@@ -23,6 +23,7 @@
+ #include "../dmaengine.h"
+ 
+ MODULE_VERSION(IOAT_DMA_VERSION);
++MODULE_DESCRIPTION("Intel I/OAT DMA Linux driver");
+ MODULE_LICENSE("Dual BSD/GPL");
+ MODULE_AUTHOR("Intel Corporation");
+ 
+diff --git a/drivers/dma/ti/omap-dma.c b/drivers/dma/ti/omap-dma.c
+index b9e0e22383b7..7e6c04afbe89 100644
+--- a/drivers/dma/ti/omap-dma.c
++++ b/drivers/dma/ti/omap-dma.c
+@@ -1950,4 +1950,5 @@ static void __exit omap_dma_exit(void)
+ module_exit(omap_dma_exit);
+ 
+ MODULE_AUTHOR("Russell King");
++MODULE_DESCRIPTION("Texas Instruments sDMA DMAengine support");
+ MODULE_LICENSE("GPL");
+
+---
+base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+change-id: 20240605-md-drivers-dma-2105b7b6f243
+
 
