@@ -1,134 +1,144 @@
-Return-Path: <linux-kernel+bounces-204826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62BD88FF3F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:41:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B9298FF3ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 076F41F28622
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:41:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69EB61F28610
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E641991D2;
-	Thu,  6 Jun 2024 17:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712581991BF;
+	Thu,  6 Jun 2024 17:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m8Ckb8dK"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q9w96H6a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7560538DC7
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 17:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E5738DC7;
+	Thu,  6 Jun 2024 17:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717695659; cv=none; b=ciCO0AffJMTMqfMZyH4tG2u4B+0ITLB1tFDhjKgXdZg2PHkMdny1njbCwRshXm4/3TAHY2XAAuV+/yjlz3gAhxCOo86HpIvtrtJ1BBzHaATzUUIA8MQqqwd0i7hpcUbfyyUm535YuCJSZRQDmNNTGFlvnfMUBrXRVUhdJmad2BU=
+	t=1717695646; cv=none; b=CxTBL615D+/H3Z8PLg25TkQaVC0kXdb2T/c+6yHvMRQWWyv+zqtzBFrZN/V8fHqhq+TDf4cLvWGAVBQu6FtMFNcUyJ7EeW7PKWFf2/f0TZak693kFIVntuZ3Ip8wvclpz+5gl7SJvD2wohIWAZIwwYNg59hf8dleazfaBObzimU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717695659; c=relaxed/simple;
-	bh=vPMN4+EuzAzMrkCd7/l/7R4dqNlDszNDo/wobQVjlgw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DY3G3UUuUoWruPBsMaK3+OEl92qu+gDO3L2ZVc6WZzfdVWJOpe6CGOnlVbArYiRpdTHQP51hOq0TEHIXEPplqQ94jRvbEfgdKUtabPO5cDume59UnEGjEziY6WuXHGFjS3wD70mODHUMapPjQtPViKl+e5oPvHJBxHX6lOlPedU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=m8Ckb8dK; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f67fa9cd73so17472165ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 10:40:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717695657; x=1718300457; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=786yOwwqWC8f8WKdqMq1eZssf/oeUFi1VZZ4ZRDSieg=;
-        b=m8Ckb8dKBpTK2SIA91Svo/7Is+1qdG+BdxA2cT4oIQ5XFqoRZIu9NBqRixVQmPpAwi
-         viLexgY+SRCVg0Voqz1C0N9VLODwJZVwG4p7eHn1U8kS/+OgjTRJk/1azYQpMId7MD9+
-         oTkr8EuonLANu3V3YjoAKWgLR1A/CyDM08egg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717695657; x=1718300457;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=786yOwwqWC8f8WKdqMq1eZssf/oeUFi1VZZ4ZRDSieg=;
-        b=mzGI3y4jeXGkuf83Q3ugqy9r/oI2NigyPQe0Kp1jeE0iNaD3RZtQoefleV3X7+n9Da
-         KZTuR676LFaTm8kHws/kJ3tobZjn+myYZaGK8bndb/HEAyivOj5LCPohsrpaoDfuBEfp
-         Oq1Hi0z3tlSRnjmzqUTxegVOptIFtRMxBViUBnVlxjEKzGzreOJ/WKcmyFGuEfqzNlHS
-         OoI4qk5gg9VjFcqmQ4206dEh/IuzYUTwE77635Jn6BfAlJ0bHy5KHn/L4i0ftBnQAy5r
-         odeaey1GiNZ/Utx6SsmcD4HgeAe2b7yayMaXSrd0ZQfaF0R2OkPR2q4CKXOzQw3S+or+
-         Q4Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCXIhDXSOhE/UUFcS5GjQdwHsDfNgpEEZLWyvNhHjAtQ0Tge6sS4RkyrwHtV2RDZP9bvFb60beIexPjSqysujNu4WfF6+XoxMIVkWFd1
-X-Gm-Message-State: AOJu0YwHqeFn08S67h2SjVFg+H9bx54NiejZpFdFcXnBBhbU+D51iDFv
-	xO205Y6uCvMnfuhPgwkJ7ALC5+3nPDA4iCLsNtWJouMrn35+3hOiU+C3P1R8fA==
-X-Google-Smtp-Source: AGHT+IFnCZ/+uAkMhQhcfFVpNxKI1wIEiKMNJnnfuVBXtku06HzN8UdFZeDTkBwQBfpqdm24q50dNA==
-X-Received: by 2002:a17:903:2286:b0:1f6:a572:86ab with SMTP id d9443c01a7336-1f6d0151b7amr5291325ad.15.1717695656830;
-        Thu, 06 Jun 2024 10:40:56 -0700 (PDT)
-Received: from pc98uv11.mtv.corp.google.com ([2620:15c:9d:2:3fe9:f321:712c:442f])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd7fd937sm17776515ad.285.2024.06.06.10.40.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 10:40:56 -0700 (PDT)
-From: Daisuke Nojiri <dnojiri@chromium.org>
-To: 
-Cc: dmitry.torokhov@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	bleung@chromium.org,
-	groeck@chromium.org,
-	linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	pmalani@chromium.org,
-	swboyd@chromium.org,
-	hverkuil-cisco@xs4all.nl,
-	rekanorman@chromium.org,
-	abhishekpandit@google.com,
-	pholla@chromium.org,
-	chingkang@chromium.org,
-	lma@chromium.org,
-	Daisuke Nojiri <dnojiri@chromium.org>
-Subject: [PATCH 0/3 v4] Add cros-ec-keyboard v3.0
-Date: Thu,  6 Jun 2024 10:40:39 -0700
-Message-ID: <20240606174052.245034-1-dnojiri@chromium.org>
-X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
-In-Reply-To: <20240604005354.2294468-1-dnojiri@chromium.org>
-References: <20240604005354.2294468-1-dnojiri@chromium.org>
+	s=arc-20240116; t=1717695646; c=relaxed/simple;
+	bh=ennOQnPWn4O/h2UKcahZrRnfi5DrhPQG7mP3BEFvYoE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zw2lde7UwE1d/oFfXTVtj/tRhTmlaucP8z7sI1Gx6BxVsNltHI+k1MpGxmhYuguZXcnMuPihq/yFcIvS9WQ36oE+OQcA5XX1uQFWjWrKrVUVHyAuH+JviVGKkVE5f1DqnnU9DbrTCHe4jKM5+DCuUDYwFrbs4A3VJqvgjKDIFqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q9w96H6a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5DACC2BD10;
+	Thu,  6 Jun 2024 17:40:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717695646;
+	bh=ennOQnPWn4O/h2UKcahZrRnfi5DrhPQG7mP3BEFvYoE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=q9w96H6amaJtFPZRtoMvWtv9V2P+7T+xz8vSeDYhcThG6iBvfKSnYKbx1FapfXbbx
+	 L7WXP1V9Xqn4G/kRoEymgc644/3yDxp66jVKWu0tbC2a5z88iNGC2DQvaCVK+2H9w6
+	 8bNJvC+xAZdTXLkGrH2g15zeNulWC9+Gvz3HasziskEOq/s7/jSkutyrFt9NsRRkMp
+	 mdSxp9y9rWXQ72ni1Yv33PzHPqxz5o7dzIQpZfcvFqQqhpPM6IlimwG0Ntj2gUdwsF
+	 2fq8xNhHpbgbUI9smSIonl3vjyUq8s7DnJNVOeTpq2XWwBIj61SU7ch9vXBOybYkST
+	 sISiIsvxon+xg==
+Date: Thu, 6 Jun 2024 10:40:44 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Leo Yan <leo.yan@arm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	James Clark <james.clark@arm.com>, Ian Rogers <irogers@google.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Nick Terrell <terrelln@fb.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Changbin Du <changbin.du@huawei.com>,
+	Fangrui Song <maskray@google.com>,
+	Mateusz Kowalczyk <fuuzetsu@fuuzetsu.co.uk>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v1 4/6] perf: build: Only link libebl.a for old libdw
+Message-ID: <ZmH0nCxLm5_Xl3Yo@google.com>
+References: <20240604093223.1934236-1-leo.yan@arm.com>
+ <20240604093223.1934236-5-leo.yan@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240604093223.1934236-5-leo.yan@arm.com>
 
-This patch series adds a support for cros-ec-keyboard v3.0, which uses a
-reorganized and larger keyboard matrix thus also requires a protocol update.
+On Tue, Jun 04, 2024 at 10:32:21AM +0100, Leo Yan wrote:
+> Since libdw version 0.177, elfutils has merged libebl.a into libdw (see
+> the commit "libebl: Don't install libebl.a, libebl.h and remove backends
+> from spec." in the elfutils repository).
+> 
+> As a result, libebl.a does not exist on Debian Bullseye and newer
+> releases, causing static perf builds to fail on these distributions.
+> 
+> This commit checks the libdw version and only links libebl.a if it
+> detects that the libdw version is older than 0.177.
+> 
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>  tools/build/feature/Makefile | 12 +++++++++++-
+>  tools/perf/Makefile.config   | 12 +++++++++++-
+>  2 files changed, 22 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
+> index 6f52f892f9a3..2f4cfb7b8c14 100644
+> --- a/tools/build/feature/Makefile
+> +++ b/tools/build/feature/Makefile
+> @@ -159,7 +159,17 @@ $(OUTPUT)test-libopencsd.bin:
+>  
+>  DWARFLIBS := -ldw
+>  ifeq ($(findstring -static,${LDFLAGS}),-static)
+> -DWARFLIBS += -lelf -lebl -lz -llzma -lbz2
+> +  DWARFLIBS += -lelf -lz -llzma -lbz2
+> +
+> +  LIBDW_VERSION := $(shell $(PKG_CONFIG) --modversion libdw)
+> +  LIBDW_VERSION_1 := $(word 1, $(subst ., ,$(LIBDW_VERSION)))
+> +  LIBDW_VERSION_2 := $(word 2, $(subst ., ,$(LIBDW_VERSION)))
+> +
+> +  # Elfutils merged libebl.a into libdw.a starting from version 0.177,
+> +  # Link libebl.a only if libdw is older than this version.
+> +  ifeq ($(shell test $(LIBDW_VERSION_2) -lt 177; echo $$?),0)
+> +    DWARFLIBS += -lebl
+> +  endif
+>  endif
 
----
-Changes in v4:
- - Change subject line: ARM:... to dt-bindings:...
- - Add description about keyboard matrix v3.0.
- - Add cover letter.
+Is there a better way to collect required libraries using pkg-config?
+I guess that's what we want to with the pkg-config in the first place.
+Maybe `pkg-config --print-requires-private libdw` ?
 
----
-Changes in v3:
- - Remove CROS_KBD_V30 in Kconfig and macros conditionally set in
-   cros-ec-keyboard.dtsi.
+Thanks,
+Namhyung
 
----
-Changes in v2:
- - Separate cros_ec_commands.h from cros_ec_proto.{c.h}.
- - Remove Change-Id, TEST=, BUG= lines.
-
-Daisuke Nojiri (3):
-  platform/chrome: Add struct ec_response_get_next_event_v3
-  platform/chrome: cros_ec_proto: Upgrade get_next_event to v3
-  dt-bindings: cros-ec-keyboard: Add keyboard matrix v3.0
-
- drivers/platform/chrome/cros_ec_proto.c       |  27 +++--
- include/dt-bindings/input/cros-ec-keyboard.h  | 104 ++++++++++++++++++
- .../linux/platform_data/cros_ec_commands.h    |  34 ++++++
- include/linux/platform_data/cros_ec_proto.h   |   2 +-
- 4 files changed, 157 insertions(+), 10 deletions(-)
-
--- 
-2.45.2.505.gda0bf45e8d-goog
-
+>  
+>  $(OUTPUT)test-dwarf.bin:
+> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> index 646e5af0ed51..e8d3713b081c 100644
+> --- a/tools/perf/Makefile.config
+> +++ b/tools/perf/Makefile.config
+> @@ -152,7 +152,17 @@ ifdef LIBDW_DIR
+>  endif
+>  DWARFLIBS := -ldw
+>  ifeq ($(findstring -static,${LDFLAGS}),-static)
+> -  DWARFLIBS += -lelf -lebl -ldl -lz -llzma -lbz2
+> +  DWARFLIBS += -lelf -ldl -lz -llzma -lbz2
+> +
+> +  LIBDW_VERSION := $(shell $(PKG_CONFIG) --modversion libdw)
+> +  LIBDW_VERSION_1 := $(word 1, $(subst ., ,$(LIBDW_VERSION)))
+> +  LIBDW_VERSION_2 := $(word 2, $(subst ., ,$(LIBDW_VERSION)))
+> +
+> +  # Elfutils merged libebl.a into libdw.a starting from version 0.177,
+> +  # Link libebl.a only if libdw is older than this version.
+> +  ifeq ($(shell test $(LIBDW_VERSION_2) -lt 177; echo $$?),0)
+> +    DWARFLIBS += -lebl
+> +  endif
+>  endif
+>  FEATURE_CHECK_CFLAGS-libdw-dwarf-unwind := $(LIBDW_CFLAGS)
+>  FEATURE_CHECK_LDFLAGS-libdw-dwarf-unwind := $(LIBDW_LDFLAGS) $(DWARFLIBS)
+> -- 
+> 2.34.1
+> 
 
