@@ -1,163 +1,121 @@
-Return-Path: <linux-kernel+bounces-203633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F03088FDE6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:58:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B43F8FDE71
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 897B9282E2A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:58:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74C67B2202C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9253E478;
-	Thu,  6 Jun 2024 05:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B1444C84;
+	Thu,  6 Jun 2024 06:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QrLx96W3"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZmLynZHb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014973A1B5;
-	Thu,  6 Jun 2024 05:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9E38821;
+	Thu,  6 Jun 2024 06:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717653503; cv=none; b=L3kaZCZsgMKl+HONjmLmfnZN07cagXdFNScyIHqHyGRnNfvUj2arADJBMFbgZd7sja1+npT9ff19SNk5u0zM3l0XjdLYwegel2rkb390OlcYgKVlfZj5pfRg4DkLE1ZoFGMVVW8cygsAO1luoqsf8F3//C2ixWRUuaWr0ibAG+o=
+	t=1717653768; cv=none; b=tp0dkdqCZqvm3hfJBBZw1GwZDbFLvxy5/8B+sZMLm7CQ5sA4e1QLdpIIrm1w5ob1ko6i/K/yH2SKO1dP4qohN3BwWps5D/8jHJSOZ0+hmy+dK3x+tOu6lE20gm24t2Wp5C1LvRM8uHrZGwIENd0Jl9moWMYTKCeyuKyKKf8pT9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717653503; c=relaxed/simple;
-	bh=6NWcvCXPzOmQL03xuUwIf0ZfJFfV4TLSn/3ewibXaUE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pRgLEmyd7kpHRfEcE3f7b/8o6tUfryOowfviSXyZne6XPHG7ZcfgGRisICvPRihryZw2Ix8dBbJD9H5LA7uyVLN2NL40fVv4vBm+rkQdv1o4LtUJBXbJD+jpApQgCxKRyfY/OvsX5+Ba1w2JU3IBXkodTEIIbH83VuGtK3M7/nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QrLx96W3; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57a2f27090aso2852647a12.0;
-        Wed, 05 Jun 2024 22:58:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717653500; x=1718258300; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U1mYtjBByOprl6ZmfuL/H30Cog14YD+HEdn6u5NccMA=;
-        b=QrLx96W37KP9KQSWLUOaCeKEM901nqpyBeGTtb+lzcXrpRh8U++sHmreUxtDCBqIKl
-         yV6plTz8K4rXiMCCr7sAECJLj3WEL4/2HExoZHm9c2xIQFC6pfco5UOvgk80k4Ky3qk8
-         XNmzbv2mWFuUgcXKx1ECoh5HFp5ujztYRUsqRcO1eNBI7wgH1SsjaWZ7CYDMk92VyLFx
-         t+MjkC2AyU9zGaqmZ3ffW5P/N4jXI1AmsPZlhx/FdF9+Umo7BhizFrgfnu1kPjE5bwz/
-         5RDlRBqyXgMgyvG1f/WWvDwZt4ViVSdYS/xYK0TLsB+xLRhzme7WJuPd2R0/7bRzvhMx
-         rkWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717653500; x=1718258300;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U1mYtjBByOprl6ZmfuL/H30Cog14YD+HEdn6u5NccMA=;
-        b=EQxUSNo/reTZFK7uDn4V2amYKdH4/dcmOK2pjdiyuk37UIr2noouWRxYxiMLkzT8SD
-         lI4Rih8PX+xkwnjzkjgw40ZHaTdjwwcpeBeUgxhHpsHrngNhXPV4lbygYnV2fs9xLaWF
-         l91ogcQryI7HjDDV02hV0NOVtKdQTIjCbG1Ca2dMdBW3BnL0xEikNzmFbMeANaguQE6S
-         Ex91DOj0reTJb8II9T1knoanptSqZUx6svyG5bAQ0fjO+Xo1dAEuJLVFP5KLpZwS/Ijf
-         Fya4zoywQ/L1ZyoWj7hjj2pQgn5aObaAgWR2JxLGf35hsTwJ4jHHFA9zctIJkDPqDHpB
-         VAZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUbr/xA8KVkk7pfYVAmBmR7/I1DE4G8Vdyn//+T4VEhbq7xgUnVzRCZ9pII2/FdTOnbGTzDAOyrAc+LvQbCudJHwJU1bjNBMDAiaPC+bF9QyaMkL3iu5sOOG6Zv0HkslHa
-X-Gm-Message-State: AOJu0Yz2qiY54cwMmODo4qmLMEc7flurxEmxTdh3HBssSIIBsp4bKpVf
-	15T6S4Lcnw1PTZfdi9XcSit/ncbae9ACq77S4UW8umx9TCapgDqI4tPqcDGVvUkRsfCKjghAwyO
-	5cy24XZnDI2wee36+FUCeboQ0ofJ2/f9kd8s=
-X-Google-Smtp-Source: AGHT+IEys7geThk0pva0KeRlzuve++l6LF43LlkA5b2bW48UwAZZ4TpcxWzTiCpa5GRUMks/MiKkC5EhfnEfGLW1VOg=
-X-Received: by 2002:a50:9f2c:0:b0:578:63ec:3e90 with SMTP id
- 4fb4d7f45d1cf-57aa55ae1dbmr1347672a12.14.1717653499952; Wed, 05 Jun 2024
- 22:58:19 -0700 (PDT)
+	s=arc-20240116; t=1717653768; c=relaxed/simple;
+	bh=+N73ZoMcTU2eT6S1zwH3KuWbb697R2JF/05UDlnStFg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=OMfZD5R4DfDjBhp1qXw7CkgBO1rS4HyVckVeX+3uou26oE6iLXHoBUIzG2hWabf8yIUyPN8LCuBy+yPgxj/CAtOVJH9LpuVoD5RScqNgrS7NOrkEVuBgKQxs8NEBdTIsh2dG7D5FjDI2lGhSrsBS76wq7baricMvEyNTXW/uoQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZmLynZHb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9185C2BD10;
+	Thu,  6 Jun 2024 06:02:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717653768;
+	bh=+N73ZoMcTU2eT6S1zwH3KuWbb697R2JF/05UDlnStFg=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=ZmLynZHbI6+wxCoH1qsyPjAEaqVNs7ObvEwVHIw3vJZfJHIwRxJfcf9FU3FL6NEEi
+	 g9yD4HLhAw0LoywOGsYjq7bj/p6fVvb66y+JJBELnB9P9WEGYvqEaCXlDEachSbGHA
+	 FRaf5sPKiic7EiwGrHG5hgacpnqiYn4ByHic1mk3NhtPrm61IpuUiVVO4X4U7s04ud
+	 GWGcjFMk85/3uLd6E8wEDOs9t3QNJ7LCJGI6cZyTTZ7CLOmIbPrLmc0PYZ3FpQL6R4
+	 mmbSZBbf9uHeBP9BxtYYUfhCFOxhy9eo/RtlsfNXBCA7SAb0aoSLB7LZDYGzuDJ59Y
+	 n/Am9dYvkU9Kg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
- <20240604222355.2370768-3-paulmck@kernel.org> <ZmCTvMVlOMFv0-zd@localhost.localdomain>
-In-Reply-To: <ZmCTvMVlOMFv0-zd@localhost.localdomain>
-From: Neeraj upadhyay <neeraj.iitr10@gmail.com>
-Date: Thu, 6 Jun 2024 11:28:07 +0530
-Message-ID: <CAFwiDX8yGCEiZE-VC0i=VoGByQArQkwG7beVvQO5wRGsK8rdPQ@mail.gmail.com>
-Subject: Re: [PATCH rcu 3/9] rcu/tree: Reduce wake up for synchronize_rcu()
- common case
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com, rostedt@goodmis.org, 
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>, Uladzislau Rezki <urezki@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 06 Jun 2024 09:02:39 +0300
+Message-Id: <D1SPFVXS6FOG.IQQB3INFYEF2@kernel.org>
+Cc: <dpsmith@apertussolutions.com>, <tglx@linutronix.de>,
+ <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+ <dave.hansen@linux.intel.com>, <ardb@kernel.org>, <mjg59@srcf.ucam.org>,
+ <James.Bottomley@hansenpartnership.com>, <peterhuewe@gmx.de>,
+ <jgg@ziepe.ca>, <luto@amacapital.net>, <nivedita@alum.mit.edu>,
+ <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <corbet@lwn.net>,
+ <ebiederm@xmission.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
+ <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
+ <trenchboot-devel@googlegroups.com>
+Subject: Re: [PATCH v9 04/19] x86: Secure Launch Resource Table header file
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: <ross.philipson@oracle.com>, <linux-kernel@vger.kernel.org>,
+ <x86@kernel.org>, <linux-integrity@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+ <kexec@lists.infradead.org>, <linux-efi@vger.kernel.org>,
+ <iommu@lists.linux-foundation.org>
+X-Mailer: aerc 0.17.0
+References: <20240531010331.134441-1-ross.philipson@oracle.com>
+ <20240531010331.134441-5-ross.philipson@oracle.com>
+ <D1RFWFIJEYWL.2FC7V79321264@kernel.org>
+ <1eca8cb1-4b3b-402b-993b-53de7c810016@oracle.com>
+ <D1RLBMTUKRFN.34KQXEFZTBA08@kernel.org>
+ <249a9b27-c18d-4377-8b51-9bc610b53a8b@oracle.com>
+ <D1RNKV4JIE5L.1LNG82UAC916M@kernel.org>
+ <f66de08f-4905-48d6-8bcf-5b1ab847492f@oracle.com>
+ <D1RSB1PB5XGS.2X032M0E1VMJW@kernel.org>
+ <a865a25c-336e-47de-9718-de4cb957e6c2@oracle.com>
+In-Reply-To: <a865a25c-336e-47de-9718-de4cb957e6c2@oracle.com>
 
-On Wed, Jun 5, 2024 at 10:05=E2=80=AFPM Frederic Weisbecker <frederic@kerne=
-l.org> wrote:
+On Wed Jun 5, 2024 at 10:03 PM EEST,  wrote:
+> So I did not mean to imply that DRTM support on various=20
+> platforms/architectures has a short expiration date. In fact we are=20
+> actively working on DRTM support through the TrenchBoot project on=20
+> several platforms/architectures. Just a quick rundown here:
 >
-> Le Tue, Jun 04, 2024 at 03:23:49PM -0700, Paul E. McKenney a =C3=A9crit :
-> > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> >
-> > In the synchronize_rcu() common case, we will have less than
-> > SR_MAX_USERS_WAKE_FROM_GP number of users per GP. Waking up the kworker
-> > is pointless just to free the last injected wait head since at that poi=
-nt,
-> > all the users have already been awakened.
-> >
-> > Introduce a new counter to track this and prevent the wakeup in the
-> > common case.
-> >
-> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> > Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > ---
-> >  kernel/rcu/tree.c | 35 ++++++++++++++++++++++++++++++-----
-> >  kernel/rcu/tree.h |  1 +
-> >  2 files changed, 31 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > index 6ba36d9c09bde..2fe08e6186b4d 100644
-> > --- a/kernel/rcu/tree.c
-> > +++ b/kernel/rcu/tree.c
-> > @@ -96,6 +96,7 @@ static struct rcu_state rcu_state =3D {
-> >       .ofl_lock =3D __ARCH_SPIN_LOCK_UNLOCKED,
-> >       .srs_cleanup_work =3D __WORK_INITIALIZER(rcu_state.srs_cleanup_wo=
-rk,
-> >               rcu_sr_normal_gp_cleanup_work),
-> > +     .srs_cleanups_pending =3D ATOMIC_INIT(0),
-> >  };
-> >
-> >  /* Dump rcu_node combining tree at boot to verify correct setup. */
-> > @@ -1633,8 +1634,11 @@ static void rcu_sr_normal_gp_cleanup_work(struct=
- work_struct *work)
-> >        * the done tail list manipulations are protected here.
-> >        */
-> >       done =3D smp_load_acquire(&rcu_state.srs_done_tail);
-> > -     if (!done)
-> > +     if (!done) {
-> > +             /* See comments below. */
-> > +             atomic_dec_return_release(&rcu_state.srs_cleanups_pending=
-);
+> Intel: Plenty of Intel platforms are vPro with TXT. It is really just=20
+> the lower end systems that don't have it available (like Core i3). And=20
+> my guess was wrong about x86s. You can find the spec on the page in the=
+=20
+> following link. There is an entire subsection on SMX support on x86s and=
+=20
+> the changes to the various GETSEC instruction leaves that were made to=20
+> make it work there (see 3.15).
 >
-> This condition is not supposed to happen. If the work is scheduled,
-> there has to be a wait_queue in rcu_state.srs_done_tail. And decrementing
-> may make things worse.
->
+> https://www.intel.com/content/www/us/en/developer/articles/technical/envi=
+sioning-future-simplified-architecture.html
 
-I also don't see a scenario where this can happen. However, if we are
-returning from here, given that for every queued work we do an
-increment of rcu_state.srs_cleanups_pending, I think it's safer to
-decrement in this
-case, as that counter tracks only the work queuing and execution counts.
+Happend to bump into same PDF specification and exactly the seeked
+information is "3.15 SMX Changes". So just write this down to some
+patch that starts adding SMX things.
 
-    atomic_inc(&rcu_state.srs_cleanups_pending);
-    if (!queue_work(sync_wq, &rcu_state.srs_cleanup_work))
-        atomic_dec(&rcu_state.srs_cleanups_pending);
+Link: https://cdrdv2.intel.com/v1/dl/getContent/776648
 
+So link and document, and other stuff above is not relevant from
+upstream context, only potential maintenance burden :-)
 
+For any architectures dig a similar fact:
 
+1. Is not dead.
+2. Will be there also in future.
 
-Thanks
-Neeraj
+Make any architecture existentially relevant for and not too much
+coloring in the text that is easy to check.
 
-> So this should be:
->
-> if (WARN_ON_ONCE(!done))
->    return;
->
-> Thanks.
->
+It is nearing 5k lines so you should be really good with measured
+facts too (not just launch) :-)
+
+BR, Jarkko
 
