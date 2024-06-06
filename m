@@ -1,170 +1,142 @@
-Return-Path: <linux-kernel+bounces-203747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368DA8FDFED
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:36:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A6CC8FDFCA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2F78282578
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:36:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D64791C242E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16B313FD8D;
-	Thu,  6 Jun 2024 07:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QDorgE9P"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BB713AD04;
+	Thu,  6 Jun 2024 07:34:32 +0000 (UTC)
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9864F13E058;
-	Thu,  6 Jun 2024 07:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC59F1F5F5;
+	Thu,  6 Jun 2024 07:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717659286; cv=none; b=TDVDmJlQ/TdsH8bjybj2G79AAMZoteGbKeLN7PQVwmlTIwGa4Ci0vkThkydkLLqzyOlsINnzsscSBV892JCR9F/SZ1Qwx5seg3inFXJnC/Uds32uMmPuUdOxxpoKWL6E/Dmmwzh5R85tYGiyOxlQJTstJl8nlZVDvfF2efbjfkE=
+	t=1717659272; cv=none; b=PSG8SraSqidSUpOGy90c6QMPgU0B1ts50c6zO9VqbnGtcMM9IrKeVUtpq3q75A6IS4nmHWOHqYAh1DR2pPXncm9Kvk+X41ZsfskQ8MaoVY2JGr1NLRCWV+FXQnbV3qIV4RftpxUbqfcGa8X3gYOcC6oba6aAylMKOG3L6WSp3i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717659286; c=relaxed/simple;
-	bh=2QuIxtKrX4JQURCSM13krZkPpuVxMNuAzViQSE1zWAs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fpiUBIytMF1NR6uOFNG2b8FUWtmdnDkrwgUHCjoIlYdrDvpNc1wlZ3vL077QJxtl+DWTU8lxePJXswxcE5YJ1T3Fx7FOx9D+dbOlz4ratd6iDPZFGCoyKejBaJJWhhtCHIOGIFRjrTQcjNRUb0AP8a3oxctI2ixcSjGLFI4ggpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QDorgE9P; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717659283;
-	bh=2QuIxtKrX4JQURCSM13krZkPpuVxMNuAzViQSE1zWAs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QDorgE9PL4QNpGF8WG36TqanKGvV4rHpz6ItFIrdm6K9swNLY7hwZUcc/TBDXKwXt
-	 O6RYvUUruh0+xYtof/3pm6ssXyXUiMxCnxCBXUC3lSnYj7FBKCK5AKdefLtjsGN1YO
-	 JRC7BgDya5bWPAshfITWulQsTtpcaunELwn298eTU3sXk1ob9Qt9ZmyV1k/LO0bdaR
-	 WcP2gSOkEd9niuiyizGwmQCLXwe8cTVxtUr6/nX+rEf4uFJJPQd6qCOnaoK+jQhb6I
-	 vWYllAHNWiYgRNCUKw7T/tEZtf3s66lkCccJ6/9GqaW8mOIUnkicjUsIhu0ZpJ0MNU
-	 o8bd21ZdLtfqQ==
-Received: from eugen-station.. (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: ehristev)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 3A4E637821D8;
-	Thu,  6 Jun 2024 07:34:42 +0000 (UTC)
-From: Eugen Hristev <eugen.hristev@collabora.com>
-To: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org,
-	jaegeuk@kernel.org,
-	adilger.kernel@dilger.ca,
-	tytso@mit.edu
-Cc: chao@kernel.org,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	ebiggers@google.com,
-	krisman@suse.de,
-	kernel@collabora.com,
-	Gabriel Krisman Bertazi <krisman@collabora.com>,
-	Eugen Hristev <eugen.hristev@collabora.com>
-Subject: [PATCH v18 7/7] f2fs: Move CONFIG_UNICODE defguards into the code flow
-Date: Thu,  6 Jun 2024 10:33:53 +0300
-Message-Id: <20240606073353.47130-8-eugen.hristev@collabora.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240606073353.47130-1-eugen.hristev@collabora.com>
-References: <20240606073353.47130-1-eugen.hristev@collabora.com>
+	s=arc-20240116; t=1717659272; c=relaxed/simple;
+	bh=ClQsc8q9HrRkQiRCQ2nOZTB+tOad1qJGFv5pAgzNOFY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S9HoYbl4EAxfSdSpXxFlhWTCYmqEzQHnhTU0CBvj9iYfiV8Ug+X984qnMO0l1xcwk1khap/0btzbe1AFC+55pTVsMwlh+Jvb3bZ3g/REjEae7amCTM5m6vIKh+ogSX/ej7ytob8QP6UZrDaNu4uY/oBXfpNVo7VcJ6NnMnLWjEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-80ac76f1226so1022843241.0;
+        Thu, 06 Jun 2024 00:34:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717659269; x=1718264069;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4GKftCP9/2k+rwdbFe8+uz5mmXt90F+mrxFfDHCGfSE=;
+        b=m2Fqm2HLd6mMQcEmLcW6iv9j/l9BO6BLmUP5eWHTLbIDfew2SSQInAvrfUz2wkmIIb
+         lxX306CJghzCTxu3v1Zpozn0tLOn+AKCal3LKM5uz6EN91L/7omMvgHCKyhORrONy3kI
+         Bxtc1eON+QdLG21ge2LFBTBB/jWvEfPB3YayPkVOEiS/MIYggFDRRp4u4RdPeiWbojtX
+         nluxg4Zk0AtdQeU4SzkSp+EAbaYgpSwvTLDNxGNnTl0GxY16AJFxGtvJtLo+ltC41CEA
+         yAdLwD/ltDQetOPzAHOF9qb4DYU/O/tR0JPN2cV5sxXeAyDTJCUNVh0XtgCYaR4wtiau
+         TRQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMg6jKHBw3pikORA7TI1aLff1dlmyyfCom3EFKwNpta4530kmkAZch+6s7UzxUUrq+kWHvXYdy9L/3xHwZK5pGRvK7VqtdKZZeXaCnfFwt6NM3ymSjgMHrg7kxQfJqYL4/F6HvACMX6+IG2BNiPi4EP0HLR/wKRakw+J3WzGvEwN6W6DBX6A==
+X-Gm-Message-State: AOJu0YyXh98B8BfYHXmvulSBX3JAkTzNhKZHzpEhVb0HCTkbWEnL8QXz
+	a1RyGJWnzaTQkIlLUNnxUy/CseimsdZfBXxXBMdJu0Ru3wa5XZWl3BPDTPpBO3B2QFstTf06t90
+	b4hHCL1nWJWVMjxcFe0my/OtXND8=
+X-Google-Smtp-Source: AGHT+IHDkMbNMsty1ht2MnXgdQEVvR9NxMfwMhbf3doeT/zFY8jzDxGMadfWznImQanH/ixCrkzqx05d8QEvEiqihNY=
+X-Received: by 2002:a05:6102:292c:b0:48b:d1dc:39f6 with SMTP id
+ ada2fe7eead31-48c165b0062mr2590222137.0.1717659269214; Thu, 06 Jun 2024
+ 00:34:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240605160848.4116061-1-kan.liang@linux.intel.com> <CAP-5=fV+-ytA2st17Ar-jQ5xYqrWtxnF2TcADKrC5WoPyKz4wQ@mail.gmail.com>
+In-Reply-To: <CAP-5=fV+-ytA2st17Ar-jQ5xYqrWtxnF2TcADKrC5WoPyKz4wQ@mail.gmail.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Thu, 6 Jun 2024 00:34:17 -0700
+Message-ID: <CAM9d7cjuHYDMvcq10ZD=3LSmia4WcvAzsme89B-odHYBAZzWYg@mail.gmail.com>
+Subject: Re: [PATCH] perf stat: Fix the hard-coded metrics calculation on the hybrid
+To: Ian Rogers <irogers@google.com>
+Cc: kan.liang@linux.intel.com, acme@kernel.org, jolsa@kernel.org, 
+	adrian.hunter@intel.com, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "Khalil, Amiri" <amiri.khalil@intel.com>, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Gabriel Krisman Bertazi <krisman@collabora.com>
+On Wed, Jun 5, 2024 at 10:21=E2=80=AFAM Ian Rogers <irogers@google.com> wro=
+te:
+>
+> On Wed, Jun 5, 2024 at 9:10=E2=80=AFAM <kan.liang@linux.intel.com> wrote:
+> >
+> > From: Kan Liang <kan.liang@linux.intel.com>
+> >
+> > The hard-coded metrics is wrongly calculated on the hybrid machine.
+> >
+> > $ perf stat -e cycles,instructions -a sleep 1
+> >
+> >  Performance counter stats for 'system wide':
+> >
+> >         18,205,487      cpu_atom/cycles/
+> >          9,733,603      cpu_core/cycles/
+> >          9,423,111      cpu_atom/instructions/     #  0.52  insn per cy=
+cle
+> >          4,268,965      cpu_core/instructions/     #  0.23  insn per cy=
+cle
+> >
+> > The insn per cycle for cpu_core should be 4,268,965 / 9,733,603 =3D 0.4=
+4.
+> >
+> > When finding the metric events, the find_stat() doesn't take the PMU
+> > type into account. The cpu_atom/cycles/ is wrongly used to calculate
+> > the IPC of the cpu_core.
+> >
+> > Fixes: 0a57b910807a ("perf stat: Use counts rather than saved_value")
+> > Reported-by: "Khalil, Amiri" <amiri.khalil@intel.com>
+> > Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+>
+> Reviewed-by: Ian Rogers <irogers@google.com>
+>
+> Thanks,
+> Ian
+>
+> > Cc: stable@vger.kernel.org
+> > ---
+> >  tools/perf/util/stat-shadow.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shado=
+w.c
+> > index 3466aa952442..4d0edc061f1a 100644
+> > --- a/tools/perf/util/stat-shadow.c
+> > +++ b/tools/perf/util/stat-shadow.c
+> > @@ -176,6 +176,10 @@ static double find_stat(const struct evsel *evsel,=
+ int aggr_idx, enum stat_type
+> >                 if (type !=3D evsel__stat_type(cur))
+> >                         continue;
+> >
+> > +               /* Ignore if not the PMU we're looking for. */
+> > +               if (evsel->pmu !=3D cur->pmu)
+> > +                       continue;
 
-Instead of a bunch of ifdefs, make the unicode built checks part of the
-code flow where possible, as requested by Torvalds.
+Hmm.. Don't some metrics need events from different PMU?
+Like cycles per sec or branch instructions per sec..
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-[eugen.hristev@collabora.com: port to 6.10-rc1]
-Signed-off-by: Eugen Hristev <eugen.hristev@collabora.com>
-Reviewed-by: Eric Biggers <ebiggers@google.com>
----
- fs/f2fs/namei.c | 10 ++++------
- fs/f2fs/super.c |  8 ++++----
- 2 files changed, 8 insertions(+), 10 deletions(-)
+Thanks,
+Namhyung
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index e54f8c08bda8..1ecde2b45e99 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -576,8 +576,7 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 		goto out_iput;
- 	}
- out_splice:
--#if IS_ENABLED(CONFIG_UNICODE)
--	if (!inode && IS_CASEFOLDED(dir)) {
-+	if (IS_ENABLED(CONFIG_UNICODE) && !inode && IS_CASEFOLDED(dir)) {
- 		/* Eventually we want to call d_add_ci(dentry, NULL)
- 		 * for negative dentries in the encoding case as
- 		 * well.  For now, prevent the negative dentry
-@@ -586,7 +585,7 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 		trace_f2fs_lookup_end(dir, dentry, ino, err);
- 		return NULL;
- 	}
--#endif
-+
- 	new = d_splice_alias(inode, dentry);
- 	trace_f2fs_lookup_end(dir, !IS_ERR_OR_NULL(new) ? new : dentry,
- 				ino, IS_ERR(new) ? PTR_ERR(new) : err);
-@@ -639,16 +638,15 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
- 	f2fs_delete_entry(de, page, dir, inode);
- 	f2fs_unlock_op(sbi);
- 
--#if IS_ENABLED(CONFIG_UNICODE)
- 	/* VFS negative dentries are incompatible with Encoding and
- 	 * Case-insensitiveness. Eventually we'll want avoid
- 	 * invalidating the dentries here, alongside with returning the
- 	 * negative dentries at f2fs_lookup(), when it is better
- 	 * supported by the VFS for the CI case.
- 	 */
--	if (IS_CASEFOLDED(dir))
-+	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
- 		d_invalidate(dentry);
--#endif
-+
- 	if (IS_DIRSYNC(dir))
- 		f2fs_sync_fs(sbi->sb, 1);
- fail:
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 1f1b3647a998..df4cf31f93df 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -321,7 +321,7 @@ struct kmem_cache *f2fs_cf_name_slab;
- static int __init f2fs_create_casefold_cache(void)
- {
- 	f2fs_cf_name_slab = f2fs_kmem_cache_create("f2fs_casefolded_name",
--							F2FS_NAME_LEN);
-+						   F2FS_NAME_LEN);
- 	return f2fs_cf_name_slab ? 0 : -ENOMEM;
- }
- 
-@@ -1326,13 +1326,13 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 		return -EINVAL;
- 	}
- #endif
--#if !IS_ENABLED(CONFIG_UNICODE)
--	if (f2fs_sb_has_casefold(sbi)) {
-+
-+	if (!IS_ENABLED(CONFIG_UNICODE) && f2fs_sb_has_casefold(sbi)) {
- 		f2fs_err(sbi,
- 			"Filesystem with casefold feature cannot be mounted without CONFIG_UNICODE");
- 		return -EINVAL;
- 	}
--#endif
-+
- 	/*
- 	 * The BLKZONED feature indicates that the drive was formatted with
- 	 * zone alignment optimization. This is optional for host-aware
--- 
-2.34.1
 
+> > +
+> >                 aggr =3D &cur->stats->aggr[aggr_idx];
+> >                 if (type =3D=3D STAT_NSECS)
+> >                         return aggr->counts.val;
+> > --
+> > 2.35.1
+> >
 
