@@ -1,223 +1,167 @@
-Return-Path: <linux-kernel+bounces-204075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F6BD8FE3F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:14:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8CE58FE3BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C03FB2828E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:59:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA7C0B2460C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90633181CF0;
-	Thu,  6 Jun 2024 09:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QKw0wDIB"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3AD152783;
+	Thu,  6 Jun 2024 09:42:17 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C2E1802DA
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1E51514EE
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717667973; cv=none; b=bANnye+gGzM/5U8qGIcqKPhveEIl7BtFsHqsN1qqJXw6yzazCo3kzTa4N27bICKM4AQ4p6zvGSPZCuhuhLJbGxToFm4Vrb0EGdedzgTqJf3GDbocpYl0Lg0NN3iTHv1m22POCt0IW58odTfiVUJngZkTlqVGl6Hx1NmumG/yFiI=
+	t=1717666936; cv=none; b=Hgtp959+KDa3BBRFp0bs5ckVh88ENI6iq1LBKWJdvX/yDBvAgIY+CYpb5rX5jJfdcRWOo7fkC0bRAVKlBr7Vnte53Rik9Anh10aHHwE9SAyQwcSgLwa3LBqif8qrQLWoh64W9Yv+8UCwGr8v6Tdta0NHLvfJ0OZ5PWUcw37ka2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717667973; c=relaxed/simple;
-	bh=+kWRtm46EHgrfEjT1jHXAvldmafiXTrXdwgo0depAw8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=ui4B5rehfjSvQF0qtwmSn/NNLtVUv4PTE7SsVWjhri1NQIRaQ89QTQKY5ADG6hQ/1OiLClsgCsxS1FEft+8dK2bMpPJ/qcIi4aV4c1tdo4I6DNEU9s4cX6OhMY7seqV64/bYIISqJSBJCQ9Efj2Bd191al8mbLLWs8phjd2tNE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QKw0wDIB; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240606095929epoutp04738a815990efb1bf72dcea39fe926f55~WYesJn5br0691206912epoutp04B
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:59:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240606095929epoutp04738a815990efb1bf72dcea39fe926f55~WYesJn5br0691206912epoutp04B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1717667970;
-	bh=X/08X1olkAIHOusibyucFDGsWQxmM65XPCWbJyAP97k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QKw0wDIB92CTHYFpIxJAvP41i3DJ/cf/0ZXQkxIvg3jr4bqVBhe5VbL0CBZzrUrbE
-	 VIsnKoi3ITrM41Z5pbK7a8XevDX5hsX25Fs2A4xZtx278nq37+lT2uXKtF7YrXjbk4
-	 YCRlRNkc3u6DgyW/ZC5f8kM7jxZaEw/81EV7Z4xg=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240606095929epcas5p245fe6bdf77b2f0f33a3edf73692d5856~WYerhxehs1456214562epcas5p21;
-	Thu,  6 Jun 2024 09:59:29 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.174]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Vw0DH2hHwz4x9Px; Thu,  6 Jun
-	2024 09:59:27 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	A2.3C.19174.F7881666; Thu,  6 Jun 2024 18:59:27 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240606072827epcas5p285de8d4f3b0f6d3a87f8341414336b42~WWaz25d7o3006730067epcas5p2d;
-	Thu,  6 Jun 2024 07:28:27 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240606072827epsmtrp28b89143fbe61df61e97e0db30931c9e8~WWaz1zddk3242132421epsmtrp2a;
-	Thu,  6 Jun 2024 07:28:27 +0000 (GMT)
-X-AuditID: b6c32a50-157f7a8000004ae6-62-6661887f9388
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	C9.FC.07412.B1561666; Thu,  6 Jun 2024 16:28:27 +0900 (KST)
-Received: from nj.shetty?samsung.com (unknown [107.99.41.245]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240606072823epsmtip2dad935b746ccadd32ea43752942abaab~WWawJjuEm2294122941epsmtip2Y;
-	Thu,  6 Jun 2024 07:28:23 +0000 (GMT)
-Date: Thu, 6 Jun 2024 12:58:35 +0530
-From: Nitesh Shetty <nj.shetty@samsung.com>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Christoph Hellwig <hch@lst.de>, Damien Le Moal <dlemoal@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
-	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
-	<mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>, Sagi Grimberg
-	<sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
-	<jack@suse.cz>, martin.petersen@oracle.com, david@fromorbit.com,
-	hare@suse.de, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
-	joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
- and request layer.
-Message-ID: <20240606072835.a7hnqm5mkzvgsojp@nj.shetty@samsung.com>
+	s=arc-20240116; t=1717666936; c=relaxed/simple;
+	bh=rAgI9GGJJTeCZyVaG2TflywO4JVeIlVSaK6x8F0N7Wc=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=TK9tic4460eWYsakIOd9DjVJ2g1pSgPXMGYpBG9XAEe5apOZ6ACizEHtjmDvP4lBrLvzWpBkyNg2UfLU8B6Z6bTNekU6mRfZLaUO/5R1CoFcK1P7tSeLQK3gmfJ9fnM0Lvpw+NWOZzIkriLd94njB7A/tAJKBUtw3XIM5g6nf6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4VvzrG4pqkz4xPBc;
+	Thu,  6 Jun 2024 17:42:06 +0800 (CST)
+Received: from xaxapp03.zte.com.cn ([10.88.97.17])
+	by mse-fl1.zte.com.cn with SMTP id 4569g0MO058198;
+	Thu, 6 Jun 2024 17:42:00 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Thu, 6 Jun 2024 17:42:03 +0800 (CST)
+Date: Thu, 6 Jun 2024 17:42:03 +0800 (CST)
+X-Zmail-TransId: 2afa6661846bffffffff819-af71f
+X-Mailer: Zmail v1.0
+Message-ID: <20240606174203124_OW-VQZ_ZLm4lGEimA-K9@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <4ffad358-a3e6-4a88-9a40-b7e5d05aa53c@acm.org>
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTZxjG951zetoSyo7A9APUscKygdw62/rhRIyiHnUzJGbZhltKVw4t
-	AdquFxTHwn1yGchlw1EUOyRyKYEJjIGCY6CAVccWoIsYCyawTQFh3ibrKAMKi//98j7Pm+f7
-	3jcvB3c1sT05cUodo1FKE/ikE9HW6+cXmJojjQ0pH+ahJnMfjjKKFnBkunuKRFO9jwAqm5vH
-	0UT3SYBstwZx1NpnBWj8x3BkrDpLoNvdHRjqrCrBUJ3pGoYqTmdi6NriDIlKeiwATY4YMNQ1
-	ugV9+0U1gTq7rhNo6NIZEp27MMlGNf12DBXnjGCofSIdoMapWQINjHqhwYV+1q6N9NDwIdpc
-	BekOw102PWi9SNBDt/R0c30uSbdUp9J/tpQD+vLtNJI+X1jKogsyH5J0R/YYi/5rcpSgZ6+M
-	kHRhaz2gbxqvsiPdouJ3KBhpDKPxZpQyVUycUh7GP3REskciEocIAgWhaBvfWylNZML4Ee9E
-	Bu6LS1gaEN87SZqgXypFSrVafvDOHRqVXsd4K1RaXRifUcckqIXqIK00UatXyoOUjG67ICTk
-	LdGSMTpe8aTIRKq/9Dg+cKeBSAP33PMAlwMpIczPyCbygBPHleoEsNGahS0LrtQjAEtmkhzC
-	MwAvdBURax01RSPAIXQB+MvT31fbHwP43Pore9lFUL7wfG8+mQc4HJLaAm8scpbL7tSb8Nl4
-	zYofp/pIWJ1VhC8LblQ0nDEXs5aZR+2BBWdqcQevg9fLJ1aSudTbcPFkJ9vxCgsX2upkDo6A
-	P/xswhzsBh/0t656POHjh12kg4/Buq9qyeVgSGUBaPjNABxCOMw2n1oJwykFbLUMrDZvgl+b
-	GzFH3QUW2CZWA3iwvXKNfWBDk3E1wANa/k5fZRr+O9DMckzlMgGtNhtWBDYbXviQ4YU8B2+H
-	uXMZLMPSwHDKC9bYOQ70g02Xgo2AVQ88GbU2Uc7IRGpBoJI59v+aZarEZrByNf6R7cD03UJQ
-	D8A4oAdADs535x3WSmJdeTHS5BOMRiXR6BMYbQ8QLW2oGPd8RaZaOjulTiIQhoYIxWKxMHSr
-	WMDfwJvKPhvjSsmlOiaeYdSMZq0P43A907DoWmuA+l6OuOAb/5SL4fv50x+ZDoJX28osXp++
-	FEU+sGtN3buD54z1zv6Efue2AIvQU+WzcXb6e5GGm60Yn5D46g8vJC/4RB3ENb5xf1QON93M
-	cJluOnDUY778n/WFJ+wfXnV3OWBzvsMqed4bgaUlFUpSaKtH+v5NybobgfSY9T2/gNLP98pf
-	rzmnqUjJP7JPJ1duDc2ZT/G4YiktbulIHuYmDSsTe40NyXszsbqyhdPzUevL7GW75zTeE7By
-	PlV4vyKg0Nn22sgHn8h2rVM+/ezJ+23xH6c62ac4iy+bQSw/F5fdF232dfvpXXfp8TfE7q7e
-	RxXpG7ww7lhzJ28mmE9oFVKBP67RSv8D5UMMgL4EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTZxiGfc97enqoIzmU4l6EaDyZDmrsbLLha2SbupicBINTyBLFDc/k
-	UAkUSEvdJNlkoKI0sPIRLaUbHxKLVUQBDShUUpRK1ZAMYaEOpFrkS2A1zoxMyiyNkX93nuu+
-	nufPQ0PpC3I1nZaZI2gy+QyWkpA3utm1myIEPnWzsUuEm5w9EOcbFiC+NPwrhae7XwJ89u95
-	iD1dhQD/97AP4taeEYBHb3+Ja+p+I/FQVzuBO+rKCHzx0l0CV50rIPDdxRkKl9kHAR4bMBG4
-	07UR156qJ3FHZy+J+2+aKVx9YUyMLQ4fgUtPDxC4zfMLwFem50h8zxWB+xYcou2RXP+jOM5Z
-	h7h207CY6xu5RnL9D3Vcs/UMxbXUH+cmWioBd2soj+LOl5SLuOKCWYprP/lExHnHXCQ3Zxug
-	uJJWK+Ae1NwRfx16QBKbImSkHRU0n3xxSHJkwuASZdtW/Wh9biTyQKO0CATRiPkUWQwDoAhI
-	aClzC6DGWgcVAOHowsIdGMih6KJvXBwoeQEqbdMTfkAyH6Hz3fq3Ak1TzEZ0f5H2j2VMFHo9
-	aiH9fcg4KTRkNpF+EMocQjPOUpE/BzNfoWJzAwwsHYeoVf+KDIAQ1FvpWcqQiUG/t7ih/wBk
-	IpDFt3QgiNmGFgs7xAbAmJYZpmWG6b1RA6AVhAvZWrVKfViZrcwUflBoebVWl6lSHM5SN4Ol
-	h5BHtYGRap/CDgga2AGiISsLjtcmp0qDU/hjuYImK1mjyxC0dhBBk+yHwUpjVYqUUfE5Qrog
-	ZAuad5Sgg1bnEeZoeVLfQfOa10mPd9fu4QcTbeky25a2+akdPZ1bp4yRzeV7w1hen7sfZmzu
-	mGWFpsHkKce2GP2bj6uUCajCs5YdzUqSJwCQmkMbfGc863adiM0tPvqm4rPwyzNaw+RJvdnb
-	0Ijmeo8h+QsVW1Fc+NTt/vyVybslMqxopXVn51DV+PxIdPKpEPw00cL/k6D0psf3mk9Xh8Bv
-	bVv/ffC96PFfLnvKow3Pd4T9dFO0zq26bZ2t1zntsdUfRJUoLnfL9sU9a3kiv27P/c6RuvK+
-	fPrn+fWJDVfzj5esgAd1aeJE4qVsMmdS4qbUVNKfBScs3xjjW59dG6zIU/yRX7aJJbVHeKUc
-	arT8/7jiQ5l/AwAA
-X-CMS-MailID: 20240606072827epcas5p285de8d4f3b0f6d3a87f8341414336b42
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_61518_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240606072827epcas5p285de8d4f3b0f6d3a87f8341414336b42
-References: <20240520102033.9361-3-nj.shetty@samsung.com>
-	<eda6c198-3a29-4da4-94db-305cfe28d3d6@acm.org>
-	<9f1ec1c1-e1b8-48ac-b7ff-8efb806a1bc8@kernel.org>
-	<a866d5b5-5b01-44a2-9ccb-63bf30aa8a51@acm.org>
-	<665850bd.050a0220.a5e6b.5b72SMTPIN_ADDED_BROKEN@mx.google.com>
-	<abe8c209-d452-4fb5-90eb-f77b5ec1a2dc@acm.org>
-	<20240601055931.GB5772@lst.de>
-	<d7ae00c8-c038-4bed-937e-222251bc627a@acm.org>
-	<20240604044042.GA29094@lst.de>
-	<4ffad358-a3e6-4a88-9a40-b7e5d05aa53c@acm.org>
-	<CGME20240606072827epcas5p285de8d4f3b0f6d3a87f8341414336b42@epcas5p2.samsung.com>
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <david@redhat.com>, <ziy@nvidia.com>, <v-songbaohua@oppo.com>,
+        <akpm@linux-foundation.org>
+Cc: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <mhocko@kernel.org>,
+        <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>,
+        <ran.xiaokai@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHQgdjJdIG1tOiBodWdlX21lbW9yeTogZml4IG1pc3VzZWQgbWFwcGluZ19sYXJnZV9mb2xpb19zdXBwb3J0KCnCoGZvciBhbm9uIGZvbGlvcw==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 4569g0MO058198
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6661846E.000/4VvzrG4pqkz4xPBc
 
-------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_61518_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
 
-On 04/06/24 04:44AM, Bart Van Assche wrote:
->On 6/3/24 21:40, Christoph Hellwig wrote:
->>There is no requirement to process them synchronously, there is just
->>a requirement to preserve the order.  Note that my suggestion a few
->>arounds ago also included a copy id to match them up.  If we don't
->>need that I'm happy to leave it away.  If need it it to make stacking
->>drivers' lifes easier that suggestion still stands.
->
->Including an ID in REQ_OP_COPY_DST and REQ_OP_COPY_SRC operations sounds
->much better to me than abusing the merge infrastructure for combining
->these two operations into a single request. With the ID-based approach
->stacking drivers are allowed to process copy bios asynchronously and it
->is no longer necessary to activate merging for copy operations if
->merging is disabled (QUEUE_FLAG_NOMERGES).
->
-Single request, with bio merging approach:
-The current approach is to send a single request to driver,
-which contains both destination and source information inside separate bios.
-Do you have any different approach in mind ?
+When I did a large folios split test, a WARNING
+"[ 5059.122759][  T166] Cannot split file folio to non-0 order"
+was triggered. But the test cases are only for anonmous folios.
+while mapping_large_folio_support() is only reasonable for page
+cache folios.
 
-If we want to proceed with this single request based approach,
-we need to merge the destination request with source BIOs at some point.
-a. We chose to do it via plug approach.
-b. Alternative I see is scheduler merging, but here we need some way to
-hold the request which has destination info, until source bio is also
-submitted.
-c. Is there any other way, which I am missing here ?
+In split_huge_page_to_list_to_order(), the folio passed to
+mapping_large_folio_support() maybe anonmous folio. The
+folio_test_anon() check is missing. So the split of the anonmous THP
+is failed. This is also the same for shmem_mapping(). We'd better add
+a check for both. But the shmem_mapping() in __split_huge_page() is
+not involved, as for anonmous folios, the end parameter is set to -1, so
+(head[i].index >= end) is always false. shmem_mapping() is not called.
 
-Limitation of current plug based approach:
-I missed the possibility of asynchronous submission by stacked device.
-Since we enabled only dm-linear, we had synchronous submission till now
-and our test cases worked fine.
-But in future if we start enabling dm targets with asynchronous submission,
-the current plug based approach won't work.
-The case where Bart mentioned possibility of 2 different tasks sending
-copy[1] and they are getting merged wrongly is valid in this case.
-There will be corruption, copy ID approach can solve this wrong merging.
+Also add a VM_WARN_ON_ONCE() in mapping_large_folio_support()
+for anon mapping, So we can detect the wrong use more easily.
 
-Copy ID based merging might preserve the order, but we still need the
-copy destination request to wait for copy source bio to merge.
+THP folios maybe exist in the pagecache even the file system doesn't
+support large folio, it is because when CONFIG_TRANSPARENT_HUGEPAGE
+is enabled, khugepaged will try to collapse read-only file-backed pages
+to THP. But the mapping does not actually support multi order
+large folios properly.
 
-Copy ID approach:
-We see 3 possibilities here:
-1. No merging: If we include copy-id in src and dst bio, the bio's will get
-submitted separately and reach to the driver as separate requests.
-How do we plan to form a copy command in driver ?
-2. Merging BIOs:
-At some point we need to match the src bio with the dst bio and send this
-information together to the driver. The current implementation.
-This still does not solve the asynchronous submission problem, mentioned
-above.
-3. Chaining BIOs:
-This won't work with stacked devices as there will be cloning, and hence
-chain won't be maintained.
+Using /sys/kernel/debug/split_huge_pages to verify this, with this
+patch, large anon THP is successfully split and the warning is ceased.
 
-[1] https://lore.kernel.org/all/d7ae00c8-c038-4bed-937e-222251bc627a@acm.org/
+Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+---
+ include/linux/pagemap.h |  4 ++++
+ mm/huge_memory.c        | 27 ++++++++++++++++-----------
+ 2 files changed, 20 insertions(+), 11 deletions(-)
 
-Thank You,
-Nitesh Shetty
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index ee633712bba0..59f1df0cde5a 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -381,6 +381,10 @@ static inline void mapping_set_large_folios(struct address_space *mapping)
+  */
+ static inline bool mapping_large_folio_support(struct address_space *mapping)
+ {
++	/* AS_LARGE_FOLIO_SUPPORT is only reasonable for pagecache folios */
++	VM_WARN_ONCE((unsigned long)mapping & PAGE_MAPPING_ANON,
++			"Anonymous mapping always supports large folio");
++
+ 	return IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
+ 		test_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
+ }
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 317de2afd371..62d57270b08e 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3009,30 +3009,35 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+ 	if (new_order >= folio_order(folio))
+ 		return -EINVAL;
 
-------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_61518_
-Content-Type: text/plain; charset="utf-8"
+-	/* Cannot split anonymous THP to order-1 */
+-	if (new_order == 1 && folio_test_anon(folio)) {
+-		VM_WARN_ONCE(1, "Cannot split to order-1 folio");
+-		return -EINVAL;
+-	}
+-
+-	if (new_order) {
+-		/* Only swapping a whole PMD-mapped folio is supported */
+-		if (folio_test_swapcache(folio))
++	if (folio_test_anon(folio)) {
++		/* Cannot split anonymous THP to order-1 */
++		if (new_order == 1) {
++			VM_WARN_ONCE(1, "Cannot split to order-1 folio");
+ 			return -EINVAL;
++		}
++	} else if (new_order) {
+ 		/* Split shmem folio to non-zero order not supported */
+ 		if (shmem_mapping(folio->mapping)) {
+ 			VM_WARN_ONCE(1,
+ 				"Cannot split shmem folio to non-0 order");
+ 			return -EINVAL;
+ 		}
+-		/* No split if the file system does not support large folio */
+-		if (!mapping_large_folio_support(folio->mapping)) {
++		/* No split if the file system does not support large folio.
++		 * Note that we might still have THPs in such mappings due to
++		 * CONFIG_READ_ONLY_THP_FOR_FS. But in that case, the mapping
++		 * does not actually support large folios properly.
++		 */
++		if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) &&
++			!mapping_large_folio_support(folio->mapping)) {
+ 			VM_WARN_ONCE(1,
+ 				"Cannot split file folio to non-0 order");
+ 			return -EINVAL;
+ 		}
+ 	}
 
++	/* Only swapping a whole PMD-mapped folio is supported */
++	if (folio_test_swapcache(folio) && new_order)
++		return -EINVAL;
 
-------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_61518_--
+ 	is_hzp = is_huge_zero_folio(folio);
+ 	if (is_hzp) {
+-- 
+2.15.2
 
