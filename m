@@ -1,167 +1,178 @@
-Return-Path: <linux-kernel+bounces-204687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C49038FF254
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:22:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76BEC8FF253
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:22:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FCF11C2634C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:22:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 081E028746E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6BFD1990A1;
-	Thu,  6 Jun 2024 16:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF98F19925C;
+	Thu,  6 Jun 2024 16:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JK11S6P0"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="/C4ELpKq";
+	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="OfscBZh3"
+Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8796199389
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 16:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717690641; cv=none; b=Jei9C+YVDlog+1VVSpY+R0SwL7sSAVlPqS81dNZD94i6+FAZqBi/djYsGY793yo29SAonLJbU/881vWBRmFoCnrnS5soXuWctwornR+oVpW22K+QdurhKVZOCfndgsIKA0Jd7RwOlxxUL4xfX9U+1H1wj20VMVE8Cw4g5cITj4E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717690641; c=relaxed/simple;
-	bh=mbAkMeRLThLu27MNnTKFl5hpf8DLAB4Oi0XQp+8bSYk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eKCXxEawms4TESqP+B2kfk3pcZCpFdhKy/V/wNKOJ3KwzWsrlvvzaBYQY1PgLU/Ryqy+GMeiSMS8nwhpPvIHS9ez+vQZ1STF4VTUXrc6vxTU1dbJI1wUFIfjxdR4wJDxx3Qf2wAS7JBC0pgATJ2Tgi7wrI+pdBllsUxutGny4Ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JK11S6P0; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-6c9e8c0a15bso876593a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 09:17:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717690639; x=1718295439; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6B06vkocA1DDiV610x8U4TAD5hd5vXgCgru9dB0vKQw=;
-        b=JK11S6P0Yp3gbEUmw89NN4iW3GwbyC8m5eAoFHxgNjHLL19pjlaTlWz22WzDX+Ojmd
-         jMLPxemUZv1DPQ/rWl4iYxOSmeKMFQbV0PMjw2QzA7ZWn5iRt3tn029bo56UT3s7o47T
-         5ASidPUMq+tXqLyROwf0xGwSMiPQP7cvThjjxrzBdVxcI73DF0sG7JlSSc50Dy79tqEM
-         MTDMmcIUqJm5rhJuRVoybDBgm/+SYzHdfn7x9t+EjXVqc1QdvyFbwXWzVGmn9h6g5HpA
-         GruDLKS4Dzm/B/ZnoOprPxFtvvKRAO3EiFkrkQwsc3Il5zGlIIUNxzedJb+XtsvRVJUF
-         h5LQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717690639; x=1718295439;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6B06vkocA1DDiV610x8U4TAD5hd5vXgCgru9dB0vKQw=;
-        b=u+nt75pZan1lbIR9Nwu+/18XyVSF9+AhkZlFjo2a3cbfpw2mJb352c0bE1nRd5fQYk
-         LYe5ixFryI48N3hJmZOqdpluQ7iH5SMLLtSJLqKCRKaXvi5hQ4gIer+lyAlreL1+VS9V
-         5u27oQsOPXczk2JeTkHlO30jKIMBRdhy3+1wsWyHvM8TiNJziGiBl4loVVAkqD3yLpZN
-         jE/SXtg0Tg0rtpMzEoVF8w87wf9c8/LXZI4x39BQc66OuvrcSPwT3iRrnwdXe7VHBWOf
-         edyAW/v0rqRTFdKJLb7wG9akUsXL5N9fjghX92v9A8NeIweqcry76HLtZb5XhKwWzQYp
-         8VPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOi8Y07QCu3oZ+VuJ2/LttYysgsZsHqwxq7gXeg99RaUa0nQPF5RngDYP9zdLHb/XOHa53lcsF/IGS8RMOTOpizbqknUPc/st/QWqB
-X-Gm-Message-State: AOJu0YzOAl2DNWnDkC7X9/J/Y98P4eKCGlxftR8B9qvTmZSjw+6xYFf/
-	KcE7vmaQffJg0ap7TYomq7SBuOQ4+fQUMKkrl5uGqGBwRqq7gc6DsSUMLTvafyhuNufQYPJMxaG
-	IDhQXcWnfywjPFUwx+DkgWQttqmUChhcG4TL9
-X-Google-Smtp-Source: AGHT+IHcdIKWECVRfkS49VoI1MkpGTE3+L1UOCM3hKmnmAXjbXPzujbCAkv0x9spbamGCxAs9KNC6QO1BLGzfwWnhsI=
-X-Received: by 2002:a17:90a:788d:b0:2bf:7eb7:373b with SMTP id
- 98e67ed59e1d1-2c27db55dc9mr5876731a91.33.1717690638412; Thu, 06 Jun 2024
- 09:17:18 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1C61990A1;
+	Thu,  6 Jun 2024 16:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717690638; cv=fail; b=Uv4UUxkQScvG9ko9nSApzWS0bmsGR3+WBeTiDt5B9Sbqe820iCvVKj4eg1wc/Gc4S7plYWp8X3lE15i9RqpQe+nMc4qSY+9AVjG5aTDmLCIMMU6xyeSlSY7fTQFalgob+b26i3i7NIBByJbgpbC2hmlT+HZi7mpnuCnj37szz3Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717690638; c=relaxed/simple;
+	bh=T+h1Ne4Z+Nus3xIRHnouZB6uatVfxpMENDpkUC19kdY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SVenfGGFhtdxmJBXk45pnXg6FXsQxnnxPBoc7fEcyL0TEK6KM1RWoAKCMdjQKCnrbICyEmi+QJj0jN7yt9Pffl/4N1c1YCNwbIIZqYx0kCu0qqbNCyn6hIUMh7AdbRMaTKVraZ69MHcmXhDNXRbcdxryG/dGz2evvUqC+xGUvJo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=/C4ELpKq; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=OfscBZh3; arc=fail smtp.client-ip=72.84.236.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
+Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
+   signature) header.d=sapience.com header.i=@sapience.com 
+   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
+   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
+Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by s1.sapience.com (Postfix) with ESMTPS id E3B634809ED;
+	Thu, 06 Jun 2024 12:17:15 -0400 (EDT)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1717690635;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=5xqiDvD8y4z/a7m1hJYP7K3YCF/4hF8rsxrnE5ysmcM=;
+ b=/C4ELpKq28JnfAjBJD485HOYv1DgVMA5zjqHvv/SLjLzrl6ZYWRbsnnL/b/b3bzfvMgct
+ vT+TIsjFJ1xEsaNDg==
+ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1717690635;
+	cv=none; b=KE2yikQ+LZZqVo7YxDSNE1ww0qqDcE1KmUdTtTxOGi1z2qYMd/5hZ/lS4MaI/04HcTpmLvdrZ7aQR8UCWhNvlhPijdfUAm0nAtBWNJJJbYzvbZUtpJySmFrXJqsQsK12qRcOWCRKnB+r3SAmy2E19Sf8eFlYYt9a0VbtQHpeTy2lQGJRt2fTIPFefaGYWH1wFBmjarQGtC4T9ypHctB+7GVYdtsGbb8U3bkuGmi2WwL/nM84B242N+gh57bBAYlM9dY0IVdMZx2tO0QlpR3V+rmPX7aobZjTFRb/Z3Cs5hqO7zrh4at5YkZP2i7bzJR2QgakrvhHmylQb3Bf7T4ROA==
+ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
+	t=1717690635; c=relaxed/simple;
+	bh=T+h1Ne4Z+Nus3xIRHnouZB6uatVfxpMENDpkUC19kdY=;
+	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
+	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
+	 MIME-Version; b=CVBpGFk1vpB7f4ZcPpVv96BaTtjtJjAS/8aCmRLqDJef1Ow0uaA8s+/gcSAs5M9CC4QgSC49KaPYREEumYjq1AkCsqBAwn61jKmxxlvgdM5mj7ayOTEiH+yN76j5yMXUiOzjj0+FbngJCbAhn+q7SeCegsTtQaoSk6ldBZzmtJyxdy06BkAbwYfC0+lStNGRD10eki3qwJSjtAL8E1YcpO6XfmcRpS2c0PcmxpPk8bEDJ4xDMzbAeUPMWka6/nJhvnCJjObOUySW7LYsRX+k2TvUUN8ANUnVVppMxblNILL3cWoNu/lS10WTfnM+IREfkIZkK1KK9Y4lFE4TyvHdIg==
+ARC-Authentication-Results: i=1; arc-srv8.sapience.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1717690635;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=5xqiDvD8y4z/a7m1hJYP7K3YCF/4hF8rsxrnE5ysmcM=;
+ b=OfscBZh31McAx9uDkwWIjfiAVKJKObsXTos8aUBzK4nDNHOPIgyN01RhnOx8LS6MuLO2z
+ RIesYDiLvLJPAmCmUfTMpDziDkaXtR3vMKx5F3cApdYKt8LvQaVacWnQPZ74wbeMcs2Uy7r
+ LlDL/vTlu+5iWhZLiJLWLUXS29MIQG7zToQuu7jsHPdhbp6QSwj5b0nxcJ4cgFfp1aZ4FUk
+ Q4kCegacPjUJ6bzHooIc8q7e7j7PrczXFkcibnEtljdNg3B5BdN8zqmD78w+0PbqYO4allM
+ L3D70y1j9OxiqaW/+gDglIjnQHi9wmvPNRhZLl7CU/wBHOXbniBSkGYaQ0dQ==
+Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by srv8.sapience.com (Postfix) with ESMTPS id BDCCB280074;
+	Thu, 06 Jun 2024 12:17:15 -0400 (EDT)
+Message-ID: <7892aaab41a9332718ecafe997127244feb9a9c4.camel@sapience.com>
+Subject: Re: 6.10-rc1 : crash in mei_csi_probe
+From: Genes Lists <lists@sapience.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org,
+ hverkuil-cisco@xs4all.nl,  laurent.pinchart@ideasonboard.com,
+ wentong.wu@intel.com,  linux-media@vger.kernel.org, Linux regressions
+ mailing list <regressions@lists.linux.dev>
+Date: Thu, 06 Jun 2024 12:17:15 -0400
+In-Reply-To: <ZmHasj3hfwwKimZF@kekkonen.localdomain>
+References: <8afe9391b96ff3e1c60e624c1b8a3b2bd5039560.camel@sapience.com>
+	 <ZlTllJeZBiGapHwZ@kekkonen.localdomain>
+	 <988e48090982c89ce0c906954832fdfb09a1ce34.camel@sapience.com>
+	 <eb10620deecc8feeae1e308c22de199be7c48ca6.camel@sapience.com>
+	 <ZmHasj3hfwwKimZF@kekkonen.localdomain>
+Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
+ keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
+ 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
+ sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
+ vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
+ BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
+Content-Type: multipart/signed; micalg="pgp-sha384";
+	protocol="application/pgp-signature"; boundary="=-3WOw2xXKzNBIwItK7RL4"
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606-tracepoint-v1-0-6551627bf51b@google.com>
- <20240606-tracepoint-v1-3-6551627bf51b@google.com> <389a8c55-a169-47ef-99c0-48f58003b40c@efficios.com>
-In-Reply-To: <389a8c55-a169-47ef-99c0-48f58003b40c@efficios.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 6 Jun 2024 18:16:51 +0200
-Message-ID: <CAH5fLghG8VpUnHbigO28k9nE9ZFS3EHGT2SE-0mZG1NtHF0qKg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] rust: add tracepoint support
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+
+
+--=-3WOw2xXKzNBIwItK7RL4
+Content-Type: multipart/alternative; boundary="=-xOWo/GJJnUGNRnVrtydb"
+
+--=-xOWo/GJJnUGNRnVrtydb
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 6, 2024 at 5:29=E2=80=AFPM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> On 2024-06-06 11:05, Alice Ryhl wrote:
-> > Make it possible to have Rust code call into tracepoints defined by C
-> > code. It is still required that the tracepoint is declared in a C
-> > header, and that this header is included in the input to bindgen.
-> >
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->
-> [...]
->
-> > diff --git a/rust/helpers.c b/rust/helpers.c
-> > index 2c37a0f5d7a8..0560cc2a512a 100644
-> > --- a/rust/helpers.c
-> > +++ b/rust/helpers.c
-> > @@ -165,6 +165,30 @@ rust_helper_krealloc(const void *objp, size_t new_=
-size, gfp_t flags)
-> >   }
-> >   EXPORT_SYMBOL_GPL(rust_helper_krealloc);
-> >
-> > +void rust_helper_preempt_enable_notrace(void)
-> > +{
-> > +     preempt_enable_notrace();
-> > +}
-> > +EXPORT_SYMBOL_GPL(rust_helper_preempt_enable_notrace);
-> > +
-> > +void rust_helper_preempt_disable_notrace(void)
-> > +{
-> > +     preempt_disable_notrace();
-> > +}
-> > +EXPORT_SYMBOL_GPL(rust_helper_preempt_disable_notrace);
-> > +
-> > +bool rust_helper_current_cpu_online(void)
-> > +{
-> > +     return cpu_online(raw_smp_processor_id());
-> > +}
-> > +EXPORT_SYMBOL_GPL(rust_helper_current_cpu_online);
-> > +
-> > +void *rust_helper___rcu_dereference_raw(void **p)
-> > +{
-> > +     return rcu_dereference_raw(p);
-> > +}
-> > +EXPORT_SYMBOL_GPL(rust_helper___rcu_dereference_raw);
->
-> Ouch. Doing a function call for each of those small operations will
-> have a rather large performance impact when tracing is active. If it is
-> not possible to inline those in Rust, then implementing __DO_TRACE in
-> a C function would at least allow Rust to only do a single call to C
-> rather than go back and forth between Rust and C.
->
-> What prevents inlining those helpers in Rust ?
+On Thu, 2024-06-06 at 15:50 +0000, Sakari Ailus wrote:
+> Hi,
+>=20
+> It'll disappear once this patch is in:
+> <URL:
+> https://lore.kernel.org/linux-acpi/MW5PR11MB5787C81ABF0C9FFF5A17E4888DF32=
+@MW5PR11MB5787.namprd11.prod.outlook.com/T/#t
+> >.
+>=20
 
-There's nothing fundamental that prevents it. But they contain a large
-amount of architecture specific code, which makes them a significant
-amount of work to reimplement in Rust.
+Terrific - thank you!
 
-For example, rcu_dereference_raw calls into READ_ONCE. READ_ONCE is
-usually a volatile load, but under arm64+LTO, you get a bunch of
-inline assembly that relies on ALTERNATIVE for feature detection:
-https://elixir.bootlin.com/linux/v6.9/source/arch/arm64/include/asm/rwonce.=
-h#L36
 
-And preempt_enable_notrace has a similar story.
+--=20
+Gene
 
-The solution that Boqun mentions is nice, but it relies on rustc and
-clang using the same version of LLVM. You are unlikely to have
-compilers with matching LLVMs unless you intentionally take steps to
-make that happen.
 
-But yes, perhaps these helpers are an argument to have a single call
-for __DO_TRACE instead.
+--=-xOWo/GJJnUGNRnVrtydb
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Alice
+<html><head><style>pre,code,address {
+  margin: 0px;
+}
+h1,h2,h3,h4,h5,h6 {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+ol,ul {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+blockquote {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+</style></head><body><div>On Thu, 2024-06-06 at 15:50 +0000, Sakari Ailus w=
+rote:</div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8ex; border-lef=
+t:2px #729fcf solid;padding-left:1ex"><div>Hi,<br></div><div><br></div><div=
+>It'll disappear once this patch is in:<br></div><div>&lt;URL:<a href=3D"ht=
+tps://lore.kernel.org/linux-acpi/MW5PR11MB5787C81ABF0C9FFF5A17E4888DF32@MW5=
+PR11MB5787.namprd11.prod.outlook.com/T/#t">https://lore.kernel.org/linux-ac=
+pi/MW5PR11MB5787C81ABF0C9FFF5A17E4888DF32@MW5PR11MB5787.namprd11.prod.outlo=
+ok.com/T/#t</a>&gt;.<br></div><div><br></div></blockquote><div><br></div><d=
+iv>Terrific - thank you!</div><div><br></div><div><br></div><div><span><pre=
+>-- <br></pre><div><span style=3D"background-color: inherit;">Gene</span></=
+div><div><br></div></span></div></body></html>
+
+--=-xOWo/GJJnUGNRnVrtydb--
+
+--=-3WOw2xXKzNBIwItK7RL4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZmHhCwAKCRA5BdB0L6Ze
+202uAQC3Ar3+V5TBBDOxG0kL2t/ZaEbg2Jgo8+UvffVvnMaB1QD+J1CIIAMWPchk
+P6mw0Qtb7ZCa9kEmKzAEGAKrKavzmgE=
+=6+Me
+-----END PGP SIGNATURE-----
+
+--=-3WOw2xXKzNBIwItK7RL4--
 
