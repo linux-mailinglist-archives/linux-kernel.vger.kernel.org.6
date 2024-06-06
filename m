@@ -1,108 +1,417 @@
-Return-Path: <linux-kernel+bounces-204076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53F748FE3B4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:01:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01F4E8FE3F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2CF01F22D3E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:01:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 662661F26C4D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134481862A1;
-	Thu,  6 Jun 2024 10:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kxC8BzMQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F1319069A;
+	Thu,  6 Jun 2024 10:13:17 +0000 (UTC)
+Received: from mail-m118219.qiye.163.com (mail-m118219.qiye.163.com [115.236.118.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D564A185091
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 10:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171C119067A;
+	Thu,  6 Jun 2024 10:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.118.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717668088; cv=none; b=fSzoc6/SgvZxUQCdLQKREoa6DQ5uqIPDMi/uhhP3zWQ7yGc1ZI/xL4XwjXOpJGUJlEjvqHghAoJvNTW+OfozoMaujQFG6tqUVp5Jtith+UVVga6pwaeQNxkcK1Ykb4D4r3dfOfdEPkvyfvE1KaHvGoYfpR+0Ew+1wnwc+4Z/dBM=
+	t=1717668796; cv=none; b=TnWRHjBA9YiJoDvfRNTRqddUwfci2FBN5kd9PmnhDpE2Yj0XUHj5ocS9imvFhhL6DW/vOeK7dwNlfg4+ZDLw5NhhQ448+Nw1nqZSeFro03nKP2ebhg6tT5LWhJOblFp47slpPBL6K/mwk9lEN6VtsYCnAlRGMv+2lyqjowPAu6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717668088; c=relaxed/simple;
-	bh=OcdwBe41VOHoxba7xSg4ULAv55Y7TqZs85XGx4ve3I0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b+oF64p76xejNLd58+6tngNPHzrBmN0j1Td/CyXDZ4PGc5iLUOTugHIrschARq4YZDe/jRHkYisA7a7JzROG1DPlZ7mYtm0P9d4NxGTJ4MoahN77XkvoT7QwlsYj26B0ddQj1HjJT5KlwRBRmFFON1YyMWq0swpSHXZedKq+lAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kxC8BzMQ; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717668087; x=1749204087;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=OcdwBe41VOHoxba7xSg4ULAv55Y7TqZs85XGx4ve3I0=;
-  b=kxC8BzMQws+49iqRLOBLJoVDZywjyeBWgKSb4TG47UTxMG8xpTSBbwbi
-   67w6/SqKs9v5/v1OY5baOXYmnid8ywNTSIW0RVkVcAGhpoElTfbHdWedd
-   0DS7Xn/Zy1HkbijZF5CLCcGIzAWeRSLjtZqVlMqILheJk3jfGhr9dKC2p
-   Tqvm1K0gR39t1r9UpB9KWPua91yBbSwERFS9PCdnjx9X0EN/bZYdJVv+N
-   7x922Y9YtPbgFmG/GmR2bpNDTYpo6193TlXjVlExGkkCA7XVCaq7eP2lB
-   sEQjZ2PaknTXKSLfo2M9rkuEpKV7zNpNq3MhsWg1GwKmsgjmlkmql1bZU
-   g==;
-X-CSE-ConnectionGUID: Rz29k9epR1uicmmHVEuGsw==
-X-CSE-MsgGUID: J5+S0Zt9Qbmi+a6Yz5WATQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="14206695"
-X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
-   d="scan'208";a="14206695"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 03:01:26 -0700
-X-CSE-ConnectionGUID: k8WdnHHqQb+Be+yOwYFqOQ==
-X-CSE-MsgGUID: AdryZSLhS8GoPM7arIdC2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
-   d="scan'208";a="38575383"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 03:01:23 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sF9vs-0000000E837-0D2i;
-	Thu, 06 Jun 2024 13:01:20 +0300
-Date: Thu, 6 Jun 2024 13:01:19 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chia-I Wu <olvaffe@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] resource: add a simple test for walk_iomem_res_desc()
-Message-ID: <ZmGI715vFZ3pgzjN@smile.fi.intel.com>
-References: <20240606004002.3280960-1-olvaffe@gmail.com>
- <CAPaKu7Q8Ba4_GEZdBruO0if374BhMYafDbGc2dptPL4vdKR+1Q@mail.gmail.com>
+	s=arc-20240116; t=1717668796; c=relaxed/simple;
+	bh=0DDqsYhBPzGeozRsqU7tZ+r1G0qVV0Sq113VIerWAPU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j9uDY9AUILp/i6a4NXroBuZUMuCx9dJJize/a5z2+MM7WwPhBUZRNUUYU6jPx9nzMhI0Kc4/9RUcexSbiSTyG6oLSSnNW6ZU4yB3hUgcg4oGg3Drtpmjq0DI6CsX9GrM4dOOqEwbshkLaQKDIupXAZ6UhWJWb5BaZVz3qk45+TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=senarytech.com; spf=pass smtp.mailfrom=senarytech.com; arc=none smtp.client-ip=115.236.118.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=senarytech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=senarytech.com
+Received: from book-ThinkStation-P328.. (unknown [61.183.143.78])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 47D81900380;
+	Thu,  6 Jun 2024 09:57:07 +0800 (CST)
+From: bo liu <bo.liu@senarytech.com>
+To: perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bo liu <bo.liu@senarytech.com>
+Subject: [PATCH V2] ALSA: hda/senarytech: add senarytech codec support
+Date: Thu,  6 Jun 2024 09:57:03 +0800
+Message-Id: <20240606015703.37118-1-bo.liu@senarytech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPaKu7Q8Ba4_GEZdBruO0if374BhMYafDbGc2dptPL4vdKR+1Q@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaQh5CVh5DGRkYHUsaTUJNT1UTARMWGhIXJBQOD1
+	lXWRgSC1lBWU1KVUpDSFVKT0hVTENZV1kWGg8SFR0UWUFZT0tIVUpNQ0xMT1VKS0tVSkJLS1kG
+X-HM-Tid: 0a8feb439abd03a9kunm47d81900380
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pww6Dyo5DzNLPDcUThhPMyk4
+	DCkKFDxVSlVKTEpMTUhCS0lMQktIVTMWGhIXVRkUVRcSDjsIHhUaCQIPHhgTVRgUFkVZV1kSC1lB
+	WU1KVUpDSFVKT0hVTENZV1kIAVlBSkpOTUo3Bg++
 
-On Wed, Jun 05, 2024 at 05:46:16PM -0700, Chia-I Wu wrote:
-> On Wed, Jun 5, 2024 at 5:40 PM Chia-I Wu <olvaffe@gmail.com> wrote:
-> >
-> > This mainly tests that find_next_iomem_res() does not miss resources.
+Add initial Senarytech codec support for SN6186. Note that this hda
+patch relies on the configuration default registers to be set correctly
+(normally by BIOS/firmware) in order for it to set up pin widgets
+properly.
 
-...
+Signed-off-by: bo liu <bo.liu@senarytech.com>
+---
+ MAINTAINERS                      |   6 +
+ sound/hda/hdac_device.c          |   1 +
+ sound/pci/hda/Kconfig            |  11 ++
+ sound/pci/hda/Makefile           |   2 +
+ sound/pci/hda/patch_senarytech.c | 263 +++++++++++++++++++++++++++++++
+ 5 files changed, 283 insertions(+)
+ create mode 100644 sound/pci/hda/patch_senarytech.c
 
-> > +       walk_iomem_res_desc(IORES_DESC_NONE, IORESOURCE_SYSTEM_RAM,
-> > +                       res[2].end + 1, res[3].end, &count,
-> This should be from "res[3].end + 1" to "res[2].end".  Not sure if I
-> should resend or if you can make the fix when applying.
-
-Please, slow down. You sent three (!) versions over a day, this is against
-the recommendations. And it seems you want to learn a hard way the clear thing:
-Hurrying just increases a chance of a mistake.
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a6a011792167..82ea8c8f74c1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -24949,6 +24949,12 @@ F:	mm/zpool.c
+ F:	mm/zswap.c
+ F:	tools/testing/selftests/cgroup/test_zswap.c
+ 
++SENARYTECH AUDIO CODEC DRIVER
++M:	bo liu <bo.liu@senarytech.com>
++S:	Maintained
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
++F:	sound/pci/hda/patch_senarytech.c
++
+ THE REST
+ M:	Linus Torvalds <torvalds@linux-foundation.org>
+ L:	linux-kernel@vger.kernel.org
+diff --git a/sound/hda/hdac_device.c b/sound/hda/hdac_device.c
+index 068c16e52dff..3fbb9793dcfc 100644
+--- a/sound/hda/hdac_device.c
++++ b/sound/hda/hdac_device.c
+@@ -665,6 +665,7 @@ static const struct hda_vendor_id hda_vendor_ids[] = {
+ 	{ 0x19e5, "Huawei" },
+ 	{ 0x1aec, "Wolfson Microelectronics" },
+ 	{ 0x1af4, "QEMU" },
++	{ 0x1fa8, "Senarytech" },
+ 	{ 0x434d, "C-Media" },
+ 	{ 0x8086, "Intel" },
+ 	{ 0x8384, "SigmaTel" },
+diff --git a/sound/pci/hda/Kconfig b/sound/pci/hda/Kconfig
+index 0da625533afc..1252632f0ffa 100644
+--- a/sound/pci/hda/Kconfig
++++ b/sound/pci/hda/Kconfig
+@@ -292,6 +292,17 @@ config SND_HDA_CODEC_CONEXANT
+ comment "Set to Y if you want auto-loading the codec driver"
+ 	depends on SND_HDA=y && SND_HDA_CODEC_CONEXANT=m
+ 
++config SND_HDA_CODEC_SENARYTECH
++	tristate "Build Senarytech HD-audio codec support"
++	select SND_HDA_GENERIC
++	select SND_HDA_GENERIC_LEDS
++	help
++	  Say Y or M here to include Senarytech HD-audio codec support in
++	  snd-hda-intel driver, such as SN6186.
++
++comment "Set to Y if you want auto-loading the codec driver"
++	depends on SND_HDA=y && SND_HDA_CODEC_SENARYTECH=m
++
+ config SND_HDA_CODEC_CA0110
+ 	tristate "Build Creative CA0110-IBG codec support"
+ 	select SND_HDA_GENERIC
+diff --git a/sound/pci/hda/Makefile b/sound/pci/hda/Makefile
+index 058ca0a289e4..7ac2105c2e00 100644
+--- a/sound/pci/hda/Makefile
++++ b/sound/pci/hda/Makefile
+@@ -24,6 +24,7 @@ snd-hda-codec-cs8409-y :=	patch_cs8409.o patch_cs8409-tables.o
+ snd-hda-codec-ca0110-y :=	patch_ca0110.o
+ snd-hda-codec-ca0132-y :=	patch_ca0132.o
+ snd-hda-codec-conexant-y :=	patch_conexant.o
++snd-hda-codec-senarytech-objs :=patch_senarytech.o
+ snd-hda-codec-via-y :=		patch_via.o
+ snd-hda-codec-hdmi-y :=		patch_hdmi.o hda_eld.o
+ 
+@@ -55,6 +56,7 @@ obj-$(CONFIG_SND_HDA_CODEC_CS8409) += snd-hda-codec-cs8409.o
+ obj-$(CONFIG_SND_HDA_CODEC_CA0110) += snd-hda-codec-ca0110.o
+ obj-$(CONFIG_SND_HDA_CODEC_CA0132) += snd-hda-codec-ca0132.o
+ obj-$(CONFIG_SND_HDA_CODEC_CONEXANT) += snd-hda-codec-conexant.o
++obj-$(CONFIG_SND_HDA_CODEC_SENARYTECH) += snd-hda-codec-senarytech.o
+ obj-$(CONFIG_SND_HDA_CODEC_VIA) += snd-hda-codec-via.o
+ obj-$(CONFIG_SND_HDA_CODEC_HDMI) += snd-hda-codec-hdmi.o
+ 
+diff --git a/sound/pci/hda/patch_senarytech.c b/sound/pci/hda/patch_senarytech.c
+new file mode 100644
+index 000000000000..465846ff5eb3
+--- /dev/null
++++ b/sound/pci/hda/patch_senarytech.c
+@@ -0,0 +1,263 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * HD audio interface patch for Senary HDA audio codec
++ *
++ * Initially based on sound/pci/hda/patch_conexant.c
++ */
++
++#include <linux/init.h>
++#include <linux/delay.h>
++#include <linux/slab.h>
++#include <linux/module.h>
++#include <sound/core.h>
++#include <sound/jack.h>
++
++#include <sound/hda_codec.h>
++#include "hda_local.h"
++#include "hda_auto_parser.h"
++#include "hda_beep.h"
++#include "hda_jack.h"
++#include "hda_generic.h"
++
++struct senary_spec {
++	struct hda_gen_spec gen;
++
++	/* extra EAPD pins */
++	unsigned int num_eapds;
++	hda_nid_t eapds[4];
++	bool dynamic_eapd;
++	hda_nid_t mute_led_eapd;
++
++	unsigned int parse_flags; /* flag for snd_hda_parse_pin_defcfg() */
++
++	int mute_led_polarity;
++	unsigned int gpio_led;
++	unsigned int gpio_mute_led_mask;
++	unsigned int gpio_mic_led_mask;
++};
++
++#ifdef CONFIG_SND_HDA_INPUT_BEEP
++/* additional beep mixers; private_value will be overwritten */
++static const struct snd_kcontrol_new senary_beep_mixer[] = {
++	HDA_CODEC_VOLUME_MONO("Beep Playback Volume", 0, 1, 0, HDA_OUTPUT),
++	HDA_CODEC_MUTE_BEEP_MONO("Beep Playback Switch", 0, 1, 0, HDA_OUTPUT),
++};
++
++static int set_beep_amp(struct senary_spec *spec, hda_nid_t nid,
++			int idx, int dir)
++{
++	struct snd_kcontrol_new *knew;
++	unsigned int beep_amp = HDA_COMPOSE_AMP_VAL(nid, 1, idx, dir);
++	int i;
++
++	spec->gen.beep_nid = nid;
++	for (i = 0; i < ARRAY_SIZE(senary_beep_mixer); i++) {
++		knew = snd_hda_gen_add_kctl(&spec->gen, NULL,
++					    &senary_beep_mixer[i]);
++		if (!knew)
++			return -ENOMEM;
++		knew->private_value = beep_amp;
++	}
++	return 0;
++}
++
++static int senary_auto_parse_beep(struct hda_codec *codec)
++{
++	struct senary_spec *spec = codec->spec;
++	hda_nid_t nid;
++
++	for_each_hda_codec_node(nid, codec)
++		if ((get_wcaps_type(get_wcaps(codec, nid)) == AC_WID_BEEP) &&
++			(get_wcaps(codec, nid) & (AC_WCAP_OUT_AMP | AC_WCAP_AMP_OVRD)))
++			return set_beep_amp(spec, nid, 0, HDA_OUTPUT);
++	return 0;
++}
++#else
++#define senary_auto_parse_beep(codec)	0
++#endif
++
++/* parse EAPDs */
++static void senary_auto_parse_eapd(struct hda_codec *codec)
++{
++	struct senary_spec *spec = codec->spec;
++	hda_nid_t nid;
++
++	for_each_hda_codec_node(nid, codec) {
++		if (get_wcaps_type(get_wcaps(codec, nid)) != AC_WID_PIN)
++			continue;
++		if (!(snd_hda_query_pin_caps(codec, nid) & AC_PINCAP_EAPD))
++			continue;
++		spec->eapds[spec->num_eapds++] = nid;
++		if (spec->num_eapds >= ARRAY_SIZE(spec->eapds))
++			break;
++	}
++
++	/* NOTE: below is a wild guess; if we have more than two EAPDs,
++	 * it's a new chip, where EAPDs are supposed to be associated to
++	 * pins, and we can control EAPD per pin.
++	 * OTOH, if only one or two EAPDs are found, it's an old chip,
++	 * thus it might control over all pins.
++	 */
++	if (spec->num_eapds > 2)
++		spec->dynamic_eapd = 1;
++}
++
++static void senary_auto_turn_eapd(struct hda_codec *codec, int num_pins,
++			      const hda_nid_t *pins, bool on)
++{
++	int i;
++
++	for (i = 0; i < num_pins; i++) {
++		if (snd_hda_query_pin_caps(codec, pins[i]) & AC_PINCAP_EAPD)
++			snd_hda_codec_write(codec, pins[i], 0,
++					    AC_VERB_SET_EAPD_BTLENABLE,
++					    on ? 0x02 : 0);
++	}
++}
++
++/* turn on/off EAPD according to Master switch */
++static void senary_auto_vmaster_hook(void *private_data, int enabled)
++{
++	struct hda_codec *codec = private_data;
++	struct senary_spec *spec = codec->spec;
++
++	senary_auto_turn_eapd(codec, spec->num_eapds, spec->eapds, enabled);
++}
++
++static void senary_init_gpio_led(struct hda_codec *codec)
++{
++	struct senary_spec *spec = codec->spec;
++	unsigned int mask = spec->gpio_mute_led_mask | spec->gpio_mic_led_mask;
++
++	if (mask) {
++		snd_hda_codec_write(codec, 0x01, 0, AC_VERB_SET_GPIO_MASK,
++				    mask);
++		snd_hda_codec_write(codec, 0x01, 0, AC_VERB_SET_GPIO_DIRECTION,
++				    mask);
++		snd_hda_codec_write(codec, 0x01, 0, AC_VERB_SET_GPIO_DATA,
++				    spec->gpio_led);
++	}
++}
++
++static int senary_auto_init(struct hda_codec *codec)
++{
++	struct senary_spec *spec = codec->spec;
++
++	snd_hda_gen_init(codec);
++	if (!spec->dynamic_eapd)
++		senary_auto_turn_eapd(codec, spec->num_eapds, spec->eapds, true);
++
++	senary_init_gpio_led(codec);
++	snd_hda_apply_fixup(codec, HDA_FIXUP_ACT_INIT);
++
++	return 0;
++}
++
++static void senary_auto_shutdown(struct hda_codec *codec)
++{
++	struct senary_spec *spec = codec->spec;
++
++	/* Turn the problematic codec into D3 to avoid spurious noises
++	 * from the internal speaker during (and after) reboot
++	 */
++	senary_auto_turn_eapd(codec, spec->num_eapds, spec->eapds, false);
++}
++
++static void senary_auto_free(struct hda_codec *codec)
++{
++	senary_auto_shutdown(codec);
++	snd_hda_gen_free(codec);
++}
++
++#ifdef CONFIG_PM
++static int senary_auto_suspend(struct hda_codec *codec)
++{
++	senary_auto_shutdown(codec);
++	return 0;
++}
++#endif
++
++static const struct hda_codec_ops senary_auto_patch_ops = {
++	.build_controls = snd_hda_gen_build_controls,
++	.build_pcms = snd_hda_gen_build_pcms,
++	.init = senary_auto_init,
++	.free = senary_auto_free,
++	.unsol_event = snd_hda_jack_unsol_event,
++#ifdef CONFIG_PM
++	.suspend = senary_auto_suspend,
++	.check_power_status = snd_hda_gen_check_power_status,
++#endif
++};
++
++static int patch_senary_auto(struct hda_codec *codec)
++{
++	struct senary_spec *spec;
++	int err;
++
++	codec_info(codec, "%s: BIOS auto-probing.\n", codec->core.chip_name);
++
++	spec = kzalloc(sizeof(*spec), GFP_KERNEL);
++	if (!spec)
++		return -ENOMEM;
++	snd_hda_gen_spec_init(&spec->gen);
++	codec->spec = spec;
++	codec->patch_ops = senary_auto_patch_ops;
++
++	senary_auto_parse_eapd(codec);
++	spec->gen.own_eapd_ctl = 1;
++
++	if (!spec->gen.vmaster_mute.hook && spec->dynamic_eapd)
++		spec->gen.vmaster_mute.hook = senary_auto_vmaster_hook;
++
++	snd_hda_apply_fixup(codec, HDA_FIXUP_ACT_PRE_PROBE);
++
++	err = snd_hda_parse_pin_defcfg(codec, &spec->gen.autocfg, NULL,
++				       spec->parse_flags);
++	if (err < 0)
++		goto error;
++
++	err = senary_auto_parse_beep(codec);
++	if (err < 0)
++		goto error;
++
++	err = snd_hda_gen_parse_auto_config(codec, &spec->gen.autocfg);
++	if (err < 0)
++		goto error;
++
++	/* Some laptops with Senary chips show stalls in S3 resume,
++	 * which falls into the single-cmd mode.
++	 * Better to make reset, then.
++	 */
++	if (!codec->bus->core.sync_write) {
++		codec_info(codec,
++			   "Enable sync_write for stable communication\n");
++		codec->bus->core.sync_write = 1;
++		codec->bus->allow_bus_reset = 1;
++	}
++
++	snd_hda_apply_fixup(codec, HDA_FIXUP_ACT_PROBE);
++
++	return 0;
++
++ error:
++	senary_auto_free(codec);
++	return err;
++}
++
++/*
++ */
++
++static const struct hda_device_id snd_hda_id_senary[] = {
++	HDA_CODEC_ENTRY(0x1fa86186, "SN6186", patch_senary_auto),
++	{} /* terminator */
++};
++MODULE_DEVICE_TABLE(hdaudio, snd_hda_id_senary);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Senarytech HD-audio codec");
++
++static struct hda_codec_driver senary_driver = {
++	.id = snd_hda_id_senary,
++};
++
++module_hda_codec_driver(senary_driver);
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
 
