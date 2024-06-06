@@ -1,191 +1,121 @@
-Return-Path: <linux-kernel+bounces-204628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D3F38FF16A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:58:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13B5B8FF179
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:01:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65C291C20E5C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:58:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DCD91F24FC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A24198837;
-	Thu,  6 Jun 2024 15:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF15196D90;
+	Thu,  6 Jun 2024 16:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RTsWUHvO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JYuTk84F"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CD5197A8C
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 15:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C20153511
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 16:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717689410; cv=none; b=mZ+OUIhN3ZtUdr3ZSk1zFnt6FYXv4LZQsYpaayqADehqkPBWuSYGgNiSf9XKyWqqx4usRSGUwTZltiSb7i5OVg1LG8bXkcK69U1KYNOFSidGI+ZwnsI/RGm7j9UBDcTl0+wSZHEsQxhPoAwiurNN4xzxXeML20X5zh3BPkrGssc=
+	t=1717689668; cv=none; b=p2Ogcd4uiZKPqTycjpAS7+1DJfV2j/WAXeKTUsFsYWEwlKubB/nHeE1ZuIWWJ9+tsIvJqyGfiwEjwC86oKg7qrm+lbhidms1Hxvwu5lMVvPowFduiugkcHC9b3NuFETFsbDzPcKiL/OCeHvhLC0LMR3kJjvd4RIe7qKFl6YEhFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717689410; c=relaxed/simple;
-	bh=n65GZzUczwFhc4ORxki7PkiT6dEccGLhcY4yBOHx/AU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jSnRkU3r1kOZtkr6HV9AWrSlxwaIkh1bM7+kdqoRnM8O5I7GeCqHJPtcPEv4PKe6nYDh1LlljD9dyaTg3eRuuAw45SltvbH5/e0XFsWW7FpMawHZ8Hkccl8xWUdccCf+cOxpTy8nChGIzIm0GNdEKfR/uwFUwTCW3gGsklpCgTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RTsWUHvO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717689407;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=rICVcq7FiKIUG7u7jIEiVO2tUcrUM6iWDXfWLjwwGZ4=;
-	b=RTsWUHvOOm8Vv/f3SEgcMVH/yo64HgjVsLNj3Lgg8lF7C4mWbpRfK5gnFDStrNnd88O5rc
-	58bRuOQ5GbfJ0VPBYvWyoYjR0LIKY2x9UIo299Xgmnkwt43k5MJJxB9g5pubISkJ09p6vS
-	Ei/tmFqCLoVCJaiWFJahDEWTJ0tK+5g=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-496-FEdG6tWaM3qq-N0r2V9S1Q-1; Thu, 06 Jun 2024 11:56:46 -0400
-X-MC-Unique: FEdG6tWaM3qq-N0r2V9S1Q-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4212a4bb9d7so11341475e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 08:56:46 -0700 (PDT)
+	s=arc-20240116; t=1717689668; c=relaxed/simple;
+	bh=sqVHQEDwVAxjqpqFdMyKgszMsUmj5y9aSsv6Guy/rJ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K/tfYyu84PAnXUVCN/FBxl4ORHBavFnFLFrG5vp2T6V0OrdF2lnuepIyIHS2qbd6T80lyreJhUYMu9HLhYe66mpeGlAXZ+P/7iwQxk5sYYJ2R3N+dZJCrtS/frkDoRZzSBbj4xpGxWBB7zHDip9WxRAXwQRM1bA5enVCGUPTufQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JYuTk84F; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6b041fa2a54so8614376d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 09:01:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1717689666; x=1718294466; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=sqVHQEDwVAxjqpqFdMyKgszMsUmj5y9aSsv6Guy/rJ4=;
+        b=JYuTk84FY4wVZ61V1rkIolMSSdhpuqsB5A0wznMf/x8TOHU1E7z1NMzXQrDA24zmwJ
+         rJUfGF6zSNIPKRUUC/NqyvsZLE4eTlvv8CjeWW3I2JG0FpaoVtvWxh6UeAUGDXUK+B+U
+         jVTnXoy7A8Cyf/8dHQMRPrMBEEhIe9t5K0Ho4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717689405; x=1718294205;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rICVcq7FiKIUG7u7jIEiVO2tUcrUM6iWDXfWLjwwGZ4=;
-        b=U7VjX8svdR0zGIAT5ec5g769fKkwTzKoc4YaKkkRGW2w14yRoRDTGyrrSy37v3cfQJ
-         3ZdY3yo3dkctLpcCOKz7HzJVGKguwFQcZCKN9/hhfUsb6Rg4xWAVAzHspFQ6pZ/ilAxV
-         9EtOTqp0bhNDveFzA1Q5kjQD4yV3dzAwIc16Wj3mmxrnS05qHtksf9HCYBgjOQveTEr1
-         rHvLHd3/nTSHCUa3iKCIg9LaUMunoGPMb4zt++l8Wjq5tltA2ekpAi16B9tmdzDf+MHX
-         nioSIbMk288VGscclQw07WMw/3QFlaHunkR2y/3Vc++HsM5kMK5RT1Z9S1zvjw1imeMS
-         5QpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXbz70JUd0OWRbt93y+UGzrYvH0rrBWOz9+oZ+wdl8W7E3ALVnfv3uOPdxeRGD2kMjIUQDwiZ6hE8nxLk9o+q5Iyux6MIUrX2QakVSy
-X-Gm-Message-State: AOJu0YyjpxcHWqH/hPfHkQS4i5WCdS3JJ8KD/3ONFOUF4ZZK97Ndi6fy
-	Gw+bpoAmIPV76t7JM1c8jndir0JBD5LTm+BidqzdSHOfY897gsusBcYgoEIFuSR1nIZG+OQjQJC
-	QhK4pcHRpuvy4IdM0v/jQKRNIQZIMccm4wovIDWwoA2YidKwFW+he/7GPD8xQ2A==
-X-Received: by 2002:a05:600c:19c7:b0:419:f911:680a with SMTP id 5b1f17b1804b1-421649ec4f1mr1464665e9.1.1717689405110;
-        Thu, 06 Jun 2024 08:56:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFICeY1PkRTCZuslnCo8zVl10rT73fNAObHJppOV3wt8/nIAR3iHGtkV3plGrDo/QKT1YfJ2Q==
-X-Received: by 2002:a05:600c:19c7:b0:419:f911:680a with SMTP id 5b1f17b1804b1-421649ec4f1mr1464195e9.1.1717689404416;
-        Thu, 06 Jun 2024 08:56:44 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c710:8800:a73c:ec5b:c02c:5e0b? (p200300cbc7108800a73cec5bc02c5e0b.dip0.t-ipconnect.de. [2003:cb:c710:8800:a73c:ec5b:c02c:5e0b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421580fe371sm60070155e9.1.2024.06.06.08.56.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 08:56:44 -0700 (PDT)
-Message-ID: <5b4e7ef2-3ced-4d4a-989c-e99b06598d32@redhat.com>
-Date: Thu, 6 Jun 2024 17:56:43 +0200
+        d=1e100.net; s=20230601; t=1717689666; x=1718294466;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sqVHQEDwVAxjqpqFdMyKgszMsUmj5y9aSsv6Guy/rJ4=;
+        b=XQhL4BERrVbPn5peaXDgzRCa14tyTZ8V3gLu2W+daRxXmz1n6QAlzq7g9FrLSl0S6Q
+         V2vGx/oFKesYymQPEOzIB+JiNJKki8lAAkZYolwBweh2LYBHIY0OraRWZ+iUjMhEld3y
+         TEYS5G/q2xnalHlgkpm46mTw02IUvQ/rervdgzv26+s1PFWFMYlt0cTnmtg0cOJ4tiAo
+         PeV6IBHk9KbvkDPiYV6ulSX699AWBzEvHxYpxrVNRoEpOL+4U4IsZ22MxGs40Uxg5Fqn
+         suzVSCVp2tFJFkoloW/DOMlWZTBSZ8C9XjA1gsENHFmsLZqihx46+cqKlxddUnlSgQBK
+         NyJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqI68fp8EEcFD6+/214dr270oWU7FsgeaQeuuN9AjkaCxsdNKRw9L2AD4PfuQA6sJtZ+jzEQWZD950bFpQgCpxgxKrk8znpJH71qYN
+X-Gm-Message-State: AOJu0Yw8bqFCVCvoXoqpVbAhxd1H7PnbM7w/DZmYUwH+1AAfHIi9kxW0
+	jLBgOcD1Ms3n07l/kprxgsNSdzSaPTFaJ5OZ0opwdo1OypX1dBehNHEW+KHRUZN+tXOPnT2PpNR
+	XkADcmemgDKidMPUsERQ/7A2yLmMIpLujC8nM
+X-Google-Smtp-Source: AGHT+IFzj8RlanPuIZnlqigaZ47DrvMcpPjFdw9hKo3mN//pDXqRuiPsikMN3AUdLkN/Awqlt/3fx9d96fwFEYXKBKs=
+X-Received: by 2002:a05:6214:2c0d:b0:6ad:63c3:12fe with SMTP id
+ 6a1803df08f44-6b02266d4cfmr71924706d6.3.1717689665559; Thu, 06 Jun 2024
+ 09:01:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/mm: use volatile keyword to not optimize mmap
- read variable
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
- Shuah Khan <shuah@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: willy@infradead.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- gost.dev@samsung.com, mcgrof@kernel.org, linux-kselftest@vger.kernel.org,
- Zi Yan <zi.yan@sent.com>, Pankaj Raghav <p.raghav@samsung.com>
-References: <20240606135835.600022-1-kernel@pankajraghav.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240606135835.600022-1-kernel@pankajraghav.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240521-board-ids-v3-0-e6c71d05f4d2@quicinc.com>
+ <CAFLszTjexpNEjo1sGVs67L0CAgGZLNkyn9RGfHRD7iHak_mtmg@mail.gmail.com> <20240605100246481-0700.eberman@hu-eberman-lv.qualcomm.com>
+In-Reply-To: <20240605100246481-0700.eberman@hu-eberman-lv.qualcomm.com>
+From: Simon Glass <sjg@chromium.org>
+Date: Thu, 6 Jun 2024 10:00:54 -0600
+Message-ID: <CAFLszThbe_aUAq_5rCCiPV-bj60oq9UCc=vdDHwM3i6t44ohLw@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 0/9] dt-bindings: hwinfo: Introduce board-id
+To: Elliot Berman <quic_eberman@quicinc.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Amrit Anand <quic_amrianan@quicinc.com>, Peter Griffin <peter.griffin@linaro.org>, 
+	Caleb Connolly <caleb.connolly@linaro.org>, Andy Gross <agross@kernel.org>, 
+	Doug Anderson <dianders@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>, 
+	Julius Werner <jwerner@chromium.org>, "Humphreys, Jonathan" <j-humphreys@ti.com>, 
+	Sumit Garg <sumit.garg@linaro.org>, Jon Hunter <jonathanh@nvidia.org>, 
+	Michal Simek <michal.simek@amd.com>, boot-architecture@lists.linaro.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 06.06.24 15:58, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
-> 
-> create_pagecache_thp_and_fd() in split_huge_page_test.c used the
-> variable dummy to perform mmap read.
-> 
-> However, this test was skipped even on XFS which has large folio
-> support. The issue was compiler (gcc 13.2.0) was optimizing out the
-> dummy variable, therefore, not creating huge page in the page cache.
-> 
-> Add volatile keyword to force compiler not to optimize out the loop
-> where we read from the mmaped addr.
-> 
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> ---
->   tools/testing/selftests/mm/split_huge_page_test.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
-> index d3c7f5fb3e7b..c573a58f80ab 100644
-> --- a/tools/testing/selftests/mm/split_huge_page_test.c
-> +++ b/tools/testing/selftests/mm/split_huge_page_test.c
-> @@ -300,7 +300,7 @@ int create_pagecache_thp_and_fd(const char *testfile, size_t fd_size, int *fd,
->   		char **addr)
->   {
->   	size_t i;
-> -	int __attribute__((unused)) dummy = 0;
-> +	volatile int __attribute__((unused)) dummy = 0;
->   
->   	srand(time(NULL));
->   
-> 
-> base-commit: d97496ca23a2d4ee80b7302849404859d9058bcd
+Hi Elliot,
 
-The rick we do in some other tests is:
+On Wed, 5 Jun 2024 at 11:17, Elliot Berman <quic_eberman@quicinc.com> wrote:
+>
+> On Wed, Jun 05, 2024 at 07:17:35AM -0600, Simon Glass wrote:
+> > Hi Elliot,
+> >
+> > I am just picking up the discussion here, which was started on another thread.
+> >
+> > I can't see why this new feature is needed. We should be able to use
+> > compatible strings, as we do now. I added a 'usage' section to the FIT
+> > spec [1] which might help. I also incorporated the board revision and
+> > variant information and some notes on how to add to the available
+> > suffixes.
+> >
+> > Does that handle your use case?
+>
+> -rev and -sku don't fit the versioning scheme for QTI devices, so this
+> isn't a generic enough approach. Patch 5 in this series describes the
+> versioning scheme for us.
+>
+> In the other thread, we had talked about using some regex based approach
+> for matching the root node compatible. I haven't had chance to work on
+> that proposal and will try to get to it in the next couple weeks.
 
-char *tmp;
+OK, I look forward to it. Please do check the FIT best match approach
+and see how it might be extended to handle your requirements. So far I
+have not seen a need for regexes, but it is certainly a possibility.
 
-tmp = *whatever;
-asm volatile("" : "+r" (tmp));
-
-
--- 
-Cheers,
-
-David / dhildenb
-
+Regards,
+Simon
 
