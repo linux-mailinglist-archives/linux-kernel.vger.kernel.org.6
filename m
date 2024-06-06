@@ -1,153 +1,193 @@
-Return-Path: <linux-kernel+bounces-204209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F1D18FE5E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:56:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3AEF8FE5E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26C301C25DB7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:56:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90D1A1C25C8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149F319596A;
-	Thu,  6 Jun 2024 11:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC46473163;
+	Thu,  6 Jun 2024 11:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="KSuigMUZ";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="S+xZnJmI"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WCzgZrWv"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893BA13D28C;
-	Thu,  6 Jun 2024 11:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680C213AD25
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 11:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717674962; cv=none; b=VsucdNYUVj/ZFTZTwSZOTPXOX9BTEfuudvuWcgk12UyCeeKtXaYbdNsbtq8nI0qn7WtqZM5IeDAdLgUYq5n80I7zlNQmLGz0LbHki4+gUqm9rI4v7SnQdg+OJX07fapK5lyLO9ZxJMpBAOjBRg7APGPIQ4CHmbVZ0bdebFeDk54=
+	t=1717674992; cv=none; b=VIj3TOuKCrktiFYW4jk2NQsj4VT+i3khRjNI9RklOU/af4bLcEzm/RtoBOyLDx+8hBZDF3L94dh3i9HnzSLcHPLDluT5ezINs1epUegvqANgaK1hL+Bg+l8+AFI51Fg2L8QRHjB/QCyi50HNomrvryV55hs1c9rD3OkiZ1VYBQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717674962; c=relaxed/simple;
-	bh=5TcS2L0Vunv8bQ6XHbiioGIW6DmWOl9p9toiSyHCi2U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Xjm6FJtNIheugHSy0wbqqU+8RJUDx7W8fz8hgh+BtolkRsULU2AUPxwN4TrucNT4QY5xEgdFBzjZ9eP7/ihxAyz757lq0kdkcKyTO54w9+62iMoXn6tOLokE34k/J1ovCDAx16VFmH/4F8cX7mfR3Z7lquh8n1Mk8V/ma+MfkQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=KSuigMUZ; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=S+xZnJmI; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3352D21AE5;
-	Thu,  6 Jun 2024 11:55:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1717674956; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=jZCoYGmEJh4l+ym/XnVfcBBQBC1YxZZjqAJOP1GtJnA=;
-	b=KSuigMUZRBIcqfkAVkZAJe2+Kz4kxMP0xgEDW1yewEdpvZRLLPVjmvjrU46HhqyFkTO6/x
-	wUW2+Cz0iYRl88d2gglyM0D79ucUSMYWYRQFwlKULo2q6Hb1UhBrb+WJE/b7zs3ClU/yrz
-	W+YKy6+U0tUasIGhJGev130yd09Vqx4=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=S+xZnJmI
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1717674955; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=jZCoYGmEJh4l+ym/XnVfcBBQBC1YxZZjqAJOP1GtJnA=;
-	b=S+xZnJmIO9S/4p9OmvLSKVLvkKVr7oLEj8ouZ27JRDBUKNJHTarj+i0ol0z6MFOr62TNVi
-	1XCcs3djAI9rdTX32Fz4WqjZuoavds1svj6eLNgA6acbdvGKkJyoatH94XmzJ+ccSFeGbW
-	Eaj/PgFkBLtDQyLGB7a5G5JnrGtTrt8=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0A8D313A1E;
-	Thu,  6 Jun 2024 11:55:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dn6JAcujYWa1KQAAD6G6ig
-	(envelope-from <ptesarik@suse.com>); Thu, 06 Jun 2024 11:55:55 +0000
-From: =?UTF-8?q?Petr=20Tesa=C5=99=C3=ADk?= <ptesarik@suse.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>
-Cc: linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Petr=20Tesa=C5=99=C3=ADk?= <ptesarik@suse.com>
-Subject: [PATCH] ACPI: CPPC: add sysfs entry for guaranteed performance
-Date: Thu,  6 Jun 2024 13:55:41 +0200
-Message-ID: <20240606115541.2069-1-ptesarik@suse.com>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1717674992; c=relaxed/simple;
+	bh=0mrz4Ql+/szyW/Tn0jSJew7WyN8DrpJkwgiX14efqeA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R45ByQxLz7ikGtJ5XF8r+DEoZj5lw4JIH/zfVj1ACi6TtJZK2GSuG5PUiidzz+1M1JymOx4pSvmG72slEPXO7elB00w+fEV2KSoSVlYwoZprE1PF+LBcb/nE/tuenhszTpoE0datAY93GE+KhQFJ85lrMzQ91ut0vM2CXD3OAJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WCzgZrWv; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a683868f463so93270666b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 04:56:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717674989; x=1718279789; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=qigu9PmFJTxWiF2SHmyTiEeuSsK0KUDZ4LsRQKX0REc=;
+        b=WCzgZrWvQXmCBE/q2ufc/dn/y6eLZRGNrnn18LCAJSjOUjaonjUN53gLqqR8LRdBgu
+         XrS94bM1elWGw461Vpc5IRmk4kHxMgEfcIjpeLJZ2M2bppCeVCo0MbiVPh2Ig/ImqnpR
+         sG1EEAriXMWSgSO18ZL/sJw0maLPDr8gKi0uCcr10+sZJCLGsxQVl8/QpFD40JggeTur
+         kUu+rLNJtzXecHvjLPKIlfxVbx4cJWIaPSX2tYuAwp+4z9Wpb5B7QMw+Akoj7h7/beAl
+         M4ff2OkE7+v52q4o6WY3jPjGHqqxmDYn+b9QTEH7h5ISGf2UixRbLm00ePcspqX1bmY9
+         cBhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717674989; x=1718279789;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qigu9PmFJTxWiF2SHmyTiEeuSsK0KUDZ4LsRQKX0REc=;
+        b=nIpqtwVwYpFw5O5qXyEcNBUu1+ELzZMHHYPP8iC25Np0CIGdoMuIKMwo6gDTgVAccS
+         OM+cGaFIqNtCrfTupIltHW8BDkSw4GqjBMn8G3kEtTQwYyiYV/PjDZAgRceLlsc+VMOB
+         xkvaaF8d74FpFr18LLXy/xqJeZgcjyJ7sDAhUKAOqeo/VAq6Ln0cnydJo6oXhXH+AZth
+         ZRcnQXK0zt+4jhG7Djug+cwDDw1rhvHRxv35Jtr3exYg2LeMZNvX1eIHR75GKZ7xZQk/
+         LpUKX6Dh/nPkS3/zDrR4GKl9KCWWqDH948Pbqle4RGVztzShDPcl99Qy81rWjYi7pwCc
+         o9yg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcnTFWYmTOR69enJIdJpfSxinEPORm/QpsU1AnfpMCNIyTckaPeHjm/oNET05SPhop5xaCHg3DC+nt660TR0XLEC/ErjynRR6v+/TY
+X-Gm-Message-State: AOJu0Yz/seNGhUQpEsWsw1Jvi/NviJu30fy7/AC+br+cEhV9b0QnVsZx
+	nJuJDiB3v/Nqyn6LLmsRGlaiTmdBIslYoCbzB5AHKcR3LeNcG67H/Ac9Grut9dg=
+X-Google-Smtp-Source: AGHT+IFBieSuf16i1ypLtg1vDRc6TWnPPoeLOLeUt2B/edYEeJwfryrucUNsxXI6VGfLB0D6SlRLzw==
+X-Received: by 2002:a17:907:cb21:b0:a62:c2a5:cff5 with SMTP id a640c23a62f3a-a69a002e7d1mr313879066b.56.1717674988815;
+        Thu, 06 Jun 2024 04:56:28 -0700 (PDT)
+Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c806eb018sm87811066b.127.2024.06.06.04.56.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 04:56:27 -0700 (PDT)
+Message-ID: <93eb11e7-21d7-4d3b-b033-b66898ea7874@linaro.org>
+Date: Thu, 6 Jun 2024 13:56:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: gcc-sm8450: set OPS_PARENT_ENABLE on
+ gcc_sdcc2_apps_clk_src
+To: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Vinod Koul <vkoul@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <20240427-topic-8450sdc2-v1-1-631cbb59e0e5@linaro.org>
+ <2337ba58adb3fb127710bead9b8665a9.sboyd@kernel.org>
+ <11bd7146-30cd-4b71-b2ca-d76875763731@linaro.org>
+ <6ba2967c6c9d24e3f1c9b76496176010.sboyd@kernel.org>
+ <3a3c4279-a254-48d0-91ad-70b7f1e3eb77@linaro.org>
+ <7baef7a173dc4d1ecf8b0dafde565b1a.sboyd@kernel.org>
+ <aeaa72f6-b227-4b54-9836-0b8f4dba6ffb@linaro.org>
+ <9440dd954294db7c02a11a1807d75ad9.sboyd@kernel.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <9440dd954294db7c02a11a1807d75ad9.sboyd@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -1.71
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 3352D21AE5
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-1.71 / 50.00];
-	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MIXED_CHARSET(0.83)[subject];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	BAYES_HAM(-0.03)[56.37%];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	DKIM_TRACE(0.00)[suse.com:+]
+Content-Transfer-Encoding: 7bit
 
-Expose the CPPC guaranteed performance as reported by the platform through
-GuaranteedPerformanceRegister.
+On 7.05.2024 11:52 PM, Stephen Boyd wrote:
+> Quoting Konrad Dybcio (2024-05-07 14:17:01)
+>>
+>>
+>> On 5/7/24 22:28, Stephen Boyd wrote:
+>>>>
+>>>
+>>> Can you share your patch that prints the message? What bit are you
+>>> checking in the hardware to determine if the RCG is enabled? Do you also
+>>> print the enable count in software?
+>>
+>> I already reset-ed the tree state, but I added something like
+>>
+>> if (rcg->cmd_rcgr == the one in the declaration)
+>>         pr_err("gcc_sdcc2_apps_clk_src is %s\n", clk_is_enabled(hw) ? "ENABLED" : "DISABLED");
+>>
+>> to drivers/clk/qcom/clk-rcg2.c : __clk_rcg2_set_rate()
+>>
+>>
+> 
+> Ok. You're reading the software state because there isn't an is_enabled
+> clk_op for RCGs. Can you also read the CMD register (0x0 offset from
+> base) and check for CMD_ROOT_EN (bit 1) being set? That's what I mean
+> when I'm talking about the RCG being enabled in hardware. Similarly,
+> read CMD_ROOT_OFF (bit 31) to see if some child branch of the RCG is
+> enabled at this time.
 
-The current value is already read in cppc_get_perf_caps() and stored in
-struct cppc_perf_caps (to be used by the intel_pstate driver), so only the
-attribute itself needs to be defined.
+[    3.998362] gcc_sdcc2_apps_clk_src is SW-DISABLED, CMD_ROOT_EN=0 CMD_ROOT_OFF=1
+[    3.999896] scsi host0: ufshcd
+[    4.006712] ------------[ cut here ]------------
+[    4.013751] gcc_sdcc2_apps_clk_src: rcg didn't update its configuration.
 
-Signed-off-by: Petr Tesařík <ptesarik@suse.com>
----
- drivers/acpi/cppc_acpi.c | 2 ++
- 1 file changed, 2 insertions(+)
+[...]
 
-diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-index 1d857978f5f4..9976bb57356e 100644
---- a/drivers/acpi/cppc_acpi.c
-+++ b/drivers/acpi/cppc_acpi.c
-@@ -160,6 +160,7 @@ show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, highest_perf);
- show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, lowest_perf);
- show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, nominal_perf);
- show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, lowest_nonlinear_perf);
-+show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, guaranteed_perf);
- show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, lowest_freq);
- show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, nominal_freq);
+[    4.288626] gcc_sdcc2_apps_clk_src is SW-ENABLED, CMD_ROOT_EN=0 CMD_ROOT_OFF=0
+
+
+Code:
+
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 9b3aaa7f20ac..a24b8931d7a1 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -471,6 +471,12 @@ static int __clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
+        struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+        const struct freq_tbl *f;
  
-@@ -196,6 +197,7 @@ static struct attribute *cppc_attrs[] = {
- 	&highest_perf.attr,
- 	&lowest_perf.attr,
- 	&lowest_nonlinear_perf.attr,
-+	&guaranteed_perf.attr,
- 	&nominal_perf.attr,
- 	&nominal_freq.attr,
- 	&lowest_freq.attr,
--- 
-2.45.1
++       if (rcg->cmd_rcgr == 0x24014)
++               pr_err("gcc_sdcc2_apps_clk_src is SW-%s, CMD_ROOT_EN=%u CMD_ROOT_OFF=%u\n",
++                      clk_hw_is_enabled(hw) ? "ENABLED" : "DISABLED",
++                      regmap_test_bits(rcg->clkr.regmap, 0x24014 + CMD_REG, CMD_ROOT_EN),
++                      regmap_test_bits(rcg->clkr.regmap, 0x24014 + CMD_REG, CMD_ROOT_OFF));
++
+        switch (policy) {
+        case FLOOR:
+                f = qcom_find_freq_floor(rcg->freq_tbl, rate);
 
+Konrad
 
