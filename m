@@ -1,157 +1,127 @@
-Return-Path: <linux-kernel+bounces-204862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7078FF466
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:12:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A5408FF469
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:12:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CC971C20F4B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:12:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8B51B2334C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D8219938D;
-	Thu,  6 Jun 2024 18:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4FC19938F;
+	Thu,  6 Jun 2024 18:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="octv4Whv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NCe97Jy0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404A3199389;
-	Thu,  6 Jun 2024 18:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A5F16FF26;
+	Thu,  6 Jun 2024 18:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717697523; cv=none; b=hUVBed2hGeFvxN1LQPJ8YwEIH4JMgtk4+p4RimIS3cdjSjgme/+8PZYOYTQ7zv/Rrf6R7ZiQ3QKoG/J9J0gvxm2Xb76hn4GcqOFd78nw3BXSxMnAvrqAxAQ9Og0ZqGHj13XXRLie8nrGR5uY6WbBxX5kdw8/N00kBUzCCbuUPSM=
+	t=1717697565; cv=none; b=DiYTaL1OjwY6o9TU0gCPat9mfGfzWJ5eR3zX3LYoDA8mgE4czmHIukG7PA4bCsMzNXbcRdJHGL56FJKz8wKZ7dNazIKl6AimnOCixsseHlAHR6GfLBr4itAvXz8gN7MHqpN31ObALvp4nmEzE8vPbjMttBVbbGwUWGcMFs/tFMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717697523; c=relaxed/simple;
-	bh=rahIpKZsGpZl2GO/jcg+ZxtQQuJCfpWo2UtJ417xTUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QMqMYLvd7MWssRBwVq3yLhXSws57WJWiVAANLXrpfFiJsJU557I01fnD+MqU54iQQd64bMyqo/byZg/99NCnLhtjox5y4gp4Wm7ChbRVNiki+RS2gFV0OCF0b9zANPGEpb/u7n+LN5ODOfirLxgZ9ujnxnSwuLeG/FHwvixNHM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=octv4Whv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C271EC2BD10;
-	Thu,  6 Jun 2024 18:12:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717697522;
-	bh=rahIpKZsGpZl2GO/jcg+ZxtQQuJCfpWo2UtJ417xTUw=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=octv4WhvBePeFZZ7velpQzLtev96q76IfX8815xAMcWB094Tr6JRjwZ7nR4LPR9Xs
-	 53zumoRdLP7y38JHxw3o6f9GxytjeiC1is8PNEz1zhgkz+I7MAEIjH+cjkZui3gQpc
-	 TWom6+lJO94GhpTjiUI33wEbgothq1eDMFQOE5oS6zIkkLUpvSJfOVulwr1fcu86ju
-	 rEgU91FGQHRzyOiIHOr/2csuQQm4Y6XSvMxqoVLNw9jY8/7+PlPrKieWhyJ91PVovI
-	 EMfmq4Cp9bkzYypKi7UpyMdhu363uhDXrtpF4nNez52jO0l1S/3BAqKUdRRVHFEcQW
-	 Fms/kBSgmutGg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 47419CE3F34; Thu,  6 Jun 2024 11:12:02 -0700 (PDT)
-Date: Thu, 6 Jun 2024 11:12:02 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Neeraj upadhyay <neeraj.iitr10@gmail.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	Uladzislau Rezki <urezki@gmail.com>
-Subject: Re: [PATCH rcu 3/9] rcu/tree: Reduce wake up for synchronize_rcu()
- common case
-Message-ID: <beb31a51-253e-4bc4-a73c-456f2bf2fd06@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
- <20240604222355.2370768-3-paulmck@kernel.org>
- <ZmCTvMVlOMFv0-zd@localhost.localdomain>
- <CAFwiDX8yGCEiZE-VC0i=VoGByQArQkwG7beVvQO5wRGsK8rdPQ@mail.gmail.com>
+	s=arc-20240116; t=1717697565; c=relaxed/simple;
+	bh=HiI/oLWPaJYnVHp8ME9u+IoBB1OrV4LXCTP5IlQqX2g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GRde3nTLzB8zuprFFWDGqMmDNfW6ppIJ/+W/r9SHyJuL8yEgv+ycKh0qXQ7tORmSV9bEgtV4qh95ubJmRLxmoyDSN0ORuPkrsC++54Zzz0ywl2ShkeHOdh6CSP9PBPzrJlIpf8ZS0K7SrsWkx3/EPbBtBoYYy53FxJt/2rVwtos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NCe97Jy0; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717697564; x=1749233564;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=HiI/oLWPaJYnVHp8ME9u+IoBB1OrV4LXCTP5IlQqX2g=;
+  b=NCe97Jy0bzMzWETnnqAkVwooqTzQc1TmwSOddrA4OVp3IETecWZaU0FQ
+   eT/Ti/qK64FpS5OAddriwvQJkPKL7v8Nznnnfsa3k/8uITTmXLKTmHzx7
+   AIB6DpMBuZiWRys1eA5Y9/Qcg1+sO5sm/eR6+ycWdmZrL13o9mR2BVJuS
+   y/eCRZlq11+4zCAsTVncmHGMI0LSgHvSseuzBoficDvTBxRk8hwlDxzw5
+   vHlFVwieb2IgZM9aa2qhfrngBfVcetq4LaIzB44Zq4jXF00TWXVKZWVXK
+   eVzRKR3zYEB6pe34VEoVYyc50CVJYcYu/94OqMUawUaeod2z19VIWmaM5
+   g==;
+X-CSE-ConnectionGUID: cDmcBfENSuaNk+2q/2NbjQ==
+X-CSE-MsgGUID: zROOiIJkSiCGtI6jQPSWVQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="24963466"
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="24963466"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 11:12:36 -0700
+X-CSE-ConnectionGUID: XNrJW7EeQ5Wyey27xaw8Zg==
+X-CSE-MsgGUID: v3t2HpxhQ1m36LJLjA7yFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="38122661"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
+  by orviesa009.jf.intel.com with ESMTP; 06 Jun 2024 11:12:36 -0700
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: rafael@kernel.org,
+	viresh.kumar@linaro.org
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH] cpufreq: intel_pstate: Update Meteor Lake EPPs
+Date: Thu,  6 Jun 2024 11:12:14 -0700
+Message-ID: <20240606181214.2456266-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFwiDX8yGCEiZE-VC0i=VoGByQArQkwG7beVvQO5wRGsK8rdPQ@mail.gmail.com>
 
-On Thu, Jun 06, 2024 at 11:28:07AM +0530, Neeraj upadhyay wrote:
-> On Wed, Jun 5, 2024 at 10:05 PM Frederic Weisbecker <frederic@kernel.org> wrote:
-> >
-> > Le Tue, Jun 04, 2024 at 03:23:49PM -0700, Paul E. McKenney a écrit :
-> > > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> > >
-> > > In the synchronize_rcu() common case, we will have less than
-> > > SR_MAX_USERS_WAKE_FROM_GP number of users per GP. Waking up the kworker
-> > > is pointless just to free the last injected wait head since at that point,
-> > > all the users have already been awakened.
-> > >
-> > > Introduce a new counter to track this and prevent the wakeup in the
-> > > common case.
-> > >
-> > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> > > Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > > ---
-> > >  kernel/rcu/tree.c | 35 ++++++++++++++++++++++++++++++-----
-> > >  kernel/rcu/tree.h |  1 +
-> > >  2 files changed, 31 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > > index 6ba36d9c09bde..2fe08e6186b4d 100644
-> > > --- a/kernel/rcu/tree.c
-> > > +++ b/kernel/rcu/tree.c
-> > > @@ -96,6 +96,7 @@ static struct rcu_state rcu_state = {
-> > >       .ofl_lock = __ARCH_SPIN_LOCK_UNLOCKED,
-> > >       .srs_cleanup_work = __WORK_INITIALIZER(rcu_state.srs_cleanup_work,
-> > >               rcu_sr_normal_gp_cleanup_work),
-> > > +     .srs_cleanups_pending = ATOMIC_INIT(0),
-> > >  };
-> > >
-> > >  /* Dump rcu_node combining tree at boot to verify correct setup. */
-> > > @@ -1633,8 +1634,11 @@ static void rcu_sr_normal_gp_cleanup_work(struct work_struct *work)
-> > >        * the done tail list manipulations are protected here.
-> > >        */
-> > >       done = smp_load_acquire(&rcu_state.srs_done_tail);
-> > > -     if (!done)
-> > > +     if (!done) {
-> > > +             /* See comments below. */
-> > > +             atomic_dec_return_release(&rcu_state.srs_cleanups_pending);
-> >
-> > This condition is not supposed to happen. If the work is scheduled,
-> > there has to be a wait_queue in rcu_state.srs_done_tail. And decrementing
-> > may make things worse.
-> >
-> 
-> I also don't see a scenario where this can happen. However, if we are
-> returning from here, given that for every queued work we do an
-> increment of rcu_state.srs_cleanups_pending, I think it's safer to
-> decrement in this
-> case, as that counter tracks only the work queuing and execution counts.
-> 
->     atomic_inc(&rcu_state.srs_cleanups_pending);
->     if (!queue_work(sync_wq, &rcu_state.srs_cleanup_work))
->         atomic_dec(&rcu_state.srs_cleanups_pending);
+Update the default balance_performance EPP to 64. This gives better
+performance and also perf/watt compared to current value of 115.
 
-Linus Torvald's general rule is that if you cannot imagine how a bug
-can happen, don't attempt to clean up after it.  His rationale (which
-is *almost* always a good one) is that not knowing how the bug happens
-means that attempts to clean up will usually just make matters worse.
-And all too often, the clean-up code makes debugging more difficult.
+For example:
 
-One example exception to this rule is when debug-objects detects a
-duplicate call_rcu().  In that case, we ignore that second call_rcu().
-But the reason is that experience has shown that the usual cause really
-is someone doing a duplicate call_rcu(), and also that ignoring the
-second call_rcu() makes debugging easier.
+Speedometer 2.1
+	score: +19%
+	Perf/watt: +5.25%
 
-So what is it that Frederic and I are missing here?
+Webxprt 4 score
+	score: +12%
+	Perf/watt: +6.12%
 
-							Thanx, Paul
+3DMark Wildlife extreme unlimited score
+	score: +3.2%
+	Perf/watt: +11.5%
 
-> Thanks
-> Neeraj
-> 
-> > So this should be:
-> >
-> > if (WARN_ON_ONCE(!done))
-> >    return;
-> >
-> > Thanks.
-> >
-> 
+Geekbench6 MT
+	score: +2.14%
+	Perf/watt: +0.32%
+
+Also update balance_power EPP default to 179. With this change:
+	Video Playback power is reduced by 52%
+	Team video conference power is reduced by 35%
+
+With Power profile daemon now sets balance_power EPP on DC instead of
+balance_performance, updating balance_power EPP will help to extend
+battery life.
+
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+---
+ drivers/cpufreq/intel_pstate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+index dbbf299f4219..8b0032d6a519 100644
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -3429,7 +3429,7 @@ static const struct x86_cpu_id intel_epp_default[] = {
+ 	X86_MATCH_INTEL_FAM6_MODEL(ALDERLAKE_L, HWP_SET_DEF_BALANCE_PERF_EPP(102)),
+ 	X86_MATCH_INTEL_FAM6_MODEL(SAPPHIRERAPIDS_X, HWP_SET_DEF_BALANCE_PERF_EPP(32)),
+ 	X86_MATCH_INTEL_FAM6_MODEL(METEORLAKE_L, HWP_SET_EPP_VALUES(HWP_EPP_POWERSAVE,
+-							HWP_EPP_BALANCE_POWERSAVE, 115, 16)),
++								    179, 64, 16)),
+ 	{}
+ };
+ 
+-- 
+2.44.0
+
 
