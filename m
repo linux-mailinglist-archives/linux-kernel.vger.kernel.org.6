@@ -1,137 +1,86 @@
-Return-Path: <linux-kernel+bounces-204231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D518FE61B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:09:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44BD78FE634
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85C6B286382
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:09:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A4F81C25360
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F333E195983;
-	Thu,  6 Jun 2024 12:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ex+NapCY"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B9F19598E;
+	Thu,  6 Jun 2024 12:11:00 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E661953A4;
-	Thu,  6 Jun 2024 12:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9B713F014
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717675780; cv=none; b=u3pnJ0eLQemVKDOIfDygTW4nQmU3CQO4wE6L7NrNi7Mwqzn4sacLS4NmY0cZ/1joK+65CLg06N+7ub//oNwQXlqcqttE2DfsMCSnlHRvpoNMuHa8dyMGrcdgwgDPZy/q+0lG1mxMTDMnOFH/1tn/GJwGJeLqxHyhBjzyLJmJ598=
+	t=1717675860; cv=none; b=e8QowkI8wGy+9QW4CEtMZjpjJqJs2aybUZSkq/rfpknyFPsHsNSAK/cnzwTMWfCecdwoZX/DQJpOFSE3+X7ireesCT0DyEdYJEk0uK1Eo6+3XErbRnuaGjD3MOTiZ7eBM2oplm93Z281bOkuIKQ6WvxPuNzoPLjeYF90JkAwnbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717675780; c=relaxed/simple;
-	bh=d/jCCF0NCqOhRllSWhbYbAQCzOnOV4aDMEeLQSfza+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=O879sNiuzhRksO/ucuLH77jPytbgrBxcWWlobhxlKXOfp5Q45u7Z+GYc3IGp+en+3FiGn0Vl4y3wu+woPdyThVHs15sjz20Vi2ZeJr7P2kN/k6X/83W/nrQJH+GHN232o96GkBVJkVpl2texU47TqwR0mY1NWoow0JdbilVXtyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ex+NapCY; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717675777;
-	bh=d/jCCF0NCqOhRllSWhbYbAQCzOnOV4aDMEeLQSfza+0=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=ex+NapCYaV6uQigRxoz9OgZuuxLinAt+ffhPwDJQBgGlx2SPufS1v3P+AztsrF40y
-	 dRz3GUhZMHA2YYKyeXhuBGMbG9HldE7vrKp5Z0aMkk7TJDryuZgGDfB6vIuUmaN5Jh
-	 ZtaoW+WFg76wAWKZsxuc9ptVjZ6wJAFaEFmmrrdiBvJ/OcdNeb1n1sjacYJ08NifXs
-	 gJXda7TmOb3v0I06XyPOME2H9GCfAv25M4/IRnJcZmn5FRz6dl9OI7Bt36nIC2i+vy
-	 6ozyecsSOFutlgR3Bx0/B/YDrWkIdTEhWye8VrqdgyMs7MzMaplLnHAA1p7tZ0ul1V
-	 Dy86HOeJ8iz6A==
-Received: from [100.93.89.217] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: benjamin.gaignard)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 8ACD83781022;
-	Thu,  6 Jun 2024 12:09:36 +0000 (UTC)
-Message-ID: <657ef910-e6fd-4791-988e-4aba03104c20@collabora.com>
-Date: Thu, 6 Jun 2024 14:09:35 +0200
+	s=arc-20240116; t=1717675860; c=relaxed/simple;
+	bh=6KIZeu7P4A+VqmPbs2foZWElhHKRiOJsd/xHANXue+M=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=uTwrqs43Fpfx5Oyw5qx3fqzrMQOXTT1JOCUKmwBUytMnYM0B1pbSikAG0Oosw4LQXD6zuu9swyy43DflpgYLGFcAyUY3c+82oNdTYEqY15dtvYS4mknmr+eLGw4yhFdn2oipCGRGT4lJ4dKlKyvNyd5zByn2EZnRkMdOWckyFT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22863C4AF0A;
+	Thu,  6 Jun 2024 12:11:00 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.97)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1sFBxQ-00000000nIN-2E0Y;
+	Thu, 06 Jun 2024 08:11:04 -0400
+Message-ID: <20240606121004.857581251@goodmis.org>
+User-Agent: quilt/0.68
+Date: Thu, 06 Jun 2024 08:10:04 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 00/15] ftrace: Updates for 6.11
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 10/12] media: platform: mtk-mdp3: Get fine-grain
- control of cmdq_pkt_finalize()
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Moudy Ho
- <moudy.ho@mediatek.com>, "Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org
-References: <20240222154120.16959-1-chunkuang.hu@kernel.org>
- <20240222154120.16959-11-chunkuang.hu@kernel.org>
-Content-Language: en-US
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-In-Reply-To: <20240222154120.16959-11-chunkuang.hu@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+fgraph/for-next
+
+Head SHA1: f6716bf04b50e791f47a5e35002ccec22b7c74be
 
 
-Le 22/02/2024 à 16:41, Chun-Kuang Hu a écrit :
-> In order to have fine-grained control, use cmdq_pkt_eoc() and
-> cmdq_pkt_jump_rel() to replace cmdq_pkt_finalize().
->
-> Signed-off-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-> ---
->   drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c | 3 ++-
->   drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c | 2 ++
->   drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.h | 1 +
->   3 files changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-> index 6adac857a477..b720e69b341d 100644
-> --- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-> +++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-> @@ -471,7 +471,8 @@ int mdp_cmdq_send(struct mdp_dev *mdp, struct mdp_cmdq_param *param)
->   		dev_err(dev, "mdp_path_config error\n");
->   		goto err_free_path;
->   	}
-> -	cmdq_pkt_finalize(&cmd->pkt);
-> +	cmdq_pkt_eoc(&cmd->pkt);
-> +	cmdq_pkt_jump_rel(&cmd->pkt, CMDQ_INST_SIZE, mdp->cmdq_shift_pa);
->   
->   	for (i = 0; i < num_comp; i++)
->   		memcpy(&comps[i], path->comps[i].comp,
-> diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c
-> index 94f4ed78523b..2214744c937c 100644
-> --- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c
-> +++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c
-> @@ -231,6 +231,8 @@ static int mdp_probe(struct platform_device *pdev)
->   		goto err_put_scp;
->   	}
->   
-> +	mdp->cmdq_shift_pa = cmdq_get_shift_pa(mdp->cmdq_clt->chan);
-> +
->   	init_waitqueue_head(&mdp->callback_wq);
->   	ida_init(&mdp->mdp_ida);
->   	platform_set_drvdata(pdev, mdp);
-> diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.h b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.h
-> index 7e21d226ceb8..ed61e0bb69ee 100644
-> --- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.h
-> +++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.h
-> @@ -83,6 +83,7 @@ struct mdp_dev {
->   	u32					id_count;
->   	struct ida				mdp_ida;
->   	struct cmdq_client			*cmdq_clt;
-> +	u8					cmdq_shift_pa;
+Jiapeng Chong (1):
+      fgraph: Remove some unused functions
 
-Can send a new version of this series because this patch can't
-be applied on media_tree/master branch.
-The code look correct for me but we need to be able to applied it
-to perform more checks.
+Steven Rostedt (Google) (13):
+      ftrace: Add back ftrace_update_trampoline() to ftrace_update_pid_func()
+      ftrace/selftests: Fix pid test with function graph not showing pids
+      ftrace: Rename dup_hash() and comment it
+      ftrace: Remove "ftrace_hash" parameter from __ftrace_hash_rec_update()
+      ftrace: Add comments to ftrace_hash_rec_disable/enable()
+      ftrace: Convert "inc" parameter to bool in ftrace_hash_rec_update_modify()
+      ftrace: Add comments to ftrace_hash_move() and friends
+      ftrace: Declare function_trace_op in header to quiet sparse warning
+      ftrace: Assign ftrace_list_end to ftrace_ops_list type cast to RCU
+      ftrace: Assign RCU list variable with rcu_assign_ptr()
+      ftrace: Fix prototypes for ftrace_startup/shutdown_subops()
+      function_graph: Make fgraph_do_direct static key static
+      function_graph: Do not update pid func if CONFIG_DYNAMIC_FTRACE not enabled
 
-Regards,
-Benjamin
+Tatsuya S (1):
+      ftrace: Hide one more entry in stack trace when ftrace_pid is enabled
 
->   	wait_queue_head_t			callback_wq;
->   
->   	struct v4l2_device			v4l2_dev;
+----
+ include/linux/ftrace.h                             |   3 +
+ kernel/trace/fgraph.c                              |  17 +--
+ kernel/trace/ftrace.c                              | 166 ++++++++++++---------
+ kernel/trace/ftrace_internal.h                     |   9 ++
+ kernel/trace/trace.h                               |   1 -
+ kernel/trace/trace_functions.c                     |   7 +-
+ .../ftrace/test.d/ftrace/func-filter-pid.tc        |   2 +
+ 7 files changed, 120 insertions(+), 85 deletions(-)
 
