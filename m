@@ -1,131 +1,118 @@
-Return-Path: <linux-kernel+bounces-204923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C196B8FF501
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:53:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0CE98FF4FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4757128E02A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:53:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 350BC28C7F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4E04E1D1;
-	Thu,  6 Jun 2024 18:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6361961FD9;
+	Thu,  6 Jun 2024 18:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="W3+7CrDF"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rcxDMi/m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8756845BE3
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 18:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7BF61FCE
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 18:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717700010; cv=none; b=TF8nq/5dfTBsIJcZCIMmcU6o4rldn42N6HMI3Vp6Umzoh+cbaD+AMCK2IDBdVTmst+JVFu89K21wyXOA6ay5duQq62lxOGbIcfShCcZj+7OyuStgu4OA9njPZ7Iy69b9Z20iE/cdJa2cLsZA3TWDez7zmSfN36S9TvdWFSIEkAY=
+	t=1717699946; cv=none; b=PBdyfVe8EDJx4i8Qj65DOQQAjWq/ovfByq9g1DU4DXr9Pc7F0QrTJ0HXFtBv1dZp0MGoUCVExDlmpuYjVXPdDE5hG16eY0CFzTDVJBRYUjCYc9VfrHFZ7rUeQeRw26hVMAnOh3NDhG0lqfOkd7QptKbe29EO1c/5O7xm/J4yC4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717700010; c=relaxed/simple;
-	bh=om1n47XePQtjI/lLgidIuMniQGl6BwDPK4rXrD+4YZQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sFHlq5BEGqD32vp36B2bSgfHuRDGrqel4NNgau6yUnkEXqf3FIJMqwO0w5RTeQ3YRM0zAHXab4AW0D6/cUO0FAQO7wwtjrhC130ngTKCzA4gxe2j6N8ENyDvhkTr8v1RcUM1OST379Ktjrwdu74DoP0MKNIA4CNvRbq9di13a+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=W3+7CrDF; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a690161d3ccso138155066b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 11:53:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1717700007; x=1718304807; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zeGjTLLISyTtH1AgP/c8JS96JX38uoEOXIRqVTS6/9M=;
-        b=W3+7CrDFBe+WIVTUDyjqaVB2cREbIijKrf1Kd5fReNBbsvxx0cW3FU6Fiv9HJv3PRW
-         2E7ZTFBdt/LXGWc23rUhnvCXDUVRKIHUeK3xmJnQiVAx0OnaKAP6XY7179k9RvXSLGjS
-         ToY+xGgMlF4BgNoTXf82jitUAjzIQAggp+bFD8L5drqExRN5ajuM0cDJSAIZ7UHBmN96
-         uNcGjI2Fi9NVjoJ+zpmzfd7ikq+0alik9RMyQ5Z4vU910pUHjOgXP8wI7lS1Si4Wecqz
-         AAr3tsO7U02ALhzmOrp3C9nSWA+8nF6ggrJ162GamfcnowyBy9a+IWK5cdnDHlHgFMN7
-         lJxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717700007; x=1718304807;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zeGjTLLISyTtH1AgP/c8JS96JX38uoEOXIRqVTS6/9M=;
-        b=F+9YzJir56tmwRq2vGMIJg9liGKUNKjhrARbHFm7ixtvA6f0co8tXSKgeEjsmvcEi/
-         h8HEYnris2yDsB2mQK6vVpRrtk9IgPm4s7egBRunwiFZRCV3/tR4d11J7lPFYg9LCba4
-         c/4O3kgSacOnX/NcJYIoyhjfOxjjvpb8K1h4HZSveHD811ilgSFDw46c8dx1Xb/nhl8m
-         /LwmJ3615jTogn7dVMLyu8pbHrLgBahJKxblp9WyN4Bh/w9aqo//fnsfQi4jpdcKdfbN
-         zNRI8mgHJalWtluhD/Na06t+YAObLjnmUw/XCe6Som06DtJ8pQr6s5yfM75EiVrRqwAX
-         AEbw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLdsoY0x+jN/xyfPlaH0ZCXG6W5rAhy417q+xvUdEeywhs4Vl/JGSSIeoP7WRIcGef6ZI02UnGbEgrqKmRRyJF+OIWqMhTY10ls+74
-X-Gm-Message-State: AOJu0YzcSNJH4OxUO+KvRLnOmHY3QmvZmkRHt5L44a+1706ktP1IevIh
-	wqBsVEdh/vxz13ochWTYd/XR2vJ509jUNfp2CkSF4HflB5QTf1vJ0vSiu44uqzldwI1sS27EiGy
-	JIUQ=
-X-Google-Smtp-Source: AGHT+IEx6zqhhAPgHVJ3Am/Pmt3iRNX4TeauA1h0PfHvUlHWCZBgHIV+NRaAEiIgeUrw/R2X5rdpRA==
-X-Received: by 2002:a17:906:4816:b0:a59:bdb7:73e8 with SMTP id a640c23a62f3a-a6cdad238d1mr28297666b.53.1717700006767;
-        Thu, 06 Jun 2024 11:53:26 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-82-135-80-164.dynamic.mnet-online.de. [82.135.80.164])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c806ea19esm130890066b.128.2024.06.06.11.53.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 11:53:25 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: rafael@kernel.org,
-	lenb@kernel.org
-Cc: linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] ACPI/NUMA: Consolidate header includes
-Date: Thu,  6 Jun 2024 20:52:02 +0200
-Message-ID: <20240606185200.1596-3-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1717699946; c=relaxed/simple;
+	bh=cjxXDxzOXY9wo/DdhYXtPhf/ZYUdZrTm3zV+OIKl1o4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qvThVNZCDGFE4YRFWQzfGmcuvnn7j1GQpxewv/K+B2MzL0dHjgLRGqrTPtkijo2D8Gc3IlgXakp44iQV/JyAvSH74+x2yk1jS8lLYnpeGn2SQCI9SPKcpD0oo3iofBcnnBClffpTuhqLQSdv4JQsw6GLTezko4otYyY++9NzrbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rcxDMi/m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E573C2BD10;
+	Thu,  6 Jun 2024 18:52:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717699946;
+	bh=cjxXDxzOXY9wo/DdhYXtPhf/ZYUdZrTm3zV+OIKl1o4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rcxDMi/mm4rrxhsLm+uiiiyTw1Bdgo2qUMftXKNN+T4kMEkOa28Lf0c2WuEAAWjan
+	 alcsj5oKfniV2gfHekNWhq9lYL2tLaVNiK43VAW1uYHg9gbJ+ZUY9Tx3AYJeg3uM8b
+	 HoA/NKz9WbvZGi3PeopKO/vCh+JMk7FYJU/L3NVS8A9tRA/CXUJXTqRLuYD5WRqS/D
+	 AUAhDXtDEA0zHTVgCQtADQyMbFE/MuMJoKMgvJlo06fD0MQFNQgLKxY/FH2om83GHu
+	 yDBrC9YdNiQxH0MLUZvXIcrfGpWMrCqvB4JHvXCv4uOeYwR04qRg9bCzd2KtOCjgjt
+	 vSqNrIANfKfnw==
+Date: Thu, 6 Jun 2024 11:52:25 -0700
+From: Kees Cook <kees@kernel.org>
+To: Joel Granados <j.granados@samsung.com>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
+	Luis Chamberlain <mcgrof@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: Current state of the sysctl constification effort
+Message-ID: <202406061143.27C12F44A3@keescook>
+References: <7823ff95-1490-4c1b-b489-a9c05adad645@t-8ch.de>
+ <CGME20240531163128eucas1p20976d08e829373bfa8aa04fda1c7bec4@eucas1p2.samsung.com>
+ <202405310930.5E2728A@keescook>
+ <20240605082625.6hwdc3haim66rr7v@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605082625.6hwdc3haim66rr7v@joelS2.panther.com>
 
-The header file acpi/acpi_numa.h is included whether CONFIG_ACPI is
-defined or not.
+On Wed, Jun 05, 2024 at 10:26:25AM +0200, Joel Granados wrote:
+> On Fri, May 31, 2024 at 09:31:24AM -0700, Kees Cook wrote:
+> > On Fri, May 31, 2024 at 12:50:32PM +0200, Thomas Wei?schuh wrote:
+> > > Hi Joel, Hi Luis,
+> > > 
+> > > most of the sysctl handler preparation patches have been picked up by
+> > > the subsystem maintainers and are available in -next.
+> > > 
+> > > Only two are missing:
+> > > 
+> > > * utsname: constify ctl_table arguments of utility function [0]
+> > > * sysctl: constify ctl_table arguments of utility function [1]
+> > > 
+> > > Both of them are going through the sysctl tree anyways.
+> > 
+> > This is great! Is the target v6.11 or v6.10 for these?
+> > 
+> > -Kees
+> > 
+> > > With this done it should be possible to also queue up 
+> > > sysctl: treewide: constify the ctl_table argument of handlers [2]
+> > > for the bots to chew on in -next.
+> @kees: Since you have probably done these before, I'll ask you the
+> questions:
+> 
+> 1. The idea is to send Linus the treewide-constify patch on its own at
+>    the end of the merge window for 6.11. Right?
 
-Include it only once before the #ifdef/#else/#endif preprocessor
-directives and fix the following make includecheck warning:
+Right. The best time is likely around Wed on the second week of the merge
+window, assuming all dependencies have landed. And it could be sent
+earlier if all the dependencies land sooner than that.
 
-	acpi/acpi_numa.h is included more than once
+> 2. Is there a special way to send these treewide patches? Or is it just
+>    a regular PR with an explanation on why it is being done?
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- include/linux/acpi.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+I would do a regular PR with all the details for Linus to do the change
+himself, but many times people send these as an explicit patch. For
+example, include the full Coccinelle script, or the "sed" command
+line, etc, and then detail any "by hand" changes that were needed on
+top of that.
 
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 28c3fb2bef0d..bb18e7bf8826 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -24,6 +24,7 @@ struct irq_domain_ops;
- #define _LINUX
- #endif
- #include <acpi/acpi.h>
-+#include <acpi/acpi_numa.h>
- 
- #ifdef	CONFIG_ACPI
- 
-@@ -35,7 +36,6 @@ struct irq_domain_ops;
- 
- #include <acpi/acpi_bus.h>
- #include <acpi/acpi_drivers.h>
--#include <acpi/acpi_numa.h>
- #include <acpi/acpi_io.h>
- #include <asm/acpi.h>
- 
-@@ -777,8 +777,6 @@ const char *acpi_get_subsystem_id(acpi_handle handle);
- #define acpi_dev_uid_match(adev, uid2)			(adev && false)
- #define acpi_dev_hid_uid_match(adev, hid2, uid2)	(adev && false)
- 
--#include <acpi/acpi_numa.h>
--
- struct fwnode_handle;
- 
- static inline bool acpi_dev_found(const char *hid)
+> 3. Can you please send (if there are any) me any examples where this has
+>    been done in the past. Maybe some lore.kernel.org links?
+
+I found this one that is a good example, though it's a PATCH not a GIT PULL:
+
+https://lore.kernel.org/lkml/20221220134519.3dd1318b@gandalf.local.home/
+became
+https://git.kernel.org/linus/292a089d78d3e2f7944e60bb897c977785a321e3
+
+-Kees
+
 -- 
-2.45.2
-
+Kees Cook
 
