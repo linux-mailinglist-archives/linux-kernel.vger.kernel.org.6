@@ -1,481 +1,359 @@
-Return-Path: <linux-kernel+bounces-204693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 815648FF271
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:26:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51E248FF285
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18496B27C48
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:24:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99A7AB2E234
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9202B1990C7;
-	Thu,  6 Jun 2024 16:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF221991DD;
+	Thu,  6 Jun 2024 16:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NWhJBPM7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WM5Dbaow";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="qdODIdn2"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E09196C72;
-	Thu,  6 Jun 2024 16:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717690939; cv=none; b=QpiLoKdbhii9zoSbguFOobE46KelOyW0nAfyx/erC/m2Gt0X6y2fxt+2VjKcYv2BSjNIjIyP88t7OldM1+lOKpdAdKuGdqzFwTXsw59Hx5DDESx6v5jRUYtnQaSr4Z/pfXnsIo+R2SoVptxoULDPPRIQxGK1E6YSzSR+2+cLbP8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717690939; c=relaxed/simple;
-	bh=O6joZNfO4WVVBwJWQ3bJy89M31e/TXm/ojMqVmHXu5M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nR5Qd1TnfpBNzw4/kVn9HHkRg4XmAZ1xcX7t4WFV8McXCnLDz8rWNtvBcQtJ8ssGPJMWzbNA4rxPsGDQ6pUWfJCSatBoaCK9vHwWlYCRKiMOeeplxyxnyo8EAnm4bB1VAt4wim+5Fyyf8ricpwXEQFSwslnbqfeIE1nzq6w/ezg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NWhJBPM7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 581E1C2BD10;
-	Thu,  6 Jun 2024 16:22:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717690938;
-	bh=O6joZNfO4WVVBwJWQ3bJy89M31e/TXm/ojMqVmHXu5M=;
-	h=From:To:Cc:Subject:Date:From;
-	b=NWhJBPM7Ve1y2L6D3phMah5SQX8oYIOqCL+Bwxw7vaLDdSylelIbFYXy/kre+tZEH
-	 GxHXeAPo14+SF+r2pOrSBvDplF7ZmZ/uXIZ34X5OK8q8hgRNrKF/xx0KQSkLwILGBL
-	 E9yBwkNzRJjoUShdRaF860kuyz49DlrPhXiUBBYGwpshMz/YkVZjcOH8o09RxtfNIn
-	 kVgq26Ez6/h60dQWxI1WkqCd1xKAmAYGxOlrpS0ay91C7VnXV5jX0DnL4+EKWsfnhd
-	 knRk7nu9I3xwsi/oHY0zoPldlgpxuLsZTkYu5P84pgqqxFf7rl8JTmznNQFHk7ogF5
-	 gnOOE1ykubNrQ==
-From: Jakub Kicinski <kuba@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	pabeni@redhat.com,
-	bpf@vger.kernel.org
-Subject: [GIT PULL] Networking for v6.10-rc3
-Date: Thu,  6 Jun 2024 09:22:17 -0700
-Message-ID: <20240606162217.3203895-1-kuba@kernel.org>
-X-Mailer: git-send-email 2.45.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C26B1991C8;
+	Thu,  6 Jun 2024 16:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717690989; cv=fail; b=dRCVoGw77d9zSDlZHOepHxVxl6FYe1ixb2BGaJ3qcY8QwcYhwxNId06ONnVnkErrfMmT1oC/NZpfMWKbFKKSiDL+1AI4tnk3MPUJrg5lJGPjM87wCabVmDi7ew3DGQ+MFD42dAWRT7LcgyhAq9oUGeW25CQfA9U6HoZMUuMp8eU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717690989; c=relaxed/simple;
+	bh=AaEjTAb6knx9oOW6umGDTy139Vc/KDs1apWj/2M0su0=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=fypGiX5PhOh9AS5eulFwQLOhAyWMCGnZgzbM16x0iaZtFhEV+wePgrTIqG0nF6KO2P6LVNrOLHDRwlbZeNscNFiX+e6ALCOPLB921IBOBCMqm6/MTSWmAAFpmD9YLnrK39Sy4Q2CoCsgiiEBWuuHpH16zwxhwWOsbpNStR5e2Lw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WM5Dbaow; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=qdODIdn2; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4568idnD021457;
+	Thu, 6 Jun 2024 16:22:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=corp-2023-11-20;
+ bh=EhHl7WUTelNCE8kcdE37+9HKWfT+fyCSmbgpF6b4KJo=;
+ b=WM5DbaowuBoG4aECB303V/J755BOac+sORt42595QBFNL3PyL3jWORGkCbK8OEPbJZHO
+ Df2X135hwjIUNoRmiGuxngkCT9Rhq708titkmbQhkxtOPVqcCbwpj7sFEgDGyjLTIk6h
+ Trwq7X3BYAF0PYkXhnwBctyzg59pofhJOaBQfrTPgRsvaPrRpC3GWbYsUJU1cbh0esdL
+ 2Qkg68skgM311yV3cGHRlGdvK+nSjrX8rH0xMyD6X/S9uo0ylLGkuUmNLE5ywmkKf3By
+ 40gGOHI7kyljvgjZR8SrOja+tyUGpq4B7MLZDG5LVg8NqMuZhQ6NXDg/YP3Hb9V0aiyL 9Q== 
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yjbqn3wpf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 06 Jun 2024 16:22:29 +0000
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 456FENTj024049;
+	Thu, 6 Jun 2024 16:22:28 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2042.outbound.protection.outlook.com [104.47.66.42])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3ygrr12ujn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 06 Jun 2024 16:22:28 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CtxdODA2jvSLivs0/3koyMtEv8oOT7lfg+oW3thzpG+fE5aOhzbTUiLIs65Uj+LFUo2nxPnWtx37qBmZJtgmEQ+i2nVtg+lytf9n2is6lII6TFq4MTD24NPZmqLArzAoknNjSvavdWXi3kK8/UdY6/Sn5VRiEJpq7JgP2UIfaCCsmTWto1KjCet1KymQ1rS2QyWAZsbcmFFWxShRZGnHzpOuMjhiRYKbnkly75hdzCLp49Hz56aWCsDNiQRGJmAh450nV5YmIIrJmGQIGBv74RAyM55S92Arvpzi6FwVNZ+Pij1mixNL/K2BoE1Zvxh2GC1McsWua45ES3ub159lXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EhHl7WUTelNCE8kcdE37+9HKWfT+fyCSmbgpF6b4KJo=;
+ b=Q2F7iKGr6FZU24GgQ/UBConA7KxnsbUhVqorOYE9KziR2cQlNpg/6DO+Q551Y3zvMk/SlYu7+g1WCpTtQGln5GClPEbIA0rkdY9HFKekHfRfPmx/yyrzAbtkE47KUO99wPkPM1FwXbSQhGrwDkVjY7OvryiGNo1tJ4KLO1ly4Sr+iL62vazb6AxyXTt/VyBP9BmlYQ5vm7QgfuAeUNtMuWrbigpK7tElB81DCIacXRGB133Gcgko1mUeOIMN81RvdW2me8v0yYVwp3xg2tereNSaJpqZx8p2agWMfIiD+cnJzYjD22hyfrUFi+AnR/KWlY2vKPiID6uETFSJZzSSsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EhHl7WUTelNCE8kcdE37+9HKWfT+fyCSmbgpF6b4KJo=;
+ b=qdODIdn2WMUGN7tCW361Lueri0mBvjuc+yxk1x2GsmeOekvFRB5b7YfwPBAX5fjkmRQVlMwmG7gXVUHejTeUvy9ur9ZuyGqswSMbyI36bvMclnTzlC83fngu3438JtzPSwCo+uCcqkmV6y8XtFUU+S78JyU6H3pZn3DW492EjEM=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by IA1PR10MB6100.namprd10.prod.outlook.com (2603:10b6:208:3ab::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.24; Thu, 6 Jun
+ 2024 16:22:25 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.7633.032; Thu, 6 Jun 2024
+ 16:22:25 +0000
+Message-ID: <bcc35a78-9446-48e4-b1ce-0f11972bd19d@oracle.com>
+Date: Thu, 6 Jun 2024 17:22:19 +0100
+User-Agent: Mozilla Thunderbird
+From: John Garry <john.g.garry@oracle.com>
+Subject: Re: [PATCH v3 07/21] fs: xfs: align args->minlen for forced
+ allocation alignment
+To: Dave Chinner <david@fromorbit.com>
+Cc: djwong@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk, brauner@kernel.org,
+        jack@suse.cz, chandan.babu@oracle.com, willy@infradead.org,
+        axboe@kernel.dk, martin.petersen@oracle.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        tytso@mit.edu, jbongio@google.com, ojaswin@linux.ibm.com,
+        ritesh.list@gmail.com, mcgrof@kernel.org, p.raghav@samsung.com,
+        linux-xfs@vger.kernel.org, catherine.hoang@oracle.com,
+        Dave Chinner <dchinner@redhat.com>
+References: <20240429174746.2132161-1-john.g.garry@oracle.com>
+ <20240429174746.2132161-8-john.g.garry@oracle.com>
+ <c9ac2f74-73f9-4eb5-819e-98a34dfb6b23@oracle.com>
+ <ZmF3h2ObrJ5hNADp@dread.disaster.area>
+Content-Language: en-US
+Organization: Oracle Corporation
+In-Reply-To: <ZmF3h2ObrJ5hNADp@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0491.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:13a::16) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|IA1PR10MB6100:EE_
+X-MS-Office365-Filtering-Correlation-Id: b024c6ae-7d12-4e46-6b0a-08dc8644d9d7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|7416005|1800799015;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?SFp1Kzd5SmEwVWJYT0ZlcE5YRGRxbmI4dmQ1SnVPTDJ2aGZua3p2b0VlWnpi?=
+ =?utf-8?B?R2RwYnNMS2xMMEloSEFsWVBwZCtHWTI3dXF2cExza25IZGtIRW9nN0JwVm1n?=
+ =?utf-8?B?dk1HNU9VQVJCUkdRamVHbzc0b1J6bmNmTHZNeVk5aEVURXZjNDlVNjJNSmlZ?=
+ =?utf-8?B?MXByb3o2UldWbDJyVnBLd01hWHdBY0cvbXV6ODhrQXZ2dWp2Tno3UUlzVjZQ?=
+ =?utf-8?B?OC9EbkhvZU9VZ1lib0V3ZHg0akdHZWJaNU1pdFovNzZ0SmtOQjJwc2lsOFFi?=
+ =?utf-8?B?cGtPS3M2aE1jODRMd0FTWEZHWk5oMXB0c0FJcm13amtwQUVINUdCYjRBUjNi?=
+ =?utf-8?B?RGlrY2hrb1I5Y0FMU1F2SFpaMDZ0NjdSUFc4TGpFSFgzMkxwSk1BakZwOW1l?=
+ =?utf-8?B?RTJPMzJZQTNsajFSSktUL2xhaHg5WDBDUVVaTG1pQWFuVjRNOXJNRnM4WkZl?=
+ =?utf-8?B?ck10TlFwbWs3MmdQeG1pbDNpazlMdEZ5S1pQcGw4MlFBUmNvcll1M212RmpO?=
+ =?utf-8?B?SjRuM2RKQVZGY3JVNUNFZngvYkRGcXVCTDV4MjRqN0J0K2drbUhvOVVHeHp6?=
+ =?utf-8?B?UGU2d01NeVJxZVFBRVhJelZmWi9CS2dnem1zMCtQdGxUYjhWNFRZUFFpUmxL?=
+ =?utf-8?B?RmNOUmlyM3RwOWtnVERDN1NTOXRKc1BSYXIzcExpWUtaeXVlMENQM28va1NO?=
+ =?utf-8?B?Wm9uOXI5TjFJMXVmdEhhY3lQL1hkWmNoazNPNVpJRG12RHg0UlZTUkRRbHB4?=
+ =?utf-8?B?c1hPNFloeWF6bCtjRHkwL2R4SHFJYWxBODhaSzVGRUxTdTRoVDl5R0tlWENo?=
+ =?utf-8?B?YlA2cFB1ZHFERWt6RHc1V3V6UDBkR3dDK1EwQ0VaOTF5R0YrRHlYVkdQR2Rv?=
+ =?utf-8?B?WURjVjlLZk1DUmhFcmJ5cFpja3hmalJGMlQxbDZSaVJ4RENUTEs1RW9pYW9G?=
+ =?utf-8?B?TkJ3aUduY3cyaHNISEdVd1B2Ymh3cVJPaHJkajEwQVZ3SSt2V2VZeUVISGRD?=
+ =?utf-8?B?ZFNHRmh0SU5XRG1YbmpreEQzeE1pL2RLQUxTWlNqb0FMaGdNdGZkZENGTEhv?=
+ =?utf-8?B?OUdrak5Ga0h6U2VveHB4UUcvdE1SUVhteDk3aHBiYzN2d1o0YXMxSnZtdmc1?=
+ =?utf-8?B?bTR3V2tZM0pwdWVxcnVYVW9qazN5MEFUelNNeStHOEIrcXJmNFFXYkdaNG5I?=
+ =?utf-8?B?SWtZd1hHYktKWVk1MWx1bzNtNXdqRU13cEVid2VxZGZCRU5ib0h0TzJod0FR?=
+ =?utf-8?B?RWp2MFBLQU5aSGQrVFRZZzZlek8xVkZ5eDFPaE9xc3BrQVRoZ3lxdEFWQm9V?=
+ =?utf-8?B?cFlMd0E1a0krQnFuRkF1RjdPTWwxYk81blZLdDJuTTZFRTFzVE9uSE5wamxI?=
+ =?utf-8?B?cGdCQ2JXM3puMitvMXdwVm41dXRrcGRyTGZSajd4bDlEQUw2Mkp3Q2hwMk0x?=
+ =?utf-8?B?VmIyYWZBWFNGajFXV3lBM1NuczlyR0N6MnZtSkR6aUp5MHRCdjlrZU5seFRP?=
+ =?utf-8?B?ZGFNR0FPQXFQWDBvbVBhbFAzdVRsbUtnN0lzb0ZWWDA5WEpMTzdVMi9EZFJN?=
+ =?utf-8?B?Y2RyR1pLNkc0emNROGhsTk1ST1ZKdUZocXVuUW12ZFJTeTNoTDQrbkFPVlY5?=
+ =?utf-8?B?eWxWc3RpU0xZVUloaUEyVGY2TGc2SVlsaktlZ0RPZzFwSk5mckUweGlrMlJx?=
+ =?utf-8?B?aVFFZUJ2ejRJNmUzNDloeE9oWis0a3QyVlZHYWRWUjRFTCtlQkJ1d1NSZXNt?=
+ =?utf-8?Q?QDhpCL3CjX+chvoq5OyrqPDWdZCaKtTBqlvf+Pm?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(7416005)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?TnlWWURocUJEQjVJVWNwdmRBK245b2I1ZjdkdXkwUURBOEtIYUtkS0lkVEYx?=
+ =?utf-8?B?c2xCSWYwcmVXZHNmOUVKbTdjb0pDS0lycmhnZzN5bzZ4a3pwdk9kTTV2TVgw?=
+ =?utf-8?B?Q3ltTVh2c1FJQ0VDc3AxcmZmZEVSblRZbUpoaXNWREJoQUZRUzYxdk5rSWpE?=
+ =?utf-8?B?UXVTRGE5U1Y2VEQ4cFpEckEwTmhTYlpmMUwvbUhYV2duZXdob2haNmFzZlpy?=
+ =?utf-8?B?bVdadGxreHBqZGJUVmpURmdidU1DSVk2cEFpblptTXhHbjVwVEZncldOTnNJ?=
+ =?utf-8?B?d2ZTOUZZdnluYTNQYTZianQvRnFRaXJPODR4TVdDN01JdmxCdGNoVHh3TzVo?=
+ =?utf-8?B?TkowcG92SmJnUGdmQWNUWHI5VXhzOVNHc1ZiVkRubUtKOWlqOEllSWd0MmNM?=
+ =?utf-8?B?VzB5Z2RYbEJCS3hBMFAxRUIxMC83MitvV25GMUdjelNMbVA1cUxKbHBqelV0?=
+ =?utf-8?B?dU1sRllScExxUUZMeTlPSnByTmI5NVFhcCs2TWlkWVo5VHBvYWFZRTF1ZlNQ?=
+ =?utf-8?B?WVBwenU3blR1Ti9Yb1l4TmZ4b09rRXFWcVJmZ1RvSjN0STVtLzYzZHBGeVo0?=
+ =?utf-8?B?dGlwbTZwUDNtNzFodFhheldKcGF4SVdLcEgrTHVGL2ZvSWRIN25OaW5hQ0lQ?=
+ =?utf-8?B?K2RGUys2azA3SXp3RUxjeGIyWGt1cWV1eWw4b3FkUWowc0pNMDZmREwvRmVO?=
+ =?utf-8?B?MndHaUYzYTBodkNLcWVMcWhzRTE0L0JzZVA2Um1USGpycitEWFVGcURHcWxJ?=
+ =?utf-8?B?UURYRU5rYUlaSkdiZFVOSkpDMlN0L1YrMng0ZXA3aDVCck5kTlVhNExJSHdw?=
+ =?utf-8?B?YlBEb0UvYitsaU91dTBIQjYwcFdOUmZUZUMzSmRiMWV0ZEJLTzR2MDNrRmh5?=
+ =?utf-8?B?T001VW1QUTl4elV0QURkRTY0cTFWRHJtSm9tLzRpUWVPcHRXZ1RadmhBRVdp?=
+ =?utf-8?B?dFlveG9la09jZEZKN3diYW5tUXgxNnVYeW5Pa3VpNjhycDBWSkJESUdiUElM?=
+ =?utf-8?B?bGlReFFLQUNjR29uQ01VbEcrVmZQUU5ObUZJQ1VPYlN3RUpYdzhWVWNHMG9Q?=
+ =?utf-8?B?RWVJTXluaTdXdWMvUTJzbUJ1TjFBMFZTV0prMU5hRlJQdkltR2ppeWtScjNv?=
+ =?utf-8?B?RGx6MXZqTFBob0VBYXRyVjdWUHh0UlcycnN1SVhVWWFLbDhXaTZKazNqSW5i?=
+ =?utf-8?B?NlhUWjltMHp0dDVIMFlQRi9YQW42TU1aYzd6MGh4ajdjVWI5TEFBYy9NU01E?=
+ =?utf-8?B?a1lBNm40a1QvRVRoc08wZStzUHRaVjFLcnB3eDZMWWtwQTd4alhKTm1XWm1x?=
+ =?utf-8?B?VUhCc3ZLWFZpZ0luU0lEM3FrYnlRZU13TVJEQ093MmtIN3UvL09xV1RhQTV2?=
+ =?utf-8?B?WVVuRFVjK3JuRHFLZUxVOWMrZ2d5UWFXeU8yQW93Ti9QVUU4eFh5bnNvMnA3?=
+ =?utf-8?B?cUE5TFR6VGJqQjRuMVZxMlhtbmJidm5obVFGSGlSOE1zeFp3T3JpU2RPSTNu?=
+ =?utf-8?B?TDdTOGRkckdhU0VseWF6N2txSUtLb1JBS09FZDFaMlptQ2grQTlPOC9DdTZ0?=
+ =?utf-8?B?UkEvRVc1QzI1S1B0dVhtVGFyWFQ0VXlWMVhZb1ErbTF1RHRJTlRtR2k0YWN0?=
+ =?utf-8?B?Q1ovUURIQVh4VTVTVVdSaFpIaGdvSm1NY3ZEWXFKK0laaVhyc1F4eVpNZTlm?=
+ =?utf-8?B?dnUrbkdSbk5tWlNUWTEveklaZkZuc2NyVFpZUHFBa0hJZHg1TjA2bmo0Tnhi?=
+ =?utf-8?B?akxKTk5paFVpVVlGLzVBY0VBYTdSeFhVZkErMEMrWG5XQjJVK1g2ck5sQ1hX?=
+ =?utf-8?B?MkF0VkxiSFc0WmYrUWpmN3p0WlRDMnd1MjJXcmRqTFRGZ2dsWXdsZlMxd3d4?=
+ =?utf-8?B?K2ljZTVidGE3QXVFQ0l0TnpFZjllMEdrZmdEOW5WSW03M3pBZmZpeWNDZVgz?=
+ =?utf-8?B?UlJveW52RURuSFgwdUhGWURLd3RNWlJUcmJFZDUyQjI5QVViT01tWGhVcWRu?=
+ =?utf-8?B?Y00zVjdYNWc2MGY3ZGF3czNZTTFuMzVENGh3UUxWU3RNQ1l6akJwQzFOU1A2?=
+ =?utf-8?B?dWFobDJqTlJKbjV3bzl3TzEvc2FiUWRTZkdld29zWlUvUFRIU0twK21sVThy?=
+ =?utf-8?Q?9kEGZ+Y6hLh5Ic88VH7mPvTwq?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	ZlJ/QdRdHz1PJMZNx2JULAVCdrjnzKbLSoS4SBOhw303jxBoNKcRsuswgmoIeaHMQJJJirq96oyThYhM+tCIKZqcHfKDfW/uNTtwNBbKwhPthykh9ZehmnK4zKUAV4vd4eCJL0SrlACm2e5sG0NyRwKI71lvYc708iIx6QSJ03QDpJHUMLrjLggWA8ARwLRTc+0pT0QAsRSIOEN+YiwzmiJtdSnvHpQkFyTR3g3rXIOF9HSQ+7njkXuvj1lr+m+D9MoKsGoJo/x7t2DlBL4ePx5ZIV7D3q1A2a8H7nGy//uXzgcAmfCZs7+QrzIj6sZ7E82K2U8ofB89mhVznxQ8OjiMufZ0xrANMGscpiRzJR3z41jAme5s1cp3W5/0o7W1/D1Ezv19yjtcjYIacesLwFY/52j5ofLqNLv959Zpl6XKEJrjtECbW0FyR1QJ3qewltw+e/Fl3mBVI8y5GpGmzEv+B0UrGcvakbz1wvdylZ8t9whMhFLkQc7OSsnt1kQdRXaey0ruV5Cs10saGAyzJX7h36vmMnSV82siI2+Z5vIl9PNYVdPirdFyBK87mFMbR0J9qaV61zqoOys9WbCxwNnRL11XeP3EKeAR7yMRT0k=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b024c6ae-7d12-4e46-6b0a-08dc8644d9d7
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 16:22:25.2760
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Oks/Rus/abovXUHfwXw8eV8g32mSLczVFnYXMq5eN1wbRHVmPylmvoY5Qdh4GZVk9dZDnuOVsIf7Mgt/K5L7RQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB6100
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-06_13,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 adultscore=0
+ phishscore=0 suspectscore=0 bulkscore=0 spamscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2406060118
+X-Proofpoint-ORIG-GUID: pCqnmOnRsNand8Lvls2NeTIRpxngNk5X
+X-Proofpoint-GUID: pCqnmOnRsNand8Lvls2NeTIRpxngNk5X
+
+On 06/06/2024 09:47, Dave Chinner wrote:
+> On Wed, Jun 05, 2024 at 03:26:11PM +0100, John Garry wrote:
+>> Hi Dave,
+>>
+>> I still think that there is a problem with this code or some other allocator
+>> code which gives rise to unexpected -ENOSPC. I just highlight this code,
+>> above, as I get an unexpected -ENOSPC failure here when the fs does have
+>> many free (big enough) extents. I think that the problem may be elsewhere,
+>> though.
+>>
+>> Initially we have a file like this:
+>>
+>>   EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL
+>>     0: [0..127]:        62592..62719      0 (62592..62719)     128
+>>     1: [128..895]:      hole                                   768
+>>     2: [896..1023]:     63616..63743      0 (63616..63743)     128
+>>     3: [1024..1151]:    64896..65023      0 (64896..65023)     128
+>>     4: [1152..1279]:    65664..65791      0 (65664..65791)     128
+>>     5: [1280..1407]:    68224..68351      0 (68224..68351)     128
+>>     6: [1408..1535]:    76416..76543      0 (76416..76543)     128
+>>     7: [1536..1791]:    62720..62975      0 (62720..62975)     256
+>>     8: [1792..1919]:    60032..60159      0 (60032..60159)     128
+>>     9: [1920..2047]:    63488..63615      0 (63488..63615)     128
+>>    10: [2048..2303]:    63744..63999      0 (63744..63999)     256
+>>
+>> forcealign extsize is 16 4k fsb, so the layout looks ok.
+>>
+>> Then we truncate the file to 454 sectors (or 56.75 fsb). This gives:
+>>
+>> EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL
+>>     0: [0..127]:        62592..62719      0 (62592..62719)     128
+>>     1: [128..455]:      hole                                   328
+>>
+>> We have 57 fsb.
+>>
+>> Then I attempt to write from byte offset 232448 (454 sector) and a get a
+>> write failure in xfs_bmap_select_minlen() returning -ENOSPC; at that point
+>> the file looks like this:
+> 
+> So you are doing an unaligned write of some size at EOF and EOF is
+> not aligned to the extsize?
+
+Correct
+
+> 
+>>   EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL
+>>     0: [0..127]:        62592..62719      0 (62592..62719)     128
+>>     1: [128..447]:      hole                                   320
+>>     2: [448..575]:      62720..62847      0 (62720..62847)     128
+>>
+>> That hole in ext #1 is 40 fsb, and not aligned with forcealign granularity.
+>> This means that ext #2 is misaligned wrt forcealign granularity.
+> 
+> OK, so the command to produce this would be something like this?
+> 
+> # xfs_io -fd -c "truncate 0" \
+> 	-c "chattr +<forcealign>" -c "extsize 64k" \
+> 	-c "pwrite 0 64k -b 64k" -c "pwrite 448k 64k -b 64k" \
+> 	-c "bmap -vvp" \
+> 	-c "truncate 227k" \
+> 	-c "bmap -vvp" \
+> 	-c "pwrite 227k 64k -b 64k" \
+> 	-c "bmap -vvp" \
+> 	/mnt/scratch/testfile
+
+No, unfortunately not. Well maybe not on a clean filesystem. In my 
+stress test, something else is causing this. Probably heavy fragmentation.
+
+> 
+>> This is strange.
+>>
+>> I notice that we when allocate ext #2, xfs_bmap_btalloc() returns
+>> ap->blkno=7840, length=16, offset=56. I would expect offset % 16 == 0, which
+>> it is not.
+> 
+> IOWs, the allocation was not correctly rounded down to an aligned
+> start offset.  What were the initial parameters passed to this
+> allocation?
+
+For xfs_bmap_btalloc() entry,
+
+ap->offset=48, length=32, blkno=0, total=0, minlen=1, minleft=1, eof=1, 
+wasdel=0, aeof=0, conv=0, datatype=5, flags=0x8
+
+> i.e. why didn't it round the start offset down to 48?
+> Answering that question will tell you where the bug is.
+
+After xfs_bmap_compute_alignments() -> xfs_bmap_extsize_align(), 
+ap->offset=48 - that seems ok.
+
+Maybe the problem is in xfs_bmap_process_allocated_extent(). For the 
+problematic case when calling that function:
+
+args->fsbno=7840 args->len=16 ap->offset=48 orig_offset=56 orig_length=24
+
+So, as the comment reads there, we could not satisfy the original length 
+request, so we move up the position of the extent.
+
+I assume that we just don't want to do that for forcealign, correct?
+
+> 
+> Of course, if the allocation start is rounded down to 48, then
+> the length should be rounded up to 32 to cover the entire range we
+> are writing new data to.
+> 
+>> In the following sub-io block zeroing, I note that we zero the front padding
+>> from pos=196608 (or fsb 48 or sector 384) for len=35840, and back padding
+>> from pos=263680 for len=64000 (upto sector 640 or fsb 80). That seems wrong,
+>> as we are zeroing data in the ext #1 hole, right?
+> 
+> The sub block zeroing is doing exactly the right thing - it is
+> demonstrating the exact range that the force aligned allocation
+> should have covered.
+
+Agreed
+
+> 
+>> Now the actual -ENOSPC comes from xfs_bmap_btalloc() -> ... ->
+>> xfs_bmap_select_minlen() with initially blen=32 args->alignment=16
+>> ap->minlen=1 args->maxlen=8. There xfs_bmap_btalloc() has ap->length=8
+>> initially. This may be just a symptom.
+> 
+> Yeah, now the allocator is trying to fix up the mess that the first unaligned
+> allocation created, and it's tripping over ENOSPC because it's not
+> allowed to do sub-extent size hint allocations when forced alignment
+> is enabled....
+> 
+>> I guess that there is something wrong in the block allocator for ext #2. Any
+>> idea where to check?
+> 
+> Start with tracing exactly what range iomap is requesting be
+> allocated, and then follow that through into the allocator to work
+> out why the offset being passed to the allocation never gets rounded
+> down to be aligned. There's a mistake in the logic somewhere that is
+> failing to apply the start alignment to the allocation request (i.e.
+> the bug will be in the allocation setup code path. i.e. somewhere
+> in the xfs_bmapi_write -> xfs_bmap_btalloc path *before* we get to
+> the xfs_alloc_vextent...() calls.
+> 
+As above, the problem seems in the processing fix-up.
+
+Thanks,
+John
 
-Hi Linus!
-
-The following changes since commit d8ec19857b095b39d114ae299713bd8ea6c1e66a:
-
-  Merge tag 'net-6.10-rc2' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-05-30 08:33:04 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.10-rc3
-
-for you to fetch changes up to 27bc86540899ee793ab2f4c846e745aa0de443f1:
-
-  Merge branch 'selftests-net-lib-small-fixes' (2024-06-06 08:29:07 -0700)
-
-----------------------------------------------------------------
-Including fixes from BPF and big collection of fixes for WiFi core
-and drivers.
-
-Current release - regressions:
-
- - vxlan: fix regression when dropping packets due to invalid src addresses
-
- - bpf: fix a potential use-after-free in bpf_link_free()
-
- - xdp: revert support for redirect to any xsk socket bound to the same
-   UMEM as it can result in a corruption
-
- - virtio_net:
-   - add missing lock protection when reading return code from control_buf
-   - fix false-positive lockdep splat in DIM
-   - Revert "wifi: wilc1000: convert list management to RCU"
-
- - wifi: ath11k: fix error path in ath11k_pcic_ext_irq_config
-
-Previous releases - regressions:
-
- - rtnetlink: make the "split" NLM_DONE handling generic, restore the old
-   behavior for two cases where we started coalescing those messages with
-   normal messages, breaking sloppily-coded userspace
-
- - wifi:
-   - cfg80211: validate HE operation element parsing
-   - cfg80211: fix 6 GHz scan request building
-   - mt76: mt7615: add missing chanctx ops
-   - ath11k: move power type check to ASSOC stage, fix connecting
-     to 6 GHz AP
-   - ath11k: fix WCN6750 firmware crash caused by 17 num_vdevs
-   - rtlwifi: ignore IEEE80211_CONF_CHANGE_RETRY_LIMITS
-   - iwlwifi: mvm: fix a crash on 7265
-
-Previous releases - always broken:
-
- - ncsi: prevent multi-threaded channel probing, a spec violation
-
- - vmxnet3: disable rx data ring on dma allocation failure
-
- - ethtool: init tsinfo stats if requested, prevent unintentionally
-   reporting all-zero stats on devices which don't implement any
-
- - dst_cache: fix possible races in less common IPv6 features
-
- - tcp: auth: don't consider TCP_CLOSE to be in TCP_AO_ESTABLISHED
-
- - ax25: fix two refcounting bugs
-
- - eth: ionic: fix kernel panic in XDP_TX action
-
-Misc:
-
- - tcp: count CLOSE-WAIT sockets for TCP_MIB_CURRESTAB
-
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-
-----------------------------------------------------------------
-Aditya Kumar Singh (1):
-      wifi: mac80211: pass proper link id for channel switch started notification
-
-Aleksandr Mishin (2):
-      net/mlx5: Fix tainted pointer delete is case of flow rules creation fail
-      net: wwan: iosm: Fix tainted pointer delete is case of region creation fail
-
-Alexis Lothoré (3):
-      Revert "wifi: wilc1000: convert list management to RCU"
-      Revert "wifi: wilc1000: set atomic flag on kmemdup in srcu critical section"
-      wifi: wilc1000: document SRCU usage instead of SRCU
-
-Andrii Nakryiko (2):
-      selftests/bpf: fix inet_csk_accept prototype in test_sk_storage_tracing.c
-      libbpf: don't close(-1) in multi-uprobe feature detector
-
-Ayala Beker (1):
-      wifi: iwlwifi: mvm: properly set 6 GHz channel direct probe option
-
-Baochen Qiang (1):
-      wifi: ath11k: move power type check to ASSOC stage when connecting to 6 GHz AP
-
-Benjamin Berg (1):
-      wifi: iwlwifi: mvm: remove stale STA link data during restart
-
-Bitterblue Smith (1):
-      wifi: rtlwifi: Ignore IEEE80211_CONF_CHANGE_RETRY_LIMITS
-
-Breno Leitao (1):
-      wifi: ath11k: Fix error path in ath11k_pcic_ext_irq_config
-
-Carl Huang (1):
-      wifi: ath11k: fix WCN6750 firmware crash caused by 17 num_vdevs
-
-Cong Wang (1):
-      bpf: Fix a potential use-after-free in bpf_link_free()
-
-Daniel Borkmann (1):
-      vxlan: Fix regression when dropping packets due to invalid src addresses
-
-David S. Miller (2):
-      Merge branch 'tcp-mptcp-close-wait'
-      Merge branch 'mlx5-fixes'
-
-DelphineCCChiu (1):
-      net/ncsi: Fix the multi thread manner of NCSI driver
-
-Dmitry Antipov (1):
-      wifi: mac80211: fix UBSAN noise in ieee80211_prep_hw_scan()
-
-Dmitry Baryshkov (1):
-      wifi: ath10k: fix QCOM_RPROC_COMMON dependency
-
-Dmitry Safonov (1):
-      net/tcp: Don't consider TCP_CLOSE in TCP_AO_ESTABLISHED
-
-Duoming Zhou (1):
-      ax25: Replace kfree() in ax25_dev_free() with ax25_dev_put()
-
-Emmanuel Grumbach (2):
-      wifi: iwlwifi: mvm: fix a crash on 7265
-      wifi: iwlwifi: mvm: don't read past the mfuart notifcation
-
-Eric Dumazet (7):
-      ipv6: ioam: block BH from ioam6_output()
-      net: ipv6: rpl_iptunnel: block BH in rpl_output() and rpl_input()
-      ipv6: sr: block BH in seg6_output_core() and seg6_input_core()
-      ila: block BH in ila_output()
-      net: dst_cache: add two DEBUG_NET warnings
-      net/sched: taprio: always validate TCA_TAPRIO_ATTR_PRIOMAP
-      ipv6: fix possible race in __fib6_drop_pcpu_from()
-
-Frank Wunderlich (1):
-      net: ethernet: mtk_eth_soc: handle dma buffer size soc specific
-
-Hangbin Liu (1):
-      selftests: hsr: add missing config for CONFIG_BRIDGE
-
-Hangyu Hua (1):
-      net: sched: sch_multiq: fix possible OOB write in multiq_tune()
-
-Heng Qi (3):
-      virtio_net: fix missing lock protection on control_buf access
-      virtio_net: fix possible dim status unrecoverable
-      virtio_net: fix a spurious deadlock issue
-
-Ilan Peer (1):
-      wifi: iwlwifi: mvm: Fix scan abort handling with HW rfkill
-
-Jacob Keller (2):
-      ice: fix iteration of TLVs in Preserved Fields Area
-      ice: fix reads from NVM Shadow RAM on E830 and E825-C devices
-
-Jakub Kicinski (8):
-      Merge branch 'virtio_net-fix-lock-warning-and-unrecoverable-state'
-      Merge branch 'dst_cache-fix-possible-races'
-      Merge tag 'wireless-2024-06-03' of git://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless
-      net: tls: fix marking packets as decrypted
-      rtnetlink: make the "split" NLM_DONE handling generic
-      Merge tag 'for-netdev' of https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf
-      Merge branch 'intel-wired-lan-driver-updates-2024-05-29-ice-igc'
-      Merge branch 'selftests-net-lib-small-fixes'
-
-Jason Xing (3):
-      net: rps: fix error when CONFIG_RFS_ACCEL is off
-      tcp: count CLOSE-WAIT sockets for TCP_MIB_CURRESTAB
-      mptcp: count CLOSE-WAIT sockets for MPTCP_MIB_CURRESTAB
-
-Jeff Johnson (1):
-      lib/test_rhashtable: add missing MODULE_DESCRIPTION() macro
-
-Jiri Olsa (2):
-      bpf: Fix bpf_session_cookie BTF_ID in special_kfunc_set list
-      bpf: Set run context for rawtp test_run callback
-
-Johannes Berg (8):
-      wifi: cfg80211: validate HE operation element parsing
-      wifi: cfg80211: fully move wiphy work to unbound workqueue
-      wifi: mac80211: apply mcast rate only if interface is up
-      wifi: mac80211: handle tasklet frames before stopping
-      wifi: cfg80211: fix 6 GHz scan request building
-      wifi: iwlwifi: mvm: revert gen2 TX A-MPDU size to 64
-      wifi: iwlwifi: mvm: handle BA session teardown in RF-kill
-      wifi: mt76: mt7615: add missing chanctx ops
-
-Kalle Valo (1):
-      Merge tag 'ath-current-20240531' of git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath
-
-Karol Kolacinski (1):
-      ptp: Fix error message on failed pin verification
-
-Kuniyuki Iwashima (15):
-      af_unix: Set sk->sk_state under unix_state_lock() for truly disconencted peer.
-      af_unix: Annodate data-races around sk->sk_state for writers.
-      af_unix: Annotate data-race of sk->sk_state in unix_inq_len().
-      af_unix: Annotate data-races around sk->sk_state in unix_write_space() and poll().
-      af_unix: Annotate data-race of sk->sk_state in unix_stream_connect().
-      af_unix: Annotate data-race of sk->sk_state in unix_accept().
-      af_unix: Annotate data-races around sk->sk_state in sendmsg() and recvmsg().
-      af_unix: Annotate data-race of sk->sk_state in unix_stream_read_skb().
-      af_unix: Annotate data-races around sk->sk_state in UNIX_DIAG.
-      af_unix: Annotate data-races around sk->sk_sndbuf.
-      af_unix: Annotate data-race of net->unx.sysctl_max_dgram_qlen.
-      af_unix: Use unix_recvq_full_lockless() in unix_stream_connect().
-      af_unix: Use skb_queue_empty_lockless() in unix_release_sock().
-      af_unix: Use skb_queue_len_lockless() in sk_diag_show_rqlen().
-      af_unix: Annotate data-race of sk->sk_shutdown in sk_diag_fill().
-
-Lars Kellogg-Stedman (1):
-      ax25: Fix refcount imbalance on inbound connections
-
-Larysa Zaremba (3):
-      ice: remove af_xdp_zc_qps bitmap
-      ice: add flag to distinguish reset from .ndo_bpf in XDP rings config
-      ice: map XDP queues to vectors in ice_vsi_map_rings_to_vectors()
-
-Lin Ma (1):
-      wifi: cfg80211: pmsr: use correct nla_get_uX functions
-
-Lingbo Kong (2):
-      wifi: mac80211: fix Spatial Reuse element size check
-      wifi: mac80211: correctly parse Spatial Reuse Parameter Set element
-
-Magnus Karlsson (2):
-      Revert "xsk: Support redirect to any socket bound to the same umem"
-      Revert "xsk: Document ability to redirect to any socket bound to the same umem"
-
-Matthias Stocker (1):
-      vmxnet3: disable rx data ring on dma allocation failure
-
-Matthieu Baerts (NGI0) (3):
-      selftests: net: lib: support errexit with busywait
-      selftests: net: lib: avoid error removing empty netns name
-      selftests: net: lib: set 'i' as local
-
-Miri Korenblit (2):
-      wifi: iwlwifi: mvm: don't initialize csa_work twice
-      wifi: iwlwifi: mvm: check n_ssids before accessing the ssids
-
-Mordechay Goodstein (1):
-      wifi: iwlwifi: mvm: set properly mac header
-
-Moshe Shemesh (1):
-      net/mlx5: Stop waiting for PCI if pci channel is offline
-
-Nicolas Escande (2):
-      wifi: mac80211: mesh: Fix leak of mesh_preq_queue objects
-      wifi: mac80211: mesh: init nonpeer_pm to active by default in mesh sdata
-
-Paolo Abeni (1):
-      Merge branch 'af_unix-fix-lockless-access-of-sk-sk_state-and-others-fields'
-
-Peter Geis (1):
-      MAINTAINERS: remove Peter Geis
-
-Remi Pommarel (2):
-      wifi: mac80211: Fix deadlock in ieee80211_sta_ps_deliver_wakeup()
-      wifi: cfg80211: Lock wiphy in cfg80211_get_station
-
-Sasha Neftin (1):
-      igc: Fix Energy Efficient Ethernet support declaration
-
-Shahar S Matityahu (1):
-      wifi: iwlwifi: dbg_ini: move iwl_dbg_tlv_free outside of debugfs ifdef
-
-Shaul Triebitz (1):
-      wifi: iwlwifi: mvm: always set the TWT IE offset
-
-Shay Drory (1):
-      net/mlx5: Always stop health timer during driver removal
-
-Su Hui (1):
-      net: ethtool: fix the error condition in ethtool_get_phy_stats_ethtool()
-
-Subbaraya Sundeep (1):
-      octeontx2-af: Always allocate PF entries from low prioriy zone
-
-Taehee Yoo (1):
-      ionic: fix kernel panic in XDP_TX action
-
-Thorsten Blum (1):
-      bpf, devmap: Remove unnecessary if check in for loop
-
-Tristram Ha (2):
-      net: phy: micrel: fix KSZ9477 PHY issues after suspend/resume
-      net: phy: Micrel KSZ8061: fix errata solution not taking effect problem
-
-Vadim Fedorenko (1):
-      ethtool: init tsinfo stats if requested
-
-Wen Gu (1):
-      net/smc: avoid overwriting when adjusting sock bufsizes
-
-Yedidya Benshimol (2):
-      wifi: iwlwifi: mvm: d3: fix WoWLAN command version lookup
-      wifi: iwlwifi: mvm: Handle BIGTK cipher in kek_kck cmd
-
- Documentation/networking/af_xdp.rst                |  31 ++---
- MAINTAINERS                                        |   1 -
- drivers/net/ethernet/intel/ice/ice.h               |  44 +++++--
- drivers/net/ethernet/intel/ice/ice_base.c          |   3 +
- drivers/net/ethernet/intel/ice/ice_lib.c           |  29 ++---
- drivers/net/ethernet/intel/ice/ice_main.c          | 144 ++++++++++++---------
- drivers/net/ethernet/intel/ice/ice_nvm.c           | 116 +++++++++++++++--
- drivers/net/ethernet/intel/ice/ice_type.h          |  14 +-
- drivers/net/ethernet/intel/ice/ice_xsk.c           |  13 +-
- drivers/net/ethernet/intel/igc/igc_ethtool.c       |   9 +-
- drivers/net/ethernet/intel/igc/igc_main.c          |   4 +
- .../net/ethernet/marvell/octeontx2/af/rvu_npc.c    |  33 +++--
- drivers/net/ethernet/mediatek/mtk_eth_soc.c        | 106 ++++++++++-----
- drivers/net/ethernet/mediatek/mtk_eth_soc.h        |   9 +-
- drivers/net/ethernet/mellanox/mlx5/core/fw.c       |   4 +
- drivers/net/ethernet/mellanox/mlx5/core/health.c   |   8 ++
- .../net/ethernet/mellanox/mlx5/core/lag/port_sel.c |   8 +-
- .../net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c  |   4 +
- drivers/net/ethernet/mellanox/mlx5/core/main.c     |   3 +
- drivers/net/ethernet/pensando/ionic/ionic_txrx.c   |   1 +
- drivers/net/phy/micrel.c                           | 104 ++++++++++++++-
- drivers/net/virtio_net.c                           |  42 +++---
- drivers/net/vmxnet3/vmxnet3_drv.c                  |   2 +-
- drivers/net/vxlan/vxlan_core.c                     |   8 +-
- drivers/net/wireless/ath/ath10k/Kconfig            |   1 +
- drivers/net/wireless/ath/ath11k/core.c             |   2 +-
- drivers/net/wireless/ath/ath11k/mac.c              |  38 ++++--
- drivers/net/wireless/ath/ath11k/pcic.c             |  25 ++--
- drivers/net/wireless/intel/iwlwifi/iwl-drv.c       |   2 +-
- drivers/net/wireless/intel/iwlwifi/mvm/d3.c        |  16 ++-
- drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c   |   9 ++
- drivers/net/wireless/intel/iwlwifi/mvm/fw.c        |  14 +-
- drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c  |   2 +-
- drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c  |  39 +++++-
- .../net/wireless/intel/iwlwifi/mvm/mld-mac80211.c  |   2 -
- drivers/net/wireless/intel/iwlwifi/mvm/mld-sta.c   |  13 +-
- drivers/net/wireless/intel/iwlwifi/mvm/mvm.h       |   1 +
- drivers/net/wireless/intel/iwlwifi/mvm/rs.h        |   9 +-
- drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c      |   5 +-
- drivers/net/wireless/intel/iwlwifi/mvm/scan.c      |  12 +-
- drivers/net/wireless/intel/iwlwifi/mvm/sta.c       |  12 +-
- drivers/net/wireless/intel/iwlwifi/mvm/sta.h       |   5 +
- drivers/net/wireless/mediatek/mt76/mt7615/main.c   |   4 +
- drivers/net/wireless/microchip/wilc1000/cfg80211.c |  41 +++---
- drivers/net/wireless/microchip/wilc1000/hif.c      |  17 ++-
- drivers/net/wireless/microchip/wilc1000/netdev.c   |  43 +++---
- drivers/net/wireless/microchip/wilc1000/netdev.h   |  12 +-
- drivers/net/wireless/microchip/wilc1000/wlan.c     |   5 +-
- drivers/net/wireless/realtek/rtlwifi/core.c        |  15 ---
- drivers/net/wwan/iosm/iosm_ipc_devlink.c           |   2 +-
- drivers/ptp/ptp_chardev.c                          |   3 +-
- include/net/rtnetlink.h                            |   1 +
- include/net/tcp_ao.h                               |   7 +-
- kernel/bpf/devmap.c                                |   3 -
- kernel/bpf/syscall.c                               |  11 +-
- kernel/bpf/verifier.c                              |   4 +
- kernel/trace/bpf_trace.c                           |   2 -
- lib/test_rhashtable.c                              |   1 +
- net/ax25/af_ax25.c                                 |   6 +
- net/ax25/ax25_dev.c                                |   2 +-
- net/bpf/test_run.c                                 |   6 +
- net/core/dev.c                                     |   3 +-
- net/core/dst_cache.c                               |   2 +
- net/core/rtnetlink.c                               |  44 ++++++-
- net/ethtool/ioctl.c                                |   2 +-
- net/ethtool/tsinfo.c                               |   6 +-
- net/ipv4/devinet.c                                 |   2 +-
- net/ipv4/fib_frontend.c                            |   7 +-
- net/ipv4/tcp.c                                     |   9 +-
- net/ipv4/tcp_ao.c                                  |  13 +-
- net/ipv6/ila/ila_lwt.c                             |   7 +-
- net/ipv6/ioam6_iptunnel.c                          |   8 +-
- net/ipv6/ip6_fib.c                                 |   6 +-
- net/ipv6/route.c                                   |   1 +
- net/ipv6/rpl_iptunnel.c                            |  14 +-
- net/ipv6/seg6_iptunnel.c                           |  14 +-
- net/mac80211/cfg.c                                 |   9 +-
- net/mac80211/he.c                                  |  10 +-
- net/mac80211/ieee80211_i.h                         |   2 +
- net/mac80211/main.c                                |  10 +-
- net/mac80211/mesh.c                                |   1 +
- net/mac80211/mesh_pathtbl.c                        |  13 ++
- net/mac80211/parse.c                               |   2 +-
- net/mac80211/scan.c                                |  14 +-
- net/mac80211/sta_info.c                            |   4 +-
- net/mac80211/util.c                                |   2 +
- net/mptcp/protocol.c                               |   9 +-
- net/ncsi/internal.h                                |   2 +
- net/ncsi/ncsi-manage.c                             |  75 ++++++-----
- net/ncsi/ncsi-rsp.c                                |   4 +-
- net/sched/sch_multiq.c                             |   2 +-
- net/sched/sch_taprio.c                             |  15 +--
- net/smc/af_smc.c                                   |  22 +---
- net/unix/af_unix.c                                 |  90 +++++++------
- net/unix/diag.c                                    |  12 +-
- net/wireless/core.c                                |   2 +-
- net/wireless/pmsr.c                                |   8 +-
- net/wireless/rdev-ops.h                            |   6 +-
- net/wireless/scan.c                                |  50 ++++---
- net/wireless/sysfs.c                               |   4 +-
- net/wireless/util.c                                |   7 +-
- net/xdp/xsk.c                                      |   5 +-
- tools/lib/bpf/features.c                           |   3 +-
- .../selftests/bpf/progs/test_sk_storage_tracing.c  |   2 +-
- tools/testing/selftests/net/hsr/config             |   1 +
- tools/testing/selftests/net/lib.sh                 |  18 +--
- 106 files changed, 1092 insertions(+), 582 deletions(-)
 
