@@ -1,278 +1,247 @@
-Return-Path: <linux-kernel+bounces-204814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 572988FF3D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:33:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F4F18FF3D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B90E81F275E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:33:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EB911F28AC4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5251990D2;
-	Thu,  6 Jun 2024 17:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22EB198E86;
+	Thu,  6 Jun 2024 17:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mDTXyTi0"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ahEf0rf8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF651991D5
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 17:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F84F19597A
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 17:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717695218; cv=none; b=U/Glv4ttZypGPfXIJFqsUg5cd3ksHBaslfk5hQoUpCzlnJWZwsH5zUEAKF4YrshhkmTwRBMMg181WKjmjhE2JWL2vh/futhPKqtpwKDDYe7Boe0NYreKo4QwoK9gyhiYw9INOwZ87pyJuJBTtK1QrHvKHchu6ngsZAynQFctyoc=
+	t=1717695208; cv=none; b=QKK1z71IOpSbgTEDsHIqhcahsBDclOOBMAX7w7qfqqGv9e/frPFKDlig/XjuejrTpTyEeUT5VI1AKXK/NZg0+QSciJZb0F5cwWu/rpcb45iDPGSmUzNFtzbaZ35gVICrJg2bT1pM2LwOdxQEyWWbjeG3JO0kM5KYVXXVPZy7wsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717695218; c=relaxed/simple;
-	bh=rYVMkwI8qFoB/ptB7kU79gZFDx+FsNx/WF4p8yfanOI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=ON7ElGIfxm7Rc7eEztKTwrKqmj064VMjAfnVBPM0DtLKuFNz8v3sXZ8e90enJkZg/6916z5A2tZCqVDw9NWYx+Oo5xzOu/y6MGdmO4WZQAX4CKCK4A4aPK/I3+zDjmmGKm82dSgTqH62MRbZ4ZNWkt3h9/wscauRAam9DBXaot4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mDTXyTi0; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4210aa012e5so13741165e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 10:33:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717695215; x=1718300015; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mPjsJlKDBXzcFKJiIo/4f6GGzkeINELRnLiFwHcGpOo=;
-        b=mDTXyTi0rNw369u0JcGh6PhF8bbU1DdWb+GmNbbS/K5/j1zjdJa6PDMz2m++vK1gwa
-         M0qxjq4TcBc8R8CeRthxIZQfF5Y/RuM6f/Sme+sY6OvrFkZyWMw5QZvRDZlL3PbgoFIK
-         vZT1mxIRTSQioeBa//dcS7595/B+C46yb79cZ5cCBKkyLcLWC7VaVQhzgc1s5wq52nGJ
-         AZu3JET/rp8SQwrPDW0qXqJ7NJKJHRSIF3PB9tfKwPIlB4ZBJ8hfjzRWMNCraIIJ+26G
-         Yg1jT2s3OZfaq9250Ovcm6F5rElsrxJ3yLWk5oMcwzGt0wBMZsJB0Y6Age3GbIzX5QOL
-         m8Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717695215; x=1718300015;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mPjsJlKDBXzcFKJiIo/4f6GGzkeINELRnLiFwHcGpOo=;
-        b=EOrJC16dZYZ5dHirQrE8vzj1MRImB6CWsD3F59JDNP+44tnD0a/de+kZ+YMrh9ffG8
-         XCEEHmiV/QE+Afg+PL/UKmKth8Ey9TSWkDUtAW1oI4MNg1DYL+jS5NErE1TsFMWMDBB0
-         krz9yB22ui85hpX9BKAEnHOcx8JqAF2YpQKtW+qeZMtq3TrjtL9BZWu3ZSTiXlcw1vGj
-         t6oSjb5ri3Wr5OaxtVFGdAn2pTDr/0K7vi388mH1OmhlaOvYSByUsSSIgGLzqem3Q5BK
-         Ii8utOcs+AVI0tK8lr0IAg8gsbEh2KX+2caNVH1su83UqbqCXMXaJUaaODBVKHFr9pJG
-         sJ6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUch4PHAqj3uTsPbYTtTGGqxClLXuhHuFZIkts4NxyxkGerOVVrZO7mkhe0YKOpNR1HZzm5fpSTnMlcU9JH6EHO8pu/bX9jqHXC0lWp
-X-Gm-Message-State: AOJu0YwmkQEeH8hgs7dkpAwzK4BcesrkqDMvG5BCRcqqhQv7RkCaiXEp
-	R0rwgucaVV0Um5667G0JcP5l6ULyUvHV8B+cJZPN/Z0ocSN5Cl61fLsU2HNmDXJso6VHszP3WHg
-	MTbPeUofdI+cb8tBWZmJlfR2RIT//vRwEVN3k
-X-Google-Smtp-Source: AGHT+IE4QPvkBQBYH5qBQiqsMSACkO+0MruSkYzXUyRwuzkvF/JqqLhtKdRfSDNl8JmBwmG1H52WpeDjd6vt0pJCRZ4=
-X-Received: by 2002:a05:600c:54ca:b0:420:309a:fe63 with SMTP id
- 5b1f17b1804b1-42164a030a5mr3279955e9.22.1717695214069; Thu, 06 Jun 2024
- 10:33:34 -0700 (PDT)
+	s=arc-20240116; t=1717695208; c=relaxed/simple;
+	bh=AZNV3pTVmDHmXeRINlmQituZgEwc942Ka9Pjh5NrzCw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=spLeR6C6Z5CLHnr38zpSBu5+e4d6rTESNLkijAqgTiJNc6Ynx/aHsReNfSvY3RZNhXXku7zfWk+DktSSZKRSeRejyZzAwyxFF52ogComqh7G6StAjSQrNG+U4ivhz3SX+9xTqkSBsD9am8Et+V8nIS6RfjegTT1Ns3kTBomctVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ahEf0rf8; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717695208; x=1749231208;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=AZNV3pTVmDHmXeRINlmQituZgEwc942Ka9Pjh5NrzCw=;
+  b=ahEf0rf8DrzgkSWabip+lnkJTAeNG/q9yTj0IIaJIjlfZdCQt53NBvfM
+   61aPFhKYwTLu6mdlpdGvNwYHuGLk2NKmcWd8pau1yx1hbcH/0qAEZmqfb
+   DepcgIfb4eKmSuou32ov/B0A8l/mbE69qhH38nTiEpcCK5azq5to13bm0
+   1yYrGS7kmH4r4Rk8G0PSTwP5i/m6nlGnMXwgEDpSTGvpNCNZbwWutSVlh
+   G6RtV361pBi3+Oe1YRp6TrQFcGMkGYtyh2UbD08LGlP1wyjaLo3ObLk1Q
+   fIB22LFvNZGpjY/PZGH/Fafj9t9zVktZ9DT83QICni61WyFR0gG5LbB1L
+   g==;
+X-CSE-ConnectionGUID: T73vty9QRNGugW7SGQ5F4A==
+X-CSE-MsgGUID: Cf6DYNl4QBCiGb0ev6QCaQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="25790449"
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="25790449"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 10:33:27 -0700
+X-CSE-ConnectionGUID: sDHjmgSsTR+gBzgynMfZ8Q==
+X-CSE-MsgGUID: 9VPzf9icQva99F34Wkfoew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="61251418"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 10:33:26 -0700
+Received: from [10.212.72.92] (kliang2-mobl1.ccr.corp.intel.com [10.212.72.92])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 1F6E820B5703;
+	Thu,  6 Jun 2024 10:33:24 -0700 (PDT)
+Message-ID: <97f4f35b-e6b2-4a2e-bbea-3f6f127cb9c8@linux.intel.com>
+Date: Thu, 6 Jun 2024 13:33:22 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605002459.4091285-1-andrii@kernel.org> <20240605002459.4091285-5-andrii@kernel.org>
- <CAJuCfpFp38X-tbiRAqS36zXG_ho2wyoRas0hCFLo07pN1noSmg@mail.gmail.com>
- <CAEf4BzYv0Ys+NpMMuXBYEVwAaOow=oBgUhBwen7g=68_5qKznQ@mail.gmail.com> <ue44yftirugr6u4ewl5cvgatpqnheuho7rgax3jyg6ox5vruyq@7k6harvobd2q>
-In-Reply-To: <ue44yftirugr6u4ewl5cvgatpqnheuho7rgax3jyg6ox5vruyq@7k6harvobd2q>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 6 Jun 2024 10:33:19 -0700
-Message-ID: <CAJuCfpEFpd-+DDr=EyA1gMKZcDZYpZN9pBuFczhVXrFSe11U_g@mail.gmail.com>
-Subject: Re: [PATCH v3 4/9] fs/procfs: use per-VMA RCU-protected locking in
- PROCMAP_QUERY API
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	brauner@kernel.org, viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
-	linux-mm@kvack.org, rppt@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jun 6, 2024 at 10:15=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
->
-> * Andrii Nakryiko <andrii.nakryiko@gmail.com> [240606 12:52]:
-> > On Wed, Jun 5, 2024 at 4:16=E2=80=AFPM Suren Baghdasaryan <surenb@googl=
-e.com> wrote:
-> > >
-> > > On Tue, Jun 4, 2024 at 5:25=E2=80=AFPM Andrii Nakryiko <andrii@kernel=
-.org> wrote:
-> > > >
-> > > > Attempt to use RCU-protected per-VMA lock when looking up requested=
- VMA
-> > > > as much as possible, only falling back to mmap_lock if per-VMA lock
-> > > > failed. This is done so that querying of VMAs doesn't interfere wit=
-h
-> > > > other critical tasks, like page fault handling.
-> > > >
-> > > > This has been suggested by mm folks, and we make use of a newly add=
-ed
-> > > > internal API that works like find_vma(), but tries to use per-VMA l=
-ock.
-> > > >
-> > > > We have two sets of setup/query/teardown helper functions with diff=
-erent
-> > > > implementations depending on availability of per-VMA lock (conditio=
-ned
-> > > > on CONFIG_PER_VMA_LOCK) to abstract per-VMA lock subtleties.
-> > > >
-> > > > When per-VMA lock is available, lookup is done under RCU, attemptin=
-g to
-> > > > take a per-VMA lock. If that fails, we fallback to mmap_lock, but t=
-hen
-> > > > proceed to unconditionally grab per-VMA lock again, dropping mmap_l=
-ock
-> > > > immediately. In this configuration mmap_lock is never helf for long=
-,
-> > > > minimizing disruptions while querying.
-> > > >
-> > > > When per-VMA lock is compiled out, we take mmap_lock once, query VM=
-As
-> > > > using find_vma() API, and then unlock mmap_lock at the very end onc=
-e as
-> > > > well. In this setup we avoid locking/unlocking mmap_lock on every l=
-ooked
-> > > > up VMA (depending on query parameters we might need to iterate a fe=
-w of
-> > > > them).
-> > > >
-> > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > > > ---
-> > > >  fs/proc/task_mmu.c | 46 ++++++++++++++++++++++++++++++++++++++++++=
-++++
-> > > >  1 file changed, 46 insertions(+)
-> > > >
-> > > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> > > > index 614fbe5d0667..140032ffc551 100644
-> > > > --- a/fs/proc/task_mmu.c
-> > > > +++ b/fs/proc/task_mmu.c
-> > > > @@ -388,6 +388,49 @@ static int pid_maps_open(struct inode *inode, =
-struct file *file)
-> > > >                 PROCMAP_QUERY_VMA_FLAGS                         \
-> > > >  )
-> > > >
-> > > > +#ifdef CONFIG_PER_VMA_LOCK
-> > > > +static int query_vma_setup(struct mm_struct *mm)
-> > > > +{
-> > > > +       /* in the presence of per-VMA lock we don't need any setup/=
-teardown */
-> > > > +       return 0;
-> > > > +}
-> > > > +
-> > > > +static void query_vma_teardown(struct mm_struct *mm, struct vm_are=
-a_struct *vma)
-> > > > +{
-> > > > +       /* in the presence of per-VMA lock we need to unlock vma, i=
-f present */
-> > > > +       if (vma)
-> > > > +               vma_end_read(vma);
-> > > > +}
-> > > > +
-> > > > +static struct vm_area_struct *query_vma_find_by_addr(struct mm_str=
-uct *mm, unsigned long addr)
-> > > > +{
-> > > > +       struct vm_area_struct *vma;
-> > > > +
-> > > > +       /* try to use less disruptive per-VMA lock */
-> > > > +       vma =3D find_and_lock_vma_rcu(mm, addr);
-> > > > +       if (IS_ERR(vma)) {
-> > > > +               /* failed to take per-VMA lock, fallback to mmap_lo=
-ck */
-> > > > +               if (mmap_read_lock_killable(mm))
-> > > > +                       return ERR_PTR(-EINTR);
-> > > > +
-> > > > +               vma =3D find_vma(mm, addr);
-> > > > +               if (vma) {
-> > > > +                       /*
-> > > > +                        * We cannot use vma_start_read() as it may=
- fail due to
-> > > > +                        * false locked (see comment in vma_start_r=
-ead()). We
-> > > > +                        * can avoid that by directly locking vm_lo=
-ck under
-> > > > +                        * mmap_lock, which guarantees that nobody =
-can lock the
-> > > > +                        * vma for write (vma_start_write()) under =
-us.
-> > > > +                        */
-> > > > +                       down_read(&vma->vm_lock->lock);
-> > >
-> > > Hi Andrii,
-> > > The above pattern of locking VMA under mmap_lock and then dropping
-> > > mmap_lock is becoming more common. Matthew had an RFC proposal for an
-> > > API to do this here:
-> > > https://lore.kernel.org/all/ZivhG0yrbpFqORDw@casper.infradead.org/. I=
-t
-> > > might be worth reviving that discussion.
-> >
-> > Sure, it would be nice to have generic and blessed primitives to use
-> > here. But the good news is that once this is all figured out by you mm
-> > folks, it should be easy to make use of those primitives here, right?
-> >
-> > >
-> > > > +               }
-> > > > +
-> > > > +               mmap_read_unlock(mm);
-> > >
-> > > Later on in your code you are calling get_vma_name() which might call
-> > > anon_vma_name() to retrieve user-defined VMA name. After this patch
-> > > this operation will be done without holding mmap_lock, however per
-> > > https://elixir.bootlin.com/linux/latest/source/include/linux/mm_types=
-.h#L582
-> > > this function has to be called with mmap_lock held for read. Indeed
-> > > with debug flags enabled you should hit this assertion:
-> > > https://elixir.bootlin.com/linux/latest/source/mm/madvise.c#L96.
->
-> The documentation on the first link says to hold the lock or take a
-> reference, but then we assert the lock.  If you take a reference to the
-> anon vma name, then we will trigger the assert.  Either the
-> documentation needs changing or the assert is incorrect - or I'm missing
-> something?
-
-I think the documentation is correct. It says that at the time of
-calling anon_vma_name() the mmap_lock should be locked (hence the
-assertion). Then the user can raise anon_vma_name refcount, drop
-mmap_lock and safely continue using anon_vma_name object. IOW this is
-fine:
-
-mmap_read_lock(vma->mm);
-anon_name =3D anon_vma_name(vma);
-anon_vma_name_get(anon_name);
-mmap_read_unlock(vma->mm);
-// keep using anon_name
-anon_vma_name_put(anon_name);
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] perf_events: exclude_guest impact on
+ time_enabled/time_running
+To: Stephane Eranian <eranian@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, LKML
+ <linux-kernel@vger.kernel.org>, Ian Rogers <irogers@google.com>,
+ "Liang, Kan" <kan.liang@intel.com>, Andi Kleen <ak@linux.intel.com>,
+ Ingo Molnar <mingo@redhat.com>, "Narayan, Ananth" <ananth.narayan@amd.com>,
+ "Bangoria, Ravikumar" <ravi.bangoria@amd.com>,
+ Namhyung Kim <namhyung@google.com>, Mingwei Zhang <mizhang@google.com>,
+ Dapeng Mi <dapeng1.mi@linux.intel.com>, Zhang Xiong <xiong.y.zhang@intel.com>
+References: <CABPqkBQ3LQ_dXQSQVSrriinvSSXm2fHx4yOms=jRsa2WaXSsog@mail.gmail.com>
+ <4622060b-b758-4629-9aa4-cc8334111be0@linux.intel.com>
+ <CABPqkBR4CGx9EY4nMmnRT1Uuw0p5iefnFZa0hphh+HBBYqQ71A@mail.gmail.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <CABPqkBR4CGx9EY4nMmnRT1Uuw0p5iefnFZa0hphh+HBBYqQ71A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
->
-> >
-> > Sigh... Ok, what's the suggestion then? Should it be some variant of
-> > mmap_assert_locked() || vma_assert_locked() logic, or it's not so
-> > simple?
-> >
-> > Maybe I should just drop the CONFIG_PER_VMA_LOCK changes for now until
-> > all these gotchas are figured out for /proc/<pid>/maps anyway, and
-> > then we can adapt both text-based and ioctl-based /proc/<pid>/maps
-> > APIs on top of whatever the final approach will end up being the right
-> > one?
-> >
-> > Liam, any objections to this? The whole point of this patch set is to
-> > add a new API, not all the CONFIG_PER_VMA_LOCK gotchas. My
-> > implementation is structured in a way that should be easily amenable
-> > to CONFIG_PER_VMA_LOCK changes, but if there are a few more subtle
-> > things that need to be figured for existing text-based
-> > /proc/<pid>/maps anyways, I think it would be best to use mmap_lock
-> > for now for this new API, and then adopt the same final
-> > CONFIG_PER_VMA_LOCK-aware solution.
->
-> The reason I was hoping to have the new interface use the per-vma
-> locking from the start is to ensure the guarantees that we provide to
-> the users would not change.  We'd also avoid shifting to yet another
-> mmap_lock users.
->
-> I also didn't think it would complicate your series too much, so I
-> understand why you want to revert to the old locking semantics.  I'm
-> fine with you continuing with the series on the old lock.  Thanks for
-> trying to make this work.
->
-> Regards,
-> Liam
+
+On 2024-06-06 1:08 p.m., Stephane Eranian wrote:
+> On Thu, Jun 6, 2024 at 8:48 AM Liang, Kan <kan.liang@linux.intel.com> wrote:
+>>
+>>
+>>
+>> On 2024-06-06 3:57 a.m., Stephane Eranian wrote:
+>>> Hi Peter,
+>>>
+>>> In the context of the new vPMU passthru patch series, we have to look
+>>> closer at the definition and implementation of the exclude_guest
+>>> filter in the perf_event_attr structure. This filter has been in the
+>>> kernel for many years. See patch:
+>>> https://lore.kernel.org/all/20240506053020.3911940-8-mizhang@google.com/
+>>>
+>>> The presumed  definition of the filter is that the user does not want
+>>> the event to count while the processor is running in guest mode (i.e.,
+>>> inside the virtual machine guest OS or guest user code).
+>>>
+>>> The perf tool sets is by default on all core PMU events:
+>>> $ perf stat -vv -e cycles sleep 0
+>>> ------------------------------------------------------------
+>>> perf_event_attr:
+>>>   size                             112
+>>>   sample_type                      IDENTIFIER
+>>>   read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
+>>>   disabled                         1
+>>>   inherit                          1
+>>>   enable_on_exec                   1
+>>>   exclude_guest                    1
+>>> ------------------------------------------------------------
+>>>
+>>> In the kernel, the way this is treated differs between AMD and Intel because AMD
+>>> does provide a hardware filter for guest vs. host in the PMU counters
+>>> whereas Intel
+>>> does not. For the latter, the  kernel simply disables the event in the
+>>> hardware counters,
+>>> i.e., the event is not descheduled.  Both approaches produce pretty
+>>> much the same
+>>> desired effect, the event is not counted while in guest mode.
+>>>
+>>> The issue I would like to raise has to do with the effects on
+>>> time_enabled and time_running
+>>> for exclude_guest=1 events.
+>>>
+>>> Given the event is not scheduled out while in guest mode, even though
+>>> it is stopped, both time_enabled and time_running continue ticking
+>>> while in guest mode.  If a measurement is 10s
+>>> long but only 5s are in non-guest mode, then time_enabled=10s,
+>>> time_running=10s. The count
+>>> represents 10s worth of non guest mode, of which only 5s were really
+>>> actively monitoring, but
+>>> the user has no way of determining this.
+>>
+>>
+>> For the latest design/implementation, only the exclude_guest=1 host
+>> event can be successfully created for the case.
+>> The end user should not expect that anything is collected in the guest
+>> mode. So both the time_enabled and the time_running will be 5s.
+>>
+>>>
+>>> If we look at vPMU passthru, the host event must have exclude_guest=1
+>>> to avoid going into
+>>> an error state on context switch to the vCPU thread (with vPMU
+>>> enabled).
+>>
+>> That's the design in V1. There is no error state anymore in V2 and later
+>> as suggested by Sean.
+>> https://lore.kernel.org/all/ZhmIrQQVgblrhCZs@google.com/
+>>
+>> The VM cannot be created if there are host events with exclude_guest=0.
+>> If a VM has been created, user cannot create an event with
+>> exclude_guest=0. So nothing will be moved to an error state on context
+>> switch to the vCPU thread.
+>>
+> Ok, that's new.
+> 
+>>> But this time,
+>>> the event is scheduled out, that means that time_enabled keeps
+>>> counting, but time_running
+>>> stops. On context switch back in, the host event is scheduled again
+>>> and time_running restarts
+>>> ticking. For a 10s measurement, where 5s here in the guest, the event
+>>> will come out with
+>>> time_enabled=10s, time_running=5s, and the tool will scale it up
+>>> because it thinks the event
+>>> was multiplexed, when in fact it was not. This is not the intended
+>>> outcome here. The tool should
+>>> not scale the count, it was not multiplexed, it was descheduled
+>>> because the filter forced it out.
+>>> Note that if the event had been multiplexed while running on the host,
+>>> then the scaling would be
+>>> appropriate.
+>>
+>> The scaling will not happen, since both time_enabled and time_running
+>> should be the same when there are enough counter resources.
+>>
+> If an event with exclude_guest=1 is sched out (event_sched_out), time_enabled
+> will keep running but time_running will stop. Because the code assumes
+> it is stopped
+> because of multiplexing. However, here this is not the case. The event
+> is stopped because
+> the CPU is entering an execution domain that is excluded for the event.
+> Unless you've modified the event_sched_out() code or added code to
+> patch up time_running
+> I don't see how they could be equal. The alternative, as you suggest,
+> is to stop time_enabled.
+> But usually time_enabled is controlled by ENABLE/DISABLE which are
+> different from
+> event_sched_out() and event_sched_in().
+
+The entire context are scheduled, ctx_sched_{in,out}.
+https://lore.kernel.org/all/20240507085807.GS40213@noisy.programming.kicks-ass.net/
+
+The time in the guest mode doesn't be accumulated in the ctx->time,
+which will be used to calculate the event time later.
+
+The event_sched_in() never be failed (assuming enough PMU resources in
+the host after be back from the guest). The time_enabled and
+time_running should be equal.
+
+Thanks,
+Kan
+> 
+> 
+>>>
+>>> In that case, I argue, time_running should be updated to cover the
+>>> time the event was not running. That would bring us back to the case I
+>>> was describing earlier.
+>>>
+>>> It boils down to the exact definition of exclude_guest and expected
+>>> impact on time_enabled
+>>> and time_running. Then, with or without vPMU passthru, we can fix the
+>>> kernel to ensure a
+>>> uniform behavior.
+>>
+>> I think the time_enabled should be the one that has a controversial
+>> definition.
+>> Should the time in the guest mode count as the enabled time for an host
+>> event that explicitly sets the exclude_guest=1?
+>>
+>> I think the answer is NO. So I implemented it in the code.
+>>
+>>>
+>>> What are your thoughts on this problem?
+>>>
+>>
+>> Peter, please share your thoughts. We want to make sure the design is on
+>> the right track.
+>>
+>> Thanks,
+>> Kan
 
