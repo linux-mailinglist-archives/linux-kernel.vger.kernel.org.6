@@ -1,84 +1,73 @@
-Return-Path: <linux-kernel+bounces-203592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D72598FDD91
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:40:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6845A8FDD95
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:42:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5552028546D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:40:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73C0C1F21F49
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEF91DFEB;
-	Thu,  6 Jun 2024 03:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF631CAA9;
+	Thu,  6 Jun 2024 03:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NIv1uy6V"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZKZbW8ya"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382BB19D89B
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 03:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A82F19D89B
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 03:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717645237; cv=none; b=BE7Q8Ej3Ypu17MWp4WEnXhz3BkU6JHVp9KdSQchMMJKthcNFpwGNXBCkBXUPDbzQGLZPtV7iuuOU3xqy4SR8gOhoJNzRmRVWakNrCBEOpW/CYr1xfz1l0souRt7Jd1P0qfnp2iICt8UvNYTOFTAPPZ9tb+/9zI3jWn1E9+AwaUM=
+	t=1717645363; cv=none; b=NFt1bVJHtG464acdEv5HwGUsVXIgQoSKJ7uIVq2z/PNjdxjbvWq16jOsXWTK48qDPL9JEf/iN3Mszd7IRarU8PVncM345Cmp79pS1tgYxou+N3CxvJYO48ZtR5vTuez/JXoW9X4yWvrKPINSRsPItE8+Ee3VnVPs9jl9TeUeX7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717645237; c=relaxed/simple;
-	bh=RmW4qL9FONoAUakOhZfofwOu6g6FtaBG5npi6z6I4qY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WaFQl5//EdrGpvu4Sjj5nzv9cCTnj8oY6SELhQyIpd9qtOmyEXTmRB6sro3Hp13033bIHqDvrv2ZH+uvfr1Di3z1d2ZcGOk+fh0RHOSS2/MBBrC80e1JysZcZkeMecRipKgVpzzVFSssLAI2CGM/Ci5pBEyH61FfFbsdeXW9LkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NIv1uy6V; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f44b42d1caso4994025ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 20:40:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717645235; x=1718250035; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=m0xWv0/mIfZjELLkhKXh+CJWnTqcZ0qlcrVWS0o/mss=;
-        b=NIv1uy6VRYMHnjZYVMU4PCaStPp4JWgE8gkByYcZHujMbE3hCuP5iq16Z+JgRN9nSD
-         OrniKfuuYkqAOW+Y+NDefgqvLCcQSaque+aYriHXlqC4kpwm/RJPdYGJwPXf8l58Sz3u
-         2HijhZ5q6Zr3CvBoYdnce2qo7DSB7HrclnDO4/6Duyp7V2t4Bc62wpJbQw3qz9zvtS13
-         KZ0YOYEDpJkCxYtrm660u5NVFidQHj+er8qMpOUc6ohta37YanzYBnjfAXQObECVbGdY
-         iGwufAweC7zMxZkW6lbc3zptxc41XRG35S/erdrsZFj/gZYH3KC25RQkYb/VX+ZOGzh9
-         ughA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717645235; x=1718250035;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m0xWv0/mIfZjELLkhKXh+CJWnTqcZ0qlcrVWS0o/mss=;
-        b=h3R6N3O9py3Ii4SZrWY+NlBtumXt0ui6yK7TYDKUhB0PsGeRj1tiEUP+by3B7wv5EZ
-         9or0ApT6lilZgZayk6nCzxSdDMPbZi2HHpv82nTtbeacCREmXqIyrPxK+XaZIeXwyUQH
-         MvlgTsDiHhac/odYzgmsx9a90s1sI9raQaSjYi+zImt2N6hRgcMVpXjFySJnxF/qQIrC
-         5ZLB1PcoEwGYe6NtZcNe4p3AIlsC1i7seBzg4iW6dmYSqnUFW22IjPn3ddeNtjf40ZuV
-         IsQgNYtXY0RFI0+aShZkR1Kp2TTxnkwKkdeheF39dHkH7B6Rdr7JNDQGuyOPF7zSpVLR
-         6tuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJXQ/mgS73V4VQH6h8FVlWnOYmVvive9IFOxFM798ZFtpXJA7ZUBBdebyF/n9UTIvY93iJu9IZwjdebvzCHc0xYaUJC9pVv0Bk8fcY
-X-Gm-Message-State: AOJu0YyQLLDQukirh2fvgfXMcy+bkr8AGmxtoWbfZjGB6EvX4auqyjES
-	otdJSKKSwU3w2mejxovfR00I4GYKky49oorzqDJYH3dvZaTPeeuL
-X-Google-Smtp-Source: AGHT+IFUSRZyXANCiLPmbIEh7GVsB2DiB97BgrZ+OGnoxcZ2TyJBSstC44wcPExOyKYNeOsgSJTxpw==
-X-Received: by 2002:a17:902:e88f:b0:1f6:1778:7f1b with SMTP id d9443c01a7336-1f6a5901d12mr51704285ad.1.1717645235264;
-        Wed, 05 Jun 2024 20:40:35 -0700 (PDT)
-Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd7ccf8bsm3148205ad.181.2024.06.05.20.40.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 20:40:34 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com,
-	linux-mm@kvack.org
-Cc: chrisl@kernel.org,
-	kasong@tencent.com,
+	s=arc-20240116; t=1717645363; c=relaxed/simple;
+	bh=+/KH7Dt/gunYlOnwVVcGKIkZIvdq00WPW2Ix2BGRdk0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LpZXLxzAqNxFaOR3VNZx/DE8Cs50Gg9lKsiVJe+PsLA1cjDP8MDuJi8pbpQg4pWARlo0GB1+k1V6Lebkw1sVjCC+X0SFROOkKcqGip/Ws6f3HhbVquog8zFFNBrxQVXkXTyw/ybo9doKamOz2wRtfgC/mIAzB8G6mnI90gSPbKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZKZbW8ya; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717645362; x=1749181362;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=+/KH7Dt/gunYlOnwVVcGKIkZIvdq00WPW2Ix2BGRdk0=;
+  b=ZKZbW8yaJZ2OIqPZKIi2PgOB+cn8web0FIHvfLAT6ai72uKkxhelsKi6
+   qsc0bBQ+CiqUV6HZ6V2/QJd/UMaZoOzPEfdlG7RtuynJzCkgj9zTSpFIY
+   JxEWdGhY8nfn0Io4sbyBsHQofznSwAj59OMCt6kpqI5WqUvayUgIMWVQJ
+   0nJEFBtR0MLXw0cnLu5bU1EM20qni0e9n+H6wXKHnf/cbuC/aDh0QiCA3
+   yMBdVsadgTr7JxNBo0N62pVNgLfF6AQN+IF/c0B+XS35oxRPhGypVavM3
+   aYhLM2Pc9W/445ihWSdb+8wdaRMyEc5J+7PwfwAmnZ90a1ZbHBBxi2VvZ
+   A==;
+X-CSE-ConnectionGUID: wr/AJ4SyS1yPE66LW2u+eQ==
+X-CSE-MsgGUID: jvMygjmwQRaGzh7ms8MtnQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="31790051"
+X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
+   d="scan'208";a="31790051"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 20:42:41 -0700
+X-CSE-ConnectionGUID: eEeBY0UNT3u3DlMV5iHCXw==
+X-CSE-MsgGUID: wAibKvBGQvC4FgeNYjCrig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
+   d="scan'208";a="75296815"
+Received: from unknown (HELO allen-box.sh.intel.com) ([10.239.159.127])
+  by orviesa001.jf.intel.com with ESMTP; 05 Jun 2024 20:42:39 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Kevin Tian <kevin.tian@intel.com>
+Cc: iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	minchan@kernel.org,
-	ryan.roberts@arm.com,
-	surenb@google.com,
-	v-songbaohua@oppo.com,
-	willy@infradead.org
-Subject: [PATCH] mm: introduce pmd|pte_need_soft_dirty_wp helpers for softdirty write-protect
-Date: Thu,  6 Jun 2024 15:40:16 +1200
-Message-Id: <20240606034016.82559-1-21cnbao@gmail.com>
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH] iommu/vt-d: Refactor PCI PRI enabling/disabling callbacks
+Date: Thu,  6 Jun 2024 11:40:19 +0800
+Message-Id: <20240606034019.42795-1-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -88,114 +77,166 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Barry Song <v-songbaohua@oppo.com>
+Commit 0095bf83554f8 ("iommu: Improve iopf_queue_remove_device()")
+specified the flow for disabling the PRI on a device. Refactor the
+PRI callbacks in the intel iommu driver to better manage PRI
+enabling and disabling and align it with the device queue interfaces
+in the iommu core.
 
-This patch introduces the pte_need_soft_dirty_wp and
-pmd_need_soft_dirty_wp helpers to determine if write protection is
-required for softdirty tracking. This can enhance code readability
-and improve its overall appearance.
-
-These new helpers are utilized in gup, huge_memory, and protect,
-and are particularly applied in do_swap_page() to optimize a
-softdirty scenario where mkwrite can still be performed.
-
-Suggested-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 ---
- -v1:
- this is suggested by David here:
- https://lore.kernel.org/linux-mm/baf84b51-7e8a-4da8-9662-3f5cf14ad6f6@redhat.com/
- thanks!
+ drivers/iommu/intel/iommu.h |  9 +++++
+ drivers/iommu/intel/iommu.c | 77 ++++++++++++++++++++++++++++++++++---
+ drivers/iommu/intel/pasid.c |  2 -
+ 3 files changed, 81 insertions(+), 7 deletions(-)
 
- mm/gup.c         |  4 ++--
- mm/huge_memory.c |  2 +-
- mm/internal.h    | 10 ++++++++++
- mm/memory.c      |  2 +-
- mm/mprotect.c    |  2 +-
- 5 files changed, 15 insertions(+), 5 deletions(-)
-
-diff --git a/mm/gup.c b/mm/gup.c
-index 83e279731d1b..756d5416df9c 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -820,7 +820,7 @@ static inline bool can_follow_write_pmd(pmd_t pmd, struct page *page,
- 		return false;
- 
- 	/* ... and a write-fault isn't required for other reasons. */
--	if (vma_soft_dirty_enabled(vma) && !pmd_soft_dirty(pmd))
-+	if (pmd_need_soft_dirty_wp(vma, pmd))
- 		return false;
- 	return !userfaultfd_huge_pmd_wp(vma, pmd);
- }
-@@ -941,7 +941,7 @@ static inline bool can_follow_write_pte(pte_t pte, struct page *page,
- 		return false;
- 
- 	/* ... and a write-fault isn't required for other reasons. */
--	if (vma_soft_dirty_enabled(vma) && !pte_soft_dirty(pte))
-+	if (pte_need_soft_dirty_wp(vma, pte))
- 		return false;
- 	return !userfaultfd_pte_wp(vma, pte);
- }
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 3fbcd77f5957..8fbb62f6e491 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1625,7 +1625,7 @@ static inline bool can_change_pmd_writable(struct vm_area_struct *vma,
- 		return false;
- 
- 	/* Do we need write faults for softdirty tracking? */
--	if (vma_soft_dirty_enabled(vma) && !pmd_soft_dirty(pmd))
-+	if (pmd_need_soft_dirty_wp(vma, pmd))
- 		return false;
- 
- 	/* Do we need write faults for uffd-wp tracking? */
-diff --git a/mm/internal.h b/mm/internal.h
-index 12e95fdf61e9..51551626da68 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -1348,6 +1348,16 @@ static inline bool vma_soft_dirty_enabled(struct vm_area_struct *vma)
- 	return !(vma->vm_flags & VM_SOFTDIRTY);
+diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
+index eaf015b4353b..3d5d8f786906 100644
+--- a/drivers/iommu/intel/iommu.h
++++ b/drivers/iommu/intel/iommu.h
+@@ -1047,6 +1047,15 @@ static inline void context_set_sm_pre(struct context_entry *context)
+ 	context->lo |= BIT_ULL(4);
  }
  
-+static inline bool pmd_need_soft_dirty_wp(struct vm_area_struct *vma, pmd_t pmd)
++/*
++ * Clear the PRE(Page Request Enable) field of a scalable mode context
++ * entry.
++ */
++static inline void context_clear_sm_pre(struct context_entry *context)
 +{
-+	return vma_soft_dirty_enabled(vma) && !pmd_soft_dirty(pmd);
++	context->lo &= ~BIT_ULL(4);
 +}
 +
-+static inline bool pte_need_soft_dirty_wp(struct vm_area_struct *vma, pte_t pte)
-+{
-+	return vma_soft_dirty_enabled(vma) && !pte_soft_dirty(pte);
-+}
-+
- static inline void vma_iter_config(struct vma_iterator *vmi,
- 		unsigned long index, unsigned long last)
+ /* Returns a number of VTD pages, but aligned to MM page size */
+ static inline unsigned long aligned_nrpages(unsigned long host_addr, size_t size)
  {
-diff --git a/mm/memory.c b/mm/memory.c
-index db9130488231..6307c43796aa 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4322,7 +4322,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 	if (!folio_test_ksm(folio) &&
- 	    (exclusive || folio_ref_count(folio) == 1)) {
- 		if ((vma->vm_flags & VM_WRITE) && !userfaultfd_pte_wp(vma, pte) &&
--		    !vma_soft_dirty_enabled(vma)) {
-+		    !pte_need_soft_dirty_wp(vma, pte)) {
- 			pte = pte_mkwrite(pte, vma);
- 			if (vmf->flags & FAULT_FLAG_WRITE) {
- 				pte = pte_mkdirty(pte);
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index 888ef66468db..5aea9ad11ae1 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -53,7 +53,7 @@ bool can_change_pte_writable(struct vm_area_struct *vma, unsigned long addr,
- 		return false;
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index 2e9811bf2a4e..2d4b122bcc1c 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -4213,6 +4213,57 @@ static int intel_iommu_enable_sva(struct device *dev)
+ 	return 0;
+ }
  
- 	/* Do we need write faults for softdirty tracking? */
--	if (vma_soft_dirty_enabled(vma) && !pte_soft_dirty(pte))
-+	if (pte_need_soft_dirty_wp(vma, pte))
- 		return false;
++/*
++ * Invalidate the caches for a present-to-present change in a context
++ * table entry according to the Spec 6.5.3.3 (Guidance to Software for
++ * Invalidations).
++ *
++ * Since context entry is not encoded by domain-id when operating in
++ * scalable-mode (refer Section 6.2.1), this performs coarser
++ * invalidation than the domain-selective granularity requested.
++ */
++static void invalidate_present_context_change(struct device_domain_info *info)
++{
++	struct intel_iommu *iommu = info->iommu;
++
++	iommu->flush.flush_context(iommu, 0, 0, 0, DMA_CCMD_GLOBAL_INVL);
++	if (sm_supported(iommu))
++		qi_flush_pasid_cache(iommu, 0, QI_PC_GLOBAL, 0);
++	iommu->flush.flush_iotlb(iommu, 0, 0, 0, DMA_TLB_GLOBAL_FLUSH);
++	__iommu_flush_dev_iotlb(info, 0, MAX_AGAW_PFN_WIDTH);
++}
++
++static int context_flip_pri(struct device_domain_info *info, bool enable)
++{
++	struct intel_iommu *iommu = info->iommu;
++	u8 bus = info->bus, devfn = info->devfn;
++	struct context_entry *context;
++
++	spin_lock(&iommu->lock);
++	if (context_copied(iommu, bus, devfn)) {
++		spin_unlock(&iommu->lock);
++		return -EINVAL;
++	}
++
++	context = iommu_context_addr(iommu, bus, devfn, false);
++	if (!context || !context_present(context)) {
++		spin_unlock(&iommu->lock);
++		return -ENODEV;
++	}
++
++	if (enable)
++		context_set_sm_pre(context);
++	else
++		context_clear_sm_pre(context);
++
++	if (!ecap_coherent(iommu->ecap))
++		clflush_cache_range(context, sizeof(*context));
++	invalidate_present_context_change(info);
++	spin_unlock(&iommu->lock);
++
++	return 0;
++}
++
+ static int intel_iommu_enable_iopf(struct device *dev)
+ {
+ 	struct pci_dev *pdev = dev_is_pci(dev) ? to_pci_dev(dev) : NULL;
+@@ -4242,15 +4293,23 @@ static int intel_iommu_enable_iopf(struct device *dev)
+ 	if (ret)
+ 		return ret;
  
- 	/* Do we need write faults for uffd-wp tracking? */
++	ret = context_flip_pri(info, true);
++	if (ret)
++		goto err_remove_device;
++
+ 	ret = pci_enable_pri(pdev, PRQ_DEPTH);
+-	if (ret) {
+-		iopf_queue_remove_device(iommu->iopf_queue, dev);
+-		return ret;
+-	}
++	if (ret)
++		goto err_clear_pri;
+ 
+ 	info->pri_enabled = 1;
+ 
+ 	return 0;
++err_clear_pri:
++	context_flip_pri(info, false);
++err_remove_device:
++	iopf_queue_remove_device(iommu->iopf_queue, dev);
++
++	return ret;
+ }
+ 
+ static int intel_iommu_disable_iopf(struct device *dev)
+@@ -4261,6 +4320,15 @@ static int intel_iommu_disable_iopf(struct device *dev)
+ 	if (!info->pri_enabled)
+ 		return -EINVAL;
+ 
++	/* Disable new PRI reception: */
++	context_flip_pri(info, false);
++
++	/*
++	 * Remove device from fault queue and acknowledge all outstanding
++	 * PRQs to the device:
++	 */
++	iopf_queue_remove_device(iommu->iopf_queue, dev);
++
+ 	/*
+ 	 * PCIe spec states that by clearing PRI enable bit, the Page
+ 	 * Request Interface will not issue new page requests, but has
+@@ -4271,7 +4339,6 @@ static int intel_iommu_disable_iopf(struct device *dev)
+ 	 */
+ 	pci_disable_pri(to_pci_dev(dev));
+ 	info->pri_enabled = 0;
+-	iopf_queue_remove_device(iommu->iopf_queue, dev);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
+index abce19e2ad6f..286a8a7d66f5 100644
+--- a/drivers/iommu/intel/pasid.c
++++ b/drivers/iommu/intel/pasid.c
+@@ -768,8 +768,6 @@ static int context_entry_set_pasid_table(struct context_entry *context,
+ 
+ 	if (info->ats_supported)
+ 		context_set_sm_dte(context);
+-	if (info->pri_supported)
+-		context_set_sm_pre(context);
+ 	if (info->pasid_supported)
+ 		context_set_pasid(context);
+ 
 -- 
 2.34.1
 
