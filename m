@@ -1,250 +1,118 @@
-Return-Path: <linux-kernel+bounces-203564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDDBE8FDD31
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:11:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 606AE8FDD32
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7903B2173E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:11:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0EAC1F2386E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B4B1DFE4;
-	Thu,  6 Jun 2024 03:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A931DFE4;
+	Thu,  6 Jun 2024 03:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CuNuOQSq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="FZjQrAcb"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A860C13C
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 03:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA692629C
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 03:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717643501; cv=none; b=F/8fehC6G1TAgrrZ2QTIy1AQSR37E/UmfGZ/HVzvr6+GtfwP0TJn2GNnz344JKYtpC4/naqJqvdBeRakflcl892do8La13noJV+W+/6NQBp5UszUuh5A35xL4u7pyEvFimWAy407cRaZd3mz4wfyWmkvGwJEuY3joVDGNbMojwg=
+	t=1717643525; cv=none; b=Jc+j+i6g0WX+mGmCer4UP5cmPMVWZ/oQgYbOjAbdFTW7lvXUF0Fu4aQHGCJSqIvsXWH9I0HCebR+gk4LaE3b/4x08OxsKTMAtVCuyYO5Bpp2x795o9oaZOGej0pd/wlg05cwFzQSILyOdWb1vvHnf4W0iMQdQ9eru7c2qRXRTh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717643501; c=relaxed/simple;
-	bh=1+v65+8xW4kXOQvfyRKPcvYScMtAHUdktuXv4AiUvUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ec698cuUUiqG0ngpVYODJ14cGDN4SLKflqNVNI6zkQD8b4VDI/F8BLvqfvvuRffxwHB/k1fL5FJvVsbsSF58yKrHWBzZlIPxpwSxyj2vo3c1VKgyzk/ZrSLPKeAZu6kTvP7fTAPtQbWQrePxwH96EcucerVslzWrUur37xa1pNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CuNuOQSq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717643498;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HaH59veb3gdb6Nle+VT8H76NeiKE5kPsBGNNkDgKop8=;
-	b=CuNuOQSqDoadSCobdsW2jB+1gXT68g+mQLqSfbYsZU7xaHjX55JyBkkW96mTtDzM/MxmhN
-	rpU0AEZj02WnXZWhr7CZRbCLaByTUxVh7jt+RQoqmIsYg+4WAvDkK3YHpVi+rI1I53knTM
-	NXEIoaaLl4FuIjsyO/NyOeE/7UtjPEY=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-495-kezD0FAoPNayyhfCPlTgHA-1; Wed, 05 Jun 2024 23:11:35 -0400
-X-MC-Unique: kezD0FAoPNayyhfCPlTgHA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+	s=arc-20240116; t=1717643525; c=relaxed/simple;
+	bh=PQDvAOJ/NePyr5xbzBU4sHe719ff3jT8xXEWgA2oi+s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pdzflPwtQdhvNgHcV5TjWLC9jORm+DSCuufJuomT/6evHoT8aosZroC3Lqsv6k7fURgYOREEEMnSCq4t/rrmyjwzhX5s/bjSKtXLaR1xLHR3LVOypBK74xe9d3yoa0K7VdSaiPfz3EbXiKm2Xo3F7kUfeDKHqSeIfr6i+KQHvoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=FZjQrAcb; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1717643521;
+	bh=uhEiQiptyrYsxItCJnv0z0F+tLwNLlQZxlw5seCMjNY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=FZjQrAcbKwFxwA8ICfiJcWVszxOw6HBkn6aKkD9VbGYIo9uxin3cwzFK0dbzidONL
+	 Ja4DUXaYMayOTjS7pFRVx0qeVZSr9tfWDsWOJ/UtYcKR62Lh/rkmii8fvhROtQ+zSm
+	 BM0wJF3WXMmRGCZlUvx1jKFhw7FRAgNrxCyvMQegfsIJKyXo4kQ5Ey4nvQl6NS3ZyA
+	 ceQW9rYkMNPDfaRCyVKQJiEFCnIpD/Mn6CqXsaQktk9SyRbvKhwjcfay2lFYKONvvN
+	 rWio03m88Ghz30n7sPjlNuvW9sB8Zfj+nTWmnyDlxl9l/6/VwnTB6PQFs6xvaEu/8T
+	 mPWFstwZ5H3PQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A280F101A520;
-	Thu,  6 Jun 2024 03:11:34 +0000 (UTC)
-Received: from localhost (unknown [10.72.113.20])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id A0B5537D6;
-	Thu,  6 Jun 2024 03:11:33 +0000 (UTC)
-Date: Thu, 6 Jun 2024 11:11:30 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Coiby Xu <coxu@redhat.com>
-Cc: kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>,
-	Milan Broz <gmazyland@gmail.com>,
-	Thomas Staudt <tstaudt@de.ibm.com>,
-	Daniel P =?iso-8859-1?Q?=2E_Berrang=E9?= <berrange@redhat.com>,
-	Kairui Song <ryncsn@gmail.com>,
-	Jan Pazdziora <jpazdziora@redhat.com>,
-	Pingfan Liu <kernelfans@gmail.com>, Dave Young <dyoung@redhat.com>,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Dave Hansen <dave.hansen@intel.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Vivek Goyal <vgoyal@redhat.com>, Kees Cook <keescook@chromium.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	"open list:KERNEL HARDENING (not covered by other areas):Keyword:b__counted_byb" <linux-hardening@vger.kernel.org>
-Subject: Re: [PATCH v4 2/7] crash_dump: make dm crypt keys persist for the
- kdump kernel
-Message-ID: <ZmEo4rw8Yhu7tspb@MiWiFi-R3L-srv>
-References: <20240523050451.788754-1-coxu@redhat.com>
- <20240523050451.788754-3-coxu@redhat.com>
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VvqB84pDKz4wc4;
+	Thu,  6 Jun 2024 13:12:00 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: David Hildenbrand <david@redhat.com>, Yu Zhao <yuzhao@google.com>,
+ Erhard Furtner <erhard_f@mailbox.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org
+Subject: Re: kswapd0: page allocation failure: order:0,
+ mode:0x820(GFP_ATOMIC), nodemask=(null),cpuset=/,mems_allowed=0 (Kernel
+ v6.5.9, 32bit ppc)
+In-Reply-To: <45fc081c-ee8d-4774-a597-708d2924f812@redhat.com>
+References: <20240508202111.768b7a4d@yea> <20240515224524.1c8befbe@yea>
+ <CAOUHufZ-9NmzOKjLedvZFp0=N0LvRZn77qC6k1WXK+NHtKr=0w@mail.gmail.com>
+ <CAOUHufZ36rQc8AfLtRv2QrEareysdvbprAEO5XkcG-FeDOxFLA@mail.gmail.com>
+ <45fc081c-ee8d-4774-a597-708d2924f812@redhat.com>
+Date: Thu, 06 Jun 2024 13:11:59 +1000
+Message-ID: <87tti6pxxc.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523050451.788754-3-coxu@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 05/23/24 at 01:04pm, Coiby Xu wrote:
-> A sysfs /sys/kernel/crash_dm_crypt_keys is provided for user space to make
-> the dm crypt keys persist for the kdump kernel. User space can send the
-> following commands,
-> - "init KEY_NUM"
->   Initialize needed structures
-> - "record KEY_DESC"
->   Record a key description. The key must be a logon key.
+David Hildenbrand <david@redhat.com> writes:
+> On 01.06.24 08:01, Yu Zhao wrote:
+>> On Wed, May 15, 2024 at 4:06=E2=80=AFPM Yu Zhao <yuzhao@google.com> wrot=
+e:
+...
+>>=20
+>> Your system has 2GB memory and it uses zswap with zsmalloc (which is
+>> good since it can allocate from the highmem zone) and zstd/lzo (which
+>> doesn't matter much). Somehow -- I couldn't figure out why -- it
+>> splits the 2GB into a 0.25GB DMA zone and a 1.75GB highmem zone:
+>>=20
+>> [    0.000000] Zone ranges:
+>> [    0.000000]   DMA      [mem 0x0000000000000000-0x000000002fffffff]
+>> [    0.000000]   Normal   empty
+>> [    0.000000]   HighMem  [mem 0x0000000030000000-0x000000007fffffff]
+>
+> That's really odd. But we are messing with "PowerMac3,6", so I don't=20
+> really know what's right or wrong ...
 
-This patch highly lack document to describe what it's doing. For
-example, how you will manipulate the /sys/kernel/crash_dm_crypt_keys to
-initialize, record the keys, can you give examples how you opeate on
-them?
+The DMA zone exists because 9739ab7eda45 ("powerpc: enable a 30-bit
+ZONE_DMA for 32-bit pmac") selects it.
 
-> 
-> User space can also read this API to learn about current state.
-> 
-> Signed-off-by: Coiby Xu <coxu@redhat.com>
-> ---
->  include/linux/crash_core.h   |   5 +-
->  kernel/Kconfig.kexec         |   8 +++
->  kernel/Makefile              |   1 +
->  kernel/crash_dump_dm_crypt.c | 113 +++++++++++++++++++++++++++++++++++
->  kernel/ksysfs.c              |  22 +++++++
->  5 files changed, 148 insertions(+), 1 deletion(-)
->  create mode 100644 kernel/crash_dump_dm_crypt.c
-> 
-> diff --git a/include/linux/crash_core.h b/include/linux/crash_core.h
-> index 44305336314e..6bff1c24efa3 100644
-> --- a/include/linux/crash_core.h
-> +++ b/include/linux/crash_core.h
-> @@ -34,7 +34,10 @@ static inline void arch_kexec_protect_crashkres(void) { }
->  static inline void arch_kexec_unprotect_crashkres(void) { }
->  #endif
->  
-> -
-> +#ifdef CONFIG_CRASH_DM_CRYPT
-> +int crash_sysfs_dm_crypt_keys_read(char *buf);
-> +int crash_sysfs_dm_crypt_keys_write(const char *buf, size_t count);
-> +#endif
->  
->  #ifndef arch_crash_handle_hotplug_event
->  static inline void arch_crash_handle_hotplug_event(struct kimage *image, void *arg) { }
-> diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
-> index 6c34e63c88ff..88525ad1c80a 100644
-> --- a/kernel/Kconfig.kexec
-> +++ b/kernel/Kconfig.kexec
-> @@ -116,6 +116,14 @@ config CRASH_DUMP
->  	  For s390, this option also enables zfcpdump.
->  	  See also <file:Documentation/arch/s390/zfcpdump.rst>
->  
-> +config CRASH_DM_CRYPT
-> +	bool "Support saving crash dump to dm-crypt encrypted volume"
-> +	depends on CRASH_DUMP
+It's 768MB (not 0.25GB) because it's clamped at max_low_pfn:
 
-Do we need add dependency on some security features, e.g KEYS?
-The current code will enable the CRASH_DM_CRYPT regardless of the
-existence of LUKS disk at all.
+#ifdef CONFIG_ZONE_DMA
+	max_zone_pfns[ZONE_DMA]	=3D min(max_low_pfn,
+				      1UL << (zone_dma_bits - PAGE_SHIFT));
+#endif
 
-> +	help
-> +	  With this option enabled, user space can intereact with
-> +	  /sys/kernel/crash_dm_crypt_keys to make the dm crypt keys
-> +	  persistent for the crash dump kernel.
-> +
->  config CRASH_HOTPLUG
->  	bool "Update the crash elfcorehdr on system configuration changes"
->  	default y
-> diff --git a/kernel/Makefile b/kernel/Makefile
-> index 3c13240dfc9f..f2e5b3e86d12 100644
-> --- a/kernel/Makefile
-> +++ b/kernel/Makefile
-> @@ -72,6 +72,7 @@ obj-$(CONFIG_VMCORE_INFO) += vmcore_info.o elfcorehdr.o
->  obj-$(CONFIG_CRASH_RESERVE) += crash_reserve.o
->  obj-$(CONFIG_KEXEC_CORE) += kexec_core.o
->  obj-$(CONFIG_CRASH_DUMP) += crash_core.o
-> +obj-$(CONFIG_CRASH_DM_CRYPT) += crash_dump_dm_crypt.o
->  obj-$(CONFIG_KEXEC) += kexec.o
->  obj-$(CONFIG_KEXEC_FILE) += kexec_file.o
->  obj-$(CONFIG_KEXEC_ELF) += kexec_elf.o
-> diff --git a/kernel/crash_dump_dm_crypt.c b/kernel/crash_dump_dm_crypt.c
-> new file mode 100644
-> index 000000000000..78809189084a
-> --- /dev/null
-> +++ b/kernel/crash_dump_dm_crypt.c
-> @@ -0,0 +1,113 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +#include <keys/user-type.h>
-> +#include <linux/crash_dump.h>
-> +
-> +#define KEY_NUM_MAX 128
-> +#define KEY_SIZE_MAX 256
-> +
-> +// The key scription has the format: cryptsetup:UUID 11+36+1(NULL)=48
-> +#define KEY_DESC_LEN 48
-> +
-> +static char *STATE_STR[] = {"fresh", "initialized", "recorded", "loaded"};
-> +static enum STATE_ENUM {
-> +	FRESH = 0,
-> +	INITIALIZED,
-> +	RECORDED,
-> +	LOADED,
-> +} state;
-> +
-> +static unsigned int key_count;
-> +static size_t keys_header_size;
-> +
-> +struct dm_crypt_key {
-> +	unsigned int key_size;
-> +	char key_desc[KEY_DESC_LEN];
-> +	u8 data[KEY_SIZE_MAX];
-> +};
-> +
-> +static struct keys_header {
-> +	unsigned int key_count;
-> +	struct dm_crypt_key keys[] __counted_by(key_count);
-> +} *keys_header;
-> +
-> +static size_t get_keys_header_size(struct keys_header *keys_header,
-> +				   size_t key_count)
-> +{
-> +	return struct_size(keys_header, keys, key_count);
-> +}
-> +
-> +static int init(const char *buf)
-> +{
-> +	unsigned int total_keys;
-> +	char dummy[5];
-> +
-> +	if (sscanf(buf, "%4s %u", dummy, &total_keys) != 2)
-> +		return -EINVAL;
+Which comes eventually from CONFIG_LOWMEM_SIZE, which defaults to 768MB.
 
-This is what I wondered and tried to find a document to get why. Can we
-search in the current system and deduce how many keys we can could use
-for kdump kernel? Or we have to retrieve and pass it from user space?
+I think it's 768MB because the user:kernel split is 3G:1G, and then the
+kernel needs some of that 1G virtual space for vmalloc/ioremap/highmem,
+so it splits it 768M:256M.
 
-> +
-> +	if (key_count > KEY_NUM_MAX) {
-> +		pr_err("Exceed the maximum number of keys (KEY_NUM_MAX=%u)\n",
-> +		       KEY_NUM_MAX);
-> +		return -EINVAL;
-> +	}
+Then ZONE_NORMAL is empty because it is also limited to max_low_pfn:
 
-Why chekcing key_count in init()? Don't you need to check
-total_keys instead? Clearly you don't do a boundary test for total_keys,
-otherwise it will trigger issue.
+	max_zone_pfns[ZONE_NORMAL] =3D max_low_pfn;
 
-> +
-> +	keys_header_size = get_keys_header_size(keys_header, total_keys);
-> +	key_count = 0;
-> +
-> +	keys_header = kzalloc(keys_header_size, GFP_KERNEL);
-> +	if (!keys_header)
-> +		return -ENOMEM;
-> +
-> +	keys_header->key_count = total_keys;
-> +	state = INITIALIZED;
-> +	return 0;
-> +}
+The rest of RAM is highmem.
 
-Please add more code comments, kernel-doc for your code, we can't assume
-people reading these codes know the entire matter.
+So I think that's all behaving as expected, but I don't know 32-bit /
+highmem stuff that well so I could be wrong.
 
+cheers
 
