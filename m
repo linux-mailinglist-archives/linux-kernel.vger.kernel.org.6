@@ -1,149 +1,85 @@
-Return-Path: <linux-kernel+bounces-204581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CC008FF116
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:47:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D35E08FF088
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10CADB2C00E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:33:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F402728E9FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D531B197A8A;
-	Thu,  6 Jun 2024 15:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B11A1974FE;
+	Thu,  6 Jun 2024 15:21:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g+LjCG5D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="PHTiZfyZ"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D77F197A96;
-	Thu,  6 Jun 2024 15:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD17195B11;
+	Thu,  6 Jun 2024 15:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717687929; cv=none; b=AaivA2zZxZUYxxvUsdWyGW1cwDeTl2m23zapu4ag4hG0FjSSAxS/heKDQZsjtdZJ/AmnGTKVtrALJDyLOwnDaopBAfLImcyIY04mQkl8Dx1ZzSH+17nUjoybsayfNIQjGVMLr10zBalBJ50H1CD/G3PN8Bzx/2woqDqA0CY8J4A=
+	t=1717687312; cv=none; b=RiIMZriqeTNYfui3W/2o9M9vy4yM84F9TGuGgyvXRZHikuwiP1T0btQ9Zlb3vh58pi0stXsHnWejX4+F9QXZYOMw9Ml+S4nU/i346VdRPDnKFWC+yicXIPJTiamoAtnRne8U1gcdShzCLv5ew4l/3ygf+Rug99FMqSnLAmLSwkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717687929; c=relaxed/simple;
-	bh=uej+Tf8xf9z3hwiLLHmVJLafNhINst5vjRm2ck0g7NI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Nge7ThiqzvDXbk42LujNEClsjSs5U8iyJJ/B8v+BeaJAWVFKDCj5oHP0iWX7PD8+tRaCtl+tUunlerDGgEeifq34DzOOtv6ltr0XeG7q9hrdPi9Cebc/LTDtx+rO3MymP60Mu4B/uXT8D8SfburFVTbUWDQRxcxCfRMisdZ5FLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g+LjCG5D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8701EC32782;
-	Thu,  6 Jun 2024 15:32:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717687928;
-	bh=uej+Tf8xf9z3hwiLLHmVJLafNhINst5vjRm2ck0g7NI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=g+LjCG5Dckh2ymqVHPJbXOurf4EebD7bdxByAad7JMaf34VU3t5ZktiW32JOaqfg/
-	 0yYaH5smz8iUiMs+iWkQtMMtXvshNLHpFGVEPS6LIVRhQ3nnjS/sW/wTiiqyEi0lld
-	 7gnvSTO/E9YgV+f0unr5p3jFPkXvp1amS2UJLU3co53afuX5JVoHHCzhNADl5+nP/g
-	 H43FGZ2r3FPKkwLA0VqDXQT4CaNMQXzhFa/zvxwzAEmINSHTEapKXrZXTAN2Vr2gS4
-	 pIHxaax2aREy4s1hZ979ZYTLSMNGgvEEDhrLpQPaJM1l+Al9yXhcd6KqxrNaRBVWaS
-	 yACtJB7XGpe7w==
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 06 Jun 2024 16:21:45 +0100
-Subject: [PATCH v2 3/4] KVM: arm64: Fix FFR offset calculation for pKVM
- host state save and restore
+	s=arc-20240116; t=1717687312; c=relaxed/simple;
+	bh=+JbV2WwHLiNrIrXPhAnPneX3NCFy22wigTTB7b9U+jY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Iy7oAJqTL3g1WAcQVTkl8/HPpkNoas6LPf1oV9JlOCn2cnUs7xBKjP/JMv2gT3UEW2UAya5wFx+YWuJWlcpLis0h37TgESamRjSzOKyoRPVhvwW2iI2rZyMEaMbm9cw0wQce4/d172s3SDR7ey7zDVBPGzei4Jdo/3tyH9VQGiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=PHTiZfyZ; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=GMT1ykjhbgM22EzMElHF0RPQcaLGLoRrCnFOFHH5cgQ=; b=PH
+	TiZfyZAZ2V5yposKZaaL0QYpCK5AUaOSZ5KQ1Y6abzo1vaOuUM1m1TQ+tWR27Hq1VLWwU2NPLRidY
+	chqFe5WvAIcsU2TWZ93uhwIuZzgmS4/lHzGNAnIC6i2mVynAb6bTLWjA11zp7C4y9upfkzdM4dM79
+	5Mo9cR5rhz+os9U=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sFEvx-00H1vZ-IS; Thu, 06 Jun 2024 17:21:45 +0200
+Date: Thu, 6 Jun 2024 17:21:45 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: =?iso-8859-1?B?Q3Pza+FzLA==?= Bence <csokas.bence@prolan.hu>,
+	Russell King <rmk+kernel@armlinux.org.uk>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH] net: sfp: Always call `sfp_sm_mod_remove()` on remove
+Message-ID: <24a48e5a-efb3-4066-af6f-69f4a254b9c3@lunn.ch>
+References: <20240605084251.63502-1-csokas.bence@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240606-kvm-arm64-fix-pkvm-sve-vl-v2-3-c88f4eb4b14b@kernel.org>
-References: <20240606-kvm-arm64-fix-pkvm-sve-vl-v2-0-c88f4eb4b14b@kernel.org>
-In-Reply-To: <20240606-kvm-arm64-fix-pkvm-sve-vl-v2-0-c88f4eb4b14b@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
- Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
- Suzuki K Poulose <suzuki.poulose@arm.com>, Fuad Tabba <tabba@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kvmarm@lists.linux.dev, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.14-dev-d4707
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3038; i=broonie@kernel.org;
- h=from:subject:message-id; bh=uej+Tf8xf9z3hwiLLHmVJLafNhINst5vjRm2ck0g7NI=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmYdZsz4r7UnVjNwEMykuqo5GUe570WUMT0pqnJdWE
- gToCCkWJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZmHWbAAKCRAk1otyXVSH0Mw4B/
- 943uDUyYIEx5pZu40qDu0DfW1U3V+HvNFfCFkiV2wuM9gthMVvxU3mdEKV8ycpgkIFfheiOOxXrdlN
- L45cC3KEK4JltkArIAf0igt7SRKdcQfhfq30AJwXcRsw+di5RlXoqQL07wQ5oVJAqnb4EbXYcpWfL/
- WOiBpO7bSj6Jqxy+eWzqiz2gzzUrVCecNYkasdJhvxtHG1UyHfcKBTT9OAL97pVa9KdOzhVIhah4YX
- 4ccR2jQi1A40+WoQEQO8Uq7Z3HsKcFEQVWg7hYdxQ2GZtQHf1Y17yxigN/3JvEs7lWu9ndaxlp9j53
- KXRUj+78kTnQLVr7UzqV33uUNcwqVR
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240605084251.63502-1-csokas.bence@prolan.hu>
 
-When saving and restoring the SVE state for the host we configure the
-hardware for the maximum VL it supports, but when calculating offsets in
-memory we use the maximum usable VL for the host. Since these two values
-may not be the same this may result in data corruption.  We can just
-read the current VL from the hardware with an instruction so do that
-instead of a saved value, we need to correct the value and this makes
-the consistency obvious.
+On Wed, Jun 05, 2024 at 10:42:51AM +0200, Csókás, Bence wrote:
+> If the module is in SFP_MOD_ERROR, `sfp_sm_mod_remove()` will
+> not be run. As a consequence, `sfp_hwmon_remove()` is not getting
+> run either, leaving a stale `hwmon` device behind. `sfp_sm_mod_remove()`
+> itself checks `sfp->sm_mod_state` anyways, so this check was not
+> really needed in the first place.
+> 
+> Signed-off-by: "Csókás, Bence" <csokas.bence@prolan.hu>
 
-Fixes: b5b9955617bc ("KVM: arm64: Eagerly restore host fpsimd/sve state in pKVM")
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- arch/arm64/include/asm/kvm_hyp.h        | 1 +
- arch/arm64/kvm/hyp/fpsimd.S             | 5 +++++
- arch/arm64/kvm/hyp/include/hyp/switch.h | 2 +-
- arch/arm64/kvm/hyp/nvhe/hyp-main.c      | 2 +-
- 4 files changed, 8 insertions(+), 2 deletions(-)
+I was expecting Russell to review this. Maybe he missed it.
 
-diff --git a/arch/arm64/include/asm/kvm_hyp.h b/arch/arm64/include/asm/kvm_hyp.h
-index b05bceca3385..7510383d78a6 100644
---- a/arch/arm64/include/asm/kvm_hyp.h
-+++ b/arch/arm64/include/asm/kvm_hyp.h
-@@ -113,6 +113,7 @@ void __fpsimd_save_state(struct user_fpsimd_state *fp_regs);
- void __fpsimd_restore_state(struct user_fpsimd_state *fp_regs);
- void __sve_save_state(void *sve_pffr, u32 *fpsr, int save_ffr);
- void __sve_restore_state(void *sve_pffr, u32 *fpsr, int restore_ffr);
-+int __sve_get_vl(void);
- 
- u64 __guest_enter(struct kvm_vcpu *vcpu);
- 
-diff --git a/arch/arm64/kvm/hyp/fpsimd.S b/arch/arm64/kvm/hyp/fpsimd.S
-index e950875e31ce..d272dbf36da8 100644
---- a/arch/arm64/kvm/hyp/fpsimd.S
-+++ b/arch/arm64/kvm/hyp/fpsimd.S
-@@ -31,3 +31,8 @@ SYM_FUNC_START(__sve_save_state)
- 	sve_save 0, x1, x2, 3
- 	ret
- SYM_FUNC_END(__sve_save_state)
-+
-+SYM_FUNC_START(__sve_get_vl)
-+	_sve_rdvl	0, 1
-+	ret
-+SYM_FUNC_END(__sve_get_vl)
-diff --git a/arch/arm64/kvm/hyp/include/hyp/switch.h b/arch/arm64/kvm/hyp/include/hyp/switch.h
-index 0c4de44534b7..06efcca765cc 100644
---- a/arch/arm64/kvm/hyp/include/hyp/switch.h
-+++ b/arch/arm64/kvm/hyp/include/hyp/switch.h
-@@ -327,7 +327,7 @@ static inline void __hyp_sve_save_host(void)
- 
- 	sve_state->zcr_el1 = read_sysreg_el1(SYS_ZCR);
- 	write_sysreg_s(ZCR_ELx_LEN_MASK, SYS_ZCR_EL2);
--	__sve_save_state(sve_state->sve_regs + sve_ffr_offset(kvm_host_sve_max_vl),
-+	__sve_save_state(sve_state->sve_regs + sve_ffr_offset(__sve_get_vl()),
- 			 &sve_state->fpsr,
- 			 true);
- }
-diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-index f43d845f3c4e..bd8f671e848c 100644
---- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-+++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-@@ -49,7 +49,7 @@ static void __hyp_sve_restore_host(void)
- 	 * supported by the system (or limited at EL3).
- 	 */
- 	write_sysreg_s(ZCR_ELx_LEN_MASK, SYS_ZCR_EL2);
--	__sve_restore_state(sve_state->sve_regs + sve_ffr_offset(kvm_host_sve_max_vl),
-+	__sve_restore_state(sve_state->sve_regs + sve_ffr_offset(__sve_get_vl()),
- 			    &sve_state->fpsr,
- 			    true);
- 	write_sysreg_el1(sve_state->zcr_el1, SYS_ZCR);
+This looks O.K. to me:
 
--- 
-2.39.2
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
+    Andrew
 
