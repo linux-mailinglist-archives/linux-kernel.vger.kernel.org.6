@@ -1,125 +1,109 @@
-Return-Path: <linux-kernel+bounces-203696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 054D98FDF2A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:54:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70A3D8FDF32
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1778C1C218AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:54:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EA141C23237
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D1B13A896;
-	Thu,  6 Jun 2024 06:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF89013A89E;
+	Thu,  6 Jun 2024 06:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Xd1GeeWG"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FIiZKxzz"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9D63AC16
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 06:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9153119D898;
+	Thu,  6 Jun 2024 06:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717656878; cv=none; b=H6wn0p/x6PYNdHbjq4RUwxEvJ3HwyezAkzg+z1rBeikNSY8BhTJpYA6bMs24btsKp2WuddUUZfxNtrXwh7pv1TFVTjETjP22Ilja+z1ILbAuneEGXw9uf9L3xLdHQbq4ZpUDVQxJy9yZkjUff81gCs+AJDjDploblAbGIIUKgEc=
+	t=1717657068; cv=none; b=dJlji2RUwFxFn9WhlX1KkM3+WtK7ga+Kfge6xjetbAwgKWXdF4jVk6TLdLImvjWhDpSya9Kf/6mzpezc3QnfiSXpq9aC1c18Aqm2kBDen1ZVDJcUuAN/f7SC/eDIkNI4liA/bwyFj6hc3q1fSIbNURXPq1sck/cBHKXLz+wvnng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717656878; c=relaxed/simple;
-	bh=KSdDPxC5VUh1WnamIAbzz671Erp4LUNSssBAt5dfhn0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=txR7GNss6IS07bRlEqhyCWHmu76A4RdzSC1C6XGQ6i27IhqJ8XxOdENLdNkmTkUe/GgsFTpgglAI0Y4qrR30qU4j+GTGFlyFAVUelD0uisNxmqA6dDjhbS6BOKBh9cWQo/8QWPoDb0+2+uCHkSVD3DY3rgUYPrELXhf8elIGhjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Xd1GeeWG; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-35e83828738so680787f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 23:54:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1717656875; x=1718261675; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=a7TCmXGWr94ZoD3g1UVXKN5ISjES07LkwWyEhWG4/I0=;
-        b=Xd1GeeWG9v03txlf+IeiUr4isYxVXO7sIlwVrFgtx1zja6n/fz2iQPtu9T/SkSo4K+
-         DpyV/FkNfNHxSIxjwzogopPQt73IMD3+32oj5r1+swWqeEdbBTODAoWErX6qJ5EhbA0R
-         HtTfy7QuwaPn4Xw2Vnc3ZKfxCc7TComljJDoArtRbb7vtxsbwXhv3+n3YSv7av+TlfXd
-         Cxw7LiDF6mp/sNv39elNFu06CElZEKRl1/b4t5s7zI5rVUcrjmcAe5u8tm1H9iTQCg4n
-         IWigq2oVWJBeoHB0JUs38ul+2sI5OrV4XqceY9663k5lfLm1aTv5aOw3k9g1eAia2hF4
-         S/Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717656875; x=1718261675;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a7TCmXGWr94ZoD3g1UVXKN5ISjES07LkwWyEhWG4/I0=;
-        b=MadEW5zNaSn7O0byd9dbWS3AThx+2nJqmDHW0m1uNf+/S6W6qPp1VhSgMJSxz+tcet
-         1eYuh/Y5PHAILIQnKVuBMrBmZGVVzBbfcvKTfuR0NUSfVTo69Hop3rdfRoNpHx8avWbt
-         EksRzr7fnAbYdM3zD3CbCHVh0Rz7JMpQow3ceVLy+f3tez0kTg8MrHNJcGEMeUvrzN/W
-         rZquj8pUU6FYDZqUqJ4cNzLq15ybPri4OXN+cP2eTm7vH9L1M5wUX+crv7e+80eLLVEP
-         SWuHLwi/MMrznWsR3DnQl5mtOliE18JtT20Ong56eFQAAri/UFj6huUJFNCX6DCixcRO
-         AUTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3+2v+al6c8agjiRSyd6t77VtatA3xIK6eEYPpaBLRXoAnRZ8VqiRNGB4gnyM5IuUGJz+BsMoAY3sLQCm99TC1vqcrdxeuyKsqh+nE
-X-Gm-Message-State: AOJu0YwJyWa6Z0Ne0WmBGIsptI3+MVSnzXDeF3CwasCo6/tOW76747ag
-	uTEeKyWGhme+b4qY2v5LIRu4kkPuNIY3U91SSSXpTekld8axsbzQhmC+DQztRvU=
-X-Google-Smtp-Source: AGHT+IHNKnXIBb3qZJygU2iYDImkZ9rzUJkNBWDBUa1dYfWFLGg6a9Ze5BMW5kuAh9PHrPhk9uqCHQ==
-X-Received: by 2002:a5d:4711:0:b0:35e:83f3:ea0a with SMTP id ffacd0b85a97d-35e8ef65b69mr3594626f8f.48.1717656874844;
-        Wed, 05 Jun 2024 23:54:34 -0700 (PDT)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5fc1ca8sm714821f8f.97.2024.06.05.23.54.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 23:54:34 -0700 (PDT)
-Date: Thu, 6 Jun 2024 08:54:33 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Tomasz Jeznach <tjeznach@rivosinc.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Anup Patel <apatel@ventanamicro.com>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Nick Kossifidis <mick@ics.forth.gr>, Sebastien Boeuf <seb@rivosinc.com>, 
-	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, linux@rivosinc.com, 
-	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [PATCH v6 2/7] iommu/riscv: Add RISC-V IOMMU platform device
- driver
-Message-ID: <20240606-988b5519747e28c276f9a952@orel>
-References: <cover.1716578450.git.tjeznach@rivosinc.com>
- <7dcd9a154625704cbf9adc4b4ac07ca0b9753b31.1716578450.git.tjeznach@rivosinc.com>
- <20240529-08fd52a8e703418142bdfa84@orel>
- <CAH2o1u7N03b3dzxxG8jp7qW2jmCDADwq_OL2Ayv1AL1XsA7s5w@mail.gmail.com>
+	s=arc-20240116; t=1717657068; c=relaxed/simple;
+	bh=AWAgYsMCFjyvMefBAsZ3RW/Wl8868HRUypW9j9t8DcI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i9ftJIY0dsyicuN8DW7amMIr+lWS0HlhcoCtoiJ4mWeumVS1XwvdENJ+q41uSrhzUqwO32x8MqzfbJio5ztoZxNoFP1m1SxAalX7D6n54A9b/z3NPKrvvza6MWlnr13ykovigIDcNVBvednHZaXlytnPnnt80+xnkjrmBNfTS7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FIiZKxzz; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 30F6260004;
+	Thu,  6 Jun 2024 06:57:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1717657058;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jgXWC6wrNxd7gBlX7Te69IijPU34lb7hb+iH3eHJsXo=;
+	b=FIiZKxzzXuNWsWWUYEG9s1CHkdsJ69grzzhE1fJ75F9v5Ys2AuTSJdmoZO8Y7ExIAi0H9x
+	D7UkSWOFwA5rcZ7uWjBFfyGHig5jG7cQkHEgVF9D0HIx2rFvJwWbgMivF7E88KuUExUAjK
+	NVMGD+56L+Kkf3V0kw9e4YOZsvxoM4Qb/5J5gGmRyZmWl7vhLykq8me+cy7ve4kOYVt94T
+	g82by/PcFlITDibCU0R6X8ywwCLUckU9bhKGGLdTSMP2xPaUR8hVa1Bo1rsBF2jx8CSVwt
+	VWWMzrjSUKAYq1FQv6cuM6KZOxq3j2Zfkpk/bNnAYHJnLOjDDDP5f4uz4LYtBw==
+Date: Thu, 6 Jun 2024 08:57:34 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
+ <andrew@lunn.ch>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Jesse Brandeburg
+ <jesse.brandeburg@intel.com>, Marek =?UTF-8?B?QmVow7pu?=
+ <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
+ mwojtas@chromium.org, Nathan Chancellor <nathan@kernel.org>, Antoine Tenart
+ <atenart@kernel.org>
+Subject: Re: [PATCH net-next v12 03/13] net: phy: add helpers to handle sfp
+ phy connect/disconnect
+Message-ID: <20240606085734.73334c68@fedora>
+In-Reply-To: <20240605201025.764f0881@kernel.org>
+References: <20240605124920.720690-1-maxime.chevallier@bootlin.com>
+	<20240605124920.720690-4-maxime.chevallier@bootlin.com>
+	<20240605201025.764f0881@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH2o1u7N03b3dzxxG8jp7qW2jmCDADwq_OL2Ayv1AL1XsA7s5w@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Wed, Jun 05, 2024 at 11:58:28AM GMT, Tomasz Jeznach wrote:
-> On Wed, May 29, 2024 at 8:15 AM Andrew Jones <ajones@ventanamicro.com> wrote:
-...
-> > > +/* 3.1.3 I/O MMU Directory cache invalidation */
-> > > +/* Fields on dword0 */
-> > > +#define RISCV_IOMMU_CMD_IODIR_OPCODE         3
-> > > +#define RISCV_IOMMU_CMD_IODIR_FUNC_INVAL_DDT 0
-> > > +#define RISCV_IOMMU_CMD_IODIR_FUNC_INVAL_PDT 1
-> > > +#define RISCV_IOMMU_CMD_IODIR_PID            GENMASK_ULL(31, 12)
-> > > +#define RISCV_IOMMU_CMD_IODIR_DV             BIT_ULL(33)
-> > > +#define RISCV_IOMMU_CMD_IODIR_DID            GENMASK_ULL(63, 40)
-> >
-> > RISCV_IOMMU_CMD_IOTDIR_* for all above
-> >
+Hello Jakub,
+
+On Wed, 5 Jun 2024 20:10:25 -0700
+Jakub Kicinski <kuba@kernel.org> wrote:
+
+> On Wed,  5 Jun 2024 14:49:08 +0200 Maxime Chevallier wrote:
+> > +/**
+> > + * phy_sfp_connect_phy - Connect the SFP module's PHY to the upstream PHY
+> > + * @upstream: pointer to the upstream phy device
+> > + * @phy: pointer to the SFP module's phy device
+> > + *
+> > + * This helper allows keeping track of PHY devices on the link. It adds the
+> > + * SFP module's phy to the phy namespace of the upstream phy
+> > + */
+> > +int phy_sfp_connect_phy(void *upstream, struct phy_device *phy)  
 > 
-> I've checked latest RISC-V IOMMU Arch Specification and it looks there
-> it is a bit inconsistent in IODIR naming.  The acronym IOTDIR is used
-> only once, while all other references to directory cache invalidation
-> command use IODIR.  I'll keep _CMD_IODIR_ here.
->
+> We run scripts/kernel-doc with -Wall now, it wants return values
+> to be documented, too. 
 
-Indeed. I've made a comment on the spec clarifications PR to suggest the
-s/IOTDIR/IODIR/ change.
+OK, I'll address that and make sure to run this script on all the
+patches in the series.
 
 Thanks,
-drew
+
+Maxime
 
