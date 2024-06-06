@@ -1,111 +1,100 @@
-Return-Path: <linux-kernel+bounces-204951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 644078FF568
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:43:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D07C38FF56C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 013BEB2384A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:43:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49C3E287FFD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE64E6E610;
-	Thu,  6 Jun 2024 19:43:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D636E610;
+	Thu,  6 Jun 2024 19:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lLlq5pID"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a735HSmi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67678821;
-	Thu,  6 Jun 2024 19:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6012D3BBCC
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 19:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717702994; cv=none; b=egX6VQg+vYo/z/ShjaR74rV/d+uo51JkypPTL4gjJMZ0c3J6Q1AvOt3a4QZ56d6aKyabqzUJ3xjI3jFmp0e5n6i7CbC4ecA30rhi4vqVyrjHQbxCDZ41zsFUTUi0W4KQqCVx7KETReH4FkkruwC3MxfUSTUHQPYvUdkIcifyVLw=
+	t=1717703127; cv=none; b=siKe7KqrnNrGHJxPHqCSKaNxdBWoKRoCYGQPUFCwIiwRJVn0OmuAQryIwYwNvM+VzgkMsrQyEnBmU4luEO11+ytDsSGlzFkz+odWrJeyyDZjaanNj01/SThDd4uMIGNPgqY41Ul5lI8YL2/Eljqe+QcaAtj/KWqVfiALnqPnprM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717702994; c=relaxed/simple;
-	bh=iJ3PfJIIVmISWOs3yDhd5uulGCXgxOcN7cbPaPCX9fg=;
+	s=arc-20240116; t=1717703127; c=relaxed/simple;
+	bh=U8mfA5xA+fMcGi1rZTOg42lZRg/R+N+3UrY82wiZ9HU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B18rynBsyqYyjZ4JIb9T68X7UspsTSWGP3ReV7tA/e78Xpwd1OzKV1n45qbFnlBruG8H3P7w2BKBmjLmYuT1T6S7+LPWci3pfyLVTUdBQiGQ7z5KpKgc096I5aDdXWOF/XYfqMopNOihvRCJt+17W0PHJFKVEL+hvkkVqCORHFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lLlq5pID; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717702993; x=1749238993;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=iJ3PfJIIVmISWOs3yDhd5uulGCXgxOcN7cbPaPCX9fg=;
-  b=lLlq5pIDLjuc++Mxa+wn/aLjn4eEFuUb79LiGpPEG0QpSQrKF2EeSGSL
-   xTp/EkASxpGtTe148fXVEAeS+fSvDUGQiSbohWGGc2Y/slUXLG6XefJQR
-   kSI9TUVVJ0YLj3phbj/s8bG94qBDVenjpIcCHXVKWezylseq+4vOqA9fc
-   wMFa1zCgCS9fdaAv926RsaC0ilfXMMCIWq+L4QIxmAuI7clUccBSHMZMw
-   q31171+35C9mG77VG0PVedseL85RxZWgUfjzTJZe5KpZMq9AlBNdGB1JN
-   iuuOU86xpextcEtDyX+nyJZegWvFKQBSdfBWIu39qUJz6fbi1XnmqNpLl
-   w==;
-X-CSE-ConnectionGUID: LNxkU18MRqGbYT+KC5NP6w==
-X-CSE-MsgGUID: 9vaT3FQDQvaLST+GxubIng==
-X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="18190218"
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="18190218"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 12:43:13 -0700
-X-CSE-ConnectionGUID: UCStVhN/SO2DSJLGK0L4cA==
-X-CSE-MsgGUID: KIifYad2QW+Pi4FxVy2Pyw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="68868902"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 12:43:11 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sFJ0u-0000000EIca-0z55;
-	Thu, 06 Jun 2024 22:43:08 +0300
-Date: Thu, 6 Jun 2024 22:43:07 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-	Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH v1 1/1] ARM: omap2: Switch to use kmemdup_array()
-Message-ID: <ZmIRS8HTar7iKQo7@smile.fi.intel.com>
-References: <20240606165104.3031737-1-andriy.shevchenko@linux.intel.com>
- <20240606193202.GD9487@darkstar.musicnaut.iki.fi>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kFbf1gRm5it5GB7h27JQL0BNRuWW2PNEer5kOYa7sO53abGfCLmTs5fOqka43pbTti3rYV/oyRIcqghbnoFRFKSpEcX1apxgjYoVPACkwlLrx3Aef3oWwjSqcGg7A9FfS4OBMMq4c74XB0ajJyrtzgfoKLjHW5x9mRso0cp89ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a735HSmi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7853C2BD10;
+	Thu,  6 Jun 2024 19:45:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717703126;
+	bh=U8mfA5xA+fMcGi1rZTOg42lZRg/R+N+3UrY82wiZ9HU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a735HSmizNNfAG+BGmyIGYKEB413vbi/u18+ryWD8ufj48Ss47wWfFaXsUfgU5Jun
+	 QK6uXHzIT/Rvr4mvA6UZCzMobnuqbk6MndYh010Q8gR/HsJXAKD1NYq2O2APJEwW2d
+	 ywppjix2iJkh8qc8zENNKaSjHdSprHUJf12988/QWF97Z24aYWYBs26AJtI2zHZFnz
+	 e1XLh+97GWaEbX5o5CMS0Ip9OdvUJ0NB0uHz/IhDWAClM6tUMn5EeSiHiIMHkk/eyn
+	 KjcKF3Oj1MhVdRGgmmDndGcZges6GwlzIYsyYQNEuiZheYRGmgda9AIG6s3sbEyCKE
+	 lpFCTJZW2nrCg==
+Date: Thu, 6 Jun 2024 12:45:25 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: objtool query: section start/end symbols?
+Message-ID: <20240606194525.cdnnidxurejsjtx4@treble>
+References: <CAHk-=wjHf6C_74VQPxmge-sMmu5yuhmNor1TaO0Uq--zrA13HA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240606193202.GD9487@darkstar.musicnaut.iki.fi>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <CAHk-=wjHf6C_74VQPxmge-sMmu5yuhmNor1TaO0Uq--zrA13HA@mail.gmail.com>
 
-On Thu, Jun 06, 2024 at 10:32:02PM +0300, Aaro Koskinen wrote:
-> On Thu, Jun 06, 2024 at 07:51:04PM +0300, Andy Shevchenko wrote:
-> > Let the kememdup_array() take care about multiplication and possible
+On Thu, Jun 06, 2024 at 11:42:40AM -0700, Linus Torvalds wrote:
+> So this is related to my currently very ugly hack at
 > 
->           ^^^^^
->           Typo.
-
-Aha, thanks!
-
-> > overflows.
-
-...
-
-> > -	hwmods = kmemdup(ohs, sizeof(struct omap_hwmod *) * oh_cnt, GFP_KERNEL);
-> > +	hwmods = kmemdup_array(ohs, oh_cnt, sizeof(*hwmods), GFP_KERNEL);
+>    https://lore.kernel.org/all/CAHk-=whFSz=usMPHHGAQBnJRVAFfuH4gFHtgyLe0YET75zYRzA@mail.gmail.com/
 > 
-> Maybe same result, but I guess the 3rd parameter should be count?
+> where I'm trying to do "runtime constants". That patch actually works,
+> but it's flawed in many ways, and one of the ways it is flawed is that
+> I really want to put the "this is the use for symbol X" in a section
+> of its own for each X.
+> 
+> Now, creating the sections is trivial, that's not the problem. I'd
+> just make the asm do
+> 
+>         ".pushsection .static_const." #sym ",\"a\"\n\t" \
+>         ...
+>         ".popsection"
+> 
+> and the linker script will just do
+> 
+>         KEEP(*(.static_const.*))
+> 
+> and I'm done. Nice individual sections for each of the runtime constant symbols.
+> 
+> However, for the fixup part, I then really want the section start and
+> end addresses, so that I can iterate over those uses for a particular
+> named symbol.
 
-Actually it is going to be changed to follow kcalloc().
-https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?id=0ee14725471c
+That should be trivial.  But ideally the interface would be less magical
+and wouldn't need objtool to sprinkle any pixie dust.  Could it be
+implemented similar to static keys by making the static const variable
+an opaque structure instead of just a "normal" variable?
+
+  DEFINE_STATIC_CONST(dentry_hashtable);
+
+That could create something similar to 'struct static_key' which
+correlates the const variable with all its use sites.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Josh
 
