@@ -1,79 +1,183 @@
-Return-Path: <linux-kernel+bounces-203519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22AC48FDC79
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 04:04:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6836C8FDC83
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 04:07:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D662B22C51
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 02:04:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1D7D286F16
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 02:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C331758D;
-	Thu,  6 Jun 2024 02:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C1319D8A4;
+	Thu,  6 Jun 2024 02:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Z1kygmFU"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dcA5W7A8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119F41373;
-	Thu,  6 Jun 2024 02:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF821401C
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 02:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717639464; cv=none; b=U5oo9iCkQu9SR2iH6wi2/8pVE2E/4/rVUfoIgJNv6xXERGRYC9o6qH8wBWGDG2PKTfLWqdww19PooiyLSHS+GnE2AaP9C7IvjRlFayzTOT0GqdCTmRFDcZS2Lc1jj1pS1o0c+YI1xOtOO0yeUCzqEr4kGPWPTVjmvguK3PcgKfc=
+	t=1717639620; cv=none; b=HLWy+WSa/8pL+s4zYn/NeoGi1LvaMp1quEZzrASQ8jMu7GHONbM8LOC9/9eYytXr3LLdQhLd7oX/8MfkIKe2EOxg+i2cmBXFGUOimbrsIiswfgO2v5kv/TnayAeOb2v8uCOxdPUlSjyP9CUEZbmaI74MbXRM+zD1evQqmdCh9p4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717639464; c=relaxed/simple;
-	bh=KchfyRw5yhyXWwSmy9ySHIAwLenL1pYcPWIufZuPhMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gLsbXFqae09GXl5Le+hx+ChEed2GDkudCXdV4Wlk86FOCQzAawJeVsKACKe1kAOKczwO8ysMjrz37+vNLkUs1tzHnzswv+hs6iYGEZLHQxHZqnI3YUkOwf2afHW4qStU1Js7nK2/ua5SJPkT86d+aef2dOJ0D/dPuVHrtJXuL+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Z1kygmFU; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=jSY0bvOqtELArheckRfbvM1kpjDwefKlvF+Tb6ce0FM=; b=Z1
-	kygmFUugkDAgM/z2UdBLJ/wViHTWhRMHHs8zGh8DQMzMlzakXTribvSF1kb4jvv5XfSiGFDVEcd2s
-	wqkgdlOLWuwOgs2JH1QC7E/MQdavLaZZlKsE5nSFhp1dLrthIdk01T8UhMfDlvBW+sfrzy7XbsL9F
-	TyR+kTH1pMWZzDM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sF2UD-00Gy0R-HX; Thu, 06 Jun 2024 04:04:17 +0200
-Date: Thu, 6 Jun 2024 04:04:17 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Kamil =?iso-8859-1?Q?Hor=E1k?= - 2N <kamilh@axis.com>
-Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-	hkallweit1@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/3] net: phy: bcm54811: New link mode for BroadR-Reach
-Message-ID: <3bd5c993-d763-4191-8a88-fcd56d9bfb4c@lunn.ch>
-References: <20240605095646.3924454-1-kamilh@axis.com>
- <20240605095646.3924454-2-kamilh@axis.com>
+	s=arc-20240116; t=1717639620; c=relaxed/simple;
+	bh=O1pxJnfGlDL+o5WOmDo3d+UFg4FCJmMKJsHIxcmUatg=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=aNyILp5MFQJ+htIE/nvAr0guGPxjv29IekInncWIYhEZQZhV66T9h0lA3GzoWCjb6Ipt/VhYL27jC4wefm18H9zkX+nty+t9MJiLoIkQzpV0dgB1uRAN5JaltHjSuFZwi85RE/EXL+D89vKxEf9rGohXD5pP5kj23TrsJKhJ5ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dcA5W7A8; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717639619; x=1749175619;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=O1pxJnfGlDL+o5WOmDo3d+UFg4FCJmMKJsHIxcmUatg=;
+  b=dcA5W7A8o4hBtZ8CaUXRUNXuPcPBibXJneb8sowSLchtDV0jBxWRbnBt
+   6Et/GH2VEAm30ctZ+RdjyIo2Ax/HX1Dd5HoEMiGyesVy5lixP/kcanj3+
+   YyK2d71v5tlCDGl7Hw4tupzbRwu+EANjuh7BbzYSYzG/wUE7IdaK7TBbO
+   GwDifb5lBtU4ezcaivPLqvQHQ6/18FmmW6s4BwnURrR3Kt7ffQJt2RcVb
+   FbyYKre9Euee2ARUyTZ8xTDWMhOkRcOAc7L01PnSSZ8/Koelp/zoKxP/j
+   EIfxfrPO965ykB/h+ojyRmjO+hcsldYVONPYkqeJ2OyBtN/oMjMF5jDzg
+   w==;
+X-CSE-ConnectionGUID: hOT/YcJkRNmhMlgWwWvsIQ==
+X-CSE-MsgGUID: YGv1TLAARBmvFHmk5uQxCQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="14241616"
+X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
+   d="scan'208";a="14241616"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 19:06:59 -0700
+X-CSE-ConnectionGUID: y0WgSW4NQBOS4MM9Agg9Iw==
+X-CSE-MsgGUID: RA+mTl0pQRWQMmAwcw88gg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
+   d="scan'208";a="37813441"
+Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
+  by fmviesa008.fm.intel.com with ESMTP; 05 Jun 2024 19:06:54 -0700
+Message-ID: <75d0e879-a807-420e-bbf6-2ba4238329cf@linux.intel.com>
+Date: Thu, 6 Jun 2024 10:04:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Kalle Valo <kvalo@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Alex Williamson <alex.williamson@redhat.com>, mst@redhat.com,
+ Jason Wang <jasowang@redhat.com>, Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>, iommu@lists.linux.dev,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/22] iommu: Add iommu_user_domain_alloc() interface
+To: Yi Liu <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
+References: <20240604015134.164206-1-baolu.lu@linux.intel.com>
+ <20240604015134.164206-2-baolu.lu@linux.intel.com>
+ <445fae9f-ea1e-4864-9f0e-f348c51146a1@intel.com>
+ <91a42f46-060a-4430-a10a-7bfded67c4a9@linux.intel.com>
+ <b205bcfb-9972-4e03-9994-62419117d76f@intel.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <b205bcfb-9972-4e03-9994-62419117d76f@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240605095646.3924454-2-kamilh@axis.com>
 
-On Wed, Jun 05, 2024 at 11:56:44AM +0200, Kamil Hor�k - 2N wrote:
-> Introduce a new link mode necessary for 10 MBit single-pair
-> connection in BroadR-Reach mode on bcm5481x PHY by Broadcom.
-> This new link mode, 10baseT1BRR, is known as 1BR10 in the Broadcom
-> terminology. Another link mode to be used is 1BR100 and it is already
-> present as 100baseT1, because Broadcom's 1BR100 became 100baseT1
-> (IEEE 802.3bw).
+On 6/5/24 2:23 PM, Yi Liu wrote:
+> On 2024/6/5 10:00, Baolu Lu wrote:
+>> On 6/4/24 4:03 PM, Yi Liu wrote:
+>>> On 2024/6/4 09:51, Lu Baolu wrote:
+>>>> Commit <909f4abd1097> ("iommu: Add new iommu op to create domains owned
+>>>> by userspace") added a dedicated iommu op to allocate a user domain.
+>>>> While IOMMUFD has already made use of this callback, other frameworks
+>>>> like vfio/type1 and vDPA still use the paging domain allocation 
+>>>> interface.
+>>>>
+>>>> Add a new interface named iommu_user_domain_alloc(), which indicates 
+>>>> the
+>>>> allocation of a domain for device DMA managed by user space driver. All
+>>>> device passthrough frameworks could use this interface for their domain
+>>>> allocation.
+>>>>
+>>>> Although it is expected that all iommu drivers could implement their 
+>>>> own
+>>>> domain_alloc_user ops, most drivers haven't implemented it yet. 
+>>>> Rollback
+>>>> to the paging domain allocation interface if the iommu driver hasn't
+>>>> implemented this op yet.
+>>>>
+>>>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>>>> ---
+>>>>   include/linux/iommu.h |  6 ++++++
+>>>>   drivers/iommu/iommu.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+>>>>   2 files changed, 48 insertions(+)
+>>>>
+>>>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+>>>> index 7bc8dff7cf6d..6648b2415474 100644
+>>>> --- a/include/linux/iommu.h
+>>>> +++ b/include/linux/iommu.h
+>>>> @@ -780,6 +780,7 @@ extern bool iommu_present(const struct bus_type 
+>>>> *bus);
+>>>>   extern bool device_iommu_capable(struct device *dev, enum 
+>>>> iommu_cap cap);
+>>>>   extern bool iommu_group_has_isolated_msi(struct iommu_group *group);
+>>>>   extern struct iommu_domain *iommu_domain_alloc(const struct 
+>>>> bus_type *bus);
+>>>> +struct iommu_domain *iommu_user_domain_alloc(struct device *dev, 
+>>>> u32 flags);
+>>>>   extern void iommu_domain_free(struct iommu_domain *domain);
+>>>>   extern int iommu_attach_device(struct iommu_domain *domain,
+>>>>                      struct device *dev);
+>>>> @@ -1086,6 +1087,11 @@ static inline struct iommu_domain 
+>>>> *iommu_domain_alloc(const struct bus_type *bus
+>>>>       return NULL;
+>>>>   }
+>>>> +static inline struct iommu_domain *iommu_user_domain_alloc(struct 
+>>>> device *dev, u32 flags)
+>>>> +{
+>>>> +    return ERR_PTR(-ENODEV);
+>>>> +}
+>>>> +
+>>>>   static inline void iommu_domain_free(struct iommu_domain *domain)
+>>>>   {
+>>>>   }
+>>>> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+>>>> index 9df7cc75c1bc..f1416892ef8e 100644
+>>>> --- a/drivers/iommu/iommu.c
+>>>> +++ b/drivers/iommu/iommu.c
+>>>> @@ -2032,6 +2032,48 @@ struct iommu_domain *iommu_domain_alloc(const 
+>>>> struct bus_type *bus)
+>>>>   }
+>>>>   EXPORT_SYMBOL_GPL(iommu_domain_alloc);
+>>>> +/**
+>>>> + * iommu_user_domain_alloc() - Allocate a user domain
+>>>> + * @dev: device for which the domain is allocated
+>>>> + * @flags: iommufd_hwpt_alloc_flags defined in uapi/linux/iommufd.h
+>>>> + *
+>>>> + * Allocate a user domain which will be managed by a userspace 
+>>>> driver. Return
+>>>> + * allocated domain if successful, or a ERR pointer for failure.
+>>>
+>>> do you want to mention that this is for paging domain allocation?
+>>
+>> You are worrying about its confusion with nesting domain allocation,
+>> right?
 > 
-> Signed-off-by: Kamil Hor�k - 2N <kamilh@axis.com>
+> yes. As I replied in last version, user_domain is a bit confusing since
+> nested domain is also a user_domain. That's why we introduced the
+> alloc_domain_user op.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+As I discussed with Jason in another reply, I will drop the
+iommu_user_domain_alloc() interface as it is currently iommfd-specific
+only and not generic for a common interface.
 
-    Andrew
+Best regards,
+baolu
 
