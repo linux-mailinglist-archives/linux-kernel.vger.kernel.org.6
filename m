@@ -1,119 +1,113 @@
-Return-Path: <linux-kernel+bounces-203923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC4C8FE208
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:06:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 398FE8FE214
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B96EB28F4F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:05:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0A2C28BE1B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F74714F10F;
-	Thu,  6 Jun 2024 09:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA5714D6E7;
+	Thu,  6 Jun 2024 09:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="B+gYOMfo"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DNjPGWpR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419EE14EC71;
-	Thu,  6 Jun 2024 09:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67962E3E5;
+	Thu,  6 Jun 2024 09:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717664481; cv=none; b=F+U+aTWEtqB0p2Q8CmgzdGmO8oBP7ogFcjwKiWIaWFq+RJbaoWOZSPTmyTBG2JKiRBtY6q/LDeu4987lEEm6gocg8/kWRNblhIk29wiUiYCWyFXjmoNgY+BHHqdW500U7Le++ybLejp9k43fdg7wmOM60mm9qeEDyoPu1wNuX0A=
+	t=1717664540; cv=none; b=CS4zZ8jm+VDVapIfj3DMDxgVg1BJvbbcj5sxKUehYXqcm1PWAIXJJ1BHncFfVHWviI7jW905kywhp+BE7IjHsAaS3ljJ7xebETSa45RMhLW0nvpejadit5My79fZxebejJk+rMkBuJd/R8ZaGk9NAayzC+li0h52bU3pSvhMcVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717664481; c=relaxed/simple;
-	bh=RGDQk9fEPK8TgeW16JgNCDUsvYQVkjgaqUjy4gYx4Tg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NNX64AvMxw2BcMSqCwusYUjpRAis4OzpIF9Lid49OqbHZRKQzOQl/igraZg/9Tm3XxL+OK2uPRTYNZh5T5cSHaGzkieO8/z8jDrMbGlxlyU8UJO7rtMD0htN8R2UicpYGsMeY2ZbxmB9SecA7zfsRPtX6zLeqB/UQLCkiv4UoCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=B+gYOMfo; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B9AB01BF20E;
-	Thu,  6 Jun 2024 09:01:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
-	t=1717664472;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P6nHOSRQUTf8lskncbcfrnOE9UYbIGtkvvS9zsNteIA=;
-	b=B+gYOMfoQgw4FyCl7kj7mLnNlrqSsM7ytiJnzZz8Q+UEsu9yEbM0jF6r7MZ6XbJ5Rff/C/
-	vMWapylmnzqLdpbZXMWTMMoeG0wnWNOhd5q/G8AlcxneKdkkH08Z7wLDmDYk7aFLM6kwfZ
-	BTmZi3nz/kET4STOEYSgG/C52WmwE+TKOfkyl2u4CckHlIzim2M7XHnp8zHqcQJFBBbKFa
-	/PsVRVDQ5aWSS7uLf23fHfBKuNCXV2kDl5HhHWvapM6h7OwKDC1kWngXRQmaxQVGRruvbM
-	XDI6/HzXUaEvUdATk7M7pxvn62d9/uUbbm1Fg47T2P1Rks/5iAbhBcRA6b+RfA==
-Message-ID: <0ae387c1-31b2-4e87-aa7d-f98e3c90e985@arinc9.com>
-Date: Thu, 6 Jun 2024 12:01:03 +0300
+	s=arc-20240116; t=1717664540; c=relaxed/simple;
+	bh=aI1uY2JkIFv49wkndJdFla4RkxMA1ro2reo6rPm40Lc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cF/zLY3H8j2IDcsAtLw7eZ5kxN84JY4mAFiJMApGI9+A7RJUUWzaQAq+zIci0ZddNsfMzz3et0JvPEEUVr14Lo79s1T8KHiVcMXAFqRYu+BsAE2MYwyKKBv6YAtIZbdWJ88M4KrJCWsSVaCQJPoKHPwCkW61TGcsqlltnjtAcko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DNjPGWpR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E221C3277B;
+	Thu,  6 Jun 2024 09:02:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717664539;
+	bh=aI1uY2JkIFv49wkndJdFla4RkxMA1ro2reo6rPm40Lc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DNjPGWpRTKgNoFfrNShpv8HfmT32GYqbdvbxB96anseRQkVufCH7u1hQPI34iHI/F
+	 eOriX6W0KiC0mbFTscBG4842Okh+GnpYAR4ogQzjzLTBjQnb4KHgT57pkjMM8C77HR
+	 0KKThcg0p55reSWy9rgCmfftGczF/e3e8GReYaIwtvl11pifEoSX5dY97QhCS/DhP0
+	 Ax5puUo9CkA3AogUQs72WezouRsBzuCu7XQ8CzWCp7wglsg3YExXxAWZzOe4U28037
+	 YZYaLZN4qeia3Q4JVdr56KU5tnKzMhVT/ArqKnVLZcMUs/o8dssTvKYooiXijmJ4ED
+	 n1PsG6pqdXVAw==
+From: Michael Walle <mwalle@kernel.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Li Yang <leoyang.li@nxp.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Priit Laes <plaes@plaes.org>,
+	Michael Grzeschik <m.grzeschik@pengutronix.de>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Michael Walle <mwalle@kernel.org>
+Subject: [PATCH v2 00/13] ARM: dts: kontron-samx6i: various fixes
+Date: Thu,  6 Jun 2024 11:01:53 +0200
+Message-Id: <20240606090206.2021237-1-mwalle@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: mt7622: fix switch probe on bananapi-r64
-To: Thorsten Leemhuis <regressions@leemhuis.info>,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- Frank Wunderlich <linux@fw-web.de>, Paolo Abeni <pabeni@redhat.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Daniel Golle <daniel@makrotopia.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- frank-w@public-files.de, Rob Herring <robh@kernel.org>
-References: <20240516204847.171029-1-linux@fw-web.de>
- <a29dd7d1-40a8-4c88-99aa-651a3305b640@arinc9.com>
- <5AEE5668-0C8E-4EE4-A398-66CB99DF5650@public-files.de>
- <43aacd9d-b851-4100-8ccc-878ac6ae10f8@leemhuis.info>
- <698cf562-1ca9-4aa3-be7e-a1474b612c5b@leemhuis.info>
- <0cba095c-3d55-416a-a7ad-b359129731cf@arinc9.com>
- <714da201-654b-4183-8e5e-8ff0b64fe621@leemhuis.info>
-Content-Language: en-US
-From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-In-Reply-To: <714da201-654b-4183-8e5e-8ff0b64fe621@leemhuis.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: arinc.unal@arinc9.com
 
-On 06/06/2024 11.26, Thorsten Leemhuis wrote:
-> On 31.05.24 08:10, Arınç ÜNAL wrote:
->> I had already submitted a patch series that would've prevented this
->> issue back in 14 March 2024 [1]. I've asked numerous times for the patch
->> series to be applied [2][3][4][5].
->>> Eventually Daniel asked for some changes [6]. But I won't have time to do
->> that anytime soon and I think the patch series is good enough to be applied
->> as is.
-> 
-> Then I guess we need some other way to resolve this in mainline to unfix
+While working on a new PHY support for this board I've noticed quite
+a few errors. Fix these and introduce an actual board for the
+module. For now, there was just a dtsi and no actual user of it.
 
-I don't believe we need another way to resolve it. I've already told that
-the patch series is good enough to be applied as is and I don't see any
-responses with reasons against this here.
+v2:
+ - new patch to fix the node names to make the schema happy
+ - new patch to fix the PCIe reset line polarity
+ - new patch to remove the unused and invalid wake-up-gpio property
+ - add required poperties for the supply voltages to the wm8904 node
+ - enable PCIe in the ADS2 device tree include
 
-> Frank's device. The two obvious options are afaics:
-> 
-> * revert the culprit (868ff5f4944aa9 ("net: dsa: mt7530-mdio: read PHY
-> address of switch from device tree")) and reapply it in a later cycle
+Michael Walle (13):
+  ARM: dts: imx6qdl-kontron-samx6i: fix phy-mode
+  ARM: dts: imx6qdl-kontron-samx6i: fix PHY reset
+  ARM: dts: imx6qdl-kontron-samx6i: fix board reset
+  ARM: dts: imx6qdl-kontron-samx6i: cleanup the PMIC node
+  ARM: dts: imx6qdl-kontron-samx6i: fix SPI0 chip selects
+  ARM: dts: imx6qdl-kontron-samx6i: fix product name
+  ARM: dts: imx6qdl-kontron-samx6i: always enable eMMC
+  ARM: dts: imx6qdl-kontron-samx6i: add SDIO_PWR_EN support
+  ARM: dts: imx6qdl-kontron-samx6i: fix node names
+  ARM: dts: imx6qdl-kontron-samx6i: fix PCIe reset polarity
+  ARM: dts: imx6qdl-kontron-samx6i: remove wake-up-gpio property
+  dt-bindings: arm: fsl: document Kontron SMARC-sAMX6i boards
+  ARM: dts: imx6qdl-kontron-samx6i: add actual device trees
 
-Sorry, no. There's nothing wrong with that patch. The actual cause of this
-issue is the patch that introduced this device tree source file with the
-wrong PHY address.
+ .../devicetree/bindings/arm/fsl.yaml          |  12 ++
+ arch/arm/boot/dts/nxp/imx/Makefile            |   2 +
+ .../nxp/imx/imx6dl-kontron-samx6i-ads2.dts    |  12 ++
+ .../dts/nxp/imx/imx6dl-kontron-samx6i.dtsi    |   2 +-
+ .../dts/nxp/imx/imx6q-kontron-samx6i-ads2.dts |  12 ++
+ .../dts/nxp/imx/imx6q-kontron-samx6i.dtsi     |  25 +--
+ .../nxp/imx/imx6qdl-kontron-samx6i-ads2.dtsi  | 148 ++++++++++++++++++
+ .../dts/nxp/imx/imx6qdl-kontron-samx6i.dtsi   |  58 ++++---
+ 8 files changed, 225 insertions(+), 46 deletions(-)
+ create mode 100644 arch/arm/boot/dts/nxp/imx/imx6dl-kontron-samx6i-ads2.dts
+ create mode 100644 arch/arm/boot/dts/nxp/imx/imx6q-kontron-samx6i-ads2.dts
+ create mode 100644 arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i-ads2.dtsi
 
-> * apply Frank's patch (or an improved one) in this thread (and if needed
-> revert it when some better changes emerge.
-> 
-> Arınç ÜNAL, could you please comment on that and ideally handle the
-> necessary tasks, as it's your patch that causes the regression.
+-- 
+2.39.2
 
-I don't see any necessary tasks for me to handle. AngeloGioacchino Del
-Regno whom is the only person I know that maintains these device tree
-source files can simply apply the patch series that I have already
-submitted and we can all move on. I haven't heard from them whilst the
-patch had been waiting since March. So I'm not sure who's going to apply
-this patch, and to which tree.
-
-Arınç
 
