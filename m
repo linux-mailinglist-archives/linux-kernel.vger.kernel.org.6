@@ -1,90 +1,78 @@
-Return-Path: <linux-kernel+bounces-204452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 801278FEF64
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:50:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F6B28FEF67
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:51:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2F4A2861F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:50:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABB6F287E18
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB731A2FB6;
-	Thu,  6 Jun 2024 14:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA766197A7F;
+	Thu,  6 Jun 2024 14:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WeROrlgf"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YXJv/ZWG"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884E71A2C2C
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB2E197A75
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717683875; cv=none; b=R5metLKJoFi+xCsRgOXbFnQLxEJJTZ186V4hVWks+Fb2G4NM1mvagz6ceQvE5S+FmUHF43kNvuMMErMwI60fT4ANDG2fVWURrW6lVzaLj+FQ1JmgAaxYxjphD68XiFATFM9ZMyWPIQRJCF3ud1K33eNAg1jwDsVZVRMDxfl2Bfc=
+	t=1717683889; cv=none; b=C5FarwqbmaTz1EbU8tUit8kQA9xdhp5n87yQeWZPllDvOtePuRUBGz3xl2bWNFHIvuhp7qQ3RtlkaPzldvzEJquAxXAIAvnd3VtJU6t6k0Ph7vaO0tjycQcYi7aXmRQH0AsdxW0BicpEWasWJoMWMcHxcaGDUIq1J+rcvmn4O1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717683875; c=relaxed/simple;
-	bh=8XJvY4PRNd7QP5IlcghDRm7uf8FuIIF+wmBZT8DMjQo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OVb50F44/Dhle8QvyGymHWEWyWsBJb3dtufVrYf4i2vpw8TCe2oFaMDWDNUwEX/9Ti1E1YqwlyqGITPaBbbiZdsEd1HZqQ0eRVMaitvUAgGnn7gC6XjwcsZzlrCNZbY4Wtj9fsoQ0Y5QDv1Iasg44cED0/yqPakLJV0McR13WIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WeROrlgf; arc=none smtp.client-ip=209.85.167.47
+	s=arc-20240116; t=1717683889; c=relaxed/simple;
+	bh=2wdmFMwyhJogEgHyP/JfsfCGdURDardPyYMuizSHKdk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Claui3eeAr3ScqT/JbAFq6jtyjlmIJ+yDLIUHdCciiSNEvLntlbgLzYJRmfhLXTVtuWfOPCTo1dFzwqTizohd4YhWmvXpehBp/Yj/0qJNJoFu+C+T9X2/esNAn0e8/EPN1KKr4hZR/a5bJlIhvyUyWTXxubkXK5g/UZ9y4t63uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YXJv/ZWG; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52b938587a4so1192607e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 07:24:33 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52b92e73e2fso1136315e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 07:24:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717683872; x=1718288672; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=++6vpzo3dEirc2BXnRm0i3mFbJVPl95CbYYtfzrVJSQ=;
-        b=WeROrlgfNQ1p0/j3NdlyeOT/+NO75Z1fur4SfX8sst39SBCzDJcHmKeKIxhpsn8SI+
-         currbqjo+DETlrHvAD+JuWpMLoTzVbIhHluRjtNeJ8OV9iBNEekCrXBNvR97GspzHPZ1
-         nffqEIjyRJuRRdKvOyIOLBuM3LMnCPRRz3mda8ObD/kJL4jzLKlR2kkYtcSnm6XG1SbL
-         eFUaOZ3H2KYiRvg1EOs3+e2GznVMLEIDzu/Bl68Vee9O+s/n3rq/Ar0JtJf68+DyZgsq
-         TTJ58EQFkFRihRSufULY9iRXzTre4Qssh/sJTTmxf5/kJvRkvq0AQJQhtBKC+0F4sxED
-         EtPA==
+        d=linaro.org; s=google; t=1717683886; x=1718288686; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xb5IzxHPDHxF7XfxqfesNhkUf5qflUpZIi271IJuxyc=;
+        b=YXJv/ZWGibkE/2hm1flZs8STNfQqzDCZ1s993q/6+4oOmT5n1ZNo/CaicmYWI+j433
+         EEPy3iUSxhFNa7D+h48x4+sYWoaj8PHLHXVfFRfmNvuMAk6hSQ8oUJHpc3I3f6e1fasi
+         N/brgnlIGmZ+MpX8t1FkHjzp2ncWdNP1CFVQBTgbZRLRo9kjdR3VorxmCbWfHMQDp9pA
+         6Euz1uL7JCzlW1DzDstAr1UT/Su8Xa5os3FnSROSl55YsbbxTz4VSevv66UHSme/rsI6
+         lY5ToU6pLoPER/1BM6YOUQ4gKk1aJJIN9I5WaY5uB4aaGx+W2FJmUeRNzfA2vUEyr8aW
+         9yPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717683872; x=1718288672;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=++6vpzo3dEirc2BXnRm0i3mFbJVPl95CbYYtfzrVJSQ=;
-        b=QsvvLkjDPkr0CtPB8kFR/M8dGL5vBxyy6IVHsLTtS69tL4ULiqRRvmDdZgNLGvHkYV
-         ALi/WYa8qarU5dka6AaKQ+glDmbBFvyAxril2HoH0Zs57voP/ifTyNUFKCjTq/Vk8fgO
-         997sx4NmwC1npjUq7w329IgGnjRsTIfTB9nBVRLCnPekGUvdi+4MJJJAKWhknEO8cWjd
-         C8GQCh6vYXmmV15CzK70xGHUg5I+tn7OzsdRLqKFZMV4+FgtNA4+I4tiooeGI01I12/S
-         cgNxgFBQ446I2qQGWn5594gJrz5GZijGHsMP2uXlx7eg51nL3man6GN3DnQRGuselVsk
-         rBOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXR8Sx9ZoadZm2B5oPcdB3ztMEceH23KPpF8r4iAjooAEnJr5E7EpuSrGzvRR8VfjcYelkzOhrqUlDVmkPFFHTMjkwv5twc9WSK2aBQ
-X-Gm-Message-State: AOJu0YxbNttZEKXvRHGKaXsE1SX2PU+/ipFPypZ8YVIHTf8VsEPc5hPj
-	oMfIq+Z/1g20u8+DopBAOiIRlbAQIyMM9EzHOfo5MNVRfzEBDA55HxbFxg87Mz4=
-X-Google-Smtp-Source: AGHT+IGK6NHwjN3jn4VsJlrqvbN9hjMoiszVr84okdXBzSyf4bSyTjksFWYG+VZCJ382BSeLaVQeGw==
-X-Received: by 2002:a05:6512:2035:b0:529:b609:fa0c with SMTP id 2adb3069b0e04-52bab50b666mr2809751e87.67.1717683871828;
-        Thu, 06 Jun 2024 07:24:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717683886; x=1718288686;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xb5IzxHPDHxF7XfxqfesNhkUf5qflUpZIi271IJuxyc=;
+        b=BuVfERy5ReZ47/2u/GTkpiYK07gtM0ujRZsS56uPbwWlkQ+oy5JvXA8rnqfOOd6+D+
+         U8fzJOKPmhF1x7b2Wgv3ALxY/Yx3wjd0zVAUxDutRNjQ2v+rZTQzGrFjCR1Jsd0j1dlC
+         O6MPgt0SHutSRtVvEDBTlLvk65ebjEIqzUpH2bX8Xltyrw+b4wgQxdeWjXFL/bWGg15y
+         zj3J3k3Os2k3gnbg7bWI9jezHTKDtzqyl5iT23IMrYqTPsu3/7zHncq8gscWc1lRyf3f
+         a9tr7eAIt3w2jQ8ZpvamZPuQBI8QxgfIKQ3yQg10Zeab6AjhiwaxVdhPSLH4v8RWlab3
+         YqpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXzRNM+Z+c3t/sVlHc0TGa8O0LxGwJik6Q6I36X7eWoB8KaerPXclQ0wrNeVmhLHP3zedDovZw50CJsLU2qK1uJnGC6nyPxO0tTIjhf
+X-Gm-Message-State: AOJu0YwWAFPzFDKHUQnNfUeGtlJMnYeJ05uMEQl+NjPCPZ9zn7zzBz5i
+	WBuzWYpW7PNJ/zy6T7cWBeqory0ZVGc8rBKC5ACnPjFahIxHguttCRpEyfVeC9I=
+X-Google-Smtp-Source: AGHT+IEx8HRSWaBTtfYg3nCa8mP+YSdRQvnvQSL1xfyvSFIVXLKtPpSIDoPSiqW4rrkYIIIiUzFSSQ==
+X-Received: by 2002:a05:6512:110f:b0:52b:8435:8f26 with SMTP id 2adb3069b0e04-52bab4f43b5mr4234853e87.44.1717683886172;
+        Thu, 06 Jun 2024 07:24:46 -0700 (PDT)
 Received: from krzk-bin.. ([110.93.11.116])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb423ceeasm211659e87.185.2024.06.06.07.24.29
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb41e1fe0sm213854e87.58.2024.06.06.07.24.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 07:24:30 -0700 (PDT)
+        Thu, 06 Jun 2024 07:24:45 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Thomas Kopp <thomas.kopp@microchip.com>,
-	linux-can@vger.kernel.org,
-	netdev@vger.kernel.org,
+To: Mircea Caprioru <mircea.caprioru@analog.com>,
+	Peter Rosin <peda@axentia.se>,
 	linux-kernel@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH net-next 3/3] can: mcp251xfd: simplify with spi_get_device_match_data()
-Date: Thu,  6 Jun 2024 16:24:24 +0200
-Message-ID: <20240606142424.129709-3-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] mux: adgs1408: simplify with spi_get_device_match_data()
+Date: Thu,  6 Jun 2024 16:24:43 +0200
+Message-ID: <20240606142443.130517-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240606142424.129709-1-krzysztof.kozlowski@linaro.org>
-References: <20240606142424.129709-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,36 +85,24 @@ Use spi_get_device_match_data() helper to simplify a bit the driver.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ drivers/mux/adgs1408.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c b/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
-index 1d9057dc44f2..4b7e08e8ed56 100644
---- a/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
-+++ b/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
-@@ -1989,7 +1989,6 @@ MODULE_DEVICE_TABLE(spi, mcp251xfd_id_table);
+diff --git a/drivers/mux/adgs1408.c b/drivers/mux/adgs1408.c
+index 22ed051eb1a4..5386cfedcb06 100644
+--- a/drivers/mux/adgs1408.c
++++ b/drivers/mux/adgs1408.c
+@@ -59,9 +59,7 @@ static int adgs1408_probe(struct spi_device *spi)
+ 	s32 idle_state;
+ 	int ret;
  
- static int mcp251xfd_probe(struct spi_device *spi)
- {
--	const void *match;
- 	struct net_device *ndev;
- 	struct mcp251xfd_priv *priv;
- 	struct gpio_desc *rx_int;
-@@ -2081,13 +2080,7 @@ static int mcp251xfd_probe(struct spi_device *spi)
- 	priv->pll_enable = pll_enable;
- 	priv->reg_vdd = reg_vdd;
- 	priv->reg_xceiver = reg_xceiver;
--
--	match = device_get_match_data(&spi->dev);
--	if (match)
--		priv->devtype_data = *(struct mcp251xfd_devtype_data *)match;
--	else
--		priv->devtype_data = *(struct mcp251xfd_devtype_data *)
--			spi_get_device_id(spi)->driver_data;
-+	priv->devtype_data = *(struct mcp251xfd_devtype_data *)spi_get_device_match_data(spi);
+-	chip_id = (enum adgs1408_chip_id)device_get_match_data(dev);
+-	if (!chip_id)
+-		chip_id = spi_get_device_id(spi)->driver_data;
++	chip_id = (enum adgs1408_chip_id)spi_get_device_match_data(spi);
  
- 	/* Errata Reference:
- 	 * mcp2517fd: DS80000792C 5., mcp2518fd: DS80000789C 4.
+ 	mux_chip = devm_mux_chip_alloc(dev, 1, 0);
+ 	if (IS_ERR(mux_chip))
 -- 
 2.43.0
 
