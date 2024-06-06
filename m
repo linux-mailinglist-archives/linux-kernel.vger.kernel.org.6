@@ -1,93 +1,139 @@
-Return-Path: <linux-kernel+bounces-204654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB3B8FF1C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:11:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 027698FF1D0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:12:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E35701F25E87
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:11:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9466B28494A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8881990C8;
-	Thu,  6 Jun 2024 16:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8E4199223;
+	Thu,  6 Jun 2024 16:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O7+WvXZ5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lIL9SuzP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5981990B5;
-	Thu,  6 Jun 2024 16:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878DA1991B6;
+	Thu,  6 Jun 2024 16:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717690175; cv=none; b=fVRJBas+qQQf8yWNogo4ZkJ9i4ph3qmofcQyEzt7SzanRFyj+Z28h24ADnCAiz7OCVm5HAcjqcn5MDCAJBKIqu70B23wG7I+kzzkel5dAa3F7HwwYF3DAlGCIoV/lIMZ5bQoWriNy3aHkZ/AORcWkUKImxKDIpC3WZzBb/oGEok=
+	t=1717690239; cv=none; b=IF19vK12HVd7m6yJLsGD5XZ7JfYTPxxRVe/P+PPXMj93nIAQz7WJ2ZH+Yb6z1UdTBik1uIIt3rSneTENipBZ+Y54FUaixo6H8q/PZPGp7SXH+znIvqEHHzEkTy477HWizkbbEepw4wPD3ZeTMGh9BHyyhvhOzYZmqOFbYNaoCRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717690175; c=relaxed/simple;
-	bh=Y1FSBBDktAab0PFUzo939Grq4Np65U4h7zGSymdlWNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YTRQefAeu7aVaFtx1vjQy0DlCPEahOY9mq6R1s/LXVsxyYmd838QSK0BAC8K4cp/XQcaKe+EblXBdDPv51jBahP2UjAzp5cNGq9zcQRlkjMgA3ogcJlXua7Z++PUI7NT3KqwF9ATQDX43DT73wn2H0Z3iJFrKn7E0cx9HFECFzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O7+WvXZ5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6EA4C2BD10;
-	Thu,  6 Jun 2024 16:09:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717690175;
-	bh=Y1FSBBDktAab0PFUzo939Grq4Np65U4h7zGSymdlWNU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O7+WvXZ5MN6Afpj3/aCgcCbfucfC4eknHYJFO7H8w8+oHVCbRbuK2xt1OXm8ScUNE
-	 8cqhN296vT0hXcwAmOJ7+APtaMgyo7tAdBWc74r/i7mZySygQKUDK6JzrM+aOv5mdl
-	 zWVZGgHgcV9QByA3GFV7IZjr6INxXVForKcqxpRMvnOj75LlapxDQZ6O1NPYoXBAWX
-	 1gJNiGQW+Xczch6ZSw8lg5wG+dlHBXRR9ZMI69+vE9w4CREiyV1F+lKSinnzADQN/7
-	 TX5qZvHSnzrcfvyDJKdb7/pjryXYykXdKW4magflnPUPKpDcxm6rZP8ZYNyIcR/Skr
-	 X9Ckn+sZx5neg==
-Date: Thu, 6 Jun 2024 17:09:30 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alex Bee <knaerzche@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+	s=arc-20240116; t=1717690239; c=relaxed/simple;
+	bh=981GD+z8786+C1hp7EEXk+A3A1FHkVkYoLEaJHuT4kc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=T5kzeRBt/B/hzzBtQcdvdu9i2xA7jt8BRe3dpM/DPKGEaJPPKQuxP2cLVl6k9RzFzPXgNm2Oe+UBYvqOy7hgZ66wqcjfUuFf1kgHR+pjcJD1JcHDKPsk4d8g0XsHArDY1GqryAd3LXXyjS+HYhuodUHFACNbbGnYFhPDk/sSZIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lIL9SuzP; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717690238; x=1749226238;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=981GD+z8786+C1hp7EEXk+A3A1FHkVkYoLEaJHuT4kc=;
+  b=lIL9SuzP05E736w2t6sclJvu3JqLstKrWkKBJ/zTYz2Sr4IkcQv/5lJD
+   FbHS8TuKdGkelpaIeuPt9+y7fzkv40lYjRMv/vzXotl1pdgOr0NzFIx58
+   ksQzp4nq9h7NsMk2DrEITP4Knd/hNmuRZhZPD4Stu7FKCagqpv7jfeeun
+   arpxMsNWizX0ycsv7QMm8ANfUFwhmnXd7lTj8JL1/GFtXHxGd2tlO5E0L
+   n4e9KKB662q9eTojfVIj2tYSao/S2qF1tcg4vagZZj+B0O7168+WB5C38
+   Vy9hyXy75VGDpXMb5w46MgfDOt0IJAER1gAU7e4FepHULRnEG+uG0NXIT
+   A==;
+X-CSE-ConnectionGUID: N/xwbN3pRw2XyKatPQvEGQ==
+X-CSE-MsgGUID: bAVsWFH5SxqrIc3Sye+W3g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="14525065"
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="14525065"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 09:10:36 -0700
+X-CSE-ConnectionGUID: 0YfWCvGIRxmFQhBgzuOM0Q==
+X-CSE-MsgGUID: fP3DNq1eQYaIJNdR5+FS1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="38695663"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa007.jf.intel.com with ESMTP; 06 Jun 2024 09:10:32 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 617131C9; Thu, 06 Jun 2024 19:10:30 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/5 RESEND] dt-bindings: clock: rk3128: Drop
- CLK_NR_CLKS
-Message-ID: <20240606-dispersal-buffed-27a6e7540d4c@spud>
-References: <20240605210049.232284-1-knaerzche@gmail.com>
- <20240605210049.232284-3-knaerzche@gmail.com>
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: [PATCH v1 1/4] clk: mmp: Switch to use kmemdup_array()
+Date: Thu,  6 Jun 2024 19:09:31 +0300
+Message-ID: <20240606161028.2986587-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+In-Reply-To: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
+References: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="FGgIfamJBCS86e7A"
-Content-Disposition: inline
-In-Reply-To: <20240605210049.232284-3-knaerzche@gmail.com>
+Content-Transfer-Encoding: 8bit
 
+Let the kememdup_array() take care about multiplication and possible
+overflows.
 
---FGgIfamJBCS86e7A
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/clk/mmp/clk-mix.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-On Wed, Jun 05, 2024 at 11:00:46PM +0200, Alex Bee wrote:
-> CLK_NR_CLKS should not be part of the binding. Let's drop it, since
-> the kernel code no longer uses it either.
+diff --git a/drivers/clk/mmp/clk-mix.c b/drivers/clk/mmp/clk-mix.c
+index 454d131f475e..07ac9e6937e5 100644
+--- a/drivers/clk/mmp/clk-mix.c
++++ b/drivers/clk/mmp/clk-mix.c
+@@ -447,7 +447,6 @@ struct clk *mmp_clk_register_mix(struct device *dev,
+ 	struct mmp_clk_mix *mix;
+ 	struct clk *clk;
+ 	struct clk_init_data init;
+-	size_t table_bytes;
+ 
+ 	mix = kzalloc(sizeof(*mix), GFP_KERNEL);
+ 	if (!mix)
+@@ -461,8 +460,8 @@ struct clk *mmp_clk_register_mix(struct device *dev,
+ 
+ 	memcpy(&mix->reg_info, &config->reg_info, sizeof(config->reg_info));
+ 	if (config->table) {
+-		table_bytes = sizeof(*config->table) * config->table_size;
+-		mix->table = kmemdup(config->table, table_bytes, GFP_KERNEL);
++		mix->table = kmemdup_array(config->table, config->table_size,
++					   sizeof(*mix->table), GFP_KERNEL);
+ 		if (!mix->table)
+ 			goto free_mix;
+ 
+@@ -470,9 +469,8 @@ struct clk *mmp_clk_register_mix(struct device *dev,
+ 	}
+ 
+ 	if (config->mux_table) {
+-		table_bytes = sizeof(u32) * num_parents;
+-		mix->mux_table = kmemdup(config->mux_table, table_bytes,
+-					 GFP_KERNEL);
++		mix->mux_table = kmemdup_array(config->mux_table, num_parents,
++					       sizeof(*mix->mux_table), GFP_KERNEL);
+ 		if (!mix->mux_table) {
+ 			kfree(mix->table);
+ 			goto free_mix;
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-What about other operating systems etc, e.g. U-Boot or barebox?
-
---FGgIfamJBCS86e7A
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmHfOgAKCRB4tDGHoIJi
-0qlIAQDozQlHl2khmv09nvKM+QpHUNjjvRIOFTm/lWr50Grs+wEAnAI+XEvELGi9
-OJrYfVp3WYbfWtOMfAmKx5KoDCQ4lwI=
-=1vL8
------END PGP SIGNATURE-----
-
---FGgIfamJBCS86e7A--
 
