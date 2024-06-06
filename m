@@ -1,113 +1,120 @@
-Return-Path: <linux-kernel+bounces-204633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA18B8FF181
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:03:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 078AB8FF183
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69A831F21C7D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:03:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CFEDB27CEC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CFA2197A85;
-	Thu,  6 Jun 2024 16:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BED198A3F;
+	Thu,  6 Jun 2024 15:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pPnFgcJG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="OJWfsYXr"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F14910E9;
-	Thu,  6 Jun 2024 16:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12393196C75;
+	Thu,  6 Jun 2024 15:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717689809; cv=none; b=Vb3J+dU3Bi+3g4osKDd9/aYb7gPVjHkfrQ//r8b4Ot1Ge9alxGYrQnZ9ECgSSu9KftC34gnzvHPV28XG/ayjk2/hNj+3yHTKElK6MvAnxF7Y6ivxF0dONg5avUmCUrUJ+sbVLg6RZVCnqzBGA3ipC/C3Z67arsBzsfxGMzLlTmY=
+	t=1717688987; cv=none; b=pSa/n9lss9DQ05o8hHZNHENvdbqpYUYNovrBsMqoWkbrQBQXuXLy4kcg3/6O7W8uy5ja61tKUzbSTqs4aFN1DKphoT+RnGKtKUd8eHtDZo8g8DpaCMt2ltw/DHy9/JTDtKteqb5jIhUSDZIjtq/+GHQmXpZlAuu7JIQp2ja5428=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717689809; c=relaxed/simple;
-	bh=UyKx9bZ3hdWJqpE8irQpBb9zB0JEyFwgJeYquJTXVQY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d8+8TD6j+EzR181UvbJEGOO9tlHUUJzLe7ML6SFDJF39q2djt8OVze4dqbc7omANPGXAkUbz0FoKIhI4SomxSwBGIyOINca4hZTAMVbhPCKr75Uq3UQ5zi/aAljVtoAwCRLK5VpyrkUcU8edaTG4vm5wpcghXMRKeKB27slr4/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pPnFgcJG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAB9FC2BD10;
-	Thu,  6 Jun 2024 16:03:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717689809;
-	bh=UyKx9bZ3hdWJqpE8irQpBb9zB0JEyFwgJeYquJTXVQY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pPnFgcJGEj5N5/dPqf2Tyyk5EUu5cc0pIq+VB5l3LP6blMU8tjart5hB59I15Z73n
-	 splLPXmqPZpKmuEJLKeiaJLXBcT5f/KYObaQOcfBeqU27WxUdgxBMlkqdZtP0j9izg
-	 O8s8VejL6vVX2vz0m8PoWpvFPvGSnvDjvcYTOFe40VQlVEZ7olrA8S5HRWA+J7+ydh
-	 ZlNXXzMraOiPBByzgnsSkHYMVdqVTjIVwjKDNhngxy2Fp3GyIGn4UhKCdR02just/U
-	 iiUEzZwESqYWvR9y33/MO2wh3bSqumcIKevR9pTs+R4HYrOphs2xm8zPfao6gxtzc/
-	 CDvnIPIXjyjXg==
-Date: Thu, 6 Jun 2024 09:03:28 -0700
-From: Kees Cook <kees@kernel.org>
-To: Abhinav Jain <jain.abhinav177@gmail.com>
-Cc: tony.luck@intel.com, gpiccoli@igalia.com,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com,
-	julia.lawall@inria.fr
-Subject: Re: [PATCH v2] pstore/ram: Replace of_node_put with __free() for
- automatic cleanup
-Message-ID: <202406060902.4F06AA0DF6@keescook>
-References: <20240605214944.22113-1-jain.abhinav177@gmail.com>
+	s=arc-20240116; t=1717688987; c=relaxed/simple;
+	bh=wAkkySakwtpXetpqy216hr8Mf/oM3hJIoPHEJd0ks+s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gdc8an+Al82DrdN/WQMjKoHSO11Qr+oeX6eR96vd5Kaxu50X6opHPyKoD4O8OhFoj2RjJC6aLrhENppFbreFOGk03hB79gix6J7WRnMWLisakpuGaKjN2E0KblFiGUR97fNlbttvriYHyrmS391cXY5+hrCiTb4L2g8UBfPzk7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=OJWfsYXr; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 7DB4187F5C;
+	Thu,  6 Jun 2024 17:49:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1717688984;
+	bh=oZ6AjegqpphtNzQqTVjigVkYVuIdij5lsm+LsTd1UtQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OJWfsYXrkT/xrqKKC8f0G7vpTqRVoG/3UxJo5NH1cdn0JC9Yt9dabTFrY4oPXk+W9
+	 9WAFIGbDvbHPI6Ox8lgHVYwEnf1xv3jwzZYpXtslutOdUt7HNrKlXZWsCVuETRBJ/8
+	 OjZ7JHCqWqSLXK3cXJaUkg/H9I7ECaLbr0y8usap/gU2Yk8HWgCel7gD5UPQhy5Jq+
+	 aSRxUxkQgw4vP49wQ/ikXJJyrFeieaVg/yZ1NqhJwtcJ5e9PoHbXCtee6PPFiXhfr9
+	 DTLsqYlSqWXaCBYawwS7t8z7izIKQTHpyWvaN8lNmjzd67mWPu3r/69eUI65g1/OQP
+	 lvkC69ao7ueuQ==
+Message-ID: <ee9a4da7-8b7a-4bd5-8a34-19e0e7cb49ff@denx.de>
+Date: Thu, 6 Jun 2024 17:47:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240605214944.22113-1-jain.abhinav177@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 07/11] net: ethernet: stmmac: add management of
+ stm32mp13 for stm32
+To: Christophe ROULLIER <christophe.roullier@foss.st.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Richard Cochran <richardcochran@gmail.com>, Jose Abreu
+ <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240604143502.154463-1-christophe.roullier@foss.st.com>
+ <20240604143502.154463-8-christophe.roullier@foss.st.com>
+ <3c40352b-ad69-4847-b665-e7b2df86a684@denx.de>
+ <73f7b4a4-31d1-4907-b83b-2ac7758edf0d@foss.st.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <73f7b4a4-31d1-4907-b83b-2ac7758edf0d@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Wed, Jun 05, 2024 at 09:49:44PM +0000, Abhinav Jain wrote:
-> Add __free(device_node) to the parent_node struct declaration
-> Add changes to incorporate the review comments from v1
+On 6/6/24 4:19 PM, Christophe ROULLIER wrote:
+
+Hi,
+
+>>> @@ -348,8 +360,15 @@ static int stm32_dwmac_parse_data(struct 
+>>> stm32_dwmac *dwmac,
+>>>           return PTR_ERR(dwmac->regmap);
+>>>         err = of_property_read_u32_index(np, "st,syscon", 1, 
+>>> &dwmac->mode_reg);
+>>> -    if (err)
+>>> +    if (err) {
+>>>           dev_err(dev, "Can't get sysconfig mode offset (%d)\n", err);
+>>> +        return err;
+>>> +    }
+>>> +
+>>> +    dwmac->mode_mask = SYSCFG_MP1_ETH_MASK;
+>>> +    err = of_property_read_u32_index(np, "st,syscon", 2, 
+>>> &dwmac->mode_mask);
+>>> +    if (err)
+>>> +        pr_debug("Warning sysconfig register mask not set\n");
+>>
+>> I _think_ you need to left-shift the mode mask by 8 for STM32MP13xx 
+>> second GMAC somewhere in here, right ?
+>>
+> The shift is performed in function stm32mp1_configure_pmcr:
 > 
-> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+>      /* Shift value at correct ethernet MAC offset in SYSCFG_PMCSETR */
+>      val <<= ffs(dwmac->mode_mask) - ffs(SYSCFG_MP1_ETH_MASK);
 > 
-> PATCH v1 link:
-> https://lore.kernel.org/all/20240415161409.8375-1-jain.abhinav177@gmail.com/
+> In case of MP13 Ethernet1 or MP15, shift equal 0
 > 
-> Changes since v1:
->  - Moved the variable definition back to the top of the function body
+> In case of MP13 Ethernet2 , shift equal 8  ;-)
 
-The history and version links should be below the "---" line.
-
-But more importantly, please base your patch on the upstream tree,
-rather than on your v1 patch. :) (i.e. squash your v1 and v2 together).
-
--Kees
-
-> ---
->  fs/pstore/ram.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-> index 14f2f4864e48..f8258e4567c3 100644
-> --- a/fs/pstore/ram.c
-> +++ b/fs/pstore/ram.c
-> @@ -644,6 +644,7 @@ static int ramoops_parse_dt(struct platform_device *pdev,
->  			    struct ramoops_platform_data *pdata)
->  {
->  	struct device_node *of_node = pdev->dev.of_node;
-> +	struct device_node *parent_node __free(device_node) = of_node_parent(of_node);
->  	struct resource *res;
->  	u32 value;
->  	int ret;
-> @@ -703,7 +704,6 @@ static int ramoops_parse_dt(struct platform_device *pdev,
->  	 * we're not a child of "reserved-memory" and mimicking the
->  	 * expected behavior.
->  	 */
-> -	struct device_node *parent_node __free(device_node) = of_node_parent(of_node);
->  	if (!of_node_name_eq(parent_node, "reserved-memory") &&
->  	    !pdata->console_size && !pdata->ftrace_size &&
->  	    !pdata->pmsg_size && !pdata->ecc_info.ecc_size) {
-> -- 
-> 2.34.1
-> 
-
--- 
-Kees Cook
+Oh, good, thanks !
 
