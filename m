@@ -1,72 +1,88 @@
-Return-Path: <linux-kernel+bounces-205109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 291058FF785
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 00:07:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33BAE8FF782
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 00:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D657B21F15
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:07:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 918B728476C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B501713D8BB;
-	Thu,  6 Jun 2024 22:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0D613D884;
+	Thu,  6 Jun 2024 22:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sUByc/MS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="na+KN3/T"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D7A13C67B;
-	Thu,  6 Jun 2024 22:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACEA2F2B;
+	Thu,  6 Jun 2024 22:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717711666; cv=none; b=taVX/VX+oYKjbLx3p6TjOhzS8G9Cos1b2tx1IkovE/YKu2ew/A+j24TfOGeSQIaJier0XOmuUF7o9PrfUx1735odQ+ZtN4/IkJhtXI6PgVey95n7S4D6UH374xo1MJnzZl0hJtyMk37TxiIGATAA9hbkm1HVkxeU9pQg8oqplaw=
+	t=1717711641; cv=none; b=PnJxnUuQ3mmzQNlVj52f5uHEpH4IgxUauFIad6MOMimu7sfko/luhlyqN6hf2WlS509LYJ4dr5E/79z0X4LbRtHnWvblIQSIRThDIVqYWR7vvlIsjyxVnw5eMMs36Va49JupTQRgSyfDnPjTsknUk5VpSb8cMRIDD04+rfc6TgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717711666; c=relaxed/simple;
-	bh=lmfYmD8PocbYwBIvNsI0krEguZSlXT3D+X8GrfxCwsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=PMw//j00c0TByjxnH41uAfhv4edYfhbBfxPptwcdpgIFxF0JodYorEE7+CiaB4tALzw0f7cBbtXqNS+OiZi0MeOYn3mf5Cy1DzfGSTkJxym7wzvgiGtlkVWGwlG23K780fHCOVWeEMZQ3zWVPRBj1fLQtmuUlQFnxS1BxBI9XAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sUByc/MS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 334C5C2BD10;
-	Thu,  6 Jun 2024 22:07:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717711665;
-	bh=lmfYmD8PocbYwBIvNsI0krEguZSlXT3D+X8GrfxCwsE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=sUByc/MSb83Ptm4NMe1WQeZUXt6PgScwLR/svMCB7dNs0qiSlijFVS7UO74+lbv03
-	 V/VgBISdxd7O7DLgDJRA0zJbKk2DMvzD9NAehnW/bCA5WwCkyICdD/ESZ0ydeJ9M+0
-	 DeTCL6fwp83ujDPM3nNFEX604YRGmERFIJbZg0AzU9ciGHhhJanRw1jnh7N55xCiUA
-	 7k0ej9Ih+hsP8hBcl8cwblI1ztzEl7jkQopNqW7yJ8ml3qYMKNSMqWZZR1iQEvin6U
-	 COmTqN/g03o5lQkqp79ziZnYsVODE9WCLQNg2L63OqLzhHsCKN3CtL7KDJknYwIv5X
-	 tMPxWpSwNx9fA==
-Date: Thu, 6 Jun 2024 17:07:43 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Sunil V L <sunilvl@ventanamicro.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-acpi@vger.kernel.org,
-	linux-pci@vger.kernel.org, acpica-devel@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Anup Patel <anup@brainfault.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Robert Moore <robert.moore@intel.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Atish Kumar Patra <atishp@rivosinc.com>,
-	Haibo1 Xu <haibo1.xu@intel.com>,
-	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-Subject: Re: [PATCH v6 10/17] ACPI: RISC-V: Implement function to reorder
- irqchip probe entries
-Message-ID: <20240606220743.GA821335@bhelgaas>
+	s=arc-20240116; t=1717711641; c=relaxed/simple;
+	bh=74HpMXe+CG43MLy3G4Vs67xOq8UiLT5VdUaTnoZeUwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZzaafEuB8/46GVJ2POw4rySiNgda5Gt7vw3fKpdXS+dZWfLegLZqmVRJnLkxKkWIw/+Ntxm7+tNgZ+8qn0qc9z7Ia9ipb7TPM+40sb2EbmvPyznwd/PCz5DurgMv3YMOdWfQFd0LRUZMXzZmOKnYz5ZjRLajileGsksbZj0wCDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=na+KN3/T; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-681bc7f50d0so1843399a12.0;
+        Thu, 06 Jun 2024 15:07:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717711639; x=1718316439; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uvkHEPEs0Z1iGFT7Wj+07l4Max2ilBTpn8C2Gm83KxA=;
+        b=na+KN3/TLQsH+xIpUXHM8wSP+60bd4DA6wJ3KTrF0rJ0TPllVgfxgT1JPq3G1jrCNn
+         5x6/2WtJ4WoUxESqGxHMgx0SrvN2KdpjGupK4H4xi0LtlE8ZZLuHxomsyBYkOFB/pdU7
+         K79H2lvpST0k0vWusDG74jV0w2IB0IbGamALIDR91G1ATcOIn3uNVAMBf3iuAmQqqD4m
+         8eEoTNTg18xyAJtPc7kxkYM1QVMuTWAI1RkWC6gokCRsF25xGZU0nF9rp0dQeo/xVXOt
+         Fss0X3ZGOHdxk7es6pz9vmhKz9lQioo7Rxww+hD0TS9aP6KvO0P7zs3AfZ3mx+hzAm4l
+         lihg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717711639; x=1718316439;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uvkHEPEs0Z1iGFT7Wj+07l4Max2ilBTpn8C2Gm83KxA=;
+        b=UROu1mxBkHg9Osixxb8Kau2+VzmZsxN/h5eIlOfHeQ/At2ON+egFsS7k9x+Lg9tkwT
+         b908Ug/A0+v7jI0bHKD70mxZ9Gc6FTnL4n5YSy/EnjKURPDjpmpcLwuPq07yK+2C4Bzk
+         9OnqtmKYTs7ZdOKICiIocEwDj8FVnmk1NPu02WfWkKM+hM/A/e8g8eVRnhNU2m2GygGn
+         SswPm25nRwrqMfd9HFWFe69CnsgvGNFHgB+/sf/oc2HYptIdzN1UCQrRfDM5LyvHgLQj
+         Uo+SEkhm7DN0UdqEYfOt0qi/cOLBWwfQgRBSx1n9X6fO9saa0Nvrl9+jN+BPTtbqFK1p
+         UBhw==
+X-Forwarded-Encrypted: i=1; AJvYcCViZvYc3sr20I8qTUFc3gA7GnMI/D+oYrEuU9fTctn8EGW2gd9ySaBKy8SJSeTxvohIUQ6Edi44pRKbs0xd7lqEBe/q48JkScXw1jIQ/Cn3VQqF6uqyvrAnPQCvx5qbneQimiVUCGDoEtHWAX5nUba9QwaEkkKwdp8pdrwhnrxyx7db13Nldp1IJUi5IhmzkUoCAKJn3rkt8EcDcO+uVg==
+X-Gm-Message-State: AOJu0Yww/Wq3axU7JlW2myztMO3LucTWciO6iKzp3Jw/DaeWlKQ86OoZ
+	7B9zMxiNzep4p7G4CesGFdqtyOapGm2z8TwpmsWHfUv3fXPgSUnvXxMz9bfn
+X-Google-Smtp-Source: AGHT+IEws3XLyWSIeIljFrAA9FQiJ0XSw9ngJH1KYHPJcEukh2jwKKfcNOAsYsVT8N2DvNkYIBUNUg==
+X-Received: by 2002:a17:902:e741:b0:1f6:8c90:3521 with SMTP id d9443c01a7336-1f6d013563cmr13693655ad.8.1717711639248;
+        Thu, 06 Jun 2024 15:07:19 -0700 (PDT)
+Received: from localhost ([2804:30c:167a:4100:8407:a7e5:9b87:8081])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd7ed6c8sm20369285ad.241.2024.06.06.15.07.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 15:07:18 -0700 (PDT)
+Date: Thu, 6 Jun 2024 19:08:30 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
+	Michael.Hennerich@analog.com, jic23@kernel.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	nuno.sa@analog.com, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/6] spi: Add SPI mode bit for MOSI idle state
+ configuration
+Message-ID: <ZmIzXun2-DWl7cT-@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1717539384.git.marcelo.schmitt@analog.com>
+ <e1d5d57f7a7481c84f64a764f9898122e278739b.1717539384.git.marcelo.schmitt@analog.com>
+ <0a716b10-0ae0-425f-919a-ea5d8b7975b6@sirena.org.uk>
+ <5dcd9701-2725-4aff-9e73-d8f2e038be75@baylibre.com>
+ <d09485bf-bbb5-4a3f-84b8-54478c6d78cf@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,99 +91,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240601150411.1929783-11-sunilvl@ventanamicro.com>
+In-Reply-To: <d09485bf-bbb5-4a3f-84b8-54478c6d78cf@sirena.org.uk>
 
-On Sat, Jun 01, 2024 at 08:34:04PM +0530, Sunil V L wrote:
-> ACPI MADT entries for interrupt controllers don't have a way to describe
-> the hierarchy. However, the hierarchy is known to the architecture and
-> on RISC-V platforms, the MADT sub table types are ordered in the
-> incremental order from the root controller which is RINTC. So, add
-> architecture function for RISC-V to reorder the interrupt controller
-> probing as per the hierarchy as below.
-
-Is this ordering requirement documented anywhere?  I don't see it in
-the RISC-V ECRs to the ACPI r6.5 spec.
-
-I guess the implication is that you need to process MADT structures in
-order of ascending acpi_madt_type:
-
-  ACPI_MADT_TYPE_RINTC = 24,
-  ACPI_MADT_TYPE_IMSIC = 25,
-  ACPI_MADT_TYPE_APLIC = 26,
-  ACPI_MADT_TYPE_PLIC = 27,
-
-regardless of the order they appear in the MADT?  I.e., process all
-the RINTC structures (in order of appearance in MADT), followed by all
-the IMSIC structures, then all the APLIC structures, etc?
-
-> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
-> ---
->  drivers/acpi/riscv/Makefile |  2 +-
->  drivers/acpi/riscv/irq.c    | 32 ++++++++++++++++++++++++++++++++
->  2 files changed, 33 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/acpi/riscv/irq.c
+On 06/05, Mark Brown wrote:
+> On Wed, Jun 05, 2024 at 11:37:48AM -0500, David Lechner wrote:
+> > On 6/5/24 7:24 AM, Mark Brown wrote:
+> > > On Tue, Jun 04, 2024 at 07:41:47PM -0300, Marcelo Schmitt wrote:
 > 
-> diff --git a/drivers/acpi/riscv/Makefile b/drivers/acpi/riscv/Makefile
-> index 877de00d1b50..a96fdf1e2cb8 100644
-> --- a/drivers/acpi/riscv/Makefile
-> +++ b/drivers/acpi/riscv/Makefile
-> @@ -1,4 +1,4 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -obj-y					+= rhct.o init.o
-> +obj-y					+= rhct.o init.o irq.o
->  obj-$(CONFIG_ACPI_PROCESSOR_IDLE)	+= cpuidle.o
->  obj-$(CONFIG_ACPI_CPPC_LIB)		+= cppc.o
-> diff --git a/drivers/acpi/riscv/irq.c b/drivers/acpi/riscv/irq.c
-> new file mode 100644
-> index 000000000000..f56e103a501f
-> --- /dev/null
-> +++ b/drivers/acpi/riscv/irq.c
-> @@ -0,0 +1,32 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2023-2024, Ventana Micro Systems Inc
-> + *	Author: Sunil V L <sunilvl@ventanamicro.com>
-> + *
-
-Spurious blank line.
-
-> + */
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/sort.h>
-> +
-> +static int irqchip_cmp_func(const void *in0, const void *in1)
-> +{
-> +	struct acpi_probe_entry *elem0 = (struct acpi_probe_entry *)in0;
-> +	struct acpi_probe_entry *elem1 = (struct acpi_probe_entry *)in1;
-> +
-> +	return (elem0->type > elem1->type) - (elem0->type < elem1->type);
-> +}
-> +
-> +/*
-> + * RISC-V irqchips in MADT of ACPI spec are defined in the same order how
-> + * they should be probed. Since IRQCHIP_ACPI_DECLARE doesn't define any
-> + * order, this arch function will reorder the probe functions as per the
-> + * required order for the architecture.
-
-But this comment seems to contradict the commit log.  This comment
-says you should process MADT structures in the order they appear in
-the MADT.  But if that were the case, you wouldn't need to sort
-anything.
-
-Maybe "defined in the order they should be probed" means "in order of
-increasing Interrupt Controller structure type value"?
-
-> + */
-> +void arch_sort_irqchip_probe(struct acpi_probe_entry *ap_head, int nr)
-> +{
-> +	struct acpi_probe_entry *ape = ap_head;
-> +
-> +	if (nr == 1 || !ACPI_COMPARE_NAMESEG(ACPI_SIG_MADT, ape->id))
-> +		return;
-> +	sort(ape, nr, sizeof(*ape), irqchip_cmp_func, NULL);
-> +}
-> -- 
-> 2.40.1
+> > >> The behavior of an SPI controller data output line (SDO or MOSI or COPI
+> > >> (Controller Output Peripheral Input) for disambiguation) is not specified
+> > >> when the controller is not clocking out data on SCLK edges. However, there
+> > >> exist SPI peripherals that require specific COPI line state when data is
+> > >> not being clocked out of the controller.
 > 
+> > I think this description is missing a key detail that the tx data line
+> > needs to be high just before and also during the CS assertion at the start
+> > of each message.
+> 
+> > And it would be helpful to have this more detailed description in the
+> > source code somewhere and not just in the commit message.
+> 
+> Yes, there's no way anyone could infer this from any aspect of the
+> series.  I think the properties also need a clearer name since someone
+> might want the accelerator functionality at some point.
+
+So, if I understand correctly, it would be desirable to also have flags and
+descriptions for the MOSI idle configuration capabilities in include/linux/spi/spi.h.
+
+Does the following definitions look good?
+#define SPI_CONTROLLER_MOSI_IDLE_LOW		BIT(8)
+#define SPI_CONTROLLER_MOSI_IDLE_HIGH		BIT(9)
+
+Maybe also document the MOSI idle configuration feature in spi-summary.rst?
+
+> 
+> > > Even without that we'd need feature detection so that drivers that try
+> > > to use this aren't just buggy when used with a controller that doesn't
+> > > implement it, but once you're detecting you may as well just make things
+> > > work.
+> 
+> > I could see something like this working for controllers that leave the
+> > tx data line in the state of the last bit of a write transfer. I.e. do a
+> > write transfer of 0xff (using the smallest number of bits per word
+> > supported by the controller) with CS not asserted, then assert CS, then
+> > do the rest of actual the transfers requested by the peripheral.
+> 
+> > But it doesn't seem like it would work for controllers that always
+> > return the tx data line to a low state after a write since this would
+> > mean that the data line would still be low during the CS assertion
+> > which is what we need to prevent.
+> 
+> With the additional requirement it's not emulatable, but we'd still need
+> the checks in the core.
 
