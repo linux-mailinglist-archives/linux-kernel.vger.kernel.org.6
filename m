@@ -1,127 +1,149 @@
-Return-Path: <linux-kernel+bounces-203712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0085C8FDF60
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:15:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A74328FDF63
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:16:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FD4F285081
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:15:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE0F01C239EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A65413C3D7;
-	Thu,  6 Jun 2024 07:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFED113B293;
+	Thu,  6 Jun 2024 07:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aHR3T4hD"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OQ6+R7QI"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EE53EA72;
-	Thu,  6 Jun 2024 07:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85FB33F7
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 07:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717658102; cv=none; b=DlI9qTFRxkquPdE3VZA5dsntuefnxh2frPYiQbv1Vso1cGaZ8ufJIIcYKdrA2YadE9LNcZG16MYEe1m77s7wlQfvRj78EbH2nCumNORN1OFQQnFAkHXcR5wBHjveTxKPB8wOLNAglbZN7U87Gi6UebhNFHtpPhDuk5uwD9RKzkw=
+	t=1717658169; cv=none; b=Ui50l/0o6qBo9vLiJxSt87NIvKBtsu4N0DJM4eG/Hiqg0qRJ1Vvzwl6CaHF/19BmNBYC7iqloI83ro2HWgw/PR08x6xnr64jX256qWhqyFFF3nisS6f+TxNTr/FZLrMzb3Oa4WRgEzmsag7bxugPpcHYCtJr1hCQ9tMI/1s4r/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717658102; c=relaxed/simple;
-	bh=yuEfa2UV+chthnn3Iq3uD3lcYGjVSmjvN5Ua5bJVleA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BICVDte3bpQhcnP0MDvg/F2XzcLTqECGjZ2VyMVV2W+BLJ8yOuhDgsXzaTj+GHhHA6VAa5wgaj6khfJ1N2+SRaeX4HB1LgCOi81+t1LarQVnr8OmVJDIHpWqDDrEGtkk2f1HYXS5F+ktV1iaOSlo0rxo0+2HNxKlQT03B8NTAPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aHR3T4hD; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7B94524000C;
-	Thu,  6 Jun 2024 07:14:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1717658092;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wtbh9Y5BhilOkF/Ov75N0g0FuZgE8BmOll+aw1LPV5g=;
-	b=aHR3T4hDEP8oxcmxkYTox0dObRLwyZcs+fahBn8rXTbY59oM2XLPUW9uoDNleMjbfCg4j+
-	mu3oByJSRS1EenKMN7sKE4FDFl5ZANKacfMfWI/lTkfdpcCoga3r1X9kHWSHM5QQF3gebv
-	rhxwFpSSwrRjHyOORqfbHy9vzgJoXDPzUaX5/MBeYu5n5sOnxdVWM2JJwPSN0vklHbjv+b
-	O1CTPUiludohFB/9OBNhSt3z55OaWP7uTYIXOIA//9AvjHLhMJ8gNs4I+VYQfyEKgXWuAK
-	7Y3pWc5NHsT8gyj2B5OE9g2j97vk8ZTIk3AUCFLs7NQYzxh+pkv6JspSHB6WTQ==
-Date: Thu, 6 Jun 2024 09:14:46 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Simon Horman <horms@kernel.org>, Sai Krishna Gajula
- <saikrishnag@marvell.com>, Thomas Gleixner <tglx@linutronix.de>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Lee Jones <lee@kernel.org>, Arnd Bergmann
- <arnd@arndb.de>, Horatiu Vultur <horatiu.vultur@microchip.com>,
- UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit
- <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Saravana
- Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Philipp
- Zabel <p.zabel@pengutronix.de>, Lars Povlsen <lars.povlsen@microchip.com>,
- Steen Hegelund <Steen.Hegelund@microchip.com>, Daniel Machon
- <daniel.machon@microchip.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, netdev@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Allan
- Nielsen <allan.nielsen@microchip.com>, Luca Ceresoli
- <luca.ceresoli@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 09/19] irqdomain: Add missing parameter descriptions
- in docs
-Message-ID: <20240606091446.03f262fa@bootlin.com>
-In-Reply-To: <ZmDEVoC9NUh7Gg7k@surfacebook.localdomain>
-References: <20240527161450.326615-1-herve.codina@bootlin.com>
-	<20240527161450.326615-10-herve.codina@bootlin.com>
-	<ZmDEVoC9NUh7Gg7k@surfacebook.localdomain>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1717658169; c=relaxed/simple;
+	bh=eFDNFT2LzXL+6EYWC4FzWMcfFmvhm9QAzRQXNzYRHfg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WXUdz4a/+AwVCWFb2V1u2S8ZBgbiU1X2l3p7bjiidslum7ciPPPDrlLNmPxmEIt09oXJvzKNw+WU0jjrOlTiCuFE5Kp/PvY6mZ+tfs3hoNdVXWD1XAOLyu5Kk2vqHIqDTs/odEzZfSDJqxKoFkMh1MRgfM1FGbqdwU+lxP6V9As=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OQ6+R7QI; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-6c5a6151ff8so486470a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 00:16:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717658167; x=1718262967; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SYc/1A16Jad9UQTX5RKOYTjLS1DJZMAchEeOfZtN35M=;
+        b=OQ6+R7QIuHaMCtnYH8g+J+BXoAHS8V/vcrFnps+uCPPdBvZ0mI0ESkaDQXmremuMbj
+         W2lxSZsHBHd0j7qYkyimOua58ZiZNZH4T4AX28kPM/M3qFi9J4Eii3fFeq9UpwBHUCyh
+         HYH3ZL7AZSaE9FRWJO9ZIIl2IzvnGharlSmp+03LDPnzmn1ERK/UcdlwUdIZUe4HtlGY
+         IHrCxcOSpzSVod5V47PLM+7OwlHXt2HZ/fKfrn027A8t4mUIvt14u7KCemiVJI8RPCGN
+         +F6PLQcu/0HwxRx0vQgiqg4S9d4zgKs1oz9aYKV/x3tleL0G+u1AmwK7qTM/NgCtMy4w
+         ecmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717658167; x=1718262967;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SYc/1A16Jad9UQTX5RKOYTjLS1DJZMAchEeOfZtN35M=;
+        b=xLt+PUAVI8mNDLJOi9bwWvilmnWLyWZ22/jFG6h2YmKZUVzQ0ZD1bmOFYq/4YaFdzF
+         IpFHL4VYcKxrCr6INYUh5/0w+ugQaeNR+fLs6oK+IrnbGgeLhH8K0w59/Mjnj6rGVrLr
+         bjavjNPTDbrrinH7y6mHWj8zElgI8F5qMQRNgwHBSFPrxCdRihKRFb3wxAfoAt0Wxnqu
+         jpqsXhzdyeebQqaMQiARaAZYDhoonmkcrDp1NpNdquGQb1wGSKO7JqEp6KQgAN99XUHz
+         MumBL2vH7uDmyIqcfABkIvFrvAZIf5HtXKkL8KEmk09MReX08J589fl/YETaoDJEJZqL
+         zvHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjZwqsogs+OvfJ47mQvXRMXoWrFiP5k6h9J6qzFuc7M0OJwJW5Q88ICfytfiykOqq36chNy0qRYE8xpeKvRzGqpq79c3yPcos9Y89N
+X-Gm-Message-State: AOJu0YyO+zzdpZmBEYzYOHls12endPnXsdHA0V8ujc53jLU5tapTsQCM
+	7miZl6W+Spx+olaSsaf6/HtnLhmABVp57v1yCa3LgCOydZZq4FRas4HKiC1Eh8Y=
+X-Google-Smtp-Source: AGHT+IG8wBNg0VIBVgAKGvbDu0gp72KpUDbk+8y91N7C4jLon0RKfO0e4pKmjH9j/pWcm7lIXHuJZw==
+X-Received: by 2002:a05:6a21:196:b0:1aa:5ca9:c565 with SMTP id adf61e73a8af0-1b2b6e4aab4mr5536085637.8.1717658166805;
+        Thu, 06 Jun 2024 00:16:06 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd52b794sm543210b3a.209.2024.06.06.00.16.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 00:16:06 -0700 (PDT)
+Date: Thu, 6 Jun 2024 12:46:04 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: "liwei (JK)" <liwei728@huawei.com>
+Cc: Ionela Voinescu <ionela.voinescu@arm.com>,
+	Beata Michalska <beata.michalska@arm.com>,
+	Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
+	rafael@kernel.org, al.stone@linaro.org, ashwin.chaugule@linaro.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	liwei391@huawei.com, liaoyu15@huawei.com
+Subject: Re: [PATCH] cpufreq/cppc: changing highest_perf to nominal_perf in
+ cppc_cpufreq_cpu_init()
+Message-ID: <20240606071604.vvthjmhdvd2rwhft@vireshk-i7>
+References: <20240428092852.1588188-1-liwei728@huawei.com>
+ <20240429104945.esdukn6ayudgyumc@vireshk-i7>
+ <ZjoBrF4bAK5ukm7H@arm.com>
+ <be312b75-eede-44f5-b7f3-b50f50c6fb56@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <be312b75-eede-44f5-b7f3-b50f50c6fb56@huawei.com>
 
-Hi Andy,
-
-On Wed, 5 Jun 2024 23:02:30 +0300
-Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-
-> Mon, May 27, 2024 at 06:14:36PM +0200, Herve Codina kirjoitti:
-> > During compilation, several warning of the following form were raised:
-> >   Function parameter or struct member 'x' not described in 'yyy'
-> > 
-> > Add the missing function parameter descriptions.  
+On 10-05-24, 11:06, liwei (JK) wrote:
+> In the above function calling process, the frequency is obtained twice. The
+> first time is in cpufreq_online(), and the second time is in
+> cpufreq_verify_current_freq().
 > 
+> When the frequency configuration takes effect slowly, the kernel cannot
+> sense when the frequency configuration takes effect.
+
+Who is making this frequency change. I am not sure I understand how is
+that taking place slowly.
+
+> It may take effect
+> before the frequency is read twice, between the frequencies read twice, or
+> after the frequency is read twice.
+> 
+> |------------------|--------------------|---------------------|
+> set highest_freq  get()               get()                target()
+> 
+> If it takes effect before two read operations, there will be no problem.
+> 
+> If it takes effect between two read operations, policy->cur will be updated
+> in cpufreq_verify_current_freq(), the execution path is as follows:
+> new_freq = cpufreq_driver->get() //  new_freq = turbo_freq
+> 	if (policy->cur != new_freq)
+> 		cpufreq_out_of_sync(policy, new_freq)
+> 			...
+> 			policy->cur = new_freq // cur = turbo_freq
 > ...
+> __cpufreq_driver_target(policy->max)
+> 	cppc_set_perf(target) // policy->cur!=target
 > 
-> >  /**
-> >   * irq_domain_translate_onecell() - Generic translate for direct one cell
-> >   * bindings
-> > + * @d:		Interrupt domain involved in the translation
-> > + * @fwspec:	The firmware interrupt specifier to translate
-> > + * @out_hwirq:	Pointer to storage for the hardware interrupt number
-> > + * @out_type:	Pointer to storage for the interrupt type  
+> Reconfigure frequency to policy->max.
 > 
-> (kernel-doc perhaps will complain on something missing here)
+> If policy->cur is not set to turbo_freq after two read operations,
+> policy->cur will not be updated in cpufreq_verify_current_freq(), the
+> execution path is as follows:
+> new_freq = cpufreq_driver->get() //  new_freq == policy->cur
+> 	if (policy->cur != new_freq)
+> ...
+> __cpufreq_driver_target(policy->max)
+> 	ret // policy->cur==target
 > 
-> >   */
-> >  int irq_domain_translate_onecell(struct irq_domain *d,  
+> Configured frequency will remain at turbo-freq.
 > 
-> You can go further and run
-> 
-> 	scripts/kernel-doc -v -none -Wall ...
-> 
-> against this file and fix more issues, like I believe in the above excerpt.
-> 
+> When reading scaling_cur_freq, the frequency value that may be read is
+> policy->cur. If arch does not implement arch_freq_get_on_cpu(), and the
+> registered cpufreq_driver does not define setpolicy()/get(), the frequency
+> will not be obtained through the get() and will directly feed back
+> policy->cur. If the above problem occurs, no exception will be detected when
+> reading scaling_cur_freq. But reading cpuinfo_cur_freq will reacquire the
+> frequency through the get() interface and feedback the newly acquired
+> frequency value.
 
-Yes indeed, I missed the return values.
-Will be updated in the next iteration.
-
-Best regards,
-Hervé
-
+-- 
+viresh
 
