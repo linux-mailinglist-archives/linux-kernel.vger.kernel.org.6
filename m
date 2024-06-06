@@ -1,135 +1,124 @@
-Return-Path: <linux-kernel+bounces-204334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 603A08FE75C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:14:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 947D38FE75D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75D631C2566D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:14:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D896B23FCB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E3A196442;
-	Thu,  6 Jun 2024 13:13:38 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1E5196450;
+	Thu,  6 Jun 2024 13:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OUJRY/qS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C1D195FF8
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 13:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DF0195B07
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 13:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717679617; cv=none; b=BBQA0MhWmVFSCtN3wt5KjpSXKnkiQNp8i+REY45WJ9FMwuD1lz6dPf9MEaYChtr74DKS9x13sctflAUDyNIaMflcFk93/dmP01A2nbvomQ/+uozfUJPgQAB6qz5+fGVWhy3wOo3GbFFQifGJ37nJAwPAK/f3OYriawZB/O3Pvf8=
+	t=1717679653; cv=none; b=WBeuJxeazTAHvm/6vwMszHvW1CF3Y2YDYX7jJsftSYDvoppQGgRmSDDtKGmiDkeuquS+OXWJvkepWSxk6j80bwHqbCoVyC0oN9wR2paXlCyxvC7QN1Szsaz/FixRk+awOqbDNHkN+4eeVNTeSelSWZ8V2uo7UhVaOgTOWbVVIvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717679617; c=relaxed/simple;
-	bh=N2TKFtZ84LRcvYpdrCo10KPBU3suJ/SBKprpElXrfuU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=EcWY9jseAQE45VjDFaUcCNxa76k0s4vilUMF/Y5hAIoUszZ6nzvuZKkxJJcNZaZ0u5rzNa4jw3PFmJjgAEVVJP7HexUmAUGBw5kV4K91I7CUjIFtb2FCmbUTb0KJeyOiW9mKcdenWbF8SPwC2GbX1qOYigdlkQj5FuIiBd8t0XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3737b6fc28fso15241575ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 06:13:36 -0700 (PDT)
+	s=arc-20240116; t=1717679653; c=relaxed/simple;
+	bh=lfT8JPB4EPm7jxr8JpU0YG0ocWc9/9yGGGGFE8+4XY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M3iw7MMTfuHz5RSzborPrYD+/fgGC26y4FkFdTgx5jO+AKaRys1BgMZpWkVZnGiFrhBXBruxBUEElCmt9RuGvKEzplp3IIX3fhaRYZMWiksISuZYDePCjW7NUTkNmzY6Bhxv8ZHtWmdZsuF2qXIfcCrNXi+477EeRuXSQXmxcbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OUJRY/qS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717679650;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3sv8BP20qLzYNDYwYiUPNVzPr3CjiidPi2llEU3NezI=;
+	b=OUJRY/qS7ZSjw0TzdB3omBtbT0eCpsbK/ZCIK2DmC5MOL9aUpyzdGcP3HRbgXt2Y1Wu1cl
+	R+9PYaQJfGLxtQJmWk8d84G1rpnaDqrMoJAL8roCCnM85qv9z+wIF5xFMVzMOAbrODPG+D
+	mNgETbImuV6IAjFXQb6ww5TyUWhIsig=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-624-1h53aZBQNXmSqM6C9Ryh9w-1; Thu, 06 Jun 2024 09:14:06 -0400
+X-MC-Unique: 1h53aZBQNXmSqM6C9Ryh9w-1
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6ad77c0aa3dso566226d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 06:14:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717679615; x=1718284415;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1717679645; x=1718284445;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=f3Wnx1/I5BhG3rHbSdQNtijPyY7wX8WKT6tGxHvilw8=;
-        b=YYQIXBAmmRtc47IUO9u+5DH2nqRqqjRZvSFSkIjMwTi4uhYotGlWlO7Lf/8Jhmv/Gc
-         0oIJ8NhwvwuvXntM+4spEHVQyyIWL7zmSRLes3osuYQhsCBQ6n57P3NnUJhzFYJu2SZW
-         wS/q4XvfwFphvevcbOcEG5Gu4B5vVklU5ijyWu8N2kFFP253/sm0VYB47ZwMKKxuKeQd
-         rjzVB7JPSEyi6Zi23lmlF6Z1imxYoo8z0TTe23E7bgGBIU2v8NuvZdx0WHu/OerkLo6P
-         JYC+gxh6yETICViCzuptSVz6S4P6OUAj21kHRzhZ4+ISFBknKwCszwFUI/zh+BCdNx3u
-         4aVg==
-X-Gm-Message-State: AOJu0Yx88bjQ0AJMtCSX0ULQ8UM5ur9pmFw5onUwNbCsgnTd+EwqodO3
-	ZVVAyIrG9+uCwzWF0jGSOEZm7xsBAm44O5YrFcyhPEADAlSwt877OPy+9vllVePDO36cwW0C8/1
-	hGx8OCHAMLIBfMls/Z+IOhC55B/IoitmHRp6IXFl9TfhKjpoNF2VSyaw=
-X-Google-Smtp-Source: AGHT+IEyDhTOPqoCjBvkG99kv7W3qeZsXTBkh17jelXfYIm7qQbL2ufKrSno5DgT7t+8sOLsrSFWAtQHWO4fNQiZdE1jNmQ+5RXA
+        bh=3sv8BP20qLzYNDYwYiUPNVzPr3CjiidPi2llEU3NezI=;
+        b=upK2uLGNm8vruWQnbW+FMJoJp0JhMAlBacE2xdxLI40lDTM4fm1aUcfYPocpPYa0wC
+         DFRANPktggcD3G1F1l0unRVg31bjYm3AD7KqwJ4eXwN2OmFzulXLzKut0WSaW1L75Law
+         brl1RW07M1GNPeQq4kaLJXv0SsabbiuOy2tl1N0+W7JP/FjqAE3ml8DI+XmwsSsJzzRs
+         ktCG3fLFYJj0cWJ/eHy21p9eUi3eHnfuLkkwQhJBXPCnDL+GqXFvELsg1EcQVocOfQNa
+         /fv3Io46pB2oFsC9xBDbeQWiqBM5TGUgVfy30p3PSyXINR+lnZsbADsOWnHcDE+wWknw
+         1+GQ==
+X-Gm-Message-State: AOJu0YzvUOVEUjDRgD/5+RzkZFmukp2PghaB8vvGkQy97xZrlrmacImG
+	ni3XgiCDeJAkxGTtz4VKdbNKm5e2l0pscXAPge+pvC7iLLHHmnb0ih7HlR6mot2xfvU1egTPtgl
+	HUeZ269vwpGma8Qlf2XM5GnvosdDb6Pa9IVoT24KntFC/cC3g+LLwlcU1/H1Q7w==
+X-Received: by 2002:ad4:5d6e:0:b0:6a0:a4eb:bcdc with SMTP id 6a1803df08f44-6b030a7e3e9mr57081076d6.3.1717679645349;
+        Thu, 06 Jun 2024 06:14:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF0c6hpgSWYYwXOOmcrAHLoDdT34ON7mNLV662Q3lKDSB8ab5uSZaStQg0NJ8IsQpIZHyk+AA==
+X-Received: by 2002:ad4:5d6e:0:b0:6a0:a4eb:bcdc with SMTP id 6a1803df08f44-6b030a7e3e9mr57080496d6.3.1717679644489;
+        Thu, 06 Jun 2024 06:14:04 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b04f9f8343sm5986836d6.126.2024.06.06.06.14.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 06:14:04 -0700 (PDT)
+Date: Thu, 6 Jun 2024 09:14:01 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Dan Williams <dan.j.williams@intel.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>
+Subject: Re: [PATCH] mm/page_table_check: Fix crash on ZONE_DEVICE
+Message-ID: <ZmG2GciaQRTk-Yam@x1n>
+References: <20240605212146.994486-1-peterx@redhat.com>
+ <20240605150543.87c81189fa7cb562e73fa0b8@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a08:b0:374:8cfc:4160 with SMTP id
- e9e14a558f8ab-374b980f6bamr1631925ab.3.1717679615593; Thu, 06 Jun 2024
- 06:13:35 -0700 (PDT)
-Date: Thu, 06 Jun 2024 06:13:35 -0700
-In-Reply-To: <000000000000adb08b061413919e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000535de9061a38730a@google.com>
-Subject: Re: [syzbot] Re: 000000000000fcfa6406141cc8ac@google.com
-From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240605150543.87c81189fa7cb562e73fa0b8@linux-foundation.org>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Wed, Jun 05, 2024 at 03:05:43PM -0700, Andrew Morton wrote:
+> On Wed,  5 Jun 2024 17:21:46 -0400 Peter Xu <peterx@redhat.com> wrote:
+> 
+> > Not all pages may apply to pgtable check.  One example is ZONE_DEVICE
+> > pages: they map PFNs directly, and they don't allocate page_ext at all even
+> > if there's struct page around.  One may reference devm_memremap_pages().
+> > 
+> > When both ZONE_DEVICE and page-table-check enabled, then try to map some
+> > dax memories, one can trigger kernel bug constantly now when the kernel was
+> > trying to inject some pfn maps on the dax device:
+> > 
+> >  kernel BUG at mm/page_table_check.c:55!
+> > 
+> > While it's pretty legal to use set_pxx_at() for ZONE_DEVICE pages for page
+> > fault resolutions, skip all the checks if page_ext doesn't even exist in
+> > pgtable checker, which applies to ZONE_DEVICE but maybe more.
+> 
+> Do we have a Reported-by: for this one?
 
-***
+Nop, I just hit that when I started to look at the dax issues.
 
-Subject: Re: 000000000000fcfa6406141cc8ac@google.com
-Author: wojciech.gladysz@infogain.com
+> 
+> And a Fixes?  It looks like df4e817b7108?
 
-#syz test: https://linux.googlesource.com/linux/kernel/git/torvalds/linux e=
-377d803b65ee4130213b3c041fc25fdfec1bd90
+Yes that commit should be proper.
 
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 2d29bc0f21cc..75fdb8e3abaa 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -2393,12 +2393,21 @@ void __bpf_trace_run(struct bpf_raw_tp_link *link, =
-u64 *args)
-       cant_sleep();
+Thanks,
 
-       // return if instrumentation disabled, see: bpf_disable_instrumentat=
-ion
--       if (unlikely(__this_cpu_read(bpf_prog_active))) {
-+       int instrumentation =3D unlikely(__this_cpu_read(bpf_prog_active));
-+       if (instrumentation) {
-+               printk("SKIP FOR INSTRUMENTATION: %s > %s > %p /%i =3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D\n",
-+                               prog->aux->name,
-+                               link->btp->tp->name, prog, instrumentation)=
-;
-               bpf_prog_inc_misses_counter(prog);
-               return;
-       }
+-- 
+Peter Xu
 
--       if (unlikely(this_cpu_inc_return(*(prog->active)) !=3D 1)) {
-+       int active =3D this_cpu_inc_return(*(prog->active));
-+       // printk("%s > %s > %p /%i\n", prog->aux->name, link->btp->tp->nam=
-e, prog, active);
-+       if (active !=3D 1) {
-+               printk("SKIP FOR ACTIVE: %s > %s > %p /%i =3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D\n",
-+                               prog->aux->name,
-+                               link->btp->tp->name, prog, active);
-               bpf_prog_inc_misses_counter(prog);
-               goto out;
-       }
-diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-index 8d1507dd0724..e756262d8df7 100644
---- a/kernel/tracepoint.c
-+++ b/kernel/tracepoint.c
-@@ -298,6 +308,8 @@ static enum tp_func_state nr_func_state(const struct tr=
-acepoint_func *tp_funcs)
-{
-       if (!tp_funcs)
-               return TP_FUNC_0;
-+       if (!tp_funcs[0].func)
-+               return TP_FUNC_0;
-       if (!tp_funcs[1].func)
-               return TP_FUNC_1;
-       if (!tp_funcs[2].func)
-
---
-The information in this email is confidential and may be legally privileged=
-. It is intended solely for the addressee and access to it by anyone else i=
-s unauthorized. If you are not the intended recipient, any disclosure, copy=
-ing, distribution or any action taken or omitted to be taken based on it, i=
-s strictly prohibited and may be unlawful.
 
