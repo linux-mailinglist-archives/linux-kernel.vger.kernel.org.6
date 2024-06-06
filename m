@@ -1,395 +1,229 @@
-Return-Path: <linux-kernel+bounces-205162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A16B58FF83E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:36:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E458FF83F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:38:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B92F286D8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:36:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D77C1C238FE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F289913F450;
-	Thu,  6 Jun 2024 23:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2911813E03C;
+	Thu,  6 Jun 2024 23:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="EdDXlTeF"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (1024-bit key) header.d=phytec.com header.i=@phytec.com header.b="PWUeAAVu"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2098.outbound.protection.outlook.com [40.107.100.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66E0145FEF;
-	Thu,  6 Jun 2024 23:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717716975; cv=none; b=noNIvYqO+7Hg+dzZ4h6mYg9Mn/IQ5a8y1ex6eOEZ34qfWwDNyD2cqlpMTzhkrT8ZJ915eQOV+Gm36BmQOUiOTvA1+tBoT4rs9QQIhX6TugVAqyHd1cAE60UXcH+cLgLhsF0wQc4PfH9c6PZ520ZN3Lw3PZ96JI9AVMxBySV6hVM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717716975; c=relaxed/simple;
-	bh=O+epwMalW8q1ywVQftnD3kr4enZ/tUns59fgSJivT+I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=keu/uBDs6LUINore9ANA9zswNH6diyZecHsmuNXZ7aLPo8k81jG/4aNV/VHJh4sAf0MJcrArGSXWL0MINySg4mPse/N5HPUO7oV8ONouGMX9558SO/OKUzMz32PktBuQJ1hfjWRd/orMuncr4zvhCsgRmKlzP9YLenMX+fz5IOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=EdDXlTeF; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1717716966; x=1718321766; i=w_armin@gmx.de;
-	bh=/OsDHVNN0gnO8H9MbGHuZBgRREzhWlwQMthhpDzyH7k=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=EdDXlTeF1uTugR21JZRATobsXjzfwAe1feN0erAXCtDxnGGgNPb33Fu6fnAuUbpk
-	 QT/4uA8wvYbVzPPKVsqd+zBHm6TuVSctCCGxkBL2n2oPAe+v6aWm/QknkJdqLL5dw
-	 6B2CTecfWldIeeCjLsNEni8lYitH7bR6+ojL2+EXiVRDkkwtZ54eR9Pobp2XcP+AJ
-	 z30z/6QhON4eAHz9ZwtHkC4XG4Zn9P2O2h/ktDQHTaTiipUz0qZmYT74O15TmiyaT
-	 gH5eLiF7CZxLQh/reS20A3FA/HQ/bp0s27ZnnRVtKXXq2VAHBBwTCqd+TgH2Yne1u
-	 KBeW67QD8VllTSbk4A==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from mx-inspiron.fritz.box ([91.137.126.34]) by mail.gmx.net
- (mrgmx005 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1MdvqW-1spF6B3kvO-00psKd; Fri, 07 Jun 2024 01:36:06 +0200
-From: Armin Wolf <W_Armin@gmx.de>
-To: matan@svgalib.org,
-	agathe@boutmy.com
-Cc: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] platform/x86: lg-laptop: Use ACPI device handle when evaluating WMAB/WMBB
-Date: Fri,  7 Jun 2024 01:35:40 +0200
-Message-Id: <20240606233540.9774-5-W_Armin@gmx.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240606233540.9774-1-W_Armin@gmx.de>
-References: <20240606233540.9774-1-W_Armin@gmx.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE54A49646
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 23:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.98
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717717096; cv=fail; b=fVXcqlrgRuE99WRvTHLo0kDw5VHvsMLNnEk83Fkn+/KAnJTB46F2O36pHnIPIAFILjv6wynxO8kFIPxnFNJXRNLHcLXOPchQiVkZKn4JhejtgFQAliTdFsIwd/OxqKunXclMyEfV95aGrjxiq69HToJrdtHHPJgf3KzevEDYvD4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717717096; c=relaxed/simple;
+	bh=6Ndwaw6KD8DyIyo3icVCF2PPJ17YKWdSoxeiMB2RVjU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=KQR+vuYIMMXD+E59qRN+/bmmGSNKaGwzD1do6RAyxysiVXFpQJ13pCOHSYfWSkhk4iHnCDbqNu51bLlKR97+xa69xP9IVLBVMR1nxWKwGtcFkLJaIbVf0dFGME2NPnPaEH498R9Q3qfoYljcrow8O0/KjJ8nQw5iZ8lcLRX1j+0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=phytec.com; spf=pass smtp.mailfrom=phytec.com; dkim=pass (1024-bit key) header.d=phytec.com header.i=@phytec.com header.b=PWUeAAVu; arc=fail smtp.client-ip=40.107.100.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=phytec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kwdcgL0Q/lserNCapg/OzWXEHXpSr1ULwjF7aaCaXbfCRbZ28tc1GY0HOUl+Man6ArOWAPdu9naVkmLDfOKAiQz5rPxu72EtFynv3GJwnBgagZJ9M9xKchMHOYVuHd3r5u/69N3SfqwnM2zKeCG0eU61UxjKEwvmJiv58yvv1ubObwcfA/fNQEBYsvYxuKCgEdSS66yWV9HoVDrvW3y9+M/Og1pmQJkWegBYUBpn8qzZqHFR6+BuK4Q/pG5F1RACGn4n7ddp3MQUZ7lL7HJ/IZNKSLfPjKOnjFi9jVdsFT9P+UQXYhol0LOmgL2uWVZspL3hbpAwb4ad1EriLRx0AQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iZA3ApG1I7aIwYN47QXucy0hzOUXacrzH2pQroVKs7g=;
+ b=VE8rv0ctChPaceAyatXigAK9ORgRW0zaTHkXTZFfo5kybv2UUf/cXLYsPU607GFX1V/ECZWOMkC13Lbc5IeNGvFSyFdAWbTJqzD1iBSqMKjqPZN0W1GNGJHtwqDbtnuG0PZkw0aMLQqfmAFgqn6fHOC0hjKT6+ENy6+XiG5eOTMM8y1MEAJFRwiudEeWDUZhOFsXx8+vNLPfvjqvCMf0Min9ZRolYAGOPWqNg8urKWoRlx+WfCDwCiaQ/oV9IcaO9BVpRxHvcMYUPFAqp9Skky+WJRGN6J6N3c1S7CWFMgJch9Oj99TUokvyNf5d1bnJwKO4ZI/U2pDy7TCwkVRv8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=phytec.com; dmarc=pass action=none header.from=phytec.com;
+ dkim=pass header.d=phytec.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=phytec.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iZA3ApG1I7aIwYN47QXucy0hzOUXacrzH2pQroVKs7g=;
+ b=PWUeAAVuwvgnnRCkiqQr/x9CSBmLaIwiWcUNcTSLKpGmjCT3HOrxl9rMopRpwa8M0YJQ8jxrr5oKKzNunl+seLr6OeDcUxIlR38+JRh+xtEiXHfsS3b1fiwnE50jZ07RRHcZu/D+8zdGouRIUX8K8Sjd8HqogOFSiGL0pBegy8k=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=phytec.com;
+Received: from SA1PR22MB5636.namprd22.prod.outlook.com (2603:10b6:806:3e2::15)
+ by SN4PR22MB2853.namprd22.prod.outlook.com (2603:10b6:806:204::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.34; Thu, 6 Jun
+ 2024 23:38:10 +0000
+Received: from SA1PR22MB5636.namprd22.prod.outlook.com
+ ([fe80::aaeb:2d53:9f16:db45]) by SA1PR22MB5636.namprd22.prod.outlook.com
+ ([fe80::aaeb:2d53:9f16:db45%3]) with mapi id 15.20.7633.021; Thu, 6 Jun 2024
+ 23:38:10 +0000
+Message-ID: <91d65552-a5ad-4daa-be0d-7a3544ec9fec@phytec.com>
+Date: Thu, 6 Jun 2024 16:38:07 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: defconfig: Enable TI LP873X PMIC
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ catalin.marinas@arm.com, will@kernel.org, quic_bjorande@quicinc.com,
+ geert+renesas@glider.be, konrad.dybcio@linaro.org, shawnguo@kernel.org,
+ neil.armstrong@linaro.org, arnd@arndb.de, m.szyprowski@samsung.com,
+ nfraprado@collabora.com, u-kumar1@ti.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ upstream@lists.phytec.de, w.egorov@phytec.de
+References: <20240604233836.3628063-1-nmorrisson@phytec.com>
+ <1bc38042-7034-4937-a2e6-2dcfd8c2d609@linaro.org>
+Content-Language: en-US
+From: Nathan Morrisson <nmorrisson@phytec.com>
+In-Reply-To: <1bc38042-7034-4937-a2e6-2dcfd8c2d609@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0096.namprd03.prod.outlook.com
+ (2603:10b6:303:b7::11) To SA1PR22MB5636.namprd22.prod.outlook.com
+ (2603:10b6:806:3e2::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:isifIVrCilxhIMRnNU3HGt2G8q3KK3cF7QzUOhPJGYG+J9SkNY8
- dc7pQuXtiMaQiG1hapVGSFZJx1bm5y6bFKCt4MTLoWa+7mK6ST3jZUfSOM/3IjRa35KdiVu
- SijdKukOdoXg2i8XBG/09uNmliz2mCh2QXTkPHAfjymWTiUozifYV+RrjLqfgcpeA1FuqP4
- Hrb8RlaKJC1MXIVS3XMFA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:esqjQDeZD5E=;nRjU9DmUydieYbAg918/syNmZkh
- d2kWsXw/dQiR6V3WKyzfuo8+zitsHu/Bz4mMlSF5MWFOT0tkfaXZXERWmYrI5VyMxatBqrpw7
- idHXbj4L9aRcpiunVsPXG+C6a+ygK0+0pwpPbWUHgSBWi3pJpZRUgVcFaKdXAdoOROx2MAlE7
- iuQsH8FRemwFDD7t8dGfFM7I1XRvicvFmgbbEz7MDk6dYmNEX31O3asHKA9J92DowJeq6+hta
- PjWiTRDRg8nmQpnREUqrFMKdt3iNzaJbjvNSjR7HJGj0nmsMJcDf4uRh6VT8Q0qG9+KZUMWZe
- EQVz72wP8Cp5xDh7cFDpsC7CE/Vs/ZwjWu2fg37Zfx3bcs1YZUYu+EUUQCdI2MlDycoujaM/W
- +Jq0TU+AEO4g6jZY4sqyYnjApAle9guV7DtzmxiA10q8/DrAtTK/gm/WYErDy+ZuF5yfT6zt0
- lCbYrOZ4Ab3czGbfbcVUgxVpXGI6Bf2u+1PR/SIoOrarTpS/SUQyy7iNlWOjv8ycJT5e1NkhY
- 0SEgRD7ieU0R251Wv/JfFusLt+ULsjT2MLEp5xBJP/FVy1RMrqarOMHGliHASi/s7B5moFBAD
- Pwgug8pJzxkIVPGm1OVmwGr7xhUy5pqah3F5NIoiuTNO6/CGgnbj53DV4Fh9cz6oQddccK9K0
- ZpLSFHtzCeacybVszmB6lkVGxyJwf66GNLWD4Pg9LdsI6Yw3x/J8DN+Mbr0sUvXcUC8E2xWvz
- PHW25e8RRu+d+A8/6bDUaAlXeo+0J+BFMDNNkyixranzLBppFcbSwqY/tHnFde/eT/eh9BIzS
- AXa2X2/xZr1jfV8wkb5L9s1B5i1A2Rx+kWgTGzdm9ohiM=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR22MB5636:EE_|SN4PR22MB2853:EE_
+X-MS-Office365-Filtering-Correlation-Id: ad1987f9-c553-4999-b604-08dc8681b98f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|7416005|376005|366007|1800799015|921011;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?U3pYcVdWelQzWldjV2E2M0VoV3R4WEp1MTYxUkdDV2tHV3hpVnBhNW40MlhJ?=
+ =?utf-8?B?VythWVJxVkZRektvWWhLWXBBa2FzNVdGSi95TlBVaDBwYWUvaHdvbG9EZDd4?=
+ =?utf-8?B?bkpiWk5SNzVaK3RFL01QNXdSM3NjR0NEZWJaVGVsU1FURmlTc0JOUGkzbXc2?=
+ =?utf-8?B?VzZndlRlcmFhTWlNMWp1UnA5bGxndjJFak9EZVkwUkcyUGZMeElFTEU5NWJM?=
+ =?utf-8?B?NzNkRGNPQ3l6RVV2VHRUTkprSUFpR1NjbXZoUnV4YXJiVFU2SGZkVUVQY0s4?=
+ =?utf-8?B?Y1BUSGNtMDYvajZONmFKeTdLY0dnRFdRbnA3L0l1VlV3cVZlb1B0TDU0ZEhQ?=
+ =?utf-8?B?c1R3TjFjMHNXT1RObm82dUlZM3RBWTNmNEl6c21jSklZRlRWWmk1d3U0T3Yy?=
+ =?utf-8?B?YTBTK3A0M0NycDFuTmQ1ZG9LQ1NTeGVYQUJhVEtrbWVoU3ltNUVCblpPSDM5?=
+ =?utf-8?B?bmw1bGhDakxVL3ZjaDZkSitYcGVVVkd1NFZJRGtsS1dBTFA4R1NWYjhHdjVT?=
+ =?utf-8?B?YWNZR2JSMGdlemdzcnY5UHRBeG5xeGNNVkpnQm00T1Q1VC9YR0pWT2xNd0I0?=
+ =?utf-8?B?QzhJTVlxU28vQTJmSVVIMUc1d1hVM2NVc3FFYXlKeFRya1BNald3TWhzTE9Q?=
+ =?utf-8?B?ek91YmRYY25TRDNHNkFYaUxLZTFPdHdpZmUrUEJPQitBcTFtQUZxWWxnWVFP?=
+ =?utf-8?B?ellPS2doS05HSGczamNKMHdxc05HRGlCTzJrOWxkYkI5and0aGk4ZHRQSGdz?=
+ =?utf-8?B?ZXFseWVhSVFERlhGcnRzVVJ0SStMK2U1TmFqbjl0ZEF3ZGRMTUtRSS9CRHg5?=
+ =?utf-8?B?QnlEbGJmZ3VwVlNNVjlUbXNheGhWRHBNYS91TjZTMDJ0eUVEcU14WTNEdytp?=
+ =?utf-8?B?aWJpa3dtVzFiblBNTHpNNVdWTldyMzRLRkNVd01nek91Sk5HUFg2dnpobnNR?=
+ =?utf-8?B?bGpISGxUOVd3dWJlMFBDc0hERUNhMHZWZHU1Q0VUWHY1cXFEMnhCTkF1eW5N?=
+ =?utf-8?B?TG5MZTRiSlMwZVZ6UmdPbjk1d2hRRFErUkZtSTdqL2pxZkt5Y0M5MUR3MGY4?=
+ =?utf-8?B?OGxRNXpuNEtwUmZ0U3hzOTRrVGN5ZDRPQjRuekVNMDg5SEVTajc0SlNhMHZo?=
+ =?utf-8?B?M2JMS2V0amdBRis5eGh2SjFnNDhkU213STI2RU5KUlA1UjRSZHY1NlZBdDEv?=
+ =?utf-8?B?Q21QSGxFRHJZTFRQbEtTcUlrOU8xQnNBVzZzbG1jdjk1Yno5OTVDL25wSDVX?=
+ =?utf-8?B?RzZXcUtVQ0RiSnRQNkwwTmI4d3M0K25qWEhLaU12TkNYZzFYMGZYanVIbGpW?=
+ =?utf-8?B?VnJCaDRiTUtuSVc2TDBVd1V4V1Q2QlIyZ0lZR2JpR3VjK1pndW9qeXdFK3Vl?=
+ =?utf-8?B?M1lmbXZPQVdlWE5LYW40SmN5cmtmMzQ3bGc3MXpmNkJveXFLZ1pyMFhLcURD?=
+ =?utf-8?B?cE5GeUdBQW1uWmUzWFBZWXJJZ1JxUEpLRW9CVFZpaC9DcWlWY2tsTklEYWoy?=
+ =?utf-8?B?QmVlbnlMT3pKdUNaUzJ1MUNROGFPZDhjL0htWGUvalRPR1RLOXdsbk0rdjFo?=
+ =?utf-8?B?QzhHUDBCRm5CMk5SY1g2S0ZQb0p6Z1BYYmVjRkNsQ0l1WVlZQi9UVGU2dDMw?=
+ =?utf-8?B?b3RhWWVQQVFBam5yTFNINGlLbDFHVm56Q2hJNWU4dE83WE40TmU1aloxYnU4?=
+ =?utf-8?B?OFFGL2tPcXJDdGlDdDhreUNIeXF4amh6NDUyQnY3bS82Rzd1bGhpditOMlZn?=
+ =?utf-8?B?MlBUZ1dTT21oS0ZnK2JTcmE0RncveURtR05LWXNYL2FUbG04dVdtZFVNRC8r?=
+ =?utf-8?Q?1hoB4plqZBkn4rO8JnvaJ2n/eLCF0TmWBrd8s=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR22MB5636.namprd22.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(376005)(366007)(1800799015)(921011);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OXlLd01DU2tBZEFwWTdrckY1aHZhZDVKRlh6SGZUMGY1ZHdNMVkzMlBPQVhY?=
+ =?utf-8?B?cUdDOE13ZUd2dklsbGtCUUd5NTlBcCtsMHUvT08xbmRvWm5xWGFHeEJVQnlU?=
+ =?utf-8?B?WmFDSUx3Wjg1WmM5YUI5Mllybm1DdWtvdXRIbkhLTWdvOFArK09lT29rTUo4?=
+ =?utf-8?B?TlZBOUZ3K3lpVi8zaEwxRG9KMFNjN3NiL0NxM0NqSXg1aEJsWUVnTnprc0Zr?=
+ =?utf-8?B?V2FpdFFNcEgzS1NMSnRRNHN0clB5NHlkeGdZSndqTFhuMEg0MjNZUkpMMFJn?=
+ =?utf-8?B?WUpOMTFjOS9tUWxJTkRnREpKcjBXVGhVbkZQckhWYVQ2NlFFaUhwQ2w0KzVU?=
+ =?utf-8?B?MVdkZWxMNUZRV3RtalZJcUhzWWlwbE41b3VBbVVrNnBNcFc0bFVYZ0FwcUFn?=
+ =?utf-8?B?VjZuZ1ZKTUNIVlprVTRGTVdmRldJYVNsOHE2Wnc4dzhudStUSWhHa1B5Q24y?=
+ =?utf-8?B?bWoybUtMY1FOL21pY29Id29yZ2lxcG5EMG9Fdi9uL2N4MDBJRy9sSUZQWm1m?=
+ =?utf-8?B?eVp3OUg2SXhkVEwyeEZUcHZiTWJmSjBMUksyVkw5Z0g5Y21tMmlPek9BTWRl?=
+ =?utf-8?B?TmpXc1BIMXR1dkZCd3JRUHZiVU5sWjd4YUk5OFRFWUNpMk8vWmt2S202S09t?=
+ =?utf-8?B?ZWRJUytkdmI4OFlpN2s0cm1wMlJoUEwwdUtkZDFaSU1velFlTUl3LzQ0cjNF?=
+ =?utf-8?B?UEdURjZsVUFFYktiZnc5YmFHNzNkMEY1VldHSk5RNXNxSkF6a01yWWgrK3hS?=
+ =?utf-8?B?Q0FJb3JqUjFnajk0dEJQMllFQmNWK1NaVEFYQ0xsMlEyWXB6blo1M1EvRjFu?=
+ =?utf-8?B?YktoclJ0Ulk0eFA5WDBwRzBvbnZ6TGRqcXRDWjd4SzRsZDRYaUdjVElXN2c3?=
+ =?utf-8?B?SG1GMGhWSGIzdS81ZW8xZE5UQmJoZVhuRzk1U0M1dXpjcHRmWVFXZmZLTU5D?=
+ =?utf-8?B?a2RrdDJlQTQ1cVM5NUxaZG1mMFFBOWdaaG4zZllXTW9Ea09JWHBSekkraGlQ?=
+ =?utf-8?B?UmM2TWJtT3o5QnB3SXJlR0h1RmVHVmNIV1ptWjFJTTR5bGVrWmx0U25aTnk5?=
+ =?utf-8?B?eXk2dUMwLy9BeHlZNFpwTitOcTRBbmswRkppU1RPaitwbEhjL0VrMVVkOXM3?=
+ =?utf-8?B?TFZ0Y0l2d1kybnlaRmNzS3ozeXl1VW00RkoxeURQdFdickZoZnJpYmVNY0tl?=
+ =?utf-8?B?UFQ1eU1GaUhXbGw0OWNabDZuYTJPZXBLdi9QTk1zWFVUS2E3UXpYUW5jUVBI?=
+ =?utf-8?B?bEVwNUdTSlVwZmtJMWFVdmFPZnZ0ampoTTVhSTJrM3JBNHV0bDBhdXJTMGxD?=
+ =?utf-8?B?N2xEZ0c4bGJjRDBWUWxYczhRbUsvVU5UQmR3ZlR0blg5RGdSQ1plaldYdnpT?=
+ =?utf-8?B?S3llZ2xIR1Z2b2pwNlFLLzZKVjJabVNuaDhHZTkremw4WVM1Q3J1L1kyK0xV?=
+ =?utf-8?B?alpIOU92NWV0YzlvUUU3d216RlhGK3FUL0MxY2MwbStGVXNmYnM0R2NucGph?=
+ =?utf-8?B?cCtHeFZHcnJnbHRZbExEWGpQVGxUdXYvNXdLSFdVbnl4OE1Ja1pOYm5zTGxv?=
+ =?utf-8?B?dVphL3ZBMVVtK2hTdk1FckdnZnBTZlF5bnA2V0EwdVAzRWlSS3l2RzBLNTFN?=
+ =?utf-8?B?c3MyTDhpT01TUTBxN2NpblVxdUpkZmNmcWRMWGJWUFkzYWJITFEwazFSc2pM?=
+ =?utf-8?B?aWp2ZWNmVXRSYW90Z01EcVZlK1NUelNyWGpmMEVGY0pKNy9CbHgzTHlwa1pu?=
+ =?utf-8?B?cTdMM2Noa1FlYldWTXB1bTVZME5oaWRyUDZjNjgyc0s1a0FibUpvOUVheUkr?=
+ =?utf-8?B?bEV1QUk5b0tqOEoyWnJnMGVuMUM5N0ZLZDU4bU8zWW94bHRtY09WRS9Qd01G?=
+ =?utf-8?B?NGg1bFU4OTlBZmliZ2p6VXd3QnFhWUtXdmtiVk8xZU5pSEcvcnNIK2NITHow?=
+ =?utf-8?B?TitDUFlRcWVKaVpjbnJsdUoxS1JJRTk1cTl4QUIxdE5xcFNEb05xMUxUanEw?=
+ =?utf-8?B?anRwWjJZT0x4UFgxY21JamtQaFpPMGF0UHhiUnAzNWhJNXdzT3JrbTB6cFZZ?=
+ =?utf-8?B?aTNDdm9hemUzUVc4WTNBYnZ2SHRiVzVTVTg0M0JZbk1YVnFPUVFUS28yRGd4?=
+ =?utf-8?Q?kkl0JychiQ1pknIsriVa5QNmb?=
+X-OriginatorOrg: phytec.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ad1987f9-c553-4999-b604-08dc8681b98f
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR22MB5636.namprd22.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 23:38:10.3374
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 67bcab1a-5db0-4ee8-86f4-1533d0b4b5c7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: G6ZR++PewYpDRQ/lM9WL91XF/G6YfhaPVPYQbW3bXLjnfxoyrRFeGjYHVT4sWE/8DbrSF5N3soU14OlOLAZFYQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR22MB2853
 
-On the LG Gram 16Z90S, the WMAB and WMBB ACPI methods are not mapped
-under \XINI, but instead are mapped under \_SB.XINI.
 
-The reason for this is that the LGEX0820 ACPI device used by this
-driver is mapped at \_SB.XINI, so the ACPI methods where moved as well
-to appear below the LGEX0820 ACPI device.
+On 6/5/24 12:15 AM, Krzysztof Kozlowski wrote:
+> On 05/06/2024 01:38, Nathan Morrisson wrote:
+>> Enable the TI LP873X PMIC configs.
+> Why? No user of this, sorry. Please explain in commit msg why this
+> should be done, e.g. which upstream user needs it.
 
-Fix this by using the ACPI handle from the ACPI device when evaluating
-both methods.
+This will be used by the phytec am642-phyboard-electra, but the patch 
+[1] has not been accepted yet. I will fix the other issues in a v2 as well.
 
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D218901
-Tested-by: Agathe Boutmy <agathe@boutmy.com>
-Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-=2D--
- drivers/platform/x86/lg-laptop.c | 79 +++++++++++++-------------------
- 1 file changed, 33 insertions(+), 46 deletions(-)
 
-diff --git a/drivers/platform/x86/lg-laptop.c b/drivers/platform/x86/lg-la=
-ptop.c
-index db8a2f79bf0a..9c7857842caf 100644
-=2D-- a/drivers/platform/x86/lg-laptop.c
-+++ b/drivers/platform/x86/lg-laptop.c
-@@ -39,8 +39,6 @@ MODULE_LICENSE("GPL");
- #define WMI_METHOD_WMBB "2B4F501A-BD3C-4394-8DCF-00A7D2BC8210"
- #define WMI_EVENT_GUID  WMI_EVENT_GUID0
+[1] 
+https://lore.kernel.org/lkml/aac6a41f-a384-43c5-8eb0-722cda74b4ea@phytec.de/
 
--#define WMAB_METHOD     "\\XINI.WMAB"
--#define WMBB_METHOD     "\\XINI.WMBB"
- #define SB_GGOV_METHOD  "\\_SB.GGOV"
- #define GOV_TLED        0x2020008
- #define WM_GET          1
-@@ -74,7 +72,7 @@ static u32 inited;
 
- static int battery_limit_use_wmbb;
- static struct led_classdev kbd_backlight;
--static enum led_brightness get_kbd_backlight_level(void);
-+static enum led_brightness get_kbd_backlight_level(struct device *dev);
+Regards,
 
- static const struct key_entry wmi_keymap[] =3D {
- 	{KE_KEY, 0x70, {KEY_F15} },	 /* LG control panel (F1) */
-@@ -127,11 +125,10 @@ static int ggov(u32 arg0)
- 	return res;
- }
+Nathan
 
--static union acpi_object *lg_wmab(u32 method, u32 arg1, u32 arg2)
-+static union acpi_object *lg_wmab(struct device *dev, u32 method, u32 arg=
-1, u32 arg2)
- {
- 	union acpi_object args[3];
- 	acpi_status status;
--	acpi_handle handle;
- 	struct acpi_object_list arg;
- 	struct acpi_buffer buffer =3D { ACPI_ALLOCATE_BUFFER, NULL };
-
-@@ -142,29 +139,22 @@ static union acpi_object *lg_wmab(u32 method, u32 ar=
-g1, u32 arg2)
- 	args[2].type =3D ACPI_TYPE_INTEGER;
- 	args[2].integer.value =3D arg2;
-
--	status =3D acpi_get_handle(NULL, (acpi_string) WMAB_METHOD, &handle);
--	if (ACPI_FAILURE(status)) {
--		pr_err("Cannot get handle");
--		return NULL;
--	}
--
- 	arg.count =3D 3;
- 	arg.pointer =3D args;
-
--	status =3D acpi_evaluate_object(handle, NULL, &arg, &buffer);
-+	status =3D acpi_evaluate_object(ACPI_HANDLE(dev), "WMAB", &arg, &buffer)=
-;
- 	if (ACPI_FAILURE(status)) {
--		acpi_handle_err(handle, "WMAB: call failed.\n");
-+		dev_err(dev, "WMAB: call failed.\n");
- 		return NULL;
- 	}
-
- 	return buffer.pointer;
- }
-
--static union acpi_object *lg_wmbb(u32 method_id, u32 arg1, u32 arg2)
-+static union acpi_object *lg_wmbb(struct device *dev, u32 method_id, u32 =
-arg1, u32 arg2)
- {
- 	union acpi_object args[3];
- 	acpi_status status;
--	acpi_handle handle;
- 	struct acpi_object_list arg;
- 	struct acpi_buffer buffer =3D { ACPI_ALLOCATE_BUFFER, NULL };
- 	u8 buf[32];
-@@ -180,18 +170,12 @@ static union acpi_object *lg_wmbb(u32 method_id, u32=
- arg1, u32 arg2)
- 	args[2].buffer.length =3D 32;
- 	args[2].buffer.pointer =3D buf;
-
--	status =3D acpi_get_handle(NULL, (acpi_string)WMBB_METHOD, &handle);
--	if (ACPI_FAILURE(status)) {
--		pr_err("Cannot get handle");
--		return NULL;
--	}
--
- 	arg.count =3D 3;
- 	arg.pointer =3D args;
-
--	status =3D acpi_evaluate_object(handle, NULL, &arg, &buffer);
-+	status =3D acpi_evaluate_object(ACPI_HANDLE(dev), "WMBB", &arg, &buffer)=
-;
- 	if (ACPI_FAILURE(status)) {
--		acpi_handle_err(handle, "WMAB: call failed.\n");
-+		dev_err(dev, "WMBB: call failed.\n");
- 		return NULL;
- 	}
-
-@@ -222,7 +206,7 @@ static void wmi_notify(u32 value, void *context)
-
- 		if (eventcode =3D=3D 0x10000000) {
- 			led_classdev_notify_brightness_hw_changed(
--				&kbd_backlight, get_kbd_backlight_level());
-+				&kbd_backlight, get_kbd_backlight_level(kbd_backlight.dev->parent));
- 		} else {
- 			key =3D sparse_keymap_entry_from_scancode(
- 				wmi_input_dev, eventcode);
-@@ -287,7 +271,7 @@ static ssize_t fan_mode_store(struct device *dev,
- 	if (ret)
- 		return ret;
-
--	r =3D lg_wmab(WM_FAN_MODE, WM_GET, 0);
-+	r =3D lg_wmab(dev, WM_FAN_MODE, WM_GET, 0);
- 	if (!r)
- 		return -EIO;
-
-@@ -298,9 +282,9 @@ static ssize_t fan_mode_store(struct device *dev,
-
- 	m =3D r->integer.value;
- 	kfree(r);
--	r =3D lg_wmab(WM_FAN_MODE, WM_SET, (m & 0xffffff0f) | (value << 4));
-+	r =3D lg_wmab(dev, WM_FAN_MODE, WM_SET, (m & 0xffffff0f) | (value << 4))=
-;
- 	kfree(r);
--	r =3D lg_wmab(WM_FAN_MODE, WM_SET, (m & 0xfffffff0) | value);
-+	r =3D lg_wmab(dev, WM_FAN_MODE, WM_SET, (m & 0xfffffff0) | value);
- 	kfree(r);
-
- 	return count;
-@@ -312,7 +296,7 @@ static ssize_t fan_mode_show(struct device *dev,
- 	unsigned int status;
- 	union acpi_object *r;
-
--	r =3D lg_wmab(WM_FAN_MODE, WM_GET, 0);
-+	r =3D lg_wmab(dev, WM_FAN_MODE, WM_GET, 0);
- 	if (!r)
- 		return -EIO;
-
-@@ -339,7 +323,7 @@ static ssize_t usb_charge_store(struct device *dev,
- 	if (ret)
- 		return ret;
-
--	r =3D lg_wmbb(WMBB_USB_CHARGE, WM_SET, value);
-+	r =3D lg_wmbb(dev, WMBB_USB_CHARGE, WM_SET, value);
- 	if (!r)
- 		return -EIO;
-
-@@ -353,7 +337,7 @@ static ssize_t usb_charge_show(struct device *dev,
- 	unsigned int status;
- 	union acpi_object *r;
-
--	r =3D lg_wmbb(WMBB_USB_CHARGE, WM_GET, 0);
-+	r =3D lg_wmbb(dev, WMBB_USB_CHARGE, WM_GET, 0);
- 	if (!r)
- 		return -EIO;
-
-@@ -381,7 +365,7 @@ static ssize_t reader_mode_store(struct device *dev,
- 	if (ret)
- 		return ret;
-
--	r =3D lg_wmab(WM_READER_MODE, WM_SET, value);
-+	r =3D lg_wmab(dev, WM_READER_MODE, WM_SET, value);
- 	if (!r)
- 		return -EIO;
-
-@@ -395,7 +379,7 @@ static ssize_t reader_mode_show(struct device *dev,
- 	unsigned int status;
- 	union acpi_object *r;
-
--	r =3D lg_wmab(WM_READER_MODE, WM_GET, 0);
-+	r =3D lg_wmab(dev, WM_READER_MODE, WM_GET, 0);
- 	if (!r)
- 		return -EIO;
-
-@@ -423,7 +407,7 @@ static ssize_t fn_lock_store(struct device *dev,
- 	if (ret)
- 		return ret;
-
--	r =3D lg_wmab(WM_FN_LOCK, WM_SET, value);
-+	r =3D lg_wmab(dev, WM_FN_LOCK, WM_SET, value);
- 	if (!r)
- 		return -EIO;
-
-@@ -437,7 +421,7 @@ static ssize_t fn_lock_show(struct device *dev,
- 	unsigned int status;
- 	union acpi_object *r;
-
--	r =3D lg_wmab(WM_FN_LOCK, WM_GET, 0);
-+	r =3D lg_wmab(dev, WM_FN_LOCK, WM_GET, 0);
- 	if (!r)
- 		return -EIO;
-
-@@ -467,9 +451,9 @@ static ssize_t charge_control_end_threshold_store(stru=
-ct device *dev,
- 		union acpi_object *r;
-
- 		if (battery_limit_use_wmbb)
--			r =3D lg_wmbb(WMBB_BATT_LIMIT, WM_SET, value);
-+			r =3D lg_wmbb(&pf_device->dev, WMBB_BATT_LIMIT, WM_SET, value);
- 		else
--			r =3D lg_wmab(WM_BATT_LIMIT, WM_SET, value);
-+			r =3D lg_wmab(&pf_device->dev, WM_BATT_LIMIT, WM_SET, value);
- 		if (!r)
- 			return -EIO;
-
-@@ -488,7 +472,7 @@ static ssize_t charge_control_end_threshold_show(struc=
-t device *device,
- 	union acpi_object *r;
-
- 	if (battery_limit_use_wmbb) {
--		r =3D lg_wmbb(WMBB_BATT_LIMIT, WM_GET, 0);
-+		r =3D lg_wmbb(&pf_device->dev, WMBB_BATT_LIMIT, WM_GET, 0);
- 		if (!r)
- 			return -EIO;
-
-@@ -499,7 +483,7 @@ static ssize_t charge_control_end_threshold_show(struc=
-t device *device,
-
- 		status =3D r->buffer.pointer[0x10];
- 	} else {
--		r =3D lg_wmab(WM_BATT_LIMIT, WM_GET, 0);
-+		r =3D lg_wmab(&pf_device->dev, WM_BATT_LIMIT, WM_GET, 0);
- 		if (!r)
- 			return -EIO;
-
-@@ -578,7 +562,7 @@ static void tpad_led_set(struct led_classdev *cdev,
- {
- 	union acpi_object *r;
-
--	r =3D lg_wmab(WM_TLED, WM_SET, brightness > LED_OFF);
-+	r =3D lg_wmab(cdev->dev->parent, WM_TLED, WM_SET, brightness > LED_OFF);
- 	kfree(r);
- }
-
-@@ -600,16 +584,16 @@ static void kbd_backlight_set(struct led_classdev *c=
-dev,
- 		val =3D 0;
- 	if (brightness >=3D LED_FULL)
- 		val =3D 0x24;
--	r =3D lg_wmab(WM_KEY_LIGHT, WM_SET, val);
-+	r =3D lg_wmab(cdev->dev->parent, WM_KEY_LIGHT, WM_SET, val);
- 	kfree(r);
- }
-
--static enum led_brightness get_kbd_backlight_level(void)
-+static enum led_brightness get_kbd_backlight_level(struct device *dev)
- {
- 	union acpi_object *r;
- 	int val;
-
--	r =3D lg_wmab(WM_KEY_LIGHT, WM_GET, 0);
-+	r =3D lg_wmab(dev, WM_KEY_LIGHT, WM_GET, 0);
-
- 	if (!r)
- 		return LED_OFF;
-@@ -637,7 +621,7 @@ static enum led_brightness get_kbd_backlight_level(voi=
-d)
-
- static enum led_brightness kbd_backlight_get(struct led_classdev *cdev)
- {
--	return get_kbd_backlight_level();
-+	return get_kbd_backlight_level(cdev->dev->parent);
- }
-
- static LED_DEVICE(kbd_backlight, 255, LED_BRIGHT_HW_CHANGED);
-@@ -664,6 +648,11 @@ static struct platform_driver pf_driver =3D {
-
- static int acpi_add(struct acpi_device *device)
- {
-+	struct platform_device_info pdev_info =3D {
-+		.fwnode =3D acpi_fwnode_handle(device),
-+		.name =3D PLATFORM_NAME,
-+		.id =3D PLATFORM_DEVID_NONE,
-+	};
- 	int ret;
- 	const char *product;
- 	int year =3D 2017;
-@@ -675,9 +664,7 @@ static int acpi_add(struct acpi_device *device)
- 	if (ret)
- 		return ret;
-
--	pf_device =3D platform_device_register_simple(PLATFORM_NAME,
--						    PLATFORM_DEVID_NONE,
--						    NULL, 0);
-+	pf_device =3D platform_device_register_full(&pdev_info);
- 	if (IS_ERR(pf_device)) {
- 		ret =3D PTR_ERR(pf_device);
- 		pf_device =3D NULL;
-=2D-
-2.39.2
-
+>
+>> Signed-off-by: Nathan Morrisson <nmorrisson@phytec.com>
+>> ---
+>>   arch/arm64/configs/defconfig | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+>> index 57a9abe78ee4..24ea62a8fdbf 100644
+>> --- a/arch/arm64/configs/defconfig
+>> +++ b/arch/arm64/configs/defconfig
+>> @@ -745,6 +745,7 @@ CONFIG_MFD_SEC_CORE=y
+>>   CONFIG_MFD_SL28CPLD=y
+>>   CONFIG_RZ_MTU3=y
+>>   CONFIG_MFD_TI_AM335X_TSCADC=m
+>> +CONFIG_MFD_TI_LP873X=y
+> Why this cannot be m?
+>
+>>   CONFIG_MFD_TPS65219=y
+>>   CONFIG_MFD_TPS6594_I2C=m
+>>   CONFIG_MFD_ROHM_BD718XX=y
+>> @@ -760,6 +761,7 @@ CONFIG_REGULATOR_FAN53555=y
+>>   CONFIG_REGULATOR_GPIO=y
+>>   CONFIG_REGULATOR_HI6421V530=y
+>>   CONFIG_REGULATOR_HI655X=y
+>> +CONFIG_REGULATOR_LP873X=y
+> Why this cannot be m?
+>
+>>   CONFIG_REGULATOR_MAX77620=y
+>>   CONFIG_REGULATOR_MAX8973=y
+>>   CONFIG_REGULATOR_MAX20411=m
+> Best regards,
+> Krzysztof
+>
 
