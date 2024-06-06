@@ -1,155 +1,132 @@
-Return-Path: <linux-kernel+bounces-205087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E99DA8FF6ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:32:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40C208FF6F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F27B1F24361
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:32:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAD31286841
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97BC13D2BB;
-	Thu,  6 Jun 2024 21:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B777513C67B;
+	Thu,  6 Jun 2024 21:33:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hAld5+a/"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b="VafrFhSD"
+Received: from ale.deltatee.com (ale.deltatee.com [204.191.154.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E94FC02;
-	Thu,  6 Jun 2024 21:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80162FC02;
+	Thu,  6 Jun 2024 21:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=204.191.154.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717709564; cv=none; b=TpOuc14r3gIyC6DLyvEv267FopsdyuWD9UAi4Moo4CIvWpAwk5+zULjAGRoOYYYo7feB1laQ3nqsCELwLpzVc4dhPzmeKsLfis8XFfRARST8O1uESFWi45z83ihkdUyUrYtXwPq7UBl4LZNsy+cXIgLPxuPDtsKCRKyPElVdDW4=
+	t=1717709591; cv=none; b=l4eAoZ9q/Ev7ME5Y35HXthve6rB4Q+fUsB9GfIuZt2sDplVKBbiRLzryW5II/rMh1u7TTF/vr/bDCbkjDbdF6CVOQQQN8URtsP3i8cU79KkaGFbrdsC4jFwUzgAO6/svdkecOR+Pwljj3TpJd+m5whPdVnopcvxVrmRts/+6thI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717709564; c=relaxed/simple;
-	bh=VyqqIvxELS07SY/UCZXKvm0fiKpJWcw9PEObBiG/th0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZWzAz+K35Tpr26nm4PkLN3U3lYYOgxX/6ZaH9SPF/ADFBK9+KQrSwqNujhFqfnJ9eRiVZ7zlF6i1VykbTMdXLtaMFj90R+D90WFqkAKHlojlhExqkByytWc0lZN/8NnB4D8CwlCAkKFJwO1lins+L6mti7pi649gqWC8IvxtaIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hAld5+a/; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f4a0050b9aso12731665ad.2;
-        Thu, 06 Jun 2024 14:32:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717709562; x=1718314362; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oCJ+6h3oOdiBUp+f2OAuium5zQQWuoIn8eHud9GJWzg=;
-        b=hAld5+a/XBTvnk8LRMJYLDf+8PDkcsJqRsZ8lC23r5QjDONVnQX4zRV43gA33rKsiy
-         I+Dsn5jh/bOAZEF9B2QU3qY49NtgYoSrnw/z8gRzs7GQ2EkK43caqc915Jmh7wXAbSIL
-         iGkXLT+DCVhK9Pk4uM4tjhW3HuTcxnvmlQFyh0CAYfzBQQOAoT0LoFJM1p3wbpW5IhsW
-         q8KkOvJ0qA+ufbbqgpVZTsWmSpPxc35y2OBLb0UEIhba4CNonE9Atto6zwoYcXsGJcVv
-         fQzq/lL97g0WDL0QGdjnRd7b9R7bLXx2ROAWXHCw8aBMR6xpGTpRQSd6UIwzQOGdqDtf
-         6hZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717709562; x=1718314362;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oCJ+6h3oOdiBUp+f2OAuium5zQQWuoIn8eHud9GJWzg=;
-        b=fUIunPDi2n0ebQBLTGiii9issdZmgFtuMbIaYpc16Ufj8lVml61ZaTXh0Q/THMAYtu
-         GW2xnIKMPKIjDvUItAA9xqrpD8apwPw7SsRJJtj+VuGRSCyDGtbHjR44yGlb/AdaZtJ4
-         N62lBSx5mrlPp2jvoEhOwcfEvHoUAJ4iTQVFxuXWdcQ1jrSwz9Cj2LPdfseMbDOxlri0
-         nWMDldFZk/v3ufyMpVAA4tccT3at2RBc01lPSS3CaI0N261tDsutbGx6SwrdzzDbSo0G
-         HPHFwtA4KXPjwJiA2RwBgnT64uJnPuAnfMPEHWF0pTFicF3WZ736xz3MkwDFAEZeDSeJ
-         Ft+g==
-X-Forwarded-Encrypted: i=1; AJvYcCU6O73CzJYxS4xzr2uElso3n5viOxkT8QpViZUipMOl6U70y34VP99kKuLeYDhVQXUTm/cOqWBjFJ94mxN9rvbVUC5BBkEObTi3V7Prlv0shTRoycu2adHZuGVEyKQvLIfjf+E8RSLTatwelgphWCZ+pHP6UaD66OWQBG8mkpgYUstv/wyW
-X-Gm-Message-State: AOJu0YxsgsMVj8CBRWPqymLrOUv/xJD3uZ/7wZ/65RIZHbg7vzGRofaB
-	Abkz62thNsDDVokF8Au164WMieLITu3jo3LZBoL07BIw4sVzA0wbNi0ROQ==
-X-Google-Smtp-Source: AGHT+IHEDPgg5UbUeel1ZbrOc19j/l10c1qIO+cNiOqendzAFNoWoER2y0caJd6aHszt9OHGhAAkoA==
-X-Received: by 2002:a17:902:ec90:b0:1f3:b55:e247 with SMTP id d9443c01a7336-1f6d03c1052mr6536285ad.55.1717709562007;
-        Thu, 06 Jun 2024 14:32:42 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:cdcb:6470:dec1:846c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd7e066dsm20024115ad.206.2024.06.06.14.32.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 14:32:41 -0700 (PDT)
-Date: Thu, 6 Jun 2024 14:32:38 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Kamel BOUHARA <kamel.bouhara@bootlin.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Jeff LaBundy <jeff@labundy.com>,
-	catalin.popescu@leica-geosystems.com,
-	mark.satterthwaite@touchnetix.com,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	bsp-development.geo@leica-geosystems.com
-Subject: Re: [PATCH v13 3/3] Input: Add TouchNetix axiom i2c touchscreen
- driver
-Message-ID: <ZmIq9jmkZtEaGw19@google.com>
-References: <20240603153929.29218-1-kamel.bouhara@bootlin.com>
- <20240603153929.29218-4-kamel.bouhara@bootlin.com>
- <Zl5ZmYyntq7OJOvZ@google.com>
- <20240605124746.GA57733@tpx1.home>
- <7ca4a22f903313128de5c0f65a49b319@bootlin.com>
+	s=arc-20240116; t=1717709591; c=relaxed/simple;
+	bh=c4VPquM25/aAzWc+PWoefzik+kfteGxmC9v6FNbyTbM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:In-Reply-To:
+	 Content-Type:Subject; b=IoYcP12aQBzVufc6VYmCaoFcYI95EAvBJY06TghI61u1pQFGX6VlPvcUbYvBqmdeu53cuqZvzXNR4vxI4Hnz7McDuWHuFy0qbAaOGw+lgW5yEIL9M/D4eUMsLxq36uBLgRhFNFZN6Uvao2qD79v1ZwFZblWoqzlFdBMChA7MqtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com; spf=pass smtp.mailfrom=deltatee.com; dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b=VafrFhSD; arc=none smtp.client-ip=204.191.154.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deltatee.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=deltatee.com; s=20200525; h=Subject:In-Reply-To:From:References:Cc:To:
+	MIME-Version:Date:Message-ID:content-disposition;
+	bh=GFEw8cAaOIMPPjcIH/t2swdVfYuU+9OBnbnvT/Z34FA=; b=VafrFhSDZTiuTQ8+eqghWgRF/6
+	LbImSkv5LzDfHOSEpw5N5S4ulsNiiv1TzeiftXjYmAxXH9xYRxXqV6ScNt6jpoZhUoMjpLgULTY4c
+	RxEqaFL5TsOFZvWBW6uee5L1CXJlmgb8ZmEQb3c/zrxeclsuynN+yXuixJpTovirhWS9QmVDgv2Ka
+	zCh7bRny2nQzn/GF+eMTU8MtnBT27kGc17jRdSPb5CgAukSJ+fhCiWh1HUL/v2CPuqd9Kw4wF00zx
+	rokY8xTE011F43W7U8oQ0olgR2h94vh+ngSqC+weHVt2qqA6FxLwSBLt7mMgxdELA9RdCtvo2WLM9
+	NfcCF6PQ==;
+Received: from d104-157-31-28.abhsia.telus.net ([104.157.31.28] helo=[192.168.1.250])
+	by ale.deltatee.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <logang@deltatee.com>)
+	id 1sFKj7-002BN1-1U;
+	Thu, 06 Jun 2024 15:33:00 -0600
+Message-ID: <bb2e5a8d-797d-406c-acc6-60e83b302ede@deltatee.com>
+Date: Thu, 6 Jun 2024 15:32:39 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7ca4a22f903313128de5c0f65a49b319@bootlin.com>
+User-Agent: Mozilla Thunderbird
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Martin Oliveira <martin.oliveira@eideticom.com>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-mm@kvack.org, Jason Gunthorpe
+ <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Tejun Heo <tj@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Mike Marciniszyn <mike.marciniszyn@intel.com>,
+ Michael Guralnik <michaelgur@nvidia.com>,
+ Dan Williams <dan.j.williams@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Valentine Sinitsyn <valesini@yandex-team.ru>, Lukas Wunner <lukas@wunner.de>
+References: <20240605192934.742369-1-martin.oliveira@eideticom.com>
+ <20240605192934.742369-2-martin.oliveira@eideticom.com>
+ <2024060658-ember-unblessed-4c74@gregkh>
+Content-Language: en-CA
+From: Logan Gunthorpe <logang@deltatee.com>
+In-Reply-To: <2024060658-ember-unblessed-4c74@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 104.157.31.28
+X-SA-Exim-Rcpt-To: gregkh@linuxfoundation.org, martin.oliveira@eideticom.com, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-mm@kvack.org, jgg@ziepe.ca, leon@kernel.org, bhelgaas@google.com, tj@kernel.org, rafael@kernel.org, akpm@linux-foundation.org, mike.marciniszyn@intel.com, michaelgur@nvidia.com, dan.j.williams@intel.com, ardb@kernel.org, valesini@yandex-team.ru, lukas@wunner.de
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Level: 
+Subject: Re: [PATCH 1/6] kernfs: create vm_operations_struct without
+ page_mkwrite()
+X-SA-Exim-Version: 4.2.1 (built Wed, 06 Jul 2022 17:57:39 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 
-On Wed, Jun 05, 2024 at 03:48:20PM +0200, Kamel BOUHARA wrote:
-> [...]
+Hi Greg,
+
+On 2024-06-06 14:54, Greg Kroah-Hartman wrote:
+> On Wed, Jun 05, 2024 at 01:29:29PM -0600, Martin Oliveira wrote:
+>> The standard kernfs vm_ops installs a page_mkwrite() operator which
+>> modifies the file update time on write.
+>>
+>> This not always required (or makes sense), such as in the P2PDMA, which
+>> uses the sysfs file as an allocator from userspace.
 > 
-> > > > +
-> > > > +	error = devm_request_threaded_irq(dev, client->irq, NULL,
-> > > > +					  axiom_irq, IRQF_ONESHOT, dev_name(dev), ts);
-> > > > +	if (error) {
-> > > > +		dev_info(dev, "Request irq failed, falling back to polling mode");
-> > > 
-> > > I do not think you should fall back to polling mode if you fail to get
-> > > interrupt. If it was not specified (client->irq) then I can see that
-> > > we
-> > > might want to fall back, but if the system configured for using
-> > > interrupt and you can not get it you should bail out.
-> > > 
-> > 
-> > Yes, clear, the polling mode can be decorrelated to the irq not provided
-> > case.
+> That's not a good idea, please don't do that.  sysfs binary files are
+> "pass through", why would you want to use this as an allocator?
+
+The P2PDMA code already creates a binary attribute which is used to
+allocate P2PDMA memory into userspace[1]. It was done this way a couple
+of years ago at the suggestion of Christoph[2]. Using a sysfs attribute
+made the code substantially simpler and got rid of a bunch of pseudofs
+mess that was required when mmaping a char device. The attribute already
+exists and is used by userspace so it's not something we can change at
+this point.
+
+The attribute has worked well for what was needed until we wanted to use
+P2PDMA memory with FOLL_LONGTERM and GUP. That path specifically denies
+FOLL_LONGTERM pins when the underlying VMA has a .page_mkwrite operator,
+which sysfs/kernfs forces on us. P2PDMA doesn't benefit from this
+operator in any way so the simplest thing is to remove it for this use case.
+
+>> Furthermore, having the page_mkwrite() operator causes
+>> writable_file_mapping_allowed() to fail due to
+>> vma_needs_dirty_tracking() on the gup flow, which is a pre-requisite for
+>> enabling P2PDMA over RDMA.
+>>
+>> Fix this by adding a new boolean on kernfs_ops to differentiate between
+>> the different behaviours.
 > 
-> Just to make sure I understood, is this what you propose ?
-> 
-> if (client->irq) {
->         error = devm_request_threaded_irq(...)
->         if (error) {
-> 		dev_warn(dev, "failed to request IRQ\n");
-> 		client->irq = 0;
->          }
-> }
-> 
-> if(!client->irq) {
->     // setup polling stuff
->     ...
-> }
+> This isn't going to work well.
 
-No, if you fail to acquire interrupt that was described in ACPI/DT it
-should be treated as an error, like this:
+What about it are you worried won't work well? We're open to other
+suggestions.
 
-	if (client->irq) {
-		error = devm_request_threaded_irq(...)
-		if (error)
-			return dev_err_probe(...);
-	} else {
-		.. set up polling ..
-	}
+Thanks,
 
-This also makes sure that if interrupt controller is not ready and
-requests probe deferral we will not end up with device in polling mode.
+Logan
 
-Thanks.
-
--- 
-Dmitry
+[1] https://elixir.bootlin.com/linux/latest/source/drivers/pci/p2pdma.c#L164
+[2] https://lore.kernel.org/all/20220705075108.GB17451@lst.de/
 
