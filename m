@@ -1,240 +1,135 @@
-Return-Path: <linux-kernel+bounces-204496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C455E8FEFCE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:02:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B7B8FEFCD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6B251C24398
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:02:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 587001F2450C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380FD19E7C9;
-	Thu,  6 Jun 2024 14:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A9619E7C2;
+	Thu,  6 Jun 2024 14:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J/TAwQlP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDPRnO+p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2303B198E9A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3E01EB3A;
+	Thu,  6 Jun 2024 14:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717684749; cv=none; b=rK0Gy3pPQN+7fo0zR6qHYp1ZPwQSJmxiN0VkLSL3PUrrdUMVvPt8+O2Oa7cmlj+0Usy37JHstIdOV+kWg4025QYTzlkXIzEhSlxY9zxNEcM2QcF+1kjYYvHQDebEUZsrr+EfGb9f3roVhA1LheQbTZzripRyohbEUmCUK5ObPbk=
+	t=1717684724; cv=none; b=TMc95ghLtNK1qNUkfjY7wxG9oWweYVasOfVDuZ/g1PT8QntyxdfSiPNblIVNK48w//iV/4ZXahDwWKwoza0oOvkc0pVXjE0M7IGrPZwvx0uqGCLuGDG+TFOBKdWlf7Z6EoYP3LwRCl64R+atFUlnrfIGsNsCymY0HfMevhst0a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717684749; c=relaxed/simple;
-	bh=O8n0Mo/8n7ogCj2ojDahL4mRLFE5oqFOARZIsUqF7dY=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=Tza/aGcU1i8ccYHUd1dWBHF/CG7TvBnCNX/JmhUYtH5pqEoxhvjFnxsM6MeJZjd8F3esfLc9VIPj/CFTQwajgnuQX+a3b1tuyPbmx7exKkF6HKD84bRe5nAP3jiE8TEpgy1qe6TyLPgA1PfSUhy4r5sRBk9Jkg/9N46I+jbrF88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J/TAwQlP; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717684747; x=1749220747;
-  h=date:from:to:cc:subject:message-id;
-  bh=O8n0Mo/8n7ogCj2ojDahL4mRLFE5oqFOARZIsUqF7dY=;
-  b=J/TAwQlP70zHV8r1cRRwC1QIn3x2+n4Uw+9spO7XPrnH2OZns0C9Rs+O
-   /ZvgcECW/JklzVEreXjO3bU8es/GZQiDHpdg2LMdB7J3hPu3Z/w+1BbTq
-   oZi5+ksjrBhQlTr0iNv3a8Si8Z31qXZ5dxX2hqmgVuozcJ2UVSoSRP529
-   1NaGm+BKlIJIme/0B37jdUjCTMJdgxHYNQ58+M/u8fZW/hmaQ84XLShpm
-   FchnG/RL20MhV6AUnBmuWFcPu5HxgwZ4bHph3LRqCA5mWffk2xTRCe7MK
-   86FLYFWcnyNwj83VLIi7zdK4dTyiFwTIlzHqTso44dkwLZoszfiBU1Bfe
-   Q==;
-X-CSE-ConnectionGUID: TfRlLQVkSFGRN57jv7m7ZQ==
-X-CSE-MsgGUID: 77s7kL3fRZSEIlWUiTrJAQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="31901658"
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="31901658"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 07:39:06 -0700
-X-CSE-ConnectionGUID: q1D6jtKDTuqn+0suMFMbaw==
-X-CSE-MsgGUID: CgpZ025QRLGxLkqo/I+3GQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="38090799"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 06 Jun 2024 07:39:05 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sFEGc-0003DM-2Y;
-	Thu, 06 Jun 2024 14:39:02 +0000
-Date: Thu, 06 Jun 2024 22:38:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:locking/urgent] BUILD SUCCESS
- f92a59f6d12e31ead999fee9585471b95a8ae8a3
-Message-ID: <202406062219.Tm2wTgBS-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1717684724; c=relaxed/simple;
+	bh=PRwLGYovMSOZLOdr9ird43QgRk/4eRVu/yuyjg0HH2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ipy8vNiqtNoq4uvzz5jTdlucAiUaNMTMdhmI9l6g1BHZvxqD2NfFxNEkRVs+BtqbFkJP4R8iyIavwA8pdW8rabnIxS8ri+zD1ImUeQj4/Pn2KqdCEGE1Fmgj/frfQrAHUVnzL0YEpoO6O8b07swLAeFJ3rny5IuLl+0UKpay6J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDPRnO+p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E45ADC2BD10;
+	Thu,  6 Jun 2024 14:38:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717684724;
+	bh=PRwLGYovMSOZLOdr9ird43QgRk/4eRVu/yuyjg0HH2E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WDPRnO+puB64OOwO9azNiTjt7xJDjsraLNB6eonI4q58Kxy+F39fyzG1QGlUKwlAL
+	 jhR0iweie4sNriDWV6e4VDvtPuMoR6o+AytaUqPlJd37IesoRKtGu8AjmnuiUSZchU
+	 t/Ph3tNieVMPPjw+Hr3Zytbz33npRrSUlNX4h8U8bOeZapr1hEf1UUujQSKg/mUsAj
+	 4INvJHigvrIJ+SY0oCBcZideXGVF+pd/z+O2gm+pz0aFdnKVP8bKS7rz+GmOUBCJr9
+	 WSz1f/GM3RNbEUQFJk7TXqhGdFwLOecChJyJNiolXxH6xo2lcQNJoTExs3vYV1lL7b
+	 4qY5Tz7NJOzYQ==
+Date: Thu, 6 Jun 2024 15:38:37 +0100
+From: Mark Brown <broonie@kernel.org>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [RFC PATCH 1/4] regulator: core: Ensure the cached state matches
+ the hardware state in regulator_set_voltage_unlocked()
+Message-ID: <c7f4dc07-5a78-4cd4-8f3e-063dec5d0bc4@sirena.org.uk>
+References: <20240605074936.578687-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240605074936.578687-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <22664e29-4c7a-4544-ad32-25c3d7e342e9@sirena.org.uk>
+ <CA+V-a8vStea7RZWNXjJLbuibz+-53KT9=5g-P9N4fUrbqjj91A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="k+c8wgxJKe7M4G9M"
+Content-Disposition: inline
+In-Reply-To: <CA+V-a8vStea7RZWNXjJLbuibz+-53KT9=5g-P9N4fUrbqjj91A@mail.gmail.com>
+X-Cookie: Simulated picture.
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/urgent
-branch HEAD: f92a59f6d12e31ead999fee9585471b95a8ae8a3  locking/atomic: scripts: fix ${atomic}_sub_and_test() kerneldoc
 
-elapsed time: 1474m
+--k+c8wgxJKe7M4G9M
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-configs tested: 148
-configs skipped: 4
+On Thu, Jun 06, 2024 at 03:12:42PM +0100, Lad, Prabhakar wrote:
+> On Thu, Jun 6, 2024 at 1:05=E2=80=AFPM Mark Brown <broonie@kernel.org> wr=
+ote:
+> > On Wed, Jun 05, 2024 at 08:49:33AM +0100, Prabhakar wrote:
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+> > > Driver code flow:
+> > > 1> set regulator to 1.8V (BIT0 =3D 1)
+> > > 2> Regulator cached state now will be 1.8V
+> > > 3> Now for some reason driver issues a reset to the IP block
+> > >    which resets the registers to default value. In this process
+> > >    the regulator is set to 3.3V (BIT0 =3D 0)
+> > > 4> Now the driver requests the regulator core to set 1.8V
 
-tested configs:
-alpha                             allnoconfig   gcc  
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-arc                              allmodconfig   gcc  
-arc                               allnoconfig   gcc  
-arc                              allyesconfig   gcc  
-arc                                 defconfig   gcc  
-arc                   randconfig-001-20240606   gcc  
-arc                   randconfig-002-20240606   gcc  
-arm                              allmodconfig   gcc  
-arm                               allnoconfig   clang
-arm                              allyesconfig   gcc  
-arm                                 defconfig   clang
-arm                           omap1_defconfig   gcc  
-arm                           tegra_defconfig   gcc  
-arm64                            allmodconfig   clang
-arm64                             allnoconfig   gcc  
-arm64                               defconfig   gcc  
-arm64                 randconfig-002-20240606   gcc  
-csky                             alldefconfig   gcc  
-csky                             allmodconfig   gcc  
-csky                              allnoconfig   gcc  
-csky                             allyesconfig   gcc  
-csky                                defconfig   gcc  
-csky                  randconfig-001-20240606   gcc  
-csky                  randconfig-002-20240606   gcc  
-hexagon                          allmodconfig   clang
-hexagon                           allnoconfig   clang
-hexagon                          allyesconfig   clang
-hexagon                             defconfig   clang
-i386                             allmodconfig   gcc  
-i386                              allnoconfig   gcc  
-i386                             allyesconfig   gcc  
-i386         buildonly-randconfig-001-20240606   clang
-i386         buildonly-randconfig-002-20240606   clang
-i386         buildonly-randconfig-003-20240606   clang
-i386         buildonly-randconfig-004-20240606   gcc  
-i386         buildonly-randconfig-005-20240606   clang
-i386         buildonly-randconfig-006-20240606   gcc  
-i386                                defconfig   clang
-i386                  randconfig-001-20240606   clang
-i386                  randconfig-002-20240606   clang
-i386                  randconfig-003-20240606   clang
-i386                  randconfig-004-20240606   clang
-i386                  randconfig-005-20240606   clang
-i386                  randconfig-006-20240606   clang
-i386                  randconfig-011-20240606   clang
-i386                  randconfig-012-20240606   gcc  
-i386                  randconfig-013-20240606   gcc  
-i386                  randconfig-014-20240606   gcc  
-i386                  randconfig-015-20240606   gcc  
-i386                  randconfig-016-20240606   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                           defconfig   gcc  
-loongarch             randconfig-001-20240606   gcc  
-loongarch             randconfig-002-20240606   gcc  
-m68k                             allmodconfig   gcc  
-m68k                              allnoconfig   gcc  
-m68k                             allyesconfig   gcc  
-m68k                                defconfig   gcc  
-m68k                          hp300_defconfig   gcc  
-microblaze                       allmodconfig   gcc  
-microblaze                        allnoconfig   gcc  
-microblaze                       allyesconfig   gcc  
-microblaze                          defconfig   gcc  
-mips                              allnoconfig   gcc  
-mips                             allyesconfig   gcc  
-mips                      maltasmvp_defconfig   gcc  
-nios2                            allmodconfig   gcc  
-nios2                             allnoconfig   gcc  
-nios2                            allyesconfig   gcc  
-nios2                               defconfig   gcc  
-nios2                 randconfig-001-20240606   gcc  
-nios2                 randconfig-002-20240606   gcc  
-openrisc                          allnoconfig   gcc  
-openrisc                         allyesconfig   gcc  
-openrisc                            defconfig   gcc  
-parisc                           allmodconfig   gcc  
-parisc                            allnoconfig   gcc  
-parisc                           allyesconfig   gcc  
-parisc                              defconfig   gcc  
-parisc                randconfig-001-20240606   gcc  
-parisc                randconfig-002-20240606   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc                          allyesconfig   clang
-powerpc                        icon_defconfig   gcc  
-powerpc               randconfig-001-20240606   gcc  
-powerpc               randconfig-002-20240606   gcc  
-powerpc               randconfig-003-20240606   gcc  
-powerpc64             randconfig-003-20240606   gcc  
-riscv                            allmodconfig   clang
-riscv                             allnoconfig   gcc  
-riscv                            allyesconfig   clang
-riscv                               defconfig   clang
-riscv                 randconfig-001-20240606   gcc  
-s390                             allmodconfig   clang
-s390                              allnoconfig   clang
-s390                             allyesconfig   gcc  
-s390                                defconfig   clang
-s390                  randconfig-001-20240606   gcc  
-s390                  randconfig-002-20240606   gcc  
-sh                               allmodconfig   gcc  
-sh                                allnoconfig   gcc  
-sh                               allyesconfig   gcc  
-sh                                  defconfig   gcc  
-sh                          r7785rp_defconfig   gcc  
-sh                    randconfig-001-20240606   gcc  
-sh                    randconfig-002-20240606   gcc  
-sh                      rts7751r2d1_defconfig   gcc  
-sh                  sh7785lcr_32bit_defconfig   gcc  
-sparc                            allmodconfig   gcc  
-sparc                             allnoconfig   gcc  
-sparc                               defconfig   gcc  
-sparc64                          allmodconfig   gcc  
-sparc64                          allyesconfig   gcc  
-sparc64                             defconfig   gcc  
-sparc64               randconfig-001-20240606   gcc  
-sparc64               randconfig-002-20240606   gcc  
-um                               allmodconfig   clang
-um                                allnoconfig   clang
-um                               allyesconfig   gcc  
-um                                  defconfig   clang
-um                             i386_defconfig   gcc  
-um                    randconfig-002-20240606   gcc  
-um                           x86_64_defconfig   clang
-x86_64                            allnoconfig   clang
-x86_64                           allyesconfig   clang
-x86_64       buildonly-randconfig-002-20240606   clang
-x86_64       buildonly-randconfig-006-20240606   clang
-x86_64                              defconfig   gcc  
-x86_64                randconfig-011-20240606   clang
-x86_64                randconfig-013-20240606   clang
-x86_64                randconfig-014-20240606   clang
-x86_64                randconfig-015-20240606   clang
-x86_64                randconfig-016-20240606   clang
-x86_64                randconfig-071-20240606   clang
-x86_64                randconfig-073-20240606   clang
-x86_64                randconfig-074-20240606   clang
-x86_64                randconfig-076-20240606   clang
-x86_64                          rhel-8.3-rust   clang
-x86_64                               rhel-8.3   gcc  
-xtensa                            allnoconfig   gcc  
-xtensa                  nommu_kc705_defconfig   gcc  
-xtensa                randconfig-001-20240606   gcc  
-xtensa                randconfig-002-20240606   gcc  
+> > If something is resetting the regulator like this that's a problem in
+> > general, we need to either have the driver notify the core when that
+> > happens so it can reconfigure the regulator or have it reapply
+> > configuration directly.  Obviously it's not great to have that happen at
+> > all...
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> Currently I am seeing this problem with SDHI driver. For the voltage
+> switch operation the MMC core requests the driver to do the change and
+> similarly the MMC core requests the reset operation.
+
+> > Having the core driver notify the core when that happens so it can reco=
+nfigure the regulator or have it reapply configuration directly.
+
+> Again doing this would be a problem as MMC core also maintains the IOS
+> states, reconfiguring the regulator would cause conflicts between the
+> states.
+
+If the device can't cope with the requested configuration being applied
+why is this going through the regulator API at all?  This just seems
+quite confused, putting a bodge in the core like this clearly isn't the
+right solution.
+
+--k+c8wgxJKe7M4G9M
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZhye0ACgkQJNaLcl1U
+h9BLqAf/UG65PeifE6tHyWrpslKd/R60qY5DdOnrVWie0kqlq5nDZHQH/T+YBOLN
+ZnHdOfBmTHARgPc08z9ronRWn0YzjG3TwzclbJE6q7/sW793wynrKhhbSZCQRemS
+aG1s81H6ARFCrIp1esBflxwaeVtsaYFYTKtLiF46dYQjRjiOgeFj5C9ECwe47Ndn
+3zbm7Fn9MMWfjqyK3kOKLrnNoNxLjjeKtCvNhYNKRNogVxPBcFlz8JhY0fP8qhsa
+aEftWbjuIUYATdQG6rvJqrvfYXdeZZN3SWm6UAuMLWwz2r0DnL9fw6RIfryfdhq1
+EXlOvf1ya0E3D7poZG/K//OMoerQbA==
+=AZYv
+-----END PGP SIGNATURE-----
+
+--k+c8wgxJKe7M4G9M--
 
