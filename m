@@ -1,78 +1,198 @@
-Return-Path: <linux-kernel+bounces-203969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 197A28FE31F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:38:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC7C78FE31D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:38:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 758A6B25BF0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:20:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40C9A1F27911
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E8016F0DB;
-	Thu,  6 Jun 2024 09:15:58 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D8217A92C;
+	Thu,  6 Jun 2024 09:37:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lDe9iSjY"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D2E16EBE3
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410B41514DB
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717665358; cv=none; b=fL9afE7EshFri/UzBEfWglafDncg/wIodR6y+K3BNVWWRLvCNDDbq7S6BwJK+bmApCw8rqHFbN/BZcymbtKAVgpBC3cap1w43zLZyc+j4GCKP+Iq2Z7osBcMzomVhDyEGXAjv40Qduc7Z6Sp1BJA+y1VlGlr3dw/ge5CPEh3zfk=
+	t=1717666639; cv=none; b=vEHEa54m9YojQ3O1eTHiu7rhxcUgGvYagRAIHTb8dj4HNLl1ygP2e4tsP4sc/wybyFRrjuC0CBKz37CJbLuWZgPlmoHMihboIkJNAVoLF2weMNfpfM6v9vc2ZB1yStZs+CqYwVdnZ/st2nwXjhS+4n5ytEjXs+cbZJG7pJR8u0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717665358; c=relaxed/simple;
-	bh=qF/jBa0Fntjej7YZy5kCrSTjdui+yNXZunZlGffXaQE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=M1aBHpB8ipXWLuEBUC4OBFO8wJZjQSFUXPT9cnSLtALchQkrupHVlOEWgKRSnzEP2K/r0KEcyTYTe/QjE2+G8jK06Z76N3z6xskDh0Hqoe23rWOrENLwzglUuIStVed8Os6LsrkSXamDWhY7iAXGdY6t1nGRtc+2YaEZmWIRJGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3748be0ae92so7410225ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 02:15:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717665356; x=1718270156;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qF/jBa0Fntjej7YZy5kCrSTjdui+yNXZunZlGffXaQE=;
-        b=vqlBiFYpn9N7ZPC+Fg0/7etWs2yGr2d1xAu4CiNdmfCyWoppGCxYXbV29qsa89tjBa
-         t4p0o9UM3+01d0DfPWnA9NB/+ViDHE4qplOIV92Tc6AvOhB0hOQ84Cps2WoC5QW/ECkD
-         RDMvkLzqnksNc798/Cu0jkGL0IfLysmaRyfcDd1559ZNzQCsoB54RVbot6cx4s9ZwpjI
-         x9kyfiH4r/BDdPUoyCC0j2ZTNajWsy0h2Ti825B+4xnfRiVl9MehpZELzEv2JU5WXw0G
-         LdKpjC9fMpQ7kauSqCSJAIPMvv+HWuh8K1BOSIBZ2wXFMjTq/7y2MHNm5VcAMkhOwplZ
-         XxIw==
-X-Gm-Message-State: AOJu0YxtVQFFfmVyy3M7whCz6xgF7yFSKiIoPPtSzNgUN4bWyUdifo3g
-	QyiIcG2kUIfcP+f9osmUIUS/Ql4Cg83CYhrvd6n+8wVVAxvqUf0+oIHSRZeEC3NGbczKzsdtQxE
-	wP5YHyCUyDvoXWQLOUJw5yr94KX8IH4MOgVBD4ef7rsJmKKCw45Jkk2I=
-X-Google-Smtp-Source: AGHT+IFCBTaEX/vsOjQcoALRp4YT1RNsCCyWjvtaPfQf3pYffJGeG7cLBdnEjYwmBmAfqUkruWmiPTtNgyafySKJrNGDIRJEeTUu
+	s=arc-20240116; t=1717666639; c=relaxed/simple;
+	bh=kVV5LyIkN1HBUvZJtL2AaAsVy962XcPeFU3Hzwm0aUs=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=UU2nOgvYqJe+23J2yGLMcl6dAH4geZqf/KW9jMXLyRrgtjiCvfSuNM0GEy6MRGZhGHcuc0eafwbtA1yH24RUB8KIQflZDVDblHinifIShh2C+XNr9hRDmYFRcDMGW7O1nyNtq7GHxRw+sYl4VR65TE3Wc9bZU1yGRjuh2cJPzdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lDe9iSjY; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240606093715epoutp036c1d15e4bc84da6e75ed8f120b397921~WYLRK7f-Z2339223392epoutp03X
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:37:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240606093715epoutp036c1d15e4bc84da6e75ed8f120b397921~WYLRK7f-Z2339223392epoutp03X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1717666635;
+	bh=k//rUFK6ioPKyiPWu8vrK3hMgJf+tmmntQhomCJq75E=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=lDe9iSjYRDM4/ZJ4Dkn/zMFq6FdlSG5FzIwzzHsHkq2O7+zzJAEM18jSss2rixQfI
+	 04JQuL6GoqxuNtu3o4jC8o6v0XJg2/SJ12f6+Ub0E++RIjNcwmq7G3pBkzpbM7IGb+
+	 N2D7PO5aRlgByAZhk9ZGNIDxC+LpF2+Vc67afEFM=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240606093714epcas5p38a560e8ab7770c88bb1b5c1543b6f240~WYLQeb1uh0034700347epcas5p3b;
+	Thu,  6 Jun 2024 09:37:14 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.176]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Vvzkc63K7z4x9Pt; Thu,  6 Jun
+	2024 09:37:12 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	3A.9F.10035.84381666; Thu,  6 Jun 2024 18:37:12 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240606091616epcas5p4806885e4893357ddf8d231ae045a5efc~WX48mSDif1383013830epcas5p40;
+	Thu,  6 Jun 2024 09:16:16 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240606091616epsmtrp1cf324bd16ddeb63e9659d90ec2a81c32~WX48lLBh52458024580epsmtrp1w;
+	Thu,  6 Jun 2024 09:16:16 +0000 (GMT)
+X-AuditID: b6c32a4b-8afff70000002733-19-666183481fa8
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9E.89.08336.06E71666; Thu,  6 Jun 2024 18:16:16 +0900 (KST)
+Received: from FDSFTE596 (unknown [107.122.82.131]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240606091612epsmtip17f4f85cdc23f67a787eeaf619af8fe2d~WX45BtATA0216002160epsmtip1U;
+	Thu,  6 Jun 2024 09:16:12 +0000 (GMT)
+From: "Swathi K S" <swathi.ks@samsung.com>
+To: "'Andrew Lunn'" <andrew@lunn.ch>, "'Sriranjani P'"
+	<sriranjani.p@samsung.com>
+Cc: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+	<richardcochran@gmail.com>, <alexandre.torgue@foss.st.com>,
+	<joabreu@synopsys.com>, <mcoquelin.stm32@gmail.com>,
+	<alim.akhtar@samsung.com>, <linux-fsd@tesla.com>,
+	<pankaj.dubey@samsung.com>, <ravi.patel@samsung.com>,
+	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, "'Chandrasekar R'"
+	<rcsekar@samsung.com>, "'Suresh Siddha'" <ssiddha@tesla.com>
+In-Reply-To: <c17ce6db-4823-44cb-8fda-6ef62f4768fd@lunn.ch>
+Subject: RE: [PATCH v3 2/4] net: stmmac: dwc-qos: Add FSD EQoS support
+Date: Thu, 6 Jun 2024 14:46:11 +0530
+Message-ID: <000401dab7f2$2ee2b8f0$8ca82ad0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:174e:b0:374:81ed:b5d4 with SMTP id
- e9e14a558f8ab-374b1edf447mr3366785ab.1.1717665356191; Thu, 06 Jun 2024
- 02:15:56 -0700 (PDT)
-Date: Thu, 06 Jun 2024 02:15:56 -0700
-In-Reply-To: <0000000000000fe556061725a7be@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000662c20061a35215c@google.com>
-Subject: Re: [syzbot] [syzbot] [ext4] KMSAN: uninit-value in aes_encrypt (5)
-From: syzbot <syzbot+aeb14e2539ffb6d21130@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQG0kE2cByMDcfrFjxkR49X5VWx9JAI1Xm+tAnXeS/UB6i7tpbHG4X3w
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTVxzHd2/bewvS5Y6HHEgY7O4lJECrtJ6q6IwEL4MQEsPYxKw29FIY
+	faW3bMNlmXODBMLTRMaaCqRRllVwWsqrPESeQxC6KShOTAGZoIJMkQwcutILG/99zvf8ft/f
+	+Z6Tw+d4F+GB/EyNgdZr5CoS8+Q2dofuCKe+k6cLjbci4MpcOQKdlY0YHJno4sDa9mEUmka+
+	58KqnmEenOmbwuE98wIPFs9OcqCjsZgHrdNjPDj5MAXesJswWDHSgcLKtToe7KveDpcHHyPQ
+	3LCEw8nFNhwaHc082DM0y4G57T04NDureR/4U7afx1FqpqQBp1qMEzhVbc2mrJZ8jLo71oZR
+	9ee+oVqan6HUk45RjCq2WRDKduUZQr08dRannlnfTBIczdqXQcsVtD6E1qRpFZkaZTQZf0R2
+	SCaWCEXhIincTYZo5Go6moxJSAqPzVS5opMhn8tV2S4pSc4wZOT+fXpttoEOydAyhmiS1ilU
+	uihdBCNXM9kaZYSGNuwRCYU7xa7C41kZg+OXUd2q4Mu6vKvck4h9WwHiwQdEFCgcuY2uszfR
+	ioCGV0dZfoqAwZnkAsTTxcsIqHT8xt1scNxs47Eb7QgYGprnsotZBLy69NJthRFhwFzcga+z
+	L3EE3BlscDOHKOKB2+fdNR7EXlD11x9uVx8iFlQ7yt3MJd4B9Z2jnHUWEFJw92Itl+U3wMCP
+	97msTzBomjdx2BOFgJWZGh47KxbccvyAsDX+oHelcKOm2wP0WiDLMWB44J8N3Qc87LfhLAeC
+	uZK8DZaBC8WjG4kzwMRqGcbyAdB50+TS+S7/UPCLPZKVg8CZaxdRduzroOjFfZTVBaC5cpPf
+	BmuPxjYsA0Dj+Sd4KUIatyQzbklm3JLA+P+0aoRrQQJoHaNW0oxYt0tDf/Hfc6dp1VbE/S/C
+	4puRKediRBeC8pEuBPA5pK8gkZGlewsU8pwTtF4r02eraKYLEbuuu4wT6JemdX0sjUEmipIK
+	oyQSSZR0l0RE+gse5Z5VeBNKuYHOomkdrd/sQ/kegSdRy8HXarxeXPhq6c7ARHyPj2a7b0UL
+	/33l9Ss3PrYzz9M7eO1Pdd+GXQXS0vH+ORvVveCll/10oCG6ZVw9mth67TRWN9+P5C7ZyTzO
+	cor/sQJl6vF3T1umxF6Pp/NVFYFFObr4Q3H3nvdNw9TUhTjPD7ETD/KvG3bv8Wl7L21I2xZe
+	e05cvwNKzQ9qnK3KkuC1sl8TCoV9CV9fUjWFp2FNfMXeT0/5fLJ4uPXYZ+ntJsFHTvRwR/Cq
+	bSy/s2pRkJxD+jntQSvbhvz4WGhccHlkb2KAOsf5Z4yXnpCgb0nrpkyO4GQcLbWO/X1w59rv
+	l4P8PSan+/abcwjcNDmeEqAiuUyGXBTG0TPyfwF9OF4PoAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUzMcRzHfX/PnR0/d9S3EDvPmass822smWG/mWdLnvObfkUP1+1OyEMq
+	NA85eUwnOaHUla3rOleS5ESx7jZ1tB5IIhSRspBxHdN/r+39+rz3/uPD4JKfhAezXbFDUCn4
+	SBklIkz3ZZ4ztsTxoT5ZehHqe3ceoJcZJgpZmypwlHenBkPp1kMEumypIVFb5SsaNWd+JJGm
+	vQVHNpOGRIZWO4la3gehpyXpFLpgLcNQRn8+iSp1rqj3cQdAmUVfadTSVUojrc1MIsuTdhwd
+	vmOhUUPHTRJlvtSR8yBnzKnHuLaTRTRXrG2iOZ0hhjPkHqW4RnspxRVeO8AVm7sx7lNZHcVp
+	jLmAM97tBtyvxEs0123wXCFeL5obIkRu3ymovAO2iLY9ri/AlN/Fu/OT7hHxoGToMeDCQNYP
+	2mpLyWNAxEjY2wDWv7ABZ+AOvxw8RzpZCnN+vaWd0hsAm+09AwHFesFMTRnt4JHsaphouEI4
+	JJy9SsI6nZlyXnQBWF56gXJYLuwcePlzA+FgKbsI6mznB5hgJ8LC8jrcwWLWHzbezCOcPAJW
+	pb3+w8yfVjlMKhhYh7Pj4K3OdNy5bjzsa8sinSMWwWe21L+OG3zQl4ynAKl2UJP2f5N2UJN2
+	0IUOELnAXVCqo8Ki1L5KX4WwS67mo9QxijD51ugoAxh4EK9pZnArt0teATAGVADI4LKR4mXq
+	4FCJOISP3SOoooNVMZGCugKMZgiZm9it/USIhA3jdwgRgqAUVP9SjHHxiMeWvzXVJ/w4w9Q9
+	bF42qqC28rQ0sfBRtVThF06Ke4/6lHjOsm8cuuLSlOEH0qbPT5EvNutXtk0oqh7i2iqfPJtp
+	PvwA740r9ru49Ij1XcNUhHln+0TkGze+yFs640nWs+mB0UGVTTO1J5pWPk/NSthnXtIYpF/r
+	rmfYNf6NF0f0J3vz8fOTe7Dbxjio3EN/2+D7nR+TXN3vYSxcHmjZfP96ultsQY59Q/fYpFTr
+	mFp/Q/Y1SZwmP0XqOnb/8fLZ2OpT4QEdhjzJwoxNAQnrNi88q/g898biNH1Q9iRb0t7ED4qd
+	4yyzTD9Qq6TnOv1qWGdV6IKI8HudgasU5XRVyKdHwTWxMkK9jff1wlVq/jd7aMISjwMAAA==
+X-CMS-MailID: 20240606091616epcas5p4806885e4893357ddf8d231ae045a5efc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230814112612epcas5p275cffb4d3dae86c6090ca246083631c4
+References: <20230814112539.70453-1-sriranjani.p@samsung.com>
+	<CGME20230814112612epcas5p275cffb4d3dae86c6090ca246083631c4@epcas5p2.samsung.com>
+	<20230814112539.70453-3-sriranjani.p@samsung.com>
+	<c17ce6db-4823-44cb-8fda-6ef62f4768fd@lunn.ch>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-***
 
-Subject: [syzbot] [ext4] KMSAN: uninit-value in aes_encrypt (5)
-Author: norkam41@gmail.com
+> -----Original Message-----
+> From: Andrew Lunn [mailto:andrew@lunn.ch]
+> Sent: 15 August 2023 02:17
+> To: Sriranjani P <sriranjani.p@samsung.com>
+> Cc: davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
+> pabeni@redhat.com; robh+dt@kernel.org;
+> krzysztof.kozlowski+dt@linaro.org; conor+dt@kernel.org;
+> richardcochran@gmail.com; alexandre.torgue@foss.st.com;
+> joabreu@synopsys.com; mcoquelin.stm32@gmail.com;
+> alim.akhtar@samsung.com; linux-fsd@tesla.com;
+> pankaj.dubey@samsung.com; swathi.ks@samsung.com;
+> ravi.patel@samsung.com; netdev@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-samsung-
+> soc@vger.kernel.org; linux-arm-kernel@lists.infradead.org; Chandrasekar R
+> <rcsekar@samsung.com>; Suresh Siddha <ssiddha@tesla.com>
+> Subject: Re: [PATCH v3 2/4] net: stmmac: dwc-qos: Add FSD EQoS support
+> 
+> > +static const int rx_clock_skew_val[] = {0x2, 0x0};
+> 
+> > +static int dwc_eqos_setup_rxclock(struct platform_device *pdev, int
+> > +ins_num) {
+> > +	struct device_node *np = pdev->dev.of_node;
+> > +	struct regmap *syscon;
+> > +	unsigned int reg;
+> > +
+> > +	if (np && of_property_read_bool(np, "fsd-rx-clock-skew")) {
+> > +		syscon = syscon_regmap_lookup_by_phandle_args(np,
+> > +							      "fsd-rx-clock-
+> skew",
+> > +							      1, &reg);
+> > +		if (IS_ERR(syscon)) {
+> > +			dev_err(&pdev->dev,
+> > +				"couldn't get the rx-clock-skew syscon!\n");
+> > +			return PTR_ERR(syscon);
+> > +		}
+> > +
+> > +		regmap_write(syscon, reg, rx_clock_skew_val[ins_num]);
+> 
+> Please could you explain what this is doing.
 
-#syz test:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-45db3ab70092637967967bfd8e6144017638563c
+As per customer requirement, we need to provide a delay of 2ns in FSYS in
+both TX and RX path and no delay in peric block
+
+> 
+>        Andrew
+
+Regards,
+Swathi
+
 
