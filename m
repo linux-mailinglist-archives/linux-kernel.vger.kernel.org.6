@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-203676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85D7F8FDEF0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:40:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA9218FDEF3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:40:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03053B26ABB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:40:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D7861F270C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C811713BAC4;
-	Thu,  6 Jun 2024 06:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610587D07E;
+	Thu,  6 Jun 2024 06:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEFmmS+y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iNcNVQ/Y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECF613BC2B;
-	Thu,  6 Jun 2024 06:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE4D19D8A1;
+	Thu,  6 Jun 2024 06:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717655976; cv=none; b=LThwwUMivfDCNf6Jvw6Cmm4/P8byWAJ0hSbuBni5zfBCG778Oo3zlXhxLnPDLkYit/6eksPDbY0VdcGsIkOYgNp2rlXb6fbtTJlhdUZQjW0/H3zfXhjT+dZAWeBmB+iLcveGzhGTuQt5xqQS9bVALnR8mYI7v3fzRC4X6R/W1Ds=
+	t=1717656018; cv=none; b=Gi1RpjtdqYNpK5tXmvUuny+gm5KG4f5YpqJbLc4aAzm57NBLNCNh0TsFG1DCR+HLHnh2vkHG4J2bKt9TE1k+Us164RzCzT76NrXacdp+A+MdP1KSYhFkAb4gt+ogrkV59jBVknv7awvlnzXvKt9lvhyab2cFV3Ga6W8KFttffRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717655976; c=relaxed/simple;
-	bh=sJKvmB1/cWlJykFFARqeITuFspBLzwVycXd9vuzvU2Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=DBFPcWtG9LMsp2MpP6i85LK6MNjefzO8YC3Q/gaAOTUY6PZU9QNRk17K6ss6WLqytYixXDhwCE8ixMCeOgEsgWPHBAT+7GSj13WjxR5Cfj3rsYXNCjuUAYtjDt9TUeUTSh7E1KmoBp/WBPGMWFlivklIi5gJbMkiBlls4WyA7vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEFmmS+y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DF89C2BD10;
-	Thu,  6 Jun 2024 06:39:31 +0000 (UTC)
+	s=arc-20240116; t=1717656018; c=relaxed/simple;
+	bh=hzA/hKBsU0KdMdQ6fXpEPMi7fRtCRLCQhAThRmevwW0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nLY1oQmgD67XtGvPDI/1CvJZchSd9gsHEK8OpTu+pRwlU2RmLlMl3CaIUnnL40PA+QRI/x+GvZkJuwyIDqlLp3dd1HJyFd70GbT5OEy3bEFcxAnmBNaxJ7dfsgXG6rxVXGcy0zVC7MwrLNsi3z0PQrGH2uE4FGpbhQ05QXgwjdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iNcNVQ/Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F0F4C4AF08;
+	Thu,  6 Jun 2024 06:40:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717655975;
-	bh=sJKvmB1/cWlJykFFARqeITuFspBLzwVycXd9vuzvU2Q=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=UEFmmS+yoHnJ7U4pz7+lfGiLF2gCEu0QWbn+PGGM2kDz8hJvdfYZEs9qmwCb4qLzx
-	 61Z9a0DWIFuVFPdGgppb+smcoZzsYR3sLKbTTWRBV3mLQfNTrtOzpdewL9lcYDNCOh
-	 /VEfMsNZfOE/+62mdebcxp3s3LGNv4803pscgyhN/viqAU0oAF1QIJg4LXfrpXBT7e
-	 3W/T7hr1R7alBfqBHynB5YRJ+TCEFu9fg7WWgnyyzmLPqRv2EnU75JcHr6GimCQCW9
-	 QvFu3qDLUhH80LBI0+m5OJ6KsJWi2coynFwA2TktfGktWG7uhUobsly5px+euAxy63
-	 WiHrtGJno2p/Q==
-Message-ID: <dc9accba-78af-45ec-a516-b89f2d4f4b03@kernel.org>
-Date: Thu, 6 Jun 2024 08:39:29 +0200
+	s=k20201202; t=1717656018;
+	bh=hzA/hKBsU0KdMdQ6fXpEPMi7fRtCRLCQhAThRmevwW0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iNcNVQ/Y3Ew8VouXRFOzwzIcujjjV65vfP/2L+0u67goxMxAnVdjbtKj0iG9Skonf
+	 qiENj3Nfi/6LNtWVU/ZcSfFudrWcqs2y29yHv8JpR/8W/i43O+p/f01mpNPgpBtabD
+	 HxKrmwrvZjgWnMet7MilY0bBnV3QYD7jnHvhHSMBzyHDnGFQbDpmeggnkwB1CGhDxB
+	 KaqDAH0MRh4IHbA7YPRjaLXh0aKCW8/DSxf2H4n9/wH5kQt4qtrJrotylnJ3LeA1+s
+	 JgLCLcqrQ45Xjg3o+zQnM80wYp2QDlEk+l1vdI3A30HUR+CRNITfdLYLLJsXeaPNJn
+	 LMVeZbPF/VRLQ==
+Message-ID: <8921976e-a0c2-48f2-bf63-9c0bc58af63f@kernel.org>
+Date: Thu, 6 Jun 2024 08:40:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,23 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] dt-bindings: pwm: imx: remove interrupt proptery from
- required
-To: Frank Li <Frank.Li@nxp.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH 2/5] dt-bindings: clock: rk3128: Drop CLK_NR_CLKS
+To: Alex Bee <knaerzche@gmail.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- "open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
- "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
- "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240605220839.1398872-1-Frank.Li@nxp.com>
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20240605205209.232005-1-knaerzche@gmail.com>
+ <20240605205209.232005-2-knaerzche@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -111,16 +104,15 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240605220839.1398872-1-Frank.Li@nxp.com>
+In-Reply-To: <20240605205209.232005-2-knaerzche@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 06/06/2024 00:08, Frank Li wrote:
-> The driver "drivers/pwm/pwm-imx27.c" never use interrupt. Generally pwm
-> hardware generate a waveform according to register timing setting. Needn't
-> interrupt handle at all. So remove it from "required" list.
+On 05/06/2024 22:52, Alex Bee wrote:
+> CLK_NR_CLKS should not be part of the binding. Let's drop it, since
+> the kernel code no longer uses it either.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Alex Bee <knaerzche@gmail.com>
 > ---
 
 Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
