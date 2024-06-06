@@ -1,84 +1,130 @@
-Return-Path: <linux-kernel+bounces-203552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FE4D8FDD01
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 04:54:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40AD98FDD03
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 04:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 056B5285C90
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 02:54:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52ED91C22702
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 02:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00BEC1DA58;
-	Thu,  6 Jun 2024 02:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615B21D551;
+	Thu,  6 Jun 2024 02:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+JGGctL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ciSxMqdz"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4243C17C68;
-	Thu,  6 Jun 2024 02:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66136182BD;
+	Thu,  6 Jun 2024 02:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717642462; cv=none; b=Pzdb5ULef1n1b9xuN1O5/HaLwIZBkufyRf7zb3mrsW1D3scP9Et2SandgbiOyZ2ccdVd2zLdm0kfZqnHb75w6fH1g263aUW2BVeEvaP/aspXYRkY9+cs2zrA76X3UHg1pmcxrSR4pep1zPPp1oFS6qedLtGt59mNroOauNmNw8I=
+	t=1717642581; cv=none; b=j4tnoR190J9tbSygE41CTe+ga0A/d+XBCyfUnu+/FXGyxPf9Ii4GiIIyczQBChUBcpl8KHn5oA3QSvk5fPuEiRH6Ax2UWS7pxxTD67SjlPf/s8oRR+E6kJKTgFes7VewrR1sCzqV1I83EDprjHT7FL0Y0ebSko3ZSnahO6/me5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717642462; c=relaxed/simple;
-	bh=MLnYIwDqlSKmUDFexu1Pj6yxjoOLhnj27TEZzHCziG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s4ERvVwgL3MIGSUqhYByNz3nKihn2z2lh05TEFlC9UCsrT73pjuYH3BKCfk+pileyKrVDEe+hTOZepvViFwo15TkCCuOcL7KJC1P7GeAk8IH+SpVD3qxpa5+TAYSA0U0dsTMw+jbtiAjhXrDG+Iizz5GSpTdtZbu153i1fB9wYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+JGGctL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42A7BC2BD11;
-	Thu,  6 Jun 2024 02:54:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717642461;
-	bh=MLnYIwDqlSKmUDFexu1Pj6yxjoOLhnj27TEZzHCziG0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=E+JGGctLP2NJ0SejSz2cPdqAsZgktmDM1pdGZD5f5f2rtJWaojPzdH2YzE6+fiOlk
-	 +n61hg6Jf+iVhzhIYLpQjRZs4K/fflz2AUduPW1poxad1izqh9vgMqGsFix2Hlver6
-	 fahkr0lBiYJ9xM67lmFok+caorwwLwPin+71HhDRWE6VNpbn+bVe8cJLwGMqNy/J6z
-	 RRyxj2FBBSivBs1m8QSmVlqVpznSNcUQpiBnowcNzdc7s5LnXzzl73IDM1ImNZjh8o
-	 D6N2CQCXcxc9OTpWgntMTAk+lrhUHXC7CTy5j7oyAq4dIPL+FBYW1coPIBknDOFY+2
-	 /2cAu+FbIRmEg==
-Date: Wed, 5 Jun 2024 19:54:20 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Andrew Lunn
- <andrew@lunn.ch>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller"
- <davem@davemloft.net>, Daniel Bristot de Oliveira <bristot@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>,
- Eric Dumazet <edumazet@google.com>, Frederic Weisbecker
- <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>, Paolo Abeni
- <pabeni@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner
- <tglx@linutronix.de>, Waiman Long <longman@redhat.com>, Will Deacon
- <will@kernel.org>
-Subject: Re: [PATCH v4 net-next 03/14] net: Use nested-BH locking for
- napi_alloc_cache.
-Message-ID: <20240605195420.2f47e6a1@kernel.org>
-In-Reply-To: <20240604154425.878636-4-bigeasy@linutronix.de>
-References: <20240604154425.878636-1-bigeasy@linutronix.de>
-	<20240604154425.878636-4-bigeasy@linutronix.de>
+	s=arc-20240116; t=1717642581; c=relaxed/simple;
+	bh=arBtpOn5cjxcy4mYPgqkevr/bxut5L6hGsMnEK17c+g=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=EwKetTylECvurq9IZH2zYpoLD2Ou8fmTkbw0hKAaS1sNphDxyXjgmbBpQcRPAE9TU93QvX5NQg9hJdttpcRKNFcUO6RNbnq6NY5cawUiQDU3/g03fditHWjECar4q36LVTALGB7PzlbLJWndfvZqjXtLSWbAAvJTV5YzWmPS+jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ciSxMqdz; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-703fec25cc5so79791b3a.0;
+        Wed, 05 Jun 2024 19:56:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717642579; x=1718247379; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tda2DkZwVgqEQjgA5uAUkLDSA6bMtgBgYubd1iKZW+Y=;
+        b=ciSxMqdzNjzDs6TOPe0ZtW6nHzLWjmpimAqxxZRW18vq/6I+k2kvHAcvFUkBTTcUiI
+         PAVjtSpULKKGjYI+t+zgsQN05aD6ajWSvIzTZS5VpggH7FKR/UJ8E8sa3/hbY9KYaHUo
+         wAyu/867U7XdelhXp2/ikXK0LPI0LF1x6qtFaTYowU+HcUEKxRiOtF3gUWgtTeY15zal
+         XVrmGsdb90t++FAKpUqdEc62j8hFSEjHYWIteXKXDSdrN112elN0iF9x4l6tYtkpzu9k
+         NDBSQVMZdnJEIrg3arZ9GlYWXw2RTXlNwiVgXRt5IsVImyVgUo0Cil3pkr4oORNf7Isc
+         Mk/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717642579; x=1718247379;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tda2DkZwVgqEQjgA5uAUkLDSA6bMtgBgYubd1iKZW+Y=;
+        b=YagaO5saHPXjowKjQV67ZuOPoJgUQ2fYPRZadserxMMm6mFiicV8mdQMjYy1PhObKu
+         bJKYJKO1fsYxKkNuIeAUESw92Q7ZPmccPUqIi6Cwb6hWVZdA87ntL3Egxz2p3zAGrkyr
+         IZArvSxAoU28YvsonlRhy+ceappWF88Qm8SV22rR4RWKuxSZk3NKGnl1EqfK0ZJkmXXV
+         JGPcPutKWzAdvQpLrqthvd71fqawRApzC0fcWxaU3q2ZrRaxIviFu83AlJ2RXYck/Xru
+         yp6xeHOsesiQx3HgKEF77nPqiSoVdLXusTGGm7kVhnkZSwUsIF8u40RccspH9M99t/yh
+         wh6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW37Eyp5FYPb6dlo6CQvwkeBPC9I2qs84yDnge1EbTzRmhVeRXSDpirilWp3XqiAavv6NojXP2wIIIgJhPFyX9GDgOE20aUgHOTjDqHwbbEQzmOyJS/sSM5mPhUFJgWG8Ph+dPNVfrypBBx
+X-Gm-Message-State: AOJu0Yx5DeebekQyMl+rygsiJNBjCqCuFVK/ikjJYUiXeAApF7+N7/3+
+	Wy+2xvH564KNJky0D92ST84ImtQCdn+6IchRAeqQthrB3BtpA6nF
+X-Google-Smtp-Source: AGHT+IE2KaNTjlc0m7jjBilwAEwta2SjTv0KQbbFPalExhbVdi5gyKFzB7cInSq9v29oEI6lyDsSVg==
+X-Received: by 2002:a05:6a20:244d:b0:1b2:53c5:9e71 with SMTP id adf61e73a8af0-1b2b6fa3436mr5260536637.25.1717642579562;
+        Wed, 05 Jun 2024 19:56:19 -0700 (PDT)
+Received: from localhost.localdomain (c-67-161-114-176.hsd1.wa.comcast.net. [67.161.114.176])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd76b16dsm2678195ad.74.2024.06.05.19.56.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 19:56:19 -0700 (PDT)
+From: mhkelley58@gmail.com
+X-Google-Original-From: mhklinux@outlook.com
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] x86/hyperv: Set X86_FEATURE_TSC_KNOWN_FREQ when Hyper-V provides frequency
+Date: Wed,  5 Jun 2024 19:55:59 -0700
+Message-Id: <20240606025559.1631-1-mhklinux@outlook.com>
+X-Mailer: git-send-email 2.25.1
+Reply-To: mhklinux@outlook.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue,  4 Jun 2024 17:24:10 +0200 Sebastian Andrzej Siewior wrote:
-> @@ -308,6 +311,7 @@ void *__napi_alloc_frag_align(unsigned int fragsz, unsigned int align_mask)
->  	struct napi_alloc_cache *nc = this_cpu_ptr(&napi_alloc_cache);
->  
->  	fragsz = SKB_DATA_ALIGN(fragsz);
-> +	guard(local_lock_nested_bh)(&napi_alloc_cache.bh_lock);
->  
->  	return __page_frag_alloc_align(&nc->page, fragsz, GFP_ATOMIC,
->  				       align_mask);
+From: Michael Kelley <mhklinux@outlook.com>
 
-We have decided to advise against the use of guard() in networking, 
-at least for now.
+A Linux guest on Hyper-V gets the TSC frequency from a synthetic MSR, if
+available. In this case, set X86_FEATURE_TSC_KNOWN_FREQ so that Linux
+doesn't unnecessarily do refined TSC calibration when setting up the TSC
+clocksource.
 
-Andrew, wasn't it on your TODO list to send the update to the docs? :)
+With this change, a message such as this is no longer output during boot
+when the TSC is used as the clocksource:
+
+[    1.115141] tsc: Refined TSC clocksource calibration: 2918.408 MHz
+
+Furthermore, the guest and host will have exactly the same view of the
+TSC frequency, which is important for features such as the TSC deadline
+timer that are emulated by the Hyper-V host.
+
+Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+---
+ arch/x86/kernel/cpu/mshyperv.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+index e0fd57a8ba84..c3e38eaf6d2f 100644
+--- a/arch/x86/kernel/cpu/mshyperv.c
++++ b/arch/x86/kernel/cpu/mshyperv.c
+@@ -424,6 +424,7 @@ static void __init ms_hyperv_init_platform(void)
+ 	    ms_hyperv.misc_features & HV_FEATURE_FREQUENCY_MSRS_AVAILABLE) {
+ 		x86_platform.calibrate_tsc = hv_get_tsc_khz;
+ 		x86_platform.calibrate_cpu = hv_get_tsc_khz;
++		setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
+ 	}
+ 
+ 	if (ms_hyperv.priv_high & HV_ISOLATION) {
+-- 
+2.25.1
+
 
