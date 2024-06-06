@@ -1,122 +1,99 @@
-Return-Path: <linux-kernel+bounces-203613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E328FDDFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:01:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30F478FDE07
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:02:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 959CD1C2322D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:01:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C64221F24F16
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897E63A1A8;
-	Thu,  6 Jun 2024 05:01:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B367E2260C;
+	Thu,  6 Jun 2024 05:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CkgJxfne"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lUjhNACh"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D8419D8A0;
-	Thu,  6 Jun 2024 05:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5565239FEF;
+	Thu,  6 Jun 2024 05:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717650095; cv=none; b=Ioz5XZqXYQ5XuP7LQiW1yKSz7HiRdtZBMxSc2jDJfu0cgQy8ngIuvl4+BsQ8yIOqJDWTQJyUSaqPlknxXxN27IUYdmfe3TWycTuAB/LZRJGGK0gkXy/V2U+FvuAF/rV6AkUzL3l5IHViWBVW3vObwm/Suks8CrU/roX/Ex6noHs=
+	t=1717650124; cv=none; b=P4JLplSN9gsr2JBGzCBTlcCuEBRl8vbscBfJfa/zaBRjeKwKbxIpw+kwOT5VNcLptv5VJzQP28pq3YS183KmmvZBoVybVq4+PWRrcUE9QA4IeXTErQuhUHSmN4N2mqfGtSgy4k1BqaDcL0tP5V0PxXQ4Vfsy69TqlsDJHsFLRXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717650095; c=relaxed/simple;
-	bh=OmvOtmiJbXtKb6iczDtulVmxMOLTSy4yvWthyLi+g9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EIqDw5cCuKpG/WjFa2lkTDAF98qXpk8peGoz4IVUsO45LwC64onmrL70+eml4GfRttHxNLeMSt8qDzUqw0ilP/48V+vPgLmY0j5chEh3nwc6Z+PARGzrew4ykWfX8aN8Ycxd862yO4KbchcWYzX1EAanQiqW2PXOh7jDvg4bCGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CkgJxfne; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4564vtDx006539;
-	Thu, 6 Jun 2024 05:01:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc : content-type : date
- : from : in-reply-to : message-id : mime-version : references : subject :
- to; s=pp1; bh=BymymZEyA0yHK9zj1vReM5+8mEepYefZuoRBwFkiKqc=;
- b=CkgJxfneFAYTO8f0IEX5iCwHmEuifWjQs/1UhdPzvYekt/vqZpc/qbLOwmc1vzvqxiTl
- bOn5A9gdaq7IWKwCMBJ5mDSDA+romw0Eivp6EN27Nm8dS967RFYtukNJzFJRBbFg2eXz
- Hue/g/t85w6BqTqcymuen5JATIOqrKjrTPwyKNzD39AYWTM5n5p858hBc3JdolrkAlm+
- iguIZ08liIl1mO1xNbl3zgzEIfG4DBeLTa5EA0sCWf6XgwOBhQRZrfTVzP6GXCPMxvUa
- /SNKqZakv/F/oHtbz58P3GJIdOlXyxHzoK8zhe6RHLIZRUaSNaaaHprFedVCApdrareR Vg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yk6hpr0b2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Jun 2024 05:01:17 +0000
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 45651GgO012946;
-	Thu, 6 Jun 2024 05:01:16 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yk6hpr0b0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Jun 2024 05:01:16 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4561Wvow000781;
-	Thu, 6 Jun 2024 05:01:15 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ygdyu8td6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Jun 2024 05:01:15 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45651CF449807754
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 6 Jun 2024 05:01:14 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1111920043;
-	Thu,  6 Jun 2024 05:01:12 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 40BA82004B;
-	Thu,  6 Jun 2024 05:01:08 +0000 (GMT)
-Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com (unknown [9.43.32.207])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu,  6 Jun 2024 05:01:07 +0000 (GMT)
-Date: Thu, 6 Jun 2024 10:31:04 +0530
-From: Gautam Menghani <gautam@linux.ibm.com>
-To: Nicholas Piggin <npiggin@gmail.com>
-Cc: mpe@ellerman.id.au, christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org,
-        naveen.n.rao@linux.ibm.com, corbet@lwn.net,
-        linuxppc-dev@lists.ozlabs.org, linux-doc@vger.kernel.org,
-        kvm@vger.kernel.org, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] Fix doorbell emulation for v2 API on PPC
-Message-ID: <bpeyrufcsihsd6mllreour3rd4kmtkpaagoeantsz3qpgfyl2u@lxrdmjlsj5oc>
-References: <20240605113913.83715-1-gautam@linux.ibm.com>
- <D1SLK9T4ODZO.11N6J5D94530R@gmail.com>
+	s=arc-20240116; t=1717650124; c=relaxed/simple;
+	bh=x/KaCHSK30aGJCKusuKSNM9ZTfEY6XeK73gltohUONo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IeKRxchjWmRnHvI7evM0Ms8DVM0J1GKOXW3pHl0opAHtCQfqK92+bY8etgTsjfVVOapUx9UQ9gpY1hjK5dIkryqqg25X752Y0QtRHh0ZApgVQxfasjQea5+oZX7p8j0DD3LfBb1PcG7IXMwgnzd5T0WvJ3CcGwKGTRA140r8IZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lUjhNACh; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1717650112; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=I0N2KsS236axdwPhFSNHHlSGJ+YG0lmLzBI3lKVcRfA=;
+	b=lUjhNAChpA5NTZvwnVm1pEMvI+mtsmP+JQevDuvZEhN02Uaqk2BqMXnkmdmmP6Q6vtUzCvFHBX3kAkQc/fW0fIeRETvX7RAYkQj29VHzADHcTm9UmWmdksKSYbq/92dYWHDXYc+2N73PsmCnOrc0LL6GoBb3MhNHCpiQCnBPDwU=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R491e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0W7x3IDj_1717650111;
+Received: from 30.97.56.72(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W7x3IDj_1717650111)
+          by smtp.aliyun-inc.com;
+          Thu, 06 Jun 2024 13:01:52 +0800
+Message-ID: <b189d815-998b-4dfd-ba89-218ff51313f8@linux.alibaba.com>
+Date: Thu, 6 Jun 2024 13:01:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D1SLK9T4ODZO.11N6J5D94530R@gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: zff5-WbwXj-_z9krGYPFA0JECxW8aSsX
-X-Proofpoint-ORIG-GUID: IP0Nw7Vu1g2iFtlKuxbNXvYmpd1ZM1lN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-05_08,2024-06-06_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 suspectscore=0 spamscore=0 clxscore=1015 adultscore=0
- priorityscore=1501 lowpriorityscore=0 phishscore=0 mlxlogscore=525
- mlxscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2406060035
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build warning after merge of the mm tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20240606132353.0db5479d@canb.auug.org.au>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20240606132353.0db5479d@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 06, 2024 at 01:00:19PM GMT, Nicholas Piggin wrote:
-> On Wed Jun 5, 2024 at 9:39 PM AEST, Gautam Menghani wrote:
-> > Doorbell emulation for KVM on PAPR guests is broken as support for DPDES
-> > was not added in initial patch series [1].
-> > Add DPDES support and doorbell handling support for V2 API. 
+
+
+On 2024/6/6 11:23, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Looks good, thanks. So fix for v1 doorbells is coming?
+> After merging the mm tree, today's linux-next build (htmldocs) produced
+> this warning:
+> 
+> Documentation/admin-guide/mm/transhuge.rst:342: ERROR: Unexpected indentation.
+> 
+> Introduced by commit
+> 
+>    716119bee914 ("mm: shmem: add multi-size THP sysfs interface for anonymous shmem")
+> 
+> from the mm-unstable branch of the mm tree.
+> 
 
-Yes I've root caused the doorbell breakage in V1 API to 
-commit 7c3ded5735141ff4d049747c9f76672a8b737c49. I'll send out a fix
-soon.
+Thanks for reporting.
 
-Thanks,
-Gautam
+Andrew, could you help to fold below changes into this serires, which 
+can fix the htmldocs building error? Thanks.
+
+diff --git a/Documentation/admin-guide/mm/transhuge.rst 
+b/Documentation/admin-guide/mm/transhuge.rst
+index b76d15e408b3..22005989363f 100644
+--- a/Documentation/admin-guide/mm/transhuge.rst
++++ b/Documentation/admin-guide/mm/transhuge.rst
+@@ -338,6 +338,7 @@ and its value for each mTHP is essentially 
+consistent with the global setting.
+  An 'inherit' option is added to ensure compatibility with these global 
+settings.
+  Conversely, the options 'force' and 'deny' are dropped, which are 
+rather testing
+  artifacts from the old ages.
++
+  always
+      Attempt to allocate <size> huge pages every time we need a new page;
 
