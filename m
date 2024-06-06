@@ -1,148 +1,295 @@
-Return-Path: <linux-kernel+bounces-204828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CF5B8FF3F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:42:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24BCB8FF3F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:42:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBC6D1F28610
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:42:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D7DF2893FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93AF71991C7;
-	Thu,  6 Jun 2024 17:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD89199234;
+	Thu,  6 Jun 2024 17:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fIfgnLn4"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cuJVpVUJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C00196446
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 17:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC42E198A24;
+	Thu,  6 Jun 2024 17:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717695754; cv=none; b=mbgT9jcBotfzjlopNu8yXovjN45gZg5m7mt7OLsADxBkFx4Zdte0okIt3mBsfPxOCG0mFFzWWx37Nr0wrT5EqdAw39ffeq4Lw81OuGV9j6jOSXhEy0sK227pgEPZvr9WoihUgtakkI9qI7gp9o/5i2GaJFbWa3VWN2muxXsFI0k=
+	t=1717695755; cv=none; b=IZRP24UFuuv+D0eTtluaT4SOKUfCwb9Y4A2HEcGdKOWdicZnm/QG5HFvOIXiBH20Jv+HOXKakn20sCUCkNn8O3DMCSy5vVPGhcR14i6WGsS/zEDlVIqI0dedQYZi611E6SQktj3CF82VvVnFICYzSyVCaZYkDza7PdwkcJNwg1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717695754; c=relaxed/simple;
-	bh=BpLUPhuD0Jaux9zNhc6cZoFq9PmN/G6ECDCzUrjjxS4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s/NOYZIScpEY7X+U9NicbGpwMiXG2xgLtQzfoZzGYL8wC+W72OBdn+Gt0iQHo1Jz3kGGf0vl1BYqKVz/7W1ZkyoZeJ1MJiUDQz2hBG3z994s3fPi+vx+EMx+K/xwP9PGseYsxc4w27qmL0ysYIayHQoRTscAvkPbF39wrbzMOcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fIfgnLn4; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a62ef52e837so164521066b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 10:42:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717695751; x=1718300551; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v1Ut3Dkh+dW6ZjfW0SAbH75TKykJw59snMxcOhxXPyw=;
-        b=fIfgnLn43TLsPR67Nwd9jEMggcE7WTgraq9BFtMESX2rpqQ5pvzvJGIkjIY+QHVpnf
-         TMzy7aC4+/iJ+NrOlVJVIFLkNO/AHvTqFVF8PvpuHJ8eajmr6IfRgGwcNr5rg9Xp1rpO
-         va+xxLb+y4PPPegbq2Bppc9GuQHt2hjsqIMgUrmJ7IMwWDJ7/fPZKFHIn3OxAYTKPW/q
-         Xt6O5QSAMOizYVUAP/VGeEAJmfHpEi8nOZMdlf7NZ9jVLST7ahb7kiIKt6YKT2mBpQb6
-         j7gjBvL+FsZqnNUqKPcYqd4hEFeqxXZ0FYZWkAFiH5rHCLcbghSEiyoBqkHH1ZpMZbRQ
-         1y7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717695751; x=1718300551;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v1Ut3Dkh+dW6ZjfW0SAbH75TKykJw59snMxcOhxXPyw=;
-        b=bu2f7RW2IxPB6C9BG5/1Djlg0D1sp/YNf+kNyO9Nxlp+WnfC10UfBMi/YW0pufr4ac
-         Chq30e/pkGQZgcx1QGICnzBiNHoOHSXyQPkQoyxzQeo1DoBOgH+q+pinpQI0O815vjR9
-         c5juqrGmFqNQb41WNzFbPfpX4qQTWinWKgHseMh7ur8fF9W7UcRdc6yk/RVYZbI2KjnV
-         mSjL/yekv/efATGNJvNiPB2QUO8Fa0kRFlP6qTzGsmrVzrvRhIBEqRo0/MQTPKl63l2D
-         14RdVkspL8IGMrIOJyR4eCexST+l58fHNDRoc7TJIElg7i0vS0GIJp3SUgh9zHT4tPmS
-         F4Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqEwalCcm2MH+n7Vg6pUOdtrzxNWZs5Dsfkc2C18QVZoMwRHvZg4RB2l6Hyc75K2Q9K8avNq1st1ogQIEpEhNOMxdDtZvA2pDYLq64
-X-Gm-Message-State: AOJu0YxV7xm9yY68LjeVpdJ6FZEkKfYeTj122sk79CAJR9SydCwu/nPA
-	voYghkf9267smwG6J9ORWhS3Dkn3W8K3Nnk9e9RjnCxgmLHGW8dsClJsTzh+WYF7WY/2VRA9ts6
-	LBuhHFDyeC1hLe++WAj+PHZrepCYi46IFP4Wu
-X-Google-Smtp-Source: AGHT+IEGBdWWUZC+WrQXxIBv4KOZPlFFbVSfkIEVyzAaxtZJ4s8YMZ9cpHiZkAazV4knO5rL7j2QTzt4B0g4tFKtZN8=
-X-Received: by 2002:a17:906:fb11:b0:a68:c5b0:9890 with SMTP id
- a640c23a62f3a-a6cd7a80f9dmr20626266b.42.1717695751357; Thu, 06 Jun 2024
- 10:42:31 -0700 (PDT)
+	s=arc-20240116; t=1717695755; c=relaxed/simple;
+	bh=6l56j3Dvt1N8dQXMYBUEdlF6rPZWJsLotwy+UDT+myA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=CwzNHW9bU7iszVAA1yydpxCIsW6VN0Ay/dRtfC6UVLJo23V0oLV1MHg0aFyY8FhpZWFhBoqi/lZN2WsRwI776Zfnc+LQXIhu/FfdMKJ4ylyQu+nGLYSr+6H8eCw6g0vTt+hm8zqbYIJXfBYYAiLyUeV4Cii/DQyytRFMTX4I5lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cuJVpVUJ; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717695753; x=1749231753;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=6l56j3Dvt1N8dQXMYBUEdlF6rPZWJsLotwy+UDT+myA=;
+  b=cuJVpVUJ3RO/fgM5J2Kcz1UDJDCoUvw3bwDofBMKliMyzvIovthX2TVj
+   30y6BeacsQP05oobPCSH+jBKqZCUxot09gp+TIn+qio3EN5cDmbXEb7OH
+   Y4zbDJ1QZYi7626zFme0INcvst+qYOAFz29Z5iLafh/DE16mR5FTao1zD
+   9twXjyBxrJXFY5tMBHDZKCq4jAFCo3y1fiBOpSxbdb3fKWaQMikrt86HC
+   XPTRInLcBJtQbxhin7vMU7qw0fWm/mxD1DDnNWT2MsrN/ifEfnyx0Ag64
+   6JM2XyOkOOYWKu+4kBCj2YByoM9CIbtceVtNr2QHyuAw7lVWbGl7fyHev
+   A==;
+X-CSE-ConnectionGUID: CrJ9ssdMQ+qs7BxHFv/ztQ==
+X-CSE-MsgGUID: p+dV7ocZQi6gvSXOy51Bmg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="25792264"
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="25792264"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 10:42:32 -0700
+X-CSE-ConnectionGUID: T2a3NxmfQVuAOFK9caKDUw==
+X-CSE-MsgGUID: YlBPw27TR8G/oZ6sta1rDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="61254856"
+Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 10:42:31 -0700
+From: Reinette Chatre <reinette.chatre@intel.com>
+To: isaku.yamahata@intel.com,
+	pbonzini@redhat.com,
+	erdemaktas@google.com,
+	vkuznets@redhat.com,
+	seanjc@google.com,
+	vannapurve@google.com,
+	jmattson@google.com,
+	mlevitsk@redhat.com,
+	xiaoyao.li@intel.com,
+	chao.gao@intel.com,
+	rick.p.edgecombe@intel.com,
+	yuan.yao@intel.com
+Cc: reinette.chatre@intel.com,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V7 0/2] KVM: x86: Make bus clock frequency for vAPIC timer configurable
+Date: Thu,  6 Jun 2024 10:41:59 -0700
+Message-Id: <cover.1717695426.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240508202111.768b7a4d@yea> <20240515224524.1c8befbe@yea>
- <CAOUHufZ-9NmzOKjLedvZFp0=N0LvRZn77qC6k1WXK+NHtKr=0w@mail.gmail.com>
- <CAOUHufZ36rQc8AfLtRv2QrEareysdvbprAEO5XkcG-FeDOxFLA@mail.gmail.com>
- <20240602200332.3e531ff1@yea> <20240604001304.5420284f@yea>
- <CAJD7tkbCRLdy0vD2Pd17fNrxHgkzW1VucN4qMkohLFLBLaaeCQ@mail.gmail.com>
- <20240604134458.3ae4396a@yea> <CAJD7tkYjJJGthQ_8NukGw6Q9EYbLA=8sAH_7=B90KXEL6HWdSw@mail.gmail.com>
- <CAOUHufa0Fpj6SjNgB-z0n5Jg63q1ewkbOAU65forpDwQVs45qg@mail.gmail.com>
- <CAJD7tkb=5GJ9SNUwDsu1Zy3Tus4rjsNo60Hg9N7=gGth409Diw@mail.gmail.com>
- <CAOUHufb6zXr14Wm3T-4-OJh7iAq+vzDKwVYfHLhMMt96SpiZXg@mail.gmail.com>
- <CAJD7tkZ+QY55GTzW9A7ZCm=rxAEfrW76cWXf8o5nwiKSXp8z=w@mail.gmail.com>
- <20240604231019.18e2f373@yea> <CAJD7tkYq5u7B+0UH2XKpeWJnUxoO2kJ1_XZ2JOgYpyNEVR7u0g@mail.gmail.com>
- <20240606010431.2b33318c@yea> <CAJD7tkbhWYzx=6YmzAh0F+cK-_Bn8mPOH7gMbQS7YVXmaFSgFg@mail.gmail.com>
- <CAPpoddc2vOLdQJ7HwG7x+=oZsTz221+YJcNbUtKvPjA9AyeY2w@mail.gmail.com>
-In-Reply-To: <CAPpoddc2vOLdQJ7HwG7x+=oZsTz221+YJcNbUtKvPjA9AyeY2w@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Thu, 6 Jun 2024 10:41:52 -0700
-Message-ID: <CAJD7tkb2b0+4_m0gb8DKSTtRwtC2GMa9NF5RuGKhXJARYHK0gw@mail.gmail.com>
-Subject: Re: kswapd0: page allocation failure: order:0, mode:0x820(GFP_ATOMIC),
- nodemask=(null),cpuset=/,mems_allowed=0 (Kernel v6.5.9, 32bit ppc)
-To: Takero Funaki <flintglass@gmail.com>
-Cc: Erhard Furtner <erhard_f@mailbox.org>, Yu Zhao <yuzhao@google.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Minchan Kim <minchan@kernel.org>, "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 6, 2024 at 10:14=E2=80=AFAM Takero Funaki <flintglass@gmail.com=
-> wrote:
->
-> 2024=E5=B9=B46=E6=9C=886=E6=97=A5(=E6=9C=A8) 8:42 Yosry Ahmed <yosryahmed=
-@google.com>:
->
-> > I think there are multiple ways to go forward here:
-> > (a) Make the number of zpools a config option, leave the default as
-> > 32, but allow special use cases to set it to 1 or similar. This is
-> > probably not preferable because it is not clear to users how to set
-> > it, but the idea is that no one will have to set it except special use
-> > cases such as Erhard's (who will want to set it to 1 in this case).
-> >
-> > (b) Make the number of zpools scale linearly with the number of CPUs.
-> > Maybe something like nr_cpus/4 or nr_cpus/8. The problem with this
-> > approach is that with a large number of CPUs, too many zpools will
-> > start having diminishing returns. Fragmentation will keep increasing,
-> > while the scalability/concurrency gains will diminish.
-> >
-> > (c) Make the number of zpools scale logarithmically with the number of
-> > CPUs. Maybe something like 4log2(nr_cpus). This will keep the number
-> > of zpools from increasing too much and close to the status quo. The
-> > problem is that at a small number of CPUs (e.g. 2), 4log2(nr_cpus)
-> > will actually give a nr_zpools > nr_cpus. So we will need to come up
-> > with a more fancy magic equation (e.g. 4log2(nr_cpus/4)).
-> >
->
-> I just posted a patch to limit the number of zpools, with some
-> theoretical background explained in the code comments. I believe that
-> 2 * CPU linearly is sufficient to reduce contention, but the scale can
-> be reduced further. All CPUs are trying to allocate/free zswap is
-> unlikely to happen.
->  How many concurrent accesses were the original 32 zpools supposed to
-> handle? I think it was for 16 cpu or more. or nr_cpus/4 would be
-> enough?
+Changes from v6:
+- V6: https://lore.kernel.org/lkml/cover.1715017765.git.reinette.chatre@intel.com/
+- KVM changes were merged into kvm-x86 misc and subsequently dropped from
+  this submission. This submission only contains the selftest changes.
+  https://lore.kernel.org/lkml/ZmBw9R_jkNLYXkJh@google.com/
+- New patch to add udelay() utility to x86_64 KVM selftests. (Sean)
+- Many changes to APIC bus frequency selftest. Please refer to the patch
+  for detailed changes.
+- Series applies cleanly to next branch of kvm-x86 with HEAD
+  af0903ab52ee6d6f0f63af67fa73d5eb00f79b9a.
 
-We use 32 zpools on machines with 100s of CPUs. Two zpools per CPU is
-an overkill imo.
+Changes from v5:
+- v5: https://lore.kernel.org/lkml/cover.1714081725.git.reinette.chatre@intel.com/
+- Rebased on latest of "next" branch of https://github.com/kvm-x86/linux.git
+- Added Xiaoyao Li and Yuan Yao's Reviewed-by tags.
+- Use the KVM selftest vm_create() wrapper instead of open coding it. (Zide)
+- Improve grammar of selftest description. (Zide)
 
-I have further comments that I will leave on the patch, but I mainly
-think this should be driven by real data, not theoretical possibility
-of lock contention.
+Changes from v4:
+- v4: https://lore.kernel.org/lkml/cover.1711035400.git.reinette.chatre@intel.com/
+- Rename capability from KVM_CAP_X86_APIC_BUS_FREQUENCY to
+  KVM_CAP_X86_APIC_BUS_CYCLES_NS. (Xiaoyao Li).
+- Include "Testing" section in cover letter.
+- Add Rick's Reviewed-by tags.
+- Rebased on latest of "next" branch of https://github.com/kvm-x86/linux.git
 
->
-> --
->
-> <flintglass@gmail.com>
+Changes from v3:
+- v3: https://lore.kernel.org/all/cover.1702974319.git.isaku.yamahata@intel.com/
+- Reworked all changelogs.
+- Regarding code changes: patches #1 and #2 are unchanged, patch #3 was
+  reworked according to Sean's guidance, and patch #4 (the test)
+  needed changes after rebase to kvm-x86/next and the implementation
+  (patch #3) changes.
+- Added Reviewed-by tags to patches #1, #2, and #4, but removed
+  Maxim's Reviewed-by tag from patch #3 because it changed so much.
+- Added a "Suggested-by" to patch #4 to reflect that it represents
+  Sean's guidance.
+- Reworked cover to match customs (in subject line) and reflect feedback
+  to patches: capability renamed to KVM_CAP_X86_APIC_BUS_FREQUENCY, clarify
+  distinction between "core crystal clock" and "bus clock", and update
+  pro/con list.
+- Please refer to individual patches for detailed changes.
+
+Changes from v2:
+- v2: https://lore.kernel.org/lkml/cover.1699936040.git.isaku.yamahata@intel.com/
+- Removed APIC_BUS_FREQUENCY and apic_bus_frequency of struct kvm-arch.
+- Update the commit messages.
+- Added reviewed-by (Maxim Levitsky)
+- Use 1.5GHz instead of 1GHz as frequency for the test case.
+
+Changes from v1:
+- v1: https://lore.kernel.org/all/cover.1699383993.git.isaku.yamahata@intel.com/
+- Added a test case
+- Fix a build error for i386 platform
+- Add check if vcpu isn't created.
+- Add check if lapic chip is in-kernel emulation.
+- Updated api.rst
+
+Summary
+-------
+Add KVM_CAP_X86_APIC_BUS_CYCLES_NS capability to configure the APIC
+bus clock frequency for APIC timer emulation.
+Allow KVM_ENABLE_CAPABILITY(KVM_CAP_X86_APIC_BUS_CYCLES_NS) to set the
+frequency in nanoseconds. When using this capability, the user space
+VMM should configure CPUID leaf 0x15 to advertise the frequency.
+
+Description
+-----------
+Vishal reported [1] that the TDX guest kernel expects a 25MHz APIC bus
+frequency but ends up getting interrupts at a significantly higher rate.
+
+The TDX architecture hard-codes the core crystal clock frequency to
+25MHz and mandates exposing it via CPUID leaf 0x15. The TDX architecture
+does not allow the VMM to override the value.
+
+In addition, per Intel SDM:
+    "The APIC timer frequency will be the processor’s bus clock or core
+     crystal clock frequency (when TSC/core crystal clock ratio is
+     enumerated in CPUID leaf 0x15) divided by the value specified in
+     the divide configuration register."
+
+The resulting 25MHz APIC bus frequency conflicts with the KVM hardcoded
+APIC bus frequency of 1GHz.
+
+The KVM doesn't enumerate CPUID leaf 0x15 to the guest unless the user
+space VMM sets it using KVM_SET_CPUID. If the CPUID leaf 0x15 is
+enumerated, the guest kernel uses it as the APIC bus frequency. If not,
+the guest kernel measures the frequency based on other known timers like
+the ACPI timer or the legacy PIT. As reported in [1] the TDX guest kernel
+expects a 25MHz timer frequency but gets timer interrupt more frequently
+due to the 1GHz frequency used by KVM.
+
+To ensure that the guest doesn't have a conflicting view of the APIC bus
+frequency, allow the userspace to tell KVM to use the same frequency that
+TDX mandates instead of the default 1Ghz.
+
+There are several options to address this:
+1. Make the KVM able to configure APIC bus frequency (this series).
+   Pro: It resembles the existing hardware.  The recent Intel CPUs
+        adopts 25MHz.
+   Con: Require the VMM to emulate the APIC timer at 25MHz.
+2. Make the TDX architecture enumerate CPUID leaf 0x15 to configurable
+   frequency or not enumerate it.
+   Pro: Any APIC bus frequency is allowed.
+   Con: Deviates from TDX architecture.
+3. Make the TDX guest kernel use 1GHz when it's running on KVM.
+   Con: The kernel ignores CPUID leaf 0x15.
+4. Change CPUID leaf 0x15 under TDX to report the crystal clock frequency
+   as 1 GHz.
+   Pro: This has been the virtual APIC frequency for KVM guests for 13
+        years.
+   Pro: This requires changing only one hard-coded constant in TDX.
+   Con: It doesn't work with other VMMs as TDX isn't specific to KVM.
+   Con: Core crystal clock frequency is also used to calculate TSC frequency.
+   Con: If it is configured to value different from hardware, it will
+        break the correctness of INTEL-PT Mini Time Count (MTC) packets
+        in TDs.
+
+Testing
+-------
+Tested on non-TDX host using included kselftest. Host running kernel
+with this series applied to "next" branch of
+https://github.com/kvm-x86/linux.git
+
+Tested on TDX host and TD using a modified version
+of x86/apic.c:test_apic_timer_one_shot() available from
+https://github.com/intel/kvm-unit-tests-tdx/blob/tdx/x86/apic.c.
+Host running TDX KVM development patches and QEMU with corresponding TDX
+changes.
+The test needed to be modified to (a) stop any lingering timers before the
+test starts, and (b) use CPUID 0x15 in TDX to accurately determine the TSC
+and APIC frequencies instead of making 1GHz assumption and use similar
+check as the kselftest test introduced in this series (while increasing
+the amount with which the frequency is allowed to deviate by 1%).
+
+The core changes made to x86/apic.c:test_apic_timer_one_shot() for this
+testing are shown below for reference. Work is in progress to upstream
+these modifications.
+
+@@ -477,11 +478,29 @@ static void lvtt_handler(isr_regs_t *regs)
+ 
+ static void test_apic_timer_one_shot(void)
+ {
+-	uint64_t tsc1, tsc2;
+ 	static const uint32_t interval = 0x10000;
++	uint64_t measured_apic_freq, tsc2, tsc1;
++	uint32_t tsc_freq = 0, apic_freq = 0;
++	struct cpuid cpuid_tsc = {};
+ 
+ #define APIC_LVT_TIMER_VECTOR    (0xee)
+ 
++	/*
++	 * CPUID 0x15 is not available in VMX, can use it to obtain
++	 * TSC and APIC frequency for accurate testing
++	 */
++	if (is_tdx_guest()) {
++		cpuid_tsc = raw_cpuid(0x15, 0);
++		tsc_freq = cpuid_tsc.c * cpuid_tsc.b / cpuid_tsc.a;
++		apic_freq = cpuid_tsc.c;
++	}
++	/*
++	   stop already fired local timer
++	   the test case can be negative failure if the timer fired
++	   after installed lvtt_handler but *before*
++	   write to TIMICT again.
++	 */
++	apic_write(APIC_TMICT, 0);
+ 	handle_irq(APIC_LVT_TIMER_VECTOR, lvtt_handler);
+ 
+ 	/* One shot mode */
+@@ -503,8 +522,16 @@ static void test_apic_timer_one_shot(void)
+ 	 * cases, the following should satisfy on all modern
+ 	 * processors.
+ 	 */
+-	report((lvtt_counter == 1) && (tsc2 - tsc1 >= interval),
+-	       "APIC LVT timer one shot");
++	if (is_tdx_guest()) {
++		measured_apic_freq = interval * (tsc_freq / (tsc2 - tsc1));
++		report((lvtt_counter == 1) &&
++		       (measured_apic_freq < apic_freq * 102 / 100) &&
++		       (measured_apic_freq > apic_freq * 98 / 100),
++		       "APIC LVT timer one shot");
++	} else {
++		report((lvtt_counter == 1) && (tsc2 - tsc1 >= interval),
++		"APIC LVT timer one shot");
++	}
+ }
+
+[1] https://lore.kernel.org/lkml/20231006011255.4163884-1-vannapurve@google.com/
+
+Isaku Yamahata (1):
+  KVM: selftests: Add test for configure of x86 APIC bus frequency
+
+Reinette Chatre (1):
+  KVM: selftests: Add x86_64 guest udelay() utility
+
+ tools/testing/selftests/kvm/Makefile          |   1 +
+ .../selftests/kvm/include/x86_64/apic.h       |   8 +
+ .../selftests/kvm/include/x86_64/processor.h  |  15 ++
+ .../selftests/kvm/lib/x86_64/processor.c      |   8 +
+ .../kvm/x86_64/apic_bus_clock_test.c          | 218 ++++++++++++++++++
+ 5 files changed, 250 insertions(+)
+ create mode 100644 tools/testing/selftests/kvm/x86_64/apic_bus_clock_test.c
+
+-- 
+2.34.1
+
 
