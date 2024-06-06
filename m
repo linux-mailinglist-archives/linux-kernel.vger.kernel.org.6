@@ -1,100 +1,85 @@
-Return-Path: <linux-kernel+bounces-204499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A867B8FEFE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:06:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 854CD8FF068
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:20:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D326B2C766
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:03:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 669A5B2DFC2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9EF19E7EC;
-	Thu,  6 Jun 2024 14:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BGVaVkyf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C104519DF68;
+	Thu,  6 Jun 2024 14:38:07 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2F219E7DC
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127F41974FA
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717684789; cv=none; b=QuL/fGdjyIEJded/EeDdek2L/dVCHGBdYKeqiIopMGvgX+cNmcl/ork9xeVAffXFECmO3Sqwmw3jt76+CSni7SWjNVPGHCjF0isqXZgGDcIy1PP4NKIX9CBxq3ROxPsCeYggMDTmnWKUXAFIfEL4bv51GKUgJwV4/NGSiHV54Qs=
+	t=1717684687; cv=none; b=HOGNAVYJFvuH1IVyUDp6phRKji6tBePr4NcbN5NlM2DgC76XTPO/mpX7gSfz9GhE6H5zdGSwOhLPUrO+yKMUGPal/zmLcvgxQErRdDH4DSb3Y7cguINhgsXwyszUd2WuzqZw0WuSScCc+OTL+AHjvzYE/jYWHLIz+p5E8PWn/vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717684789; c=relaxed/simple;
-	bh=h7zjIQkZZTzWaJBKoOJsIZ+rDuw+R7H+L3cDkG6DR2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E/eWSHAPnlFND555+XBla6wA5890ejK0Q1ZaysgPMcUv+sgXq2uWMnGlmRtTO8KHTNC1GwSRgRWfrSZZgxB/i8fbNeX2YZXc/jPeKbxEregYmQ50Ah18OMDmHWY/K+s+/y33lt2dSNct8maO5KhphXoReqG2sEwl8Cpg/uH9Wf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BGVaVkyf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79206C2BD10;
-	Thu,  6 Jun 2024 14:39:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717684789;
-	bh=h7zjIQkZZTzWaJBKoOJsIZ+rDuw+R7H+L3cDkG6DR2c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BGVaVkyf5/nh+sUMeJbg1le2pWIskJPBQor0Ur9hVRT7r7RNMYSoamsKBOUBt3edf
-	 XGhXpu0TVRBqZgw8Pf+DsB/szpaZoLRcjOPl1JyOApwkO7vp0lWcuvL+msNfYHEkBJ
-	 YsjTNhrSIMuhUYYiZctJT/oEKcxR1/KKblBZHMB2k3XFbXbKb+Cd7s/gMOFHQ/yACT
-	 +mfoU5nqBt1mom+0nDn27nOdEb53xdkvs8/+RR/kRq9o36GHORnQsVpYM1D9KMhBOs
-	 DVkIYuPlON5MNW5coXBxRpYs9c0NSgwDNZX/a6NLCpdR/QbY8EF/cTK1XQNJSjo3FP
-	 8LkDV2NrezsTQ==
-Date: Thu, 6 Jun 2024 17:37:49 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Borislav Petkov <bp@kernel.org>, Jan Beulich <jbeulich@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Narasimhan V <Narasimhan.V@amd.com>
-Subject: Re: [PATCH] x86/mm/numa: Use NUMA_NO_NODE when calling
- memblock_set_node()
-Message-ID: <ZmHJvY5h887hDN87@kernel.org>
-References: <20240603141005.23261-1-bp@kernel.org>
- <171750701353.925406.16431237983148253122.b4-ty@kernel.org>
+	s=arc-20240116; t=1717684687; c=relaxed/simple;
+	bh=GKSmEQQhWMULX/meKsTtsC0/Yt50KLAGPEr7AHZpt14=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=q3ATaEo8fjTM8zlb063EzZFpcczJBauxPtv8ofneqsO4MyuPkTzX0egRSOHma7tOql/RDEd1pYOvQiJW3L3aYGIwsJT3UPKHb9f2RJSmqqfGN1/Fqzsi14TLBBR9SOgNlJp9H+TCiiVhUDvP4wfDZ4bivGL4HUatyq6kiPhvuDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7ead7796052so111850639f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 07:38:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717684685; x=1718289485;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2fLoaeyGFI7/ZIxhQjo4nBcAkpSxHGUV3XRWCyjIOHE=;
+        b=lns0XgTFq/6lOyxuc34+imbWq2OFp5QEzesSOuAq+67TFkM20ZQY3IJh75btcg/2wG
+         AGoEjmmELkBElSrSBqUgeYY6MeU/ZDeleFujxOJKy1erG6WyfDi0Mi3iLmNw2LghiSSE
+         PNe6LioD9vmJgZ1Am9IOi592Z5Wq/Y8dIrRDFC35ZNmVMhpPj97UbhQLZEmcSytOJbMs
+         Z4MFYSfApvhPmfrwTIbeiq1sWIhi0yRWHsuWNigGwvsCK/oN9Q/DiYaF597OcuSGrZGx
+         wHebdBjOgNYTSyW0qcNImwzsrF2Q/NEtvMNqmJ+i4qKfkMM7XFrM1GNe3YYvo8T64GnR
+         0m9A==
+X-Gm-Message-State: AOJu0YwG+DNq1CSO1vLSY8hjY/9nlMCbme0jOy8Y7W4UzhdvAcoRuWcA
+	+W6gRc9/db9FU0YNFU/vmY/f021tSXf5abKMl9NfDV7uBuzJsmaO8gWBUBpBo1YvwfXw9mktE4r
+	QaFnYbDwRz3EOjYb8Q16REOKjqt6RPhW4HfxVgz/F1EHxh+rTgluON6U=
+X-Google-Smtp-Source: AGHT+IH/RWfhFIJZdUsXH00+g69ohwgqn28xDhnGb04AViS7nzRcIfyUvLo9DBWtpXi2mCfaXfG4DS8XA68IkZY4Ahp1JFg7PZqf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <171750701353.925406.16431237983148253122.b4-ty@kernel.org>
+X-Received: by 2002:a05:6602:6c12:b0:7de:e175:fd2d with SMTP id
+ ca18e2360f4ac-7eb3ca8dc06mr25678739f.3.1717684685333; Thu, 06 Jun 2024
+ 07:38:05 -0700 (PDT)
+Date: Thu, 06 Jun 2024 07:38:05 -0700
+In-Reply-To: <20240606141413.137516-1-norkam41@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000081786e061a39a187@google.com>
+Subject: Re: [syzbot] [bpf?] possible deadlock in trie_delete_elem
+From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, norkam41@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jun 04, 2024 at 04:16:57PM +0300, Mike Rapoport wrote:
-> On Mon, 03 Jun 2024 16:10:05 +0200, Borislav Petkov wrote:
-> > memblock_set_node() warns about using MAX_NUMNODES, see
-> > 
-> >   e0eec24e2e19 ("memblock: make memblock_set_node() also warn about use of MAX_NUMNODES")
-> > 
-> > for details.
-> > 
-> > 
-> > [...]
-> 
-> Applied to fixes branch of memblock.git tree, thanks!
-> 
-> [1/1] x86/mm/numa: Use NUMA_NO_NODE when calling memblock_set_node()
->       commit: c55f3cc2d9f241d6e45336fd48dafa755c012297
-> 
-> tree: https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock
-> branch: fixes
+Hello,
 
-There was a similar, but better fix from Jan Beulich:
+syzbot tried to test the proposed patch but the build/boot failed:
 
-https://lore.kernel.org/lkml/abadb736-a239-49e4-ab42-ace7acdd4278@suse.com/
+kernel/tracepoint.c:178:36: error: incomplete definition of type 'struct bpf_raw_tp_link'
+kernel/tracepoint.c:182:9: error: incomplete definition of type 'struct bpf_raw_tp_link'
 
-that also updated numa_clear_kernel_node_hotplug().
 
-I'm going to replace this patch with his and use Boris' changelog as more
-appropriate.
- 
-> --
-> Sincerely yours,
-> Mike.
-> 
+Tested on:
 
--- 
-Sincerely yours,
-Mike.
+commit:         c3f38fa6 Linux 6.10-rc2
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9d7ea7de0cb32587
+dashboard link: https://syzkaller.appspot.com/bug?extid=9d95beb2a3c260622518
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15bfdbc2980000
+
 
