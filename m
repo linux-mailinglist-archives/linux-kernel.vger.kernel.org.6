@@ -1,117 +1,94 @@
-Return-Path: <linux-kernel+bounces-204359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 137AC8FE7B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:26:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E0E08FE7B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:26:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1182287BE8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:26:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACF74B21A0A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC22B195FD0;
-	Thu,  6 Jun 2024 13:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51996195FF3;
+	Thu,  6 Jun 2024 13:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DwhgUyyc"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="BEQ2Sg2h"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF4F195B3B;
-	Thu,  6 Jun 2024 13:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201B4FC02;
+	Thu,  6 Jun 2024 13:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717680388; cv=none; b=KhXIaR7J08R7sy98y6w/gbRKaIu29LXfcg78nBUdluBkQcsGaZZuthPMTUOgznoxg3+fNgkFzNvBd9F2C9NjZndVaa/xF7soYCDg3NFyBwqWKtDvdPnLvP6CNhNUnXuPAp2AXHP06YNAjufZ4MmgY437bbiSQ4PAGOiltymvoS8=
+	t=1717680368; cv=none; b=mo3pgwldfb5GXUUe0+B5lOTTp2Tc1HyAChKY+yUxg0hIqVLytqcJ+bMpKzNGQr8KXnDxfey60e2XKB0bS3NlJr0u4LaiEzUuMSFwXAJFq94Q+a0cUbKkXdcKVST90PLGYIINyirS6/edOVoaWTa//jQyqG4YzNEXBwn0gG7jrLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717680388; c=relaxed/simple;
-	bh=T4gVqNeiQwLc9IY+uR1Fx3P7ODXlaBcg5nHWL2xEQ5Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JBdpjzY1rkK2YOnD0kx4PSNvF4uqImSZ0NPlXBVO0kmh73tj35GgHGWQQ6jP4qEo3n6E4AmekdQvqyQOXnttfJLgIuYNN+elap0aSkulgK7sLwPneR7Hq/k5PxLeIF2pFejL0L0ydDzoq+jc+t6e7FxFLQosacZphCelTtl/dQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DwhgUyyc; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-703fec25cc5so509632b3a.0;
-        Thu, 06 Jun 2024 06:26:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717680386; x=1718285186; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=x07L2+MySqjTT/zwv5/pvgKJjPAjMRPDflzahQe9bjk=;
-        b=DwhgUyyckbiZ06PZ1u/IessHOJn6q6Oql4bTghZAZiRHLCy+Q7k4rGm5WQcl4eJBug
-         XEJORrCTcwyhNzY+XxYn8Qkk30nuaQIZrqfnq3y8FCEBSYClFnQAApNX3F7kqQJ7r25S
-         /InbRY34XMH2hDlr79RQHeM01cAl3F3sQNOhHFaeyL4Zb+d8zf7na/G5dO/XeSDNL3Se
-         Z+j7bITVWCgIzElx+quJUUDaebeYzvgZ7sfsVmoDb71K3Rf+NuIxkeOwquSubkAjRqIG
-         3PrDeRXpKVvMPU2lAQHNkJuEYfksb+WwpgO/JD12ysmG9DPSoUjuqu59WnlH1PqwOVMc
-         FSEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717680386; x=1718285186;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x07L2+MySqjTT/zwv5/pvgKJjPAjMRPDflzahQe9bjk=;
-        b=lqWEDH93BL5ds/elcweN7rSfhoe6Fqs2pclpfeN5j2sBd470prkOj1QbrEeoHyZM7U
-         Vvl/0DPwn61ucIcY+MKxwFQ4SYvVhhLX6m4Oh1DU+NwH//3p97U/S4xqgfT7jG32vBDF
-         33dUmpJcowkmMkcRW8beIEzZ9KwVbKOchb3jFirT9BD/qgWtDRYyM9iJ6XJ/KXzD/Ol4
-         HuRhBIQgn7pAGR3pASTB8P2IK1PFangCY1nNLVp0GwFmMDPo5+4/RL6/tU3lOVdp5BDe
-         UHlxwmx+S/sm/kOIG0UPjwMl4qd+pgNNVV/vwH8oSBfaI/TymrU+ztLtsHNUi3xk9X8d
-         kOWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVC7zHctvPFknp8/JuJHNh+BcpS+3Fm/Ew60gNSTV5FcDGFC6/8AKz2nsxLe/B1iBT3qyR4RCurokS+PEqI9nrnae71/dXA/OL/5q7P3/gLka/+3RT3XuFQiq+WZIDCK29LthWXFJIoFDq8HB48W2TM
-X-Gm-Message-State: AOJu0Yxx+UegJLhXlivkO5VgPoPooL3C2du1omRHc7NSmzJ9HqQ34jwH
-	esU9D0C9vL7nHN8xv+Qd8uvJ6/2FSf57S5s/G4O8W64rYV6FjGOrHYzC5Vf1
-X-Google-Smtp-Source: AGHT+IHqxlZxQe+HTbj7/MJEg8YdNiO0QXLtdoN1nyAkm21W4IxViTfvZtV64EInGb0ldJuqW/ib7A==
-X-Received: by 2002:a05:6a21:622:b0:1a7:11bf:7b74 with SMTP id adf61e73a8af0-1b2b71adac8mr4742743637.62.1717680385745;
-        Thu, 06 Jun 2024 06:26:25 -0700 (PDT)
-Received: from mari.. ([2804:431:cfd3:42f5:bf70:5697:bacd:e5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70408c58197sm65585b3a.129.2024.06.06.06.26.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 06:26:25 -0700 (PDT)
-From: Marilene A Garcia <marilene.agarcia@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Marilene A Garcia <marilene.agarcia@gmail.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v2] ftrace: Add missing kerneldoc parameters to unregister_ftrace_direct()
-Date: Thu,  6 Jun 2024 10:25:20 -0300
-Message-Id: <20240606132520.1397567-1-marilene.agarcia@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717680368; c=relaxed/simple;
+	bh=Da94MbDvCzudQyDztnqyQOKY9skofvJFvAJNp1KTIcI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gieaXsHP8HeHZ2Del1BwTAvXF15KAZ9DkHmDNOgwd3De+Yiig384+w/kuyPFDs5BE5xUSMOPyrW6WXJwdJegZDLMHAR8MEsJRANbWVaqzX/8qzoPv7NIEwZjHRGhrahVz9pSsAXBgOJ1j204dPpwHZrSAfELGYH4Kt+ths2OHcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=BEQ2Sg2h; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=QehpudYNwQn/+EF5t8WXc8vQI3VYnM/EWDpwkUDEZHI=; b=BEQ2Sg2hRkMyI04nmbrlG0HbLo
+	QeO7iB/STgiK0VKfWXCGl2sd4tRbx5MAgMZ9LWf63lpyYEFkYk4g6YyOsCBRaL6wqcc/iMAGBoUZ0
+	+cN1km/L3X73Hqjk5o0FlagS1JwYR7HdhDrOZmTBtipc3cdJhEStoQJjYmllVZH48tYg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sFD7o-00H1FE-DV; Thu, 06 Jun 2024 15:25:52 +0200
+Date: Thu, 6 Jun 2024 15:25:52 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Swathi K S <swathi.ks@samsung.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	richardcochran@gmail.com, alexandre.torgue@foss.st.com,
+	joabreu@synopsys.com, mcoquelin.stm32@gmail.com,
+	alim.akhtar@samsung.com, linux-fsd@tesla.com,
+	pankaj.dubey@samsung.com, ravi.patel@samsung.com,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: net: Add FSD EQoS device tree
+ bindings
+Message-ID: <22eae086-0f77-4df7-9d70-e7249d67b106@lunn.ch>
+References: <20230814112539.70453-1-sriranjani.p@samsung.com>
+ <CGME20230814112605epcas5p31aca7b23e70e8d93df11414291f7ce66@epcas5p3.samsung.com>
+ <20230814112539.70453-2-sriranjani.p@samsung.com>
+ <4e745c2a-57bd-45da-8bd2-ee1cb2bab84f@lunn.ch>
+ <000201dab7f2$1c8d4580$55a7d080$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000201dab7f2$1c8d4580$55a7d080$@samsung.com>
 
-Add the description to the parameters addr and free_filters
-of the function unregister_ftrace_direct().
+> > > +  fsd-rx-clock-skew:
+> > > +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> > > +    items:
+> > > +      - items:
+> > > +          - description: phandle to the syscon node
+> > > +          - description: offset of the control register
+> > > +    description:
+> > > +      Should be phandle/offset pair. The phandle to the syscon node.
+> > 
+> > What clock are you skew-ing here? And why?
+> 
+> As per customer's requirement, we need 2ns delay in fsys block both in TX
+> and RX path.
 
-Signed-off-by: Marilene A Garcia <marilene.agarcia@gmail.com>
----
-Hello,
-Thank you for the feedback.
-The requested changes were applied in this new version.
+Lots of people get RGMII delays wrong. Please look back at the mailing
+list where there is plenty of discussion about this. I don't want to
+have to repeat myself yet again...
 
- kernel/trace/ftrace.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index da7e6abf48b4..1f79cf3c598e 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -5960,6 +5960,8 @@ EXPORT_SYMBOL_GPL(register_ftrace_direct);
-  * unregister_ftrace_direct - Remove calls to custom trampoline
-  * previously registered by register_ftrace_direct for @ops object.
-  * @ops: The address of the struct ftrace_ops object
-+ * @addr: The address of the direct function that is called by the @ops functions
-+ * @free_filters: Set to true to remove all filters for the ftrace_ops, false otherwise
-  *
-  * This is used to remove a direct calls to @addr from the nop locations
-  * of the functions registered in @ops (with by ftrace_set_filter_ip
--- 
-2.34.1
-
+     Andrew
 
