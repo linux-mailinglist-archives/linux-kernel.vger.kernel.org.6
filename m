@@ -1,164 +1,183 @@
-Return-Path: <linux-kernel+bounces-204827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B7A8FF3F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:41:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EABC8FF3FE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:45:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF7C3286332
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:41:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B352428E85B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29903199229;
-	Thu,  6 Jun 2024 17:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD67319923C;
+	Thu,  6 Jun 2024 17:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PzkVz2Rp"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zQbuG2hR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WWbspxkS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B707E199234;
-	Thu,  6 Jun 2024 17:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851A91991C7;
+	Thu,  6 Jun 2024 17:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717695663; cv=none; b=ko2Vm5HiVFYnSlIWlf9xcPCM+u1FukOJFkRXGpf5Kg0SQYSpCq7LHfDWQlrrs+gAI9KHOT4vnqV9TJ8zOtx9Qijem53jSJVZ37vCVKUlZbJZhnh/VhF+Iq14WdA85oSnK6ABRtAx5IJCZkjzxv43+QANbLIKa7Lzk+D54BgQbvc=
+	t=1717695913; cv=none; b=KjAv72YyKPUWGd1AaswAKcSrwCnx3ACw38RgCahegQc5/cqv36gtdHkDfyShSjmu+cWfh8+IvGAcvjSUjhAnSHKL54Mx84/6LVEk7D3JohAHL+A3KCqj/NILcEWKlP8lmdlfAXJXeEeCGUtA73zwbaLJX80FWUoywuK4Kv0xv1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717695663; c=relaxed/simple;
-	bh=yDUl6DKSl9pKbiUv316LKJC/x2wJuLMw7ScYSeQPJzA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DcZp1RpFAMQ8cpPwG2c0Ud5YDwdng6XD+9u1QQvNtyBJ09MHlmWV3gFOOWPookWTG1SOVt5X5nHzgD+l15COOUgaxp2n7WnmpmODXaMxf4SQx+CGSJgh+9ktsq0Jgfxvm+pP+livn1ojQZliwy4r9/kpV9aTMf56LrKccUB/O20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PzkVz2Rp; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e73359b979so15196241fa.1;
-        Thu, 06 Jun 2024 10:41:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717695659; x=1718300459; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xxRkvTIPkScGp1ZyUGP+q6S56T8mZvmbd28YjaNuyas=;
-        b=PzkVz2RpKtL0vVCcA3TTmLQ4LND23PakwSf5r9xRGCKUtHcjEocRo5pkNV85X5vsSy
-         CcD7ngypCNl/hVJBzIuUXKJbbVsxc/+VxLIeBYd6rWA34a1PDIS9n29ItoK2i/YDf5RN
-         Fhlu8KnMGrwk3JSwjj+jD48Z1XrBEDrGcNQG7MBQAT0gzmHcNZRUY4vrw3Mvl0ERHPNV
-         cM2fCxAJgi8/HeMtgWhS7G+oG4EzGz47YUrpscPSlHCxS/OIgvjb/9EZTqIA5sbccix0
-         Ukeun8ZJAY3aZOgKIJiG3d4Je43xX7cAZXGWJ74uVJ1lPljOG/Jto+JQ1TNwjKwhJ4z/
-         gq1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717695659; x=1718300459;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xxRkvTIPkScGp1ZyUGP+q6S56T8mZvmbd28YjaNuyas=;
-        b=rC3xTFRTJDehwbpNaRvhlTU7JcTVOkrqcprV56Hgo09dk0lHZTUG14dNLrHfowZ5PQ
-         TsQm4O6r5Jg3iwpVFcV1HBbC0h+6HE3WZXA00F7NJTFSpC3kfeTAyYblCyaJ/1VsvMk6
-         0DrGQQH8eGQYucNS2/b8FzYvSpH6ASSB2RPUzj+IdzIWtEKNbzMdI/erm9KkSvGTu0dd
-         nzneX6fn6Nw2eNQmvMHEcIsnPJB7bRQAXhEucHqni2y43RlP3tHlVj8yODWuc9N1Wl2F
-         hpvZoanyQAR8qZoCyNDXSu4/rkhLged0BJMvN+So6ZVCPE9qDm/I/YUJD+GSR8erKlAj
-         nPCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxk/ccU/JKZyVCa/PXJQp99uE+a96U/FOVnF5w6g0XVFEFNlspla2veq/3+YP75/O/0jIFVfw5Az/lidcKmWpXq5IcUi3qLBT3t5IB8sGCLhELfV99Dh1bWfF48CEbelw/jqEFVBiFqOvmGoDV
-X-Gm-Message-State: AOJu0YwjlSvJ1AaVPAP6pgZ2W8/2dRukJNNaM0jqtHQbBO+bUvBYUVn/
-	di+TjpKXyYKkOwzgyi5A02vDdwlLUw7plOGbpz7kQF/l66lvcxHU
-X-Google-Smtp-Source: AGHT+IEc4dm0uh5aarO64zIpyotGYs9UV+iunav+qqO0HqIqTJeg4E9+AGBRQzENYh6eqU5xAzwJCg==
-X-Received: by 2002:a2e:bc14:0:b0:2da:a3ff:524e with SMTP id 38308e7fff4ca-2eadce208c4mr2745941fa.9.1717695658663;
-        Thu, 06 Jun 2024 10:40:58 -0700 (PDT)
-Received: from [10.0.0.42] (host-85-29-124-88.kaisa-laajakaista.fi. [85.29.124.88])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ead41bef2dsm2583541fa.109.2024.06.06.10.40.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 10:40:58 -0700 (PDT)
-Message-ID: <b57827de-8e72-442d-99fa-307a719ea33b@gmail.com>
-Date: Thu, 6 Jun 2024 20:44:31 +0300
+	s=arc-20240116; t=1717695913; c=relaxed/simple;
+	bh=uyGm6ZUIbxbRbpt405smIVUtq5i5bFuz83fng0Jpp+w=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=DsDk97kMgABxc3Ksu3VIN+JTUUVXuFeWGMIn27Xez5P8ahEFfeBc6u1VtUOgdsBZwXJzaUl/HaUSrYog3rbXTVD+WKb+RZlafwbnSwjRnv+oLLpg5OFjFYyGiIioiiIJSogiJPx1DGiR4DrtnNbmWa8mA5qDBC+no9IlCvukROE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zQbuG2hR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WWbspxkS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 06 Jun 2024 17:45:08 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717695909;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/DRLsjhbepAMwN+9568MetcDQGBIgafcDOLWHnxhD78=;
+	b=zQbuG2hRd/kn6X7JoB8dNT52KQrGPGX7fipxdEbkFyOVDFNJSWxUGxsduqoaZUMrHyyQD9
+	dR8f6hm197ohdYkDUqZlBpGqwuRkqiy5zvtTPlyErTbGakQcsF+GBpDJUng57w0KD0yS9y
+	QbGV8vPiYAe6L4YwybKgc7yN86ZYt1B7b1BVJ03NaJsf4ExRdoBsoPHT3mtW0jHqI2kwvW
+	JsxDHZ6YhOuyx8KloDd6fUfLBPzL9R67qi/YrhwMQeMk8TyAc4K0jpBf4NkS80XcA+6yDk
+	UeerZZl6eof80KYOpj+vMu35YKgYOFQZzBP1M7VDqp4OIpOjm5JErxjyRGNp3w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717695909;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/DRLsjhbepAMwN+9568MetcDQGBIgafcDOLWHnxhD78=;
+	b=WWbspxkSoGyH5YQzw23KCyXQLtHY1RuMyGGyc6Ie9lcNL0ptPUF5UBUEOP+WXfhzt47EOu
+	AMI2CRdeWWu8q5CQ==
+From: "tip-bot2 for Sean Christopherson" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] sched/core: Drop spinlocks on contention iff kernel
+ is preemptible
+Cc: Sean Christopherson <seanjc@google.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Ankur Arora <ankur.a.arora@oracle.com>, Chen Yu <yu.c.chen@intel.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <ef81ff36-64bb-4cfe-ae9b-e3acf47bff24@proxmox.com>
+References: <ef81ff36-64bb-4cfe-ae9b-e3acf47bff24@proxmox.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dmaengine: add missing MODULE_DESCRIPTION() macros
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
- Fenghua Yu <fenghua.yu@intel.com>, Dave Jiang <dave.jiang@intel.com>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <20240605-md-drivers-dma-v1-1-bcbcfd9ce706@quicinc.com>
-Content-Language: en-US
-From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
-In-Reply-To: <20240605-md-drivers-dma-v1-1-bcbcfd9ce706@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <171769590909.10875.6998954081392102122.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi,
+The following commit has been merged into the sched/core branch of tip:
 
-On 6/5/24 10:28 PM, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/idxd/idxd.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/ti/omap-dma.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/dmatest.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/ioat/ioatdma.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  drivers/dma/dmatest.c     | 1 +
->  drivers/dma/idxd/init.c   | 1 +
->  drivers/dma/ioat/init.c   | 1 +
->  drivers/dma/ti/omap-dma.c | 1 +
->  4 files changed, 4 insertions(+)
-> 
-> diff --git a/drivers/dma/dmatest.c b/drivers/dma/dmatest.c
-> index a4f608837849..1f201a542b37 100644
-> --- a/drivers/dma/dmatest.c
-> +++ b/drivers/dma/dmatest.c
-> @@ -1372,4 +1372,5 @@ static void __exit dmatest_exit(void)
->  module_exit(dmatest_exit);
->  
->  MODULE_AUTHOR("Haavard Skinnemoen (Atmel)");
-> +MODULE_DESCRIPTION("DMA Engine test module");
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-> index a7295943fa22..cb5f9748f54a 100644
-> --- a/drivers/dma/idxd/init.c
-> +++ b/drivers/dma/idxd/init.c
-> @@ -22,6 +22,7 @@
->  #include "perfmon.h"
->  
->  MODULE_VERSION(IDXD_DRIVER_VERSION);
-> +MODULE_DESCRIPTION("Intel Data Accelerators support");
->  MODULE_LICENSE("GPL v2");
->  MODULE_AUTHOR("Intel Corporation");
->  MODULE_IMPORT_NS(IDXD);
-> diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
-> index 9c364e92cb82..d84d95321f43 100644
-> --- a/drivers/dma/ioat/init.c
-> +++ b/drivers/dma/ioat/init.c
-> @@ -23,6 +23,7 @@
->  #include "../dmaengine.h"
->  
->  MODULE_VERSION(IOAT_DMA_VERSION);
-> +MODULE_DESCRIPTION("Intel I/OAT DMA Linux driver");
->  MODULE_LICENSE("Dual BSD/GPL");
->  MODULE_AUTHOR("Intel Corporation");
->  
-> diff --git a/drivers/dma/ti/omap-dma.c b/drivers/dma/ti/omap-dma.c
-> index b9e0e22383b7..5b994c325b41 100644
-> --- a/drivers/dma/ti/omap-dma.c
-> +++ b/drivers/dma/ti/omap-dma.c
-> @@ -1950,4 +1950,5 @@ static void __exit omap_dma_exit(void)
->  module_exit(omap_dma_exit);
->  
->  MODULE_AUTHOR("Russell King");
-> +MODULE_DESCRIPTION("OMAP DMAengine support");
+Commit-ID:     c793a62823d1ce8f70d9cfc7803e3ea436277cda
+Gitweb:        https://git.kernel.org/tip/c793a62823d1ce8f70d9cfc7803e3ea436277cda
+Author:        Sean Christopherson <seanjc@google.com>
+AuthorDate:    Mon, 27 May 2024 17:34:48 -07:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Wed, 05 Jun 2024 16:52:36 +02:00
 
-It would be better to "Texas Instruments sDMA DMAengine support"
+sched/core: Drop spinlocks on contention iff kernel is preemptible
 
->  MODULE_LICENSE("GPL");
-> 
-> ---
-> base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-> change-id: 20240605-md-drivers-dma-2105b7b6f243
-> 
+Use preempt_model_preemptible() to detect a preemptible kernel when
+deciding whether or not to reschedule in order to drop a contended
+spinlock or rwlock.  Because PREEMPT_DYNAMIC selects PREEMPTION, kernels
+built with PREEMPT_DYNAMIC=y will yield contended locks even if the live
+preemption model is "none" or "voluntary".  In short, make kernels with
+dynamically selected models behave the same as kernels with statically
+selected models.
 
--- 
-Péter
+Somewhat counter-intuitively, NOT yielding a lock can provide better
+latency for the relevant tasks/processes.  E.g. KVM x86's mmu_lock, a
+rwlock, is often contended between an invalidation event (takes mmu_lock
+for write) and a vCPU servicing a guest page fault (takes mmu_lock for
+read).  For _some_ setups, letting the invalidation task complete even
+if there is mmu_lock contention provides lower latency for *all* tasks,
+i.e. the invalidation completes sooner *and* the vCPU services the guest
+page fault sooner.
+
+But even KVM's mmu_lock behavior isn't uniform, e.g. the "best" behavior
+can vary depending on the host VMM, the guest workload, the number of
+vCPUs, the number of pCPUs in the host, why there is lock contention, etc.
+
+In other words, simply deleting the CONFIG_PREEMPTION guard (or doing the
+opposite and removing contention yielding entirely) needs to come with a
+big pile of data proving that changing the status quo is a net positive.
+
+Opportunistically document this side effect of preempt=full, as yielding
+contended spinlocks can have significant, user-visible impact.
+
+Fixes: c597bfddc9e9 ("sched: Provide Kconfig support for default dynamic preempt mode")
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Ankur Arora <ankur.a.arora@oracle.com>
+Reviewed-by: Chen Yu <yu.c.chen@intel.com>
+Link: https://lore.kernel.org/kvm/ef81ff36-64bb-4cfe-ae9b-e3acf47bff24@proxmox.com
+---
+ Documentation/admin-guide/kernel-parameters.txt |  4 +++-
+ include/linux/spinlock.h                        | 14 ++++++--------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 500cfa7..555e6b5 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4752,7 +4752,9 @@
+ 			none - Limited to cond_resched() calls
+ 			voluntary - Limited to cond_resched() and might_sleep() calls
+ 			full - Any section that isn't explicitly preempt disabled
+-			       can be preempted anytime.
++			       can be preempted anytime.  Tasks will also yield
++			       contended spinlocks (if the critical section isn't
++			       explicitly preempt disabled beyond the lock itself).
+ 
+ 	print-fatal-signals=
+ 			[KNL] debug: print fatal signals
+diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
+index 3fcd20d..63dd8cf 100644
+--- a/include/linux/spinlock.h
++++ b/include/linux/spinlock.h
+@@ -462,11 +462,10 @@ static __always_inline int spin_is_contended(spinlock_t *lock)
+  */
+ static inline int spin_needbreak(spinlock_t *lock)
+ {
+-#ifdef CONFIG_PREEMPTION
++	if (!preempt_model_preemptible())
++		return 0;
++
+ 	return spin_is_contended(lock);
+-#else
+-	return 0;
+-#endif
+ }
+ 
+ /*
+@@ -479,11 +478,10 @@ static inline int spin_needbreak(spinlock_t *lock)
+  */
+ static inline int rwlock_needbreak(rwlock_t *lock)
+ {
+-#ifdef CONFIG_PREEMPTION
++	if (!preempt_model_preemptible())
++		return 0;
++
+ 	return rwlock_is_contended(lock);
+-#else
+-	return 0;
+-#endif
+ }
+ 
+ /*
 
