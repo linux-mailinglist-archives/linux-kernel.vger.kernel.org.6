@@ -1,69 +1,67 @@
-Return-Path: <linux-kernel+bounces-204975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2F268FF5BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:17:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCDE48FF5BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86E8F288431
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:17:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEF641C257CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8827344E;
-	Thu,  6 Jun 2024 20:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E3A73469;
+	Thu,  6 Jun 2024 20:18:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7ll0qYy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="O1ZmJ6Rl"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DBA71748
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 20:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D1038F9C;
+	Thu,  6 Jun 2024 20:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717705072; cv=none; b=hQMVYGrCcKBiRezj2vmFQ5f3GeiDkqTOXWCiAO1iMavO9ThS9Hupd68JrToegEI77ozZ5OnJ0NY8ojdlGSnQTRlH2FQiePWFIv+D/1W6p35gb371E7P0RsGRhsUDS0IkKALOq5Hqf5htFjZT9KRs7KqEHL+DwUyem7oKBbwdcFY=
+	t=1717705121; cv=none; b=vCJ251qkXfjCMhcDhWyblUdJgjXz8219QplneHKY3QQpSo8QO+DXfSE2eh5N6j7Ysc033+D99bt00OGPc43/mg/qTSy8S0/rHHQ81izIHtn7QDFGmnG0cV0NBvcV/SxR/5oXhSPo5yxroHq/HeOabRrLeaBPFk8uJl2a/F+U99s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717705072; c=relaxed/simple;
-	bh=dx6bcYfXV1SsrXcEAk9+8Tahom5shjEJqNgJxSC5+uo=;
+	s=arc-20240116; t=1717705121; c=relaxed/simple;
+	bh=cyu/1xEpXUTxEGqlT0D38XPGikaORzZ2nxSbTMl8Ksc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qj5oDQnV6NjHuR1/Pg2BOxtCYElm0LyYveir7XyeIAUezqz5bGz9+Xhr5g/G5YZbCGcfRKlkJKbmsC9h4KeW967alH14MNIs9mQTsuyQNIipBN3RAE8h3C4O4t8BXA+to95XPDPLbLZueF1/AJMT2q9Bts9uyRbbuSPW322ehpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7ll0qYy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44B77C2BD10;
-	Thu,  6 Jun 2024 20:17:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717705072;
-	bh=dx6bcYfXV1SsrXcEAk9+8Tahom5shjEJqNgJxSC5+uo=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=D7ll0qYy2mDFGwsDsvQitNmg+2UP9O14St6XtZh9w4br7741OM3l8DJQT8tQS4lfh
-	 XJ9adLYcZf0XKVJjXldGS8c52Ma2ppN9VivDNgbAXeq2Jz7GK8R++SxKNgjwW5yA1i
-	 Ym7E6ZspfBUGgANB3cskL8clbMs2fLnoK5+UCeeiF4Q+8APfjTSAuakKk41CNs96UT
-	 XteNmOyTHd32UpIkfoWVh5zts7OlHP0HDYQYS7RV5xyeP/bpHZvvvy/TdzP/BZeWVG
-	 wI84S6aqgY1Tch3cmF7mSrXUXGz/Mbxx+ieybuCyzR6B2QEraXuNxejPkGsdnvFuLq
-	 SC2AJHDetbQYg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id E7A41CE3F34; Thu,  6 Jun 2024 13:17:51 -0700 (PDT)
-Date: Thu, 6 Jun 2024 13:17:51 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Jan Beulich <jbeulich@suse.com>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	linux-mm <linux-mm@kvack.org>, lkft-triage@lists.linaro.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: x86: WARNING: at mm/memblock.c:1339 memblock_set_node - Usage of
- MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead
-Message-ID: <04eb89b7-9d63-4b06-b553-2cb2095539db@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <CA+G9fYsGFerOtoxwpKLOYcRtyJkmgjdP=qg4Y5iP5q-4Lt17Lg@mail.gmail.com>
- <315d6873-d618-4126-b67a-de62502d7ee2@paulmck-laptop>
- <7d55b65e-331a-4ce2-8f72-d3c5c9e6eae0@suse.com>
- <e220910c-da6e-40ab-895f-87fd43c1de3f@paulmck-laptop>
- <eaa90c1a-ae96-4506-90dd-146ce85d311c@suse.com>
- <20c484a5-d797-4782-b5b5-bea5fcae9284@paulmck-laptop>
- <b004f0be-1aa5-4f5b-8dd5-a071bcfc5179@paulmck-laptop>
- <ZmIScSCwqpS6WBGn@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=i3BgZ3rFna4uOe9pC1zNRNhzmFrEjCyYYQJt5nAcMcwJW/V4DRQOxGhtU7qdMS2sDDEsohjsCiAiN68eLzzS2U/L0clQ7oZ/zWeLEhSJ9lGwP9uvKftFdUaPtgRU7htvdHpcmnfRaPmo2W1HdIji0AZGKmQYMz2oOJblKgJBSyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=O1ZmJ6Rl; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4VwFyg0Hnvz9sq3;
+	Thu,  6 Jun 2024 22:18:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1717705115;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ohDaG0hOCzORTv2Q7Osb5vtnPE6ReKAWi9dBZ7ab1xc=;
+	b=O1ZmJ6RlSaIOZnPqzA910/zSq4CkE+BrWOeNVx/EF5z6ns2s5l8/eGtXfKm/IgSB7aQgWh
+	tX4O09EFjB0RqCkS8+vnZwUKX42BvYRExY1SAvJSJg6aFJdwdSnhEJ+Yi0SLMXNqmCGHgP
+	AR10WbEyD+zM4kInasIOD27qTCyeC18NseUz9ZlG/IpX7BlbQMOCt/eCGu3oXMsIPoGEeD
+	A92YRz07AVoOe/9WTPvYABVKoYDSWHdLSc6z+rP5/0drGs6GgGAqdNIOkDRgFma3bMXNln
+	pBG4Y5gAHVzaL8EhZ+Sd0OQeJk8xBrfEqDLIBlDO4e6QYQMMQ4nFlXZpD8nw7g==
+Date: Thu, 6 Jun 2024 20:18:31 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>, willy@infradead.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	gost.dev@samsung.com, mcgrof@kernel.org,
+	linux-kselftest@vger.kernel.org, Zi Yan <zi.yan@sent.com>,
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH] selftests/mm: use volatile keyword to not optimize mmap
+ read variable
+Message-ID: <20240606201831.ywmawi7xl6jgj3p4@quentin>
+References: <20240606135835.600022-1-kernel@pankajraghav.com>
+ <5b4e7ef2-3ced-4d4a-989c-e99b06598d32@redhat.com>
+ <f199d120-2347-4bc0-8940-155c3c465de9@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,58 +70,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZmIScSCwqpS6WBGn@kernel.org>
+In-Reply-To: <f199d120-2347-4bc0-8940-155c3c465de9@redhat.com>
+X-Rspamd-Queue-Id: 4VwFyg0Hnvz9sq3
 
-On Thu, Jun 06, 2024 at 10:48:01PM +0300, Mike Rapoport wrote:
-> On Thu, Jun 06, 2024 at 11:04:30AM -0700, Paul E. McKenney wrote:
-> > On Thu, Jun 06, 2024 at 07:19:40AM -0700, Paul E. McKenney wrote:
-> > > On Thu, Jun 06, 2024 at 08:13:17AM +0200, Jan Beulich wrote:
-> > > > On 05.06.2024 22:48, Paul E. McKenney wrote:
-> > > > > On Wed, Jun 05, 2024 at 09:46:37PM +0200, Jan Beulich wrote:
-> > > > >> On 05.06.2024 21:07, Paul E. McKenney wrote:
-> > > > >>> On Mon, Jun 03, 2024 at 07:19:21PM +0530, Naresh Kamboju wrote:
-> > > > >>>> The following kernel warnings are noticed on x86 devices while booting
-> > > > >>>> the Linux next-20240603 tag and looks like it is expected to warn users to
-> > > > >>>> use NUMA_NO_NODE instead.
-> > > > >>>>
-> > > > >>>> Usage of MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead
-> > > > >>>>
-> > > > >>>> The following config is enabled
-> > > > >>>> CONFIG_NUMA=y
-> > > > >>>
-> > > > >>> I am seeing this as well.  Is the following commit premature?
-> > > > >>>
-> > > > >>> e0eec24e2e19 ("memblock: make memblock_set_node() also warn about use of MAX_NUMNODES")
-> > > > >>>
-> > > > >>> Maybe old ACPI tables and device trees need to catch up?
-> > > > >>>
-> > > > >>> Left to myself, I would simply remove the WARN_ON_ONCE() from the above
-> > > > >>> commit, but I would guess that there is a better way.
-> > > > >>
-> > > > >> Well, the warning is issued precisely to make clear that call
-> > > > >> sites need to change. A patch to do so for the two instances
-> > > > >> on x86 that I'm aware of is already pending maintainer approval.
-> > > > > 
-> > > > > Could you please point me at that patch so that I can stop repeatedly
-> > > > > reproducing those two particular issues?
-> > > > 
-> > > > https://lore.kernel.org/lkml/abadb736-a239-49e4-ab42-ace7acdd4278@suse.com/
+On Thu, Jun 06, 2024 at 05:57:21PM +0200, David Hildenbrand wrote:
+> On 06.06.24 17:56, David Hildenbrand wrote:
+> > On 06.06.24 15:58, Pankaj Raghav (Samsung) wrote:
+> > > From: Pankaj Raghav <p.raghav@samsung.com>
 > > > 
-> > > Thank you, Jan!
+> > > create_pagecache_thp_and_fd() in split_huge_page_test.c used the
+> > > variable dummy to perform mmap read.
 > > > 
-> > > A quick initial test shows that this clears things up.  I have started
-> > > a longer test to check for additional issues.  But in the meantime
-> > > for the issues I was already seeing in the initial test:
+> > > However, this test was skipped even on XFS which has large folio
+> > > support. The issue was compiler (gcc 13.2.0) was optimizing out the
+> > > dummy variable, therefore, not creating huge page in the page cache.
 > > > 
-> > > Tested-by: Paul E. McKenney <paulmck@kernel.org>
+> > > Add volatile keyword to force compiler not to optimize out the loop
+> > > where we read from the mmaped addr.
+> > > 
+> > > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> > > ---
+> > >    tools/testing/selftests/mm/split_huge_page_test.c | 2 +-
+> > >    1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
+> > > index d3c7f5fb3e7b..c573a58f80ab 100644
+> > > --- a/tools/testing/selftests/mm/split_huge_page_test.c
+> > > +++ b/tools/testing/selftests/mm/split_huge_page_test.c
+> > > @@ -300,7 +300,7 @@ int create_pagecache_thp_and_fd(const char *testfile, size_t fd_size, int *fd,
+> > >    		char **addr)
+> > >    {
+> > >    	size_t i;
+> > > -	int __attribute__((unused)) dummy = 0;
+> > > +	volatile int __attribute__((unused)) dummy = 0;
+> > >    	srand(time(NULL));
+> > > 
+> > > base-commit: d97496ca23a2d4ee80b7302849404859d9058bcd
 > > 
-> > And the longer test ran without errors as well, so again, thank you!
+> > The rick we do in some other tests is:
 > > 
-> > Any chance of getting this into -next sooner rather than later?
+> > char *tmp;
+> > 
+> > tmp = *whatever;
+> > asm volatile("" : "+r" (tmp));
 > 
-> Should be there tomorrow.
+> char tmp; of course. See cow.c as an example.
+Thanks David! I remember also seeing this when I grepped for volatile in
+the selftests directory.
 
-Thank you very much!
+Willy gave the idea of making it as a global variable [1]. But your
+trick also works :)
 
-							Thanx, Paul
+diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
+index d3c7f5fb3e7b..9c957703c1f7 100644
+--- a/tools/testing/selftests/mm/split_huge_page_test.c
++++ b/tools/testing/selftests/mm/split_huge_page_test.c
+@@ -341,6 +341,7 @@ int create_pagecache_thp_and_fd(const char *testfile, size_t fd_size, int *fd,
+ 
+        for (size_t i = 0; i < fd_size; i++)
+                dummy += *(*addr + i);
++       asm volatile("" : "+r" (dummy));
+ 
+        if (!check_huge_file(*addr, fd_size / pmd_pagesize, pmd_pagesize)) {
+                ksft_print_msg("No large pagecache folio generated, please provide a filesystem supporting large folio\n");
+
+I am fine with either solutions. But using the trick asm volatile is more
+cleaner than making it a global variable IMO and makes it more uniform
+across the other mm tests.
+
+Let me know what others think.
+
+
+[1] https://lore.kernel.org/linux-mm/20240606154428.672643-1-kernel@pankajraghav.com/
 
