@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-203758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 797968FE01E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:45:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 520728FE021
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55E361C2152E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:45:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4A6F1F21526
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C8E13AD11;
-	Thu,  6 Jun 2024 07:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7893213AA48;
+	Thu,  6 Jun 2024 07:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MaaCmaOi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VuFWuk5m"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F317381C7;
-	Thu,  6 Jun 2024 07:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92D0DF44;
+	Thu,  6 Jun 2024 07:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717659924; cv=none; b=BhKzkzNr3TH2axC0JDqnLEy03EfZxQOewGQz7AWzuSsvMfZx5x67xP5+nl64N+S0hVWYpCovKvnlFnjRCoGesqfAoQ2S38tX6DlfVBPE3+wFufoiLJ+wtio8Xk+3GrQJ3gtmLuWUbmHPqXskHokQdnykWh01lom0pgCMMdXN9+A=
+	t=1717659958; cv=none; b=rkaxuMBlv7KFgRpr5oO9eT9KzhOOhGkdGi7xCTOwXUHMpp2csmWPfLu5kC4c3i85EhfciYWSUsyTc+CuVtvUEUk7HOmYcDWUAU7zgbP8NgUUdZ28ZIxK+DSEFOO/PAAGU2+FMzVBQVuMtiep2o2TUl3ogp2i8SmoSsLqz2Czngs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717659924; c=relaxed/simple;
-	bh=Z/5PfYRFanPiZ1cX8KTcWTm3qmmFzc9dXjuacLPiD+Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nWzMVMaC5eIEJBKWtJjf99W/4iAdqcE9kfPgISaJiehCOCCyZcEYk/U/jpGppKP7pjohmUbDbGyg1OSA3ClkXM2yMhcbA7fYqohydBU6ZWnJI55ZRkYsk2A0Db9McvGC59LoXyTafE+I7ozs5m1gXRk8M93RBfCFipjdg0vvfiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MaaCmaOi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03523C2BD10;
-	Thu,  6 Jun 2024 07:45:20 +0000 (UTC)
+	s=arc-20240116; t=1717659958; c=relaxed/simple;
+	bh=n2bFnbVhEVrvOShZE3hFXBh4jzmB5nDaAr/D1/e0dUg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=dfESQZs2qRonvzjxksSrBjyxtOo0klWL1fboLZWcRmRee7TcLxVQ2Y1TrwtZfG2O8fMLoUMPg9SHHqAtz3xRXAG1YTAkfM/JnrxXVc0sUd8dnOf8s1A9YfPyjFtOVkmC6rqs+mYtxeCIJpUxfqQq2vXn0Y7M/Ib/0Ib9+FXSNXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VuFWuk5m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E723C32782;
+	Thu,  6 Jun 2024 07:45:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717659923;
-	bh=Z/5PfYRFanPiZ1cX8KTcWTm3qmmFzc9dXjuacLPiD+Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MaaCmaOi/O3f1iod6jEv4FW9UD7/VQqNnNwMF7psNmmXy+rZSY5AkKjxpZmXVw/Yd
-	 4aANM+/i5SrWqraDuLPv9WxnXG8yLTz++/Y9nmCZ62NFKqcqFrZ6cv1h2MJSTVarjl
-	 0uGSOSb2gEOLlcFOOvNPt9HC1M1f+lp5gX+p4CdwiCzqu/EWCZU8vE1eG2KRwqI006
-	 +YnzXTMacg2JxpytqY5exHgBtNzcP5dYri8e4h6GtkjPciP+5hMAThJuS53t/A4sdd
-	 jBAgb2Cwx42vxCtO3JFz03Xfc3JOBE/98UbM9FqHZzlqn8XSMe8Ij+a7jRWYRdixZt
-	 Hfi8S0pGsF9FA==
-Message-ID: <05454339-9f83-4101-ac55-0dc7b5a8d45e@kernel.org>
-Date: Thu, 6 Jun 2024 09:45:19 +0200
+	s=k20201202; t=1717659958;
+	bh=n2bFnbVhEVrvOShZE3hFXBh4jzmB5nDaAr/D1/e0dUg=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=VuFWuk5mg8XUtiuypbnX3eRz7G1JOLtqCqsb1TvPWVvKFFvviVC6bDn1Lgjubq77k
+	 9fpv8pKAVKtrStywLVLHmuvk199C5yzlaWbOQORlT/+XYOQwZ2VEDiacW+zSighyEZ
+	 nGTijTdlInsqJ/nOy/QfVDo92P9gBAWjFvzt3ou0d/OJFmMbZkL71XFOgBPRTPgfvJ
+	 Vpcha7aCUO5M4j7hob2RaGfubijmPP07RFXiHqLg1/LsJ1p51t0JIYfR2Ahm4xoLcT
+	 YEJNhqzWccETSbJ1BZus66ko+xftK76y0GSovX6tUa1Fn0puUIGoM7EXU6qt6DbUQb
+	 BiLk2CgIvKCVw==
+Message-ID: <4d9d7cff-1a00-459d-8ccf-d30ec2cdcaad@kernel.org>
+Date: Thu, 6 Jun 2024 09:45:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,6 +51,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] ASoC: dt-binding: convert amlogic,g12a-tohdmitx to
  dt-schema
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
  Jerome Brunet <jbrunet@baylibre.com>, Liam Girdwood <lgirdwood@gmail.com>,
  Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -58,7 +59,7 @@ To: Neil Armstrong <neil.armstrong@linaro.org>,
 Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20240605-topic-amlogic-upstream-bindings-convert-g12a-tohdmitx-v1-1-b851c195e241@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <05454339-9f83-4101-ac55-0dc7b5a8d45e@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -103,84 +104,87 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240605-topic-amlogic-upstream-bindings-convert-g12a-tohdmitx-v1-1-b851c195e241@linaro.org>
+In-Reply-To: <05454339-9f83-4101-ac55-0dc7b5a8d45e@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 05/06/2024 18:23, Neil Armstrong wrote:
-> Convert text bindings to dt-schema format for the Amlogic TX HDMI
-> control glue.
+On 06/06/2024 09:45, Krzysztof Kozlowski wrote:
+> On 05/06/2024 18:23, Neil Armstrong wrote:
+>> Convert text bindings to dt-schema format for the Amlogic TX HDMI
+>> control glue.
+>>
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-
-subject: dt-bindings (missing 's')
-
-> ---
->  .../bindings/sound/amlogic,g12a-tohdmitx.txt       | 58 ----------------------
->  .../bindings/sound/amlogic,g12a-tohdmitx.yaml      | 56 +++++++++++++++++++++
->  2 files changed, 56 insertions(+), 58 deletions(-)
+> subject: dt-bindings (missing 's')
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/amlogic,g12a-tohdmitx.txt b/Documentation/devicetree/bindings/sound/amlogic,g12a-tohdmitx.txt
-> deleted file mode 100644
-> index 4e8cd7eb7cec..000000000000
-> --- a/Documentation/devicetree/bindings/sound/amlogic,g12a-tohdmitx.txt
-> +++ /dev/null
-> @@ -1,58 +0,0 @@
-> -* Amlogic HDMI Tx control glue
-> -
-
-> +
-> +title: Amlogic G12a HDMI TX Control Glue
-> +
-> +maintainers:
-> +  - Jerome Brunet <jbrunet@baylibre.com>
-> +
-> +allOf:
-> +  - $ref: dai-common.yaml#
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^audio-controller@.*"
-> +
-> +  "#sound-dai-cells":
-> +    const: 1
-> +
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - const: amlogic,g12a-tohdmitx
-> +      - items:
-> +          - enum:
-> +              - amlogic,sm1-tohdmitx
-> +          - const: amlogic,g12a-tohdmitx
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  sound-name-prefix: true
-
-Drop
-
-> +
-> +required:
-> +  - "#sound-dai-cells"
-> +  - compatible
-> +  - reg
-> +  - resets
-
-Please keep the same order as in "properties:" block.
-
-> +
-> +additionalProperties: false
-
-and here instead:
-unevaluatedProperties: false
-
+>> ---
+>>  .../bindings/sound/amlogic,g12a-tohdmitx.txt       | 58 ----------------------
+>>  .../bindings/sound/amlogic,g12a-tohdmitx.yaml      | 56 +++++++++++++++++++++
+>>  2 files changed, 56 insertions(+), 58 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/sound/amlogic,g12a-tohdmitx.txt b/Documentation/devicetree/bindings/sound/amlogic,g12a-tohdmitx.txt
+>> deleted file mode 100644
+>> index 4e8cd7eb7cec..000000000000
+>> --- a/Documentation/devicetree/bindings/sound/amlogic,g12a-tohdmitx.txt
+>> +++ /dev/null
+>> @@ -1,58 +0,0 @@
+>> -* Amlogic HDMI Tx control glue
+>> -
+> 
+>> +
+>> +title: Amlogic G12a HDMI TX Control Glue
+>> +
+>> +maintainers:
+>> +  - Jerome Brunet <jbrunet@baylibre.com>
+>> +
+>> +allOf:
+>> +  - $ref: dai-common.yaml#
+>> +
+>> +properties:
+>> +  $nodename:
+>> +    pattern: "^audio-controller@.*"
+>> +
+>> +  "#sound-dai-cells":
+>> +    const: 1
+>> +
+>> +  compatible:
+>> +    oneOf:
+>> +      - items:
+>> +          - const: amlogic,g12a-tohdmitx
+>> +      - items:
+>> +          - enum:
+>> +              - amlogic,sm1-tohdmitx
+>> +          - const: amlogic,g12a-tohdmitx
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  resets:
+>> +    maxItems: 1
+>> +
+>> +  sound-name-prefix: true
+> 
+> Drop
+> 
+>> +
+>> +required:
+>> +  - "#sound-dai-cells"
+>> +  - compatible
+>> +  - reg
+>> +  - resets
+> 
+> Please keep the same order as in "properties:" block.
+> 
+>> +
+>> +additionalProperties: false
+> 
+> and here instead:
+> unevaluatedProperties: false
 > 
 
+and with above changes:
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
