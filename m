@@ -1,131 +1,129 @@
-Return-Path: <linux-kernel+bounces-204113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C50A8FE45D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:32:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E04E58FE46A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:36:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDB10283A02
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:32:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67915B2600F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA181957EC;
-	Thu,  6 Jun 2024 10:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA5F194C90;
+	Thu,  6 Jun 2024 10:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XbulXuX5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="bUi1VfSv"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987441953A8
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 10:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028D713C673;
+	Thu,  6 Jun 2024 10:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717669931; cv=none; b=dCYoH1Fokyb9AheX2p8m+3ktq8XtIx7FlN+3tF5coB+6WLZayz4GWWn/NyEOugu9NIRap2ggKddu4k3Uw+UHOC1pWisujIJsikFyae8LvmcH2loaYfVvqYTNOvEJsiY9QnCrZcEkuC25O4Ve1k2QDnu00jm2BoHos5vC7YKVEEQ=
+	t=1717670181; cv=none; b=tvVZlZgAsw4xmkp4nvEzaX62M85fDdjjNKfckNP1gGL70Fd82i4ebXN+ZDiXAf0jVGAgnRsbzhzOpqmlZ50WuAP2IxS2l4w0LtpMqecOqXjFZXn9ApWBk99USDmYCAoiTbQTZU/oYYLJ2MRXS3+dlcVBC9Jd0mqwRAlWBsS7O/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717669931; c=relaxed/simple;
-	bh=YdSiMdtyFWm0ebM3vMJuUzuqgktJqM5o3IypdS48e7w=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Q0Jbi3YpN7Nu0qDAyrNzmq3zVAQf4XDUu+kZc+ijf0+Ch7SeILmiEsACMN34pEUPscE1Z2IepJgf5qMZBz29T7r+63I20vO8VdAxX1zt0yy8FkelvM8hKo13qH6C0LB00wyvDBscn5H8ZF3EKM3a5eVLtByl0mS3Vd1fzqTgn4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XbulXuX5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717669928;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=okcCBnpBaepvEzHkq6pZ+HVb3a6/ILeWW2zUqiVZXkE=;
-	b=XbulXuX5E5Sp4f02G8WJV9tWLbUOCU8tS8b19G+3IUFv0a5AFIbEOmEcvKLy/Y/MfpDVAC
-	9t50vy6EQzhykcLX58p1nLZeTrFf/YUJfCSfUXQtqDFMw6ewm6FdvrXYAtsSmZOUuzxMD9
-	AzvJc5NAlBCXXMKr3BORilrgjfvFc0Q=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-621-TfFr0kyFPfCE64X0prDu2A-1; Thu, 06 Jun 2024 06:32:07 -0400
-X-MC-Unique: TfFr0kyFPfCE64X0prDu2A-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-35dc02bfc28so121816f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 03:32:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717669926; x=1718274726;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=okcCBnpBaepvEzHkq6pZ+HVb3a6/ILeWW2zUqiVZXkE=;
-        b=koWF5QNRrR0gr2IQsGDXDj00I48sGdr0O3JPIKMXhKoaIQEY7izu+HvVMXoPjomDl5
-         YvycrD8t+sIjvEO3PBPyR05iae/ZXrk0rTqL3ECzU0TawQF+4D/uJ4W4c/ikwL3CFO49
-         FlMBhrRWrYbb9wJEVzOrzAPctln+DX64pZ7pUUraO4C3CZjy5KY/fo92STRGXk1/3+t0
-         vWLWEBSRFx7MJh9iP2T3LrY7++oSDzg9v/30195LGCftDDVJSIFLsMiHksGT4OyQW1fC
-         jgaoj3/LVR8shmaZZPsWnO8AJZsENCF3HSjwhvVAweLI0nvEeJP+4WWIlY4GSLPXQS6f
-         3ttA==
-X-Forwarded-Encrypted: i=1; AJvYcCVFR+I6wsryG5Nil4lPBlV3OCdUqlopqxW4hIgdaUxn98N44aQB/ScKoxixst43yB/jYPRPfuEET9diUljzM+bircLLkTQStX+X8p/Q
-X-Gm-Message-State: AOJu0Yx/i9u5NX4obLgzk8Y6pqjPjgTpNMKlBzuJG97VRbCX1pin47jy
-	tc0gLB9MPqhfTN8aLkcqNnkt4XHzbFZzi3bqKlbJpJ9VFybCfVGjBLDw9VbiMYMY7CR2GymyltG
-	qK/qHa95/i0cNCwMFJ/ji69RMvr3jbmDkj+SWTAU91P/8cvxd4Wmz+RMu1zm56w==
-X-Received: by 2002:a05:600c:1c84:b0:419:f68e:118c with SMTP id 5b1f17b1804b1-421562be89emr38745445e9.1.1717669926173;
-        Thu, 06 Jun 2024 03:32:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGGqBYYHB9r1GeBK3LPMZGKwp6qJmaoXlA8R51Ypr/pmv+eWaeCaQEb1jrtEyN3vnK//Ix4Dg==
-X-Received: by 2002:a05:600c:1c84:b0:419:f68e:118c with SMTP id 5b1f17b1804b1-421562be89emr38745275e9.1.1717669925822;
-        Thu, 06 Jun 2024 03:32:05 -0700 (PDT)
-Received: from gerbillo.redhat.com ([2a0d:3344:1b74:3a10::f71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c1aa954sm17043235e9.17.2024.06.06.03.32.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 03:32:05 -0700 (PDT)
-Message-ID: <c518f6dd6cf9e92469d37a7317a6881ebed6a8c1.camel@redhat.com>
-Subject: Re: [PATCH net-next v2 2/3] net: ti: icss-iep: Enable compare events
-From: Paolo Abeni <pabeni@redhat.com>
-To: Diogo Ivo <diogo.ivo@siemens.com>, MD Danish Anwar <danishanwar@ti.com>,
-  Roger Quadros <rogerq@kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,  Jakub Kicinski
- <kuba@kernel.org>, Richard Cochran <richardcochran@gmail.com>, Nishanth
- Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo
- <kristo@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jan Kiszka
- <jan.kiszka@siemens.com>, Jacob Keller <jacob.e.keller@intel.com>, Simon
- Horman <horms@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Date: Thu, 06 Jun 2024 12:32:03 +0200
-In-Reply-To: <20240604-iep-v2-2-ea8e1c0a5686@siemens.com>
-References: <20240604-iep-v2-0-ea8e1c0a5686@siemens.com>
-	 <20240604-iep-v2-2-ea8e1c0a5686@siemens.com>
-Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1717670181; c=relaxed/simple;
+	bh=LbTHfTiaz8Wa3aiCs77X41Ckl0OGx2RPke2/xDmq5VU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VFh8lcPnIUjklMGvT6Bwqh/5qBw9NHIDWimgGeaXwOlvrS9PCw7/gQvoM7B/t73YccGr8wVl+53ENkdpMC4LnuDsRXjnQpYABwTlEQk3AYmcLSGpZ+43IvUrbQLlzP7n7b80jSqNJ8upS+IzHQv7eYvaKcb1zHTDbOtfrIwcvZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=bUi1VfSv; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id 09848100003;
+	Thu,  6 Jun 2024 13:35:52 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1717670152; bh=BRjCYvyyTZK9/lxCnrrQBIuLJua/61JU5n0x/gTg+ZA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=bUi1VfSvb8h6aEDsPxp5NofVUCoT154GJavGxcDqJypy9mIDBA/wfMmhltqXK4X7k
+	 fbrtHihqpi/djmHEPT+V1D8OuoNLDxFkw8MjmmP5m7anSr6j/ims71DHilB6DC5TgW
+	 BAFH4xROBL8UkI/5Gn6eHzV7LpyWf9BGTXlZnmDriUpkmIU0lUrzsmfmKyRv+Z4prk
+	 hNcbUP9Zld0lsK9ZLhj4uKtXbRvjvjWkqqI+gOCD55PcTXxuyZY518s1vQIRSc6Sdr
+	 RXmBmdNnq7ExiLqEnTpjZzHMbJTWB+tuekBOzw8NtjUnicTuIK7jjFrynT65naVVqs
+	 1tBiYLfJ5E3vA==
+Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Thu,  6 Jun 2024 13:34:30 +0300 (MSK)
+Received: from localhost.localdomain (172.17.215.6) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 6 Jun 2024
+ 13:34:09 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: Weiyi Lu <weiyi.lu@mediatek.com>, <stable@vger.kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, Sasha Levin <sashal@kernel.org>, AngeloGioacchino
+ Del Regno <angelogioacchino.delregno@collabora.com>, Markus
+ Schneider-Pargmann <msp@baylibre.com>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH 5.10/5.15/6.1] clk: mediatek: mt8183: Add memory
+Date: Thu, 6 Jun 2024 13:34:02 +0300
+Message-ID: <20240606103402.23912-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185766 [Jun 06 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;mx1.t-argos.ru.ru:7.1.1;t-argos.ru:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/06/06 10:23:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/06/06 06:58:00 #25471362
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Tue, 2024-06-04 at 14:15 +0100, Diogo Ivo wrote:
-> @@ -571,6 +573,57 @@ static int icss_iep_perout_enable(struct icss_iep *i=
-ep,
->  	return ret;
->  }
-> =20
-> +static void icss_iep_cap_cmp_work(struct work_struct *work)
-> +{
-> +	struct icss_iep *iep =3D container_of(work, struct icss_iep, work);
-> +	const u32 *reg_offs =3D iep->plat_data->reg_offs;
-> +	struct ptp_clock_event pevent;
-> +	unsigned int val;
-> +	u64 ns, ns_next;
-> +
-> +	spin_lock(&iep->irq_lock);
+No upstream commit exists for this commit.
 
-'irq_lock' is always acquired with the irqsave variant, and here we are
-in process context. This discrepancy would at least deserve a comment;
-likely the above lock type is not correct.
+The issue was introduced with commit c93d059a8045 ("clk: mediatek: mt8183:
+Register 13MHz clock earlier for clocksource")
 
-Cheers,
+In case of memory allocation fail in clk_mt8183_top_init_early()
+'top_clk_data' will be set to NULL and later dereferenced without check.
+Fix this bug by adding NULL-return check.
 
-Paolo
+Upstream branch code has been significantly refactored and can't be
+backported directly.
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+---
+ drivers/clk/mediatek/clk-mt8183.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
+index 78620244144e..8377a877d9e3 100644
+--- a/drivers/clk/mediatek/clk-mt8183.c
++++ b/drivers/clk/mediatek/clk-mt8183.c
+@@ -1185,6 +1185,11 @@ static void clk_mt8183_top_init_early(struct device_node *node)
+ 	int i;
+ 
+ 	top_clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
++	if (!top_clk_data) {
++		pr_err("%s(): could not register clock provider: %d\n",
++			__func__, -ENOMEM);
++		return;
++	}
+ 
+ 	for (i = 0; i < CLK_TOP_NR_CLK; i++)
+ 		top_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
+-- 
+2.30.2
 
 
