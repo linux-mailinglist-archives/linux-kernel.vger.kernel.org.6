@@ -1,417 +1,223 @@
-Return-Path: <linux-kernel+bounces-204090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01F4E8FE3F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:13:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F6BD8FE3F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 662661F26C4D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:13:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C03FB2828E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F1319069A;
-	Thu,  6 Jun 2024 10:13:17 +0000 (UTC)
-Received: from mail-m118219.qiye.163.com (mail-m118219.qiye.163.com [115.236.118.219])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90633181CF0;
+	Thu,  6 Jun 2024 09:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QKw0wDIB"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171C119067A;
-	Thu,  6 Jun 2024 10:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.118.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C2E1802DA
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717668796; cv=none; b=TnWRHjBA9YiJoDvfRNTRqddUwfci2FBN5kd9PmnhDpE2Yj0XUHj5ocS9imvFhhL6DW/vOeK7dwNlfg4+ZDLw5NhhQ448+Nw1nqZSeFro03nKP2ebhg6tT5LWhJOblFp47slpPBL6K/mwk9lEN6VtsYCnAlRGMv+2lyqjowPAu6s=
+	t=1717667973; cv=none; b=bANnye+gGzM/5U8qGIcqKPhveEIl7BtFsHqsN1qqJXw6yzazCo3kzTa4N27bICKM4AQ4p6zvGSPZCuhuhLJbGxToFm4Vrb0EGdedzgTqJf3GDbocpYl0Lg0NN3iTHv1m22POCt0IW58odTfiVUJngZkTlqVGl6Hx1NmumG/yFiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717668796; c=relaxed/simple;
-	bh=0DDqsYhBPzGeozRsqU7tZ+r1G0qVV0Sq113VIerWAPU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j9uDY9AUILp/i6a4NXroBuZUMuCx9dJJize/a5z2+MM7WwPhBUZRNUUYU6jPx9nzMhI0Kc4/9RUcexSbiSTyG6oLSSnNW6ZU4yB3hUgcg4oGg3Drtpmjq0DI6CsX9GrM4dOOqEwbshkLaQKDIupXAZ6UhWJWb5BaZVz3qk45+TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=senarytech.com; spf=pass smtp.mailfrom=senarytech.com; arc=none smtp.client-ip=115.236.118.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=senarytech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=senarytech.com
-Received: from book-ThinkStation-P328.. (unknown [61.183.143.78])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 47D81900380;
-	Thu,  6 Jun 2024 09:57:07 +0800 (CST)
-From: bo liu <bo.liu@senarytech.com>
-To: perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bo liu <bo.liu@senarytech.com>
-Subject: [PATCH V2] ALSA: hda/senarytech: add senarytech codec support
-Date: Thu,  6 Jun 2024 09:57:03 +0800
-Message-Id: <20240606015703.37118-1-bo.liu@senarytech.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717667973; c=relaxed/simple;
+	bh=+kWRtm46EHgrfEjT1jHXAvldmafiXTrXdwgo0depAw8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=ui4B5rehfjSvQF0qtwmSn/NNLtVUv4PTE7SsVWjhri1NQIRaQ89QTQKY5ADG6hQ/1OiLClsgCsxS1FEft+8dK2bMpPJ/qcIi4aV4c1tdo4I6DNEU9s4cX6OhMY7seqV64/bYIISqJSBJCQ9Efj2Bd191al8mbLLWs8phjd2tNE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QKw0wDIB; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240606095929epoutp04738a815990efb1bf72dcea39fe926f55~WYesJn5br0691206912epoutp04B
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:59:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240606095929epoutp04738a815990efb1bf72dcea39fe926f55~WYesJn5br0691206912epoutp04B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1717667970;
+	bh=X/08X1olkAIHOusibyucFDGsWQxmM65XPCWbJyAP97k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QKw0wDIB92CTHYFpIxJAvP41i3DJ/cf/0ZXQkxIvg3jr4bqVBhe5VbL0CBZzrUrbE
+	 VIsnKoi3ITrM41Z5pbK7a8XevDX5hsX25Fs2A4xZtx278nq37+lT2uXKtF7YrXjbk4
+	 YCRlRNkc3u6DgyW/ZC5f8kM7jxZaEw/81EV7Z4xg=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240606095929epcas5p245fe6bdf77b2f0f33a3edf73692d5856~WYerhxehs1456214562epcas5p21;
+	Thu,  6 Jun 2024 09:59:29 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Vw0DH2hHwz4x9Px; Thu,  6 Jun
+	2024 09:59:27 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A2.3C.19174.F7881666; Thu,  6 Jun 2024 18:59:27 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240606072827epcas5p285de8d4f3b0f6d3a87f8341414336b42~WWaz25d7o3006730067epcas5p2d;
+	Thu,  6 Jun 2024 07:28:27 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240606072827epsmtrp28b89143fbe61df61e97e0db30931c9e8~WWaz1zddk3242132421epsmtrp2a;
+	Thu,  6 Jun 2024 07:28:27 +0000 (GMT)
+X-AuditID: b6c32a50-157f7a8000004ae6-62-6661887f9388
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	C9.FC.07412.B1561666; Thu,  6 Jun 2024 16:28:27 +0900 (KST)
+Received: from nj.shetty?samsung.com (unknown [107.99.41.245]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240606072823epsmtip2dad935b746ccadd32ea43752942abaab~WWawJjuEm2294122941epsmtip2Y;
+	Thu,  6 Jun 2024 07:28:23 +0000 (GMT)
+Date: Thu, 6 Jun 2024 12:58:35 +0530
+From: Nitesh Shetty <nj.shetty@samsung.com>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Christoph Hellwig <hch@lst.de>, Damien Le Moal <dlemoal@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
+	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
+	<mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>, Sagi Grimberg
+	<sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+	<jack@suse.cz>, martin.petersen@oracle.com, david@fromorbit.com,
+	hare@suse.de, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
+	joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
+ and request layer.
+Message-ID: <20240606072835.a7hnqm5mkzvgsojp@nj.shetty@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaQh5CVh5DGRkYHUsaTUJNT1UTARMWGhIXJBQOD1
-	lXWRgSC1lBWU1KVUpDSFVKT0hVTENZV1kWGg8SFR0UWUFZT0tIVUpNQ0xMT1VKS0tVSkJLS1kG
-X-HM-Tid: 0a8feb439abd03a9kunm47d81900380
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pww6Dyo5DzNLPDcUThhPMyk4
-	DCkKFDxVSlVKTEpMTUhCS0lMQktIVTMWGhIXVRkUVRcSDjsIHhUaCQIPHhgTVRgUFkVZV1kSC1lB
-	WU1KVUpDSFVKT0hVTENZV1kIAVlBSkpOTUo3Bg++
+In-Reply-To: <4ffad358-a3e6-4a88-9a40-b7e5d05aa53c@acm.org>
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTZxjG951zetoSyo7A9APUscKygdw62/rhRIyiHnUzJGbZhltKVw4t
+	AdquFxTHwn1yGchlw1EUOyRyKYEJjIGCY6CAVccWoIsYCyawTQFh3ibrKAMKi//98j7Pm+f7
+	3jcvB3c1sT05cUodo1FKE/ikE9HW6+cXmJojjQ0pH+ahJnMfjjKKFnBkunuKRFO9jwAqm5vH
+	0UT3SYBstwZx1NpnBWj8x3BkrDpLoNvdHRjqrCrBUJ3pGoYqTmdi6NriDIlKeiwATY4YMNQ1
+	ugV9+0U1gTq7rhNo6NIZEp27MMlGNf12DBXnjGCofSIdoMapWQINjHqhwYV+1q6N9NDwIdpc
+	BekOw102PWi9SNBDt/R0c30uSbdUp9J/tpQD+vLtNJI+X1jKogsyH5J0R/YYi/5rcpSgZ6+M
+	kHRhaz2gbxqvsiPdouJ3KBhpDKPxZpQyVUycUh7GP3REskciEocIAgWhaBvfWylNZML4Ee9E
+	Bu6LS1gaEN87SZqgXypFSrVafvDOHRqVXsd4K1RaXRifUcckqIXqIK00UatXyoOUjG67ICTk
+	LdGSMTpe8aTIRKq/9Dg+cKeBSAP33PMAlwMpIczPyCbygBPHleoEsNGahS0LrtQjAEtmkhzC
+	MwAvdBURax01RSPAIXQB+MvT31fbHwP43Pore9lFUL7wfG8+mQc4HJLaAm8scpbL7tSb8Nl4
+	zYofp/pIWJ1VhC8LblQ0nDEXs5aZR+2BBWdqcQevg9fLJ1aSudTbcPFkJ9vxCgsX2upkDo6A
+	P/xswhzsBh/0t656POHjh12kg4/Buq9qyeVgSGUBaPjNABxCOMw2n1oJwykFbLUMrDZvgl+b
+	GzFH3QUW2CZWA3iwvXKNfWBDk3E1wANa/k5fZRr+O9DMckzlMgGtNhtWBDYbXviQ4YU8B2+H
+	uXMZLMPSwHDKC9bYOQ70g02Xgo2AVQ88GbU2Uc7IRGpBoJI59v+aZarEZrByNf6R7cD03UJQ
+	D8A4oAdADs535x3WSmJdeTHS5BOMRiXR6BMYbQ8QLW2oGPd8RaZaOjulTiIQhoYIxWKxMHSr
+	WMDfwJvKPhvjSsmlOiaeYdSMZq0P43A907DoWmuA+l6OuOAb/5SL4fv50x+ZDoJX28osXp++
+	FEU+sGtN3buD54z1zv6Efue2AIvQU+WzcXb6e5GGm60Yn5D46g8vJC/4RB3ENb5xf1QON93M
+	cJluOnDUY778n/WFJ+wfXnV3OWBzvsMqed4bgaUlFUpSaKtH+v5NybobgfSY9T2/gNLP98pf
+	rzmnqUjJP7JPJ1duDc2ZT/G4YiktbulIHuYmDSsTe40NyXszsbqyhdPzUevL7GW75zTeE7By
+	PlV4vyKg0Nn22sgHn8h2rVM+/ezJ+23xH6c62ac4iy+bQSw/F5fdF232dfvpXXfp8TfE7q7e
+	RxXpG7ww7lhzJ28mmE9oFVKBP67RSv8D5UMMgL4EAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTZxiGfc97enqoIzmU4l6EaDyZDmrsbLLha2SbupicBINTyBLFDc/k
+	UAkUSEvdJNlkoKI0sPIRLaUbHxKLVUQBDShUUpRK1ZAMYaEOpFrkS2A1zoxMyiyNkX93nuu+
+	nufPQ0PpC3I1nZaZI2gy+QyWkpA3utm1myIEPnWzsUuEm5w9EOcbFiC+NPwrhae7XwJ89u95
+	iD1dhQD/97AP4taeEYBHb3+Ja+p+I/FQVzuBO+rKCHzx0l0CV50rIPDdxRkKl9kHAR4bMBG4
+	07UR156qJ3FHZy+J+2+aKVx9YUyMLQ4fgUtPDxC4zfMLwFem50h8zxWB+xYcou2RXP+jOM5Z
+	h7h207CY6xu5RnL9D3Vcs/UMxbXUH+cmWioBd2soj+LOl5SLuOKCWYprP/lExHnHXCQ3Zxug
+	uJJWK+Ae1NwRfx16QBKbImSkHRU0n3xxSHJkwuASZdtW/Wh9biTyQKO0CATRiPkUWQwDoAhI
+	aClzC6DGWgcVAOHowsIdGMih6KJvXBwoeQEqbdMTfkAyH6Hz3fq3Ak1TzEZ0f5H2j2VMFHo9
+	aiH9fcg4KTRkNpF+EMocQjPOUpE/BzNfoWJzAwwsHYeoVf+KDIAQ1FvpWcqQiUG/t7ih/wBk
+	IpDFt3QgiNmGFgs7xAbAmJYZpmWG6b1RA6AVhAvZWrVKfViZrcwUflBoebVWl6lSHM5SN4Ol
+	h5BHtYGRap/CDgga2AGiISsLjtcmp0qDU/hjuYImK1mjyxC0dhBBk+yHwUpjVYqUUfE5Qrog
+	ZAuad5Sgg1bnEeZoeVLfQfOa10mPd9fu4QcTbeky25a2+akdPZ1bp4yRzeV7w1hen7sfZmzu
+	mGWFpsHkKce2GP2bj6uUCajCs5YdzUqSJwCQmkMbfGc863adiM0tPvqm4rPwyzNaw+RJvdnb
+	0Ijmeo8h+QsVW1Fc+NTt/vyVybslMqxopXVn51DV+PxIdPKpEPw00cL/k6D0psf3mk9Xh8Bv
+	bVv/ffC96PFfLnvKow3Pd4T9dFO0zq26bZ2t1zntsdUfRJUoLnfL9sU9a3kiv27P/c6RuvK+
+	fPrn+fWJDVfzj5esgAd1aeJE4qVsMmdS4qbUVNKfBScs3xjjW59dG6zIU/yRX7aJJbVHeKUc
+	arT8/7jiQ5l/AwAA
+X-CMS-MailID: 20240606072827epcas5p285de8d4f3b0f6d3a87f8341414336b42
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_61518_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240606072827epcas5p285de8d4f3b0f6d3a87f8341414336b42
+References: <20240520102033.9361-3-nj.shetty@samsung.com>
+	<eda6c198-3a29-4da4-94db-305cfe28d3d6@acm.org>
+	<9f1ec1c1-e1b8-48ac-b7ff-8efb806a1bc8@kernel.org>
+	<a866d5b5-5b01-44a2-9ccb-63bf30aa8a51@acm.org>
+	<665850bd.050a0220.a5e6b.5b72SMTPIN_ADDED_BROKEN@mx.google.com>
+	<abe8c209-d452-4fb5-90eb-f77b5ec1a2dc@acm.org>
+	<20240601055931.GB5772@lst.de>
+	<d7ae00c8-c038-4bed-937e-222251bc627a@acm.org>
+	<20240604044042.GA29094@lst.de>
+	<4ffad358-a3e6-4a88-9a40-b7e5d05aa53c@acm.org>
+	<CGME20240606072827epcas5p285de8d4f3b0f6d3a87f8341414336b42@epcas5p2.samsung.com>
 
-Add initial Senarytech codec support for SN6186. Note that this hda
-patch relies on the configuration default registers to be set correctly
-(normally by BIOS/firmware) in order for it to set up pin widgets
-properly.
+------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_61518_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-Signed-off-by: bo liu <bo.liu@senarytech.com>
----
- MAINTAINERS                      |   6 +
- sound/hda/hdac_device.c          |   1 +
- sound/pci/hda/Kconfig            |  11 ++
- sound/pci/hda/Makefile           |   2 +
- sound/pci/hda/patch_senarytech.c | 263 +++++++++++++++++++++++++++++++
- 5 files changed, 283 insertions(+)
- create mode 100644 sound/pci/hda/patch_senarytech.c
+On 04/06/24 04:44AM, Bart Van Assche wrote:
+>On 6/3/24 21:40, Christoph Hellwig wrote:
+>>There is no requirement to process them synchronously, there is just
+>>a requirement to preserve the order.  Note that my suggestion a few
+>>arounds ago also included a copy id to match them up.  If we don't
+>>need that I'm happy to leave it away.  If need it it to make stacking
+>>drivers' lifes easier that suggestion still stands.
+>
+>Including an ID in REQ_OP_COPY_DST and REQ_OP_COPY_SRC operations sounds
+>much better to me than abusing the merge infrastructure for combining
+>these two operations into a single request. With the ID-based approach
+>stacking drivers are allowed to process copy bios asynchronously and it
+>is no longer necessary to activate merging for copy operations if
+>merging is disabled (QUEUE_FLAG_NOMERGES).
+>
+Single request, with bio merging approach:
+The current approach is to send a single request to driver,
+which contains both destination and source information inside separate bios.
+Do you have any different approach in mind ?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a6a011792167..82ea8c8f74c1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -24949,6 +24949,12 @@ F:	mm/zpool.c
- F:	mm/zswap.c
- F:	tools/testing/selftests/cgroup/test_zswap.c
- 
-+SENARYTECH AUDIO CODEC DRIVER
-+M:	bo liu <bo.liu@senarytech.com>
-+S:	Maintained
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
-+F:	sound/pci/hda/patch_senarytech.c
-+
- THE REST
- M:	Linus Torvalds <torvalds@linux-foundation.org>
- L:	linux-kernel@vger.kernel.org
-diff --git a/sound/hda/hdac_device.c b/sound/hda/hdac_device.c
-index 068c16e52dff..3fbb9793dcfc 100644
---- a/sound/hda/hdac_device.c
-+++ b/sound/hda/hdac_device.c
-@@ -665,6 +665,7 @@ static const struct hda_vendor_id hda_vendor_ids[] = {
- 	{ 0x19e5, "Huawei" },
- 	{ 0x1aec, "Wolfson Microelectronics" },
- 	{ 0x1af4, "QEMU" },
-+	{ 0x1fa8, "Senarytech" },
- 	{ 0x434d, "C-Media" },
- 	{ 0x8086, "Intel" },
- 	{ 0x8384, "SigmaTel" },
-diff --git a/sound/pci/hda/Kconfig b/sound/pci/hda/Kconfig
-index 0da625533afc..1252632f0ffa 100644
---- a/sound/pci/hda/Kconfig
-+++ b/sound/pci/hda/Kconfig
-@@ -292,6 +292,17 @@ config SND_HDA_CODEC_CONEXANT
- comment "Set to Y if you want auto-loading the codec driver"
- 	depends on SND_HDA=y && SND_HDA_CODEC_CONEXANT=m
- 
-+config SND_HDA_CODEC_SENARYTECH
-+	tristate "Build Senarytech HD-audio codec support"
-+	select SND_HDA_GENERIC
-+	select SND_HDA_GENERIC_LEDS
-+	help
-+	  Say Y or M here to include Senarytech HD-audio codec support in
-+	  snd-hda-intel driver, such as SN6186.
-+
-+comment "Set to Y if you want auto-loading the codec driver"
-+	depends on SND_HDA=y && SND_HDA_CODEC_SENARYTECH=m
-+
- config SND_HDA_CODEC_CA0110
- 	tristate "Build Creative CA0110-IBG codec support"
- 	select SND_HDA_GENERIC
-diff --git a/sound/pci/hda/Makefile b/sound/pci/hda/Makefile
-index 058ca0a289e4..7ac2105c2e00 100644
---- a/sound/pci/hda/Makefile
-+++ b/sound/pci/hda/Makefile
-@@ -24,6 +24,7 @@ snd-hda-codec-cs8409-y :=	patch_cs8409.o patch_cs8409-tables.o
- snd-hda-codec-ca0110-y :=	patch_ca0110.o
- snd-hda-codec-ca0132-y :=	patch_ca0132.o
- snd-hda-codec-conexant-y :=	patch_conexant.o
-+snd-hda-codec-senarytech-objs :=patch_senarytech.o
- snd-hda-codec-via-y :=		patch_via.o
- snd-hda-codec-hdmi-y :=		patch_hdmi.o hda_eld.o
- 
-@@ -55,6 +56,7 @@ obj-$(CONFIG_SND_HDA_CODEC_CS8409) += snd-hda-codec-cs8409.o
- obj-$(CONFIG_SND_HDA_CODEC_CA0110) += snd-hda-codec-ca0110.o
- obj-$(CONFIG_SND_HDA_CODEC_CA0132) += snd-hda-codec-ca0132.o
- obj-$(CONFIG_SND_HDA_CODEC_CONEXANT) += snd-hda-codec-conexant.o
-+obj-$(CONFIG_SND_HDA_CODEC_SENARYTECH) += snd-hda-codec-senarytech.o
- obj-$(CONFIG_SND_HDA_CODEC_VIA) += snd-hda-codec-via.o
- obj-$(CONFIG_SND_HDA_CODEC_HDMI) += snd-hda-codec-hdmi.o
- 
-diff --git a/sound/pci/hda/patch_senarytech.c b/sound/pci/hda/patch_senarytech.c
-new file mode 100644
-index 000000000000..465846ff5eb3
---- /dev/null
-+++ b/sound/pci/hda/patch_senarytech.c
-@@ -0,0 +1,263 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * HD audio interface patch for Senary HDA audio codec
-+ *
-+ * Initially based on sound/pci/hda/patch_conexant.c
-+ */
-+
-+#include <linux/init.h>
-+#include <linux/delay.h>
-+#include <linux/slab.h>
-+#include <linux/module.h>
-+#include <sound/core.h>
-+#include <sound/jack.h>
-+
-+#include <sound/hda_codec.h>
-+#include "hda_local.h"
-+#include "hda_auto_parser.h"
-+#include "hda_beep.h"
-+#include "hda_jack.h"
-+#include "hda_generic.h"
-+
-+struct senary_spec {
-+	struct hda_gen_spec gen;
-+
-+	/* extra EAPD pins */
-+	unsigned int num_eapds;
-+	hda_nid_t eapds[4];
-+	bool dynamic_eapd;
-+	hda_nid_t mute_led_eapd;
-+
-+	unsigned int parse_flags; /* flag for snd_hda_parse_pin_defcfg() */
-+
-+	int mute_led_polarity;
-+	unsigned int gpio_led;
-+	unsigned int gpio_mute_led_mask;
-+	unsigned int gpio_mic_led_mask;
-+};
-+
-+#ifdef CONFIG_SND_HDA_INPUT_BEEP
-+/* additional beep mixers; private_value will be overwritten */
-+static const struct snd_kcontrol_new senary_beep_mixer[] = {
-+	HDA_CODEC_VOLUME_MONO("Beep Playback Volume", 0, 1, 0, HDA_OUTPUT),
-+	HDA_CODEC_MUTE_BEEP_MONO("Beep Playback Switch", 0, 1, 0, HDA_OUTPUT),
-+};
-+
-+static int set_beep_amp(struct senary_spec *spec, hda_nid_t nid,
-+			int idx, int dir)
-+{
-+	struct snd_kcontrol_new *knew;
-+	unsigned int beep_amp = HDA_COMPOSE_AMP_VAL(nid, 1, idx, dir);
-+	int i;
-+
-+	spec->gen.beep_nid = nid;
-+	for (i = 0; i < ARRAY_SIZE(senary_beep_mixer); i++) {
-+		knew = snd_hda_gen_add_kctl(&spec->gen, NULL,
-+					    &senary_beep_mixer[i]);
-+		if (!knew)
-+			return -ENOMEM;
-+		knew->private_value = beep_amp;
-+	}
-+	return 0;
-+}
-+
-+static int senary_auto_parse_beep(struct hda_codec *codec)
-+{
-+	struct senary_spec *spec = codec->spec;
-+	hda_nid_t nid;
-+
-+	for_each_hda_codec_node(nid, codec)
-+		if ((get_wcaps_type(get_wcaps(codec, nid)) == AC_WID_BEEP) &&
-+			(get_wcaps(codec, nid) & (AC_WCAP_OUT_AMP | AC_WCAP_AMP_OVRD)))
-+			return set_beep_amp(spec, nid, 0, HDA_OUTPUT);
-+	return 0;
-+}
-+#else
-+#define senary_auto_parse_beep(codec)	0
-+#endif
-+
-+/* parse EAPDs */
-+static void senary_auto_parse_eapd(struct hda_codec *codec)
-+{
-+	struct senary_spec *spec = codec->spec;
-+	hda_nid_t nid;
-+
-+	for_each_hda_codec_node(nid, codec) {
-+		if (get_wcaps_type(get_wcaps(codec, nid)) != AC_WID_PIN)
-+			continue;
-+		if (!(snd_hda_query_pin_caps(codec, nid) & AC_PINCAP_EAPD))
-+			continue;
-+		spec->eapds[spec->num_eapds++] = nid;
-+		if (spec->num_eapds >= ARRAY_SIZE(spec->eapds))
-+			break;
-+	}
-+
-+	/* NOTE: below is a wild guess; if we have more than two EAPDs,
-+	 * it's a new chip, where EAPDs are supposed to be associated to
-+	 * pins, and we can control EAPD per pin.
-+	 * OTOH, if only one or two EAPDs are found, it's an old chip,
-+	 * thus it might control over all pins.
-+	 */
-+	if (spec->num_eapds > 2)
-+		spec->dynamic_eapd = 1;
-+}
-+
-+static void senary_auto_turn_eapd(struct hda_codec *codec, int num_pins,
-+			      const hda_nid_t *pins, bool on)
-+{
-+	int i;
-+
-+	for (i = 0; i < num_pins; i++) {
-+		if (snd_hda_query_pin_caps(codec, pins[i]) & AC_PINCAP_EAPD)
-+			snd_hda_codec_write(codec, pins[i], 0,
-+					    AC_VERB_SET_EAPD_BTLENABLE,
-+					    on ? 0x02 : 0);
-+	}
-+}
-+
-+/* turn on/off EAPD according to Master switch */
-+static void senary_auto_vmaster_hook(void *private_data, int enabled)
-+{
-+	struct hda_codec *codec = private_data;
-+	struct senary_spec *spec = codec->spec;
-+
-+	senary_auto_turn_eapd(codec, spec->num_eapds, spec->eapds, enabled);
-+}
-+
-+static void senary_init_gpio_led(struct hda_codec *codec)
-+{
-+	struct senary_spec *spec = codec->spec;
-+	unsigned int mask = spec->gpio_mute_led_mask | spec->gpio_mic_led_mask;
-+
-+	if (mask) {
-+		snd_hda_codec_write(codec, 0x01, 0, AC_VERB_SET_GPIO_MASK,
-+				    mask);
-+		snd_hda_codec_write(codec, 0x01, 0, AC_VERB_SET_GPIO_DIRECTION,
-+				    mask);
-+		snd_hda_codec_write(codec, 0x01, 0, AC_VERB_SET_GPIO_DATA,
-+				    spec->gpio_led);
-+	}
-+}
-+
-+static int senary_auto_init(struct hda_codec *codec)
-+{
-+	struct senary_spec *spec = codec->spec;
-+
-+	snd_hda_gen_init(codec);
-+	if (!spec->dynamic_eapd)
-+		senary_auto_turn_eapd(codec, spec->num_eapds, spec->eapds, true);
-+
-+	senary_init_gpio_led(codec);
-+	snd_hda_apply_fixup(codec, HDA_FIXUP_ACT_INIT);
-+
-+	return 0;
-+}
-+
-+static void senary_auto_shutdown(struct hda_codec *codec)
-+{
-+	struct senary_spec *spec = codec->spec;
-+
-+	/* Turn the problematic codec into D3 to avoid spurious noises
-+	 * from the internal speaker during (and after) reboot
-+	 */
-+	senary_auto_turn_eapd(codec, spec->num_eapds, spec->eapds, false);
-+}
-+
-+static void senary_auto_free(struct hda_codec *codec)
-+{
-+	senary_auto_shutdown(codec);
-+	snd_hda_gen_free(codec);
-+}
-+
-+#ifdef CONFIG_PM
-+static int senary_auto_suspend(struct hda_codec *codec)
-+{
-+	senary_auto_shutdown(codec);
-+	return 0;
-+}
-+#endif
-+
-+static const struct hda_codec_ops senary_auto_patch_ops = {
-+	.build_controls = snd_hda_gen_build_controls,
-+	.build_pcms = snd_hda_gen_build_pcms,
-+	.init = senary_auto_init,
-+	.free = senary_auto_free,
-+	.unsol_event = snd_hda_jack_unsol_event,
-+#ifdef CONFIG_PM
-+	.suspend = senary_auto_suspend,
-+	.check_power_status = snd_hda_gen_check_power_status,
-+#endif
-+};
-+
-+static int patch_senary_auto(struct hda_codec *codec)
-+{
-+	struct senary_spec *spec;
-+	int err;
-+
-+	codec_info(codec, "%s: BIOS auto-probing.\n", codec->core.chip_name);
-+
-+	spec = kzalloc(sizeof(*spec), GFP_KERNEL);
-+	if (!spec)
-+		return -ENOMEM;
-+	snd_hda_gen_spec_init(&spec->gen);
-+	codec->spec = spec;
-+	codec->patch_ops = senary_auto_patch_ops;
-+
-+	senary_auto_parse_eapd(codec);
-+	spec->gen.own_eapd_ctl = 1;
-+
-+	if (!spec->gen.vmaster_mute.hook && spec->dynamic_eapd)
-+		spec->gen.vmaster_mute.hook = senary_auto_vmaster_hook;
-+
-+	snd_hda_apply_fixup(codec, HDA_FIXUP_ACT_PRE_PROBE);
-+
-+	err = snd_hda_parse_pin_defcfg(codec, &spec->gen.autocfg, NULL,
-+				       spec->parse_flags);
-+	if (err < 0)
-+		goto error;
-+
-+	err = senary_auto_parse_beep(codec);
-+	if (err < 0)
-+		goto error;
-+
-+	err = snd_hda_gen_parse_auto_config(codec, &spec->gen.autocfg);
-+	if (err < 0)
-+		goto error;
-+
-+	/* Some laptops with Senary chips show stalls in S3 resume,
-+	 * which falls into the single-cmd mode.
-+	 * Better to make reset, then.
-+	 */
-+	if (!codec->bus->core.sync_write) {
-+		codec_info(codec,
-+			   "Enable sync_write for stable communication\n");
-+		codec->bus->core.sync_write = 1;
-+		codec->bus->allow_bus_reset = 1;
-+	}
-+
-+	snd_hda_apply_fixup(codec, HDA_FIXUP_ACT_PROBE);
-+
-+	return 0;
-+
-+ error:
-+	senary_auto_free(codec);
-+	return err;
-+}
-+
-+/*
-+ */
-+
-+static const struct hda_device_id snd_hda_id_senary[] = {
-+	HDA_CODEC_ENTRY(0x1fa86186, "SN6186", patch_senary_auto),
-+	{} /* terminator */
-+};
-+MODULE_DEVICE_TABLE(hdaudio, snd_hda_id_senary);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Senarytech HD-audio codec");
-+
-+static struct hda_codec_driver senary_driver = {
-+	.id = snd_hda_id_senary,
-+};
-+
-+module_hda_codec_driver(senary_driver);
--- 
-2.34.1
+If we want to proceed with this single request based approach,
+we need to merge the destination request with source BIOs at some point.
+a. We chose to do it via plug approach.
+b. Alternative I see is scheduler merging, but here we need some way to
+hold the request which has destination info, until source bio is also
+submitted.
+c. Is there any other way, which I am missing here ?
 
+Limitation of current plug based approach:
+I missed the possibility of asynchronous submission by stacked device.
+Since we enabled only dm-linear, we had synchronous submission till now
+and our test cases worked fine.
+But in future if we start enabling dm targets with asynchronous submission,
+the current plug based approach won't work.
+The case where Bart mentioned possibility of 2 different tasks sending
+copy[1] and they are getting merged wrongly is valid in this case.
+There will be corruption, copy ID approach can solve this wrong merging.
+
+Copy ID based merging might preserve the order, but we still need the
+copy destination request to wait for copy source bio to merge.
+
+Copy ID approach:
+We see 3 possibilities here:
+1. No merging: If we include copy-id in src and dst bio, the bio's will get
+submitted separately and reach to the driver as separate requests.
+How do we plan to form a copy command in driver ?
+2. Merging BIOs:
+At some point we need to match the src bio with the dst bio and send this
+information together to the driver. The current implementation.
+This still does not solve the asynchronous submission problem, mentioned
+above.
+3. Chaining BIOs:
+This won't work with stacked devices as there will be cloning, and hence
+chain won't be maintained.
+
+[1] https://lore.kernel.org/all/d7ae00c8-c038-4bed-937e-222251bc627a@acm.org/
+
+Thank You,
+Nitesh Shetty
+
+------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_61518_
+Content-Type: text/plain; charset="utf-8"
+
+
+------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_61518_--
 
