@@ -1,166 +1,240 @@
-Return-Path: <linux-kernel+bounces-205013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 267878FF62A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:56:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCBD68FF639
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E9071C2275F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:56:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CF9F28794F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E632413A89B;
-	Thu,  6 Jun 2024 20:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D7678C96;
+	Thu,  6 Jun 2024 21:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nce+23rA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HWP4BbHq"
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D39112AAC9
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 20:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AD01BDEF
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 21:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717707372; cv=none; b=l6hTiIOU0P29LSfyyDbCsnEma2tXttWp4xHZ9ZIQi2GLr+xGztlBiVkJWzxnfNYsRlSQhhZd4IuAq45bLcu9jGRdt+LmUUb9Itsz2ooXXDgHiT/sf+0vcwO4VirKAmeJy7x3bF5ZzJFuHzdSdx0HqsPWRjCG6xLMpN92OnKmbbM=
+	t=1717707647; cv=none; b=qzLxSqedQRRSKEn9VfLsaw5d2p9wPgNjIDv1/OLXqqA4LDMDreD3Ww8Lq+CvOk3lwnAIeHRh0499kCWfJFHzEfIxczWOTP/G0HK3taeT2XaFqdTejqDrbcGJyXWhl1ekX6LW4LxjKu//IguuwUXbU2w7Va1PmvF5X6DCU1r+Ofw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717707372; c=relaxed/simple;
-	bh=4ow+aBJaAcuMTW5flp5fXja6q1Fflsv4kDwUcEkG9MQ=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=RTetQmKXrfF612huIGQnC91GYEx282mAJKIvjnWkgUdZa9mAjaE6mZgkvzjnxl2l3+MqeCx5t8E7FPWajR2MCseaSpOgYHtCscT+i1x/1PaADqIvl3N44mGltDMFEZxjepBp4fXWguibxyAPYfssccJZKzM3H3+SU+CnHrSGpgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nce+23rA; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717707370; x=1749243370;
-  h=date:from:to:cc:subject:message-id;
-  bh=4ow+aBJaAcuMTW5flp5fXja6q1Fflsv4kDwUcEkG9MQ=;
-  b=nce+23rAZQcCVQnaDGA316dlXnQxBDgHkkSg/NkJmrDqWW9moHEDZ4ak
-   /YYmA9Y2oa5V+um18BmFGOxfE0/ZI00mG3JqT+r0piXbfARcgcHH+CYT6
-   7IhHhXTBO+ZsWl8YIOOTfLOAUEVxWUMX5/6OEgLMdpdi1R9ttkQuz/YTF
-   hQmgFdGrmL+IXdc6wgFHcRMrjhF24WMKSAhcO53KFrwMVDaiW363NU2hc
-   vBVMdLYeVKUF1Ay9xnWJ4Wy5yi+uURmTPzBhqR+FXHc18A+EP2dCwwuqg
-   brDYtQuxZdTrXYcebZyltBHCcByQU+4lArqaEWyQ3sfD0dNXFSaQrvBlN
-   g==;
-X-CSE-ConnectionGUID: PwfhXDSKSta8kyhWbmPkrg==
-X-CSE-MsgGUID: 9Y9GfxiURq+xFeniHGJkOw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="14146917"
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="14146917"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 13:56:09 -0700
-X-CSE-ConnectionGUID: fKw926pwQPui2ZyK5SFt3A==
-X-CSE-MsgGUID: e78w4aQBRDWZM9PDMmgRHA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="38772042"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 06 Jun 2024 13:56:09 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sFK9W-0003hP-0K;
-	Thu, 06 Jun 2024 20:56:06 +0000
-Date: Fri, 07 Jun 2024 04:55:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/urgent] BUILD SUCCESS
- c625dabbf1c4a8e77e4734014f2fde7aa9071a1f
-Message-ID: <202406070409.DfAFxBuY-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1717707647; c=relaxed/simple;
+	bh=vmK7m3jqRULb3qiu4kjw11C00ZZdOCR19TbVXR5IWcU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pVCrhmklr5ONtav267nKqCrqR1SY8rlqsO1OtPwgO5EZCUBloiDJ/fLp2J65mPrxnGv8FQh5hosCWVd97LT49vdXBNNT0j21OW+aAL2/hnX1OawYBEnbGlYpVam5Ij4u69LMg2nY2pgyUaapjlJaUhwYGIjmg+0k0vQvIJKWQw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HWP4BbHq; arc=none smtp.client-ip=209.85.222.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-80ad2893ae5so389615241.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 14:00:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717707644; x=1718312444; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lbT4Y3Y/h7wbsMDxOnKoTQqMWb5YcFDUKO9fnBN+XwE=;
+        b=HWP4BbHqF6YDZgYFRlSBGE/7NUhYw8H8yTN+KVI9sn04l8M5rb4O9gWPKwq6i0/4yF
+         YjzLfTV5tHEiE/eqYYqLjsSDFJHvDlaYrzbm83kikdRvLSwcIpg8KTDv2mmlRmwM4wXk
+         J+hsGQPZpz4dAhRDD9lYZrrD3kUyhdCM/i15/kduVkMogZhhc2evIye1YUjpvL64fMfp
+         MazncSiI0uvvhIZsrOwYdJzm82cjnyZkZrRKqhjdzU22fimnH33y2s+uAjTJF6Bu0Ytz
+         TMP6GuE8hdzvMHD4qlXctOJ0GMYGFf+NZhLzXt7SG922bbJbdGynG3S5gDGCTn0XE0Wz
+         AD+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717707644; x=1718312444;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lbT4Y3Y/h7wbsMDxOnKoTQqMWb5YcFDUKO9fnBN+XwE=;
+        b=OBxxaM+F/0fQpFITLXXoKY7yV2cclknQXEThaxT+bpTH2c0ST46uKeOn1ZVa5Xq/W4
+         lm5t5p1ipbUv5p/nBrWD9RvKC64yuR9GjaIsCSuLVqLoC54kln+mKtwf+Cw0LjNrFwx5
+         tGouzZ3/MqUJ1Z7Yw8VrO5/AdA2U7ZCuINHk5/Hs2nolFbX7RPmUBTFABVPu8sX+cmGM
+         6tjiKfTcc78RpvhCtoki1wQNhiY9E52LMqKvex2wYOY5BzOjSesEAq0Q1+B2xQSd01jV
+         pgvVyTCrdbTjXhYMz5wr/Te6p4lhmGnTKEY4kzYo+my0HO+y2PligHvP77yqQVFjt+nT
+         GNXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUeFz5t6MQ7M7S2fVqdKLzvx7aChm8BD24/Cu4JIacVd4DL50FFUDxwqJiFoFV5h4hbK2DXl3+M+ITze4o6UJNzGTDXZqMOkL/+n74u
+X-Gm-Message-State: AOJu0YyWA8CK39cvxrdXNNS3OT9QmrIbGEqiJ6IxOR/cCc4yfW0Sppcm
+	pQZs7XnJ7oudf7c0YRBhFiNRX+SBjxJuaFPq6DE0BgrLykCkkKXrca5BSLYuojiGUA1+oex5iQ2
+	8DAhPSqOZ57vrR0qABjr/bX1FcOmT0XZ8
+X-Google-Smtp-Source: AGHT+IF/5u5Baa4VRSA+h9ecC9KG95vBFCUol6RE+wcGpEiVT3tgGrNT8/lIIXLfb1GhipEd6Z7hDApzS1cjsbkxgkk=
+X-Received: by 2002:a05:6102:3092:b0:48c:1157:2f58 with SMTP id
+ ada2fe7eead31-48c275dd6edmr434522137.17.1717707644169; Thu, 06 Jun 2024
+ 14:00:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20240606174203124_OW-VQZ_ZLm4lGEimA-K9@zte.com.cn> <51DED95F-832A-4836-AA81-556968F6B645@nvidia.com>
+In-Reply-To: <51DED95F-832A-4836-AA81-556968F6B645@nvidia.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 7 Jun 2024 09:00:33 +1200
+Message-ID: <CAGsJ_4w9cRZUEF7PaVjz1HQoUr1pxHEO15gpbsnAoJHMZG0djQ@mail.gmail.com>
+Subject: Re: [PATCH linux-next v2] mm: huge_memory: fix misused
+ mapping_large_folio_support() for anon folios
+To: Zi Yan <ziy@nvidia.com>
+Cc: xu.xin16@zte.com.cn, david@redhat.com, v-songbaohua@oppo.com, 
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	mhocko@kernel.org, yang.yang29@zte.com.cn, ran.xiaokai@zte.com.cn, 
+	Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-branch HEAD: c625dabbf1c4a8e77e4734014f2fde7aa9071a1f  x86/amd_nb: Check for invalid SMN reads
+On Fri, Jun 7, 2024 at 2:35=E2=80=AFAM Zi Yan <ziy@nvidia.com> wrote:
+>
+> +Matthew
+>
+> For mapping_large_folio_support() changes.
+>
+> On 6 Jun 2024, at 2:42, xu.xin16@zte.com.cn wrote:
+>
+> > From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+> >
+> > When I did a large folios split test, a WARNING
+> > "[ 5059.122759][  T166] Cannot split file folio to non-0 order"
+> > was triggered. But the test cases are only for anonmous folios.
+> > while mapping_large_folio_support() is only reasonable for page
+> > cache folios.
+> >
+> > In split_huge_page_to_list_to_order(), the folio passed to
+> > mapping_large_folio_support() maybe anonmous folio. The
+> > folio_test_anon() check is missing. So the split of the anonmous THP
+> > is failed. This is also the same for shmem_mapping(). We'd better add
+> > a check for both. But the shmem_mapping() in __split_huge_page() is
+> > not involved, as for anonmous folios, the end parameter is set to -1, s=
+o
+> > (head[i].index >=3D end) is always false. shmem_mapping() is not called=
+.
+> >
+> > Also add a VM_WARN_ON_ONCE() in mapping_large_folio_support()
+> > for anon mapping, So we can detect the wrong use more easily.
+> >
+> > THP folios maybe exist in the pagecache even the file system doesn't
+> > support large folio, it is because when CONFIG_TRANSPARENT_HUGEPAGE
+> > is enabled, khugepaged will try to collapse read-only file-backed pages
+> > to THP. But the mapping does not actually support multi order
+> > large folios properly.
+> >
+> > Using /sys/kernel/debug/split_huge_pages to verify this, with this
+> > patch, large anon THP is successfully split and the warning is ceased.
+> >
+> > Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+> > ---
+> >  include/linux/pagemap.h |  4 ++++
+> >  mm/huge_memory.c        | 27 ++++++++++++++++-----------
+> >  2 files changed, 20 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> > index ee633712bba0..59f1df0cde5a 100644
+> > --- a/include/linux/pagemap.h
+> > +++ b/include/linux/pagemap.h
+> > @@ -381,6 +381,10 @@ static inline void mapping_set_large_folios(struct=
+ address_space *mapping)
+> >   */
+> >  static inline bool mapping_large_folio_support(struct address_space *m=
+apping)
+> >  {
+> > +     /* AS_LARGE_FOLIO_SUPPORT is only reasonable for pagecache folios=
+ */
+> > +     VM_WARN_ONCE((unsigned long)mapping & PAGE_MAPPING_ANON,
+> > +                     "Anonymous mapping always supports large folio");
+> > +
+> >       return IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
+> >               test_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
+> >  }
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index 317de2afd371..62d57270b08e 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -3009,30 +3009,35 @@ int split_huge_page_to_list_to_order(struct pag=
+e *page, struct list_head *list,
+> >       if (new_order >=3D folio_order(folio))
+> >               return -EINVAL;
+> >
+> > -     /* Cannot split anonymous THP to order-1 */
+> > -     if (new_order =3D=3D 1 && folio_test_anon(folio)) {
+> > -             VM_WARN_ONCE(1, "Cannot split to order-1 folio");
+> > -             return -EINVAL;
+> > -     }
+> > -
+> > -     if (new_order) {
+> > -             /* Only swapping a whole PMD-mapped folio is supported */
+> > -             if (folio_test_swapcache(folio))
+> > +     if (folio_test_anon(folio)) {
+> > +             /* Cannot split anonymous THP to order-1 */
+> > +             if (new_order =3D=3D 1) {
+> > +                     VM_WARN_ONCE(1, "Cannot split to order-1 folio");
+> >                       return -EINVAL;
+> > +             }
+> > +     } else if (new_order) {
+> >               /* Split shmem folio to non-zero order not supported */
+> >               if (shmem_mapping(folio->mapping)) {
+> >                       VM_WARN_ONCE(1,
+> >                               "Cannot split shmem folio to non-0 order"=
+);
+> >                       return -EINVAL;
+> >               }
+> > -             /* No split if the file system does not support large fol=
+io */
+> > -             if (!mapping_large_folio_support(folio->mapping)) {
+> > +             /* No split if the file system does not support large fol=
+io.
+> > +              * Note that we might still have THPs in such mappings du=
+e to
+> > +              * CONFIG_READ_ONLY_THP_FOR_FS. But in that case, the map=
+ping
+> > +              * does not actually support large folios properly.
+> > +              */
+> > +             if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) &&
+> > +                     !mapping_large_folio_support(folio->mapping)) {
+>
+> Shouldn=E2=80=99t this be
+>
+> if (!IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) &&
+>         !mapping_large_folio_support(folio->mapping)) {
+>
+> ?
+>
+> When CONFIG_READ_ONLY_THP_FOR_FS is not set, we need to check
+> mapping_large_folio_support(), otherwise we do not.
 
-elapsed time: 1490m
+while CONFIG_READ_ONLY_THP_FOR_FS is not set, that is no way
+a large folio can be mapped to a filesystem which doesn't support
+large folio mapping. i think
+if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS)) is correct.
 
-configs tested: 74
-configs skipped: 134
+The below means a BUG which has never a chance to happen if it
+is true.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+!IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) &&
+        !mapping_large_folio_support(folio->mapping));
 
-tested configs:
-alpha                             allnoconfig   gcc  
-alpha                               defconfig   gcc  
-arc                               allnoconfig   gcc  
-arc                                 defconfig   gcc  
-arm64                             allnoconfig   gcc  
-arm64                               defconfig   gcc  
-csky                              allnoconfig   gcc  
-csky                                defconfig   gcc  
-hexagon                          allmodconfig   clang
-hexagon                          allyesconfig   clang
-i386                             allmodconfig   gcc  
-i386                              allnoconfig   gcc  
-i386                             allyesconfig   gcc  
-i386         buildonly-randconfig-001-20240606   clang
-i386         buildonly-randconfig-002-20240606   clang
-i386         buildonly-randconfig-003-20240606   clang
-i386         buildonly-randconfig-004-20240606   gcc  
-i386         buildonly-randconfig-005-20240606   clang
-i386         buildonly-randconfig-006-20240606   gcc  
-i386                                defconfig   clang
-i386                  randconfig-001-20240606   clang
-i386                  randconfig-002-20240606   clang
-i386                  randconfig-003-20240606   clang
-i386                  randconfig-004-20240606   clang
-i386                  randconfig-005-20240606   clang
-i386                  randconfig-006-20240606   clang
-i386                  randconfig-011-20240606   clang
-i386                  randconfig-012-20240606   gcc  
-i386                  randconfig-013-20240606   gcc  
-i386                  randconfig-014-20240606   gcc  
-i386                  randconfig-015-20240606   gcc  
-i386                  randconfig-016-20240606   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                           defconfig   gcc  
-m68k                              allnoconfig   gcc  
-m68k                                defconfig   gcc  
-microblaze                        allnoconfig   gcc  
-microblaze                          defconfig   gcc  
-mips                              allnoconfig   gcc  
-nios2                             allnoconfig   gcc  
-nios2                               defconfig   gcc  
-openrisc                          allnoconfig   gcc  
-openrisc                            defconfig   gcc  
-parisc                            allnoconfig   gcc  
-parisc                              defconfig   gcc  
-parisc64                            defconfig   gcc  
-powerpc                           allnoconfig   gcc  
-riscv                             allnoconfig   gcc  
-sh                                allnoconfig   gcc  
-sh                                  defconfig   gcc  
-sparc                             allnoconfig   gcc  
-sparc                               defconfig   gcc  
-sparc64                             defconfig   gcc  
-um                               allmodconfig   clang
-um                             i386_defconfig   gcc  
-x86_64                            allnoconfig   clang
-x86_64                           allyesconfig   clang
-x86_64       buildonly-randconfig-001-20240607   gcc  
-x86_64       buildonly-randconfig-002-20240607   gcc  
-x86_64       buildonly-randconfig-003-20240607   clang
-x86_64       buildonly-randconfig-004-20240607   gcc  
-x86_64       buildonly-randconfig-005-20240607   gcc  
-x86_64       buildonly-randconfig-006-20240607   clang
-x86_64                              defconfig   gcc  
-x86_64                randconfig-001-20240607   gcc  
-x86_64                randconfig-002-20240607   gcc  
-x86_64                randconfig-003-20240607   clang
-x86_64                randconfig-004-20240607   clang
-x86_64                randconfig-005-20240607   clang
-x86_64                randconfig-006-20240607   gcc  
-x86_64                randconfig-011-20240607   gcc  
-x86_64                randconfig-012-20240607   clang
-x86_64                          rhel-8.3-rust   clang
-xtensa                            allnoconfig   gcc  
+>
+> >                       VM_WARN_ONCE(1,
+> >                               "Cannot split file folio to non-0 order")=
+;
+> >                       return -EINVAL;
+> >               }
+> >       }
+> >
+> > +     /* Only swapping a whole PMD-mapped folio is supported */
+> > +     if (folio_test_swapcache(folio) && new_order)
+> > +             return -EINVAL;
+> >
+> >       is_hzp =3D is_huge_zero_folio(folio);
+> >       if (is_hzp) {
+> > --
+> > 2.15.2
+>
+>
+> Best Regards,
+> Yan, Zi
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks
+Barry
 
