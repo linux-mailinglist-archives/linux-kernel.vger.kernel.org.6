@@ -1,349 +1,321 @@
-Return-Path: <linux-kernel+bounces-204065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 012798FE38C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:54:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0129F8FE391
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98FA6285F62
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:54:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 823691F21FED
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB8F17F4F6;
-	Thu,  6 Jun 2024 09:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9A917FACA;
+	Thu,  6 Jun 2024 09:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="abVrr9x/"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVCst6jk"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445B017E917;
-	Thu,  6 Jun 2024 09:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F73517E8FF;
+	Thu,  6 Jun 2024 09:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717667671; cv=none; b=YDpwyqxwVQxpOHx1/QlrBUwzsIOxSSobk0KpmHVsZprpHxW6dGr1L+kB3i/xm9ELuxRYnlRqwlWcZuvM4N3OX3uKmFThVp7dYgCjUTap3V/nB42KkshGvNZdbn5jpeIclSkwe9YYkTAc49Hq3WErkjLvrwBXgoJL2PYteOUMjyg=
+	t=1717667681; cv=none; b=EpM1BMu60mD6uaSUhhGm5jMjHPvgZ6XDjdJPNIu6QH06GOWYXbPRpJejAmygnX3JDyxFlQNioaxEvwijxc32NE/2YDgIYny4SfUf9heF3kBXQ3jU98l6slivaqDsOeZJPfZkO7A0yZIzpa7ra6L98GMdT9VWvCcQqQ5z/aZfGB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717667671; c=relaxed/simple;
-	bh=l/3/72E49ZUwrIhqeKCY3nzQfHvWIssOCNgujYr8PKY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bgALr4F4cX/7kmDgTXJYjl4vhEBBD18IBA4CRX90V1484j4Kp2X3zHEZQ0d5CCF8pV7l2TW0udF3zSOjAczihvyrfcRFA8U0/r0Sf4BJKxsZ2dpbfaAEEDCtggmmY04P2y/LAF8+PlFBXumd3in8f8K/sLnIqTYRonO46QqUTMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=abVrr9x/; arc=none smtp.client-ip=209.85.167.50
+	s=arc-20240116; t=1717667681; c=relaxed/simple;
+	bh=Z2VMccOOSDatzJeze9t5UPPkyLkp/fkXGrpo/4e/Fos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Az1Y764sIp24UwRstuAR8LW+w7SJDIt7+3WU/oBn7HPDuTC90VXWsjA/3vZlJRjpnZS+umOUhRlAaVBPQ8cPsfRQoHBo2eaYfwR8/3rOvdJTNu0O9YXARbugblEr8AjGk9h5992tukhQvKqmOv3/0qr9Ljq3pXm4GuZyXbnfCfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DVCst6jk; arc=none smtp.client-ip=209.85.208.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52baa9026dcso893876e87.3;
-        Thu, 06 Jun 2024 02:54:29 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2eaad2c673fso9905651fa.3;
+        Thu, 06 Jun 2024 02:54:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717667667; x=1718272467; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Whn2w+VTi4qPZ5FGXEXha21o8nVB5Tk2U6db+I1W52s=;
-        b=abVrr9x/sRQTjE3mg0l8SXlb2KqmZ1Q6Fin+C+Q9aeDNrNmq0ey+RuD325xBO5XTqn
-         4cxyEgCcRh/49R2rynkyMnzPYOHVkgOU4Humb9Dk9CHKDMTss0b/6VJPpqc8Ng9O8/8a
-         8RtrdoExE8CuGgIooiygOgPk6Vm3z12F5XH8Vh4laMj0xV6/iiHXPYwPQfvoxOFxgELg
-         BzOKiVxoHDOYL0jO5GHBeZE9xOqgOKJ0VpyHpp98u8SLKsbSl5zpruy2/rUCfqVMPD74
-         VlIMeD2Bn6HTC3nhgatCazuumQcHje/TUdZzUaQOcuR10RYLpiESMhfyYFaFGqjIoUHw
-         RZKg==
+        d=gmail.com; s=20230601; t=1717667677; x=1718272477; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=j7ZwTo7cubPdTqgiQ3bolCsFuxVdpo9KUozcuDCSqoc=;
+        b=DVCst6jk3edpR/3dogHtrJE9PReTxgZY1NGJpOd4CF0o4ehFJUaBXKz7hb0F6E/O82
+         33YHdSvYQQBnuUhNCX3O2bzgU3BGkRSVSGW9R+97zI7dp26e2iYZ+xWEBc1cvqWzUTLr
+         W7uAq61teZv7ZSlkdzObJZhOSyZDTdQzOVHg6DPmIIKXekWBdkTQjYPGpILFa9kHE9zh
+         jap7CYH+8RgRchtT3pavT9XRSZ89x2SScgsuPXDn+TDqu1FNCGf+/0RZFOruXj0yWQlC
+         qiH6SMn2q/bv1dVRDqF/7wFKzvHQSfUBpOH1iJVgX5fQuG6T+RDwThqbTU0iFJj1mdk9
+         BZYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717667667; x=1718272467;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Whn2w+VTi4qPZ5FGXEXha21o8nVB5Tk2U6db+I1W52s=;
-        b=bSf2eAV197z+AAfjIg95WLMLv61aRYln/s3hQ07auNi6EBmGte0W2Li7D7Dez53ItH
-         VaKX5xa6gCirEbEQXYcUVtvjYts8aSVh2vRBHXpLf1pB1ID+PkdjCT3BB8QaFJ7QpZRb
-         1l7lYHD5JlI2Cxw/f2biYbenkIvbhejghcaijNZqzPzcGlkXNnQYGOUSqUaj02zVguoj
-         tNF8rW1aoSOBF4p+ITz7vOP95+a7lUuXY/HtgH4PNFD7b9eA0S5G8Nr4JiqgUQlgD/zl
-         mKM24dNryLiSGyM6ZLk1Ug623TMkQ/OPz/cnyFbXEhkEyfiutwVZput4aP2hKT8BDYw6
-         PuPg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6P45q55gmm4o1PSLy3bwbw+lwTeQ8u1ok0It4411t/4KB3uGn6BPnP6aS7JZM2zhgbNEh4JX0ntzFChG0nPJrn0zZ+dMFgGXF6z+UnbaIfocYW1mn18wDPS1Q50jFm6tjtz5U5D40rw==
-X-Gm-Message-State: AOJu0YyFYNzOnN68K8biClPn8pInEGBlOoYPFyplTWxKaqUlPpt/fdHJ
-	eXErp6/OOCk4KZw7rYScKYvQOfE+IQTlj4/u4xdvcAeUgPN4YwZB
-X-Google-Smtp-Source: AGHT+IFZhf67e4fW0zgYeBIiAIwklUJsAE33gFJ9wJ7BeLDDaR/lfu9ABqO+rTIRLE9sjC8E8IyQuA==
-X-Received: by 2002:ac2:499d:0:b0:51c:bd90:e60b with SMTP id 2adb3069b0e04-52bab4c854dmr3056595e87.25.1717667667390;
-        Thu, 06 Jun 2024 02:54:27 -0700 (PDT)
-Received: from toolbox.. ([87.200.95.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42158148ffasm51454325e9.38.2024.06.06.02.54.24
+        d=1e100.net; s=20230601; t=1717667677; x=1718272477;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j7ZwTo7cubPdTqgiQ3bolCsFuxVdpo9KUozcuDCSqoc=;
+        b=oW6WuWrjIokW88DXdIpifIdXqRZbrXFe9XO8NtkCK4eZ+6UGR5qsXm0/DLkcA9z7eJ
+         MvYvHv81/vTNpVueK+j4MVcLFXudLnzsCfmipzrfAB/8/OgijDPO3n+QnYJ+mKJTh8vn
+         hCw1+inGJfxEkWtsnn29klijxQ2QDJHxXotjbdA+GXJz1SiAvX1DxjUlEjfZbIZ1yCY9
+         KlFzAk4TYzYvQ7TRdimtA5fSx/VyjmLh1aBA9kqHMrD0hpMVsS0yPmmJu8DCxVflMzVO
+         oQa49Kkhgya+o9y7IE/Dtm3ZSc5zZPe4NtwbQzoBkNYg5cJcujqT37cmngtlQyxKv0qt
+         hMmg==
+X-Forwarded-Encrypted: i=1; AJvYcCWKsv0R49zPb1paRvuaZW9h4clEI9brw0PcyCWjpASXH4JqhqJ4BLHYbeREvz0hP0aQKq9KqITTTtXkzlHIwSnJfk4n917Nm+AeAjxvFLQ+nhq5Rq2iN13zhTekAo2MzFVxp38Xnp7k7afCL3uGtBhukEAFFWP2xScoVqlvtxo6lA==
+X-Gm-Message-State: AOJu0YzxXE3ihZraSkCT2n9uhsiZjopbIwqotBx1cCL7ZymTjB8spawd
+	Ku+tRsBBH7UCr2F3YQbNoyYJavuyhalTvHNeEhKtWX+LP8FkiYVQ
+X-Google-Smtp-Source: AGHT+IH5n69aXPBRxoZg81CcKGwp0ngW28+xp43M7nAJ2tqTWlt88QYTqbsfeuor6ja2zNiMeyzhYw==
+X-Received: by 2002:a2e:9201:0:b0:2ea:823d:c33a with SMTP id 38308e7fff4ca-2eac7a6850amr39864101fa.33.1717667677058;
+        Thu, 06 Jun 2024 02:54:37 -0700 (PDT)
+Received: from mobilestation ([178.176.56.174])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ead41b0748sm1430241fa.88.2024.06.06.02.54.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 02:54:26 -0700 (PDT)
-From: Christian Hewitt <christianshewitt@gmail.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Christian Hewitt <christianshewitt@gmail.com>
-Subject: [PATCH 2/2] arm64: dts: meson: add support for OSMC Vero 4K
-Date: Thu,  6 Jun 2024 09:54:19 +0000
-Message-Id: <20240606095419.3950015-2-christianshewitt@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240606095419.3950015-1-christianshewitt@gmail.com>
-References: <20240606095419.3950015-1-christianshewitt@gmail.com>
+        Thu, 06 Jun 2024 02:54:36 -0700 (PDT)
+Date: Thu, 6 Jun 2024 12:54:33 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, Jose Abreu <Jose.Abreu@synopsys.com>, 
+	Vladimir Oltean <olteanv@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, 
+	Maxime Chevallier <maxime.chevallier@bootlin.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Sagar Cheluvegowda <quic_scheluve@quicinc.com>, 
+	Abhishek Chauhan <quic_abchauha@quicinc.com>, Andrew Halaney <ahalaney@redhat.com>, 
+	Jiawen Wu <jiawenwu@trustnetic.com>, Mengyuan Lou <mengyuanlou@net-swift.com>, 
+	Tomer Maimon <tmaimon77@gmail.com>, openbmc@lists.ozlabs.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 06/10] dt-bindings: net: Add Synopsys DW xPCS
+ bindings
+Message-ID: <d57e77t4cz434qfdnuq7qek6zxcaehxmzlqtb3ezloh74ihclb@wn7gbfd6wbw7>
+References: <20240602143636.5839-1-fancer.lancer@gmail.com>
+ <20240602143636.5839-7-fancer.lancer@gmail.com>
+ <20240605232916.GA3400992-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605232916.GA3400992-robh@kernel.org>
 
-The OSMC Vero 4K device is based on the Amlogic S905X (P212)
-reference design with the following specifications:
+On Wed, Jun 05, 2024 at 05:29:16PM -0600, Rob Herring wrote:
+> On Sun, Jun 02, 2024 at 05:36:20PM +0300, Serge Semin wrote:
+> > Synopsys DesignWare XPCS IP-core is a Physical Coding Sublayer (PCS) layer
+> > providing an interface between the Media Access Control (MAC) and Physical
+> > Medium Attachment Sublayer (PMA) through a Media independent interface.
+> > >From software point of view it exposes IEEE std. Clause 45 CSR space and
+> > can be accessible either by MDIO or MCI/APB3 bus interfaces. In the former
+> > case the PCS device is supposed to be defined under the respective MDIO
+> > bus DT-node. In the later case the DW xPCS will be just a normal IO
+> > memory-mapped device.
+> > 
+> > Besides of that DW XPCS DT-nodes can have an interrupt signal and clock
+> > source properties specified. The former one indicates the Clause 73/37
+> > auto-negotiation events like: negotiation page received, AN is completed
+> > or incompatible link partner. The clock DT-properties can describe up to
+> > three clock sources: peripheral bus clock source, internal reference clock
+> > and the externally connected reference clock.
+> > 
+> > Finally the DW XPCS IP-core can be optionally synthesized with a
+> > vendor-specific interface connected to the Synopsys PMA (also called
+> > DesignWare Consumer/Enterprise PHY). Alas that isn't auto-detectable in a
+> > portable way. So if the DW XPCS device has the respective PMA attached
+> > then it should be reflected in the DT-node compatible string so the driver
+> > would be aware of the PMA-specific device capabilities (mainly connected
+> > with CSRs available for the fine-tunings).
+> > 
+> > Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+> > 
+> > ---
+> > 
+> > Changelog v2:
+> > - Drop the Management Interface DT-node bindings. DW xPCS with MCI/APB3
+> >   interface is just a normal memory-mapped device.
+> > ---
+> >  .../bindings/net/pcs/snps,dw-xpcs.yaml        | 133 ++++++++++++++++++
+> >  1 file changed, 133 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/net/pcs/snps,dw-xpcs.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/net/pcs/snps,dw-xpcs.yaml b/Documentation/devicetree/bindings/net/pcs/snps,dw-xpcs.yaml
+> > new file mode 100644
+> > index 000000000000..7927bceefbf3
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/net/pcs/snps,dw-xpcs.yaml
+> > @@ -0,0 +1,133 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/net/pcs/snps,dw-xpcs.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Synopsys DesignWare Ethernet PCS
+> > +
+> > +maintainers:
+> > +  - Serge Semin <fancer.lancer@gmail.com>
+> > +
+> > +description:
+> > +  Synopsys DesignWare Ethernet Physical Coding Sublayer provides an interface
+> > +  between Media Access Control and Physical Medium Attachment Sublayer through
+> > +  the Media Independent Interface (XGMII, USXGMII, XLGMII, GMII, etc)
+> > +  controlled by means of the IEEE std. Clause 45 registers set. The PCS can be
+> > +  optionally synthesized with a vendor-specific interface connected to
+> > +  Synopsys PMA (also called DesignWare Consumer/Enterprise PHY) although in
+> > +  general it can be used to communicate with any compatible PHY.
+> > +
+> > +  The PCS CSRs can be accessible either over the Ethernet MDIO bus or directly
+> > +  by means of the APB3/MCI interfaces. In the later case the XPCS can be mapped
+> > +  right to the system IO memory space.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    oneOf:
+> > +      - description: Synopsys DesignWare XPCS with none or unknown PMA
+> > +        const: snps,dw-xpcs
+> > +      - description: Synopsys DesignWare XPCS with Consumer Gen1 3G PMA
+> > +        const: snps,dw-xpcs-gen1-3g
+> > +      - description: Synopsys DesignWare XPCS with Consumer Gen2 3G PMA
+> > +        const: snps,dw-xpcs-gen2-3g
+> > +      - description: Synopsys DesignWare XPCS with Consumer Gen2 6G PMA
+> > +        const: snps,dw-xpcs-gen2-6g
+> > +      - description: Synopsys DesignWare XPCS with Consumer Gen4 3G PMA
+> > +        const: snps,dw-xpcs-gen4-3g
+> > +      - description: Synopsys DesignWare XPCS with Consumer Gen4 6G PMA
+> > +        const: snps,dw-xpcs-gen4-6g
+> > +      - description: Synopsys DesignWare XPCS with Consumer Gen5 10G PMA
+> > +        const: snps,dw-xpcs-gen5-10g
+> > +      - description: Synopsys DesignWare XPCS with Consumer Gen5 12G PMA
+> > +        const: snps,dw-xpcs-gen5-12g
+> > +
+> > +  reg:
+> > +    items:
+> > +      - description:
+> > +          In case of the MDIO management interface this just a 5-bits ID
+> > +          of the MDIO bus device. If DW XPCS CSRs space is accessed over the
+> > +          MCI or APB3 management interfaces, then the space mapping can be
+> > +          either 'direct' or 'indirect'. In the former case all Clause 45
+> > +          registers are contiguously mapped within the address space
+> > +          MMD '[20:16]', Reg '[15:0]'. In the later case the space is divided
+> > +          to the multiple 256 register sets. There is a special viewport CSR
+> > +          which is responsible for the set selection. The upper part of
+> > +          the CSR address MMD+REG[20:8] is supposed to be written in there
+> > +          so the corresponding subset would be mapped to the lowest 255 CSRs.
+> > +
+> > +  reg-names:
+> > +    items:
+> > +      - enum: [ direct, indirect ]
+> > +
+> > +  reg-io-width:
+> > +    description:
+> > +      The way the CSRs are mapped to the memory is platform depended. Since
+> > +      each Clause 45 CSR is of 16-bits wide the access instructions must be
+> > +      two bytes aligned at least.
+> > +    default: 2
+> > +    enum: [ 2, 4 ]
+> > +
+> > +  interrupts:
+> > +    description:
+> > +      System interface interrupt output (sbd_intr_o) indicating Clause 73/37
+> > +      auto-negotiation events':' Page received, AN is completed or incompatible
+> > +      link partner.
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    description:
+> > +      Both MCI and APB3 interfaces are supposed to be equipped with a clock
+> > +      source connected via the clk_csr_i line.
+> > +
+> > +      PCS/PMA layer can be clocked by an internal reference clock source
+> > +      (phyN_core_refclk) or by an externally connected (phyN_pad_refclk) clock
+> > +      generator. Both clocks can be supplied at a time.
+> > +    minItems: 1
+> > +    maxItems: 3
+> > +
+> > +  clock-names:
+> > +    minItems: 1
+> > +    maxItems: 3
+> > +    anyOf:
+> > +      - items:
+> > +          enum: [ core, pad ]
+> 
 
-- 2GB DDR4 RAM
-- 16GB eMMC
-- HDMI 2.1 video
-- S/PDIF optical output
-- AV output
-- 10/100 Ethernet
-- AP6255 Wireless (802.11 a/b/g/n/ac, BT 4.2)
-- 2x USB 2.0 ports (1x OTG)
-- IR receiver (internal)
-- IR extender port (external)
-- 1x micro SD card slot
-- 1x Power LED (red)
-- 1x Reset button (in AV jack)
+> This has no effect. If it is true, then the 2nd entry is too.
 
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
----
- arch/arm64/boot/dts/amlogic/Makefile          |   7 +
- .../dts/amlogic/meson-gxl-s905x-vero4k.dts    | 202 ++++++++++++++++++
- 2 files changed, 209 insertions(+)
- create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-s905x-vero4k.dts
+Yeah, from the anyOf logic it's redundant indeed. But the idea was to
+signify that the DT-node may have one the next clock-names
+combination:
+   clock-names = "pad";
+or clock-names = "core";
+or clock-names = "core", "pad";
+or clock-names = "pclk";
+or clock-names = "pclk", "core";
+or clock-names = "pclk", "pad";
+or clock-names = "pclk", "core", "pad";
+> 
+> You are saying all the clocks are optional and any combination/order is 
+> valid. Do we really need it so flexible? Doubtful the h/w is that 
+> flexible.
 
-diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-index 4addcae2c54e..78941ddd3136 100644
---- a/arch/arm64/boot/dts/amlogic/Makefile
-+++ b/arch/arm64/boot/dts/amlogic/Makefile
-@@ -55,6 +55,13 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-p231.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-phicomm-n1.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-sml5442tw.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-vero4k-plus.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-hwacom-amazetv.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-khadas-vim.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-libretech-cc.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-libretech-cc-v2.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-nexbox-a95x.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-p212.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-vero4k.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-jethome-jethub-j80.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-p281.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-tx3-mini.dtb
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-vero4k.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-vero4k.dts
-new file mode 100644
-index 000000000000..b325cd75a792
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-vero4k.dts
-@@ -0,0 +1,202 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2024 Christian Hewitt <christianshewitt@gmail.com>
-+ */
-+
-+/dts-v1/;
-+
-+#include "meson-gxl-s905x-p212.dtsi"
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/sound/meson-aiu.h>
-+
-+/ {
-+	compatible = "osmc,vero4k", "amlogic,s905x", "amlogic,meson-gxl";
-+	model = "OSMC Vero 4K";
-+
-+	reserved-memory {
-+		/* 32 MiB reserved for ARM Trusted Firmware (BL32) */
-+		secmon_reserved_bl32: secmon@5300000 {
-+			reg = <0x0 0x05300000 0x0 0x2000000>;
-+			no-map;
-+		};
-+	};
-+
-+	gpio-keys-polled {
-+		compatible = "gpio-keys-polled";
-+		poll-interval = <20>;
-+
-+		button {
-+			label = "power";
-+			linux,code = <KEY_POWER>;
-+			gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led-standby {
-+			color = <LED_COLOR_ID_RED>;
-+			function = LED_FUNCTION_POWER;
-+			gpios = <&gpio GPIODV_24 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+			panic-indicator;
-+		};
-+	};
-+
-+	dio2133: analog-amplifier {
-+		compatible = "simple-audio-amplifier";
-+		sound-name-prefix = "AU2";
-+		VCC-supply = <&hdmi_5v>;
-+		enable-gpios = <&gpio GPIOH_5 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	spdif_dit: audio-codec-0 {
-+		#sound-dai-cells = <0>;
-+		compatible = "linux,spdif-dit";
-+		sound-name-prefix = "DIT";
-+	};
-+
-+	cvbs-connector {
-+		compatible = "composite-video-connector";
-+
-+		port {
-+			cvbs_connector_in: endpoint {
-+				remote-endpoint = <&cvbs_vdac_out>;
-+			};
-+		};
-+	};
-+
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_connector_in: endpoint {
-+				remote-endpoint = <&hdmi_tx_tmds_out>;
-+			};
-+		};
-+	};
-+
-+	sound {
-+		compatible = "amlogic,gx-sound-card";
-+		model = "VERO4K";
-+		audio-aux-devs = <&dio2133>;
-+		audio-widgets = "Line", "Lineout";
-+		audio-routing = "AU2 INL", "ACODEC LOLP",
-+				"AU2 INR", "ACODEC LORP",
-+				"AU2 INL", "ACODEC LOLN",
-+				"AU2 INR", "ACODEC LORN",
-+				"Lineout", "AU2 OUTL",
-+				"Lineout", "AU2 OUTR";
-+
-+		dai-link-0 {
-+			sound-dai = <&aiu AIU_CPU CPU_I2S_FIFO>;
-+		};
-+
-+		dai-link-1 {
-+			sound-dai = <&aiu AIU_CPU CPU_SPDIF_FIFO>;
-+		};
-+
-+		dai-link-2 {
-+			sound-dai = <&aiu AIU_CPU CPU_I2S_ENCODER>;
-+			dai-format = "i2s";
-+			mclk-fs = <256>;
-+
-+			codec-0 {
-+				sound-dai = <&aiu AIU_HDMI CTRL_I2S>;
-+			};
-+
-+			codec-1 {
-+				sound-dai = <&aiu AIU_ACODEC CTRL_I2S>;
-+			};
-+		};
-+
-+		dai-link-3 {
-+			sound-dai = <&aiu AIU_CPU CPU_SPDIF_ENCODER>;
-+
-+			codec-0 {
-+				sound-dai = <&spdif_dit>;
-+			};
-+		};
-+
-+		dai-link-4 {
-+			sound-dai = <&aiu AIU_HDMI CTRL_OUT>;
-+
-+			codec-0 {
-+				sound-dai = <&hdmi_tx>;
-+			};
-+		};
-+
-+		dai-link-5 {
-+			sound-dai = <&aiu AIU_ACODEC CTRL_OUT>;
-+
-+			codec-0 {
-+				sound-dai = <&acodec>;
-+			};
-+		};
-+	};
-+};
-+
-+&acodec {
-+	AVDD-supply = <&vddio_ao18>;
-+	status = "okay";
-+};
-+
-+&aiu {
-+	status = "okay";
-+	pinctrl-0 = <&spdif_out_h_pins>;
-+	pinctrl-names = "default";
-+};
-+
-+&cec_AO {
-+	status = "okay";
-+	pinctrl-0 = <&ao_cec_pins>;
-+	pinctrl-names = "default";
-+	hdmi-phandle = <&hdmi_tx>;
-+};
-+
-+&clkc {
-+	assigned-clocks = <&clkc CLKID_MPLL0>,
-+			  <&clkc CLKID_MPLL1>,
-+			  <&clkc CLKID_MPLL2>;
-+	assigned-clock-parents = <0>, <0>, <0>;
-+	assigned-clock-rates = <294912000>,
-+			       <270950400>,
-+			       <393216000>;
-+};
-+
-+&cvbs_vdac_port {
-+	cvbs_vdac_out: endpoint {
-+		remote-endpoint = <&cvbs_connector_in>;
-+	};
-+};
-+
-+&ethmac {
-+	phy-mode = "rmii";
-+	phy-handle = <&internal_phy>;
-+};
-+
-+&hdmi_tx {
-+	status = "okay";
-+	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
-+	pinctrl-names = "default";
-+	hdmi-supply = <&hdmi_5v>;
-+};
-+
-+&hdmi_tx_tmds_port {
-+	hdmi_tx_tmds_out: endpoint {
-+		remote-endpoint = <&hdmi_connector_in>;
-+	};
-+};
-+
-+&internal_phy {
-+	pinctrl-0 = <&eth_link_led_pins>, <&eth_act_led_pins>;
-+	pinctrl-names = "default";
-+};
-+
-+/* This UART is brought out to the DB9 connector */
-+&uart_AO {
-+	status = "okay";
-+};
--- 
-2.34.1
+Well, I failed to figure out a more restrictive but still simple
+constraint. Here are the conditions which need to be taken into
+account:
+1. "pclk" is specific for the memory-mapped DW XPCS only (DT-nodes
+found under normal system bus super-node). DT-nodes placed under the
+MDIO-bus super-node obviously have the MDIO-bus communication channel
+which is clocked by the internal clock generator.
+2. "core" (also mentioned as "alt" in the HW-databooks) and "pad"
+clock sources can be found on XPCS with DW Enterprise Gen2, Gen4, Gen5
+and Gen6 PMAs. (At least that's what I managed to find in the DW XPCS
+v3.11a HW-manual.) Both of these clock sources can be specified at a
+time. So it's the software responsibility to choose which one to use.
 
+So based on the notes above it's still possible to have no clock
+source specified if it's an MDIO-based DW XPCS with a PMA/PHY with no
+ref-clock required.
+
+Any idea of how to implement the constraint with these conditions
+followed?
+
+-Serge(y)
+
+> 
+> > +      - items:
+> > +          enum: [ pclk, core, pad ]
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > +
+> > +    ethernet-pcs@1f05d000 {
+> > +      compatible = "snps,dw-xpcs";
+> > +      reg = <0x1f05d000 0x1000>;
+> > +      reg-names = "indirect";
+> > +
+> > +      reg-io-width = <4>;
+> > +
+> > +      interrupts = <79 IRQ_TYPE_LEVEL_HIGH>;
+> > +
+> > +      clocks = <&ccu_pclk>, <&ccu_core>, <&ccu_pad>;
+> > +      clock-names = "pclk", "core", "pad";
+> > +    };
+> > +  - |
+> > +    mdio-bus {
+> > +      #address-cells = <1>;
+> > +      #size-cells = <0>;
+> > +
+> > +      ethernet-pcs@0 {
+> > +        compatible = "snps,dw-xpcs";
+> > +        reg = <0>;
+> > +
+> > +        clocks = <&ccu_core>, <&ccu_pad>;
+> > +        clock-names = "core", "pad";
+> > +      };
+> > +    };
+> > +...
+> > -- 
+> > 2.43.0
+> > 
 
