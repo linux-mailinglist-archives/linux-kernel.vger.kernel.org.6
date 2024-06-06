@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-204973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B5B8FF5B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:14:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16EF98FF5BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FF911F22B5E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:14:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E59E31C261A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620D5745C2;
-	Thu,  6 Jun 2024 20:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC33573451;
+	Thu,  6 Jun 2024 20:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xgcm/jrS"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cd2G0q6B"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65084087C;
-	Thu,  6 Jun 2024 20:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E3D4087C;
+	Thu,  6 Jun 2024 20:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717704839; cv=none; b=HynRlmzM+g69fU+SOL6JodLmgsX7efPwx5dkI9bTBNTvzrrJl5wA3R1Bs/YmR79K2am+C8X8MwR/huG392ewx0HTCayc9oXLHuDa4rap/xh/HhpMG2oW0ZcA65uH4aOtJltDu8z1T6hcJc7q8P+3oIFFb8xxbEdMWqlGcNb4NJk=
+	t=1717705025; cv=none; b=JfCjlJ5TLXltuGXBUhBnmrVP1XMr1Jk6+cErL9dN5iSPeh4cM1QB/fG4LelKbyUpci5rF5gSXK4aH+CwasG3eArz4RDA+p7PgJ4d6RI12dAiHSiicOCmO4JWtrhShMsBji83JTIuqk8d9EjsOICanQbYB6iM1kSFu5CyycI19HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717704839; c=relaxed/simple;
-	bh=e/k8T23IcfrxvnEY3jF5IDKgD7d9+QvRMd9YF93aCrI=;
+	s=arc-20240116; t=1717705025; c=relaxed/simple;
+	bh=MojF64g3qeGzJpL9xjL9l2iCruX4eRjYEO6HiXPP3Qo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qe0MlZexdWgIp8Q29+I1Wjpym/ZnS0Yhyu5yURzvDAA9YbJe40e3XEIF9HUK/Z/EmIHC3hvCBlDblQXfr8ByNIcslebx7oujoXrZR5GTQ8/Sc6p+ndFHnHNzjEcpzWsLcznIwWz9ZcgoM/H+XfrFseELJmjC+Sj3lUINfja2U6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xgcm/jrS; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 In-Reply-To:Content-Type; b=IcGq4gPCjxPY0BhXB23lV77kDMOzQdVWntN4Lz1BVdKiV65AljnjPBp18JO1jVNIEJkCFiDaqoANQE7Z8iZ9Bz3F9I4r/nOv2vy08sEZMTmMIaVMPkSgcq2iUn9X0zpdn1mSYH+kB6/5L261CQQok9HbtNUKTZWDYbOsmrNjD3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cd2G0q6B; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52b912198a6so1775685e87.0;
-        Thu, 06 Jun 2024 13:13:57 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f61f775738so12650685ad.2;
+        Thu, 06 Jun 2024 13:17:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717704836; x=1718309636; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=s6byb3FQ3EWJ8Jrp9C5qUBdjUY8SseNTuUFxwvT1eGA=;
-        b=Xgcm/jrSepzRlg9EufKtscxa4o4DQn4qsBpqBEo+chyNhg5tmBZRiMyHOF+jMaryER
-         +vnIhDZNX8M32XDGYtJUEJFzVk5I406XeJ0uR6U3EK3BdmKKuCK4KtW/TUAFC05zxtGP
-         CNP6YCskU0WSCrYOKAjDGr2wOHexffwPzWwtTfLgUSt4gg+vyfrNgUZMWAjVnZI6fl47
-         +1AbrPqpGazVwca/feTwSVDDLqUmvxJ1KUmY00rUXlaciBQjBb/hgZ6A/JlvvptRGLnd
-         ZMoZAjKUeAWCw8ALN6KN9c9sE20kJm1VilKwKceygDbofnucRuednpjiy1vq8FtMs95q
-         jzZA==
+        d=gmail.com; s=20230601; t=1717705022; x=1718309822; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vox9mTkZlXCf8sOHEn/pthk3lSwJg80jcuxQmvb7VWQ=;
+        b=Cd2G0q6BVcIJWpSdP6jPllsQFmiGFn92DrHDG/TFNa97KPrmueZPtouoLB6dB8QgBu
+         xl6xwziuYDM6/xkxnm86LA4/s5BLlN0LjgRSUE04rAPPmhm+or9leoM33klonwFpjXMD
+         Tgpbs6V7I1esZlORidnGWFS1yXHC/8ODACrtWi4lzojroHzGPUZE7nAXF9keuZhucHD5
+         iGF/E18eIy4A27lBYWcqAC3EISjmTXuNgsIRZ6nV+dUJRG6h0ZU+MBOi/7UXMgBmZyVE
+         7Kvoo5EnVifQxbPDhFnKjLzFH3qe1pJR7l/r5WXd8cOLUPIVr/CxhB38c0cqSrDYemuw
+         050Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717704836; x=1718309636;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s6byb3FQ3EWJ8Jrp9C5qUBdjUY8SseNTuUFxwvT1eGA=;
-        b=DglKnWpp9BE/kmywFtHfTiinvlqBd0Llj8QMXRHi5Z4yYTHNJHaLvJ6S+76zE9YnaK
-         tAstEeuydw5jgtanSqRN7EPX0wlLyfX13Em0QIwNQ+S11SEz7ydKeoep8xuC/vpT/nkE
-         882HYBmvMKWocUBfjVH1qvbRYyb+2TDT374xurPFNvskKUKKB4HlOKY4K1WntZKdK0fI
-         SlVvNDMUh8kM9Surz1+CSbSfg67srri8Xj5kr3QaoOZ2yLcrDLTgDAGGbF0mp587oEgj
-         jFhseAvW0lfpNyqxa0c+BG0sIWGUPyxzOLvIrmp66cAx3lMdca1LGM3zZDKkUId9PluN
-         z6rw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWQLca7RlycAuIyypedYYP2UahXi9X3hRUSxi8bMLq0WdftOqUz6mDKaI0LnwGeO1uHkWmPOPbEK5xVNTLCSyG8+ffqVkkTtEcY2ApwkNKcaMkQ+llxqvLoT+jMKEV5j3jHEG8mN5FfUHH9F5WtN/fIMb76h3uB7vDZc0hcFLzaw==
-X-Gm-Message-State: AOJu0YxgqqceUwd4OhVgSCarIN446NP8iI0i41/0bO2zf1jUevQZ5Yl5
-	fh+Qdtw7LsdUgReejLNPUXUXzDJ4C9uiPMXrGY1A1D3EO3UMNtEg
-X-Google-Smtp-Source: AGHT+IGGsASs+yGRGOikavcnVUtRQ09wNGnpM686klGUTFEisDih3dGbHw2iNffAqxgjiZhzT0iOcg==
-X-Received: by 2002:ac2:4542:0:b0:51d:6790:b788 with SMTP id 2adb3069b0e04-52bb9fdc22dmr470856e87.56.1717704835752;
-        Thu, 06 Jun 2024 13:13:55 -0700 (PDT)
-Received: from [172.27.33.107] ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c2a544bsm32825635e9.21.2024.06.06.13.13.53
+        d=1e100.net; s=20230601; t=1717705022; x=1718309822;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vox9mTkZlXCf8sOHEn/pthk3lSwJg80jcuxQmvb7VWQ=;
+        b=SfE7RJEDkmf6TntuDSQ00vAcMfyk6/ky2AwpC0pibOCnv/n2SBPrvNKXvzn/MnA9N3
+         a/fx0+t2bB3blHo1sfIb80xq2UvUOQLGPTXIVyy5Cyyc/BG43ABnHy9bQur3f3i63oS2
+         tZGU5dYAEdBMT3giHlXnYCoaeLKrdJXk0j3l0AVIMG+ngTVlZLHrpTdHjnFFTONf4OUu
+         PUewETdzumuc43rEY+LbNShsF3Ji7emzyJNlLnfHZNzINLm+K/1//+C+wMcyCTpWLWXF
+         rjlx9n5TKxEsI3P8OIrv7bLBqkHWgBY9vqgRAZm7cIaxXCPkABa3hMyMMY3luydYWUab
+         aAxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUB2VUy+AjLKZcWAxM7J8zbitK3QA/6IE3icIhfJ5YxEW5gGSJr6OOPBpP5+WHGyi7WHC1x9mrqk6k2EtEkp4sIrTTfyGvc78YjMeNOpMxBzhR9qUZHzwj9D3Zidc5SxSxsPm5N5kX1CIY=
+X-Gm-Message-State: AOJu0YwmZpk36nxximM2VR9F3uuOdgYUnjm+FlzI3CAL54bX5T3cZRWp
+	tVRpSWPTkRMVopXBqbpmDnG3THFRAgxbGmVGCxcK4psGlv1PKW/+
+X-Google-Smtp-Source: AGHT+IHf6rnPBUoUn1KY0t+VRww4OuCl4n2+BQ3fPggdvrY50wa19m4FiRLTgJTS1ND3mLCISavfNQ==
+X-Received: by 2002:a17:902:e88e:b0:1f4:bcef:e970 with SMTP id d9443c01a7336-1f6d03bc747mr5757045ad.55.1717705022438;
+        Thu, 06 Jun 2024 13:17:02 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd76be78sm19459555ad.95.2024.06.06.13.17.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 13:13:55 -0700 (PDT)
-Message-ID: <f131e427-0541-462c-bd37-2132acf6f559@gmail.com>
-Date: Thu, 6 Jun 2024 23:13:52 +0300
+        Thu, 06 Jun 2024 13:17:01 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <9f2e2b48-f7b4-49da-ac02-1f73923fb9ef@roeck-us.net>
+Date: Thu, 6 Jun 2024 13:16:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,160 +77,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC net-next v4 1/2] net/mlx5e: Add txq to sq stats mapping
-To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: nalramli@fastly.com, Saeed Mahameed <saeedm@nvidia.com>,
- Leon Romanovsky <leon@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Gal Pressman <gal@nvidia.com>,
- Carolina Jubran <cjubran@nvidia.com>,
- Naveen Mamindlapalli <naveenm@marvell.com>,
- "open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>
-References: <20240604004629.299699-1-jdamato@fastly.com>
- <20240604004629.299699-2-jdamato@fastly.com>
+Subject: Re: [PATCH] hwmon: (cros-ec_hwmon) Fix access to restricted __le16
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Benson Leung <bleung@chromium.org>
+References: <20240606180507.3332237-1-linux@roeck-us.net>
+ <571aaac0-a397-4aa8-b9d5-2315f6a637d4@t-8ch.de>
 Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <20240604004629.299699-2-jdamato@fastly.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <571aaac0-a397-4aa8-b9d5-2315f6a637d4@t-8ch.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-
-
-On 04/06/2024 3:46, Joe Damato wrote:
-> mlx5 currently maps txqs to an sq via priv->txq2sq. It is useful to map
-> txqs to sq_stats, as well, for direct access to stats.
+On 6/6/24 12:53, Thomas Weißschuh wrote:
+> Thanks!
 > 
-> Add priv->txq2sq_stats and insert mappings. The mappings will be used
-> next to tabulate stats information.
+> On 2024-06-06 11:05:07+0000, Guenter Roeck wrote:
+>> 0-day complains:
+>>
+>> drivers-hwmon-cros_ec_hwmon.c:sparse:sparse:cast-to-restricted-__le16
+>>
+>> Fix by using a __le16 typed variable as parameter to le16_to_cpu().
+>>
+>> Fixes: bc3e45258096 ("hwmon: add ChromeOS EC driver")
+>> Cc: Thomas Weißschuh <linux@weissschuh.net>
+>> Cc: Tzung-Bi Shih <tzungbi@kernel.org>
+>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 > 
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
-> ---
->   drivers/net/ethernet/mellanox/mlx5/core/en.h      |  2 ++
->   drivers/net/ethernet/mellanox/mlx5/core/en/qos.c  | 13 +++++++++++--
->   drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 11 ++++++++++-
->   3 files changed, 23 insertions(+), 3 deletions(-)
+> Acked-by: Thomas Weißschuh <linux@weissschuh.net>
 > 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en.h b/drivers/net/ethernet/mellanox/mlx5/core/en.h
-> index e85fb71bf0b4..4ae3eee3940c 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en.h
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en.h
-> @@ -885,6 +885,8 @@ struct mlx5e_priv {
->   	/* priv data path fields - start */
->   	struct mlx5e_selq selq;
->   	struct mlx5e_txqsq **txq2sq;
-> +	struct mlx5e_sq_stats **txq2sq_stats;
-> +
->   #ifdef CONFIG_MLX5_CORE_EN_DCB
->   	struct mlx5e_dcbx_dp       dcbx_dp;
->   #endif
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/qos.c b/drivers/net/ethernet/mellanox/mlx5/core/en/qos.c
-> index 6743806b8480..e89272a5d036 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en/qos.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en/qos.c
-> @@ -170,6 +170,7 @@ int mlx5e_activate_qos_sq(void *data, u16 node_qid, u32 hw_id)
->   	mlx5e_tx_disable_queue(netdev_get_tx_queue(priv->netdev, qid));
->   
->   	priv->txq2sq[qid] = sq;
-> +	priv->txq2sq_stats[qid] = sq->stats;
->   
->   	/* Make the change to txq2sq visible before the queue is started.
->   	 * As mlx5e_xmit runs under a spinlock, there is an implicit ACQUIRE,
-> @@ -186,6 +187,7 @@ int mlx5e_activate_qos_sq(void *data, u16 node_qid, u32 hw_id)
->   void mlx5e_deactivate_qos_sq(struct mlx5e_priv *priv, u16 qid)
->   {
->   	struct mlx5e_txqsq *sq;
-> +	u16 mlx5e_qid;
+> Guenter, does sparse work locally for you?
+> 
 
-Do not use mlx5 in variables names.
+It does, but I use the version from git://repo.or.cz/smatch.git.
 
->   
->   	sq = mlx5e_get_qos_sq(priv, qid);
->   	if (!sq) /* Handle the case when the SQ failed to open. */
-> @@ -194,7 +196,10 @@ void mlx5e_deactivate_qos_sq(struct mlx5e_priv *priv, u16 qid)
->   	qos_dbg(sq->mdev, "Deactivate QoS SQ qid %u\n", qid);
->   	mlx5e_deactivate_txqsq(sq);
->   
-> -	priv->txq2sq[mlx5e_qid_from_qos(&priv->channels, qid)] = NULL;
-> +	mlx5e_qid = mlx5e_qid_from_qos(&priv->channels, qid);
-> +
-> +	priv->txq2sq[mlx5e_qid] = NULL;
-> +	priv->txq2sq_stats[mlx5e_qid] = NULL;
->   
->   	/* Make the change to txq2sq visible before the queue is started again.
->   	 * As mlx5e_xmit runs under a spinlock, there is an implicit ACQUIRE,
-> @@ -325,6 +330,7 @@ void mlx5e_qos_deactivate_queues(struct mlx5e_channel *c)
->   {
->   	struct mlx5e_params *params = &c->priv->channels.params;
->   	struct mlx5e_txqsq __rcu **qos_sqs;
-> +	u16 mlx5e_qid;
->   	int i;
->   
->   	qos_sqs = mlx5e_state_dereference(c->priv, c->qos_sqs);
-> @@ -342,8 +348,11 @@ void mlx5e_qos_deactivate_queues(struct mlx5e_channel *c)
->   		qos_dbg(c->mdev, "Deactivate QoS SQ qid %u\n", qid);
->   		mlx5e_deactivate_txqsq(sq);
->   
-> +		mlx5e_qid = mlx5e_qid_from_qos(&c->priv->channels, qid);
-> +
->   		/* The queue is disabled, no synchronization with datapath is needed. */
-> -		c->priv->txq2sq[mlx5e_qid_from_qos(&c->priv->channels, qid)] = NULL;
-> +		c->priv->txq2sq[mlx5e_qid] = NULL;
-> +		c->priv->txq2sq_stats[mlx5e_qid] = NULL;
->   	}
->   }
->   
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-> index c53c99dde558..d03fd1c98eb6 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-> @@ -3111,6 +3111,7 @@ static void mlx5e_build_txq_maps(struct mlx5e_priv *priv)
->   			struct mlx5e_txqsq *sq = &c->sq[tc];
->   
->   			priv->txq2sq[sq->txq_ix] = sq;
-> +			priv->txq2sq_stats[sq->txq_ix] = sq->stats;
->   		}
->   	}
->   
-> @@ -3125,6 +3126,7 @@ static void mlx5e_build_txq_maps(struct mlx5e_priv *priv)
->   		struct mlx5e_txqsq *sq = &c->ptpsq[tc].txqsq;
->   
->   		priv->txq2sq[sq->txq_ix] = sq;
-> +		priv->txq2sq_stats[sq->txq_ix] = sq->stats;
->   	}
->   
->   out:
-> @@ -5824,9 +5826,13 @@ int mlx5e_priv_init(struct mlx5e_priv *priv,
->   	if (!priv->txq2sq)
->   		goto err_destroy_workqueue;
->   
-> +	priv->txq2sq_stats = kcalloc_node(num_txqs, sizeof(*priv->txq2sq_stats), GFP_KERNEL, node);
-> +	if (!priv->txq2sq_stats)
-> +		goto err_free_txq2sq;
-> +
->   	priv->tx_rates = kcalloc_node(num_txqs, sizeof(*priv->tx_rates), GFP_KERNEL, node);
->   	if (!priv->tx_rates)
-> -		goto err_free_txq2sq;
-> +		goto err_free_txq2sq_stats;
->   
->   	priv->channel_stats =
->   		kcalloc_node(nch, sizeof(*priv->channel_stats), GFP_KERNEL, node);
-> @@ -5837,6 +5843,8 @@ int mlx5e_priv_init(struct mlx5e_priv *priv,
->   
->   err_free_tx_rates:
->   	kfree(priv->tx_rates);
-> +err_free_txq2sq_stats:
-> +	kfree(priv->txq2sq_stats);
->   err_free_txq2sq:
->   	kfree(priv->txq2sq);
->   err_destroy_workqueue:
-> @@ -5860,6 +5868,7 @@ void mlx5e_priv_cleanup(struct mlx5e_priv *priv)
->   		kvfree(priv->channel_stats[i]);
->   	kfree(priv->channel_stats);
->   	kfree(priv->tx_rates);
-> +	kfree(priv->txq2sq_stats);
->   	kfree(priv->txq2sq);
->   	destroy_workqueue(priv->wq);
->   	mlx5e_selq_cleanup(&priv->selq);
+Guenter
+
 
