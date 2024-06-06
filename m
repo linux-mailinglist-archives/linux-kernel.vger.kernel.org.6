@@ -1,55 +1,61 @@
-Return-Path: <linux-kernel+bounces-205114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF8958FF79A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 00:19:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76DD78FF79C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 00:20:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3E7B1C24308
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:19:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1532A287433
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3082E13C67B;
-	Thu,  6 Jun 2024 22:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07C613D2A0;
+	Thu,  6 Jun 2024 22:20:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z/gzv8oP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RdGVDGPj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738FD624
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 22:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBDE13B5AB;
+	Thu,  6 Jun 2024 22:20:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717712338; cv=none; b=HTZEF5M9sjrmiYKaZZztAcdonawkyd20LLN6SUWWbruTnNzzwLRf+OFEaC59rXtSSViZ02ol5NYwdKu7o4yiqok5kr5jzdGj32OnSOgp7JyXppqm1I6Pg8jW8eFIGw2gMwpLqv+drk1WfIukZIVEfM8ZzvriLA8E15zU2ZnVw9c=
+	t=1717712412; cv=none; b=VxBuAykHqULVkx42jFJU0I7vIphW6SviEpgnAhYbE8ExRW17IZqojV6jB4Ag5wSQ3xgiTp7PtJO6MRsqikBuwC+kNH9Zu9fvE+zh0Sxr5hGxbKhvCQnwoF2jGG1SUQfNHqNkIILBjNAZY2qzxrGPF/r9TMOFWBsAEpWAl/so36w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717712338; c=relaxed/simple;
-	bh=JCXmklu+aztEXOYGwB+38pWL/rIG+7//05x4dLVsHS0=;
+	s=arc-20240116; t=1717712412; c=relaxed/simple;
+	bh=V2mhAI3N/CK2RAkvpKzrmFJaAkBiHqMsJK628EGcqOQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M5MBZC28qJUnN8vBNM+1uE0QajcPihrvDDlLIbUqrbAgwh6sA7RNqFdPKaALMqp4qC45xD884D9L9PWUWM4cqHOTWe786qTYbfAKnAYaXrDPtQNLTJolILghpKY7c1XUVy+EVBSoLabC1cGgDOeJ1mvtjEElSJBlKx85uHkHVmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z/gzv8oP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5506C2BD10;
-	Thu,  6 Jun 2024 22:18:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=M19tsElCwBBUa/H/wW0YQLBDx4/pQoi4Di4GQyCjIe7Dk/bxVSLIHi9g7v5WV/3tOaMLmLewnUkMrLrIu1qLlYP+NfPlCe2FPL7PvDI0QxTptlspugbH9zD0mK0EpypKx3IGXjd5b/rxbLHofzdh4MDuTdXrk7JOvdvKUY20M/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RdGVDGPj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B27ECC2BD10;
+	Thu,  6 Jun 2024 22:20:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717712338;
-	bh=JCXmklu+aztEXOYGwB+38pWL/rIG+7//05x4dLVsHS0=;
+	s=k20201202; t=1717712411;
+	bh=V2mhAI3N/CK2RAkvpKzrmFJaAkBiHqMsJK628EGcqOQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z/gzv8oPRXJsgmsdI6uzHt9sLfLBmmW7Y/ZNdzDD5jsvk6zt30rL3W66YZ1IDMV81
-	 xamCcpKotx9QLcleIs7cd++au1PPk5ifXuYSWfPhhLopG9ibmwvxkX/1v25Ub6+wMb
-	 8YSxB0q5NcpYlQjOcFk+H2CV33GbX5YJMnDniJta+imAAxFUi/2p53hrUn8DFhtIcy
-	 wb9xCPLAtZBTXCzIof1UU5evwepOEPUDca2bc3i7vOSfYjfBDy23v3XT9/dkKSQRj6
-	 3/eFPvG+xmdOHQuAkiKS3nkyXQZL573pFU7fOieb5Lbu5XG5tg9mLm7hB8ikT05ok2
-	 LzCXh7tk4f0bQ==
-Date: Thu, 6 Jun 2024 15:18:56 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
+	b=RdGVDGPj6PpPZjWrGE7/T/tYX8TjRpkqKcVx8nvPXTwZ15gir0phES2KM6JAHN97m
+	 A7Iz6Acykxaktq4oqEzvy8exrqeMQEkXCHlfPcy2aFZLc7joEKkM+psXO8NVrfNu6v
+	 ISyjkLqj+wobzuwVD3jJvc3tGjHqhk3a8N8UALObbQ5+7IlXODGycElOQOPhlvJlbW
+	 9PbuvzK7mQaLyjqzy10PW3Qk0yGz1Ol6vQ5wnTVBZ8DC8BYAZgbgrvrTA/JjNd6Sfy
+	 ZZv/AeWykr/QvIyzU+DYt/QfcsO3F08gySWokmgLy2ICQVH4mqOYJP60MkuZA+brz/
+	 vOv0jJUDbBEwQ==
+Date: Thu, 6 Jun 2024 15:20:10 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Milian Wolff <milian.wolff@kdab.com>,
+	linux-perf-users@vger.kernel.org,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Arnaldo Carvalho de Melo <acme@kenel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: objtool query: section start/end symbols?
-Message-ID: <20240606221856.g3iboxfkkgzp6sd3@treble>
-References: <CAHk-=wjHf6C_74VQPxmge-sMmu5yuhmNor1TaO0Uq--zrA13HA@mail.gmail.com>
- <20240606194525.cdnnidxurejsjtx4@treble>
- <CAHk-=wjdrJ1H7sbsaL8_bLvRmt26_io=5_b3k_g33kd+bwFHzA@mail.gmail.com>
+Subject: Re: perf 6.9-1 (archlinux) crashes during recording of cycles +
+ raw_syscalls
+Message-ID: <ZmI2Gumx5yUwyFsT@google.com>
+References: <23879991.0LEYPuXRzz@milian-workstation>
+ <Zl8bhWfHSXxs35r2@x1>
+ <Zl8g1LxRCYgTSxhy@x1>
+ <CAP-5=fVJRr2Qgf88ugEJ2FGerzKNv_dD6XOT_dSuFyYp2ubwSw@mail.gmail.com>
+ <Zl9ksOlHJHnKM70p@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,49 +64,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjdrJ1H7sbsaL8_bLvRmt26_io=5_b3k_g33kd+bwFHzA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zl9ksOlHJHnKM70p@x1>
 
-On Thu, Jun 06, 2024 at 02:10:30PM -0700, Linus Torvalds wrote:
-> So what I'm interested in would be to simplify things, and get rid of
-> the "key" entirely, because with a good symbol for the start and end
-> of the array of users (for _each_ pseudo-constant symbol), it all
-> makes the code a lot more straightforward.
+On Tue, Jun 04, 2024 at 04:02:08PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Tue, Jun 04, 2024 at 11:48:09AM -0700, Ian Rogers wrote:
+> > On Tue, Jun 4, 2024 at 7:12 AM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > > Can you please try with the attached and perhaps provide your Tested-by?
 > 
-> In particular, it would make the architecture side much more
-> straightforward, because instead of traversing some "array of keys and
-> types" and pick up the ones that match, it would just traverse an
-> array that is already pre-matched, because each key goes into its own
-> section.
+> > > From ab355e2c6b4cf641a9fff7af38059cf69ac712d5 Mon Sep 17 00:00:00 2001
+> > > From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > > Date: Tue, 4 Jun 2024 11:00:22 -0300
+> > > Subject: [PATCH 1/1] Revert "perf record: Reduce memory for recording
+> > >  PERF_RECORD_LOST_SAMPLES event"
 > 
-> So I want to *simplify* the code, not make it the horrendous
-> complicated mess that is static calls. No "build up that list of
-> sites" at run-time.
+> > > This reverts commit 7d1405c71df21f6c394b8a885aa8a133f749fa22.
+>  
+> > I think we should try to fight back reverts when possible. Reverts are
+> > removing something somebody poured time and attention into. When a
 > 
-> Now, I actually suspect that doing this thing would then allow *other*
-> cases - like possibly static calls - to simplify their code too. I
-> think the static calls could easily use this to simplify the code.
+> While in the development phase, yeah, but when we find a regression and
+> the revert makes it go away, that is the way to go.
 > 
-> So I would throw your question back at you and say "No! I'm asking for
-> this support because it would allow me to *not* do even a simplified
-> version of the horrible things that static calls do".
+> The person who poured time on the development gets notified and can
+> decide if/when to try again.
+> 
+> Millian had to pour time to figure out why something stopped working,
+> was kind enough to provide the output from multiple tools to help in
+> fixing the problem and I had to do the bisect to figure out when the
+> problem happened and to check if reverting it we would have the tool
+> working again.
+> 
+> If we try to fix this for v6.10 we may end up adding yet another bug, so
+> the safe thing to do at this point is to do the revert.
+> 
+> We can try improving this once again for v6.11.
 
-The "key" idea was probably misguided.  I didn't mean to suggest to make
-it all complex like static branches/calls, I was just hoping there's a
-simple way to implement "static consts" without needing objtool.
+I think I found a couple of problems with this issue. :(
 
-Aside from the idea of avoiding "magic", another small downside of using
-objtool is that isn't currently supported on most arches.  That said, it
-should be easy enough to make it arch-independent by default for simple
-features like this, it just needs a little refactoring.
+ 1. perf_session__set_id_hdr_size() uses the first evsel in the session
+    But I think it should pick the tracking event.  I guess we assume
+    all events have the same set of sample_type wrt the sample_id_all
+    but I'm not sure if it's correct.
 
-I still get the feeling there's a way to keep static consts simple
-without objtool, but I'm too knee-deep in another problem at the moment
-to be able to back that feeling up with much technical merit.
+ 2. With --call-graph dwarf, it seems to set unrelated sample type bits
+    in the attr like ADDR and DATA_SRC.
 
-So while I'm not yet necessarily conceding that objtool is really needed
-here, I could work up a quick objtool patch.  It would just be x86-only,
-is that ok for the time being?
+ 3. For tracepoint events, evsel__newtp_idx() sets a couple of sample
+    type regardless of the configuration.  This includes RAW, TIME and
+    CPU.  This one changes the format of the id headers.
 
--- 
-Josh
+ 4. PERF_RECORD_LOST_SAMPLES is for the sampling event, so it should
+    use the event's sample_type.  But the event parsing looks up the
+    event using evlist->is_pos which is set for the first event.
+
+ 5. I think we can remove some sample type (i.e. TID and CPU) from the
+    tracking event in most cases.  ID(ENTIFIER) will be used for LOST_
+    SAMPLES and TIME is needed anyway.  TID is might be used for SWITCH
+    but others already contain necessary information in the type.  I
+    wish we could add id field to PERF_RECORD_LOST_SAMPLES and tid/pid
+    to PERF_RECORD_SWITCH.
+
+Thanks,
+Namhyung
+
+> 
+> > regression has occurred then I think we should add the regression case
+> > as a test.
+> 
+> Sure, I thought about that as well, will try and have one shell test
+> with that, referring to this case, for v6.11.
+> 
+> - Arnaldo
 
