@@ -1,133 +1,106 @@
-Return-Path: <linux-kernel+bounces-203649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 587F38FDEA2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:20:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFB328FDEA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 590D71C24202
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:20:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B51771C22D09
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6328178C95;
-	Thu,  6 Jun 2024 06:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B687373466;
+	Thu,  6 Jun 2024 06:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PFYPckTw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vRU+Xrt7";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="87c6PaFT"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1F23A8CB;
-	Thu,  6 Jun 2024 06:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9345019D8A1;
+	Thu,  6 Jun 2024 06:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717654823; cv=none; b=bUcyfW44Cd00ms+8L3NSsgDGXdJ4w3Vlc7yIog6bEhPVrTV6ocmkmsOv2wYZafW3E31QAo3eCLnzBJWoesl/yuIpwMF1ZVBsF01kPxvYnIPMkKpnXC6AWNWI7L/h9616XrEwBWjxngK8EACMeHhlP/SgjDsdYmJNlpRIXLFfQXw=
+	t=1717654963; cv=none; b=hoVqeyGfAU4yVy/PTgn4rb/VZ0A5eENWvbXTigjr8PMUV6x4uewk0WXkepQVRTfDCm7ACIz+pSM9WpG5CFNdE/ST2crkVfnDAgl9/p+s+IluMmb/IHDSJkSKnZ+kW3y64owvlk0TKk4c+W1ysz3QcwvP8cXmWSZWfglWhhuoyv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717654823; c=relaxed/simple;
-	bh=j0MquPfi/vCjoi1SmAsqOpd/5qF8sXpBLh7cch3Ljiw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=PBak9+50exSNg+pszKa0jTUK28i+44GZrEmYgDbdC1of1iM1nyNz73VJnS36VSQ/6Rb8fISKKnlYpvOMwBurcjdjIzNq2CLu7qCEFI+dHgYeIAVTCJrvl9UJ/89UtDNMSXkk2J9abXGXzihbRIeARSRhR0J4pOhBwOX1JN8EPH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PFYPckTw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71D27C2BD10;
-	Thu,  6 Jun 2024 06:20:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717654823;
-	bh=j0MquPfi/vCjoi1SmAsqOpd/5qF8sXpBLh7cch3Ljiw=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=PFYPckTwPtlU2Q6yc2XxFDj1a4kOn7LPfgUd8jE1iMpKXfHW+p4h38pdWBX7uCPNg
-	 ABNcAPIOO/0qVJu7MZE/2Fg8eB6PhV+VWJ9DDYy31koefpByBBW6mWzsjf/aL7Snae
-	 e0ryAUwdMnZmWjWQkTJ+XhL/zAFSZjfUF4KuXUo51cHLCQTT2TkaykKB5/vVJRE7gN
-	 U3FNRzkxCOu6fdVgBfZHYlI36zCkSRZ3IEu0d2lxSsk1HvZiUu9Z5ugzim4Zfn24al
-	 DHI+HTxvuvHFx31ORBKtvNRE2gkE9XmgcLbZwpUPjHwsMwklbqsHetWUUu3Mofarqp
-	 c6Nf3X3FhBifA==
+	s=arc-20240116; t=1717654963; c=relaxed/simple;
+	bh=yB68uGLMaXT1YV1sbSThDoviU8YPb91HeMCIZFMJbgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q5XHAo9y54YWFsAGRBGskg9sW5zErO3qIF4Xkj3tVV1kmFSeTAyeVF53T8XBCFP5CRF2Hcap1MIai0dQDLigYATWiOk2hhHg2wKkorK/QWPUIfW8mRhdNtAuM9iJgBPC0Wj3DQAg350XZ90oBYZ2EkOvUShhENqtZhWmrKUbKHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vRU+Xrt7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=87c6PaFT; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 6 Jun 2024 08:22:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717654959;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PZbspwahrReSiEYm4PJOvgqOfbLgJT+v5PtwhKLRS5Q=;
+	b=vRU+Xrt7qfOQCVY3ghd5wShqMojUHU2Scch7McyNsNbBycPTimJzgb6hrCTrgzVo7gFnz/
+	QZk4QInUEfFvPtfRmmtRiqpg5A/OIt0TKgiNuxH/kpoIb8HwswgOyZXem1kgjMyGo/BePo
+	YI1RJkl8x8xGJVUcitI9rr7YRzaAUmR7hL9z5sLsFExOTm8NL5PUXmihuTkrp6wa86iSJF
+	LFIyn73IDnn71pcppGenwuIvJK7tbBPGXDll1jM9JDH8wpu/TCGuXDuG7/ztVh4gKKN1zz
+	J7+LlDKVGCEJWxJXgw1M/AfM2WhWzFqQFtdeHFOVGDsHN/jhY3McCXoBiTI3QA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717654959;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PZbspwahrReSiEYm4PJOvgqOfbLgJT+v5PtwhKLRS5Q=;
+	b=87c6PaFTSzuOuHDnarqFAleF2KS2afdlq8GLhiwo1iPMdlo3lj4MrafLsYp7Ao1MqnfWLZ
+	izXGRThGBs4B1KBQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Daniel Bristot de Oliveira <bristot@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Paolo Abeni <pabeni@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v4 net-next 03/14] net: Use nested-BH locking for
+ napi_alloc_cache.
+Message-ID: <20240606062237.nuBoHreW@linutronix.de>
+References: <20240604154425.878636-1-bigeasy@linutronix.de>
+ <20240604154425.878636-4-bigeasy@linutronix.de>
+ <20240605195420.2f47e6a1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 06 Jun 2024 09:20:16 +0300
-Message-Id: <D1SPTDBBDU6F.2WLRZKYZWWTRB@kernel.org>
-Cc: <zhiquan1.li@intel.com>, <kristen@linux.intel.com>, <seanjc@google.com>,
- <zhanb@microsoft.com>, <anakrish@microsoft.com>,
- <mikko.ylinen@linux.intel.com>, <yangjie@microsoft.com>,
- <chrisyan@microsoft.com>
-Subject: Re: [PATCH v14 14/14] selftests/sgx: Add scripts for EPC cgroup
- testing
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Huang, Kai" <kai.huang@intel.com>, "Haitao Huang"
- <haitao.huang@linux.intel.com>, <dave.hansen@linux.intel.com>,
- <tj@kernel.org>, <mkoutny@suse.com>, <linux-kernel@vger.kernel.org>,
- <linux-sgx@vger.kernel.org>, <x86@kernel.org>, <cgroups@vger.kernel.org>,
- <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
- <sohil.mehta@intel.com>, <tim.c.chen@linux.intel.com>
-X-Mailer: aerc 0.17.0
-References: <20240531222630.4634-1-haitao.huang@linux.intel.com>
- <20240531222630.4634-15-haitao.huang@linux.intel.com>
- <D1RKK8CENNXI.1KMNDADV9C1YM@kernel.org>
- <op.2owf5xiwwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <7cbf3583-a23e-4437-afc2-1faeb4a1f436@intel.com>
-In-Reply-To: <7cbf3583-a23e-4437-afc2-1faeb4a1f436@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240605195420.2f47e6a1@kernel.org>
 
-On Thu Jun 6, 2024 at 1:30 AM EEST, Huang, Kai wrote:
->
-> >> Reorg:
-> >>
-> >> void sgx_cgroup_init(void)
-> >> {
-> >> =C2=A0=C2=A0=C2=A0=C2=A0struct workqueue_struct *wq;
-> >>
-> >> =C2=A0=C2=A0=C2=A0=C2=A0/* eagerly allocate the workqueue: */
-> >> =C2=A0=C2=A0=C2=A0=C2=A0wq =3D alloc_workqueue("sgx_cg_wq", wq_unbound=
- | wq_freezable,=20
-> >> wq_unbound_max_active);
-> >> =C2=A0=C2=A0=C2=A0=C2=A0if (!wq) {
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_warn("sgx_cg_wq creation=
- failed\n");
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
-> >=20
-> > sgx_cgroup_try_charge() expects sgx_cg_wq, so it would break unless we=
-=20
-> > check and return 0 which was the initially implemented in v12. But then=
-=20
-> > Kai had some concern on that we expose all the interface files to allow=
-=20
-> > user to set limits but we don't enforce. To keep it simple we settled=
-=20
-> > down back to BUG_ON().=20
->
-> [...]
->
-> > This would only happen rarely and user can add=20
-> > command-line to disable SGX if s/he really wants to start kernel in thi=
-s=20
-> > case, just can't do SGX.
->
-> Just to be clear that I don't like BUG_ON() either.  It's inevitable you=
-=20
-> will get attention because of using it.
+On 2024-06-05 19:54:20 [-0700], Jakub Kicinski wrote:
+> On Tue,  4 Jun 2024 17:24:10 +0200 Sebastian Andrzej Siewior wrote:
+> > @@ -308,6 +311,7 @@ void *__napi_alloc_frag_align(unsigned int fragsz, unsigned int align_mask)
+> >  	struct napi_alloc_cache *nc = this_cpu_ptr(&napi_alloc_cache);
+> >  
+> >  	fragsz = SKB_DATA_ALIGN(fragsz);
+> > +	guard(local_lock_nested_bh)(&napi_alloc_cache.bh_lock);
+> >  
+> >  	return __page_frag_alloc_align(&nc->page, fragsz, GFP_ATOMIC,
+> >  				       align_mask);
+> 
+> We have decided to advise against the use of guard() in networking, 
+> at least for now.
 
-Just then plain disable SGX if it fails to start.
+Understood.
 
-Do not take down the whole system.
+> Andrew, wasn't it on your TODO list to send the update to the docs? :)
+I can add it to
+	Documentation/process/maintainer-netdev.rst
 
-> This is a compromise that you don't want to reset "capacity" to 0 when=20
-> alloc_workqueue() fails.
+Yes, no, Andrew?
 
-BUG_ON() is not a "compromise".
-
-> There are existing code where BUG_ON() is used during the kernel early=20
-> boot code when memory allocation fails (e.g., see cgroup_init_subsys()),=
-=20
-> so it might be acceptable to use BUG_ON() here, but it's up to=20
-> maintainers to decide whether it is OK.
-
-When it is not possible continue to run the system at all, and only
-then.
-
-Here it is possible. Without SGX.
-
-BR, Jarkko
+Sebastian
 
