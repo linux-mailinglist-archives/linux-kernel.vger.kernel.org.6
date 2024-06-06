@@ -1,122 +1,103 @@
-Return-Path: <linux-kernel+bounces-204742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 951068FF303
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:53:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B0048FF30B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:54:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BB731C2037E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:53:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7009C1C21D01
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25AE198A3E;
-	Thu,  6 Jun 2024 16:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5DF198A16;
+	Thu,  6 Jun 2024 16:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DSQS1HFl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="tL9rdML7"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8669224D1
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 16:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EAB017BC9
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 16:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717692823; cv=none; b=WWs7tdaykU/ObKSfo4XMJZvHarHpHw44hlKdwseTi7VZsyDhSSRQZBzDZHEv+5L8NJEex9+nQDrU0Gs1CtYP7Q1qV7aSbAD6V8xkGOAPl7aETUwJK5+ei4zzJDQEYIdA90jRT8rZK201uEEwwSQxI3y94mwiKZCG7N22893odS8=
+	t=1717692886; cv=none; b=nRmbfGtAnACOPncZs1IStfJ/9PfNgOsQt22gbKv8HkBqiPiYdAUseMh/FDtz89XqFYZDNjauaZJ+qeOPVBnlEk3XA0LTy2McoLQwWddNyfoT+1LZWMZkffKJt+XtDziT69Eyz6TwwKyhAYN2mItjsX9t/dpHRwqvOFiJsU07XAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717692823; c=relaxed/simple;
-	bh=UfPRa8N1NpQXy0hUsyfCoV9/IzKPawQ3WxpkEv4gwoQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fXUouGT4gJDWE2ZwXkVBNZQ+jYNEU/1DNBZlo3FMsS4zw4IMwsj/lrKiF5fj0h6AJQJvwGnF6+cli/yi0AanUIO6I2izqN4iu+m2K84hXiK/9Qo/HopLcjZ/vIcBHLlZCVafNguIuxos/1dUXV5emEjti9WweVIEMpsrg1yGVUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DSQS1HFl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0919AC2BD10;
-	Thu,  6 Jun 2024 16:53:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717692822;
-	bh=UfPRa8N1NpQXy0hUsyfCoV9/IzKPawQ3WxpkEv4gwoQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DSQS1HFlpBRZ83O1xKUSI5diJtuOlVYBr2LgczQEvleXWNd6HpjbexSOBzjkR5WbY
-	 BSqiVya+7Z5Bxpd4p20MoH6QOAgx/Yz2qeT8KVm2+c702w87lV+lvfZKQtx/IHYQBm
-	 9SXDanaV5WWdi9qzuEQcE+lIZWxbw3xOX44VoXmhi7nWvpqr+DTOSjMf7gkEHSIHGR
-	 KTWPQ+OvIoPA48E78fLk923VjkKy2Oi09ajoH1Hs9dRIYbCMCpdyOhVxh7Bbkx9rWV
-	 dcJHbFamIVno+gXC6hCG/CPK3BIgvvhxAsmR4o9jYW5ToB/sh5wGsfDcMSSReJG8FP
-	 +54Rq6Ik/+LXg==
-Message-ID: <e1b78d49-72ef-4c9e-be1c-919a72940b1b@kernel.org>
-Date: Thu, 6 Jun 2024 18:53:36 +0200
+	s=arc-20240116; t=1717692886; c=relaxed/simple;
+	bh=YD+Wd2hBc/cdkdO3mlBFfazKoYYVzUBziDVhraNCsIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nV6E69Yhj6I6NGBnkQ87sQ380KbNPZtJNeqslfsECejuoDpAdw88P9cCJsVzYdEYOfs5wFmw6FY/IhwfXKcw/591UMT+Vb+SFgcGpo6xw3npYRBZ9jePfD7mWFWWWPR3D3E9NOAo0xes8nX0I3/LbejbSWL72pkv/KFRGPl1ANU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=tL9rdML7; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4403bd2d199so5736251cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 09:54:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1717692884; x=1718297684; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+y+dl8aT5uPAs1eKPG+kVmWJwMw6JblJ8vF59gD+i5Q=;
+        b=tL9rdML73qPgqYqyRj2cAb1vUI4OFNp/1y+AvdYTDQ5fTIlEJZc5w4DynpDgNvszrZ
+         DwM110MVuxozer0Y7gh+o2GTH2aaVEp9Av2MPTUkdD6NgWH1JR3rrPqWfT5W4tkd0sj7
+         e0p5BxEvEM6Yknk69rGHFn6+QZj03JCFu4spl8kyw1/FkRcr0lJ6F9Oe/73O05VPbv85
+         /wNBZDZxmq2sG5IKHI3fycT/xXTr53NPrA0XJDc0AgeAsuILmNgxE03ea1gJoCBZxQWa
+         m8fQG+tygeaPDDTbVWPjiN8AqeTrQ0xZBkWlCbTHJDAS8tX1WWPNwbz6y3oyW2OCx/U7
+         60hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717692884; x=1718297684;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+y+dl8aT5uPAs1eKPG+kVmWJwMw6JblJ8vF59gD+i5Q=;
+        b=XTXpyhdOvprc49SE7X3wGib8z+aRZ6jJmgAr3o2VDxk/v0Yh0LW+16qHI79qWwAYnR
+         amv8iSU5nnC/nrUIWhXBDMTN9aSGqLVAC/ZGQCoDvaximzmp9dx1dP6kfVHYcqV1d6Bg
+         ugtQv5NR6otYNm9bxGqP6bHSc2BrZL29UgyCtst81SZ+s1ghqX2wJnL+tm54bAaQGbNr
+         IleZWvuX0WIgSfIS06xvQbGmmwpTnU/A6DgSEf96xUQqwgtPhGRDaVMDuUGcKr9mZ54E
+         nizwnR8wEsJ+RxETmdisAx+JZ6mPvMK7neLfpMjAupN8SaN0+mPquK8+SkrogtqrCd6n
+         16Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCvEQZesA0iJVKcK3hFKVpyzEwfFmfiipHKCADx8TWYL+onZhZLPq/N+LZjZ5nOe7lNmATeRwh1G4xAJfqEKOPKEsNc9s65kmi/FEW
+X-Gm-Message-State: AOJu0YyRphRa7EvtCyipo1LaKeWxuEufs7S2c8FdfCG/CB2N2+4i2yZs
+	ovWAbl52ZIqur4UuPKxfXR0GcToc/FqIxW4VGyIltISt3JO9+imDPUXT37pqrccsHOIH9hLKZ0I
+	n
+X-Google-Smtp-Source: AGHT+IFAYcXMFI8o0MjOxBERg27z3u3kw0duCZYFs2U33NR29oDfLpQLlRfKGKgdE6Y2F+w+ln9DOQ==
+X-Received: by 2002:a05:6214:3186:b0:6ab:996d:425b with SMTP id 6a1803df08f44-6b05951098fmr4622796d6.4.1717692884259;
+        Thu, 06 Jun 2024 09:54:44 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b04f988c20sm7820016d6.98.2024.06.06.09.54.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 09:54:43 -0700 (PDT)
+Date: Thu, 6 Jun 2024 12:54:43 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Johannes Thumshirn <jth@kernel.org>
+Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH v2 5/6] btrfs: pass a struct reloc_control to
+ prealloc_file_extent_cluster
+Message-ID: <20240606165443.GC2529118@perftesting>
+References: <20240606-reloc-cleanups-v2-0-5172a6926f62@kernel.org>
+ <20240606-reloc-cleanups-v2-5-5172a6926f62@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: kswapd0: page allocation failure: order:0,
- mode:0x820(GFP_ATOMIC), nodemask=(null),cpuset=/,mems_allowed=0 (Kernel
- v6.5.9, 32bit ppc)
-Content-Language: en-US
-To: Erhard Furtner <erhard_f@mailbox.org>
-Cc: Yosry Ahmed <yosryahmed@google.com>, Yu Zhao <yuzhao@google.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, Johannes Weiner <hannes@cmpxchg.org>,
- Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Minchan Kim <minchan@kernel.org>, Michal Hocko <mhocko@kernel.org>
-References: <20240508202111.768b7a4d@yea> <20240515224524.1c8befbe@yea>
- <CAOUHufZ-9NmzOKjLedvZFp0=N0LvRZn77qC6k1WXK+NHtKr=0w@mail.gmail.com>
- <CAOUHufZ36rQc8AfLtRv2QrEareysdvbprAEO5XkcG-FeDOxFLA@mail.gmail.com>
- <20240602200332.3e531ff1@yea> <20240604001304.5420284f@yea>
- <CAJD7tkbCRLdy0vD2Pd17fNrxHgkzW1VucN4qMkohLFLBLaaeCQ@mail.gmail.com>
- <20240604134458.3ae4396a@yea>
- <CAJD7tkYjJJGthQ_8NukGw6Q9EYbLA=8sAH_7=B90KXEL6HWdSw@mail.gmail.com>
- <CAOUHufa0Fpj6SjNgB-z0n5Jg63q1ewkbOAU65forpDwQVs45qg@mail.gmail.com>
- <CAJD7tkb=5GJ9SNUwDsu1Zy3Tus4rjsNo60Hg9N7=gGth409Diw@mail.gmail.com>
- <CAOUHufb6zXr14Wm3T-4-OJh7iAq+vzDKwVYfHLhMMt96SpiZXg@mail.gmail.com>
- <CAJD7tkZ+QY55GTzW9A7ZCm=rxAEfrW76cWXf8o5nwiKSXp8z=w@mail.gmail.com>
- <20240604231019.18e2f373@yea>
- <CAJD7tkYq5u7B+0UH2XKpeWJnUxoO2kJ1_XZ2JOgYpyNEVR7u0g@mail.gmail.com>
- <20240606010431.2b33318c@yea>
- <CAJD7tkbhWYzx=6YmzAh0F+cK-_Bn8mPOH7gMbQS7YVXmaFSgFg@mail.gmail.com>
- <fd7fafb9-09be-48b1-ba52-57e52c6d973a@kernel.org>
- <20240606153210.18ef5299@yea>
-From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-In-Reply-To: <20240606153210.18ef5299@yea>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606-reloc-cleanups-v2-5-5172a6926f62@kernel.org>
 
-On 6/6/24 3:32 PM, Erhard Furtner wrote:
-> On Thu, 6 Jun 2024 09:24:56 +0200
-> "Vlastimil Babka (SUSE)" <vbabka@kernel.org> wrote:
+On Thu, Jun 06, 2024 at 10:35:03AM +0200, Johannes Thumshirn wrote:
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > 
->> Besides the zpool commit which might have just pushed the machine over the
->> edge, but it was probably close to it already. I've noticed a more general
->> problem that there are GFP_KERNEL allocations failing from kswapd. Those
->> could probably use be __GFP_NOMEMALLOC (or scoped variant, is there one?)
->> since it's the case of "allocating memory to free memory". Or use mempools
->> if the progress (success will lead to freeing memory) is really guaranteed.
->> 
->> Another interesting data point could be to see if traditional reclaim
->> behaves any better on this machine than MGLRU. I saw in the config:
->> 
->> CONFIG_LRU_GEN=y
->> CONFIG_LRU_GEN_ENABLED=y
->> 
->> So disabling at least the second one would revert to the traditional reclaim
->> and we could see if it handles such a constrained system better or not.
+> Pass a 'struct reloc_control' to prealloc_file_extent_cluster()
+> instead of passing its members 'data_inode' and 'cluster' on their own.
 > 
-> I set RANDOM_KMALLOC_CACHES=n and LRU_GEN_ENABLED=n but still hit the issue.
-> 
-> dmesg looks a bit different (unpatched v6.10-rc2).
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-What caught my eye, but it's also in some of the previous dmesg with MGRLU,
-is that in one case there's:
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-DMA free:0kB
+Thanks,
 
-That means many allocations went through that are allowed to just ignore all
-reserves, and depleted everything. That would mean __GFP_MEMALLOC or
-PF_MEMALLOC, which I suggested earlier for the GFP_KERNEL failure, is being
-used somewhere, but not leading to the expected memory freeing.
-
-> Regards,
-> Erhard
-
+Josef
 
