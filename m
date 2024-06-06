@@ -1,165 +1,241 @@
-Return-Path: <linux-kernel+bounces-203464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E478FDB96
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 02:42:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5DC08FDB99
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 02:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B8AF1C2325A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 00:42:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 901651C214A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 00:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBE4748F;
-	Thu,  6 Jun 2024 00:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D028F58;
+	Thu,  6 Jun 2024 00:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OaZqeNHq"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l60RncE1"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CFF646
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 00:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176E029AF
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 00:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717634539; cv=none; b=b/zxkT33H2+bFF6xD+OJ8X1Rhjw/AwPD3wjYroHrK5gmwX0OFEWxoVfxqsgkdjfmurKUM74/R2d3+SEtnTOFdnL7joeC3ccfMJFV9v/1IaCgo2na93jUU6ogL6utsmtiUu/IPZ1yPa2dTccrcmFaIMZUcqH3CwhixEvL2AYc3qo=
+	t=1717634791; cv=none; b=s2/FYgF0+TemuVWItjBnSXb8AIQlkq+RdDEZBe2Ow+B0OIYGgwrXqvOqNeaup0CcdiRHXV1SyqVPDRRJVyE00D2OVbSGhtWX8YTA7YF9HtFKhRAcc47bFUteWk7nqRS0vNUbzwxgI6bBNuqeFlWHP6GJ+AZL0HgnSne9ILm+FZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717634539; c=relaxed/simple;
-	bh=H97UUkxz43bfwlw7MPZnzFwcHWU9V5Gq9lHVpnzJ0L0=;
+	s=arc-20240116; t=1717634791; c=relaxed/simple;
+	bh=yIZJVvAK3HHx+7zGZQrgoXzBGlVRQKP+JzY1L8rRxRQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TIIAeU/iR6o24NQkULc5SXewsEhPeDV6F9FNOoEqSL+TCyGhIqv4CDNCq3FmIHL9s8cTWBLIZ4r4aJdXfL+mRUm5cL1xavu5sJ+xIm9OOWeoo4nxwAMGAUFs2RWyqlvF/40HCG1v/EjFU2jJmqkSxhZIUlD0hJzBCg7UbVK8wII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OaZqeNHq; arc=none smtp.client-ip=209.85.128.169
+	 To:Content-Type; b=F2ywK/EUf9DnbvV6SIgpBPqPHEGZicRZkYFe1BYepxbMsUXKvjnRuuR0hcTh1USYpdZjn1xhc7A+AoJKf4AR+TdDP4vI8Iws9zk1JKsdAnSwfvP1/0EOJ/HL+cizUarCKwvnFqPl+wNSRUf4nbh2YWD8vhmWUHv88rjQv+M5sXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l60RncE1; arc=none smtp.client-ip=209.85.219.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-62a087c0638so416897b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 17:42:18 -0700 (PDT)
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-df78af3bdbcso75260276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 17:46:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717634537; x=1718239337; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=gmail.com; s=20230601; t=1717634789; x=1718239589; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pRHWIqKrogA88n9Tkj9zJquUR76xLrOnJBRrvpKpqgM=;
-        b=OaZqeNHq0CeyRSWNx47YyC5Wjoj7T0yHkfnwoZjswUg28ilurEIE+F7Ap7DnbPaKPH
-         AhwsStgJblTuEOOVi2RW3TMWVBjy2Ye5GLTyR3gxobbvqcUguzYsAQsaoWK1A+3iJlSy
-         dqCAhM5Qdu7jaA4r1qbhqOnwv3F5jO+wE05G27nA5WSHt6gNOSMElf1aQOmMY15oP3oI
-         gEjtpwqDuvOPQk7Cerzllqu2ArLneQnosgx80I7uAYY4CED2MSkd/6AC9eDzWcJ7J9z8
-         BzFaWhCQrS60jtLf9DNESJiVVP4nQvfIjsn9Zx052eECWMbycADFnww0KT5lcXM9aAQl
-         pWdA==
+        bh=6MFC/FaxgXEL8RPYoKRhycCHLP0/mgJuIoz6NXdvOI4=;
+        b=l60RncE1iISUzwEprCu/Rtd5zPStVfNgQYDOF7kWRWKnQNL4Ijqa1khPFEvDdLSsbc
+         S7OkXrjw3q/Rl0T1g131i4KjocoYZ8CNR4gVOKIYQXY3kZd8rK57C38lhPPL+N9HfmjP
+         b41dUl+duk59Uv24oN/85673UwnfAVnwObxWFZUkR/OZWubV/tRZZUR7HLwCo4OoNiTa
+         kM3/TCP4lSEOhoUE3V6eG8w2VnaTKyjXC9qBGlt8hXdZkr1N6tV4cwz1yObVp4hPVPgu
+         PmIONmr//HYgyuodCYR2nLuqq19d8jGzb8RV9/x/RTYD6qhC3tYlQ9ZNzHTjYMH/uF7o
+         0ojQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717634537; x=1718239337;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1717634789; x=1718239589;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pRHWIqKrogA88n9Tkj9zJquUR76xLrOnJBRrvpKpqgM=;
-        b=RjKl5osfBxSQti+kdKFcx5jqwy+pz2RFPGh3uODA56Wg+jcobKgrn/8SUUrYb5iVAH
-         ouCUw8clbbinnMGt4GV+zSCuPzGNxPlbSshn+Iy9lQ/RTRbWwSByHV77IJMqDdt6nYKS
-         66ZKozqegfw2pNjzPpODJPL6fuQF13BnKSJ+NqbFvKgLi07+hIM4wDlLZ7Hq7zyK9TRG
-         6BpvTEQP31hIYW7aUmHA06dI8dAjzbRvbfbKg4dujoTtIXvCZxT5Hnb6USg0IS6WosE5
-         F5W2IekmxFy6R+iuzZoF+l6Y8QX44x9b9/WCf7N8qfcKRaHGT/dXoTxY36omx6SBtzyL
-         19Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCWAJHS0VHjiMq7bBAHO1fqep4L7gqGbYejpSXgsWZfqCaFctdZMvJhXLxDIzWf6oNtW/GKBytVxuB5jCwFK9Vzc9zN6NdF9gr3z4sfF
-X-Gm-Message-State: AOJu0Yw0n/EoQT9Lo25AOYqXS0BRkYJHpDpIhY98rd/pNRT1UadATWtv
-	z5IGEI2uDPK+ALWtZ+JioAinDZrMRNN9icqT0sUIvoxHlPNm9WvtMrdrQUDLZ0d9WB//WUD8BZo
-	GbSvyRpHDxDb+fcYxqY1zC1m7OPA=
-X-Google-Smtp-Source: AGHT+IGG+yEl6GsG8Q10ABwlODJbh7Jvv2CPe2zzEg+R2wJ2Rik4Z8buKvpbpjKi64bV6lL8IUuC3qw9R8ZDeM45M00=
-X-Received: by 2002:a05:690c:660c:b0:627:a25d:6e76 with SMTP id
- 00721157ae682-62cbb4c9685mr40711377b3.2.1717634536103; Wed, 05 Jun 2024
- 17:42:16 -0700 (PDT)
+        bh=6MFC/FaxgXEL8RPYoKRhycCHLP0/mgJuIoz6NXdvOI4=;
+        b=c2O1p39Dt+5s62JqINHkm2VBJjVXIgmTsb7JVaPRE43tlfADu+BGeDIACOuxQrWvlm
+         atL4PpWepr/qUcaynrLLFX5SShYni/GTMgy+pbtigayPRmb3CpJverRowd0qbualwAM7
+         OpB+KGgLEW39DE+H1xgM8c0Vc1s0OCUIYfbxzyOmaIZ7rOmHGjSrAlGtgEt69UqyH0A8
+         fRd7BfmUnDrl9Y4CD/YevYCITE1RwtwdUnWhdWVVv/VcLW5mXLiEY3Vozy+WU9Rku+j2
+         SW1mlY2BfVQTet/2Q4knX75RKD4VMSifAnpkNQ3S7rdVPQlQZPOp9FJryP4A4CwuCp5E
+         b6Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCXT2nAlzLidMAAxe1yQ7aj6DXruKFkJlKZufX1WZ02hq6FPCBtUzOsLIC2V8cE45CgsgQf4IEDwZAq4hnuHg/EQsjAbzkLwEvkr7HnH
+X-Gm-Message-State: AOJu0YyPn6SYFW6bGpcPPowu46aOxqxXsXUBsa4hg7bQbE1SDFgRMjtf
+	y7azi8d24ZCMrZF+wH9qmXpLinivwSqXb1mAZZVde3K5FFmGuR09fxh0wK7e/1MKaqhYZU8qF+c
+	ZWgRoXI2yDemfhLn+jdZVSTdq/io=
+X-Google-Smtp-Source: AGHT+IE6Dh6kz+d89djMSqTzxUiYsLPH2rhtvI0EIyaJNhn3MwrMctlg9ryIrTzUsKd7Yk347s2F9SiwVBASLW5XsQ8=
+X-Received: by 2002:a05:690c:f01:b0:627:e34e:14de with SMTP id
+ 00721157ae682-62cbb6917f0mr31095297b3.5.1717634787539; Wed, 05 Jun 2024
+ 17:46:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605212840.3227774-1-olvaffe@gmail.com> <ZmDiYze9MEFxn50C@smile.fi.intel.com>
- <CAPaKu7SJ5TVXsqnsqnucpE=wVKwGCdXyCTNBhr+rcJrmLw5GgQ@mail.gmail.com> <ZmD2c0rNz10KsPA0@smile.fi.intel.com>
-In-Reply-To: <ZmD2c0rNz10KsPA0@smile.fi.intel.com>
+References: <20240606004002.3280960-1-olvaffe@gmail.com>
+In-Reply-To: <20240606004002.3280960-1-olvaffe@gmail.com>
 From: Chia-I Wu <olvaffe@gmail.com>
-Date: Wed, 5 Jun 2024 17:42:05 -0700
-Message-ID: <CAPaKu7Rt_wn4nycc=2hr6N6X77vDqyvFbkgrBeEzfmY3nEaong@mail.gmail.com>
-Subject: Re: [PATCH v4] resource: add a simple test for walk_iomem_res_desc()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, 
-	AKASHI Takahiro <takahiro.akashi@linaro.org>, Dave Jiang <dave.jiang@intel.com>, 
+Date: Wed, 5 Jun 2024 17:46:16 -0700
+Message-ID: <CAPaKu7Q8Ba4_GEZdBruO0if374BhMYafDbGc2dptPL4vdKR+1Q@mail.gmail.com>
+Subject: Re: [PATCH v5] resource: add a simple test for walk_iomem_res_desc()
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dave Jiang <dave.jiang@intel.com>, 
 	Alison Schofield <alison.schofield@intel.com>, Baoquan He <bhe@redhat.com>, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 5, 2024 at 4:36=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Wed, Jun 5, 2024 at 5:40=E2=80=AFPM Chia-I Wu <olvaffe@gmail.com> wrote:
 >
-> On Wed, Jun 05, 2024 at 03:52:26PM -0700, Chia-I Wu wrote:
-> > On Wed, Jun 5, 2024 at 3:10=E2=80=AFPM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > > On Wed, Jun 05, 2024 at 02:28:26PM -0700, Chia-I Wu wrote:
-> > > > This mainly tests that find_next_iomem_res() does not miss resource=
-s.
+> This mainly tests that find_next_iomem_res() does not miss resources.
 >
-> ...
+> Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
 >
-> > > > +     /* build the resource tree */
-> > > > +     res[0] =3D DEFINE_RES_NAMED(root.start + 0x0000, 0x1000, "SYS=
-RAM 1",
-> > > > +                     IORESOURCE_SYSTEM_RAM);
-> > > > +     res[1] =3D DEFINE_RES_NAMED(root.start + 0x1000, 0x1000, "OTH=
-ER", 0);
-> > > > +
-> > > > +     res[2] =3D DEFINE_RES_NAMED(root.start + 0x3000, 0x1000, "NES=
-TED", 0);
-> > > > +     res[3] =3D DEFINE_RES_NAMED(root.start + 0x3800, 0x0400, "SYS=
-RAM 2",
-> > > > +                     IORESOURCE_SYSTEM_RAM);
-> > >
-> > > ...here is overlap with the previous resource.
-> > >
-> > > And here is the gap to the next one, in case we make that overlapping=
- gone.
-> > >
-> > > > +     res[4] =3D DEFINE_RES_NAMED(root.start + 0x4000, 0x1000, "SYS=
-RAM 3",
-> > > > +                     IORESOURCE_SYSTEM_RAM);
-> > >
-> > > It wasn't the case in previous data. Please, elaborate what's going o=
-n here?
-> > The test data is chosen to be
-> >
-> >   first interval: a matching resource (res[0])
-> >   second interval: a non-matching resource (res[1])
-> >   third interval: a hole
-> >   fourth interval: a matching resource (res[3]) nested in a
-> > non-matching resource (res[2])
-> >   fifth interval: a matching resource (res[4])
-> >
-> > The idea hasn't changed between revisions.
-> >
-> > res[3] went from a half of res[2] to a quarter of res[2] in v4.  I
-> > guess it causes confusion if it is not viewed as a nested resource.
+> ---
+> v2: update subject, use DEFINE_RES_NAMED and hardcoded offsets
+> v3: really hardcode offsets, with 4KB intervals since 0x1000 is easier
+>     to read than 0x400
+> v4: use RESOURCE_SIZE_MAX, split allocate_resource and KUNIT_ASSERT_EQ,
+>     and other cosmetic changes
+> v5: include linux/limits.h, add a comment on the resource layout, and
+>     add more negative tests for holes
+> ---
+>  kernel/resource_kunit.c | 99 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 99 insertions(+)
 >
-> Okay, so far it's correct data from testing p.o.v.
+> diff --git a/kernel/resource_kunit.c b/kernel/resource_kunit.c
+> index 58ab9f914602b..b13f01f290606 100644
+> --- a/kernel/resource_kunit.c
+> +++ b/kernel/resource_kunit.c
+> @@ -6,6 +6,7 @@
+>  #include <kunit/test.h>
+>  #include <linux/ioport.h>
+>  #include <linux/kernel.h>
+> +#include <linux/limits.h>
+>  #include <linux/string.h>
 >
-> Maybe you can add a comment on top explaining this layout?
-Done in v5.  I also added negative tests for all holes in the test
-data.  Hope it's better now.
+>  #define R0_START       0x0000
+> @@ -137,9 +138,107 @@ static void resource_test_intersection(struct kunit=
+ *test)
+>         } while (++i < ARRAY_SIZE(results_for_intersection));
+>  }
+>
+> +static int resource_walk_count(struct resource *res, void *data)
+> +{
+> +       int *count =3D data;
+> +
+> +       (*count)++;
+> +       return 0;
+> +}
+> +
+> +static void resource_test_walk_iomem_res_desc(struct kunit *test)
+> +{
+> +       struct resource root =3D {
+> +               .name =3D "Resource Walk Test",
+> +       };
+> +       struct resource res[8];
+> +       int count;
+> +       int ret;
+> +
+> +       ret =3D allocate_resource(&iomem_resource, &root, 0x100000,
+> +                       0, RESOURCE_SIZE_MAX, 0x100000, NULL, NULL);
+> +       KUNIT_ASSERT_EQ(test, 0, ret);
+> +
+> +       /* build the resource tree under the test root:
+> +        *
+> +        *   0x0000-0x0fff: res[0], a match
+> +        *   0x1000-0x1fff: res[1], a non-match
+> +        *   0x2000-0x2fff: a hole
+> +        *   0x3000-0x3fff: res[2], a non-match
+> +        *     0x3800-0x3bff: res[3], a match
+> +        *   0x4000-0x4fff: res[4], a match
+> +        */
+> +       res[0] =3D DEFINE_RES_NAMED(root.start + 0x0000, 0x1000, "SYSRAM =
+1",
+> +                       IORESOURCE_SYSTEM_RAM);
+> +       res[1] =3D DEFINE_RES_NAMED(root.start + 0x1000, 0x1000, "OTHER",=
+ 0);
+> +
+> +       res[2] =3D DEFINE_RES_NAMED(root.start + 0x3000, 0x1000, "NESTED"=
+, 0);
+> +       res[3] =3D DEFINE_RES_NAMED(root.start + 0x3800, 0x0400, "SYSRAM =
+2",
+> +                       IORESOURCE_SYSTEM_RAM);
+> +
+> +       res[4] =3D DEFINE_RES_NAMED(root.start + 0x4000, 0x1000, "SYSRAM =
+3",
+> +                       IORESOURCE_SYSTEM_RAM);
+> +
+> +       KUNIT_EXPECT_EQ(test, 0, request_resource(&root, &res[0]));
+> +       KUNIT_EXPECT_EQ(test, 0, request_resource(&root, &res[1]));
+> +       KUNIT_EXPECT_EQ(test, 0, request_resource(&root, &res[2]));
+> +       KUNIT_EXPECT_EQ(test, 0, request_resource(&res[2], &res[3]));
+> +       KUNIT_EXPECT_EQ(test, 0, request_resource(&root, &res[4]));
+> +
+> +       /* walk the entire region */
+> +       count =3D 0;
+> +       walk_iomem_res_desc(IORES_DESC_NONE, IORESOURCE_SYSTEM_RAM,
+> +                       root.start, root.end, &count, resource_walk_count=
+);
+> +       KUNIT_EXPECT_EQ(test, count, 3);
+> +
+> +       /* walk the region requested by res[0] */
+> +       count =3D 0;
+> +       walk_iomem_res_desc(IORES_DESC_NONE, IORESOURCE_SYSTEM_RAM,
+> +                       res[0].start, res[0].end, &count, resource_walk_c=
+ount);
+> +       KUNIT_EXPECT_EQ(test, count, 1);
+> +
+> +       /* walk the region requested by res[1] */
+> +       count =3D 0;
+> +       walk_iomem_res_desc(IORES_DESC_NONE, IORESOURCE_SYSTEM_RAM,
+> +                       res[1].start, res[1].end, &count, resource_walk_c=
+ount);
+> +       KUNIT_EXPECT_EQ(test, count, 0);
+> +
+> +       /* walk the hole between res[1] and res[2] */
+> +       count =3D 0;
+> +       walk_iomem_res_desc(IORES_DESC_NONE, IORESOURCE_SYSTEM_RAM,
+> +                       res[1].end + 1, res[2].start - 1, &count,
+> +                       resource_walk_count);
+> +       KUNIT_EXPECT_EQ(test, count, 0);
+> +
+> +       /* walk the region requested by res[2] */
+> +       count =3D 0;
+> +       walk_iomem_res_desc(IORES_DESC_NONE, IORESOURCE_SYSTEM_RAM,
+> +                       res[2].start, res[2].end, &count, resource_walk_c=
+ount);
+> +       KUNIT_EXPECT_EQ(test, count, 1);
+> +
+> +       /* walk the holes before and after res[3] nested under res[2] */
+> +       count =3D 0;
+> +       walk_iomem_res_desc(IORES_DESC_NONE, IORESOURCE_SYSTEM_RAM,
+> +                       res[2].start, res[3].start - 1, &count,
+> +                       resource_walk_count);
+> +       walk_iomem_res_desc(IORES_DESC_NONE, IORESOURCE_SYSTEM_RAM,
+> +                       res[2].end + 1, res[3].end, &count,
+This should be from "res[3].end + 1" to "res[2].end".  Not sure if I
+should resend or if you can make the fix when applying.
 
->
-> ...
->
-> > > And rather sending one version per 12h, take your time and think more=
- about
-> > > test data. What are we testing? Are the testing data correct? Shouldn=
-'t we also
-> > > have negative test cases?
-> > The current choice of test data covers the most common patterns.  Do
-> > you have other patterns you want to cover?  I am new to the resource
-> > code and that's why I am largely reactive to review feedback.
->
-> Nope, seems okay to have what is there for the starter. Later on we might=
- add
-> more if required. Just got confused.
+> +                       resource_walk_count);
+> +       KUNIT_EXPECT_EQ(test, count, 0);
+> +
+> +       /* walk the region requested by res[4] */
+> +       count =3D 0;
+> +       walk_iomem_res_desc(IORES_DESC_NONE, IORESOURCE_SYSTEM_RAM,
+> +                       res[4].start, res[4].end, &count, resource_walk_c=
+ount);
+> +       KUNIT_EXPECT_EQ(test, count, 1);
+> +
+> +       release_resource(&root);
+> +}
+> +
+>  static struct kunit_case resource_test_cases[] =3D {
+>         KUNIT_CASE(resource_test_union),
+>         KUNIT_CASE(resource_test_intersection),
+> +       KUNIT_CASE(resource_test_walk_iomem_res_desc),
+>         {}
+>  };
 >
 > --
-> With Best Regards,
-> Andy Shevchenko
->
+> 2.45.1.467.gbab1589fc0-goog
 >
 
