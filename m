@@ -1,185 +1,166 @@
-Return-Path: <linux-kernel+bounces-204391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B159A8FE81B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:44:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 794518FE820
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BE5A286C56
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:44:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0955B2897E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16D5196451;
-	Thu,  6 Jun 2024 13:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B53195FC9;
+	Thu,  6 Jun 2024 13:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eFAnytJw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sM/kYm/U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C5419642D;
-	Thu,  6 Jun 2024 13:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0E1195995
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 13:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717681482; cv=none; b=QexpgPx3vB0iOHA4oZZfv7dwZn+aFLbqv7+XJP6WSCkvSn0vI2PMlX6UGlQn7zfIn0ZV3lirzTbU6sAVazp7zj8A61yMjyYcS+TvY+5ZMnmPO0yMSPuB9opJchTGztrt6dxKw3jOr5pYwgZJB6zHCy3ss2xy8XyKMxIG/0/z+zM=
+	t=1717681525; cv=none; b=HpqAdtGJjCmr2vA5krrfmMrvi1Tzt8Wxv0iSU7w+D57U6GplOcRPSJhGyeTyPvGV09jjo1uMuCZE+ZFNLrv/DG84g9AA/EuGrk7MiA6gNMuMa4GcWbqfNTmbhR7sCQzb5kR/mUv0VdHboSIBP3cYlFVzFhUoBR4eo4/GKdfpzXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717681482; c=relaxed/simple;
-	bh=lq7yE7QHdLhqmzRBDqpM7MNtwj4dP5zB26YYW2zA/rQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M7uU4wXHwRt2xFBMX5vmux1tjpj3fVh0vfTQFdDeC3bk5GRvvEbq7KHj882IOGFgjx7xZ4o7fEjrrL5ol3/huEf25lCEWmdkOMs5zbl3956+lPJc/hNua2u6/HfFdSymyoMMy5hOIYyPyYiQJLGPoO9GzpRUYpxhEf/y0VbkJxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eFAnytJw; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717681480; x=1749217480;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=lq7yE7QHdLhqmzRBDqpM7MNtwj4dP5zB26YYW2zA/rQ=;
-  b=eFAnytJwViFYBS6xqugBZZ4NW7ce1E3xJSkT2nAEH/Pv58fSQspngDAy
-   ek1DnWXbCGv8T9xtciJD2uQUlNuA6WFtZ03u03Br18BX0GXAvP/eJETT/
-   Spa4soie6t57+Pg0F5LslA5WQ9gPkiyKtig2+FHfTi8XqQvFyW6IXJ0N0
-   U31MlIAHxW9m86mqdyEJXNDG+EH0mPcrMOGjY8/mDxiu14ebla5y0L6v/
-   jeHwXlXan/ZQo9AUWbxY4WoWgMRJ7aZpueAvKu7+3PEC38KtyrgAld/zD
-   NC9B4/10iRxszpB7JIAI490nUEl1zDS7wWYu071624ErYt9z+5Z6IdvXc
-   A==;
-X-CSE-ConnectionGUID: coc32HTHQqKI2I1e4Zq/ww==
-X-CSE-MsgGUID: UHgnPOujRTWlHPQ8+OPt2Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="25004528"
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="25004528"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 06:44:39 -0700
-X-CSE-ConnectionGUID: GLottgdCSheTmgjT8VIBnA==
-X-CSE-MsgGUID: AtEl53KdR3WXtdiwM29u/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="37977429"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 06:44:39 -0700
-Received: from [10.212.72.92] (kliang2-mobl1.ccr.corp.intel.com [10.212.72.92])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id AEF5F20B5703;
-	Thu,  6 Jun 2024 06:44:37 -0700 (PDT)
-Message-ID: <31ec235a-70f6-435b-b99b-5d59f4989ba6@linux.intel.com>
-Date: Thu, 6 Jun 2024 09:44:36 -0400
+	s=arc-20240116; t=1717681525; c=relaxed/simple;
+	bh=RabUCoQbg8d0SmOaAZkfQWlRTkdI/BRDQ5JH4zGLsU8=;
+	h=Content-Type:Date:Message-Id:To:Subject:Cc:From:References:
+	 In-Reply-To; b=O+x60te9xxxuL5RaM7PlO8cBqHR9GfSSyQZBK8X//Lw43zcPnWHkumFKfZiljyKctC3FexPxI26Zf5fPPLH5hKmDt8d39GXzUXQGUGu1IU588cD189i6IDoMbxd53WzzqbFnt8+t/+4obKRwK4y9joK7k6HBD/ciWG/YNxIzh1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sM/kYm/U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B083C2BD10;
+	Thu,  6 Jun 2024 13:45:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717681524;
+	bh=RabUCoQbg8d0SmOaAZkfQWlRTkdI/BRDQ5JH4zGLsU8=;
+	h=Date:To:Subject:Cc:From:References:In-Reply-To:From;
+	b=sM/kYm/UmKCqEWhz9SVw/B4ILwiXoakHZuJL59GXp8JmSio7E9b5ZY582HXeXkbi6
+	 1pUuryZorn3aNFdkqCF12ZsRDE5FHpZN6xiPAeFYakUirFHYehesJdjFq+e2Rs2bJG
+	 Bd4xM1qw43tq3Jtk2Tt9cXVxfr4KRcvCp0Xo2uodQqiJzVyzPXO1WHiIYSmVOZrCKJ
+	 cYBq3/A1hObLhwJl0mRny+cvj9Pps6nhNmxq6O2mcbXyl/ZNWtwdT34m75XXEqFM2k
+	 e9FOpXNU1EzQA0paWTizjxGe1GJk7tKdCI9WwVMxKmYzDQm7xoIdH87L16Z7fSSnZz
+	 X69FGa83YklTQ==
+Content-Type: multipart/signed;
+ boundary=479d9d31d50b1e2e2050036af42fee8ce0912e5ec1a0f68f2ab9c35385aa;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Thu, 06 Jun 2024 15:45:20 +0200
+Message-Id: <D1SZA4ZDM06P.CJC0EQ9ULA04@kernel.org>
+To: "Tudor Ambarus" <tudor.ambarus@linaro.org>, "Esben Haabendal"
+ <esben@geanix.com>, "Pratyush Yadav" <pratyush@kernel.org>, "Miquel Raynal"
+ <miquel.raynal@bootlin.com>, "Richard Weinberger" <richard@nod.at>,
+ "Vignesh Raghavendra" <vigneshr@ti.com>
+Subject: Re: [PATCH] mtd: spi-nor: macronix: workaround for device id re-use
+Cc: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>, "Rasmus
+ Villemoes" <rasmus.villemoes@prevas.dk>
+From: "Michael Walle" <mwalle@kernel.org>
+X-Mailer: aerc 0.16.0
+References: <20240524-macronix-mx25l3205d-fixups-v1-1-ee152e56afb3@geanix.com> <D1Q7BU6PJ356.1CTXPUZE8U6XX@kernel.org> <8513a828-6669-4bf3-91d3-799771866f32@linaro.org>
+In-Reply-To: <8513a828-6669-4bf3-91d3-799771866f32@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf stat: Fix the hard-coded metrics calculation on the
- hybrid
-To: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>
-Cc: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Khalil, Amiri" <amiri.khalil@intel.com>, stable@vger.kernel.org
-References: <20240605160848.4116061-1-kan.liang@linux.intel.com>
- <CAP-5=fV+-ytA2st17Ar-jQ5xYqrWtxnF2TcADKrC5WoPyKz4wQ@mail.gmail.com>
- <CAM9d7cjuHYDMvcq10ZD=3LSmia4WcvAzsme89B-odHYBAZzWYg@mail.gmail.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <CAM9d7cjuHYDMvcq10ZD=3LSmia4WcvAzsme89B-odHYBAZzWYg@mail.gmail.com>
+
+--479d9d31d50b1e2e2050036af42fee8ce0912e5ec1a0f68f2ab9c35385aa
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-
-
-On 2024-06-06 3:34 a.m., Namhyung Kim wrote:
-> On Wed, Jun 5, 2024 at 10:21 AM Ian Rogers <irogers@google.com> wrote:
->>
->> On Wed, Jun 5, 2024 at 9:10 AM <kan.liang@linux.intel.com> wrote:
->>>
->>> From: Kan Liang <kan.liang@linux.intel.com>
->>>
->>> The hard-coded metrics is wrongly calculated on the hybrid machine.
->>>
->>> $ perf stat -e cycles,instructions -a sleep 1
->>>
->>>  Performance counter stats for 'system wide':
->>>
->>>         18,205,487      cpu_atom/cycles/
->>>          9,733,603      cpu_core/cycles/
->>>          9,423,111      cpu_atom/instructions/     #  0.52  insn per cycle
->>>          4,268,965      cpu_core/instructions/     #  0.23  insn per cycle
->>>
->>> The insn per cycle for cpu_core should be 4,268,965 / 9,733,603 = 0.44.
->>>
->>> When finding the metric events, the find_stat() doesn't take the PMU
->>> type into account. The cpu_atom/cycles/ is wrongly used to calculate
->>> the IPC of the cpu_core.
->>>
->>> Fixes: 0a57b910807a ("perf stat: Use counts rather than saved_value")
->>> Reported-by: "Khalil, Amiri" <amiri.khalil@intel.com>
->>> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
->>
->> Reviewed-by: Ian Rogers <irogers@google.com>
->>
->> Thanks,
->> Ian
->>
->>> Cc: stable@vger.kernel.org
->>> ---
->>>  tools/perf/util/stat-shadow.c | 4 ++++
->>>  1 file changed, 4 insertions(+)
->>>
->>> diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
->>> index 3466aa952442..4d0edc061f1a 100644
->>> --- a/tools/perf/util/stat-shadow.c
->>> +++ b/tools/perf/util/stat-shadow.c
->>> @@ -176,6 +176,10 @@ static double find_stat(const struct evsel *evsel, int aggr_idx, enum stat_type
->>>                 if (type != evsel__stat_type(cur))
->>>                         continue;
->>>
->>> +               /* Ignore if not the PMU we're looking for. */
->>> +               if (evsel->pmu != cur->pmu)
->>> +                       continue;
-> 
-> Hmm.. Don't some metrics need events from different PMU?
-> Like cycles per sec or branch instructions per sec..
+> >> + */
+> >> +static int
+> >> +mx25l3205d_late_init(struct spi_nor *nor)
+> >> +{
+> >> +	struct spi_nor_flash_parameter *params =3D nor->params;
+> >> +
+> >> +	/*                          DREAD  2READ  QREAD  4READ
+> >> +	 *                          1-1-2  1-2-2  1-1-4  1-4-4
+> >> +	 * Before SFDP parse          1      0      1      0
+> >> +	 * 3206e after SFDP parse     1      0      0      0
+> >> +	 * 3233f after SFDP parse     1      1      1      1
+> >> +	 * 3205d after this func      0      1      0      0
+> >> +	 */
+> >> +	if ((params->hwcaps.mask & SNOR_HWCAPS_READ_1_1_4) &&
+> >> +	    !(params->hwcaps.mask & SNOR_HWCAPS_READ_1_4_4)) {
+> >> +		/* Should be MX25L3205D */
+> >> +		params->hwcaps.mask &=3D ~SNOR_HWCAPS_READ_1_1_2;
+> >> +		spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_1_1_2],
+> >> +					  0, 0, 0, 0);
+> >> +		params->hwcaps.mask &=3D ~SNOR_HWCAPS_READ_1_1_4;
+> >> +		spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_1_1_4],
+> >> +					  0, 0, 0, 0);
+> >> +		params->hwcaps.mask |=3D SNOR_HWCAPS_READ_1_2_2;
+> >> +		spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_1_2_2],
+> >> +					  0, 4, SPINOR_OP_READ_1_2_2,
+> >> +					  SNOR_PROTO_1_2_2);
+> >> +	}
+> >> +
+> >> +	return 0;
+> >> +}
+> >> +
+> >> +static const struct spi_nor_fixups mx25l3205d_fixups =3D {
+> >> +	.late_init =3D mx25l3205d_late_init,
+> >> +};
+> >> +
+> >>  static int
+> >>  mx25l25635_post_bfpt_fixups(struct spi_nor *nor,
+> >>  			    const struct sfdp_parameter_header *bfpt_header,
+> >> @@ -61,7 +118,8 @@ static const struct flash_info macronix_nor_parts[]=
+ =3D {
+> >>  		.id =3D SNOR_ID(0xc2, 0x20, 0x16),
+> >>  		.name =3D "mx25l3205d",
+> >>  		.size =3D SZ_4M,
+> >> -		.no_sfdp_flags =3D SECT_4K,
+> >> +		.no_sfdp_flags =3D SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+> >> +		.fixups =3D &mx25l3205d_fixups
+> >>  	}, {
+> >>  		.id =3D SNOR_ID(0xc2, 0x20, 0x17),
+> >>  		.name =3D "mx25l6405d",
+> >>
 >
+> If all support 1-1-2, (seems MX25L3205D doesn't), then we may have a
+> change to don't update the core.
+>
+> Frankly I don't care too much about what happens in the manufacturer
+> drivers, but I do care about the core and to not extend it with . This
+> patch is not too heavy to be unmaintainable and shows clear where the
+> problem is, we can keep this as well.
 
-Right.
+It's a horrible hack. For example I'm working on a patch to clean up
+the spi_nor_set_read_settings() handling. So just throwing any code
+into vendor drivers doesn't make it any better in terms of
+maintainability. I'd need to touch all the code anyway. In fact it
+makes it even worse, because it looks like the manufacturer drivers
+are just a dumping ground for bad things. Thus, I'd really have it
+handled in a correct way inside the core.
 
-In the hard-coded metrics, the events from a different PMU are
-SW_CPU_CLOCK and SW_TASK_CLOCK. They both have the stat type,
-STAT_NSECS. Perf should ignore the PMU checking for the type as below.
-I will send a V2 to fix it.
+Also, this is not device specific. Let there be two different
+flashes with the same ID, but one support SFDP and one doesn't.
+Right now, you have to have any of the magic flags (dual, quad,
+etc) set to trigger an SFDP parsing. If the flash without SFDP
+doesn't support any of these, like in this case, we are screwed.
+Hence we might need such a flag also for other flashes.
 
-diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
-index 3466aa952442..d01335f18808 100644
---- a/tools/perf/util/stat-shadow.c
-+++ b/tools/perf/util/stat-shadow.c
-@@ -176,6 +176,9 @@ static double find_stat(const struct evsel *evsel,
-int aggr_idx, enum stat_type
-		if (type != evsel__stat_type(cur))
-			continue;
+> Other option that I'd like you to consider is whether we just remove
+> support for MX25L3205D, thus the entry altogether, and instead rely on
+> SFDP to set everything.
 
-+		if ((type != STAT_NSECS) && (evsel->pmu != cur->pmu))
-+			continue;
-+
-		aggr = &cur->stats->aggr[aggr_idx];
-		if (type == STAT_NSECS)
-			return aggr->counts.val;
+Well, this will break boards with this flash :) And we don't know if
+there are any.
 
+-michael
 
-Thanks,
-Kan
+--479d9d31d50b1e2e2050036af42fee8ce0912e5ec1a0f68f2ab9c35385aa
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> Thanks,
-> Namhyung
-> 
-> 
->>> +
->>>                 aggr = &cur->stats->aggr[aggr_idx];
->>>                 if (type == STAT_NSECS)
->>>                         return aggr->counts.val;
->>> --
->>> 2.35.1
->>>
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZmG9cRIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/grRgF+Ju8AIIr0YhhI6wK7vFUrv1TIIvNnMZRo
+2eP5r1ZrYb43Tt9ShCcjpqMu98HIjwPVAXwOYh+E6vTynjxye7akY9WaDu1x6oDk
++qvFE+kgUdpUFnzjF0Kg3Csc3MUnvLogIS4=
+=5qOF
+-----END PGP SIGNATURE-----
+
+--479d9d31d50b1e2e2050036af42fee8ce0912e5ec1a0f68f2ab9c35385aa--
 
