@@ -1,150 +1,129 @@
-Return-Path: <linux-kernel+bounces-203639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AC858FDE82
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:11:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6602B8FDE83
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AAAE1F261CE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:11:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D24C1C21DE4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF2345012;
-	Thu,  6 Jun 2024 06:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBAAE40BF2;
+	Thu,  6 Jun 2024 06:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="czKuIsd0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cRhxxbMO"
+Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1582576B;
-	Thu,  6 Jun 2024 06:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69562576B
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 06:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717654300; cv=none; b=eKdxnH+umdLcdb9e/UuOlsTIA3tU1Lx/3aS5KG996ruJxgTaSf6S7lNB2T9EZrpDOhGKLdyGXxeE93+ZX3922YdS9aHwVIQSVxJ6EwE9F2Qw1kyRqlibzJVFzVg4yfgmDiR8lFgG4Is3pSPaXMvzSNdLWKGNVrWjOoB2OSi+9aQ=
+	t=1717654404; cv=none; b=u1b3n+yUi/Pmgg7xQuLSGwRnUEGxupukpDthiGzfchMo1R2qBatObYpAnsFh5Bp/9q0W7qgX6rXc8XjqDGv8VX0+MEflySBoJ59oM3TiO0+BlTHxRTlrYrKJR1ade6zONwFhhh0YWHrcmlEXT5TYjdd+L0dU92ZBEmfd96saEFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717654300; c=relaxed/simple;
-	bh=8t8GqrE9igKsHXbHUsO0YQpu7quqdO/sjnwgir25+xo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qM3Dzi8OO69rqSytMV9CF5EKTKx+RHnPJqyVrBOGOPMBB218WAaXCDZUJOXpqx/2wa2ADcp0bC2gzDq51Sr0JIL8T5ooun/9cScbMBA6LuEaq+v6xMHgbewHJkG4hV3n3llJ94qziER3Yd0bb4ttcsOq3YMx7/dfLP3aWX+togI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=czKuIsd0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 455I2jeO013971;
-	Thu, 6 Jun 2024 06:11:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6AsnmxVVbU7WdXutARzYu6ckxAXWOB5d2hWAzut8hks=; b=czKuIsd0XPdhj8mx
-	P590rci7xVbofX2F7fEg7DErp47934vA6mTvUHgiT/fAqUaNXcmOM466IrDqcpWL
-	cCD17/7GJa+C/9e2RGXTuy0+OnW5GAopA8SH3S3GGgYcf9L8WVvtoSeBLgwyiNUq
-	/qVZ4Ur+iCeGu1TsgFosysyQsesdFkuLZ8cP3OrZxjh/FHtAhT294xVFUPIivTUh
-	db7pRMVkXvBIAMet4tjLE0NQLYOBP4LSS1fBSkXc2SCKaUsrlA+57SOZxvxdzvcy
-	cVLbIYF5KZp/CgDNQKrtzrXFHMLXkif4Ar1YtWAk6mZkHvHLlp9+xxNrXc8gQth0
-	LFsGHA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjvxy97my-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Jun 2024 06:11:29 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4566BSP6004623
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 6 Jun 2024 06:11:28 GMT
-Received: from [10.218.10.146] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Jun 2024
- 23:11:22 -0700
-Message-ID: <664cca91-8615-d3f6-7525-15b9b6725cce@quicinc.com>
-Date: Thu, 6 Jun 2024 11:41:19 +0530
+	s=arc-20240116; t=1717654404; c=relaxed/simple;
+	bh=r75guN+BnCzlQbFq5diJqJ88aH62k44AS+UwMn1GXYI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BBE5y5RxtP/GQ8kSZ2sTbP2jHHFTuKQ9wchz6gz3HtS194UXfYk19Vkws4sEGICR2YOftGeE7rKfg2oBs5DcHs7JvZU/7BP5sc73dyHP3Qpi2lbQIeU0ezYDXKR4xFfdjhuz03QvqIBopmGe5B3Fe1kDvxkPFbd6rNomjgOCkRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cRhxxbMO; arc=none smtp.client-ip=209.85.128.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-42147970772so3785475e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 23:13:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1717654400; x=1718259200; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oWm+nHGRVZmn5pKnEf1Ct3kDjGKfvwPGZdqr9mJxN1g=;
+        b=cRhxxbMO0WNWkjJ3PZ3n66jgbjK53ZAYcCNHn25EPQocqSmD72L5wNyWt91X+G8tUw
+         KS5d9oOD9K5Eb6fQO6ZEVN7DkKyA0nDlebVHgTPq+/QEy7ewb7b+/RF22NB3eIoigOWy
+         cO6IXQN22T491HUT6WF4dnZ1zJgvV+7kyxOWRgIgbZWmVwZS4AQicYGyenFssYN5Nxhx
+         dilGsMXObMTrZOOjHPXF8qT8oxVLmw137hBhELmWAuYj9qUGeFLi7UBhidqWYq/ig8q9
+         uDigG39+Kp3N3qYJz32t4TRcyqXpqgyG/1SIxL8AjHGZEaQC/HJEGX5AXubSFOS30JwE
+         Yxdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717654400; x=1718259200;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oWm+nHGRVZmn5pKnEf1Ct3kDjGKfvwPGZdqr9mJxN1g=;
+        b=UPJXtns6HGD2a1yQOyWO4m8Qn06xznxldn/PN5RHfxBMAYD+reka1xj864kQbWIj4c
+         /JS5hlENQz9f6lafIli/qobteWV+G816lblKe88Z6fS41rybb80ObqiSY3coj2Rr7d2W
+         JiUS+zfVxz8+c2WlK0KrxiQ3ooZAz4nJDkWMyg8BAjh+LYaV9jEBNANmtrY6f8EW5aao
+         IXspR8T6CnX5QJGiqELehl0x440HWlS9DguN2IIEaRc2H32/F+HZZ5/za7mnluLl8v4X
+         5pAwHjHzRHUtzmacR2pdunHwXUjZLcUy0YXMUQOVs6ITbTe+YS4BH/U+1qCgs1qkkBEF
+         l9WA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9WcEGgmSqzlNmYHa7L6j8oBlxrUwezhxQm10SSNYvsbss1xlhKd/Cxni/KtjGcoxJMy3ngJzyIXtRPJFL9iwibSxfxud6FkVvruwa
+X-Gm-Message-State: AOJu0YwcdYczxnWa3nd6mqPOYlIgjyAwtbVRAg7AskLnhF53SN5vFoQn
+	I51UyoaAwyw0xNnjd8EIceirhYPMBQzcSiyGKB502pGmorq9CldlE/Q/U5GvAg==
+X-Google-Smtp-Source: AGHT+IEdYO6AfXamDYAKvZ4Ohq1sOCgsXjLiUQvXLMa15nBjHTkZ3AhSkmWVtColqKowDCX+kK1Bwg==
+X-Received: by 2002:a05:600c:3152:b0:420:1f0f:fe19 with SMTP id 5b1f17b1804b1-421562dd344mr35474245e9.13.1717654399816;
+        Wed, 05 Jun 2024 23:13:19 -0700 (PDT)
+Received: from [172.31.7.231] ([62.28.210.62])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c19e572sm9924525e9.10.2024.06.05.23.13.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 23:13:19 -0700 (PDT)
+Message-ID: <eaa90c1a-ae96-4506-90dd-146ce85d311c@suse.com>
+Date: Thu, 6 Jun 2024 08:13:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH V3 7/8] clk: qcom: Add GPUCC driver support for SM4450
-To: Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>
-References: <20240528114254.3147988-1-quic_ajipan@quicinc.com>
- <20240528114254.3147988-8-quic_ajipan@quicinc.com>
- <ssnyujhgz64mbxawb43okjkdidd3tbxwjob36ikgbogy64xuqv@ckvir5vfqo63>
- <63d35ddacc113598f1822486b882552a.sboyd@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: x86: WARNING: at mm/memblock.c:1339 memblock_set_node - Usage of
+ MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead
+To: paulmck@kernel.org
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
+ open list <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+ lkft-triage@lists.linaro.org, Andrew Morton <akpm@linux-foundation.org>,
+ Mike Rapoport <rppt@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>,
+ Arnd Bergmann <arnd@arndb.de>
+References: <CA+G9fYsGFerOtoxwpKLOYcRtyJkmgjdP=qg4Y5iP5q-4Lt17Lg@mail.gmail.com>
+ <315d6873-d618-4126-b67a-de62502d7ee2@paulmck-laptop>
+ <7d55b65e-331a-4ce2-8f72-d3c5c9e6eae0@suse.com>
+ <e220910c-da6e-40ab-895f-87fd43c1de3f@paulmck-laptop>
 Content-Language: en-US
-From: Ajit Pandey <quic_ajipan@quicinc.com>
-In-Reply-To: <63d35ddacc113598f1822486b882552a.sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Jan Beulich <jbeulich@suse.com>
+In-Reply-To: <e220910c-da6e-40ab-895f-87fd43c1de3f@paulmck-laptop>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: oz3MYEvDsO1nCe3XwPLEHzl9WDMbYrKr
-X-Proofpoint-GUID: oz3MYEvDsO1nCe3XwPLEHzl9WDMbYrKr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-06_01,2024-06-06_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
- mlxscore=0 adultscore=0 bulkscore=0 phishscore=0 priorityscore=1501
- lowpriorityscore=0 mlxlogscore=958 impostorscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406060044
 
-
-
-On 5/30/2024 1:18 AM, Stephen Boyd wrote:
-> Quoting Dmitry Baryshkov (2024-05-28 06:23:27)
->> On Tue, May 28, 2024 at 05:12:53PM +0530, Ajit Pandey wrote:
->>> Add Graphics Clock Controller (GPUCC) support for SM4450 platform.
+On 05.06.2024 22:48, Paul E. McKenney wrote:
+> On Wed, Jun 05, 2024 at 09:46:37PM +0200, Jan Beulich wrote:
+>> On 05.06.2024 21:07, Paul E. McKenney wrote:
+>>> On Mon, Jun 03, 2024 at 07:19:21PM +0530, Naresh Kamboju wrote:
+>>>> The following kernel warnings are noticed on x86 devices while booting
+>>>> the Linux next-20240603 tag and looks like it is expected to warn users to
+>>>> use NUMA_NO_NODE instead.
+>>>>
+>>>> Usage of MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead
+>>>>
+>>>> The following config is enabled
+>>>> CONFIG_NUMA=y
 >>>
->>> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
->>> ---
->>>   drivers/clk/qcom/Kconfig        |   9 +
->>>   drivers/clk/qcom/Makefile       |   1 +
->>>   drivers/clk/qcom/gpucc-sm4450.c | 805 ++++++++++++++++++++++++++++++++
->>>   3 files changed, 815 insertions(+)
->>>   create mode 100644 drivers/clk/qcom/gpucc-sm4450.c
+>>> I am seeing this as well.  Is the following commit premature?
+>>>
+>>> e0eec24e2e19 ("memblock: make memblock_set_node() also warn about use of MAX_NUMNODES")
+>>>
+>>> Maybe old ACPI tables and device trees need to catch up?
+>>>
+>>> Left to myself, I would simply remove the WARN_ON_ONCE() from the above
+>>> commit, but I would guess that there is a better way.
 >>
->> [trimmed]
->>
->>> +
->>> +     /* Keep some clocks always enabled */
->>> +     qcom_branch_set_clk_en(regmap, 0x93a4); /* GPU_CC_CB_CLK */
->>> +     qcom_branch_set_clk_en(regmap, 0x9004); /* GPU_CC_CXO_AON_CLK */
->>> +     qcom_branch_set_clk_en(regmap, 0x900c); /* GPU_CC_DEMET_CLK */
->>
->> I pinged Stephen regarding these clocks. LGTM otherwise.
->>
+>> Well, the warning is issued precisely to make clear that call
+>> sites need to change. A patch to do so for the two instances
+>> on x86 that I'm aware of is already pending maintainer approval.
 > 
-> Looks OK to me. I assume that these clks don't get turned off when the
-> GPU power domain is turned off. If that's the case then presumably we
-> would need to turn these on and off during power transitions.
+> Could you please point me at that patch so that I can stop repeatedly
+> reproducing those two particular issues?
 
-Yes, these clocks will not get turned off with GPU power domain 
-transitions hence explicit on and off isn't required.
+https://lore.kernel.org/lkml/abadb736-a239-49e4-ab42-ace7acdd4278@suse.com/
 
--- 
-Thanks, and Regards
-Ajit
+Jan
+
 
