@@ -1,113 +1,78 @@
-Return-Path: <linux-kernel+bounces-205096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CC2F8FF702
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:47:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F076F8FF706
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02D6E287567
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:47:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 899DEB20FA6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341E871B3A;
-	Thu,  6 Jun 2024 21:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1541613DBB3;
+	Thu,  6 Jun 2024 21:47:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="A/0f0sJm"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9PPRtnf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9382F2B;
-	Thu,  6 Jun 2024 21:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E5113AA31;
+	Thu,  6 Jun 2024 21:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717710442; cv=none; b=nphNbn+wWKNmRgyce9GkQbXZCMOZXwbNiJpnUsbOlgOZAPDcgN1m9mSjmlTvxEbBzRL9n7x+iPXDEr1knD+aS7bXnUNUxYCop8jbuGt1zy0jfBzuon965Zqbz7cXnfsLT/rAdRgclGRBSdA8W8TVlrX4vd6jdZNdHtbOnrgWAEo=
+	t=1717710457; cv=none; b=LIdoTiwVlVoauNpDaUAcv0+rLYxJrhuKz2gy4FLCiPm5IHpJmrowbzRjDV5e7g701/3k91qCMl91vKV93+MOJwtJsu4s7uctLP+qPKhJAhTqqa3IKlNBtZsP9kKebIqfXfMLyxL86A2Nflx08verfTzsX/FOPqoCFcfRPpZRZGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717710442; c=relaxed/simple;
-	bh=/iPN4m0a4yNtyGO2fZsVP3jEdCk2fprkDN6p48JCvKs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=r3xWDb31kB0BnrueznvF8NJppthuh5j7mrlYhJ8u9teJFQtMPOyG+L0n5EBNNMW+ocGdVdMQoEArARypeX/TSoHssoO/NNe3FU8/zaA1wFcJexiaY3XmsSMZfZ8OeDujwzxpErJbNm3Rcvshu9q1ISxIje3abU+6QluSt44J4lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=A/0f0sJm; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1717710434;
-	bh=yQKunjdgLYpgpq4ERfEQ/ViJUETeK4Sm4IU0aIcVhGE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=A/0f0sJmBt7NCudA0XzagPS1HPPHb1LJIFmVTPZDJUt7t/8kp9lM09+RZjWOJJwLK
-	 xOgOwQuVPLECJjTUrJzVADPfqkgoFM8f4BcgQUNGss4gTT31GGMw7K1On8GJeEad4e
-	 xsTpoTqaQjUGI66MNvrcFPl4kXsvc4U9ZrEW/JWcZmaK6Bpk4DCmNBxLR4sKroFu7n
-	 aclvDdv+hRpokGikTAldAoP2Xsgu78KrbfNQT4rQR7baWoLHC11HvQTw0ouAiSKdaj
-	 Cw2tUDuhm0N5SC33bZq8+KKEpoHT0Ysr6vqiOq263E6BXgQ3ooDTQiIf9uHeKqL24x
-	 TRJiACXSZ+D7w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VwHwx6JH6z4wcC;
-	Fri,  7 Jun 2024 07:47:13 +1000 (AEST)
-Date: Fri, 7 Jun 2024 07:47:11 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires
- <benjamin.tissoires@redhat.com>
-Cc: Andrew Ballance <andrewjballance@gmail.com>, Benjamin Tissoires
- <bentiss@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the hid tree
-Message-ID: <20240607074711.4390fbe4@canb.auug.org.au>
+	s=arc-20240116; t=1717710457; c=relaxed/simple;
+	bh=4zIzx33sDkv7R/xxA8g1AIqLRslHINgKj7vaNorjoiI=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ssl+DfRzOqUhmXyX3csyt6tgl0yI/ijd5qOhtQGdmWue6SGlkhIIxja0GCUV+HnmAyqrT7pJtw1WRFUMkkC56KLSMg8sMU6NF0d7muN8eKbm2z+UUPDWr4g0l9/MjLsM+AFYnMOvWeCSzoLi+pl04Hk/oYzrXsJhcbp4yGOia8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9PPRtnf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D9E0EC32786;
+	Thu,  6 Jun 2024 21:47:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717710456;
+	bh=4zIzx33sDkv7R/xxA8g1AIqLRslHINgKj7vaNorjoiI=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=b9PPRtnf8ECEr+x/ibCIBqd01CbBTu6QtMbXUhXoUpwniZ1eIWfzy2wQu8bpWd2Pt
+	 /WOvmCFcJNkYw4sUjTZ1zw2ZgiQiqb6JlfORG7CoE9aO3pPjM4Cz2DHwYohH3RokeG
+	 eyqKfYXfXkcJtF6J3GWLRogdfkJN7gVLQ4ZXdcN3ZRHDR56HyZjfI/0j/Rv/b1PrT7
+	 vBSDVFoqgHUMRMgCzfEvfuwF6YKGd2nUfh8jhFUtE3rcS1gq0w0zxmCEil7RAYdpoT
+	 B3L5ZfRRXmJJyzMhdbVo2ViWHSyvaKFSi78ZHLbUt7ZSchCHUQ2Ow2Nby5kcMu3XbY
+	 reex8DCxWV4kQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CA846D2039E;
+	Thu,  6 Jun 2024 21:47:36 +0000 (UTC)
+Subject: Re: [GIT PULL] SCSI fixes for 6.10-rc2
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <f91727d00e7d2c0084c71022bb0884442fd1e13e.camel@HansenPartnership.com>
+References: <f91727d00e7d2c0084c71022bb0884442fd1e13e.camel@HansenPartnership.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <f91727d00e7d2c0084c71022bb0884442fd1e13e.camel@HansenPartnership.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+X-PR-Tracked-Commit-Id: d53b681ce9ca7db5ef4ecb8d2cf465ae4a031264
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 8a92980606e3585d72d510a03b59906e96755b8a
+Message-Id: <171771045682.14151.12228229203179950219.pr-tracker-bot@kernel.org>
+Date: Thu, 06 Jun 2024 21:47:36 +0000
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/0lB1VbUxYf8kXxngRTZOhZx";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/0lB1VbUxYf8kXxngRTZOhZx
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The pull request you sent on Thu, 06 Jun 2024 15:03:50 -0400:
 
-Hi all,
+> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-In commit
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/8a92980606e3585d72d510a03b59906e96755b8a
 
-  cfacaaf33cd7 ("hid: asus: asus_report_fixup: fix potential read out of bo=
-unds")
+Thank you!
 
-Fixes tag
-
-  Fixes: 59d2f5b73921 ("HID: asus: fix more n-key report descriptors if n-k=
-ey quirked")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Maybe you meant
-
-Fixes: 59d2f5b7392e ("HID: asus: fix more n-key report descriptors if n-key=
- quirked")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/0lB1VbUxYf8kXxngRTZOhZx
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZiLmAACgkQAVBC80lX
-0Gz8yAf/S8QjsnCuBKsoSlI3HHp2pqtIAb1biAfEiy6HjVQn+kg6tKpD22aCkOOz
-nK+zcJW0EGhbQvOb5hwNQvmOT2+mOwuLTPmZyR376674cK9I0hl3bpvc0OVaJ+rV
-ukdsFa6Qu5UYQ+3YjyfB2Xouo6qeOgiRnOcYM5VPswbZgccfAR3kAW9V/LaV+y9z
-O/VAMGOJyctTv6JpfzrtsX9cB+KJvrcbuCHep8mXq4vdcOlVnU9FZRCPJMu6X9pu
-4jmKD36NNWegKhOdetx8sSWPtbBNRmCn0WYNSxliPQsqbAhVzVxLiCCRs/CpEbju
-3j6HDGw5BEXnCONNqXcSIhL2U7zR0w==
-=A6L0
------END PGP SIGNATURE-----
-
---Sig_/0lB1VbUxYf8kXxngRTZOhZx--
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
