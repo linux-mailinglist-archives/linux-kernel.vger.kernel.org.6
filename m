@@ -1,179 +1,216 @@
-Return-Path: <linux-kernel+bounces-204094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F3B88FE40D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:17:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E97318FE40F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:17:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCAA71F258BF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:17:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F5861F24ED5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3989194AF1;
-	Thu,  6 Jun 2024 10:17:30 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B87194AF2;
+	Thu,  6 Jun 2024 10:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uiEWhhEz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01D513C909;
-	Thu,  6 Jun 2024 10:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B873158848;
+	Thu,  6 Jun 2024 10:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717669050; cv=none; b=I8lQLt8Y3wcBz6OnSO7N0xp/HwSLmfRlXxViClKmXTL/eIofKGd3teffEhlQQTlk/7V7qHxVRcHY3wXH4VIR8hBNqdi95M7ZoQ7nf7Illdtaln4m8Cw/VaPfDno/hLF+D6bEqmwj4Dn0Tewm+DBRtuQeID/my7lBvNXd+8ZNduU=
+	t=1717669060; cv=none; b=FV3/lPzwqTvHWWXqqSmh51ImAbajYrnBfPn++1ZgUweBk0kuAlf38cknp7PRPQSxHScZ88tEOLgaSW/kNSHDysIudbsTd/pEY10X5n185VXmr4wCvqqSqyDkmvACO5WapIRLzshiAtuenHqFkXbiJqhr70gu5BB/1INEhXOhgQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717669050; c=relaxed/simple;
-	bh=atCDVQzHMtc7/hxct2RHiTzxnZqGbGZOcNVITLT0fEc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ScJntVDElqFk9ONxxq3CFo9vsNg0KjicPc4n32zlu5VQup85a7jXqIOlpFERXPItvN5Iz320JOswVU+KGEkd/6IjmYfwFACaqm5fHa0xGcZxghuEbEKmAlKx2+TZtJNAZ42Of+fAc0g2lJpEmH6ye2b5ZIPO7nJQvo4ekrpItXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875b65.versanet.de ([83.135.91.101] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sFAAx-0007vD-35; Thu, 06 Jun 2024 12:16:55 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, kernel@collabora.com,
- Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
- Algea Cao <algea.cao@rock-chips.com>
-Subject:
- Re: [PATCH 13/14] drm/bridge: synopsys: Add DW HDMI QP TX controller driver
-Date: Thu, 06 Jun 2024 12:16:53 +0200
-Message-ID: <2491902.uoxibFcf9D@diego>
-In-Reply-To: <25ba8753-b7e9-4f6f-a9ad-c5266540939a@collabora.com>
-References:
- <20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com>
- <2554679.TLnPLrj5Ze@diego>
- <25ba8753-b7e9-4f6f-a9ad-c5266540939a@collabora.com>
+	s=arc-20240116; t=1717669060; c=relaxed/simple;
+	bh=W9kbQ3pOCWummTxiokP7SZcsLeHBrYY6Qzq/MV72KTU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ll5e/OPt2kAbbBDKs6l2nqrJiWbc0ASdP7a8Eki37HA2vrxdkiL+Fm0/7lfXRkeePgYbRGY+r3lzZX6OYiaKOE1aqjwzufpgipqPLZzP7pybbmhI/bpvQnW7+ZtbrWhfb5V0xEyE1Jaiczai9LoOXeGK1YzjYMviJEgIUmLhsEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uiEWhhEz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D96D3C32782;
+	Thu,  6 Jun 2024 10:17:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717669059;
+	bh=W9kbQ3pOCWummTxiokP7SZcsLeHBrYY6Qzq/MV72KTU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uiEWhhEzoZzCIGqYIZyzZELj/haUQGSJYnc/PlYcDgqUSC+04XGE+M+Tzy36Jqpso
+	 I4B8nKfrhcD+XTJPPvcyuINb4gGoyzJipMtkwRp7X0fqGZw7thxFDzT+qaAd6DOc9T
+	 QBvq9FMfIsHUTsjV38OTk1T8r1ewNiaQYBW/7WFHcCJfVMrArKP4FF2eUjYCCgPsA1
+	 6Tjjgrm9HSl+IZVOcW3vsUHWvSXPOXJA894X2JupawEqiGdJ2N8+LVKJqegLeNFow3
+	 7R9xEkjRyNPAxeI84GiTRczFdUBT8YJCJnuGxyakUMHsf4RiuMWtgfuQ+vATZ5VKwV
+	 C39dwBzegKSSQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sFABd-001G9O-CB;
+	Thu, 06 Jun 2024 11:17:37 +0100
+Date: Thu, 06 Jun 2024 11:17:36 +0100
+Message-ID: <867cf2l6in.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu
+ <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Subject: Re: [PATCH v3 12/14] arm64: realm: Support nonsecure ITS emulation shared
+In-Reply-To: <4c363476-e5b5-42ff-9f30-a02a92b6751b@arm.com>
+References: <20240605093006.145492-1-steven.price@arm.com>
+	<20240605093006.145492-13-steven.price@arm.com>
+	<86a5jzld9g.wl-maz@kernel.org>
+	<4c363476-e5b5-42ff-9f30-a02a92b6751b@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: steven.price@arm.com, kvm@vger.kernel.org, kvmarm@lists.linux.dev, catalin.marinas@arm.com, will@kernel.org, james.morse@arm.com, oliver.upton@linux.dev, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, joey.gouly@arm.com, alexandru.elisei@arm.com, christoffer.dall@arm.com, tabba@google.com, linux-coco@lists.linux.dev, gankulkarni@os.amperecomputing.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Am Donnerstag, 6. Juni 2024, 11:53:23 CEST schrieb Cristian Ciocaltea:
-> On 6/5/24 5:48 PM, Heiko St=FCbner wrote:
-> > Am Samstag, 1. Juni 2024, 15:12:35 CEST schrieb Cristian Ciocaltea:
-> >> The Synopsys DesignWare HDMI 2.1 Quad-Pixel (QP) TX controller supports
-> >> the following features, among others:
+On Wed, 05 Jun 2024 16:08:49 +0100,
+Steven Price <steven.price@arm.com> wrote:
+> 
+> Hi Marc,
+> 
+> On 05/06/2024 14:39, Marc Zyngier wrote:
+> > The subject line is... odd. I'd expect something like:
+> > 
+> > "irqchip/gic-v3-its: Share ITS tables with a non-trusted hypervisor"
+> > 
+> > because nothing here should be CCA specific.
+> 
+> Good point - that's a much better subject.
+> 
+> > On Wed, 05 Jun 2024 10:30:04 +0100,
+> > Steven Price <steven.price@arm.com> wrote:
 > >>
-> >> * Fixed Rate Link (FRL)
-> >> * 4K@120Hz and 8K@60Hz video modes
-> >> * Variable Refresh Rate (VRR) including Quick Media Switching (QMS), a=
-ka
-> >>   Cinema VRR
-> >> * Fast Vactive (FVA), aka Quick Frame Transport (QFT)
-> >> * SCDC I2C DDC access
-> >> * TMDS Scrambler enabling 2160p@60Hz with RGB/YCbCr4:4:4
-> >> * YCbCr4:2:0 enabling 2160p@60Hz at lower HDMI link speeds
-> >> * Multi-stream audio
-> >> * Enhanced Audio Return Channel (EARC)
-> >>
-> >> Add driver to enable basic support, i.e. RGB output up to 4K@60Hz,
-> >> without audio, CEC or any HDMI 2.1 specific features.
-> >>
-> >> Co-developed-by: Algea Cao <algea.cao@rock-chips.com>
-> >> Signed-off-by: Algea Cao <algea.cao@rock-chips.com>
-> >> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> >> ---
-> >>  drivers/gpu/drm/bridge/synopsys/Makefile     |   2 +-
-> >>  drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c | 787 ++++++++++++++++++=
-+++++++
-> >>  drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.h | 831 ++++++++++++++++++=
-+++++++++
-> >>  include/drm/bridge/dw_hdmi.h                 |   8 +
-> >>  4 files changed, 1627 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/bridge/synopsys/Makefile b/drivers/gpu/dr=
-m/bridge/synopsys/Makefile
-> >> index ce715562e9e5..8354e4879f70 100644
-> >> --- a/drivers/gpu/drm/bridge/synopsys/Makefile
-> >> +++ b/drivers/gpu/drm/bridge/synopsys/Makefile
-> >=20
-> >> +static int dw_hdmi_qp_i2c_read(struct dw_hdmi *hdmi,
-> >> +			       unsigned char *buf, unsigned int length)
-> >> +{
-> >> +	struct dw_hdmi_i2c *i2c =3D hdmi->i2c;
-> >> +	int stat;
-> >> +
-> >> +	if (!i2c->is_regaddr) {
-> >> +		dev_dbg(hdmi->dev, "set read register address to 0\n");
-> >> +		i2c->slave_reg =3D 0x00;
-> >> +		i2c->is_regaddr =3D true;
-> >> +	}
-> >> +
-> >> +	while (length--) {
-> >> +		reinit_completion(&i2c->cmp);
-> >> +
-> >> +		dw_hdmi_qp_mod(hdmi, i2c->slave_reg++ << 12, I2CM_ADDR,
-> >> +			       I2CM_INTERFACE_CONTROL0);
-> >> +
-> >> +		dw_hdmi_qp_mod(hdmi, I2CM_FM_READ, I2CM_WR_MASK,
-> >> +			       I2CM_INTERFACE_CONTROL0);
-> >=20
-> > Somehow the segment handling is present in the rest of the i2c code her=
-e, but
-> > not the actual handling for reads.
-> >=20
-> > The vendor-kernel does:
-> >=20
-> > -               dw_hdmi_qp_mod(hdmi, I2CM_FM_READ, I2CM_WR_MASK,
-> > -                              I2CM_INTERFACE_CONTROL0);
-> > +               if (i2c->is_segment)
-> > +                       dw_hdmi_qp_mod(hdmi, I2CM_EXT_READ, I2CM_WR_MAS=
-K,
-> > +                                      I2CM_INTERFACE_CONTROL0);
-> > +               else
-> > +                       dw_hdmi_qp_mod(hdmi, I2CM_FM_READ, I2CM_WR_MASK,
-> > +                                      I2CM_INTERFACE_CONTROL0);
->=20
-> Hmm, for some reason this is not present in the stable-5.10-rock5 branch=
-=20
-> I've been using as an implementation reference:
->=20
-> https://github.com/radxa/kernel/blob/stable-5.10-rock5/drivers/gpu/drm/br=
-idge/synopsys/dw-hdmi-qp.c#L760
->=20
-> Is there an updated fork?
+> >> Within a realm guest the ITS is emulated by the host. This means the
+> >> allocations must have been made available to the host by a call to
+> >> set_memory_decrypted(). Introduce an allocation function which performs
+> >> this extra call.
+> > 
+> > This doesn't mention that this patch radically changes the allocation
+> > of some tables.
+> 
+> I guess that depends on your definition of radical, see below.
 
-I think the radxa code-base is quite old in terms of sdk-version it's based=
- on.
-Grabbing a 6.1 branch from Radxa shows it in:
-https://github.com/radxa/kernel/blob/linux-6.1-stan-rkr1/drivers/gpu/drm/br=
-idge/synopsys/dw-hdmi-qp.c#L995
+It's election time, I'm all about making bold statements!
 
-> > Without this change, connecting to a DVI display does not work, and
-> > reading the EDID ends in the "i2c read error" below.
-> >=20
-> > Adding the segment handling as above makes the DVI connection
-> > work (as it does in the vendor-kernel).
-> >=20
-> > So it would be nice if you could maybe incorporate this in the next ver=
-sion?
->=20
-> Sure, thanks for pointing this out!
->=20
-> Cristian
->=20
+[...]
 
+> >> @@ -3334,8 +3365,9 @@ static bool its_alloc_table_entry(struct its_node *its,
+> >>  
+> >>  	/* Allocate memory for 2nd level table */
+> >>  	if (!table[idx]) {
+> >> -		page = alloc_pages_node(its->numa_node, GFP_KERNEL | __GFP_ZERO,
+> >> -					get_order(baser->psz));
+> >> +		page = its_alloc_pages_node(its->numa_node,
+> >> +					    GFP_KERNEL | __GFP_ZERO,
+> >> +					    get_order(baser->psz));
+> >>  		if (!page)
+> >>  			return false;
+> >>  
+> >> @@ -3418,7 +3450,9 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+> >>  	unsigned long *lpi_map = NULL;
+> >>  	unsigned long flags;
+> >>  	u16 *col_map = NULL;
+> >> +	struct page *page;
+> >>  	void *itt;
+> >> +	int itt_order;
+> >>  	int lpi_base;
+> >>  	int nr_lpis;
+> >>  	int nr_ites;
+> >> @@ -3430,7 +3464,6 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+> >>  	if (WARN_ON(!is_power_of_2(nvecs)))
+> >>  		nvecs = roundup_pow_of_two(nvecs);
+> >>  
+> >> -	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+> >>  	/*
+> >>  	 * Even if the device wants a single LPI, the ITT must be
+> >>  	 * sized as a power of two (and you need at least one bit...).
+> >> @@ -3438,7 +3471,16 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+> >>  	nr_ites = max(2, nvecs);
+> >>  	sz = nr_ites * (FIELD_GET(GITS_TYPER_ITT_ENTRY_SIZE, its->typer) + 1);
+> >>  	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
+> >> -	itt = kzalloc_node(sz, GFP_KERNEL, its->numa_node);
+> >> +	itt_order = get_order(sz);
+> >> +	page = its_alloc_pages_node(its->numa_node,
+> >> +				    GFP_KERNEL | __GFP_ZERO,
+> >> +				    itt_order);
+> > 
+> > So we go from an allocation that was so far measured in *bytes* to
+> > something that is now at least a page. Per device. This seems a bit
+> > excessive to me, specially when it isn't conditioned on anything and
+> > is now imposed on all platforms, including the non-CCA systems (which
+> > are exactly 100% of the machines).
+> 
+> Catalin asked about this in v2:
+> https://lore.kernel.org/lkml/c329ae18-2b61-4851-8d6a-9e691a2007c8@arm.com/
+> 
+> To be honest, I don't have a great handle on how much memory is being
+> wasted here. Within the realm guest I was testing this is rounding up an
+> otherwise 511 byte allocation to a 4k page, and there are 3 of them.
+> Which seems reasonable from a realm guest perspective.
 
+And not that reasonable on a smaller system, such as my own router VM
+that has a whole lot of devices and very little memory. Not to mention
+that while CCA is stuck with 4k pages (duh!), the world is moving
+towards larger pages, meaning that this is wasting even more memory.
 
+> 
+> I can see two options to improve here:
+> 
+> 1. Add a !is_realm_world() check and return to the previous behaviour
+> when not running in a realm. It's ugly, and doesn't deal with any other
+> potential future memory encryption. cc_platform_has(CC_ATTR_MEM_ENCRYPT)
+> might be preferable? But this means no impact to non-realm guests.
 
+No, this is way too ugly, and doesn't help with things like pKVM.
+
+> 
+> 2. Use a special (global) memory allocator that does the
+> set_memory_decrypted() dance on the pages that it allocates but allows
+> packing the allocations. I'm not aware of an existing kernel API for
+> this, so it's potentially quite a bit of code. The benefit is that it
+> reduces memory consumption in a realm guest, although fragmentation
+> still means we're likely to see a (small) growth.
+> 
+> Any thoughts on what you think would be best?
+
+I would expect that something similar to kmem_cache could be of help,
+only with the ability to deal with variable object sizes (in this
+case: minimum of 256 bytes, in increments defined by the
+implementation, and with a 256 byte alignment).
+
+I don't think the ITS is particularly special here, and we should come
+up with something that is generic enough to support sharing of
+non-page-sized objects.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
