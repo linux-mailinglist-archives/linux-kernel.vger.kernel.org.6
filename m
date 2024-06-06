@@ -1,94 +1,105 @@
-Return-Path: <linux-kernel+bounces-203580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 886988FDD68
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:23:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AED998FDD6A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12E19B24AEA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:23:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B308B229DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A9371B3A;
-	Thu,  6 Jun 2024 03:20:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A111E51F;
+	Thu,  6 Jun 2024 03:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IVB2GNeT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gesX6l2p"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CE56F06E;
-	Thu,  6 Jun 2024 03:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD029D502;
+	Thu,  6 Jun 2024 03:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717644050; cv=none; b=DFz0UVRZWf6CF8BLj1i6wzE4NqDGjuPdlIvnaI8lnTNbAbRGnEJ/mxpE9YEI5t+ypSLsSIYIhhUBU1LJSMJT1CGAUGwNk7nUQrymJFQDGmO/KfUd2m9pnMol8Ppak4M5ibEV0t764/cgOHR2RJYg8G0ltcxgvfZ3HU30G3YFcJQ=
+	t=1717644238; cv=none; b=f/N01bvcMKKPMvbMGJ+IozLmKGDVtSFbGm1JlOuvavg/2qVHIYq/GrKj/vVatyK1rNdJ5k1nIjeRLE4c5pGBKrAGQdlqCwPdw9lGgVnGJNi1inN660gZ/CUTNGV1jLKdOBn6WHuwh/Iz25FetoET6X5DrcHQr3YpUKB82rXtQs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717644050; c=relaxed/simple;
-	bh=lTwROkn0eQ4IiIEKxNxqBGGJZJXeBxIuDT8xYbXd/dM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A9Qn3BR0AXhLS4Vt8VuK4zS7lYXBq6zH93Ccntfh1UYHDLdrIoUQwYWqu+Rtn0JfgKLhUGyb7MSOSi7AAMFyOVuKQeHorxzDrGh3zI9BIpzwlqXH6gqD5uAo5KTj1WI3ZRiD6an3tK5yRsMsK7MHVwanruuggkqR+SV21gbVCus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IVB2GNeT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E4C6C4AF08;
-	Thu,  6 Jun 2024 03:20:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717644050;
-	bh=lTwROkn0eQ4IiIEKxNxqBGGJZJXeBxIuDT8xYbXd/dM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IVB2GNeT4pHWYWo+kR8d5xcANGSlLECthTSHepjWxxiErUBJCg1kH6R6F82UB6xXS
-	 4p7+0T5mcVb0/Pf1CsGQEwZyRY3b2zKuMAeQi5F4rs1WQrv8HzMag2wlf7ilQRHAyL
-	 K+j4sGOL5EJKcmJrV0Br+r6oJQhne/9igPU8JiQZsUCK9X6hpUK20e/Tbo+4ZYRLQv
-	 LDElbVhhHmYSIFuFyaV1iovzGtXcGmyoGhTLEKWTsUkwVWELtNIJn9NVsbdiYT92pU
-	 ak/izeCUjh1xK8lgOuy5aC3pGqT/wXSxDEiH/5GQlJnVDk/QciQA9hCoyQFjdS9jzU
-	 Ql+YkXH+sZ4dg==
-From: Bjorn Andersson <andersson@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	Raymond Hackley <raymondhackley@protonmail.com>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Siddharth Manthan <siddharth.manthan@gmail.com>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	Nikita Travkin <nikita@trvn.ru>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH 0/3] arm64: dts: qcom: msm8916-samsung-fortuna: Add msm8916-samsung-fortuna/rossa: Add S3FWRN5 NFC and RT5033 PMIC/charger
-Date: Wed,  5 Jun 2024 22:20:36 -0500
-Message-ID: <171764403337.730206.729155025878631182.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240601115321.25314-1-raymondhackley@protonmail.com>
-References: <20240601115321.25314-1-raymondhackley@protonmail.com>
+	s=arc-20240116; t=1717644238; c=relaxed/simple;
+	bh=ZgmxUUkZDpNMQ5ixeBv7rSrczU1eYTFGRLNIh0XhcnU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AEa06HRR2DLM8H13tp7XcQ7C6TUxlnwcn8jOEQdWjy0oCRVcuDJXA35jWc8a7K7cYmSY0pfhfzVfuUgi/IaJHLR3L7cb04r5sG2K7zNsYhH8CJhdb5B2WU9mlaXC8bO3nkYcTloY6EBUO0ZBTuUvMZCILbwWqP2VX2N5mYM06vQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=gesX6l2p; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1717644234;
+	bh=lMy+0/atMC48fOKFAywkdgbZ96HlOLLijTmghtRCqrM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=gesX6l2pthjuCAdxhEGOX+jMWY/cfPVhYkgWuIiMgQpP+hQi3iwKqTj4C9xGNIJYV
+	 TYobQufYQ4P3Ohl5fZpmiCxFZMHVrMdbFHA6ejR7RgMAAIe8oplpyeNKqVGF2oQDOV
+	 sLSI+FNOdgQuL681ktxpeXgbOVRT0mTmYJfmhWy7z0p/ain4O1+XOcsWwQtdwwRnAp
+	 upp6HZ1vhRDN+DsKHuARwwD96YoE1ryh1JNzES7FiksSLDVlRQQTGbBm7ohltOC2gB
+	 kxBIE/rN3nx7ct61V1Islenmr9RvvGKHoWtB0r7neE5NFBkpcuv5a+SwKDuCsVTwVR
+	 yuVjsDHZv5g2w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VvqRt0mk4z4wc4;
+	Thu,  6 Jun 2024 13:23:54 +1000 (AEST)
+Date: Thu, 6 Jun 2024 13:23:53 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the mm tree
+Message-ID: <20240606132353.0db5479d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/P2FWn0QyvTKehDY1DgWLLeZ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/P2FWn0QyvTKehDY1DgWLLeZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 01 Jun 2024 11:53:38 +0000, Raymond Hackley wrote:
-> Some variants of Samsung Galaxy Core Prime LTE / Grand Prime LTE have
-> a Samsung S3FWRN5 NFC chip that works quite well with the s3fwrn5 driver
-> in the Linux NFC subsystem.
-> 
-> All of Samsung Galaxy Core Prime LTE/ Grand Prime have Richtek RT5033 PMIC
-> and charger.
-> 
-> [...]
+Hi all,
 
-Applied, thanks!
+After merging the mm tree, today's linux-next build (htmldocs) produced
+this warning:
 
-[1/3] arm64: dts: qcom: msm8916-samsung-gprimeltecan: Add NFC
-      commit: 62ae64ceb9a55333f3b259fef8acd0bf1598638a
-[2/3] arm64: dts: qcom: msm8916-samsung-fortuna/rossa: Add S3FWRN5 NFC
-      commit: 834cfba67835ff2440ef7402e1448a40d3c61250
-[3/3] arm64: dts: qcom: msm8916-samsung-fortuna/rossa: Add PMIC and charger
-      commit: ca4afdfdbbbd64cc08eee834bee97596bb649413
+Documentation/admin-guide/mm/transhuge.rst:342: ERROR: Unexpected indentati=
+on.
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Introduced by commit
+
+  716119bee914 ("mm: shmem: add multi-size THP sysfs interface for anonymou=
+s shmem")
+
+from the mm-unstable branch of the mm tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/P2FWn0QyvTKehDY1DgWLLeZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZhK8kACgkQAVBC80lX
+0GzzfAgAnmwoz+cQyZ5BL9oAMe/1uuWRoo873kAQ+sUzdEmOT9a//uEDhFqgpvxG
+hvcUP3hL2SNl+63nb94Qpzd7d3db0EHBXxxYsySf800RWuXaR/mmhMvAxBi2hR+u
+ZeSJD13YTZVvPAWPaTwzBKQSgk21wZUItg5gFcTCd7/9rxNRSHWEVkYeDcvmmKbi
+Uug5l2dnxaLXUARCOIlfVA3mgBvi5DQnQ9ZZ/kvHTGB6PRCuFZUK6tMHgJorRY+v
+Lgmg81ev2kKyhaXYSl9tZa05JiKLYs/9S+HtAXcI2z4PnXXgDbRa0Y8+rcI9gP5E
+lfXO7B0CENE4zouLHeqIejSml0oxVg==
+=LZTz
+-----END PGP SIGNATURE-----
+
+--Sig_/P2FWn0QyvTKehDY1DgWLLeZ--
 
