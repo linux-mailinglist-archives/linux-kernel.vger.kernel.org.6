@@ -1,232 +1,112 @@
-Return-Path: <linux-kernel+bounces-204771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D31378FF375
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:15:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 738008FF364
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:11:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C08B9B26088
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:08:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1199F1F23018
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1F719884A;
-	Thu,  6 Jun 2024 17:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF786198E8E;
+	Thu,  6 Jun 2024 17:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mt+E5LxF"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IxIY+/zM";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nK5SsT/R"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0823224D1
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 17:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9C8198A31;
+	Thu,  6 Jun 2024 17:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717693732; cv=none; b=rtuC1yBTxKup07eLXXudx0CY21XL3Aw7WNpfAmGfG2RI1N7hj/wHEiXEuqCw7SSBHAAiXzqmVoPm1BbIMrsg+Kdy5sWp5w4Xe/yfLKLilqoHmbackIqNDfl/DyL+IPTFjbyJNP234zrhgtQSBEFj0bRURt8A2t4VxYehJhA9894=
+	t=1717693896; cv=none; b=kLb8X//pKmIstN1OdL891rnch7VNCuMlnb84Iaom3xOhO668EEuzZQA4vB1IwZcjhqrbR4pO2zjRozud58vd6oglGy5oaq35yrNWobUh2D2gP2RANouY1evnLMetYfcOtMwGxCaX3HbMI8RBm6ncT2lcZxNGx5UzSIbpXHREobY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717693732; c=relaxed/simple;
-	bh=jqdEnsUh5f5u/kzCtZ3UfwvJy3TI4NEJlzUYx8ZL95o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mH/oKe0wcYbIxiO8hcEXcE3D8/dq5/PDwu7ble9c2gyCtR4LJKH9ydzxP6GGPM5AHXbM2IcuHws5nLWBtRPx4Y92yCyIqilKtE7XXQkPWY7obp4jX1L0X8BAO/tFeOM0JyRp0/LZOeFqQk1H4AMlhzFX8O8z245oSRB+JGP3e9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mt+E5LxF; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4215b888eabso2945e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 10:08:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717693729; x=1718298529; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0/LLxJUqKq1bvt/TMLmBZz7OUOIkMeU81CHHfdNKgg0=;
-        b=mt+E5LxFWY1QzI4ndrmjlatObt+T8LdhaF9nsY731GeyYWsJZNPlkjgpMuWbfUPkAD
-         z6GWHmQR5AjKOrcLkIQN3Q6/IYgrKO1lHvex/qjSUk876LhkzhOKVnnCKb5C3RWG7dCw
-         qByKkvJ+cpJav7LuRK8XACyNHxawVfnqvEoXgCRJu3FsUeYmIPo1u95jX2Y7OUCYAQsk
-         1REEUjYEeIOsqUssR0Ay5alu1imuJhGwudm3bv9ZzjbVWg8EYMstli1HR4NPcC3yEZVp
-         7g8eOgQq4dztM2T5Gu/GV0d6kI9hhtVTLEOnKTlcuu2lWSm8nW5nN4oJXl95owNdqBFd
-         +kmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717693729; x=1718298529;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0/LLxJUqKq1bvt/TMLmBZz7OUOIkMeU81CHHfdNKgg0=;
-        b=I4JiHM3Qd25n/hY3sXcDkO0s9pasOq8t1iRO1VxZYrPMbIc4ktAfqX0zIlf10hZTHu
-         Bw2LsKWA0lyw9PVi4dweGvSJGQbR10CNzLFcjx6G1yEShd1vdVKyMuOpFqREF35zfk8e
-         mc9zzbohqrGUhKt/gfHjFIYYaUr0rAglqpQ8NCAqTpLzxJWT1DQkTqt+4kVowbc9Nman
-         6+wwLeUgq51Y5jv6pR46y6DpvuPZvboMVJIF8TlpQgNeTMkKB60XkzLfdSK86Ahex+F4
-         95rn7lI+1c+1qFIcoRqUwAElbyHUwnY59DvQ4VAD/uZsUywZxkBA0TmGI2m/hzmmalVv
-         O2zw==
-X-Forwarded-Encrypted: i=1; AJvYcCXayOBtE5805fRoDXd2Y2TFnD0e1kh/xnKqmCycnnLc204/Fo5QXyw+UCIGsYt6qX52MzafcaSFloAHNIp6xJTxQRq1OZpGeg7rAgJl
-X-Gm-Message-State: AOJu0YwT3FcR7FIAdwfYP0XMmBcU8QHdbiloDM/SAmeYybrknyC0LpvG
-	d93jMV4TMqMjc+vQbGFHVCiOpchWB0LHicZTaD7G2BXFi6D2yHyAcafSgVPvgS1lSsT4EgNcXld
-	WHAgXRdiO7hVEP7VcmoQRAhxhaTIJ13yPt5NW
-X-Google-Smtp-Source: AGHT+IGzT+E1H4a1K/U7H5b2gaV84vGydj02geZe0QgGUYltG+Tz1VUCThgVAr8woy8ZYveQdZGYXKelcqo8teX5udI=
-X-Received: by 2002:a05:600c:3b1c:b0:41b:e55c:8dca with SMTP id
- 5b1f17b1804b1-4215c34b2f8mr2016725e9.7.1717693728830; Thu, 06 Jun 2024
- 10:08:48 -0700 (PDT)
+	s=arc-20240116; t=1717693896; c=relaxed/simple;
+	bh=63wNISo13/97qVFbNwC/m0bF2xFFqGttpBT+0BwEnew=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WeM6ZvS+CqRyflNvBGbnLE4XuVDGJfmgLpXs5oO1dZ+WgiDPC3z80WbQxzMFRAOmJqtmwkuLbV4TWaWfqm4mB8Vr6qB0MFytzgKIB/lTIRPx94+8lFimqubGXhwy1mm0me4UmtUh6Yr55OFP3cgyB1uJqOyrhxQsJmhtUv93ZaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IxIY+/zM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nK5SsT/R; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Kurt Kanzenbach <kurt@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717693891;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=63wNISo13/97qVFbNwC/m0bF2xFFqGttpBT+0BwEnew=;
+	b=IxIY+/zMpLVNBKwD4IIN7f9oggeNH/7nzTmJzXTJ/UU41EtCzDmCSrVINaoPZP2N0R6dIB
+	lAszc6oH0T2ngObSapuyxXF5iL8sC1RQQNfuZmHKa/Z5PJJFyPcpA1WRkYlJruwpuiW5o/
+	HAnJNO4Nt3W4ariTgSQi6I8TmGKoQ+VGvWDqHM/AzXhOvD1qCSuUZfezH0fk1WX82uj7uh
+	GFtghOgPGZivz3pbSq6qx+Jj2ITbzEEcdf8dRC8Stpz7+ryajtGP+79BnLBrauMoUo9Q66
+	CPtet/fYTk87xqFIwOAmg3Hu9dAjngX0cZf45C8aFVtfVpH2jqZJyjiqwuRQjw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717693891;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=63wNISo13/97qVFbNwC/m0bF2xFFqGttpBT+0BwEnew=;
+	b=nK5SsT/RjHVycaC4bMAFKGA9vyxTnnZUtHCHBHYZh9ewna4xNtsu6rTVS47g2ci1iiWCEq
+	EG9YCNdvcMBq8yDw==
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH net-next v1 1/1] net: dsa: hellcreek: Replace kernel.h
+ with what is used
+In-Reply-To: <20240606161549.2987587-1-andriy.shevchenko@linux.intel.com>
+References: <20240606161549.2987587-1-andriy.shevchenko@linux.intel.com>
+Date: Thu, 06 Jun 2024 19:11:29 +0200
+Message-ID: <87frtq2dz2.fsf@kurt.kurt.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABPqkBQ3LQ_dXQSQVSrriinvSSXm2fHx4yOms=jRsa2WaXSsog@mail.gmail.com>
- <4622060b-b758-4629-9aa4-cc8334111be0@linux.intel.com>
-In-Reply-To: <4622060b-b758-4629-9aa4-cc8334111be0@linux.intel.com>
-From: Stephane Eranian <eranian@google.com>
-Date: Thu, 6 Jun 2024 10:08:34 -0700
-Message-ID: <CABPqkBR4CGx9EY4nMmnRT1Uuw0p5iefnFZa0hphh+HBBYqQ71A@mail.gmail.com>
-Subject: Re: [RFC] perf_events: exclude_guest impact on time_enabled/time_running
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Ian Rogers <irogers@google.com>, "Liang, Kan" <kan.liang@intel.com>, 
-	Andi Kleen <ak@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
-	"Narayan, Ananth" <ananth.narayan@amd.com>, "Bangoria, Ravikumar" <ravi.bangoria@amd.com>, 
-	Namhyung Kim <namhyung@google.com>, Mingwei Zhang <mizhang@google.com>, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>, Zhang Xiong <xiong.y.zhang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 
-On Thu, Jun 6, 2024 at 8:48=E2=80=AFAM Liang, Kan <kan.liang@linux.intel.co=
-m> wrote:
->
->
->
-> On 2024-06-06 3:57 a.m., Stephane Eranian wrote:
-> > Hi Peter,
-> >
-> > In the context of the new vPMU passthru patch series, we have to look
-> > closer at the definition and implementation of the exclude_guest
-> > filter in the perf_event_attr structure. This filter has been in the
-> > kernel for many years. See patch:
-> > https://lore.kernel.org/all/20240506053020.3911940-8-mizhang@google.com=
-/
-> >
-> > The presumed  definition of the filter is that the user does not want
-> > the event to count while the processor is running in guest mode (i.e.,
-> > inside the virtual machine guest OS or guest user code).
-> >
-> > The perf tool sets is by default on all core PMU events:
-> > $ perf stat -vv -e cycles sleep 0
-> > ------------------------------------------------------------
-> > perf_event_attr:
-> >   size                             112
-> >   sample_type                      IDENTIFIER
-> >   read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNIN=
-G
-> >   disabled                         1
-> >   inherit                          1
-> >   enable_on_exec                   1
-> >   exclude_guest                    1
-> > ------------------------------------------------------------
-> >
-> > In the kernel, the way this is treated differs between AMD and Intel be=
-cause AMD
-> > does provide a hardware filter for guest vs. host in the PMU counters
-> > whereas Intel
-> > does not. For the latter, the  kernel simply disables the event in the
-> > hardware counters,
-> > i.e., the event is not descheduled.  Both approaches produce pretty
-> > much the same
-> > desired effect, the event is not counted while in guest mode.
-> >
-> > The issue I would like to raise has to do with the effects on
-> > time_enabled and time_running
-> > for exclude_guest=3D1 events.
-> >
-> > Given the event is not scheduled out while in guest mode, even though
-> > it is stopped, both time_enabled and time_running continue ticking
-> > while in guest mode.  If a measurement is 10s
-> > long but only 5s are in non-guest mode, then time_enabled=3D10s,
-> > time_running=3D10s. The count
-> > represents 10s worth of non guest mode, of which only 5s were really
-> > actively monitoring, but
-> > the user has no way of determining this.
->
->
-> For the latest design/implementation, only the exclude_guest=3D1 host
-> event can be successfully created for the case.
-> The end user should not expect that anything is collected in the guest
-> mode. So both the time_enabled and the time_running will be 5s.
->
-> >
-> > If we look at vPMU passthru, the host event must have exclude_guest=3D1
-> > to avoid going into
-> > an error state on context switch to the vCPU thread (with vPMU
-> > enabled).
->
-> That's the design in V1. There is no error state anymore in V2 and later
-> as suggested by Sean.
-> https://lore.kernel.org/all/ZhmIrQQVgblrhCZs@google.com/
->
-> The VM cannot be created if there are host events with exclude_guest=3D0.
-> If a VM has been created, user cannot create an event with
-> exclude_guest=3D0. So nothing will be moved to an error state on context
-> switch to the vCPU thread.
->
-Ok, that's new.
+--=-=-=
+Content-Type: text/plain
 
-> > But this time,
-> > the event is scheduled out, that means that time_enabled keeps
-> > counting, but time_running
-> > stops. On context switch back in, the host event is scheduled again
-> > and time_running restarts
-> > ticking. For a 10s measurement, where 5s here in the guest, the event
-> > will come out with
-> > time_enabled=3D10s, time_running=3D5s, and the tool will scale it up
-> > because it thinks the event
-> > was multiplexed, when in fact it was not. This is not the intended
-> > outcome here. The tool should
-> > not scale the count, it was not multiplexed, it was descheduled
-> > because the filter forced it out.
-> > Note that if the event had been multiplexed while running on the host,
-> > then the scaling would be
-> > appropriate.
+On Thu Jun 06 2024, Andy Shevchenko wrote:
+> kernel.h is included solely for some other existing headers.
+> Include them directly and get rid of kernel.h.
 >
-> The scaling will not happen, since both time_enabled and time_running
-> should be the same when there are enough counter resources.
+> While at it, sort headers alphabetically for easier maintenance.
 >
-If an event with exclude_guest=3D1 is sched out (event_sched_out), time_ena=
-bled
-will keep running but time_running will stop. Because the code assumes
-it is stopped
-because of multiplexing. However, here this is not the case. The event
-is stopped because
-the CPU is entering an execution domain that is excluded for the event.
-Unless you've modified the event_sched_out() code or added code to
-patch up time_running
-I don't see how they could be equal. The alternative, as you suggest,
-is to stop time_enabled.
-But usually time_enabled is controlled by ENABLE/DISABLE which are
-different from
-event_sched_out() and event_sched_in().
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
+Thanks!
 
-> >
-> > In that case, I argue, time_running should be updated to cover the
-> > time the event was not running. That would bring us back to the case I
-> > was describing earlier.
-> >
-> > It boils down to the exact definition of exclude_guest and expected
-> > impact on time_enabled
-> > and time_running. Then, with or without vPMU passthru, we can fix the
-> > kernel to ensure a
-> > uniform behavior.
->
-> I think the time_enabled should be the one that has a controversial
-> definition.
-> Should the time in the guest mode count as the enabled time for an host
-> event that explicitly sets the exclude_guest=3D1?
->
-> I think the answer is NO. So I implemented it in the code.
->
-> >
-> > What are your thoughts on this problem?
-> >
->
-> Peter, please share your thoughts. We want to make sure the design is on
-> the right track.
->
-> Thanks,
-> Kan
+Reviewed-by: Kurt Kanzenbach <kurt@linutronix.de>
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJHBAEBCgAxFiEEvLm/ssjDfdPf21mSwZPR8qpGc4IFAmZh7cETHGt1cnRAbGlu
+dXRyb25peC5kZQAKCRDBk9HyqkZzgjZVEACuxnRhqdhTumWAeUFO7CWUch7cSn8q
+tqSHUEJoPjv/m7pypn6xqYIk8pTr/5FdvWXeyMCPWFF1MHG8KVufgvZgPJx2cpu+
+4l0t3mBN2hQwx3KF37l/2Xt0ro6CA2HnguggBwfSwyg8OoA6v4HdD4R0iymjKPsh
+4mYupER4oxnfYucp6K3teTNc9SMIO+KeInCUKyQ8ipCeV4xwrMoxZigSeax/IAEV
+l8dNQtJKDakgEJ+/+8BsMoe1lTl1qWhwfA2DrERMv/X+OwRiGsMAdu1BetAmGyTe
+uNUgMNRhAlgVkfouGf1JzG4DwAy+/r5vQhfQqzDIVrBQR+uGrE/H6YpcW+N90BFo
+XR+4ycMY4T/obPSSRVp5EMMHAhLGTNmpJ238+jFsCqEh1vfSPKitcGoyjJJx+32I
+Ub42h8mAwOyMQpDEWL5iMGCY6MbtmSTlbxZT4zVqd7rEaxwR1ZVGmSG59X5nJClI
+kZKN8P9Njb/OMH5CKc4A/Lpfyx/i/WH1EXogEws3r08jz59i7yZ+L7DXW38y9EuQ
+nxC9gmhO4+2zLybC0PGt+XzEbxc+CPkf78Ev3gOzKXo8/KGczpooineI1ypTlOZw
+EIZUXpSoZrZd2J8KXJo4tlEPzWhVxF7YC6GWMI59E35VesyN2i2dR5FomRFSpiBj
+lA+rJ4fRv+E5QQ==
+=1rPQ
+-----END PGP SIGNATURE-----
+--=-=-=--
 
