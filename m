@@ -1,140 +1,188 @@
-Return-Path: <linux-kernel+bounces-203757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D62C8FE017
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:42:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 797968FE01E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:45:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B86DB22D95
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:42:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55E361C2152E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C49713BC3F;
-	Thu,  6 Jun 2024 07:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C8E13AD11;
+	Thu,  6 Jun 2024 07:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NL++cvwa"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MaaCmaOi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40D913AD06
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 07:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F317381C7;
+	Thu,  6 Jun 2024 07:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717659763; cv=none; b=LEYffLN01lJfRRukJSTuOFHDLEVWYVL0WlSJWP5U6ciBF7UKwEk1lhOXrSuZiz7kIbLtx82h34bHDrhNNr+oRPab6Zf94mzhOQdMb0XyZ16rz4FenG1xngA/+svcJVP+lMyCrdadLDXIWToDFJO9HaezEu65g2JA8YgS8jxTVfs=
+	t=1717659924; cv=none; b=BhKzkzNr3TH2axC0JDqnLEy03EfZxQOewGQz7AWzuSsvMfZx5x67xP5+nl64N+S0hVWYpCovKvnlFnjRCoGesqfAoQ2S38tX6DlfVBPE3+wFufoiLJ+wtio8Xk+3GrQJ3gtmLuWUbmHPqXskHokQdnykWh01lom0pgCMMdXN9+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717659763; c=relaxed/simple;
-	bh=7OaWmqVFqUj8UiBMIFYvyTDVYpCRKRaVDuAaqAod2/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GpEA5ZgPwy3hyBjV+0L9ABM60CxbgSA/+V/pJiBSedfLZf9ukQjIQ9DMc+M3JzDbQY0q75lj+lbAHgoSZtwpVFOT0g22ytLJOyvzoNyH8aca7OYmnDgsBAGDM+mVEuPWLb41b6zAVdj8yhHSxGAXLP4KDz3DIwn8+fnqKqWOh5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NL++cvwa; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a691bbb7031so86778366b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 00:42:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717659760; x=1718264560; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7hn7A2vtREo0E7HfSwjkC9hqptsOSWf7nUvmnuVDMQY=;
-        b=NL++cvwa1YzNLaO02KuHXfdUWI0iBeBifsmyZyDIb5uMpknUdYDOeT/BDI/fB1OqHk
-         +7gCI0acVsZJ9rqdfi0zaMODPSc2iNqRCIIzabLp1tuBymzYzAtsSw1iGNJhqh8NyJ/4
-         bfRhWy9o8GJlE3fdPgPV+MIOX2Zas3+n6dR2PFZyU7rJMR6cFy0R0pMq+kF7E/jGpRD5
-         dXGJ+GxjzoVPjGZ3tiwUrB4gUVnyjnHucGul9epeD37Bp6ZiZqmXwZ1hXIrXEdNVrXJF
-         ilEl3P0UI+XCbpU9AbkrYXIGfV5G0BBv+rrjrB1As9IXmF71GnivuRMlHZ8mIiUgEiHw
-         uAJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717659760; x=1718264560;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7hn7A2vtREo0E7HfSwjkC9hqptsOSWf7nUvmnuVDMQY=;
-        b=cb0Wb/vDEr5ZZZEA1cUDEV6a86pGj/YVFSXkYW85J5gS+cNxFCZm3rGOtNWX5+5yi5
-         2TDbwLwmP0S6RE1xbWWTJAExZSmCTwMTwuVObCHq4M3HBJ6WhBJCKV6eQp3yOxRhf6Tf
-         tptrVmdInUq1xokpTA8Qs2fJfAmwE10r5CgDR9NLZW0IFnsBpoDpte8a6L9uknWHZ0TB
-         3YcRFW9lEf6vEAZn9/kfGYRxD3s2vCVc2FmN1PiEJEPHP+XhL/YXgZrO5RjGyk1gC0dS
-         pCBZUNTZVZBlqWpXFuvvrs9/iWX6n/DuaWiSNApAX5o/3UrWcS43jbE6yjNIDbapXGEh
-         xcbA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQNS4bBZC+d8PrWjf7zmoRp7zso8oXge5wJRRMkkGnhreYKqdJcewxbKrbBszGo8O1l2yZ5fdddfuw+JlGyWy2lec+HZpYpzbHAUqk
-X-Gm-Message-State: AOJu0Yy1QO9bDVZ+yxzmCJ3FkVo/u9yB/SqyoZ1Dwynk6Wc2pjXOB6FE
-	Y+aM3i4yBaIm2u0MHD8/LA9Kx1LWMosxjL0Hwb9voh1JKJDLmurL/jvnh15LeFQ=
-X-Google-Smtp-Source: AGHT+IG9fb84ekx6f8HaBtotI1FnubBAZuTJ3dgM/XdsdCeyuhCLEIFdUbolQkfIb3FKjJXzmIhddQ==
-X-Received: by 2002:a17:907:900e:b0:a68:fe79:9499 with SMTP id a640c23a62f3a-a699f88b67cmr343464966b.40.1717659760015;
-        Thu, 06 Jun 2024 00:42:40 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c806ebc43sm57149266b.141.2024.06.06.00.42.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 00:42:39 -0700 (PDT)
-Date: Thu, 6 Jun 2024 10:42:35 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Joy Chakraborty <joychakr@google.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-rtc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
-	manugautam@google.com
-Subject: Re: [PATCH v1 01/17] hwmon: pmbus: adm1266: Change nvmem
- reg_read/write return type
-Message-ID: <08ff07f4-034d-4342-89da-d83044871ab1@moroto.mountain>
-References: <20240605175953.2613260-1-joychakr@google.com>
- <20240605175953.2613260-2-joychakr@google.com>
+	s=arc-20240116; t=1717659924; c=relaxed/simple;
+	bh=Z/5PfYRFanPiZ1cX8KTcWTm3qmmFzc9dXjuacLPiD+Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nWzMVMaC5eIEJBKWtJjf99W/4iAdqcE9kfPgISaJiehCOCCyZcEYk/U/jpGppKP7pjohmUbDbGyg1OSA3ClkXM2yMhcbA7fYqohydBU6ZWnJI55ZRkYsk2A0Db9McvGC59LoXyTafE+I7ozs5m1gXRk8M93RBfCFipjdg0vvfiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MaaCmaOi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03523C2BD10;
+	Thu,  6 Jun 2024 07:45:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717659923;
+	bh=Z/5PfYRFanPiZ1cX8KTcWTm3qmmFzc9dXjuacLPiD+Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MaaCmaOi/O3f1iod6jEv4FW9UD7/VQqNnNwMF7psNmmXy+rZSY5AkKjxpZmXVw/Yd
+	 4aANM+/i5SrWqraDuLPv9WxnXG8yLTz++/Y9nmCZ62NFKqcqFrZ6cv1h2MJSTVarjl
+	 0uGSOSb2gEOLlcFOOvNPt9HC1M1f+lp5gX+p4CdwiCzqu/EWCZU8vE1eG2KRwqI006
+	 +YnzXTMacg2JxpytqY5exHgBtNzcP5dYri8e4h6GtkjPciP+5hMAThJuS53t/A4sdd
+	 jBAgb2Cwx42vxCtO3JFz03Xfc3JOBE/98UbM9FqHZzlqn8XSMe8Ij+a7jRWYRdixZt
+	 Hfi8S0pGsF9FA==
+Message-ID: <05454339-9f83-4101-ac55-0dc7b5a8d45e@kernel.org>
+Date: Thu, 6 Jun 2024 09:45:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240605175953.2613260-2-joychakr@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: dt-binding: convert amlogic,g12a-tohdmitx to
+ dt-schema
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+ Jerome Brunet <jbrunet@baylibre.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240605-topic-amlogic-upstream-bindings-convert-g12a-tohdmitx-v1-1-b851c195e241@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240605-topic-amlogic-upstream-bindings-convert-g12a-tohdmitx-v1-1-b851c195e241@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 05, 2024 at 05:59:45PM +0000, Joy Chakraborty wrote:
-> Change nvmem read/write function definition return type to ssize_t.
+On 05/06/2024 18:23, Neil Armstrong wrote:
+> Convert text bindings to dt-schema format for the Amlogic TX HDMI
+> control glue.
 > 
-> Signed-off-by: Joy Chakraborty <joychakr@google.com>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+
+subject: dt-bindings (missing 's')
+
 > ---
->  drivers/hwmon/pmbus/adm1266.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  .../bindings/sound/amlogic,g12a-tohdmitx.txt       | 58 ----------------------
+>  .../bindings/sound/amlogic,g12a-tohdmitx.yaml      | 56 +++++++++++++++++++++
+>  2 files changed, 56 insertions(+), 58 deletions(-)
 > 
-> diff --git a/drivers/hwmon/pmbus/adm1266.c b/drivers/hwmon/pmbus/adm1266.c
-> index 2c4d94cc8729..7eaab5a7b04c 100644
-> --- a/drivers/hwmon/pmbus/adm1266.c
-> +++ b/drivers/hwmon/pmbus/adm1266.c
-> @@ -375,7 +375,7 @@ static int adm1266_nvmem_read_blackbox(struct adm1266_data *data, u8 *read_buff)
->  	return 0;
->  }
->  
-> -static int adm1266_nvmem_read(void *priv, unsigned int offset, void *val, size_t bytes)
-> +static ssize_t adm1266_nvmem_read(void *priv, unsigned int offset, void *val, size_t bytes)
->  {
->  	struct adm1266_data *data = priv;
->  	int ret;
-> @@ -395,7 +395,7 @@ static int adm1266_nvmem_read(void *priv, unsigned int offset, void *val, size_t
->  
->  	memcpy(val, data->dev_mem + offset, bytes);
->  
-> -	return 0;
-> +	return bytes;
->  }
+> diff --git a/Documentation/devicetree/bindings/sound/amlogic,g12a-tohdmitx.txt b/Documentation/devicetree/bindings/sound/amlogic,g12a-tohdmitx.txt
+> deleted file mode 100644
+> index 4e8cd7eb7cec..000000000000
+> --- a/Documentation/devicetree/bindings/sound/amlogic,g12a-tohdmitx.txt
+> +++ /dev/null
+> @@ -1,58 +0,0 @@
+> -* Amlogic HDMI Tx control glue
+> -
 
-This breaks the build so it's not allowed.  The way to do it is to:
-1) add a new pointer which takes a ssize_t
-2) convert everything to the new pointer
-3) Rename the new pointer to the old name
+> +
+> +title: Amlogic G12a HDMI TX Control Glue
+> +
+> +maintainers:
+> +  - Jerome Brunet <jbrunet@baylibre.com>
+> +
+> +allOf:
+> +  - $ref: dai-common.yaml#
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^audio-controller@.*"
+> +
+> +  "#sound-dai-cells":
+> +    const: 1
+> +
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - const: amlogic,g12a-tohdmitx
+> +      - items:
+> +          - enum:
+> +              - amlogic,sm1-tohdmitx
+> +          - const: amlogic,g12a-tohdmitx
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  sound-name-prefix: true
 
-regards,
-dan carpenter
+Drop
+
+> +
+> +required:
+> +  - "#sound-dai-cells"
+> +  - compatible
+> +  - reg
+> +  - resets
+
+Please keep the same order as in "properties:" block.
+
+> +
+> +additionalProperties: false
+
+and here instead:
+unevaluatedProperties: false
+
+> 
+
+
+Best regards,
+Krzysztof
 
 
