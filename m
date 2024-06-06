@@ -1,231 +1,186 @@
-Return-Path: <linux-kernel+bounces-205085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 830C28FF6E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:32:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C71988FF6E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D25E11F26204
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:32:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41677283C1B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4246013DDC5;
-	Thu,  6 Jun 2024 21:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E345B13CFAF;
+	Thu,  6 Jun 2024 21:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kYMqDpkK"
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XWpTHPmC"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B725313D884
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 21:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D924595B;
+	Thu,  6 Jun 2024 21:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717709446; cv=none; b=kA5DkDzRyN/xySjWU85ajPTiLFI+3ZFtA10n5V3oTQELVbyWoFxk5UzXDJenfX2MuligNld6WZERiCgdQNqZHX9mZlvLmSRF//LiEQbjeOvKo/9YkDBcg5t5c2JnAA1fsb7prWQ8OD3hh3XVj6mKKuHVM4/oB9mm5pqU6HPRiOI=
+	t=1717709443; cv=none; b=MlwqpfyhTVgi5Kbob3DQUlqFOV3FuJuR0DTDMkY98kyzKuRgMEyfzMnFbvkYluLnGXOhpW1Sv6r8pYU0SE/onjpk7xgHhKShVY9LegGiZw28knitN6ziP7YusdNeG1NB2A9OJXocxW7ZFa6S2lbVHn8wJFtWsBgZOKC331TY93w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717709446; c=relaxed/simple;
-	bh=6OX5jbLn5eWzJyYfgZq3Z11UzdVZrtsm1qMNkRxFuGs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CvAVesyRZ2Cye9CB7cn0dV0jxaGzyNpZ412iqQzriHlhZQcZVhW5srDw/YEklLxgdji1XOgZbNXyrNmupA6M/SvE+afbCIWathJRZzU1u9YDJrxWUOk5uq4iQRcN0CL1F5IcoD/pEOiZ9PKwrYMqkVHBFUOwrn91C24ritE72BI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kYMqDpkK; arc=none smtp.client-ip=209.85.222.53
+	s=arc-20240116; t=1717709443; c=relaxed/simple;
+	bh=GsgJwa/FwW2SlFBiMFcYxk+JVXnVTpzZgoTf/0KbxlY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AceKDzuoVIXdTDYTjxekJWcC3q3ZcSBeQUwwHay1TiDNRwxpCwU5qsAsM3Qefk24ch//sf/eeTW1mugv0vvWFBxi1ie2/PjUr6F67LKsmq6EBmAWmUzLh8HhvlV45E85XEqKE/iJuVjHBGU9+LJWLg6EbeFK2l7tdXdHxT9icR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XWpTHPmC; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-80ad842d3a7so438966241.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 14:30:44 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f64ecb1766so12617855ad.1;
+        Thu, 06 Jun 2024 14:30:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717709443; x=1718314243; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9dcy8tpFWcvRLoLZii3SRyMdBoRRi8/R0gDiOrgpUeI=;
-        b=kYMqDpkKM9KLRgAp9XNDMjvFV2H6DGW4CaAjl5IJ6kZyvBFMb7kol1+fuRyDK7lC10
-         BIU/HbxRJUMUGMk6qq1qFSZl7JUOh8Mj5u5l6Fqwce/MHzGmrVDgK2ExIfkVfJO7WftQ
-         f1kTsdFmGeMARI+Mmnm8MuksJJdEFvx1gJ8nAaQ7jvhUF1K9hPcw5t5iS3btrbO30rAi
-         GRheshR0uCLEA7u10uVOI9uV0cfH6F5v5Y13781XmCbqSXcXi7DC7bCxXUXaBsBZF/Ka
-         pk9mneS/NgYgx6W/ww7FbwXwyhY2pcW3RURc5gsg4inBp+yBJY9un8UCS6UxL3OFXTvE
-         B0OA==
+        d=gmail.com; s=20230601; t=1717709441; x=1718314241; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=VG+FhUMIemPNzijlVmturC0HHAgzjdPKydYKX9+fG78=;
+        b=XWpTHPmCR6sUieUIgQ7a1T4Q8AoU3H8tQu6crUsU+1DaT5La6s4jYov2+nQYL8zJ3j
+         PJPhcrHaYb4F0GWhZJAdZtXrY8rC+Bbeh2tKFiKT/S0OWDketoRVZgjEutPI6x5m1Lez
+         0BxciyIR5ArwAh2EiwZmMfXHhSs4bk3SpZVHM4sHYHwDCcflHVw2+bLoaqQF5aqmiipj
+         rnzkr4amnjmqkcRY2j8QzjKxtXV2JIw6vyt0hIgUp5r3U/2MMVkiiwcylxSSEcXCbNGk
+         wbjUdLKEjfDFLLDk6IP3eIarLGNl6ZzRQo6/aqg9VlOajqEeW4RMMOWj2OlJPMO98Mxk
+         2BlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717709443; x=1718314243;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9dcy8tpFWcvRLoLZii3SRyMdBoRRi8/R0gDiOrgpUeI=;
-        b=ow3v1Ah9colG70Xu7XWvEWPNlU6/zEnsTu1n0g36l3ky1O1j2sBPLjrHZa76eNk5UR
-         OD0p71PAvdZzYlKszYJ1vOGU4ZSw2bVI2+B9GTbtWr2h9KOXFohFTWc2nCO95KmXEQPK
-         3jEOyBdBOFe6u79gYBnAiBXYqGliE0r1cE2WlhvrJkTBMsYhxwp5I3wKK1/gkaDALA/N
-         SJpsIB/dWn6EOkKe5ssSc2ilSi900k6PISi8UJRCUi0CSzFhuu4x8t4jHRK3qnALcPeI
-         RVuviB2qeJeRX36JticnJ6q7oI8ovYfe08kVAK8JySj2/P31c6LJue18CpLU6mgW4nEv
-         6IQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWr4AVsuWtD2qOLc0/siovVAuNVhX52eB537S2D9TJfFvPj4arViNRNJJxxuwT+vQrHVTJAggiK2MXGA0gvCY38Q5FaDHwzvgSF9qNh
-X-Gm-Message-State: AOJu0Yz+OU8kPFYVRO6UaeMClxNQjugh4Rdk/K/+aq/X6y7mfYOUHppl
-	CjcJgujusBmlcg3T90pe5wQZ1AVDy+bpAJF1kSD086c1HPW+uPSa8LBWxpiPPjRCgchQqc8P/V1
-	9tfNiPwdF25Jta1BrbacR5iFHVCo=
-X-Google-Smtp-Source: AGHT+IG4PaBA65BT5QX3MFC0AYUK0+sOcbkTAIJSiPdPkj1KsbpbjbQrUFT6MGHg0PeF1/oTxw3FXsmSKQPOisZpvyQ=
-X-Received: by 2002:a67:f744:0:b0:47b:cd96:6d3d with SMTP id
- ada2fe7eead31-48c27568ae3mr589121137.3.1717709443083; Thu, 06 Jun 2024
- 14:30:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717709441; x=1718314241;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VG+FhUMIemPNzijlVmturC0HHAgzjdPKydYKX9+fG78=;
+        b=q9nouIzZUwpjNfzJmNEMSgX026bsU6DNghcSX9wFRKDt/TIPriebM60BdCp6zRRZEj
+         O0uAe8B0ZpW9nLhgxEud9SuJ+tGWwMpr3qMGpaA/WrfT5/k+0tvosluoqZPpYgT6ERK+
+         h1Yoa3Wpbfb9aFCcegAVN35EhIlhZd5rpmH+TV4lWJ+eDmmNOuevBJoWObhWUaJqW+fK
+         y7WVLpQjAfpJElxmoZcgi4ImMcmRLGB487rwzZ3p5/cGLA6R/zMQ4VcyJGXeRMHGBWFi
+         nv/pHGf5by9fnrZvAnpFcyUfRaNwswvSYm+YQf/0FKGD7FRI/sfXS7dae6iYdOp1e4Ws
+         pYJw==
+X-Forwarded-Encrypted: i=1; AJvYcCX2YU+h5gVnJfLdQFXMy5edhNZETfZYKQTx82bGxiI/Nu5pJuJNJgoQ5tkZKG+wiCPd7m7NPwJyAaKYDytO8l8vxO58T2HP4X0yC5brvOB9bGhOzZ5EgEKwOdh+qNsCrPLUraGpsWXf+96H6mwdSK5U/kPGyNGbq+WGH8GA+cUdwWrVBFrF9haw7o5VrHJuBUzpnJ2DgguGdVdZpD4UsQ==
+X-Gm-Message-State: AOJu0Yw6VjlkaZKfZbtYidZH2csV1Dq7j3lUqbyjy0m0XrYFI+/bDmBy
+	NWkLQz79xCq8YY1pitRBv3XkGO0ZhfnYgEycivp8p++J+DrNzkp1
+X-Google-Smtp-Source: AGHT+IF6RLsY8z3Bg926Owab/WEi0IA3FYbIXfUzsYPVEqPPzT4w4iqZoL0ronwPvarZKS8J677VXg==
+X-Received: by 2002:a17:903:2345:b0:1f6:74f3:ac0a with SMTP id d9443c01a7336-1f6d03d6ef3mr9493505ad.64.1717709440765;
+        Thu, 06 Jun 2024 14:30:40 -0700 (PDT)
+Received: from localhost ([2804:30c:167a:4100:8407:a7e5:9b87:8081])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd7e2d70sm20282305ad.228.2024.06.06.14.30.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 14:30:40 -0700 (PDT)
+Date: Thu, 6 Jun 2024 18:31:49 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
+	lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, nuno.sa@analog.com, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/6] spi: spi-axi-spi-engine: Add support for MOSI
+ idle configuration
+Message-ID: <ZmIqxS-xUVMNH_lJ@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1717539384.git.marcelo.schmitt@analog.com>
+ <a6b00e84325bbe44919cc49509e837f2555367d0.1717539384.git.marcelo.schmitt@analog.com>
+ <ed4fe3de-726b-4eba-a12a-d2f7b1da26d1@baylibre.com>
+ <0e18b3aa83a62103b0f06ee516193c03f80abae9.camel@gmail.com>
+ <f8ce5dc8-ed68-4f04-af3a-187bf0e4a3b3@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606184818.1566920-1-yosryahmed@google.com>
- <84d78362-e75c-40c8-b6c2-56d5d5292aa7@redhat.com> <CAJD7tkZH9C21nx75W9Erun=oUvmad5ujmDyGYWRRHEwPCCizUw@mail.gmail.com>
- <7507d075-9f4d-4a9b-836c-1fbb2fbd2257@redhat.com>
-In-Reply-To: <7507d075-9f4d-4a9b-836c-1fbb2fbd2257@redhat.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 7 Jun 2024 09:30:31 +1200
-Message-ID: <CAGsJ_4w_dEyLsPhdJCtRMReXDD116p+U979Yk-8EBu=zx5FWgQ@mail.gmail.com>
-Subject: Re: [PATCH] mm: zswap: add VM_BUG_ON() if large folio swapin is attempted
-To: David Hildenbrand <david@redhat.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chris Li <chrisl@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f8ce5dc8-ed68-4f04-af3a-187bf0e4a3b3@baylibre.com>
 
-On Fri, Jun 7, 2024 at 9:17=E2=80=AFAM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 06.06.24 22:31, Yosry Ahmed wrote:
-> > On Thu, Jun 6, 2024 at 1:22=E2=80=AFPM David Hildenbrand <david@redhat.=
-com> wrote:
-> >>
-> >> On 06.06.24 20:48, Yosry Ahmed wrote:
-> >>> With ongoing work to support large folio swapin, it is important to m=
-ake
-> >>> sure we do not pass large folios to zswap_load() without implementing
-> >>> proper support.
+On 06/06, David Lechner wrote:
+> On 6/6/24 1:51 AM, Nuno Sá wrote:
+> > On Wed, 2024-06-05 at 12:03 -0500, David Lechner wrote:
+> >> On 6/4/24 5:43 PM, Marcelo Schmitt wrote:
+> >>> Implement MOSI idle low and MOSI idle high to better support peripherals
+> >>> that request specific MOSI behavior.
 > >>>
-> >>> For example, if a swapin fault observes that contiguous PTEs are
-> >>> pointing to contiguous swap entries and tries to swap them in as a la=
-rge
-> >>> folio, swap_read_folio() will pass in a large folio to zswap_load(), =
-but
-> >>> zswap_load() will only effectively load the first page in the folio. =
-If
-> >>> the first page is not in zswap, the folio will be read from disk, eve=
-n
-> >>> though other pages may be in zswap.
-> >>>
-> >>> In both cases, this will lead to silent data corruption.
-> >>>
-> >>> Proper large folio swapin support needs to go into zswap before zswap
-> >>> can be enabled in a system that supports large folio swapin.
-> >>>
-> >>> Looking at callers of swap_read_folio(), it seems like they are eithe=
-r
-> >>> allocated from __read_swap_cache_async() or do_swap_page() in the
-> >>> SWP_SYNCHRONOUS_IO path. Both of which allocate order-0 folios, so we
-> >>> are fine for now.
-> >>>
-> >>> Add a VM_BUG_ON() in zswap_load() to make sure that we detect changes=
- in
-> >>> the order of those allocations without proper handling of zswap.
-> >>>
-> >>> Alternatively, swap_read_folio() (or its callers) can be updated to h=
-ave
-> >>> a fallback mechanism that splits large folios or reads subpages
-> >>> separately. Similar logic may be needed anyway in case part of a larg=
-e
-> >>> folio is already in the swapcache and the rest of it is swapped out.
-> >>>
-> >>> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+> >>> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
 > >>> ---
+> >>>  drivers/spi/spi-axi-spi-engine.c | 8 +++++++-
+> >>>  1 file changed, 7 insertions(+), 1 deletion(-)
 > >>>
-> >>> Sorry for the long CC list, I just found myself repeatedly looking at
-> >>> new series that add swap support for mTHPs / large folios, making sur=
-e
-> >>> they do not break with zswap or make incorrect assumptions. This debu=
-g
-> >>> check should give us some peace of mind. Hopefully this patch will al=
-so
-> >>> raise awareness among people who are working on this.
-> >>>
-> >>> ---
-> >>>    mm/zswap.c | 3 +++
-> >>>    1 file changed, 3 insertions(+)
-> >>>
-> >>> diff --git a/mm/zswap.c b/mm/zswap.c
-> >>> index b9b35ef86d9be..6007252429bb2 100644
-> >>> --- a/mm/zswap.c
-> >>> +++ b/mm/zswap.c
-> >>> @@ -1577,6 +1577,9 @@ bool zswap_load(struct folio *folio)
-> >>>        if (!entry)
-> >>>                return false;
-> >>>
-> >>> +     /* Zswap loads do not handle large folio swapins correctly yet =
-*/
-> >>> +     VM_BUG_ON(folio_test_large(folio));
-> >>> +
+> >>> diff --git a/drivers/spi/spi-axi-spi-engine.c b/drivers/spi/spi-axi-spi-
+> >>> engine.c
+> >>> index 0aa31d745734..549f03069d0e 100644
+> >>> --- a/drivers/spi/spi-axi-spi-engine.c
+> >>> +++ b/drivers/spi/spi-axi-spi-engine.c
+> >>> @@ -41,6 +41,7 @@
+> >>>  #define SPI_ENGINE_CONFIG_CPHA			BIT(0)
+> >>>  #define SPI_ENGINE_CONFIG_CPOL			BIT(1)
+> >>>  #define SPI_ENGINE_CONFIG_3WIRE			BIT(2)
+> >>> +#define SPI_ENGINE_CONFIG_SDO_IDLE		BIT(3)
+> >>>  
+> >>>  #define SPI_ENGINE_INST_TRANSFER		0x0
+> >>>  #define SPI_ENGINE_INST_ASSERT			0x1
+> >>> @@ -132,6 +133,10 @@ static unsigned int spi_engine_get_config(struct
+> >>> spi_device *spi)
+> >>>  		config |= SPI_ENGINE_CONFIG_CPHA;
+> >>>  	if (spi->mode & SPI_3WIRE)
+> >>>  		config |= SPI_ENGINE_CONFIG_3WIRE;
+> >>> +	if (spi->mode & SPI_MOSI_IDLE_HIGH)
+> >>> +		config |= SPI_ENGINE_CONFIG_SDO_IDLE;
+> >>> +	if (spi->mode & SPI_MOSI_IDLE_LOW)
+> >>> +		config &= ~SPI_ENGINE_CONFIG_SDO_IDLE;
+> >>>  
+> >>>  	return config;
+> >>>  }
+> >>> @@ -645,7 +650,8 @@ static int spi_engine_probe(struct platform_device
+> >>> *pdev)
+> >>>  		return ret;
+> >>>  
+> >>>  	host->dev.of_node = pdev->dev.of_node;
+> >>> -	host->mode_bits = SPI_CPOL | SPI_CPHA | SPI_3WIRE;
+> >>> +	host->mode_bits = SPI_CPOL | SPI_CPHA | SPI_3WIRE |
+> >>> SPI_MOSI_IDLE_LOW
+> >>> +			  | SPI_MOSI_IDLE_HIGH;
+> >>>  	host->bits_per_word_mask = SPI_BPW_RANGE_MASK(1, 32);
+> >>>  	host->max_speed_hz = clk_get_rate(spi_engine->ref_clk) / 2;
+> >>>  	host->transfer_one_message = spi_engine_transfer_one_message;
 > >>
-> >> There is no way we could have a WARN_ON_ONCE() and recover, right?
-> >
-> > Not without making more fundamental changes to the surrounding swap
-> > code. Currently zswap_load() returns either true (folio was loaded
-> > from zswap) or false (folio is not in zswap).
-> >
-> > To handle this correctly zswap_load() would need to tell
-> > swap_read_folio() which subpages are in zswap and have been loaded,
-> > and then swap_read_folio() would need to read the remaining subpages
-> > from disk. This of course assumes that the caller of swap_read_folio()
-> > made sure that the entire folio is swapped out and protected against
-> > races with other swapins.
-> >
-> > Also, because swap_read_folio() cannot split the folio itself, other
-> > swap_read_folio_*() functions that are called from it should be
-> > updated to handle swapping in tail subpages, which may be questionable
-> > in its own right.
-> >
-> > An alternative would be that zswap_load() (or a separate interface)
-> > could tell swap_read_folio() that the folio is partially in zswap,
-> > then we can just bail and tell the caller that it cannot read the
-> > large folio and that it should be split.
-> >
-> > There may be other options as well, but the bottom line is that it is
-> > possible, but probably not something that we want to do right now.
-> >
-> > A stronger protection method would be to introduce a config option or
-> > boot parameter for large folio swapin, and then make CONFIG_ZSWAP
-> > depend on it being disabled, or have zswap check it at boot and refuse
-> > to be enabled if it is on.
->
-> Right, sounds like the VM_BUG_ON() really is not that easily avoidable.
->
-> I was wondering, if we could WARN_ON_ONCE and make the swap code detect
-> this like a read-error from disk.
->
-> I think do_swap_page() detects that by checking if the folio is not
-> uptodate:
->
-> if (unlikely(!folio_test_uptodate(folio))) {
->         ret =3D VM_FAULT_SIGBUS;
->         goto out_nomap;
-> }
->
-> So maybe WARN_ON_ONCE() + triggering that might be a bit nicer to the
-> system (but the app would crash either way, there is no way around it).
->
+> >> I think we need a version check instead of setting the flags unconditionally
+> >> here since older versions of the AXI SPI Engine won't support this feature.
+> > 
+> > Oh, was not aware of that... Then, we definitely need to do that. Marcelo, only
+> > add my r-b tag with the version change in place.
+> > 
+> > - Nuno Sá
 
-I'd rather fallback to small folios swapin instead crashing apps till we fi=
-x
-the large folio swapin in zswap :-)
+Nuno,
 
-+static struct folio *alloc_swap_folio(struct vm_fault *vmf)
-+{
-+      ...
-+
-+      if (is_zswap_enabled())
-+           goto fallback;
+I think there will be more disscussion about this series.
+Maybe better I not add the tag at all so you may check to agree with the next
+patch version.
 
-> --
-> Cheers,
->
-> David / dhildenb
+> 
+> Actually, looking at [1], it looks like this could be a compile-time
+> flag when the HDL is built. If it stays that way, then we would need
+> a way to read that flag from a register instead of using the version.
+> 
+> 
+> [1]: https://github.com/analogdevicesinc/hdl/pull/1320#issuecomment-2145744521
 
-Thanks
-Barry
+When is a driver version check needed?
+Yes, older versions of SPI-Engine won't support this, but the patch set should
+cause no regression. Even if loading the current ad4000 driver with
+older SPI-Engine HDL and driver, the ADC driver would get a warn (or error?)
+and do what's possible without MOSI idle feature (probably only be able to do
+reg access) or fail probing.
+
+We decided to have the MOSI idle state feature for SPI-Engine configured by
+writing to a dedicated bit [1] in the SPI Configuration Register [2].
+Does this looks good?
+
+[1]: https://github.com/analogdevicesinc/hdl/pull/1320/commits/941937eedae6701d253b4930d8f279c21ef3f807#diff-dc9213744b55493ca9430cd02cd62212436c2379ca121d1a2681356e6a37e22dR257
+[2]: https://analogdevicesinc.github.io/hdl/library/spi_engine/instruction-format.html#spi-configuration-register
+
+Thanks,
+Marcelo
 
