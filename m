@@ -1,285 +1,134 @@
-Return-Path: <linux-kernel+bounces-203977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF2388FE275
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:22:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB7278FE27B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A002E1C246F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:22:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8070B1F21B54
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D115213D89D;
-	Thu,  6 Jun 2024 09:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D91A15252D;
+	Thu,  6 Jun 2024 09:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EFerXMHJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D5BgrmD3"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012F13398E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33A21514D2
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717665694; cv=none; b=lrCvB5hct22GPbJW5tY95BlxbllgStXBITsQq40+NAja215AEssFLPoNpuf8oD3zCjQH/5o6qVuolTkW2cHYSHDh5yRsllVHxFu70h+5s37zTRdWOGY01gICDCRUtwDFSxd6ob4Imel1MLpPXgnfP3Hqvnhrc54YtWc2H2KXRuw=
+	t=1717665708; cv=none; b=unLYf565aG9f4LMdCFjj7hH2wJ1AUJ0Uom/a8rSNgON8U8WBQ4kZs8g9+Ql1idphhu2KndzM1vF0U1UNDAywFgXENBQRQmOGzkj8T8Ik6jtpxQRh3qpVc+vJ44Zf+A7OHTtnE9YBHUDXA8Py2ew5P3HF59vIWi2RUcA6DudaoU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717665694; c=relaxed/simple;
-	bh=C8sulEDJMrxWYwdcSw3tGuQJg30NjDlZJQNANrn1vsA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=OilyE74j0FGee8BZwhvrT0iOAnkBUCP+AkTPM+VFw8MTGZPwsyFyilv5yn7zaT6FrN90/hfPHYYN7UK5ESWIvZzlHS7pe9knk1j/N6G5/hDAJmJggFjAXpPsF9dhRA+4eQlSeUtaYRWlm5Hq+0n4U0cnYNL55GbVw1tW+9MjQro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EFerXMHJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67703C2BD10;
-	Thu,  6 Jun 2024 09:21:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717665693;
-	bh=C8sulEDJMrxWYwdcSw3tGuQJg30NjDlZJQNANrn1vsA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=EFerXMHJ/BuFTp3gArt56JMANEARiwmx+3u3439NienSDrWW2U1at+iMb7h06wKYo
-	 FdA4GUWvOobJietEPmp/1VRYQv+nRH7GV5Li0/7m6VrX3cu/gTxU59KNTe24avtB5a
-	 3joAkd0XcXmYTl2SeMjjx5iWexZR+CqzwNBEl+s/cm/yMPz1bSeIOOJxuqA5Bkzs0M
-	 q4U37ml6qELvOwjX69MMw1O/kESa4cRAs/8MeTv74E+0N6wqyN6zY85wOUR7t7tWeV
-	 PVClUNTc5f7kyB9mhUNcOxnS3mjOfwowjgYjbtg6qsd4LpMaZODCzDCV0Dt66HImGa
-	 r6XZ0RyABTz4g==
-From: Michael Walle <mwalle@kernel.org>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Jitao Shi <jitao.shi@mediatek.com>,
-	Stu Hsieh <stu.hsieh@mediatek.com>,
-	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
-	dri-devel@lists.freedesktop.org,
-	Frank Wunderlich <frank-w@public-files.de>,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Walle <mwalle@kernel.org>,
-	=?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= <nfraprado@collabora.com>
-Subject: [PATCH RESEND v5] drm/mediatek: dpi/dsi: fix possible_crtcs calculation
-Date: Thu,  6 Jun 2024 11:21:22 +0200
-Message-Id: <20240606092122.2026313-1-mwalle@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1717665708; c=relaxed/simple;
+	bh=tjwN2braW1ggfU8ulOrgsPDVHY3oLWrcM+PDLwBsLrQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=XKr9lw17f4jv82/MkE9Z0sfP3JqpIP0DnKTSKXw4nhCMAe3+J+uJh0haB5rxnn8HkTY2afd/paEWU6USfTB5K6gZLjUGUk+A1/rpKfjwhVJUyO+ZKdVDAWm8PfUz3bpy3C6HVRMLi6Fi/V4dd17q9lwx5FoFPlj1NBDmte+FOv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D5BgrmD3; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-35dcc681f70so593994f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 02:21:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717665704; x=1718270504; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NW4EvucckY8CVmeUy8IT9ST3GVjxL8wLdD6zQ7ebgWc=;
+        b=D5BgrmD3B0Se48+upm2jtHZWBJOI4CHn4AoMZ0nRWfguuFT7uoi0/M0RbYrsl1GFB9
+         sKTGkEn3YiFmWNAdQNdOkX3w3y+Nrj5ADX+7d1tr4xdVW5gZTU4OtX+RVOuWQBZAwas8
+         W61ALj5DmlBtfPTfgiqNIKvifarIfd9NywAE/7l6yg0icWEcsa00XIRGU0P0CsDyXMbw
+         AvZ4zEyyyERbETf9ALZI01wEThqMoxC0WZKfsK13/t19dStKP02KS6CYdFYvGMCMdMY5
+         jIG7enDfhRgmBzSAWwLH99YA5ngnQMU1/Bo7wic5/gN28mxXxYIIkJk/HVZbyrhAxvPc
+         M7RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717665704; x=1718270504;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NW4EvucckY8CVmeUy8IT9ST3GVjxL8wLdD6zQ7ebgWc=;
+        b=AtXwBCH7tX9XfhH4jK/pvBTwaJAjUCSmVES385phMnI93tUAq68m45Bz5UTWhJ30lw
+         BP4LnN0PEGzYiVdU86a+btXEHCSuSuGYOazEyI5BC1wus8VAtyYB33bkv+BWUeUnMQCo
+         CacDcOc0CF6Ljr3zLu9ICzD0w2DSctgdrAj5m83Ruc8y+nLDr9JZmdj+q1H3j83bkZPG
+         jTSNBFos9/I/R3Ztb3qeBj1ufHnY9p3XmwMMjhXiJM1tTridFkgA8+o/ROaNHPBySoWf
+         8XUv4hWg+WBwrC0BfJgTN3SFREiRhocEvwrND+7PDB3fB/6lhD/aMhwHi5jjSO2ztcp+
+         PXuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVL6qo3ViVdximuE/BCz7z7+89d+tnO8Laofl2yeY/bHzsBgDssNkeutF5BXOxsQ1jNVC6QvzrlrGT0SnqhY2IwGA0osrYuY65MVGbr
+X-Gm-Message-State: AOJu0YwEpWZbCP3o43oEJx9J/cX+qSiaR/0SLrH+neb4qwbZfaiGz7pc
+	mXA1QjH9Vf87hCbtsQdEA2Eqt3kSOn9vewFBfJKM8Ibl+dWDx5bvk2KWS+3MPDk=
+X-Google-Smtp-Source: AGHT+IEQUFhZ4ffQXqczY6bwPIu6J1c6sh9bixcCzNZvbDmwint0JLpN8+SWvWpMQ7EjeERX9pZH2w==
+X-Received: by 2002:a5d:4c52:0:b0:354:fca5:4190 with SMTP id ffacd0b85a97d-35e8ef09a32mr3843778f8f.41.1717665703974;
+        Thu, 06 Jun 2024 02:21:43 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d4a582sm1033012f8f.35.2024.06.06.02.21.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 02:21:43 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Jianxin Pan <jianxin.pan@amlogic.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org
+In-Reply-To: <20240528-a4_secpowerdomain-v1-0-2a9d7df9b128@amlogic.com>
+References: <20240528-a4_secpowerdomain-v1-0-2a9d7df9b128@amlogic.com>
+Subject: Re: [PATCH 0/3] Power: A4: add power domain driver
+Message-Id: <171766570315.3938980.14182626736757886496.b4-ty@linaro.org>
+Date: Thu, 06 Jun 2024 11:21:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-mtk_find_possible_crtcs() assumes that the main path will always have
-the CRTC with id 0, the ext id 1 and the third id 2. This is only true
-if the paths are all available. But paths are optional (see also
-comment in mtk_drm_kms_init()), e.g. the main path might not be enabled
-or available at all. Then the CRTC IDs will shift one up, e.g. ext will
-be 0 and the third path will be 1.
+Hi,
 
-To fix that, dynamically calculate the IDs by the presence of the paths.
+On Tue, 28 May 2024 16:39:27 +0800, Xianwei Zhao wrote:
+> Add power controller driver support for Amlogic A4 SoC.
+> 
+> 
 
-While at it, make the return code a signed one and return -ENODEV if no
-path is found and handle the error in the callers.
+Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.11/arm64-dt)
 
-Fixes: 5aa8e7647676 ("drm/mediatek: dpi/dsi: Change the getting possible_crtc way")
-Suggested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-Signed-off-by: Michael Walle <mwalle@kernel.org>
----
-You can find v4 at [1]. Unfortunately, it was never applied and in the
-meantime there was a change in mtk_find_possible_crtcs(). So I've
-dropped Nícolas Reviewed and Tested-by tags and Angelos Reviewed-by
-tag.
+[1/3] dt-bindings: power: add Amlogic A4 power domains
+      (no commit info)
+[2/3] pmdomain: amlogic: Add support for A4 power domains controller
+      (no commit info)
+[3/3] arm64: dts: amlogic: a4: add power domain controller node
+      https://git.kernel.org/amlogic/c/c830ead0d16131de93d2020369ede4d670a4123b
 
-[1] https://lore.kernel.org/r/20230905084922.3908121-2-mwalle@kernel.org/
----
- drivers/gpu/drm/mediatek/mtk_ddp_comp.c | 105 ++++++++++++++++--------
- drivers/gpu/drm/mediatek/mtk_ddp_comp.h |   2 +-
- drivers/gpu/drm/mediatek/mtk_dpi.c      |   5 +-
- drivers/gpu/drm/mediatek/mtk_dsi.c      |   5 +-
- 4 files changed, 78 insertions(+), 39 deletions(-)
+These changes has been applied on the intermediate git tree [1].
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-index 17b036411292..9a8c1cace8a0 100644
---- a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-@@ -514,29 +514,42 @@ static bool mtk_ddp_comp_find(struct device *dev,
- 	return false;
- }
- 
--static unsigned int mtk_ddp_comp_find_in_route(struct device *dev,
--					       const struct mtk_drm_route *routes,
--					       unsigned int num_routes,
--					       struct mtk_ddp_comp *ddp_comp)
-+static int mtk_ddp_comp_find_in_route(struct device *dev,
-+				      const struct mtk_drm_route *routes,
-+				      unsigned int num_routes,
-+				      struct mtk_ddp_comp *ddp_comp)
- {
--	int ret;
- 	unsigned int i;
- 
--	if (!routes) {
--		ret = -EINVAL;
--		goto err;
--	}
-+	if (!routes)
-+		return -EINVAL;
- 
- 	for (i = 0; i < num_routes; i++)
- 		if (dev == ddp_comp[routes[i].route_ddp].dev)
- 			return BIT(routes[i].crtc_id);
- 
--	ret = -ENODEV;
--err:
-+	return -ENODEV;
-+}
- 
--	DRM_INFO("Failed to find comp in ddp table, ret = %d\n", ret);
-+static bool mtk_ddp_path_available(const unsigned int *path,
-+				   unsigned int path_len,
-+				   struct device_node **comp_node)
-+{
-+	unsigned int i;
- 
--	return 0;
-+	if (!path || !path_len)
-+		return false;
-+
-+	for (i = 0U; i < path_len; i++) {
-+		/* OVL_ADAPTOR doesn't have a device node */
-+		if (path[i] == DDP_COMPONENT_DRM_OVL_ADAPTOR)
-+			continue;
-+
-+		if (!comp_node[path[i]])
-+			return false;
-+	}
-+
-+	return true;
- }
- 
- int mtk_ddp_comp_get_id(struct device_node *node,
-@@ -554,32 +567,52 @@ int mtk_ddp_comp_get_id(struct device_node *node,
- 	return -EINVAL;
- }
- 
--unsigned int mtk_find_possible_crtcs(struct drm_device *drm, struct device *dev)
-+int mtk_find_possible_crtcs(struct drm_device *drm, struct device *dev)
- {
- 	struct mtk_drm_private *private = drm->dev_private;
--	unsigned int ret = 0;
--
--	if (mtk_ddp_comp_find(dev,
--			      private->data->main_path,
--			      private->data->main_len,
--			      private->ddp_comp))
--		ret = BIT(0);
--	else if (mtk_ddp_comp_find(dev,
--				   private->data->ext_path,
--				   private->data->ext_len,
--				   private->ddp_comp))
--		ret = BIT(1);
--	else if (mtk_ddp_comp_find(dev,
--				   private->data->third_path,
--				   private->data->third_len,
--				   private->ddp_comp))
--		ret = BIT(2);
--	else
--		ret = mtk_ddp_comp_find_in_route(dev,
--						 private->data->conn_routes,
--						 private->data->num_conn_routes,
--						 private->ddp_comp);
-+	const struct mtk_mmsys_driver_data *data;
-+	struct mtk_drm_private *priv_n;
-+	int i = 0, j;
-+	int ret;
- 
-+	for (j = 0; j < private->data->mmsys_dev_num; j++) {
-+		priv_n = private->all_drm_private[j];
-+		data = priv_n->data;
-+
-+		if (mtk_ddp_path_available(data->main_path, data->main_len,
-+					   priv_n->comp_node)) {
-+			if (mtk_ddp_comp_find(dev, data->main_path,
-+					      data->main_len,
-+					      priv_n->ddp_comp))
-+				return BIT(i);
-+			i++;
-+		}
-+
-+		if (mtk_ddp_path_available(data->ext_path, data->ext_len,
-+					   priv_n->comp_node)) {
-+			if (mtk_ddp_comp_find(dev, data->ext_path,
-+					      data->ext_len,
-+					      priv_n->ddp_comp))
-+				return BIT(i);
-+			i++;
-+		}
-+
-+		if (mtk_ddp_path_available(data->third_path, data->third_len,
-+					   priv_n->comp_node)) {
-+			if (mtk_ddp_comp_find(dev, data->third_path,
-+					      data->third_len,
-+					      priv_n->ddp_comp))
-+				return BIT(i);
-+			i++;
-+		}
-+	}
-+
-+	ret = mtk_ddp_comp_find_in_route(dev,
-+					 private->data->conn_routes,
-+					 private->data->num_conn_routes,
-+					 private->ddp_comp);
-+
-+	DRM_INFO("Failed to find comp in ddp table, ret = %d\n", ret);
- 	return ret;
- }
- 
-diff --git a/drivers/gpu/drm/mediatek/mtk_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-index 26236691ce4c..e2ea19d5ddcb 100644
---- a/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-+++ b/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-@@ -326,7 +326,7 @@ static inline void mtk_ddp_comp_encoder_index_set(struct mtk_ddp_comp *comp)
- 
- int mtk_ddp_comp_get_id(struct device_node *node,
- 			enum mtk_ddp_comp_type comp_type);
--unsigned int mtk_find_possible_crtcs(struct drm_device *drm, struct device *dev);
-+int mtk_find_possible_crtcs(struct drm_device *drm, struct device *dev);
- int mtk_ddp_comp_init(struct device_node *comp_node, struct mtk_ddp_comp *comp,
- 		      unsigned int comp_id);
- enum mtk_ddp_comp_type mtk_ddp_comp_get_type(unsigned int comp_id);
-diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
-index 5c86aa0b75b2..b894be9f1f53 100644
---- a/drivers/gpu/drm/mediatek/mtk_dpi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-@@ -814,7 +814,10 @@ static int mtk_dpi_bind(struct device *dev, struct device *master, void *data)
- 		return ret;
- 	}
- 
--	dpi->encoder.possible_crtcs = mtk_find_possible_crtcs(drm_dev, dpi->dev);
-+	ret = mtk_find_possible_crtcs(drm_dev, dpi->dev);
-+	if (ret < 0)
-+		goto err_cleanup;
-+	dpi->encoder.possible_crtcs = ret;
- 
- 	ret = drm_bridge_attach(&dpi->encoder, &dpi->bridge, NULL,
- 				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-index 2b0ac859a653..b450b7223aa2 100644
---- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-@@ -861,7 +861,10 @@ static int mtk_dsi_encoder_init(struct drm_device *drm, struct mtk_dsi *dsi)
- 		return ret;
- 	}
- 
--	dsi->encoder.possible_crtcs = mtk_find_possible_crtcs(drm, dsi->host.dev);
-+	ret = mtk_find_possible_crtcs(drm, dsi->host.dev);
-+	if (ret < 0)
-+		goto err_cleanup_encoder;
-+	dsi->encoder.possible_crtcs = ret;
- 
- 	ret = drm_bridge_attach(&dsi->encoder, &dsi->bridge, NULL,
- 				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+The v6.11/arm64-dt branch will then be sent via a formal Pull Request to the Linux SoC maintainers
+for inclusion in their intermediate git branches in order to be sent to Linus during
+the next merge window, or sooner if it's a set of fixes.
+
+In the cases of fixes, those will be merged in the current release candidate
+kernel and as soon they appear on the Linux master branch they will be
+backported to the previous Stable and Long-Stable kernels [2].
+
+The intermediate git branches are merged daily in the linux-next tree [3],
+people are encouraged testing these pre-release kernels and report issues on the
+relevant mailing-lists.
+
+If problems are discovered on those changes, please submit a signed-off-by revert
+patch followed by a corrective changeset.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+
 -- 
-2.39.2
+Neil
 
 
