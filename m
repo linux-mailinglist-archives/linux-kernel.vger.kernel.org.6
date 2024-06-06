@@ -1,117 +1,210 @@
-Return-Path: <linux-kernel+bounces-203863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54FB88FE165
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:47:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87D958FE16B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 041BB1F23513
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:47:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FEAF1F22E9E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE57813C9BE;
-	Thu,  6 Jun 2024 08:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87E213D8BB;
+	Thu,  6 Jun 2024 08:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MJ7KkhfO"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="YbKTq5JE"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962DF19D8B5;
-	Thu,  6 Jun 2024 08:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5308D13CF9C
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717663626; cv=none; b=TKn16ojcQDkQV7Sx6dfxvFYsmtmnOLN6h87BxpksKk88yFly3vseFWCB9dZhdWg4uHBqzwMd7Q7bmJYfB2bLqw63+uj6mWgwRECR6JmqSZurY1d2HTvpfQM5hfjdSz9DFzQ/WWw/LLPAg2xBhbx6BLDxrMaaZuWRRTfOEqKUoUo=
+	t=1717663628; cv=none; b=sD1BQ0rGa3zyODr8Ki7peF4xsOoUgUqNp0RG+4FmXWkpTYNZh+tf4NUhnCYdxhv1CSc/8jqDNd36Frt8uHwEgH5lkOAiwfY642azXl6UZHMmNWhVQeJ+rPSQ3afhCLsnLYncq0CX4MEHEox4vW5VYnnwDvQc4Mb6rTYiZxTox50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717663626; c=relaxed/simple;
-	bh=3Z8Us2nSlYTKmCcmp9/IYqU2ynqeFuKwkzczHr5v/dw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jaGgwdQuNCe279KCnVQsF1G5Cmpa2URozT6saoF/4Ky7+G4s7ToeEL2qZkT8RcvjsVE1PoQeLPnfg1EdNw7Y5owEUUJTqvWVt39Fg6F3DHrkVjdTx7UbYMXDmUlo7tZmCXzq/2jPthXAEr+VGR1UbDRxyGbyvJg+ecGSr8TsZH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MJ7KkhfO; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57a2406f951so717358a12.1;
-        Thu, 06 Jun 2024 01:47:04 -0700 (PDT)
+	s=arc-20240116; t=1717663628; c=relaxed/simple;
+	bh=Cniel9xmz6tFmH21G0iQilDoqldTJ7+he557GBpk4mo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mrlQsfqjAKZawg1FUOYezH54vzRyfl53UuQWlUL2XCRDzBJ8qBrJH6h750KcqWjJoQ5MbTWOPIN7TzsIGJftC+dPdOM1xwmIe8aw+Ws32+vkUMQCKhSc04aJ+pAgmmWejILZl9GVE/9pAcRNWHiFNkhYQlvAEhdJjk/eCowbwik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=YbKTq5JE; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70260814b2dso532234b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 01:47:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717663623; x=1718268423; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3Z8Us2nSlYTKmCcmp9/IYqU2ynqeFuKwkzczHr5v/dw=;
-        b=MJ7KkhfOjfP4Dkhgtd0l28xYDrIO/K1d8LCOrch8QsMEsmWN9vbZ6InY7e1pH6IWcB
-         D6XfnSORsEgPIEakoulzblOqYz5p6iREuDMLFKaULI+GiI91x6XKWQ0mARnDf0kckQC6
-         2me+Dx7zYQKxvKG8hj4I9lBLpzgeevW+k0AX9RP3zRqwSti4kdqfhdDJ/DnDK2QUKFeT
-         GKxRoqm9RXgh7ardTxXbndNwSRT8L+mDkshv+LFL/qGPrZKUVfEM/Toee3HvwB2MvFOq
-         N0ChQ8YQ1/rOig7mVjXaVexk67RwQ0zMurooTVObcHHmV0D1LEUuOXYLAm+Dc+cr3kq+
-         RCpw==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1717663627; x=1718268427; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=41y8XHGYPcaf8xhTg/yf8k7aSgLq6vpwTaajj5o1iV0=;
+        b=YbKTq5JE7bUxuyGpvh8Td2MgBPekNV4/yshy/pLrOTb/G3Dpd8grz/Ox1yxGavclOc
+         FeMKPKeX8y+AwkxSwV9i6LQrZPcApskmCCNxxkAW6eG9mUJ0Wf1PUt9kJLELmtdSCTGA
+         8nD5S3N8q17ciI8V/d80e7sbATg+KWk3L3ItXx3garZwvd91RTltr7GevJs8FXUR+bXt
+         vGGZzCcOwQNZguIYmBKbGnw0B8xaFu141N/jQiLynApX/zrKNqlLGnZ2eWizIBKV0eOP
+         /DiEaekdE7UkSk/oIUh0zjbDl6vcn572oLKTgWzz6Itfo8lzS5g5KSPDhqMuaPf8xofn
+         mWFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717663623; x=1718268423;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3Z8Us2nSlYTKmCcmp9/IYqU2ynqeFuKwkzczHr5v/dw=;
-        b=lPLtgRlnw2nRTx2HvNwMyKbH3AgTnaaGsjBVkUqVSZEb6gLWezU6+/ZbeSRYL+IgLD
-         wrBs5XDFTmpgzhufJe0a9ZA5W04oBt9Mqs75cLPXwFM7bYHOhAQrs8kxXGr+2OQ9RJGy
-         tDN1D2rzqi/j/3tp5AFVVMTOkIYNst8JY9qhBgJt8zG/No7sI2Ad7rMEUZyZFFMCYGCA
-         xKie7HhRQFGBT5toR/HpvJONaLhAJA/U7oJxUI6WcKp3PtpR/fCQb+/Ng15OkLy7zTPO
-         8WVzIojT/T0rSgw8GHdzy3abDeD9jW9VsHthrFaCeKxPpluBUZfDxRbRqP1rG2SQ+y0r
-         VxTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6UWlIYCGgt3smucxb9puItgRxehMZ21qqgjKejkAnEv6HQ/GSb700PGmMJncOj+KDuSDx7V0Z+8Q9Agu4uozPohhncUO4GaUNiP7zuYUeoWL9D6eUlqoS6NOdesTBMpvU7o9i1izB9eOItVkHXiiaTUoH03ZMj6G/Wh8ekrTQTE1NjjKIaF/V4+R7Cqgx7fzEng/IKQNRQsVphA==
-X-Gm-Message-State: AOJu0YyID4QVFXxAldkBjMynRaAO8SgGCErolDVBCzoX3okj4aSvEoai
-	I1Y+nmfio9DCewUMswCBfdhta3C62ym54Qx+GyoL0m8XXs62dXLeE7PAPakyBbT87U5mLw1+yx0
-	iog1BLfXFEjp6wGTiiS8yuF6lBtQ=
-X-Google-Smtp-Source: AGHT+IGdVYuwX6uA4TvJlilcYuuO/VA69P7h3+MlIEcZkfM3mPZGkSv1vh38t8Zdpu59VKYRGWXpx5Vfrnq/qoT+4dU=
-X-Received: by 2002:a17:906:65c5:b0:a6c:702f:7a1b with SMTP id
- a640c23a62f3a-a6c702f7b0cmr196870666b.23.1717663622692; Thu, 06 Jun 2024
- 01:47:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717663627; x=1718268427;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=41y8XHGYPcaf8xhTg/yf8k7aSgLq6vpwTaajj5o1iV0=;
+        b=agDUYhvmm9ETHAyGVKaB+mTrHEWlDhf7Ji4s+3vF7mOqUnrqdvEIx4Rx40u/4v8goc
+         SVCQ4XXgvqgdZI2NlmlruHO2MDLVvHTTQh5RYf9O3IfbmQn+RO4qqxWIfn3JX0kB2j5j
+         Bw3CwUA2YtlXqjtJaP6XKjpuuvu+3LsjNXrnnx/DJVnRjuYgXsGQ1K3ZQQPOUwd9Mwgz
+         o7wQqrC/XEkkTU9wG1aBMFY41qkjStaJ0sZkwTxH8+20BNiBv3AuRRVCkPp1Ksr8CoVd
+         UDSRIqbqaXa/ke1DWJ7bbwtnyDao+brkWnwHAsq5XkO4/8tlii+i3NXr6JaERctN1Sy2
+         W3hw==
+X-Forwarded-Encrypted: i=1; AJvYcCWc6n1UJW19/13kt8E0+uSHr0ogCNbGh18OM0Q4pChF0i1XElbKSZMXkR97mBqcAxl9KBs1uwkMxUQ+rSilcgQ1dKWJBdKQCyE2sO1g
+X-Gm-Message-State: AOJu0YxKmJaKnCNic0IDafUAF9rEjSrQnQF8uxMU64wK9iMMgbEjaWik
+	RkpUfg0F5BMIrFNjwgHBglzS7r1KofGjzhWRjcp/loORRzCJjMMZHeLaJkDxZB0=
+X-Google-Smtp-Source: AGHT+IHjGeY29y4OU+xw1rBhPOFqtYDVJ8x9JMmJjh9yFx+g6FM2F5NCbVZSw7OeTFhUfQU8Amb4dA==
+X-Received: by 2002:a05:6a20:2447:b0:1b2:cd79:f41b with SMTP id adf61e73a8af0-1b2cd7a18aamr558625637.25.1717663626447;
+        Thu, 06 Jun 2024 01:47:06 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6de28957153sm695226a12.91.2024.06.06.01.47.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 01:47:05 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sF8lz-006AWk-0H;
+	Thu, 06 Jun 2024 18:47:03 +1000
+Date: Thu, 6 Jun 2024 18:47:03 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: djwong@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, chandan.babu@oracle.com,
+	willy@infradead.org, axboe@kernel.dk, martin.petersen@oracle.com,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	tytso@mit.edu, jbongio@google.com, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, mcgrof@kernel.org, p.raghav@samsung.com,
+	linux-xfs@vger.kernel.org, catherine.hoang@oracle.com,
+	Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH v3 07/21] fs: xfs: align args->minlen for forced
+ allocation alignment
+Message-ID: <ZmF3h2ObrJ5hNADp@dread.disaster.area>
+References: <20240429174746.2132161-1-john.g.garry@oracle.com>
+ <20240429174746.2132161-8-john.g.garry@oracle.com>
+ <c9ac2f74-73f9-4eb5-819e-98a34dfb6b23@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527161450.326615-1-herve.codina@bootlin.com>
- <20240527161450.326615-10-herve.codina@bootlin.com> <ZmDEVoC9NUh7Gg7k@surfacebook.localdomain>
- <20240606091446.03f262fa@bootlin.com>
-In-Reply-To: <20240606091446.03f262fa@bootlin.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 6 Jun 2024 11:46:25 +0300
-Message-ID: <CAHp75Vex7M0htYQiALN3SVy4XHv8bQ-6QQaX21vS_BFF7Sn_Gw@mail.gmail.com>
-Subject: Re: [PATCH v2 09/19] irqdomain: Add missing parameter descriptions in docs
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Simon Horman <horms@kernel.org>, Sai Krishna Gajula <saikrishnag@marvell.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Lee Jones <lee@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
-	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Lars Povlsen <lars.povlsen@microchip.com>, 
-	Steen Hegelund <Steen.Hegelund@microchip.com>, Daniel Machon <daniel.machon@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	Allan Nielsen <allan.nielsen@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c9ac2f74-73f9-4eb5-819e-98a34dfb6b23@oracle.com>
 
-On Thu, Jun 6, 2024 at 10:14=E2=80=AFAM Herve Codina <herve.codina@bootlin.=
-com> wrote:
-> On Wed, 5 Jun 2024 23:02:30 +0300
-> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+On Wed, Jun 05, 2024 at 03:26:11PM +0100, John Garry wrote:
+> Hi Dave,
+> 
+> I still think that there is a problem with this code or some other allocator
+> code which gives rise to unexpected -ENOSPC. I just highlight this code,
+> above, as I get an unexpected -ENOSPC failure here when the fs does have
+> many free (big enough) extents. I think that the problem may be elsewhere,
+> though.
+> 
+> Initially we have a file like this:
+> 
+>  EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL
+>    0: [0..127]:        62592..62719      0 (62592..62719)     128
+>    1: [128..895]:      hole                                   768
+>    2: [896..1023]:     63616..63743      0 (63616..63743)     128
+>    3: [1024..1151]:    64896..65023      0 (64896..65023)     128
+>    4: [1152..1279]:    65664..65791      0 (65664..65791)     128
+>    5: [1280..1407]:    68224..68351      0 (68224..68351)     128
+>    6: [1408..1535]:    76416..76543      0 (76416..76543)     128
+>    7: [1536..1791]:    62720..62975      0 (62720..62975)     256
+>    8: [1792..1919]:    60032..60159      0 (60032..60159)     128
+>    9: [1920..2047]:    63488..63615      0 (63488..63615)     128
+>   10: [2048..2303]:    63744..63999      0 (63744..63999)     256
+> 
+> forcealign extsize is 16 4k fsb, so the layout looks ok.
+> 
+> Then we truncate the file to 454 sectors (or 56.75 fsb). This gives:
+> 
+> EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL
+>    0: [0..127]:        62592..62719      0 (62592..62719)     128
+>    1: [128..455]:      hole                                   328
+>
+> We have 57 fsb.
+> 
+> Then I attempt to write from byte offset 232448 (454 sector) and a get a
+> write failure in xfs_bmap_select_minlen() returning -ENOSPC; at that point
+> the file looks like this:
 
-...
+So you are doing an unaligned write of some size at EOF and EOF is
+not aligned to the extsize?
 
-> Yes indeed, I missed the return values.
-> Will be updated in the next iteration.
+>  EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL
+>    0: [0..127]:        62592..62719      0 (62592..62719)     128
+>    1: [128..447]:      hole                                   320
+>    2: [448..575]:      62720..62847      0 (62720..62847)     128
+> 
+> That hole in ext #1 is 40 fsb, and not aligned with forcealign granularity.
+> This means that ext #2 is misaligned wrt forcealign granularity.
 
-Note, Thomas already applied this version, so it should be just a follow up=
-.
+OK, so the command to produce this would be something like this?
 
---=20
-With Best Regards,
-Andy Shevchenko
+# xfs_io -fd -c "truncate 0" \
+	-c "chattr +<forcealign>" -c "extsize 64k" \
+	-c "pwrite 0 64k -b 64k" -c "pwrite 448k 64k -b 64k" \
+	-c "bmap -vvp" \
+	-c "truncate 227k" \
+	-c "bmap -vvp" \
+	-c "pwrite 227k 64k -b 64k" \
+	-c "bmap -vvp" \
+	/mnt/scratch/testfile
+
+> This is strange.
+> 
+> I notice that we when allocate ext #2, xfs_bmap_btalloc() returns
+> ap->blkno=7840, length=16, offset=56. I would expect offset % 16 == 0, which
+> it is not.
+
+IOWs, the allocation was not correctly rounded down to an aligned
+start offset.  What were the initial parameters passed to this
+allocation? i.e. why didn't it round the start offset down to 48?
+Answering that question will tell you where the bug is.
+
+Of course, if the allocation start is rounded down to 48, then
+the length should be rounded up to 32 to cover the entire range we
+are writing new data to.
+
+> In the following sub-io block zeroing, I note that we zero the front padding
+> from pos=196608 (or fsb 48 or sector 384) for len=35840, and back padding
+> from pos=263680 for len=64000 (upto sector 640 or fsb 80). That seems wrong,
+> as we are zeroing data in the ext #1 hole, right?
+
+The sub block zeroing is doing exactly the right thing - it is
+demonstrating the exact range that the force aligned allocation
+should have covered.
+
+> Now the actual -ENOSPC comes from xfs_bmap_btalloc() -> ... ->
+> xfs_bmap_select_minlen() with initially blen=32 args->alignment=16
+> ap->minlen=1 args->maxlen=8. There xfs_bmap_btalloc() has ap->length=8
+> initially. This may be just a symptom.
+
+Yeah, now the allocator is trying to fix up the mess that the first unaligned
+allocation created, and it's tripping over ENOSPC because it's not
+allowed to do sub-extent size hint allocations when forced alignment
+is enabled....
+
+> I guess that there is something wrong in the block allocator for ext #2. Any
+> idea where to check?
+
+Start with tracing exactly what range iomap is requesting be
+allocated, and then follow that through into the allocator to work
+out why the offset being passed to the allocation never gets rounded
+down to be aligned. There's a mistake in the logic somewhere that is
+failing to apply the start alignment to the allocation request (i.e.
+the bug will be in the allocation setup code path. i.e. somewhere
+in the xfs_bmapi_write -> xfs_bmap_btalloc path *before* we get to
+the xfs_alloc_vextent...() calls.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
