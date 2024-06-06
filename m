@@ -1,124 +1,107 @@
-Return-Path: <linux-kernel+bounces-204335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 947D38FE75D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:15:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F01448FE760
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D896B23FCB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:15:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 747EC283E68
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1E5196450;
-	Thu,  6 Jun 2024 13:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OUJRY/qS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE75B19643C;
+	Thu,  6 Jun 2024 13:14:47 +0000 (UTC)
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DF0195B07
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 13:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF5B196428;
+	Thu,  6 Jun 2024 13:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717679653; cv=none; b=WBeuJxeazTAHvm/6vwMszHvW1CF3Y2YDYX7jJsftSYDvoppQGgRmSDDtKGmiDkeuquS+OXWJvkepWSxk6j80bwHqbCoVyC0oN9wR2paXlCyxvC7QN1Szsaz/FixRk+awOqbDNHkN+4eeVNTeSelSWZ8V2uo7UhVaOgTOWbVVIvE=
+	t=1717679687; cv=none; b=mQcb3FCIMmAqLwJcuEnwvLcJJAIAyMuJjaVh3DDKTD7cnH4E3ZfehahwNzul9vqoYnJ4Hq2m4Dr3L2sC+FV9tzleVfHU8P3pOkHF0W0cGulPZcj50Oni8/NT1xT1Mh3b4vDsvTzHGtL1v4gm9wJQ94331PM8FMft3XoADUG+M2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717679653; c=relaxed/simple;
-	bh=lfT8JPB4EPm7jxr8JpU0YG0ocWc9/9yGGGGFE8+4XY8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M3iw7MMTfuHz5RSzborPrYD+/fgGC26y4FkFdTgx5jO+AKaRys1BgMZpWkVZnGiFrhBXBruxBUEElCmt9RuGvKEzplp3IIX3fhaRYZMWiksISuZYDePCjW7NUTkNmzY6Bhxv8ZHtWmdZsuF2qXIfcCrNXi+477EeRuXSQXmxcbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OUJRY/qS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717679650;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3sv8BP20qLzYNDYwYiUPNVzPr3CjiidPi2llEU3NezI=;
-	b=OUJRY/qS7ZSjw0TzdB3omBtbT0eCpsbK/ZCIK2DmC5MOL9aUpyzdGcP3HRbgXt2Y1Wu1cl
-	R+9PYaQJfGLxtQJmWk8d84G1rpnaDqrMoJAL8roCCnM85qv9z+wIF5xFMVzMOAbrODPG+D
-	mNgETbImuV6IAjFXQb6ww5TyUWhIsig=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-624-1h53aZBQNXmSqM6C9Ryh9w-1; Thu, 06 Jun 2024 09:14:06 -0400
-X-MC-Unique: 1h53aZBQNXmSqM6C9Ryh9w-1
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6ad77c0aa3dso566226d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 06:14:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717679645; x=1718284445;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3sv8BP20qLzYNDYwYiUPNVzPr3CjiidPi2llEU3NezI=;
-        b=upK2uLGNm8vruWQnbW+FMJoJp0JhMAlBacE2xdxLI40lDTM4fm1aUcfYPocpPYa0wC
-         DFRANPktggcD3G1F1l0unRVg31bjYm3AD7KqwJ4eXwN2OmFzulXLzKut0WSaW1L75Law
-         brl1RW07M1GNPeQq4kaLJXv0SsabbiuOy2tl1N0+W7JP/FjqAE3ml8DI+XmwsSsJzzRs
-         ktCG3fLFYJj0cWJ/eHy21p9eUi3eHnfuLkkwQhJBXPCnDL+GqXFvELsg1EcQVocOfQNa
-         /fv3Io46pB2oFsC9xBDbeQWiqBM5TGUgVfy30p3PSyXINR+lnZsbADsOWnHcDE+wWknw
-         1+GQ==
-X-Gm-Message-State: AOJu0YzvUOVEUjDRgD/5+RzkZFmukp2PghaB8vvGkQy97xZrlrmacImG
-	ni3XgiCDeJAkxGTtz4VKdbNKm5e2l0pscXAPge+pvC7iLLHHmnb0ih7HlR6mot2xfvU1egTPtgl
-	HUeZ269vwpGma8Qlf2XM5GnvosdDb6Pa9IVoT24KntFC/cC3g+LLwlcU1/H1Q7w==
-X-Received: by 2002:ad4:5d6e:0:b0:6a0:a4eb:bcdc with SMTP id 6a1803df08f44-6b030a7e3e9mr57081076d6.3.1717679645349;
-        Thu, 06 Jun 2024 06:14:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF0c6hpgSWYYwXOOmcrAHLoDdT34ON7mNLV662Q3lKDSB8ab5uSZaStQg0NJ8IsQpIZHyk+AA==
-X-Received: by 2002:ad4:5d6e:0:b0:6a0:a4eb:bcdc with SMTP id 6a1803df08f44-6b030a7e3e9mr57080496d6.3.1717679644489;
-        Thu, 06 Jun 2024 06:14:04 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b04f9f8343sm5986836d6.126.2024.06.06.06.14.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 06:14:04 -0700 (PDT)
-Date: Thu, 6 Jun 2024 09:14:01 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Dan Williams <dan.j.williams@intel.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>
-Subject: Re: [PATCH] mm/page_table_check: Fix crash on ZONE_DEVICE
-Message-ID: <ZmG2GciaQRTk-Yam@x1n>
-References: <20240605212146.994486-1-peterx@redhat.com>
- <20240605150543.87c81189fa7cb562e73fa0b8@linux-foundation.org>
+	s=arc-20240116; t=1717679687; c=relaxed/simple;
+	bh=gp3sNoq6XZoTI5NVdrBYpz34TiddWLflixAGr4p22MM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gr4sOaspVmmmzo01Hpz+0CSbsIMvpvE6lN95Aoqe79lkU90Zz1ytNFAhM7xw+xISNg0faUfK6za4fTKkI4MIyHts+uevmKmAtylIvuLCYw2bq79L3gMGwTEAZp/5b0cXV6NnEJK2ViVAeaCZChb1WBW9i48o20QD/mUzwQlqh9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=pankajraghav.com; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Vw4YX4BqXz9scC;
+	Thu,  6 Jun 2024 15:14:40 +0200 (CEST)
+From: Pankaj Raghav <p.raghav@samsung.com>
+To: donettom@linux.ibm.com
+Cc: akpm@linux-foundation.org,
+	david@redhat.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org,
+	ritesh.list@gmail.com,
+	rppt@kernel.org,
+	shuah@kernel.org,
+	songmuchun@bytedance.com,
+	tonyb@cybernetics.com,
+	willy@infradead.org
+Subject: Re: [PATCH] selftest: mm: Test if hugepage does not get leaked during __bio_release_pages()
+Date: Thu,  6 Jun 2024 13:14:29 +0000
+Message-ID: <20240606131436.592793-1-p.raghav@samsung.com>
+In-Reply-To: <20240604132801.23377-1-donettom@linux.ibm.com>
+References: <20240604132801.23377-1-donettom@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240605150543.87c81189fa7cb562e73fa0b8@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 05, 2024 at 03:05:43PM -0700, Andrew Morton wrote:
-> On Wed,  5 Jun 2024 17:21:46 -0400 Peter Xu <peterx@redhat.com> wrote:
-> 
-> > Not all pages may apply to pgtable check.  One example is ZONE_DEVICE
-> > pages: they map PFNs directly, and they don't allocate page_ext at all even
-> > if there's struct page around.  One may reference devm_memremap_pages().
-> > 
-> > When both ZONE_DEVICE and page-table-check enabled, then try to map some
-> > dax memories, one can trigger kernel bug constantly now when the kernel was
-> > trying to inject some pfn maps on the dax device:
-> > 
-> >  kernel BUG at mm/page_table_check.c:55!
-> > 
-> > While it's pretty legal to use set_pxx_at() for ZONE_DEVICE pages for page
-> > fault resolutions, skip all the checks if page_ext doesn't even exist in
-> > pgtable checker, which applies to ZONE_DEVICE but maybe more.
-> 
-> Do we have a Reported-by: for this one?
 
-Nop, I just hit that when I started to look at the dax issues.
+> +void run_dio_using_hugetlb(unsigned int start_off, unsigned int end_off)
+> +{
+> +	int fd;
+> +	char *buffer =  NULL;
+> +	char *orig_buffer = NULL;
+> +	size_t h_pagesize = 0;
+> +	size_t writesize;
+> +	int free_hpage_b = 0;
+> +	int free_hpage_a = 0;
+> +
+> +	writesize = end_off - start_off;
+> +
+> +	/* Get the default huge page size */
+> +	h_pagesize = default_huge_page_size();
+> +	if (!h_pagesize)
+> +		ksft_exit_fail_msg("Unable to determine huge page size\n");
+> +
+> +	/* Open the file to DIO */
+> +	fd = open("/tmp", O_TMPFILE | O_RDWR | O_DIRECT);
 
-> 
-> And a Fixes?  It looks like df4e817b7108?
+I encountered a build error as follows in NixOS:
 
-Yes that commit should be proper.
+In file included from /nix/store/fwh4fxd747m0py3ib3s5abamia9nrf90-glibc-2.39-52-dev/include/fcntl.h:342,
+                 from hugetlb_dio.c:15:
+In function ‘open’,
+    inlined from ‘run_dio_using_hugetlb’ at hugetlb_dio.c:41:7:
+/nix/store/fwh4fxd747m0py3ib3s5abamia9nrf90-glibc-2.39-52-dev/include/bits/fcntl2.h:50:11: error: call to ‘__open_missing_mode’ declared with attribute error: open with O_CREAT or O_TMPFILE in second argument needs 3 arguments
+   50 |           __open_missing_mode ();
 
-Thanks,
 
--- 
-Peter Xu
+I saw a commit that fixed similar issues with open syscall before:
+8b65ef5ad486 ("selftests/mm: Fix build with _FORTIFY_SOURCE")
+
+So something like this should fix the issue?
+
+-       fd = open("/tmp", O_TMPFILE | O_RDWR | O_DIRECT);
++       fd = open("/tmp", O_TMPFILE | O_RDWR | O_DIRECT, 0664);
+
+> +	if (fd < 0)
+> +		ksft_exit_fail_msg("Error opening file");
+> +
 
 
