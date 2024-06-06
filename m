@@ -1,62 +1,46 @@
-Return-Path: <linux-kernel+bounces-204872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 570B38FF48D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:20:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F5B58FF48F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1F4A1F272DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:20:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93F981F273B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2081993B0;
-	Thu,  6 Jun 2024 18:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE1119939D;
+	Thu,  6 Jun 2024 18:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pjaFbB1H"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF392110E;
-	Thu,  6 Jun 2024 18:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="rW067lQc"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDFB19750B;
+	Thu,  6 Jun 2024 18:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717697999; cv=none; b=lQ95uQ5cyePO4eZqE5J2ghPK2F61r104YDOunMlUYvVKymXhvnRgLGDgSvQccLnJYP8/ote1txvaGG7XCzNR09SBndl9X8jXMKzWsRey7RElup2EyXkw3dgzJvYlTCHNpx8NGOZld9d8yJTpQSPccEjHPosTg0D0Y5TUdUlFPys=
+	t=1717698075; cv=none; b=P2UUGD0BapPVNE7pfo/lYSk9BG9e3yV/nur3JJKLcgaQBYrwfDPPwmg3WAgBxJJhkmbh8eQi797O4rzyb1ARXpfDEKrHxWM37/WJ8tzZE4PHmlx0zq74fCgx86evDmG4xXMVHKA/bNOpv+kbllV/v0xglYlGbCr4cK86xUopWyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717697999; c=relaxed/simple;
-	bh=69zQpjAYtvwRFnrv/J4UIrzjMDYCSMX8xFrTmgQ3yHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NxCxor63HmiPUjY6CZQAYzXCfFEYlIU7YXlJoaMo5v0TVqRoeGly5hRIxndm4p+M89bkghw+BSbI26sgQ1lMs600Im/UqhkYqfyvrsIWsvxFwvtCLJJdvaalFmRV4PJKy+PnQRTNi3Ms99egZAwj3X5oC5T6DwZb2vDVFG7/dms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pjaFbB1H; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 456GHpB3013966;
-	Thu, 6 Jun 2024 18:19:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jgHHZLFc42AkrFsoO0x+siraOmLlalkQoI+WyMiSkbk=; b=pjaFbB1HSFFdGluU
-	LroCspppBFTMZvnU9gjOxlmSoCkcOMha6/eXcgY9awr077xH6kYRioXUiGW7qYsT
-	lJoEA/DNv8NDgox+oLBYUjdLbzFucxNUlwXlOwtpGykqRN5wXocL7Sb/U4I7NXcO
-	CLw/fP+dpykYgGIvDEBQIc1XxsSVtS0JOxRnaI7fnGZvoWXwBKCDdxADt84S1IMX
-	wQ9FdVJ26bQzo42rJ04iKSK2BT71zWXfaaJklVduAapv3NawGZWrRrciCNLAg4ou
-	y0kHzWUCq5kZUFSAAIKMRBdg6Dx6qTRRY7jHeDTrQLpqIMenY6p8ojIKPQOJKLOb
-	AEOaPg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjvxyax98-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Jun 2024 18:19:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 456IJjUv023792
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 6 Jun 2024 18:19:45 GMT
-Received: from [10.48.241.109] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 6 Jun 2024
- 11:19:44 -0700
-Message-ID: <08b18db2-63f2-4eb9-ad7a-318cd7a207ee@quicinc.com>
-Date: Thu, 6 Jun 2024 11:19:43 -0700
+	s=arc-20240116; t=1717698075; c=relaxed/simple;
+	bh=anY/d8A01PQ7OY+Z7i2qgvA8r2Z5cysTIgQdnQRQQn8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=pskBOXXf29gGbSx5gKpkuvN4bHG/R7ARcaBUq8bHTfRoyrSBt7ZznwFtzogcLu9lKbyUu6Cy+wyb6Ayr43D8yC3ZYagcGOl0JMBzwV2uJbkD8WQgyoaAk18flgU9kObDGqPCTaTsA7/P0RWC5na1E4pljYVKqvdtfOgWqRa0zYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=rW067lQc; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.49.54] (c-73-118-245-227.hsd1.wa.comcast.net [73.118.245.227])
+	by linux.microsoft.com (Postfix) with ESMTPSA id B279320B915A;
+	Thu,  6 Jun 2024 11:21:06 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B279320B915A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1717698066;
+	bh=hc7uke1nP9K6ZEiOlab0+7WnHfaWkClsnMNcflkN4jU=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=rW067lQc+jCvJbWL4V/gx0fjzaOI9VmYDgh34Vn4R/RlxAZUYvYF8R9dv28mxYPrQ
+	 peHPLzSrKw0Yhb4WX94d0ehATIIimuY2yUEilS31GXxHAxqD51wlohfEXsqvdd0BnM
+	 W0IQUuyLgQ8/nPdRDNo7xShM+ZPaUtSbmo5qxwcE=
+Message-ID: <27a0ad29-a096-48fe-b9fc-e918464227da@linux.microsoft.com>
+Date: Thu, 6 Jun 2024 11:21:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,60 +48,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 0/2] dt-bindings: describe the ath1X modules on QCom
- BT/WLAN chipsets
+Cc: eahariha@linux.microsoft.com, linux-crypto@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: Re: [PATCH] crypto: algif_aead: After having been compared to a NULL
+ value at algif_aead.c:191, pointer 'tsgl_src' is passed as 2nd parameter in
+ call to function 'crypto_aead_copy_sgl' at algif_aead.c:244, where it is
+ dereferenced at algif_aead.c:85.
+To: Alexander Sapozhnikov <alsp705@gmail.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>
+References: <20240606172023.23-1-alsp705@gmail.com>
 Content-Language: en-US
-To: Kalle Valo <kvalo@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-CC: "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jeff Johnson
-	<jjohnson@kernel.org>, <linux-wireless@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <ath11k@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <ath12k@lists.infradead.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>
-References: <20240605122106.23818-1-brgl@bgdev.pl> <878qziqjn5.fsf@kernel.org>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <878qziqjn5.fsf@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+In-Reply-To: <20240606172023.23-1-alsp705@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: FEhgh-xv4AfcdpCcpXYjCI7RdTDSgPn2
-X-Proofpoint-GUID: FEhgh-xv4AfcdpCcpXYjCI7RdTDSgPn2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-06_14,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 spamscore=0
- mlxscore=0 adultscore=0 bulkscore=0 phishscore=0 priorityscore=1501
- lowpriorityscore=0 mlxlogscore=703 impostorscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406060127
 
-On 6/6/2024 6:35 AM, Kalle Valo wrote:
-> Bartosz Golaszewski <brgl@bgdev.pl> writes:
+On 6/6/2024 10:20 AM, Alexander Sapozhnikov wrote:
+> From: Alexandr Sapozhnikov <alsp705@gmail.com>
 > 
->> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>
->> Here are the two dt-binding patches from the power-sequencing series
->> targeting the wireless subsystem. To keep the cover-letter short, I
->> won't repeat all the details, they can be found in the cover-letter for
->> v8. Please consider picking them up into your tree, they were reviewed
->> by Krzysztof earlier.
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 > 
-> Is it ok for everyone that I'll take these to our ath.git tree?
+> Signed-off-by: Alexandr Sapozhnikov <alsp705@gmail.com>
+> ---
+>  crypto/algif_aead.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/crypto/algif_aead.c b/crypto/algif_aead.c
+> index 42493b4..f757907 100644
+> --- a/crypto/algif_aead.c
+> +++ b/crypto/algif_aead.c
+> @@ -191,7 +191,7 @@ static int _aead_recvmsg(struct socket *sock, struct msghdr *msg,
+>  		if (tsgl_src)
+>  			break;
+>  	}
+> -	if (processed && !tsgl_src) {
+> +	if (processed || !tsgl_src) {
+>  		err = -EFAULT;
+>  		goto free;
+>  	}
 
-Kalle, if you take through your tree can you:
-s/quic_jjohnson@quicinc.com/jjohnson@kernel.org/
 
+Please see
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#the-canonical-patch-format
+and format your subject line accordingly.
+
+Thanks,
+Easwar
 
