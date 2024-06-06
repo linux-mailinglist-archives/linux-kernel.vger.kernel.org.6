@@ -1,482 +1,308 @@
-Return-Path: <linux-kernel+bounces-204634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 170D38FF185
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:04:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 315E28FF189
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:05:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 968FF28869E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:04:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AC4B1F24B15
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE17197A96;
-	Thu,  6 Jun 2024 16:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T8B89E+/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA70A10E9;
+	Thu,  6 Jun 2024 16:05:15 +0000 (UTC)
+Received: from proxmox-new.maurer-it.com (proxmox-new.maurer-it.com [94.136.29.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2642628C
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 16:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D5519755B;
+	Thu,  6 Jun 2024 16:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.136.29.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717689875; cv=none; b=KXyBjOPIorYcs87B5+doAoJraeh4ebpywLWEeSZYoVhv4Bbps18xLSYu7FlODE7pmqDODbqPerLKS0AYzzCYswXmL2dxI38abhWunRwtDfdpWjVDdz3Wfb/vMlxJmN9mniMhTCCbN31RwrrEzPM0GvgVe1c2l68HTgDCoBDKkqI=
+	t=1717689915; cv=none; b=dEBxTYLA+iXgBjgfn1WZXsOBWPtqbXnLabsDCMlsTSU8KQizGFkOHRIgUcSeAisVYlEcoj0u4VOoKwZvnIf2bMkrZXOjyfCrQRsWkKGBJtNM8rLVJFu/gfD8KJt+1qzgXpHW2e+E+A9TCjZqjXwZQQyrrEenBsdPjzKGBvHExig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717689875; c=relaxed/simple;
-	bh=VB4ZT7y7ubhEcNdi+Z6RBcm06BWgu2STwBI8AxU5xtw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AUiLndU466QyrGUX5F2djb8wIZdYApXLrY+lIsTOqxc7H/dS7P8kESD25FJofDESxNuXV468e+HlN8eMWoQT+xINZF0oa56O7NfY2Rng9XJJLp3keCMoC+cAEW5pZ4gueO2AOQZfMvcj5EUW1aNDOeFJVwu3HSmmy0uoYhgHbD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T8B89E+/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717689872;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pfA3Qnw2+eAYJOpoaCDqBDsNQKqj0hc7AnbxZ6IN4PE=;
-	b=T8B89E+/d1sFIsn9zjPMN5vMak/J/PK+CWuPgDKgYvohzhwu9xq1BM74L2e006HXd1e58H
-	wbSkCZL6552juSFherYEaKN6/BPERFsBGpQT5AIYZsi5VShA3ad3yZXWaaDsEAKaJShojs
-	8CtvHXjLKyzJ95G7YYYM8Ko+MN8Dyig=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-670-Ewhric9RNReFKqmdwEtp4Q-1; Thu, 06 Jun 2024 12:04:30 -0400
-X-MC-Unique: Ewhric9RNReFKqmdwEtp4Q-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42155e1f0aaso11308125e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 09:04:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717689869; x=1718294669;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pfA3Qnw2+eAYJOpoaCDqBDsNQKqj0hc7AnbxZ6IN4PE=;
-        b=blglFiiXyI19PsqqY86I7WtNF3ZmxYckxiMDWOAllvd84fXEA87l7SXWZvXpVK4Lq4
-         reDgWBWnYHAcN+cR4WKgSnwwMBzCmYzmKxpjPKyFOA9SKA2TO1lQsmwwCcjzRz8t7jOM
-         8LzcBcCF1rHUoaaKqmR80bs9kTU1YujzOjY20fFkp6ie6NpHlmbKaxMYbwV9EHjoGOgc
-         JiKJ8GdUMgC0OWtIwDq7RbBF6g68UYM/ClkBPzxRU9MOnklb3i4Fm4Lx0xl6jVFeADRi
-         XihbQXt34SMg7xGMNyO7Luh9h8B/tbIVzUev0QHtgcxyDxdvI14+BSLepHSHcPHc3mu9
-         jRcg==
-X-Forwarded-Encrypted: i=1; AJvYcCW1OcBZP4TMkdREjUCWe32kyKIOE04LlJyM4VSbT+HzB3CY+OhRFNVHKFi2EvSDhhLLR36D+5IEGQqI+2ZiEysaf7yXmxaxG9qo4Gfj
-X-Gm-Message-State: AOJu0YyZY6HNTNNp+3rnXQJ86gym1SKSGVQaviYdv3mMrgLDx5MJ+olt
-	ABGhdAxGbNrKv9Oa646ud2WsqV301NCcxSSbh7bUlzF4n/1IKMc5g0nJPdlc97734AOBbgXhUbj
-	Zi9eBw7xsbJW90YU+zzwu4wXPqvbL/m08D3l8dz/5AktX7n3iENTMb6lk5LOBdFwKBOLrNNttfj
-	0p/9N9kt5h5ZYk8O/8R8HOgBNdoQ7+nUx38nTP
-X-Received: by 2002:a05:600c:34d5:b0:420:fed7:2903 with SMTP id 5b1f17b1804b1-421649fbfa9mr1534455e9.15.1717689868989;
-        Thu, 06 Jun 2024 09:04:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEEtcMoC8e263ZOq7Zpku7n6tvwSu52vSZNIEAlnH04yVgG8by9a1+rNrcAr3RoPs3nnSCahP04ezzjzcdHBHA=
-X-Received: by 2002:a05:600c:34d5:b0:420:fed7:2903 with SMTP id
- 5b1f17b1804b1-421649fbfa9mr1534125e9.15.1717689868482; Thu, 06 Jun 2024
- 09:04:28 -0700 (PDT)
+	s=arc-20240116; t=1717689915; c=relaxed/simple;
+	bh=K95CGJHofbZP/t+PheO5JSwrsm72bTgMD8eUhXv5s1w=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=SygGx+xBnq11pkRASMFjARfZfk+vU2G94PGFN3PTEEGmkeazsxwleAsTRKB9Lgub2W8oTGpvZA0sgPSyW163tocHzY4iFaHrKD8t8Q0oPmAiQFnu8ji551Duey8lCPSCEl34oGvaR8otKGDnzkCnuRMnKSJc3Ngmx8iQvUGBRP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com; spf=pass smtp.mailfrom=proxmox.com; arc=none smtp.client-ip=94.136.29.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proxmox.com
+Received: from proxmox-new.maurer-it.com (localhost.localdomain [127.0.0.1])
+	by proxmox-new.maurer-it.com (Proxmox) with ESMTP id E67D044EC0;
+	Thu,  6 Jun 2024 18:05:02 +0200 (CEST)
+Message-ID: <da23559e-c4df-4aaf-9832-57ea6e625d18@proxmox.com>
+Date: Thu, 6 Jun 2024 18:05:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530210714.364118-1-rick.p.edgecombe@intel.com> <20240530210714.364118-4-rick.p.edgecombe@intel.com>
-In-Reply-To: <20240530210714.364118-4-rick.p.edgecombe@intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Thu, 6 Jun 2024 18:04:17 +0200
-Message-ID: <CABgObfYO2FgAOpvp-9jexp5fMh2xoYyE1CNs526z9S7i2Gao_g@mail.gmail.com>
-Subject: Re: [PATCH v2 03/15] KVM: x86/mmu: Add a mirrored pointer to struct kvm_mmu_page
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: seanjc@google.com, kvm@vger.kernel.org, kai.huang@intel.com, 
-	dmatlack@google.com, erdemaktas@google.com, isaku.yamahata@gmail.com, 
-	linux-kernel@vger.kernel.org, sagis@google.com, yan.y.zhao@intel.com, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, Binbin Wu <binbin.wu@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] block: fix request.queuelist usage in flush
+From: Friedrich Weber <f.weber@proxmox.com>
+To: Chengming Zhou <chengming.zhou@linux.dev>, axboe@kernel.dk,
+ ming.lei@redhat.com, hch@lst.de, bvanassche@acm.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ zhouchengming@bytedance.com, Thomas Lamprecht <t.lamprecht@proxmox.com>
+References: <20240604064745.808610-1-chengming.zhou@linux.dev>
+ <c9d03ff7-27c5-4ebd-b3f6-5a90d96f35ba@proxmox.com>
+ <1344640f-b22d-4791-aed4-68fc62fb6e36@linux.dev>
+ <ec27da86-b84a-430b-98aa-9971f90c8c87@proxmox.com>
+ <7193e02e-7347-48db-b1a0-67b44730480b@proxmox.com>
+ <448721f2-8e0b-4c5a-9764-bde65a5ee981@linux.dev>
+ <343166f4-ac11-4f0e-ad13-6dc14dbf573d@proxmox.com>
+Content-Language: en-US
+In-Reply-To: <343166f4-ac11-4f0e-ad13-6dc14dbf573d@proxmox.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 30, 2024 at 11:07=E2=80=AFPM Rick Edgecombe
-<rick.p.edgecombe@intel.com> wrote:
->
-> From: Isaku Yamahata <isaku.yamahata@intel.com>
->
-> Add a mirrored pointer to struct kvm_mmu_page for the private page table =
-and
-> add helper functions to allocate/initialize/free a private page table pag=
-e.
-> Because KVM TDP MMU doesn't use unsync_children and write_flooding_count,
-> pack them to have room for a pointer and use a union to avoid memory
-> overhead.
->
-> For private GPA, CPU refers to a private page table whose contents are
-> encrypted. The dedicated APIs to operate on it (e.g. updating/reading its
-> PTE entry) are used, and their cost is expensive.
->
-> When KVM resolves the KVM page fault, it walks the page tables. To reuse
-> the existing KVM MMU code and mitigate the heavy cost of directly walking
-> the private page table, allocate one more page for the mirrored page tabl=
-e
-> for the KVM MMU code to directly walk. Resolve the KVM page fault with
-> the existing code, and do additional operations necessary for the private
-> page table. To distinguish such cases, the existing KVM page table is
-> called a shared page table (i.e., not associated with a private page
-> table), and the page table with a private page table is called a mirrored
-> page table. The relationship is depicted below.
->
->               KVM page fault                     |
->                      |                           |
->                      V                           |
->         -------------+----------                 |
->         |                      |                 |
->         V                      V                 |
->      shared GPA           private GPA            |
->         |                      |                 |
->         V                      V                 |
->     shared PT root      mirror PT root           |    private PT root
->         |                      |                 |           |
->         V                      V                 |           V
->      shared PT           mirror PT     --propagate-->  private/mirrored P=
-T
->         |                      |                 |           |
->         |                      \-----------------+------\    |
->         |                                        |      |    |
->         V                                        |      V    V
->   shared guest page                              |    private guest page
->                                                  |
->                            non-encrypted memory  |    encrypted memory
->                                                  |
-> PT: Page table
-> Shared PT: visible to KVM, and the CPU uses it for shared mappings.
-> Private/mirrored PT: the CPU uses it, but it is invisible to KVM.  TDX
->                      module updates this table to map private guest pages=
-.
-> Mirror PT: It is visible to KVM, but the CPU doesn't use it.  KVM uses it
->              to propagate PT change to the actual private PT.
+On 06/06/2024 10:44, Friedrich Weber wrote:
+> On 05/06/2024 16:27, Chengming Zhou wrote:
+>> On 2024/6/5 21:34, Friedrich Weber wrote:
+>>> On 05/06/2024 12:54, Friedrich Weber wrote:
+>>> [...]
+>>>
+>>> My results:
+>>>
+>>> Booting the Debian (virtual) machine with mainline kernel v6.10-rc2
+>>> (c3f38fa61af77b49866b006939479069cd451173):
+>>> works fine, no crash
+>>>
+>>> Booting the Debian (virtual) machine with patch "block: fix
+>>> request.queuelist usage in flush" applied on top of v6.10-rc2: The
+>>> Debian (virtual) machine crashes during boot with [1].
+>>>
+>>> Hope this helps! If I can provide anything else, just let me know.
+>>
+>> Thanks for your help, I still can't reproduce it myself, don't know why.
+> 
+> Weird -- when booting the Debian machine into mainline kernel v6.10-rc2
+> with "block: fix request.queuelist usage in flush" applied on top, it
+> crashes reliably for me. The machine having its root on LVM seems to be
+> essential to reproduce the crash, though.
+> 
+> Maybe the fact that I'm running the Debian machine virtualized makes the
+> crash more likely to trigger. I'll try to reproduce on bare metal to
+> narrow down the reproducer and get back to you.
 
-Which one is the "Mirror" and which one is the "Mirrored" PT is
-uncomfortably confusing.
+The crashing Debian VM (QEMU/KVM) has its root on an LVM Logical Volume.
+As it turns out, whether there is an in-guest kernel crash on boot
+depends on the cache mode of the disk backing the LVM Physical Volume
+(Christoph also mentioned the write cache being relevant for the
+original issue with software RAID [1]). Steps to reproduce:
 
-I hate to bikeshed even more, but while I like "Mirror PT" (a lot), I
-would stick with "Private" or perhaps "External" for the pages owned
-by the TDX module.
+- Install kernel v6.10-rc2 with "block: fix request.queuelist usage in
+flush" applied inside the Debian VM
 
-> +       /*
-> +        * This cache is to allocate private page table. E.g. private EPT=
- used
-> +        * by the TDX module.
-> +        */
-> +       struct kvm_mmu_memory_cache mmu_mirrored_spt_cache;
+- Start the Debian VM with `cache=writethrough` for its disk (see [2]
+for upstream QEMU 8.2.2 command line)
+  => no in-guest crash on boot
 
-So this would be "mmu_external_spt_cache".
+- Start the VM with `cache=writeback` for its disk (see [3] for diff to
+previous command line)
+  => in-guest crash [4] on boot
 
-> -       unsigned int unsync_children;
-> +       union {
-> +               /* Those two members aren't used for TDP MMU */
+Maybe the cache=writeback was missing to reproduce the crash on your
+end? If you still cannot reproduce the crash, let me know -- I'll
+provide more detailed steps how to generate the VM disk then.
 
-s/Those/These/
+I was also able to reproduce the crash on bare metal, with a Proxmox VE
+8.2 installation -- if needed I can also retry with e.g. a bare-metal
+Debian installation.
 
-> +               struct {
-> +                       unsigned int unsync_children;
-> +                       /*
-> +                        * Number of writes since the last time traversal
-> +                        * visited this page.
-> +                        */
-> +                       atomic_t write_flooding_count;
-> +               };
-> +               /*
-> +                * Page table page of private PT.
-> +                * Passed to TDX module, not accessed by KVM.
-> +                */
-> +               void *mirrored_spt;
+However, also here the write cache seems to be relevant:
 
-external_spt
+- Running kernel is again mainline v6.10-rc2 with "block: fix
+request.queuelist usage in flush" applied. root is on LVM (see [5]).
 
-> +static inline void kvm_mmu_alloc_mirrored_spt(struct kvm_vcpu *vcpu, str=
-uct kvm_mmu_page *sp)
-> +{
-> +       /*
-> +        * mirrored_spt is allocated for TDX module to hold private EPT m=
-appings,
-> +        * TDX module will initialize the page by itself.
-> +        * Therefore, KVM does not need to initialize or access mirrored_=
-spt.
-> +        * KVM only interacts with sp->spt for mirrored EPT operations.
-> +        */
-> +       sp->mirrored_spt =3D kvm_mmu_memory_cache_alloc(&vcpu->arch.mmu_m=
-irrored_spt_cache);
-> +}
-> +
-> +static inline void kvm_mmu_alloc_private_spt(struct kvm_vcpu *vcpu, stru=
-ct kvm_mmu_page *sp)
-> +{
-> +       /*
-> +        * private_spt is allocated for TDX module to hold private EPT ma=
-ppings,
-> +        * TDX module will initialize the page by itself.
-> +        * Therefore, KVM does not need to initialize or access private_s=
-pt.
-> +        * KVM only interacts with sp->spt for mirrored EPT operations.
-> +        */
-> +       sp->mirrored_spt =3D kvm_mmu_memory_cache_alloc(&vcpu->arch.mmu_m=
-irrored_spt_cache);
-> +}
+- If I enable write caching for the disk backing the LVM PV via `hdparm
+-W1 /dev/sdb` and reboot, I see the crash in blk_mq_requeue_work on boot.
 
-Duplicate function.
+- If I disable write caching via `hdparm -W0 /dev/sdb` and reboot, I see
+no crash.
 
-Naming aside, looks good.
+Hope this helps. Let me know if I can provide any more information.
 
-Paolo
+Best,
 
-On Thu, May 30, 2024 at 11:07=E2=80=AFPM Rick Edgecombe
-<rick.p.edgecombe@intel.com> wrote:
->
-> From: Isaku Yamahata <isaku.yamahata@intel.com>
->
-> Add a mirrored pointer to struct kvm_mmu_page for the private page table =
-and
-> add helper functions to allocate/initialize/free a private page table pag=
-e.
-> Because KVM TDP MMU doesn't use unsync_children and write_flooding_count,
-> pack them to have room for a pointer and use a union to avoid memory
-> overhead.
->
-> For private GPA, CPU refers to a private page table whose contents are
-> encrypted. The dedicated APIs to operate on it (e.g. updating/reading its
-> PTE entry) are used, and their cost is expensive.
->
-> When KVM resolves the KVM page fault, it walks the page tables. To reuse
-> the existing KVM MMU code and mitigate the heavy cost of directly walking
-> the private page table, allocate one more page for the mirrored page tabl=
-e
-> for the KVM MMU code to directly walk. Resolve the KVM page fault with
-> the existing code, and do additional operations necessary for the private
-> page table. To distinguish such cases, the existing KVM page table is
-> called a shared page table (i.e., not associated with a private page
-> table), and the page table with a private page table is called a mirrored
-> page table. The relationship is depicted below.
->
->               KVM page fault                     |
->                      |                           |
->                      V                           |
->         -------------+----------                 |
->         |                      |                 |
->         V                      V                 |
->      shared GPA           private GPA            |
->         |                      |                 |
->         V                      V                 |
->     shared PT root      mirror PT root           |    private PT root
->         |                      |                 |           |
->         V                      V                 |           V
->      shared PT           mirror PT     --propagate-->  private/mirrored P=
-T
->         |                      |                 |           |
->         |                      \-----------------+------\    |
->         |                                        |      |    |
->         V                                        |      V    V
->   shared guest page                              |    private guest page
->                                                  |
->                            non-encrypted memory  |    encrypted memory
->                                                  |
-> PT: Page table
-> Shared PT: visible to KVM, and the CPU uses it for shared mappings.
-> Private/mirrored PT: the CPU uses it, but it is invisible to KVM.  TDX
->                      module updates this table to map private guest pages=
-.
-> Mirror PT: It is visible to KVM, but the CPU doesn't use it.  KVM uses it
->              to propagate PT change to the actual private PT.
->
-> Add a helper kvm_has_mirrored_tdp() to trigger this behavior and wire it
-> to the TDX vm type.
->
-> Co-developed-by: Yan Zhao <yan.y.zhao@intel.com>
-> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-> ---
-> TDX MMU Prep v2:
->  - Rename private->mirror
->  - Don't trigger off of shared mask
->
-> TDX MMU Prep:
-> - Rename terminology, dummy PT =3D> mirror PT. and updated the commit mes=
-sage
->   By Rick and Kai.
-> - Added a comment on union of private_spt by Rick.
-> - Don't handle the root case in kvm_mmu_alloc_private_spt(), it will not
->   be needed in future patches. (Rick)
-> - Update comments (Yan)
-> - Remove kvm_mmu_init_private_spt(), open code it in later patches (Yan)
->
-> v19:
-> - typo in the comment in kvm_mmu_alloc_private_spt()
-> - drop CONFIG_KVM_MMU_PRIVATE
-> ---
->  arch/x86/include/asm/kvm_host.h |  5 ++++
->  arch/x86/kvm/mmu.h              |  5 ++++
->  arch/x86/kvm/mmu/mmu.c          |  7 +++++
->  arch/x86/kvm/mmu/mmu_internal.h | 47 ++++++++++++++++++++++++++++++---
->  arch/x86/kvm/mmu/tdp_mmu.c      |  1 +
->  5 files changed, 61 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_h=
-ost.h
-> index aabf1648a56a..250899a0239b 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -817,6 +817,11 @@ struct kvm_vcpu_arch {
->         struct kvm_mmu_memory_cache mmu_shadow_page_cache;
->         struct kvm_mmu_memory_cache mmu_shadowed_info_cache;
->         struct kvm_mmu_memory_cache mmu_page_header_cache;
-> +       /*
-> +        * This cache is to allocate private page table. E.g. private EPT=
- used
-> +        * by the TDX module.
-> +        */
-> +       struct kvm_mmu_memory_cache mmu_mirrored_spt_cache;
->
->         /*
->          * QEMU userspace and the guest each have their own FPU state.
-> diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
-> index dc80e72e4848..0c3bf89cf7db 100644
-> --- a/arch/x86/kvm/mmu.h
-> +++ b/arch/x86/kvm/mmu.h
-> @@ -318,4 +318,9 @@ static inline gpa_t kvm_translate_gpa(struct kvm_vcpu=
- *vcpu,
->                 return gpa;
->         return translate_nested_gpa(vcpu, gpa, access, exception);
->  }
-> +
-> +static inline bool kvm_has_mirrored_tdp(const struct kvm *kvm)
-> +{
-> +       return kvm->arch.vm_type =3D=3D KVM_X86_TDX_VM;
-> +}
->  #endif
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index b97241945596..5070ba7c6e89 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -685,6 +685,12 @@ static int mmu_topup_memory_caches(struct kvm_vcpu *=
-vcpu, bool maybe_indirect)
->                                        1 + PT64_ROOT_MAX_LEVEL + PTE_PREF=
-ETCH_NUM);
->         if (r)
->                 return r;
-> +       if (kvm_has_mirrored_tdp(vcpu->kvm)) {
-> +               r =3D kvm_mmu_topup_memory_cache(&vcpu->arch.mmu_mirrored=
-_spt_cache,
-> +                                              PT64_ROOT_MAX_LEVEL);
-> +               if (r)
-> +                       return r;
-> +       }
->         r =3D kvm_mmu_topup_memory_cache(&vcpu->arch.mmu_shadow_page_cach=
-e,
->                                        PT64_ROOT_MAX_LEVEL);
->         if (r)
-> @@ -704,6 +710,7 @@ static void mmu_free_memory_caches(struct kvm_vcpu *v=
-cpu)
->         kvm_mmu_free_memory_cache(&vcpu->arch.mmu_pte_list_desc_cache);
->         kvm_mmu_free_memory_cache(&vcpu->arch.mmu_shadow_page_cache);
->         kvm_mmu_free_memory_cache(&vcpu->arch.mmu_shadowed_info_cache);
-> +       kvm_mmu_free_memory_cache(&vcpu->arch.mmu_mirrored_spt_cache);
->         kvm_mmu_free_memory_cache(&vcpu->arch.mmu_page_header_cache);
->  }
->
-> diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_inter=
-nal.h
-> index 706f0ce8784c..faef40a561f9 100644
-> --- a/arch/x86/kvm/mmu/mmu_internal.h
-> +++ b/arch/x86/kvm/mmu/mmu_internal.h
-> @@ -101,7 +101,22 @@ struct kvm_mmu_page {
->                 int root_count;
->                 refcount_t tdp_mmu_root_count;
->         };
-> -       unsigned int unsync_children;
-> +       union {
-> +               /* Those two members aren't used for TDP MMU */
-> +               struct {
-> +                       unsigned int unsync_children;
-> +                       /*
-> +                        * Number of writes since the last time traversal
-> +                        * visited this page.
-> +                        */
-> +                       atomic_t write_flooding_count;
-> +               };
-> +               /*
-> +                * Page table page of private PT.
-> +                * Passed to TDX module, not accessed by KVM.
-> +                */
-> +               void *mirrored_spt;
-> +       };
->         union {
->                 struct kvm_rmap_head parent_ptes; /* rmap pointers to par=
-ent sptes */
->                 tdp_ptep_t ptep;
-> @@ -124,9 +139,6 @@ struct kvm_mmu_page {
->         int clear_spte_count;
->  #endif
->
-> -       /* Number of writes since the last time traversal visited this pa=
-ge.  */
-> -       atomic_t write_flooding_count;
-> -
->  #ifdef CONFIG_X86_64
->         /* Used for freeing the page asynchronously if it is a TDP MMU pa=
-ge. */
->         struct rcu_head rcu_head;
-> @@ -145,6 +157,33 @@ static inline int kvm_mmu_page_as_id(struct kvm_mmu_=
-page *sp)
->         return kvm_mmu_role_as_id(sp->role);
->  }
->
-> +static inline void *kvm_mmu_mirrored_spt(struct kvm_mmu_page *sp)
-> +{
-> +       return sp->mirrored_spt;
-> +}
-> +
-> +static inline void kvm_mmu_alloc_mirrored_spt(struct kvm_vcpu *vcpu, str=
-uct kvm_mmu_page *sp)
-> +{
-> +       /*
-> +        * mirrored_spt is allocated for TDX module to hold private EPT m=
-appings,
-> +        * TDX module will initialize the page by itself.
-> +        * Therefore, KVM does not need to initialize or access mirrored_=
-spt.
-> +        * KVM only interacts with sp->spt for mirrored EPT operations.
-> +        */
-> +       sp->mirrored_spt =3D kvm_mmu_memory_cache_alloc(&vcpu->arch.mmu_m=
-irrored_spt_cache);
-> +}
-> +
-> +static inline void kvm_mmu_alloc_private_spt(struct kvm_vcpu *vcpu, stru=
-ct kvm_mmu_page *sp)
-> +{
-> +       /*
-> +        * private_spt is allocated for TDX module to hold private EPT ma=
-ppings,
-> +        * TDX module will initialize the page by itself.
-> +        * Therefore, KVM does not need to initialize or access private_s=
-pt.
-> +        * KVM only interacts with sp->spt for mirrored EPT operations.
-> +        */
-> +       sp->mirrored_spt =3D kvm_mmu_memory_cache_alloc(&vcpu->arch.mmu_m=
-irrored_spt_cache);
-> +}
-> +
->  static inline bool kvm_mmu_page_ad_need_write_protect(struct kvm_mmu_pag=
-e *sp)
->  {
->         /*
-> diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-> index 1259dd63defc..e7cd4921afe7 100644
-> --- a/arch/x86/kvm/mmu/tdp_mmu.c
-> +++ b/arch/x86/kvm/mmu/tdp_mmu.c
-> @@ -53,6 +53,7 @@ void kvm_mmu_uninit_tdp_mmu(struct kvm *kvm)
->
->  static void tdp_mmu_free_sp(struct kvm_mmu_page *sp)
->  {
-> +       free_page((unsigned long)sp->mirrored_spt);
->         free_page((unsigned long)sp->spt);
->         kmem_cache_free(mmu_page_header_cache, sp);
->  }
-> --
-> 2.34.1
->
+Friedrich
+
+[1] https://lore.kernel.org/all/20240531061708.GB18075@lst.de/
+[2]
+
+[...]/qemu-stable-8.2/qemu-8.2.2/build/qemu-system-x86_64 \
+  -accel kvm \
+  -name 'kernel684deb,debug-threads=on' \
+  -chardev
+'socket,id=qmp,path=/var/run/qemu-server/198.qmp,server=on,wait=off' \
+  -mon 'chardev=qmp,mode=control' \
+  -chardev 'socket,id=qmp-event,path=/var/run/qmeventd.sock,reconnect=5' \
+  -mon 'chardev=qmp-event,mode=control' \
+  -pidfile /var/run/qemu-server/198.pid \
+  -smbios 'type=1,uuid=49351322-c4a0-420b-a780-d445a638973a' \
+  -smp '1,sockets=1,cores=1,maxcpus=1' \
+  -nodefaults \
+  -vnc 'unix:/var/run/qemu-server/198.vnc,password=on' \
+  -cpu qemu64,enforce,+kvm_pv_eoi,+kvm_pv_unhalt \
+  -m 8192 \
+  -device 'pci-bridge,id=pci.1,chassis_nr=1,bus=pci.0,addr=0x1e' \
+  -device 'pci-bridge,id=pci.2,chassis_nr=2,bus=pci.0,addr=0x1f' \
+  -device 'vmgenid,guid=78d4ee6d-a73a-43bd-9e3a-5395449af862' \
+  -chardev
+'socket,id=serial0,path=/var/run/qemu-server/198.serial0,server=on,wait=off'
+\
+  -device 'isa-serial,chardev=serial0' \
+  -device 'VGA,id=vga,bus=pci.0,addr=0x2' \
+  -device 'ahci,id=ahci0,multifunction=on,bus=pci.0,addr=0x7' \
+  -drive
+'file=/dev/pve/vm-198-disk-0,if=none,id=drive-sata0,format=raw,aio=threads,detect-zeroes=on,cache=writethrough'
+\
+  -device 'ide-hd,bus=ahci0.0,drive=drive-sata0,id=sata0,bootindex=100' \
+  -machine 'type=pc'
+
+[3]
+--- run-198-nocrash.sh	2024-06-06 17:19:10.725256488 +0200
++++ run-198-crash.sh	2024-06-06 17:18:39.444974266 +0200
+@@ -19,6 +19,6 @@
+   -device 'isa-serial,chardev=serial0' \
+   -device 'VGA,id=vga,bus=pci.0,addr=0x2' \
+   -device 'ahci,id=ahci0,multifunction=on,bus=pci.0,addr=0x7' \
+-  -drive
+'file=/dev/pve/vm-198-disk-0,if=none,id=drive-sata0,format=raw,aio=threads,detect-zeroes=on,cache=writethrough'
+\
++  -drive
+'file=/dev/pve/vm-198-disk-0,if=none,id=drive-sata0,format=raw,aio=threads,detect-zeroes=on,cache=writeback'
+\
+   -device 'ide-hd,bus=ahci0.0,drive=drive-sata0,id=sata0,bootindex=100' \
+   -machine 'type=pc'
+
+[4]
+[    1.911631] BUG: kernel NULL pointer dereference, address:
+0000000000000000
+[    1.912249] #PF: supervisor write access in kernel mode
+[    1.912723] #PF: error_code(0x0002) - not-present page
+[    1.913157] PGD 0 P4D 0
+[    1.913405] Oops: Oops: 0002 [#1] PREEMPT SMP PTI
+[    1.913787] CPU: 0 PID: 45 Comm: kworker/0:1H Tainted: G            E
+     6.10.0-rc2-patch0604-6-10rc2+ #37
+[    1.915161] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+[    1.916098] Workqueue: kblockd blk_mq_requeue_work
+[    1.916501] RIP: 0010:_raw_spin_lock+0x13/0x60
+[    1.916895] Code: 31 db c3 cc cc cc cc 90 90 90 90 90 90 90 90 90 90
+90 90 90 90 90 90 0f 1f 44 00 00 65 ff 05 3c 42 4a 59 31 c0 ba 01 00 00
+00 <3e> 0f b1 17 75 1b 31 c0 31 d2 31 c9 31 f6 31 ff 45 31 c0 45 31 c9
+[    1.918434] RSP: 0000:ffffa31fc0177d78 EFLAGS: 00010246
+[    1.918880] RAX: 0000000000000000 RBX: ffff8dcf4dcd0400 RCX:
+00000000ffffffe0
+[    1.919393] RDX: 0000000000000001 RSI: 0000000000000001 RDI:
+0000000000000000
+[    1.920014] RBP: ffffa31fc0177d98 R08: 0000000000000000 R09:
+0000000000000000
+[    1.920615] R10: 0000000000000000 R11: 0000000000000000 R12:
+0000000000000000
+[    1.921216] R13: 0000000000000001 R14: ffffc31fbfc013c0 R15:
+ffff8dcf4dcd3c54
+[    1.921811] FS:  0000000000000000(0000) GS:ffff8dd077c00000(0000)
+knlGS:0000000000000000
+[    1.922471] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    1.922964] CR2: 0000000000000000 CR3: 000000010235a000 CR4:
+00000000000006f0
+[    1.923566] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
+0000000000000000
+[    1.924166] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
+0000000000000400
+[    1.924768] Call Trace:
+[    1.924968]  <TASK>
+[    1.925120]  ? show_regs+0x6c/0x80
+[    1.925366]  ? __die+0x24/0x80
+[    1.925580]  ? page_fault_oops+0x175/0x5e0
+[    1.925862]  ? _raw_spin_lock+0x13/0x60
+[    1.926127]  ? kernelmode_fixup_or_oops.constprop.0+0x69/0x90
+[    1.926523]  ? __bad_area_nosemaphore+0x19f/0x280
+[    1.926844]  ? bad_area_nosemaphore+0x16/0x30
+[    1.927143]  ? do_user_addr_fault+0x2ce/0x690
+[    1.927450]  ? exc_page_fault+0x82/0x1b0
+[    1.927719]  ? asm_exc_page_fault+0x27/0x30
+[    1.928006]  ? _raw_spin_lock+0x13/0x60
+[    1.928273]  ? blk_mq_request_bypass_insert+0x20/0xe0
+[    1.928617]  blk_mq_insert_request+0x120/0x1e0
+[    1.928922]  blk_mq_requeue_work+0x18f/0x230
+[    1.929216]  process_one_work+0x199/0x3e0
+[    1.929496]  worker_thread+0x32a/0x500
+[    1.929754]  ? __pfx_worker_thread+0x10/0x10
+[    1.930047]  kthread+0xe4/0x110
+[    1.930271]  ? __pfx_kthread+0x10/0x10
+[    1.930531]  ret_from_fork+0x47/0x70
+[    1.930781]  ? __pfx_kthread+0x10/0x10
+[    1.931040]  ret_from_fork_asm+0x1a/0x30
+[    1.931318]  </TASK>
+[    1.931473] Modules linked in: efi_pstore(E) dmi_sysfs(E)
+qemu_fw_cfg(E) ip_tables(E) x_tables(E) autofs4(E) psmouse(E) bochs(E)
+drm_vram_helper(E) drm_ttm_helper(E) ahci(E) ttm(E) libahci(E)
+i2c_piix4(E) pata_acpi(E) floppy(E)
+[    1.932778] CR2: 0000000000000000
+[    1.932993] ---[ end trace 0000000000000000 ]---
+[    1.933289] RIP: 0010:_raw_spin_lock+0x13/0x60
+[    1.933572] Code: 31 db c3 cc cc cc cc 90 90 90 90 90 90 90 90 90 90
+90 90 90 90 90 90 0f 1f 44 00 00 65 ff 05 3c 42 4a 59 31 c0 ba 01 00 00
+00 <3e> 0f b1 17 75 1b 31 c0 31 d2 31 c9 31 f6 31 ff 45 31 c0 45 31 c9
+[    1.934720] RSP: 0000:ffffa31fc0177d78 EFLAGS: 00010246
+[    1.935049] RAX: 0000000000000000 RBX: ffff8dcf4dcd0400 RCX:
+00000000ffffffe0
+[    1.935510] RDX: 0000000000000001 RSI: 0000000000000001 RDI:
+0000000000000000
+[    1.935967] RBP: ffffa31fc0177d98 R08: 0000000000000000 R09:
+0000000000000000
+[    1.936437] R10: 0000000000000000 R11: 0000000000000000 R12:
+0000000000000000
+[    1.937001] R13: 0000000000000001 R14: ffffc31fbfc013c0 R15:
+ffff8dcf4dcd3c54
+[    1.937481] FS:  0000000000000000(0000) GS:ffff8dd077c00000(0000)
+knlGS:0000000000000000
+[    1.937995] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    1.938599] CR2: 0000000000000000 CR3: 000000010235a000 CR4:
+00000000000006f0
+[    1.939320] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
+0000000000000000
+[    1.940067] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
+0000000000000400
+
+[5]
+# lsblk --ascii
+NAME               MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+sda                  8:0    1 465.8G  0 disk
+sdb                  8:16   1 119.2G  0 disk
+|-sdb1               8:17   1  1007K  0 part
+|-sdb2               8:18   1     1G  0 part /boot/efi
+`-sdb3               8:19   1 118.2G  0 part
+  |-pve-swap       252:0    0     8G  0 lvm  [SWAP]
+  |-pve-root       252:2    0  39.6G  0 lvm  /
+  |-pve-data_tmeta 252:3    0     1G  0 lvm
+  | `-pve-data     252:5    0  53.9G  0 lvm
+  `-pve-data_tdata 252:4    0  53.9G  0 lvm
+    `-pve-data     252:5    0  53.9G  0 lvm
+sdc                  8:32   1 476.9G  0 disk
+sdd                  8:48   1 446.9G  0 disk
+# pvs
+  PV         VG  Fmt  Attr PSize    PFree
+  /dev/sdb3  pve lvm2 a--  <118.24g 14.75g
+# vgs
+  VG  #PV #LV #SN Attr   VSize    VFree
+  pve   1   3   0 wz--n- <118.24g 14.75g
+# lvs
+  LV   VG  Attr       LSize   Pool Origin Data%  Meta%  Move Log
+Cpy%Sync Convert
+  data pve twi-a-tz-- <53.93g             0.00   1.59
+  root pve -wi-ao---- <39.56g
+  swap pve -wi-ao----   8.00g
+# findmnt -ascii
+TARGET    SOURCE               FSTYPE OPTIONS
+/         /dev/mapper/pve-root ext4   errors=remount-ro
+/boot/efi UUID=6314-15A9       vfat   defaults
+none      /dev/mapper/pve-swap swap   sw
+/proc     proc                 proc   defaults
 
 
