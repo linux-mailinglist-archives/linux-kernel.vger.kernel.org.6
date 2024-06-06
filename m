@@ -1,151 +1,114 @@
-Return-Path: <linux-kernel+bounces-204063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F44D8FE385
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:54:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C3648FE38A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:54:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B03611F22011
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:54:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DE951F21C3B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF93417E904;
-	Thu,  6 Jun 2024 09:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5A517E8E9;
+	Thu,  6 Jun 2024 09:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WHc6iWWD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ddkwLcl3"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1FC17C9FB
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A9173444;
+	Thu,  6 Jun 2024 09:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717667629; cv=none; b=tPM5ByXCEnKrns7GGbdg8ZmkJRcurkui2rlHryGFpjWeJr83VjzqnMWZSPLCh9XtLRlDnG3YVwe+NcZ1mwq3p365qNY/AB3iS2SV50UIy75flzLJxTpdjCgmvLyANKIJN8aBAzJV+WBUzho2YisvjoHoBbCM0+snkkfXhxzV24k=
+	t=1717667668; cv=none; b=Tb+pvkNFEl6tnnZK8ssAy5hz/KTUFlkWiOx/H0V6QKkgcDdCJxPTvcqibUlgRCzDrTvntf1SzV5onKGpRsbPtFtnHyeZeUgcbCJMbuukYmSrGSjB2JqrqiYuJZksYnX+bl/ijxlGbsa1+t5udedjZm7goNFLwORDqNXn+mR3jKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717667629; c=relaxed/simple;
-	bh=OKrWD4tOdXVJBlVFBMqDGcjT1rYT3HlZVNBKuy96eA8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dht2EzaZz4Jj9XpkUItcwI2qXsbhr+Tx6G4beBmBcWuPL8gwf+Oa5G337wK4rDWu4ojPdbxBltRF/wk1Nk7yrOSzPznLn2T5sFkzCncfXdzj5niUqX4pZ4J8ONXpipN2vWFMy05y8ZLYT24gKeu0wobw7T4xt6WdpxbFtVSUozo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WHc6iWWD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717667626;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g9rUrzJjZko2Iw3f3+zK1QF9Mdz370vXHXH1MDphNK8=;
-	b=WHc6iWWDOTN+k+W0hzFzN9tg+KuYkNqhkOMciRmYZMEgkYNTLOOhMiRHqnmXfnh+5zqgQv
-	9Q6nl8B6QzJZat7++uBH//F5KYccljLFi4o76V6yuNfjMknF2Hr6pQBJVq4WhXUIzSi44K
-	Qs8vXmZdMV2REEu4LXmIBff3ZaBEVgw=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-661-mZoGuxszOz-j_SUX8veGMA-1; Thu, 06 Jun 2024 05:53:45 -0400
-X-MC-Unique: mZoGuxszOz-j_SUX8veGMA-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4215a04220eso7920835e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 02:53:45 -0700 (PDT)
+	s=arc-20240116; t=1717667668; c=relaxed/simple;
+	bh=W0liS6l/IMX1KNzJs2URUcAemV2b4bSV/M1sWrYD9kI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uFEamPMGBPtMpjIwdLiT2K0s7HR4KXaKaae8aDIQlxq/FGw1wxSgTrGdZfXy89Cmc3UEAPIiAM8bHrmynwHB8YGN0RvKrRCK1CUim7CwvvNPtxKFVCjyxyuQi7M64ENDaYoRVW/KgAEaPMcGSnKCAGD8w1aQSiNQzZRybrPtn60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ddkwLcl3; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4214aa43a66so9117485e9.1;
+        Thu, 06 Jun 2024 02:54:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717667664; x=1718272464; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=apHCWRIB7mRNBEtiZcbMzZM2Ta+6YdoOJz2/tCdUzps=;
+        b=ddkwLcl3uJuO/eBJ6hA79op8Fek/l0dlcF9tPTzpc7hCTsBCZRE0uFDhnzS5mO15r1
+         q1YW/GxwQWnFhRop0TPAAaSB+kU4b9vnkDDSe9GHyespk+rlJBl+Wss5Je9O5XC/wK93
+         DDiWAAwOED+zltIo/AZFWONfik2xJHpl0EOA8xVVqIrxsTB0tDW9TyQDJrSA5mXf1i1b
+         AJnbTOzaCXSXN0xuhp6UTmpQzdWHRtjaeSJt60PHwXsSsEjxdpCDqbcoFjPimEBgX2p+
+         pGJ75nIBc0Ij+tTXC7ckT5NQLqugqW4Lt6rj38KVu4O0zpt7cIPeRdSlrK0Vgn7SAAi8
+         1B+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717667624; x=1718272424;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g9rUrzJjZko2Iw3f3+zK1QF9Mdz370vXHXH1MDphNK8=;
-        b=SNE2c/eipB8lnrFyCi/ubIAsOfrBREkBLGUcdEqjO+y52erPMOGLXCHVTU86owzyvN
-         5olL/mil2vQrtUwlTZCaGir7f5wA7TxskeWExW5NQhrwboSYnjM/Wt9VIW6a33oXtBaE
-         oGEc+/w7Ag6w8q4fDZ4fEYjnNG0OnTIXQn9hkUyEmj1BuNXHxTJB10m0HgsIH+OMjz75
-         03FsgKKxB1LU/+IDkM10F4Qr1lnVs/JDjizG5Jqq/L8MXyWEoGDmalVBVL68x9IV6jgU
-         vISko8rzlOScDDzFc3fA6CYw31ZrC8IrueYHXi3cngPtY7eA4FHTsig7Jhvsy48Nau6L
-         cIzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmM8rfjEq975U9k5a7ORGrftxH/O77n6OAntqI8hI1TAd+hoGAr54Z/ScdJLPmHxDquJa0kpGi+K1g0fTpffeOBDaT9UIwSOSpFYqs
-X-Gm-Message-State: AOJu0Ywh86yEhJ9aZbFJJkWW0Bph6zzRv/KdV4Xxkov5qM5axxDTPgvy
-	zxmzHN0HWmbsIvVsxuxI3QtgMRMLSmYiUefvl7Wb1unX9XcaFczPmhHnhbSXRDgp/Q/3nM2es0+
-	kF9plxhYuANfKXUKaTVFq+H90OeVt6pd5KjdG48qZUDf+2MvcKDdBzusEWe2x+w==
-X-Received: by 2002:a05:6000:b41:b0:354:f8a9:351 with SMTP id ffacd0b85a97d-35e8406dd83mr4727353f8f.3.1717667624154;
-        Thu, 06 Jun 2024 02:53:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEF5gfi1+scnkAQWAZIkTvX0i5PmX29J29SdadoblzycAnzsfmoVfewxnuf+86GgbXImXCwgQ==
-X-Received: by 2002:a05:6000:b41:b0:354:f8a9:351 with SMTP id ffacd0b85a97d-35e8406dd83mr4727337f8f.3.1717667623783;
-        Thu, 06 Jun 2024 02:53:43 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c8072a101sm72627566b.201.2024.06.06.02.53.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 02:53:43 -0700 (PDT)
-Message-ID: <fc03506c-210f-4d79-9a99-8bc9b0587d25@redhat.com>
-Date: Thu, 6 Jun 2024 11:53:42 +0200
+        d=1e100.net; s=20230601; t=1717667664; x=1718272464;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=apHCWRIB7mRNBEtiZcbMzZM2Ta+6YdoOJz2/tCdUzps=;
+        b=HAFssqc6qlkkJ6OG+6khR9fjBWidY98PRbnEQaq6SM+X2HFyKc9lws3jyFVLbXhohO
+         Qe+noIdknwomocSCgIFY1QVaLh/5ndtyGFfXk6OeXavk2sYU5I5y6KIx30s9u4E2E8xo
+         tpjGHrDivFKk0mBgECFPt9tTnr4e6ATA4zEjfzxVuXalS1Jw3s7oe4B0GyrBLvxzB6V+
+         bnUjhTwVWyYZCkbcc0zbc+ED9cCfcZVure8EtaFdwGWMHF3YjXUs+/YVaHRsEZp1aZxN
+         diqeBU70J1kqpBvxcf2vjoWHdX64cZxvKbcFto3BLmry5AG0HK4ldvDHMv9qYXoLR9M4
+         s+QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5xN0NUXZNATbx8i7iRIWsLq9gbF2m9QsNyM6BY1zGKBZEDsuD3VUai8qT30VGVedRXq8d0WpE6str/Xano4D3Kd+FEfbAm00y0Bn+YRrMDnhs9r+xBtbzsqLb93O0IBGXqgzCrcdaaA==
+X-Gm-Message-State: AOJu0YwDQzLzxrP5F7dN6FP5vmbN+Qk01Dx0kTM/DF240PG8DXrd4KoU
+	cjaPG6g6EiOxnb6euJF/95k1c5255pWCkFLylHAwKiGzsqLlRaKw
+X-Google-Smtp-Source: AGHT+IESF+hF++itPBlS+1rbKuC2h+vYSYamsDEjJaYuGkc6F/FPJuj8oyrWs28c0E+zvST8Mj8jzw==
+X-Received: by 2002:a05:600c:4f84:b0:421:5352:690e with SMTP id 5b1f17b1804b1-4215632d104mr37980375e9.25.1717667664364;
+        Thu, 06 Jun 2024 02:54:24 -0700 (PDT)
+Received: from toolbox.. ([87.200.95.144])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42158148ffasm51454325e9.38.2024.06.06.02.54.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 02:54:23 -0700 (PDT)
+From: Christian Hewitt <christianshewitt@gmail.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Christian Hewitt <christianshewitt@gmail.com>
+Subject: [PATCH 1/2] dt-bindings: arm: amlogic: add OSMC Vero 4K
+Date: Thu,  6 Jun 2024 09:54:18 +0000
+Message-Id: <20240606095419.3950015-1-christianshewitt@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/2] asus wmi and hid: use HID LED for brightness
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: "Luke D. Jones" <luke@ljones.dev>, Jiri Kosina <jikos@kernel.org>,
- ilpo.jarvinen@linux.intel.com, corentin.chary@gmail.com,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-input@vger.kernel.org
-References: <20240529012827.146005-1-luke@ljones.dev>
- <b0d8eebc-5abb-4ec0-898c-af7eedc730d9@redhat.com>
- <dflqwdl4fo3wv4zjj4jl6sbot6cotscksgpyrbiu3j77lyrwal@s6nomonx4gv6>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <dflqwdl4fo3wv4zjj4jl6sbot6cotscksgpyrbiu3j77lyrwal@s6nomonx4gv6>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Benjamin,
+Add support for the OSMC Vero 4K Linux-based STB
 
-On 6/6/24 10:49 AM, Benjamin Tissoires wrote:
-> On May 29 2024, Hans de Goede wrote:
->> Hi all,
->>
->> On 5/29/24 3:28 AM, Luke D. Jones wrote:
->>> Changelog:
->>> - v1
->>>   - Split the patch in two
->>>   - Move function body to asus-wmi and export
->>>   - Use array of names and for loops
->>>
->>> History:
->>> - https://lore.kernel.org/linux-input/20240528013959.14661-1-luke@ljones.dev/T/#u
->>>
->>> Luke D. Jones (2):
->>>   hid-asus: use hid for brightness control on keyboard
->>>   hid-asus: change the report_id used for HID LED control
->>>
->>>  drivers/hid/hid-asus.c                     | 32 +++++++++++++++++++-
->>>  drivers/platform/x86/asus-wmi.c            | 35 +++++++++++++++++++++-
->>>  include/linux/platform_data/x86/asus-wmi.h | 10 +++++++
->>>  3 files changed, 75 insertions(+), 2 deletions(-)
->>
->> Jiri, Benjamin since the first patch now also touches pdx86 files
->> we need to coordinate merging this.
->>
->> There also is a long list of patches pending for
->> drivers/platform/x86/asus-wmi.c
->>
->> So I would prefer to take this series (both patches) upstream through
->> the pdx86 tree to avoid conflicts.
->>
->> May we have an ack from one of you for merging this through pdx86/for-next ?
-> 
-> Sure:
-> Acked-by: Benjamin Tissoires <bentiss@kernel.org>
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+---
+ Documentation/devicetree/bindings/arm/amlogic.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thank you for the ack.
-
-> But I haven't seen the v2. Are you sure you want to take this series as
-> it is?
-
-No I plan to wait for v2, I just thought it would be good to have
-an ack to merge this through the pdx86 tree beforehand.
-
-Regards,
-
-Hans
-
+diff --git a/Documentation/devicetree/bindings/arm/amlogic.yaml b/Documentation/devicetree/bindings/arm/amlogic.yaml
+index b39eb17abbba..0647851ae1f5 100644
+--- a/Documentation/devicetree/bindings/arm/amlogic.yaml
++++ b/Documentation/devicetree/bindings/arm/amlogic.yaml
+@@ -91,6 +91,7 @@ properties:
+               - libretech,aml-s905x-cc
+               - libretech,aml-s905x-cc-v2
+               - nexbox,a95x
++              - osmc,vero4k
+           - const: amlogic,s905x
+           - const: amlogic,meson-gxl
+ 
+-- 
+2.34.1
 
 
