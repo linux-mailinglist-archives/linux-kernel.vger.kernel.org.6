@@ -1,216 +1,149 @@
-Return-Path: <linux-kernel+bounces-205007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A94138FF616
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:52:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30DDF8FF617
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:54:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42452286994
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:52:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0C3B1F2637E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8437E139D17;
-	Thu,  6 Jun 2024 20:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E30313AA41;
+	Thu,  6 Jun 2024 20:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eoPHZ2LH"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2046.outbound.protection.outlook.com [40.107.223.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a5UtJ1XW"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BAB196C7D;
-	Thu,  6 Jun 2024 20:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717707165; cv=fail; b=rXbJsG5m+Lu/fh4313f+6qnub3O9KuP7khhFzTfHFC3F4/y02VIz0CFOeiAYyZb6JEH9HPLZQG0GjuF/YAu+QI0Vw228Dw4d2Fi2vZyTex/ZokSX3jMEVPB2IC2T1i5P2KmfJBOGypUWSZaBFJgfMD7YL6HF0t12d6TlmqpSzFk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717707165; c=relaxed/simple;
-	bh=USFPXjaCdXxprPKhF4OO58Zka2SpqCA7MjYwkGRrGqk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hbPPQKvOJncSX4Uig1JUeTAhi4+HlNa+hBFBgmIYH9MLRbrGK0VFhGFJog81oWtKh5T/UlPMg5IMz37WEN8DQLeWN8wcJFnWk5XTZ13pTzctgJC33H16WyyMyMHUbneXV71zHl6UFGSpBkuyRne6dna8Dg1rubAaIX8UCCdF9iY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eoPHZ2LH; arc=fail smtp.client-ip=40.107.223.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Wgzilu7ksrSkLnxntLV7aRh1xWS0wElh8rcoAzzgz9Y3qFMJPHMfVgSkO690e33MY+aKaQq7H62OnL2phdkLqjgIp41uPlfX9hyYjKoQ9cacdbb6MLQsXIx340o1WGeJsaONWyPeeUbtsKc81UAiLhhtXjSJ3Q63Mx42Aia8/3+LSYEeDAmcgFE3cHpWIvrGXiELlYfVwCxU4MRUbsXbt9QqDctU80PHJzsChuSGselp4cV77qk0GoMAv2ZO603r9FNDsz1e/NCHmh8VHLOWaGGEXkxd8fbd8OFzqdHt9lFHHUBwyM7n7rH9WbZMYS69db4iYOx7Vkpgwatp9GVe4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Pr3s4mLaMCNzGIJMpoNKfoawcDGPXGMhPKI2VuxL78A=;
- b=iVMVi0u9lBfsHp7yFoCniA2tgkAR49tBWbMKPYKLAI3u8/K1Ev79GoZhxMOGAaOuE0+i4yIf//PyDctYWuqDHbE3PxOBVU8fZ53DClsjCL6GJdKskyV6alid9cSCDzCPN+nYC184e039jJ6nKDRx/xrYdvgxThMaS06IL3Oi39auyRWls5DokU29RzASWUHN/W+xNxxIEiNBLdrKzJvT7zJF1mzRjfzHE0LHOV+t3mA90H4AfDxzL4FqYQ3Txjjq0LbkIcI8JetSRK3o4OmJDFrGA9QsmX8Lh1STWMKlamTwS+NuXQms+Hca/sDsGjujQb6wYNSZwQehW/mea8m92g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Pr3s4mLaMCNzGIJMpoNKfoawcDGPXGMhPKI2VuxL78A=;
- b=eoPHZ2LH3uTBy/upXQXWdmUYWweqWFZB2T5OWpwQ8jzIrxB8DJ+X6b3k6JsGul619C34/XOLfS9FjsbyxDrpaPlnHZzheNzF54cbIKeWUlw3Zh3IUAS8/7HE65AaGShWyioQIj6jaAE2VFGG0gg/hGFIiwm3crpSEagGeTWNXy36V57oDnkjrLDGnb6VD2uI3VnHbCMaw7Y9ivMd8PVfjYUDEZwL1trFpKgeD5HoD/SQ542Z8/5StBpLGAwMdDoT+rwgDPrCxPRLtLn/5DwqFA/RFq7S/7mOftLXwiZZWG7i10c+yq8TgVlhNOCkex7nm2RpOzTtuuJasbnC3mXRjw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB5744.namprd12.prod.outlook.com (2603:10b6:8:73::18) by
- SA0PR12MB4495.namprd12.prod.outlook.com (2603:10b6:806:70::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.33; Thu, 6 Jun 2024 20:52:40 +0000
-Received: from DS7PR12MB5744.namprd12.prod.outlook.com
- ([fe80::f018:13a9:e165:6b7e]) by DS7PR12MB5744.namprd12.prod.outlook.com
- ([fe80::f018:13a9:e165:6b7e%4]) with mapi id 15.20.7633.021; Thu, 6 Jun 2024
- 20:52:40 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
- linux-mm@kvack.org, gost.dev@samsung.com,
- David Hildenbrand <david@redhat.com>, willy@infradead.org, mcgrof@kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH v3] selftests/mm: use asm volatile to not optimize mmap
- read variable
-Date: Thu, 06 Jun 2024 13:52:36 -0700
-X-Mailer: MailMate (1.14r6030)
-Message-ID: <5B059AE5-AA46-465D-A91E-9142A4FFA0F2@nvidia.com>
-In-Reply-To: <20240606203619.677276-1-kernel@pankajraghav.com>
-References: <20240606203619.677276-1-kernel@pankajraghav.com>
-Content-Type: multipart/signed;
- boundary="=_MailMate_092E7FE2-E062-4802-B1DF-23A3367946F5_=";
- micalg=pgp-sha512; protocol="application/pgp-signature"
-X-ClientProxiedBy: BYAPR03CA0036.namprd03.prod.outlook.com
- (2603:10b6:a02:a8::49) To DS7PR12MB5744.namprd12.prod.outlook.com
- (2603:10b6:8:73::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D706F06E;
+	Thu,  6 Jun 2024 20:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717707234; cv=none; b=MANxux/dMtwCOV8eD3pQJ0JWkOu++2BaZW4dNX4AdGCuvpwIoBdBzUl7HyNpPxPukVa2Cb0MnQAR4HhGPq+ZherREoXzRhmGUQLmIajuoMyV0ClyTYp4tDSFeeLf5ji/qORPA+K4wSMfu0szlpxS+7YGwJzNnukcC6yvE1Qw6lo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717707234; c=relaxed/simple;
+	bh=xs/oD7HTgnoX74SDL1MTe+KSc283t/RE+0Yrs73x9ok=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bbwrGoV1/XZlJlkYLRIpBb8fWz6R9TezWgUHa4TP86f993nSk1C/aC1uxel7hHkstwcpKcJvRT1a8FlvtLslhPoI0L2SZ/9qGSqHSm70PIVN0CI7A29AAwe89uUt4dHQkLRPzjcTdOH+ptCbniw0c51EmNxXcbqcSbZqIDDOeyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a5UtJ1XW; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52b92e73e2fso1617065e87.2;
+        Thu, 06 Jun 2024 13:53:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717707231; x=1718312031; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MqoEdi+5Li7qCxgZnJ0d4rFJMsPiflzcBA1WO++S0A4=;
+        b=a5UtJ1XWNyOocMn/NCpq2nNVx0Iu1Lki76zC/IH+YyzSpq2xrKNpEq+6iaq3GtfHJ3
+         u/3XCK2r1MULv4uIMNv3Cqc0YsCOfOYSg3uV0aZGHFUfnMZbMa+TR0n/d1i4v+Pms5sg
+         WEQ4EReEAY0B5FCHx5IuexQfx8TZ6jiqCXUtaOvZP9N3gbAffuzxV04Qz/n5c1tLHCC6
+         vETizacRGPm2he0WUbUctAMk9en5c+ncF7iBTksyt5dMEbz8DaVY62BTIXKsn5mW/kYp
+         EAeROx45H4v4JM9058Xv7Bw13KAfD68BLYQFTznzLWiwq0OeTudiwq0HT4aBghySIP7T
+         FpZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717707231; x=1718312031;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MqoEdi+5Li7qCxgZnJ0d4rFJMsPiflzcBA1WO++S0A4=;
+        b=ZYnYZ2UT0xTw7790GoXcCiTAohLMSJjAQ0O2gTUxSmPwRQIdJYPw1N8tt/GP39Mbyp
+         W2oUPzThQqzW601z60QdDSaDKZJEunUPhtBZjZRrXkDIQLfB0YbfbyaI0je5xtvmgbsh
+         YbToYAzGeQ3O4qEnKACOJHqt0UTF5fMsw5BwWCTRhpiL5xY/yQNVIKFP5Tev1dqqR3DS
+         EuNhtfZae7EKPITGWCR9TLO2lkOpCbI3BCD29AOgCoQbBmS8QyNVJ/RYToTzsFAjHosk
+         Wss2tYBfDiF/DjxGFsiZ9ujzSngNhk2Cjc4UbQULCngcjn/r6vYSqiguFqkoK2rZDSdT
+         vr+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUk8pzxh/+qFnjGu6ArkYBY26AF/oSRGUDgkwG8kFTSqOK0uTkxUvmHAi52CYZTFcEBnrnSOVqQKhBuOwAeiLDb2ZT8FuVaPbU1VUxW3xCB/LbC3h20UOsIwK/LRx05/TFmfqqBJu1gomHG9aNN
+X-Gm-Message-State: AOJu0YxSEse/SzfpPCFMX7tZWeQDfciblgpyXhqx9f1SwZCl+2nZAK/4
+	0mZMFu23zdeWzbU4tCa4gx9jD+/LIvRG8gwmTJULz0iZspTAk1C+6ElQKeTI5wQmJsRLvX4I9MX
+	ku1bhLeuezzZ0Ad9U6D1vq7cqdIc=
+X-Google-Smtp-Source: AGHT+IGe+E8yRR+CT71Fsvaer0y2RqxtMLRAiJ6nUZRps3iY7/5o5Z2BUQ/38UuLanYuW7ZWdPOf501mR5Ez+VzmzyI=
+X-Received: by 2002:a2e:8191:0:b0:2ea:83d1:47fe with SMTP id
+ 38308e7fff4ca-2eadce36253mr4325701fa.20.1717707230856; Thu, 06 Jun 2024
+ 13:53:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB5744:EE_|SA0PR12MB4495:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5e1af498-c6b7-4d23-9c71-08dc866a9ad9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|7416005|366007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Ze0MxrHrm6+474orFjqZ7FMWBFjqJfwSSXst8Gm6vIUWoTviw5ry8Tt8W7QT?=
- =?us-ascii?Q?viyEDWjLsrgBWcnbbg4VzvJM1sXwAK2LxLwl5GeWw32K3QqqrAMJQcQ8+khk?=
- =?us-ascii?Q?Sw0KDOvjGMhi60Ib/v2LXoimKcG1NcOJsioymKrAoNm/jQ+KsZFkMAneW26P?=
- =?us-ascii?Q?p9n/HuPLrXt1CdEM1cG8qjZ1tcY4EQJe2r9X1c6B9vA4Un/MKloPWf6u/Wyn?=
- =?us-ascii?Q?Abho4F61zKIGOhdPoW7xAQ4hmuy0oP5LN872mItoRXaNn8+B9z0QF8kP9qCp?=
- =?us-ascii?Q?1ElLCEl11unAoNhrp135CgT8Zou+ElPzdGwEwYywpGrsa4dXm/MJBh/VdSWl?=
- =?us-ascii?Q?h+jayu+zQtHlzpArzJ7+gteCMl0MjYrH4sqy+UEznH2Ds988fq+GI+JyAhtW?=
- =?us-ascii?Q?nkT/uEkR48lcw9em1mySwSQZyDaJuTdkitvlp9pmEL5wx4AGgDV91MF4gbhq?=
- =?us-ascii?Q?Nv4Tbsee6VNv2q0S2XWBuqQlhldLjddQav0CeWv1RdNh563VsDn6wJYvBGpb?=
- =?us-ascii?Q?up/+gUauxYko2+/vbR5vzcoJdmlxd5cWbXhDoY+xmhXBRcVqkiX9G9NjpzhV?=
- =?us-ascii?Q?vvIFtzm4Ja6euX+AulMcKzF2pzMUlNASgWyA6YCJ+Y60KTvoh8QrYweq120N?=
- =?us-ascii?Q?6ZbgQduEFYthf+k+fOsbLVx65mhuModR2usUgVCpVYmRaY9C0Cwzo4avcIAi?=
- =?us-ascii?Q?4L5xiUM8ALcbQ2tiSxapAmammmnq3Xu9lYZ6g4GMLzaSZAfBJ6HCVpxhQWBZ?=
- =?us-ascii?Q?aP2YeEzzdN9D/sPB+iF4J5+TImbKUT2zFXead8Vv65r6u0VB3nqmB48oGgwW?=
- =?us-ascii?Q?78ewVLL+gKenV4PXpU0GsAFa3umb/7DaM4EwPYqnlQV3ztHuFzHQAZRaRwH1?=
- =?us-ascii?Q?LxKpfXhqhtyTjgEGYdwpepSq4dup9VFBajXwUSsdtQ47noQTUnKbENfCtqrd?=
- =?us-ascii?Q?oGdU5L+L1K/BLpnwoJRt+5FsVY22L0CKJjCf7PSfi5IxfhIMnptqZ52hpvm8?=
- =?us-ascii?Q?1gf4I+Qf2bFcJbJlol+7RtRUbOnSJA1KX0mp1hUNDoOOzuwvKx5WgIFtkeu8?=
- =?us-ascii?Q?zbwM/Kxx4HaYpyZzPRKj+Oq9zADn5f6KBfrAz7bSfmVSovEo/05MEXhR+daC?=
- =?us-ascii?Q?rKuZSzpvKMF8lzN5JBcOsKD3hN3RVOaPZxuJC4BBx/sdD5FLt3HC/HAY87O8?=
- =?us-ascii?Q?7GI4Ako6mDDUNcCXwug0wVrHEZzWI5Z48BEy/u5/+70E8qAmUmuCjM3DVTDj?=
- =?us-ascii?Q?Av+JmnzAmw3FHO2y7o8wXfKubKQjWD3HVgSgLI6fz7PdLuOIVNQSy2ehktzl?=
- =?us-ascii?Q?6wk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB5744.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(7416005)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?lOr0Al+hBoQyvj7BrN/ieuanuTEagf7r7Pd0hbEFjZwvQ2NaynyDgyFWiIf7?=
- =?us-ascii?Q?6ScINjpr8gt+rZ2uPyR43EegU3GIhRaggZ/uDpHWN8QE+EEk7kJx9MjCDnPp?=
- =?us-ascii?Q?xgatrpOWEAk+5v0Swf2iNgRqjiyxvx2AsRFL3AVjlzC01GsnZgLNEmbu/CVP?=
- =?us-ascii?Q?GlFpY4yF5ZeNdvoi4mG7hFXe9OJFnihuW7Fiz1aaGvyMPU2Rvh7OupfP5x+v?=
- =?us-ascii?Q?DRPy223NalkJaFBYvnyR0qEUCirbxY1QDwCa7hCSu7bxFvQ2m+Y32yYNMWXG?=
- =?us-ascii?Q?NXDkt1ip/QOKcuDTIjSvTNB16Q4AMteOV/UJhmenwvFeEU3Sljlnjlf1g3z5?=
- =?us-ascii?Q?4Y4cj39YECaTNUsoaaqZ42bP+IgQI+ufUV64It09pg0twl1cUIgY6jA/0mSE?=
- =?us-ascii?Q?wQ5W9P4/1bD1JkQYYQE0FdrkJ/mbvfwzx5PlJ5ds6ElacZ8LWDaPOkMVDjGe?=
- =?us-ascii?Q?KhbY2572o3BbrN/AUZypkoZj3jbCZqIoqLr5r5szqMLnLQr8G4ojoR6hzpk8?=
- =?us-ascii?Q?+2bM1lsL4ZX59eIpTbSYf7q47S/VJuhZNXx7vxDIznbZ8S0ovjIrnuS0Igqi?=
- =?us-ascii?Q?/2m99VB+ZMhhxAdK8aJ7r/qaeM+PZIvt2OYjv2ge6WgYGE45D3hO87pfzd5U?=
- =?us-ascii?Q?8B+ascGQ1qpNt3HqdyGdCcBXnJOg7dsepv+QsG9D1fL1GDht8rJpJcG/3BCT?=
- =?us-ascii?Q?6k29Pwl8RYarUyuQV65I5mQOj/wi1wAafeuK7OAzj33Pfc9dtH+pt5QHRQR+?=
- =?us-ascii?Q?npYWWcsp8VnAO2t8l6Gsu2wfevAkEJ7OhX/Qt+r/WpjFRn8zHYBBQ4oL36sH?=
- =?us-ascii?Q?d3eN4OPniLQqb961hLkItdEuGR5O4ke0wftIdw/MykTHBmWWKEF1SRnQsE7y?=
- =?us-ascii?Q?+yNB5vzGif9edG0aCJRuexBTAyzGzjlht23Ct5yvhxq7/+bMRvbh1KYfHgZT?=
- =?us-ascii?Q?7JWY5l5c9/sPiHA51eOvdkAK3HRhF/6MYAW22pCfvkqC7NA3mW1FjzoLW9yx?=
- =?us-ascii?Q?IB8k9OjUz2WlPbncZ8Q40sZOxQxRv4YDNwt92yT79+duQW6UUwF8z7dR5Lef?=
- =?us-ascii?Q?lVGE/q2rzeGkV+aJL6SDD89sXq5m0umcGNT2TJiSXPdaZZ0LXkE7ySoGHylp?=
- =?us-ascii?Q?e628DthBYwe+LP3rGMjpJL1TDZneQVj8js72VjuTepKL6wppcyRKKqy0wnjE?=
- =?us-ascii?Q?1s9dPcRSOD5zF2YwXcyFx22wDtnrYvcvJco1SEI2giyiKRcveCSrIsp1N8+k?=
- =?us-ascii?Q?xeiwomvEEkDgoT9CVi+aVboAMcxNMxSd2RKRwbMUuUb3urmJIunJqHSWpSIR?=
- =?us-ascii?Q?l8WMCoExn/xxOfojIHZ8RiuN0o62RHGnYGFjly5JRGCk4JvOY+hn73AI2TfX?=
- =?us-ascii?Q?6KgbP23alSHDcMiDFEaBeXQvtHJQs9X8yS8FhqUb3P8AJQOWBLoKNOVBT8Ea?=
- =?us-ascii?Q?5BFWQNx6aABSJxMGH7G6Su42PSkyt35brJVG+0n11jTaenGZqzxyU2sgz1KA?=
- =?us-ascii?Q?G+8MK8zWptIXpCGsl9yB+jtLVBaBboMTH91BSWmvXC+rQ6kBZ7TEyXBWMwPn?=
- =?us-ascii?Q?6gi+i99GVViiH6y6FUA=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5e1af498-c6b7-4d23-9c71-08dc866a9ad9
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB5744.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 20:52:40.4431
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dHAQG30JVYmb++v9d0hsHA7LoeHrJbvBTu47HOnI/atxqvmhK4ELFT/uMzlar/rr
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4495
+References: <20240606114321.30515-1-chris.lu@mediatek.com> <20240606114321.30515-3-chris.lu@mediatek.com>
+In-Reply-To: <20240606114321.30515-3-chris.lu@mediatek.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Thu, 6 Jun 2024 16:53:38 -0400
+Message-ID: <CABBYNZLRWpxfrYDk7JbozC-2mZk2r3BAOkCSEfhR48AH25RkZw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/4] Bluetooth: btusb: add callback function in btusb suspend/resume
+To: Chris Lu <chris.lu@mediatek.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
+	Sean Wang <sean.wang@mediatek.com>, Deren Wu <deren.Wu@mediatek.com>, 
+	Aaron Hou <aaron.hou@mediatek.com>, Steve Lee <steve.lee@mediatek.com>, 
+	linux-bluetooth <linux-bluetooth@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-mediatek <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
---=_MailMate_092E7FE2-E062-4802-B1DF-23A3367946F5_=
-Content-Type: text/plain
+Hi Chris,
 
-On 6 Jun 2024, at 13:36, Pankaj Raghav (Samsung) wrote:
-
-> From: Pankaj Raghav <p.raghav@samsung.com>
+On Thu, Jun 6, 2024 at 7:43=E2=80=AFAM Chris Lu <chris.lu@mediatek.com> wro=
+te:
 >
-> create_pagecache_thp_and_fd() in split_huge_page_test.c used the
-> variable dummy to perform mmap read.
+> Add new function: dev_suspend/dev_resume in btusb_data which are reserved
+> for vendor specific usage during suspend/resume. dev_suspend will be
+> added before stop traffic in btusb_suspend and dev_resume will be
+> added after resubmit urb in btusb_resuem.
 >
-> However, this test was skipped even on XFS which has large folio
-> support. The issue was compiler (gcc 13.2.0) was optimizing out the
-> dummy variable, therefore, not creating huge page in the page cache.
->
-> Use asm volatile() trick to force the compiler not to optimize out
-> the loop where we read from the mmaped addr. This is similar to what is
-> being done in other tests (cow.c, etc)
->
-> As the variable is now used in the asm statement, remove the unused
-> attribute.
->
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> Signed-off-by: Chris Lu <chris.lu@mediatek.com>
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 > ---
-> Changes since v2:
-> - Use the asm volatile trick to force the compiler to not optimize the
->   read into dummy variable. (David)
+>  drivers/bluetooth/btusb.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 >
->  tools/testing/selftests/mm/split_huge_page_test.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> index 79aefdb3324d..83765c0c14b4 100644
+> --- a/drivers/bluetooth/btusb.c
+> +++ b/drivers/bluetooth/btusb.c
+> @@ -891,6 +891,9 @@ struct btusb_data {
 >
-LGTM. Reviewed-by: Zi Yan <ziy@nvidia.com>
+>         int (*setup_on_usb)(struct hci_dev *hdev);
+>
+> +       int (*dev_suspend)(struct hci_dev *hdev);
+> +       int (*dev_resume)(struct hci_dev *hdev);
 
-Best Regards,
-Yan, Zi
+I'd name these suspend, resume respectively.
 
---=_MailMate_092E7FE2-E062-4802-B1DF-23A3367946F5_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename=signature.asc
-Content-Type: application/pgp-signature; name=signature.asc
+>         int oob_wake_irq;   /* irq for out-of-band wake-on-bt */
+>         unsigned cmd_timeout_cnt;
+>
+> @@ -4715,6 +4718,9 @@ static int btusb_suspend(struct usb_interface *intf=
+, pm_message_t message)
+>
+>         cancel_work_sync(&data->work);
+>
+> +       if (data->dev_suspend)
+> +               data->dev_suspend(data->hdev);
+> +
+>         btusb_stop_traffic(data);
+>         usb_kill_anchored_urbs(&data->tx_anchor);
+>
+> @@ -4818,6 +4824,9 @@ static int btusb_resume(struct usb_interface *intf)
+>                         btusb_submit_isoc_urb(hdev, GFP_NOIO);
+>         }
+>
+> +       if (data->dev_resume)
+> +               data->dev_resume(hdev);
+> +
+>         spin_lock_irq(&data->txlock);
+>         play_deferred(data);
+>         clear_bit(BTUSB_SUSPENDING, &data->flags);
+> --
+> 2.18.0
+>
 
------BEGIN PGP SIGNATURE-----
 
-iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAmZiIZQPHHppeUBudmlk
-aWEuY29tAAoJEJ2yUfNrYfqKFG8P/3n929AP8zttgexd8vlAsf0flN2SyuXkiwdN
-poeWe0VtzTP3jnKSfO8hXGAoLyJGwLVnNLFzpAnI9PA5o8ABuPPY5TE/ae/jOySS
-A5eIeeK8+2WypdtX9vVB8kb6gkmWOf1Wq3wwvLaR1Fs5c9cyeQheGP3Hy14sg20m
-44PODhji+8FJuSQ5RH9zi2XyWXm7QX4no2fvsQG816ZuocnR3hEMl3Kkol364asq
-0+hq9ubDieoFUZMrvsEmMs2u35E1c1ZgqecjnPWIwmiFJo+SrIqj3IZFb6uZ0+VF
-duyj0SkQtU24VyvDlEpLy6fUKsMkNq67XlG7NfqG0x+IfdmFuBt3i8LNxn/J0z6T
-845dSX0jEXQIjvq0zWXTkf2gbOdjyG7uBmeLrnHNeofOYN2MCbal1cTEGhXiIWbq
-ruAD9LxDsKbc/j0Hlz3OQPXjH4tE8Q8SWJkDm5KbS5npDR9mhM4txqTtI3ivmVoD
-qxzlN/sOMrRl4fU7I+02HrhqHbJms++1E79rXV/DsQSZlnK2iEyRYdBwhi4Rzqo1
-TkfFQpcrHk5jaYSHR/h3Lu3vjzhbdYqG6FAKPcEo1rAxnXmxOaMKS+t/+TAsS9LN
-WsmuU32+pEDvS2Cqo+dj3U4FGqP8nSGgBDS826jOSIUb8J9SK0cpjt1IT2WtMsX7
-cri4k9VA
-=LG24
------END PGP SIGNATURE-----
-
---=_MailMate_092E7FE2-E062-4802-B1DF-23A3367946F5_=--
+--=20
+Luiz Augusto von Dentz
 
