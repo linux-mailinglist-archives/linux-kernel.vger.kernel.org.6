@@ -1,166 +1,175 @@
-Return-Path: <linux-kernel+bounces-204392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 794518FE820
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:45:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDBD98FE822
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0955B2897E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:45:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6F421C25F67
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B53195FC9;
-	Thu,  6 Jun 2024 13:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5182195FDA;
+	Thu,  6 Jun 2024 13:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sM/kYm/U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SfGgTXTt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0E1195995
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 13:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19F013E048;
+	Thu,  6 Jun 2024 13:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717681525; cv=none; b=HpqAdtGJjCmr2vA5krrfmMrvi1Tzt8Wxv0iSU7w+D57U6GplOcRPSJhGyeTyPvGV09jjo1uMuCZE+ZFNLrv/DG84g9AA/EuGrk7MiA6gNMuMa4GcWbqfNTmbhR7sCQzb5kR/mUv0VdHboSIBP3cYlFVzFhUoBR4eo4/GKdfpzXw=
+	t=1717681626; cv=none; b=RPgoEn/wH+kyfenrMFkF4hAK0Zw5i2MYUvU98W9uZCBO/zYKC8mnAwAR/MJnb0WBB7RAddXJpwnUOoqPX5bOYJ3EdaB5xGsHdlTz/CnJYpA8BGYfEratlBDcVqFdCp8kU2UQoOu5eEz6UsiRo3lC+Av+7MlOOc3HbCq1jJdrHUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717681525; c=relaxed/simple;
-	bh=RabUCoQbg8d0SmOaAZkfQWlRTkdI/BRDQ5JH4zGLsU8=;
-	h=Content-Type:Date:Message-Id:To:Subject:Cc:From:References:
-	 In-Reply-To; b=O+x60te9xxxuL5RaM7PlO8cBqHR9GfSSyQZBK8X//Lw43zcPnWHkumFKfZiljyKctC3FexPxI26Zf5fPPLH5hKmDt8d39GXzUXQGUGu1IU588cD189i6IDoMbxd53WzzqbFnt8+t/+4obKRwK4y9joK7k6HBD/ciWG/YNxIzh1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sM/kYm/U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B083C2BD10;
-	Thu,  6 Jun 2024 13:45:24 +0000 (UTC)
+	s=arc-20240116; t=1717681626; c=relaxed/simple;
+	bh=HKbs6KEJJv7rnYC3V1+3YTC08XWD0qNNBYHnC3DJ9pI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ubi0kMF5M9sPNkPLLkrqbyZ92JbarCePa+XzE4+y1cB38yyqZTjXRqMIhKn3N/DBnIhN0OtnXUQC+ZqlRo6f4TtF1SenK75dV6tqF4EAueOUadh9mTSxN4LeXCyQNAoDUIXkyvu4Kvk63oiV2SuwmjdIsBE/XfbllUHTKBM8MqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SfGgTXTt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E54F9C2BD10;
+	Thu,  6 Jun 2024 13:47:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717681524;
-	bh=RabUCoQbg8d0SmOaAZkfQWlRTkdI/BRDQ5JH4zGLsU8=;
-	h=Date:To:Subject:Cc:From:References:In-Reply-To:From;
-	b=sM/kYm/UmKCqEWhz9SVw/B4ILwiXoakHZuJL59GXp8JmSio7E9b5ZY582HXeXkbi6
-	 1pUuryZorn3aNFdkqCF12ZsRDE5FHpZN6xiPAeFYakUirFHYehesJdjFq+e2Rs2bJG
-	 Bd4xM1qw43tq3Jtk2Tt9cXVxfr4KRcvCp0Xo2uodQqiJzVyzPXO1WHiIYSmVOZrCKJ
-	 cYBq3/A1hObLhwJl0mRny+cvj9Pps6nhNmxq6O2mcbXyl/ZNWtwdT34m75XXEqFM2k
-	 e9FOpXNU1EzQA0paWTizjxGe1GJk7tKdCI9WwVMxKmYzDQm7xoIdH87L16Z7fSSnZz
-	 X69FGa83YklTQ==
-Content-Type: multipart/signed;
- boundary=479d9d31d50b1e2e2050036af42fee8ce0912e5ec1a0f68f2ab9c35385aa;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Thu, 06 Jun 2024 15:45:20 +0200
-Message-Id: <D1SZA4ZDM06P.CJC0EQ9ULA04@kernel.org>
-To: "Tudor Ambarus" <tudor.ambarus@linaro.org>, "Esben Haabendal"
- <esben@geanix.com>, "Pratyush Yadav" <pratyush@kernel.org>, "Miquel Raynal"
- <miquel.raynal@bootlin.com>, "Richard Weinberger" <richard@nod.at>,
- "Vignesh Raghavendra" <vigneshr@ti.com>
-Subject: Re: [PATCH] mtd: spi-nor: macronix: workaround for device id re-use
-Cc: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>, "Rasmus
- Villemoes" <rasmus.villemoes@prevas.dk>
-From: "Michael Walle" <mwalle@kernel.org>
-X-Mailer: aerc 0.16.0
-References: <20240524-macronix-mx25l3205d-fixups-v1-1-ee152e56afb3@geanix.com> <D1Q7BU6PJ356.1CTXPUZE8U6XX@kernel.org> <8513a828-6669-4bf3-91d3-799771866f32@linaro.org>
-In-Reply-To: <8513a828-6669-4bf3-91d3-799771866f32@linaro.org>
+	s=k20201202; t=1717681625;
+	bh=HKbs6KEJJv7rnYC3V1+3YTC08XWD0qNNBYHnC3DJ9pI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SfGgTXTtPV8T7/S3RnEiAb8n2+b7IZ+cceY2/+q8O5Et6XzQBkTH0fKkVBug1lLzv
+	 /DlpWZ0ircGd2Q7nAD5SUyGSaafIXXFH5fCUWiubXNsbtHC2bDNo9clXgRX7Zt5Ky4
+	 DD2Lt5seTBlepcQkreZ42GPIS7OKhO4q+xNEyCGDoEKCDAOn6hVBy/ZHBEeqLbL2p7
+	 3G2kCyDHFOdh8/UGZNyZL3SfG2k375yMaZNTR6+Ch1+uk1AWoQ/m1hqLqJN6yenS7y
+	 ulkXFz2P7ncO+ppY4jJfivcYzoBri5Fn0AOFd4/slmcmRPgj1OnwuX5kK2OaOCacd/
+	 qqMNEDnIx4QHg==
+Date: Thu, 6 Jun 2024 10:47:02 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, James Clark <james.clark@arm.com>,
+	Leo Yan <leo.yan@linux.dev>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] perf evlist: Force adding default events only to core
+ PMUs
+Message-ID: <ZmG91mG32AKViIbh@x1>
+References: <ZlY0F_lmB37g10OK@x1>
+ <CAP-5=fWM8LxrcR4Nf+e2jRtJ-jC0Sa-HYPf56pU5GW8ySdX1CQ@mail.gmail.com>
+ <d79b18d7-6930-41fd-8157-eaa55b52df86@arm.com>
+ <Zld3dlJHjFMFG02v@x1>
+ <CAP-5=fXKnQzfwDSr3zVeo6ChJe3+xwpBfyAi0ExmPEdhcde4ww@mail.gmail.com>
+ <CAM9d7chV8YOCj8=SGs0f60UGtf+N2+X=U+Brg246bFoPXBXS+g@mail.gmail.com>
+ <aee9254e-81c1-464a-8a28-f971615baffc@arm.com>
+ <CAP-5=fVynt-8cH6Jc5VyfBLBOqkF+v_7kknHdUPZBM1r3WwhTQ@mail.gmail.com>
+ <ZlkC_Tm6kKIL3Phc@google.com>
+ <CAM9d7ciTbHngfimDNsXS_adR7xg4ZHvSHzVhAzuQ6o-nQ2nsMQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAM9d7ciTbHngfimDNsXS_adR7xg4ZHvSHzVhAzuQ6o-nQ2nsMQ@mail.gmail.com>
 
---479d9d31d50b1e2e2050036af42fee8ce0912e5ec1a0f68f2ab9c35385aa
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Wed, Jun 05, 2024 at 01:29:02PM -0700, Namhyung Kim wrote:
+> On Thu, May 30, 2024 at 3:52 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > On Thu, May 30, 2024 at 06:46:08AM -0700, Ian Rogers wrote:
+> > > On Thu, May 30, 2024 at 5:48 AM James Clark <james.clark@arm.com> wrote:
+> > > > On 30/05/2024 06:35, Namhyung Kim wrote:
+> > > > > It might not be a perfect solution but it could be a simple one.
+> > > > > Ideally I think it'd be nice if the kernel exports more information
+> > > > > about the PMUs like sampling and exclude capabilities.
 
-> >> + */
-> >> +static int
-> >> +mx25l3205d_late_init(struct spi_nor *nor)
-> >> +{
-> >> +	struct spi_nor_flash_parameter *params =3D nor->params;
-> >> +
-> >> +	/*                          DREAD  2READ  QREAD  4READ
-> >> +	 *                          1-1-2  1-2-2  1-1-4  1-4-4
-> >> +	 * Before SFDP parse          1      0      1      0
-> >> +	 * 3206e after SFDP parse     1      0      0      0
-> >> +	 * 3233f after SFDP parse     1      1      1      1
-> >> +	 * 3205d after this func      0      1      0      0
-> >> +	 */
-> >> +	if ((params->hwcaps.mask & SNOR_HWCAPS_READ_1_1_4) &&
-> >> +	    !(params->hwcaps.mask & SNOR_HWCAPS_READ_1_4_4)) {
-> >> +		/* Should be MX25L3205D */
-> >> +		params->hwcaps.mask &=3D ~SNOR_HWCAPS_READ_1_1_2;
-> >> +		spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_1_1_2],
-> >> +					  0, 0, 0, 0);
-> >> +		params->hwcaps.mask &=3D ~SNOR_HWCAPS_READ_1_1_4;
-> >> +		spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_1_1_4],
-> >> +					  0, 0, 0, 0);
-> >> +		params->hwcaps.mask |=3D SNOR_HWCAPS_READ_1_2_2;
-> >> +		spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_1_2_2],
-> >> +					  0, 4, SPINOR_OP_READ_1_2_2,
-> >> +					  SNOR_PROTO_1_2_2);
-> >> +	}
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static const struct spi_nor_fixups mx25l3205d_fixups =3D {
-> >> +	.late_init =3D mx25l3205d_late_init,
-> >> +};
-> >> +
-> >>  static int
-> >>  mx25l25635_post_bfpt_fixups(struct spi_nor *nor,
-> >>  			    const struct sfdp_parameter_header *bfpt_header,
-> >> @@ -61,7 +118,8 @@ static const struct flash_info macronix_nor_parts[]=
- =3D {
-> >>  		.id =3D SNOR_ID(0xc2, 0x20, 0x16),
-> >>  		.name =3D "mx25l3205d",
-> >>  		.size =3D SZ_4M,
-> >> -		.no_sfdp_flags =3D SECT_4K,
-> >> +		.no_sfdp_flags =3D SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
-> >> +		.fixups =3D &mx25l3205d_fixups
-> >>  	}, {
-> >>  		.id =3D SNOR_ID(0xc2, 0x20, 0x17),
-> >>  		.name =3D "mx25l6405d",
-> >>
->
-> If all support 1-1-2, (seems MX25L3205D doesn't), then we may have a
-> change to don't update the core.
->
-> Frankly I don't care too much about what happens in the manufacturer
-> drivers, but I do care about the core and to not extend it with . This
-> patch is not too heavy to be unmaintainable and shows clear where the
-> problem is, we can keep this as well.
+> > > > That seems like a much better suggestion. Especially with the ever
+> > > > expanding retry/fallback mechanism that can never really take into
+> > > > account every combination of event attributes that can fail.
 
-It's a horrible hack. For example I'm working on a patch to clean up
-the spi_nor_set_read_settings() handling. So just throwing any code
-into vendor drivers doesn't make it any better in terms of
-maintainability. I'd need to touch all the code anyway. In fact it
-makes it even worse, because it looks like the manufacturer drivers
-are just a dumping ground for bad things. Thus, I'd really have it
-handled in a correct way inside the core.
+> > > I think this approach can work but we may break PMUs.
 
-Also, this is not device specific. Let there be two different
-flashes with the same ID, but one support SFDP and one doesn't.
-Right now, you have to have any of the magic flags (dual, quad,
-etc) set to trigger an SFDP parsing. If the flash without SFDP
-doesn't support any of these, like in this case, we are screwed.
-Hence we might need such a flag also for other flashes.
+> > > Rather than use `is_core` on `struct pmu` we could have say a
+> > > `supports_sampling` and we pass to parse_events an option to exclude
+> > > any PMU that doesn't have that flag. Now obviously more than just core
+> > > PMUs support sampling. All software PMUs, tracepoints, probes. We have
+> > > an imprecise list of these in perf_pmu__is_software. So we can set
+> > > supports_sampling for perf_pmu__is_software and is_core.
 
-> Other option that I'd like you to consider is whether we just remove
-> support for MX25L3205D, thus the entry altogether, and instead rely on
-> SFDP to set everything.
+> > Yep, we can do that if the kernel provides the info.  But before that
+> > I think it's practical to skip uncore PMUs and hope other PMUs don't
+> > have event aliases clashing with the legacy names. :)
 
-Well, this will break boards with this flash :) And we don't know if
-there are any.
+> > > I think the problem comes for things like the AMD IBS PMUs, intel_bts
+> > > and intel_pt. Often these only support sampling but aren't core. There
+> > > may be IBM S390 PMUs or other vendor PMUs that are similar. If we can
+> > > make a list of all these PMU names then we can use that to set
+> > > supports_sampling and not break event parsing for these PMUs.
 
--michael
+> > > The name list sounds somewhat impractical, let's say we lazily compute
+> > > the supports_sampling on a PMU. We need the sampling equivalent of
+> > > is_event_supported:
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/print-events.c?h=perf-tools-next#n242
+> > > is_event_supported has had bugs, look at the exclude_guest workaround
+> > > for Apple PMUs. It also isn't clear to me how we choose the event
+> > > config that we're going to probe to determine whether sampling works.
+> > > The perf_event_open may reject the test because of a bad config and
+> > > not because sampling isn't supported.
 
---479d9d31d50b1e2e2050036af42fee8ce0912e5ec1a0f68f2ab9c35385aa
-Content-Type: application/pgp-signature; name="signature.asc"
+> > > So I think we can make the approach work if we had either:
+> > > 1) a list of PMUs that support sampling,
+> > > 2) a reliable "is_sampling_supported" test.
 
------BEGIN PGP SIGNATURE-----
+> > > I'm not sure of the advantages of doing (2) rather than just creating
+> > > the set of evsels and ignoring those that fail to open. Ignoring
+> > > evsels that fail to open seems more unlikely to break anything as the
+> > > user is giving the events/config values for the PMUs they care about.
 
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZmG9cRIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/grRgF+Ju8AIIr0YhhI6wK7vFUrv1TIIvNnMZRo
-2eP5r1ZrYb43Tt9ShCcjpqMu98HIjwPVAXwOYh+E6vTynjxye7akY9WaDu1x6oDk
-+qvFE+kgUdpUFnzjF0Kg3Csc3MUnvLogIS4=
-=5qOF
------END PGP SIGNATURE-----
+> > Yep, that's also possible.  I'm ok if you want to go that direction.
+ 
+> Hmm.. I thought about this again.  But it can be a problem if we ignore
+> any failures as it can be a real error due to other reason - e.g. not
+> supported configuration or other user mistakes.
 
---479d9d31d50b1e2e2050036af42fee8ce0912e5ec1a0f68f2ab9c35385aa--
+Well, we should not ignore any failures, just look at
+evsel__open_strerror(), we get some error from the kernel, we know we're
+doing something, we put it into context, and then we try to provide the
+most helpful message to the user.
+
+The question here is how to figure out if what we want to do (sample)
+makes sense for this event that has the name we used, since we're using
+a "wildcard", a "well known event name" that should be translated to
+events in all PMUs where it "matches", if those actual per-PMU events
+can provide what the user is asking.
+
+My suggestion about using pr_debug() is a compromise, one that will not
+show warnings all the time for such a common case (cycles) while
+allowing the use to follow a common, in tools/perf, way of diagnosing
+when things don't look sane, which is to ask for verbose mode.
+
+The best thing would be for us to be able to query, using existing
+facilities, if what we want is possible, i.e. interpret the error coming
+from the kernel in the context of what we are asking.
+
+If this is not possible because the error is too generic (EINVAL) and
+can map to multiple other things, then we can try to have a new kernel
+facility for us to get this info in a authoritative way and use a
+pr_warning() knowing that that warning will go away as the kernel is
+updated.
+
+Or we could use a big hammer, special handling some PMUs/events we know
+can't sample and avoiding those when they fail, ugly, but should work,
+and this is just for this "well known event names" people have been
+using since forever. Those wanting specific events to be used should
+know better and specify it precisely in the command line.
+
+Does this sum up all the discussion so far?
+
+Cheers,
+
+- Arnaldo
 
