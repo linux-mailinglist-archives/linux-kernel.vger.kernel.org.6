@@ -1,268 +1,357 @@
-Return-Path: <linux-kernel+bounces-203911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B2B98FE1EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:02:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F4B18FE1ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:02:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73AA51C256C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:02:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F03BCB27FE5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422E214D2BF;
-	Thu,  6 Jun 2024 08:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5755814D2AA;
+	Thu,  6 Jun 2024 08:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A13X19Zi"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="OAez0Yln"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2059.outbound.protection.outlook.com [40.107.117.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54F714D2AA
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717664120; cv=none; b=YWBfo4IcWVV3/uJW919HdzrQxJZ6I7IX+uagC2O2PZgQs97CJzeCuIIgSDh1TJ0JpYa8SM45RSUZM9Kvh858VBAY5mf8S3BEzT1UrjMp1E89B7lY9YSoc7PN0/mZDlbbVj5UXbaUI4UIY1StzWd26CA3FnKVhkWh6tifLuSdysc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717664120; c=relaxed/simple;
-	bh=6KSEalqE21ArngKn9LVLlMftoFw59V3KJcO9fzXuW2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hZpNJPXgxa518F3xo80pg0K+LXTZeZJmCB4cE+hbTtNJ/v9cNiVwJ/fO3QAg75Clw8/i5bKGX0j56s5XoLVvc5Kwnv+E2pe552UjkoiR110KklxoUlhcPMghFqtVZyv7hSr8w8xOuWGdY2YWdsgXqGRQxPITEKLFQ7+g3dxOKSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A13X19Zi; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-70245b22365so556341b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 01:55:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717664118; x=1718268918; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=dk9BWKp9OYanKkL2Tvug+GGaXtEJQkSbsvBhVywEESU=;
-        b=A13X19Zi1l95Qnq46j1jB0DbsCPhDMz2AvzVmTbN2XrU7Fg87NuGfjh5y1oZq/FAkT
-         xHtWoel/9MoK00TAORoXHsjKwM3El6LMs6UkE7Shehyg0+cUn0FwiIJNSFkNyk5qI5FD
-         3BrMHt30JDtC0g7DdurOBaziOnHYGLpkA2EdrJGGelaYjaUp+MOnP6Mxgyr/d6ymc4cb
-         XUxhuvvdBN4vBsnmPEftXPzZnAO9VnmGWPxpr3mm2qZybNN14J8SGH37PL1CCLnQdmzo
-         NpGApV7I0wdh5E/6w/1e1DbuMvNb6gN1Zv6x/op+gD+mAQAKd+OGPBu9Scmgh8kdX0JW
-         8Bqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717664118; x=1718268918;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dk9BWKp9OYanKkL2Tvug+GGaXtEJQkSbsvBhVywEESU=;
-        b=WyOFCLP429RWzmg9trxzhA9bB/BfDfrWrK6FQsJ8oPS7evKXQw4vFe811wQotyo5ah
-         9O6XJxxs5+DNO0SfiljK3ugWrQVRSSxjCn7Jm3KHR3bcp2x6R8MVcgXj8xnCMCTQAXNq
-         YLevf6XiRuiwTVXqSL92h7JLlm9HAYaCYdCV1Qtz107DHi8mDs7cd7ZTWlOonmbtTgbS
-         4IwVPugQirU4mL/0fAR8Z4W+FugYcnnLr/9Ea2AB6UjaiX1SNG/YNuQU2C7oax13OT2I
-         htJMV+xEIkRB6qAzdmsudXHA0wruGQIBMVapyPxYJmL5CYt3yy7fWx/xn/wNkcuNI+0o
-         EaTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWROaAwgXgFY+kPxs/OlCweFXPHdjnwO0GJGC77Y15xHMb4AFC3suBJUqssdH9uZjiO3d2weI3W3909gjP1SnKK98IngHPAdRAi2Vk4
-X-Gm-Message-State: AOJu0Yw8QtkITfJ/5NWOq15PRenekwWkK6dOBSn2VxW66YYo+O87PQMu
-	BxL7x2S8d5canRow92Aaugq1xASvwA9WQtFndGh9Jjp/+F8IR+G4m72WN7Zyl84=
-X-Google-Smtp-Source: AGHT+IG9eLM1ZognviqtOg2/2n4CszKiPvgmkMnPj0BxOHDg6SxsW1TJbW5owPsBXzz4fBocMjS0cA==
-X-Received: by 2002:a05:6a00:2307:b0:6ee:1b6e:662a with SMTP id d2e1a72fcca58-703e5aa047emr5587253b3a.32.1717664117811;
-        Thu, 06 Jun 2024 01:55:17 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd395458sm704148b3a.60.2024.06.06.01.55.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 01:55:15 -0700 (PDT)
-Date: Thu, 6 Jun 2024 14:25:13 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Beata Michalska <beata.michalska@arm.com>, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, len.brown@intel.com,
-	ionela.voinescu@arm.com, vanshikonda@os.amperecomputing.com,
-	sumitg@nvidia.com, vincent.guittot@linaro.org
-Subject: Re: [PATCH 1/1] cpufreq: Rewire arch specific feedback for
- cpuinfo/scaling_cur_freq
-Message-ID: <20240606085513.pptx5dtjcvvg3zo4@vireshk-i7>
-References: <20240603081331.3829278-1-beata.michalska@arm.com>
- <20240603081331.3829278-2-beata.michalska@arm.com>
- <20240603114811.oio3uemniib5uaa2@vireshk-i7>
- <CAJZ5v0j1bqhmKrJirw+WgEVDdszZ9xQSgmfazVKMVa8H6_5TSw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD731156646;
+	Thu,  6 Jun 2024 08:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717664126; cv=fail; b=GTU0XjkEcNvyvPPTtjPQudLHNyNj5fABTZd+NkDAQq+qqP9/Jkw8j4dplBebXMLkowLS0I+FTc7z+XgDIq3sdYze6AdjsXkxXaNqr3Mp788uhuzUS9mxqvLdrV69GWyj7GRcCVY14O+qwYZnmEpZfnXxQ+7BIuoom5R5b63uJBg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717664126; c=relaxed/simple;
+	bh=J2alaeWQ9eHZ6xb7v0Hy+exAguvjT14s78CcH3g0NSE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=B9aLxqSY07EBYudUmKKBQ7SZbm/0Avyh5/8d6zm6M+pWMaHcJqgLm/gEW1SmJhXce/LuMTp3hMk5kDvdjQCNQe0KiPbrafF8Cp2/oTCcXiS8aakS8hgazCELZg5ikVYPPBV22XivMDGDi/zuX5+qWY19Y+D2Hp1AkJr2slK62VA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=OAez0Yln; arc=fail smtp.client-ip=40.107.117.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Jv0roeVJGNfal+5kzBuFoebzw2WDFWhAJASDezklvUSWVWEFsjrXoHol6DZKAuu8hNGknT+EEzy3yyMOoAxNvDqQS/IzM+A7+N5sQXIdh+BoeIrD7D04JfyACSaHbgJL++e5WkcQaHrZMdP4UhKJGMMhHbjNDbNpOUPsb2F7T741vEf+58QR63svxjdW2Ai0XZ43ysqUOfzbA4EJCOwbS+aw2s12N+ZzXZR7muS9ZyPAzwHIwtDdbMD8FvAhEFEHak18KXKo38vOmfuGe2fGEm1JT3Ubbo4rz5mdEPV5pZpVaulIOwv2hcULHKmid558UCbi/knCK9KCDH9nSiKs2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=X5IAYnsyNZeMPjpIVZ2Nk+7W1nkJaq0ftVQyfYu4rvk=;
+ b=miHv8kOSgf7uTHBeRto6+jvMe2QgVaVo8PCERBdpEMRYruvLXFGybjHABj4d0ott/SmW2EpYpEtk73msaX3w+hXqSlljDiKPIKN/og0zhw4pChEtVBABtLz5mAbzGaj5dxsb6wlx3/BASv1woQVZbZSFnjMwTSgDP0doYaNel9hcCADJrxY3BLFZEucr9v4l6zzazfwsu5ldi1gSV84EGaF0P8AS1hxxGERk9/h2KG+GiQaRgcPkDCqXkaypsF3Eq2FqbHiO/ZEkBvo7OO1nzuo0p2EcEi9l8YyYjVZiBuZMQb8mXNDPqJ4WRPrVc9aL4sWZuilMcrvVxp3cDp/ENw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=X5IAYnsyNZeMPjpIVZ2Nk+7W1nkJaq0ftVQyfYu4rvk=;
+ b=OAez0YlnYl/YpUh2B7jLxKu+QZ+36N1emZufSIj3zHGJMpGxjNzq6UUdLY/ZtB1dTOGZbMfP6YYU0BykOtI7nTz6XHEAkYXQyU1NbON53MDQSrHMR0fngCx9IQEQ1dO0KieFOlroODZ6cbo45GoklnN3yYyXW92+qqUNYI/HguACiTqWjGupOAkMZojlDSImrP/68puKPRdYyDSQB2+L8mViHQxeWk7PaTxF/0AZYsoaHCo0h0VecdPHEGCNNtjBIsuLCGlaR+1P3+7eT/VlqdqRY5yYdXktsFn9B80J5MqsPN8FxkWx037YpxyBzA8GqfbpZ+JgY3NjI0h73pGXAA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR06MB7401.apcprd06.prod.outlook.com (2603:1096:820:146::12)
+ by TYZPR06MB6699.apcprd06.prod.outlook.com (2603:1096:400:45b::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.33; Thu, 6 Jun
+ 2024 08:55:20 +0000
+Received: from KL1PR06MB7401.apcprd06.prod.outlook.com
+ ([fe80::f4f:43c4:25e5:394e]) by KL1PR06MB7401.apcprd06.prod.outlook.com
+ ([fe80::f4f:43c4:25e5:394e%4]) with mapi id 15.20.7633.033; Thu, 6 Jun 2024
+ 08:55:20 +0000
+Message-ID: <35bd4fe6-5ed0-4446-8fab-f86909212e60@vivo.com>
+Date: Thu, 6 Jun 2024 16:55:17 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] sbitmap: fix io hung due to race on
+ sbitmap_word::cleared
+Content-Language: en-US
+To: Yu Kuai <yukuai1@huaweicloud.com>, Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>,
+ Pavel Begunkov <asml.silence@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
+References: <20240604031124.2261-1-yang.yang@vivo.com>
+ <CAFj5m9KV7OJ4_KjbSkpdtfrKamoLzV6EH-mJP3=y+VvoYOzC3w@mail.gmail.com>
+ <aa7246f9-f7df-3054-077e-eb21c7f423ac@huaweicloud.com>
+From: YangYang <yang.yang@vivo.com>
+In-Reply-To: <aa7246f9-f7df-3054-077e-eb21c7f423ac@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2P153CA0035.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::22)
+ To KL1PR06MB7401.apcprd06.prod.outlook.com (2603:1096:820:146::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0j1bqhmKrJirw+WgEVDdszZ9xQSgmfazVKMVa8H6_5TSw@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR06MB7401:EE_|TYZPR06MB6699:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5835f2ca-cd68-433d-f617-08dc8606652f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S2JlamJvWmprYkFlc01DQXdhT09RTFh0WEN0SC8rbW1IRFYyUWFka0IyMkxC?=
+ =?utf-8?B?M291WGxjWTMxdmVCL3ErNUJnZllwTDY1RWpYVUdrMDdyQTFXQTNGRGNEdmln?=
+ =?utf-8?B?dVB6QnU4WTU2eWlnbzIrNXpHYStoSDk5VzZvcExwbWFoQkZtclFKQzdMeUhu?=
+ =?utf-8?B?RW1lbVU4UzY4RjdzcndWbUlSRjhLMHNZSU5EYkxJS285MndYZzM1UitFT1JU?=
+ =?utf-8?B?NW9qSmNLbVN0cmZoM3krMUUzMmhEdzhLSm5VL0R1YWJsd1FUZ1Q4b1VwR3RJ?=
+ =?utf-8?B?OVFwcVpJQWtzc2ZkNkF3RSs5azExTmE0akx5cGNTRE5YUUF1M2RYYnYwd09R?=
+ =?utf-8?B?KzV2V0hSK0RVOXkwYitHNTZuS21XZmhoNGJ4TkNvMmFJT1hDUWVhTCtoNHN0?=
+ =?utf-8?B?RE9pQWdOaE9JVGszOFZuUnZOa1NTeXJLbnRiMXBYcXgrNTNQYWM4MUZtNFBT?=
+ =?utf-8?B?bjc2VTZoMjcwbi9QYy8vclhBcEtlRDliVFhNVzhHdFZFcmxMaXptOWsvYTcx?=
+ =?utf-8?B?RmFxOVNIMnY5SkE1Qk4zSkJGaWRtWnBzdFhYVnA0WXlMaW5HRS9xZHFMVk1S?=
+ =?utf-8?B?UlV2L1lZK0NXSjBTZjJRdmZVRHV1MElLYjU4SkpCTVhCZnJkZWF4ZlptWHR3?=
+ =?utf-8?B?VUtheE43NGg3M3VlWThnZ0c5NjFUSnE3Q05nSER3eGpEY1lodFlqaXYvaTVm?=
+ =?utf-8?B?c0c4RWczdWcybHBOWUIvOHkzZkJhUTkxelhPbFp5QWcyYVF6M3daV0k5bFR6?=
+ =?utf-8?B?Z01nUk11V1dTeE8rM1VpeEN4ZGVQZnMwQ1RaOGFmMC9FSTJpU0Jxdy8yOE1k?=
+ =?utf-8?B?RWxOWDFKWGFHSkx1cWNQeGJTT1Q0TFFidmRpbTYrVnhXTXUxRUZtNHFUbThU?=
+ =?utf-8?B?UXFYVkdaWmhVM005N2NhaHVGOUZXYmE2cWFXa1FFZ1FZRStNK1VXVHBzc0Qv?=
+ =?utf-8?B?amtRYmh5aDNpMjk2czRnYkNMamh4bHltMFpGU1dQNEkwSzFSdG1mNzIzUDZF?=
+ =?utf-8?B?MU1OdkR6R0V2anRyMnJRaENicTB2TFBHdncwT3N6eTJaM1pCMFh3Q0ZKNk81?=
+ =?utf-8?B?U2RxKytEeFc5L2ZlRFJBNzJ3RTlkTGk5WXlKck45QlFCUUttOGhOM0NNZGpn?=
+ =?utf-8?B?endCcDlUQnRuSXNoeFQzQjFTRVYyY2s2cWRqS1lERS8yL2NYL0ZDbEY0KzVI?=
+ =?utf-8?B?aUVJeDZzUFdiaTdhWUlqdUVkcG5tWTEvUUt6WFdRQlZ3WUkvSUFNMHJlS3NN?=
+ =?utf-8?B?QUtaZTlVSEY4cXhiS2dlS08yb0hDdlhhS1dCZGtRc3c5dHB1UzFPNHdNdHp6?=
+ =?utf-8?B?ektHUmhabStlQXpsMEFHd3V2N0kydjhSMlFXUmpmSTF2VWZYNXJBdzdUVnZZ?=
+ =?utf-8?B?SmhjMGFOOWRhdEFuU092UVU5dXU5elhLeUhaU09HQWt6bnhWa3JLdFB3aGFh?=
+ =?utf-8?B?ZXExakE4dlp0b1BWaHJYRmE1OXVFNGZRVUptcEY0VEtTS1BJQi9NWm1PN3kr?=
+ =?utf-8?B?d0RoemF2UHcyMzlZUjBIME1TWHI5aXhHS3VKaHdKcUI0cHZyalhJOEJiZHFK?=
+ =?utf-8?B?VllGKzhUdlNnUlZvZnFTVjhUd0RYNjh4VW8zVmRNSjhEaCtLenlkWHZLZVZ2?=
+ =?utf-8?B?RGdQWkZlL0NhaWQ4SVQ3bW9tc1ljaGtSVDRjY25KUElNSDloNy9qbU9GbmVH?=
+ =?utf-8?B?M2R2MzVmTXBtaE5TYmRXTUZweHFTYkNpdzhKK3NyQ1ZlNlNaNFBidVMxb0Ex?=
+ =?utf-8?Q?H8fBm3bzHguKTK+r6reRbmqyHZTshFDeLQ592XF?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB7401.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?M3RPbnFDN2VScEk0SW5EYk9zQU0zbFkvVXFERmtPaWl4TVBJYUZTSlFJY05P?=
+ =?utf-8?B?WnhvWWtTNzNjRFl6SDUxb3ZDZXAvVHNmbXlrSHNabzRSdWFpa3EzbS9HRVRU?=
+ =?utf-8?B?dTRoUis3Sk5ndlRGdkl4SXpxVHVJb0s3VFBkYWM4VHVwRFBKSitmRldtU08y?=
+ =?utf-8?B?V3NHbDVvc04vekx4SDlsR0crT0YwZEFmY1FreWhYNGNTd01lSWZ2NHFyNnNB?=
+ =?utf-8?B?TUF6OWNJQ1ZWYk1sUlhnYS9ua0lwam4rV2RtVEQ1V2dlc2t0OGtVMXl2V3ZM?=
+ =?utf-8?B?OWxhYTJ1QVdJUjhEV3ZHMzR4ZUpkQ3RudXBVUFZyMW1TSCs5S3V6WVRDRHRl?=
+ =?utf-8?B?Vi9RRHljSWlBMDJ6NU5mdW9QT3RrQjFmUGo1Vy9tVzBLMTBwdmtXaWlwNnVM?=
+ =?utf-8?B?cEhWRlFwQy94T0tVd2krb3d6VjBPZG53c0xibEpmM2JXYzFlY2tocTkyamFZ?=
+ =?utf-8?B?cm1LS3dpeWd3c3liLzUxbGtrMEpkLzZlWUJKT3UzQ01sVzZqT1JHblExZ3FK?=
+ =?utf-8?B?a1dQR3JiNW4vM3NYcFE5S3VJSGUzelZLWTR5N2pXK0JUZzZWVVJJSVdua3l3?=
+ =?utf-8?B?SDljdUh1OEQ5RkI3THF3a0pUSG5Ed05jSFkvWXNnOUFDK2FGcE9UUEZNMExC?=
+ =?utf-8?B?Q2V4aUNlbGowUFVSQVdMblpBcXhFM1E4VzVVS3haajVxNjdjYUsydWNMaTVD?=
+ =?utf-8?B?WkdDR0FvSUJvMlp6Z1I3VlNnQlk5VWtPemUxZUxHQkpRZHgvM0gwYjVpWTl6?=
+ =?utf-8?B?eTJScUcza1NBRFQ5c3YralVjS0dxdXNoNTJRUWhEVEVzWVhBZDZ6NHRBOG9u?=
+ =?utf-8?B?UDI3dlFaQmlQdzhpN2F3Tk9RTzF1Lzg4Wk52cDRoZWVlUFMwTEhuYkpGWXY0?=
+ =?utf-8?B?YmF0YUd6ZTF5ZkdIMDUvNDRrM0RodnVld1E0NnlPTStmSCtmaU5FODBUR3dD?=
+ =?utf-8?B?MS9VM25ndTZKc3krOFhnVEdYVEsza1BoUjFKTjFPaEIzV1g3cVNWSHdzQlB0?=
+ =?utf-8?B?TGRjdjZEMFhHNHovcklkcFpGeFBDSzZnb2xRdkFzNFY3Y2sxS0FjQWd0STR4?=
+ =?utf-8?B?NlIxOFZhTWF6V3lFTXJhRHZPalMyai8zZlJ6V0ZrNy9MSWRaaGpLMDlGTlpY?=
+ =?utf-8?B?ZlZMWkNESHhGWEVPc0hzcGoxTW50L0FOYVdRYzZqbDkyd05URlQxM2N0UGhG?=
+ =?utf-8?B?b21HVS8rb1creXhLQTUwdlZlbDFUU25rTzN2U2JXb3I3S0JWRHh5a2VNaXFH?=
+ =?utf-8?B?elZCNU83aFdnYlIveVBxb2lzZGdGZjFyR1VOMWFYRTBKWUt2cFVLaWpIa2Zh?=
+ =?utf-8?B?UHRRWTQ1TEU4Umc5dlpocThjSVVPcWNka1Q4UWtRK1pmMWcrbkFPOVZiZUxx?=
+ =?utf-8?B?OTBCVlFOZGdBOE02bkZkbWhzd3BOQUhDVGdLZ0ZjbVhSdCtDeG0wOGpMaWRC?=
+ =?utf-8?B?RGxseVBuVms3RmJKUy9ld3NyNC9jR2d6S1NGekxnK3pRSkpjTDlBQUl6Qncr?=
+ =?utf-8?B?d3FJV0dsbVV6bXJzUXk3aUFDdVBSVmxFNXM2ZVNIWW9sL0lBTGdXT3JtQVZ3?=
+ =?utf-8?B?T2Qvb1RuRjNPNnFUKytHYjJ5aXNaTnNBVVlWTWVpaTBXcUZKWUE4TExoV29s?=
+ =?utf-8?B?K0hOemdiZUZZSUtZN0htc0RrUXU5MXJyaW9UVytLZjNCRThaSTg4UGhaMWhU?=
+ =?utf-8?B?ZlJrbGxFMForT2UxZTFoM3FzemdkRkd4Z2wxM2tQRWJxblFoMmdKb0RGN01m?=
+ =?utf-8?B?b29MN3h0Q2ZGNi9ubTdrd05COGNKeWk3VzVndW9jSGxCdHN1OGd6VjBrQ2VC?=
+ =?utf-8?B?WGl2cWlCSm5kQXoxdWlsQnRRMENhejIrMDI4TElYT251WVgrZm8xdUZCd2cz?=
+ =?utf-8?B?V3ZsTFRrck4xalg4WjFCUy95TUxEZ1EraWpDQzBUdkZNMW4wK2M3L0NzVzdF?=
+ =?utf-8?B?QkpHbGVZRmpSYVJoK2N6ZGxNWVV5YTFVTnp1dWFESTVFRkpXaVY2NjVQMDkw?=
+ =?utf-8?B?M3dSdGVZc05KdEJMTFFPUFI0N3F2Q2xWOEFQMmRwVm5RSFR5ckhRWGM2akxI?=
+ =?utf-8?B?N3hMSVRJRm82M1YzQzNiQ0NubWxYYk9EbVJQZS9GSmVXc0Ird0VhTVUxM21u?=
+ =?utf-8?Q?EDNi/k0DwCilZm+2Oe22wwOWG?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5835f2ca-cd68-433d-f617-08dc8606652f
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB7401.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 08:55:20.6411
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ql3Pr+JC6sEnnke4pXpvk5psTzeQCU+L6Ei22UAoLjXd4nCJ7tiU8Pwg5FhWM1B6mWIzW5geZONG8KTnAvsVhg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6699
 
-On 03-06-24, 15:43, Rafael J. Wysocki wrote:
-> On Mon, Jun 3, 2024 at 1:48 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > Rafael,
-> >
-> > We probably need to decide on a policy for these two files, it is
-> > getting a bit confusing.
-> >
-> > cpuinfo_cur_freq:
-> >
-> > The purpose of this file is abundantly clear. This returns the best
-> > possible guess of the current hardware frequency. It should rely on
-> > arch_freq_get_on_cpu() or ->get() to get the value.
+On 2024/6/4 14:12, Yu Kuai wrote:
+> Hi,
 > 
-> Let me quote the documentation:
+> 在 2024/06/04 11:25, Ming Lei 写道:
+>> On Tue, Jun 4, 2024 at 11:12 AM Yang Yang <yang.yang@vivo.com> wrote:
+>>>
+>>> Configuration for sbq:
+>>>    depth=64, wake_batch=6, shift=6, map_nr=1
+>>>
+>>> 1. There are 64 requests in progress:
+>>>    map->word = 0xFFFFFFFFFFFFFFFF
+>>> 2. After all the 64 requests complete, and no more requests come:
+>>>    map->word = 0xFFFFFFFFFFFFFFFF, map->cleared = 0xFFFFFFFFFFFFFFFF
+>>> 3. Now two tasks try to allocate requests:
+>>>    T1:                                       T2:
+>>>    __blk_mq_get_tag                          .
+>>>    __sbitmap_queue_get                       .
+>>>    sbitmap_get                               .
+>>>    sbitmap_find_bit                          .
+>>>    sbitmap_find_bit_in_word                  .
+>>>    __sbitmap_get_word  -> nr=-1              __blk_mq_get_tag
+>>>    sbitmap_deferred_clear                    __sbitmap_queue_get
+>>>    /* map->cleared=0xFFFFFFFFFFFFFFFF */     sbitmap_find_bit
+>>>      if (!READ_ONCE(map->cleared))           sbitmap_find_bit_in_word
+>>>        return false;                         __sbitmap_get_word -> nr=-1
+>>>      mask = xchg(&map->cleared, 0)           sbitmap_deferred_clear
+>>>      atomic_long_andnot()                    /* map->cleared=0 */
+>>>                                                if (!(map->cleared))
+>>>                                                  return false;
+>>>                                       /*
+>>>                                        * map->cleared is cleared by T1
+>>>                                        * T2 fail to acquire the tag
+>>>                                        */
+>>>
+>>> 4. T2 is the sole tag waiter. When T1 puts the tag, T2 cannot be woken
+>>> up due to the wake_batch being set at 6. If no more requests come, T1
+>>> will wait here indefinitely.
+>>>
+>>> To fix this issue, simply revert commit 661d4f55a794 ("sbitmap:
+>>> remove swap_lock"), which causes this issue.
+>>
+>> I'd suggest to add the following words in commit log:
+>>
+>> Check on ->cleared and update on both ->cleared and ->word need to be
+>> done atomically, and using spinlock could be the simplest solution.
+>>
+>> Otherwise, the patch looks fine for me.
 > 
-> "This is expected to be the frequency the hardware actually runs at.
-> If that frequency cannot be determined, this attribute should not be
-> present."
+> Maybe I'm noob, but I'm confused how can this fix the problem, looks
+> like the race condition doesn't change.
 > 
-> In my reading, this has nothing to do with arch_freq_get_on_cpu(), at
-> least on x86.
+> In sbitmap_find_bit_in_word:
 > 
-> > Perhaps we can
-> > make this available all the time, instead of conditionally on ->get()
-> > callback (which isn't present for intel-pstate for example).
+> 1) __sbitmap_get_word read word;
+> 2) sbitmap_deferred_clear clear cleared;
+> 3) sbitmap_deferred_clear update word;
 > 
-> We could, but then on x86 there is no expectation that this file will
-> be present and changing this may introduce significant confusion
-> because of the way it is documented (which would need to be changed,
-> but people might be forgiven for failing to notice the change of
-> interpretation of this file).
- 
-> > scaling_cur_freq:
-> >
-> > This should better reflect the last requested frequency, but since a
-> > significant time now it is trying to show what cpuinfo_cur_freq shows.
+> 2) and 3) are done atomically while 1) can still concurrent with 3):
 > 
-> Well, not really.
+> t1:
+> sbitmap_find_bit_in_word
+>   __sbitmap_get_word
+>   -> read old word, return -1
+>          t2:
+>          sbitmap_find_bit_in_word
+>           __sbitmap_get_word
+>           -> read old word, return -1
+>   sbitmap_deferred_clear
+>   -> clear cleared and update word
+>          sbitmap_deferred_clear
+>          -> cleared is cleared, fail
 > 
-> > commit c034b02e213d ("cpufreq: expose scaling_cur_freq sysfs file for set_policy() drivers")
-> > commit f8475cef9008 ("x86: use common aperfmperf_khz_on_cpu() to calculate KHz using APERF/MPERF")
-> 
-> "In the majority of cases, this is the frequency of the last P-state
-> requested by the scaling driver from the hardware using the scaling
-> interface provided by it, which may or may not reflect the frequency
-> the CPU is actually running at (due to hardware design and other
-> limitations).
-> 
-> Some architectures (e.g. x86) may attempt to provide information more
-> precisely reflecting the current CPU frequency through this attribute,
-> but that still may not be the exact current CPU frequency as seen by
-> the hardware at the moment."
+> BYW, I still think it's fine to fix this problem by trying the
+> __sbitmap_get_word() at least one more time if __sbitmap_get_word()
+> failed.
 
-Right, with time the documentation is updated and now it has mixed
-the purpose of both these files IMO.
+How about this one:
+1. Add extra check in sbitmap_find_bit_in_word() referenced from
+    Yu kuai's suggestion.
+2. Change from atomic_long_andnot to atomic_long_fetch_andnot_release
 
-> So the problem is that on Intel x86 with HWP and intel_pstate in the
-> active mode, say, "the frequency of the last P-state requested by the
-> scaling driver from the hardware" is actually never known, so exposing
-> it via scaling_cur_freq is not possible.
-> 
-> Moreover, because cpuinfo_cur_freq is not present at all in that case,
-> scaling_cur_freq is the only way to allow user space to get an idea
-> about the CPU current frequency.  I don't think it can be changed now
-> without confusing users.
+---
+  include/linux/sbitmap.h |  5 +++++
+  lib/sbitmap.c           | 23 ++++++++++++++++++-----
+  2 files changed, 23 insertions(+), 5 deletions(-)
 
-Yes, this is a valid concern. The changes in documentation have been
-there for many years and changing the behavior now is not going to be
-an easy / right thing to do.
-
-> > What should we do ? I wonder if we will break some userspace tools
-> > (which may have started relying on these changes).
-> 
-> We will.
-> 
-> IIUC, it is desirable to expose "the frequency of the last P-state
-> requested by the scaling driver from the hardware" via
-> scaling_cur_freq on ARM, but it is also desirable to expose an
-> approximation of the actual current CPU frequency, so the only way to
-> do that without confusing the heck out of everybody downstream would
-> be to introduce a new attribute for this purpose and document it
-> precisely.
-
-Hmm, having 3 files would confuse people even more I guess. I wanted
-to get this sorted to have the same behavior for all platforms, but it
-seems somewhat difficult to achieve now.
-
-What about this, hopefully this doesn't break any existing platforms
-and fix the problems for ARM (and others):
-
-- scaling_cur_freq:
-
-  Returns the frequency of the last P-state requested by the scaling
-  driver from the hardware. For set_policy() drivers, use the ->get()
-  callback to get a value that can provide the best estimate to user.
-
-  To make this work, we can add get() callback to intel and amd pstate
-  drivers, and use arch_freq_get_on_cpu().
-
-  This will keep the current behavior intact for such drivers.
-
-- cpuinfo_cur_freq:
-
-  Currently this file is available only if the get() callback is
-  available. Maybe we can keep this behavior as is, and expose this
-  now for both the pstate drivers (once above change is added). We
-  will be left with only one driver that doesn't provide the get()
-  callback: pasemi-cpufreq.c
-
-  Coming back to the implementation of the file read operation, I
-  think the whole purpose of arch_freq_get_on_cpu() was to get a
-  better estimate (which may not be perfect) of the frequency the
-  hardware is really running at (in the last window) and if a platform
-  provides this, then it can be given priority over the ->get()
-  callback in order to show the value to userspace.
-
-  And so, if the platform provides, we can use arch_freq_get_on_cpu()
-  first and then the get() callback.
-
-That would leave us to this change for the core, and yes a get()
-callback for intel-pstate and amd-pstate:
-
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 7c6879efe9ef..e265f8450160 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -756,12 +756,8 @@ __weak unsigned int arch_freq_get_on_cpu(int cpu)
- static ssize_t show_scaling_cur_freq(struct cpufreq_policy *policy, char *buf)
- {
-        ssize_t ret;
--       unsigned int freq;
-
--       freq = arch_freq_get_on_cpu(policy->cpu);
--       if (freq)
--               ret = sprintf(buf, "%u\n", freq);
--       else if (cpufreq_driver->setpolicy && cpufreq_driver->get)
-+       if (cpufreq_driver->setpolicy && cpufreq_driver->get)
-                ret = sprintf(buf, "%u\n", cpufreq_driver->get(policy->cpu));
-        else
-                ret = sprintf(buf, "%u\n", policy->cur);
-@@ -795,7 +791,10 @@ store_one(scaling_max_freq, max);
- static ssize_t show_cpuinfo_cur_freq(struct cpufreq_policy *policy,
-                                        char *buf)
- {
--       unsigned int cur_freq = __cpufreq_get(policy);
-+       unsigned int cur_freq = arch_freq_get_on_cpu(policy->cpu);
+diff --git a/include/linux/sbitmap.h b/include/linux/sbitmap.h
+index d662cf136021..ec0b0e73c906 100644
+--- a/include/linux/sbitmap.h
++++ b/include/linux/sbitmap.h
+@@ -36,6 +36,11 @@ struct sbitmap_word {
+      * @cleared: word holding cleared bits
+      */
+     unsigned long cleared ____cacheline_aligned_in_smp;
 +
-+       if (!cur_freq)
-+               cur_freq = __cpufreq_get(policy);
++   /**
++    * @swap_lock: Held while swapping word <-> cleared
++    */
++   spinlock_t swap_lock;
+  } ____cacheline_aligned_in_smp;
 
-        if (cur_freq)
-                return sprintf(buf, "%u\n", cur_freq);
+  /**
+diff --git a/lib/sbitmap.c b/lib/sbitmap.c
+index 1e453f825c05..63dadf91e40b 100644
+--- a/lib/sbitmap.c
++++ b/lib/sbitmap.c
+@@ -63,9 +63,13 @@ static inline void update_alloc_hint_after_get(struct sbitmap *sb,
+  static inline bool sbitmap_deferred_clear(struct sbitmap_word *map)
+  {
+     unsigned long mask;
++   bool ret = false;
++   unsigned long flags;
 
+-   if (!READ_ONCE(map->cleared))
+-       return false;
++   spin_lock_irqsave(&map->swap_lock, flags);
++
++   if (!map->cleared)
++       goto out_unlock;
 
-I think this will also make more sense from documentation's
-perspective, which says that:
+     /*
+      * First get a stable cleared mask, setting the old mask to 0.
+@@ -75,9 +79,12 @@ static inline bool sbitmap_deferred_clear(struct sbitmap_word *map)
+     /*
+      * Now clear the masked bits in our free word
+      */
+-   atomic_long_andnot(mask, (atomic_long_t *)&map->word);
++   atomic_long_fetch_andnot_release(mask, (atomic_long_t *)&map->word);
+     BUILD_BUG_ON(sizeof(atomic_long_t) != sizeof(map->word));
+-   return true;
++   ret = true;
++out_unlock:
++   spin_unlock_irqrestore(&map->swap_lock, flags);
++   return ret;
+  }
 
-"In the majority of cases, this is the frequency of the last P-state
-requested by the scaling driver from the hardware using the scaling
-interface provided by it, which may or may not reflect the frequency
-the CPU is actually running at (due to hardware design and other
-limitations)."
+  int sbitmap_init_node(struct sbitmap *sb, unsigned int depth, int shift,
+@@ -85,6 +92,7 @@ int sbitmap_init_node(struct sbitmap *sb, unsigned int depth, int shift,
+               bool alloc_hint)
+  {
+     unsigned int bits_per_word;
++   int i;
 
--- we do this at the core level.
+     if (shift < 0)
+         shift = sbitmap_calculate_shift(depth);
+@@ -116,6 +124,9 @@ int sbitmap_init_node(struct sbitmap *sb, unsigned int depth, int shift,
+         return -ENOMEM;
+     }
 
-"Some architectures (e.g. x86) may attempt to provide information more
-precisely reflecting the current CPU frequency through this attribute,
-but that still may not be the exact current CPU frequency as seen by
-the hardware at the moment."
++   for (i = 0; i < sb->map_nr; i++)
++       spin_lock_init(&sb->map[i].swap_lock);
++
+     return 0;
+  }
+  EXPORT_SYMBOL_GPL(sbitmap_init_node);
+@@ -175,11 +186,13 @@ static int sbitmap_find_bit_in_word(struct sbitmap_word *map,
+     int nr;
 
--- and this at driver level, as a special case.
+     do {
++       unsigned long cleared = READ_ONCE(map->cleared);
++
+         nr = __sbitmap_get_word(&map->word, depth,
+                     alloc_hint, wrap);
+         if (nr != -1)
+             break;
+-       if (!sbitmap_deferred_clear(map))
++       if (!sbitmap_deferred_clear(map) && !cleared)
+             break;
+     } while (1);
 
 -- 
-viresh
+2.34.1
+
+> 
+> Thanks,
+> Kuai
+> 
+>>
+>> Thanks,
+>>
+>>
+>> .
+>>
+> 
+
 
