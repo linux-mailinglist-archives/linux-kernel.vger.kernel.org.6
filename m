@@ -1,124 +1,161 @@
-Return-Path: <linux-kernel+bounces-204426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FF968FEAE5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:22:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4944F8FEB9D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:26:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 520C2287D66
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:22:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEC641F28D79
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10991A1893;
-	Thu,  6 Jun 2024 14:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fW0I7Rwh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F28E1AB8FA;
+	Thu,  6 Jun 2024 14:14:33 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4371A186B;
-	Thu,  6 Jun 2024 14:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A6919A295
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717683188; cv=none; b=l9AzjAFIAjCPXQURifPN1uCmaCG2qxFcVB6xgWm/et4ryhh2qt1uP8NFEPIL2XlugmwaFwAQPHpQ6RSsVtNS84kyrPwSg48XyejxdvzPd9IZXL7muEAuN/vgX6dR/bRTUIrA3oq/FTjdXRZXwQCsat9qLvEvQYVTXS8nlSTEal0=
+	t=1717683273; cv=none; b=cpzskNLyL2LDPN8ioAaWKXq15+a3BIvNWWjZHwx0sb7AMW1lZMzpjJsDHBhXUdfasyLp3IsB3SnTCVhPxTzKHANECl3OKLlHcejk+dS8Z0FQvMkgXZ1Ny8T2YSqWtGwjEES2rOV8JANotVg+jypgT68Jo1kP5DqQ7cegUtnnQTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717683188; c=relaxed/simple;
-	bh=IsdLDPmj0SmbAXCgn+8qfRe+A3ztyr1j6wceGEhWF0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cxUIWfpaz1Fw7yoiPqy5MNkFllWtgJqde7VMeXsSPSmxhTEp8pe95vTUOOuvYqLQ/k5JqVttoQmwtYmFegPu7nFYCqEiOtE3VMDr+A4viQBTxDF3NB5Z10SNqCsZTJ2uqZFbEOvxbXecPzp0l9N+3BYPVuqx8qMuT9TfKaRcnPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fW0I7Rwh; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717683187; x=1749219187;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=IsdLDPmj0SmbAXCgn+8qfRe+A3ztyr1j6wceGEhWF0A=;
-  b=fW0I7Rwh/brFkzpgDroUfYlzvwI8hDBjz+S8Z722ZvLihccNGyCoiQD1
-   lXiAtdbHQUNOmp9+oZUAV5BQOpZCdoQI4nm4FFxagHuOgCdYyyo+DKOw7
-   YuNSxqal9oMIgGLmnSOypOVhPRoWuiU1jAERHJmlgfo7nHrESSJE1ZEaa
-   1K80tSuMHuQCX8XFRUUufUcW0roVhwtcQjNgcA2GokJzoy1Qzj/5D+aNT
-   f6dgQ4GroxumTgQI7GJV8ev4nRJaqJuEPCanh9B/niaClUJ0NXXRtfEVg
-   ASwo6CvnmAmd1nHRavYDphnzzBqDNUgO134pwCcxEgxZDBSsYv74+pNNI
-   g==;
-X-CSE-ConnectionGUID: B5CUVPBoQpKgD812XWCMuw==
-X-CSE-MsgGUID: jsh/SuHASKuirfT5nbbO0Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="24924368"
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="24924368"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 07:13:06 -0700
-X-CSE-ConnectionGUID: 8ND2elZKS2e+hKpRoRovhw==
-X-CSE-MsgGUID: Ja7dKVhLT8ChYzA52oYi3Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="37837567"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 07:13:02 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sFDrQ-0000000ECTP-019r;
-	Thu, 06 Jun 2024 17:13:00 +0300
-Date: Thu, 6 Jun 2024 17:12:59 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Cc: Nuno Sa <nuno.sa@analog.com>, Petr Mladek <pmladek@suse.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Jyoti Bhayana <jbhayana@google.com>,
-	Chris Down <chris@chrisdown.name>,
-	John Ogness <john.ogness@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andi Shyti <andi.shyti@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] iio: temperature: ltc2983: convert to
- dev_err_probe()
-Message-ID: <ZmHD63_tvC75To8r@smile.fi.intel.com>
-References: <20240606-dev-add_dev_errp_probe-v3-0-51bb229edd79@analog.com>
- <20240606-dev-add_dev_errp_probe-v3-2-51bb229edd79@analog.com>
- <ZmGMwwglUlS6_NI_@smile.fi.intel.com>
- <da57a64e4f5cdda7ee6b794c448995eee648c436.camel@gmail.com>
+	s=arc-20240116; t=1717683273; c=relaxed/simple;
+	bh=Pwl+Ph8+3XYeth7wyt/AmydUz4nZL/6HcBeIPvZXsRE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bmWcvG/0igTzOH8FDQispcjar/K4pCQmk1oZ+iLQZhvBEC68Z1Sgli7XQhrY/py5OQQHKAmlV8uIrLMhxaXU/NI4mQMPurk99GGYeELYKq4OsDYP49MoFkofIWsdPALpM6cB/X+4/zic0ctipCuejI+hGPUfOXnIJZfNYcFvE8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-374ad7fa4bbso10089955ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 07:14:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717683270; x=1718288070;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MpKPMPp72E39a98DYqNubx0t6d1WZdls3EbkjhEyXDg=;
+        b=P20bFn4dV4et3KuzugVNoh9lvCXfYemVxQe82FvNwxQrlBda2NBKNHZ+lE8ICVE0EO
+         7SK7F2cTyuiEsTXGwrOb+giXROnOR+2lPuNIbTJM8Q2GaTd1ZtX0PumuqAW4RtURKN8a
+         sRv9vol/2agXUS6vHyg4AnTsVLRwt4AiVZltjQxYdEGXPn0OojBRz4MDk91AcuTjq/Km
+         MkwnaYrZk8LhgZ+NGOU9uYk6/k/dsbbxftaNh+itBtlVEaFC+qBIaz/q7Ay39tZQIB4E
+         jTUpJ8ahg8MYmzEUoONyJcP875RKT6GCaxdxecPe1dQvi+YElQZzVU3JSZsKhckA81Ba
+         7F+w==
+X-Gm-Message-State: AOJu0YxMeI12qX4cpfUUDD+8z21jqBCI4nmTF9mNdl8Drsw1J4laVl77
+	Pj+ptgWFeDoMGX1qtFKBTWPTgGOX4XzN3JMDmOga5UkeYZgf8LbrVLLLA5He7jui+ID/mTPbYSr
+	Dny7kuMFubvwx3Vkrg0hnofoT0PHkMbUvUvT4YMbJofgvRAspwU9b1io=
+X-Google-Smtp-Source: AGHT+IHHmX5X1ULzOzng/upfRocUoEOv/1IM52Yfa9EKkY1SuGZ+colljbASDJtMnxfDAR5WIJvxl/ekp7Bzzfq2BJ7KNwUPT7IV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <da57a64e4f5cdda7ee6b794c448995eee648c436.camel@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Received: by 2002:a92:c26b:0:b0:36c:5228:462 with SMTP id
+ e9e14a558f8ab-374b1f56c81mr3614015ab.3.1717683270146; Thu, 06 Jun 2024
+ 07:14:30 -0700 (PDT)
+Date: Thu, 06 Jun 2024 07:14:30 -0700
+In-Reply-To: <000000000000adb08b061413919e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000277099061a394d13@google.com>
+Subject: Re: [syzbot] possible deadlock in trie_delete_elem
+From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 06, 2024 at 02:27:03PM +0200, Nuno Sá wrote:
-> On Thu, 2024-06-06 at 13:17 +0300, Andy Shevchenko wrote:
-> > On Thu, Jun 06, 2024 at 09:22:38AM +0200, Nuno Sa wrote:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-...
+***
 
-> > > +			return dev_err_ptr_probe(&st->spi->dev, -EINVAL,
-> > 
-> > You can make all these lines shorter by using
-> > 
-> > 	struct device *dev = &st->spi->dev; // or analogue
-> > 
-> > at the top of the function.
-> > 
-> 
-> Well, I had that in v2 (making the whole driver coherent with the local struct
-> device helper but you kind of "complained" for a precursor patch (on a
-> devm_kzalloc() call). So basically I deferred that change for a follow up patch.
+Subject: possible deadlock in trie_delete_elem
+Author: norkam41@gmail.com
 
-Hmm... I don't remember the story behind this, but probably it's good to have
-this done one (precursor) or the other way (follow up). Just check how many
-changes will be done, whichever diff is shorter, choose that one.
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.g=
+it c3f38fa61af77b49866b006939479069cd451173
 
--- 
-With Best Regards,
-Andy Shevchenko
+Signed-off-by: Norbert Kami=C5=84ski <norkam41@gmail.com>
+---
+ kernel/trace/bpf_trace.c | 18 +++++++++++++++++-
+ kernel/tracepoint.c      | 15 +++++++++++++--
+ 2 files changed, 30 insertions(+), 3 deletions(-)
 
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 6249dac61701..75fdb8e3abaa 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -2391,7 +2391,23 @@ void __bpf_trace_run(struct bpf_raw_tp_link *link, u=
+64 *args)
+ 	struct bpf_trace_run_ctx run_ctx;
+=20
+ 	cant_sleep();
+-	if (unlikely(this_cpu_inc_return(*(prog->active)) !=3D 1)) {
++
++	// return if instrumentation disabled, see: bpf_disable_instrumentation
++	int instrumentation =3D unlikely(__this_cpu_read(bpf_prog_active));
++	if (instrumentation) {
++		printk("SKIP FOR INSTRUMENTATION: %s > %s > %p /%i =3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D\n",
++				prog->aux->name,
++				link->btp->tp->name, prog, instrumentation);
++		bpf_prog_inc_misses_counter(prog);
++		return;
++	}
++
++	int active =3D this_cpu_inc_return(*(prog->active));
++	// printk("%s > %s > %p /%i\n", prog->aux->name, link->btp->tp->name, pro=
+g, active);
++	if (active !=3D 1) {
++		printk("SKIP FOR ACTIVE: %s > %s > %p /%i =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D\n",
++				prog->aux->name,
++				link->btp->tp->name, prog, active);
+ 		bpf_prog_inc_misses_counter(prog);
+ 		goto out;
+ 	}
+diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+index 8d1507dd0724..a0a0d8b16b41 100644
+--- a/kernel/tracepoint.c
++++ b/kernel/tracepoint.c
+@@ -168,12 +168,21 @@ static inline void release_probes(struct tracepoint_f=
+unc *old)
+ static void debug_print_probes(struct tracepoint_func *funcs)
+ {
+ 	int i;
++	struct bpf_raw_tp_link *link;
+=20
+ 	if (!tracepoint_debug || !funcs)
+ 		return;
+=20
+-	for (i =3D 0; funcs[i].func; i++)
+-		printk(KERN_DEBUG "Probe %d : %p\n", i, funcs[i].func);
++	for (i =3D 0; funcs[i].func; i++) {
++		link =3D funcs[i].data;
++		int active =3D this_cpu_read(*(link->link.prog->active));
++		printk("Probe %d : %p / %p: %s/%d / %i\n", i,
++				funcs[i].func,
++				link,
++				link->link.prog->aux->name,
++				active,
++				funcs[i].prio);
++	}
+ }
+=20
+ static struct tracepoint_func *
+@@ -298,6 +307,8 @@ static enum tp_func_state nr_func_state(const struct tr=
+acepoint_func *tp_funcs)
+ {
+ 	if (!tp_funcs)
+ 		return TP_FUNC_0;
++	if (!tp_funcs[0].func)
++		return TP_FUNC_0;
+ 	if (!tp_funcs[1].func)
+ 		return TP_FUNC_1;
+ 	if (!tp_funcs[2].func)
+--=20
+2.34.1
 
 
