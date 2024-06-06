@@ -1,148 +1,279 @@
-Return-Path: <linux-kernel+bounces-203958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A868E8FE24C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:16:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60BB98FE250
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:16:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B12541C221E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:16:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41BC01C21967
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:16:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114F313B5B9;
-	Thu,  6 Jun 2024 09:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C4515218D;
+	Thu,  6 Jun 2024 09:11:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="nCO5UMrP"
-Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF2F13D880
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.6
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ju8sxcUF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB18313E03C;
+	Thu,  6 Jun 2024 09:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717665102; cv=none; b=oIzVCr8UbWjrX5cWQs56OkqELWTqDkW9EB2BaaoFtcYHGUSk2sZ5O8xyOMk+iDuxRtz5DMwUE8KvyTztqtO3YQRfFDHwRw/sSnKTQ2VKHpwunSVexJPFHnAAZuKV1xUw+t9Bbwj1rK0nvKHm8xVipYjS+tn7SM+8gynLiYCKVyw=
+	t=1717665116; cv=none; b=rphVHB+vVthnpcko8HCjklXbg69K1NA9t2UNRrFkFgHpAvowIDtmMcOMHwuuUaa7ROsfumY+OUlV3dWJAtwinsAhOckPbXljG6zmtSfgWcTyqpiG7Zk+i5lvIYzEbdvzbAZVuzRqmBoXN/bC8J25JEEzvspBUvxhniO1Pbi46V4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717665102; c=relaxed/simple;
-	bh=B78sJA4u7GQ6oTEA8lz721ZrFNIE3REAE/bNe5WcHvI=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=lMbY4Xb9/XxNN+4cror3TYj2xdCeb2OAbT/VWRzlui3xTWRTyYENX67yjKYEwrhs0mY6r04d/E0oSREK6mKECYaTWjvq2F2lc8G6ow3Zfu+foUwtw7R3tHumzPxn15vPfeC0FXG9aGR7KO6J/PiSvBMMG1aX2PrGT4lTVpCuLAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=nCO5UMrP; arc=none smtp.client-ip=117.135.210.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Subject:From:Message-ID:Date:MIME-Version:
-	Content-Type; bh=fc/bMpgE3KzMCFW55h1T50uds9erffHp9ylfNmlmvJA=;
-	b=nCO5UMrPVZ4GZhVXWNh6TcsxFF6bQCYDyq8ujEvhxpoyhawcHFDUWp9uMHURnI
-	CRsWRO+b8EZQfwCukuYnPrxRJtZe+guW73AVlSR7FVCmRZXa5pSgnZT4D4EvpP9Q
-	CaKMhBNL7+uDTrV6L1XCP4qwLKDD10zW4vkCIy/92rR0c=
-Received: from [172.21.21.216] (unknown [118.242.3.34])
-	by gzga-smtp-mta-g1-4 (Coremail) with SMTP id _____wC330AifWFmmhe2AQ--.40121S2;
-	Thu, 06 Jun 2024 17:11:00 +0800 (CST)
-Subject: Re: [PATCH] mm/page_alloc: skip THP-sized PCP list when allocating
- non-CMA THP-sized page
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, liuzixing@hygon.cn,
- Johannes Weiner <hannes@cmpxchg.org>, Vlastimil Babka <vbabka@suse.cz>,
- Zi Yan <ziy@nvidia.com>
-References: <1717492460-19457-1-git-send-email-yangge1116@126.com>
- <c180d2a0-1e34-41f0-bae8-1205d04a5f6b@linux.alibaba.com>
- <82d31425-86d7-16fa-d09b-fcb203de0986@126.com>
- <7087d0af-93d8-4d49-94f4-dc846a4e2b98@linux.alibaba.com>
-From: yangge1116 <yangge1116@126.com>
-Message-ID: <1250569c-c428-5a0c-f1b7-fe5013eace3f@126.com>
-Date: Thu, 6 Jun 2024 17:10:58 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+	s=arc-20240116; t=1717665116; c=relaxed/simple;
+	bh=eC5wX2eAW1HqPpt0NLbi0EUof17svVNQi4hnTqBuM1Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Tl8lLTBW/YTAqhIoaAMu+tGqXEe4FrJ6Cm7BL4o9rMoMHcXELBTgtJpszf41rYEPz+Yi3Z7WS9izTj1OU4gcyRlflWU+iqvv7NvjyDRLqecwMua03oTaNbH70LcTGBFYhEsr/sAId4LFwmKRfQd+D7y3ZabuhCzFhQ1R5aZeG2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ju8sxcUF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D2F0C2BD10;
+	Thu,  6 Jun 2024 09:11:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717665116;
+	bh=eC5wX2eAW1HqPpt0NLbi0EUof17svVNQi4hnTqBuM1Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ju8sxcUFv/x6oSnDewNWGfttFoWiXZaGTGlTQrjw2RjVabkmKyvBgzrGPeLIhX48z
+	 9hskYqu2ZuB5QgVA/vmbFcqdWAG6DzIjl+U9Yt4qTKOShiQSvKR4zg1B1O5wvcwUlM
+	 /wTbxKmT3X0RXSc1IWpQJRvz7k1PENGFEyOQs96mJNvD9ZLaKuzZ5FHKtBvtQQcseE
+	 LVTNi3AmvyqQNRUmS1o+cmcjkYrQ8w/ZL/Q8vSslkitlRaq14/6T2ZOU5+t9UdIj4u
+	 zV+JBQcqcJgF3agocC7dggwuEnCK9HD+KzT7bQIV6jBSxu1QXkqfPt7GUEzLcUUgaY
+	 QsZ9BdWs/VXZw==
+Message-ID: <92c1cb53-ec2b-4153-b97d-c2b8c0fdfaf2@kernel.org>
+Date: Thu, 6 Jun 2024 11:11:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <7087d0af-93d8-4d49-94f4-dc846a4e2b98@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH net-next v3 3/6] net/tcp: Move tcp_inbound_hash() from
+ headers
+Content-Language: en-GB
+To: 0x7f454c46@gmail.com, Eric Dumazet <edumazet@google.com>,
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, David Ahern <dsahern@kernel.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: Mohammad Nassiri <mnassiri@ciena.com>, Simon Horman <horms@kernel.org>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20240606-tcp_ao-tracepoints-v3-0-13621988c09f@gmail.com>
+ <20240606-tcp_ao-tracepoints-v3-3-13621988c09f@gmail.com>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <20240606-tcp_ao-tracepoints-v3-3-13621988c09f@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wC330AifWFmmhe2AQ--.40121S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGFy7KFWUGFy5KrWfWF47XFb_yoW5Xr45pF
-	WrC3WjyF4UX345A3s7tFn0krnI9ws7KF48Wr4rZr1UZwnIkr4xGr97tF129F1rZrZrAF40
-	vr4vgFyfZF4qya7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07bofH8UUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiGBb1G2VLbn5CgAAAsc
 
+Hi Dmitry,
 
-
-在 2024/6/6 上午11:06, Baolin Wang 写道:
+On 06/06/2024 02:58, Dmitry Safonov via B4 Relay wrote:
+> From: Dmitry Safonov <0x7f454c46@gmail.com>
 > 
+> Two reasons:
+> 1. It's grown up enough
+> 2. In order to not do header spaghetti by including
+>    <trace/events/tcp.h>, which is necessary for TCP tracepoints.
 > 
-> On 2024/6/4 20:36, yangge1116 wrote:
->>
->>
->> 在 2024/6/4 下午8:01, Baolin Wang 写道:
->>> Cc Johannes, Zi and Vlastimil.
->>>
->>> On 2024/6/4 17:14, yangge1116@126.com wrote:
->>>> From: yangge <yangge1116@126.com>
->>>>
->>>> Since commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for
->>>> THP-sized allocations") no longer differentiates the migration type
->>>> of pages in THP-sized PCP list, it's possible to get a CMA page from
->>>> the list, in some cases, it's not acceptable, for example, allocating
->>>> a non-CMA page with PF_MEMALLOC_PIN flag returns a CMA page.
->>>>
->>>> The patch forbids allocating non-CMA THP-sized page from THP-sized
->>>> PCP list to avoid the issue above.
->>>>
->>>> Fixes: 5d0a661d808f ("mm/page_alloc: use only one PCP list for 
->>>> THP-sized allocations")
->>>> Signed-off-by: yangge <yangge1116@126.com>
->>>> ---
->>>>   mm/page_alloc.c | 10 ++++++++++
->>>>   1 file changed, 10 insertions(+)
->>>>
->>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->>>> index 2e22ce5..0bdf471 100644
->>>> --- a/mm/page_alloc.c
->>>> +++ b/mm/page_alloc.c
->>>> @@ -2987,10 +2987,20 @@ struct page *rmqueue(struct zone 
->>>> *preferred_zone,
->>>>       WARN_ON_ONCE((gfp_flags & __GFP_NOFAIL) && (order > 1));
->>>>       if (likely(pcp_allowed_order(order))) {
->>>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>>> +        if (!IS_ENABLED(CONFIG_CMA) || alloc_flags & ALLOC_CMA ||
->>>> +                        order != HPAGE_PMD_ORDER) {
->>>
->>> Seems you will also miss the non-CMA THP from the PCP, so I wonder if 
->>> we can add a migratetype comparison in __rmqueue_pcplist(), and if 
->>> it's not suitable, then fallback to buddy?
->>
->> Yes, we may miss some non-CMA THPs in the PCP. But, if add a 
->> migratetype comparison in __rmqueue_pcplist(), we may need to compare 
->> many times because of pcp batch.
-> 
-> I mean we can only compare once, focusing on CMA pages.
+> While at it, unexport and make static tcp_inbound_ao_hash().
 
-pcp_list may contains CMA and no-CMA pages, why only compare once, just 
-increase one chance of using the pcp_list?
-
-
+Thank you for working on this.
+ > Signed-off-by: Dmitry Safonov <0x7f454c46@gmail.com>
+> ---
+>  include/net/tcp.h | 78 +++----------------------------------------------------
+>  net/ipv4/tcp.c    | 66 ++++++++++++++++++++++++++++++++++++++++++++--
+>  2 files changed, 68 insertions(+), 76 deletions(-)
 > 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 3734fe7e67c0..960a3b5744d8 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -2973,6 +2973,11 @@ struct page *__rmqueue_pcplist(struct zone *zone, 
-> unsigned int order,
->                  }
-> 
->                  page = list_first_entry(list, struct page, pcp_list);
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +               if (order == HPAGE_PMD_ORDER && 
-> !is_migrate_movable(migratetype) &&
-> +                   is_migrate_cma(get_pageblock_migratetype(page)))
-> +                       return NULL;
-> +#endif
->                  list_del(&page->pcp_list);
->                  pcp->count -= 1 << order;
->          } while (check_new_pages(page, order));
+> diff --git a/include/net/tcp.h b/include/net/tcp.h
+> index e5427b05129b..2aac11e7e1cc 100644
+> --- a/include/net/tcp.h
+> +++ b/include/net/tcp.h
+> @@ -1863,12 +1863,6 @@ tcp_md5_do_lookup_any_l3index(const struct sock *sk,
+>  	return __tcp_md5_do_lookup(sk, 0, addr, family, true);
+>  }
+>  
+> -enum skb_drop_reason
+> -tcp_inbound_md5_hash(const struct sock *sk, const struct sk_buff *skb,
+> -		     const void *saddr, const void *daddr,
+> -		     int family, int l3index, const __u8 *hash_location);
+> -
+> -
+>  #define tcp_twsk_md5_key(twsk)	((twsk)->tw_md5_key)
+>  #else
+>  static inline struct tcp_md5sig_key *
+> @@ -1885,13 +1879,6 @@ tcp_md5_do_lookup_any_l3index(const struct sock *sk,
+>  	return NULL;
+>  }
+>  
+> -static inline enum skb_drop_reason
+> -tcp_inbound_md5_hash(const struct sock *sk, const struct sk_buff *skb,
+> -		     const void *saddr, const void *daddr,
+> -		     int family, int l3index, const __u8 *hash_location)
+> -{
+> -	return SKB_NOT_DROPPED_YET;
+> -}
+
+It looks like this no-op is still needed, please see below.
+
+>  #define tcp_twsk_md5_key(twsk)	NULL
+>  #endif
+>  
+
+(...)
+
+> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+> index fa43aaacd92b..80ed5c099f11 100644
+> --- a/net/ipv4/tcp.c
+> +++ b/net/ipv4/tcp.c
+> @@ -4456,7 +4456,7 @@ int tcp_md5_hash_key(struct tcp_sigpool *hp,
+>  EXPORT_SYMBOL(tcp_md5_hash_key);
+>  
+>  /* Called with rcu_read_lock() */
+> -enum skb_drop_reason
+> +static enum skb_drop_reason
+>  tcp_inbound_md5_hash(const struct sock *sk, const struct sk_buff *skb,
+>  		     const void *saddr, const void *daddr,
+>  		     int family, int l3index, const __u8 *hash_location)
+> @@ -4510,10 +4510,72 @@ tcp_inbound_md5_hash(const struct sock *sk, const struct sk_buff *skb,
+>  	}
+>  	return SKB_NOT_DROPPED_YET;
+>  }
+> -EXPORT_SYMBOL(tcp_inbound_md5_hash);
+>  
+>  #endif
+>  
+> +/* Called with rcu_read_lock() */
+> +enum skb_drop_reason
+> +tcp_inbound_hash(struct sock *sk, const struct request_sock *req,
+> +		 const struct sk_buff *skb,
+> +		 const void *saddr, const void *daddr,
+> +		 int family, int dif, int sdif)
+> +{
+> +	const struct tcphdr *th = tcp_hdr(skb);
+> +	const struct tcp_ao_hdr *aoh;
+> +	const __u8 *md5_location;
+> +	int l3index;
+> +
+> +	/* Invalid option or two times meet any of auth options */
+> +	if (tcp_parse_auth_options(th, &md5_location, &aoh)) {
+> +		tcp_hash_fail("TCP segment has incorrect auth options set",
+> +			      family, skb, "");
+> +		return SKB_DROP_REASON_TCP_AUTH_HDR;
+> +	}
+> +
+> +	if (req) {
+> +		if (tcp_rsk_used_ao(req) != !!aoh) {
+> +			NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPAOBAD);
+> +			tcp_hash_fail("TCP connection can't start/end using TCP-AO",
+> +				      family, skb, "%s",
+> +				      !aoh ? "missing AO" : "AO signed");
+> +			return SKB_DROP_REASON_TCP_AOFAILURE;
+> +		}
+> +	}
+> +
+> +	/* sdif set, means packet ingressed via a device
+> +	 * in an L3 domain and dif is set to the l3mdev
+> +	 */
+> +	l3index = sdif ? dif : 0;
+> +
+> +	/* Fast path: unsigned segments */
+> +	if (likely(!md5_location && !aoh)) {
+> +		/* Drop if there's TCP-MD5 or TCP-AO key with any rcvid/sndid
+> +		 * for the remote peer. On TCP-AO established connection
+> +		 * the last key is impossible to remove, so there's
+> +		 * always at least one current_key.
+> +		 */
+> +		if (tcp_ao_required(sk, saddr, family, l3index, true)) {
+> +			tcp_hash_fail("AO hash is required, but not found",
+> +				      family, skb, "L3 index %d", l3index);
+> +			return SKB_DROP_REASON_TCP_AONOTFOUND;
+> +		}
+> +		if (unlikely(tcp_md5_do_lookup(sk, l3index, saddr, family))) {
+> +			NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPMD5NOTFOUND);
+> +			tcp_hash_fail("MD5 Hash not found",
+> +				      family, skb, "L3 index %d", l3index);
+> +			return SKB_DROP_REASON_TCP_MD5NOTFOUND;
+> +		}
+> +		return SKB_NOT_DROPPED_YET;
+> +	}
+> +
+> +	if (aoh)
+> +		return tcp_inbound_ao_hash(sk, skb, family, req, l3index, aoh);
+> +
+> +	return tcp_inbound_md5_hash(sk, skb, saddr, daddr, family,
+> +				    l3index, md5_location);
+
+Many selftests are currently failing [1] because of this line: if
+CONFIG_TCP_MD5SIG is not defined -- which is currently the case in many
+selftests: tc, mptcp, forwarding, netfilter, drivers, etc. -- then this
+tcp_inbound_md5_hash() function is not defined:
+
+> net/ipv4/tcp.c: In function ‘tcp_inbound_hash’:
+> net/ipv4/tcp.c:4570:16: error: implicit declaration of function ‘tcp_inbound_md5_hash’; did you mean ‘tcp_inbound_ao_hash’? [-Werror=implicit-function-declaration]
+>  4570 |         return tcp_inbound_md5_hash(sk, skb, saddr, daddr, family,
+>       |                ^~~~~~~~~~~~~~~~~~~~
+>       |                tcp_inbound_ao_hash
+
+Do you (or any maintainers) mind replying to this email with this line
+[2] so future builds from the CI will no longer pick-up this series?
+
+pw-bot: changes-requested
+
+[1]
+https://netdev.bots.linux.dev/contest.html?pw-n=0&branch=net-next-2024-06-06--06-00&test=build
+[2]
+https://docs.kernel.org/process/maintainer-netdev.html#updating-patch-status
+
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
 
 
