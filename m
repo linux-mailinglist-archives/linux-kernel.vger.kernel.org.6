@@ -1,188 +1,128 @@
-Return-Path: <linux-kernel+bounces-204428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF6AA8FEB30
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:23:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50B9B8FEAF1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:22:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E63F31C25F24
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:23:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 808BB2888F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:22:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6751A2FC7;
-	Thu,  6 Jun 2024 14:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0304C199241;
+	Thu,  6 Jun 2024 14:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=opensynergy.com header.i=@opensynergy.com header.b="P9MqYJmj"
-Received: from repost01.tmes.trendmicro.eu (repost01.tmes.trendmicro.eu [18.185.115.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JBTa+1/+"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BB9197A68
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=18.185.115.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717683221; cv=fail; b=Q6E4h1IxCMbzWv+ruOCji7KW8IqSrdRclxIKlmO6LLE7aN+krbqrHSytmnuup3f/osPKjnZp/EtgGvFNm0EEjdoa4wnjvwr6j2IO9A7KpAAQbLSrRwelqHjde/HkfheseN9j8w121r7t1Lj3ZnWNA4uKUmhzEk1T6Cw0G1qmKIY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717683221; c=relaxed/simple;
-	bh=ZXv35xifz+hJm716XeIMbGKw4efsIvlgMuhBrLoADbc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Jocdb5OBuFSo9C7T+ehYAZ7rkOMmS6XkYAAcelHUGqd2e4LZkZo7loU1CVLwhmhgLF/ZQlWG3FqzWX/tnsW3S/l7RPBqTm5hwuEKTPwTYGJT+UB22TrTSBaVTMBkzr8itGF52WKysVqVPsFzJAlODmlV3VMH/Kxb6U97c0tThDw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensynergy.com; spf=pass smtp.mailfrom=opensynergy.com; dkim=pass (2048-bit key) header.d=opensynergy.com header.i=@opensynergy.com header.b=P9MqYJmj; arc=fail smtp.client-ip=18.185.115.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensynergy.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensynergy.com
-Received: from 104.47.11.168_.trendmicro.com (unknown [172.21.163.121])
-	by repost01.tmes.trendmicro.eu (Postfix) with SMTP id CBA8D10001FB2;
-	Thu,  6 Jun 2024 14:13:31 +0000 (UTC)
-X-TM-MAIL-RECEIVED-TIME: 1717683210.892000
-X-TM-MAIL-UUID: b2d114a7-56b0-42fe-9394-aebe964cfdac
-Received: from DEU01-FR2-obe.outbound.protection.outlook.com (unknown [104.47.11.168])
-	by repre01.tmes.trendmicro.eu (Trend Micro Email Security) with ESMTPS id D9E651000031A;
-	Thu,  6 Jun 2024 14:13:30 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=f4x+IMA7qCFQ/3YMkVHJE+90gqwnxK1S8ZWj4v81Eq+fzLuE8hNDm4iM6ATTcNXmtXL92PMwBrWP8JorD35jEGg7xSvK7mtfKJX2BV5gLdGr4iDvR58+8yZLdXqtDbsKtQ4BH8iTCd3Ac3h/z6aCoB12Lz521JKVsWDih1VYz5fKF8bZVBlLPKWxwyneKCPkm0YBkolGfL6P/D9DE7rmo1l1rvh4ArVyLoyG22O8Kqpj60qpDRTHAZrfIL0qi5TYEpIXVeL1HiNn5QgDO3rCPJG9Im0vfpT4stLCeoo1LAEtxQT1F1VUynnqtkZ30pPeuSmR+X8eC1w3cpLeCB3DJQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4nu7ix7PCGKEAqZGthDLNSCsfM/y6b3m/vUkfP75TGQ=;
- b=kw+anKL0k5jSiBtaPWFEVShcXapBM7TFP69+95Q+3Huri1Pi4xYPvb9vsBb5gpeLxvAjb8Iys+xiCRO/s5VUVRQwSpp8DzlvAcjv1qnl2lOWk8mvZnTUXvtbmnBXuk6u4FG5ggtkrJ4yWq33Ld3PJHdIk0ZAmjqsBahOrLmmHj4X9//s9py8+KUEGpS9mjvvvDjgS+ZZUhbY7rkGHgUV8dtgw8CrkiWN6+mQ+AWFjIEC0R/2Y8NTGIHFsrECDTsp2zqusGvn8FVPEVyadXSn0VfbLZ93Gp+A/V3/ra9xbkLw1Ma/++ENC//Kc2yU/GY8FzxC9v8Ab9rUi6WTTYdHig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 213.61.166.92) smtp.rcpttodomain=davemloft.net smtp.mailfrom=opensynergy.com;
- dmarc=fail (p=reject sp=reject pct=100) action=oreject
- header.from=opensynergy.com; dkim=none (message not signed); arc=none (0)
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 213.61.166.92)
- smtp.mailfrom=opensynergy.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=oreject header.from=opensynergy.com;
-Received-SPF: Fail (protection.outlook.com: domain of opensynergy.com does not
- designate 213.61.166.92 as permitted sender) receiver=protection.outlook.com;
- client-ip=213.61.166.92; helo=SR-MAIL-03.open-synergy.com;
-From: Harald Mommer <Harald.Mommer@opensynergy.com>
-To: virtio-dev@lists.linux.dev,
-	linux-can@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Wolfgang Grandegger <wg@grandegger.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Dariusz Stojaczyk <Dariusz.Stojaczyk@opensynergy.com>,
-	Harald Mommer <Harald.Mommer@opensynergy.com>
-Subject: [PATCH 1/1] virtio-can: Add link to CAN specification from ISO.
-Date: Thu,  6 Jun 2024 16:12:22 +0200
-Message-Id: <20240606141222.11237-1-Harald.Mommer@opensynergy.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD5C1A254F;
+	Thu,  6 Jun 2024 14:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717683192; cv=none; b=ZDJc5jI8uaeOoUbsZgArsHGz+1FzXaaOJTzP9sHPvSgxgmbqIXgCjC0dtI2SnAejhpY0UANoVw+EZQ+V9DqCvec4SeRKKBJ3ZFdwgcmjRQq1/EcXdYZRX09MJdd9PjTGDVJPFzq3epuZZn/MuXkoQ7Zaefif8D/HbTEM32CsRnI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717683192; c=relaxed/simple;
+	bh=rRQ3jNDRpm7FOp0E37GOIvxo9WdqaMWWaKCaRg4WA5o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ak1a09e6n0jyfSy2kmykROpxzaKy2i94pQDGCACuK26G51Kvi4MSBmLCX/R1hW+QO1TIw2v5lF6CroTPiNWDIbNth/PwA+hPzmvJ9p+Dth/uJEY89tRi00OeXIXZWFdaub5cCpfH8/kMWGqvQW/Iqh1O+3Ttkjp8N06fRKwMp8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JBTa+1/+; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-6f8e7b6c5dfso369081a34.1;
+        Thu, 06 Jun 2024 07:13:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717683189; x=1718287989; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DSL3V94nwMBNbfDW+Rmoc+9OI1jw7v5BXyHyBpJCRfs=;
+        b=JBTa+1/+Sd61QiC9QqBmkdmmSBbZFSJKskECspfJDAhj0xqu28PHla3CoUdKZpcTJH
+         HB2vl0Gw40nmFAdqYlL5Ueqbg/U6bdpeyfENdCnx50Z92d1iGQHBBtWrr6pGWVuYekeM
+         FCZiCcpTsXx6Wr2i8cie0TywyrFcjbDC0Bi3a8/VR9CbDPi8Xupyd0mRl7WkY5VA96gl
+         ltOFb62v8+dTVHQLbaCUJrfLg/Uz6LwNRm2gNf+YW2/8rlGdsFoBAVC6uC5kfuiGQxiV
+         dvuWGU8N5JTqa1hFirY3cJbQIMf1x6ocStRHJe4PInUGo/lzucEkpBSi0VbqgjHywRmw
+         rYMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717683189; x=1718287989;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DSL3V94nwMBNbfDW+Rmoc+9OI1jw7v5BXyHyBpJCRfs=;
+        b=mJnkJYED1+0JK77G8vCMMJkQ8mEdlfgNvYIPEY+Vvu3vISoh8Jn7zZPqfpw6EVxWHH
+         Ty7pl+EPutx61LOpOBBsND6NuPFc+MK5RRTNydNexMXtb8tu7U75KwvWKHJiig6iJdlq
+         noMJ6NfWjTqbsLLJf3wQAfAY3JnFyFdCvfww3dq4BoTAhLNfLN5m/wyWkdfwZgw4QiVT
+         uifvOzCqkiHy1Dji7fW/oqo++RU+wUd7xoaA/3c1QpNiIrHg1CFRl2IakHglC1zOJpVw
+         595e/WoJm/hUsE0EWMuvVJsfWmJPJ+gHujHzJECvNsa1YzEFk+IIZWzyuEDENbBJnIrH
+         lEbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVeaGmEA44eTzq2xkT/oD+qDBXkvCMy2mAlmqRCb7Ld4+PWg0SJWPm7I9SD4vg9Ofj1gualBqCMUbnQLeQ01PVxBpyfLogqUfbtSTY1ArpjYw2K2/tyNs1+3xZCf0MFRSLkr2l3Rx/LNREMogKlgYu3j0+h8lNItj15XRJ2L+Gby+hbEnF73dhCVJBWPS2/R+noqGLL8xTzdljbHfgXd8GMcUSvg4Uq
+X-Gm-Message-State: AOJu0YzvwbYzynreTFKCM9KWC3ex0G814P8XMWPLJdv7ORBdQ9zy4xHc
+	lW/riIGAIi75hOQtiyykzWyO8IaWoBxWKJ6oO/rf0LDg/xu5EjbjWPdPrl/6OcDDzP3y5jNJ/07
+	usQ4fFrOt4j3XSp7SzwC6bgPThJk=
+X-Google-Smtp-Source: AGHT+IHdJrybow0vXUpJ0Jea1nDFSyIH7eIo2AC4cOCRdrEHsi5K/3ryvxAqAUrS0ivYlUev4Jw+a83pgXZ7FODqx6g=
+X-Received: by 2002:a05:6870:d10f:b0:24c:b0ca:9650 with SMTP id
+ 586e51a60fabf-25121c7e02fmr6232772fac.1.1717683188863; Thu, 06 Jun 2024
+ 07:13:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB1PEPF0003922E:EE_|BE1P281MB3013:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 482a6911-d7d7-40d0-b68d-08dc8632d56c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|82310400017|7416005|36860700004|1800799015|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?S/USiP98O9D9oMvhHySeHzM5MJ9mhIrxjaHWBmKiWfCr9yaSk7D/mUrUhzFN?=
- =?us-ascii?Q?Y4ZstUoqFGohPNDkk5NDPEkq2f9/Fz1jzu3VitCeejFrKs9erWLSO9ZHt/T/?=
- =?us-ascii?Q?AZuR3azZszMyliutO7G6ILZSPIaVdelAU7/RJLkX+lR7lfDdx3hrLvubl03K?=
- =?us-ascii?Q?R2qI8Tje+OUsYOHnHF443Fr+QQirq6FOnb3SVS8gEerrz68vtcyxktHjNYOV?=
- =?us-ascii?Q?TDTCnwfG9ljD+LXiXM58mtKteTAAsd+anq5kK78Jd/nPFpsgZ7aQ1uqFihj+?=
- =?us-ascii?Q?eMtHr9Z+Evr0JXAHm3V6BavBzKAMtCZGyfDQEnVAuhtuIQGlNXermxQuy9Gx?=
- =?us-ascii?Q?BQbzwHuTG3l/NnOBjvDfmyJzILg6lG+fACGOsQYdWE+ivyfLHW+lSfxPj9Is?=
- =?us-ascii?Q?yhcPHRbPnldoQ4ZVw31N3yysFSOB3bVGG6ILETJyerDD9dygeMLHJBg9mwkk?=
- =?us-ascii?Q?TQEf6Y8/HXOo9Gj+ytxwGXlwRJIVRFR6VVpDesRJw2q7fJI+6jNnjiqLyDzK?=
- =?us-ascii?Q?j5ZSq8vhNeAhx5VB7OMwRzqJW+Y7Mr5nrOGR2BZOr1eDu80C0zyYa5q/jSBo?=
- =?us-ascii?Q?MBl4xS6HXDhoVp3Fgz5xXmMKrBD2v8UU5WvZBJ36Dr8t3/yaVpZxLsZtZFE4?=
- =?us-ascii?Q?gyUqvcELlJKMkEGVdLrgc5eXJ7QTnrjYbvQ2tKxkbuU9kU3Qlrx7nGTRQmlC?=
- =?us-ascii?Q?T+c2xMbEddsiPCXf7+WYk1+xcBUdgoibv+KujoejiktHwulXGApcq5unsMj5?=
- =?us-ascii?Q?Y3QXHBRhWNiavnVaH0mg/9m/rIyukU5m5DiYYfjCzexHTcjixj8wG1XyGdfA?=
- =?us-ascii?Q?4JUYcfShyYWVSpaoHdGKAav/QyGA2by+oXt/qPk/W8HSx3vJo+ij8aELYtkw?=
- =?us-ascii?Q?5nKTAwRGQ3uwq8+V4BMEY7S8iXDrdefSn+n0kd/Ma1kMCjnhyd2qlL7FZ/F+?=
- =?us-ascii?Q?Lt5Nr+P946JcfwnKR3dDyLVDVNrDthPjq+vFvS2MhoO1EWo8rjlaKslGpfTF?=
- =?us-ascii?Q?ilkrqlVZOMqI3dlnPxZ/BO52NCgpnDIAVRtHhfqE0SBbxTmjOXGl2scmcmeY?=
- =?us-ascii?Q?CHqocwX+Wzd7Ti3GfE8Hlf65uyUhJUYEW5C0Ne6v+zaWASJUWt1PyvURrUyY?=
- =?us-ascii?Q?+FYpwoTijWsDdMfaW7P4T1y60N9sqHecfPelE3mCVXlqnOsMLr5PpmELg2vZ?=
- =?us-ascii?Q?1zX8OW7SiT9xPajo5x+awbY8D/Y5SOkZJHnp0bZ9BXHtyscHKtHPZca60wpY?=
- =?us-ascii?Q?0pz4c2SrPNuOh3azFuauS/gdC6MuJSxkraLmLI/TGwBZqLRJ4QkaHSj6JYY7?=
- =?us-ascii?Q?XE+4ms/mZXY9QZPm2lk5O+hmhQWlw+zOWLK/QCHD02c8SmSA2XsPRpHuhu2S?=
- =?us-ascii?Q?eGDku0CMASwMwytmaFMjmDa41Xi7EGq1ePCj+M2SweLC0vg40Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:213.61.166.92;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SR-MAIL-03.open-synergy.com;PTR:exchangeconnector.opensynergy.com;CAT:NONE;SFS:(13230031)(82310400017)(7416005)(36860700004)(1800799015)(376005);DIR:OUT;SFP:1102;
-X-OriginatorOrg: opensynergy.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 14:13:26.5832
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 482a6911-d7d7-40d0-b68d-08dc8632d56c
-X-MS-Exchange-CrossTenant-Id: 800fae25-9b1b-4edc-993d-c939c4e84a64
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=800fae25-9b1b-4edc-993d-c939c4e84a64;Ip=[213.61.166.92];Helo=[SR-MAIL-03.open-synergy.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB1PEPF0003922E.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BE1P281MB3013
-X-TM-AS-ERS: 104.47.11.168-0.0.0.0
-X-TMASE-Version: StarCloud-1.3-9.1.1023-28436.000
-X-TMASE-Result: 10-1.047800-4.000000
-X-TMASE-MatchedRID: NGDYxnKYxb3J+P2VFrJmrKdMZMc4JlQbCsYnJzXwRoqL12p7cZqBWIvP
-	iBq/iW91MpPx8OFzfY1Ta75sGuqeWKi8PTAxIaqS7yR/hLt1y2iFU/rz+g+hxFtpNa0o3mGFqXN
-	pl1fc2dczrT87MhOW5dAxdIKEp2hCA3ASNiUtxi2wL+/cgG+7zMn4xfDEuqcVQUZlCPgOIPyF6z
-	UvsSpW6rEDulXIfwn2ckkZYKzf3mGfQEixngIIE2B6KL0WmlgVYppqMItbEgOI/kD+1oWNGb/a0
-	nd+hIFCI/NGWt0UYPAv8kOye9F0ID8aOpcAGK1zWClmBfZH1l0adwCj1QH6tsX55enpC3hi
-X-TMASE-XGENCLOUD: 8fd3d490-e00a-41d7-aab8-a1c43a45ac15-0-0-200-0
-X-TM-Deliver-Signature: C7A16AA34FA8A78513F2FD2AEEEB9E32
-X-TM-Addin-Auth: 1aCZQe/g7OGbQb8gWYKBQTEfmpX+jfFYL+p7mJAt2dl+mksNfThWsLoJMwH
-	Y3cC6H5EdD3EOpURaj8x0aTgfdCbN4kxSaLSWYsv1JnKviCdk7y3uZetMwc4+X0ZrLW05cqJBP5
-	8kEM4zdO2K/sOySFw4BKC10s5Ne4DAydfQ7zdaHT/VNYyij4kbuCpJCMnYyYFWrmQl7IIwIA6rG
-	+gRwYuyPV/l5J1BXIjT1kW4uZinE7dS36U8M7HoH6CweYm5gUGoS50rCvXFGwXkfznrtnakQncD
-	ng/F62CWzbPxX9M=.RKfypBes0KPGz17ya+9pF2Ja1WdanpdhAfiEk9EDYrHcTShZ5KSRkCUf1G
-	FfRjM1+uwYkekMKZyKEUR8m0s02jbQSuGTiFFXuZ4tFBctT4oqsBSMz8TnhVrCHXc01RjWSmCzi
-	Pei4bVMQO9pMaEONDCcRFcQboGBuguh33PwjTxW8XF3iSa9fOGRORDssc3ndRb1/Hv2kXkCDFLs
-	h/pXTPWBnFcozd8bYdQH7scdaBbuKuHOpsvSzK4wOGHiUiGmycfDokZlBP+q5KUQvM33kWJVOls
-	Y5t3tTAA7ms0510rTB0xNc3GXnP4sjLaU+Q7RxTJpSZreURpOzibPitF+Ug==
-X-TM-Addin-ProductCode: EMS
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=opensynergy.com;
-	s=TM-DKIM-20210503141657; t=1717683211;
-	bh=ZXv35xifz+hJm716XeIMbGKw4efsIvlgMuhBrLoADbc=; l=1043;
-	h=From:To:Date;
-	b=P9MqYJmj61pCmqiu8SaWJGOl2I3Gkc8ROrZ4JQ+GeGCkGKx1wrDVmofaunwtE3DeP
-	 z8ubQlcENbwt8esAPbd2hvXgNv7mSplg/k8JEF4CH0YExuT1SdjLBdntj+VzqGdyWP
-	 dB3crvClowBovJBPq5gAN2JR4Q65hSXB2LQnaySFyuNdJDzd7Z0cKq/Q8EXGLH/W5N
-	 HdwHdmU82exyMsKQv5QoAKlmX2UWm/pmGNM0wjZ9ajKlTK/Md0iiOSI71fm5ozzTcR
-	 UYCmRX4h57j7EdS1vMoS6Wrzmvjd+pGyLJNC2vyJpzgVFdm4XS+1FUY6j+z2Bty0Uw
-	 rTJVnoB4qJ/7Q==
+References: <20240605074936.578687-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240605074936.578687-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <22664e29-4c7a-4544-ad32-25c3d7e342e9@sirena.org.uk>
+In-Reply-To: <22664e29-4c7a-4544-ad32-25c3d7e342e9@sirena.org.uk>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 6 Jun 2024 15:12:42 +0100
+Message-ID: <CA+V-a8vStea7RZWNXjJLbuibz+-53KT9=5g-P9N4fUrbqjj91A@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/4] regulator: core: Ensure the cached state matches
+ the hardware state in regulator_set_voltage_unlocked()
+To: Mark Brown <broonie@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add link to the CAN specification in the ISO shop.
+Hi Mark,
 
-  ISO 11898-1:2015
-  Road vehicles
-  Controller area network (CAN)
-  Part 1: Data link layer and physical signalling
+On Thu, Jun 6, 2024 at 1:05=E2=80=AFPM Mark Brown <broonie@kernel.org> wrot=
+e:
+>
+> On Wed, Jun 05, 2024 at 08:49:33AM +0100, Prabhakar wrote:
+>
+> > Driver code flow:
+> > 1> set regulator to 1.8V (BIT0 =3D 1)
+> > 2> Regulator cached state now will be 1.8V
+> > 3> Now for some reason driver issues a reset to the IP block
+> >    which resets the registers to default value. In this process
+> >    the regulator is set to 3.3V (BIT0 =3D 0)
+> > 4> Now the driver requests the regulator core to set 1.8V
+>
+> If something is resetting the regulator like this that's a problem in
+> general, we need to either have the driver notify the core when that
+> happens so it can reconfigure the regulator or have it reapply
+> configuration directly.  Obviously it's not great to have that happen at
+> all...
+>
+Currently I am seeing this problem with SDHI driver. For the voltage
+switch operation the MMC core requests the driver to do the change and
+similarly the MMC core requests the reset operation.
 
-The specification is not freely obtainable there.
----
- introduction.tex | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> Having the core driver notify the core when that happens so it can reconf=
+igure the regulator or have it reapply configuration directly.
+Again doing this would be a problem as MMC core also maintains the IOS
+states, reconfiguring the regulator would cause conflicts between the
+states.
 
-diff --git a/introduction.tex b/introduction.tex
-index 8bcef03..72573d6 100644
---- a/introduction.tex
-+++ b/introduction.tex
-@@ -142,7 +142,8 @@ \section{Normative References}\label{sec:Normative References}
-     TRANSMISSION CONTROL PROTOCOL
- 	\newline\url{https://www.rfc-editor.org/rfc/rfc793}\\
- 	\phantomsection\label{intro:CAN}\textbf{[CAN]} &
--    ISO 11898-1:2015 Road vehicles -- Controller area network (CAN) -- Part 1: Data link layer and physical signalling\\
-+    ISO 11898-1:2015 Road vehicles -- Controller area network (CAN) -- Part 1: Data link layer and physical signalling
-+	\newline\url{https://www.iso.org/standard/63648.html}\\
- \end{longtable}
- 
- \section{Non-Normative References}
--- 
-2.34.1
+Ulf/Wolfram - please correct me if I'm wrong here.
 
+Cheers,
+Prabhakar
 
