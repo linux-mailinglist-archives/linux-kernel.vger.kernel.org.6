@@ -1,155 +1,121 @@
-Return-Path: <linux-kernel+bounces-203980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 252B88FE285
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:23:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3B728FE28A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C4FC1C2250C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:23:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E78961C2222B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE9013F422;
-	Thu,  6 Jun 2024 09:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBE713F426;
+	Thu,  6 Jun 2024 09:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Crpew3vw"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="OwR9xt3Y"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE88113C913
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E5113C816;
+	Thu,  6 Jun 2024 09:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717665788; cv=none; b=L5xLjRHyMDrslzLClxkDksBb/HAS0AlnDIXhWPefUeB5e9f69+mlmX8tL6u26n65zvr9SxuuWEV8typqHXhNv86BJ1xNDeuJrY94qe4IatzgL0k8oDowSV5j8egqKhg+h/oT06OGm8TorWVbsHCMLZT9lQLVmBhbTuR/yZVUAEo=
+	t=1717665832; cv=none; b=W7H3cltc7X744vQ9zlRUZh1C1XTv+TbFz9w3JrtZGCnwZxaEPp5wqEWQo/nYLOBHLaMnbkamoVnVQxLttL/AVzbNtdulPSDWFskM5G/cv60cjtkMIIn7t/XhFAONqTIabEVaOUYIJqk07/ruYovUBhXasXf6r0APlDIY3bMXFYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717665788; c=relaxed/simple;
-	bh=SEZNCNy3TlFdmEoQ2GZ2Aljta1PfdelqlRlbOXhQfSk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OEDtvEvQF1I+ZoAJdhmMazk+ELnOFRwQDWCcsqr9yHItSNes+wcWmOFkHfNple9mgl+YRiRl3Emssvd229Tpt8LrGMp7LVmjkiX4wXAPKViUaRw/EHosFZWQipDSqehA4x86dZONaYe8e0uaQzVEwHaLsBt2Ks1rXOVxp17hrxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Crpew3vw; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a689ad8d1f6so81763066b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 02:23:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717665785; x=1718270585; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xdo3ldNDeMyIM6Kx3VweI5RQmky1PUGTcMckmPYOvUE=;
-        b=Crpew3vwwN9zyUOgT8tIFNgxp6++QSlGxmrGff8YAu5UGYudOjqQDqhBzlxUPFrMEe
-         lQwbh+TQKRib3IVWV9RMF6rMtxZY3hsHCdU8I8HbI+LwhVLWO2kNrzZTpubG4X8B44RJ
-         Sa9y8BdAM7ILpQeaOW6QluO9bTBQt0iYhgtSdnXRaT2II2RLT45JCxqq9PrtDmwcD+AF
-         PUuW7ByZTP3xMdlOyIzevGQ/ba4qyWq4jG9E1Po+nIM2JUxIF27KbXtvexwTSnnAn+hG
-         +58pBzJJKugJO0tN85bPtr8AAMA7y2gdUZYSJXNiNjD/9mj74dQ5dkh9jTXyoXWFDYTC
-         +C5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717665785; x=1718270585;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xdo3ldNDeMyIM6Kx3VweI5RQmky1PUGTcMckmPYOvUE=;
-        b=xC8C3+/LgERbmSVjz/aHMVpEAZ4jdHBSFEx6hOWi+WfQhDV+nKb1L+X/W27+ypCVPl
-         nS+j7UWcKewPiqf7TkceG7cLO2o7aHNIIxBvQYW/IqBBvwrILRIs38SkR7cjzlSqNh+W
-         8PZujvXlp0l7ZyXvICyLgPPBpqk2DRdoTqzsXiKj/9CyWWNud/UACm7+1tYxUPY7rQSD
-         6NOz0zXF4HCnHkBoo3uxmmyy9CjtpkDnYtbTBV88VDAU/kUZiA4WJSbAq46xrQcOsxzb
-         IpddyrzERxpOqkZdWprd8ijy6feL4LFNZSB6iwTzsYA8n60yM/y+HvPEuQzrc3EjS+Hd
-         +MbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHvtd+sh0WAX70zYrnht0nklnqDSXEbtalr1TEyOOxQaMWAVbUaAlKhXTPMTsVaJ4+5rGFNyXs6+F6LYqHnFbdG1XXKyJXFEi3It3b
-X-Gm-Message-State: AOJu0Yxz7szj8dFMmAHzRHc77g9Tqn1Lqcf0SmfxjLPLO8Qy+FkfnQin
-	APykcG0VY7JluP2vwKq9veR4FQedlL4jmQ1vHTieuj5Rvv7p/hmDNuBKdUWf23m6V+AWZci8fCp
-	Nd2+HgHxY0OVTtiftrHCp4NBxlJDh7iVDYvXk
-X-Google-Smtp-Source: AGHT+IEbpprl6blPk8T2xU2kaYzhaNrmYq2+TvX42xRzC/TSvUdDQXwO9kRI4X6UmxZu4UT9hOygjZqZt2phPUhxZ0w=
-X-Received: by 2002:a17:906:4694:b0:a5a:2d30:b8c1 with SMTP id
- a640c23a62f3a-a699f680d76mr317202766b.14.1717665784784; Thu, 06 Jun 2024
- 02:23:04 -0700 (PDT)
+	s=arc-20240116; t=1717665832; c=relaxed/simple;
+	bh=wHvXWElO6jsBeJGkAS0R0PtO32uQ3rTua3ys+4HojWo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l+h0bv2uuGcuU9/P+UGbv0aNreUfHA6rJ2GhJHgL4vN4XF+mMuigoG4SAX2gvIXTFME9wi/YzHF6gWCpbiYXvzkFF6YsS9YoHHDG3d9ekoXOriGOSLHoHpaKlJBCWhkAb0H9ePFVpTYJDsPCOb/IaHVvXo1rd0KNaJ6OmjTZG/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=OwR9xt3Y; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 7932251623e611efa54bbfbb386b949c-20240606
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=XQ9ak821eXByMY+QdSWsGgzwxrORtfb3fHozOaAo82o=;
+	b=OwR9xt3YPKMXqIzfxN5ForQ9TefvaOAYfWgSfg5qRCDC8GixaLr2DMYmFGmv1NnfmYgdYGKHjcbVhhfI1TGDg9hA38QQK5fTGOCHoOzHMukqiBz01K9zuntjHOYe6yyoSXWlF2DeEdWSI+eFDImfI2D5g5HM6EIh0nbfMns20/c=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.39,REQID:6128a54c-2d4a-46eb-aa72-3378517682c3,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:393d96e,CLOUDID:00d8c984-4f93-4875-95e7-8c66ea833d57,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:1,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 7932251623e611efa54bbfbb386b949c-20240606
+Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
+	(envelope-from <chris.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 954380074; Thu, 06 Jun 2024 17:23:45 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 6 Jun 2024 17:23:42 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 6 Jun 2024 17:23:42 +0800
+From: Chris Lu <chris.lu@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Deren Wu <deren.Wu@mediatek.com>,
+	Aaron Hou <aaron.hou@mediatek.com>, Steve Lee <steve.lee@mediatek.com>,
+	linux-bluetooth <linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
+Subject: [PATCH v3 0/4] Bluetooth: btusb: MediaTek ISO data transmission
+Date: Thu, 6 Jun 2024 17:23:36 +0800
+Message-ID: <20240606092340.27675-1-chris.lu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605175953.2613260-1-joychakr@google.com> <20240605175953.2613260-2-joychakr@google.com>
- <b2ccaf40-fe04-490f-a625-4c502c038627@roeck-us.net>
-In-Reply-To: <b2ccaf40-fe04-490f-a625-4c502c038627@roeck-us.net>
-From: Joy Chakraborty <joychakr@google.com>
-Date: Thu, 6 Jun 2024 14:52:51 +0530
-Message-ID: <CAOSNQF3bw4+-SPEVf9wwsrt0L-6VNK0NWuDKW6AhX701+OKjsg@mail.gmail.com>
-Subject: Re: [PATCH v1 01/17] hwmon: pmbus: adm1266: Change nvmem
- reg_read/write return type
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Bingbu Cao <bingbu.cao@intel.com>, Zhihao Cheng <chengzhihao1@huawei.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-hwmon@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, manugautam@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--8.321600-8.000000
+X-TMASE-MatchedRID: Xmc9pn+G6/3aYQdwXEMf70j2sPWKvtn0DRi0jfY6gL1oNGY/OdYkWWAI
+	1go6d1sNmMN+S0FpW+8dHzBmTYIGm/Iejw19Z0aTuIwLnB3Aqp1A8I/PJy4EU70rWM4nIpJrA4e
+	V6z+cHCdlEs7ay6jM0o8X8tv4W+1B5JVxYapKMGA0JY9d6s3vaRQK/sD1nu4xq8z7POX8FJNdpM
+	SiKlvaL+LzNWBegCW2wgn7iDBesS15zdAzex5xZnyYiUbOQn1QobgMoGjAF6AlHeB0Vcx6dQHeq
+	RoPqTlD98lGCtircYmUTGVAhB5EbQ==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--8.321600-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	86E486E2C6DC60E90F5EAA27F591247998E9FC8835B962B9047EC150F0EBA8742000:8
 
-On Thu, Jun 6, 2024 at 2:59=E2=80=AFAM Guenter Roeck <linux@roeck-us.net> w=
-rote:
->
-> On 6/5/24 10:59, Joy Chakraborty wrote:
-> > Change nvmem read/write function definition return type to ssize_t.
-> >
-> > Signed-off-by: Joy Chakraborty <joychakr@google.com>
-> > ---
-> >   drivers/hwmon/pmbus/adm1266.c | 4 ++--
-> >   1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/hwmon/pmbus/adm1266.c b/drivers/hwmon/pmbus/adm126=
-6.c
-> > index 2c4d94cc8729..7eaab5a7b04c 100644
-> > --- a/drivers/hwmon/pmbus/adm1266.c
-> > +++ b/drivers/hwmon/pmbus/adm1266.c
-> > @@ -375,7 +375,7 @@ static int adm1266_nvmem_read_blackbox(struct adm12=
-66_data *data, u8 *read_buff)
-> >       return 0;
-> >   }
-> >
-> > -static int adm1266_nvmem_read(void *priv, unsigned int offset, void *v=
-al, size_t bytes)
-> > +static ssize_t adm1266_nvmem_read(void *priv, unsigned int offset, voi=
-d *val, size_t bytes)
-> >   {
-> >       struct adm1266_data *data =3D priv;
-> >       int ret;
-> > @@ -395,7 +395,7 @@ static int adm1266_nvmem_read(void *priv, unsigned =
-int offset, void *val, size_t
-> >
-> >       memcpy(val, data->dev_mem + offset, bytes);
-> >
-> > -     return 0;
-> > +     return bytes;
-> >   }
-> >
-> >   static int adm1266_config_nvmem(struct adm1266_data *data)
->
-> The series doesn't explain what a driver is supposed to do if it
-> only transfers part of the data but not all of it due to an error,
-> or because the request exceeded the size of the media.
->
-This patch series is actually a follow up on
-https://lore.kernel.org/all/20240206042408.224138-1-joychakr@google.com/
-which has now been reverted . I shall try to collate it and send it
-again with a better explanation.
+Since SIG has not yet clearly defined the specification for ISO data
+transmission over USB, MediaTek has adopted a method of adding an
+additional interrupt endpoint for ISO data transmission. This approach
+differs from the current method used in the Bluetooth upstream driver,
+which utilizes existing bulk endpoints. The interrupt endpoint provides
+guaranteed bandwidth, sufficient maximum data length for ISO packets
+and error checking.
 
-> For example, this driver still returns an error code if it successfully
-> transferred some data but not all of it, or if more data was requested
-> than is available.
->
-> I didn't check other drivers, but I would assume that many of them
-> have the same or a similar problem.
->
-> Guenter
->
+Certain new functions related to USB transportation, such as urb
+allocation and submission, are implemented in btusb.c to leverage
+existing functions and data structures defined therein. Meanwhile,
+vendor-specific functions unrelated to transportation have been moved
+to btmtk.c to streamline btusb.c.
+
+Chris Lu (4):
+  Bluetooth: net: add hci_iso_hdr function for iso data
+  Bluetooth: btusb: add callback function in btusb suspend/resume
+  Bluetooth: btmtk: add macro to get/set/clear MediaTek defined flags
+  Bluetooth: btusb: mediatek: add ISO data transmission functions
+
+ drivers/bluetooth/btmtk.c   |  92 ++++++++++++
+ drivers/bluetooth/btmtk.h   |  61 ++++++++
+ drivers/bluetooth/btusb.c   | 276 ++++++++++++++++++++++++++++++++++++
+ include/net/bluetooth/hci.h |   5 +
+ 4 files changed, 434 insertions(+)
+
+-- 
+2.18.0
+
 
