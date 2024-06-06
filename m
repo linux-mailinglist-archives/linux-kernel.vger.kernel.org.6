@@ -1,118 +1,86 @@
-Return-Path: <linux-kernel+bounces-203635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 421608FDE74
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:04:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C52C8FDE8A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6614A1C220B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:04:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2696A1F23317
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1113CF58;
-	Thu,  6 Jun 2024 06:04:05 +0000 (UTC)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D5945025;
+	Thu,  6 Jun 2024 06:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=eh5.me header.i=@eh5.me header.b="lbDyrS7e"
+Received: from mail.eh5.me (mail.eh5.me [45.76.111.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D587F8821;
-	Thu,  6 Jun 2024 06:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE3940BF2;
+	Thu,  6 Jun 2024 06:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.76.111.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717653845; cv=none; b=gAQgTsFN0vPAnq2NL8Sg0rMbMDzuYbxhA7DZPH6WTn2yVK8UMAdYlrwolKVI8j2vieZymbxglAZBasfIskP23dkHeMi+n0FDrzlS36qbqwhDfvNBfmFnrmlJdVBPcGmKfrM2eOdHCk5cItnkd0geAJlxvWtzzKagERavNngrIKo=
+	t=1717654438; cv=none; b=LQjdqjQNHe9KPPfA7XLq1ctME/3i36tpTLNz+iTW1NEjZp3HkWGn6H04kLWp5lueGXZfttaDVFK3bZ3iuyG79nuTI/AiIomjZ2YCrH1S41o3u1/HPpAC4A7z6LzbLxiZPzTxLnhRKI1kIrizqc1rc0+VqKL6urWqkwv/sDToeWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717653845; c=relaxed/simple;
-	bh=q0RkIW1UuOcBaGnX7vu1FHUFaqjIonZ3nWXkvIDOjNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ui31+ChYELI/ESi+uaMPq7kL5zSmeGLwH1k4rhdjAn4hUI0w9mJ3Sxnb63g22buPHhc3EiN19GB/qc6bDZCBdYyRg7VFMHjPuUTu5jTEddFkEjQcDH554u1Vuyw8F2ZA7YD7ptKFcRUBSxmk1bUatT/AEpS8W3IwvwcuobAw1g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f480624d0dso5742985ad.1;
-        Wed, 05 Jun 2024 23:04:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717653843; x=1718258643;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vW+NUheV7568ouqMVknlYZR46EFHvU/7fsxRTr51dSA=;
-        b=jTi2AZpIgG3Mnlfq9+peXCZVu82N0zqbqU7TDUgj7EIhjbhovCfJcrLhZ9/eu6bzQd
-         fdfgntsRyxM99senHDY+aPxEVQArj0KUBt3F4043lY/6WNm4CQIAQl5TTv4jDOPGTBfA
-         mygpZUbEwduLKcxyN+K01YHRH7TIpuFZguLsGG36TUyGeYURagozqCyk6E4uRSNyYyM1
-         Hs8MB8ValxUF45ukqWZjqsk3PgbOOcIMduWrWpw8dUwEphK/nCKPSpPAKe8JwEfAWFos
-         Lb39t2GE99meAZlLjksB41ZgTSASabiVuQUgU47Ceq+u9uKUW0NgbA3KuFaMr5yVRm8a
-         fuQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWdIHCYR2QGyVc2ccrZ7tNgeF9lT2veWsI2EBLqCerJVP56K5b2cvGUrS9qAU9I29IKBOpum/3Vv/0Eca5tKOvIiskpZEeruVWuc8dv8vQrNBFWmB0iqEmKs8bFyUBc8kY7aIFqpb8RtEw8
-X-Gm-Message-State: AOJu0YxCkyE1uhcpH4K8Lk2XWIyVSvKPl7Xz5e0ZBxjf1O7VygJczKBr
-	mTjQEeNuTenvVJiSv88hW3YXJeNWSVGGpJQvzzi5wgykVHBApcx91Or0jg==
-X-Google-Smtp-Source: AGHT+IEedURaXgZKthRR+I14MZX7JgvaXsxKqCy9JKFRscKccmM0FEVjcN3PflLAjXihY0+B8ZLs+Q==
-X-Received: by 2002:a17:902:e80b:b0:1f4:8358:47d5 with SMTP id d9443c01a7336-1f6a590a9d9mr65401995ad.7.1717653843013;
-        Wed, 05 Jun 2024 23:04:03 -0700 (PDT)
-Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd7d898asm5809685ad.134.2024.06.05.23.04.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 23:04:02 -0700 (PDT)
-Date: Thu, 6 Jun 2024 06:03:56 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: Aditya Nagesh <adityanagesh@linux.microsoft.com>,
-	"adityanagesh@microsoft.com" <adityanagesh@microsoft.com>,
-	"kys@microsoft.com" <kys@microsoft.com>,
-	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"decui@microsoft.com" <decui@microsoft.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6] Drivers: hv: Cosmetic changes for hv.c and balloon.c
-Message-ID: <ZmFRTC7mi-67GG_8@liuwe-devbox-debian-v2>
-References: <1717152521-6439-1-git-send-email-adityanagesh@linux.microsoft.com>
- <SN6PR02MB4157D719EE0D5BAC19FFA449D4FD2@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1717654438; c=relaxed/simple;
+	bh=1FbzqOuIUQRbo7rAgErLXS2ed9dfsCghKLThPMcoGiI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iBHLS0E7IWBSVJzdZ0/wUWgHZ2toFQ/Kxz1/GoRhLfAIAeus++gDcYNuaQ2joycbA6VPWdA6LrbT9+6Xa2anLKVEG64/sLWlYuDuzOm7r1GS54PbEXSHG7tTb7+qDGS/CrFGgQdM+PFMBNg/cw4oOjXG3a6qgtXGVb/QwyDlhs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=eh5.me; spf=pass smtp.mailfrom=eh5.me; dkim=pass (1024-bit key) header.d=eh5.me header.i=@eh5.me header.b=lbDyrS7e; arc=none smtp.client-ip=45.76.111.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=eh5.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eh5.me
+From: Huang-Huang Bao <i@eh5.me>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=eh5.me; s=dkim;
+	t=1717653883;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QMXP4D7iL2Jw3xOBudLgXxOe6NslpIdO9kJBig+lh+o=;
+	b=lbDyrS7euNYKlPciL76y/GFuuUgrhivXJhlxcOe/ILAOJSbo7+JnggWVBtdD1DiRy1iUKh
+	1W3sfW2DYWiRCOxUBXqL9VWsP8xAGaioMRnadGlkNSeA6o4I5hBg/5ZxZgrfdwRvOXx2/a
+	C9tUfj7OFGi3DRUcQ/ra/FCt/44myg8=
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Huang-Huang Bao <i@eh5.me>
+Subject: [PATCH 0/3] pinctrl: rockchip: fix RK3328 pinmux bits
+Date: Thu,  6 Jun 2024 14:04:32 +0800
+Message-ID: <20240606060435.765716-1-i@mail.eh5.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB4157D719EE0D5BAC19FFA449D4FD2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jun 01, 2024 at 04:11:32AM +0000, Michael Kelley wrote:
-> From: Aditya Nagesh <adityanagesh@linux.microsoft.com> Sent: Friday, May 31, 2024 3:49 AM
-> > 
-> > Fix issues reported by checkpatch.pl script in hv.c and
-> > balloon.c
-> >  - Remove unnecessary parentheses
-> >  - Remove extra newlines
-> >  - Remove extra spaces
-> >  - Add spaces between comparison operators
-> >  - Remove comparison with NULL in if statements
-> > 
-> > No functional changes intended
-> > 
-> > Signed-off-by: Aditya Nagesh <adityanagesh@linux.microsoft.com>
-> > Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-> > ---
-> > [V6]
-> > Fix build failure and unintended change after rebase
-> > 
-> > [V5]
-> > Rebase to hyperv-fixes
-> > 
-> > [V4]
-> > Fix Alignment issue and revert a line since 100 characters are allowed in a line
-> > 
-> > [V3]
-> > Fix alignment issues in multiline function parameters.
-> > 
-> > [V2]
-> > Change Subject from "Drivers: hv: Fix Issues reported by checkpatch.pl script"
-> >  drivers/hv/hv.c         | 37 ++++++++--------
-> >  drivers/hv/hv_balloon.c | 98 +++++++++++++++--------------------------
-> >  2 files changed, 53 insertions(+), 82 deletions(-)
-> 
-> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
-> 
+The pinmux settings for RK3328 is incomplete, correct the pin bank
+settings and recalced mux data according to RK3328 TRM.
 
-Applied to hyperv-fixes. Thanks.
+There was a patch[1] in rockchip-linux kernel repo that cover part of
+missing mux settings, unfortunatly it never got into upstream kernel
+source.
+
+The last patch fixes an issue in rockchip_pmx_set which is general for
+all rockchip platforms that might cause unexpected pinmux to be set to
+0.
+
+[1]: https://github.com/rockchip-linux/kernel/commit/d69af8ab6534bb28c1556076f08d2a5ab4935d95
+
+Huang-Huang Bao (3):
+  pinctrl: rockchip: fix RK3328 pinmux bits
+  pinctrl: rockchip: use dedicated pinctrl type for RK3328
+  pinctrl: rockchip: fix pinmux reset in rockchip_pmx_set
+
+ drivers/pinctrl/pinctrl-rockchip.c | 68 ++++++++++++++++++++++++++----
+ drivers/pinctrl/pinctrl-rockchip.h |  1 +
+ 2 files changed, 60 insertions(+), 9 deletions(-)
+
+
+base-commit: 2df0193e62cf887f373995fb8a91068562784adc
+--
+2.45.2
 
