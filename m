@@ -1,134 +1,106 @@
-Return-Path: <linux-kernel+bounces-204018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A5668FE2FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:35:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED3A38FE300
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:35:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1480F286427
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:35:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C20A1F26F6B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E2F15278F;
-	Thu,  6 Jun 2024 09:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288F0152E00;
+	Thu,  6 Jun 2024 09:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="ErXUHyxM"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lpEBkUbw"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EF619D8B5;
-	Thu,  6 Jun 2024 09:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08D51534E4;
+	Thu,  6 Jun 2024 09:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717666495; cv=none; b=jrbU4rzlb3CyaAheAPOm1umMZSUSN7kFOTvQ7iFQ3/ZtSoYZ4vnGXV1XvccDoUG5L+ITb6xvW6YyEZowpQ0xj6QN90LuWLEPXt0cNUedVXYc8HjWz1Z19Dx2xl4YIoBO67sK7ehK7i0fyDJsT0iKlNQcotp6GHSpbey7XaXFLYs=
+	t=1717666502; cv=none; b=ezVyZDydXMFSYHRvZooVagSyLmHTVoZZ/G6pi+WjUnlb0fG9cVPaurY9TzCJPZoQCtK15bZGxxwC10NVOBIDRDROKqTk3CaGW1dVs2mmx7HyQWI0S1UKBXjZMTPbmsyUczDYwNYFobiUbUGxc4XT7M/iTUN61Js/ovpRB6SY8yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717666495; c=relaxed/simple;
-	bh=O6QxW/6BMIUtD8lYbUc2Pu0nN4KzJrdPqakO9O5geSg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qO82bkKWVHdyrM709N6cKY0Axmaq4NjIqdz7G5zo0dRh37YAudlpqzAYDY/Iq9JkeAP9ZG0CKbl/gNyv6siD52QiFknKATBJ8ABbTEbHv5UaxYxd+zM/MbBbk61SEbDHxys71NE6/zcjbr1HaV+DBTak/oKNDUQ++4ASiMjtHB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=ErXUHyxM; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=kmeK62SoIdnIVPwJAA1ZxGyQbY0oIueNKztx6sdjWRM=; t=1717666493;
-	x=1718098493; b=ErXUHyxMmVjARkDr/9YwQ/s6qYvBhon3JXt6cr7AB6nnXZyvt1uJgQZphXfF6
-	mNTNhvLniodCtNFkA+slnwcYBOfZ+oRR7YM9+fNQEqmsXMcjzz0w/kVT/LLlcCpFvclhxcUHeHsLN
-	Uet5d4zgzfDZv6lNjyc+aA1lMEjQ3zbQtbiotrt5X984PDE/Vtg98LfnpNX0B7yN59zvRAqL4lcGk
-	54pRgkmnDxrlKDcYLDQGzxxLSHJn2k3OG86rZs6kJGR9XjMbEyF3Nas3+IAxhr1catQUmWnmOa+1a
-	imp4cGrDQGGeF8tlWnQUo/RtGxwcj5sgpUYvYHBgsjNpSYlAIw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sF9W3-0004z8-HD; Thu, 06 Jun 2024 11:34:39 +0200
-Message-ID: <cee5e4ee-3d67-4eba-a790-c0c016cee937@leemhuis.info>
-Date: Thu, 6 Jun 2024 11:34:38 +0200
+	s=arc-20240116; t=1717666502; c=relaxed/simple;
+	bh=AteQUiMN9mu0T8tkg+4d+kFHWiS7N/ANiSWeyPvJSGo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xpv17e7LTOyh/bwryJQkgUd6WfaGJQNsR4P6PYAZU/HnnhgzyUU4zuFqfIZbuAMSd0OFcKPimzTucrFrvNbFYBmoW2KIay3fpik5z7WkXr1Q/2Sp6cyKpORt03ZBxtZTZXXgQV1v6FdQkF2LhTSSfJQQDXQsyhBCEh1uo5jTE7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lpEBkUbw; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id EA5BF4000A;
+	Thu,  6 Jun 2024 09:34:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1717666497;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RS0s9L44RI2bohZZrpnBXbgm/qsCjn1tbXIkJCFMuX8=;
+	b=lpEBkUbwH6HwdJRVgyaQVE9iH81VHMRt8U5Y0dwkSR7NAer3zyjr5MpO+tvb8U8rPBWHaU
+	2tPH9q14mkbOYPB0+chmRbILHw3gQnuCbUNUt1No/2IJ/XLOm0ElK5yoqKHuriTN43E7Bn
+	+KUJM/6oRXnk5PRYtGobsJsKs75osPy1NGxpFxhwL9Nwnrg9AZ+9gseSBxqGMAmn2Krwdz
+	g4Ea88qrO6yFtwZukNgZP9MNDZiJmolIwnDgLjlqWHe5GzkmwppRsLkt5nl4OZlWvsn3zW
+	BsZmFzBwGrUQ5ST7fyZCcZ7Kjd+kefi7x5p2qvI7RbfTyjI0q/hXbV8b0doXew==
+Date: Thu, 6 Jun 2024 11:34:54 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
+ kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
+ <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Richard
+ Cochran <richardcochran@gmail.com>, Radu Pirea
+ <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh <j.vosburgh@gmail.com>, Andy
+ Gospodarek <andy@greyhouse.net>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
+ <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
+ UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>, Vladimir
+ Oltean <vladimir.oltean@nxp.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>,
+ Alexandra Winter <wintera@linux.ibm.com>
+Subject: Re: [PATCH net-next v14 07/14] net: Add struct
+ kernel_ethtool_ts_info
+Message-ID: <20240606113454.209ca92a@kmaincent-XPS-13-7390>
+In-Reply-To: <8b5e1ffe0bc5a9e03c622166f4d5d26c5c6ce9b5.camel@redhat.com>
+References: <20240604-feature_ptp_netnext-v14-0-77b6f6efea40@bootlin.com>
+	<20240604-feature_ptp_netnext-v14-7-77b6f6efea40@bootlin.com>
+	<8b5e1ffe0bc5a9e03c622166f4d5d26c5c6ce9b5.camel@redhat.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: mt7622: fix switch probe on bananapi-r64
-To: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
- Paolo Abeni <pabeni@redhat.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Daniel Golle <daniel@makrotopia.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- frank-w@public-files.de, Rob Herring <robh@kernel.org>,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- Frank Wunderlich <linux@fw-web.de>
-References: <20240516204847.171029-1-linux@fw-web.de>
- <a29dd7d1-40a8-4c88-99aa-651a3305b640@arinc9.com>
- <5AEE5668-0C8E-4EE4-A398-66CB99DF5650@public-files.de>
- <43aacd9d-b851-4100-8ccc-878ac6ae10f8@leemhuis.info>
- <698cf562-1ca9-4aa3-be7e-a1474b612c5b@leemhuis.info>
- <0cba095c-3d55-416a-a7ad-b359129731cf@arinc9.com>
- <714da201-654b-4183-8e5e-8ff0b64fe621@leemhuis.info>
- <0ae387c1-31b2-4e87-aa7d-f98e3c90e985@arinc9.com>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <0ae387c1-31b2-4e87-aa7d-f98e3c90e985@arinc9.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1717666493;3a8ac617;
-X-HE-SMSGID: 1sF9W3-0004z8-HD
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On 06.06.24 11:01, Arınç ÜNAL wrote:
-> On 06/06/2024 11.26, Thorsten Leemhuis wrote:
->> On 31.05.24 08:10, Arınç ÜNAL wrote:
->>> I had already submitted a patch series that would've prevented this
->>> issue back in 14 March 2024 [1]. I've asked numerous times for the patch
->>> series to be applied [2][3][4][5].
->>>> Eventually Daniel asked for some changes [6]. But I won't have time
->>>> to do
->>> that anytime soon and I think the patch series is good enough to be
->>> applied
->>> as is.
->>
->> Then I guess we need some other way to resolve this in mainline to unfix
-> 
-> I don't believe we need another way to resolve it. I've already told that
-> the patch series is good enough to be applied as is and I don't see any
-> responses with reasons against this here.
-> 
->> Frank's device. The two obvious options are afaics:
->>
->> * revert the culprit (868ff5f4944aa9 ("net: dsa: mt7530-mdio: read PHY
->> address of switch from device tree")) and reapply it in a later cycle
-> 
-> Sorry, no. There's nothing wrong with that patch. The actual cause of this
-> issue is the patch that introduced this device tree source file with the
-> wrong PHY address.
+On Thu, 06 Jun 2024 11:14:47 +0200
+Paolo Abeni <pabeni@redhat.com> wrote:
 
-Was that also merged for 6.10? Because if not, then what matters here
-afaics is what patch exposed the problem. Of course ideally we wound fix
-that problem -- but if nobody takes care of that any time soon it might
-come down to a revert of the patch that exposed the problem. At least
-that how Linus handles these things afaics.
+> On Tue, 2024-06-04 at 12:39 +0200, Kory Maincent wrote:
+>  [...] =20
+>=20
+> It looks like 'info' is not zeroed anymore...
+>=20
+>  [...] =20
+>=20
+> ... so this risk exposing to user-space unintialized kernel memory
 
->> * apply Frank's patch (or an improved one) in this thread (and if needed
->> revert it when some better changes emerge.
->>
->> Arınç ÜNAL, could you please comment on that and ideally handle the
->> necessary tasks, as it's your patch that causes the regression.
-> 
-> I don't see any necessary tasks for me to handle. AngeloGioacchino Del
-> Regno whom is the only person I know that maintains these device tree
-> source files can simply apply the patch series that I have already
-> submitted and we can all move on. I haven't heard from them whilst the
-> patch had been waiting since March. So I'm not sure who's going to apply
-> this patch, and to which tree.
-
-AngeloGioacchino Del Regno, if you have a minute, could you please
-comment if merging those changes for 6.10 is an option?
-
-Ciao, Thorsten
+You are right, tx/rx_reserved fields are indeed not initialized anymore.
+Thanks for spotting it!
+=20
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
