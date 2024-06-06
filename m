@@ -1,219 +1,144 @@
-Return-Path: <linux-kernel+bounces-204820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 232B38FF3E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:36:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7D7F8FF3DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CFD91F28AB4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:36:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E852E1C27A32
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914E4199242;
-	Thu,  6 Jun 2024 17:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E8C1990BE;
+	Thu,  6 Jun 2024 17:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KTOXEWNZ"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b="YJO1Diat"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200331991DB
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 17:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A195938DC7
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 17:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717695355; cv=none; b=HwH0XrH2xAD8Jj1QXNQqWpmxuL/UsV+GjprNuV+zh412Qnl5tVhRLOJjuwNgQvLcU4OPWAghY2jGqm4Ixi4nVSe0EGL8EemkeOaJGQlUxH6duzK9T7jrSWm8eemUorD8E7rw6SKKtbZySKshNrogvA+fnTlp8ngk/86/07ywbpE=
+	t=1717695278; cv=none; b=FYq9Vk/7o9yZWPPN2i8Aby4ByGP7gHPoGXb+1ss/OMEUvKJSs2bXMtIvHpEo4FkigI1lZ+n4GjbI+XMCiSNGUUVD3lx9EwOyqbCyaWeMraoamg89jTGGT2Ph9MxtwIm8TUWlh4b/obllDe+7OLEqM/73bP5ymKJYoqHx0qdIkhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717695355; c=relaxed/simple;
-	bh=JNXCflDio0Du4CwfDelhowY/4X5glDuOivTHSZ4vr60=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N59Ox8RqoEREGeaOPZbULCJ1OoAr8//ZZnBe/HyrHrnNK3JD9JktdRM2K7a3p+t/17k26SjcJvJTACrUxHPNjmeFegPq8+l/MK3aGRYsUnvRRNK7QogHXweOQ0kLBVgd8XU2xfDUsi4C6VNwb5nSzyDRZbgl/IJGipGS8OtRZ7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KTOXEWNZ; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-703ed5d37acso1061235b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 10:35:53 -0700 (PDT)
+	s=arc-20240116; t=1717695278; c=relaxed/simple;
+	bh=Mwm44gSX2pJSO1DQZKq/bU47/WAyUUvkVlSXQ5KADlE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WSR5HRhkc6tRVgGrs9EMScMs3s6jYlyhBMmPdMwaq1SAryHCEw0XztjGPYCjGlXo3k+clFjV6wVH8LzhbGiWsBSM/KMaBQ7/ZdkScvlAv78bnIDdXcndFYlxhomJIPhyqISX/kG7oXgY07LOSEFXvRYxCFy7UJbOAcuNmDFImug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com; spf=none smtp.mailfrom=osandov.com; dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b=YJO1Diat; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=osandov.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f692d6e990so12785915ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 10:34:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717695353; x=1718300153; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SNZT90i7xX7z9SBNw7Fi+15fEhA21+XfQ1kCVGtVUWU=;
-        b=KTOXEWNZ/WFeBokZ5WcdG1yDpaIjTdPOb5Bu4cycH0TRCgXFmrObRLLDud9i3+IRFa
-         xKcYqWFyeizTRR6QlphG681l6+s8/KsBa3qGYGoI8mMNkRGAp6jzHvD2HuzULSfloiFu
-         4KU8AF5OF6r3Ii+WZUlV70Aj4xSAZ1YRNcXwc=
+        d=osandov-com.20230601.gappssmtp.com; s=20230601; t=1717695276; x=1718300076; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AAulxVnYL/xyKaB3vnDRoKBoF0F084Ubuhab5n7H9jo=;
+        b=YJO1Diat12qRHgRFZWWqBb3KbE33vc5ktBSHZTqYRHvyq4z4Z+2fKwebosbdoHGZsq
+         fd04O80vSJ4FLQsa5wbXmUmbbS5Izkx0Bpaz17aO+Zqt/mSyAGq7iuBbABhW6CIsZszR
+         WJyq6aE02SrNBKBkwctYJLM9dqZV0zGIlBgN9bHVxyXtYcpACpUtSmABkPUv7n4U+nxd
+         hn8J7rcTf6Dy4YyqEX/c9OzGhgJtp+uVmuLNU/DOWCjNqmxIYPDKPoWRr9HmCXKcAXja
+         SebV03S5FUqTRloqn2Zl6tXQyeG9rUmBCHu/gL0VYBLR8ACtPAkazyB6mhvb8OiCREKF
+         0A7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717695353; x=1718300153;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SNZT90i7xX7z9SBNw7Fi+15fEhA21+XfQ1kCVGtVUWU=;
-        b=j0P+BfgtxpMpI7Br7zTkvmDegr1Ass76ct9wSL3rIrVP0opTtjmXgmt+FOYwd8qTwK
-         rtFMrmIn05eRKEa/Pxaaki967rU38a0byyNXldBYU5/xlqZ4nTzQqn3YqLiKdfPp8DxO
-         XhSdO4BiuswMgJbnqJ9qpJKffRvhz+W+WmRveNxAGUawd/CH5XzYHQ5Jwx81S3kUV8u2
-         eXxGG429ztD9U4W/zXxPh+thicgntbH8XB9FjN5bEiHXgC+rr1FC4gNU7JVKUEjbrpgZ
-         dpNiSJrZnWu6m8byQoGUAYql7xe/R+KcQVGeEayqDuUpFMinUqcUeKDMbf+0y7my8LUB
-         BTig==
-X-Forwarded-Encrypted: i=1; AJvYcCX4U+dIAhWQwWR+R04iXN/DDc/kysqBwAetQPFZqf3CpxikynBVzyr10yG8xJ+2Ca9zGcj0FtoxfvS4gLSgqf0BwpjZUaOYV+2K2pbp
-X-Gm-Message-State: AOJu0Yxs8ZiDpQBlgv6gnrew0Cr1qOs9pwHdGYDOfLJEfXeWBYnpWYzK
-	S7FL030fotFrPfSdo3Ga6D1jaz2SU9Bv0xMzSffGGgBc+6U6kFk5AJn1x0bSa6nVG1bWEFd9TuV
-	/kA==
-X-Google-Smtp-Source: AGHT+IHvUtVDhjTFNuhMNUZCXM9tIRlP4ACCXa2ST0RxyLrWRDwQVLc2GshKOnDDj1UIRLsNM512eQ==
-X-Received: by 2002:a05:6a00:21c9:b0:6f3:e6e0:d9f3 with SMTP id d2e1a72fcca58-7040c752719mr134972b3a.31.1717695353412;
-        Thu, 06 Jun 2024 10:35:53 -0700 (PDT)
-Received: from pc98uv11.mtv.corp.google.com ([2620:15c:9d:2:3fe9:f321:712c:442f])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd375503sm1334904b3a.42.2024.06.06.10.35.52
+        d=1e100.net; s=20230601; t=1717695276; x=1718300076;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AAulxVnYL/xyKaB3vnDRoKBoF0F084Ubuhab5n7H9jo=;
+        b=u0FU+ftgWYttmr3u0xcr76nGmzoaG3D83Ap/bVGakP1UlJkp8B/5WJk8LsP2HJhQai
+         NP7H9gmu0jHuky5p+3oLArnsq1Goviqm5DY8u+yBbGcbeMV0oYwpqbJzMWUxpqIShAiu
+         p2OcYDvFjrrgwV2Yd/lcoptdc5FXrQ312oYuS5M0gEG7leUTKjc7Mcvt1D0znAqLpYk8
+         lofZK2ekedfM4URZayn8ZzMoo+Emd3QY3IpDB8js1pnqfWep+kTaYBZf70W/VE2kA9I/
+         qJPFD2XimCAN4uERK1ewukH2PPq5AJDBlLPdAeVZjc6fe+ukJKfACxjemKqYIVNT4N37
+         ++5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVUlBQC9oKO3ifQBWBHTImQRyMBBXf8YsoeHNw7NL+VLOzj/tHTRTK//gjHiyuGzS62NYObnkrMMBqpE5c48hpnsKqhnYIFKyKz+KQX
+X-Gm-Message-State: AOJu0Yx3rLVwhvJxw3EIcPXntIWSEQwY3MaRZyfGa8dG/XrfHcb/NzEF
+	SikHHQ8wcZd7ipokhy8ElGxuqTxqUAmAujuGR7jjlaZFKvIEiOMaMQHcJKNO40iauFQ7Mdrq0MR
+	gXeg=
+X-Google-Smtp-Source: AGHT+IFF5YghgVig/RYReBOoP5uz9DUPAWXJpwtPKtVnFV4hSzqDyvhiRUIt9MC0+IujJ6KGfql9Zw==
+X-Received: by 2002:a17:902:dac6:b0:1f6:678c:9e8c with SMTP id d9443c01a7336-1f6d03be125mr2564165ad.67.1717695275716;
+        Thu, 06 Jun 2024 10:34:35 -0700 (PDT)
+Received: from telecaster.dhcp.thefacebook.com ([2620:10d:c090:400::5:ae4b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd76aa80sm17769735ad.69.2024.06.06.10.34.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 10:35:53 -0700 (PDT)
-From: Daisuke Nojiri <dnojiri@chromium.org>
-To: 
-Cc: Daisuke Nojiri <dnojiri@chromium.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3 v4] dt-bindings: cros-ec-keyboard: Add keyboard matrix v3.0
-Date: Thu,  6 Jun 2024 10:34:30 -0700
-Message-ID: <20240606173509.243739-4-dnojiri@chromium.org>
-X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
-In-Reply-To: <20240606173509.243739-1-dnojiri@chromium.org>
-References: <20240604005354.2294468-1-dnojiri@chromium.org>
- <20240606173509.243739-1-dnojiri@chromium.org>
+        Thu, 06 Jun 2024 10:34:35 -0700 (PDT)
+Date: Thu, 6 Jun 2024 10:34:33 -0700
+From: Omar Sandoval <osandov@osandov.com>
+To: Stephen Brennan <stephen.s.brennan@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+	Hao Ge <gehao@kylinos.cn>, Vlastimil Babka <vbabka@suse.cz>,
+	"Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-debuggers@vger.kernel.org
+Subject: Re: [PATCH] mm: convert page type macros to enum
+Message-ID: <ZmHzKRkgKOGW8Xmk@telecaster.dhcp.thefacebook.com>
+References: <20240606172530.829790-1-stephen.s.brennan@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606172530.829790-1-stephen.s.brennan@oracle.com>
 
-Add support for keyboard matrix version 3.0, which reduces keyboard
-ghosting.
+On Thu, Jun 06, 2024 at 10:25:29AM -0700, Stephen Brennan wrote:
+> Changing PG_slab from a page flag to a page type in commit 46df8e73a4a3
+> ("mm: free up PG_slab") in has the unintended consequence of removing
+> the PG_slab constant from kernel debuginfo. The commit does add the
+> value to the vmcoreinfo note, which allows debuggers to find the value
+> without hardcoding it. However it's most flexible to continue
+> representing the constant with an enum. To that end, convert the page
+> type fields into an enum. Debuggers will now be able to detect that
+> PG_slab's type has changed from enum pageflags to enum page_type.
+> 
+> Fixes: 46df8e73a4a3 ("mm: free up PG_slab")
+> 
+> Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
+> ---
+>  include/linux/page-flags.h | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+> 
+> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> index 104078afe0b16..64fc191a75e8d 100644
+> --- a/include/linux/page-flags.h
+> +++ b/include/linux/page-flags.h
+> @@ -947,12 +947,15 @@ PAGEFLAG_FALSE(HasHWPoisoned, has_hwpoisoned)
+>  #define PAGE_TYPE_BASE	0xf0000000
+>  /* Reserve		0x0000007f to catch underflows of _mapcount */
+>  #define PAGE_MAPCOUNT_RESERVE	-128
 
-Signed-off-by: Daisuke Nojiri <dnojiri@chromium.org>
----
- include/dt-bindings/input/cros-ec-keyboard.h | 104 +++++++++++++++++++
- 1 file changed, 104 insertions(+)
+Adding linux-debuggers to Cc.
 
-diff --git a/include/dt-bindings/input/cros-ec-keyboard.h b/include/dt-bindings/input/cros-ec-keyboard.h
-index f0ae03634a96..afc12f6aa642 100644
---- a/include/dt-bindings/input/cros-ec-keyboard.h
-+++ b/include/dt-bindings/input/cros-ec-keyboard.h
-@@ -100,4 +100,108 @@
- 	MATRIX_KEY(0x07, 0x0b, KEY_UP)		\
- 	MATRIX_KEY(0x07, 0x0c, KEY_LEFT)
- 
-+/* No numpad */
-+#define CROS_TOP_ROW_KEYMAP_V30 \
-+	MATRIX_KEY(0x00, 0x01, KEY_F11)		/* T11 */	\
-+	MATRIX_KEY(0x00, 0x02, KEY_F1)		/* T1 */	\
-+	MATRIX_KEY(0x00, 0x04, KEY_F10)		/* T10 */	\
-+	MATRIX_KEY(0x00, 0x0b, KEY_F14)		/* T14 */	\
-+	MATRIX_KEY(0x00, 0x0c, KEY_F15)		/* T15 */	\
-+	MATRIX_KEY(0x01, 0x02, KEY_F4)		/* T4 */	\
-+	MATRIX_KEY(0x01, 0x04, KEY_F7)		/* T7 */	\
-+	MATRIX_KEY(0x01, 0x05, KEY_F12)		/* T12 */	\
-+	MATRIX_KEY(0x01, 0x09, KEY_F9)		/* T9 */	\
-+	MATRIX_KEY(0x02, 0x02, KEY_F3)		/* T3 */	\
-+	MATRIX_KEY(0x02, 0x04, KEY_F6)		/* T6 */	\
-+	MATRIX_KEY(0x02, 0x0b, KEY_F8)		/* T8 */	\
-+	MATRIX_KEY(0x03, 0x02, KEY_F2)		/* T2 */	\
-+	MATRIX_KEY(0x03, 0x05, KEY_F13)		/* T13 */	\
-+	MATRIX_KEY(0x04, 0x04, KEY_F5)		/* T5 */
-+
-+#define CROS_MAIN_KEYMAP_V30			/* Keycode */	\
-+	MATRIX_KEY(0x00, 0x03, KEY_B)		/* 50 */	\
-+	MATRIX_KEY(0x00, 0x05, KEY_N)		/* 51 */	\
-+	MATRIX_KEY(0x00, 0x06, KEY_RO)		/* 56 (JIS) */	\
-+	MATRIX_KEY(0x00, 0x08, KEY_EQUAL)	/* 13 */	\
-+	MATRIX_KEY(0x00, 0x09, KEY_HOME)	/* 80 (Numpad) */	\
-+	MATRIX_KEY(0x00, 0x0a, KEY_RIGHTALT)	/* 62 */	\
-+	MATRIX_KEY(0x00, 0x10, KEY_FN)		/* 127 */	\
-+								\
-+	MATRIX_KEY(0x01, 0x01, KEY_ESC)		/* 110 */	\
-+	MATRIX_KEY(0x01, 0x03, KEY_G)		/* 35 */	\
-+	MATRIX_KEY(0x01, 0x06, KEY_H)		/* 36 */	\
-+	MATRIX_KEY(0x01, 0x08, KEY_APOSTROPHE)	/* 41 */	\
-+	MATRIX_KEY(0x01, 0x0b, KEY_BACKSPACE)	/* 15 */	\
-+	MATRIX_KEY(0x01, 0x0c, KEY_HENKAN)	/* 65 (JIS) */	\
-+	MATRIX_KEY(0x01, 0x0e, KEY_LEFTCTRL)	/* 58 */	\
-+								\
-+	MATRIX_KEY(0x02, 0x01, KEY_TAB)		/* 16 */	\
-+	MATRIX_KEY(0x02, 0x03, KEY_T)		/* 21 */	\
-+	MATRIX_KEY(0x02, 0x05, KEY_RIGHTBRACE)	/* 28 */	\
-+	MATRIX_KEY(0x02, 0x06, KEY_Y)		/* 22 */	\
-+	MATRIX_KEY(0x02, 0x08, KEY_LEFTBRACE)	/* 27 */	\
-+	MATRIX_KEY(0x02, 0x09, KEY_DELETE)	/* 76 (Numpad) */	\
-+	MATRIX_KEY(0x02, 0x0c, KEY_PAGEUP)	/* 85 (Numpad) */	\
-+	MATRIX_KEY(0x02, 0x011, KEY_YEN)	/* 14 (JIS) */	\
-+								\
-+	MATRIX_KEY(0x03, 0x00, KEY_LEFTMETA)	/* Launcher */	\
-+	MATRIX_KEY(0x03, 0x01, KEY_GRAVE)	/* 1 */	\
-+	MATRIX_KEY(0x03, 0x03, KEY_5)		/* 6 */	\
-+	MATRIX_KEY(0x03, 0x04, KEY_S)		/* 32 */	\
-+	MATRIX_KEY(0x03, 0x06, KEY_MINUS)	/* 12 */	\
-+	MATRIX_KEY(0x03, 0x08, KEY_6)		/* 7 */		\
-+	MATRIX_KEY(0x03, 0x09, KEY_SLEEP)	/* Lock */	\
-+	MATRIX_KEY(0x03, 0x0b, KEY_BACKSLASH)	/* 29 */	\
-+	MATRIX_KEY(0x03, 0x0c, KEY_MUHENKAN)	/* 63 (JIS) */	\
-+	MATRIX_KEY(0x03, 0x0e, KEY_RIGHTCTRL)	/* 64 */	\
-+								\
-+	MATRIX_KEY(0x04, 0x01, KEY_A)		/* 31 */	\
-+	MATRIX_KEY(0x04, 0x02, KEY_D)		/* 33 */	\
-+	MATRIX_KEY(0x04, 0x03, KEY_F)		/* 34 */	\
-+	MATRIX_KEY(0x04, 0x05, KEY_K)		/* 38 */	\
-+	MATRIX_KEY(0x04, 0x06, KEY_J)		/* 37 */	\
-+	MATRIX_KEY(0x04, 0x08, KEY_SEMICOLON)	/* 40 */	\
-+	MATRIX_KEY(0x04, 0x09, KEY_L)		/* 39 */	\
-+	MATRIX_KEY(0x04, 0x0b, KEY_ENTER)	/* 43 */	\
-+	MATRIX_KEY(0x04, 0x0c, KEY_END)		/* 81 (Numpad) */	\
-+								\
-+	MATRIX_KEY(0x05, 0x01, KEY_1)		/* 2 */	\
-+	MATRIX_KEY(0x05, 0x02, KEY_COMMA)	/* 53 */	\
-+	MATRIX_KEY(0x05, 0x03, KEY_DOT)		/* 54 */	\
-+	MATRIX_KEY(0x05, 0x04, KEY_SLASH)	/* 55 */	\
-+	MATRIX_KEY(0x05, 0x05, KEY_C)		/* 48 */	\
-+	MATRIX_KEY(0x05, 0x06, KEY_SPACE)	/* 61 */	\
-+	MATRIX_KEY(0x05, 0x07, KEY_LEFTSHIFT)	/* 44 */	\
-+	MATRIX_KEY(0x05, 0x08, KEY_X)		/* 47 */	\
-+	MATRIX_KEY(0x05, 0x09, KEY_V)		/* 49 */	\
-+	MATRIX_KEY(0x05, 0x0b, KEY_M)		/* 52 */	\
-+	MATRIX_KEY(0x05, 0x0c, KEY_PAGEDOWN)	/* 86 (Numpad) */	\
-+								\
-+	MATRIX_KEY(0x06, 0x01, KEY_Z)		/* 46 */	\
-+	MATRIX_KEY(0x06, 0x02, KEY_3)		/* 4 */		\
-+	MATRIX_KEY(0x06, 0x03, KEY_4)		/* 5 */		\
-+	MATRIX_KEY(0x06, 0x04, KEY_2)		/* 3 */		\
-+	MATRIX_KEY(0x06, 0x05, KEY_8)		/* 9 */		\
-+	MATRIX_KEY(0x06, 0x06, KEY_0)		/* 11 */	\
-+	MATRIX_KEY(0x06, 0x08, KEY_7)		/* 8 */		\
-+	MATRIX_KEY(0x06, 0x09, KEY_9)		/* 10 */	\
-+	MATRIX_KEY(0x06, 0x0b, KEY_DOWN)	/* 84 */	\
-+	MATRIX_KEY(0x06, 0x0c, KEY_RIGHT)	/* 89 */	\
-+	MATRIX_KEY(0x06, 0x0d, KEY_LEFTALT)	/* 60 */	\
-+	MATRIX_KEY(0x06, 0x0f, KEY_ASSISTANT)	/* 128 */	\
-+	MATRIX_KEY(0x06, 0x11, KEY_BACKSLASH)	/* 42 (JIS, ISO) */	\
-+								\
-+	MATRIX_KEY(0x07, 0x01, KEY_U)		/* 23 */	\
-+	MATRIX_KEY(0x07, 0x02, KEY_I)		/* 24 */	\
-+	MATRIX_KEY(0x07, 0x03, KEY_O)		/* 25 */	\
-+	MATRIX_KEY(0x07, 0x04, KEY_P)		/* 26 */	\
-+	MATRIX_KEY(0x07, 0x05, KEY_Q)		/* 17 */	\
-+	MATRIX_KEY(0x07, 0x06, KEY_W)		/* 18 */	\
-+	MATRIX_KEY(0x07, 0x07, KEY_RIGHTSHIFT)	/* 57 */	\
-+	MATRIX_KEY(0x07, 0x08, KEY_E)		/* 19 */	\
-+	MATRIX_KEY(0x07, 0x09, KEY_R)		/* 20 */	\
-+	MATRIX_KEY(0x07, 0x0b, KEY_UP)		/* 83 */	\
-+	MATRIX_KEY(0x07, 0x0c, KEY_LEFT)	/* 79 */	\
-+	MATRIX_KEY(0x07, 0x11, KEY_102ND)	/* 45 (ISO) */
-+
- #endif /* _CROS_EC_KEYBOARD_H */
--- 
-2.45.2.505.gda0bf45e8d-goog
+Can we also get PAGE_TYPE_BASE and PAGE_MAPCOUNT_RESERVE as enums? That
+would make it possible for debuggers to implement PageType() and
+page_has_type().
 
+> -#define PG_buddy	0x00000080
+> -#define PG_offline	0x00000100
+> -#define PG_table	0x00000200
+> -#define PG_guard	0x00000400
+> -#define PG_hugetlb	0x00000800
+> -#define PG_slab		0x00001000
+> +
+> +enum page_type {
+> +	PG_buddy	= 0x00000080,
+> +	PG_offline	= 0x00000100,
+> +	PG_table	= 0x00000200,
+> +	PG_guard	= 0x00000400,
+> +	PG_hugetlb	= 0x00000800,
+> +	PG_slab		= 0x00001000,
+> +};
+>  
+>  #define PageType(page, flag)						\
+>  	((page->page_type & (PAGE_TYPE_BASE | flag)) == PAGE_TYPE_BASE)
+> -- 
+> 2.43.0
+> 
 
