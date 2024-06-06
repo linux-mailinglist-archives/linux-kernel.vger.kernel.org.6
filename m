@@ -1,274 +1,315 @@
-Return-Path: <linux-kernel+bounces-204283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40B218FE6AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:39:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 745E68FE6B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FFF8B24ADE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:39:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC6801F27C3E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0778195991;
-	Thu,  6 Jun 2024 12:39:37 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2970195B0A;
+	Thu,  6 Jun 2024 12:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WJYMlWJ0"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C2013B28A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.178.238
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717677577; cv=fail; b=IjfSPMbU695xrtaMC3ScK00SQP4hWEa2tZoKFN/yoTTVzmOOskAfO98Pdxcn1QeYBl/CM9T41MMO7cKN6wYohn7G/1bIUWCPUS/G1xhq43mybSfk0n8MUcRtJx5q/pLTdeQoEWrpDgiMhHqUFx8hQQwVnR+XnT+fTKYXgwlY2js=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717677577; c=relaxed/simple;
-	bh=q/CYn8jtoTmT6OX0PJ/k0uZUn3d6l+RsnN3U16+pveo=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=C4u29R5Pbf7P1uxeDXiZAnBO0wKXG9+4EZAdMCLIVfm3TvM4sPJcxbm61Zm0ltTbme5k5EpILWlUpKS55llaHKa2HEVHbeUqo5Dp0ebe+tH1rBNjYL9uhkL88RSh3dtpSri+UJJR75tC+ljsCSgp15jtMmofBqvupA9ksah5dL8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4563mMka021165;
-	Thu, 6 Jun 2024 12:39:27 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2045.outbound.protection.outlook.com [104.47.70.45])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3yfruxd8ux-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Jun 2024 12:39:27 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XsfnGSHWdG9CUF9n8MPcizih7bYsr6KAMbXkdszHULH26w3hlrnNpDoSlqVst4gDBPZpkGLDSfWUf6Flgyy1+ZMWWINDOjB+OUSPyhpJxOPDcwIkgdRf/AWyGQ30LbH3XWBfgEpL/Me95NIx7D66rY/me7fCSeJztsp7XWo3JMY8Aw4UfC3jsKAD0wheKZkZsO7mpaaQ78KDgJh6QW1bbvtQ0bGXbUYbOJS9eQ4hjYlGP/IixUPjMFdkZ5/j90NWVWsmpaNKSrtH+iv4z4tWviIyHp1ACHJX6ZSAdLQPNK0vJHbOzlO5kqAwx7d4Ri3qH58M/IRKYFquINdWUrOTBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sCdeKmv1OqCIjbA3GqAcpgZ0v/n8j8GWEev3otKZd44=;
- b=A5ys4CCOD1ErU0nubUuAR11egJjoUHZD6Gk/QpI+lE9ZAnVlgHb/sfeKBTGQcDxhQdADgXDFpZzDxXgCYzHjpkk9d+b8Wd1+ldVKysK0bmn+HfQhghZx20EcFrMPcQ1l3pHHwO+zsXsH7pwOVGcS4llclQDY0jF1v3pDFfgvgfl45Bf30njLtvdGStCiQB3atxPoRfXJxklTLAB8+QNMqq9P7ylaLnZapnQfo7kov348k39xWJbq5t1L/SdCMwtUvl0HtrtkQtdg7b4IRLTr9f6KW71N5gx+eakBA0fy6bLfSPdq0fk58GwJmT4rX2Cs9eMPhvtDlpr2GaaLlomV5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from SA3PR11MB7527.namprd11.prod.outlook.com (2603:10b6:806:314::20)
- by CY8PR11MB7393.namprd11.prod.outlook.com (2603:10b6:930:84::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.32; Thu, 6 Jun
- 2024 12:39:24 +0000
-Received: from SA3PR11MB7527.namprd11.prod.outlook.com
- ([fe80::3133:62e0:c57c:e538]) by SA3PR11MB7527.namprd11.prod.outlook.com
- ([fe80::3133:62e0:c57c:e538%7]) with mapi id 15.20.7633.021; Thu, 6 Jun 2024
- 12:39:24 +0000
-From: He Zhe <zhe.he@windriver.com>
-To: clemens@ladisch.de, arnd@arndb.de, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Cc: zhe.he@windriver.com
-Subject: [PATCH v3] hpet: Support 32-bit userspace
-Date: Thu,  6 Jun 2024 20:39:08 +0800
-Message-Id: <20240606123908.738733-1-zhe.he@windriver.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0016.apcprd02.prod.outlook.com
- (2603:1096:4:1f4::17) To SA3PR11MB7527.namprd11.prod.outlook.com
- (2603:10b6:806:314::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A9C13F014
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717677608; cv=none; b=UcVMd6Weg1mCTEe/Yj+RUE+FRL/OTEddm1M5DPC1bzsozHuhp5etdNc0zS/kgXIQxvYYzVNIXL6mKE2CvjXUkKkciEN+XKCRxKyVNDNxhmFViI52AEohzDPwPeIi0u5aBgwHNO7BNbAxKRGn9nVHEbhyp25lj+TO+EvOTcagdm0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717677608; c=relaxed/simple;
+	bh=2hmuyNqQTvaA5z2wwn4yQo3Vjk9z0/qD/1y7aL3KO4k=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Hb6qn0KMpAyDOdP78Zh7bkAHT4YbrKMXKZEEKmcZ3KaQtKk5u5ySGGcJwWdQQvCbMOG2jnuA1tTKfXa69ae0ilxysuI61oPfVsiI/ekMSrk6vdRADCovZG/JaC8OPvdJBpHsUpBLQ0vTIty0+kjNTqX2Ktbg1aWlAlUPw9ACXG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WJYMlWJ0; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6afc61f9a2eso7022726d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 05:40:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717677606; x=1718282406; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SuUr0xdmiuXB9sYL3V50E0XBlpUTxzxBdUup1Y2+RDI=;
+        b=WJYMlWJ0a4Hr5tSHe5UrScT/j3PwIKn/4x4+zw9VGSUBITUzVLPuont45kPA5ctJQz
+         qHg6pASeJMDLiVftxdlb1RCBWTPWylv/FVROiHf9H/W6EWXAZbwiUzIn4mpSpDIJAiMw
+         HBZiMHWJTOINQv1It4CAg1WS/NPCs0syo03kz32UydFJqM/T9iPqyf0My/xLp6ygebf1
+         dlDcvk6GGSlGFpT7E45ZmPLvDyDOy6/sDld8RaKJeFm/NwA8C6PMJPbjMwgkUdqwlKb+
+         ykv4kzKHOXBihDksJiBeWif95hmhfvoXNVyD608G/VL/CYyLj3xqwly2Gw4mavI0I6h9
+         u3gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717677606; x=1718282406;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SuUr0xdmiuXB9sYL3V50E0XBlpUTxzxBdUup1Y2+RDI=;
+        b=Svn3GcooWvcKFGGWTmEySW3YgslHpIC5wN40adL+y3xFCS78UrP0MtCVKtM/cfqF4H
+         n9CX1jxZVFsQTaNugq1h2DpKwWkNNkgi7NofzlAMfCrxZcIJDN5rSFzje4y7d60xomoK
+         /g8Ziq2JJTHefBU97yObeWZYbLP4MK47uwmJfmNLOQ1lGWrMdB75F7j+xYjAKu9bGqfn
+         WjxFCuEzogaCyePQmTaqdAKtNxDqIMLI+UyXYFtR2h4dweGsYtSMb52b7/fRYx+2WMCO
+         tAqSqPQFyBnLMRqcit+aLZMaDG1OuXYmrM2hI18nclx3ZWoiUbEjcnUxZD4J18aw2UA2
+         SliA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9zyFJcEfGEbjvYdX71ZnlZIWTdYqEN4SpSUro31aHpYdpXUThRg4jAK0yEboWkpkTgYgHeQfC2034BYYZtYb+HOtd2teIlRTcwWU5
+X-Gm-Message-State: AOJu0YyeTNgYgjWf+pBMgjKx5N6Jrp3ovKRpFcKUOUQ+VnyLb2ON31Pk
+	Qiniovoq7gCCA+iNfOx3dtFWspQm2p0+dLb8XLb1n0fN9utDozXq
+X-Google-Smtp-Source: AGHT+IES+FMJjr9muBMUefRvn7PGclBxSG1bMxV60L4GSkvNKmMX4kS3eOt112c/VzYFf2D7NP3Kjw==
+X-Received: by 2002:a05:6214:598b:b0:6b0:5755:7dcf with SMTP id 6a1803df08f44-6b057557eaamr1976836d6.10.1717677605695;
+        Thu, 06 Jun 2024 05:40:05 -0700 (PDT)
+Received: from smtpclient.apple (174.137.59.200.16clouds.com. [174.137.59.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b04f9fb10csm5743626d6.120.2024.06.06.05.39.59
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Jun 2024 05:40:05 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA3PR11MB7527:EE_|CY8PR11MB7393:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7be2082f-9caa-4187-f6a8-08dc8625b266
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230031|366007|52116005|1800799015|376005|38350700005;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?dP1uX0Jqi0xFR/J66hHyCyvdwePS/DaY0c+BIZLfzsTPaQXcLICBljP8LXUs?=
- =?us-ascii?Q?oDM4LpCOAsYEwTp176//8RILt147v+HEG7GL17Lsz1SnlrDHz0Mfq4qJ8p3V?=
- =?us-ascii?Q?Alol97QtD2asLc1F9ZFnPTnAzk24c0AiCUWFGhxlTPJnzvkX5/AoiiUE8RSJ?=
- =?us-ascii?Q?GaIhTYPvdbGDJE+kkjbABS4Xw3p2nctvjGWQ/YKBC3w8rnLZQqWOSJa83/4Z?=
- =?us-ascii?Q?A7MvXchi1ELYQJCop66Ke6AjZBXr1OUSXqMBh3QWdjUCgSVRg1LVVgbPHMji?=
- =?us-ascii?Q?sgyhf1/rTEuOfqqBSjwP0eb7PSX4JOxuSGs/IVt4L2NNQUFMl5XeZOhCCkR1?=
- =?us-ascii?Q?/DJbHwr4VCSp3h9ddiOV9Xi7fpPdlkMKHY8j6wcDIcuOVHZdSLCj4njVyc8u?=
- =?us-ascii?Q?IPprsFkQCobu9LM3ZuopJmN16vakvGyNuM9Uddbm2OqTl4PFZrQ63XqqlsCj?=
- =?us-ascii?Q?gAogoCDnQTL9AYDhG/PUVMKGOTb2031U4xtzUKsk3D1WjMROUkhfCnhUxSpd?=
- =?us-ascii?Q?gw4SqTZJYXyDfTATMcYP5hr79cWbR2YdbO5POCeJOJjSgKOqoBGTi5m0v3XT?=
- =?us-ascii?Q?vsU9uHDe643/P1A5sHsa8rlEPI6y4qpH/ZQlSSQ+hHAVG3fR4zHlEXYIidaR?=
- =?us-ascii?Q?2DdnJCtqmbt66PD+21ox+6G/fhjn1zJ7aIF1h5ayU3B68HmHuTZThq6rlCnQ?=
- =?us-ascii?Q?B6WFZEbqyRneC0Ljw/xJlvnosCFHM+ZG9cUAMqwW1vikESI8oVkz4eJG5xrl?=
- =?us-ascii?Q?zpFJJFOy9iNgC2H1psxF4amh2osn307P3W2zUIAVbiGUxjuIxZGGbq3VraAd?=
- =?us-ascii?Q?dXn6bVfHdOOtsVC7H9Qo+ZWqO5HYg0FPLJ2xNZw2Q3v4QZ+ac6IVytaXrRq5?=
- =?us-ascii?Q?b6skEhzO5Y+oUkHPruDw6+m2Enp4p+5lOb27CPpI45S32Hr6NZRRa+Ac6kIc?=
- =?us-ascii?Q?dNFNA421DOExzbg7rdVT+kjcUWxr7Tn68d0XvwdwgfXdwS8NqeVCy/vZ+RUd?=
- =?us-ascii?Q?Q2TXfdPwkFux1k3s0dM8wfPlb9HMazxzZJS2cV+FdmF2irQGCL60jOYD+xlW?=
- =?us-ascii?Q?GNjMT4pSAXM8aEqO18rqGVkPGioyQHoYdbWMXtj2sL60QEekp6PSOhS1TOLd?=
- =?us-ascii?Q?1+3oZQhCtdvjQfHZdYHHUSkfRevU/JYLBXmlmERPiIMGrfLq4pKrICMp5F5D?=
- =?us-ascii?Q?P2vbiPK8/5j9WN51Oj9pq4B3OPUP2oeGNt3PimLvVc9MnPLrVpSKn0JiDb24?=
- =?us-ascii?Q?g6BIPY7YI9whYDDTxiokiGXfdz8zrMmfYTGtyFdx9WjcNOScVlD7WFqmIMXc?=
- =?us-ascii?Q?30MNwNsa2+r6bPFDlNS//VINrkSnJjPcsOCfFjvIw+2Ovdr4s7KyLan+nab0?=
- =?us-ascii?Q?PrvqE0M=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR11MB7527.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(52116005)(1800799015)(376005)(38350700005);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?ciZOmxRALYJUaYJfpiA4mBWtvZdbano4KrVLLIRQve+uQFPqkjFD3mm0JqrU?=
- =?us-ascii?Q?Lqbi92HEDS8JT+UYi75pPzAzF2fxUJrymgofERZDhOTHwPXXpCfN0kuutChY?=
- =?us-ascii?Q?ZVrNRmT1P5b2GkZWjL+2CEa13ZeaoB+ThRFTVkqTG5tvqex+Y7RmryNSBEEj?=
- =?us-ascii?Q?/oh7iEQ1ecVEW2Yw+FIVFVqUbfKd233G30E3/NgF70I0WqPTC6GBDKnAqtdn?=
- =?us-ascii?Q?VPrQ4FXsuUGn7h2nvrcCq5HnNv3hV6nVi5AXpA0Q+iTutOuhHrnkfznnMXq4?=
- =?us-ascii?Q?ILiFxJfdTQItSUccw+5Sx3ebvlY/2J2/sds4qmzfEUVCBf+PaD0kkevu4+UF?=
- =?us-ascii?Q?rM+pO3Z3U5lSuk5qbR0gTsROk9FOSZksJ6HR37/U4qL17c1R5DBWyw+tYXR+?=
- =?us-ascii?Q?q8fDjbNx5f8cnn/AJEKbSVuPk5Mo7jvJ7m9E7zfN5IoGK/KMZDJ/ccpEMF3B?=
- =?us-ascii?Q?SNp5ZrwSZ8/QIAxfbEnI5zdW1GMRTk+TPOjIC4pX1bgRQDxtKIiGbU2I/YDo?=
- =?us-ascii?Q?kO2YO8gMJ4svCxdArC7tc5j9lmAIxqKj5FxkYhAWgDKv9dPctUy3V/LABlke?=
- =?us-ascii?Q?ieEULsuUXZxuMLUA4grIPbEqEoU19xG/2z7UVG9TX4SNnQ3TzuihMl9jVwXL?=
- =?us-ascii?Q?qi/8Wh/Wty2jFxiwi1TZABvTDoQ8+RdSqr7iYEgeNtIribe3l4NMdNoyr/Uz?=
- =?us-ascii?Q?rVLs/bvHK9eefgglQnN54u/TvpaFjWWj4TpKd1lcLMIw4Kh8KGdhdi7xABYF?=
- =?us-ascii?Q?j6fLiRlOA29XtiJlgJvXxqxqBTwZ5k5QadcuwSDZz3uDo6QQkJjd6lQpoCDq?=
- =?us-ascii?Q?zsmDJAhaZo1Kp4f7Z+TTSTCoFL2OPglbTYOgXR+bThm2oZuSNuuhSWA2Uv6o?=
- =?us-ascii?Q?g23AsHuWc98Hxndy2NxSMM6SWmpNIYwflJwtsvUEZW5WsMx6s7LAEBToqjg9?=
- =?us-ascii?Q?xkxOmMrmeCisIpTkujEeqqKRw4zXvdIPritk/oAFoSqbqxprsoRnPFYU48/g?=
- =?us-ascii?Q?XyqLrDZYpZDz6h9KaCtORYRsyvG5r9MVhqr2Y+MZJA9nAFrwsvTkrak+0tEo?=
- =?us-ascii?Q?AJuOlTE6WEN1eqxiyJprKwcfn/FFbfsD0ISx/pguvmKY7be32A+m//jQCEei?=
- =?us-ascii?Q?Y1Tw9dA5UOR5gHYKBbk+vbN84lP3PB8cBAzXzSnN1vXu8cDeaVdX5auZXGp/?=
- =?us-ascii?Q?QbzOEe8KjqN5OZ/80vaJwJRNpclCXI1apnGIgBIPHIhheJDLNT2tqJVRj3jB?=
- =?us-ascii?Q?A0N+qmRN8GwSe94GkDw4UaDO7t87yeGHkC/+KeJ1dX6AQBrcpkCsXTjd8X3C?=
- =?us-ascii?Q?YdEXiOd7ViT/JdIa2MV+4lseXSZA8pUduKeYpN2jbvJfQ0fqZ7vmiTqIv5KO?=
- =?us-ascii?Q?ZUyXpnfAnkmkW7fSCHkyaF/p0l/KAb0CU6mlAy1S3EMaLMU4WdkfGoLbel0h?=
- =?us-ascii?Q?/miwZx06VlxE3N2LwIGpbNzlqnejZxCzhm9ZrQbfiVadm25GhxYBhpA998+Q?=
- =?us-ascii?Q?A/s5N5T/98PXCZOi+PFfwBuNOxJVYANcU7JTv8HMJt6Od+HAxbIK4AMMRqvb?=
- =?us-ascii?Q?AMVhFeYgIK+8YBOUpW+qsp036BWgkWlh/Xlz7U/a?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7be2082f-9caa-4187-f6a8-08dc8625b266
-X-MS-Exchange-CrossTenant-AuthSource: SA3PR11MB7527.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 12:39:24.6329
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: g6VJ/IrV+dGcSWh3L9yF79HveaC4uCcRGBsfylquyHLXKBLpXky7Wqi8+J0L8TZamuhKEReVvXVPwx6pLHnqxw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7393
-X-Proofpoint-ORIG-GUID: uiNV1t4ANwD2UOmPWStSZNIOC6_YZn5_
-X-Proofpoint-GUID: uiNV1t4ANwD2UOmPWStSZNIOC6_YZn5_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-06_01,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- lowpriorityscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- bulkscore=0 spamscore=0 mlxscore=0 priorityscore=1501 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2405170001 definitions=main-2406060092
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.700.6\))
+Subject: Re: [PATCH] sched/fair: Reschedule the cfs_rq when current is
+ ineligible
+From: Chunxin Zang <spring.cxz@gmail.com>
+In-Reply-To: <bb43844e-0ef2-44d6-9d98-496865d942b9@126.com>
+Date: Thu, 6 Jun 2024 20:39:44 +0800
+Cc: dietmar.eggemann@arm.com,
+ rostedt@goodmis.org,
+ bsegall@google.com,
+ mgorman@suse.de,
+ bristot@redhat.com,
+ vschneid@redhat.com,
+ linux-kernel@vger.kernel.org,
+ Chen Yu <yu.c.chen@intel.com>,
+ yangchen11@lixiang.com,
+ Jerry Zhou <zhouchunhua@lixiang.com>,
+ Chunxin Zang <zangchunxin@lixiang.com>,
+ mingo@redhat.com,
+ Peter Zijlstra <peterz@infradead.org>,
+ juri.lelli@redhat.com,
+ vincent.guittot@linaro.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <DD2A2CD1-E7F9-4519-82F5-22E769364C55@gmail.com>
+References: <20240524134011.270861-1-spring.cxz@gmail.com>
+ <572bef0a-727c-4922-93e9-ad29c385120e@126.com>
+ <6AF97701-B8F4-46C6-851E-A8BACE97E8C0@gmail.com>
+ <bb43844e-0ef2-44d6-9d98-496865d942b9@126.com>
+To: Honglei Wang <jameshongleiwang@126.com>
+X-Mailer: Apple Mail (2.3731.700.6)
 
-hpet_compat_ioctl and read file operations failed to handle parameters from
-32-bit userspace and thus samples/timers/hpet_example.c fails as below.
 
-root@intel-x86-64:~# ./hpet_example-32.out poll /dev/hpet 1 2
--hpet: executing poll
-hpet_poll: HPET_IRQFREQ failed
 
-This patch fixes cmd and arg handling in hpet_compat_ioctl and adds compat
-handling for 32-bit userspace in hpet_read.
+> On Jun 3, 2024, at 10:55, Honglei Wang <jameshongleiwang@126.com> =
+wrote:
+>=20
+>=20
+>=20
+> On 2024/5/29 22:31, Chunxin Zang wrote:
+>>> On May 25, 2024, at 19:48, Honglei Wang <jameshongleiwang@126.com> =
+wrote:
+>>>=20
+>>>=20
+>>>=20
+>>> On 2024/5/24 21:40, Chunxin Zang wrote:
+>>>> I found that some tasks have been running for a long enough time =
+and
+>>>> have become illegal, but they are still not releasing the CPU. This
+>>>> will increase the scheduling delay of other processes. Therefore, I
+>>>> tried checking the current process in wakeup_preempt and =
+entity_tick,
+>>>> and if it is illegal, reschedule that cfs queue.
+>>>> The modification can reduce the scheduling delay by about 30% when
+>>>> RUN_TO_PARITY is enabled.
+>>>> So far, it has been running well in my test environment, and I have
+>>>> pasted some test results below.
+>>>> I isolated four cores for testing. I ran Hackbench in the =
+background
+>>>> and observed the test results of cyclictest.
+>>>> hackbench -g 4 -l 100000000 &
+>>>> cyclictest --mlockall -D 5m -q
+>>>>                                  EEVDF      PATCH  EEVDF-NO_PARITY  =
+PATCH-NO_PARITY
+>>>>                 # Min Latencies: 00006      00006      00006      =
+00006
+>>>>   LNICE(-19)    # Avg Latencies: 00191      00122      00089      =
+00066
+>>>>                 # Max Latencies: 15442      07648      14133      =
+07713
+>>>>                 # Min Latencies: 00006      00010      00006      =
+00006
+>>>>   LNICE(0)      # Avg Latencies: 00466      00277      00289      =
+00257
+>>>>                 # Max Latencies: 38917      32391      32665      =
+17710
+>>>>                 # Min Latencies: 00019      00053      00010      =
+00013
+>>>>   LNICE(19)     # Avg Latencies: 37151      31045      18293      =
+23035
+>>>>                 # Max Latencies: 2688299    7031295    426196     =
+425708
+>>>> I'm actually a bit hesitant about placing this modification under =
+the
+>>>> NO_PARITY feature. This is because the modification conflicts with =
+the
+>>>> semantics of RUN_TO_PARITY. So, I captured and compared the number =
+of
+>>>> resched occurrences in wakeup_preempt to see if it introduced any
+>>>> additional overhead.
+>>>> Similarly, hackbench is used to stress the utilization of four =
+cores to
+>>>> 100%, and the method for capturing the number of PREEMPT =
+occurrences is
+>>>> referenced from [1].
+>>>> schedstats                          EEVDF       PATCH   =
+EEVDF-NO_PARITY  PATCH-NO_PARITY  CFS(6.5)
+>>>> stats.check_preempt_count          5053054     5057286    5003806   =
+ 5018589    5031908
+>>>> stats.patch_cause_preempt_count    -------     858044     -------   =
+ 765726     -------
+>>>> stats.need_preempt_count           570520      858684     3380513   =
+ 3426977    1140821
+>>>> =46rom the above test results, there is a slight increase in the =
+number of
+>>>> resched occurrences in wakeup_preempt. However, the results vary =
+with each
+>>>> test, and sometimes the difference is not that significant. But =
+overall,
+>>>> the count of reschedules remains lower than that of CFS and is much =
+less
+>>>> than that of NO_PARITY.
+>>>> [1]: =
+https://lore.kernel.org/all/20230816134059.GC982867@hirez.programming.kick=
+s-ass.net/T/#m52057282ceb6203318be1ce9f835363de3bef5cb
+>>>> Signed-off-by: Chunxin Zang <zangchunxin@lixiang.com>
+>>>> Reviewed-by: Chen Yang <yangchen11@lixiang.com>
+>>>> ---
+>>>>  kernel/sched/fair.c | 6 ++++++
+>>>>  1 file changed, 6 insertions(+)
+>>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>>> index 03be0d1330a6..a0005d240db5 100644
+>>>> --- a/kernel/sched/fair.c
+>>>> +++ b/kernel/sched/fair.c
+>>>> @@ -5523,6 +5523,9 @@ entity_tick(struct cfs_rq *cfs_rq, struct =
+sched_entity *curr, int queued)
+>>>>   hrtimer_active(&rq_of(cfs_rq)->hrtick_timer))
+>>>>   return;
+>>>>  #endif
+>>>> +
+>>>> + if (!entity_eligible(cfs_rq, curr))
+>>>> + resched_curr(rq_of(cfs_rq));
+>>>>  }
+>>>>    @@ -8325,6 +8328,9 @@ static void =
+check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+>>>>   if (unlikely(p->policy !=3D SCHED_NORMAL) || =
+!sched_feat(WAKEUP_PREEMPTION))
+>>>>   return;
+>>>>  + if (!entity_eligible(cfs_rq, se))
+>>>> + goto preempt;
+>>>> +
+>>>>   find_matching_se(&se, &pse);
+>>>>   WARN_ON_ONCE(!pse);
+>>>> =20
+>>> Hi Chunxin,
+>>>=20
+>>> Did you run a comparative test to see which modification is more =
+helpful on improve the latency? Modification at tick point makes more =
+sense to me. But, seems just resched arbitrarily in wakeup might =
+introduce too much preemption (and maybe more context switch?) in =
+complex environment such as cgroup hierarchy.
+>>>=20
+>>> Thanks,
+>>> Honglei
+>> Hi Honglei
+>> I attempted to build a slightly more complex scenario. It consists of =
+4 isolated cores,
+>> 4 groups of hackbench (160 processes in total) to stress the CPU, and =
+1 cyclictest
+>> process to test scheduling latency. Using cgroup v2, to created 64 =
+cgroup leaf nodes
+>> in a binary tree structure (with a depth of 7). I then evenly =
+distributed the aforementioned
+>> 161 processes across the 64 cgroups respectively, and observed the =
+scheduling delay
+>> performance of cyclictest.
+>> Unfortunately, the test results were very fluctuating, and the two =
+sets of data were very
+>> close to each other. I suspect that it might be due to too few =
+processes being distributed
+>> in each cgroup, which led to the logic for determining ineligible =
+always succeeding and
+>> following the original logic. Later, I will attempt more tests to =
+verify the impact of these
+>> modifications in scenarios involving multiple cgroups.
+>=20
+> Sorry to lately replay, I was a bit busy last week. How's the test =
+going on? What about run some workload processes who spend more time in =
+kernel? Maybe it's worth do give a try, but it depends on your test =
+plan.
+>=20
 
-hpet_example now shows that it works for both 64-bit and 32-bit.
+Hi honglei
 
-root@intel-x86-64:~# ./hpet_example-32.out poll /dev/hpet 1 2
--hpet: executing poll
-hpet_poll: info.hi_flags 0x0
-hpet_poll: expired time = 0xf4298
-hpet_poll: revents = 0x1
-hpet_poll: data 0x1
-hpet_poll: expired time = 0xf4235
-hpet_poll: revents = 0x1
-hpet_poll: data 0x1
-root@intel-x86-64:~# ./hpet_example-64.out poll /dev/hpet 1 2
--hpet: executing poll
-hpet_poll: info.hi_flags 0x0
-hpet_poll: expired time = 0xf42a1
-hpet_poll: revents = 0x1
-hpet_poll: data 0x1
-hpet_poll: expired time = 0xf4232
-hpet_poll: revents = 0x1
-hpet_poll: data 0x1
+Recently, I conducted testing of multiple cgroups using version 2. =
+Version 2 ensures the
+RUN_TO_PARITY feature, so the test results are somewhat better under the
+NO_RUN_TO_PARITY feature.
+=
+https://lore.kernel.org/lkml/20240529141806.16029-1-spring.cxz@gmail.com/T=
+/
 
-Cc: stable@vger.kernel.org
-Signed-off-by: He Zhe <zhe.he@windriver.com>
----
-v3:
-- Remove unnecessary CONFIG_COMPATs
-v2:
-- Use in_compat_syscall to determine if we're handling 32-bit or 64-bit
-- Drop unnecessary compat_ptr for hpet_ioctl_common
-- Add comment for COMPAT_HPET_INFO and COMPAT_HPET_IRQFREQ
+The testing environment I used still employed 4 cores,  4 groups of =
+hackbench (160 processes)
+and 1 cyclictest. If too many cgroups or processes are created on the 4 =
+cores, the test
+results will fluctuate severely, making it difficult to discern any =
+differences.
 
-Signed-off-by: He Zhe <zhe.he@windriver.com>
----
- drivers/char/hpet.c | 34 +++++++++++++++++++++++++++++-----
- 1 file changed, 29 insertions(+), 5 deletions(-)
+The organization of cgroups was in two forms:=20
+1. Within the same level cgroup, 10 sub-cgroups were created, with each =
+cgroup having
+  an average of 16 processes.=20
 
-diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
-index d51fc8321d41..da32e8ed0830 100644
---- a/drivers/char/hpet.c
-+++ b/drivers/char/hpet.c
-@@ -269,8 +269,13 @@ hpet_read(struct file *file, char __user *buf, size_t count, loff_t * ppos)
- 	if (!devp->hd_ireqfreq)
- 		return -EIO;
- 
--	if (count < sizeof(unsigned long))
--		return -EINVAL;
-+	if (in_compat_syscall()) {
-+		if (count < sizeof(compat_ulong_t))
-+			return -EINVAL;
-+	} else {
-+		if (count < sizeof(unsigned long))
-+			return -EINVAL;
-+	}
- 
- 	add_wait_queue(&devp->hd_waitqueue, &wait);
- 
-@@ -294,9 +299,16 @@ hpet_read(struct file *file, char __user *buf, size_t count, loff_t * ppos)
- 		schedule();
- 	}
- 
--	retval = put_user(data, (unsigned long __user *)buf);
--	if (!retval)
--		retval = sizeof(unsigned long);
-+	if (in_compat_syscall()) {
-+		retval = put_user(data, (compat_ulong_t __user *)buf);
-+		if (!retval)
-+			retval = sizeof(compat_ulong_t);
-+	} else {
-+		retval = put_user(data, (unsigned long __user *)buf);
-+		if (!retval)
-+			retval = sizeof(unsigned long);
-+	}
-+
- out:
- 	__set_current_state(TASK_RUNNING);
- 	remove_wait_queue(&devp->hd_waitqueue, &wait);
-@@ -651,12 +663,24 @@ struct compat_hpet_info {
- 	unsigned short hi_timer;
- };
- 
-+/* 32-bit types would lead to different command codes which should be
-+ * translated into 64-bit ones before passed to hpet_ioctl_common
-+ */
-+#define COMPAT_HPET_INFO       _IOR('h', 0x03, struct compat_hpet_info)
-+#define COMPAT_HPET_IRQFREQ    _IOW('h', 0x6, compat_ulong_t)
-+
- static long
- hpet_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- {
- 	struct hpet_info info;
- 	int err;
- 
-+	if (cmd == COMPAT_HPET_INFO)
-+		cmd = HPET_INFO;
-+
-+	if (cmd == COMPAT_HPET_IRQFREQ)
-+		cmd = HPET_IRQFREQ;
-+
- 	mutex_lock(&hpet_mutex);
- 	err = hpet_ioctl_common(file->private_data, cmd, arg, &info);
- 	mutex_unlock(&hpet_mutex);
--- 
-2.25.1
+                                  EEVDF      PATCH  EEVDF-NO_PARITY  =
+PATCH-NO_PARITY
+
+   LNICE(-19)    # Avg Latencies: 00572      00347      00502      00218
+
+   LNICE(0)      # Avg Latencies: 02262      02225      02442      02321
+
+   LNICE(19)     # Avg Latencies: 03132      03422      03333      03489
+
+2. In the form of a binary tree, 8 leaf cgroups were established, with a =
+depth of 4.=20
+  On average, each cgroup had 20 processes
+
+                                  EEVDF      PATCH  EEVDF-NO_PARITY  =
+PATCH-NO_PARITY
+
+   LNICE(-19)    # Avg Latencies: 00601      00592      00510      00400
+
+   LNICE(0)      # Avg Latencies: 02703      02170      02381      02126
+
+   LNICE(19)     # Avg Latencies: 04773      03387      04478      03611
+
+Based on the test results, there is a noticeable improvement in =
+scheduling latency after
+applying the patch in scenarios involving multiple cgroups.
+
+
+thanks=20
+Chunxin
+
+> Thanks,
+> Honglei
+>=20
+>> thanks
+>> Chunxin
+
 
 
