@@ -1,39 +1,62 @@
-Return-Path: <linux-kernel+bounces-203600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A82B8FDDA4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:58:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A49C8FDDB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:05:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9871C284D35
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:58:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6BB61C238C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 04:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5F420330;
-	Thu,  6 Jun 2024 03:58:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28BE317579;
-	Thu,  6 Jun 2024 03:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41FE208B6;
+	Thu,  6 Jun 2024 04:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SepihYV8"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ADB2114;
+	Thu,  6 Jun 2024 04:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717646299; cv=none; b=CFG4tTdKwgdgeyIkw4OAev7wYn78GRIUnn5pj+ybvOxVzQCSyzHWJhtLvIjfcrbwcLqNzs4cU6VHOIkFvFiCAsETp0NJE58kcLyf5RCpEHD7Ji+v8wzTuNfiL2+avWj+SpsZ9si1OQuSRUjii3PTnE68qtnj60oEAgx2H3Krd88=
+	t=1717646744; cv=none; b=hIuQHlXZ5j0VTNINbC5K/vQzPJVw+GADKePlPWtSyCGwN1thWp1IxrdZLkjixa/1HXBIA+3Wpe2G5al2879y8cjBHaXpbBhgFeR89D92lDsL1z7VNmm5X/o/UELR9IdBlrO30YT6YFr7aBsza8BZzuABbTZUBWj3dShdeBRCX3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717646299; c=relaxed/simple;
-	bh=+phaAw/KzcXCMt/nllQsT4B1286Zl4xZ6TDEpS52VpI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mC7wI8twVUUMKO3p3H42+6hum3kS+TpiiFfnk1MWqyXJmlsLX+P2PAtLLpDHTxNFLpr6RfoYiiyBA8WdL9Ahll3Hw8u78Z6yM23urp0StuNoh4iBs/E0LEOat0smAAh+EHSGfOsmkQH8SFV+01xiq98YHv2NRp/xib/fFTKbYp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5915E339;
-	Wed,  5 Jun 2024 20:58:40 -0700 (PDT)
-Received: from [10.162.40.16] (a077893.blr.arm.com [10.162.40.16])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6F2E23F64C;
-	Wed,  5 Jun 2024 20:58:11 -0700 (PDT)
-Message-ID: <d43d65a7-9cb9-436d-86a9-a50cbd2639d9@arm.com>
-Date: Thu, 6 Jun 2024 09:27:49 +0530
+	s=arc-20240116; t=1717646744; c=relaxed/simple;
+	bh=p6a5pdP9a15oGecBROZueV3dKmS8yv8D3takQtLrHnA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=B6ZldnPaMG4yt/jTUUhwOKKZpcce0nVb09ysgETg+n5t3aAF0MSCz6yPdI2EFs6mlBqgldTaiXaDxFW1vg+B/nThqDEak91O74pyY5MH1JRDzGaknT8obX4tIQ7/FtXvXDGN+rmtQ7OU1Yk5+EQiC+MmWbdYPKNyqpliBzd8Nac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SepihYV8; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45645VF7105201;
+	Wed, 5 Jun 2024 23:05:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717646731;
+	bh=mdvTzOkLikM46VzU6/78jqQPkp9ny5FpHczJhZOmO88=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=SepihYV8gXDemmp40p69RPrQxdvGztmfZYX5aXwW7xPjfaQG+fM4bYbdODfAKJavH
+	 wvmoyMJdGYYDo0glj1fz+FTSrVzGR/mHuUKNOd68AlpnSpILmJFlFKo1IZt6nzvWdP
+	 BxOWW5nwkDTdVXEseldeiJXTZtCvHus8sXb+7DJw=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45645Vs8044068
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 5 Jun 2024 23:05:31 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 5
+ Jun 2024 23:05:30 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 5 Jun 2024 23:05:30 -0500
+Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45645QhE031850;
+	Wed, 5 Jun 2024 23:05:27 -0500
+Message-ID: <79eedaea-bf4f-4a20-8a52-751ce7187523@ti.com>
+Date: Thu, 6 Jun 2024 09:35:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,125 +64,161 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V17 0/9] arm64/perf: Enable branch stack sampling
+Subject: Re: [PATCH v5 4/7] arm64: dts: ti: k3-j722s: Switch to
+ k3-am62p-j722s-common.dtsi
+To: Siddharth Vadapalli <s-vadapalli@ti.com>, <nm@ti.com>, <afd@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <rogerq@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <u-kumar1@ti.com>,
+        <danishanwar@ti.com>, <srk@ti.com>
+References: <20240604085252.3686037-1-s-vadapalli@ti.com>
+ <20240604085252.3686037-5-s-vadapalli@ti.com>
+From: Vignesh Raghavendra <vigneshr@ti.com>
 Content-Language: en-US
-To: James Clark <james.clark@arm.com>, mark.rutland@arm.com
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Marc Zyngier <maz@kernel.org>, Suzuki Poulose <suzuki.poulose@arm.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, will@kernel.org, catalin.marinas@arm.com
-References: <20240405024639.1179064-1-anshuman.khandual@arm.com>
- <80d33844-bdd2-4fee-81dd-9cd37c63d42c@arm.com>
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <80d33844-bdd2-4fee-81dd-9cd37c63d42c@arm.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20240604085252.3686037-5-s-vadapalli@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
 
 
-On 5/30/24 15:17, James Clark wrote:
+On 04/06/24 14:22, Siddharth Vadapalli wrote:
+> Update "k3-j722s.dtsi" to use "k3-am62p-j722s-common.dtsi" which
+> contains the nodes shared with AM62P, followed by including the J722S
+> specific main domain peripherals contained in "k3-j722s-main.dtsi".
 > 
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> ---
+> v4:
+> https://lore.kernel.org/r/20240601121554.2860403-5-s-vadapalli@ti.com/
+> No changes since v4.
 > 
-> On 05/04/2024 03:46, Anshuman Khandual wrote:
->> This series enables perf branch stack sampling support on arm64 platform
->> via a new arch feature called Branch Record Buffer Extension (BRBE). All
->> the relevant register definitions could be accessed here.
->>
->> https://developer.arm.com/documentation/ddi0601/2021-12/AArch64-Registers
->>
->> This series applies on 6.9-rc2.
->>
->> Also this series is being hosted below for quick access, review and test.
->>
->> https://git.gitlab.arm.com/linux-arm/linux-anshuman.git (brbe_v17)
->>
->> There are still some open questions regarding handling multiple perf events
->> with different privilege branch filters getting on the same PMU, supporting
->> guest branch stack tracing from the host etc. Finally also looking for some
->> suggestions regarding supporting BRBE inside the guest. The series has been
->> re-organized completely as suggested earlier.
->>
->> - Anshuman
->>
-> [...]
->>
->> ------------------ Possible 'branch_sample_type' Mismatch -----------------
->>
->> Branch stack sampling attributes 'event->attr.branch_sample_type' generally
->> remain the same for all the events during a perf record session.
->>
->> $perf record -e <event_1> -e <event_2> -j <branch_filters> [workload]
->>
->> event_1->attr.branch_sample_type == event_2->attr.branch_sample_type
->>
->> This 'branch_sample_type' is used to configure the BRBE hardware, when both
->> events i.e <event_1> and <event_2> get scheduled on a given PMU. But during
->> PMU HW event's privilege filter inheritance, 'branch_sample_type' does not
->> remain the same for all events. Let's consider the following example
->>
->> $perf record -e cycles:u -e instructions:k -j any,save_type ls
->>
->> cycles->attr.branch_sample_type != instructions->attr.branch_sample_type
->>
->> Because cycles event inherits PERF_SAMPLE_BRANCH_USER and instruction event
->> inherits PERF_SAMPLE_BRANCH_KERNEL. The proposed solution here configures
->> BRBE hardware with 'branch_sample_type' from last event to be added in the
->> PMU and hence captured branch records only get passed on to matching events
->> during a PMU interrupt.
->>
+>  arch/arm64/boot/dts/ti/k3-j722s.dtsi | 97 +++++++++++++++++++++++++++-
+>  1 file changed, 96 insertions(+), 1 deletion(-)
 > 
-> Hi Anshuman,
-> 
-> Surely because of this example we should merge? At least we have to try
-> to make the most common basic command lines work. Unless we expect all
-> tools to know whether the branch buffer is shared between PMUs on each
-> architecture or not. The driver knows though, so can merge the settings
-> because it all has to go into one BRBE.
-> 
-> Merging the settings in tools would be a much harder problem.
+> diff --git a/arch/arm64/boot/dts/ti/k3-j722s.dtsi b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
+> index c75744edb143..9e04e6a5c0fd 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j722s.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
+> @@ -10,12 +10,107 @@
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/soc/ti,sci_pm_domain.h>
+>  
+> -#include "k3-am62p5.dtsi"
+> +#include "k3-am62p-j722s-common.dtsi"
+> +#include "k3-j722s-main.dtsi"
+>  
+>  / {
+>  	model = "Texas Instruments K3 J722S SoC";
+>  	compatible = "ti,j722s";
+>  
+> +	cpus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		cpu-map {
+> +			cluster0: cluster0 {
+> +				core0 {
+> +					cpu = <&cpu0>;
+> +				};
+> +
+> +				core1 {
+> +					cpu = <&cpu1>;
+> +				};
+> +
+> +				core2 {
+> +					cpu = <&cpu2>;
+> +				};
+> +
+> +				core3 {
+> +					cpu = <&cpu3>;
+> +				};
+> +			};
+> +		};
+> +
+> +		cpu0: cpu@0 {
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x000>;
+> +			device_type = "cpu";
+> +			enable-method = "psci";
+> +			i-cache-size = <0x8000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <256>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			next-level-cache = <&l2_0>;
+> +			clocks = <&k3_clks 135 0>;
+> +		};
+> +
+> +		cpu1: cpu@1 {
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x001>;
+> +			device_type = "cpu";
+> +			enable-method = "psci";
+> +			i-cache-size = <0x8000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <256>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			next-level-cache = <&l2_0>;
+> +			clocks = <&k3_clks 136 0>;
+> +		};
+> +
+> +		cpu2: cpu@2 {
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x002>;
+> +			device_type = "cpu";
+> +			enable-method = "psci";
+> +			i-cache-size = <0x8000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <256>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			next-level-cache = <&l2_0>;
+> +			clocks = <&k3_clks 137 0>;
+> +		};
+> +
+> +		cpu3: cpu@3 {
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x003>;
+> +			device_type = "cpu";
+> +			enable-method = "psci";
+> +			i-cache-size = <0x8000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <256>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			next-level-cache = <&l2_0>;
+> +			clocks = <&k3_clks 138 0>;
+> +		};
+> +	};
+> +
+> +	l2_0: l2-cache0 {
+> +		compatible = "cache";
+> +		cache-unified;
+> +		cache-level = <2>;
+> +		cache-size = <0x80000>;
+> +		cache-line-size = <64>;
+> +		cache-sets = <512>;
+> +	};
+> +
+>  	cbass_main: bus@f0000 {
+>  		compatible = "simple-bus";
+>  		#address-cells = <2>;
 
-Alright, makes sense.
 
-> 
-> Any user that doesn't have permission for anything in the merged result
-> can continue to get nothing.
-> 
-> And we can always add filtering in the kernel later on if we want to to
-> make it appear to behave even more normally.
+You would need to move the rest of main domain overrides and cbass_main
+definitions to k3-j722s-main.dtsi and limit this file to CPU definitions
+similar to k3-am62p5.dtsi
 
-Understood.
 
-> 
->> static int
->> armpmu_add(struct perf_event *event, int flags)
->> {
->> 	........
->> 	if (has_branch_stack(event)) {
->> 		/*
->> 		 * Reset branch records buffer if a new task event gets
->> 		 * scheduled on a PMU which might have existing records.
->> 		 * Otherwise older branch records present in the buffer
->> 		 * might leak into the new task event.
->> 		 */
->> 		if (event->ctx->task && hw_events->brbe_context != event->ctx) {
->> 			hw_events->brbe_context = event->ctx;
->> 			if (armpmu->branch_reset)
->> 				armpmu->branch_reset();
->> 		}
->> 		hw_events->brbe_users++;
->> Here ------->	hw_events->brbe_sample_type = event->attr.branch_sample_type;
->> 	}
->> 	........
->> }
->>
->> Instead of overriding existing 'branch_sample_type', both could be merged.
->>
-> 
-> I can't see any use case where anyone would want the override behavior.
-> Especially if you imagine multiple users not even aware of each other.
-> Either the current "no records for mismatches" or the merged one make sense.
 
-Hence I had enlisted all the three available options.
+-- 
+Regards
+Vignesh
 
