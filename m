@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-204123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB0E8FE481
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:42:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44FB78FE480
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EE261F255DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:42:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39B161C23EEC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:42:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E138C19538A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE917195388;
 	Thu,  6 Jun 2024 10:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CnhRPDEh"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LUHKA9oI"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7C29450
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 10:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B29194C7F
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 10:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717670531; cv=none; b=J7HP1iIKVTWwDfnnxpJT/ju3p64d7sIYPpLjVmftLyJQVbLkVNgK6ZGb1VvykGYhkB7faKPxe32OZYQGy1lk7lFuwAcNBugZmXn6wtsXhDkOHrhQdZVW/OuAigYBYxJC13mpPTWGLatyOVqtxShk0yvPtdQLFVXUNL1WSMjCVGc=
+	t=1717670531; cv=none; b=a9wZBhODdXfzM/KBKLmos5M3+0zJb+IaiuHHECe1SRLijn1U948uPmoi2MjdG2LZ0IZ/yS3GuqiRNhMbz9IArTR3iIJ3me1AHIFjDHJPNYljXRexorXsvmC+9M3yY4kb2vxrATe85uryrxIBDye19Yj//EBOWshrKo/jD9sTjrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717670531; c=relaxed/simple;
-	bh=hNNb3uu5lIklT27wmBQeBH67uwc9FjU1a1qJJk57yq0=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iuLwZAY1eCONT9Ap8Dlx/kF639ivGMKKHOiLO9II8sl+b9h1W1ZpNcBPrfyBwEr8Rr1dkpxT3I18aEyHbAqtjIHE/NFKNH1snPXsiT/X0mY1jw/0VJZOpqp8qebDC1XB0j/OZvPDFhszDzdGj4HqH57pYPu+Zt4+afBxXRBhZHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CnhRPDEh; arc=none smtp.client-ip=209.85.208.43
+	bh=An0xem+v30MD+yvMR7Xg9gPbSXxhWMS6dug6ZfUDI84=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=nerUFFQuIMI8Q4ufo/Mo6CBNKGcpw/pVXZuh9B/FmXv3PS5l4h9e8d2r+M7KK0jzDsQFRkCdcEzhcu+rHktKvCeb1a7edp5lvg2Ma6o8hODG0nAyrJV4YsW+JXT3Ks6oGZuq+APdZ7fnvqgGdEZmSEp2dvaoUWGpmrta10XL1hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LUHKA9oI; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57a3d21299aso746801a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 03:42:07 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57a4d7ba501so844409a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 03:42:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717670526; x=1718275326; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SooWuqQXauSzxphu70p3G8Eh6c+zvS1vBd4sPGE4ZNk=;
-        b=CnhRPDEhW+ntTRYhv41kGJaaTUPOMwMtpZDk4LS70QjzRML+1PD2brJb3DmxqP6Nzr
-         D5uDdxoFDyviv0nsK59vO3tW49hWW1tecViypLx3hYrQg0LgDHBUyEXUiOAYzCVHrfDc
-         q8VaNDGVirZsB0to20wo1IyiiuLXRR6uZtRQ5BXvMlfFTgH0qORUf9q4B6hoAUZuViI9
-         wUocxqJXVzB5ls0Nnu4E2h/WbC/9tYu9TW+c+ySwVIAALC4l8SydDz1/jCyNoD+Hc+wz
-         gm1JKsOV9AKCLoi9vTlV8UGipIo0wvEJlryPqQuEgKVaV+6tC4OlQ+xfWwR1/OoBAvr/
-         EDFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717670526; x=1718275326;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1717670528; x=1718275328; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SooWuqQXauSzxphu70p3G8Eh6c+zvS1vBd4sPGE4ZNk=;
-        b=NAMkmzKP+T8YArDwK/L+o7RsbXWqT0VLaO+zxOgm+CftXcywGaX4XHeRslz+XmGUhV
-         ckr8lDjPLnlN3IK4igl2Dc7PSbf8D5L+sPhCVUhc5nUa6lsip5Ci/M77wqVtveyNkASg
-         VaTGD1AaNs9ibe1LCPrzFLS8n89jBu4ph7zM31yoIYnLlaZWfEekWc7AjbcUnFTsQBJX
-         8uUA9QQETDd0W/4uEK8HOZ7U78vYtJeuuWcuk3aGRIjGF/zgeWyuEHnC4h35rdWIF/pH
-         W7BDMvf7CpuPxWZFrJvwrQIhd8mLn20/uPU5mKaGFGEB5Gn+csNGffysuB6u7aLGR822
-         c9Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCWqOyyqfoIvF92O/p2GJjat2t9I7RKN8bUBMOkuhqu9SSChsDZLwIyt7daPXNKrXkjU1ZuQjgsOcczbMuhdwdxvGwA25tpDpZnReUUA
-X-Gm-Message-State: AOJu0Yx6UZyAucvNnsRY4145HOFtO2U9ZVR77RX5CpRUaWBm1UxdlW+b
-	attX9QIUJfAQsfaP8OdzFgaf93A0VvMQ/rGSk+vLsn/iA1ZORptyPOf9v7M/RyE=
-X-Google-Smtp-Source: AGHT+IGjrvdWppFFzb4kg/Oj4OT0vWpAdWK4Lk32DK7hqmqzem4f3+si8L6Ep6lBQIZt5XqIf9J24w==
-X-Received: by 2002:a50:c314:0:b0:57a:2ccb:b3f1 with SMTP id 4fb4d7f45d1cf-57a8bcb420dmr3193123a12.26.1717670526168;
-        Thu, 06 Jun 2024 03:42:06 -0700 (PDT)
+        bh=zpeFn017Q1U5L13CH6jXgmUXbUUD3PoX+619nEqpGTA=;
+        b=LUHKA9oIaicM7K0hiWOGC1CugzH6mCTGAdPPXV3tYYuMJNoju4PEoVJD9twFhzXs13
+         n1kXU6kqA6HgUvEOCMGF66woEzWfIYtjUeRZIa64A1vGy3qxFTR2CHM1F1jV30zPqF7Q
+         7M0mZMrPiuxVg0nsUGpvO+vToLWQ7GBKsqB3Q0E4HwfJ1PaYJEcOAmC41yc7+HgoIVg6
+         VGYOKH4hHyeZht8opL0pZDl6T7W7Q5GHw0mwJtKrG/rL4Jpo1ErSeycsAfYZgkMu1Jpj
+         U1PfdOBl2cD6DKxyk9SSLkMFQUMJUBJw7nVsFOHuzqO1cu5WeVzppskawLF0LJGSc5NI
+         xxeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717670528; x=1718275328;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zpeFn017Q1U5L13CH6jXgmUXbUUD3PoX+619nEqpGTA=;
+        b=vrITZyhzELaCwDz0ieZz+SD7tWJ/Wn/IJAPSCuOoA8a3ExwYnBsd/TGMm1UaM1GaEC
+         PQ3QwwWqigJjwZNmPwGtEtRgJzzqeCz+Q2PC1FHOosMELVQp7iCaGT3kbCBbk7IJgdjH
+         OkL2rRH+pbyyOijKHNhoG9MTnVBJhRlmi/vvLhxAcSXc6U8ID6Ye+mwuqYRbyMXOpcr/
+         oAh3g8or2kuZyMMwAWt85wDTjQB2Ga8F8pzIegKviS9pV5Vf05Hmq/3AdtTHdzck5XGg
+         JuFWWKMleZYiJQi/ZFBZGNRnoUnNw/c4dzM6zbZaCNO3qPbvVWGwYRsVcwMJqOHfEY6h
+         gVrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ71FTT3io8PXhCiic1c5uLUGLC2HZ/RXYxGgKv4g+jTm8Zsam8+uMfeG7+6E61DE+VZ9JgBzcmHzxGkGzRmU3MzLzlApCmHt0bPM6
+X-Gm-Message-State: AOJu0Yz8gtVaKQqEEX9MEQo/aK9h5qT3Qmb1wSfGDvMd5iUAd+3vcdKi
+	YBjMgOFA7XQB6ioOsvMaQ0BhpMSZciHVMWnLVaJ++9asBxy3ZB0yjVQIRd7R2JI=
+X-Google-Smtp-Source: AGHT+IESr0UJZW1T4o91KuIYjr/YU+ee5zsNo/9ERPhUt96slwRCDf/E7Eh9toC1vZ8SzclAV76fzA==
+X-Received: by 2002:a50:c2d1:0:b0:57a:2abb:9e82 with SMTP id 4fb4d7f45d1cf-57a8bcb743fmr2570169a12.41.1717670527721;
+        Thu, 06 Jun 2024 03:42:07 -0700 (PDT)
 Received: from [127.0.1.1] ([188.27.161.69])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae0cc36bsm871477a12.26.2024.06.06.03.42.05
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae0cc36bsm871477a12.26.2024.06.06.03.42.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 03:42:05 -0700 (PDT)
+        Thu, 06 Jun 2024 03:42:06 -0700 (PDT)
 From: Abel Vesa <abel.vesa@linaro.org>
-Subject: [PATCH v2 0/3] arm64: dts: qcom: x1e80100: Describe 3 USB Type-C
- connectors currently used
-Date: Thu, 06 Jun 2024 13:41:51 +0300
-Message-Id: <20240606-x1e80100-dts-pmic-glink-v2-0-972c902e3e6b@linaro.org>
+Date: Thu, 06 Jun 2024 13:41:52 +0300
+Subject: [PATCH v2 1/3] arm64: dts: qcom: x1e80100: Add remote endpoints
+ between PHYs and DPs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,10 +78,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAG+SYWYC/3WNQQ6CMBBFr0Jm7ZhOoYKuvIdhQWGEidqSlhAM4
- e4W9i7fS/77K0QOwhFu2QqBZ4niXQJ9yqAdGtczSpcYtNI5aSpwIa4UKYXdFHH8SIv9W9wLL4Z
- zQ6a82spCWo+Bn7Ic5UedeJA4+fA9jmba7d4slNHl3+ZMqLDkxrQV26LT9p50E/zZhx7qbdt+B
- Zv2778AAAA=
+Message-Id: <20240606-x1e80100-dts-pmic-glink-v2-1-972c902e3e6b@linaro.org>
+References: <20240606-x1e80100-dts-pmic-glink-v2-0-972c902e3e6b@linaro.org>
+In-Reply-To: <20240606-x1e80100-dts-pmic-glink-v2-0-972c902e3e6b@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -88,56 +88,88 @@ To: Bjorn Andersson <andersson@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1488; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=hNNb3uu5lIklT27wmBQeBH67uwc9FjU1a1qJJk57yq0=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmYZJ0BRQUKiqMVDyYe+ca76JCBCF1raVxp7Gbe
- 2ajHxtb7IyJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZmGSdAAKCRAbX0TJAJUV
- VnlsD/9zzGjeT1mphHee2RW/h/n2fbKZKbp2AJi3WDeuVKNCPl6rh+fw4+Mp1l0P5KQoQn4dgnz
- wfBaHH7koXFyCEvboFhKC77znBg+Jg/ZsjA6v6zkpt+90qvlIP1YeUrrO/8B9LbTyspWMGbYOCZ
- EPO6pp89BilkeAgh3BzHDfZT6syOGdswqOyzcHPRCWnSj2jndaOp3nOoUkZLbKF9mbarC1BrqAN
- whY6l5oNv5q7Kvy60do4wIkcdPFgeFKWhRAWwaafcs5MbhdpQ4fgLgSuLx2cqd/WtOqETPaCkvW
- jbBgrZPBqxTpaj2uYN1xEldRmiUuo/tngWE3JZTh/2rXoF91L7BJkL6rregeH+pDWdvGvcCdhxK
- MLYszXy0zhp11K3Vyok8g5ktg5yIMM1vCSF4HQXr9cRST5DRh9p28QHTbxQvDVelMk0thiEtisO
- lFSWG+cC1oIBimOxU8TpqPa3IJFxT1hzaXl1rni/49GuZUtUCL5T4XFTj+UtNWv1tq+4WsuGKGP
- CWjVr0uferfJ/+XAiEw7bV099sLM7MVSqwntFmr/cSN5LiQ4LUCmeVioZybm/1YylAb4TmrU4M3
- qPqGy2JiRK3GIiMLE7hXeUUhnJnQXnhR12ka7bu3NdwLrPUK8tQ0HiSU4P0T8p2Ip/T4otW6gER
- kFqn+xUQUyJREJQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1541; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=An0xem+v30MD+yvMR7Xg9gPbSXxhWMS6dug6ZfUDI84=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmYZJ5gMK61+359XUpvb5WAC4wQf4rQ8N7/b3P+
+ pDqmHeepLuJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZmGSeQAKCRAbX0TJAJUV
+ Vk6/D/9/eiFaSp26mKepaWqP3uUxe5Zl/lyYYuEtR/tZvF7ZFd3l1699gsxh8P4RRmBi/bsihze
+ +cD2bhs+GSJMVREvXN8cb5Tm4wUh2rJBDSAiDnyfhOE5IR8zQbxblHXVkXOzHHeTH+3AP+d9VBm
+ 9eA74BXBCc0nJJCWRU7A37foJl89n+WuCrdsEmkbqoO4DPoc9Hwa4k7y42nfkHhgH8qKKzoznpV
+ KLOsUtLJtaNbf6ieWPp7sGWr0zCUv/0mVDD5I4PFvBI3flROcu9PiesAtzwBTMotxqQGis5o7OV
+ i7xVZLhqPPo/EUWEasaZWEWKbQa/Ty+QXhY4uoCROe6QEtWoS0pMXBi4PTbrZ64M0WmKNMywD8Y
+ YRJ5VKAWlPsD45Fh4H5pAsro2/nTJRX6yqEsqm0XYI+mHpqRL2pWYlWFauiZsYiIUEFgJEW+b2w
+ ZywO7bjZJH4bLqgWCFzZd33AchYTYkPriGmYvPT2jUc59aw3ysNBDKsYqPl71rFTyYvTLpC1S3G
+ gowMl/TuQFLgcebD4eFhwEsht1bZFMhfOaM4OahvPh4MQ9b062r8YimebUbmvFdHlaoUb7cZEYe
+ UEWvp6Hb4lr4H8j5LnFFWrCyBUgVcPxDSJX+m+j1stkdTDyo/qULEp8YcwosdGIMTu065Lr1R+1
+ 5bDgY04xhTpzFQw==
 X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
  fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-Both QCP and CRD boards using X Elite (x1e80100) make use of 3 USB
-Type-C ports (USB1 SS0, SS1, and SS2). Describe the graph for the USB
-part of each one of them for now. The DP port will come at a later stage
-since there are some muxes/retimers involved, depending on the type of
-board.
+Describe the port/endpoints graph between the USB/DP combo PHYs and their
+corresponding DP controllers.
 
 Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 ---
-Changes in v2:
-- Rebased on today's -next which already defines parts of the graph in
-  SoC file.
-- Described the connectors for the CRD, like Konrad suggested.
-- Dropped the remote endpoints assignments from board files as they are
-  already described in SoC file.
-- Re-worded the commit message to talk about the plural w.r.t. DP ports.
-- Link to v1: https://lore.kernel.org/r/20240527-x1e80100-dts-pmic-glink-v1-0-7ea5c8eb4d2b@linaro.org
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
----
-Abel Vesa (3):
-      arm64: dts: qcom: x1e80100: Add remote endpoints between PHYs and DPs
-      arm64: dts: qcom: x1e80100-crd: Add pmic-glink node with all 3 connectors
-      arm64: dts: qcom: x1e80100-qcp: Add pmic-glink node with all 3 connectors
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+index cf8d8d5b1870..e275a2a04add 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+@@ -2567,6 +2567,7 @@ port@2 {
+ 					reg = <2>;
+ 
+ 					usb_1_ss0_qmpphy_dp_in: endpoint {
++						remote-endpoint = <&mdss_dp0_out>;
+ 					};
+ 				};
+ 			};
+@@ -2634,6 +2635,7 @@ port@2 {
+ 					reg = <2>;
+ 
+ 					usb_1_ss1_qmpphy_dp_in: endpoint {
++						remote-endpoint = <&mdss_dp1_out>;
+ 					};
+ 				};
+ 			};
+@@ -2701,6 +2703,7 @@ port@2 {
+ 					reg = <2>;
+ 
+ 					usb_1_ss2_qmpphy_dp_in: endpoint {
++						remote-endpoint = <&mdss_dp2_out>;
+ 					};
+ 				};
+ 			};
+@@ -3993,6 +3996,7 @@ port@1 {
+ 						reg = <1>;
+ 
+ 						mdss_dp0_out: endpoint {
++							remote-endpoint = <&usb_1_ss0_qmpphy_dp_in>;
+ 						};
+ 					};
+ 				};
+@@ -4075,6 +4079,7 @@ port@1 {
+ 						reg = <1>;
+ 
+ 						mdss_dp1_out: endpoint {
++							remote-endpoint = <&usb_1_ss1_qmpphy_dp_in>;
+ 						};
+ 					};
+ 				};
+@@ -4154,6 +4159,10 @@ mdss_dp2_in: endpoint {
+ 
+ 					port@1 {
+ 						reg = <1>;
++
++						mdss_dp2_out: endpoint {
++							remote-endpoint = <&usb_1_ss2_qmpphy_dp_in>;
++						};
+ 					};
+ 				};
+ 
 
- arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 122 ++++++++++++++++++++++++++++++
- arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 119 +++++++++++++++++++++++++++++
- arch/arm64/boot/dts/qcom/x1e80100.dtsi    |   9 +++
- 3 files changed, 250 insertions(+)
----
-base-commit: ee78a17615ad0cfdbbc27182b1047cd36c9d4d5f
-change-id: 20231214-x1e80100-dts-pmic-glink-65e351579b8b
-
-Best regards,
 -- 
-Abel Vesa <abel.vesa@linaro.org>
+2.34.1
 
 
