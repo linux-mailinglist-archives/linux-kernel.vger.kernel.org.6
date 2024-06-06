@@ -1,94 +1,116 @@
-Return-Path: <linux-kernel+bounces-204924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00AF98FF50E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:59:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96A598FF512
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:00:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E054C1C25EC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:59:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40C561F24CE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007E8535C8;
-	Thu,  6 Jun 2024 18:59:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE024E1CA;
+	Thu,  6 Jun 2024 18:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R4Nu8RMt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qJi+R8wv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NZuoaFCW"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF2E1BC3C;
-	Thu,  6 Jun 2024 18:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524131BC3C;
+	Thu,  6 Jun 2024 18:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717700367; cv=none; b=r47kWwZu+ElrUblnK1ZGL23Ty2PobgY0/n373V+XNPY0UDBY0iDxAUvWU5kAaC6dlC22N9gEdCogqszq13rl1obh0xRZys69Ze6sD/LiGOKgemy8ZC0wqSeRMn8yvrDjAa0nkuOOuJxQLHaRWjWulrfDxDOOzsqMViwDILg/w8M=
+	t=1717700391; cv=none; b=imPcywcip1M3WQMVCtZqWe909cho6hzhdfwWxxp1qmrpKB9ERUzBFl29DQKRAVXQYSg6g7d2EwQE4pMGPYgbd9SLPwCA8si9C0gAgaTU8fRidu4A2JCNadmBGuAvgR7dUANZjmAuKyANEiljQ6U3JSvYmfgzdey90lt3A8jkqw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717700367; c=relaxed/simple;
-	bh=FmIcLEU78RYqLgP+RXvK8d/zWUTgBjyUQnlYUUF65ns=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=s5jNcxOpkhF9yNQKO7Wy3C41R2/FnqnMe39erWXxJNILVngfSWVDK0KhhWwgYz39jQZmoLzMG5fLcfSkb1gumeZUeu5hdJqVYviari/ky2rhFOXLB8rHcnMuQ1SLJ3ELLHlSpgCYDJwZOh0XCx6ykiRlQmglAUoPLyWz+XfaQmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R4Nu8RMt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C792CC2BD10;
-	Thu,  6 Jun 2024 18:59:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717700367;
-	bh=FmIcLEU78RYqLgP+RXvK8d/zWUTgBjyUQnlYUUF65ns=;
-	h=Date:From:To:Cc:Subject:From;
-	b=R4Nu8RMti0VThshaG+Ipzw7+E2qzgvmApl5iIwyNCSd9uekOQgF4f+sIjbm4SScE0
-	 S1hNxxvHh7LYHGdlXotwqZqNCGEjn9Nw07cD77amXwMWElp/5S/AnZzF4UEtf3Mc5Z
-	 eOnCtQR8mmfHc2G29WBZrXYQPmrrAbIm4mY0f7vpdDfS3FxK/bN+yn/h/XNsl0JyLS
-	 8vNsuIFi/MsV9J8+qZTcC2w11Rt/HCSqABOryC285bag9L2u9vjF8d2c7fCLk03ATc
-	 kfmq0xuvH63M5e7HWmSfKH8MhfSPF3dwmFs2SyaxsGjLOtJrY7zWGCyEpLHtIivUXU
-	 KB6m+XcrCteIQ==
-Date: Thu, 6 Jun 2024 13:59:25 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Imre Deak <imre.deak@intel.com>,
-	Hans de Goede <hdegoede@redhat.com>, Kalle Valo <kvalo@kernel.org>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Jani Saarinen <jani.saarinen@intel.com>,
-	Leon Romanovsky <leonro@nvidia.com>
-Subject: [GIT PULL] PCI fixes for v6.10
-Message-ID: <20240606185925.GA810710@bhelgaas>
+	s=arc-20240116; t=1717700391; c=relaxed/simple;
+	bh=PBQlux8vvLo0Z0BGhEJHALFedNirUWBPON8FKluAEi4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KRiFbWUB98+MBv+PaXDU9tK0YJOOaxeZsgaNy4LaJSzNArfbhIhQWKeZUDicqy9gma2AA8xZQonkhGt70JVhZCxr+rz4WbrVP+q6IamrLrISRwEX+XWreBB2tAsVLPWJ8mqeWgYGY7PUBCc+4ib1Mt9TOUAkJYEXqBB98KfJH5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qJi+R8wv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NZuoaFCW; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717700388;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h2T0DbAUrrKT9ttONGR5TRLMSSgb9Rr8VNZEBbJLs/w=;
+	b=qJi+R8wvfyokvEVu1Cl/Od8jkeXDw5uvpcyTPmN+FcBBm1O6CCsm/AqRssvMXQ4dxgKzsK
+	0sgVPC4rog6n7YSMRfQ7FvhPgz5pNXp4XzzV89Rf4HS8AB7SiCT2veA11f6vv926JGTuzh
+	tFhgAtFeozzDGMb1pqF0wD4EJegwqOlUhD98v7//h+TJTXkorNTgjE7VuI7itFvJu2uRFv
+	lG2RvMsMBFr40s/EpyTJ+1VnAG6T/SzMnihoWTdvECoHPGRdPuKXQUwtzzLTKhsd0tpe+u
+	KRGVdG4D2tV0YBpsbe+Suug8VTDyGJ018GknZ0oTxUi/H7BzcTxVr+NiESHDIg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717700388;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h2T0DbAUrrKT9ttONGR5TRLMSSgb9Rr8VNZEBbJLs/w=;
+	b=NZuoaFCW1bXqXaEoiXWONbX88yFJvCwxT7Ryn74knGA5myyU5InuJkHDJYiybDd8AoGvdp
+	AKGUVN3kwEnlmdBg==
+To: Matti Vaittinen <mazziesaccount@gmail.com>, Matti Vaittinen
+ <mazziesaccount@gmail.com>, Matti Vaittinen
+ <matti.vaittinen@fi.rohmeurope.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
+ <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+ <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Matti Vaittinen
+ <mazziesaccount@gmail.com>, Wim Van Sebroeck <wim@linux-watchdog.org>,
+ Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org, Herve Codina
+ <herve.codina@bootlin.com>
+Subject: Re: [PATCH v3 07/10] irqdomain: Allow giving name suffix for domain
+In-Reply-To: <bbd219c95f4fe88752aee5f21232480fe9b949fb.1717486682.git.mazziesaccount@gmail.com>
+References: <cover.1717486682.git.mazziesaccount@gmail.com>
+ <bbd219c95f4fe88752aee5f21232480fe9b949fb.1717486682.git.mazziesaccount@gmail.com>
+Date: Thu, 06 Jun 2024 20:59:47 +0200
+Message-ID: <87plst28yk.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+Matti!
 
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+On Tue, Jun 04 2024 at 10:55, Matti Vaittinen wrote:
+>  struct irq_domain *__irq_domain_add(struct fwnode_handle *fwnode, unsigned int size,
+>  				    irq_hw_number_t hwirq_max, int direct_max,
+>  				    const struct irq_domain_ops *ops,
+> -				    void *host_data);
+> +				    void *host_data, const char *name_suffix);
+>  struct irq_domain *irq_domain_create_simple(struct fwnode_handle *fwnode,
+>  					    unsigned int size,
+>  					    unsigned int first_irq,
+> @@ -350,7 +350,8 @@ static inline struct irq_domain *irq_domain_add_linear(struct device_node *of_no
+>  					 const struct irq_domain_ops *ops,
+>  					 void *host_data)
+>  {
+> -	return __irq_domain_add(of_node_to_fwnode(of_node), size, size, 0, ops, host_data);
+> +	return __irq_domain_add(of_node_to_fwnode(of_node), size, size, 0, ops,
+> +				host_data, NULL);
 
-are available in the Git repository at:
+....
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.10-fixes-1
+Looking at the resulting amount of churn to add that argument, I'm not
+really enthused. There is some other unrelated change required in this
+area:
 
-for you to fetch changes up to c9d52fb313d3719d69a040f4ca78a3e2e95fba21:
+  https://lore.kernel.org/all/8734pr5yq1.ffs@tglx
 
-  PCI: Revert the cfg_access_lock lockdep mechanism (2024-06-04 12:10:05 -0500)
+My suggestion to convert all of this mess into a template based
+mechanism would nicely solve your problem too.
 
-----------------------------------------------------------------
-- Revert lockdep checking on locking that protects device resets from
-  user-space config accesses; it exposed issues for which fixes are in the
-  works but are too risky for this cycle (Dan Williams)
+Can you please have a look and eventually team up with Herve (CC'ed) to
+sort this out? I'm happy to help and give guidance.
 
-----------------------------------------------------------------
-Dan Williams (1):
-      PCI: Revert the cfg_access_lock lockdep mechanism
+Thanks,
 
- drivers/pci/access.c    | 4 ----
- drivers/pci/pci.c       | 1 -
- drivers/pci/probe.c     | 3 ---
- include/linux/lockdep.h | 5 -----
- include/linux/pci.h     | 2 --
- 5 files changed, 15 deletions(-)
+        tglx
 
