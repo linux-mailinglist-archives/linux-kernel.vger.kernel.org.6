@@ -1,110 +1,169 @@
-Return-Path: <linux-kernel+bounces-204795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B6EA8FF3A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:26:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96BF38FF3AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:26:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A66861C25C9E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:26:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A44E284E6C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8191991A0;
-	Thu,  6 Jun 2024 17:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D901991BD;
+	Thu,  6 Jun 2024 17:26:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d5ojnwxW"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U6cVw9w4"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69691990A2;
-	Thu,  6 Jun 2024 17:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BC41990D8;
+	Thu,  6 Jun 2024 17:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717694771; cv=none; b=goBtAXHrTaUfgCGI1p1d7KH+fYhFJYq68zBiSxIfms1+BCGlQ90jNz0A1MuS0X3lgewhOqYo7z14ucYGv8oYuVc2faUTLX+wBhM+OXTNYfMxQvKrDL/xGOI3cmvIpx7NEMIihYefhQ01T2oSIicOQm/z43twPUTrCYAS0OY4Vc4=
+	t=1717694781; cv=none; b=BtfcZs4lj1W4Ex8Qj5p/7g9Id7YqtKe4z8jITBHSqvVYQUe7Jcw2anXZVT2Wq7a6cD1GMXH93SEbhZFe1ZptUImlVW2UOr6vDbFMAEsm8FFtK+bt3Bn+a08/Eh9veRkGROTTn6bH/znoVksK5i2v1rhpNdZJpJJ3tRX0FOswU1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717694771; c=relaxed/simple;
-	bh=VqnNKmLSC1RD6dHJs9bd0MVxv0ddr88QmVM8jgunJ+I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EDdsTPXoER/oTgI3oWOXPC4Ur45+Y40fNBesXwDEj0TBlM4Yv3N7zHBtL/8AMI/A/hsTTyjbEOUshBIS3RL732vHFAH4uyEcezo7jC/qfuPpm8ej+JSxUJ46Ykd0Cq+jP5gdIk7xtYu3eSLSZVXzWaQynFZovLv0HRmSt+8iLBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d5ojnwxW; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a692130eb19so136746666b.2;
-        Thu, 06 Jun 2024 10:26:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717694768; x=1718299568; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VqnNKmLSC1RD6dHJs9bd0MVxv0ddr88QmVM8jgunJ+I=;
-        b=d5ojnwxWdvkyXcBrwWEJzHu5MwkasidhPfm7+vMuuGPFAQGmeooTwWu9HmkjRaias1
-         ckNRxwjVWRz9bCga0m6ARIeAcaXCpRbCc0/4MLmU/2MEiET/+CSkpWuH0LoHTVpibGiN
-         FvQjTNhZf8Wm8ppsmc3wAyAOVNit/X/WIVnjOvAe7wz5IiOun4Ve1mgmihLHoJvlqscU
-         8Obqcf8x5f8WgC4M5MiFQ6t39MDlPcJSgJXXYh7d/s5zNfycBBZXmadEMxf8395MIO+E
-         tZs6jD2jl/4GtSQZj5nRDSSrdAjIAL+qKie6Nv4lmXaQMKp5K4fTMk6P7Z1/Cdq3OVoZ
-         ctfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717694768; x=1718299568;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VqnNKmLSC1RD6dHJs9bd0MVxv0ddr88QmVM8jgunJ+I=;
-        b=Fzw6s1YP3FPe8xwJ+2Im4JNWshMsyS2rgUPV6T9P9/rqQWYnzGjFrNjC6vTAwouPPN
-         CD06s4dIdeqhPZihIe7X5zZyMJ1G+ocLqWcBoPzhCfLddWvJa9FU8lw+p7KbdkE5Xmbk
-         ui0AdtoQgklzl1Q+g5g7sMq5a/yG3JcG6TLSkjK6NAZO2GJ+FEhUQFaH3R9L3pc/pa09
-         8M+Yr81U5LSPWuZSuWp5ehcLJ7TLSIFqMjbnugkXhs9gtNH46bhDv8Efc6fTHEeyYusG
-         PjNKjEs7XYdvGTWI4JP+Yx+NweHqzAqAWEbKZm3eV6ARRPPyQ/FamejRVffbjxLeZzAX
-         AdXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDxUWAmqe9rIY6ocM0ezrJBtOaxCYd5hgydE9KDfMCgvF21n6+gTPxhfG4mfgzg1Zi4k00QDaqwKsykiZJA4bHrPRIhVxjSmkMhht/ZM/t8TNsgP0ywSeuFi+4cXsbg1SPQ1eNdh47Bdth/Rfq1AMfMgozOg4vZJx+qTK/x9lRbH+tlg==
-X-Gm-Message-State: AOJu0YwX84CV3Bohig25ySoq2j+SPfW/IL8mVZgJckQ/8+YRluPq2FjF
-	kQYbtpq72a7SAZtc1rBegVIaqjUOvLzMj5NSjP4qt3aBYiIoFHo=
-X-Google-Smtp-Source: AGHT+IEWHpUP1OjNuBxbT3hNUewpxmHFYSGB8WmlQsIDkOOC1DBOurNrQViCNgd74rDrnr8oHEdemA==
-X-Received: by 2002:a17:906:446:b0:a68:cc34:87d8 with SMTP id a640c23a62f3a-a6cdbfec41cmr13492866b.67.1717694767849;
-        Thu, 06 Jun 2024 10:26:07 -0700 (PDT)
-Received: from ?IPV6:2a02:810b:f40:4600:ed9f:91b7:21f2:3109? ([2a02:810b:f40:4600:ed9f:91b7:21f2:3109])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c805ccb11sm120939166b.78.2024.06.06.10.26.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 10:26:07 -0700 (PDT)
-Message-ID: <1f549cba-a754-4256-aa4b-dbc630e5e451@gmail.com>
-Date: Thu, 6 Jun 2024 19:26:06 +0200
+	s=arc-20240116; t=1717694781; c=relaxed/simple;
+	bh=l8EdykTqJ3aoDDrALAsVEr30BhVYMuefAflhbdzU+3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pwt7N64kzigV8RAQqIZcb/mJOJ82Tj0b2/E46fWY9QEcouUeD7FhRtZ1X/aRGHTTmS8I+Zg7g3oNUigggxGrAqlEb3fVHIwh7TsW5FdLSYL/ebFzNVrKV1peOQOOCBzSopf2f9q7mRYgv+mo7hbRQpPlp3WHzqAKYQBrPc0lXog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=U6cVw9w4; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Jniy+NLgVrBfK0p3PyzP0Z6EZrAShqg1T5f6U9wpTZM=; b=U6cVw9w4l6T0HIwuVstgOdFrTf
+	/eJRHcWb1hvtr8USQwnMbi9gwBnZoAmC5llmrCK8WoJavNxSZyU1vBRsTXpX1mIxRV2HbXbKvemvr
+	TcXvzrpg5zh8w7sQ/DUmTHhVSvF/gW4d7nzHmzLdSKn8+nXlNSLKkBVrg5ifTV1HQcWCAL4a1TzO7
+	qOWitxMaFgEvdbg1vnic8/zdxscPveTofIJJgbgTNMTGr1zZ0yrw7ce5WHIqVbg4oxX0vZIbXtgXw
+	aC3yBbxrIM1qZQ9dcKNVCUGJtqPoggVx2LR7agbJzNJM8kOrpNoU60HebjaE6iXoVS3ZhuNGq8+B4
+	tvA9fqYA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sFGsN-00000001fmR-14ZR;
+	Thu, 06 Jun 2024 17:26:11 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E941230047C; Thu,  6 Jun 2024 19:26:07 +0200 (CEST)
+Date: Thu, 6 Jun 2024 19:26:07 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] rust: add tracepoint support
+Message-ID: <20240606172607.GG8774@noisy.programming.kicks-ass.net>
+References: <20240606-tracepoint-v1-0-6551627bf51b@google.com>
+ <20240606-tracepoint-v1-3-6551627bf51b@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5 RESEND] dt-bindings: clock: rk3128: Drop
- CLK_NR_CLKS
-To: Conor Dooley <conor@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20240605210049.232284-1-knaerzche@gmail.com>
- <20240605210049.232284-3-knaerzche@gmail.com>
- <20240606-dispersal-buffed-27a6e7540d4c@spud>
-Content-Language: en-US
-From: Alex Bee <knaerzche@gmail.com>
-In-Reply-To: <20240606-dispersal-buffed-27a6e7540d4c@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606-tracepoint-v1-3-6551627bf51b@google.com>
 
+On Thu, Jun 06, 2024 at 03:05:26PM +0000, Alice Ryhl wrote:
+> Make it possible to have Rust code call into tracepoints defined by C
+> code. It is still required that the tracepoint is declared in a C
+> header, and that this header is included in the input to bindgen.
+> 
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  rust/bindings/bindings_helper.h |  1 +
+>  rust/bindings/lib.rs            | 15 +++++++
+>  rust/helpers.c                  | 24 +++++++++++
+>  rust/kernel/lib.rs              |  1 +
+>  rust/kernel/tracepoint.rs       | 92 +++++++++++++++++++++++++++++++++++++++++
+>  5 files changed, 133 insertions(+)
+> 
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+> index ddb5644d4fd9..d442f9ccfc2c 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -15,6 +15,7 @@
+>  #include <linux/refcount.h>
+>  #include <linux/sched.h>
+>  #include <linux/slab.h>
+> +#include <linux/tracepoint.h>
+>  #include <linux/wait.h>
+>  #include <linux/workqueue.h>
+>  
+> diff --git a/rust/bindings/lib.rs b/rust/bindings/lib.rs
+> index 40ddaee50d8b..48856761d682 100644
+> --- a/rust/bindings/lib.rs
+> +++ b/rust/bindings/lib.rs
+> @@ -48,3 +48,18 @@ mod bindings_helper {
+>  }
+>  
+>  pub use bindings_raw::*;
+> +
+> +/// Rust version of the C macro `rcu_dereference_raw`.
+> +///
+> +/// The rust helper only works with void pointers, but this wrapper method makes it work with any
+> +/// pointer type using pointer casts.
+> +///
+> +/// # Safety
+> +///
+> +/// This method has the same safety requirements as the C macro of the same name.
+> +#[inline(always)]
+> +pub unsafe fn rcu_dereference_raw<T>(p: *const *mut T) -> *mut T {
+> +    // SAFETY: This helper calls into the C macro, so the caller promises to uphold the safety
+> +    // requirements.
+> +    unsafe { __rcu_dereference_raw(p as *mut *mut _) as *mut T }
+> +}
+> diff --git a/rust/helpers.c b/rust/helpers.c
+> index 2c37a0f5d7a8..0560cc2a512a 100644
+> --- a/rust/helpers.c
+> +++ b/rust/helpers.c
+> @@ -165,6 +165,30 @@ rust_helper_krealloc(const void *objp, size_t new_size, gfp_t flags)
+>  }
+>  EXPORT_SYMBOL_GPL(rust_helper_krealloc);
+>  
+> +void rust_helper_preempt_enable_notrace(void)
+> +{
+> +	preempt_enable_notrace();
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_preempt_enable_notrace);
+> +
+> +void rust_helper_preempt_disable_notrace(void)
+> +{
+> +	preempt_disable_notrace();
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_preempt_disable_notrace);
 
-Am 06.06.24 um 18:09 schrieb Conor Dooley:
-> On Wed, Jun 05, 2024 at 11:00:46PM +0200, Alex Bee wrote:
->> CLK_NR_CLKS should not be part of the binding. Let's drop it, since
->> the kernel code no longer uses it either.
-> What about other operating systems etc, e.g. U-Boot or barebox?
-For u-boot: RK3128 hasn't been switched to OF_UPSTREAM yet and it still
-uses it's own (dated) copy of the dt-bindings headers [0] and besides this
-macro isn't used there. Barebox doesn't support RK3128 at all and I'm
-generally not aware of any other bootloader/OS does which does and
-especially none which uses this macro.
+A notrace wrapper that is tracable, lol.
 
-[0]
-https://github.com/u-boot/u-boot/blob/master/include/dt-bindings/clock/rk3128-cru.h
+> +bool rust_helper_current_cpu_online(void)
+> +{
+> +	return cpu_online(raw_smp_processor_id());
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_current_cpu_online);
+> +
+> +void *rust_helper___rcu_dereference_raw(void **p)
+> +{
+> +	return rcu_dereference_raw(p);
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper___rcu_dereference_raw);
+
+I'm going to keep yelling and objecting to these wrappers.
+
+Fix bindgen already. Or whatever is needed to get it to interoperate
+with C inline / asm.
+
+NAK NAK NAK
 
