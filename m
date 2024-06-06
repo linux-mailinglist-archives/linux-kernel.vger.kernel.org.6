@@ -1,112 +1,137 @@
-Return-Path: <linux-kernel+bounces-203815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 961DC8FE0C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:20:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D7F28FE0CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35325282396
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:20:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76AD4282AC0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3497013C3F7;
-	Thu,  6 Jun 2024 08:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE1913BACE;
+	Thu,  6 Jun 2024 08:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JDNe2zSc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NA/LBhby"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739001C6A5;
-	Thu,  6 Jun 2024 08:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EBA13AD06
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717662032; cv=none; b=oD+VGjgCY0yJoG10HjmCPdTHh/quoD1x/C1dbMvEhOwdnX+aMYRgb7xc1xlwNfB0VfObRGFXaVMBrMMfwJUcqmYNyfhUvt84tXrToi6XCOOIsEeiBoMnRmJ7rO4G+BBLLfKQIaiFLLn53lMXZFhoCdABKRfR1UL77hPkhbcfvc8=
+	t=1717662068; cv=none; b=WwYK4uET23OCDeSuM5h/7B/smxAc4fgYpIukJ11pYSJ2Ui/dqaBIuCM03Mmn2ZmCMNnPior53nsRhEBp5+zM/E6hJ+s5Dqp/rJKvzH0cEoTDfD5kyChMEB7v98zk6uz2k3Rl9S4tvqaRyW01OHecPJYE32a6fHUqP/hJjaYZhWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717662032; c=relaxed/simple;
-	bh=bfxpRNZtKe1C4PHdEOcPjLmS2P7p3xcUsikhdkzmyzs=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=YcoehZVqAUA79lQS3D6zfIzFXFzf31XwIt3OdpmdEJ0mYrUN5cbDV1RYmZ3L0pq/BoPxSLXTbEK9oJm6S3RqupymtFcOXgsVLlqOEA3vKAr6i9FYoVa3FNe7jX5gceD8PB5RO5xlG/D9DHx1uLTuZN2DijxgS57Pgw/5aa0RfbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JDNe2zSc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E724DC3277B;
-	Thu,  6 Jun 2024 08:20:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717662032;
-	bh=bfxpRNZtKe1C4PHdEOcPjLmS2P7p3xcUsikhdkzmyzs=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=JDNe2zSc0rdLpRlN+FzJcC3yr3R4SE0AqC479sCIzvesJUqNU8S9NI0XcMKGfVbQ4
-	 p8ezja60MVYKlHFl3dfqrkIpBP5Ksu8Da9llP+v/v3g8Ld9kpQUxHWUDoWsA6JrNrm
-	 LDEtd3jYMELFISCjkwbFS6q4fJG+FKSLFwKwflREkoUn+fF/c0A//dU3Sfm3hby8uA
-	 l4Nv459BgBBI/HcW5i9PwRXkJ+C2ZcmKNfAezNCTg/6X5K7aXm0Sk0vUR2njCEN6gD
-	 z2/FfL6cZnXxIRoPJnpWxJWMCMMIh9Z/1zWm4pt14QHloeLo6uLRfYVif8MAYOzr9T
-	 fFIihuKAZFAAQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D29C1D2039D;
-	Thu,  6 Jun 2024 08:20:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1717662068; c=relaxed/simple;
+	bh=OOkSy4F0JYT9inqys1CD0ozUVyy8lyS01yw14ls74nQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jLzusmcdME6oEPZFic2CwVGVw3lbrzyeXbLrke8Yvs9NkPKHlKwsKj3Qnqa7sHQXW/XGi0dC0E6kSf1pA38u74B1r3mO145AxC8+F80/XEeQTmMDvMbRduZ+J78xy1zdhe9OdXsljockI4cq3gFkLRJvcw/jofCwew+fQqtdXvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NA/LBhby; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717662065; x=1749198065;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=OOkSy4F0JYT9inqys1CD0ozUVyy8lyS01yw14ls74nQ=;
+  b=NA/LBhbyRlq8zjZ+IVG/rguRm872p8bxgOShNWcNKYSxdHW0DcX3kg25
+   vBLzCEou0XNFChQcnggqP7RKFjRFGRsirsKnDvrB/zP6bZgUTnnz+Zzdg
+   4eX7xicAPmHkeXsL1XaJiTYXe/ApSCrlrDnpDUEcaOzmemrdW42cODxNN
+   uhMelHyWTGlHCufEYRr9KCuX5XFH0lLnQHTrR+dOXG8YXVHTdggGPcUch
+   aUcNCVsGxnctz9/xHuWKDaWL50zsPybQcdx6ckuhZonWGCKeNWW1ZuncZ
+   QTC1ljHPHYdpdf7Ay8uNiYJQyeSGCJSYMduhhNPVPlWl97AiGID2BRTEm
+   A==;
+X-CSE-ConnectionGUID: o4iYyuwWT/qM2OTgB3n+2g==
+X-CSE-MsgGUID: gfs+kcj2T3SLyPwiYBdkIA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="36842099"
+X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
+   d="scan'208";a="36842099"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 01:21:05 -0700
+X-CSE-ConnectionGUID: RBEN41ANSAuJlHmEns1ziA==
+X-CSE-MsgGUID: 70o4qeZYR4ChidCq5p+urQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
+   d="scan'208";a="42813100"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.9])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 01:21:01 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: pengfuyuan <pengfuyuan@kylinos.cn>, Liviu Dudau <liviu.dudau@arm.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, pengfuyuan
+ <pengfuyuan@kylinos.cn>, k2ci <kernel-bot@kylinos.cn>
+Subject: Re: [PATCH] arm/komeda: Compile DEFINE_SHOW_ATTRIBUTE() only when
+ CONFIG_DEBUG_FS is enabled
+In-Reply-To: <20240606075846.1307007-1-pengfuyuan@kylinos.cn>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240606075846.1307007-1-pengfuyuan@kylinos.cn>
+Date: Thu, 06 Jun 2024 11:20:58 +0300
+Message-ID: <87ed9abhxx.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [net-next PATCH v5 0/7] Improve GbEth performance on Renesas RZ/G2L
- and related SoCs
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171766203185.3557.7483807066243458681.git-patchwork-notify@kernel.org>
-Date: Thu, 06 Jun 2024 08:20:31 +0000
-References: <20240604072825.7490-1-paul.barker.ct@bp.renesas.com>
-In-Reply-To: <20240604072825.7490-1-paul.barker.ct@bp.renesas.com>
-To: Paul Barker <paul.barker.ct@bp.renesas.com>
-Cc: s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, niklas.soderlund+renesas@ragnatech.se,
- horms@kernel.org, biju.das.jz@bp.renesas.com,
- claudiu.beznea.uj@bp.renesas.com, yoshihiro.shimoda.uh@renesas.com,
- netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain
 
-Hello:
+On Thu, 06 Jun 2024, pengfuyuan <pengfuyuan@kylinos.cn> wrote:
+> We do not call komeda_debugfs_init() and the debugfs core function
+> declaration if CONFIG_DEBUG_FS is not defined, but we should not
+> compile it either because the debugfs core function declaration is
+> not included.
+>
+> Reported-by: k2ci <kernel-bot@kylinos.cn>
+> Signed-off-by: pengfuyuan <pengfuyuan@kylinos.cn>
 
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+An interesting alternative might actually be to remove *all* the
+CONFIG_DEBUG_FS conditional compilation from the file. Since the debugfs
+functions have no-op stubs for CONFIG_DEBUG_FS=n, the compiler will
+optimize the rest away, because they're no longer referenced. (For the
+same reason, I don't think this patch has an impact for code size.)
 
-On Tue,  4 Jun 2024 08:28:18 +0100 you wrote:
-> This series aims to improve performance of the GbEth IP in the Renesas
-> RZ/G2L SoC family and the RZ/G3S SoC, which use the ravb driver. Along
-> the way, we do some refactoring and ensure that napi_complete_done() is
-> used in accordance with the NAPI documentation for both GbEth and R-Car
-> code paths.
-> 
-> Much of the performance improvement comes from enabling SW IRQ
-> Coalescing for all SoCs using the GbEth IP, and NAPI Threaded mode for
-> single core SoCs using the GbEth IP. These can be enabled/disabled at
-> runtime via sysfs, but our goal is to set sensible defaults which get
-> good performance on the affected SoCs.
-> 
-> [...]
+The upside for removing conditional compilation is that you'll actually
+do build testing for both CONFIG_DEBUG_FS config values. Assuming most
+developers have it enabled, there's not a lot of testing going on for
+CONFIG_DEBUG_FS=n, and you might introduce build failures with the
+conditional compilation.
 
-Here is the summary with links:
-  - [net-next,v5,1/7] net: ravb: Simplify poll & receive functions
-    https://git.kernel.org/netdev/net-next/c/118e640af30c
-  - [net-next,v5,2/7] net: ravb: Align poll function with NAPI docs
-    https://git.kernel.org/netdev/net-next/c/b0e0e20dc60e
-  - [net-next,v5,3/7] net: ravb: Refactor RX ring refill
-    https://git.kernel.org/netdev/net-next/c/37a01c12e9e8
-  - [net-next,v5,4/7] net: ravb: Refactor GbEth RX code path
-    https://git.kernel.org/netdev/net-next/c/3ee43f09cb2c
-  - [net-next,v5,5/7] net: ravb: Enable SW IRQ Coalescing for GbEth
-    https://git.kernel.org/netdev/net-next/c/7b39c1814ce3
-  - [net-next,v5,6/7] net: ravb: Use NAPI threaded mode on 1-core CPUs with GbEth IP
-    https://git.kernel.org/netdev/net-next/c/65c482bc226a
-  - [net-next,v5,7/7] net: ravb: Allocate RX buffers via page pool
-    https://git.kernel.org/netdev/net-next/c/966726324b7b
+Of course, up to Liviu to decide.
 
-You are awesome, thank you!
+
+BR,
+Jani.
+
+
+> ---
+>  drivers/gpu/drm/arm/display/komeda/komeda_dev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
+> index 14ee79becacb..7ada8e6f407c 100644
+> --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
+> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
+> @@ -21,6 +21,7 @@
+>  
+>  #include "komeda_dev.h"
+>  
+> +#ifdef CONFIG_DEBUG_FS
+>  static int komeda_register_show(struct seq_file *sf, void *x)
+>  {
+>  	struct komeda_dev *mdev = sf->private;
+> @@ -43,7 +44,6 @@ static int komeda_register_show(struct seq_file *sf, void *x)
+>  
+>  DEFINE_SHOW_ATTRIBUTE(komeda_register);
+>  
+> -#ifdef CONFIG_DEBUG_FS
+>  static void komeda_debugfs_init(struct komeda_dev *mdev)
+>  {
+>  	if (!debugfs_initialized())
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Jani Nikula, Intel
 
