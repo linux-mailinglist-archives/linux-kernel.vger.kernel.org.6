@@ -1,106 +1,92 @@
-Return-Path: <linux-kernel+bounces-203650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB328FDEA8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:22:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6F978FDEAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B51771C22D09
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:22:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 704412852E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B687373466;
-	Thu,  6 Jun 2024 06:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2006F7346A;
+	Thu,  6 Jun 2024 06:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vRU+Xrt7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="87c6PaFT"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V6a3uCBz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9345019D8A1;
-	Thu,  6 Jun 2024 06:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F9417BD5;
+	Thu,  6 Jun 2024 06:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717654963; cv=none; b=hoVqeyGfAU4yVy/PTgn4rb/VZ0A5eENWvbXTigjr8PMUV6x4uewk0WXkepQVRTfDCm7ACIz+pSM9WpG5CFNdE/ST2crkVfnDAgl9/p+s+IluMmb/IHDSJkSKnZ+kW3y64owvlk0TKk4c+W1ysz3QcwvP8cXmWSZWfglWhhuoyv0=
+	t=1717655045; cv=none; b=eNoXex+ofo4giKjHAQzcg983iB8nhZIZ6GHn7Cw1HXuCfC0YiXwD8dCU/geO4TrzTlJBYuZdi2u0XXcj8DDp647idhl39RVsxgiRXpB5b9zr7rV9quXk0TS542jyKSDhLVnRJH/T48qz+hxXCU6njb/37jUWreAjwPgn87ZbQGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717654963; c=relaxed/simple;
-	bh=yB68uGLMaXT1YV1sbSThDoviU8YPb91HeMCIZFMJbgQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q5XHAo9y54YWFsAGRBGskg9sW5zErO3qIF4Xkj3tVV1kmFSeTAyeVF53T8XBCFP5CRF2Hcap1MIai0dQDLigYATWiOk2hhHg2wKkorK/QWPUIfW8mRhdNtAuM9iJgBPC0Wj3DQAg350XZ90oBYZ2EkOvUShhENqtZhWmrKUbKHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vRU+Xrt7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=87c6PaFT; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 6 Jun 2024 08:22:37 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717654959;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PZbspwahrReSiEYm4PJOvgqOfbLgJT+v5PtwhKLRS5Q=;
-	b=vRU+Xrt7qfOQCVY3ghd5wShqMojUHU2Scch7McyNsNbBycPTimJzgb6hrCTrgzVo7gFnz/
-	QZk4QInUEfFvPtfRmmtRiqpg5A/OIt0TKgiNuxH/kpoIb8HwswgOyZXem1kgjMyGo/BePo
-	YI1RJkl8x8xGJVUcitI9rr7YRzaAUmR7hL9z5sLsFExOTm8NL5PUXmihuTkrp6wa86iSJF
-	LFIyn73IDnn71pcppGenwuIvJK7tbBPGXDll1jM9JDH8wpu/TCGuXDuG7/ztVh4gKKN1zz
-	J7+LlDKVGCEJWxJXgw1M/AfM2WhWzFqQFtdeHFOVGDsHN/jhY3McCXoBiTI3QA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717654959;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PZbspwahrReSiEYm4PJOvgqOfbLgJT+v5PtwhKLRS5Q=;
-	b=87c6PaFTSzuOuHDnarqFAleF2KS2afdlq8GLhiwo1iPMdlo3lj4MrafLsYp7Ao1MqnfWLZ
-	izXGRThGBs4B1KBQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Daniel Bristot de Oliveira <bristot@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Paolo Abeni <pabeni@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v4 net-next 03/14] net: Use nested-BH locking for
- napi_alloc_cache.
-Message-ID: <20240606062237.nuBoHreW@linutronix.de>
-References: <20240604154425.878636-1-bigeasy@linutronix.de>
- <20240604154425.878636-4-bigeasy@linutronix.de>
- <20240605195420.2f47e6a1@kernel.org>
+	s=arc-20240116; t=1717655045; c=relaxed/simple;
+	bh=Xmf+9W3CuWTJtgo6IQWETLoxYV8aWEsYyhvAl4to5BI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=MtDX6pIoFAJhT8ZcwVuL/+RlgFJJ1PxkGb1Bv+Xfdi7sScXIxqOOzp9OkWbqOSxl+atUI3PzEF/eOOSUpBUBAPBG/DoGxswhEzU0KHtN4g7UUxA51nkVNIfdNiIW9fjk4r3kJivqzpS2rRrnRD5GkhqrFb2T/9mCsx3FcmeJ10U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V6a3uCBz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52FB0C2BD10;
+	Thu,  6 Jun 2024 06:24:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717655044;
+	bh=Xmf+9W3CuWTJtgo6IQWETLoxYV8aWEsYyhvAl4to5BI=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=V6a3uCBzKKrXFU0sf5Wio7VKNFk/R+sFFVccK40BceTOBRmpggbf/7GL5usUiHpVT
+	 F7gHqNe/M8rpWA6oAIaJvtxatNMjowRWXNTAgji3i4ivJnpFRqxJ34nTgLHKAdCxu3
+	 oXoqKyrYtbYjL6Mz5PgVF0d+GLfmYaAnTnYIo8YrFYgVgFDLanMbID3cJFdErVQuJg
+	 PVZjN9x+qc0s0EC4LTOD7i4NuU0tLLbiy7ZRSSGrIqqIG2ahSOiusGWnXr1dUkv4Td
+	 nowd9hYqGEMTNBddwSYaxqD8Diyp6Z94nRNJeScCS22oXvoVchPylY/4eGAh/Fk5bl
+	 3uEpd+nCPa4QQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240605195420.2f47e6a1@kernel.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 06 Jun 2024 09:23:58 +0300
+Message-Id: <D1SPW7EF9CTN.1BY6S0JCPDPPY@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Huang, Kai"
+ <kai.huang@intel.com>, "Haitao Huang" <haitao.huang@linux.intel.com>,
+ <dave.hansen@linux.intel.com>, <tj@kernel.org>, <mkoutny@suse.com>,
+ <linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
+ <x86@kernel.org>, <cgroups@vger.kernel.org>, <tglx@linutronix.de>,
+ <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+ <sohil.mehta@intel.com>, <tim.c.chen@linux.intel.com>
+Cc: <zhiquan1.li@intel.com>, <kristen@linux.intel.com>, <seanjc@google.com>,
+ <zhanb@microsoft.com>, <anakrish@microsoft.com>,
+ <mikko.ylinen@linux.intel.com>, <yangjie@microsoft.com>,
+ <chrisyan@microsoft.com>
+Subject: Re: [PATCH v14 14/14] selftests/sgx: Add scripts for EPC cgroup
+ testing
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240531222630.4634-1-haitao.huang@linux.intel.com>
+ <20240531222630.4634-15-haitao.huang@linux.intel.com>
+ <D1RKK8CENNXI.1KMNDADV9C1YM@kernel.org>
+ <op.2owf5xiwwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <7cbf3583-a23e-4437-afc2-1faeb4a1f436@intel.com>
+ <D1SPTDBBDU6F.2WLRZKYZWWTRB@kernel.org>
+In-Reply-To: <D1SPTDBBDU6F.2WLRZKYZWWTRB@kernel.org>
 
-On 2024-06-05 19:54:20 [-0700], Jakub Kicinski wrote:
-> On Tue,  4 Jun 2024 17:24:10 +0200 Sebastian Andrzej Siewior wrote:
-> > @@ -308,6 +311,7 @@ void *__napi_alloc_frag_align(unsigned int fragsz, unsigned int align_mask)
-> >  	struct napi_alloc_cache *nc = this_cpu_ptr(&napi_alloc_cache);
-> >  
-> >  	fragsz = SKB_DATA_ALIGN(fragsz);
-> > +	guard(local_lock_nested_bh)(&napi_alloc_cache.bh_lock);
-> >  
-> >  	return __page_frag_alloc_align(&nc->page, fragsz, GFP_ATOMIC,
-> >  				       align_mask);
-> 
-> We have decided to advise against the use of guard() in networking, 
-> at least for now.
+On Thu Jun 6, 2024 at 9:20 AM EEST, Jarkko Sakkinen wrote:
+> > There are existing code where BUG_ON() is used during the kernel early=
+=20
+> > boot code when memory allocation fails (e.g., see cgroup_init_subsys())=
+,=20
+> > so it might be acceptable to use BUG_ON() here, but it's up to=20
+> > maintainers to decide whether it is OK.
+>
+> When it is not possible continue to run the system at all, and only
+> then.
+>
+> Here it is possible. Without SGX.
 
-Understood.
+With this logic sgx_init() should call BUG() in the error paths.
 
-> Andrew, wasn't it on your TODO list to send the update to the docs? :)
-I can add it to
-	Documentation/process/maintainer-netdev.rst
-
-Yes, no, Andrew?
-
-Sebastian
+BR, Jarkko
 
