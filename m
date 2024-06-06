@@ -1,320 +1,126 @@
-Return-Path: <linux-kernel+bounces-204306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F8318FE6FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:59:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322798FE6FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:01:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F292E1C22247
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:59:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 954D1283409
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903FA195F06;
-	Thu,  6 Jun 2024 12:58:38 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150F4195B36
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF30D195B1F;
+	Thu,  6 Jun 2024 13:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="k3FKzFlQ"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88DB1E868
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 13:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717678717; cv=none; b=JmXw1ILXwlVYNJAomtStfL/yly+J6AIFvRePP31lOzeo64yRWjLxeKlOM7pwNZBljjx7yBsGg51OPT3RyVkUyk3yrg+mkZh61BLD7VPj+0SJ4h8oTEXnLW0pdV7LvwnXkJepyf7XiwcA5EDpibCypTsjfNAnMHtvAtsIhoDuWOI=
+	t=1717678872; cv=none; b=J3bOVxqctgpg1UnxAVOEUxRIZksAlyIYJKyHfEHg03rGXJSu6UxaFy1oc0fUSg96sLrMPNyO8OoQqy0k9d8cbnushEuJA33y6odqYgayOw7xxPDBOlKk5kr0bTw9LiFilRGUypj+QwIK5xjpSkMyWGDVTxhg8iuYq2eDhr0U220=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717678717; c=relaxed/simple;
-	bh=yoys+3JRRN2n5ze9L4pWq5Mtn0CwRaad6toh+QE8ngM=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=U7lvgqHQLROSA5m8avU4GvnCABMlZjNnNmhNkxeeYJi8rt19VwjLKzDH8icy945mOErRiRm3xsbegeJcB8wNtL7o5keUsUDJKp8GtVksjAg61K9AeEyiD9lXgU1Eg3abKofMN7LySrBmTdLYw0vpvWkuBnYNGqTl4U2Xlh9klW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.239])
-	by gateway (Coremail) with SMTP id _____8Bx3+t4smFmszwEAA--.2052S3;
-	Thu, 06 Jun 2024 20:58:32 +0800 (CST)
-Received: from [10.20.42.239] (unknown [10.20.42.239])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8CxLMdxsmFmi+0WAA--.57439S3;
-	Thu, 06 Jun 2024 20:58:27 +0800 (CST)
-Subject: Re: [PATCH] irqchip/loongson-eiointc: Add extioi virt extension
- support
-To: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Cc: chenhuacai@kernel.org, jiaxun.yang@flygoat.com, maobibo@loongson.cn
-References: <20240605070229.2569875-1-gaosong@loongson.cn>
- <87a5jz47hc.ffs@tglx>
-From: gaosong <gaosong@loongson.cn>
-Message-ID: <d5efc13a-f719-bc77-1adb-feb73a8155b4@loongson.cn>
-Date: Thu, 6 Jun 2024 20:58:26 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1717678872; c=relaxed/simple;
+	bh=JuUsKChiLT+vfrAvapauPrs05KYeEB5xAXVHns6YIng=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ZM1P/rYvYOb4ORcAsKuVU7uqUVqEJ4HgIuHoGEVETUVdkKZtNvT1+YXIt7EguCCU/KyzvFqfD+KUx6l3nuVaBLrWISCU1jd5Za+9qjvm4Z6/au6lfSYY3H1NBty2nBPusFXSYIVN3MjaWJgF06HRjr3dOU0q7TdS4gvC2t+l9rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=k3FKzFlQ; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6ae60725ea1so5275326d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 06:01:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1717678869; x=1718283669; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c+/smkBmATmw+XKww99raJg0ggR9T5aTjmAVyB+/Cqc=;
+        b=k3FKzFlQkT4qoDF1MvnbQBlwu4mdk3vAeS7I0HAqYXVlV3/T7VBvEAkp+OP9DDDfUP
+         yhf04BuTLkeyjtWQcGDA/2wRKXUK4/PaRWmoy2RoWqwQls8dJMCAkZnYnXmj/It8N7fk
+         hZWfg/fTVqzP1mwHEEk1nVMqiC+sIsiE9yvEs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717678869; x=1718283669;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c+/smkBmATmw+XKww99raJg0ggR9T5aTjmAVyB+/Cqc=;
+        b=OL4NlWgR6l9XgRupDUzEi4MBknF1P7FcL7uNyAyLHxqEH/oKyrjRiL1dj3pTubjK5+
+         8FFYua5kxq7ymWYnrtvxkG95PChuH5ExbpGeZFMhBniy7PzVOCg2nMIzC7Robp2nu4Ob
+         5evcPHPI99chnJ39Q9v82ZrqgxNY6ZyxC/NjiMRFpof5RuPxZfmeFqcKPKC284tbgpT9
+         oyNwvV4NsdflJdWYaEaHU4IIsD+rW2ZqeqZiQ06ZV6Rp8P2b7TGMFLTaKGjC4MWfQtEK
+         S5h6f5GDZkRdy2uVKwIIw/ZzBbhcFexpBcguNwy13s8+rcv9o0/FFln4oBKWTi3jC7+h
+         N6gw==
+X-Forwarded-Encrypted: i=1; AJvYcCXpCnC56UzFN7bAwBTr2PpcVrM7A0Y2POJcYG2ZG79i1w73xAXYyNIc3Ilk7FkYCdc5Ff7HeW6Rjn5TBRL/D1Si3hZQ7Dn7RMzve5c0
+X-Gm-Message-State: AOJu0YylCz1hUpV7kQKOOcWRslppHUXijy7wI/TnV2AvT2ZZG6mFZERR
+	Aa/jzyrDwHGmQ6/gb0Q//qXaggRiEEn+4LW8og3BP3l15omjavqntPXDHZ5cBQ==
+X-Google-Smtp-Source: AGHT+IH6JUdnRck7CPLLbnhrGIHcZXdHdRadjMOXloMShAFg/P7yO2dY07pA9eCBWDpCwxUBYv7E1A==
+X-Received: by 2002:a05:6214:5d8b:b0:6ab:83a5:195 with SMTP id 6a1803df08f44-6b030a96731mr59407256d6.41.1717678869377;
+        Thu, 06 Jun 2024 06:01:09 -0700 (PDT)
+Received: from denia.c.googlers.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b04f6c4022sm5998646d6.51.2024.06.06.06.01.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 06:01:08 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Thu, 06 Jun 2024 13:01:07 +0000
+Subject: [PATCH] media: c8sectpfe: Add missing parameter names
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <87a5jz47hc.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:AQAAf8CxLMdxsmFmi+0WAA--.57439S3
-X-CM-SenderInfo: 5jdr20tqj6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW3XrW5Zry3tF17uFyktFy7urX_yoW3tr47pF
-	W0kFZxtrWjqFWSg3yvqFs5JFyayr93GrWDtF43Gayrta4F9r109F1vgrnxuF1xCrWkCFWa
-	v343X34Uuw1qy3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv
-	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
-	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
-	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1Ek
-	sDUUUUU==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240606-c8sectpfe-v1-1-c4b18f38295d@chromium.org>
+X-B4-Tracking: v=1; b=H4sIABKzYWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDMwMz3WSL4tTkkoK0VF3TNAODJEsLM/M0YzMloPqCotS0zAqwWdGxtbU
+ Au5rR9VsAAAA=
+To: Patrice Chotard <patrice.chotard@foss.st.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <ndesaulniers@google.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+ kernel test robot <lkp@intel.com>, Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.12.4
 
-Hi Thomas,
+clang 19 complains about the missing parameter name. Let's add it.
 
-Thanks for your comments
+drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-debugfs.h:19:62: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
 
-在 2024/6/6 上午1:36, Thomas Gleixner 写道:
-> On Wed, Jun 05 2024 at 15:02, Song Gao wrote:
->> Currently IRQs can be routed to only 4 vcpus with one Hw extioi.
-> Can you please use proper words instead of acronyms?
->
-> Interrupts can be routed to maximal four virtual CPUs with one external
-> hardware interrupt.
-Yes,  I will correct it.
->> This patch adds the extioi virt extension support so that IRQs can
-> git grep 'This patch' Documentation/process/
->
->> be routed to 256 vcpus on hypervior mode.
->>
->> Now IRQs is emulated in userspace, so the extioi virt device emulation
->> is implemented in userspace firstly.
-> I'm failing to understand what this means and how this and the link are
-> relevant to the change log and the change itself.
-I will clean it.
->> See:
->>    https://patchew.org/QEMU/20240528083855.1912757-1-gaosong@loongson.cn/
->>   
->> +#define EXTIOI_VIRT_FEATURES           0x40000000
->> +#define  EXTIOI_HAS_VIRT_EXTENSION     0
->> +#define  EXTIOI_HAS_ENABLE_OPTION      1
->> +#define  EXTIOI_HAS_INT_ENCODE         2
->> +#define  EXTIOI_HAS_CPU_ENCODE         3
->> +#define EXTIOI_VIRT_CONFIG             0x40000004
->> +#define  EXTIOI_ENABLE                 1
->> +#define  EXTIOI_ENABLE_INT_ENCODE      2
->> +#define  EXTIOI_ENABLE_CPU_ENCODE      3
-> These are clearly bits. So why not define them as BIT(0), so you can
-> spare that at the usage site?
-Got it.
-> Also why defining all of this when there are only two defines used?
-BIT(1) and BIT(2) correspond to Bit Fields 48 and 49 of Table 28 in 
-Section 4.13 of Manual [1].
-These are present in the physical hardware, just not yet used in the 
-software logic.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202406050908.1kL1C69p-lkp@intel.com/
+Fixes: e22b4973ee20 ("media: c8sectpfe: Do not depend on DEBUG_FS")
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+ drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-debugfs.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-[1] 
-https://github.com/loongson/LoongArch-Documentation/releases/download/2023.04.20/Loongson-3A5000-usermanual-v1.03-EN.pdf
+diff --git a/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-debugfs.h b/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-debugfs.h
+index 8e1bfd860524..3fe177b59b16 100644
+--- a/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-debugfs.h
++++ b/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-debugfs.h
+@@ -16,8 +16,8 @@
+ void c8sectpfe_debugfs_init(struct c8sectpfei *);
+ void c8sectpfe_debugfs_exit(struct c8sectpfei *);
+ #else
+-static inline void c8sectpfe_debugfs_init(struct c8sectpfei *) {};
+-static inline void c8sectpfe_debugfs_exit(struct c8sectpfei *) {};
++static inline void c8sectpfe_debugfs_init(struct c8sectpfei *fei) {};
++static inline void c8sectpfe_debugfs_exit(struct c8sectpfei *fei) {};
+ #endif
+ 
+ #endif /* __C8SECTPFE_DEBUG_H */
 
->> +
->>   #define VEC_REG_COUNT		4
->>   #define VEC_COUNT_PER_REG	64
->>   #define VEC_COUNT		(VEC_REG_COUNT * VEC_COUNT_PER_REG)
->> @@ -41,6 +51,7 @@ struct eiointc_priv {
->>   	cpumask_t		cpuspan_map;
->>   	struct fwnode_handle	*domain_handle;
->>   	struct irq_domain	*eiointc_domain;
->> +	bool			cpu_encoded;
->>   };
->>   
->>   static struct eiointc_priv *eiointc_priv[MAX_IO_PICS];
->> @@ -56,7 +67,9 @@ static void eiointc_enable(void)
->>   
->>   static int cpu_to_eio_node(int cpu)
->>   {
->> -	return cpu_logical_map(cpu) / CORES_PER_EIO_NODE;
->> +	int cores = (cpu_has_hypervisor ? MAX_CORES_PER_EIO_NODE : CORES_PER_EIO_NODE);
-> Pointless brackets.
-Got it.
->> +
->> +	return cpu_logical_map(cpu) / cores;
->>   }
->>   
->>   #ifdef CONFIG_SMP
->> @@ -88,6 +101,20 @@ static void eiointc_set_irq_route(int pos, unsigned int cpu, unsigned int mnode,
->>   
->>   static DEFINE_RAW_SPINLOCK(affinity_lock);
->>   
->> +static void virt_extioi_set_irq_route(int irq, unsigned int cpu)
-> unsigned int irq;
->
-> But this is about vectors not interrupts. So please name it
-> accordingly. 'irq' is just confusing. I had to look up the call site to
-> figure out what this is about.
-Thanks for your suggestion.
->> +{
->> +        int data;
-> This represents a hardware register value, so the data type wants to be
-> u32, no?
-I will correct it.
->> +        /*
->> +         * get irq route info for continuous 4 vectors
->> +         * and set affinity for specified vector
->> +         */
->> +        data = iocsr_read32(EIOINTC_REG_ROUTE + (irq & ~3));
->> +        data &=  ~(0xff << ((irq & 3) * 8));
->> +        data |= cpu_logical_map(cpu) << ((irq & 3) * 8);
->> +        iocsr_write32(data, EIOINTC_REG_ROUTE + (irq & ~3));
-> This all consists of undocumented magic numeric constants '3', '0xff',
-> 8. Documentation clearly tells not to do so.
->
-> /*
->   * Routing registers contain four vectors and have an offset of four to
->   * the base. The routing information is 8 bit wide.
->   */
-> #define EIOINTC_REG_ROUTE(vector)			\
-> 	(0x1c00 + (vector & ~0x03)
->
-> #define EIOINTC_REG_ROUTE_SHIFT(vector)			\
-> 	((vector & 0x03) << 3)
->
-> #define EIOINTC_REG_ROUTE_MASK(vector)			\
-> 	(0xff << EIOINTC_REG_ROUTE_SHIFT(vector))
->
-> Those can be used to simplify the existing code pretty much in a
-> preparatory patch and then the above becomes:
->
->       unsigned long reg = EIOINTC_REG_ROUTE(vector);
->       u32 data = iocsr_read32(reg);
->
->       data &= EIOINTC_REG_ROUTE_MASK(vector);
->       data |= cpu_logical_map(cpu) << EIOINTC_REG_ROUTE_SHIFT(vector);
->       iocsr_write32(reg, data);
->
-> See how this makes the code suddenly comprehensible?
-Yes, the code is very concise, thanks for the example.
->>   static int eiointc_set_irq_affinity(struct irq_data *d, const struct cpumask *affinity, bool force)
->>   {
->>   	unsigned int cpu;
->> @@ -106,16 +133,22 @@ static int eiointc_set_irq_affinity(struct irq_data *d, const struct cpumask *af
->>   	vector = d->hwirq;
->>   	regaddr = EIOINTC_REG_ENABLE + ((vector >> 5) << 2);
->>   
->> -	/* Mask target vector */
->> -	csr_any_send(regaddr, EIOINTC_ALL_ENABLE & (~BIT(vector & 0x1F)),
->> -			0x0, priv->node * CORES_PER_EIO_NODE);
->> -
->> -	/* Set route for target vector */
->> -	eiointc_set_irq_route(vector, cpu, priv->node, &priv->node_map);
->> -
->> -	/* Unmask target vector */
->> -	csr_any_send(regaddr, EIOINTC_ALL_ENABLE,
->> -			0x0, priv->node * CORES_PER_EIO_NODE);
->> +	if (priv->cpu_encoded) {
->> +		iocsr_write32(EIOINTC_ALL_ENABLE & ~BIT(vector & 0x1F), regaddr);
-> There exists BIT_MASK() and please get rid of these numeric constants.
-How about this:
+---
+base-commit: 1aea3d1d4a21e3e7895663b848ffae79ee82e065
+change-id: 20240606-c8sectpfe-5f00b9867f36
 
-   #define EIOINTC_ALL_ENABLE     0xffffffff
-+#define EIOINTC_ALL_ENABLE_MASK(vector)        \
-+           (EIOINTC_ALL_ENABLE & ~BIT(vector & 0x1F))
-+#define EIOINTC_REG_ENABLE(vector)                 \
-+           (EIOINTC_REG_ENABLE + (vector >> 5) << 2)
-
->> +		virt_extioi_set_irq_route(vector, cpu);
->> +		iocsr_write32(EIOINTC_ALL_ENABLE, regaddr);
->> +	} else {
->> +		/* Mask target vector */
->> +		csr_any_send(regaddr, EIOINTC_ALL_ENABLE & (~BIT(vector & 0x1F)),
->> +				0x0, priv->node * CORES_PER_EIO_NODE);
->> +
->> +		/* Set route for target vector */
->> +		eiointc_set_irq_route(vector, cpu, priv->node, &priv->node_map);
->> +
->> +		/* Unmask target vector */
->> +		csr_any_send(regaddr, EIOINTC_ALL_ENABLE,
->> +				0x0, priv->node * CORES_PER_EIO_NODE);
-> Please follow the documented tip tree coding style for line breaks.
-OK.
->> +	}
->>   
->>   	irq_data_update_effective_affinity(d, cpumask_of(cpu));
->>   
->> @@ -143,13 +176,14 @@ static int eiointc_router_init(unsigned int cpu)
->>   	uint32_t data;
->>   	uint32_t node = cpu_to_eio_node(cpu);
->>   	int index = eiointc_index(node);
->> +	int cores = (cpu_has_hypervisor ? MAX_CORES_PER_EIO_NODE : CORES_PER_EIO_NODE);
-> Sigh. Please use the documented ordering of variable declaration
-> ordering.
-
-Sorry, I didn't find the information in document [1].
-
-[1]: https://www.kernel.org/doc/html/next/process/coding-style.html
-
-
-How about this:
-
-  static int eiointc_router_init(unsigned int cpu)
-  {
--       int i, bit;
--       uint32_t data;
--       uint32_t node = cpu_to_eio_node(cpu);
--       int index = eiointc_index(node);
--       int cores = (cpu_has_hypervisor ? MAX_CORES_PER_EIO_NODE : CORES_PER_EIO_NODE);
-+       int i, bit, cores, index;
-+       uint32_t data, node;
-+
-+       node = cpu_to_eio_node(cpu);
-+       index = eiointc_index(node);
-  
-         if (index < 0) {
-                 pr_err("Error: invalid nodemap!\n");
-                 return -1;
-         }
-  
-+       cores = cpu_has_hypervisor ? MAX_CORES_PER_EIO_NODE : CORES_PER_EIO_NODE;
-+
-         if ((cpu_logical_map(cpu) % cores) == 0) {
-
->>   	if (index < 0) {
->>   		pr_err("Error: invalid nodemap!\n");
->>   		return -1;
-> What is -1? Error codes exist for a reason.
-I will use -EINVAL.
->>   static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq,
->>   			       u64 node_map)
->>   {
->> -	int i;
->> +	int i, val;
-> again u32 ...
-Got it .
-
-Thanks again for your comments.
-
-Thanks
-Song Gao
->    
->>   	node_map = node_map ? node_map : -1ULL;
->>   	for_each_possible_cpu(i) {
->> @@ -389,6 +425,17 @@ static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq,
->>   		return -ENOMEM;
->>   	}
->>   
->> +	if (cpu_has_hypervisor) {
->> +		val = iocsr_read32(EXTIOI_VIRT_FEATURES);
->> +		if (val & BIT(EXTIOI_HAS_CPU_ENCODE)) {
->> +			val = iocsr_read32(EXTIOI_VIRT_CONFIG);
->> +			val |= BIT(EXTIOI_ENABLE_CPU_ENCODE);
->> +			iocsr_write32(val, EXTIOI_VIRT_CONFIG);
->> +			priv->cpu_encoded = true;
->> +			pr_info("loongson-extioi: enable cpu encodig \n");
->> +		}
-> Thanks,
->
->          tglx
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
 
 
