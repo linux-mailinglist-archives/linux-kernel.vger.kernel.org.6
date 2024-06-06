@@ -1,144 +1,168 @@
-Return-Path: <linux-kernel+bounces-204815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D7F8FF3DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:34:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA538FF3DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E852E1C27A32
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:34:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DD2028DC6F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E8C1990BE;
-	Thu,  6 Jun 2024 17:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85D31990B2;
+	Thu,  6 Jun 2024 17:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b="YJO1Diat"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="YIMRUiFy"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A195938DC7
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 17:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3500E38DC7
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 17:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717695278; cv=none; b=FYq9Vk/7o9yZWPPN2i8Aby4ByGP7gHPoGXb+1ss/OMEUvKJSs2bXMtIvHpEo4FkigI1lZ+n4GjbI+XMCiSNGUUVD3lx9EwOyqbCyaWeMraoamg89jTGGT2Ph9MxtwIm8TUWlh4b/obllDe+7OLEqM/73bP5ymKJYoqHx0qdIkhU=
+	t=1717695312; cv=none; b=RatDhdMbv8XdIeEt4s1xG9C6EV7BMPHsSMQmbFLTDf4DZLgXOrS7RGjYSLtxyb+pMNWpvfqBeisYAvlOqTFdcBfLi7Y5FqVmRoiuqndjumhf95EOynlspEMVUv6PqoRzqLP1I01blum1UhnLgjqs76rp3mV9tdR6V5hqpiN4fzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717695278; c=relaxed/simple;
-	bh=Mwm44gSX2pJSO1DQZKq/bU47/WAyUUvkVlSXQ5KADlE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WSR5HRhkc6tRVgGrs9EMScMs3s6jYlyhBMmPdMwaq1SAryHCEw0XztjGPYCjGlXo3k+clFjV6wVH8LzhbGiWsBSM/KMaBQ7/ZdkScvlAv78bnIDdXcndFYlxhomJIPhyqISX/kG7oXgY07LOSEFXvRYxCFy7UJbOAcuNmDFImug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com; spf=none smtp.mailfrom=osandov.com; dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b=YJO1Diat; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=osandov.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f692d6e990so12785915ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 10:34:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20230601.gappssmtp.com; s=20230601; t=1717695276; x=1718300076; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AAulxVnYL/xyKaB3vnDRoKBoF0F084Ubuhab5n7H9jo=;
-        b=YJO1Diat12qRHgRFZWWqBb3KbE33vc5ktBSHZTqYRHvyq4z4Z+2fKwebosbdoHGZsq
-         fd04O80vSJ4FLQsa5wbXmUmbbS5Izkx0Bpaz17aO+Zqt/mSyAGq7iuBbABhW6CIsZszR
-         WJyq6aE02SrNBKBkwctYJLM9dqZV0zGIlBgN9bHVxyXtYcpACpUtSmABkPUv7n4U+nxd
-         hn8J7rcTf6Dy4YyqEX/c9OzGhgJtp+uVmuLNU/DOWCjNqmxIYPDKPoWRr9HmCXKcAXja
-         SebV03S5FUqTRloqn2Zl6tXQyeG9rUmBCHu/gL0VYBLR8ACtPAkazyB6mhvb8OiCREKF
-         0A7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717695276; x=1718300076;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AAulxVnYL/xyKaB3vnDRoKBoF0F084Ubuhab5n7H9jo=;
-        b=u0FU+ftgWYttmr3u0xcr76nGmzoaG3D83Ap/bVGakP1UlJkp8B/5WJk8LsP2HJhQai
-         NP7H9gmu0jHuky5p+3oLArnsq1Goviqm5DY8u+yBbGcbeMV0oYwpqbJzMWUxpqIShAiu
-         p2OcYDvFjrrgwV2Yd/lcoptdc5FXrQ312oYuS5M0gEG7leUTKjc7Mcvt1D0znAqLpYk8
-         lofZK2ekedfM4URZayn8ZzMoo+Emd3QY3IpDB8js1pnqfWep+kTaYBZf70W/VE2kA9I/
-         qJPFD2XimCAN4uERK1ewukH2PPq5AJDBlLPdAeVZjc6fe+ukJKfACxjemKqYIVNT4N37
-         ++5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVUlBQC9oKO3ifQBWBHTImQRyMBBXf8YsoeHNw7NL+VLOzj/tHTRTK//gjHiyuGzS62NYObnkrMMBqpE5c48hpnsKqhnYIFKyKz+KQX
-X-Gm-Message-State: AOJu0Yx3rLVwhvJxw3EIcPXntIWSEQwY3MaRZyfGa8dG/XrfHcb/NzEF
-	SikHHQ8wcZd7ipokhy8ElGxuqTxqUAmAujuGR7jjlaZFKvIEiOMaMQHcJKNO40iauFQ7Mdrq0MR
-	gXeg=
-X-Google-Smtp-Source: AGHT+IFF5YghgVig/RYReBOoP5uz9DUPAWXJpwtPKtVnFV4hSzqDyvhiRUIt9MC0+IujJ6KGfql9Zw==
-X-Received: by 2002:a17:902:dac6:b0:1f6:678c:9e8c with SMTP id d9443c01a7336-1f6d03be125mr2564165ad.67.1717695275716;
-        Thu, 06 Jun 2024 10:34:35 -0700 (PDT)
-Received: from telecaster.dhcp.thefacebook.com ([2620:10d:c090:400::5:ae4b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd76aa80sm17769735ad.69.2024.06.06.10.34.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 10:34:35 -0700 (PDT)
-Date: Thu, 6 Jun 2024 10:34:33 -0700
-From: Omar Sandoval <osandov@osandov.com>
-To: Stephen Brennan <stephen.s.brennan@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-	Hao Ge <gehao@kylinos.cn>, Vlastimil Babka <vbabka@suse.cz>,
-	"Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	linux-debuggers@vger.kernel.org
-Subject: Re: [PATCH] mm: convert page type macros to enum
-Message-ID: <ZmHzKRkgKOGW8Xmk@telecaster.dhcp.thefacebook.com>
-References: <20240606172530.829790-1-stephen.s.brennan@oracle.com>
+	s=arc-20240116; t=1717695312; c=relaxed/simple;
+	bh=uupDSeWXdAPWvc2kL9o+GSBoSZKN1q738oHE+tt4FRc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=uJBnImsT+tCEvf/F63DWrMnui/oip6hPFxZJ/ciWHq88+ElAB4pcUH1YaGk6F9DUHME2nVJZvOpBlnpOESd/kMZsfh6oTmXT5HE81pi0ife3g1ed741L7TaJ5ruqFKIzfRbyGPO5KL0D8XV986ULYCwUyWl4hfPl/0CQJwAtS2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=YIMRUiFy; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=CUuCxid6NILsuNvzm9Fa8Mpc8mnuooImrZQ0s/si8+0=; b=YIMRUiFyJNP4LtyC2Zz0njPusb
+	6MUnjSmeRNscKJwJrMmBrHRnpon1Cgz7Cn8KEwkebwcL1vh5gf2G3j9pMGGega55FToZdPeziCvCh
+	obDd33IkMMavputh8MWl4EMDapomp6o/mdoRY8migmuwuSuFi3TSLW+21zyK+/9JhynVgd7y2Mk8d
+	862AkSqVarEEmGYP3/pY0h4Nx3HCzk4vaX9NHTR5dafRvWav361qPlMPsGkVpfQbB0tPcITvYj20P
+	zD8pMoz4+L9YFsQ7KR4bofFRUMhHidUAoSlT5JRNg+g1cr9Au/ITNxNg437EZmxe0N8DttoDHPS+e
+	DhiVlRaA==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <esben@geanix.com>)
+	id 1sFH15-0004DR-6T; Thu, 06 Jun 2024 19:35:07 +0200
+Received: from [80.62.117.184] (helo=localhost)
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <esben@geanix.com>)
+	id 1sFH11-00019h-1M;
+	Thu, 06 Jun 2024 19:35:07 +0200
+From: Esben Haabendal <esben@geanix.com>
+To: "Michael Walle" <mwalle@kernel.org>
+Cc: "Tudor Ambarus" <tudor.ambarus@linaro.org>,  "Pratyush Yadav"
+ <pratyush@kernel.org>,  "Miquel Raynal" <miquel.raynal@bootlin.com>,
+  "Richard Weinberger" <richard@nod.at>,  "Vignesh Raghavendra"
+ <vigneshr@ti.com>,  <linux-mtd@lists.infradead.org>,
+  <linux-kernel@vger.kernel.org>,  "Rasmus Villemoes"
+ <rasmus.villemoes@prevas.dk>
+Subject: Re: [PATCH] mtd: spi-nor: macronix: workaround for device id re-use
+In-Reply-To: <D1SZA4ZDM06P.CJC0EQ9ULA04@kernel.org> (Michael Walle's message
+	of "Thu, 06 Jun 2024 15:45:20 +0200")
+References: <20240524-macronix-mx25l3205d-fixups-v1-1-ee152e56afb3@geanix.com>
+	<D1Q7BU6PJ356.1CTXPUZE8U6XX@kernel.org>
+	<8513a828-6669-4bf3-91d3-799771866f32@linaro.org>
+	<D1SZA4ZDM06P.CJC0EQ9ULA04@kernel.org>
+Date: Thu, 06 Jun 2024 19:35:06 +0200
+Message-ID: <87msny9dpx.fsf@geanix.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606172530.829790-1-stephen.s.brennan@oracle.com>
+Content-Type: text/plain
+X-Authenticated-Sender: esben@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27298/Thu Jun  6 10:30:08 2024)
 
-On Thu, Jun 06, 2024 at 10:25:29AM -0700, Stephen Brennan wrote:
-> Changing PG_slab from a page flag to a page type in commit 46df8e73a4a3
-> ("mm: free up PG_slab") in has the unintended consequence of removing
-> the PG_slab constant from kernel debuginfo. The commit does add the
-> value to the vmcoreinfo note, which allows debuggers to find the value
-> without hardcoding it. However it's most flexible to continue
-> representing the constant with an enum. To that end, convert the page
-> type fields into an enum. Debuggers will now be able to detect that
-> PG_slab's type has changed from enum pageflags to enum page_type.
-> 
-> Fixes: 46df8e73a4a3 ("mm: free up PG_slab")
-> 
-> Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
-> ---
->  include/linux/page-flags.h | 15 +++++++++------
->  1 file changed, 9 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index 104078afe0b16..64fc191a75e8d 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -947,12 +947,15 @@ PAGEFLAG_FALSE(HasHWPoisoned, has_hwpoisoned)
->  #define PAGE_TYPE_BASE	0xf0000000
->  /* Reserve		0x0000007f to catch underflows of _mapcount */
->  #define PAGE_MAPCOUNT_RESERVE	-128
+"Michael Walle" <mwalle@kernel.org> writes:
 
-Adding linux-debuggers to Cc.
+>> >> + */
+>> >> +static int
+>> >> +mx25l3205d_late_init(struct spi_nor *nor)
+>> >> +{
+>> >> +	struct spi_nor_flash_parameter *params = nor->params;
+>> >> +
+>> >> +	/*                          DREAD  2READ  QREAD  4READ
+>> >> +	 *                          1-1-2  1-2-2  1-1-4  1-4-4
+>> >> +	 * Before SFDP parse          1      0      1      0
+>> >> +	 * 3206e after SFDP parse     1      0      0      0
+>> >> +	 * 3233f after SFDP parse     1      1      1      1
+>> >> +	 * 3205d after this func      0      1      0      0
+>> >> +	 */
+>> >> +	if ((params->hwcaps.mask & SNOR_HWCAPS_READ_1_1_4) &&
+>> >> +	    !(params->hwcaps.mask & SNOR_HWCAPS_READ_1_4_4)) {
+>> >> +		/* Should be MX25L3205D */
+>> >> +		params->hwcaps.mask &= ~SNOR_HWCAPS_READ_1_1_2;
+>> >> +		spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_1_1_2],
+>> >> +					  0, 0, 0, 0);
+>> >> +		params->hwcaps.mask &= ~SNOR_HWCAPS_READ_1_1_4;
+>> >> +		spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_1_1_4],
+>> >> +					  0, 0, 0, 0);
+>> >> +		params->hwcaps.mask |= SNOR_HWCAPS_READ_1_2_2;
+>> >> +		spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_1_2_2],
+>> >> +					  0, 4, SPINOR_OP_READ_1_2_2,
+>> >> +					  SNOR_PROTO_1_2_2);
+>> >> +	}
+>> >> +
+>> >> +	return 0;
+>> >> +}
+>> >> +
+>> >> +static const struct spi_nor_fixups mx25l3205d_fixups = {
+>> >> +	.late_init = mx25l3205d_late_init,
+>> >> +};
+>> >> +
+>> >>  static int
+>> >>  mx25l25635_post_bfpt_fixups(struct spi_nor *nor,
+>> >>  			    const struct sfdp_parameter_header *bfpt_header,
+>> >> @@ -61,7 +118,8 @@ static const struct flash_info macronix_nor_parts[] = {
+>> >>  		.id = SNOR_ID(0xc2, 0x20, 0x16),
+>> >>  		.name = "mx25l3205d",
+>> >>  		.size = SZ_4M,
+>> >> -		.no_sfdp_flags = SECT_4K,
+>> >> +		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+>> >> +		.fixups = &mx25l3205d_fixups
+>> >>  	}, {
+>> >>  		.id = SNOR_ID(0xc2, 0x20, 0x17),
+>> >>  		.name = "mx25l6405d",
+>> >>
+>>
+>> If all support 1-1-2, (seems MX25L3205D doesn't), then we may have a
+>> change to don't update the core.
+>>
+>> Frankly I don't care too much about what happens in the manufacturer
+>> drivers, but I do care about the core and to not extend it with . This
+>> patch is not too heavy to be unmaintainable and shows clear where the
+>> problem is, we can keep this as well.
+>
+> It's a horrible hack. For example I'm working on a patch to clean up
+> the spi_nor_set_read_settings() handling. So just throwing any code
+> into vendor drivers doesn't make it any better in terms of
+> maintainability. I'd need to touch all the code anyway. In fact it
+> makes it even worse, because it looks like the manufacturer drivers
+> are just a dumping ground for bad things. Thus, I'd really have it
+> handled in a correct way inside the core.
+>
+> Also, this is not device specific. Let there be two different
+> flashes with the same ID, but one support SFDP and one doesn't.
+> Right now, you have to have any of the magic flags (dual, quad,
+> etc) set to trigger an SFDP parsing. If the flash without SFDP
+> doesn't support any of these, like in this case, we are screwed.
+> Hence we might need such a flag also for other flashes.
 
-Can we also get PAGE_TYPE_BASE and PAGE_MAPCOUNT_RESERVE as enums? That
-would make it possible for debuggers to implement PageType() and
-page_has_type().
+Also, it is not very obvious that you can trigger SFDP parsing by
+setting these dual/quad bits.  Having an explicit flag to cause this
+behvaiour would be much better IMHO.
 
-> -#define PG_buddy	0x00000080
-> -#define PG_offline	0x00000100
-> -#define PG_table	0x00000200
-> -#define PG_guard	0x00000400
-> -#define PG_hugetlb	0x00000800
-> -#define PG_slab		0x00001000
-> +
-> +enum page_type {
-> +	PG_buddy	= 0x00000080,
-> +	PG_offline	= 0x00000100,
-> +	PG_table	= 0x00000200,
-> +	PG_guard	= 0x00000400,
-> +	PG_hugetlb	= 0x00000800,
-> +	PG_slab		= 0x00001000,
-> +};
->  
->  #define PageType(page, flag)						\
->  	((page->page_type & (PAGE_TYPE_BASE | flag)) == PAGE_TYPE_BASE)
-> -- 
-> 2.43.0
-> 
+>> Other option that I'd like you to consider is whether we just remove
+>> support for MX25L3205D, thus the entry altogether, and instead rely on
+>> SFDP to set everything.
+>
+> Well, this will break boards with this flash :) And we don't know if
+> there are any.
 
