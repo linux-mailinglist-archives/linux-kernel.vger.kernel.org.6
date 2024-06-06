@@ -1,77 +1,83 @@
-Return-Path: <linux-kernel+bounces-204942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5EE18FF54B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:30:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F9D98FF54D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F470287CFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:30:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA2081F25967
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77496E611;
-	Thu,  6 Jun 2024 19:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9940861FE3;
+	Thu,  6 Jun 2024 19:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TLvnw+LZ"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="Kt7dO5PL"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7F061FF4;
-	Thu,  6 Jun 2024 19:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717702206; cv=none; b=BBnkgzwuFzUlPwISyRJrqHztK93D06sLvVmNJOBylNcCjjiQhNtbfEtlph2Ed8IwQZqLcR6SP/cRs/Fv0wxSFYrlvVB0BPAA2My56FxOUsFj+ZEw0VFA4dBXk6zvraaoFVI75NN7nQNLk37uSNchgU+lLlrGQEEvDeQK2dTjl+k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717702206; c=relaxed/simple;
-	bh=wy1/27O4ST7Jy9JP64TpBdbyH6AK9ftFJSVxc2OSFec=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F823F9C5;
+	Thu,  6 Jun 2024 19:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717702337; cv=pass; b=mhn2W7RZIiRhsUoWEkVL7m0reXgxjQZs4207v0ENzcEw1ju0fBAoygqf2xCbEZR6chGvY0ZvqBSF9qn4pzc7b7khqnmHIbIeDfoP2fjU11oJOnt7wx5Jyr2D1PAkCIGuf1RBjwUUTqmI7l+KDoiJ7yVDIdfjQeHvwO351KTsfno=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717702337; c=relaxed/simple;
+	bh=mO+1Ftxqq4589VdeFMJmWCGzaDlSTAJ0LpbFsraI4QY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=so+DLevSqtkDNykD5kdHrmhTAa7KsEp77TtJHNp4hfogFFWXcIU8HKRpEfHXDsU4Mk4D63fwuNT3lDw4D/ZUOjrXe6sF7hzlwZuAjIFMY1kKvq5pMbXsS9tYRFN2cwbNTpGm8RZS+qS2ItYgzTqOsJ9bz5Kw5zcNIOWcUOsRBHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TLvnw+LZ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=qA4o5RhLhxxQQJ4V/KaMjw8f4e84B0lZhKxN3jROpVo=; b=TLvnw+LZ/wnjwjqGrMD54EPGyO
-	rgreJpieJ2i9XPHAxvnGKfIFioZJaBmMsgu2sIWt+gIcxYNrIveD2M/w+WaoSfL7ENWKtetioczN2
-	+LKxTvWHnsLHFGYJwblc7gG5KAlkNMO6EiO5rG9uAgh8xW6AAh0ToSFOaEwY4nl4jY2QzEebSu2dk
-	ZozKxf5huJ22QzBCQ0Gm8SlPywrSABPalEQJVF9HLFecs8hKlcna5AkSfp0tSDHxdmQeUdSlu9gRq
-	r+ob5Ofa2vq30q5z00FVbZKtkT6T7vK8wvyRHagYOFFHHnfINEnW5JJRyDDdcO7MjRFnwGO92iZlB
-	FB35iSmA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sFIo5-00000004ApV-28S9;
-	Thu, 06 Jun 2024 19:29:53 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 5BEAA30047C; Thu,  6 Jun 2024 21:29:51 +0200 (CEST)
-Date: Thu, 6 Jun 2024 21:29:51 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] rust: add tracepoint support
-Message-ID: <20240606192951.GJ8774@noisy.programming.kicks-ass.net>
-References: <20240606-tracepoint-v1-0-6551627bf51b@google.com>
- <20240606-tracepoint-v1-3-6551627bf51b@google.com>
- <389a8c55-a169-47ef-99c0-48f58003b40c@efficios.com>
- <ZmHacqvRwBj7OvWm@boqun-archlinux>
- <20240606173544.GI8774@noisy.programming.kicks-ass.net>
- <ZmIHVIqEukWWRMgd@boqun-archlinux>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CLHCatCXxiFcJzWLj4/LObM6LIjj46CHqqnkL1oMh8/bdqLSBivdD+3gAYB50zTZVcPf3RQUWdgps6dq+7FSvxfJ8iGcCxtYOskzE4CK6WGYDzjH78gvEDhYUM+CLZau8BHBbS8BkCyoeW/eIecDnlh47vlSoSVPaD+hXoTJ/aQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=Kt7dO5PL; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from darkstar.musicnaut.iki.fi (85-76-74-208-nat.elisa-mobile.fi [85.76.74.208])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: aaro.koskinen)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4VwDx01NqGz49Pyc;
+	Thu,  6 Jun 2024 22:32:03 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1717702325;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fOE5refhVYmgYhGy/7BLh0kzb17xpI98nmAMDjYzLKk=;
+	b=Kt7dO5PL+hAKAO7BMWL4c3Pkg8E06WDDg43ZVGvQKzppz67Ek3f56ft6xc+GDcfiEOSG7i
+	8vNJExCYRzB8vxTvbGpqdTbXe7QFTClAp9+vQvBEoiPJm5Fr25T4vpoMjXGfk+UG6E26bk
+	AEaM0wg4fsJRGvzB+yU6PR14+e8UM6FFXogzh7hxRULPw8tB8E7M4yyiYi66kVI7g3O5jI
+	cwnKEfQy3+Ed39zTE6qw2eqWOOd1dBcpv0MM2Y5Ot/0rG8YwewzcaAyIsH5SJJbqwNPcPo
+	eyEBF2D9IQfYPTsxPTkPyj8rhTFC0DqSXDGQkCJvb55Gev2JuArZn/ZGLJJDSg==
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1717702325; a=rsa-sha256;
+	cv=none;
+	b=dzh622iDqYoZExWNbWR9X5ptuh+zwWIpoldjUDA6qx4L8XNllbPeOxlGfVYVli3GwrGheR
+	7Ke9nK6XyU97zMiT6uCWhcCP1TNiC1GSpbX1KePm/Eygw0tjR9Qs+JE0q40JYVdi7M0AT4
+	BIEtSkr7zmxiVwjBMvz4ABg/4WBOt4o+jHHazGpO7i4XZ6U8mrSW9BtvnEtG+D7JLwpE9l
+	f9Y4zP+MFS4WcVXIpHJdzohRv4rKusyAW0DHv4OrmdB9JzTnBekYI+Eq0VEcUYC9oDkPYl
+	DijkOA8mX6kwsSJijXjW4S6jMkBBentwtfh2K5wielvsBW9AI9yJ0RdnrPzo2w==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=aaro.koskinen smtp.mailfrom=aaro.koskinen@iki.fi
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1717702325;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fOE5refhVYmgYhGy/7BLh0kzb17xpI98nmAMDjYzLKk=;
+	b=ouH9XyFr2tNubzCLbPdeafXegjPI/fPROf1AeHoPqgXuB5xG+TsO3D14uYqrDzHxagDHdg
+	RXrLdHu+JcFWZzrBm6KzrKXQvqY+ezUFtxg0f2Imn7qM4Ac8bax207NELbZwBpO8AEryOi
+	mtaBX1j8djKOPaHHeQcw94knySbuS1Wc7Z+Z6PRFhuwh2PVYfcU4xmjqQCyCWR/XSl4Sls
+	Yp69NqOeOe4VebB0qpt4rurhcFwO1QIZQoCDh2nB6nF8K8jx5II7umMRLyCKriz2CJY8rs
+	NRfPbYFGrhMJVweKmD/5JOrQqjyI9w9GN8zwO7cxi7DmfSWLIaN+E05hajYamw==
+Date: Thu, 6 Jun 2024 22:32:02 +0300
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+	Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH v1 1/1] ARM: omap2: Switch to use kmemdup_array()
+Message-ID: <20240606193202.GD9487@darkstar.musicnaut.iki.fi>
+References: <20240606165104.3031737-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,44 +86,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZmIHVIqEukWWRMgd@boqun-archlinux>
+In-Reply-To: <20240606165104.3031737-1-andriy.shevchenko@linux.intel.com>
 
-On Thu, Jun 06, 2024 at 12:00:36PM -0700, Boqun Feng wrote:
-> On Thu, Jun 06, 2024 at 07:35:44PM +0200, Peter Zijlstra wrote:
-> > On Thu, Jun 06, 2024 at 08:49:06AM -0700, Boqun Feng wrote:
-> > 
-> > > Long-term plan is to 1) compile the C helpers in some IR and 2) inline
-> > > the helpers with Rust in IR-level, as what Gary has:
-> > > 
-> > > 	https://lore.kernel.org/rust-for-linux/20240529202817.3641974-1-gary@garyguo.net/
-> > 
-> > Urgh, that still needs us to maintain that silly list of helpers :-/
-> > 
+Hi,
+
+On Thu, Jun 06, 2024 at 07:51:04PM +0300, Andy Shevchenko wrote:
+> Let the kememdup_array() take care about multiplication and possible
+
+          ^^^^^
+          Typo.
+
+> overflows.
 > 
-> But it's an improvement from the current stage, right? ;-)
-
-Somewhat, but only marginal.
-
-> > Can't we pretty please have clang parse the actual header files into IR
-> > and munge that into rust? So that we don't get to manually duplicate
-> > everything+dog.
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  arch/arm/mach-omap2/omap_device.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> That won't always work, because some of our kernel APIs are defined as
-> macros, and I don't think it's a trivial job to generate a macro
-> definition to a function definition so that it can be translated to
-> something in IR. We will have to do the macro -> function mapping
-> ourselves somewhere, if we want to inline the API across languages.
+> diff --git a/arch/arm/mach-omap2/omap_device.c b/arch/arm/mach-omap2/omap_device.c
+> index fca7869c8075..800980057373 100644
+> --- a/arch/arm/mach-omap2/omap_device.c
+> +++ b/arch/arm/mach-omap2/omap_device.c
+> @@ -315,7 +315,7 @@ static struct omap_device *omap_device_alloc(struct platform_device *pdev,
+>  
+>  	od->hwmods_cnt = oh_cnt;
+>  
+> -	hwmods = kmemdup(ohs, sizeof(struct omap_hwmod *) * oh_cnt, GFP_KERNEL);
+> +	hwmods = kmemdup_array(ohs, oh_cnt, sizeof(*hwmods), GFP_KERNEL);
 
-We can try and see how far we can get with moving a bunch of stuff into
-inlines. There's quite a bit of simple CPP that could be inlines or
-const objects I suppose.
+Maybe same result, but I guess the 3rd parameter should be count?
 
-Things like the tracepoints are of course glorious CPP abuse and are
-never going to work.
-
-But perhaps you can have an explicit 'eval-CPP on this here' construct
-or whatnot. If I squit I see this paste! thingy (WTF's up with that !
-operator?) to munge function names in the static_call thing. So
-something like apply CPP from over there on this here can also be done
-:-)
+A.
 
