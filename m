@@ -1,75 +1,80 @@
-Return-Path: <linux-kernel+bounces-204627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926B08FF169
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:58:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D3F38FF16A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87D561C21EB2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:58:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65C291C20E5C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED298198824;
-	Thu,  6 Jun 2024 15:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A24198837;
+	Thu,  6 Jun 2024 15:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BrlWybBZ"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RTsWUHvO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F43D19755C;
-	Thu,  6 Jun 2024 15:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CD5197A8C
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 15:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717689393; cv=none; b=IYEXUKl/wEvvSUQNvXJiIqY3w6+DkIArHMPy8GBfL7NsDp68xGekAYeJKbEjwW1HVRez7abV0ZLjvwBwdOIyt/Cq1nFLVfkbXh3kUNS4OudmAd+RUNtlDoY1vDugY7gyco+ZnwDZ7+X8eLAJg9FYZ1/wA6T+Jd7W0+d5+zts7L8=
+	t=1717689410; cv=none; b=mZ+OUIhN3ZtUdr3ZSk1zFnt6FYXv4LZQsYpaayqADehqkPBWuSYGgNiSf9XKyWqqx4usRSGUwTZltiSb7i5OVg1LG8bXkcK69U1KYNOFSidGI+ZwnsI/RGm7j9UBDcTl0+wSZHEsQxhPoAwiurNN4xzxXeML20X5zh3BPkrGssc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717689393; c=relaxed/simple;
-	bh=aN7hkfedECxgkVE23qR9N+sYKz/S1B2IOFGhsAJmM2A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=TJ6QJjyXA2k2F21uXOzG6nYejw7B87stChmxwa7DJZ7CsxmRytP6Dm+DnsR/38wpB849EgO39Q51BQBfq84bGDwNJK67ancOqCMtxy+ufnvb0AeCFIkQDOk9cheVLQciAED+c7qUdVoTP3wznPJwrR9M+4dJKDTrNHw+QOGTFgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BrlWybBZ; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2c210d3dc6cso906302a91.3;
-        Thu, 06 Jun 2024 08:56:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717689390; x=1718294190; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=rIY0Sjutq2SY/qAhA7gEXlN2ObMxXgioEhBGlNvC0rk=;
-        b=BrlWybBZ4YXlJ37lAri8GzHrrAPk2/s9IMQPXdbH+bHMC97R0LrFc531g104aBPIZ3
-         GCC/7X12fZrNzsiA/NLWhFxTzQOmUDaDai0s4LccAO7PrlLMUu7HAQ4nxHZ7auYtI7WI
-         2Nlggq4d2ZKUmOkT7ICAvYrwHLGtQ0PQk6+7QCBp21PXIT4/q+vLbk/OkMli+IK+4soX
-         9QeG//t4EdoqGkzITqpai7hvbSV1EAQZIdPEsOVci9/9m3kLreGmO1amTO39JLmHF90Q
-         BxyyQxD8B5FJADPXjO0lNYczcqqibH12XebaTXfY1FCB26AjmIgNyVSEq52kQZy3MMl2
-         p/lA==
+	s=arc-20240116; t=1717689410; c=relaxed/simple;
+	bh=n65GZzUczwFhc4ORxki7PkiT6dEccGLhcY4yBOHx/AU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jSnRkU3r1kOZtkr6HV9AWrSlxwaIkh1bM7+kdqoRnM8O5I7GeCqHJPtcPEv4PKe6nYDh1LlljD9dyaTg3eRuuAw45SltvbH5/e0XFsWW7FpMawHZ8Hkccl8xWUdccCf+cOxpTy8nChGIzIm0GNdEKfR/uwFUwTCW3gGsklpCgTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RTsWUHvO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717689407;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rICVcq7FiKIUG7u7jIEiVO2tUcrUM6iWDXfWLjwwGZ4=;
+	b=RTsWUHvOOm8Vv/f3SEgcMVH/yo64HgjVsLNj3Lgg8lF7C4mWbpRfK5gnFDStrNnd88O5rc
+	58bRuOQ5GbfJ0VPBYvWyoYjR0LIKY2x9UIo299Xgmnkwt43k5MJJxB9g5pubISkJ09p6vS
+	Ei/tmFqCLoVCJaiWFJahDEWTJ0tK+5g=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-496-FEdG6tWaM3qq-N0r2V9S1Q-1; Thu, 06 Jun 2024 11:56:46 -0400
+X-MC-Unique: FEdG6tWaM3qq-N0r2V9S1Q-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4212a4bb9d7so11341475e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 08:56:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717689390; x=1718294190;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rIY0Sjutq2SY/qAhA7gEXlN2ObMxXgioEhBGlNvC0rk=;
-        b=m0xVJoiolVT5V37ds42399WJQEBC3tPfVn5LShP597sX5BHCA45mXBkuvsxOZQms2D
-         Syd7I09is+mhUsQbjrdWihiynobTRQftUgCaWudiIL0BNc3pjArFcdR66g+0GnQQ5kR0
-         ddDH0YiQNW5r8Iz7L3fOnu2vQ4oymklb0C7RCA6Q/5UWC6MqXPR4CFjlUTK0PWD4hyj+
-         8V01Svh9KpGWEWGT0bI9DlE7pAa7qu4aaHRncIVCNflJN+A91aQVCFwIgKpIHsoAtcsh
-         L52+JL8KTd+bz0xc8raKesEKWL0mJwrmS8zBs5fh+xJyiCpNuvtbbQNZN4u2hP58b1NK
-         1jhA==
-X-Forwarded-Encrypted: i=1; AJvYcCXG6+1YV5FrAUTTBXYtkN/6hBpUKSIBIg5EkvQQm6njuLOPBvIEm6lSIKlgzNXgg3YUpdVhAWWlJKu2Eq1qu6w5zWNmswzfSt4pv+mx7flQAxstLCgxK3dC9C8/pu2uYHB/OtonAgXOvxM=
-X-Gm-Message-State: AOJu0YwNrd9UK0L0+vXBjNpeXpuZ8oHgyHSoO2sPTpwDCEWFRwcZD8bf
-	jWGq31DVuSWzNKo1RK1mp7YxUmugZAmvc04HBJMPIBqYp6tGKl5O
-X-Google-Smtp-Source: AGHT+IGreggTp2+HarPrTH2cwRbn8GGPf4N/449Y7qUxOQCMuQy399m6/OXcwYrALtrErwdGdTcMqw==
-X-Received: by 2002:a17:90b:110e:b0:2bd:b091:bae1 with SMTP id 98e67ed59e1d1-2c27db18bb8mr6150891a91.25.1717689389379;
-        Thu, 06 Jun 2024 08:56:29 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c28063a7fcsm3763521a91.7.2024.06.06.08.56.26
+        d=1e100.net; s=20230601; t=1717689405; x=1718294205;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rICVcq7FiKIUG7u7jIEiVO2tUcrUM6iWDXfWLjwwGZ4=;
+        b=U7VjX8svdR0zGIAT5ec5g769fKkwTzKoc4YaKkkRGW2w14yRoRDTGyrrSy37v3cfQJ
+         3ZdY3yo3dkctLpcCOKz7HzJVGKguwFQcZCKN9/hhfUsb6Rg4xWAVAzHspFQ6pZ/ilAxV
+         9EtOTqp0bhNDveFzA1Q5kjQD4yV3dzAwIc16Wj3mmxrnS05qHtksf9HCYBgjOQveTEr1
+         rHvLHd3/nTSHCUa3iKCIg9LaUMunoGPMb4zt++l8Wjq5tltA2ekpAi16B9tmdzDf+MHX
+         nioSIbMk288VGscclQw07WMw/3QFlaHunkR2y/3Vc++HsM5kMK5RT1Z9S1zvjw1imeMS
+         5QpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXbz70JUd0OWRbt93y+UGzrYvH0rrBWOz9+oZ+wdl8W7E3ALVnfv3uOPdxeRGD2kMjIUQDwiZ6hE8nxLk9o+q5Iyux6MIUrX2QakVSy
+X-Gm-Message-State: AOJu0YyjpxcHWqH/hPfHkQS4i5WCdS3JJ8KD/3ONFOUF4ZZK97Ndi6fy
+	Gw+bpoAmIPV76t7JM1c8jndir0JBD5LTm+BidqzdSHOfY897gsusBcYgoEIFuSR1nIZG+OQjQJC
+	QhK4pcHRpuvy4IdM0v/jQKRNIQZIMccm4wovIDWwoA2YidKwFW+he/7GPD8xQ2A==
+X-Received: by 2002:a05:600c:19c7:b0:419:f911:680a with SMTP id 5b1f17b1804b1-421649ec4f1mr1464665e9.1.1717689405110;
+        Thu, 06 Jun 2024 08:56:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFICeY1PkRTCZuslnCo8zVl10rT73fNAObHJppOV3wt8/nIAR3iHGtkV3plGrDo/QKT1YfJ2Q==
+X-Received: by 2002:a05:600c:19c7:b0:419:f911:680a with SMTP id 5b1f17b1804b1-421649ec4f1mr1464195e9.1.1717689404416;
+        Thu, 06 Jun 2024 08:56:44 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c710:8800:a73c:ec5b:c02c:5e0b? (p200300cbc7108800a73cec5bc02c5e0b.dip0.t-ipconnect.de. [2003:cb:c710:8800:a73c:ec5b:c02c:5e0b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421580fe371sm60070155e9.1.2024.06.06.08.56.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 08:56:28 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <32a542a9-e338-4f8a-af24-a32c8426e619@roeck-us.net>
-Date: Thu, 6 Jun 2024 08:56:25 -0700
+        Thu, 06 Jun 2024 08:56:44 -0700 (PDT)
+Message-ID: <5b4e7ef2-3ced-4d4a-989c-e99b06598d32@redhat.com>
+Date: Thu, 6 Jun 2024 17:56:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,95 +82,110 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hwmon: lm70: simplify with spi_get_device_match_data()
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240606142515.132504-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] selftests/mm: use volatile keyword to not optimize mmap
+ read variable
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+ Shuah Khan <shuah@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: willy@infradead.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ gost.dev@samsung.com, mcgrof@kernel.org, linux-kselftest@vger.kernel.org,
+ Zi Yan <zi.yan@sent.com>, Pankaj Raghav <p.raghav@samsung.com>
+References: <20240606135835.600022-1-kernel@pankajraghav.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
- RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
- nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
- 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
- gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
- IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
- kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
- VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
- jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
- BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
- ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
- CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
- nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
- hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
- c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
- 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
- GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
- sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
- Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
- HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
- BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
- l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
- 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
- pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
- J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
- pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
- 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
- ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
- I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
- nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
- HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
- JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
- J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
- cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
- wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
- hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
- nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
- QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
- trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
- WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
- HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240606142515.132504-1-krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240606135835.600022-1-kernel@pankajraghav.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 6/6/24 07:25, Krzysztof Kozlowski wrote:
-> Use spi_get_device_match_data() helper to simplify a bit the driver.
-> Also kernel_ulong_t type is preferred for kernel code over uintptr_t
-> (needed for the cast).
+On 06.06.24 15:58, Pankaj Raghav (Samsung) wrote:
+> From: Pankaj Raghav <p.raghav@samsung.com>
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> create_pagecache_thp_and_fd() in split_huge_page_test.c used the
+> variable dummy to perform mmap read.
+> 
+> However, this test was skipped even on XFS which has large folio
+> support. The issue was compiler (gcc 13.2.0) was optimizing out the
+> dummy variable, therefore, not creating huge page in the page cache.
+> 
+> Add volatile keyword to force compiler not to optimize out the loop
+> where we read from the mmaped addr.
+> 
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 > ---
->   drivers/hwmon/lm70.c | 6 +-----
->   1 file changed, 1 insertion(+), 5 deletions(-)
+>   tools/testing/selftests/mm/split_huge_page_test.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/hwmon/lm70.c b/drivers/hwmon/lm70.c
-> index 481e4e1f8f4f..0d5a250cb672 100644
-> --- a/drivers/hwmon/lm70.c
-> +++ b/drivers/hwmon/lm70.c
-> @@ -169,11 +169,7 @@ static int lm70_probe(struct spi_device *spi)
->   	struct lm70 *p_lm70;
->   	int chip;
+> diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
+> index d3c7f5fb3e7b..c573a58f80ab 100644
+> --- a/tools/testing/selftests/mm/split_huge_page_test.c
+> +++ b/tools/testing/selftests/mm/split_huge_page_test.c
+> @@ -300,7 +300,7 @@ int create_pagecache_thp_and_fd(const char *testfile, size_t fd_size, int *fd,
+>   		char **addr)
+>   {
+>   	size_t i;
+> -	int __attribute__((unused)) dummy = 0;
+> +	volatile int __attribute__((unused)) dummy = 0;
 >   
-> -	if (dev_fwnode(&spi->dev))
-> -		chip = (int)(uintptr_t)device_get_match_data(&spi->dev);
-> -	else
-> -		chip = spi_get_device_id(spi)->driver_data;
-> -
-> +	chip = (kernel_ulong_t)spi_get_device_match_data(spi);
+>   	srand(time(NULL));
 >   
->   	/* signaling is SPI_MODE_0 */
->   	if ((spi->mode & SPI_MODE_X_MASK) != SPI_MODE_0)
+> 
+> base-commit: d97496ca23a2d4ee80b7302849404859d9058bcd
 
-I'll apply this patch, but ...
+The rick we do in some other tests is:
 
-I take it that the earlier claims that driver_data must not be
-something like "(void *) LM70_CHIP_LM70", where LM70_CHIP_LM70 is 0,
-was wrong. I'll start reverting all patches which changed starting
-enum values from 0 to 1 based on that wrong claim.
+char *tmp;
 
-Guenter
+tmp = *whatever;
+asm volatile("" : "+r" (tmp));
+
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
