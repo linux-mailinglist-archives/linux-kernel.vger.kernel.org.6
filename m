@@ -1,146 +1,195 @@
-Return-Path: <linux-kernel+bounces-203691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D4E28FDF1C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:50:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D02F8FDF1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D7021F239DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:50:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF6DCB260FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DAE513791C;
-	Thu,  6 Jun 2024 06:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A91E139D11;
+	Thu,  6 Jun 2024 06:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="dYYm//49"
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2050.outbound.protection.outlook.com [40.92.103.50])
+	dkim=pass (1024-bit key) header.d=Sony.onmicrosoft.com header.i=@Sony.onmicrosoft.com header.b="eyLVBPdx"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2067.outbound.protection.outlook.com [40.107.100.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D77D19D898;
-	Thu,  6 Jun 2024 06:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B3D19D898;
+	Thu,  6 Jun 2024 06:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.67
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717656605; cv=fail; b=twniLYYVIT+dIsCjeuCQRnW0W3rNx62zSBnvZAUs+/ooqc2PXLZdTdVH0DpbniFkn695iXjDdg4odJvlh5oe3REQVzKmpFq0WviS3uITH+9cwNyZEn/K2xCufAY0PTtNeXBE3A/s+EzcJ9vvZcQntXQuzU2zZMi+w5wEQUbe878=
+	t=1717656679; cv=fail; b=MfwxBnV+VXpZvyHxTApnxf/nLDFPWmXoLxJJhT5wtZNk14I/5HdYiqbF8Y8GhInoCOqKcF+284U0BBGIndHdJ4i/8OXdKAfNMJX/+2VW4qKo5ZtNsWpQotwkWUzYglG5QmA1KsyY0ugqU3FaBHgvIMAh/5ipwS/aHUXlm/YGIyI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717656605; c=relaxed/simple;
-	bh=TK9N1wGIK9y06GWgxpI+U6X2BdhbB1j+YXsXrtirBE0=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Ykqd4Fo89HCUp/10dtwWvLHS0FJnr7JYlG7FlYUS0za6QUOZTSzB2FtYBEZctSujX0iPNUlypu9+clc8cts5CpwHU9aSpHzxAX4bIVRgbjRfQ+yDxXUdTbNE1zgvZIDO9XpcaqmvzB4FibzErIA/f0rcSz/LrJzwjDCFTqGrp7U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=dYYm//49; arc=fail smtp.client-ip=40.92.103.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+	s=arc-20240116; t=1717656679; c=relaxed/simple;
+	bh=nGvW4yOXM4JnO1HUKDUS/bk+9RulcBQl9R66MLoM6gI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qSum2QR3wp+iezEt/InfnskU6Yy77N3UR2yfylUWgRBBPs9q5vKeOirNrwxLUTmn7/0dDdV/xomB1EpRDHi6rRWu7MxOdr6z5S4nj14MIqUijiou5zw1gnhWGURJu8V+8++PkOPJw+QAOS+e6Tpmw7N/vEkXAAhJ7tdaiCAGjSA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (1024-bit key) header.d=Sony.onmicrosoft.com header.i=@Sony.onmicrosoft.com header.b=eyLVBPdx; arc=fail smtp.client-ip=40.107.100.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MOuGL2dXzbG6QPQmZBdMpx95ldrktwBodB2e6styVqagbW0giEjaeH7IcwyNUsZiASM/fyER8y0PQ86bQZaP0Had3norAB/yhKfSj6EaAq97nHngSTQpoND9RvcXspvUTkaP7rN03cP8FHoxumvLxZNz/dV69JJr8HRhpj8G4lWpCCpJrmg3LOzdGYC6lDIz0UIpjF9kDEhk065PAZuvTUdVm1ka3jZi42pfZK9tLYGecjTF8Tt+9x5GFoHXNPhTPNtReuvMJzXjB5L/5oQAzX2HXBgyHvQMUcs2XGC378icIxAd2SJjIP6rxXgsldDf9cq5Z9g9PUylmb2aFF53Xg==
+ b=lAz4qE4+27xk67s7wY6+5nttPfkJ/+vhlLJi4OY1GkApV3I92vCsZhQR8Be2YfH2djcwbMMNlnqNMqXFPa6fb9yhLynfUcQJyNwNhvv8VyEXN0mKZMNMvE8QHXwyZGJdqgjUiVEsCUVC+nCj99NM8ImfwCB0dd7ot9/xH8znOTWBm4bvqzd5OhpniFpuT5WTFY9dOIvY4m3lhaK27jgqZFWOmFnjNjD57aFAMD04G7AyEOyyK5dSx9iv7boklDszK/6SUTvj3tCKsQSYFAZ6EEdJ+BFd+yVL2319ADOlEIXlHA19Vtb5FCItEX0C0vPImFoRLkIcBc7mZjmUVn0ZoA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TK9N1wGIK9y06GWgxpI+U6X2BdhbB1j+YXsXrtirBE0=;
- b=c795yPkvljPd54mgP4IlJzUocR2nn1BLk8lLyui5gOicF7DPIFW8HG26WmQSt/tVUSkHRzC06vOxu2Etbae2SxKKzwpHkcCE0zSVy49u0KughjRI9touMmpui5+FbpJAglkhkvTsSwu4bzQMpm9ZrbW5ExYktCYFAvL1mANkFysrOzggkA4F8cIwN42XJqWBDdi8IGN+ML96xiRjV2K3C90KaeibOeBHGALmVhZIcEqGMETqdbh9k8PBtAMx4msQPsaC2HTZKLTCiKU4CF0Cg/WYmqi5e2aJlNbGb9HDXGPl2DY1qFnbYJnjmathY15D2Uds4o8/Ba4gy6QjeKamOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ bh=zWnl6b3x/8NzNd6mnRPaBXIO0coTbMS4V1K0jRQSvYw=;
+ b=UBPMvDOiD1mjJgEiyE/Zg3mW3nIv51pGYEnw9sRxGXkdV0vjKbQv8x19hyVTfh+zWdV0KdqQltVpmx6vIQflXrJNgrWGr0IVPUtgJ6CsJFRLXhJoBbKWZP8Ga6P/BpUIUT170tND5StUjpPvj6hBRXxlmSnEMfWyTr3w2hMjUyK2Gs8D479Mguyy7LMEUHfaadLqa54caG+QG3M8CloCfmQV2PGTqinpqyWa5xeF9XIIqPeuiOrPrJRLYnUqApz25C0Rq6fK7RL0hMcxBJ0Ztk5nnmpRgixoA8rB5C22mR9fuQ7dZInxocTzrwmNI4ZAJ/ObREcPIomcRvD4Oiox9Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 121.100.38.198) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=sony.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=sony.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Sony.onmicrosoft.com;
+ s=selector2-Sony-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TK9N1wGIK9y06GWgxpI+U6X2BdhbB1j+YXsXrtirBE0=;
- b=dYYm//49xL5DCP55TUIYVMWnsYeJZiWOuELNLsHcc3VzJORFAncCmKN2BBxEwbXqadhb6SBmMu8Ytwgs40uPALQcxKKQakc5KbMm/+Ar5X4qAMUG8ppa6OclvWw6nJ1uZPcNEbeiX07ihJXV2Cp1btMg+5d9WSJ3EEblpO5cChNf5S6POmAzOkUVpaVt95VPNIhWKwMd+oZq430OrpwSkmHTRVJi1gcF7ubhaNPmJ33NhW5ouH/oxiTqt0GJEBgL+srCLUn72WDg6lhrold3xXKPsFkfI5C6euzG0g4eKtgGV2YuMOIIV4OLoqQPQ1nd7eLlmHun7Yv+ILvAHvDAAQ==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- MA0P287MB2125.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:103::14) with Microsoft
+ bh=zWnl6b3x/8NzNd6mnRPaBXIO0coTbMS4V1K0jRQSvYw=;
+ b=eyLVBPdxHa2JQCsmQofeuQ/XtIlYDeSEiJxwCaMych3xrnkzuHaBz9+dx+ohFay1UbH2mZK1Huydkzwrby4KY0kAhZ+bYpydD9b7uKhT8jVhAuOSWu6yz9+hWwhpZiytwkYUiwTnBk1cKE9LP3f1scXnJaTfN6pMKHDx1alujoM=
+Received: from CH2PR14CA0041.namprd14.prod.outlook.com (2603:10b6:610:56::21)
+ by PH0PR13MB4987.namprd13.prod.outlook.com (2603:10b6:510:75::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.20; Thu, 6 Jun
+ 2024 06:51:14 +0000
+Received: from CH1PEPF0000AD83.namprd04.prod.outlook.com
+ (2603:10b6:610:56:cafe::56) by CH2PR14CA0041.outlook.office365.com
+ (2603:10b6:610:56::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.31 via Frontend
+ Transport; Thu, 6 Jun 2024 06:51:13 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 121.100.38.198)
+ smtp.mailfrom=sony.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=sony.com;
+Received-SPF: Fail (protection.outlook.com: domain of sony.com does not
+ designate 121.100.38.198 as permitted sender)
+ receiver=protection.outlook.com; client-ip=121.100.38.198;
+ helo=gepdcl09.sg.gdce.sony.com.sg;
+Received: from gepdcl09.sg.gdce.sony.com.sg (121.100.38.198) by
+ CH1PEPF0000AD83.mail.protection.outlook.com (10.167.244.85) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.31; Thu, 6 Jun 2024 06:49:59 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%7]) with mapi id 15.20.7633.033; Thu, 6 Jun 2024
- 06:49:59 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: "mcgrof@kernel.org" <mcgrof@kernel.org>, "linux-modules@vger.kernel.org"
-	<linux-modules@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Current status and possible improvements in
- CONFIG_MODULE_FORCE_UNLOAD
-Thread-Topic: Current status and possible improvements in
- CONFIG_MODULE_FORCE_UNLOAD
-Thread-Index: AQHat92/O7UUpgMSCkmL1ayN4UTeWA==
-Date: Thu, 6 Jun 2024 06:49:59 +0000
-Message-ID:
- <MA0P287MB021781F0CCD7C62CAC608714B8FA2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
-Accept-Language: en-IN, en-US
-Content-Language: en-IN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn: [8gupDJrd7krmrdAGLWuAsbSXa9ZAxkkI]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|MA0P287MB2125:EE_
-x-ms-office365-filtering-correlation-id: 3b945e12-dac1-485d-f2e4-08dc85f4e23b
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199019|3412199016|440099019|102099023;
-x-microsoft-antispam-message-info:
- JR/UXFcvHVN9yfTDoxuUJqzsS+jLU/fZ4m+qIBIjmVPfQoHH9ayt3HaZB8jhNsdXF+O2nSnb5iNb08+BUx7n/1AQ47o+T27mReP/zP/bTvhrd0L5TTFWHIw0RjHaNniKQ2fyDSfBQ8kJiGVeoJp17P3l21YH6hNKp5a/dciLwaq4/x1d+H4OxT0H5XLi7uxqZl2p2u3oQi4pmlfH3jyw1Pp0EpVqn76/OYcvbrjz2tzQKOF8UvFm65OEk2SMME0PHYXvRx8CPUlQ+b5eDcJhL6kAEnSM/4Ko0Ny/kZnYG3x5D/wzjkhwirdrBaJIguO3D8AOIItxvxVWYi0UGZ8hYVhBiRP50QqmM5jn6EmiA+IPHjmLNHT1RMsdk6usLx43QUUciUkeX/IAJlObYlCdjHSkRTHGFFg0ciPMotA5ke5oZU1fgpPtnhnlShGIaqmRd7HWYvgADvOk+VHBr65A4D71skmXO6jArfFfUT3eGugI7GCaPUWllXZck+WUKmoydaQRZlHE74ldsti5lu2drr2E4KULdQWTZm7kW3MdvcyuqoRAF2aLtkAwUpfAYNvY
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?mb0qsrCq2+2fGq047rPHIX8ahqxyRv4fDjuzXW88j7McxbxWANrhzD5lK6qA?=
- =?us-ascii?Q?wX7hK7V68QDK7Vm3Ygl4l4BV1YhUF8Rnb5azYeWwuIKQKht1kXK7EUFJ1goi?=
- =?us-ascii?Q?Mm+ueqEPXkz0nxrcHqH72yY3I6bfSvIqLltsX5thTQsxHrc+tiXqZAgKiXQk?=
- =?us-ascii?Q?JfPutZSrwXeujZXc5X8w54jpL7wX7AizYtk29gPnkNv0sWzFRxfTLYcGAWJA?=
- =?us-ascii?Q?KlRsPsf0ZSMfefbR1OYCp6EvV/waqhL+tooNpekVwNlO3cs7YAF3hb/otL4f?=
- =?us-ascii?Q?7pDCAv/aiZ34atgt37KnI5vqy55B0swrm3yVe1ApqVnKrey+4sElPpwDKd+T?=
- =?us-ascii?Q?antoL8s8dv06tdxitupRP1B9J/MhTn66pJg7t35flrgnn2HXsZME7M3GIp3R?=
- =?us-ascii?Q?q9oTDQCxy/f5UKyBqnWdYPGbC/pybVyPf+zE8j9ygrKEGN65uJh7c70E3xN/?=
- =?us-ascii?Q?2K8yPqYNzlXUmcETCedvHpzA6d7xNx+jmbcSCTtAWEQKLvznCIu2+EGQU8uO?=
- =?us-ascii?Q?BKGKZmYndvhYylYv2dObJ82C5Y+HSEYdfsleT3ZNNA+/Cx8mI7t4KHzmAZX9?=
- =?us-ascii?Q?XX4qQeuWraDL5APUfO2LYnfwOgi4CARYjLaG2O+7zuTjlcYRMcFLEaSq//Sq?=
- =?us-ascii?Q?4YUT3E1rmIOPkei3xnEOZ0o8yPWUXfX2Kd214njiYvN1WPBAiqq1sH7beWUA?=
- =?us-ascii?Q?Phrm24yHOfgL0DfVpMs4R1YeqQDDtVzSC/G9OykAwADeDKhTHlyLNivgRcdi?=
- =?us-ascii?Q?en0lUQ5DuFc8sqvEdMH2WG54WW9NeyzmDhiZYosNT+Xcr/9eHoClqRHAqxU5?=
- =?us-ascii?Q?M9/fWv7PyTFf+HXA4rWyvFFVh1SqtEDNwEsSLoecVt6ajDH7pBAtW8AUyraj?=
- =?us-ascii?Q?+6ry/Vk5uexqys2NL8Hky57556/Ny6pFIXzuodQTuBl1xO4ZuxjUQvhc62qL?=
- =?us-ascii?Q?ksz6tNib6H+EmyNvFp+5Xafc4EuKivvn8s0+B2yAgeM1T+938x/5bfXSoecI?=
- =?us-ascii?Q?2xvLWLvtCMTXdWTc7C7ii7JUqkNS5SDoAUfV441YcBf0Zn29JsQR9m6BAx/Z?=
- =?us-ascii?Q?7bofcVj0ApZlNsd6gcMJ7cLYJ7LliHCg+gJTjK4YW4YwVUnL2EB2VRnMJizi?=
- =?us-ascii?Q?z/1GJawH88z+MrKIDkhb5iIolGL8b8FlcTu6JULn54Pt9DgXDxq5/U2wYc4X?=
- =?us-ascii?Q?HxUq0+3JdzWshAoe6I/xMqQaECj7xun8OJmwSWxx8/pSqOdxjhucJTT5LTs?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID:
- <87C6861F1D3FF3499AE05689A18E319F@sct-15-20-4755-11-msonline-outlook-bafef.templateTenant>
-Content-Transfer-Encoding: quoted-printable
+ 15.20.7452.22 via Frontend Transport; Thu, 6 Jun 2024 06:51:13 +0000
+Received: from gepdcl02.s.gdce.sony.com.sg (SGGDCSE1NS07.sony.com.sg [146.215.123.196])
+	by gepdcl09.sg.gdce.sony.com.sg (8.14.7/8.14.4) with ESMTP id 4566ogC1000973;
+	Thu, 6 Jun 2024 14:50:54 +0800
+Received: from mail.sony.com ([43.88.80.246])
+	by gepdcl02.s.gdce.sony.com.sg (8.14.7/8.14.4) with ESMTP id 4566ofwH016350;
+	Thu, 6 Jun 2024 14:50:41 +0800
+Received: by mail.sony.com (Postfix, from userid 1001)
+	id 1E7731D8018C; Thu,  6 Jun 2024 12:20:41 +0530 (IST)
+Date: Thu, 6 Jun 2024 12:20:40 +0530
+From: Sreenath Vijayan <sreenath.vijayan@sony.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: john.ogness@linutronix.de, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, rdunlap@infradead.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        taichi.shimoyashiki@sony.com, daniel.palmer@sony.com,
+        anandakumar.balasubramaniam@sony.com
+Subject: Re: [PATCH] printk: Rename console_replay_all() and update context
+Message-ID: <ZmFcQPDi+de6egqY@sreenath.vijayan@sony.com>
+References: <66582edb.650a0220.8de7.c591SMTPIN_ADDED_BROKEN@mx.google.com>
+ <ZlmPAZUeKIDFKLdf@pathway.suse.cz>
+ <Zl7Lo5eGJKLjbTUc@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-bafef.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b945e12-dac1-485d-f2e4-08dc85f4e23b
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2024 06:49:59.3240
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zl7Lo5eGJKLjbTUc@pathway.suse.cz>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD83:EE_|PH0PR13MB4987:EE_
+X-MS-Office365-Filtering-Correlation-Id: d093c78b-f195-4d0d-4bf8-08dc85f50e93
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|82310400017|376005|36860700004|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?rKKr1rMzBILCjpRCXAzPd0kIUcicY13L2Y7GuH7EEK9xZxLj0rHVfanwG66M?=
+ =?us-ascii?Q?hK+mI4NNrq14gQsiQ9epr7OMv/Z37tpgRixy90WC/afwxSvFN2L71iVdcxXU?=
+ =?us-ascii?Q?b0Jawt2ISHgV/dme+TddAjIsie4mI/+g3N8epWndoZhNtm+0Y8CqncmO9+gJ?=
+ =?us-ascii?Q?xHZpOsX5wgfaJ0spqIfURMjsbh2hQlVR9wsqrfChnu5wGeQ4oxcGm1XpuFvf?=
+ =?us-ascii?Q?8ZSpi1GhBsnbjOgKo/QXEqzxEiHLypthwJYJ67xOur4YTBA+iMahnHZj2EF1?=
+ =?us-ascii?Q?It2j0xwdVeci5gB1i3sHxOTEMlEiWdqvzus7GDYDL7n92ee8zAaSYRgxnQjQ?=
+ =?us-ascii?Q?Wx1SdFzSpG6IVL8libxWy0glOcZQ1XTYTvVm4mc2dt7o4kONhv4OzolEjoBp?=
+ =?us-ascii?Q?a12GefQ3as3/9v76PLNUkEfqlxoIyTpyFLe4Gy5rJmWt/+iZWCofHbqBpCEh?=
+ =?us-ascii?Q?Gkmv7PGvD8ApNgSY9ma0F0iqX8CXBZ4iTxzd976LxNiBGewuOo5aE8r7IEvz?=
+ =?us-ascii?Q?hivg3VTzQ0zYSzXQ2awl/weVXQfaN7LE131+fWN9Be7v0WzH0n9zRrImoQZu?=
+ =?us-ascii?Q?ejyEUBRuc4FuQorZDrPs8XOxe7oaX2YBJZAmY9tNqzKXc5msP8uDRFmVju4m?=
+ =?us-ascii?Q?4vcorABL3ylhaZbP1mkSP2ZXYVtuapZEcE7O3l3/LNwN8voUaUPlLh+Dgf0v?=
+ =?us-ascii?Q?XVp6bkf74X+zcJ1SE74OglB/5NRppRz1Q3PpYGui50lPJb0GIHPfZMDcSSjF?=
+ =?us-ascii?Q?cR/ovmnGPiVCUN3ogF89Qo+Sar7rr7yzZFLWBD8GDiLoNhABETTOJqRZMFeJ?=
+ =?us-ascii?Q?R7ZrM1HSC5YILfn4Fbu8znwD98zcPk3+eITwLEj7KsSFANUEn8vRWAqLP2nE?=
+ =?us-ascii?Q?oqPbC4Jslu1iH/KXNIGsbedHzY7J8sLoGsU1ip+xaXuUZ9WqXts/ms5DxKmU?=
+ =?us-ascii?Q?YFAJp6j3o1Mp0oj1awidu78tY6+9VHr6Jq/o56sJu1+0pHVrAqueqCfUMuyI?=
+ =?us-ascii?Q?AunL/5IJ+zdsDYQGqQeUG8oD7+5GFQr5178Y3KieGefEHKTjDprZnEDmXOxr?=
+ =?us-ascii?Q?4MHRD1gRi+hvAvm0mZPTBZDn3mkKJ5bJUzdfTtPVKHPwX4vJbGolN4xsf0Vz?=
+ =?us-ascii?Q?NCk6jB3f5GB6h/Rj4H9EnOIGLIzCvxGEOvcIDcG9nO38DB9KrhuhQKxGVz2a?=
+ =?us-ascii?Q?N1tNkUZX1sR8ZX4s4hREDf0T/+TmAELNr8sUkj+aOmLnMBXEU6lrJ8XH41zE?=
+ =?us-ascii?Q?8BAJ7eZQWkcByR18EOB1xTdUNrtst7h2f5WOogIZUwot1eotj6+0VNvhXquW?=
+ =?us-ascii?Q?dG4pwQokhTtp148tPNDfbplPYIjvoJNzs9tswlGdPh9yHHwt32hNN7pqcyKy?=
+ =?us-ascii?Q?uHOnNBoAsicQoDGJGgXnyb8FD9ClqJcEDcmZ8+VG9wQNajoU9g=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:121.100.38.198;CTRY:SG;LANG:;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:gepdcl09.sg.gdce.sony.com.sg;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(82310400017)(376005)(36860700004)(1800799015);DIR:OUT;SFP:1101;
+X-OriginatorOrg: sony.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 06:51:13.0596
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB2125
+X-MS-Exchange-CrossTenant-Network-Message-Id: d093c78b-f195-4d0d-4bf8-08dc85f50e93
+X-MS-Exchange-CrossTenant-Id: 66c65d8a-9158-4521-a2d8-664963db48e4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=66c65d8a-9158-4521-a2d8-664963db48e4;Ip=[121.100.38.198];Helo=[gepdcl09.sg.gdce.sony.com.sg]
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-CH1PEPF0000AD83.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR13MB4987
 
-Hi
+On Tue, Jun 04, 2024 at 10:09:07AM +0200, Petr Mladek wrote:
+> On Fri 2024-05-31 10:49:08, Petr Mladek wrote:
+> > On Thu 2024-05-30 13:15:47, Sreenath Vijayan wrote:
+> > > Rename console_replay_all() to console_try_replay_all() to make
+> > > clear that the implementation is best effort. Also, the function
+> > > should not be called in NMI context as it takes locks, so update
+> > > the comment in code.
+> > > 
+> > > Fixes: 693f75b91a91 ("printk: Add function to replay kernel log on consoles")
+> > > Fixes: 1b743485e27f ("tty/sysrq: Replay kernel log messages on consoles via sysrq")
+> > > Suggested-by: Petr Mladek <pmladek@suse.com>
+> > > Signed-off-by: Shimoyashiki Taichi <taichi.shimoyashiki@sony.com>
+> > > Signed-off-by: Sreenath Vijayan <sreenath.vijayan@sony.com>
+> > 
+> > Thanks for the fix.
+> > 
+> > Reviewed-by: Petr Mladek <pmladek@suse.com>
+>  
+> > PS: I am going to queue it for 6.11. It is not critical
+> >     to hurry it into 6.10-rcX.
+> 
+> JFYI, the patch has been comitted into printk/linux.git,
+> branch for-6.11.
+>
 
-I am Aditya Garg. I often require using out of tree drivers to support vari=
-ous hardwares on Linux. Sometimes the provider doesn't write good drivers, =
-and often they have to be force unloaded. It's a common thing in proprietar=
-y drivers. I know the author of the driver should take note of the issues, =
-but still the force unloading of the modules does come in handy many times.
+Ok, thank you for the update.
+ 
+> BTW:
+> 
+> I have pushed a patch which came to my mailbox with ID
+> 
+>    66582edb.650a0220.8de7.c591SMTPIN_ADDED_BROKEN@mx.google.com
+> 
+> >From some reasons, it is not available in the official archive
+> at lore.kernel.org. Instead, I have mentioned in the commit
+> message
+> 
+>      https://lore.kernel.org/r/Zlguq/wU21Z8MqI4@sreenath.vijayan@sony.com
+> 
+> which points to the same patch (same changes), exists at
+> lore.kernel.org but I havn't got that one from some reason.
+> 
+> Best Regards,
+> Petr
 
-Unfortunately if CONFIG_MODULE_FORCE_UNLOAD is not enabled in your kernel, =
-which most probably is not enabled if you are using a Distribution pre comp=
-iled kernel, you have to recompile the whole kernel again.
+Understood.
 
-I want wondering if instead of a kernel config option, we could use a kerne=
-l parameter to enable/disable this feature, I believe it should act as a be=
-tter alternative. After all there must be people like me who are forced to =
-recompile the whole linux kernel just for the sake of getting a functionali=
-ty.
-
-I hope for a reply and suggestions
-
-Regards
-Aditya=
+Regards,
+Sreenath
 
