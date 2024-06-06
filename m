@@ -1,117 +1,223 @@
-Return-Path: <linux-kernel+bounces-204226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A6188FE606
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:04:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB5678FE609
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31F571F20FE7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:04:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 760D428687B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A8719597F;
-	Thu,  6 Jun 2024 12:03:44 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDCE195973
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF0119596E;
+	Thu,  6 Jun 2024 12:05:23 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F0C1FAA;
+	Thu,  6 Jun 2024 12:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717675423; cv=none; b=L1aydwczJqdGywL9dOsqLi+PSymN7dw9E5OSy3lUsLOZPKmb6h/kA+ExWlp8OOKkMEQZgSv6O6LJ3ivPpsk5gc866Mdcx5mM8PIwP2gn5vRr6UYJSBxYBea57GCjOhJjfgxzow7pyFsIxU1UhPxqR4yEhGeb3FWXd5FlemayeG0=
+	t=1717675523; cv=none; b=FKYEqsfQslK9Wh6raZFRX23L1nkDIBui5dDNdMdSjjo/Kp5+rvh/WgKynYHXYR2/9c1uH6AOcfC/NuY1/akVVgsDON1/VBJslxajhkaBwPm4BHobe9HetX94jQtggYGznpwxhDdoRABo13QhEmG8PjwfYKyONzQottqnFRzJVjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717675423; c=relaxed/simple;
-	bh=mcOHG0deKrGCvqyg3BnPUTpeGth5ZBz1TLGdKS7y3UA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=rBKWvXIUJPC4xGG1ZREOSxkbP8IJoB9azkyXpu72JHMmlecXOHpbfZDY7uvCtsxGs+6WuHp+mVvf/vR7pv3nwTEKKV5WuzSlhIO1Q59Xl8b+V7uOvGxT8rylhyQAg7WJO7ERBn3gO58sLD27lU6Cqsshm67Cu6fPR1fmwj50Aeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7eb520773e3so27888039f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 05:03:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717675420; x=1718280220;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mcOHG0deKrGCvqyg3BnPUTpeGth5ZBz1TLGdKS7y3UA=;
-        b=bRGplADKpytMg2/mYmou24DifqPfxuLOVOmOUVUv1tUOfswBqa5CyxHVWGcaePmPH3
-         uPKyFnVfYfCb71/4tMBbeGqO0hynmX5p+DQ20EhwyWM3oeyYuO9CpNutJMg4QE5YMp2K
-         WRUT22rsatlwysOIe+pCr+lXMZhRJaQ6RLHYWu/o4In5aVx5u4SvrNM35j0nDdUQD6uT
-         y4lPSgTCa+k7YZ9Y3Ltjv38it1V7hj8dOdgV7u0pPAuPfuiRxi5Pp8GJnMVYF8KO1TqH
-         +Brjf3QbiPA4nSj/P64S1zVsFmGci3sZ+RIjf4RGNRcwMR/gafK1fEjGxZgfT5q6lj7z
-         fgrw==
-X-Gm-Message-State: AOJu0YzDVyszERaZQy5hVoid1iPGtM5AMy4QQEb4e8gLByNzmtMrqjM1
-	dIWBr2Xem85pjvxJljSSMxNUPpEDUAQVj8L3cs5aqgCgHrkH6u1IPHG507xgSuu/EUm7Ags4va7
-	UVNRNXMxYzIxJVlKxquUr4qSesGoeOb07IlKq2HeK4G4dnmftqy78vZg=
-X-Google-Smtp-Source: AGHT+IHxb06aCGlAm0uw+1WnUOga2CKxsiLI2OyzkBGYGHAJcSQQ3Iyl21lQ+UxolSNTf1HobEoUre3NFnm73BYnGr6pG9xTtW4i
+	s=arc-20240116; t=1717675523; c=relaxed/simple;
+	bh=vfyoX5kteCRR1xD8K7FFTepZ0enm4dufLuYIW1N4V9E=;
+	h=Subject:From:To:Cc:References:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=t5/Y+cEjFgRVphosky0x+C/QmNICkZFfMrV9m66JHEncGgFor1cc4Qr5K6MXilhGQ6ud+bq+HpLGydMEhPrM3vIoF4Q4X60CbJtPQ/c1mysXR6Ip52fR4UGzF2dxBBcyyVogDFNZeyYzST78ySv6qLG+XIDPIYMVj+QsV0hEG4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8CxyOn9pWFmqDcEAA--.4986S3;
+	Thu, 06 Jun 2024 20:05:17 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8Dxusb7pWFmauAWAA--.57600S3;
+	Thu, 06 Jun 2024 20:05:17 +0800 (CST)
+Subject: Re: [PATCH] LoongArch: KVM: Add feature passing from user space
+From: maobibo <maobibo@loongson.cn>
+To: WANG Xuerui <kernel@xen0n.name>, Tianrui Zhao <zhaotianrui@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>
+Cc: kvm@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20240606074850.2651896-1-maobibo@loongson.cn>
+ <9bb552c8-fe86-43dc-9c4e-0b95c99fb25c@xen0n.name>
+ <2774b010-8033-2167-474a-cb1b29b27d2b@loongson.cn>
+Message-ID: <ca286a23-f22b-092c-20d0-6ab20fd0883f@loongson.cn>
+Date: Thu, 6 Jun 2024 20:05:14 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2cd2:b0:7da:19cb:1c7f with SMTP id
- ca18e2360f4ac-7eb3c28b4f2mr22450339f.0.1717675420392; Thu, 06 Jun 2024
- 05:03:40 -0700 (PDT)
-Date: Thu, 06 Jun 2024 05:03:40 -0700
-In-Reply-To: <000000000000adb08b061413919e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000045babb061a377958@google.com>
-Subject: Re: [syzbot] Re: 000000000000fcfa6406141cc8ac@google.com
-From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+In-Reply-To: <2774b010-8033-2167-474a-cb1b29b27d2b@loongson.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAf8Dxusb7pWFmauAWAA--.57600S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxKFykXFyfuw15Aw4rXw1fAFc_yoW7ZF47pr
+	yvyFs8GrWUGr1fCr1kta4DXryUJr1xGw12qF17X3W8JF47Kr12gr1vgryqgF1DJw48X3W0
+	qF1Yqw13ZF1YqwcCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU9Sb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv
+	67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
+	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C2
+	67AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI
+	8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWU
+	CwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r
+	1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBI
+	daVFxhVjvjDU0xZFpf9x07jY38nUUUUU=
 
-Rm9yIGFyY2hpdmFsIHB1cnBvc2VzLCBmb3J3YXJkaW5nIGFuIGluY29taW5nIGNvbW1hbmQgZW1h
-aWwgdG8KbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZywgc3l6a2FsbGVyLWJ1Z3NAZ29vZ2xl
-Z3JvdXBzLmNvbS4KCioqKgoKU3ViamVjdDogUmU6IDAwMDAwMDAwMDAwMGZjZmE2NDA2MTQxY2M4
-YWNAZ29vZ2xlLmNvbQpBdXRob3I6IHdvamNpZWNoLmdsYWR5c3pAaW5mb2dhaW4uY29tCgojc3l6
-IHRlc3QgaHR0cHM6Ly9saW51eC5nb29nbGVzb3VyY2UuY29tL2xpbnV4L2tlcm5lbC9naXQvdG9y
-dmFsZHMvbGludXggZTM3N2Q4MDNiNjVlZTQxMzAyMTNiM2MwNDFmYzI1ZmRmZWMxYmQ5MA0KDQot
-LS0gYS9rZXJuZWwvdHJhY2UvYnBmX3RyYWNlLmMNCisrKyBiL2tlcm5lbC90cmFjZS9icGZfdHJh
-Y2UuYw0KQEAgLTIzOTMsMTIgKzIzOTMsMjEgQEAgdm9pZCBfX2JwZl90cmFjZV9ydW4oc3RydWN0
-DQog4oCC4oCC4oCC4oCC4oCCY2FudF9zbGVlcCgpOw0KDQog4oCC4oCC4oCC4oCC4oCCLy8gcmV0
-dXJuIGlmIGluc3RydW1lbnRhdGlvbiBkaXNhYmxlZCwgc2VlOiBicGZfZGlzYWJsZV9pbnN0cnVt
-ZW50YXRpb24NCi3igILigILigILigILigIJpZiAodW5saWtlbHkoX190aGlzX2NwdV9yZWFkKGJw
-Zl9wcm9nX2FjdGl2ZSkpKSB7DQor4oCC4oCC4oCC4oCC4oCCaW50IGluc3RydW1lbnRhdGlvbiA9
-IHVubGlrZWx5KF9fdGhpc19jcHVfcmVhZChicGZfcHJvZ19hY3RpdmUpKTsNCivigILigILigILi
-gILigIJpZiAoaW5zdHJ1bWVudGF0aW9uKSB7DQor4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC
-4oCC4oCCcHJpbnRrKCJTS0lQIEZPUiBJTlNUUlVNRU5UQVRJT046ICVzID4gJXMgPiAlcCAvJWkg
-PT09PT09PT09PT09PT1cbiIsDQor4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC
-4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCCcHJvZy0+YXV4LT5uYW1lLA0KK+KAguKA
-guKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKA
-guKAguKAgmxpbmstPmJ0cC0+dHAtPm5hbWUsIHByb2csIGluc3RydW1lbnRhdGlvbik7DQog4oCC
-4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCCYnBmX3Byb2dfaW5jX21pc3Nlc19jb3VudGVy
-KHByb2cpOw0KIOKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAgnJldHVybjsNCiDigILi
-gILigILigILigIJ9DQoNCi3igILigILigILigILigIJpZiAodW5saWtlbHkodGhpc19jcHVfaW5j
-X3JldHVybigqKHByb2ctPmFjdGl2ZSkpICE9IDEpKSB7DQor4oCC4oCC4oCC4oCC4oCCaW50IGFj
-dGl2ZSA9IHRoaXNfY3B1X2luY19yZXR1cm4oKihwcm9nLT5hY3RpdmUpKTsNCivigILigILigILi
-gILigIIvLyBwcmludGsoIiVzID4gJXMgPiAlcCAvJWlcbiIsIHByb2ctPmF1eC0+bmFtZSwgbGlu
-ay0+YnRwLT50cC0+bmFtZSwgcHJvZywgYWN0aXZlKTsNCivigILigILigILigILigIJpZiAoYWN0
-aXZlICE9IDEpIHsNCivigILigILigILigILigILigILigILigILigILigILigIJwcmludGsoIlNL
-SVAgRk9SIEFDVElWRTogJXMgPiAlcyA+ICVwIC8laSA9PT09PT09PT09PT09PT09PT09PT09PVxu
-IiwNCivigILigILigILigILigILigILigILigILigILigILigILigILigILigILigILigILigILi
-gILigILigILigILigILigIJwcm9nLT5hdXgtPm5hbWUsDQor4oCC4oCC4oCC4oCC4oCC4oCC4oCC
-4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCCbGluay0+YnRw
-LT50cC0+bmFtZSwgcHJvZywgYWN0aXZlKTsNCiDigILigILigILigILigILigILigILigILigILi
-gILigIJicGZfcHJvZ19pbmNfbWlzc2VzX2NvdW50ZXIocHJvZyk7DQog4oCC4oCC4oCC4oCC4oCC
-4oCC4oCC4oCC4oCC4oCC4oCCZ290byBvdXQ7DQog4oCC4oCC4oCC4oCC4oCCfQ0KLS0tIGEva2Vy
-bmVsL3RyYWNlcG9pbnQuYw0KKysrIGIva2VybmVsL3RyYWNlcG9pbnQuYw0KQEAgLTI5OCw2ICsz
-MDgsOCBAQCBzdGF0aWMgZW51bSB0cF9mdW5jX3N0YXRlIG5yX2Z1bmNfc3RhdGUoY29uc3QNCiB7
-DQog4oCC4oCC4oCC4oCC4oCCaWYgKCF0cF9mdW5jcykNCiDigILigILigILigILigILigILigILi
-gILigILigILigIJyZXR1cm4gVFBfRlVOQ18wOw0KK+KAguKAguKAguKAguKAgmlmICghdHBfZnVu
-Y3NbMF0uZnVuYykNCivigILigILigILigILigILigILigILigILigILigILigIJyZXR1cm4gVFBf
-RlVOQ18wOw0KIOKAguKAguKAguKAguKAgmlmICghdHBfZnVuY3NbMV0uZnVuYykNCiDigILigILi
-gILigILigILigILigILigILigILigILigIJyZXR1cm4gVFBfRlVOQ18xOw0KIOKAguKAguKAguKA
-guKAgmlmICghdHBfZnVuY3NbMl0uZnVuYykNCi0tDQoNClRoZSBpbmZvcm1hdGlvbiBpbiB0aGlz
-IGVtYWlsIGlzIGNvbmZpZGVudGlhbCBhbmQgbWF5IGJlIGxlZ2FsbHkgcHJpdmlsZWdlZC4gSXQg
-aXMgaW50ZW5kZWQgc29sZWx5IGZvciB0aGUgYWRkcmVzc2VlIGFuZCBhY2Nlc3MgdG8gaXQgYnkg
-YW55b25lIGVsc2UgaXMgdW5hdXRob3JpemVkLiBJZiB5b3UgYXJlIG5vdCB0aGUgaW50ZW5kZWQg
-cmVjaXBpZW50LCBhbnkgZGlzY2xvc3VyZSwgY29weWluZywgZGlzdHJpYnV0aW9uIG9yIGFueSBh
-Y3Rpb24gdGFrZW4gb3Igb21pdHRlZCB0byBiZSB0YWtlbiBiYXNlZCBvbiBpdCwgaXMgc3RyaWN0
-bHkgcHJvaGliaXRlZCBhbmQgbWF5IGJlIHVubGF3ZnVsLg0K
+
+
+On 2024/6/6 下午7:54, maobibo wrote:
+> Xuerui,
+> 
+> Thanks for your reviewing.
+> I reply inline.
+> 
+> On 2024/6/6 下午7:20, WANG Xuerui wrote:
+>> Hi,
+>>
+>> On 6/6/24 15:48, Bibo Mao wrote:
+>>> Currently features defined in cpucfg CPUCFG_KVM_FEATURE comes from
+>>> kvm kernel mode only. Some features are defined in user space VMM,
+>>
+>> "come from kernel side only. But currently KVM is not aware of 
+>> user-space VMM features which makes it hard to employ optimizations 
+>> that are both (1) specific to the VM use case and (2) requiring 
+>> cooperation from user space."
+> Will modify in next version.
+>>
+>>> however KVM module does not know. Here interface is added to update
+>>> register CPUCFG_KVM_FEATURE from user space, only bit 24 - 31 is valid.
+>>>
+>>> Feature KVM_LOONGARCH_VCPU_FEAT_VIRT_EXTIOI is added from user mdoe.
+>>> FEAT_VIRT_EXTIOI is virt EXTIOI extension which can route interrupt
+>>> to 256 VCPUs rather than 4 CPUs like real hw.
+>>
+>> "A new feature bit ... is added which can be set from user space. 
+>> FEAT_... indicates that the VM EXTIOI can route interrupts to 256 
+>> vCPUs, rather than 4 like with real HW."
+> will modify in next version.
+> 
+>>
+>> (Am I right in paraphrasing the "EXTIOI" part?)
+>>
+>>>
+>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>>> ---
+>>>   arch/loongarch/include/asm/kvm_host.h  |  4 +++
+>>>   arch/loongarch/include/asm/loongarch.h |  5 ++++
+>>>   arch/loongarch/include/uapi/asm/kvm.h  |  2 ++
+>>>   arch/loongarch/kvm/exit.c              |  1 +
+>>>   arch/loongarch/kvm/vcpu.c              | 36 +++++++++++++++++++++++---
+>>>   5 files changed, 44 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/arch/loongarch/include/asm/kvm_host.h 
+>>> b/arch/loongarch/include/asm/kvm_host.h
+>>> index 88023ab59486..8fa50d757247 100644
+>>> --- a/arch/loongarch/include/asm/kvm_host.h
+>>> +++ b/arch/loongarch/include/asm/kvm_host.h
+>>> @@ -135,6 +135,9 @@ enum emulation_result {
+>>>   #define KVM_LARCH_HWCSR_USABLE    (0x1 << 4)
+>>>   #define KVM_LARCH_LBT        (0x1 << 5)
+>>> +#define KVM_LOONGARCH_USR_FEAT_MASK            \
+>>> +    BIT(KVM_LOONGARCH_VCPU_FEAT_VIRT_EXTIOI)
+>>> +
+>>>   struct kvm_vcpu_arch {
+>>>       /*
+>>>        * Switch pointer-to-function type to unsigned long
+>>> @@ -210,6 +213,7 @@ struct kvm_vcpu_arch {
+>>>           u64 last_steal;
+>>>           struct gfn_to_hva_cache cache;
+>>>       } st;
+>>> +    unsigned int usr_features;
+>>>   };
+>>>   static inline unsigned long readl_sw_gcsr(struct loongarch_csrs 
+>>> *csr, int reg)
+>>> diff --git a/arch/loongarch/include/asm/loongarch.h 
+>>> b/arch/loongarch/include/asm/loongarch.h
+>>> index 7a4633ef284b..4d9837512c19 100644
+>>> --- a/arch/loongarch/include/asm/loongarch.h
+>>> +++ b/arch/loongarch/include/asm/loongarch.h
+>>> @@ -167,9 +167,14 @@
+>>>   #define CPUCFG_KVM_SIG            (CPUCFG_KVM_BASE + 0)
+>>>   #define  KVM_SIGNATURE            "KVM\0"
+>>> +/*
+>>> + * BIT 24 - 31 is features configurable by user space vmm
+>>> + */
+>>>   #define CPUCFG_KVM_FEATURE        (CPUCFG_KVM_BASE + 4)
+>>>   #define  KVM_FEATURE_IPI        BIT(1)
+>>>   #define  KVM_FEATURE_STEAL_TIME        BIT(2)
+>>> +/* With VIRT_EXTIOI feature, interrupt can route to 256 VCPUs */
+>>> +#define  KVM_FEATURE_VIRT_EXTIOI    BIT(24)
+>>>   #ifndef __ASSEMBLY__
+>>
+>> What about assigning a new CPUCFG leaf ID for separating the two kinds 
+>> of feature flags very cleanly?
+> For compatible issue like new kernel on old KVM host, to add a new
+> CPUCFG leaf ID, a new feature need be defined on existing 
+> CPUCFG_KVM_FEATURE register. Such as:
+>     #define  KVM_FEATURE_EXTEND_CPUCFG        BIT(3)
+> 
+> VM need check feature KVM_FEATURE_EXTEND_CPUCFG at first, and then read 
+> the new CPUCFG leaf ID if feature EXTEND_CPUCFG is enabled.
+> 
+> That maybe makes it complicated since feature bit is enough now.
+The default return value is zero with old kvm host, it is possible to
+use a new CPUCFG leaf ID. Both methods are ok for me.
+
+Huacai,
+What is your optnion about this?
+
+Regards
+Bibo Mao
+>>
+>>> @@ -896,7 +907,24 @@ static int kvm_loongarch_vcpu_get_attr(struct 
+>>> kvm_vcpu *vcpu,
+>>>   static int kvm_loongarch_cpucfg_set_attr(struct kvm_vcpu *vcpu,
+>>>                        struct kvm_device_attr *attr)
+>>>   {
+>>> -    return -ENXIO;
+>>> +    u64 __user *user = (u64 __user *)attr->addr;
+>>> +    u64 val, valid_flags;
+>>> +
+>>> +    switch (attr->attr) {
+>>> +    case CPUCFG_KVM_FEATURE:
+>>> +        if (get_user(val, user))
+>>> +            return -EFAULT;
+>>> +
+>>> +        valid_flags = KVM_LOONGARCH_USR_FEAT_MASK;
+>>> +        if (val & ~valid_flags)
+>>> +            return -EINVAL;
+>>> +
+>>> +        vcpu->arch.usr_features |= val;
+>>
+>> Isn't this usage of "|=" instead of "=" implying that the feature bits 
+>> could not get disabled after being enabled earlier, for whatever reason?
+> yes, "=" is better. Will modify in next version.
+> 
+> Regards
+> Bibo Mao
+>>
+>>> +        return 0;
+>>> +
+>>> +    default:
+>>> +        return -ENXIO;
+>>> +    }
+>>>   }
+>>>   static int kvm_loongarch_vcpu_set_attr(struct kvm_vcpu *vcpu,
+>>>
+>>> base-commit: 2df0193e62cf887f373995fb8a91068562784adc
+>>
+> 
+
 
