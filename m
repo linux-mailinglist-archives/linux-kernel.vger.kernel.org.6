@@ -1,107 +1,134 @@
-Return-Path: <linux-kernel+bounces-204107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F31278FE445
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:30:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46A378FE44E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6CC41C2584D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:30:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA2802825F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789611953BE;
-	Thu,  6 Jun 2024 10:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856221953A4;
+	Thu,  6 Jun 2024 10:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k+xivNkp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fJKOa/ws"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6F2194C63;
-	Thu,  6 Jun 2024 10:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13833BB59;
+	Thu,  6 Jun 2024 10:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717669767; cv=none; b=G22WSGmrAuZy3Q8CU43aFYzhTonA7Fb+07qCdeWnZt31jLs9g8aPrTP+/il/Ax9OI5EKzY9QVxoMPPWvyZslEujeCAvBbb7WTztn9lHZ2tZpfiltIfJaYP6OWQCjpxkVzV6KR6uCZK5RfEqjaQyMhpGAor1u/Mfj20Ou1fxTDu8=
+	t=1717669857; cv=none; b=X5ZkQXGSlBu8lUVm6jnEzi1AM//SWqSe3hTLbxoISqDYRojm5tmIVRvl4eE9xtmddGDHrM7Q3T5vZy+fgYQx+5fS7jAsvo6I7HPuvfDa6hIoHZe+T11Tcw2WdUWt3hW8ASoCbyOJTzyG6oqyAY+1VUGE6jIwNYB68BHWajJ41yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717669767; c=relaxed/simple;
-	bh=qhqknNWVMeNYoWtTdBFYEjniMNaEAVGn4mAJNY/G3To=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XHCcd+ZEpbZzSYD/fB1m/rkrI1q4YVLMWVckDGSf4mbC+USeZoX70vUeNNdx5WceKYbSzqCajDX7L8z7eK67tTVKETR6l642cYddtPmmMvV7FjXogbPK7nAVuUTF1eEv0Rrzx6K/iCWt/+hGGcpgP9TemoR6egkuJMIEQBBtmG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k+xivNkp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 877A6C4AF0F;
-	Thu,  6 Jun 2024 10:29:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717669766;
-	bh=qhqknNWVMeNYoWtTdBFYEjniMNaEAVGn4mAJNY/G3To=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k+xivNkpkyVhP1NuwNn+lsy8+20Ri42Il3zhipU1fxf8wo6vrLJp+Scs92UYJETMc
-	 yCkDwht9art5jJTfNiTyj48jjXCFnHkGKkItGnHHJQZVyLWmic+dv1hcIms34EnpPE
-	 e9aX73VH7w/YSpHPRVyk22wRauXo2Utv9OLK7svRtI9myoUyJQlJF0cXCT3T53Mn7t
-	 zWPFwtuz+tJDbwCPtb+fAkXgMsFK4D5BNENzFAgiaqQsSKXPXhbn+P8W60QYPaGImp
-	 gRYNGgW1qglssWl4XPG6ia0iOFkH3qY4FX1y0GJpTlREjlsIpQn5qxyqUzZvAo6Wbu
-	 99yoYfX65B+Zw==
-Date: Thu, 6 Jun 2024 13:29:21 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Hillf Danton <hdanton@sina.com>
-Cc: Tejun Heo <tj@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, linux-kernel@vger.kernel.org,
-	Gal Pressman <gal@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
-	RDMA mailing list <linux-rdma@vger.kernel.org>
-Subject: Re: [PATCH -rc] workqueue: Reimplement UAF fix to avoid lockdep
- worning
-Message-ID: <20240606102921.GE13732@unreal>
-References: <4c4f1fb769a609a61010cb6d884ab2841ef716d3.1716885172.git.leon@kernel.org>
- <ZljyqODpCD0_5-YD@slm.duckdns.org>
- <20240531034851.GF3884@unreal>
- <Zl4jPImmEeRuYQjz@slm.duckdns.org>
- <20240604105456.1668-1-hdanton@sina.com>
- <20240604113834.GO3884@unreal>
- <Zl9BOaPDsQBc8hSL@slm.duckdns.org>
- <20240605111055.1843-1-hdanton@sina.com>
- <20240606073801.GA13732@unreal>
+	s=arc-20240116; t=1717669857; c=relaxed/simple;
+	bh=n8NQZKeOwsHVqFfy3xQydSiac6ZEqPtQOJSNPM1mQvk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oa1ouL90xkoeCYsm9eQozyz7BxgKFifNnA9VbLfdQPm8emD2SpizWdmAZJDP18Iqf8gfWCpSCxvxWlRzPGVbPjCGJzY3lEPURXi3oL1Dz6KKVw0OubMIqYU6TfN8kcIp9WYhi9OWZDa4Mdv4bQO4NEBYlrE/qSQ0ZPY6fnkJzrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fJKOa/ws; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 456ATv4r063258;
+	Thu, 6 Jun 2024 05:29:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717669797;
+	bh=9ZCEA6cP5eUu5u5Wy7c5Qa6XpiJ0SNZvrvxHy3jwf1w=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=fJKOa/wsX3EBlujkA6t8UrFIGrAbdCE7KR+XE/HH97gbjeGaHaXL8+1qU/H0jK2cx
+	 wC5KT1F0rQ2h8e/E6HwyoyY7Yb2Ndc6I6UApNJoGJiIawowiz3rWLsr43MMzL7YLve
+	 kn2shltk136jLtQaP9TWHjtZ3qM7fvv3uKDOccqs=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 456ATvxF027716
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 6 Jun 2024 05:29:57 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 6
+ Jun 2024 05:29:57 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 6 Jun 2024 05:29:57 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 456ATu3Y111689;
+	Thu, 6 Jun 2024 05:29:57 -0500
+Date: Thu, 6 Jun 2024 15:59:55 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: Vignesh Raghavendra <vigneshr@ti.com>,
+        Siddharth Vadapalli
+	<s-vadapalli@ti.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof
+ =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha
+ Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team
+	<kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Minghuan Lian
+	<minghuan.Lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang
+	<roy.zang@nxp.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jingoo Han
+	<jingoohan1@gmail.com>,
+        Srikanth Thokala <srikanth.thokala@intel.com>,
+        Marek
+ Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda
+	<yoshihiro.shimoda.uh@renesas.com>,
+        Thierry Reding
+	<thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko
+ Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu
+	<mhiramat@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <imx@lists.linux.dev>, <linuxppc-dev@lists.ozlabs.org>,
+        <linux-arm-kernel@axis.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <mhi@lists.linux.dev>, Niklas Cassel <cassel@kernel.org>,
+        Bjorn Helgaas
+	<helgaas@kernel.org>
+Subject: Re: [PATCH 1/5] PCI: dwc: ep: Remove dw_pcie_ep_init_notify() wrapper
+Message-ID: <ef98f581-e2a3-419c-90a8-6cb64ca4e835@ti.com>
+References: <20240606-pci-deinit-v1-0-4395534520dc@linaro.org>
+ <20240606-pci-deinit-v1-1-4395534520dc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240606073801.GA13732@unreal>
+In-Reply-To: <20240606-pci-deinit-v1-1-4395534520dc@linaro.org>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Thu, Jun 06, 2024 at 10:38:01AM +0300, Leon Romanovsky wrote:
-> On Wed, Jun 05, 2024 at 07:10:55PM +0800, Hillf Danton wrote:
-> > On Tue, 4 Jun 2024 21:58:04 +0300 Leon Romanovsky <leon@kernel.org>
-> > > On Tue, Jun 04, 2024 at 06:30:49AM -1000, Tejun Heo wrote:
-> > > > On Tue, Jun 04, 2024 at 02:38:34PM +0300, Leon Romanovsky wrote:
-> > > > > Thanks, it is very rare situation where call to flush/drain queue
-> > > > > (in our case kthread_flush_worker) in the middle of the allocation
-> > > > > flow can be correct. I can't remember any such case.
-> > > > >
-> > > > > So even we don't fully understand the root cause, the reimplementation
-> > > > > is still valid and improves existing code.
-> > > > 
-> > > > It's not valid. pwq release is async and while wq free in the error path
-> > > > isn't. The flush is there so that we finish the async part before
-> > > > synchronize error handling. The patch you posted will can lead to double
-> > > > free after a pwq allocation failure. We can make the error path synchronous
-> > > > but the pwq free path should be updated first so that it stays synchronous
-> > > > in the error path. Note that it *needs* to be asynchronous in non-error
-> > > > paths, so it's going to be a bit subtle one way or the other.
-> > > 
-> > > But at that point, we didn't add newly created WQ to any list which will execute
-> > > that asynchronous release. Did I miss something?
-> > > 
-> > Maybe it is more subtle than thought, but not difficult to make the wq
-> > allocation path sync. See if the patch could survive your test.
+On Thu, Jun 06, 2024 at 12:56:34PM +0530, Manivannan Sadhasivam wrote:
+> Currently dw_pcie_ep_init_notify() wrapper just calls pci_epc_init_notify()
+> directly. So this wrapper provides no benefit to the glue drivers.
 > 
-> Thanks, I started to run our tests with Dan's revert.
-> https://lore.kernel.org/all/171711745834.1628941.5259278474013108507.stgit@dwillia2-xfh.jf.intel.com/
+> So let's remove it and call pci_epc_init_notify() directly from glue
+> drivers.
 > 
-> As premature results, it fixed my lockdep warnings, but it will take time till I get full confidence.
+> Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Don't series fixed reported issue.
+Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
 
-Thanks
+[...]
+
+Regards,
+Siddharth.
 
