@@ -1,108 +1,88 @@
-Return-Path: <linux-kernel+bounces-204092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 168958FE407
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:16:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA33C8FE409
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:17:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D287284AE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:16:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51882284517
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:17:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5572D194C60;
-	Thu,  6 Jun 2024 10:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B07194AEC;
+	Thu,  6 Jun 2024 10:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Vt+2Tjzz"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cWZ7zbat";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vKpMm5MV"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C746D1922E6;
-	Thu,  6 Jun 2024 10:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF38158848
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 10:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717668987; cv=none; b=VlLRJZS+N2nG2KzrQX0owKgfEyXHjw3DllZ5NwhfSlTnFPoBvOWj+WsVZobxJ7+buBvfcGRAQ4O70ZfdFIoRJQ6NXHdpJ7FUTUYrNWwRkcRw9ItxIWaZqn6K+5CDjSAsbUihcDyVo+G8XAXkqAMo5iwvxxCUW0XqDzqFakBk8tE=
+	t=1717669018; cv=none; b=Jopdo+87CbTsZDqbAM8HHMM5Syo6ZeHmaH3E1fVxxC9YhZujrzqBKvvmf2THyR2mj6JhWyvrNLIxAhK0PIcUcPYnylkt7JDe9rbXECuYIVpiFJ3sqTyQhuVFas6CK+t9l8DoLWnqLH+yn+yOmOaFUslzxCS06b/YKIngVdZWRUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717668987; c=relaxed/simple;
-	bh=TNXQqXOK0vZauoDoKBlQ1r923hP5FVOWyGW1tQfI9Vw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ovwdy6GTpWnKD0bRCt3oB2493pl5tLcLESJtoLEaP0BF0W0k786+Ne9jlSAywLwAh6qWrWw8N/QDZzQvN7bmR/FfIxKhIH0taaNXZwG7a1yaCfhW9GgnYkB3W5UphhTqAjkctTYJKbYz32IuVvfrdiFOrFAK72BUWDD7UNyTnbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Vt+2Tjzz; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 963CBE000B;
-	Thu,  6 Jun 2024 10:16:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1717668982;
+	s=arc-20240116; t=1717669018; c=relaxed/simple;
+	bh=5A8sf7+yLRYKY9ELUuBQgOLbkKskjjU7WN2pZkuN8Cs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h3jSAHhQFkyjIBwJd1RHeuqmtnmDiFPTYHT0a1TGvbD0hpCHQIVH9v+cl+KOWYHLAhzZ+7oj4Mdkci0vsCmqBxvNdHfu1/aJ4qHLt0/0NT/aeGsrrr4BN85ehuZaBSSGTZbnRyq8EsMwVwaQwokNfCq2X9vNzE618d3go+WHqj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cWZ7zbat; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vKpMm5MV; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 6 Jun 2024 12:16:48 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717669009;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=j2h0D3OMhz7wpGy+JkAY94boI0RbGnCtt4jE0xdb+Is=;
-	b=Vt+2TjzzzJf3t9GSoFPTGEhH/bh9FYCKoiqm9LKD05/iRy0oGnTXiwZq+8fALq2tMDJzoa
-	WqM5Abq6eMYXx/4e7bFgFfkzsrCDpjCbU5QV75eQnntjcvliOLtY0QvHqJ4Kyc/JNdhUpN
-	z9HodfvxYu+xIok0w39tH5PF8ZCH1AnehMDO3h4NAzSBK7PJt+OWCWQlR1S6zwKMpwT7zp
-	4IW+wIn5moQjVp+XU/FBA42iRLhVGO2mYIqzk3+2UmBqTmG+N3VFMZjICbX78FSP9dQvWn
-	XsySalCA1q4Zi3k1gZZ1eZv6foOXbSqX/GGyTQqM+WEoW1SKvSTeTQIEW4NA8g==
-Date: Thu, 6 Jun 2024 12:16:16 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Simon Horman <horms@kernel.org>, Sai Krishna Gajula
- <saikrishnag@marvell.com>, Thomas Gleixner <tglx@linutronix.de>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Lee Jones <lee@kernel.org>, Arnd Bergmann
- <arnd@arndb.de>, Horatiu Vultur <horatiu.vultur@microchip.com>,
- UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit
- <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Saravana
- Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Philipp
- Zabel <p.zabel@pengutronix.de>, Lars Povlsen <lars.povlsen@microchip.com>,
- Steen Hegelund <Steen.Hegelund@microchip.com>, Daniel Machon
- <daniel.machon@microchip.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, netdev@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Allan
- Nielsen <allan.nielsen@microchip.com>, Luca Ceresoli
- <luca.ceresoli@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 09/19] irqdomain: Add missing parameter descriptions
- in docs
-Message-ID: <20240606121616.20113726@bootlin.com>
-In-Reply-To: <CAHp75Vex7M0htYQiALN3SVy4XHv8bQ-6QQaX21vS_BFF7Sn_Gw@mail.gmail.com>
-References: <20240527161450.326615-1-herve.codina@bootlin.com>
-	<20240527161450.326615-10-herve.codina@bootlin.com>
-	<ZmDEVoC9NUh7Gg7k@surfacebook.localdomain>
-	<20240606091446.03f262fa@bootlin.com>
-	<CAHp75Vex7M0htYQiALN3SVy4XHv8bQ-6QQaX21vS_BFF7Sn_Gw@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	bh=nB08h6l0DX4mfAbuJ0lVlp4ndJx2Sw6kgwEfV7ZfKZA=;
+	b=cWZ7zbatMUtio6jOGpnHxn4S/VFCQOA/OeAiUilP6VzrTsvfPTOQ440kXTRTutDQrdMu0L
+	803XCgOAAkqFEJ2fKPiyKgsKCYf62khRoYmXoEhCj6ZWkmPW90e7yaoOzfO0er91JF9HBT
+	tPSHwSOWmZ3VP+XO6KxxJlRxpnk+c35TxzpggbKccRwimQwssoILv/LCJGE+gMZWWIr2Oa
+	TmomMYrpoC+uzerkBO1EE5jLxldWfWd3/v55+E3wvpC89K0YgoDH8MBbC94kfvXFbISOPj
+	vBMM7MC4GX/bY0+pxoRHnTXtg4uOzoXWL+S6aHUU+SpZzQvOqHj9I9QHqkJsIA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717669009;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nB08h6l0DX4mfAbuJ0lVlp4ndJx2Sw6kgwEfV7ZfKZA=;
+	b=vKpMm5MV5/unNJK57XZLa3psO1Km1djXUoc2z5/BgJiHh7yyDYxz+b3gLM/NEh275qunBG
+	eSGmQo7qILdVerDg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [PATCH 0/4 v3] perf: Fix leaked sigtrap events
+Message-ID: <20240606101648.D07Btzy4@linutronix.de>
+References: <20240516140936.13694-1-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240516140936.13694-1-frederic@kernel.org>
 
-On Thu, 6 Jun 2024 11:46:25 +0300
-Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-
-> On Thu, Jun 6, 2024 at 10:14 AM Herve Codina <herve.codina@bootlin.com> wrote:
-> > On Wed, 5 Jun 2024 23:02:30 +0300
-> > Andy Shevchenko <andy.shevchenko@gmail.com> wrote:  
+On 2024-05-16 16:09:32 [+0200], Frederic Weisbecker wrote:
+> Changes since v2:
 > 
-> ...
-> 
-> > Yes indeed, I missed the return values.
-> > Will be updated in the next iteration.  
-> 
-> Note, Thomas already applied this version, so it should be just a follow up.
+> * Simplify the branch condition on [3/4] (peterz)
+> * Rebase [4/4] accordingly
 
-Indeed, I saw that.
+This wasn't applied in the meantime?
+I will try to rebase my patches on top of this series.
 
-Thanks,
-Hervé
+Sebastian
 
