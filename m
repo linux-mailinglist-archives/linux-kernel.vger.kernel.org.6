@@ -1,121 +1,142 @@
-Return-Path: <linux-kernel+bounces-204396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F9FB8FE832
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:51:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ABA38FE834
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D6351F24F83
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:51:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74E9DB25CDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F6019644F;
-	Thu,  6 Jun 2024 13:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d1AU+LTI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D49E196441;
+	Thu,  6 Jun 2024 13:51:53 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E5E195F10;
-	Thu,  6 Jun 2024 13:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1E71940BE
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 13:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717681887; cv=none; b=GuG6zmAjCaG4Ns2uiFdiVyxzEl0XfRhwiirrHI6ndkPlzgzjkOOO+5krkGBK/6tfHGcZKC94r2oC7Qqm6Q7v6/biLAxJd2pvD+aesbZWWmpMQokPqitB61+Gw05r3SNYv5ZTW5m6dGejIk3xS7blYYw/lqaCO0wK6QrIPnpmuWU=
+	t=1717681913; cv=none; b=sV3CPz+6HST/knyoJRsD5OD6OKgDXtDrrSLloJlNRLzKtSTHE9LWXzbD+Vm7+SSF+0xyTGBqlanJQyAd5CRjZjkibk+LDuoRDcZ73PQ4pa7fNVyxJ9Ljfie/rYMcwuhVGGqZCLn0hbFmExXKX6SspAFjsIPJnzvYWqpxbNgsjNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717681887; c=relaxed/simple;
-	bh=gNK3dp5fn/H795o5UEgHg6VeYr3fgd5BNg14ucmQgQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LzLP1GK8weH6+g28rhi9FrCJ5iAlZ3VmqchO6ZDliwTvxIBw4o8SoP41eR0oEOexot4SLvO3SSIqsfn/n8HBK/ucHFLIB4y4rsx9OwjOEMCFtpTsN19ZHGt6g8sw7HuDY2p/OAfIZ67w8pq+6y5+S9e3QpUimZ/FShRPY5H+yEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d1AU+LTI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03FCFC2BD10;
-	Thu,  6 Jun 2024 13:51:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717681886;
-	bh=gNK3dp5fn/H795o5UEgHg6VeYr3fgd5BNg14ucmQgQE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d1AU+LTIBH/0dAG7ND7cckGhpsoCV34pPi3eW6gnxERxWaCKYcGH6rWkgPDgUeHgA
-	 pkRxHLfKUin8/eVQWLWcsMixNuhT3RaZ7L8I395lHN+AcWQSH2hZKIcEqAHnbo9K3T
-	 kqpNgN4lKlCv/VEwxTcckkOEYZCMq6TLWccgFAiQUA16bLW00g24j9rWoCA3Tc2hlm
-	 gFeQGEV9CxHRvKDSNTU8o/RNXtaBgAUyuKWbWyI6KjpXz4UX7KCwASwqsBHpPYrcrO
-	 MY7PwGJJAn8FvyUjm+lc+cUes6XoAfeTJY68tK84R75EytaflgrtZGJ9mUz0cZiWsO
-	 QhzeR3uYiwX5g==
-Date: Thu, 6 Jun 2024 10:51:23 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: James Clark <james.clark@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Leo Yan <leo.yan@linux.dev>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] perf evlist: Force adding default events only to core
- PMUs
-Message-ID: <ZmG-28go-qqOVsyM@x1>
-References: <Zld3dlJHjFMFG02v@x1>
- <CAP-5=fXKnQzfwDSr3zVeo6ChJe3+xwpBfyAi0ExmPEdhcde4ww@mail.gmail.com>
- <CAM9d7chV8YOCj8=SGs0f60UGtf+N2+X=U+Brg246bFoPXBXS+g@mail.gmail.com>
- <aee9254e-81c1-464a-8a28-f971615baffc@arm.com>
- <CAP-5=fVynt-8cH6Jc5VyfBLBOqkF+v_7kknHdUPZBM1r3WwhTQ@mail.gmail.com>
- <ZlkC_Tm6kKIL3Phc@google.com>
- <CAM9d7ciTbHngfimDNsXS_adR7xg4ZHvSHzVhAzuQ6o-nQ2nsMQ@mail.gmail.com>
- <CAP-5=fUq6jLCtjPNb0gngtR0cXopG+-mJ-+CnEOAXeG7VShh8A@mail.gmail.com>
- <CAM9d7cjPe68PMb1hnbypMOQUQOybpisdqH3eTH1B9G-KG5rKXw@mail.gmail.com>
- <f30f676e-a1d7-4d6b-94c1-3bdbd1448887@arm.com>
+	s=arc-20240116; t=1717681913; c=relaxed/simple;
+	bh=IDL5SpyE6W7WVazaqU2DGPiFv2/6beF2WWfKG8n1szs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=pXzUCdai89Fbx9CBpcxdQGz0pQy3l3SL9YQmsBV9b1qnISiN+tQxWLC8SJE9b+Lnbc3q/lVAWodJ28Eky97lGS4alfVwvsltnFjqKUxGBsJ9RH3hTq8tVJtBD4u/7Em9yZjtfYdzbvjFuWhN8pQeV/bunsStkX1MWf3axMm/01Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-374820a077cso6978735ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 06:51:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717681911; x=1718286711;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1aQ+Beukn7IdnK93tu8Ue6o5bCvmF41VO02ftLOaYhs=;
+        b=Alvy8l8cRjDzNarlL4XDlQ0QvGU4+ZGWc69lIpAGW2zOGz4EnLuZeiTnJPHhtYCEpw
+         c/27ScaCeMmdUoRr0MKsTQpGe2oRtf00QH2tXI05qJrpDSknap3eY+aCAAOVWDM7iVQA
+         PBijrxt0PE2XiOoGkd8QENk6Dib3BIcweS1Q3+T4wXwU/zCrxLtA8Zd7DJ4XWfjweDsH
+         h4hukoiCAfCK7osVsHNmACYxDtFsn7sOHm5widq0bl4CEV1yqid5DgsfMm24diZYYEvw
+         QMV/7H0wO53G5NBVfKU8HgMKjHxkQyZPQnDaLts0xrygs4fiFg8HKvzZmPN+gpwGX/zA
+         DeBA==
+X-Gm-Message-State: AOJu0Yzw8R/+Jh9S29vyUA+ApghgRrQ3VhAuUCNOMNhvXN9LgLNzv021
+	fiXQnFDXB9hJnPZvdEGKdR5JHPj1zAnCrPHU/ziC0pAaOxoa+oMHjeZEoJFFLNolIqeW+Me7db5
+	cfkTgY7VfyWzKEbnLP2JFn81LGxdBXOp4/hNoZ35Ew3SL/MS7apc6CLE=
+X-Google-Smtp-Source: AGHT+IHc7y4L+SXOnEIs/3IcL89VcNEB/3RGfvvU0lo4AMw8KD7d6AlD1M2xCCr1rccOApNyaJy5SDZGpDHp8sOfVjUmzYjeJnl8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f30f676e-a1d7-4d6b-94c1-3bdbd1448887@arm.com>
+X-Received: by 2002:a92:b70d:0:b0:374:b233:3433 with SMTP id
+ e9e14a558f8ab-374b23335e8mr2094025ab.5.1717681911118; Thu, 06 Jun 2024
+ 06:51:51 -0700 (PDT)
+Date: Thu, 06 Jun 2024 06:51:51 -0700
+In-Reply-To: <000000000000adb08b061413919e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000265027061a38fce6@google.com>
+Subject: Re: [syzbot] possible deadlock in trie_delete_elem
+From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jun 06, 2024 at 10:42:33AM +0100, James Clark wrote:
-> On 06/06/2024 08:09, Namhyung Kim wrote:
-> > On Wed, Jun 5, 2024 at 4:02 PM Ian Rogers <irogers@google.com> wrote:
-> >> 2) Ignore failures, possibly hiding user errors.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-> >> I would prefer for (2) the errors were pr_err rather than pr_debug,
-> >> something the user can clean up by getting rid of warned about PMUs.
-> >> This will avoid hiding the error, but then on Neoverse cycles will
-> >> warn about the arm_dsu PMU's cycles event for exactly Linus' test
-> >> case. My understanding is that this is deemed a regression, hence
-> >> Arnaldo proposing pr_debug to hide it.
+***
 
-> > Right, if we use pr_err() then users will complain.  If we use
-> > pr_debug() then errors will be hidden silently.
- 
-> I'm not sure if anyone would really complain about warnings for
-> attempting to open but not succeeding, as long as the event that they
-> really wanted is there. I'm imagining output like this:
- 
->   $ perf record -e cycles -- ls
- 
->   Warning: skipped arm_dsu/cycles/ event(s), recording on
->     armv8_pmuv3_0/cycles/, armv8_pmuv3_1/cycles/
- 
->   [ perf record: Woken up 1 times to write data ]
->   [ perf record: Captured and wrote 0.008 MB perf.data (30 samples) ]
- 
-> You only really need to worry when no events can be opened, but
-> presumably that was a warning anyway.
+Subject: possible deadlock in trie_delete_elem
+Author: norkam41@gmail.com
 
-Agreed, while we don't find a way, old or new to autoritatively skip the
-event, when that pr_warning() gets turned into a pr_debug() so that
-people expecting that those skipped events were included get a message
-telling why they were not.
- 
-> And in stat mode I wouldn't expect any warnings.
+#syz test: https://linux.googlesource.com/linux/kernel/git/torvalds/linux e377d803b65ee4130213b3c041fc25fdfec1bd90
 
-Right.
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 2d29bc0f21cc..75fdb8e3abaa 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -2393,12 +2393,21 @@ void __bpf_trace_run(struct bpf_raw_tp_link *link, u64 *args)
+ 	cant_sleep();
 
-- Arnaldo
+ 	// return if instrumentation disabled, see: bpf_disable_instrumentation
+-	if (unlikely(__this_cpu_read(bpf_prog_active))) {
++	int instrumentation = unlikely(__this_cpu_read(bpf_prog_active));
++	if (instrumentation) {
++		printk("SKIP FOR INSTRUMENTATION: %s > %s > %p /%i ==============\n",
++				prog->aux->name,
++				link->btp->tp->name, prog, instrumentation);
+ 		bpf_prog_inc_misses_counter(prog);
+ 		return;
+ 	}
+
+-	if (unlikely(this_cpu_inc_return(*(prog->active)) != 1)) {
++	int active = this_cpu_inc_return(*(prog->active));
++	// printk("%s > %s > %p /%i\n", prog->aux->name, link->btp->tp->name, prog, active);
++	if (active != 1) {
++		printk("SKIP FOR ACTIVE: %s > %s > %p /%i =======================\n",
++				prog->aux->name,
++				link->btp->tp->name, prog, active);
+ 		bpf_prog_inc_misses_counter(prog);
+ 		goto out;
+ 	}
+diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+index 8d1507dd0724..e756262d8df7 100644
+--- a/kernel/tracepoint.c
++++ b/kernel/tracepoint.c
+@@ -168,12 +169,21 @@ static inline void release_probes(struct tracepoint_func *old)
+ static void debug_print_probes(struct tracepoint_func *funcs)
+ {
+ 	int i;
++	struct bpf_raw_tp_link *link;
+
+ 	if (!tracepoint_debug || !funcs)
+ 		return;
+
+-	for (i = 0; funcs[i].func; i++)
+-		printk(KERN_DEBUG "Probe %d : %p\n", i, funcs[i].func);
++	for (i = 0; funcs[i].func; i++) {
++		link = funcs[i].data;
++		int active = this_cpu_read(*(link->link.prog->active));
++		printk("Probe %d : %p / %p: %s/%d / %i\n", i,
++				funcs[i].func,
++				link,
++				link->link.prog->aux->name,
++				active,
++				funcs[i].prio);
++	}
+ }
+
+ static struct tracepoint_func *
+@@ -298,6 +308,8 @@ static enum tp_func_state nr_func_state(const struct tracepoint_func *tp_funcs)
+ {
+ 	if (!tp_funcs)
+ 		return TP_FUNC_0;
++	if (!tp_funcs[0].func)
++		return TP_FUNC_0;
+ 	if (!tp_funcs[1].func)
+ 		return TP_FUNC_1;
+ 	if (!tp_funcs[2].func)
 
