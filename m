@@ -1,94 +1,110 @@
-Return-Path: <linux-kernel+bounces-204653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 069558FF1C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:11:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D74638FF1CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FB7328511E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:11:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE3F81C249F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40180198E87;
-	Thu,  6 Jun 2024 16:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2511A1990D7;
+	Thu,  6 Jun 2024 16:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dgh/4/r8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UFdMrZ1G"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7972E153511;
-	Thu,  6 Jun 2024 16:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45C51991A7;
+	Thu,  6 Jun 2024 16:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717690107; cv=none; b=l9Tsw4zO5Aa0zNy/lM00D6Cc7AKMBV8AVaX7zoyBrLpTS8COlD/KuL4sGJCvaD9Ju02e9LmlHpbBbl3TwQ7ayKJaVuzpFx40xF3STEXXafEor9Em1/XnRC4Tkq8gzy8FJjinVEemMiaX3xw1Mv7z+e3/AcNqAr43RAXUPQ0M18o=
+	t=1717690237; cv=none; b=bjh4bmJDAAWhzpkgDVSHfqGuTCzMZDmdfxVLAXfe4IQKBimjgdU3kwi2u3FC8dqxpXUtPBQ+/NZFPVMTRyEvYP4+c8ELcNTUJ8whSrD420MSN/eBhMovbGgN1ubPo2lvS3fc02e+p6XyEr4OkpOTpWd7nmtHooWjr1PMnnkunQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717690107; c=relaxed/simple;
-	bh=UmCxizvm3rPZ18X39bpJ5dPVaD+xg52JPfN7bRM6mjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jn7m3mG8IIIALbH4E1hlWgX/lbqI+d5A41CDQ1r6X7Hsx9aanD9q5AIurjlc2pb8tQBYZbHPz36/G0cl4sihwqdawAxBZ5OnUXUyDh8qmIUEsJiuV0CQyFwkuSWkZ5eGDKGuXgg7iHcev9xLsWX0E6b7j6Sv6A78znMkcYQwc7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dgh/4/r8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3074C2BD10;
-	Thu,  6 Jun 2024 16:08:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717690107;
-	bh=UmCxizvm3rPZ18X39bpJ5dPVaD+xg52JPfN7bRM6mjY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dgh/4/r8y1ht0dQWNTA3d0N0tSKSedHgcydHx39SJCfR47uwyeai8NiJPUrZsdu6Q
-	 Y2+Sw3drdOUCDfCUliRgezLGTQflWADHttk6KFAPsl9qP9yNq5EPltRIXJPU24rPQU
-	 QfjiVfuWbmbtUmf5mvecvAjTVi7lJUYHF76Mv4m1cU8mfRQf+QVYfVMOf+9i8uTXkY
-	 45rltO4yBVglKtnyGyUvS1LXcQw7fA+j8J/0mQjajIERORDCX3+p0zDcBrk019No5D
-	 FrrTZronBlNN2Bi57J9L1JHtHwHboDR03IfOYzq0TQk5aiIgW5Ia0U9Aqd8A+YDWE1
-	 HdUAzJQfDgJcQ==
-Date: Thu, 6 Jun 2024 17:08:22 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alex Bee <knaerzche@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+	s=arc-20240116; t=1717690237; c=relaxed/simple;
+	bh=je0DYBuKhWYW4JpL97m6nmOv4z/QoM1eIcNvWJ+BGJY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mt+1VyyB44OTkybg5PcwYU/CY3zbsbPZ0DTBoOhJ1p6QUqYHT+6wYI4iW+KRqZGHyNxJnRYCFWt+pCOAXu8TyZgtSUGkSD6NBUmLRJ3ZgbxcIggNpumPjtv/9OSZpoLn3MW2pdqgUadd7jog3eJhRtnPqk96K99xbIMFB4AMEB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UFdMrZ1G; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717690236; x=1749226236;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=je0DYBuKhWYW4JpL97m6nmOv4z/QoM1eIcNvWJ+BGJY=;
+  b=UFdMrZ1GfxjDqJUR3mR1sMujMHwYLbWlGKtL78M2ggr3dFjywpvvXbA2
+   Tsib6sdhDPZxjvxsf5vMBD+pXBgzzGA9RWBzm7CnS3AVuCXV1KmD/ZXw6
+   QkSjl13oJspvBHL3clLyHe1a116tBGOkdE0L+K9R53UpXWjPXDZe31vKn
+   8mDi4LMpaDhi8mzgDVtedqCRKBGhRAL1s8KOzRrwQE0JMnj5zMuuwfBbe
+   pNoRDmy5QTOOcqnDb5BjUeh+mdUDAqj1zSmR9DvMgyNUyQaA/9017EQi8
+   oPrgT1/loct11vT0w50yvVV+pw94s0LyfKSRtwFUsK+zYYVuf6h7bs41Q
+   w==;
+X-CSE-ConnectionGUID: d0iNDyqkS4a9Ejc7IcInvw==
+X-CSE-MsgGUID: ELl6U3UMTZm5GvgMDM7uPA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="14525073"
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="14525073"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 09:10:36 -0700
+X-CSE-ConnectionGUID: SEfdrqv7QsChJC8hWYOwtA==
+X-CSE-MsgGUID: uMf6eAe2QZ6v/8IuWzVlkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="38695666"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa007.jf.intel.com with ESMTP; 06 Jun 2024 09:10:32 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 515D12A4; Thu, 06 Jun 2024 19:10:30 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 3/5 RESEND] dt-bindings: clock: rk3128: Add HCLK_SFC
-Message-ID: <20240606-rudder-urging-b3adff371b09@spud>
-References: <20240605210049.232284-1-knaerzche@gmail.com>
- <20240605210049.232284-4-knaerzche@gmail.com>
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: [PATCH v1 0/4] clk: Switch to use kmemdup_array()
+Date: Thu,  6 Jun 2024 19:09:30 +0300
+Message-ID: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Nr0MJ9IweRh6y/Hr"
-Content-Disposition: inline
-In-Reply-To: <20240605210049.232284-4-knaerzche@gmail.com>
+Content-Transfer-Encoding: 8bit
 
+Replace open coded kmemdup_array(), which does an additional
+overflow check.
 
---Nr0MJ9IweRh6y/Hr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Andy Shevchenko (4):
+  clk: mmp: Switch to use kmemdup_array()
+  clk: rockchip: Switch to use kmemdup_array()
+  clk: samsung: Switch to use kmemdup_array()
+  clk: visconti: Switch to use kmemdup_array()
 
-On Wed, Jun 05, 2024 at 11:00:47PM +0200, Alex Bee wrote:
-> Add a clock id for SFC's AHB clock.
->=20
-> Signed-off-by: Alex Bee <knaerzche@gmail.com>
+ drivers/clk/mmp/clk-mix.c      | 10 ++++------
+ drivers/clk/rockchip/clk-cpu.c |  5 ++---
+ drivers/clk/rockchip/clk-pll.c |  8 ++++----
+ drivers/clk/samsung/clk-cpu.c  |  4 ++--
+ drivers/clk/samsung/clk-pll.c  |  8 ++++----
+ drivers/clk/visconti/pll.c     |  6 +++---
+ 6 files changed, 19 insertions(+), 22 deletions(-)
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
---Nr0MJ9IweRh6y/Hr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmHe9gAKCRB4tDGHoIJi
-0jn9AP9SMAO9sum1e1deg3jz2j/qKh9LNAHOswIPlSqJXs+jdwD/a08TAeMh5Eza
-L1XTPyQj2TxsBm1lt+YZp4ZN6on0lAQ=
-=f9NK
------END PGP SIGNATURE-----
-
---Nr0MJ9IweRh6y/Hr--
 
