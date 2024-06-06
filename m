@@ -1,123 +1,227 @@
-Return-Path: <linux-kernel+bounces-203775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B0158FE057
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:59:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B72678FE061
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8409BB23E49
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:59:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61F29286A80
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58EAC13C81B;
-	Thu,  6 Jun 2024 07:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5B313C676;
+	Thu,  6 Jun 2024 07:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qG7OKZtk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/vlEsE7K"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YqbNN5sv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337981327E5;
-	Thu,  6 Jun 2024 07:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FD31F5F5
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 07:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717660756; cv=none; b=C/9PAeD6Bhl3whbLNdMogXfwXn4raHwe1Qernv0+XRdxPMqKfNxsgrY0Clj5cw4hxq9n8LL5CmfNnXAkWBZtIZ81sjnC6Xvg7wIxcS06g4Z8jcprbrGCRZCKrJAo0NK5ja6gmgnz+qVfra7Tf8d4YQhsxEnJ2Jwt4BJgQkvl59w=
+	t=1717660788; cv=none; b=cVsDJo4clVu0hgru8LjwWmtOcQVpcpvRQR4+3hvnp8AHyXrb2CSwBmhs9X+jCXwWfg8jKhdu1jsE9XZO9hZf+eLn1TXhiEkX8BArebiW8wr2DeF7p99WS//mecygJaQ+Sdwzkwcmg3dpwJ9NBXAvf4hdqnJnHvAPhkQqIDrPSdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717660756; c=relaxed/simple;
-	bh=ATccA5r9ES5LDi1RDOSSs0f1rgaAZyIufvadcuOLeFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nUusVI166KnElkTJOzF/Bg80ZWMDUP7O2UqmTmcK8w8Z3tAyHSD8v9zWWGIzxibPH+hxI8grOZZe6YZQJymhy5qs5DTMGYJYhezGvtwlIt6zw/DwWY7Y/Mr94M8aLbituSSo6h0qOXZ2HtqPRivUjxWm5hjzpF1crsGS5AsZB5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qG7OKZtk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/vlEsE7K; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 6 Jun 2024 09:59:11 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717660753;
+	s=arc-20240116; t=1717660788; c=relaxed/simple;
+	bh=Mk/4fFk2IORAea27C9IdZ1tLJIMPn5C6VTpjLf6KOC8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KNmR2YCsNp8VtzznnBvaMHM7/zDS1qlkLs6PYEd1UwdGHYCt2YRw+zDe6wdb9iVmrKUMc5N3Emvhcid/lHoF2uMvXWWQQLC6Y1HVMfeevcEQg+MwynjK5NSBZCvOOt/FMQ2ElrQxN8xto4lVwrVpaK4iYbFDji/3YTujEQb4JOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YqbNN5sv; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717660785;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=30vocsfTuBFpsGaciPogg95G00+g0UfUEX+ZmA5rlwg=;
-	b=qG7OKZtkHJpbqIHTP6vxfQj8V7scoSssLhudVwaoRNmMxuNqyDVz0iYt59zlvq1xEQyViX
-	pAo0nsfe/fWaTjkiYBg09yUpxkocdAxbBNXvd4WZGqPxnYoJ9OrVoqt+io2e7GWHeZZiRo
-	nOuv538ixF+g7vr8BmdDzbx+xbldmjBq/7iq9AwHdPqvVGi/KCn/u10wSgcgLfUiTTgyRQ
-	Hd4TJseY++Ezq60frsHLNVxP8nR1hSmioXrsp53+nKKaQz0JnHZZ3lK8JYabVeZ4gOoKTj
-	K4PSPXcupatjR3JRZYyux/bM8JpPE1I7o8GZMex6tHDxLdbq9yk0RWdFgOdHiQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717660753;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=30vocsfTuBFpsGaciPogg95G00+g0UfUEX+ZmA5rlwg=;
-	b=/vlEsE7KNVIsQeYT9HKWZ40jdf2xffBPU3Ix94pTZGc2VwmA1ydkvnSgKFpmSc6namZ0nr
-	SXN0zwMGrKiR5uCA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Daniel Bristot de Oliveira <bristot@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v4 net-next 01/14] locking/local_lock: Add local nested
- BH locking infrastructure.
-Message-ID: <20240606075911.4eE4DdNS@linutronix.de>
-References: <20240604154425.878636-1-bigeasy@linutronix.de>
- <20240604154425.878636-2-bigeasy@linutronix.de>
- <20240606075244.GB8774@noisy.programming.kicks-ass.net>
+	bh=Mk/4fFk2IORAea27C9IdZ1tLJIMPn5C6VTpjLf6KOC8=;
+	b=YqbNN5svTb0my8yRQ3h7RMYFa9QMNqB7KNcJK2sPp4S583YVMvN+PtQJ8/ez7JL3Z9BXjF
+	yDGMMlxCKE8u7fIXZR6EPbnKyBtrV7t2Ioo6a7jJcitQ4Hhs8ISYZsyZw3HNJTcEvPRMh/
+	yTu22LO1PRUqyu+VX/PcRqO0GL+2uSw=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-594-tYyCiSGnNE2qoGmERfQKbw-1; Thu, 06 Jun 2024 03:59:44 -0400
+X-MC-Unique: tYyCiSGnNE2qoGmERfQKbw-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42156176983so1171965e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 00:59:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717660782; x=1718265582;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Mk/4fFk2IORAea27C9IdZ1tLJIMPn5C6VTpjLf6KOC8=;
+        b=HTWrcu/Wqo4+00/z4epLswv1nu/ZslgD6uwYauRBnVbQHT9lXHsBOWhRlGdK0SsLcg
+         YnS+k0bKfMbt3/7WjP/tg+i0xrnv8ST9H0a6C7GFTuVyQy5pG/hdHa3SG2a0X2ktxMzb
+         b7aerpNF1RJ7fymIfJawMI8vTddw5c0yxz4o0NU/1y639levN08693bDI2859ac61jm5
+         t58wsUfuAiydqCjUYPALlPtMTAtA8Xf1pPwIDcpIOYAQZs10UMj+lbX+3k7cTWQ9IAko
+         HrEqvoOrttkKqT6n6ObKmVfVbGSsYPDnBgiwV4ri+PZLwpmS13nsfOC2EbltgexQ9oa2
+         tShQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVlt3u6ifnSo7oJ4ZEG2pNbqKFsjERJF43zDGposs6gzBBGrS88XmSdjMpEgMHX+9acwv19RnD6Q6x37Ggx75uLbq+kbVaBQzQ/7Zm0
+X-Gm-Message-State: AOJu0YyJQGt4rp2CIBz6H4oB4RBVNwXduwhfy/xCMkwpG3oVCz5PEobk
+	Pgp6yK8Eo1o99pjK5mThXCwXQRj3X/T/ZlmthGzDAnLuJU+PvE+Aia7NbXsfY3dCAJ5WrqvCFJJ
+	GJfF0x6AIDZwiuDYk7nXgA/+tt2s2GReFHnbKX8g31HWhqVTqXnR3Ep/I8sHaTw==
+X-Received: by 2002:a05:600c:3550:b0:419:f4d6:5044 with SMTP id 5b1f17b1804b1-4215633e751mr35821905e9.2.1717660782339;
+        Thu, 06 Jun 2024 00:59:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEGUivM8mTO4gESausagxMuauIee1AR3Fy2H3uz4r7VZZRJPl8dNT+bxzFFZ+Bi3JsZ54tp9Q==
+X-Received: by 2002:a05:600c:3550:b0:419:f4d6:5044 with SMTP id 5b1f17b1804b1-4215633e751mr35821745e9.2.1717660781967;
+        Thu, 06 Jun 2024 00:59:41 -0700 (PDT)
+Received: from pstanner-thinkpadt14sgen1.remote.csb (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c2a6225sm12525895e9.25.2024.06.06.00.59.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 00:59:41 -0700 (PDT)
+Message-ID: <3ba34cca64c5146c954f1395b3e20215afc255ec.camel@redhat.com>
+Subject: Re: [PATCH v7 07/13] PCI: Move dev-enabled status bit to struct
+ pci_dev
+From: Philipp Stanner <pstanner@redhat.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>, Sam
+ Ravnborg <sam@ravnborg.org>, dakr@redhat.com, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org
+Date: Thu, 06 Jun 2024 09:59:40 +0200
+In-Reply-To: <20240605211111.GA779780@bhelgaas>
+References: <20240605211111.GA779780@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240606075244.GB8774@noisy.programming.kicks-ass.net>
 
-On 2024-06-06 09:52:44 [+0200], Peter Zijlstra wrote:
-> On Tue, Jun 04, 2024 at 05:24:08PM +0200, Sebastian Andrzej Siewior wrote:
-> > Add local_lock_nested_bh() locking. It is based on local_lock_t and the
-> > naming follows the preempt_disable_nested() example.
-> > 
-> > For !PREEMPT_RT + !LOCKDEP it is a per-CPU annotation for locking
-> > assumptions based on local_bh_disable(). The macro is optimized away
-> > during compilation.
-> > For !PREEMPT_RT + LOCKDEP the local_lock_nested_bh() is reduced to
-> > the usual lock-acquire plus lockdep_assert_in_softirq() - ensuring that
-> > BH is disabled.
-> > 
-> > For PREEMPT_RT local_lock_nested_bh() acquires the specified per-CPU
-> > lock. It does not disable CPU migration because it relies on
-> > local_bh_disable() disabling CPU migration.
-> 
-> should we assert this? lockdep_assert(current->migration_disabled) or
-> somesuch should do, rite?
+T24gV2VkLCAyMDI0LTA2LTA1IGF0IDE2OjExIC0wNTAwLCBCam9ybiBIZWxnYWFzIHdyb3RlOgo+
+IE9uIFdlZCwgSnVuIDA1LCAyMDI0IGF0IDEwOjE1OjU5QU0gKzAyMDAsIFBoaWxpcHAgU3Rhbm5l
+ciB3cm90ZToKPiA+IFRoZSBiaXQgZGVzY3JpYmluZyB3aGV0aGVyIHRoZSBQQ0kgZGV2aWNlIGlz
+IGN1cnJlbnRseSBlbmFibGVkIGlzCj4gPiBzdG9yZWQKPiA+IGluIHN0cnVjdCBwY2lfZGV2cmVz
+LiBCZXNpZGVzIHRoaXMgc3RydWN0IGJlaW5nIHN1YmplY3Qgb2YgYQo+ID4gY2xlYW51cAo+ID4g
+cHJvY2Vzcywgc3RydWN0IHBjaV9kZXZpY2UgaXMgaW4gZ2VuZXJhbCB0aGUgcmlnaHQgcGxhY2Ug
+dG8gc3RvcmUKPiA+IHRoaXMKPiA+IGluZm9ybWF0aW9uLCBzaW5jZSBpdCBpcyBub3QgZGV2cmVz
+LXNwZWNpZmljLgo+ID4gCj4gPiBNb3ZlIHRoZSAnZW5hYmxlZCcgYm9vbGVhbiBiaXQgdG8gc3Ry
+dWN0IHBjaV9kZXYuCj4gCj4gSSB0aGluayB0aGlzIChhbmQgdGhlIHNpbWlsYXIgJ3Bpbm5lZCcg
+cGF0Y2gpIGFwcGVhcmVkIGluIHY2LgoKWWVzLiBUaGlzIHBhdGNoIGFuZCBpdHMgYnJvdGhlcnMg
+c2VydmUgdG8gcmVtb3ZlIG1lbWJlcnMgZnJvbQpzdHJ1Y3QgcGNpX2RldnJlcyBzdGVwIGJ5IHN0
+ZXAsIHNvIGl0IGNhbiB1bHRpbWF0ZWx5IGJlIHJlbW92ZWQsIHNvCnRoYXQgd2Ugd29uJ3QgaGF2
+ZSBhIGdlbmVyaWMgZGV2cmVzIHN0cnVjdCBhbnltb3JlLCBidXQgYWN0dWFsCnJlc291cmNlLXNw
+ZWNpZmljIHN0cnVjdHMuCgo+IAo+IEl0IHNvdW5kcyBwbGF1c2libGUgdG8gaGF2ZSB0aGlzIGlu
+IHN0cnVjdCBwY2lfZGV2LCBidXQgaXQncwo+IGNvbmZ1c2luZwo+IHRvIGhhdmUgYm90aDoKPiAK
+PiDCoCBwY2lfZGV2LmVuYWJsZWQKPiDCoCBwY2lfZGV2LmVuYWJsZV9jbnQsIHVzZWQgYnkgcGNp
+X2lzX2VuYWJsZWQoKQo+IAo+IEkgaGF2ZW4ndCBsb29rZWQgaGFyZCBlbm91Z2ggdG8gc2VlIHdo
+ZXRoZXIgYm90aCBhcmUgcmVxdWlyZWQuwqAgSWYKPiB0aGV5IGFyZSwgSSB0aGluayB3ZSBzaG91
+bGQgcmVuYW1lICJlbmFibGVkIiB0byBzb21ldGhpbmcgZGVzY3JpcHRpdmUKPiBlbm91Z2ggdG8g
+bWFrZSBpdCBvYnZpb3VzbHkgZGlmZmVyZW50IGZyb20gImVuYWJsZV9jbnQiLgoKSSB0b29rIGEg
+bG9vayBhdCBpdCBhbmQgSSB0aGluayB3ZSBjYW4gYWN0dWFsbHkgZHJvcCAiZW5hYmxlZCIgYW5k
+IHVzZQoiZW5hYmxlX2NudCIgZm9yIGV2ZXJ5dGhpbmcuIFRoYXQgd291bGQgZXZlbiBzaW1wbGlm
+eSB0aGluZ3MgbW9yZSwgSSdkCnNheS4KCkxldCBtZSBwcm92aWRlIHRoYXQgaW4gdjguCgoKUC4K
+Cj4gCj4gPiBTaWduZWQtb2ZmLWJ5OiBQaGlsaXBwIFN0YW5uZXIgPHBzdGFubmVyQHJlZGhhdC5j
+b20+Cj4gPiAtLS0KPiA+IMKgZHJpdmVycy9wY2kvZGV2cmVzLmMgfCAxMSArKysrLS0tLS0tLQo+
+ID4gwqBkcml2ZXJzL3BjaS9wY2kuY8KgwqDCoCB8IDE3ICsrKysrKysrKystLS0tLS0tCj4gPiDC
+oGRyaXZlcnMvcGNpL3BjaS5owqDCoMKgIHzCoCAxIC0KPiA+IMKgaW5jbHVkZS9saW51eC9wY2ku
+aMKgIHzCoCAxICsKPiA+IMKgNCBmaWxlcyBjaGFuZ2VkLCAxNSBpbnNlcnRpb25zKCspLCAxNSBk
+ZWxldGlvbnMoLSkKPiA+IAo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGNpL2RldnJlcy5jIGIv
+ZHJpdmVycy9wY2kvZGV2cmVzLmMKPiA+IGluZGV4IDU3MmE0ZTE5Mzg3OS4uZWE1OTBjYWY4OTk1
+IDEwMDY0NAo+ID4gLS0tIGEvZHJpdmVycy9wY2kvZGV2cmVzLmMKPiA+ICsrKyBiL2RyaXZlcnMv
+cGNpL2RldnJlcy5jCj4gPiBAQCAtMzk4LDcgKzM5OCw3IEBAIHN0YXRpYyB2b2lkIHBjaW1fcmVs
+ZWFzZShzdHJ1Y3QgZGV2aWNlICpnZW5kZXYsCj4gPiB2b2lkICpyZXMpCj4gPiDCoMKgwqDCoMKg
+wqDCoMKgaWYgKHRoaXMtPnJlc3RvcmVfaW50eCkKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgcGNpX2ludHgoZGV2LCB0aGlzLT5vcmlnX2ludHgpOwo+ID4gwqAKPiA+IC3CoMKg
+wqDCoMKgwqDCoGlmICh0aGlzLT5lbmFibGVkICYmICF0aGlzLT5waW5uZWQpCj4gPiArwqDCoMKg
+wqDCoMKgwqBpZiAoIXRoaXMtPnBpbm5lZCkKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgcGNpX2Rpc2FibGVfZGV2aWNlKGRldik7Cj4gPiDCoH0KPiA+IMKgCj4gPiBAQCAtNDQx
+LDE0ICs0NDEsMTEgQEAgaW50IHBjaW1fZW5hYmxlX2RldmljZShzdHJ1Y3QgcGNpX2RldiAqcGRl
+dikKPiA+IMKgwqDCoMKgwqDCoMKgwqBkciA9IGdldF9wY2lfZHIocGRldik7Cj4gPiDCoMKgwqDC
+oMKgwqDCoMKgaWYgKHVubGlrZWx5KCFkcikpCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoHJldHVybiAtRU5PTUVNOwo+ID4gLcKgwqDCoMKgwqDCoMKgaWYgKGRyLT5lbmFibGVk
+KQo+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiAwOwo+ID4gwqAKPiA+
+IMKgwqDCoMKgwqDCoMKgwqByYyA9IHBjaV9lbmFibGVfZGV2aWNlKHBkZXYpOwo+ID4gLcKgwqDC
+oMKgwqDCoMKgaWYgKCFyYykgewo+ID4gK8KgwqDCoMKgwqDCoMKgaWYgKCFyYykKPiA+IMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcGRldi0+aXNfbWFuYWdlZCA9IDE7Cj4gPiAtwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZHItPmVuYWJsZWQgPSAxOwo+ID4gLcKgwqDCoMKg
+wqDCoMKgfQo+ID4gKwo+ID4gwqDCoMKgwqDCoMKgwqDCoHJldHVybiByYzsKPiA+IMKgfQo+ID4g
+wqBFWFBPUlRfU1lNQk9MKHBjaW1fZW5hYmxlX2RldmljZSk7Cj4gPiBAQCAtNDY2LDcgKzQ2Myw3
+IEBAIHZvaWQgcGNpbV9waW5fZGV2aWNlKHN0cnVjdCBwY2lfZGV2ICpwZGV2KQo+ID4gwqDCoMKg
+wqDCoMKgwqDCoHN0cnVjdCBwY2lfZGV2cmVzICpkcjsKPiA+IMKgCj4gPiDCoMKgwqDCoMKgwqDC
+oMKgZHIgPSBmaW5kX3BjaV9kcihwZGV2KTsKPiA+IC3CoMKgwqDCoMKgwqDCoFdBUk5fT04oIWRy
+IHx8ICFkci0+ZW5hYmxlZCk7Cj4gPiArwqDCoMKgwqDCoMKgwqBXQVJOX09OKCFkciB8fCAhcGRl
+di0+ZW5hYmxlZCk7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgaWYgKGRyKQo+ID4gwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqBkci0+cGlubmVkID0gMTsKPiA+IMKgfQo+ID4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvcGNpL3BjaS5jIGIvZHJpdmVycy9wY2kvcGNpLmMKPiA+IGluZGV4IDhkZDcx
+MWI5YTI5MS4uMDRhY2NkZmFiN2NlIDEwMDY0NAo+ID4gLS0tIGEvZHJpdmVycy9wY2kvcGNpLmMK
+PiA+ICsrKyBiL2RyaXZlcnMvcGNpL3BjaS5jCj4gPiBAQCAtMjAxMSw2ICsyMDExLDkgQEAgc3Rh
+dGljIGludCBkb19wY2lfZW5hYmxlX2RldmljZShzdHJ1Y3QKPiA+IHBjaV9kZXYgKmRldiwgaW50
+IGJhcnMpCj4gPiDCoMKgwqDCoMKgwqDCoMKgdTE2IGNtZDsKPiA+IMKgwqDCoMKgwqDCoMKgwqB1
+OCBwaW47Cj4gPiDCoAo+ID4gK8KgwqDCoMKgwqDCoMKgaWYgKGRldi0+ZW5hYmxlZCkKPiA+ICvC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gMDsKPiA+ICsKPiA+IMKgwqDCoMKg
+wqDCoMKgwqBlcnIgPSBwY2lfc2V0X3Bvd2VyX3N0YXRlKGRldiwgUENJX0QwKTsKPiA+IMKgwqDC
+oMKgwqDCoMKgwqBpZiAoZXJyIDwgMCAmJiBlcnIgIT0gLUVJTykKPiA+IMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIGVycjsKPiA+IEBAIC0yMDI1LDcgKzIwMjgsNyBAQCBz
+dGF0aWMgaW50IGRvX3BjaV9lbmFibGVfZGV2aWNlKHN0cnVjdAo+ID4gcGNpX2RldiAqZGV2LCBp
+bnQgYmFycykKPiA+IMKgwqDCoMKgwqDCoMKgwqBwY2lfZml4dXBfZGV2aWNlKHBjaV9maXh1cF9l
+bmFibGUsIGRldik7Cj4gPiDCoAo+ID4gwqDCoMKgwqDCoMKgwqDCoGlmIChkZXYtPm1zaV9lbmFi
+bGVkIHx8IGRldi0+bXNpeF9lbmFibGVkKQo+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoHJldHVybiAwOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGdvdG8gc3Vj
+Y2Vzc19vdXQ7Cj4gPiDCoAo+ID4gwqDCoMKgwqDCoMKgwqDCoHBjaV9yZWFkX2NvbmZpZ19ieXRl
+KGRldiwgUENJX0lOVEVSUlVQVF9QSU4sICZwaW4pOwo+ID4gwqDCoMKgwqDCoMKgwqDCoGlmIChw
+aW4pIHsKPiA+IEBAIC0yMDM1LDYgKzIwMzgsOCBAQCBzdGF0aWMgaW50IGRvX3BjaV9lbmFibGVf
+ZGV2aWNlKHN0cnVjdAo+ID4gcGNpX2RldiAqZGV2LCBpbnQgYmFycykKPiA+IMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjbWQgJgo+ID4gflBDSV9DT01NQU5EX0lOVFhfRElTQUJM
+RSk7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgfQo+ID4gwqAKPiA+ICtzdWNjZXNzX291dDoKPiA+ICvC
+oMKgwqDCoMKgwqDCoGRldi0+ZW5hYmxlZCA9IHRydWU7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgcmV0
+dXJuIDA7Cj4gPiDCoH0KPiA+IMKgCj4gPiBAQCAtMjE5Myw2ICsyMTk4LDkgQEAgc3RhdGljIHZv
+aWQgZG9fcGNpX2Rpc2FibGVfZGV2aWNlKHN0cnVjdAo+ID4gcGNpX2RldiAqZGV2KQo+ID4gwqB7
+Cj4gPiDCoMKgwqDCoMKgwqDCoMKgdTE2IHBjaV9jb21tYW5kOwo+ID4gwqAKPiA+ICvCoMKgwqDC
+oMKgwqDCoGlmICghZGV2LT5lbmFibGVkKQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoHJldHVybjsKPiA+ICsKPiA+IMKgwqDCoMKgwqDCoMKgwqBwY2lfcmVhZF9jb25maWdfd29y
+ZChkZXYsIFBDSV9DT01NQU5ELCAmcGNpX2NvbW1hbmQpOwo+ID4gwqDCoMKgwqDCoMKgwqDCoGlm
+IChwY2lfY29tbWFuZCAmIFBDSV9DT01NQU5EX01BU1RFUikgewo+ID4gwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqBwY2lfY29tbWFuZCAmPSB+UENJX0NPTU1BTkRfTUFTVEVSOwo+ID4g
+QEAgLTIyMDAsNiArMjIwOCw3IEBAIHN0YXRpYyB2b2lkIGRvX3BjaV9kaXNhYmxlX2RldmljZShz
+dHJ1Y3QKPiA+IHBjaV9kZXYgKmRldikKPiA+IMKgwqDCoMKgwqDCoMKgwqB9Cj4gPiDCoAo+ID4g
+wqDCoMKgwqDCoMKgwqDCoHBjaWJpb3NfZGlzYWJsZV9kZXZpY2UoZGV2KTsKPiA+ICvCoMKgwqDC
+oMKgwqDCoGRldi0+ZW5hYmxlZCA9IGZhbHNlOwo+ID4gwqB9Cj4gPiDCoAo+ID4gwqAvKioKPiA+
+IEBAIC0yMjI3LDEyICsyMjM2LDYgQEAgdm9pZCBwY2lfZGlzYWJsZV9lbmFibGVkX2RldmljZShz
+dHJ1Y3QKPiA+IHBjaV9kZXYgKmRldikKPiA+IMKgICovCj4gPiDCoHZvaWQgcGNpX2Rpc2FibGVf
+ZGV2aWNlKHN0cnVjdCBwY2lfZGV2ICpkZXYpCj4gPiDCoHsKPiA+IC3CoMKgwqDCoMKgwqDCoHN0
+cnVjdCBwY2lfZGV2cmVzICpkcjsKPiA+IC0KPiA+IC3CoMKgwqDCoMKgwqDCoGRyID0gZmluZF9w
+Y2lfZHIoZGV2KTsKPiA+IC3CoMKgwqDCoMKgwqDCoGlmIChkcikKPiA+IC3CoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqBkci0+ZW5hYmxlZCA9IDA7Cj4gPiAtCj4gPiDCoMKgwqDCoMKgwqDC
+oMKgZGV2X1dBUk5fT05DRSgmZGV2LT5kZXYsIGF0b21pY19yZWFkKCZkZXYtPmVuYWJsZV9jbnQp
+IDw9Cj4gPiAwLAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+ICJkaXNhYmxpbmcgYWxyZWFkeS1kaXNhYmxlZCBkZXZpY2UiKTsKPiA+IMKgCj4gPiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9wY2kvcGNpLmggYi9kcml2ZXJzL3BjaS9wY2kuaAo+ID4gaW5kZXggOWZk
+NTBiYzk5ZTZiLi5lMjIzZTBmN2RhZGEgMTAwNjQ0Cj4gPiAtLS0gYS9kcml2ZXJzL3BjaS9wY2ku
+aAo+ID4gKysrIGIvZHJpdmVycy9wY2kvcGNpLmgKPiA+IEBAIC04MjMsNyArODIzLDYgQEAgc3Rh
+dGljIGlubGluZSBwY2lfcG93ZXJfdAo+ID4gbWlkX3BjaV9nZXRfcG93ZXJfc3RhdGUoc3RydWN0
+IHBjaV9kZXYgKnBkZXYpCj4gPiDCoCAqIHRoZW4gcmVtb3ZlIHRoZW0gZnJvbSBoZXJlLgo+ID4g
+wqAgKi8KPiA+IMKgc3RydWN0IHBjaV9kZXZyZXMgewo+ID4gLcKgwqDCoMKgwqDCoMKgdW5zaWdu
+ZWQgaW50IGVuYWJsZWQ6MTsKPiA+IMKgwqDCoMKgwqDCoMKgwqB1bnNpZ25lZCBpbnQgcGlubmVk
+OjE7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgdW5zaWduZWQgaW50IG9yaWdfaW50eDoxOwo+ID4gwqDC
+oMKgwqDCoMKgwqDCoHVuc2lnbmVkIGludCByZXN0b3JlX2ludHg6MTsKPiA+IGRpZmYgLS1naXQg
+YS9pbmNsdWRlL2xpbnV4L3BjaS5oIGIvaW5jbHVkZS9saW51eC9wY2kuaAo+ID4gaW5kZXggMTY0
+OTM0MjZhMDRmLi4xMTA1NDhmMDBiM2IgMTAwNjQ0Cj4gPiAtLS0gYS9pbmNsdWRlL2xpbnV4L3Bj
+aS5oCj4gPiArKysgYi9pbmNsdWRlL2xpbnV4L3BjaS5oCj4gPiBAQCAtMzY3LDYgKzM2Nyw3IEBA
+IHN0cnVjdCBwY2lfZGV2IHsKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB0aGlzIGlz
+IEQwLUQzLCBEMCBiZWluZwo+ID4gZnVsbHkKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCBmdW5jdGlvbmFsLCBhbmQgRDMgYmVpbmcKPiA+IG9mZi4gKi8KPiA+IMKgwqDCoMKgwqDCoMKg
+wqB1OMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwbV9jYXA7wqDCoMKgwqDCoMKgwqDCoMKg
+LyogUE0gY2FwYWJpbGl0eSBvZmZzZXQgKi8KPiA+ICvCoMKgwqDCoMKgwqDCoHVuc2lnbmVkIGlu
+dMKgwqDCoMKgZW5hYmxlZDoxO8KgwqDCoMKgwqDCoC8qIFdoZXRoZXIgdGhpcyBkZXYgaXMKPiA+
+IGVuYWJsZWQgKi8KPiA+IMKgwqDCoMKgwqDCoMKgwqB1bnNpZ25lZCBpbnTCoMKgwqDCoGltbV9y
+ZWFkeToxO8KgwqDCoMKgLyogU3VwcG9ydHMgSW1tZWRpYXRlCj4gPiBSZWFkaW5lc3MgKi8KPiA+
+IMKgwqDCoMKgwqDCoMKgwqB1bnNpZ25lZCBpbnTCoMKgwqDCoHBtZV9zdXBwb3J0OjU7wqDCoC8q
+IEJpdG1hc2sgb2Ygc3RhdGVzIGZyb20KPiA+IHdoaWNoIFBNRSMKPiA+IMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCBjYW4gYmUgZ2VuZXJhdGVkICovCj4gPiAtLSAKPiA+IDIuNDUuMAo+ID4g
+Cj4gCgo=
 
-local_lock_nested_bh() has lockdep_assert_in_softirq(). You want the
-migration check additionally or should that softirq assert work?
-
-> > With LOCKDEP it performans the usual lockdep checks as with !PREEMPT_RT.
-> > Due to include hell the softirq check has been moved spinlock.c.
-> > 
-> > The intention is to use this locking in places where locking of a per-CPU
-> > variable relies on BH being disabled. Instead of treating disabled
-> > bottom halves as a big per-CPU lock, PREEMPT_RT can use this to reduce
-> > the locking scope to what actually needs protecting.
-> > A side effect is that it also documents the protection scope of the
-> > per-CPU variables.
-> > 
-> > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> 
-> Otherwise I suppose sp.. not a fan of the whole nested thing, but I
-> don't really have an alternative proposal so yeah, whatever :-)
-
-Cool.
-
-Sebastian
 
