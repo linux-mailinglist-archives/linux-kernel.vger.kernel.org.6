@@ -1,99 +1,120 @@
-Return-Path: <linux-kernel+bounces-204591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8AF18FF12B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:49:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DA488FF13D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:52:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 441B1B2B863
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:40:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8526CB28611
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009AB19753A;
-	Thu,  6 Jun 2024 15:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEBF819753E;
+	Thu,  6 Jun 2024 15:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SEPwr7FX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="fhC17j66"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7781667E6;
-	Thu,  6 Jun 2024 15:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF58D197538;
+	Thu,  6 Jun 2024 15:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717688430; cv=none; b=T598l6q8l1XrSGpktGciCC47QSaHFNmCC5pvt2voQjT+5NZzazFki5aMckGrsdCTe0XNtqbYLGUeiXe5/mlprEDXWraP3T9O/ON4/KhuIKTYYNLsbfDhlOubwZiuo+XBAetaK25OgHr2JbhfXlTL9U45HH4pxY+3eUpZotxfchM=
+	t=1717688494; cv=none; b=mm8eIyiESWNHOgfFwYS5vLv/G7AWL8k3xXF9umpXZ3Q0nco17LME8HCDx0SpohvFfMnTv3WeAvn4dERUscicC6/asCKKqF34m31Fbm9nLCBoerJ8DHAVwKgwDSDNEXbJhy+WK254KMK/SV1iso4C/XDneU0SlJxUTsoFuGvTn34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717688430; c=relaxed/simple;
-	bh=bOtc9xpVQTwyQV8Z4EEgfw4s9RXLbG1zVlhp5cDRID4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=RMj4Pjvci63WpelpAjHjGIwmU/Qh0FE/2oJbHKm8RKLe7wLmbyZXNu+v3KVBPp9gxecZxJ9/py1Irm69HKE8eS9QNeYF/N3LfANzu3URF/jpnvSkOg126Jsr7Mzbd/BOuL4pFje9GlDzgHj3rSz6oaUl+sIo2W3lEyO7YsryLo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SEPwr7FX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id AEAEDC32781;
-	Thu,  6 Jun 2024 15:40:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717688429;
-	bh=bOtc9xpVQTwyQV8Z4EEgfw4s9RXLbG1zVlhp5cDRID4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=SEPwr7FX0HO8InWEnb9M1muMB5t3cu9RxHr1O32+4uK1/KoTf75dY16jTu2f9kpfq
-	 xuZ7lcjYgUh2+NeszzhRILShEYeP4XOdigtWRbKe9H2jw6GFxJYGan/O50z2jSnABg
-	 2MqN5BBeYXFmIPBomJ1xHqbymRC7DkL31oCvk5HLeWP9sBgIvWF2sTTvZ2z885HJ0/
-	 iUqycHoQbMKs4rHN08ikwfO3C/sLTfnztUhwHXF3yq7OSIL3Ge6R4Pcuqx06IoVWeR
-	 BhQ04UYSwuXEC+pvC+QNzURR6Du9aUIVLo9JWZZQfT/7FVHLIKSlZUcbpZH9MqI6Vn
-	 kzq9xRgTAGjfg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 99D3BD20380;
-	Thu,  6 Jun 2024 15:40:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1717688494; c=relaxed/simple;
+	bh=U9/fTFa6AFZKFaYVobFDAx2u0wkfJM36d6EMcVyO/Lo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KEHhwziEoOJxT+/QDwrTFyhEFwnwwpTJI+NIU0cUOYVw3Mtdi7gftE/kgeAbQDhFJskooTqL1qHJv7l0WSKwmrIg6GSOGmyYHDkqpTkJPIjB0G7AJIrrMsQuXIfPZFB36c9uvwTkzdLHh0idlU5rWsSou6VmkEGfhFnMSuCE78k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=fhC17j66; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=HtCXOhY+1iqYPYRg3w33pyQ6Llz91ckac8NBDvTBJTs=; b=fhC17j66D6okl9Nhe1UBE3BnQZ
+	7bLWt+spJnQsF5zMdnj9XdW9NlWojYvCHJDZK5NIn5xqQwQ5FjtmHoaYpTb7XJRVqU9pxjSlPnrOI
+	3aKO6dik/sUTbC5Mlq4MkQshpvCpIvgN++RXAaZr78AVYEGepPQxlFRqv/RhGK9PiZ8U=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sFFEu-00H22T-Eg; Thu, 06 Jun 2024 17:41:20 +0200
+Date: Thu, 6 Jun 2024 17:41:20 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jacob Keller <jacob.e.keller@intel.com>
+Cc: jackie.jone@alliedtelesis.co.nz, davem@davemloft.net,
+	jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com,
+	kuba@kernel.org, intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	chris.packham@alliedtelesis.co.nz
+Subject: Re: [PATCH] igb: Add MII write support
+Message-ID: <1dbb8291-9004-4ec2-a01b-9dd5b2a8be39@lunn.ch>
+References: <20240604031020.2313175-1-jackie.jone@alliedtelesis.co.nz>
+ <ad56235d-d267-4477-9c35-210309286ff4@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net 0/3] selftests: net: lib: small fixes
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171768842962.28804.8836141710421199665.git-patchwork-notify@kernel.org>
-Date: Thu, 06 Jun 2024 15:40:29 +0000
-References: <20240605-upstream-net-20240605-selftests-net-lib-fixes-v1-0-b3afadd368c9@kernel.org>
-In-Reply-To: <20240605-upstream-net-20240605-selftests-net-lib-fixes-v1-0-b3afadd368c9@kernel.org>
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, shuah@kernel.org, petrm@nvidia.com,
- liuhangbin@gmail.com, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, geliang@kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ad56235d-d267-4477-9c35-210309286ff4@intel.com>
 
-Hello:
-
-This series was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 05 Jun 2024 11:21:15 +0200 you wrote:
-> While looking at using 'lib.sh' for the MPTCP selftests [1], we found
-> some small issues with 'lib.sh'. Here they are:
+On Wed, Jun 05, 2024 at 01:51:24PM -0700, Jacob Keller wrote:
 > 
-> - Patch 1: fix 'errexit' (set -e) support with busywait. 'errexit' is
->   supported in some functions, not all. A fix for v6.8+.
 > 
-> - Patch 2: avoid confusing error messages linked to the cleaning part
->   when the netns setup fails. A fix for v6.8+.
+> On 6/3/2024 8:10 PM, jackie.jone@alliedtelesis.co.nz wrote:
+> > From: Jackie Jone <jackie.jone@alliedtelesis.co.nz>
+> > 
+> > To facilitate running PHY parametric tests, add support for the SIOCSMIIREG
+> > ioctl. This allows a userspace application to write to the PHY registers
+> > to enable the test modes.
+> > 
+> > Signed-off-by: Jackie Jone <jackie.jone@alliedtelesis.co.nz>
+> > ---
+> >  drivers/net/ethernet/intel/igb/igb_main.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+> > index 03a4da6a1447..7fbfcf01fbf9 100644
+> > --- a/drivers/net/ethernet/intel/igb/igb_main.c
+> > +++ b/drivers/net/ethernet/intel/igb/igb_main.c
+> > @@ -8977,6 +8977,10 @@ static int igb_mii_ioctl(struct net_device *netdev, struct ifreq *ifr, int cmd)
+> >  			return -EIO;
+> >  		break;
+> >  	case SIOCSMIIREG:
+> > +		if (igb_write_phy_reg(&adapter->hw, data->reg_num & 0x1F,
+> > +				     data->val_in))
+> > +			return -EIO;
+> > +		break;
 > 
-> [...]
+> A handful of drivers seem to expose this. What are the consequences of
+> exposing this ioctl? What can user space do with it?
 
-Here is the summary with links:
-  - [net,1/3] selftests: net: lib: support errexit with busywait
-    https://git.kernel.org/netdev/net/c/41b02ea4c0ad
-  - [net,2/3] selftests: net: lib: avoid error removing empty netns name
-    https://git.kernel.org/netdev/net/c/79322174bcc7
-  - [net,3/3] selftests: net: lib: set 'i' as local
-    https://git.kernel.org/netdev/net/c/84a8bc3ec225
+User space can break the PHY configuration, cause the link to fail,
+all behind the MAC drivers back. The generic version of this call
+tries to see what registers are being written, and update state:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+https://elixir.bootlin.com/linux/latest/source/drivers/net/phy/phy.c#L325
 
+But you can still break it.
 
+> It looks like a few drivers also check something like CAP_NET_ADMIN to
+> avoid allowing write access to all users. Is that enforced somewhere else?
+
+Only root is allowed to use it. So it is a classic 'You have the
+option to shoot yourself in the foot'.
+
+For the use case being talked about here, there has been a few emails
+one the list about implementing the IEEE 802.3 test modes. But nobody
+has actually got around to doing it. Not that it would help in this
+case, Intel don't use the Linux PHY drivers, which is where i would
+expect to see such code implemented first. Maybe if the "Great Intel
+Ethernet driver refactoring" makes progress, it could swap to using
+the Linux PHY drivers.
+
+      Andrew
 
