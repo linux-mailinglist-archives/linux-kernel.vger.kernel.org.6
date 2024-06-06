@@ -1,238 +1,221 @@
-Return-Path: <linux-kernel+bounces-204032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82E8E8FE32C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:41:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0DE08FE338
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:42:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC0B81F22352
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:41:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55B2F282D9A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E118E152190;
-	Thu,  6 Jun 2024 09:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB3315FCFB;
+	Thu,  6 Jun 2024 09:42:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dw3lUjKK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E5FN9IWj"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428F379F4
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220301527AA
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717666878; cv=none; b=VptXd2+gglVKpmFnigTiSwWbsAwPztSAMqkhr7rZodPaASvtkhby0iHlfuGsc0AmTEror9IYh7dwVcvlN+NrQV9gki2/KEkmBj/fQD8JIWq3+kLJebvTQIgF2/+WGWWwQHLr8gPz2W65fm08Yd2FSlaUoHHxn52eKBZRb85CITo=
+	t=1717666947; cv=none; b=F2zqXo3oo8RiUfLVXfUeFOt+YtMLjgtNF6GSgqhk2+iPNmifudNOfpx3jz0Da5gSD4ZzkH1BKz8n4TmQlrIStDHh9OAxdfEiGe4N/r/GUhvByk4LPOBcFrOxCZQvUovhliR69ptc7iRLboOoWXl4DFqQvh5uTiVY7KUyYjSuu9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717666878; c=relaxed/simple;
-	bh=xiQKMXhmswoJYfu87AO/u+Q3CPtVEqr0qVK9t8P54SY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ryvvy47MKiPl+hW2iOWkAc9lhqHcuNTSCMdh2d/Jh4nVRgNAmAsJET1NqOdHKoHMBPgfHR3iM/0WPl2QcOkFpqkz6hp3Hoqel53fozwS6JvWVRyz5v6qLS7VJb9MgPEyfKXFXy2TLhy617FuADJr3xx6nWbyxiViUsKxlSe8+u4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dw3lUjKK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717666875;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sDuQFsGapZ5dAq2VQ6Agr+wNPKN/yhAr1BOmKnlpkcE=;
-	b=Dw3lUjKK2OSxvwQZhdkakYlwq2LFJ/5Lm5GCbkv3bpo60GsBc6u0Swurd3I7LeRkSkecgU
-	aobzQc+J3ZBEHyHMxv6+wSQrU6zf6HLe8pSd22HD7ZbknjTFRtVwOw+Sm+ESPMDHz1KjP9
-	NqSfJ8J7BH3PTR3E5ysL+6Nd8OYpQWU=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-107-aY5RZiHLPOuR_2W__7VXFQ-1; Thu, 06 Jun 2024 05:41:13 -0400
-X-MC-Unique: aY5RZiHLPOuR_2W__7VXFQ-1
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-52bb096e9d8so513422e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 02:41:13 -0700 (PDT)
+	s=arc-20240116; t=1717666947; c=relaxed/simple;
+	bh=Z+b7d3fhc4m4+HH35+El67g/rcBghxOw/7N/brUEw2o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j7IWmwdrcTfeL9BFed2FHUYLZdPk/sBLcpLar5gxJL2lBOO7WIZ27R8DuUYXM5/hmeQztwT9qfl5nJ+XstyMa/FKi9wGcek/tAbfpdiEwsT8+G33sa/FKi4NCy1j7CMPLJF+QBNcUAU+zZCXwx4Rxh/IGvPHQ9mNWRUixll9fIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E5FN9IWj; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-6c9e8c0a15bso547542a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 02:42:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717666944; x=1718271744; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pZxkAQ+JG8hv+VfYtFPLswW4j/3rOvFhx5X0N2PU448=;
+        b=E5FN9IWjmGxVoUD+OWTZamrPnXDvPSavkFVxYovj1GvPqpojMxxGK7EXOEVwM89/sj
+         BA67SJlwRC+KnFKCrGDfFXM7jHjo195s9ppGv0U/UVHyDfTEkid9rldQDO70NAQhQ33B
+         TUKIkU1Oy4v16ytVgyRDllutuHAIkahfrmzcuFWvPWzrGUtjeD52YtvBdmG0usvAFtog
+         5agnUSEhElOqDGCmKSbzHOLAwBWkyI1OwIFrNiTvuqtw3aIfyaPhl3zvgyBN6e6H9cYv
+         g7uAXYDRDtM7vr0mO/rUBZET4HlpzVE5cDs+hU2LRGGDQN6uXa3F/Vpd31FOyyXgWYpP
+         E3mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717666872; x=1718271672;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sDuQFsGapZ5dAq2VQ6Agr+wNPKN/yhAr1BOmKnlpkcE=;
-        b=dvNzP3Bq96vw0HElc2H/W7C70sUUoVV3FOGqlXMA/5i0BlMIKMUf/wOaO/sKPhFLrV
-         DRGiXLVlgGa3n+ZIokmx2FwoRHuVIriqo5AAoaTUIADkvetiGLxhWw0ictJ0lDaaMaOu
-         ZCiGnxgQQgZKSlImu0mspfElQsJv5FcCMETanANGHsMfRnzA3SLZVBMqOPyZ6KSdxjN3
-         zHXQ23horiy5ENdyfpDFfhAUDHxo6Hl66Nz53rRiBZtglLiHpA2i1rgSK5KKAvchg4Y7
-         eB4Nbak+85I5sPLqDaYPe6Z/Q7NMau2B1JPNljwJWniWEZF+lRAZE5UX9bFMck0bQuvb
-         2Rjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXskFaPLBHosIsNK+lwDzHq8hNpEnwfuFO9C1BWuD7oVDlXAWTZKHLmKNJFYm3dw/CXYOCOh23cNFO58Ic8g/dG1aL7GQm2dffQnb+Y
-X-Gm-Message-State: AOJu0YzoJZ13BZhtyvS8rA0aai7nblLioLVU3vBBG3eJP83+xWCqcys5
-	BZlRy/90X6aJf/y4IoeOF78omlFeG6JYAz1AWbIaPeWLT7TRyhLAeRTvjq5WKS77GWrByHQOgdZ
-	dqzuA5fjwudxhsXQgyyWE+8cVhFrLrTWj4EpDNbM6y+uJr1YnZWa3HrvEH4NQhw==
-X-Received: by 2002:a19:a40a:0:b0:52b:aa2f:d89b with SMTP id 2adb3069b0e04-52bab4fc5c9mr2758007e87.68.1717666872104;
-        Thu, 06 Jun 2024 02:41:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFhLqsJXiIpJ9ZW7HW04hpVTkrfSK7URSEN5bAqF0lpzCT8Uw/WRp+1uI1wUYbaEqt8GWmWAQ==
-X-Received: by 2002:a19:a40a:0:b0:52b:aa2f:d89b with SMTP id 2adb3069b0e04-52bab4fc5c9mr2757990e87.68.1717666871651;
-        Thu, 06 Jun 2024 02:41:11 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c710:8800:a73c:ec5b:c02c:5e0b? (p200300cbc7108800a73cec5bc02c5e0b.dip0.t-ipconnect.de. [2003:cb:c710:8800:a73c:ec5b:c02c:5e0b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c1aa2easm15655555e9.12.2024.06.06.02.41.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 02:41:11 -0700 (PDT)
-Message-ID: <2a6a1b50-e711-42c2-91f4-42881a6057e9@redhat.com>
-Date: Thu, 6 Jun 2024 11:41:09 +0200
+        d=1e100.net; s=20230601; t=1717666944; x=1718271744;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pZxkAQ+JG8hv+VfYtFPLswW4j/3rOvFhx5X0N2PU448=;
+        b=ed/z87XHugRBL4lSqgJeNpaUNL+tBxUbQqQoWmVso/bRyjJTDwUB5e426fRFUXeyow
+         MF8kWrMKh2jJp+h+uGk9nBc47YvI8dvKltU0/lmCqTxd4FQjPwcoOydIJDcdS+VIe3Cp
+         3exBXqS5OKNDaDfp5lMen6yoV9PS09PoPjnM8VvmjOkIcVTJu61tKqEnM8kyfPkcGTuE
+         aGxzzVNK3z1+cKjgH1Tui/LadfF7sytpg/qNYbXYmQg3kenhfjn27bHxNXJYlcZDk7mI
+         5a2UyO08k9oCRuKv/632KiGhCl1nWyts+vgsCFOBjfUNGp/jhGdhgSAzkt/U8O1TYlxY
+         owaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSNxEheFh/Vt1qee18lGfDpg1xl0e/CXR4NKcizOiPxwkle3Cn2vFcw/+m41OcjizUeBmzd4zUrZ5Z7sBmFv+JQDrEX1bELguWtEwL
+X-Gm-Message-State: AOJu0YwmRqQX3OZkEEpHyQQw+307sEp8qfKB7Msoe0NRjq3J9k+CRvFU
+	EAWgsJd4MMDXG71L7SC/pBDAWR5ymZqdnhHy93vuxL+QFvsVgXJRurSZVdwVWoTR0Y6E/7WJnAp
+	OB3VL4p4iAbNfb/3dn7PSynSbUgnJ3vGvzxet
+X-Google-Smtp-Source: AGHT+IEWwVSwT6aqEkrDe0tLMBSTWElwotQtqstSRStzjfIU8jhDcLm33ZWeSi7tWYVCsMsV4ghgN5gJvMEjynSIzaM=
+X-Received: by 2002:a05:6a20:daa4:b0:1a7:aabc:24ae with SMTP id
+ adf61e73a8af0-1b2b6ed7966mr5928466637.18.1717666944034; Thu, 06 Jun 2024
+ 02:42:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/3] mm/rmap: integrate PMD-mapped folio splitting into
- pagewalk loop
-To: Lance Yang <ioworker0@gmail.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org,
- baolin.wang@linux.alibaba.com, maskray@google.com, ziy@nvidia.com,
- ryan.roberts@arm.com, 21cnbao@gmail.com, mhocko@suse.com,
- fengwei.yin@intel.com, zokeefe@google.com, shy828301@gmail.com,
- xiehuan09@gmail.com, libang.li@antgroup.com, wangkefeng.wang@huawei.com,
- songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20240521040244.48760-1-ioworker0@gmail.com>
- <20240521040244.48760-3-ioworker0@gmail.com>
- <fd16b219-bc46-484a-8581-a21240440fa6@redhat.com>
- <CAK1f24kwf4gDwK=8X4z1bM9-H6_M9QKy6-ko9pTUZij-W=40wg@mail.gmail.com>
- <d319f00e-9dfb-43b1-ae81-a2e2afdf36c4@redhat.com>
- <CAK1f24kKra71RSQdFOpQecU6+yMELC748irKUt54Kg64-P=4-A@mail.gmail.com>
- <758f7be7-c17e-46d1-879f-83340ec85749@redhat.com>
- <5a728148-ed93-4d68-a86f-9be3612dedbb@redhat.com>
- <CAK1f24nMbW_UvCTq=K0aFu9=7psYZ9wmHq47J=AK7VYmpCpC4Q@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CAK1f24nMbW_UvCTq=K0aFu9=7psYZ9wmHq47J=AK7VYmpCpC4Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240605175953.2613260-1-joychakr@google.com> <20240605175953.2613260-8-joychakr@google.com>
+ <f98a1d8f-e936-4798-8447-c642e8fe11d5@moroto.mountain>
+In-Reply-To: <f98a1d8f-e936-4798-8447-c642e8fe11d5@moroto.mountain>
+From: Joy Chakraborty <joychakr@google.com>
+Date: Thu, 6 Jun 2024 15:12:03 +0530
+Message-ID: <CAOSNQF0Qj2CnRDWAGM8Y1wyEdgWP04RDJx1TKO-Ge4nUH=qxoQ@mail.gmail.com>
+Subject: Re: [PATCH v1 07/17] misc: eeprom: at25: Change nvmem reg_read/write
+ return type
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Bingbu Cao <bingbu.cao@intel.com>, Zhihao Cheng <chengzhihao1@huawei.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-hwmon@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-mtd@lists.infradead.org, 
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, manugautam@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 06.06.24 11:38, Lance Yang wrote:
-> On Thu, Jun 6, 2024 at 4:06 PM David Hildenbrand <david@redhat.com> wrote:
->>
->> On 06.06.24 10:01, David Hildenbrand wrote:
->>> On 06.06.24 05:55, Lance Yang wrote:
->>>> On Wed, Jun 5, 2024 at 10:28 PM David Hildenbrand <david@redhat.com> wrote:
->>>>>
->>>>> On 05.06.24 16:20, Lance Yang wrote:
->>>>>> Hi David,
->>>>>>
->>>>>> On Wed, Jun 5, 2024 at 8:46 PM David Hildenbrand <david@redhat.com> wrote:
->>>>>>>
->>>>>>> On 21.05.24 06:02, Lance Yang wrote:
->>>>>>>> In preparation for supporting try_to_unmap_one() to unmap PMD-mapped
->>>>>>>> folios, start the pagewalk first, then call split_huge_pmd_address() to
->>>>>>>> split the folio.
->>>>>>>>
->>>>>>>> Since TTU_SPLIT_HUGE_PMD will no longer perform immediately, we might
->>>>>>>> encounter a PMD-mapped THP missing the mlock in the VM_LOCKED range during
->>>>>>>> the page walk. It’s probably necessary to mlock this THP to prevent it from
->>>>>>>> being picked up during page reclaim.
->>>>>>>>
->>>>>>>> Suggested-by: David Hildenbrand <david@redhat.com>
->>>>>>>> Suggested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->>>>>>>> Signed-off-by: Lance Yang <ioworker0@gmail.com>
->>>>>>>> ---
->>>>>>>
->>>>>>> [...] again, sorry for the late review.
->>>>>>
->>>>>> No worries at all, thanks for taking time to review!
->>>>>>
->>>>>>>
->>>>>>>> diff --git a/mm/rmap.c b/mm/rmap.c
->>>>>>>> index ddffa30c79fb..08a93347f283 100644
->>>>>>>> --- a/mm/rmap.c
->>>>>>>> +++ b/mm/rmap.c
->>>>>>>> @@ -1640,9 +1640,6 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
->>>>>>>>           if (flags & TTU_SYNC)
->>>>>>>>                   pvmw.flags = PVMW_SYNC;
->>>>>>>>
->>>>>>>> -     if (flags & TTU_SPLIT_HUGE_PMD)
->>>>>>>> -             split_huge_pmd_address(vma, address, false, folio);
->>>>>>>> -
->>>>>>>>           /*
->>>>>>>>            * For THP, we have to assume the worse case ie pmd for invalidation.
->>>>>>>>            * For hugetlb, it could be much worse if we need to do pud
->>>>>>>> @@ -1668,20 +1665,35 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
->>>>>>>>           mmu_notifier_invalidate_range_start(&range);
->>>>>>>>
->>>>>>>>           while (page_vma_mapped_walk(&pvmw)) {
->>>>>>>> -             /* Unexpected PMD-mapped THP? */
->>>>>>>> -             VM_BUG_ON_FOLIO(!pvmw.pte, folio);
->>>>>>>> -
->>>>>>>>                   /*
->>>>>>>>                    * If the folio is in an mlock()d vma, we must not swap it out.
->>>>>>>>                    */
->>>>>>>>                   if (!(flags & TTU_IGNORE_MLOCK) &&
->>>>>>>>                       (vma->vm_flags & VM_LOCKED)) {
->>>>>>>>                           /* Restore the mlock which got missed */
->>>>>>>> -                     if (!folio_test_large(folio))
->>>>>>>> +                     if (!folio_test_large(folio) ||
->>>>>>>> +                         (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)))
->>>>>>>>                                   mlock_vma_folio(folio, vma);
-> 
-> Should we still keep the '!pvmw.pte' here? Something like:
-> 
-> if (!folio_test_large(folio) || !pvmw.pte)
->      mlock_vma_folio(folio, vma);
+On Thu, Jun 6, 2024 at 2:11=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
+org> wrote:
+>
+> On Wed, Jun 05, 2024 at 05:59:51PM +0000, Joy Chakraborty wrote:
+> > @@ -195,10 +195,11 @@ static struct attribute *sernum_attrs[] =3D {
+> >  };
+> >  ATTRIBUTE_GROUPS(sernum);
+> >
+> > -static int at25_ee_write(void *priv, unsigned int off, void *val, size=
+_t count)
+> > +static ssize_t at25_ee_write(void *priv, unsigned int off, void *val, =
+size_t count)
+> >  {
+> >       struct at25_data *at25 =3D priv;
+> >       size_t maxsz =3D spi_max_transfer_size(at25->spi);
+> > +     size_t bytes_written =3D count;
+> >       const char *buf =3D val;
+> >       int                     status =3D 0;
+> >       unsigned                buf_size;
+> > @@ -313,7 +314,7 @@ static int at25_ee_write(void *priv, unsigned int o=
+ff, void *val, size_t count)
+> >       mutex_unlock(&at25->lock);
+> >
+> >       kfree(bounce);
+> > -     return status;
+> > +     return status < 0 ? status : bytes_written;
+> >  }
+>
+> So the original bug was that rmem_read() is returning positive values
+> on success instead of zero[1].  That started a discussion about partial
+> reads which resulted in changing the API to support partial reads[2].
+> That patchset broke the build.  This patchset is trying to fix the
+> build breakage.
+>
+> [1] https://lore.kernel.org/all/20240206042408.224138-1-joychakr@google.c=
+om/
+> [2] https://lore.kernel.org/all/20240510082929.3792559-2-joychakr@google.=
+com/
+>
+> The bug in rmem_read() is still not fixed.  That needs to be fixed as
+> a stand alone patch.  We can discuss re-writing the API separately.
+>
 
-I was wondering the same the whole time ...
+True, fixing the return type would fix that as well is what I thought
+but maybe yes we need to fix that separately as well.
 
-> 
-> We can mlock the THP to prevent it from being picked up during page reclaim.
-> 
-> David, I’d like to hear your thoughts on this ;)
+> These functions are used internally and exported to the user through
+> sysfs via bin_attr_nvmem_read/write().  For internal users partial reads
+> should be treated as failure.  What are we supposed to do with a partial
+> read?  I don't think anyone has asked for partial reads to be supported
+> from sysfs either except Greg was wondering about it while reading the
+> code.
+>
+> Currently, a lot of drivers return -EINVAL for partial read/writes but
+> some return success.  It is a bit messy.  But this patchset doesn't
+> really improve anything.  In at24_read() we check if it's going to be a
+> partial read and return -EINVAL.  Below we report a partial read as a
+> full read.  It's just a more complicated way of doing exactly what we
+> were doing before.
 
-but I think there is no need to for now, in the context of your patchset. :)
+Currently what drivers return is up to their interpretation of int
+return type, there are a few drivers which also return the number of
+bytes written/read already like
+drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c .
+The objective of the patch was to handle partial reads and errors at
+the nvmem core and instead of leaving it up to each nvmem provider by
+providing a better return value to nvmem providers.
 
--- 
-Cheers,
+Regarding drivers/misc/eeprom/at25.c which you pointed below, that is
+a problem in my code change. I missed that count was modified later on
+and should initialize bytes_written to the new value of count, will
+fix that when I come up with the new patch.
 
-David / dhildenb
+I agree that it does not improve anything for a lot of nvmem providers
+for example the ones which call into other reg_map_read/write apis
+which do not return the number of bytes read/written but it does help
+us do better error handling at the nvmem core layer for nvmem
+providers who can return the valid number of bytes read/written.
 
+Please let me know if you have any other suggestions on how to handle
+this better.
+
+Thanks
+Joy
+
+>
+> drivers/misc/eeprom/at25.c
+>    198  static int at25_ee_write(void *priv, unsigned int off, void *val,=
+ size_t count)
+>    199  {
+>    200          struct at25_data *at25 =3D priv;
+>    201          size_t maxsz =3D spi_max_transfer_size(at25->spi);
+> New:            size_t bytes_written =3D count;
+>                        ^^^^^^^^^^^^^^^^^^^^^
+> This is not the number of bytes written.
+>
+>    202          const char *buf =3D val;
+>    203          int                     status =3D 0;
+>    204          unsigned                buf_size;
+>    205          u8                      *bounce;
+>    206
+>    207          if (unlikely(off >=3D at25->chip.byte_len))
+>    208                  return -EFBIG;
+>    209          if ((off + count) > at25->chip.byte_len)
+>    210                  count =3D at25->chip.byte_len - off;
+>                         ^^^^^
+> This is.
+>
+>    211          if (unlikely(!count))
+>    212                  return -EINVAL;
+>    213
+>    214          /* Temp buffer starts with command and address */
+>    215          buf_size =3D at25->chip.page_size;
+>    216          if (buf_size > io_limit)
+>    217                  buf_size =3D io_limit;
+>    218          bounce =3D kmalloc(buf_size + at25->addrlen + 1, GFP_KERN=
+EL);
+>    219          if (!bounce)
+>    220                  return -ENOMEM;
+>    221
+>
+> regards,
+> dan carpenter
 
