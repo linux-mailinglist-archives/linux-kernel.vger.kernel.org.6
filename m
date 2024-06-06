@@ -1,121 +1,113 @@
-Return-Path: <linux-kernel+bounces-204632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13B5B8FF179
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:01:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA18B8FF181
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:03:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DCD91F24FC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:01:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69A831F21C7D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF15196D90;
-	Thu,  6 Jun 2024 16:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CFA2197A85;
+	Thu,  6 Jun 2024 16:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JYuTk84F"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pPnFgcJG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C20153511
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 16:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F14910E9;
+	Thu,  6 Jun 2024 16:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717689668; cv=none; b=p2Ogcd4uiZKPqTycjpAS7+1DJfV2j/WAXeKTUsFsYWEwlKubB/nHeE1ZuIWWJ9+tsIvJqyGfiwEjwC86oKg7qrm+lbhidms1Hxvwu5lMVvPowFduiugkcHC9b3NuFETFsbDzPcKiL/OCeHvhLC0LMR3kJjvd4RIe7qKFl6YEhFs=
+	t=1717689809; cv=none; b=Vb3J+dU3Bi+3g4osKDd9/aYb7gPVjHkfrQ//r8b4Ot1Ge9alxGYrQnZ9ECgSSu9KftC34gnzvHPV28XG/ayjk2/hNj+3yHTKElK6MvAnxF7Y6ivxF0dONg5avUmCUrUJ+sbVLg6RZVCnqzBGA3ipC/C3Z67arsBzsfxGMzLlTmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717689668; c=relaxed/simple;
-	bh=sqVHQEDwVAxjqpqFdMyKgszMsUmj5y9aSsv6Guy/rJ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K/tfYyu84PAnXUVCN/FBxl4ORHBavFnFLFrG5vp2T6V0OrdF2lnuepIyIHS2qbd6T80lyreJhUYMu9HLhYe66mpeGlAXZ+P/7iwQxk5sYYJ2R3N+dZJCrtS/frkDoRZzSBbj4xpGxWBB7zHDip9WxRAXwQRM1bA5enVCGUPTufQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JYuTk84F; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6b041fa2a54so8614376d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 09:01:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717689666; x=1718294466; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sqVHQEDwVAxjqpqFdMyKgszMsUmj5y9aSsv6Guy/rJ4=;
-        b=JYuTk84FY4wVZ61V1rkIolMSSdhpuqsB5A0wznMf/x8TOHU1E7z1NMzXQrDA24zmwJ
-         rJUfGF6zSNIPKRUUC/NqyvsZLE4eTlvv8CjeWW3I2JG0FpaoVtvWxh6UeAUGDXUK+B+U
-         jVTnXoy7A8Cyf/8dHQMRPrMBEEhIe9t5K0Ho4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717689666; x=1718294466;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sqVHQEDwVAxjqpqFdMyKgszMsUmj5y9aSsv6Guy/rJ4=;
-        b=XQhL4BERrVbPn5peaXDgzRCa14tyTZ8V3gLu2W+daRxXmz1n6QAlzq7g9FrLSl0S6Q
-         V2vGx/oFKesYymQPEOzIB+JiNJKki8lAAkZYolwBweh2LYBHIY0OraRWZ+iUjMhEld3y
-         TEYS5G/q2xnalHlgkpm46mTw02IUvQ/rervdgzv26+s1PFWFMYlt0cTnmtg0cOJ4tiAo
-         PeV6IBHk9KbvkDPiYV6ulSX699AWBzEvHxYpxrVNRoEpOL+4U4IsZ22MxGs40Uxg5Fqn
-         suzVSCVp2tFJFkoloW/DOMlWZTBSZ8C9XjA1gsENHFmsLZqihx46+cqKlxddUnlSgQBK
-         NyJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVqI68fp8EEcFD6+/214dr270oWU7FsgeaQeuuN9AjkaCxsdNKRw9L2AD4PfuQA6sJtZ+jzEQWZD950bFpQgCpxgxKrk8znpJH71qYN
-X-Gm-Message-State: AOJu0Yw8bqFCVCvoXoqpVbAhxd1H7PnbM7w/DZmYUwH+1AAfHIi9kxW0
-	jLBgOcD1Ms3n07l/kprxgsNSdzSaPTFaJ5OZ0opwdo1OypX1dBehNHEW+KHRUZN+tXOPnT2PpNR
-	XkADcmemgDKidMPUsERQ/7A2yLmMIpLujC8nM
-X-Google-Smtp-Source: AGHT+IFzj8RlanPuIZnlqigaZ47DrvMcpPjFdw9hKo3mN//pDXqRuiPsikMN3AUdLkN/Awqlt/3fx9d96fwFEYXKBKs=
-X-Received: by 2002:a05:6214:2c0d:b0:6ad:63c3:12fe with SMTP id
- 6a1803df08f44-6b02266d4cfmr71924706d6.3.1717689665559; Thu, 06 Jun 2024
- 09:01:05 -0700 (PDT)
+	s=arc-20240116; t=1717689809; c=relaxed/simple;
+	bh=UyKx9bZ3hdWJqpE8irQpBb9zB0JEyFwgJeYquJTXVQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d8+8TD6j+EzR181UvbJEGOO9tlHUUJzLe7ML6SFDJF39q2djt8OVze4dqbc7omANPGXAkUbz0FoKIhI4SomxSwBGIyOINca4hZTAMVbhPCKr75Uq3UQ5zi/aAljVtoAwCRLK5VpyrkUcU8edaTG4vm5wpcghXMRKeKB27slr4/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pPnFgcJG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAB9FC2BD10;
+	Thu,  6 Jun 2024 16:03:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717689809;
+	bh=UyKx9bZ3hdWJqpE8irQpBb9zB0JEyFwgJeYquJTXVQY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pPnFgcJGEj5N5/dPqf2Tyyk5EUu5cc0pIq+VB5l3LP6blMU8tjart5hB59I15Z73n
+	 splLPXmqPZpKmuEJLKeiaJLXBcT5f/KYObaQOcfBeqU27WxUdgxBMlkqdZtP0j9izg
+	 O8s8VejL6vVX2vz0m8PoWpvFPvGSnvDjvcYTOFe40VQlVEZ7olrA8S5HRWA+J7+ydh
+	 ZlNXXzMraOiPBByzgnsSkHYMVdqVTjIVwjKDNhngxy2Fp3GyIGn4UhKCdR02just/U
+	 iiUEzZwESqYWvR9y33/MO2wh3bSqumcIKevR9pTs+R4HYrOphs2xm8zPfao6gxtzc/
+	 CDvnIPIXjyjXg==
+Date: Thu, 6 Jun 2024 09:03:28 -0700
+From: Kees Cook <kees@kernel.org>
+To: Abhinav Jain <jain.abhinav177@gmail.com>
+Cc: tony.luck@intel.com, gpiccoli@igalia.com,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com,
+	julia.lawall@inria.fr
+Subject: Re: [PATCH v2] pstore/ram: Replace of_node_put with __free() for
+ automatic cleanup
+Message-ID: <202406060902.4F06AA0DF6@keescook>
+References: <20240605214944.22113-1-jain.abhinav177@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240521-board-ids-v3-0-e6c71d05f4d2@quicinc.com>
- <CAFLszTjexpNEjo1sGVs67L0CAgGZLNkyn9RGfHRD7iHak_mtmg@mail.gmail.com> <20240605100246481-0700.eberman@hu-eberman-lv.qualcomm.com>
-In-Reply-To: <20240605100246481-0700.eberman@hu-eberman-lv.qualcomm.com>
-From: Simon Glass <sjg@chromium.org>
-Date: Thu, 6 Jun 2024 10:00:54 -0600
-Message-ID: <CAFLszThbe_aUAq_5rCCiPV-bj60oq9UCc=vdDHwM3i6t44ohLw@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 0/9] dt-bindings: hwinfo: Introduce board-id
-To: Elliot Berman <quic_eberman@quicinc.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Amrit Anand <quic_amrianan@quicinc.com>, Peter Griffin <peter.griffin@linaro.org>, 
-	Caleb Connolly <caleb.connolly@linaro.org>, Andy Gross <agross@kernel.org>, 
-	Doug Anderson <dianders@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>, 
-	Julius Werner <jwerner@chromium.org>, "Humphreys, Jonathan" <j-humphreys@ti.com>, 
-	Sumit Garg <sumit.garg@linaro.org>, Jon Hunter <jonathanh@nvidia.org>, 
-	Michal Simek <michal.simek@amd.com>, boot-architecture@lists.linaro.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605214944.22113-1-jain.abhinav177@gmail.com>
 
-Hi Elliot,
+On Wed, Jun 05, 2024 at 09:49:44PM +0000, Abhinav Jain wrote:
+> Add __free(device_node) to the parent_node struct declaration
+> Add changes to incorporate the review comments from v1
+> 
+> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+> 
+> PATCH v1 link:
+> https://lore.kernel.org/all/20240415161409.8375-1-jain.abhinav177@gmail.com/
+> 
+> Changes since v1:
+>  - Moved the variable definition back to the top of the function body
 
-On Wed, 5 Jun 2024 at 11:17, Elliot Berman <quic_eberman@quicinc.com> wrote:
->
-> On Wed, Jun 05, 2024 at 07:17:35AM -0600, Simon Glass wrote:
-> > Hi Elliot,
-> >
-> > I am just picking up the discussion here, which was started on another thread.
-> >
-> > I can't see why this new feature is needed. We should be able to use
-> > compatible strings, as we do now. I added a 'usage' section to the FIT
-> > spec [1] which might help. I also incorporated the board revision and
-> > variant information and some notes on how to add to the available
-> > suffixes.
-> >
-> > Does that handle your use case?
->
-> -rev and -sku don't fit the versioning scheme for QTI devices, so this
-> isn't a generic enough approach. Patch 5 in this series describes the
-> versioning scheme for us.
->
-> In the other thread, we had talked about using some regex based approach
-> for matching the root node compatible. I haven't had chance to work on
-> that proposal and will try to get to it in the next couple weeks.
+The history and version links should be below the "---" line.
 
-OK, I look forward to it. Please do check the FIT best match approach
-and see how it might be extended to handle your requirements. So far I
-have not seen a need for regexes, but it is certainly a possibility.
+But more importantly, please base your patch on the upstream tree,
+rather than on your v1 patch. :) (i.e. squash your v1 and v2 together).
 
-Regards,
-Simon
+-Kees
+
+> ---
+>  fs/pstore/ram.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+> index 14f2f4864e48..f8258e4567c3 100644
+> --- a/fs/pstore/ram.c
+> +++ b/fs/pstore/ram.c
+> @@ -644,6 +644,7 @@ static int ramoops_parse_dt(struct platform_device *pdev,
+>  			    struct ramoops_platform_data *pdata)
+>  {
+>  	struct device_node *of_node = pdev->dev.of_node;
+> +	struct device_node *parent_node __free(device_node) = of_node_parent(of_node);
+>  	struct resource *res;
+>  	u32 value;
+>  	int ret;
+> @@ -703,7 +704,6 @@ static int ramoops_parse_dt(struct platform_device *pdev,
+>  	 * we're not a child of "reserved-memory" and mimicking the
+>  	 * expected behavior.
+>  	 */
+> -	struct device_node *parent_node __free(device_node) = of_node_parent(of_node);
+>  	if (!of_node_name_eq(parent_node, "reserved-memory") &&
+>  	    !pdata->console_size && !pdata->ftrace_size &&
+>  	    !pdata->pmsg_size && !pdata->ecc_info.ecc_size) {
+> -- 
+> 2.34.1
+> 
+
+-- 
+Kees Cook
 
