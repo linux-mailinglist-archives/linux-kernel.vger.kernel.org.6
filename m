@@ -1,180 +1,278 @@
-Return-Path: <linux-kernel+bounces-204812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F50E8FF3D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:33:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 572988FF3D8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:33:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E766B28B634
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:33:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B90E81F275E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5023B1991CD;
-	Thu,  6 Jun 2024 17:33:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5251990D2;
+	Thu,  6 Jun 2024 17:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YjgG7Vov"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mDTXyTi0"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10BDD15253E;
-	Thu,  6 Jun 2024 17:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF651991D5
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 17:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717695179; cv=none; b=uSrg/wd4/MolU5TGC3kyMEBmXjAEJ0r6/RO6aDf89WemRPnqTSJJ8Y5sFLc5fPGCRfmLJflkHealzbbp2bRHiELTCIZw3BC02GMMZybGIdLw4CDvLMZzXWM47nI9KrsHl4JSN/T17L0dQ6FCw3pYUFvx04E+l9EY8efEv/uzOyI=
+	t=1717695218; cv=none; b=U/Glv4ttZypGPfXIJFqsUg5cd3ksHBaslfk5hQoUpCzlnJWZwsH5zUEAKF4YrshhkmTwRBMMg181WKjmjhE2JWL2vh/futhPKqtpwKDDYe7Boe0NYreKo4QwoK9gyhiYw9INOwZ87pyJuJBTtK1QrHvKHchu6ngsZAynQFctyoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717695179; c=relaxed/simple;
-	bh=tvNSjOg8mx3j+RpQ0huRviLFFC0DGjMakF1YpHzl9p4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hDVzI9hsV9VIW3WwO61FpEk1Dyn6/o9dFv9hRYYZyJMT4wzben+HEm0gw9J6VX2P8X87oyCPB5daqwxpVh7D05vhSFUd2kFw3jc37IMCooy2Zy1YtfHkhIyfpyb/1W/2sESL6Z3Uavdn2np+Q339vw5tBlv9J7EJ0mcqbk3jquM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YjgG7Vov; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=6C3828TkhUBt3LMHxNw+f5eKbQSK74nm3cDfcfA+ESQ=; b=YjgG7Vov4whzGWtff+CpF/oKgO
-	S3i5UR/b7npg7U4tVrxl3/D4ZmVvyFwLuag78KKpUhLwsakb4RRuKd+b+fvTmuvICnqfNxp6Mmwb+
-	m8qm8ei8eE7zOW7hJpzGnDF/99H35cAwMFrDaHJ8pWLHqwo3ULZoC6aVMUzDzpK3UgH+tt+fio3q+
-	rfntirFQ7pDVbXz+c05AEXWBLgme0hSzKmAmCpLaKc9pxe2XJgMaZm/2lF17eM9JfIjJOewvm84eV
-	cloM0LYjQ5T2r2CcHxsslcAhPDYArfm4Kf+iQ9Ddu3DECTWahfCAv33BCBI6HW4F9kNSNrdMmQtEE
-	ZTzE5uxg==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sFGyq-0000000Alrg-33v6;
-	Thu, 06 Jun 2024 17:32:52 +0000
-Message-ID: <5052adab-5b5e-4ac2-902c-bb373c00bbbb@infradead.org>
-Date: Thu, 6 Jun 2024 10:32:51 -0700
+	s=arc-20240116; t=1717695218; c=relaxed/simple;
+	bh=rYVMkwI8qFoB/ptB7kU79gZFDx+FsNx/WF4p8yfanOI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=ON7ElGIfxm7Rc7eEztKTwrKqmj064VMjAfnVBPM0DtLKuFNz8v3sXZ8e90enJkZg/6916z5A2tZCqVDw9NWYx+Oo5xzOu/y6MGdmO4WZQAX4CKCK4A4aPK/I3+zDjmmGKm82dSgTqH62MRbZ4ZNWkt3h9/wscauRAam9DBXaot4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mDTXyTi0; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4210aa012e5so13741165e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 10:33:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717695215; x=1718300015; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mPjsJlKDBXzcFKJiIo/4f6GGzkeINELRnLiFwHcGpOo=;
+        b=mDTXyTi0rNw369u0JcGh6PhF8bbU1DdWb+GmNbbS/K5/j1zjdJa6PDMz2m++vK1gwa
+         M0qxjq4TcBc8R8CeRthxIZQfF5Y/RuM6f/Sme+sY6OvrFkZyWMw5QZvRDZlL3PbgoFIK
+         vZT1mxIRTSQioeBa//dcS7595/B+C46yb79cZ5cCBKkyLcLWC7VaVQhzgc1s5wq52nGJ
+         AZu3JET/rp8SQwrPDW0qXqJ7NJKJHRSIF3PB9tfKwPIlB4ZBJ8hfjzRWMNCraIIJ+26G
+         Yg1jT2s3OZfaq9250Ovcm6F5rElsrxJ3yLWk5oMcwzGt0wBMZsJB0Y6Age3GbIzX5QOL
+         m8Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717695215; x=1718300015;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mPjsJlKDBXzcFKJiIo/4f6GGzkeINELRnLiFwHcGpOo=;
+        b=EOrJC16dZYZ5dHirQrE8vzj1MRImB6CWsD3F59JDNP+44tnD0a/de+kZ+YMrh9ffG8
+         XCEEHmiV/QE+Afg+PL/UKmKth8Ey9TSWkDUtAW1oI4MNg1DYL+jS5NErE1TsFMWMDBB0
+         krz9yB22ui85hpX9BKAEnHOcx8JqAF2YpQKtW+qeZMtq3TrjtL9BZWu3ZSTiXlcw1vGj
+         t6oSjb5ri3Wr5OaxtVFGdAn2pTDr/0K7vi388mH1OmhlaOvYSByUsSSIgGLzqem3Q5BK
+         Ii8utOcs+AVI0tK8lr0IAg8gsbEh2KX+2caNVH1su83UqbqCXMXaJUaaODBVKHFr9pJG
+         sJ6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUch4PHAqj3uTsPbYTtTGGqxClLXuhHuFZIkts4NxyxkGerOVVrZO7mkhe0YKOpNR1HZzm5fpSTnMlcU9JH6EHO8pu/bX9jqHXC0lWp
+X-Gm-Message-State: AOJu0YwmkQEeH8hgs7dkpAwzK4BcesrkqDMvG5BCRcqqhQv7RkCaiXEp
+	R0rwgucaVV0Um5667G0JcP5l6ULyUvHV8B+cJZPN/Z0ocSN5Cl61fLsU2HNmDXJso6VHszP3WHg
+	MTbPeUofdI+cb8tBWZmJlfR2RIT//vRwEVN3k
+X-Google-Smtp-Source: AGHT+IE4QPvkBQBYH5qBQiqsMSACkO+0MruSkYzXUyRwuzkvF/JqqLhtKdRfSDNl8JmBwmG1H52WpeDjd6vt0pJCRZ4=
+X-Received: by 2002:a05:600c:54ca:b0:420:309a:fe63 with SMTP id
+ 5b1f17b1804b1-42164a030a5mr3279955e9.22.1717695214069; Thu, 06 Jun 2024
+ 10:33:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 6/6] Documentation: iio: Document high-speed DMABUF
- based API
-To: Paul Cercueil <paul@crapouillou.net>, Jonathan Cameron
- <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Vinod Koul <vkoul@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Nuno Sa <nuno.sa@analog.com>,
- linux-iio@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org
-References: <20240605110845.86740-1-paul@crapouillou.net>
- <20240605110845.86740-7-paul@crapouillou.net>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240605110845.86740-7-paul@crapouillou.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240605002459.4091285-1-andrii@kernel.org> <20240605002459.4091285-5-andrii@kernel.org>
+ <CAJuCfpFp38X-tbiRAqS36zXG_ho2wyoRas0hCFLo07pN1noSmg@mail.gmail.com>
+ <CAEf4BzYv0Ys+NpMMuXBYEVwAaOow=oBgUhBwen7g=68_5qKznQ@mail.gmail.com> <ue44yftirugr6u4ewl5cvgatpqnheuho7rgax3jyg6ox5vruyq@7k6harvobd2q>
+In-Reply-To: <ue44yftirugr6u4ewl5cvgatpqnheuho7rgax3jyg6ox5vruyq@7k6harvobd2q>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 6 Jun 2024 10:33:19 -0700
+Message-ID: <CAJuCfpEFpd-+DDr=EyA1gMKZcDZYpZN9pBuFczhVXrFSe11U_g@mail.gmail.com>
+Subject: Re: [PATCH v3 4/9] fs/procfs: use per-VMA RCU-protected locking in
+ PROCMAP_QUERY API
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	brauner@kernel.org, viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
+	linux-mm@kvack.org, rppt@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Thu, Jun 6, 2024 at 10:15=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+>
+> * Andrii Nakryiko <andrii.nakryiko@gmail.com> [240606 12:52]:
+> > On Wed, Jun 5, 2024 at 4:16=E2=80=AFPM Suren Baghdasaryan <surenb@googl=
+e.com> wrote:
+> > >
+> > > On Tue, Jun 4, 2024 at 5:25=E2=80=AFPM Andrii Nakryiko <andrii@kernel=
+.org> wrote:
+> > > >
+> > > > Attempt to use RCU-protected per-VMA lock when looking up requested=
+ VMA
+> > > > as much as possible, only falling back to mmap_lock if per-VMA lock
+> > > > failed. This is done so that querying of VMAs doesn't interfere wit=
+h
+> > > > other critical tasks, like page fault handling.
+> > > >
+> > > > This has been suggested by mm folks, and we make use of a newly add=
+ed
+> > > > internal API that works like find_vma(), but tries to use per-VMA l=
+ock.
+> > > >
+> > > > We have two sets of setup/query/teardown helper functions with diff=
+erent
+> > > > implementations depending on availability of per-VMA lock (conditio=
+ned
+> > > > on CONFIG_PER_VMA_LOCK) to abstract per-VMA lock subtleties.
+> > > >
+> > > > When per-VMA lock is available, lookup is done under RCU, attemptin=
+g to
+> > > > take a per-VMA lock. If that fails, we fallback to mmap_lock, but t=
+hen
+> > > > proceed to unconditionally grab per-VMA lock again, dropping mmap_l=
+ock
+> > > > immediately. In this configuration mmap_lock is never helf for long=
+,
+> > > > minimizing disruptions while querying.
+> > > >
+> > > > When per-VMA lock is compiled out, we take mmap_lock once, query VM=
+As
+> > > > using find_vma() API, and then unlock mmap_lock at the very end onc=
+e as
+> > > > well. In this setup we avoid locking/unlocking mmap_lock on every l=
+ooked
+> > > > up VMA (depending on query parameters we might need to iterate a fe=
+w of
+> > > > them).
+> > > >
+> > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > > ---
+> > > >  fs/proc/task_mmu.c | 46 ++++++++++++++++++++++++++++++++++++++++++=
+++++
+> > > >  1 file changed, 46 insertions(+)
+> > > >
+> > > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > > > index 614fbe5d0667..140032ffc551 100644
+> > > > --- a/fs/proc/task_mmu.c
+> > > > +++ b/fs/proc/task_mmu.c
+> > > > @@ -388,6 +388,49 @@ static int pid_maps_open(struct inode *inode, =
+struct file *file)
+> > > >                 PROCMAP_QUERY_VMA_FLAGS                         \
+> > > >  )
+> > > >
+> > > > +#ifdef CONFIG_PER_VMA_LOCK
+> > > > +static int query_vma_setup(struct mm_struct *mm)
+> > > > +{
+> > > > +       /* in the presence of per-VMA lock we don't need any setup/=
+teardown */
+> > > > +       return 0;
+> > > > +}
+> > > > +
+> > > > +static void query_vma_teardown(struct mm_struct *mm, struct vm_are=
+a_struct *vma)
+> > > > +{
+> > > > +       /* in the presence of per-VMA lock we need to unlock vma, i=
+f present */
+> > > > +       if (vma)
+> > > > +               vma_end_read(vma);
+> > > > +}
+> > > > +
+> > > > +static struct vm_area_struct *query_vma_find_by_addr(struct mm_str=
+uct *mm, unsigned long addr)
+> > > > +{
+> > > > +       struct vm_area_struct *vma;
+> > > > +
+> > > > +       /* try to use less disruptive per-VMA lock */
+> > > > +       vma =3D find_and_lock_vma_rcu(mm, addr);
+> > > > +       if (IS_ERR(vma)) {
+> > > > +               /* failed to take per-VMA lock, fallback to mmap_lo=
+ck */
+> > > > +               if (mmap_read_lock_killable(mm))
+> > > > +                       return ERR_PTR(-EINTR);
+> > > > +
+> > > > +               vma =3D find_vma(mm, addr);
+> > > > +               if (vma) {
+> > > > +                       /*
+> > > > +                        * We cannot use vma_start_read() as it may=
+ fail due to
+> > > > +                        * false locked (see comment in vma_start_r=
+ead()). We
+> > > > +                        * can avoid that by directly locking vm_lo=
+ck under
+> > > > +                        * mmap_lock, which guarantees that nobody =
+can lock the
+> > > > +                        * vma for write (vma_start_write()) under =
+us.
+> > > > +                        */
+> > > > +                       down_read(&vma->vm_lock->lock);
+> > >
+> > > Hi Andrii,
+> > > The above pattern of locking VMA under mmap_lock and then dropping
+> > > mmap_lock is becoming more common. Matthew had an RFC proposal for an
+> > > API to do this here:
+> > > https://lore.kernel.org/all/ZivhG0yrbpFqORDw@casper.infradead.org/. I=
+t
+> > > might be worth reviving that discussion.
+> >
+> > Sure, it would be nice to have generic and blessed primitives to use
+> > here. But the good news is that once this is all figured out by you mm
+> > folks, it should be easy to make use of those primitives here, right?
+> >
+> > >
+> > > > +               }
+> > > > +
+> > > > +               mmap_read_unlock(mm);
+> > >
+> > > Later on in your code you are calling get_vma_name() which might call
+> > > anon_vma_name() to retrieve user-defined VMA name. After this patch
+> > > this operation will be done without holding mmap_lock, however per
+> > > https://elixir.bootlin.com/linux/latest/source/include/linux/mm_types=
+.h#L582
+> > > this function has to be called with mmap_lock held for read. Indeed
+> > > with debug flags enabled you should hit this assertion:
+> > > https://elixir.bootlin.com/linux/latest/source/mm/madvise.c#L96.
+>
+> The documentation on the first link says to hold the lock or take a
+> reference, but then we assert the lock.  If you take a reference to the
+> anon vma name, then we will trigger the assert.  Either the
+> documentation needs changing or the assert is incorrect - or I'm missing
+> something?
 
-On 6/5/24 4:08 AM, Paul Cercueil wrote:
-> Document the new DMABUF based API.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> Signed-off-by: Nuno Sa <nuno.sa@analog.com>
-> 
-> ---
-> v2: - Explicitly state that the new interface is optional and is
->       not implemented by all drivers.
->     - The IOCTLs can now only be called on the buffer FD returned by
->       IIO_BUFFER_GET_FD_IOCTL.
->     - Move the page up a bit in the index since it is core stuff and not
->       driver-specific.
-> 
-> v3: Update the documentation to reflect the new API.
-> 
-> v5: Use description lists for the documentation of the three new IOCTLs
->     instead of abusing subsections.
-> 
-> v8: Renamed dmabuf_api.rst -> iio_dmabuf_api.rst, and updated index.rst
->     whose format changed in iio/togreg.
-> ---
->  Documentation/iio/iio_dmabuf_api.rst | 54 ++++++++++++++++++++++++++++
->  Documentation/iio/index.rst          |  1 +
->  2 files changed, 55 insertions(+)
->  create mode 100644 Documentation/iio/iio_dmabuf_api.rst
-> 
-> diff --git a/Documentation/iio/iio_dmabuf_api.rst b/Documentation/iio/iio_dmabuf_api.rst
-> new file mode 100644
-> index 000000000000..1cd6cd51a582
-> --- /dev/null
-> +++ b/Documentation/iio/iio_dmabuf_api.rst
-> @@ -0,0 +1,54 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +===================================
-> +High-speed DMABUF interface for IIO
-> +===================================
-> +
-> +1. Overview
-> +===========
-> +
-> +The Industrial I/O subsystem supports access to buffers through a
-> +file-based interface, with read() and write() access calls through the
-> +IIO device's dev node.
-> +
-> +It additionally supports a DMABUF based interface, where the userspace
-> +can attach DMABUF objects (externally created) to a IIO buffer, and
+I think the documentation is correct. It says that at the time of
+calling anon_vma_name() the mmap_lock should be locked (hence the
+assertion). Then the user can raise anon_vma_name refcount, drop
+mmap_lock and safely continue using anon_vma_name object. IOW this is
+fine:
 
-I would say/write:                                to an IIO buffer,
+mmap_read_lock(vma->mm);
+anon_name =3D anon_vma_name(vma);
+anon_vma_name_get(anon_name);
+mmap_read_unlock(vma->mm);
+// keep using anon_name
+anon_vma_name_put(anon_name);
 
-> +subsequently use them for data transfers.
-> +
-> +A userspace application can then use this interface to share DMABUF
-> +objects between several interfaces, allowing it to transfer data in a
-> +zero-copy fashion, for instance between IIO and the USB stack.
-> +
-> +The userspace application can also memory-map the DMABUF objects, and
-> +access the sample data directly. The advantage of doing this vs. the
-> +read() interface is that it avoids an extra copy of the data between the
-> +kernel and userspace. This is particularly useful for high-speed devices
-> +which produce several megabytes or even gigabytes of data per second.
-> +It does however increase the userspace-kernelspace synchronization
-> +overhead, as the DMA_BUF_SYNC_START and DMA_BUF_SYNC_END IOCTLs have to
-> +be used for data integrity.
-> +
-> +2. User API
-> +===========
-> +
-> +As part of this interface, three new IOCTLs have been added. These three
-> +IOCTLs have to be performed on the IIO buffer's file descriptor,
-> +obtained using the IIO_BUFFER_GET_FD_IOCTL() ioctl.
-> +
-> +  ``IIO_BUFFER_DMABUF_ATTACH_IOCTL(int)``
 
-                                     (int fd)
-?
-
-> +    Attach the DMABUF object, identified by its file descriptor, to the
-> +    IIO buffer. Returns zero on success, and a negative errno value on
-> +    error.
-> +
-> +  ``IIO_BUFFER_DMABUF_DETACH_IOCTL(int)``
-
-ditto.
-
-> +    Detach the given DMABUF object, identified by its file descriptor,
-> +    from the IIO buffer. Returns zero on success, and a negative errno
-> +    value on error.
-> +
-> +    Note that closing the IIO buffer's file descriptor will
-> +    automatically detach all previously attached DMABUF objects.
-> +
-> +  ``IIO_BUFFER_DMABUF_ENQUEUE_IOCTL(struct iio_dmabuf *iio_dmabuf)``
-> +    Enqueue a previously attached DMABUF object to the buffer queue.
-> +    Enqueued DMABUFs will be read from (if output buffer) or written to
-> +    (if input buffer) as long as the buffer is enabled.
-
-thanks.
--- 
-#Randy
-https://people.kernel.org/tglx/notes-about-netiquette
-https://subspace.kernel.org/etiquette.html
+>
+> >
+> > Sigh... Ok, what's the suggestion then? Should it be some variant of
+> > mmap_assert_locked() || vma_assert_locked() logic, or it's not so
+> > simple?
+> >
+> > Maybe I should just drop the CONFIG_PER_VMA_LOCK changes for now until
+> > all these gotchas are figured out for /proc/<pid>/maps anyway, and
+> > then we can adapt both text-based and ioctl-based /proc/<pid>/maps
+> > APIs on top of whatever the final approach will end up being the right
+> > one?
+> >
+> > Liam, any objections to this? The whole point of this patch set is to
+> > add a new API, not all the CONFIG_PER_VMA_LOCK gotchas. My
+> > implementation is structured in a way that should be easily amenable
+> > to CONFIG_PER_VMA_LOCK changes, but if there are a few more subtle
+> > things that need to be figured for existing text-based
+> > /proc/<pid>/maps anyways, I think it would be best to use mmap_lock
+> > for now for this new API, and then adopt the same final
+> > CONFIG_PER_VMA_LOCK-aware solution.
+>
+> The reason I was hoping to have the new interface use the per-vma
+> locking from the start is to ensure the guarantees that we provide to
+> the users would not change.  We'd also avoid shifting to yet another
+> mmap_lock users.
+>
+> I also didn't think it would complicate your series too much, so I
+> understand why you want to revert to the old locking semantics.  I'm
+> fine with you continuing with the series on the old lock.  Thanks for
+> trying to make this work.
+>
+> Regards,
+> Liam
 
