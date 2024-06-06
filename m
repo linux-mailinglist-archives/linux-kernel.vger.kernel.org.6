@@ -1,86 +1,73 @@
-Return-Path: <linux-kernel+bounces-203715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43D3E8FDF67
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:18:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DE288FDF69
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B2B51C2158B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:18:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5D412858D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0196B13B293;
-	Thu,  6 Jun 2024 07:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B4913B5B9;
+	Thu,  6 Jun 2024 07:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FT9np/9j"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BJUx2KUE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13FE13A896
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 07:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D939E33F7;
+	Thu,  6 Jun 2024 07:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717658334; cv=none; b=WN3R5UX4ObHwpV+yOzaDNkrmXtfCvnf3Ksq3s/heXZUZS5O9gJKhiTZiTK8akh+jcmO0rdvVOUtTXrX5lPGm2LyFX2ebcE3ydDLbsjQ1hunjGqCmOtOZECJe4+Gd8IaSaxqDjGp1d6FgpWkxa6g60wtHxxX7d9tPwW3LAbEJnNY=
+	t=1717658394; cv=none; b=O4QM7kGNi8FKZtgUIRP01vf1kNJhb0/AglWHS+6qgMOq9zJE0o0MvsZaLnEY5SFFrU2Jp1vRqDg9oEKVjPu58XXAhn92dU3qOwhrp/TO+N/zcMBmU/5SAp/9VL3kyyO0/EoQPjwjxUjaZQxBzvHarABaUmekYjnAny0gtjSAHCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717658334; c=relaxed/simple;
-	bh=oogjLwTgHPDKdJboP9zTfcvNz3yggXEeinlMPoQL/PU=;
+	s=arc-20240116; t=1717658394; c=relaxed/simple;
+	bh=a7uPeHNSogsl6puPap/Zhg4IvhvtmmxpELsNKC9X/44=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iZ9f+bcBF9j8p7xCswJkACZTec9mdKfAlcpF7CQNyCZydhkzRDiIrAVfXL/3a26W2ZAVnhlCv2Pdlzo5nXuLDIS9WiowEwhoGMRh6WDgB6Sf8NGP2rWFl89cXlDQXHmaD5ZVPQZBpejqT9aAQE3ahfFVsktpZ1+vnVjiUb1mLFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FT9np/9j; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717658331;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DnNgXsFNzCy0InHxHbl/oFWafRsx14xzXtW04Ib8MOQ=;
-	b=FT9np/9j2vYAbqI3yCGUNFKdkyHq3Rcmbr2R2PFlAprrjW1B1p+1Pt1G6ruobEf7T/Snan
-	qWsUphcHrJwkFdOgXFQZRSoecV4vwXQ3mUnoQCkBXwBQm97CjF4YKZAe+VGltKYxoOKL46
-	2gLuiBdvPK8Dy+JQySGtGMVRIcOiU+4=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-191-I5FOl6JAM4iP-fyGtQ_McA-1; Thu, 06 Jun 2024 03:18:45 -0400
-X-MC-Unique: I5FOl6JAM4iP-fyGtQ_McA-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a68c0bb18e3so16704466b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 00:18:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717658324; x=1718263124;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DnNgXsFNzCy0InHxHbl/oFWafRsx14xzXtW04Ib8MOQ=;
-        b=UtoqcPCsMDjeyGC2PsJdE9hN7xQ4HQTqwDVdVNOlwD5V3rrq13D5M0AHDoXhLe24Ez
-         yfsqmoix5TLEh+2Di3XjEW/LrgVGKYNvcP89R3c9WR11vXSsjqnD5ACIrAXijSPI9rFS
-         YYHgHMQyK+c93Mnnu4AHmarGYD/HcDWo/IgVnUt3RAIlX21Frjzn7x3DQ4NeASLTf/4K
-         vDTaZs+y0OkqzkWnktMa6e375Sli5os7bS90uG+bpobmZOqK8wXtassIKIi5/xhYaf60
-         S2DVOrYibAz0I4oJ6auBCpWmIPfFM1dnbXe6kP5NXwEOVGr+BBc/IT9Y8kAxkv0R2/aB
-         SrPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdhLHjXMDt4sxA3TduakBkq3g3rya7s8xWORVaQKkGK6kILW6IcbDiNCB01UWDx3HlHixrGZi51oXL05BP0RSfRaBNsrOl7Hd3bgw+
-X-Gm-Message-State: AOJu0YznERf9CZi12vaV1RoxpgWnPJA1bh8GpkoL/MwcCH0kgliAFItU
-	eAUK7HFl5J4qUp99G0AEnUfNP+z4G50BItQo31+EFKaKey90gCyoAs6zwazwtT/yGhIlnMHk2Yg
-	cbNe6d6+fSuGTE/RKyeKsy2WMC4rNxZxmC8K8SQPqp3IcD5OZl6V+UbfY4OP53A==
-X-Received: by 2002:a17:906:f28f:b0:a68:dff5:b153 with SMTP id a640c23a62f3a-a699f67ecddmr302761266b.33.1717658324223;
-        Thu, 06 Jun 2024 00:18:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGQ0hybjvC9Ghsz91IEElthfbzx3nnHI0CBKidzNm5YHGJFz2dGcO4+FDkQheBagmgGj19jFA==
-X-Received: by 2002:a17:906:f28f:b0:a68:dff5:b153 with SMTP id a640c23a62f3a-a699f67ecddmr302758766b.33.1717658323740;
-        Thu, 06 Jun 2024 00:18:43 -0700 (PDT)
-Received: from redhat.com ([2.55.59.85])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c80581716sm54728666b.19.2024.06.06.00.18.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 00:18:43 -0700 (PDT)
-Date: Thu, 6 Jun 2024 03:18:39 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: cuitao <cuitao@kylinos.cn>
-Cc: jasowang@redhat.com, virtualization@lists.linux.dev,
-	xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools/virtio: Use the __GFP_ZERO flag of kmalloc to
- complete the memory initialization.
-Message-ID: <20240606031810-mutt-send-email-mst@kernel.org>
-References: <20240605135245.14921-1-cuitao@kylinos.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rCAAwSpfj2HlulloiYcSWPh7N+deMWhpS+7wW1QH009f9Y36Ekh1gu0pbuzuiRXmdT/Msi/dbBUPBgjtDixfNwW7JplfkR8YVZV1n0CkWBH15iKgBfVz3bW8t1yZb+ZavwiyzxeX87UsuvnJv/xo0YRSR8mu/iV8y4jLcFx0X50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BJUx2KUE; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717658393; x=1749194393;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=a7uPeHNSogsl6puPap/Zhg4IvhvtmmxpELsNKC9X/44=;
+  b=BJUx2KUErrq7EIUQ6LY8sv1RrwXqudYkZ4T7eiJwfkCaLRH75ysNs+5x
+   z2p3W12KPKzsk8TRxxiXTX9m6F2X3/aWW2/VG8QDbMQaGaA2Yc5m5Gb2r
+   gdn2V2jSUPpYfIo6q/uqqxk6xI360xp1RbBS+9H/PI74S7awMAxZgD2WH
+   Navvbq9sauQ0m/8Wjypr4nXvdBHX99KXEdANv5ZM3HGpEpkGfqR6ORlBa
+   Fu/3D3GmubqwURFV+x0z7r6RWZjeTZwQz7NeG1fS8olIaUscs1Sx9vzkK
+   taeDU64hAZ+hWtYzaQBfgQG+KYsYgFQbUPnB931akhTmYIhxQfG9tFN47
+   w==;
+X-CSE-ConnectionGUID: MfFqqUTcRPykuDbGIvuPgg==
+X-CSE-MsgGUID: PG0k22ftTiu2QZKZXo6UHw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="24876846"
+X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
+   d="scan'208";a="24876846"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 00:19:53 -0700
+X-CSE-ConnectionGUID: YYSkyvbXQnyCJ4XflenCyQ==
+X-CSE-MsgGUID: MC1QJTQzSpCCHGVZYVlwJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
+   d="scan'208";a="38420693"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by orviesa008.jf.intel.com with SMTP; 06 Jun 2024 00:19:50 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 06 Jun 2024 10:19:49 +0300
+Date: Thu, 6 Jun 2024 10:19:49 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH 1/1] usb: typec: tcpm: use 'time_left' variable with
+ wait_for_completion_timeout()
+Message-ID: <ZmFjFSzZwE8Z97yZ@kuha.fi.intel.com>
+References: <20240604212730.4968-2-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,38 +76,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240605135245.14921-1-cuitao@kylinos.cn>
+In-Reply-To: <20240604212730.4968-2-wsa+renesas@sang-engineering.com>
 
-On Wed, Jun 05, 2024 at 09:52:45PM +0800, cuitao wrote:
-> Use the __GFP_ZERO flag of kmalloc to initialize memory while allocating it,
-> without the need for an additional memset call.
+On Tue, Jun 04, 2024 at 11:27:31PM +0200, Wolfram Sang wrote:
+> There is a confusing pattern in the kernel to use a variable named 'timeout' to
+> store the result of wait_for_completion_timeout() causing patterns like:
 > 
-> Signed-off-by: cuitao <cuitao@kylinos.cn>
+> 	timeout = wait_for_completion_timeout(...)
+> 	if (!timeout) return -ETIMEDOUT;
+> 
+> with all kinds of permutations. Use 'time_left' as a variable to make the code
+> self explaining.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
 > ---
->  tools/virtio/linux/kernel.h | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+>  drivers/usb/typec/tcpm/tcpm.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/tools/virtio/linux/kernel.h b/tools/virtio/linux/kernel.h
-> index 6702008f7f5c..9e401fb7c215 100644
-> --- a/tools/virtio/linux/kernel.h
-> +++ b/tools/virtio/linux/kernel.h
-> @@ -66,10 +66,7 @@ static inline void *kmalloc_array(unsigned n, size_t s, gfp_t gfp)
->  
->  static inline void *kzalloc(size_t s, gfp_t gfp)
+> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+> index 8a1af08f71b6..e46148c19be3 100644
+> --- a/drivers/usb/typec/tcpm/tcpm.c
+> +++ b/drivers/usb/typec/tcpm/tcpm.c
+> @@ -943,7 +943,7 @@ static int tcpm_pd_transmit(struct tcpm_port *port,
+>  			    enum tcpm_transmit_type tx_sop_type,
+>  			    const struct pd_message *msg)
 >  {
-> -	void *p = kmalloc(s, gfp);
-> -
-> -	memset(p, 0, s);
-> -	return p;
-> +	return kmalloc(s, gfp | __GFP_ZERO);
->  }
-
-
-Why do we care? It's just here to make things compile. The simpler the
-better.
-
->  static inline void *alloc_pages_exact(size_t s, gfp_t gfp)
+> -	unsigned long timeout;
+> +	unsigned long time_left;
+>  	int ret;
+>  	unsigned int negotiated_rev;
+>  
+> @@ -968,10 +968,10 @@ static int tcpm_pd_transmit(struct tcpm_port *port,
+>  		return ret;
+>  
+>  	mutex_unlock(&port->lock);
+> -	timeout = wait_for_completion_timeout(&port->tx_complete,
+> -				msecs_to_jiffies(PD_T_TCPC_TX_TIMEOUT));
+> +	time_left = wait_for_completion_timeout(&port->tx_complete,
+> +						msecs_to_jiffies(PD_T_TCPC_TX_TIMEOUT));
+>  	mutex_lock(&port->lock);
+> -	if (!timeout)
+> +	if (!time_left)
+>  		return -ETIMEDOUT;
+>  
+>  	switch (port->tx_status) {
 > -- 
-> 2.25.1
+> 2.43.0
 
+-- 
+heikki
 
