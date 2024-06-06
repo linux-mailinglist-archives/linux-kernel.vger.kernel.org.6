@@ -1,150 +1,252 @@
-Return-Path: <linux-kernel+bounces-204029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A81778FE326
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:40:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4B4D8FE33D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59F471F21A88
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:40:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64F43B29315
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931C1152DED;
-	Thu,  6 Jun 2024 09:40:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514B5153593;
+	Thu,  6 Jun 2024 09:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1DndqkAT";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wDTpVDr1";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1DndqkAT";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wDTpVDr1"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="IGWVZaDU"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A81E146A85;
-	Thu,  6 Jun 2024 09:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2121514D2
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717666805; cv=none; b=DCy4xEP6shXRqNHt3NDUcWiAzVPc0PGRsSjd6ij6TtIMsXWeju3XJp+GUrrP1DHQ3mDt/aIaXufz+fW05s+xE02uZlNmCAbtFQnC3ulBV3BFlH57gSuK3D0yhAmEk2+kDPKia39oJOvI1+eIgGHZZQ7Q/dWS7SYXhCK0ooprvJM=
+	t=1717666806; cv=none; b=Z6RBiViZKoNgnIXw8S1ZHDL5EWhZlXAlsXdDadkibJWC57wMrqZY5W19AHXCB3tvSLC2GeetEG8TL/LL18d3C05aoL5jY7c7gQP6KysJzK7J5RL0dwBrIJnGKJyOBfdAb1uZwvOJqSLVVUbq9unaM5zdEWQfKW6I3kXPPHvsncQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717666805; c=relaxed/simple;
-	bh=CrDpUO2rON715u+0HzYAeYwMgZVfaEAK1m120nVUyns=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Jv2y/DcEHD9oCWgYSRXxUmRBKN9hzzHzGOlRGpvo17Q9yaZUs9BrymuOMTXJGbxH/SrRFq6wsOWKbD6e0yGmup5ZiH18FtCJdSWervYLNi3hEn96I5J96FrDFbG9+GsGEnyflCpoblzlqTQU0hcBqJrZA//VHLF4FEFERoXZMzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1DndqkAT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wDTpVDr1; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1DndqkAT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wDTpVDr1; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from hawking.nue2.suse.org (unknown [IPv6:2a07:de40:a101:3:10:168:4:11])
-	by smtp-out2.suse.de (Postfix) with ESMTP id 0BA9D1F8BD;
-	Thu,  6 Jun 2024 09:40:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717666802; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/emRcecuEPEWjtJsdbqSVkHQav4CDEjorhc3/XLD1hQ=;
-	b=1DndqkATBhtrBaxrwi/9LPU4XCDIVMVqaB1mkhPzF18IqNIihZZbtg8qm254BR32pfoq9E
-	tXB4uJZbcs+7KMP/+1GSmFaKEX4AcGffHu5IjfVSQ4U/R8ZiQCO6Sxetnq7G6mY2WlRvO4
-	O4nZ0ymAV+7kTHPYZYtKFyE5zE2jdNc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717666802;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/emRcecuEPEWjtJsdbqSVkHQav4CDEjorhc3/XLD1hQ=;
-	b=wDTpVDr1+qpCkDVANUi/xfu8TTwhQddk6RfhBRfaLCFz3rsk7xuwgJqHe2fYhtV16sbwsn
-	v9IRVfNhVKsNP3Cw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=1DndqkAT;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=wDTpVDr1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717666802; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/emRcecuEPEWjtJsdbqSVkHQav4CDEjorhc3/XLD1hQ=;
-	b=1DndqkATBhtrBaxrwi/9LPU4XCDIVMVqaB1mkhPzF18IqNIihZZbtg8qm254BR32pfoq9E
-	tXB4uJZbcs+7KMP/+1GSmFaKEX4AcGffHu5IjfVSQ4U/R8ZiQCO6Sxetnq7G6mY2WlRvO4
-	O4nZ0ymAV+7kTHPYZYtKFyE5zE2jdNc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717666802;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/emRcecuEPEWjtJsdbqSVkHQav4CDEjorhc3/XLD1hQ=;
-	b=wDTpVDr1+qpCkDVANUi/xfu8TTwhQddk6RfhBRfaLCFz3rsk7xuwgJqHe2fYhtV16sbwsn
-	v9IRVfNhVKsNP3Cw==
-Received: by hawking.nue2.suse.org (Postfix, from userid 17005)
-	id 71E5B4A0552; Thu,  6 Jun 2024 11:40:01 +0200 (CEST)
-From: Andreas Schwab <schwab@suse.de>
-To: Shenlin Liang <liangshenlin@eswincomputing.com>
-Cc: anup@brainfault.org,  atishp@atishpatra.org,  paul.walmsley@sifive.com,
-  palmer@dabbelt.com,  aou@eecs.berkeley.edu,  kvm@vger.kernel.org,
-  kvm-riscv@lists.infradead.org,  linux-riscv@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  peterz@infradead.org,  mingo@redhat.com,
-  acme@kernel.org,  namhyung@kernel.org,  mark.rutland@arm.com,
-  alexander.shishkin@linux.intel.com,  jolsa@kernel.org,
-  irogers@google.com,  adrian.hunter@intel.com,
-  linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] perf kvm/riscv: Port perf kvm stat to RISC-V
-In-Reply-To: <20240422080833.8745-3-liangshenlin@eswincomputing.com> (Shenlin
-	Liang's message of "Mon, 22 Apr 2024 08:08:33 +0000")
-References: <20240422080833.8745-1-liangshenlin@eswincomputing.com>
-	<20240422080833.8745-3-liangshenlin@eswincomputing.com>
-X-Yow: Uh-oh --  WHY am I suddenly thinking of a VENERABLE religious leader
- frolicking on a FORT LAUDERDALE weekend?
-Date: Thu, 06 Jun 2024 11:40:01 +0200
-Message-ID: <mvmr0das93i.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1717666806; c=relaxed/simple;
+	bh=kSVC+U7oS/xSosJpR+TEJzulX6axqACMcatd0XTsHOw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=svmO4j0gScJcsc7GmypdYPuSHSacqgrSOqMC5feqY+o5tiU2jnEbLudqDYUzOMjToTfnRUQLi2bxbQyPe1Xy9QD1qIC61Mg4aWJv7I8tEuYmyxHXBA79HXxSlw7PcXH9wwnbJldDK3uS+CkgtIJ1hc3TXjqDwC3DeZ1viTZxtCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=IGWVZaDU; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717666802;
+	bh=kSVC+U7oS/xSosJpR+TEJzulX6axqACMcatd0XTsHOw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IGWVZaDUwXjvPtTLSsG8f374rNuIEfljyhQDbcmsfdMBiPtrR3WOkMhJpS73nznAL
+	 7AePQS+Z6hSoPkUCpwZlbgP8CeNWtRqgAvaP91T2A84hnzCDs3Ta1eizf3WNCiMl6b
+	 e/Te5B0xA0A7DuUZ/KcGi543YnDs4nwu1YLD1K93KwhBKKwEIQKQ1Eb5ltclFr4OC5
+	 WQWFIBeyrZnKdp/CHP6/h44Y9ov+OQr8w+ThbK3Wv/EDr1i5fdlRLC5al+T+knkRC0
+	 ARmICgtAmjaW2CBmYb+Rm7sbgfQ26jHpJgjPP0nzFEiNeaTYfvbFQEp8pP0CkRdUL7
+	 ZTS6/FOFg9faQ==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 02E8237810F1;
+	Thu,  6 Jun 2024 09:40:01 +0000 (UTC)
+Message-ID: <1394577e-1407-4f72-a61f-7f92f351d626@collabora.com>
+Date: Thu, 6 Jun 2024 11:40:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Level: *
-X-Spamd-Result: default: False [1.77 / 50.00];
-	BAYES_HAM(-2.99)[99.96%];
-	HFILTER_HOSTNAME_UNKNOWN(2.50)[];
-	ONCE_RECEIVED(1.20)[];
-	RDNS_NONE(1.00)[];
-	HFILTER_HELO_IP_A(1.00)[hawking.nue2.suse.org];
-	NEURAL_HAM_LONG(-1.00)[-0.998];
-	HFILTER_HELO_NORES_A_OR_MX(0.30)[hawking.nue2.suse.org];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_NO_TLS_LAST(0.10)[];
-	MIME_GOOD(-0.10)[text/plain];
-	NEURAL_HAM_SHORT(-0.03)[-0.147];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DIRECT_TO_MX(0.00)[Gnus/5.13 (Gnus v5.13)];
-	DKIM_TRACE(0.00)[suse.de:+];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_ONE(0.00)[1];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	R_RATELIMIT(0.00)[from(RLajr16mudzow8bnf6sy)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Score: 1.77
-X-Spamd-Bar: +
-X-Rspamd-Queue-Id: 0BA9D1F8BD
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/mediatek: Don't print error if EDEFER_PROBE returned
+ on component_add
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240605-mtk-disp-rdma-dev-err-probe-v1-1-91259e1d3a93@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240605-mtk-disp-rdma-dev-err-probe-v1-1-91259e1d3a93@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Apr 22 2024, Shenlin Liang wrote:
+Il 05/06/24 18:50, Nícolas F. R. A. Prado ha scritto:
+> Use dev_err_probe() in the component_add() error path to prevent
+> printing an error when the probe is deferred. This was observed on
+> mt8195 with the disp-rdma driver:
+> 
+>    mediatek-disp-rdma 1c002000.rdma: Failed to add component: -517
+> 
+> But the same pattern is used across many other drivers, so update them
+> all.
 
-> \ No newline at end of file
+While I agree with this commit, it makes little sense to change only one print.
 
-Please fix that.
+Can you take care of converting all of the dev_err() prints to dev_err_probe()?
 
--- 
-Andreas Schwab, SUSE Labs, schwab@suse.de
-GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
-"And now for something completely different."
+P.S.: Also please do it on top of my OF graph series [1]
+P.P.S.: It's -EPROBE_DEFER, not EDEFER_PROBE :-P
+
+Thanks,
+Angelo
+
+[1]: 
+https://lore.kernel.org/all/20240516081104.83458-1-angelogioacchino.delregno@collabora.com/
+
+
+> 
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
+>   drivers/gpu/drm/mediatek/mtk_disp_aal.c         | 2 +-
+>   drivers/gpu/drm/mediatek/mtk_disp_ccorr.c       | 2 +-
+>   drivers/gpu/drm/mediatek/mtk_disp_color.c       | 2 +-
+>   drivers/gpu/drm/mediatek/mtk_disp_gamma.c       | 2 +-
+>   drivers/gpu/drm/mediatek/mtk_disp_merge.c       | 2 +-
+>   drivers/gpu/drm/mediatek/mtk_disp_ovl.c         | 2 +-
+>   drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c | 2 +-
+>   drivers/gpu/drm/mediatek/mtk_disp_rdma.c        | 2 +-
+>   drivers/gpu/drm/mediatek/mtk_ethdr.c            | 2 +-
+>   drivers/gpu/drm/mediatek/mtk_mdp_rdma.c         | 2 +-
+>   10 files changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_aal.c b/drivers/gpu/drm/mediatek/mtk_disp_aal.c
+> index 3ce8f32b06d5..892dc40458fb 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_disp_aal.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_disp_aal.c
+> @@ -197,7 +197,7 @@ static int mtk_disp_aal_probe(struct platform_device *pdev)
+>   
+>   	ret = component_add(dev, &mtk_disp_aal_component_ops);
+>   	if (ret)
+> -		dev_err(dev, "Failed to add component: %d\n", ret);
+> +		dev_err_probe(dev, ret, "Failed to add component\n");
+>   
+>   	return ret;
+>   }
+> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ccorr.c b/drivers/gpu/drm/mediatek/mtk_disp_ccorr.c
+> index df35e90dd25f..fc273ebdbcd2 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_disp_ccorr.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_disp_ccorr.c
+> @@ -182,7 +182,7 @@ static int mtk_disp_ccorr_probe(struct platform_device *pdev)
+>   
+>   	ret = component_add(dev, &mtk_disp_ccorr_component_ops);
+>   	if (ret)
+> -		dev_err(dev, "Failed to add component: %d\n", ret);
+> +		dev_err_probe(dev, ret, "Failed to add component\n");
+>   
+>   	return ret;
+>   }
+> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_color.c b/drivers/gpu/drm/mediatek/mtk_disp_color.c
+> index 7f0085be5671..c2c374e9a8e3 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_disp_color.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_disp_color.c
+> @@ -126,7 +126,7 @@ static int mtk_disp_color_probe(struct platform_device *pdev)
+>   
+>   	ret = component_add(dev, &mtk_disp_color_component_ops);
+>   	if (ret)
+> -		dev_err(dev, "Failed to add component: %d\n", ret);
+> +		dev_err_probe(dev, ret, "Failed to add component\n");
+>   
+>   	return ret;
+>   }
+> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_gamma.c b/drivers/gpu/drm/mediatek/mtk_disp_gamma.c
+> index ca8d1f3aca03..ec926b32c34d 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_disp_gamma.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_disp_gamma.c
+> @@ -287,7 +287,7 @@ static int mtk_disp_gamma_probe(struct platform_device *pdev)
+>   
+>   	ret = component_add(dev, &mtk_disp_gamma_component_ops);
+>   	if (ret)
+> -		dev_err(dev, "Failed to add component: %d\n", ret);
+> +		dev_err_probe(dev, ret, "Failed to add component\n");
+>   
+>   	return ret;
+>   }
+> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_merge.c b/drivers/gpu/drm/mediatek/mtk_disp_merge.c
+> index 77c057e0e671..2f6a605542d5 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_disp_merge.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_disp_merge.c
+> @@ -354,7 +354,7 @@ static int mtk_disp_merge_probe(struct platform_device *pdev)
+>   
+>   	ret = component_add(dev, &mtk_disp_merge_component_ops);
+>   	if (ret != 0)
+> -		dev_err(dev, "Failed to add component: %d\n", ret);
+> +		dev_err_probe(dev, ret, "Failed to add component\n");
+>   
+>   	return ret;
+>   }
+> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+> index b552a02d7eae..ffdc9ca5b6f5 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+> @@ -555,7 +555,7 @@ static int mtk_disp_ovl_probe(struct platform_device *pdev)
+>   	ret = component_add(dev, &mtk_disp_ovl_component_ops);
+>   	if (ret) {
+>   		pm_runtime_disable(dev);
+> -		dev_err(dev, "Failed to add component: %d\n", ret);
+> +		dev_err_probe(dev, ret, "Failed to add component\n");
+>   	}
+>   
+>   	return ret;
+> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
+> index 02dd7dcdfedb..c9d6f2b39e92 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
+> @@ -612,7 +612,7 @@ static int mtk_disp_ovl_adaptor_probe(struct platform_device *pdev)
+>   	ret = component_add(dev, &mtk_disp_ovl_adaptor_comp_ops);
+>   	if (ret != 0) {
+>   		pm_runtime_disable(dev);
+> -		dev_err(dev, "Failed to add component: %d\n", ret);
+> +		dev_err_probe(dev, ret, "Failed to add component\n");
+>   	}
+>   
+>   	return ret;
+> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
+> index 7b1a6e631200..ac83e89e39d2 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
+> @@ -373,7 +373,7 @@ static int mtk_disp_rdma_probe(struct platform_device *pdev)
+>   	ret = component_add(dev, &mtk_disp_rdma_component_ops);
+>   	if (ret) {
+>   		pm_runtime_disable(dev);
+> -		dev_err(dev, "Failed to add component: %d\n", ret);
+> +		dev_err_probe(dev, ret, "Failed to add component\n");
+>   	}
+>   
+>   	return ret;
+> diff --git a/drivers/gpu/drm/mediatek/mtk_ethdr.c b/drivers/gpu/drm/mediatek/mtk_ethdr.c
+> index 156c6ff547e8..25b305bff97e 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_ethdr.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_ethdr.c
+> @@ -341,7 +341,7 @@ static int mtk_ethdr_probe(struct platform_device *pdev)
+>   
+>   	ret = component_add(dev, &mtk_ethdr_component_ops);
+>   	if (ret)
+> -		dev_notice(dev, "Failed to add component: %d\n", ret);
+> +		dev_err_probe(dev, ret, "Failed to add component\n");
+>   
+>   	return ret;
+>   }
+> diff --git a/drivers/gpu/drm/mediatek/mtk_mdp_rdma.c b/drivers/gpu/drm/mediatek/mtk_mdp_rdma.c
+> index 925cbb7471ec..3a0944bee134 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_mdp_rdma.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_mdp_rdma.c
+> @@ -324,7 +324,7 @@ static int mtk_mdp_rdma_probe(struct platform_device *pdev)
+>   	ret = component_add(dev, &mtk_mdp_rdma_component_ops);
+>   	if (ret != 0) {
+>   		pm_runtime_disable(dev);
+> -		dev_err(dev, "Failed to add component: %d\n", ret);
+> +		dev_err_probe(dev, ret, "Failed to add component\n");
+>   	}
+>   	return ret;
+>   }
+> 
+> ---
+> base-commit: d97496ca23a2d4ee80b7302849404859d9058bcd
+> change-id: 20240605-mtk-disp-rdma-dev-err-probe-ef9c10a1a91e
+> 
+> Best regards,
+
+
 
