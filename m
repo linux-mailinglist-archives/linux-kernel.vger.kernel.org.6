@@ -1,346 +1,84 @@
-Return-Path: <linux-kernel+bounces-204885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EB898FF4AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:31:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8E7E8FF4B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 765EB1F2600C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:31:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D7141F279E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B19D487A9;
-	Thu,  6 Jun 2024 18:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2324503C;
+	Thu,  6 Jun 2024 18:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="PGDAZ2wx"
-Received: from mail2.andi.de1.cc (vmd64148.contaboserver.net [161.97.139.27])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GluwDzP0"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D523B79F;
-	Thu,  6 Jun 2024 18:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.97.139.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A228821;
+	Thu,  6 Jun 2024 18:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717698648; cv=none; b=awbjD4qZjE4v7Zz7HbFrnRQs899JbV6mduS4Rq9MS+M+FkhilHF7bjGJXJLXPdrOSsizjd37KBWrq0JazxTTPV8itYj/G5vMezDvJ2w2OZNOeIv3ZDkWEsHC3foyEBCSpJM9iAEZzz+4ZmOfNDUMhj1FsDAvZBWBXHLuVKGM5ZI=
+	t=1717698726; cv=none; b=UfXQCHBG3tci/b19A5s0wVtHP5Rct3VCBSOxfEZH7GQ6Qs/HkaH7nom5rmBktIFYjb1eE4kJds7ROrja0xftx4XBOe2TbSU5fJaqMLRC3fTGSEN8Ob0PBkyDh8a0a1MMSf/1/RUaHqfM8AMBhICE3rvCDo1Q3Y15mcNX4uRyoN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717698648; c=relaxed/simple;
-	bh=audM1GFMFlK0723o2y3zV7ty4VIfDO8jaEerO3PeTN0=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=daD6Aw34ixvSVMdKzYHF39DI4WQxdEh+w/yoQ/8JwbcA4UeMZOfRkHIYvDNXg9pwj3lMzFpp1ai9eQXSiK9nnWgQEBv+xT+0yr+07zKZDzzGZTNw2os8eUlBDWSG5LXf+dGGxgZ9mWyGgEo/bs9RBQG2hlru3HYpS+RMDtYnPkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=PGDAZ2wx; arc=none smtp.client-ip=161.97.139.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-Received: from mail.andi.de1.cc ([2a02:c205:3004:2154::1])
-	by mail2.andi.de1.cc with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sFHsp-0090wt-0N;
-	Thu, 06 Jun 2024 20:30:44 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-Id:Date:Subject:To:From:Sender:Reply-To:Cc:
-	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=/wRtwRt7d5bwW8PrzaTjfLtLqO+p3QGKLvHTBjCKdYg=; b=PGDAZ2wxfmD5rDL7K2/WWKZNUq
-	Nrhd+fkmeFKYCYGcx5SypVZIBt8G7BNVaGq1ct2gajEpVWdZB2WGM7ExJXhf1T1D4PFB7uMBWVKNI
-	ZR1ZXjCzNXEgQbwJo03MDz3qqj2U0gEdXONAaAwnPrPEQpFwXDbRKWZ8DdxJJChTR1s5MZ9i6L1tD
-	aK4IOPTu1E8B2pRFKIjhy8z7llEBR8X4zyqyS9BiZvZYbt53xkZwq2kzrq09yeS5MwZ8zQoK5xiZ3
-	CdMAder8gNw/5Z2QGgW4lYh8ZUHy6UCFzFE0UYeT3cTJQVZdnwdo4y1f60QXFczSp5l+9YFYFnKVH
-	Fra0jnlQ==;
-Received: from p200300c20737c2001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:c2:737:c200:1a3d:a2ff:febf:d33a] helo=aktux)
-	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sFHsn-002nvz-0A;
-	Thu, 06 Jun 2024 20:30:42 +0200
-Received: from andi by aktux with local (Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sFHsn-002s4g-3D;
-	Thu, 06 Jun 2024 20:30:42 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com,
-	johan@kernel.org,
-	pmenzel@molgen.mpg.de,
-	jirislaby@kernel.org,
-	andreas@kemnade.info,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-bluetooth@vger.kernel.org,
-	Adam Ford <aford173@gmail.com>,
-	Tony Lindgren <tony@atomide.com>,
-	tomi.valkeinen@ideasonboard.com,
-	=?UTF-8?q?P=C3=A9ter=20Ujfalusi?= <peter.ujfalusi@gmail.com>,
-	robh@kernel.org,
-	hns@goldelico.com
-Subject: [PATCH RFC v4 4/4] gnss: ai2: replace long sleeps by wait for acks
-Date: Thu,  6 Jun 2024 20:30:32 +0200
-Message-Id: <20240606183032.684481-5-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240606183032.684481-1-andreas@kemnade.info>
-References: <20240606183032.684481-1-andreas@kemnade.info>
+	s=arc-20240116; t=1717698726; c=relaxed/simple;
+	bh=c8317Md13mBmS3nLncmRd43PS4wNRAjjAbEJxzLRCHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E+vT0DtNuoKLyPIKpVcDKtfAaxsZcJHK4fOdhWhtFnjTQWNfy3ugAwfDWFq1W/2PbXm/B3+WmLuZ2VRgBOAxRUwAZ37hsO6jbjdM4G8tGEHG7mXq2+9CT8wMcpCDGDoI/E/v6fwk4M0b92UKWL6oSY1HhYVq1IkvbUwLHdIxtC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GluwDzP0; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=KS2oYQ6kEvwe+tStHjauZWJyl0wKHtSJW2cYetOHMQY=; b=GluwDzP0zbxIddz8/0rWtWfUnP
+	Ln4KiPloTvSPVnN8yiLLtHlYqh8rz0Jk8wsMbDT/9VSmeb4d3lPfYsukLdRZPYCkvXRKB0jEnwcKV
+	FwKqjeHY+qO2mKiCRJ9IGOvDwycriNLjaoJdyeIFPSxXEUPBmHctT/baE7rsilrMSIK4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sFHtn-00H2hc-F7; Thu, 06 Jun 2024 20:31:43 +0200
+Date: Thu, 6 Jun 2024 20:31:43 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jacob Keller <jacob.e.keller@intel.com>
+Cc: jackie.jone@alliedtelesis.co.nz, davem@davemloft.net,
+	jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com,
+	kuba@kernel.org, intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	chris.packham@alliedtelesis.co.nz
+Subject: Re: [PATCH] igb: Add MII write support
+Message-ID: <12b1febd-a634-43bb-8edf-79ccb4f9e3aa@lunn.ch>
+References: <20240604031020.2313175-1-jackie.jone@alliedtelesis.co.nz>
+ <ad56235d-d267-4477-9c35-210309286ff4@intel.com>
+ <1dbb8291-9004-4ec2-a01b-9dd5b2a8be39@lunn.ch>
+ <c12ffb8e-0606-442b-810a-69bf65624bf9@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c12ffb8e-0606-442b-810a-69bf65624bf9@intel.com>
 
-Previously there were long sleeps for everything sent out.
-Replace the sleeps by some wait for completion.
-Wait times like 60ms are seen.
-There are ack packets sent out if requested. Unfortunately
-just waiting for them seems not stable, some open()/close()
-loop stress-testing brings the communication into complete
-disorder. Unfortunately these ack packets arrive before
-a complete answer of the command has been received but
-apparently after some processing has been done.
-Properly declaring expected answers might help but adding
-that can only be justified after some wider testing.
+> Yea, its extremely easy to break things if you don't know what you're
+> doing here. So its more a question of "are we ok exposing yet another
+> way root can brick things?"
 
-So leaving this part of the series as a RFC and base
-for future optimzations.
+Many MAC drivers allow it, and we have not had complaints. It is not
+really something i'm a fan of, it in theory allows user space drivers
+for PHYs, but it is full of race conditions so in practice unlikely to
+work reliably.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- drivers/gnss/ai2.c | 110 +++++++++++++++++++++++++++++----------------
- 1 file changed, 71 insertions(+), 39 deletions(-)
+If you are worried about it causing additional support issues because
+it gets abused, you could make it taint the kernel. That makes it
+clear all bets are off if used. For the use case presented here, a
+tainted kernel does not matter, it for lab testing, not production.
 
-diff --git a/drivers/gnss/ai2.c b/drivers/gnss/ai2.c
-index 930c065050917..be72fb7fcc272 100644
---- a/drivers/gnss/ai2.c
-+++ b/drivers/gnss/ai2.c
-@@ -6,6 +6,7 @@
-  * Copyright (C) 2024 Andreas Kemnade <andreas@kemnade.info>
-  */
- #include <asm/byteorder.h>
-+#include <linux/completion.h>
- #include <linux/errno.h>
- #include <linux/gnss.h>
- #include <linux/init.h>
-@@ -68,6 +69,16 @@ struct ai2_device {
- 	struct device *dev;
- 	struct sk_buff *recv_skb;
- 	bool recv_esc;
-+	/*
-+	 * completion for the lower level around
-+	 * GPS_CH9_OP_COMPLETED_EVT
-+	 * probably more important if we send large
-+	 * fragmented packets
-+	 */
-+	struct completion ch9_complete;
-+
-+	/* completion for AI2 ack packets */
-+	struct completion ai2_ack_complete;
- };
- 
- static struct sk_buff *ai2_skb_alloc(unsigned int len, gfp_t how)
-@@ -87,6 +98,7 @@ static int ai2_send_frame(struct ai2_device *ai2dev,
- 	int len;
- 	struct gps_event_hdr *gnssdrv_hdr;
- 	struct hci_dev *hdev;
-+	int ret;
- 
- 	if (skb->len >= U16_MAX)
- 		return -EINVAL;
-@@ -96,13 +108,25 @@ static int ai2_send_frame(struct ai2_device *ai2dev,
- 	 * not needed for simple config commands
- 	 */
- 	len = skb->len;
-+	print_hex_dump_bytes("ai2 send frame: ", DUMP_PREFIX_OFFSET, skb->data, skb->len);
-+
- 	gnssdrv_hdr = skb_push(skb, sizeof(struct gps_event_hdr));
- 	gnssdrv_hdr->opcode = GPS_CH9_OP_WRITE;
- 	gnssdrv_hdr->plen = __cpu_to_le16(len);
--
- 	hci_skb_pkt_type(skb) = GPS_CH9_PKT_NUMBER;
- 	hdev = st_get_hci(ai2dev->dev->parent);
--	return hdev->send(hdev, skb);
-+	reinit_completion(&ai2dev->ch9_complete);
-+
-+	ret = hdev->send(hdev, skb);
-+	if (ret)
-+		return ret;
-+
-+	if (!wait_for_completion_timeout(&ai2dev->ch9_complete,
-+					 msecs_to_jiffies(2000)))
-+		return -ETIMEDOUT;
-+	dev_dbg(ai2dev->dev, "send finished\n");
-+
-+	return 0;
- }
- 
- static void ai2_put_escaped(struct sk_buff *skb, u8 d)
-@@ -151,30 +175,50 @@ static struct sk_buff *ai2_compose_frame(bool request_ack,
- 	return skb;
- }
- 
--static int ai2_set_receiver_state(struct ai2_device *ai2dev,
--					      uint8_t state)
-+static int ai2_compose_send_frame(struct ai2_device *ai2dev,
-+				  bool request_ack,
-+				  u8 cmd,
-+				  const u8 *data,
-+				  int len)
- {
--	struct sk_buff *skb = ai2_compose_frame(true, AI2_CMD_RECEIVER_STATE,
--						&state, 1);
-+	struct sk_buff *skb = ai2_compose_frame(request_ack, cmd, data, len);
- 	if (!skb)
- 		return -ENOMEM;
- 
-+	if (request_ack) {
-+		int ret;
-+
-+		reinit_completion(&ai2dev->ai2_ack_complete);
-+
-+		ret = ai2_send_frame(ai2dev, skb);
-+		if (ret)
-+			return ret;
-+
-+		if (!wait_for_completion_timeout(&ai2dev->ai2_ack_complete,
-+						 msecs_to_jiffies(2000)))
-+			return -ETIMEDOUT;
-+
-+		return 0;
-+	}
-+
- 	return ai2_send_frame(ai2dev, skb);
- }
- 
-+static int ai2_set_receiver_state(struct ai2_device *ai2dev,
-+				  uint8_t state)
-+{
-+	return ai2_compose_send_frame(ai2dev, true, AI2_CMD_RECEIVER_STATE,
-+				      &state, 1);
-+}
-+
- static int ai2_config_nmea_reports(struct ai2_device *ai2dev,
- 				   uint8_t mask)
- {
- 	u8 buf[4] = {0};
--	struct sk_buff *skb;
- 
- 	buf[0] = mask;
--	skb = ai2_compose_frame(true, AI2_CMD_CONFIG_NMEA,
--				buf, sizeof(buf));
--	if (!skb)
--		return -ENOMEM;
--
--	return ai2_send_frame(ai2dev, skb);
-+	return ai2_compose_send_frame(ai2dev, true, AI2_CMD_CONFIG_NMEA,
-+				      buf, sizeof(buf));
- }
- 
- /*
-@@ -187,22 +231,12 @@ static int gnss_ai2_init(struct ai2_device *ai2dev)
- {
- 	int ret;
- 	u8 d = 0x01;
--	struct sk_buff *skb = ai2_compose_frame(true, 0xf5, &d, 1);
--
--	if (!skb)
--		return -ENOMEM;
--
--	ret = ai2_send_frame(ai2dev, skb);
-+	ret = ai2_compose_send_frame(ai2dev, true, 0xf5, &d, 1);
- 	if (ret)
- 		return ret;
- 
--	msleep(200); /* seen some 60ms response time here, so wait a bit */
- 	d = 5;
--	skb = ai2_compose_frame(true, 0xf1, &d, 1);
--	if (!skb)
--		return -ENOMEM;
--
--	return ai2_send_frame(ai2dev, skb);
-+	return ai2_compose_send_frame(ai2dev, true, 0xf1, &d, 1);
- }
- 
- static int gnss_ai2_open(struct gnss_device *gdev)
-@@ -220,18 +254,14 @@ static int gnss_ai2_open(struct gnss_device *gdev)
- 	if (ret)
- 		goto err;
- 
--	/* TODO: find out on what kind of ack we should wait */
--	msleep(50);
- 	ret = ai2_set_receiver_state(ai2dev, RECEIVER_STATE_IDLE);
- 	if (ret)
- 		goto err;
- 
--	msleep(100);
- 	ret = ai2_config_nmea_reports(ai2dev, NMEA_MASK_ALL);
- 	if (ret)
- 		goto err;
- 
--	msleep(50);
- 	ret = ai2_set_receiver_state(ai2dev, RECEIVER_STATE_ON);
- 	if (ret)
- 		goto err;
-@@ -254,13 +284,9 @@ static void gnss_ai2_close(struct gnss_device *gdev)
- {
- 	struct ai2_device *ai2dev = gnss_get_drvdata(gdev);
- 
--	/* TODO: find out on what kind of ack we should wait */
- 	if (!ai2raw) {
--		msleep(50);
- 		ai2_set_receiver_state(ai2dev, RECEIVER_STATE_IDLE);
--		msleep(50);
- 		ai2_set_receiver_state(ai2dev, RECEIVER_STATE_OFF);
--		msleep(200); /* seen some longer response time here, so wait */
- 	}
- 
- 	mutex_lock(&ai2dev->gdev_mutex);
-@@ -345,8 +371,10 @@ static void process_ai2_frame(struct ai2_device *ai2dev)
- 	}
- 
- 	/* reached if byte 1 in the command packet is set to 1 */
--	if (data[1] == AI2_ACK)
-+	if (data[1] == AI2_ACK) {
-+		complete(&ai2dev->ai2_ack_complete);
- 		return;
-+	}
- 
- 	head = skb_pull(ai2dev->recv_skb, 2); /* drop frame start marker */
- 	while (head && (ai2dev->recv_skb->len >= 3)) {
-@@ -434,11 +462,9 @@ static void gnss_recv_frame(struct device *dev, struct sk_buff *skb)
- 	gnss_hdr = (struct gps_event_hdr *)skb->data;
- 
- 	data = skb_pull(skb, sizeof(*gnss_hdr));
--	/*
--	 * REVISIT: maybe do something with the completed
--	 * event
--	 */
--	if (gnss_hdr->opcode ==	GPS_CH9_OP_READ) {
-+
-+	switch (gnss_hdr->opcode) {
-+	case GPS_CH9_OP_READ:
- 		mutex_lock(&ai2dev->gdev_mutex);
- 		if (ai2dev->gdev_open) {
- 			if (ai2raw)
-@@ -450,6 +476,10 @@ static void gnss_recv_frame(struct device *dev, struct sk_buff *skb)
- 				"receiving data while chip should be off\n");
- 		}
- 		mutex_unlock(&ai2dev->gdev_mutex);
-+		break;
-+	case GPS_CH9_OP_COMPLETED_EVT:
-+		complete(&ai2dev->ch9_complete);
-+		break;
- 	}
- 	kfree_skb(skb);
- }
-@@ -475,6 +505,8 @@ static int gnss_ai2_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, ai2dev);
- 	st_set_gnss_recv_func(pdev->dev.parent, gnss_recv_frame);
- 	mutex_init(&ai2dev->gdev_mutex);
-+	init_completion(&ai2dev->ch9_complete);
-+	init_completion(&ai2dev->ai2_ack_complete);
- 
- 	ret = gnss_register_device(gdev);
- 	if (ret)
--- 
-2.39.2
+      Andrew
 
 
