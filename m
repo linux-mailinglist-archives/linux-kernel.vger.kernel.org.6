@@ -1,255 +1,123 @@
-Return-Path: <linux-kernel+bounces-203824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B3F98FE0F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:28:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 446EC8FE0F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 379E1284F68
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:28:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4ACB1F272FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4214813C676;
-	Thu,  6 Jun 2024 08:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310F813C676;
+	Thu,  6 Jun 2024 08:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iq+3N3Ya";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="o5l2hoyd";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="v1UVVONM";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DYo2NAoi"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="a1wc5lvj"
+Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E49E381A4
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4C5199A2
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717662487; cv=none; b=AUfbDSucqfy6BO4oQZkvTjgRxDI0aHm2VQurIsucbPCTJYVlH6uggwU7+Xr3CopBvhq/dpqCs/d2VK/yQ57yyEGVhvuW7O42CLqAwjaQem+A5C9PUK3IIClEXnu5mhR1HVGRIqAdC8iSeDh9IxN6g/GmeGkXUU2HgVYbi+lI08k=
+	t=1717662536; cv=none; b=GprQ+SsK7JAJTwJkAYkS+0QF7s+mnZX0WNU2Tl22OHJpFVRlCRoAojBEdNXKNhpHCskHxd4SybngLh8nGr9Pg/urCaCklVXu6GLB0TEkK+i+bZF3j2hhG3l73q4ET+atjnFTcOezpyOI10rif0F0uIi9krvL8GZYUAUDbAlGR6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717662487; c=relaxed/simple;
-	bh=urVaAz59lmFVtrCwgpcr7cFuKX6dQw6fSOUZw8e5LOQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=emK3arQLfmx3bmV//gxxsyX2QTASEdBPBDCAVJeowv6NkJhWcCd/vpXRl3uxfn1/olpn+fXj0gpaOGzo4xlnKzyrh1bfNSyP8DwxxpVTbWhVe4+mTtGljRxwOyEnOg7gBZbdp+u9HpWniNjQt4coVCqrSz3WxZzgmohz/xq7KBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iq+3N3Ya; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=o5l2hoyd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=v1UVVONM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DYo2NAoi; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1851421AD7;
-	Thu,  6 Jun 2024 08:28:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717662483; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6jiPdbd20VjozORRerWC26vG1+ezrVORj3LEO3DREF0=;
-	b=iq+3N3YaYHt47ur3L9ka1fOGv8sxQqiI8XCs8dGT6JFsPIbIsHC+ACBEGeaqCOIS8Da7LA
-	GADL+DAmReYhgQjk/jP7ZoUN9eerThBgtpwBZntQcm3mOG5HuRaEYRewLCGpeTsxFQlRrO
-	mbZBq3dJJY+fU1HdDA0RZ/5iYQ58Cc0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717662483;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6jiPdbd20VjozORRerWC26vG1+ezrVORj3LEO3DREF0=;
-	b=o5l2hoydoeKnX6bTTgOSElq+zFayICMJEl3d5BOMEL+bszUHHy+h3FHZYxZLlz66polDwA
-	HFtrN+qVOTuK0/Dg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717662482; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6jiPdbd20VjozORRerWC26vG1+ezrVORj3LEO3DREF0=;
-	b=v1UVVONM11N/gFuFmKHSjLltNLpc6F5B4WM6sDq15UBn+YkdMQKkE+AhRHkGcbT3K/Czee
-	p1QbqRufq9QZfWbPpUiFG8zVwAv1a0BrVnugDWUIKnN3VdikX6T7Om9q5qjE4Vln5aSbKm
-	VRECrQ8gKtg91KRsPv4H5a2OmgUeMxg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717662482;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6jiPdbd20VjozORRerWC26vG1+ezrVORj3LEO3DREF0=;
-	b=DYo2NAoiAP2OM8rwolgoVWGiaoWEfKdvkMn5CDMMo24CK1Xe6VHhteu3Ok8DYjw57L6DF6
-	Y5hcksHZZUqrSNBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F1C5213A1E;
-	Thu,  6 Jun 2024 08:28:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id uUepOhFzYWZdYwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 06 Jun 2024 08:28:01 +0000
-Message-ID: <ef24c2be-d6bb-49ec-a72f-7228f284e524@suse.cz>
-Date: Thu, 6 Jun 2024 10:28:01 +0200
+	s=arc-20240116; t=1717662536; c=relaxed/simple;
+	bh=5Ys8iQVTydCi1EldwvCjBJXP9wRpAX7anX9XZCbGrW4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qZn1kFDV2MUByV3K7hd1VXXf9dTWm3lFF2i2m4/oTYVv+hcJKhraG31KqFDucc+EzjUrcgB3UkC+wNyqLALuKWlTv7sAAkYE4O+pgbPohcg/uhHeEEatukaBhYoaG1hiDWwEICRSZ4qDKTENLgY7L8Rjo9uiWt943X3hTWjGsCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=a1wc5lvj; arc=none smtp.client-ip=46.19.9.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
+	s=default; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=x2+y0ipvw9/Vy2jDpbW19iXnZKhk5ENbIrkj5TxdUAo=; b=a1wc5lvj/qqWeL1mcBgtu/fUX8
+	9dfM5CxAFBm7zIHLyMs/dNaUjhFFEuE6VC7cze0+rFogayNd44qpV8REmAsMa2VHCIS3N6RTRW48Z
+	3c3WE1gnaVe8I/yMNJTFnooerwgpC4f2YT2z2j8Jaq0uj19GDwrs2AU1Kn7NOAjveOezgVdaulXgi
+	Zu50CX9ZiM2B/2tdGMwEpbo1fByyczgEddfAo5FProzQl78feIk4ET2UG3srCEXkWdtTeyJP7gSds
+	FeqccFMlFvPx4rXm9f+zHNMeC+f25Zm2vmvv6MQ5rDKPxz7Hys9jB2pj9ieZH9iulJ3Q9oKEEDQwX
+	Oov2ifQQ==;
+Received: from [89.212.21.243] (port=59706 helo=localhost.localdomain)
+	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <primoz.fiser@norik.com>)
+	id 1sF8UP-00BbFF-2Y;
+	Thu, 06 Jun 2024 10:28:53 +0200
+From: Primoz Fiser <primoz.fiser@norik.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Douglas Anderson <dianders@chromium.org>,
+	Rob Herring <robh@kernel.org>,
+	Primoz Fiser <primoz.fiser@norik.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: upstream@lists.phytec.de
+Subject: [PATCH] drm/omap: dss: Support all VOUT ports
+Date: Thu,  6 Jun 2024 10:28:50 +0200
+Message-Id: <20240606082850.3746052-1-primoz.fiser@norik.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] slab: make check_object() more consistent
-To: Chengming Zhou <chengming.zhou@linux.dev>,
- Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
- David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Feng Tang <feng.tang@intel.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- zhouchengming@bytedance.com
-References: <20240605-b4-slab-debug-v2-0-c535b9cd361c@linux.dev>
- <20240605-b4-slab-debug-v2-1-c535b9cd361c@linux.dev>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240605-b4-slab-debug-v2-1-c535b9cd361c@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Flag: NO
-X-Spam-Score: -2.79
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.79 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[linux.dev,linux.com,kernel.org,google.com,lge.com,linux-foundation.org,gmail.com,intel.com];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel.siel.si
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - norik.com
+X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
+X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On 6/5/24 9:13 AM, Chengming Zhou wrote:
-> Now check_object() calls check_bytes_and_report() multiple times to
-> check every section of the object it cares about, like left and right
-> redzones, object poison, paddings poison and freepointer. It will
-> abort the checking process and return 0 once it finds an error.
-> 
-> There are two inconsistencies in check_object(), which are alignment
-> padding checking and object padding checking. We only print the error
-> messages but don't return 0 to tell callers that something is wrong
-> and needs to be handled. Please see alloc_debug_processing() and
-> free_debug_processing() for details.
-> 
-> If the above inconsistencies are not intentional, we should fix it.
+Allow function dss_dpi_select_source_dra7xx() to set the channel in the
+dra7xx DSS_CONTROL register for any VOUT port, not just VOUT1 (port 0).
 
-It doesn't seem intentional, I don't see why padding specifically would be
-different from the other tests here.
+Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+---
+ drivers/gpu/drm/omapdrm/dss/dss.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-<snip>
-
-> -	if (!freeptr_outside_object(s) && val == SLUB_RED_ACTIVE)
-> -		/*
-> -		 * Object and freepointer overlap. Cannot check
-> -		 * freepointer while object is allocated.
-> -		 */
-> -		return 1;
-> -
-> -	/* Check free pointer validity */
-> -	if (!check_valid_pointer(s, slab, get_freepointer(s, p))) {
-> +	/*
-> +	 * Cannot check freepointer while object is allocated if
-> +	 * object and freepointer overlap.
-> +	 */
-> +	if (!freeptr_outside_object(s) && val == SLUB_RED_ACTIVE &&
-
-Seems this condition should have been logically flipped?
-
-> +	    !check_valid_pointer(s, slab, get_freepointer(s, p))) {
->  		object_err(s, slab, p, "Freepointer corrupt");
->  		/*
->  		 * No choice but to zap it and thus lose the remainder
-> @@ -1370,9 +1368,14 @@ static int check_object(struct kmem_cache *s, struct slab *slab,
->  		 * another error because the object count is now wrong.
->  		 */
->  		set_freepointer(s, p, NULL);
-> -		return 0;
-
-Should set ret = 0 here?
-
->  	}
-> -	return 1;
-> +
-> +	if (!ret && !slab_add_kunit_errors()) {
-
-Also 5/6 of slub_kunit tests now fail as we increased the number of recorded
-errors vs expected. Either the slab_add_kunit_errors() test above should
-have a variant (parameter?) so it will only detect we are in slab-kunit test
-(to suppress the printing and taint) but doesn't increase slab_errors (we
-increased them for the individual issues already), or simply raise the
-expectations of the tests so it matches the new implementation.
-
-Thanks,
-Vlastimil
-
-> +		print_trailer(s, slab, object);
-> +		add_taint(TAINT_BAD_PAGE, LOCKDEP_NOW_UNRELIABLE);
-> +	}
-> +
-> +	return ret;
->  }
->  
->  static int check_slab(struct kmem_cache *s, struct slab *slab)
-> 
+diff --git a/drivers/gpu/drm/omapdrm/dss/dss.c b/drivers/gpu/drm/omapdrm/dss/dss.c
+index 988888e164d7..f5a484ef0f48 100644
+--- a/drivers/gpu/drm/omapdrm/dss/dss.c
++++ b/drivers/gpu/drm/omapdrm/dss/dss.c
+@@ -796,7 +796,9 @@ static int dss_dpi_select_source_dra7xx(struct dss_device *dss, int port,
+ {
+ 	switch (port) {
+ 	case 0:
+-		return dss_dpi_select_source_omap5(dss, port, channel);
++		if (channel != OMAP_DSS_CHANNEL_LCD)
++			return -EINVAL;
++		break;
+ 	case 1:
+ 		if (channel != OMAP_DSS_CHANNEL_LCD2)
+ 			return -EINVAL;
+@@ -809,7 +811,7 @@ static int dss_dpi_select_source_dra7xx(struct dss_device *dss, int port,
+ 		return -EINVAL;
+ 	}
+ 
+-	return 0;
++	return dss_dpi_select_source_omap5(dss, port, channel);
+ }
+ 
+ int dss_dpi_select_source(struct dss_device *dss, int port,
+-- 
+2.25.1
 
 
