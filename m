@@ -1,109 +1,110 @@
-Return-Path: <linux-kernel+bounces-203698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A3D8FDF32
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:57:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EC3D8FDF36
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EA141C23237
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:57:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3344B252D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF89013A89E;
-	Thu,  6 Jun 2024 06:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC9613C3ED;
+	Thu,  6 Jun 2024 06:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FIiZKxzz"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GNlqMDCB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9153119D898;
-	Thu,  6 Jun 2024 06:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D7D19D898;
+	Thu,  6 Jun 2024 06:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717657068; cv=none; b=dJlji2RUwFxFn9WhlX1KkM3+WtK7ga+Kfge6xjetbAwgKWXdF4jVk6TLdLImvjWhDpSya9Kf/6mzpezc3QnfiSXpq9aC1c18Aqm2kBDen1ZVDJcUuAN/f7SC/eDIkNI4liA/bwyFj6hc3q1fSIbNURXPq1sck/cBHKXLz+wvnng=
+	t=1717657074; cv=none; b=jADhp5YuWLsl4NWTsqCiokJIjre6HywdO85QSC6T0+rTzHxQBfY34njJ80TMtEjqnAJpV7Kf2Ob5Gbc9WAc8K4s4qunpyFIPQ9jrWC+2YstynWlTEpERSAXcwnroAu2bquIcnUrY7RGMElSI7AJesQwToLG+1ymf1rTVSLYJ5XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717657068; c=relaxed/simple;
-	bh=AWAgYsMCFjyvMefBAsZ3RW/Wl8868HRUypW9j9t8DcI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i9ftJIY0dsyicuN8DW7amMIr+lWS0HlhcoCtoiJ4mWeumVS1XwvdENJ+q41uSrhzUqwO32x8MqzfbJio5ztoZxNoFP1m1SxAalX7D6n54A9b/z3NPKrvvza6MWlnr13ykovigIDcNVBvednHZaXlytnPnnt80+xnkjrmBNfTS7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FIiZKxzz; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 30F6260004;
-	Thu,  6 Jun 2024 06:57:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1717657058;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jgXWC6wrNxd7gBlX7Te69IijPU34lb7hb+iH3eHJsXo=;
-	b=FIiZKxzzXuNWsWWUYEG9s1CHkdsJ69grzzhE1fJ75F9v5Ys2AuTSJdmoZO8Y7ExIAi0H9x
-	D7UkSWOFwA5rcZ7uWjBFfyGHig5jG7cQkHEgVF9D0HIx2rFvJwWbgMivF7E88KuUExUAjK
-	NVMGD+56L+Kkf3V0kw9e4YOZsvxoM4Qb/5J5gGmRyZmWl7vhLykq8me+cy7ve4kOYVt94T
-	g82by/PcFlITDibCU0R6X8ywwCLUckU9bhKGGLdTSMP2xPaUR8hVa1Bo1rsBF2jx8CSVwt
-	VWWMzrjSUKAYq1FQv6cuM6KZOxq3j2Zfkpk/bNnAYHJnLOjDDDP5f4uz4LYtBw==
-Date: Thu, 6 Jun 2024 08:57:34 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
- <andrew@lunn.ch>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Jesse Brandeburg
- <jesse.brandeburg@intel.com>, Marek =?UTF-8?B?QmVow7pu?=
- <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
- <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
- mwojtas@chromium.org, Nathan Chancellor <nathan@kernel.org>, Antoine Tenart
- <atenart@kernel.org>
-Subject: Re: [PATCH net-next v12 03/13] net: phy: add helpers to handle sfp
- phy connect/disconnect
-Message-ID: <20240606085734.73334c68@fedora>
-In-Reply-To: <20240605201025.764f0881@kernel.org>
-References: <20240605124920.720690-1-maxime.chevallier@bootlin.com>
-	<20240605124920.720690-4-maxime.chevallier@bootlin.com>
-	<20240605201025.764f0881@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1717657074; c=relaxed/simple;
+	bh=Y1QGCsG4sNiWJEzr1Fn7n1E794mS092qLQjOEa8ZQYw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J9RDZkaZNwDUxTnKgw2an03JLYcTcPUFQayyMx4Du5ibsm3JqOwP54LbLDcAHErzV7TKol3EsXVdD4tAMXCRKFQYT08x6UXFG406tW2yLO8+Q8Ah/AOYFs2rDjSEcv5vbZ+hsR6oV68i4c2jTsbMKzsWu/YTwKzTVen6TlnHYjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GNlqMDCB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FCF3C4AF0E;
+	Thu,  6 Jun 2024 06:57:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717657073;
+	bh=Y1QGCsG4sNiWJEzr1Fn7n1E794mS092qLQjOEa8ZQYw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GNlqMDCBUsnnK0DuaVMMIuoZ5tNuAdvFxjzWX/XSleUj9AK/fSYYeslNQadVN78dj
+	 QvbgHGzNksPIGIAiAEZp07xBum4dwl/ZpGKNle8Z6GyGDRU8RBeVATID3yRI3pkStm
+	 RIhf0Cz9o9kxC/d1BjcBONmdTEpUyquxQjTJDqU+X7VutRvTHRQDuQ44c5dTaT1kTG
+	 O8zuwUFrJu9EZrdG8iwkYgr4sgvdW2Vz1Cp8Pw4pwbGQtrxcULmdSmrEkGWB1hpCjZ
+	 W3rGO3ETAHzzdDhkKCesv5zhLbkksbVnaixR+C1MiOXxmP9sMpN4dGG2xSXCZin5Ny
+	 PvvbBA9Ei9OPQ==
+Date: Thu, 6 Jun 2024 08:57:47 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>, 
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Douglas Anderson <dianders@chromium.org>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] HID/arm64: dts: qcom: sc8280xp-x13s: fix
+ touchscreen power on
+Message-ID: <fupsiajh2za5r7itt2naxtynyqiwpw3efubrjmydd5ohypo3jg@2u44rbhbvmym>
+References: <20240507144821.12275-1-johan+linaro@kernel.org>
+ <ZmBZPHbDv7ma_JaJ@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmBZPHbDv7ma_JaJ@hovoldconsulting.com>
 
-Hello Jakub,
-
-On Wed, 5 Jun 2024 20:10:25 -0700
-Jakub Kicinski <kuba@kernel.org> wrote:
-
-> On Wed,  5 Jun 2024 14:49:08 +0200 Maxime Chevallier wrote:
-> > +/**
-> > + * phy_sfp_connect_phy - Connect the SFP module's PHY to the upstream PHY
-> > + * @upstream: pointer to the upstream phy device
-> > + * @phy: pointer to the SFP module's phy device
-> > + *
-> > + * This helper allows keeping track of PHY devices on the link. It adds the
-> > + * SFP module's phy to the phy namespace of the upstream phy
-> > + */
-> > +int phy_sfp_connect_phy(void *upstream, struct phy_device *phy)  
+On Jun 05 2024, Johan Hovold wrote:
+> Hi Jiri and Benjamin,
 > 
-> We run scripts/kernel-doc with -Wall now, it wants return values
-> to be documented, too. 
+> On Tue, May 07, 2024 at 04:48:14PM +0200, Johan Hovold wrote:
+> > The Elan eKTH5015M touch controller on the X13s requires a 300 ms delay
+> > before sending commands after having deasserted reset during power on.
+> > 
+> > This series switches the X13s devicetree to use the Elan specific
+> > binding so that the OS can determine the required power-on sequence and
+> > make sure that the controller is always detected during boot. [1]
+> 
+> > The devicetree changes are expected to go in through the Qualcomm tree
+> > once the binding and driver updates have been merged.
+> 
+> > [1] The reset signal is currently deasserted using the pin configuration
+> >     and the controller would be detected if probe is deferred or if user
+> >     space triggers a reprobe through sysfs.
+> 
+> > Johan Hovold (7):
+> >   dt-bindings: HID: i2c-hid: add dedicated Ilitek ILI2901 schema
+> >   dt-bindings: HID: i2c-hid: elan: add Elan eKTH5015M
+> >   dt-bindings: HID: i2c-hid: elan: add 'no-reset-on-power-off' property
+> >   HID: i2c-hid: elan: fix reset suspend current leakage
+> 
+> Could you consider picking the first four patches up for 6.10-rc3 so
+> that Bjorn can take the devicetree changes?
 
-OK, I'll address that and make sure to run this script on all the
-patches in the series.
+We definitely can. But if it makes things easier, Bjorn can also take
+the whole series through his tree with my Acked-by.
 
-Thanks,
+If I don't get answer by tomorrow I'll apply the first 4 in the hid
+tree.
 
-Maxime
+Cheers,
+Benjamin
+
+> 
+> >   arm64: dts: qcom: sc8280xp-x13s: fix touchscreen power on
+> >   arm64: dts: qcom: sc8280xp-crd: use external pull up for touch reset
+> >   arm64: defconfig: enable Elan i2c-hid driver
+> 
+> Johan
 
