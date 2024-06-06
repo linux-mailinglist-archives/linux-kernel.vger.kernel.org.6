@@ -1,106 +1,244 @@
-Return-Path: <linux-kernel+bounces-203582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49EC98FDD6C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:24:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 176E68FDD72
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B892A28218B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:24:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7994F1F22B0A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547201E867;
-	Thu,  6 Jun 2024 03:24:49 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E358F1E893;
+	Thu,  6 Jun 2024 03:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cB5uE5NB"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CEF17BD8;
-	Thu,  6 Jun 2024 03:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B77D2E5
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 03:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717644288; cv=none; b=tm9p9mH47VbvMK7x9T6Va2vlwJ/nc4XyL3N/LiSgmyS4Se9EGL2yptI05qO663Cj7OO2Jl1QruAxeHfGQsUhxkUAFVYIfM9QYSRD+GzK1ZjQlOaUtApbuWyinZdu+w5KuCalsBULbLUojbc77NmdtsKfZhe0LIN0xvtatwjf7Ew=
+	t=1717644521; cv=none; b=Rt+GhRNipmR4Nh3DXgo4S06Y9MmnGo1/GteHNQEDobQwd/tTUBjVgWD6fWmer/mJ+9sdntE0f38FjIQuGnNRPhvsOGTvnHnUjoUL0KCAWXN4yvAizQFYAv0znNHIVeFzIS1q5pUqXSx3hejNzseYBy8A7aU+CcTK9v4FMj+kEPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717644288; c=relaxed/simple;
-	bh=EeTpYbZng4Y5bfpMT8WReGs6mMWFJe0SV0m03KYwY3M=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=FMoJE9Xnwfba+4tdw7TflACk3bvWtognmZu41hmsi+cXPK/WXzzmHo6hZSzKsJrjkL7azqY2zgKE9atQPca/CI951sCtRMzzJwp5HPq6idzi2BjjVXMydpz5diJwFvOPW3gBcQh9S9mBymnYuoB0mTcERIGqpzRETX1HC7FfTtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VvqST1C9mz4f3nKW;
-	Thu,  6 Jun 2024 11:24:25 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 556A31A016E;
-	Thu,  6 Jun 2024 11:24:36 +0800 (CST)
-Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP3 (Coremail) with SMTP id _Ch0CgAnMJjyK2Fmz2rqOQ--.40149S2;
-	Thu, 06 Jun 2024 11:24:36 +0800 (CST)
-Subject: Re: [PATCH v2 8/8] writeback: factor out balance_wb_limits to remove
- repeated code
-To: Tejun Heo <tj@kernel.org>
-Cc: willy@infradead.org, akpm@linux-foundation.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20240514125254.142203-1-shikemeng@huaweicloud.com>
- <20240514125254.142203-9-shikemeng@huaweicloud.com>
- <ZljGiunxmVAlW6EE@slm.duckdns.org>
- <cfbbcc80-7db1-8277-98ab-1f32c3a629ab@huaweicloud.com>
- <Zl4G0tI_0CHKIWHh@slm.duckdns.org>
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-Message-ID: <6d5e260e-4910-92d1-faf4-8aee0b78b16d@huaweicloud.com>
-Date: Thu, 6 Jun 2024 11:24:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+	s=arc-20240116; t=1717644521; c=relaxed/simple;
+	bh=xlRiBRv2c0oWUuCdzxJ1CpU23sgbWcNpzLLbJvAQ8oY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fi8Wstq1jJszmiRlMktjt3cwMAKKcptlbzyU5dOgND6ZIDyx0DxOPdKrAWkZYonS9k8nKFsvoiNvEqzb9YcW+7pYHdnlWtXZr29OeU1ZVCsK6mFFYKJy7p0PR1avMMZn70L44BbiOXjCoxeqt1jWuiEJ+16xkbKtX1Amly0upy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cB5uE5NB; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52b9dda4906so695158e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 20:28:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1717644517; x=1718249317; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uqp5qceNq5zHDEhmHDdIMgCbwP2xDR/VfW9ZZv9RNJk=;
+        b=cB5uE5NB672qfHFBTqhOsfyc390GF48Vyroa7qdJYLs6CKDEcNu36lCkoKP3Soc0UW
+         fj51a7hbGFI1YZUcYWagvronoZKZionVnd/l/rcwS4UuH1UqfSno91uT69ZpngODNvT0
+         P5+I0+auNYP/KeIwDpmeUmEN8nLsy7Yz6x39g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717644517; x=1718249317;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Uqp5qceNq5zHDEhmHDdIMgCbwP2xDR/VfW9ZZv9RNJk=;
+        b=rxmSFJWZ0g2YCMZfISLXmXXb+P7a0DLcgnxynzs7hs8n6x49va/ddtLRcl+GXfv4r6
+         UBEHREMgWkSjpix0TNKvJg6QdOZF4DM9GWgDt6JJKdB96BYbHd4CPdp6eNdZJXxBvMKj
+         k9HGN2ElGQgEi2pSSd6E5DkZgj3eCjlhLLEqUPdhyw/Hy+zLVyknfmYYVIJdtBvzkKfT
+         FQ6CZMmvyahxgbQuKbj30IuO0on2220H7PJCFvBxWETA5IvchQ8oiCt9PpRu/cbjmzOL
+         kzUrJHBDClU9L3PpVZTSq8e4/6zSlWg5nnmQrfsWYsqYzSe4QxnDqqrzPLCyzaMglgPz
+         toqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWI5PWvx6H5IBExwrTNBd9K1IuTPQ0Xlf0BrbTOnjVwAyKNpaIa0TLdlky247tuwmLU9HrDEcLxX7GUUYrSzItWz1N/yo1xyVFBIX1H
+X-Gm-Message-State: AOJu0YxF7ArlUXTaQ6u3E69ZeMQgJfNhedu+2xUAsnrDNA1rv9N97AhU
+	gT+tY9wALxgfmjdz7fEk/IggnPb7rOMPjU2em/1PSyppg+lPtjUruH8OpDByLw3/OejBynFbcy2
+	gJOXGOBv9LUGgkcEREOAv29VNp6pl69appVrZ
+X-Google-Smtp-Source: AGHT+IGsCEI0/+y91vNyNNYX+q2ZIumGw6d9Pxpjw+1niuix5bZfPr7FyV232O4Sowxvaw+VS8I/365F2zfGr+Nw9m4=
+X-Received: by 2002:ac2:48ad:0:b0:51d:34bb:3c6c with SMTP id
+ 2adb3069b0e04-52bab4ea6dbmr2490766e87.31.1717644517343; Wed, 05 Jun 2024
+ 20:28:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Zl4G0tI_0CHKIWHh@slm.duckdns.org>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_Ch0CgAnMJjyK2Fmz2rqOQ--.40149S2
-X-Coremail-Antispam: 1UD129KBjvdXoWruFyrWFW8JF4UCF43Zr4DXFb_yoW3Wwb_WF
-	s29aykKw4UuFs7ta1vyF45J34xGFWrXryUZ348Way7C34fAa1UWay5WFyav3WxJr4IkF9x
-	W3Z2g340kry2vjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbzAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0E
-	wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
-	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0
-	I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
-	k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUzsqWUUUUU
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+References: <20240530083513.4135052-1-wenst@chromium.org> <20240530083513.4135052-6-wenst@chromium.org>
+ <4f20f130-c9ab-43ea-a758-e29d7be10db0@collabora.com> <CAGXv+5GuGz-KahcbKtuyUA1-59sMWSL0QucOdp8FPoQWrc9YUQ@mail.gmail.com>
+ <08256a88-7165-41ca-b484-4acf1c8e316b@collabora.com>
+In-Reply-To: <08256a88-7165-41ca-b484-4acf1c8e316b@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 6 Jun 2024 11:28:26 +0800
+Message-ID: <CAGXv+5EtKwdFRCX6BqmVVA5yXCDpJ8eb80m7yU8Aj7vz9E=36w@mail.gmail.com>
+Subject: Re: [PATCH 5/6] arm64: dts: mediatek: mt8173: Fix MFG_ASYNC power
+ domain clock
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jun 5, 2024 at 7:25=E2=80=AFPM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> Il 05/06/24 10:25, Chen-Yu Tsai ha scritto:
+> > On Thu, May 30, 2024 at 6:03=E2=80=AFPM AngeloGioacchino Del Regno
+> > <angelogioacchino.delregno@collabora.com> wrote:
+> >>
+> >> Il 30/05/24 10:35, Chen-Yu Tsai ha scritto:
+> >>> The MFG_ASYNC domain, which is likely associated to the whole MFG blo=
+ck,
+> >>> currently specifies clk26m as its domain clock. This is bogus, since =
+the
+> >>> clock is an external crystal with no controls. Also, the MFG block ha=
+s
+> >>> a independent CLK_TOP_AXI_MFG_IN_SEL clock, which according to the bl=
+ock
+> >>> diagram, gates access to the hardware registers. Having this one as t=
+he
+> >>> domain clock makes much more sense. This also fixes access to the MFG=
+TOP
+> >>> registers.
+> >>>
+> >>> Change the MFG_ASYNC domain clock to CLK_TOP_AXI_MFG_IN_SEL.
+> >>>
+> >>> Fixes: 8b6562644df9 ("arm64: dts: mediatek: Add mt8173 power domain c=
+ontroller")
+> >>> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> >>
+> >> Just one question... what happens if there's no GPU support at all and=
+ this
+> >> power domain gets powered off?
+> >>
+> >> I expect the answer to be "nothing", so I'm preventively giving you my
+> >
+> > Well it's powered off by default. Just double checked, and without the =
+final
+> > patch:
+> >
+> > # cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
+> > domain                          status          children
+> >              performance
+> >      /device                                             runtime status
+> > -----------------------------------------------------------------------=
+-----------------------
+> > mfg                             off-0
+> >              0
+> > mfg_2d                          off-0
+> >              0
+> >                                                  mfg
+> > mfg_async                       off-0
+> >              0
+> >                                                  mfg_2d
+> >
+> > And with the last patch but with the powervr removed:
+> >
+> > # cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
+> > domain                          status          children
+> >              performance
+> >      /device                                             runtime status
+> > -----------------------------------------------------------------------=
+-----------------------
+> > mfg_apm                         off-0
+> >              0
+> > mfg                             off-0
+> >              0
+> >                                                  mfg_apm
+> >      /devices/platform/soc/13fff000.clock-controller     suspended
+> >              0
+> > mfg_2d                          off-0
+> >              0
+> >                                                  mfg
+> > mfg_async                       off-0
+> >              0
+> >                                                  mfg_2d
+> >
+> > Things seem to work OK. I can SSH in, and the framebuffer console on th=
+e screen
+> > works fine.
+> >
+> >
+> > Note that accessing the regmap through debugfs doesn't do much good. re=
+gmap
+> > doesn't handle runtime PM. And the syscon regmap isn't even tied to a
+> > struct device. Dumping the regmap through debugfs while the power domai=
+n
+> > is off gives all zeroes, likely due to bus isolation.
+> >
+>
+> The last part where you say "gives all zeroes" is actually the best outco=
+me that
+> I could have ever expected.
+>
+> So, well, many thanks for this very nice analysis and test.
+>
+> >> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@col=
+labora.com>
+>
+> I confirm my green light. It's beautiful when this kind of patches come u=
+pstream
+> especially with your replies actually removing any kind of possible doubt=
+.
+>
+> >
+> > Thanks!
+>
+> Thank *you* for caring about this old platform!
+
+Can you pick up this patch first?
+
+Frank mentioned that the GPU core takes two power domains. I asked
+MediaTek for more information but I don't know how long that will take.
 
 
+ChenYu
 
-on 6/4/2024 2:09 AM, Tejun Heo wrote:
-> Hello,
-> 
-> On Mon, Jun 03, 2024 at 02:39:18PM +0800, Kemeng Shi wrote:
->>> Isn't this a bit nasty? The helper skips updating states because it knows
->>> the caller is not going to use them? I'm not sure the slight code reduction
->>> justifies the added subtlety.
->>
->> It's a general rule that wb should not be limited if the wb is in freerun state.
->> So I think it's intuitive to obey the rule in both balance_wb_limits and it's
->> caller in which case balance_wb_limits and it's caller should stop to do anything
->> when freerun state of wb is first seen.
->> But no insistant on this...
-> 
-> Hmm... can you at least add comments pointing out that if freerun, the
-> limits fields are invalid?
-Sure, will add it in next version. Thanks
-> 
-> Thanks.
-> 
-
+> Cheers,
+> Angelo
+>
+> >
+> > ChenYu
+> >
+> >> ....but if I'm wrong and the answer isn't exactly "nothing", then I st=
+ill agree
+> >> with this commit, but only after removing the Fixes tag.
+> >>
+> >> Cheers,
+> >> Angelo
+> >>
+> >>> ---
+> >>>    arch/arm64/boot/dts/mediatek/mt8173.dtsi | 2 +-
+> >>>    1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/bo=
+ot/dts/mediatek/mt8173.dtsi
+> >>> index 3458be7f7f61..136b28f80cc2 100644
+> >>> --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+> >>> +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+> >>> @@ -497,7 +497,7 @@ power-domain@MT8173_POWER_DOMAIN_USB {
+> >>>                                };
+> >>>                                mfg_async: power-domain@MT8173_POWER_D=
+OMAIN_MFG_ASYNC {
+> >>>                                        reg =3D <MT8173_POWER_DOMAIN_M=
+FG_ASYNC>;
+> >>> -                                     clocks =3D <&clk26m>;
+> >>> +                                     clocks =3D <&topckgen CLK_TOP_A=
+XI_MFG_IN_SEL>;
+> >>>                                        clock-names =3D "mfg";
+> >>>                                        #address-cells =3D <1>;
+> >>>                                        #size-cells =3D <0>;
+> >>
+> >>
+>
 
