@@ -1,107 +1,178 @@
-Return-Path: <linux-kernel+bounces-204709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51B528FF2AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:38:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 434C88FF2B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:39:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6282B1C25D25
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:38:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDAB11F21542
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9855198A0F;
-	Thu,  6 Jun 2024 16:38:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB0B198A1D;
+	Thu,  6 Jun 2024 16:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mlWSLPjI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LrmS2OSU"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00CA443ACB;
-	Thu,  6 Jun 2024 16:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C4C197A8A
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 16:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717691909; cv=none; b=ISZW/Sr49lLxu4SRfI5IrDPPfEOG70GHDIGUxiceb+QfgP2a6m5Y1AQORTQJZBs7Bj7b5oRiVd8qNzvst8Mj0NytQDSF1zcfK2NzcXXG+LlQSTAiWVCmqXzSSqRzHQX3AbZrDBtj//v4IaEme3MQn8jdLRj+XqSjZmIWOiU3198=
+	t=1717691946; cv=none; b=tmYhiqUvxrsEDQ8s10D/+T+B1GZwluRVoiUGJ8Da8ntc7lIkb0dzU+2Y4rb9CqBLRp8gp98OOB+tuZ+dNDOYS0glRm/pSazs/LNkeuNvLE2ya0htUecCjBJNWBPgMNA1qLS0OoegdxtGc8df/K1pfphyZmcodNq3jEXEuSszwxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717691909; c=relaxed/simple;
-	bh=toosofXlxyPkLKyNmOnNS6IdsUgdaS0Lex6c+Er5Ob4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ihj78SY8b1MelMYOyGBmRILMT3yICPHwvYFtHQ28mxHZE46kNu+hTv1PzeMRpDHIjrY40NtzqySv0E3/i3pNDAks0hZYhpqK+TrjgDa8nJGiWX8u9bdwB6SC+IZyIqq9yG3hCmAj7I9oKWKvbInqurWuRx2dGbJmWhlWUxKKDI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mlWSLPjI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F107C2BD10;
-	Thu,  6 Jun 2024 16:38:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717691908;
-	bh=toosofXlxyPkLKyNmOnNS6IdsUgdaS0Lex6c+Er5Ob4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mlWSLPjIcj8g2VEKb8D3AgtPbx4RLtISCQpeJW4eqWFBgWsWXkhkMYl3IKRgFLu/m
-	 je+r20BojQ5Z8ARTN+8rkujew/SzrBUKokZ+IzG9mTrRjWPjDWVoUejuJejlWc2YV9
-	 roFNg8K+iVKIR62o27j8M0hXX3BKig7rxH5ykmJlkn3FrxrSSJeOf/YTb6QRnD3mJf
-	 g75q01u649/mTFC3Bay97BnN7rn8YLX5YHNuGkXfyfg0nZkvQhnp/7U3M+DKsEpZ2/
-	 FD5NaedOPprEvSky8mNReoIAtIZpM3iCEST9YMWJ7yX5Js0fv81wyO5VnHDU6n9616
-	 uT4RA3RaStvmw==
-Date: Thu, 6 Jun 2024 17:38:24 +0100
-From: Conor Dooley <conor@kernel.org>
-To: dumitru.ceclan@analog.com
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>
-Subject: Re: [PATCH v6 2/9] dt-bindings: adc: ad7173: add support for ad411x
-Message-ID: <20240606-matchbook-hedging-6db729d4c304@spud>
-References: <20240606-ad4111-v6-0-573981fb3e2e@analog.com>
- <20240606-ad4111-v6-2-573981fb3e2e@analog.com>
+	s=arc-20240116; t=1717691946; c=relaxed/simple;
+	bh=0sUhzePxA5ILJh6kcxhT9jhNMheNOJsBhpMUA+zrAr4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FU3QaZUEqZY2OiRKpRYjqPHvAqShmgEPlPIT7vVFtCAmF55GyXHr3wYrjB7aiPn4Yu3IwevrZbb46Kb937gPHOlyM88W4P719lDcSt7kk++0n8jmaOR25lX8XZd4PVwW8+airos8lw5pW8OtQzob4DaRAZ8HMLKVB9IPbeI13lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LrmS2OSU; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-35e573c0334so1382362f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 09:39:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717691943; x=1718296743; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BXdSRq/xXQtY4fK65pJyyKeGGdpvh+lT4zYhLPfTB4c=;
+        b=LrmS2OSUCUbTBiodfAgWSYWBnMDqVBYu654UCCncw8BnmKEab2fmtG3UBUnMs/iZ4U
+         Y6rR4or+YvlJn3ET8aiaNNIMcJh8yC2MqGvhYuFS9fM/aGPSHmwYXKdaSbKfCFfsOdU2
+         mdkhX48BAncBwkaRhRb3JlYBtUyqkoz+iL6HwJpYZEvxVScQtXMKno38jZpOzuLt0leq
+         w50y1EQSsgPA0+YNZK36o9GjH8ixnSawCSVNUnzlLZRqCJGYBm5bHo7Ciyt6E0SG2HS7
+         vVzeFAOPa7hESOy3Zaa0LmlnB1sHGLAsWo63dAkbMTRo7r2iM9HXh7mr0oFH1CJR//B0
+         vUQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717691943; x=1718296743;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BXdSRq/xXQtY4fK65pJyyKeGGdpvh+lT4zYhLPfTB4c=;
+        b=CRU+H8LIhIarcQcPbVf/KmqmaOGdojjJD93QJ+eglf88dX+nClBkEjrRojC21g3uWl
+         z6lZ2yxVEaMqZar2kfjLdYGXmMrWvzb98OaqvCFtlh+9cEfDdfTld+vGRaTm5GuD0Hey
+         feK2H5nVLSvEy4Vuz7w6jgwUvTXtr8S79LmwzPK0b+YtzTpMkF5smaSWy1smuJkhCeAK
+         aJUr86/bv/o3JCll0hxArnDe05KkTsqWC2Ppwx01UZMFZ42O6v1AVPrxNN1C3dpGTkMj
+         kLwEZJEWKjJjPNMigSF5aRINFGPEcI/nHb62oK2IASuIjyU3Z9PjWe6qvl5Al54C5XaO
+         AKFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1wsdEpuHOEaO9P49otVrsmbdiGKTUWMdOiNvlt0W2g9/9oLc5cMyjFGm0o69WdxuK4wCbEPYxhygSyy6MnGxQaglQ0yr6xaIpr+Aj
+X-Gm-Message-State: AOJu0YwcL8QmLWy6r9dMBOQK5ubt7LrLE4VOS6AqthwGoO5JQSwzwozq
+	ryIcQigzhivXMA3zLvdCAM860pry1eMhzZpFB2HNqx7XXMeAMbBO9rxgrAu5f4Y=
+X-Google-Smtp-Source: AGHT+IFtjI2uG5kxWT0xfMI3B/djVg1/Aj63CZXkzzrEcegz3u68SQVBpTCW8tUcw72ZesSgllhIjA==
+X-Received: by 2002:adf:ed52:0:b0:355:b9d2:4667 with SMTP id ffacd0b85a97d-35efea6fa89mr211455f8f.29.1717691943486;
+        Thu, 06 Jun 2024 09:39:03 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:f9a9:3740:b905:9995? ([2a05:6e02:1041:c10:f9a9:3740:b905:9995])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-35ef5d4a827sm1984629f8f.36.2024.06.06.09.39.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 09:39:03 -0700 (PDT)
+Message-ID: <a5476bdb-da6f-40d5-baa9-fa2caea72e3d@linaro.org>
+Date: Thu, 6 Jun 2024 18:39:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hDKkRkJGh4Hdx0pa"
-Content-Disposition: inline
-In-Reply-To: <20240606-ad4111-v6-2-573981fb3e2e@analog.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] thermal: core: Do not fail cdev registration because
+ of invalid initial state
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>, Laura Nao <laura.nao@collabora.com>
+Cc: Linux ACPI <linux-acpi@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>
+References: <6056838.lOV4Wx5bFT@kreacher>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <6056838.lOV4Wx5bFT@kreacher>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+On 06/06/2024 18:08, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> It is reported that commit 31a0fa0019b0 ("thermal/debugfs: Pass cooling
+> device state to thermal_debug_cdev_add()") causes the ACPI fan driver
+> to fail probing on some systems which turns out to be due to the _FST
+> control method returning an invalid value until _FSL is first evaluated
+> for the given fan.  If this happens, the .get_cur_state() cooling device
+> callback returns an error and __thermal_cooling_device_register() fails
+> as uses that callback after commit 31a0fa0019b0.
+> 
+> Arguably, _FST should not return an invalid value even if it is
+> evaluated before _FSL, so this may be regarded as a platform firmware
+> issue, but at the same time it is not a good enough reason for failing
+> the cooling device registration where the initial cooling device state
+> is only needed to initialize a thermal debug facility.
+> 
+> Accordingly, modify __thermal_cooling_device_register() to avoid calling
+> thermal_debug_cdev_add() instead of returning an error if the initial
+> .get_cur_state() callback invocation fails.
+> 
+> Fixes: 31a0fa0019b0 ("thermal/debugfs: Pass cooling device state to thermal_debug_cdev_add()")
+> Closes: https://lore.kernel.org/linux-acpi/20240530153727.843378-1-laura.nao@collabora.com
+> Reported-by: Laura Nao <laura.nao@collabora.com>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> v1 -> v2:
+>     * Instead of making the thermal debug code effectively ignore the invalid
+>       initial cooling device state, simply don't register thermal debugfs for
+>       a cooling device if its initial state returned by the driver's
+>       .get_cur_state() is invalid (Daniel).
+> 
+> Laura, please test this one even though I don't see why it wouldn't work for
+> you if the v1 did.
+> 
+> ---
+>   drivers/thermal/thermal_core.c |    5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> Index: linux-pm/drivers/thermal/thermal_core.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_core.c
+> +++ linux-pm/drivers/thermal/thermal_core.c
+> @@ -1001,7 +1001,7 @@ __thermal_cooling_device_register(struct
+>   
+>   	ret = cdev->ops->get_cur_state(cdev, &current_state);
+>   	if (ret)
+> -		goto out_cdev_type;
+> +		current_state = ULONG_MAX;
+
+Why not move the section ? So we end up below.
+
+>   
+>   	thermal_cooling_device_setup_sysfs(cdev);
+>   
+> @@ -1016,7 +1016,8 @@ __thermal_cooling_device_register(struct
+>   		return ERR_PTR(ret);
+>   	}
+>   
+> -	thermal_debug_cdev_add(cdev, current_state);
+> +	if (current_state <= cdev->max_state)
+> +		thermal_debug_cdev_add(cdev, current_state);
+
+	ret = cdev->ops->get_cur_state(cdev, &current_state);
+	if (!ret)
+		thermal_debug_cdev_add(cdev, current_state);
+
+Additionally a comment here to explain why get_cur_state can fail and 
+telling it is up to the driver to fix its routine?
 
 
---hDKkRkJGh4Hdx0pa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>   	/* Add 'this' new cdev to the global cdev list */
+>   	mutex_lock(&thermal_list_lock);
+> 
+> 
+> 
 
-On Thu, Jun 06, 2024 at 07:07:41PM +0300, Dumitru Ceclan via B4 Relay wrote:
-> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
->=20
-> Add support for: AD4111, AD4112, AD4114, AD4115, AD4116.
->=20
-> AD411x family ADCs support a VCOM pin. The purpose of this pin is to
-> offer a dedicated common-mode voltage input for single-ended channels.
-> This pin is specified as supporting a differential channel with VIN10 on
-> model AD4116.
->=20
-> AD4111/AD4112 support current channels. Support is implemented using
-> single-channel and "adi,current-channel".
->=20
-> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
-Thanks,
-Conor.
-
---hDKkRkJGh4Hdx0pa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmHmAAAKCRB4tDGHoIJi
-0tT0AQCn7eyplOvUIcTU8QqPpvwaIyG5129D8kctOmrMtVEaVwD9GaamRZS8ugvY
-/KNQ75AAqjZuzZflmGMwhGj/geCMmwI=
-=gVp6
------END PGP SIGNATURE-----
-
---hDKkRkJGh4Hdx0pa--
 
