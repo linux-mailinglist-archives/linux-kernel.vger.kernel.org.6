@@ -1,115 +1,176 @@
-Return-Path: <linux-kernel+bounces-204258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 907DD8FE648
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:16:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C3E08FE64B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22FFD28832F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:16:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF4D4B23F8E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1E7195B3E;
-	Thu,  6 Jun 2024 12:14:19 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D79195FC4;
+	Thu,  6 Jun 2024 12:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RdAjV9ES"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05FC195988
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69B0195F2E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717676059; cv=none; b=SYYB7PyUZOe8cMMpDRg+M+WfxC3Nef7NIFD+sZexgQxfZ6iiz830rPBf7NUzoDjAtidtX+h8H76fkYW2LxEkvlm9ICBbmDbCJX/FVYFLU+tuUZrQ/6yf2/2xpzcKprjA3H7vwKu0aofW+dO0nvKQcX0BXicxA0i69GXWruk3l6w=
+	t=1717676068; cv=none; b=VMB9JMW440pt7aTJQPi5OCYjXII9p5hkNQupTRH7gL0y87+JQbzQKN5/1U7rqzjUEyMgOZxB12hlCCmZWAaNSSzd5x0OfH4UAaDbp8flzWIiVFC+Pz1hAoZv7b/+r8QXUD9opDKsB6vMsbOfpD4eqGBUvbS3Ew+K+oSnRhfzUf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717676059; c=relaxed/simple;
-	bh=w3tUB9Z8s9p6lHhxqs1STK1Yqtj1XVLB1rOrlR5FVeU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=hu4l3dyeTb9p6YxbcGxdeG8o3tFxlcynFmJDH9p2K0LUdY1UKPdL80baSZ+RZ/Wq+eBfJqQo296W4S7kaJKeBl0w1+2NpoTT79ZLGvXZcgiVIVRYHd13dasW3sBAVhcMBk8lfIG7UjR9/DdEd0MfOSW7ICzRgXkvtmipKeb+qzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7e20341b122so94620139f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 05:14:17 -0700 (PDT)
+	s=arc-20240116; t=1717676068; c=relaxed/simple;
+	bh=6Wohv+osAdLb7FnEZVEAAa/e/pGCKjdQxGRzOwQyVOo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dBfnJGv73vkDxBZNBbVgzVX1cguuNamYRJ3z/dhxwSqkD98neyYih1qC9RZevJu22Xe4yr9GtcCuyskdQ7z1wCYNq76/kPB9mRZxpMx/nD4Ubmexc/JQCG4EO8gXgFILcjaaARTg41WvM80mreFD1axGA6+kNXbD5NyErVpS0tM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RdAjV9ES; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57a2f27090aso3361579a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 05:14:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717676065; x=1718280865; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=P4eR0U8qSC2JKNbsIe9eb3BDB8OBTYCS7ARMldo+loA=;
+        b=RdAjV9ES7QP3/zlbiaQC7UxjHBJtqHjGzaGkuPDKIhc2opTV/ibDiAgx36Rh+T6KrK
+         CSBzhAKncY2C2szDlY86Epeu+oy8aE6QxQG8K3SXm50ENLcMnb4olXg/nhGZeTHHuYl8
+         4vm2MtOOj8c6qvJ7qKcJMA+NgRPTNPEwN0eU/ya/TdDH5IYs1vZ8fxiQ0tKd8r0n18Al
+         6lu+XCbBo3YM608OgdXEGfLgfn+WhWrkLQdzEV9jccuMdHzSMY0UidbB5sDRwklewM9z
+         D9HYwbiSEK6RqwGMJP5psiLobvQ3R1PQjy1jXZHy+r9saaDz/M/9ihOjov4+wK+CJBSe
+         RHeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717676057; x=1718280857;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w3tUB9Z8s9p6lHhxqs1STK1Yqtj1XVLB1rOrlR5FVeU=;
-        b=dPqCN2E9jfxatjDH1wa7PnuONzZCYMs7hoyjmFejiUbqTaoAjAeM8vdcFHaYL2+ArW
-         G1WIH3NnWimDEaWD0yT9rYRSrA1EnsghNVY0hnNvv1yYWLVpWcdnSZ/EHhW9bNpau9Lk
-         gLdMYfyUbehrbfEfopT76JJrAI0i/GtLb7ygjz+aTn7emm3sgqfqjju9EnYiC8JLfS58
-         SIQqHBo4I8tEytzZ/ZT1fIj0gpInBIxLl3QhcTQEl685XKHGuAmVe1McPjiS5Q/PFfc7
-         x3ilbAu8QaUlHp2SsOpEeg20c0mpCBdRmmhmA33m+AVzQz6c8LykU5AjxoU93Rl42tiI
-         fppg==
-X-Gm-Message-State: AOJu0YzuqDt7O7eatFjhOqjJuYEBjuv5rBq+SgC7SaVV7++cQLV4BnNu
-	EpTauJRi3JDzaZcJePNZ0Us+Kdfgk0G0jWjcixvb3tvSr6Orrfq8Bn5eH7/8XWMnvSolC1FDr+4
-	rVF2MVYWPw4qMFQudk6eGLJ4EmsS3vcF9SwcGZkswNgn8SaOENRGZa6g=
-X-Google-Smtp-Source: AGHT+IEL+oo5A7XAzzKE0qN7bXYGrGgroelBkJRfF6U3BlEilOaBrAyadF0XGxh9UnAnGkjEclIzR4TygYUlPGPO98jTkwwMTh3m
+        d=1e100.net; s=20230601; t=1717676065; x=1718280865;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P4eR0U8qSC2JKNbsIe9eb3BDB8OBTYCS7ARMldo+loA=;
+        b=qXq5ugj0KIkRqBbzInc2gW/TV0++X/GBaV3K5+QeQpGWsjECa6TelOaesFAA2bmydK
+         WUFKfUVv6bDGUo8cFC+9gN6+GGwDR2f9amdwzmsvOIqBffHwaOKqpY1/RuxCQccr2tZJ
+         AaLxCdF4dWr1GaLPds8/y42vH/1NzE1UYECUsql2OgRDoiczqqOdrPpZqFcfv1fxMWAp
+         Thwavp/CxDYmHn7DTGflWfwKCrth8th53v8b/qhdUhXI9In+r0JOhriMA5QBPYQlKrk9
+         Jq2MwXH4rTtIxkIeFT9pyHcecJd0wtlHNLVamZXnf6siZg2CDWq4LTF1BxbIGgBt8v9O
+         DPdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqZJlC96pZOuF4Lco6EdBrdUf/r4YU9CJf1RShvvQk8YG4HMP17P3tZqapeyh+UWMLjDP9gqfVza08YgnUnQgQO/uUz+j6hdro4wyT
+X-Gm-Message-State: AOJu0YytaAR0X9aRI3Bf6OhXFDvzAfjTxkVujEbx2xY2jffv4IxeLRGX
+	USiWlkahiG/zbw1LbVAcaMGuOaXQAjK9mKFVDb8D4FKbGK4KBqTQnRPGbzWzXF4=
+X-Google-Smtp-Source: AGHT+IEhF5VnQ6RnaPOF2ap3H2sWIDZtTNmy4OAYW9J+Tfvg4TS3Uau9eObHLN4jYtjlQ3mlVjyN6g==
+X-Received: by 2002:a50:9eeb:0:b0:579:fb7e:2112 with SMTP id 4fb4d7f45d1cf-57aa5425c5cmr2134985a12.11.1717676065035;
+        Thu, 06 Jun 2024 05:14:25 -0700 (PDT)
+Received: from [192.168.2.107] ([79.115.63.17])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aadf9d28bsm993500a12.19.2024.06.06.05.14.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 05:14:24 -0700 (PDT)
+Message-ID: <1094fbfd-0ee7-430e-b62c-20764c1fbeec@linaro.org>
+Date: Thu, 6 Jun 2024 13:14:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8419:b0:4b5:ed14:3807 with SMTP id
- 8926c6da1cb9f-4b63a740afdmr140474173.1.1717676056607; Thu, 06 Jun 2024
- 05:14:16 -0700 (PDT)
-Date: Thu, 06 Jun 2024 05:14:16 -0700
-In-Reply-To: <000000000000adb08b061413919e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000318b15061a379fe1@google.com>
-Subject: Re: [syzbot] Re: 000000000000fcfa6406141cc8ac@google.com
-From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: mtd: spi-nor: deprecate Everspin MRAM
+ devices
+To: Thorsten Scherer <T.Scherer@eckelmann.de>,
+ Michael Walle <mwalle@kernel.org>
+Cc: Pratyush Yadav <pratyush@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Marek Vasut <marex@denx.de>, Imre Kaloz <kaloz@openwrt.org>,
+ Andrew Lunn <andrew@lunn.ch>, Flavio Suligoi <f.suligoi@asem.it>,
+ kernel@pengutronix.de
+References: <20240604074231.1874972-1-mwalle@kernel.org>
+ <kl4ikwh4fpkhhlpneuujyk2j4a2byif7l27n7kgb4pm72hb4an@akhbc4jg6hyq>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <kl4ikwh4fpkhhlpneuujyk2j4a2byif7l27n7kgb4pm72hb4an@akhbc4jg6hyq>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Rm9yIGFyY2hpdmFsIHB1cnBvc2VzLCBmb3J3YXJkaW5nIGFuIGluY29taW5nIGNvbW1hbmQgZW1h
-aWwgdG8KbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZywgc3l6a2FsbGVyLWJ1Z3NAZ29vZ2xl
-Z3JvdXBzLmNvbS4KCioqKgoKU3ViamVjdDogUmU6IDAwMDAwMDAwMDAwMGZjZmE2NDA2MTQxY2M4
-YWNAZ29vZ2xlLmNvbQpBdXRob3I6IHdvamNpZWNoLmdsYWR5c3pAaW5mb2dhaW4uY29tCgoNCiNz
-eXogdGVzdCBodHRwczovL2xpbnV4Lmdvb2dsZXNvdXJjZS5jb20vbGludXgva2VybmVsL2dpdC90
-b3J2YWxkcy9saW51eCBlMzc3ZDgwM2I2NWVlNDEzMDIxM2IzYzA0MWZjMjVmZGZlYzFiZDkwDQoN
-Ci0tLSBhL2tlcm5lbC90cmFjZS9icGZfdHJhY2UuYw0KKysrIGIva2VybmVsL3RyYWNlL2JwZl90
-cmFjZS5jDQog4oCC4oCC4oCC4oCC4oCCY2FudF9zbGVlcCgpOw0KDQog4oCC4oCC4oCC4oCC4oCC
-Ly8gcmV0dXJuIGlmIGluc3RydW1lbnRhdGlvbiBkaXNhYmxlZCwgc2VlOiBicGZfZGlzYWJsZV9p
-bnN0cnVtZW50YXRpb24NCi3igILigILigILigILigIJpZiAodW5saWtlbHkoX190aGlzX2NwdV9y
-ZWFkKGJwZl9wcm9nX2FjdGl2ZSkpKSB7DQor4oCC4oCC4oCC4oCC4oCCaW50IGluc3RydW1lbnRh
-dGlvbiA9IHVubGlrZWx5KF9fdGhpc19jcHVfcmVhZChicGZfcHJvZ19hY3RpdmUpKTsNCivigILi
-gILigILigILigIJpZiAoaW5zdHJ1bWVudGF0aW9uKSB7DQor4oCC4oCC4oCC4oCC4oCC4oCC4oCC
-4oCC4oCC4oCC4oCCcHJpbnRrKCJTS0lQIEZPUiBJTlNUUlVNRU5UQVRJT046ICVzID4gJXMgPiAl
-cCAvJWkgPT09PT09PT09PT09PT1cbiIsDQor4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC
-4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCCcHJvZy0+YXV4LT5uYW1lLA0K
-K+KAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKA
-guKAguKAguKAguKAgmxpbmstPmJ0cC0+dHAtPm5hbWUsIHByb2csIGluc3RydW1lbnRhdGlvbik7
-DQog4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCCYnBmX3Byb2dfaW5jX21pc3Nlc19j
-b3VudGVyKHByb2cpOw0KIOKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAgnJldHVybjsN
-CiDigILigILigILigILigIJ9DQoNCi3igILigILigILigILigIJpZiAodW5saWtlbHkodGhpc19j
-cHVfaW5jX3JldHVybigqKHByb2ctPmFjdGl2ZSkpICE9IDEpKSB7DQor4oCC4oCC4oCC4oCC4oCC
-aW50IGFjdGl2ZSA9IHRoaXNfY3B1X2luY19yZXR1cm4oKihwcm9nLT5hY3RpdmUpKTsNCivigILi
-gILigILigILigIIvLyBwcmludGsoIiVzID4gJXMgPiAlcCAvJWlcbiIsIHByb2ctPmF1eC0+bmFt
-ZSwgbGluay0+YnRwLT50cC0+bmFtZSwgcHJvZywgYWN0aXZlKTsNCivigILigILigILigILigIJp
-ZiAoYWN0aXZlICE9IDEpIHsNCivigILigILigILigILigILigILigILigILigILigILigIJwcmlu
-dGsoIlNLSVAgRk9SIEFDVElWRTogJXMgPiAlcyA+ICVwIC8laSA9PT09PT09PT09PT09PT09PT09
-PT09PVxuIiwNCivigILigILigILigILigILigILigILigILigILigILigILigILigILigILigILi
-gILigILigILigILigILigILigILigIJwcm9nLT5hdXgtPm5hbWUsDQor4oCC4oCC4oCC4oCC4oCC
-4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCCbGlu
-ay0+YnRwLT50cC0+bmFtZSwgcHJvZywgYWN0aXZlKTsNCiDigILigILigILigILigILigILigILi
-gILigILigILigIJicGZfcHJvZ19pbmNfbWlzc2VzX2NvdW50ZXIocHJvZyk7DQog4oCC4oCC4oCC
-4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCCZ290byBvdXQ7DQog4oCC4oCC4oCC4oCC4oCCfQ0KLS0t
-IGEva2VybmVsL3RyYWNlcG9pbnQuYw0KKysrIGIva2VybmVsL3RyYWNlcG9pbnQuYw0KIHsNCiDi
-gILigILigILigILigIJpZiAoIXRwX2Z1bmNzKQ0KIOKAguKAguKAguKAguKAguKAguKAguKAguKA
-guKAguKAgnJldHVybiBUUF9GVU5DXzA7DQor4oCC4oCC4oCC4oCC4oCCaWYgKCF0cF9mdW5jc1sw
-XS5mdW5jKQ0KK+KAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAgnJldHVybiBUUF9GVU5D
-XzA7DQog4oCC4oCC4oCC4oCC4oCCaWYgKCF0cF9mdW5jc1sxXS5mdW5jKQ0KIOKAguKAguKAguKA
-guKAguKAguKAguKAguKAguKAguKAgnJldHVybiBUUF9GVU5DXzE7DQog4oCC4oCC4oCC4oCC4oCC
-aWYgKCF0cF9mdW5jc1syXS5mdW5jKQ0KLS0NCg0KVGhlIGluZm9ybWF0aW9uIGluIHRoaXMgZW1h
-aWwgaXMgY29uZmlkZW50aWFsIGFuZCBtYXkgYmUgbGVnYWxseSBwcml2aWxlZ2VkLiBJdCBpcyBp
-bnRlbmRlZCBzb2xlbHkgZm9yIHRoZSBhZGRyZXNzZWUgYW5kIGFjY2VzcyB0byBpdCBieSBhbnlv
-bmUgZWxzZSBpcyB1bmF1dGhvcml6ZWQuIElmIHlvdSBhcmUgbm90IHRoZSBpbnRlbmRlZCByZWNp
-cGllbnQsIGFueSBkaXNjbG9zdXJlLCBjb3B5aW5nLCBkaXN0cmlidXRpb24gb3IgYW55IGFjdGlv
-biB0YWtlbiBvciBvbWl0dGVkIHRvIGJlIHRha2VuIGJhc2VkIG9uIGl0LCBpcyBzdHJpY3RseSBw
-cm9oaWJpdGVkIGFuZCBtYXkgYmUgdW5sYXdmdWwuDQo=
+
+
+On 6/5/24 14:58, Thorsten Scherer wrote:
+> Hello,
+> 
+
+Hi!
+
+> in the past I more actively worked on the ci4x10.  That changed after switching
+> departments.  Anyway, I thought maybe it's useful if I share my point of view.
+> 
+> On Tue, Jun 04, 2024 at 09:42:31AM +0200, Michael Walle wrote:
+>> These devices are more like an AT25 compatible EEPROM instead of
+>> flashes. Like an EEPROM the user doesn't need to explicitly erase the
+>> memory, nor are there sectors or pages. Thus, instead of the SPI-NOR
+>> (flash) driver, one should instead use the at25 EEPROM driver.
+>>
+>> Signed-off-by: Michael Walle <mwalle@kernel.org>
+>> Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> 
+> You cannot reach Uwe via this address anymore.
+> 
+> IMHO missing in this discussion is 
+> 
+>     kernel@pengutronix.de
+> 
+> , which I added to CC.
+> 
+>> Cc: Thorsten Scherer <t.scherer@eckelmann.de>
+>> Cc: Marek Vasut <marex@denx.de>
+>> Cc: Imre Kaloz <kaloz@openwrt.org>
+>> Cc: Andrew Lunn <andrew@lunn.ch>
+>> Cc: Flavio Suligoi <f.suligoi@asem.it>
+>> ---
+>> The referenced binding only supports the true AT25 compatible EEPROMs
+>> where you have to specify additional properties like size and page size
+>> or cypress FRAM devices where all the properties are discovered by the
+>> driver. I don't have the actual hardware, therefore I can't work on a
+>> proper driver and binding. But I really want to deprecate the use of
+>> these EEPROM like devices in SPI-NOR. So as a first step, mark the
+>> devices in the DT bindings as deprecated.
+>>
+>> There are three in-tree users of this. I hope I've CCed all the relevant
+>> people. With the switch to the at25 driver also comes a user-space
+>> facing change: there is no more MTD device. Instead there is an "eeprom"
+>> file in /sys now, just like for every other EEPROM.
+> 
+> My vague memory tells me (at least some of) the domain specific applications
+> running on ci4x10 rely on MTD(block?) devices.  So this change would break
+> user-space.
+
+it's a possibility, indeed. I assume we don't know for sure, right?
+> 
+>> Marek already expressed, that the sps1 dts can likely be removed
+>> altogether. I'd like to hear from the other board DTS maintainers if
+>> they seem some problems moving to the EEPROM interface - or maybe that
+>> device isn't used at all anyway. So in the end, we can hopefully move
+
+if it's not used at all we can remove it entirely.
+
+>> all the users over to the at25 driver.
+> 
+> The ci4x10 is still being used and sold.  Right now I do not have a clear
+> view on the implications of moving to that driver.  I'd like to invest some
+> time to sharpen my picture (or find the person that claims responsibility), but
+> this will propably not happen this week.
+> 
+
+if it's used then we are forced to keep the entry in SPI NOR for
+backward compatibility. But we can still deprecate the use and forbid
+new support in SPI NOR while directing users to the other driver.
+
+> Hope this helps.
+> 
+Thanks!
+ta
 
