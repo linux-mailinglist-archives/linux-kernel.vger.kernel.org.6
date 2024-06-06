@@ -1,74 +1,62 @@
-Return-Path: <linux-kernel+bounces-204154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B57698FE4D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:03:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60B0D8FE4DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46A4A284A0A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:03:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C82C0284AAC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC6F195397;
-	Thu,  6 Jun 2024 11:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9031953A4;
+	Thu,  6 Jun 2024 11:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fCzMSwo+"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="X2/jq/PV"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB62514E2C4
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 11:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6AB14E2C4;
+	Thu,  6 Jun 2024 11:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717671824; cv=none; b=ssO8YkzX4Qlt96CyRt7R+LFcJM+AroqMTiuFNO3hkJyIm9Oa+Io4wY6F5SNK6Zgw3C/TuubXoWovy2MO67VMVjq6MmF7lEjj+/FmnNa7+shg+01EBC8e5HTyeRp8iHWGCggoMJV1bpg1omKgAH7CylTt4lErC25SqaiO2DcH2GE=
+	t=1717671886; cv=none; b=Z0biaJ0OmEbeBuVr2BT2BNByjhYsGS1VwpaZU6XPTJKw/6/NFmMQ64GjYZWrwlOaFcgoY+SFyil9MegofO4Vd9WS8zXQFZb+biZm29eUHm51Cz1Y+knmqNFcTS4W7+7uPZhSBToKyx36d9E7SXTkMY1+D1fwJUhcd4p8QPlHWM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717671824; c=relaxed/simple;
-	bh=O6TzrTzuuPIyiVf2XUGIbRwwCuWNmcXtprbs1qF9JLQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E8n5OA65Wi5WZ0I5S+bGSewHsjvT06vAR2pZKKOnlZKfo/aCDDwlx9F405WX8XC/cg3REx9p2WPn27JzQJ26qeZsbdgEPS7tJzvABQRPBh5mI2Df1ud/cS6WHVYkswVTEm4RVoIXTg4QcpzuqMFfMMMYcFu07J79kruZG5sAYmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fCzMSwo+; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57864327f6eso43854a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 04:03:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717671820; x=1718276620; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=emgin1EcSYg/XiU2eX6KMlGDNnBu9STItuqAnBEEre8=;
-        b=fCzMSwo+PdQgCsEsNlv/3YphFASKp5UrjuBQyyBWf+szVM9yTlvnV/n8BhAhkTK1Bu
-         frMXI8T4ZMNltnZIUY9+P7gJaKPPSRN1Vs2V1AeS5MfMD1OJZ7jSJ60/aAiZaqyqay6T
-         sd9MNAESzauPvv6ya7mbSedehlDjtSbsOVIyTD0wv8dJ1n1ZU/C/SAWSvRHDt0MaYytB
-         TsFe0NXan9t+vfCmHp/1a4VdvIWfuYKy4ncWU7twSDa8WrGBkpnwDCj3IzzPcr3Qy90g
-         CFQJtbnM5fEba7Tft3RzNcpVdMpqlf3w/PdjwBl3N3pKr1jlfuv4PuM1tGMO9vK08zqK
-         GMRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717671820; x=1718276620;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=emgin1EcSYg/XiU2eX6KMlGDNnBu9STItuqAnBEEre8=;
-        b=CGRMzbd6tmm2mGJ9JZyAuEBBrHoAjV2WOsDjekbZRx635KeVNBIUTRnVSxvnK9JpuM
-         gmTaESrysyVodHgV/g3t43ElBD3zlo6n8V5K5LxkDDn9ujsRy/4AmDV7LGDAD0J9wEPK
-         sCmK2OQgfH30zWpjTXKE+uvXfiJdaEbG0/O6B51aRaQvqT/OnQuWaoDI6PY7zmTY3GnG
-         aC8H35/ybFIay+DiZ3/6K1f/nVtvfFtUOKAnrg8w0OgOPzSuGNlCiSDQp9oZQOeva0dz
-         EtJkHR1DuyD4JtRGW6w8CIkD7JvzWoDCCPTxgkj2Cu+c+l0xz3VS5izM3X7Fbf4hmhmD
-         KWcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHScFIC2qPo2mt9qxpQ2z/bi1VFNxVZ3o78hJq4I92yjM3e155RbpHvKzBDfF/j0sd+e6ZNMsf/ew7tOYbi/ww+iZMjubEj+gbyYqy
-X-Gm-Message-State: AOJu0YzUEqEhYzSEGFhnDxKX01Z+Z5F+kXB69Sw0zJvJFbLbgFAOPTMi
-	uBX6v+KX149jK5aFta5E8US2BdaJ5cGg402bwu3Xj9VKBz0mXmhn1ei6bdu3rdU=
-X-Google-Smtp-Source: AGHT+IFjGxMJ/6Gzs3DR05v8iNmpQu7iscqwSy3nSZk0P8Y0h8/Ct7luKvYEceem9XDewEk/wl3KRQ==
-X-Received: by 2002:a50:a418:0:b0:579:e690:8349 with SMTP id 4fb4d7f45d1cf-57aa55ae5f1mr2220154a12.15.1717671820001;
-        Thu, 06 Jun 2024 04:03:40 -0700 (PDT)
-Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae25ecbbsm885464a12.96.2024.06.06.04.03.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 04:03:39 -0700 (PDT)
-Message-ID: <8de9ef05-6caf-42fc-9547-58e9d340a31f@linaro.org>
-Date: Thu, 6 Jun 2024 13:03:37 +0200
+	s=arc-20240116; t=1717671886; c=relaxed/simple;
+	bh=b0gFQ+ZcaE8T903rqwYT5HjMzjueTgVUhMcZGCtC+RM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Z5DOO+PXaQl7GQiyT4ARsoggAnjCpsdysLrHFVZLMKJiNXYfcaw6jbQRUFaAaEdiRsNLKLRlfXorPGoYOzKVM+GTu23S2ADxpxpBcfidt1b6DFxxU4f3pw9FlQHbDxjbn9uJB3Vwpyea6xbAyVThTgh+ZIVzvsyGsWDOvpcSyt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=X2/jq/PV; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 456B46Og100174;
+	Thu, 6 Jun 2024 06:04:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717671846;
+	bh=20X6I5VDlzPvydZWN+ufD39ZfcX3t7agcBykyGbFZcA=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=X2/jq/PV/wz6I8IH7dSClKdOQ/skJn01ghoRGvShsTTV2ub54buEyx2JXCQw+nAa3
+	 /8X77JRCI9y0dk/LDbT+sujWi/fa00Vep1Pq9IUhwiQs8cgHBcKSjJcDanNmO3TDfz
+	 CLc93IsbTnBI2xl1mqaBkctgjIY8XvEy80qF1i5I=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 456B46XR059783
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 6 Jun 2024 06:04:06 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 6
+ Jun 2024 06:04:06 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 6 Jun 2024 06:04:05 -0500
+Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 456B3xBx034871;
+	Thu, 6 Jun 2024 06:04:00 -0500
+Message-ID: <d5786231-b79d-46a0-bb4e-020efb805559@ti.com>
+Date: Thu, 6 Jun 2024 16:33:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,193 +64,572 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: Enable tsens and thermal
- nodes
-To: Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Rajendra Nayak <quic_rjendra@quicinc.com>
-References: <20240527-x1e80100-dts-thermal-v1-1-ea13b8fa6ffc@linaro.org>
+Subject: Re: [PATCH net-next v9 2/2] net: ti: icssg_prueth: add TAPRIO offload
+ support
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+CC: Jan Kiszka <jan.kiszka@siemens.com>,
+        Dan Carpenter
+	<dan.carpenter@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>, Simon Horman
+	<horms@kernel.org>,
+        Diogo Ivo <diogo.ivo@siemens.com>,
+        Wolfram Sang
+	<wsa+renesas@sang-engineering.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Roger Quadros
+	<rogerq@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Jakub Kicinski
+	<kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
+        Jacob
+ Keller <jacob.e.keller@intel.com>,
+        Roger Quadros <rogerq@ti.com>
+References: <20240531044512.981587-3-danishanwar@ti.com>
+ <20240531044512.981587-3-danishanwar@ti.com>
+ <20240531135157.aaxgslyur5br6zkb@skbuf>
+ <20240531044512.981587-1-danishanwar@ti.com>
+ <20240531044512.981587-1-danishanwar@ti.com>
+ <20240531044512.981587-3-danishanwar@ti.com>
+ <20240531044512.981587-3-danishanwar@ti.com>
+ <20240531135157.aaxgslyur5br6zkb@skbuf>
+ <9bcc04a9-645a-4571-a679-ffe67300877a@ti.com>
+ <9bcc04a9-645a-4571-a679-ffe67300877a@ti.com>
+ <20240603135100.t57lr4u3j6h6zszd@skbuf>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240527-x1e80100-dts-thermal-v1-1-ea13b8fa6ffc@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <20240603135100.t57lr4u3j6h6zszd@skbuf>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 27.05.2024 8:51 AM, Abel Vesa wrote:
-> From: Rajendra Nayak <quic_rjendra@quicinc.com>
+Hi Vladimir,
+
+On 03/06/24 7:21 pm, Vladimir Oltean wrote:
+> Hi Danish,
 > 
-> Add tsens and thermal nodes for x1e80100 SoC.
+> On Mon, Jun 03, 2024 at 05:42:06PM +0530, MD Danish Anwar wrote:
+>>>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_qos.c b/drivers/net/ethernet/ti/icssg/icssg_qos.c
+>>>> new file mode 100644
+>>>> index 000000000000..5e93b1b9ca43
+>>>> --- /dev/null
+>>>> +++ b/drivers/net/ethernet/ti/icssg/icssg_qos.c
+>>>> @@ -0,0 +1,288 @@
+>>>> +static void tas_update_fw_list_pointers(struct prueth_emac *emac)
+>>>> +{
+>>>> +	struct tas_config *tas = &emac->qos.tas.config;
+>>>> +
+>>>> +	if ((readb(tas->active_list)) == TAS_LIST0) {
+>>>
+>>> Who and when updates tas->active_list from TAS_LIST0 to TAS_LIST1?
+>>>
+>>
+>> ->emac_taprio_replace()
+>> 	-> tas_update_oper_list()
+>> 		-> tas_set_trigger_list_change()
+>>
+>> This API send a r30 command to firmware to trigger the list change
+>> `emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_TRIGGER);`
+>>
+>> This once firmware recives this command, it swaps the active and shadow
+>> list.
+>>
+>> emac_taprio_replace() calls tas_update_oper_list()
+>>
+>> In tas_update_oper_list() in the beginning active_list is 0 i.e.
+>> TAS_LIST0, tas_update_fw_list_pointers() is called which configures the
+>> active and shadow list pointers. TAS_LIST0 becomes the active_list and
+>> TAS_LIST1 becomes the shadow list.
+>>
+>> Let's say before this API was called, active_list is TAS_LIST0 (0) and
+>> shadow_list is TAS_LIST1.
+>>
+>> After getting the shadow_list we fill three different arrays,
+>> 1. gate_mask_list[]
+>> 2. win_end_time_list[]
+>> 3. gate_close_time_list[][] - 2D array with size = num_entries * num_queues
+>>
+>> Driver only updates the shadow_list. Once shadow list is filled, we call
+>> tas_set_trigger_list_change() and ask firmware to change the active
+>> list. Now the shadow_list that we had filled (TAS_LIST1) will become
+>> active list and vice versa. We will again update our pointers
+>>
+>> This is how list is changed by calling tas_update_fw_list_pointers.
+>>
+>>>> +	tas_update_fw_list_pointers(emac);
+>>>
+>>> Calling this twice in the same function? Explanation?
+>>>
+>>
+>> As explained earlier tas_update_fw_list_pointers() is called in the
+>> beginning to set the active and shadow_list. After that we fill the
+>> shadow list and then send commmand to swap the active and shadow list.
+>> As the list are swapped we will call tas_update_fw_list_pointers() to
+>> update the list pointers.
 > 
-> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 1356 ++++++++++++++++++++++++++++++++
->  1 file changed, 1356 insertions(+)
+> Ok, but if icssg_qos_tas_init() already calls tas_update_fw_list_pointers()
+> initially, I don't understand why the first tas_update_oper_list() call
+> of tas_update_oper_list() is necessary, if only tas_set_trigger_list_change()
+> swaps the active with the shadow list. There was no unaccounted list
+> swap prior to the tas_update_oper_list() call, was there?
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> index 5f90a0b3c016..2e34086b0ddd 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> @@ -2505,6 +2505,66 @@ &config_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
->  			};
->  		};
->  
-> +		tsens0: thermal-sensor@c271000 {
-> +			compatible = "qcom,x1e80100-tsens", "qcom,tsens-v2";
-> +			reg = <0 0x0c271000 0 0x1000>, /* TM */
-> +			      <0 0x0c222000 0 0x1000>; /* SROT */
 
-Please drop the comments
+You are right. This additional call to tas_update_fw_list_pointers() is
+not needed. I will drop the call in the begining. The call should only
+be made after the lists have been swapped.
 
-[...]
+>>>> +static void tas_reset(struct prueth_emac *emac)
+>>>> +{
+>>>> +	struct tas_config *tas = &emac->qos.tas.config;
+>>>> +	int i;
+>>>> +
+>>>> +	for (i = 0; i < TAS_MAX_NUM_QUEUES; i++)
+>>>> +		tas->max_sdu_table.max_sdu[i] = 2048;
+>>>
+>>> Macro + short comment for the magic number, please.
+>>>
+>>
+>> Sure I will add it. Each elements in this array is a 2 byte value
+>> showing the maximum length of frame to be allowed through each gate.
+> 
+> Is the queueMaxSDU[] array active even with the TAS being in the reset
+> state? Does this configuration have any impact upon the device MTU?
+> I don't know why 2048 was chosen.
 
-> +
-> +	thermal-zones {
-> +		aoss0-thermal {
-> +			polling-delay-passive = <0>;
-> +			polling-delay = <0>;
+I talked to the firmware team. The value of 248 is actually wrong. It
+should be the device mtu only i.e. PRUETH_MAX_MTU.
 
-Remove polling-delay (irq driven), put something in polling-delay-passive
-(250 sounds decent)
+> 
+>>>> +static int tas_set_state(struct prueth_emac *emac, enum tas_state state)
+>>>> +{
+>>>> +	struct tas_config *tas = &emac->qos.tas.config;
+>>>> +	int ret;
+>>>> +
+>>>> +	if (tas->state == state)
+>>>> +		return 0;
+>>>> +
+>>>> +	switch (state) {
+>>>> +	case TAS_STATE_RESET:
+>>>> +		tas_reset(emac);
+>>>> +		ret = emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_RESET);
+>>>> +		tas->state = TAS_STATE_RESET;
+>>>> +		break;
+>>>> +	case TAS_STATE_ENABLE:
+>>>> +		ret = emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_ENABLE);
+>>>> +		tas->state = TAS_STATE_ENABLE;
+>>>> +		break;
+>>>> +	case TAS_STATE_DISABLE:
+>>>> +		ret = emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_DISABLE);
+>>>> +		tas->state = TAS_STATE_DISABLE;
+>>>
+>>> This can be expressed as just "tas->state = state" outside the switch statement.
+>>> But probably shouldn't be, if "ret != 0".
+>>
+>> Yes we shouldn't do that as we are sending the r30 command to firmware
+>> in each case.
+> 
+> I was saying that if there's a firmware error, we probably shouldn't
+> update our tas->state as if there wasn't.
+> 
+> And that the tas->state = state assignment is common across all switch
+> cases, so it's simpler to move it out.
+> 
 
-> +			thermal-sensors = <&tsens0 0>;
-> +
-> +			trips {
-> +				thermal-engine-config {
-> +					temperature = <125000>;
-> +					hysteresis = <1000>;
-> +					type = "passive";
-> +				};
-> +
-> +				reset-mon-config {
+Understood, I will move this out of switch block and only set it if
+emac_set_port_state() was a success.
 
-Drop all reset-mon-* stuff
+>>>
+>>>> +		break;
+>>>> +	default:
+>>>> +		netdev_err(emac->ndev, "%s: unsupported state\n", __func__);
+>>>
+>>> There are two levels of logging for this error, and this particular one
+>>> isn't useful. We can infer it went through the "default" case when the
+>>> printk below returned -EINVAL, because if that -EINVAL came from
+>>> emac_set_port_state(), that would have printed, in turn, "invalid port command".
+>>>
+>>
+>> But, the enum tas_state and enum icssg_port_state_cmd are not 1-1 mapped.
+> 
+> Correct, but you aren't printing the tas_state anyway, and there's no
+> code path possible with a tas_state outside the well-defined values.
+> 
+>> emac_set_port_state() will only return -EINVAL when `cmd >=
+>> ICSSG_EMAC_PORT_MAX_COMMANDS` which is 19. But a tas_state value of 3 is
+>> also invalid as we only support value of 0,1 and 2 so I think this print
+>> shoudl be okay
+>>
+>> enum tas_state {
+>> 	TAS_STATE_DISABLE = 0,
+>> 	TAS_STATE_ENABLE = 1,
+>> 	TAS_STATE_RESET = 2,
+>> };
+>>
+>>> I don't think that a "default" case is needed here, as long as all enum
+>>> values are handled, and the input is sanitized everywhere (which it is).
+>>>
+>>
+>> I think the default case should remain. Without default case the
+>> function will return 0 even for invalid sates. By default ret = 0, in
+>> the tas_state passed to API is not valid, none of the case will be
+>> called, ret will remaing zero. No error will be printed and the function
+>> will return 0. Keeping default case makes sure that the wrong state was
+>> requested.
+>>
+> 
+> Dead code is what it is. If a new enum tas_state value is added and it's
+> not handled there, the _compiler_ will warn, rather than the Linux runtime.
+> So it's actually easier for the developer to catch it, rather than the user.
+> You don't need to protect against your own shadow.
 
-> +					temperature = <115000>;
-> +					hysteresis = <5000>;
-> +					type = "passive";
-> +				};
-> +			};
-> +		};
-> +
-> +		cpu0-0-0-thermal {
 
-This naming is a bit too much.. is that cluster:core:sensor?
+Sure, I will drop the default case.
 
-If so, do the sensors have some sensible differentiator, like physical
-placement that could be used instead of 0/1?
+> 
+>>>> +static int tas_set_trigger_list_change(struct prueth_emac *emac)
+>>>> +{
+>>>> +	struct tc_taprio_qopt_offload *admin_list = emac->qos.tas.taprio_admin;
+>>>> +	struct tas_config *tas = &emac->qos.tas.config;
+>>>> +	struct ptp_system_timestamp sts;
+>>>> +	u32 change_cycle_count;
+>>>> +	u32 cycle_time;
+>>>> +	u64 base_time;
+>>>> +	u64 cur_time;
+>>>> +
+>>>> +	/* IEP clock has a hardware errata due to which it wraps around exactly
+>>>> +	 * once every taprio cycle. To compensate for that, adjust cycle time
+>>>> +	 * by the wrap around time which is stored in emac->iep->def_inc
+>>>> +	 */
+>>>> +	cycle_time = admin_list->cycle_time - emac->iep->def_inc;
+>>>> +	base_time = admin_list->base_time;
+>>>> +	cur_time = prueth_iep_gettime(emac, &sts);
+>>>> +
+>>>> +	if (base_time > cur_time)
+>>>> +		change_cycle_count = DIV_ROUND_UP_ULL(base_time - cur_time, cycle_time);
+>>>> +	else
+>>>> +		change_cycle_count = 1;
+>>>> +
+>>>> +	writel(cycle_time, emac->dram.va + TAS_ADMIN_CYCLE_TIME);
+>>>> +	writel(change_cycle_count, emac->dram.va + TAS_CONFIG_CHANGE_CYCLE_COUNT);
+>>>> +	writeb(admin_list->num_entries, emac->dram.va + TAS_ADMIN_LIST_LENGTH);
+>>>> +
+>>>> +	/* config_change cleared by f/w to ack reception of new shadow list */
+>>>> +	writeb(1, &tas->config_list->config_change);
+>>>> +	/* config_pending cleared by f/w when new shadow list is copied to active list */
+>>>> +	writeb(1, &tas->config_list->config_pending);
+>>>> +
+>>>> +	return emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_TRIGGER);
+>>>
+>>> The call path here is:
+>>>
+>>> emac_taprio_replace()
+>>> -> tas_update_oper_list()
+>>>    -> tas_set_trigger_list_change()
+>>>       -> emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_TRIGGER);
+>>> -> tas_set_state(emac, TAS_STATE_ENABLE);
+>>>    -> emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_ENABLE);
+>>>
+>>> I'm surprised by the calls to emac_set_port_state() in such a quick
+>>> succession? Is there any firmware requirement for how much should the
+>>> port stay in the TAS_TRIGGER state? Or is it not really a state, despite
+>>> it being an argument to a function named emac_set_port_state()?
+>>>
+>>
+>> ICSSG_EMAC_PORT_TAS_TRIGGER is not a state. emac_set_port_state() sends
+>> a command to firmware, we call it r30 command. Driver then waits for the
+>> response for some time. If a successfull response is recived the
+>> function return 0 otherwise error.
+>>
+>> Here first `emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_TRIGGER)` is
+>> called which will ask firmware to swap the active_list and shadow_list
+>> as explained above.
+>>
+>> After that ICSSG_EMAC_PORT_TAS_ENABLE cmd is sent. Upon recievinig this
+>> command firmware will Enable TAS for the particular port. (port is part
+>> of emac structure).
+>>
+>> I can see how that can be confusing given the API name is
+>> emac_set_port_state(). Some of the cmds infact triggers a state change
+>> eg. ICSSG_EMAC_PORT_DISABLE, ICSSG_EMAC_PORT_BLOCK,
+>> ICSSG_EMAC_PORT_FORWARD but some of the commands just triggers some
+>> action on the firmware side. Based on the command firmware does some
+>> actions.
+> 
+> If you're replacing an existing active schedule with a shadow one, the
+> ICSSG_EMAC_PORT_TAS_ENABLE command isn't needed because the TAS is
+> already enabled on the port, right? In fact it will be suppressed by
+> tas_set_state() without even generating an emac_set_port_state() call,
+> right?
+> 
 
-[...]
+As this point TAS is not enabled. TAS is enabled on the port only when
+ICSSG_EMAC_PORT_TAS_ENABLE is sent. Which happens at the end of
+emac_taprio_replace().
 
-> +		cpuss0-0-thermal {
-> +			polling-delay-passive = <0>;
-> +			polling-delay = <0>;
-> +			thermal-sensors = <&tsens0 9>;
-> +
-> +			trips {
-> +				thermal-engine-config {
+>>>> +}
+>>>
+>>> There's something extremely elementary about this function which I still
+>>> don't understand.
+>>>
+>>> When does the schedule actually _start_? Can that be controlled by the
+>>> driver with the high (nanosecond) precision necessary in order for the
+>>> ICSSG to synchronize with the schedule of other equipment in the LAN?
+>>>
+>>> You never pass the base time per se to the firmware. Just a number of
+>>> cycles from now. I guess that number of cycles decides when the schedule
+>>> starts, but what are those cycles relative to?
+>>>
+>>
+>> Once the shadow list is updated, the trigger is set in the firmware and
+>> for that API tas_set_trigger_list_change() is called.
+>>
+>> The following three offsets are configured in this function,
+>> 1. TAS_ADMIN_CYCLE_TIME → admin cycle time
+>> 2. TAS_CONFIG_CHANGE_CYCLE_COUNT → number of cycles after which the
+>> admin list is taken as operating list.
+>> This parameter is calculated based on the base_time, cur_time and
+>> cycle_time. If the base_time is in past (already passed) the
+>> TAS_CONFIG_CHANGE_CYCLE_COUNT is set to 1. If the base_time is in
+>> future, TAS_CONFIG_CHANGE_CYCLE_COUNT is calculated using
+>> DIV_ROUND_UP_ULL(base_time - cur_time, cycle_time)
+>> 3. TAS_ADMIN_LIST_LENGTH → Number of window entries in the admin list.
+>>
+>> After configuring the above three parameters, the driver gives the
+>> trigger signal to the firmware using the R30 command interface with
+>> ICSSG_EMAC_PORT_TAS_TRIGGER command.
+>>
+>> The schedule starts based on TAS_CONFIG_CHANGE_CYCLE_COUNT. Those cycles
+>> are relative to time remaining in the base_time from now i.e. base_time
+>> - cur_time.
+> 
+> So you're saying that the firmware executes the schedule switch at
+> 
+> 	now                  +      TAS_ADMIN_CYCLE_TIME * TAS_CONFIG_CHANGE_CYCLE_COUNT ns
+> 	~~~
+> 	time of reception of
+> 	ICSSG_EMAC_PORT_TAS_TRIGGER
+> 	R30 command
+> 
+> ?
+> 
 
-Themal engine is also a downstream invention, replace this with a
+I talked to the firmware team on this topic. Seems like this is actually
+a bug in the firmware design. This *now* is very relative and it will
+always introduce jitter as you have mentioned.
 
-trip-point0 {
-	temperature = <110000>;
-        hysteresis = <1000>;
-        type = "critical";
-}
+The firmware needs to change to handle the below two cases that you have
+mentioned.
 
-110 is in line with all the other cpu nodes
+The schedule should start at base-time (given by user). Instead of
+sending the cycle count from now to base-time to firmware. Driver should
+send the absolute cycle count corresponding to the base-time. Firmware
+can then check the curr cycle count and when it matches the count set by
+driver firmware will start scheduling.
 
-> +					temperature = <125000>;
-> +					hysteresis = <1000>;
-> +					type = "passive";
-> +				};
-> +
-> +				reset-mon-config {
-> +					temperature = <115000>;
-> +					hysteresis = <5000>;
-> +					type = "passive";
-> +				};
-> +			};
-> +		};
-> +
-> +		cpuss0-1-thermal {
+change_cycle_count = base-time / cycle-time;
 
-cpuss-x.y also isn't very meaningful.. I'm assuming x is cluster and y
-is some sensor within?
+This way the irregularity with *now* will be removed. Now even if we run
+the same command on two different ICSSG devices(whose clocks are synced
+with PTP), the scheduling will happen at same time.
 
-[...]
+As the change_cycle_count will be same for both of them. Since the
+clocks are synced the current cycle count (read from
+TIMESYNC_FW_WC_CYCLECOUNT_OFFSET) will also be same for both the devices
 
-> +		gpuss-1-thermal {
-> +			polling-delay-passive = <10>;
-> +			polling-delay = <0>;
-> +			thermal-sensors = <&tsens3 6>;
-> +
-> +			trips {
-> +				thermal-engine-config {
-> +					temperature = <125000>;
-> +					hysteresis = <1000>;
-> +					type = "passive";
-> +				};
-> +
-> +				thermal-hal-config {
-> +					temperature = <125000>;
-> +					hysteresis = <1000>;
-> +					type = "passive";
-> +				};
-> +
-> +				reset-mon-config {
-> +					temperature = <115000>;
-> +					hysteresis = <5000>;
-> +					type = "passive";
-> +				};
-> +
-> +				gpu1_junction_config: junction-config {
-> +					temperature = <95000>;
-> +					hysteresis = <5000>;
-> +					type = "passive";
-> +				};
-> +			};
+> I'm not really interested in how the driver calculates the cycle count,
+> just in what are the primitives that the firmware ABI wants.
+> 
+> Does the readb_poll_timeout() call from tas_update_oper_list() actually
+> wait until this whole time elapses? It is user space input, so it can
+> keep a task waiting in the kernel, with rtnl_lock() acquired, for a very
+> long time if the base_time is far away in the future.
+> 
 
-Please replace with something like:
+readb_poll_timeout() call from tas_update_oper_list() waits for exactly
+10 msecs. Driver send the trigger_list_change command and sets
+config_change register to 1 (details in tas_set_trigger_list_change()).
+Driver waits for 10 ms for firmware to clear this register. If the
+register is not cleared, list wasn't changed by firmware. Driver will
+then return err.
 
-https://lore.kernel.org/linux-arm-msm/20240510-topic-gpus_are_cool_now-v1-12-ababc269a438@linaro.org/
+> If my understanding is correct, then there are 2 things you cannot do
+> (which IMO are very important) with the current firmware ABI:
+> 
+> 1. You cannot synchronize the schedules on two ICSSG devices to one
+> another.
+> 
+> You are supposed to be able to run the same taprio command on the egress
+> port of 2 chained switches in a LAN:
+> 
+> tc qdisc replace dev swp0 parent root taprio \
+> 	num_tc 8 \
+> 	map 0 1 2 3 4 5 6 7 \
+> 	queues 1@0 1@1 1@2 1@3 1@4 1@5 1@6 1@7 \
+> 	base-time 0 \
+> 	sched-entry S 0x81 100000 \
+> 	sched-entry S 0x01 900000 \
+> 	flags 0x2 \
+> 	max-sdu 0 0 0 0 0 0 0 79
+> 
+> and, assuming that the switches are synchronized by PTP, the gate events
+> will be synchronized on the 2 switches.
+> 
+> But if the schedule change formula in the firmware is fundamentally
+> dependant on a "now" that depends on when the Linux driver performed the
+> TAS_TRIGGER action, the gate events will never be precisely synchronized.
 
-Konrad
+As mentioned above, changing the implemntation in firmware and driver
+can fix this. With the suggested new implementation the timing will not
+be dependent on when the driver sends TAS_TRIGGER cmd.
+
+> 
+> Here, "base-time 0" means that the driver/firmware/hardware should
+> advance the schedule start time into the closest moment in PTP time
+> which is a multiple of the cycle-time (100000+900000=1000000). So for
+> example, if the current PTP time is 1000.123456789, the closest start
+> time would be 100.124000000.
+> 
+
+That would be handled. When base-time is 0, change_cycle_count would be
+1 meaning firmware will start scheduling in the very next cycle.
+
+> 2. You cannot apply a phase offset between the schedules on two ICSSG
+> devices in the same network.
+> 
+> Since there is a PHY-dependent propagation delay on each link, network
+> engineers typically delay the schedules on switch ports along the path
+> of a stream.
+> 
+> Say for example there is a propagation delay of 800 ns on a switch with
+> base-time 0. On the next switch, you could add the schedule like this:
+> 
+> tc qdisc replace dev swp0 parent root taprio \
+> 	num_tc 8 \
+> 	map 0 1 2 3 4 5 6 7 \
+> 	queues 1@0 1@1 1@2 1@3 1@4 1@5 1@6 1@7 \
+> 	base-time 800 \
+> 	sched-entry S 0x81 100000 \
+> 	sched-entry S 0x01 900000 \
+> 	flags 0x2 \
+> 	max-sdu 0 0 0 0 0 0 0 79
+> 
+> Same schedule, phase-shifted by 800 ns, so that if the packet goes
+> through an open gate in the first switch, it will also go through an
+> open gate through the second.
+> 
+> According to your own calculations and explanations, the firmware ABI
+> makes no difference between base-time 0 and base-time 800.
+> 
+
+In the new implementation base-time 0 and base-time 800 will make a
+difference. as the change_cycle_count will be different from both the cases.
+In case of base-time 0, change_cycle_count will be 1. Implying schedule
+will start on the very next cycle.
+
+In case of base-time 800, change_cycle_count will be 800 / cycle-time.
+
+> In this case they are probably both smaller than the current time, so
+> TAS_CONFIG_CHANGE_CYCLE_COUNT will be set to the same "1" in both cases.
+> 
+
+If cycle-time is larger then both 0 and 800 then the change_cycle_count
+would be 1 in both the cases.
+
+> But even assuming a future base-time, it still will make no difference.
+> The firmware seems to operate only on integer multiples of a cycle-time
+> (here 1000000).
+
+Yes, the firmware works only on multiple of cycle time. If the base-time
+is not a multiple of cycle time, the scheduling will start on the next
+cycle count.
+
+i.e. change_cycle_count = ceil (base-time / cycle-time)
+
+> 
+> Summarized, the blocking problems I see are:
+> 
+> - For issue #2, the driver should not lie to the user space that it
+>   applied a schedule with a base-time that isn't a precise multiple of
+>   the cycle-time, because it doesn't do that.
+> 
+
+Yes, I acknowledge it's a limitation. Driver can print "requested
+base-time is not multiple of cycle-time, secheduling will start on the
+next available cycle from base-time". I agree the driver shouldn't lie
+about this. Whenever driver encounters a base time which is not multiple
+of cycle-time. It can still do the scheduling but throw a print so that
+user is aware of this.
+
+> - For issue #1, the bigger problem is that there is always a
+>   software-induced jitter which makes whatever the user space has
+>   requested irrelevant.
+> 
+
+As a I mentioned earlier, the new implementation will take care of this.
+
+I will work with the firmware team to get this fixed. Once that's done I
+will send a new revision.
+
+Thanks for all the feedbacks. Please let me know if some more
+clarification is needed.
+
+> This is sufficiently bad that I don't think it's worth spending any more
+> time on anything else until it is clear how you can make the firmware
+> actually obey the requested base-time.
+> 
+>>>> +static int emac_taprio_replace(struct net_device *ndev,
+>>>> +			       struct tc_taprio_qopt_offload *taprio)
+>>>> +{
+>>>> +	struct prueth_emac *emac = netdev_priv(ndev);
+>>>> +	int ret;
+>>>> +
+>>>> +	if (taprio->cycle_time_extension) {
+>>>> +		NL_SET_ERR_MSG_MOD(taprio->extack, "Cycle time extension not supported");
+>>>> +		return -EOPNOTSUPP;
+>>>> +	}
+>>>> +
+>>>> +	if (taprio->cycle_time < TAS_MIN_CYCLE_TIME) {
+>>>> +		NL_SET_ERR_MSG_FMT_MOD(taprio->extack, "cycle_time %llu is less than min supported cycle_time %d",
+>>>> +				       taprio->cycle_time, TAS_MIN_CYCLE_TIME);
+>>>> +		return -EINVAL;
+>>>> +	}
+>>>> +
+>>>> +	if (taprio->num_entries > TAS_MAX_CMD_LISTS) {
+>>>> +		NL_SET_ERR_MSG_FMT_MOD(taprio->extack, "num_entries %lu is more than max supported entries %d",
+>>>> +				       taprio->num_entries, TAS_MAX_CMD_LISTS);
+>>>> +		return -EINVAL;
+>>>> +	}
+>>>> +
+>>>> +	if (emac->qos.tas.taprio_admin)
+>>>> +		taprio_offload_free(emac->qos.tas.taprio_admin);
+>>>> +
+>>>> +	emac->qos.tas.taprio_admin = taprio_offload_get(taprio);
+>>>> +	ret = tas_update_oper_list(emac);
+>>>
+>>> If this fails and there was a previous emac->qos.tas.taprio_admin
+>>> schedule present, you just broke it. In particular, the
+>>> "if (admin_list->cycle_time > TAS_MAX_CYCLE_TIME)" bounds check really
+>>> doesn't belong there; it should have been done much earlier, to avoid a
+>>> complete offload breakage for such a silly thing (replacing a working
+>>> taprio schedule with a new one that has too large cycle breaks the old
+>>> schedule).
+>>>
+>>
+>> Will adding the check "if (admin_list->cycle_time > TAS_MAX_CYCLE_TIME)"
+>> in emac_taprio_replace() along with the all the checks be OK?
+> 
+> Yes, but "it will be ok" needs to be put in proper context (this small
+> thing is OK doesn't mean everything is OK).
+
+Understood. I know that the full code is still very far from being OK.
+
+-- 
+Thanks and Regards,
+Danish
 
