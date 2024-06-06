@@ -1,243 +1,205 @@
-Return-Path: <linux-kernel+bounces-203594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6845A8FDD95
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:42:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B048FDD94
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73C0C1F21F49
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:42:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CD6B284773
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF631CAA9;
-	Thu,  6 Jun 2024 03:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77EC1F93E;
+	Thu,  6 Jun 2024 03:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZKZbW8ya"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xe89Cy/L"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A82F19D89B
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 03:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B2619D89B;
+	Thu,  6 Jun 2024 03:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717645363; cv=none; b=NFt1bVJHtG464acdEv5HwGUsVXIgQoSKJ7uIVq2z/PNjdxjbvWq16jOsXWTK48qDPL9JEf/iN3Mszd7IRarU8PVncM345Cmp79pS1tgYxou+N3CxvJYO48ZtR5vTuez/JXoW9X4yWvrKPINSRsPItE8+Ee3VnVPs9jl9TeUeX7s=
+	t=1717645296; cv=none; b=JpqHNtC4mMzdLI5wQbMuCzHxH6t33Z++bNZUDMrabJ3aQHO7BHfdtLsGDsyBLnrZXkgYrG6rojhDFf5bT2zpiMCZScM89t4FGo744C42+h9NqmQ4SZ6Fl07FbB19G0jnY21wgGRmAw4ZOiBti8IjCSI4EPDNkgbPZsbdQS2Ahq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717645363; c=relaxed/simple;
-	bh=+/KH7Dt/gunYlOnwVVcGKIkZIvdq00WPW2Ix2BGRdk0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LpZXLxzAqNxFaOR3VNZx/DE8Cs50Gg9lKsiVJe+PsLA1cjDP8MDuJi8pbpQg4pWARlo0GB1+k1V6Lebkw1sVjCC+X0SFROOkKcqGip/Ws6f3HhbVquog8zFFNBrxQVXkXTyw/ybo9doKamOz2wRtfgC/mIAzB8G6mnI90gSPbKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZKZbW8ya; arc=none smtp.client-ip=198.175.65.10
+	s=arc-20240116; t=1717645296; c=relaxed/simple;
+	bh=7i6qlJ4MQazUo2BFSri14hrv8zTgFKAa/wwxkpGrDJs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DG0633jwNqWzRETbUtRnRWhJ/Hqk91ZULRiEd5l9uLc/MitdgKnRQKgI2uHgfpV+ClNTkhguVyaGMwl750iCZfJ2GIe0bhspvrdpjDYhZy7vWxlRLWMHhsnW1/OYzIvX4g2CcfZKBQwQjKhCpAC5wMDJnP+pf/TGa0hOa+jvK8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xe89Cy/L; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717645362; x=1749181362;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=+/KH7Dt/gunYlOnwVVcGKIkZIvdq00WPW2Ix2BGRdk0=;
-  b=ZKZbW8yaJZ2OIqPZKIi2PgOB+cn8web0FIHvfLAT6ai72uKkxhelsKi6
-   qsc0bBQ+CiqUV6HZ6V2/QJd/UMaZoOzPEfdlG7RtuynJzCkgj9zTSpFIY
-   JxEWdGhY8nfn0Io4sbyBsHQofznSwAj59OMCt6kpqI5WqUvayUgIMWVQJ
-   0nJEFBtR0MLXw0cnLu5bU1EM20qni0e9n+H6wXKHnf/cbuC/aDh0QiCA3
-   yMBdVsadgTr7JxNBo0N62pVNgLfF6AQN+IF/c0B+XS35oxRPhGypVavM3
-   aYhLM2Pc9W/445ihWSdb+8wdaRMyEc5J+7PwfwAmnZ90a1ZbHBBxi2VvZ
-   A==;
-X-CSE-ConnectionGUID: wr/AJ4SyS1yPE66LW2u+eQ==
-X-CSE-MsgGUID: jvMygjmwQRaGzh7ms8MtnQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="31790051"
+  t=1717645294; x=1749181294;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=7i6qlJ4MQazUo2BFSri14hrv8zTgFKAa/wwxkpGrDJs=;
+  b=Xe89Cy/LicprldoK/VTM7H8g3JAdQTBlVbJgYUTm8U4TlXvenqpVPIH8
+   uAvgjRbcRwKxHx4JJjBUGHlamUxjO2LXEYtvYu8v4agLxuuLBA1UNhPeK
+   N87AYK3V06319hyAilmDlFEUOJrlZo+Zhtz3w4ZUFSqeA8QuiMeLhxzzk
+   5Od/U66tOPRE4vroYaDvgDk+j78LfsqZfYS4JMgnQ2rh90KatA2e6kNRb
+   6BIWn/sBwnhWQBO+V8XhRAy8O+oezJsrS9/puJr0TJGh6YbM0ncW0AZ8z
+   voC0mNS2gfuZWn+ztpxMKa8cgptNGUIA+FQUOSn111Sp51XKe0v9UkS/c
+   Q==;
+X-CSE-ConnectionGUID: LV54aqIzSceklVXX3f6AYw==
+X-CSE-MsgGUID: FLYnXbuGQoSiC4yHM2JTtQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="14248354"
 X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
-   d="scan'208";a="31790051"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 20:42:41 -0700
-X-CSE-ConnectionGUID: eEeBY0UNT3u3DlMV5iHCXw==
-X-CSE-MsgGUID: wAibKvBGQvC4FgeNYjCrig==
+   d="scan'208";a="14248354"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 20:41:33 -0700
+X-CSE-ConnectionGUID: mAneGKfXSCeDwblX/sRntw==
+X-CSE-MsgGUID: 65NTedZASW2d6VIZBDyesg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
-   d="scan'208";a="75296815"
-Received: from unknown (HELO allen-box.sh.intel.com) ([10.239.159.127])
-  by orviesa001.jf.intel.com with ESMTP; 05 Jun 2024 20:42:39 -0700
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Kevin Tian <kevin.tian@intel.com>
-Cc: iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH] iommu/vt-d: Refactor PCI PRI enabling/disabling callbacks
-Date: Thu,  6 Jun 2024 11:40:19 +0800
-Message-Id: <20240606034019.42795-1-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
+   d="scan'208";a="37828634"
+Received: from kbommu-mobl3.gar.corp.intel.com ([10.213.76.177])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 20:41:30 -0700
+Message-ID: <cf24f2193c16ed070e5ec3b2f601650eb5b867ed.camel@linux.intel.com>
+Subject: Re: [PATCH v1] thermal: core: Do not fail cdev registration because
+ of invalid initial state
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM
+ <linux-pm@vger.kernel.org>
+Cc: Linux ACPI <linux-acpi@vger.kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>,  Lukasz Luba <lukasz.luba@arm.com>, Zhang
+ Rui <rui.zhang@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Laura Nao <laura.nao@collabora.com>
+Date: Wed, 05 Jun 2024 20:41:22 -0700
+In-Reply-To: <4569763.LvFx2qVVIh@kreacher>
+References: <4569763.LvFx2qVVIh@kreacher>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.0-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Commit 0095bf83554f8 ("iommu: Improve iopf_queue_remove_device()")
-specified the flow for disabling the PRI on a device. Refactor the
-PRI callbacks in the intel iommu driver to better manage PRI
-enabling and disabling and align it with the device queue interfaces
-in the iommu core.
+On Wed, 2024-06-05 at 21:17 +0200, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>=20
+> It is reported that commit 31a0fa0019b0 ("thermal/debugfs: Pass
+> cooling
+> device state to thermal_debug_cdev_add()") causes the ACPI fan driver
+> to fail probing on some systems which turns out to be due to the _FST
+> control method returning an invalid value until _FSL is first
+> evaluated
+> for the given fan.=C2=A0 If this happens, the .get_cur_state() cooling
+> device
+> callback returns an error and __thermal_cooling_device_register()
+> fails
+> as uses that callback after commit 31a0fa0019b0.
+>=20
+> Arguably, _FST should not return an inavlid
+s/inavlid/invalid
 
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/intel/iommu.h |  9 +++++
- drivers/iommu/intel/iommu.c | 77 ++++++++++++++++++++++++++++++++++---
- drivers/iommu/intel/pasid.c |  2 -
- 3 files changed, 81 insertions(+), 7 deletions(-)
+Thanks,
+Srinivas
 
-diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
-index eaf015b4353b..3d5d8f786906 100644
---- a/drivers/iommu/intel/iommu.h
-+++ b/drivers/iommu/intel/iommu.h
-@@ -1047,6 +1047,15 @@ static inline void context_set_sm_pre(struct context_entry *context)
- 	context->lo |= BIT_ULL(4);
- }
- 
-+/*
-+ * Clear the PRE(Page Request Enable) field of a scalable mode context
-+ * entry.
-+ */
-+static inline void context_clear_sm_pre(struct context_entry *context)
-+{
-+	context->lo &= ~BIT_ULL(4);
-+}
-+
- /* Returns a number of VTD pages, but aligned to MM page size */
- static inline unsigned long aligned_nrpages(unsigned long host_addr, size_t size)
- {
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 2e9811bf2a4e..2d4b122bcc1c 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -4213,6 +4213,57 @@ static int intel_iommu_enable_sva(struct device *dev)
- 	return 0;
- }
- 
-+/*
-+ * Invalidate the caches for a present-to-present change in a context
-+ * table entry according to the Spec 6.5.3.3 (Guidance to Software for
-+ * Invalidations).
-+ *
-+ * Since context entry is not encoded by domain-id when operating in
-+ * scalable-mode (refer Section 6.2.1), this performs coarser
-+ * invalidation than the domain-selective granularity requested.
-+ */
-+static void invalidate_present_context_change(struct device_domain_info *info)
-+{
-+	struct intel_iommu *iommu = info->iommu;
-+
-+	iommu->flush.flush_context(iommu, 0, 0, 0, DMA_CCMD_GLOBAL_INVL);
-+	if (sm_supported(iommu))
-+		qi_flush_pasid_cache(iommu, 0, QI_PC_GLOBAL, 0);
-+	iommu->flush.flush_iotlb(iommu, 0, 0, 0, DMA_TLB_GLOBAL_FLUSH);
-+	__iommu_flush_dev_iotlb(info, 0, MAX_AGAW_PFN_WIDTH);
-+}
-+
-+static int context_flip_pri(struct device_domain_info *info, bool enable)
-+{
-+	struct intel_iommu *iommu = info->iommu;
-+	u8 bus = info->bus, devfn = info->devfn;
-+	struct context_entry *context;
-+
-+	spin_lock(&iommu->lock);
-+	if (context_copied(iommu, bus, devfn)) {
-+		spin_unlock(&iommu->lock);
-+		return -EINVAL;
-+	}
-+
-+	context = iommu_context_addr(iommu, bus, devfn, false);
-+	if (!context || !context_present(context)) {
-+		spin_unlock(&iommu->lock);
-+		return -ENODEV;
-+	}
-+
-+	if (enable)
-+		context_set_sm_pre(context);
-+	else
-+		context_clear_sm_pre(context);
-+
-+	if (!ecap_coherent(iommu->ecap))
-+		clflush_cache_range(context, sizeof(*context));
-+	invalidate_present_context_change(info);
-+	spin_unlock(&iommu->lock);
-+
-+	return 0;
-+}
-+
- static int intel_iommu_enable_iopf(struct device *dev)
- {
- 	struct pci_dev *pdev = dev_is_pci(dev) ? to_pci_dev(dev) : NULL;
-@@ -4242,15 +4293,23 @@ static int intel_iommu_enable_iopf(struct device *dev)
- 	if (ret)
- 		return ret;
- 
-+	ret = context_flip_pri(info, true);
-+	if (ret)
-+		goto err_remove_device;
-+
- 	ret = pci_enable_pri(pdev, PRQ_DEPTH);
--	if (ret) {
--		iopf_queue_remove_device(iommu->iopf_queue, dev);
--		return ret;
--	}
-+	if (ret)
-+		goto err_clear_pri;
- 
- 	info->pri_enabled = 1;
- 
- 	return 0;
-+err_clear_pri:
-+	context_flip_pri(info, false);
-+err_remove_device:
-+	iopf_queue_remove_device(iommu->iopf_queue, dev);
-+
-+	return ret;
- }
- 
- static int intel_iommu_disable_iopf(struct device *dev)
-@@ -4261,6 +4320,15 @@ static int intel_iommu_disable_iopf(struct device *dev)
- 	if (!info->pri_enabled)
- 		return -EINVAL;
- 
-+	/* Disable new PRI reception: */
-+	context_flip_pri(info, false);
-+
-+	/*
-+	 * Remove device from fault queue and acknowledge all outstanding
-+	 * PRQs to the device:
-+	 */
-+	iopf_queue_remove_device(iommu->iopf_queue, dev);
-+
- 	/*
- 	 * PCIe spec states that by clearing PRI enable bit, the Page
- 	 * Request Interface will not issue new page requests, but has
-@@ -4271,7 +4339,6 @@ static int intel_iommu_disable_iopf(struct device *dev)
- 	 */
- 	pci_disable_pri(to_pci_dev(dev));
- 	info->pri_enabled = 0;
--	iopf_queue_remove_device(iommu->iopf_queue, dev);
- 
- 	return 0;
- }
-diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
-index abce19e2ad6f..286a8a7d66f5 100644
---- a/drivers/iommu/intel/pasid.c
-+++ b/drivers/iommu/intel/pasid.c
-@@ -768,8 +768,6 @@ static int context_entry_set_pasid_table(struct context_entry *context,
- 
- 	if (info->ats_supported)
- 		context_set_sm_dte(context);
--	if (info->pri_supported)
--		context_set_sm_pre(context);
- 	if (info->pasid_supported)
- 		context_set_pasid(context);
- 
--- 
-2.34.1
+>  value even if it is
+> evaluated before _FSL, so this may be regarded as a platform firmware
+> issue, but at the same time it is not a good enough reason for
+> failing
+> the cooling device registration where the initial cooling device
+> state
+> is only needed to initialize a thermal debug facility.
+>=20
+> Accordingly, modify __thermal_cooling_device_register() to pass a
+> negative state value to thermal_debug_cdev_add() instead of failing
+> if the initial .get_cur_state() callback invocation fails and adjust
+> the thermal debug code to ignore negative cooling device state
+> values.
+>=20
+> Fixes: 31a0fa0019b0 ("thermal/debugfs: Pass cooling device state to
+> thermal_debug_cdev_add()")
+> Closes:
+> https://lore.kernel.org/linux-acpi/20240530153727.843378-1-laura.nao@coll=
+abora.com
+> Reported-by: Laura Nao <laura.nao@collabora.com>
+> Tested-by: Laura Nao <laura.nao@collabora.com>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> =C2=A0drivers/thermal/thermal_core.c=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 11 +=
+++++++----
+> =C2=A0drivers/thermal/thermal_debugfs.c |=C2=A0=C2=A0=C2=A0 7 ++++++-
+> =C2=A02 files changed, 13 insertions(+), 5 deletions(-)
+>=20
+> Index: linux-pm/drivers/thermal/thermal_core.c
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- linux-pm.orig/drivers/thermal/thermal_core.c
+> +++ linux-pm/drivers/thermal/thermal_core.c
+> @@ -964,7 +964,8 @@ __thermal_cooling_device_register(struct
+> =C2=A0{
+> =C2=A0	struct thermal_cooling_device *cdev;
+> =C2=A0	struct thermal_zone_device *pos =3D NULL;
+> -	unsigned long current_state;
+> +	unsigned long val;
+> +	int current_state;
+> =C2=A0	int id, ret;
+> =C2=A0
+> =C2=A0	if (!ops || !ops->get_max_state || !ops->get_cur_state ||
+> @@ -1002,9 +1003,11 @@ __thermal_cooling_device_register(struct
+> =C2=A0	if (ret)
+> =C2=A0		goto out_cdev_type;
+> =C2=A0
+> -	ret =3D cdev->ops->get_cur_state(cdev, &current_state);
+> -	if (ret)
+> -		goto out_cdev_type;
+> +	ret =3D cdev->ops->get_cur_state(cdev, &val);
+> +	if (!ret && val >=3D 0 && val <=3D INT_MAX)
+> +		current_state =3D val;
+> +	else
+> +		current_state =3D -1;
+> =C2=A0
+> =C2=A0	thermal_cooling_device_setup_sysfs(cdev);
+> =C2=A0
+> Index: linux-pm/drivers/thermal/thermal_debugfs.c
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- linux-pm.orig/drivers/thermal/thermal_debugfs.c
+> +++ linux-pm/drivers/thermal/thermal_debugfs.c
+> @@ -421,6 +421,8 @@ void thermal_debug_cdev_state_update(con
+> =C2=A0	cdev_dbg =3D &thermal_dbg->cdev_dbg;
+> =C2=A0
+> =C2=A0	old_state =3D cdev_dbg->current_state;
+> +	if (old_state < 0)
+> +		goto unlock;
+> =C2=A0
+> =C2=A0	/*
+> =C2=A0	 * Get the old state information in the durations list. If
+> @@ -463,6 +465,7 @@ void thermal_debug_cdev_state_update(con
+> =C2=A0
+> =C2=A0	cdev_dbg->total++;
+> =C2=A0
+> +unlock:
+> =C2=A0	mutex_unlock(&thermal_dbg->lock);
+> =C2=A0}
+> =C2=A0
+> @@ -499,7 +502,9 @@ void thermal_debug_cdev_add(struct therm
+> =C2=A0	 * duration will be printed by cdev_dt_seq_show() as
+> expected if it
+> =C2=A0	 * runs before the first state transition.
+> =C2=A0	 */
+> -	thermal_debugfs_cdev_record_get(thermal_dbg, cdev_dbg-
+> >durations, state);
+> +	if (state >=3D 0)
+> +		thermal_debugfs_cdev_record_get(thermal_dbg,
+> cdev_dbg->durations,
+> +						state);
+> =C2=A0
+> =C2=A0	debugfs_create_file("trans_table", 0400, thermal_dbg->d_top,
+> =C2=A0			=C2=A0=C2=A0=C2=A0 thermal_dbg, &tt_fops);
+>=20
+>=20
+>=20
+>=20
 
 
