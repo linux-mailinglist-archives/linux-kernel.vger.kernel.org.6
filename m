@@ -1,132 +1,147 @@
-Return-Path: <linux-kernel+bounces-203560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6B08FDD29
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:06:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E54258FDD2A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD872B2101C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:06:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 751A5287420
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC621DA4C;
-	Thu,  6 Jun 2024 03:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762D31F5FD;
+	Thu,  6 Jun 2024 03:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="GuhBrcCU"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TIMvQRHV"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BA91BDD5
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 03:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671E51C68E;
+	Thu,  6 Jun 2024 03:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717643196; cv=none; b=QVClmUNDgcfYHW/0ExEg78nxWcqCP0L7Q7/lUI53HsBP1IGWiHRY2t/m8n+cn0QTfJWdNKWVho1M2YJ0bQeoCNTA6yK6sRW+8LxKun23bLlqohTY91ceyMpL9OebFgArn84DUUiOGQEnrQH9Nm1y68uwswkyYIC3fRIUHB1oApw=
+	t=1717643196; cv=none; b=U5yIqSOxQU1oyQVQCLxWpRfqCyDJosPdClljwdRruPCzq4efEwnn0rqNFNZVIxmTa2lwkrC6t13SIdcB5CLeMEZ6qvcE8wbC05+Ze28rTkBTJVDzTY1Zss8KkddIP/g8vVY8d3xJJfFeyNzKWE4Sc7HnfgQ4jkLxsA0yYUKvqlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717643196; c=relaxed/simple;
-	bh=ADcWD5s3SbBgke1vgRZ9Zm3ZPHyg+dBTYX/gcGpNJO4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FnONEtpZ4YPSmLcjl9Gz/p/E5LB4u5r5c486KHKfwTdhalXc0RRmtv1jaVJD3GOA9hRjvvYtpPBtm/O6djIJSFiAZzoZqhAn/zjAHDZ6/lJaNsueLD6jvRAX0/0bPI/JIMpsvroJ89A/0CBos8d2eOOxZdjdzAeWxe3GdEErDQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=GuhBrcCU; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1717643185; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=5YZZSmIQT3EnCQ697u4wLeqAC6O9xFWtLOr4ccPxfkw=;
-	b=GuhBrcCU4E8fBT5QnGjEpOt26tglym485wzQa/M1usmV2cxBrdrhofu3tCuV4Ogz74Fd9Ke7Pe15EbeK+vuYclxhPmpuTTTxViBuNtcf6GWYOjTd77LBz3oHeyViDEyknMzxnmJNqvLMxhPdT1q2gqDww0QY1bPGvi5OV8aFEU4=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R331e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0W7wm0mE_1717643184;
-Received: from 30.97.56.72(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W7wm0mE_1717643184)
-          by smtp.aliyun-inc.com;
-          Thu, 06 Jun 2024 11:06:25 +0800
-Message-ID: <7087d0af-93d8-4d49-94f4-dc846a4e2b98@linux.alibaba.com>
-Date: Thu, 6 Jun 2024 11:06:23 +0800
+	bh=DvrsBmGuwD2ImyPbsOpP7Kxt6pcNYk1wwR6Wgnw6MGk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Pjikv+jnzFdkYLnTt+PJ2j5w7Ip6DryeOUtizZ6ojz/eop4E5X6MBZ0ijyO6oF1L/hNySmXsK8EpapTu5iyxw/3T6Cx7fI7OeOvZCNpG5esAQ+zHz8r/okMFJrKSNcKTGADM7tmX1n7w9WEFc9U+q+qUD0JjS67NsQh+1QDC0Zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TIMvQRHV; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f65a3abd01so4718425ad.3;
+        Wed, 05 Jun 2024 20:06:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717643195; x=1718247995; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HjMuvcnH30KoyWBjd5euk3EXjF9nRQlbcgZhgbXTZgk=;
+        b=TIMvQRHVzromOxD7n7W6qMyegpAmxqHHi6Z4En3Vhg1oyNeY9JqPiC1PDcCDuWNuy+
+         7xxLd0OqgK2TFvlyXwAUDbG2nby6YHcKQoojHFX0OuVp2/C3FnQ/9ZXh0M3EUPuzpem2
+         xu6IGspiutS6BPmeBqZqSP/lt535Jop1VUcJwswOVRIbnjwjRfXoZ1BAM71N1ORuaGGs
+         8h9gnfYxQwjKLpSNNsllvmKGOaYjmIhITWnv3Z+52USsJa5s31+6Zta24pttdi/OO4vJ
+         LR57qtoriPIS84/Qg9CrsUi6nFM2ngxazXmIxq3wzambEhXn/A/1eC2HD0+LC2jV9S0d
+         hT6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717643195; x=1718247995;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HjMuvcnH30KoyWBjd5euk3EXjF9nRQlbcgZhgbXTZgk=;
+        b=eNWrTrGomem8XiB6kbiKdLTXeh0wLVoy0Uhf0RAM33Ng+cMpNWNlKcmqR069LbBx1H
+         ZSS31DR78IL6ptMd9NpGOp5sPao/g0gNDECKrE7k9C3hWKNPiWLcsJ3e+wotk+oUdrcT
+         yWJ0tCzZuDO0LflyElYTU7ilezEgvP7+EjXiR/cq3cp92P5dK8iuQMvEkJFoN1P+egpP
+         uqVckcxVYyhojMP6NKLsAMUNX2tUngr8tmuJEKd5bexB3/dPme0PtLWYWOfEDQsqE5ZV
+         FVXgpJR5Ii41ky8NB+am3FoxEh2STyFxE3in4jTtVFiTOAZU4BbNPiLM7A02lYsVfVO0
+         +2jg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYTDuZvzHgBWns4ocFuCWpi5/B9ZXgxoqKi4vUmPhUuIQLC4njp7anRaJsltQEW86Iutcfkhxx/lOSEaMy5x8lN8QKAPHA5cPBMT/JiCT6s/u6P+0zEUKxeP3j2Z5u+kf5Xmlb4ZLUpYQ6QncufYT+pAyvVughX2PD21/O
+X-Gm-Message-State: AOJu0YzZub5He2d9Sfnoq9lgTyq2/Kk8VeHjtX2S0sxMHwsVuaF3tcOW
+	HccCv4YUhbwlu4Zem0fQFj9q8kUXuNiBHwBhgomGTTIps79ArzrC
+X-Google-Smtp-Source: AGHT+IFZESfAMwBlJNHmCynL0DhPXDEYi3w27GieK3vEDPShijCOjqUcQk+TWV8ZF55Do87jKArwPQ==
+X-Received: by 2002:a17:902:e850:b0:1eb:fc2:1eed with SMTP id d9443c01a7336-1f6a5a33a69mr54209595ad.41.1717643194601;
+        Wed, 05 Jun 2024 20:06:34 -0700 (PDT)
+Received: from localhost (110-175-65-7.tpgi.com.au. [110.175.65.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd7e07edsm2702695ad.214.2024.06.05.20.06.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 20:06:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/page_alloc: skip THP-sized PCP list when allocating
- non-CMA THP-sized page
-To: yangge1116 <yangge1116@126.com>, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, liuzixing@hygon.cn,
- Johannes Weiner <hannes@cmpxchg.org>, Vlastimil Babka <vbabka@suse.cz>,
- Zi Yan <ziy@nvidia.com>
-References: <1717492460-19457-1-git-send-email-yangge1116@126.com>
- <c180d2a0-1e34-41f0-bae8-1205d04a5f6b@linux.alibaba.com>
- <82d31425-86d7-16fa-d09b-fcb203de0986@126.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <82d31425-86d7-16fa-d09b-fcb203de0986@126.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 06 Jun 2024 13:06:26 +1000
+Message-Id: <D1SLOYCQGIQ6.17Y5C9XJDHX33@gmail.com>
+Cc: <pbonzini@redhat.com>, <naveen.n.rao@linux.ibm.com>,
+ <christophe.leroy@csgroup.eu>, <corbet@lwn.net>, <mpe@ellerman.id.au>,
+ <namhyung@kernel.org>, <pbonzini@redhat.com>, <jniethe5@gmail.com>,
+ <atrajeev@linux.vnet.ibm.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/8] KVM: PPC: Book3S HV: Nested guest migration
+ fixes
+From: "Nicholas Piggin" <npiggin@gmail.com>
+To: "Shivaprasad G Bhat" <sbhat@linux.ibm.com>, <kvm@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>
+X-Mailer: aerc 0.17.0
+References: <171759276071.1480.9356137231993600304.stgit@linux.ibm.com>
+In-Reply-To: <171759276071.1480.9356137231993600304.stgit@linux.ibm.com>
 
+On Wed Jun 5, 2024 at 11:06 PM AEST, Shivaprasad G Bhat wrote:
+> The series fixes the issues exposed by the kvm-unit-tests[1]
+> sprs-migration test.
+>
+> The SDAR, MMCR3 were seen to have some typo/refactoring bugs.
+> The first two patches fix them.
+>
+> The remaining patches take care of save-restoring the guest
+> state elements for DEXCR, HASHKEYR and HASHPKEYR SPRs with PHYP
+> during entry-exit. The KVM_PPC_REG too for them are missing which
+> are added for use by the QEMU.
 
+These and the qemu patches all look good now. I'll give them
+some testing and send R-B in the next day or two. I'm trying
+to write a k-u-t for the hashpkey migration case...
 
-On 2024/6/4 20:36, yangge1116 wrote:
-> 
-> 
-> 在 2024/6/4 下午8:01, Baolin Wang 写道:
->> Cc Johannes, Zi and Vlastimil.
->>
->> On 2024/6/4 17:14, yangge1116@126.com wrote:
->>> From: yangge <yangge1116@126.com>
->>>
->>> Since commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for
->>> THP-sized allocations") no longer differentiates the migration type
->>> of pages in THP-sized PCP list, it's possible to get a CMA page from
->>> the list, in some cases, it's not acceptable, for example, allocating
->>> a non-CMA page with PF_MEMALLOC_PIN flag returns a CMA page.
->>>
->>> The patch forbids allocating non-CMA THP-sized page from THP-sized
->>> PCP list to avoid the issue above.
->>>
->>> Fixes: 5d0a661d808f ("mm/page_alloc: use only one PCP list for 
->>> THP-sized allocations")
->>> Signed-off-by: yangge <yangge1116@126.com>
->>> ---
->>>   mm/page_alloc.c | 10 ++++++++++
->>>   1 file changed, 10 insertions(+)
->>>
->>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->>> index 2e22ce5..0bdf471 100644
->>> --- a/mm/page_alloc.c
->>> +++ b/mm/page_alloc.c
->>> @@ -2987,10 +2987,20 @@ struct page *rmqueue(struct zone 
->>> *preferred_zone,
->>>       WARN_ON_ONCE((gfp_flags & __GFP_NOFAIL) && (order > 1));
->>>       if (likely(pcp_allowed_order(order))) {
->>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>> +        if (!IS_ENABLED(CONFIG_CMA) || alloc_flags & ALLOC_CMA ||
->>> +                        order != HPAGE_PMD_ORDER) {
->>
->> Seems you will also miss the non-CMA THP from the PCP, so I wonder if 
->> we can add a migratetype comparison in __rmqueue_pcplist(), and if 
->> it's not suitable, then fallback to buddy?
-> 
-> Yes, we may miss some non-CMA THPs in the PCP. But, if add a migratetype 
-> comparison in __rmqueue_pcplist(), we may need to compare many times 
-> because of pcp batch.
+Thanks,
+Nick
 
-I mean we can only compare once, focusing on CMA pages.
+>
+> References:
+> [1]: https://github.com/kvm-unit-tests/kvm-unit-tests
+>
+> ---
+>
+> Changelog:
+> v1: https://lore.kernel.org/kvm/171741555734.11675.17428208097186191736.s=
+tgit@c0c876608f2d/
+>  - Reordered the patches in a way to introduce the SPRs first as
+>    suggested.
+>  - Added Reviewed-bys to the reviewed ones.
+>  - Added 2 more patches to handle the hashpkeyr state
+>
+> Shivaprasad G Bhat (8):
+>       KVM: PPC: Book3S HV: Fix the set_one_reg for MMCR3
+>       KVM: PPC: Book3S HV: Fix the get_one_reg of SDAR
+>       KVM: PPC: Book3S HV: Add one-reg interface for DEXCR register
+>       KVM: PPC: Book3S HV nestedv2: Keep nested guest DEXCR in sync
+>       KVM: PPC: Book3S HV: Add one-reg interface for HASHKEYR register
+>       KVM: PPC: Book3S HV nestedv2: Keep nested guest HASHKEYR in sync
+>       KVM: PPC: Book3S HV: Add one-reg interface for HASHPKEYR register
+>       KVM: PPC: Book3S HV nestedv2: Keep nested guest HASHPKEYR in sync
+>
+>
+>  Documentation/virt/kvm/api.rst        |  3 +++
+>  arch/powerpc/include/asm/kvm_host.h   |  3 +++
+>  arch/powerpc/include/uapi/asm/kvm.h   |  3 +++
+>  arch/powerpc/kvm/book3s_hv.c          | 22 ++++++++++++++++++++--
+>  arch/powerpc/kvm/book3s_hv.h          |  3 +++
+>  arch/powerpc/kvm/book3s_hv_nestedv2.c | 18 ++++++++++++++++++
+>  6 files changed, 50 insertions(+), 2 deletions(-)
+>
+> --
+> Signature
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 3734fe7e67c0..960a3b5744d8 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -2973,6 +2973,11 @@ struct page *__rmqueue_pcplist(struct zone *zone, 
-unsigned int order,
-                 }
-
-                 page = list_first_entry(list, struct page, pcp_list);
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+               if (order == HPAGE_PMD_ORDER && 
-!is_migrate_movable(migratetype) &&
-+                   is_migrate_cma(get_pageblock_migratetype(page)))
-+                       return NULL;
-+#endif
-                 list_del(&page->pcp_list);
-                 pcp->count -= 1 << order;
-         } while (check_new_pages(page, order));
 
