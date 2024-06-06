@@ -1,138 +1,184 @@
-Return-Path: <linux-kernel+bounces-204517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DACC08FF006
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:09:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B6C58FF00D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71E3A1F234BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:09:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A6FF1F24A62
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470C719EECD;
-	Thu,  6 Jun 2024 14:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E38197A66;
+	Thu,  6 Jun 2024 14:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GpjpVti8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gESt/CPi"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD6B168C10;
-	Thu,  6 Jun 2024 14:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F30196D86
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717685377; cv=none; b=O41Rnwur3zvfrNmxPU74nDdSjnxeUFOpL2CxJc9g1rTfeVtK+I/lpedTjjseFcjpQW14aRUF4PwCOhRtfvirfKfgQIEeCnFs2/OpstvMhg+Egwj9EvqHS/R05Dy9iIXnmXbDiKqaTYZHY6MwhM0jrqC7WvmrwTlOCOT4RpuC2E4=
+	t=1717685422; cv=none; b=dAZ2fJlurnsRqR3Fl6GMXRHArDtGFxYDiqyxh+kPgoET/nQufgS0AgQS6wjpOamu4RadOF5T7Kjg1fBipSa8T3Bo8o3MGtaCrPi5JmNt7tjxbgd5Yn6gWQ6Sn6mjmGLJh40fOCBGrIdzzz0qtnAK7wCOpBQG/YPlPNAGjXBzE0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717685377; c=relaxed/simple;
-	bh=NawlGkZO31q/YuNHdtemo5FsmDquueklSL3reLTQCVk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nc5PfKWVMaWyT7py7fjeaJhFBXbbBKD1OjZANJ8qLsCt4pw0BEBJI5IO2rFiR/BfyM7XzQHLbWUtKDV++TXArs3BTZNvhTIGisrkgyeqnsuCum9kTrpmkODPu/Vg5uFg0LlIyMgcZ3/57kYhFf1t27s2K9STdZ3u/0+UXxgnJWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GpjpVti8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C7B4C2BD10;
-	Thu,  6 Jun 2024 14:49:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717685377;
-	bh=NawlGkZO31q/YuNHdtemo5FsmDquueklSL3reLTQCVk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GpjpVti8zIZRDaf+7jUHZAt5ir0Ijq3fwR5fNwfU/m50uDARoCrFQx++QEMidwXOk
-	 SAy2G0CewxH44dWhdkUuWrqm93E4nbsQWaVEwg4L6M9eps5KVoxOUKdrC+WNrlAl74
-	 XKwpLaSuPi4rcYw59uy3cNj7m4FqMCS1/vF7pthkcOA5MZ8XyxYkzlEaPFO9eWVioq
-	 Nj/yGTcUXx8amouohrs4P+ViRl324LrJsQXbEp0lClp8buQ41JYR1JqK2JpZ0HZ5jU
-	 UsM8/fPLXsp/gl006YMW/9IL4HUvtO+LmVEFYUifwnAP2XWZw6gccX+K/whiWH2Lag
-	 cOxSZael9SbKA==
-Message-ID: <4ed45f6d-fcc7-45d7-8df0-5470f7f75d0e@kernel.org>
-Date: Thu, 6 Jun 2024 16:49:32 +0200
+	s=arc-20240116; t=1717685422; c=relaxed/simple;
+	bh=nNzkTpZJ7qh9/otKbRVfsT4Y09H0DA5UH+VJfpL9/2g=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=mXmCn0p0wDolueMnbW3qvrzLvfaNQJZ5GcrGM9ZQKdWJD6QWDnV1WqO+zgxTDQR5jMFgpj6AGakb62HsbduVEJfhdb4/7G5ui0sEav/6/Evpb16flZSHWknOHaQhJwbWc1s0ktHHxGwWTuE/PsAGkwR0CcVtrl2TBxekLrDgPR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mattgilbride.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gESt/CPi; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mattgilbride.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62a3dec382eso11317387b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 07:50:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717685420; x=1718290220; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=YbF+MHEIuz2j4yWwye2pV8E1rRND1f3g4pzJjU/SQzI=;
+        b=gESt/CPiSNgWGF3RSKgF7XALR+pxtQilhZF6qaS8nrTOd2GKLlNrircD+2H6czun8b
+         Cvuv76X5ITAkQBUVy9YoGuCc0k4AzaAXnBDHyZxXAMBUpwI+GnDycpX7eQ/Q06t5wk7p
+         99tJwwnyQfGDcSwVDIZp8xMVSZlUYGtPDjJXUeaCAqKt2cGuQjIVv1O17zmIWTdhFBx4
+         Q8VhbaqrlFpXcFaL3QiTfIuFL/LmHJRpqo+MMlp6efKIHrU/QNtW/n03e6Ye6ru+5JcW
+         P7GQ4MH2pkHVEVBAkqt3NZlm96gB3+wnsRpg3I3lOKtMyBAB6nVQmF41lVAxayK/Cvja
+         SiGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717685420; x=1718290220;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YbF+MHEIuz2j4yWwye2pV8E1rRND1f3g4pzJjU/SQzI=;
+        b=DHaLG6J8sT8mi3F/ugnH0JZTEd4uwKR5Quuy4QQss+K1d28F2+8ot11xsa2MfMeOwE
+         Rg/AcVyQLrefs5ZVrxxAu++TC/z0u9xqTqdXdTMM0whGo9bamfNzpeaUopr4WlMXPEBD
+         C9PTS8Q7JeXr0E1qcFNR6ZxjhYJwIKpjQwp8o8S8651C8HrTsh0VoYDWdnDJifXoKnnc
+         WcDfZIp0cRvgJh0CiJfVUQ/ITPuqNoj0k3xxTxmovQexMRryteuBm6SropyFv9b2m5Fx
+         /Y9ix/mUYrVtro38t5ZJJ55GSzxZNF7XcAr53jYaii/TwYYbs4yJS8Ni/FgJ+VZx4mgt
+         GsoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHWuwi9txcXjhtcG9nexTdmVOHj61yHuEtlp+PUH8wL6AIUV42anvaX2sdeXwnOY4akEbU6ns20sPAPvI98h8Gog/BSbF/OEGMBjR1
+X-Gm-Message-State: AOJu0YwKllryimR6uW02g0t8PIHS64Cfw/YEl+VxL3mCcXMa903GjJuO
+	N+4UZTsAisW+Yx7zYBAAPNpXPlVTULozmAC7Ll9mG2eKZVTiCAstWk0XNlYpoR7myx8KhmdKzTY
+	q4fSJTRDE90/dY9jqO5pEVp3zwQ==
+X-Google-Smtp-Source: AGHT+IGJLuwS6IvKPZXMNSnzngsVamcYvOj+g7XUXgZKcUCcREBgTLsv19tfUudBGp+EcaAkr9Xn0Ygn7TJSh7jK9fw=
+X-Received: from mattgilbride.c.googlers.com ([fda3:e722:ac3:cc00:2b:7d90:c0a8:2ac5])
+ (user=mattgilbride job=sendgmr) by 2002:a05:690c:dcf:b0:61b:e53e:c7ae with
+ SMTP id 00721157ae682-62cc709c399mr8543147b3.2.1717685420049; Thu, 06 Jun
+ 2024 07:50:20 -0700 (PDT)
+Date: Thu, 06 Jun 2024 14:50:03 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: remoteproc: qcom,sm8550-pas: document
- the SDX75 PAS
-To: Naina Mehta <quic_nainmeht@quicinc.com>, andersson@kernel.org,
- mathieu.poirier@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, konrad.dybcio@linaro.org,
- manivannan.sadhasivam@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240606143858.4026-1-quic_nainmeht@quicinc.com>
- <20240606143858.4026-2-quic_nainmeht@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240606143858.4026-2-quic_nainmeht@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAJvMYWYC/2XMQQ6CMBCF4auQrq2Z6RQCrryHcdGWAZooNYUQD
+ eHuFjZiWL7JfP8sBo6eB3HJZhF58oMPfRr5KROuM33L0tdpCwWKUEEurZbRjpFZGmvRABYNGBD
+ p/xW58e+tdbun3flhDPGzpSdcr2tFw39lQgmyqnImZqbSwbUNoX3w2YWnWDOT2lGs9lQlChaRj LFEUB8o/ajGck8pUVLESJoqcHyg+kcLoD3VK4WSNdWFsY37o8uyfAHCHDrdVAEAAA==
+X-Mailer: b4 0.12.4
+Message-ID: <20240606-b4-rbtree-v5-0-96fe1a0e97c0@google.com>
+Subject: [PATCH v5 0/6] Red-black tree abstraction needed by Rust Binder
+From: Matt Gilbride <mattgilbride@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Christian Brauner <brauner@kernel.org>
+Cc: Rob Landley <rob@landley.net>, Davidlohr Bueso <dave@stgolabs.net>, 
+	Michel Lespinasse <michel@lespinasse.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Matt Gilbride <mattgilbride@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On 06/06/2024 16:38, Naina Mehta wrote:
-> Document the MPSS Peripheral Authentication Service on SDX75 platform.
-> 
-> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
-> ---
->  .../devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml          | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-> index 73fda7565cd1..02e15b1f78ab 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-> @@ -16,6 +16,7 @@ description:
->  properties:
->    compatible:
->      enum:
-> +      - qcom,sdx75-mpss-pas
->        - qcom,sm8550-adsp-pas
->        - qcom,sm8550-cdsp-pas
->        - qcom,sm8550-mpss-pas
+This patchset contains the red-black tree abstractions needed by the Rust
+implementation of the Binder driver.
 
-Missing updates to allOf constraints. Are you sure this is the binding
-for SDX75?
+Binder driver benefits from O(log n) search/insertion/deletion of
+key/value mappings in various places, including `process.rs` and
+`range_alloc.rs`.  In `range_alloc.rs`, the ability to store and
+search by a generic key type is also useful.
+
+Please see the Rust Binder RFC for usage examples [1]. Note that
+the `container_of` macro is currently used only by `rbtree` itself.
+
+Users of "rust: rbtree: add red-black tree implementation backed by the C version"
+    [PATCH RFC 03/20] rust_binder: add threading support
+    [PATCH RFC 05/20] rust_binder: add nodes and context managers
+    [PATCH RFC 06/20] rust_binder: add oneway transactions
+
+Users of "rust: rbtree: add iterator"
+    [PATCH RFC 17/20] rust_binder: add oneway spam detection
+
+Users of "rust: rbtree: add mutable iterator"
+    [PATCH RFC 06/20] rust_binder: add oneway transactions
+
+Users of "rust: rbtree: add `RBTreeCursor`"
+    [PATCH RFC 06/20] rust_binder: add oneway transactions
+
+Users of "rust: rbtree: add RBTree::entry"
+    Not used in the original RFC, but introduced after further
+    code review.  See: https://r.android.com/2849906
+
+The Rust Binder RFC addresses the upstream deprecation of red-black
+tree. Quoted here for convenience:
+
+"This RFC uses the kernel's red-black tree for key/value mappings, but we
+are aware that the red-black tree is deprecated. We did this to make the
+performance comparison more fair, since C binder also uses rbtree for
+this. We intend to replace these with XArrays instead. That said, we
+don't think that XArray is a good fit for the range allocator, and we
+propose to continue using the red-black tree for the range allocator."
+
+Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/ [1]
+Signed-off-by: Matt Gilbride <mattgilbride@google.com>
+---
+Changes in v5:
+- Used `Box::write` in `RBTreeNodeReservation::into_node`, removing
+  unnecessary `unsafe` blocks.
+- Updated `RBTreeCursor::remove_current` to return the removed node.
+- Link to v4: https://lore.kernel.org/r/20240603-b4-rbtree-v4-0-308e43d6abfc@google.com
+
+Changes in v4:
+- rebased onto the tip of rust-for-linux/rust-next (97ab3e8eec0ce79d9e265e6c9e4c480492180409)
+- addressed comments from draft PR on GitHub: https://github.com/Rust-for-Linux/linux/pull/1081
+- Link to v3: https://lore.kernel.org/r/20240418-b4-rbtree-v3-0-323e134390ce@google.com
+
+Changes in v3:
+- Address various feedback re: SAFETY and INVARIANT comments from v2.
+- Update variable naming and add detailed comments for the `RBTree::insert` (later moved to
+  `RBTree::raw_entry`) implementation.
+- Link to v2: https://lore.kernel.org/r/20240219-b4-rbtree-v2-0-0b113aab330d@google.com
+
+Changes in v2:
+- Update documentation link to the C header file
+- Use `core::convert::Infallible` in try_reserve_node
+- Link to v1: https://lore.kernel.org/r/20240205-b4-rbtree-v1-0-995e3eee38c0@google.com
+
+---
+Alice Ryhl (1):
+      rust: rbtree: add `RBTree::entry`
+
+Benno Lossin (1):
+      rust: kernel: add `drop_contents` to `BoxExt`
+
+Matt Gilbride (1):
+      rust: rbtree: add `RBTreeCursor`
+
+Wedson Almeida Filho (3):
+      rust: rbtree: add red-black tree implementation backed by the C version
+      rust: rbtree: add iterator
+      rust: rbtree: add mutable iterator
+
+ rust/helpers.c               |    7 +
+ rust/kernel/alloc/box_ext.rs |   24 +-
+ rust/kernel/lib.rs           |    1 +
+ rust/kernel/rbtree.rs        | 1279 ++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 1310 insertions(+), 1 deletion(-)
+---
+base-commit: 97ab3e8eec0ce79d9e265e6c9e4c480492180409
+change-id: 20231205-b4-rbtree-abb1a016f0a0
 
 Best regards,
-Krzysztof
+-- 
+Matt Gilbride <mattgilbride@google.com>
 
 
