@@ -1,119 +1,79 @@
-Return-Path: <linux-kernel+bounces-204476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B3258FEF94
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:57:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1118B8FEF98
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 711591C25B3E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:57:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A335628B360
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5641D6BD;
-	Thu,  6 Jun 2024 14:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45161AC251;
+	Thu,  6 Jun 2024 14:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dw/iUL5g"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="VcWpyeBg"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EB51E507
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB9319AD5E;
+	Thu,  6 Jun 2024 14:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717684228; cv=none; b=agfCojQFGeTeCBGhRBWSh6sMUTb8hLF1vXUEbl3hihaMmLHrOlr6oIi4mRx+Vf4q+6IwvtxfEWiYPkcZqM/+6FCLZgaEA8SL79LYgLZoeKzfw3Z5HaydaGGlmXKM/SOkCdYzcEfX1TuPjay47nomJqkUO+xg/1CeelcBoSnh0cA=
+	t=1717684234; cv=none; b=WhG6gWwzDXjEGqN6XhrfENbwBIhTssCXVmgozwuGayXyTqfRjSpOLHXP7ZAFg5MeKyc6xvLMd5FOIWuOjhel+p5C5NfDOEu5LnvIONVGzist3NhUva0fpSmoJx4+PA4crUy/OwOzwv/gRRCjh7K8rcUCdr4+y438yFG8oZjXTn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717684228; c=relaxed/simple;
-	bh=pZ1CKh3rD/Cz84c1OVJeXYmbaArg0035BD5hKW/0e0k=;
+	s=arc-20240116; t=1717684234; c=relaxed/simple;
+	bh=OvnfEQO/21Hp0O519uSBy/WK6+BMymWF8Iu1zCEidYM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xx+3bdHsEW9AKz8FyGtLU6iXRHldelBb/dmJBexC5EvKs/fjjVD4d3bgLbMdxLGRs4mwwDbXRe6AW9F4ais/sf8MmbdGYTl8R/KT5hDMpBB7pJCRFoBjkS+Y9buc4lGIOiXNpTcgp06pI3dZy48NYhb6AHA0LhI+7oIpLBMywRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dw/iUL5g; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717684225;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iqw3ulTgT3WOYmTar3ZvencBj9bvK1e+eNQvYeGna2o=;
-	b=Dw/iUL5gzTTaFLaiq4HLZs0jEcGVf+lIpplZX6hLPl0p5QT2DFn6UyfKuslj132suca5S3
-	xQUvYR9Ym97hy+iNXgQxbBCfIAPopb9gqa5335M2rwVomKmJfja6pETv2h4tmoxVCNFcqg
-	hrd9xQvOvrFqiWViESKv282JZrY5xoM=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-303-bNueIWOhOgeP9J9aaoLCfA-1; Thu,
- 06 Jun 2024 10:30:22 -0400
-X-MC-Unique: bNueIWOhOgeP9J9aaoLCfA-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5062F196DFDF;
-	Thu,  6 Jun 2024 14:30:20 +0000 (UTC)
-Received: from fedora (unknown [10.72.113.78])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6B9301959178;
-	Thu,  6 Jun 2024 14:30:11 +0000 (UTC)
-Date: Thu, 6 Jun 2024 22:30:06 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: yebin <yebin@huaweicloud.com>
-Cc: Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ye Bin <yebin10@huawei.com>, Zhang Yi <yizhan@redhat.com>,
-	"Ewan D. Milne" <emilne@redhat.com>, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH] block: bio-integrity: fix potential null-ptr-deref in
- bio_integrity_free
-Message-ID: <ZmHH7mW0M80RaPlj@fedora>
-References: <20240606062655.2185006-1-yebin@huaweicloud.com>
- <ZmFatW3BEzTPgR7S@infradead.org>
- <66619EB6.4040002@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u0BTaiOUVjpymH44olCgFH1wZcYUkZCRr5GbUAQWBsYydhbUA2YT5gKiLw3zT1jgPjJS87zanlGIE78WFjgubM1kPLBJjwO7TXv0lGegOWVfIfebjDNFpDde6sThutxSJozD403h7U42hd5rI76Z51PgtSwzHz6AC618dBeP/xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=VcWpyeBg; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1717684225;
+	bh=OvnfEQO/21Hp0O519uSBy/WK6+BMymWF8Iu1zCEidYM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VcWpyeBgOqzYo+lhsjYvWrRoBs+s2FGG7fSBHO8oAWErIz93Glkzhc8QScYlhq0gB
+	 ZQ0AZgvBNHbdLqrtRPTr4UpzwlSvkT2zVYDFiohgrZukOfIw392Ex50103HHRg5par
+	 qspoKxIu9dIkPl8xmUGkCvGtpUwbI4Y701sUsPEA=
+Date: Thu, 6 Jun 2024 16:30:25 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	chrome-platform@lists.linux.dev, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (cros_ec) Prevent read overflow in probe()
+Message-ID: <ea14f4b3-0785-46f8-8d8c-f4398c454b1b@t-8ch.de>
+References: <42331b70-bd3c-496c-8c79-3ec4faad40b8@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <66619EB6.4040002@huaweicloud.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <42331b70-bd3c-496c-8c79-3ec4faad40b8@moroto.mountain>
 
-On Thu, Jun 06, 2024 at 07:34:14PM +0800, yebin wrote:
+Thanks!
+
+On 2024-06-06 16:12:11+0000, Dan Carpenter wrote:
+> The "resp.sensor_name" comes from cros_ec_cmd() and it hasn't necessarily
+> been NUL terminated.  We had not intended to read past "sensor_name_size"
+> bytes, however, there is a width vs precision bug in the format string.
+> The format needs to be precision '%.*s' instead of width '%*s'.
+> Precision prevents an out of bounds read, but width is a no-op.
 > 
-> 
-> On 2024/6/6 14:44, Christoph Hellwig wrote:
-> > What kernel is this on?  As of Linux 6.9 we are now always freezing
-> v4.18
-> > the queue while updating the logical_block_size in the nvme driver,
-> > so there should be no inflight I/O while it is changing.
-> > 
-> The root cause of the problem is that there is no concurrency protection
-> between
-> issuing DIO checks in __ blkdev direct IO simple() and updating logical
-> block sizes ,
-> resulting in the block layer being able to see DIOs that are not aligned
-> with logical
-> blocks.
+> Fixes: bc3e45258096 ("hwmon: add ChromeOS EC driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Yeah, that is one area queue freezing can't cover logical block size
-change, but I'd suggest to put the logical bs check into submit_bio() or
-slow path of __bio_queue_enter() at least.
+Acked-by: Thomas Weißschuh <linux@weissschuh.net>
 
-BTW, Yi has one reproducer, and slab is corrupted just like this report
-when running 'nvme format' & IO on partitions.
-
-I am not sure if this kind of change can avoid the issue completely, anyway
-Yi and I can test it and see if the kind of change works.
-
-My concern is that nvme format is started without draining IO, and
-IO can be submitted to hardware when nvme FW is handling formatting.
-I am not sure if nvme FW can deal with this situation correctly.
-Ewan suggested to run 'nvme format' with exclusive nvme disk open, which
-needs nvme-cli change.
+devm_kstrndup() would have been nice.
 
 
-
-Thanks,
-Ming
-
+Thomas
 
