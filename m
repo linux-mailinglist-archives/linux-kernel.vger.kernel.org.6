@@ -1,140 +1,135 @@
-Return-Path: <linux-kernel+bounces-204166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FC438FE51C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:19:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E8CB8FE542
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AC452876A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:19:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6013E1C21937
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7816F195392;
-	Thu,  6 Jun 2024 11:18:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55EB7153585
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 11:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA2E1957F2;
+	Thu,  6 Jun 2024 11:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="I9EZ7Y/l"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4775D160865;
+	Thu,  6 Jun 2024 11:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717672735; cv=none; b=Dgco7KDeh0j9/q+LveXfOEN7C69PFZ+p25FZH0BewieBXz/Lt5XLzYQ2BGHkw0wHHb0WOiFIX9+kNwImw2qEtq4k4Kg557A+dnB9CwIUQhF0us6M7bMlVA0MqdNeWQCkikWxjd6caLafROT6B2WlomTmgzUDtVqE5GHTLEQ03xs=
+	t=1717672927; cv=none; b=BX//T9PCLVP8kW3jqQxrfjc/WzHMwYTYLLDXqfAZEixe7OvHtsKSoQDHQb+TItq8ttC3KuWyfnOXlem/C/hk6HPta8naD9uXw9LAJAVL7ARFhmzyWYhwh3iWzfSRv/4uVqEhRuU2UdVKQTqg7FE5o1+HtLZDS2s9OYc9nZeYSm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717672735; c=relaxed/simple;
-	bh=7jev0F1MNj88ehg7RxQ/SzvgEtu1Ajfuk8eCFTpmozM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QlqFeKbtmk0KNMswaqVkRjqC2lVBYUCVdNrpo9on5D6YyKALLLoJyew3nchYlBxxqyt7H3fdfxqeVkOYBY7QOwsRW6O53RLSfwBHru2xts28aIMV0TJG7oaTYd9ZfDuXZ/+BVJlZpcbwWFWOedBOVUSgsNw4XNM1rLQTLltIS+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D3571576
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 04:19:17 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 59BC73F762
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 04:18:52 -0700 (PDT)
-Date: Thu, 6 Jun 2024 12:18:43 +0100
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: pengfuyuan <pengfuyuan@kylinos.cn>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	k2ci <kernel-bot@kylinos.cn>
-Subject: Re: [PATCH] arm/komeda: Compile DEFINE_SHOW_ATTRIBUTE() only when
- CONFIG_DEBUG_FS is enabled
-Message-ID: <ZmGbE3g_OFuowEgF@e110455-lin.cambridge.arm.com>
-References: <20240606075846.1307007-1-pengfuyuan@kylinos.cn>
- <87ed9abhxx.fsf@intel.com>
+	s=arc-20240116; t=1717672927; c=relaxed/simple;
+	bh=QHITYfArNAu5Rk8S7h7iCcXXlTjF5EYR3au8v/kNbmk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dD0aDi5xDsZdgqcE3cgSOn8Qh/C7EVCw705GebYZ/yUpwVIfjL93XGWV9gE2YFQDje1+QQ7jos/IRhK6cBPo0OcWNOIeFeDtV6zSRkpwOF5OfsFmgPvRM31kE9PpR4XNQiOsbVQIZHikq46cHKEqrp03KPoRHSDFDJKdhi4jbVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=I9EZ7Y/l; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id 8FD82100003;
+	Thu,  6 Jun 2024 14:21:44 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1717672904; bh=Vp9npdqLFP/lcQh3A2I1pzb9L/b0Qc1VzUDSRtwXlK8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=I9EZ7Y/l/fjO6n/oAcRH/YOp5FUAKQyMzKWX+LTTJMsXGwxuQjYQ1qUGOWSZSTzes
+	 l3iSthS/hc3gv8HsAJaN4tLLFfopdY/rRrzesP14Oj7hwuWp/OndPfqtTXq/Z5/ES7
+	 2Ijx2Sz1wGJp5yE618CIyQgfrKSyw23egjnhzQ97nlQAXJqhLt8ecPIVJzH2Qol0xd
+	 y67kxhwIS0h+TUm+R0BPb/CQVhKkXiQeMb8aoNodpOcwI1Te5JnrGap55OD73uBMiD
+	 lE1J9ivBcvMqOThMDe4fR20stniW5V1Ka1i429sQyp0tEyPru7m49DOTjekWC2UHTV
+	 MZDc/BRNO2NCg==
+Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Thu,  6 Jun 2024 14:20:24 +0300 (MSK)
+Received: from localhost.localdomain (172.17.215.6) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 6 Jun 2024
+ 14:20:03 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: Weiyi Lu <weiyi.lu@mediatek.com>, <stable@vger.kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, Sasha Levin <sashal@kernel.org>, AngeloGioacchino
+ Del Regno <angelogioacchino.delregno@collabora.com>, Markus
+ Schneider-Pargmann <msp@baylibre.com>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH 5.10/5.15/6.1 v2] clk: mediatek: mt8183: Add memory allocation fail handling in clk_mt8183_top_init_early()
+Date: Thu, 6 Jun 2024 14:19:49 +0300
+Message-ID: <20240606111949.35502-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20240606103402.23912-1-amishin@t-argos.ru>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <87ed9abhxx.fsf@intel.com>
+Content-Type: text/plain
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185766 [Jun 06 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_from_domain_doesnt_match_to}, mx1.t-argos.ru.ru:7.1.1;t-argos.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/06/06 10:23:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/06/06 10:36:00 #25485870
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Thu, Jun 06, 2024 at 11:20:58AM +0300, Jani Nikula wrote:
-> On Thu, 06 Jun 2024, pengfuyuan <pengfuyuan@kylinos.cn> wrote:
-> > We do not call komeda_debugfs_init() and the debugfs core function
-> > declaration if CONFIG_DEBUG_FS is not defined, but we should not
-> > compile it either because the debugfs core function declaration is
-> > not included.
-> >
-> > Reported-by: k2ci <kernel-bot@kylinos.cn>
+No upstream commit exists for this commit.
 
-Can we see what the bot reported?
+The issue was introduced with commit c93d059a8045 ("clk: mediatek: mt8183:
+Register 13MHz clock earlier for clocksource")
 
-> > Signed-off-by: pengfuyuan <pengfuyuan@kylinos.cn>
-> 
-> An interesting alternative might actually be to remove *all* the
-> CONFIG_DEBUG_FS conditional compilation from the file. Since the debugfs
-> functions have no-op stubs for CONFIG_DEBUG_FS=n, the compiler will
-> optimize the rest away, because they're no longer referenced. (For the
-> same reason, I don't think this patch has an impact for code size.)
-> 
-> The upside for removing conditional compilation is that you'll actually
-> do build testing for both CONFIG_DEBUG_FS config values. Assuming most
-> developers have it enabled, there's not a lot of testing going on for
-> CONFIG_DEBUG_FS=n, and you might introduce build failures with the
-> conditional compilation.
-> 
-> Of course, up to Liviu to decide.
+In case of memory allocation fail in clk_mt8183_top_init_early()
+'top_clk_data' will be set to NULL and later dereferenced without check.
+Fix this bug by adding NULL-return check.
 
-Yeah, I quite like the idea of removing the conditional compilation from
-the file entirely.
+Upstream branch code has been significantly refactored and can't be
+backported directly.
 
-Pengfuyuan, do you mind sending a new patch removing all the CONFIG_DEBUG_FS
-from the file, rather than moving things around?
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Best regards,
-Liviu
+Fixes: c93d059a8045 ("clk: mediatek: mt8183: Register 13MHz clock earlier for clocksource")
+Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+---
+v1->v2: Add "Fixes:" tag, fix subject misspell
 
-> 
-> 
-> BR,
-> Jani.
-> 
-> 
-> > ---
-> >  drivers/gpu/drm/arm/display/komeda/komeda_dev.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-> > index 14ee79becacb..7ada8e6f407c 100644
-> > --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-> > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-> > @@ -21,6 +21,7 @@
-> >  
-> >  #include "komeda_dev.h"
-> >  
-> > +#ifdef CONFIG_DEBUG_FS
-> >  static int komeda_register_show(struct seq_file *sf, void *x)
-> >  {
-> >  	struct komeda_dev *mdev = sf->private;
-> > @@ -43,7 +44,6 @@ static int komeda_register_show(struct seq_file *sf, void *x)
-> >  
-> >  DEFINE_SHOW_ATTRIBUTE(komeda_register);
-> >  
-> > -#ifdef CONFIG_DEBUG_FS
-> >  static void komeda_debugfs_init(struct komeda_dev *mdev)
-> >  {
-> >  	if (!debugfs_initialized())
-> 
-> -- 
-> Jani Nikula, Intel
+ drivers/clk/mediatek/clk-mt8183.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
+diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
+index 78620244144e..8377a877d9e3 100644
+--- a/drivers/clk/mediatek/clk-mt8183.c
++++ b/drivers/clk/mediatek/clk-mt8183.c
+@@ -1185,6 +1185,11 @@ static void clk_mt8183_top_init_early(struct device_node *node)
+ 	int i;
+ 
+ 	top_clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
++	if (!top_clk_data) {
++		pr_err("%s(): could not register clock provider: %d\n",
++			__func__, -ENOMEM);
++		return;
++	}
+ 
+ 	for (i = 0; i < CLK_TOP_NR_CLK; i++)
+ 		top_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+2.30.2
+
 
