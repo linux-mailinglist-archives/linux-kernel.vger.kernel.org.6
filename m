@@ -1,170 +1,134 @@
-Return-Path: <linux-kernel+bounces-204772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AB338FF382
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:16:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5870A8FF36E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0D15B256AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:10:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E67EF2845A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CD3198E84;
-	Thu,  6 Jun 2024 17:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C6E198E8B;
+	Thu,  6 Jun 2024 17:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FwLPMfxO"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="kpWsQY2+"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BB6224D1;
-	Thu,  6 Jun 2024 17:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF18196DA2
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 17:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717693826; cv=none; b=QzAFBabIdUnpMa9uBE0aaPxNwhnnBnIPSRqZ7x7mM7VLIvASBcI7EgbLzjmxqKeDelznWBJ76MqynSOEv9/BzeM9QA0gUfAG3z8DVQV7Dz55ynj1uubkghMSeBdr4GiySDsNDvLtBTPBE8moowdBkQFHQ8zyrkd8o5RvN0nk9RE=
+	t=1717694045; cv=none; b=insb8AYysl0ZpVqaEJRj0FneIIO6GqbRDvsSI8fAqtuMfbCLlGiecF+7o7J+J1ITqmVQlsvdMn6+tFKD4JmLEUwHZkNXeMyuCd9VeL+JRE67PM3Eo8SzX6BgsJC7rNxYUpmsZM88rk/fGuLdtlpu/tvmPmlXphHfprE8p5oAyyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717693826; c=relaxed/simple;
-	bh=M70tp6532oErosXvST9jh7Vo9666z4tcB3oOndDwuWo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aiDu3bUys2KrKvot9jGaqVjx5UY/uZ84oDjqYAT9z1x1xxB7aq7SD1z/yuSkr7lZmTXfesfk8XTbEWoCGw6x3+U7BO2m+A6v8CcnBT+TIzC1rjclIhdmcbihZnWNutKPsAkcUTgI1bH2xKdJ+10J4obYuH84LY9g4gqYAWEj9yM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FwLPMfxO; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52b94ad88cbso1882106e87.0;
-        Thu, 06 Jun 2024 10:10:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717693823; x=1718298623; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vfcPheLV0NZCmf87grsxqRgL031WLMyzJrb0w/6enLU=;
-        b=FwLPMfxOY2UivHsEBqPZJSUYsTJ2gFu9CCyLYNTISJh9QqTx2uYLsxqsURO8Ffw0eK
-         VUC2vozC6NnqwZl4yn0V1yCajm/GzIIExF0KSafQEVYNmX4XAyj9+mE/4VXTj3vvvzmU
-         0oZPusyxzTLjBAEMteDVtHpq/5rqyLPVGJIEC+NXR/Kv4qCpphb2fy/BoiDBMcZ6gU9u
-         QQux5JzIW/Tpa8cLoWgt6K0afncWT7ozOhT9o3WzR+uEWVD8cHTy57YDH/ZPEv6PLWgI
-         59puwfdbabzuOcwairzvGVCXpgQ2ZRgTeTSEkZfVb0oz3EpzWGOPTUF4hFFZzS/zZ4HK
-         rd3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717693823; x=1718298623;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vfcPheLV0NZCmf87grsxqRgL031WLMyzJrb0w/6enLU=;
-        b=pEU2hzL6XX8s+P4ELdiqVNzK+YnZP0jRZwsI9hYa0dO8OKTOd9XyhZNDQbRlsJgr4O
-         T3YqIx44F+JjEOGon7akoyNQ+incqc3OfTC5aylSH6i0oX/yllQ1ovZ7uOy3jnI02D6U
-         X3LjT+G37vfgFGageMZo51zicXZ7sIMDUPSi34sUhg+/7XNzZWhFydKwxTUZrVLCz0ca
-         ovzNpy9aZAkBYjpdhKq/Y3j+2BF7xzkbp4oszFUrAjg5e7g8lffksQsHGHm4tv84l1Qq
-         wttaqD0iVXLtOURHWcpIvmWxyfkcpGqyCfQGyF7TG09sBgaFFKrNkd1LxcAnXrs69VhH
-         uk3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWy+GvOMYSJLZg03U9nkga4yhj8sbckBDMxAp57PYrUXrpHEHHTntqvcWamaFF8AH2DJa3bmEPmOmAxdqsD18kYm6G0tkaBkATLeWY+
-X-Gm-Message-State: AOJu0YyeGvYovP0QC86AT+6n1059wmksY8zn36AtQfTTq7mpVc/yqwab
-	5hWcJFGxf4nX1TrCyDC/6teO4sE49l9xUw1cXy1xUn8n468xTtw0
-X-Google-Smtp-Source: AGHT+IHjAV1sRFdp+OWciQrMCzE/Ou7KGCZoDPrUBVN8JEZkK68c3eqRAB4TI9M5ylBpowsDZcF8Qg==
-X-Received: by 2002:a05:6512:3f09:b0:51f:3e0c:ace3 with SMTP id 2adb3069b0e04-52bb9f785d9mr227002e87.16.1717693822817;
-        Thu, 06 Jun 2024 10:10:22 -0700 (PDT)
-Received: from [10.0.0.42] (host-85-29-124-88.kaisa-laajakaista.fi. [85.29.124.88])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb423cf28sm246062e87.194.2024.06.06.10.10.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 10:10:22 -0700 (PDT)
-Message-ID: <6a88c1b3-b3d0-48d0-a620-b17464cb559e@gmail.com>
-Date: Thu, 6 Jun 2024 20:13:55 +0300
+	s=arc-20240116; t=1717694045; c=relaxed/simple;
+	bh=2J55QsUu0z3E0qDgXwQdGuYSG3si4g5PUGdsDhCwlfw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Em0hCx9DYCKGa8x8gYT4F1r1yzv/0zZq7KZVOeWn22my4AuUbXLes6QyT40tDR7lsI64xFFkyBXcIw0nGGaBsfjuubMIQrDOui2vyw/t3t1Hbjpo1fVnrJwrIDykEewxDDUMfQtvHyGWrWTekfZcy7CNCOdA3UgJSv+8Sig5ats=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=kpWsQY2+; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=1vBrOmztxvBw+j73gnLOXwBxCVfezAXKUqEGyYm7Fts=; b=kpWsQY2+cY0zYTy6UinHv5YmIN
+	7lP0AP1opPSmrj4ovt/CwCKTZohixjRO7oMjFCcjLYw8kr+4g3O5cdCWB4mGLZUKSqeN1pf6GiVvB
+	DjfOkZH3NmsY/wkBRwI/ZvJcXQu8s6WHDB2JSaOi+DDhmlxEqepkAT0BQUVOahnBi1psQdjSEGBzD
+	hc83WZfTHp/lJAFHkkLD8drOP+V/fEtkCOLDmqEtoItOXinUlU4VJO3JodLHl9kvUR3gaH+QSId3P
+	fO6mLgGyn4V3mdZTj60sC/ARwDW0j199MLwzWuyHuIXvwBPD9HYSEwO2js1iOGROEzJAGYVB9+gxc
+	b4goRBQg==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <esben@geanix.com>)
+	id 1sFGgb-00012F-Sw; Thu, 06 Jun 2024 19:13:58 +0200
+Received: from [80.62.117.184] (helo=localhost)
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <esben@geanix.com>)
+	id 1sFGgY-0005oY-0K;
+	Thu, 06 Jun 2024 19:13:57 +0200
+From: Esben Haabendal <esben@geanix.com>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Pratyush Yadav <pratyush@kernel.org>,  Michael Walle
+ <mwalle@kernel.org>,  Miquel Raynal <miquel.raynal@bootlin.com>,  Richard
+ Weinberger <richard@nod.at>,  Vignesh Raghavendra <vigneshr@ti.com>,
+  linux-mtd@lists.infradead.org,  linux-kernel@vger.kernel.org,  Rasmus
+ Villemoes <rasmus.villemoes@prevas.dk>
+Subject: Re: [PATCH v2 1/2] mtd: spi-nor: core: add flag for doing optional
+ SFDP
+In-Reply-To: <a379a411-2c9e-4d9d-aa8f-4c4f3463cc27@linaro.org> (Tudor
+	Ambarus's message of "Thu, 6 Jun 2024 14:31:22 +0100")
+References: <20240603-macronix-mx25l3205d-fixups-v2-0-ff98da26835c@geanix.com>
+	<20240603-macronix-mx25l3205d-fixups-v2-1-ff98da26835c@geanix.com>
+	<a379a411-2c9e-4d9d-aa8f-4c4f3463cc27@linaro.org>
+Date: Thu, 06 Jun 2024 19:13:57 +0200
+Message-ID: <878qziat9m.fsf@geanix.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] ASoC: ti: davinci-mcasp: Set min period size using
- FIFO config
-To: Jai Luthra <j-luthra@ti.com>, Lars-Peter Clausen <lars@metafoo.de>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- alsa-devel@alsa-project.org
-References: <20240604-asoc_next-v1-0-e895c88e744d@ti.com>
- <20240604-asoc_next-v1-2-e895c88e744d@ti.com>
-Content-Language: en-US
-From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
-In-Reply-To: <20240604-asoc_next-v1-2-e895c88e744d@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authenticated-Sender: esben@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27298/Thu Jun  6 10:30:08 2024)
 
-Hi,
+Tudor Ambarus <tudor.ambarus@linaro.org> writes:
 
-On 6/4/24 1:01 PM, Jai Luthra wrote:
-> The minimum period size was enforced to 64 as older devices integrating
-> McASP with EDMA used an internal FIFO of 64 samples.
-> 
-> With UDMA based platforms this internal McASP FIFO is optional, as the
-> DMA engine internally does some buffering which is already accounted for
-> when registering the platform. So we should read the actual FIFO
-> configuration (txnumevt/rxnumevt) instead of hardcoding frames.min to
-> 64.
-> 
-> Signed-off-by: Jai Luthra <j-luthra@ti.com>
-> ---
->  sound/soc/ti/davinci-mcasp.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/soc/ti/davinci-mcasp.c b/sound/soc/ti/davinci-mcasp.c
-> index 1e760c315521..2a53fb7e72eb 100644
-> --- a/sound/soc/ti/davinci-mcasp.c
-> +++ b/sound/soc/ti/davinci-mcasp.c
-> @@ -70,6 +70,7 @@ struct davinci_mcasp_context {
->  struct davinci_mcasp_ruledata {
->  	struct davinci_mcasp *mcasp;
->  	int serializers;
-> +	u8 numevt;
->  };
->  
->  struct davinci_mcasp {
-> @@ -1470,12 +1471,13 @@ static int davinci_mcasp_hw_rule_format(struct snd_pcm_hw_params *params,
->  static int davinci_mcasp_hw_rule_min_periodsize(
->  		struct snd_pcm_hw_params *params, struct snd_pcm_hw_rule *rule)
->  {
-> +	struct davinci_mcasp_ruledata *rd = rule->private;
->  	struct snd_interval *period_size = hw_param_interval(params,
->  						SNDRV_PCM_HW_PARAM_PERIOD_SIZE);
->  	struct snd_interval frames;
->  
->  	snd_interval_any(&frames);
-> -	frames.min = 64;
-> +	frames.min = rd->numevt;
+> On 6/3/24 14:09, Esben Haabendal wrote:
+>> A dedicated flag for triggering call to
+>> spi_nor_sfdp_init_params_deprecated() allows enabling optional SFDP read
+>> and parse, with fallback to legacy flash parameters, without having dual,
+>> quad or octal parameters set in the legacy flash parameters.
+>> 
+>> With this, spi-nor flash parts without SFDP that is replaced with a
+>> different flash NOR flash part that does have SFDP, but shares the same
+>> manufacturer and device ID is easily handled.
+>> 
+>> Signed-off-by: Esben Haabendal <esben@geanix.com>
+>> ---
+>>  drivers/mtd/spi-nor/core.c | 3 ++-
+>>  drivers/mtd/spi-nor/core.h | 1 +
+>>  2 files changed, 3 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
+>> index 3e1f1913536b..1c4d66fc993b 100644
+>> --- a/drivers/mtd/spi-nor/core.c
+>> +++ b/drivers/mtd/spi-nor/core.c
+>> @@ -2933,7 +2933,8 @@ static void spi_nor_init_params_deprecated(struct spi_nor *nor)
+>>  
+>>  	spi_nor_manufacturer_init_params(nor);
+>>  
+>> -	if (nor->info->no_sfdp_flags & (SPI_NOR_DUAL_READ |
+>> +	if (nor->info->no_sfdp_flags & (SPI_NOR_TRY_SFDP |
+>
+> I don't like that we update deprecated methods. The solution though is
+> elegant.
 
-64 was a nice number ;)
+Maybe we should un-deprecate it? I don't understand why it should be
+deprecated. It obviously has a valid purpose.
 
->  	frames.integer = 1;
->  
->  	return snd_interval_refine(period_size, &frames);
-> @@ -1516,6 +1518,9 @@ static int davinci_mcasp_startup(struct snd_pcm_substream *substream,
->  		if (mcasp->serial_dir[i] == dir)
->  			max_channels++;
->  	}
-> +	ruledata->numevt = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) ?
-> +				   mcasp->txnumevt :
-> +				   mcasp->rxnumevt;
-
-Do this at the same location where the rest of the ruledata members are
-initialized, or
-
->  	ruledata->serializers = max_channels;
->  	ruledata->mcasp = mcasp;
->  	max_channels *= tdm_slots;
-> @@ -1591,7 +1596,7 @@ static int davinci_mcasp_startup(struct snd_pcm_substream *substream,
->  
->  	snd_pcm_hw_rule_add(substream->runtime, 0,
->  			    SNDRV_PCM_HW_PARAM_PERIOD_SIZE,
-> -			    davinci_mcasp_hw_rule_min_periodsize, NULL,
-> +			    davinci_mcasp_hw_rule_min_periodsize, ruledata,
-
-You could just pass a pointer to txnumevt/rxnumevt directly...
-
->  			    SNDRV_PCM_HW_PARAM_PERIOD_SIZE, -1);
->  
->  	return 0;
-> 
-
--- 
-Péter
+>> +					SPI_NOR_DUAL_READ |
+>>  					SPI_NOR_QUAD_READ |
+>>  					SPI_NOR_OCTAL_READ |
+>>  					SPI_NOR_OCTAL_DTR_READ))
+>> diff --git a/drivers/mtd/spi-nor/core.h b/drivers/mtd/spi-nor/core.h
+>> index 442786685515..77f61a984cb3 100644
+>> --- a/drivers/mtd/spi-nor/core.h
+>> +++ b/drivers/mtd/spi-nor/core.h
+>> @@ -535,6 +535,7 @@ struct flash_info {
+>>  	u8 no_sfdp_flags;
+>>  #define SPI_NOR_SKIP_SFDP		BIT(0)
+>>  #define SECT_4K				BIT(1)
+>> +#define SPI_NOR_TRY_SFDP		BIT(2)
+>>  #define SPI_NOR_DUAL_READ		BIT(3)
+>>  #define SPI_NOR_QUAD_READ		BIT(4)
+>>  #define SPI_NOR_OCTAL_READ		BIT(5)
+>> 
 
