@@ -1,66 +1,66 @@
-Return-Path: <linux-kernel+bounces-204909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0998A8FF4E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:47:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E0E88FF4E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:47:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9533A28A86A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:47:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EE1C282C94
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6BB61FD9;
-	Thu,  6 Jun 2024 18:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8E14E1D6;
+	Thu,  6 Jun 2024 18:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="heMxl5Rk"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="EPkZeTTo"
 Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2075.outbound.protection.outlook.com [40.107.21.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9684E1D1;
-	Thu,  6 Jun 2024 18:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C7554FAF;
+	Thu,  6 Jun 2024 18:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.75
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717699644; cv=fail; b=F3DKjPlD4uwS+gleiX0zikd6frsRX8fl1Pgzvx2fBmvZMPmeUY//Uz5BjOm9PQDspFepmZP7J+nUwLIogXRou3yIwaIN7C4mNrHa+PLzGwsswRi/mPCEvBbovHbnN2IO0d9z3FpY2tqBITEszoBkd0UZqtuftGGMISWep+YZcUY=
+	t=1717699647; cv=fail; b=gz2cNbZoL3RaDJDSpfkEYVwPWQIqskbfuv6M3npOckl6ui5Mipu5EG1z19f27Bgr1yF/YnFgGLrrhq7sjOBQR1nqv1z4SXIceAB5PIX7wqOe+/wf2J7H1X2UVwordHgyN0SFVNWiE4mKnEPUWZUkE3QXgHDc6zwsFLp9wTTlZ4A=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717699644; c=relaxed/simple;
-	bh=HxqilMpkOUYtT6M32FAj6QHaT7m1xfXbT1CeKuw1Cos=;
+	s=arc-20240116; t=1717699647; c=relaxed/simple;
+	bh=woZl32LsPM90+cbZ0hBx3TO93OcOsNDJO7ghpq27th4=;
 	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=EBBiFqn3nngyfRGISq7qx3uh9cHPrZxBCUgpo4bjSIyOJZS8Cgvae2TxykEECf+B8K3XlW/ALLs+uOb3iFPcckTBm67QZPmhS8uScQPtr7ciwRL7nO3GwaGhIece5lIKjsP9i61w4il4QbR3Eo6LQFypyrLAujMl+ntnxfNPtHA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=heMxl5Rk; arc=fail smtp.client-ip=40.107.21.75
+	 To:Cc:MIME-Version; b=IWYMJolwLuKe/qNOSd3+cVRIP/Cr5CpvHEC6xjVzEetjvjfQJkSDAn7jAbaWQ/GYIRWMQNSeN69ecaXFBWUrYyEo27pl39pdxWTeAWHBu1Kh2YghQzVxPtTh7Fg6xIagADs2heR4pwY/644mO58Dw/Qm17A2E9YE7Nkfbss7D8A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=EPkZeTTo; arc=fail smtp.client-ip=40.107.21.75
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IuhWzSw59rYc9NMlyaMRBgG/MDmnMkfVE4A7lSOo0tpZAOi4l7FJGul1A8CgZPJTFjGa/V74VX4amwVWgN/fYvnAjN1Uc3OCF0t89jRxhpu038xkhUZ+WedzqMzmapbIQVPTmwt1+Mz3a+QbIhM2TZlsUh3zfZecdgQgEohhQl6/uYDUx4CbsFVLqgTAPWnmRNT8vzhNAboey7d+XZTB8xWTrNX9UGsV5Vd9XLW7jxFW2Z7zGDrnyHGeNZCRdjtquMS7Azno/ROGpzg+9hBGgv5FPUa2nN+EQvujNoVxTfLPtpC6jvyhGoamir86HVZrwPN2se3n9+7O2eQLRne8Cg==
+ b=NdUlTx3WtNbhUfPJyIjz9+boZRnOPATMpRtV0i3B6Ca1b2ZCi9WeMl7oX8F6ByIbzZGVR4HJ/t4SKI0Qw6xhX94oycMUcJb7i5Qmbt2jLzZy7bnw8kYefpjgfU/wlULhnZFHirNpL3CTiFTWKghvPe8IQwLSbR+hqEF9V9j6vgP+yGEfac/gq+y9yZjd3b9rR7qcZ5zLmwDQdy7sn+IdxT2Mq/HOoGy0x078aVBr7iWEg+060Piga7ETc5fFRm8JargShUQ2TFn5N8nCeIvLRdYoPIgY/HEfAL5xNg7kNKmqKDHiVT7qkVu0RS8H2pDNQEj0Ck6jzZsX4gJ5UvRhlQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eEr4H2t/FZhrOLiRv93baGt2D1M7/Y54CPZ/HyC2GX4=;
- b=fYxO5JUacFsl1ayXnTGxeskiotouZp7TRz1P29/Fyn1lw+lMxZbZWoFU8AomfVJJv+/XXill71HFKYu/UZpdtxHCfrwsugjmVWK7L7qXOs90HT7gTbg3RkMNuZQEyDAVCfb8ijCHqY3g+SIGCnkjTaiEYZYD8DycmvK4cwl516u68ak4VlySg6PJSjfU7Bh/SBU92MnMWkQHpXFdGtXK7QhwXnK6Gq28JRww1UEu7BsWgC0U45BBsNEGXB+TOZ24D17W1/gGMDQPcUella/WyZSF2vhxmWqIz4P00/yPMidDm/DxaZqykPeqOiGVWRlATvxqPVy4sR2dyK5kdmCCxA==
+ bh=BBOyMsKcgfnqOIXjklRaVSAY4hGLqCd/Nto0kUlHcmg=;
+ b=RP9TRDP1zqu/MVlqc2jNpXk0POpu7OUBnQVNAgy9tkQpVa5/HSlu6ZSpK5dqriQUOkhRG55fKEZBdAuzxp+2xT6d+hgCVyy2MmWbOVo00O0qMjuEZQ4ZvhCrxEDIYBDcgpjm9qzlzDZzFeh0gHAO4sxciR+5rDVOU5Gj99NSOPhzz5Vd81LhUoWo4oDwKy4eMqMPZAI9Sig/TqQQiDO+TfUtPzUiuy6eF3dHmK5pOCtyhYl4NutTZpyXohW6gPyZKJ3t8AATeuz4WMk8P92ALx7ZDDbHMjZS38dRR3AzgoC14A+1WRIN1zw1cj6r3XRP30WWYvx88Zv2qw9AzRi8gw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eEr4H2t/FZhrOLiRv93baGt2D1M7/Y54CPZ/HyC2GX4=;
- b=heMxl5Rk6W3Ek6t2n9nYt1kAuuHCFZF8hr7R1+khkIjAInptfRKBE1KXP1I1DY75t6EFCX8ecEfFuFrSotTbaz1PMHe1LpeG/XSxDRU8ioiLmJhEJMfPtjYfNdBEx8mmmdZnUPfZ8k9myx8qRGqYvHcZYqP+Qgj1nwjsfD9GkWg=
+ bh=BBOyMsKcgfnqOIXjklRaVSAY4hGLqCd/Nto0kUlHcmg=;
+ b=EPkZeTToWS8Y4XqUk7rFzu5/KdNqCUeZQ/D5REM6yLRAoX45fMGV5rpbITFCHfWO0Kuuht6GzVArhM/IjWnB7NEouNBTFILAj5VqQWIFZqR9RYqO14osEq74ewPpZM6lOULwQBfTO4uNhu5pohSd7le6fpy53UrBqJLovon8JyE=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
  by VI0PR04MB11069.eurprd04.prod.outlook.com (2603:10a6:800:266::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.27; Thu, 6 Jun
- 2024 18:47:18 +0000
+ 2024 18:47:22 +0000
 Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
  ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
  ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7633.021; Thu, 6 Jun 2024
- 18:47:18 +0000
+ 18:47:22 +0000
 From: Frank Li <Frank.Li@nxp.com>
-Date: Thu, 06 Jun 2024 14:46:55 -0400
-Subject: [PATCH 1/7] arm64: dts: imx8qm: add lvds subsystem
+Date: Thu, 06 Jun 2024 14:46:56 -0400
+Subject: [PATCH 2/7] arm64: dts: imx8qm: add mipi subsystem
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240606-imx8qm-dts-usb-v1-1-565721b64f25@nxp.com>
+Message-Id: <20240606-imx8qm-dts-usb-v1-2-565721b64f25@nxp.com>
 References: <20240606-imx8qm-dts-usb-v1-0-565721b64f25@nxp.com>
 In-Reply-To: <20240606-imx8qm-dts-usb-v1-0-565721b64f25@nxp.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -72,11 +72,11 @@ Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Frank Li <Frank.Li@nxp.com>
 X-Mailer: b4 0.13-dev-e586c
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717699632; l=8595;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717699632; l=10395;
  i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=HxqilMpkOUYtT6M32FAj6QHaT7m1xfXbT1CeKuw1Cos=;
- b=6IdTc3M+2FeZeytZ8ahGB/9FuxJ6JzV9l0OK/B9EwX/QyE8EKS48Spqg+WQ0v1NINjgFVsMYZ
- f4zvGOZ0eInBtZIfWMGWui3onfdgftNhfVjmIVystIaAdAVzazJpkVA
+ bh=woZl32LsPM90+cbZ0hBx3TO93OcOsNDJO7ghpq27th4=;
+ b=9hW1H4XQ0wXcsWiegOEfaPoa+mGlJcihGnx91YHyRTwszK/ojZ2xmlh/WBezHByQ68NazDUp9
+ BBMUQzyxPAjBxK8lZU6hvF8ZDZ9rDK7Yh+tgNk5XfRxTbU/6fr5Aasi
 X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
  pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
 X-ClientProxiedBy: SJ0PR05CA0178.namprd05.prod.outlook.com
@@ -90,349 +90,404 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI0PR04MB11069:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4253d309-c05e-4b00-2a8d-08dc865917a3
+X-MS-Office365-Filtering-Correlation-Id: a5c63fec-5518-4263-8101-08dc865919bb
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230031|52116005|376005|1800799015|7416005|366007|38350700005;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WFc5eWJvZy80eVRlZEJxYmFudzdTZTJJWkJhbVpqa0VIaGtOWUhFclB1YWd3?=
- =?utf-8?B?TVVqVjIvVFBGWkRYMmRzZnZOSUJUM0FDWUR5UW5JT05kTDhNRTZXU213WWpT?=
- =?utf-8?B?emJUZEQ4eGJmWGpoWWd0MHJWRUVaVWJlRnRzOHRRS1RiNW84WHpvdlQvRG9T?=
- =?utf-8?B?L2l2aWJGN2w1ZG9EUG9HTHVoK3FsUURVdWI0S0hFWkx6T2xCZG9TeUhvVUZn?=
- =?utf-8?B?TzVza1JtSEtDa1F3bVJ5UDZGUTVxeThsK2p0UTNFcjcydisvaG1pLytLUmpQ?=
- =?utf-8?B?cHpQR1hsMWZvY0VEOWZPaWx6anRoUDZ1Sms5OE1iRlJQaUpWRTBCV3RRdkoy?=
- =?utf-8?B?WWZ2Zldnbm41RzJjcmM0MVU4ajM4MDUzUm16NkpNaW9qc3J1WWE1VlV0L1pH?=
- =?utf-8?B?dFBvckdwamRSb1FRbmlSd3FCSE5pK3Y5L0FaVWZ3bEJjaVNQMzFVR1QzV0lK?=
- =?utf-8?B?bGxXZ2tvMzBoNDNXYVdnUitSMHQvWUp4enRkd3hRS0xUbTJkcVNJT21FVXJ2?=
- =?utf-8?B?ZFNHRnExQ1pGZnFjOFFBUGhHSHVHMEV6akwvRTV3UmxXUE44K1NlVmVIbDBy?=
- =?utf-8?B?ZUZPZWRQOXozUVBnL05VcHdwOElqM2RBNk5ScDRVT3hoZWpvYXlzVXoxOVlW?=
- =?utf-8?B?dWhwK0FpMzVqWFczRDVzREhBT2ZqSkc2NXJ1YXExbFNweXFibk5GTjJESUVJ?=
- =?utf-8?B?Tk1oczFlc1lvNnRET1p2VE1CZCtmeWdyVmdsV0wydmkwTWZRcGpHQ0grTnZm?=
- =?utf-8?B?ejd3dWFyb0pSc3pzWVY2NkdOZDNJemJFWFRzbTNWaVlWb051RHlMdTFrcHRh?=
- =?utf-8?B?TXh5SU1DZzFnODJZRkVsVnhJOU16b3I5RzY5Z25oRXZQdEJkSjhoT0hicFpr?=
- =?utf-8?B?S3Y3TkJObUkwbFoybG9RRXFObEM5bHdBdklvN2todjI0V1lheEVUdm5BamxY?=
- =?utf-8?B?MlJ0S25sQ1hqMGdGcS9BcE9QZ0dJZzA5UmN0RTkxRy9zcVdBa3RYcWVVUnow?=
- =?utf-8?B?b2V6RC9CR0hUQURWbXF1ZGlMM3h1Y1dMdGxlWDg4K3MvNkRMUXZhVSs2SFMz?=
- =?utf-8?B?ZUZmdkFlUWJvTjZXM3lPd1kyaXdWelVwUW5vQUEzUS9iZXIvQUpxQkFvcjFr?=
- =?utf-8?B?ZVBTZENPZm1mcnhOc05ZTHVtNGtaZ3E2SWJhSTdGOXFEODExdFZaanVibVJQ?=
- =?utf-8?B?YmFFbjJueXhQS3czZFdTd2FzTHloSXlheVdoSWNOa0gxTkpiU0NMQlNUSGpk?=
- =?utf-8?B?c0F1R2NFK3dvOXlGdGg4cWUwOG1MVysxZEpVYS9sMVhsVFhiQ0phUFYwZVpI?=
- =?utf-8?B?L2VqZlRYRnlPUEtqdnRYRHdCai9ObnRTckpkK2xNWnBTWTA1aHNLV1h6NmNX?=
- =?utf-8?B?QXdtZ3kwZndrbDZGRXdCK3NFZkdQeG1scUh6VjgxQWh6LzIzYko4NFA5MnBF?=
- =?utf-8?B?bU5pVUFFMmZnMTFWSG9SbnRBdGVuTHpJNE9qc2VGSWkzUnJEMERtcHZXbGNn?=
- =?utf-8?B?cDVTY3RvZ25YQTEyMFdkQzR0cVdiQjdENGNTc3VFZ1dSc1JQZllqZmU2dnA4?=
- =?utf-8?B?cnRSVTNmQUN2ZVJPUTJRZEVDaTdyeHhKSlRpUWpnQU1Dd3QwSXZvQ2VpZmYy?=
- =?utf-8?B?amZxeW93dTYyQit1cmtjT0ZFdWhXUDMwM2g1Y2xSUTZ5MUtEYWxORW5LWXY2?=
- =?utf-8?B?VlpYK1BiYnh3elRhZzg5cExKYjVPSjMvT3h4cmluRCtJd2xFdGYvMmVISS9S?=
- =?utf-8?B?ejhxeWRBaHJHNW1GcnpCLzIwQXZZUFZoWjlzNThhYmM1T0lCNHpDa3RuQmNY?=
- =?utf-8?Q?zfTJZo01FfHvBg169ITn/aSzQQhJK1c9I5mps=3D?=
+	=?utf-8?B?NHJERjJETUJlenZDOEtJQW4zYnhuNjFRaUtaNkpIWTkwQzZaNlpTVzZLTGsw?=
+ =?utf-8?B?bnc5bFpLS3Rhc0ZLRWlzUUx5bmE5RGFHZlRzZUR4b3FwNUxmTUhWcnVFVHhi?=
+ =?utf-8?B?dFlmVzFJbG1WQlh4UEtCSzJ1eHR1S3Z0T2xOUG9NNmtOck12cTJac3k3UTFU?=
+ =?utf-8?B?cGJpN3dVVVQvRjliWTJmUHN5Z25YclV4QVZxdUp0b0dvcU9sMW5pRDNHekE2?=
+ =?utf-8?B?QkUrTFdNb1YzTFA3dkIyK1ZyVE1NY1ZaaERMZy84d2hUSmJFT0tpNnlxMUpp?=
+ =?utf-8?B?WWo2UFo1QUR2ZlAxdXlweTZjMWd1WWxlV1JVVEhDN05UMWZja3pja3o4OHFj?=
+ =?utf-8?B?Y1BIa0QzWVRqN1VGWjQzV25CenhKTWhOWGRJNU9lUmNLaENQUmNCekV2bCt6?=
+ =?utf-8?B?Z0tCaHdXN0JqUWFUb05oNVg3c0xSNTJGd2JZZnVKVWFObmtrWTVPZkZOR05v?=
+ =?utf-8?B?RERrZnJ3ZlpJWDR4M0t3Qjl6c01iS0VyRVVlZW1DVXozY2NjSnRjUkpHVHpw?=
+ =?utf-8?B?M3B3alFQSDZDT3FHVnQ2OUQ4MTF3TEFNT1ZLaFU3aStNNG1jeEVPaW9wMUxS?=
+ =?utf-8?B?MWNxMTNTSHlqZkxxMHZyUDl3WkVhaDZFWktqa01DekxuVzVXOFRmdDgzMTY1?=
+ =?utf-8?B?eHJnSlVjbHZ3NEVxYTRNY0dnTDY1TlpSN2dMc1RRcDFiT3ZwaVZBMkdsQWNZ?=
+ =?utf-8?B?aHNyMGdGSlUrMFdRaGwvWGdCeEJMZGxlcGNpVzcvY2J2NEFqZXVndWozMGhU?=
+ =?utf-8?B?enpKZ0JMSFVMNy81d0FDcklTYVhHdWFBQ1N1eC9zdllKdlg3TDFCNzlnb0RJ?=
+ =?utf-8?B?aUFFdDJjZ2JaNWI0V3V0SDV5RDJiTnViSVRsc0cvYTc2QytvRjV2OEkzdDA1?=
+ =?utf-8?B?Q1ZvdWZveDNxaDBpSys3aWcvUzVXNTFWOUZ6d0lwWlZNLzVaSFF3Mi82WXpu?=
+ =?utf-8?B?cm5aZFUzaEFhVXRidVphQ2lyV3FZNkdtRFlFbW1iQjUvSC9RTEhzWU0rcDhU?=
+ =?utf-8?B?SVcvS3h3VFNlYUVqZUNvSVd2S09NOGpGc2dmR2NRVERDbVU0ZFkra1RaSmpw?=
+ =?utf-8?B?WE5OTHVDVHJGbXpEdGd6TkQyQkFSQXpuZFFMZEhCV01zM29aYmYrYnQyRnR5?=
+ =?utf-8?B?OHZyWVdmNk1sVGtpNkFGMi9FRDQreThFeEIxREVwblZKSUtNTFkzVENZRHEv?=
+ =?utf-8?B?ekY2c081MktNb28yZHNIK2FPalFVNlpuNFMrZVBiQ3M1ckJ4Qkxxbjl2T211?=
+ =?utf-8?B?b2Q5dDd5Y2MrWnpKQW81YmFSUkVDYTlMdUsvblZQUi9sSTdCTC9tZVV4UUpq?=
+ =?utf-8?B?OVFPK3JGYW96dk1sUU1RQU16YnkycjBrTXh1ekFPWlBLMys0UlFnQ2V5Q3I2?=
+ =?utf-8?B?dHRrMG9HMzVvLzl6S25ZN1ptN2lNWkhJeDRzOGV0bWJZZUNIQ1F5WWoxRmh4?=
+ =?utf-8?B?U0g5OVo4d3gzcFMyMjBFM0p0dExqeEErZUhNSjJMc0pwSHVBT0JJd0pDVlZz?=
+ =?utf-8?B?bkxQcnVObEYrVlM3bWZKQWJ4NHdtRUtwcXNGTXRvYVlvMXBTMWdIYlBObXFX?=
+ =?utf-8?B?UnRpVFlHQjJXUXNhUW1WTmRmdnZsQTN6blZSUk9iUWtJUUkwS3c0eXgwTVNN?=
+ =?utf-8?B?cUJTU3laRk5jT20wUkM5Nlc0UWtiK1kzTEZaTmdJNnZMNktiWTFXMmFxU3JU?=
+ =?utf-8?B?WEhRZmY1blVzVXRHMGNhdHYwM1FJUXRIbE5QWVBsempjS3RYNEpBZSttODUz?=
+ =?utf-8?B?VEIyS3pNb3BSVVdsM1FHN1JmNDB1RkR5WG1iM01uMHNtUXNjTG1pTW96YVk5?=
+ =?utf-8?Q?284YhclWhlaULR/nR//buUBVBCet+Sg1zu0LE=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(52116005)(376005)(1800799015)(7416005)(366007)(38350700005);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?elJGUnc2WUtMcEZEQkxWNU5PbjNQR2t2TUwvd3Q1M0YwZjNhcUVqdGlyWXJV?=
- =?utf-8?B?RGsvYmozOWw5Wnh0SVNscTJqWmFIdlRVcHdmalcwUFNrRE9sSnFiSGNYci82?=
- =?utf-8?B?OU9yYm1JUTZhME80SVEzcmllVnYxeE84RVR6TkJOWDRITlFFWFVBUnZDYkp1?=
- =?utf-8?B?MjA4ZVFHN2VXYTVRMWtLa2JvZ3k1ZG9EY2VpZlcvVTFzalVsOG5iWFRUNkFy?=
- =?utf-8?B?T3psdG1zMmtFeUh5QjYvbWVnSm5PaWdCQWhxTHRSYy9JWUxPOWtpMDQyYTB3?=
- =?utf-8?B?WkRNa1F2Sk0yWmVLaFE2bUJoRTZSanNRK1J0R3hHdTZkelEwUDFhSDNCNmhy?=
- =?utf-8?B?dVdINTlCRDF4Umw4dmNMdEVsMFRDeDBKRnp6aGN0TTR4N28vZjdKaEk4bWpu?=
- =?utf-8?B?Q2F5YTl4Q0xuYjBlSy9iY1ZZd0p1Skg1Uk9SS1F4VlFQWE5pMlJIcHcvWE9m?=
- =?utf-8?B?TmpOTGVkcDF0cDJXaE5aQVcvTzNiTDR1aHZ0Y05uZWJJeGxRTzd2bHJ6ZHoy?=
- =?utf-8?B?d2dmd1p6U3RKU1prQmxJOWdoeUFjKzNpbmJlbEM1OWtKUm1DMmlVYzB1eUlC?=
- =?utf-8?B?ajNJSGdISUpGOHJURGY5RjRmOTJxZ2lNV0c1NDd1RHoxTDlsMkFScjJ6dit1?=
- =?utf-8?B?RlJWWHQ3MERrWW0rWk84QTMvcDRmYk90dkZzVjNsNTdtb2sxU0R4bzhkL1dW?=
- =?utf-8?B?aHRkK3Nic2dqYmJTYUVzZm5TMUF5VFFjdEFwVHIyWUFqeG14WnorWklONDVk?=
- =?utf-8?B?NDlQVDA1bURDZEdrNUd6cG84RGFUUHJrRTdQZENvaU9PVmE5bUNQUS9vd2p1?=
- =?utf-8?B?bkVoV2ZsSXhsWENVR25zMVpyeGQrd2MvZ0V3YnpzNkdtSng3TGtLVTlWZTlE?=
- =?utf-8?B?OEhzcmkrY0cxT0hyaGtnbFJ3WTNCdzh0THdLSHI3ZU1GTVVOeFFWaEU5UjVO?=
- =?utf-8?B?UGh5eXFRTFJTa1ZQazhKS21DdXpWN2J6KzV1Z2V0Q1cxZElpQUptdkNqVVdm?=
- =?utf-8?B?UnpsZGtQd0lRNEtmNnZncStXNWJhYTNETFhQVnRTeHdrNkdaV0Exa1BBV3Qw?=
- =?utf-8?B?QkdqNURUVTFXdDQvc1BSNXoza2IzUXdKWlNwaCtCc1AwQ09OT1NBTDQrUkx2?=
- =?utf-8?B?MFE1UmthQTlHbmd0My8rWmZrRlhNR3M0VTBJWG9UMEZXMjV4ZCtvcnI3K1Vl?=
- =?utf-8?B?aThwVUpDNWVaUnVoUFJhRDUwVUdJN1F5SU5ST25lalkwanpPRktIYlJVU1Fa?=
- =?utf-8?B?RkI1NjhndGdSZXdrRTZpKzE1V3lzUmJNMmNxN2wrd1RDTEc2M1B4UlAwd0x6?=
- =?utf-8?B?R3NDZDMvVjZjd0wvYnd0Y09yZUZSTFRPYng5R3pHTlBGWmpnVC9aVDFiT0FG?=
- =?utf-8?B?YVRMWmh2VnVBM2JSMXVwenF3OExscjBxWXZLRmpjdlBXZ3U4U1FmQm9tUFRX?=
- =?utf-8?B?bitsWlc0QlBRMS9STFJHcXE0UzJIeGdTWUhlViswR3BSZmJSOWVuOWFCUVBH?=
- =?utf-8?B?eXNHMnZRRHpISWpiY1F4Y0svS1ZEelV0V3pkQThJc0c5ckpnd0tOODFrTDdu?=
- =?utf-8?B?bGFyWE5PcGQrSGlrNXVCTFkwbE1qU2FDM1VkbEUwZFhhdDdNK0E1c2ttZHVR?=
- =?utf-8?B?N2dMY09Rd3VBN055N0ZZLzExY2NPVHFhTFRXTjFiVnhNRHRXTk54K0h3NVlw?=
- =?utf-8?B?NkJnaVFmQ2M4ZnA3YzhYZ2tuUlhLS1F6SnRuQzdWRkVPZXllTGpXaTlrTjBC?=
- =?utf-8?B?S2FtR29ZaU1HTUxWNFlaSWpIT2tCQkxkSUxEd1B4b3dPVCtRZkVvQ3h0ZTdS?=
- =?utf-8?B?RndtSUNhOTR6Q1BrdFJTaHFmR041SWZ3ellQVkN5Z01waEVyU0pRNzg1RHVy?=
- =?utf-8?B?YmJKSXE3aW0vcjRWQVJlZ3ZWdmJDbm5DSElvZmptNHE0YS9CUzBFekJObHNV?=
- =?utf-8?B?TFJOVVJrNFMwaVNiT2hlNmpZNTQraTR1NHI1cnBwTldYVHFkUnd4VG1lYXFa?=
- =?utf-8?B?WXU1blgxM1daR3BoTE5tSzQ5UFgvRC9neTI0ajIwT1d6eWVmN1phdGo3Ukh0?=
- =?utf-8?B?RTlVR2dnaFZibnhuMHNQWEtwaEZxMmtyaS84c0ZJTTNodUZ4dXNTdUF4MzFk?=
- =?utf-8?Q?AfFDUE1ig0qb17GxqCIrdDCsC?=
+	=?utf-8?B?bURHWHcyNmNoWWxiMHFsSzB1T1BSZGpSK3haWmcxTXpKSmdiMVpNM0dHQUYr?=
+ =?utf-8?B?YWJMb1I3NkNiUXZFQ3BzaFRraGlFTTJ1endtQ1dlV3hES2FVVlR3ZGpyOVNY?=
+ =?utf-8?B?dWRpa01ldmpXRGRNVWJRTm4xT0ZzTHl5TlV1eVFjSWJ2MHRkeFBNNEhoOXVL?=
+ =?utf-8?B?UlRidUJFMDJDcWZqSTZxRXJjYk9yZk1IVUVtOEUydnpJS01FWXJMcEkzWTdJ?=
+ =?utf-8?B?N2NjUFcxMS9Vem9jR2VhYTMwWk5XdldxRytLRkJmQ0RQQjFMUUNaaElwMFhj?=
+ =?utf-8?B?bUNJOERMeHN6bXFwRkV6eHZkUG5xbDVOelNtbGxQb2tKdWZBSWhlaE0xcGVs?=
+ =?utf-8?B?NzkxV1NpVkxzOFhaTXdBN2sveXRUM1JxOWNPT0pvVjZFQ0RFMkR3ZlQySnE0?=
+ =?utf-8?B?WGttejdabThIdlpCSFRqRVNjSXlMT24rcjdLVFhUaEhKekEvRGI4b2Y0bDBJ?=
+ =?utf-8?B?K3hnOHdpYU1UK0Z2TFFoQlNQdFd3Lyt2NE4vQ0wvUTFzSGliNFQ0ZVU1RzRa?=
+ =?utf-8?B?ZUMrUmd6a1UxMkdhaGM0NElsYlpwRHljL3dnMXZNQk5tRlFCVTF4am0zUjg4?=
+ =?utf-8?B?QXZ4cHp2Nng5RWplRW1KZlFzT3JNQ3piT0YyYVJYZE81QzIrL093bkhuYlRw?=
+ =?utf-8?B?VFhGREV1Z0JGNFFVc29RdkZTKzU0MVZEV096TXhNdXhubEp6MkN2eDJZWkpi?=
+ =?utf-8?B?dHY0VnY1Wmw1N0VSTTlvOXJqMFlqZVJ4WWpGRkp0UUVuRUwyamwyZTYxdWpR?=
+ =?utf-8?B?dm94TGFFMVR4bDFiNzJOY2RSbWJLK0xzd1I1byt4OFJqOFpFdnR3c2FxWW1r?=
+ =?utf-8?B?UzJQVjdqWW1tNTh0TFJKV2ZZQUZkM0lPVDE3b0FNSS9iaHBjSk9BZzBHbkNX?=
+ =?utf-8?B?WUl3NjFpY2JrNm1zWS92bWcybkhIZ2ZlUVNWTHV5WmlOSnlhejBpNy8veG5C?=
+ =?utf-8?B?VERmbkpsVXo4NHpvTWtMcHAvNVNrMkwzckNmbjlOQkdKN1ZBYklkdExQMVFq?=
+ =?utf-8?B?MDN5dVh1dVZOT1IwMUtOREdueGFHcCt4aUxNRU9hYUhIQUxIWWVTYkw1QmhS?=
+ =?utf-8?B?NnhuS2lwZFBXQUN2N0RPem5sN1EvbUJvMkQ1Umx1N1NrUlZCLzRYY2xsZVFY?=
+ =?utf-8?B?K2lBaDRlL2VmWUtXMkNBc0pPdDgrR0hrdFA0UjFFaUpYVG9QLzZSckRkK2lS?=
+ =?utf-8?B?TnFrQU1oZWZTajByRnRxMmpGaUVndFFLQ0ZNcXc2aGpSYTdiV2c0WHNaZmNj?=
+ =?utf-8?B?OEFxQ3BOLzlKaVpWWGRWeXZuODNlZGV6MGxWVlVqS3R4Z0k3MFVKb3FkdDRH?=
+ =?utf-8?B?RjZ3ZnJkSGdtaTRLN0lvb0dDVEx0bEx0Y3NCRUhYZVFyMWd6VTBIOHlxWEVO?=
+ =?utf-8?B?TVhqOHd1Yk4vR1FyWk12OFZaamdFTXhnWEt1bURGVnBhcUtuSmhlVkhPeXNW?=
+ =?utf-8?B?dkpRemJpeC9rQ3N5amtmbWhZSG1tb01WWlNDK1FiY0JHZXB5QUZ4TUVRVGRN?=
+ =?utf-8?B?STMwbmdKVnNWcGhCMEQwKzQ3SFhRWk11SmJpYzhRTmM1M0JLdndtejBESUFp?=
+ =?utf-8?B?WVltdE9GK1AwQytCaVFzSVNmZEd0bmtXV2hGeU9vVkpTVjFwc3NQZ3RMRTRs?=
+ =?utf-8?B?NkNZcUdvZHJLRXJnZVJXZjBaVHc0dGNhZE5YekxwK1pTcVdSdTEzMjhQS0hE?=
+ =?utf-8?B?ajByL3BhdTllMUxySjJVUFhFZ1FZUHkremFvcFhiMkxycjVHelZ2ZjY4UXB6?=
+ =?utf-8?B?OElhSC9Wcm9OWFlrbjJSMXJuN2Raa0NIenJVY3ByMzdidjBmbksrazdDNmdu?=
+ =?utf-8?B?emdoMkcxSGtIOWR4bWJkSWJSUHhiK2k4WUlybzBvZERoQVV4ZzR3Z1VHOStV?=
+ =?utf-8?B?Rit2WnpPck1teXp1UEJ6aW4zUVNCMDNvYlZOTmZUdkpUQUVBeXBDa2E2T3Zv?=
+ =?utf-8?B?c0Jpd3REMHNnTUx0NTZaQTNqNkZ1aHB3YXI0RDNrS1kyeGlyOVdTNnNHdjFq?=
+ =?utf-8?B?bnFodWtma1lQYVBiVXNxQXNtUDRoR0p6WWliRHdxMG93Rkd4YWxJRzVaTFJn?=
+ =?utf-8?B?cUlkbnVMd0xmdVBZUGlTN0NmQndXVFZMd2JZYUVlZDJLUXFNV2Jwak5PVWNL?=
+ =?utf-8?Q?pbxaKbyr1+pc9nILCXRsPZuGc?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4253d309-c05e-4b00-2a8d-08dc865917a3
+X-MS-Exchange-CrossTenant-Network-Message-Id: a5c63fec-5518-4263-8101-08dc865919bb
 X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 18:47:18.7279
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 18:47:22.2357
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XqdTubS9kKiV62gSbm0e2Z3dHVBilvaffQ4uoPfEyYbfwLMWAQr+bOVWdOVsfS92vsNNpKbo9n8ww2XGBr0/8A==
+X-MS-Exchange-CrossTenant-UserPrincipalName: NyY9cxsZhS40fKAlEcQsVp9ZA13Cp1Cq2sGNWBSjIPOV7DNsx/bumcfFhRQiMWaghZkH5hraxrmS40GcmSDvwA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB11069
 
-Add irqstear, pwm and i2c in lvds subsystem.
+Add irqstear, pwm and i2c in mipi subsystem.
 
 Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
- arch/arm64/boot/dts/freescale/imx8qm-ss-lvds.dtsi | 231 ++++++++++++++++++++++
+ arch/arm64/boot/dts/freescale/imx8qm-ss-mipi.dtsi | 286 ++++++++++++++++++++++
  arch/arm64/boot/dts/freescale/imx8qm.dtsi         |   1 +
- 2 files changed, 232 insertions(+)
+ 2 files changed, 287 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8qm-ss-lvds.dtsi b/arch/arm64/boot/dts/freescale/imx8qm-ss-lvds.dtsi
+diff --git a/arch/arm64/boot/dts/freescale/imx8qm-ss-mipi.dtsi b/arch/arm64/boot/dts/freescale/imx8qm-ss-mipi.dtsi
 new file mode 100644
-index 0000000000000..eb8208cddeaf9
+index 0000000000000..bd18468923e52
 --- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8qm-ss-lvds.dtsi
-@@ -0,0 +1,231 @@
++++ b/arch/arm64/boot/dts/freescale/imx8qm-ss-mipi.dtsi
+@@ -0,0 +1,286 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +
 +/*
 + * Copyright 2024 NXP
 + */
 +
-+/{
-+
-+	lvds1_ipg_clk: lvds0_ipg_clk: clock-controller-lvds-ipg {
++/ {
++	dsi_ipg_clk: clock-dsi-ipg {
 +		compatible = "fixed-clock";
 +		#clock-cells = <0>;
-+		clock-frequency = <24000000>;
-+		clock-output-names = "lvds0_ipg_clk";
++		clock-frequency = <120000000>;
++		clock-output-names = "dsi_ipg_clk";
 +	};
 +
-+	lvds1_subsys: bus@56240000 {
++	mipi_pll_div2_clk: clock-mipi-div2-pll {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <432000000>;
++		clock-output-names = "mipi_pll_div2_clk";
++	};
++
++	mipi0_subsys: bus@56220000 {
 +		compatible = "simple-bus";
-+		interrupt-parent = <&irqsteer_lvds0>;
++		interrupt-parent = <&irqsteer_mipi0>;
 +		#address-cells = <1>;
 +		#size-cells = <1>;
-+		ranges = <0x56240000 0x0 0x56240000 0x10000>;
++		ranges = <0x56220000 0x0 0x56220000 0x10000>;
 +
-+		irqsteer_lvds0: interrupt-controller@56240000 {
++		irqsteer_mipi0: interrupt-controller@56220000 {
 +			compatible = "fsl,imx-irqsteer";
-+			reg = <0x56240000 0x1000>;
-+			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x56220000 0x1000>;
++			interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
 +			interrupt-controller;
 +			interrupt-parent = <&gic>;
 +			#interrupt-cells = <1>;
-+			clocks = <&lvds0_lis_lpcg IMX_LPCG_CLK_4>;
++			clocks = <&mipi0_lis_lpcg IMX_LPCG_CLK_0>;
 +			clock-names = "ipg";
-+			power-domains = <&pd IMX_SC_R_LVDS_0>;
-+
++			power-domains = <&pd IMX_SC_R_MIPI_0>;
 +			fsl,channel = <0>;
 +			fsl,num-irqs = <32>;
 +		};
 +
-+		lvds0_lis_lpcg: clock-controller@56243000 {
++		mipi0_lis_lpcg: clock-controller@56223000 {
 +			compatible = "fsl,imx8qxp-lpcg";
-+			reg = <0x56243000 0x4>;
++			reg = <0x56223000 0x4>;
 +			#clock-cells = <1>;
-+			clocks = <&lvds0_ipg_clk>;
-+			clock-indices = <IMX_LPCG_CLK_4>;
-+			clock-output-names = "lvds0_lis_lpcg_ipg_clk";
-+			power-domains = <&pd IMX_SC_R_LVDS_0>;
++			clocks = <&dsi_ipg_clk>;
++			clock-indices = <IMX_LPCG_CLK_0>;
++			clock-output-names = "mipi0_lis_lpcg_ipg_clk";
++			power-domains = <&pd IMX_SC_R_MIPI_0>;
 +		};
 +
-+		lvds0_pwm_lpcg: clock-controller@5624300c {
++		mipi0_pwm_lpcg: clock-controller@5622300c {
 +			compatible = "fsl,imx8qxp-lpcg";
-+			reg = <0x5624300c 0x4>;
++			reg = <0x5622300c 0x4>;
 +			#clock-cells = <1>;
-+			clocks = <&clk IMX_SC_R_LVDS_0_PWM_0 IMX_SC_PM_CLK_PER>,
-+				 <&lvds0_ipg_clk>;
++			clocks = <&clk IMX_SC_R_MIPI_0_PWM_0 IMX_SC_PM_CLK_PER>,
++				 <&dsi_ipg_clk>;
 +			clock-indices = <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
-+			clock-output-names = "lvds0_pwm_lpcg_clk",
-+					     "lvds0_pwm_lpcg_ipg_clk";
-+			power-domains = <&pd IMX_SC_R_LVDS_0_PWM_0>;
++			clock-output-names = "mipi0_pwm_lpcg_clk",
++					     "mipi0_pwm_lpcg_ipg_clk";
++			power-domains = <&pd IMX_SC_R_MIPI_0_PWM_0>;
 +		};
 +
-+		lvds0_i2c0_lpcg: clock-controller@56243010 {
++		mipi0_i2c0_lpcg_ipg_clk: clock-controller@56223014 {
 +			compatible = "fsl,imx8qxp-lpcg";
-+			reg = <0x56243010 0x4>;
++			reg = <0x56223014 0x4>;
 +			#clock-cells = <1>;
-+			clocks = <&clk IMX_SC_R_LVDS_0_I2C_0 IMX_SC_PM_CLK_PER>,
-+				 <&lvds0_ipg_clk>;
-+			clock-indices = <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
-+			clock-output-names = "lvds0_i2c0_lpcg_clk",
-+					     "lvds0_i2c0_lpcg_ipg_clk";
-+			power-domains = <&pd IMX_SC_R_LVDS_0_I2C_0>;
++			clocks = <&mipi0_i2c0_lpcg_ipg_s_clk IMX_LPCG_CLK_0>;
++			clock-indices = <IMX_LPCG_CLK_0>;
++			clock-output-names = "mipi0_i2c0_lpcg_ipg_clk";
++			power-domains = <&pd IMX_SC_R_MIPI_0_I2C_0>;
 +		};
 +
-+		lvds0_i2c1_lpcg: clock-controller@56243014 {
++		mipi0_i2c0_lpcg_ipg_s_clk: clock-controller@56223018 {
 +			compatible = "fsl,imx8qxp-lpcg";
-+			reg = <0x56243014 0x4>;
++			reg = <0x56223018 0x4>;
 +			#clock-cells = <1>;
-+			clocks = <&clk IMX_SC_R_LVDS_0_I2C_0 IMX_SC_PM_CLK_PER>,
-+				 <&lvds0_ipg_clk>;
-+			clock-indices = <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
-+			clock-output-names = "lvds0_i2c1_lpcg_clk",
-+					     "lvds0_i2c1_lpcg_ipg_clk";
-+			power-domains = <&pd IMX_SC_R_LVDS_0_I2C_0>;
++			clocks = <&dsi_ipg_clk>;
++			clock-indices = <IMX_LPCG_CLK_0>;
++			clock-output-names = "mipi0_i2c0_lpcg_ipg_s_clk";
++			power-domains = <&pd IMX_SC_R_MIPI_0_I2C_0>;
 +		};
 +
-+		pwm_lvds0: pwm@56244000 {
++		mipi0_i2c0_lpcg_clk: clock-controller@5622301c {
++			compatible = "fsl,imx8qxp-lpcg";
++			reg = <0x5622301c 0x4>;
++			#clock-cells = <1>;
++			clocks = <&clk IMX_SC_R_MIPI_0_I2C_0 IMX_SC_PM_CLK_MISC2>;
++			clock-indices = <IMX_LPCG_CLK_0>;
++			clock-output-names = "mipi0_i2c0_lpcg_clk";
++			power-domains = <&pd IMX_SC_R_MIPI_0_I2C_0>;
++		};
++
++		mipi0_i2c1_lpcg_ipg_clk: clock-controller@56223024 {
++			compatible = "fsl,imx8qxp-lpcg";
++			reg = <0x56223024 0x4>;
++			#clock-cells = <1>;
++			clocks = <&mipi0_i2c1_lpcg_ipg_s_clk IMX_LPCG_CLK_0>;
++			clock-indices = <IMX_LPCG_CLK_0>;
++			clock-output-names = "mipi0_i2c1_lpcg_ipg_clk";
++			power-domains = <&pd IMX_SC_R_MIPI_0_I2C_1>;
++		};
++
++		mipi0_i2c1_lpcg_clk: clock-controller@5622302c {
++			compatible = "fsl,imx8qxp-lpcg";
++			reg = <0x5622302c 0x4>;
++			#clock-cells = <1>;
++			clocks = <&clk IMX_SC_R_MIPI_0_I2C_1 IMX_SC_PM_CLK_MISC2>;
++			clock-indices = <IMX_LPCG_CLK_0>;
++			clock-output-names = "mipi0_i2c1_lpcg_clk";
++			power-domains = <&pd IMX_SC_R_MIPI_0_I2C_1>;
++		};
++
++		mipi0_i2c1_lpcg_ipg_s_clk: clock-controller@56223028 {
++			compatible = "fsl,imx8qxp-lpcg";
++			reg = <0x56223028 0x4>;
++			#clock-cells = <1>;
++			clocks = <&dsi_ipg_clk>;
++			clock-indices = <IMX_LPCG_CLK_0>;
++			clock-output-names = "mipi0_i2c1_lpcg_ipg_s_clk";
++			power-domains = <&pd IMX_SC_R_MIPI_0_I2C_1>;
++		};
++
++		pwm_mipi0: pwm@56224000 {
 +			compatible = "fsl,imx8qxp-pwm", "fsl,imx27-pwm";
-+			reg = <0x56244000 0x1000>;
-+			clocks = <&lvds0_pwm_lpcg IMX_LPCG_CLK_4>,
-+				 <&lvds0_pwm_lpcg IMX_LPCG_CLK_0>;
++			reg = <0x56224000 0x1000>;
++			clocks = <&mipi0_pwm_lpcg IMX_LPCG_CLK_4>,
++				 <&mipi0_pwm_lpcg IMX_LPCG_CLK_0>;
 +			clock-names = "ipg", "per";
-+			assigned-clocks = <&clk IMX_SC_R_LVDS_0_PWM_0 IMX_SC_PM_CLK_PER>;
++			assigned-clocks = <&clk IMX_SC_R_MIPI_0_PWM_0 IMX_SC_PM_CLK_PER>;
 +			assigned-clock-rates = <24000000>;
 +			#pwm-cells = <3>;
-+			power-domains = <&pd IMX_SC_R_LVDS_0_PWM_0>;
++			power-domains = <&pd IMX_SC_R_MIPI_0_PWM_0>;
 +			status = "disabled";
 +		};
 +
-+		i2c0_lvds0: i2c@56246000 {
++		i2c0_mipi0: i2c@56226000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
 +			compatible = "fsl,imx8qm-lpi2c", "fsl,imx7ulp-lpi2c";
-+			reg = <0x56246000 0x1000>;
++			reg = <0x56226000 0x1000>;
 +			interrupts = <8>;
-+			clocks = <&lvds0_i2c0_lpcg IMX_LPCG_CLK_0>,
-+				 <&lvds0_i2c0_lpcg IMX_LPCG_CLK_4>;
++			clocks = <&mipi0_i2c0_lpcg_clk IMX_LPCG_CLK_0>,
++				 <&mipi0_i2c0_lpcg_ipg_clk IMX_LPCG_CLK_0>;
 +			clock-names = "per", "ipg";
-+			assigned-clocks = <&clk IMX_SC_R_LVDS_0_I2C_0 IMX_SC_PM_CLK_PER>;
++			assigned-clocks = <&mipi0_i2c0_lpcg_clk IMX_LPCG_CLK_0>;
 +			assigned-clock-rates = <24000000>;
-+			power-domains = <&pd IMX_SC_R_LVDS_0_I2C_0>;
-+			status = "disabled";
-+		};
-+
-+		i2c1_lvds0: i2c@56247000 {
-+			compatible = "fsl,imx8qm-lpi2c", "fsl,imx7ulp-lpi2c";
-+			reg = <0x56247000 0x1000>;
-+			interrupts = <9>;
-+			clocks = <&lvds0_i2c0_lpcg IMX_LPCG_CLK_0>,
-+				 <&lvds0_i2c0_lpcg IMX_LPCG_CLK_4>;
-+			clock-names = "per", "ipg";
-+			assigned-clocks = <&clk IMX_SC_R_LVDS_0_I2C_0 IMX_SC_PM_CLK_PER>;
-+			assigned-clock-rates = <24000000>;
-+			power-domains = <&pd IMX_SC_R_LVDS_0_I2C_0>;
++			power-domains = <&pd IMX_SC_R_MIPI_0_I2C_0>;
 +			status = "disabled";
 +		};
 +	};
 +
-+	lvds2_subsys: bus@57240000 {
++	mipi1_subsys: bus@57220000 {
 +		compatible = "simple-bus";
-+		interrupt-parent = <&irqsteer_lvds1>;
 +		#address-cells = <1>;
 +		#size-cells = <1>;
-+		ranges = <0x57240000 0x0 0x57240000 0x10000>;
++		ranges = <0x57220000 0x0 0x57220000 0x10000>;
 +
-+		irqsteer_lvds1: interrupt-controller@57240000 {
++		irqsteer_mipi1: interrupt-controller@57220000 {
 +			compatible = "fsl,imx-irqsteer";
-+			reg = <0x57240000 0x1000>;
-+			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x57220000 0x1000>;
++			interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
 +			interrupt-controller;
 +			interrupt-parent = <&gic>;
 +			#interrupt-cells = <1>;
-+			clocks = <&lvds1_lis_lpcg IMX_LPCG_CLK_4>;
++			clocks = <&mipi1_lis_lpcg IMX_LPCG_CLK_0>;
 +			clock-names = "ipg";
-+			power-domains = <&pd IMX_SC_R_LVDS_1>;
-+
++			power-domains = <&pd IMX_SC_R_MIPI_1>;
 +			fsl,channel = <0>;
 +			fsl,num-irqs = <32>;
 +		};
 +
-+		lvds1_lis_lpcg: clock-controller@57243000 {
++		mipi1_lis_lpcg: clock-controller@57223000 {
 +			compatible = "fsl,imx8qxp-lpcg";
-+			reg = <0x57243000 0x4>;
++			reg = <0x57223000 0x4>;
 +			#clock-cells = <1>;
-+			clocks = <&lvds1_ipg_clk>;
-+			clock-indices = <IMX_LPCG_CLK_4>;
-+			clock-output-names = "lvds1_lis_lpcg_ipg_clk";
-+			power-domains = <&pd IMX_SC_R_LVDS_1>;
++			clocks = <&dsi_ipg_clk>;
++			clock-indices = <IMX_LPCG_CLK_0>;
++			clock-output-names = "mipi1_lis_lpcg_ipg_clk";
++			power-domains = <&pd IMX_SC_R_MIPI_1>;
 +		};
 +
-+		lvds1_pwm_lpcg: clock-controller@5724300c {
++		mipi1_pwm_lpcg: clock-controller@5722300c {
 +			compatible = "fsl,imx8qxp-lpcg";
-+			reg = <0x5724300c 0x4>;
++			reg = <0x5722300c 0x4>;
 +			#clock-cells = <1>;
-+			clocks = <&clk IMX_SC_R_LVDS_1_PWM_0 IMX_SC_PM_CLK_PER>,
-+				 <&lvds1_ipg_clk>;
++			clocks = <&clk IMX_SC_R_MIPI_1_PWM_0 IMX_SC_PM_CLK_PER>,
++				 <&dsi_ipg_clk>;
 +			clock-indices = <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
-+			clock-output-names = "lvds1_pwm_lpcg_clk",
-+					     "lvds1_pwm_lpcg_ipg_clk";
-+			power-domains = <&pd IMX_SC_R_LVDS_1_PWM_0>;
++			clock-output-names = "mipi1_pwm_lpcg_clk",
++					     "mipi1_pwm_lpcg_ipg_clk";
++			power-domains = <&pd IMX_SC_R_MIPI_1_PWM_0>;
 +		};
 +
-+		lvds1_i2c0_lpcg: clock-controller@57243010 {
++		mipi1_i2c0_lpcg_clk: clock-controller@5722301c {
 +			compatible = "fsl,imx8qxp-lpcg";
-+			reg = <0x57243010 0x4>;
++			reg = <0x5722301c 0x4>;
 +			#clock-cells = <1>;
-+			clocks = <&clk IMX_SC_R_LVDS_1_I2C_0 IMX_SC_PM_CLK_PER>,
-+				 <&lvds1_ipg_clk>;
-+			clock-indices = <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
-+			clock-output-names = "lvds1_i2c0_lpcg_clk",
-+					     "lvds1_i2c0_lpcg_ipg_clk";
-+			power-domains = <&pd IMX_SC_R_LVDS_1_I2C_0>;
++			clocks = <&clk IMX_SC_R_MIPI_1_I2C_0 IMX_SC_PM_CLK_MISC2>;
++			clock-indices = <IMX_LPCG_CLK_0>;
++			clock-output-names = "mipi1_i2c0_lpcg_clk";
++			power-domains = <&pd IMX_SC_R_MIPI_1_I2C_0>;
 +		};
 +
-+		lvds1_i2c1_lpcg: clock-controller@57243014 {
++		mipi1_i2c0_lpcg_ipg_clk: clock-controller@57223014 {
 +			compatible = "fsl,imx8qxp-lpcg";
-+			reg = <0x57243014 0x4>;
++			reg = <0x57223014 0x4>;
 +			#clock-cells = <1>;
-+			clocks = <&clk IMX_SC_R_LVDS_1_I2C_0 IMX_SC_PM_CLK_PER>,
-+				 <&lvds1_ipg_clk>;
-+			clock-indices = <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
-+			clock-output-names = "lvds1_i2c1_lpcg_clk",
-+					     "lvds1_i2c1_lpcg_ipg_clk";
-+			power-domains = <&pd IMX_SC_R_LVDS_1_I2C_0>;
++			clocks = <&mipi1_i2c0_lpcg_ipg_s_clk IMX_LPCG_CLK_0>;
++			clock-indices = <IMX_LPCG_CLK_0>;
++			clock-output-names = "mipi1_i2c0_lpcg_ipg_clk";
++			power-domains = <&pd IMX_SC_R_MIPI_1_I2C_0>;
 +		};
 +
-+		pwm_lvds1: pwm@57244000 {
++		mipi1_i2c0_lpcg_ipg_s_clk: clock-controller@57223018 {
++			compatible = "fsl,imx8qxp-lpcg";
++			reg = <0x57223018 0x4>;
++			#clock-cells = <1>;
++			clocks = <&dsi_ipg_clk>;
++			clock-indices = <IMX_LPCG_CLK_0>;
++			clock-output-names = "mipi1_i2c0_lpcg_ipg_s_clk";
++			power-domains = <&pd IMX_SC_R_MIPI_1_I2C_0>;
++		};
++
++		mipi1_i2c1_lpcg_ipg_clk: clock-controller@57223024 {
++			compatible = "fsl,imx8qxp-lpcg";
++			reg = <0x57223024 0x4>;
++			#clock-cells = <1>;
++			clocks = <&mipi1_i2c1_lpcg_ipg_s_clk IMX_LPCG_CLK_0>;
++			clock-indices = <IMX_LPCG_CLK_0>;
++			clock-output-names = "mipi1_i2c1_lpcg_ipg_clk";
++			power-domains = <&pd IMX_SC_R_MIPI_1_I2C_1>;
++		};
++
++		mipi1_i2c1_lpcg_ipg_s_clk: clock-controller@57223028 {
++			compatible = "fsl,imx8qxp-lpcg";
++			reg = <0x57223028 0x4>;
++			#clock-cells = <1>;
++			clocks = <&dsi_ipg_clk>;
++			clock-indices = <IMX_LPCG_CLK_0>;
++			clock-output-names = "mipi1_i2c1_lpcg_ipg_s_clk";
++			power-domains = <&pd IMX_SC_R_MIPI_1_I2C_1>;
++		};
++
++		mipi1_i2c1_lpcg_clk: clock-controller@5722302c {
++			compatible = "fsl,imx8qxp-lpcg";
++			reg = <0x5722302c 0x4>;
++			#clock-cells = <1>;
++			clocks = <&clk IMX_SC_R_MIPI_1_I2C_1 IMX_SC_PM_CLK_MISC2>;
++			clock-indices = <IMX_LPCG_CLK_0>;
++			clock-output-names = "mipi1_i2c1_lpcg_clk";
++			power-domains = <&pd IMX_SC_R_MIPI_1_I2C_1>;
++		};
++
++		pwm_mipi1: pwm@57224000 {
 +			compatible = "fsl,imx8qxp-pwm", "fsl,imx27-pwm";
-+			reg = <0x57244000 0x1000>;
-+			clocks = <&lvds1_pwm_lpcg IMX_LPCG_CLK_4>,
-+				 <&lvds1_pwm_lpcg IMX_LPCG_CLK_0>;
++			reg = <0x57224000 0x1000>;
++			clocks = <&mipi1_pwm_lpcg IMX_LPCG_CLK_4>,
++				 <&mipi1_pwm_lpcg IMX_LPCG_CLK_0>;
 +			clock-names = "ipg", "per";
-+			assigned-clocks = <&clk IMX_SC_R_LVDS_1_PWM_0 IMX_SC_PM_CLK_PER>;
++			assigned-clocks = <&clk IMX_SC_R_MIPI_1_PWM_0 IMX_SC_PM_CLK_PER>;
 +			assigned-clock-rates = <24000000>;
 +			#pwm-cells = <3>;
-+			power-domains = <&pd IMX_SC_R_LVDS_1_PWM_0>;
++			power-domains = <&pd IMX_SC_R_MIPI_1_PWM_0>;
 +			status = "disabled";
 +		};
 +
-+		i2c0_lvds1: i2c@57246000 {
++		i2c0_mipi1: i2c@57226000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
 +			compatible = "fsl,imx8qm-lpi2c", "fsl,imx7ulp-lpi2c";
-+			reg = <0x57246000 0x1000>;
++			reg = <0x57226000 0x1000>;
 +			interrupts = <8>;
-+			clocks = <&lvds1_i2c0_lpcg IMX_LPCG_CLK_0>,
-+				 <&lvds1_i2c0_lpcg IMX_LPCG_CLK_4>;
++			interrupt-parent = <&irqsteer_mipi1>;
++			clocks = <&mipi1_i2c0_lpcg_clk IMX_LPCG_CLK_0>,
++				 <&mipi1_i2c0_lpcg_ipg_clk IMX_LPCG_CLK_0>;
 +			clock-names = "per", "ipg";
-+			assigned-clocks = <&clk IMX_SC_R_LVDS_1_I2C_0 IMX_SC_PM_CLK_PER>;
++			assigned-clocks = <&mipi1_i2c0_lpcg_clk IMX_LPCG_CLK_0>;
 +			assigned-clock-rates = <24000000>;
-+			power-domains = <&pd IMX_SC_R_LVDS_1_I2C_0>;
-+			status = "disabled";
-+		};
-+
-+		i2c1_lvds1: i2c@57247000 {
-+			compatible = "fsl,imx8qm-lpi2c", "fsl,imx7ulp-lpi2c";
-+			reg = <0x57247000 0x1000>;
-+			interrupts = <9>;
-+			clocks = <&lvds1_i2c0_lpcg IMX_LPCG_CLK_0>,
-+				 <&lvds1_i2c0_lpcg IMX_LPCG_CLK_4>;
-+			clock-names = "per", "ipg";
-+			assigned-clocks = <&clk IMX_SC_R_LVDS_1_I2C_0 IMX_SC_PM_CLK_PER>;
-+			assigned-clock-rates = <24000000>;
-+			power-domains = <&pd IMX_SC_R_LVDS_1_I2C_0>;
++			power-domains = <&pd IMX_SC_R_MIPI_1_I2C_0>;
 +			status = "disabled";
 +		};
 +	};
 +};
++
 diff --git a/arch/arm64/boot/dts/freescale/imx8qm.dtsi b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
-index 61986e0639e53..9f29fe4589668 100644
+index 9f29fe4589668..846b95be22bbe 100644
 --- a/arch/arm64/boot/dts/freescale/imx8qm.dtsi
 +++ b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
-@@ -576,3 +576,4 @@ clk_spdif1_rx: clock-spdif1-rx {
- #include "imx8qm-ss-conn.dtsi"
+@@ -577,3 +577,4 @@ clk_spdif1_rx: clock-spdif1-rx {
  #include "imx8qm-ss-lsio.dtsi"
  #include "imx8qm-ss-audio.dtsi"
-+#include "imx8qm-ss-lvds.dtsi"
+ #include "imx8qm-ss-lvds.dtsi"
++#include "imx8qm-ss-mipi.dtsi"
 
 -- 
 2.34.1
