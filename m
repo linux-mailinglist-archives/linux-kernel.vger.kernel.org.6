@@ -1,229 +1,153 @@
-Return-Path: <linux-kernel+bounces-204208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 747508FE5DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:55:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F1D18FE5E0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62A3E1C25BFF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:55:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26C301C25DB7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709FC195B0C;
-	Thu,  6 Jun 2024 11:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149F319596A;
+	Thu,  6 Jun 2024 11:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ekkw8VGE"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2084.outbound.protection.outlook.com [40.107.93.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="KSuigMUZ";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="S+xZnJmI"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C923F13D28C;
-	Thu,  6 Jun 2024 11:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717674911; cv=fail; b=QVD7G8TO1wU22abAR588gR5OGQYxY9zJKZxFBrUP26pIKGFRWE2VMcotqyrOoH/l8+9U+YtSwTcNeV/08FccEvRtDwYyd/+r+Ea78lbqvsqqHnNJnp4XtOCQVow0drIleCM42sQmrMeGP3of0KM+oc2LYKZX09/VgUraBOTmc/A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717674911; c=relaxed/simple;
-	bh=LAHFNNYPLXX8stQX8md53HD9RhBmZac0U5mAc8hs3rM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ibeJ82ioTikSfkRUeXhy/X9xvYgAy0gEas55UBV0RimePHe1esnDZzji4NmX5u9ll+pY+UkvpVfsJr6f9AMhePEWPFZmcZiNwe6KGUaJ0hV8sIwiwUOYTmdHt0rJrlksotNA3k+G5/6O7oYtaYIVrlodf/MupoQjdZtMRT8zIAM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ekkw8VGE; arc=fail smtp.client-ip=40.107.93.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=e1df2fbdrQE8xGDD3CtmKA7kgQH7uVfUHFKyBnWuV0DpBViTSMO8UZX8GckIo9G47B8XoWXEERKHcWNKH0v5ruD0iBxQQ8iTUutOnN1UsYA/zW3ESD1J+7eTIYAqwhlnFMl217qJvP2O2H2Ak/rC/h7m4osHTqy9FTCPqylNX/VIMveGMu+kwVpA8ZcUWifZSlylWZsPaZwRgCuNgtV48Da6dUlk3B7JAUjf0do6fFZEsAOKhtR6DxdyxGPNHsKrhl9RY8/ylFARmj/kDD1Kqt9WpTzulFYvGD+WnAYRNQoQrIGXE8K8VTk/nZOWy3p0UW02GBPHOatef7lClcYmpw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EASVH1VmbtdqnGevT6o0++PgCNjRcfgLEmPp059tB+A=;
- b=VfpZx+D9IJFUI3W6JzW/CmBEGEtFyI1marAJabE/2LYuvhUc16uiw/PC0IJYPZA+vpfGpOr/tEEDaOiKWZ30cUwDgvkouOdqGPUuEwYDPQnjZ3b/ty2zJ/9xxW6ixlmJ5BGKMX18ldbeIWYZlTnD/mpaFkZSxqqXKVAtwbJ1Z6hdQPf8TRf3IbM5CASpbHTCJZnO5qMLJZspz5Ye0jhCpuldrfJ/3fyzzGEQwRrXm1ZN3tkSG1Jg9JjBcFE3BmUmU3wCSlPpjqq+lvpD8qtDx+nAIaHTyohEZKxjx5ZSLuGecN8hhDQ26p4zJWOc1SrIay1pulYYDI9fEkcCMtpEbg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EASVH1VmbtdqnGevT6o0++PgCNjRcfgLEmPp059tB+A=;
- b=ekkw8VGEmDiXrPuz8SIB+vtmoq4PODwmXHlR2PunXusnSCpXSLUJMFLOrY2ahdfYllelVhtwnWdv818uqp+BGDrTpvQfW5kPigcL+BmMtyHGfwHcKMBOAarV6vhpduy/XAwv6bP7cgD/uod6ne/f4jNTUvDQRDfyp98RM8aLNnXXWohriJ1yZHLTFew/CDTZjXqbgSsi3FnqUCFLRfcr22n6Qxucq+Y6NlMuOIdeC/lqXTRSIA6msq/B/qfa8gnOjk+GGh4AIsCVYhcfuHnDWXteISPq3GP4rmIWj3jIzc2e44Wd3FSIxssYj0x0gCn6+GN9NVyED+lait7DDJ8c2Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by DM6PR12MB4371.namprd12.prod.outlook.com (2603:10b6:5:2a3::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.34; Thu, 6 Jun
- 2024 11:55:05 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7633.033; Thu, 6 Jun 2024
- 11:55:05 +0000
-Date: Thu, 6 Jun 2024 08:55:03 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Christoph Hellwig <hch@infradead.org>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	alex.williamson@redhat.com, kevin.tian@intel.com,
-	iommu@lists.linux.dev, pbonzini@redhat.com, seanjc@google.com,
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-	corbet@lwn.net, joro@8bytes.org, will@kernel.org,
-	robin.murphy@arm.com, baolu.lu@linux.intel.com, yi.l.liu@intel.com,
-	Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH 3/5] x86/mm: Introduce and export interface
- arch_clean_nonsnoop_dma()
-Message-ID: <20240606115503.GZ19897@nvidia.com>
-References: <20240507061802.20184-1-yan.y.zhao@intel.com>
- <20240507062044.20399-1-yan.y.zhao@intel.com>
- <ZktZDmcNnsHhp4Tm@infradead.org>
- <20240521154939.GH20229@nvidia.com>
- <20240521160016.GA2513156@nvidia.com>
- <ZlV7rlmWdU7dJZKo@infradead.org>
- <Zlt6huNJeW8ekJlE@nvidia.com>
- <ZmEjavnYePBLDbrS@yzhao56-desk.sh.intel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmEjavnYePBLDbrS@yzhao56-desk.sh.intel.com>
-X-ClientProxiedBy: MN2PR03CA0024.namprd03.prod.outlook.com
- (2603:10b6:208:23a::29) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893BA13D28C;
+	Thu,  6 Jun 2024 11:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717674962; cv=none; b=VsucdNYUVj/ZFTZTwSZOTPXOX9BTEfuudvuWcgk12UyCeeKtXaYbdNsbtq8nI0qn7WtqZM5IeDAdLgUYq5n80I7zlNQmLGz0LbHki4+gUqm9rI4v7SnQdg+OJX07fapK5lyLO9ZxJMpBAOjBRg7APGPIQ4CHmbVZ0bdebFeDk54=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717674962; c=relaxed/simple;
+	bh=5TcS2L0Vunv8bQ6XHbiioGIW6DmWOl9p9toiSyHCi2U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Xjm6FJtNIheugHSy0wbqqU+8RJUDx7W8fz8hgh+BtolkRsULU2AUPxwN4TrucNT4QY5xEgdFBzjZ9eP7/ihxAyz757lq0kdkcKyTO54w9+62iMoXn6tOLokE34k/J1ovCDAx16VFmH/4F8cX7mfR3Z7lquh8n1Mk8V/ma+MfkQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=KSuigMUZ; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=S+xZnJmI; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3352D21AE5;
+	Thu,  6 Jun 2024 11:55:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1717674956; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jZCoYGmEJh4l+ym/XnVfcBBQBC1YxZZjqAJOP1GtJnA=;
+	b=KSuigMUZRBIcqfkAVkZAJe2+Kz4kxMP0xgEDW1yewEdpvZRLLPVjmvjrU46HhqyFkTO6/x
+	wUW2+Cz0iYRl88d2gglyM0D79ucUSMYWYRQFwlKULo2q6Hb1UhBrb+WJE/b7zs3ClU/yrz
+	W+YKy6+U0tUasIGhJGev130yd09Vqx4=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=S+xZnJmI
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1717674955; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jZCoYGmEJh4l+ym/XnVfcBBQBC1YxZZjqAJOP1GtJnA=;
+	b=S+xZnJmIO9S/4p9OmvLSKVLvkKVr7oLEj8ouZ27JRDBUKNJHTarj+i0ol0z6MFOr62TNVi
+	1XCcs3djAI9rdTX32Fz4WqjZuoavds1svj6eLNgA6acbdvGKkJyoatH94XmzJ+ccSFeGbW
+	Eaj/PgFkBLtDQyLGB7a5G5JnrGtTrt8=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0A8D313A1E;
+	Thu,  6 Jun 2024 11:55:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dn6JAcujYWa1KQAAD6G6ig
+	(envelope-from <ptesarik@suse.com>); Thu, 06 Jun 2024 11:55:55 +0000
+From: =?UTF-8?q?Petr=20Tesa=C5=99=C3=ADk?= <ptesarik@suse.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>
+Cc: linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Petr=20Tesa=C5=99=C3=ADk?= <ptesarik@suse.com>
+Subject: [PATCH] ACPI: CPPC: add sysfs entry for guaranteed performance
+Date: Thu,  6 Jun 2024 13:55:41 +0200
+Message-ID: <20240606115541.2069-1-ptesarik@suse.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|DM6PR12MB4371:EE_
-X-MS-Office365-Filtering-Correlation-Id: b8dbd145-c0e1-4eba-cd13-08dc861f8116
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|7416005|1800799015|366007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZlSkBZ5XRQfqF3HV6n8UiGBnN4ogwOzPAt73CYmBP7wk82WLb8HQItpDWaS1?=
- =?us-ascii?Q?oB/usI+n6S/pAhR51APULR4dFGjnNG7r+vHJzim9WktGoP15KjGsdcbIgd+/?=
- =?us-ascii?Q?ZKszih9UvUKjkcXWezesPyw6lbEANkmGtJyiQECiKnNJGRLM3hylo7IjN8Du?=
- =?us-ascii?Q?xjLp+9ykjgdowHZCWiSe3RyFzb8+SryaMG2//gUXH/NM8iibNZ9ZmDlCTijR?=
- =?us-ascii?Q?UWL2cvdegw6nAFqS3oJkwFBv8mTgi989rpnM0dnQ2sx3OzzFpGaFMlau7LG2?=
- =?us-ascii?Q?/F0MdSx3QvebvK1ezXZAJ1rgJPPqFo8b4CDuDOcsoHhulwtmTCVQyiw2Zm1x?=
- =?us-ascii?Q?tpM0z3Y6gv+daoyHUlr/YJl9HLOqHqJM2dgjfj8SdxOVIWzCGWXo831SNmUD?=
- =?us-ascii?Q?2fYiH7Y+hB7RP2ECDsSLqKdEBw4OO7fquJWrXkH0fEKvOJI+h2m6QzrZ3Rft?=
- =?us-ascii?Q?/d9AfunRcuLI4lX97e2SoZ3nwCifW1EgeRI3tR458ypNSEpmE9yAKblMxGFX?=
- =?us-ascii?Q?XRps2IqraX7UnBcU8Zmsk/CncPAPlIuGfCJyPdM4JGan0X6eegaZ7aW0SpcR?=
- =?us-ascii?Q?zYktHpXvpmiWr1zGGSjUAfUMK4OXFgCAFaiQnXcNqeZG7ee9//8jWMvi4jbB?=
- =?us-ascii?Q?asWDHX0haDE2bxI4KT1/09puLK9euNijgLnzC0cfkHdXViPytXvMeJoBJUfy?=
- =?us-ascii?Q?d2hc8Vn41C5hLNX2WbXTA/NxYVPJ6eNTTXjtv2W/qNJIl4VNYYzS82ZpV3K4?=
- =?us-ascii?Q?1Cy9QVB+ccYXjrxPC+huizG46Hh2VSHBfdFerG4b1xwSAFfIaLznMUdBSbM3?=
- =?us-ascii?Q?9r1A3/6GBIpoDS+0x0TgeGjPLUIIx0a7Pfvlu6Ncy/0fOWxPyZ8H1n/xMNq8?=
- =?us-ascii?Q?gyQ47w+s4d1miHggwkr6ZvbmxT4voCFaHK/P5GVWR2DD8AeicKltpi5K6YEI?=
- =?us-ascii?Q?NvDrGEo9eO/eNth2HRVAzaT9E3ByByzMNPiITyNQjcq7FJ8JQ4ig0PHSgSQh?=
- =?us-ascii?Q?CwqyYEE6JqjAJob9P1S4Qy5aX6TXw0Qhy1tvwb0sds9UDBevGS5idEXo0o2p?=
- =?us-ascii?Q?1B0wzQZ9BHSd/ic3wTuA8fCM15XKo9z8iTk7sTiKDkJrzLYAP4ibOShkNk5w?=
- =?us-ascii?Q?5sI66Rbsp6DYBb07jb6OiM2xBViC95Eorw2Gr8GfMcMUrC06vl80nlrBAzvT?=
- =?us-ascii?Q?SMa+Qj8jUaFDum1fRquJi+GkzpihkxC500KwBKuDHgGqpVUFB56x1XCFMp9g?=
- =?us-ascii?Q?zpGs6JnvLocSjimkRAlfDF6nPHd9iWbPQKvbZDk6dRqr8CgfizjbX+Cg6v5g?=
- =?us-ascii?Q?UzmFNO4yn8l0sB9+EpXYzG9+?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?7IG1awX2rOpgLEOvkba20ylMW851rxc+DmVaBEj1x2fNQc1V6S/ZwEKvnqm2?=
- =?us-ascii?Q?QaKjjuPDOAFHelZqsvFRp4nwhA/qKSJiXvhjkPeJ7WNYjHXUJKpNu3ljO9Ur?=
- =?us-ascii?Q?WcG6fPTLVo/QRixEfh6/1z/9xTVBrVoI2yYKgBV1gbDDxkAou3Jnt7i/yeO4?=
- =?us-ascii?Q?6OkDNs/K5f9tH22/2TlIwBvjKVqnxAcHQc0OPZwIlV1SKBqnZHHGL3CEIdbh?=
- =?us-ascii?Q?SQmcVJRjA1fh7CDaJeYe0u4LjpNSac2l4c2iHNujnz4XGRNA1Ztdw/ZMQ8Il?=
- =?us-ascii?Q?+6zATncyHHvFgr+1r2CW6OfPBzw+8iOJS3aJU4rCwVY/3FGR0rdfgNyKSazu?=
- =?us-ascii?Q?JQgLWZWNWoRNT/x6tMMrPf3YZ1SoCX/zCLec/onXACiGJZMvSGJybFcHNuUd?=
- =?us-ascii?Q?pcdNcyfqL0+fswUmrYmXPkeF5JDo3x8cmra6+CZYqYVID1dYrmiSIoGNhwH7?=
- =?us-ascii?Q?pAZp0m686CPk3MUshX74WxZNfqgxeQXKVYdwcElwDaAaM87akenAOHJ6+Eh6?=
- =?us-ascii?Q?4uPkofpdrv3EmpiV8RpiQtkGKQTmtSP+rslGJTZ1qsItOayqGZVyTyJ5Kssz?=
- =?us-ascii?Q?QPgX2U6POdgje/kwUEBi1rxx8uw1uV6QJ4Lqj6seHHTRBPG1HeTjJgCV4hCO?=
- =?us-ascii?Q?BA/S2YjoP34v7eBfW5LBFOX2rcwdQH2jqLE3eOzD6jwlpaLtW2wznu6Tj3sZ?=
- =?us-ascii?Q?KHCfnRPNq1Wzvr46HMlf06YX9FZm3DQ9An9pkzPcpmHdKTMkwaomcNbt7q/K?=
- =?us-ascii?Q?Hcvl3feWXO5mC7qSH3WEHlQSXCNtEN0FJWj4dDEuNMytDjRK7VEjajQ7YN6g?=
- =?us-ascii?Q?+CguNkr1ZEz3DOSExcc42r2so/6DD2yojRAHFjRK1ZJs2qlvwHvDgq5XOnyy?=
- =?us-ascii?Q?qc+SJuWEIGOq4rFKXOa/dSKMpdSzikahkS51DW47FMfTMJvI6Qg6dfJyuY3D?=
- =?us-ascii?Q?4tFZOQ/gb1pyVkzqKwj2nchT5E8YUb5HHnym7SL5sd+FM+jfal/4bmTd7cr6?=
- =?us-ascii?Q?TAX6riMByxoKTIYlwpIqoupBv89ADSR+wiLSk2LBgG3+3TuSY+IEeWJ/v0KK?=
- =?us-ascii?Q?F/eK5vRS6N6JCm5gyJv2Ifp8s+f3Ir3LPI1337kw+yT/47cC6ayT9nny3c12?=
- =?us-ascii?Q?8jwLXitR25K4x4dcEdQj4qf/4sC2Ste44mkdIyOe9WLrBRtv3Is0hKxmmjDI?=
- =?us-ascii?Q?dr5I3A00BB9l4bhG/2X9dVt0m/klpDy3xD8jVI0kMWHLGcgtCxeQjVan8pYJ?=
- =?us-ascii?Q?LP++gZk3KttgY8O70GcEl5cQ/SqHb8ExugUSE+VBCUmmFxN1qG2CBxXAW4Yo?=
- =?us-ascii?Q?qlcSHLssBvG2F/bJfNRExw1fWi4ISyA424k0ze5rDrgMPTcdoJjgXok5BRaH?=
- =?us-ascii?Q?q7oD6dDZ+uIrOZ1T85D6ersP1P22xKvWR59DCFNum4MmmdVAyRNaCEHDv1L1?=
- =?us-ascii?Q?79BW0f+O/0FNGzaYjpIb1MkjKmI0UImo/vbWKq2Y1X076qx7dt3l3m3lThyF?=
- =?us-ascii?Q?DLct25uCgFMWog71YJ0WpmGBxP2uTR0r3Zvj11FpPAgJEJls6eUw0pcuUgP+?=
- =?us-ascii?Q?Y8QfsY7dOIFJkwn7RBw/KiArZoOYi7fN7QxMm/ps?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8dbd145-c0e1-4eba-cd13-08dc861f8116
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 11:55:04.9681
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sbM8tDNfm0TocNK8sDMbKl7/wnpE4eV9Rrpt5CCEEZTC0VCB1zkI4gxEOqzh/vdK
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4371
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -1.71
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 3352D21AE5
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-1.71 / 50.00];
+	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MIXED_CHARSET(0.83)[subject];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	BAYES_HAM(-0.03)[56.37%];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	DKIM_TRACE(0.00)[suse.com:+]
 
-On Thu, Jun 06, 2024 at 10:48:10AM +0800, Yan Zhao wrote:
-> On Sat, Jun 01, 2024 at 04:46:14PM -0300, Jason Gunthorpe wrote:
-> > On Mon, May 27, 2024 at 11:37:34PM -0700, Christoph Hellwig wrote:
-> > > On Tue, May 21, 2024 at 01:00:16PM -0300, Jason Gunthorpe wrote:
-> > > > > > Err, no.  There should really be no exported cache manipulation macros,
-> > > > > > as drivers are almost guaranteed to get this wrong.  I've added
-> > > > > > Russell to the Cc list who has been extremtly vocal about this at least
-> > > > > > for arm.
-> > > > > 
-> > > > > We could possibly move this under some IOMMU core API (ie flush and
-> > > > > map, unmap and flush), the iommu APIs are non-modular so this could
-> > > > > avoid the exported symbol.
-> > > > 
-> > > > Though this would be pretty difficult for unmap as we don't have the
-> > > > pfns in the core code to flush. I don't think we have alot of good
-> > > > options but to make iommufd & VFIO handle this directly as they have
-> > > > the list of pages to flush on the unmap side. Use a namespace?
-> > > 
-> > > Just have a unmap version that also takes a list of PFNs that you'd
-> > > need for non-coherent mappings?
-> > 
-> > VFIO has never supported that so nothing like that exists yet.. This
-> > is sort of the first steps to some very basic support for a
-> > non-coherent cache flush in a limited case of a VM that can do its own
-> > cache flushing through kvm.
-> > 
-> > The pfn list is needed for unpin_user_pages() and it has an ugly
-> > design where vfio/iommufd read back the pfns seperately from unmap,
-> > and they both do it differently without a common range list
-> > datastructure here.
-> > 
-> > So, we'd need to build some new unmap function that returns a pfn list
-> > that it internally fetches via the read ops. Then it can do the read,
-> > unmap, flush iotlb, flush cache in core code.
-> Would the core code flush CPU caches by providing page physical address?
+Expose the CPPC guaranteed performance as reported by the platform through
+GuaranteedPerformanceRegister.
 
-Physical address is all we will have in the core code..
+The current value is already read in cppc_get_perf_caps() and stored in
+struct cppc_perf_caps (to be used by the intel_pstate driver), so only the
+attribute itself needs to be defined.
 
-> If yes, do you think it's still necessary to export arch_flush_cache_phys()
-> (as what's implemented in this patch)?
+Signed-off-by: Petr Tesařík <ptesarik@suse.com>
+---
+ drivers/acpi/cppc_acpi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Christoph is asking not to export it, that would mean relying on the
-iommu core to be non-modulare and putting the arch calls there with a
-more restricted exported API - ie based on unmap.
-
-> > I've been working towards this very slowly as I want to push this
-> > stuff down into the io page table walk and remove the significant
-> > inefficiency, so it is not throw away work, but it is certainly some
-> > notable amount of work to do.
-> Will VFIO also be switched to this new unmap interface? Do we need to care
-> about backporting?
-
-I don't know :)
+diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+index 1d857978f5f4..9976bb57356e 100644
+--- a/drivers/acpi/cppc_acpi.c
++++ b/drivers/acpi/cppc_acpi.c
+@@ -160,6 +160,7 @@ show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, highest_perf);
+ show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, lowest_perf);
+ show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, nominal_perf);
+ show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, lowest_nonlinear_perf);
++show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, guaranteed_perf);
+ show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, lowest_freq);
+ show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, nominal_freq);
  
-> And is it possible for VFIO alone to implement in the current proposed way
-> in this series as the first step for easier backport?
+@@ -196,6 +197,7 @@ static struct attribute *cppc_attrs[] = {
+ 	&highest_perf.attr,
+ 	&lowest_perf.attr,
+ 	&lowest_nonlinear_perf.attr,
++	&guaranteed_perf.attr,
+ 	&nominal_perf.attr,
+ 	&nominal_freq.attr,
+ 	&lowest_freq.attr,
+-- 
+2.45.1
 
-I think this series is the best option we have right now, but make the
-EXPORT a NS export to try to discourage abuse of it while we continue
-working
-
-Jason
 
