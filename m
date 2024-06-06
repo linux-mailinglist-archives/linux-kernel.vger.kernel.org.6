@@ -1,101 +1,87 @@
-Return-Path: <linux-kernel+bounces-205004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C288FF60D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:49:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7CF58FF610
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E4D6284A78
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:49:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58279B2336B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30D512AAC9;
-	Thu,  6 Jun 2024 20:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C386053368;
+	Thu,  6 Jun 2024 20:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="emy80JGq"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ISkKSuK7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC8B4AECB;
-	Thu,  6 Jun 2024 20:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BA4762C1;
+	Thu,  6 Jun 2024 20:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717706946; cv=none; b=lng9uwShn8MWLka8V7hTeyCsMdfSGMRRIYWOx6EBhVvPh9mi3Iz5uxuzIGXt6XsvRrLgfDa5Oiv7GIHcdyHfFnWgonnVSKSfZYrEPPJqyfxd1XlfmkbUg/wc6TBxiGGXznfFuWV+AmVn88xlJYervxH4GRreAaVjj2Ds0TtqTog=
+	t=1717706966; cv=none; b=RXlKIFlFCh4lpTIywlvVv6iU6IOkPiIOSm8LDdHDXN8Bbxsfco4ux9vxq/bUhm0Sxt9StLeE6hw6bMFTFk7sSEvaAnwY+9CEbfMF5ZEc+4o5ZiwN3T8OmxE4iwnahuVRMMO1D5KeAop5hfdc9srtBTGyXqLsAlEh95qgDzXvDD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717706946; c=relaxed/simple;
-	bh=p6jNNr5yW2xzPxtDiKafQJVv16x4Fx9TtvoO6CBw4Us=;
+	s=arc-20240116; t=1717706966; c=relaxed/simple;
+	bh=RFULZ5kbXH4pWawUttHhrKUEKFuQo39Nf1voIsadOqY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oSl5neD3V9O5512oxshnltq+sM+KMTOg2xA9uq+bftY+S4qwzNGraSgjSAAMxVPPL228kORFQb6X1SnpcPZljC9xr1togO0xEKHc9Jb2lrw+Cco6NvzBENDIYUdfMGstwgf7ZuSzS/xwZ2iUYDSKeNREJMdxP3eS8BQrfvnI+qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=emy80JGq; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1717706940;
-	bh=p6jNNr5yW2xzPxtDiKafQJVv16x4Fx9TtvoO6CBw4Us=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=f/7EEDw/CF1Tu/R2OlUFcU8GBGenDbsMfjw6LFdLLxthCw5ioZPO3tyJBZp7aR7Erc+HWrhWpQxIepc3KjbxRgv4/lbgiQbkT24GCxFzIkfP/ZkHf40kFKG2rCidrWXrHNq8WiEPw589dJBVgRsKOejnmrnFWgUc3IGnXlWoSZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ISkKSuK7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F4C0C2BD10;
+	Thu,  6 Jun 2024 20:49:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717706965;
+	bh=RFULZ5kbXH4pWawUttHhrKUEKFuQo39Nf1voIsadOqY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=emy80JGq6Y8v2ZaDg2S8BIjchrX1M+eOh2z0WltlmeC2oN9dwcK7JAqI62pbJ9U6+
-	 hTSSBLREO/fXiWNmiGqslT5v1sBru3qNDcK2DvKRJgCAordn8rrXaCt/O1LRNeGErL
-	 rOiVZt1pdp7ae7n00pT2Mly4ZIMJ2zMe8XdkesuY=
-Date: Thu, 6 Jun 2024 22:48:59 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev, 
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, Benson Leung <bleung@chromium.org>
-Subject: Re: [PATCH] hwmon: (cros-ec_hwmon) Fix access to restricted __le16
-Message-ID: <a9409e1f-a6d1-4d97-86c5-acb11c0115af@t-8ch.de>
-References: <20240606180507.3332237-1-linux@roeck-us.net>
- <571aaac0-a397-4aa8-b9d5-2315f6a637d4@t-8ch.de>
- <9f2e2b48-f7b4-49da-ac02-1f73923fb9ef@roeck-us.net>
+	b=ISkKSuK775Ho1duwSP2qy7qNLwQJ7SYPjq/g85auOFDGYODQ1A3wLJPL9L567XWAb
+	 ba5Ww+cahVYZo8Tc16v+jDSShKDU4z9XLNN8pn3YPlE79jiXJBU2JTbPM3iOOYD3IR
+	 Y/T5IAfbsON7g97nFuJxR5nJc3+EyLiFdHOhLAwuUFoznEktNai4jPXikKDlHA/Uc/
+	 kyO31Yd3jIH7P7IiYA5qjqggiXX1OtLBhmMXchU8wNxdqJDuobgK5aSrVqAvmksxpn
+	 0Q+oVREbxR5IiJRvS6DrI/Dy+VVxpDxQafv8w+4IJc3MCgqbIYxe6JG0gS4Pm8fK3w
+	 KJRcINW6U5X0g==
+Date: Thu, 6 Jun 2024 14:49:24 -0600
+From: Rob Herring <robh@kernel.org>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: =?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <jpaulo.silvagoncalves@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: iio: adc: add ti,ads1119
+Message-ID: <20240606204924.GA3830246-robh@kernel.org>
+References: <20240606163529.87528-1-francesco@dolcini.it>
+ <20240606163529.87528-2-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9f2e2b48-f7b4-49da-ac02-1f73923fb9ef@roeck-us.net>
+In-Reply-To: <20240606163529.87528-2-francesco@dolcini.it>
 
-On 2024-06-06 13:16:59+0000, Guenter Roeck wrote:
-> On 6/6/24 12:53, Thomas WeiÃŸschuh wrote:
-> > Thanks!
-> > 
-> > On 2024-06-06 11:05:07+0000, Guenter Roeck wrote:
-> > > 0-day complains:
-> > > 
-> > > drivers-hwmon-cros_ec_hwmon.c:sparse:sparse:cast-to-restricted-__le16
-> > > 
-> > > Fix by using a __le16 typed variable as parameter to le16_to_cpu().
-> > > 
-> > > Fixes: bc3e45258096 ("hwmon: add ChromeOS EC driver")
-> > > Cc: Thomas WeiÃŸschuh <linux@weissschuh.net>
-> > > Cc: Tzung-Bi Shih <tzungbi@kernel.org>
-> > > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> > 
-> > Acked-by: Thomas WeiÃŸschuh <linux@weissschuh.net>
-> > 
-> > Guenter, does sparse work locally for you?
-> > 
+On Thu, Jun 06, 2024 at 06:35:28PM +0200, Francesco Dolcini wrote:
+> From: João Paulo Gonçalves <joao.goncalves@toradex.com>
 > 
-> It does, but I use the version from git://repo.or.cz/smatch.git.
+> Add devicetree bindings for Texas Instruments ADS1119 16-bit ADC
+> with I2C interface.
+> 
+> Datasheet: https://www.ti.com/lit/gpn/ads1119
+> Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
+> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> ---
+> v2:
+>  - add diff-channels and single-channel
 
-That does indeed look much better, thanks.
+Running the checks gives this error:
 
-
-I have another question about the endianness conversion in general.
-The only places I see doing a conversion are
-cros_ec_sensors_cmd_read_u16() and the original cros_ec hwmon driver.
-
-Also the documentation of the EC protocol does not specify anything in
-that regard.
-Instead there is the following comment in host_event_set_bit():
-
-   /*
-    * The overall host event implementation assumes it's running on and
-    * communicating with little-endian architectures.
-    */
-
-Can the conversion be dropped?
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml: single-channel: missing type definition
 
