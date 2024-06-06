@@ -1,94 +1,73 @@
-Return-Path: <linux-kernel+bounces-203840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A861D8FE116
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:37:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D7F8FE117
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:37:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 499292888DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:37:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F1B51F22CB9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE2D13C807;
-	Thu,  6 Jun 2024 08:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7195513C91A;
+	Thu,  6 Jun 2024 08:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1+yU8Cs3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D38aEflB";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aZz9x/m5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fOo/jCg2"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b="BvO86Caj"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E212E1DFEB
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D44413C812
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717662936; cv=none; b=UIZI5yPqIIy5cPDKVxAE8WZKLRvC1AKOjpSJ/goshHtCQEGBl1isFf+YOnfcM0MeWw/qFjSmc6FLhgBvQAxpT/8tDJTxnL3FXzkI+h5WGtNV34lvIeeWM5PNpT7KemX4KT/d0vVpgA+3py0f96zt5gB+QHFIHvwUdbjUMANasLo=
+	t=1717662944; cv=none; b=SLmKTd0RuG5iUiXxtBZh1r7YSrnBtFW2mnVlLbA98DEOYAAnkvxRg2UWDlbaI9YbLcTUaiR8Hs851NW+MXKUddfKXnjC+arTo7fr/goupMDEtWkxhXDESbavrS2XQvAgrLlKsmXqr8pAn4kwOzvMAu/IzHdvfS7jLBHneujRhus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717662936; c=relaxed/simple;
-	bh=EwO14/mEgbQRHzXhPbzNnk8eNjPwE+X1Ypz6bQX5UkM=;
+	s=arc-20240116; t=1717662944; c=relaxed/simple;
+	bh=TEa8HshL8R6beVCZZICGFhOgG9ZinqXY4f/S/jqkPwo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NRjy/nonughP2XDjNjeI6RW1IzXTDN/2j+Fz4xruRqldVunWgfD7h2S8WlT19urBafm7jvpth76K/grsjgX25UwUxJVWjLflfhEWwa1PuT2ocrPqBHKqjxz3mPBWw9rVnk81ReKJ+pOLcR4jLgilzcBlxfz7rPcY/xw7ZHRLrRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1+yU8Cs3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D38aEflB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aZz9x/m5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fOo/jCg2; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2592021AD8;
-	Thu,  6 Jun 2024 08:35:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717662933; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=y7WK71CX1bWFgxub7m1jJiwAutqf8GRVZ6L2udibCoE=;
-	b=1+yU8Cs3Fnfu77s+0HXV08KzmvPMw4TTCk3Cajtn8uXj2eN3e5zBeRJa/x5cLu8cI26OyJ
-	0T5MTNl01fDdZsEDRwr0VasgO00DsbH9ZwxN9Udl0cVugFuMeqpcW0yqWCIhgOI33NgCyM
-	ctGYewYBr+mHFUPkoY9UiTvRtOXim1A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717662933;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=y7WK71CX1bWFgxub7m1jJiwAutqf8GRVZ6L2udibCoE=;
-	b=D38aEflBbVq6FR9fgQijRg7PQh/cIBqQ/6drnOB9uq4F1IYZssfil/+9kjYwrJtCFAGhW6
-	QAUDpDV0o0j9X4CA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717662932; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=y7WK71CX1bWFgxub7m1jJiwAutqf8GRVZ6L2udibCoE=;
-	b=aZz9x/m5tfre4ZFI2mQS8qD9g0d7CFHDBBh5g+84pap6U+zxtU7V2pxNVH/SBjdjiGTRRY
-	SUrFqjg+5IdrF/2f/1lV2YdFV+2qw02ZUrmRUI/LgQWcyWPqpmHxEkd3K6s5L43rKOa0tZ
-	Wmxn5cwmCrt5I0lu5Haul+Sk6ppwp3g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717662932;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=y7WK71CX1bWFgxub7m1jJiwAutqf8GRVZ6L2udibCoE=;
-	b=fOo/jCg2XkK24Xb5Lc2XfrsaUS8ZJisGpxBZk9XXhAAyK3D36+cRBk7aoPI0MQOPLnWDJx
-	kwl19X88vkddTIDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0F16713A1E;
-	Thu,  6 Jun 2024 08:35:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jIFHA9R0YWbTZQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 06 Jun 2024 08:35:32 +0000
-Message-ID: <96b67998-213c-49c1-8f67-07d43f89715b@suse.cz>
-Date: Thu, 6 Jun 2024 10:35:31 +0200
+	 In-Reply-To:Content-Type; b=R4adaYNLFHlBX4x4Qr856/9VCCmQoH2FnyI0EOTO2DWv9I4PEf0CmBXAdZmHxxE0Mzlld+WkTYa/xMUNL2y5cXWfXcOGYIybXTvYnCID4IStvaMqRgwI/X71WbCSHCT9jMd6ezGu/JaUyIf8FIknuvk4K1TlA1K1XfD7tWv4nN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=none smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b=BvO86Caj; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ursulin.net
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-35e0f4e1821so521948f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 01:35:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ursulin-net.20230601.gappssmtp.com; s=20230601; t=1717662941; x=1718267741; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CCwIYRedAV5Z8YBxgB7muTkW1BWHNjBVC+U5ONE1IoM=;
+        b=BvO86CajaKzB/GaDjcqA+gt59SWrAMxWmvNWpGztKUkCv9KkJ0Nw0S/VeRoFy7Of1l
+         fn8S/r78HxdKkekBFNu/GVc+Z4xkguxcHXMImn3AUqLF1vQ72YqMkolk0eN31Qoh3fui
+         IpzLLNLR9COEF7C1vsyReui0bFzmBLbwypqKtDznXGZsn0CplhcDJN7fUj6dvu/tFXiU
+         swt8QuI0Rg5gJU0g1D9rUYDoXiu0rpqhgH4bSfsEI4oYL+ydDSHJYJw2A2qYp7ret27D
+         awsd+9/vvpziza9pPHA+gwPL5stL1XZg+aun3N86IIn5D+3U7HwCxNoYZqXtl6X7a9/h
+         CFNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717662941; x=1718267741;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CCwIYRedAV5Z8YBxgB7muTkW1BWHNjBVC+U5ONE1IoM=;
+        b=GlhIocf179iPHfAUFsptumMkRSE8RA0BOQliry/mJofWTQbaaroadedsANL8zjwIBx
+         FaWI/RiisdnmbjW0HQguDJIqrOjnGgnLk/aril6FgVwNfyurTAY/gRTIBUb9uedPsQKb
+         x0NZxBcZRkCkkhWGmm5arczP0SH03hJ+z3lC+4rTu7sc9iMDXyFk0kQiJLbC4zRjUC48
+         ed+n0ZiiUSqpJMgUbLxQ08mrquQ071JyjqjOFknm/nJgJKS0W3YuLbV3Ha74rKT36GdV
+         MEeBbTxqsauwD1oQHHKPEJWk2a1DadKPkjYzrIGN0o6g0LkTASHnBdgZSHg0890TcOv6
+         M69A==
+X-Forwarded-Encrypted: i=1; AJvYcCXchWmicNcyiiI/zdgVUHyJbKqYwVumZmkCRKiuq+VUt1yqwUtax0mTz6BszDMcgR1Zq0n304du753qstpAxWkLeSYP0Wjy7+o1vFMp
+X-Gm-Message-State: AOJu0YwC2qP55SwG93JViTxDBRSxnjQU34LXx85jEdBKl7C0RLt2jC3y
+	SvCnFDz+bYOtTZkUANJOxzXIDEqHMLLPy29RZW5P98is2u2aR5qtXmzEzRJfPuM=
+X-Google-Smtp-Source: AGHT+IHs+uu+sCK+3QGcW2yHZE69rF6zH5KkgsyOFeQlqam69zVQG+kaq1EKZ7ucxK1IOfaJpqTrgw==
+X-Received: by 2002:a5d:6504:0:b0:35e:f374:33b4 with SMTP id ffacd0b85a97d-35ef37435b8mr1172473f8f.65.1717662940656;
+        Thu, 06 Jun 2024 01:35:40 -0700 (PDT)
+Received: from [10.0.21.32] (210.red-80-36-22.staticip.rima-tde.net. [80.36.22.210])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d4bcd6sm932216f8f.45.2024.06.06.01.35.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 01:35:40 -0700 (PDT)
+Message-ID: <1c40ea3a-ac58-4fa9-a7e5-3af880effb0e@ursulin.net>
+Date: Thu, 6 Jun 2024 10:35:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,141 +75,193 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] slab: don't put freepointer outside of object if
- only orig_size
-Content-Language: en-US
-To: Chengming Zhou <chengming.zhou@linux.dev>,
- Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
- David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Feng Tang <feng.tang@intel.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- zhouchengming@bytedance.com
-References: <20240605-b4-slab-debug-v2-0-c535b9cd361c@linux.dev>
- <20240605-b4-slab-debug-v2-2-c535b9cd361c@linux.dev>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240605-b4-slab-debug-v2-2-c535b9cd361c@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.79 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[linux.dev,linux.com,kernel.org,google.com,lge.com,linux-foundation.org,gmail.com,intel.com];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,intel.com:email]
-X-Spam-Score: -2.79
-X-Spam-Flag: NO
+Subject: Re: [PATCH v3 6/7] drm/drm_file: add display of driver's internal
+ memory size
+Content-Language: en-GB
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Rob Clark <robdclark@gmail.com>
+References: <20240606005416.1172431-1-adrian.larumbe@collabora.com>
+ <20240606005416.1172431-7-adrian.larumbe@collabora.com>
+From: Tvrtko Ursulin <tursulin@ursulin.net>
+In-Reply-To: <20240606005416.1172431-7-adrian.larumbe@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 6/5/24 9:13 AM, Chengming Zhou wrote:
-> The commit 946fa0dbf2d8 ("mm/slub: extend redzone check to extra
-> allocated kmalloc space than requested") will extend right redzone
-> when allocating for orig_size < object_size. So we can't overlay the
-> freepointer in the object space in this case.
-> 
-> But the code looks like it forgot to check SLAB_RED_ZONE, since there
-> won't be extended right redzone if only orig_size enabled.
-> 
-> As we are here, make this complex conditional expressions a little
-> prettier and add some comments about extending right redzone when
-> slub_debug_orig_size() enabled.
-> 
-> Reviewed-by: Feng Tang <feng.tang@intel.com>
-> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+On 06/06/2024 02:49, Adrián Larumbe wrote:
+
+> Some drivers must allocate a considerable amount of memory for bookkeeping
+> structures and GPU's MCU-kernel shared communication regions. These are
+> often created as a result of the invocation of the driver's ioctl()
+> interface functions, so it is sensible to consider them as being owned by
+> the render context associated with an open drm file.
+>
+> However, at the moment drm_show_memory_stats only traverses the UM-exposed
+> drm objects for which a handle exists. Private driver objects and memory
+> regions, though connected to a render context, are unaccounted for in their
+> fdinfo numbers.
+>
+> Add a new drm_memory_stats 'internal' memory category.
+>
+> Because deciding what constitutes an 'internal' object and where to find
+> these are driver-dependent, calculation of this size must be done through a
+> driver-provided function pointer, which becomes the third argument of
+> drm_show_memory_stats. Drivers which have no interest in exposing the size
+> of internal memory objects can keep passing NULL for unaltered behaviour.
+>
+> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+
+Please Cc people who were previously involved in defining 
+drm-usage-stats.rst. I added Rob, but I am not sure if I forgot someone 
+from the top of my head.
+
+Internal as a category sounds potentially useful. One reservation I have 
+though is itdoes not necessarily fit with the others but is something 
+semantically different from them.
+
+In i915 I had the similar desire to account for internal objects and 
+have approached it by similarly tracking them outside the DRM idr but 
+counting them under the existing respective categories and memory 
+regions. Ie. internal objects can also be purgeable or not, etc, and can 
+be backed by either system memory or device local memory.
+
+Advantage is it is more accurate in those aspect and does not require 
+adding a new category.
+
+Downside of this is that 'internal' is bunched with the explicit 
+userspace objects so perhaps less accurate in this other aspect.
+
+Regards,
+
+Tvrtko
 
 > ---
->  mm/slub.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 7fbd5ce4320a..704c662227e6 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -5152,10 +5152,9 @@ static int calculate_sizes(struct kmem_cache *s)
->  	 */
->  	s->inuse = size;
->  
-> -	if (slub_debug_orig_size(s) ||
-> -	    (flags & (SLAB_TYPESAFE_BY_RCU | SLAB_POISON)) ||
-> -	    ((flags & SLAB_RED_ZONE) && s->object_size < sizeof(void *)) ||
-> -	    s->ctor) {
-> +	if ((flags & (SLAB_TYPESAFE_BY_RCU | SLAB_POISON)) || s->ctor ||
-> +	    ((flags & SLAB_RED_ZONE) &&
-> +	     (s->object_size < sizeof(void *) || slub_debug_orig_size(s)))) {
->  		/*
->  		 * Relocate free pointer after the object if it is not
->  		 * permitted to overwrite the first word of the object on
-> @@ -5163,7 +5162,9 @@ static int calculate_sizes(struct kmem_cache *s)
->  		 *
->  		 * This is the case if we do RCU, have a constructor or
->  		 * destructor, are poisoning the objects, or are
-> -		 * redzoning an object smaller than sizeof(void *).
-> +		 * redzoning an object smaller than sizeof(void *) or are
-> +		 * redzoning an object with slub_debug_orig_size() enabled,
-> +		 * in which case the right redzone may be extended.
->  		 *
->  		 * The assumption that s->offset >= s->inuse means free
->  		 * pointer is outside of the object is used in the
-> 
-
+>   Documentation/gpu/drm-usage-stats.rst   | 4 ++++
+>   drivers/gpu/drm/drm_file.c              | 9 +++++++--
+>   drivers/gpu/drm/msm/msm_drv.c           | 2 +-
+>   drivers/gpu/drm/panfrost/panfrost_drv.c | 2 +-
+>   include/drm/drm_file.h                  | 7 ++++++-
+>   5 files changed, 19 insertions(+), 5 deletions(-)
+>
+> diff --git a/Documentation/gpu/drm-usage-stats.rst b/Documentation/gpu/drm-usage-stats.rst
+> index 6dc299343b48..0da5ebecd232 100644
+> --- a/Documentation/gpu/drm-usage-stats.rst
+> +++ b/Documentation/gpu/drm-usage-stats.rst
+> @@ -157,6 +157,10 @@ The total size of buffers that are purgeable.
+>   
+>   The total size of buffers that are active on one or more engines.
+>   
+> +- drm-internal-<region>: <uint> [KiB|MiB]
+> +
+> +The total size of GEM objects that aren't exposed to user space.
+> +
+>   Implementation Details
+>   ======================
+>   
+> diff --git a/drivers/gpu/drm/drm_file.c b/drivers/gpu/drm/drm_file.c
+> index 638ffa4444f5..d1c13eed8d34 100644
+> --- a/drivers/gpu/drm/drm_file.c
+> +++ b/drivers/gpu/drm/drm_file.c
+> @@ -874,9 +874,10 @@ void drm_print_memory_stats(struct drm_printer *p,
+>   			    enum drm_gem_object_status supported_status,
+>   			    const char *region)
+>   {
+> -	print_size(p, "total", region, stats->private + stats->shared);
+> +	print_size(p, "total", region, stats->private + stats->shared + stats->internal);
+>   	print_size(p, "shared", region, stats->shared);
+>   	print_size(p, "active", region, stats->active);
+> +	print_size(p, "internal", region, stats->internal);
+>   
+>   	if (supported_status & DRM_GEM_OBJECT_RESIDENT)
+>   		print_size(p, "resident", region, stats->resident);
+> @@ -890,11 +891,12 @@ EXPORT_SYMBOL(drm_print_memory_stats);
+>    * drm_show_memory_stats - Helper to collect and show standard fdinfo memory stats
+>    * @p: the printer to print output to
+>    * @file: the DRM file
+> + * @func: driver-specific function pointer to count the size of internal objects
+>    *
+>    * Helper to iterate over GEM objects with a handle allocated in the specified
+>    * file.
+>    */
+> -void drm_show_memory_stats(struct drm_printer *p, struct drm_file *file)
+> +void drm_show_memory_stats(struct drm_printer *p, struct drm_file *file, internal_bos func)
+>   {
+>   	struct drm_gem_object *obj;
+>   	struct drm_memory_stats status = {};
+> @@ -940,6 +942,9 @@ void drm_show_memory_stats(struct drm_printer *p, struct drm_file *file)
+>   	}
+>   	spin_unlock(&file->table_lock);
+>   
+> +	if (func)
+> +		func(&status, file);
+> +
+>   	drm_print_memory_stats(p, &status, supported_status, "memory");
+>   }
+>   EXPORT_SYMBOL(drm_show_memory_stats);
+> diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+> index 9c33f4e3f822..f97d3cdc4f50 100644
+> --- a/drivers/gpu/drm/msm/msm_drv.c
+> +++ b/drivers/gpu/drm/msm/msm_drv.c
+> @@ -880,7 +880,7 @@ static void msm_show_fdinfo(struct drm_printer *p, struct drm_file *file)
+>   
+>   	msm_gpu_show_fdinfo(priv->gpu, file->driver_priv, p);
+>   
+> -	drm_show_memory_stats(p, file);
+> +	drm_show_memory_stats(p, file, NULL);
+>   }
+>   
+>   static const struct file_operations fops = {
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> index ef9f6c0716d5..53640ac44e42 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> @@ -570,7 +570,7 @@ static void panfrost_show_fdinfo(struct drm_printer *p, struct drm_file *file)
+>   
+>   	panfrost_gpu_show_fdinfo(pfdev, file->driver_priv, p);
+>   
+> -	drm_show_memory_stats(p, file);
+> +	drm_show_memory_stats(p, file, NULL);
+>   }
+>   
+>   static const struct file_operations panfrost_drm_driver_fops = {
+> diff --git a/include/drm/drm_file.h b/include/drm/drm_file.h
+> index ab230d3af138..d71a5ac50ea9 100644
+> --- a/include/drm/drm_file.h
+> +++ b/include/drm/drm_file.h
+> @@ -464,6 +464,7 @@ void drm_send_event_timestamp_locked(struct drm_device *dev,
+>    * @resident: Total size of GEM objects backing pages
+>    * @purgeable: Total size of GEM objects that can be purged (resident and not active)
+>    * @active: Total size of GEM objects active on one or more engines
+> + * @internal: Total size of GEM objects that aren't exposed to user space
+>    *
+>    * Used by drm_print_memory_stats()
+>    */
+> @@ -473,16 +474,20 @@ struct drm_memory_stats {
+>   	u64 resident;
+>   	u64 purgeable;
+>   	u64 active;
+> +	u64 internal;
+>   };
+>   
+>   enum drm_gem_object_status;
+>   
+> +typedef void (*internal_bos)(struct drm_memory_stats *status,
+> +			     struct drm_file *file);
+> +
+>   void drm_print_memory_stats(struct drm_printer *p,
+>   			    const struct drm_memory_stats *stats,
+>   			    enum drm_gem_object_status supported_status,
+>   			    const char *region);
+>   
+> -void drm_show_memory_stats(struct drm_printer *p, struct drm_file *file);
+> +void drm_show_memory_stats(struct drm_printer *p, struct drm_file *file, internal_bos func);
+>   void drm_show_fdinfo(struct seq_file *m, struct file *f);
+>   
+>   struct file *mock_drm_getfile(struct drm_minor *minor, unsigned int flags);
 
