@@ -1,195 +1,155 @@
-Return-Path: <linux-kernel+bounces-203692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D02F8FDF1E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:51:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E99478FDF18
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF6DCB260FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:51:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C7111F22B04
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A91E139D11;
-	Thu,  6 Jun 2024 06:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC1613A3E2;
+	Thu,  6 Jun 2024 06:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=Sony.onmicrosoft.com header.i=@Sony.onmicrosoft.com header.b="eyLVBPdx"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2067.outbound.protection.outlook.com [40.107.100.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AR1HQFdc"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B3D19D898;
-	Thu,  6 Jun 2024 06:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717656679; cv=fail; b=MfwxBnV+VXpZvyHxTApnxf/nLDFPWmXoLxJJhT5wtZNk14I/5HdYiqbF8Y8GhInoCOqKcF+284U0BBGIndHdJ4i/8OXdKAfNMJX/+2VW4qKo5ZtNsWpQotwkWUzYglG5QmA1KsyY0ugqU3FaBHgvIMAh/5ipwS/aHUXlm/YGIyI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717656679; c=relaxed/simple;
-	bh=nGvW4yOXM4JnO1HUKDUS/bk+9RulcBQl9R66MLoM6gI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qSum2QR3wp+iezEt/InfnskU6Yy77N3UR2yfylUWgRBBPs9q5vKeOirNrwxLUTmn7/0dDdV/xomB1EpRDHi6rRWu7MxOdr6z5S4nj14MIqUijiou5zw1gnhWGURJu8V+8++PkOPJw+QAOS+e6Tpmw7N/vEkXAAhJ7tdaiCAGjSA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (1024-bit key) header.d=Sony.onmicrosoft.com header.i=@Sony.onmicrosoft.com header.b=eyLVBPdx; arc=fail smtp.client-ip=40.107.100.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lAz4qE4+27xk67s7wY6+5nttPfkJ/+vhlLJi4OY1GkApV3I92vCsZhQR8Be2YfH2djcwbMMNlnqNMqXFPa6fb9yhLynfUcQJyNwNhvv8VyEXN0mKZMNMvE8QHXwyZGJdqgjUiVEsCUVC+nCj99NM8ImfwCB0dd7ot9/xH8znOTWBm4bvqzd5OhpniFpuT5WTFY9dOIvY4m3lhaK27jgqZFWOmFnjNjD57aFAMD04G7AyEOyyK5dSx9iv7boklDszK/6SUTvj3tCKsQSYFAZ6EEdJ+BFd+yVL2319ADOlEIXlHA19Vtb5FCItEX0C0vPImFoRLkIcBc7mZjmUVn0ZoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zWnl6b3x/8NzNd6mnRPaBXIO0coTbMS4V1K0jRQSvYw=;
- b=UBPMvDOiD1mjJgEiyE/Zg3mW3nIv51pGYEnw9sRxGXkdV0vjKbQv8x19hyVTfh+zWdV0KdqQltVpmx6vIQflXrJNgrWGr0IVPUtgJ6CsJFRLXhJoBbKWZP8Ga6P/BpUIUT170tND5StUjpPvj6hBRXxlmSnEMfWyTr3w2hMjUyK2Gs8D479Mguyy7LMEUHfaadLqa54caG+QG3M8CloCfmQV2PGTqinpqyWa5xeF9XIIqPeuiOrPrJRLYnUqApz25C0Rq6fK7RL0hMcxBJ0Ztk5nnmpRgixoA8rB5C22mR9fuQ7dZInxocTzrwmNI4ZAJ/ObREcPIomcRvD4Oiox9Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 121.100.38.198) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=sony.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=sony.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Sony.onmicrosoft.com;
- s=selector2-Sony-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zWnl6b3x/8NzNd6mnRPaBXIO0coTbMS4V1K0jRQSvYw=;
- b=eyLVBPdxHa2JQCsmQofeuQ/XtIlYDeSEiJxwCaMych3xrnkzuHaBz9+dx+ohFay1UbH2mZK1Huydkzwrby4KY0kAhZ+bYpydD9b7uKhT8jVhAuOSWu6yz9+hWwhpZiytwkYUiwTnBk1cKE9LP3f1scXnJaTfN6pMKHDx1alujoM=
-Received: from CH2PR14CA0041.namprd14.prod.outlook.com (2603:10b6:610:56::21)
- by PH0PR13MB4987.namprd13.prod.outlook.com (2603:10b6:510:75::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.20; Thu, 6 Jun
- 2024 06:51:14 +0000
-Received: from CH1PEPF0000AD83.namprd04.prod.outlook.com
- (2603:10b6:610:56:cafe::56) by CH2PR14CA0041.outlook.office365.com
- (2603:10b6:610:56::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.31 via Frontend
- Transport; Thu, 6 Jun 2024 06:51:13 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 121.100.38.198)
- smtp.mailfrom=sony.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=sony.com;
-Received-SPF: Fail (protection.outlook.com: domain of sony.com does not
- designate 121.100.38.198 as permitted sender)
- receiver=protection.outlook.com; client-ip=121.100.38.198;
- helo=gepdcl09.sg.gdce.sony.com.sg;
-Received: from gepdcl09.sg.gdce.sony.com.sg (121.100.38.198) by
- CH1PEPF0000AD83.mail.protection.outlook.com (10.167.244.85) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7452.22 via Frontend Transport; Thu, 6 Jun 2024 06:51:13 +0000
-Received: from gepdcl02.s.gdce.sony.com.sg (SGGDCSE1NS07.sony.com.sg [146.215.123.196])
-	by gepdcl09.sg.gdce.sony.com.sg (8.14.7/8.14.4) with ESMTP id 4566ogC1000973;
-	Thu, 6 Jun 2024 14:50:54 +0800
-Received: from mail.sony.com ([43.88.80.246])
-	by gepdcl02.s.gdce.sony.com.sg (8.14.7/8.14.4) with ESMTP id 4566ofwH016350;
-	Thu, 6 Jun 2024 14:50:41 +0800
-Received: by mail.sony.com (Postfix, from userid 1001)
-	id 1E7731D8018C; Thu,  6 Jun 2024 12:20:41 +0530 (IST)
-Date: Thu, 6 Jun 2024 12:20:40 +0530
-From: Sreenath Vijayan <sreenath.vijayan@sony.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: john.ogness@linutronix.de, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, rdunlap@infradead.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        taichi.shimoyashiki@sony.com, daniel.palmer@sony.com,
-        anandakumar.balasubramaniam@sony.com
-Subject: Re: [PATCH] printk: Rename console_replay_all() and update context
-Message-ID: <ZmFcQPDi+de6egqY@sreenath.vijayan@sony.com>
-References: <66582edb.650a0220.8de7.c591SMTPIN_ADDED_BROKEN@mx.google.com>
- <ZlmPAZUeKIDFKLdf@pathway.suse.cz>
- <Zl7Lo5eGJKLjbTUc@pathway.suse.cz>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA8319D898;
+	Thu,  6 Jun 2024 06:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717656466; cv=none; b=PXLbGHOS8NkScYe79zJdPVdY6HkMRX+8C6JSrdlghvNgTAHct9Sfat8kzcn+yL7K1YcA7OQQb1c8kJ+DYnqLltlS58it2TOH8jUQxePlCM3RWPcNQfrrLOb3FTybz+2d5pagEpbGlpehqzT1EsPO9i1NuJr2lwFXv+1TQ8CUPsI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717656466; c=relaxed/simple;
+	bh=k5s7YOLQTUatjXw1nfSPcz2NVGXMNK1aE7DYjJ86gfw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uXjGvhoju6Mj0Q0+7w8uBd5dWI4lPoD+Gt5po9xiRb9Ghe1tax/Vu8Tq2bf4ptidz5PdjRLqoKRcOn4F0NMrfiyVyq1yFIcUpjR8b7JPIOA+ZzKIBfzjWbHLpYMdX1TGXn0PaS5ulnez00p85JIuRvirWgrv1PalPb0PMvGMnSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AR1HQFdc; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42108856c33so9823295e9.1;
+        Wed, 05 Jun 2024 23:47:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717656463; x=1718261263; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Lb426LLnUih8K2YvE1gaXIGP1CqxxrBM8f63wiNLErg=;
+        b=AR1HQFdc4pNbEsyuZbviskoQAcI6alssR9O87H+rPm2rHF1D2rzGLBRa2Uw1tvzppM
+         sZmw5VkdVS+VSvNPH4DDIbihAXNkTbi/q+2KDZaC7f8Eg1j/hX/Roh3Pszbocleu4W34
+         KrHR9YOyQyH+ioKqvzp5LCPiX4Q4B1F2WX833psXhmsCl+MuEJa+XuK4bq1T91BfrODo
+         PH+OuwdLAItM04tcrPIedt1jbKYkNWrjWPRwB0fkOWHFSmajOvcxxgd7VEhBGj1rFxDg
+         hj8hN5mG4N/NpettbMZzgCgJTqgVES4TbkHalfrpnp99yU7rqHuFAHXL9iiO0jLHXGwP
+         cTIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717656463; x=1718261263;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Lb426LLnUih8K2YvE1gaXIGP1CqxxrBM8f63wiNLErg=;
+        b=I2z+9cxmSo/+b6SjtCeRJGOm4ILT0btXvNk/nE6GgyqAZ8MsG8EWO4M8YpPwZluc9C
+         NlT/jqJILwnHkBczIolEn0cp0HjOHdT79dxoxPWFGrjGPgBjEIZgHQcWu9XTZe/3v2Ho
+         x5rPo7y4tOVvUKXe3zrdEW3hRmmfW1KbDqYqT0EJOvhm0YM9BG5zCeqThTxFu4c/1ZJ9
+         rYtt1ZWx3lp/0YWoj713yemD3dCNM+6nldLkH3BEnIP6D5FqzjfmUMI6Ff/8TKpAZGTA
+         dKdodSTlV6yhplGJRU4EfF6k8+eRKvGJHaJ+07em+/RJg6pPRrER+0ffp/7/jMXI0zPI
+         giMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXfyjafyD9ddjdNf5hl/omc8jCtJoNRTiYRSZkVZ78BsaRpkdGlmDXxjfRKsHCqt3j9EtQvbwdVVaf7t5XcQ1VWfL0Pw4kXgRs0ZBtfH2mni4p+hu3P6AoS+Anu796AlBLQtiuxwFx31cSYtuUc72EAxvkRQaExO7KMDk4qvS0Kke+qkg==
+X-Gm-Message-State: AOJu0YyYYFf98bgTYxzJy78FSZyIgrk9zHz924yROpsnRgmL1Bk+yXVf
+	7CF3UFtORZBIy/FCgy1PKiTNTQQIBYs4/jw1RlCroWAQrqgQlnpK
+X-Google-Smtp-Source: AGHT+IHgIM6GzVD3SkjPmL595htx1HpX163bpnbtHN6d9yNTYrl3KyPXaMvMUNTmUbrcl7cCljvHOA==
+X-Received: by 2002:a05:600c:46cf:b0:41b:f4e1:381b with SMTP id 5b1f17b1804b1-4215acbf8bdmr13792865e9.2.1717656463069;
+        Wed, 05 Jun 2024 23:47:43 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:994e:fbde:478:1ce1? (p200300f6ef1cc500994efbde04781ce1.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:994e:fbde:478:1ce1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42158116e41sm43625595e9.21.2024.06.05.23.47.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 23:47:42 -0700 (PDT)
+Message-ID: <0e18b3aa83a62103b0f06ee516193c03f80abae9.camel@gmail.com>
+Subject: Re: [PATCH v3 4/6] spi: spi-axi-spi-engine: Add support for MOSI
+ idle configuration
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Marcelo Schmitt
+ <marcelo.schmitt@analog.com>, broonie@kernel.org, lars@metafoo.de, 
+ Michael.Hennerich@analog.com, jic23@kernel.org, robh+dt@kernel.org, 
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, nuno.sa@analog.com,
+  marcelo.schmitt1@gmail.com
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 06 Jun 2024 08:51:29 +0200
+In-Reply-To: <ed4fe3de-726b-4eba-a12a-d2f7b1da26d1@baylibre.com>
+References: <cover.1717539384.git.marcelo.schmitt@analog.com>
+	 <a6b00e84325bbe44919cc49509e837f2555367d0.1717539384.git.marcelo.schmitt@analog.com>
+	 <ed4fe3de-726b-4eba-a12a-d2f7b1da26d1@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zl7Lo5eGJKLjbTUc@pathway.suse.cz>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD83:EE_|PH0PR13MB4987:EE_
-X-MS-Office365-Filtering-Correlation-Id: d093c78b-f195-4d0d-4bf8-08dc85f50e93
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|82310400017|376005|36860700004|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?rKKr1rMzBILCjpRCXAzPd0kIUcicY13L2Y7GuH7EEK9xZxLj0rHVfanwG66M?=
- =?us-ascii?Q?hK+mI4NNrq14gQsiQ9epr7OMv/Z37tpgRixy90WC/afwxSvFN2L71iVdcxXU?=
- =?us-ascii?Q?b0Jawt2ISHgV/dme+TddAjIsie4mI/+g3N8epWndoZhNtm+0Y8CqncmO9+gJ?=
- =?us-ascii?Q?xHZpOsX5wgfaJ0spqIfURMjsbh2hQlVR9wsqrfChnu5wGeQ4oxcGm1XpuFvf?=
- =?us-ascii?Q?8ZSpi1GhBsnbjOgKo/QXEqzxEiHLypthwJYJ67xOur4YTBA+iMahnHZj2EF1?=
- =?us-ascii?Q?It2j0xwdVeci5gB1i3sHxOTEMlEiWdqvzus7GDYDL7n92ee8zAaSYRgxnQjQ?=
- =?us-ascii?Q?Wx1SdFzSpG6IVL8libxWy0glOcZQ1XTYTvVm4mc2dt7o4kONhv4OzolEjoBp?=
- =?us-ascii?Q?a12GefQ3as3/9v76PLNUkEfqlxoIyTpyFLe4Gy5rJmWt/+iZWCofHbqBpCEh?=
- =?us-ascii?Q?Gkmv7PGvD8ApNgSY9ma0F0iqX8CXBZ4iTxzd976LxNiBGewuOo5aE8r7IEvz?=
- =?us-ascii?Q?hivg3VTzQ0zYSzXQ2awl/weVXQfaN7LE131+fWN9Be7v0WzH0n9zRrImoQZu?=
- =?us-ascii?Q?ejyEUBRuc4FuQorZDrPs8XOxe7oaX2YBJZAmY9tNqzKXc5msP8uDRFmVju4m?=
- =?us-ascii?Q?4vcorABL3ylhaZbP1mkSP2ZXYVtuapZEcE7O3l3/LNwN8voUaUPlLh+Dgf0v?=
- =?us-ascii?Q?XVp6bkf74X+zcJ1SE74OglB/5NRppRz1Q3PpYGui50lPJb0GIHPfZMDcSSjF?=
- =?us-ascii?Q?cR/ovmnGPiVCUN3ogF89Qo+Sar7rr7yzZFLWBD8GDiLoNhABETTOJqRZMFeJ?=
- =?us-ascii?Q?R7ZrM1HSC5YILfn4Fbu8znwD98zcPk3+eITwLEj7KsSFANUEn8vRWAqLP2nE?=
- =?us-ascii?Q?oqPbC4Jslu1iH/KXNIGsbedHzY7J8sLoGsU1ip+xaXuUZ9WqXts/ms5DxKmU?=
- =?us-ascii?Q?YFAJp6j3o1Mp0oj1awidu78tY6+9VHr6Jq/o56sJu1+0pHVrAqueqCfUMuyI?=
- =?us-ascii?Q?AunL/5IJ+zdsDYQGqQeUG8oD7+5GFQr5178Y3KieGefEHKTjDprZnEDmXOxr?=
- =?us-ascii?Q?4MHRD1gRi+hvAvm0mZPTBZDn3mkKJ5bJUzdfTtPVKHPwX4vJbGolN4xsf0Vz?=
- =?us-ascii?Q?NCk6jB3f5GB6h/Rj4H9EnOIGLIzCvxGEOvcIDcG9nO38DB9KrhuhQKxGVz2a?=
- =?us-ascii?Q?N1tNkUZX1sR8ZX4s4hREDf0T/+TmAELNr8sUkj+aOmLnMBXEU6lrJ8XH41zE?=
- =?us-ascii?Q?8BAJ7eZQWkcByR18EOB1xTdUNrtst7h2f5WOogIZUwot1eotj6+0VNvhXquW?=
- =?us-ascii?Q?dG4pwQokhTtp148tPNDfbplPYIjvoJNzs9tswlGdPh9yHHwt32hNN7pqcyKy?=
- =?us-ascii?Q?uHOnNBoAsicQoDGJGgXnyb8FD9ClqJcEDcmZ8+VG9wQNajoU9g=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:121.100.38.198;CTRY:SG;LANG:;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:gepdcl09.sg.gdce.sony.com.sg;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(82310400017)(376005)(36860700004)(1800799015);DIR:OUT;SFP:1101;
-X-OriginatorOrg: sony.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 06:51:13.0596
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d093c78b-f195-4d0d-4bf8-08dc85f50e93
-X-MS-Exchange-CrossTenant-Id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=66c65d8a-9158-4521-a2d8-664963db48e4;Ip=[121.100.38.198];Helo=[gepdcl09.sg.gdce.sony.com.sg]
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-CH1PEPF0000AD83.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR13MB4987
 
-On Tue, Jun 04, 2024 at 10:09:07AM +0200, Petr Mladek wrote:
-> On Fri 2024-05-31 10:49:08, Petr Mladek wrote:
-> > On Thu 2024-05-30 13:15:47, Sreenath Vijayan wrote:
-> > > Rename console_replay_all() to console_try_replay_all() to make
-> > > clear that the implementation is best effort. Also, the function
-> > > should not be called in NMI context as it takes locks, so update
-> > > the comment in code.
-> > > 
-> > > Fixes: 693f75b91a91 ("printk: Add function to replay kernel log on consoles")
-> > > Fixes: 1b743485e27f ("tty/sysrq: Replay kernel log messages on consoles via sysrq")
-> > > Suggested-by: Petr Mladek <pmladek@suse.com>
-> > > Signed-off-by: Shimoyashiki Taichi <taichi.shimoyashiki@sony.com>
-> > > Signed-off-by: Sreenath Vijayan <sreenath.vijayan@sony.com>
-> > 
-> > Thanks for the fix.
-> > 
-> > Reviewed-by: Petr Mladek <pmladek@suse.com>
->  
-> > PS: I am going to queue it for 6.11. It is not critical
-> >     to hurry it into 6.10-rcX.
-> 
-> JFYI, the patch has been comitted into printk/linux.git,
-> branch for-6.11.
->
+On Wed, 2024-06-05 at 12:03 -0500, David Lechner wrote:
+> On 6/4/24 5:43 PM, Marcelo Schmitt wrote:
+> > Implement MOSI idle low and MOSI idle high to better support peripheral=
+s
+> > that request specific MOSI behavior.
+> >=20
+> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> > ---
+> > =C2=A0drivers/spi/spi-axi-spi-engine.c | 8 +++++++-
+> > =C2=A01 file changed, 7 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/spi/spi-axi-spi-engine.c b/drivers/spi/spi-axi-spi=
+-
+> > engine.c
+> > index 0aa31d745734..549f03069d0e 100644
+> > --- a/drivers/spi/spi-axi-spi-engine.c
+> > +++ b/drivers/spi/spi-axi-spi-engine.c
+> > @@ -41,6 +41,7 @@
+> > =C2=A0#define SPI_ENGINE_CONFIG_CPHA			BIT(0)
+> > =C2=A0#define SPI_ENGINE_CONFIG_CPOL			BIT(1)
+> > =C2=A0#define SPI_ENGINE_CONFIG_3WIRE			BIT(2)
+> > +#define SPI_ENGINE_CONFIG_SDO_IDLE		BIT(3)
+> > =C2=A0
+> > =C2=A0#define SPI_ENGINE_INST_TRANSFER		0x0
+> > =C2=A0#define SPI_ENGINE_INST_ASSERT			0x1
+> > @@ -132,6 +133,10 @@ static unsigned int spi_engine_get_config(struct
+> > spi_device *spi)
+> > =C2=A0		config |=3D SPI_ENGINE_CONFIG_CPHA;
+> > =C2=A0	if (spi->mode & SPI_3WIRE)
+> > =C2=A0		config |=3D SPI_ENGINE_CONFIG_3WIRE;
+> > +	if (spi->mode & SPI_MOSI_IDLE_HIGH)
+> > +		config |=3D SPI_ENGINE_CONFIG_SDO_IDLE;
+> > +	if (spi->mode & SPI_MOSI_IDLE_LOW)
+> > +		config &=3D ~SPI_ENGINE_CONFIG_SDO_IDLE;
+> > =C2=A0
+> > =C2=A0	return config;
+> > =C2=A0}
+> > @@ -645,7 +650,8 @@ static int spi_engine_probe(struct platform_device
+> > *pdev)
+> > =C2=A0		return ret;
+> > =C2=A0
+> > =C2=A0	host->dev.of_node =3D pdev->dev.of_node;
+> > -	host->mode_bits =3D SPI_CPOL | SPI_CPHA | SPI_3WIRE;
+> > +	host->mode_bits =3D SPI_CPOL | SPI_CPHA | SPI_3WIRE |
+> > SPI_MOSI_IDLE_LOW
+> > +			=C2=A0 | SPI_MOSI_IDLE_HIGH;
+> > =C2=A0	host->bits_per_word_mask =3D SPI_BPW_RANGE_MASK(1, 32);
+> > =C2=A0	host->max_speed_hz =3D clk_get_rate(spi_engine->ref_clk) / 2;
+> > =C2=A0	host->transfer_one_message =3D spi_engine_transfer_one_message;
+>=20
+> I think we need a version check instead of setting the flags unconditiona=
+lly
+> here since older versions of the AXI SPI Engine won't support this featur=
+e.
 
-Ok, thank you for the update.
- 
-> BTW:
-> 
-> I have pushed a patch which came to my mailbox with ID
-> 
->    66582edb.650a0220.8de7.c591SMTPIN_ADDED_BROKEN@mx.google.com
-> 
-> >From some reasons, it is not available in the official archive
-> at lore.kernel.org. Instead, I have mentioned in the commit
-> message
-> 
->      https://lore.kernel.org/r/Zlguq/wU21Z8MqI4@sreenath.vijayan@sony.com
-> 
-> which points to the same patch (same changes), exists at
-> lore.kernel.org but I havn't got that one from some reason.
-> 
-> Best Regards,
-> Petr
+Oh, was not aware of that... Then, we definitely need to do that. Marcelo, =
+only
+add my r-b tag with the version change in place.
 
-Understood.
-
-Regards,
-Sreenath
+- Nuno S=C3=A1
 
