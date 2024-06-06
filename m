@@ -1,688 +1,145 @@
-Return-Path: <linux-kernel+bounces-205128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 174658FF7BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 00:41:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A2F8FF7BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 00:42:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44D2EB22BF0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:41:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95BBA286647
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDEC714373C;
-	Thu,  6 Jun 2024 22:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C888BFC0A;
+	Thu,  6 Jun 2024 22:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cPlrEYYr"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Au9P+D8l"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACE313DB8A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 22:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2927313DB8A
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 22:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717713661; cv=none; b=L2kpDuk+n4pC3u33R/dGzYDVZDmUsnGvjiZJ+54Ro6d+GCY7l/7qCoDQ5Uk/zmVQKt9FbB8QUz9Q4wcvd65L85ArAbNZynQWTKtcvU51WTLz+B/ffGk9TvnrmuFw+yPXmEJfmgHdkJjq0nJoGuLKQ4qJGtfdkGjo3feaD2wKDFM=
+	t=1717713684; cv=none; b=SUY+UuTObYtrqA/NFCptoZlA9GzKAHzR0Ow2K+vgLU6/MvzrfbQQCYr7ciNAWX+m5Ha28UTbUpNsQrBxPlJihzvfTC3619REJKv/rLSH/fXBkWe7HAA2KyCAYe+NoHQGPBwsQkzFBodfmbyMCBd9cxma008/vVtjYopTdmIdo9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717713661; c=relaxed/simple;
-	bh=J1b27VYsfLQvuVJyF+fdGiQ2uYAEcmfZhBC8XsbfpUo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=vCWzamo/rXPmwbDzIOzAU5jIVBcKtCDjdmRJc0Gu5vuCdlZ4o3vwgPzajtSloImPz6zRTu5tvJdg34fe+kk96FLI51tmZnGzp1zVuERFS0DcOqaULGFzPvHraIqOJSIauyNCQuY8CHXYEsmT9qSkUytwnSrCLP3QS8/OzOOQVDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cPlrEYYr; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 456HwgMx021833;
-	Thu, 6 Jun 2024 22:40:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc :
- content-transfer-encoding : date : from : in-reply-to : message-id :
- mime-version : references : subject : to; s=corp-2023-11-20;
- bh=fOZMkJCmTdJyaIIYWm1FvA+OFNILzQXTMMKpbnktMeI=;
- b=cPlrEYYrFjbjGQBdIUZWOzBFnVQQQ7lksn9hPInCK/m1CKEnSLIZDDClcZyC3gCDcaGO
- k+ADOU8w34orx79K1gtLtVEt/2K0uGGa4Lo9l1uCl0TmvEXbpHk/gzix42Hf9N7NuT0k
- YEzWdSclTBlcR5Tj6aF2mzTzHhIkJKJTDtm1X1/4WR4W5QhiObyjmTqcfT8+yTny0zmO
- XTogBFuQm3bJAPKuSyf5Ss9+t5pN8SoAC1B0C/A0a/BhlIks/M9h82d8FVxeOOl9q3p+
- VoLMcu+bcBypM/LRaOJimWaHJ3dDSOOWzj7+daTRcu8E7frAtHtCivhhUZegIzA2DlhJ Ow== 
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yjvwd2jmp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 06 Jun 2024 22:40:44 +0000
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 456KORm8005608;
-	Thu, 6 Jun 2024 22:40:43 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3ygrmh5anq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 06 Jun 2024 22:40:43 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 456MebVU028229;
-	Thu, 6 Jun 2024 22:40:43 GMT
-Received: from aruramak-dev.osdevelopmeniad.oraclevcn.com (aruramak-dev.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.253.155])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3ygrmh5ag4-6;
-	Thu, 06 Jun 2024 22:40:42 +0000
-From: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-To: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, dave.hansen@linux.intel.com, tglx@linutronix.de,
-        mingo@kernel.org, keith.lucas@oracle.com, aruna.ramakrishna@oracle.com
-Subject: [PATCH v5 5/5] selftests/mm: Add new testcases for pkeys
-Date: Thu,  6 Jun 2024 22:40:35 +0000
-Message-Id: <20240606224035.3238985-6-aruna.ramakrishna@oracle.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240606224035.3238985-1-aruna.ramakrishna@oracle.com>
-References: <20240606224035.3238985-1-aruna.ramakrishna@oracle.com>
+	s=arc-20240116; t=1717713684; c=relaxed/simple;
+	bh=zxcSda9gU+HzNUpNd0mmDETx9ck9BJ1lS0ujOJFIF/A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EE3tl3vAWCErqZ+DhyRxxsKuI0xiTIB9WdPOLwgmGFuzbwkVXxThV6JaMGVbtwlBtvAVOiIWBdVAsyYqd9AEVJeg/TeqS2SCcm982MaNIJ7hVOzWkw/3fQHshv/tNKw/Xp5mDAcMm+/GIup8jKLuIhkrUNb4TS1CeQwGj/YeoZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Au9P+D8l; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5b97f09cde3so176500eaf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 15:41:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1717713680; x=1718318480; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fu83QXOMrXhByeadwJGN5pkmUocyBJK3IGgFCoxU680=;
+        b=Au9P+D8lFjz2Jx2LpI+xclxnrIa8k3adfBkzhuEn0TD//MUw+n/qW0xxfV1bo1oJg6
+         zxpu4OVncTez2u7Q+K2t3tt3Oksg8FJClekWkF/M36xRv5M3E1hT3r/LIyp///Q207ze
+         w9B8qPxz29Yragn1M97waNonQL3dEgU1TJM1U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717713680; x=1718318480;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fu83QXOMrXhByeadwJGN5pkmUocyBJK3IGgFCoxU680=;
+        b=bgdJkN8q09HJIKX+W0oe1irmqxCwMqfsTO7NzFm0nMTM1fezSfPp/xGtBxuMqjmoYS
+         Sz/Xb2dK+hl3Q+SfqTMGtdsCtmlqoA8UGV2jdyvlcck/nVL5SFKH47ONUgw8BOoajBUm
+         zS00XRkppOPDJkRBosXQwBcfIJC7frtxRNkM6T4JM1E9+6AELvwRSXbBoQg3kTNXcIyD
+         cQpbJ8uUes2wCJMcIUgKyx2vtnCPkzDfGY7eaRUh+tNcoQx01CUszVARe+YDTIiNF6NK
+         guzInCulaOTTQIwPQDcrfdSYacq5tHF8C9V9brgZhKVFc++qdggQxNzyzDEgeTLcPpEX
+         PzsA==
+X-Forwarded-Encrypted: i=1; AJvYcCViOV45dQcIgDOiNUDzQ+4A30ErZet7o/cHH6RxqvqhC9MNJpVXrskZu16so/c6atxAgs+NfFmKeEvGW+Ghz8tgnS+9USgi9HPHeiac
+X-Gm-Message-State: AOJu0YwGdRkrjB1jmIifh8RS/mDJIlaK4+X0Kz4ARj05E20p0EB+KS0P
+	Al3tnWUrjKjRZJw458GAvtPcQ4R9uaLipMUevHakTSUcpKQl3fgiFDQkejuJYW0=
+X-Google-Smtp-Source: AGHT+IFGczxipoctZnUp0jr1WE80vjoihITpV0Krs3FTVt+NHekgF5mGTIuEb5D0jWCijTVoZAhqNw==
+X-Received: by 2002:a05:6871:3a13:b0:24f:cabc:4fa3 with SMTP id 586e51a60fabf-25463e7c2cdmr928272fac.0.1717713680050;
+        Thu, 06 Jun 2024 15:41:20 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25448043150sm584518fac.39.2024.06.06.15.41.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 15:41:19 -0700 (PDT)
+Message-ID: <be032a65-e61b-40e0-a982-cb622ccca548@linuxfoundation.org>
+Date: Thu, 6 Jun 2024 16:41:18 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-06_18,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 malwarescore=0
- suspectscore=0 spamscore=0 mlxlogscore=999 adultscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
- definitions=main-2406060156
-X-Proofpoint-ORIG-GUID: 3bMspBiPs6GE9f4gNZ0Uqr76zqHoz_Yv
-X-Proofpoint-GUID: 3bMspBiPs6GE9f4gNZ0Uqr76zqHoz_Yv
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: seccomp: fix format-zero-length warnings
+To: Amer Al Shanawany <amer.shanawany@gmail.com>, Kees Cook
+ <kees@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
+ Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ kernel test robot <lkp@intel.com>, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240603115447.30279-1-amer.shanawany@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240603115447.30279-1-amer.shanawany@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Keith Lucas <keith.lucas@oracle.com>
+On 6/3/24 05:54, Amer Al Shanawany wrote:
+> seccomp_benchmark.c:197:24: warning: zero-length gnu_printf format
+>   string [-Wformat-zero-length]
+>    197 |         ksft_print_msg("");
+>        |                        ^~
+> seccomp_benchmark.c:202:24: warning: zero-length gnu_printf format
+>   string [-Wformat-zero-length]
+>    202 |         ksft_print_msg("");
+>        |                        ^~
+> seccomp_benchmark.c:204:24: warning: zero-length gnu_printf format
+>   string [-Wformat-zero-length]
+>    204 |         ksft_print_msg("");
+>        |                        ^~
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202312260235.Uj5ug8K9-lkp@intel.com/
+> Signed-off-by: Amer Al Shanawany <amer.shanawany@gmail.com>
+> ---
+>   tools/testing/selftests/seccomp/seccomp_benchmark.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/seccomp/seccomp_benchmark.c b/tools/testing/selftests/seccomp/seccomp_benchmark.c
+> index b83099160fbc..ed04b89de9c6 100644
+> --- a/tools/testing/selftests/seccomp/seccomp_benchmark.c
+> +++ b/tools/testing/selftests/seccomp/seccomp_benchmark.c
+> @@ -194,14 +194,14 @@ int main(int argc, char *argv[])
+>   	ksft_set_plan(7);
+>   
+>   	ksft_print_msg("Running on:\n");
+> -	ksft_print_msg("");
+> +	ksft_print_msg(" ");
 
-Add a few new tests to exercise the signal handler flow,
-especially with pkey 0 disabled.
+Why not delete this all together?
 
-There are 5 new tests added:
-- test_sigsegv_handler_with_pkey0_disabled
-- test_sigsegv_handler_cannot_access_stack
-- test_sigsegv_handler_with_different_pkey_for_stack
-- test_pkru_preserved_after_sigusr1
-- test_pkru_sigreturn
+>   	system("uname -a");
+>   
+>   	ksft_print_msg("Current BPF sysctl settings:\n");
+>   	/* Avoid using "sysctl" which may not be installed. */
+> -	ksft_print_msg("");
+> +	ksft_print_msg(" ");
 
-[ Aruna: Adapted to upstream ]
+Why not delete this all together?
 
-Signed-off-by: Keith Lucas <keith.lucas@oracle.com>
-Signed-off-by: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
----
- tools/testing/selftests/mm/Makefile           |   5 +-
- tools/testing/selftests/mm/pkey-helpers.h     |  11 +-
- .../selftests/mm/pkey_sighandler_tests.c      | 479 ++++++++++++++++++
- tools/testing/selftests/mm/protection_keys.c  |  10 -
- 4 files changed, 493 insertions(+), 12 deletions(-)
- create mode 100644 tools/testing/selftests/mm/pkey_sighandler_tests.c
+>   	system("grep -H . /proc/sys/net/core/bpf_jit_enable");
+> -	ksft_print_msg("");
+> +	ksft_print_msg(" ");
 
-diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
-index 410495e0a611..1bb95960d28b 100644
---- a/tools/testing/selftests/mm/Makefile
-+++ b/tools/testing/selftests/mm/Makefile
-@@ -2,6 +2,7 @@
- # Makefile for mm selftests
- 
- LOCAL_HDRS += $(selfdir)/mm/local_config.h $(top_srcdir)/mm/gup_test.h
-+LINUX_TOOL_INCLUDE = $(top_srcdir)/tools/include
- 
- include local_config.mk
- 
-@@ -32,7 +33,7 @@ endif
- # LDLIBS.
- MAKEFLAGS += --no-builtin-rules
- 
--CFLAGS = -Wall -I $(top_srcdir) $(EXTRA_CFLAGS) $(KHDR_INCLUDES)
-+CFLAGS = -Wall -I $(top_srcdir) $(EXTRA_CFLAGS) -I$(LINUX_TOOL_INCLUDE) $(KHDR_INCLUDES)
- LDLIBS = -lrt -lpthread -lm
- 
- TEST_GEN_FILES = cow
-@@ -82,6 +83,7 @@ CAN_BUILD_X86_64 := $(shell ./../x86/check_cc.sh "$(CC)" ../x86/trivial_64bit_pr
- CAN_BUILD_WITH_NOPIE := $(shell ./../x86/check_cc.sh "$(CC)" ../x86/trivial_program.c -no-pie)
- 
- VMTARGETS := protection_keys
-+VMTARGETS := pkey_sighandler_tests
- BINARIES_32 := $(VMTARGETS:%=%_32)
- BINARIES_64 := $(VMTARGETS:%=%_64)
- 
-@@ -100,6 +102,7 @@ else
- 
- ifneq (,$(findstring $(ARCH),powerpc))
- TEST_GEN_FILES += protection_keys
-+TEST_GEN_FILES += pkey_sighandler_tests
- endif
- 
- endif
-diff --git a/tools/testing/selftests/mm/pkey-helpers.h b/tools/testing/selftests/mm/pkey-helpers.h
-index 1af3156a9db8..2b1189c27167 100644
---- a/tools/testing/selftests/mm/pkey-helpers.h
-+++ b/tools/testing/selftests/mm/pkey-helpers.h
-@@ -12,6 +12,7 @@
- #include <stdlib.h>
- #include <ucontext.h>
- #include <sys/mman.h>
-+#include <linux/compiler.h>
- 
- #include "../kselftest.h"
- 
-@@ -79,7 +80,15 @@ extern void abort_hooks(void);
- 	}					\
- } while (0)
- 
--__attribute__((noinline)) int read_ptr(int *ptr);
-+noinline int read_ptr(int *ptr)
-+{
-+	/*
-+	 * Keep GCC from optimizing this away somehow
-+	 */
-+	barrier();
-+	return *ptr;
-+}
-+
- void expected_pkey_fault(int pkey);
- int sys_pkey_alloc(unsigned long flags, unsigned long init_val);
- int sys_pkey_free(unsigned long pkey);
-diff --git a/tools/testing/selftests/mm/pkey_sighandler_tests.c b/tools/testing/selftests/mm/pkey_sighandler_tests.c
-new file mode 100644
-index 000000000000..c43030c7056d
---- /dev/null
-+++ b/tools/testing/selftests/mm/pkey_sighandler_tests.c
-@@ -0,0 +1,479 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Tests Memory Protection Keys (see Documentation/core-api/protection-keys.rst)
-+ *
-+ * The testcases in this file exercise various flows related to signal handling,
-+ * using an alternate signal stack, with the default pkey (pkey 0) disabled.
-+ *
-+ * Compile with:
-+ * gcc -mxsave      -o pkey_sighandler_tests -O2 -g -std=gnu99 -pthread -Wall pkey_sighandler_tests.c -I../../../../tools/include -lrt -ldl -lm
-+ * gcc -mxsave -m32 -o pkey_sighandler_tests -O2 -g -std=gnu99 -pthread -Wall pkey_sighandler_tests.c -I../../../../tools/include -lrt -ldl -lm
-+ */
-+#define _GNU_SOURCE
-+#define __SANE_USERSPACE_TYPES__
-+#include <errno.h>
-+#include <sys/syscall.h>
-+#include <string.h>
-+#include <stdio.h>
-+#include <stdint.h>
-+#include <stdbool.h>
-+#include <signal.h>
-+#include <assert.h>
-+#include <stdlib.h>
-+#include <sys/mman.h>
-+#include <sys/types.h>
-+#include <sys/stat.h>
-+#include <unistd.h>
-+#include <pthread.h>
-+#include <limits.h>
-+
-+#include "pkey-helpers.h"
-+
-+#define STACK_SIZE PTHREAD_STACK_MIN
-+
-+void expected_pkey_fault(int pkey) {}
-+
-+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
-+siginfo_t siginfo = {0};
-+
-+/*
-+ * We need to use inline assembly instead of glibc's syscall because glibc's
-+ * syscall will attempt to access the PLT in order to call a library function
-+ * which is protected by MPK 0 which we don't have access to.
-+ */
-+static inline __always_inline
-+long syscall_raw(long n, long a1, long a2, long a3, long a4, long a5, long a6)
-+{
-+	unsigned long ret;
-+#ifdef __x86_64__
-+	register long r10 asm("r10") = a4;
-+	register long r8 asm("r8") = a5;
-+	register long r9 asm("r9") = a6;
-+	asm volatile ("syscall"
-+		      : "=a"(ret)
-+		      : "a"(n), "D"(a1), "S"(a2), "d"(a3), "r"(r10), "r"(r8), "r"(r9)
-+		      : "rcx", "r11", "memory");
-+#elif defined __i386__
-+	asm volatile ("int $0x80"
-+		      : "=a"(ret)
-+		      : "a"(n), "b"(a1), "c"(a2), "d"(a3), "S"(a4), "D"(a5)
-+		      : "memory");
-+#endif
-+	return ret;
-+}
-+
-+static void sigsegv_handler(int signo, siginfo_t *info, void *ucontext)
-+{
-+	pthread_mutex_lock(&mutex);
-+
-+	memcpy(&siginfo, info, sizeof(siginfo_t));
-+
-+	pthread_cond_signal(&cond);
-+	pthread_mutex_unlock(&mutex);
-+
-+	syscall_raw(SYS_exit, 0, 0, 0, 0, 0, 0);
-+}
-+
-+static void sigusr1_handler(int signo, siginfo_t *info, void *ucontext)
-+{
-+	pthread_mutex_lock(&mutex);
-+
-+	memcpy(&siginfo, info, sizeof(siginfo_t));
-+
-+	pthread_cond_signal(&cond);
-+	pthread_mutex_unlock(&mutex);
-+}
-+
-+static void sigusr2_handler(int signo, siginfo_t *info, void *ucontext)
-+{
-+	/*
-+	 * pkru should be the init_pkru value which enabled MPK 0 so
-+	 * we can use library functions.
-+	 */
-+	printf("%s invoked.\n", __func__);
-+}
-+
-+static void raise_sigusr2(void)
-+{
-+	pid_t tid = 0;
-+
-+	tid = syscall_raw(SYS_gettid, 0, 0, 0, 0, 0, 0);
-+
-+	syscall_raw(SYS_tkill, tid, SIGUSR2, 0, 0, 0, 0);
-+
-+	/*
-+	 * We should return from the signal handler here and be able to
-+	 * return to the interrupted thread.
-+	 */
-+}
-+
-+static void *thread_segv_with_pkey0_disabled(void *ptr)
-+{
-+	/* Disable MPK 0 (and all others too) */
-+	__write_pkey_reg(0x55555555);
-+
-+	/* Segfault (with SEGV_MAPERR) */
-+	*(int *) (0x1) = 1;
-+	return NULL;
-+}
-+
-+static void *thread_segv_pkuerr_stack(void *ptr)
-+{
-+	/* Disable MPK 0 (and all others too) */
-+	__write_pkey_reg(0x55555555);
-+
-+	/* After we disable MPK 0, we can't access the stack to return */
-+	return NULL;
-+}
-+
-+static void *thread_segv_maperr_ptr(void *ptr)
-+{
-+	stack_t *stack = ptr;
-+	int *bad = (int *)1;
-+
-+	/*
-+	 * Setup alternate signal stack, which should be pkey_mprotect()ed by
-+	 * MPK 0. The thread's stack cannot be used for signals because it is
-+	 * not accessible by the default init_pkru value of 0x55555554.
-+	 */
-+	syscall_raw(SYS_sigaltstack, (long)stack, 0, 0, 0, 0, 0);
-+
-+	/* Disable MPK 0.  Only MPK 1 is enabled. */
-+	__write_pkey_reg(0x55555551);
-+
-+	/* Segfault */
-+	*bad = 1;
-+	syscall_raw(SYS_exit, 0, 0, 0, 0, 0, 0);
-+	return NULL;
-+}
-+
-+/*
-+ * Verify that the sigsegv handler is invoked when pkey 0 is disabled.
-+ * Note that the new thread stack and the alternate signal stack is
-+ * protected by MPK 0.
-+ */
-+static void test_sigsegv_handler_with_pkey0_disabled(void)
-+{
-+	struct sigaction sa;
-+	pthread_attr_t attr;
-+	pthread_t thr;
-+
-+	sa.sa_flags = SA_SIGINFO;
-+
-+	sa.sa_sigaction = sigsegv_handler;
-+	sigemptyset(&sa.sa_mask);
-+	if (sigaction(SIGSEGV, &sa, NULL) == -1) {
-+		perror("sigaction");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	memset(&siginfo, 0, sizeof(siginfo));
-+
-+	pthread_attr_init(&attr);
-+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-+
-+	pthread_create(&thr, &attr, thread_segv_with_pkey0_disabled, NULL);
-+
-+	pthread_mutex_lock(&mutex);
-+	while (siginfo.si_signo == 0)
-+		pthread_cond_wait(&cond, &mutex);
-+	pthread_mutex_unlock(&mutex);
-+
-+	ksft_test_result(siginfo.si_signo == SIGSEGV &&
-+			 siginfo.si_code == SEGV_MAPERR &&
-+			 siginfo.si_addr == (void *)1,
-+			 "%s\n", __func__);
-+}
-+
-+/*
-+ * Verify that the sigsegv handler is invoked when pkey 0 is disabled.
-+ * Note that the new thread stack and the alternate signal stack is
-+ * protected by MPK 0, which renders them inaccessible when MPK 0
-+ * is disabled. So just the return from the thread should cause a
-+ * segfault with SEGV_PKUERR.
-+ */
-+static void test_sigsegv_handler_cannot_access_stack(void)
-+{
-+	struct sigaction sa;
-+	pthread_attr_t attr;
-+	pthread_t thr;
-+
-+	sa.sa_flags = SA_SIGINFO;
-+
-+	sa.sa_sigaction = sigsegv_handler;
-+	sigemptyset(&sa.sa_mask);
-+	if (sigaction(SIGSEGV, &sa, NULL) == -1) {
-+		perror("sigaction");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	memset(&siginfo, 0, sizeof(siginfo));
-+
-+	pthread_attr_init(&attr);
-+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-+
-+	pthread_create(&thr, &attr, thread_segv_pkuerr_stack, NULL);
-+
-+	pthread_mutex_lock(&mutex);
-+	while (siginfo.si_signo == 0)
-+		pthread_cond_wait(&cond, &mutex);
-+	pthread_mutex_unlock(&mutex);
-+
-+	ksft_test_result(siginfo.si_signo == SIGSEGV &&
-+			 siginfo.si_code == SEGV_PKUERR,
-+			 "%s\n", __func__);
-+}
-+
-+/*
-+ * Verify that the sigsegv handler that uses an alternate signal stack
-+ * is correctly invoked for a thread which uses a non-zero MPK to protect
-+ * its own stack, and disables all other MPKs (including 0).
-+ */
-+static void test_sigsegv_handler_with_different_pkey_for_stack(void)
-+{
-+	struct sigaction sa;
-+	static stack_t sigstack;
-+	void *stack;
-+	int pkey;
-+	int parent_pid = 0;
-+	int child_pid = 0;
-+
-+	sa.sa_flags = SA_SIGINFO | SA_ONSTACK;
-+
-+	sa.sa_sigaction = sigsegv_handler;
-+
-+	sigemptyset(&sa.sa_mask);
-+	if (sigaction(SIGSEGV, &sa, NULL) == -1) {
-+		perror("sigaction");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	stack = mmap(0, STACK_SIZE, PROT_READ | PROT_WRITE,
-+		     MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-+
-+	assert(stack != MAP_FAILED);
-+
-+	/* Allow access to MPK 0 and MPK 1 */
-+	__write_pkey_reg(0x55555550);
-+
-+	/* Protect the new stack with MPK 1 */
-+	pkey = pkey_alloc(0, 0);
-+	pkey_mprotect(stack, STACK_SIZE, PROT_READ | PROT_WRITE, pkey);
-+
-+	/* Set up alternate signal stack that will use the default MPK */
-+	sigstack.ss_sp = mmap(0, STACK_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC,
-+			      MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-+	sigstack.ss_flags = 0;
-+	sigstack.ss_size = STACK_SIZE;
-+
-+	memset(&siginfo, 0, sizeof(siginfo));
-+
-+	/* Use clone to avoid newer glibcs using rseq on new threads */
-+	long ret = syscall_raw(SYS_clone,
-+			       CLONE_VM | CLONE_FS | CLONE_FILES |
-+			       CLONE_SIGHAND | CLONE_THREAD | CLONE_SYSVSEM |
-+			       CLONE_PARENT_SETTID | CLONE_CHILD_CLEARTID |
-+			       CLONE_DETACHED,
-+			       (long) ((char *)(stack) + STACK_SIZE),
-+			       (long) &parent_pid,
-+			       (long) &child_pid, 0, 0);
-+
-+	if (ret < 0) {
-+		errno = -ret;
-+		perror("clone");
-+	} else if (ret == 0) {
-+		thread_segv_maperr_ptr(&sigstack);
-+		syscall_raw(SYS_exit, 0, 0, 0, 0, 0, 0);
-+	}
-+
-+	pthread_mutex_lock(&mutex);
-+	while (siginfo.si_signo == 0)
-+		pthread_cond_wait(&cond, &mutex);
-+	pthread_mutex_unlock(&mutex);
-+
-+	ksft_test_result(siginfo.si_signo == SIGSEGV &&
-+			 siginfo.si_code == SEGV_MAPERR &&
-+			 siginfo.si_addr == (void *)1,
-+			 "%s\n", __func__);
-+}
-+
-+/*
-+ * Verify that the PKRU value set by the application is correctly
-+ * restored upon return from signal handling.
-+ */
-+static void test_pkru_preserved_after_sigusr1(void)
-+{
-+	struct sigaction sa;
-+	unsigned long pkru = 0x45454544;
-+
-+	sa.sa_flags = SA_SIGINFO;
-+
-+	sa.sa_sigaction = sigusr1_handler;
-+	sigemptyset(&sa.sa_mask);
-+	if (sigaction(SIGUSR1, &sa, NULL) == -1) {
-+		perror("sigaction");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	memset(&siginfo, 0, sizeof(siginfo));
-+
-+	__write_pkey_reg(pkru);
-+
-+	raise(SIGUSR1);
-+
-+	pthread_mutex_lock(&mutex);
-+	while (siginfo.si_signo == 0)
-+		pthread_cond_wait(&cond, &mutex);
-+	pthread_mutex_unlock(&mutex);
-+
-+	/* Ensure the pkru value is the same after returning from signal. */
-+	ksft_test_result(pkru == __read_pkey_reg() &&
-+			 siginfo.si_signo == SIGUSR1,
-+			 "%s\n", __func__);
-+}
-+
-+static noinline void *thread_sigusr2_self(void *ptr)
-+{
-+	/*
-+	 * A const char array like "Resuming after SIGUSR2" won't be stored on
-+	 * the stack and the code could access it via an offset from the program
-+	 * counter. This makes sure it's on the function's stack frame.
-+	 */
-+	char str[] = {'R', 'e', 's', 'u', 'm', 'i', 'n', 'g', ' ',
-+		'a', 'f', 't', 'e', 'r', ' ',
-+		'S', 'I', 'G', 'U', 'S', 'R', '2',
-+		'.', '.', '.', '\n', '\0'};
-+	stack_t *stack = ptr;
-+
-+	/*
-+	 * Setup alternate signal stack, which should be pkey_mprotect()ed by
-+	 * MPK 0. The thread's stack cannot be used for signals because it is
-+	 * not accessible by the default init_pkru value of 0x55555554.
-+	 */
-+	syscall(SYS_sigaltstack, (long)stack, 0, 0, 0, 0, 0);
-+
-+	/* Disable MPK 0.  Only MPK 2 is enabled. */
-+	__write_pkey_reg(0x55555545);
-+
-+	raise_sigusr2();
-+
-+	/* Do something, to show the thread resumed execution after the signal */
-+	syscall_raw(SYS_write, 1, (long) str, sizeof(str) - 1, 0, 0, 0);
-+
-+	/*
-+	 * We can't return to test_pkru_sigreturn because it
-+	 * will attempt to use a %rbp value which is on the stack
-+	 * of the main thread.
-+	 */
-+	syscall_raw(SYS_exit, 0, 0, 0, 0, 0, 0);
-+	return NULL;
-+}
-+
-+/*
-+ * Verify that sigreturn is able to restore altstack even if the thread had
-+ * disabled pkey 0.
-+ */
-+static void test_pkru_sigreturn(void)
-+{
-+	struct sigaction sa = {0};
-+	static stack_t sigstack;
-+	void *stack;
-+	int pkey;
-+	int parent_pid = 0;
-+	int child_pid = 0;
-+
-+	sa.sa_handler = SIG_DFL;
-+	sa.sa_flags = 0;
-+	sigemptyset(&sa.sa_mask);
-+
-+	/*
-+	 * For this testcase, we do not want to handle SIGSEGV. Reset handler
-+	 * to default so that the application can crash if it receives SIGSEGV.
-+	 */
-+	if (sigaction(SIGSEGV, &sa, NULL) == -1) {
-+		perror("sigaction");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	sa.sa_flags = SA_SIGINFO | SA_ONSTACK;
-+	sa.sa_sigaction = sigusr2_handler;
-+	sigemptyset(&sa.sa_mask);
-+
-+	if (sigaction(SIGUSR2, &sa, NULL) == -1) {
-+		perror("sigaction");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	stack = mmap(0, STACK_SIZE, PROT_READ | PROT_WRITE,
-+		     MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-+
-+	assert(stack != MAP_FAILED);
-+
-+	/*
-+	 * Allow access to MPK 0 and MPK 2. The child thread (to be created
-+	 * later in this flow) will have its stack protected by MPK 2, whereas
-+	 * the current thread's stack is protected by the default MPK 0. Hence
-+	 * both need to be enabled.
-+	 */
-+	__write_pkey_reg(0x55555544);
-+
-+	/* Protect the stack with MPK 2 */
-+	pkey = pkey_alloc(0, 0);
-+	pkey_mprotect(stack, STACK_SIZE, PROT_READ | PROT_WRITE, pkey);
-+
-+	/* Set up alternate signal stack that will use the default MPK */
-+	sigstack.ss_sp = mmap(0, STACK_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC,
-+			      MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-+	sigstack.ss_flags = 0;
-+	sigstack.ss_size = STACK_SIZE;
-+
-+	/* Use clone to avoid newer glibcs using rseq on new threads */
-+	long ret = syscall_raw(SYS_clone,
-+			       CLONE_VM | CLONE_FS | CLONE_FILES |
-+			       CLONE_SIGHAND | CLONE_THREAD | CLONE_SYSVSEM |
-+			       CLONE_PARENT_SETTID | CLONE_CHILD_CLEARTID |
-+			       CLONE_DETACHED,
-+			       (long) ((char *)(stack) + STACK_SIZE),
-+			       (long) &parent_pid,
-+			       (long) &child_pid, 0, 0);
-+
-+	if (ret < 0) {
-+		errno = -ret;
-+		perror("clone");
-+	}  else if (ret == 0) {
-+		thread_sigusr2_self(&sigstack);
-+		syscall_raw(SYS_exit, 0, 0, 0, 0, 0, 0);
-+	}
-+
-+	child_pid =  ret;
-+	/* Check that thread exited */
-+	do {
-+		sched_yield();
-+		ret = syscall_raw(SYS_tkill, child_pid, 0, 0, 0, 0, 0);
-+	} while (ret != -ESRCH && ret != -EINVAL);
-+
-+	ksft_test_result_pass("%s\n", __func__);
-+}
-+
-+void (*pkey_tests[])(void) = {
-+	test_sigsegv_handler_with_pkey0_disabled,
-+	test_sigsegv_handler_cannot_access_stack,
-+	test_sigsegv_handler_with_different_pkey_for_stack,
-+	test_pkru_preserved_after_sigusr1,
-+	test_pkru_sigreturn
-+};
-+
-+int main(int argc, char *argv[])
-+{
-+	int i;
-+
-+	ksft_print_header();
-+	ksft_set_plan(ARRAY_SIZE(pkey_tests));
-+
-+	for (i = 0; i < ARRAY_SIZE(pkey_tests); i++)
-+		(*pkey_tests[i])();
-+
-+	ksft_finished();
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/mm/protection_keys.c b/tools/testing/selftests/mm/protection_keys.c
-index 48dc151f8fca..2af344e55d37 100644
---- a/tools/testing/selftests/mm/protection_keys.c
-+++ b/tools/testing/selftests/mm/protection_keys.c
-@@ -950,16 +950,6 @@ void close_test_fds(void)
- 	nr_test_fds = 0;
- }
- 
--#define barrier() __asm__ __volatile__("": : :"memory")
--__attribute__((noinline)) int read_ptr(int *ptr)
--{
--	/*
--	 * Keep GCC from optimizing this away somehow
--	 */
--	barrier();
--	return *ptr;
--}
--
- void test_pkey_alloc_free_attach_pkey0(int *ptr, u16 pkey)
- {
- 	int i, err;
--- 
-2.39.3
+Why not delete this all together?
+
+>   	system("grep -H . /proc/sys/net/core/bpf_jit_harden");
+>   
+>   	affinity();
+
+thanks,
+-- Shuah
 
 
