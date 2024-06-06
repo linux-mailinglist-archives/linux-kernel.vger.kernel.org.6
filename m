@@ -1,201 +1,115 @@
-Return-Path: <linux-kernel+bounces-203448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3548A8FDB68
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 02:24:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB858FDB6B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 02:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF68B285472
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 00:24:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D03BB1C21ED3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 00:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B6079F6;
-	Thu,  6 Jun 2024 00:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5BC18827;
+	Thu,  6 Jun 2024 00:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ceCEYX9s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XXAxGoeQ"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AFDA4C7D;
-	Thu,  6 Jun 2024 00:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2AF2563;
+	Thu,  6 Jun 2024 00:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717633449; cv=none; b=g6eL+TiDc8QMVXvfxljpwoMLFVoKPMGOt2HjFESO6o175xOfkJ+APXaO7MNOXx4I9YocAKrYKJdkw2HcEz8c5GYNSdtZuHBoNmV6UrWEcfTbpC8UU5fdXArxTmtftsYNnKkPJBNp9v6vcyZ10QGR3ZPhD+xq+udNTTmDiF4KLWk=
+	t=1717633519; cv=none; b=SKnF/45GtFWDQfGOqLi5NPfOoZnuPmldHAgB0NVlxcB+NVzAm6q33zStcS+6ipedTUIBo1a81SeMP9hCSRzMTFXOQo436BnQ2fnrj+WTsvGN6asGhN9jRpkaHh8DE6bcConQlI+qyi1OWAwN7NFWhsoBf9xXHxYjs6qx8FE32Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717633449; c=relaxed/simple;
-	bh=zACP1JLsppCuez65YERBmhPkTyiM+safYjy0gPvN8lw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WhULOe8N/cdSiO50tSm/EWE6cEFhsVupHJ919xVDTYBpM9m0XDMwggP2zA3rmc6f/ab/Uxv+fqC0SEkY5pe2FI2TsdHWPHolyonET78eXb9A+0jbL1DW2rMxB/WMqVREbzlyOg8BAfQ5X7Ybw7cgICtL6FOHpoyr66ii8w6Tdh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ceCEYX9s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E618C2BD11;
-	Thu,  6 Jun 2024 00:24:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717633449;
-	bh=zACP1JLsppCuez65YERBmhPkTyiM+safYjy0gPvN8lw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ceCEYX9swt6oUdD83N+Dn0TprBelZK0XyzkwqtehmDvOoXjeLtLR5/irNitMobfjC
-	 lPaBpB21ox2ddyTDI9tWyWbKAUBROmTSkbGGPAQ0Kra1tSrO1J96mCPunxbDd95mAQ
-	 aSi8DEmkrJ0+vZASlQUUmLwXjJwISyMrJKgWh/XNB90PE0KSwPaB1o15CINeZ7/lOf
-	 pKj5l/nutEqQX+8O56Nc87f6lL2yugsBnMvl99huwlFBjParNuqoa6yevsLifUouQd
-	 KURO0rE5soZExXcqnKUolB/zTvZ+7Ywu8GUQ9vsI3kAsKErG3qEMzi151LEk7Eb9SQ
-	 yZjOESCbXnQEw==
-Date: Wed, 5 Jun 2024 18:24:06 -0600
-From: Rob Herring <robh@kernel.org>
-To: Daisuke Nojiri <dnojiri@chromium.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] ARM: dts: cros-ec-keyboard: Add keyboard matrix v3.0
-Message-ID: <20240606002406.GA3505320-robh@kernel.org>
-References: <20240604005354.2294468-1-dnojiri@chromium.org>
- <20240604230909.2879006-1-dnojiri@chromium.org>
+	s=arc-20240116; t=1717633519; c=relaxed/simple;
+	bh=3wZVavp6tao9ffC1YphaeS9zPVgycL7M4c8WdP2SgWA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dumPdWXo4Uxi0lHZV6UR74bdgmERBrPsPBMPpQC2HxmPDccMobzUf8CDv+XqBGk2MYh4IDQtlTCBqB0VppQMHCh/BA9QgEQO3AgExq845CzoidcZvZRteUtmdcK1x0YSn7ug0vfZy7ogTCV110C++DSVv6A7GM5QhH9IPFBzxJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=XXAxGoeQ; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 455JINiP015747;
+	Thu, 6 Jun 2024 00:24:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=corp-2023-11-20;
+ bh=1Ww9Rdq98RgqCia4UdhAvlzFlQ7oc3WmT+CLtqus8As=;
+ b=XXAxGoeQxY1ylnW621TgDu2TX7CRHbPEikIp5gxSzri56vfRkviA+lFrcCmVYmJ5Fh1g
+ ov1BQ7xKbLgZtktlOzKlAhqbx6hnVjt9Fe+PFHIZIoDO0qfJjBh2v9E53rzg2BpPBbH4
+ LUcxtvf2QdhtaAXTsMX9etjK4/fOfzld5hcjrkf9n9KXZQAisrl2FvClCaX+62OqqBTS
+ VkUwpIYZhttx43q6+WByP3EzU8g3NzCaB2QMVZ5xjJGN9+ZbTlhXU+5xofK66MkDl+tV
+ pMMBTr0rEQukzrNEt+Ywjla4O03Ct3+Qd5KyJcR+TRBTn4s/aOoRoY0zY8RvDXeQ0ttS 3Q== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yjbsyaf9w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 06 Jun 2024 00:24:59 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 455Mat8Y015719;
+	Thu, 6 Jun 2024 00:24:58 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3ygrjeg0qq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 06 Jun 2024 00:24:58 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4560OwH0004414;
+	Thu, 6 Jun 2024 00:24:58 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3ygrjeg0py-1;
+	Thu, 06 Jun 2024 00:24:57 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: Sathya Prakash <sathya.prakash@broadcom.com>,
+        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+        Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Chaitra P B <chaitra.basappa@broadcom.com>,
+        Breno Leitao <leitao@debian.org>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, leit@meta.com,
+        stable@vger.kernel.org, Keith Busch <kbusch@kernel.org>,
+        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mpt3sas: Avoid test/set_bit() operating in non-allocated memory
+Date: Wed,  5 Jun 2024 20:24:19 -0400
+Message-ID: <171763343411.4164272.12258794227278624618.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240605085530.499432-1-leitao@debian.org>
+References: <20240605085530.499432-1-leitao@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240604230909.2879006-1-dnojiri@chromium.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-05_02,2024-06-05_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=586 phishscore=0
+ adultscore=0 bulkscore=0 spamscore=0 malwarescore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2406060001
+X-Proofpoint-GUID: HNWNmYom_xalhO768Wrbf1PkPwmQ6GyN
+X-Proofpoint-ORIG-GUID: HNWNmYom_xalhO768Wrbf1PkPwmQ6GyN
 
-On Tue, Jun 04, 2024 at 04:09:07PM -0700, Daisuke Nojiri wrote:
-> Add support for keyboard matrix version 3.0.
+On Wed, 05 Jun 2024 01:55:29 -0700, Breno Leitao wrote:
 
-What's that?
-
-Subject is wrong. This is not an ARM dts. 'dt-bindings: ' is the prefix.
-
-
+> There is a potential out-of-bounds access when using test_bit() on a
+> single word. The test_bit() and set_bit() functions operate on long
+> values, and when testing or setting a single word, they can exceed the
+> word boundary. KASAN detects this issue and produces a dump:
 > 
-> Signed-off-by: Daisuke Nojiri <dnojiri@chromium.org>
-> Change-Id: I18957556bcd01c74ded84571638de2583dccb93f
-
-Drop Change-Id for upstream.
-
-> ---
->  include/dt-bindings/input/cros-ec-keyboard.h | 104 +++++++++++++++++++
->  1 file changed, 104 insertions(+)
+> 	 BUG: KASAN: slab-out-of-bounds in _scsih_add_device.constprop.0 (./arch/x86/include/asm/bitops.h:60 ./include/asm-generic/bitops/instrumented-atomic.h:29 drivers/scsi/mpt3sas/mpt3sas_scsih.c:7331) mpt3sas
 > 
-> diff --git a/include/dt-bindings/input/cros-ec-keyboard.h b/include/dt-bindings/input/cros-ec-keyboard.h
-> index f0ae03634a96..afc12f6aa642 100644
-> --- a/include/dt-bindings/input/cros-ec-keyboard.h
-> +++ b/include/dt-bindings/input/cros-ec-keyboard.h
-> @@ -100,4 +100,108 @@
->  	MATRIX_KEY(0x07, 0x0b, KEY_UP)		\
->  	MATRIX_KEY(0x07, 0x0c, KEY_LEFT)
->  
-> +/* No numpad */
-> +#define CROS_TOP_ROW_KEYMAP_V30 \
-> +	MATRIX_KEY(0x00, 0x01, KEY_F11)		/* T11 */	\
-> +	MATRIX_KEY(0x00, 0x02, KEY_F1)		/* T1 */	\
-> +	MATRIX_KEY(0x00, 0x04, KEY_F10)		/* T10 */	\
-> +	MATRIX_KEY(0x00, 0x0b, KEY_F14)		/* T14 */	\
-> +	MATRIX_KEY(0x00, 0x0c, KEY_F15)		/* T15 */	\
-> +	MATRIX_KEY(0x01, 0x02, KEY_F4)		/* T4 */	\
-> +	MATRIX_KEY(0x01, 0x04, KEY_F7)		/* T7 */	\
-> +	MATRIX_KEY(0x01, 0x05, KEY_F12)		/* T12 */	\
-> +	MATRIX_KEY(0x01, 0x09, KEY_F9)		/* T9 */	\
-> +	MATRIX_KEY(0x02, 0x02, KEY_F3)		/* T3 */	\
-> +	MATRIX_KEY(0x02, 0x04, KEY_F6)		/* T6 */	\
-> +	MATRIX_KEY(0x02, 0x0b, KEY_F8)		/* T8 */	\
-> +	MATRIX_KEY(0x03, 0x02, KEY_F2)		/* T2 */	\
-> +	MATRIX_KEY(0x03, 0x05, KEY_F13)		/* T13 */	\
-> +	MATRIX_KEY(0x04, 0x04, KEY_F5)		/* T5 */
-> +
-> +#define CROS_MAIN_KEYMAP_V30			/* Keycode */	\
-> +	MATRIX_KEY(0x00, 0x03, KEY_B)		/* 50 */	\
-> +	MATRIX_KEY(0x00, 0x05, KEY_N)		/* 51 */	\
-> +	MATRIX_KEY(0x00, 0x06, KEY_RO)		/* 56 (JIS) */	\
-> +	MATRIX_KEY(0x00, 0x08, KEY_EQUAL)	/* 13 */	\
-> +	MATRIX_KEY(0x00, 0x09, KEY_HOME)	/* 80 (Numpad) */	\
-> +	MATRIX_KEY(0x00, 0x0a, KEY_RIGHTALT)	/* 62 */	\
-> +	MATRIX_KEY(0x00, 0x10, KEY_FN)		/* 127 */	\
-> +								\
-> +	MATRIX_KEY(0x01, 0x01, KEY_ESC)		/* 110 */	\
-> +	MATRIX_KEY(0x01, 0x03, KEY_G)		/* 35 */	\
-> +	MATRIX_KEY(0x01, 0x06, KEY_H)		/* 36 */	\
-> +	MATRIX_KEY(0x01, 0x08, KEY_APOSTROPHE)	/* 41 */	\
-> +	MATRIX_KEY(0x01, 0x0b, KEY_BACKSPACE)	/* 15 */	\
-> +	MATRIX_KEY(0x01, 0x0c, KEY_HENKAN)	/* 65 (JIS) */	\
-> +	MATRIX_KEY(0x01, 0x0e, KEY_LEFTCTRL)	/* 58 */	\
-> +								\
-> +	MATRIX_KEY(0x02, 0x01, KEY_TAB)		/* 16 */	\
-> +	MATRIX_KEY(0x02, 0x03, KEY_T)		/* 21 */	\
-> +	MATRIX_KEY(0x02, 0x05, KEY_RIGHTBRACE)	/* 28 */	\
-> +	MATRIX_KEY(0x02, 0x06, KEY_Y)		/* 22 */	\
-> +	MATRIX_KEY(0x02, 0x08, KEY_LEFTBRACE)	/* 27 */	\
-> +	MATRIX_KEY(0x02, 0x09, KEY_DELETE)	/* 76 (Numpad) */	\
-> +	MATRIX_KEY(0x02, 0x0c, KEY_PAGEUP)	/* 85 (Numpad) */	\
-> +	MATRIX_KEY(0x02, 0x011, KEY_YEN)	/* 14 (JIS) */	\
-> +								\
-> +	MATRIX_KEY(0x03, 0x00, KEY_LEFTMETA)	/* Launcher */	\
-> +	MATRIX_KEY(0x03, 0x01, KEY_GRAVE)	/* 1 */	\
-> +	MATRIX_KEY(0x03, 0x03, KEY_5)		/* 6 */	\
-> +	MATRIX_KEY(0x03, 0x04, KEY_S)		/* 32 */	\
-> +	MATRIX_KEY(0x03, 0x06, KEY_MINUS)	/* 12 */	\
-> +	MATRIX_KEY(0x03, 0x08, KEY_6)		/* 7 */		\
-> +	MATRIX_KEY(0x03, 0x09, KEY_SLEEP)	/* Lock */	\
-> +	MATRIX_KEY(0x03, 0x0b, KEY_BACKSLASH)	/* 29 */	\
-> +	MATRIX_KEY(0x03, 0x0c, KEY_MUHENKAN)	/* 63 (JIS) */	\
-> +	MATRIX_KEY(0x03, 0x0e, KEY_RIGHTCTRL)	/* 64 */	\
-> +								\
-> +	MATRIX_KEY(0x04, 0x01, KEY_A)		/* 31 */	\
-> +	MATRIX_KEY(0x04, 0x02, KEY_D)		/* 33 */	\
-> +	MATRIX_KEY(0x04, 0x03, KEY_F)		/* 34 */	\
-> +	MATRIX_KEY(0x04, 0x05, KEY_K)		/* 38 */	\
-> +	MATRIX_KEY(0x04, 0x06, KEY_J)		/* 37 */	\
-> +	MATRIX_KEY(0x04, 0x08, KEY_SEMICOLON)	/* 40 */	\
-> +	MATRIX_KEY(0x04, 0x09, KEY_L)		/* 39 */	\
-> +	MATRIX_KEY(0x04, 0x0b, KEY_ENTER)	/* 43 */	\
-> +	MATRIX_KEY(0x04, 0x0c, KEY_END)		/* 81 (Numpad) */	\
-> +								\
-> +	MATRIX_KEY(0x05, 0x01, KEY_1)		/* 2 */	\
-> +	MATRIX_KEY(0x05, 0x02, KEY_COMMA)	/* 53 */	\
-> +	MATRIX_KEY(0x05, 0x03, KEY_DOT)		/* 54 */	\
-> +	MATRIX_KEY(0x05, 0x04, KEY_SLASH)	/* 55 */	\
-> +	MATRIX_KEY(0x05, 0x05, KEY_C)		/* 48 */	\
-> +	MATRIX_KEY(0x05, 0x06, KEY_SPACE)	/* 61 */	\
-> +	MATRIX_KEY(0x05, 0x07, KEY_LEFTSHIFT)	/* 44 */	\
-> +	MATRIX_KEY(0x05, 0x08, KEY_X)		/* 47 */	\
-> +	MATRIX_KEY(0x05, 0x09, KEY_V)		/* 49 */	\
-> +	MATRIX_KEY(0x05, 0x0b, KEY_M)		/* 52 */	\
-> +	MATRIX_KEY(0x05, 0x0c, KEY_PAGEDOWN)	/* 86 (Numpad) */	\
-> +								\
-> +	MATRIX_KEY(0x06, 0x01, KEY_Z)		/* 46 */	\
-> +	MATRIX_KEY(0x06, 0x02, KEY_3)		/* 4 */		\
-> +	MATRIX_KEY(0x06, 0x03, KEY_4)		/* 5 */		\
-> +	MATRIX_KEY(0x06, 0x04, KEY_2)		/* 3 */		\
-> +	MATRIX_KEY(0x06, 0x05, KEY_8)		/* 9 */		\
-> +	MATRIX_KEY(0x06, 0x06, KEY_0)		/* 11 */	\
-> +	MATRIX_KEY(0x06, 0x08, KEY_7)		/* 8 */		\
-> +	MATRIX_KEY(0x06, 0x09, KEY_9)		/* 10 */	\
-> +	MATRIX_KEY(0x06, 0x0b, KEY_DOWN)	/* 84 */	\
-> +	MATRIX_KEY(0x06, 0x0c, KEY_RIGHT)	/* 89 */	\
-> +	MATRIX_KEY(0x06, 0x0d, KEY_LEFTALT)	/* 60 */	\
-> +	MATRIX_KEY(0x06, 0x0f, KEY_ASSISTANT)	/* 128 */	\
-> +	MATRIX_KEY(0x06, 0x11, KEY_BACKSLASH)	/* 42 (JIS, ISO) */	\
-> +								\
-> +	MATRIX_KEY(0x07, 0x01, KEY_U)		/* 23 */	\
-> +	MATRIX_KEY(0x07, 0x02, KEY_I)		/* 24 */	\
-> +	MATRIX_KEY(0x07, 0x03, KEY_O)		/* 25 */	\
-> +	MATRIX_KEY(0x07, 0x04, KEY_P)		/* 26 */	\
-> +	MATRIX_KEY(0x07, 0x05, KEY_Q)		/* 17 */	\
-> +	MATRIX_KEY(0x07, 0x06, KEY_W)		/* 18 */	\
-> +	MATRIX_KEY(0x07, 0x07, KEY_RIGHTSHIFT)	/* 57 */	\
-> +	MATRIX_KEY(0x07, 0x08, KEY_E)		/* 19 */	\
-> +	MATRIX_KEY(0x07, 0x09, KEY_R)		/* 20 */	\
-> +	MATRIX_KEY(0x07, 0x0b, KEY_UP)		/* 83 */	\
-> +	MATRIX_KEY(0x07, 0x0c, KEY_LEFT)	/* 79 */	\
-> +	MATRIX_KEY(0x07, 0x11, KEY_102ND)	/* 45 (ISO) */
-> +
->  #endif /* _CROS_EC_KEYBOARD_H */
-> -- 
-> 2.45.1.288.g0e0cd299f1-goog
-> 
+> [...]
+
+Applied to 6.10/scsi-fixes, thanks!
+
+[1/1] mpt3sas: Avoid test/set_bit() operating in non-allocated memory
+      https://git.kernel.org/mkp/scsi/c/4254dfeda82f
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
