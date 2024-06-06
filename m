@@ -1,86 +1,230 @@
-Return-Path: <linux-kernel+bounces-204205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E48A88FE5D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:53:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57FC38FE5D8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C0D71F2569B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:53:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 079B1288AA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5F51957F6;
-	Thu,  6 Jun 2024 11:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ca9dmr/p"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A87813D28C
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 11:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192B2195962;
+	Thu,  6 Jun 2024 11:54:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267DC13D28C;
+	Thu,  6 Jun 2024 11:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717674815; cv=none; b=tNjOSEy7cd3kui5Xujf/dzHsxnSnhzeRulLqWjBlui29vsCBwfbOctac7IGqVMm0yhXE0F5WmC+CEMFEI9CfZnrCxTZ0fpqN9/q+C2clrNVXFLJtL86DcwT1L2TpXgeBwS7+T4ymKyPUOAZGzKn67He8gJV2QsasPtO83eXFrPc=
+	t=1717674878; cv=none; b=U9Ck8nfyvWV3tcp9ODWj0WCdyHsLwfs5ynonQYdtCb46BFDLsQMohm/DzdfsvmKZiUyd4NCTRHNFzBhEquG170KvvXL0xpttVA8FyYqVlf2I+enVkKi+P5Gw+tCh7XVicfkxWnU/rnRAWCA53mhQyLpcJU3379e6tpgJ/wbiFXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717674815; c=relaxed/simple;
-	bh=MZxV6F75nZKmqUEOUAqMNdx5/blZ0m+jsECgN2bV7os=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g0QDHUeYHnG/fmXCN7zx4d7o926a0+IHZi0ZKwrbv+Sr8euF4vvy2YB80KznPM2llmDfm7QgxEFVHJRG95uXEb6USo8pEEjc+IPn3xTYcbnYMvxdjc/8ywsgKR+WS6VDL4H41TmYjMEWGKQ+sS4fINbpdDrG7QIUEX2qsFEyrtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ca9dmr/p; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=MZxV6F75nZKmqUEOUAqMNdx5/blZ0m+jsECgN2bV7os=; b=ca9dmr/pLETq/5NICsLXRG6J3Y
-	gVxppDTzq+BRV5tbTbrmWKu1VXJESJIN+/phPrItw+/q2UnhuXgxO0WUa9XBucu2D3ECUZOXEf8NZ
-	pw5DSACugIbChRf5/Gul1V7DbHZnUR1WgeemI4khiDBSzRrxSPSguW5PwUEomBJb5L+VR+dhr81pB
-	J83VDhqCxlarkYdbuzkGvTYH2j9aW4QUTVcYGw9zDjfqCodBST1lqWHPAwr84x1fQyTca3AKHW122
-	kAFM02+TlHYPxXfbrDfnz5alRKUzoT00F3aXe5PTeBxOd2JNCySB2rpP8vJpxD3n1fL5OjMyfqt/+
-	W9LZfRAw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sFBgM-0000000DxXj-0Adb;
-	Thu, 06 Jun 2024 11:53:26 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id AA11F30047C; Thu,  6 Jun 2024 13:53:25 +0200 (CEST)
-Date: Thu, 6 Jun 2024 13:53:25 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org,
-	tglx@linutronix.de, torvalds@linux-foundation.org,
-	rostedt@goodmis.org, mark.rutland@arm.com, juri.lelli@redhat.com,
-	joel@joelfernandes.org, raghavendra.kt@amd.com,
-	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com,
-	konrad.wilk@oracle.com, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH v2 16/35] preempt,rcu: warn on PREEMPT_RCU=n, preempt=full
-Message-ID: <20240606115325.GD8774@noisy.programming.kicks-ass.net>
-References: <20240528003521.979836-1-ankur.a.arora@oracle.com>
- <20240528003521.979836-17-ankur.a.arora@oracle.com>
- <20240529081404.GI26599@noisy.programming.kicks-ass.net>
- <8734py6gvq.fsf@oracle.com>
- <c6b5a5e4-e14e-4fbb-84af-75d4035ced32@paulmck-laptop>
+	s=arc-20240116; t=1717674878; c=relaxed/simple;
+	bh=N92kaXVmF3fufNiwIfVbcm1oBKaXy1S33HJtdH0cBJs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lCrWpIUzl/4/VOeMKgN2P7Xvqmt3budBj/oHL7gaTCEUu5ARDqJKoU4vfgqWup3sCLUwY9Mkot88Ye9iyih6zYQ/O410MyJb8v6359Be8C5UgE82LlPb9MWJC2YkRQO23BJgAIhgmEgf9x3emHwNHG0KJwl/s9VEy4Sr1J6i34Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CDA662F4;
+	Thu,  6 Jun 2024 04:54:59 -0700 (PDT)
+Received: from [10.1.28.63] (e127648.arm.com [10.1.28.63])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 24B3C3F64C;
+	Thu,  6 Jun 2024 04:54:32 -0700 (PDT)
+Message-ID: <db984b92-549a-46e1-ae3a-0e1fb4f2e5b2@arm.com>
+Date: Thu, 6 Jun 2024 12:54:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c6b5a5e4-e14e-4fbb-84af-75d4035ced32@paulmck-laptop>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/6] cpuidle: teo: fixes and improvements
+To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, rafael@kernel.org
+Cc: vincent.guittot@linaro.org, qyousef@layalina.io, peterz@infradead.org,
+ daniel.lezcano@linaro.org, anna-maria@linutronix.de,
+ kajetan.puchalski@arm.com, lukasz.luba@arm.com, dietmar.eggemann@arm.com
+References: <20240606090050.327614-1-christian.loehle@arm.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20240606090050.327614-1-christian.loehle@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 30, 2024 at 04:20:26PM -0700, Paul E. McKenney wrote:
+On 6/6/24 10:00, Christian Loehle wrote:
+> Hi all,
+> so my investigation into teo lead to the following fixes and
+> improvements. Logically they are mostly independent, that's why this
+> cover letter is quite short, details are in the patches.
+> 
+> 1/6:
+> As discussed, the utilization threshold is too high, while
+> there are benefits in certain workloads, there are quite a few
+> regressions, too.
+> 2/6:
+> Especially with the new util threshold, stopping tick makes little
+> sense when utilized is detected, so don't.
+> 3/6:
+> Particularly with WFI, even if it's the only state, stopping the tick
+> has benefits, so enable that in the early bail out.
+> 4/6:
+> Stopping the tick with 0 cost (if the idle state dictates it) is too
+> aggressive IMO, so add 1ms constant cost.
+> XXX: This has the issue of now being counted as idle_miss, so we could
+> consider adding this to the states, too, but the simple implementation
+> of this would have the downside that the cost is added to deeper states
+> even if the tick is already off.
+> 5/6:
+> Remove the 'recent' intercept logic, see my findings in:
+> https://lore.kernel.org/lkml/0ce2d536-1125-4df8-9a5b-0d5e389cd8af@arm.com/
+> I haven't found a way to salvage this properly, so I removed it.
+> The regular intercept seems to decay fast enough to not need this, but
+> we could change it if that turns out to be the case.
+> 6/6:
+> The rest of the intercept logic had issues, too.
+> See the commit.
+> 
+> TODO: add some measurements of common workloads and some simple sanity
+> tests (like Vincent described in low utilization workloads if the
+> state selection looks reasonable).
+> I have some, but more (and more standardized) would be beneficial.
+> 
+> Happy for anyone to take a look and test as well.
+> 
+> Some numbers for context:
+> Maybe some numbers for context, I'll probably add them to the cover letter.
+> 
+> Comparing:
+> - IO workload (intercept heavy).
+> - Timer workload very low utilization (check for deepest state)
+> - hackbench (high utilization)
+> all on RK3399 with CONFIG_HZ=100.
+> target_residencies: 1, 900, 2000
+> 
+> 1. IO workload, 5 runs, results sorted, in read IOPS.
+> fio --minimal --time_based --name=fiotest --filename=/dev/nvme0n1 --runtime=30 --rw=randread --bs=4k --ioengine=psync --iodepth=1 --direct=1 | cut -d \; -f 8;
+> 
+> teo fixed:
+> /dev/nvme0n1
+> [4597, 4673, 4727, 4741, 4756]
+> /dev/mmcblk2
+> [5753, 5832, 5837, 5911, 5949]
+> /dev/mmcblk1
+> [2059, 2062, 2070, 2071, 2080]
+> 
+> teo mainline:
+> /dev/nvme0n1
+> [3793, 3825, 3846, 3865, 3964]
+> /dev/mmcblk2
+> [3831, 4110, 4154, 4203, 4228]
+> /dev/mmcblk1
+> [1559, 1564, 1596, 1611, 1618]
+> 
+> menu:
+> /dev/nvme0n1
+> [2571, 2630, 2804, 2813, 2917]
+> /dev/mmcblk2
+> [4181, 4260, 5062, 5260, 5329]
+> /dev/mmcblk1
+> [1567, 1581, 1585, 1603, 1769]
+> 
+> 2. Timer workload (through IO for my convenience ;) )
+> Results in read IOPS, fio same as above.
+> echo "0 2097152 zero" | dmsetup create dm-zeros
+> echo "0 2097152 delay /dev/mapper/dm-zeros 0 50" | dmsetup create dm-slow
+> (Each IO is delayed by timer of 50ms, should be mostly in state2)
+> 
+> teo fixed:
+> 3269 cpu_idle total
+> 48 cpu_idle_miss
+> 30 cpu_idle_miss above
+> 18 cpu_idle_miss below
+> 
+> teo mainline:
+> 3221 cpu_idle total
+> 1269 cpu_idle_miss
+> 22 cpu_idle_miss above
+> 1247 cpu_idle_miss below
+> 
+> menu:
+> 3433 cpu_idle total
+> 114 cpu_idle_miss
+> 61 cpu_idle_miss above
+> 53 cpu_idle_miss below
+> 
+> Residencies:
 
-> My selfish motivation here is to avoid testing this combination unless
-> and until someone actually has a good use for it.
+Hmm, maybe actually including them would've been helpful too:
+(Over 5s workload, only showing LITTLE cluster)
+teo fixed:
+idle_state 	
+2.0 	4.813378
+-1.0 	0.210820
+1.0 	0.202778
+0.0 	0.062426
 
-That doesn't make sense, the whole LAZY thing is fundamentally identical
-to FULL, except it sometimes delays the preemption a wee bit. But all
-the preemption scenarios from FULL are possible.
+teo mainline:
+idle_state
+1.0 	4.895766
+-1.0 	0.098063
+0.0 	0.253069
 
-As such, it makes far more sense to only test FULL.
+menu:
+idle_state
+2.0 	4.528356
+-1.0 	0.241486
+1.0 	0.345829
+0.0 	0.202505
+
+> 
+> tldr: overall teo fixed spends more time in state2 while having
+> fewer idle_miss than menu.
+> teo mainline was just way too aggressive at selecting shallow states.
+> 
+> 3. Hackbench, 5 runs
+> for i in $(seq 0 4); do hackbench -l 100 -g 100 ; sleep 1; done
+> 
+> teo fixed:
+> Time: 4.807
+> Time: 4.856
+> Time: 5.072
+> Time: 4.934
+> Time: 4.962
+> 
+> teo mainline:
+> Time: 4.945
+> Time: 5.021
+> Time: 4.927
+> Time: 4.923
+> Time: 5.137
+> 
+> menu:
+> Time: 4.991
+> Time: 4.884
+> Time: 4.880
+> Time: 4.946
+> Time: 4.980
+> 
+> tldr: all comparable, teo mainline slightly worse
+> 
+> Kind Regards,
+> Christian
+> 
+> Christian Loehle (6):
+>   cpuidle: teo: Increase util-threshold
+>   cpuidle: teo: Don't stop tick on utilized
+>   cpuidle: teo: Don't always stop tick on one state
+>   cpuidle: teo: Increase minimum time to stop tick
+>   cpuidle: teo: Remove recent intercepts metric
+>   cpuidle: teo: Don't count non-existent intercepts
+> 
+>  drivers/cpuidle/governors/teo.c | 121 +++++++++++++-------------------
+>  1 file changed, 48 insertions(+), 73 deletions(-)
+> 
+> --
+> 2.34.1
+> 
+
 
