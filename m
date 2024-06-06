@@ -1,178 +1,117 @@
-Return-Path: <linux-kernel+bounces-204730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B34C98FF2DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:50:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C77398FF2E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6371B28E0FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:50:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79D791F27AE4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1A5198E6A;
-	Thu,  6 Jun 2024 16:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A528198E8B;
+	Thu,  6 Jun 2024 16:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FJhdTGIx"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e3yfbXCA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED3C198A3E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 16:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D3E198E88;
+	Thu,  6 Jun 2024 16:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717692594; cv=none; b=mYQXGkDV2Q53AxGRaXYemMhZ+d/hch6zVdc2Y4ozaIv76MpfcpkT5A6IFTEG2v89AQQmCokiw4OhHdyUOxBywSWFMgHyNFqxhAZVUGeHJ1q9d6uc4yuod8ktU0a8HriuklZ68x2OPiw2JUtWfGSmn/8pysBqPyCRjtRi/wxynIs=
+	t=1717692600; cv=none; b=WwOaUKXeclN9obyHduYSEO/bmQ6JeTpEMbXabr1dTo5xu6dpyjMm1/AU53yr9QBp4C7gR/pO2VmaD25DbJfp48aemIAgU8HrGGSYFJxwmplUcarDUYusiEzgnhExKdjZ8xEtl9W9AdKBof6F6GVrZpVJ1CJNt6VVcIpYeCF6F8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717692594; c=relaxed/simple;
-	bh=QlINFaI4LTvEN0VfK5cNmlEbpI0ZCm9ojcKkqo+H+CY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=necRZ4Itlq/fWWQAWQR3s4PJI4B58aLTZyb+pUBIHvUTwSbZkrJuDIgJQ2u4eLcF/ptHoRE0mjf1fCBgXTLaC4hCV9EVUY0EkoGO41/KkhU0gGJ4tWKL5txmtBRO9xen3/x1vu/917bYAk+zRJO6wlyn8+h/kOVljn9ND5Wu+zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FJhdTGIx; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a68b54577aaso149647566b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 09:49:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717692590; x=1718297390; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kXklq3VgB30R+o4fq7okdZC1G76cerOH8ymTCu7s03o=;
-        b=FJhdTGIxctQIk6xOF7Zd1CW+slog1vE6ixCwSs90XTWdHvLrBkGDpnZvoFXFyz1T1o
-         V4F8vhBb8Z9pLu4Hey3uN7SpOw98HEw5zZfZg9nMeeIq15SzcDrkfc3yFfMIQ7cGDLhS
-         uzuog7ycVldhDgR/tnY8wgKRLn4ZW48PynK4NO30CtEOjuoJprXwbn/n4AAzAzVSv1eV
-         YT0AOV+hEMO0OE5fYOn1IKcOU5GzjY3ixs74XLG4XOqY9urvq4k+mtpko+C7uMZ+/mT5
-         RJdnLuvYqSwOku/GHAfZY23nQtqTtYRUtFX7oZeCPiXA05AnDfx9g6sPjP2AepkKYJom
-         UYfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717692590; x=1718297390;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kXklq3VgB30R+o4fq7okdZC1G76cerOH8ymTCu7s03o=;
-        b=tP4ILXhJHRACb7lfJMhxAoHl91eenMM7pfoOnDgTISvU4VI8y3/I+PJ3+gvLVEsr9/
-         dCLMDemaIT8iNp5capnap/FHKy53C8isRuZlNbhOI1IeYQ3q9Peane6YcF3dvWriimtS
-         ZqYr8fNCKU4d5IjpfsI9BzaTvmrnzjKIpzuVrUPSLnImtj6CFxkLNJLue9tCImHuW3Jc
-         zDD3kZRc0vBye7aMVtxCmoMsEdLeNnqI4RDIsfQoisOI4cPWGFZ9WGQL3q/g3jo8EfAP
-         +B6V9zcZN1GOiXyvGPrpUxQb+GN0gPwObNC9wAjmyScjJvbgSm+8ke+uEf7Q87184gmw
-         MOhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnI6rHRbUjFNs1QvvLlgvdVlJTZxAVG49RgfoAHvOw8OaeNkbYVcRqUrI0aAt5mAH7LxMNxFtLekN92rz6DUnfpM7XRwX864IJdTCz
-X-Gm-Message-State: AOJu0YzhH66NO/cnh91asWTyRkAl++IolrR+tomlOYwikQ6B/J1Z+HqJ
-	gtYmqEWX3fFUBfJ9Sk7vwXdF4Dbi2dCAzP05kgEKgRLcgEY4QJ5Q4g31WKeWJXPMQGm5gZbX04+
-	UPlGP+PtF8AbiLtFpW1S975YkqyVRDgpIdyx2CkRto8Pe3THiEiKI4jg9tA==
-X-Google-Smtp-Source: AGHT+IH2yDy4H26F3I2+8dO9xS+2+lL/iHck43y2iBW4jw1+n0fE7mBk6YXmrPpbRP2wxNUQ12+YElL3P5ewJrljwbU=
-X-Received: by 2002:a17:907:7786:b0:a68:c9fa:f19f with SMTP id
- a640c23a62f3a-a6cdb0f542cmr7959966b.53.1717692590194; Thu, 06 Jun 2024
- 09:49:50 -0700 (PDT)
+	s=arc-20240116; t=1717692600; c=relaxed/simple;
+	bh=Hg4pytPcshJ5Vzw0x241oxxxQys6HoLuHWw6mFPLn8E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SWhIiDaJuuBVMT6fRHBFGdV6YI37uyHdb+RLz2Fjf3x4ZpjL7O45oQvtSK/TEgbyHpOSNN49XobWUg7IOQrk/zAfJ0jcFN3IVNQS1VZ3+zdJKqToFrGPlfmrpbkD3gQYqra1+P/dbdvMnvdEL7vy8G2E6yG6Ehva37+eP8T2VqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e3yfbXCA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED54DC2BD10;
+	Thu,  6 Jun 2024 16:49:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717692600;
+	bh=Hg4pytPcshJ5Vzw0x241oxxxQys6HoLuHWw6mFPLn8E=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=e3yfbXCAXuC3R6OV8jc4OSsJCSGMdLDXIpC9Mg5QkQkblbPsf/ViCa/8PdzjmhzBN
+	 e9hVL3PeCaJCFkn00KUNpywqYQhDaXS1WOTriYDioxkcEI4cpbEaL2aiSzEq72MqQR
+	 CTrlnQ1RQKL5rI+kqUL8zSTJkVz6mF+P11dl+XpVOnSh/m1nR/z79qUID/TEZaJzT+
+	 zfhYkqgAmlnbbNWZu9wAtkxJzMBfMYeb5y1aZSRUsvPMTmdkxm1GeSSSHfU9y3JNX1
+	 MOZP8/42JlzXe2uy5WxvHNn9D+HDxzDGtakyXjG0Z0gAAUu8LSoYgq/xO1XBRLW6HU
+	 LOzr8KkKPkzYw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 88570CE3F34; Thu,  6 Jun 2024 09:49:59 -0700 (PDT)
+Date: Thu, 6 Jun 2024 09:49:59 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org
+Subject: Re: [PATCH rcu 2/9] rcu: Reduce synchronize_rcu() delays when all
+ wait heads are in use
+Message-ID: <a0aa3d5e-006c-475d-bd2f-b15fca47deee@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
+ <20240604222355.2370768-2-paulmck@kernel.org>
+ <ZmBVfpyEZeTIAHJn@localhost.localdomain>
+ <c7d07e5d-34a0-4874-8e7e-1c576c14c8e6@paulmck-laptop>
+ <fbc30c3a-ecd3-4525-9434-307c7769bb4c@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530201616.1316526-1-almasrymina@google.com>
- <20240530201616.1316526-11-almasrymina@google.com> <84162ef4c695cb764454087ca0bc81082d4fac8d.camel@redhat.com>
-In-Reply-To: <84162ef4c695cb764454087ca0bc81082d4fac8d.camel@redhat.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Thu, 6 Jun 2024 09:49:38 -0700
-Message-ID: <CAHS8izNupu9u1zx9YD9KaNxahBeZeaajOUUSFePbQk+rfUFn+Q@mail.gmail.com>
-Subject: Re: [PATCH net-next v10 10/14] net: add support for skbs with
- unreadable frags
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, 
-	Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fbc30c3a-ecd3-4525-9434-307c7769bb4c@amd.com>
 
-On Tue, Jun 4, 2024 at 3:46=E2=80=AFAM Paolo Abeni <pabeni@redhat.com> wrot=
-e:
->
-> On Thu, 2024-05-30 at 20:16 +0000, Mina Almasry wrote:
-> > diff --git a/net/core/gro.c b/net/core/gro.c
-> > index 26f09c3e830b7..7b9d018f552bd 100644
-> > --- a/net/core/gro.c
-> > +++ b/net/core/gro.c
-> > @@ -422,6 +422,9 @@ static void gro_pull_from_frag0(struct sk_buff *skb=
-, int grow)
-> >  {
-> >       struct skb_shared_info *pinfo =3D skb_shinfo(skb);
-> >
-> > +     if (WARN_ON_ONCE(!skb_frags_readable(skb)))
-> > +             return;
-> > +
-> >       BUG_ON(skb->end - skb->tail < grow);
-> >
-> >       memcpy(skb_tail_pointer(skb), NAPI_GRO_CB(skb)->frag0, grow);
-> > @@ -443,7 +446,7 @@ static void gro_try_pull_from_frag0(struct sk_buff =
-*skb)
-> >  {
-> >       int grow =3D skb_gro_offset(skb) - skb_headlen(skb);
-> >
-> > -     if (grow > 0)
-> > +     if (grow > 0 && skb_frags_readable(skb))
-> >               gro_pull_from_frag0(skb, grow);
-> >  }
->
-> I'm unsure if this was already mentioned, so please pardon the eventual
-> duplicate...
->
-> The above code is quite critical performance wise, and the previous
-> patch already prevent frag0 from being set to a non paged frag,
+On Thu, Jun 06, 2024 at 09:16:08AM +0530, Neeraj Upadhyay wrote:
+> 
+> 
+> On 6/6/2024 12:08 AM, Paul E. McKenney wrote:
+> > On Wed, Jun 05, 2024 at 02:09:34PM +0200, Frederic Weisbecker wrote:
+> >> Le Tue, Jun 04, 2024 at 03:23:48PM -0700, Paul E. McKenney a écrit :
+> >>> From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> >>>
+> >>> When all wait heads are in use, which can happen when
+> >>> rcu_sr_normal_gp_cleanup_work()'s callback processing
+> >>> is slow, any new synchronize_rcu() user's rcu_synchronize
+> >>> node's processing is deferred to future GP periods. This
+> >>> can result in long list of synchronize_rcu() invocations
+> >>> waiting for full grace period processing, which can delay
+> >>> freeing of memory. Mitigate this problem by using first
+> >>> node in the list as wait tail when all wait heads are in use.
+> >>> While methods to speed up callback processing would be needed
+> >>> to recover from this situation, allowing new nodes to complete
+> >>> their grace period can help prevent delays due to a fixed
+> >>> number of wait head nodes.
+> >>>
+> >>> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> >>> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> >>
+> >> IIRC we agreed that this patch could be a step too far that
+> >> made an already not so simple state machine even less simple,
+> >> breaking the wait_head based flow.
+> > 
+> > True, which is why we agreed not to submit it into the v6.10 merge window.
+> > 
+> > And I don't recall us saying what merge window to send it to.
+> > 
+> >> Should we postpone this change until it is observed that a workqueue
+> >> not being scheduled for 5 grace periods is a real issue?
+> > 
+> > Neeraj, thoughts?  Or, better yet, test results?  ;-)
+> 
+> Yes I agree that we postpone this change until we see it as a real
+> problem. I had run a test to invoke synchronize_rcu() from all CPUs
+> on a 96 core system in parallel. I didn't specifically check if this
+> scenario was hit. Will run RCU torture test with this change.
 
+Very well, I will drop this patch with the expectation that you will
+re-post it if a problem does arise.
 
-Hi Paolo!
-
-The last patch, d4d25dd237a61 ("net: support non paged skb frags"),
-AFAICT doesn't prevent frag0 from being a non-paged frag. What we do
-is set ->frag0=3Dskb->data, then prevent it from being reset to
-skb_frag_address() for non-paged skbs. ->frag0 will likely actually be
-a bad value for non-paged frags, so we need to check in
-gro_pul_from_frag0() so that we don't accidentally pull from a bad
-->frag0 value.
-
-What I think I should do here is what you said. I should make sure
-frag0 and frag0_len is not set if it's a non-paged frag. Then, we
-don't need special checks in gro_pull_from_frag0 I think, because
-skb_gro_may_pull() should detect that frag0_len is 0 and should
-prevent a pull.
-
-I will apply this fix to the next iteration for your review. Let me
-know if I missed something.
-
-
-> so what
-> about dropping the above additional checks?
->
-
-
---
-Thanks,
-Mina
+							Thanx, Paul
 
