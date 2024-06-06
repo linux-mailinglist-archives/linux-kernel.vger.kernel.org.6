@@ -1,80 +1,96 @@
-Return-Path: <linux-kernel+bounces-204189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1970B8FE599
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:39:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C1D88FE59D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A709A28432D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:39:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B73C1F26442
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D969C195812;
-	Thu,  6 Jun 2024 11:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2894A195966;
+	Thu,  6 Jun 2024 11:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxluKUId"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mxAPjwCd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2664D13D2A2;
-	Thu,  6 Jun 2024 11:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5782313D2A2;
+	Thu,  6 Jun 2024 11:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717673976; cv=none; b=fWmmYRGPWKhWyXSrzJQIMm8iGvu2UsTJcdXT2O6BmrYYB1KYI3czDAq4HLfk6tttMmnAEeJX6LdXd34lBTO/vHGHCTlQQKiTFPiyTHSwsdauBa6GWkNjC9SHkN8FGzBrCXLuqvOYg5IQfPcdqa7zTYIGxoXFU+pH2BWERSWYUSM=
+	t=1717674031; cv=none; b=Ss71LC+MS7VkftXUpUaGxHdlqeXcLRvQMRyFcq8ixq0mFuOX2VhzXrjbukrL6qW+az3e8LhA2ZU3jmNrBObc6MkzPaiaGASM4xZFdm4IqDO/9yXawlxnIH0QGQI2S+Ocs7XZ+XxgMipe0BrEC1chFV3IkGbDzptj9Vtwz2Re+6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717673976; c=relaxed/simple;
-	bh=p8wXrhQRix7YyGimgIgbUuipMII47I8TqUv3RdMezL8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=naU0BAQdXSj1gT/eZ0w1lZHuzU3SyobSxZWSLFB25RBeSY3PkF2T7pZGdnC3m02SGKJbBIRAmQC7mcvIo4ObUHqzhQ5dlAk3nNBLhVT7k+UHBvg9wNBLkKKKFbajn+FGxLxBSKCafkOUpgBZJ6DidOE/adOB/XJYdcVFFRvQR2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PxluKUId; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 270C8C32786;
-	Thu,  6 Jun 2024 11:39:34 +0000 (UTC)
+	s=arc-20240116; t=1717674031; c=relaxed/simple;
+	bh=aGnlINQZ7i3g921rtkuSNbz/2AJPPOBSiliF5MFlN1c=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=af2zcBxmijNWRL1QnS+pwFcyqk1qkP/bBjlImWVIDiAkjVSU3AP/Ptv0XuMQ9hDSpNAQvBd52SZZIpCBJmmY7+wyzdwPRlls/LEZBkQvG/UgZyz/gaHViX4e9I1qXY/XWjZjktjraClYg0qGsdqac4Q4nWK/nfcleb5KQ55ZpfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mxAPjwCd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D5C5FC4AF08;
+	Thu,  6 Jun 2024 11:40:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717673975;
-	bh=p8wXrhQRix7YyGimgIgbUuipMII47I8TqUv3RdMezL8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PxluKUId4GjYQC8dsW1AOb0RjdQbh1NXSyqlZtJoxvIcRyf14R+TlveN6Lcs1Uh2N
-	 +Jzd2EU2gJmZhjJYNBARNqSGiDC4r474yF/rmdVZ5/0OgQlSIlQzfxQWshjkEVBacV
-	 OVgPa1/3ZcRm7Oyi2eINvLeLpk1YVT2cwhKTRv61YLCU8CYSOEonRglAWUrh8schYj
-	 nyM3MXWanslqZjSZoxi9KM9F9HaCruvI99/jgfNiF07F3BRfAIT0JQprGZkBfYzFxr
-	 Y/98qm7aAd8nFtgRneD4B2OWDfjZRqb6okrLgZP4Xi4/AwOCR/37N17F2YeDbPJusX
-	 ifVl1oZkRDmhw==
-Date: Thu, 6 Jun 2024 14:39:31 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Konstantin Taranov <kotaranov@microsoft.com>
-Cc: Long Li <longli@microsoft.com>,
-	Konstantin Taranov <kotaranov@linux.microsoft.com>,
-	"sharmaajay@microsoft.com" <sharmaajay@microsoft.com>,
-	"jgg@ziepe.ca" <jgg@ziepe.ca>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/1] RDMA/mana_ib: ignore optional access flags for MRs
-Message-ID: <20240606113931.GH13732@unreal>
-References: <1717575368-14879-1-git-send-email-kotaranov@linux.microsoft.com>
- <PH7PR21MB307116D097353657259A7BB1CEF92@PH7PR21MB3071.namprd21.prod.outlook.com>
- <PAXPR83MB0559158B879C008258BC7B6AB4FA2@PAXPR83MB0559.EURPRD83.prod.outlook.com>
+	s=k20201202; t=1717674030;
+	bh=aGnlINQZ7i3g921rtkuSNbz/2AJPPOBSiliF5MFlN1c=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=mxAPjwCdXGHOa6qAR1ARgkitGjl2+LiVNYRw169W9erePhsPdm55nvzpcuqfeRIRX
+	 /dsMFFtBHezRgVUWxCo062Gywikc25yjPHBfkIo3hYS4bIITu3UziguRYMYlZiW/jC
+	 bBuUGAaV9K7mobpXikOT3cqPbzPFLfBzBWN2dnf+wqk3Wh6obvH2+iM0Y4Hy/rSEag
+	 aci+f3hB8D5CxBZbHPdn4b7IkMcf/QrDzHW6HenVymdmDeHcfnNJUsrxAljVqbbqO2
+	 Ine2NkEi+OgCmlQ9GY9vFpFVSK7guoM9zu03Tbu+mQMrAF328Z1cxo/QPY88fNTIx4
+	 kUKCXVa+dlJGg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C3892D2039E;
+	Thu,  6 Jun 2024 11:40:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR83MB0559158B879C008258BC7B6AB4FA2@PAXPR83MB0559.EURPRD83.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: ethtool: fix the error condition in
+ ethtool_get_phy_stats_ethtool()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171767403079.12695.6034347075508573945.git-patchwork-notify@kernel.org>
+Date: Thu, 06 Jun 2024 11:40:30 +0000
+References: <20240605034742.921751-1-suhui@nfschina.com>
+In-Reply-To: <20240605034742.921751-1-suhui@nfschina.com>
+To: Su Hui <suhui@nfschina.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, nathan@kernel.org, ndesaulniers@google.com,
+ morbo@google.com, justinstitt@google.com, andrew@lunn.ch,
+ ahmed.zaki@intel.com, hkallweit1@gmail.com, justin.chen@broadcom.com,
+ jdamato@fastly.com, gerhard@engleder-embedded.com, d-tatianin@yandex-team.ru,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+ kernel-janitors@vger.kernel.org
 
-On Thu, Jun 06, 2024 at 08:30:06AM +0000, Konstantin Taranov wrote:
-> > > Ignore optional ib_access_flags when an MR is created.
-> > 
-> > Can you add details on why this is needed?
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Wed,  5 Jun 2024 11:47:43 +0800 you wrote:
+> Clang static checker (scan-build) warning:
+> net/ethtool/ioctl.c:line 2233, column 2
+> Called function pointer is null (null dereference).
 > 
-> Do you mean to the commit message?
-> If we do not ignore these optional flags, the reg user mr fails because the next 2 lines:
-> 	if (access_flags & ~VALID_MR_FLAGS)
-> 		return ERR_PTR(-EINVAL);
+> Return '-EOPNOTSUPP' when 'ops->get_ethtool_phy_stats' is NULL to fix
+> this typo error.
+> 
+> [...]
 
-I took this patch as is.
+Here is the summary with links:
+  - [net] net: ethtool: fix the error condition in ethtool_get_phy_stats_ethtool()
+    https://git.kernel.org/netdev/net/c/0dcc53abf58d
 
-Thanks
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
