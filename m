@@ -1,135 +1,109 @@
-Return-Path: <linux-kernel+bounces-203523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5CB48FDC8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 04:10:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E9108FDC8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 04:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE953288A79
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 02:10:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE636288F4F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 02:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D409F17BA2;
-	Thu,  6 Jun 2024 02:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3BB18042;
+	Thu,  6 Jun 2024 02:11:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3FOQwrFn"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="wU+zKI4A"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47841640B;
-	Thu,  6 Jun 2024 02:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038BE19D8A9;
+	Thu,  6 Jun 2024 02:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717639845; cv=none; b=fFd6Wwy3XKOZ/ScX1rYcWfyCOFW7p28EtymBKFSdMQiX6VXQYv2eAvv/vZcZzjs17ndSkhAdVhwb6F6+Mp5ISGV73xiAHNz413nMD9YjMBoI9P5oB6lfzZ1eZ1+H+/OaM4MZLXJoFrMDMqSKB0e32dvrm7cU8nT2oDno9qsCXxI=
+	t=1717639876; cv=none; b=B6LvHnAyPZdm7HTvdTMv3ywXbDBWZjUXNpgNQ9d1GxpSWyROSb8hnJMiZZa4+Mvb5DfSJg6T7wD1+MzNs3LUPn5LocAedSx9Qfv8Bkjgzf+XI0sHTnwaLQrLx8LoMLMFeOITGA861MUr6lb2jbTnPRLqTA9C6ysIy5p32wMYbKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717639845; c=relaxed/simple;
-	bh=rzkXo4IiaYMRDDc4Kh6uXteBk5BmEOFOnfDbjMu0Pks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U+Zm+I1zf99IiS2fgyCEIO+Ic0UqYsyHgt36KKdFIF4VS3nejHHN9zyACLvoU+NF9oBT7fi1Vqq8yAQ2JpeA5hDyzIh+jDbn95lXtwKkzfJeUhJGkUDvda7pgD6qWpANHTA8dh8NCxCpia4+Kdf24gszL3ystUj1xX5SNdGnBJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=3FOQwrFn; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=EiYcxxAUjvaXFSXD8Eyyj23c1fzGWFwSW2rcb3xgMqw=; b=3F
-	OQwrFnv1lMS+Ax3bpro3dfWTZhMVDenFAvHSiWuA5iliO1aKS2NCfJautCPMsx+jyXyinAJT2YDPG
-	rwV9/Z2RxGdwhx9ey29Gfwx75Zwp2LU8rTCCoOIW+aQkNHsKB2Hyk02vECSu0HcEuQhDIZKpuwTF+
-	AgPhUwyQ289RuBA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sF2aO-00Gy1b-3w; Thu, 06 Jun 2024 04:10:40 +0200
-Date: Thu, 6 Jun 2024 04:10:40 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Kamil =?iso-8859-1?Q?Hor=E1k?= - 2N <kamilh@axis.com>
-Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-	hkallweit1@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] net: phy: bcm-phy-lib: Implement BroadR-Reach
- link modes
-Message-ID: <7a313ff6-574b-425d-be06-23bb588402c8@lunn.ch>
-References: <20240605095646.3924454-1-kamilh@axis.com>
- <20240605095646.3924454-4-kamilh@axis.com>
+	s=arc-20240116; t=1717639876; c=relaxed/simple;
+	bh=SwDOWZjXkGasfrj5gOSvdtiuegyDLuPA+BB35Wt5NKM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gWV1tXaIAGGN7v5erFG+Mjz0XZdEcZGkQzrPCXj//BKd1B2s4HKCb99/EK2UF1w4AQf1LLQHtc/OGoQ+Js02pWdW6V/sWXLVSvImwipkCOYyGB9DCTd8gu9REV72iNgzxdGCGlj/kf4deIFQAqoSMGG/rKnTguJ/QmRJ5BcrThc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=wU+zKI4A; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1717639870; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=J2HjalGyu16JiUmBtdpjzCgzLQfZA9s0Yu8WWDb1HCE=;
+	b=wU+zKI4Ar13ms1Conm+ZBGjaOcu2njdSrgQCO+3gBJjirrWmPpTYsqvbg+wEYXkf4mhZo6vSHgpR2WnM3CL01zVCLP3eyXT/TjwMKoYKB6pBip2dG45M01ajC9LylLKeSS8PD6d5GcZ8p9JsZ4u5LOR7eZyrTLAZvyO+0PKDbV4=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R431e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0W7wUGVG_1717639855;
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W7wUGVG_1717639855)
+          by smtp.aliyun-inc.com;
+          Thu, 06 Jun 2024 10:11:10 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: rostedt@goodmis.org
+Cc: mhiramat@kernel.org,
+	mark.rutland@arm.com,
+	mathieu.desnoyers@efficios.com,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH] fgraph: Remove some unused functions
+Date: Thu,  6 Jun 2024 10:10:53 +0800
+Message-Id: <20240606021053.27783-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240605095646.3924454-4-kamilh@axis.com>
 
-On Wed, Jun 05, 2024 at 11:56:46AM +0200, Kamil Horák - 2N wrote:
-> Implement single-pair BroadR-Reach modes on bcm5481x PHY by Broadcom.
-> Create set of functions alternative to IEEE 802.3 to handle configuration
-> of these modes on compatible Broadcom PHYs.
-> 
-> Change-Id: I592d261bc0d60aaa78fc1717a315b0b1c1449c81
-> Signed-off-by: Kamil Horák - 2N <kamilh@axis.com>
-> ---
->  drivers/net/phy/bcm-phy-lib.c | 123 ++++++++++++
->  drivers/net/phy/bcm-phy-lib.h |   4 +
->  drivers/net/phy/broadcom.c    | 368 ++++++++++++++++++++++++++++++++--
->  drivers/net/phy/phy-core.c    |   2 +-
->  include/linux/brcmphy.h       |   9 +
->  5 files changed, 488 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/net/phy/bcm-phy-lib.c b/drivers/net/phy/bcm-phy-lib.c
-> index 876f28fd8256..cc1b5e5a958c 100644
-> --- a/drivers/net/phy/bcm-phy-lib.c
-> +++ b/drivers/net/phy/bcm-phy-lib.c
-> @@ -794,6 +794,47 @@ static int _bcm_phy_cable_test_get_status(struct phy_device *phydev,
->  	return ret;
->  }
->  
-> +static int bcm_setup_forced(struct phy_device *phydev)
-> +{
-> +	u16 ctl = 0;
-> +
-> +	phydev->pause = 0;
-> +	phydev->asym_pause = 0;
-> +
-> +	if (phydev->speed == SPEED_100)
-> +		ctl |= LRECR_SPEED100;
-> +
-> +	if (phydev->duplex != DUPLEX_FULL)
-> +		return -EOPNOTSUPP;
-> +
-> +	return phy_modify(phydev, MII_BCM54XX_LRECR, LRECR_SPEED100, ctl);
+These functions are defined in the fgraph.c file, but not
+called elsewhere, so delete these unused functions.
 
-We should consider naming here. I assume this will not work for IEEE
-forced mode? So maybe this should have _lre_ or _brr_ in the name to
-make it clear what it actually does.
+kernel/trace/fgraph.c:273:1: warning: unused function 'set_bitmap_bits'.
+kernel/trace/fgraph.c:259:19: warning: unused function 'get_fgraph_type'.
 
-> +}
-
-
-
-> +
-> +/**
-> + * bcm_linkmode_adv_to_mii_adv_t
-> + * @advertising: the linkmode advertisement settings
-> + * @return: LDS Auto-Negotiation Advertised Ability register value
-> + *
-> + * A small helper function that translates linkmode advertisement
-> + * settings to phy autonegotiation advertisements for the
-> + * MII_BCM54XX_LREANAA register of Broadcom PHYs capable of LDS
-> + */
-> +static u32 bcm_linkmode_adv_to_mii_adv_t(unsigned long *advertising)
-> +{
-> +	u32 result = 0;
-
-Make here, and maybe lre_advertising?
-
-Please go through all the functions and think about naming.
-
-    Andrew
-
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9289
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 ---
-pw-bot: cr
+ kernel/trace/fgraph.c | 13 -------------
+ 1 file changed, 13 deletions(-)
+
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index 4bf91eebbb08..c00fbf1d0dd9 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -255,12 +255,6 @@ static inline int get_frame_offset(struct task_struct *t, int offset)
+ 	return __get_offset(t->ret_stack[offset]);
+ }
+ 
+-/* Get FGRAPH_TYPE from the word from the @offset at ret_stack */
+-static inline int get_fgraph_type(struct task_struct *t, int offset)
+-{
+-	return __get_type(t->ret_stack[offset]);
+-}
+-
+ /* For BITMAP type: get the bitmask from the @offset at ret_stack */
+ static inline unsigned long
+ get_bitmap_bits(struct task_struct *t, int offset)
+@@ -268,13 +262,6 @@ get_bitmap_bits(struct task_struct *t, int offset)
+ 	return (t->ret_stack[offset] >> FGRAPH_INDEX_SHIFT) & FGRAPH_INDEX_MASK;
+ }
+ 
+-/* For BITMAP type: set the bits in the bitmap bitmask at @offset on ret_stack */
+-static inline void
+-set_bitmap_bits(struct task_struct *t, int offset, unsigned long bitmap)
+-{
+-	t->ret_stack[offset] |= (bitmap << FGRAPH_INDEX_SHIFT);
+-}
+-
+ /* Write the bitmap to the ret_stack at @offset (does index, offset and bitmask) */
+ static inline void
+ set_bitmap(struct task_struct *t, int offset, unsigned long bitmap)
+-- 
+2.20.1.7.g153144c
+
 
