@@ -1,268 +1,148 @@
-Return-Path: <linux-kernel+bounces-204126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF088FE48A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:43:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 395298FE48C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:46:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 973111C25EC5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:43:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58B6D1C24D42
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218F2195381;
-	Thu,  6 Jun 2024 10:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF19194C80;
+	Thu,  6 Jun 2024 10:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="krpwgOhL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bs8GTU35"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E7A13AD25;
-	Thu,  6 Jun 2024 10:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658D12E639
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 10:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717670574; cv=none; b=Aew80mSO3Lw3+zT8V8Tr/BKGzDzd+aXtaE/j3AJzSGT29RxRe+Wp6UD6vAwYBGm6zgzPFHtM/IzBns9Gi/28gxDQaLJTER1PSWRSA8tAIf6rdNE/Ma/z2/eoGcSxPDcwEB5iTzb9EuBdX7+SXLWAMR/q6trKCD1JwgC2rxWjnPE=
+	t=1717670757; cv=none; b=t/GratvkdtKdSLfQdX/rtysnD3U9GyRQj1gBMF17nEpmWFUJQ3f2veXEaPGp2sJmF/z+xgsCjG2x0PpEO1e/WGE/9u7jdNLFZ4DSzA949hLf/kej+Lpu9QRko5SuDbZMHOFasGO8VI80n3tvP/Ejd+98vacLaGvS4U7WMdNS/uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717670574; c=relaxed/simple;
-	bh=gcyhBTjSNVb7wu268JcVK1apAHBGJ38qvCp2uwXmZ1s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c+29GgC9XcWNag/5DIPudznSQmKKZAeMJtOcQt6x6LalCvOcizpKHFJwbuQTg/ZbAJQp61RHUegmauNffBI0Gsqr6Bu+bWYXceVFBUG2+3pibSCZj8YzC/F4DW41xBFdhGUzUZq2w6v0gVfvJsLrsVCqXDEYHy3jPsvw39eTxys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=krpwgOhL; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717670572; x=1749206572;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=gcyhBTjSNVb7wu268JcVK1apAHBGJ38qvCp2uwXmZ1s=;
-  b=krpwgOhLBnipgo5Fnn0y3On4QczWGAiM4fJTUM26P0ut5d49w2q3xQTt
-   cfnjpGjsAMWaaqQBMULY2FW1HtgOCT13ZTi50JO338mjMPRPYgO34k5lY
-   aW7dLPRaZac/+kBPtT6aAf0ClgUMn8kxkpRm5AZivfzGM0uHA7KCDi2Sx
-   DUwAA3ZMKDUMLj4xsfGKBnCjoWDQ4epDjFyi8Fqp2JBGLz7lJSfVPtXK4
-   7uKujRZ4kMPRWPcEOuq8MZJBq2HAFCQF43nznDBn7yTYybjVQ8CrTK6/s
-   LijaXkN0ew0zvFmgoLniQ4sNpN0a//Y4Oi62y2T5/VvDP23kuuPt7RgJ6
-   g==;
-X-CSE-ConnectionGUID: HPmJ5SygRcq098tuSA5/Hg==
-X-CSE-MsgGUID: jUgR1S1ARtGQpDcTtzCKNQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="24962861"
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="24962861"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 03:42:51 -0700
-X-CSE-ConnectionGUID: E4XLhoBnRnGlO87Bzez5OQ==
-X-CSE-MsgGUID: DGZC0NvkQUyZvd7qqdLNxg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="37989265"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.29])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 03:42:48 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v6] cxl/events: Use a common struct for DRAM and General Media
- events
-Date: Thu, 06 Jun 2024 12:42:44 +0200
-Message-ID: <4881660.OV4Wx5bFTl@fdefranc-mobl3>
-In-Reply-To: <20240605123000.00001e8f@Huawei.com>
-References:
- <20240602191238.27712-1-fabio.m.de.francesco@linux.intel.com>
- <20240605123000.00001e8f@Huawei.com>
+	s=arc-20240116; t=1717670757; c=relaxed/simple;
+	bh=h3rlAL05qzuoEVAgqdyf4GZBDnMMNwXcIPdnVSrPw1o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H35/L8nNS9qfAAuvE8hHKxOgxh48PaLNxR07Tckm5OnPKZ/tPt3mm8Xc6Tde97jF6n/sCDab5SQdmfY7Da2QKJ6JxZi2raYT6Z0bwQyzjgYQ3CGh5SG8+N3YE/ZPxYKvMKtSOtFWRZ1a2hEZ15LOWoydkyfCXvu8eyznanfuKOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bs8GTU35; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52b962c4bb6so1128749e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 03:45:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717670753; x=1718275553; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jP/P1r8f+yBhFT8klLxmUkK6v5m++uhvmhlQ2QteYiM=;
+        b=bs8GTU354ru479OWw7pqCl6u2qhCnvWbXsuCHOucogadzx2LqnD1WNBtjuHsJtf5Hg
+         Oh2kPwVHK3CUwerZwT9ODBIaC/dgpt5Y0Ok66UpTUjNchTwd9dHwLMIpuKFpNFIdz6mZ
+         V1WqAyWNKfUCxIjB/Ix5R647Xt8inLqlAtVhzufk+QwH4XUoOqBgkPE0OGTWub2lbl1h
+         do9vCTZkmq9h7WJbiGZm+vuGDj1BWTH1lX2SzqQ3/Qqso248hbv0YVvHN/LwKrI4ZbKD
+         aTMc5kb/CqUwHkgR2YhvFtny6xonG/P7ZXK6atDy7OBr0MsrDen4DW8hRL0JfA47kUn5
+         RvhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717670753; x=1718275553;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jP/P1r8f+yBhFT8klLxmUkK6v5m++uhvmhlQ2QteYiM=;
+        b=cy2OQuCctpGLOpW06FvaomvNyltVJM/JaKqTspE3k9aa7j27bs5AWttCOImw02VEU4
+         EIvBjkcz2E1B7Rr5WjxlDOXuPnH5v0d6mz1HDQjeLkBU3d1R0EQn97wJzrDLWt1Os1GK
+         WCRruItH87xjW81cfrXsuAZL48pKpayRHw8jZdxjmgR2rG1ApyY1Z0CEqvnCiNDSy9J+
+         wTh97PgEVrTvmShVeCi8KqF/cZPP9THDwL0yjYt5tkDzIun19uwFG5zBSUV304bRsdjy
+         AWMmuLBPV0kzMVOjjyopP84RxyLx3AzTs1tcgTqwkSd2uJmxOHxkOia6t/bqgfmyDpPu
+         9h2A==
+X-Gm-Message-State: AOJu0Yyec+72l2TF5owGSbD0njpYVxcGanr9+toNA4Zn8VfuwNeHLfe0
+	l9nqMrvWeXUZzyJT8Lt0nsmVD6Ms6HKYwpQhxt7ysIdfsGqPo7T1gXP7cFoxmBa1JvSyKJ1kc9I
+	jv22v6LFDLlAxowe0in4xHo5qdzQ=
+X-Google-Smtp-Source: AGHT+IHf+U8AmaOcxLHhcMMePjN2rSCYrwuCaaNR9m85rVCNdzEtI6ULy38kKvbCkgR2zOxbfRxUoUaw2XAbAu/eP50=
+X-Received: by 2002:a05:6512:33ce:b0:51f:2f5a:54ae with SMTP id
+ 2adb3069b0e04-52bab4c9be7mr5099012e87.7.1717670753295; Thu, 06 Jun 2024
+ 03:45:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <6e8b7716-c657-4f20-b509-6356b5c8075b.bugreport@ubisectech.com>
+In-Reply-To: <6e8b7716-c657-4f20-b509-6356b5c8075b.bugreport@ubisectech.com>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Thu, 6 Jun 2024 19:45:36 +0900
+Message-ID: <CAKFNMomUZp9QfMWxcncQW-V-i45sN38-XCTLPenTWkU7KTk0Mg@mail.gmail.com>
+Subject: Re: kernel BUG in __folio_start_writeback
+To: Ubisectech Sirius <bugreport@ubisectech.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, willy <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-On Wednesday, June 5, 2024 1:30:00=E2=80=AFPM GMT+2 Jonathan Cameron wrote:
-> On Sun,  2 Jun 2024 21:12:25 +0200
-> "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com> wrote:
->=20
-> > cxl_event_common was an unfortunate naming choice and caused confusion=
-=20
-with
-> > the existing Common Event Record. Furthermore, its fields didn't map all
-> > the common information between DRAM and General Media Events.
-> >=20
-> > Remove cxl_event_common and introduce cxl_event_media_hdr to record com=
-mon
-> > information between DRAM and General Media events.
-> >=20
-> > cxl_event_media_hdr, which is embedded in both cxl_event_gen_media and
-> > cxl_event_dram, leverages the commonalities between the two events to
-> > simplify their respective handling.
-> >=20
-> > Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> > Reviewed-by: Alison Schofield <alison.schofield@intel.com>
-> > Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-> > Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> > Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.=
-com>
-> > ---
-> >=20
-> > - Changes for v6 -
-> >=20
-> > 	- Add "Reviewed-by" tags
-> Hi Fabio,
+On Thu, Jun 6, 2024 at 7:01=E2=80=AFPM Ubisectech Sirius wrote:
+>
+> Hello.
+> We are Ubisectech Sirius Team, the vulnerability lab of China ValiantSec.=
+ Recently, our team has discovered a issue in Linux kernel 6.8. Attached to=
+ the email were a PoC file of the issue.
+>
+> Stack dump:
+>  __vm_munmap+0x13d/0x390 mm/mmap.c:2990
+>  __do_sys_munmap mm/mmap.c:3007 [inline]
+>  __se_sys_munmap mm/mmap.c:3004 [inline]
+>  __x64_sys_munmap+0x62/0x90 mm/mmap.c:3004
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xd5/0x270 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x6f/0x77
+> ------------[ cut here ]------------
+> kernel BUG at mm/page-writeback.c:2991!
+> invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> CPU: 1 PID: 12198 Comm: segctord Not tainted 6.8.0 #1
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/0=
+1/2014
+> RIP: 0010:__folio_start_writeback+0x6f3/0xad0 mm/page-writeback.c:2991
+> Code: e8 a2 28 ce ff 48 89 ef e8 aa ed 1d 00 49 89 c7 e9 67 fd ff ff e8 8=
+d 28 ce ff 48 c7 c6 e0 91 d7 8a 48 89 ef e8 7e 7c 0d 00 90 <0f> 0b e8 76 28=
+ ce ff e8 c1 eb d9 08 e9 4b fb ff ff e8 67 28 ce ff
+> RSP: 0018:ffffc900020ffa00 EFLAGS: 00010293
+> RAX: 0000000000000000 RBX: ffff88804246c1f8 RCX: ffffc900020ff860
+> RDX: ffff888018964980 RSI: ffffffff81bc8432 RDI: 0000000000000000
+> RBP: ffffea00018b57c0 R08: 0000000000000001 R09: fffffbfff1eb0742
+> R10: ffffffff8f583a17 R11: 0000000000000001 R12: 1ffff9200041ff45
+> R13: 0000000000000000 R14: 0000000000000001 R15: ffffea00018b57c0
+> FS:  0000000000000000(0000) GS:ffff88807ec00000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f9cb42f0088 CR3: 00000000454c0000 CR4: 0000000000750ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> PKRU: 55555554
+> Call Trace:
+>  <TASK>
+>  nilfs_segctor_prepare_write fs/nilfs2/segment.c:1697 [inline]
+>  nilfs_segctor_do_construct+0x1c10/0x78a0 fs/nilfs2/segment.c:2113
+>  nilfs_segctor_construct+0x8c7/0xb10 fs/nilfs2/segment.c:2418
+>  nilfs_segctor_thread_construct fs/nilfs2/segment.c:2526 [inline]
+>  nilfs_segctor_thread+0x3cc/0xf30 fs/nilfs2/segment.c:2610
+>  kthread+0x2cc/0x3b0 kernel/kthread.c:388
+>  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1b/0x30 arch/x86/entry/entry_64.S:243
+>  </TASK>
+...
+>
+> Thank you for taking the time to read this email and we look forward to w=
+orking with you further.
 
-Hi Jonathan,
-=20
-> Adding tags doesn't need a new version. b4 or however Dave is picking the=
-se
-> up will gather them up from the v5 posting.
+I believe this issue will be fixed by the following bug fix, which is
+currently in the mm tree and will be merged into the mainline soon:
 
-I just read  what you replied in the v5 thread and know that now it makes m=
-ore=20
-sense.
+https://lkml.kernel.org/r/20240530141556.4411-1-konishi.ryusuke@gmail.com
 
-> My one nervousness about this is the impression it perhaps gives that the=
-=20
-contents
-> of validity flags has the same meaning in both records.
->=20
-> Maybe a comment to that effect next to it's definition makes sense?
+After the merge, it will also be sent to the stable trees.
 
-Yes, sure.=20
-I'll add it.
+Please wait a little while until then.
 
-> I think the alternative of not including that or the remaining elements in
-> your common structure would be worse.
->=20
-> Jonathan
->=20
-
-Thank you,
-
-=46abio
-
->=20
-> >=20
-> > - Changes for v5 -
-> >=20
-> > 	- Rebase on v6.10-rc1
-> >=20
-> > - Changes for v4 -
-> >=20
-> >         - Initialise cxl_test_dram and cxl_test_gen_media without=20
-> >           unnecessary extra de-references (Dan)
-> >         - Add a comment for media_hdr in union cxl_event (Alison)
-> >=20
-> > - Changes for v3 -
-> >=20
-> >         - Rework the layout of cxl_event_dram and cxl_event_gen_media to
-> >           make a simpler change (Dan)
-> >         - Remove a "Fixes" tag (Dan)
-> >         - Don't use unnecessary struct_group[_tagged] (Jonathan, Ira)
-> >         - Rewrite end extend the commit message
-> >=20
-> > - Link to v4 -
-> >=20
-> > https://lore.kernel.org/linux-cxl/20240521140750.26035-1-fabio.m.de.fra=
-ncesco@linux.intel.com/
-> >=20
-> >  drivers/cxl/core/mbox.c      |  2 +-
-> >  drivers/cxl/core/trace.h     | 32 ++++++++++-----------
-> >  include/linux/cxl-event.h    | 41 ++++++++++-----------------
-> >  tools/testing/cxl/test/mem.c | 54 +++++++++++++++++++-----------------
-> >  4 files changed, 61 insertions(+), 68 deletions(-)
->=20
->=20
->=20
-> > diff --git a/include/linux/cxl-event.h b/include/linux/cxl-event.h
-> > index 60b25020281f..1119d0bbb091 100644
-> > --- a/include/linux/cxl-event.h
-> > +++ b/include/linux/cxl-event.h
-> > @@ -21,6 +21,17 @@ struct cxl_event_record_hdr {
-> >  	u8 reserved[15];
-> >  } __packed;
-> > =20
-> > +struct cxl_event_media_hdr {
-> > +	struct cxl_event_record_hdr hdr;
-> > +	__le64 phys_addr;
-> > +	u8 descriptor;
-> > +	u8 type;
-> > +	u8 transaction_type;
-> > +	u8 validity_flags[2];
->=20
-> Perhaps a comment to say that validity_flags meaning after bit 2
-> varies across the different records?
->=20
-> > +	u8 channel;
-> > +	u8 rank;
-> > +} __packed;
-> > +
-> >  #define CXL_EVENT_RECORD_DATA_LENGTH 0x50
-> >  struct cxl_event_generic {
-> >  	struct cxl_event_record_hdr hdr;
-> > @@ -33,14 +44,7 @@ struct cxl_event_generic {
-> >   */
-> >  #define CXL_EVENT_GEN_MED_COMP_ID_SIZE	0x10
-> >  struct cxl_event_gen_media {
-> > -	struct cxl_event_record_hdr hdr;
-> > -	__le64 phys_addr;
-> > -	u8 descriptor;
-> > -	u8 type;
-> > -	u8 transaction_type;
-> > -	u8 validity_flags[2];
-> > -	u8 channel;
-> > -	u8 rank;
-> > +	struct cxl_event_media_hdr media_hdr;
-> >  	u8 device[3];
-> >  	u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
-> >  	u8 reserved[46];
-> > @@ -52,14 +56,7 @@ struct cxl_event_gen_media {
-> >   */
-> >  #define CXL_EVENT_DER_CORRECTION_MASK_SIZE	0x20
-> >  struct cxl_event_dram {
-> > -	struct cxl_event_record_hdr hdr;
-> > -	__le64 phys_addr;
-> > -	u8 descriptor;
-> > -	u8 type;
-> > -	u8 transaction_type;
-> > -	u8 validity_flags[2];
-> > -	u8 channel;
-> > -	u8 rank;
-> > +	struct cxl_event_media_hdr media_hdr;
-> >  	u8 nibble_mask[3];
-> >  	u8 bank_group;
-> >  	u8 bank;
-> > @@ -95,21 +92,13 @@ struct cxl_event_mem_module {
-> >  	u8 reserved[0x3d];
-> >  } __packed;
-> > =20
-> > -/*
-> > - * General Media or DRAM Event Common Fields
-> > - * - provides common access to phys_addr
-> > - */
-> > -struct cxl_event_common {
-> > -	struct cxl_event_record_hdr hdr;
-> > -	__le64 phys_addr;
-> > -} __packed;
-> > -
-> >  union cxl_event {
-> >  	struct cxl_event_generic generic;
-> >  	struct cxl_event_gen_media gen_media;
-> >  	struct cxl_event_dram dram;
-> >  	struct cxl_event_mem_module mem_module;
-> > -	struct cxl_event_common common;
-> > +	/* dram & gen_media event header */
-> > +	struct cxl_event_media_hdr media_hdr;
-> >  } __packed;
->=20
->=20
->=20
->=20
->=20
-
-
-
-
+Thanks,
+Ryusuke Konishi
 
