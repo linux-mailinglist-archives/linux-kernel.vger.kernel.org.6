@@ -1,141 +1,236 @@
-Return-Path: <linux-kernel+bounces-204287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB0248FE6BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:43:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2AA88FE6BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8176C284445
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:43:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07B561C23AB8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF6B195B0A;
-	Thu,  6 Jun 2024 12:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF21195B22;
+	Thu,  6 Jun 2024 12:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DgkphBEY"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aJWkEbVD"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48A3195B14
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB19195985;
+	Thu,  6 Jun 2024 12:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717677809; cv=none; b=CTj9Pk/FraUnQJWuv8bGbsK/faBw+CPDYnQeWLdaAglFucFcXMDpNSb1qwi9JhAAu7n3Np2n6TzRm3jDhUxRS39atLA1CiYiDA+odl6vHk32beX9LYDq8dqspme0SOjIjqPJyjgXfdhYAVO2FnzP8VvR9Fo56owGXzVZVtjHlXI=
+	t=1717677823; cv=none; b=RF+Sp+sTu2jB4F+HnC04hrhja2GrTjFIAxJucPaB/LpnQBokTWDWbP5tTBWtRoRiVif500/SPpiA9iAm6CGKk5EsD6iCgflSW/gl4oi+/y/BaAa8Bh8Pi+FEs9I8KTrmrYlLxeNvg946urBUzEVLwtz+TjGMrNhY2Bbz5bZ1VBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717677809; c=relaxed/simple;
-	bh=yeaLzEzJvuDa+m3/Uff7Po27zqgumLOSQUtaxyu5en0=;
+	s=arc-20240116; t=1717677823; c=relaxed/simple;
+	bh=7xfx0RwobM98qQzUiwKow0mIEtxgNTKOA4X87GmA4lU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i0COBPEz2tbbQbMVQ20S652WnTHgnQ4zY1WcpnhyWIbGr8pSFX49hpcRNtd4a1GZCCDhxyaTHoY+ZqAeF3VdMs4a2ISlvvoLsQQNAlEjM4GvG+9NQQD575qZ4LDOv5R+83NMNAvAEhvxm4EJ91BTLG1OKOkZUM9hti2tG4QHsO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DgkphBEY; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C07EC40E0177;
-	Thu,  6 Jun 2024 12:43:25 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id cftr_SWYD-Q8; Thu,  6 Jun 2024 12:43:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717677801; bh=p+KyFhBaucRcYTGBApiIZCCM19WHZeYhUd5Yam8pwIs=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=sEolB5FNGxfQ/dbqJqTDNwQQusGuY3MiyyeyLYI1jDssYbOTK1xF5yP7v/gMLgwCbp6AtLdNJx5bT2JI5nvgwYH8jSyAtLxy9kq/3kK3kyS78yBKflfPdmzaqHck/d4b/fFNodOwToUXGP8/sEnQVulRWLRZewqaJtujeNjYGSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aJWkEbVD; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717677820;
+	bh=7xfx0RwobM98qQzUiwKow0mIEtxgNTKOA4X87GmA4lU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DgkphBEYlRfV6LQse3Mv3DAu/Rw9h78h10oBjOtWaLPSAE08OFA7rrRgVe0aEbmJI
-	 YcTm1/p3ISnTcSo+Bm1LLB2zZNHeuCdd3nf8aDviK9JoEz8b3uj4+SbxlLuYRwS4kt
-	 WJrJ5yClBwDCqYStlX07ay0zoWXftsEZILvDF2/UYsHWzMi+oziWxXrSXexw0IQLZg
-	 c6ElT7xGfaL21PBeBXc+gAU2i8rNkGoI8HhfMvU0BngplCCcZFhMwXfAt1oJ15IS27
-	 YzS0VV6jsJgO5RL5ky5ZjYyle6v4eF99iscRO+eQHHl4Dxv7G0XnV9fD5OxNetA2n0
-	 U04JIzNXoLV2iIxK/hrcs5zfmAjsGdjJaBZ0GM5f5A3leKOklSAETEFJPzjsQObUEJ
-	 q+kW4KM+Z1HZa5GL7C6Jh9p+JEpH9xntHRBqaaNE8rqwnVXi+Fhj5jM6wlZrzbw0GP
-	 Jrxj0N2HeoIXa2n7b0ISgQMenlPMVVIp1Nwheu5csP1ryTX4wtZA6gR1YNSwLCnzmb
-	 6tvek0VgpXoXJNOdb4ORwMFk8Gp/o/Qjvx+jwKebdIvrStL3V1mH2MAwVajjQOf9Dg
-	 OjMpXRWL48CEe4otcYw+ZfcXgsqoLLstfxbSjPooen8P/C+1RmD0/om14U/8hpnFQw
-	 Va2PlqVfCCkAye/3XsQCkvfk=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	b=aJWkEbVDyYsn/QA0VdEYPY8/fi+6+wpPT+fiJMktGjaqNN19Lt5AznB4KeuPE/6G8
+	 4yrw43VfFOrFJ1bw1I9519hyzphHSgsM0i/1tFAYX3y/FR62LrMNxViADsQEBK7OHS
+	 sMBa+8swbVxn4LXdeFpQGCF8plYg7wr3g7ZwjMlkH2OyPleaduYkvUXKn/BAK7FPKH
+	 tO1pQTA0N3O2sM5NudUds3OA1gafiLiY2cSC5ZitmKKFmlTN9pUzlXLNjJmbfkqroF
+	 Y9lcMEC+0gkU5dqlPMW4acba2HaGOOexRblNFF5rdfES+XqBcwH9nr6ZXci27PLUML
+	 ZHeE69NN6yfRg==
+Received: from localhost (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2D01540E0031;
-	Thu,  6 Jun 2024 12:43:09 +0000 (UTC)
-Date: Thu, 6 Jun 2024 14:43:08 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tony Luck <tony.luck@intel.com>
-Cc: x86@kernel.org, Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: Re: [PATCH v2 3/3] x86/resctrl: Replace open code cacheinfo search
- in rdtgroup_cbm_to_size()
-Message-ID: <20240606124308.GCZmGu3Aj3_spSd0WS@fat_crate.local>
-References: <20240605161427.312994-1-tony.luck@intel.com>
- <20240605161427.312994-4-tony.luck@intel.com>
+	(Authenticated sender: sebastianfricke)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0F5A237811F4;
+	Thu,  6 Jun 2024 12:43:40 +0000 (UTC)
+Date: Thu, 6 Jun 2024 14:43:39 +0200
+From: "sebastian.fricke@collabora.com" <sebastian.fricke@collabora.com>
+To: "jackson.lee" <jackson.lee@chipsnmedia.com>
+Cc: "mchehab@kernel.org" <mchehab@kernel.org>,
+	"nicolas@ndufresne.ca" <nicolas@ndufresne.ca>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
+	Nas Chung <nas.chung@chipsnmedia.com>,
+	"lafley.kim" <lafley.kim@chipsnmedia.com>,
+	"b-brnich@ti.com" <b-brnich@ti.com>
+Subject: Re: [RESEND PATCH v4 0/4] Add features to an existing driver
+Message-ID: <20240606124339.i5l25wwo6fca2ne2@basti-XPS-13-9310>
+References: <20240510112252.800-1-jackson.lee@chipsnmedia.com>
+ <SE1P216MB13031A560625CE8C7614D5F6EDE92@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20240605161427.312994-4-tony.luck@intel.com>
+In-Reply-To: <SE1P216MB13031A560625CE8C7614D5F6EDE92@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
 
-On Wed, Jun 05, 2024 at 09:14:27AM -0700, Tony Luck wrote:
-> Use get_cpu_cacheinfo_level() instead of open coded search.
-> 
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
-> ---
->  arch/x86/kernel/cpu/resctrl/rdtgroup.c | 14 +++++---------
->  1 file changed, 5 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> index 02f213f1c51c..cb68a121dabb 100644
-> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> @@ -1450,18 +1450,14 @@ static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
->  unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r,
->  				  struct rdt_domain *d, unsigned long cbm)
->  {
-> -	struct cpu_cacheinfo *ci;
->  	unsigned int size = 0;
-> -	int num_b, i;
-> +	struct cacheinfo *ci;
-> +	int num_b;
->  
->  	num_b = bitmap_weight(&cbm, r->cache.cbm_len);
-> -	ci = get_cpu_cacheinfo(cpumask_any(&d->cpu_mask));
-> -	for (i = 0; i < ci->num_leaves; i++) {
-> -		if (ci->info_list[i].level == r->cache_level) {
-> -			size = ci->info_list[i].size / r->cache.cbm_len * num_b;
-> -			break;
-> -		}
-> -	}
-> +	ci = get_cpu_cacheinfo_level(cpumask_any(&d->cpu_mask), r->cache_level);
-> +	if (ci)
-> +		size = ci->size / r->cache.cbm_len * num_b;
->  
->  	return size;
->  }
-> -- 
+Hey Jackson,
 
-Those last two patches can be a single one which replaces open-coded
-cacheinfo search in resctrl.
+On 20.05.2024 01:45, jackson.lee wrote:
+>Hi sebastian and Nicolas
+>
+>I sent the v4 patch. Can you please review them ?
 
-Or is there any particular reason for them to be separate?
+so overall this looks good now, but there are still a few warnings:
+https://linux-media.pages.freedesktop.org/-/users/sebastianfricke/-/jobs/59559963/artifacts/report.htm
 
-Because it is a single logical change...
+Could you please look into those? (Please tell me if you can't access
+the link)
 
-Thx.
+>
+>https://lore.kernel.org/linux-media/20240510112252.800-1-jackson.lee@chipsnmedia.com/
+>
+>
+>thanks
+>Jackson
 
--- 
-Regards/Gruss,
-    Boris.
+Regards,
+Sebastian
 
-https://people.kernel.org/tglx/notes-about-netiquette
+>
+>> -----Original Message-----
+>> From: jackson.lee <jackson.lee@chipsnmedia.com>
+>> Sent: Friday, May 10, 2024 8:23 PM
+>> To: mchehab@kernel.org; nicolas@ndufresne.ca; sebastian.fricke@collabora.com
+>> Cc: linux-media@vger.kernel.org; linux-kernel@vger.kernel.org;
+>> hverkuil@xs4all.nl; Nas Chung <nas.chung@chipsnmedia.com>; lafley.kim
+>> <lafley.kim@chipsnmedia.com>; b-brnich@ti.com; jackson.lee
+>> <jackson.lee@chipsnmedia.com>
+>> Subject: [RESEND PATCH v4 0/4] Add features to an existing driver
+>>
+>> From: "Jackson.lee" <jackson.lee@chipsnmedia.com>
+>>
+>> The wave5 codec driver is a stateful encoder/decoder.
+>> The following patches is for supporting yuv422 inpuy format, supporting
+>> runtime suspend/resume feature and extra things.
+>>
+>> v4l2-compliance results:
+>> ========================
+>>
+>> v4l2-compliance 1.24.1, 64 bits, 64-bit time_t
+>>
+>> Buffer ioctls:
+>>             warn: v4l2-test-buffers.cpp(693): VIDIOC_CREATE_BUFS not supported
+>>             warn: v4l2-test-buffers.cpp(693): VIDIOC_CREATE_BUFS not supported
+>>     test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+>>     test VIDIOC_EXPBUF: OK
+>>     test Requests: OK (Not Supported)
+>>
+>> Total for wave5-dec device /dev/video0: 45, Succeeded: 45, Failed: 0,
+>> Warnings: 2 Total for wave5-enc device /dev/video1: 45, Succeeded: 45, Failed:
+>> 0, Warnings: 0
+>>
+>> Fluster test results:
+>> =====================
+>>
+>> Running test suite JCT-VC-HEVC_V1 with decoder GStreamer-H.265-V4L2-Gst1.0
+>> Using 1 parallel job(s)
+>> Ran 132/147 tests successfully               in 97.421 secs
+>>
+>> (1 test fails because of not supporting to parse multi frames, 1 test fails
+>> because of a missing frame and slight corruption,
+>>  2 tests fail because of sizes which are incompatible with the IP, 11 tests
+>> fail because of unsupported 10 bit format)
+>>
+>> Running test suite JVT-AVC_V1 with decoder GStreamer-H.264-V4L2-Gst1.0 Using
+>> 1 parallel job(s)
+>> Ran 77/135 tests successfully               in 37.233 secs
+>>
+>> (58 fail because the hardware is unable to decode  MBAFF / FMO / Field /
+>> Extended profile streams.)
+>>
+>> Change since v3:
+>> =================
+>>
+>> * For [PATCH v4 1/4] media: chips-media: wave5: Support SPS/PPS generation
+>> for each IDR
+>>  - add Reviewed-By tag
+>>
+>> * For [PATCH v4 2/4] media: chips-media: wave5: Support runtime
+>> suspend/resume
+>>  - add Reviewed-By tag
+>>
+>> * For [PATCH v4 3/4] media: chips-media: wave5: Use helpers to calculate
+>> bytesperline and sizeimage.
+>>  - modify the commit message
+>>  - define three framesize structures for decoder
+>>
+>> * For [PATCH v4 4/4] media: chips-media: wave5: Support YUV422 raw pixel-
+>> formats on the encoder
+>>  - modify the commit message
+>>  - use the v4l2_format_info to calculate luma, chroma size
+>>
+>> Change since v2:
+>> =================
+>>
+>> * For [PATCH v3 0/4] media: chips-media: wave5: Support SPS/PPS generation
+>> for each IDR
+>>  - add the suggested _SHIFT suffix
+>>
+>> * For [PATCH v3 1/4] media: chips-media: wave5: Support runtime
+>> suspend/resume
+>>  - change a commit message
+>>
+>> * For [PATCH v3 2/4] media: chips-media: wave5: Use helpers to calculate
+>> bytesperline and sizeimage
+>>  - add pix_fmt_type parameter into wave5_update_pix_fmt function
+>>  - add min/max width/height values into dec_fmt_list
+>>
+>> Change since v1:
+>> =================
+>>
+>> * For [PATCH v2 0/4] media: chips-media: wave5: Support SPS/PPS generation
+>> for each IDR
+>>  - define a macro for register addresses
+>>
+>> * For [PATCH v2 1/4] media: chips-media: wave5: Support runtime
+>> suspend/resume
+>>  - add auto suspend/resume
+>>
+>> * For [PATCH v2 2/4] media: chips-media: wave5: Use helpers to calculate
+>> bytesperline and sizeimage
+>>  - use helper functions to calculate bytesperline and sizeimage
+>>
+>> * For [PATCH v2 3/4] media: chips-media: wave5: Support YUV422 raw pixel-
+>> formats on the encoder
+>>  - remove unnecessary codes
+>>
+>> Change since v0:
+>> =================
+>> The DEFAULT_SRC_SIZE macro was defined using multiple lines, To make a simple
+>> define, tab and multiple lines has been removed, The macro is defined using
+>> one line.
+>>
+>> Jackson.lee (4):
+>>   media: chips-media: wave5: Support SPS/PPS generation for each IDR
+>>   media: chips-media: wave5: Support runtime suspend/resume
+>>   media: chips-media: wave5: Use helpers to calculate bytesperline and
+>>     sizeimage.
+>>   media: chips-media: wave5: Support YUV422 raw pixel-formats on the
+>>     encoder.
+>>
+>>  .../platform/chips-media/wave5/wave5-helper.c |  24 ++
+>>  .../platform/chips-media/wave5/wave5-helper.h |   5 +
+>>  .../platform/chips-media/wave5/wave5-hw.c     |  23 +-
+>>  .../chips-media/wave5/wave5-vpu-dec.c         | 312 +++++++-----------
+>>  .../chips-media/wave5/wave5-vpu-enc.c         | 300 +++++++++--------
+>>  .../platform/chips-media/wave5/wave5-vpu.c    |  43 +++
+>>  .../platform/chips-media/wave5/wave5-vpu.h    |   5 +-
+>>  .../platform/chips-media/wave5/wave5-vpuapi.c |  14 +-
+>>  .../platform/chips-media/wave5/wave5-vpuapi.h |   1 +
+>>  .../chips-media/wave5/wave5-vpuconfig.h       |  27 +-
+>>  .../media/platform/chips-media/wave5/wave5.h  |   3 +
+>>  11 files changed, 414 insertions(+), 343 deletions(-)
+>>
+>> --
+>> 2.43.0
+>
 
