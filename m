@@ -1,145 +1,143 @@
-Return-Path: <linux-kernel+bounces-204976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCDE48FF5BF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:18:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EFA48FF5C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:19:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEF641C257CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:18:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A14F91C257CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E3A73469;
-	Thu,  6 Jun 2024 20:18:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541F774424;
+	Thu,  6 Jun 2024 20:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="O1ZmJ6Rl"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="kFAacZI8"
+Received: from mail2.andi.de1.cc (vmd64148.contaboserver.net [161.97.139.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D1038F9C;
-	Thu,  6 Jun 2024 20:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F65138F9C;
+	Thu,  6 Jun 2024 20:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.97.139.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717705121; cv=none; b=vCJ251qkXfjCMhcDhWyblUdJgjXz8219QplneHKY3QQpSo8QO+DXfSE2eh5N6j7Ysc033+D99bt00OGPc43/mg/qTSy8S0/rHHQ81izIHtn7QDFGmnG0cV0NBvcV/SxR/5oXhSPo5yxroHq/HeOabRrLeaBPFk8uJl2a/F+U99s=
+	t=1717705188; cv=none; b=i91l7mDa0qnD7TKMkTn6XuXPqdReIwpKSptqgp54y+wHsWn9V65KoPwrJue/G24CgAgqzgdEZ/IhCGMJ4aCma64e0w6BhysngHA7j3jtOI6ua31jjEXS75Wjgfl8GWQtkYwraGW66MDADutyWPLYBOy35bN7VIaoB4dTo1K814c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717705121; c=relaxed/simple;
-	bh=cyu/1xEpXUTxEGqlT0D38XPGikaORzZ2nxSbTMl8Ksc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i3BgZ3rFna4uOe9pC1zNRNhzmFrEjCyYYQJt5nAcMcwJW/V4DRQOxGhtU7qdMS2sDDEsohjsCiAiN68eLzzS2U/L0clQ7oZ/zWeLEhSJ9lGwP9uvKftFdUaPtgRU7htvdHpcmnfRaPmo2W1HdIji0AZGKmQYMz2oOJblKgJBSyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=O1ZmJ6Rl; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4VwFyg0Hnvz9sq3;
-	Thu,  6 Jun 2024 22:18:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1717705115;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ohDaG0hOCzORTv2Q7Osb5vtnPE6ReKAWi9dBZ7ab1xc=;
-	b=O1ZmJ6RlSaIOZnPqzA910/zSq4CkE+BrWOeNVx/EF5z6ns2s5l8/eGtXfKm/IgSB7aQgWh
-	tX4O09EFjB0RqCkS8+vnZwUKX42BvYRExY1SAvJSJg6aFJdwdSnhEJ+Yi0SLMXNqmCGHgP
-	AR10WbEyD+zM4kInasIOD27qTCyeC18NseUz9ZlG/IpX7BlbQMOCt/eCGu3oXMsIPoGEeD
-	A92YRz07AVoOe/9WTPvYABVKoYDSWHdLSc6z+rP5/0drGs6GgGAqdNIOkDRgFma3bMXNln
-	pBG4Y5gAHVzaL8EhZ+Sd0OQeJk8xBrfEqDLIBlDO4e6QYQMMQ4nFlXZpD8nw7g==
-Date: Thu, 6 Jun 2024 20:18:31 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Shuah Khan <shuah@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>, willy@infradead.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	gost.dev@samsung.com, mcgrof@kernel.org,
-	linux-kselftest@vger.kernel.org, Zi Yan <zi.yan@sent.com>,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH] selftests/mm: use volatile keyword to not optimize mmap
- read variable
-Message-ID: <20240606201831.ywmawi7xl6jgj3p4@quentin>
-References: <20240606135835.600022-1-kernel@pankajraghav.com>
- <5b4e7ef2-3ced-4d4a-989c-e99b06598d32@redhat.com>
- <f199d120-2347-4bc0-8940-155c3c465de9@redhat.com>
+	s=arc-20240116; t=1717705188; c=relaxed/simple;
+	bh=wa3BBdGR1+78PPUuJsMGHRdeHoVZKgnZms8c31qQteY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GfWpfDSFcOUyLRlDfJpsCdLjY7ho5Fy7ya0bkSSQUPIwQmDbopfG8VyP0ubZO7jxnOQzLH/guNKFINKqKv92WeEiHzqN6PrmyDkU6jPJAX0sSC7s/eogAHaSc67m3b1vbK62UNzlgoiv8uxgHgWNik0fQfJZd0schZjuXoEiYcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=kFAacZI8; arc=none smtp.client-ip=161.97.139.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+Received: from mail.andi.de1.cc ([2a02:c205:3004:2154::1])
+	by mail2.andi.de1.cc with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <andreas@kemnade.info>)
+	id 1sFJaJ-0094PM-2s;
+	Thu, 06 Jun 2024 22:19:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=SL5BnMk1PEOausbJHr2HCDEZ4yWEUH7QQMEph3aTbgw=; b=kFAacZI8g90v4i6fUcbrkwDdnX
+	rU4s8/cXRH16qiyrT6glZHCQqOS0qjjpaVHSoWDzodbsGebPoAZ38sQqHyEcRsI+iH1QN4xbEkN+E
+	Schyei93eUPhiZyZY5XzGaNAx4bdwQctlJ0LNF/cYgLj0TE5FN945zWuCr8T86nKO1289GnIrg+Uj
+	lx0p25iRrQxeLlXogaMV2DApnE9iWI0u4ssRQsFqmhGNZ2UIuS+qRsStKYVdwNOYrKJRcbd2iH7kF
+	Opl0hzyujsLnKiLb5wtldC+ssVrUw9WP93OYYfyowBKHPKtXXv8XIbokTrHgbMML/AoOk6g+8CgZG
+	NlM6cPOA==;
+Received: from p200300c20737c2001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:c2:737:c200:1a3d:a2ff:febf:d33a] helo=aktux)
+	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <andreas@kemnade.info>)
+	id 1sFJaH-002oCx-35;
+	Thu, 06 Jun 2024 22:19:43 +0200
+Date: Thu, 6 Jun 2024 22:19:41 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: marcel@holtmann.org, johan@kernel.org, pmenzel@molgen.mpg.de,
+ jirislaby@kernel.org, gregkh@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org, Adam Ford
+ <aford173@gmail.com>, Tony Lindgren <tony@atomide.com>,
+ tomi.valkeinen@ideasonboard.com, =?UTF-8?B?UMOpdGVy?= Ujfalusi
+ <peter.ujfalusi@gmail.com>, robh@kernel.org, hns@goldelico.com
+Subject: Re: [PATCH v4 0/4] Bluetooth/gnss: GNSS support for TiWi chips
+Message-ID: <20240606221941.333a9704@aktux>
+In-Reply-To: <CABBYNZ+Fz2TLSNa28H3kjVKOSA7C-XOzdQJiHdJs3FKxnq01DA@mail.gmail.com>
+References: <20240606183032.684481-1-andreas@kemnade.info>
+	<CABBYNZ+Fz2TLSNa28H3kjVKOSA7C-XOzdQJiHdJs3FKxnq01DA@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f199d120-2347-4bc0-8940-155c3c465de9@redhat.com>
-X-Rspamd-Queue-Id: 4VwFyg0Hnvz9sq3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 06, 2024 at 05:57:21PM +0200, David Hildenbrand wrote:
-> On 06.06.24 17:56, David Hildenbrand wrote:
-> > On 06.06.24 15:58, Pankaj Raghav (Samsung) wrote:
-> > > From: Pankaj Raghav <p.raghav@samsung.com>
-> > > 
-> > > create_pagecache_thp_and_fd() in split_huge_page_test.c used the
-> > > variable dummy to perform mmap read.
-> > > 
-> > > However, this test was skipped even on XFS which has large folio
-> > > support. The issue was compiler (gcc 13.2.0) was optimizing out the
-> > > dummy variable, therefore, not creating huge page in the page cache.
-> > > 
-> > > Add volatile keyword to force compiler not to optimize out the loop
-> > > where we read from the mmaped addr.
-> > > 
-> > > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> > > ---
-> > >    tools/testing/selftests/mm/split_huge_page_test.c | 2 +-
-> > >    1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
-> > > index d3c7f5fb3e7b..c573a58f80ab 100644
-> > > --- a/tools/testing/selftests/mm/split_huge_page_test.c
-> > > +++ b/tools/testing/selftests/mm/split_huge_page_test.c
-> > > @@ -300,7 +300,7 @@ int create_pagecache_thp_and_fd(const char *testfile, size_t fd_size, int *fd,
-> > >    		char **addr)
-> > >    {
-> > >    	size_t i;
-> > > -	int __attribute__((unused)) dummy = 0;
-> > > +	volatile int __attribute__((unused)) dummy = 0;
-> > >    	srand(time(NULL));
-> > > 
-> > > base-commit: d97496ca23a2d4ee80b7302849404859d9058bcd
-> > 
-> > The rick we do in some other tests is:
-> > 
-> > char *tmp;
-> > 
-> > tmp = *whatever;
-> > asm volatile("" : "+r" (tmp));
-> 
-> char tmp; of course. See cow.c as an example.
-Thanks David! I remember also seeing this when I grepped for volatile in
-the selftests directory.
+Hi Luiz,
 
-Willy gave the idea of making it as a global variable [1]. But your
-trick also works :)
+On Thu, 6 Jun 2024 16:04:10 -0400
+Luiz Augusto von Dentz <luiz.dentz@gmail.com> wrote:
 
-diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
-index d3c7f5fb3e7b..9c957703c1f7 100644
---- a/tools/testing/selftests/mm/split_huge_page_test.c
-+++ b/tools/testing/selftests/mm/split_huge_page_test.c
-@@ -341,6 +341,7 @@ int create_pagecache_thp_and_fd(const char *testfile, size_t fd_size, int *fd,
- 
-        for (size_t i = 0; i < fd_size; i++)
-                dummy += *(*addr + i);
-+       asm volatile("" : "+r" (dummy));
- 
-        if (!check_huge_file(*addr, fd_size / pmd_pagesize, pmd_pagesize)) {
-                ksft_print_msg("No large pagecache folio generated, please provide a filesystem supporting large folio\n");
+> Hi Andreas,
+>=20
+> On Thu, Jun 6, 2024 at 2:30=E2=80=AFPM Andreas Kemnade <andreas@kemnade.i=
+nfo> wrote:
+> >
+> > Some of these chips have GNSS support. In some vendor kernels
+> > a driver on top of misc/ti-st can be found providing a /dev/tigps
+> > device which speaks the secretive Air Independent Interface (AI2) proto=
+col.
+> >
+> > To be more compatible with userspace send out NMEA by default but
+> > allow a more raw mode by using a module parameter.
+> >
+> > This was tested on the Epson Moverio BT-200.
+> >
+> > Who will take this series (1-3)? GNSS with ack from Bluetooth?
+> >
+> > Changes since V3:
+> > - Finally remove the period from 1/4 subject
+> > - include things directly for get_unaligned_le16() to fix 0-day issues
+> >
+> > Changes since V2:
+> > - Optimize waits
+> > - Fix some packet analysis / checksum computation issue
+> > - Adding a proposal for removing those waits as RFC
+> > - Minor spell corrections and improved descriptions
+> >
+> > Changes since V1:
+> > - Set up things for NMEA output
+> > - Powerup/down at open()/close()
+> > - split out logic between drivers/bluetooth and drivers/gnss
+> > - leave out drivers/misc/ti-st driver removal to avoid
+> >   filling up mailboxes during the iterations, this series is
+> >   still a proof that it is not needed, will take the brush after
+> >   this series is accepted.
+> >
+> >
+> > Andreas Kemnade (4):
+> >   gnss: Add AI2 protocol used by some TI combo chips
+> >   Bluetooth: ti-st: Add GNSS subdevice for TI Wilink chips =20
+>=20
+> The bluetooth one looks relatively simple so I could take that one and
+> push to bluetooth-next if there are no dependencies on the other
+> changes.
+>=20
+There is:
 
-I am fine with either solutions. But using the trick asm volatile is more
-cleaner than making it a global variable IMO and makes it more uniform
-across the other mm tests.
+include/linux/ti_wilink_st.h |   8 +
 
-Let me know what others think.
+We have compile time deps here. Patch 3 compile time depends on patch 2. If=
+ we
+cannot take everything in for  6.11, you might opt to take the bluetooth pa=
+rt.
+That would work.
 
-
-[1] https://lore.kernel.org/linux-mm/20240606154428.672643-1-kernel@pankajraghav.com/
+Regards,
+Andreas
 
