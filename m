@@ -1,111 +1,107 @@
-Return-Path: <linux-kernel+bounces-203541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D1A78FDCD9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 04:37:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 027628FDCDC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 04:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28C771F2504D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 02:37:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23D9A1C2110E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 02:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B283A1C68D;
-	Thu,  6 Jun 2024 02:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019FD1BDD3;
+	Thu,  6 Jun 2024 02:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L0SLFfvD"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fgPHgB1d"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A88C18C38
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 02:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9365D18638;
+	Thu,  6 Jun 2024 02:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717641447; cv=none; b=ER+KaEULokxGmJbZSiomLOxymObDJJFPI2zMq8tE9T3V2SR+1c7oRvKpAo+rM8b7z25Lc6QnOk8DYf3lFGInX4jV2YvDeoUTGkOjL7AU33e3J8wpx3W0P7y5E3glzpyPEWSrzdY0p+pkOAGJgP4w32tZUv26wG+0Ss9ufNvRPOo=
+	t=1717641483; cv=none; b=c6QSqk3oCE1NgVYINtpQTH9AVo6chQvuEwd5csHoHsK0NCL4FjbZesgKeR0qUqu/HlcS7l1hk/7Tf+u5//bRuh7KZ+YBV1x79LEJUp6otx9S+bmuXZmUXJSfD3hoDa+ns6k/L8ckNZJ+IxIZhhS9dbccqHELOgnCaGK306RbApQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717641447; c=relaxed/simple;
-	bh=oiY2aWMnh4Ts+LK48PEMYffGEi+9hRB5M6zGjjCh3a0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V1mADsWC+jra+HC/Kfre4u0utz9jkC7oED65Mtfs0/8iG4L1iP7idtmH2VvzPzVCgGj6C7sIxuQ/QW/UdgdmwbIddg+7DX/5G6PLV9QwLB3ll7KRXmNAGpoNgNxN7wtXQOs0U5VQhCUWWLoi7qBYCKZoeM1+k0M28keYG//HZf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=L0SLFfvD; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4214a7c14c1so26685e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 19:37:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717641444; x=1718246244; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xDq/ZYiqvUMpGmnfFROlIKqAnO6GO+2iuQr9cMLLamE=;
-        b=L0SLFfvDdAn5BfnPnrkagX4mb1eb0pi7fM9zhBh2BpaauKh2ji5vASNo0F3Umm5g75
-         uFVejtGoOAxGZoL6FnoD/lGVfSMSkkUtwxv/3irQKOrhcCpjo09U+s8FqUOR7qL2nA/h
-         Hh9B4DvWHBhXbzndEH/z0gxMNNwr7Do50Oei0qr8GCMgq+HEPTMZmjjwnJIhJZCWNOTE
-         xE2vxd18DtsTpMi627sN7mira/40hhY6q3Q9TCt7kr0HF/m+6n4OSjGUOVlbwVTMJnBs
-         0GZYpWgM/OgXqYvqD15Ba/zYCFp1fVS5sj62B+IemznZplQQzdN6DQEUvuByfg3uSner
-         4uWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717641444; x=1718246244;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xDq/ZYiqvUMpGmnfFROlIKqAnO6GO+2iuQr9cMLLamE=;
-        b=Ibk/B5PyHNn/vRNMCDa3my0uF0M9z+3vuwOJ0mWqeIjCdrCNpYxi5eeco5s0brwzja
-         Jj1zVQ5DOevtzbgApsix2hcjuTn07WyHh0aTxUBNfzpZ19p+wJHfrl9CTASMPIedzx1O
-         Jn5qOoZXU1cViNMYzFIqD2Ls7MceTYoJZRQMZCSE2lrYgil/eE5YVHgVgu/QXk+iPNDt
-         NRTPxUEMoUkPZV2MuRmAFr/SAChmdZ2yWkcrIRgjCGBQQsPSsPucBOMznKyi1Z/Zelo4
-         va48nkhqx0DaHRCYqLi4O+7ptSqmkDMvMD3i7w2TU/KPuSyquCZ7v6UNdWHu8w805sev
-         QewQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDRdkVs/gK3/T132eXtsTmNWBFmWAEbRBIRD/Q7YZ0PLG0pofPztyHgCG7EYFMElABCkKPTwTxu9JNVfsSRVEwFDzRWUhI6sOB0Ie/
-X-Gm-Message-State: AOJu0YyEoVxYjk62eo0HYqjUuhjZpIF7/hcZU9IxQtUkdXJiQqZAjzLX
-	XYRFGbC7ACh6TgesiwFLh4UBoVkaxP1wB2yWp/rGCjXBk9LembVDDKyisH2Yb2055hhryTX+Gfv
-	4ThiKxsoWe82KqVwGJCNgWNt0fJ/luckFy8Y=
-X-Google-Smtp-Source: AGHT+IHaMob5QkMPplPJnTDM+qZg7pZsoKZ3tUHMJRiC4H1J40L0Caw6VHQuvDnoIsS+ROt+MN9cjAZbJk4mBEgVeG0=
-X-Received: by 2002:a05:600c:3b1c:b0:41b:e55c:8dca with SMTP id
- 5b1f17b1804b1-4215c34b2f8mr642165e9.7.1717641443632; Wed, 05 Jun 2024
- 19:37:23 -0700 (PDT)
+	s=arc-20240116; t=1717641483; c=relaxed/simple;
+	bh=q00fbyXWbku008T8lIzi4IMyV7RDrJvronr10vODt6A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=V0NNr7HTf8NfejsUZM+gre+hFna4GnvoR7DHYO4phsF+aSnDxG0tkrHr2srz3zUfRv1HAJd+IKuXcmHLok3I1STIX8pZX9ZmGf1IjsxHFw6Tp3GASzOukyvSxuLVvZJJ7uh1SWelnGl4aRUzaC2YUie2KRrcrxn58Wod8ZyX6fA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=fgPHgB1d; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1717641479;
+	bh=D+Cfu7ALBMW2PLLit63JOjJ2fwsMyM7p3hV2JeqvN1M=;
+	h=Date:From:To:Cc:Subject:From;
+	b=fgPHgB1dNGZPoYt8ZBTtTQTaks0yZHTKkFjCcTNlU3bNM8QQ1viZxcuUL8azMcLMA
+	 p5dYpOnA0UdvD22iyFNN66EEwd/c0QdVCU88udAOeTxQqepA1yG2TCzKtEL/L+3mHy
+	 DpDobhVjAe3J7/VX45MsRbozzIqzUFDzq53N4OyCqj1wI5AmwdwvBLuiyD3uVggYlp
+	 SkDvjkiHhUUwRNZjlGMWBG4Y3MvSE/X8+Qev166VyBxEztDGDEHJ3pPt7kzWamnoM3
+	 QyUa/WMhjFpoEaT3zo1kBNSRdlrRZnrX9hho/nrftt3e2p6CtVCjpKbDz1j6uA+A2T
+	 Eb1jNZThR2X2g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VvpQv57xzz4wc3;
+	Thu,  6 Jun 2024 12:37:59 +1000 (AEST)
+Date: Thu, 6 Jun 2024 12:37:59 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mike Rapoport <rppt@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the memblock tree
+Message-ID: <20240606123759.2a86c8c9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606020213.49854-1-21cnbao@gmail.com>
-In-Reply-To: <20240606020213.49854-1-21cnbao@gmail.com>
-From: John Stultz <jstultz@google.com>
-Date: Wed, 5 Jun 2024 19:37:11 -0700
-Message-ID: <CANDhNCpFXKs-z5Ymy=61fTqU3aXj4sM9RTD5_sEB0937CrVJBw@mail.gmail.com>
-Subject: Re: [PATCH] dma-buf/heaps: Correct the types of fd_flags and heap_flags
-To: Barry Song <21cnbao@gmail.com>
-Cc: linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org, 
-	sumit.semwal@linaro.org, Brian.Starkey@arm.com, 
-	benjamin.gaignard@collabora.com, christian.koenig@amd.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	tjmercier@google.com, v-songbaohua@oppo.com, hailong.liu@oppo.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/Cta1QLGl8wU=JWk7Bc=ti1d";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/Cta1QLGl8wU=JWk7Bc=ti1d
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 5, 2024 at 7:02=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrote=
-:
->
-> From: Barry Song <v-songbaohua@oppo.com>
->
-> dma_heap_allocation_data defines the UAPI as follows:
->
->  struct dma_heap_allocation_data {
->         __u64 len;
->         __u32 fd;
->         __u32 fd_flags;
->         __u64 heap_flags;
->  };
->
-> But dma heaps are casting both fd_flags and heap_flags into
-> unsigned long. This patch makes dma heaps - cma heap and
-> system heap have consistent types with UAPI.
->
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+Hi all,
 
-Thanks for submitting this additional cleanup!
+The following commits are also in the mm tree as different commits
+(but the same patches):
 
-Acked-by: John Stultz <jstultz@google.com>
+  731b11684819 ("mm/mm_init.c: use deferred_init_mem_pfn_range_in_zone() to=
+ decide loop condition")
+  e62a627e845d ("mm/mm_init.c: get the highest zone directly")
+
+These are commits
+
+  dcd8c5e5603d ("mm/mm_init.c: use deferred_init_mem_pfn_range_in_zone() to=
+ decide loop condition")
+  6d60d854951f ("mm/mm_init.c: get the highest zone directly")
+
+in the mm-unstable branch of the mm tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Cta1QLGl8wU=JWk7Bc=ti1d
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZhIQcACgkQAVBC80lX
+0Gyk4ggApJTalVDS9ucCyEh6FpPSF89jyv42n2k78Mvj1sf9O4YFDQIRGrpcXjga
+bI9zIFR4F0erIq56QtBPxDuYJBPSeO7/ZAqDAimgmMh9S7vKBhkygO4thFDf7pgU
+3gqI1XvGUx7lhDwVXwVas5xoOY39g6PEUTTMDF4oCrZXRpDaQgDjRaZfR0taVyFG
+t80UCCxpItaMIDtxdYmVAEldkfNEEbGyGvUN0QImV4HLRCLuD4us0Pos8OpjoeFN
+NwhOaT9qNRlsiAKkMTs42/Y/rV9al89OOBb/pUENlLsbxYW5kuYW11Juagp5ThUT
+gmktyhW5EjfHmBTGV/5ojDWQavpLAA==
+=AUJ/
+-----END PGP SIGNATURE-----
+
+--Sig_/Cta1QLGl8wU=JWk7Bc=ti1d--
 
