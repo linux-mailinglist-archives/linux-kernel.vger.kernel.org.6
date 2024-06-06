@@ -1,176 +1,143 @@
-Return-Path: <linux-kernel+bounces-204259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C3E08FE64B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:17:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 736D18FE650
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF4D4B23F8E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:17:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 868FE1C259C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D79195FC4;
-	Thu,  6 Jun 2024 12:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE4A196429;
+	Thu,  6 Jun 2024 12:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RdAjV9ES"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0a6jw42"
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69B0195F2E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1967413C67A;
+	Thu,  6 Jun 2024 12:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717676068; cv=none; b=VMB9JMW440pt7aTJQPi5OCYjXII9p5hkNQupTRH7gL0y87+JQbzQKN5/1U7rqzjUEyMgOZxB12hlCCmZWAaNSSzd5x0OfH4UAaDbp8flzWIiVFC+Pz1hAoZv7b/+r8QXUD9opDKsB6vMsbOfpD4eqGBUvbS3Ew+K+oSnRhfzUf4=
+	t=1717676159; cv=none; b=gdADjOK6Yvp38h/1RGFGWYYrb61ZfCWVqUO3zwiw+IbzGQYdwATiUTgffLOwiSkIYDqBT7OLbxvG1AC3zmn1YvVQb33NB6gqIB+Th1AnaFTd1FSYulLDLVm7C+ii3gANr8YmmLsxF0NxTGVNRif0pAg2IxN/d9WVM8QkYtiCXbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717676068; c=relaxed/simple;
-	bh=6Wohv+osAdLb7FnEZVEAAa/e/pGCKjdQxGRzOwQyVOo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dBfnJGv73vkDxBZNBbVgzVX1cguuNamYRJ3z/dhxwSqkD98neyYih1qC9RZevJu22Xe4yr9GtcCuyskdQ7z1wCYNq76/kPB9mRZxpMx/nD4Ubmexc/JQCG4EO8gXgFILcjaaARTg41WvM80mreFD1axGA6+kNXbD5NyErVpS0tM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RdAjV9ES; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57a2f27090aso3361579a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 05:14:26 -0700 (PDT)
+	s=arc-20240116; t=1717676159; c=relaxed/simple;
+	bh=/ILD+yysd96LQOcdo8q6ydbBw8MiIr1yxbmz97h7ldI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=mpdWH7gLl+lhvbFjNsL2BQmCdnULx7J/0HVk8Rz8+4PTJZHXEUl5h6CezXjXIrV3F8sF1I3rrj1ZgwHSGULRVY1NdnQV96iKoC5uDuogx2MBBKp4ZEPo6WZ3SP7K0cFNJPTJ2P0+g0lSSK4Q6z7bw+rA1KrJ3RzoylaQN5IMRRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d0a6jw42; arc=none smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-48bc50d1e12so269244137.2;
+        Thu, 06 Jun 2024 05:15:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717676065; x=1718280865; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=P4eR0U8qSC2JKNbsIe9eb3BDB8OBTYCS7ARMldo+loA=;
-        b=RdAjV9ES7QP3/zlbiaQC7UxjHBJtqHjGzaGkuPDKIhc2opTV/ibDiAgx36Rh+T6KrK
-         CSBzhAKncY2C2szDlY86Epeu+oy8aE6QxQG8K3SXm50ENLcMnb4olXg/nhGZeTHHuYl8
-         4vm2MtOOj8c6qvJ7qKcJMA+NgRPTNPEwN0eU/ya/TdDH5IYs1vZ8fxiQ0tKd8r0n18Al
-         6lu+XCbBo3YM608OgdXEGfLgfn+WhWrkLQdzEV9jccuMdHzSMY0UidbB5sDRwklewM9z
-         D9HYwbiSEK6RqwGMJP5psiLobvQ3R1PQjy1jXZHy+r9saaDz/M/9ihOjov4+wK+CJBSe
-         RHeA==
+        d=gmail.com; s=20230601; t=1717676157; x=1718280957; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f2+uhi1v2SZXqGXEnTfx34Wm9MPbbIaEgx51pK2VeTM=;
+        b=d0a6jw42Zzn3ZHLtQsNkNkVXIbr6NsGYdn4LIwysfm3s3rRsJwLGeQ9N4cT38yu7ba
+         8hTIWLTkqamQ6ZHbOs7rFGWWUIfza/q5N2707+gDVlw2Tzagw65huufKv4T5lioVIJAi
+         js8ZF0m7PO+IkZ+valXWNll+kgvc4v3vMARzEh3gvlCoLHdJCvr07kVo0Z1abr1lCnZ2
+         BmVhz+ISZ7EayMjvU7H7wA8aBUAVRvaCALpQomkvx2Hs/lFJxf0V1RLIL2Nmc2tkrF6K
+         0LWbwDg0c/d2cmpRgsJz/XVSHneJtnKKaZTz5a9wgYnXjkbKFnZiRYHyCHwGarU7dC5v
+         hs7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717676065; x=1718280865;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P4eR0U8qSC2JKNbsIe9eb3BDB8OBTYCS7ARMldo+loA=;
-        b=qXq5ugj0KIkRqBbzInc2gW/TV0++X/GBaV3K5+QeQpGWsjECa6TelOaesFAA2bmydK
-         WUFKfUVv6bDGUo8cFC+9gN6+GGwDR2f9amdwzmsvOIqBffHwaOKqpY1/RuxCQccr2tZJ
-         AaLxCdF4dWr1GaLPds8/y42vH/1NzE1UYECUsql2OgRDoiczqqOdrPpZqFcfv1fxMWAp
-         Thwavp/CxDYmHn7DTGflWfwKCrth8th53v8b/qhdUhXI9In+r0JOhriMA5QBPYQlKrk9
-         Jq2MwXH4rTtIxkIeFT9pyHcecJd0wtlHNLVamZXnf6siZg2CDWq4LTF1BxbIGgBt8v9O
-         DPdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqZJlC96pZOuF4Lco6EdBrdUf/r4YU9CJf1RShvvQk8YG4HMP17P3tZqapeyh+UWMLjDP9gqfVza08YgnUnQgQO/uUz+j6hdro4wyT
-X-Gm-Message-State: AOJu0YytaAR0X9aRI3Bf6OhXFDvzAfjTxkVujEbx2xY2jffv4IxeLRGX
-	USiWlkahiG/zbw1LbVAcaMGuOaXQAjK9mKFVDb8D4FKbGK4KBqTQnRPGbzWzXF4=
-X-Google-Smtp-Source: AGHT+IEhF5VnQ6RnaPOF2ap3H2sWIDZtTNmy4OAYW9J+Tfvg4TS3Uau9eObHLN4jYtjlQ3mlVjyN6g==
-X-Received: by 2002:a50:9eeb:0:b0:579:fb7e:2112 with SMTP id 4fb4d7f45d1cf-57aa5425c5cmr2134985a12.11.1717676065035;
-        Thu, 06 Jun 2024 05:14:25 -0700 (PDT)
-Received: from [192.168.2.107] ([79.115.63.17])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aadf9d28bsm993500a12.19.2024.06.06.05.14.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 05:14:24 -0700 (PDT)
-Message-ID: <1094fbfd-0ee7-430e-b62c-20764c1fbeec@linaro.org>
-Date: Thu, 6 Jun 2024 13:14:21 +0100
+        d=1e100.net; s=20230601; t=1717676157; x=1718280957;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f2+uhi1v2SZXqGXEnTfx34Wm9MPbbIaEgx51pK2VeTM=;
+        b=e81p4hILlXuHxq1cZ9Uj19Dg0/wVUOcWXIcaO/HXx/r4/p8k/WIJ23MLwS5Ebh+Dow
+         Plu+n2901jFIZDSKpX5iZ9k+naW6fjG9ZV4q5CynsaOc9bue9ZL+ht/z2wwRf9jURJ3R
+         KuWlrMapiSmuRFmSCg6eqDKS6NgUJnN6PKaaRAetCOdTwaIZQwx4LiWRyDHol7g6Dptp
+         NnQ0UbEyK6VksI0gWYgK3Ne06EaUnbEVaru1jE53yMFIO9HyJT0s3W6LA3Cvjay4mvs6
+         uLC70G9WvXi7YX9xh8qhnyqMLAnJmlCfSSz7vxIRsYW7dhG3wb1sJwvpbTyA1Jz/3lth
+         ZRdw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3KcaqVM79QSeggliMrEGDMjMWN0olQBdLL4YAlCrlk+DQ/c0fgtzowyS9HIYfu2FyEVFCZjqhBi2eDwpnMlDRIxWDGgfD1Oc7htty5MCNU53aZiSuBuI8Uq+KHD0LyqYRQ8icKr5ctZ/7Uyy0Mb2Rg/gJx+v46/T7t6b9t/SUkmG2PxzLW7vXOgqO+Biw7kyIkLqsFJBNMjEFjddl6ZbFkB1oJazJ
+X-Gm-Message-State: AOJu0YxkDXGGoC5bOVOVJxa2g8/aXIB6tlFa/InvMAwmj2Q3qxwOn9PR
+	+YHh8xn8GEz88v6l7HEuA+WLY9hC8RY2/v+3MKWi84O4uZf7gl1EpF3X7ESzfvyjTfb8YGw0JIA
+	fOdgzZNUnqPUlsVf6Is9OG0tAIac=
+X-Google-Smtp-Source: AGHT+IEtT47JTlx6jnMKU9PXVq/XptLMk/6ncO97G9msW7yyL8oVjf2Amhz+iTjNnA5sPFxNzXv+hmIiZfcH5rDBR/o=
+X-Received: by 2002:a05:6122:2010:b0:4e9:7e39:cc9e with SMTP id
+ 71dfb90a1353d-4eb3a4dc39bmr6795855e0c.10.1717676156610; Thu, 06 Jun 2024
+ 05:15:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: mtd: spi-nor: deprecate Everspin MRAM
- devices
-To: Thorsten Scherer <T.Scherer@eckelmann.de>,
- Michael Walle <mwalle@kernel.org>
-Cc: Pratyush Yadav <pratyush@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Marek Vasut <marex@denx.de>, Imre Kaloz <kaloz@openwrt.org>,
- Andrew Lunn <andrew@lunn.ch>, Flavio Suligoi <f.suligoi@asem.it>,
- kernel@pengutronix.de
-References: <20240604074231.1874972-1-mwalle@kernel.org>
- <kl4ikwh4fpkhhlpneuujyk2j4a2byif7l27n7kgb4pm72hb4an@akhbc4jg6hyq>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <kl4ikwh4fpkhhlpneuujyk2j4a2byif7l27n7kgb4pm72hb4an@akhbc4jg6hyq>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240605074936.578687-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240605074936.578687-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240606100810.eskr7bd3oqpphaxh@ninjato>
+In-Reply-To: <20240606100810.eskr7bd3oqpphaxh@ninjato>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 6 Jun 2024 13:15:30 +0100
+Message-ID: <CA+V-a8vAkuHN8_4w5QJ-V_ehnmWrto=Ox2A7D6Wrr7bnaf=t9A@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/4] mmc: renesas_sdhi: Add support for RZ/V2H(P) SoC
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Prabhakar <prabhakar.csengg@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Wolfram,
 
+On Thu, Jun 6, 2024 at 11:08=E2=80=AFAM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> Hi Prabhakar,
+>
+> thanks for this series!
+>
+> On Wed, Jun 05, 2024 at 08:49:36AM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > The SDHI/eMMC IPs found in the RZ/V2H(P) (a.k.a. r9a09g057) are very
+> > similar to those found in R-Car Gen3. However, they are not identical,
+> > necessitating an SoC-specific compatible string for fine-tuning driver
+> > support.
+> >
+> > Key features of the RZ/V2H(P) SDHI/eMMC IPs include:
+> > - Voltage level control via the IOVS bit.
+> > - PWEN pin support via SD_STATUS register.
+> > - Lack of HS400 support.
+> > - Fixed address mode operation.
+> >
+> > sd_iovs and sd_pwen quirks are introduced for SoCs supporting this bit
+> > to handle voltage level control and power enable via SD_STATUS register=
+.
+>
+> Two high-level questions:
+>
+> - can't we use .enable/.disable in regulator_ops for handling pwen?
+>   Then we could simply use regulator_en/disable in the code and be future
+>   proof when other SDHI instances have other kinds of regulators (unless
+>   I am mising something)
+>
+Ok let me check on this and get back.
 
-On 6/5/24 14:58, Thorsten Scherer wrote:
-> Hello,
-> 
+> - what about not using regmap and use set/get_voltage and friends? My
+>   concern is that other "new" registers might appear in the future and
+>   it will be cumbersome to handle the scattered IO regions.
+>
+I'll have to do some reading on this. Can you please point me to any
+example driver which does not use regmap.
 
-Hi!
+> That said, having a regulator is not a quirk in my book. I'd think
+> 'struct renesas_sdhi' is the proper place. Or?
+>
+Ok, I will move them out of quirks.
 
-> in the past I more actively worked on the ci4x10.  That changed after switching
-> departments.  Anyway, I thought maybe it's useful if I share my point of view.
-> 
-> On Tue, Jun 04, 2024 at 09:42:31AM +0200, Michael Walle wrote:
->> These devices are more like an AT25 compatible EEPROM instead of
->> flashes. Like an EEPROM the user doesn't need to explicitly erase the
->> memory, nor are there sectors or pages. Thus, instead of the SPI-NOR
->> (flash) driver, one should instead use the at25 EEPROM driver.
->>
->> Signed-off-by: Michael Walle <mwalle@kernel.org>
->> Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> 
-> You cannot reach Uwe via this address anymore.
-> 
-> IMHO missing in this discussion is 
-> 
->     kernel@pengutronix.de
-> 
-> , which I added to CC.
-> 
->> Cc: Thorsten Scherer <t.scherer@eckelmann.de>
->> Cc: Marek Vasut <marex@denx.de>
->> Cc: Imre Kaloz <kaloz@openwrt.org>
->> Cc: Andrew Lunn <andrew@lunn.ch>
->> Cc: Flavio Suligoi <f.suligoi@asem.it>
->> ---
->> The referenced binding only supports the true AT25 compatible EEPROMs
->> where you have to specify additional properties like size and page size
->> or cypress FRAM devices where all the properties are discovered by the
->> driver. I don't have the actual hardware, therefore I can't work on a
->> proper driver and binding. But I really want to deprecate the use of
->> these EEPROM like devices in SPI-NOR. So as a first step, mark the
->> devices in the DT bindings as deprecated.
->>
->> There are three in-tree users of this. I hope I've CCed all the relevant
->> people. With the switch to the at25 driver also comes a user-space
->> facing change: there is no more MTD device. Instead there is an "eeprom"
->> file in /sys now, just like for every other EEPROM.
-> 
-> My vague memory tells me (at least some of) the domain specific applications
-> running on ci4x10 rely on MTD(block?) devices.  So this change would break
-> user-space.
-
-it's a possibility, indeed. I assume we don't know for sure, right?
-> 
->> Marek already expressed, that the sps1 dts can likely be removed
->> altogether. I'd like to hear from the other board DTS maintainers if
->> they seem some problems moving to the EEPROM interface - or maybe that
->> device isn't used at all anyway. So in the end, we can hopefully move
-
-if it's not used at all we can remove it entirely.
-
->> all the users over to the at25 driver.
-> 
-> The ci4x10 is still being used and sold.  Right now I do not have a clear
-> view on the implications of moving to that driver.  I'd like to invest some
-> time to sharpen my picture (or find the person that claims responsibility), but
-> this will propably not happen this week.
-> 
-
-if it's used then we are forced to keep the entry in SPI NOR for
-backward compatibility. But we can still deprecate the use and forbid
-new support in SPI NOR while directing users to the other driver.
-
-> Hope this helps.
-> 
-Thanks!
-ta
+Cheers,
+Prabhakar
 
