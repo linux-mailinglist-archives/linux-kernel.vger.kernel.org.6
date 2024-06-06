@@ -1,122 +1,175 @@
-Return-Path: <linux-kernel+bounces-203915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C45E58FE1F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:03:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 663B08FE1F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C376D1C257E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:03:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E05BFB288D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E4213E3F6;
-	Thu,  6 Jun 2024 08:57:27 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83F913F012;
+	Thu,  6 Jun 2024 08:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g91mZzVQ"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CAA13E04F
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CFF13C674
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717664246; cv=none; b=grzfZNtEdcA3CL+OuQ+fFyxHxGIv17qqO0Wcwpprua8kS3Hp/Y/BpTD0/zVquvLbMzKaq/OunntcI9U/dZE5bwTat5g4bG7Xk1sxqfPUuMehoGX5NOLo2GuybhGo5AwNxRMP7YOSvFqbZJy0c1En+0UM7tHlk2LJTwYGf4hdp4Y=
+	t=1717664287; cv=none; b=EaALp+AweYWILtQVdbQ7gC/kqdAXPjRWjKcTijzlXwevr12QMASMn79cklLn38R37Z5X5LHGz9i6PwWB0Tkq1yw2TezVlMPoWWp2v1DBOUEfpyYOB7hTrvBafmcmxCEkxO8+hp0v3BmaxlEDt79mYaAhQR/xFi8iUAvS7t26gvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717664246; c=relaxed/simple;
-	bh=zwNZwNj49yJIvJf65cLY49SODLGZDo/4Wj1rSccPRDM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jC0SNqhn2q5DoGN6e7dmGal3v+WQn6Oz4e6mVR0TKav/qwpSDj60i1iwQboo0nAbGfnlUPJzt3W8EUvTqiAvd1AfGw5/RONllOKOt2S2DnUjO0R+eNS1NUgnECsYwg/oItksxXEf4MoKHXANexlr9XO7dfolU5BSdGrUYrir+nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7e69c0762b8so88469239f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 01:57:24 -0700 (PDT)
+	s=arc-20240116; t=1717664287; c=relaxed/simple;
+	bh=CLHwP7L0/ux9CLmz+ukY/+pvEHh7wwe2hBd2gGvLaVw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZQtKKa5YeIWnHtY86nIheWX+y+VPL9/Z+525tJLDP2vhzRKqPxG3j/PLQBQupVcmtj39hmcXgle2iPoXU7sFyX8sdqwrF0ETT8R0BLrT1Ua587hm3xdh0xHytDNpPFHPgdgkoLveax5HUYmvxAP1COeM2J2GH0JZYdvgeZTYtkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g91mZzVQ; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f63642ab8aso6733665ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 01:58:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717664285; x=1718269085; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3LaMMkCgoD2esCAQkiWaMg4nJpbFy0zkLlRqQQ/bL3w=;
+        b=g91mZzVQguOCQOO/o8/dh7fps2hj68fn84HB9FJRooG8etfU0xInaabu0GpC5oPxZc
+         rwIvecPDiSnAg0Irpyo/KuOxYcuiQlNsyo1OKPx2sUIXTkW7PnvuB2HVjPHWyC7Uu0p1
+         nMy0V1k0YOOujf2TYkiwiquQssLJYmgHZjcBU2eBGzyXfgbxxzjZ4uKOUULrtTaas7IN
+         fmokNnXKlWwO61HQtF+J0WEFxIs+Bye5FH1xERduomE+34nje4g6SiP7cxPjPje6IdKX
+         vbKey8f5bE1OJCxZ/EjQpn9RLS5nnwFBTFvAQi87aHFMRygGOhYN4s4XPSkhJPIgbr63
+         azmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717664244; x=1718269044;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zwNZwNj49yJIvJf65cLY49SODLGZDo/4Wj1rSccPRDM=;
-        b=wb1KRZ1apDDcusqHhhtjIjsjgxA5bWVn0TTyWyFt2e+sUMJCdq5RotkHwv4dl1p9Fx
-         WpI0b47rymMpNDzuJWTEMqc/lvSxz10HYQDESDL/cSBFzmSPTDatucwKkebeJKVNDkjp
-         YM+28b41ze7yQFgG+RahbEa/Gx3MxT9QvM8XKJrPXow2aGTHGRxQAuSD8bn37WZOodSW
-         F+F15AZCfEuHNZjUCVEGugWwxCuGRLTHvP98PEGWnvjEfWB8SvDcfRV99KR1TBhxXSWE
-         XeIJYYf3n5lqs/4Ha27eO0zkjX9PbYBBX4sa5lao/OrquxEjLe2jqtURuLUrjLayuLl2
-         1CHQ==
-X-Gm-Message-State: AOJu0YxTOJUTkcMt8HjyaaqkPR+9PzsOUE5tc81PxwfZi42TgzITphCX
-	z3yFv5NpTdVeYSKDvC0paD9Yo19sSu2o1/VvP0lwkjr4tVRAX+KsUDsCYJUAyyH1M8TNJdr+CUY
-	kxiWHHpNSY5cWNUGcblvLE4JZXuc3sNYM142NMh1uwZfz65icW7qbywY=
-X-Google-Smtp-Source: AGHT+IHQFT29DDICj6HmHq9v6UyCWqko5su9/c8HnafKiv6YfnJ836HZoccspA9w8SMyNlJXAR9W3xJm8JJqUA4UMHtZf4KsE+a+
+        d=1e100.net; s=20230601; t=1717664285; x=1718269085;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3LaMMkCgoD2esCAQkiWaMg4nJpbFy0zkLlRqQQ/bL3w=;
+        b=OlBpJxdHOtCBplPvZCeEzWkg6293dF7sfmPHMDHHyIUx/gd2hV84fTT6+UcxvyZRgv
+         y5yPH9fmHdFQbTL5R9tp9SHBSjZRapI8fp0YRJ6+QDwMuMIZ9JW2R1CLXzqgf7dKWeaP
+         e6Gxfp7Ka2T3PiTbYkGzZkaxhw9aPGTb710QtKptfIDJf2oXb2uLA9X+cNjllc7MkkQU
+         Q6bb/UWlBYgSsuACx0S7x6qoQqTmymfnhfDvKX0MEkS++skMBTE7bYXAsKPs1QwP0+CB
+         rII3R9/FsKOnilqPgSdC/wB6GXvASEWIQWKEyRY8CUTJ6xOlSJtyd+gk27vEz3s32SgV
+         sT1A==
+X-Forwarded-Encrypted: i=1; AJvYcCV9U5rnQfYE3PmbKKVZ4n5lc1Jj2R8O+OLkh+x+6GrcSTf+P+j5lILX1HWMuHS7SZqcWljWh3Ox5VkAORLYRr1Ih6OUGhDR6gM0YC/f
+X-Gm-Message-State: AOJu0YwR7SPgcZrcKl39Uci27a2MeLhtedpKW+KpSjJBycOVKmzUVx/r
+	wg2U6czY8EK9goCNHxQ4hhZfsNLhRbFwLSjyhQbhwQtFK3fb8cuw
+X-Google-Smtp-Source: AGHT+IGxpQqwtv04/Y9Ak3EGgBqkshIUytt5ok8MuS1ssOunVPTUtvNCxENcTvSLyI1S0QldY0sVXA==
+X-Received: by 2002:a17:902:f549:b0:1f4:5278:5c19 with SMTP id d9443c01a7336-1f6a5a5ca41mr53823725ad.49.1717664284995;
+        Thu, 06 Jun 2024 01:58:04 -0700 (PDT)
+Received: from localhost (97.64.23.41.16clouds.com. [97.64.23.41])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd75f0e2sm9580805ad.5.2024.06.06.01.58.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 01:58:04 -0700 (PDT)
+From: Wenchao Hao <haowenchao22@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	linux-kernel@vger.kernel.org
+Cc: Wenchao Hao <haowenchao22@gmail.com>
+Subject: [PATCH] lockdep: make class_filter() inline and remove unnecessary macros
+Date: Thu,  6 Jun 2024 16:57:44 +0800
+Message-Id: <20240606085744.3475629-1-haowenchao22@gmail.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1602:b0:7de:e182:ddf1 with SMTP id
- ca18e2360f4ac-7eb3c005602mr16414239f.0.1717664244360; Thu, 06 Jun 2024
- 01:57:24 -0700 (PDT)
-Date: Thu, 06 Jun 2024 01:57:24 -0700
-In-Reply-To: <000000000000adb08b061413919e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000020f7d6061a34dfb8@google.com>
-Subject: Re: [syzbot] Re: 000000000000fcfa6406141cc8ac@google.com
-From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 
-Rm9yIGFyY2hpdmFsIHB1cnBvc2VzLCBmb3J3YXJkaW5nIGFuIGluY29taW5nIGNvbW1hbmQgZW1h
-aWwgdG8KbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZywgc3l6a2FsbGVyLWJ1Z3NAZ29vZ2xl
-Z3JvdXBzLmNvbS4KCioqKgoKU3ViamVjdDogUmU6IDAwMDAwMDAwMDAwMGZjZmE2NDA2MTQxY2M4
-YWNAZ29vZ2xlLmNvbQpBdXRob3I6IHdvamNpZWNoLmdsYWR5c3pAaW5mb2dhaW4uY29tCgojc3l6
-IHRlc3QgaHR0cHM6Ly9saW51eC5nb29nbGVzb3VyY2UuY29tL2xpbnV4L2tlcm5lbC9naXQvdG9y
-dmFsZHMvbGludXggZTM3N2Q4MDNiNjVlZTQxMzAyMTNiM2MwNDFmYzI1ZmRmZWMxYmQ5MA0KDQot
-LS0gYS9rZXJuZWwvdHJhY2UvYnBmX3RyYWNlLmMNCisrKyBiL2tlcm5lbC90cmFjZS9icGZfdHJh
-Y2UuYw0KQEAgLTIzOTMsMTIgKzIzOTMsMjEgQEAgdm9pZCBfX2JwZl90cmFjZV9ydW4oc3RydWN0
-IGJwZl9yYXdfdHBfbGluayAqbGluaywgdTY0ICphcmdzKQ0KIOKAguKAguKAguKAguKAgmNhbnRf
-c2xlZXAoKTsNCg0KIOKAguKAguKAguKAguKAgi8vIHJldHVybiBpZiBpbnN0cnVtZW50YXRpb24g
-ZGlzYWJsZWQsIHNlZTogYnBmX2Rpc2FibGVfaW5zdHJ1bWVudGF0aW9uDQot4oCC4oCC4oCC4oCC
-4oCCaWYgKHVubGlrZWx5KF9fdGhpc19jcHVfcmVhZChicGZfcHJvZ19hY3RpdmUpKSkgew0KK+KA
-guKAguKAguKAguKAgmludCBpbnN0cnVtZW50YXRpb24gPSB1bmxpa2VseShfX3RoaXNfY3B1X3Jl
-YWQoYnBmX3Byb2dfYWN0aXZlKSk7DQor4oCC4oCC4oCC4oCC4oCCaWYgKGluc3RydW1lbnRhdGlv
-bikgew0KK+KAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAgnByaW50aygiU0tJUCBGT1Ig
-SU5TVFJVTUVOVEFUSU9OOiAlcyA+ICVzID4gJXAgLyVpID09PT09PT09PT09PT09XG4iLA0KK+KA
-guKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKA
-guKAguKAguKAgnByb2ctPmF1eC0+bmFtZSwNCivigILigILigILigILigILigILigILigILigILi
-gILigILigILigILigILigILigILigILigILigILigILigILigILigIJsaW5rLT5idHAtPnRwLT5u
-YW1lLCBwcm9nLCBpbnN0cnVtZW50YXRpb24pOw0KIOKAguKAguKAguKAguKAguKAguKAguKAguKA
-guKAguKAgmJwZl9wcm9nX2luY19taXNzZXNfY291bnRlcihwcm9nKTsNCiDigILigILigILigILi
-gILigILigILigILigILigILigIJyZXR1cm47DQog4oCC4oCC4oCC4oCC4oCCfQ0KDQot4oCC4oCC
-4oCC4oCC4oCCaWYgKHVubGlrZWx5KHRoaXNfY3B1X2luY19yZXR1cm4oKihwcm9nLT5hY3RpdmUp
-KSAhPSAxKSkgew0KK+KAguKAguKAguKAguKAgmludCBhY3RpdmUgPSB0aGlzX2NwdV9pbmNfcmV0
-dXJuKCoocHJvZy0+YWN0aXZlKSk7DQor4oCC4oCC4oCC4oCC4oCCLy8gcHJpbnRrKCIlcyA+ICVz
-ID4gJXAgLyVpXG4iLCBwcm9nLT5hdXgtPm5hbWUsIGxpbmstPmJ0cC0+dHAtPm5hbWUsIHByb2cs
-IGFjdGl2ZSk7DQor4oCC4oCC4oCC4oCC4oCCaWYgKGFjdGl2ZSAhPSAxKSB7DQor4oCC4oCC4oCC
-4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCCcHJpbnRrKCJTS0lQIEZPUiBBQ1RJVkU6ICVzID4gJXMg
-PiAlcCAvJWkgPT09PT09PT09PT09PT09PT09PT09PT1cbiIsDQor4oCC4oCC4oCC4oCC4oCC4oCC
-4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCCcHJvZy0+
-YXV4LT5uYW1lLA0KK+KAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKA
-guKAguKAguKAguKAguKAguKAguKAguKAgmxpbmstPmJ0cC0+dHAtPm5hbWUsIHByb2csIGFjdGl2
-ZSk7DQog4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCCYnBmX3Byb2dfaW5jX21pc3Nl
-c19jb3VudGVyKHByb2cpOw0KIOKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAgmdvdG8g
-b3V0Ow0KIOKAguKAguKAguKAguKAgn0NCi0tLSBhL2tlcm5lbC90cmFjZXBvaW50LmMNCisrKyBi
-L2tlcm5lbC90cmFjZXBvaW50LmMNCkBAIC02Nyw3ICs2Nyw3IEBAIHN0YXRpYyB2b2lkIHRwX3Jj
-dV9jb25kX3N5bmMoZW51bSB0cF90cmFuc2l0aW9uX3N5bmMgc3luYykNCiB9DQoNCiAvKiBTZXQg
-dG8gMSB0byBlbmFibGUgdHJhY2Vwb2ludCBkZWJ1ZyBvdXRwdXQgKi8NCi1zdGF0aWMgY29uc3Qg
-aW50IHRyYWNlcG9pbnRfZGVidWc7DQorc3RhdGljIGNvbnN0IGludCB0cmFjZXBvaW50X2RlYnVn
-PTE7DQoNCiAjaWZkZWYgQ09ORklHX01PRFVMRVMNCiAvKg0KQEAgLTI5OCw2ICsyOTgsOCBAQCBz
-dGF0aWMgZW51bSB0cF9mdW5jX3N0YXRlIG5yX2Z1bmNfc3RhdGUoY29uc3Qgc3RydWN0IHRyYWNl
-cG9pbnRfZnVuYyAqdHBfZnVuY3MpDQogew0KIOKAguKAguKAguKAguKAgmlmICghdHBfZnVuY3Mp
-DQog4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCCcmV0dXJuIFRQX0ZVTkNfMDsNCivi
-gILigILigILigILigIJpZiAoIXRwX2Z1bmNzWzBdLmZ1bmMpDQor4oCC4oCC4oCC4oCC4oCC4oCC
-4oCC4oCC4oCC4oCC4oCCcmV0dXJuIFRQX0ZVTkNfMDsNCiDigILigILigILigILigIJpZiAoIXRw
-X2Z1bmNzWzFdLmZ1bmMpDQog4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCCcmV0dXJu
-IFRQX0ZVTkNfMTsNCiDigILigILigILigILigIJpZiAoIXRwX2Z1bmNzWzJdLmZ1bmMpDQoNClRo
-ZSBpbmZvcm1hdGlvbiBpbiB0aGlzIGVtYWlsIGlzIGNvbmZpZGVudGlhbCBhbmQgbWF5IGJlIGxl
-Z2FsbHkgcHJpdmlsZWdlZC4gSXQgaXMgaW50ZW5kZWQgc29sZWx5IGZvciB0aGUgYWRkcmVzc2Vl
-IGFuZCBhY2Nlc3MgdG8gaXQgYnkgYW55b25lIGVsc2UgaXMgdW5hdXRob3JpemVkLiBJZiB5b3Ug
-YXJlIG5vdCB0aGUgaW50ZW5kZWQgcmVjaXBpZW50LCBhbnkgZGlzY2xvc3VyZSwgY29weWluZywg
-ZGlzdHJpYnV0aW9uIG9yIGFueSBhY3Rpb24gdGFrZW4gb3Igb21pdHRlZCB0byBiZSB0YWtlbiBi
-YXNlZCBvbiBpdCwgaXMgc3RyaWN0bHkgcHJvaGliaXRlZCBhbmQgbWF5IGJlIHVubGF3ZnVsLg0K
+This is just a clean code which simplify the code implement and make it
+easy to understand. No logic changed from origin implement.
+
+Make class_filter() inline which just return 0, and directly called from
+verbose(), very_verbose(), HARDIRQ_verbose() and SOFTIRQ_verbose() without
+macro control, remove unnecessary macros VERY_VERBOSE, HARDIRQ_VERBOSE
+and SOFTIRQ_VERBOSE.
+
+Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
+---
+ kernel/locking/lockdep.c | 25 +------------------------
+ 1 file changed, 1 insertion(+), 24 deletions(-)
+
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 151bd3de5936..cd8356106da2 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -478,21 +478,11 @@ void lockdep_set_selftest_task(struct task_struct *task)
+  */
+ 
+ #define VERBOSE			0
+-#define VERY_VERBOSE		0
+ 
+-#if VERBOSE
+-# define HARDIRQ_VERBOSE	1
+-# define SOFTIRQ_VERBOSE	1
+-#else
+-# define HARDIRQ_VERBOSE	0
+-# define SOFTIRQ_VERBOSE	0
+-#endif
+-
+-#if VERBOSE || HARDIRQ_VERBOSE || SOFTIRQ_VERBOSE
+ /*
+  * Quick filtering for interesting events:
+  */
+-static int class_filter(struct lock_class *class)
++static inline int class_filter(struct lock_class *class)
+ {
+ #if 0
+ 	/* Example */
+@@ -506,14 +496,10 @@ static int class_filter(struct lock_class *class)
+ 	/* Filter everything else. 1 would be to allow everything else */
+ 	return 0;
+ }
+-#endif
+ 
+ static int verbose(struct lock_class *class)
+ {
+-#if VERBOSE
+ 	return class_filter(class);
+-#endif
+-	return 0;
+ }
+ 
+ static void print_lockdep_off(const char *bug_msg)
+@@ -809,10 +795,7 @@ static void print_kernel_ident(void)
+ 
+ static int very_verbose(struct lock_class *class)
+ {
+-#if VERY_VERBOSE
+ 	return class_filter(class);
+-#endif
+-	return 0;
+ }
+ 
+ /*
+@@ -4171,18 +4154,12 @@ void print_irqtrace_events(struct task_struct *curr)
+ 
+ static int HARDIRQ_verbose(struct lock_class *class)
+ {
+-#if HARDIRQ_VERBOSE
+ 	return class_filter(class);
+-#endif
+-	return 0;
+ }
+ 
+ static int SOFTIRQ_verbose(struct lock_class *class)
+ {
+-#if SOFTIRQ_VERBOSE
+ 	return class_filter(class);
+-#endif
+-	return 0;
+ }
+ 
+ static int (*state_verbose_f[])(struct lock_class *class) = {
+-- 
+2.38.1
+
 
