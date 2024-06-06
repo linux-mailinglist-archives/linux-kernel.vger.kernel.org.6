@@ -1,432 +1,186 @@
-Return-Path: <linux-kernel+bounces-205033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C268FF680
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:11:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81CB78FF681
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:11:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B4231F257F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:11:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97E861C24B90
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9944196C7D;
-	Thu,  6 Jun 2024 21:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6FD6197A65;
+	Thu,  6 Jun 2024 21:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="DUUoGUVc"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2058.outbound.protection.outlook.com [40.107.241.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Qleoegue"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7261BDEF;
-	Thu,  6 Jun 2024 21:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717708249; cv=fail; b=iC9cP7QgNfwrxNx9dTeDKQLi5c9Tc2FN5Rvd5C/W59wdSYjlA4/O98xDuud5zr9AJsTulO4UfQc+jbYFVSLGg8/U/me4d6AXATUu9IC7a2lR3H3C2Gi17JLi2XnVYF4N6AYMikrKm5Bt+s9psTmwLcGAqzcc8nIpVrQGTW7D+bs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717708249; c=relaxed/simple;
-	bh=sc/W3ZGLU6emYBsb8gg7QIEFeBry2xuOgQ0hqq4aaT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=D9oXu48UsB5CpkPOoCMcZr+Kke9Fe5Rh3cKiKgRKEsp1ACf4lpHE4Jzs6o/RWGC7StFBBI7V5T/8FpoexcR+2zyM2qa9w/5/ePBqFRPiZTnC/EiMQvAOs3XjifGfeVC55ETvHn2wdxOLo3AasooMDQ22HFLwpXXx7slbv5VkDo8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=DUUoGUVc; arc=fail smtp.client-ip=40.107.241.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CbKyAYUzLjzd81SlrjO9K2Fm/VqOHuH+5aN3GLdAgz14rVHnPHEPs3dRI7vhNVV3Nox3fo5HaQvb7V12Ls0zBqp9DCvXreTzG7tXrlIxKk+X8L4sZ/RYgp9OF8Vz7pqRzCE/zHZQtbHrbstcUZ9lYW4LFZckLKrFDrHY+9Y+GGGtHEMeQI4hykF7DGY5ctVHgMF3In2TVgWiyprOZu6io7H8YjqDdbfIWfWSJBM01mExkAZ1fK/yxMFVwRllPbVJZiqd1j+BoxP5CAb0UvuSN+hrozMDmnloeTAg9tDIDSCgsgd35ZibCzwfjd/YebSLCMQWI0ZGLow5p4pSibr5/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pLjwML3+LJqJe0egmg4+SzXghL6iZlUrjvqiCwPG3WM=;
- b=XBpEc3nfuIpPYBqr4FXAym+0h4wi6fWETK9Z2nSiut0xAJolWLPG8JTHThNmV1zntJl3xcVTPzAUgsIqwdSOSZ7E8CRokdruc4LVM+uJ8ZSqCsTTPczdmwMcYd9zWiJQwYGKxOoY6ZdB6YZhenoIO/kZv0MWz0nyTyyL79+V58hoCowSTl01mwPvu9DcC9mLBjHZi6+4bEy+ywbYcxbe6lUwx3T2xAqeTSw3exO7TbY8YdqDVhlzEPxkzsCvTE+HhIyI4oC2zKeEBMpPNeBlKOO4gQ2FEVoN/gs0eRAKaJkHCFYSzmo3YgUlVF3haMI9cvWy7a9z7JyTtZ4CnwmI8w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pLjwML3+LJqJe0egmg4+SzXghL6iZlUrjvqiCwPG3WM=;
- b=DUUoGUVcYK4bjDs4WFZ/CBM+4l//Yl9hNUvk7wXYQENMWU+UtgAMhtUc3vaCcFwwFSmLME0a3v8Wbboi4UT8TDt96WV7T83Osez9lteRwzNVCj1d+HSFh0E11Q14ZzU2JiNRlapo1vym68c1rOSjBoh+emvEAC5sxcV81/2fDo4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PA1PR04MB10208.eurprd04.prod.outlook.com (2603:10a6:102:454::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.33; Thu, 6 Jun
- 2024 21:10:42 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7633.021; Thu, 6 Jun 2024
- 21:10:42 +0000
-Date: Thu, 6 Jun 2024 17:10:29 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Minghuan Lian <minghuan.Lian@nxp.com>,
-	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Srikanth Thokala <srikanth.thokala@intel.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-	mhi@lists.linux.dev, Niklas Cassel <cassel@kernel.org>
-Subject: Re: [PATCH 2/5] PCI: endpoint: Introduce 'epc_deinit' event and
- notify the EPF drivers
-Message-ID: <ZmIlxSQ8ffDk4Dau@lizhi-Precision-Tower-5810>
-References: <20240606-pci-deinit-v1-0-4395534520dc@linaro.org>
- <20240606-pci-deinit-v1-2-4395534520dc@linaro.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606-pci-deinit-v1-2-4395534520dc@linaro.org>
-X-ClientProxiedBy: SJ0PR13CA0188.namprd13.prod.outlook.com
- (2603:10b6:a03:2c3::13) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C65F196449
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 21:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717708252; cv=none; b=qtQ25CVq0Lpbb7peCXhe+FBGoTjJM11sDZumcNUJeztuknkcgzlJeWgBA8C348o3l6Ye0ZTKRSiglKokPFvSh/5eq5X6isUkJ8Sx3hvX0j0gzpLqiXnU3j4LhQuoR7WkeXBMnm8Who/V9zeo5WlQL+Y+xnfUvwoEqI5cavQ2UUc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717708252; c=relaxed/simple;
+	bh=AUHnthjxhvSfZt1T5NTkzWwZswiKcMJtW7KrT1ABp7Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XIpKXfHheks3RCBOhCemAlilxoDch3ZTyFPxmBnMnEr4zNGa4nmmcIOa3CieKcKOBcMhj3Tl9KaSpvKadOL2bLfHvR3LRm4m6h3zGYXcMOZdobUhlEAHdwbHfhaEDOaiYuzIqPxAHdbLgh9Ou14zX+XManLAIfiszUZRXEWkKOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Qleoegue; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eadaac1d28so8541241fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 14:10:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1717708248; x=1718313048; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8TjgBjt57C936onmGqCK9GXQjMks7PTUKgl/Z6/JtaU=;
+        b=QleoegueDBMmbfgGAKMJE3mOmI25sjdOU0wZAUndzcyXNd75pblKCoD36zYwtEQRDQ
+         R+rKJ5pKcuedBsC5fiyne7iq/a12dEpOLZTvpvEtvPIU2XgRwDg2Sfagwc7Hc6RzFd2F
+         QovBS+vIknSfwpYkev1Kbfnuty6enkm/ICL/s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717708248; x=1718313048;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8TjgBjt57C936onmGqCK9GXQjMks7PTUKgl/Z6/JtaU=;
+        b=RTwZGS0/5iCl9TXvi8Oar2ZLpXEel/d5VcFH0pn8SXCkoMVbabuBqtuuac57kp8S40
+         1lJuVmXZBIHJGpq4z03Z0XrAqx/4KM7G0ArcJwtiAuNRzuGuIg4GTHYwUghan5+cYNWT
+         m3kBlSmieITC4uSnXotk0qObHUeNeb56UWE4+iCxqBl5pq3e02GoVQBXIV75iSbnUorb
+         7uX/Df8ZvPcjNlh5HjDKo4lYy3rDhpwwjGoivDc41XvSKoaqqYvpnuA+YGjWz5PjTXaV
+         Go0/4/j7ASgSjXBFisi+2Oc+eEkpooXSUtNnWQ8CATn/nkR9qFSKw2nEGF7t5EfCvxr5
+         dJZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHfl8uVnA71UZYxK6WgsQtPwqjOX4WP0dX6kkGHHVpL9CTDrtTF8jU1W1tlAVbFUOf7asfVFV1oJ+L14/0RO0rRRqDMJJT/qpTy8Ep
+X-Gm-Message-State: AOJu0YwUCo3bMLz9D/F3tXq5Wz5Fcq1b0agvkp//Y/M2oZ5ZibusTrNh
+	gxENUKwDQiC3iSV1fl+n9tSLc4aOQyVWacXKO8s6Yc+tbXNd6mjBaE9PuJH9s7/sleTMCBaEcoT
+	w
+X-Google-Smtp-Source: AGHT+IHv/jKdu5UGvgVHoibT1EjVGRrIl2R8k37l5VetQF27bw0kszR4nftyu+c5ythVRLH7ezrloA==
+X-Received: by 2002:a2e:351a:0:b0:2ea:c0ad:f974 with SMTP id 38308e7fff4ca-2eadce78587mr5599251fa.36.1717708248088;
+        Thu, 06 Jun 2024 14:10:48 -0700 (PDT)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae0ca5e3sm1660224a12.25.2024.06.06.14.10.47
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 14:10:47 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57a31d63b6bso1984141a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 14:10:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXl/ixrIP3sT+zjNccb0eskjy+mUkQIV0lrO5mztHOg1yp6SH+DdBbg9vSAFCgkcvxB8ZZ6sNf/Nw1NJcA3aOghUOY4U5/LgC7xlnq9
+X-Received: by 2002:a17:906:26d8:b0:a68:f43f:6f31 with SMTP id
+ a640c23a62f3a-a6cdc0e40e4mr47636166b.64.1717708247141; Thu, 06 Jun 2024
+ 14:10:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA1PR04MB10208:EE_
-X-MS-Office365-Filtering-Correlation-Id: f9585b62-22e6-40bb-3067-08dc866d1fcc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|366007|7416005|52116005|376005|1800799015|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?imY6PnzkWIsks1J2DWujzNdheRbLCnZNtaA0GHhRbzyeV+aUfUF4T+Pa4gWq?=
- =?us-ascii?Q?KX9m/nzGUg/JF+LaxnOd0YZcVrCMILs1b3XBWZBBzSc8KKgyXtTGZv/JAq4W?=
- =?us-ascii?Q?B5po1zMoNMUDhL0uwYPi8M52kXDVe2UxNG+zircP+YZyy1EHg+gZS/UPxQJY?=
- =?us-ascii?Q?8cZiFDF+QKUohec47oEHo6NQSxQJKBoowgfiWk6apVlEQGFUb/3vSI5mACsV?=
- =?us-ascii?Q?tsg2vWiAYTyFJwgW2rCz1jyTPbB9KfrgvZhTxQ2SRfywgsC9hBz0/qYS3V1W?=
- =?us-ascii?Q?IzNqQjC/beOARM8PU92VpdlT0SleYDfWSLCHf/ASBwXz9N/1GtrRmoDmcg/U?=
- =?us-ascii?Q?1hIp/Sbkxl0P+X6F30Js46nKvBNTDTCr1/4HfeXuMnjD3rAgnAg5Lwx5yf78?=
- =?us-ascii?Q?f8mm/y2b+a8TQ+zzjTZbjy3Ti6dEnsS6wOSxIFGPr7BRTAOZXvaxVcklKwWS?=
- =?us-ascii?Q?v3WGE6ApVaf5WvNUOqAJkaPCnNmvKPEDyf127rGD6h8TIzg4+Q8SzCN4lqzY?=
- =?us-ascii?Q?8PMDy2XGdtFwha+V3ga9ex7a6nAqEJZ0SIxAMjkIZfi7TrJgwemo/h8SWdEU?=
- =?us-ascii?Q?67w1I9h/7qvjRBQ7gTq3Rghr3NNvTAgJp3LEnYmyNrSY+jNJubcCi5/66IZe?=
- =?us-ascii?Q?bxcXBxVcJMO4E4V4BQNi9dXAJdqDimif7maKlfju+CplyzlMm6WyWcCUyxbM?=
- =?us-ascii?Q?AGiAd4C3suNsw4C9i3VWZYe1OfJ0eUxTVcQpGjvK6Yf3y0CZRAUJg8ZvMAHJ?=
- =?us-ascii?Q?/clxzj/xxS56GfQFkyqSIRb816PJt5/MF1lboVIiyBLprg9v1SaJJXZWXiCv?=
- =?us-ascii?Q?Eoki1ufdvXCcN1w32cEvsdQ8aci8XmkOV5PoyO7iGmMIatv8WSL4JXtiAk7z?=
- =?us-ascii?Q?SsgNlH+ILgkYzDUwXrZx3itRcmGyTxovpZEuoKRuCp3DIvYJx7dEz4RSpc4A?=
- =?us-ascii?Q?ERwpOxAEdUZFwFGxHSvPrRVrJ8JxjS6py4rcaBSmfpEH2o7aNHEdcpI45o2M?=
- =?us-ascii?Q?zhOuJa8qJiRkMbh5VOsmmZNU2mUo8Q8SSJbatoxxxJk6vLly6ocx1qjb11Ni?=
- =?us-ascii?Q?fBv3bsFb78XvQ7Be59MEd2uj9YAoTKMsJDlREmaiWZhaa7n4LH1Ur9O/N9iw?=
- =?us-ascii?Q?0YbHrNwYzRlxvG5lp10l/37+62xLfkvj0EwwKO+fhnlAMv9Ld0Aakx5ewXzp?=
- =?us-ascii?Q?454KrLrpFVkTMzIKIF35xjNiTU+jxFdwtp1lTJZYoKCs4OZaqEwb+e1MKVf4?=
- =?us-ascii?Q?I//K2Go8TZglvcCi+31a+Yl2LWifA1KmZn8if5R/3xUy6QdDH3qT7xNfbRBN?=
- =?us-ascii?Q?kpaKO5WfKIuqAlljL3o9SYY+BBjsbfxW65KnxtaUe7p+Ik8jw2+iYbPnSt2c?=
- =?us-ascii?Q?/szKkbo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(7416005)(52116005)(376005)(1800799015)(38350700005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?pDhM/hW/FbWSQ/bthLswklRDmLtj9asDyCQRpqHu6xHbcB3rlad+rwPSSLjB?=
- =?us-ascii?Q?k2baVqoLi3N+6Xon2JY8JhLACI8u1k8S2Feso46u517OMSwgHGNjs3QKEhlY?=
- =?us-ascii?Q?4mNVO30fVacJt1SSw2sfYu+VSnGN6QTpaNkX+aeLChAosm26xWKyH2WJxcVT?=
- =?us-ascii?Q?i1cCp73pgbKq17eMYKIyOqr5MSIBufWstW7DpKvVsfZjl7tCVVd2MlGRe2JU?=
- =?us-ascii?Q?F+kYnoYhEW+ITd6Jrj7dL5TtBwkum9fQeRT0MugihGzk7J5r2J7Re23zDCNm?=
- =?us-ascii?Q?iFe6hcl+CP/E1cXGIlJz7UmA0m3GykmZXVAFp4BEyZxKh6+kmsmW5hOPFtYB?=
- =?us-ascii?Q?kKZQUnHnf1z9NEKfX0lIHtJsmqYvbUqaCqh5L4+76eNGtIKt8a3Bh4my7Fuk?=
- =?us-ascii?Q?udZRnGeyVbs8/VmzilmqHSsTGgiHBt2FT1K1nHC3DeX417pvi0S6Yf8H7WDI?=
- =?us-ascii?Q?f1eAXpNnYGpuhC21VH6JY5FSoTOaWBNTPannhahxKKAqfEalHBQ6gfglBJGY?=
- =?us-ascii?Q?4feaEfxlPTluy7ME5L+e+RfSqmNS4i3VM5d4gccLedGj6EQDoQxq5zGkEzDj?=
- =?us-ascii?Q?Xqqf2OhoBXH7O2Z+FvvKHBlpuMoWiEtOtH5xy3K55qgeN72EFKw6LDi25t3L?=
- =?us-ascii?Q?s7hiQRm9OC/+TKjAH0Vucvsb/zZTx8obcWRITSaTu075XJD1uJWCpgTQW4ol?=
- =?us-ascii?Q?VQXedHjhEophE2hyuECoBLS/AjDOsAyyQeI30L/Zv9AAZC+Oq9PR7xVTsQSj?=
- =?us-ascii?Q?oyW4fA37X5YPl5N5mWZ0LCL/ijPUxnmpP0lwvohESy+ZJLKXZw5jjXmOUrs2?=
- =?us-ascii?Q?X0X919m+Z/HpltIug6hzFxF62uboIccCxRaRKcXemmsx4mHFkVwH+DOV53za?=
- =?us-ascii?Q?Ts5Jb/wa93sUTNzwvk/OCH7Na54uJCZF8LWqaJ941UN9wo240kjVeOrRndov?=
- =?us-ascii?Q?FLk+1VAZ6mxFHDI8aYDXfy28Nxf79+2ylAjBunrSNoCciOpeyWjz8/REoNRu?=
- =?us-ascii?Q?o6TlU2FYCw/5GBi8m8pNPjXpBsInj8PMv3ubcsY/Fq5iiqlfGZRFkv52lEkm?=
- =?us-ascii?Q?q7+kVheByxmQxbCiEQEU7qE1zGplTCkckIs9lVKmejNLdk/9lOBGMKtmY141?=
- =?us-ascii?Q?R98plPBA4jShbbVDTVLUO/z3QOFVIZ+lgtVT4tZssNopUIgDp86GWePDphTr?=
- =?us-ascii?Q?+61CavN00T0er3r7hJcLLpGyrnBFLKT907nLi4BtmhHUxXdW2hVacZsdfWEE?=
- =?us-ascii?Q?7ENRPM5AjWYny/LYjqIG4qSiJqA1aUTnZXsWrbE1HXXxFwpA7wJ/y8d6p4GZ?=
- =?us-ascii?Q?MSt+CBL7HGmaRTIFtUpIj8gMpwxFltjEDNeHTkdAcm/0Hqj/j8exwFR0uPAv?=
- =?us-ascii?Q?WpQj6FocuVlVhcellWSpP3/0t2bDiv1HswN1X5tc7wjTmucFynpCCSVEnJx0?=
- =?us-ascii?Q?vXslR+lUaSG4MmPE/JPrRzNiVOidUIdECKxSWBejJ9H0nJ7x2s1qohRcP6XN?=
- =?us-ascii?Q?zjDyRVfkFFtmLgFC327IoXEEpvCwh/MsgXhNlicLnKXIIoXriTwSKCy8nB1c?=
- =?us-ascii?Q?jpKcPp09j3iVRU01TG4=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f9585b62-22e6-40bb-3067-08dc866d1fcc
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 21:10:42.3718
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: L7bt6Tm2qzfEz4k3+o+nNFIX6XnQrhsskUdRmtbHritonSUiDhaN0OPH9ZC9LbtnJHu8YLFpHuFA1ZuTtdI6eg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10208
+References: <CAHk-=wjHf6C_74VQPxmge-sMmu5yuhmNor1TaO0Uq--zrA13HA@mail.gmail.com>
+ <20240606194525.cdnnidxurejsjtx4@treble>
+In-Reply-To: <20240606194525.cdnnidxurejsjtx4@treble>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 6 Jun 2024 14:10:30 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjdrJ1H7sbsaL8_bLvRmt26_io=5_b3k_g33kd+bwFHzA@mail.gmail.com>
+Message-ID: <CAHk-=wjdrJ1H7sbsaL8_bLvRmt26_io=5_b3k_g33kd+bwFHzA@mail.gmail.com>
+Subject: Re: objtool query: section start/end symbols?
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jun 06, 2024 at 12:56:35PM +0530, Manivannan Sadhasivam wrote:
-> As like the 'epc_init' event, that is used to signal the EPF drivers about
-> the EPC initialization, let's introduce 'epc_deinit' event that is used to
-> signal EPC deinitialization.
-> 
-> The EPC deinitialization applies only when any sort of fundamental reset
-> is supported by the endpoint controller as per the PCIe spec.
-> 
-> Reference: PCIe Base spec v5.0, sections 4.2.4.9.1 and 6.6.1.
-> 
-> Currently, some EPC drivers like pcie-qcom-ep and pcie-tegra194 support
-> PERST# as the fundamental reset. So the 'deinit' event will be notified to
-> the EPF drivers when PERST# assert happens in the above mentioned EPC
-> drivers.
-> 
-> The EPF drivers, on receiving the event through the epc_deinit() callback
-> should reset the EPF state machine and also cleanup any configuration that
-> got affected by the fundamental reset like BAR, DMA etc...
-> 
-> This change also warrants skipping the cleanups in unbind() if already done
-> in epc_deinit().
-> 
-> Reviewed-by: Niklas Cassel <cassel@kernel.org>
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On Thu, 6 Jun 2024 at 12:45, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+>
+> That should be trivial.  But ideally the interface would be less magical
+> and wouldn't need objtool to sprinkle any pixie dust.  Could it be
+> implemented similar to static keys by making the static const variable
+> an opaque structure instead of just a "normal" variable?
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+So I will absolutely add some wrappers - we'll need them just to make
+the "no static constants" case work.
 
-> ---
->  drivers/pci/controller/dwc/pcie-designware-ep.c |  1 -
->  drivers/pci/controller/dwc/pcie-qcom-ep.c       |  1 +
->  drivers/pci/controller/dwc/pcie-tegra194.c      |  1 +
->  drivers/pci/endpoint/functions/pci-epf-mhi.c    | 19 +++++++++++++++++++
->  drivers/pci/endpoint/functions/pci-epf-test.c   | 17 +++++++++++++++--
->  drivers/pci/endpoint/pci-epc-core.c             | 25 +++++++++++++++++++++++++
->  include/linux/pci-epc.h                         | 13 +++++++++++++
->  include/linux/pci-epf.h                         |  2 ++
->  8 files changed, 76 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> index 2e69f81baf99..78d5fc72c9cb 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> @@ -620,7 +620,6 @@ void dw_pcie_ep_cleanup(struct dw_pcie_ep *ep)
->  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
->  
->  	dw_pcie_edma_remove(pci);
-> -	ep->epc->init_complete = false;
->  }
->  EXPORT_SYMBOL_GPL(dw_pcie_ep_cleanup);
->  
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> index 4d2d7457dcb3..2324e56c9bfc 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> @@ -507,6 +507,7 @@ static void qcom_pcie_perst_assert(struct dw_pcie *pci)
->  		return;
->  	}
->  
-> +	pci_epc_deinit_notify(pci->ep.epc);
->  	dw_pcie_ep_cleanup(&pci->ep);
->  	qcom_pcie_disable_resources(pcie_ep);
->  	pcie_ep->link_status = QCOM_PCIE_EP_LINK_DISABLED;
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 432ed9d9a463..4ca7404246a3 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -1715,6 +1715,7 @@ static void pex_ep_event_pex_rst_assert(struct tegra_pcie_dw *pcie)
->  	if (ret)
->  		dev_err(pcie->dev, "Failed to go Detect state: %d\n", ret);
->  
-> +	pci_epc_deinit_notify(pcie->pci.ep.epc);
->  	dw_pcie_ep_cleanup(&pcie->pci.ep);
->  
->  	reset_control_assert(pcie->core_rst);
-> diff --git a/drivers/pci/endpoint/functions/pci-epf-mhi.c b/drivers/pci/endpoint/functions/pci-epf-mhi.c
-> index 205c02953f25..5832989e55e8 100644
-> --- a/drivers/pci/endpoint/functions/pci-epf-mhi.c
-> +++ b/drivers/pci/endpoint/functions/pci-epf-mhi.c
-> @@ -764,6 +764,24 @@ static int pci_epf_mhi_epc_init(struct pci_epf *epf)
->  	return 0;
->  }
->  
-> +static void pci_epf_mhi_epc_deinit(struct pci_epf *epf)
-> +{
-> +	struct pci_epf_mhi *epf_mhi = epf_get_drvdata(epf);
-> +	const struct pci_epf_mhi_ep_info *info = epf_mhi->info;
-> +	struct pci_epf_bar *epf_bar = &epf->bar[info->bar_num];
-> +	struct mhi_ep_cntrl *mhi_cntrl = &epf_mhi->mhi_cntrl;
-> +	struct pci_epc *epc = epf->epc;
-> +
-> +	if (mhi_cntrl->mhi_dev) {
-> +		mhi_ep_power_down(mhi_cntrl);
-> +		if (info->flags & MHI_EPF_USE_DMA)
-> +			pci_epf_mhi_dma_deinit(epf_mhi);
-> +		mhi_ep_unregister_controller(mhi_cntrl);
-> +	}
-> +
-> +	pci_epc_clear_bar(epc, epf->func_no, epf->vfunc_no, epf_bar);
-> +}
-> +
->  static int pci_epf_mhi_link_up(struct pci_epf *epf)
->  {
->  	struct pci_epf_mhi *epf_mhi = epf_get_drvdata(epf);
-> @@ -898,6 +916,7 @@ static void pci_epf_mhi_unbind(struct pci_epf *epf)
->  
->  static const struct pci_epc_event_ops pci_epf_mhi_event_ops = {
->  	.epc_init = pci_epf_mhi_epc_init,
-> +	.epc_deinit = pci_epf_mhi_epc_deinit,
->  	.link_up = pci_epf_mhi_link_up,
->  	.link_down = pci_epf_mhi_link_down,
->  	.bus_master_enable = pci_epf_mhi_bus_master_enable,
-> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> index e771be7512a1..7c2ed6eae53a 100644
-> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> @@ -782,6 +782,15 @@ static int pci_epf_test_epc_init(struct pci_epf *epf)
->  	return 0;
->  }
->  
-> +static void pci_epf_test_epc_deinit(struct pci_epf *epf)
-> +{
-> +	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
-> +
-> +	cancel_delayed_work(&epf_test->cmd_handler);
-> +	pci_epf_test_clean_dma_chan(epf_test);
-> +	pci_epf_test_clear_bar(epf);
-> +}
-> +
->  static int pci_epf_test_link_up(struct pci_epf *epf)
->  {
->  	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
-> @@ -803,6 +812,7 @@ static int pci_epf_test_link_down(struct pci_epf *epf)
->  
->  static const struct pci_epc_event_ops pci_epf_test_event_ops = {
->  	.epc_init = pci_epf_test_epc_init,
-> +	.epc_deinit = pci_epf_test_epc_deinit,
->  	.link_up = pci_epf_test_link_up,
->  	.link_down = pci_epf_test_link_down,
->  };
-> @@ -905,10 +915,13 @@ static int pci_epf_test_bind(struct pci_epf *epf)
->  static void pci_epf_test_unbind(struct pci_epf *epf)
->  {
->  	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
-> +	struct pci_epc *epc = epf->epc;
->  
->  	cancel_delayed_work(&epf_test->cmd_handler);
-> -	pci_epf_test_clean_dma_chan(epf_test);
-> -	pci_epf_test_clear_bar(epf);
-> +	if (epc->init_complete) {
-> +		pci_epf_test_clean_dma_chan(epf_test);
-> +		pci_epf_test_clear_bar(epf);
-> +	}
->  	pci_epf_test_free_space(epf);
->  }
->  
-> diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-> index 56b60330355d..47a91dcb07d7 100644
-> --- a/drivers/pci/endpoint/pci-epc-core.c
-> +++ b/drivers/pci/endpoint/pci-epc-core.c
-> @@ -774,6 +774,31 @@ void pci_epc_notify_pending_init(struct pci_epc *epc, struct pci_epf *epf)
->  }
->  EXPORT_SYMBOL_GPL(pci_epc_notify_pending_init);
->  
-> +/**
-> + * pci_epc_deinit_notify() - Notify the EPF device about EPC deinitialization
-> + * @epc: the EPC device whose deinitialization is completed
-> + *
-> + * Invoke to notify the EPF device that the EPC deinitialization is completed.
-> + */
-> +void pci_epc_deinit_notify(struct pci_epc *epc)
-> +{
-> +	struct pci_epf *epf;
-> +
-> +	if (IS_ERR_OR_NULL(epc))
-> +		return;
-> +
-> +	mutex_lock(&epc->list_lock);
-> +	list_for_each_entry(epf, &epc->pci_epf, list) {
-> +		mutex_lock(&epf->lock);
-> +		if (epf->event_ops && epf->event_ops->epc_deinit)
-> +			epf->event_ops->epc_deinit(epf);
-> +		mutex_unlock(&epf->lock);
-> +	}
-> +	epc->init_complete = false;
-> +	mutex_unlock(&epc->list_lock);
-> +}
-> +EXPORT_SYMBOL_GPL(pci_epc_deinit_notify);
-> +
->  /**
->   * pci_epc_bus_master_enable_notify() - Notify the EPF device that the EPC
->   *					device has received the Bus Master
-> diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
-> index 11115cd0fe5b..85bdf2adb760 100644
-> --- a/include/linux/pci-epc.h
-> +++ b/include/linux/pci-epc.h
-> @@ -197,6 +197,8 @@ struct pci_epc_features {
->  
->  #define to_pci_epc(device) container_of((device), struct pci_epc, dev)
->  
-> +#ifdef CONFIG_PCI_ENDPOINT
-> +
->  #define pci_epc_create(dev, ops)    \
->  		__pci_epc_create((dev), (ops), THIS_MODULE)
->  #define devm_pci_epc_create(dev, ops)    \
-> @@ -226,6 +228,7 @@ void pci_epc_linkup(struct pci_epc *epc);
->  void pci_epc_linkdown(struct pci_epc *epc);
->  void pci_epc_init_notify(struct pci_epc *epc);
->  void pci_epc_notify_pending_init(struct pci_epc *epc, struct pci_epf *epf);
-> +void pci_epc_deinit_notify(struct pci_epc *epc);
->  void pci_epc_bus_master_enable_notify(struct pci_epc *epc);
->  void pci_epc_remove_epf(struct pci_epc *epc, struct pci_epf *epf,
->  			enum pci_epc_interface_type type);
-> @@ -272,4 +275,14 @@ void __iomem *pci_epc_mem_alloc_addr(struct pci_epc *epc,
->  				     phys_addr_t *phys_addr, size_t size);
->  void pci_epc_mem_free_addr(struct pci_epc *epc, phys_addr_t phys_addr,
->  			   void __iomem *virt_addr, size_t size);
-> +
-> +#else
-> +static inline void pci_epc_init_notify(struct pci_epc *epc)
-> +{
-> +}
-> +
-> +static inline void pci_epc_deinit_notify(struct pci_epc *epc)
-> +{
-> +}
-> +#endif /* CONFIG_PCI_ENDPOINT */
->  #endif /* __LINUX_PCI_EPC_H */
-> diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
-> index dc759eb7157c..0639d4dc8986 100644
-> --- a/include/linux/pci-epf.h
-> +++ b/include/linux/pci-epf.h
-> @@ -71,12 +71,14 @@ struct pci_epf_ops {
->  /**
->   * struct pci_epc_event_ops - Callbacks for capturing the EPC events
->   * @epc_init: Callback for the EPC initialization complete event
-> + * @epc_deinit: Callback for the EPC deinitialization event
->   * @link_up: Callback for the EPC link up event
->   * @link_down: Callback for the EPC link down event
->   * @bus_master_enable: Callback for the EPC Bus Master Enable event
->   */
->  struct pci_epc_event_ops {
->  	int (*epc_init)(struct pci_epf *epf);
-> +	void (*epc_deinit)(struct pci_epf *epf);
->  	int (*link_up)(struct pci_epf *epf);
->  	int (*link_down)(struct pci_epf *epf);
->  	int (*bus_master_enable)(struct pci_epf *epf);
-> 
-> -- 
-> 2.25.1
-> 
+I doubt I'll need any more than a simple wrapper, because there is no
+equivalent of a trampoline when it comes to static constants - the
+whole point is avoiding any indirection at all, and generating better
+code.
+
+So the only "wrapper" needed is the "different architectures will have
+to have different ways to generate the runtime constant operations"
+and the "with no support, it will just use the variable as before".
+
+But the data itself is fundamentally embedded in the inline asm that
+generates the constant op (note that I say "op" - it's not just
+loading a constant, it's using a constant as *part* of the
+instruction).
+
+IOW, think of this more as an "alternative asm", where the alternative
+is about the constants used in order to avoid memory loads and extra
+registers.
+
+I did name it after the "static call" model, but it's actually pretty different.
+
+For example, if we ever extend this to modules, then any constants
+will be fixed up by the module loader. There will not ever be any
+dynamic rewriting like static calls support.
+
+This would be for some very core constants only. Not random code that
+wants to avoid an indirect call.
+
+My code did the dentry hash table and size, but I would envision it
+would be for pseudo-constants like __VIRTUAL_MASK_SHIFT etc (which
+_used_ to be a big pain for put_user() and friends, but we solved it
+with a different model).
+
+Things that depend purely on boot time stuff.
+
+>   DEFINE_STATIC_CONST(dentry_hashtable);
+>
+> That could create something similar to 'struct static_key' which
+> correlates the const variable with all its use sites.
+
+Oh, honestly, I don't need the disgusting things that static_calls()
+do. The patch I already have is better than that.
+
+IOW, already have the list of where the static call data is (the thing
+that the .static_call_sites section contains).
+
+Sure, it's not a "single" array of sites, because my sections are
+partitioned by size (the static calls use a flag value instead), and
+my "key" for the array traversal is just the address of the runtime
+constant that they deal with.
+
+It all works fine, although it will need some abstraction to deal with
+different architectures.
+
+I'm not at all interested in creating some fancy linked list of those
+things like static calls do in __static_call_init() at runtime.,
+
+This is literally for a one-time constant for built-in code, I think
+the static call code is completely over-designed and inappropriate for
+this.
+
+So what I'm interested in would be to simplify things, and get rid of
+the "key" entirely, because with a good symbol for the start and end
+of the array of users (for _each_ pseudo-constant symbol), it all
+makes the code a lot more straightforward.
+
+In particular, it would make the architecture side much more
+straightforward, because instead of traversing some "array of keys and
+types" and pick up the ones that match, it would just traverse an
+array that is already pre-matched, because each key goes into its own
+section.
+
+So I want to *simplify* the code, not make it the horrendous
+complicated mess that is static calls. No "build up that list of
+sites" at run-time.
+
+Now, I actually suspect that doing this thing would then allow *other*
+cases - like possibly static calls - to simplify their code too. I
+think the static calls could easily use this to simplify the code.
+
+So I would throw your question back at you and say "No! I'm asking for
+this support because it would allow me to *not* do even a simplified
+version of the horrible things that static calls do".
+
+                    Linus
 
