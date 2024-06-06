@@ -1,105 +1,119 @@
-Return-Path: <linux-kernel+bounces-204847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A97518FF42F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:02:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5653F8FF431
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A842B1C26C37
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:02:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C25DF289F33
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3333619923D;
-	Thu,  6 Jun 2024 18:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5BC199235;
+	Thu,  6 Jun 2024 18:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UIpCVqph"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C4NoENYt"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719952110E;
-	Thu,  6 Jun 2024 18:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE3F2110E;
+	Thu,  6 Jun 2024 18:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717696915; cv=none; b=tNITr5Ogr49lrmmkGjeRctutbCj7CTaWq8e8aaGjacITdKydY2srkEXVn/m+qSNiNOJTxSN7GIEXmwuldbBiU6fNVsQf6ODsP8gnP0Hu5AnWP0rGAmVxbY965VQS1Zpe/uZfZGW3GOzZ09XG0AxW0bWjb/NNMiFjDYCRK7QnKkA=
+	t=1717696952; cv=none; b=gfPVrjV3ajWor4HBUzcOJhk87mK6aTZci6MJnCKzIgXoqz8Ag0k58I5NXWpUxz3nSBjHynkGyVs1hei/VjT8g6pIKemDKODfHNTbxrtk7gi21uUHVBxeDfHa6ruQ0WH/1Rj6zTTziJXmOGXXZlPzXuSosr5wQwdULH1Hevnoo9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717696915; c=relaxed/simple;
-	bh=rLHR1mdRF8Q7kTfSQyHdMtwG40Yu6O42W8bLyqZDcxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R2vQzPC3ueP771WEFZNlSeOtAFF6Nm0mffrApzgDZHkhimSBWE5nm6HiNa14GbsAhyTNiVsQn0Zb5SRcEhflpONVJxCXY9av0ZtL5plXAnFVjA3JjmZvTjHdDiebFx9twenrVNtR6GabkSSIoGVXgrZCaUH4mHbr3jysX8nLn4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UIpCVqph; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7F93C2BD10;
-	Thu,  6 Jun 2024 18:01:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717696915;
-	bh=rLHR1mdRF8Q7kTfSQyHdMtwG40Yu6O42W8bLyqZDcxI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UIpCVqphcYjSEj+73lmEvNqoYnS/NNAicw0VJZPiKYDgV82T0Pbn+StfgQkcLIDOf
-	 itAC+fMT6O4Tj8YbFgI65olho7G6t9v0pFikZkNybUhJrznUYAIpNlo5+ghpWHN0Ed
-	 erwy4JHmQb2wY904gfPFd5F//tsoESm5pBhpbZ6tJTsi/jsSHs6uSCsiHQd5gAnuTt
-	 UPu332a1kyODyFB2YiXBR32IjZja5nTHf8SUEsxHDkdwx8SMph64RAkPNdBA3/4JOn
-	 38xYriHsoWTnvViR34Z+5gCm9a4Eeg1B/84EpEl98Vgnx0IcJOSmVzqP3LT+nfM0nB
-	 T1nmu3iQLBSig==
-Date: Thu, 6 Jun 2024 19:01:49 +0100
-From: Mark Brown <broonie@kernel.org>
-To: =?iso-8859-1?Q?P=E9ter?= Ujfalusi <peter.ujfalusi@gmail.com>
-Cc: Primoz Fiser <primoz.fiser@norik.com>,
-	Jarkko Nikula <jarkko.nikula@bitmer.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@lists.phytec.de
-Subject: Re: [PATCH] ASoC: ti: omap-hdmi: Fix too long driver name
-Message-ID: <71d7754e-f72c-4a04-b03e-a0ee0e24c9e0@sirena.org.uk>
-References: <20240606070645.3519459-1-primoz.fiser@norik.com>
- <dac7fba4-c7e3-4be9-8072-625d723e6cf5@gmail.com>
+	s=arc-20240116; t=1717696952; c=relaxed/simple;
+	bh=poZeW91FEAcK+LR8apJL9m9Ughfu2Nu4hcz5bnJpHTU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=W94syl6jDnp5wSpexliWu8Fwh76WqnM/d6E25hNzj/XuIgElrVJoLJLQr7IfZcFDTJ56ja1zCtV24j/PXS3THL5kSVYIlI9Fau2Bf1kMP9dasBZ2Mw+dg/3Z4MYiEXs0KO9ev4efGmm9+UkXJE9uD+a9eIArjrezGvU91zwQpY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C4NoENYt; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-35e0f4e1821so972881f8f.0;
+        Thu, 06 Jun 2024 11:02:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717696949; x=1718301749; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XKboiQNCgjTtj2XP2zVG0LoDtn/Tdn95ZqhsAO9F9iA=;
+        b=C4NoENYtV4QCAQKa+DsyM389XV7ntDaipmYxqAAUBl71JrbPetJ5Hx18QcC/fgtRWT
+         V2zdloxqpM7qEM/McX6AR5n5hK3Lb6gGeXlCsWweBWSvOngLiW6Z/7Q7R0LbwuX7yQ23
+         XiOJvQ3XMC8+1YbIFlTpUwd03LacMalp1/i7ZDaoxxAYae37kaKw6Fvq88LK7pFzn8Tl
+         OC53oyi+Qsj+PrJWB2iDPxB/FRhrfmYmBuCs6/tLVgumBePy5bauoR6tytTc5OGIJUlr
+         y8UkxZ5JMhW6Opo+EexutqbvN7+Hu0brkXRzDY9tzcyIbgKICZEo3OvcR9vU8yxojfqq
+         xWNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717696949; x=1718301749;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XKboiQNCgjTtj2XP2zVG0LoDtn/Tdn95ZqhsAO9F9iA=;
+        b=fCPv5pJKZerau7LDf9lbSFkG384En3YJ7Z674FJVFt6G2daCzj2nWBEIAFwPZXuEEs
+         Seekn0ieq00Ygpn1PTGtoZOWsWrqtI4puxqOIW/lP/sC684JgNXl1HNFlnLTD8O9IA02
+         d71vJjTmQGFnekI4+uPktRpNjU+Vub2oNPWoINOEPU349oog0iOaOmDOy+b2kzsyud7r
+         N+xJNCgVbFSpv83eusgsturMh6skdRX0iMR8HnvJVpPqvSQY/+bo3379zhYluErNPMiE
+         g2kvc+rAV3Nxkk8tNV1N6KuwRRBUNtu54XavRa3wQvNIDvRaOjAd2mfJT/AsLaUUp75l
+         KsSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuSeZBmPGL79neIH3La3qI3WlpCb4x+m1SwNoCDcTwLOhdpInzNT8Be3KZuOUvkGxVDYiDDctq4eTb3kqE9QTjZHjl9NIxMJ5E+ioRSsl0KFjHTN64VjV7ZZKcBnIzAraJZ/Wm4Gngak6Aa9fi
+X-Gm-Message-State: AOJu0YwaPbvqkQEyFP/Cc0rT67Pd0v254ryVdCavD84NJREsV4jHijOu
+	QAwLhNr9hk4pyNroakilCY9YTQ6vAqHFY25we1/OmsNYunyUJTnY
+X-Google-Smtp-Source: AGHT+IEyUJK0+WcN94l4qlqs/C/t+LVyad6TUE9aRji3xljA0mFNuKLLoyFJ66N1cpYON1MlB67WDA==
+X-Received: by 2002:a05:6000:1faf:b0:35e:5b3f:3954 with SMTP id ffacd0b85a97d-35efed2e00cmr339702f8f.21.1717696949130;
+        Thu, 06 Jun 2024 11:02:29 -0700 (PDT)
+Received: from localhost.localdomain ([78.190.122.84])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d29e57sm2177503f8f.2.2024.06.06.11.02.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 11:02:28 -0700 (PDT)
+From: =?UTF-8?q?Okan=20T=C3=BCm=C3=BCkl=C3=BC?= <okantumukluu@gmail.com>
+To: brauner@kernel.org
+Cc: shuah@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Kees Cook <keescook@chromium.org>
+Subject: [PATCH 07/10] selftests/pidfd: Fix wrong expectation
+Date: Thu,  6 Jun 2024 21:02:23 +0300
+Message-Id: <20240606180223.5527-1-okantumukluu@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="r1jMZGoX0bjt5dhf"
-Content-Disposition: inline
-In-Reply-To: <dac7fba4-c7e3-4be9-8072-625d723e6cf5@gmail.com>
-X-Cookie: Simulated picture.
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+From: Mickaël Salaün <mic@digikod.net>
 
---r1jMZGoX0bjt5dhf
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Replace a wrong EXPECT_GT(self->child_pid_exited, 0) with EXPECT_GE(),
+which will be actually tested on the parent and child sides with a
+following commit.
 
-On Thu, Jun 06, 2024 at 09:00:47PM +0300, P=E9ter Ujfalusi wrote:
-> On 6/6/24 10:06 AM, Primoz Fiser wrote:
+Cc: Shuah Khan <skhan@linuxfoundation.org>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Christian Brauner <brauner@kernel.org>
+Link: https://lore.kernel.org/r/20240511171445.904356-8-mic@digikod.net
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+ tools/testing/selftests/pidfd/pidfd_setns_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > -	card->name =3D devm_kasprintf(dev, GFP_KERNEL,
-> > -				    "HDMI %s", dev_name(ad->dssdev));
-> > -	if (!card->name)
-> > -		return -ENOMEM;
-> > -
-> > +	card->name =3D DRV_NAME;
+diff --git a/tools/testing/selftests/pidfd/pidfd_setns_test.c b/tools/testing/selftests/pidfd/pidfd_setns_test.c
+index 6e2f2cd400ca..47746b0c6acd 100644
+--- a/tools/testing/selftests/pidfd/pidfd_setns_test.c
++++ b/tools/testing/selftests/pidfd/pidfd_setns_test.c
+@@ -158,7 +158,7 @@ FIXTURE_SETUP(current_nsset)
+ 	/* Create task that exits right away. */
+ 	self->child_pid_exited = create_child(&self->child_pidfd_exited,
+ 					      CLONE_NEWUSER | CLONE_NEWNET);
+-	EXPECT_GT(self->child_pid_exited, 0);
++	EXPECT_GE(self->child_pid_exited, 0);
+ 
+ 	if (self->child_pid_exited == 0)
+ 		_exit(EXIT_SUCCESS);
+-- 
+2.39.2
 
-> I think it would be better to name is simply "HDMI" instead
-
-That does seem a bit more user friendly.
-
---r1jMZGoX0bjt5dhf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZh+YwACgkQJNaLcl1U
-h9DkCAf+JXtwlhN6eFOr73JPv20Yks83kzwet2NPTrWQDbj97XD+8BI81dHoMB9+
-gR3bo5kQMZ3x9SlEzXM20YpMhdZP5YCduTPywx3AHXflTkdxE52dDVpsSy8O9THq
-uZzS/OMFKUmX+0YNa14dc2W9dFAsH52PT8c5G5sejFRVhNzj3/7cZCEj8RoeGlHc
-AeI9toTJD2SqJlICBEibE4//YPE1A0YB92zAznfE4dOJUeuSVcc3aBP0II2u90K3
-xPUY6j6y6fb2rhzjLgDyo7uOjgCiDbzOfypL1tjbuLsX1ekrZSXpnBGuEx8Pi1pn
-Dhg7QZQfMWDw0C8KZScwu6XN//zwWg==
-=OOLJ
------END PGP SIGNATURE-----
-
---r1jMZGoX0bjt5dhf--
 
