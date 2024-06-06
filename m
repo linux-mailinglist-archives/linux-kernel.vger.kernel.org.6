@@ -1,132 +1,273 @@
-Return-Path: <linux-kernel+bounces-205088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40C208FF6F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:33:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA2888FF6F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:34:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAD31286841
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:33:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48EA1B26F9F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B777513C67B;
-	Thu,  6 Jun 2024 21:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6D913DBBE;
+	Thu,  6 Jun 2024 21:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b="VafrFhSD"
-Received: from ale.deltatee.com (ale.deltatee.com [204.191.154.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HHR3smTd"
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80162FC02;
-	Thu,  6 Jun 2024 21:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=204.191.154.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229B713D8A0
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 21:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717709591; cv=none; b=l4eAoZ9q/Ev7ME5Y35HXthve6rB4Q+fUsB9GfIuZt2sDplVKBbiRLzryW5II/rMh1u7TTF/vr/bDCbkjDbdF6CVOQQQN8URtsP3i8cU79KkaGFbrdsC4jFwUzgAO6/svdkecOR+Pwljj3TpJd+m5whPdVnopcvxVrmRts/+6thI=
+	t=1717709635; cv=none; b=g1Wj/5W6Vsh+88gz14abWgqCGlpxB6rwCaqbxzvpuVpdZH0qM/EpMgTg6WlH8R0qt6EIg9ZqMKhus33oUJ/IZZuaf7vvjroWiI6pIrno8Ff62SWA/OUl2nDadEVagrKSoKnGdQZWv/ZUNfuKXG9eE+4UCof64GawrTMo74hmEEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717709591; c=relaxed/simple;
-	bh=c4VPquM25/aAzWc+PWoefzik+kfteGxmC9v6FNbyTbM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:In-Reply-To:
-	 Content-Type:Subject; b=IoYcP12aQBzVufc6VYmCaoFcYI95EAvBJY06TghI61u1pQFGX6VlPvcUbYvBqmdeu53cuqZvzXNR4vxI4Hnz7McDuWHuFy0qbAaOGw+lgW5yEIL9M/D4eUMsLxq36uBLgRhFNFZN6Uvao2qD79v1ZwFZblWoqzlFdBMChA7MqtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com; spf=pass smtp.mailfrom=deltatee.com; dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b=VafrFhSD; arc=none smtp.client-ip=204.191.154.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deltatee.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=deltatee.com; s=20200525; h=Subject:In-Reply-To:From:References:Cc:To:
-	MIME-Version:Date:Message-ID:content-disposition;
-	bh=GFEw8cAaOIMPPjcIH/t2swdVfYuU+9OBnbnvT/Z34FA=; b=VafrFhSDZTiuTQ8+eqghWgRF/6
-	LbImSkv5LzDfHOSEpw5N5S4ulsNiiv1TzeiftXjYmAxXH9xYRxXqV6ScNt6jpoZhUoMjpLgULTY4c
-	RxEqaFL5TsOFZvWBW6uee5L1CXJlmgb8ZmEQb3c/zrxeclsuynN+yXuixJpTovirhWS9QmVDgv2Ka
-	zCh7bRny2nQzn/GF+eMTU8MtnBT27kGc17jRdSPb5CgAukSJ+fhCiWh1HUL/v2CPuqd9Kw4wF00zx
-	rokY8xTE011F43W7U8oQ0olgR2h94vh+ngSqC+weHVt2qqA6FxLwSBLt7mMgxdELA9RdCtvo2WLM9
-	NfcCF6PQ==;
-Received: from d104-157-31-28.abhsia.telus.net ([104.157.31.28] helo=[192.168.1.250])
-	by ale.deltatee.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96)
-	(envelope-from <logang@deltatee.com>)
-	id 1sFKj7-002BN1-1U;
-	Thu, 06 Jun 2024 15:33:00 -0600
-Message-ID: <bb2e5a8d-797d-406c-acc6-60e83b302ede@deltatee.com>
-Date: Thu, 6 Jun 2024 15:32:39 -0600
+	s=arc-20240116; t=1717709635; c=relaxed/simple;
+	bh=bl6Q8nkiPHSSkriXbTCVWxpXKhPBGBfSU3OcD0PgMsY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BuDNPZIE6oSwXMEApv3JddRxhQQtTrnhtBjMTXUCpdm9i9ZgBtH1yIW7N78RZNPtkTwe2uY8tfUtmDH8B26okla8yxW9YPQ9zSmSCIL0ydm78cSiGw1dRiC45172LhFbLsx8xZDQtaRgFlJ9uNfAvzrKvM01UnnLMZCMdGHqcfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HHR3smTd; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-4eb0c729c2eso404054e0c.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 14:33:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717709633; x=1718314433; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ENh6EmpxBzWS1RyJnWCwXYBRXkzIo8pjpUNY60CBW0M=;
+        b=HHR3smTdV7aNLwhcL3K/4Y1o2NiUlo+SPShdLrshhFdBl7mhXdpb+ygBaf1xT/TP7m
+         FYwTYMCJPZhWNWLNX4Txb4ySYhuAKtQ8C67ipLJLdxi9uoDg+yvApUr61Lp3xoJkL4ip
+         1Cd2QnWhTCPX/AWh1Hpp+LM/5YumQgJe9lcMbYaf8unxytXkrm4BDBHTMciKWzcUt5V4
+         tlYVkwXZP0QRss5zdsgkpbaIXaavFEOkDMxLMJqU3IrTUedxogUPH38LB/9rSAxzphw5
+         VZJ7Xe9VkjCCQqLBPSYNCcEORXQusYSKEAeZXScd/6LzBOKanrM4wxLIv7hVDes+MqGs
+         +dKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717709633; x=1718314433;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ENh6EmpxBzWS1RyJnWCwXYBRXkzIo8pjpUNY60CBW0M=;
+        b=MjykUuXnXQYVLTtHBQvGjzATPUvy7BQAPKxZvJ/TS9L3z+C4SgrwN0BTPF8qyMiQOf
+         Rvh9NXIkMSNam35SMm0OQs/cu8n1MxueM89mkTvDW9Q87RTQG/pKa0j/vlBlZgY471uI
+         hxbvHyJREfzEyAsL2RjvKvUBmrhoGLjXP1tQSknDzKSxXAM5/VZFW+kqpDglj+rvRrct
+         PTgPP111LKO+2DoLxGWmT+pIJ4FRsduN08xXaVA5cTprQ2CBdsYCcMwU4ikPPxPo0qC+
+         9+iBZUB+4eDaLSIKY+I/iaDJGHtf8OhK5fQs1jIgHfD1oiF3CuI86FdV9aN/a/fONpIR
+         Thxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVew2EPlF3axNAWjxglv9SpI/8T0FHIvXQBaPmqV8pvl+Nd5Jlr3u2nqYYWR8RNbcRnFCfZewldSEy7sZkw7dgw/wEe/vyeEKR/+3Z
+X-Gm-Message-State: AOJu0YwKz5qWNWF7gDhI0WWyhLNWzUtfMKRxiyVYOnT7yPVME0GgBfM5
+	69me8DnyCC71I2oAMz1vPQf5WSBF8HUakXVbtwibqbq+PACdxOqeqG+i32fbBIbR3Axg7LgUpEK
+	+WEQ7+TKpOqpmNaJry7KyNvZtFa0=
+X-Google-Smtp-Source: AGHT+IE0+uM7qXu/RA+jEbZdc4cfBIOn2I55lHxR2NcB5mpJEcF1RcWblNNTj663LVKwR67OPlnWqxSyRWzSNbVzWrI=
+X-Received: by 2002:a1f:cd87:0:b0:4e9:7f87:4c2b with SMTP id
+ 71dfb90a1353d-4eb5621cd6cmr876541e0c.3.1717709632786; Thu, 06 Jun 2024
+ 14:33:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Martin Oliveira <martin.oliveira@eideticom.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-mm@kvack.org, Jason Gunthorpe
- <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Tejun Heo <tj@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Mike Marciniszyn <mike.marciniszyn@intel.com>,
- Michael Guralnik <michaelgur@nvidia.com>,
- Dan Williams <dan.j.williams@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
- Valentine Sinitsyn <valesini@yandex-team.ru>, Lukas Wunner <lukas@wunner.de>
-References: <20240605192934.742369-1-martin.oliveira@eideticom.com>
- <20240605192934.742369-2-martin.oliveira@eideticom.com>
- <2024060658-ember-unblessed-4c74@gregkh>
-Content-Language: en-CA
-From: Logan Gunthorpe <logang@deltatee.com>
-In-Reply-To: <2024060658-ember-unblessed-4c74@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 104.157.31.28
-X-SA-Exim-Rcpt-To: gregkh@linuxfoundation.org, martin.oliveira@eideticom.com, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-mm@kvack.org, jgg@ziepe.ca, leon@kernel.org, bhelgaas@google.com, tj@kernel.org, rafael@kernel.org, akpm@linux-foundation.org, mike.marciniszyn@intel.com, michaelgur@nvidia.com, dan.j.williams@intel.com, ardb@kernel.org, valesini@yandex-team.ru, lukas@wunner.de
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Level: 
-Subject: Re: [PATCH 1/6] kernfs: create vm_operations_struct without
- page_mkwrite()
-X-SA-Exim-Version: 4.2.1 (built Wed, 06 Jul 2022 17:57:39 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <20240606174203124_OW-VQZ_ZLm4lGEimA-K9@zte.com.cn>
+ <51DED95F-832A-4836-AA81-556968F6B645@nvidia.com> <CAGsJ_4w9cRZUEF7PaVjz1HQoUr1pxHEO15gpbsnAoJHMZG0djQ@mail.gmail.com>
+ <B7796F09-BAA6-4555-A9FE-F44DF1CBFA6F@nvidia.com>
+In-Reply-To: <B7796F09-BAA6-4555-A9FE-F44DF1CBFA6F@nvidia.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 7 Jun 2024 09:33:41 +1200
+Message-ID: <CAGsJ_4xu9jfC7UWdOqP5_saEXRE26mo6Msx_=JGCKaWac57=BQ@mail.gmail.com>
+Subject: Re: [PATCH linux-next v2] mm: huge_memory: fix misused
+ mapping_large_folio_support() for anon folios
+To: Zi Yan <ziy@nvidia.com>
+Cc: xu.xin16@zte.com.cn, david@redhat.com, v-songbaohua@oppo.com, 
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	mhocko@kernel.org, yang.yang29@zte.com.cn, ran.xiaokai@zte.com.cn, 
+	Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+On Fri, Jun 7, 2024 at 9:24=E2=80=AFAM Zi Yan <ziy@nvidia.com> wrote:
+>
+> On 6 Jun 2024, at 14:00, Barry Song wrote:
+>
+> > On Fri, Jun 7, 2024 at 2:35=E2=80=AFAM Zi Yan <ziy@nvidia.com> wrote:
+> >>
+> >> +Matthew
+> >>
+> >> For mapping_large_folio_support() changes.
+> >>
+> >> On 6 Jun 2024, at 2:42, xu.xin16@zte.com.cn wrote:
+> >>
+> >>> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+> >>>
+> >>> When I did a large folios split test, a WARNING
+> >>> "[ 5059.122759][  T166] Cannot split file folio to non-0 order"
+> >>> was triggered. But the test cases are only for anonmous folios.
+> >>> while mapping_large_folio_support() is only reasonable for page
+> >>> cache folios.
+> >>>
+> >>> In split_huge_page_to_list_to_order(), the folio passed to
+> >>> mapping_large_folio_support() maybe anonmous folio. The
+> >>> folio_test_anon() check is missing. So the split of the anonmous THP
+> >>> is failed. This is also the same for shmem_mapping(). We'd better add
+> >>> a check for both. But the shmem_mapping() in __split_huge_page() is
+> >>> not involved, as for anonmous folios, the end parameter is set to -1,=
+ so
+> >>> (head[i].index >=3D end) is always false. shmem_mapping() is not call=
+ed.
+> >>>
+> >>> Also add a VM_WARN_ON_ONCE() in mapping_large_folio_support()
+> >>> for anon mapping, So we can detect the wrong use more easily.
+> >>>
+> >>> THP folios maybe exist in the pagecache even the file system doesn't
+> >>> support large folio, it is because when CONFIG_TRANSPARENT_HUGEPAGE
+> >>> is enabled, khugepaged will try to collapse read-only file-backed pag=
+es
+> >>> to THP. But the mapping does not actually support multi order
+> >>> large folios properly.
+> >>>
+> >>> Using /sys/kernel/debug/split_huge_pages to verify this, with this
+> >>> patch, large anon THP is successfully split and the warning is ceased=
+.
+> >>>
+> >>> Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+> >>> ---
+> >>>  include/linux/pagemap.h |  4 ++++
+> >>>  mm/huge_memory.c        | 27 ++++++++++++++++-----------
+> >>>  2 files changed, 20 insertions(+), 11 deletions(-)
+> >>>
+> >>> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> >>> index ee633712bba0..59f1df0cde5a 100644
+> >>> --- a/include/linux/pagemap.h
+> >>> +++ b/include/linux/pagemap.h
+> >>> @@ -381,6 +381,10 @@ static inline void mapping_set_large_folios(stru=
+ct address_space *mapping)
+> >>>   */
+> >>>  static inline bool mapping_large_folio_support(struct address_space =
+*mapping)
+> >>>  {
+> >>> +     /* AS_LARGE_FOLIO_SUPPORT is only reasonable for pagecache foli=
+os */
+> >>> +     VM_WARN_ONCE((unsigned long)mapping & PAGE_MAPPING_ANON,
+> >>> +                     "Anonymous mapping always supports large folio"=
+);
+> >>> +
+> >>>       return IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
+> >>>               test_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
+> >>>  }
+> >>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> >>> index 317de2afd371..62d57270b08e 100644
+> >>> --- a/mm/huge_memory.c
+> >>> +++ b/mm/huge_memory.c
+> >>> @@ -3009,30 +3009,35 @@ int split_huge_page_to_list_to_order(struct p=
+age *page, struct list_head *list,
+> >>>       if (new_order >=3D folio_order(folio))
+> >>>               return -EINVAL;
+> >>>
+> >>> -     /* Cannot split anonymous THP to order-1 */
+> >>> -     if (new_order =3D=3D 1 && folio_test_anon(folio)) {
+> >>> -             VM_WARN_ONCE(1, "Cannot split to order-1 folio");
+> >>> -             return -EINVAL;
+> >>> -     }
+> >>> -
+> >>> -     if (new_order) {
+> >>> -             /* Only swapping a whole PMD-mapped folio is supported =
+*/
+> >>> -             if (folio_test_swapcache(folio))
+> >>> +     if (folio_test_anon(folio)) {
+> >>> +             /* Cannot split anonymous THP to order-1 */
+> >>> +             if (new_order =3D=3D 1) {
+> >>> +                     VM_WARN_ONCE(1, "Cannot split to order-1 folio"=
+);
+> >>>                       return -EINVAL;
+> >>> +             }
+> >>> +     } else if (new_order) {
+> >>>               /* Split shmem folio to non-zero order not supported */
+> >>>               if (shmem_mapping(folio->mapping)) {
+> >>>                       VM_WARN_ONCE(1,
+> >>>                               "Cannot split shmem folio to non-0 orde=
+r");
+> >>>                       return -EINVAL;
+> >>>               }
+> >>> -             /* No split if the file system does not support large f=
+olio */
+> >>> -             if (!mapping_large_folio_support(folio->mapping)) {
+> >>> +             /* No split if the file system does not support large f=
+olio.
+> >>> +              * Note that we might still have THPs in such mappings =
+due to
+> >>> +              * CONFIG_READ_ONLY_THP_FOR_FS. But in that case, the m=
+apping
+> >>> +              * does not actually support large folios properly.
+> >>> +              */
+> >>> +             if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) &&
+> >>> +                     !mapping_large_folio_support(folio->mapping)) {
+> >>
+> >> Shouldn=E2=80=99t this be
+> >>
+> >> if (!IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) &&
+> >>         !mapping_large_folio_support(folio->mapping)) {
+> >>
+> >> ?
+> >>
+> >> When CONFIG_READ_ONLY_THP_FOR_FS is not set, we need to check
+> >> mapping_large_folio_support(), otherwise we do not.
+> >
+> > while CONFIG_READ_ONLY_THP_FOR_FS is not set, that is no way
+> > a large folio can be mapped to a filesystem which doesn't support
+> > large folio mapping. i think
+>
+> That is why we have the warning below to catch this undesired
+> case.
+>
+> > if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS)) is correct.
+>
+> When it is set, khugepaged can create a large pagecache folio
+> on a filesystem without large folio support and the warning
+> will be triggered once the created large pagecache folio
+> is split. That is not what we want.
 
-On 2024-06-06 14:54, Greg Kroah-Hartman wrote:
-> On Wed, Jun 05, 2024 at 01:29:29PM -0600, Martin Oliveira wrote:
->> The standard kernfs vm_ops installs a page_mkwrite() operator which
->> modifies the file update time on write.
->>
->> This not always required (or makes sense), such as in the P2PDMA, which
->> uses the sysfs file as an allocator from userspace.
-> 
-> That's not a good idea, please don't do that.  sysfs binary files are
-> "pass through", why would you want to use this as an allocator?
+yes. This is exactly why we need if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS=
+))
+but not if (!IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS)) .
 
-The P2PDMA code already creates a binary attribute which is used to
-allocate P2PDMA memory into userspace[1]. It was done this way a couple
-of years ago at the suggestion of Christoph[2]. Using a sysfs attribute
-made the code substantially simpler and got rid of a bunch of pseudofs
-mess that was required when mmaping a char device. The attribute already
-exists and is used by userspace so it's not something we can change at
-this point.
+because if (!IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS)), folio is definitely
+pointing to a file system supporting large folio. otherwise, it is a bug.
 
-The attribute has worked well for what was needed until we wanted to use
-P2PDMA memory with FOLL_LONGTERM and GUP. That path specifically denies
-FOLL_LONGTERM pins when the underlying VMA has a .page_mkwrite operator,
-which sysfs/kernfs forces on us. P2PDMA doesn't benefit from this
-operator in any way so the simplest thing is to remove it for this use case.
-
->> Furthermore, having the page_mkwrite() operator causes
->> writable_file_mapping_allowed() to fail due to
->> vma_needs_dirty_tracking() on the gup flow, which is a pre-requisite for
->> enabling P2PDMA over RDMA.
->>
->> Fix this by adding a new boolean on kernfs_ops to differentiate between
->> the different behaviours.
-> 
-> This isn't going to work well.
-
-What about it are you worried won't work well? We're open to other
-suggestions.
-
-Thanks,
-
-Logan
-
-[1] https://elixir.bootlin.com/linux/latest/source/drivers/pci/p2pdma.c#L164
-[2] https://lore.kernel.org/all/20220705075108.GB17451@lst.de/
+>
+> >
+> > The below means a BUG which has never a chance to happen if it
+> > is true.
+> >
+> > !IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) &&
+> >         !mapping_large_folio_support(folio->mapping));
+> >
+> >>
+> >>>                       VM_WARN_ONCE(1,
+> >>>                               "Cannot split file folio to non-0 order=
+");
+> >>>                       return -EINVAL;
+> >>>               }
+> >>>       }
+> >>>
+> >>> +     /* Only swapping a whole PMD-mapped folio is supported */
+> >>> +     if (folio_test_swapcache(folio) && new_order)
+> >>> +             return -EINVAL;
+> >>>
+> >>>       is_hzp =3D is_huge_zero_folio(folio);
+> >>>       if (is_hzp) {
+> >>> --
+> >>> 2.15.2
+> >>
+> >>
+> >> Best Regards,
+> >> Yan, Zi
+> >
+> > Thanks
+> > Barry
+>
+>
+> Best Regards,
+> Yan, Zi
 
