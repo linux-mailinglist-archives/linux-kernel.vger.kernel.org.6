@@ -1,143 +1,115 @@
-Return-Path: <linux-kernel+bounces-203951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E6358FE23C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:14:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A04528FE23E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EBA31F2165F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:14:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29439282F12
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD8913DDA9;
-	Thu,  6 Jun 2024 09:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB541474BD;
+	Thu,  6 Jun 2024 09:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kbWlIRBj"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="meRGJnk6"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DEF219E1
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4668145322;
+	Thu,  6 Jun 2024 09:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717664774; cv=none; b=pMWnsbz3k3777Mh2TazBjFkxTEIyKLYdNK9u1IniLP9toLDwCwy22sbX5wS2dQZtNt7RxlujVZvVmcDwyLCITcjkNQqjEuQCaSS0r0rgSkI88R/3H64vrwY4gDmg9MTBE05pBKi8G1/BHHdb2aVZ51eQcD52/2kHxj2WgY+jedk=
+	t=1717664786; cv=none; b=fEGg7B6Z60g/XO1XuJUOGfu2V9oTQPxx0OWACMrkh3eWDPFBq+ehZGRbh67rTNXFauhaUFdwYsiyiJpGyvoDAvryCXrZiXyQGiIfRaW2217q/X1j5JFsVxkutK2iL4EWiAFtvxy1v2SWFD8HtgmIBcEvcWtzpdVw0ZSkKYxit+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717664774; c=relaxed/simple;
-	bh=0s2tqnVZ8o1Ooqq2REO8kb7fgRVkVQI1Jj3HyXpVWSQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fvPvSnEE35JI4ouBTuxA7J89c/uy5dbUI+OlRShUQsTgaqgH2sH4fkSkFL6ZaajtwAxwRyRiNal70EAFHr2N09FjIgueS20DQwYXNGJFrxYXTDeLeypywHMhVR2LyJs8BJ1Dj/a0xzfWO6eFJcMHzPqCtYJeVYBgISU2be8Axsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kbWlIRBj; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42108856c33so10683315e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 02:06:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717664771; x=1718269571; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rnszw8n4L4YEghZrXAC4hBn0cS9S211yJ6LqSVtlsjo=;
-        b=kbWlIRBj0lCRKLpuMZqZK47RLxX9y/ntPC/kQD4FtVjCaX9A92ygO6APg9Ni9+l+hW
-         1LySBS++RWaC/HToyFwxKkjMeKH1WIG8O23L+FfAwElNojZGFlMrtH09SW38JwAk/l3E
-         ldwutRpPc/PSfmG1pT5vljd7vdNscoGunnWoOkqakNEizA+LWzX5TbPxj/DRb13GDteo
-         AZWHUagUWr+yB9w9pve4j0Kr7CALNKltmZ+ZHnHvLpdbOlSnjpzW05+U8AywRGIw0Vg1
-         3fmNoBpV32Q2bALpFGDeBQpQR4m78EV6QcXnEnAxOmS/xFvPClO54pStrKnZCVTIWQ85
-         ROFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717664771; x=1718269571;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rnszw8n4L4YEghZrXAC4hBn0cS9S211yJ6LqSVtlsjo=;
-        b=JoIvJPgHubShNip2Wi0IdgQHRiZtywDulRA0sQ32aBR4tiO3SKeLH84/Dyft9sXIC8
-         RLc/Cjy3y1Vdmb2Iu5GX1JLvYvn7oXIcqBG3X4PsmStul0Jx9D6ItuV8TXZ+7QATBCWE
-         k9j0iDC/Uwli2UNWum6+mD9d87MBrk++xv6/arVXq5wWoSHdJVopeEtULPwYOKqtU2NC
-         GzQ3Gh+Sp4EwyBIo38nPK0KE9mghw7ox6BpiDBDYWs36FQaiDXY1mKgfJrMhsEXdFY1b
-         ViYwF1e39ELsWezioV8BDVOtwOs/4P6SxESHYsxsn/Bo36X1sf7YY4WjHCTxWsNu8NN8
-         TlCA==
-X-Gm-Message-State: AOJu0Yx3nzuZV7N6/F92BhWRSFsrGVv5KaKDHp4slbOND+vxZRbqqXjs
-	N48Qr9focBdgu+m7mslDu2TqzXEa2fGyr6QVpfC3WRfqLb8gLFJM
-X-Google-Smtp-Source: AGHT+IFMhC1oPfyKrsZlAwV/OdzyxsBoH7hu8OS9Q1I+NglNdPIcimhJGIe+o1W4wru1RzDuoKmfMg==
-X-Received: by 2002:a05:600c:4fd4:b0:421:38c4:1829 with SMTP id 5b1f17b1804b1-4215ad1f9acmr16393815e9.13.1717664770714;
-        Thu, 06 Jun 2024 02:06:10 -0700 (PDT)
-Received: from gmail.com (1F2EF20A.nat.pool.telekom.hu. [31.46.242.10])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42158148ffasm50087755e9.38.2024.06.06.02.06.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 02:06:10 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Thu, 6 Jun 2024 11:06:08 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Brian Gerst <brgerst@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dave Hansen <dave@sr71.net>, Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uros Bizjak <ubizjak@gmail.com>
-Subject: [PATCH] x86/fpu: Introduce the x86_task_fpu() helper method
-Message-ID: <ZmF8AH0TX_lgkxS5@gmail.com>
-References: <20240605083557.2051480-1-mingo@kernel.org>
- <CAMzpN2hms-cpsaief4j_1LhXXznreE+it8nnsH2-8yoQ2Bn0Rw@mail.gmail.com>
+	s=arc-20240116; t=1717664786; c=relaxed/simple;
+	bh=j0KhmEiIBVO2I7pYxITi/gig0dN1DEwHjsDGFnXyrzk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g/+v1FMdxe/zjSD7mW1cfQaOH6sNacjeW+usJqUL4p3WYB6pZEjRspdyfRgSRgXPsDzZwpIxocr+1480Wd6YICIDbagn37xWCKwJtCAGO9X/jcvogl68CV2+3Yi22g0SZRA7Oy7DmttWRDxZ8PvJ2GvzngdPhEJ7c6NSvGtr6eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=mediatek.corp-partner.google.com; spf=fail smtp.mailfrom=mediatek.corp-partner.google.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=meRGJnk6; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=mediatek.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mediatek.corp-partner.google.com
+X-UUID: 0635c1be23e411efa54bbfbb386b949c-20240606
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=TulsrRhbIDs8TKsNZRbXbYoBg2+wZ1zCZBN14dFoG5E=;
+	b=meRGJnk6ziUMw8bfG5YwdnTXZ8OftlmFv16yhdTHyNmchu5fd0JqfDbu98jsgYSDLlISiTU91vS0GZoI9UyrVnhGbQT9sNTPi+5Fg9gWw3pCpdUU8wo9L13137J8ucGYCwdR+YaThhS29S2ltUZ7vW8JurHZrMQ5EsZz/UBvwds=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.39,REQID:14891e03-ae90-45a9-8280-66784abd9ebb,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:393d96e,CLOUDID:8178b093-e2c0-40b0-a8fe-7c7e47299109,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 0635c1be23e411efa54bbfbb386b949c-20240606
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
+	(envelope-from <jason-ch.chen@mediatek.corp-partner.google.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 665328105; Thu, 06 Jun 2024 17:06:13 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 6 Jun 2024 17:06:11 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 6 Jun 2024 17:06:11 +0800
+From: jason-ch chen <jason-ch.chen@mediatek.corp-partner.google.com>
+To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+CC: <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	Jason Chen <Jason-ch.Chen@mediatek.com>
+Subject: [PATCH] remoteproc: mediatek: Increase MT8188 SCP core0 DRAM size
+Date: Thu, 6 Jun 2024 17:06:09 +0800
+Message-ID: <20240606090609.3199-1-jason-ch.chen@mediatek.corp-partner.google.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMzpN2hms-cpsaief4j_1LhXXznreE+it8nnsH2-8yoQ2Bn0Rw@mail.gmail.com>
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--11.374200-8.000000
+X-TMASE-MatchedRID: Xmee87WA04ARm9WAyl7+Dna57ruHAnHxJDAZBInjo2YUtdRZTmEaIUUe
+	RhGY4VMdIV4u8YKdeKsBtjkcfRMmqUN64DZ+6OgVngIgpj8eDcBpkajQR5gb3savT21DsLD/UEh
+	Wy9W70AGsWV0bdkf4OZnI7w0MyspY5QW3P0Do1rUHGWE57KOVV6Bw96C56Hm+BeJ5GJM55Sw=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--11.374200-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	8F2C02F9BB7FE52F84685050D7437B8500119C0C2DF2251449391A35E88052222000:8
 
+From: Jason Chen <Jason-ch.Chen@mediatek.com>
 
-* Brian Gerst <brgerst@gmail.com> wrote:
+Increase MT8188 SCP core0 DRAM size for HEVC driver.
 
-> >  17 files changed, 104 insertions(+), 107 deletions(-)
-> 
-> This series would be better if you added the x86_task_fpu() helper in
-> an initial patch without any other changes.  That would make the
-> actual changes more visible with less code churn.
-
-Makes sense - I've split out the patch below and adjusted the rest of the 
-series. Is this what you had in mind?
-
-Note that I also robustified the macro a bit:
-
- -# define x86_task_fpu(task) ((struct fpu *)((void *)task + sizeof(*task)))
- +# define x86_task_fpu(task) ((struct fpu *)((void *)(task) + sizeof(*(task))))
-
-Thanks,
-
-	Ingo
-
-========================>
-From: Ingo Molnar <mingo@kernel.org>
-Date: Thu, 6 Jun 2024 11:01:14 +0200
-Subject: [PATCH] x86/fpu: Introduce the x86_task_fpu() helper method
-
-The per-task FPU context/save area is allocated right
-next to task_struct() - introduce the x86_task_fpu()
-helper that calculates this explicitly from the
-task pointer.
-
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Jason Chen <Jason-ch.Chen@mediatek.com>
 ---
- arch/x86/include/asm/processor.h | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/remoteproc/mtk_scp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 920b0beebd11..fb6f030f0692 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -507,6 +507,8 @@ struct thread_struct {
- 	struct fpu		*fpu;
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index b885a9a041e4..2119fc62c3f2 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -1390,7 +1390,7 @@ static const struct mtk_scp_sizes_data default_scp_sizes = {
  };
  
-+#define x86_task_fpu(task) ((struct fpu *)((void *)(task) + sizeof(*(task))))
-+
- /*
-  * X86 doesn't need any embedded-FPU-struct quirks:
-  */
+ static const struct mtk_scp_sizes_data mt8188_scp_sizes = {
+-	.max_dram_size = 0x500000,
++	.max_dram_size = 0x800000,
+ 	.ipi_share_buffer_size = 600,
+ };
+ 
+-- 
+2.34.1
+
 
