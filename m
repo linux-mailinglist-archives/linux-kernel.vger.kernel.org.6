@@ -1,169 +1,150 @@
-Return-Path: <linux-kernel+bounces-204796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96BF38FF3AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:26:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D0448FF3B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:27:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A44E284E6C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:26:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08CC11F27C0C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D901991BD;
-	Thu,  6 Jun 2024 17:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF54199225;
+	Thu,  6 Jun 2024 17:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U6cVw9w4"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OldNq88M"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BC41990D8;
-	Thu,  6 Jun 2024 17:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0CB1990DA
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 17:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717694781; cv=none; b=BtfcZs4lj1W4Ex8Qj5p/7g9Id7YqtKe4z8jITBHSqvVYQUe7Jcw2anXZVT2Wq7a6cD1GMXH93SEbhZFe1ZptUImlVW2UOr6vDbFMAEsm8FFtK+bt3Bn+a08/Eh9veRkGROTTn6bH/znoVksK5i2v1rhpNdZJpJJ3tRX0FOswU1s=
+	t=1717694845; cv=none; b=ZC/DXtguNVYDGbS4JSjUjKxytYGYfBEnSOwlaVFOYI0v5P395kEsf6KHirja/zbHdc3hdgMRwFElrSNAPLkZGTYItQO5P0TlvdJGO6H3sAzu/kfqyhuHmaLdelqfAF87hidKj7fw29L40MRHKPgPridAcmKONgojnCtdGgLHkPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717694781; c=relaxed/simple;
-	bh=l8EdykTqJ3aoDDrALAsVEr30BhVYMuefAflhbdzU+3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pwt7N64kzigV8RAQqIZcb/mJOJ82Tj0b2/E46fWY9QEcouUeD7FhRtZ1X/aRGHTTmS8I+Zg7g3oNUigggxGrAqlEb3fVHIwh7TsW5FdLSYL/ebFzNVrKV1peOQOOCBzSopf2f9q7mRYgv+mo7hbRQpPlp3WHzqAKYQBrPc0lXog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=U6cVw9w4; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Jniy+NLgVrBfK0p3PyzP0Z6EZrAShqg1T5f6U9wpTZM=; b=U6cVw9w4l6T0HIwuVstgOdFrTf
-	/eJRHcWb1hvtr8USQwnMbi9gwBnZoAmC5llmrCK8WoJavNxSZyU1vBRsTXpX1mIxRV2HbXbKvemvr
-	TcXvzrpg5zh8w7sQ/DUmTHhVSvF/gW4d7nzHmzLdSKn8+nXlNSLKkBVrg5ifTV1HQcWCAL4a1TzO7
-	qOWitxMaFgEvdbg1vnic8/zdxscPveTofIJJgbgTNMTGr1zZ0yrw7ce5WHIqVbg4oxX0vZIbXtgXw
-	aC3yBbxrIM1qZQ9dcKNVCUGJtqPoggVx2LR7agbJzNJM8kOrpNoU60HebjaE6iXoVS3ZhuNGq8+B4
-	tvA9fqYA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sFGsN-00000001fmR-14ZR;
-	Thu, 06 Jun 2024 17:26:11 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E941230047C; Thu,  6 Jun 2024 19:26:07 +0200 (CEST)
-Date: Thu, 6 Jun 2024 19:26:07 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] rust: add tracepoint support
-Message-ID: <20240606172607.GG8774@noisy.programming.kicks-ass.net>
-References: <20240606-tracepoint-v1-0-6551627bf51b@google.com>
- <20240606-tracepoint-v1-3-6551627bf51b@google.com>
+	s=arc-20240116; t=1717694845; c=relaxed/simple;
+	bh=Vrj6by7HZ5znl+cZYgtRvTbs4mioHISFswzBIkufzzw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q6oMePMtijSg2x1hf+CXqeqesbV2JDd7pU3G7dw2nSq7YRgLvn4L3//k8+tJZVm3lpwEV4fOChD+CRSLE/yvBcQ5gVoKHZdnZlQa/fGxdziW+7VZfkZ86dCyJrZwM3cwCr3FB/98aWpGpK2nHlDdmudwy/B0DbOHSUOvqBQwnJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OldNq88M; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717694842;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Sz0RERWk5Ecm+O3n3osXuRqBMwh86v1zD3ET+YEnd50=;
+	b=OldNq88MjcP6wkIoMum+VFpMKTeJGxuqrBgpa39Alj6NM31UkWAdc7JsNXadqVwv61F0cj
+	Z6RVNI16ionKyZrR5t91Nhwj1ka1xB6jkWsmFH3xg6j/bJVpFyiGUqgPjmH5CGB2D3Kgre
+	sr1klHOGtAHmfYJ/ABTBvTopjeifY1Y=
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
+ [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-491-xw4ZDV4gOgqDvDE55Aotcg-1; Thu, 06 Jun 2024 13:27:21 -0400
+X-MC-Unique: xw4ZDV4gOgqDvDE55Aotcg-1
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3746147204eso11282215ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 10:27:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717694840; x=1718299640;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Sz0RERWk5Ecm+O3n3osXuRqBMwh86v1zD3ET+YEnd50=;
+        b=mtQsObHNZa1LYc2HEKZ3Y704bHB5EPhRtVm7AzwTJ3twrJAYvnv+mFb5YaLrdkHhGf
+         V0E7odmWBuxUd8OfH92vWOUO4yg6BEMvq9k/5ZYxDVVTGgM0i0W/+PC9QGqeIg8SwcwH
+         kJu3ps80mNcUMj8KcF1/sfuA+JmiHJ1WGN+KM9/U/v0z5P3Av+KdjUXtaby7R+1nKb3I
+         PtbeSgxeXzFuFogskXxkxxFSNCOtqZRXRw8TC5W8WqdM1oTMGKZ2HPPUBGKYNaKbFnGu
+         0m6nO2JD/DvbwMyMyCIGx1djoQ4iY0AgNfkZfnDHa74GT6b6VVbfO24FuHPz9PRbxe9I
+         extQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEittrWSJC3XpaXJ60d9s7jMrHogjXZHKZPFWwfY5Agn/Z8zwhYI1Nc6ZqRUzlTZkEepCwDyMAng0kxMys3kcakrGdnjb4ocTV+hi4
+X-Gm-Message-State: AOJu0Yy9j7KF9xURtPmkgPuv+FvLbUE55e0q7xYsVwuAXTg6G6649R3r
+	8D/CKcLok7wdrtDdreUqUxmOsbfYuZLF9BJDeo+BEBXTKw6FsInvYJAMImk99ALVo8Xf+UGu2Kf
+	BH7qi83EbXpold96cBHEKP4SJsW5C+L+TYH2+5qD2qANGPacMcB15zWy0ky2LMZMB72ov9A==
+X-Received: by 2002:a05:6e02:218b:b0:374:a667:fc06 with SMTP id e9e14a558f8ab-37580309f62mr4417515ab.8.1717694840571;
+        Thu, 06 Jun 2024 10:27:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFckJLvv9jZB8litqQUIqmCS99LH6RC9Z9rWoLoaNkdTMJWgv2uggN2xOA/AH43OBZbA27vbg==
+X-Received: by 2002:a05:6e02:218b:b0:374:a667:fc06 with SMTP id e9e14a558f8ab-37580309f62mr4417285ab.8.1717694840192;
+        Thu, 06 Jun 2024 10:27:20 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-374bc15dca5sm3869215ab.49.2024.06.06.10.27.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 10:27:19 -0700 (PDT)
+Date: Thu, 6 Jun 2024 11:27:18 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Christian Borntraeger <borntraeger@linux.ibm.com>
+Cc: Niklas Schnelle <schnelle@linux.ibm.com>, Gerald Schaefer
+ <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily
+ Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Gerd Bayer <gbayer@linux.ibm.com>,
+ Matthew Rosato <mjrosato@linux.ibm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] vfio/pci: s390: Fix issues preventing
+ VFIO_PCI_MMAP=y for s390 and enable it
+Message-ID: <20240606112718.0171f5b3.alex.williamson@redhat.com>
+In-Reply-To: <0a4622ce-3826-4b08-ab81-375887ab6a46@linux.ibm.com>
+References: <20240529-vfio_pci_mmap-v3-0-cd217d019218@linux.ibm.com>
+	<0a4622ce-3826-4b08-ab81-375887ab6a46@linux.ibm.com>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606-tracepoint-v1-3-6551627bf51b@google.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 06, 2024 at 03:05:26PM +0000, Alice Ryhl wrote:
-> Make it possible to have Rust code call into tracepoints defined by C
-> code. It is still required that the tracepoint is declared in a C
-> header, and that this header is included in the input to bindgen.
+On Mon, 3 Jun 2024 17:50:13 +0200
+Christian Borntraeger <borntraeger@linux.ibm.com> wrote:
+
+> Am 29.05.24 um 13:36 schrieb Niklas Schnelle:
+> > With the introduction of memory I/O (MIO) instructions enbaled in commit
+> > 71ba41c9b1d9 ("s390/pci: provide support for MIO instructions") s390
+> > gained support for direct user-space access to mapped PCI resources.
+> > Even without those however user-space can access mapped PCI resources
+> > via the s390 specific MMIO syscalls. There is thus nothing fundamentally
+> > preventing s390 from supporting VFIO_PCI_MMAP allowing user-space drivers
+> > to access PCI resources without going through the pread() interface.
+> > To actually enable VFIO_PCI_MMAP a few issues need fixing however.
+> > 
+> > Firstly the s390 MMIO syscalls do not cause a page fault when
+> > follow_pte() fails due to the page not being present. This breaks
+> > vfio-pci's mmap() handling which lazily maps on first access.
+> > 
+> > Secondly on s390 there is a virtual PCI device called ISM which has
+> > a few oddities. For one it claims to have a 256 TiB PCI BAR (not a typo)
+> > which leads to any attempt to mmap() it fail with the following message:
+> > 
+> >      vmap allocation for size 281474976714752 failed: use vmalloc=<size> to increase size
+> > 
+> > Even if one tried to map this BAR only partially the mapping would not
+> > be usable on systems with MIO support enabled. So just block mapping
+> > BARs which don't fit between IOREMAP_START and IOREMAP_END.
+> > 
+> > Note:
+> > For your convenience the code is also available in the tagged
+> > b4/vfio_pci_mmap branch on my git.kernel.org site below:
+> > https: //git.kernel.org/pub/scm/linux/kernel/git/niks/linux.git/  
 > 
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  rust/bindings/bindings_helper.h |  1 +
->  rust/bindings/lib.rs            | 15 +++++++
->  rust/helpers.c                  | 24 +++++++++++
->  rust/kernel/lib.rs              |  1 +
->  rust/kernel/tracepoint.rs       | 92 +++++++++++++++++++++++++++++++++++++++++
->  5 files changed, 133 insertions(+)
 > 
-> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-> index ddb5644d4fd9..d442f9ccfc2c 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -15,6 +15,7 @@
->  #include <linux/refcount.h>
->  #include <linux/sched.h>
->  #include <linux/slab.h>
-> +#include <linux/tracepoint.h>
->  #include <linux/wait.h>
->  #include <linux/workqueue.h>
->  
-> diff --git a/rust/bindings/lib.rs b/rust/bindings/lib.rs
-> index 40ddaee50d8b..48856761d682 100644
-> --- a/rust/bindings/lib.rs
-> +++ b/rust/bindings/lib.rs
-> @@ -48,3 +48,18 @@ mod bindings_helper {
->  }
->  
->  pub use bindings_raw::*;
-> +
-> +/// Rust version of the C macro `rcu_dereference_raw`.
-> +///
-> +/// The rust helper only works with void pointers, but this wrapper method makes it work with any
-> +/// pointer type using pointer casts.
-> +///
-> +/// # Safety
-> +///
-> +/// This method has the same safety requirements as the C macro of the same name.
-> +#[inline(always)]
-> +pub unsafe fn rcu_dereference_raw<T>(p: *const *mut T) -> *mut T {
-> +    // SAFETY: This helper calls into the C macro, so the caller promises to uphold the safety
-> +    // requirements.
-> +    unsafe { __rcu_dereference_raw(p as *mut *mut _) as *mut T }
-> +}
-> diff --git a/rust/helpers.c b/rust/helpers.c
-> index 2c37a0f5d7a8..0560cc2a512a 100644
-> --- a/rust/helpers.c
-> +++ b/rust/helpers.c
-> @@ -165,6 +165,30 @@ rust_helper_krealloc(const void *objp, size_t new_size, gfp_t flags)
->  }
->  EXPORT_SYMBOL_GPL(rust_helper_krealloc);
->  
-> +void rust_helper_preempt_enable_notrace(void)
-> +{
-> +	preempt_enable_notrace();
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_preempt_enable_notrace);
-> +
-> +void rust_helper_preempt_disable_notrace(void)
-> +{
-> +	preempt_disable_notrace();
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_preempt_disable_notrace);
+> I guess its now mostly a question of who picks those patches? Alex?
+> 
+> Any patch suitable for stable?
 
-A notrace wrapper that is tracable, lol.
+Nothing here looks like stable material to me.  1/ only becomes an
+issue when mmap of MMIO is allowed on s390 (ie. 3/), 2/ is generic, but
+only really targets a device found on s390, and finally 3/ is
+essentially enabling a new feature.
 
-> +bool rust_helper_current_cpu_online(void)
-> +{
-> +	return cpu_online(raw_smp_processor_id());
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_current_cpu_online);
-> +
-> +void *rust_helper___rcu_dereference_raw(void **p)
-> +{
-> +	return rcu_dereference_raw(p);
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper___rcu_dereference_raw);
+If we expect any conflicts with 1/ in the next merge window I can take
+a branch for it and apply 2/ and 3/ through the vfio tree, otherwise I
+can bring them all through the vfio tree if the s390 folks agree.
+Thanks,
 
-I'm going to keep yelling and objecting to these wrappers.
+Alex
 
-Fix bindgen already. Or whatever is needed to get it to interoperate
-with C inline / asm.
-
-NAK NAK NAK
 
