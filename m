@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-204412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D368FE863
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:06:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A118FE868
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 857E8B23FD3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:06:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50AF01F26109
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118CF1974E7;
-	Thu,  6 Jun 2024 14:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD32196C92;
+	Thu,  6 Jun 2024 14:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HGqJByk7"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="luh/ZlY6"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9CF196C91;
-	Thu,  6 Jun 2024 14:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EBF3196C75
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717682729; cv=none; b=Y3nae9kMMljtHaDL8mDsVoWp18cX1gvBtkKvXboFSXDtlAlCmk8sf1nYJLvncCozKPBRiR3p6RLbW+uKpAEKBlez9pEPvjRNoGJeg1mWwpevoigGLf5evHVAjaIZuLCCzck7hYCZ1guJkf7RGMmV4COF8bxjfsLMK6/ippvUyRs=
+	t=1717682768; cv=none; b=IL9A6FZy2rBpHKsgvN3J+/X9573Ht7aNQHhzTOnzJGiERssD8VJlI59m72ovqnZkBW/znGbeFEUEii+PQSoq3TYlCf0qEvaAeX7/T+pHd0By0WkEDSgiA6VLalXpy7qFMfdR7NnzYoYglFVMRVtWKSsXPM3JK2ybq/vuqqpojHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717682729; c=relaxed/simple;
-	bh=i45Gu0FMOskw0DjvYyiQtFVhpvpJPcYFFKf1FYSoNCg=;
+	s=arc-20240116; t=1717682768; c=relaxed/simple;
+	bh=0XIaO8VC8/Cr25KGmS0Cf8z2nqAra51paSuynMDMkSA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uiNJsSYyG9uNn6zPjp9PJ2rEo5SSgDLw1NoZYrNZOr8cvlbpkYl0Hw05N0krhwWoY52fx6ZEH37DgKlF5ygtXGt9vpx+nxBdSobbpcDZTnXozSW4byZgNmHAeafso68zTDCBwyuyo8iaLk2OQy7voKz45LyhDbVccwSMNgaqyWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HGqJByk7; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f44b45d6abso9746595ad.0;
-        Thu, 06 Jun 2024 07:05:26 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=k8TR2NFkw09ijo0OV/mzLH14hakQJlSu4QSW1BtIAP7A/NfSf9dQv+j6FSpnsWnOXGOKs26SWfjoHo1O3KuDEq9hD3yTBM1975iBHmaC2WJiHafibAIMYeKar7Qo6ETP1d7CPg1bMrXVLYUdz0daQ9Wv3drZ1Cbn63RGq/CzT9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=luh/ZlY6; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57a2406f951so1204152a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 07:06:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717682726; x=1718287526; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1717682765; x=1718287565; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=hkvtxfRBP8HwEJyE98iao7aEsT4W32s7jFfmrt+wfA0=;
-        b=HGqJByk7JbgtCNgLSqPFCWv5BXNsgjE+qssJT1/VQN0riMbhPkjgewVeUbBMIv6pZZ
-         9xjFd/T6jdEy4kGjIwl16eJ0prmUuVrQyos5e56JUipJxczLMlaAHGfc2/4R1cV2kC2V
-         CO7vxxh0jXUdgAEXO2J/hlyKQPA5G/mkQ0Xclym+mQVEYm4ZsljwnNRWGRn0iivQ7Pwu
-         OkQAALkP07iycdJb9zYKChumaSdkNDTUcwpsIlK3lfS+ybjJRlfDwL2nQv6QDq68HxLc
-         Pi+loL2Y7C9MEk72/53qowLqJR6yIwKExp7TWxcTvL7s8mqNwyM4RT2Q54MwRdjG4s9x
-         9PTg==
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=vQKb19ONiS07YwbhzyqTZ4NVaKzqW4YHDAO1Nu9VvEE=;
+        b=luh/ZlY6dJvTVX+ZmD4u7Vjkfi8G833l5e9dYSiFv5pIXEj5aN745++PCX2h39PRAK
+         o/Cfr0sZDk36ykEHjIYuB+HeQtzUzJlN1RNay63ryX6iADoTe4R7AYKoU2yy4i2Z/eej
+         nVGfcSoVblDQt1OnN19JON5s8sJw16/Z8hPXdLCLZYLfJZmwmzBsAqKPCTtj0FQOgsbo
+         DEqQzL8P7DhxaiCipM4spw59v6vs1DS9HzNZ/p3z0PRSBttvaI1gtMXT8uYLo2BzdwXb
+         kpvOfxGCpe4eZAFEDGrRIDPJHnaV7ZppNSCjYym3/EOAJvHfbYXW/5wbzWvJGkyKgUek
+         hLAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717682726; x=1718287526;
+        d=1e100.net; s=20230601; t=1717682765; x=1718287565;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hkvtxfRBP8HwEJyE98iao7aEsT4W32s7jFfmrt+wfA0=;
-        b=Eq0EGtwqtA8PL2mXansZsIVKOW19VukCygvDMbg6wU1G1pOQ66LALU+mgICev/Hvg8
-         fcIsu9xPYdnJcygHbDiQVV5hXOsxKbZQwdHsgmve2so0EKemf9nK5RoMb8Pe0rW6+qSN
-         0gNNWIhIq6oSQSFLJ1HAvGTRTBaS2sIFiw0UkLFCqDOl8HhOc4rhXIr10Be0TNunNjVA
-         H2lXaSoXc8RBzymttmyVCPcoHZ0dcORU0RIQ5pX05TornPQ8YB3D+wplmFHAlh1n/IGR
-         zUlmnE8JFny2DF9+FGlSeQuOZuSH3HcE7I779NHA2p4YCWfgWT+iZXqYU4lhER1oS38y
-         TFrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaeNxSCIC7kTmMW6TUZ4gUkyOF4UTq9qniSBArj0nivNlJpqkHCOgNBQGzsWzIV2vi4DW6akUknXukzyKLuRj4iobfFz1J/OLs9m2RBr5pgIKB8HU8U2gXqY7+EGlN7URy3eRGgR6mqoUj7HaOjtezIfAzXkB9azD/K9cH/MkmfQoBS6Z5Q2439w8=
-X-Gm-Message-State: AOJu0YxG1oeFutDVKT0+/a8ZOszvUlrj6p0oNrPrddqMMVXo5TZ3nLn2
-	tRBgPBIchbvEfBwtGwJ2sqwcyhMRocGxBiV1nEoblmX0UAGi4bhx
-X-Google-Smtp-Source: AGHT+IFEAiWIPngu5fU5+VKXgB5gVnT2E50j/2D/yKpChFDLWSGB6HMf20Lx2V4tl6ZUCjDwcRzLRg==
-X-Received: by 2002:a17:902:e851:b0:1f6:7cc9:fb2c with SMTP id d9443c01a7336-1f6a5a6aec3mr63688685ad.49.1717682725317;
-        Thu, 06 Jun 2024 07:05:25 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd76ab8fsm15288175ad.73.2024.06.06.07.05.23
+        bh=vQKb19ONiS07YwbhzyqTZ4NVaKzqW4YHDAO1Nu9VvEE=;
+        b=lr/wFd8cj1lnSwsXQtZoTS+Ce2f3f16xUutEoiz0v2oSwskREjwHXAJ28xGV43AzRW
+         kaja+NApkhSsj3+v4pisrLorVWBQJimttr66Qn1SkQpMh7F0mfdd/eBpcp1+OvWv5T5I
+         9TINQdvJnwkdyiyqMWJW2Z4dvfwaKbQeGsDnAzpabR7xAhBMtNhynTtqt0HOrC7oq3U0
+         jNh/rUnos5HkUBIN0i5veYqeNVAG9sdUHf/io661ZlAwJjK0HXm0i4StWFFeooPHNVu7
+         fw3xdaCRJhfFR2ka2xfLK/A1qG0Lz/JKFrAlbN+O2zAyHJ0shUfIECtdGQKltG7b2MaZ
+         IWdw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOhkvu+zhasVzwBJG8eECabj9yXBSR2l36ySvA3uDm9N8T9WrpbOHwHOMtrKFxJbBLLg50fNfNqMAhi6EUPBXQp7wl0FYUYAWaykXg
+X-Gm-Message-State: AOJu0Yw6W5AkQkv2rKUBWEuxB0wPW3O2bbCF8seb59fRTQmPg22GyZZV
+	9Bsjrda2XqEI1mH8byT99XBNY3qEWr223aSYE7ZRtMfk5mfiur75IX5xym+B0hBJ11QqUc64nWh
+	ypOo=
+X-Google-Smtp-Source: AGHT+IHMBu9F3fZBohRfOXGBJmwL+dUO/U6UFuk7SvnfrU+SXs+rB4HE/CdJVvunmmD5Lrwi01e+sw==
+X-Received: by 2002:a50:ab0d:0:b0:57a:79c2:e9d5 with SMTP id 4fb4d7f45d1cf-57a8b6ac6c0mr3439122a12.18.1717682764777;
+        Thu, 06 Jun 2024 07:06:04 -0700 (PDT)
+Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aadcbf568sm1166892a12.0.2024.06.06.07.06.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 07:05:24 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <01c955d3-cec6-43bc-be7c-b6c1bde441d1@roeck-us.net>
-Date: Thu, 6 Jun 2024 07:05:22 -0700
+        Thu, 06 Jun 2024 07:06:04 -0700 (PDT)
+Message-ID: <1a08ef42-b52f-4c97-90d7-e7fdee7725b4@linaro.org>
+Date: Thu, 6 Jun 2024 16:06:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,92 +77,205 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hwmon: (cros_ec) Prevent read overflow in probe()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>,
- Jean Delvare <jdelvare@suse.com>, Benson Leung <bleung@chromium.org>,
- Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <42331b70-bd3c-496c-8c79-3ec4faad40b8@moroto.mountain>
+Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
+ ability to gcc
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: Georgi Djakov <djakov@kernel.org>, andersson@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, quic_anusha@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20240418092305.2337429-1-quic_varada@quicinc.com>
+ <20240418092305.2337429-7-quic_varada@quicinc.com>
+ <a7194edd-a2c8-46fc-bea1-f26b0960e535@linaro.org>
+ <Ziov6bWBXYXJ4Zp8@hu-varada-blr.qualcomm.com>
+ <27f4f3dd-9375-40cf-8c8f-1c4edf66e31b@linaro.org>
+ <ZjNdTmmXucjtRxJt@hu-varada-blr.qualcomm.com>
+ <c015b3a5-2213-4ebd-b960-d97ed1fe7062@kernel.org>
+ <ZjshR0ekcn0gxwOa@hu-varada-blr.qualcomm.com>
+ <CAA8EJpqENsojPQmCbma_nQLEZq8nK1fz1K0JdtvLd=kPrH_DBw@mail.gmail.com>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <42331b70-bd3c-496c-8c79-3ec4faad40b8@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
+ BB/OmIWU6X+LZW6P88ZmHe+KeyABLMP5s1tJNK1j4ntT7mECcWZDzafPWF4F6m4WJOG27kTJ
+ HGWdmtO+RvadOVi6CoUDqALsmfS3MUG5Pj2Ne9+0jRg4hEnB92AyF9rW2G3qisFcwPgvatt7
+ TXD5E38mLyOPOUyXNj9XpDbt1hNwKQfiidmPh5e7VNAWRnW1iCMMoKqzM1Anzq7e5Afyeifz
+ zRcQPLaqrPjnKqZGL2BKQSZDh6NkI5ZLRhhHQf61fkWcUpTp1oDC6jWVfT7hwRVIQLrrNj9G
+ MpPzrlN4YuAqKeIer1FMt8cq64ifgTzxHzXsMcUdclzq2LTk2RXaPl6Jg/IXWqUClJHbamSk
+ t1bfif3SnmhA6TiNvEpDKPiT3IDs42THU6ygslrBxyROQPWLI9IL1y8S6RtEh8H+NZQWZNzm
+ UQ3imZirlPjxZtvz1BtnnBWS06e7x/UEAguj7VHCuymVgpl2Za17d1jj81YN5Rp5L9GXxkV1
+ aUEwONM3eCI3qcYm5JNc5X+JthZOWsbIPSC1Rhxz3JmWIwP1udr5E3oNRe9u2LIEq+wH/toH
+ kpPDhTeMkvt4KfE5m5ercid9+ZXAqoaYLUL4HCEw+HW0DXcKDwARAQABzShLb25yYWQgRHli
+ Y2lvIDxrb25yYWQuZHliY2lvQGxpbmFyby5vcmc+wsGOBBMBCAA4FiEEU24if9oCL2zdAAQV
+ R4cBcg5dfFgFAmQ5bqwCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQR4cBcg5dfFjO
+ BQ//YQV6fkbqQCceYebGg6TiisWCy8LG77zV7DB0VMIWJv7Km7Sz0QQrHQVzhEr3trNenZrf
+ yy+o2tQOF2biICzbLM8oyQPY8B///KJTWI2khoB8IJSJq3kNG68NjPg2vkP6CMltC/X3ohAo
+ xL2UgwN5vj74QnlNneOjc0vGbtA7zURNhTz5P/YuTudCqcAbxJkbqZM4WymjQhe0XgwHLkiH
+ 5LHSZ31MRKp/+4Kqs4DTXMctc7vFhtUdmatAExDKw8oEz5NbskKbW+qHjW1XUcUIrxRr667V
+ GWH6MkVceT9ZBrtLoSzMLYaQXvi3sSAup0qiJiBYszc/VOu3RbIpNLRcXN3KYuxdQAptacTE
+ mA+5+4Y4DfC3rUSun+hWLDeac9z9jjHm5rE998OqZnOU9aztbd6zQG5VL6EKgsVXAZD4D3RP
+ x1NaAjdA3MD06eyvbOWiA5NSzIcC8UIQvgx09xm7dThCuQYJR4Yxjd+9JPJHI6apzNZpDGvQ
+ BBZzvwxV6L1CojUEpnilmMG1ZOTstktWpNzw3G2Gis0XihDUef0MWVsQYJAl0wfiv/0By+XK
+ mm2zRR+l/dnzxnlbgJ5pO0imC2w0TVxLkAp0eo0LHw619finad2u6UPQAkZ4oj++iIGrJkt5
+ Lkn2XgB+IW8ESflz6nDY3b5KQRF8Z6XLP0+IEdLOOARkOW7yEgorBgEEAZdVAQUBAQdAwmUx
+ xrbSCx2ksDxz7rFFGX1KmTkdRtcgC6F3NfuNYkYDAQgHwsF2BBgBCAAgFiEEU24if9oCL2zd
+ AAQVR4cBcg5dfFgFAmQ5bvICGwwACgkQR4cBcg5dfFju1Q//Xta1ShwL0MLSC1KL1lXGXeRM
+ 8arzfyiB5wJ9tb9U/nZvhhdfilEDLe0jKJY0RJErbdRHsalwQCrtq/1ewQpMpsRxXzAjgfRN
+ jc4tgxRWmI+aVTzSRpywNahzZBT695hMz81cVZJoZzaV0KaMTlSnBkrviPz1nIGHYCHJxF9r
+ cIu0GSIyUjZ/7xslxdvjpLth16H27JCWDzDqIQMtg61063gNyEyWgt1qRSaK14JIH/DoYRfn
+ jfFQSC8bffFjat7BQGFz4ZpRavkMUFuDirn5Tf28oc5ebe2cIHp4/kajTx/7JOxWZ80U70mA
+ cBgEeYSrYYnX+UJsSxpzLc/0sT1eRJDEhI4XIQM4ClIzpsCIN5HnVF76UQXh3a9zpwh3dk8i
+ bhN/URmCOTH+LHNJYN/MxY8wuukq877DWB7k86pBs5IDLAXmW8v3gIDWyIcgYqb2v8QO2Mqx
+ YMqL7UZxVLul4/JbllsQB8F/fNI8AfttmAQL9cwo6C8yDTXKdho920W4WUR9k8NT/OBqWSyk
+ bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
+ nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
+ izWDgYvmBE8=
+In-Reply-To: <CAA8EJpqENsojPQmCbma_nQLEZq8nK1fz1K0JdtvLd=kPrH_DBw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 6/6/24 06:12, Dan Carpenter wrote:
-> The "resp.sensor_name" comes from cros_ec_cmd() and it hasn't necessarily
-> been NUL terminated.  We had not intended to read past "sensor_name_size"
-> bytes, however, there is a width vs precision bug in the format string.
-> The format needs to be precision '%.*s' instead of width '%*s'.
-> Precision prevents an out of bounds read, but width is a no-op.
+On 8.05.2024 10:10 AM, Dmitry Baryshkov wrote:
+> On Wed, 8 May 2024 at 09:53, Varadarajan Narayanan
+> <quic_varada@quicinc.com> wrote:
+>>
+>> On Fri, May 03, 2024 at 04:51:04PM +0300, Georgi Djakov wrote:
+>>> Hi Varada,
+>>>
+>>> Thank you for your work on this!
+>>>
+>>> On 2.05.24 12:30, Varadarajan Narayanan wrote:
+>>>> On Tue, Apr 30, 2024 at 12:05:29PM +0200, Konrad Dybcio wrote:
+>>>>> On 25.04.2024 12:26 PM, Varadarajan Narayanan wrote:
+>>>>>> On Tue, Apr 23, 2024 at 02:58:41PM +0200, Konrad Dybcio wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 4/18/24 11:23, Varadarajan Narayanan wrote:
+>>>>>>>> IPQ SoCs dont involve RPM in managing NoC related clocks and
+>>>>>>>> there is no NoC scaling. Linux itself handles these clocks.
+>>>>>>>> However, these should not be exposed as just clocks and align
+>>>>>>>> with other Qualcomm SoCs that handle these clocks from a
+>>>>>>>> interconnect provider.
+>>>>>>>>
+>>>>>>>> Hence include icc provider capability to the gcc node so that
+>>>>>>>> peripherals can use the interconnect facility to enable these
+>>>>>>>> clocks.
+>>>>>>>>
+>>>>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>>>>>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+>>>>>>>> ---
+>>>>>>>
+>>>>>>> If this is all you do to enable interconnect (which is not the case,
+>>>>>>> as this patch only satisfies the bindings checker, the meaningful
+>>>>>>> change happens in the previous patch) and nothing explodes, this is
+>>>>>>> an apparent sign of your driver doing nothing.
+>>>>>>
+>>>>>> It appears to do nothing because, we are just enabling the clock
+>>>>>> provider to also act as interconnect provider. Only when the
+>>>>>> consumers are enabled with interconnect usage, this will create
+>>>>>> paths and turn on the relevant NOC clocks.
+>>>>>
+>>>>> No, with sync_state it actually does "something" (sets the interconnect
+>>>>> path bandwidths to zero). And *this* patch does nothing functionally,
+>>>>> it only makes the dt checker happy.
+>>>>
+>>>> I understand.
+>>>>
+>>>>>> This interconnect will be used by the PCIe and NSS blocks. When
+>>>>>> those patches were posted earlier, they were put on hold until
+>>>>>> interconnect driver is available.
+>>>>>>
+>>>>>> Once this patch gets in, PCIe for example will make use of icc.
+>>>>>> Please refer to https://lore.kernel.org/linux-arm-msm/20230519090219.15925-5-quic_devipriy@quicinc.com/.
+>>>>>>
+>>>>>> The 'pcieX' nodes will include the following entries.
+>>>>>>
+>>>>>>         interconnects = <&gcc MASTER_ANOC_PCIE0 &gcc SLAVE_ANOC_PCIE0>,
+>>>>>>                         <&gcc MASTER_SNOC_PCIE0 &gcc SLAVE_SNOC_PCIE0>;
+>>>>>>         interconnect-names = "pcie-mem", "cpu-pcie";
+>>>>>
+>>>>> Okay. What about USB that's already enabled? And BIMC/MEMNOC?
+>>>>
+>>>> For USB, the GCC_ANOC_USB_AXI_CLK is enabled as part of the iface
+>>>> clock. Hence, interconnect is not specified there.
+>>>>
+>>>> MEMNOC to System NOC interfaces seem to be enabled automatically.
+>>>> Software doesn't have to turn on or program specific clocks.
+>>>>
+>>>>>>> The expected reaction to "enabling interconnect" without defining the
+>>>>>>> required paths for your hardware would be a crash-on-sync_state, as all
+>>>>>>> unused (from Linux's POV) resources ought to be shut down.
+>>>>>>>
+>>>>>>> Because you lack sync_state, the interconnects silently retain the state
+>>>>>>> that they were left in (which is not deterministic), and that's precisely
+>>>>>>> what we want to avoid.
+>>>>>>
+>>>>>> I tried to set 'sync_state' to icc_sync_state to be invoked and
+>>>>>> didn't see any crash.
+>>>>>
+>>>>> Have you confirmed that the registers are actually written to, and with
+>>>>> correct values?
+>>>>
+>>>> I tried the following combinations:-
+>>>>
+>>>> 1. Top of tree linux-next + This patch set
+>>>>
+>>>>     * icc_sync_state called
+>>>>     * No crash or hang observed
+>>>>     * From /sys/kernel/debug/clk/clk_summary can see the
+>>>>       relevant clocks are set to the expected rates (compared
+>>>>       with downstream kernel)
+>>>>
+>>>> 2. Top of tree linux-next + This patch set + PCIe enablement
+>>>>
+>>>>     * icc_sync_state NOT called
+>>>
+>>> If sync_state() is not being called, that usually means that there
+>>> are interconnect consumers that haven't probed successfully (PCIe?)
+>>> or their dependencies. That can be checked in /sys/class/devlink/.../status
+>>> But i am not sure how this works for PCI devices however.
+>>>
+>>> You can also manually force a call to sync_state by writing "1" to
+>>> the interconnect provider's /sys/devices/.../state_synced
+>>>
+>>> Anyway, the question is if PCIe and NSS work without this driver?
+>>
+>> No.
+>>
+>>> If they work, is this because the clocks are turned on by default
+>>> or by the boot loader?
+>>
+>> Initially, the PCIe/NSS driver enabled these clocks directly
+>> by having them in their DT nodes itself. Based on community
+>> feedback this was removed and after that PCIe/NSS did not work.
+>>
+>>> Then if an interconnect path (clock) gets disabled either when we
+>>> reach a sync_state (with no bandwidth requests) or we explicitly
+>>> call icc_set_bw() with 0 bandwidth values, i would expect that
+>>> these PCIe and NSS devices would not function anymore (it might
+>>> save some power etc) and if this is unexpected we should see a
+>>> a crash or hang...
+>>>
+>>> Can you confirm this?
+>>
+>> With ICC enabled, icc_set_bw (with non-zero values) is called by
+>> PCIe and NSS drivers. Haven't checked with icc_set_bw with zero
+>> values.
+>>
+>> PCIe:   qcom_pcie_probe -> qcom_pcie_icc_init -> icc_set_bw
+>> NSS:    ppe_icc_init -> icc_set_bw
+>>
+>> I believe sync_state is not getting called since there is a
+>> non-zero set bandwidth request. Which seems to be aligned with
+>> your explanation.
 > 
-> Fixes: bc3e45258096 ("hwmon: add ChromeOS EC driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> This doesn't look correct. sync_state is being called once all
+> consumers are probed. It doesn't matter whether those consumers have
+> non-zero bandwidth requests or no.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+/sys/kernel/debug/devices_deferred may have some useful info, too
 
-> ---
->   drivers/hwmon/cros_ec_hwmon.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
-> index 41f268fa8260..b3ba7247e06b 100644
-> --- a/drivers/hwmon/cros_ec_hwmon.c
-> +++ b/drivers/hwmon/cros_ec_hwmon.c
-> @@ -212,7 +212,7 @@ static void cros_ec_hwmon_probe_temp_sensors(struct device *dev, struct cros_ec_
->   			continue;
->   
->   		sensor_name_size = strnlen(resp.sensor_name, sizeof(resp.sensor_name));
-> -		priv->temp_sensor_names[i] = devm_kasprintf(dev, GFP_KERNEL, "%*s",
-> +		priv->temp_sensor_names[i] = devm_kasprintf(dev, GFP_KERNEL, "%.*s",
->   							    (int)sensor_name_size,
->   							    resp.sensor_name);
->   	}
-
+Konrad
 
