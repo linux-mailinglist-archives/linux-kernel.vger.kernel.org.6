@@ -1,207 +1,148 @@
-Return-Path: <linux-kernel+bounces-203760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08E2E8FE023
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:49:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51E998FE029
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA9BD1F22CBD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:49:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB8DA284538
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A14E13B28A;
-	Thu,  6 Jun 2024 07:48:58 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885E131A89;
-	Thu,  6 Jun 2024 07:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0A713B5A9;
+	Thu,  6 Jun 2024 07:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nyeVwCmT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E87DF44;
+	Thu,  6 Jun 2024 07:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717660137; cv=none; b=pGAK5ZY4Mba0nw6TcbVdbIh06HGWFyr/LykcATK4wzbmOV7dEISzpM/6aommfxUM1o+pCEpGsX1+w6SzwGbUNs0YSn76sFItz5kTIcVKl+jJy+XsD8A2iZOY+C/PiLItcENM5N2KZqntfDbtULj3pXzMXVKblQE3SQ4PZ+n7Ws4=
+	t=1717660257; cv=none; b=e1nbRokBa8zqkmBnR9amfITeACUVt0VxtWT7kWfp08oh90ZGoXf8xXc4eS6Jt76F4cAdtVS7rGocV4yr/MPw3cQInOmJAiWvxMRLTtzM927uxfyJjsTK4uU18GEefxobmHs1UzPaCocPZlf9MO2dfYNd0qzLMNGJD6aKV10P3WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717660137; c=relaxed/simple;
-	bh=vvKAQj9A9a25UiDJC3KL5MSzdfTdK8owek4RnM6UtrM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=M7Y2vRKA1kg0khKERNqhkBQvjaDHPuxvyCqsY7LmLaznoY5dxPq9kZ0y7gmFMZCFdjqsmF+7QNt3SVuM18OjGS3JQU6VwezMDRVW30iMEH63yTZfWG1ECiBR4MdBndQ9uQ202wvGClVnyCF64mWH4jPHdjAdMth8YS7Y/GBvoDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8CxcPDkaWFmAyAEAA--.17638S3;
-	Thu, 06 Jun 2024 15:48:52 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8Axw8TjaWFmGaIWAA--.45782S2;
-	Thu, 06 Jun 2024 15:48:51 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] LoongArch: KVM: Add feature passing from user space
-Date: Thu,  6 Jun 2024 15:48:50 +0800
-Message-Id: <20240606074850.2651896-1-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1717660257; c=relaxed/simple;
+	bh=KbKt7/g1FIVQl+e686tRBTUARQfsnnzl+KTMOBV11GM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZdaJo0rsWxypvuEA25xXok6V4FLO/vqYGYum4DpHK2FAuMURMlGjiqa2FKnzqIUz3lRlqM4LH8Z80NUem8Hqbyx0+7ibamlaAMfr94z6VdVRh8V3B72qt2+LAK/WEupr9UZuvWK9lqAM6POgtfZwojb8C3lwIQI2q67y3Be+V1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nyeVwCmT; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717660255; x=1749196255;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=KbKt7/g1FIVQl+e686tRBTUARQfsnnzl+KTMOBV11GM=;
+  b=nyeVwCmTjzY0f6CllUF0rka7wDHi0PFxX+GZ1HsU3uhsQtYxq0jRh/sD
+   oJehUKPWY5NolNaB2wJhTlN+t7fg00FL2LUFatKQQgkDxRFqR5rgMwqwc
+   O9Vw8Mdzd8rz6km6E05x+7+BXm9SL7N3EDeGbOTsibGkfyyyBUW5URhiK
+   jcOEaKGxEpOzLK0jaqQEkRf46Rjjay8EfBmXoXThs6WLpOyeiiiR2RuKS
+   q+XCAOIbvMsgXeMU61R+JPAYyGMpLfKPatvdCqDw5ejQ5OekH2JnY7tAk
+   RjIVe6IICxUoXHkAqpMomaBSeFxYo+5l7QUBX2ZJnwcg2ju+gvA6yj0tX
+   A==;
+X-CSE-ConnectionGUID: r98B2grqSAeSE+FQGgQUEw==
+X-CSE-MsgGUID: 9SbnLWjgRDyH9kCt/JUkTA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="24966544"
+X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
+   d="scan'208";a="24966544"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 00:50:55 -0700
+X-CSE-ConnectionGUID: ASUIEKgwTyCLrIwxWuK8sg==
+X-CSE-MsgGUID: aRNYetmaRNa8KejmhwBAJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
+   d="scan'208";a="68689466"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by orviesa002.jf.intel.com with SMTP; 06 Jun 2024 00:50:52 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 06 Jun 2024 10:50:51 +0300
+Date: Thu, 6 Jun 2024 10:50:51 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Xin Ji <xji@analogixsemi.com>, LKML <linux-kernel@vger.kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH] usb: typec: anx7411: Use scope-based resource management
+ in anx7411_typec_port_probe()
+Message-ID: <ZmFqWxqOsd6FxD3l@kuha.fi.intel.com>
+References: <889729ac-3fc5-4666-b9f5-ce6e588a341a@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8Axw8TjaWFmGaIWAA--.45782S2
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+In-Reply-To: <889729ac-3fc5-4666-b9f5-ce6e588a341a@web.de>
 
-Currently features defined in cpucfg CPUCFG_KVM_FEATURE comes from
-kvm kernel mode only. Some features are defined in user space VMM,
-however KVM module does not know. Here interface is added to update
-register CPUCFG_KVM_FEATURE from user space, only bit 24 - 31 is valid.
+On Wed, Jun 05, 2024 at 07:11:04PM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 5 Jun 2024 18:56:19 +0200
+> 
+> Scope-based resource management became supported also for another
+> programming interface by contributions of Jonathan Cameron on 2024-02-17.
+> See also the commit 59ed5e2d505bf5f9b4af64d0021cd0c96aec1f7c ("device
+> property: Add cleanup.h based fwnode_handle_put() scope based cleanup.").
+> 
+> * Thus use the attribute “__free(fwnode_handle)”.
+> 
+> * Reduce the scope for the local variable “fwnode”.
+> 
+> Fixes: fe6d8a9c8e64 ("usb: typec: anx7411: Add Analogix PD ANX7411 support")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Feature KVM_LOONGARCH_VCPU_FEAT_VIRT_EXTIOI is added from user mdoe.
-FEAT_VIRT_EXTIOI is virt EXTIOI extension which can route interrupt
-to 256 VCPUs rather than 4 CPUs like real hw.
+Was the fwnode leaked, or why else is this a "fix"? It's not clear
+from the commit message. In any case:
 
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
----
- arch/loongarch/include/asm/kvm_host.h  |  4 +++
- arch/loongarch/include/asm/loongarch.h |  5 ++++
- arch/loongarch/include/uapi/asm/kvm.h  |  2 ++
- arch/loongarch/kvm/exit.c              |  1 +
- arch/loongarch/kvm/vcpu.c              | 36 +++++++++++++++++++++++---
- 5 files changed, 44 insertions(+), 4 deletions(-)
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
-index 88023ab59486..8fa50d757247 100644
---- a/arch/loongarch/include/asm/kvm_host.h
-+++ b/arch/loongarch/include/asm/kvm_host.h
-@@ -135,6 +135,9 @@ enum emulation_result {
- #define KVM_LARCH_HWCSR_USABLE	(0x1 << 4)
- #define KVM_LARCH_LBT		(0x1 << 5)
- 
-+#define KVM_LOONGARCH_USR_FEAT_MASK			\
-+	BIT(KVM_LOONGARCH_VCPU_FEAT_VIRT_EXTIOI)
-+
- struct kvm_vcpu_arch {
- 	/*
- 	 * Switch pointer-to-function type to unsigned long
-@@ -210,6 +213,7 @@ struct kvm_vcpu_arch {
- 		u64 last_steal;
- 		struct gfn_to_hva_cache cache;
- 	} st;
-+	unsigned int usr_features;
- };
- 
- static inline unsigned long readl_sw_gcsr(struct loongarch_csrs *csr, int reg)
-diff --git a/arch/loongarch/include/asm/loongarch.h b/arch/loongarch/include/asm/loongarch.h
-index 7a4633ef284b..4d9837512c19 100644
---- a/arch/loongarch/include/asm/loongarch.h
-+++ b/arch/loongarch/include/asm/loongarch.h
-@@ -167,9 +167,14 @@
- 
- #define CPUCFG_KVM_SIG			(CPUCFG_KVM_BASE + 0)
- #define  KVM_SIGNATURE			"KVM\0"
-+/*
-+ * BIT 24 - 31 is features configurable by user space vmm
-+ */
- #define CPUCFG_KVM_FEATURE		(CPUCFG_KVM_BASE + 4)
- #define  KVM_FEATURE_IPI		BIT(1)
- #define  KVM_FEATURE_STEAL_TIME		BIT(2)
-+/* With VIRT_EXTIOI feature, interrupt can route to 256 VCPUs */
-+#define  KVM_FEATURE_VIRT_EXTIOI	BIT(24)
- 
- #ifndef __ASSEMBLY__
- 
-diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/include/uapi/asm/kvm.h
-index ed12e509815c..dd141259de48 100644
---- a/arch/loongarch/include/uapi/asm/kvm.h
-+++ b/arch/loongarch/include/uapi/asm/kvm.h
-@@ -99,6 +99,8 @@ struct kvm_fpu {
- 
- /* Device Control API on vcpu fd */
- #define KVM_LOONGARCH_VCPU_CPUCFG	0
-+/* For CPUCFG_KVM_FEATURE register */
-+#define  KVM_LOONGARCH_VCPU_FEAT_VIRT_EXTIOI	24
- #define KVM_LOONGARCH_VCPU_PVTIME_CTRL	1
- #define  KVM_LOONGARCH_VCPU_PVTIME_GPA	0
- 
-diff --git a/arch/loongarch/kvm/exit.c b/arch/loongarch/kvm/exit.c
-index e1bd81d27fd8..ab2dcc76784a 100644
---- a/arch/loongarch/kvm/exit.c
-+++ b/arch/loongarch/kvm/exit.c
-@@ -53,6 +53,7 @@ static int kvm_emu_cpucfg(struct kvm_vcpu *vcpu, larch_inst inst)
- 		ret = KVM_FEATURE_IPI;
- 		if (sched_info_on())
- 			ret |= KVM_FEATURE_STEAL_TIME;
-+		ret |= vcpu->arch.usr_features;
- 		vcpu->arch.gprs[rd] = ret;
- 		break;
- 	default:
-diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
-index 3783151fde32..26f2b22b6a62 100644
---- a/arch/loongarch/kvm/vcpu.c
-+++ b/arch/loongarch/kvm/vcpu.c
-@@ -832,6 +832,8 @@ static int kvm_loongarch_cpucfg_has_attr(struct kvm_vcpu *vcpu,
- 	switch (attr->attr) {
- 	case 2:
- 		return 0;
-+	case CPUCFG_KVM_FEATURE:
-+		return 0;
- 	default:
- 		return -ENXIO;
- 	}
-@@ -865,9 +867,18 @@ static int kvm_loongarch_get_cpucfg_attr(struct kvm_vcpu *vcpu,
- 	uint64_t val;
- 	uint64_t __user *uaddr = (uint64_t __user *)attr->addr;
- 
--	ret = _kvm_get_cpucfg_mask(attr->attr, &val);
--	if (ret)
--		return ret;
-+	switch (attr->attr) {
-+	case 0 ... (KVM_MAX_CPUCFG_REGS - 1):
-+		ret = _kvm_get_cpucfg_mask(attr->attr, &val);
-+		if (ret)
-+			return ret;
-+		break;
-+	case CPUCFG_KVM_FEATURE:
-+		val = vcpu->arch.usr_features & KVM_LOONGARCH_USR_FEAT_MASK;
-+		break;
-+	default:
-+		return -ENXIO;
-+	}
- 
- 	put_user(val, uaddr);
- 
-@@ -896,7 +907,24 @@ static int kvm_loongarch_vcpu_get_attr(struct kvm_vcpu *vcpu,
- static int kvm_loongarch_cpucfg_set_attr(struct kvm_vcpu *vcpu,
- 					 struct kvm_device_attr *attr)
- {
--	return -ENXIO;
-+	u64 __user *user = (u64 __user *)attr->addr;
-+	u64 val, valid_flags;
-+
-+	switch (attr->attr) {
-+	case CPUCFG_KVM_FEATURE:
-+		if (get_user(val, user))
-+			return -EFAULT;
-+
-+		valid_flags = KVM_LOONGARCH_USR_FEAT_MASK;
-+		if (val & ~valid_flags)
-+			return -EINVAL;
-+
-+		vcpu->arch.usr_features |= val;
-+		return 0;
-+
-+	default:
-+		return -ENXIO;
-+	}
- }
- 
- static int kvm_loongarch_vcpu_set_attr(struct kvm_vcpu *vcpu,
+> ---
+>  drivers/usb/typec/anx7411.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/anx7411.c b/drivers/usb/typec/anx7411.c
+> index b12a07edc71b..9fb52f233a30 100644
+> --- a/drivers/usb/typec/anx7411.c
+> +++ b/drivers/usb/typec/anx7411.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/of_graph.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/pm_runtime.h>
+> +#include <linux/property.h>
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/slab.h>
+>  #include <linux/types.h>
+> @@ -1142,11 +1143,11 @@ static int anx7411_typec_port_probe(struct anx7411_data *ctx,
+>  {
+>  	struct typec_capability *cap = &ctx->typec.caps;
+>  	struct typec_params *typecp = &ctx->typec;
+> -	struct fwnode_handle *fwnode;
+>  	const char *buf;
+>  	int ret, i;
+> 
+> -	fwnode = device_get_named_child_node(dev, "connector");
+> +	struct fwnode_handle *fwnode __free(fwnode_handle)
+> +				     = device_get_named_child_node(dev, "connector");
+>  	if (!fwnode)
+>  		return -EINVAL;
+> 
+> @@ -1237,7 +1238,7 @@ static int anx7411_typec_port_probe(struct anx7411_data *ctx,
+>  		typecp->caps_flags |= HAS_SINK_WATT;
+>  	}
+> 
+> -	cap->fwnode = fwnode;
+> +	cap->fwnode = no_free_ptr(fwnode);
+> 
+>  	ctx->typec.role_sw = usb_role_switch_get(dev);
+>  	if (IS_ERR(ctx->typec.role_sw)) {
+> --
+> 2.45.1
 
-base-commit: 2df0193e62cf887f373995fb8a91068562784adc
 -- 
-2.39.3
-
+heikki
 
