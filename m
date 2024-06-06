@@ -1,118 +1,155 @@
-Return-Path: <linux-kernel+bounces-204223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AC7A8FE5FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:02:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE2D48FE5FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C07D51F23F6C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:02:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A071F25CF1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A120E195815;
-	Thu,  6 Jun 2024 12:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F0C195973;
+	Thu,  6 Jun 2024 12:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="djxxwVVI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NG8m01Ef"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C7A1953B5
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2967194AE0
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717675339; cv=none; b=l8V34g75fY6e7vBkz3uWgDly0xwsbQQJi9svhc5IAMNQ7zOWCeq1K2hFwWAnqjauQCAE0xvWHY8H3xl7w9XIOAKfzsAgizRmdMpzWAavzy+A4X+UuHgMgFslYpuVobNMkGb0NNw0+q5QaYxxHmxQzJX6+iAmMZdhLKtOZWAsdmY=
+	t=1717675324; cv=none; b=QBNduZHJFn34Y+Hzw9eRe8XSiEgBgL/qkyft5lZVZWHrPKvY8tGbSv/fnDQEhoohIcRTgcLYAAThYj7ehUbxjl/tA8M4XRWHfo2RW09jO41ygUm2f9hM8bNmYxWvfhX0/59hOk8nu5qtaYeVS1JF6/SjRAouBtAOCzhJza3YfpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717675339; c=relaxed/simple;
-	bh=4bUJYb2nU/Uqt7KYEGDi/qFb4SSmyf/7m+E23emU67Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gbe7v0pKVHLMcHZEXAV/93GxPdIqAbUfz+c5galIa9o2VQJ+MgfhyDiR+djCTQXH526VZI0XpPufXv8/BJoCMC+4iMIpeLcgwQVGW8l4B4zKMEX+Rq0MXc+J5xOc0LbC8XPnp+29aEMtnETl7gZ5Az0t1uTdEYb7+XYVHxlxns8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=djxxwVVI; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1717675324; c=relaxed/simple;
+	bh=XzA9XcS9J8/JaJGhY85xTyvzVAiJwfKIIBi3J6rxAwM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=oSOX1XuGSIDs+z1jUIvzlXymCjxqMt1u9btTv8HR6s9v1nonMFhAEA/VYuBLA44miQAqQ+ey0BltIaECiRMLOJR5Dal/sAbtZIZyJ1lpYD4efeqjiYWAj5rHn0wvkKh8WggY/3c2Y747uKfaycfx4vCNIgv7KKjoZB6JqNahKhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NG8m01Ef; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717675336;
+	s=mimecast20190719; t=1717675321;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XWWTK5qhVcanDQ3qGq7g2oah+h7PvOaUzbsjJCySE6U=;
-	b=djxxwVVIa78SaPeREWZMX4uCQq4nnr7NuXCVmPDsjI0GIVvl+BpLH70fYrQoiTKoOZPgKW
-	5Py2Oqt1/YtUBkQzbJN9XA8hgVyhN1nuMdPbrVcAUouYTPRmMIeKs3xdDocnKffwm+Aiyy
-	MTD0S2Th+5hZBn+xGZHtsBjiqZEwFLI=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=o1PVj6wl0RhMQ9aVu/kpZquF9TBmMzt7pDp7sPNrIU4=;
+	b=NG8m01EfkrXJkJGwgDbOjTdlf4hxxSxa9y8ubtHu/+BShqnf0n4BsSXvfUNrkzGI1uC1kg
+	iKqVUe3AmZpbH3D0TdclIGcpE71t1GWWeswoNLw9GYUOG9oo4lzbTGtlw5wVKX+W+FqQml
+	jZ1tetsFdVDT4OjaKZLc9S3bskTfDpE=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-452-0yHxYiYcN1akpk4CRgImlw-1; Thu, 06 Jun 2024 08:02:11 -0400
-X-MC-Unique: 0yHxYiYcN1akpk4CRgImlw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7F13F811E8E;
-	Thu,  6 Jun 2024 12:02:10 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.3])
-	by smtp.corp.redhat.com (Postfix) with SMTP id B61B91C0005E;
-	Thu,  6 Jun 2024 12:02:07 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu,  6 Jun 2024 14:00:41 +0200 (CEST)
-Date: Thu, 6 Jun 2024 14:00:38 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dave Hansen <dave@sr71.net>, Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uros Bizjak <ubizjak@gmail.com>
-Subject: Re: [PATCH 3/3, v4] x86/fpu: Remove init_task FPU state
- dependencies, add debugging warning for PF_KTHREAD tasks
-Message-ID: <20240606120038.GB22450@redhat.com>
-References: <20240605083557.2051480-1-mingo@kernel.org>
- <20240605083557.2051480-4-mingo@kernel.org>
- <20240605141733.GC25006@redhat.com>
- <CAHk-=wi4773Ls82kqVbPmM1deghS2NXkHNCCzWPc270kcByXPA@mail.gmail.com>
- <20240605162610.GF25006@redhat.com>
- <CAHk-=wg2zJgy69j8n6C9T4YARkxcJ09SFkpMiqrCqhChf0s3NQ@mail.gmail.com>
- <ZmFziN0i10sILaIo@gmail.com>
+ us-mta-615-f3vg4GAvOyWFdGgouxqVIw-1; Thu, 06 Jun 2024 08:01:59 -0400
+X-MC-Unique: f3vg4GAvOyWFdGgouxqVIw-1
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2eaa74bfc18so6433831fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 05:01:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717675317; x=1718280117;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o1PVj6wl0RhMQ9aVu/kpZquF9TBmMzt7pDp7sPNrIU4=;
+        b=kE2dds+c5nwPiTNa7j6MAzm5mI/cq/UNcsICjkGvGojdCKjY3+5CB9k1n8nfV8jWgF
+         LNCT83lG8KFKiXOqxYMNTsMCSUMX/cWxt0aHEN/VTilga92rf1CpW5ocTw3sqUj18bkr
+         xc4/X3Fv6o6f7Qd4feUIstWOfDiEwN9hq3zlp8TAwZX1kI8K6X/QSBTDAw0DcEQIjgz0
+         L4jehk0sfHAjvTHEQRaZqzeqkJDE6ZrUboklcAE7BvS1yEh58P3+556uXwMDUqZe1tmI
+         HBXarwVlZQIOaYcYfgztrPCxzHS5SYNoiN6KAt1iZQa86PJ6JUaK0sgLn9Ru51JegQLc
+         m5CA==
+X-Forwarded-Encrypted: i=1; AJvYcCVphjjO0DsqzCRBV+M20UVEMas5q+WuTs9xhqJII6cE52NgRzU2QYDpXwPMSU9G9up7YmdXPz/6BSj+dG/uIPWxyaupcmCsM6UQL2bH
+X-Gm-Message-State: AOJu0YxBpf0cBr2FqiHJWrlES5BgOzAtgw1ri0dzzSgExgm22ESm9Hk7
+	07u/zVsXjwTc9Vb9aY51+Xo3wTXX5n7mzy9S1q0TDKJTTaKkcpktTi43zCm1JcQbcl8qjfQtfOv
+	tX7pXrhST2wXMZhuvrRK7MGlqKPGWd0iMY7eiE6TuJSRxkVVxkbmmdLgB+wswVyTu930TSw==
+X-Received: by 2002:a2e:6804:0:b0:2d6:dba1:6d37 with SMTP id 38308e7fff4ca-2eac79c3350mr33445091fa.11.1717675317621;
+        Thu, 06 Jun 2024 05:01:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH2WITeGFROobQCTrCntY3Omdm5T0qGOCAwnVA1tvshsd8kmSQuctYu9lHc2+ZfKmWSvWTupQ==
+X-Received: by 2002:a2e:6804:0:b0:2d6:dba1:6d37 with SMTP id 38308e7fff4ca-2eac79c3350mr33444781fa.11.1717675317163;
+        Thu, 06 Jun 2024 05:01:57 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aadf9d296sm980451a12.7.2024.06.06.05.01.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 05:01:56 -0700 (PDT)
+Message-ID: <9d821cea-507f-4674-809c-a4640119c435@redhat.com>
+Date: Thu, 6 Jun 2024 14:01:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmFziN0i10sILaIo@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+User-Agent: Mozilla Thunderbird
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: Hung tasks due to a AB-BA deadlock between the leds_list_lock
+ rwsem and the rtnl mutex
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
+ Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+ Linux LEDs <linux-leds@vger.kernel.org>,
+ Heiner Kallweit <hkallweit1@gmail.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, johanneswueller@gmail.com,
+ "Russell King (Oracle)" <linux@armlinux.org.uk>,
+ Genes Lists <lists@sapience.com>
+References: <9d189ec329cfe68ed68699f314e191a10d4b5eda.camel@sapience.com>
+ <15a0bbd24cd01bd0b60b7047958a2e3ab556ea6f.camel@sapience.com>
+ <ZliHhebSGQYZ/0S0@shell.armlinux.org.uk>
+ <42d498fc-c95b-4441-b81a-aee4237d1c0d@leemhuis.info>
+ <618601d8-f82a-402f-bf7f-831671d3d83f@redhat.com>
+ <01fc2e30-eafe-495c-a62d-402903fd3e2a@lunn.ch>
+Content-Language: en-US, nl
+In-Reply-To: <01fc2e30-eafe-495c-a62d-402903fd3e2a@lunn.ch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 06/06, Ingo Molnar wrote:
->
-> I changed the debug check to test for PF_KTHREAD, and to return NULL:
->
-> +#ifdef CONFIG_X86_DEBUG_FPU
-> +struct fpu *x86_task_fpu(struct task_struct *task)
-> +{
-> +	if (WARN_ON_ONCE(task->flags & PF_KTHREAD))
-> +		return NULL;
-> +
-> +	return (void *)task + sizeof(*task);
-> +}
-> +#endif
+Hi all,
 
-How many users enable CONFIG_X86_DEBUG_FPU? Perhaps it makes sense
-to check PF_KTHREAD unconditionally for the start, them add
-if (IS_ENABLED(X86_DEBUG_FPU)). But I won't insist.
+On 5/31/24 2:54 PM, Andrew Lunn wrote:
+>> I actually have been looking at a ledtrig-netdev lockdep warning yesterday
+>> which I believe is the same thing. I'll include the lockdep trace below.
+>>
+>> According to lockdep there indeed is a ABBA (ish) cyclic deadlock with
+>> the rtnl mutex vs led-triggers related locks. I believe that this problem
+>> may be a pre-existing problem but this now actually gets hit in kernels >=
+>> 6.9 because of commit 66601a29bb23 ("leds: class: If no default trigger is
+>> given, make hw_control trigger the default trigger"). Before that commit
+>> the "netdev" trigger would not be bound / set as phy LEDs trigger by default.
+>>
+>> +Cc Heiner Kallweit who authored that commit.
+>>
+>> The netdev trigger typically is not needed because the PHY LEDs are typically
+>> under hw-control and the netdev trigger even tries to leave things that way
+>> so setting it as the active trigger for the LED class device is basically
+>> a no-op. I guess the goal of that commit is correctly have the triggers
+>> file content reflect that the LED is controlled by a netdev and to allow
+>> changing the hw-control mode without the user first needing to set netdev
+>> as trigger before being able to change the mode.
+> 
+> It was not the intention that this triggers is loaded for all
+> systems.
+
+<snip>
+
+> Reverting this patch does seem like a good way forward, but i would
+> also like to give Heiner a little bit of time to see if he has a quick
+> real fix.
+
+So it has been almost a week and no reply from Heiner. Since this is
+causing real issues for users out there I think a revert of 66601a29bb23
+should be submitted to Linus and then backported to the stable kernels.
+to fix the immediate issue at hand.
+
+Once the underlying locking issue which is the real root cause here
+is fixed then we can reconsider re-applying 66601a29bb23.
+
+Regards,
+
+Hans
 
 
-For the record, I think we can later change this code to check
 
-	task->flags & (PF_KTHREAD | PF_USER_WORKER)
 
-but I guess this needs some (simple) changes in the ptrace/coredump
-paths.
-
-Oleg.
 
 
