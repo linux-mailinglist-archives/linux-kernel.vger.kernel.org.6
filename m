@@ -1,129 +1,82 @@
-Return-Path: <linux-kernel+bounces-204158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 507A38FE4EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:12:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1114C8FE4E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:10:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC1551F23BDB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:12:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A644E287213
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727F91953A4;
-	Thu,  6 Jun 2024 11:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3541953A4;
+	Thu,  6 Jun 2024 11:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="a74KY71h"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Ywq89jY4"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D5D1870;
-	Thu,  6 Jun 2024 11:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3AE17E443
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 11:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717672325; cv=none; b=bd+rtl8jvStjvW2MW4DlW3b/PsV3YHLLo4/8qJ2vE5sV7nuD7C1xkNdMOgwxEVBpOp6udNKIeWhRqaohF7bbNtBvCqE324OcDrgzR0Yle+GqGZdvj3p/4FhdbGXFdpVMhV+Qs1surCF93E+KLVaJ6jdEo4dC0rEf7lshrXzZ7N0=
+	t=1717672221; cv=none; b=gcS7ciM0AtsfuMf/LPhd7EIcRceAjChq0c1d2SyZuWmZ0hsYE6jsIlNszg31tf7vXjpXXlCjMcp0xIfwzlb92g/Y/IBy9RpoZphLygq8NRqIAIfYtxsYA6KYviYNxXigMcMvtvvtIhR9HZjYIsKOalW9ayrXxR5IBTY8YphpPk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717672325; c=relaxed/simple;
-	bh=xkdQLPprwdUTlYoPH0s01hFUilN1bSyGE+rTC2MwfuQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Gbf4scbMZMNzxA+K6GggpKSyZj7Nmmtm5K1TsONenRA5KX5MSasw9WouEDtMndENafDx9Z/Y67ECQZl+Dc6aM5eFFO65HGbGDHPaZeUElKfcKhHv47K9tdkmY3t9hWAF7RtmsNtNOg+ZEgv+P1UBMa+bHtoDEU9JJL839aDSmRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=a74KY71h; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id 25990100003;
-	Thu,  6 Jun 2024 14:11:43 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1717672303; bh=vVnZyr+Byd5IfmgdNdhgTlifSMH3+cJybEmR3qMbFvM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=a74KY71hgI+3T00Tg8UGiiq6XsAW2C7aRMPQe/Jz2QqMquL8glRnElIe9XXpYu418
-	 hf6G3bFaNnv77YZxubbWhCcNbDE5E08Nvyha6yDPyasrBIW3nh3nMrc9z4m7G62E0n
-	 IOgCxnhTma+plhiq4Mw9+wfQvn2JbpEEnQDh6QDpKdQcpCz7ORfVKfBgl8mF6dyWbV
-	 wY4TYuTFQHVSaskRHKjVbygOWck7Fk3aYyTOS4ConnUgVlK4X2MaaogczHE/G6+s6H
-	 gK32mQrUDQhIWLX0Qf+Ct5XWN+98XIpkVryf4lFtAFUs1Wbk1H4kw4Vrcacnwfq3vk
-	 gTe9ST+JxB1fw==
-Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Thu,  6 Jun 2024 14:10:23 +0300 (MSK)
-Received: from localhost.localdomain (172.17.215.6) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 6 Jun 2024
- 14:10:03 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: Weiyi Lu <weiyi.lu@mediatek.com>, <stable@vger.kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, Sasha Levin <sashal@kernel.org>, AngeloGioacchino
- Del Regno <angelogioacchino.delregno@collabora.com>, Markus
- Schneider-Pargmann <msp@baylibre.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH 5.10/5.15/6.1] clk: mediatek: Add memory allocation fail handling in clk_mt2712_top_init_early()
-Date: Thu, 6 Jun 2024 14:09:55 +0300
-Message-ID: <20240606110955.35313-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1717672221; c=relaxed/simple;
+	bh=rKEbTCfYp0j2M89c2TXzm3ycbGwz3PSSgkyTb6IxAI8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a+HXjEFgeBPehdfKr6S2aGw0OGM1mLvNd+t7hOOevaEcuzIumy8qoY5olCmWPO3JgFyM8Dg1VVHOX7X1z3vso0iisKgPb2xHwRJF2PqjYusuKCjITXIw2vr9wREQb0D9jwgfsTIx5GQnJCQom/mtfjxyTQKUd5tYIIkMqEGnzUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Ywq89jY4; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a69607c6ccaso86011866b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 04:10:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1717672215; x=1718277015; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rKEbTCfYp0j2M89c2TXzm3ycbGwz3PSSgkyTb6IxAI8=;
+        b=Ywq89jY4ESan3QWUa19aIcqPxHPKLdpAukDsSsPWksHangGmAn67ZTKokh0QXssai6
+         z8ZrJzYH0UoH9IoA8Vnovor65d5hBfON9BRwd21+pVsSJgtX5MBv1+vNT1wgnHZ2wRCP
+         y9ztb45iGh0PgElbhCFvHz8gcOpdzVBQuPUUo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717672215; x=1718277015;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rKEbTCfYp0j2M89c2TXzm3ycbGwz3PSSgkyTb6IxAI8=;
+        b=UuYIVyrf7uSLcmGwlMgXNw1OblOK7NhFihGQeXzijbYwHC8nvzGzuCMnMqfUHEq6ZE
+         rBTjU8isRItLQVaA3d0L8qNAT/Gi8u6NR+fjLGF38LB0hWaSrGdLbE/7gZm4KngQjEK4
+         ejTv0faZjfz3MSwEOV0rrWP4Dx9bCyhwslqne+WB0pVzWWfQWb/UFPzeXEfCLLWxBcsQ
+         Qtb900C1JtI7JOAoJ/UjHTCKPAoZIyK2F2B/A6OJLuH+WMOuM3JKKfZTXCLPZ6cbu/j6
+         0W3USzzBFJkM0Iyo4s4ydMbWw0W7iRmkJbQZAnLqTANyGEiwSNbaFTmj+yUfHiuG6Sov
+         /T7A==
+X-Forwarded-Encrypted: i=1; AJvYcCWWr8cFJOkfkR4OCenAYRZlnb/8uuK1t/jGqWQQVLUwX0ODXYGS/Vogj64Dx8ywZ3MLituX5gjubIn+2y17ZlGS8v1k55Qc+9IAa+PN
+X-Gm-Message-State: AOJu0YwgjkAISdn7pjRk5He9TpYgmRC5W19Kj7cyUbL8XilGJDHqnrz+
+	0boNPVeQPlOcX+Ccw/N1Gy9YX2h+Mc9mBi1D+BRaB4t8JRCZTkl7M84Mk2uUs91qLjqEqj/FIR6
+	JdjrzI6qyuWlvkhrpc9JX7dxms+UnW9UAsIyXgPxQuYhF8YlD/ik=
+X-Google-Smtp-Source: AGHT+IGm0e86tHnJ7ewyM+gpz++EnmWLvK7sCcAhY7kwEQzDofLD+hRf1Kki/LQoR67pw9uJmopjsOBrGPC3K9mep4M=
+X-Received: by 2002:a17:906:5846:b0:a6c:7181:500d with SMTP id
+ a640c23a62f3a-a6c7181530amr190193166b.45.1717672215456; Thu, 06 Jun 2024
+ 04:10:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185766 [Jun 06 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;mx1.t-argos.ru.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;t-argos.ru:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/06/06 10:23:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/06/06 06:58:00 #25471362
-X-KSMG-AntiVirus-Status: Clean, skipped
+References: <000000000000c27c85061828ca26@google.com>
+In-Reply-To: <000000000000c27c85061828ca26@google.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 6 Jun 2024 13:10:04 +0200
+Message-ID: <CAJfpegutqoJxR303yk_8pkvGidEztteGhTpk2uhf-oC4AXdZRA@mail.gmail.com>
+Subject: Re: [syzbot] [fuse?] WARNING in fuse_request_end
+To: syzbot <syzbot+da4ed53f6a834e1bf57f@syzkaller.appspotmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-No upstream commit exists for this commit.
-
-The issue was introduced with commit e2f744a82d72 ("clk: mediatek:
-Add MT2712 clock support")
-
-In case of memory allocation fail in clk_mt2712_top_init_early()
-'top_clk_data' will be set to NULL and later dereferenced without check.
-Fix this bug by adding NULL-return check.
-
-Upstream branch code has been significantly refactored and can't be
-backported directly.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
----
- drivers/clk/mediatek/clk-mt2712.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/clk/mediatek/clk-mt2712.c b/drivers/clk/mediatek/clk-mt2712.c
-index a0f0c9ed48d1..1830bae661dc 100644
---- a/drivers/clk/mediatek/clk-mt2712.c
-+++ b/drivers/clk/mediatek/clk-mt2712.c
-@@ -1277,6 +1277,11 @@ static void clk_mt2712_top_init_early(struct device_node *node)
- 
- 	if (!top_clk_data) {
- 		top_clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
-+		if (!top_clk_data) {
-+			pr_err("%s(): could not register clock provider: %d\n",
-+				__func__, -ENOMEM);
-+			return;
-+		}
- 
- 		for (i = 0; i < CLK_TOP_NR_CLK; i++)
- 			top_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
--- 
-2.30.2
-
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+246014876d78
 
