@@ -1,192 +1,169 @@
-Return-Path: <linux-kernel+bounces-204876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11438FF496
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:24:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D188FF497
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:25:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 406931F264EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:24:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36710B2A0B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501A91993A4;
-	Thu,  6 Jun 2024 18:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E2D19939C;
+	Thu,  6 Jun 2024 18:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="k63ORTmo"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2086.outbound.protection.outlook.com [40.107.100.86])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WTb7nrrf"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9608219753C;
-	Thu,  6 Jun 2024 18:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717698276; cv=fail; b=I9bJ07uf5p6DG+jwF1UbeSQCx39jh3nNOyn5o1lpFvTfHtba14Zj1Ep5QyyUt3uKfuSOTDWa/CssJ04RnNpN/fOljH8YRDV7c/Oe0u0/gDta96e6KWrKQ8K1JKNeU4kRH/1dLzSdYho5B+yTfFguY8rLdptf2Kg4w9hh6A8gCyM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717698276; c=relaxed/simple;
-	bh=y1fNpj6A1eb89ZMVSegQdyAcNoSiAXraLfC5lcdy0pE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Ul9sVA8cz+sc7R+c4TW34ZJyXBqPSYk5A2RG00xF5f0gNlvJpkUWrv8Pyj2MfxvaEowkPxCfqvt2Dn87Fz8P76Z7z6FwdUAWqEvIGgCM7CSXYxJnfmEjBi3HrMhTEDJf9JKGaEZHHY9DcHAwhhhMq9Gt82yrlVF31g3PhuyFyP8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=k63ORTmo; arc=fail smtp.client-ip=40.107.100.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=G8CNiatn2siq0bGiVYM2tdYHwhCTkJED8Kkb8HR4XO7GWShk3ieFfGDgQdT68kDj6UC1Vn4maB6FWUohsOznkT1h1b3pBn1yh7lqGdViHxUuIbdJqcRg73xlS2QxgIB+nG+gt9IQgHuopO5pz9GHVMJS0KKu6o4aP6UrYOrjXo6QWSB3kBkTvvYlUL+EoyG9GVwvQk3MtvL6uDR1XFbJhozqatn1AnzzjJQ05LIcaD9mEraSN4oD5XorTUW2mMqsiEKPnoBOzffHOO9SZ0Tj2X4F9aTC7IMb+0xwPhnN9TqeaWM/MhOtHuNObZTC9SS8mFhsnxDbw17yy7ss4rlPOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vA2mB+t9ZmNNRqZYi/dBaEd0oBbdpS5JN9UWnf4QGvg=;
- b=RvcpWbVsvSj5L3qI9d65eO8UtYBd6S7y0hsvUjrnRA2IOYZq4FmXjnPSlg8Nr2KtsdmPKNvHILfw769/Jbc8ST1ikUY0+8ptwHDSkJTSAxKOj15hlQvnmVY4L1W4uskQJdSSoiL50FXU2FxsvPEtyFpljsoBnwEwGExWDI8f9frzOtgPneAHW8m2vm/BhIpYfjlEQ9c+sGs3vuIMyyEO2vx3KyACp3BExIZIR6Y9i3FQK4uiVzTYuK/+pG5/OMFzmVbFxrrRdzpGiQ563GGlRx0UA+EEq6vsh3M9T3h2ar2GygIrKnlJrBYtPxYLbHFYOYwGJ4aN9SwLGU5By2MSyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vA2mB+t9ZmNNRqZYi/dBaEd0oBbdpS5JN9UWnf4QGvg=;
- b=k63ORTmo39eGpNdtkCpbQbeHDDWvt5mcpUuafN+vpRFjK+tJyXvU7B9bVKXIRjEUIHUVDuZ+vVBJn/ebTs0jvjZ7p6It8g/y+15ENGay14wvyUOEaNlJusyqUS24l3q2nOocPkZjunO9XFlqN1ne94knkWh9d8BqP2u4CImPBw4wCyyrdGlWxo6/6in+jJiYQtQRsAvNTEiQUxiH/3guE91Vxzi4sg4w3DDlYhfZ5eCtFe+2Wnfwq61c0NSj7Lpl5azVSRv0TcW5tMTmIVjRRQZZcPSeHg4CYKwisuQWNEFpM6dTmbeduYkMgacgP3EnbOG16cOlXuvWPdkeFiTW8w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by MW4PR12MB5642.namprd12.prod.outlook.com (2603:10b6:303:187::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.33; Thu, 6 Jun
- 2024 18:24:25 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7633.033; Thu, 6 Jun 2024
- 18:24:25 +0000
-Date: Thu, 6 Jun 2024 15:24:23 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: "Tian, Kevin" <kevin.tian@intel.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"Liu, Yi L" <yi.l.liu@intel.com>,
-	"eric.auger@redhat.com" <eric.auger@redhat.com>,
-	"vasant.hegde@amd.com" <vasant.hegde@amd.com>,
-	"jon.grimm@amd.com" <jon.grimm@amd.com>,
-	"santosh.shukla@amd.com" <santosh.shukla@amd.com>,
-	"Dhaval.Giani@amd.com" <Dhaval.Giani@amd.com>,
-	"shameerali.kolothum.thodi@huawei.com" <shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [PATCH RFCv1 08/14] iommufd: Add IOMMU_VIOMMU_SET_DEV_ID ioctl
-Message-ID: <20240606182423.GF19897@nvidia.com>
-References: <BN9PR11MB52762A0BC67B64D4171480C78CF52@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20240524131912.GT20229@nvidia.com>
- <BN9PR11MB5276BBD592021507C3A0EBB38CF02@BN9PR11MB5276.namprd11.prod.outlook.com>
- <ZlY886FT3HHLC8Cf@nvidia.com>
- <BN9PR11MB52762EA9B444DA71F551C3868CF22@BN9PR11MB5276.namprd11.prod.outlook.com>
- <ZlafEktUu5znDsNt@Asurada-Nvidia>
- <BN9PR11MB5276AC43120376A2502D3D148CF32@BN9PR11MB5276.namprd11.prod.outlook.com>
- <ZlfPPwsnY6P4SoGF@Asurada-Nvidia>
- <ZluWXYQjroz0fqqn@nvidia.com>
- <Zl03rsgZl/msa3I+@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zl03rsgZl/msa3I+@nvidia.com>
-X-ClientProxiedBy: MN2PR13CA0005.namprd13.prod.outlook.com
- (2603:10b6:208:160::18) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788FA1991D3
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 18:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717698291; cv=none; b=Ei2JWEcbUroCF3VEf0Yj6fR+Ug4pjwoDeZtqR9+KliGh0ip1LMGzgqOWzi1zFGD88Fz2hA1wLegqB18H8SWAoT20dzDia9z/ArWkuIqLTDbdBWDQEJE2hY8+H2rdpkpEGnA0sDkoNMjbaRMVaaWrYOG54nUMJIOTbPeauf2OKhQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717698291; c=relaxed/simple;
+	bh=nFNwZjwWrvyOyNkS5EL5RDmYDz9n7HpbU1l2B+KUFYE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=MeNQkTSa8n5/WOpVHMzJMn2KrD2/ITlx9OpMaInNiP4h012m7L5NICyMzGBW8iTFCiGr8podPwuYY5tXWNN89Uvy4PqGIKyNun8+/71YRnMUmVBRTFbTe1Hc+oITo+o/EKSErHq1HtffHXVU+rs+1/k79qn+rQTnWQ8/40sN9pE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WTb7nrrf; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717698281;
+	bh=nFNwZjwWrvyOyNkS5EL5RDmYDz9n7HpbU1l2B+KUFYE=;
+	h=Date:To:Cc:From:Subject:From;
+	b=WTb7nrrfCwV39z+ie8e6bJ+jHuahgNpiGfFJiABJr4+k7uCTqsju2A4GBf9J686TS
+	 0J88eez0lCP8rGdK6tjumsFlEIaQvXUH/Tn7C92Ja+oI455n7/LNP9RlxrvMRdFqJW
+	 UmCosevWz8dZ+PImqOgeNnwGRCR/LaQ2D4MJYBtpHov81FBsPbh6CGvY6BBXQak4S+
+	 myHeGSyuSc7BuJTLL6c+YVLtJINNLpaIDtCI4klUQhJJmBJX3YoUSrN893fwiFZmff
+	 ZUssZNl9Hf2FSOjzRsrsVidnrhkTI4fdCCV8nI3OIxv5vPqQMgc0Nnb9QotfGw+SAt
+	 VOdrrR/oGtuWg==
+Received: from [100.118.151.62] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: padovan)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 5B2CA37820A9;
+	Thu,  6 Jun 2024 18:24:40 +0000 (UTC)
+Message-ID: <5b603b8f-c9b2-4148-7212-dd69a3fdf506@collabora.com>
+Date: Thu, 6 Jun 2024 15:24:38 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|MW4PR12MB5642:EE_
-X-MS-Office365-Filtering-Correlation-Id: 091f5287-2078-465f-4329-08dc8655e4ca
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|376005|1800799015|366007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?RU/P8SaB+QiW/9Ljmo0SYohzzdUYWCSH70rThxKHytOgUHYAmVC6Y9GpiOYH?=
- =?us-ascii?Q?un49rkAlNcufly1XK05TKb57jS/SJctIC7YyPldMIAZvhvNKx4xmN6Vv3ltR?=
- =?us-ascii?Q?LKw4bI1Bg4Xa1UvFx5TbInKh9axCb0XA/lVIWL2CgJyWNSTaJ1G0rtHVYaJt?=
- =?us-ascii?Q?qxGxkVOfEsTDviX2fNKsJHR/63H/NzyluX6XzmuEMt60NrC26hQ9OGjhdeWk?=
- =?us-ascii?Q?puLYhF+FvR+3Xbe/BTWq9Id5R3F9D0wkrFL5BCQcncXeZtWLdX7qA7yVOchI?=
- =?us-ascii?Q?MGxtIA+orHiksdAbka/a/eXpTyEyCIlAdN60wTz/jt8gxycnOwjiwxCDzqwV?=
- =?us-ascii?Q?xPeTVS7DjzIV0Y9z4Etg9BkKtYw0+I9HKEdzL0CYLlwVdVRMgiF+MCpdPnrK?=
- =?us-ascii?Q?+/T3grQtYpc9RlnJBtsMgV5VIN9Babbxsu0SNME2jeUs3grIts//GAgoI2vS?=
- =?us-ascii?Q?c/iEEMbudQn+of0e3NMc2Sufe8vbZKqdvoH1JyySLyVUpInUPdig7U/1MCPa?=
- =?us-ascii?Q?aP702/EP2XA0Ag7ltQJKPxM4BVQLMeczoi+NZmSracN2HvhImwY12GY1qz0l?=
- =?us-ascii?Q?WwCHpKMTZnHZgLm6RZSFr99jFKZlf31rQXIUnU50CS0J4BokP8UrwXM8wlGj?=
- =?us-ascii?Q?WWkuY4j3q/jAzu9WFF2yrv7Yz7tihvFWXC+gwPNSgEV1ZfT0kz/N7Vv0uoQJ?=
- =?us-ascii?Q?jViezUW7rahIn4S0CZYb4q/KI0OZ1kbVb5jNbc/t/KjtpwDhh6RnyM/RRIlS?=
- =?us-ascii?Q?l+yal48wA1bhBMMTNIUs61w5rlbyV5M9WoBAdVoxkRUiGL1nfVXykMSaeMx0?=
- =?us-ascii?Q?PnzvyrrsYwt4yrc/vN+BFkC5EOn/siMI3bTh4thK9w52CUTl/N5SjzO3l18X?=
- =?us-ascii?Q?UU2g+Mm7n7cMBcmJSBeGoZaBIzw7ETXVxfHq+H87C3PWuv3fBmGl7h58DXHr?=
- =?us-ascii?Q?aFiqLPNDvCBFjmXDA1obsARfv57HnfSIXqsjfoIY+lE1iR/3ZhvZt6NabThZ?=
- =?us-ascii?Q?dqDjv1oeczcIjUxGB80zEtOGBS5QDOEMKHli8/GuEZBINh1QQSEFuwekRbFF?=
- =?us-ascii?Q?x0gXWzaK7eCl1PggM1utUm3e7aAyyT8uIe+otzV5JUGIeN15PWO1880tzPeU?=
- =?us-ascii?Q?F+orP0I2ofb9G2PnRsxAWIVTgKDJ5HVnYrHxUYUwTgixNTZsuBycYs4Ln9O3?=
- =?us-ascii?Q?Z+/HmFIv9zJSQgEoDEJGkLFSz/gHjW6bN9pMkyYkgosvYsCXesq9GAW/jAwF?=
- =?us-ascii?Q?jopuKT4J1bMfHK2dTTMMsriw8PyFXFudA3q7VmYmjJGDttbsI+pbOhr0UpwX?=
- =?us-ascii?Q?jXfNbTqSlYMPjrL3jrPhOU0F?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?lLe35z0ToteTWvINWKN99J1XAWcc462qfwH8w7VT9uOy3nvICkMwussdqM7L?=
- =?us-ascii?Q?MoSoGpchwmO4eVIEE3Ma5R1YZoYZfffclYMzxb0I5LGB5n5orSLiPfiACv/i?=
- =?us-ascii?Q?0FcnqyxemDM0Ij0OU7t/+5el28uoHkBQNoWpcj2XO/iiZ3SiH2FDzl7KIsyN?=
- =?us-ascii?Q?MOMlOU3/hVuIVfHQVgE9qISvRX1mPCrugt0Mox7VLEt5jKg3Yv+1UA/F9IKp?=
- =?us-ascii?Q?ZkdTNf2hVUdTkCoH4IjV2Hq1cBeRE2VZXiHmqee0KLLoaI4Qj+sWaLBASqe0?=
- =?us-ascii?Q?DfsB2AqBPcllDbA8CdE5Kf72iro0euaAHnCmfGjteQ6W+4VeB48PbRsHRfje?=
- =?us-ascii?Q?Pn1REpI3NkRG3B4Az2ot5VzNPoOPsirFLDFmjrSvU0CBLaFnXHbSONfeZ7CP?=
- =?us-ascii?Q?i2LZ5M12Zmkp0QMHWJxvOJppBbGIS5waNMVPYml6ljtsXlB9qXsgrxiuTHXM?=
- =?us-ascii?Q?mJpebCZbL0sDra9Up4MoGmM5nQyp7jGfBFDeK1Egq9gNecpF5D5bu26QfsE2?=
- =?us-ascii?Q?qrhYRvBrvmxU3PrtgMvHqu0h4qI1IcBYoWN+sdNCao+HwB2jqe34NtqIlXJU?=
- =?us-ascii?Q?cVqa+iAuV2HElUBm4oaW4nh8isHpzx6n36uZB2NUMA5WdApZSjUYpdsLJip9?=
- =?us-ascii?Q?iMIIkfNZFfuSgGagDIBpdrBl7rC96jjkgpq+8UHxpxm+CCOWiCTYJ1X7qH1w?=
- =?us-ascii?Q?waSNBdkWfnypLZRLr1TPW3UMQa9khvVhv5S4dC2lJqUJ0gN2mvwCXV+zrgWl?=
- =?us-ascii?Q?KZBaPXuqujlJlnqTR1aplc9k85dpjX4ajm/hMiwzPLqmmI1f7fO2p5ygePg1?=
- =?us-ascii?Q?VfXkeY3MGKRT1tINr54mh/kuhSanrRzQ27POFAbefHTygvUBQyxLTT6hNHLW?=
- =?us-ascii?Q?tEbvPH/KfIoxjGku5AtKm6AO6lXb1CVYLkIqO80j9MZ1SX3Y1vk7f+kAH2fi?=
- =?us-ascii?Q?QWUXiSml12XaIvL0vND+UNHhpkCKr+i1viQx2V3AH2s2ccRX1DDQD1Ios3oq?=
- =?us-ascii?Q?SvbaIcbC5DOAZrRNlHNibySppeHB9oRSNWbftuQMX2ZoVfs4egnv7ORdQjLQ?=
- =?us-ascii?Q?pONeWALg7YAn6sONCuZxKnUtE7JGrBOr4tTc8UMD0nPLgdvMTZm3jbEdj8Or?=
- =?us-ascii?Q?wXBt8I7ke4B9f3x9y2KAJ1nHTvqPcey8dqGBoaunJ/sABWGpn6IuVWlBW1IG?=
- =?us-ascii?Q?UC+5WBE12bnW3IcU6/WlEtkP2JR85+AkRnppA3+eormGek+A7sVPEk0bPnho?=
- =?us-ascii?Q?lqdnV7F0rvL6tyDlo3H0O7WRIon9bfODX/IFDYo1AturXkQPiMgywo3HcWf3?=
- =?us-ascii?Q?PciJAA1KiL8no4w8bGgF5ZXZH2QNi/6rQGJnUog8NZIbaFXCQbuIkrKh+VAM?=
- =?us-ascii?Q?sZBRqQCZUiionC9q7yj3Q3kxSmA3ua9iHjkjXOi5AJhmhkJ92BrcLZrbSKWq?=
- =?us-ascii?Q?SVtcg8L3StyWNK7TS1Rmro3Cj60e3Y5tUMaFw3kGk/a347fWykEYjZAj2Wma?=
- =?us-ascii?Q?1xevSnaXg/AUvLlNpuFWZ++NyO1YGiEDY0pH89nr60TqtnmF1IZAc88Fv4Qq?=
- =?us-ascii?Q?z8qSj617ZQoZ86c4r55oTo6tkTl6ADQeMFXI9ecb?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 091f5287-2078-465f-4329-08dc8655e4ca
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 18:24:24.9780
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: h909WFd7VqtfoPzpt3P/tPNX5VdclkZYeeVOUQ5V3SHwKkpAH7OZbryfhuuyIUsz
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB5642
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Content-Language: en-US
+To: "kernelci@lists.linux.dev" <kernelci@lists.linux.dev>
+Cc: "automated-testing@lists.yoctoproject.org"
+ <automated-testing@lists.yoctoproject.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Gustavo Padovan <gus@collabora.com>
+Subject: KernelCI switch to new testing architecture - plan
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jun 02, 2024 at 08:25:34PM -0700, Nicolin Chen wrote:
+Hello everyone,
 
-> > I understand the appeal of doing this has been to minimize qemu
-> > changes in its ACPI parts if we tackle that instead maybe we should
-> > just not implement viommu to multiple piommu. It is somewhat
-> > complicated.
-> 
-> Would you please clarify that suggestion "not implement viommu
-> to multiple piommu"?
-> 
-> For regular nesting (SMMU), we are still doing one vSMMU in the
-> VMM, though VCMDQ case would be an exception....
+As most of you know, the KernelCI community developed a new testing 
+architecture.
+It is now time to move over to it. In this message, we want to share 
+some details about
+the upcoming movements, especially about the shutdown of the existing 
+legacy system.
 
-This is what I mean, always do multiple vSMMU if there are multiple
-physical pSMMUs. Don't replicate any virtual commands across pSMMUs.
+In our latest blog post[1], we shared an update about what's coming. 
+ From a strategic
+point of view, not much has changed since that blog post. We made 
+progress on the
+implementations, making the systems more stable, adding more tests and 
+labs and
+refining the data connection with KCIDB.
 
-Jason
+As shared at that time, the primary focus in the new testing 
+architecture is on quality
+rather than quantity. We want high quality test results that will reduce 
+the community's
+workload, and not waste their time with low-quality test results. **As a 
+direct
+consequence of our focus on quality, we will not port all tests from 
+legacy KernelCI
+to the new system**. Reach out to us at kernelci@lists.linux.dev, if you 
+want to see
+specific tests ported and we will give you instructions and support on 
+how to do it.
+
+Current status:
+* ready to receive new trees and tests
+* moving existing labs over
+* developing the new Web Dashboard
+
+The new Web Dashboard should be ready in the coming months for basic 
+visualization.
+In the meantime, we have the grafana instance to build boards to 
+visualize test results
+and also some interim tooling that pulls the data from the API and 
+generates reports.
+If you want to bring your tree and tests over and use our tooling to 
+analyze the results,
+we can onboard you while also benefiting from your feedback to evolve 
+our regression
+tracking intelligence.
+
+We will share more information about the transition as the work evolves 
+in the
+coming months. Don't worry!
+
+The target is to shutdown the legacy system around the end of August[2]. 
+Some labs
+will probably disconnect themselves from legacy KernelCI before that. We 
+can not delay
+the shutdown date much as the amount of cloud resources and engineering 
+is a high
+toll to the project.
+
+**If you are depending on legacy KernelCI, please speak up, so we can 
+help you move
+your stuff over to the new system.**
+
+To be clear, the KernelCI project will not maintain 100% compatibility 
+with what was
+provided by its legacy system. As we create a better future for 
+KernelCI, some hard decisions
+had to be taken; not porting all tests and usecases was one of them.
+
+As we leave our legacy behind, a vibrant community has been gathering 
+around KernelCI in
+the past few months, corroborating the new strategic directions we are 
+putting in place for
+the project. Bear with us during this transition and the future will be 
+brighter!
+
+We are happy to hear thoughts and questions from everyone about the 
+transition. We are
+probably forgetting some important details in this message.
+
+Thank you for your continued support and your patience as the KernelCI 
+project goes
+through its biggest change since its inception.
+
+Best Regards,
+
+- Gus
+
+[1] https://kernelci.org/blog/posts/2024/strategic-updates/
+[2] https://github.com/kernelci/kernelci-project/issues/337
+
+-- 
+Gustavo Padovan
+Kernel Lead
+
+Collabora Ltd.
+Platinum Building, St John's Innovation Park
+Cambridge CB4 0DS, UK
+Registered in England & Wales, no. 5513718
+
 
