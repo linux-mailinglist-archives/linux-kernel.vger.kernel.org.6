@@ -1,113 +1,127 @@
-Return-Path: <linux-kernel+bounces-203711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 936BA8FDF5B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:13:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0085C8FDF60
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C04BBB21E26
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:13:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FD4F285081
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4657F13B2BC;
-	Thu,  6 Jun 2024 07:13:48 +0000 (UTC)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A65413C3D7;
+	Thu,  6 Jun 2024 07:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aHR3T4hD"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9723EA72;
-	Thu,  6 Jun 2024 07:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EE53EA72;
+	Thu,  6 Jun 2024 07:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717658027; cv=none; b=h9jjLWy9Sw54RZIphM2cPVv7+UXPDanxDuCoEl/Kz/hWnRumOJUa7PKg/VfiuvouifH2DwGH8eMD1Na1qeXyrYyTQwjNOMQzCPFYLPu7ZHAc4Qi6jfzhBvOS2eqyEpuc5vBh8O4ku0isu+92zATDDaw166XZqYt5zIDWTU6VN3w=
+	t=1717658102; cv=none; b=DlI9qTFRxkquPdE3VZA5dsntuefnxh2frPYiQbv1Vso1cGaZ8ufJIIcYKdrA2YadE9LNcZG16MYEe1m77s7wlQfvRj78EbH2nCumNORN1OFQQnFAkHXcR5wBHjveTxKPB8wOLNAglbZN7U87Gi6UebhNFHtpPhDuk5uwD9RKzkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717658027; c=relaxed/simple;
-	bh=zeU6ieindwFhx65owVU/4wu96d3miDMyrhgkBCEZg4k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jin2gCa5gOQwMfByJ3/qaNCqJncB46Uibmnmb93Vsu0vKGJ+SPH7qOolMKRwwCH/pQcM9Vuc7pJ44SJUzTM8VOFfQVjYnDYO51IoM70CTm0MaR1uhmIjBeTuS3+L35seqpA2xjldqa7D3NFgXS5FVTSmG7JExQ7CLOmWMkSUFME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-62a2424ec39so6499717b3.1;
-        Thu, 06 Jun 2024 00:13:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717658024; x=1718262824;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YC3aEUF0r/ho1aec7nweuE1jEwUeFO57mmlxnzfx9fs=;
-        b=KQaxhf+wMHKnniTFwRX78b4iEgi+2oG+0YLtYYfeaDomOPVjHssBHyZWHkUBQhTV4a
-         4/mJ37mniQSM5cqKhsSfW7rGjb/wMrH4eIBo4ur6fZSZW03Ve5jol6YVhC1lAMUjjFOS
-         dcSh9BsTEps/8mlVznyIVAx+eiJOBUfhpjagA1K5paQHH20Gs+iLONFvdX8iskoB2ihU
-         4F2OIl3k3S37bf9JrIV4b5stf7I0ZeAdZ5o7zAdoTVnOcmLjFDgv8YxYw9WGiFRWnX2m
-         oh2ViR1BxcmAJ2wcTNuU86oDJTnWocamOofDlz8cWhyD74nFdXDjsgYzVPLxsJUoUNHG
-         GPtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0zl8Scdr+zFywUyDwvbGmmlfneF19W46kjufrShr/7yCxlSWHrfq6psoeffz8NmYUAqDEaw0AnT+Tlg3I7FbPlVDzsSvRIAN2iWK9QHerEOdQyPfhmdgPW1pgRNc7bARGhYhu/cpJJRqL3kycyN3pqN1Pn5VlUJ40c4Q4JsOwQesuASljOAF0NqVCkcULHdTYz0Y6vK3aST7xBzxUP6Srug2xtTsFwg==
-X-Gm-Message-State: AOJu0Yxn97PJCOjZbUgGGzQhjYqijQdieF2S8yj8Dk5TpVBbqETZ/MNK
-	rDjBmMiZ1Thn7Z+06kX5HB0eU/0po2IjNOzl6D6eR/M9dFoIURe6dFUAz1jQ
-X-Google-Smtp-Source: AGHT+IGQjIITTAj0p/Vqy5EC4/7eZIl0JsD8xjUbEHKOw6AERoQj1Z4Xli5GNWEVijyh/EjEqB1ILw==
-X-Received: by 2002:a05:690c:242:b0:615:1e68:9080 with SMTP id 00721157ae682-62cbb5050efmr45900877b3.26.1717658023013;
-        Thu, 06 Jun 2024 00:13:43 -0700 (PDT)
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62ccacaddd1sm1655807b3.11.2024.06.06.00.13.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 00:13:42 -0700 (PDT)
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dfa584ea2ffso594077276.1;
-        Thu, 06 Jun 2024 00:13:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVdNO7uwjuOxUpKq0bOGiLjpFQ0D2Gi6lUFQlEXVEIqpwVwEn7S4vP+wdWjnlhOU/M4jsGlzhH2F3h1JdjLl7KgcES2FKYckr4k+EnRwhG48Yb0UPLCOzMV7nuzqfoTB7Lu63nqUVWJaG1MnfWgyd5daVNQP/+beZN476PGqmrsRpxcdFs1k1y3UtV+41a02gCCM+bGLwusPlR9F/8E9DHI6OBSUR77qw==
-X-Received: by 2002:a25:c544:0:b0:df7:955f:9b99 with SMTP id
- 3f1490d57ef6-dfacaced9aamr4723147276.47.1717658021842; Thu, 06 Jun 2024
- 00:13:41 -0700 (PDT)
+	s=arc-20240116; t=1717658102; c=relaxed/simple;
+	bh=yuEfa2UV+chthnn3Iq3uD3lcYGjVSmjvN5Ua5bJVleA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BICVDte3bpQhcnP0MDvg/F2XzcLTqECGjZ2VyMVV2W+BLJ8yOuhDgsXzaTj+GHhHA6VAa5wgaj6khfJ1N2+SRaeX4HB1LgCOi81+t1LarQVnr8OmVJDIHpWqDDrEGtkk2f1HYXS5F+ktV1iaOSlo0rxo0+2HNxKlQT03B8NTAPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aHR3T4hD; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7B94524000C;
+	Thu,  6 Jun 2024 07:14:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1717658092;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wtbh9Y5BhilOkF/Ov75N0g0FuZgE8BmOll+aw1LPV5g=;
+	b=aHR3T4hDEP8oxcmxkYTox0dObRLwyZcs+fahBn8rXTbY59oM2XLPUW9uoDNleMjbfCg4j+
+	mu3oByJSRS1EenKMN7sKE4FDFl5ZANKacfMfWI/lTkfdpcCoga3r1X9kHWSHM5QQF3gebv
+	rhxwFpSSwrRjHyOORqfbHy9vzgJoXDPzUaX5/MBeYu5n5sOnxdVWM2JJwPSN0vklHbjv+b
+	O1CTPUiludohFB/9OBNhSt3z55OaWP7uTYIXOIA//9AvjHLhMJ8gNs4I+VYQfyEKgXWuAK
+	7Y3pWc5NHsT8gyj2B5OE9g2j97vk8ZTIk3AUCFLs7NQYzxh+pkv6JspSHB6WTQ==
+Date: Thu, 6 Jun 2024 09:14:46 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Simon Horman <horms@kernel.org>, Sai Krishna Gajula
+ <saikrishnag@marvell.com>, Thomas Gleixner <tglx@linutronix.de>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Lee Jones <lee@kernel.org>, Arnd Bergmann
+ <arnd@arndb.de>, Horatiu Vultur <horatiu.vultur@microchip.com>,
+ UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Saravana
+ Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Lars Povlsen <lars.povlsen@microchip.com>,
+ Steen Hegelund <Steen.Hegelund@microchip.com>, Daniel Machon
+ <daniel.machon@microchip.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, netdev@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Allan
+ Nielsen <allan.nielsen@microchip.com>, Luca Ceresoli
+ <luca.ceresoli@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 09/19] irqdomain: Add missing parameter descriptions
+ in docs
+Message-ID: <20240606091446.03f262fa@bootlin.com>
+In-Reply-To: <ZmDEVoC9NUh7Gg7k@surfacebook.localdomain>
+References: <20240527161450.326615-1-herve.codina@bootlin.com>
+	<20240527161450.326615-10-herve.codina@bootlin.com>
+	<ZmDEVoC9NUh7Gg7k@surfacebook.localdomain>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530173857.164073-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240530173857.164073-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240604153612.GA839371-robh@kernel.org> <CA+V-a8tWxGBkuOY=G3RaB_0NXS3ShE-nL+5t49=_mJGvo6j6yQ@mail.gmail.com>
-In-Reply-To: <CA+V-a8tWxGBkuOY=G3RaB_0NXS3ShE-nL+5t49=_mJGvo6j6yQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Jun 2024 09:13:29 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWvdvmt42Wy=5Do2MeCRNbLOd2c8Nra2RFQtumnmZod_g@mail.gmail.com>
-Message-ID: <CAMuHMdWvdvmt42Wy=5Do2MeCRNbLOd2c8Nra2RFQtumnmZod_g@mail.gmail.com>
-Subject: Re: [PATCH v3 01/15] dt-bindings: pinctrl: renesas: Document
- RZ/V2H(P) SoC
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Paul Barker <paul.barker.ct@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-Hi Prabhakar,
+Hi Andy,
 
-On Wed, Jun 5, 2024 at 11:39=E2=80=AFAM Lad, Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
-> OK, I will fix the above and send a v6 series.
+On Wed, 5 Jun 2024 23:02:30 +0300
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-Please don't drag it out that long ;-)
-As the rest of the series looks fine, a v4 should be sufficient.
-Actually a v4 of just the first patch would be fine for me, too.
+> Mon, May 27, 2024 at 06:14:36PM +0200, Herve Codina kirjoitti:
+> > During compilation, several warning of the following form were raised:
+> >   Function parameter or struct member 'x' not described in 'yyy'
+> > 
+> > Add the missing function parameter descriptions.  
+> 
+> ...
+> 
+> >  /**
+> >   * irq_domain_translate_onecell() - Generic translate for direct one cell
+> >   * bindings
+> > + * @d:		Interrupt domain involved in the translation
+> > + * @fwspec:	The firmware interrupt specifier to translate
+> > + * @out_hwirq:	Pointer to storage for the hardware interrupt number
+> > + * @out_type:	Pointer to storage for the interrupt type  
+> 
+> (kernel-doc perhaps will complain on something missing here)
+> 
+> >   */
+> >  int irq_domain_translate_onecell(struct irq_domain *d,  
+> 
+> You can go further and run
+> 
+> 	scripts/kernel-doc -v -none -Wall ...
+> 
+> against this file and fix more issues, like I believe in the above excerpt.
+> 
 
-Gr{oetje,eeting}s,
+Yes indeed, I missed the return values.
+Will be updated in the next iteration.
 
-                        Geert
+Best regards,
+Hervé
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
