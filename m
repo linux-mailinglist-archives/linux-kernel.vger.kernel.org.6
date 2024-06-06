@@ -1,139 +1,130 @@
-Return-Path: <linux-kernel+bounces-204853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C0E18FF43C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:04:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A6258FF439
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 327D81C24E96
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:04:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E74A284B1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8461974E7;
-	Thu,  6 Jun 2024 18:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A6119925A;
+	Thu,  6 Jun 2024 18:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mZzKpqVD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FP+oP4FE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14F5199246;
-	Thu,  6 Jun 2024 18:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF0F1991D3
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 18:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717697074; cv=none; b=s1xuDjB5HIxbDN1EyiE1rG0uOYUz0cb6MudJmFNw1X3cjw7fgrz/Wh05l/eK03w8STofF+F3cz4RhX0UYJpJlbLhcrnJN+L9t8btM9vilRH5b6m4CzbQKYsim81q5PBcESr1NYfrG9CE4k1BgkSxaOUpR4Bi6Ph1J0hR7rkO95M=
+	t=1717697061; cv=none; b=BTSMSF7lYJz6XvizdSeoeVJx5/69sjdRUN5bbffnlJmhcno1+oXQo2otRnUGNRnidCiKGohtOSRUb72QbleUG7OQ3Di7pk+d73tcZUdomE21gWcOatUIypZ1b14OCWOTv9S/VcFqHU4kZbfp7FijNXkc8Qc2NfvJMU3eHeaOJes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717697074; c=relaxed/simple;
-	bh=N7urc3PGrVRVyhlP4ECO2cQhX6mwjAHqaA+2X4Nkxno=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cUud3b8UpAzB7VmB+jFF0kRQt2sroz2hs9RvpqyHEVcTG6TncUR2cYTPm4jCMqIf8LUjLM7toTvJpZ1uwYrPqGEJuZRS7Lpju/LKry+EFejf22ajLPY1bBMpWSiNnwdvBRDbmkLpNI+TaiXH+YMW1rhHtnHEQy41avnPF81kVNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mZzKpqVD; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717697073; x=1749233073;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=N7urc3PGrVRVyhlP4ECO2cQhX6mwjAHqaA+2X4Nkxno=;
-  b=mZzKpqVDKEietPZXO0iIp42rsdp1TSRgTuAlzSeG9CQYlv9NyM0S3Ag0
-   ywCQ92CS3D6TJkP8a3897Ec72D1af3VUDw3Kf29KEvr8jrC8OucHRbD4X
-   KjN0gK68QGqW9iGEI/5X/dt88wDEnqr1N2imPzo6erBMy9INMLnaktW6Z
-   g2JTLQvVAQeMXrvLZzdTv66hMgbs786OSaiaPU5vIdpIqYo9+prBRp3XZ
-   1gYFWnKyJU+vhqV6Mn4C6g+C8iDgZhwHOhYUMH2/TZD4433D6eGJ4wV+P
-   3FnA3KqmFaofTeWVMJ+q3Fc50vNEGBmpOb21k4fcBi6HdzDM+Mf8Sjah0
-   w==;
-X-CSE-ConnectionGUID: xf/xh1ygRbSJ4DanRJfXXw==
-X-CSE-MsgGUID: nJT56psGSaOIP6QEeT/t1Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="31883375"
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="31883375"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 11:04:32 -0700
-X-CSE-ConnectionGUID: 7+a/ImkFSuKYq4D81JiMGA==
-X-CSE-MsgGUID: fLEw+7VUQS+oeVZ2UqNCIw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="38170025"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by fmviesa009.fm.intel.com with ESMTP; 06 Jun 2024 11:04:31 -0700
-From: kan.liang@linux.intel.com
-To: acme@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	jolsa@kernel.org,
-	adrian.hunter@intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Kan Liang <kan.liang@linux.intel.com>,
-	"Khalil, Amiri" <amiri.khalil@intel.com>,
-	stable@vger.kernel.org
-Subject: [PATCH V2] perf stat: Fix the hard-coded metrics calculation on the hybrid
-Date: Thu,  6 Jun 2024 11:03:16 -0700
-Message-Id: <20240606180316.4122904-1-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
+	s=arc-20240116; t=1717697061; c=relaxed/simple;
+	bh=da+imw45i6WbUyYnjdn/vso5vMNu8F/aTdzRiRx0Jm8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oTyZfxKEmncPVKqJgAvpoFmdjsfctWFY0+Y1i83i249Jr/iNhsRNnMQLAefjiCivpxpl+4iYm7RfYscZ44+ngHoOOr2KvHmqhxZFZ5eFWFEx0gBoOkIUnz0650ixiGlqJrwRLvgpWaAV/0iDcgM5HcIIKDanZoIz7/12w3FjSnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FP+oP4FE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717697058;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6CO0g1e2iEYIKJ/eo72YLUJTNuT2OqKeA+f4WWAhCUA=;
+	b=FP+oP4FEDgh2HaiiWpZlKv9XuMtjsKEejf3C+FrrL9e1V2x8Qn2j7Tmzy8Vo9NR7nKcwKQ
+	39bbsofuPdJ5uoBmTB4QfUI5ha84g5ATk/1nrrXFlvEdZ59y2xJJJgdSlgfayg5N91NsVF
+	Jck9rfOvqCIn0B0e0e/cMh5igltyoV0=
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
+ [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-210-8ypqWJbzPAWP3SCrROSlnA-1; Thu, 06 Jun 2024 14:04:17 -0400
+X-MC-Unique: 8ypqWJbzPAWP3SCrROSlnA-1
+Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3d1ff776f69so937915b6e.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 11:04:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717697056; x=1718301856;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6CO0g1e2iEYIKJ/eo72YLUJTNuT2OqKeA+f4WWAhCUA=;
+        b=PweA8Ctrx2CefIwnIjnp15XeJRng8IfqMFJi9tMNUtccMNnhs+bF+QTh00I4Uz5cgM
+         9aAWwDiYdrE5ZSR7qpVEF7lWX57yoodu7h/UPLObE1zNWpdzrD6parQl20Y52xvi5r4r
+         PtlVOKRoJw4LBdvmpNof1e6iXDU8XtroI6Gbl4LFi+v2oZ9RpHjHcC+IsPlCYLMDHslo
+         Si4C4piKxayfa+5YMbaCSRebcokjta06X6dgZ7F1GI85hdaRCn+2kwVDkU9x5i7uei3d
+         hkKySsUXZMNavZ7kWZAp6uFlAyO1SmsGYZTrk+rRNs9u5rbMewRmR+cj0TeDob4g9FHR
+         Xewg==
+X-Forwarded-Encrypted: i=1; AJvYcCUV25QHMB3BtlMAjMiVS5LC9TiyVn4e2KeztVk/KxV3D+B2d1gdlNrPC95bXEm6TggBjv0f1gp3aGOxPCiqf5ZV6n+QFxE/yKP0F03C
+X-Gm-Message-State: AOJu0Yz3Xwshj/rtpO/w8SuJHrtpsECB2+YQwC+qhUIKLv9hZEcvtmkx
+	C+9sbG/rxbzBE1nSNLV/YIe44Du41LKYHUtYqC16BLMVPfYIoYQV9adVVV/KRUbgQZAlekeHHGJ
+	4Xaq9sqWI35kLmapH5/rUrtruIsCOjHoqJYtotIyyMwSoy7k08UPPU1fKPt0TSOCotZKkU3QV5F
+	qmyjzIoEDaKx/VOY/PP1+bC0uwa1fmMBwK7UZ0qQQW35fe
+X-Received: by 2002:a05:6808:f01:b0:3c9:c350:bd40 with SMTP id 5614622812f47-3d210c5c58dmr321906b6e.0.1717697055854;
+        Thu, 06 Jun 2024 11:04:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEMNpxDILxVYdYF+MIzB3EnzNYH3beUywsvqC9vv7lHss0Xq69PNun6Ju9dhGLMdY0RV9kmGV1cAXkq3BMPIBY=
+X-Received: by 2002:a05:6808:f01:b0:3c9:c350:bd40 with SMTP id
+ 5614622812f47-3d210c5c58dmr321852b6e.0.1717697055422; Thu, 06 Jun 2024
+ 11:04:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <alpine.LSU.2.21.2405311304250.8344@pobox.suse.cz> <20240606135348.4708-1-rysulliv@redhat.com>
+In-Reply-To: <20240606135348.4708-1-rysulliv@redhat.com>
+From: Joel Savitz <jsavitz@redhat.com>
+Date: Thu, 6 Jun 2024 14:03:59 -0400
+Message-ID: <CAL1p7m7oHwX_OqyUiXqKh=x24d9b9x9gqNA6YEec6s58adAE0A@mail.gmail.com>
+Subject: Re: [PATCH] selftests/livepatch: define max test-syscall processes
+To: Ryan Sullivan <rysulliv@redhat.com>
+Cc: live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mpdesouza@suse.com, jpoimboe@kernel.org, 
+	jikos@kernel.org, mbenes@suse.cz, pmladek@suse.com, joe.lawrence@redhat.com, 
+	shuah@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Kan Liang <kan.liang@linux.intel.com>
-
-The hard-coded metrics is wrongly calculated on the hybrid machine.
-
-$ perf stat -e cycles,instructions -a sleep 1
-
- Performance counter stats for 'system wide':
-
-        18,205,487      cpu_atom/cycles/
-         9,733,603      cpu_core/cycles/
-         9,423,111      cpu_atom/instructions/     #  0.52  insn per cycle
-         4,268,965      cpu_core/instructions/     #  0.23  insn per cycle
-
-The insn per cycle for cpu_core should be 4,268,965 / 9,733,603 = 0.44.
-
-When finding the metric events, the find_stat() doesn't take the PMU
-type into account. The cpu_atom/cycles/ is wrongly used to calculate
-the IPC of the cpu_core.
-
-In the hard-coded metrics, the events from a different PMU are only
-SW_CPU_CLOCK and SW_TASK_CLOCK. They both have the stat type,
-STAT_NSECS. Except the SW CLOCK events, check the PMU type as well.
-
-Fixes: 0a57b910807a ("perf stat: Use counts rather than saved_value")
-Reported-by: "Khalil, Amiri" <amiri.khalil@intel.com>
-Reviewed-by: Ian Rogers <irogers@google.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: stable@vger.kernel.org
----
-
-Changes since V1:
-- Don't check the PMU of the SW CLOCK events 
-
- tools/perf/util/stat-shadow.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
-index 3466aa952442..6bb975e46de3 100644
---- a/tools/perf/util/stat-shadow.c
-+++ b/tools/perf/util/stat-shadow.c
-@@ -176,6 +176,13 @@ static double find_stat(const struct evsel *evsel, int aggr_idx, enum stat_type
- 		if (type != evsel__stat_type(cur))
- 			continue;
- 
-+		/*
-+		 * Except the SW CLOCK events,
-+		 * ignore if not the PMU we're looking for.
-+		 */
-+		if ((type != STAT_NSECS) && (evsel->pmu != cur->pmu))
-+			continue;
-+
- 		aggr = &cur->stats->aggr[aggr_idx];
- 		if (type == STAT_NSECS)
- 			return aggr->counts.val;
--- 
-2.35.1
+On Thu, Jun 6, 2024 at 9:54=E2=80=AFAM Ryan Sullivan <rysulliv@redhat.com> =
+wrote:
+>
+> Define a maximum allowable number of pids that can be livepatched in
+> test-syscall.sh as with extremely large machines the output from a
+> large number of processes overflows the dev/kmsg "expect" buffer in
+> the "check_result" function and causes a false error.
+>
+> Reported-by: CKI Project <cki-project@redhat.com>
+> Signed-off-by: Ryan Sullivan <rysulliv@redhat.com>
+> ---
+>  tools/testing/selftests/livepatch/test-syscall.sh | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/livepatch/test-syscall.sh b/tools/te=
+sting/selftests/livepatch/test-syscall.sh
+> index b76a881d4013..289eb7d4c4b3 100755
+> --- a/tools/testing/selftests/livepatch/test-syscall.sh
+> +++ b/tools/testing/selftests/livepatch/test-syscall.sh
+> @@ -15,7 +15,10 @@ setup_config
+>
+>  start_test "patch getpid syscall while being heavily hammered"
+>
+> -for i in $(seq 1 $(getconf _NPROCESSORS_ONLN)); do
+> +NPROC=3D$(getconf _NPROCESSORS_ONLN)
+> +MAXPROC=3D128
+> +
+> +for i in $(seq 1 $(($NPROC < $MAXPROC ? $NPROC : $MAXPROC))); do
+>         ./test_klp-call_getpid &
+>         pids[$i]=3D"$!"
+>  done
+> --
+> 2.44.0
+>
+>
+Acked-by: Joel Savitz <jsavitz@redhat.com>
 
 
