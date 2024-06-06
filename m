@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-204485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7251C8FEFB2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:59:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C6F8FEFB3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:00:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 796B51C22CAB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:59:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 183AF28D6A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52021974FB;
-	Thu,  6 Jun 2024 14:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B3719CCF7;
+	Thu,  6 Jun 2024 14:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IqIQay0Q"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lmbm5cNx"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4B5196C85
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFC91974E1
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717684615; cv=none; b=Fk0VtjG8HFQcM04caLi057WQZOJff4BKkXTQgaO2SA141kcH76cUDMZtYpAJBKncD149bjTZSYLlA8NKA+jNnKvjU95Ipxeg/XuWyin75CSc0I8dqTPA4E4rEapAMtKRrdvGNDokyvqgGUK3Korq+BgrGtFMxKHFNJMG0PHRNjE=
+	t=1717684616; cv=none; b=Q+qTTtmMPP3U0KD0fhdxs8YIYHCbOwEFtNfUZISfT6M0actW2OVtoqZ8uaslajYVcgMqtm5wOXRTKeikhI/3Mey7W2TXGrkUONLJPz4cEa08jUZ04SqHPhbuvz3eKhfPFACypsmJkzHNwkoY6YJgU7q1rcjNwvXCDIqMda+f4tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717684615; c=relaxed/simple;
-	bh=HYbaZvNxTbJKa5f2sNO1p1OoBPjJdhGaLI/bsnkYCJE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AYH3Ar4ISMbeq3P0hZOOxX6wTpt8+tdqXE86LkBIAwLeVl7Ty7OJD89QeQskDkSQ//aqzgmTKkEEC/C1Ft2zGQXJyiCrrriULdNKEXjQA2woantVaUocfScM2xcfQfaS+FufnbXvO3iJSjLmkxLztiI71oOsS/cU4kjDtFdbzEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IqIQay0Q; arc=none smtp.client-ip=209.85.128.42
+	s=arc-20240116; t=1717684616; c=relaxed/simple;
+	bh=9gyIokVicuhxbeWTupBDVovN5lebwLBLjKOrrkbqEoo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bGYPHad/XjaWLshpkHgXwSk9QjVsdc1atSqSopIIeMWdnAENNvJGRMxXXYVVSmOP6kAyzMwE/a/iOA7HNCstEJ2rTtY6CheO4IS4UiiaHsz8u6EuAU2Ge/SD2q1YH3keo51RMiCYo89zVnnaep6fgd0iSG7qo1nNXQeuI4OUac0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lmbm5cNx; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4213b94b8b5so11123485e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 07:36:53 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-421396e3918so13843015e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 07:36:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717684612; x=1718289412; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BEGX/YRM4abY7OJ5gwhaYjtg7TEA+2R15UHkn44kNAM=;
-        b=IqIQay0Q5P7XYVATbQn48HyzwiLUxI9p95BsPhPjHMLptI7Yw1BbAEYl1Gj9yPhR4w
-         oYD/hk42u5R/TTZV4PvsnFUAx1rG/iO+fYDVoopToydKPv+Qnl94VnmG55zpKckNMZh6
-         GdzBi2byTKkSHkPbh8kJYE+JZLU2kuD8OMv+JCTA1+umBKa42Y6S8/dOgNdQFevJAdIi
-         p98zcrwoHRd1EODe9mIKy83b5P1ULS97+3cQh8fFgkcNDSgtcGN6MmJqCQorrh5nQHJm
-         p/5HpG/F4zdtdKf/+fCBoCmiA1wNBwo4qOtjZLszFZ9LGrAtBYMVJXHcdFwDk6K8zogt
-         6v2w==
+        d=linaro.org; s=google; t=1717684613; x=1718289413; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kFnV2pRf1FmcK1ZExXtDIcGcJDZUgCsecv4UoOT/g6I=;
+        b=Lmbm5cNxd+hXB9PBnc20FO7XqEauoTlAyMRlzVlYbrV3n8upXU7cIfJG5lWWiKBzVV
+         TSfy+CoqUJJVoljH0manBtq4eaEeY2enwUCMBzggIHjR6zG4Be+eW4Q4yfmuq0CTP/XJ
+         zMiApBDChc6fDtFQ0N15D6+ULws3DH06UblYR713qDBxJDKG1ZZqUnyfP+koVO7NTVSw
+         dgEi+4Db0dnqazl5EeIQFksMao5HcrOORj42fqphkqwXSQg1QDPyWmkka8B56mnjQus7
+         m7PcU3L41XEVZ1Q/OmFRAK0E/Fwz9zP4fw8R6E8iwwl+CG/OJNkhQCHd5uOHM/hF2ljB
+         9USQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717684612; x=1718289412;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BEGX/YRM4abY7OJ5gwhaYjtg7TEA+2R15UHkn44kNAM=;
-        b=TYlznuVRlvVGMrHoNyQ0KucpJv5RgUr+ztzGUrZkzh9j8RpK5lGxb8Qr59ix+cK3oK
-         1ybFOjjusZ8rKLT6q1+DLnuMesNpcV7hjTtv7azlMa9CMT1L4f3eNjtPmAUClEoASf3C
-         Gk1RyNxRaSLRBZ53C/HXj6Ht6SLjdyBG8jBDNmUOnJVwWFKmuhNLUSaSozGKnjK6DRgY
-         e38VROVDQjbHoodhis894ifSzpO0SQMuhl0FqWq5MAYUHzN7VhAkSeX2Hn+9MNPoYYkE
-         8oXMarzoO5GO7e/mDYNdeyaAtMpwhgTgKRI6apHEwKW8L+V3xaBqKFUDFkcGvMfLZ8zq
-         0yJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjTWkXfAtz8rfdum2l+zh+ley5S4i8dtub8IobfxXjgTIQDdFgxhHQpLCb1XnSoLzFP5lKxzXa+9ceeDBC4aYNRvc1CzerGKk6b3y7
-X-Gm-Message-State: AOJu0YwSVOn2HQX9gvVz4u15ZqLfMJJxAK5WnNqtht21idQXi0/5NFft
-	zSUAjw4205zSjE+5quNtwFR0waG8NS+qRUu8xDwx4X0z6nPdb+XF8kptYe9tSvQ=
-X-Google-Smtp-Source: AGHT+IEzOvqTcqQFVTM/zPrDfgG4Ch2gvXbBob36jdrxqP8DV2hXHRxxXD0hBtX3K+evZarwhWDdKQ==
-X-Received: by 2002:a05:600c:4714:b0:41f:afa6:3d85 with SMTP id 5b1f17b1804b1-421563504aamr51262215e9.31.1717684611808;
-        Thu, 06 Jun 2024 07:36:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717684613; x=1718289413;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kFnV2pRf1FmcK1ZExXtDIcGcJDZUgCsecv4UoOT/g6I=;
+        b=KRWUwv+aZ6QVt+Gw0X4oixBGdl2GRbQaWmYYcv/NBxomch+hbfUqqe9ucxP4tqliCF
+         5qdsxoRFTKl7SDEilBVP+TtcG4vQAqLvCmwlBpp7YNr8RAyB94LsYRJSMMh2odq70+SR
+         XhZDeFEifdNdp9QB3r1SqaWWBquyuJK5ImmpQRKCwFlvW+60S50b95aPh/1n10PEzWj9
+         wllFfIpT9rnrup48tn8vSiIQlc5Uu0CQuqPuulS3wz/LdwV1o6sv9HHTWk8blVcdGxra
+         4SizCNVgcXdrSeWCjUYU/+ioZz23jbWKbkZ9p7EN9JG91V0kG60QDuIz+PI6r6+UTpen
+         00gA==
+X-Forwarded-Encrypted: i=1; AJvYcCXSvfLiRgKWEjlQ4aXK0qs47h7gPCLzOuPcoXRI9ogxCNVe/ys69NoanLpbIkRoor+gfprUOWsQvdBU6yrVHxk8BihXzBhEfgaRf2uU
+X-Gm-Message-State: AOJu0YwRuH3vk/B0AFy5DodiQ13CLu3bdHrv7/mKNRSEeJ2LwJbm8EOf
+	l3kKCzJRyPzi2/g0RLzXJ3c0nyprNWeJsFCEjRLwh7/EIfuiqdwDJHi3qh7mCJY=
+X-Google-Smtp-Source: AGHT+IEl9ZyRAcSIX5UQpPead73VIlTKgZG4JDvlzUJFXbj34q/+RJSy54ckSAI9W87xI9+q/46GXg==
+X-Received: by 2002:a05:600c:138f:b0:421:5604:d1c1 with SMTP id 5b1f17b1804b1-421563503fdmr64858635e9.35.1717684613218;
+        Thu, 06 Jun 2024 07:36:53 -0700 (PDT)
 Received: from krzk-bin.. ([110.93.11.116])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42158148ffasm59540865e9.38.2024.06.06.07.36.50
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42158148ffasm59540865e9.38.2024.06.06.07.36.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 07:36:51 -0700 (PDT)
+        Thu, 06 Jun 2024 07:36:52 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Chanwoo Choi <cw00.choi@samsung.com>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
@@ -82,10 +84,12 @@ To: Chanwoo Choi <cw00.choi@samsung.com>,
 	patches@opensource.cirrus.com,
 	llvm@lists.linux.dev
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 1/3] mfd: max14577: Fix Wvoid-pointer-to-enum-cast warning (again)
-Date: Thu,  6 Jun 2024 16:36:46 +0200
-Message-ID: <20240606143648.152668-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 2/3] mfd: mxs-lradc: Fix Wvoid-pointer-to-enum-cast warning (again)
+Date: Thu,  6 Jun 2024 16:36:47 +0200
+Message-ID: <20240606143648.152668-2-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240606143648.152668-1-krzysztof.kozlowski@linaro.org>
+References: <20240606143648.152668-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,7 +101,7 @@ Content-Transfer-Encoding: 8bit
 'type' is an enum, thus cast of pointer on 64-bit compile test with
 clang and W=1 causes:
 
-  max14577.c:400:23: error: cast to smaller integer type 'enum maxim_device_type' from 'const void *' [-Werror,-Wvoid-pointer-to-enum-cast]
+  mxs-lradc.c:140:15: error: cast to smaller integer type 'enum mxs_lradc_id' from 'const void *' [-Werror,-Wvoid-pointer-to-enum-cast]
 
 Year ago this was solved, although LKML discussion suggested warning is
 not suitable for kernel.  Nothing changed in this regard for a year, so
@@ -107,22 +111,22 @@ Link: https://lore.kernel.org/all/20230814160457.GA2836@dev-arch.thelio-3990X/
 Link: https://lore.kernel.org/all/20230810095849.123321-1-krzysztof.kozlowski@linaro.org/
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/mfd/max14577.c | 2 +-
+ drivers/mfd/mxs-lradc.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/max14577.c b/drivers/mfd/max14577.c
-index 8f7472c76009..67bf4de4c0c1 100644
---- a/drivers/mfd/max14577.c
-+++ b/drivers/mfd/max14577.c
-@@ -397,7 +397,7 @@ static int max14577_i2c_probe(struct i2c_client *i2c)
- 		return ret;
- 	}
+diff --git a/drivers/mfd/mxs-lradc.c b/drivers/mfd/mxs-lradc.c
+index 73893890b50a..b2ebb5433121 100644
+--- a/drivers/mfd/mxs-lradc.c
++++ b/drivers/mfd/mxs-lradc.c
+@@ -137,7 +137,7 @@ static int mxs_lradc_probe(struct platform_device *pdev)
+ 	if (!lradc)
+ 		return -ENOMEM;
  
--	max14577->dev_type = (enum maxim_device_type)i2c_get_match_data(i2c);
-+	max14577->dev_type = (kernel_ulong_t)i2c_get_match_data(i2c);
+-	lradc->soc = (enum mxs_lradc_id)device_get_match_data(&pdev->dev);
++	lradc->soc = (kernel_ulong_t)device_get_match_data(&pdev->dev);
  
- 	max14577_print_dev_type(max14577);
- 
+ 	lradc->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(lradc->clk)) {
 -- 
 2.43.0
 
