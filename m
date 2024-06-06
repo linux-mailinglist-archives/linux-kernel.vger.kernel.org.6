@@ -1,88 +1,79 @@
-Return-Path: <linux-kernel+bounces-203887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA278FE1A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:54:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC21C8FE1AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:54:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA2FD1C22FA2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:54:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F645285712
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8AB146D53;
-	Thu,  6 Jun 2024 08:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4984913D8AE;
+	Thu,  6 Jun 2024 08:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iHH342ED"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="brmyF0bd"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3819F145B13;
-	Thu,  6 Jun 2024 08:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC9113A259
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717663900; cv=none; b=uIJofzXkK4Q22cdqGM+4ujUFXjB0oMKceG9PTlObik6KDQCxwWY5ketKGIutv68lWpIYl20/KNHOyzK/Eo63wS5ckzdRHvNyFdj7txlEh7oOE5W0kciHe8RB29cR2C9A7W4v2ezPPcl8GNUMdfYjE1XNaTpEQzZLXQDGelNNz4U=
+	t=1717663941; cv=none; b=q8W/bQ3HreuCuvMQJKqa0MeeU+zfgoRzO+qDzatb3PDy2JiWGmbSjMnkEQHT+y0iaeQNx3zqSBeGgx5kl0BC6WegN/GN6pIPHl9xZdvpkDb1pb+D0zvflN47spmsLRfp4HvL2jsB098Gz1T+wiHHV6H73lXJV9AlRShWq0uCODk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717663900; c=relaxed/simple;
-	bh=olMsTt0E07IExOiEWWxYo5VlwenVYpNVSmvwdO7uYe8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LPDKuFK6CnRggRWSeiIXAVvTyOE05a7u3fPhP6KnTWHWWM+bQy+CPmO8pMul0sSMcK8temLFifBJbWNi6/z/PuiQJGQmPlPztEe8Wdw/9gQr0NJmLh+D+5DgxQouN6UUBuAZ7tT8HwsVyo+hnVDlHn2aQsrm/ZP6inedmGvrp9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iHH342ED; arc=none smtp.client-ip=209.85.221.41
+	s=arc-20240116; t=1717663941; c=relaxed/simple;
+	bh=sB9OPYz17fodfyyWPlp7gGc+2LZTdi+aFKX3ww6shyQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OHj4XTu1+ZoalWqkT2BWp7IWZcsjOA24fG3pHtgfxCSRe2PXaxIyqng1ndcYbyZksGlCVpYrLtfgsia6/2WCt5xYz/YbOp7k2hiqL4WYm+oddoO+SHQzoyqoRQnXzJUmGjX2RbQ8lEukXbNHmpUaCZzOEFdJQcKheXJ65cDZYnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=brmyF0bd; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-35b6467754cso483549f8f.3;
-        Thu, 06 Jun 2024 01:51:39 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7025c5e6b94so573155b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 01:52:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717663898; x=1718268698; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1717663939; x=1718268739; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1mllGj07TyExdbGEWAEU/QQgVzOqr2piCK4whCFAxbs=;
-        b=iHH342ED33f1VOrWDeEwrO7VSl+c6V2qq5y7LRIA0SRnuuMPH6R+19E++QcvfgHtQf
-         N4qga3KklXymk7RFGMEBzIs53/iF7bxNMglyEhnMFculywKQgvWUykS4djQSzzrnE/bL
-         r8guSGZhg1QJdZwqL4zqnZ+FOeQWmF1YxgntySyxD4hW6e2DP4EN8dTFSBxVzfSnHh7E
-         xl1ScBlXXCm1CmoFxgn0Zd7q/RLAdDtQZznO87EqsKMEgz6b3CVTbnI6Xa1i582UEscV
-         4SrU24JkUUs9VDiDetIhfyASIvScnSXhctoLNS5g8Q+z3dKNzxNYgpedwtoLsJj8PNiU
-         Tdig==
+        bh=QNZl1fm5lZ6xU+lYt20e3pUCTVWLs0P5EsahCrj4FTs=;
+        b=brmyF0bdVWKv5mDiAU9borwDfTUhdrVfj7w9mzGJsIcVPD2rPjuYXt2OuUE9cGqN/r
+         Hzq2UbsEJ25Dzmu421BaiYM8enD7ki1I98pcVxblLrW1zAyUAVZ2GA0KiO/8I/qjKcuH
+         cy0gdsmCW7admFSbbu30/0zmAydD45OpZ3jncNT9k5cGl6chHxivxj+ZL7Fz+2rrVnnj
+         9j16VpNM6mZpnZiTGi2HF6JRflx01dvn5sQ14i5/wS547yTpLZfMnnUFNA9bTxsPYr18
+         br3qQ/J+Q3LqVtfVmkjh/htji2Zdax1GIJa/kizLuHZf/K0pEfif87cUkKLWj5tcOFyq
+         Fe5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717663898; x=1718268698;
+        d=1e100.net; s=20230601; t=1717663939; x=1718268739;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=1mllGj07TyExdbGEWAEU/QQgVzOqr2piCK4whCFAxbs=;
-        b=HIazSisR91MAGKA2riVxcvMvDlKq8YyQ6fZU7b9kibY/vpWUeMQhpHaACwDHh1dmPY
-         Go/hWo8hoWcuyEZl3A3TDxCvXIn+jdj3IAWQb5jWT/XylhQTQJGshdmqcu5stRHz2Mrx
-         frv7MUc0YQbBXG1VykMJgE/sV3VPBqUNe7SPvMsVgVcS3Bdlf7gk7/E91GPp/iDZQAvH
-         tPTI+w1lvy2APlNglla2EH00z/ANX+DWFXgrD0Y4AgE/U1Dkxwaq3EcoetChNSM6xEX2
-         vRbRXbq4+eNfvko2wItozY/3dKi3bdzgkl/huhSjj9N92R2kuCBY0/skUIp09mtX7Q8I
-         c6Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxyToCaoyNZ/a6sjNzQVGfXn6xw+HtX7dh3aRMO4E/A1NtL6hXTcRZuW+oo27iY/6pcpX5rFx+2Z9Pexreys9susXFUEUqp20UKhF4LUjM+fycS+3fgnr+sM0mjy9vu29Z8TXGjD3Ljai++91eUIXuxZd+UeQiC9KMO6PYss3nBFmkT8o=
-X-Gm-Message-State: AOJu0Yx52ejlXtWlveVMtbOT60FkT+8JshNRH1iFeIeUFaRc7IbGhDMv
-	YuDXak6eQv03L1pSSZgacff2dMVhsUBL6iG5KRRTr7IwebXRk5K8
-X-Google-Smtp-Source: AGHT+IGtbmw8e09ZrB/ElqmFff5B2nsA8J/S0oplHnyKX/IDSc903euWdyLnHYpsrkdkNdDc6PzMMQ==
-X-Received: by 2002:a5d:49c5:0:b0:354:c934:efa1 with SMTP id ffacd0b85a97d-35e8ef888camr3319737f8f.56.1717663897283;
-        Thu, 06 Jun 2024 01:51:37 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d69c68sm986772f8f.61.2024.06.06.01.51.36
+        bh=QNZl1fm5lZ6xU+lYt20e3pUCTVWLs0P5EsahCrj4FTs=;
+        b=O6XBtNnJiOjXTzaPLqeqvGrwR3Qz2IxKN331zYQ0y6hoMQgAfFgtjA9kcNz6lgcf3V
+         D1aSPZ6sMExag9ibdJUw0i5GL25BGhHxFBEPL7nHhdiqgv80XHq6FEqjzXLERndum5u+
+         LB4O6oQwhvGSNKGz2cKAmB6vrBhTltzErAb1P2iU5B4SIHinDBjUZQ6stxxLMyvrfzfE
+         aAsIsFM6b+76a1VdIwhiU0AkcAWaXqsBYDQsr8Iyx8b+539ZIx57J14jEyz3pGI8E7le
+         HL5ipXIPdGCz0BkPQ8BK/sBu0bTOdVXEqGlkgshuUi48Lea8KP2sgOXGBpVgkbZskbXa
+         gk7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXJWGu5ekbjVGf21RKGYvAloMkRn6npAqabJ6Hd9a/LqkxU+3gg0ckt3c89ivDOFIg+ytXLZ2BeV2xKsbSO959z01ylHmwLHv+vRvAc
+X-Gm-Message-State: AOJu0YwUvpQ6IVNusQVRZdyCSQIlpKWrdETgZWaE6g91ucK/Ugvpgu8M
+	HAstmp72IoONylgcWQvv3L98RyEXlHgc1OIlb9LDZCVZNs+jX1o/
+X-Google-Smtp-Source: AGHT+IEcuTK1oA/a/mv6glrur8w2uorsffQeDphZCcgDGHk5GkZaEIYsf8IcWwA3HPqNE3bJ6ZjvbA==
+X-Received: by 2002:a05:6a20:564e:b0:1af:a6bb:45c5 with SMTP id adf61e73a8af0-1b2b6fe3ad3mr3773872637.30.1717663939535;
+        Thu, 06 Jun 2024 01:52:19 -0700 (PDT)
+Received: from localhost (97.64.23.41.16clouds.com. [97.64.23.41])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd4db3aasm692595b3a.155.2024.06.06.01.52.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 01:51:36 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v4] dt-bindings: pinctrl: renesas: Document RZ/V2H(P) SoC
-Date: Thu,  6 Jun 2024 09:51:33 +0100
-Message-Id: <20240606085133.632307-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.34.1
+        Thu, 06 Jun 2024 01:52:19 -0700 (PDT)
+From: Wenchao Hao <haowenchao22@gmail.com>
+To: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	linux-kernel@vger.kernel.org
+Cc: Wenchao Hao <haowenchao22@gmail.com>,
+	Audra Mitchell <audra@redhat.com>
+Subject: [PATCH 1/2] workqueue: Increase worker desc's length to 32
+Date: Thu,  6 Jun 2024 16:52:15 +0800
+Message-Id: <20240606085216.3475033-1-haowenchao22@gmail.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,146 +82,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Commit 31c89007285d ("workqueue.c: Increase workqueue name length")
+increased WQ_NAME_LEN from 24 to 32, but forget to increase
+WORKER_DESC_LEN, which would cause truncation when setting kworker's
+desc from workqueue_struct's name, process_one_work() for example.
 
-Add documentation for the pin controller found on the Renesas RZ/V2H(P)
-(R9A09G057) SoC. The RZ/V2H PFC varies slightly compared to the RZ/G2L
-family:
-- Additional bits need to be set during pinmuxing.
-- The GPIO pin count is different.
+Fixes: 31c89007285d ("workqueue.c: Increase workqueue name length")
 
-Hence, a SoC-specific compatible string, 'renesas,r9a09g057-pinctrl', is
-added for the RZ/V2H(P) SoC.
-
-Also, add the 'renesas,output-impedance' property. The drive strength
-setting on RZ/V2H(P) depends on the different power rails coming out from
-the PMIC (connected via I2C). These power rails (required for drive
-strength) can be 1.2V, 1.8V, or 3.3V.
-
-Pins are grouped into 4 groups:
-
-Group 1: Impedance
-- 150/75/38/25 ohms (at 3.3V)
-- 130/65/33/22 ohms (at 1.8V)
-
-Group 2: Impedance
-- 50/40/33/25 ohms (at 1.8V)
-
-Group 3: Impedance
-- 150/75/37.5/25 ohms (at 3.3V)
-- 130/65/33/22 ohms (at 1.8V)
-
-Group 4: Impedance
-- 110/55/30/20 ohms (at 1.8V)
-- 150/75/38/25 ohms (at 1.2V)
-
-The 'renesas,output-impedance' property, as documented, can be
-[0, 1, 2, 3], these correspond to register bit values that can
-be set in the PFC_IOLH_mn register, which adjusts the drive
-strength value and is pin-dependent.
-
-As power rail information may not be available very early in the boot
-process, the 'renesas,output-impedance' property is added instead of
-reusing the 'output-impedance-ohms' property.
-
-Also, allow bias-disable, bias-pull-down and bias-pull-up properties
-as these can be used to configure the pins.
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
+CC: Audra Mitchell <audra@redhat.com>
 ---
-Sending just the binding patch of series [0] as reset of the patches have
-been Reviewed.
+ include/linux/workqueue.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[0] https://patchwork.kernel.org/project/linux-renesas-soc/cover/20240530173857.164073-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
-
-v3->v4
-- Added a conditional schema for ensuring the reset length
-  is 2 for RZ/V2H and 3 otherwise
-- Updated description for renesas,output-impedance property
-- Dropped '|'
-
-v2->v3
-- Updated description for renesas,output-impedance property
-- Updated commit description
-
-RFC->v2
-- Renamed renesas-rzv2h,output-impedance -> renesas,output-impedance
-- Updated values for renesas,output-impedance
-- Added bias properties
----
- .../pinctrl/renesas,rzg2l-pinctrl.yaml        | 37 +++++++++++++++++--
- 1 file changed, 33 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
-index 881e992adca3..56d90c8e1fa3 100644
---- a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
-@@ -26,6 +26,7 @@ properties:
-               - renesas,r9a07g043-pinctrl # RZ/G2UL{Type-1,Type-2} and RZ/Five
-               - renesas,r9a07g044-pinctrl # RZ/G2{L,LC}
-               - renesas,r9a08g045-pinctrl # RZ/G3S
-+              - renesas,r9a09g057-pinctrl # RZ/V2H(P)
+diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
+index fb3993894536..d9968bfc8eac 100644
+--- a/include/linux/workqueue.h
++++ b/include/linux/workqueue.h
+@@ -95,7 +95,7 @@ enum wq_misc_consts {
+ 	WORK_BUSY_RUNNING	= 1 << 1,
  
-       - items:
-           - enum:
-@@ -66,10 +67,14 @@ properties:
-     maxItems: 1
+ 	/* maximum string length for set_worker_desc() */
+-	WORKER_DESC_LEN		= 24,
++	WORKER_DESC_LEN		= 32,
+ };
  
-   resets:
--    items:
--      - description: GPIO_RSTN signal
--      - description: GPIO_PORT_RESETN signal
--      - description: GPIO_SPARE_RESETN signal
-+    oneOf:
-+      - items:
-+          - description: GPIO_RSTN signal
-+          - description: GPIO_PORT_RESETN signal
-+          - description: GPIO_SPARE_RESETN signal
-+      - items:
-+          - description: PFC main reset
-+          - description: Reset for the control register related to WDTUDFCA and WDTUDFFCM pins
- 
- additionalProperties:
-   anyOf:
-@@ -111,6 +116,16 @@ additionalProperties:
-         output-high: true
-         output-low: true
-         line-name: true
-+        bias-disable: true
-+        bias-pull-down: true
-+        bias-pull-up: true
-+        renesas,output-impedance:
-+          description:
-+            Output impedance for pins on the RZ/V2H(P) SoC. The value provided by this
-+            property corresponds to register bit values that can be set in the PFC_IOLH_mn
-+            register, which adjusts the drive strength value and is pin-dependent.
-+          $ref: /schemas/types.yaml#/definitions/uint32
-+          enum: [0, 1, 2, 3]
- 
-     - type: object
-       additionalProperties:
-@@ -119,6 +134,20 @@ additionalProperties:
- allOf:
-   - $ref: pinctrl.yaml#
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,r9a09g057-pinctrl
-+    then:
-+      properties:
-+        resets:
-+          maxItems: 2
-+    else:
-+      properties:
-+        resets:
-+          minItems: 3
-+
- required:
-   - compatible
-   - reg
+ /* Convenience constants - of type 'unsigned long', not 'enum'! */
 -- 
-2.34.1
+2.38.1
 
 
