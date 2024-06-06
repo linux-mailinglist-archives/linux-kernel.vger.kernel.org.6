@@ -1,114 +1,123 @@
-Return-Path: <linux-kernel+bounces-204660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D86D8FF1E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:13:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D18D8FF272
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:26:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A9921C25B5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:13:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97442B2894E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5E0199E9C;
-	Thu,  6 Jun 2024 16:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5ED719A284;
+	Thu,  6 Jun 2024 16:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ndSWqezx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fZP/rKJP"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBCF01993AB;
-	Thu,  6 Jun 2024 16:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3C7197A9E;
+	Thu,  6 Jun 2024 16:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717690245; cv=none; b=Vxx4ZJby7wx14DP1saG576cROlXJICbLliPIScAXfnoERf1UIrq7Uvebck+W6BHdzvaNlMuQ1OAYINftuPygGfizfGIkbnN/HK8qgu3lPW/RwMVqywXVELpBy2hFafJs+L8YEm8tEvwGYz6v4RvdIR3f9+1Q0Ppa6MTc9ACdZ/U=
+	t=1717690266; cv=none; b=K/2Jr2YPUJ3nqRhZQZ5GqOiyz0imFyfmVE8tmsBZXhdAbDHznhNbBPhuIKkf19VEgcUD8WDDMIdT3VABhBSKi7VOHKfL3JOYA7bKEKeecxK8mw7kFrkeEWC/fKZqkIG0bXgFWRoFTcX7oFI2N2i9XU91u7HOygPP2siegpIbxvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717690245; c=relaxed/simple;
-	bh=qv1pFXlcSgwYbKrQz9zbw//dFkZVqhId2iv4MglEBDU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QpRwaB2nG3Pqw9eC3ja8AcMd5CpayHDjTT7RleSFqkbhhYQRhQdE/zQ/Zhgnh+5Si8S9h4d90bpBIg38fI8lndnxRS+Xq4YbagwMdpFyOGN1NUgHtRT+pML+wbiB+OSaXKMpAVx9lCtRryPiT1P8lI4UUDp40xxKUc2qOHTXHIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ndSWqezx; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717690244; x=1749226244;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=qv1pFXlcSgwYbKrQz9zbw//dFkZVqhId2iv4MglEBDU=;
-  b=ndSWqezxjb/BIV+jOmZLHU9R8TSYXdOqbNeA70s+BIKhxw/jKmfP78G4
-   UN7tqe6opWbX3Bmw5SS4kf5m1YTOXkP+16HU/29pWbItbQBCM1pkA6EuX
-   9jXWKmzRIs42aNmjX6MLHtyHKWsoItY88kjvExwqE2bb2bweqZBpQIkcG
-   qHjUgWvJMVNPASnwmsOMHHW9hTVMsUB8CtSFTVNycP1EeB1fkBPD3O2hi
-   mly0oqsv5Un2+JSma1Y7SzVIN/j5C3l8py4Fpl1qcX14oyIko8fClbReM
-   NnRMlqWvy2lq92D/XikxfpLX9+cw1lSCtjQAWa6v1I2TEZtV0TBg063c3
-   A==;
-X-CSE-ConnectionGUID: uMU940J6R02cRdieFPLBlw==
-X-CSE-MsgGUID: n28c+R0TTkKUxDwUNprqvw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="14525107"
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="14525107"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 09:10:44 -0700
-X-CSE-ConnectionGUID: bvhW7S7sQSWtax5dU45RBQ==
-X-CSE-MsgGUID: Tqx9REmTSsaOvs1iEkDMhA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="38695769"
-Received: from djiang5-mobl3.amr.corp.intel.com (HELO [10.125.109.168]) ([10.125.109.168])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 09:10:44 -0700
-Message-ID: <5224f029-c156-4477-9823-54efd434af98@intel.com>
-Date: Thu, 6 Jun 2024 09:10:42 -0700
+	s=arc-20240116; t=1717690266; c=relaxed/simple;
+	bh=jPkUwIUErPfWq/A4tMraeoYy+ph2aOlfxFKOGnXfBKQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OpSXDzURvu/e4CpmfZ9PPLB9Oqjd0I7wdYiyVTeB+efswwfo/bJHdfPVDoaTn8s/r06tiIwhD/RjoDqCEJY1GhGCp1pMb1wDW5Txg6YkJ/tYHRge8QO6TLNxBdVdHte/jXHx8d3RY6PQimiX3PE5v3aL+5PE343L703fyplNd40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fZP/rKJP; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-421396e3918so14944595e9.0;
+        Thu, 06 Jun 2024 09:11:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717690263; x=1718295063; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6gYT/WuDQbbZMRTr/c1VVX3M41AHAGXJIfymJEdz54I=;
+        b=fZP/rKJPcclFUi0LuXG9zGf7+g0fGrpB5Y+zEZg30+5DUIeFeeWAp2QpMGQ1dQgApN
+         PubDStHmIuyMq/o871v9xwYBFkIZoN9J8Ynxhb0dVB+mNocbE3jHzU3IxytUgD5P1gWD
+         tc3IXVq6Ya0YuU4IVZ4MBpC2JBYPvcYoe8azKMR7BPfCmLxgwerfFrgPwbYMJ2rjmyBC
+         q/r/7t81VUqQp2Ba7KnpnouBR+b/csqRjh0dagqlcde9tapr2136LFpyQSKAiJnMXbv2
+         uGwtMGTLzFsZ+5wn0aPZZ6P/AGI5oq4kgcVo+bzQL6bW6ACWXeh5KYuWn5sZ1FwWJh0X
+         LLFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717690263; x=1718295063;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6gYT/WuDQbbZMRTr/c1VVX3M41AHAGXJIfymJEdz54I=;
+        b=JNt3BAPC6bUwnOkoiLzenGMGXWK//1uqoNd+14d01x7S4g7zAFyzrt+LEgvXdqTtex
+         rdBR0K1lziBBnGSG0tBAbdwzvYcy7QaEw+g6SBHMnXZM86YANJheyGHvyp60jx/ZEtZT
+         nT9zMntn//Xk4B9JYSivYRPYzNOVFrDq5fM+IBDT1Tym8tCJIBrwFsyFUmXuvepLT28V
+         a1fqNFOA8Tay3IUlcge2ogHDFlUKLj7EK7MVHjQ1yZhIrHNUYap+Lw5IaJW4WR1LlQd0
+         n8N9PE2RKXxWaLRSzbQz6F7/glyiUOweIZBU0GoktS2BoTkf7ATb3XI1Nfism1tcXomc
+         UXlw==
+X-Forwarded-Encrypted: i=1; AJvYcCXOXqJ6S03s+yaDyza+X6WMGdnzxhSpd7TgwrfouX5VZvzM31XoUN+YuXbOsLXWb5RYgV83zH2HZfS+n4IdD46hbIHDWDN49rHugfqfXH31cXYa/9II6HYcRp/5WyD2FmuyeRz530K+d3kcPK7Vb8/4mHTDiKx3Vax6yMbTTZcoYdSi1A==
+X-Gm-Message-State: AOJu0YxSMVIbC0w7EJUz84pqJqwqco/O1DcclwhsfRQvo1HzJFgdxN+0
+	Je6elyj5FlbeuX+SAKiZKXYs8iOKYhfZjgC2T5ajPwzGLelO/wFE
+X-Google-Smtp-Source: AGHT+IEjmbYzoXyGZuLYy9YXCYIoFgpNnq3YKEnWDVeZM9L/qvjO7hTxRccvi71+ha+k+Rs/FajN8w==
+X-Received: by 2002:a05:600c:4590:b0:41f:e7e6:7f27 with SMTP id 5b1f17b1804b1-42164a2b361mr1517815e9.26.1717690262362;
+        Thu, 06 Jun 2024 09:11:02 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4216055101dsm14229565e9.21.2024.06.06.09.11.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 09:11:01 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] dt-bindings: clock: renesas,rzg2l-cpg: Update description for #reset-cells
+Date: Thu,  6 Jun 2024 17:10:47 +0100
+Message-Id: <20240606161047.663833-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI: NFIT: add missing MODULE_DESCRIPTION() macro
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
-Cc: nvdimm@lists.linux.dev, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20240603-md-drivers-acpi-nfit-v1-1-11a5614a8dbe@quicinc.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20240603-md-drivers-acpi-nfit-v1-1-11a5614a8dbe@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
+For the RZ/G2L and similar SoCs, the reset specifier is the reset number
+and not the module number. Reflect this in the description for the
+'#reset-cells' property.
 
-On 6/3/24 6:30 AM, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/acpi/nfit/nfit.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->  drivers/acpi/nfit/core.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-> index d4595d1985b1..e8520fb8af4f 100644
-> --- a/drivers/acpi/nfit/core.c
-> +++ b/drivers/acpi/nfit/core.c
-> @@ -3531,5 +3531,6 @@ static __exit void nfit_exit(void)
->  
->  module_init(nfit_init);
->  module_exit(nfit_exit);
-> +MODULE_DESCRIPTION("ACPI NVDIMM Firmware Interface Table (NFIT) module");
->  MODULE_LICENSE("GPL v2");
->  MODULE_AUTHOR("Intel Corporation");
-> 
-> ---
-> base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-> change-id: 20240603-md-drivers-acpi-nfit-e032bad0b189
-> 
+diff --git a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
+index 4e3b0c45124a..0440f23da059 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
+@@ -62,7 +62,7 @@ properties:
+ 
+   '#reset-cells':
+     description:
+-      The single reset specifier cell must be the module number, as defined in
++      The single reset specifier cell must be the reset number, as defined in
+       <dt-bindings/clock/r9a0*-cpg.h>.
+     const: 1
+ 
+-- 
+2.34.1
+
 
