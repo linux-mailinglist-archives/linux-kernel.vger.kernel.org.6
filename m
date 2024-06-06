@@ -1,197 +1,154 @@
-Return-Path: <linux-kernel+bounces-204374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E6B8FE7E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:33:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81D218FE7E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:33:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77A22285CD5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:33:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3536B26C69
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D69319598F;
-	Thu,  6 Jun 2024 13:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8EB4195B2D;
+	Thu,  6 Jun 2024 13:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="SC4lwstz"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01olkn2086.outbound.protection.outlook.com [40.92.107.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="phrv5Lvc"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1461D688;
-	Thu,  6 Jun 2024 13:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.107.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717680781; cv=fail; b=cgknajrYqqPYvyUfjpUZIKEktv/7RkIvgh0TDbvtchlW12RvUvIf68MwINqp67EKYkZxKuqI9Ga3XMjj1WR23DA0aHhWqaBqPAJdcI7wL/6yDgmwHt1eofczU+hdAmR15xJE2pL6WH3QnBTiyGz34fmRj8e1HpgScipFlybUv78=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717680781; c=relaxed/simple;
-	bh=yTHdYKUAIdJRQlBO979yaiQ5PF+eMMt3Zypiw12F/Wc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=KBS3PU57yotdfA+kyVdHitKItGjOR02epqZGyTJVqP+gDnnO9+tOHk0r5DN0i50XDJZqyYe6j0/z1vcQc5Dmlz8NHH1Y2aPn9Dfuop5cNcfAabrArpC4+mhxZZGPIys55tXQXHCDbGimLVgvIdJpSUQu2cvN2wSj2D6fQ/Yz4jE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=SC4lwstz; arc=fail smtp.client-ip=40.92.107.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TjlayhP+TJqKDx02J6t4dyPtcmAoYq2PM/TX4car2QKMKnd+51ZwwA3qWpVxutQLGRrQvu983FTeD91/F/zX0gCHiUCAShlO4wqMu6DVvY/H4btYpzngHfmB4glPEMmKfagxpFD/ZfTwke+UCsxOtKciCduR8a94eaPueKdH988K5FWbQhm9aVMfp7A5shKQhfX2uTZd1lIgQaGgVNVeFzGWOaaBEgswq/JOoZu39P3NvXSUJA64hUKAq/9328p0ya66sk5j5QC3fxnxRGM6LArXqF7l/icD8zqOwztWrx+nkZO66TCiX6gFQkTYjjh7TLCpW4YTCovj/yjpGR3Yiw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=S7RyNEK/SZiMBPFRsyChZe4sv+YZt9bOrcIjLaQkwHA=;
- b=gEsV7PBhRmB+HidY+41YiqLicP0B/o1r6/xPcqKUbG2dSTNpk5I+1GfYThAKYK2+Ymt933rj516f5A8WfK5C0qLVGVVFdRGl0ABoy2hYEJvVxJ4xNnHoySsSOcLwE3gq9e2YxEbQdu4kwl7PAbv2oVrAYWZFlpqzhUBF0NWl5YSn8O7J7htDCAyz4c5xXL0rM/6ACbOmTO8CxyOgWiF4wSQECR4pncI/NDmVRcCO9oW1/Ji2DgvDSIqNNrGYZuqFwIL0dEMVXKgM52GLqzyLZw8Ph2bS/PYM+7vmicqb3bmanE5jmcbxqu/IaG/MYHV7iCZfvXxTu1dO96+xnPzeyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S7RyNEK/SZiMBPFRsyChZe4sv+YZt9bOrcIjLaQkwHA=;
- b=SC4lwstz/BxzatjEIRO1+kXsb2ZhUrXCkm2T8qaWXHFEBUCcshimMex0phjyT+NQ20RvVEeOyJgTjjwG+AFVQyIUHRPBcVy0msFZEyyNB4olvlzoFOSMLjvh3pBar1RlcQVRYPjIKDi8mbeNIbnz0miUcUGp7NcOLFTWDOqlvvzlbasPysNEbr1rOpd7RRPrkWUIybIiifuPdi8uVh7p0oDALTGijnTX0ZVk9auq2mJmW2esQu82bVEBfN0FZh7o1YHqqxM9BDY+tr2WdrgSKLv7KIVdoG+juVW1enP6g3BKfi4JKxhftqBzLInflY1iii5BHexse2vsJ7Kzv5rm/g==
-Received: from SEYPR01MB4221.apcprd01.prod.exchangelabs.com
- (2603:1096:101:56::12) by TY0PR0101MB4585.apcprd01.prod.exchangelabs.com
- (2603:1096:400:206::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.33; Thu, 6 Jun
- 2024 13:32:54 +0000
-Received: from SEYPR01MB4221.apcprd01.prod.exchangelabs.com
- ([fe80::b674:8f70:6e29:3756]) by SEYPR01MB4221.apcprd01.prod.exchangelabs.com
- ([fe80::b674:8f70:6e29:3756%4]) with mapi id 15.20.7633.033; Thu, 6 Jun 2024
- 13:32:54 +0000
-Date: Thu, 6 Jun 2024 13:32:46 +0000
-From: Haylen Chu <heylenay@outlook.com>
-To: Conor Dooley <conor@kernel.org>, Inochi Amaoto <inochiama@outlook.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: thermal: sophgo,cv180x-thermal: Add
- Sophgo CV180x thermal
-Message-ID:
- <SEYPR01MB4221F0E46F600E013974F21BD7FA2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
-References: <SG2PR01MB4218013241B3EED779D3BAE8D7F82@SG2PR01MB4218.apcprd01.prod.exchangelabs.com>
- <SG2PR01MB42189977B4172405F5704CC4D7F82@SG2PR01MB4218.apcprd01.prod.exchangelabs.com>
- <IA1PR20MB49531F55C8D7DC5D0050CAF9BBF92@IA1PR20MB4953.namprd20.prod.outlook.com>
- <20240605-tightwad-janitor-82cfceb1469d@spud>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240605-tightwad-janitor-82cfceb1469d@spud>
-X-TMN: [jFjPx4ocdXOp+2tsDXSBaiWOiBmI4omW]
-X-ClientProxiedBy: SI2PR02CA0040.apcprd02.prod.outlook.com
- (2603:1096:4:196::6) To SEYPR01MB4221.apcprd01.prod.exchangelabs.com
- (2603:1096:101:56::12)
-X-Microsoft-Original-Message-ID: <ZmG6fi9fdSCC3P28@ketchup>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC7E13E048
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 13:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717680802; cv=none; b=nDX5hJ583CGWDkbSQNJk9Rwuaq4i6AXVlTHbipPMXfYxqhLhVpuiKsoodv4sFRPQafbZGBePaK8I3YkHw16JZrQJYlev72Wa2bSwE5wa4OJ6LE3MZNbye3/wPrN2NBf+786pKIrBbe8tepHolFRnK5tdA4u1Ka6K2XUj2F03g3U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717680802; c=relaxed/simple;
+	bh=Lh2gUDPVnlN9p0WrExloiI0bv+g9JrOg7vuZHCMZA4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VqmuKVN2Eb+rklPpR2veUypgroMKkSV94ShdHGw7NVVGeU3EHTgy0wZAgejMnsVpQ2WnqsI88XE4Iya35k+vWvgZeO5ChOV/Pzbz01giQeJ/xeSA/yGF8BW4uvpnIi5SRHBK+dyOKv3aK64M+BjMfLAZksmJ4zSEWCfF9xfrr00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=phrv5Lvc; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57a7dc13aabso1188071a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 06:33:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717680798; x=1718285598; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y9vfJnrIrJKrBEEsqJQfUNJPUu7ekbSS5ajlvoZ3oR8=;
+        b=phrv5LvcdQmoAjXq+s69j0xwpCYsSyIkx9zXkzx7kR43ekX+5rtXVV1DpoT/3QGOAM
+         jUxHhmq4TsTqKA3/VhmecOw2qwvOoL2eTi5+PxK4loG3v1RiRuWTIPog9jtFB6rm+5t4
+         9O67ofusARYELoxg7RM2DoO5e7cV5WcR15F0yr4jkA2WkvV24/IkjRD9D5WsW5MTp9UP
+         dew3TV0UE6pt3RRpNZtbUvx1kYoy1jUTce9AEB9Mg4uP0ptCyQfDTeB3NzYdvHyCPpAP
+         8HlTr8JbaQ9Bn3wwf0q7evxMmwYncTwdJa8Qa+YF12LReSk4uUCIJ3dYWyKzwUe76ZNQ
+         6ykg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717680798; x=1718285598;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y9vfJnrIrJKrBEEsqJQfUNJPUu7ekbSS5ajlvoZ3oR8=;
+        b=O9sSqQuopQHja+ymhz7ifgwSBa9wP7shDaG2JxcomUpJYj53UYT/YCIyx6X6xlmiuZ
+         Regife+cuiZGVVp7B1Xizg1vzIO7ut7cdJeGO7WBYT0TkSbJE9GY60Plmq2hxkkFJQmK
+         Gkxw/I6DR8hhqWGqUjtvr5ur8YEcOqJjm+AaNvltCYEGQYBlcmuLYfskztu/DYMjp4Yf
+         r4OsR0NpekJgByEbGsSBICqHzSvWAFhM2Rv8I54eb8bDO/N7KiXlrLPWGZdBLNY8TBkU
+         axsXtIKu6JLabaaR7Hl3EvZN6eREuFtfN6j/xbF+2wN7rixh5gI0FyYxGEwFuCwRpE19
+         Ac2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVcLAhGe+JwAqk1fxZro89Hxu8wk/gV88x56HcNccA8GWdCiCFTlNYFYz0SkXkPWawD0gM8ktdK5Xs51osiC0ESZB4K5+DtaS5dnc/n
+X-Gm-Message-State: AOJu0Yzjh2dLhFs1EusK+dsBiEpKFRUrtlW0sxKSCSraXjw9mzaFvtjD
+	g0BhC6BOKfMSi4RvBnUNsjHnph+tk9tXFSNhVXJXRVdXjRXevw4zILU7wIfDQtQ=
+X-Google-Smtp-Source: AGHT+IFoJD9GtL3GCiogv6CbJkDLnJ9CENNShalKA9gLKUp/ppTsRqeS2+q+/IrI887XwCzUUFS55Q==
+X-Received: by 2002:a17:906:258f:b0:a61:4224:c998 with SMTP id a640c23a62f3a-a699fcf6586mr351582866b.54.1717680798512;
+        Thu, 06 Jun 2024 06:33:18 -0700 (PDT)
+Received: from [192.168.2.107] ([79.115.63.17])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c8070e19dsm96579566b.164.2024.06.06.06.33.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 06:33:17 -0700 (PDT)
+Message-ID: <cdd6bc25-6282-4e43-9909-16ab918ed983@linaro.org>
+Date: Thu, 6 Jun 2024 14:33:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEYPR01MB4221:EE_|TY0PR0101MB4585:EE_
-X-MS-Office365-Filtering-Correlation-Id: 897ad3e1-835f-4798-ba35-08dc862d2bac
-X-Microsoft-Antispam: BCL:0;ARA:14566002|461199019|3412199016|440099019;
-X-Microsoft-Antispam-Message-Info:
-	PHQiJ6SYFtx8JefPfJdb8OKNuNemZM8hB6boojVMRwyocQMLeIH05/k+Gk/Ast4J3RTJCf8v6LgGfTLIumNQwJS7ishwilHnfNUqqj6MfZJmi/897269nlTum1t/NCefv5dyqzZZCGpGT5gMxiWg5mTrURgZ3Dh/FHJYEqKXAKNDTcEQ1IbukHW6STN2TWp4BraIDzeVtuNFpM3EAtlW7sc1Nksa53pSkZoGVgLObSztrDracxfPH4wndOmZ1eelcnXUBFMiCn+2r/v7f7+aqwJgMFZpw0TnUFMM+pbJJC8xQyqs2go3JTBKuze8i/B+MZZRPvdNedUJpn4gL0N1fC/Qxj6q9MmxohzZVBPNObC7y8RaapmJSzPLKQKx7FgtfGmqML99YzdGw0sOWxxgBB3guhNP2PwYhNMC9ridskKAGYqyhvZVc/35ASMIEAoF6qyn8RZSj49uux5yWwxZoyammkAdvmjKOTEpObgdYsTW2ZlIEiuYfONstAqcV/tnaIWcjzo5EYlFO47CzXkXmmKqw2ZBrjq3+q2NyAymgcTFyGlCv5h3rI435RIetJ4d
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6Qoh+eC7T/Jhs6tmQyrPLx6WigUMcr+EPuprH49c20qlHlTtXwd3BmhTRP6D?=
- =?us-ascii?Q?2Twwxgr7RE0r4Kd8QxhGry7yqg28iGSf5nJQaHGXDHsdqhwUqj4uC38S7YeP?=
- =?us-ascii?Q?q3FTfOsW/lasmgJwBUegk5MsqvunmVJLMn6TgBY8Kqye2SyzXX1AqiiyKYaV?=
- =?us-ascii?Q?9x92JyrHr7oOkMhq0Wy+gfrdOViQ5n9bsNx/Zht+OYjHFr/uP1NY0QglEy9w?=
- =?us-ascii?Q?SN4Z7VpX7Oi4ezaStc+2CWX/89SHlUk5drcnqQz6UUCTz0J9j44Wnj7BBNFm?=
- =?us-ascii?Q?l2WpZITb3EoUHMA33HzHl13mnAWc0iutysIfYGO9bADOTXGW5fc3NzMIRMcw?=
- =?us-ascii?Q?Uv3p6ZtIwc9YQIzmQeR8XhsMQPp2ocrnbWoFSLxaS4E1FpCKGo/JCdfugKxG?=
- =?us-ascii?Q?noLg5k+U3uE+kuupCvrqy7IDg49s3vFgscoFUN0MUy1yH2O2DWIc+9g5qYq0?=
- =?us-ascii?Q?8yTb6Rm7M+BS6qDahxKfLeUnM61zC7FgFRqFpQUWBx6LBmCCUwTavRztvL0b?=
- =?us-ascii?Q?om3DpF5/RNJbr27aL8CBPwrFJLbx6zxDzE8a88C5ZRx95KqA3pWsJiQZLqr2?=
- =?us-ascii?Q?vX1QoXJgrJS2WCN1aELpX3gLiuTICIQA0FfyTzYxHYvJ0BIVHe/KvW/KIJPn?=
- =?us-ascii?Q?IF+ngIgWy5hxnn4vPg59B1Yx3K+e0o9aeZo4gDKoSMu5Dd8Tg/wGFD7onfNm?=
- =?us-ascii?Q?o30YwonS4UFLbvj+POc1JnyD6IsInz0CdZRFUSExjbPFsAD09XJJne7Fnw0V?=
- =?us-ascii?Q?FS011LTgUw2q5r5K7Xq+rRDTIdLgrIAQYkTUrK51pIwvppt9sISaldzcpHVs?=
- =?us-ascii?Q?0+1lw7DTUpqUYFT/OLPXpRYAEHQ+euCTdwDtYaZ46VQYoWc/DyOAz3bPuUQj?=
- =?us-ascii?Q?8GXO2OSmk/G6pex+JqstqRqP0/DrdhN3BoExzRv57kPSLLG/QK4C8ogL5cko?=
- =?us-ascii?Q?BmAGD3dkd3XV1N96r9WaHBzn2nybIjKmIvRQscyoKNC9P1aV3v0Evo+LhxOM?=
- =?us-ascii?Q?QwOcmRe4+zrOGvofEiyTyKRP8BgnNQ32Q6IMMm01nPHEsTpCdQ1CgMaHMb1D?=
- =?us-ascii?Q?7rcBftlyhhdV23CwtHkCN1qn7pRqx1H5Pc1CkKvMvuxAMrG05ieLkPGcy8Dx?=
- =?us-ascii?Q?GRZ3Tqzqh3MBo8JtWdGBBsyCNPlOtl4OJiGaZ9BVRR+VRBviFMlTM/wfKKeh?=
- =?us-ascii?Q?qLG9Ike5o8XPLWMMiAQ+eRrFb0EvjI5LYGYfAeUcHORmKv79hCKwzvX7uwU?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 897ad3e1-835f-4798-ba35-08dc862d2bac
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR01MB4221.apcprd01.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 13:32:54.6993
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR0101MB4585
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] mtd: spi-nor: macronix: enable quad/dual speed for
+ mx25l3205d chips
+To: Esben Haabendal <esben@geanix.com>, Pratyush Yadav <pratyush@kernel.org>,
+ Michael Walle <mwalle@kernel.org>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>,
+ Vignesh Raghavendra <vigneshr@ti.com>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+References: <20240603-macronix-mx25l3205d-fixups-v2-0-ff98da26835c@geanix.com>
+ <20240603-macronix-mx25l3205d-fixups-v2-2-ff98da26835c@geanix.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20240603-macronix-mx25l3205d-fixups-v2-2-ff98da26835c@geanix.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 05, 2024 at 06:54:17PM +0100, Conor Dooley wrote:
-> > > +  accumulation-period:
-> > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > +    description: Accumulation period for a sample
-> > > +    oneOf:
-> > > +      - const: 0
-> > > +        description: 512 ticks
-> > > +      - const: 1
-> > > +        description: 1024 ticks
-> > > +      - const: 2
-> > > +        description: 2048 ticks
-> > > +      - const: 3
-> > > +        description: 4096 ticks
-> > > +    default: 2
-> > > +
-> > > +  chop-period:
-> > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > +    description: ADC chop period
+
+
+On 6/3/24 14:09, Esben Haabendal wrote:
+> Macronix engineers apparantly do not understand the purpose of having
+> an ID actually identify the chip and its capabilities. Sigh.
 > 
-> What's a "chop" and why is either this or the accumulation-period a
-> fixed property of the hardware? Shouldn't this choice really be up to
-> the user?
-
-The chop-period is an ADC parameter.
-
-Both accumulation-period and chop-period specify how the sensor
-measures temperature. Making these parameters up to end users brings
-extra unnecessary code complexity. Being configurable for each board
-should be enough and other thermal drivers have been doing things in
-this way.
-
+> The original Macronix SPI NOR flash that identifies itself as 0xC22016
+> with RDID was MX25L3205D. This chip does not support SFDP, but does
+> support the 2READ command (1-2-2).
 > 
-> > > +    oneOf:
-> > > +      - const: 0
-> > > +        description: 128 ticks
-> > > +      - const: 1
-> > > +        description: 256 ticks
-> > > +      - const: 2
-> > > +        description: 512 ticks
-> > > +      - const: 3
-> > > +        description: 1024 ticks
+> When Macronix announced EoL for MX25L3205D, the recommended
+> replacement part was MX25L3206E, which conveniently also identifies
+> itself as 0xC22016. It does not support 2READ, but supports DREAD
+> (1-1-2) instead, and supports SFDP for discovering this.
 > 
-> Can we just make the number of ticks the unit here, and above?
-> Also, a "oneOf: - const" structure is just an enum.
-
-I do not catch your idea. These values directly map to raw register
-configuration, which simplify the implementation a lot.
-
+> When Macronix announced EoL for MX25L3206E, the recommended
+> replacement part was MX25L3233F, which also identifies itself as
+> 0xC22016. It supports DREAD, 2READ, and the quad modes QREAD (1-1-4)
+> and 4READ (1-4-4). This also support SFDP.
 > 
-> > > +    default: 3
-> > > +
-> > > +  sample-cycle-us:
-> > > +    description: Period between samples
-> > > +    default: 1000000
-> No constraints?
+> So far, all of these chips have been handled the same way by the Linux
+> driver. The SFDP information have not been read, and no dual and quad
+> read modes have been enabled.
+> 
+> The trouble begins when we want to enable the faster read modes. The
+> RDID command only return the same 3 bytes for all 3 chips, so that
+> doesn't really help.
+> 
+> Instead, we can use the SPI_NOR_TRY_SFDP flag, which forces the spi-nor
+> system to try using SFDP, but fallback to the parameters specified in
+> struct flash_info.
+> 
+> This way, boards using MX25L3205D will continue as before this change.
+> That is without taking advantage of the 1-2-2 that it supports.
+> 
+> For MX25L3206E and MX25L3233F, the SFDP parameters are used, and they will
+> therefore be using the optimal dual or quad mode supported by the flash
+> and the SPI controller it is attached to.
+> 
+> Signed-off-by: Esben Haabendal <esben@geanix.com>
+> ---
+>  drivers/mtd/spi-nor/macronix.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
+> index ea6be95e75a5..090f28e05a5d 100644
+> --- a/drivers/mtd/spi-nor/macronix.c
+> +++ b/drivers/mtd/spi-nor/macronix.c
+> @@ -61,7 +61,7 @@ static const struct flash_info macronix_nor_parts[] = {
+>  		.id = SNOR_ID(0xc2, 0x20, 0x16),
+>  		.name = "mx25l3205d",
+>  		.size = SZ_4M,
+> -		.no_sfdp_flags = SECT_4K,
+> +		.no_sfdp_flags = SECT_4K | SPI_NOR_TRY_SFDP,
+>  	}, {
 
-Sample cycle is more flexible because of hardware designing.
+let's remove support for MX25L3205D. You'll then be able to drop the
+flash entry altogether and instead rely on SFDP to discover the flash's
+capabilities.
 
-Best reguards,
-Haylen Chu
 
