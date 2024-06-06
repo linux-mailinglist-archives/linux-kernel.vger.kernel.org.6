@@ -1,679 +1,215 @@
-Return-Path: <linux-kernel+bounces-205023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A17068FF65B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:06:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C077C8FF669
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBB141C254D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:06:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D3C02877C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C426A33B;
-	Thu,  6 Jun 2024 21:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1E21990D8;
+	Thu,  6 Jun 2024 21:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I2SwxT36"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="GIiSxaZ/"
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2053.outbound.protection.outlook.com [40.107.105.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF5313C81C;
-	Thu,  6 Jun 2024 21:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717707988; cv=none; b=WdRnCyULUiEUNgMgsKWA1PmJojcpa1r0QrMCbRfqNVnlVdK+1rPHUUmXhVTxM6fNkJsJDX3PFBOC5thWAEziW9y5HonxEWuRE/Ym/c8fwIWIPVrryCN+Hmk7VLgLcDKMj5P6vlzJFlidVAc9Zf+40s+1FNRKSRx/lV7fCiSzPTg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717707988; c=relaxed/simple;
-	bh=QMOr0godD31izaLZ93d/PbRu2A/tqyole7CMvfQZz5A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DV8w8FELnhaFrVLACtwZ1NJaJLEBf+vclDYQINkRBH3r81M6VPo4e/xFjaUKDbj0MY8//18ilCvj5wCrH9I8K3noZdePLhMQD5bjG9PgGCHPrlNe+1NqS6pljYlhe3U+g6kxrX1uPvfyuM+kFfRP6jKbSi7RotfufsJ7eX83N4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I2SwxT36; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e6f33150bcso14763751fa.2;
-        Thu, 06 Jun 2024 14:06:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717707985; x=1718312785; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fAK7Wl00Ln42614n7iZrgFDpbdIlmOxaHyugBgnfZVY=;
-        b=I2SwxT36IrXHdgjV1S816UG/dAV6abjtbcGi9OCaVNoO2VWh1KlLgsu/5OJrYzNukE
-         SiblQrgMo7psY+6CBd64jqsWbANruRUdzWfTvWQcbST2NMHRC4hU7igG+tUptmtoKBg/
-         LBPRAqhjYfgRdIAbil7M8b6G/Fx84HV6J9CUyDSS7696tjuYgqHzP5+MUO+den767Lja
-         6EuwiXs9/QqqDjichLLbE4dzCfVOSgB9A4qiS11fPvIF8WN8iFW2sLQejmjGtPMUaJGH
-         lv7vebLv96z5R/OFh88CEg40JGJwbNceqhl4kGSD7QE+rKFBc/coQc/wwOeUjqIE7t/A
-         FxHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717707985; x=1718312785;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fAK7Wl00Ln42614n7iZrgFDpbdIlmOxaHyugBgnfZVY=;
-        b=W9/bDj1wx3H0s3oQfrHDGDDhaFC4CuvZU2Rn18CnJ70dAYg3W2XsduWA6x496p63n6
-         qF3yn8jgeFmb6xt6U35I5nHQKMHmi91f0aFiDFga6tGnrRCHQnBBCEmZ8ZSegA0C2MoP
-         n62q5D/TQ3+FFbGu93jbuEouqAfgBVyCz7fxBV1T9nMsg9+12GnQtDvRHLb03ce4LpGx
-         JkG8UgMvMCKlVeygRKOASbRRoUpbv7qQUF83wquC9oW3WYzLz59dSrFc0NV+9DDO8hyq
-         mCmf6aNPnLr8J5dodJ5kn/n+6FecqV3K8YIlxbiFM4ywHrCnxLuKeP3+qLyLF2ZsNNsu
-         Y/LA==
-X-Forwarded-Encrypted: i=1; AJvYcCVX8eY6dfOoJbJlNu9UxcZ4VKaNNfKoajHN6FAlzN1zUvIZWsCUJ8Yv2Ofrcz7EqJOVbYY3gyI+2UG2caUznUfVOr/eP/DnGqghzSpYAzYE7yXM7cTRZw5tCCTUDHeX/c4YY1GjIuaIJuRVaL4U
-X-Gm-Message-State: AOJu0YwWAGu3dP0OvU9+NKf5oaT5bjPjJx3PJFUv6Pr/Y6WsAIoYPjtB
-	0AH3PxMFbAMScOTXY94PryTy8DuEZ2m4VzVyjAw1IgY7AkA4Qdazo0jPa0KtBB+dbdGsGkTfl+7
-	V4UgvMj0gZUNQuF6H4R8idjvQKeRP5ujWC1g=
-X-Google-Smtp-Source: AGHT+IGYoFmx8Vak8kfOQ/ad4xyipv/li+lZLsWd3osdmG6OBMu4ma7xXWtW8rM9O24U/VzIvHcIHAuJGZ8n3iAiG6M=
-X-Received: by 2002:a2e:a786:0:b0:2e0:c689:f8cd with SMTP id
- 38308e7fff4ca-2eadce37783mr5960181fa.29.1717707984378; Thu, 06 Jun 2024
- 14:06:24 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDB371748;
+	Thu,  6 Jun 2024 21:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717708039; cv=fail; b=DFziioVY/r5dXnmgTnBV4A4nPQbYdufRMEQOkYr1yOim6unHdAc0IBShkyAKD71/+sG2oxeCqEMSPNPgUgJDwDYTcwIARLQazKk8n44Ddao+VWybDZb8SOXFMeuB00VI6dXB3NvMjvIN4Pb6UUU/1KcvXRY7Srydk83e0jodoXg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717708039; c=relaxed/simple;
+	bh=X+a2PvM70/HFTtwC3Aji3HgaGDtpop2gAkj3lQwqQ6Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=O9+OIoue7854TwK2v/zpd9Xrmyttcq1+qYPr0O8d8I8CMCHpLtMNHJKWZkG8sx7S4/5/pIava1vpow6SJFXvkikkA81kbIMO6ZeFOsAQYpuQ6agtj/GokNmPBydHzcKndgV61K+/K/knjZZOaHJ+6pMPZz8jR9hKRxxObI4ux1c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=GIiSxaZ/; arc=fail smtp.client-ip=40.107.105.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lrOPyKH50RJzQJLuAHhhuGVReA07B0NbrSWHFVBWzz0bnWDMdHsC+9/5vBeixf5U3AwD1ALiUCJS9XqZiF/RBE4xRLK/WNM4viFXytlR3vhev/GSmlpNAfzHBQY56ipHwDMADnmxdLIZv5Lp2pz8tncIXKUmMewMfgW7sT4RwPqbkuGps7xJ2S9EUh4LRyGPjr66agyxuC+mNhPZSmPCdVprmhWEWQAi5Av+PchxWfCdShOwSBKPllkPMbqN+vIe2uNIXoHHHKMdljXPE1LTSjqFDrRfIVKwAGGmozRxC4l0U1rZF28T10xh7PJPnZRlXeCY5wuWQgCIW69Mhh2m1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nwbQ3ZjvE9oY/cydrJJlnyx7xZ82kdvKtneakcCNQXo=;
+ b=V3TbJItF4RmtzbYXxxQ1uor1sIfUOm/tIQsMzovczpjddDRBlVq1TqE8jl0fvBEGsTO/6T5+NqUJUmSY2aMPCCZmWDTvRFlzKjRU5jzn1DlenGV/8Bf6iy1BfW3QkEIwON23t2i7B1n1GrP6l2xgy3dunaEdK13MMMtl94qsbjeRkA3QOE/RODQ0kEV7l6uOrHstRfcpEa7hAo5MPRwO4x9RvrUcA2YJSCGGlpcoxs8mQ8EPJpSVbLnugkresb7aovcbY0k20DsNap20crYhj+fG6g7cYclSLrnuKU2lXPQpFDuBIAw2+aM7T4uhiDEXjGyJvA/K03m04nTJXf9KrQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nwbQ3ZjvE9oY/cydrJJlnyx7xZ82kdvKtneakcCNQXo=;
+ b=GIiSxaZ/fiGcZaS/9S7t3e1uDjR50pIHit0ewp/lWo72LSPYhVFK2rVJnpNQoEJnobrhO/C5scFc6Y6dLqXnG2y8XP3S2ty9iZyJ2QywNbXn7Mo2CbUaaSIq1zyny+DFOvUCn85f+5CzReBkwBt7fc0qii+sZdg9u1DkdXw0FD4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PA1PR04MB10208.eurprd04.prod.outlook.com (2603:10a6:102:454::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.33; Thu, 6 Jun
+ 2024 21:07:09 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7633.021; Thu, 6 Jun 2024
+ 21:07:09 +0000
+Date: Thu, 6 Jun 2024 17:06:55 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Minghuan Lian <minghuan.Lian@nxp.com>,
+	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+	Jesper Nilsson <jesper.nilsson@axis.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Srikanth Thokala <srikanth.thokala@intel.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+	mhi@lists.linux.dev, Niklas Cassel <cassel@kernel.org>,
+	Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH 5/5] PCI: layerscape-ep: Use the generic
+ dw_pcie_ep_linkdown() API to handle Link Down event
+Message-ID: <ZmIk7zjzfiAENF3I@lizhi-Precision-Tower-5810>
+References: <20240606-pci-deinit-v1-0-4395534520dc@linaro.org>
+ <20240606-pci-deinit-v1-5-4395534520dc@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606-pci-deinit-v1-5-4395534520dc@linaro.org>
+X-ClientProxiedBy: BY3PR10CA0020.namprd10.prod.outlook.com
+ (2603:10b6:a03:255::25) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606114321.30515-1-chris.lu@mediatek.com> <20240606114321.30515-5-chris.lu@mediatek.com>
-In-Reply-To: <20240606114321.30515-5-chris.lu@mediatek.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Thu, 6 Jun 2024 17:06:11 -0400
-Message-ID: <CABBYNZKhafMLdygNw-+CU8m3gXzq=28qfgQGBVrxh_wLLbq8aQ@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] Bluetooth: btusb: mediatek: add ISO data
- transmission functions
-To: Chris Lu <chris.lu@mediatek.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
-	Sean Wang <sean.wang@mediatek.com>, Deren Wu <deren.Wu@mediatek.com>, 
-	Aaron Hou <aaron.hou@mediatek.com>, Steve Lee <steve.lee@mediatek.com>, 
-	linux-bluetooth <linux-bluetooth@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-mediatek <linux-mediatek@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA1PR04MB10208:EE_
+X-MS-Office365-Filtering-Correlation-Id: 118840ea-47cf-43a8-8417-08dc866ca098
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|366007|7416005|52116005|376005|1800799015|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?JpLrNO/KpRUkJSUFbOB8bm4wY7SVAGrj+tvQf0WNTn4VydF5Jdx5bf+y2Zvz?=
+ =?us-ascii?Q?4Yl8FHduixjncYVMcw7JlYJg71ryUMKRZnLB/80HegoBCDxvn2KDjuQ8KEyY?=
+ =?us-ascii?Q?/n+/HTX1IgTsFZA6Lqft+79sQ4AqhanFqo3uzpPsg5RFDKHjYdQdiZsBF53l?=
+ =?us-ascii?Q?m14G2DnXoE/0/ZK9XyBPUXY2tmyJb0rv7Adp7tH3jUTZJK2dlpp/wmr1H4Nl?=
+ =?us-ascii?Q?0eK9XeoHicVSflDpl0IVzEt28yL2wUsoPcRaV/osmgvnTigonYqHRjmotBM9?=
+ =?us-ascii?Q?bzxmFOyS23OWDJ8xGxR3EFQgCwHq48l6bKYvUZXpwIUpjgxRDQyaw7QK9X0J?=
+ =?us-ascii?Q?vzbfA1t9yuBJp0+xfPacjtP8CZWdg8dvab76O9wR6dRPCPImOorDVQ4tjLzP?=
+ =?us-ascii?Q?I0qmR6tv+PK4qsCQDx2mlMzL4hYWxCiJbgp+YaKCoHia7duXx8EY5imvbChU?=
+ =?us-ascii?Q?zuTe52UkIJ3hYu7uryc1e/LjmQSCl4Twnrtg8unB9t/QyAuDdsWhV2n/U+tG?=
+ =?us-ascii?Q?o0BnTeuo7S6cds3hcGD2qiCsEw/6sLXrzJbV8n/qwmIIUWTW4IG0bPyiDGsq?=
+ =?us-ascii?Q?uzRv45E05QaDsNuHG9xjfwy3e0YklmbXG8VbEh0FLsrTrO4kbpkC/2M5PK59?=
+ =?us-ascii?Q?ytmkONHLcS13+1jfQY7TIuj+yZXBXRLrecQyMiaztT7Y7YjrOdHodbJgTi+x?=
+ =?us-ascii?Q?KGZ+8P44hkellx5lKTWmoju6pFS3CKb5Ni3Y2tsdWNRoB+YJT6XEqaPGrepU?=
+ =?us-ascii?Q?HEWmnUCnuba86n4S+UC+FinmtCximpSknH1kyB+WCFQQaHchOGlb2DhqDDGc?=
+ =?us-ascii?Q?1Q9+Qk5/1we0Jhtqdht3Ie0R7DhWIbMHJmBilBG7oQZ0s8KoSJyYEjNUWTFg?=
+ =?us-ascii?Q?7wbV4W4fOx0sKAlJy+eoBrY04I932ezlI1udl89P1vmAMHnSs8tGOxcQpFVT?=
+ =?us-ascii?Q?7BpEbJz7GaHulJSVJFEuBhdjh2/1w/7D0v4AMOXM49qRY29XeB3szIGIeGeJ?=
+ =?us-ascii?Q?aVnFYY7rS7WFYgWkM/5/Q0iFJiLzVY78Xo/McrhzapqmyK/NUTSvNnE0+tLu?=
+ =?us-ascii?Q?IO5irYe11F0g6h6SWhjkqwog36S9zaZ4uhU93rz1T0Anp3P3NpaLJnNhi64o?=
+ =?us-ascii?Q?7VitqhfuVu4BsBb1zFeiS4HNDBnLQ0zSQ+iWwZx5fQOjlCV9aObTjFTmsF/v?=
+ =?us-ascii?Q?zTo/aGHNKb667brxNj/4Gbss1DGbFyjqzsPMtQk9+Ih8WQ9cUZM2tK4YOxq/?=
+ =?us-ascii?Q?HCIR+qbPkO59GPgrewBCw7FGp9VIF0uINXrPHm78kHfFT7JdUTtUPNjg7dzy?=
+ =?us-ascii?Q?8PaJCPI3soAoJQj+zrvNeHovM9DvPM3+NmTQXaGYgFmIwUONgh3ikUaYiP9S?=
+ =?us-ascii?Q?EOdw9q0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(7416005)(52116005)(376005)(1800799015)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?fX8zybbuRxMqhwZelzXLXGsKE/Pb7DmFUhbXL9WEBRJ6pzHoTJRQZYs1xhCe?=
+ =?us-ascii?Q?rR4y9Wgs/0WLtCSi+I1EoFZcpAQyjbnkhPBEq6o29nbIJpT34b0aPIy6IVsI?=
+ =?us-ascii?Q?4YshyhnfhJ7+zZcIniLdzafNn217y3jdgyUKWm81IE3D6+d0Krqzzi0zqRTh?=
+ =?us-ascii?Q?1auULzHnn7HuD/jZqOPDYPIXUTgH9UtBZ/3eFqNMGk7BopJMXY0xusmyKHzU?=
+ =?us-ascii?Q?M28enIQGfRUn79pEFVsu3ycrIo2tnhJm6/Me1JGPOuHqdSV/t5TC7E8aOLNL?=
+ =?us-ascii?Q?yfdGtEWLZ8IN1ENa5Tp/3AHtFZhVrs3fJBQaXaQqofu0RREozBq48L1dlswi?=
+ =?us-ascii?Q?rw5JtFFdtAKWSO60+GsIAbaa1dwGEUb5JB/hDdjifbtCyJ9vC9EVRiUaLqnp?=
+ =?us-ascii?Q?4LoD3oCwqoR9kQYiUjGsNoPqB28S5HvaGcQ8E80o0i7169gYC4T8C0T8Vy8Z?=
+ =?us-ascii?Q?rg8DBr1zSrBE1rvZYuXTjrr+9aBK5ioTthJG/WWx+U13aXyeLirGZ3KPFGTx?=
+ =?us-ascii?Q?8SXJG5mAQSIkPtwCDFW6MyaoT0jKv3LcJUS1UHRwDNsBev0wWI6KxMkTIOwn?=
+ =?us-ascii?Q?w7qoFaCciNNTNEOSo2GYM8hSl4ecCnmiKhmKFTS43L7r3vJned+dn80xIB7z?=
+ =?us-ascii?Q?OFu0IzqCDUjrb6Q+rkE+ouui2kmjxRs9nZ1ywmZcg6WBRagj9sRTZhXQM+Vc?=
+ =?us-ascii?Q?FC2qJiDdUfEiHTMg36WOPZPdPa6ifz5lcIdBwQ61qi5H2b3KuTGBiqh7fihQ?=
+ =?us-ascii?Q?DIOskOHbunonrpCHPgv8jbsAWLo9sQBQsluKLxzc/N2f8WvuF0SinOwqO1fq?=
+ =?us-ascii?Q?+p420qzAq8E12YAUXgGnkkRZKjaDOKxM2A8fubC+Xcauq0fYdl+Zvy4FQiqH?=
+ =?us-ascii?Q?904Tykk2mhT9bZXjvmuRJGpdHYlkz/5S02z3zaWqTsK2PQ6iGiuChKgT/uB4?=
+ =?us-ascii?Q?qexw1Gp54DJRme/Iptr2agxA+A7vD3d+Nv14Zv5zD+RxVA3EjY9ALENQWjxK?=
+ =?us-ascii?Q?06TywWy9zYq3gnnyYWfo2xSWO3Sc1NavURpuOw3yUEw0W/68bfCgOVQ5N966?=
+ =?us-ascii?Q?O0/G09D3M/NR+IVMC4689hkamP5/mRKeAOH+57syBQH0eDgsgG0MShpDbAP6?=
+ =?us-ascii?Q?IWp+HS0P3Pr1iu7KiK6J1ruTTXkdvSm5gdK09luh+ip3/WT17sx5NSlkbjR+?=
+ =?us-ascii?Q?dy38SLcv00iCN+kYsU4FiJtbbH/q9zNRAeVTm9F076sJOoA4QyUTBm81Otno?=
+ =?us-ascii?Q?mCHocPNDFFbX2zEexjHwDBhwtNapWkQ4xD/kowT5bQlA2wJazhgVTO0YQiJi?=
+ =?us-ascii?Q?TxCrGzhXZl3G+uNLXJsMKEKNB8MQoWJ4A0VtaUbKpQ5bNvO3kG2zEDECKcJm?=
+ =?us-ascii?Q?bnXxlcXB3zUJ5XVzdEMZv7IWwhf58t/IQvBlWSSnuQARr8wLeUaTDXZ4liRZ?=
+ =?us-ascii?Q?mYRfC8xNUDmr48wQQp6YaTQ2rj4X/PjiToor80UgGg0eWxWJPFFvKVnToeOx?=
+ =?us-ascii?Q?VOQF/UMdXQ5hzlcnK+yGzyf9bUVr1O5fnsO7U2wkrT0PVqog046H+eIi0f18?=
+ =?us-ascii?Q?lWIsTJ0snT0x1+QZPLQ=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 118840ea-47cf-43a8-8417-08dc866ca098
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 21:07:09.1165
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Svn2v8m8EN0GvgcgqCiLvPxbV0oaTGuc2IgLz0oPQIFOIu1HBvZl3BkBr3Hk4BQo7y80bKK7aX1gl7nn2XdvEg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10208
 
-Hi Chris,
+On Thu, Jun 06, 2024 at 12:56:38PM +0530, Manivannan Sadhasivam wrote:
+> Now that the API is available, let's make use of it. It also handles the
+> reinitialization of DWC non-sticky registers in addition to sending the
+> notification to EPF drivers.
+> 
+> Reported-by: Bjorn Helgaas <helgaas@kernel.org>
+> Closes: https://lore.kernel.org/linux-pci/20240528195539.GA458945@bhelgaas/
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-On Thu, Jun 6, 2024 at 7:43=E2=80=AFAM Chris Lu <chris.lu@mediatek.com> wro=
-te:
->
-> This patch implements functions for ISO data send and receive in btusb
-> driver for MediaTek's controller.
->
-> MediaTek defines a specific interrupt endpoint for ISO data transmissin
-> because the characteristics of interrupt endpoint are similar to the
-> application of ISO data which can support guaranteed transmissin
-> bandwidth, enough maximum data length and error checking mechanism.
->
-> Driver sets up ISO interface and endpoints in btusb_mtk_setup and clears
-> the setup in btusb_mtk_shutdown. ISO packet anchor stops when driver
-> suspend and resubmit iso urb in driver resume.
->
-> Signed-off-by: Chris Lu <chris.lu@mediatek.com>
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+
 > ---
->  drivers/bluetooth/btmtk.c |  94 ++++++++++++++
->  drivers/bluetooth/btmtk.h |  38 ++++++
->  drivers/bluetooth/btusb.c | 267 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 399 insertions(+)
->
-> diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
-> index a27c251bf56e..07d27724d915 100644
-> --- a/drivers/bluetooth/btmtk.c
-> +++ b/drivers/bluetooth/btmtk.c
-> @@ -19,6 +19,9 @@
->  #define MTK_SEC_MAP_COMMON_SIZE        12
->  #define MTK_SEC_MAP_NEED_SEND_SIZE     52
->
-> +/* It is for mt79xx iso data transmission setting */
-> +#define MTK_ISO_THRESHOLD      264
-> +
->  struct btmtk_patch_header {
->         u8 datetime[16];
->         u8 platform[4];
-> @@ -431,6 +434,97 @@ int btmtk_process_coredump(struct hci_dev *hdev, str=
-uct sk_buff *skb)
->  }
->  EXPORT_SYMBOL_GPL(btmtk_process_coredump);
->
-> +int btmtk_isointf_setup(struct hci_dev *hdev)
-> +{
-> +       u8 iso_param[2] =3D { 0x08, 0x01 };
-> +       struct sk_buff *skb;
-> +
-> +       skb =3D __hci_cmd_sync(hdev, 0xfd98, sizeof(iso_param), iso_param=
-,
-> +                            HCI_INIT_TIMEOUT);
-> +       if (IS_ERR(skb)) {
-> +               bt_dev_err(hdev, "Failed to apply iso setting (%ld)", PTR=
-_ERR(skb));
-> +               return PTR_ERR(skb);
-> +       }
-> +       kfree_skb(skb);
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(btmtk_isointf_setup);
-> +
-> +int btmtk_isopkt_pad(struct hci_dev *hdev, struct sk_buff *skb)
-> +{
-> +       if (skb->len > MTK_ISO_THRESHOLD)
-> +               return -EINVAL;
-> +
-> +       if (skb_pad(skb, MTK_ISO_THRESHOLD - skb->len))
-> +               return -ENOMEM;
-> +
-> +       __skb_put(skb, MTK_ISO_THRESHOLD - skb->len);
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(btmtk_isopkt_pad);
-> +
-> +int btmtk_recv_isopkt(struct hci_dev *hdev, void *buffer, int count)
-> +{
-> +       struct btmediatek_data *btmtk_data =3D hci_get_priv(hdev);
-> +       struct sk_buff *skb;
-> +       unsigned long flags;
-> +       int err =3D 0;
-> +
-> +       spin_lock_irqsave(&btmtk_data->isopkt_info.isorxlock, flags);
-> +       skb =3D btmtk_data->isopkt_info.isopkt_skb;
-> +
-> +       while (count) {
-> +               int len;
-> +
-> +               if (!skb) {
-> +                       skb =3D bt_skb_alloc(HCI_MAX_ISO_SIZE, GFP_ATOMIC=
-);
-> +                       if (!skb) {
-> +                               err =3D -ENOMEM;
-> +                               break;
-> +                       }
-> +
-> +                       hci_skb_pkt_type(skb) =3D HCI_ISODATA_PKT;
-> +                       hci_skb_expect(skb) =3D HCI_ISO_HDR_SIZE;
-> +               }
-> +
-> +               len =3D min_t(uint, hci_skb_expect(skb), count);
-> +               skb_put_data(skb, buffer, len);
-> +
-> +               count -=3D len;
-> +               buffer +=3D len;
-> +               hci_skb_expect(skb) -=3D len;
-> +
-> +               if (skb->len =3D=3D HCI_ISO_HDR_SIZE) {
-> +                       __le16 dlen =3D hci_iso_hdr(skb)->dlen;
-> +
-> +                       /* Complete ISO header */
-> +                       hci_skb_expect(skb) =3D __le16_to_cpu(dlen);
-> +
-> +                       if (skb_tailroom(skb) < hci_skb_expect(skb)) {
-> +                               kfree_skb(skb);
-> +                               skb =3D NULL;
-> +
-> +                               err =3D -EILSEQ;
-> +                               break;
-> +                       }
-> +               }
-> +
-> +               if (!hci_skb_expect(skb)) {
-> +                       /* Complete frame */
-> +                       hci_recv_frame(hdev, skb);
-> +                       skb =3D NULL;
-> +               }
-> +       }
-> +
-> +       btmtk_data->isopkt_info.isopkt_skb =3D skb;
-> +       spin_unlock_irqrestore(&btmtk_data->isopkt_info.isorxlock, flags)=
-;
-> +
-> +       return err;
-> +}
-> +EXPORT_SYMBOL_GPL(btmtk_recv_isopkt);
-> +
->  MODULE_AUTHOR("Sean Wang <sean.wang@mediatek.com>");
->  MODULE_AUTHOR("Mark Chen <mark-yw.chen@mediatek.com>");
->  MODULE_DESCRIPTION("Bluetooth support for MediaTek devices ver " VERSION=
-);
-> diff --git a/drivers/bluetooth/btmtk.h b/drivers/bluetooth/btmtk.h
-> index 6a0697a22b16..cb9dc4ccc266 100644
-> --- a/drivers/bluetooth/btmtk.h
-> +++ b/drivers/bluetooth/btmtk.h
-> @@ -1,6 +1,8 @@
->  /* SPDX-License-Identifier: ISC */
->  /* Copyright (C) 2021 MediaTek Inc. */
->
-> +#include <linux/usb.h>
-> +
->  #define FIRMWARE_MT7622                "mediatek/mt7622pr2h.bin"
->  #define FIRMWARE_MT7663                "mediatek/mt7663pr2h.bin"
->  #define FIRMWARE_MT7668                "mediatek/mt7668pr2h.bin"
-> @@ -129,6 +131,9 @@ struct btmtk_hci_wmt_params {
->  typedef int (*btmtk_reset_sync_func_t)(struct hci_dev *, void *);
->
->  enum {
-> +       BTMTK_ISOPKT_OVER_INTR,
-> +       BTMTK_ISOPKT_RUNNING,
-> +
->         __BTMTK_NUM_FLAGS,
->  };
->
-> @@ -139,12 +144,24 @@ struct btmtk_coredump_info {
->         int state;
->  };
->
-> +struct btmtk_isopkt_info {
-> +       struct usb_endpoint_descriptor *isopkt_tx_ep;
-> +       struct usb_endpoint_descriptor *isopkt_rx_ep;
-> +       struct usb_interface *isopkt_intf;
-> +       struct usb_anchor isopkt_anchor;
-> +       struct sk_buff *isopkt_skb;
-> +
-> +       /* spinlock for ISO data transmission */
-> +       spinlock_t isorxlock;
-> +};
-> +
->  struct btmediatek_data {
->         DECLARE_BITMAP(flags, __BTMTK_NUM_FLAGS);
->
->         u32 dev_id;
->         btmtk_reset_sync_func_t reset_sync;
->         struct btmtk_coredump_info cd_info;
-> +       struct btmtk_isopkt_info isopkt_info;
->  };
->
->  #define btmtk_set_flag(hdev, nr)                                        =
-       \
-> @@ -186,6 +203,12 @@ int btmtk_process_coredump(struct hci_dev *hdev, str=
-uct sk_buff *skb);
->
->  void btmtk_fw_get_filename(char *buf, size_t size, u32 dev_id, u32 fw_ve=
-r,
->                            u32 fw_flavor);
-> +
-> +int btmtk_isointf_setup(struct hci_dev *hdev);
-> +
-> +int btmtk_isopkt_pad(struct hci_dev *hdev, struct sk_buff *skb);
-> +
-> +int btmtk_recv_isopkt(struct hci_dev *hdev, void *buffer, int count);
->  #else
->
->  static inline int btmtk_set_bdaddr(struct hci_dev *hdev,
-> @@ -225,4 +248,19 @@ static void btmtk_fw_get_filename(char *buf, size_t =
-size, u32 dev_id,
->                                   u32 fw_ver, u32 fw_flavor)
->  {
->  }
-> +
-> +static int btmtk_isointf_setup(struct hci_dev *hdev)
-> +{
-> +       return -EOPNOTSUPP;
-> +}
-> +
-> +static int btmtk_isopkt_pad(struct hci_dev *hdev, struct sk_buff *skb)
-> +{
-> +       return ERR_PTR(-EOPNOTSUPP);
-> +}
-> +
-> +static int btmtk_recv_isopkt(struct hci_dev *hdev, void *buffer, int cou=
-nt)
-> +{
-> +       return -EOPNOTSUPP;
-> +}
->  #endif
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index 83765c0c14b4..e297dcb6a8e2 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -2653,6 +2653,8 @@ static int btusb_recv_event_realtek(struct hci_dev =
-*hdev, struct sk_buff *skb)
->  #define MTK_BT_RESET_REG_CONNV3        0x70028610
->  #define MTK_BT_READ_DEV_ID     0x70010200
->
-> +/* MediaTek ISO Interface */
-> +#define MTK_ISO_IFNUM          2
->
->  static void btusb_mtk_wmt_recv(struct urb *urb)
->  {
-> @@ -3129,6 +3131,239 @@ static int btusb_mtk_reset(struct hci_dev *hdev, =
-void *rst_data)
->         return err;
->  }
->
-> +static void btusb_mtk_intr_complete(struct urb *urb)
-> +{
-> +       struct hci_dev *hdev =3D urb->context;
-> +       struct btmediatek_data *btmtk_data =3D hci_get_priv(hdev);
-> +       struct btusb_data *data =3D hci_get_drvdata(hdev);
-> +       int err;
-> +
-> +       BT_DBG("%s urb %p status %d count %d", hdev->name, urb, urb->stat=
-us,
-> +              urb->actual_length);
-> +
-> +       if (!test_bit(HCI_RUNNING, &hdev->flags))
-> +               return;
-> +
-> +       if (urb->status =3D=3D 0) {
-> +               hdev->stat.byte_rx +=3D urb->actual_length;
-> +
-> +               if (btmtk_recv_isopkt(hdev, urb->transfer_buffer,
-> +                                     urb->actual_length) < 0) {
-> +                       bt_dev_err(hdev, "corrupted iso packet");
-> +                       hdev->stat.err_rx++;
-> +               }
-> +       } else if (urb->status =3D=3D -ENOENT) {
-> +               /* Avoid suspend failed when usb_kill_urb */
-> +               return;
-> +       }
-> +
-> +       if (!btmtk_test_flag(hdev, BTMTK_ISOPKT_RUNNING))
-> +               return;
-> +
-> +       usb_mark_last_busy(data->udev);
-> +       usb_anchor_urb(urb, &btmtk_data->isopkt_info.isopkt_anchor);
-> +
-> +       err =3D usb_submit_urb(urb, GFP_ATOMIC);
-> +       if (err < 0) {
-> +               /* -EPERM: urb is being killed;
-> +                * -ENODEV: device got disconnected
-> +                */
-> +               if (err !=3D -EPERM && err !=3D -ENODEV)
-> +                       bt_dev_err(hdev, "urb %p failed to resubmit (%d)"=
-,
-> +                                  urb, -err);
-> +               if (err !=3D -EPERM)
-> +                       hci_cmd_sync_cancel(hdev, -err);
-> +               usb_unanchor_urb(urb);
-> +       }
-> +}
-> +
-> +static int btusb_mtk_submit_intr_urb(struct hci_dev *hdev, gfp_t mem_fla=
-gs)
-> +{
-> +       struct btmediatek_data *btmtk_data =3D hci_get_priv(hdev);
-> +       struct btusb_data *data =3D hci_get_drvdata(hdev);
-> +       unsigned char *buf;
-> +       unsigned int pipe;
-> +       struct urb *urb;
-> +       int err, size;
-> +
-> +       BT_DBG("%s", hdev->name);
-> +
-> +       if (!btmtk_data->isopkt_info.isopkt_rx_ep)
-> +               return -ENODEV;
-> +
-> +       urb =3D usb_alloc_urb(0, mem_flags);
-> +       if (!urb)
-> +               return -ENOMEM;
-> +       size =3D le16_to_cpu(btmtk_data->isopkt_info.isopkt_rx_ep->wMaxPa=
-cketSize);
-> +
-> +       buf =3D kmalloc(size, mem_flags);
-> +       if (!buf) {
-> +               usb_free_urb(urb);
-> +               return -ENOMEM;
-> +       }
-> +
-> +       pipe =3D usb_rcvintpipe(data->udev,
-> +                             btmtk_data->isopkt_info.isopkt_rx_ep->bEndp=
-ointAddress);
-> +
-> +       usb_fill_int_urb(urb, data->udev, pipe, buf, size,
-> +                        btusb_mtk_intr_complete, hdev,
-> +                        btmtk_data->isopkt_info.isopkt_rx_ep->bInterval)=
-;
-> +
-> +       urb->transfer_flags |=3D URB_FREE_BUFFER;
-> +
-> +       usb_mark_last_busy(data->udev);
-> +       usb_anchor_urb(urb, &btmtk_data->isopkt_info.isopkt_anchor);
-> +
-> +       err =3D usb_submit_urb(urb, mem_flags);
-> +       if (err < 0) {
-> +               if (err !=3D -EPERM && err !=3D -ENODEV)
-> +                       bt_dev_err(hdev, "urb %p submission failed (%d)",
-> +                                  urb, -err);
-> +               usb_unanchor_urb(urb);
-> +       }
-> +
-> +       usb_free_urb(urb);
-> +
-> +       return err;
-> +}
-> +
-> +static inline int __set_mtk_intr_interface(struct hci_dev *hdev, unsigne=
-d int ifnum)
-> +{
-> +       struct btusb_data *data =3D hci_get_drvdata(hdev);
-> +       struct btmediatek_data *btmtk_data =3D hci_get_priv(hdev);
-> +       struct usb_interface *intf =3D btmtk_data->isopkt_info.isopkt_int=
-f;
-> +       int i, err;
-> +
-> +       if (!btmtk_data->isopkt_info.isopkt_intf)
-> +               return -ENODEV;
-> +
-> +       err =3D usb_set_interface(data->udev, ifnum, 1);
-> +       if (err < 0) {
-> +               bt_dev_err(hdev, "setting interface failed (%d)", -err);
-> +               return err;
-> +       }
-> +
-> +       btmtk_data->isopkt_info.isopkt_tx_ep =3D NULL;
-> +       btmtk_data->isopkt_info.isopkt_rx_ep =3D NULL;
-> +
-> +       for (i =3D 0; i < intf->cur_altsetting->desc.bNumEndpoints; i++) =
-{
-> +               struct usb_endpoint_descriptor *ep_desc;
-> +
-> +               ep_desc =3D &intf->cur_altsetting->endpoint[i].desc;
-> +
-> +               if (!btmtk_data->isopkt_info.isopkt_tx_ep &&
-> +                   usb_endpoint_is_int_out(ep_desc)) {
-> +                       btmtk_data->isopkt_info.isopkt_tx_ep =3D ep_desc;
-> +                       continue;
-> +               }
-> +
-> +               if (!btmtk_data->isopkt_info.isopkt_rx_ep &&
-> +                   usb_endpoint_is_int_in(ep_desc)) {
-> +                       btmtk_data->isopkt_info.isopkt_rx_ep =3D ep_desc;
-> +                       continue;
-> +               }
-> +       }
-> +
-> +       if (!btmtk_data->isopkt_info.isopkt_tx_ep ||
-> +           !btmtk_data->isopkt_info.isopkt_rx_ep) {
-> +               bt_dev_err(hdev, "invalid interrupt descriptors");
-> +               return -ENODEV;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static int btusb_mtk_isopkt_stop(struct hci_dev *hdev)
-> +{
-> +       struct btmediatek_data *btmtk_data =3D hci_get_priv(hdev);
-> +
-> +       usb_kill_anchored_urbs(&btmtk_data->isopkt_info.isopkt_anchor);
-> +
-> +       return 0;
-> +}
-> +
-> +static int btusb_mtk_isopkt_start(struct hci_dev *hdev)
-> +{
-> +       if (btmtk_test_flag(hdev, BTMTK_ISOPKT_RUNNING)) {
-> +               if (btusb_mtk_submit_intr_urb(hdev, GFP_NOIO) < 0)
-> +                       btmtk_clear_flag(hdev, BTMTK_ISOPKT_RUNNING);
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static int btusb_mtk_claim_iso_intf(struct btusb_data *data, struct usb_=
-interface *intf)
-> +{
-> +       struct btmediatek_data *btmtk_data =3D hci_get_priv(data->hdev);
-> +       int err;
-> +
-> +       err =3D usb_driver_claim_interface(&btusb_driver, intf, data);
-> +       if (err < 0)
-> +               return err;
-> +
-> +       init_usb_anchor(&btmtk_data->isopkt_info.isopkt_anchor);
-> +       spin_lock_init(&btmtk_data->isopkt_info.isorxlock);
-> +
-> +       __set_mtk_intr_interface(data->hdev, MTK_ISO_IFNUM);
-> +
-> +       err =3D btusb_mtk_submit_intr_urb(data->hdev, GFP_KERNEL);
-> +       if (err < 0) {
-> +               btusb_mtk_isopkt_stop(data->hdev);
-> +               bt_dev_err(data->hdev, "ISO intf not support (%d)", err);
-> +               return err;
-> +       }
-> +
-> +       btmtk_set_flag(data->hdev, BTMTK_ISOPKT_OVER_INTR);
-> +
-> +       return 0;
-> +}
-> +
-> +static struct urb *alloc_mtk_intr_urb(struct hci_dev *hdev, struct sk_bu=
-ff *skb)
-> +{
-> +       struct btusb_data *data =3D hci_get_drvdata(hdev);
-> +       struct btmediatek_data *btmtk_data =3D hci_get_priv(hdev);
-> +       unsigned int pipe;
-> +       struct urb *urb;
-> +
-> +       if (!btmtk_data->isopkt_info.isopkt_tx_ep)
-> +               return ERR_PTR(-ENODEV);
-> +
-> +       urb =3D usb_alloc_urb(0, GFP_KERNEL);
-> +       if (!urb)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       if (btmtk_isopkt_pad(hdev, skb))
-> +               return ERR_PTR(-EINVAL);
-> +
-> +       pipe =3D usb_sndintpipe(data->udev,
-> +                             btmtk_data->isopkt_info.isopkt_tx_ep->bEndp=
-ointAddress);
-> +
-> +       usb_fill_int_urb(urb, data->udev, pipe,
-> +                        skb->data, skb->len, btusb_tx_complete,
-> +                        skb, btmtk_data->isopkt_info.isopkt_tx_ep->bInte=
-rval);
-> +
-> +       skb->dev =3D (void *)hdev;
-> +
-> +       return urb;
-> +}
-> +
-> +static int btusb_send_frame_mtk(struct hci_dev *hdev, struct sk_buff *sk=
-b)
-> +{
-> +       struct urb *urb;
-> +
-> +       BT_DBG("%s", hdev->name);
-> +
-> +       if (hci_skb_pkt_type(skb) =3D=3D HCI_ISODATA_PKT) {
-> +               urb =3D alloc_mtk_intr_urb(hdev, skb);
-> +               if (IS_ERR(urb))
-> +                       return PTR_ERR(urb);
-> +
-> +               return submit_or_queue_tx_urb(hdev, urb);
-> +       } else {
-> +               return btusb_send_frame(hdev, skb);
-> +       }
-> +}
-> +
->  static int btusb_mtk_setup(struct hci_dev *hdev)
->  {
->         struct btusb_data *data =3D hci_get_drvdata(hdev);
-> @@ -3213,6 +3448,12 @@ static int btusb_mtk_setup(struct hci_dev *hdev)
->                 /* It's Device EndPoint Reset Option Register */
->                 btusb_mtk_uhw_reg_write(data, MTK_EP_RST_OPT, MTK_EP_RST_=
-IN_OUT_OPT);
->
-> +               /* Claim ISO data interface and endpoint */
-> +               mediatek->isopkt_info.isopkt_intf =3D usb_ifnum_to_if(dat=
-a->udev, MTK_ISO_IFNUM);
-> +               err =3D btusb_mtk_claim_iso_intf(data, mediatek->isopkt_i=
-nfo.isopkt_intf);
-> +               if (err < 0)
-> +                       mediatek->isopkt_info.isopkt_intf =3D NULL;
-> +
->                 /* Enable Bluetooth protocol */
->                 param =3D 1;
->                 wmt_params.op =3D BTMTK_WMT_FUNC_CTRL;
-> @@ -3229,6 +3470,13 @@ static int btusb_mtk_setup(struct hci_dev *hdev)
->
->                 hci_set_msft_opcode(hdev, 0xFD30);
->                 hci_set_aosp_capable(hdev);
-> +
-> +               /* Set up ISO interface after protocol enabled */
-> +               if (btmtk_test_flag(hdev, BTMTK_ISOPKT_OVER_INTR)) {
-> +                       btmtk_isointf_setup(hdev);
-> +                       btmtk_set_flag(data->hdev, BTMTK_ISOPKT_RUNNING);
-> +               }
-> +
->                 goto done;
->         default:
->                 bt_dev_err(hdev, "Unsupported hardware variant (%08x)",
-> @@ -3321,6 +3569,7 @@ static int btusb_mtk_setup(struct hci_dev *hdev)
->  static int btusb_mtk_shutdown(struct hci_dev *hdev)
->  {
->         struct btmtk_hci_wmt_params wmt_params;
-> +       struct btmediatek_data *btmtk_data =3D hci_get_priv(hdev);
->         u8 param =3D 0;
->         int err;
->
-> @@ -3337,6 +3586,21 @@ static int btusb_mtk_shutdown(struct hci_dev *hdev=
-)
->                 return err;
->         }
->
-> +       if (btmtk_test_flag(hdev, BTMTK_ISOPKT_RUNNING)) {
-> +               btusb_mtk_isopkt_stop(hdev);
-> +               btmtk_clear_flag(hdev, BTMTK_ISOPKT_RUNNING);
-> +
-> +               if (btmtk_data->isopkt_info.isopkt_intf) {
-> +                       usb_set_intfdata(btmtk_data->isopkt_info.isopkt_i=
-ntf, NULL);
-> +                       usb_driver_release_interface(&btusb_driver,
-> +                                                    btmtk_data->isopkt_i=
-nfo.isopkt_intf);
-> +                       dev_kfree_skb_irq(btmtk_data->isopkt_info.isopkt_=
-skb);
-> +                       btmtk_data->isopkt_info.isopkt_skb =3D NULL;
-> +
-> +                       btmtk_clear_flag(hdev, BTMTK_ISOPKT_OVER_INTR);
-> +               }
-> +       }
-
-There is still an awful lot of code into btusb that is actually not
-part of the standard interface, for instance the above could also
-possible be done in btmtk as well, in fact I'm not really sure why we
-need the likes of btusb_mtk_shutdown or btusb_mtk_setup, etc, inside
-btusb.c?
-
->         return 0;
->  }
->
-> @@ -4475,9 +4739,12 @@ static int btusb_probe(struct usb_interface *intf,
->                 hdev->manufacturer =3D 70;
->                 hdev->cmd_timeout =3D btmtk_reset_sync;
->                 hdev->set_bdaddr =3D btmtk_set_bdaddr;
-> +               hdev->send =3D btusb_send_frame_mtk;
->                 set_bit(HCI_QUIRK_BROKEN_ENHANCED_SETUP_SYNC_CONN, &hdev-=
->quirks);
->                 set_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks);
->                 data->recv_acl =3D btusb_recv_acl_mtk;
-> +               data->dev_suspend =3D btusb_mtk_isopkt_stop;
-> +               data->dev_resume =3D btusb_mtk_isopkt_start;
->         }
->
->         if (id->driver_info & BTUSB_SWAVE) {
-> --
-> 2.18.0
->
-
-
---=20
-Luiz Augusto von Dentz
+>  drivers/pci/controller/dwc/pci-layerscape-ep.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c b/drivers/pci/controller/dwc/pci-layerscape-ep.c
+> index 35bb481564c7..a4a800699f89 100644
+> --- a/drivers/pci/controller/dwc/pci-layerscape-ep.c
+> +++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
+> @@ -104,7 +104,7 @@ static irqreturn_t ls_pcie_ep_event_handler(int irq, void *dev_id)
+>  		dev_dbg(pci->dev, "Link up\n");
+>  	} else if (val & PEX_PF0_PME_MES_DR_LDD) {
+>  		dev_dbg(pci->dev, "Link down\n");
+> -		pci_epc_linkdown(pci->ep.epc);
+> +		dw_pcie_ep_linkdown(&pci->ep);
+>  	} else if (val & PEX_PF0_PME_MES_DR_HRD) {
+>  		dev_dbg(pci->dev, "Hot reset\n");
+>  	}
+> 
+> -- 
+> 2.25.1
+> 
 
