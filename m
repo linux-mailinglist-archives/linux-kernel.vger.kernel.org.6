@@ -1,92 +1,55 @@
-Return-Path: <linux-kernel+bounces-203880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E8058FE18C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:51:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0FDB8FE190
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:52:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27CDB2873A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:51:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59992B25FB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EABB14EC6B;
-	Thu,  6 Jun 2024 08:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3B713CF9C;
+	Thu,  6 Jun 2024 08:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1Q2sZKg"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mXWkv87T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8D714EC4A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1700F224D6;
+	Thu,  6 Jun 2024 08:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717663719; cv=none; b=CJb6ncn8Dy0sQEmnfa4MSm2bOHTHhTYFqZYC81mJfJck0Pr8X++zgGbvrAtmKry/9AI44XV+wN7LfQFTojLh0FAoVNzSZ5XUWXNWBN9erDoA9X+R9uRGEITuWg/nweYCRaWKFumF4M0NfzB5bYXLgt7dVShr6ubXw37AWVBUnjY=
+	t=1717663775; cv=none; b=FGfnR5eEchyMxDbKdls3Sj8lj+zRA9TUBAW510PMIpej8eoZTts5oUr1MguOa/Ts2Wqh5r1uREWIgkgQX12Ck4oqQHtoOqiyPdmkEvZmAjnRKEmlnpZgj8Cisv51+KgkDeNCC3hVfkrCfHfTimuIkcWuIYLQyzmhmXrId23quvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717663719; c=relaxed/simple;
-	bh=l9xAn4M5MGqMAykc7g1jfGArOcfFcSGhYTBvMYs2WIQ=;
+	s=arc-20240116; t=1717663775; c=relaxed/simple;
+	bh=dfVI/Ias/QH1fB6PdleaDpJdgE9J8+Im8iYfonyb/fc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CNi24/bs/YCONZgNnetnHT2zpsxIYgURAElUSdx84hrFLt0qw3PwLMjcnWXZNO6Ha11gXkLBgPKSGDC1JMebb+MCKsLUvCeQNUCkuZok/vp/tJaxiiJ/oqbuQYAUA1YpQAo8Zd+YjU92WZ4eV69+jAdhlwvGsnP/KDGHdjS+mkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B1Q2sZKg; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42159283989so9847505e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 01:48:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717663716; x=1718268516; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C7mm47USfyF10BLhroH/wO49awuW1U7B3PUEMT0cnVY=;
-        b=B1Q2sZKg3MsOxvA5pcFl8Yot0bpsvDbNcbe4jPIt5MyHIvqOKCe9bhMUAe/i089QV6
-         27YSo301nHupBYyGOfqK2fcnO5HYoht3ELeXtZPl3HwhWDOeSYbqW0m/yF6VjOLC6p8U
-         4MAfnjqie/yWnt1P98leGjFZV86uK0/IamvVxI8+ghZ/Zgj838tyN64AQTrKFLTjmox9
-         bUg7gCf0GaHCFkblGWl9LyvglTUQLd9EaRPfX2CsZfVHooWlaMne2UQj45xQKGEn6wTN
-         x4cLJQqabdBGJdTR2513L30UgOaT4t+x6gQ4VbCsoqJ5IPlML2Ivifplg1bbvXEDhaaA
-         Dlrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717663716; x=1718268516;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C7mm47USfyF10BLhroH/wO49awuW1U7B3PUEMT0cnVY=;
-        b=HonOZHJPCUHRba/ArCEVZrqmGCWXGS6Ljvf1NKv4lnhSAzfVoGrGoBD1jPgs5FLW8M
-         /iZLI4nDdI96QXy4PxXoAFq8DF2y2AxkSD3OBGWsY2UFqw6tBBrSRqwBtpV2joqc76G3
-         JoKRV9ddDXUwNI0nVm7ZPSOqVv71FW7VEbpG1G+n0SBWm1r7o3MmROqfZ+43hF/D1ZUz
-         Wd25gDQMNohsEp3syVvem3A+o+g7F3ayfHg7ftnitlZLbSFmPTSOUayPn/x7M0ZMaX6Y
-         4O0oNkG07IEGBfGg2p9yCaCE6mzUHgKIzEiYz2N3+3xupQv9A36NmiFLlRELTXRxImRR
-         9mzw==
-X-Forwarded-Encrypted: i=1; AJvYcCXBVRjAu4oZBpPdQ3x655wiRVuz72A4buG7rAuOQm5VJ/toSJ8ZLphLlYhHWSA3YixVq7/hsLCaxGYMQYz6o4pmGTlZL9/kYgEwL8Xp
-X-Gm-Message-State: AOJu0YwBVjFPpVUQzO2kWv3SNza0IREewM6ckT16DX1jxiBUk6Bd4lAh
-	IMvqQKwIJeRta5Q9Rb6B6+I28zf/ejo+rYJzHGUVEH/5UOAuwfo5
-X-Google-Smtp-Source: AGHT+IEpLEZ4pLzlDnzqRB1nU9qOswtuCAFnRdf2l6Ek4pUng3hIrk4laZ4SNADkauj6uLxYLwoiRw==
-X-Received: by 2002:a05:600c:35c1:b0:416:8efd:1645 with SMTP id 5b1f17b1804b1-421562c354emr56334005e9.7.1717663715889;
-        Thu, 06 Jun 2024 01:48:35 -0700 (PDT)
-Received: from gmail.com (1F2EF20A.nat.pool.telekom.hu. [31.46.242.10])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215811d49esm46855915e9.27.2024.06.06.01.48.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 01:48:35 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Thu, 6 Jun 2024 10:48:33 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org,
-	Andy Lutomirski <luto@amacapital.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dave Hansen <dave@sr71.net>, Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uros Bizjak <ubizjak@gmail.com>
-Subject: Re: [PATCH 3/3, v4] x86/fpu: Remove init_task FPU state
- dependencies, add debugging warning for PF_KTHREAD tasks
-Message-ID: <ZmF34YbJPrV7WQzn@gmail.com>
-References: <20240605083557.2051480-1-mingo@kernel.org>
- <20240605083557.2051480-4-mingo@kernel.org>
- <20240605141733.GC25006@redhat.com>
- <CAHk-=wi4773Ls82kqVbPmM1deghS2NXkHNCCzWPc270kcByXPA@mail.gmail.com>
- <20240605162610.GF25006@redhat.com>
- <CAHk-=wg2zJgy69j8n6C9T4YARkxcJ09SFkpMiqrCqhChf0s3NQ@mail.gmail.com>
- <ZmFziN0i10sILaIo@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n8k6svgKGTJLMLh6QOGCAC6RPChA7u9fcC+8hcZcVA2UrPOYbo3Zoo14NtgmNtuSOXPa4KkMJhFf4dsHvB7PRQsA6o+O4Lv8etKovOuWU9BRe0XHQzTJEx5xAQiNntnEtyUq4Vxz8qDJv6WlT+MqMbQ/ACrv58mDHOV1EP9hosk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mXWkv87T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AED1EC4AF0C;
+	Thu,  6 Jun 2024 08:49:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717663774;
+	bh=dfVI/Ias/QH1fB6PdleaDpJdgE9J8+Im8iYfonyb/fc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mXWkv87TKtRUSkjrpl9WBIMY6mBJ9QPS7BtHjKkdBkz0gFi8u5CwaMHyCyby9Szvt
+	 B70hE8uW84WT8zRTAdkIccDVLNcC78B2m0zovDwQu04tdlFROBBpctRBEnKJGPv5Zy
+	 oeirI1Dn6bfv6NSEaFll6nIPeNgNQqH7YxrIBdMWUb81eK0dxLGMHTHAG88L/9hJW2
+	 sOblBxjYyZK7Xd2MaomQqviWZL8eHk8rE+6CoupP9yS5lNaa+NknJQpES4ab5yN6cj
+	 FiI6NcuAhj5at0RvlL0NZ+dsj0pv5vW4H0rKwEGZeEPVM6Qj3bhs4rr+FFNBCIQe2Z
+	 KZaoWpYqNsGBw==
+Date: Thu, 6 Jun 2024 10:49:30 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: "Luke D. Jones" <luke@ljones.dev>, Jiri Kosina <jikos@kernel.org>, 
+	ilpo.jarvinen@linux.intel.com, corentin.chary@gmail.com, platform-driver-x86@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] asus wmi and hid: use HID LED for brightness
+Message-ID: <dflqwdl4fo3wv4zjj4jl6sbot6cotscksgpyrbiu3j77lyrwal@s6nomonx4gv6>
+References: <20240529012827.146005-1-luke@ljones.dev>
+ <b0d8eebc-5abb-4ec0-898c-af7eedc730d9@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,46 +58,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZmFziN0i10sILaIo@gmail.com>
+In-Reply-To: <b0d8eebc-5abb-4ec0-898c-af7eedc730d9@redhat.com>
 
-
-* Ingo Molnar <mingo@kernel.org> wrote:
-
-> I changed the debug check to test for PF_KTHREAD, and to return NULL:
+On May 29 2024, Hans de Goede wrote:
+> Hi all,
 > 
-> +#ifdef CONFIG_X86_DEBUG_FPU
-> +struct fpu *x86_task_fpu(struct task_struct *task)
-> +{
-> +	if (WARN_ON_ONCE(task->flags & PF_KTHREAD))
-> +		return NULL;
-> +
-> +	return (void *)task + sizeof(*task);
-> +}
-> +#endif
+> On 5/29/24 3:28 AM, Luke D. Jones wrote:
+> > Changelog:
+> > - v1
+> >   - Split the patch in two
+> >   - Move function body to asus-wmi and export
+> >   - Use array of names and for loops
+> > 
+> > History:
+> > - https://lore.kernel.org/linux-input/20240528013959.14661-1-luke@ljones.dev/T/#u
+> > 
+> > Luke D. Jones (2):
+> >   hid-asus: use hid for brightness control on keyboard
+> >   hid-asus: change the report_id used for HID LED control
+> > 
+> >  drivers/hid/hid-asus.c                     | 32 +++++++++++++++++++-
+> >  drivers/platform/x86/asus-wmi.c            | 35 +++++++++++++++++++++-
+> >  include/linux/platform_data/x86/asus-wmi.h | 10 +++++++
+> >  3 files changed, 75 insertions(+), 2 deletions(-)
 > 
-> ... and the NULL we return will likely crash & exit any kthreads attempting 
-> to use the FPU context area - which I think is preferable to returning 
-> invalid memory that may then be corrupted.
+> Jiri, Benjamin since the first patch now also touches pdx86 files
+> we need to coordinate merging this.
 > 
-> Hopefully this remains a hypothethical concern. :-)
+> There also is a long list of patches pending for
+> drivers/platform/x86/asus-wmi.c
 > 
-> Alternatively, this may be one of the very few cases where a BUG_ON() might 
-> be justified? This condition is not recoverable in any sane fashion IMO.
+> So I would prefer to take this series (both patches) upstream through
+> the pdx86 tree to avoid conflicts.
+> 
+> May we have an ack from one of you for merging this through pdx86/for-next ?
 
-And promptly this triggered in live testing, because while kthreads do not 
-use the FPU context area, the current fpu__drop() code does call 
-x86_task_cpu() even for kthreads...
+Sure:
+Acked-by: Benjamin Tissoires <bentiss@kernel.org>
 
-See the two new 4/3 and 5/3 patches in this thread I've sent that clean 
-this up:
+But I haven't seen the v2. Are you sure you want to take this series as
+it is?
 
-  [PATCH 4/3] x86/fpu: Push 'fpu' pointer calculation into the fpu__drop() call
-  [PATCH 5/3] x86/fpu: Make sure x86_task_fpu() doesn't get called for PF_KTHREAD tasks during exit
-
-I'll also reorder the patches to apply these fpu__drop() changes before 
-adding the debug warning.
-
-Thanks,
-
-	Ingo
+Cheers,
+Benjamin
 
