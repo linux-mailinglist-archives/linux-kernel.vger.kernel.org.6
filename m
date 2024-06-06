@@ -1,73 +1,54 @@
-Return-Path: <linux-kernel+bounces-204439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3042C8FEE20
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:42:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8ABE8FEE19
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 576051C25215
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:42:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 851671F2286E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21C51C2221;
-	Thu,  6 Jun 2024 14:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OIhqFYC4"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73401C0DC2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63CD19EECC;
 	Thu,  6 Jun 2024 14:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YYJzAMfm"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75BAC19EEC8;
+	Thu,  6 Jun 2024 14:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717683560; cv=none; b=WqYZoaHGrhpuCq2yQ2Wqjpo6g9Qagb/ytAnBS1Zo9wCg1EoOq/8J2F5E6ma8MKOQs6FTqlVw56dyrRhFkapftIqEYtF086SrFEtQU0HqC5xJnArgQfdNj/8QlCW14VMKE9gvQa/T7xb54xMbeJsoCGVxfzo8f7gOzycaDB4byD4=
+	t=1717683558; cv=none; b=jxtjTK7aaRu5FCTx3FDiI8BkdDfLUVB43Yu881PC4jIT66GsMQwxhCfC4gvnHh7itTENU0ZRdCidnMxHPGOi02APEatYys+zll3YBe8U3bPw5qC2cpQrSR3QltljtbtJCNyEiNZ+1xEQwnvla9EcZHYH2EzXDNBjT89JaW4DpAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717683560; c=relaxed/simple;
-	bh=EIN+KuUQmKGM4LQhb84pnUKc3j3RvgGFbJhMtBtv63I=;
+	s=arc-20240116; t=1717683558; c=relaxed/simple;
+	bh=4TkfymXhZni13bl4zIia9hXBLpsc7d/HZrJcyEK53uE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MfwrcOKQxX0TvmT2PtCFhPx8ZTHdhHm0iZ0fkldO3eyvcZ7YgAX+Jyg2tn6bin9Nzo7kqVhoIWoU9+AnFeBDpCkssKUvCl6zyjFfsW46EF5UrH84H1i/nc+UiVbZMgGIkxCfU9E3eS1ssssmejzl2TctqS8KcVIfj0RBL4+Z2zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OIhqFYC4; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-701b0b0be38so1006440b3a.0;
-        Thu, 06 Jun 2024 07:19:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717683558; x=1718288358; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dcbWossHxFAPWhaCt0jaKVByCwga+fTczv+uXxjTlu0=;
-        b=OIhqFYC4jGwWY+9iFJSrz/vhxDx8jIXoIT/qW/m1VY34nyuoL4hlkA1ZfnjTW1+fyN
-         v7urIQrG8yXSi7Ty3GNa8v7rlDNLf5bTzraPNvXq6uIYzKWwhxNuB5qSM7lTKx6y+ou1
-         324wCln80TlRfv+Hz5yaC5aKAsKBzkG17vdyp6nqb28VsKoeZNWtWgHT5zNFm03we9Jy
-         tkaYH3r1K+X0FFg95ksDFzvbuiazswobVFxHnJlKmPWBUYl3oVKCRQoUFdkqPrj0B/QO
-         lyX9DT7+pB+HZJ4hSTDulIxM+aHiLRM6srpXf8kZrSXMKw86sBMi6i6wT+9zUclPwm/c
-         /D6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717683558; x=1718288358;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dcbWossHxFAPWhaCt0jaKVByCwga+fTczv+uXxjTlu0=;
-        b=gvskTnY/cW+UZE4/MV3Ynj1hpzpNkUjSP/qPHJUiH3vai8PLsXZ8qHZ4TgCm/2GoP/
-         +6LpukE/N+IumBeLcfscCmNIW6b7vPntdxvSnuryy4NxfQth+WkkfcIbi4B70jouUMa+
-         DRgGPL8hfHlkG7cBXL83s4d5jGtqUuavsE3KwJM5APONYPL2NYyQwNj+Bn6UlHvWBasU
-         1ia+ExNeiFRqQZJVvqLGxJA64bctKh6D/vjdtjP1BwbpegY/W7q3Hlkc52SZ8yIMGPf2
-         u+8wT2aa9bAsBtD9JaYKYsmZv6CejBdnI85iHiTdHl3HWBNKaEDdh7ljU8bkJ8Rz7VHq
-         G8Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3cTgCH0NBpHhCAfTuoS474/hlK/b8Sh3fBYLO5eXxoyUUak+cLmBHvENQtd4ubjKHpNvYFo18AHYwREI7ewZ0f37DWpNQwqggKRQIWsbu5WGla2cAhf+fN2Txqi/UeyvBLh38ArozwA==
-X-Gm-Message-State: AOJu0YyXr37PVh1TLzHtIIyMihQrEHwbRbMys9YFc/Puql/8/jI6Oqg+
-	GawFAsHERzbxFr4sTFSfKDoFHtbPMJCHATKixJQHJ+9vCIqK2Lrc
-X-Google-Smtp-Source: AGHT+IGW51mR4NTliKKpbb6mL8Di0ngne/w1f8Ev53XXXVhQjFI9ZzWUelNFBR3sa/34xvYKydHeSA==
-X-Received: by 2002:a05:6a20:3c8d:b0:1af:9edd:9cb3 with SMTP id adf61e73a8af0-1b2b7414232mr7369811637.17.1717683557519;
-        Thu, 06 Jun 2024 07:19:17 -0700 (PDT)
-Received: from [10.7.27.90] ([103.170.1.54])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd495062sm1146384b3a.119.2024.06.06.07.19.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 07:19:17 -0700 (PDT)
-Message-ID: <c32b902e-0338-436b-85e1-827c48e0ee2b@gmail.com>
-Date: Thu, 6 Jun 2024 19:49:04 +0530
+	 In-Reply-To:Content-Type; b=O8C8srYIwvFmeB5JGeFAae7KVrVQVuC8BzNyhiXcOWkIFCV2dnOQYn0RU5Blvh7UXeCqZFGisTxrBHo8bOziY4HB4zgJ0IL5M/n7hXyD0OshbW4xmF1pBfPnTUNK/KCaqMMj9iBRM58ThcpPznktT2bASFWBg+OlrCGLQkWJcZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YYJzAMfm; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717683554;
+	bh=4TkfymXhZni13bl4zIia9hXBLpsc7d/HZrJcyEK53uE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YYJzAMfmKb0Sl998xS57d6Y2oXgCJXzbp64dD6iufiPya+cyK/Yh8/bmqAwyRXH79
+	 OMhbtx6SWkjgl0XzM0qeO/w8DqLWgtyr4MwPwtJ1Vm8V2t0gWeOozKJyvyD0Oi+G26
+	 0kGx4sgDYPgWmAhOc30W7A6I+rZs4qMl6iejTh88t073Zrcwt3xGGRX5uTHc1cXIwj
+	 zWfj0xjnuNmVVQeZ8DPdnE00hqD68dGQS9G8adx35MWhz4AUVBetZb3NLTMvbDAFWg
+	 WLYTK2N1S6cgbncH+x88ry+IqXgHPE2775C56+P5E4yRF7nFR9AAx+U+fpuNvXRmAA
+	 q4rO/xIwsS9yA==
+Received: from [100.95.196.25] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: koike)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id ED18337820B5;
+	Thu,  6 Jun 2024 14:19:08 +0000 (UTC)
+Message-ID: <99fe00bf-003c-4295-8cfc-562068e11f98@collabora.com>
+Date: Thu, 6 Jun 2024 11:19:08 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,70 +56,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: dt-bindings: mt6358: Convert to dtschema
-Content-Language: en-US, ar-LB
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20240518081621.63386-1-agarwala.kartik@gmail.com>
- <c05f91f5-a878-4f36-b325-0ac8e038a7e5@linaro.org>
-From: Kartik Agarwala <agarwala.kartik@gmail.com>
-In-Reply-To: <c05f91f5-a878-4f36-b325-0ac8e038a7e5@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v3 2/6] drm/ci: add farm variable
+To: Vignesh Raman <vignesh.raman@collabora.com>,
+ dri-devel@lists.freedesktop.org
+Cc: daniels@collabora.com, airlied@gmail.com, daniel@ffwll.ch,
+ robdclark@gmail.com, david.heidelberg@collabora.com,
+ guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com,
+ dmitry.baryshkov@linaro.org, mcanal@igalia.com,
+ linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, amd-gfx@lists.freedesktop.org,
+ linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+References: <20240529024049.356327-1-vignesh.raman@collabora.com>
+ <20240529024049.356327-3-vignesh.raman@collabora.com>
+Content-Language: en-US
+From: Helen Koike <helen.koike@collabora.com>
+In-Reply-To: <20240529024049.356327-3-vignesh.raman@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 5/20/24 12:39 PM, Krzysztof Kozlowski wrote:
-> On 18/05/2024 10:16, Kartik Agarwala wrote:
->> Convert Mediatek MT6358 Audio Codec bindings from text to dtschema.
->>
->> Signed-off-by: Kartik Agarwala <agarwala.kartik@gmail.com>
->> ---
->>  .../bindings/sound/mediatek,mt6358.yaml       | 47 +++++++++++++++++++
->>  .../devicetree/bindings/sound/mt6358.txt      | 26 ----------
->>  2 files changed, 47 insertions(+), 26 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/sound/mediatek,mt6358.yaml
->>  delete mode 100644 Documentation/devicetree/bindings/sound/mt6358.txt
->>
->> diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt6358.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt6358.yaml
->> new file mode 100644
->> index 000000000..f57ef2aa5
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/sound/mediatek,mt6358.yaml
->> @@ -0,0 +1,47 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/sound/mediatek,mt6358.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Mediatek MT6358 Audio Codec
->> +
->> +maintainers:
->> +  - Kartik Agarwala <agarwala.kartik@gmail.com>
->> +
->> +description: |
-> 
-> Do not need '|' unless you need to preserve formatting.
-> 
->> +  The communication between MT6358 and SoC is through Mediatek PMIC wrapper.
->> +  For more detail, please visit Mediatek PMIC wrapper documentation.
->> +  Must be a child node of PMIC wrapper.
-> 
-> Did you update the PMIC wrapper binding with ref to this?
-> 
 
-Hi Krzysztof, 
 
-I apologize incase this is something obvious but I am still not sure
-if I understand what you expect here. Could you please explain this
-a bit more? I thought that you wanted me to convert the Mediatek PMIC 
-wrapper but it already seems to be in DT-Schema format.[1]
+On 28/05/2024 23:40, Vignesh Raman wrote:
+> Mesa uses structured logs for logging and debug purpose,
+> https://mesa.pages.freedesktop.org/-/mesa/-/jobs/59165650/artifacts/results/job_detail.json
+> 
+> Since drm-ci uses the mesa scripts, add the farm variable
+> and update the device type for missing jobs.
+> 
+> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
 
-[1]: https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/soc/mediatek/mediatek%2Cpwrap.yaml
+Acked-by: Helen Koike <helen.koike@collabora.com>
 
-Thanks and Regards,
-Kartik Agarwala
+
+> ---
+> 
+> v3:
+>    - New commit to add farm variable and update device type variable.
+> 
+> ---
+>   drivers/gpu/drm/ci/test.yml | 11 +++++++++--
+>   1 file changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/ci/test.yml b/drivers/gpu/drm/ci/test.yml
+> index 8bc63912fddb..2615f67f6aa3 100644
+> --- a/drivers/gpu/drm/ci/test.yml
+> +++ b/drivers/gpu/drm/ci/test.yml
+> @@ -24,6 +24,7 @@
+>     variables:
+>       HWCI_TEST_SCRIPT: "/install/igt_runner.sh"
+>       DEBIAN_ARCH: "armhf"
+> +    FARM: collabora
+>     dependencies:
+>       - testing:arm32
+>     needs:
+> @@ -39,6 +40,7 @@
+>     variables:
+>       HWCI_TEST_SCRIPT: "/install/igt_runner.sh"
+>       DEBIAN_ARCH: "arm64"
+> +    FARM: collabora
+>     dependencies:
+>       - testing:arm64
+>     needs:
+> @@ -54,6 +56,7 @@
+>     variables:
+>       HWCI_TEST_SCRIPT: "/install/igt_runner.sh"
+>       DEBIAN_ARCH: "amd64"
+> +    FARM: collabora
+>     dependencies:
+>       - testing:x86_64
+>     needs:
+> @@ -74,6 +77,7 @@
+>       S3_ARTIFACT_NAME: "arm64/kernel-files"
+>       BM_KERNEL: https://${PIPELINE_ARTIFACTS_BASE}/arm64/Image.gz
+>       BM_CMDLINE: "ip=dhcp console=ttyMSM0,115200n8 $BM_KERNEL_EXTRA_ARGS root=/dev/nfs rw nfsrootdebug nfsroot=,tcp,nfsvers=4.2 init=/init $BM_KERNELARGS"
+> +    FARM: google
+>     needs:
+>       - debian/arm64_test
+>       - job: testing:arm64
+> @@ -116,8 +120,9 @@ msm:apq8016:
+>       - .baremetal-igt-arm64
+>     stage: msm
+>     variables:
+> +    DEVICE_TYPE: apq8016-sbc-usb-host
+>       DRIVER_NAME: msm
+> -    BM_DTB: https://${PIPELINE_ARTIFACTS_BASE}/arm64/apq8016-sbc-usb-host.dtb
+> +    BM_DTB: https://${PIPELINE_ARTIFACTS_BASE}/arm64/${DEVICE_TYPE}.dtb
+>       GPU_VERSION: apq8016
+>       # disabling unused clocks congests with the MDSS runtime PM trying to
+>       # disable those clocks and causes boot to fail.
+> @@ -132,9 +137,10 @@ msm:apq8096:
+>       - .baremetal-igt-arm64
+>     stage: msm
+>     variables:
+> +    DEVICE_TYPE: apq8096-db820c
+>       DRIVER_NAME: msm
+>       BM_KERNEL_EXTRA_ARGS: maxcpus=2
+> -    BM_DTB: https://${PIPELINE_ARTIFACTS_BASE}/arm64/apq8096-db820c.dtb
+> +    BM_DTB: https://${PIPELINE_ARTIFACTS_BASE}/arm64/${DEVICE_TYPE}.dtb
+>       GPU_VERSION: apq8096
+>       RUNNER_TAG: google-freedreno-db820c
+>     script:
+> @@ -146,6 +152,7 @@ msm:sdm845:
+>     stage: msm
+>     parallel: 6
+>     variables:
+> +    DEVICE_TYPE: sdm845-cheza-r3
+>       DRIVER_NAME: msm
+>       BM_KERNEL: https://${PIPELINE_ARTIFACTS_BASE}/arm64/cheza-kernel
+>       GPU_VERSION: sdm845
 
