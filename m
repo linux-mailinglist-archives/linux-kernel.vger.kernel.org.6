@@ -1,148 +1,122 @@
-Return-Path: <linux-kernel+bounces-203628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A04D8FDE51
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:48:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0ED38FDE65
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:56:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 981EF1F23D82
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:48:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BD911C22950
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D773B3E487;
-	Thu,  6 Jun 2024 05:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B695147A53;
+	Thu,  6 Jun 2024 05:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QtJGZlhg"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iwKwqsfj"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442A63BB59;
-	Thu,  6 Jun 2024 05:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CD145BE3
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 05:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717652921; cv=none; b=OQZHTwoWUH/xH1FhoT6OKfZCcU8SUkRqZpZhlGFQulAfYYW6dOgRKfLGNnOYtXVP3U+u0QFeAWlmu7t7W/ZZG5vRWoL0OBaTTxdydxwVtP+xqC8qnxpO1x9ypvRxDwucw/5USylt93ZK4VeqvJAjei0Er/xEsIGWaVJMhbxG5PI=
+	t=1717653383; cv=none; b=Wan04Nr2yXHMarp1yyScq/IjaVdD2NU5RRJk+DYArkatcvwmwnKU9uLnTL63TGhhlJe0Aqxijn5T2MSCMmDsEeVse/vd375p4Nn83DKU6HpU0m0nLtFhnkacMV63zc38dqraRB8NXSzKAtmRCAZopV1IBPNpJ73oyqXbk79BNSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717652921; c=relaxed/simple;
-	bh=S9BRO1CiBzd0Cxt3mGbAHDhzFMKInH76sn7ppWFxmPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hZNVBsFwyDFY2R0C/o9eJi4MmfNwxhbQMiBwSEqM80I8pTq9+ht1SgRVzOEvges7/5D9qT4oj0PGNM5cjdy+yLR+SPDnwje0FZujNva80NYVfXVo7mB7ZzcejZoI4u2OjyKHDZ52MFwGjWJeGVg1+9P/ALsxNkgNCq+utL0UaQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QtJGZlhg; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4564fQ1l031562;
-	Thu, 6 Jun 2024 05:48:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc : content-type : date
- : from : in-reply-to : message-id : mime-version : references : subject :
- to; s=pp1; bh=F1QxdnanM0DI+xMmZuQK1XU1kD0sRkv46FM+ALv8/RY=;
- b=QtJGZlhgqgx4YR8FKPwgMLc7QHJXCg1ncKiGb8ewrAUZYkfnr6a4dxPLnWAg13NWNePA
- vGZudAhNawb/e7bGe0QaJ/Pldlz+cuaBQ4Nr86ua8HjDUu1Kxx4By4nAV4JJ4+4Vj4AN
- tNXmeQDcTecG7/V5UjT0gVg+ypwNw1npXaZW8rtiIYTD0rgCPLqmKWybQEdrMixGqrNH
- Gv/bgOpJvacHCgUAfcu24rFbOSZ4Gm/3v5PNswzqqp7HTUa0fnpc0winUYwuXwJ0Z+Mn
- iOeM9Fw1zdPWbAOhZiMxJio+X2IevmzNgnr7ShIRk78MnLVf9qKTobWdKDA4ALwx8M6u 0w== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yk4n18bee-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Jun 2024 05:48:24 +0000
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4565mNsq004930;
-	Thu, 6 Jun 2024 05:48:23 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yk4n18be9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Jun 2024 05:48:23 +0000
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4564gXQW008458;
-	Thu, 6 Jun 2024 05:48:22 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ygec10xc1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Jun 2024 05:48:22 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4565mIDC25559620
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 6 Jun 2024 05:48:20 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 75F6F20956;
-	Thu,  6 Jun 2024 05:46:16 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 365242093B;
-	Thu,  6 Jun 2024 05:46:12 +0000 (GMT)
-Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com (unknown [9.43.32.207])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu,  6 Jun 2024 05:46:11 +0000 (GMT)
-Date: Thu, 6 Jun 2024 11:16:08 +0530
-From: Gautam Menghani <gautam@linux.ibm.com>
-To: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        aneesh.kumar@kernel.org, naveen.n.rao@linux.ibm.com, corbet@lwn.net
-Cc: linuxppc-dev@lists.ozlabs.org, linux-doc@vger.kernel.org,
-        kvm@vger.kernel.org, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] Fix doorbell emulation for v2 API on PPC
-Message-ID: <yzixdicgdqcten6eglcc4zlhn3sbnqrax3ymzzqvdmxvdh63zx@xymyajel3aoh>
-References: <20240605113913.83715-1-gautam@linux.ibm.com>
+	s=arc-20240116; t=1717653383; c=relaxed/simple;
+	bh=Rn6MIgAHXThpOou1fRNGm5w62PA8fwoF6VJ/NPzgQgI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BsvZjO6WPzVYUNu2f+JakQfTJttegN4AYTfXanvEBKrbq79Pqjmgu8I2QfPjalIy1Dg0IRKiiomvwK5zvan3EQBGt0CaJzCyzJYpeyQpk14qnAXwaAtUTCAUYOQNFc32kbX+nd7550zehbDcbtnFKyZimn8NUdt/p4l3GICAXQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iwKwqsfj; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: senozhatsky@chromium.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1717653378;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+8Z5XmpUE3zx1Y8cy7cbU/CoYCfPRTM2B2i5o3MFz18=;
+	b=iwKwqsfjoGXVgQe/po1O8i4bOhN+NhoK5vwBxCPBRqhvuJO6LC62WtY9E5l6kKozckGXAN
+	ENQD0kw1r5cy9frpP4esDYHVVJkYEgPMeRbsQqoP8S+NpNI4S+mRQgCBad5qPF4uRF7Akg
+	A+vmKupx/CjWu2gH98ucZkabpnMTcQs=
+X-Envelope-To: yosryahmed@google.com
+X-Envelope-To: erhard_f@mailbox.org
+X-Envelope-To: yuzhao@google.com
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linuxppc-dev@lists.ozlabs.org
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: nphamcs@gmail.com
+X-Envelope-To: minchan@kernel.org
+X-Envelope-To: vbabka@kernel.org
+Message-ID: <f92e6d70-32e3-4f45-8fe8-0b7af7a14bc6@linux.dev>
+Date: Thu, 6 Jun 2024 13:55:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240605113913.83715-1-gautam@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: EblB2tKXDq9detrDQrwOMaMKSlbJs6rb
-X-Proofpoint-GUID: -G_Cdwm-ls8YhJt_YOO4Dh9rKtQGZgs8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-06_01,2024-06-06_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
- mlxlogscore=583 mlxscore=0 malwarescore=0 phishscore=0 impostorscore=0
- spamscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
- definitions=main-2406060040
+Subject: Re: kswapd0: page allocation failure: order:0,
+ mode:0x820(GFP_ATOMIC), nodemask=(null),cpuset=/,mems_allowed=0 (Kernel
+ v6.5.9, 32bit ppc)
+Content-Language: en-US
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Yosry Ahmed <yosryahmed@google.com>, Erhard Furtner
+ <erhard_f@mailbox.org>, Yu Zhao <yuzhao@google.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
+ Minchan Kim <minchan@kernel.org>, "Vlastimil Babka (SUSE)"
+ <vbabka@kernel.org>
+References: <CAJD7tkb=5GJ9SNUwDsu1Zy3Tus4rjsNo60Hg9N7=gGth409Diw@mail.gmail.com>
+ <CAOUHufb6zXr14Wm3T-4-OJh7iAq+vzDKwVYfHLhMMt96SpiZXg@mail.gmail.com>
+ <CAJD7tkZ+QY55GTzW9A7ZCm=rxAEfrW76cWXf8o5nwiKSXp8z=w@mail.gmail.com>
+ <20240604231019.18e2f373@yea>
+ <CAJD7tkYq5u7B+0UH2XKpeWJnUxoO2kJ1_XZ2JOgYpyNEVR7u0g@mail.gmail.com>
+ <20240606010431.2b33318c@yea>
+ <CAJD7tkbhWYzx=6YmzAh0F+cK-_Bn8mPOH7gMbQS7YVXmaFSgFg@mail.gmail.com>
+ <e68bcc6a-25b1-42aa-83b3-5d457b254cbe@linux.dev>
+ <20240606043156.GC11718@google.com>
+ <6335c05d-9493-4b03-85a7-f2dd91db9451@linux.dev>
+ <20240606054334.GD11718@google.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <20240606054334.GD11718@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jun 05, 2024 at 05:09:08PM GMT, Gautam Menghani wrote:
-> Doorbell emulation for KVM on PAPR guests is broken as support for DPDES
-> was not added in initial patch series [1].
-> Add DPDES support and doorbell handling support for V2 API. 
+On 2024/6/6 13:43, Sergey Senozhatsky wrote:
+> On (24/06/06 12:46), Chengming Zhou wrote:
+>>>> Agree, I think we should try to improve locking scalability of zsmalloc.
+>>>> I have some thoughts to share, no code or test data yet:
+>>>>
+>>>> 1. First, we can change the pool global lock to per-class lock, which
+>>>>    is more fine-grained.
+>>>
+>>> Commit c0547d0b6a4b6 "zsmalloc: consolidate zs_pool's migrate_lock
+>>> and size_class's locks" [1] claimed no significant difference
+>>> between class->lock and pool->lock.
+>>
+>> Ok, I haven't looked into the history much, that seems preparation of trying
+>> to introduce reclaim in the zsmalloc? Not sure. But now with the reclaim code
+>> in zsmalloc has gone, should we change back to the per-class lock? Which is
 > 
-> [1] lore.kernel.org/linuxppc-dev/20230914030600.16993-1-jniethe5@gmail.com
+> Well, the point that commit made was that Nhat (and Johannes?) were
+> unable to detect any impact of pool->lock on a variety of cases.  So
+> we went on with code simplification.
+
+Right, the code is simpler.
+
 > 
-> Changes in v2:
-> 1. Split DPDES support into its own patch
+>> obviously more fine-grained than the pool lock. Actually, I have just done it,
+>> will test to get some data later.
 > 
-> Gautam Menghani (2):
->   arch/powerpc/kvm: Add DPDES support in helper library for Guest state
->     buffer
->   arch/powerpc/kvm: Fix doorbell emulation for v2 API
-> 
->  Documentation/arch/powerpc/kvm-nested.rst     | 4 +++-
->  arch/powerpc/include/asm/guest-state-buffer.h | 3 ++-
->  arch/powerpc/include/asm/kvm_book3s.h         | 1 +
->  arch/powerpc/kvm/book3s_hv.c                  | 5 +++++
->  arch/powerpc/kvm/book3s_hv_nestedv2.c         | 7 +++++++
->  arch/powerpc/kvm/test-guest-state-buffer.c    | 2 +-
->  6 files changed, 19 insertions(+), 3 deletions(-)
-> 
-> -- 
-> 2.45.1
-> 
+> Thanks, we'll need data on this.  I'm happy to take the patch, but
+> jumping back and forth between class->lock and pool->lock merely
+> "for obvious reasons" is not what I'm extremely excited about.
 
-
-Hi Michael,
-
-This patch series is to be backported for all kernels >= 6.7. So the tag
-should be 
-Cc: stable@vger.kernel.org # v6.7+
-
-and not
-Cc: stable@vger.kernel.org # v6.7
-
-Should I send a new version of this series or can you please make this 
-change when pulling in your tree?
-
-Thanks,
-Gautam
+Yeah, agree, we need test data.
 
