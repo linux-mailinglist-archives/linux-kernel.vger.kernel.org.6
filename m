@@ -1,292 +1,192 @@
-Return-Path: <linux-kernel+bounces-204875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24CA78FF494
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:24:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D11438FF496
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:24:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FAB0B22EBE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:24:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 406931F264EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B523B1993A7;
-	Thu,  6 Jun 2024 18:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501A91993A4;
+	Thu,  6 Jun 2024 18:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EEsprxD1"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="k63ORTmo"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2086.outbound.protection.outlook.com [40.107.100.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39620198E77
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 18:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717698246; cv=none; b=Wda4N0rYLft7STF1dxPOwGjeKBXstQNaEd51E00PwkE2bcwqHmrahNY+PoV6rlM4/br49wzYPVlvQaYVoD3ujxZ9cc8Igfxp1h8T8XRoVr8Q6nw4SRFSNdQ4id6KCrt9lnf341gSMdtg/uDoJ8bPGTaR2La7+KOwHmmQr0Ymovk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717698246; c=relaxed/simple;
-	bh=GkWa7BIPh4/KmbJyOT/Mk5hzWzWa5IQyYQXoThRbpnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OCyzoK7M+gp+8/WEIUJytVANs/+UbTdrjxF4ze7h69AQNY80cqtGBXIuIMA0ErddgU2MdvOCWy+OSreM7PDfqc2iIHpneeWb5ThcROvZS4y0IydliWXx1mRksBsEZqSwv62CrX9AjPhLaOHTHc2INTtnlOJMNb0FqjrPnJNXxVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EEsprxD1; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3748ebe7e53so5307675ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 11:24:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717698244; x=1718303044; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Gl+OqhWGBvRrXejeIiWyBxaA/z/+TnOK8uadnUzKZxU=;
-        b=EEsprxD1SbSPBe0cxtYH/7sTBKSfsrej5TCeM5l2QQGH0/BvAISGrk9+6PcfcYButW
-         9bIsAuWR75+ZGQOGie7B/hwDIitSFaH7E8CQSipn38b67E5UuDGNdLqbWP0LgkYjaByR
-         29D41PbWncfwXf+l114QGwPGg1/BknlslZwJw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717698244; x=1718303044;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gl+OqhWGBvRrXejeIiWyBxaA/z/+TnOK8uadnUzKZxU=;
-        b=FWHduO3FmJLksvy7SFkO0uom9R2me6Fb6RaHZtvxKs/rA+fUBla5F/J5IGsqkLCeIj
-         H9oDBsb4rQV9ApMwGPu5nJDA3z3rK1XFpBOY+ttytCTu3KJl8Yoe6+tbNxFRQKaW5hYS
-         hCqgg03Bkl6Rn44mgenUrdiEc/vRrC8vd0f5AyLjEY2pCNbgXnjB2Y3PytXlyIOUo7di
-         Vl4FPfUKQMH4jDnv7RN01z6yGd5obDmR7ZYAQs7nTYXxsSZOS8rEndSrW8FO94FMKxw4
-         IOSbP/yM58QmsGuSBQAgFA2uLIt2c9Z6nRtP8FA50vmTzpvYM1ni/0i00tE1qm0VhEAU
-         Exng==
-X-Forwarded-Encrypted: i=1; AJvYcCXrVvDwKcX8TRxwrXrvIFK5P90Nf1793TlYGo2bimARCMUxjBelw719/w/aqtN4RxfzKABySKwFMlEMkR25dMFvzHoyTZ5Wyx7AHCzL
-X-Gm-Message-State: AOJu0YwnUuFq5UHu5lYmzitJPas1E/9I037VVb4UDmFwEwfgBKvYvKCo
-	OnMwXLzG1WygcS0GJxguw7JY/l1ZWToQmqrAX60WFowbMC7HBxukGZnr01XbWw==
-X-Google-Smtp-Source: AGHT+IFJPZFXI4+pEL8XTW85t1QN+HSWQIYmTgmWjR8yPBouYuGxl/ji+dUgM0GRTYwa/tPXlAUkYg==
-X-Received: by 2002:a05:6e02:1d1e:b0:374:91a6:7bc9 with SMTP id e9e14a558f8ab-375803a748bmr5902575ab.30.1717698243975;
-        Thu, 06 Jun 2024 11:24:03 -0700 (PDT)
-Received: from localhost (113.176.132.34.bc.googleusercontent.com. [34.132.176.113])
-        by smtp.gmail.com with UTF8SMTPSA id e9e14a558f8ab-374bc1c82fesm3948695ab.84.2024.06.06.11.24.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 11:24:03 -0700 (PDT)
-Date: Thu, 6 Jun 2024 18:24:02 +0000
-From: Matthias Kaehlcke <mka@chromium.org>
-To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Cc: gregkh@linuxfoundation.org, javier.carrasco@wolfvision.net,
-	benjamin.bara@skidata.com, m.felsch@pengutronix.de,
-	jbrunet@baylibre.com, frieder.schrempf@kontron.de,
-	stefan.eichenberger@toradex.com, michal.simek@amd.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	git@amd.com
-Subject: Re: [PATCH] usb: misc: add Microchip usb5744 SMBus programming
- support
-Message-ID: <ZmH-wuS8TUxpm6h-@google.com>
-References: <1717676883-2876611-1-git-send-email-radhey.shyam.pandey@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9608219753C;
+	Thu,  6 Jun 2024 18:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717698276; cv=fail; b=I9bJ07uf5p6DG+jwF1UbeSQCx39jh3nNOyn5o1lpFvTfHtba14Zj1Ep5QyyUt3uKfuSOTDWa/CssJ04RnNpN/fOljH8YRDV7c/Oe0u0/gDta96e6KWrKQ8K1JKNeU4kRH/1dLzSdYho5B+yTfFguY8rLdptf2Kg4w9hh6A8gCyM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717698276; c=relaxed/simple;
+	bh=y1fNpj6A1eb89ZMVSegQdyAcNoSiAXraLfC5lcdy0pE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Ul9sVA8cz+sc7R+c4TW34ZJyXBqPSYk5A2RG00xF5f0gNlvJpkUWrv8Pyj2MfxvaEowkPxCfqvt2Dn87Fz8P76Z7z6FwdUAWqEvIGgCM7CSXYxJnfmEjBi3HrMhTEDJf9JKGaEZHHY9DcHAwhhhMq9Gt82yrlVF31g3PhuyFyP8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=k63ORTmo; arc=fail smtp.client-ip=40.107.100.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=G8CNiatn2siq0bGiVYM2tdYHwhCTkJED8Kkb8HR4XO7GWShk3ieFfGDgQdT68kDj6UC1Vn4maB6FWUohsOznkT1h1b3pBn1yh7lqGdViHxUuIbdJqcRg73xlS2QxgIB+nG+gt9IQgHuopO5pz9GHVMJS0KKu6o4aP6UrYOrjXo6QWSB3kBkTvvYlUL+EoyG9GVwvQk3MtvL6uDR1XFbJhozqatn1AnzzjJQ05LIcaD9mEraSN4oD5XorTUW2mMqsiEKPnoBOzffHOO9SZ0Tj2X4F9aTC7IMb+0xwPhnN9TqeaWM/MhOtHuNObZTC9SS8mFhsnxDbw17yy7ss4rlPOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vA2mB+t9ZmNNRqZYi/dBaEd0oBbdpS5JN9UWnf4QGvg=;
+ b=RvcpWbVsvSj5L3qI9d65eO8UtYBd6S7y0hsvUjrnRA2IOYZq4FmXjnPSlg8Nr2KtsdmPKNvHILfw769/Jbc8ST1ikUY0+8ptwHDSkJTSAxKOj15hlQvnmVY4L1W4uskQJdSSoiL50FXU2FxsvPEtyFpljsoBnwEwGExWDI8f9frzOtgPneAHW8m2vm/BhIpYfjlEQ9c+sGs3vuIMyyEO2vx3KyACp3BExIZIR6Y9i3FQK4uiVzTYuK/+pG5/OMFzmVbFxrrRdzpGiQ563GGlRx0UA+EEq6vsh3M9T3h2ar2GygIrKnlJrBYtPxYLbHFYOYwGJ4aN9SwLGU5By2MSyw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vA2mB+t9ZmNNRqZYi/dBaEd0oBbdpS5JN9UWnf4QGvg=;
+ b=k63ORTmo39eGpNdtkCpbQbeHDDWvt5mcpUuafN+vpRFjK+tJyXvU7B9bVKXIRjEUIHUVDuZ+vVBJn/ebTs0jvjZ7p6It8g/y+15ENGay14wvyUOEaNlJusyqUS24l3q2nOocPkZjunO9XFlqN1ne94knkWh9d8BqP2u4CImPBw4wCyyrdGlWxo6/6in+jJiYQtQRsAvNTEiQUxiH/3guE91Vxzi4sg4w3DDlYhfZ5eCtFe+2Wnfwq61c0NSj7Lpl5azVSRv0TcW5tMTmIVjRRQZZcPSeHg4CYKwisuQWNEFpM6dTmbeduYkMgacgP3EnbOG16cOlXuvWPdkeFiTW8w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
+ by MW4PR12MB5642.namprd12.prod.outlook.com (2603:10b6:303:187::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.33; Thu, 6 Jun
+ 2024 18:24:25 +0000
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7633.033; Thu, 6 Jun 2024
+ 18:24:25 +0000
+Date: Thu, 6 Jun 2024 15:24:23 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: "Tian, Kevin" <kevin.tian@intel.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
+	"joro@8bytes.org" <joro@8bytes.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"Liu, Yi L" <yi.l.liu@intel.com>,
+	"eric.auger@redhat.com" <eric.auger@redhat.com>,
+	"vasant.hegde@amd.com" <vasant.hegde@amd.com>,
+	"jon.grimm@amd.com" <jon.grimm@amd.com>,
+	"santosh.shukla@amd.com" <santosh.shukla@amd.com>,
+	"Dhaval.Giani@amd.com" <Dhaval.Giani@amd.com>,
+	"shameerali.kolothum.thodi@huawei.com" <shameerali.kolothum.thodi@huawei.com>
+Subject: Re: [PATCH RFCv1 08/14] iommufd: Add IOMMU_VIOMMU_SET_DEV_ID ioctl
+Message-ID: <20240606182423.GF19897@nvidia.com>
+References: <BN9PR11MB52762A0BC67B64D4171480C78CF52@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20240524131912.GT20229@nvidia.com>
+ <BN9PR11MB5276BBD592021507C3A0EBB38CF02@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <ZlY886FT3HHLC8Cf@nvidia.com>
+ <BN9PR11MB52762EA9B444DA71F551C3868CF22@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <ZlafEktUu5znDsNt@Asurada-Nvidia>
+ <BN9PR11MB5276AC43120376A2502D3D148CF32@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <ZlfPPwsnY6P4SoGF@Asurada-Nvidia>
+ <ZluWXYQjroz0fqqn@nvidia.com>
+ <Zl03rsgZl/msa3I+@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zl03rsgZl/msa3I+@nvidia.com>
+X-ClientProxiedBy: MN2PR13CA0005.namprd13.prod.outlook.com
+ (2603:10b6:208:160::18) To DM6PR12MB3849.namprd12.prod.outlook.com
+ (2603:10b6:5:1c7::26)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1717676883-2876611-1-git-send-email-radhey.shyam.pandey@amd.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|MW4PR12MB5642:EE_
+X-MS-Office365-Filtering-Correlation-Id: 091f5287-2078-465f-4329-08dc8655e4ca
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|376005|1800799015|366007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?RU/P8SaB+QiW/9Ljmo0SYohzzdUYWCSH70rThxKHytOgUHYAmVC6Y9GpiOYH?=
+ =?us-ascii?Q?un49rkAlNcufly1XK05TKb57jS/SJctIC7YyPldMIAZvhvNKx4xmN6Vv3ltR?=
+ =?us-ascii?Q?LKw4bI1Bg4Xa1UvFx5TbInKh9axCb0XA/lVIWL2CgJyWNSTaJ1G0rtHVYaJt?=
+ =?us-ascii?Q?qxGxkVOfEsTDviX2fNKsJHR/63H/NzyluX6XzmuEMt60NrC26hQ9OGjhdeWk?=
+ =?us-ascii?Q?puLYhF+FvR+3Xbe/BTWq9Id5R3F9D0wkrFL5BCQcncXeZtWLdX7qA7yVOchI?=
+ =?us-ascii?Q?MGxtIA+orHiksdAbka/a/eXpTyEyCIlAdN60wTz/jt8gxycnOwjiwxCDzqwV?=
+ =?us-ascii?Q?xPeTVS7DjzIV0Y9z4Etg9BkKtYw0+I9HKEdzL0CYLlwVdVRMgiF+MCpdPnrK?=
+ =?us-ascii?Q?+/T3grQtYpc9RlnJBtsMgV5VIN9Babbxsu0SNME2jeUs3grIts//GAgoI2vS?=
+ =?us-ascii?Q?c/iEEMbudQn+of0e3NMc2Sufe8vbZKqdvoH1JyySLyVUpInUPdig7U/1MCPa?=
+ =?us-ascii?Q?aP702/EP2XA0Ag7ltQJKPxM4BVQLMeczoi+NZmSracN2HvhImwY12GY1qz0l?=
+ =?us-ascii?Q?WwCHpKMTZnHZgLm6RZSFr99jFKZlf31rQXIUnU50CS0J4BokP8UrwXM8wlGj?=
+ =?us-ascii?Q?WWkuY4j3q/jAzu9WFF2yrv7Yz7tihvFWXC+gwPNSgEV1ZfT0kz/N7Vv0uoQJ?=
+ =?us-ascii?Q?jViezUW7rahIn4S0CZYb4q/KI0OZ1kbVb5jNbc/t/KjtpwDhh6RnyM/RRIlS?=
+ =?us-ascii?Q?l+yal48wA1bhBMMTNIUs61w5rlbyV5M9WoBAdVoxkRUiGL1nfVXykMSaeMx0?=
+ =?us-ascii?Q?PnzvyrrsYwt4yrc/vN+BFkC5EOn/siMI3bTh4thK9w52CUTl/N5SjzO3l18X?=
+ =?us-ascii?Q?UU2g+Mm7n7cMBcmJSBeGoZaBIzw7ETXVxfHq+H87C3PWuv3fBmGl7h58DXHr?=
+ =?us-ascii?Q?aFiqLPNDvCBFjmXDA1obsARfv57HnfSIXqsjfoIY+lE1iR/3ZhvZt6NabThZ?=
+ =?us-ascii?Q?dqDjv1oeczcIjUxGB80zEtOGBS5QDOEMKHli8/GuEZBINh1QQSEFuwekRbFF?=
+ =?us-ascii?Q?x0gXWzaK7eCl1PggM1utUm3e7aAyyT8uIe+otzV5JUGIeN15PWO1880tzPeU?=
+ =?us-ascii?Q?F+orP0I2ofb9G2PnRsxAWIVTgKDJ5HVnYrHxUYUwTgixNTZsuBycYs4Ln9O3?=
+ =?us-ascii?Q?Z+/HmFIv9zJSQgEoDEJGkLFSz/gHjW6bN9pMkyYkgosvYsCXesq9GAW/jAwF?=
+ =?us-ascii?Q?jopuKT4J1bMfHK2dTTMMsriw8PyFXFudA3q7VmYmjJGDttbsI+pbOhr0UpwX?=
+ =?us-ascii?Q?jXfNbTqSlYMPjrL3jrPhOU0F?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?lLe35z0ToteTWvINWKN99J1XAWcc462qfwH8w7VT9uOy3nvICkMwussdqM7L?=
+ =?us-ascii?Q?MoSoGpchwmO4eVIEE3Ma5R1YZoYZfffclYMzxb0I5LGB5n5orSLiPfiACv/i?=
+ =?us-ascii?Q?0FcnqyxemDM0Ij0OU7t/+5el28uoHkBQNoWpcj2XO/iiZ3SiH2FDzl7KIsyN?=
+ =?us-ascii?Q?MOMlOU3/hVuIVfHQVgE9qISvRX1mPCrugt0Mox7VLEt5jKg3Yv+1UA/F9IKp?=
+ =?us-ascii?Q?ZkdTNf2hVUdTkCoH4IjV2Hq1cBeRE2VZXiHmqee0KLLoaI4Qj+sWaLBASqe0?=
+ =?us-ascii?Q?DfsB2AqBPcllDbA8CdE5Kf72iro0euaAHnCmfGjteQ6W+4VeB48PbRsHRfje?=
+ =?us-ascii?Q?Pn1REpI3NkRG3B4Az2ot5VzNPoOPsirFLDFmjrSvU0CBLaFnXHbSONfeZ7CP?=
+ =?us-ascii?Q?i2LZ5M12Zmkp0QMHWJxvOJppBbGIS5waNMVPYml6ljtsXlB9qXsgrxiuTHXM?=
+ =?us-ascii?Q?mJpebCZbL0sDra9Up4MoGmM5nQyp7jGfBFDeK1Egq9gNecpF5D5bu26QfsE2?=
+ =?us-ascii?Q?qrhYRvBrvmxU3PrtgMvHqu0h4qI1IcBYoWN+sdNCao+HwB2jqe34NtqIlXJU?=
+ =?us-ascii?Q?cVqa+iAuV2HElUBm4oaW4nh8isHpzx6n36uZB2NUMA5WdApZSjUYpdsLJip9?=
+ =?us-ascii?Q?iMIIkfNZFfuSgGagDIBpdrBl7rC96jjkgpq+8UHxpxm+CCOWiCTYJ1X7qH1w?=
+ =?us-ascii?Q?waSNBdkWfnypLZRLr1TPW3UMQa9khvVhv5S4dC2lJqUJ0gN2mvwCXV+zrgWl?=
+ =?us-ascii?Q?KZBaPXuqujlJlnqTR1aplc9k85dpjX4ajm/hMiwzPLqmmI1f7fO2p5ygePg1?=
+ =?us-ascii?Q?VfXkeY3MGKRT1tINr54mh/kuhSanrRzQ27POFAbefHTygvUBQyxLTT6hNHLW?=
+ =?us-ascii?Q?tEbvPH/KfIoxjGku5AtKm6AO6lXb1CVYLkIqO80j9MZ1SX3Y1vk7f+kAH2fi?=
+ =?us-ascii?Q?QWUXiSml12XaIvL0vND+UNHhpkCKr+i1viQx2V3AH2s2ccRX1DDQD1Ios3oq?=
+ =?us-ascii?Q?SvbaIcbC5DOAZrRNlHNibySppeHB9oRSNWbftuQMX2ZoVfs4egnv7ORdQjLQ?=
+ =?us-ascii?Q?pONeWALg7YAn6sONCuZxKnUtE7JGrBOr4tTc8UMD0nPLgdvMTZm3jbEdj8Or?=
+ =?us-ascii?Q?wXBt8I7ke4B9f3x9y2KAJ1nHTvqPcey8dqGBoaunJ/sABWGpn6IuVWlBW1IG?=
+ =?us-ascii?Q?UC+5WBE12bnW3IcU6/WlEtkP2JR85+AkRnppA3+eormGek+A7sVPEk0bPnho?=
+ =?us-ascii?Q?lqdnV7F0rvL6tyDlo3H0O7WRIon9bfODX/IFDYo1AturXkQPiMgywo3HcWf3?=
+ =?us-ascii?Q?PciJAA1KiL8no4w8bGgF5ZXZH2QNi/6rQGJnUog8NZIbaFXCQbuIkrKh+VAM?=
+ =?us-ascii?Q?sZBRqQCZUiionC9q7yj3Q3kxSmA3ua9iHjkjXOi5AJhmhkJ92BrcLZrbSKWq?=
+ =?us-ascii?Q?SVtcg8L3StyWNK7TS1Rmro3Cj60e3Y5tUMaFw3kGk/a347fWykEYjZAj2Wma?=
+ =?us-ascii?Q?1xevSnaXg/AUvLlNpuFWZ++NyO1YGiEDY0pH89nr60TqtnmF1IZAc88Fv4Qq?=
+ =?us-ascii?Q?z8qSj617ZQoZ86c4r55oTo6tkTl6ADQeMFXI9ecb?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 091f5287-2078-465f-4329-08dc8655e4ca
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 18:24:24.9780
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: h909WFd7VqtfoPzpt3P/tPNX5VdclkZYeeVOUQ5V3SHwKkpAH7OZbryfhuuyIUsz
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB5642
 
-On Thu, Jun 06, 2024 at 05:58:03PM +0530, Radhey Shyam Pandey wrote:
+On Sun, Jun 02, 2024 at 08:25:34PM -0700, Nicolin Chen wrote:
 
-> PATCH] usb: misc: add Microchip usb5744 SMBus programming support
-
-usb: misc: onboard_usb_dev: ...
-
->
-> usb5744 supports SMBus Configuration and it may be configured via the
-> SMBus slave interface during the hub’s start-up configuration stage.
+> > I understand the appeal of doing this has been to minimize qemu
+> > changes in its ACPI parts if we tackle that instead maybe we should
+> > just not implement viommu to multiple piommu. It is somewhat
+> > complicated.
 > 
-> To program it introduce i2c initialization hook and set usb5744 platform
-> data with function having required smbus initialization sequence. Core
-> driver uses i2c-bus phandle (added in commit '02be19e914b8 dt-bindings:
-> usb: Add support for Microchip usb5744 hub controller') to get i2c client
-> device and then calls usb5744 i2c default initialization sequence.
+> Would you please clarify that suggestion "not implement viommu
+> to multiple piommu"?
 > 
-> Apart from the USB command attach, prevent the hub from suspend.
-> when the “USB Attach with SMBus (0xAA56)” command is issued to the hub,
-> the hub is getting enumerated and then it puts in a suspend mode.
-> This causes the hub to NAK any SMBus access made by the SMBus Master
-> during this period and not able to see the hub's slave address while
-> running the "i2c probe" command.
-> 
-> Prevent the MCU from the putting the HUB in suspend mode through
-> register write. The BYPASS_UDC_SUSPEND bit (Bit 3) of the RuntimeFlags2
-> register at address 0x411D controls this aspect of the hub. The
-> BYPASS_UDC_SUSPEND bit in register 0x411Dh must be set to ensure that the
-> MCU is always enabled and ready to respond to SMBus runtime commands.
-> This register needs to be written before the USB attach command is issued.
-> 
-> The byte sequence is as follows:
-> Slave addr: 0x2d           00 00 05 00 01 41 1D 08
-> Slave addr: 0x2d           99 37 00
-> Slave addr: 0x2d           AA 56 00
-> 
-> In addition to SMBus programming sequence also update post reset
-> delay as without it there is a failure on first SMBus write.
-> i2c 2-002d: error -ENXIO: BYPASS_UDC_SUSPEND bit configuration failed
-> 
-> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-> ---
-> ---
->  drivers/usb/misc/onboard_usb_dev.c | 46 ++++++++++++++++++++++++++++++
->  drivers/usb/misc/onboard_usb_dev.h |  8 +++++-
->  2 files changed, 53 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/misc/onboard_usb_dev.c b/drivers/usb/misc/onboard_usb_dev.c
-> index f2bcc1a8b95f..5621c1273a12 100644
-> --- a/drivers/usb/misc/onboard_usb_dev.c
-> +++ b/drivers/usb/misc/onboard_usb_dev.c
-> @@ -98,6 +98,7 @@ static int onboard_dev_power_on(struct onboard_dev *onboard_dev)
->  
->  	fsleep(onboard_dev->pdata->reset_us);
->  	gpiod_set_value_cansleep(onboard_dev->reset_gpio, 0);
-> +	fsleep(onboard_dev->pdata->reset_us);
+> For regular nesting (SMMU), we are still doing one vSMMU in the
+> VMM, though VCMDQ case would be an exception....
 
-This also impacts devices that don't require a delay, plus requirements for
-this delay are not necessarily the same as the reset delay.
+This is what I mean, always do multiple vSMMU if there are multiple
+physical pSMMUs. Don't replicate any virtual commands across pSMMUs.
 
-Better add a dedicated field like 'power_on_delay_us'.
-
->  
->  	onboard_dev->is_powered_on = true;
->  
-> @@ -296,10 +297,34 @@ static void onboard_dev_attach_usb_driver(struct work_struct *work)
->  		pr_err("Failed to attach USB driver: %pe\n", ERR_PTR(err));
->  }
->  
-> +int onboard_dev_5744_i2c_init(struct i2c_client *client)
-
-static int
-
-We probably want to move hardware specific code to a dedicated file
-as there is added more, but I for now it's ok to have it in the main
-driver.
-
-> +{
-> +	struct device *dev = &client->dev;
-> +	int ret;
-> +
-> +	char wr_buf[7] = {0x00, 0x05, 0x00, 0x01, 0x41, 0x1D, 0x08};
-
-Please use constants for the different bits instead of magic values. I know
-the magic values are explained in the commit message, but that's something
-people have to dig up.
-
-> +
-> +	ret = i2c_smbus_write_block_data(client, 0, sizeof(wr_buf), wr_buf);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "BYPASS_UDC_SUSPEND bit configuration failed\n");
-> +
-> +	ret = i2c_smbus_write_word_data(client, 0x99, htons(0x3700));
-
-ditto, no magic values please
-
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Configuration Register Access Command failed\n");
-> +
-> +	/* Send SMBus command to boot hub. */
-> +	ret = i2c_smbus_write_word_data(client, 0xAA, htons(0x5600));
-
-ditto
-
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "USB Attach with SMBus command failed\n");
-> +
-> +	return ret;
-
-  	return 0;
-> +}
-> +
->  static int onboard_dev_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct onboard_dev *onboard_dev;
-> +	struct device_node *i2c_node;
->  	int err;
->  
->  	onboard_dev = devm_kzalloc(dev, sizeof(*onboard_dev), GFP_KERNEL);
-> @@ -339,6 +364,23 @@ static int onboard_dev_probe(struct platform_device *pdev)
->  	if (err)
->  		return err;
->  
-> +	i2c_node = of_parse_phandle(pdev->dev.of_node, "i2c-bus", 0);
-> +	if (i2c_node) {
-> +		struct i2c_client *client;
-> +
-> +		client = of_find_i2c_device_by_node(i2c_node);
-> +		of_node_put(i2c_node);
-> +
-> +		if (!client) {
-> +			err = -EPROBE_DEFER;
-> +			goto err_dev_power_off;
-
-nit: err_power_off
-
-> +		}
-> +		err = onboard_dev->pdata->onboard_dev_i2c_init(client);
-> +		put_device(&client->dev);
-> +		if (err < 0)
-> +			goto err_dev_power_off;
-> +	}
-> +
->  	/*
->  	 * The USB driver might have been detached from the USB devices by
->  	 * onboard_dev_remove() (e.g. through an 'unbind' by userspace),
-> @@ -350,6 +392,10 @@ static int onboard_dev_probe(struct platform_device *pdev)
->  	schedule_work(&attach_usb_driver_work);
->  
->  	return 0;
-> +
-> +err_dev_power_off:
-> +	onboard_dev_power_off(onboard_dev);
-> +	return err;
->  }
->  
->  static void onboard_dev_remove(struct platform_device *pdev)
-> diff --git a/drivers/usb/misc/onboard_usb_dev.h b/drivers/usb/misc/onboard_usb_dev.h
-> index fbba549c0f47..17311ea7bacd 100644
-> --- a/drivers/usb/misc/onboard_usb_dev.h
-> +++ b/drivers/usb/misc/onboard_usb_dev.h
-> @@ -6,6 +6,8 @@
->  #ifndef _USB_MISC_ONBOARD_USB_DEV_H
->  #define _USB_MISC_ONBOARD_USB_DEV_H
->  
-> +#include <linux/i2c.h>
-> +
->  #define MAX_SUPPLIES 2
->  
->  struct onboard_dev_pdata {
-> @@ -13,6 +15,7 @@ struct onboard_dev_pdata {
->  	unsigned int num_supplies;	/* number of supplies */
->  	const char * const supply_names[MAX_SUPPLIES];
->  	bool is_hub;
-> +	int (*onboard_dev_i2c_init)(struct i2c_client *client);
->  };
->  
->  static const struct onboard_dev_pdata microchip_usb424_data = {
-> @@ -22,11 +25,14 @@ static const struct onboard_dev_pdata microchip_usb424_data = {
->  	.is_hub = true,
->  };
->  
-> +int onboard_dev_5744_i2c_init(struct i2c_client *client);
-> +
->  static const struct onboard_dev_pdata microchip_usb5744_data = {
-> -	.reset_us = 0,
-> +	.reset_us = 10000,
-
-That's one reason why I don't think it's a good idea to use 'reset_us'
-twice. In this case the total delay would go from formerly 0ms to 20ms,
-when a delay of 10ms after the reset should be sufficient.
-
->  	.num_supplies = 2,
->  	.supply_names = { "vdd", "vdd2" },
->  	.is_hub = true,
-> +	.onboard_dev_i2c_init = onboard_dev_5744_i2c_init,
->  };
->  
->  static const struct onboard_dev_pdata realtek_rts5411_data = {
-> -- 
-> 2.34.1
-> 
+Jason
 
