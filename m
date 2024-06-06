@@ -1,163 +1,159 @@
-Return-Path: <linux-kernel+bounces-204865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84B838FF46B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:13:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9258FF477
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21394B250CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:13:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09BF21C2281B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E12C198E74;
-	Thu,  6 Jun 2024 18:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC50D199399;
+	Thu,  6 Jun 2024 18:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SoqiDdeP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="LRBftX5x"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A211990A2
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 18:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B74F198E74;
+	Thu,  6 Jun 2024 18:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717697566; cv=none; b=ICY0cbM3OqcVCJcXtUTckPf7579RazmDz6mKkET8XuX2JWKx+Q4CNjDefHPPplLrXpVAmJDhUrLipf3cyQBEr4zMZu1N0ZkujOrQai2z1rqWZ9N3hTMTDgOk5hh4Bm6hVpUXD9vnku7MU2ObTyx716tcY+YH9m2drGaCjW7aQFY=
+	t=1717697698; cv=none; b=l+DImWGznili8tB2O8DU/JL1fl8nwRjvN52RiGDUR+z27WG5H+K+fZgtNj1/ZW5C+KIFVll6+zFScNgBqmXv1tE1aabfyGvEF+tc78bsX/RTfKc5rlTb9+uNhHHhGs3FpFmfWw8PFVWJqg9agD9Pj5pX8l2FDQkc/DjssHz0QK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717697566; c=relaxed/simple;
-	bh=g18wcZ4Vrm3OPpEKR5GaSFXC3qL8zJOqLvXNZzYFeuM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=dkznaFOfagoCVCaUq8VxEuNJuC4GRQGfaFv5H2uZ6aJHbo/T1zesutGtZGqFYhshpFvQLbkAoysCwFajib57wecvBVNJjACJDRB5UExGJKVRrBUm9eyES6CE6wLBjh2Z7hvXeLccgv7nOBM8vq6gOctvjPEqu5UYvvMcOihLU4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SoqiDdeP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717697563;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KeMRLeH8AVI7a9rTTiY6E9/CXZa2WPt/Gto/LcU6z5E=;
-	b=SoqiDdePkvNH0uu7KcxzL1hr51Px56KeKd7hbdojySVWqGHeAcDXrMBBf9JbL92rRsm5rF
-	97Su1htbKADhpuSa2ykMQffSXgkoq7gDsQlsNze1f7Q2Yj7z3xuzMVFMtmZtF1AdXJNS6e
-	ABEkvz08mFCx/bKK9MIT9dxOhnq0m4M=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-20-H8eWDcY8PdG71auT7GSR9A-1; Thu, 06 Jun 2024 14:12:41 -0400
-X-MC-Unique: H8eWDcY8PdG71auT7GSR9A-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2eab0fe8a7eso10956891fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 11:12:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717697560; x=1718302360;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KeMRLeH8AVI7a9rTTiY6E9/CXZa2WPt/Gto/LcU6z5E=;
-        b=YN1vxDTgeiDQbjbN2VyhrpuGR5h/Gx8T/r1q+WM48rea11We+d5zGb5YT9abcQEGz+
-         K8fh2cdhJVexaB5nLtefV8jWeGL0vxhMQSC1o4gcqgTt1vWZ8ubRZW5oXZpg7UyocLsL
-         rMl8eVBOVM3llVywtXI8y8z+PKV9S6DoUsu6xVu8T+MmnghUreiIwKFISjwbCW0q7U8D
-         uYJ/qRSWVF2TF/A37/d805jFtB/641Zk1ixkVeVt05y+67GIHLD5gfs+wR/Ly2ys/pK7
-         t5RMXA55Rto5zxohZIow8HMbwVCL5+MEj/sdiTzxvsbD4Q51Fq1g28TycPwh62TFMP13
-         Kd7g==
-X-Gm-Message-State: AOJu0Yzu9kBjNhA3Q0+FelNJ40komejsSDV0/YooBoFIL9cZrULsqXMZ
-	qgiwa/gIPhSu5eGHh7HYRh+6RTl2GDARUQZfxrXqIOCRKQtcc0dPTTXiycElmiyqOeYyIvtFx3l
-	ndMbiEC6c7ix9+He0Jix/PLs+tu5IZUgWp13tu2PVHKkme5cCTRI1oI8sGF8tTA==
-X-Received: by 2002:a2e:be0d:0:b0:2ea:bc04:9876 with SMTP id 38308e7fff4ca-2eadce712d0mr3648071fa.38.1717697560061;
-        Thu, 06 Jun 2024 11:12:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEA8ZzHNP1/hcWkbYv2OrPty7pGVWuhlHWVUFyoEu0CW/LdPcqaEzki1tsMBhjPdaeTrSwq3Q==
-X-Received: by 2002:a2e:be0d:0:b0:2ea:bc04:9876 with SMTP id 38308e7fff4ca-2eadce712d0mr3647841fa.38.1717697559679;
-        Thu, 06 Jun 2024 11:12:39 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae13dc46sm1465248a12.52.2024.06.06.11.12.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 11:12:38 -0700 (PDT)
-Message-ID: <e9062095-b312-44df-a9e3-0b09f3ec9eff@redhat.com>
-Date: Thu, 6 Jun 2024 20:12:37 +0200
+	s=arc-20240116; t=1717697698; c=relaxed/simple;
+	bh=M9XIPOULFDe6w6kGb/xahMh6Yl3IJasd1iK5x4l9yqw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EN+3Y7WZeMXGAt6bkG3urpVmb69/AH7b2kl7sr4JVf67RtOvKtmgnJ+ysgbSkW5bECUdVCm3LFdx89qRm56Ym9aeWSWbMfTBC8rymoQz+RCmyy1KOm3LD9YkkIm5Tn431MmN1hMmQZTVpejT4zm3MDdYfl+1QHY668ALghf+PJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=LRBftX5x reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.1.0)
+ id 436db8d5d006e18c; Thu, 6 Jun 2024 20:14:53 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 352946A65D2;
+	Thu,  6 Jun 2024 20:14:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1717697693;
+	bh=M9XIPOULFDe6w6kGb/xahMh6Yl3IJasd1iK5x4l9yqw=;
+	h=From:To:Cc:Subject:Date;
+	b=LRBftX5xDVJR0MW/8CQlboQhcFkEEFkZNIArPAVzKM7iV7dfh6+EnO3pNMNv8tOTG
+	 /A2zwtBh7bhvJf+EOCLmNWo1qZ4thq6M3rOuhi1Jt8hV4f+iFBlS/DHSmcS31G555S
+	 XpIwAR0ejTC3jYV724rc8wddTKWatK3XaQEcpSM3dWWje7NGND1uhazg6mjpdfTSnI
+	 7TKHHSdX2myi62lLJ0DobgZhR4APtCoP1PcgPQAi3Qx+/XPaB8VM58y3dKcJwaN/XR
+	 65XbwPrg6fk15ZocsOZblkzAA4A7Kh7zOSZ00Im/Az51O6W4ddSo+v2MJWlEJG7Kki
+	 xZo0iqU895n4g==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Laura Nao <laura.nao@collabora.com>
+Cc: Linux ACPI <linux-acpi@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>
+Subject:
+ [PATCH v3] thermal: core: Do not fail cdev registration because of invalid
+ initial state
+Date: Thu, 06 Jun 2024 20:14:52 +0200
+Message-ID: <12456961.O9o76ZdvQC@kreacher>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] ACPI: scan: Ignore Dell XPS 9320 camera graph port
- nodes
-From: Hans de Goede <hdegoede@redhat.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Genes Lists <lists@sapience.com>, "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org,
- hverkuil-cisco@xs4all.nl, laurent.pinchart@ideasonboard.com,
- wentong.wu@intel.com, linux-media@vger.kernel.org,
- linux-acpi@vger.kernel.org,
- "regressions@lists.linux.dev" <regressions@lists.linux.dev>
-References: <988e48090982c89ce0c906954832fdfb09a1ce34.camel@sapience.com>
- <20240528084413.2624435-1-sakari.ailus@linux.intel.com>
- <a05df025-a0be-49cd-84a9-7d7fb2eeb33e@redhat.com>
-Content-Language: en-US, nl
-In-Reply-To: <a05df025-a0be-49cd-84a9-7d7fb2eeb33e@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrvdelkedguddvudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepkedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhgruhhrrgdrnhgrohestgholhhlrggsohhrrgdrtghomhdprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhk
+ vghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=8 Fuz1=8 Fuz2=8
 
-Hi,
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Subject: [PATCH v3] thermal: core: Do not fail cdev registration because of invalid initial state
 
-+To: Rafael since this was Cc-ed to linux-acpi but never send
-to Rafael directly.
+It is reported that commit 31a0fa0019b0 ("thermal/debugfs: Pass cooling
+device state to thermal_debug_cdev_add()") causes the ACPI fan driver
+to fail probing on some systems which turns out to be due to the _FST
+control method returning an invalid value until _FSL is first evaluated
+for the given fan.  If this happens, the .get_cur_state() cooling device
+callback returns an error and __thermal_cooling_device_register() fails
+as uses that callback after commit 31a0fa0019b0.
 
-Rafael this fixes a crash in 6.10-rc1 for some users and is necessary
-to make the cameras work on the Dell XPS 13 plus 9320 .
+Arguably, _FST should not return an invalid value even if it is
+evaluated before _FSL, so this may be regarded as a platform firmware
+issue, but at the same time it is not a good enough reason for failing
+the cooling device registration where the initial cooling device state
+is only needed to initialize a thermal debug facility.
 
-On 5/28/24 7:09 PM, Hans de Goede wrote:
-> Hi Sakari,
-> 
-> On 5/28/24 10:44 AM, Sakari Ailus wrote:
->> Ignore camera related graph port nodes on Dell XPS 9320. They data in BIOS
->> is buggy, just like it is for Dell XPS 9315. The corresponding software
->> nodes are created by the ipu-bridge.
->>
->> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
->> ---
->> Hi,
->>
->> Could you test this and see whether it fixes the warning?
->>
->> The camera might work with this change, too.
-> 
-> Thank you I just received a Dell XPS 13 plus 9320 myself to use
-> for VSC testing and I can confirm that with this patch 6.10.0-rc1
-> works, including giving a picture with the libcamera software ISP +
-> 3 small libcamera patches.
+Accordingly, modify __thermal_cooling_device_register() to avoid
+calling thermal_debug_cdev_add() instead of returning an error if the
+initial .get_cur_state() callback invocation fails.
 
-I forgot to add:
+Fixes: 31a0fa0019b0 ("thermal/debugfs: Pass cooling device state to thermal_debug_cdev_add()")
+Closes: https://lore.kernel.org/linux-acpi/20240530153727.843378-1-laura.nao@collabora.com
+Reported-by: Laura Nao <laura.nao@collabora.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-Tested-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+v2 -> v3:
+   * Add a comment to explain the initial state of a cooling device (Daniel).
+     No functional changes.
 
-Regards,
+v1 -> v2:
+   * Instead of making the thermal debug code effectively ignore the invalid
+     initial cooling device state, simply don't register thermal debugfs for
+     a cooling device if its initial state returned by the driver's
+     .get_cur_state() is invalid (Daniel).
 
-Hans
+Laura, please test this one even though I don't see why it wouldn't work for
+you if the v1 did.
+
+---
+ drivers/thermal/thermal_core.c |   13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -999,9 +999,17 @@ __thermal_cooling_device_register(struct
+ 	if (ret)
+ 		goto out_cdev_type;
+ 
++	/*
++	 * The cooling device's current state is only needed for debug
++	 * initialization below, so a failure to get it does not cause
++	 * the entire cooling device initialization to fail.  However,
++	 * the debug will not work for the device if its initial state
++	 * cannot be determined and drivers are responsible for ensuring
++	 * that this will not happen.
++	 */
+ 	ret = cdev->ops->get_cur_state(cdev, &current_state);
+ 	if (ret)
+-		goto out_cdev_type;
++		current_state = ULONG_MAX;
+ 
+ 	thermal_cooling_device_setup_sysfs(cdev);
+ 
+@@ -1016,7 +1024,8 @@ __thermal_cooling_device_register(struct
+ 		return ERR_PTR(ret);
+ 	}
+ 
+-	thermal_debug_cdev_add(cdev, current_state);
++	if (current_state <= cdev->max_state)
++		thermal_debug_cdev_add(cdev, current_state);
+ 
+ 	/* Add 'this' new cdev to the global cdev list */
+ 	mutex_lock(&thermal_list_lock);
 
 
-
-
->>  drivers/acpi/mipi-disco-img.c | 6 ++++++
->>  1 file changed, 6 insertions(+)
->>
->> diff --git a/drivers/acpi/mipi-disco-img.c b/drivers/acpi/mipi-disco-img.c
->> index d05413a0672a..bf9a5cee32ac 100644
->> --- a/drivers/acpi/mipi-disco-img.c
->> +++ b/drivers/acpi/mipi-disco-img.c
->> @@ -732,6 +732,12 @@ static const struct dmi_system_id dmi_ignore_port_nodes[] = {
->>  			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "XPS 9315"),
->>  		},
->>  	},
->> +	{
->> +		.matches = {
->> +			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
->> +			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "XPS 9320"),
->> +		},
->> +	},
->>  	{ }
->>  };
->>  
 
 
