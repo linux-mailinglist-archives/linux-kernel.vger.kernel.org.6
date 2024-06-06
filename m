@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-203640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6602B8FDE83
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:13:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C548E8FDE87
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D24C1C21DE4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:13:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D651F2845A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBAAE40BF2;
-	Thu,  6 Jun 2024 06:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73A045012;
+	Thu,  6 Jun 2024 06:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cRhxxbMO"
-Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rBTpQDSo"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69562576B
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 06:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F68444C8C
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 06:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717654404; cv=none; b=u1b3n+yUi/Pmgg7xQuLSGwRnUEGxupukpDthiGzfchMo1R2qBatObYpAnsFh5Bp/9q0W7qgX6rXc8XjqDGv8VX0+MEflySBoJ59oM3TiO0+BlTHxRTlrYrKJR1ade6zONwFhhh0YWHrcmlEXT5TYjdd+L0dU92ZBEmfd96saEFM=
+	t=1717654407; cv=none; b=WEeVzScuqO/Uf5axUMyLcsaAzOLmFvggADIsxb87oj0UMl8u8gdMGAchJIXB3oxaEV3uOq2xXP9/qwnHN3CjEshO2F18VXTboc9OnSdJVBIfCwqQofj/qhuMlD+7NHW1i9phuSLFsgTuvsqyFW9A1BkYlJ8mlhH6wzIuimzDQH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717654404; c=relaxed/simple;
-	bh=r75guN+BnCzlQbFq5diJqJ88aH62k44AS+UwMn1GXYI=;
+	s=arc-20240116; t=1717654407; c=relaxed/simple;
+	bh=TCEmfUhx5NW8tX4+3pFLKOppFW7aeQNfaGuzeZ6O/XU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BBE5y5RxtP/GQ8kSZ2sTbP2jHHFTuKQ9wchz6gz3HtS194UXfYk19Vkws4sEGICR2YOftGeE7rKfg2oBs5DcHs7JvZU/7BP5sc73dyHP3Qpi2lbQIeU0ezYDXKR4xFfdjhuz03QvqIBopmGe5B3Fe1kDvxkPFbd6rNomjgOCkRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cRhxxbMO; arc=none smtp.client-ip=209.85.128.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-42147970772so3785475e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 23:13:21 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=E/PxvvrfGPIi6fOSkbfttVnwFuybr4nQVLCT7rPephU8VlKJrQKkHofl8QjdUjiENBwxqwKszM4A5SvBGb/tZNdVpTyBFnB3B6Y8hR3e/Y599UjTLyNVX4GIGLdo+yVdrLTlFPXSjJZvQyp/eUG1LRqEKj0h+Xm9cUsKXJ+t/vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rBTpQDSo; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52b912198f1so821170e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 23:13:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1717654400; x=1718259200; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oWm+nHGRVZmn5pKnEf1Ct3kDjGKfvwPGZdqr9mJxN1g=;
-        b=cRhxxbMO0WNWkjJ3PZ3n66jgbjK53ZAYcCNHn25EPQocqSmD72L5wNyWt91X+G8tUw
-         KS5d9oOD9K5Eb6fQO6ZEVN7DkKyA0nDlebVHgTPq+/QEy7ewb7b+/RF22NB3eIoigOWy
-         cO6IXQN22T491HUT6WF4dnZ1zJgvV+7kyxOWRgIgbZWmVwZS4AQicYGyenFssYN5Nxhx
-         dilGsMXObMTrZOOjHPXF8qT8oxVLmw137hBhELmWAuYj9qUGeFLi7UBhidqWYq/ig8q9
-         uDigG39+Kp3N3qYJz32t4TRcyqXpqgyG/1SIxL8AjHGZEaQC/HJEGX5AXubSFOS30JwE
-         Yxdg==
+        d=linaro.org; s=google; t=1717654404; x=1718259204; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=8sQ5CkvXW1H/O7XRlffCbc9bM4I1KOOxElkjM2VolH4=;
+        b=rBTpQDSoELBXB1AZ1d2sFnZGrPufKaB7cMX3Z8gL1BduPqd9BNCVQKa4l4Tsyizk6l
+         d2rH1kF3b8sBLjNQ7HKNCgZ6VtKdBmHkMYkc8vKP2vbPwg8JYSc+ozQDVa92yaU3tbSh
+         l6+OSsvi0nVy+gqnlfw0uRTPWVk2KeX0Lats7M6jTxCUs250NIsZQJrDMNQLluA+D23H
+         xKiFR1xvifQ7qtKSND7zQTNRZaVwcw7WeQ7Q4LCij4x/BJZi9ln/PyyAQqIMGNz6ROHG
+         mctGNfjxYx8BROod7rTv3LF6T//X9yILssKBqG/lnzgGHiFOGSsz/wPCKWilwGUfi4/X
+         YYWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717654400; x=1718259200;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oWm+nHGRVZmn5pKnEf1Ct3kDjGKfvwPGZdqr9mJxN1g=;
-        b=UPJXtns6HGD2a1yQOyWO4m8Qn06xznxldn/PN5RHfxBMAYD+reka1xj864kQbWIj4c
-         /JS5hlENQz9f6lafIli/qobteWV+G816lblKe88Z6fS41rybb80ObqiSY3coj2Rr7d2W
-         JiUS+zfVxz8+c2WlK0KrxiQ3ooZAz4nJDkWMyg8BAjh+LYaV9jEBNANmtrY6f8EW5aao
-         IXspR8T6CnX5QJGiqELehl0x440HWlS9DguN2IIEaRc2H32/F+HZZ5/za7mnluLl8v4X
-         5pAwHjHzRHUtzmacR2pdunHwXUjZLcUy0YXMUQOVs6ITbTe+YS4BH/U+1qCgs1qkkBEF
-         l9WA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9WcEGgmSqzlNmYHa7L6j8oBlxrUwezhxQm10SSNYvsbss1xlhKd/Cxni/KtjGcoxJMy3ngJzyIXtRPJFL9iwibSxfxud6FkVvruwa
-X-Gm-Message-State: AOJu0YwcdYczxnWa3nd6mqPOYlIgjyAwtbVRAg7AskLnhF53SN5vFoQn
-	I51UyoaAwyw0xNnjd8EIceirhYPMBQzcSiyGKB502pGmorq9CldlE/Q/U5GvAg==
-X-Google-Smtp-Source: AGHT+IEdYO6AfXamDYAKvZ4Ohq1sOCgsXjLiUQvXLMa15nBjHTkZ3AhSkmWVtColqKowDCX+kK1Bwg==
-X-Received: by 2002:a05:600c:3152:b0:420:1f0f:fe19 with SMTP id 5b1f17b1804b1-421562dd344mr35474245e9.13.1717654399816;
-        Wed, 05 Jun 2024 23:13:19 -0700 (PDT)
-Received: from [172.31.7.231] ([62.28.210.62])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c19e572sm9924525e9.10.2024.06.05.23.13.18
+        d=1e100.net; s=20230601; t=1717654404; x=1718259204;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8sQ5CkvXW1H/O7XRlffCbc9bM4I1KOOxElkjM2VolH4=;
+        b=LvFI/bahNWc+jY30xlaWBB9293JIpXmQnMZodDxJbfjfrmDvUQ47jMEmWM12rhBj7Z
+         IH0NasTl3XIfpNuoDNYycVh7XpjpjnepU+Eq9/ekw486W017I0Ibyp+M95s9hSAUmcdl
+         R7rbD4pqcMYRwqLJ/SPSFy+xsd8TsXu4rTSFiQxHmmAxj9OKCNYce71XaMn3/WfcwC2i
+         8XN5KMbwwgBvN0STSgc7t9Ksb4ZQGV7Rfer4oKTguLsDc+kkPRdob+M2hoBgRdyHIOZ8
+         tIDkUmNzyHmMeWVY7SwLMgOEnTZWksYt7vecAw7Iy1ZUG3wbnQaL1INsxfjR6J4lxeHs
+         z7OA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTpwEFQWRRP4kEdgMGtLXHX3G3bh2lCdMn7pv6RNM4VIXwONN6FkVfFQ19C6K5Mz7Xfkch0985BlIyo674ylT7aZ5dttNGCSZYn99H
+X-Gm-Message-State: AOJu0YzRaB3kVm4ipVsZdyYw1uXtChuMKCBYbvSRv+Kz4YqlpiZv4i7b
+	FRSBr5KAZtIoaVqWpnM9n3YxmymA+Edn4WXRH39yRieU8prWjwA8D55nEUqk4ew=
+X-Google-Smtp-Source: AGHT+IH6GDxAjS0FP0Fzu4H4EKEOYscrl/Q2tDMYt8/w5DcMnYe+h9UOrzA/5POt0zk/gnrf2oQv7w==
+X-Received: by 2002:ac2:5583:0:b0:523:b7ec:a222 with SMTP id 2adb3069b0e04-52bab4fc76bmr2487345e87.51.1717654403584;
+        Wed, 05 Jun 2024 23:13:23 -0700 (PDT)
+Received: from [192.168.2.24] ([110.93.11.116])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c19e567sm9925265e9.1.2024.06.05.23.13.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 23:13:19 -0700 (PDT)
-Message-ID: <eaa90c1a-ae96-4506-90dd-146ce85d311c@suse.com>
-Date: Thu, 6 Jun 2024 08:13:17 +0200
+        Wed, 05 Jun 2024 23:13:23 -0700 (PDT)
+Message-ID: <ad665e7c-a299-422b-b280-e80c9960b006@linaro.org>
+Date: Thu, 6 Jun 2024 08:13:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,55 +76,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: x86: WARNING: at mm/memblock.c:1339 memblock_set_node - Usage of
- MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead
-To: paulmck@kernel.org
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
- open list <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
- lkft-triage@lists.linaro.org, Andrew Morton <akpm@linux-foundation.org>,
- Mike Rapoport <rppt@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>,
- Arnd Bergmann <arnd@arndb.de>
-References: <CA+G9fYsGFerOtoxwpKLOYcRtyJkmgjdP=qg4Y5iP5q-4Lt17Lg@mail.gmail.com>
- <315d6873-d618-4126-b67a-de62502d7ee2@paulmck-laptop>
- <7d55b65e-331a-4ce2-8f72-d3c5c9e6eae0@suse.com>
- <e220910c-da6e-40ab-895f-87fd43c1de3f@paulmck-laptop>
+Subject: Re: [PATCH] arm64: dts: qcom: x1e80100-crd: add USB DisplayPort audio
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240604094947.98191-1-krzysztof.kozlowski@linaro.org>
+ <gqcbvowfma7l4lmqeom4pczjnl5anxtn5brsp3ttu4fisgcw7u@ax4eqlpfqnc4>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-From: Jan Beulich <jbeulich@suse.com>
-In-Reply-To: <e220910c-da6e-40ab-895f-87fd43c1de3f@paulmck-laptop>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <gqcbvowfma7l4lmqeom4pczjnl5anxtn5brsp3ttu4fisgcw7u@ax4eqlpfqnc4>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 05.06.2024 22:48, Paul E. McKenney wrote:
-> On Wed, Jun 05, 2024 at 09:46:37PM +0200, Jan Beulich wrote:
->> On 05.06.2024 21:07, Paul E. McKenney wrote:
->>> On Mon, Jun 03, 2024 at 07:19:21PM +0530, Naresh Kamboju wrote:
->>>> The following kernel warnings are noticed on x86 devices while booting
->>>> the Linux next-20240603 tag and looks like it is expected to warn users to
->>>> use NUMA_NO_NODE instead.
->>>>
->>>> Usage of MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead
->>>>
->>>> The following config is enabled
->>>> CONFIG_NUMA=y
->>>
->>> I am seeing this as well.  Is the following commit premature?
->>>
->>> e0eec24e2e19 ("memblock: make memblock_set_node() also warn about use of MAX_NUMNODES")
->>>
->>> Maybe old ACPI tables and device trees need to catch up?
->>>
->>> Left to myself, I would simply remove the WARN_ON_ONCE() from the above
->>> commit, but I would guess that there is a better way.
->>
->> Well, the warning is issued precisely to make clear that call
->> sites need to change. A patch to do so for the two instances
->> on x86 that I'm aware of is already pending maintainer approval.
+On 06/06/2024 04:47, Bjorn Andersson wrote:
+> On Tue, Jun 04, 2024 at 11:49:47AM GMT, Krzysztof Kozlowski wrote:
+>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+> [..]
+>> @@ -836,6 +868,7 @@ &mdss {
+>>  };
+>>  
+>>  &mdss_dp0 {
 > 
-> Could you please point me at that patch so that I can stop repeatedly
-> reproducing those two particular issues?
+> I don't seem to have this node, did I loose a patch somewhere?
+> 
 
-https://lore.kernel.org/lkml/abadb736-a239-49e4-ab42-ace7acdd4278@suse.com/
+I rebased my branch on top of Abel's work/next branches for x1e80100,
+assuming he sent the USB display port. Apparently this is not the case,
+so this makes little sense now. Sorry for the noise, I will come back
+once Abel's work get posted or merged.
 
-Jan
+Best regards,
+Krzysztof
 
 
