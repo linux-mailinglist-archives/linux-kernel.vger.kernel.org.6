@@ -1,152 +1,134 @@
-Return-Path: <linux-kernel+bounces-204602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B12208FF117
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:47:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA0F8FF120
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B561B1C23671
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:47:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86B9D28243D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95246197A8F;
-	Thu,  6 Jun 2024 15:47:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E549C197A7A;
+	Thu,  6 Jun 2024 15:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OZNx6c2/"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=schaecsn@gmx.net header.b="U2T/S5JR"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7BB197543
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 15:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC10198A0A;
+	Thu,  6 Jun 2024 15:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717688831; cv=none; b=ozZ8jiphXUUscyluzI1BznrHU5vw3iiyZ40f7gtd6xVzhmWUz8wQA7GIdwPM/pv8chAD5EVcSu+youLBOS3cJ/mmHo+Myh+Pwpxun8yZnHKojU64VQcQ1zFfHpVy42HdYupuqnU8lQrXcsE6sSy4Dwq3so/AUMQrV1w++Oz+YBY=
+	t=1717688847; cv=none; b=ZigOTfEJAllCQ5znOHKEZT/FOe0yegMoRHsF2eOqDUt3rrI+vC7Ok9UXHaXHNgbMNnskaAs9esII/RqsMN9DFCd4l3dr8yNJHRMo0LT6Y0DHmYAayR6Ah9e378O/8Jvd9wz/4z0XS2O71vtfT/mNXFoRNxEPAUn7K+xHV50pYB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717688831; c=relaxed/simple;
-	bh=hKe52NGpfUxlQvWE5siBYeg/W5fcruKXW0Q1K5Wl+lE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tIZfICA4g4gPcmLxAeIVsYrgsnVWVRamlHSNzUd1loMXM2hR9yjJh5O16g7MfLJQHbw3yRzP+Wb9aNGVwVUwGOKGij0L9MLEA445RPE+6iY0hinkoOUEtyYo+94+FzH67Fhc74/Bzjxg1ad6yDA1bq3screKpZw/cHAUsDQ/WQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OZNx6c2/; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-35e5c6600f0so930841f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 08:47:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717688828; x=1718293628; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hKe52NGpfUxlQvWE5siBYeg/W5fcruKXW0Q1K5Wl+lE=;
-        b=OZNx6c2/IKmqQJcxrj0tQNl2zPD5oIkhrhQGFsoBiwvg0uKo0JcRyiJyw+KzMdVdeu
-         Td+E+VwRLrrt3V9uWxkPdw1WOkQy1W+hovlj5if+8p7WjWHFkYnBaCrdgqTjO0wC1xU7
-         va9+oTOj5z20OS3AtlP3Nqnbxm1BHWI/eYgOaRCEbDtdRUixsdylUnBmGbhpqcSoeuYX
-         4/9J7WfunmnqKXh4KUmT5aeghIPTjsFeLAg+x0pp7r+7NqkAfkEgds6it/TZviqje9/1
-         1IfaAUuGG0cky3yhJyFPJkC2jUzdBvSxbFHLAzsCP44/0TIQCfmNq5qUpvdLO4np4A7K
-         lZJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717688828; x=1718293628;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hKe52NGpfUxlQvWE5siBYeg/W5fcruKXW0Q1K5Wl+lE=;
-        b=eSzp7frJK6VOCMAnNzh/35CzWbO9evBtralhL0rIslViv11yBoDcIyxIOQkNzIR4+B
-         15gg/a5wNC9QfjoYEtv9aRtsjDyOdDjfScrdtsTq8AbbmdjWuX1owFWIj7WKTsegdfOk
-         mbtjKCLGDSrpJ6fKCinRbLKXpYDmf8cAHphgCZi0sQaPx64oysFqkM5eZeEAesV7qMLV
-         8yFKaAVYJ4fjTvja+GPSqEpua5LhIHmTCBgCqn226nnsiXoajFSxWt6JyGmpv6F1XRFF
-         +Je6ZU6f8PRPidU2a+0rhe2R3Xq8pf63ug17VAZrN3R15R/QmiHILsE5gSPcz2ZXqpQy
-         YIgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWBsmNuXxdFKZS6FMO5gRGUEufdfZwv6QsAW4GNuyILpY0ZUIllwtBCEghW2D0YZJN4waEEI+Dnz85pyT3HpY7RvuVGGLJAV7Z/BeG6
-X-Gm-Message-State: AOJu0Ywufb3GlUJ4b5eh8lLJQKJBCuJa7pTmak2m1CFcX7OmsEx/pI24
-	wZ6daWF6mrIWB1cUdKWvYomSTsiu8M/xKowy/3tJBrHKWZgjmsx2KjGhnfmse5qWKWx3Syspo3a
-	XJg3jcvsPPNWkVUSRHwlGBPm71eKi/D8Xt+B3
-X-Google-Smtp-Source: AGHT+IHRaKVw7qOuW6NYsVktUE3gSn+rIAOkyJWHl3lX8amN9wd4ANmNf31Gd3QTmhu64UAg4XcBRWc+rft0gePr+8A=
-X-Received: by 2002:a5d:6ac6:0:b0:35e:8333:28f4 with SMTP id
- ffacd0b85a97d-35e8ef7f346mr4448223f8f.60.1717688828366; Thu, 06 Jun 2024
- 08:47:08 -0700 (PDT)
+	s=arc-20240116; t=1717688847; c=relaxed/simple;
+	bh=QcDw2jc2BfZ+k/TbM/vd1C8TAW70hXP/jfMovjQ+yG0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KXP6yaRB7zv2iyXT/WPhcdzRstvU10vKt7XHJgiUxm8lhNcJAQTFZ8txedTZ9rqo+Rp67ObkYhEYbDaAIFFzmv1352x3lTLc+XqVUOcy+sjbCkZLLjR0rEZ6IAxjD20Oz5vs9NFc71jQPcwiFNEppKDcF5t4iZRaw2iNaflDvt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=schaecsn@gmx.net header.b=U2T/S5JR; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1717688825; x=1718293625; i=schaecsn@gmx.net;
+	bh=QcDw2jc2BfZ+k/TbM/vd1C8TAW70hXP/jfMovjQ+yG0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=U2T/S5JR+0SiGAsJWWnecKg7FYYQ8f+8yIcT03A/poLh9al5q7EpfB+4HR2K8i3S
+	 oZMNiiuDB6as1VrNnS+hIk3Qs1UViKD/S8mKt4z0eZluVeC9GdPtREV89IwCeiZbR
+	 AGiDr7D8Sl5/GKvfFi+at37HjxRt3EDU92O7nWU+N2BhRoNy4xaNn9J4+W8VBOVWy
+	 /8887KtAdsSgUJqAofYtfUJgdAfFlZNKrQOkFBVznw/YceAv32V2IX9uhywR3tMfL
+	 RjQV1QOQetaeI7EkPqOlDrONjMyv3h6AzrEkxsO5SfDUMHhFbbUlH5vF9gOpMA2Ls
+	 +Ya496qxHiHzFt3q6g==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.209] ([173.228.106.93]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M5wLT-1sM60x1tYB-00AKLE; Thu, 06
+ Jun 2024 17:47:04 +0200
+Message-ID: <70d92f17-d9aa-48c0-a132-506faf6f94dd@gmx.net>
+Date: Thu, 6 Jun 2024 08:46:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606-tracepoint-v1-0-6551627bf51b@google.com> <cd4a58d9-3e0a-49d1-8a74-bc9d53fc2dfd@efficios.com>
-In-Reply-To: <cd4a58d9-3e0a-49d1-8a74-bc9d53fc2dfd@efficios.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 6 Jun 2024 17:46:55 +0200
-Message-ID: <CAH5fLgi4zs5ehDCEgkxPzaamNKn_2cP5+qH8KTy4ujdf2_D-vA@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Tracepoints and static branch/call in Rust
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] igb: Fix igb_down hung on surprise removal
+To: Ying Hsu <yinghsu@chromium.org>
+Cc: netdev@vger.kernel.org, grundler@chromium.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>,
+ Jesse Brandeburg <jesse.brandeburg@intel.com>,
+ Paolo Abeni <pabeni@redhat.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
+ intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org
+References: <20230518072657.1.If9539da710217ed92e764cc0ba0f3d2d246a1aee@changeid>
+ <5184214b-22ed-41cf-a1b0-6db2d4ff324c@gmx.net>
+ <CAAa9mD1HGJDKzoLoqZzyrR5wsk_6voWs+VmoZoo9ZontyvjUww@mail.gmail.com>
+Content-Language: en-US
+From: Stefan Schaeckeler <schaecsn@gmx.net>
+In-Reply-To: <CAAa9mD1HGJDKzoLoqZzyrR5wsk_6voWs+VmoZoo9ZontyvjUww@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:RmkEobG8qViO5ZiTlBvaeaBpYAXSsAocvTIYWQATG91O5FsnEPF
+ naNXMtLGd0+K0AIT0P4dEDFW1lysZS7X3IZ/cSfR24LbftzMuQlFsNIgy1Hety/+P2WyutL
+ o5o98aBKQ3lwBnyrFnDVDxVoLlT0QMr1qq7+wbY/C5ffqYlxOwQiBa+ptFFFDFG0vPPrqPW
+ XdgK+alTkrPl3ZKcwo3Mg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:/+v8FRrhYKg=;AjlZ+spZRlHkTBGo1MORJrN9CJR
+ yR8tJV/Yv8WZRm1KTu82pixM/xa9d0iev8SB8fMGQSeQA3mxwd6mABcFO0MVTTCAsrOcQAA0T
+ h0aK9wT2Q/bAP6WPwW3Jcojsn5I0jM75tpwe8sBXWWt6IzE0FtX949Cru4B9ArgaHj1+klGBm
+ SiTzHqevrgu5QJal6B54+YAfORngMMy/Ql4aXazSQyWHW3ChHqbRD6QyQnO5rCUrLCpDFAzxr
+ rTg3i1+BAyLJ32o4CPqxJbs085GPHIn6RclmwjeZofCtuJlsuyAG6QBhfPfy0QH1QXC8eQjhQ
+ aj9+r9aZE2rYGrjNcu5S41vOK67o9VrHPe6A5EJFEIzyggCbHw0krcg/lCQ8x2MH2B0Na5kaA
+ o3tM/P21Qs3kMqQShg1zkeG9p86jeuVSsh9+kbzM4DPrrxnlS+XUIkeZ6Ys7QiQgQ9nH9Zjdm
+ SATQHcbZA5fMSMBo5CcmgW4hlmmQV6qTgk+JGcX+4+DQIHtK9iUtumi+IFeK2cDEpPjRg9a6U
+ ptSfd6gHc3hUmCUjsINeAC/iaQVf87h2HtUrPu0wt28JemX9rdeVuaLxAwXJqyZ2paLy2XlCO
+ zb6X/MaIPKz3b3rRAyNpo4GoYU3Fk94QbZDAMhRmAFNxQxX8QMQ2o+b/BBIMULr0UKSep3Jxw
+ v9kBD43HDsG8Q2Pk2J1KRLKceQfHsKn2JvLW3b5D7cg6tfRitrDzUMi8G/sUYqRUHfqFNHub9
+ z/8viftYEgcEwRCn/6rJvXcQRXI+AsoHWnxxADI/LHxz8gzBAgeRR1gId2+8zL+u0T3nO+iAC
+ 2+sjgUE3ePunsWCWDGJLAmrk/ySRcsRMdwOhR7OWJ0xtU=
 
-On Thu, Jun 6, 2024 at 5:25=E2=80=AFPM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> On 2024-06-06 11:05, Alice Ryhl wrote:
-> > This implementation implements support for static keys in Rust so that
-> > the actual static branch will end up in the Rust object file. However,
-> > it would also be possible to just wrap the trace_##name generated by
-> > __DECLARE_TRACE in an extern C function and then call that from Rust.
-> > This will simplify the Rust code by removing the need for static
-> > branches and calls, but it places the static branch behind an external
-> > call, which has performance implications.
->
-> The tracepoints try very hard to minimize overhead of dormant tracepoints
-> so it is not frowned-upon to have them built into production binaries.
-> This is needed to make sure distribution vendors keep those tracepoints
-> in the kernel binaries that reach end-users.
->
-> Adding a function call before evaluation of the static branch goes agains=
-t
-> this major goal.
->
-> >
-> > A possible middle ground would be to place just the __DO_TRACE body in
-> > an extern C function and to implement the Rust wrapper by doing the
-> > static branch in Rust, and then calling into C the code that contains
-> > __DO_TRACE when the tracepoint is active. However, this would need some
-> > changes to include/linux/tracepoint.h to generate and export a function
-> > containing the body of __DO_TRACE when the tracepoint should be callabl=
-e
-> > from Rust.
->
-> This tradeoff is more acceptable than having a function call before
-> evaluation of the static branch, but I wonder what is the upside of
-> this tradeoff compared to inlining the whole __DO_TRACE in Rust ?
->
-> > So in general, there is a tradeoff between placing parts of the
-> > tracepoint (which is perf sensitive) behind an external call, and havin=
-g
-> > code duplicated in both C and Rust (which must be kept in sync when
-> > changes are made). This is an important point that I would like feedbac=
-k
-> > on from the C maintainers.
->
-> I don't see how the duplication happens there: __DO_TRACE is meant to be
-> inlined into each C tracepoint caller site, so the code is already meant
-> to be duplicated. Having an explicit function wrapping the tracepoint
-> for Rust would just create an extra instance of __DO_TRACE if it happens
-> to be also inlined into C code.
->
-> Or do you meant you would like to prevent having to duplicate the
-> implementation of __DO_TRACE in both C and Rust ?
->
-> I'm not sure if you mean to prevent source code duplication between
-> C and Rust or duplication of binary code (instructions).
+Hello Ying,
 
-It's a question of maintenance burden. If you change how __DO_TRACE is
-implemented, then those changes must also be reflected in the Rust
-version. There's no issue in the binary code.
+On 6/6/24 01:03, Ying Hsu wrote:
+> On the CalDigit Thunderbolt Station 3 Plus, we've encountered an issue
+> when the USB downstream display connection state changes. The
+> problematic sequence observed is:
+> ```
+> igb_io_error_detected
+> igb_down
+> igb_io_error_detected
+> igb_down
+> ```
+>
+> The second igb_down call blocks at napi_synchronize.
 
-Alice
+=46rom the backtrace in your commit message, I gain the impression you get=
+ a hotplug event for removing the ethernet device. From your commit messag=
+e I gain the impression you get an AER as well which is handled in igb_io_=
+error_detected()/igb_io_resume(). The problem lies IMHO in the interaction=
+ of both.
+
+
+> Simply avoiding redundant igb_down calls makes the Ethernet of the thund=
+erbolt dock unusable.
+
+I'm not too sure if the current code is even perfect in your use-case. Wha=
+t happens when you get an AER on the ethernet device (without plugging it =
+out at the same time)?
+
+Can you try to AER inject a completion timeout into your ethernet device, =
+similar how I showed it in my previous message? Just replace the bdf 09:00=
+.0 with the bdf of your ethernet device. I expect a kernel crash like we s=
+ee that on our embedded system.
+
+
+> If Intel can identify when an Ethernet device is within a Thunderbolt
+> tunnel, the patch can be more specific.
+
+ Stefan
 
