@@ -1,149 +1,97 @@
-Return-Path: <linux-kernel+bounces-205008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30DDF8FF617
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:54:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF4A8FF61B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0C3B1F2637E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:54:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED6262867A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E30313AA41;
-	Thu,  6 Jun 2024 20:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E512913B585;
+	Thu,  6 Jun 2024 20:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a5UtJ1XW"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="A6kyP1N4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D706F06E;
-	Thu,  6 Jun 2024 20:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E7B6F06E;
+	Thu,  6 Jun 2024 20:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717707234; cv=none; b=MANxux/dMtwCOV8eD3pQJ0JWkOu++2BaZW4dNX4AdGCuvpwIoBdBzUl7HyNpPxPukVa2Cb0MnQAR4HhGPq+ZherREoXzRhmGUQLmIajuoMyV0ClyTYp4tDSFeeLf5ji/qORPA+K4wSMfu0szlpxS+7YGwJzNnukcC6yvE1Qw6lo=
+	t=1717707249; cv=none; b=muizLf7rpNZoT3jwdVC0lzFlPt3LwwUVp2FTpfVP977F5SeXWFxaKACp1RKPZZtNIMX529oIdCLgiLcJBYnhuKGR86glxA3ERrhj93McoN9w7Il7aYuZNb8LjJRcXza/0A276kRMwqPFodLG1w2K3aDFznqs2s/6lCcABl/Fg2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717707234; c=relaxed/simple;
-	bh=xs/oD7HTgnoX74SDL1MTe+KSc283t/RE+0Yrs73x9ok=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bbwrGoV1/XZlJlkYLRIpBb8fWz6R9TezWgUHa4TP86f993nSk1C/aC1uxel7hHkstwcpKcJvRT1a8FlvtLslhPoI0L2SZ/9qGSqHSm70PIVN0CI7A29AAwe89uUt4dHQkLRPzjcTdOH+ptCbniw0c51EmNxXcbqcSbZqIDDOeyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a5UtJ1XW; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52b92e73e2fso1617065e87.2;
-        Thu, 06 Jun 2024 13:53:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717707231; x=1718312031; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MqoEdi+5Li7qCxgZnJ0d4rFJMsPiflzcBA1WO++S0A4=;
-        b=a5UtJ1XWNyOocMn/NCpq2nNVx0Iu1Lki76zC/IH+YyzSpq2xrKNpEq+6iaq3GtfHJ3
-         u/3XCK2r1MULv4uIMNv3Cqc0YsCOfOYSg3uV0aZGHFUfnMZbMa+TR0n/d1i4v+Pms5sg
-         WEQ4EReEAY0B5FCHx5IuexQfx8TZ6jiqCXUtaOvZP9N3gbAffuzxV04Qz/n5c1tLHCC6
-         vETizacRGPm2he0WUbUctAMk9en5c+ncF7iBTksyt5dMEbz8DaVY62BTIXKsn5mW/kYp
-         EAeROx45H4v4JM9058Xv7Bw13KAfD68BLYQFTznzLWiwq0OeTudiwq0HT4aBghySIP7T
-         FpZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717707231; x=1718312031;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MqoEdi+5Li7qCxgZnJ0d4rFJMsPiflzcBA1WO++S0A4=;
-        b=ZYnYZ2UT0xTw7790GoXcCiTAohLMSJjAQ0O2gTUxSmPwRQIdJYPw1N8tt/GP39Mbyp
-         W2oUPzThQqzW601z60QdDSaDKZJEunUPhtBZjZRrXkDIQLfB0YbfbyaI0je5xtvmgbsh
-         YbToYAzGeQ3O4qEnKACOJHqt0UTF5fMsw5BwWCTRhpiL5xY/yQNVIKFP5Tev1dqqR3DS
-         EuNhtfZae7EKPITGWCR9TLO2lkOpCbI3BCD29AOgCoQbBmS8QyNVJ/RYToTzsFAjHosk
-         Wss2tYBfDiF/DjxGFsiZ9ujzSngNhk2Cjc4UbQULCngcjn/r6vYSqiguFqkoK2rZDSdT
-         vr+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUk8pzxh/+qFnjGu6ArkYBY26AF/oSRGUDgkwG8kFTSqOK0uTkxUvmHAi52CYZTFcEBnrnSOVqQKhBuOwAeiLDb2ZT8FuVaPbU1VUxW3xCB/LbC3h20UOsIwK/LRx05/TFmfqqBJu1gomHG9aNN
-X-Gm-Message-State: AOJu0YxSEse/SzfpPCFMX7tZWeQDfciblgpyXhqx9f1SwZCl+2nZAK/4
-	0mZMFu23zdeWzbU4tCa4gx9jD+/LIvRG8gwmTJULz0iZspTAk1C+6ElQKeTI5wQmJsRLvX4I9MX
-	ku1bhLeuezzZ0Ad9U6D1vq7cqdIc=
-X-Google-Smtp-Source: AGHT+IGe+E8yRR+CT71Fsvaer0y2RqxtMLRAiJ6nUZRps3iY7/5o5Z2BUQ/38UuLanYuW7ZWdPOf501mR5Ez+VzmzyI=
-X-Received: by 2002:a2e:8191:0:b0:2ea:83d1:47fe with SMTP id
- 38308e7fff4ca-2eadce36253mr4325701fa.20.1717707230856; Thu, 06 Jun 2024
- 13:53:50 -0700 (PDT)
+	s=arc-20240116; t=1717707249; c=relaxed/simple;
+	bh=UqeI96+MM5X3pqwCptXH2eQJ3yuc1OFxEnYiSX/y3zc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OThTK7TeDfB4FDEef+Pq4zdCh0CoNe++cWG0bzYJFMCdbGf9WkY6LS3fljVegBAXcHL8Js1ICIr6HxFd+Mz1WfeqkGidY/73hTKHODIJcFD0A4B8/th/MpLyE8P43+RWSM36gRr/XI1cTzqL4ILyKwEP6GY1ad2SUtC3PsBY/mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=A6kyP1N4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59061C2BD10;
+	Thu,  6 Jun 2024 20:54:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1717707248;
+	bh=UqeI96+MM5X3pqwCptXH2eQJ3yuc1OFxEnYiSX/y3zc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A6kyP1N4dXj3GzUHpLannf6y6D/DZdpilO3+TVH+Fi8roM8Aj39obTruHOHQheVuo
+	 UJwXzYsvbA9zFqU5zAV9iT651Za7HI5PQpS0joWloWlz6gfYZXd5/Xg1juzOG9Jn4T
+	 4c7WbLPv3KG8D/bcooMr+zVEgBpvvB94WvCxd0eE=
+Date: Thu, 6 Jun 2024 22:54:06 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Martin Oliveira <martin.oliveira@eideticom.com>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-mm@kvack.org,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>, Tejun Heo <tj@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	Michael Guralnik <michaelgur@nvidia.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Valentine Sinitsyn <valesini@yandex-team.ru>,
+	Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH 1/6] kernfs: create vm_operations_struct without
+ page_mkwrite()
+Message-ID: <2024060658-ember-unblessed-4c74@gregkh>
+References: <20240605192934.742369-1-martin.oliveira@eideticom.com>
+ <20240605192934.742369-2-martin.oliveira@eideticom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606114321.30515-1-chris.lu@mediatek.com> <20240606114321.30515-3-chris.lu@mediatek.com>
-In-Reply-To: <20240606114321.30515-3-chris.lu@mediatek.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Thu, 6 Jun 2024 16:53:38 -0400
-Message-ID: <CABBYNZLRWpxfrYDk7JbozC-2mZk2r3BAOkCSEfhR48AH25RkZw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] Bluetooth: btusb: add callback function in btusb suspend/resume
-To: Chris Lu <chris.lu@mediatek.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
-	Sean Wang <sean.wang@mediatek.com>, Deren Wu <deren.Wu@mediatek.com>, 
-	Aaron Hou <aaron.hou@mediatek.com>, Steve Lee <steve.lee@mediatek.com>, 
-	linux-bluetooth <linux-bluetooth@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-mediatek <linux-mediatek@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605192934.742369-2-martin.oliveira@eideticom.com>
 
-Hi Chris,
+On Wed, Jun 05, 2024 at 01:29:29PM -0600, Martin Oliveira wrote:
+> The standard kernfs vm_ops installs a page_mkwrite() operator which
+> modifies the file update time on write.
+> 
+> This not always required (or makes sense), such as in the P2PDMA, which
+> uses the sysfs file as an allocator from userspace.
 
-On Thu, Jun 6, 2024 at 7:43=E2=80=AFAM Chris Lu <chris.lu@mediatek.com> wro=
-te:
->
-> Add new function: dev_suspend/dev_resume in btusb_data which are reserved
-> for vendor specific usage during suspend/resume. dev_suspend will be
-> added before stop traffic in btusb_suspend and dev_resume will be
-> added after resubmit urb in btusb_resuem.
->
-> Signed-off-by: Chris Lu <chris.lu@mediatek.com>
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> ---
->  drivers/bluetooth/btusb.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index 79aefdb3324d..83765c0c14b4 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -891,6 +891,9 @@ struct btusb_data {
->
->         int (*setup_on_usb)(struct hci_dev *hdev);
->
-> +       int (*dev_suspend)(struct hci_dev *hdev);
-> +       int (*dev_resume)(struct hci_dev *hdev);
+That's not a good idea, please don't do that.  sysfs binary files are
+"pass through", why would you want to use this as an allocator?
 
-I'd name these suspend, resume respectively.
+> Furthermore, having the page_mkwrite() operator causes
+> writable_file_mapping_allowed() to fail due to
+> vma_needs_dirty_tracking() on the gup flow, which is a pre-requisite for
+> enabling P2PDMA over RDMA.
+> 
+> Fix this by adding a new boolean on kernfs_ops to differentiate between
+> the different behaviours.
 
->         int oob_wake_irq;   /* irq for out-of-band wake-on-bt */
->         unsigned cmd_timeout_cnt;
->
-> @@ -4715,6 +4718,9 @@ static int btusb_suspend(struct usb_interface *intf=
-, pm_message_t message)
->
->         cancel_work_sync(&data->work);
->
-> +       if (data->dev_suspend)
-> +               data->dev_suspend(data->hdev);
-> +
->         btusb_stop_traffic(data);
->         usb_kill_anchored_urbs(&data->tx_anchor);
->
-> @@ -4818,6 +4824,9 @@ static int btusb_resume(struct usb_interface *intf)
->                         btusb_submit_isoc_urb(hdev, GFP_NOIO);
->         }
->
-> +       if (data->dev_resume)
-> +               data->dev_resume(hdev);
-> +
->         spin_lock_irq(&data->txlock);
->         play_deferred(data);
->         clear_bit(BTUSB_SUSPENDING, &data->flags);
-> --
-> 2.18.0
->
+This isn't going to work well.
 
+What exactly are you wanting to do in sysfs that you feel this is
+required?
 
---=20
-Luiz Augusto von Dentz
+thanks,
+
+greg k-h
 
