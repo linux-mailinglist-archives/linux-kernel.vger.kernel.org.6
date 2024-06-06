@@ -1,128 +1,124 @@
-Return-Path: <linux-kernel+bounces-204427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B9B8FEAF1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:22:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FF968FEAE5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:22:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 808BB2888F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:22:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 520C2287D66
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0304C199241;
-	Thu,  6 Jun 2024 14:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10991A1893;
+	Thu,  6 Jun 2024 14:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JBTa+1/+"
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fW0I7Rwh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD5C1A254F;
-	Thu,  6 Jun 2024 14:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4371A186B;
+	Thu,  6 Jun 2024 14:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717683192; cv=none; b=ZDJc5jI8uaeOoUbsZgArsHGz+1FzXaaOJTzP9sHPvSgxgmbqIXgCjC0dtI2SnAejhpY0UANoVw+EZQ+V9DqCvec4SeRKKBJ3ZFdwgcmjRQq1/EcXdYZRX09MJdd9PjTGDVJPFzq3epuZZn/MuXkoQ7Zaefif8D/HbTEM32CsRnI=
+	t=1717683188; cv=none; b=l9AzjAFIAjCPXQURifPN1uCmaCG2qxFcVB6xgWm/et4ryhh2qt1uP8NFEPIL2XlugmwaFwAQPHpQ6RSsVtNS84kyrPwSg48XyejxdvzPd9IZXL7muEAuN/vgX6dR/bRTUIrA3oq/FTjdXRZXwQCsat9qLvEvQYVTXS8nlSTEal0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717683192; c=relaxed/simple;
-	bh=rRQ3jNDRpm7FOp0E37GOIvxo9WdqaMWWaKCaRg4WA5o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ak1a09e6n0jyfSy2kmykROpxzaKy2i94pQDGCACuK26G51Kvi4MSBmLCX/R1hW+QO1TIw2v5lF6CroTPiNWDIbNth/PwA+hPzmvJ9p+Dth/uJEY89tRi00OeXIXZWFdaub5cCpfH8/kMWGqvQW/Iqh1O+3Ttkjp8N06fRKwMp8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JBTa+1/+; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-6f8e7b6c5dfso369081a34.1;
-        Thu, 06 Jun 2024 07:13:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717683189; x=1718287989; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DSL3V94nwMBNbfDW+Rmoc+9OI1jw7v5BXyHyBpJCRfs=;
-        b=JBTa+1/+Sd61QiC9QqBmkdmmSBbZFSJKskECspfJDAhj0xqu28PHla3CoUdKZpcTJH
-         HB2vl0Gw40nmFAdqYlL5Ueqbg/U6bdpeyfENdCnx50Z92d1iGQHBBtWrr6pGWVuYekeM
-         FCZiCcpTsXx6Wr2i8cie0TywyrFcjbDC0Bi3a8/VR9CbDPi8Xupyd0mRl7WkY5VA96gl
-         ltOFb62v8+dTVHQLbaCUJrfLg/Uz6LwNRm2gNf+YW2/8rlGdsFoBAVC6uC5kfuiGQxiV
-         dvuWGU8N5JTqa1hFirY3cJbQIMf1x6ocStRHJe4PInUGo/lzucEkpBSi0VbqgjHywRmw
-         rYMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717683189; x=1718287989;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DSL3V94nwMBNbfDW+Rmoc+9OI1jw7v5BXyHyBpJCRfs=;
-        b=mJnkJYED1+0JK77G8vCMMJkQ8mEdlfgNvYIPEY+Vvu3vISoh8Jn7zZPqfpw6EVxWHH
-         Ty7pl+EPutx61LOpOBBsND6NuPFc+MK5RRTNydNexMXtb8tu7U75KwvWKHJiig6iJdlq
-         noMJ6NfWjTqbsLLJf3wQAfAY3JnFyFdCvfww3dq4BoTAhLNfLN5m/wyWkdfwZgw4QiVT
-         uifvOzCqkiHy1Dji7fW/oqo++RU+wUd7xoaA/3c1QpNiIrHg1CFRl2IakHglC1zOJpVw
-         595e/WoJm/hUsE0EWMuvVJsfWmJPJ+gHujHzJECvNsa1YzEFk+IIZWzyuEDENbBJnIrH
-         lEbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVeaGmEA44eTzq2xkT/oD+qDBXkvCMy2mAlmqRCb7Ld4+PWg0SJWPm7I9SD4vg9Ofj1gualBqCMUbnQLeQ01PVxBpyfLogqUfbtSTY1ArpjYw2K2/tyNs1+3xZCf0MFRSLkr2l3Rx/LNREMogKlgYu3j0+h8lNItj15XRJ2L+Gby+hbEnF73dhCVJBWPS2/R+noqGLL8xTzdljbHfgXd8GMcUSvg4Uq
-X-Gm-Message-State: AOJu0YzvwbYzynreTFKCM9KWC3ex0G814P8XMWPLJdv7ORBdQ9zy4xHc
-	lW/riIGAIi75hOQtiyykzWyO8IaWoBxWKJ6oO/rf0LDg/xu5EjbjWPdPrl/6OcDDzP3y5jNJ/07
-	usQ4fFrOt4j3XSp7SzwC6bgPThJk=
-X-Google-Smtp-Source: AGHT+IHdJrybow0vXUpJ0Jea1nDFSyIH7eIo2AC4cOCRdrEHsi5K/3ryvxAqAUrS0ivYlUev4Jw+a83pgXZ7FODqx6g=
-X-Received: by 2002:a05:6870:d10f:b0:24c:b0ca:9650 with SMTP id
- 586e51a60fabf-25121c7e02fmr6232772fac.1.1717683188863; Thu, 06 Jun 2024
- 07:13:08 -0700 (PDT)
+	s=arc-20240116; t=1717683188; c=relaxed/simple;
+	bh=IsdLDPmj0SmbAXCgn+8qfRe+A3ztyr1j6wceGEhWF0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cxUIWfpaz1Fw7yoiPqy5MNkFllWtgJqde7VMeXsSPSmxhTEp8pe95vTUOOuvYqLQ/k5JqVttoQmwtYmFegPu7nFYCqEiOtE3VMDr+A4viQBTxDF3NB5Z10SNqCsZTJ2uqZFbEOvxbXecPzp0l9N+3BYPVuqx8qMuT9TfKaRcnPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fW0I7Rwh; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717683187; x=1749219187;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=IsdLDPmj0SmbAXCgn+8qfRe+A3ztyr1j6wceGEhWF0A=;
+  b=fW0I7Rwh/brFkzpgDroUfYlzvwI8hDBjz+S8Z722ZvLihccNGyCoiQD1
+   lXiAtdbHQUNOmp9+oZUAV5BQOpZCdoQI4nm4FFxagHuOgCdYyyo+DKOw7
+   YuNSxqal9oMIgGLmnSOypOVhPRoWuiU1jAERHJmlgfo7nHrESSJE1ZEaa
+   1K80tSuMHuQCX8XFRUUufUcW0roVhwtcQjNgcA2GokJzoy1Qzj/5D+aNT
+   f6dgQ4GroxumTgQI7GJV8ev4nRJaqJuEPCanh9B/niaClUJ0NXXRtfEVg
+   ASwo6CvnmAmd1nHRavYDphnzzBqDNUgO134pwCcxEgxZDBSsYv74+pNNI
+   g==;
+X-CSE-ConnectionGUID: B5CUVPBoQpKgD812XWCMuw==
+X-CSE-MsgGUID: jsh/SuHASKuirfT5nbbO0Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="24924368"
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="24924368"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 07:13:06 -0700
+X-CSE-ConnectionGUID: 8ND2elZKS2e+hKpRoRovhw==
+X-CSE-MsgGUID: Ja7dKVhLT8ChYzA52oYi3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="37837567"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 07:13:02 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sFDrQ-0000000ECTP-019r;
+	Thu, 06 Jun 2024 17:13:00 +0300
+Date: Thu, 6 Jun 2024 17:12:59 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+Cc: Nuno Sa <nuno.sa@analog.com>, Petr Mladek <pmladek@suse.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Jyoti Bhayana <jbhayana@google.com>,
+	Chris Down <chris@chrisdown.name>,
+	John Ogness <john.ogness@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andi Shyti <andi.shyti@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] iio: temperature: ltc2983: convert to
+ dev_err_probe()
+Message-ID: <ZmHD63_tvC75To8r@smile.fi.intel.com>
+References: <20240606-dev-add_dev_errp_probe-v3-0-51bb229edd79@analog.com>
+ <20240606-dev-add_dev_errp_probe-v3-2-51bb229edd79@analog.com>
+ <ZmGMwwglUlS6_NI_@smile.fi.intel.com>
+ <da57a64e4f5cdda7ee6b794c448995eee648c436.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605074936.578687-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240605074936.578687-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <22664e29-4c7a-4544-ad32-25c3d7e342e9@sirena.org.uk>
-In-Reply-To: <22664e29-4c7a-4544-ad32-25c3d7e342e9@sirena.org.uk>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 6 Jun 2024 15:12:42 +0100
-Message-ID: <CA+V-a8vStea7RZWNXjJLbuibz+-53KT9=5g-P9N4fUrbqjj91A@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/4] regulator: core: Ensure the cached state matches
- the hardware state in regulator_set_voltage_unlocked()
-To: Mark Brown <broonie@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <da57a64e4f5cdda7ee6b794c448995eee648c436.camel@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Mark,
+On Thu, Jun 06, 2024 at 02:27:03PM +0200, Nuno Sá wrote:
+> On Thu, 2024-06-06 at 13:17 +0300, Andy Shevchenko wrote:
+> > On Thu, Jun 06, 2024 at 09:22:38AM +0200, Nuno Sa wrote:
 
-On Thu, Jun 6, 2024 at 1:05=E2=80=AFPM Mark Brown <broonie@kernel.org> wrot=
-e:
->
-> On Wed, Jun 05, 2024 at 08:49:33AM +0100, Prabhakar wrote:
->
-> > Driver code flow:
-> > 1> set regulator to 1.8V (BIT0 =3D 1)
-> > 2> Regulator cached state now will be 1.8V
-> > 3> Now for some reason driver issues a reset to the IP block
-> >    which resets the registers to default value. In this process
-> >    the regulator is set to 3.3V (BIT0 =3D 0)
-> > 4> Now the driver requests the regulator core to set 1.8V
->
-> If something is resetting the regulator like this that's a problem in
-> general, we need to either have the driver notify the core when that
-> happens so it can reconfigure the regulator or have it reapply
-> configuration directly.  Obviously it's not great to have that happen at
-> all...
->
-Currently I am seeing this problem with SDHI driver. For the voltage
-switch operation the MMC core requests the driver to do the change and
-similarly the MMC core requests the reset operation.
+...
 
-> Having the core driver notify the core when that happens so it can reconf=
-igure the regulator or have it reapply configuration directly.
-Again doing this would be a problem as MMC core also maintains the IOS
-states, reconfiguring the regulator would cause conflicts between the
-states.
+> > > +			return dev_err_ptr_probe(&st->spi->dev, -EINVAL,
+> > 
+> > You can make all these lines shorter by using
+> > 
+> > 	struct device *dev = &st->spi->dev; // or analogue
+> > 
+> > at the top of the function.
+> > 
+> 
+> Well, I had that in v2 (making the whole driver coherent with the local struct
+> device helper but you kind of "complained" for a precursor patch (on a
+> devm_kzalloc() call). So basically I deferred that change for a follow up patch.
 
-Ulf/Wolfram - please correct me if I'm wrong here.
+Hmm... I don't remember the story behind this, but probably it's good to have
+this done one (precursor) or the other way (follow up). Just check how many
+changes will be done, whichever diff is shorter, choose that one.
 
-Cheers,
-Prabhakar
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
