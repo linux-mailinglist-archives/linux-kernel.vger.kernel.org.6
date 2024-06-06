@@ -1,157 +1,190 @@
-Return-Path: <linux-kernel+bounces-204081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56B468FE3CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:08:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 291DB8FE3CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:08:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF8A228721A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:08:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD0F01F225C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AE418F2E8;
-	Thu,  6 Jun 2024 10:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="DjjLC/7K"
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087FF18F2F4;
+	Thu,  6 Jun 2024 10:08:41 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B82188CD1
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 10:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F5017D36B;
+	Thu,  6 Jun 2024 10:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717668496; cv=none; b=IrUDEfeqo+/OxnUHXAQljTbpgmcWnSI2f4fLykuwgigeDkhzmHg0VbF6xjyWbHhsWrghrmqtFtQoXl/D9niyv2mpfjB74s1f54fJs+gdngyCxIQNKiyzw73leSgrTZz1Xo8fmd+3sYDoZkXKSevgyIF0ZYCfrgdghKrNZ7mlPh0=
+	t=1717668520; cv=none; b=e9VIKk87wXuSU7BuTbfVPzp+BxPAJnWY0hCD9zvV6a0Bq/FGv28pFEOIjNEPzuJz3Bb/SX8ZDyXXnXTxMxtUgD3cXL+NMlgeCkLWsNftEAcKy028p75pgcmXR6caag9m7yWTiLV+zeljj0LHtIkaxyEiWHzJT3D5JqtWL0vk6Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717668496; c=relaxed/simple;
-	bh=kE2NyNQtVQLVkbR6xyVZdiXkGUHjIIus5Y90ecB5k/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cZBjMJnMtT7Oy7izuNnDgqiJatnxPpgns4C8IrzhiKo0Tcn/2o8hqr6GIf09xhIeRt0rX9HjzaJYovchSAajRKkPOgsWTFNBvZUWp3jJk0jVmhx/sqNlHK/vCj27XRHs9HDgR3CgxUT2sN8iJU3Ad6442EOg1Y9KY/8Y/tzwoK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=DjjLC/7K; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=kv1a
-	MtLEznsb7d+x/dGO3ACtifhy610beU+a/4RhXxU=; b=DjjLC/7KrQm2ZjGy+CzS
-	4n/VoKJj1CCkUs3xFoRU8NicWSW+xeyfZRUHPOsHTB9x0jEg1ztzn28a2SdLAbTP
-	XzqQ/vIg0zGuHuRFYTq6gdLoLs9kEfVjLET3xnXwg/IPfzK+Dso1LqBNuYjRX1O4
-	oWO/FD1HwQvEsgOV4iDkuLYcSWCEbBwt//tcLAdvXu0/Wm53/7gptbK7Zvg3JBSm
-	RlpVZdQhVvv97XmlTLhXlq1gYPoOJ/w+OQJsJdWwDB1P6FhYo6pxzGCRM6Ksp8VA
-	nxuJfxXU6Ht3AsU+2l2zwPJpvy4mEcL58bqJhxnfP6JEeuCl/AQHswG9fwQ1j5d1
-	WA==
-Received: (qmail 2956939 invoked from network); 6 Jun 2024 12:08:10 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Jun 2024 12:08:10 +0200
-X-UD-Smtp-Session: l3s3148p1@u2U43DUa3qZehhrL
-Date: Thu, 6 Jun 2024 12:08:10 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [RFC PATCH 4/4] mmc: renesas_sdhi: Add support for RZ/V2H(P) SoC
-Message-ID: <20240606100810.eskr7bd3oqpphaxh@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20240605074936.578687-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240605074936.578687-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1717668520; c=relaxed/simple;
+	bh=O4Hl1CJ9U+tfQkDb3eVAbFT3e6iHQs+MpqFGSGK4EgM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TIuVqsSktVHt3ByYAIeeVDzoRMjyyaIgIvuc05vYPBDgrHO+VKRZDGtdPOFqjA/Jr8dJ4xfML5rxfxTVc1YHkT1mFlXxhnKUaNw7SV0dfNdtA+EuyC9sSRuYER0sqvfXzogiUUhJ5Q6ctfGiTMN9oAtXv9ahu77zZTEjCzn87p0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875b65.versanet.de ([83.135.91.101] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sFA2t-0007q0-Lu; Thu, 06 Jun 2024 12:08:35 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Linus Walleij <linus.walleij@linaro.org>, Huang-Huang Bao <i@eh5.me>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Huang-Huang Bao <i@eh5.me>
+Subject: Re: [PATCH 1/3] pinctrl: rockchip: fix RK3328 pinmux bits
+Date: Thu, 06 Jun 2024 12:08:34 +0200
+Message-ID: <3862456.FjKLVJYuhi@diego>
+In-Reply-To: <20240606060435.765716-2-i@mail.eh5.me>
+References:
+ <20240606060435.765716-1-i@eh5.me> <20240606060435.765716-2-i@mail.eh5.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="c4wwgkhsymlp5fu6"
-Content-Disposition: inline
-In-Reply-To: <20240605074936.578687-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+
+Hi,
+
+Am Donnerstag, 6. Juni 2024, 08:04:33 CEST schrieb Huang-Huang Bao:
+> The pinmux bits for GPIO2-B0 to GPIO2-B6 actually have 2 bits width,
+> correct the bank flag for GPIO2-B. The pinmux bits for GPIO2-B7 is
+> recalculated so it remain unchanged.
+
+I've verified the gpio2-related pin settings via the TRM, so this part
+looks good :-)
 
 
---c4wwgkhsymlp5fu6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> The pinmux bits for GPIO3-B1 to GPIO3-B6 have different register offset
+> than common rockhip pinmux, set the correct value for those pins in
+> rk3328_mux_recalced_data.
+> 
+> The pinmux bits for those pins are not explicitly specified in RK3328
+> TRM, however we can get hint from pad name and its correspinding IOMUX
+> setting for pins in interface descriptions, e.g.
+> IO_SPIclkm0_GPIO2B0vccio5 with GRF_GPIO2B_IOMUX[1:0]=2'b01 setting.
+> 
+> This fix has been tested on NanoPi R2S for fixing confliting pinmux bits
+> between GPIO2-15 with GPIO2-13.
 
-Hi Prabhakar,
+As you said, the gpio3-based pins are not documented in the TRM,
+but in your description above you're talking about pins in the gpio2-
+group?
 
-thanks for this series!
+So where did the gpio3-related pin information come from?
 
-On Wed, Jun 05, 2024 at 08:49:36AM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->=20
-> The SDHI/eMMC IPs found in the RZ/V2H(P) (a.k.a. r9a09g057) are very
-> similar to those found in R-Car Gen3. However, they are not identical,
-> necessitating an SoC-specific compatible string for fine-tuning driver
-> support.
->=20
-> Key features of the RZ/V2H(P) SDHI/eMMC IPs include:
-> - Voltage level control via the IOVS bit.
-> - PWEN pin support via SD_STATUS register.
-> - Lack of HS400 support.
-> - Fixed address mode operation.
->=20
-> sd_iovs and sd_pwen quirks are introduced for SoCs supporting this bit
-> to handle voltage level control and power enable via SD_STATUS register.
-
-Two high-level questions:
-
-- can't we use .enable/.disable in regulator_ops for handling pwen?
-  Then we could simply use regulator_en/disable in the code and be future
-  proof when other SDHI instances have other kinds of regulators (unless
-  I am mising something)
-
-- what about not using regmap and use set/get_voltage and friends? My
-  concern is that other "new" registers might appear in the future and
-  it will be cumbersome to handle the scattered IO regions.
-
-That said, having a regulator is not a quirk in my book. I'd think
-'struct renesas_sdhi' is the proper place. Or?
-
-Looking forward to your comments,
-
-   Wolfram
+Also, could you please split this patch in two pieces, one fixing the
+gpio2-area and one for the new gpio3 pins please?
 
 
---c4wwgkhsymlp5fu6
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks
+Heiko
 
------BEGIN PGP SIGNATURE-----
+> Signed-off-by: Huang-Huang Bao <i@eh5.me>
+> ---
+>  drivers/pinctrl/pinctrl-rockchip.c | 59 ++++++++++++++++++++++++++----
+>  1 file changed, 52 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+> index 3bedf36a0019..23531ea0d088 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.c
+> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+> @@ -634,23 +634,68 @@ static struct rockchip_mux_recalced_data rk3308_mux_recalced_data[] = {
+>  
+>  static struct rockchip_mux_recalced_data rk3328_mux_recalced_data[] = {
+>  	{
+> -		.num = 2,
+> -		.pin = 12,
+> -		.reg = 0x24,
+> -		.bit = 8,
+> -		.mask = 0x3
+> -	}, {
+> +		/* gpio2_b7_sel */
+>  		.num = 2,
+>  		.pin = 15,
+>  		.reg = 0x28,
+>  		.bit = 0,
+>  		.mask = 0x7
+>  	}, {
+> +		/* gpio2_c7_sel */
+>  		.num = 2,
+>  		.pin = 23,
+>  		.reg = 0x30,
+>  		.bit = 14,
+>  		.mask = 0x3
+> +	}, {
+> +		/* gpio3_b1_sel */
+> +		.num = 3,
+> +		.pin = 9,
+> +		.reg = 0x44,
+> +		.bit = 2,
+> +		.mask = 0x3
+> +	}, {
+> +		/* gpio3_b2_sel */
+> +		.num = 3,
+> +		.pin = 10,
+> +		.reg = 0x44,
+> +		.bit = 4,
+> +		.mask = 0x3
+> +	}, {
+> +		/* gpio3_b3_sel */
+> +		.num = 3,
+> +		.pin = 11,
+> +		.reg = 0x44,
+> +		.bit = 6,
+> +		.mask = 0x3
+> +	}, {
+> +		/* gpio3_b4_sel */
+> +		.num = 3,
+> +		.pin = 12,
+> +		.reg = 0x44,
+> +		.bit = 8,
+> +		.mask = 0x3
+> +	}, {
+> +		/* gpio3_b5_sel */
+> +		.num = 3,
+> +		.pin = 13,
+> +		.reg = 0x44,
+> +		.bit = 10,
+> +		.mask = 0x3
+> +	}, {
+> +		/* gpio3_b6_sel */
+> +		.num = 3,
+> +		.pin = 14,
+> +		.reg = 0x44,
+> +		.bit = 12,
+> +		.mask = 0x3
+> +	}, {
+> +		/* gpio3_b7_sel */
+> +		.num = 3,
+> +		.pin = 15,
+> +		.reg = 0x44,
+> +		.bit = 14,
+> +		.mask = 0x3
+>  	},
+>  };
+>  
+> @@ -3763,7 +3808,7 @@ static struct rockchip_pin_bank rk3328_pin_banks[] = {
+>  	PIN_BANK_IOMUX_FLAGS(0, 32, "gpio0", 0, 0, 0, 0),
+>  	PIN_BANK_IOMUX_FLAGS(1, 32, "gpio1", 0, 0, 0, 0),
+>  	PIN_BANK_IOMUX_FLAGS(2, 32, "gpio2", 0,
+> -			     IOMUX_WIDTH_3BIT,
+> +			     0,
+>  			     IOMUX_WIDTH_3BIT,
+>  			     0),
+>  	PIN_BANK_IOMUX_FLAGS(3, 32, "gpio3",
+> 
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZhioYACgkQFA3kzBSg
-KbZKIw/8CeM4x7MUv2ZgIkGAEWZHXs2GyoBn8JtzcEX+6C23RHT5CK7aIZDFBFQG
-t8QPol3bNqQhqAD8ObdCrTbuXR2bnCMdAM3vlacVLuv388kh7yHCSvQWdJYwNMVY
-wJJ0h7pAfdsbl774qX5RXSsf4yDWr/2c2TA9ABS+nJmC2AMyzDwISUeKm6Ws4vqJ
-WqDe2m7f6uE7SaB+uWqUZsesNZkeL2ZapUrtqvU4t17UJix/bmtXkhYCvWlcttAt
-Felb9LHSBhd2mnSDYrTQi8EKanFxdrt0+Y8YqRyugIxn/HHs15l+shDjglv51zCe
-0+c7V4onCYfsY8Cd+FN1P4VYiOJzKnGO5kT7HCpnMBHcJVl7wf3NC92tvOTrUpZh
-6hjis3RLBviAZ7NdWfYeSDauvrTTJw5XCqfoMv6H+a4kwbgWRaXtI2n18viqG6ce
-l2wEfGL6AiLdQefohdA9/WJXMoPxA2HtBi3KI/D4zj3r+e9NDxKAPiQctg0GWbe/
-A9iIT01hyBRXThdSmAVsIPpv7ATwcWjnEAiHbvo4vvDuq8tRhnntKAMZpm/wl14z
-K1xt777o7rcQe/T81SsT4eJNhubxz1hUhAiqv1rlLyS9XG6KqMpr+j4/LvAUfsHn
-Uqgl283qj+tiMvA3mF+uxLCraFS5Uwfr4pkrNy6aK7W2Hf9Hqis=
-=trg3
------END PGP SIGNATURE-----
 
---c4wwgkhsymlp5fu6--
+
+
 
