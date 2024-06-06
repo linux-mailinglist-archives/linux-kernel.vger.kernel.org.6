@@ -1,48 +1,47 @@
-Return-Path: <linux-kernel+bounces-204246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9AA68FE63B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:13:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A6A8FE63C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B94F1F22FB6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:13:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC0BF1F22D3B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC50D197552;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1030197555;
 	Thu,  6 Jun 2024 12:11:02 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5825C195F27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3F2195F2A
 	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717675861; cv=none; b=rWlytpwh8ewySoFO2n5cNSfyTmn4P3Kw5TAk9gHwxbTWd/8HKk0UZmpw2sjBcviWvKyi/5o9qORdCrArJgm+qTuIiBuXwyGkHNKQyKtGJb6QQVRSCIlxLwyJmGDmyKft9VaB0b4oFkYfrdRoQYNfetWvCTt2ZAaWgJoAYm1gpIw=
+	t=1717675861; cv=none; b=HwUkRUaI+iENkTnY5GR3K6HmAK0/IMCXfav0Ptke8noGyZ5dhFrDAyFDRm5WuocrBAz/8Kg5BSocgFLTAEYICGxbiTQpogruGbbzoKdXnE/kWdO9Sknt8quTQvmbDjQpqh84jxghXKtE1WdxVWsPE3bgHRrm/lMEIVRs8TygM5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717675861; c=relaxed/simple;
-	bh=H4J/vOPaYGRMPo4WfrxbkfzY1t5g0RPt7rHCPw01rI8=;
+	bh=NJYbbejIctt8G+auynjs7BQD1BTTaaHXR8rDk7HRzc0=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=diSz4rRUzwh2DEwVXvd/1hLrlGW+6384KsXZMQka++Fm2vlsuv2qBb12r6k9ahRzZqoIcgC/13rCA7ycla9ij9p/pESLAkSVPb2/ZitGmPi/obO8Aywo0WKlreefoE4Kq5Uk+HhyBdlrhCGsTSBmedftE7GBbWt+FnfRFMFngKc=
+	 Content-Type; b=FpQVlr6OG4/h0DiZxwvsjMPerZmePQhjtJ7R3pVbPUJlltSYxGRlSfBr9Y8iDwHplziohePMOW8WxuyDZg5Pff1sZcY1DdXPEPRbGcnH4ejiSTrxlrcodzbwQexZI3O9oPQW52ZgUlmkKaYraN528JQRn3SjyXSqbNhCXbhd19k=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E6AFC4DE0B;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24A94C4AF0C;
 	Thu,  6 Jun 2024 12:11:01 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.97)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1sFBxR-00000000nLK-23op;
+	id 1sFBxR-00000000nLo-2ink;
 	Thu, 06 Jun 2024 08:11:05 -0400
-Message-ID: <20240606121105.350727218@goodmis.org>
+Message-ID: <20240606121105.511202862@goodmis.org>
 User-Agent: quilt/0.68
-Date: Thu, 06 Jun 2024 08:10:10 -0400
+Date: Thu, 06 Jun 2024 08:10:11 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 06/15] ftrace: Convert "inc" parameter to bool in
- ftrace_hash_rec_update_modify()
+Subject: [for-next][PATCH 07/15] ftrace: Add comments to ftrace_hash_move() and friends
 References: <20240606121004.857581251@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -54,12 +53,10 @@ Content-Type: text/plain; charset=UTF-8
 
 From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
 
-The parameter "inc" in the function ftrace_hash_rec_update_modify() is
-boolean. Change it to be such.
+Describe what ftrace_hash_move() does and add some more comments to some
+other functions to make it easier to understand.
 
-Also add documentation to what the function does.
-
-Link: https://lore.kernel.org/linux-trace-kernel/20240605180409.021080462@goodmis.org
+Link: https://lore.kernel.org/linux-trace-kernel/20240605180409.179520305@goodmis.org
 
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
@@ -67,54 +64,65 @@ Cc: Andrew Morton <akpm@linux-foundation.org>
 Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/ftrace.c | 23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
+ kernel/trace/ftrace.c | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 4140d0ce25f1..256b5e07c39a 100644
+index 256b5e07c39a..9c4d01b1bb68 100644
 --- a/kernel/trace/ftrace.c
 +++ b/kernel/trace/ftrace.c
-@@ -1883,7 +1883,24 @@ static bool ftrace_hash_rec_enable(struct ftrace_ops *ops)
- 	return __ftrace_hash_rec_update(ops, true);
+@@ -169,6 +169,7 @@ static inline void ftrace_ops_init(struct ftrace_ops *ops)
+ #endif
  }
  
--static void ftrace_hash_rec_update_modify(struct ftrace_ops *ops, int inc)
-+/*
-+ * This function will update what functions @ops traces when its filter
-+ * changes.
++/* Call this function for when a callback filters on set_ftrace_pid */
+ static void ftrace_pid_func(unsigned long ip, unsigned long parent_ip,
+ 			    struct ftrace_ops *op, struct ftrace_regs *fregs)
+ {
+@@ -1318,7 +1319,7 @@ static struct ftrace_hash *alloc_ftrace_hash(int size_bits)
+ 	return hash;
+ }
+ 
+-
++/* Used to save filters on functions for modules not loaded yet */
+ static int ftrace_add_mod(struct trace_array *tr,
+ 			  const char *func, const char *module,
+ 			  int enable)
+@@ -1430,6 +1431,7 @@ static struct ftrace_hash *__move_hash(struct ftrace_hash *src, int size)
+ 	return new_hash;
+ }
+ 
++/* Move the @src entries to a newly allocated hash */
+ static struct ftrace_hash *
+ __ftrace_hash_move(struct ftrace_hash *src)
+ {
+@@ -1444,6 +1446,26 @@ __ftrace_hash_move(struct ftrace_hash *src)
+ 	return __move_hash(src, size);
+ }
+ 
++/**
++ * ftrace_hash_move - move a new hash to a filter and do updates
++ * @ops: The ops with the hash that @dst points to
++ * @enable: True if for the filter hash, false for the notrace hash
++ * @dst: Points to the @ops hash that should be updated
++ * @src: The hash to update @dst with
 + *
-+ * The @inc states if the @ops callbacks are going to be added or removed.
-+ * When one of the @ops hashes are updated to a "new_hash" the dyn_ftrace
-+ * records are update via:
++ * This is called when an ftrace_ops hash is being updated and the
++ * the kernel needs to reflect this. Note, this only updates the kernel
++ * function callbacks if the @ops is enabled (not to be confused with
++ * @enable above). If the @ops is enabled, its hash determines what
++ * callbacks get called. This function gets called when the @ops hash
++ * is updated and it requires new callbacks.
 + *
-+ * ftrace_hash_rec_disable_modify(ops);
-+ * ops->hash = new_hash
-+ * ftrace_hash_rec_enable_modify(ops);
++ * On success the elements of @src is moved to @dst, and @dst is updated
++ * properly, as well as the functions determined by the @ops hashes
++ * are now calling the @ops callback function.
 + *
-+ * Where the @ops is removed from all the records it is tracing using
-+ * its old hash. The @ops hash is updated to the new hash, and then
-+ * the @ops is added back to the records so that it is tracing all
-+ * the new functions.
++ * Regardless of return type, @src should be freed with free_ftrace_hash().
 + */
-+static void ftrace_hash_rec_update_modify(struct ftrace_ops *ops, bool inc)
- {
- 	struct ftrace_ops *op;
- 
-@@ -1907,12 +1924,12 @@ static void ftrace_hash_rec_update_modify(struct ftrace_ops *ops, int inc)
- 
- static void ftrace_hash_rec_disable_modify(struct ftrace_ops *ops)
- {
--	ftrace_hash_rec_update_modify(ops, 0);
-+	ftrace_hash_rec_update_modify(ops, false);
- }
- 
- static void ftrace_hash_rec_enable_modify(struct ftrace_ops *ops)
- {
--	ftrace_hash_rec_update_modify(ops, 1);
-+	ftrace_hash_rec_update_modify(ops, true);
- }
- 
- /*
+ static int
+ ftrace_hash_move(struct ftrace_ops *ops, int enable,
+ 		 struct ftrace_hash **dst, struct ftrace_hash *src)
 -- 
 2.43.0
 
