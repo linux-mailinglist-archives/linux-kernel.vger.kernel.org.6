@@ -1,136 +1,133 @@
-Return-Path: <linux-kernel+bounces-203648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC1718FDEA0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:20:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 587F38FDEA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 390E11F2536A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:20:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 590D71C24202
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E76473164;
-	Thu,  6 Jun 2024 06:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6328178C95;
+	Thu,  6 Jun 2024 06:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DoKv4M2u"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PFYPckTw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466A23A8CB
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 06:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1F23A8CB;
+	Thu,  6 Jun 2024 06:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717654818; cv=none; b=FB175zVaVsELmLgPbCxA19b41CU3jomXGyQuv5hDimklO80BaPxPGj/8m4RRxdNMALqun7bKX4oyiBVbqdmQ9Co33fGi2grPkN+oe6zA02EuRnwY0eUuswlB+vMXXybFzkfxWEtr2yN3PEXQQHL5siykJnwOakcRAlrzn3gPGUo=
+	t=1717654823; cv=none; b=bUcyfW44Cd00ms+8L3NSsgDGXdJ4w3Vlc7yIog6bEhPVrTV6ocmkmsOv2wYZafW3E31QAo3eCLnzBJWoesl/yuIpwMF1ZVBsF01kPxvYnIPMkKpnXC6AWNWI7L/h9616XrEwBWjxngK8EACMeHhlP/SgjDsdYmJNlpRIXLFfQXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717654818; c=relaxed/simple;
-	bh=VhWurgY4SNYpQC5RgKYTiiS00Kxh5m8ta7BWoyK0uds=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=lMY/4BlIKVySRdZvKHMUDd6yzyLp/dm2gOuG6o+OJ+Saabnv5GTBOBfk6UdPEL9ssum4zw/76tnpKRBbb60aC+ImIaz5Gwp25L85G9sNRPJTwFzkDbz0/p/S5UYdo9iV3829R/Mgeoa1jTjtHfkXTzSgzehDxpshGll3fgmXEO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DoKv4M2u; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717654816; x=1749190816;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=VhWurgY4SNYpQC5RgKYTiiS00Kxh5m8ta7BWoyK0uds=;
-  b=DoKv4M2uJOwHlPwYEh3fjsaadaYEq/oLuaxsj95vADYZHpNRZS4lrl+R
-   ZujdpuTk3FvYNGlgJ/EjIWFRYAQdW9dwJKI+TC74JuyClavJdUGgAjt+o
-   JfdRz4pngkg9gZmjMxt2DgPyI0oLvxS/TofBrc7YLl14fxbOECK+bV0go
-   5mE2wyG61piFWaJJ8UkrrAbMZGgTo8Id3coBoowAoMp7+MJ2KbyRNqrl9
-   xJ5cEmXzQ9YsEE1QSBBDBk+JO9r5pWUjtOMho0jtLkyydxp9itshKtYEC
-   b3apEq5DHvrmK9QzGDWuPVO+EyZMdJ49Wxl74tuQteY2Kt8h7LHVd2pIT
-   Q==;
-X-CSE-ConnectionGUID: M31O4dpGSi+c+M5RX94ifQ==
-X-CSE-MsgGUID: 5w4aZFXTRUGOqOFczKct2A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="25700797"
-X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
-   d="scan'208";a="25700797"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 23:20:16 -0700
-X-CSE-ConnectionGUID: 2MuqxhvNRnuxX+F/PpqWBw==
-X-CSE-MsgGUID: /4JIvm5/TUqS0kZTFBMszw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
-   d="scan'208";a="61056085"
-Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
-  by fmviesa002.fm.intel.com with ESMTP; 05 Jun 2024 23:20:12 -0700
-Message-ID: <26f7e8b4-7702-4aa5-b370-b529df21e0c1@linux.intel.com>
-Date: Thu, 6 Jun 2024 14:18:02 +0800
+	s=arc-20240116; t=1717654823; c=relaxed/simple;
+	bh=j0MquPfi/vCjoi1SmAsqOpd/5qF8sXpBLh7cch3Ljiw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=PBak9+50exSNg+pszKa0jTUK28i+44GZrEmYgDbdC1of1iM1nyNz73VJnS36VSQ/6Rb8fISKKnlYpvOMwBurcjdjIzNq2CLu7qCEFI+dHgYeIAVTCJrvl9UJ/89UtDNMSXkk2J9abXGXzihbRIeARSRhR0J4pOhBwOX1JN8EPH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PFYPckTw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71D27C2BD10;
+	Thu,  6 Jun 2024 06:20:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717654823;
+	bh=j0MquPfi/vCjoi1SmAsqOpd/5qF8sXpBLh7cch3Ljiw=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=PFYPckTwPtlU2Q6yc2XxFDj1a4kOn7LPfgUd8jE1iMpKXfHW+p4h38pdWBX7uCPNg
+	 ABNcAPIOO/0qVJu7MZE/2Fg8eB6PhV+VWJ9DDYy31koefpByBBW6mWzsjf/aL7Snae
+	 e0ryAUwdMnZmWjWQkTJ+XhL/zAFSZjfUF4KuXUo51cHLCQTT2TkaykKB5/vVJRE7gN
+	 U3FNRzkxCOu6fdVgBfZHYlI36zCkSRZ3IEu0d2lxSsk1HvZiUu9Z5ugzim4Zfn24al
+	 DHI+HTxvuvHFx31ORBKtvNRE2gkE9XmgcLbZwpUPjHwsMwklbqsHetWUUu3Mofarqp
+	 c6Nf3X3FhBifA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, "iommu@lists.linux.dev"
- <iommu@lists.linux.dev>,
- "virtualization@lists.linux-foundation.org"
- <virtualization@lists.linux-foundation.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 03/10] iommu: Add attach handle to struct iopf_group
-To: "Tian, Kevin" <kevin.tian@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Nicolin Chen <nicolinc@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
- Jacob Pan <jacob.jun.pan@linux.intel.com>,
- Joel Granados <j.granados@samsung.com>
-References: <20240527040517.38561-1-baolu.lu@linux.intel.com>
- <20240527040517.38561-4-baolu.lu@linux.intel.com>
- <BN9PR11MB52764CBD6B889A07A8CCB4918CF92@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <BN9PR11MB52764CBD6B889A07A8CCB4918CF92@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 06 Jun 2024 09:20:16 +0300
+Message-Id: <D1SPTDBBDU6F.2WLRZKYZWWTRB@kernel.org>
+Cc: <zhiquan1.li@intel.com>, <kristen@linux.intel.com>, <seanjc@google.com>,
+ <zhanb@microsoft.com>, <anakrish@microsoft.com>,
+ <mikko.ylinen@linux.intel.com>, <yangjie@microsoft.com>,
+ <chrisyan@microsoft.com>
+Subject: Re: [PATCH v14 14/14] selftests/sgx: Add scripts for EPC cgroup
+ testing
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Huang, Kai" <kai.huang@intel.com>, "Haitao Huang"
+ <haitao.huang@linux.intel.com>, <dave.hansen@linux.intel.com>,
+ <tj@kernel.org>, <mkoutny@suse.com>, <linux-kernel@vger.kernel.org>,
+ <linux-sgx@vger.kernel.org>, <x86@kernel.org>, <cgroups@vger.kernel.org>,
+ <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+ <sohil.mehta@intel.com>, <tim.c.chen@linux.intel.com>
+X-Mailer: aerc 0.17.0
+References: <20240531222630.4634-1-haitao.huang@linux.intel.com>
+ <20240531222630.4634-15-haitao.huang@linux.intel.com>
+ <D1RKK8CENNXI.1KMNDADV9C1YM@kernel.org>
+ <op.2owf5xiwwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <7cbf3583-a23e-4437-afc2-1faeb4a1f436@intel.com>
+In-Reply-To: <7cbf3583-a23e-4437-afc2-1faeb4a1f436@intel.com>
 
-On 6/5/24 4:23 PM, Tian, Kevin wrote:
->> From: Lu Baolu <baolu.lu@linux.intel.com>
->> Sent: Monday, May 27, 2024 12:05 PM
->>
->> @@ -249,6 +249,12 @@ enum iommu_cap {
->>   	 */
->>   	IOMMU_CAP_DEFERRED_FLUSH,
->>   	IOMMU_CAP_DIRTY_TRACKING,	/* IOMMU supports dirty
->> tracking */
->> +	/*
->> +	 * IOMMU driver supports user-managed IOASID table. There is no
->> +	 * user domain for each PASID and the I/O page faults are forwarded
->> +	 * through the user domain attached to the device RID.
->> +	 */
->> +	IOMMU_CAP_USER_IOASID_TABLE,
->>   };
-> 
-> Given all other context are around PASID let's just call it as USER_PASID_TABLE.
-> 
-> btw this goes differently from your plan in [1] which tried to introduce
-> different nesting types between Intel and other vendors.
-> 
-> I guess the reason might be that you want to avoid getting the handle
-> for RID on Intel platform in case of failing to find the handle for the
-> faulting PASID. and save a new domain type.
-> 
-> this looks fine to me but should be explained.
+On Thu Jun 6, 2024 at 1:30 AM EEST, Huang, Kai wrote:
+>
+> >> Reorg:
+> >>
+> >> void sgx_cgroup_init(void)
+> >> {
+> >> =C2=A0=C2=A0=C2=A0=C2=A0struct workqueue_struct *wq;
+> >>
+> >> =C2=A0=C2=A0=C2=A0=C2=A0/* eagerly allocate the workqueue: */
+> >> =C2=A0=C2=A0=C2=A0=C2=A0wq =3D alloc_workqueue("sgx_cg_wq", wq_unbound=
+ | wq_freezable,=20
+> >> wq_unbound_max_active);
+> >> =C2=A0=C2=A0=C2=A0=C2=A0if (!wq) {
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_warn("sgx_cg_wq creation=
+ failed\n");
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
+> >=20
+> > sgx_cgroup_try_charge() expects sgx_cg_wq, so it would break unless we=
+=20
+> > check and return 0 which was the initially implemented in v12. But then=
+=20
+> > Kai had some concern on that we expose all the interface files to allow=
+=20
+> > user to set limits but we don't enforce. To keep it simple we settled=
+=20
+> > down back to BUG_ON().=20
+>
+> [...]
+>
+> > This would only happen rarely and user can add=20
+> > command-line to disable SGX if s/he really wants to start kernel in thi=
+s=20
+> > case, just can't do SGX.
+>
+> Just to be clear that I don't like BUG_ON() either.  It's inevitable you=
+=20
+> will get attention because of using it.
 
-Yeah! I was considering this in two aspects and chose this simple
-solution in the end.
+Just then plain disable SGX if it fails to start.
 
-- If we choose to add a new domain type, we need to change iommufd,
-   iommu core and the individual driver. That seems too complicated to
-   address a small issue here.
+Do not take down the whole system.
 
-- Fundamentally, this is a hardware implementation difference, hence use
-   the existing per-device iommu capability interface sounds more
-   reasonable.
+> This is a compromise that you don't want to reset "capacity" to 0 when=20
+> alloc_workqueue() fails.
 
-> 
-> [1] https://lore.kernel.org/linux-iommu/0de7c71f-571a-4800-8f2b-9eda0c6b75de@linux.intel.com/
-> 
+BUG_ON() is not a "compromise".
 
-Best regards,
-baolu
+> There are existing code where BUG_ON() is used during the kernel early=20
+> boot code when memory allocation fails (e.g., see cgroup_init_subsys()),=
+=20
+> so it might be acceptable to use BUG_ON() here, but it's up to=20
+> maintainers to decide whether it is OK.
+
+When it is not possible continue to run the system at all, and only
+then.
+
+Here it is possible. Without SGX.
+
+BR, Jarkko
 
