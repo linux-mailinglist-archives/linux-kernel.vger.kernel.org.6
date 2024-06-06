@@ -1,186 +1,237 @@
-Return-Path: <linux-kernel+bounces-204793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DF658FF3A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:24:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB0B8FF3B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:28:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 433741C264EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:24:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1762F288820
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D2B31990C4;
-	Thu,  6 Jun 2024 17:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F341991A6;
+	Thu,  6 Jun 2024 17:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XdF2lzmG"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yXB3t5wM"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E888E38FB9;
-	Thu,  6 Jun 2024 17:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49DA1990AB
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 17:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717694670; cv=none; b=aIPqAWZ8ULL4q5MluhQMOiQIwHA9cFWuR3DnYSL467bGE8EYB3fXgmfGDTjQK+1ZX06OZA2rBQJCCjySIChUTbtgmKUvaVC0LbuRvaZNHfA9QPJSrIt11UFE7RZ0njYdASSUjqXr8wNwVuaeAp0mDxJCbSDp6PD5xfaVrYQ/eOA=
+	t=1717694899; cv=none; b=FyAe74dD6bdpso+p7T7xtCBotlIFfaJ/r0PSFsVs/Fe3Uh3JX6Lri8HdhSCt5DFA/N7A6cvTrDaCpeh6d5R2h6kijL+KIzde6ThfYNu41+uQFY4s07qN5Z4LolCanTNECmC/Qp9CJ9uz+bliyISrWcr4YkYHZadW9rLjUdD+H74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717694670; c=relaxed/simple;
-	bh=dTxC9S5XIMg5ioG+Q/uZwME7wTTzhbUrfZPA4xxlN5g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C3COvBK9ZyALezqJYvl7z1OaTYtGbwfsgELPSMFic93fUIt+u7/AxIq3zsEPXHBhRF1Ty4NpjPolJYKzjikeNHHlIuhfCXmh+MmWxqbQjh8n4yQwEC9djtAGNuXOipU3Wy+hR3z9Zp7UxpwA6vol855//hyoaEPVJj1JYOu+Iys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XdF2lzmG; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52b992fd796so1296020e87.0;
-        Thu, 06 Jun 2024 10:24:28 -0700 (PDT)
+	s=arc-20240116; t=1717694899; c=relaxed/simple;
+	bh=VyaTOddNCzEFJ/NEh/9NuxV4q03NkvdncMSoKRh5+1c=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=cY1Db9peM7+7dTnbw/aoCBkc8Arprm3jKyeL9MHTTzWttaA6f9R9/9xqwxJm/a8LX8hsLlUluk68rId+LqS8TUIegCXukd6NRYtXnnuYmC4c8I88mpVUVNGoxIVaacNcT6eRIbzsgNWaCsHATM4MTmf5htuvLXLqm86YbPQLuto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yXB3t5wM; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dfa74682897so1894002276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 10:28:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717694667; x=1718299467; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=I4LNbr7VfEe6izakn3pwLNIw70DykAuM2PJO0ynb8N4=;
-        b=XdF2lzmGv3IToifvd3sNb0kDc7JxmflBItKCg12cIrTXc/wiG/KVqkx580tGcOMH/u
-         HOXi6AVjMyuUcEkbpj9r1IL4/L5pwFKKpl4+nlXqjuVVnPgL59S1JyM371FiFmW/Ntpw
-         U+AQJn3blWFT8yiOt5j956XEWtgKTTVCCDtg2aiZH1lRj6jYozLOv/1vJ6FH7IpGcbAK
-         O/qBMFHv8UVz0eU6tWyLk7/zJvynY3Cudi72hrYql0J0othhBrM6Ajry38zwWF+ODxD5
-         rspQM9enjP2N0gN2e0hXSOzddXlGcqq/t/G/CvQZQK6cQ2lk4R6I+FHxSpbES2HJmRAI
-         nXKg==
+        d=google.com; s=20230601; t=1717694897; x=1718299697; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=HgRRo88YfpvYO7wSKqGlPrXzX3q2dRMuM6tAFdbCFr0=;
+        b=yXB3t5wMDrrw9Run39TOpZ+h7Q9lnvAdfioCbhEPhYFAnzgBB/p8LAM6xEIwvn1iYs
+         cES716Y24+eXYnCQKVPpcVAr6lfWv/DDNkD8VA38RbZ31MqgIZzpEJjN44YPpLLS7U1V
+         A+POHMK/vfWvgXPHrdS5DblevpYFDQpHf0SmAz8reI6Rn/7Zmz1rDP2/Sdvdrwe2W79M
+         krjzFD8WbymCUhkcnDCd+jF81aOKKvm21EynQXnw4jORFca19oupSsbs37UfAdM0ISih
+         GxVJyg4vkuSZ62miKHMxjvD3tmWtyAgsTjhKpDHU+YqY5qI7rb7j6JKzqceOkO1INYgt
+         fSjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717694667; x=1718299467;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I4LNbr7VfEe6izakn3pwLNIw70DykAuM2PJO0ynb8N4=;
-        b=XqcNMg9u3bduLpShWeN0iQYcQfav8BCk174yOKkvc4uLhrHdHmLXWjBes3KFSKo4RG
-         9fbcjTEf4JDBx0mJX630tw5/jXWV23nr/0jCH4wst1WRpzwrVstYR3rUlauWJvd/HfZh
-         VfzFkt+ud0PUXXLXANliaB69nruBofjzY1Ucyo0v/9vWnkhS6EiQBz6nU5SyXWncKA1U
-         JuTue7xk/zVVYB8M4MIRL6RS8zGA8stHo5SPKds9Pn1ZbIeFQ3wLGbM6hnFWztSjAnqF
-         MQ466BumAJpJjqXaycogGGJU+MpqRSYCVDpYkJSZg+GiL8x+hjrBscDyPmVBg3NlVfSD
-         JGww==
-X-Forwarded-Encrypted: i=1; AJvYcCU5cBcTwXgj+NUZWGoyAVuLvGavJlhlxuX1U2gTPTphvPr8EKR+PbOCZORq63fZIecZ/qnTVVflTEFzXqQENlbenqmfgjhIquu8srd5
-X-Gm-Message-State: AOJu0YxX3ChwB03R5zoZrZcDqArsGhtLU+D6QGLkkw/dmWG+B7n9pkhP
-	41RYFOJfri6LmP/uQXvLpdCq0i867e84KTXqbDKXO6A9kzDmSXps
-X-Google-Smtp-Source: AGHT+IFOjYFmBcUyHgIetl0AFa3Qy+ZmzXrs7sFeq0xkgOyXErd6aZfbK+diwqdTip7ERQeoicunDg==
-X-Received: by 2002:a19:2d50:0:b0:52b:b89a:cec7 with SMTP id 2adb3069b0e04-52bb9fd150dmr170915e87.60.1717694666798;
-        Thu, 06 Jun 2024 10:24:26 -0700 (PDT)
-Received: from [10.0.0.42] (host-85-29-124-88.kaisa-laajakaista.fi. [85.29.124.88])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb41e1c29sm251177e87.5.2024.06.06.10.24.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 10:24:26 -0700 (PDT)
-Message-ID: <43418c73-b240-461f-af4e-49735304eaa5@gmail.com>
-Date: Thu, 6 Jun 2024 20:28:00 +0300
+        d=1e100.net; s=20230601; t=1717694897; x=1718299697;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HgRRo88YfpvYO7wSKqGlPrXzX3q2dRMuM6tAFdbCFr0=;
+        b=IVD12Pzoq1gIrOgmuVWBbekucCtO+FKOmeyW6tAynFndTpye4bKNg64dgkQPIY9w1B
+         y2Fc8JLfy0BuTfcKTZ6ffoy4CxMHihX18Ttam4nR/zjQ0C1CSsZoofoGn5CG9JU0TT+o
+         mdZefcYfAAux2kAkFmhLnY8m+dxHm6SFUPwHQWRIZ2J7+F7JLMcylNRW+wWWIZq53DBw
+         mcpxrrpUPKXMKFMgrDhXSOErk+dblDHCtxl3wRm2BmOjr89ChbudNry0WfT+poHGBRRs
+         E6t9bXCySgG1oDCzXXu1j9XUFQ+Y7IiWx85lekrZt54Rk8aQcIksYuiqvPizKwJeSDG/
+         baCA==
+X-Forwarded-Encrypted: i=1; AJvYcCUk307vGJXzn5KkdpGwlEaF9/UjP9PGBKu+6kS7XeYtggfsFevhmP1kXyDYoQH6QaIP7EDA94iQiBxoDQH64hyDyF0zU8kI3p9MYPSv
+X-Gm-Message-State: AOJu0Yzr27zdwOvvZvRlLKcJJr7XgM7w9UldldP54AOcz+yllOg747mF
+	2yC5Le8uDVwHbhyl9hFHYWBxuPPPNVsf7R+bbYSk14XDOFoGj9m/01EgZNQj4ASSXqCH4M2VGmM
+	0wbmI0i6HrMUh9JD4rymQaZLr8keWqHziPw==
+X-Google-Smtp-Source: AGHT+IGmL/ci+QUeD78WXo0hxk1uBw/HJGmZ0Y2PniemChSJPTzIQcW9M9adT9vpi4Jwi6aRAmFxTkLHJQdDOs8cEtopoQ==
+X-Received: from isaacmanjarres.irv.corp.google.com ([2620:15c:2d:3:662b:6cb2:952a:1074])
+ (user=isaacmanjarres job=sendgmr) by 2002:a25:b28a:0:b0:df7:7a90:26c1 with
+ SMTP id 3f1490d57ef6-dfaf667f667mr10303276.13.1717694896769; Thu, 06 Jun 2024
+ 10:28:16 -0700 (PDT)
+Date: Thu,  6 Jun 2024 10:28:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] ALSA: dmaengine: Synchronize dma channel in prepare()
-To: Jai Luthra <j-luthra@ti.com>, Lars-Peter Clausen <lars@metafoo.de>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- alsa-devel@alsa-project.org
-References: <20240604-asoc_next-v1-0-e895c88e744d@ti.com>
- <20240604-asoc_next-v1-1-e895c88e744d@ti.com>
-Content-Language: en-US
-From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
-In-Reply-To: <20240604-asoc_next-v1-1-e895c88e744d@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+Message-ID: <20240606172813.2755930-1-isaacmanjarres@google.com>
+Subject: [PATCH v5] fs: Improve eventpoll logging to stop indicting timerfd
+From: "Isaac J. Manjarres" <isaacmanjarres@google.com>
+To: tglx@linutronix.de, "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+	Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: saravanak@google.com, Manish Varma <varmam@google.com>, 
+	Kelly Rossmoyer <krossmo@google.com>, "Isaac J . Manjarres" <isaacmanjarres@google.com>, kernel-team@android.com, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+From: Manish Varma <varmam@google.com>
 
+timerfd doesn't create any wakelocks, but eventpoll can.  When it does,
+it names them after the underlying file descriptor, and since all
+timerfd file descriptors are named "[timerfd]" (which saves memory on
+systems like desktops with potentially many timerfd instances), all
+wakesources created as a result of using the eventpoll-on-timerfd idiom
+are called... "[timerfd]".
 
-On 6/4/24 1:01 PM, Jai Luthra wrote:
-> Sometimes the stream may be stopped due to XRUN events, in which case
-> the userspace can call snd_pcm_drop() and snd_pcm_prepare() to stop and
-> start the stream again.
-> 
-> In these cases, we must wait for the DMA channel to synchronize before
-> marking the stream as prepared for playback, as the DMA channel gets
-> stopped by snd_pcm_drop() without any synchronization.
+However, it becomes impossible to tell which "[timerfd]" wakesource is
+affliated with which process and hence troubleshooting is difficult.
 
-Right, this is a plausible scenario, the xrun is pointing to unhealthy
-system, but before re-using the channel we indeed need to make sure that
-it is finished with the stop.
+This change addresses this problem by changing the way eventpoll
+wakesources are named:
 
-Reviewed-by: Peter Ujfalusi <peter.ujfalusi@gmail.com>
+1) the top-level per-process eventpoll wakesource is now named
+"epollN:P" (instead of just "eventpoll"), where N is a unique ID token,
+and P is the PID of the creating process.
+2) individual per-underlying-file descriptor eventpoll wakesources are
+now named "epollitemN:P.F", where N is a unique ID token and P is PID
+of the creating process and F is the name of the underlying file
+descriptor.
 
-> Signed-off-by: Jai Luthra <j-luthra@ti.com>
-> ---
->  include/sound/dmaengine_pcm.h         |  1 +
->  sound/core/pcm_dmaengine.c            | 10 ++++++++++
->  sound/soc/soc-generic-dmaengine-pcm.c |  8 ++++++++
->  3 files changed, 19 insertions(+)
-> 
-> diff --git a/include/sound/dmaengine_pcm.h b/include/sound/dmaengine_pcm.h
-> index c11aaf8079fb..9c5800e5659f 100644
-> --- a/include/sound/dmaengine_pcm.h
-> +++ b/include/sound/dmaengine_pcm.h
-> @@ -36,6 +36,7 @@ snd_pcm_uframes_t snd_dmaengine_pcm_pointer_no_residue(struct snd_pcm_substream
->  int snd_dmaengine_pcm_open(struct snd_pcm_substream *substream,
->  	struct dma_chan *chan);
->  int snd_dmaengine_pcm_close(struct snd_pcm_substream *substream);
-> +int snd_dmaengine_pcm_prepare(struct snd_pcm_substream *substream);
->  
->  int snd_dmaengine_pcm_open_request_chan(struct snd_pcm_substream *substream,
->  	dma_filter_fn filter_fn, void *filter_data);
-> diff --git a/sound/core/pcm_dmaengine.c b/sound/core/pcm_dmaengine.c
-> index 12aa1cef11a1..dbf5c6136d68 100644
-> --- a/sound/core/pcm_dmaengine.c
-> +++ b/sound/core/pcm_dmaengine.c
-> @@ -349,6 +349,16 @@ int snd_dmaengine_pcm_open_request_chan(struct snd_pcm_substream *substream,
->  }
->  EXPORT_SYMBOL_GPL(snd_dmaengine_pcm_open_request_chan);
->  
-> +int snd_dmaengine_pcm_prepare(struct snd_pcm_substream *substream)
-> +{
-> +	struct dmaengine_pcm_runtime_data *prtd = substream_to_prtd(substream);
-> +
-> +	dmaengine_synchronize(prtd->dma_chan);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(snd_dmaengine_pcm_prepare);
-> +
->  /**
->   * snd_dmaengine_pcm_close - Close a dmaengine based PCM substream
->   * @substream: PCM substream
-> diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
-> index ea3bc9318412..af439486d33a 100644
-> --- a/sound/soc/soc-generic-dmaengine-pcm.c
-> +++ b/sound/soc/soc-generic-dmaengine-pcm.c
-> @@ -318,6 +318,12 @@ static int dmaengine_copy(struct snd_soc_component *component,
->  	return 0;
->  }
->  
-> +int dmaengine_pcm_prepare(struct snd_soc_component *component,
-> +			  struct snd_pcm_substream *substream)
-> +{
-> +	return snd_dmaengine_pcm_prepare(substream);
-> +}
-> +
->  static const struct snd_soc_component_driver dmaengine_pcm_component = {
->  	.name		= SND_DMAENGINE_PCM_DRV_NAME,
->  	.probe_order	= SND_SOC_COMP_ORDER_LATE,
-> @@ -327,6 +333,7 @@ static const struct snd_soc_component_driver dmaengine_pcm_component = {
->  	.trigger	= dmaengine_pcm_trigger,
->  	.pointer	= dmaengine_pcm_pointer,
->  	.pcm_construct	= dmaengine_pcm_new,
-> +	.prepare	= dmaengine_pcm_prepare,
->  };
->  
->  static const struct snd_soc_component_driver dmaengine_pcm_component_process = {
-> @@ -339,6 +346,7 @@ static const struct snd_soc_component_driver dmaengine_pcm_component_process = {
->  	.pointer	= dmaengine_pcm_pointer,
->  	.copy		= dmaengine_copy,
->  	.pcm_construct	= dmaengine_pcm_new,
-> +	.prepare	= dmaengine_pcm_prepare,
->  };
->  
->  static const char * const dmaengine_pcm_dma_channel_names[] = {
-> 
+Co-developed-by: Kelly Rossmoyer <krossmo@google.com>
+Signed-off-by: Kelly Rossmoyer <krossmo@google.com>
+Signed-off-by: Manish Varma <varmam@google.com>
+Co-developed-by: Isaac J. Manjarres <isaacmanjarres@google.com>
+Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
+---
+ drivers/base/power/wakeup.c | 12 +++++++++---
+ fs/eventpoll.c              | 11 +++++++++--
+ include/linux/pm_wakeup.h   |  8 ++++----
+ 3 files changed, 22 insertions(+), 9 deletions(-)
 
+ v1 -> v2:
+ - Renamed instance count to wakesource_create_id to better describe
+   its purpose.
+ - Changed the wakeup source naming convention for wakeup sources
+   created by eventpoll to avoid changing the timerfd names.
+ - Used the PID of the process instead of the process name for the
+   sake of uniqueness when creating wakeup sources.
+
+v2 -> v3:
+ - Changed wakeup_source_register() to take in a format string
+   and arguments to avoid duplicating code to construct wakeup
+   source names.
+ - Moved the definition of wakesource_create_id so that it is
+   always defined to fix an compilation error.
+
+v3 -> v4:
+ - Changed the naming convention for the top-level epoll wakeup
+   sources to include an ID for uniqueness. This is needed in
+   cases where a process is using two epoll fds.
+ - Edited commit log to reflect new changes and add new tags.
+
+v4 -> v5:
+ - Added the format attribute to the wakeup_source_register()
+   function to address a warning from the kernel test robot:
+   https://lore.kernel.org/all/202406050504.UvdlPAQ0-lkp@intel.com/
+
+diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+index 752b417e8129..04a808607b62 100644
+--- a/drivers/base/power/wakeup.c
++++ b/drivers/base/power/wakeup.c
+@@ -209,13 +209,19 @@ EXPORT_SYMBOL_GPL(wakeup_source_remove);
+ /**
+  * wakeup_source_register - Create wakeup source and add it to the list.
+  * @dev: Device this wakeup source is associated with (or NULL if virtual).
+- * @name: Name of the wakeup source to register.
++ * @fmt: format string for the wakeup source name
+  */
+-struct wakeup_source *wakeup_source_register(struct device *dev,
+-					     const char *name)
++__printf(2, 3) struct wakeup_source *wakeup_source_register(struct device *dev,
++							    const char *fmt, ...)
+ {
+ 	struct wakeup_source *ws;
+ 	int ret;
++	char name[128];
++	va_list args;
++
++	va_start(args, fmt);
++	vsnprintf(name, sizeof(name), fmt, args);
++	va_end(args);
+ 
+ 	ws = wakeup_source_create(name);
+ 	if (ws) {
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index f53ca4f7fced..941df15208a4 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -338,6 +338,7 @@ static void __init epoll_sysctls_init(void)
+ #define epoll_sysctls_init() do { } while (0)
+ #endif /* CONFIG_SYSCTL */
+ 
++static atomic_t wakesource_create_id  = ATOMIC_INIT(0);
+ static const struct file_operations eventpoll_fops;
+ 
+ static inline int is_file_epoll(struct file *f)
+@@ -1545,15 +1546,21 @@ static int ep_create_wakeup_source(struct epitem *epi)
+ {
+ 	struct name_snapshot n;
+ 	struct wakeup_source *ws;
++	pid_t task_pid;
++	int id;
++
++	task_pid = task_pid_nr(current);
+ 
+ 	if (!epi->ep->ws) {
+-		epi->ep->ws = wakeup_source_register(NULL, "eventpoll");
++		id = atomic_inc_return(&wakesource_create_id);
++		epi->ep->ws = wakeup_source_register(NULL, "epoll:%d:%d", id, task_pid);
+ 		if (!epi->ep->ws)
+ 			return -ENOMEM;
+ 	}
+ 
++	id = atomic_inc_return(&wakesource_create_id);
+ 	take_dentry_name_snapshot(&n, epi->ffd.file->f_path.dentry);
+-	ws = wakeup_source_register(NULL, n.name.name);
++	ws = wakeup_source_register(NULL, "epollitem%d:%d.%s", id, task_pid, n.name.name);
+ 	release_dentry_name_snapshot(&n);
+ 
+ 	if (!ws)
+diff --git a/include/linux/pm_wakeup.h b/include/linux/pm_wakeup.h
+index 76cd1f9f1365..1fb6dca981c2 100644
+--- a/include/linux/pm_wakeup.h
++++ b/include/linux/pm_wakeup.h
+@@ -99,8 +99,8 @@ extern struct wakeup_source *wakeup_source_create(const char *name);
+ extern void wakeup_source_destroy(struct wakeup_source *ws);
+ extern void wakeup_source_add(struct wakeup_source *ws);
+ extern void wakeup_source_remove(struct wakeup_source *ws);
+-extern struct wakeup_source *wakeup_source_register(struct device *dev,
+-						    const char *name);
++extern __printf(2, 3) struct wakeup_source *wakeup_source_register(struct device *dev,
++								   const char *fmt, ...);
+ extern void wakeup_source_unregister(struct wakeup_source *ws);
+ extern int wakeup_sources_read_lock(void);
+ extern void wakeup_sources_read_unlock(int idx);
+@@ -140,8 +140,8 @@ static inline void wakeup_source_add(struct wakeup_source *ws) {}
+ 
+ static inline void wakeup_source_remove(struct wakeup_source *ws) {}
+ 
+-static inline struct wakeup_source *wakeup_source_register(struct device *dev,
+-							   const char *name)
++static inline __printf(2, 3) struct wakeup_source *wakeup_source_register(struct device *dev,
++									  const char *fmt, ...)
+ {
+ 	return NULL;
+ }
 -- 
-Péter
+2.45.2.505.gda0bf45e8d-goog
+
 
