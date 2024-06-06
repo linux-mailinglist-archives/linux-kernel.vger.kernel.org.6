@@ -1,159 +1,133 @@
-Return-Path: <linux-kernel+bounces-203684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E44B98FDF08
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:44:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA4078FDEF9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80522B24DE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:44:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C2F7287F8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BEFA13AA5D;
-	Thu,  6 Jun 2024 06:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C62130482;
+	Thu,  6 Jun 2024 06:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="RBuQdhw8"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WUitNi1M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3ED7130482;
-	Thu,  6 Jun 2024 06:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7AC19D8A1;
+	Thu,  6 Jun 2024 06:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717656238; cv=none; b=dMzwFXuUFWhF213+8NqLl6CxesIdid/tW2fyJnwediThQodOKF2VgbSIzc+u6fxUTQMe+qu2KHI68g0YhF642ELKBWhAQriv5+VJPE7gkh7CmxwjtX14kto5mCIa0Hdz05NPkm7v+iYWNkrFPf+GXhAm6Xd4MJwr+FjFUIeZfy4=
+	t=1717656085; cv=none; b=LaNZrmnKXkdKM7dbRtSSd4xlhMK4C54dQ6lRN9u90KeyCK1AJR9ctbIj5JYAXBwc1Kh2obaYW+JGZAPzvzDODKylKhVHKuVXuNbeevt1YN3wtjXurMwRRMHflzl8oGIoXohYOh1nb5cajAPbJYRRcxuQu/HvASUmfPcuIUg8nm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717656238; c=relaxed/simple;
-	bh=32L8G+FZMjkCPqq/m+QVmmb5J2ZOiAF+Tzy4v6bCN5I=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IXJHoPKoTJ57o+weq/Aelndu5XUd07jsHQZ8kifukXycEQGM4oWKI+k00ttxLbZ8JuaOUZzocHCXWxM77IxwrcH0Scz8RNbeDbZy3h6LrwFKOKaP7EAjxm08Ut1NGw1AqCBk6LaQXwrYAooQCLZGtHgCWZWDanS/TSTkE2FG2mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=RBuQdhw8; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1717656236; x=1749192236;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=32L8G+FZMjkCPqq/m+QVmmb5J2ZOiAF+Tzy4v6bCN5I=;
-  b=RBuQdhw89eFDO0nCpgYzVZ+1hAJfm/RLUfeqBdIBnKedkenbB5/3bY8U
-   ePjOz7SDsBfpsXdThq8XvzL+irW0dcdtRLw/3v6d+drFiXgXTANIYv5Hc
-   oN0RqqspqkMfpz36y41LIQLwFhqoaLt+lrJNLipWfJ08QS5/fk+yG6/pF
-   U7vcIoa05w2JXg0R6ly+9aW2vAFDAgK73zIE6dKbjnnGFcd3C9fIslS17
-   4wJD/9JBTKk3JFKlrp5mq0rcKIWnGc2vu6Uq4mf7+5/AwRo4pAz+65vJm
-   eHL8mlEr9stkEdGvia4dx3vJR/rbBht8M0od2StYmyVmncKH2/3pQcsl4
-   w==;
-X-CSE-ConnectionGUID: TJ+w9vbOSBmBbzdOv8xviA==
-X-CSE-MsgGUID: 5YT6fVzyRhOdZkjKzntlGw==
-X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
-   d="scan'208";a="257898861"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 05 Jun 2024 23:43:49 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 5 Jun 2024 23:43:45 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Wed, 5 Jun 2024 23:43:44 -0700
-Date: Thu, 6 Jun 2024 12:11:05 +0530
-From: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-To: Wojciech Drewek <wojciech.drewek@intel.com>
-CC: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>, <netdev@vger.kernel.org>,
-	<davem@davemloft.net>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<bryan.whitehead@microchip.com>, <andrew@lunn.ch>, <linux@armlinux.org.uk>,
-	<sbauer@blackbox.su>, <hmehrtens@maxlinear.com>, <lxu@maxlinear.com>,
-	<hkallweit1@gmail.com>, <edumazet@google.com>, <pabeni@redhat.com>,
-	<UNGLinuxDriver@microchip.com>
-Subject: Re: [PATCH net V3 3/3] net: phy: mxl-gpy: Remove interrupt mask
- clearing from config_init
-Message-ID: <ZmFaATrK6ORRzHv6@HYD-DK-UNGSW21.microchip.com>
-References: <20240605101611.18791-1-Raju.Lakkaraju@microchip.com>
- <20240605101611.18791-4-Raju.Lakkaraju@microchip.com>
- <05146417-c29b-41f4-89ac-bc9e1af2cee7@intel.com>
+	s=arc-20240116; t=1717656085; c=relaxed/simple;
+	bh=u1Ua0OCeUX5MT5pyXeBzHix33dU1A3JIMQ8y9wVfqdU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HDeEEd/xgXRtdcU+Mg748vcYSpzDGnbDWDsI1mjpKATDOygVNuxojYa+AzCYP0wJWcDRhUDWhzy4z64ihcaRNXmJTOvkX8Wwxzf1tPs5PniLbtlIRtnuKKGAMbDbhFjwqEaYY3tLJae9Xn6Um5D88M+yPK58FJUd+YSPuO3LnbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WUitNi1M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17A1EC2BD10;
+	Thu,  6 Jun 2024 06:41:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717656085;
+	bh=u1Ua0OCeUX5MT5pyXeBzHix33dU1A3JIMQ8y9wVfqdU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WUitNi1MxjVRHcBSCq7PFZcxaUgvlGQiCymu/UlrXWgQDQDYHfyvAIthSpG2x9TqG
+	 Sd2x1al+fpQOM5fpj+ciYtVDP7qbLeLWerRP0cFbTWSONeHZr5wLiYwuIXHumjwRjj
+	 KjDAhae0fIZQFgnMA9KjdsIODh1ILV3VA2LnKzKb81OzgqpSqas3tggHDyembJSx3C
+	 BuKvUpJk+vBHQ2icB/c5igJC4Um/WJqwmbmueszIyQ/IzBsBRLeqpToY6fCx3kHG4X
+	 fCwcii6ogJ6eN+/dXg76NYXKRgQhrJbPSjBqN+B//IG3qrkeHSOeV37oL4zcMHS6L8
+	 6luC0r/DvlELw==
+Message-ID: <fcff0181-b6de-4e47-b7ff-47baac061b3e@kernel.org>
+Date: Thu, 6 Jun 2024 08:41:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <05146417-c29b-41f4-89ac-bc9e1af2cee7@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/5] Add SFC support for RK3128
+To: Alex Bee <knaerzche@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20240605205209.232005-1-knaerzche@gmail.com>
+ <20240605205209.232005-6-knaerzche@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240605205209.232005-6-knaerzche@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Wojciech,
-
-The 06/05/2024 13:24, Wojciech Drewek wrote:
-> [Some people who received this message don't often get email from wojciech.drewek@intel.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+On 05/06/2024 22:52, Alex Bee wrote:
+> This series adds support for the Serial Flash Controller (SFC) found in
+> RK3128 SoCs.
 > 
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> As without using some "id holes" we would run out clock ids in the binding
+> and would have to touch the ABI, I added patches which removes the
+> CLK_NR_CLKS macro and uses the recently introduced
+> rockchip_clk_find_max_clk_id helper instead to find the highest clock id.
 > 
-> On 05.06.2024 12:16, Raju Lakkaraju wrote:
-> > When the system resumes from sleep, the phy_init_hw() function invokes
-> > config_init(), which clears all interrupt masks and causes wake events to be
-> > lost in subsequent wake sequences. Remove interrupt mask clearing from
-> > config_init() and preserve relevant masks in config_intr()
-> >
-> > Fixes: 7d901a1e878a ("net: phy: add Maxlinear GPY115/21x/24x driver")
-> > Signed-off-by: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-> > ---
-> 
-> One nit, other than that:
-> Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>
-> 
-> > Change List:
-> > ------------
-> > V0 -> V3:
-> >   - Address the https://lore.kernel.org/lkml/4a565d54-f468-4e32-8a2c-102c1203f72c@lunn.ch/T/
-> >     review comments
-> >
-> >  drivers/net/phy/mxl-gpy.c | 58 +++++++++++++++++++++++++--------------
-> >  1 file changed, 38 insertions(+), 20 deletions(-)
-> >
-> > diff --git a/drivers/net/phy/mxl-gpy.c b/drivers/net/phy/mxl-gpy.c
-> > index b2d36a3a96f1..e5f8ac4b4604 100644
-> > --- a/drivers/net/phy/mxl-gpy.c
-> > +++ b/drivers/net/phy/mxl-gpy.c
-> > @@ -107,6 +107,7 @@ struct gpy_priv {
-> >
-> >       u8 fw_major;
-> >       u8 fw_minor;
-> > +     u32 wolopts;
-> >
-> >       /* It takes 3 seconds to fully switch out of loopback mode before
-> >        * it can safely re-enter loopback mode. Record the time when
-> > @@ -221,6 +222,15 @@ static int gpy_hwmon_register(struct phy_device *phydev)
-> >  }
-> >  #endif
-> >
-> > +static int gpy_ack_interrupt(struct phy_device *phydev)
-> > +{
-> > +     int ret;
-> > +
-> > +     /* Clear all pending interrupts */
-> > +     ret = phy_read(phydev, PHY_ISTAT);
-> > +     return ret < 0 ? ret : 0;
-> 
-> Can we just return phy_read?
+> changes since v1:
+>  - added patches to remove CLK_NR_CLKS (Connor)
 > 
 
-No.
-PHY_ISTAT (i.e.16 bit) is Max Linear's GPY211 PHY interrupt status register.
-These bits are ROSC (i.e. "Read Only, Self-Clearing) bits.
-Read Status gives us the interrupts details
-Any negative number is indicate the error in accessing PHY registgers. 
-Return either success (i.e. 0) or Error ( < 0)
+Do not attach (thread) your patchsets to some other threads (unrelated
+or older versions). This buries them deep in the mailbox and might
+interfere with applying entire sets.
 
-> > +}
-> > +
-> >  static int gpy_mbox_read(struct phy_device *phydev, u32 addr)
-> >  {
-> >       struct gpy_priv *priv = phydev->priv;
-> > @@ -262,16 +272,8 @@ static int gpy_mbox_read(struct phy_device *phydev, u32 addr)
-> >
+You sent now v2 immediately after. Confused.
 
--- 
-Thanks,                                                                         
-Raju
+Best regards,
+Krzysztof
+
 
