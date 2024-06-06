@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-204277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 195B38FE69D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:36:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3A1F8FE69F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D0991F24292
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:36:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57B4F281C03
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02DF195B2E;
-	Thu,  6 Jun 2024 12:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34329195F0F;
+	Thu,  6 Jun 2024 12:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kWeZsbNR"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pO4mNX5D"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6488D195B2D
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3E6195B2D
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717677369; cv=none; b=NwR4sPJC6awn9TwGjQBcSHmNJCYJk9aO7nLA2J17dRay5NgdD/8hsyYgemj1IUTfrJcHyEIBuAc6yLJtSZ7VyWNhTq/tmFS8ED0EUDS/OuMnwm0Vs1/J9UiHfgt5GNg4fnZ4TYXV7ckfn2RsZv/uSH5T8NqdPpXKoSDqbVfe8x8=
+	t=1717677375; cv=none; b=ejZx2HakbDS2Gi7tDdV3kBUKnC8Gn2mBJtIwE0yClL7jvbw6VqOIozihPufCHc+aJLlDVQzbl3zL0RLaLml1QrhBps+jBaR/utBPkxvcKwbd85LVDGjEbGLx39pduyt8woAn/PyZnivyeezx3PceQgwGulD3VObuJ9xrv4FtoxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717677369; c=relaxed/simple;
-	bh=VRRqbVEquUQ2bRgwPTK9mr4lopNRZX/TnD66S6sJvFw=;
+	s=arc-20240116; t=1717677375; c=relaxed/simple;
+	bh=GJs62SsgmLSxQvrSOVsJLWdRFgzQ41bXC4iAy+Q0DUc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=gKfGm82h4SstkUugWi/3GVFwp3Zn1eGZqumrCEL8w8ThEcFRl3U5ayoFdebS5wLdnD6CGPvCQJ5p+NDWh6vvTaAd/GCg39X4aoKPwGdzqWELB35FnVDd7xeLpgMUsDoZ98S50S3ANqvXX8BYvPgJJt0eahVlbbTlVc/0087dtCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kWeZsbNR; arc=none smtp.client-ip=209.85.128.43
+	 In-Reply-To:Content-Type; b=ThiKx8VnOyz3mOkyHeanfDp020eLikllfl1eQU6ztq2yG+JfdkA1le5417X9/cpL51AGtGtaMMprQt9FyovMvOHRzqM5muAt6rY2tgmC16olo+723DhaqHoczzsQEywf8rRGpXAoMUh3/Wgy+S+bN7WSogpGX5oCx4IQcmdq7fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pO4mNX5D; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-421578c546eso9519475e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 05:36:07 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52b8d483a08so1156795e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 05:36:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717677366; x=1718282166; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ogY55IeWKsz6nhskBHDlN3lk/o0stE2xrcCaIWC2sHs=;
-        b=kWeZsbNRz2qWBT1Fo0hPQheDjlqVwcYSXdn+kMdAk0+8L3UeaVJHXi1zOx1oYIYosc
-         7JV+ogyYGt5ZzycmaxZsNYMYDE/DZeN22OfRVqaqU6j8nS9yv974o1Ac/P+nrEkPfRB/
-         nMuR3pbIosVAM1FruNxs03ftDIegle1CstgbZgiqj0/iu7YcyYj8h5VygD7VPJabJY/V
-         zxKYtw3yYVhx1nLaUWh8SrIjbkYaHM0eLjYZtUP7x8MspQ4Gq7I58n3s8FBMDAJ7MOoS
-         nzze7zQUYAU3hpVFUmJ4ZRzv/LZfO6eot9/FxX4lRp8XjTlg9XICvb9rlCQLh/fpjbKd
-         lsKQ==
+        d=linaro.org; s=google; t=1717677372; x=1718282172; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=CwfHtQYioR0Ch6IYzc3G8E96QHC5Vz0OXP+upCsTiZQ=;
+        b=pO4mNX5DtnQTFOFFFKoyoSOMUNd2pXspOhcR1x5sxM9CLw9HsvxhLUv2exqrgB/TX+
+         oOTUImBMzBZ+tTEIsgX4/yjuwshdWqrUG1XSJajwhEkx4TdIPKjr/0DtcHiHwuEmfRsH
+         Qicj+qoCBwlDDDmDciK8OcJ7Woht3bqhYivaF8XftivnbV+a158LffFpQVhmsursCr6e
+         b6wAfqwJgupCzhyztVByDFvKCMendD8xKoFs1S70o0aHH0Mr0Son7YC+mDzrPNeU3xz+
+         4d29iq6wL4GGAKsXClOCbppNZOrvuCRRwCJTqbRf8Q91tA95vwfVjL1HOmMsHcQkWdWl
+         Ws6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717677366; x=1718282166;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ogY55IeWKsz6nhskBHDlN3lk/o0stE2xrcCaIWC2sHs=;
-        b=k55oK1SaeA5xMK8odF3UgeQPIL1qtR0iwz9hQ7KpiK67nGvAbt4Hi6wQalQ9iNBood
-         ffjdwC6HoCqGwKMURcfmRnmcQ0IVBv9I7fMmvLx8s5L61sNwnuAPJHhU1Fc7A/GkoLaM
-         1NKSsBwHI2MvcBIVVZIggLepnuv4oXU5v36b4QxITqzFUFxZt41jb+x9arBgZuEGajhl
-         Xa9SlVrcg5SmyKDnkjzUCpC7GkxcX+RoBXLsIEdebJygotAx5d35XScf1cZNpkgpuOlF
-         gdeFyhfJKWRwH41veatvmCeECGA64ALf8diplRx4fovFZnTfLI/w5udYicH9zQGPU1T1
-         4CAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcquR9sAN3j2M54VTxV1fcua/YGa5F5LiqMTcWR5Q0ofk0/SwBLRAKJUzuEUYOnnWRYJZ6uohp5zXa8J9easVLe+UPkmtowaPjFAJJ
-X-Gm-Message-State: AOJu0Yz/biOTiP9GMVVR4R4FqhlkVRxUj1G1kci5CZczI49Qt28fTtC1
-	h75aW2lq4MOWX/hOyTDL3Fkbw2NK+gD7Fx9WGB3RSVggjlD1XB+9UdmYTSdiwkI=
-X-Google-Smtp-Source: AGHT+IHVI3vQZBy/HXvAuNxs2tFj9UxFWNOQxTwJYAajuQ0iu0j1R4hPD19fqE02mrYtg7hJDVcByg==
-X-Received: by 2002:a05:600c:1391:b0:421:925:6655 with SMTP id 5b1f17b1804b1-421562df25dmr40150145e9.1.1717677365733;
-        Thu, 06 Jun 2024 05:36:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717677372; x=1718282172;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CwfHtQYioR0Ch6IYzc3G8E96QHC5Vz0OXP+upCsTiZQ=;
+        b=JS2xqmCgyHrBz7zogFAC/iYGvOAA1umfu6HncmuAfEdqHt0g/GEtukw4Gbsn2CAMHz
+         8hCyREc21vfioThZd5blxemiHG2a6v7r8ztP06nL7ot5NaZfKaHiUAij5fydgErLrI3N
+         tT7ZtJ5rEjn2tFb2e3TFPRoVEz8MST9L/DIhGmUVftgqSgzsA3ppPE9o00jNrdqSHG7t
+         s1xgYjuQkJd2pxPqCUlWBI88IS2DkMDK7Nef04SqgMCWRqgcZSTZry/l5lizsRTGoW8R
+         u+2J4YI6sYAIoFDmI4hFmZtFx5cfdNw5qKstUvznmZ6jZ8n/j79YsXCa5AY3F5tmuCpy
+         93Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCWqqazvIDhPiZacm97bM87eEba/ucdKwJJJevzh+seYfPpCc3RDdOQeeZj3dB1TA3mSlbUIwAljYtKL4HXvhivDXdH4odgiTVAJ9z5J
+X-Gm-Message-State: AOJu0YzGUMy6UIb1ychTGdvKxciY1w1znjRmQ/4AqzFuQ0ZQpYrNfSqY
+	nTVW0bgMIJO7Q6pTFuysIP918via293hi2VCWOJxEvo2Q1d646Y6R7EojpiaOOk=
+X-Google-Smtp-Source: AGHT+IFxf5AbZK0xfoIuzBycTPd0ERSVWXQofkSrXHJeZcE6CsZLV7QVG/4Dq36UAbGn4z0NplXrCg==
+X-Received: by 2002:a19:7006:0:b0:52b:98ab:6100 with SMTP id 2adb3069b0e04-52bab4c92d3mr3154822e87.15.1717677371942;
+        Thu, 06 Jun 2024 05:36:11 -0700 (PDT)
 Received: from [192.168.2.24] ([110.93.11.116])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421580fe366sm54771735e9.7.2024.06.06.05.36.04
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421580fe366sm54771735e9.7.2024.06.06.05.36.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 05:36:05 -0700 (PDT)
-Message-ID: <3c7c9662-7eff-471d-9274-f8b340cdb2b6@linaro.org>
-Date: Thu, 6 Jun 2024 14:36:04 +0200
+        Thu, 06 Jun 2024 05:36:11 -0700 (PDT)
+Message-ID: <db540adf-b03a-445c-b9a4-aa48b2a844b5@linaro.org>
+Date: Thu, 6 Jun 2024 14:36:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,7 +76,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: add dream vendor prefix
+Subject: Re: [PATCH 2/3] dt-bindings: arm: amlogic: add support for Dreambox
+ One/Two
 To: Christian Hewitt <christianshewitt@gmail.com>,
  Rob Herring <robh+dt@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -86,8 +88,9 @@ To: Christian Hewitt <christianshewitt@gmail.com>,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20240606094513.3949323-1-christianshewitt@gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ <20240606094513.3949323-2-christianshewitt@gmail.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -132,12 +135,13 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240606094513.3949323-1-christianshewitt@gmail.com>
+In-Reply-To: <20240606094513.3949323-2-christianshewitt@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 06/06/2024 11:45, Christian Hewitt wrote:
-> Add a vendor prefix for Dream Property GmbH
+> Dreambox One and Dreambox Two are DVBS/T2 receiver boxes based
+> on the Amlogic W400 reference board with an S922X chip.
 > 
 > Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
 > ---
