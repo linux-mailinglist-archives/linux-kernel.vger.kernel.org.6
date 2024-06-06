@@ -1,112 +1,74 @@
-Return-Path: <linux-kernel+bounces-204773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 738008FF364
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:11:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51FC28FF366
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1199F1F23018
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:11:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C707E1F2264D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF786198E8E;
-	Thu,  6 Jun 2024 17:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F55E198E87;
+	Thu,  6 Jun 2024 17:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IxIY+/zM";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nK5SsT/R"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m9prq4Ei"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9C8198A31;
-	Thu,  6 Jun 2024 17:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EDA196DA2;
+	Thu,  6 Jun 2024 17:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717693896; cv=none; b=kLb8X//pKmIstN1OdL891rnch7VNCuMlnb84Iaom3xOhO668EEuzZQA4vB1IwZcjhqrbR4pO2zjRozud58vd6oglGy5oaq35yrNWobUh2D2gP2RANouY1evnLMetYfcOtMwGxCaX3HbMI8RBm6ncT2lcZxNGx5UzSIbpXHREobY=
+	t=1717693910; cv=none; b=jFF7BPu3GOrJW1M1DC44wu7e2XU5xHrR+CM6rTY5T/3pJmqISF0t/TF5Dru82/TMVliUlN55G5znljU8F8vdd/H74Tut9lHPg+J0qRdyNmQkfvSFQGyOG51nMdpE/e6Qv4wwICyADGoYU8yXrdr04t/YJcb1DrYOZCbXeaHDhDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717693896; c=relaxed/simple;
-	bh=63wNISo13/97qVFbNwC/m0bF2xFFqGttpBT+0BwEnew=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WeM6ZvS+CqRyflNvBGbnLE4XuVDGJfmgLpXs5oO1dZ+WgiDPC3z80WbQxzMFRAOmJqtmwkuLbV4TWaWfqm4mB8Vr6qB0MFytzgKIB/lTIRPx94+8lFimqubGXhwy1mm0me4UmtUh6Yr55OFP3cgyB1uJqOyrhxQsJmhtUv93ZaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IxIY+/zM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nK5SsT/R; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Kurt Kanzenbach <kurt@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717693891;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=63wNISo13/97qVFbNwC/m0bF2xFFqGttpBT+0BwEnew=;
-	b=IxIY+/zMpLVNBKwD4IIN7f9oggeNH/7nzTmJzXTJ/UU41EtCzDmCSrVINaoPZP2N0R6dIB
-	lAszc6oH0T2ngObSapuyxXF5iL8sC1RQQNfuZmHKa/Z5PJJFyPcpA1WRkYlJruwpuiW5o/
-	HAnJNO4Nt3W4ariTgSQi6I8TmGKoQ+VGvWDqHM/AzXhOvD1qCSuUZfezH0fk1WX82uj7uh
-	GFtghOgPGZivz3pbSq6qx+Jj2ITbzEEcdf8dRC8Stpz7+ryajtGP+79BnLBrauMoUo9Q66
-	CPtet/fYTk87xqFIwOAmg3Hu9dAjngX0cZf45C8aFVtfVpH2jqZJyjiqwuRQjw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717693891;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=63wNISo13/97qVFbNwC/m0bF2xFFqGttpBT+0BwEnew=;
-	b=nK5SsT/RjHVycaC4bMAFKGA9vyxTnnZUtHCHBHYZh9ewna4xNtsu6rTVS47g2ci1iiWCEq
-	EG9YCNdvcMBq8yDw==
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
- Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH net-next v1 1/1] net: dsa: hellcreek: Replace kernel.h
- with what is used
-In-Reply-To: <20240606161549.2987587-1-andriy.shevchenko@linux.intel.com>
-References: <20240606161549.2987587-1-andriy.shevchenko@linux.intel.com>
-Date: Thu, 06 Jun 2024 19:11:29 +0200
-Message-ID: <87frtq2dz2.fsf@kurt.kurt.home>
+	s=arc-20240116; t=1717693910; c=relaxed/simple;
+	bh=O41E5mYK1HCbNo7OTdY8PzyG7mLhcJjX2LBf+/qZIEc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sffEcrovt3KwkmlN/pfSHxRSW3zh7cx0DRt5/c6xRk27IhgcwxJBUDML0urYHz3K0OBdtW69+4WEzhRoo+nAVFIhB9klNRmJO4yMcrZSuPdBNBd0V7ns7/z4WzTN/ivINGQrDBwYaEeJIzmPhcSuBLsY7025bHTD5vWBB0RXN98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m9prq4Ei; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B06CC2BD10;
+	Thu,  6 Jun 2024 17:11:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717693909;
+	bh=O41E5mYK1HCbNo7OTdY8PzyG7mLhcJjX2LBf+/qZIEc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=m9prq4EiC93Qtc7WfK4xLw5bUZsFqWhCOzxQGfujGItZY/vshvG8NcfEzkh0EDWUx
+	 NvG+9HuAT9Twkea1GkUA4GuSWXDIgVgIxCYhjv+Ui2qixtp0A9feB1su6Xp+cHlQjA
+	 tVCLYmGVrcu4Q6kveO0vmCw43IkyYRs7aRIAH8R+r0dp4o4w7EkmHLazhOxltm+6wz
+	 QzDYLrnfa3uP3eSHI6fxpY2diJ1FA5JesWSwRwRvamw5hUcSq35LXa+DIT7Mf/Dbbw
+	 +Zv0928HvVDW7EnM2W2iSHhzqGRCFC25lvCQdLXN5IPWeiqQDqXcIk/Qo+HnQ6idTc
+	 TaW76Q0ZulgEA==
+From: Namhyung Kim <namhyung@kernel.org>
+To: yangyicong@hisilicon.com,
+	jonathan.cameron@huawei.com,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	linux@treblig.org
+Cc: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf hisi-ptt: remove unused struct 'hisi_ptt_queue'
+Date: Thu,  6 Jun 2024 10:11:42 -0700
+Message-ID: <171769384225.2339517.15362661960178701693.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+In-Reply-To: <20240602000709.213116-1-linux@treblig.org>
+References: <20240602000709.213116-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
---=-=-=
-Content-Type: text/plain
+On Sun, 02 Jun 2024 01:07:09 +0100, linux@treblig.org wrote:
 
-On Thu Jun 06 2024, Andy Shevchenko wrote:
-> kernel.h is included solely for some other existing headers.
-> Include them directly and get rid of kernel.h.
->
-> While at it, sort headers alphabetically for easier maintenance.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Applied to perf-tools-next, thanks!
 
-Thanks!
-
-Reviewed-by: Kurt Kanzenbach <kurt@linutronix.de>
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQJHBAEBCgAxFiEEvLm/ssjDfdPf21mSwZPR8qpGc4IFAmZh7cETHGt1cnRAbGlu
-dXRyb25peC5kZQAKCRDBk9HyqkZzgjZVEACuxnRhqdhTumWAeUFO7CWUch7cSn8q
-tqSHUEJoPjv/m7pypn6xqYIk8pTr/5FdvWXeyMCPWFF1MHG8KVufgvZgPJx2cpu+
-4l0t3mBN2hQwx3KF37l/2Xt0ro6CA2HnguggBwfSwyg8OoA6v4HdD4R0iymjKPsh
-4mYupER4oxnfYucp6K3teTNc9SMIO+KeInCUKyQ8ipCeV4xwrMoxZigSeax/IAEV
-l8dNQtJKDakgEJ+/+8BsMoe1lTl1qWhwfA2DrERMv/X+OwRiGsMAdu1BetAmGyTe
-uNUgMNRhAlgVkfouGf1JzG4DwAy+/r5vQhfQqzDIVrBQR+uGrE/H6YpcW+N90BFo
-XR+4ycMY4T/obPSSRVp5EMMHAhLGTNmpJ238+jFsCqEh1vfSPKitcGoyjJJx+32I
-Ub42h8mAwOyMQpDEWL5iMGCY6MbtmSTlbxZT4zVqd7rEaxwR1ZVGmSG59X5nJClI
-kZKN8P9Njb/OMH5CKc4A/Lpfyx/i/WH1EXogEws3r08jz59i7yZ+L7DXW38y9EuQ
-nxC9gmhO4+2zLybC0PGt+XzEbxc+CPkf78Ev3gOzKXo8/KGczpooineI1ypTlOZw
-EIZUXpSoZrZd2J8KXJo4tlEPzWhVxF7YC6GWMI59E35VesyN2i2dR5FomRFSpiBj
-lA+rJ4fRv+E5QQ==
-=1rPQ
------END PGP SIGNATURE-----
---=-=-=--
+Best regards,
+Namhyung
 
