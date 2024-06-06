@@ -1,106 +1,131 @@
-Return-Path: <linux-kernel+bounces-204355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5248FE7A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:23:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE4BE8FE7AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:24:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFE4928676E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:23:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2ED01F24157
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CBD195FE4;
-	Thu,  6 Jun 2024 13:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="rKN9pVNQ"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523C1195FCB;
+	Thu,  6 Jun 2024 13:24:05 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62408193080;
-	Thu,  6 Jun 2024 13:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86992195973
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 13:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717680193; cv=none; b=GUoSJGKi1RzNcsms0Doj5rALqpl7n1iquR+uhigyyudrWAHNbwrCzy6ZypNZJUqp98TPoDfLhGJWlGvqKG498VukXQonO9w5ilETh4f5hNt9okwOUSzSl/i2j9e+q//5+xx+G+60Vw1o2fobRI5zBbLWcZEqbtzZLMLfPccSh8s=
+	t=1717680244; cv=none; b=diHfFH2iGUxx+l7FyDuJXsMyCv3l0C5uthtMqc8eLBgMhlTf8kH6hhdGx6Mpt3nDoOD3yYTIfdExiAaMDhvBm/jY/ES8nzjqFROyBVHpy4Yh2fffbpYJInJ+01leOy/016LJsbNcnBcjHBRrKdDwJfqFVVpKQbLcK9l3shDs/ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717680193; c=relaxed/simple;
-	bh=00drqhebaHWCjS05Lbg4tmTQZPkOKshoCUutLfgZstY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fl/JQA+QLJ7szGxKiI/A5/Jf/3MnNJTdfmW8mUrQNYVDSi74iRf4KQa6+TrIj7ng5bcgifdZNjyX59A/AW6XnfQaU2+spm1fpLTRe8YqA6xOjiJ8bw9jEwj3JTumlfG8baF72WTlUnzRLhYa2He+FnsrLbrVXe1no8Xi5NgpL3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=rKN9pVNQ; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=mhwoRV2RXqsiDHFrRm5Df2FNUcBIA3rXGBCyxZFRSdk=; b=rKN9pVNQpy9JdaYYfUdasjoWj3
-	B4SlMa28Ql1LIrX6cdnDqFHeEz7t9uskCc5VMipW6S/Ew/0fXrQgwQyEqXCyjMIXi3RVHn+84EBKC
-	IEZqxuQQolOWc5oxUnPCZnwB0DSZx6j8r9dKOX4PCCk6ie+N9QTgrE9k5RqKSsC3xGdE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sFD4x-00H1ED-R9; Thu, 06 Jun 2024 15:22:55 +0200
-Date: Thu, 6 Jun 2024 15:22:55 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Swathi K S <swathi.ks@samsung.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	richardcochran@gmail.com, alexandre.torgue@foss.st.com,
-	joabreu@synopsys.com, mcoquelin.stm32@gmail.com,
-	alim.akhtar@samsung.com, linux-fsd@tesla.com,
-	pankaj.dubey@samsung.com, ravi.patel@samsung.com,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	'Jayati Sahu' <jayati.sahu@samsung.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>
-Subject: Re: [PATCH v3 3/4] arm64: dts: fsd: Add Ethernet support for FSYS0
- Block of FSD SoC
-Message-ID: <14887409-4c5e-4589-b188-564df42924c8@lunn.ch>
-References: <20230814112539.70453-1-sriranjani.p@samsung.com>
- <CGME20230814112617epcas5p1bc094e9cf29da5dd7d1706e3f509ac28@epcas5p1.samsung.com>
- <20230814112539.70453-4-sriranjani.p@samsung.com>
- <323e6d03-f205-4078-a722-dd67c66e7805@lunn.ch>
- <000001dab7f2$18a499a0$49edcce0$@samsung.com>
+	s=arc-20240116; t=1717680244; c=relaxed/simple;
+	bh=7f26wen0QFpSjQJgMpxsD7nI/sETwjE/NfJJVswG4z8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=KwLWk+MIiUEAxTPLTe4yAcX0DwsKC0t1dhqO3ZP0V0CyDe3IPHOxqLiNTxSnd9UU2VEIi0ZASrFneR/uBofOxdvi+5MmVbLm78ICb8K5PXOEuJJ4wtcDZG/MENfD2TU0SSLYaZTGcRUMy38fQEDhxiK5fS4KvMGuyAn1dDKBSjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7e92491e750so57675639f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 06:24:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717680242; x=1718285042;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6cN2gFw1REYRRysfYPSn2zWfWFPFbNqDCxuEWS+aG9A=;
+        b=pFURoIVnQb4kn6JXJSACbv/DxDyEHuHn/mJgNXW4OYEgfo7iDhquYQko+1XxZioC5P
+         fgR185j/tk9miL7Qwr5YPU5ymvJ1vpebdVcSnZWv1/DTnshokQU4TMe1pIuLri/6pIjJ
+         aODTkg1cMKR+d6e61LJtO02/x4CCc6sHBCZnFdetrQd/yF2B9K7gdvxfJxeOfhZQP+5V
+         /QKaeC5M26IXxCRAYBnG4ambd9DsysRySAClBm6ZHQ1LUr9KzeRzR9nmjw73k2VOsjFe
+         sBE7uNRQxLTUx+7sTwYjVaIQlzk9/vw2iZPNTnNSvWa1aoI0zd0zfL9uP35WG0+2ZBA5
+         M5wA==
+X-Gm-Message-State: AOJu0Yw4Y6JkbO8EZZES7bUdEJ0bdR4zbvUEFv1AlPY1xqDL9+Xb1k4w
+	77B22AEGlIreeBxND3c0AvHlri/6gGXIgJiajiF15ZzpaoPdGtWn53w9b7KF01M0ZLoZ+dSjews
+	TL5xSOwsZi8RhGisq/NsXmb+bpmEd2/O5KPF8YINp+b3Ew6+G9bCbmwU=
+X-Google-Smtp-Source: AGHT+IEh9SoZHVSqu7m658XfUNOb8q+kAgtseR+mpz1GID5F//1TLqt0O0ABudsvd4q7Md912N+SjMAecTdp58BNOTLxSPGs3RkC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000001dab7f2$18a499a0$49edcce0$@samsung.com>
+X-Received: by 2002:a05:6602:6c10:b0:7e2:2f0e:5a65 with SMTP id
+ ca18e2360f4ac-7eb49d96bd2mr13908339f.2.1717680242702; Thu, 06 Jun 2024
+ 06:24:02 -0700 (PDT)
+Date: Thu, 06 Jun 2024 06:24:02 -0700
+In-Reply-To: <000000000000adb08b061413919e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b447ac061a3898ea@google.com>
+Subject: Re: [syzbot] Re: 000000000000fcfa6406141cc8ac@google.com
+From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > > +&ethernet_0 {
-> > > +	status = "okay";
-> > > +
-> > > +	fixed-link {
-> > > +		speed = <1000>;
-> > > +		full-duplex;
-> > > +	};
-> > > +};
-> > 
-> > A fixed link on its own is pretty unusual. Normally it is combined with an
-> > Ethernet switch. What is the link peer here?
-> 
-> It is a direct connection to the Ethernet switch managed by an external
-> management unit.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Ah, interesting. This is the third example of this in about a
-month. Take a look at the Realtek and TI work in this area.
+***
 
-So, i will ask the same questions i put to Realtek and TI. Does Linux
-know about the switch in any way? Can it manage the switch, other than
-SNMP, HTTP from user space? Does it know about the state of the ports,
-etc?
+Subject: Re: 000000000000fcfa6406141cc8ac@google.com
+Author: wojciech.gladysz@infogain.com
 
-If you say this is just a colocated management switch, which Linux is
-not managing in any way, that is O.K. If you have Linux involved in
-some way, please join the discussion with TI about adding a new model
-for semi-autonomous switches.
+#syz test: https://linux.googlesource.com/linux/kernel/git/torvalds/linux e=
+377d803b65ee4130213b3c041fc25fdfec1bd90
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -2393,12 +2393,21 @@ void __bpf_trace_run(struct bpf_raw_tp_link *link, =
+u64 *args)
+        cant_sleep();
 
-   Andrew
+        // return if instrumentation disabled, see: bpf_disable_instrumenta=
+tion
+-       if (unlikely(__this_cpu_read(bpf_prog_active))) {
++       int instrumentation =3D unlikely(__this_cpu_read(bpf_prog_active));
++       if (instrumentation) {
++               printk("SKIP FOR INSTRUMENTATION: %s > %s > %p /%i =3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D\n",
++                               prog->aux->name,
++                               link->btp->tp->name, prog, instrumentation)=
+;
+                bpf_prog_inc_misses_counter(prog);
+                return;
+        }
+
+-       if (unlikely(this_cpu_inc_return(*(prog->active)) !=3D 1)) {
++       int active =3D this_cpu_inc_return(*(prog->active));
++       printk("%s > %s > %p /%i\n", prog->aux->name, link->btp->tp->name, =
+prog, active);
++       if (active !=3D 1) {
++               printk("SKIP FOR ACTIVE: %s > %s > %p /%i =3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D\n",
++                               prog->aux->name,
++                               link->btp->tp->name, prog, active);
+                bpf_prog_inc_misses_counter(prog);
+                goto out;
+        }
+diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+index 8d1507dd0724..f852d7b86ff4 100644
+--- a/kernel/tracepoint.c
++++ b/kernel/tracepoint.c
+@@ -298,6 +308,8 @@ static enum tp_func_state nr_func_state(const struct tr=
+acepoint_func *tp_funcs)
+ {
+        if (!tp_funcs)
+                return TP_FUNC_0;
++       if (!tp_funcs[0].func)
++               return TP_FUNC_0;
+        if (!tp_funcs[1].func)
+                return TP_FUNC_1;
+        if (!tp_funcs[2].func)
+--
+The information in this email is confidential and may be legally privileged=
+. It is intended solely for the addressee and access to it by anyone else i=
+s unauthorized. If you are not the intended recipient, any disclosure, copy=
+ing, distribution or any action taken or omitted to be taken based on it, i=
+s strictly prohibited and may be unlawful.
 
