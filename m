@@ -1,162 +1,188 @@
-Return-Path: <linux-kernel+bounces-204212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 444F98FE5EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:58:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37E1D8FE5EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:58:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2B031F256AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:58:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF025288B32
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB06195971;
-	Thu,  6 Jun 2024 11:57:56 +0000 (UTC)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B7913D28C;
+	Thu,  6 Jun 2024 11:58:05 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C17C195967;
-	Thu,  6 Jun 2024 11:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF7E4DA14;
+	Thu,  6 Jun 2024 11:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717675076; cv=none; b=hdIUeBnAeWqflCyqg8yrtUbXs1pnRSJjq1k45u0WuX8KcsMLkviakuU5qvwrCjMpqc4zagTsuZMnIiqnKc2xiO4OWUcYoC3MaKHTpKcnme/ttTsHyySVv0EA7Or39Vzyp9nxUtAklvCAjnZMSj9VLn8OFbTbxTbjv3kQXxeZL7A=
+	t=1717675085; cv=none; b=DthaRo0cLAjxUtRUMWG09RLoe0VkLwqLKfPPj+ISgwnSfqvE572VRMkhP4V04x9BhudujjJEtgM2DHsir1rsBaMb6oG8V0p6ajcjjwAwl91WWYn2aT6ifq3gYKTojpqCnWbKyPT5X25dphOJXAd0snBGWO1kafA9adT+GO93ECU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717675076; c=relaxed/simple;
-	bh=GOMW/FwNhUYau4q4SHpghUB5HgRQmmWpXYy8yblL6Mc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EpM3CKDiZOyZVnq74eMOuq5dV2wMADHTC+xUw4KIFbYivtXmW5xRvnxOpVdB1d3OYg5GOq2+ZjDE8H8vwl0BgzD4TTkG5zqT94BSjJ7dQQ+/HqfkWv5Z9F75m1W9irbtEpujTY1ZcZYMxLF3XOTs5V6Lp141ztVRSzJzBhaXDiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-62a08091c2bso8409767b3.0;
-        Thu, 06 Jun 2024 04:57:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717675072; x=1718279872;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JW29ScnmlrzACbU2zNoMRoUdfE+x9Aisx6QLidUI4l4=;
-        b=SMbHAMMzj/KO8hfuiTCBE1yGHAB47n9mTb391CutuXHA86yHbPY/b9fZ0jlvNqfj+N
-         n8HwCqh+iY4ZUfyl/vgJp3DlL7VhxiyKz9D8/NXM93bVn4Swy4iYb6kL2sf+uswRTa/o
-         /tZk6d2aOgH91xTn37AAR1WsSKmNRnzwHz584L4ZdLBR04R6TuaZ/P1rlWT/f+yuvxtZ
-         gf9aLKG70CGmG8KTJz91WqKCK62uxAuxI3kzfRgMKKQHZDuYn9z81lR1CKaCd/HPZQCc
-         G+HBY4KdLCPxx+TCOEdvSKw5ZYgD+O5sIwPwIP5KEGcbP04ZkOxHwlpb3CBq7uDvH+81
-         o9Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCVpMxd8Y0mVuypAoQFfiBrT1cW5+I1k3XjrzgOAN648eELNbsO0UV0ide6xBZwP00kf8RWVqKrCsDgwuK4QCOwVOhEAM/UP7moYfN4eZiWREiUvPlrJAGVLB9X51IC0CEfO3XcRFAOdTNVRLynJbv8oKG7jjW5PYMi5N4N01K+WZAhJzt92KYieRe00s1RgwwM/3XIZ1VKbdI7y07r3MB5H7hftSHqPSQ==
-X-Gm-Message-State: AOJu0Ywl5GJRq18gFchbchid1sND21WMJrHQtIaj4kHHvz/ciXSa1JV6
-	QB4Sm1w0a3jaFXn5xP1lOhtK0313y46k87zYix6ktw/WnnpZusWoe342a4Ca
-X-Google-Smtp-Source: AGHT+IGO9mA6vXfOFRblu46UTFef4m4DKibuGUgH9GSY1vpQnC2W/4LoFnRmTgYGB3XLGiFDNpy5xg==
-X-Received: by 2002:a81:ad04:0:b0:627:24d0:5037 with SMTP id 00721157ae682-62cbb310351mr54258387b3.0.1717675072115;
-        Thu, 06 Jun 2024 04:57:52 -0700 (PDT)
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62ccacadca4sm2206077b3.18.2024.06.06.04.57.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 04:57:51 -0700 (PDT)
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-dfa682a4025so980579276.2;
-        Thu, 06 Jun 2024 04:57:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVQ+Ev+Dh+oGOrZAosHwR+5gDEIXkzerjoINl5nb/M6B+bkkTKBII7AlCcF/h/PkyAp06mxs2E6QBPhovLD9O6BUVix8sBmoQQHv9IJLojhgS3/LTFnCqz0hBD9mOVBQ7riTj/yy4WDRNgyPTRys58+44oGQBwJsPIZfes+qIj+RgRqpmvvUYVjtIMaMMG0jp3URVtJqcdGMOh/qFlJYc8g1DNRoCmiQQ==
-X-Received: by 2002:a5b:64b:0:b0:dfa:7bcd:efc0 with SMTP id
- 3f1490d57ef6-dfacacec42bmr5433758276.43.1717675071297; Thu, 06 Jun 2024
- 04:57:51 -0700 (PDT)
+	s=arc-20240116; t=1717675085; c=relaxed/simple;
+	bh=0RyeNRIOnCXCsqFDPiFcqqnV8Y98K30Zik5s5Ww0H2Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ps1EVTFauMLJt7vm8CwrDid8VfZFXmiSddfjaDHQSe7qxnItgi+l9YP3Q7UHuf24bcfNub47lJvjO9nou2E0miBBrG9A0nmrQvrwrE52sgd6NA81qPHzOZ3LEzfKHjy/vt86zxTYG5jRy9XtCcuGCNgGYcc9YSx8M0gjXUGzMt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1793BC4AF0A;
+	Thu,  6 Jun 2024 11:58:00 +0000 (UTC)
+Message-ID: <1976a7c6-6b66-4c4c-9c9c-f41dd8b2bdf3@xs4all.nl>
+Date: Thu, 6 Jun 2024 13:57:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606085133.632307-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240606085133.632307-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Jun 2024 13:57:39 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXrR7ymDBvLywYF1YYf894gUTGsQkC+M-1+uxxAEoS+xA@mail.gmail.com>
-Message-ID: <CAMuHMdXrR7ymDBvLywYF1YYf894gUTGsQkC+M-1+uxxAEoS+xA@mail.gmail.com>
-Subject: Re: [PATCH v4] dt-bindings: pinctrl: renesas: Document RZ/V2H(P) SoC
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/4] media: uvcvideo: stop stream during unregister
+To: Tomasz Figa <tfiga@chromium.org>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Guenter Roeck <linux@roeck-us.net>, Max Staudt <mstaudt@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Alan Stern <stern@rowland.harvard.edu>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Sean Paul <seanpaul@chromium.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+References: <20240327-guenter-mini-v4-0-49955c198eae@chromium.org>
+ <20240327-guenter-mini-v4-1-49955c198eae@chromium.org>
+ <7d06c6e4-c555-4117-a22b-5c614d7f6f8a@xs4all.nl>
+ <CAAFQd5A3nzpv531fu6h7thCkxettTSbc3vofPyt7ie8qf6SJcQ@mail.gmail.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <CAAFQd5A3nzpv531fu6h7thCkxettTSbc3vofPyt7ie8qf6SJcQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 6, 2024 at 10:51=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add documentation for the pin controller found on the Renesas RZ/V2H(P)
-> (R9A09G057) SoC. The RZ/V2H PFC varies slightly compared to the RZ/G2L
-> family:
-> - Additional bits need to be set during pinmuxing.
-> - The GPIO pin count is different.
->
-> Hence, a SoC-specific compatible string, 'renesas,r9a09g057-pinctrl', is
-> added for the RZ/V2H(P) SoC.
->
-> Also, add the 'renesas,output-impedance' property. The drive strength
-> setting on RZ/V2H(P) depends on the different power rails coming out from
-> the PMIC (connected via I2C). These power rails (required for drive
-> strength) can be 1.2V, 1.8V, or 3.3V.
->
-> Pins are grouped into 4 groups:
->
-> Group 1: Impedance
-> - 150/75/38/25 ohms (at 3.3V)
-> - 130/65/33/22 ohms (at 1.8V)
->
-> Group 2: Impedance
-> - 50/40/33/25 ohms (at 1.8V)
->
-> Group 3: Impedance
-> - 150/75/37.5/25 ohms (at 3.3V)
-> - 130/65/33/22 ohms (at 1.8V)
->
-> Group 4: Impedance
-> - 110/55/30/20 ohms (at 1.8V)
-> - 150/75/38/25 ohms (at 1.2V)
->
-> The 'renesas,output-impedance' property, as documented, can be
-> [0, 1, 2, 3], these correspond to register bit values that can
-> be set in the PFC_IOLH_mn register, which adjusts the drive
-> strength value and is pin-dependent.
->
-> As power rail information may not be available very early in the boot
-> process, the 'renesas,output-impedance' property is added instead of
-> reusing the 'output-impedance-ohms' property.
->
-> Also, allow bias-disable, bias-pull-down and bias-pull-up properties
-> as these can be used to configure the pins.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> Sending just the binding patch of series [0] as reset of the patches have
-> been Reviewed.
->
-> [0] https://patchwork.kernel.org/project/linux-renesas-soc/cover/20240530=
-173857.164073-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
->
-> v3->v4
-> - Added a conditional schema for ensuring the reset length
->   is 2 for RZ/V2H and 3 otherwise
-> - Updated description for renesas,output-impedance property
-> - Dropped '|'
+On 06/06/2024 12:04, Tomasz Figa wrote:
+> Hi Hans,
+> 
+> On Tue, May 28, 2024 at 4:55 PM Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
+>>
+>> On 27/03/2024 09:24, Ricardo Ribalda wrote:
+>>> uvc_unregister_video() can be called asynchronously from
+>>> uvc_disconnect(). If the device is still streaming when that happens, a
+>>> plethora of race conditions can happen.
+>>>
+>>> Make sure that the device has stopped streaming before exiting this
+>>> function.
+>>>
+>>> If the user still holds handles to the driver's file descriptors, any
+>>> ioctl will return -ENODEV from the v4l2 core.
+>>>
+>>> This change make uvc more consistent with the rest of the v4l2 drivers
+>>> using the vb2_fop_* and vb2_ioctl_* helpers.
+>>>
+>>> Suggested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+>>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+>>> ---
+>>>  drivers/media/usb/uvc/uvc_driver.c | 11 +++++++++++
+>>>  1 file changed, 11 insertions(+)
+>>>
+>>> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+>>> index bbd90123a4e76..17fc945c8deb6 100644
+>>> --- a/drivers/media/usb/uvc/uvc_driver.c
+>>> +++ b/drivers/media/usb/uvc/uvc_driver.c
+>>> @@ -1911,8 +1911,19 @@ static void uvc_unregister_video(struct uvc_device *dev)
+>>>               if (!video_is_registered(&stream->vdev))
+>>>                       continue;
+>>>
+>>> +             /*
+>>> +              * Serialize other access to the stream.
+>>> +              */
+>>> +             mutex_lock(&stream->mutex);
+>>> +             uvc_queue_streamoff(&stream->queue, stream->type);
+>>>               video_unregister_device(&stream->vdev);
+>>>               video_unregister_device(&stream->meta.vdev);
+>>> +             mutex_unlock(&stream->mutex);
+>>
+>> This sequence isn't fool proof. You have to follow the same sequence as
+>> vb2_video_unregister_device(): take a reference to the video device,
+>> then unregister, then take the stream mutex and call vb2_queue_release
+>> for each queue. Finally unlock the mutex and call put_device.
+> 
+> vb2_queue_release() will run when the userspace releases the file
+> handle that owns the vb2 queue [1], so we shouldn't really need to
+> call it here.
+> 
+> [1] https://elixir.bootlin.com/linux/v6.9.3/source/drivers/media/usb/uvc/uvc_v4l2.c#L655
+> 
+>>
+>> Doing the video_unregister_device first ensures no new ioctls can be
+>> called on that device node. Taking the mutex ensures that any still
+>> running ioctls will finish (since it will sleep until they release the
+>> mutex), and then you can release the queue.
+> 
+> Actually isn't the only missing thing in the code basically ensuring
+> that any ioctl currently being executed finishes? Why is the streamoff
+> or queue release needed?
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v6.11.
+See below...
 
-Gr{oetje,eeting}s,
+> 
+> Best regards,
+> Tomasz
+> 
+>>
+>> This does require that you call get_device before calling video_unregister_device,
+>> otherwise everything might be released at that point.
+>>
+>> Instead of vb2_queue_release() you might have to call uvc_queue_streamoff,
+>> but note that there are two queues here: video and meta. The code above
+>> just calls streamoff for the video device.
+>>
+>> For the meta device I think you can just use vb2_video_unregister_device()
+>> directly, since that sets vdev->queue and vdev->queue.lock to the correct
+>> values. That would just leave the video device where you need to do this
+>> manually.
 
-                        Geert
+Ideally uvc should just use centralized locking (i.e. set vdev->queue.lock)
+for the video node, just like it does for the meta device.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+If that was the case, then it can just call vb2_video_unregister_device().
+The vb2_video_unregister_device helper was added to ensure that no ioctls
+are running, and then streaming is stopped and the queue is released.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+While it is true that the queue is released automatically when the last user
+closes the filehandle, it can get complicated if the application has a file
+handle open when the device is unregistered (usually due to it being unplugged).
+Without that call to vb2_video_unregister_device() the queue is still active,
+and especially if you also have subdevices that are still in streaming mode,
+it is hard to make sure nothing is still using the hardware.
+
+vb2_video_unregister_device() provides a clean way of ensuring that when the
+device is unregistered all streaming is stopped and the vb2 queue is released.
+
+After that the only file operation that can be used without returning an error
+is close().
+
+Since uvc uses its own locking for the video device, it has to do this manually.
+It is probably enough to ensure no ioctls are running since uvc doesn't have
+subdevices, but I think it makes sense to stop streaming and release the queue
+when unregistering the device, it is weird to postpone that until the last fh
+is closed.
+
+Regards,
+
+	Hans
+
+
+>>
+>> Regards,
+>>
+>>         Hans
+>>
+>>> +
+>>> +             /*
+>>> +              * Now the vdev is not streaming and all the ioctls will
+>>> +              * return -ENODEV
+>>> +              */
+>>>
+>>>               uvc_debugfs_cleanup_stream(stream);
+>>>       }
+>>>
+>>
+
 
