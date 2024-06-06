@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-204519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 529BC8FF083
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:23:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CF958FF013
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48678B2FDBF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:10:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A607E1F25262
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4145A199392;
-	Thu,  6 Jun 2024 14:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE141A0DDA;
+	Thu,  6 Jun 2024 14:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q8xDURwH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TIGotSiG"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D59A197554;
-	Thu,  6 Jun 2024 14:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51DB81A01B9
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717685421; cv=none; b=P/uxmiYToXpE48tg5cc4EhVThfrGswKk5ByXPaGk8W4SRW9n3Jq5uxR6Rom7qPbsAjsoGZ0Gx+8k0oJyt0OKEAsZDYoUDKElP+jvcqmOKVm6ZmtDoPXzJwa0jI7zt+GKnwRsQBu0FSw4SDZH+/9fYRb1bhg7sdHAWgje+hM0g7w=
+	t=1717685431; cv=none; b=NJJqO6dXWdeQb74PFF5XsNAFXQp7RkytrOiuHsKeQhm6+NmeoaZJJto9OFkzsLX72ulbfA+U+5k2zFBgbUlZqdTjjizub8aQr0fm2QOqWvfSU/SETKIuv0pXGDPuBr8e5IErKRNHX2Gnf0izYvXZKWTymbLpDsxJ0R+TtD3yp/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717685421; c=relaxed/simple;
-	bh=zw1XPsrHhdkztMwHgoGHGJIAqzfN4fPRiDa1UBE8hg4=;
+	s=arc-20240116; t=1717685431; c=relaxed/simple;
+	bh=ZvQ1pENygtYl6o/j4xo9oIYijYCQF5WO63/exjSZDws=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qG9b28vJeCT3h1ay/PCJydivX0yTrhJn5lnbmNSw+Ml+pdLGhsmUinwgXs3NYrBjlYvmZKxdyIyO9gotdic8kMUOY3h9jQNyMDiVreGhjDuMmLhFq6/ip82gHjAlBbjipBicpjoKNV8bsUJoF63m5MS87eeBSJcA2hCTkKJka5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q8xDURwH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DA55C2BD10;
-	Thu,  6 Jun 2024 14:50:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717685421;
-	bh=zw1XPsrHhdkztMwHgoGHGJIAqzfN4fPRiDa1UBE8hg4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=q8xDURwHUQecEv7Wd726Z+XRi0d7dHC+Vocn4v/8McV1mzJuKaRhoqiK6fyF3D8nj
-	 nWtgyeC26J6c9+Ix91nq9OnqqP17GGGcUqnToeR7nc+zNUH6H/Adi8DxeIj/gW6pKL
-	 W+FWCVVGyb93lQJeNp+k5wff8HtIpgcC79/9+IX66Jkf9uwfSRFRNLbBr/3xdIf61f
-	 7Kfh+/tiVEVLwDHOQXW75xOGUfbpG73GT3PeNV+n3MBMlt0r2oH9Zn+nZWFOjK4eKr
-	 Jb+32GpHgkIxNfc3stsimYJ9ppjdMP0chzoxf5yepoU18EU55MHxkH7fykMFETQaXZ
-	 vz33HwU3ZVOFw==
-Message-ID: <c22e20f5-5ca9-485c-991f-9b45e35cd75a@kernel.org>
-Date: Thu, 6 Jun 2024 16:50:16 +0200
+	 In-Reply-To:Content-Type; b=X+Zo/xgIUXHLPtQ3NEy981vcu4r/gCLm/Z2Dv/SEyuem/6U7YawDDkwjg4JcZm5Kvi51TsrXIRZbiVBPOyA/DRhR5I2Aq1HjItvaDw1PpT+W5in92QIwSuqO9xn8HD1HtNtRmi8GvZjDjeknD+z/VDL62CsqQMg4rp/lwxSfg0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TIGotSiG; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2eaad2c673fso15171041fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 07:50:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717685425; x=1718290225; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4eQN39Nkp7zX3QVgBwh8fSEqWjLG+WRfJd6VENywnME=;
+        b=TIGotSiGK97J3TK+yfmqtjjNklSBHm66MwWyCUGJXLj+XmQDPe65PDDJm6XcbruucD
+         iHmPmpcfG0Rlm6ZVsR2+EvUYW3rZh3X2NKShJ3GkgHtMFlNry/aXUDHfX51C/bAhgAN8
+         NOawqkWoe4VUw8T290hGNjFUmxBSYTnnoxuJSfmD6k2Dlsb64pWU7dxJD3YABhZFSzp5
+         Wno34xAVdS3rl9Uus8ljaa9cZH3XGZKLOij4v7m8TQs9CQbcleXtNQcrdNJ6TCYCNtx7
+         ThkV+eO2NurqGYQWx/00WnDlDlnjg06Hok/M2b5Kyghg/+nitVbiAAjyImR+c0BzQrGO
+         ZWsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717685425; x=1718290225;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4eQN39Nkp7zX3QVgBwh8fSEqWjLG+WRfJd6VENywnME=;
+        b=haa19sO6FocxuFjXwFt9ApgJmnqFH8IRMk45ccKGfzfzL4eXPPSx3uHEeHEIMAyAfc
+         O6/LPkeEfi+t4+STP7+EbACVNcBZi8a5x294cfJ5YiSg5T+EQqXkipzB7humfrDWAjCc
+         1o0TIWB+1Z+uVdDdxh0AhgTqaAstYgcgQgr+T7VetQLVNl2YE1tKgiB7TUcj1BfdwfkS
+         4ErD9tJ6zgxfL/KKHE3YCEH8f3CZzWg9awQBVm8Lb9kxhbrhGPfSUhZjesdPtXIA3vzJ
+         XTNo9/W1u22E82h/8cGGUx89Gn6HkDTEZ13XbgkvojzrJE6/AbIhsGg96nHbMgdwtMgz
+         ptsw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ+bjOZzRHk/jR9fve32n4oU2f5uLJVYhbCy7vCxkzCYM3x1G6+lMtB51epHA0p9hWFtmQ2onpCftTCSJQmnroJhJPNR2+3F+LMfDf
+X-Gm-Message-State: AOJu0YyBl18K3R9LeBQug1U8mpCOsXKuTbXXhfXh4THtDM+f1yzG00fI
+	8c5WLa/dG8fB8jIWUPhROpCikudZakxD8Zhswp47kd+nGlSxMrInKTS48QPI2F4=
+X-Google-Smtp-Source: AGHT+IHwoVb1UEEad+fTat0R/+JZtULip8B74o83THglv5q5fWQXs+TEQMKY/3pMO+zjn8zJCmDeNw==
+X-Received: by 2002:a05:651c:1a2a:b0:2de:ca7f:c849 with SMTP id 38308e7fff4ca-2eac7a7fcd5mr50121091fa.43.1717685425433;
+        Thu, 06 Jun 2024 07:50:25 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:f9a9:3740:b905:9995? ([2a05:6e02:1041:c10:f9a9:3740:b905:9995])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a6c8070ea54sm106413366b.157.2024.06.06.07.50.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 07:50:24 -0700 (PDT)
+Message-ID: <90a9df3e-153f-4972-8086-13c21a574763@linaro.org>
+Date: Thu, 6 Jun 2024 16:50:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,99 +75,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] arm64: dts: qcom: sdx75: add missing qlink_logging
- reserved memory for mpss
-To: Naina Mehta <quic_nainmeht@quicinc.com>, andersson@kernel.org,
- mathieu.poirier@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, konrad.dybcio@linaro.org,
- manivannan.sadhasivam@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240606143858.4026-1-quic_nainmeht@quicinc.com>
- <20240606143858.4026-4-quic_nainmeht@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v1] thermal: core: Do not fail cdev registration because
+ of invalid initial state
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>, Linux ACPI
+ <linux-acpi@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>, Laura Nao <laura.nao@collabora.com>
+References: <4569763.LvFx2qVVIh@kreacher>
+ <5f93f034-f781-47e0-b8ce-3c8407a709f7@linaro.org>
+ <CAJZ5v0hkOvYL66D+tCRJxbp=XqV59yeZ0dA1Kxoczkcpe5X9sA@mail.gmail.com>
+ <CAJZ5v0joTyOcRU0FyaHEEYEbiPbbNSFzW3P7eJJ4MM5QdhQR2w@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240606143858.4026-4-quic_nainmeht@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <CAJZ5v0joTyOcRU0FyaHEEYEbiPbbNSFzW3P7eJJ4MM5QdhQR2w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 06/06/2024 16:38, Naina Mehta wrote:
-> The qlink_logging memory region is also used by the modem firmware,
-> add it to reserved memory regions.
-> Also split MPSS DSM region into 2 separate regions.
+On 06/06/2024 16:18, Rafael J. Wysocki wrote:
+> On Thu, Jun 6, 2024 at 3:42 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>>
+>> On Thu, Jun 6, 2024 at 3:07 PM Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>>>
+>>> On 05/06/2024 21:17, Rafael J. Wysocki wrote:
+>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>>
+>>>> It is reported that commit 31a0fa0019b0 ("thermal/debugfs: Pass cooling
+>>>> device state to thermal_debug_cdev_add()") causes the ACPI fan driver
+>>>> to fail probing on some systems which turns out to be due to the _FST
+>>>> control method returning an invalid value until _FSL is first evaluated
+>>>> for the given fan.  If this happens, the .get_cur_state() cooling device
+>>>> callback returns an error and __thermal_cooling_device_register() fails
+>>>> as uses that callback after commit 31a0fa0019b0.
+>>>>
+>>>> Arguably, _FST should not return an inavlid value even if it is
+>>>> evaluated before _FSL, so this may be regarded as a platform firmware
+>>>> issue, but at the same time it is not a good enough reason for failing
+>>>> the cooling device registration where the initial cooling device state
+>>>> is only needed to initialize a thermal debug facility.
+>>>>
+>>>> Accordingly, modify __thermal_cooling_device_register() to pass a
+>>>> negative state value to thermal_debug_cdev_add() instead of failing
+>>>> if the initial .get_cur_state() callback invocation fails and adjust
+>>>> the thermal debug code to ignore negative cooling device state values.
+>>>>
+>>>> Fixes: 31a0fa0019b0 ("thermal/debugfs: Pass cooling device state to thermal_debug_cdev_add()")
+>>>> Closes: https://lore.kernel.org/linux-acpi/20240530153727.843378-1-laura.nao@collabora.com
+>>>> Reported-by: Laura Nao <laura.nao@collabora.com>
+>>>> Tested-by: Laura Nao <laura.nao@collabora.com>
+>>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>
+>>> As it is a driver issue, it should be fixed in the driver, not in the
+>>> core code. The resulting code logic in the core is trying to deal with
+>>> bad driver behavior, it does not really seem appropriate.
 > 
-> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sdx75.dtsi | 17 +++++++++++++----
->  1 file changed, 13 insertions(+), 4 deletions(-)
+> Besides, I don't quite agree with dismissing it as a driver issue.  If
+> a driver cannot determine the cooling device state, it should not be
+> required to make it up.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sdx75.dtsi b/arch/arm64/boot/dts/qcom/sdx75.dtsi
-> index 9b93f6501d55..9349b1c4e196 100644
-> --- a/arch/arm64/boot/dts/qcom/sdx75.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdx75.dtsi
-> @@ -366,7 +366,12 @@
->  			no-map;
->  		};
->  
-> -		qdss_mem: qdss@88800000 {
-> +		qdss_mem: qdss@88500000 {
-> +			reg = <0x0 0x88500000 0x0 0x300000>;
-> +			no-map;
-> +		};
-> +
-> +		qlink_logging_mem: qlink_logging@88800000 {
+> Because .get_cur_state() is specifically designed to be able to return
+> an error, the core should be prepared to deal with errors returned by
+> it and propagating the error is not always the best choice, like in
+> this particular case.
+> 
+>>> The core code has been clean up from the high friction it had with the
+>>> legacy ACPI code. It would be nice to continue it this direction.
+> 
+> This isn't really ACPI specific.  Any driver can return an error from
+> .get_cur_state() if it has a good enough reason.
 
-Sorry, no downstream code.
-
-Please follow DTS coding style - no underscores in node names. This
-applies to all work sent upstream.
+We are talking about registration time, right? If the driver is 
+registering too soon, eg. the firmware is not ready, should it fix the 
+moment it is registering the cooling device when it is sure the firmware 
+completed its initialization ?
 
 
+>> Essentially, you are saying that .get_cur_state() should not return an
+>> error even if it gets an utterly invalid value from the platform
+>> firmware.
+>>
+>> What value should it return then?
 
-Best regards,
-Krzysztof
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
 
