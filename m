@@ -1,143 +1,100 @@
-Return-Path: <linux-kernel+bounces-204172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 682AC8FE558
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:29:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90FA58FE55C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4338C1C2137D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:29:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFD1B281EF6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:30:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83611957FB;
-	Thu,  6 Jun 2024 11:29:02 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1A61957FE;
+	Thu,  6 Jun 2024 11:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bekwKb8z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6827160865
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 11:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595791FAA;
+	Thu,  6 Jun 2024 11:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717673342; cv=none; b=tGjoAcFfC3PGea05L99ZH7svE4WQbQVPV7mdHse36jrPLNzOZlWc7bRn8UK4QpoW0K30mdD6JE2gIibZ15FL65up9c8z27WrK+buzArZ7UKDVVAfkznhbHTpiyXlBn9hr4tDIPT91LGmvUnRbV/i1WV9r0FEc3gk8bIDaFjXVGo=
+	t=1717673443; cv=none; b=A4DrQ3cFrwY5fgiBl7SGUXEVp/JQcwLY8Q0SOmb+PwkUFiNNO0VDa9Hn00hAIfEE9o5XUIMRsO86UbS+a7tUbM7kZd3IcUG+izcMU4wEoakmP7GQskE/1P0ptVBAF9dlVaxucMglv5r4J3rDcvsJoq2Jq3g1ncZqMXNOErrknow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717673342; c=relaxed/simple;
-	bh=WH2ROnLCR40grHlWCcojPTgFMSnZb1kSwzJOI8moWwQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ZEKuM9EXj88Wnc4y3g4cWCGWFlAKoVM4sCq20vCOB+x+aZ2Y1Z+dIGxcEgFAK9eCvqxOPQaIDkgeaZUZ4a+2qfNyuWwzfIuqJks4GmxnQ2wlo2i2jMpPrpNM0xeFt7slCozJjNDmwxepwPMTTSvTiT2SWRLCZlxUPCok0OSA7nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3746147204eso7477675ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 04:29:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717673340; x=1718278140;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WH2ROnLCR40grHlWCcojPTgFMSnZb1kSwzJOI8moWwQ=;
-        b=cG3xERfPjteuDfMza+CKhMIIM60ZyAZVN+DqFsquutacyu6lGCT+3Yo3WL3VU0khy2
-         IlnoRotc1MsmXLCcrRCV+FMqundct54mJzjOJEpL+LEY8TGjx9AJd5MGIo6xF2tlrjWf
-         sReINeOt7w78uYnE6RM0Z/BBGuT/8Z0+wKlfbczQ3+dN85cgjDym5nqs7AmavQTaF/Wz
-         uzDxJzgh1JDnoCEfQZAFsKHSxwj7V+mMmG++Zf6wV4jS5oFkSzhodSquFNtRDHnNUGo0
-         oeeU7DjVmBxuh2uXp2W6LhYYZpKhpu0l5tWFLIlY84c3S5tumaS0CWbqH8Kd9GSDR6FL
-         U2+g==
-X-Gm-Message-State: AOJu0YwHPJnr/Y/AA5OOfr/G53+AcZH6rK+X0R3Idbm3MqFRByage/+o
-	vpDM32x4X7nr0wrVWnsfSiiw3R5A5cFJDwXPwDJkvKl7FyPCu7Y2c/9S2DPG2KSOUfCY46s5fUq
-	XNkOIewx4SjnQsqG8YT9U6MoTYW1m+uMzZuELG4c29GOe0UeCBzd/nJ8=
-X-Google-Smtp-Source: AGHT+IFP/lo2zqIF6X0L23XTOM6wLpD5TUqaLpYEn5Y9zzZiARQrJ8c2D3zTVMVQO/74JRwq8MHwuzAs5kfXL6l5m+ieVpz9KRtI
+	s=arc-20240116; t=1717673443; c=relaxed/simple;
+	bh=0rkDd8mVoj1gvTm4BM8F/12A2+SY1O0XgQZkI7uUmv0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=lL8qh/tQ/CHpiiV2UF9+OfMih5Ov95BMjrWAKrxrSEu5eE1TUObbbAmvk5qxUcS/ZmIZFKZSLQEzf+bBSllm/VaxQuHdBo/Z9Qy9c/71T1Tl8yn17CzHmERbewZqbvLs6sQm3urVWwzVeqrJCdkbgdceWqa2FPoNoKJxOMu5xOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bekwKb8z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C4ECC4AF07;
+	Thu,  6 Jun 2024 11:30:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717673442;
+	bh=0rkDd8mVoj1gvTm4BM8F/12A2+SY1O0XgQZkI7uUmv0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=bekwKb8zgJt4oxDeTej6tAgPbCh9AJJeCVlmTJK9tQYirUflVmw4eBbPj3DGw9DPh
+	 /v8zhWPFBuqaslcpDz14RgwbUS8ny5/rWHybGjYMjZP03pky8d2WZHPLlSfRSngZng
+	 vJFDnpszRtnTxPQrbL6k0yNapq0d6eDD7Rj0CpFBfjOZGej9nco5EgpN61iIsDp8BK
+	 yxByRdI3qIM47ADW73zvYkYU5sI6W5cPz3UC5t3cf5tTZSafrZN802mslPprWzrb7D
+	 jleZO8We5qLcwhKuXp29WcjKbefoKyQ3TqH1uO4aVVxoodxsYTM/nsbF1oe/k/3Vk7
+	 neM7v/p5esSfQ==
+From: Mark Brown <broonie@kernel.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Martin Kurbanov <mmkurbanov@sberdevices.ru>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240605-topic-amlogic-upstream-bindings-fixes-power-domains-spifc-v1-1-380f29ba4a16@linaro.org>
+References: <20240605-topic-amlogic-upstream-bindings-fixes-power-domains-spifc-v1-1-380f29ba4a16@linaro.org>
+Subject: Re: [PATCH] dt-bindings: spi: amlogic,a1-spifc: add missing
+ power-domains
+Message-Id: <171767344096.946998.3741235965670333447.b4-ty@kernel.org>
+Date: Thu, 06 Jun 2024 12:30:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b27:b0:374:491c:654a with SMTP id
- e9e14a558f8ab-374b1edc6c9mr3403695ab.1.1717673340109; Thu, 06 Jun 2024
- 04:29:00 -0700 (PDT)
-Date: Thu, 06 Jun 2024 04:29:00 -0700
-In-Reply-To: <000000000000adb08b061413919e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004720d2061a36fd41@google.com>
-Subject: Re: [syzbot] Re: 000000000000fcfa6406141cc8ac@google.com
-From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-d4707
 
-Rm9yIGFyY2hpdmFsIHB1cnBvc2VzLCBmb3J3YXJkaW5nIGFuIGluY29taW5nIGNvbW1hbmQgZW1h
-aWwgdG8KbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZywgc3l6a2FsbGVyLWJ1Z3NAZ29vZ2xl
-Z3JvdXBzLmNvbS4KCioqKgoKU3ViamVjdDogUmU6IDAwMDAwMDAwMDAwMGZjZmE2NDA2MTQxY2M4
-YWNAZ29vZ2xlLmNvbQpBdXRob3I6IHdvamNpZWNoLmdsYWR5c3pAaW5mb2dhaW4uY29tCgojc3l6
-IHRlc3QgaHR0cHM6Ly9saW51eC5nb29nbGVzb3VyY2UuY29tL2xpbnV4L2tlcm5lbC9naXQvdG9y
-dmFsZHMvbGludXggZTM3N2Q4MDNiNjVlZTQxMzAyMTNiM2MwNDFmYzI1ZmRmZWMxYmQ5MA0KDQpk
-aWZmIC0tZ2l0IGEva2VybmVsL3RyYWNlL2JwZl90cmFjZS5jIGIva2VybmVsL3RyYWNlL2JwZl90
-cmFjZS5jDQppbmRleCAyZDI5YmMwZjIxY2MuLjc1ZmRiOGUzYWJhYSAxMDA2NDQNCi0tLSBhL2tl
-cm5lbC90cmFjZS9icGZfdHJhY2UuYw0KKysrIGIva2VybmVsL3RyYWNlL2JwZl90cmFjZS5jDQpA
-QCAtMjM5MywxMiArMjM5MywyMSBAQCB2b2lkIF9fYnBmX3RyYWNlX3J1bihzdHJ1Y3QgYnBmX3Jh
-d190cF9saW5rICpsaW5rLCB1NjQgKmFyZ3MpDQog4oCC4oCC4oCC4oCC4oCCY2FudF9zbGVlcCgp
-Ow0KDQog4oCC4oCC4oCC4oCC4oCCLy8gcmV0dXJuIGlmIGluc3RydW1lbnRhdGlvbiBkaXNhYmxl
-ZCwgc2VlOiBicGZfZGlzYWJsZV9pbnN0cnVtZW50YXRpb24NCi3igILigILigILigILigIJpZiAo
-dW5saWtlbHkoX190aGlzX2NwdV9yZWFkKGJwZl9wcm9nX2FjdGl2ZSkpKSB7DQor4oCC4oCC4oCC
-4oCC4oCCaW50IGluc3RydW1lbnRhdGlvbiA9IHVubGlrZWx5KF9fdGhpc19jcHVfcmVhZChicGZf
-cHJvZ19hY3RpdmUpKTsNCivigILigILigILigILigIJpZiAoaW5zdHJ1bWVudGF0aW9uKSB7DQor
-4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCCcHJpbnRrKCJTS0lQIEZPUiBJTlNUUlVN
-RU5UQVRJT046ICVzID4gJXMgPiAlcCAvJWkgPT09PT09PT09PT09PT1cbiIsDQor4oCC4oCC4oCC
-4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC
-4oCCcHJvZy0+YXV4LT5uYW1lLA0KK+KAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKA
-guKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAgmxpbmstPmJ0cC0+dHAtPm5hbWUsIHBy
-b2csIGluc3RydW1lbnRhdGlvbik7DQog4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC
-YnBmX3Byb2dfaW5jX21pc3Nlc19jb3VudGVyKHByb2cpOw0KIOKAguKAguKAguKAguKAguKAguKA
-guKAguKAguKAguKAgnJldHVybjsNCiDigILigILigILigILigIJ9DQoNCi3igILigILigILigILi
-gIJpZiAodW5saWtlbHkodGhpc19jcHVfaW5jX3JldHVybigqKHByb2ctPmFjdGl2ZSkpICE9IDEp
-KSB7DQor4oCC4oCC4oCC4oCC4oCCaW50IGFjdGl2ZSA9IHRoaXNfY3B1X2luY19yZXR1cm4oKihw
-cm9nLT5hY3RpdmUpKTsNCivigILigILigILigILigIIvLyBwcmludGsoIiVzID4gJXMgPiAlcCAv
-JWlcbiIsIHByb2ctPmF1eC0+bmFtZSwgbGluay0+YnRwLT50cC0+bmFtZSwgcHJvZywgYWN0aXZl
-KTsNCivigILigILigILigILigIJpZiAoYWN0aXZlICE9IDEpIHsNCivigILigILigILigILigILi
-gILigILigILigILigILigIJwcmludGsoIlNLSVAgRk9SIEFDVElWRTogJXMgPiAlcyA+ICVwIC8l
-aSA9PT09PT09PT09PT09PT09PT09PT09PVxuIiwNCivigILigILigILigILigILigILigILigILi
-gILigILigILigILigILigILigILigILigILigILigILigILigILigILigIJwcm9nLT5hdXgtPm5h
-bWUsDQor4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC
-4oCC4oCC4oCC4oCC4oCC4oCCbGluay0+YnRwLT50cC0+bmFtZSwgcHJvZywgYWN0aXZlKTsNCiDi
-gILigILigILigILigILigILigILigILigILigILigIJicGZfcHJvZ19pbmNfbWlzc2VzX2NvdW50
-ZXIocHJvZyk7DQog4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCCZ290byBvdXQ7DQog
-4oCC4oCC4oCC4oCC4oCCfQ0KZGlmZiAtLWdpdCBhL2tlcm5lbC90cmFjZXBvaW50LmMgYi9rZXJu
-ZWwvdHJhY2Vwb2ludC5jDQppbmRleCA4ZDE1MDdkZDA3MjQuLmU3NTYyNjJkOGRmNyAxMDA2NDQN
-Ci0tLSBhL2tlcm5lbC90cmFjZXBvaW50LmMNCisrKyBiL2tlcm5lbC90cmFjZXBvaW50LmMNCkBA
-IC0xNjgsMTIgKzE2OSwyMSBAQCBzdGF0aWMgaW5saW5lIHZvaWQgcmVsZWFzZV9wcm9iZXMoc3Ry
-dWN0IHRyYWNlcG9pbnRfZnVuYyAqb2xkKQ0KIHN0YXRpYyB2b2lkIGRlYnVnX3ByaW50X3Byb2Jl
-cyhzdHJ1Y3QgdHJhY2Vwb2ludF9mdW5jICpmdW5jcykNCiB7DQog4oCC4oCC4oCC4oCC4oCCaW50
-IGk7DQor4oCC4oCC4oCC4oCC4oCCc3RydWN0IGJwZl9yYXdfdHBfbGluayAqbGluazsNCg0KIOKA
-guKAguKAguKAguKAgmlmICghdHJhY2Vwb2ludF9kZWJ1ZyB8fCAhZnVuY3MpDQog4oCC4oCC4oCC
-4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCCcmV0dXJuOw0KDQot4oCC4oCC4oCC4oCC4oCCZm9yIChp
-ID0gMDsgZnVuY3NbaV0uZnVuYzsgaSsrKQ0KLeKAguKAguKAguKAguKAguKAguKAguKAguKAguKA
-guKAgnByaW50ayhLRVJOX0RFQlVHICJQcm9iZSAlZCA6ICVwXG4iLCBpLCBmdW5jc1tpXS5mdW5j
-KTsNCivigILigILigILigILigIJmb3IgKGkgPSAwOyBmdW5jc1tpXS5mdW5jOyBpKyspIHsNCivi
-gILigILigILigILigILigILigILigILigILigILigIJsaW5rID0gZnVuY3NbaV0uZGF0YTsNCivi
-gILigILigILigILigILigILigILigILigILigILigIJpbnQgYWN0aXZlID0gdGhpc19jcHVfcmVh
-ZCgqKGxpbmstPmxpbmsucHJvZy0+YWN0aXZlKSk7DQor4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC
-4oCC4oCC4oCCcHJpbnRrKCJQcm9iZSAlZCA6ICVwIC8gJXA6ICVzLyVkIC8gJWlcbiIsIGksDQor
-4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC
-4oCC4oCC4oCC4oCCZnVuY3NbaV0uZnVuYywNCivigILigILigILigILigILigILigILigILigILi
-gILigILigILigILigILigILigILigILigILigILigILigILigILigIJsaW5rLA0KK+KAguKAguKA
-guKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKA
-guKAgmxpbmstPmxpbmsucHJvZy0+YXV4LT5uYW1lLA0KK+KAguKAguKAguKAguKAguKAguKAguKA
-guKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAguKAgmFjdGl2ZSwNCivi
-gILigILigILigILigILigILigILigILigILigILigILigILigILigILigILigILigILigILigILi
-gILigILigILigIJmdW5jc1tpXS5wcmlvKTsNCivigILigILigILigILigIJ9DQogfQ0KDQogc3Rh
-dGljIHN0cnVjdCB0cmFjZXBvaW50X2Z1bmMgKg0KQEAgLTI5OCw2ICszMDgsOCBAQCBzdGF0aWMg
-ZW51bSB0cF9mdW5jX3N0YXRlIG5yX2Z1bmNfc3RhdGUoY29uc3Qgc3RydWN0IHRyYWNlcG9pbnRf
-ZnVuYyAqdHBfZnVuY3MpDQogew0KIOKAguKAguKAguKAguKAgmlmICghdHBfZnVuY3MpDQog4oCC
-4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCCcmV0dXJuIFRQX0ZVTkNfMDsNCivigILigILi
-gILigILigIJpZiAoIXRwX2Z1bmNzWzBdLmZ1bmMpDQor4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC
-4oCC4oCC4oCCcmV0dXJuIFRQX0ZVTkNfMDsNCiDigILigILigILigILigIJpZiAoIXRwX2Z1bmNz
-WzFdLmZ1bmMpDQog4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCC4oCCcmV0dXJuIFRQX0ZV
-TkNfMTsNCiDigILigILigILigILigIJpZiAoIXRwX2Z1bmNzWzJdLmZ1bmMpDQoNClRoZSBpbmZv
-cm1hdGlvbiBpbiB0aGlzIGVtYWlsIGlzIGNvbmZpZGVudGlhbCBhbmQgbWF5IGJlIGxlZ2FsbHkg
-cHJpdmlsZWdlZC4gSXQgaXMgaW50ZW5kZWQgc29sZWx5IGZvciB0aGUgYWRkcmVzc2VlIGFuZCBh
-Y2Nlc3MgdG8gaXQgYnkgYW55b25lIGVsc2UgaXMgdW5hdXRob3JpemVkLiBJZiB5b3UgYXJlIG5v
-dCB0aGUgaW50ZW5kZWQgcmVjaXBpZW50LCBhbnkgZGlzY2xvc3VyZSwgY29weWluZywgZGlzdHJp
-YnV0aW9uIG9yIGFueSBhY3Rpb24gdGFrZW4gb3Igb21pdHRlZCB0byBiZSB0YWtlbiBiYXNlZCBv
-biBpdCwgaXMgc3RyaWN0bHkgcHJvaGliaXRlZCBhbmQgbWF5IGJlIHVubGF3ZnVsLg0K
+On Wed, 05 Jun 2024 11:37:45 +0200, Neil Armstrong wrote:
+> On the Amlogic A1, the SPI FC controller can require a power-domain to
+> operate, add it as optional.
+> 
+> 
+
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/1] dt-bindings: spi: amlogic,a1-spifc: add missing power-domains
+      commit: 3b0d6a32115c88618794406123ef8466f0327898
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
