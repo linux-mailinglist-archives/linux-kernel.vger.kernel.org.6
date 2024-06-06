@@ -1,84 +1,148 @@
-Return-Path: <linux-kernel+bounces-203627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A698FDE49
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:46:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A04D8FDE51
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1AD31F2598E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:46:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 981EF1F23D82
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F0A3B1BC;
-	Thu,  6 Jun 2024 05:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D773B3E487;
+	Thu,  6 Jun 2024 05:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuVObQkK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QtJGZlhg"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7CA2564;
-	Thu,  6 Jun 2024 05:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442A63BB59;
+	Thu,  6 Jun 2024 05:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717652786; cv=none; b=FeON1dVoEpopLc09mcDXr8kd3MfybEtIp1UZkMPWznFbFqooPL5mR+w+LhDXP1I1tDGCt74130KfPQsSfqxrP45JOxo5wGA2c7wTTEwbsg36AeBdhc1HjEd2h3ICz6do9Th7HbEMcsBX4f5p/nj4oZ2e9i3Txnlk+JKKH+q6gGU=
+	t=1717652921; cv=none; b=OQZHTwoWUH/xH1FhoT6OKfZCcU8SUkRqZpZhlGFQulAfYYW6dOgRKfLGNnOYtXVP3U+u0QFeAWlmu7t7W/ZZG5vRWoL0OBaTTxdydxwVtP+xqC8qnxpO1x9ypvRxDwucw/5USylt93ZK4VeqvJAjei0Er/xEsIGWaVJMhbxG5PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717652786; c=relaxed/simple;
-	bh=oasRQEowEDEvTcuNGQIUUnbDSjk2QLAdYm53uQmTzeg=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=QFv5avcjBi2wenkm3CgKjpl5PuOCHvPRBbEFDxiHFdGL4C6eJ2ho+RQKjV1QM9QXeIawqaqPoDjlAZJ+J2aecS673y6CD0nJjsKJyJ/rb/y0Oh2YmXrlWbAjsbSWiT19dUsbUsdsxIlvzTlnQ9dPC8u8yO6wPQkJIU7pJRm3jso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TuVObQkK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26179C4AF0F;
-	Thu,  6 Jun 2024 05:46:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717652785;
-	bh=oasRQEowEDEvTcuNGQIUUnbDSjk2QLAdYm53uQmTzeg=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:From;
-	b=TuVObQkKFUYUfNEWP5lb1pHRVQVrSJug+a5WQPZwLzW+wRlbOLBzOP8t8f14smZLa
-	 2l3/bZqUn8Cm3swwT4chu7n98wrPdYTs3Y2bR/4ATgcmDZasrzy1ZetX3O92spiHpw
-	 JJG024TSkuBeyFKRzIXCECF6cF+kpO9CXFHr1pf2km4MnZiPJkai3dmBbIUsTuiCC1
-	 G9qbY3IsL6HV8wayvjxlh+cjffE4fml0QZKXi0cCjf++NBOWzDYwgRdhk0cP/WiZQt
-	 f9CnreLxOL9P62vcjMfxTjLyBgZebMK4lUv2a9fjSWKLb4ammyrrxE8biY1CI4qm5i
-	 RW0ASqPQMfbAQ==
-References: <20240603112222.2109341-1-yi.zhang@huaweicloud.com>
-User-agent: mu4e 1.10.8; emacs 29.2
-From: Chandan Babu R <chandanbabu@kernel.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
- brauner@kernel.org, david@fromorbit.com, jack@suse.cz,
- yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH] iomap: keep on increasing i_size in iomap_write_end()
-Date: Thu, 06 Jun 2024 11:15:33 +0530
-In-reply-to: <20240603112222.2109341-1-yi.zhang@huaweicloud.com>
-Message-ID: <87tti61v4g.fsf@debian-BULLSEYE-live-builder-AMD64>
+	s=arc-20240116; t=1717652921; c=relaxed/simple;
+	bh=S9BRO1CiBzd0Cxt3mGbAHDhzFMKInH76sn7ppWFxmPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hZNVBsFwyDFY2R0C/o9eJi4MmfNwxhbQMiBwSEqM80I8pTq9+ht1SgRVzOEvges7/5D9qT4oj0PGNM5cjdy+yLR+SPDnwje0FZujNva80NYVfXVo7mB7ZzcejZoI4u2OjyKHDZ52MFwGjWJeGVg1+9P/ALsxNkgNCq+utL0UaQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QtJGZlhg; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4564fQ1l031562;
+	Thu, 6 Jun 2024 05:48:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc : content-type : date
+ : from : in-reply-to : message-id : mime-version : references : subject :
+ to; s=pp1; bh=F1QxdnanM0DI+xMmZuQK1XU1kD0sRkv46FM+ALv8/RY=;
+ b=QtJGZlhgqgx4YR8FKPwgMLc7QHJXCg1ncKiGb8ewrAUZYkfnr6a4dxPLnWAg13NWNePA
+ vGZudAhNawb/e7bGe0QaJ/Pldlz+cuaBQ4Nr86ua8HjDUu1Kxx4By4nAV4JJ4+4Vj4AN
+ tNXmeQDcTecG7/V5UjT0gVg+ypwNw1npXaZW8rtiIYTD0rgCPLqmKWybQEdrMixGqrNH
+ Gv/bgOpJvacHCgUAfcu24rFbOSZ4Gm/3v5PNswzqqp7HTUa0fnpc0winUYwuXwJ0Z+Mn
+ iOeM9Fw1zdPWbAOhZiMxJio+X2IevmzNgnr7ShIRk78MnLVf9qKTobWdKDA4ALwx8M6u 0w== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yk4n18bee-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Jun 2024 05:48:24 +0000
+Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4565mNsq004930;
+	Thu, 6 Jun 2024 05:48:23 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yk4n18be9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Jun 2024 05:48:23 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4564gXQW008458;
+	Thu, 6 Jun 2024 05:48:22 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ygec10xc1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Jun 2024 05:48:22 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4565mIDC25559620
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 6 Jun 2024 05:48:20 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 75F6F20956;
+	Thu,  6 Jun 2024 05:46:16 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 365242093B;
+	Thu,  6 Jun 2024 05:46:12 +0000 (GMT)
+Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com (unknown [9.43.32.207])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu,  6 Jun 2024 05:46:11 +0000 (GMT)
+Date: Thu, 6 Jun 2024 11:16:08 +0530
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        aneesh.kumar@kernel.org, naveen.n.rao@linux.ibm.com, corbet@lwn.net
+Cc: linuxppc-dev@lists.ozlabs.org, linux-doc@vger.kernel.org,
+        kvm@vger.kernel.org, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] Fix doorbell emulation for v2 API on PPC
+Message-ID: <yzixdicgdqcten6eglcc4zlhn3sbnqrax3ymzzqvdmxvdh63zx@xymyajel3aoh>
+References: <20240605113913.83715-1-gautam@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605113913.83715-1-gautam@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: EblB2tKXDq9detrDQrwOMaMKSlbJs6rb
+X-Proofpoint-GUID: -G_Cdwm-ls8YhJt_YOO4Dh9rKtQGZgs8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-06_01,2024-06-06_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ mlxlogscore=583 mlxscore=0 malwarescore=0 phishscore=0 impostorscore=0
+ spamscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2406060040
 
-On Mon, Jun 03, 2024 at 07:22:22 PM +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
->
-> Commit '943bc0882ceb ("iomap: don't increase i_size if it's not a write
-> operation")' breaks xfs with realtime device on generic/561, the problem
-> is when unaligned truncate down a xfs realtime inode with rtextsize > 1
-> fs block, xfs only zero out the EOF block but doesn't zero out the tail
-> blocks that aligned to rtextsize, so if we don't increase i_size in
-> iomap_write_end(), it could expose stale data after we do an append
-> write beyond the aligned EOF block.
->
-> xfs should zero out the tail blocks when truncate down, but before we
-> finish that, let's fix the issue by just revert the changes in
-> iomap_write_end().
+On Wed, Jun 05, 2024 at 05:09:08PM GMT, Gautam Menghani wrote:
+> Doorbell emulation for KVM on PAPR guests is broken as support for DPDES
+> was not added in initial patch series [1].
+> Add DPDES support and doorbell handling support for V2 API. 
+> 
+> [1] lore.kernel.org/linuxppc-dev/20230914030600.16993-1-jniethe5@gmail.com
+> 
+> Changes in v2:
+> 1. Split DPDES support into its own patch
+> 
+> Gautam Menghani (2):
+>   arch/powerpc/kvm: Add DPDES support in helper library for Guest state
+>     buffer
+>   arch/powerpc/kvm: Fix doorbell emulation for v2 API
+> 
+>  Documentation/arch/powerpc/kvm-nested.rst     | 4 +++-
+>  arch/powerpc/include/asm/guest-state-buffer.h | 3 ++-
+>  arch/powerpc/include/asm/kvm_book3s.h         | 1 +
+>  arch/powerpc/kvm/book3s_hv.c                  | 5 +++++
+>  arch/powerpc/kvm/book3s_hv_nestedv2.c         | 7 +++++++
+>  arch/powerpc/kvm/test-guest-state-buffer.c    | 2 +-
+>  6 files changed, 19 insertions(+), 3 deletions(-)
+> 
+> -- 
+> 2.45.1
+> 
 
-I didn't notice any regressions with this patch applied. Hence,
 
-Tested-by: Chandan Babu R <chandanbabu@kernel.org>
+Hi Michael,
 
--- 
-Chandan
+This patch series is to be backported for all kernels >= 6.7. So the tag
+should be 
+Cc: stable@vger.kernel.org # v6.7+
+
+and not
+Cc: stable@vger.kernel.org # v6.7
+
+Should I send a new version of this series or can you please make this 
+change when pulling in your tree?
+
+Thanks,
+Gautam
 
