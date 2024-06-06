@@ -1,250 +1,170 @@
-Return-Path: <linux-kernel+bounces-204778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E668FF38B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:17:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AB338FF382
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDF91B285FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:14:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0D15B256AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BC41991A6;
-	Thu,  6 Jun 2024 17:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CD3198E84;
+	Thu,  6 Jun 2024 17:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZfHKPHd8"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FwLPMfxO"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE9D198E86
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 17:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BB6224D1;
+	Thu,  6 Jun 2024 17:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717694048; cv=none; b=FHyiAXuXzFVBrqIwYb7iAkncUwHFPE/byLQuV/oqOuVLtIJSoKcuhU+Xi6bMJKxZSzQel7ZbWfVFwXiZDvhFWTLkHmsebm9uiYa5DOtNgjrBMvwLzddsKahjvJMSERQ81Cqho5h9ifEERfI12/4sbT3o/7xSbNTKRw7xCfsWqps=
+	t=1717693826; cv=none; b=QzAFBabIdUnpMa9uBE0aaPxNwhnnBnIPSRqZ7x7mM7VLIvASBcI7EgbLzjmxqKeDelznWBJ76MqynSOEv9/BzeM9QA0gUfAG3z8DVQV7Dz55ynj1uubkghMSeBdr4GiySDsNDvLtBTPBE8moowdBkQFHQ8zyrkd8o5RvN0nk9RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717694048; c=relaxed/simple;
-	bh=3PcZbTSvMIet1KvRH/3UIizXiqdHfZwbn62ekU7BeTk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MJ/6OdgOuLDl3lZgqfRIj8McYQXpGkT0SVJauOeTsbVLASQczru1yMeQeaz3DXoMztE2cpn7PMwRvR+fQhthrtqZyHS5O8Q1gIx+yvXk509O4zXAFLSqWlZqZuvalVAzwOL21gp/UVVbJ4+1DhV//+9yGXbwHHQi6Lxc3AOTFxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZfHKPHd8; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-62a0809c805so12054077b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 10:14:06 -0700 (PDT)
+	s=arc-20240116; t=1717693826; c=relaxed/simple;
+	bh=M70tp6532oErosXvST9jh7Vo9666z4tcB3oOndDwuWo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aiDu3bUys2KrKvot9jGaqVjx5UY/uZ84oDjqYAT9z1x1xxB7aq7SD1z/yuSkr7lZmTXfesfk8XTbEWoCGw6x3+U7BO2m+A6v8CcnBT+TIzC1rjclIhdmcbihZnWNutKPsAkcUTgI1bH2xKdJ+10J4obYuH84LY9g4gqYAWEj9yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FwLPMfxO; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52b94ad88cbso1882106e87.0;
+        Thu, 06 Jun 2024 10:10:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717694045; x=1718298845; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hRK/mnhg9puUTTzwI/wwQsIKXT3wkOFAvZtn/HKANeU=;
-        b=ZfHKPHd88/pQdXDhSx7rj+OQOYhlJT8Ziy+oVtQGDenFjzFnp1lY1uDONjpIbY6C6L
-         T0SbIYjboXx1e02tAi3c3ZD3Gq+G2goZHggWjMm33l5djEuEPgfApdzrTlQsVSUKx1NT
-         STiUjeurb7q9QslwoKoU9kU6oYDOqZkkXO+LgaFSf6sv3L/fTb5ekW0oqxuv34FoqNxA
-         T5PcV+YIq8Lh/fwjRYzWA/oIS3a3kfdo+pTp/iOWhEUJXrhxNxbjCaYVw3m+oPnMl0pm
-         qbpCxk7rC7UMkgI24mawWB4sAvdATgJ0ztfcCGzylZuwZLWS+CzpSmGIURkswJap463h
-         4b2w==
+        d=gmail.com; s=20230601; t=1717693823; x=1718298623; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vfcPheLV0NZCmf87grsxqRgL031WLMyzJrb0w/6enLU=;
+        b=FwLPMfxOY2UivHsEBqPZJSUYsTJ2gFu9CCyLYNTISJh9QqTx2uYLsxqsURO8Ffw0eK
+         VUC2vozC6NnqwZl4yn0V1yCajm/GzIIExF0KSafQEVYNmX4XAyj9+mE/4VXTj3vvvzmU
+         0oZPusyxzTLjBAEMteDVtHpq/5rqyLPVGJIEC+NXR/Kv4qCpphb2fy/BoiDBMcZ6gU9u
+         QQux5JzIW/Tpa8cLoWgt6K0afncWT7ozOhT9o3WzR+uEWVD8cHTy57YDH/ZPEv6PLWgI
+         59puwfdbabzuOcwairzvGVCXpgQ2ZRgTeTSEkZfVb0oz3EpzWGOPTUF4hFFZzS/zZ4HK
+         rd3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717694045; x=1718298845;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hRK/mnhg9puUTTzwI/wwQsIKXT3wkOFAvZtn/HKANeU=;
-        b=cyvmyl2nu8BmZ3w9s7AlkcPaIG/SKJPVOQdG1FamIpVPL++u4Cu5iAUpFhjdlZC+qi
-         XbaC3R5KxFticGxXS7X1T/ORVrlGuz0hrMW3kGbTmA/cCNAoRUjQvxGlUu1Drn2BiwNf
-         S9nHLdRgi+jQLBrAgRPt24SPxLIkOF/GyrjHTbWe6TmnYuyvfGshpsNs2aWmB7prZQF5
-         7bQ0hhrZOIZrKh2iItOtK7SuE+QdctzYlPxy37xRRl06qh3dUrgJjmsUcrBOXkZR10Sm
-         DHoRt2+CWfzacUZ6CANDUXY9qXx1i0W4cgPxL2PuKnmhCg56zBSsLGycvlmq92Xewn89
-         Ozmw==
-X-Forwarded-Encrypted: i=1; AJvYcCW31x5uYZpSw/Fwz90XtXxjGKnZ2UdhlsrzS77UpIhuA0eQhcgYg6+ADp7jwSzwDnE5UKoQhLn58LtG6rIlgqsV21HMgsGCWoRbwnKJ
-X-Gm-Message-State: AOJu0YxkP2ZvALq0qI0/u/EdZRWz+g5Sk3sBd1zQonqXHlYTUEWo2Hgd
-	L44CSM0XKaqTPwLFDo63AgUS6fSKiKx3jEIu+D2vig+amjmigIB8PDGFAL0CipuNviAfqn5Gr23
-	OztCUmjh8oz2/AAU61YNEHk6jzHbPRFJgmUC2
-X-Google-Smtp-Source: AGHT+IE6g1Qt1a0uWEMeEkhuX3E8E0Aujra9U26A4am4FT81CMUGmJmJOs73aDziKCtCgxpH2azFXeJj7iJZZjlkoqQ=
-X-Received: by 2002:a0d:d709:0:b0:615:1a0:78ea with SMTP id
- 00721157ae682-62cbff3b0eamr45661767b3.34.1717694044790; Thu, 06 Jun 2024
- 10:14:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717693823; x=1718298623;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vfcPheLV0NZCmf87grsxqRgL031WLMyzJrb0w/6enLU=;
+        b=pEU2hzL6XX8s+P4ELdiqVNzK+YnZP0jRZwsI9hYa0dO8OKTOd9XyhZNDQbRlsJgr4O
+         T3YqIx44F+JjEOGon7akoyNQ+incqc3OfTC5aylSH6i0oX/yllQ1ovZ7uOy3jnI02D6U
+         X3LjT+G37vfgFGageMZo51zicXZ7sIMDUPSi34sUhg+/7XNzZWhFydKwxTUZrVLCz0ca
+         ovzNpy9aZAkBYjpdhKq/Y3j+2BF7xzkbp4oszFUrAjg5e7g8lffksQsHGHm4tv84l1Qq
+         wttaqD0iVXLtOURHWcpIvmWxyfkcpGqyCfQGyF7TG09sBgaFFKrNkd1LxcAnXrs69VhH
+         uk3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWy+GvOMYSJLZg03U9nkga4yhj8sbckBDMxAp57PYrUXrpHEHHTntqvcWamaFF8AH2DJa3bmEPmOmAxdqsD18kYm6G0tkaBkATLeWY+
+X-Gm-Message-State: AOJu0YyeGvYovP0QC86AT+6n1059wmksY8zn36AtQfTTq7mpVc/yqwab
+	5hWcJFGxf4nX1TrCyDC/6teO4sE49l9xUw1cXy1xUn8n468xTtw0
+X-Google-Smtp-Source: AGHT+IHjAV1sRFdp+OWciQrMCzE/Ou7KGCZoDPrUBVN8JEZkK68c3eqRAB4TI9M5ylBpowsDZcF8Qg==
+X-Received: by 2002:a05:6512:3f09:b0:51f:3e0c:ace3 with SMTP id 2adb3069b0e04-52bb9f785d9mr227002e87.16.1717693822817;
+        Thu, 06 Jun 2024 10:10:22 -0700 (PDT)
+Received: from [10.0.0.42] (host-85-29-124-88.kaisa-laajakaista.fi. [85.29.124.88])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb423cf28sm246062e87.194.2024.06.06.10.10.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 10:10:22 -0700 (PDT)
+Message-ID: <6a88c1b3-b3d0-48d0-a620-b17464cb559e@gmail.com>
+Date: Thu, 6 Jun 2024 20:13:55 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605002459.4091285-1-andrii@kernel.org> <20240605002459.4091285-2-andrii@kernel.org>
- <Zl-38XrUw9entlFR@casper.infradead.org> <uevtozlryyqw5vj2duuzowupknfynmreruiw6m7bcxryjppqpm@7g766emooxfh>
- <CAEf4BzZFpidjJzRMWboZYY03U8M22Yo1sqXconi36V11XA-ZfA@mail.gmail.com>
- <CAEf4BzYDhtkYt=qn2YgrnRkZ0tpa3EPAiCUcBkdUa-9DKN22dQ@mail.gmail.com>
- <CAEf4Bzbzj55LfgTom9KiM1Xe8pfXvpWBd6ETjXQCh7M===G5aw@mail.gmail.com>
- <5fmylram4hhrrdl7vf6odyvuxcrvhipsx2ij5z4dsfciuzf4on@qwk7qzze6gbt>
- <CAJuCfpER9qUSGbWBcHhT1=ssH41Xv8--XVA5BEPCM7uf=z_GLw@mail.gmail.com> <CAEf4Bzax2E1JS=MUm=sBJvcMb+CyWaPdxmr2mDuODs2cc3_mTg@mail.gmail.com>
-In-Reply-To: <CAEf4Bzax2E1JS=MUm=sBJvcMb+CyWaPdxmr2mDuODs2cc3_mTg@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 6 Jun 2024 10:13:52 -0700
-Message-ID: <CAJuCfpFKA9KChaunoYo-yH4GipvGjRpKqyneOhwi-E6n3Lfq3g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/9] mm: add find_vma()-like API but RCU protected and
- taking VMA lock
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
-	linux-mm@kvack.org, rppt@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] ASoC: ti: davinci-mcasp: Set min period size using
+ FIFO config
+To: Jai Luthra <j-luthra@ti.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ alsa-devel@alsa-project.org
+References: <20240604-asoc_next-v1-0-e895c88e744d@ti.com>
+ <20240604-asoc_next-v1-2-e895c88e744d@ti.com>
+Content-Language: en-US
+From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
+In-Reply-To: <20240604-asoc_next-v1-2-e895c88e744d@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 6, 2024 at 9:52=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Wed, Jun 5, 2024 at 4:22=E2=80=AFPM Suren Baghdasaryan <surenb@google.=
-com> wrote:
-> >
-> > On Wed, Jun 5, 2024 at 10:03=E2=80=AFAM Liam R. Howlett <Liam.Howlett@o=
-racle.com> wrote:
-> > >
-> > > * Andrii Nakryiko <andrii.nakryiko@gmail.com> [240605 12:27]:
-> > > > On Wed, Jun 5, 2024 at 9:24=E2=80=AFAM Andrii Nakryiko
-> > > > <andrii.nakryiko@gmail.com> wrote:
-> > > > >
-> > > > > On Wed, Jun 5, 2024 at 9:13=E2=80=AFAM Andrii Nakryiko
-> > > > > <andrii.nakryiko@gmail.com> wrote:
-> > > > > >
-> > > > > > On Wed, Jun 5, 2024 at 6:33=E2=80=AFAM Liam R. Howlett <Liam.Ho=
-wlett@oracle.com> wrote:
-> > > > > > >
-> > > > > > > * Matthew Wilcox <willy@infradead.org> [240604 20:57]:
-> > > > > > > > On Tue, Jun 04, 2024 at 05:24:46PM -0700, Andrii Nakryiko w=
-rote:
-> > > > > > > > > +/*
-> > > > > > > > > + * find_and_lock_vma_rcu() - Find and lock the VMA for a=
- given address, or the
-> > > > > > > > > + * next VMA. Search is done under RCU protection, withou=
-t taking or assuming
-> > > > > > > > > + * mmap_lock. Returned VMA is guaranteed to be stable an=
-d not isolated.
-> > > > > > > >
-> > > > > > > > You know this is supposed to be the _short_ description, ri=
-ght?
-> > > > > > > > Three lines is way too long.  The full description goes bet=
-ween the
-> > > > > > > > arguments and the Return: line.
-> > > > > >
-> > > > > > Sure, I'll adjust.
-> > > > > >
-> > > > > > > >
-> > > > > > > > > + * @mm: The mm_struct to check
-> > > > > > > > > + * @addr: The address
-> > > > > > > > > + *
-> > > > > > > > > + * Returns: The VMA associated with addr, or the next VM=
-A.
-> > > > > > > > > + * May return %NULL in the case of no VMA at addr or abo=
-ve.
-> > > > > > > > > + * If the VMA is being modified and can't be locked, -EB=
-USY is returned.
-> > > > > > > > > + */
-> > > > > > > > > +struct vm_area_struct *find_and_lock_vma_rcu(struct mm_s=
-truct *mm,
-> > > > > > > > > +                                        unsigned long ad=
-dress)
-> > > > > > > > > +{
-> > > > > > > > > +   MA_STATE(mas, &mm->mm_mt, address, address);
-> > > > > > > > > +   struct vm_area_struct *vma;
-> > > > > > > > > +   int err;
-> > > > > > > > > +
-> > > > > > > > > +   rcu_read_lock();
-> > > > > > > > > +retry:
-> > > > > > > > > +   vma =3D mas_find(&mas, ULONG_MAX);
-> > > > > > > > > +   if (!vma) {
-> > > > > > > > > +           err =3D 0; /* no VMA, return NULL */
-> > > > > > > > > +           goto inval;
-> > > > > > > > > +   }
-> > > > > > > > > +
-> > > > > > > > > +   if (!vma_start_read(vma)) {
-> > > > > > > > > +           err =3D -EBUSY;
-> > > > > > > > > +           goto inval;
-> > > > > > > > > +   }
-> > > > > > > > > +
-> > > > > > > > > +   /*
-> > > > > > > > > +    * Check since vm_start/vm_end might change before we=
- lock the VMA.
-> > > > > > > > > +    * Note, unlike lock_vma_under_rcu() we are searching=
- for VMA covering
-> > > > > > > > > +    * address or the next one, so we only make sure VMA =
-wasn't updated to
-> > > > > > > > > +    * end before the address.
-> > > > > > > > > +    */
-> > > > > > > > > +   if (unlikely(vma->vm_end <=3D address)) {
-> > > > > > > > > +           err =3D -EBUSY;
-> > > > > > > > > +           goto inval_end_read;
-> > > > > > > > > +   }
-> > > > > > > > > +
-> > > > > > > > > +   /* Check if the VMA got isolated after we found it */
-> > > > > > > > > +   if (vma->detached) {
-> > > > > > > > > +           vma_end_read(vma);
-> > > > > > > > > +           count_vm_vma_lock_event(VMA_LOCK_MISS);
-> > > > > > > > > +           /* The area was replaced with another one */
-> > > > > > > >
-> > > > > > > > Surely you need to mas_reset() before you goto retry?
-> > > > > > >
-> > > > > > > Probably more than that.  We've found and may have adjusted t=
-he
-> > > > > > > index/last; we should reconfigure the maple state.  You shoul=
-d probably
-> > > > > > > use mas_set(), which will reset the maple state and set the i=
-ndex and
-> > > > > > > long to address.
-> > > > > >
-> > > > > > Yep, makes sense, thanks. As for the `unlikely(vma->vm_end <=3D
-> > > > > > address)` case, I presume we want to do the same, right? Basica=
-lly, on
-> > > > > > each retry start from the `address` unconditionally, no matter =
-what's
-> > > > > > the reason for retry.
-> > > > >
-> > > > > ah, never mind, we don't retry in that situation, I'll just put
-> > > > > `mas_set(&mas, address);` right before `goto retry;`. Unless we s=
-hould
-> > > > > actually retry in the case when VMA got moved before the requeste=
-d
-> > > > > address, not sure, let me know what you think. Presumably retryin=
-g
-> > > > > will allow us to get the correct VMA without the need to fall bac=
-k to
-> > > > > mmap_lock?
-> > > >
-> > > > sorry, one more question as I look some more around this (unfamilia=
-r
-> > > > to me) piece of code. I see that lock_vma_under_rcu counts
-> > > > VMA_LOCK_MISS on retry, but I see that there is actually a
-> > > > VMA_LOCK_RETRY stat as well. Any reason it's a MISS instead of RETR=
-Y?
-> > > > Should I use MISS as well, or actually count a RETRY?
-> > > >
-> > >
-> > > VMA_LOCK_MISS is used here because we missed the VMA due to a write
-> > > happening to move the vma (rather rare).  The VMA_LOCK missed the vma=
-.
-> > >
-> > > VMA_LOCK_RETRY is used to indicate we need to retry under the mmap lo=
-ck.
-> > > A retry is needed after the VMA_LOCK did not work under rcu locking.
-> >
-> > Originally lock_vma_under_rcu() was used only inside page fault path,
-> > so these counters helped us quantify how effective VMA locking is when
-> > handling page faults. With more users of that function these counters
-> > will be affected by other paths as well. I'm not sure but I think it
-> > makes sense to use them only inside page fault path, IOW we should
-> > probably move count_vm_vma_lock_event() calls outside of
-> > lock_vma_under_rcu() and add them only when handling page faults.
->
-> Alright, seems like I should then just drop count_vm_vma_lock_event()
-> from the API I'm adding.
+Hi,
 
-That would be my preference but as I said, I'm not 100% sure about
-this direction.
+On 6/4/24 1:01 PM, Jai Luthra wrote:
+> The minimum period size was enforced to 64 as older devices integrating
+> McASP with EDMA used an internal FIFO of 64 samples.
+> 
+> With UDMA based platforms this internal McASP FIFO is optional, as the
+> DMA engine internally does some buffering which is already accounted for
+> when registering the platform. So we should read the actual FIFO
+> configuration (txnumevt/rxnumevt) instead of hardcoding frames.min to
+> 64.
+> 
+> Signed-off-by: Jai Luthra <j-luthra@ti.com>
+> ---
+>  sound/soc/ti/davinci-mcasp.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/soc/ti/davinci-mcasp.c b/sound/soc/ti/davinci-mcasp.c
+> index 1e760c315521..2a53fb7e72eb 100644
+> --- a/sound/soc/ti/davinci-mcasp.c
+> +++ b/sound/soc/ti/davinci-mcasp.c
+> @@ -70,6 +70,7 @@ struct davinci_mcasp_context {
+>  struct davinci_mcasp_ruledata {
+>  	struct davinci_mcasp *mcasp;
+>  	int serializers;
+> +	u8 numevt;
+>  };
+>  
+>  struct davinci_mcasp {
+> @@ -1470,12 +1471,13 @@ static int davinci_mcasp_hw_rule_format(struct snd_pcm_hw_params *params,
+>  static int davinci_mcasp_hw_rule_min_periodsize(
+>  		struct snd_pcm_hw_params *params, struct snd_pcm_hw_rule *rule)
+>  {
+> +	struct davinci_mcasp_ruledata *rd = rule->private;
+>  	struct snd_interval *period_size = hw_param_interval(params,
+>  						SNDRV_PCM_HW_PARAM_PERIOD_SIZE);
+>  	struct snd_interval frames;
+>  
+>  	snd_interval_any(&frames);
+> -	frames.min = 64;
+> +	frames.min = rd->numevt;
 
->
-> >
-> > >
-> > > Thanks,
-> > > Liam
+64 was a nice number ;)
+
+>  	frames.integer = 1;
+>  
+>  	return snd_interval_refine(period_size, &frames);
+> @@ -1516,6 +1518,9 @@ static int davinci_mcasp_startup(struct snd_pcm_substream *substream,
+>  		if (mcasp->serial_dir[i] == dir)
+>  			max_channels++;
+>  	}
+> +	ruledata->numevt = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) ?
+> +				   mcasp->txnumevt :
+> +				   mcasp->rxnumevt;
+
+Do this at the same location where the rest of the ruledata members are
+initialized, or
+
+>  	ruledata->serializers = max_channels;
+>  	ruledata->mcasp = mcasp;
+>  	max_channels *= tdm_slots;
+> @@ -1591,7 +1596,7 @@ static int davinci_mcasp_startup(struct snd_pcm_substream *substream,
+>  
+>  	snd_pcm_hw_rule_add(substream->runtime, 0,
+>  			    SNDRV_PCM_HW_PARAM_PERIOD_SIZE,
+> -			    davinci_mcasp_hw_rule_min_periodsize, NULL,
+> +			    davinci_mcasp_hw_rule_min_periodsize, ruledata,
+
+You could just pass a pointer to txnumevt/rxnumevt directly...
+
+>  			    SNDRV_PCM_HW_PARAM_PERIOD_SIZE, -1);
+>  
+>  	return 0;
+> 
+
+-- 
+Péter
 
