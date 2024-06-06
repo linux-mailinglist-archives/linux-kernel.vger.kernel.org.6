@@ -1,75 +1,78 @@
-Return-Path: <linux-kernel+bounces-203505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FF278FDC34
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:36:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3DC18FDC36
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:40:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06E6D1C23DF1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:36:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAE481C23549
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0164A1401B;
-	Thu,  6 Jun 2024 01:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1D014AB8;
+	Thu,  6 Jun 2024 01:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="nDEs2rxc"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2088.outbound.protection.outlook.com [40.107.249.88])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="eObzf+w8"
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2086.outbound.protection.outlook.com [40.107.6.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD201798C;
-	Thu,  6 Jun 2024 01:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A304911187;
+	Thu,  6 Jun 2024 01:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.6.86
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717637804; cv=fail; b=hkzMcIusfRT5VEJuW0myBO1X3/4YU+8iDClJ8AbiDUd8Yw8jTleimWoRklyKp2di2cj3zW8TTd0Js0OgguhEO9oGznkfVKWMHQFmwFjj6/ZL12Q920SggLBm/EUr1loWMCxYn37zYy3KlUHO9KRrAoUxIPYksSOnW1bmZCkA788=
+	t=1717637997; cv=fail; b=SEFHMG4dd7SJFakPK5n2eZ04zsL28tkRF47IS2kJGcTZnG4rBMSgq5rhrk6r8a94qTfXSTHGOp10hXC7bLxCQHWRIhSip45StpTTsRdo+FBGrz6lv0TVxkOaTV4NgrVPotdfJktviHxIXM45FRVJWwih/LLj/gHbtEzmNySClkE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717637804; c=relaxed/simple;
-	bh=gp8TFH3m1uHPG4gQxNHmSxg2i7rMJE2xbOLDnZOvY9k=;
+	s=arc-20240116; t=1717637997; c=relaxed/simple;
+	bh=0UJDOrx/vhtVtUP7brODY3gaqI1cfTyDu0SCJv837Og=;
 	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=BHuEef1MMU5d7hipaGqJfjMCSuR0AP3M+oK68NkrrEWHBTXl6KT0MUSRqnYG93jX//HZWZv5lVQQ3VpxwZhJ8jUcgqdyKHc875GrsfRfHp9gc0TSfCYn/3vB40T3KSIQyKXmXV65Mr/M8lLqQXcSMXXI/Cz+jjdg5fynDVwg/bM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=nDEs2rxc; arc=fail smtp.client-ip=40.107.249.88
+	 Content-Type:MIME-Version; b=FJftoWA5o2VHDOguiSLieCjQABC0zfMG6ttTGnDayG8nkmZQQN5wkjVkNgJ0EnGtQNe86IVx+MbbocNeinyS/ErbAGxf+HfHe4hQEvM/DRqhKUCazn8DzaXDmTdSXnyoxbWFBv26qaEyM2rnAotgsjYwgYPpGRvQ1xnjL5bRC24=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=eObzf+w8; arc=fail smtp.client-ip=40.107.6.86
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=b1MX9wSn6zeNjwJUBmkXTmnkP2ug+1VrWQZ94uihwV9GwqwBRNmLHZQ9n5NmZVR0YuwNGweNUduTFmwxkUTdkH7Yk2ZNjCmxON8Sf7+cs+gCNOkT1dqjW1w5xcWRs/hGgcN2y0UUQS34OAuF4j4tkSDtKdx2jZMIxc75oP18tUoebLgWvI+NKaNADTXIOynkLB3npJsYNwZWEiWTuwdQKfmeAZ0UHJyOHhU5K7DYczeFm9xpAzbjJh+jKoOIyQzR3iZTzuRFhI9lueVjw91JHidXv29w+xlI3me00YMQxAGf1EAcBfIoEi4q6zWsrfDUe5UADeB8XKQh/fN9om7w1A==
+ b=lqVsnHVfpjl4yXJ3B8bgXuhsvlHK+9KQkcF4W0UPvdkVqUUY7jrTy6q3YgYYrInuOlylnyuyJfSBtYl1FV08szdFCpdNXq8k/fAh7g9hBWrnUUAafNDtVanWKzjS/He4iRCShvJFdvjb1n4YV29Akxcv4nM7yFfVR3tDrvPtXWj5kXzoLTvHPFEK9mkvZF0pytiu/hlNI10Az8hoVbo1NIDqfzd6PnV/kP+7a9l8z4KaAdsYEp6H1bV/D8QTya1efqrUlO0kPrlK1611SAZhsqt1DTksDfRoaVuaUNBwQXfJV3JYAPwQFam+2wDT+o9z6VVOk/SUla5eizR0nfyz8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jG9GUIPKYMpfAexQlfgC23EhTtFuCHAP3BVdwadhVNg=;
- b=SYdZq1KAwAwE1lznAnek/r5qUbRs7U+1iJPbiKAFVY9QG8jP1Zp2MdPb26+fNfDjs1gxblzCJhG+9zYd2Nqroa3gL3r9ua2AcMWnqEy6D4e5+TJXfw9iDanHFYAJIHflNZ9DutN0/H3jteX3psT018ngnIgswaQJwy+nfsvBdktCt5irPapOqiW7O1fZQNmFn+m5ID3ALiJO1xznCERVNHc4Ggx5Tw7erIoGUaKYwCNh8YhMsMOmyhzwKetHzdjCuFDxRTauTKwkIPLj/05ljkcGhCT7xHpSRoW0fe4nuf9qWmnmBLkLnP3r8r33si2eNaVZQRXQH/WelOnyOSyARw==
+ bh=Y2q8dQ9ME2IeE77zfYFnz9T2I1TZ0nI+XstzOepGsMk=;
+ b=Men7cEDzEhLYYBk4rR2gg6ClYgiUW0wx0XsITMDsx3plok1HUf9Y2VSgo607EVIq7PTTGhLTqjryenv3DBrhJptcIPVrtrsRGK5d/rbUdO5tGzS07hyZArTSrfwOPbST9nBcvqozbEoYPjB7c9XIeSTPGFyn+3LRPgc9vMvAqIU4H/bYSnEb5V0Rnugt5dvX9BrYi5GSXRYU5GrVNDdzwZAvAbPvKb1I6XAHuq2p62qMpNakJr8YA5s05BYO6MJEMSBOWlMXoMZrEUCouDxIq4x45jBqkK6sY5AcEzcIVcSdMGWSo+S722OkAp0sT68FEBukQoJXTU8lcP/8zO+AWA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jG9GUIPKYMpfAexQlfgC23EhTtFuCHAP3BVdwadhVNg=;
- b=nDEs2rxclmpf8Bohpr7WupTOmryxHcTPe6fGmE/8h1lsA9RtmBSjGzF/nFf1uIO8IB8up2WWQ3g5i21dTJ8t9bGLerrgMypW4cEY15LNVxJh0trkW1oX6+CtPlVZKn8WR58mZvOagG6K3UO07CqV7caAYX7qyP6ezZcW5mZ4xJM=
+ bh=Y2q8dQ9ME2IeE77zfYFnz9T2I1TZ0nI+XstzOepGsMk=;
+ b=eObzf+w8navUrIQey7zmtoHuvqitAaUt5MWReEtMmRMh/N3sAyijssy7vvVZlz0qweNTvW1wNyPsY6HxxNjJepfKXoyr5Xe3RG6BYzvU9gsUbmVTUs3bQsZNNTkHvoxNBMBVbCa2p5EbXeldINhD0ifpNvQjHoL0szoIroZt9wQ=
 Received: from AM6PR04MB5941.eurprd04.prod.outlook.com (2603:10a6:20b:9e::16)
- by PAXPR04MB8476.eurprd04.prod.outlook.com (2603:10a6:102:1df::13) with
+ by DBBPR04MB7786.eurprd04.prod.outlook.com (2603:10a6:10:1e8::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.26; Thu, 6 Jun
- 2024 01:36:38 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.33; Thu, 6 Jun
+ 2024 01:39:52 +0000
 Received: from AM6PR04MB5941.eurprd04.prod.outlook.com
  ([fe80::9f4e:b695:f5f0:5256]) by AM6PR04MB5941.eurprd04.prod.outlook.com
  ([fe80::9f4e:b695:f5f0:5256%5]) with mapi id 15.20.7611.030; Thu, 6 Jun 2024
- 01:36:38 +0000
+ 01:39:52 +0000
 From: Peng Fan <peng.fan@nxp.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Shawn Guo
-	<shawnguo@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sascha Hauer
-	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: RE: [PATCH 1/3] arm64: dts: freescale: use defines for interrupts
-Thread-Topic: [PATCH 1/3] arm64: dts: freescale: use defines for interrupts
-Thread-Index: AQHat11vkih66VawFEWwECoBg9yRQLG59ScA
-Date: Thu, 6 Jun 2024 01:36:38 +0000
+To: Frank Li <frank.li@nxp.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo
+	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+	<devicetree@vger.kernel.org>, "open list:ARM/FREESCALE IMX / MXC ARM
+ ARCHITECTURE" <imx@lists.linux.dev>, "moderated list:ARM/FREESCALE IMX / MXC
+ ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, open list
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/1] arm64: dts: imx8dxl-evk: add imx8dxl_cm4, lsio mu5,
+ related memory region
+Thread-Topic: [PATCH 1/1] arm64: dts: imx8dxl-evk: add imx8dxl_cm4, lsio mu5,
+ related memory region
+Thread-Index: AQHat4b0yuXmSw/0t0K1zNfThU4QA7G59Ynw
+Date: Thu, 6 Jun 2024 01:39:52 +0000
 Message-ID:
- <AM6PR04MB594144EE748C5F61F72B63F688FA2@AM6PR04MB5941.eurprd04.prod.outlook.com>
-References: <20240605153020.104717-1-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20240605153020.104717-1-krzysztof.kozlowski@linaro.org>
+ <AM6PR04MB59410C8115DB22CA2CE3E30088FA2@AM6PR04MB5941.eurprd04.prod.outlook.com>
+References: <20240605202703.1220203-1-Frank.Li@nxp.com>
+In-Reply-To: <20240605202703.1220203-1-Frank.Li@nxp.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach:
@@ -77,68 +80,67 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM6PR04MB5941:EE_|PAXPR04MB8476:EE_
-x-ms-office365-filtering-correlation-id: c66f4be5-23db-43e9-8469-08dc85c91bd5
+x-ms-traffictypediagnostic: AM6PR04MB5941:EE_|DBBPR04MB7786:EE_
+x-ms-office365-filtering-correlation-id: 04e3618c-4616-42b3-4a37-08dc85c98fbd
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam:
- BCL:0;ARA:13230031|376005|366007|1800799015|7416005|921011|38070700009;
+ BCL:0;ARA:13230031|1800799015|7416005|376005|366007|921011|38070700009;
 x-microsoft-antispam-message-info:
- =?us-ascii?Q?hEBkMfFBR1/s8u104RpoYy1mgimWczDy9TZwvctrdI6mPtbx7KZkc7zeg4Fj?=
- =?us-ascii?Q?Vkw3KmSj/fYSST1u97YmUWJH8PtwgBcY6CBlI1KCZAZ56Qhm/HLbPyptlgXr?=
- =?us-ascii?Q?QmhviQgmMSyEbfBwP8d6Y4ZKRLCxbY/9AOtLECAj2MgO9tjp2k1HnI2xuMvv?=
- =?us-ascii?Q?/kNM8Xg9T2fe8WqyHR420t8dSzDUDFL4Ungfk0Lxeosbf9HI5+IPZGFRrpYb?=
- =?us-ascii?Q?WBEw9GGZCV9hDu59sPeuN4Iy1cAW0qSwgFtm1m8pgJkNNLXjI2tjkv7RWI5G?=
- =?us-ascii?Q?5N4oNNPBzVZRLWMypMxua84VLtfwbr+pcGiiUIsVBgp+S+WCc941EAzjl6W8?=
- =?us-ascii?Q?kJ3+JRjYU1x43kB+JvCM9cP9ugRkUbzEhYyqtmnETP72qXIhkJe5MgshApRZ?=
- =?us-ascii?Q?449T1F0rmCLca48ULWC5kZT8HnS+vn3JSu2bY2jCf2M8vhbpWolkuihwHeDr?=
- =?us-ascii?Q?HTfyAvBTkAdbK0JGE4x89vEHmd6YkIAgKRkcx2ABCA4FCD6OsmFlmsKb1zrD?=
- =?us-ascii?Q?wrJgXFZu/Tfje5GEo4QTDWRxhC65yuSF/Gopyk0rcpIDFlBGgDZI+prOfKiR?=
- =?us-ascii?Q?wy1ncplSIh1tFCKdlXQiNM4X2OKVPfLIHkr23b93LafBqTFhpRApMwPKZS6j?=
- =?us-ascii?Q?SjacQNyvqumy2NdKE0bhIjzVaGP83IpZS16a4MUcIGrUSUHL0imN9hQ3J7iY?=
- =?us-ascii?Q?Zfododo8CBgZIValqcbUPYz4guoryHVUk9N675q4PdnRGN+KPw3FffacB0b1?=
- =?us-ascii?Q?btrYtbuoJAbPc+i6wpJGsJKwjCaTIuN+nzhOImPDdWKgLJ7ahLPstBo5RIF7?=
- =?us-ascii?Q?qcoOZ61fQiio1pcmUEnrlbc9iWxBjaI7TYoCWl9nHO1u8Jqgy6Bfo94GnAVh?=
- =?us-ascii?Q?fKcMqxza+oXCwVrJaMiCch0rCI0Gq/iddMIwjPav9S8JS4zkfV2UD0TFA1do?=
- =?us-ascii?Q?wwk5VJ7GvewVJbidhdWGwOi2jHVwvT/+36U1nksVUBhDp6SEGh4Hp+CzBdGU?=
- =?us-ascii?Q?o9xxK8itMGyxI9rFoc4XTFkq7wNX7UmqpUKZ1f7eJ3h+HuxaueOzL6EFyWPt?=
- =?us-ascii?Q?Ldfasbp157O3IrgXp6N6sKq3uKVERqTXE2vUxjuon8F6fBTTo7st0iepgwgq?=
- =?us-ascii?Q?4I7vK9Xjv8DD37+Sio8wpWZfQ7H/dtfhKqC9FG+ZD5JOvv9+eQLamNmM7jgc?=
- =?us-ascii?Q?AkIX/2DmnDzd6a4tLRzDZYNMNR2z7Bm1O+ccYQjIH9iPfUUOuK+GvzV41jw7?=
- =?us-ascii?Q?m26PTkY2rPBh/jiEp9vaQAhlUdMPAD4iQxABF8xHW6wQojcKtS+mse0u5yXD?=
- =?us-ascii?Q?vI+8KcwLyiY5kFlDknRfAox1PCvndL7RiIzbnq0jganIVPujE3L5zPhzmV1g?=
- =?us-ascii?Q?Rv26vDI=3D?=
+ =?us-ascii?Q?Y5TwpCNZKhh3nq6cV5piLpe0O44g455YrH3cNBWQhMl2WtkC6l8Ro8sZiIXZ?=
+ =?us-ascii?Q?CXNO7EfF680PK+qlXYcVjX2i+D2V0vXsp/mTTnnoC6wrxxo+gA+opRJhxQAo?=
+ =?us-ascii?Q?2E7uHwt8ZVlRHJ61HE4Ow4qQmPMCBqeTJxL5oSx4sg947LlePYtSncgv+0oP?=
+ =?us-ascii?Q?7/+PR/DOMFCfUh9rfNDS83D2lJGcyk3O10yNPVdW/w6+RSo4/jL3hVuBLO4k?=
+ =?us-ascii?Q?3F2iNCFfh7eIexHrVnFHnH15kOf4+nkuuat7uCtGNH3CYbml9vvyyXLXOkCG?=
+ =?us-ascii?Q?oGfmbtiCq/8SHTyWyZv74SSxBUS1UJdyPdGKDqODwtFlLBQRzGJXK7BNHwYT?=
+ =?us-ascii?Q?AsIGacAQDk+gNUKEK9A9fFI29rUKyqWNaBDJBrcADRHBrmSEF7tlYUZ1ezH7?=
+ =?us-ascii?Q?IGlmXzgo91s2w43vDYPoapCNnyzH1SCNV0FOspPWOYYy1d0+Mfltzhycf1/7?=
+ =?us-ascii?Q?5qN2lmxHUdB07nr7U5LQHq+IZeo9AliOmFaRu6Hw01vuCtmDRS6Dx4XK7wgs?=
+ =?us-ascii?Q?7X/W3n0BA01aUW7RbnZVJ8S5LxGJRh6ncVJszCoFv/sabzn9Y36JtsL9h1aF?=
+ =?us-ascii?Q?TvpBN4cALEyR1iGNqrd9/8bxskBglWH4fj6Jodt8cOV83FsEeF8OFlDx2o2p?=
+ =?us-ascii?Q?aHkg3r6vepxhjECDUEOgOWSztQ/7KHeg+Mov0xy0OQvl+srAYCFEXcitQL0q?=
+ =?us-ascii?Q?5O44kdqVnnEut9EMytwV+Ke5QRad1MQBq1/jFH/KQ9Byk5dwxdVIaUaZ4+Iw?=
+ =?us-ascii?Q?qZde9BzxwzDUWOcpEW36J/ycUhKt+caCiSNUfSCkdYoZtToUMfnsu9+8piCO?=
+ =?us-ascii?Q?OR/3mHG19OFVlHHS3ZlkwYj8UWnUHfP9YmOJ9k1wP1AE2mEXpNJ8JIDhudVw?=
+ =?us-ascii?Q?onfuI4FK6ZBKPLy/rqwrK/9Uk/xoXj/2aZzrwWgizrCETwuOA6+KeQW/HiMk?=
+ =?us-ascii?Q?ihDry8/q861xiUVd/Vp4Ex5YY21GMwcinEkW7eFB9QVSERa7kMKIFpz8QQb/?=
+ =?us-ascii?Q?aukKYFhHjwomg92hDLBDLZbi6r3oOsGhGP110ZCmsCj3IXV1yomZA35oVDVy?=
+ =?us-ascii?Q?ay8bfLu4p3dyxgNbXr2aVSRp0OW+VrjDZNfYNE0Hy8GtpWp92neOAnrK/Flk?=
+ =?us-ascii?Q?Y8vLkfLd4HR2Bp4SWk9zKF9UDEMB1pBz0hBwJ4dmSWNnvQPTRFU2owf+eAoY?=
+ =?us-ascii?Q?w4bRZJ0bHeDaCf4j2ja0p91b6UKypGmE2BsRHmz/1rjyUfnZg4iIkN5YmvzD?=
+ =?us-ascii?Q?WKP1ZJM1wLPoaRH6joEob6R+Gp8rBe0GfQdgJljRpZIy+999Sve63BvJScUM?=
+ =?us-ascii?Q?mBz5H1Sy0rtlAlBQTuCsJ1Rqj20XujdDY97DYISgR1i/EA=3D=3D?=
 x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015)(7416005)(921011)(38070700009);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(366007)(921011)(38070700009);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?DfYSxD8AMvHudXeyy0XWl4OcmfY7IkSKGkr6PQtX3UJBBOrIOplbi/AwY2Hs?=
- =?us-ascii?Q?4pdr/0mkARvLJ6FmRK5Hfz2hJKhTcJUN1ccPbyjfDFthvjGt0jhXFoCRXjoR?=
- =?us-ascii?Q?QvKOe1dLgryQLlfikEEOIJiGQPSAvPQ2yESQ6I2je5HyRWKjTJVChv5oct9c?=
- =?us-ascii?Q?14RZZ2QwFtogSIun7DBcitysavbValFh8Hpk9wT0oGFGrajsqNpwIoktJ7Bs?=
- =?us-ascii?Q?bqZGN7pOCVDMRDdALX4qL1s4ZSqNQw8h3ZvNB/GDjflvgeWoR7O0dokyDpSm?=
- =?us-ascii?Q?Fy1Wtu/K5kgKwcmvxGqnaCB5WAf82fLBNWR1iBZaMf7wFwAkOGY5+jhSW5ot?=
- =?us-ascii?Q?IpN1LjXqA0VOGhFFix/dSUgUaZ/uNYsO+tLXt2yCYSOJ88C1DKfumh1lgMQv?=
- =?us-ascii?Q?tz/uPw4CG5rs8wTD1H79U4SurorNvsEFQHzXd4DrmLOUE6Ud2Z8F/aHj/LU0?=
- =?us-ascii?Q?+ku49dgHT7fcWxEbByJvneRUIXy0pU66F7wAAT0UBjAI9eb3u/0YhB5OVa0u?=
- =?us-ascii?Q?SCsDR85Skvb2q3WjI4FzatPjcKurJZktLlY4SiWZvJS583XWI0q08JBpRxEV?=
- =?us-ascii?Q?p2RCYDS4DHpjWH/3+7/6p5J5kyUs3fypvuF6j6MHE+vkHPT3jMVoAfw39xLf?=
- =?us-ascii?Q?AfnHJHUoRgrCyFs3WOAoGa9j2MiVTA73LK4ppAwMEI9P85n0yDSpgFdMhbtd?=
- =?us-ascii?Q?7NJK/BtJ2AopcI2b2sXhJqS2TA04aoZu/Dd5S9KT507JiM3xUeT/398NOX6B?=
- =?us-ascii?Q?agalY+mgzIWSJbL59lrogzBI3oTB49KVz8QY8lDNBHcxQZllEuwVc3olKlLJ?=
- =?us-ascii?Q?a8iUDzCPqS3vZl0sGZvx0BSKFYYNiywXdVIpWxqLZeSltCorMnghcZcFWL4c?=
- =?us-ascii?Q?3JpVNFmZC4ULyB5bsJdzjgiwz/4/xLpspvP5b2mUJu9hhE/HB+VURXP4BoCR?=
- =?us-ascii?Q?/1SDT/3zIhdwj1Mw9l8cyZDgEQUYH6K5zXTqnfUYQWxE/VlavMl3bTj6IQJl?=
- =?us-ascii?Q?fgi7cpO5zKHTfwrJUq+6gQhr38+PTCMem0sDpFg+znjdxwSnMWKwd00r6Zte?=
- =?us-ascii?Q?ZCUXbgPMMvDQ2zsF3aGBPjMFa5RdGIHqXM02RuhM4q6o3zjJ02zhybXwrMWM?=
- =?us-ascii?Q?WbOLOAEvjTF1GFKpsGxSVl3ulEhd+RwV8P6tUNTvoh01VXovPQTPDqJeT7sf?=
- =?us-ascii?Q?xktSgraAoQKYAIdLnkpmAx27xFrYHc374POSXZhb/qcPM+gGsJv65y+I+Suo?=
- =?us-ascii?Q?0Jhk8vUVxPLGFhWaRz5l+tDuAiOEF8hxG54AALw1txok8B7H1P7YIBl5mwsS?=
- =?us-ascii?Q?nm2wqAskyEMi3beIKahncj9FirExvDoeKao7Yx8IPg/mRPBOqzMi/b9u3wON?=
- =?us-ascii?Q?k5Gc0s+J1uC/OKhXPwl6C5qRa9FLPfifSyvN/Dg2iRSMCX4G7QsgF2YmL5GW?=
- =?us-ascii?Q?YWLetpiGg7HRjLV5WPp0a7sipWKGjUpwfn8WLB8yD+RZtgrD32kZlZq3sWMS?=
- =?us-ascii?Q?5/aV6VZa1n+1MDR6Egs0DBIXjlb5S7JhgYqiaitFsS4VkMZytjdr9qhreVRv?=
- =?us-ascii?Q?VQeItv8FtP/opKtvBnE=3D?=
+ =?us-ascii?Q?seTzT3w4kRPT5OJl0i3eI0KRj+tkBU8Rk0O81UZxZEu9nMnS5btrEkuqzdxL?=
+ =?us-ascii?Q?dZT5JKKIAJxqFcFSw+R2TbL1KxqISyt+YWCWaLAOUNrzHqdKu8AcnPWsk/o9?=
+ =?us-ascii?Q?tN1b8F9JXS+TxIpnKSnzCRh2QToGVGa7TopJFEZwia2pJs4sxmkZjXdJv7f1?=
+ =?us-ascii?Q?AVCPLgX8LJMk0acJ31CQKYLV5hLkyxh2e673Ut1O+4zK5zQY49ZrmhV2ITos?=
+ =?us-ascii?Q?yAXodbquEEFl+RYbgBX2XY7iLyf6uNmO1wWAQ/L38XAz/fA4WMVwTW49gx0c?=
+ =?us-ascii?Q?iKdBLs/YMyqTajz+twb1oTMgogFb2AmvRZNDrxan5tlq9tw+mqnadW+K7yke?=
+ =?us-ascii?Q?f4HDik5jDCvbisi29wJQ9Ax/BJ0pcvYyFSujAJ+Xmc1q7HpxVrvU4EW1cxi6?=
+ =?us-ascii?Q?fwKDXHbq4vsr32cNUAUusnMjkoHEuakYfJF9Sr5ANu0pz2eMGFFnX8C7ELcl?=
+ =?us-ascii?Q?j8JEvfrs6ZSYHtycmIaeHupSFBmvOdh/kfB/yl414n6czaT/2c/zYs4yo8oK?=
+ =?us-ascii?Q?JZk3/ftNXyioCsFE5weUWUQYKK0c9sJuDIxsSsU6Te6Hw9Lzv5+HC1gERcoD?=
+ =?us-ascii?Q?88omqDGxnjQEKGCYRFk9Xd5Rx2ZszwHwf6oegpYI6RhBMJbyI+jGNAGQfC8S?=
+ =?us-ascii?Q?ktcCjH19xd3bKOaXRsp+FjNszvVgT3aL/ClJEZGiNBg8cGC70CjcxymaBke5?=
+ =?us-ascii?Q?bb+dcQWyh7z86hNHMBA7utmf0yhGsGlREW1FHP/wcoIlEQU4HtRJUOHUI8Xc?=
+ =?us-ascii?Q?9WYpcN94a4GkN70fMXC+CiBq7hcbngBLLOtUfHj2KaehYqOmbRuMxaMK5C46?=
+ =?us-ascii?Q?VxDOYxvV2p93neA2EzGRnutykRqmeoO1SpOC0rnE6wIR/P4j887p+Ne5VXiQ?=
+ =?us-ascii?Q?Mq3yYMvZSpJeYj7hRS15KKqcBv2W/4Yv1XWKKGGCYfWe75Sj2PX7xUHB4aUE?=
+ =?us-ascii?Q?DpnKOyT1SJj+2QNjDYgOS+udB95WSmwe/nAyvB2hgkVk15vW0GCB9Yp0rLv5?=
+ =?us-ascii?Q?wV9ur2b2BGsCSEjRdoCwcO5rSGr9zLOb9nTPqiRxJ/susXgyJEVbFej34lNH?=
+ =?us-ascii?Q?UrQYIHMyh4v3sRallvPeUZETeeSDdH5MVeq8lwr9WJ1nj/3DfXqWxlqnxup2?=
+ =?us-ascii?Q?sZPvE2/eNLTclseMbHrVgmv5ScOyk78lI5QFiVZUZ+hoBxp1UPsm/fbX09Cc?=
+ =?us-ascii?Q?FpscDbJ9bhuOZukIpjv8BvVwNLU7SmZUjYVkgfxBxhozpYl/aFSnybUj0n1z?=
+ =?us-ascii?Q?pSm+BKc0arJNesBSgQIxpE/sa3cJ5sh0eaD8/1gASzZHNmelrD1ZxXlzcF20?=
+ =?us-ascii?Q?NlWzBNCto49zdRhHVVc7HbHWqyLn3Xjff+YOcFtDqJ7BgtPCDoL4m5aqiPR0?=
+ =?us-ascii?Q?o32O+J7It9p9exgmooxRmZHnSgqvC+b097Y+lO+ukaHCMeZ1paENRhkFLcUp?=
+ =?us-ascii?Q?/23EbTX5jLvMGM62HHwRTrmaym/8NCtfoRJpv/39qlvC4u3pSkl7z1YcG1Gh?=
+ =?us-ascii?Q?FvT6YbRzIcjnekSRnPKz1AC9Ub5yfZzg6CT3Wx7i7yDb2D7UcfRYcC09icgT?=
+ =?us-ascii?Q?XFfAP2jx0C+wG/Jfo3M=3D?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -150,1408 +152,106 @@ MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB5941.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c66f4be5-23db-43e9-8469-08dc85c91bd5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2024 01:36:38.1475
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04e3618c-4616-42b3-4a37-08dc85c98fbd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2024 01:39:52.6083
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: +Y/ZHIcE+Ael9iq2/Y9lAXU5QPl48IxHpxWWljShGpawfBSBR1CSmXJzt+EjX5c03NU0mYkpFCJfCCwgcWXSfA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8476
+X-MS-Exchange-CrossTenant-userprincipalname: 0fLyY2e3pDebj/OQRwJsLyJGjcPZDPus/Rptq8FdXRsL3dbix8ketEtq0zK9rMqNDC+q7jQKdA6yp/XzS8tnRw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7786
 
-> Subject: [PATCH 1/3] arm64: dts: freescale: use defines for interrupts
+> Subject: [PATCH 1/1] arm64: dts: imx8dxl-evk: add imx8dxl_cm4, lsio mu5,
+> related memory region
 >=20
-> Replace hard-coded interrupt parts (GIC, flags) with standard defines for
-> readability.  No changes in resulting DTBs.
+> Add imx8dxl_cm4, lsio mu5 and related memory region.
 >=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
 Reviewed-by: Peng Fan <peng.fan@nxp.com>
 > ---
->  .../arm64/boot/dts/freescale/fsl-ls1012a.dtsi |  54 +++----
->  .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi |   6 +-
->  .../arm64/boot/dts/freescale/fsl-ls1043a.dtsi | 108 +++++++-------
->  .../arm64/boot/dts/freescale/fsl-ls1046a.dtsi |   2 +-
->  .../arm64/boot/dts/freescale/fsl-ls1088a.dtsi |  48 +++----
->  .../arm64/boot/dts/freescale/fsl-ls2080a.dtsi |   2 +-
->  .../arm64/boot/dts/freescale/fsl-ls2088a.dtsi |   2 +-
->  .../arm64/boot/dts/freescale/fsl-ls208xa.dtsi | 136 +++++++++---------
->  .../arm64/boot/dts/freescale/fsl-lx2160a.dtsi |   4 +-
->  9 files changed, 181 insertions(+), 181 deletions(-)
+>  arch/arm64/boot/dts/freescale/imx8dxl-evk.dts | 48 +++++++++++++++++++
+>  1 file changed, 48 insertions(+)
 >=20
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
-> b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
-> index a0f7bbd691a0..cfb77a76a240 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
-> @@ -74,15 +74,15 @@ coreclk: coreclk {
->=20
->  	timer {
->  		compatible =3D "arm,armv8-timer";
-> -		interrupts =3D <1 13 IRQ_TYPE_LEVEL_LOW>,/* Physical Secure
-> PPI */
-> -			     <1 14 IRQ_TYPE_LEVEL_LOW>,/* Physical Non-
-> Secure PPI */
-> -			     <1 11 IRQ_TYPE_LEVEL_LOW>,/* Virtual PPI */
-> -			     <1 10 IRQ_TYPE_LEVEL_LOW>;/* Hypervisor PPI
-> */
-> +		interrupts =3D <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,/* Physical
-> Secure PPI */
-> +			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,/* Physical
-> Non-Secure PPI */
-> +			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,/* Virtual
-> PPI */
-> +			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;/*
-> Hypervisor PPI */
+> diff --git a/arch/arm64/boot/dts/freescale/imx8dxl-evk.dts
+> b/arch/arm64/boot/dts/freescale/imx8dxl-evk.dts
+> index 4ac96a0586294..c5e601b98cf8f 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8dxl-evk.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8dxl-evk.dts
+> @@ -24,6 +24,19 @@ chosen {
+>  		stdout-path =3D &lpuart0;
 >  	};
 >=20
->  	pmu {
->  		compatible =3D "arm,cortex-a53-pmu";
-> -		interrupts =3D <0 106 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupts =3D <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
+> +	imx8dxl-cm4 {
+> +		compatible =3D "fsl,imx8qxp-cm4";
+> +		clocks =3D <&clk_dummy>;
+> +		mbox-names =3D "tx", "rx", "rxdb";
+> +		mboxes =3D <&lsio_mu5 0 1 &lsio_mu5 1 1 &lsio_mu5 3 1>;
+> +		memory-region =3D <&vdevbuffer>, <&vdev0vring0>,
+> <&vdev0vring1>,
+> +				<&vdev1vring0>, <&vdev1vring1>,
+> <&rsc_table>;
+> +		power-domains =3D <&pd IMX_SC_R_M4_0_PID0>, <&pd
+> IMX_SC_R_M4_0_MU_1A>;
+> +		fsl,resource-id =3D <IMX_SC_R_M4_0_PID0>;
+> +		fsl,entry-address =3D <0x34fe0000>;
+> +	};
+> +
+> +
+>  	memory@80000000 {
+>  		device_type =3D "memory";
+>  		reg =3D <0x00000000 0x80000000 0 0x40000000>; @@ -51,6
+> +64,37 @@ linux,cma {
+>  			alloc-ranges =3D <0 0x98000000 0 0x14000000>;
+>  			linux,cma-default;
+>  		};
+> +
+> +		vdev0vring0: memory0@90000000 {
+> +			reg =3D <0 0x90000000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev0vring1: memory@90008000 {
+> +			reg =3D <0 0x90008000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev1vring0: memory@90010000 {
+> +			reg =3D <0 0x90010000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev1vring1: memory@90018000 {
+> +			reg =3D <0 0x90018000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		rsc_table: memory-rsc-table@900ff000 {
+> +			reg =3D <0 0x900ff000 0 0x1000>;
+> +			no-map;
+> +		};
+> +
+> +		vdevbuffer: memory-vdevbuffer {
+> +			compatible =3D "shared-dma-pool";
+> +			reg =3D <0 0x90400000 0 0x100000>;
+> +			no-map;
+> +		};
 >  	};
 >=20
->  	gic: interrupt-controller@1400000 {
-> @@ -93,7 +93,7 @@ gic: interrupt-controller@1400000 {
->  		      <0x0 0x1402000 0 0x2000>, /* GICC */
->  		      <0x0 0x1404000 0 0x2000>, /* GICH */
->  		      <0x0 0x1406000 0 0x2000>; /* GICV */
-> -		interrupts =3D <1 9 IRQ_TYPE_LEVEL_LOW>;
-> +		interrupts =3D <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
->  	};
->=20
->  	reboot {
-> @@ -159,7 +159,7 @@ QORIQ_CLK_PLL_DIV(1)>,
->  		esdhc0: esdhc@1560000 {
->  			compatible =3D "fsl,ls1012a-esdhc", "fsl,esdhc";
->  			reg =3D <0x0 0x1560000 0x0 0x10000>;
-> -			interrupts =3D <0 62 0x4>;
-> +			interrupts =3D <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
->  			voltage-ranges =3D <1800 1800 3300 3300>; @@ -
-> 178,7 +178,7 @@ scfg: scfg@1570000 {
->  		esdhc1: esdhc@1580000 {
->  			compatible =3D "fsl,ls1012a-esdhc", "fsl,esdhc";
->  			reg =3D <0x0 0x1580000 0x0 0x10000>;
-> -			interrupts =3D <0 65 0x4>;
-> +			interrupts =3D <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
->  			voltage-ranges =3D <1800 1800 3300 3300>; @@ -
-> 305,7 +305,7 @@ clockgen: clocking@1ee1000 {
->  		tmu: tmu@1f00000 {
->  			compatible =3D "fsl,qoriq-tmu";
->  			reg =3D <0x0 0x1f00000 0x0 0x10000>;
-> -			interrupts =3D <0 33 0x4>;
-> +			interrupts =3D <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
->  			fsl,tmu-range =3D <0xb0000 0x9002a 0x6004c
-> 0x60062>;
->  			fsl,tmu-calibration =3D
->  					<0x00000000 0x00000025>,
-> @@ -355,7 +355,7 @@ i2c0: i2c@2180000 {
->  			#address-cells =3D <1>;
->  			#size-cells =3D <0>;
->  			reg =3D <0x0 0x2180000 0x0 0x10000>;
-> -			interrupts =3D <0 56 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(4)>;
->  			scl-gpios =3D <&gpio0 2 0>;
-> @@ -367,7 +367,7 @@ i2c1: i2c@2190000 {
->  			#address-cells =3D <1>;
->  			#size-cells =3D <0>;
->  			reg =3D <0x0 0x2190000 0x0 0x10000>;
-> -			interrupts =3D <0 57 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(4)>;
->  			scl-gpios =3D <&gpio0 13 0>;
-> @@ -379,7 +379,7 @@ dspi: spi@2100000 {
->  			#address-cells =3D <1>;
->  			#size-cells =3D <0>;
->  			reg =3D <0x0 0x2100000 0x0 0x10000>;
-> -			interrupts =3D <0 64 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
->  			clock-names =3D "dspi";
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
-> @@ -391,7 +391,7 @@ dspi: spi@2100000 {
->  		duart0: serial@21c0500 {
->  			compatible =3D "fsl,ns16550", "ns16550a";
->  			reg =3D <0x00 0x21c0500 0x0 0x100>;
-> -			interrupts =3D <0 54 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
->  			status =3D "disabled";
-> @@ -400,7 +400,7 @@ duart0: serial@21c0500 {
->  		duart1: serial@21c0600 {
->  			compatible =3D "fsl,ns16550", "ns16550a";
->  			reg =3D <0x00 0x21c0600 0x0 0x100>;
-> -			interrupts =3D <0 54 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
->  			status =3D "disabled";
-> @@ -409,7 +409,7 @@ duart1: serial@21c0600 {
->  		gpio0: gpio@2300000 {
->  			compatible =3D "fsl,qoriq-gpio";
->  			reg =3D <0x0 0x2300000 0x0 0x10000>;
-> -			interrupts =3D <0 66 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>;
->  			gpio-controller;
->  			#gpio-cells =3D <2>;
->  			interrupt-controller;
-> @@ -419,7 +419,7 @@ gpio0: gpio@2300000 {
->  		gpio1: gpio@2310000 {
->  			compatible =3D "fsl,qoriq-gpio";
->  			reg =3D <0x0 0x2310000 0x0 0x10000>;
-> -			interrupts =3D <0 67 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
->  			gpio-controller;
->  			#gpio-cells =3D <2>;
->  			interrupt-controller;
-> @@ -430,7 +430,7 @@ wdog0: watchdog@2ad0000 {
->  			compatible =3D "fsl,ls1012a-wdt",
->  				     "fsl,imx21-wdt";
->  			reg =3D <0x0 0x2ad0000 0x0 0x10000>;
-> -			interrupts =3D <0 83 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
-> QORIQ_CLK_PLL_DIV(1)>;
->  			big-endian;
->  		};
-> @@ -439,7 +439,7 @@ sai1: sai@2b50000 {
->  			#sound-dai-cells =3D <0>;
->  			compatible =3D "fsl,vf610-sai";
->  			reg =3D <0x0 0x2b50000 0x0 0x10000>;
-> -			interrupts =3D <0 148 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(4)>,
->  				 <&clockgen QORIQ_CLK_PLATFORM_PLL
-> @@ -459,7 +459,7 @@ sai2: sai@2b60000 {
->  			#sound-dai-cells =3D <0>;
->  			compatible =3D "fsl,vf610-sai";
->  			reg =3D <0x0 0x2b60000 0x0 0x10000>;
-> -			interrupts =3D <0 149 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(4)>,
->  				 <&clockgen QORIQ_CLK_PLATFORM_PLL
-> @@ -481,8 +481,8 @@ edma0: dma-controller@2c00000 {
->  			reg =3D <0x0 0x2c00000 0x0 0x10000>,
->  			      <0x0 0x2c10000 0x0 0x10000>,
->  			      <0x0 0x2c20000 0x0 0x10000>;
-> -			interrupts =3D <0 103 IRQ_TYPE_LEVEL_HIGH>,
-> -				     <0 103 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
->  			interrupt-names =3D "edma-tx", "edma-err";
->  			dma-channels =3D <32>;
->  			big-endian;
-> @@ -496,7 +496,7 @@ QORIQ_CLK_PLL_DIV(4)>,
->  		usb0: usb@2f00000 {
->  			compatible =3D "snps,dwc3";
->  			reg =3D <0x0 0x2f00000 0x0 0x10000>;
-> -			interrupts =3D <0 60 0x4>;
-> +			interrupts =3D <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
->  			dr_mode =3D "host";
->  			snps,quirk-frame-length-adjustment =3D <0x20>;
->  			snps,dis_rxdet_inp3_quirk;
-> @@ -509,7 +509,7 @@ sata: sata@3200000 {
->  			reg =3D <0x0 0x3200000 0x0 0x10000>,
->  				<0x0 0x20140520 0x0 0x4>;
->  			reg-names =3D "ahci", "sata-ecc";
-> -			interrupts =3D <0 69 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
->  			dma-coherent;
-> @@ -519,7 +519,7 @@ sata: sata@3200000 {
->  		usb1: usb@8600000 {
->  			compatible =3D "fsl-usb2-dr-v2.5", "fsl-usb2-dr";
->  			reg =3D <0x0 0x8600000 0x0 0x1000>;
-> -			interrupts =3D <0 139 0x4>;
-> +			interrupts =3D <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>;
->  			dr_mode =3D "host";
->  			phy_type =3D "ulpi";
->  		};
-> @@ -528,7 +528,7 @@ msi: msi-controller1@1572000 {
->  			compatible =3D "fsl,ls1012a-msi";
->  			reg =3D <0x0 0x1572000 0x0 0x8>;
->  			msi-controller;
-> -			interrupts =3D <0 126 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>;
->  		};
->=20
->  		pcie1: pcie@3400000 {
-> @@ -536,8 +536,8 @@ pcie1: pcie@3400000 {
->  			reg =3D <0x00 0x03400000 0x0 0x00100000>, /*
-> controller registers */
->  			      <0x40 0x00000000 0x0 0x00002000>; /*
-> configuration space */
->  			reg-names =3D "regs", "config";
-> -			interrupts =3D <0 118 0x4>, /* controller interrupt */
-> -				     <0 117 0x4>; /* PME interrupt */
-> +			interrupts =3D <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
-> /* controller interrupt */
-> +				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
-> /* PME interrupt */
->  			interrupt-names =3D "aer", "pme";
->  			#address-cells =3D <3>;
->  			#size-cells =3D <2>;
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> index 70b8731029c4..18aa02a0ebff 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> @@ -859,8 +859,8 @@ QORIQ_CLK_PLL_DIV(16)>,
->  		malidp0: display@f080000 {
->  			compatible =3D "arm,mali-dp500";
->  			reg =3D <0x0 0xf080000 0x0 0x10000>;
-> -			interrupts =3D <0 222 IRQ_TYPE_LEVEL_HIGH>,
-> -				     <0 223 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>;
->  			interrupt-names =3D "DE", "SE";
->  			clocks =3D <&dpclk>,
->  				 <&clockgen QORIQ_CLK_HWACCEL 2>,
-> @@ -1024,7 +1024,7 @@ dpclk: clock-controller@f1f0000 {
->  		tmu: tmu@1f80000 {
->  			compatible =3D "fsl,qoriq-tmu";
->  			reg =3D <0x0 0x1f80000 0x0 0x10000>;
-> -			interrupts =3D <0 23 0x4>;
-> +			interrupts =3D <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
->  			fsl,tmu-range =3D <0xb0000 0xa0026 0x80048
-> 0x70061>;
->  			fsl,tmu-calibration =3D
->  					<0x00000000 0x00000024>,
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-> b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-> index 8ee6d8c0ef61..1f5ae061e7e3 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-> @@ -268,19 +268,19 @@ sec-crit {
->=20
->  	timer {
->  		compatible =3D "arm,armv8-timer";
-> -		interrupts =3D <1 13 0xf08>, /* Physical Secure PPI */
-> -			     <1 14 0xf08>, /* Physical Non-Secure PPI */
-> -			     <1 11 0xf08>, /* Virtual PPI */
-> -			     <1 10 0xf08>; /* Hypervisor PPI */
-> +		interrupts =3D <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) |
-> IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) |
-> IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) |
-> IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) |
-> IRQ_TYPE_LEVEL_LOW)>;
->  		fsl,erratum-a008585;
->  	};
->=20
->  	pmu {
->  		compatible =3D "arm,cortex-a53-pmu";
-> -		interrupts =3D <0 106 0x4>,
-> -			     <0 107 0x4>,
-> -			     <0 95 0x4>,
-> -			     <0 97 0x4>;
-> +		interrupts =3D <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
->  		interrupt-affinity =3D <&cpu0>,
->  				     <&cpu1>,
->  				     <&cpu2>,
-> @@ -295,7 +295,7 @@ gic: interrupt-controller@1400000 {
->  		      <0x0 0x1402000 0 0x2000>, /* GICC */
->  		      <0x0 0x1404000 0 0x2000>, /* GICH */
->  		      <0x0 0x1406000 0 0x2000>; /* GICV */
-> -		interrupts =3D <1 9 0xf08>;
-> +		interrupts =3D <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) |
-> +IRQ_TYPE_LEVEL_LOW)>;
->  	};
->=20
->  	soc: soc {
-> @@ -352,7 +352,7 @@ crypto: crypto@1700000 {
->  			#size-cells =3D <1>;
->  			ranges =3D <0x0 0x00 0x1700000 0x100000>;
->  			reg =3D <0x00 0x1700000 0x0 0x100000>;
-> -			interrupts =3D <0 75 0x4>;
-> +			interrupts =3D <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
->  			dma-coherent;
->=20
->  			sec_jr0: jr@10000 {
-> @@ -360,7 +360,7 @@ sec_jr0: jr@10000 {
->  					     "fsl,sec-v5.0-job-ring",
->  					     "fsl,sec-v4.0-job-ring";
->  				reg =3D <0x10000 0x10000>;
-> -				interrupts =3D <0 71 0x4>;
-> +				interrupts =3D <GIC_SPI 71
-> IRQ_TYPE_LEVEL_HIGH>;
->  			};
->=20
->  			sec_jr1: jr@20000 {
-> @@ -368,7 +368,7 @@ sec_jr1: jr@20000 {
->  					     "fsl,sec-v5.0-job-ring",
->  					     "fsl,sec-v4.0-job-ring";
->  				reg =3D <0x20000 0x10000>;
-> -				interrupts =3D <0 72 0x4>;
-> +				interrupts =3D <GIC_SPI 72
-> IRQ_TYPE_LEVEL_HIGH>;
->  			};
->=20
->  			sec_jr2: jr@30000 {
-> @@ -376,7 +376,7 @@ sec_jr2: jr@30000 {
->  					     "fsl,sec-v5.0-job-ring",
->  					     "fsl,sec-v4.0-job-ring";
->  				reg =3D <0x30000 0x10000>;
-> -				interrupts =3D <0 73 0x4>;
-> +				interrupts =3D <GIC_SPI 73
-> IRQ_TYPE_LEVEL_HIGH>;
->  			};
->=20
->  			sec_jr3: jr@40000 {
-> @@ -384,7 +384,7 @@ sec_jr3: jr@40000 {
->  					     "fsl,sec-v5.0-job-ring",
->  					     "fsl,sec-v4.0-job-ring";
->  				reg =3D <0x40000 0x10000>;
-> -				interrupts =3D <0 74 0x4>;
-> +				interrupts =3D <GIC_SPI 74
-> IRQ_TYPE_LEVEL_HIGH>;
->  			};
->  		};
->=20
-> @@ -405,7 +405,7 @@ dcfg: dcfg@1ee0000 {
->  		ifc: memory-controller@1530000 {
->  			compatible =3D "fsl,ifc";
->  			reg =3D <0x0 0x1530000 0x0 0x10000>;
-> -			interrupts =3D <0 43 0x4>;
-> +			interrupts =3D <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
->  		};
->=20
->  		qspi: spi@1550000 {
-> @@ -415,7 +415,7 @@ qspi: spi@1550000 {
->  			reg =3D <0x0 0x1550000 0x0 0x10000>,
->  				<0x0 0x40000000 0x0 0x4000000>;
->  			reg-names =3D "QuadSPI", "QuadSPI-memory";
-> -			interrupts =3D <0 99 0x4>;
-> +			interrupts =3D <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>;
->  			clock-names =3D "qspi_en", "qspi";
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>,
-> @@ -427,7 +427,7 @@ QORIQ_CLK_PLL_DIV(1)>,
->  		esdhc: esdhc@1560000 {
->  			compatible =3D "fsl,ls1043a-esdhc", "fsl,esdhc";
->  			reg =3D <0x0 0x1560000 0x0 0x10000>;
-> -			interrupts =3D <0 62 0x4>;
-> +			interrupts =3D <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
->  			clock-frequency =3D <0>;
->  			voltage-ranges =3D <1800 1800 3300 3300>;
->  			sdhci,auto-cmd12;
-> @@ -438,14 +438,14 @@ esdhc: esdhc@1560000 {
->  		ddr: memory-controller@1080000 {
->  			compatible =3D "fsl,qoriq-memory-controller";
->  			reg =3D <0x0 0x1080000 0x0 0x1000>;
-> -			interrupts =3D <0 144 0x4>;
-> +			interrupts =3D <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
->  			big-endian;
->  		};
->=20
->  		tmu: tmu@1f00000 {
->  			compatible =3D "fsl,qoriq-tmu";
->  			reg =3D <0x0 0x1f00000 0x0 0x10000>;
-> -			interrupts =3D <0 33 0x4>;
-> +			interrupts =3D <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
->  			fsl,tmu-range =3D <0xb0000 0x9002a 0x6004c
-> 0x70062>;
->  			fsl,tmu-calibration =3D
->  					<0x00000000 0x00000023>,
-> @@ -518,7 +518,7 @@ dspi0: spi@2100000 {
->  			#address-cells =3D <1>;
->  			#size-cells =3D <0>;
->  			reg =3D <0x0 0x2100000 0x0 0x10000>;
-> -			interrupts =3D <0 64 0x4>;
-> +			interrupts =3D <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
->  			clock-names =3D "dspi";
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
-> @@ -532,7 +532,7 @@ i2c0: i2c@2180000 {
->  			#address-cells =3D <1>;
->  			#size-cells =3D <0>;
->  			reg =3D <0x0 0x2180000 0x0 0x10000>;
-> -			interrupts =3D <0 56 0x4>;
-> +			interrupts =3D <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
->  			clock-names =3D "i2c";
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
-> @@ -547,7 +547,7 @@ i2c1: i2c@2190000 {
->  			#address-cells =3D <1>;
->  			#size-cells =3D <0>;
->  			reg =3D <0x0 0x2190000 0x0 0x10000>;
-> -			interrupts =3D <0 57 0x4>;
-> +			interrupts =3D <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
->  			clock-names =3D "i2c";
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
-> @@ -560,7 +560,7 @@ i2c2: i2c@21a0000 {
->  			#address-cells =3D <1>;
->  			#size-cells =3D <0>;
->  			reg =3D <0x0 0x21a0000 0x0 0x10000>;
-> -			interrupts =3D <0 58 0x4>;
-> +			interrupts =3D <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
->  			clock-names =3D "i2c";
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
-> @@ -573,7 +573,7 @@ i2c3: i2c@21b0000 {
->  			#address-cells =3D <1>;
->  			#size-cells =3D <0>;
->  			reg =3D <0x0 0x21b0000 0x0 0x10000>;
-> -			interrupts =3D <0 59 0x4>;
-> +			interrupts =3D <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
->  			clock-names =3D "i2c";
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
-> @@ -584,7 +584,7 @@ i2c3: i2c@21b0000 {
->  		duart0: serial@21c0500 {
->  			compatible =3D "fsl,ns16550", "ns16550a";
->  			reg =3D <0x00 0x21c0500 0x0 0x100>;
-> -			interrupts =3D <0 54 0x4>;
-> +			interrupts =3D <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
->  		};
-> @@ -592,7 +592,7 @@ duart0: serial@21c0500 {
->  		duart1: serial@21c0600 {
->  			compatible =3D "fsl,ns16550", "ns16550a";
->  			reg =3D <0x00 0x21c0600 0x0 0x100>;
-> -			interrupts =3D <0 54 0x4>;
-> +			interrupts =3D <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
->  		};
-> @@ -600,7 +600,7 @@ duart1: serial@21c0600 {
->  		duart2: serial@21d0500 {
->  			compatible =3D "fsl,ns16550", "ns16550a";
->  			reg =3D <0x0 0x21d0500 0x0 0x100>;
-> -			interrupts =3D <0 55 0x4>;
-> +			interrupts =3D <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
->  		};
-> @@ -608,7 +608,7 @@ duart2: serial@21d0500 {
->  		duart3: serial@21d0600 {
->  			compatible =3D "fsl,ns16550", "ns16550a";
->  			reg =3D <0x0 0x21d0600 0x0 0x100>;
-> -			interrupts =3D <0 55 0x4>;
-> +			interrupts =3D <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
->  		};
-> @@ -616,7 +616,7 @@ duart3: serial@21d0600 {
->  		gpio1: gpio@2300000 {
->  			compatible =3D "fsl,ls1043a-gpio", "fsl,qoriq-gpio";
->  			reg =3D <0x0 0x2300000 0x0 0x10000>;
-> -			interrupts =3D <0 66 0x4>;
-> +			interrupts =3D <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>;
->  			gpio-controller;
->  			#gpio-cells =3D <2>;
->  			interrupt-controller;
-> @@ -626,7 +626,7 @@ gpio1: gpio@2300000 {
->  		gpio2: gpio@2310000 {
->  			compatible =3D "fsl,ls1043a-gpio", "fsl,qoriq-gpio";
->  			reg =3D <0x0 0x2310000 0x0 0x10000>;
-> -			interrupts =3D <0 67 0x4>;
-> +			interrupts =3D <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
->  			gpio-controller;
->  			#gpio-cells =3D <2>;
->  			interrupt-controller;
-> @@ -636,7 +636,7 @@ gpio2: gpio@2310000 {
->  		gpio3: gpio@2320000 {
->  			compatible =3D "fsl,ls1043a-gpio", "fsl,qoriq-gpio";
->  			reg =3D <0x0 0x2320000 0x0 0x10000>;
-> -			interrupts =3D <0 68 0x4>;
-> +			interrupts =3D <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
->  			gpio-controller;
->  			#gpio-cells =3D <2>;
->  			interrupt-controller;
-> @@ -646,7 +646,7 @@ gpio3: gpio@2320000 {
->  		gpio4: gpio@2330000 {
->  			compatible =3D "fsl,ls1043a-gpio", "fsl,qoriq-gpio";
->  			reg =3D <0x0 0x2330000 0x0 0x10000>;
-> -			interrupts =3D <0 134 0x4>;
-> +			interrupts =3D <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>;
->  			gpio-controller;
->  			#gpio-cells =3D <2>;
->  			interrupt-controller;
-> @@ -721,7 +721,7 @@ data-only@0 {
->  		lpuart0: serial@2950000 {
->  			compatible =3D "fsl,ls1021a-lpuart";
->  			reg =3D <0x0 0x2950000 0x0 0x1000>;
-> -			interrupts =3D <0 48 0x4>;
-> +			interrupts =3D <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_SYSCLK 0>;
->  			clock-names =3D "ipg";
->  			status =3D "disabled";
-> @@ -730,7 +730,7 @@ lpuart0: serial@2950000 {
->  		lpuart1: serial@2960000 {
->  			compatible =3D "fsl,ls1021a-lpuart";
->  			reg =3D <0x0 0x2960000 0x0 0x1000>;
-> -			interrupts =3D <0 49 0x4>;
-> +			interrupts =3D <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
->  			clock-names =3D "ipg";
-> @@ -740,7 +740,7 @@ lpuart1: serial@2960000 {
->  		lpuart2: serial@2970000 {
->  			compatible =3D "fsl,ls1021a-lpuart";
->  			reg =3D <0x0 0x2970000 0x0 0x1000>;
-> -			interrupts =3D <0 50 0x4>;
-> +			interrupts =3D <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
->  			clock-names =3D "ipg";
-> @@ -750,7 +750,7 @@ lpuart2: serial@2970000 {
->  		lpuart3: serial@2980000 {
->  			compatible =3D "fsl,ls1021a-lpuart";
->  			reg =3D <0x0 0x2980000 0x0 0x1000>;
-> -			interrupts =3D <0 51 0x4>;
-> +			interrupts =3D <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
->  			clock-names =3D "ipg";
-> @@ -760,7 +760,7 @@ lpuart3: serial@2980000 {
->  		lpuart4: serial@2990000 {
->  			compatible =3D "fsl,ls1021a-lpuart";
->  			reg =3D <0x0 0x2990000 0x0 0x1000>;
-> -			interrupts =3D <0 52 0x4>;
-> +			interrupts =3D <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
->  			clock-names =3D "ipg";
-> @@ -770,7 +770,7 @@ lpuart4: serial@2990000 {
->  		lpuart5: serial@29a0000 {
->  			compatible =3D "fsl,ls1021a-lpuart";
->  			reg =3D <0x0 0x29a0000 0x0 0x1000>;
-> -			interrupts =3D <0 53 0x4>;
-> +			interrupts =3D <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
->  			clock-names =3D "ipg";
-> @@ -780,7 +780,7 @@ lpuart5: serial@29a0000 {
->  		wdog0: watchdog@2ad0000 {
->  			compatible =3D "fsl,ls1043a-wdt", "fsl,imx21-wdt";
->  			reg =3D <0x0 0x2ad0000 0x0 0x10000>;
-> -			interrupts =3D <0 83 0x4>;
-> +			interrupts =3D <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(1)>;
->  			clock-names =3D "wdog";
-> @@ -793,8 +793,8 @@ edma0: dma-controller@2c00000 {
->  			reg =3D <0x0 0x2c00000 0x0 0x10000>,
->  			      <0x0 0x2c10000 0x0 0x10000>,
->  			      <0x0 0x2c20000 0x0 0x10000>;
-> -			interrupts =3D <0 103 0x4>,
-> -				     <0 103 0x4>;
-> +			interrupts =3D <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
->  			interrupt-names =3D "edma-tx", "edma-err";
->  			dma-channels =3D <32>;
->  			big-endian;
-> @@ -815,7 +815,7 @@ aux_bus: aux_bus {
->  			usb0: usb@2f00000 {
->  				compatible =3D "snps,dwc3";
->  				reg =3D <0x0 0x2f00000 0x0 0x10000>;
-> -				interrupts =3D <0 60 IRQ_TYPE_LEVEL_HIGH>;
-> +				interrupts =3D <GIC_SPI 60
-> IRQ_TYPE_LEVEL_HIGH>;
->  				dr_mode =3D "host";
->  				snps,quirk-frame-length-adjustment =3D
-> <0x20>;
->  				snps,dis_rxdet_inp3_quirk;
-> @@ -827,7 +827,7 @@ usb0: usb@2f00000 {
->  			usb1: usb@3000000 {
->  				compatible =3D "snps,dwc3";
->  				reg =3D <0x0 0x3000000 0x0 0x10000>;
-> -				interrupts =3D <0 61 IRQ_TYPE_LEVEL_HIGH>;
-> +				interrupts =3D <GIC_SPI 61
-> IRQ_TYPE_LEVEL_HIGH>;
->  				dr_mode =3D "host";
->  				snps,quirk-frame-length-adjustment =3D
-> <0x20>;
->  				snps,dis_rxdet_inp3_quirk;
-> @@ -839,7 +839,7 @@ usb1: usb@3000000 {
->  			usb2: usb@3100000 {
->  				compatible =3D "snps,dwc3";
->  				reg =3D <0x0 0x3100000 0x0 0x10000>;
-> -				interrupts =3D <0 63 IRQ_TYPE_LEVEL_HIGH>;
-> +				interrupts =3D <GIC_SPI 63
-> IRQ_TYPE_LEVEL_HIGH>;
->  				dr_mode =3D "host";
->  				snps,quirk-frame-length-adjustment =3D
-> <0x20>;
->  				snps,dis_rxdet_inp3_quirk;
-> @@ -853,7 +853,7 @@ sata: sata@3200000 {
->  				reg =3D <0x0 0x3200000 0x0 0x10000>,
->  					<0x0 0x20140520 0x0 0x4>;
->  				reg-names =3D "ahci", "sata-ecc";
-> -				interrupts =3D <0 69 IRQ_TYPE_LEVEL_HIGH>;
-> +				interrupts =3D <GIC_SPI 69
-> IRQ_TYPE_LEVEL_HIGH>;
->  				clocks =3D <&clockgen
-> QORIQ_CLK_PLATFORM_PLL
->  						    QORIQ_CLK_PLL_DIV(1)>;
->  				dma-coherent;
-> @@ -864,21 +864,21 @@ msi1: msi-controller1@1571000 {
->  			compatible =3D "fsl,ls1043a-msi";
->  			reg =3D <0x0 0x1571000 0x0 0x8>;
->  			msi-controller;
-> -			interrupts =3D <0 116 0x4>;
-> +			interrupts =3D <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
->  		};
->=20
->  		msi2: msi-controller2@1572000 {
->  			compatible =3D "fsl,ls1043a-msi";
->  			reg =3D <0x0 0x1572000 0x0 0x8>;
->  			msi-controller;
-> -			interrupts =3D <0 126 0x4>;
-> +			interrupts =3D <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>;
->  		};
->=20
->  		msi3: msi-controller3@1573000 {
->  			compatible =3D "fsl,ls1043a-msi";
->  			reg =3D <0x0 0x1573000 0x0 0x8>;
->  			msi-controller;
-> -			interrupts =3D <0 160 0x4>;
-> +			interrupts =3D <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>;
->  		};
->=20
->  		pcie1: pcie@3400000 {
-> @@ -886,8 +886,8 @@ pcie1: pcie@3400000 {
->  			reg =3D <0x00 0x03400000 0x0 0x00100000>, /*
-> controller registers */
->  			      <0x40 0x00000000 0x0 0x00002000>; /*
-> configuration space */
->  			reg-names =3D "regs", "config";
-> -			interrupts =3D <0 117 IRQ_TYPE_LEVEL_HIGH>,
-> -				     <0 118 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
->  			interrupt-names =3D "pme", "aer";
->  			#address-cells =3D <3>;
->  			#size-cells =3D <2>;
-> @@ -913,8 +913,8 @@ pcie2: pcie@3500000 {
->  			reg =3D <0x00 0x03500000 0x0 0x00100000>, /*
-> controller registers */
->  			      <0x48 0x00000000 0x0 0x00002000>; /*
-> configuration space */
->  			reg-names =3D "regs", "config";
-> -			interrupts =3D <0 127 IRQ_TYPE_LEVEL_HIGH>,
-> -				     <0 128 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>;
->  			interrupt-names =3D "pme", "aer";
->  			#address-cells =3D <3>;
->  			#size-cells =3D <2>;
-> @@ -940,8 +940,8 @@ pcie3: pcie@3600000 {
->  			reg =3D <0x00 0x03600000 0x0 0x00100000>, /*
-> controller registers */
->  			      <0x50 0x00000000 0x0 0x00002000>; /*
-> configuration space */
->  			reg-names =3D "regs", "config";
-> -			interrupts =3D <0 161 IRQ_TYPE_LEVEL_HIGH>,
-> -				     <0 162 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
->  			interrupt-names =3D "pme", "aer";
->  			#address-cells =3D <3>;
->  			#size-cells =3D <2>;
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-> b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-> index 754a64be739c..e5fcfc690ffc 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-> @@ -441,7 +441,7 @@ clockgen: clocking@1ee1000 {
->  		tmu: tmu@1f00000 {
->  			compatible =3D "fsl,qoriq-tmu";
->  			reg =3D <0x0 0x1f00000 0x0 0x10000>;
-> -			interrupts =3D <0 33 0x4>;
-> +			interrupts =3D <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
->  			fsl,tmu-range =3D <0xb0000 0x9002a 0x6004c
-> 0x70062>;
->  			fsl,tmu-calibration =3D
->  				/* Calibration data group 1 */
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-> b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-> index 604bf88d70b3..91589b907ec8 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-> @@ -118,7 +118,7 @@ gic: interrupt-controller@6000000 {
->  		      <0x0 0x0c0c0000 0 0x2000>, /* GICC */
->  		      <0x0 0x0c0d0000 0 0x1000>, /* GICH */
->  		      <0x0 0x0c0e0000 0 0x20000>; /* GICV */
-> -		interrupts =3D <1 9 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupts =3D <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
->  		#address-cells =3D <2>;
->  		#size-cells =3D <2>;
->  		ranges;
-> @@ -183,10 +183,10 @@ soc-crit {
->=20
->  	timer {
->  		compatible =3D "arm,armv8-timer";
-> -		interrupts =3D <1 13 IRQ_TYPE_LEVEL_LOW>,/* Physical Secure
-> PPI */
-> -			     <1 14 IRQ_TYPE_LEVEL_LOW>,/* Physical Non-
-> Secure PPI */
-> -			     <1 11 IRQ_TYPE_LEVEL_LOW>,/* Virtual PPI */
-> -			     <1 10 IRQ_TYPE_LEVEL_LOW>;/* Hypervisor PPI
-> */
-> +		interrupts =3D <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,/* Physical
-> Secure PPI */
-> +			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,/* Physical
-> Non-Secure PPI */
-> +			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,/* Virtual
-> PPI */
-> +			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;/*
-> Hypervisor PPI */
->  	};
->=20
->  	pmu {
-> @@ -280,7 +280,7 @@ sfp: efuse@1e80000 {
->  		tmu: tmu@1f80000 {
->  			compatible =3D "fsl,qoriq-tmu";
->  			reg =3D <0x0 0x1f80000 0x0 0x10000>;
-> -			interrupts =3D <0 23 0x4>;
-> +			interrupts =3D <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
->  			fsl,tmu-range =3D <0xb0000 0x9002a 0x6004c
-> 0x70062>;
->  			fsl,tmu-calibration =3D
->  				/* Calibration data group 1 */
-> @@ -347,7 +347,7 @@ duart0: serial@21c0500 {
->  			reg =3D <0x0 0x21c0500 0x0 0x100>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(4)>;
-> -			interrupts =3D <0 32 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
->  			status =3D "disabled";
->  		};
->=20
-> @@ -356,14 +356,14 @@ duart1: serial@21c0600 {
->  			reg =3D <0x0 0x21c0600 0x0 0x100>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(4)>;
-> -			interrupts =3D <0 32 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
->  			status =3D "disabled";
->  		};
->=20
->  		gpio0: gpio@2300000 {
->  			compatible =3D "fsl,ls1088a-gpio", "fsl,qoriq-gpio";
->  			reg =3D <0x0 0x2300000 0x0 0x10000>;
-> -			interrupts =3D <0 36 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
->  			little-endian;
->  			gpio-controller;
->  			#gpio-cells =3D <2>;
-> @@ -374,7 +374,7 @@ gpio0: gpio@2300000 {
->  		gpio1: gpio@2310000 {
->  			compatible =3D "fsl,ls1088a-gpio", "fsl,qoriq-gpio";
->  			reg =3D <0x0 0x2310000 0x0 0x10000>;
-> -			interrupts =3D <0 36 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
->  			little-endian;
->  			gpio-controller;
->  			#gpio-cells =3D <2>;
-> @@ -385,7 +385,7 @@ gpio1: gpio@2310000 {
->  		gpio2: gpio@2320000 {
->  			compatible =3D "fsl,ls1088a-gpio", "fsl,qoriq-gpio";
->  			reg =3D <0x0 0x2320000 0x0 0x10000>;
-> -			interrupts =3D <0 37 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
->  			little-endian;
->  			gpio-controller;
->  			#gpio-cells =3D <2>;
-> @@ -396,7 +396,7 @@ gpio2: gpio@2320000 {
->  		gpio3: gpio@2330000 {
->  			compatible =3D "fsl,ls1088a-gpio", "fsl,qoriq-gpio";
->  			reg =3D <0x0 0x2330000 0x0 0x10000>;
-> -			interrupts =3D <0 37 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
->  			little-endian;
->  			gpio-controller;
->  			#gpio-cells =3D <2>;
-> @@ -407,7 +407,7 @@ gpio3: gpio@2330000 {
->  		ifc: memory-controller@2240000 {
->  			compatible =3D "fsl,ifc";
->  			reg =3D <0x0 0x2240000 0x0 0x20000>;
-> -			interrupts =3D <0 21 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
->  			little-endian;
->  			#address-cells =3D <2>;
->  			#size-cells =3D <1>;
-> @@ -419,7 +419,7 @@ i2c0: i2c@2000000 {
->  			#address-cells =3D <1>;
->  			#size-cells =3D <0>;
->  			reg =3D <0x0 0x2000000 0x0 0x10000>;
-> -			interrupts =3D <0 34 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(8)>;
->  			status =3D "disabled";
-> @@ -430,7 +430,7 @@ i2c1: i2c@2010000 {
->  			#address-cells =3D <1>;
->  			#size-cells =3D <0>;
->  			reg =3D <0x0 0x2010000 0x0 0x10000>;
-> -			interrupts =3D <0 34 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(8)>;
->  			status =3D "disabled";
-> @@ -441,7 +441,7 @@ i2c2: i2c@2020000 {
->  			#address-cells =3D <1>;
->  			#size-cells =3D <0>;
->  			reg =3D <0x0 0x2020000 0x0 0x10000>;
-> -			interrupts =3D <0 35 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(8)>;
->  			status =3D "disabled";
-> @@ -452,7 +452,7 @@ i2c3: i2c@2030000 {
->  			#address-cells =3D <1>;
->  			#size-cells =3D <0>;
->  			reg =3D <0x0 0x2030000 0x0 0x10000>;
-> -			interrupts =3D <0 35 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(8)>;
->  			status =3D "disabled";
-> @@ -477,7 +477,7 @@ QORIQ_CLK_PLL_DIV(4)>,
->  		esdhc: esdhc@2140000 {
->  			compatible =3D "fsl,ls1088a-esdhc", "fsl,esdhc";
->  			reg =3D <0x0 0x2140000 0x0 0x10000>;
-> -			interrupts =3D <0 28 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
->  			clock-frequency =3D <0>;
->  			clocks =3D <&clockgen QORIQ_CLK_HWACCEL 1>;
->  			voltage-ranges =3D <1800 1800 3300 3300>; @@ -
-> 490,7 +490,7 @@ esdhc: esdhc@2140000 {
->  		usb0: usb@3100000 {
->  			compatible =3D "snps,dwc3";
->  			reg =3D <0x0 0x3100000 0x0 0x10000>;
-> -			interrupts =3D <0 80 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
->  			dr_mode =3D "host";
->  			snps,quirk-frame-length-adjustment =3D <0x20>;
->  			snps,dis_rxdet_inp3_quirk;
-> @@ -501,7 +501,7 @@ usb0: usb@3100000 {
->  		usb1: usb@3110000 {
->  			compatible =3D "snps,dwc3";
->  			reg =3D <0x0 0x3110000 0x0 0x10000>;
-> -			interrupts =3D <0 81 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
->  			dr_mode =3D "host";
->  			snps,quirk-frame-length-adjustment =3D <0x20>;
->  			snps,dis_rxdet_inp3_quirk;
-> @@ -514,7 +514,7 @@ sata: sata@3200000 {
->  			reg =3D <0x0 0x3200000 0x0 0x10000>,
->  				<0x7 0x100520 0x0 0x4>;
->  			reg-names =3D "ahci", "sata-ecc";
-> -			interrupts =3D <0 133 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupts =3D <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(4)>;
->  			dma-coherent;
-> @@ -565,7 +565,7 @@ pcie1: pcie@3400000 {
->  			reg =3D <0x00 0x03400000 0x0 0x00100000>, /*
-> controller registers */
->  			      <0x20 0x00000000 0x0 0x00002000>; /*
-> configuration space */
->  			reg-names =3D "regs", "config";
-> -			interrupts =3D <0 108 IRQ_TYPE_LEVEL_HIGH>; /* aer
-> interrupt */
-> +			interrupts =3D <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-> /* aer interrupt */
->  			interrupt-names =3D "aer";
->  			#address-cells =3D <3>;
->  			#size-cells =3D <2>;
-> @@ -604,7 +604,7 @@ pcie2: pcie@3500000 {
->  			reg =3D <0x00 0x03500000 0x0 0x00100000>, /*
-> controller registers */
->  			      <0x28 0x00000000 0x0 0x00002000>; /*
-> configuration space */
->  			reg-names =3D "regs", "config";
-> -			interrupts =3D <0 113 IRQ_TYPE_LEVEL_HIGH>; /* aer
-> interrupt */
-> +			interrupts =3D <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-> /* aer interrupt */
->  			interrupt-names =3D "aer";
->  			#address-cells =3D <3>;
->  			#size-cells =3D <2>;
-> @@ -642,7 +642,7 @@ pcie3: pcie@3600000 {
->  			reg =3D <0x00 0x03600000 0x0 0x00100000>, /*
-> controller registers */
->  			      <0x30 0x00000000 0x0 0x00002000>; /*
-> configuration space */
->  			reg-names =3D "regs", "config";
-> -			interrupts =3D <0 118 IRQ_TYPE_LEVEL_HIGH>; /* aer
-> interrupt */
-> +			interrupts =3D <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
-> /* aer interrupt */
->  			interrupt-names =3D "aer";
->  			#address-cells =3D <3>;
->  			#size-cells =3D <2>;
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-> b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-> index 8352197cea6f..e9bc1f4fa13c 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-> @@ -15,7 +15,7 @@
->  / {
->  	pmu {
->  		compatible =3D "arm,cortex-a57-pmu";
-> -		interrupts =3D <1 7 0x8>; /* PMU PPI, Level low type */
-> +		interrupts =3D <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
->  	};
+>  	m2_uart1_sel: regulator-m2uart1sel {
+> @@ -505,6 +549,10 @@ &lpuart1 {
+>  	status =3D "okay";
 >  };
 >=20
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi
-> b/arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi
-> index 245bbd615c81..60c422560e33 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi
-> @@ -15,7 +15,7 @@
->  / {
->  	pmu {
->  		compatible =3D "arm,cortex-a72-pmu";
-> -		interrupts =3D <1 7 0x8>; /* PMU PPI, Level low type */
-> +		interrupts =3D <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
->  	};
->  };
->=20
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-> b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-> index ccba0a135b24..cc305e629bdc 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-> @@ -58,7 +58,7 @@ gic: interrupt-controller@6000000 {
->  		#size-cells =3D <2>;
->  		ranges;
->  		interrupt-controller;
-> -		interrupts =3D <1 9 0x4>;
-> +		interrupts =3D <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
->=20
->  		its: msi-controller@6020000 {
->  			compatible =3D "arm,gic-v3-its";
-> @@ -314,7 +314,7 @@ extirq: interrupt-controller@14 {
->  		tmu: tmu@1f80000 {
->  			compatible =3D "fsl,qoriq-tmu";
->  			reg =3D <0x0 0x1f80000 0x0 0x10000>;
-> -			interrupts =3D <0 23 0x4>;
-> +			interrupts =3D <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
->  			fsl,tmu-range =3D <0xb0000 0x9002a 0x6004c
-> 0x30062>;
->  			fsl,tmu-calibration =3D
->  					<0x00000000 0x00000026>,
-> @@ -362,7 +362,7 @@ serial0: serial@21c0500 {
->  			reg =3D <0x0 0x21c0500 0x0 0x100>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(4)>;
-> -			interrupts =3D <0 32 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
->  		};
->=20
->  		serial1: serial@21c0600 {
-> @@ -370,7 +370,7 @@ serial1: serial@21c0600 {
->  			reg =3D <0x0 0x21c0600 0x0 0x100>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(4)>;
-> -			interrupts =3D <0 32 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
->  		};
->=20
->  		serial2: serial@21d0500 {
-> @@ -378,7 +378,7 @@ serial2: serial@21d0500 {
->  			reg =3D <0x0 0x21d0500 0x0 0x100>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(4)>;
-> -			interrupts =3D <0 33 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
->  		};
->=20
->  		serial3: serial@21d0600 {
-> @@ -386,7 +386,7 @@ serial3: serial@21d0600 {
->  			reg =3D <0x0 0x21d0600 0x0 0x100>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(4)>;
-> -			interrupts =3D <0 33 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
->  		};
->=20
->  		cluster1_core0_watchdog: wdt@c000000 { @@ -883,48
-> +883,48 @@ smmu: iommu@5000000 {
->  			#iommu-cells =3D <1>;
->  			stream-match-mask =3D <0x7C00>;
->  			dma-coherent;
-> -			interrupts =3D <0 13 4>, /* global secure fault */
-> -				     <0 14 4>, /* combined secure interrupt
-> */
-> -				     <0 15 4>, /* global non-secure fault */
-> -				     <0 16 4>, /* combined non-secure
-> interrupt */
-> +			interrupts =3D <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>, /*
-> global secure fault */
-> +				     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>, /*
-> combined secure interrupt */
-> +				     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>, /*
-> global non-secure fault */
-> +				     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>, /*
-> combined non-secure
-> +interrupt */
->  				/* performance counter interrupts 0-7 */
-> -				     <0 211 4>, <0 212 4>,
-> -				     <0 213 4>, <0 214 4>,
-> -				     <0 215 4>, <0 216 4>,
-> -				     <0 217 4>, <0 218 4>,
-> +				     <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 218
-> +IRQ_TYPE_LEVEL_HIGH>,
->  				/* per context interrupt, 64 interrupts */
-> -				     <0 146 4>, <0 147 4>,
-> -				     <0 148 4>, <0 149 4>,
-> -				     <0 150 4>, <0 151 4>,
-> -				     <0 152 4>, <0 153 4>,
-> -				     <0 154 4>, <0 155 4>,
-> -				     <0 156 4>, <0 157 4>,
-> -				     <0 158 4>, <0 159 4>,
-> -				     <0 160 4>, <0 161 4>,
-> -				     <0 162 4>, <0 163 4>,
-> -				     <0 164 4>, <0 165 4>,
-> -				     <0 166 4>, <0 167 4>,
-> -				     <0 168 4>, <0 169 4>,
-> -				     <0 170 4>, <0 171 4>,
-> -				     <0 172 4>, <0 173 4>,
-> -				     <0 174 4>, <0 175 4>,
-> -				     <0 176 4>, <0 177 4>,
-> -				     <0 178 4>, <0 179 4>,
-> -				     <0 180 4>, <0 181 4>,
-> -				     <0 182 4>, <0 183 4>,
-> -				     <0 184 4>, <0 185 4>,
-> -				     <0 186 4>, <0 187 4>,
-> -				     <0 188 4>, <0 189 4>,
-> -				     <0 190 4>, <0 191 4>,
-> -				     <0 192 4>, <0 193 4>,
-> -				     <0 194 4>, <0 195 4>,
-> -				     <0 196 4>, <0 197 4>,
-> -				     <0 198 4>, <0 199 4>,
-> -				     <0 200 4>, <0 201 4>,
-> -				     <0 202 4>, <0 203 4>,
-> -				     <0 204 4>, <0 205 4>,
-> -				     <0 206 4>, <0 207 4>,
-> -				     <0 208 4>, <0 209 4>;
-> +				     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 171 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 172 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 180 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 181 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 182 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>,
-> <GIC_SPI 209
-> +IRQ_TYPE_LEVEL_HIGH>;
->  		};
->=20
->  		dspi: spi@2100000 {
-> @@ -933,7 +933,7 @@ dspi: spi@2100000 {
->  			#address-cells =3D <1>;
->  			#size-cells =3D <0>;
->  			reg =3D <0x0 0x2100000 0x0 0x10000>;
-> -			interrupts =3D <0 26 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(4)>;
->  			clock-names =3D "dspi";
-> @@ -944,7 +944,7 @@ esdhc: esdhc@2140000 {
->  			status =3D "disabled";
->  			compatible =3D "fsl,ls2080a-esdhc", "fsl,esdhc";
->  			reg =3D <0x0 0x2140000 0x0 0x10000>;
-> -			interrupts =3D <0 28 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(2)>;
->  			voltage-ranges =3D <1800 1800 3300 3300>; @@ -
-> 956,7 +956,7 @@ esdhc: esdhc@2140000 {
->  		gpio0: gpio@2300000 {
->  			compatible =3D "fsl,ls2080a-gpio", "fsl,qoriq-gpio";
->  			reg =3D <0x0 0x2300000 0x0 0x10000>;
-> -			interrupts =3D <0 36 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
->  			gpio-controller;
->  			little-endian;
->  			#gpio-cells =3D <2>;
-> @@ -967,7 +967,7 @@ gpio0: gpio@2300000 {
->  		gpio1: gpio@2310000 {
->  			compatible =3D "fsl,ls2080a-gpio", "fsl,qoriq-gpio";
->  			reg =3D <0x0 0x2310000 0x0 0x10000>;
-> -			interrupts =3D <0 36 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
->  			gpio-controller;
->  			little-endian;
->  			#gpio-cells =3D <2>;
-> @@ -978,7 +978,7 @@ gpio1: gpio@2310000 {
->  		gpio2: gpio@2320000 {
->  			compatible =3D "fsl,ls2080a-gpio", "fsl,qoriq-gpio";
->  			reg =3D <0x0 0x2320000 0x0 0x10000>;
-> -			interrupts =3D <0 37 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
->  			gpio-controller;
->  			little-endian;
->  			#gpio-cells =3D <2>;
-> @@ -989,7 +989,7 @@ gpio2: gpio@2320000 {
->  		gpio3: gpio@2330000 {
->  			compatible =3D "fsl,ls2080a-gpio", "fsl,qoriq-gpio";
->  			reg =3D <0x0 0x2330000 0x0 0x10000>;
-> -			interrupts =3D <0 37 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
->  			gpio-controller;
->  			little-endian;
->  			#gpio-cells =3D <2>;
-> @@ -1003,7 +1003,7 @@ i2c0: i2c@2000000 {
->  			#address-cells =3D <1>;
->  			#size-cells =3D <0>;
->  			reg =3D <0x0 0x2000000 0x0 0x10000>;
-> -			interrupts =3D <0 34 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
->  			clock-names =3D "i2c";
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(4)>;
-> @@ -1015,7 +1015,7 @@ i2c1: i2c@2010000 {
->  			#address-cells =3D <1>;
->  			#size-cells =3D <0>;
->  			reg =3D <0x0 0x2010000 0x0 0x10000>;
-> -			interrupts =3D <0 34 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
->  			clock-names =3D "i2c";
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(4)>;
-> @@ -1027,7 +1027,7 @@ i2c2: i2c@2020000 {
->  			#address-cells =3D <1>;
->  			#size-cells =3D <0>;
->  			reg =3D <0x0 0x2020000 0x0 0x10000>;
-> -			interrupts =3D <0 35 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
->  			clock-names =3D "i2c";
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(4)>;
-> @@ -1039,7 +1039,7 @@ i2c3: i2c@2030000 {
->  			#address-cells =3D <1>;
->  			#size-cells =3D <0>;
->  			reg =3D <0x0 0x2030000 0x0 0x10000>;
-> -			interrupts =3D <0 35 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
->  			clock-names =3D "i2c";
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(4)>;
-> @@ -1048,7 +1048,7 @@ i2c3: i2c@2030000 {
->  		ifc: memory-controller@2240000 {
->  			compatible =3D "fsl,ifc";
->  			reg =3D <0x0 0x2240000 0x0 0x20000>;
-> -			interrupts =3D <0 21 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
->  			little-endian;
->  			#address-cells =3D <2>;
->  			#size-cells =3D <1>;
-> @@ -1077,7 +1077,7 @@ QORIQ_CLK_PLL_DIV(4)>,
->  		pcie1: pcie@3400000 {
->  			compatible =3D "fsl,ls2080a-pcie", "fsl,ls2085a-pcie";
->  			reg-names =3D "regs", "config";
-> -			interrupts =3D <0 108 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
->  			interrupt-names =3D "intr";
->  			#address-cells =3D <3>;
->  			#size-cells =3D <2>;
-> @@ -1099,7 +1099,7 @@ pcie1: pcie@3400000 {
->  		pcie2: pcie@3500000 {
->  			compatible =3D "fsl,ls2080a-pcie", "fsl,ls2085a-pcie";
->  			reg-names =3D "regs", "config";
-> -			interrupts =3D <0 113 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
->  			interrupt-names =3D "intr";
->  			#address-cells =3D <3>;
->  			#size-cells =3D <2>;
-> @@ -1121,7 +1121,7 @@ pcie2: pcie@3500000 {
->  		pcie3: pcie@3600000 {
->  			compatible =3D "fsl,ls2080a-pcie", "fsl,ls2085a-pcie";
->  			reg-names =3D "regs", "config";
-> -			interrupts =3D <0 118 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
->  			interrupt-names =3D "intr";
->  			#address-cells =3D <3>;
->  			#size-cells =3D <2>;
-> @@ -1143,7 +1143,7 @@ pcie3: pcie@3600000 {
->  		pcie4: pcie@3700000 {
->  			compatible =3D "fsl,ls2080a-pcie", "fsl,ls2085a-pcie";
->  			reg-names =3D "regs", "config";
-> -			interrupts =3D <0 123 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
->  			interrupt-names =3D "intr";
->  			#address-cells =3D <3>;
->  			#size-cells =3D <2>;
-> @@ -1166,7 +1166,7 @@ sata0: sata@3200000 {
->  			status =3D "disabled";
->  			compatible =3D "fsl,ls2080a-ahci";
->  			reg =3D <0x0 0x3200000 0x0 0x10000>;
-> -			interrupts =3D <0 133 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(4)>;
->  			dma-coherent;
-> @@ -1176,7 +1176,7 @@ sata1: sata@3210000 {
->  			status =3D "disabled";
->  			compatible =3D "fsl,ls2080a-ahci";
->  			reg =3D <0x0 0x3210000 0x0 0x10000>;
-> -			interrupts =3D <0 136 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(4)>;
->  			dma-coherent;
-> @@ -1192,7 +1192,7 @@ bus: bus {
->  			usb0: usb@3100000 {
->  				compatible =3D "snps,dwc3";
->  				reg =3D <0x0 0x3100000 0x0 0x10000>;
-> -				interrupts =3D <0 80 0x4>; /* Level high type
-> */
-> +				interrupts =3D <GIC_SPI 80
-> IRQ_TYPE_LEVEL_HIGH>;
->  				dr_mode =3D "host";
->  				snps,quirk-frame-length-adjustment =3D
-> <0x20>;
->  				snps,dis_rxdet_inp3_quirk;
-> @@ -1203,7 +1203,7 @@ usb0: usb@3100000 {
->  			usb1: usb@3110000 {
->  				compatible =3D "snps,dwc3";
->  				reg =3D <0x0 0x3110000 0x0 0x10000>;
-> -				interrupts =3D <0 81 0x4>; /* Level high type
-> */
-> +				interrupts =3D <GIC_SPI 81
-> IRQ_TYPE_LEVEL_HIGH>;
->  				dr_mode =3D "host";
->  				snps,quirk-frame-length-adjustment =3D
-> <0x20>;
->  				snps,dis_rxdet_inp3_quirk;
-> @@ -1215,7 +1215,7 @@ usb1: usb@3110000 {
->  		ccn@4000000 {
->  			compatible =3D "arm,ccn-504";
->  			reg =3D <0x0 0x04000000 0x0 0x01000000>;
-> -			interrupts =3D <0 12 4>;
-> +			interrupts =3D <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
->  		};
->=20
->  		rcpm: power-controller@1e34040 {
-> @@ -1236,14 +1236,14 @@ ftm_alarm0: timer@2800000 {
->  	ddr1: memory-controller@1080000 {
->  		compatible =3D "fsl,qoriq-memory-controller";
->  		reg =3D <0x0 0x1080000 0x0 0x1000>;
-> -		interrupts =3D <0 17 0x4>;
-> +		interrupts =3D <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
->  		little-endian;
->  	};
->=20
->  	ddr2: memory-controller@1090000 {
->  		compatible =3D "fsl,qoriq-memory-controller";
->  		reg =3D <0x0 0x1090000 0x0 0x1000>;
-> -		interrupts =3D <0 18 0x4>;
-> +		interrupts =3D <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
->  		little-endian;
->  	};
->=20
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> index 96055593204a..eaa7d8c70964 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> @@ -928,7 +928,7 @@ dspi2: spi@2120000 {
->  		esdhc0: esdhc@2140000 {
->  			compatible =3D "fsl,esdhc";
->  			reg =3D <0x0 0x2140000 0x0 0x10000>;
-> -			interrupts =3D <0 28 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(2)>;
->  			dma-coherent;
-> @@ -942,7 +942,7 @@ esdhc0: esdhc@2140000 {
->  		esdhc1: esdhc@2150000 {
->  			compatible =3D "fsl,esdhc";
->  			reg =3D <0x0 0x2150000 0x0 0x10000>;
-> -			interrupts =3D <0 63 0x4>; /* Level high type */
-> +			interrupts =3D <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks =3D <&clockgen QORIQ_CLK_PLATFORM_PLL
->  					    QORIQ_CLK_PLL_DIV(2)>;
->  			dma-coherent;
+> +&lsio_mu5 {
+> +	status =3D "okay";
+> +};
+> +
+>  &flexcan2 {
+>  	pinctrl-names =3D "default";
+>  	pinctrl-0 =3D <&pinctrl_flexcan2>;
 > --
-> 2.43.0
+> 2.34.1
 >=20
 
 
