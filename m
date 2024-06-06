@@ -1,128 +1,97 @@
-Return-Path: <linux-kernel+bounces-203854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABAF68FE146
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:41:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29E178FE148
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:41:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFD3B1C21599
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:41:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC81B1F24105
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C431313D25D;
-	Thu,  6 Jun 2024 08:41:10 +0000 (UTC)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89F513C91A;
+	Thu,  6 Jun 2024 08:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f9BkKMe0"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8331213C69A;
-	Thu,  6 Jun 2024 08:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FAE19D89A;
+	Thu,  6 Jun 2024 08:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717663270; cv=none; b=sVR/Vp/Y9PyRd5vEf0GYfSmMyB8nEFxsY2jm3PHsIVl7v5mWHDoXr2pIm4HCur+ecdL7M8Y9rJv+EvPUgVYeCZtsQcJiHI8QeN5eizKtuzBnayMP9N6FnObxyxZOnCc8QQacZK8TuEyFMSSbrmz8Zj5CuCLJ709jIXQ3S0141as=
+	t=1717663301; cv=none; b=KTjkc2hJqxR1Zz8wwRwTcruTfbfmLRijIBfyzV8nvlEd/FTPHh/Ka3XfyvNcO80Ti76O5D8Xk/+oeSqT/jmmZHMGYMgUos9CTV4gb3ld3sKmoGqPe0+KU6Q/QvzjfoRtmH5aRNbnKATrFSPgRhJVf9cs/J5+tsAlEMX1NUPpHKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717663270; c=relaxed/simple;
-	bh=kLTF0LF86rZ6TPdKMpFHXRAynse2+A4IFt/K7Y1MS70=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uiIK6IDn+DWQTo0oOqUBjCsNChZ6HX0uv6lZC9N5qIM39O2/eOWX8b3kC5uP0u42JW4fTEdi+wMAD15+kVllunVrY+Egy91gjNoZJkU3GBjpGcuKbwPGnHb6S1svfGWnoyPy8/Cu5VCD3t7+VRhtaVANs5fhn+mrjYLA11nBujM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-df771b6cc9cso769464276.3;
-        Thu, 06 Jun 2024 01:41:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717663267; x=1718268067;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7rJJ6wIAGO4z93hTC8lSOsbCqJndTTd+qtAeIcf8Fus=;
-        b=f5kyYoLvcn5+GN0aS8N90BrEcw65dfRkwKqHtfN0fuFDSecYxTggcsqTe0I8zon435
-         YTurHrtkjcQ8171JaHIA/oo6nDCB3UUR4cwomfCW/wk763amrYxr1mmQVHyYKs/izpFP
-         R6zQtT/2cqHQnJ7fGfTL1baHMp38z+qknXKXr/KCEtB3Led1D2j54NLqJDG7IM9TBbfd
-         XQPsqf17mQMO8SJ1r3ME74y9xpOM3iMuYgxrSYR1oHJL/J9ldeR2E9W2SGqS/dX8upjo
-         +s5aYaoGBjDbXD7XXiFgo3S/OjB0MKRXmUrHyDxXyIJVp3FBg7Zx72C64a0KTdnSAZ4I
-         r7sA==
-X-Forwarded-Encrypted: i=1; AJvYcCXEsM6s7WwTnlDG4SMTCqaT/uN7CU+wxSEJN+BJ89ZkttsvZFXltUrg2qGrSEGiW90pB/3WuU2B5hnbAPRnNCuJFZ+CYIopwavv0iMuc98mTb8Gb9apuFmXbOy8tARqG4I3bvKws5QYhTAxpgSSeZKrfMc7C7Jj6dZib3HADutTZovnf3SghugNfVwH32G2yDralUhMkFVWGJmmIxxkshd67vLyZqzHiA==
-X-Gm-Message-State: AOJu0YxW9xvht2r6iCxXy6zIfmYFFsK3/RGy7TrbOMqN2MbOYxIUZV99
-	fOsl/YE2Yo/gzEItKcSHYCQvtUrAnUXrIGg/xBY/eIG1DQSK2SytJ+SlX4L6
-X-Google-Smtp-Source: AGHT+IFj2XrgSOkLCdkhrx7rLI/AhecH+wnyPU0ydigPIFlIDaLicwSVWuTSA8MkE4PaXgGrdk6d7w==
-X-Received: by 2002:a25:6fc5:0:b0:de6:1a66:3e4d with SMTP id 3f1490d57ef6-dfacad0c760mr5104885276.59.1717663266640;
-        Thu, 06 Jun 2024 01:41:06 -0700 (PDT)
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dfae52bc078sm204469276.7.2024.06.06.01.41.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 01:41:06 -0700 (PDT)
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dfab4779d95so736549276.0;
-        Thu, 06 Jun 2024 01:41:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVa09VyOL9KZ0WRNH6u9h8ll9Qr641bTFkvUl9lnm2CLAbgMD4Giq4G3Qgp6Y3MuAcX9yJ5+ir50F6xkdYnq7jhQYuOvGYeSgB8LEdtdbuc2TU6QA6FuwFWQDa27uT0jjh7gT9arOeSR2X98tKUiJ0rmXeqpcCSC4EKKwVRY1wu90OfpkdlxTfz6SDr5p9/iVQsmSvaGiCfTQZEtvsHmaO8ObG8IIIqdA==
-X-Received: by 2002:a25:948:0:b0:de5:507a:7378 with SMTP id
- 3f1490d57ef6-dfacacedf3emr5460184276.45.1717663266094; Thu, 06 Jun 2024
- 01:41:06 -0700 (PDT)
+	s=arc-20240116; t=1717663301; c=relaxed/simple;
+	bh=EoyaGw1A4h+VCG9rJx8NmSKJzlh6fEw3DCXv7QkXl2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BvYJUp6Z+YnIoHVtsITe3Vf/TiGPN7yllqzwRdB5Xx6M19RSyYJnhJ7ZHaxho4zjXiLLXuzJ+wKS3WyR0lNV23SdALaw+ztk8ORC8mahObm/eUHhkjtO2YHKP7LrxeDGeYsnEFUzlvbbrH3RdcTBzJBd+WOQ+MPlz6uUNOnamiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f9BkKMe0; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id AEBCBC0002;
+	Thu,  6 Jun 2024 08:41:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1717663291;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sMtvqFFLEqL2SjbNwyELJMYS5t5iIw2nNf41UsERVgM=;
+	b=f9BkKMe0PdFR6PJ5U/70w1adfe0YuIzB0MeSC1RxKfJu9RbReWEeeK+mD7zHCILpSYGrfJ
+	tAPdtU4NWgRZH1iF1vbZtfrhrOqVNag0PPReZxAWuZF37fZKQH7KupxwK3kZOMwFk7ieik
+	n4izgVeKiZ/O66riUbr0IF2SVrmjXPZmzkdFmanIvhADdoz+BIAeuSbfIAKb+2OPL+40xI
+	OEqUcNWp/Yh6F+U4QAO4KKz2RW5arwvpJssbHTppWZvc4wyRoOSFuhEqPjaEb3EaIE6vfw
+	nhr50aTz4WbQ3b3fZmodZjT6ScoNE4DURregM4fgqeXg8KU5o5k63zC7vNnLdA==
+Date: Thu, 6 Jun 2024 10:41:25 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
+ <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell King
+ <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Herve Codina
+ <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Heiner
+ Kallweit <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ Jesse Brandeburg <jesse.brandeburg@intel.com>, Marek =?UTF-8?B?QmVow7pu?=
+ <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
+ mwojtas@chromium.org, Nathan Chancellor <nathan@kernel.org>, Antoine Tenart
+ <atenart@kernel.org>
+Subject: Re: [PATCH net-next v12 10/13] net: ethtool: pse-pd: Target the
+ command to the requested PHY
+Message-ID: <20240606104125.4ece706a@kmaincent-XPS-13-7390>
+In-Reply-To: <20240605124920.720690-11-maxime.chevallier@bootlin.com>
+References: <20240605124920.720690-1-maxime.chevallier@bootlin.com>
+	<20240605124920.720690-11-maxime.chevallier@bootlin.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530173857.164073-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240530173857.164073-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240604153612.GA839371-robh@kernel.org> <CA+V-a8tWxGBkuOY=G3RaB_0NXS3ShE-nL+5t49=_mJGvo6j6yQ@mail.gmail.com>
- <CAMuHMdWvdvmt42Wy=5Do2MeCRNbLOd2c8Nra2RFQtumnmZod_g@mail.gmail.com> <CA+V-a8sbjD=KghOmw6OEWXxbbPkmW-ycwuxFxh43GL3nKhLWxQ@mail.gmail.com>
-In-Reply-To: <CA+V-a8sbjD=KghOmw6OEWXxbbPkmW-ycwuxFxh43GL3nKhLWxQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Jun 2024 10:40:54 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWE3ZsNZ_WgwhmOEEqCMNUdoskVf6C=QJgThsK0kJK8Jw@mail.gmail.com>
-Message-ID: <CAMuHMdWE3ZsNZ_WgwhmOEEqCMNUdoskVf6C=QJgThsK0kJK8Jw@mail.gmail.com>
-Subject: Re: [PATCH v3 01/15] dt-bindings: pinctrl: renesas: Document
- RZ/V2H(P) SoC
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Paul Barker <paul.barker.ct@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-Hi Prabhakar,
+On Wed,  5 Jun 2024 14:49:15 +0200
+Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
 
-On Thu, Jun 6, 2024 at 10:38=E2=80=AFAM Lad, Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
-> On Thu, Jun 6, 2024 at 8:13=E2=80=AFAM Geert Uytterhoeven <geert@linux-m6=
-8k.org> wrote:
-> > On Wed, Jun 5, 2024 at 11:39=E2=80=AFAM Lad, Prabhakar
-> > <prabhakar.csengg@gmail.com> wrote:
-> > > OK, I will fix the above and send a v6 series.
-> >
-> > Please don't drag it out that long ;-)
-> Oops, that was a typo.
->
-> > As the rest of the series looks fine, a v4 should be sufficient.
-> > Actually a v4 of just the first patch would be fine for me, too.
-> >
-> As agreed patch 02/15 needs dropping, with that patch 07/14 ("pinctrl:
-> renesas: pinctrl-rzg2l: Add function pointer for locking/unlocking the
-> PFC register") does not apply cleanly anymore. Maybe I'll just send v4
-> for the entire patches?
+> PSE and PD configuration is a PHY-specific command. Instead of targeting
+> the command towards dev->phydev, use the request to pick the targeted
+> PHY device.
+>=20
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-Fine for me, and up to you.
-I can easily drop 02/15, and do a s/BOWI/B0WI/g before applying.
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
 
 --=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
