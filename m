@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-203679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA4078FDEF9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:41:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E35578FDEFC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C2F7287F8F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:41:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5865E28D618
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C62130482;
-	Thu,  6 Jun 2024 06:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC556131E38;
+	Thu,  6 Jun 2024 06:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WUitNi1M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nsb83SIM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7AC19D8A1;
-	Thu,  6 Jun 2024 06:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0577E43AB7;
+	Thu,  6 Jun 2024 06:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717656085; cv=none; b=LaNZrmnKXkdKM7dbRtSSd4xlhMK4C54dQ6lRN9u90KeyCK1AJR9ctbIj5JYAXBwc1Kh2obaYW+JGZAPzvzDODKylKhVHKuVXuNbeevt1YN3wtjXurMwRRMHflzl8oGIoXohYOh1nb5cajAPbJYRRcxuQu/HvASUmfPcuIUg8nm8=
+	t=1717656176; cv=none; b=NBHRFvsyj3z6g8kOqps5sKzthR2W4tQ8ewIwg+cMO8QChuCQE1CtKZzvwRr79EcuarbZ4kkJCBUidPm2O1zJIbCcHrdS4lDbC9uj1p/gQqsyCiCbTV8H+If5kwTsRu1bA+8suPPrEZcSaScSYhZG5AdXPEOHFbqmzIiLiHJbTPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717656085; c=relaxed/simple;
-	bh=u1Ua0OCeUX5MT5pyXeBzHix33dU1A3JIMQ8y9wVfqdU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HDeEEd/xgXRtdcU+Mg748vcYSpzDGnbDWDsI1mjpKATDOygVNuxojYa+AzCYP0wJWcDRhUDWhzy4z64ihcaRNXmJTOvkX8Wwxzf1tPs5PniLbtlIRtnuKKGAMbDbhFjwqEaYY3tLJae9Xn6Um5D88M+yPK58FJUd+YSPuO3LnbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WUitNi1M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17A1EC2BD10;
-	Thu,  6 Jun 2024 06:41:21 +0000 (UTC)
+	s=arc-20240116; t=1717656176; c=relaxed/simple;
+	bh=IVm4GBK+EUL7qtaYcd3QzD3U1t+bEREQP2cYVxz4d/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=LouuWxZaVmYnHlSPzyaQBJGQsl4YtdXp8ZSxTRH4BMyrt60MFvtBH3EDcpCnnOV4J49wkpxOUI6iMf005nh7QXa0j/L2C9RExHEcAmMW+Rs4t3oa0Yl52CLt7ryzICL7LNZKROcdA6giWlEgAls61lvi/arnTJ0tYZhJ7ZIkF6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nsb83SIM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4708C3277B;
+	Thu,  6 Jun 2024 06:42:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717656085;
-	bh=u1Ua0OCeUX5MT5pyXeBzHix33dU1A3JIMQ8y9wVfqdU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WUitNi1MxjVRHcBSCq7PFZcxaUgvlGQiCymu/UlrXWgQDQDYHfyvAIthSpG2x9TqG
-	 Sd2x1al+fpQOM5fpj+ciYtVDP7qbLeLWerRP0cFbTWSONeHZr5wLiYwuIXHumjwRjj
-	 KjDAhae0fIZQFgnMA9KjdsIODh1ILV3VA2LnKzKb81OzgqpSqas3tggHDyembJSx3C
-	 BuKvUpJk+vBHQ2icB/c5igJC4Um/WJqwmbmueszIyQ/IzBsBRLeqpToY6fCx3kHG4X
-	 fCwcii6ogJ6eN+/dXg76NYXKRgQhrJbPSjBqN+B//IG3qrkeHSOeV37oL4zcMHS6L8
-	 6luC0r/DvlELw==
-Message-ID: <fcff0181-b6de-4e47-b7ff-47baac061b3e@kernel.org>
-Date: Thu, 6 Jun 2024 08:41:19 +0200
+	s=k20201202; t=1717656175;
+	bh=IVm4GBK+EUL7qtaYcd3QzD3U1t+bEREQP2cYVxz4d/M=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=Nsb83SIMVtw+ghHxIM2giiqGIlGzPuX7YNekKTNZNk6IQVJaEDDRiKTCelplHLdaJ
+	 sNDn31y/YHTSGIFy/K383Z+XjWPVJVY0ydW9Njy16uOyZpEKnwj4e5XWD0ITjwBoxn
+	 hRwyfxUvplo27U3yxgYAcUam83yYPRQVKxI91I0Bbb2Vcm0PsjXC/qnrE4w+EFm06e
+	 6I9RVh5VO6kPhB+fIExmM44yF6V5pH1NUK+tewQS9R1MjoE5dIwRGzoxzZpQgenfsd
+	 pwvVEoIIUeW7JLv0dOpcHTvjg5E7rchjC/hfrsrl15QwBn1ijs8jBuY6clcDVc+v32
+	 XoNa3UC+hZLuw==
+Message-ID: <5f8ccd9b-d419-4a77-9e05-c2290c40b9d0@kernel.org>
+Date: Thu, 6 Jun 2024 08:42:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] Add SFC support for RK3128
-To: Alex Bee <knaerzche@gmail.com>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH 1/1] dt-bindings: remoteproc: imx_rproc: add minItems for
+ power-domain
+To: Frank Li <Frank.Li@nxp.com>, Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20240605205209.232005-1-knaerzche@gmail.com>
- <20240605205209.232005-6-knaerzche@gmail.com>
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+ "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM"
+ <linux-remoteproc@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>,
+ "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
+ "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240605193409.1131220-1-Frank.Li@nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,28 +112,61 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240605205209.232005-6-knaerzche@gmail.com>
+In-Reply-To: <20240605193409.1131220-1-Frank.Li@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 05/06/2024 22:52, Alex Bee wrote:
-> This series adds support for the Serial Flash Controller (SFC) found in
-> RK3128 SoCs.
+On 05/06/2024 21:34, Frank Li wrote:
+> "fsl,imx8qxp-cm4" just need 2 power domains. Keep the same restriction for
+> other compatible string.
 > 
-> As without using some "id holes" we would run out clock ids in the binding
-> and would have to touch the ABI, I added patches which removes the
-> CLK_NR_CLKS macro and uses the recently introduced
-> rockchip_clk_find_max_clk_id helper instead to find the highest clock id.
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
 > 
-> changes since v1:
->  - added patches to remove CLK_NR_CLKS (Connor)
+> Notes:
+>     pass dt_binding_check.
+>     
+>     make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8  dt_binding_check DT_SCHEMA_FILES=fsl,imx-rproc.yaml
+>       SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+>       CHKDT   Documentation/devicetree/bindings
+>       LINT    Documentation/devicetree/bindings
+>       DTEX    Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.example.dts
+>       DTC_CHK Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.example.dtb
 > 
+>  .../bindings/remoteproc/fsl,imx-rproc.yaml       | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> index df36e29d974ca..60267c1ba94e0 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> @@ -59,6 +59,7 @@ properties:
+>      maxItems: 32
+>  
+>    power-domains:
+> +    minItems: 1
 
-Do not attach (thread) your patchsets to some other threads (unrelated
-or older versions). This buries them deep in the mailbox and might
-interfere with applying entire sets.
+Then here should be 2.
 
-You sent now v2 immediately after. Confused.
+>      maxItems: 8
+>  
+>    fsl,auto-boot:
+> @@ -99,6 +100,21 @@ allOf:
+>        properties:
+>          fsl,iomuxc-gpr: false
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - fsl,imx8qxp-cm4
+> +    then:
+> +      properties:
+> +        power-domains:
+> +          minItems: 2
+
+
 
 Best regards,
 Krzysztof
