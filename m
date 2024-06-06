@@ -1,403 +1,212 @@
-Return-Path: <linux-kernel+bounces-205029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55CA28FF673
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:08:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C55478FF674
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA36FB254C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:08:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 716CF288915
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3EFD196C7D;
-	Thu,  6 Jun 2024 21:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400F313A869;
+	Thu,  6 Jun 2024 21:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="oUEVBbCz"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2079.outbound.protection.outlook.com [40.107.105.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rYBop3Ua"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE22482E9;
-	Thu,  6 Jun 2024 21:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717708110; cv=fail; b=SdvUSXxlgo2K63FBs0xJmAm3UE4KOV6RQzf0KzpArP6Zxckkco+2sGuaSC1DPSsNX6YrE+JrrzOU7Xjco1TtsM7mHTm3DkNa9ePjkclPyf8sAjb7CemyE3d0/hWGgdvsLI54Ytbsqs2/3eRgHpB+sqKB5awA5PHG5tzdNrM43is=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717708110; c=relaxed/simple;
-	bh=vQWrh/UD8Z6d775rhUAYJ74o98HPub2I9YA5zFLdVqw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HOKbbX0Wryv5NLtcLneMWsZHqOviKa/Mu8vLipbU/eGYJOJJciuFwcF7arzhpg6WXuGhrCkxnC1KuSrv2sZzZBHKAAfV+Yt9tR9UQq1cr4a+viz4n92ofpEFL9MYhnV9CHxzl+SXMr3AVg6w7/RBpuE6f/SBJBC5AIUPxuMnFXU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=oUEVBbCz; arc=fail smtp.client-ip=40.107.105.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kto19UZ43U+WUDF4Mq0YduH4hgJ535PaW70zvF9baqrAaB8mllNDiyG4Yceo3dirAt1ChNErzG6ikUhdW0Ut9GQ7ww6Z7a2LSQfb0PPYsBTDWJm2U6xQDvpqgySkgCsN+xQPZUMw+DeVDoolxOM/D/Z6ZW//j10MmAkO3ZrPmPwPW0UlEzg+ypahdE2b2arF5DDB6OrCliYQh5Fg5R7dId89Qcotwt1WIAk25ZCsjF8BvuHzKbNE14X6BX9ag9DvMD+xi/13MJOZnRs9phPmIOxDD+3ImbHWiTtQC15SFO6UeV7u2v5f07Xe4dwkH7h5T+efJwgf5U1aME56SEZnKg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RS8ppJdVLQhrDqPtrigWBnclXjVsMSL2ukpQoSTMuec=;
- b=W6xWZuV5Srk9yTRBoxtbW3Fb9r3O4cDO2Jj4fNrmGcIHwke+eTNPZ+qVLjp1jEwSERZRm1mXeZ26OCeEE3zDTxKkh/jSn+lVYQayDA8LoHT3vwhIz5LcClLjwqV7U0gpohL/sSS78snyLRroU8y+i6hSPSUqFBJZiaNEn8CW9OnfAg5UchAtK3iLS0RvWgjtvtByo0N5e3ooxprZ5yPBLNOJBUHAIGG8twSDe7LM0bLPZHzFPjR3Ehk/t+caGSy+hSEVeYBB4R1D0k7jxylnAR+ePOHcUj9XSAWdTAv3lRrGES7B9mcke8QYcDVZ1uw6Da6DTKqaNLjhQBCGVyb5Bw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RS8ppJdVLQhrDqPtrigWBnclXjVsMSL2ukpQoSTMuec=;
- b=oUEVBbCzXhQFc5gMcYVbw3QgUhc1f9H/S+H/vuA2mt3hp6EBZuYhOwH7bFBpCvMYecZjYrjcl4+Jy7xKQ4IuTqNi0UatTnja1ZxPMcMwQ8xHESQMMseqScLrC6cHuR3IlgAr8sfOp3lc6FEexYlLyBrTWjp0bWvslFKGHlMdCoY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PA1PR04MB10208.eurprd04.prod.outlook.com (2603:10a6:102:454::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.33; Thu, 6 Jun
- 2024 21:08:24 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7633.021; Thu, 6 Jun 2024
- 21:08:24 +0000
-Date: Thu, 6 Jun 2024 17:08:11 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Minghuan Lian <minghuan.Lian@nxp.com>,
-	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Srikanth Thokala <srikanth.thokala@intel.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-	mhi@lists.linux.dev, Niklas Cassel <cassel@kernel.org>,
-	Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH 1/5] PCI: dwc: ep: Remove dw_pcie_ep_init_notify() wrapper
-Message-ID: <ZmIlO+kVWV+C1QiA@lizhi-Precision-Tower-5810>
-References: <20240606-pci-deinit-v1-0-4395534520dc@linaro.org>
- <20240606-pci-deinit-v1-1-4395534520dc@linaro.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606-pci-deinit-v1-1-4395534520dc@linaro.org>
-X-ClientProxiedBy: BYAPR05CA0081.namprd05.prod.outlook.com
- (2603:10b6:a03:e0::22) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E397D1BDEF
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 21:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717708128; cv=none; b=me9knnBbyB+EPVwHHYMsDLOctPG65AZMQMQV1zs1Nf4vhJpEoBbsOAHUwKdanAxUvL6nrPZsC1mVXqGwACEDkRC/4YIFe/Xe4DxBILqRtPC9CLvyeKCzBM1aPW/S6Ma1TkGs6WL2DRlNXhSqlsewqhFqzeYeYksQvbx6Z8jmqu8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717708128; c=relaxed/simple;
+	bh=Ug/ACKKxEbkTvVoY6/kaf5EGZWfVHkLFkeiakUZyeGQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=FHptWThjPjW695Fvq2VyhVBnouT1Lgxppi+cC2cNZuAJLIoYaIQMbxV4UqjmfdGVJfpuYmLZ/PFtMS0P8Pt3iZX1bwVgdva/hUeCjsELhY7Qf1QPL8wwMf8c4OTl+6ckpa61H0R1c4Bs986DkxZE0YREMeiywTPSOkHCGydjx8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rYBop3Ua; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-627956be166so26293077b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 14:08:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717708126; x=1718312926; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Mye/YuqNKSozWj2ToP+PBiLkrDhSqJxsbKIKLkePCYI=;
+        b=rYBop3UaIbJ3XsOynHOJGLw03U2q16/TPCde7tC47zFQ+PEUCZ/qDqjNoPAUHCEgr4
+         B4sXseS20mcyLEzLd9R3ahFU2GLOpzzwB7xceeBzPvTOK0BNxmPasvwAMAQEWb46aQaA
+         /mIJ5CX16okZuf0N4jN903uQjsIqQcrF8zy72pHCzTjhioAq6U60sGWuW5gt8ssmIDkZ
+         V79Kip5sYrQPW+1KHjDktCvv6wBmA0zZy148ODYW7tvl0D9toUyj9QXnz3TH4hlen2/A
+         jPjKxEkm01v7BLb2tYpxzo4b+6Z3q0UOw+LUKsWki4gkV/XUNY255IU2AIazxsnnC0+I
+         Mi2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717708126; x=1718312926;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Mye/YuqNKSozWj2ToP+PBiLkrDhSqJxsbKIKLkePCYI=;
+        b=T/vNS2kTsIwW8+jB6j6k//4PmDOWGhbGGG1CDpyO9QgbGSLYP8Wgo64uIdaIxHNDt/
+         XhVKsjyKusv1Amp6bEgysYssCNd4k++qiDDWlGWN6/jP7Xhfk1+6EgqZNbTzWXRviZjG
+         L8ZzPbXIioAKy9vL6RCOKU4kylNgAU05DIfD6g1ZEOb8XoKbITBg+7LmIFOrz+c/XaeN
+         i236wych+Jn657/Rb67AF432weEPt0Q2X3n8C5emDJ3rnwL8jbf17AU89PzDYJxsiEaD
+         WsaHOsPdmRYUGAYWP5xn/Y2wjkNRg7pHtAc1dNeV/3x8QAZECyy6dayE2qTLBVSNaxvY
+         3kgg==
+X-Forwarded-Encrypted: i=1; AJvYcCW60OXiV9uLOBX9iQUXaB3E4NDTrCY8nmEBrLmsTOxMvyTJjnl0pKnHlzhTI/iIrQQFnSPghtttEEOrLyUXjYmiADNiOgMIYXL5vXcn
+X-Gm-Message-State: AOJu0YwrIyub2lBhKRqUSot6kUwfsRmieLr05G4GgboVizdywN3By3hj
+	o16hUMQrR7Jf1phApzjBI45p1o2IvhrlpOIbwbSDcSOSxVeVLYb9C18Nlr2WGB1kOCh68VbGjDd
+	KycwCptpcXH+BqbHAXw==
+X-Google-Smtp-Source: AGHT+IG5eZu2alNNou1PgVUYAuSn0/HSugrHQxS37yxt94oc6r8ncA4WHMp4irRp7eN3oydZ5YZmw9L8MaKII7dQ
+X-Received: from yosry.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:29b4])
+ (user=yosryahmed job=sendgmr) by 2002:a05:6902:100a:b0:df4:ece5:2720 with
+ SMTP id 3f1490d57ef6-dfaf6608d72mr164831276.13.1717708125555; Thu, 06 Jun
+ 2024 14:08:45 -0700 (PDT)
+Date: Thu,  6 Jun 2024 21:08:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA1PR04MB10208:EE_
-X-MS-Office365-Filtering-Correlation-Id: 57b188bb-ae03-4173-6833-08dc866ccd86
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|366007|7416005|52116005|376005|1800799015|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Cmp9kucf6joiw40WJjqx/DWOofgKQ8wuoVNX5FIBCM6jLCgTUwM1iWRhhXVV?=
- =?us-ascii?Q?mUG4T5lD4VyiboC9aAB+yLuj3nASw5FlFjqsglefQK2BEPRzdMIYDlu0A6cB?=
- =?us-ascii?Q?56u2eoO83QSDjogZy5gW81S0j8eCbEDRQrph8nvJ5u3V80NPUN35MmT1THhN?=
- =?us-ascii?Q?pcSurv0FD8/NOyLoIA7x8iz47Tn/FR0JcVbtbhRP5yMbVlx4qzIex0qBem5n?=
- =?us-ascii?Q?/4qAMPN+n9/SHWZXyf4rQEWOElUFB/VjeZDcuPm/ct6AQ7/Qt3boy8hu2VX+?=
- =?us-ascii?Q?hVSgzt6fLwgsdhfNLDLa99VLrhRFd0Cf/wApl+hKvb8uk+He5+AmYltfnb5r?=
- =?us-ascii?Q?oz2jSXSxCkfsI8+SXXkcHD+341CiD/TNBuALRRUxCR8ZXTYRqj95eL726VDL?=
- =?us-ascii?Q?YwI2rm7m/iiatQjiwg1H2PkXXZHUxYlOq5xRcDy3S/hVSpIL0tXtkiZIda6O?=
- =?us-ascii?Q?zhprnS2YasdppXpSXwbbFqJJNeErPPpDfH+O8rccp2xIZ8UzW2kO6l2ijEUX?=
- =?us-ascii?Q?jHocY7VOrwkcy/YxygzmXg2bFN6zbdotXnRw3zwUx2QUtsgv9O67E6O35jDs?=
- =?us-ascii?Q?EcAebNOZb4F4n5m0D7gPeElUs3BX58sVur0FXwQvf/UZwirNIJ8r3a1VLl+M?=
- =?us-ascii?Q?1kZ+MSjqU9yRcqb2Ix/9o0v9yc8RsRGeKz0HIUrTcC9b9ZvmTAI+VbqX/np3?=
- =?us-ascii?Q?zQ+m0TRzg+FzfK4NAzv2SdNV1jcDD1/1W51zr2+vb1+H0amZnKVCD44fuIOr?=
- =?us-ascii?Q?88RQ1kig/PSeI3wnzHCPaXyvR0tRV6W2lI5dw1x42vEMrctw06OwvMjDZ+xE?=
- =?us-ascii?Q?9IdxcnhesXUpJxhSnv+rNohiLGH1yViO310M/8BrDqgvM4MOutVkuLGkw0F/?=
- =?us-ascii?Q?AsldtjRDGKwp5ZVSy66QlbNROZRVV4otjMB+EVCOwCfI+WeOy2/NyUQPLLcK?=
- =?us-ascii?Q?CrNgQnTqd+Xryolcny3gry+T281knAHmh9wN/KDLdcANvDMhB1VjqmP/OBjv?=
- =?us-ascii?Q?/XNo9/xsMeHLTyhubEtwgYeEC0018Y3d286FHts8wXL/13S4X5cdHwci+Hd1?=
- =?us-ascii?Q?BCxk14QZDJNq9N7ht9+ZbnRXRduXybmO0eaEfKiuQcBnzVshp7edKN1FjTCy?=
- =?us-ascii?Q?phuzNUIH8WF5YMLZ3iCmi3RN2Yzf+EU+YjJxklUAJHNoo6FOYpeco6QpHmdv?=
- =?us-ascii?Q?e5Pb+LlIuGIttDWka7m+EjuBy5z7g+rQHJtlKaQHdSnh6WAC+a4Xrb9Nndv8?=
- =?us-ascii?Q?N+CPP5P+9tgYEkLU8UC7xtdsQgDvOMruh0/89srgGSVIul6b+wtf1pDk1zyl?=
- =?us-ascii?Q?Lu7ziatrrYcl1Th49NnRuL3kHbRi1Zp3YIan1OvbRBrvHFsmVaTEGbHwxa/i?=
- =?us-ascii?Q?tD7sY8Y=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(7416005)(52116005)(376005)(1800799015)(38350700005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gO+aqO65ljzF9JhriNTewCs2lCm1zkQIiqPf8UQzjuIcDruY+nvirlsy9erP?=
- =?us-ascii?Q?8rKtDBzV2hZYGcM9NxGAm7HZ5MkefJ4VuLLZjsPZeqWMwgwzW7UJA2mP9Qk/?=
- =?us-ascii?Q?Z8RGpngyOuigbSFZac8et+fUxSNtYgTPnxVeKTQsp0TG2FefE4CVE/wwnmGg?=
- =?us-ascii?Q?zNUaQ7X4mCDfyz8zVh5cFsAGh7mNTx2mlo0JlzVRaEyRkTujv+mpLWJh4cxa?=
- =?us-ascii?Q?Ji8Lg4QCMrMPppDiOJ+5+1qw4z5UVDhIkjiuHaNcYFbZJc+N4MS6GuDg1uBs?=
- =?us-ascii?Q?qKykqG050ZFTdUUSLLJSoL/2l5ow8t8vkytVz6YCp3n4I2H584q1+04wH7ef?=
- =?us-ascii?Q?XYxMwu5onJ8PlF+kATmp7CvMA1DGQT1qqGYhOf+HmEy8yI476J3z83SOZHp6?=
- =?us-ascii?Q?aDs6APQhCgkL4vdsHpxBm/PhM0hOPN+nPBkBPxwQNpwEq1Mfraj0bQyIYr9/?=
- =?us-ascii?Q?UdInFS8CBcuflGskTaQ4NZL83EP6JLcIZvp3HC21fnVrqahBe2qVe/ahdCj6?=
- =?us-ascii?Q?gm6jmb0x9LQ1g+Ks+GzDra6gF4tawA2oUOVgqPMrcqAzcpogyY5NlfsGzqcv?=
- =?us-ascii?Q?jyGWLTwLKNgzOcErZzYOyAf2e0zJhebO8byHoFMtDtslEI60c5T3nhKnJTCm?=
- =?us-ascii?Q?ayByogVHQvX+OYTrXOVdhgNp6Qz8n2Bs67IpdDkW3m2sjSegQmtDdn9Lbs92?=
- =?us-ascii?Q?QxwL0YK3LMjnMrju0lfYB+8CpbM9RqqnoUg4036lOWkUkCLKJ+oFhc5+aQUf?=
- =?us-ascii?Q?dnHa2aj4Iz+5xrXu8QeExUtDe6pDVe0FokRWDrIYcEB+AzXw6afJ9NJ3Ttt6?=
- =?us-ascii?Q?7vfGiU0RMZ0Eal9GeLk6oqT+upoTtyUisLF/u4LkRGB2LQbRcMcMUi7x3hEy?=
- =?us-ascii?Q?15NJiGPu+E7uPUn2gB/sy7H8sOe5hffWfB+/bjO4DyKyGAlnn7V00QgCI/u7?=
- =?us-ascii?Q?A/MNZcjWA8fMBGlwLdj+A017BCGw/m+52+yQJWSBmF8upANbMVfQu8h7otUR?=
- =?us-ascii?Q?jcY7p1cj+MzmwyDVL9Emzvg0/kkYyHsPgH753LRqpUl8mYXJj2Kh7Uww3wFX?=
- =?us-ascii?Q?k33i4eGV6w5fCrpUus5R2PBsGXX9Z6kgDl3yKwRGJRqjfpN2upyHr8A3pwlf?=
- =?us-ascii?Q?+UbUsNa337G2zBiKu7BhbI1+UGdUTAOEWeYVnDqpUI4VTqIGv1+mClTYQLY9?=
- =?us-ascii?Q?ArG6vWZYRBiPaTpxKm4g+FXazsIeurzB7IGN0UYth9dDQ353vwMrOdbVD6l4?=
- =?us-ascii?Q?zT99rhsARnQCx1z/h89/14h62In9UaljX9aqqscwGMlF7NBoeWXvR0QVV+El?=
- =?us-ascii?Q?IZvoFfXrOGeG53eIvuqK7duY0Dz9lA33aTzRRu6Ey25hBg4oBOSnloGmIAWx?=
- =?us-ascii?Q?uHMo/9shoswEqG31el5hb6y+fdGRf0zLI0TZjTY9fVAiUA1Tr030i8xmiffz?=
- =?us-ascii?Q?UHxNfGZUtf4/T6bqBFhen9iy0X0Fvu/P2XL5FGOY6GAMtIMStFhZbPFTwojc?=
- =?us-ascii?Q?g/XQa9UBC2mY6TWKkvsMUUA17KAOWQfL9iiMM0SURKBrT5xvEaK+w3a28Nue?=
- =?us-ascii?Q?OMB/SO67CBY+5maDUU2jG3TkieDR4dGw64ICmBvl?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57b188bb-ae03-4173-6833-08dc866ccd86
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 21:08:24.4682
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bDTq7qRU3pMpwxMqjXkkuzHwRKY/OTUQRpwCsQon00Uz/7Fjb8y4AC6jYjUHgVvcwsBf58XyUV4LsrO524ZYFA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10208
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+Message-ID: <20240606210840.1650341-1-yosryahmed@google.com>
+Subject: [PATCH] mm: swap: remove 'synchronous' argument to swap_read_folio()
+From: Yosry Ahmed <yosryahmed@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Huang Ying <ying.huang@intel.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Yosry Ahmed <yosryahmed@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jun 06, 2024 at 12:56:34PM +0530, Manivannan Sadhasivam wrote:
-> Currently dw_pcie_ep_init_notify() wrapper just calls pci_epc_init_notify()
-> directly. So this wrapper provides no benefit to the glue drivers.
-> 
-> So let's remove it and call pci_epc_init_notify() directly from glue
-> drivers.
-> 
-> Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+swap_read_folio() reads the folio synchronously if synchronous is passed
+as true or if SWP_SYNCHRONOUS_IO is set in swap_info_struct. The only
+caller that passes synchronous=true is in do_swap_page() in the
+SWP_SYNCHRONOUS_IO case.
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Hence, the argument is redundant, it is only set to true when the swap
+read would have been synchronous anyway. Remove it.
 
-> ---
->  drivers/pci/controller/dwc/pci-dra7xx.c           |  2 +-
->  drivers/pci/controller/dwc/pci-imx6.c             |  2 +-
->  drivers/pci/controller/dwc/pci-keystone.c         |  2 +-
->  drivers/pci/controller/dwc/pci-layerscape-ep.c    |  2 +-
->  drivers/pci/controller/dwc/pcie-artpec6.c         |  2 +-
->  drivers/pci/controller/dwc/pcie-designware-ep.c   | 12 ------------
->  drivers/pci/controller/dwc/pcie-designware-plat.c |  2 +-
->  drivers/pci/controller/dwc/pcie-designware.h      |  5 -----
->  drivers/pci/controller/dwc/pcie-keembay.c         |  2 +-
->  drivers/pci/controller/dwc/pcie-qcom-ep.c         |  2 +-
->  drivers/pci/controller/dwc/pcie-rcar-gen4.c       |  2 +-
->  drivers/pci/controller/dwc/pcie-tegra194.c        |  2 +-
->  drivers/pci/controller/dwc/pcie-uniphier-ep.c     |  2 +-
->  13 files changed, 11 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
-> index d2d17d37d3e0..e491d0ff3962 100644
-> --- a/drivers/pci/controller/dwc/pci-dra7xx.c
-> +++ b/drivers/pci/controller/dwc/pci-dra7xx.c
-> @@ -474,7 +474,7 @@ static int dra7xx_add_pcie_ep(struct dra7xx_pcie *dra7xx,
->  		return ret;
->  	}
->  
-> -	dw_pcie_ep_init_notify(ep);
-> +	pci_epc_init_notify(ep->epc);
->  
->  	return 0;
->  }
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 917c69edee1d..a876b8e6e741 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -1131,7 +1131,7 @@ static int imx6_add_pcie_ep(struct imx6_pcie *imx6_pcie,
->  		return ret;
->  	}
->  
-> -	dw_pcie_ep_init_notify(ep);
-> +	pci_epc_init_notify(ep->epc);
->  
->  	/* Start LTSSM. */
->  	imx6_pcie_ltssm_enable(dev);
-> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-> index d3a7d14ee685..ca1054f5c79a 100644
-> --- a/drivers/pci/controller/dwc/pci-keystone.c
-> +++ b/drivers/pci/controller/dwc/pci-keystone.c
-> @@ -1293,7 +1293,7 @@ static int ks_pcie_probe(struct platform_device *pdev)
->  			goto err_ep_init;
->  		}
->  
-> -		dw_pcie_ep_init_notify(&pci->ep);
-> +		pci_epc_init_notify(pci->ep.epc);
->  
->  		break;
->  	default:
-> diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> index 7dde6d5fa4d8..35bb481564c7 100644
-> --- a/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> +++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> @@ -286,7 +286,7 @@ static int __init ls_pcie_ep_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> -	dw_pcie_ep_init_notify(&pci->ep);
-> +	pci_epc_init_notify(pci->ep.epc);
->  
->  	return ls_pcie_ep_interrupt_init(pcie, pdev);
->  }
-> diff --git a/drivers/pci/controller/dwc/pcie-artpec6.c b/drivers/pci/controller/dwc/pcie-artpec6.c
-> index a4630b92489b..dc8dd7f27b78 100644
-> --- a/drivers/pci/controller/dwc/pcie-artpec6.c
-> +++ b/drivers/pci/controller/dwc/pcie-artpec6.c
-> @@ -452,7 +452,7 @@ static int artpec6_pcie_probe(struct platform_device *pdev)
->  			return ret;
->  		}
->  
-> -		dw_pcie_ep_init_notify(&pci->ep);
-> +		pci_epc_init_notify(pci->ep.epc);
->  
->  		break;
->  	default:
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> index 47391d7d3a73..2e69f81baf99 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> @@ -27,18 +27,6 @@ void dw_pcie_ep_linkup(struct dw_pcie_ep *ep)
->  }
->  EXPORT_SYMBOL_GPL(dw_pcie_ep_linkup);
->  
-> -/**
-> - * dw_pcie_ep_init_notify - Notify EPF drivers about EPC initialization complete
-> - * @ep: DWC EP device
-> - */
-> -void dw_pcie_ep_init_notify(struct dw_pcie_ep *ep)
-> -{
-> -	struct pci_epc *epc = ep->epc;
-> -
-> -	pci_epc_init_notify(epc);
-> -}
-> -EXPORT_SYMBOL_GPL(dw_pcie_ep_init_notify);
-> -
->  /**
->   * dw_pcie_ep_get_func_from_ep - Get the struct dw_pcie_ep_func corresponding to
->   *				 the endpoint function
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-plat.c b/drivers/pci/controller/dwc/pcie-designware-plat.c
-> index 8490c5d6ff9f..771b9d9be077 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-plat.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-plat.c
-> @@ -154,7 +154,7 @@ static int dw_plat_pcie_probe(struct platform_device *pdev)
->  			dw_pcie_ep_deinit(&pci->ep);
->  		}
->  
-> -		dw_pcie_ep_init_notify(&pci->ep);
-> +		pci_epc_init_notify(pci->ep.epc);
->  
->  		break;
->  	default:
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index f8e5431a207b..49ae845a3662 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -670,7 +670,6 @@ static inline void __iomem *dw_pcie_own_conf_map_bus(struct pci_bus *bus,
->  void dw_pcie_ep_linkup(struct dw_pcie_ep *ep);
->  int dw_pcie_ep_init(struct dw_pcie_ep *ep);
->  int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep);
-> -void dw_pcie_ep_init_notify(struct dw_pcie_ep *ep);
->  void dw_pcie_ep_deinit(struct dw_pcie_ep *ep);
->  void dw_pcie_ep_cleanup(struct dw_pcie_ep *ep);
->  int dw_pcie_ep_raise_intx_irq(struct dw_pcie_ep *ep, u8 func_no);
-> @@ -698,10 +697,6 @@ static inline int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
->  	return 0;
->  }
->  
-> -static inline void dw_pcie_ep_init_notify(struct dw_pcie_ep *ep)
-> -{
-> -}
-> -
->  static inline void dw_pcie_ep_deinit(struct dw_pcie_ep *ep)
->  {
->  }
-> diff --git a/drivers/pci/controller/dwc/pcie-keembay.c b/drivers/pci/controller/dwc/pcie-keembay.c
-> index 98bbc83182b4..278205db60a2 100644
-> --- a/drivers/pci/controller/dwc/pcie-keembay.c
-> +++ b/drivers/pci/controller/dwc/pcie-keembay.c
-> @@ -442,7 +442,7 @@ static int keembay_pcie_probe(struct platform_device *pdev)
->  			return ret;
->  		}
->  
-> -		dw_pcie_ep_init_notify(&pci->ep);
-> +		pci_epc_init_notify(pci->ep.epc);
->  
->  		break;
->  	default:
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> index 1ecf602c225a..4d2d7457dcb3 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> @@ -482,7 +482,7 @@ static int qcom_pcie_perst_deassert(struct dw_pcie *pci)
->  	val &= ~PARF_MSTR_AXI_CLK_EN;
->  	writel_relaxed(val, pcie_ep->parf + PARF_MHI_CLOCK_RESET_CTRL);
->  
-> -	dw_pcie_ep_init_notify(&pcie_ep->pci.ep);
-> +	pci_epc_init_notify(pcie_ep->pci.ep.epc);
->  
->  	/* Enable LTSSM */
->  	val = readl_relaxed(pcie_ep->parf + PARF_LTSSM);
-> diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-> index cfeccc2f9ee1..237a6a8818de 100644
-> --- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-> +++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-> @@ -437,7 +437,7 @@ static int rcar_gen4_add_dw_pcie_ep(struct rcar_gen4_pcie *rcar)
->  		rcar_gen4_pcie_ep_deinit(rcar);
->  	}
->  
-> -	dw_pcie_ep_init_notify(ep);
-> +	pci_epc_init_notify(ep->epc);
->  
->  	return ret;
->  }
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 93f5433c5c55..432ed9d9a463 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -1903,7 +1903,7 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
->  		goto fail_init_complete;
->  	}
->  
-> -	dw_pcie_ep_init_notify(ep);
-> +	pci_epc_init_notify(ep->epc);
->  
->  	/* Program the private control to allow sending LTR upstream */
->  	if (pcie->of_data->has_ltr_req_fix) {
-> diff --git a/drivers/pci/controller/dwc/pcie-uniphier-ep.c b/drivers/pci/controller/dwc/pcie-uniphier-ep.c
-> index a2b844268e28..d6e73811216e 100644
-> --- a/drivers/pci/controller/dwc/pcie-uniphier-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-uniphier-ep.c
-> @@ -410,7 +410,7 @@ static int uniphier_pcie_ep_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> -	dw_pcie_ep_init_notify(&priv->pci.ep);
-> +	pci_epc_init_notify(priv->pci.ep.epc);
->  
->  	return 0;
->  }
-> 
-> -- 
-> 2.25.1
-> 
+Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+---
+ mm/memory.c     |  2 +-
+ mm/page_io.c    |  6 +++---
+ mm/swap.h       |  6 ++----
+ mm/swap_state.c | 10 +++++-----
+ 4 files changed, 11 insertions(+), 13 deletions(-)
+
+diff --git a/mm/memory.c b/mm/memory.c
+index db91304882312..2b3ef08e8bb7d 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4113,7 +4113,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+ 
+ 				/* To provide entry to swap_read_folio() */
+ 				folio->swap = entry;
+-				swap_read_folio(folio, true, NULL);
++				swap_read_folio(folio, NULL);
+ 				folio->private = NULL;
+ 			}
+ 		} else {
+diff --git a/mm/page_io.c b/mm/page_io.c
+index 41e8d738c6d28..f1a9cfab6e748 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -493,10 +493,10 @@ static void swap_read_folio_bdev_async(struct folio *folio,
+ 	submit_bio(bio);
+ }
+ 
+-void swap_read_folio(struct folio *folio, bool synchronous,
+-		struct swap_iocb **plug)
++void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
+ {
+ 	struct swap_info_struct *sis = swp_swap_info(folio->swap);
++	bool synchronous = sis->flags & SWP_SYNCHRONOUS_IO;
+ 	bool workingset = folio_test_workingset(folio);
+ 	unsigned long pflags;
+ 	bool in_thrashing;
+@@ -521,7 +521,7 @@ void swap_read_folio(struct folio *folio, bool synchronous,
+ 		folio_unlock(folio);
+ 	} else if (data_race(sis->flags & SWP_FS_OPS)) {
+ 		swap_read_folio_fs(folio, plug);
+-	} else if (synchronous || (sis->flags & SWP_SYNCHRONOUS_IO)) {
++	} else if (synchronous) {
+ 		swap_read_folio_bdev_sync(folio, sis);
+ 	} else {
+ 		swap_read_folio_bdev_async(folio, sis);
+diff --git a/mm/swap.h b/mm/swap.h
+index 2c0e96272d498..baa1fa946b347 100644
+--- a/mm/swap.h
++++ b/mm/swap.h
+@@ -11,8 +11,7 @@ struct mempolicy;
+ /* linux/mm/page_io.c */
+ int sio_pool_init(void);
+ struct swap_iocb;
+-void swap_read_folio(struct folio *folio, bool do_poll,
+-		struct swap_iocb **plug);
++void swap_read_folio(struct folio *folio, struct swap_iocb **plug);
+ void __swap_read_unplug(struct swap_iocb *plug);
+ static inline void swap_read_unplug(struct swap_iocb *plug)
+ {
+@@ -83,8 +82,7 @@ static inline unsigned int folio_swap_flags(struct folio *folio)
+ }
+ #else /* CONFIG_SWAP */
+ struct swap_iocb;
+-static inline void swap_read_folio(struct folio *folio, bool do_poll,
+-		struct swap_iocb **plug)
++static inline void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
+ {
+ }
+ static inline void swap_write_unplug(struct swap_iocb *sio)
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index 0803eedeabe3d..994723cef8217 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -567,7 +567,7 @@ struct folio *read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 	mpol_cond_put(mpol);
+ 
+ 	if (page_allocated)
+-		swap_read_folio(folio, false, plug);
++		swap_read_folio(folio, plug);
+ 	return folio;
+ }
+ 
+@@ -684,7 +684,7 @@ struct folio *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
+ 		if (!folio)
+ 			continue;
+ 		if (page_allocated) {
+-			swap_read_folio(folio, false, &splug);
++			swap_read_folio(folio, &splug);
+ 			if (offset != entry_offset) {
+ 				folio_set_readahead(folio);
+ 				count_vm_event(SWAP_RA);
+@@ -701,7 +701,7 @@ struct folio *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
+ 					&page_allocated, false);
+ 	if (unlikely(page_allocated)) {
+ 		zswap_folio_swapin(folio);
+-		swap_read_folio(folio, false, NULL);
++		swap_read_folio(folio, NULL);
+ 	}
+ 	return folio;
+ }
+@@ -834,7 +834,7 @@ static struct folio *swap_vma_readahead(swp_entry_t targ_entry, gfp_t gfp_mask,
+ 		if (!folio)
+ 			continue;
+ 		if (page_allocated) {
+-			swap_read_folio(folio, false, &splug);
++			swap_read_folio(folio, &splug);
+ 			if (addr != vmf->address) {
+ 				folio_set_readahead(folio);
+ 				count_vm_event(SWAP_RA);
+@@ -853,7 +853,7 @@ static struct folio *swap_vma_readahead(swp_entry_t targ_entry, gfp_t gfp_mask,
+ 					&page_allocated, false);
+ 	if (unlikely(page_allocated)) {
+ 		zswap_folio_swapin(folio);
+-		swap_read_folio(folio, false, NULL);
++		swap_read_folio(folio, NULL);
+ 	}
+ 	return folio;
+ }
+-- 
+2.45.2.505.gda0bf45e8d-goog
+
 
