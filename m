@@ -1,143 +1,149 @@
-Return-Path: <linux-kernel+bounces-204432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60D168FECF3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:34:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DA848FE856
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:04:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15DA01F2620F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:34:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 306792832E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4554A1B3F01;
-	Thu,  6 Jun 2024 14:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yoPRq6ZL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47DB19643E;
+	Thu,  6 Jun 2024 14:04:07 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845E319CCFB;
-	Thu,  6 Jun 2024 14:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1038D2BAF1
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717683427; cv=none; b=C6kBtAaIhxAkhlPXpbEFCg2tdGlxwJRN6JuVfFx3vL/aWqIHX5q+YWP2SPde5DJ2JUlP3xowA/oxmQM6c1NPL+ac1laKsb+K9nqvNDZY4xxChb3+0ZJKNEU71Vuxz/fCevLHRFNDMlp3r6+YDrGFp5H0HiHtF/Bwnu8GfMbYZKA=
+	t=1717682647; cv=none; b=S/hUhpa29y5zdivsXwngdEcae1VqEig/b6/H/PQ++3XgqXQsKGCy1DKtQg1/YdWusaTLm/BYvkI79i7TRw67TlKO9+sEx//5xai8meEBLgqG2Kt4ng2aT7SFfj1x6GQ/7LjYd3wOGFfZaJzQT6JDCdmCrA2EkRSAUFZqxNh42NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717683427; c=relaxed/simple;
-	bh=7FPLIoOdl0Zmsq6B7Q7QW7kzcK/k4/6nu2KE144GnMU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SzxJnqkjW6Qwm5Vg3gEBquVUcLsM+5K00PbAgOS1ZcHk9H4VAVJuQsjSyrowaFxEhxEpt6gzJbw+xiWWslHONj4agQ5icJksniAoolJUym25lgdPojNbpvkb+IRlBt3xeM6BYfIeil3GzL3PC9UD+Vr5UBA8O81xFws8LPPRXCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yoPRq6ZL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56925C32781;
-	Thu,  6 Jun 2024 14:17:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1717683427;
-	bh=7FPLIoOdl0Zmsq6B7Q7QW7kzcK/k4/6nu2KE144GnMU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=yoPRq6ZLMsTyHQ/CYMS7UjlpGAGUmRDHt66Pvqfas6tKJkH5+IcU4qlUQeyU7XDE1
-	 0/ceEIqLcc9qLLqxfURFetbxPSk4s0jCjyGYCLCA4Be61QyQF+ytpavoBLnknbAqY6
-	 Ixyx+zIlP1pUpPblxmltKniClJcQ1AyDb7LAKDzE=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@arm.com>,
-	Leo Yan <leo.yan@linaro.org>,
-	linux-acpi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	coresight@lists.linaro.org,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.1 313/473] coresight: etm4x: Fix unbalanced pm_runtime_enable()
-Date: Thu,  6 Jun 2024 16:04:02 +0200
-Message-ID: <20240606131710.288688254@linuxfoundation.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240606131659.786180261@linuxfoundation.org>
-References: <20240606131659.786180261@linuxfoundation.org>
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
+	s=arc-20240116; t=1717682647; c=relaxed/simple;
+	bh=Aa+yNawb/6vYuwyonTK2efnNyGoMyOrjMBz0/aNhX4E=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=cOTD0oBgYwfJvLDagSa0UBkHMyoiySifPGZHE/+GS1MVBL9NeIdoPCKjG7/IDp8K3ruHBgKWjdl1BK1w2mF41VfN/2M3BToNz2r5WvAxWPyKOilXZ/CbzAw96yH2Vlrw5jEuU4+3XjNafL2Q0k8dYpF7GuUyLIyRaDu6XLPqTGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7e8e7707356so113059139f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 07:04:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717682645; x=1718287445;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1fTb+s859GtkLCRE6EYmEpE5ayYfzHKL23weMhhSCJw=;
+        b=oFuxWhe9beOK5il5+OkJhj4cTDEed1li6USoN/Vd+UiSOEfbH2LOp3QpGg7aa6fmUd
+         RQzT3qa/NxC+Ic9A1f+1nTHvFji/vv91DWwljnc4zVeR5MgTv5YBJLxD0wHD6SQ4Hmh/
+         qrcGatk5IMLZJ3WqkuuHYbtDa7Jc/BQ3JdB/NBgGlGVpqCnbdOKYqteg9qjiGTfFR5uW
+         n9aymN9eCj837xuZGFySFdWg829d/QEUyCGugsnDuuX6jdwmJgKpkK4QmDP4JydCo6te
+         6TjLT5XfG44lHNcbAMrarLFfC5IJKVuhcCCKoFfp+ZwdKgmIps4AMsqP59yioXlpmTc9
+         G1SQ==
+X-Gm-Message-State: AOJu0YxFH4ghD2nHeUi31zEgz5iK0EWStp0QPZjal2NQXg77O1yKbjjB
+	XMnoPL8yNijDqz942YnW9kT1uZPSSfTmMy2/5x2DQy9jTbUmFzKa/a0TVns/viQB/JMZPjsWlBg
+	x+U6ikCTKovJ2k9pmmuTzEkS2pBqNSVWJ7nCaIux62WnuDT5gQLyB78o=
+X-Google-Smtp-Source: AGHT+IGzdZgbkAjYV3xxcl7t4lOKILpj7Pjw+fbBoWdyx2dZil9BeMCC3g/yVgVkbWk7KhDj5eStbUF7nKktbyWfmFuBNv70O0vR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:841c:b0:4b3:292b:278e with SMTP id
+ 8926c6da1cb9f-4b63a76852emr338252173.1.1717682644967; Thu, 06 Jun 2024
+ 07:04:04 -0700 (PDT)
+Date: Thu, 06 Jun 2024 07:04:04 -0700
+In-Reply-To: <000000000000adb08b061413919e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e3f688061a392771@google.com>
+Subject: Re: [syzbot] possible deadlock in trie_delete_elem
+From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-6.1-stable review patch.  If anyone has any objections, please let me know.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-------------------
+***
 
-From: Anshuman Khandual <anshuman.khandual@arm.com>
+Subject: possible deadlock in trie_delete_elem
+Author: norkam41@gmail.com
 
-[ Upstream commit caa41c47dab7e1054f587e592ab21296e3a6781c ]
+#syz test: https://linux.googlesource.com/linux/kernel/git/torvalds/linux e377d803b65ee4130213b3c041fc25fdfec1bd90
 
-There is an unbalanced pm_runtime_enable() in etm4_probe_platform_dev()
-when etm4_probe() fails. This problem can be observed via the coresight
-etm4 module's (load -> unload -> load) sequence when etm4_probe() fails
-in etm4_probe_platform_dev().
-
-[   63.379943] coresight-etm4x 7040000.etm: Unbalanced pm_runtime_enable!
-[   63.393630] coresight-etm4x 7140000.etm: Unbalanced pm_runtime_enable!
-[   63.407455] coresight-etm4x 7240000.etm: Unbalanced pm_runtime_enable!
-[   63.420983] coresight-etm4x 7340000.etm: Unbalanced pm_runtime_enable!
-[   63.420999] coresight-etm4x 7440000.etm: Unbalanced pm_runtime_enable!
-[   63.441209] coresight-etm4x 7540000.etm: Unbalanced pm_runtime_enable!
-[   63.454689] coresight-etm4x 7640000.etm: Unbalanced pm_runtime_enable!
-[   63.474982] coresight-etm4x 7740000.etm: Unbalanced pm_runtime_enable!
-
-This fixes the above problem - with an explicit pm_runtime_disable() call
-when etm4_probe() fails during etm4_probe_platform_dev().
-
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Hanjun Guo <guohanjun@huawei.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Len Brown <lenb@kernel.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Mike Leach <mike.leach@linaro.org>
-Cc: James Clark <james.clark@arm.com>
-Cc: Leo Yan <leo.yan@linaro.org>
-Cc: linux-acpi@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: coresight@lists.linaro.org
-Fixes: 5214b563588e ("coresight: etm4x: Add support for sysreg only devices")
-Reviewed-by: James Clark <james.clark@arm.com>
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Link: https://lore.kernel.org/r/20240314055843.2625883-2-anshuman.khandual@arm.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwtracing/coresight/coresight-etm4x-core.c | 3 +++
- 1 file changed, 3 insertions(+)
+ kernel/trace/bpf_trace.c | 13 +++++++++++--
+ kernel/tracepoint.c      | 15 +++++++++++++--
+ 2 files changed, 24 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-index fda48a0afc1a5..63fe506a60314 100644
---- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-+++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-@@ -2053,6 +2053,9 @@ static int etm4_probe_platform_dev(struct platform_device *pdev)
- 	ret = etm4_probe(&pdev->dev, NULL, 0);
- 
- 	pm_runtime_put(&pdev->dev);
-+	if (ret)
-+		pm_runtime_disable(&pdev->dev);
-+
- 	return ret;
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 2d29bc0f21cc..75fdb8e3abaa 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -2393,12 +2393,21 @@ void __bpf_trace_run(struct bpf_raw_tp_link *link, u64 *args)
+ 	cant_sleep();
+
+ 	// return if instrumentation disabled, see: bpf_disable_instrumentation
+-	if (unlikely(__this_cpu_read(bpf_prog_active))) {
++	int instrumentation = unlikely(__this_cpu_read(bpf_prog_active));
++	if (instrumentation) {
++		printk("SKIP FOR INSTRUMENTATION: %s > %s > %p /%i ==============\n",
++				prog->aux->name,
++				link->btp->tp->name, prog, instrumentation);
+ 		bpf_prog_inc_misses_counter(prog);
+ 		return;
+ 	}
+
+-	if (unlikely(this_cpu_inc_return(*(prog->active)) != 1)) {
++	int active = this_cpu_inc_return(*(prog->active));
++	// printk("%s > %s > %p /%i\n", prog->aux->name, link->btp->tp->name, prog, active);
++	if (active != 1) {
++		printk("SKIP FOR ACTIVE: %s > %s > %p /%i =======================\n",
++				prog->aux->name,
++				link->btp->tp->name, prog, active);
+ 		bpf_prog_inc_misses_counter(prog);
+ 		goto out;
+ 	}
+diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+index 8d1507dd0724..a0a0d8b16b41 100644
+--- a/kernel/tracepoint.c
++++ b/kernel/tracepoint.c
+@@ -168,12 +168,21 @@ static inline void release_probes(struct tracepoint_func *old)
+ static void debug_print_probes(struct tracepoint_func *funcs)
+ {
+ 	int i;
++	struct bpf_raw_tp_link *link;
+
+ 	if (!tracepoint_debug || !funcs)
+ 		return;
+
+-	for (i = 0; funcs[i].func; i++)
+-		printk(KERN_DEBUG "Probe %d : %p\n", i, funcs[i].func);
++	for (i = 0; funcs[i].func; i++) {
++		link = funcs[i].data;
++		int active = this_cpu_read(*(link->link.prog->active));
++		printk("Probe %d : %p / %p: %s/%d / %i\n", i,
++				funcs[i].func,
++				link,
++				link->link.prog->aux->name,
++				active,
++				funcs[i].prio);
++	}
  }
- 
--- 
-2.43.0
 
-
-
+ static struct tracepoint_func *
+@@ -298,6 +307,8 @@ static enum tp_func_state nr_func_state(const struct tracepoint_func *tp_funcs)
+ {
+ 	if (!tp_funcs)
+ 		return TP_FUNC_0;
++	if (!tp_funcs[0].func)
++		return TP_FUNC_0;
+ 	if (!tp_funcs[1].func)
+ 		return TP_FUNC_1;
+ 	if (!tp_funcs[2].func)
+--
+2.34.1
 
