@@ -1,136 +1,137 @@
-Return-Path: <linux-kernel+bounces-204313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E9D8FE718
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:06:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CECE68FE726
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:07:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A190B283C7E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:06:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6159A2834E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D898D195B36;
-	Thu,  6 Jun 2024 13:05:57 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76300195F2B;
+	Thu,  6 Jun 2024 13:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pxwKEkMC"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256AC194C99
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 13:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529CD194C99
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 13:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717679157; cv=none; b=gqJyVqXhuXg4IqsHQ3UPFbgP8WiAOAx2zl46DSs8ej9L33TW6F7tOnVqQg74muBbpabs8jzacDZJKILSMlQxt6dS23yVgqX/Tbv7+2keF0mTluP1auk54h3fmguwBYxKp1tOz4ZAQFKWuiDSRzc/RuVXi9HNBncAFs74iWZ7GLM=
+	t=1717679251; cv=none; b=ne9BS796UirFjIW1t2iMXF8r//clHjGE9hwm4OBBBaPDa3AYjU0mfSZ1nmc4pkP7WvUWtMyfNG1AOD2ksWHk0pHJc5JgRkR6V7B4DIyyzI39OmxQxl/FBJCx0nSDYNAQ1qAr8fBCMrA+xZ+B0+VSSHVbF65q6edfHc3t4AlXw+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717679157; c=relaxed/simple;
-	bh=u8L6dUucWZRm9VtkOK5vym0gJ+Ywx2a9eggu8RhlaOk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QmDu0Kdoh7mbIrwGBqTrIEFc7DnAWzPwSvBlmV1IVWzejupKEWCzqiqA2ofgN1Ny+IpMzqEt8QfVdCTxggrSZG1vpp+sqBEkrvMjyq5clR2rsrXLICg2TiKcbytw9BQOP/dXnyq4XHi0ovgWju1k+c5lOUx1xVjBQYN1Cjjh6Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7e8e5d55441so91872439f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 06:05:55 -0700 (PDT)
+	s=arc-20240116; t=1717679251; c=relaxed/simple;
+	bh=BdMDCKYOciFtZo4PTTUMFab4UVUl6ecIp67QhNGiFxE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P/SfzIGzU4pK7o0m9fVCMAsoXxkpWBobWxnOvWqqRE+VJixlG4CG+3xyorz9CYMFgMrFYKBpnuy6IRe1D3GRDyij75ynEypik8s08dP7UiMB69oXRMiyjZl8XA8APYWnmXHk7X3bp8Ws5nEJTlcPwlIxhvLvDJ1vyByTcujT9Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pxwKEkMC; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e96f29884dso10099531fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 06:07:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717679247; x=1718284047; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9xqbTDU5EddtC0TrVAfeU+ERNe8gfqyFv4sZpg6VCoU=;
+        b=pxwKEkMCAXQ3w1PmZGCLFJPg73nrIiAPKJ09kyo49i0sr85KLCvLJ1iGVUpouQPxRK
+         VtoYUCN/QXLqsdurv1iapN+4l6ku+A7trXHNZCu3LMfJhXstzUuj+pEbAA3gqaTnQ2L3
+         yAVINfg0dsSQzCuA+ep21dnQAjJmLgzdVd1f3W/LWMzCXplErGog/26QuCbai80e5mku
+         kC7R7eJQNfDF5/w74oTXWwI9C9kE37U3apw+oFiG2ewAbScm2OVbzX5YuIsxFfxAZi/G
+         Y4L5YASTKUKdITRxEc2NoBHqk87NfI4sa5b0OL68oA6J9wKMpJ7cA7yaZKPa5+eqeZSB
+         CdVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717679155; x=1718283955;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mds6YO+HTZDWBYnzuTDKxSNA9F8P/HeS82JmjodgFU8=;
-        b=tbYB811AxXhY34ssucIasEySdsJCwebzPG4Xvh3ZFQ94JyWGrrH6h/ot5IZFHa3a62
-         n6VkUFR5VYuOa498lKvDaR3QlYYH0FoyYRbKwfj2ze6dCp+rgUMUs8GBkLFOhW0Jpx0N
-         VZ6GWdIRKIkEzfR6/P2LdQOCV1zO4SQs6l4ucx39eLnpHxDjKX36El4G9JvNouDRXLUA
-         MGEaLgfI2rDKaa9L2ad/CL/h1GBJWnP0TQJ9MuW62IBnFEVWOxmveDWn2z4+xt4CPdoK
-         1QCAZnQibdu5yTMOFoXFoDKvZyIRnE7PDftV/U/P2jc8eVvw3eqNVKjoFxCROaV0ytzg
-         bTbA==
-X-Gm-Message-State: AOJu0Yz4V0QKaaGZoYGJ4CV6vrLd6jyg8va4/w1rVR9YPLGufb52VTQ6
-	Lv0a2OTCW7k5mzUKyMy/ufsbMZEIcAIGjqwpgrA0ZzrWI2irpBIwIHN44Swg0lNGEDMOa2uoNBN
-	ZA9L2aPVb+2+98FyfFLWIGmy1fvb2tm11a5G7xq07uLZIsp7h2nmEBvc=
-X-Google-Smtp-Source: AGHT+IHJNQqRrETHsbsE4xCLExeB+43y2rsxwo47WOoeITfOMRHErt0OhoiLQtMxbTfEWW887yiDNMPTDf2A7Wsq0gYIHnkJ7XWx
+        d=1e100.net; s=20230601; t=1717679247; x=1718284047;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9xqbTDU5EddtC0TrVAfeU+ERNe8gfqyFv4sZpg6VCoU=;
+        b=sF2Sn5JNPbq6up31vZcvF26CJkIfqPp6/TnTqmBkKnrylkI9enaCm462NucW3Z8dFg
+         FHfgTn10N95cF+WQcUC3zAc3q7amyab7ebjCi4B8iSGg5kkcX6K+d1ICTXqzENx9O1LE
+         cS7TT9kRZaIW+cNDoPk5++Cf60UjB/Dt9pSuoeSzJyyFkjHRj23VYoTkOR+DGiG7exuX
+         Olm4gQJSxS8j+yuiM7t4cwGh9JlE1wI/LxEXsn+XBzHeg+K4hIBmhrpCmnKmov9IFl0a
+         jAEqnNSLrGedeMKXAJ55C5X1WSC5ep8tOe8OlCnUwNbPu0/uaALMhlg+/k1VqpZ4sabA
+         wo1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWZRoKctSBqXY1gD57YQuwOqcaPs78n4Gb6lJx7KY+IujDBmEkLz5tPphr2xRzN3ROoAapKiWwfQGMJlHJPzKOZv2p6hVd/uIipSefH
+X-Gm-Message-State: AOJu0Ywf1zTkgGVgq/aEFCVMUxYhiKanf61LSgJvd+xSUdfrTf0Tr2iF
+	fu05TAQqs+B+Ss9N0pXKSMIir2VKge9W1ulfvJujxLzyFls9I2VM6PpBCK9NHtk=
+X-Google-Smtp-Source: AGHT+IGlDZLXub3zByy5p0lR4DbNs9Rf06mpjjFumk2zfzKdHZ7Rvj7G7Qjl3dOWAdV+S5AdUp9Xhg==
+X-Received: by 2002:a2e:9c07:0:b0:2e9:8ac8:b0c4 with SMTP id 38308e7fff4ca-2eac7a6ed32mr28518321fa.49.1717679247427;
+        Thu, 06 Jun 2024 06:07:27 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:f9a9:3740:b905:9995? ([2a05:6e02:1041:c10:f9a9:3740:b905:9995])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4215c19e67fsm21943435e9.2.2024.06.06.06.07.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 06:07:26 -0700 (PDT)
+Message-ID: <5f93f034-f781-47e0-b8ce-3c8407a709f7@linaro.org>
+Date: Thu, 6 Jun 2024 15:07:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3787:b0:488:9fae:e95c with SMTP id
- 8926c6da1cb9f-4b63a8f6dbfmr158845173.4.1717679155102; Thu, 06 Jun 2024
- 06:05:55 -0700 (PDT)
-Date: Thu, 06 Jun 2024 06:05:55 -0700
-In-Reply-To: <000000000000adb08b061413919e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e0e0e8061a385789@google.com>
-Subject: Re: [syzbot] Re: 000000000000fcfa6406141cc8ac@google.com
-From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] thermal: core: Do not fail cdev registration because
+ of invalid initial state
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: Linux ACPI <linux-acpi@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>, Laura Nao <laura.nao@collabora.com>
+References: <4569763.LvFx2qVVIh@kreacher>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <4569763.LvFx2qVVIh@kreacher>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On 05/06/2024 21:17, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> It is reported that commit 31a0fa0019b0 ("thermal/debugfs: Pass cooling
+> device state to thermal_debug_cdev_add()") causes the ACPI fan driver
+> to fail probing on some systems which turns out to be due to the _FST
+> control method returning an invalid value until _FSL is first evaluated
+> for the given fan.  If this happens, the .get_cur_state() cooling device
+> callback returns an error and __thermal_cooling_device_register() fails
+> as uses that callback after commit 31a0fa0019b0.
+> 
+> Arguably, _FST should not return an inavlid value even if it is
+> evaluated before _FSL, so this may be regarded as a platform firmware
+> issue, but at the same time it is not a good enough reason for failing
+> the cooling device registration where the initial cooling device state
+> is only needed to initialize a thermal debug facility.
+> 
+> Accordingly, modify __thermal_cooling_device_register() to pass a
+> negative state value to thermal_debug_cdev_add() instead of failing
+> if the initial .get_cur_state() callback invocation fails and adjust
+> the thermal debug code to ignore negative cooling device state values.
+> 
+> Fixes: 31a0fa0019b0 ("thermal/debugfs: Pass cooling device state to thermal_debug_cdev_add()")
+> Closes: https://lore.kernel.org/linux-acpi/20240530153727.843378-1-laura.nao@collabora.com
+> Reported-by: Laura Nao <laura.nao@collabora.com>
+> Tested-by: Laura Nao <laura.nao@collabora.com>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-***
+As it is a driver issue, it should be fixed in the driver, not in the 
+core code. The resulting code logic in the core is trying to deal with 
+bad driver behavior, it does not really seem appropriate.
 
-Subject: Re: 000000000000fcfa6406141cc8ac@google.com
-Author: wojciech.gladysz@infogain.com
+The core code has been clean up from the high friction it had with the 
+legacy ACPI code. It would be nice to continue it this direction.
 
-#syz test: https://linux.googlesource.com/linux/kernel/git/torvalds/linux e=
-377d803b65ee4130213b3c041fc25fdfec1bd90
 
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 2d29bc0f21cc..75fdb8e3abaa 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -2393,12 +2393,21 @@ void __bpf_trace_run(struct bpf_raw_tp_link *link, =
-u64 *args)
-       cant_sleep();
 
-       // return if instrumentation disabled, see: bpf_disable_instrumentat=
-ion
--       if (unlikely(__this_cpu_read(bpf_prog_active))) {
-+       int instrumentation =3D unlikely(__this_cpu_read(bpf_prog_active));
-+       if (instrumentation) {
-+               printk("SKIP FOR INSTRUMENTATION: %s > %s > %p /%i =3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D\n",
-+                               prog->aux->name,
-+                               link->btp->tp->name, prog, instrumentation)=
-;
-               bpf_prog_inc_misses_counter(prog);
-               return;
-       }
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
--       if (unlikely(this_cpu_inc_return(*(prog->active)) !=3D 1)) {
-+       int active =3D this_cpu_inc_return(*(prog->active));
-+       // printk("%s > %s > %p /%i\n", prog->aux->name, link->btp->tp->nam=
-e, prog, active);
-+       if (active !=3D 1) {
-+               printk("SKIP FOR ACTIVE: %s > %s > %p /%i =3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D\n",
-+                               prog->aux->name,
-+                               link->btp->tp->name, prog, active);
-               bpf_prog_inc_misses_counter(prog);
-               goto out;
-       }
-diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-index 8d1507dd0724..e756262d8df7 100644
---- a/kernel/tracepoint.c
-+++ b/kernel/tracepoint.c
-@@ -298,6 +308,8 @@ static enum tp_func_state nr_func_state(const struct tr=
-acepoint_func *tp_funcs)
-{
-       if (!tp_funcs)
-               return TP_FUNC_0;
-+       if (!tp_funcs[0].func)
-+               return TP_FUNC_0;
-       if (!tp_funcs[1].func)
-               return TP_FUNC_1;
-       if (!tp_funcs[2].func)
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
---
-
-The information in this email is confidential and may be legally privileged=
-. It is intended solely for the addressee and access to it by anyone else i=
-s unauthorized. If you are not the intended recipient, any disclosure, copy=
-ing, distribution or any action taken or omitted to be taken based on it, i=
-s strictly prohibited and may be unlawful.
 
