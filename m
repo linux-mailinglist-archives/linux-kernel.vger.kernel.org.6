@@ -1,116 +1,104 @@
-Return-Path: <linux-kernel+bounces-204056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39CB18FE36B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:51:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5370E8FE370
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:52:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1EC72836D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:51:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 679B21C24B4F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B9D17E8EA;
-	Thu,  6 Jun 2024 09:51:09 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCA517E8FB;
+	Thu,  6 Jun 2024 09:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="gtk1a9bp"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AD917DE1C;
-	Thu,  6 Jun 2024 09:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E03417DE1C
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717667469; cv=none; b=jF9DUcPpG4P6n9Xj3inwUIPtl8rxZvBYJuS/8kyyiX9AcPkeupM1VL8xEY+3RADCRF2oNH93M8AQ0hQdMH5aioD5xN4t1Gzh4+ik1hTfg9wWixNixHL6EWFu/lanly9wNobEex12/E6ehYknKbcRFwO3OQuWHpEovzDdROwRZBs=
+	t=1717667534; cv=none; b=OxQNhZJIVUK4mGXy61YhBXcctNsY3oaXCzHTyz2Is8+o/50fRXIj0zVpOwtb9eTDmmrDWrqzSAio2SyuHZ0b7XruppG0E9vwL9P2kqvnJGQOU0mQ0N8PIMYlMEKQWgRbt7e8d8rJs6qa/Cqj05+sFkhs17vUJRZLOgVS5Fu+IL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717667469; c=relaxed/simple;
-	bh=lQCVjCQl8DTqF87eiCriB0r+cf5cnwi6Z8BJtQTuc5E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I+H5AQcgwCQ7sRk21/AfwGolqqezGrUcquoP8r9JggMYRjWJdoP3qjjjwnlnnCYD74pps8TK/i4HxIuM1OeJm4QgFNIxXumpGlg2XdbXmD9cxkP79orR/VZzegF+JueuMhjRGG3X0eX1hIIRonHDVWlGmi58uFNcvJb37w0HuTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875b65.versanet.de ([83.135.91.101] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sF9lw-0007hw-5J; Thu, 06 Jun 2024 11:51:04 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Linus Walleij <linus.walleij@linaro.org>, Huang-Huang Bao <i@eh5.me>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Huang-Huang Bao <i@eh5.me>
-Subject:
- Re: [PATCH 3/3] pinctrl: rockchip: fix pinmux reset in rockchip_pmx_set
-Date: Thu, 06 Jun 2024 11:51:03 +0200
-Message-ID: <2308120.IFkqi6BYcA@diego>
-In-Reply-To: <20240606060435.765716-4-i@mail.eh5.me>
-References:
- <20240606060435.765716-1-i@eh5.me> <20240606060435.765716-4-i@mail.eh5.me>
+	s=arc-20240116; t=1717667534; c=relaxed/simple;
+	bh=hzMInXZBrq08VfXm9EodIoLXJ2qNXwWHpR/vSZpB+as=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fqIesnTY73eydebrUpyIPlb+pwABv/iWm/fZSW+ddE+rvB/wwUgEqQ77JqG1aCoTSj3iffyO2e92ip9RMHJUgZaKrol3tUunhpvloQ9xU1R/wW5FQSr3ggVjSQEihfJQYPvOXQwpKso666Yt/40ufGCa38qEPzM8ajpT5p7Hl10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=gtk1a9bp; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2eab0bc74cdso7316281fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 02:52:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1717667531; x=1718272331; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hzMInXZBrq08VfXm9EodIoLXJ2qNXwWHpR/vSZpB+as=;
+        b=gtk1a9bpnVtDocVdEOLvEOtSatyS73dq6dJfgs1U+WASwtsiqzSuVhHfb0c2T6rklL
+         HEBfmgXDL587gyb6sDVbecdU7maBaPvdxalvbmUw4sBKfUY8EXlOtU+hzixVOJiw1Z1t
+         iVw58P5FR2jo1hocr6P6kJCmL9NRP5QSG28dofAGZiMyFrUjBqtV6fQbxEP+PprfUYmn
+         b00b1+BLLIOROzaImz6CTvHi4mN3qzotw+BiFqecf0LMDG3TQ0t7plzlq9usP4L5CWsg
+         FEhh6cFj8JH7pmSvVSFy5LjBuer4lKhswukaCZDnFfBR5XwmuSjeXKTQO36uWCzQ10b0
+         JiMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717667531; x=1718272331;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hzMInXZBrq08VfXm9EodIoLXJ2qNXwWHpR/vSZpB+as=;
+        b=oKztz2dl9hmeWqpj4ewAaCM5K1L9uu8G+/wKvMWnVcjZbl9+5uT66MIeNW1GLkqKil
+         EH+hmgYRtkKX8KvoREJPeau3VCqc1hgShO87sbJ6S9Y/MeHVe7XhStZZ0s6Y1hGPGy1K
+         YGDaSGwsOJ2jEj8nFgo6RYnWLQmDXBgyd/DmysPI5d5/iOaFbqf+eTzPUQr5A9sS0O1i
+         W2SZ6YzkrCZ2Zpxu56EjACWou4wewu2cWFUJgM7Fw0hTKihHMqankR1MRcNFFj2XOnL5
+         lgYCI2Ysnqbxkd9nBiB/ro4Hm3qiBenML1r/9OMv9VuEKCTiNjccnSAor7Rqun9NYWyJ
+         xPew==
+X-Forwarded-Encrypted: i=1; AJvYcCXh3KY7MvLPGnCntn+Ge33N/yxaKPAMP5Xku2c4q8Rqcyk8ezhU4iDSCdTwDHMp2FA3JIs9rMNkE6gzGOsKiN3tu/albWYPPn11lPGW
+X-Gm-Message-State: AOJu0YwkM8wSgSJ+7blvwEQoj0WlVIR+uY7AmRb1FZuDFW/0FHt1YXtT
+	newAZZCxGt1gfM61qh05K9jW7G7S3Dfun9/YytwR93lIOSq4d0Bae6NEjEhivaUPn1mxFwsgDJM
+	MjEvrk5+k+d63irXL7GH1hOiyDAvSPK5xaOlBSQ==
+X-Google-Smtp-Source: AGHT+IGRjxg5JxSkcZ0TIa9nvKzj+6js95PShzriLgFiyIk8WZvSEOxoci54ygHxxx3XlK6Ngc3iCOMpgDTyPLdieC0=
+X-Received: by 2002:a2e:9617:0:b0:2d8:3e60:b9c9 with SMTP id
+ 38308e7fff4ca-2eac7a82898mr28203101fa.33.1717667530690; Thu, 06 Jun 2024
+ 02:52:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20240422080833.8745-1-liangshenlin@eswincomputing.com>
+ <20240422080833.8745-3-liangshenlin@eswincomputing.com> <mvmr0das93i.fsf@suse.de>
+In-Reply-To: <mvmr0das93i.fsf@suse.de>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Thu, 6 Jun 2024 15:21:59 +0530
+Message-ID: <CAK9=C2Ug2gcS5Rbqc9EQ6mVwrJkoeLscOm6wtgqGKHdqEdSpSA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] perf kvm/riscv: Port perf kvm stat to RISC-V
+To: Andreas Schwab <schwab@suse.de>
+Cc: Shenlin Liang <liangshenlin@eswincomputing.com>, anup@brainfault.org, 
+	atishp@atishpatra.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	peterz@infradead.org, mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, 
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
+	irogers@google.com, adrian.hunter@intel.com, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am Donnerstag, 6. Juni 2024, 08:04:35 CEST schrieb Huang-Huang Bao:
-> rockchip_pmx_set reset all pinmuxs in group to 0 in the case of error,
-> add missing bank data retrieval in that code to avoid setting mux on
-> unexpected pins.
-> 
-> Fixes: 14797189b35e ("pinctrl: rockchip: add return value to rockchip_set_mux")
-> Signed-off-by: Huang-Huang Bao <i@eh5.me>
-> ---
->  drivers/pinctrl/pinctrl-rockchip.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-> index 24ee88863ce3..3f56991f5b89 100644
-> --- a/drivers/pinctrl/pinctrl-rockchip.c
-> +++ b/drivers/pinctrl/pinctrl-rockchip.c
-> @@ -2751,8 +2751,10 @@ static int rockchip_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
->  
->  	if (ret) {
->  		/* revert the already done pin settings */
-> -		for (cnt--; cnt >= 0; cnt--)
-> +		for (cnt--; cnt >= 0; cnt--) {
-> +			bank = pin_to_bank(info, pins[cnt]);
->  			rockchip_set_mux(bank, pins[cnt] - bank->pin_base, 0);
-> +		}
->  
->  		return ret;
->  	}
-> 
+On Thu, Jun 6, 2024 at 3:10=E2=80=AFPM Andreas Schwab <schwab@suse.de> wrot=
+e:
+>
+> On Apr 22 2024, Shenlin Liang wrote:
+>
+> > \ No newline at end of file
+>
+> Please fix that.
 
-Oh, nice find - and wow that original code is actually 10 years old :-)
-For context, original mistake is in the error handling (probably the case
-it never turned up)
+Fixed in KVM RISC-V queue.
 
-The first loop counts upwards doing pinmuxing and in the error case,
-wants to reset everything back to the "standard" gpio muxing.
-The first loop correctly retrieves the bank for each group, but the
-error handling will always operate on that last retrieved bank:
-
- 	for (cnt = 0; cnt < info->groups[group].npins; cnt++) {
- 		bank = pin_to_bank(info, pins[cnt]);
-		ret = rockchip_set_mux(bank, pins[cnt] - bank->pin_base,
-				       data[cnt].func);
-		if (ret)
-			break;
-	}
-
-	if (ret) {
-		/* revert the already done pin settings */
-		for (cnt--; cnt >= 0; cnt--)
-			rockchip_set_mux(bank, pins[cnt] - bank->pin_base, 0);
-
-		return ret;
- 	}
-
-So, TL;DR:
-
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-
+Thanks,
+Anup
 
