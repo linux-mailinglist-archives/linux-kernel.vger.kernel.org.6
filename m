@@ -1,111 +1,184 @@
-Return-Path: <linux-kernel+bounces-204583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 048418FF0BF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:33:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E5AA8FF0C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:34:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A70901F22295
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:33:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B16A41F249FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC72198A2A;
-	Thu,  6 Jun 2024 15:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556461974EB;
+	Thu,  6 Jun 2024 15:34:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="cNKYQSt+"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q+m0m/hD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EB019882E;
-	Thu,  6 Jun 2024 15:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77243196C92;
+	Thu,  6 Jun 2024 15:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717687933; cv=none; b=Q/m9aTIo+l1FEstVCU7irXXg/zp/rmi7WjGxnGhHOoYzQ9JKnkCf55MkuZsjT4z5/iOMpY+mQc94Ot6rGlzktwPoEB26/wN4d+UnfY3Dw84/w4wLjCVZBNRsbj16y5v5cfQAYg3A88Ooq/1e3GxpeOhyB+zlKDuwuXh+L4xin9c=
+	t=1717688041; cv=none; b=rm7NRc91W+hB29XTh+ICS55ns64uNclf4DUJjXyuAs85lWP5bTrQ04dYnHEyGGjLSYFEqCqHqjI3LuJIkCvOiglsn7WKjKBnGjld64wL6HVnCSj4sYEYqrxcxyxzsELjKrJ6Dx4xNADsjtro3498e5yTUGm6cIwH9Fe41DBwf7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717687933; c=relaxed/simple;
-	bh=e9b7O67biSQr3Vkb+Z4FukqqPXyNhKAwN6iuh+fjvYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R6yCUoRymvom4pQxobDrBszbuVrIhwcxVQFpv2ZCN+/fG/Rnw+HZ34ny2kyMXBrWZL+4Cq7rP9T1vYrNpvpqVqgTKC/V/HHtg8JWpcq0AS4hXm+fIUBcmQlOeFmwd9c+8M4kOt6IZ/0KALyTLK33ySK+uAoqKKBznIylp/eNeQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=cNKYQSt+; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=O+j1gI0/6XSijnz/g/7kQxa5ff0QAlOQAsmOEq3HvEI=; b=cNKYQSt+8OlXKFORK3erELwpqA
-	zjVvdj2YP+LLiTWSwTul1o4MxZVWMHGE7pD7TYMaTQl/hycm8zwg5QBJuPFkmSUg6VVXXodwad33n
-	luwekayQiun191duTaHE7sk+XiD0Pr8kIJ3eZhvTfyWfeeYM2+AfqmHXuRvSzR8K8kLXsN0ikGVMe
-	cuBXRrvekw3nw/+EA82+ediN8DoAe89cHhnUKl9+ALAsSWHrorAm/9FctbiQ2DVehr/9DGUk/YbWI
-	vbIX3lBXYy3UpkVxjinKT0RzJXhtnWoHc8BOUJ2upkNLHFws6vvbnwcDRLqzBdG/K4Klym8vwrtHv
-	fgTuMgQw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:35628)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sFF5n-0006Xx-23;
-	Thu, 06 Jun 2024 16:31:55 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sFF5o-0003JG-GD; Thu, 06 Jun 2024 16:31:56 +0100
-Date: Thu, 6 Jun 2024 16:31:56 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: =?iso-8859-1?B?Q3Pza+FzLA==?= Bence <csokas.bence@prolan.hu>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH] net: sfp: Always call `sfp_sm_mod_remove()` on remove
-Message-ID: <ZmHWbBheKycKjigC@shell.armlinux.org.uk>
-References: <20240605084251.63502-1-csokas.bence@prolan.hu>
- <24a48e5a-efb3-4066-af6f-69f4a254b9c3@lunn.ch>
+	s=arc-20240116; t=1717688041; c=relaxed/simple;
+	bh=0K8GBFSkW4AN3/Sl0e8hqJEwYUcj7GhL4o9uYrZuMNs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QP3vXxR40+M9dbt7hJbeX2fgaAztjnVpMESxqbHqtRmiDjX92g25pevIebmELxvj36qNwxC3JUPe9zajD2KLnlz67PVlDtDEW6R6Q0I805fTCZYh3lpMSgwAyjlkJ+ghwK0pxgQY/vTeXgZfRNE4F0J3h7+ZR+pGaYCRLeM+FiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q+m0m/hD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C4E1C4AF07;
+	Thu,  6 Jun 2024 15:34:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717688041;
+	bh=0K8GBFSkW4AN3/Sl0e8hqJEwYUcj7GhL4o9uYrZuMNs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=q+m0m/hDap6Q+Gvf79W9TSJ5BxkxcLyOWQHEjNJfzm0i/KUM0Fa9rpBxNiC8hEaIO
+	 TbhCC0MbAyvOG9XcO7O0LaxQxoGhDnu4LkwSLIVxQ9JJO/ACBsRukMJTftGc48vH1E
+	 +suwv7DsuARGwdxanEvDdFI+8mBEV4OX3SugRnGOVgPqXCrLBLHJsSQ11TtVB4w7DG
+	 fRJp9Ei3m2o95YbkgZhtFUS+mlYtY+ybykj5Ycyhla0/+5gRXmJEl+ZkkGuND30WhR
+	 itcVrJBfR/D2E7xqsKbeEXZqpHMVE8UzSCL+rvgqjdCDlZm2RlPdNRFj+oOjIEiO06
+	 Z9t6nfwptzMew==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2eacd7e7ad7so14056471fa.3;
+        Thu, 06 Jun 2024 08:34:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUAc/oY6RCyUl41XQejG6PeojSMscFkGGb5d5L0ESqnSMWjf9wq/92HXyYUuA5kcmSwapNqbtx46Sm/zCM/j3iwBpiSf6CE84BkUOtI/XH0Wsusu/c+S0VakzjefEhIzYGITTUkFWMSJA==
+X-Gm-Message-State: AOJu0Yy5jgvzzuAIsKvkJolvYFyLr+jsbMZqu6G2b2HZRCwfWZe8idLE
+	8b+NJ2PMmE4gjH5ji9U/L74Fr/J7hbOQxINPl9SSBy9GZucvpDEnmnJPKcBsv10NBpTCkY9d41B
+	jilGPoYmBMYjLgqEL6GHZ3VkoVA==
+X-Google-Smtp-Source: AGHT+IFXwVRydGZ8W00wKskR1TtWyhH2bfTYh82RbfdTsMpPc96OSXgYmnPF7JWcJPPSEUu5kMdOQoxjLugRZuW1lHo=
+X-Received: by 2002:a05:651c:1502:b0:2ea:c450:ac2 with SMTP id
+ 38308e7fff4ca-2eadce3714dmr429241fa.23.1717688039491; Thu, 06 Jun 2024
+ 08:33:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <24a48e5a-efb3-4066-af6f-69f4a254b9c3@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20240528223650.619532-1-quic_obabatun@quicinc.com>
+In-Reply-To: <20240528223650.619532-1-quic_obabatun@quicinc.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 6 Jun 2024 09:33:47 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLPznMbqiLXrugB1Qbj3MhMdN9mtbRQFx+94f1F0-JPNA@mail.gmail.com>
+Message-ID: <CAL_JsqLPznMbqiLXrugB1Qbj3MhMdN9mtbRQFx+94f1F0-JPNA@mail.gmail.com>
+Subject: Re: [PATCH v6 0/4] Dynamic Allocation of the reserved_mem array
+To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+Cc: saravanak@google.com, hch@lst.de, m.szyprowski@samsung.com, 
+	robin.murphy@arm.com, will@kernel.org, catalin.marinas@arm.com, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, kernel@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 06, 2024 at 05:21:45PM +0200, Andrew Lunn wrote:
-> On Wed, Jun 05, 2024 at 10:42:51AM +0200, Csókás, Bence wrote:
-> > If the module is in SFP_MOD_ERROR, `sfp_sm_mod_remove()` will
-> > not be run. As a consequence, `sfp_hwmon_remove()` is not getting
-> > run either, leaving a stale `hwmon` device behind. `sfp_sm_mod_remove()`
-> > itself checks `sfp->sm_mod_state` anyways, so this check was not
-> > really needed in the first place.
-> > 
-> > Signed-off-by: "Csókás, Bence" <csokas.bence@prolan.hu>
-> 
-> I was expecting Russell to review this. Maybe he missed it.
+On Tue, May 28, 2024 at 4:37=E2=80=AFPM Oreoluwa Babatunde
+<quic_obabatun@quicinc.com> wrote:
+>
+> The reserved_mem array is used to store data for the different
+> reserved memory regions defined in the DT of a device.  The array
+> stores information such as region name, node reference, start-address,
+> and size of the different reserved memory regions.
+>
+> The array is currently statically allocated with a size of
+> MAX_RESERVED_REGIONS(64). This means that any system that specifies a
+> number of reserved memory regions greater than MAX_RESERVED_REGIONS(64)
+> will not have enough space to store the information for all the regions.
+>
+> This can be fixed by making the reserved_mem array a dynamically sized
+> array which is allocated using memblock_alloc() based on the exact
+> number of reserved memory regions defined in the DT.
+>
+> On architectures such as arm64, memblock allocated memory is not
+> writable until after the page tables have been setup.
+> This is an issue because the current implementation initializes the
+> reserved memory regions and stores their information in the array before
+> the page tables are setup. Hence, dynamically allocating the
+> reserved_mem array and attempting to write information to it at this
+> point will fail.
+>
+> Therefore, the allocation of the reserved_mem array will need to be done
+> after the page tables have been setup, which means that the reserved
+> memory regions will also need to wait until after the page tables have
+> been setup to be stored in the array.
+>
+> When processing the reserved memory regions defined in the DT, these
+> regions are marked as reserved by calling memblock_reserve(base, size).
+> Where:  base =3D base address of the reserved region.
+>         size =3D the size of the reserved memory region.
+>
+> Depending on if that region is defined using the "no-map" property,
+> memblock_mark_nomap(base, size) is also called.
+>
+> The "no-map" property is used to indicate to the operating system that a
+> mapping of the specified region must NOT be created. This also means
+> that no access (including speculative accesses) is allowed on this
+> region of memory except when it is coming from the device driver that
+> this region of memory is being reserved for.[1]
+>
+> Therefore, it is important to call memblock_reserve() and
+> memblock_mark_nomap() on all the reserved memory regions before the
+> system sets up the page tables so that the system does not unknowingly
+> include any of the no-map reserved memory regions in the memory map.
+>
+> There are two ways to define how/where a reserved memory region is
+> placed in memory:
+> i) Statically-placed reserved memory regions
+> i.e. regions defined with a set start address and size using the
+>      "reg" property in the DT.
+> ii) Dynamically-placed reserved memory regions.
+> i.e. regions defined by specifying a range of addresses where they can
+>      be placed in memory using the "alloc_ranges" and "size" properties
+>      in the DT.
+>
+> The dynamically-placed reserved memory regions get assigned a start
+> address only at runtime. And this needs to  be done before the page
+> tables are setup so that memblock_reserve() and memblock_mark_nomap()
+> can be called on the allocated region as explained above.
+> Since the dynamically allocated reserved_mem array can only available
+> after the page tables have been setup, the information for the
+> dynamically-placed reserved memory regions needs to be stored somewhere
+> temporarily until the reserved_mem array is available.
+>
+> Therefore, this series makes use of a temporary static array to store
+> the information of the dynamically-placed reserved memory regions until
+> the reserved_mem array is allocated.
+> Once the reserved_mem array is available, the information is copied over
+> from the temporary array into the reserved_mem array, and the memory for
+> the temporary array is freed back to the system.
+>
+> The information for the statically-placed reserved memory regions does
+> not need to be stored in a temporary array because their starting
+> address is already stored in the devicetree.
+> Hence, the only thing that needs to be done for these regions before the
+> page tables are setup is to call memblock_reserve() and
+> memblock_mark_nomap().
+> Once the reserved_mem array is allocated, the information for the
+> statically-placed reserved memory regions is added to the array.
+>
+> Note:
+> Because of the use of a temporary array to store the information of the
+> dynamically-placed reserved memory regions, there still exists a
+> limitation of 64 for this particular kind of reserved memory regions.
+> From my observation, these regions are typically small in number and
+> hence I expect this to not be an issue for now.
+>
+> Dependency:
+> This series is dependent on the below patchset for proper behavior on
+> the sh architecture. The patch is currently being reviewed by the
+> relevant architecture maintainer and will hopefully be merged soon.
+> https://lore.kernel.org/all/20240520175802.2002183-1-quic_obabatun@quicin=
+c.com/
 
-I haven't missed it, I just haven't had the time to review and respond.
-Work stuff is still very busy. I know this has been going on for well
-over a month, but as it's partly coming from my employer and partly due
-to medical stuff taking hours out of my working week, there's nothing
-much I can do about it. I'm doing the best I can, but I know that I
-can't keep up with what people expect of me at the moment.
+Is it really dependent? This series just adds one additional
+allocation before all the reservations are done.
 
-I've had to tell Kory that I won't be able to review and test his
-patch series - it's just totally impossible for me to be near the
-hardware I need to test with his series _and_ have the time to do so.
-I feel bad about that, because it's addressing the issue I raised a
-number of years ago with PTP, yet I don't have the time to be involved
-in that right now.
+I've applied this series and ran it thru kernelCI. I'm going to add it
+to next to get some more testing.
 
-It's frustrating for me that I'm not able to do everything that I'd like
-to...
+I made one change dropping of_reserved_mem_check_root(). That's done
+still with FDT function, so no need to do it twice. Plus, the
+unflattened function doesn't have the restriction. (We could fix the
+FDT version pretty easily because we have a translation function.)
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Rob
 
