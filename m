@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-205159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1ED88FF837
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:36:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1F7B8FF83A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:36:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72147289C3A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:36:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 517BC1F25FF3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94AB313F44E;
-	Thu,  6 Jun 2024 23:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9373D13F00C;
+	Thu,  6 Jun 2024 23:36:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="gvpX9uyu"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="EMXEqH0E"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32A54D9E9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8AD13BC02;
 	Thu,  6 Jun 2024 23:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717716966; cv=none; b=NvTlCkug39Z1tX1EgPPUO/Z7lWEWSj8uF0sboXT7PSn85S4ZnMZNiAzCs4BQLs8/wIzQ6J4T+7AispY/I2WBmNdJflZlfiJQf2LUQFgPGmom8/dZrrnGkBwFIQ259XZGny9dXRxTje7NA80AI379I4lDlrl99g4uiaCg/SKKC2o=
+	t=1717716968; cv=none; b=phcR+ie4AtyujEa+NBaMmOkEq90CsfOcjT+R3gDjO3zg9E8voDAtp6ybUistQ9FI73YvxE8O5CBdxqqM2qJQxUrTTg9v3LZyF3MWBjDonTa3jem/4u/ZA+9b9ciBfoOsuVFu4ecEwC9LmyIuuleH/m8VCz8eXHjtWmQhtuaCOg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717716966; c=relaxed/simple;
-	bh=CszDyLkit3de2JZWz7Ffnq1hiMqWQuFV3nWNx51JSHk=;
+	s=arc-20240116; t=1717716968; c=relaxed/simple;
+	bh=otV4zp1MoGFcTiETzXfR3TcxXLb4cvvRGl8k3ULZ0sA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=P92qvF39rcL8x7m2qriuGBLxm4UZ3tpgvAGuMRyiXt6JubPq6aCKrvGz1npWA8v+qwPCN5Xe4Hgh0ksXCsr6scpFhyUwPNBvUHDuHa3yKc6VCwk/XaWoRBo6FpMh723bguE8YO045YqYQEVsJ3gdRTlEk8twn/ku4M79g9Lx0A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=gvpX9uyu; arc=none smtp.client-ip=212.227.15.15
+	 MIME-Version; b=IePemqVJEmqBasGVenCGYIJJ1C4c5f+fzF4BKlaomK8+3dNCK2/fLZ5COenThPc3UolDJIM1Ml8JheHKNm85jP258w4ulWAFuMzBkI7wev41h4okxu/yHoCtIHcF5+FBGJxSyZLJrGdsp8et3Ic2dROrbf/LDDsxG2VfglUs1IY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=EMXEqH0E; arc=none smtp.client-ip=212.227.15.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1717716955; x=1718321755; i=w_armin@gmx.de;
-	bh=ls7bbEgPyWSpw4Yu8LPj3JEysDNJBAPZLyyhcFGu83E=;
+	s=s31663417; t=1717716958; x=1718321758; i=w_armin@gmx.de;
+	bh=ISDNXycXxWS0qiiXv/+/ANk/YpjMLHNtNunSMSoCI94=;
 	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
 	 References:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=gvpX9uyu/8A3ND5tnIKz6j95NO40vevlzQFO18WtNqNK92nqh51t1t/HMMBn2SIJ
-	 qogdl+R3GgJO8o//Osr9h3QMW04t897fMNYh2N6M0hk8Nfr+MON0aJABHMm6Zs8AA
-	 AF5P7zmPJ3Mu7KFuxX+7ANGzEtUkyxs+lV9dynoxBSr4AWR5hiO0PzGBLT45MB8oH
-	 UT3SgxEbnJJ9LdKCo11FdwP89U3yTbUhIZaCmv92p5//Zbk4kwqvo+GM06zWwf70l
-	 prcxqTvJD2QQOBc/63Rf/+V2ocFXRvTfvzZco93ZXE3hQcaf+sfwdshPX8cFmjBfr
-	 FFMFMuQJW5x4JX514Q==
+	b=EMXEqH0E7UooufD5REalm+XgOuY1ZRzgM7v00fquYiQeY7sCUJ4+wwk5maSIIh7w
+	 uaizp24FDwLG85dT2snxzv55EJfM60jmj+/VxGjdHBjWQVIyOQSV0YlmE9aMHyPWQ
+	 CU2BUmOAw7R/1qll8lAtMHgWbU3ZFmEry5KFnJgmsYhk4ZSu2cQr31q17rj8ffuAT
+	 BgUBxPJkS068JkDiDr87HL+h9PYCgS12/lwSTmYl97kuedDs/92aMEpYTmJQghrB+
+	 3YTwwHdClSg5ZIoal4nUv28V4SYeS87Fl93F4gcpsoPQYtP4mt802rc5386hvmLTj
+	 i+PzVChIe8jDCDsT3g==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from mx-inspiron.fritz.box ([91.137.126.34]) by mail.gmx.net
- (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1MEUzA-1sCfku3bJa-00GkmE; Fri, 07 Jun 2024 01:35:55 +0200
+ (mrgmx005 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1MsHs0-1sYggG02mY-014Dw8; Fri, 07 Jun 2024 01:35:58 +0200
 From: Armin Wolf <W_Armin@gmx.de>
 To: matan@svgalib.org,
 	agathe@boutmy.com
@@ -54,9 +54,9 @@ Cc: hdegoede@redhat.com,
 	ilpo.jarvinen@linux.intel.com,
 	platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] platform/x86: wireless-hotkey: Add support for LG Airplane Button
-Date: Fri,  7 Jun 2024 01:35:37 +0200
-Message-Id: <20240606233540.9774-2-W_Armin@gmx.de>
+Subject: [PATCH 2/4] platform/x86: lg-laptop: Remove LGEX0815 hotkey handling
+Date: Fri,  7 Jun 2024 01:35:38 +0200
+Message-Id: <20240606233540.9774-3-W_Armin@gmx.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240606233540.9774-1-W_Armin@gmx.de>
 References: <20240606233540.9774-1-W_Armin@gmx.de>
@@ -67,59 +67,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Mj/34HTANbvlRo/35nqfopFGSdz1vprlRwqVKzNwP7eHuxrCn4I
- WWPx2AEDPtyjcd5LMICltjh9KUTyTVFTqaxwyks55aTYLaLZ56t60n1K1cktj3EApDKs5w3
- 81XZ62tDg/zT0iFhRAHlW9L8d0Z28uMdE9Yllbwl2Ryi6p6mh4r0LsfA6hAJeizaHkdS+PU
- Pl0nxIOS8KP0sLF5wKZYg==
+X-Provags-ID: V03:K1:DIdyGUYS8BPW7Q9MzAcW6zeIXzDGwemyHaDEjkBvBDmwF3sTIMx
+ 8wF2cnYmpa+/deSSBjREYMcodtsv7gl4Qkii67si1G+ii/WV4Ab79D8rI0EknkQtGdH6uKE
+ 7htEoZxF5sf5Bv78VCY4Dv/+W6HpgP56Bv3W1VPfoxJP2xp7MFooE8tG//fFcbCdLSkvzlc
+ w9g+pdgBP3Z8Xhu1gmOtQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:YMOj+HmkksQ=;U+a2OK8ue6btpop0GkP6qB35OoV
- bniKoh/POHGzcRLLMR2Jz/663KtcpkiGnBwgMjxzOUiorITtIvYr0SzwgAuHxiooVwqh+0WC7
- uj2WJs3WldTPD8Qg5HxC5ihZ1QL6YVk37e/NOKd7271cMTIYdMQYqtyctFekDEmnxkryKeQEf
- e1+PgP+P9K5rfoZLx+Oc8SgBauiBlyE6/e3i82S7J6FV5gaDWR1YObKT2BEmUzCdHvAeQYPpE
- duhNw+0rVnfSxwD/LCibtT4vFObSzcyTHO8FDMoHTh8PhKG1rQsZBci3WCkg2MqTh8Exx++7h
- vCw/td6SzCEbjY3XK9H5g452TkRAnd0rcc5unFWwsjfKdQNDyK8xyv5mOllv3kPSlJVqUSNHB
- /0su+Z12tCo8EBsGNt+jo1K5fcDsB6iBst3aluiKpSPuVyWwbvjNJQPr8wwSnIc+PnWm5EdIz
- 5zVVSXZ8/RZGHgJ0a74yRl4jB+Edl+56Ti5/0gkuOUsUJOFnvbZcc4ZtVemt6Jnn4GpT8zuLY
- fsB9nqUjIjOfgJf9KMknMV6CvakIQnLeRKrd9FgmI6KSEa+sDXtiPgdnS06hSQhcVVMFzqYx+
- XvMqmzNz89auTuf2IzHoJ5FDRh8qiIG+SCay8tpjTo3QJkKXytFB9ThKeRVS+WZ3uVnT0idOh
- fVbvwocfwWA293THqYHjaxnEqm8j8p4iTvL2EcIgHi9iYaT05ImcwZRiv+hhcLhpWYwG6A80O
- U9jMzkzF3bQ8bF/H4VE80UiRf3vg5cvjeovSG+16WQ+BYbDI6vn0Fga035DMzf1xFTsySkbJE
- O+19QTu8DnJcrByVCzv6Wn2O3dZz4D4Zm6OMJdEneLc70=
+UI-OutboundReport: notjunk:1;M01:P0:YoPEzoASVvk=;FrKHFjjPPLCmrwJdNHNjg3KzhM/
+ Y1N6w2rL6jNDzUSqfTJu2pFruthpBYZ6NmOgGqHFQIugsKU0X3ZsqSUmE/YQcNVJl+Dd7UBC6
+ YNfSq999qBdvNuMKH9r3b+94CgdEybT9/JEVAOssVD/tjmK43yG9dGN5mQQmjKZ5lwcw5aEb4
+ ep6kWHcAaARboq9FazJlep9dlVd2PuDLNoTfZP4C7+gFvCadYz/JqYW/hIQg3+aFKLO09DYQ4
+ Y+zJkvpRiN/eFf5yzzCcxQKWkPDgigVKRzraI0wJSsbVLpwLW1sjR3DLZwY9KklbM/zOP5HXE
+ DjwX49Cln9C4GIwsBU28LKXNmbYtBtQ3voNa9c2VXYbpsEp2Umk7L6ZfKftu2IX5RWkcvVYey
+ IbJK05CjdygNMgi9/APxb7iyHb7QR1KaJXcRGSdIBhmO+819hczONF9oSy9LFyygQWh78crZU
+ dFzK81Rwi7CsyEREAM0dUnOoIyiVlixOsbzjau6QRJsiyWenbNtNcEK+azeCzjXbRGQGJGNeq
+ L8AHvYraJoCBfdwH5gQJL0gW2ZQ1+HaLIsmI7NlrQdSnx9S6QueWIaner2wAauQZfOGdeLent
+ HkQ7oNQXMo2ED2ntrnQfPi/TuDR545lx8CKOdtFTsrh2GFVAXjt20heHrCmZqzSeF8xd7pkCy
+ 8xD+aJGlPsSHJMHrla8op1VmQZOy1SOwOUVaX/VSz7/yB/5nKHrRlDINN/Fmk2tlplHeLZN0w
+ 3iGLzViDHHY25gvBMOwQfgxZ3VC4qvAK/0BT2iVZQtkBp65YnMjkbEHtid4m3dxsB+fCvAPVS
+ 54eYqvdqrRNUMvEkU8FmGEehf2lYOArhu5WsH0i2wYjdo=
 
-The LGEX0815 ACPI device is used by the "LG Airplane Mode Button"
-Windows driver for handling rfkill requests. When the ACPI device
-receives an 0x80 ACPI notification, an rfkill event is to be
-send to userspace.
+The rfkill hotkey handling is already provided by the wireless-hotkey
+driver. Remove the now unnecessary rfkill hotkey handling to avoid
+duplicating functionality.
 
-Add support for the LGEX0815 ACPI device to the driver.
+The ACPI notify handler still prints debugging information when
+receiving ACPI notifications to aid in reverse-engineering.
 
 Tested-by: Agathe Boutmy <agathe@boutmy.com>
 Signed-off-by: Armin Wolf <W_Armin@gmx.de>
 =2D--
- drivers/platform/x86/wireless-hotkey.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/platform/x86/lg-laptop.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/drivers/platform/x86/wireless-hotkey.c b/drivers/platform/x86=
-/wireless-hotkey.c
-index e95cdbbfb708..ab46164cbe13 100644
-=2D-- a/drivers/platform/x86/wireless-hotkey.c
-+++ b/drivers/platform/x86/wireless-hotkey.c
-@@ -19,6 +19,7 @@ MODULE_AUTHOR("Alex Hung");
- MODULE_ALIAS("acpi*:HPQ6001:*");
- MODULE_ALIAS("acpi*:WSTADEF:*");
- MODULE_ALIAS("acpi*:AMDI0051:*");
-+MODULE_ALIAS("acpi*:LGEX0815:*");
-
- struct wl_button {
- 	struct input_dev *input_dev;
-@@ -29,6 +30,7 @@ static const struct acpi_device_id wl_ids[] =3D {
- 	{"HPQ6001", 0},
- 	{"WSTADEF", 0},
- 	{"AMDI0051", 0},
-+	{"LGEX0815", 0},
- 	{"", 0},
+diff --git a/drivers/platform/x86/lg-laptop.c b/drivers/platform/x86/lg-la=
+ptop.c
+index d0fee5d375d7..ea83630106e8 100644
+=2D-- a/drivers/platform/x86/lg-laptop.c
++++ b/drivers/platform/x86/lg-laptop.c
+@@ -84,7 +84,6 @@ static const struct key_entry wmi_keymap[] =3D {
+ 					  * this key both sends an event and
+ 					  * changes backlight level.
+ 					  */
+-	{KE_KEY, 0x80, {KEY_RFKILL} },
+ 	{KE_END, 0}
  };
 
+@@ -272,14 +271,7 @@ static void wmi_input_setup(void)
+
+ static void acpi_notify(struct acpi_device *device, u32 event)
+ {
+-	struct key_entry *key;
+-
+ 	acpi_handle_debug(device->handle, "notify: %d\n", event);
+-	if (inited & INIT_SPARSE_KEYMAP) {
+-		key =3D sparse_keymap_entry_from_scancode(wmi_input_dev, 0x80);
+-		if (key && key->type =3D=3D KE_KEY)
+-			sparse_keymap_report_entry(wmi_input_dev, key, 1, true);
+-	}
+ }
+
+ static ssize_t fan_mode_store(struct device *dev,
 =2D-
 2.39.2
 
