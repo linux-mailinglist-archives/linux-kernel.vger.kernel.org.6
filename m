@@ -1,93 +1,141 @@
-Return-Path: <linux-kernel+bounces-204357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39A408FE7AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:25:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67EAB8FE7A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDECE1F23506
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:24:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13C212832E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E84195F3D;
-	Thu,  6 Jun 2024 13:24:53 +0000 (UTC)
-Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65559195F04;
+	Thu,  6 Jun 2024 13:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G13lutu8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DFF195B0E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 13:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB59195B0E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 13:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717680292; cv=none; b=sq7AtY1MDaWKj9MUtNmuvbYB6LFZVXyvSOHFSlS2m9zSgQ+djxnuLA68RYaQC4T4V8+5SvBDkPiEybnu1V/ktd7hhVvG2Z9vJSyPATJ03qGxP7uE/XbLPKcXpQWqQxjoNd9iMBGOsHJR+HNKMzzO+yFv9U2/r9WQ06yWbBrEkPU=
+	t=1717680120; cv=none; b=sgkfB+JiKnk860Wx9CBsKIMqpW+BfLER9qUhKvx2Z8f/b+Q4OA94jRemkddqBK6VTKGM5vsqEKd8RDXaMagBM+S9BcQDpsFRik45QoVjBjSLAgaW7HmLm5WHYf5eG5jpzGeFt3BWZqGsnufbV2iyHyMlqKA1yPwBpUjgB4IjLgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717680292; c=relaxed/simple;
-	bh=rNBwdzFBhysEd9wzyQXAbWC3pB6V0UCYgvGyEBhdwgM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SSO82QNa2pRmcklh1BdQMGjlpza+il+9xJHmHTLX5iPiZHzDlKQGA0mHrNLZWnrIi8pCoLbQXUY78B3DytTjODyrSOCk11+Sn82Q4kEH6khAMeppsM7LhexMMwNuXV6xy318tB3FSBHiqihK/Dct7+ldH9vA8EJke9s76wL+9QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=15.184.224.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shingroup.cn
-X-QQ-mid: bizesmtpsz1t1717680152t9w1o59
-X-QQ-Originating-IP: AmpsQDgASEaAJP+E87sCAd76grdai6fjPk9qNQFKsTE=
-Received: from HX01040082.powercore.com.cn ( [14.19.67.247])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 06 Jun 2024 21:22:30 +0800 (CST)
-X-QQ-SSF: 01400000000000B0B000000A0000000
-X-QQ-FEAT: ZbT1X8e7m5Fo8AN97Qo/SfGebcJKiGCLiCQTkAdeNHxeen7puOp3rgyNhjIt5
-	7ivIxPLQoqj+KveACDdj1lmBLe2B8/h/Vu0gnl0TIdLE8IDLugpGSGFcirwJP07QLzJL70D
-	cgcDtrWYTwlJ9foJ0eDH0q5qY5aybrSj0hEeGnf9DDQB7Y7NJHxJ+1YAkXKnCuds3woC6tq
-	0GKmhV3D2upU42VhZB6cbfDqQuYa+lH4lTGgjJqB4gCsEQF8JaQo/9N4cI9EiKqyVtOSna/
-	0dXm1bKxjcSRrgLGUJoblqa04ndCqf35Ce51QfzRd3kAjBx+G93Vv1lUCMa5nHc9yq59avq
-	A5RJA9krwXJw+hZMRDcyO6SwkDveAgBf/RznDViJIF90orGxmoprHMOgw12ww==
-X-QQ-GoodBg: 2
-X-BIZMAIL-ID: 20561316882800220
-From: Jinglin Wen <jinglin.wen@shingroup.cn>
-To: npiggin@gmail.com
-Cc: mpe@ellerman.id.au,
-	christophe.leroy@csgroup.eu,
-	naveen.n.rao@linux.ibm.com,
-	jinglin.wen@shingroup.cn,
-	masahiroy@kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] powerpc: Fixed the bug of duplicate copying
-Date: Thu,  6 Jun 2024 21:21:32 +0800
-Message-Id: <20240606132132.13785-1-jinglin.wen@shingroup.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1717680120; c=relaxed/simple;
+	bh=fjqEjkWA2RusVimCoeFUf+3aEstaA7Y6jxoveNe8UhY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Whp3t21ZlLs0Mn4a8D/bwqOUu04w4xNTPexzRsK4Gb+TNCDuQVCtTiChfOIYdCzaOpBzWTkp8uQCvi+xPpAqpQqiw8iHutrl/4J2heIpn60F3Ft+d3iEUBSfLgQnf9lLyDHsabYNXI10IG9xBprmydV0GglFR7Tpf/2GLY9RfQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G13lutu8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EA2AC2BD10;
+	Thu,  6 Jun 2024 13:21:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717680120;
+	bh=fjqEjkWA2RusVimCoeFUf+3aEstaA7Y6jxoveNe8UhY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=G13lutu8CuRuAAjeYkL7CNW5FbHI8z/9XaOcBPH9CjItJF3wwUYLG5gpahIvlzRt4
+	 7qUkCdKFRjXUDdlr7Cv5fSAnIIKZKr1gD7d0uKtrfy0+mI4MNOBcwhKeE2L0T2Uyr1
+	 FPxqF7t2yC3j+mVLbkWI6zvm67DRJYJ49D9uNpuLluAV3KBy/7CLO0rIHXSX2QhrH3
+	 5wF4gC39WliiSsUefgG0PD4sk8LKCueHpqvMNFH8u2NiOf4dtLxHJgazKiPlZl+oDR
+	 FsDpv2uAqOtBEGW4KP3HZkujvRlvIFHqqloxSRiyW9LBH54Aqt2lrIjW3iwrZOQb1+
+	 kKo/1W+553ZTA==
+Message-ID: <39ec8353-8f3e-45c6-b8a9-359ff96502f5@kernel.org>
+Date: Thu, 6 Jun 2024 21:22:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:shingroup.cn:qybglogicsvrgz:qybglogicsvrgz5a-2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] f2fs: get rid of buffer_head use
+To: Matthew Wilcox <willy@infradead.org>
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org
+References: <20240606095037.4086881-1-chao@kernel.org>
+ <ZmGttup4xQM_jWky@casper.infradead.org>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+Autocrypt: addr=chao@kernel.org; keydata=
+ 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
+In-Reply-To: <ZmGttup4xQM_jWky@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Fixed the issue where the kernel, when booting from address 0, had
-code incorrectly duplicated to address 0.
+On 2024/6/6 20:38, Matthew Wilcox wrote:
+> On Thu, Jun 06, 2024 at 05:50:37PM +0800, Chao Yu wrote:
+>> For later folio conversion.
+> 
+> What tree is this against?
 
-Signed-off-by: Jinglin Wen <jinglin.wen@shingroup.cn>
----
- arch/powerpc/kernel/head_64.S | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Last dev-test branch of f2fs git tree, I guess it's a little behind
+to linus' tree.
 
-diff --git a/arch/powerpc/kernel/head_64.S b/arch/powerpc/kernel/head_64.S
-index 4690c219bfa4..6c73551bdc50 100644
---- a/arch/powerpc/kernel/head_64.S
-+++ b/arch/powerpc/kernel/head_64.S
-@@ -647,7 +647,9 @@ __after_prom_start:
-  * Note: This process overwrites the OF exception vectors.
-  */
- 	LOAD_REG_IMMEDIATE(r3, PAGE_OFFSET)
--	mr.	r4,r26			/* In some cases the loader may  */
-+	tophys(r4,r26)
-+	cmplwi	cr0,r4,0	/* runtime base addr is zero */
-+	mr	r4,r26			/* In some cases the loader may */
- 	beq	9f			/* have already put us at zero */
- 	li	r6,0x100		/* Start offset, the first 0x100 */
- 					/* bytes were copied earlier.	 */
--- 
-2.25.1
+> 
+>> @@ -3957,32 +3976,32 @@ static int read_raw_super_block(struct f2fs_sb_info *sbi,
+>>   		return -ENOMEM;
+>>   
+>>   	for (block = 0; block < 2; block++) {
+>> -		bh = sb_bread(sb, block);
+>> -		if (!bh) {
+>> +		page = read_mapping_page(sb->s_bdev->bd_inode->i_mapping,
+>> +								block, NULL);
+> 
+> You need to use bd_mapping, not bd_inode->i_mapping (since May 21 in
+> Linus' tree).
 
+Will update it once f2fs codebase was rebased to linus' tree.
+
+> 
+> And I don't think there's much point in switching to pages as an
+> intermediate step.  You may as well go straight to folios.
+> 
+> 		folio = read_mapping_folio(sb->s_bdev->bd_mapping, block, NULL);
+
+Fine, let me work on this in v2.
+
+Thanks,
+
+> 
 
