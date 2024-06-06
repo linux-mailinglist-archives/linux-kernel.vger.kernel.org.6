@@ -1,279 +1,193 @@
-Return-Path: <linux-kernel+bounces-205146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E04DA8FF806
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:18:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 371778FF80B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D344F1C242B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:18:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA09428478F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2238C13E03C;
-	Thu,  6 Jun 2024 23:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738CA13E404;
+	Thu,  6 Jun 2024 23:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DsT53hOn"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ZvbUn5j6"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C666D73451
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 23:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353074E1D6
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 23:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717715883; cv=none; b=DxUvgfI8CJbCWDCw/U7852vTuClVSYS/+Cs8pa+YvYU8D5o4g/sPxKaq7RlhMCh6v7NMMCboBd4miV+hb2LqHzPuBka7vnl2jqu7etg/hdXgyRK6Vz1k6OmVOrBMZmdZJec8cE8m+yeY02k3PeZYvhCwRkb4xZGs8+spwrI8IC4=
+	t=1717715945; cv=none; b=nvphEzFI5s09HAr+w2au5u1Rv5HiKROialM9QHEJauzHWbgpQPh+seOHbsXL0wVVtHih+oecvIh7EKktGJgx9rIEoXdxIKwNsyLBKJ5eqc5abYDYgjrOSRy2+eyFtIA4p+xRH6JdH83IKGcxAFkvGCL5o4vKiQLk/FbA2+UDW+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717715883; c=relaxed/simple;
-	bh=19XaacNp8Kcu5Ti2DS4m8MBq16yvs29OoTKcO5yHFZk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ro0EXeTybfWDMpOJXYuoQoDpphgs5Hyglb1NZGRPQz/sFkqtZyVn7Lszc35oVVknp+7tTv9MO/9g/BSu0vB/BsKOYdba23O8bPGaZDkdHLccfS8Sk4o+vIaxB/s+coJfanQ12DA1wx5Iv6dOcFry3Ov/9Hwvy6naOozNqcxDPIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DsT53hOn; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1ee5f3123d8so28155ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 16:18:01 -0700 (PDT)
+	s=arc-20240116; t=1717715945; c=relaxed/simple;
+	bh=KopYV/PxRKfVKnIeeW/2XvxTVqfdsZhYvuOqTaBPIlY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dSis1b3nnwJDzfdb+Oi8ya8+E4v1xcm4iRt6Gb7ZNx+2tKD8WBJicMlcBH0uzk67jUZ68jPbJ/NSonLhjdYomld9pzaA42ORsiYK5e/37DLi/csfDjKIboyQU0U+ezA69/F+WklmkpjG+VulGeHivsDpqaqUKZwwfFBhwvkYvOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ZvbUn5j6; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f480624d0fso13949455ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 16:19:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717715881; x=1718320681; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/l8SdZWscT50XIJXXqQu2Ls5LcDQtk8S/Jn0vt/xS74=;
-        b=DsT53hOnkDHKVm85WY+FXC1BWLs4SGxZHsdbGq8o+qsbdixiN/CdxZM9kbGq0v9JeU
-         agmF+xPit7YMhDl+eWxdN9DAeyTTrz99P+oHve7muk8rsiJl4UmRQ+/1fcS13nMTKNm3
-         RvoWT5pGb/t17ZJvvtnGow8PaYypMHSBFmlyPgfP1t/+6B+hcQrGIDnvnhwf16VXj9AQ
-         KTajIs9f813hH+ftutYnwGMubsfcERbozB6UVhtsewLWCoEXG9T5aYXc9R3/qUsZzCm6
-         sT9SRWYkK7ip0b8sGE9rqP1CdI1PwiHt8ewoc6JTLmrCLH9x2JaUjzmVCgLHxRmWn8du
-         jR4Q==
+        d=broadcom.com; s=google; t=1717715943; x=1718320743; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=B5W2Nv+UImujN12YJ4otFyCpCSzcEj5c4HLiL4+sD5Y=;
+        b=ZvbUn5j6+tXpyHhAqH4vrsela0/Z3Ak9a7fLNVO4ZTE4Neh2ui0HeI0BtCsZUFyD5G
+         hAhs4BhyMmCy9D8+oWouADYSUhG2FO9s50I8JqgO9n0JBPy4UKauot94Tw+4+2gcU5lb
+         ONnaxACTaZk9xgLkm2l8YJQQ1OHT8ScMNHFLY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717715881; x=1718320681;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/l8SdZWscT50XIJXXqQu2Ls5LcDQtk8S/Jn0vt/xS74=;
-        b=enrWCPcYWXiyHJy55stJLo1vplikA0Bq3Pz5K69ya43EsQjEnhE+3y/1q8J7aSEOcM
-         CVZcemh9TUUgu/jKkZQwoM/CegL+pRCM1VqRTh/hEYAsLqdfMvOO66RrBDImND0V9dhW
-         QsQ+B1IG5R7ZXwMv99aaWT5kTP4ouzDxo2roDY+NPoaLbYJUx+07sbYI52AoozumLfci
-         r6ntPlwbw7vb0zrW0mL4UT4OQe7dIHaO0wezBduHsqyOHbP7onjXxWuGyGMDo/UT/ter
-         8s0Pf+VTtkaLl8srL6xWuks33ZCG0eoygxm+BLAL8rJtY0dtDrO+9gn7qlbpOL6gPhJK
-         asKg==
-X-Forwarded-Encrypted: i=1; AJvYcCX6CywXAM5q0Pkry1QKYpolZ0eAMcHAlmPPz6JNwYwPz4s7TXtDcojTOWOAMZC2BRCRpIGdauFT2ejJpp2QwFguDq3/Vn/nNv9stsLq
-X-Gm-Message-State: AOJu0YwVvnbwXpKx39hY3qmXFE07kvND5+SDzmAdlOBryMcIC6HsivpY
-	X+UapOzcR43kUZc7zPZGGMj7MNcB75wxlNF3HwnJV9xPDSbjzhNy+Ll0Nmy5r4o9HkO/EOXo45R
-	D9qfUqJPkHNZx5OeYKdluFnjXGmbkUpjt1ORz
-X-Google-Smtp-Source: AGHT+IH/xutXin8rqxWXABdip1JdHkR2hPTycF2hrEcY74OusUk2w+OhuEuyNKB3wiyM50A4wOlHuBU9pnXbR9oSs0U=
-X-Received: by 2002:a17:902:dac2:b0:1f6:7fce:5684 with SMTP id
- d9443c01a7336-1f6bd339c13mr4741225ad.3.1717715875849; Thu, 06 Jun 2024
- 16:17:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717715943; x=1718320743;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B5W2Nv+UImujN12YJ4otFyCpCSzcEj5c4HLiL4+sD5Y=;
+        b=SMlojllQ3AmvDACf2BSLliILki8188XpubblrA/9exCkIH3e2mOqbjULKJS0sfWaHA
+         /wa1nxmbqji1v8ty08361gpIn38hBq5JXSgYE4U+rlB7v5Pn0x6+ge5PJ6hlVB3R+IaG
+         WxIUSCDv3M6FZRKYRPH5HjGOJgx9ASjAyTR1vXl/peK2uF83/hcNWt22dILb3Zf7PZcp
+         Vp85SoJt81maq6Za3V7IFokfXAwOLsAMia2UjzSvhO6rrHB4heOdzozeyollBMrIpNrQ
+         8WTQE8zEpXT2pWSPmjyrl6V10uOOUFXnp6aI/VJSzkcgVDVCYnJQ+Xbhsj7lre4tS92f
+         8BpA==
+X-Gm-Message-State: AOJu0Yz6xtESDAuGJQln9si5PpGFvupPoE35Bg/VgGCiGg/9DKbgeiKi
+	Plo7ukcNjrlt1tiMeQ2qQPJnVcRTDoy+Kbo3fqSSqRQFg4zlZsZ2Y09Py8L19A==
+X-Google-Smtp-Source: AGHT+IHIzTCrpwOBuPoFHxi87A/kHEekLhj24/3k60Aq8kd9drw2D8EtGjRvHFgvTvQIHd91BX7SXg==
+X-Received: by 2002:a17:903:2407:b0:1f6:6c74:e5c1 with SMTP id d9443c01a7336-1f6d02c0e82mr14328785ad.4.1717715943397;
+        Thu, 06 Jun 2024 16:19:03 -0700 (PDT)
+Received: from [10.66.192.68] ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd76d20asm20950295ad.93.2024.06.06.16.18.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 16:19:03 -0700 (PDT)
+Message-ID: <3d6ec46c-53c2-4a13-90ff-eb419863c1d5@broadcom.com>
+Date: Thu, 6 Jun 2024 16:18:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <23879991.0LEYPuXRzz@milian-workstation> <Zl8bhWfHSXxs35r2@x1>
- <Zl8g1LxRCYgTSxhy@x1> <CAP-5=fVJRr2Qgf88ugEJ2FGerzKNv_dD6XOT_dSuFyYp2ubwSw@mail.gmail.com>
- <Zl9ksOlHJHnKM70p@x1> <ZmI2Gumx5yUwyFsT@google.com>
-In-Reply-To: <ZmI2Gumx5yUwyFsT@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 6 Jun 2024 16:17:43 -0700
-Message-ID: <CAP-5=fWD+PPCVCvyBFfd3vZzUajM0HAEWzJe8XmB9p_bfT4ATQ@mail.gmail.com>
-Subject: Re: perf 6.9-1 (archlinux) crashes during recording of cycles + raw_syscalls
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Milian Wolff <milian.wolff@kdab.com>, 
-	linux-perf-users@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, 
-	Arnaldo Carvalho de Melo <acme@kenel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 1/8] x86/vmware: Introduce VMware hypercall API
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+ hpa@zytor.com, dave.hansen@linux.intel.com, mingo@redhat.com,
+ tglx@linutronix.de, x86@kernel.org, netdev@vger.kernel.org,
+ richardcochran@gmail.com, linux-input@vger.kernel.org,
+ dmitry.torokhov@gmail.com, zackr@vmware.com,
+ linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
+ timothym@vmware.com, akaher@vmware.com, dri-devel@lists.freedesktop.org,
+ daniel@ffwll.ch, airlied@gmail.com, tzimmermann@suse.de, mripard@kernel.org,
+ maarten.lankhorst@linux.intel.com, horms@kernel.org,
+ kirill.shutemov@linux.intel.com
+References: <20240523191446.54695-1-alexey.makhalov@broadcom.com>
+ <20240523191446.54695-2-alexey.makhalov@broadcom.com>
+ <20240527170734.GCZlS91uXD68HRN1na@fat_crate.local>
+ <9ca6230c-740c-4f1a-8fdf-73f74cf025a1@broadcom.com>
+ <20240603175844.GKZl4EVGUxp2aQZnYJ@fat_crate.local>
+Content-Language: en-US
+From: Alexey Makhalov <alexey.makhalov@broadcom.com>
+Autocrypt: addr=alexey.makhalov@broadcom.com; keydata=
+ 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 EuY0
+In-Reply-To: <20240603175844.GKZl4EVGUxp2aQZnYJ@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 6, 2024 at 3:20=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
-rote:
->
-> On Tue, Jun 04, 2024 at 04:02:08PM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Tue, Jun 04, 2024 at 11:48:09AM -0700, Ian Rogers wrote:
-> > > On Tue, Jun 4, 2024 at 7:12=E2=80=AFAM Arnaldo Carvalho de Melo <acme=
-@kernel.org> wrote:
-> > > > Can you please try with the attached and perhaps provide your Teste=
-d-by?
-> >
-> > > > From ab355e2c6b4cf641a9fff7af38059cf69ac712d5 Mon Sep 17 00:00:00 2=
-001
-> > > > From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > > > Date: Tue, 4 Jun 2024 11:00:22 -0300
-> > > > Subject: [PATCH 1/1] Revert "perf record: Reduce memory for recordi=
-ng
-> > > >  PERF_RECORD_LOST_SAMPLES event"
-> >
-> > > > This reverts commit 7d1405c71df21f6c394b8a885aa8a133f749fa22.
-> >
-> > > I think we should try to fight back reverts when possible. Reverts ar=
-e
-> > > removing something somebody poured time and attention into. When a
-> >
-> > While in the development phase, yeah, but when we find a regression and
-> > the revert makes it go away, that is the way to go.
-> >
-> > The person who poured time on the development gets notified and can
-> > decide if/when to try again.
-> >
-> > Millian had to pour time to figure out why something stopped working,
-> > was kind enough to provide the output from multiple tools to help in
-> > fixing the problem and I had to do the bisect to figure out when the
-> > problem happened and to check if reverting it we would have the tool
-> > working again.
-> >
-> > If we try to fix this for v6.10 we may end up adding yet another bug, s=
-o
-> > the safe thing to do at this point is to do the revert.
-> >
-> > We can try improving this once again for v6.11.
->
-> I think I found a couple of problems with this issue. :(
->
->  1. perf_session__set_id_hdr_size() uses the first evsel in the session
->     But I think it should pick the tracking event.  I guess we assume
->     all events have the same set of sample_type wrt the sample_id_all
->     but I'm not sure if it's correct.
->
->  2. With --call-graph dwarf, it seems to set unrelated sample type bits
->     in the attr like ADDR and DATA_SRC.
->
->  3. For tracepoint events, evsel__newtp_idx() sets a couple of sample
->     type regardless of the configuration.  This includes RAW, TIME and
->     CPU.  This one changes the format of the id headers.
->
->  4. PERF_RECORD_LOST_SAMPLES is for the sampling event, so it should
->     use the event's sample_type.  But the event parsing looks up the
->     event using evlist->is_pos which is set for the first event.
->
->  5. I think we can remove some sample type (i.e. TID and CPU) from the
->     tracking event in most cases.  ID(ENTIFIER) will be used for LOST_
->     SAMPLES and TIME is needed anyway.  TID is might be used for SWITCH
->     but others already contain necessary information in the type.  I
->     wish we could add id field to PERF_RECORD_LOST_SAMPLES and tid/pid
->     to PERF_RECORD_SWITCH.
 
-Right, this is good. To clear up the immediate error we just need to
-increase the memory allocation size by 48 bytes to account for the
-sample ID being written. Here is a change doing that and removing the
-memory allocation altogether:
-```
-diff --git a/tools/lib/perf/include/perf/event.h
-b/tools/lib/perf/include/perf/event.h
-index ae64090184d3..a2dfaff26fb7 100644
---- a/tools/lib/perf/include/perf/event.h
-+++ b/tools/lib/perf/include/perf/event.h
-@@ -77,6 +77,8 @@ struct perf_record_lost_samples {
-       __u64                    lost;
-};
 
-+#define PERF_RECORD_MAX_LOST_SAMPLE_AND_ID_SIZE \
-+       (sizeof(struct perf_record_lost_samples) + 6 * sizeof(__u64))
-/*
- * PERF_FORMAT_ENABLED | PERF_FORMAT_RUNNING | PERF_FORMAT_ID | PERF_FORMAT=
-_LOST
- */
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 66a3de8ac661..1615a1723fb9 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -1926,7 +1926,10 @@ static void __record__save_lost_samples(struct
-record *rec, struct evsel *evs
-el,
-static void record__read_lost_samples(struct record *rec)
-{
-       struct perf_session *session =3D rec->session;
--       struct perf_record_lost_samples *lost =3D NULL;
-+       union {
-+               struct perf_record_lost_samples lost;
-+               char
-lost_and_sample_id[PERF_RECORD_MAX_LOST_SAMPLE_AND_ID_SIZE];
-+       } lost;
-       struct evsel *evsel;
+On 6/3/24 10:58 AM, Borislav Petkov wrote:
+> On Wed, May 29, 2024 at 05:44:32PM -0700, Alexey Makhalov wrote:
+>> While most of the vmware_hypercall callers are executed after alternative
+>> patching applied, there are small amount of hypercalls running before that.
+>> Only for them we have the logic of analyzing vmware_hypercall_mode as a
+>> default alternative code. And there are 2 constraints:
+>> 1. vmcall/vmmcall are not supported by old ESXi/Workstation/Fusion. We have
+>> to use in/out instructions. After the end of support of old hypervisors the
+>> alternative can be simplified as follow:
+>> ALTERNATIVE("vmcall", "vmmcall", X86_FEATURE_VMW_VMMCALL);
+>> 2. SEV-ES enabled VMs should use _only_ vmcall/vmmcall as in/out
+>> instructions cause faults.
+>>
+>> Another approach that we discussed internally was to use
+>> ALTERNATIVE_2("movw %[port], %%dx; "inl (%%dx), %%eax", "vmcall",
+>> X86_FEATURE_VMW_VMCALL, "vmmcall", X86_FEATURE_VMW_VMMCALL) for
+>> vmware_hypercallX family of functions, _and_ to have a separate API
+>> vmware_sev_hypercallX, with the silly dance without an alternative inside,
+>> to be used only by early boot code, before alternative application. But,
+>> it's error prone when things come to boot time related code movements or
+>> rearrangements as it puts additional requirement for SEV-ES
+>> understanding/testing for VMware guests.
+> 
+> Right, so since we're exporting that alternatives_patched thing already,
+> you might also try to do:
+> 
+> 	if (unlikely(!alternatives_patched))
+> 		return slow_hypercall_X_in_c();
+> 
+> 	asm_inline volatile(VMWARE_HYPERCALL...
+> 
+> where that slow_hypercall_X_in_c()* set of APIs does the checks in C.
+> 
+> And the VMWARE_HYPERCALL thing is a lot simpler then.
+> 
+> All in all, you'll have a lot less unreadable asm to pay attention to
+> and those APIs should be all easy and readable.
+> 
 
-       /* there was an error during record__open */
-@@ -1951,20 +1954,13 @@ static void record__read_lost_samples(struct
-record *rec)
+Thanks for the idea.
 
-                               if (perf_evsel__read(&evsel->core, x,
-y, &count) < 0) {
-                                       pr_debug("read LOST count failed\n")=
-;
--                                       goto out;
-+                                       return;
-                               }
+I improved the condition to eliminate slow path for modules such as 
+vmmouse, vmwgfx.
+        if (unlikely(!alternatives_patched) && !__is_defined(MODULE))
+                return vmware_hypercall_slow(...);
+It also drops the need for exporting vmware_hypercall_mode or 
+vmware_hypercall_slow symbols.
 
-                               if (count.lost) {
--                                       if (!lost) {
--                                               lost =3D zalloc(sizeof(*los=
-t) +
--
-session->machines.host.id_hdr_size);
--                                               if (!lost) {
--
-pr_debug("Memory allocation failed\n");
--                                                       return;
--                                               }
--                                               lost->header.type =3D
-PERF_RECORD_LOST_SAMPLES;
--                                       }
--
-__record__save_lost_samples(rec, evsel, lost,
-+                                       memset(&lost, 0, sizeof(lost));
-+                                       lost.lost.header.type =3D
-PERF_RECORD_LOST_SAMPLES;
-+
-__record__save_lost_samples(rec, evsel, &lost.lost,
-                                                                   x,
-y, count.lost, 0);
-                               }
-                       }
-@@ -1972,21 +1968,12 @@ static void record__read_lost_samples(struct
-record *rec)
+Will post just Patch0001 for review here before sending v11 out.
 
-               lost_count =3D perf_bpf_filter__lost_count(evsel);
-               if (lost_count) {
--                       if (!lost) {
--                               lost =3D zalloc(sizeof(*lost) +
--
-session->machines.host.id_hdr_size);
--                               if (!lost) {
--                                       pr_debug("Memory allocation failed\=
-n");
--                                       return;
--                               }
--                               lost->header.type =3D PERF_RECORD_LOST_SAMP=
-LES;
--                       }
--                       __record__save_lost_samples(rec, evsel, lost,
-0, 0, lost_count,
-+                       memset(&lost, 0, sizeof(lost));
-+                       lost.lost.header.type =3D PERF_RECORD_LOST_SAMPLES;
-+                       __record__save_lost_samples(rec, evsel,
-&lost.lost, 0, 0, lost_count,
-
-PERF_RECORD_MISC_LOST_SAMPLES_BPF);
-               }
-       }
--out:
--       free(lost);
-}
-
-static volatile sig_atomic_t workload_exec_errno;
-```
-
-Thanks,
-Ian
-
-> Thanks,
-> Namhyung
->
-> >
-> > > regression has occurred then I think we should add the regression cas=
-e
-> > > as a test.
-> >
-> > Sure, I thought about that as well, will try and have one shell test
-> > with that, referring to this case, for v6.11.
-> >
-> > - Arnaldo
 
