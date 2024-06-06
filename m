@@ -1,130 +1,132 @@
-Return-Path: <linux-kernel+bounces-204116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01FE58FE465
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:34:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CCCE8FE467
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A05361F24296
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:34:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 712571C253AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD43194C9A;
-	Thu,  6 Jun 2024 10:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6C11957FC;
+	Thu,  6 Jun 2024 10:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="fjgmxjsN";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="U9c9hgd3"
-Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="ngYtts2P"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D6514A63D
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 10:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3EE1953A4;
+	Thu,  6 Jun 2024 10:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717670076; cv=none; b=TL+q59CJoVJV20uz99hCPj8RU2cu7LuhBvgK5ZBHQpJVmYV/+FnnzxEWymG/1/qJKpYHboNOl4vU26wBg2onagwwWVbBk1PyujuxF9Xh9gx2YU4CwWrhAkjPz8ZIHK8UlxwwP/+nlGR3B46MAG4bp+qE+PUGGuu6sYIAtd/Deno=
+	t=1717670080; cv=none; b=Cj/pSL0O0jMVF8I/DypPiWnDXv91epgyzKUSDL4bwgaN/xJiaxeSBN8BbemncA0g16ig5GUDoHhIMd21MMbLmA5uPuwcYcgLks8ldQwVMOoBjudBWWzS4ncpxWL8v/ENBPhABWvUKPI3IlP3Y6s1EJ9Rg9h98fPS2dbuX+AdJWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717670076; c=relaxed/simple;
-	bh=cvyZ/7L1W/sMKUoGTzgpr7rHrNNeRA3a1PKzfaJ2JeY=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:
-	 Subject:Content-Type; b=Fd68Ry2es64mFu6bnW+dXo40Z0214B84+YBxztEGxrFVhLjwJDy8tbcXobtvcGGiU6rkYQosRw7XEw77zkCO4H82wqEKgt1Qq2n5htKrkWHr0PTkQhaA9e5YQsKdEL3ZqxbGi2rEB9XZ2shURvvrQt6xgm4yrBUfIRDBphcIuZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=fjgmxjsN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=U9c9hgd3; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id A158B11401C0;
-	Thu,  6 Jun 2024 06:34:33 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Thu, 06 Jun 2024 06:34:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1717670073; x=1717756473; bh=jXJvaMIeMq
-	D7KMAhp02FWS9gqDr1lXH41UZet54nW88=; b=fjgmxjsNcRBWSJnJtFwh1wG2yn
-	fjbyCkvAqbaSOgyl3rOAr7jMzGjoTQbYrSKzuuWTCmga4EPlsiBEZZaA8cCxgi/9
-	dakxT/csYGIXe65Zi8qDFGQLehzRl56hmxQsaxkedYZd7JDPN6Lzb+j5sFesFMwf
-	U1Wi6Umwq+nZGkWucTf10pD9UMij8inhdu7xzvquefdG3EeR6QzV5MkuFlHpFI7U
-	/2ANaA3gQBjekWtCifQEqQT/79mJb9jg1jiUtisU0dyrdTZKE8xLoIuOvlpMmlAC
-	HOd3Qx7PmXyFWEQ+PGj6mQ/exFsEC206xQha52JUFu/u2UkX9ZgZbRXMcesA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1717670073; x=1717756473; bh=jXJvaMIeMqD7KMAhp02FWS9gqDr1
-	lXH41UZet54nW88=; b=U9c9hgd3vJy87It56sbRV6trPiqutZdi1oiT2S2GSny2
-	A2oTPkApM3u0AJrpIRsDAt3Igo1TLSOjV7kUcFCJlbwNtxNHP1ehHMEp4tUC+OfT
-	mvpinNz8lWiYQnzZY0SMcaXZCzTLkjnt9zOW0mH/qvlNMwlk6xc8OvExldI/f+wz
-	tEq8hPQqrG2tFykzloaHRcT6lOSeQ/eqN0zo/Tcp91uHQC17Ov1+uzOlNJ4mv3fX
-	qo3nXq4XROxogbT3jk6ERtrJeKHnpahcSrMvCZq8BziKvc2QOSt6iATl3DJfHxL4
-	0gLEaNNVrTIlT/5Mak5jOLRvX9F4sbr+FESZsJy3fg==
-X-ME-Sender: <xms:uJBhZv2DjfEoX1c5F_od8EQ5m7iiWdkLOh4043SKeTbJMey_kggr4Q>
-    <xme:uJBhZuGcCFmYMok73spDiHQjO2jGtxspCQIqc2RO_QvCV7ezkN1amTEP2x0ygH2FF
-    ogvM9TOTmBhxZf5beg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdelkedgfedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeffgeffuddtvdehffefleethfejjeegvdelffejieegueetledvtedtudelgfdu
-    gfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:uZBhZv5JaVoJ3E9gvza1A6M4zAuqyjK9Yvvifpl8YR7PeNXJJAq07w>
-    <xmx:uZBhZk0hWtarkEmS-kYhur8PdO47KK-IYMmXwW3eNdqMN0jx_JGkbg>
-    <xmx:uZBhZiEgi_MJggWRykZN0ImqbLeE63axFEe1uVcr3-hB57gByru2bg>
-    <xmx:uZBhZl_wbG4e9gliIvtZd-8Xp62Pr8K4zkMUBLVCpjE7HtuER448LQ>
-    <xmx:uZBhZuBiuYk8ju7-vs9hqMAougaqg7dFBtfzfHYTUMu4SWdq5eZKd-YE>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id E3817B6008D; Thu,  6 Jun 2024 06:34:32 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-497-g97f96844c-fm-20240526.001-g97f96844
+	s=arc-20240116; t=1717670080; c=relaxed/simple;
+	bh=w+Cp/U/HLDL+t89AzdC0HW8vLKiCbe4Wmt8j44QHOXc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=THycGvBHeRiWZAOFDZEpY57nNH/VCkHH2/vsDKjfSMNMRgkndFCKlkE3SXxsdhyHwPkPg+Xi+dwb9w1jvpxr3Hgiv5ZhICG73brqy6F6sFBHds3mAgZsFQQkrvMf+p7UszavW3YvRQtaBVfE/qASrhW6oPoM/bmlesGchtuIrYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=ngYtts2P; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=w+Cp/U/HLDL+t89AzdC0HW8vLKiCbe4Wmt8j44QHOXc=; t=1717670079;
+	x=1718102079; b=ngYtts2PUCdo5pXR6KWImqh3GO5qaXjmUDfaUvOscBbjgOwMb9jZ26vBcyaT9
+	RHQ1MnDhOJufP7tmP5aY7UkW4TSpRxCSS2uTO9yguN5xlF0gGz5MGQpZm5cXLynvoYJXWrzXl0FJ+
+	3Ag1RDdn85jXJbtsWxLlDQpIOEIc3fZdfxwyeSuLQy3Tnj5uChCssFcwLZpv9ben+yNuDt6ggTo5E
+	hu6T5hoAqdVIAis7JY5mKTdb5zNzg9mpVm4Von9ixLdXirohCNCzcWvJPEVBTi9MHTkXwVMLipeT8
+	x5r+2GaXjQf1mfkw6bMn32wRw79CpqmosXG46kolv2Aiij5SAw==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sFAS0-0007b3-Cf; Thu, 06 Jun 2024 12:34:32 +0200
+Message-ID: <8d1588d5-0884-469a-b1ed-322f91a4d290@leemhuis.info>
+Date: Thu, 6 Jun 2024 12:34:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <5050968c-6807-4688-ad7c-24c19820f1e6@app.fastmail.com>
-In-Reply-To: <20240606094620.3946453-1-zhe.he@windriver.com>
-References: <20240606094620.3946453-1-zhe.he@windriver.com>
-Date: Thu, 06 Jun 2024 12:34:12 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "He Zhe" <zhe.he@windriver.com>, "Clemens Ladisch" <clemens@ladisch.de>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] hpet: Support 32-bit userspace
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2] net: ti: icssg-prueth: Split out common
+ object into module
+To: MD Danish Anwar <danishanwar@ti.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Diogo Ivo <diogo.ivo@siemens.com>, Andrew Lunn <andrew@lunn.ch>,
+ Roger Quadros <rogerq@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
+ "David S. Miller" <davem@davemloft.net>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, srk@ti.com,
+ Vignesh Raghavendra <vigneshr@ti.com>, kernel test robot <lkp@intel.com>
+References: <20240606073639.3299252-1-danishanwar@ti.com>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: en-US, de-DE
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 n7RI
+In-Reply-To: <20240606073639.3299252-1-danishanwar@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1717670079;7eb2a595;
+X-HE-SMSGID: 1sFAS0-0007b3-Cf
 
-On Thu, Jun 6, 2024, at 11:46, He Zhe wrote:
-> v2:
-> - Use in_compat_syscall to determine if we're handling 32-bit or 64-bit
-> - Drop unnecessary compat_ptr for hpet_ioctl_common
-> - Add comment for COMPAT_HPET_INFO and COMPAT_HPET_IRQFREQ
+On 06.06.24 09:36, MD Danish Anwar wrote:
+> icssg_prueth.c and icssg_prueth_sr1.c drivers use multiple common .c
+> files. These common objects are getting added to multiple modules. As a
+> result when both drivers are enabled in .config, below warning is seen.
+> [...]
 
-Thanks, this version looks correct to me,
+Thx, seems that patch does the trick as well (tested it with today's
+-next and assuming here that no change fixed it in between).
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Reported-and-tested-by: Thorsten Leemhuis <linux@leemhuis.info>
+Closes:
+https://lore.kernel.org/all/de980a49-b802-417a-a57e-2c47f67b08e4@leemhuis.info/
 
-I would suggest one simplification though:
-
-> +#ifdef CONFIG_COMPAT
-> +	if (in_compat_syscall()) {
-> +		if (count < sizeof(compat_ulong_t))
-> +			return -EINVAL;
-> +	} else {
-> +		if (count < sizeof(unsigned long))
-> +			return -EINVAL;
-> +	}
-> +#else
->  	if (count < sizeof(unsigned long))
->  		return -EINVAL;
-> +#endif
-
-The #ifdef/#else is not really required here, since
-in_compat_syscall() is defined to return false when
-this is unset. For both cases, it should be sufficient
-to keep the part inside of the #ifdef block.
-
-     Arnd
+Ciao, Thorsten
 
