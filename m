@@ -1,420 +1,111 @@
-Return-Path: <linux-kernel+bounces-204786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56B388FF394
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:20:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B81E78FF397
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02AF8286287
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:20:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFF691C26519
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0561990B5;
-	Thu,  6 Jun 2024 17:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C491990C6;
+	Thu,  6 Jun 2024 17:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HUujiJkO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SzwQUBHQ"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D43266AB;
-	Thu,  6 Jun 2024 17:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D92198E90;
+	Thu,  6 Jun 2024 17:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717694420; cv=none; b=j688PWJSmM1vP0pkTgba+2NY/sy6wIMHxqU5NlHj+I+HwS/evRozL9iFgY5bAaWySqZgmBSA7/MOElRakvb4gGv6OGan0gxvYWdUfF4o92HuwGpoLkd7HoYq8MeCX51kfX9Eyj6UQeClkYOPkgsCpemVNg5vmxEMK5cBQWpMpqQ=
+	t=1717694466; cv=none; b=Nj8zWMF7bWxluG9A8Z1MMFQCKh30IWVczrVvHDIKOBvKg9WbxR9kpGDJarAhjGLMCtHQvdnuGf2b1ZbYOdB45c8iv//6MLsIIeJTwe4s9lEpldiK1CWhHyDzL3o3hgldpe5aoCpYY4mrw0cQG2gj9IpwSkDeGqpl7vja3hJOeHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717694420; c=relaxed/simple;
-	bh=HaZcjrOCRN6LrZvCxFlM99g5xcxdurTMUCw4ejQkan8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bh7NzEMpKjmiNGVIWMi32DembC6reGyiW8MMHMKj0bNZdkRZHrbk97/1Uy4nySLC7sDR24tCeZC/eKwC8mrcheBinjE3KYvHfKzFDZqfi6Z9RssRPc2WE5odeILXapXXAzG8uoCAs7ddGt+UgIHQutwycNy1L9Bom2F8Y7vw0c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HUujiJkO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F23DBC2BD10;
-	Thu,  6 Jun 2024 17:20:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717694419;
-	bh=HaZcjrOCRN6LrZvCxFlM99g5xcxdurTMUCw4ejQkan8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HUujiJkOokWTBojCTlf13HHjvAGkt3Er6Es3cEb8zMwUl1N4e9BRBmRHtu9ft2LP6
-	 3OTYRzWPdXGXZLHoCDV7xGrTBJBYA+uht4usZxSKsSyl2xObkQNkyy62oEbb/NQj3e
-	 a7pvCEXPU7E0bqg/d46H8WRetGGy2GLWffY3PhUcTecfI+Wa/G0QseOcKJwxoGksZP
-	 ZijwJ4N4robpWcOAQ9Q/hIQm2MZnpwsnzHyV1z6foLzI+slBvnuMpnJUp7G8plW7w3
-	 2rKCLKP13HytcY8HWjYMIAqREJx0u4BdCiK+hnyBOg7x75W6d2j+dP26EPDdhXesVV
-	 jUPxci/rLIkVQ==
-Date: Thu, 6 Jun 2024 19:20:16 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Devarsh Thakkar <devarsht@ti.com>
-Cc: Javier Martinez Canillas <javierm@redhat.com>, jyri.sarha@iki.fi, 
-	tomi.valkeinen@ideasonboard.com, airlied@gmail.com, maarten.lankhorst@linux.intel.com, 
-	tzimmermann@suse.de, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	conor+dt@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, nm@ti.com, vigneshr@ti.com, 
-	kristo@kernel.org, praneeth@ti.com, a-bhatia1@ti.com, j-luthra@ti.com
-Subject: Re: [RFC PATCH 2/3] drm/tidss: Add support for display sharing
-Message-ID: <20240606-puzzling-brainy-chital-4bf891@houat>
-References: <20240116134142.2092483-3-devarsht@ti.com>
- <vgfzhamtiwkpdyk5ndagsb63subclinotoe6tsi3wu6z7454ec@igxfzjc5gyqm>
- <88018f5f-a7db-7278-e5c3-bb1dbf0e3f14@ti.com>
- <qiqrhpqtnox47wj6az7t3fjp4vc6k32fw42tp5slqggrhe6utb@i7lkpaf3v3od>
- <2f4cf2a7-ce7a-bb34-f722-7e66ea41def7@ti.com>
- <20240314-hospitable-attractive-cuttlefish-a2f504@houat>
- <03e2d653-731c-bb30-321b-b5477d7b82b2@ti.com>
- <87ikzf16dm.fsf@minerva.mail-host-address-is-not-set>
- <ZkYBWnQO8AbGAt06@phenom.ffwll.local>
- <b3b7fe51-ce9e-1dc4-27ee-e380c242d446@ti.com>
+	s=arc-20240116; t=1717694466; c=relaxed/simple;
+	bh=Ot9A6SeA8dAsQwHKsNxRkFPhOuP4b68dsYRTMjNGsNg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kQTmHGPWvHeAbmqrpvf8dS/MDhMRN7wsudpfhcQ+RQyFm7FB957iUOtxHTDaMzaiHZyWT7cGNdnxkbgL4SIulpJPy4uPWuLzHPWWxxfvXxUfRN6pob517SJN7YOf3aXAPQy6gLq9jLck1WnSEDByUQZ3h3dQXTtQ4/8AFePw0WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SzwQUBHQ; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5295e488248so1504345e87.2;
+        Thu, 06 Jun 2024 10:21:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717694463; x=1718299263; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EBzQ8negayjPzH4I927JPLD9bGZumwIM1r0NZmwJJnc=;
+        b=SzwQUBHQFxefchAPAscBLcY4DQdC6AdCaYNLNdvEv+EtHkgdaRyoSs+bRaFlidUWsL
+         t/LeWqR8uABmirPdimWpbYSLs8/pkl3yQQgDtJqOS2MRNz5fvM2Mn7r6EVEKNMLmH3ec
+         rDhB4Xb1m6Mgrplgbhjl4/viuzuJ0S8wN/pQZhfjlXc9Id0SS2LIdsefsI6Uc/wO6qoJ
+         Y5i28/qw86sV47dMOdccquOR9UVGWm4GfhrT3RdHBGlrBXGgWg2R/LTXuq18V6O06jL2
+         7PqtI35Lu7tMmSnMBsYsou+Qh6mUAEIgXeSRq6lxp8xZT1CBZzgpi5JUTCvESg6PwjeD
+         6tkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717694463; x=1718299263;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EBzQ8negayjPzH4I927JPLD9bGZumwIM1r0NZmwJJnc=;
+        b=W0UehYSuH4rRgKusi9fyGl8twdG1KLG/0mvCl8oxXME54ECirOEZ7ihi3kJWkh3RKH
+         S0uAh20qQ7dMuJyQ8smDfufoIFV+cpJq7KEiVMhZhzVZ0N20t4Nx7obeNQspZuKv02pP
+         89GXyz91fLVN2FBI1AHxNx2v5wgIXP+omCJpuJ/DHkAlX3kO1cnUcsjyvEU2W3QOEifO
+         5ggX8Q2IqUArS+Goj4UtMzw0F8deUE+4K0/E4FCClm7g6sEwJhU74QfefUhFN3X+CqYg
+         j9Wpwr63a3GWpU2Iu1oc0EgWfqPaMLuEFfCPT9oAhvEiC6kRF0gN97CYn4sSrFZ9MRnI
+         K4ng==
+X-Forwarded-Encrypted: i=1; AJvYcCX5SFXU+YKwM6ShGf58w524PXa5+HWtrG4Z0PQMrYoJX+W4Do1c23zed9sGdKgYm5oG/n/Oy+CM3Vn+RyFtNgrQ/3dLLFTVutdJq13U4VBpOECCXaJIkddbXiVdMrXpDNdlWAi7cqGP+hOa
+X-Gm-Message-State: AOJu0Yw3KN6Mfu4MoudfyyuwGvBehzKZRKQTB4AUcWrA9Iy6WdKz/+Qt
+	IMwChRG6YpjXBccDakt3TFgUsp9pD7jPCOeeTRY0lF5WWKcu6I6ODb4fBg==
+X-Google-Smtp-Source: AGHT+IE2jJfxNHfndA4jVkwzr8ji42GiKL6ddO3EGnD7yTDIo+519kYcIXxcxarQcigruI8iFaWKVg==
+X-Received: by 2002:a2e:b711:0:b0:2ea:c00e:2a93 with SMTP id 38308e7fff4ca-2eadce715b2mr2147021fa.40.1717694462861;
+        Thu, 06 Jun 2024 10:21:02 -0700 (PDT)
+Received: from alsp.netis.cc ([2a02:2168:8a08:3100:4883:2cdd:2b2a:fbd5])
+        by smtp.googlemail.com with ESMTPSA id 38308e7fff4ca-2ead41b078asm2613361fa.74.2024.06.06.10.21.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 10:21:02 -0700 (PDT)
+From: Alexander Sapozhnikov <alsp705@gmail.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>
+Cc: Alexandr Sapozhnikov <alsp705@gmail.com>,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] crypto: algif_aead: After having been compared to a NULL value at algif_aead.c:191, pointer 'tsgl_src' is passed as 2nd parameter in call to function 'crypto_aead_copy_sgl' at algif_aead.c:244, where it is dereferenced at algif_aead.c:85.
+Date: Thu,  6 Jun 2024 20:20:23 +0300
+Message-Id: <20240606172023.23-1-alsp705@gmail.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="ukbfkqhfo7stgfft"
-Content-Disposition: inline
-In-Reply-To: <b3b7fe51-ce9e-1dc4-27ee-e380c242d446@ti.com>
+Content-Transfer-Encoding: 8bit
 
+From: Alexandr Sapozhnikov <alsp705@gmail.com>
 
---ukbfkqhfo7stgfft
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-On Wed, May 29, 2024 at 08:16:46PM GMT, Devarsh Thakkar wrote:
-> Hi Javier, Maxime, Daniel,
->=20
-> Sorry for the delay. Please find response inline.
->=20
-> On 16/05/24 18:21, Daniel Vetter wrote:
-> > On Wed, May 15, 2024 at 04:45:09PM +0200, Javier Martinez Canillas wrot=
-e:
-> >> Devarsh Thakkar <devarsht@ti.com> writes:
->=20
-> [..]
->=20
-> >>
-> >> If I understand you correctly, for now the only real use case is when =
-the
-> >> the RTOS owns / manages the complete display pipeline and Linux can on=
-ly
-> >> own video planes.
-> >>
->=20
-> Not exactly, What I mean is that this is the default configuration/exampl=
-e we
-> intend to provide to customer as an out-of-box demo . But flexibility is
-> provided to customer to modify the display sharing configuration per their
-> use-case, for e.g at RTOS side in place of device-tree, we have a sysconf=
-ig
-> menu [1] using which they can select the desired configuration, furthermo=
-re
-> they can go ahead and edit the code too, so Linux driver is expected to be
-> flexible to support different configurations as supported by the HW.
+Signed-off-by: Alexandr Sapozhnikov <alsp705@gmail.com>
+---
+ crypto/algif_aead.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Everything you stated above can be achieved with the solutions we've
-been suggesting too.
+diff --git a/crypto/algif_aead.c b/crypto/algif_aead.c
+index 42493b4..f757907 100644
+--- a/crypto/algif_aead.c
++++ b/crypto/algif_aead.c
+@@ -191,7 +191,7 @@ static int _aead_recvmsg(struct socket *sock, struct msghdr *msg,
+ 		if (tsgl_src)
+ 			break;
+ 	}
+-	if (processed && !tsgl_src) {
++	if (processed || !tsgl_src) {
+ 		err = -EFAULT;
+ 		goto free;
+ 	}
+-- 
+2.5.3
 
-> I have a limited view of all possible use-cases which customer may try out
-> with different configurations
-
-I think that's a problem in itself. In order to properly reflect and
-discuss a solution, we first need to have a problem. "Flexible
-solutions" in practice never really work because you always end up not
-flexible enough and still have to rework the whole thing. Except it's
-now harder to do since you created something complicated first.
-
-> few examples are shared below part from the one discussed earlier :
->=20
-> [Examples]:
-> 1) Customer is running Linux as main OS but using RTOS to control some
-> external peripherals like temperature sensor, motion sensor e.t.c. In that
-> case if they want to display the sensor data too on the same monitor, then
-> they can use the configuration where RTOS use single plane and Linux as t=
-he
-> DSS master.
-
-How would that work in real-world? If Linux is in charge of the display,
-it can shut down the output whenever it wants too, including shutting
-down the clocks or power domains, which then would probably make the
-firmware crash?
-
-A much more robust solution here would be to have either the firmware in
-charge of the display and delegate a few planes, or provide some way for
-Linux to access those sensors while being fully in charge of the
-display.
-
-> 2) Another configuration could be where RTOS want to control one full
-> end-to-end pipeline going to one connector and Linux want to control full
-> end-to-end pipeline going to another connector, that can be supported too
-> using this scheme (as shared in this series).
-
-That one is easy: you make the firmware adjust the DT when it boots
-Linux and thus restrict the part of the display controller it can use.
-
-It's mostly a DT binding issue.
-
-> 3) Also I think, this device-tree based scheme could be leveraged in
-> virtualization too with static partitioning based scheme using Xen for e.=
-g. we
-> split the DSS resources between host (DOM0) and the guest (DOMU).
-
-I'm not sure you can leverage virtio at the firmware level, but
-otherwise, it's pretty much what we've been suggesting the whole time:
-make a generic interface between the firmware and Linux, and then write
-a KMS driver for that interface.
-
-Then the firmware can delegate planes to Linux, just like the hypervisor
-would to a guest VM.
-
-> >> The opposite is supported by the DSS hardware (thanks to its feature t=
-hat
-> >> allows partitioning the register space and having multiple per-host IR=
-Qs)=20
-> >> but it's not a real use case yet. The reason why this case is added to=
- the
-> >> DT binding is as you said for flexiblity and make the design future-pr=
-oof.
->
-> Not really, as explained above we are documenting all possible configurat=
-ions
-> which hardware supports as supported in software in the SDK and that's wh=
-at we
-> are aiming for upstream too.
-
-Generally speaking, not all hardware configurations make sense to run
-with in Linux, and there's tons of drivers were we support only a
-limited set of capabilities precisely because some simply don't work
-well with Linux. I'm glad you're (and your organization) is that
-committed to Linux, but I don't think having that as an absolute goal is
-reasonable.
-
-Let's work on usecases, and make the most of it instead. In your
-examples, 2 and 3 make total sense to be supported in Linux. I'm not
-sure 1) does.
-
-> [..]>>>> I'm probably missing something then here, but if the Linux side =
-of
-> >>>> things is expected to keep the current configuration and keep it act=
-ive
-> >>>> for it to work, what use-case would it be useful for?
-> >>>>
-> >>>
-> >>> It's just one of the partitioning possibilities that I mentioned here=
-, that
-> >>> Linux is in control of DSS as a whole and the user want the other hos=
-t (be it
-> >>> RTOS or any other core) to control a single plane. For e.g it could b=
-e Linux
-> >>> (with GPU rendering) displaying the graphics and RTOS overlaying a re=
-al time
-> >>> clock or any other signs which need to be displayed in real-time.
-> >>> But more than the use-case this is inspired by the fact that we want =
-to be
-> >>> flexible and support in the linux driver whatever partitioning scheme
-> >>> possibilities are there which are supported in hardware and we let us=
-er decide
-> >>> on the partitioning scheme.
-> >>>
-> >>
-> >> A possible use case here could be if Linux is safer than the other host
-> >> owning a single plane, right? Then in that case the RTOS could fail but
-> >> the display pipeline won't be teared down.
-> >>
-> >> That is, if your safety tell-tales would be driven by Linux and having
-> >> other OS dislay the GPU-rendered QT based application on another plane.
-> >>
-> >> But as said, for now that's a theorethical use case since the one you
-> >> mentioned is the opposite.
-> >>
-> >> [....]
-> >>
->=20
-> Yes that could be a possible use-case too, we want to provide customer
-> the flexibility in their app design to select different configuration,
-> as we say all these configurations as supported in the driver.
->=20
-> [..]
-> >>>>> If there is a more complex use-case which requires dynamic
-> >>>>> assignment/arbitration of resources then I agree those require some=
- sort of
-> >>>>> IPC scheme but this is not what we target with these series. This s=
-eries is
-> >>>>> simply to support static partitioning feature (separate register sp=
-ace,
-> >>>>> separate irq, firewalling support etc) of TI DSS hardware across th=
-e multiple
-> >>>>> hosts and there are use-cases too for which this scheme suffices.
-> >>>>
-> >>>> I think you're right and we have a misunderstanding. My initial
-> >>>> assumption was that it was to prevent the Linux side of sides from
-> >>>> screwing up the output if it was to crash.
-> >>>>
-> >>>> But it looks like it's not the main point of this series, so could y=
-ou
-> >>>> share some use-cases you're trying to address?
-> >>>>
-> >>>
-> >>> The end use-case we have demonstrated right now with this series is a
-> >>> proof-of-concept display cluster use-case where RTOS boots early on M=
-CU core
-> >>> (launched at bootloader stage) and initializes the display (using the=
- global
-> >>> common0 register space and irq) and starts displaying safety tell-tal=
-es on one
-> >>> plane, and once Linux boots up on application processor,
-> >>> Linux (using common1 register space and irq) controls the other plane=
- with GPU
-> >>> rendering using a QT based application. And yes, we also support the =
-scenario
-> >>> where Linux crashes but RTOS being the DSS master and in control of D=
-SS power,
-> >>> clock domain and global register space is not impacted by the crash.
-> >>
-> >> You mention 2 scenarios but are actually the same? Or did I misunderst=
-and?
-> >>
->=20
-> I have explained the other examples (where Linux is the master) above wit=
-h tag
-> [Examples].
->=20
-> >> In both cases the RTOS own the display pipeline and Linux can just dis=
-play
-> >> using a single plane.
-> >>
-> >> That's why I think that agree with Maxime, that a fwkms could be a sim=
-pler
-> >> solution to your use case instead of adding all this complexity to the=
- DSS
-> >> driver. Yes, I understand the HW supports all this flexibility but the=
-re's
-> >> no real use case yet (you mentioned that don't even have firmware for =
-this
-> >> single plane owned by the RTOS in the R5F case).
-> >>
->=20
-> I analyzed the fwkms driver [2] from the RPi repo (as seems like it is not
-> upstream), here the firmware is the entity owning the display register sp=
-ace
-> completely and the fwkms driver simply acts as a translating layer which
-> translates the incoming DRM/KMS ioctls into IPC messages (having unique
-> message tags) sent over mailbox which the firmware receives and programs
-> corresponding registers accordingly, so there is no display sharing achie=
-ved
-> here as there is only single display context as coming from Linux and no
-> separate display context running at firmware side.
-
-That's somewhat correct, but also a simplification: while the driver and
-firmware indeed never do any kind of segmentation (iirc), the protocol
-between the firmware and the kernel leaves that door opened so you could
-very well do that with some work on the firmware.
-
-And now that I think about it, I think the RPi firmware can in some
-situations (like overheating) add an overlay on top of the current
-output.
-
-Also, we're not advocating for you to use the RPi driver as is: we
-suggested to use a similar solution, but we can totally use a different
-transport mechanism or protocol (and we probably should if we want to
-make it somewhat generic).
-
-> But yes, in general for simple display controllers having single register
-> space and single IRQ, I think that a standard IPC based scheme would be
-> required for sharing the display between Linux and RTOS where for e.g. RT=
-OS
-> would be in full control of display register space and the interrupt line.
-> Linux would send messages to RTOS via IPC scheme (similar to RPi fwkms) to
-> commit the framebuffer and RTOS would send a frame done message to LInux =
-on
-> receiving vblank irq which would eventually call drm_crtc_handle_vblank.
-> Although the IPC layer would need to be standardized (virtio_kms?)
-
-rpmsg is another candidate, but yeah, that's what in mind too (I think?).
-
-> >> The DT binding for a fwkms driver would be trivial, in fact maybe we m=
-ight
-> >> even leverage simpledrm for this case and not require a new driver at =
-all.
-> >=20
-> > I guess you can still do things like pageflipping and maybe use some of
-> > the color/blending hardware? Maybe even have more than one plane
-> > available? fwkms/simpledrm conceptually cannot really support pageflipp=
-ing
-> > even, so that's a much, much reduced feature set.
-> >
->=20
-> Yes exactly, fwkms, simpledrm are not related to display sharing.
->=20
-> > That all aside I do think we should limit the support to just the first
-> > case, where linux gets a few pieces assigned to it and is not the DSS
-> > master. From what I'm understanding you could assign entire crtc with
-> > planes and everything to linux, so this shouldn't really constraint
-> > real-world usage?
-> >=20
-> > At least until there's support in firmware for this it's all way too
-> > theoretical, and I agree with Maxime and Javier that there's some serio=
-us
-> > design questions about how this kind of static leasing should work with
-> > drm sitting on top.
->=20
-> To summarize, as per my understanding there are two schemes for display
-> sharing possible
->=20
-> 1) IPC based scheme  -> This would be useful for simple display controlle=
-rs
-> having single register space and single irq line to one host)
-> 2) Static partitioning scheme -> This would require some support in displ=
-ay
-> controller (per host irq e.t.c) as explained below :
->=20
-> And I think each one has it's own uniqueness and holds on it's own and bo=
-th
-> solutions can be pursued independently and development for one scheme sho=
-uld
-> not block development for another.
-
-Agreed.
-
-> As TI display controller supports robust partitioning of DSS processing b=
-locks
-> (Pipelines, overlays, interrupts etc) among multiple processors allowing
-> parallel and independent control of the DSS resources in an interference =
-free
-> environment, the static partitioning scheme was possible to implement and=
- it
-> sufficed the requirements of display sharing use-case without incurring a=
-ny
-> extra overhead and complexity of IPC.
->=20
-> And If there is another display controller having similar feature-set as =
-above
-> then the bindings for the static partitioning scheme (or at-least some of
-> them) could be generalized.
->=20
-> 	drm,shared-mode;
-> 	drm,shared-mode-crtc =3D "..";
-> 	drm,shared-mode-crtc-owned =3D "..";
-> 	drm,shared-mode-planes =3D "..";
->=20
-> But I could not find any other display controller support above static
-> partitioning feature and hence I put the bindings as specific to TI.
-
-I think the binding would make more sense to me using child nodes to
-describe the available planes, CRTCs, etc.
-
-But that's something to discuss with the DT maintainers.
-
-Maxime
-
---ukbfkqhfo7stgfft
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZmHvxwAKCRAnX84Zoj2+
-dkQvAX4u2DBBUnbt8iCa9UyqmKVMSEE04hUCcRZ8uCUti9c6zW+8cWz6Yf1hiqdS
-E+MIpAkBf1GnvxZ1c5HlrcKyT5mcaloNsYDAEtUEnby2UJeCLEEOSAMM5hy0yhMN
-ccGS2fAAtg==
-=WAIs
------END PGP SIGNATURE-----
-
---ukbfkqhfo7stgfft--
 
