@@ -1,193 +1,167 @@
-Return-Path: <linux-kernel+bounces-203608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43E268FDDD4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:45:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE34C8FDDDE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABB121F254DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 04:45:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D181F25502
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 04:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608181BDEF;
-	Thu,  6 Jun 2024 04:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33745241E7;
+	Thu,  6 Jun 2024 04:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RxnzQd8Q"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2072.outbound.protection.outlook.com [40.107.100.72])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="extDQOVZ"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3001EEF7;
-	Thu,  6 Jun 2024 04:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717649119; cv=fail; b=NUy64GVR96paoO9ZTAHbsL7bAh4O0v6n5H1T1RHx4jB5Df/ONB2KdaUFhO4j65yxonByPhJRNhQcCv+PI+Et016gf+9Myiyxq4RI/G6U5EQ2yLx0DCWgyjsDu873gqKrQhOjHrhCtPKrt6l0mlbI1mZn11rDUzoobnXG2JvcY4Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717649119; c=relaxed/simple;
-	bh=+FHjpg1ZgGsVhmOuLJqkgFi0TO3KuOoAfPsHVuMjnXU=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=WUncUeeDGrbYjMy74Kl/HTznkJ1chiTOgamQxOgdYbfXdXs8lTQDvbRVzL17sUBqHeyDV0tqEsyrhA1oAS5RdFcck/KTRW2TjLZ1cOuYillUGf+AWHr9PdFdq8fFhu5RYdc+k9HopdqjLtccCakO0TUA5X5MmBpcRdTgVzmqHtw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RxnzQd8Q; arc=fail smtp.client-ip=40.107.100.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HH1LtYimrRVWWT/wdwpeCNNp8dbKpUu4z5xMbIGTw46YznSPP9Ne6guTHuEQThe42sswRIhR5af1qinfueiMWW9A7+/yLqNKXYeqE685IXacN8xEEmKwzrOLq/nrsFU2Q/q35/OMslCs52xG0mLs5aZLPgUhhi9+rKyRpfk6Nkxij9XfQg19v9xrbLb6rjf3WO/rz5xacE+dOG9r1toXi6gmgCR3OPvbOXx7/WmJXxbuyyxUZqjchA1D96uYGqEL6tfSCS9XFNAQZnBXgK0pQBzdi7m1UuObRxnDROg6VnlFIJ5Cmxta0QN+e9lX2zOepy+7kt+aXIY6cakgJMrvwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+FHjpg1ZgGsVhmOuLJqkgFi0TO3KuOoAfPsHVuMjnXU=;
- b=arvOZQV4zuOampgpm2QuucPbkXLW+CUWB9GdBU8TP9I7QbpXj0HY3SK8EAuvXOZwv8qr4EDxUxRW/rLAvXVgiVvEHOGCA0w/xhIrIp6JLc9PVbu50hpy4KYeIQzp0KsR4BUcB/zTOHaIinXjAzJDbwPd7xi8MkkkjMoPWzxl3Np8p/JQ0DdcrsTSPQP5Pv+IEkeEhK1ofi6ScmYOIgf0CfwGMrZYgFHJsUJEfII5v6dqtfR1xxoWZfxMjz42iEbcnur+oLvrkkvDg8cWcvU4sWT6x9kSLgn1RbZuw5/oRCR1sI1MACPxPzDMXqV5uaXgAu8Bi1lYARKh3oG+Fk5rjA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+FHjpg1ZgGsVhmOuLJqkgFi0TO3KuOoAfPsHVuMjnXU=;
- b=RxnzQd8Q3+Ec9rgd2Jc6jTAf840SgoibZLoR5TYPONVmKkrZLWQvTGpAmZRaElE9icWDovaDO+oSiJXNFDD9yOzQ8E/808ZXrqneJRYG6wGpgwYH9iLafz7P8HGyFcNUGTkpw/DMbe7d3mIMl7iN58Rk8TORYj29EDF7nVrEPI0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB6588.namprd12.prod.outlook.com (2603:10b6:510:210::10)
- by DM4PR12MB8475.namprd12.prod.outlook.com (2603:10b6:8:190::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.31; Thu, 6 Jun
- 2024 04:45:12 +0000
-Received: from PH7PR12MB6588.namprd12.prod.outlook.com
- ([fe80::5e9c:4117:b5e0:cf39]) by PH7PR12MB6588.namprd12.prod.outlook.com
- ([fe80::5e9c:4117:b5e0:cf39%6]) with mapi id 15.20.7633.018; Thu, 6 Jun 2024
- 04:45:12 +0000
-Message-ID: <86136e0d-45e9-4bf4-826b-359e4993488f@amd.com>
-Date: Thu, 6 Jun 2024 10:15:00 +0530
-User-Agent: Mozilla Thunderbird
-From: Ravi Bangoria <ravi.bangoria@amd.com>
-Subject: Re: [PATCH v1] perf top: Make zeroing histogram on refresh the
- default
-To: Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Mark Rutland
- <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Changbin Du <changbin.du@huawei.com>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Stephane Eranian <eranian@google.com>,
- ravi.bangoria@amd.com
-References: <20240516222159.3710131-1-irogers@google.com>
-Content-Language: en-US
-In-Reply-To: <20240516222159.3710131-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0029.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:25::34) To PH7PR12MB6588.namprd12.prod.outlook.com
- (2603:10b6:510:210::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA8C17579
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 04:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717649230; cv=none; b=gFrgLemfWnJwaLuayFkK6fSFh/yQBAi0yF7q4AXNBC8VtJIMHcADYKGQNxxfZ0hSsISp7oVEkyEFtMx+2T61UJ9QkSq8O47QZ/IMCFavsICGSPABtmdgOOWG4FFzlbNM6K9zXonqJnSlfhEntYdP0W3j/xCUotsw/RqiLRHy7N8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717649230; c=relaxed/simple;
+	bh=nW0O3F7QzckCStslnCVqG21lZcJ5C46Mg9S7qdrjcjs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hz7hRRVwMbpmJkeX5UEocy3i+fZBG2H9omY7zTOKScUubqyTS3yfUUcJElm0rB3xOZIcHHiQEB7uWovIt2EnAVG4+pOPeJPr2pvUoEdbo0OVVmKiYDXQqaD1tyyNRNToaEq498JLjbCxZ9YkkGni9Hlz8dlLH5M+tYCi84wuMzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=extDQOVZ; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: senozhatsky@chromium.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1717649225;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4nLB6EbYrbegnA9wITWnbt4aOb9qcGFKJTII1fSGomQ=;
+	b=extDQOVZpl/9ARNAyQKxODmd+M/hxCklhwtcl03lSAtLo3ObGUxnuJu4xHv3SSORnPVTuR
+	D1J+k3cp5F5p3tT/nL1cT4al7bC5E174jbetvR3Qxjs72hGS1q983xDoLCI2v9A1yzKoG2
+	H0Fq2bYQG0OTrdJUvHrcs6TbdEoBw8A=
+X-Envelope-To: yosryahmed@google.com
+X-Envelope-To: erhard_f@mailbox.org
+X-Envelope-To: yuzhao@google.com
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linuxppc-dev@lists.ozlabs.org
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: nphamcs@gmail.com
+X-Envelope-To: minchan@kernel.org
+X-Envelope-To: vbabka@kernel.org
+Message-ID: <6335c05d-9493-4b03-85a7-f2dd91db9451@linux.dev>
+Date: Thu, 6 Jun 2024 12:46:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB6588:EE_|DM4PR12MB8475:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7791368f-0add-434e-eb4f-08dc85e37386
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|7416005|1800799015|366007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VXJHWWEyU1hnTEw3a2VYdmswam5NNFF3bjR0Y2c5STV2VUcyV0xDQU41cWFG?=
- =?utf-8?B?bVphcmxlbmUxMEM0aUhZZ1lOVEdTbzFka3U4NFRURjFYcm5tYkwrV0RxUzR6?=
- =?utf-8?B?M3d4YVEvZW95R1VDVkpBNTJ2UnFLSlZ1d1g4QjZ5N3l4bk0vM01mclJ0Y3lp?=
- =?utf-8?B?VDhVVEQveU9nK0JlVUFpbjZCS1l3cUtMcUdGaHZhSS9IR0RtQjVaV3pnYk95?=
- =?utf-8?B?T1VIOGxDYUdHWmhydVpCVnA3RVQwWGpuK0NsTmZxSHZ0bGNqNE42Ri9zWDRo?=
- =?utf-8?B?cG12UklSMExuRitEdFd1dDduM3I1ZlFXelltK1VpS0I4YmJiUCtzUFduR3ZL?=
- =?utf-8?B?RFVpajdPZitmT2dwemR1ejhkdUp5eWNTMWVNM0diSjBhcEZaYXdSS3Rabkt6?=
- =?utf-8?B?NXNWK29PUnpWRmtXeEMxZ2xHa3JjRG5KK3NCQ1FTK2F2aGpYT2xma1NTZWRz?=
- =?utf-8?B?eERzLzJGL0JHUHhmM005SjJ1Y0FFNlI2MVo2Q21SQTVDV2t2aWJ3T0hKRmd0?=
- =?utf-8?B?Nk5Wa3JzREZrdVkxZ05KSDhJbFl2Und2VGQyajZQZSt0bCsvazJneW5XMEVF?=
- =?utf-8?B?aVJmUEc1SmxKV1YrRXk4TzNGcWowRnl4YkNHSVp4c3ZpQmtHajdoQlJ5Ymg5?=
- =?utf-8?B?TEFhZFF5UTVtUGoveU9XV2NIbDhiWXZYT1NjL3dxOU9FUzU4UHorN2ZRQ1pj?=
- =?utf-8?B?S0lJc09hWkEwU0Vmb0J4b0lvNjNqOSswWnh0bjFjeEZwSTI1K0dncldpaU5P?=
- =?utf-8?B?b3p3VW82MDB6bE1GcENHRU0xbG4wYkZCdThnckJoM3pQZmpsVjIyZFF1ZWRa?=
- =?utf-8?B?QmZkMzBuOUJCQytUakRPWHhaTDR2S0t2WGFvbExpZ2crQWZpVnQvTjhYTGp5?=
- =?utf-8?B?YUZ4WjkvTUs1Y1dPaEYyZ3lyQWV2QitjMUQyWkdvTWR2YXdoQm1kVGhtN2xU?=
- =?utf-8?B?QnJCaDdSSWY1TXFkdHVLZDZoSWlKcU9lc3FwLy8zU0VMdGs4bDl4KzB4UUEr?=
- =?utf-8?B?MnB6aDZhQVZYaE9XU1I3dUxlR0Z6YTVpMFFnNEhtdUVENGhWUTZHVWVCRkpp?=
- =?utf-8?B?dHhGZThhcm5IVTBwR01xMDk5ZzdDVHJRYXR4SXV0aCt4NTliSmRPd3VGekV3?=
- =?utf-8?B?cGl6d2ZnMTBjVy9rSW1mRnpvdk1abStha2ttblZTQ3djNnRTZzVycGpqYmhV?=
- =?utf-8?B?a0tRV2M0RXRCU25HWWdKSmJUaEQwcU1tVE5ZMFZoTVIxQktyUnVFMTFndlB4?=
- =?utf-8?B?Snk5ODJoaGptcEpUZ3ZwWnFpTDk2YTdtdHRCMjl2QUtOYjBSZ1BPVGx6OFZT?=
- =?utf-8?B?cEl1L0FFeVV4S3NOaW5yZ2haQ0ZTbG80ejlyNFZCbmxjWEVpb3JsbEVFVHBX?=
- =?utf-8?B?OTA0b1R2eVVaNGk4ZEVaV0lVQTRwcG1BTGp4K1hEdjNoVWpNN0ZKSFB3Znha?=
- =?utf-8?B?S1NtZUxGU2ZySXdxSy9aS1R4cnJhL0JlZ05raHpBcW1qY0lob0F1QkdibUhV?=
- =?utf-8?B?MmhYaTdWbHBSa3o1TE0xaDIzOEl6UWE2M2NTU1VEV05UNjZQaWk2OHhoRUwz?=
- =?utf-8?B?SjF1bEs0OTNmeGE3V2o3VG5Ub3cwOTA3QmVLQ29XVG40bWUrSFRnSUJKS0N4?=
- =?utf-8?B?K0crWUVhbXR2SHVPZHlkME1lZmhKaEJWRkRSVWNxZklzb2JGVU93OCsyVE9K?=
- =?utf-8?B?NGxTektzUTN2Y0RHWEFuMVlKTWhpN3JwSndRaCszVTQ4b2ZhbUxuMDZqVnV3?=
- =?utf-8?Q?H938QVAhw2kpNZYUXIP9ePBxqGeepOZfiy+m1Zn?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6588.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?V3hKWVRWdTRjUlZucjFqS0Y5TVNLNTlXbDZxVGRCNkNPOTVrMU44QmJHS2JQ?=
- =?utf-8?B?eGxkQk0zVktscXRjYjR2ZCtpQzcxZGFGTUpNRFl4Q3g2Vm8vb1ZGeFNra2FU?=
- =?utf-8?B?Tno5NjZLb00raDJxZS9xbDJuckZJR0NzS0lzNnRVa1QrKzA2WEFhT284WTBn?=
- =?utf-8?B?OXE0SFErLzZtdDlYN1FOQ2lEbW1BZFl3WmQrLzhYYldVZk5WeHRjTGE5L21C?=
- =?utf-8?B?L3lIVDF0UUFGSFFhK0NaanJ2clVTajRrY3RHZVZURElqMU5VdmN0bzkzL1lB?=
- =?utf-8?B?bXVtUHBJTmhVdFlIVWJyTlpMVmZQM0QzZmVUTTRsWE1tT1JETFYvZm96RmpP?=
- =?utf-8?B?U24rcXFROW1lYUFaODVXTk9JNVJDaCtvaFNMYk1CSXpSNUFENmdtVFVqUU0z?=
- =?utf-8?B?bVJOUHZTb1NlRlhYTFFJME9VcE5ENVBQYisyVDBUVmIrdGI4UzB4a3ZUYndh?=
- =?utf-8?B?SGEyZGZsWnhNRjlzRHJYNmRrMExUVFNsNDNlbllvRmpuNkZLK1ZteE1yTmky?=
- =?utf-8?B?TnFrUDVqYXowN1VvVWdIL0ZRS2x6MDM4ejV2dUdwdmNqVHM5N2NGeUFUTGlx?=
- =?utf-8?B?Z0c3NkFlUERzTHMwbHAyTjVvVHdnZTlxZUsvMWc1Z1NDZThGOGEwUHpNNDY1?=
- =?utf-8?B?QjQ2dHA3cXhqODV4d3ZXUnhic0VubFJscU1HOFlQWU9RWmZMWU83WjcwWkVK?=
- =?utf-8?B?U1kvUHVWMloyeFg2ME92WHJZODVZYmFKK2lYd2NXTkMybWgxNHpLZXBzMG1M?=
- =?utf-8?B?LzBDUi9YTG54NnFFSzBKN1VKVEJXUmFKTWxyVmlTcmlyZkxFMm9NNktEcU9l?=
- =?utf-8?B?OGNQRFpCR1hlSFp1ZE9wZHp3NjJQNkNCdHBEZGJRUWcwYUNvSmVlNy9kZTVR?=
- =?utf-8?B?eURyUU9iSGNBSnVveGJkZ0dweXdMREJwVHVIczRZeW4wVEFvMTVLb0ZUaEVF?=
- =?utf-8?B?TFBtMzdia1o4M0YxdUw0eS9xamJuTVBqbU5YUU4wTHhqaVBKQ1h1bUpOYVBt?=
- =?utf-8?B?QjhuT3pYS01mREJtVkc1dmZqZW54L0tYRk5HMTNoM1JYK1AxTEVkN1Fadnp2?=
- =?utf-8?B?TDNHeGMvQUZJT2NQTnJnYUV1bXVxVnQrTWgyRXgvVkQyd1NMMWxDQ1duZHo1?=
- =?utf-8?B?RzlyeGN2RlVyMXBEM3JhcE1zc1hBOUdJVjZ3VytkWmFhWnlROXlmUklFNElh?=
- =?utf-8?B?dm1HSis5Qnd5R2VKdWF1UU9IcDN1K0lhT003U1NYTGNPQUEzbGltR1lNT0tq?=
- =?utf-8?B?NE9GZVMrcEVGMzU3ZlFhMEJMdGh0QTJrUnh4eHIvYUw3SjlNTmZud1JDajlh?=
- =?utf-8?B?L3Foa2t1eHkxcDdhU0g3a3YwYTdXWjAyWk5iZW1maWNBQUxMdkZKdEUzVFdt?=
- =?utf-8?B?Q2pVRGNLSEZnMWs4VEdkWHUrVGhqWFZGL250TUs0M1FHdzNOS0FyTjVRaXUy?=
- =?utf-8?B?YStEdWRRdGsraExaVnRucEt6VkNjMzdWcWV3T29rbzFXcTZ2YnNDMVU0S0tw?=
- =?utf-8?B?ZXQ4QUNCQ2thcWtDWFhMbUcwOFl4aHNVTHRMTEdiaVNlYjhBNVR6TnBoK3lo?=
- =?utf-8?B?L1BLS1B0WUx3dmw4NGI4Y2JtWGFXZmZRVEhpeWZDMHBLV2RObkhZMklqUVlS?=
- =?utf-8?B?OW82MWFlNWphQTR2cVNPQTBsZHhWOVY5TkdvRU1HMkVXK1ltT2ZNM3Y0Vjlw?=
- =?utf-8?B?OE0vNEVxNngvczVoZTRXdmVwdWxvU2tsVmE2RDlrK1FHbGxIbmg0VzZ1ZHhj?=
- =?utf-8?B?QW5oK1dseVRZTjFoclpEUUdZRmhXMFVCOVZVK0txdTNXYXVIUDlDam9LUk5E?=
- =?utf-8?B?M0l5ckd1YkNNdHFRSStJbE9pWldIMjN1dXVFYjJRdk12Q2JmWDA4SXM4UXF6?=
- =?utf-8?B?UWx4S2JKMEZtQm5zRVoyUjliRmtLcU53M2xKVFJha0IvYmNudUxvbVp2NUd5?=
- =?utf-8?B?cVJ3Ym9nbGJsb3NhRktPVUNGSkw4aHN6b1BIa2lkZFVYVWJzazlzbVZTSlg4?=
- =?utf-8?B?THJ2NjJ6SEhwcWtIODlpQ2F3bHBWcGUzUC9ZT3gwVWZCeHB1Nk1qRHNPa2Vz?=
- =?utf-8?B?N0ZGd1pQL2ZEeFhSQXNLNG5tWHoxVG16UFo3aml6cmp5c2IvVER1emNUVVkr?=
- =?utf-8?Q?zLVNd11SRF66WtdIysPRCc0PN?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7791368f-0add-434e-eb4f-08dc85e37386
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6588.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 04:45:12.5217
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: etYKol6WGFC6e0cAV+gCk9WT8OaanL/Z4xIQZeUr4rd+xH/f8Cvi4XOn8cpCbITUZYEwAo9axYKfQUCjgbOCug==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8475
+Subject: Re: kswapd0: page allocation failure: order:0,
+ mode:0x820(GFP_ATOMIC), nodemask=(null),cpuset=/,mems_allowed=0 (Kernel
+ v6.5.9, 32bit ppc)
+Content-Language: en-US
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Yosry Ahmed <yosryahmed@google.com>, Erhard Furtner
+ <erhard_f@mailbox.org>, Yu Zhao <yuzhao@google.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
+ Minchan Kim <minchan@kernel.org>, "Vlastimil Babka (SUSE)"
+ <vbabka@kernel.org>
+References: <CAJD7tkYjJJGthQ_8NukGw6Q9EYbLA=8sAH_7=B90KXEL6HWdSw@mail.gmail.com>
+ <CAOUHufa0Fpj6SjNgB-z0n5Jg63q1ewkbOAU65forpDwQVs45qg@mail.gmail.com>
+ <CAJD7tkb=5GJ9SNUwDsu1Zy3Tus4rjsNo60Hg9N7=gGth409Diw@mail.gmail.com>
+ <CAOUHufb6zXr14Wm3T-4-OJh7iAq+vzDKwVYfHLhMMt96SpiZXg@mail.gmail.com>
+ <CAJD7tkZ+QY55GTzW9A7ZCm=rxAEfrW76cWXf8o5nwiKSXp8z=w@mail.gmail.com>
+ <20240604231019.18e2f373@yea>
+ <CAJD7tkYq5u7B+0UH2XKpeWJnUxoO2kJ1_XZ2JOgYpyNEVR7u0g@mail.gmail.com>
+ <20240606010431.2b33318c@yea>
+ <CAJD7tkbhWYzx=6YmzAh0F+cK-_Bn8mPOH7gMbQS7YVXmaFSgFg@mail.gmail.com>
+ <e68bcc6a-25b1-42aa-83b3-5d457b254cbe@linux.dev>
+ <20240606043156.GC11718@google.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <20240606043156.GC11718@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 5/17/2024 3:51 AM, Ian Rogers wrote:
-> Instead of decaying histograms over time change it so that they are
-> zero-ed on each perf top refresh. Previously the option '-z', or
-> pressing 'z' in tui mode, would enable this behavior. Decaying samples
-> is non-intuitive as it isn't how "top" works. Make zeroing on refresh
-> the default and rename the command line options from 'z' to 'Z' and
-> 'zero' to 'decay'.
-I've also felt `perf top` decay as non-intuitive. Esp. when system becomes
-idle after some heavy workload, even decayed samples are far more compared
-to samples from currently running processes and thus `perf top` keeps
-showing already finished processes at the top, which is kind of confusing.
-fwiw:
+On 2024/6/6 12:31, Sergey Senozhatsky wrote:
+> On (24/06/06 10:49), Chengming Zhou wrote:
+>>> Thanks for trying this out. This is interesting, so even two zpools is
+>>> too much fragmentation for your use case.
+>>>
+>>> I think there are multiple ways to go forward here:
+>>> (a) Make the number of zpools a config option, leave the default as
+>>> 32, but allow special use cases to set it to 1 or similar. This is
+>>> probably not preferable because it is not clear to users how to set
+>>> it, but the idea is that no one will have to set it except special use
+>>> cases such as Erhard's (who will want to set it to 1 in this case).
+>>>
+>>> (b) Make the number of zpools scale linearly with the number of CPUs.
+>>> Maybe something like nr_cpus/4 or nr_cpus/8. The problem with this
+>>> approach is that with a large number of CPUs, too many zpools will
+>>> start having diminishing returns. Fragmentation will keep increasing,
+>>> while the scalability/concurrency gains will diminish.
+>>>
+>>> (c) Make the number of zpools scale logarithmically with the number of
+>>> CPUs. Maybe something like 4log2(nr_cpus). This will keep the number
+>>> of zpools from increasing too much and close to the status quo. The
+>>> problem is that at a small number of CPUs (e.g. 2), 4log2(nr_cpus)
+>>> will actually give a nr_zpools > nr_cpus. So we will need to come up
+>>> with a more fancy magic equation (e.g. 4log2(nr_cpus/4)).
+>>>
+>>> (d) Make the number of zpools scale linearly with memory. This makes
+>>> more sense than scaling with CPUs because increasing the number of
+>>> zpools increases fragmentation, so it makes sense to limit it by the
+>>> available memory. This is also more consistent with other magic
+>>> numbers we have (e.g. SWAP_ADDRESS_SPACE_SHIFT).
+>>>
+>>> The problem is that unlike zswap trees, the zswap pool is not
+>>> connected to the swapfile size, so we don't have an indication for how
+>>> much memory will be in the zswap pool. We can scale the number of
+>>> zpools with the entire memory on the machine during boot, but this
+>>> seems like it would be difficult to figure out, and will not take into
+>>> consideration memory hotplugging and the zswap global limit changing.
+>>>
+>>> (e) A creative mix of the above.
+>>>
+>>> (f) Something else (probably simpler).
+>>>
+>>> I am personally leaning toward (c), but I want to hear the opinions of
+>>> other people here. Yu, Vlastimil, Johannes, Nhat? Anyone else?
+>>>
+>>> In the long-term, I think we may want to address the lock contention
+>>> in zsmalloc itself instead of zswap spawning multiple zpools.
+> 
+> Sorry, I'm sure I'm not following this discussion closely enough,
+> has the lock contention been demonstrated/proved somehow? lock-stats?
 
-Acked-by: Ravi Bangoria <ravi.bangoria@amd.com>
+Yosry has some stats in his commit b8cf32dc6e8c ("mm: zswap: multiple zpools support"),
+and I have also seen some locking contention when using zram to test kernel building,
+since zram still has only one pool.
+
+> 
+>> Agree, I think we should try to improve locking scalability of zsmalloc.
+>> I have some thoughts to share, no code or test data yet:
+>>
+>> 1. First, we can change the pool global lock to per-class lock, which
+>>    is more fine-grained.
+> 
+> Commit c0547d0b6a4b6 "zsmalloc: consolidate zs_pool's migrate_lock
+> and size_class's locks" [1] claimed no significant difference
+> between class->lock and pool->lock.
+
+Ok, I haven't looked into the history much, that seems preparation of trying
+to introduce reclaim in the zsmalloc? Not sure. But now with the reclaim code
+in zsmalloc has gone, should we change back to the per-class lock? Which is
+obviously more fine-grained than the pool lock. Actually, I have just done it,
+will test to get some data later.
+
+Thanks.
+
+> 
+> [1] https://lkml.kernel.org/r/20221128191616.1261026-4-nphamcs@gmail.com
 
