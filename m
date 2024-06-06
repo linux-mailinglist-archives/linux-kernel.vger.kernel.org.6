@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-203677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA9218FDEF3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:40:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7903E8FDEF6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D7861F270C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:40:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 014CDB26D7F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610587D07E;
-	Thu,  6 Jun 2024 06:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD2D13AA41;
+	Thu,  6 Jun 2024 06:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iNcNVQ/Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XSCvo6kx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE4D19D8A1;
-	Thu,  6 Jun 2024 06:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85AA3768E1;
+	Thu,  6 Jun 2024 06:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717656018; cv=none; b=Gi1RpjtdqYNpK5tXmvUuny+gm5KG4f5YpqJbLc4aAzm57NBLNCNh0TsFG1DCR+HLHnh2vkHG4J2bKt9TE1k+Us164RzCzT76NrXacdp+A+MdP1KSYhFkAb4gt+ogrkV59jBVknv7awvlnzXvKt9lvhyab2cFV3Ga6W8KFttffRI=
+	t=1717656026; cv=none; b=l8z5ccPvW83ZjP9MwEQUliJMOgWD99JYRiaODytlceZjBWQ/6O0/jaj68jAMN1yKB1OnjKSwLISxOtCpeLzEVKxn5F1QuK0wj0G5i/RkjC8uhNM9vO8Nse7WHjnWHsWd/rDPrZ5qeAxP/H9DVDO5m6y7I70vZJmdA6A/+MvWzas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717656018; c=relaxed/simple;
-	bh=hzA/hKBsU0KdMdQ6fXpEPMi7fRtCRLCQhAThRmevwW0=;
+	s=arc-20240116; t=1717656026; c=relaxed/simple;
+	bh=BQUTtUE0GlUdPhQO0ro2WyOZ35L4blkmwQj67XovYDs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nLY1oQmgD67XtGvPDI/1CvJZchSd9gsHEK8OpTu+pRwlU2RmLlMl3CaIUnnL40PA+QRI/x+GvZkJuwyIDqlLp3dd1HJyFd70GbT5OEy3bEFcxAnmBNaxJ7dfsgXG6rxVXGcy0zVC7MwrLNsi3z0PQrGH2uE4FGpbhQ05QXgwjdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iNcNVQ/Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F0F4C4AF08;
-	Thu,  6 Jun 2024 06:40:14 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=u8ISGh1hTRXGQrwtagQyPfr1YnPPLDNYJ0xw7rZmymbHP4lyWVTNN9eBpm7aqAXlY4PMxmDOdYM2/swyhZcGi9PeKwwJiqvVTnm6HqIG+GR3K/ihb1o5XuyBeuVkRhGr6c8gImO7faskTc9fvOBMYzkRkLbomwplOtqe14eLPGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XSCvo6kx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34A30C4AF08;
+	Thu,  6 Jun 2024 06:40:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717656018;
-	bh=hzA/hKBsU0KdMdQ6fXpEPMi7fRtCRLCQhAThRmevwW0=;
+	s=k20201202; t=1717656025;
+	bh=BQUTtUE0GlUdPhQO0ro2WyOZ35L4blkmwQj67XovYDs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iNcNVQ/Y3Ew8VouXRFOzwzIcujjjV65vfP/2L+0u67goxMxAnVdjbtKj0iG9Skonf
-	 qiENj3Nfi/6LNtWVU/ZcSfFudrWcqs2y29yHv8JpR/8W/i43O+p/f01mpNPgpBtabD
-	 HxKrmwrvZjgWnMet7MilY0bBnV3QYD7jnHvhHSMBzyHDnGFQbDpmeggnkwB1CGhDxB
-	 KaqDAH0MRh4IHbA7YPRjaLXh0aKCW8/DSxf2H4n9/wH5kQt4qtrJrotylnJ3LeA1+s
-	 JgLCLcqrQ45Xjg3o+zQnM80wYp2QDlEk+l1vdI3A30HUR+CRNITfdLYLLJsXeaPNJn
-	 LMVeZbPF/VRLQ==
-Message-ID: <8921976e-a0c2-48f2-bf63-9c0bc58af63f@kernel.org>
-Date: Thu, 6 Jun 2024 08:40:13 +0200
+	b=XSCvo6kxZ4Uw6qHkNNey13WUa48GM3oDWy56ZG4bv5Ki4uJHnAgZP3YfS/G6Am/8b
+	 8KEQU2dChJYd7QbryuXmzXtMSLSkw+92B/mbndiaGOR+a9filNCbguD5P57T9NhzCc
+	 9VHQBgeu4X+1F6nn8CrKHIJ9Omv4g4esHBdOsOLkxGn19G1upJ79oB+jPcvKbLuvL5
+	 ThshJM2BAVcKfd9Jm8TqncJfL6rNU1/D8x6awuGyjCrpDO429U0f728nPRbu2kfP7m
+	 SuMO/R/h+MyPVeyHSeJNT9sVxWLBKF+Hm+vkpw0H5vBSQeNysmgiht7DsEDHUhOMSN
+	 asG/UETxRUBlw==
+Message-ID: <745f15b4-279b-4a6a-a6cb-58ac726f68b9@kernel.org>
+Date: Thu, 6 Jun 2024 08:40:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] dt-bindings: clock: rk3128: Drop CLK_NR_CLKS
+Subject: Re: [PATCH 3/5] dt-bindings: clock: rk3128: Add HCLK_SFC
 To: Alex Bee <knaerzche@gmail.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
@@ -58,9 +58,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
  linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
  linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 References: <20240605205209.232005-1-knaerzche@gmail.com>
- <20240605205209.232005-2-knaerzche@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <20240605205209.232005-3-knaerzche@gmail.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -104,16 +104,16 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240605205209.232005-2-knaerzche@gmail.com>
+In-Reply-To: <20240605205209.232005-3-knaerzche@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 05/06/2024 22:52, Alex Bee wrote:
-> CLK_NR_CLKS should not be part of the binding. Let's drop it, since
-> the kernel code no longer uses it either.
+> Add a clock id for SFC's AHB clock.
 > 
 > Signed-off-by: Alex Bee <knaerzche@gmail.com>
 > ---
+>  include/dt-bindings/clock/rk3128-cru.h | 1 +
 
 Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
