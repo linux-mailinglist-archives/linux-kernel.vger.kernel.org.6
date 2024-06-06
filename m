@@ -1,138 +1,281 @@
-Return-Path: <linux-kernel+bounces-204858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DAFC8FF456
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:09:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43B1F8FF45A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23470287C22
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:09:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C874D287CAB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1330199382;
-	Thu,  6 Jun 2024 18:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C142199392;
+	Thu,  6 Jun 2024 18:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DIoln4T4"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZqaQu1Bw"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02913198E74;
-	Thu,  6 Jun 2024 18:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9422619924E;
+	Thu,  6 Jun 2024 18:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717697348; cv=none; b=X5IifolTOrIAB2FWCYInGy8HZ+MfxutnMusXpBFNQTBZGiJ5bRMpZKFPEFrw2Oe1aJwg8apPxgKOOGl8HzePDXJO7rro5fd1ZDJUXPr6k2sNc2wKG+zsALsvH6wgR76DyG4uot5L6x69qVsUyuL1y9HtX3LvJpdTyELNlczuPSs=
+	t=1717697385; cv=none; b=idwEHTCoBfEHJh/kwVgpY89+gVfFNxIA/hHFS9EY9gwUXyRDvMl1EnNuOLuFg6AsWH/VVDp3L1GZ0BRNXApu28IKs4Yo97ap0BdY9aDBa6mew/Arq+BPv0uAAN+zLKloJeQdgBed3DB9zLqJrsmz8TEYUbeEUVjMiJ0iMP7gdj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717697348; c=relaxed/simple;
-	bh=8rmvDfyR18J9R4Nr5L9/81wBXu6SoSVYsBY65zb4Wdk=;
+	s=arc-20240116; t=1717697385; c=relaxed/simple;
+	bh=wtSfRCp4XoOtqSU/r2nCisszzCUK5dk8CscPsz5DTE0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eSLuW7Q0JIPkD5nHGOS+fDW+XhNe2fWAXeMpoyt3qusMA6VjEK3sScfbnpp4cAuboXvMFQ5+j4PGZ0FAx6n1hLqPQ2RpugY1sYenhrGkLyqbHEmiX6Os61IwPEEv98uc+OPANo0RNaHV0GtDcVlBhsJlGIJ2uYMalWQTAta2Y84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DIoln4T4; arc=none smtp.client-ip=209.85.216.49
+	 To:Content-Type; b=q4wMC6ar3GrckbSwiUSSsEK3dyCMFcMEPzW6qA3N0a+7lLH6Oz+hnR0f4fY49Y6kilDgHeWcoLyzTvFKoMXiPh+pUfujBv6tZCWpqM3NZqMBo7caNpLfaiosEhnK3zlRK6oVCe2LK1tDw2f3AVG7q/npjE6oR31mGBErg5sx9AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZqaQu1Bw; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2bfff08fc29so1105993a91.1;
-        Thu, 06 Jun 2024 11:09:06 -0700 (PDT)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2c1a5913777so1069009a91.2;
+        Thu, 06 Jun 2024 11:09:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717697346; x=1718302146; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=gmail.com; s=20230601; t=1717697383; x=1718302183; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1uSu71eHsqUtnpmvK2hW8dkSREGhr2OmLFu/qTAkXfY=;
-        b=DIoln4T4hE34c4oSQm/+ZKvlffd/LP8+BVJV9odIfxkXXhwgbMBeSbjxyS5OeZkiTI
-         J0i7AQobCP8dz3Q8vhLt61qMAkCUie0c7hlNZUyEk3f4HlrqK/wTJ8zSvTn1FgC4C61C
-         grhzMJF+UIe3LPi3LnwKTZrzkj8RSSdd1ol6FSkD4W5huiciupqqcft6HLgvpvdw3U5M
-         c5LDdHWuh+phKFMfFk+xm/f4uYfjwJUN3wUfHqbnp7CZm7rFBjCiFK+Goi5IctPpb631
-         jTpV3nFWBnzT2NKVtYwBUS0THYLERPnfu36kesmb80Q3hzC4+fb9J51+LhwXgibisqUs
-         mByg==
+        bh=r5OklrM6JwTm3HO8tSX1yK0hEi0xNRql5wG9ok44Rvg=;
+        b=ZqaQu1Bwhr773eo/v0OHpAKMPjzNjs4jwmO06/R3NjNk87AaW4epmK9kD67ML5Takg
+         TVFODCYMui2fAEXHjfW4lQK41klbxdJoQi29HZbvAV+/lBs0DdRW2T+gIDqPPEvkTGCl
+         sRVZVJ6OLtv6fEsmNCiYWwJwWTi8/PG+wCGQDFB+iwMubI1djoF0A/2OmjPu2z6dgRI5
+         69Dy32jHzF1cD772H2NxgtvhPbP1tW0gA64gWTmN0y0plhvfU45rmJCJ+b25K3G/+ot0
+         emB6sWIE8oV1UB2amFSwpk4RCsUPDmzZwC3Y+6TDOfEaVORnYh2YeMpyX/csBknCFHjd
+         9RrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717697346; x=1718302146;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1717697383; x=1718302183;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1uSu71eHsqUtnpmvK2hW8dkSREGhr2OmLFu/qTAkXfY=;
-        b=d9XlemMqfkW8DWwtO6hZiotgETn94uPpbXe8Hk8aTOBk6NIJSKYGih7dCCDpbT8R5r
-         tWk1ogLa+lVyqemLoHhD5hiy48gfNX/mWN7UEQHvhIuOrPx4DAmS1claPbtZVwtJ8hJF
-         yjMBWWvFGMOY5Sn1E3lLtRO1LcE30RCC9V3YsPMyFlXL+0CCMQ85wCgcuGbtyqnkoIqx
-         vJwx6RYfpqj6rkvrn3kg9XOHlizuUZJVj8V38ozBB0zHCjswso0T7gCjcRGUkLhVvGiL
-         JzfrbxUl8rAAMoJ5MZtm1BYjjtK8Vm20wi0eEEMSMagytTBfUBAWqgNJWGe3zMeifl3A
-         gUCg==
-X-Forwarded-Encrypted: i=1; AJvYcCULtOdR29Q4h6ep7ucw0uksA7ZhoBSEKuoFPrcNsCj8oNvjqs0vFFxQSxTXafi7x4RFqqU1MzS6heFYwDPf8SLSaakTNz7MO3iOuPIn4bEyMOyJsIjhjPFsAiVq808gPyUvGafY9Wo9
-X-Gm-Message-State: AOJu0YzoEAEGjZLj16gSed/9+SjvT1fVtmTJQRdNrLYmlKjMYY6ljoLp
-	JptVFD6bUfXmiI6gcgOld/jJYOIDBZnG2j9f+xk4r+7oAOEU4KQ4sxZGsTgKoQCR30ddTcIVYrE
-	f638PtagGQawBGhuCVCUkt/8QrZs=
-X-Google-Smtp-Source: AGHT+IGVqfib7a6zT10Bihuq1okEft/QKigMZXkxBv7gI9UOhsg+rEzGiZYDIYZIVJEp5FciaEux0sVwRtv6+I1acYM=
-X-Received: by 2002:a17:90a:4383:b0:2ac:9baf:25b5 with SMTP id
- 98e67ed59e1d1-2c2bcc0b8c4mr271174a91.25.1717697345935; Thu, 06 Jun 2024
- 11:09:05 -0700 (PDT)
+        bh=r5OklrM6JwTm3HO8tSX1yK0hEi0xNRql5wG9ok44Rvg=;
+        b=pRrO2oEWs0izYx5GTDUPUmUgapALsinJTV4bT7kyO9efUzjr6GfNdJYg1+2bytTHU6
+         K6UUji+U1HMoHlYOwHdbe4yK9fTAdxqjFunaKtqucbhwM3NqIIKyEGTZMbObbutVuA4l
+         bsHFjDCGcN06oZfH/C9nGxjvwRksmy922D7Iu3SfUVqpUY6yWASuApWdVXoAYiWLf6Xf
+         u7sNOhoNxh8AAkwZ1nhDQuBrYztmsX5/S3o3VVOQt3Ml+mr2Czt9pMLNb1f9vu/xO26u
+         9il4VgAHh5z8CmWfkigSc3199og5407vhufUY6HMHjOduRnFUV+8m/A4LbMsPINvej94
+         fRNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVMGLshzLsfAq+VKU3708LV8s59xGyvDpsW5oAd+kdFUEI8+4gYFdZmZIhxFdB0d09Y4zzXqzlUu4GUyPsHsXSR3fI/kqwWKHEEgAXBzE8+cq5yYfdUr3NZfJ4zqs6gxenIJ2B/o7k6bHXpS17G8mfV3LNe2jptMsfDihKmD8P4BA==
+X-Gm-Message-State: AOJu0Yymwu8AxVqK7CZnKSPokzu+0/nmwln49A519S4D/Bo7Aejpu4fu
+	n8myQu03yGambd8v/GyE9S4ehMjT8CpsRrQGKsB0kAQOCizctCBmPWxl0P4VY4vP+ofoSHjo0+u
+	vtans0E9ChZtIJiSncGda6uYdEcg=
+X-Google-Smtp-Source: AGHT+IE2vgamaVfO416HSacKOgFDRZp6Of3eAzhvkx6J5QoVRXuCcj8K++0BpcHhbM0bVu33tOq4JFowQg2f8/r9/fQ=
+X-Received: by 2002:a17:90b:1013:b0:2bf:9ed7:a79b with SMTP id
+ 98e67ed59e1d1-2c2bcada703mr290487a91.19.1717697382797; Thu, 06 Jun 2024
+ 11:09:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1711026842-7268-1-git-send-email-shengjiu.wang@nxp.com>
- <20240424164725.GA18760@francesco-nb> <f0a38df8-9197-452d-a46f-2bc2697c1186@sirena.org.uk>
- <CAA+D8APWGk6oJJsfLhcOfyzMo7uNFABFmeF51gerSC_16xj9uQ@mail.gmail.com>
-In-Reply-To: <CAA+D8APWGk6oJJsfLhcOfyzMo7uNFABFmeF51gerSC_16xj9uQ@mail.gmail.com>
-From: Adam Ford <aford173@gmail.com>
-Date: Thu, 6 Jun 2024 13:08:54 -0500
-Message-ID: <CAHCN7xJgqz3_6j5dzJQ5OW_=g_VEYj4zNUBn-SjEBSj1GF9BSw@mail.gmail.com>
-Subject: Re: [PATCH v4] clk: imx: imx8mp: Add pm_runtime support for power saving
-To: Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, Francesco Dolcini <francesco@dolcini.it>, 
-	Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, peng.fan@nxp.com, 
-	mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	linux-imx@nxp.com, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240605002459.4091285-1-andrii@kernel.org> <20240605002459.4091285-5-andrii@kernel.org>
+ <CAJuCfpFp38X-tbiRAqS36zXG_ho2wyoRas0hCFLo07pN1noSmg@mail.gmail.com>
+ <CAEf4BzYv0Ys+NpMMuXBYEVwAaOow=oBgUhBwen7g=68_5qKznQ@mail.gmail.com> <ue44yftirugr6u4ewl5cvgatpqnheuho7rgax3jyg6ox5vruyq@7k6harvobd2q>
+In-Reply-To: <ue44yftirugr6u4ewl5cvgatpqnheuho7rgax3jyg6ox5vruyq@7k6harvobd2q>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 6 Jun 2024 11:09:30 -0700
+Message-ID: <CAEf4Bzaac0Di+mCfrxRVsZT0sfWWoOJi6ByW0XA5YEh1h7dwuw@mail.gmail.com>
+Subject: Re: [PATCH v3 4/9] fs/procfs: use per-VMA RCU-protected locking in
+ PROCMAP_QUERY API
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	brauner@kernel.org, viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
+	linux-mm@kvack.org, rppt@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 27, 2024 at 7:37=E2=80=AFAM Shengjiu Wang <shengjiu.wang@gmail.=
-com> wrote:
+On Thu, Jun 6, 2024 at 10:15=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
 >
-> On Mon, May 27, 2024 at 8:24=E2=80=AFPM Mark Brown <broonie@kernel.org> w=
-rote:
-> >
-> > On Wed, Apr 24, 2024 at 06:47:25PM +0200, Francesco Dolcini wrote:
-> > > On Thu, Mar 21, 2024 at 09:14:02PM +0800, Shengjiu Wang wrote:
-> > > > Add pm_runtime support for power saving. In pm runtime suspend
-> > > > state the registers will be reseted, so add registers save
-> > > > in pm runtime suspend and restore them in pm runtime resume.
+> * Andrii Nakryiko <andrii.nakryiko@gmail.com> [240606 12:52]:
+> > On Wed, Jun 5, 2024 at 4:16=E2=80=AFPM Suren Baghdasaryan <surenb@googl=
+e.com> wrote:
+> > >
+> > > On Tue, Jun 4, 2024 at 5:25=E2=80=AFPM Andrii Nakryiko <andrii@kernel=
+.org> wrote:
 > > > >
-> > > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > > > Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> > > > Attempt to use RCU-protected per-VMA lock when looking up requested=
+ VMA
+> > > > as much as possible, only falling back to mmap_lock if per-VMA lock
+> > > > failed. This is done so that querying of VMAs doesn't interfere wit=
+h
+> > > > other critical tasks, like page fault handling.
+> > > >
+> > > > This has been suggested by mm folks, and we make use of a newly add=
+ed
+> > > > internal API that works like find_vma(), but tries to use per-VMA l=
+ock.
+> > > >
+> > > > We have two sets of setup/query/teardown helper functions with diff=
+erent
+> > > > implementations depending on availability of per-VMA lock (conditio=
+ned
+> > > > on CONFIG_PER_VMA_LOCK) to abstract per-VMA lock subtleties.
+> > > >
+> > > > When per-VMA lock is available, lookup is done under RCU, attemptin=
+g to
+> > > > take a per-VMA lock. If that fails, we fallback to mmap_lock, but t=
+hen
+> > > > proceed to unconditionally grab per-VMA lock again, dropping mmap_l=
+ock
+> > > > immediately. In this configuration mmap_lock is never helf for long=
+,
+> > > > minimizing disruptions while querying.
+> > > >
+> > > > When per-VMA lock is compiled out, we take mmap_lock once, query VM=
+As
+> > > > using find_vma() API, and then unlock mmap_lock at the very end onc=
+e as
+> > > > well. In this setup we avoid locking/unlocking mmap_lock on every l=
+ooked
+> > > > up VMA (depending on query parameters we might need to iterate a fe=
+w of
+> > > > them).
+> > > >
+> > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > > ---
+> > > >  fs/proc/task_mmu.c | 46 ++++++++++++++++++++++++++++++++++++++++++=
+++++
+> > > >  1 file changed, 46 insertions(+)
+> > > >
+> > > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > > > index 614fbe5d0667..140032ffc551 100644
+> > > > --- a/fs/proc/task_mmu.c
+> > > > +++ b/fs/proc/task_mmu.c
+> > > > @@ -388,6 +388,49 @@ static int pid_maps_open(struct inode *inode, =
+struct file *file)
+> > > >                 PROCMAP_QUERY_VMA_FLAGS                         \
+> > > >  )
+> > > >
+> > > > +#ifdef CONFIG_PER_VMA_LOCK
+> > > > +static int query_vma_setup(struct mm_struct *mm)
+> > > > +{
+> > > > +       /* in the presence of per-VMA lock we don't need any setup/=
+teardown */
+> > > > +       return 0;
+> > > > +}
+> > > > +
+> > > > +static void query_vma_teardown(struct mm_struct *mm, struct vm_are=
+a_struct *vma)
+> > > > +{
+> > > > +       /* in the presence of per-VMA lock we need to unlock vma, i=
+f present */
+> > > > +       if (vma)
+> > > > +               vma_end_read(vma);
+> > > > +}
+> > > > +
+> > > > +static struct vm_area_struct *query_vma_find_by_addr(struct mm_str=
+uct *mm, unsigned long addr)
+> > > > +{
+> > > > +       struct vm_area_struct *vma;
+> > > > +
+> > > > +       /* try to use less disruptive per-VMA lock */
+> > > > +       vma =3D find_and_lock_vma_rcu(mm, addr);
+> > > > +       if (IS_ERR(vma)) {
+> > > > +               /* failed to take per-VMA lock, fallback to mmap_lo=
+ck */
+> > > > +               if (mmap_read_lock_killable(mm))
+> > > > +                       return ERR_PTR(-EINTR);
+> > > > +
+> > > > +               vma =3D find_vma(mm, addr);
+> > > > +               if (vma) {
+> > > > +                       /*
+> > > > +                        * We cannot use vma_start_read() as it may=
+ fail due to
+> > > > +                        * false locked (see comment in vma_start_r=
+ead()). We
+> > > > +                        * can avoid that by directly locking vm_lo=
+ck under
+> > > > +                        * mmap_lock, which guarantees that nobody =
+can lock the
+> > > > +                        * vma for write (vma_start_write()) under =
+us.
+> > > > +                        */
+> > > > +                       down_read(&vma->vm_lock->lock);
 > > >
-> > > Is this introducing a regression?
-> > >
-> > >   800 13:50:19.713052  <6>[   16.531134] clk: Disabling unused clocks
-> > >   801 13:50:19.727524  <2>[   16.535413] SError Interrupt on CPU2, co=
-de 0x00000000bf000002 -- SError
-> > >   802 13:50:19.731400  <4>[   16.535421] CPU: 2 PID: 1 Comm: swapper/=
-0 Not tainted 6.9.0-rc5-next-20240424 #1
-> > >   803 13:50:19.742514  <4>[   16.535428] Hardware name: Toradex Verdi=
-n iMX8M Plus on Dahlia Board (DT)
+> > > Hi Andrii,
+> > > The above pattern of locking VMA under mmap_lock and then dropping
+> > > mmap_lock is becoming more common. Matthew had an RFC proposal for an
+> > > API to do this here:
+> > > https://lore.kernel.org/all/ZivhG0yrbpFqORDw@casper.infradead.org/. I=
+t
+> > > might be worth reviving that discussion.
 > >
-> > I am now seeing this failure in mainline on both the above board and
-> > i.MX8MP-EVK.  There was a fix mentioned in the thread but it's not
-> > landed for -rc1, both boards crash as above.  What's the plan for
-> > getting this fixed, should the patch be reverted for now?
+> > Sure, it would be nice to have generic and blessed primitives to use
+> > here. But the good news is that once this is all figured out by you mm
+> > folks, it should be easy to make use of those primitives here, right?
+> >
+> > >
+> > > > +               }
+> > > > +
+> > > > +               mmap_read_unlock(mm);
+> > >
+> > > Later on in your code you are calling get_vma_name() which might call
+> > > anon_vma_name() to retrieve user-defined VMA name. After this patch
+> > > this operation will be done without holding mmap_lock, however per
+> > > https://elixir.bootlin.com/linux/latest/source/include/linux/mm_types=
+.h#L582
+> > > this function has to be called with mmap_lock held for read. Indeed
+> > > with debug flags enabled you should hit this assertion:
+> > > https://elixir.bootlin.com/linux/latest/source/mm/madvise.c#L96.
 >
-> https://lore.kernel.org/all/CAPDyKFp4V8f0iyeRASSEu4YaCSz0m56=3D8ssBJ9ogSv=
-qG1dzMZA@mail.gmail.com/
+> The documentation on the first link says to hold the lock or take a
+> reference, but then we assert the lock.  If you take a reference to the
+> anon vma name, then we will trigger the assert.  Either the
+> documentation needs changing or the assert is incorrect - or I'm missing
+> something?
 >
-> fixed is merged,  but may not in v6.10-rc1. Should anybody help to cherry=
--pick?
-
-It appears that RC2 has this fix [1].
-
-adam
-
-[1] - https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/di=
-ff/drivers/pmdomain/imx/gpcv2.c?id=3Dv6.10-rc2&id2=3Dv6.10-rc1
-
+> >
+> > Sigh... Ok, what's the suggestion then? Should it be some variant of
+> > mmap_assert_locked() || vma_assert_locked() logic, or it's not so
+> > simple?
+> >
+> > Maybe I should just drop the CONFIG_PER_VMA_LOCK changes for now until
+> > all these gotchas are figured out for /proc/<pid>/maps anyway, and
+> > then we can adapt both text-based and ioctl-based /proc/<pid>/maps
+> > APIs on top of whatever the final approach will end up being the right
+> > one?
+> >
+> > Liam, any objections to this? The whole point of this patch set is to
+> > add a new API, not all the CONFIG_PER_VMA_LOCK gotchas. My
+> > implementation is structured in a way that should be easily amenable
+> > to CONFIG_PER_VMA_LOCK changes, but if there are a few more subtle
+> > things that need to be figured for existing text-based
+> > /proc/<pid>/maps anyways, I think it would be best to use mmap_lock
+> > for now for this new API, and then adopt the same final
+> > CONFIG_PER_VMA_LOCK-aware solution.
 >
-> Best regards
-> Shengjiu Wang
+> The reason I was hoping to have the new interface use the per-vma
+> locking from the start is to ensure the guarantees that we provide to
+> the users would not change.  We'd also avoid shifting to yet another
+> mmap_lock users.
 >
+
+Yep, it's completely understandable. And you see that I changed the
+structure quite a lot to abstract away mmap_lock vs vm_lock details.
+I'm afraid anon_vma_name() is quite an obstacle, unfortunately, and
+seems like it should be addressed first, but I'm just not qualified
+enough to do this.
+
+> I also didn't think it would complicate your series too much, so I
+> understand why you want to revert to the old locking semantics.  I'm
+> fine with you continuing with the series on the old lock.  Thanks for
+> trying to make this work.
+>
+
+I'm happy to keep the existing structure of the code, and
+(intentionally) all the CONFIG_PER_VMA_LOCK logic is in separate
+patches, so it's easy to do. I'd love to help adopt a per-VMA lock
+once all the pieces are figured out. Hopefully anon_vma_name() is the
+last one remaining :) So please keep me cc'ed on relevant patches.
+
+As I mentioned, I just don't feel like I would be able to solve the
+anon_vma_name() problem, but of course I wouldn't want to be
+completely blocked by it as well.
+
+> Regards,
+> Liam
 
