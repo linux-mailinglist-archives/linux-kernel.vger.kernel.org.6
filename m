@@ -1,186 +1,176 @@
-Return-Path: <linux-kernel+bounces-203856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11EA28FE14E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:42:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50B3A8FE153
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:42:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 042881C24DB9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:42:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E138F28CE9B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CEE613D2BB;
-	Thu,  6 Jun 2024 08:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A99813D242;
+	Thu,  6 Jun 2024 08:42:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BV2vGp8+"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HwkNmP3T"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A245C26292
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3919B13C821
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717663314; cv=none; b=UCX7aQbJPBDZ9aGZkXzgvoxlOLg6lAiZMr59pcG6J8mquUf8h0fMitpoiDOSUV1zZUMupVXmMcbB1cwkh4Dxo/80nLrTsNsEwakDnADgUtZjAch4cV1iXQZT4jP+avp+CQO1TClwJAy2TqgbBdc8oj8T3F5/8EcIhZK9lSWImfw=
+	t=1717663329; cv=none; b=nAufIEdj0R2gZpc1cclj/Pow2pG2tBxHlIhtomtTFAWkwhM7AsqWbLsSwdH1iYmPOFoCmTd7M72aOunykJLz4TXEPBZMMo8DhUE8pBntHhPpRc4E4wgkY5t77+sRANW9aJ2LUDHhfard2boQloOMcw6KScXfzEiWao5y95NKM8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717663314; c=relaxed/simple;
-	bh=Tnid5tfB5kBNwDescW1YCizAMVKFdBOYhN6ibNA8jrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xjfi+QgM5c0SVVeZCwcEKc04PMAZ6S1WER3IHCxkG2khPv6NVRS9ULuZEp5UkrfmZx+1wpIqTDvv5UAXlxozdaQVwPFd+QWabWdADAPJVp71B13Zx6rjYPfFg+PKc4b6u2T5/y/02wR66uq2YLm0hQYr1IyFrFflHXnOVeDNZ38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BV2vGp8+; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ea903cd11bso9064411fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 01:41:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717663311; x=1718268111; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lboqGDLkSlZiXGaj/uzeRuz104hFq0ngZ+Ud/fj/+Ag=;
-        b=BV2vGp8+YXaLnNH1waaAKaquOhikkhb2BWhRfWW9k7Va0KXcavSwNjREuP+jVgWRLC
-         kQjGxdFGcqbd3zvl+gqz8Fcghyrx9Aqpzn8lyrBSJ9rmmgboMhMwFpY+R6FTTemamxUb
-         PbXk39YVIv3VUg2MAlbkHP7QqLUdeLPq3vtviteGDSYQHqH7bQgBr/VAbAWwIIMLzhuN
-         YcGS76bZiWWFKOLnJYMQphXg0yszLXxR6NDzfzXgAL9h+t0MVo3CJYxGmVpc/W2KPPTn
-         muuE/nh3uL5T+aX4GON7WzoiUjwUSH5rMSA8ZdSKRljIlkkcqCFN2kwr3VKScvrdNGRX
-         OKCQ==
+	s=arc-20240116; t=1717663329; c=relaxed/simple;
+	bh=mAb+0Iv6Exl25GZ+qLNucVvBGjl2AXfSSYAlWqDLImc=;
+	h=From:References:MIME-Version:In-Reply-To:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JwuG9Q189Nw4XTqJe1NHBhvQS9ai24j75FaJ552r23HQ3rrp627R4E8ZvC2BR7nfADKPrZraLlTDZDbnktq1jcAzQjH9haPp28vvtBZM3WNyboxIRZsJN4MMGIW7Ix0uJJJaRlYNn0VMxd68jctQtJAZfeGurP4qM9ihRwwdWWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HwkNmP3T; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717663327;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3DTzxzZ6ElccSXzynyCH2s3XyyNG1vvqASU4bmMnRVo=;
+	b=HwkNmP3TXBtVmSqnPJ12BFp1rEzPKq+kApjfDPm5X4CJJvNlM9KDJ/vpYwAizfwZAVpCG8
+	2s4JTMQHOp5Jd+FWXCer2QIM+FhFd6HFs4rDLO99eTIDYV59B6AgEYeAZC55FY2czcwfS2
+	OOLQMIttz/mto43/4Z46WdhHzzc2BLw=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-349-55i_iJlCOrqhdEZ-3OGXGw-1; Thu, 06 Jun 2024 04:42:05 -0400
+X-MC-Unique: 55i_iJlCOrqhdEZ-3OGXGw-1
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6ad706fab2aso9989966d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 01:42:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717663311; x=1718268111;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lboqGDLkSlZiXGaj/uzeRuz104hFq0ngZ+Ud/fj/+Ag=;
-        b=rHjnyCDRI/iOA4zNUsNDzm/EfEhGdCPwndO4vBbnvGtLLTlAre6cXJ3WdP5kSgZWXG
-         3yvTOgK5mw7ln9JTgKq8ywjiup4nlCw79neRB196MQbEi4htCK/t65k0krYS41mXOsBH
-         Wny5LSnQKBXeEklYogHOCbpST9tpTDTbcviwlyDyna9xrtrGQht8P9LTYB1sBaLEXyMV
-         rUmxFe8MRHoAUffcdw/CMQcIL1zE87qo6i2VCdU8AaoOIa/qqCRvZ/4U/NNepWsaNqai
-         LK44LYucj1ZUFpm32zWO9Kbrv7CvGyBYX57ZLN8tRsdfxDoSXjEhLm/9ZBuw3uvlkt1k
-         extA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0LAzdzgoAQHe5Fqb3OEadNFFc9vwM6cBU00cNapI2P5S5nhNBUPJ1MLHOUO9qhUtxgtIZhjyXifkFuOZaC0W1swhFkyt3ch/2VJNt
-X-Gm-Message-State: AOJu0YyCNw18z8kuCYhYWIQhXl9ESsf3t7odMsGpkckEPa9h607GaXTI
-	JESVAuSfAFaJrqNNF5ust1Ua9uG4netGRu2c/x3NLmmY7OY5Iy+aPynbHZGPDQw=
-X-Google-Smtp-Source: AGHT+IEzdn9+piYZ1x5EsTOIWqi/J/85mLEB4Nr/4e4HHjN18eVZC+5BHKwFvsEHZndySpOVd4em4g==
-X-Received: by 2002:a2e:8550:0:b0:2e6:d1fb:4470 with SMTP id 38308e7fff4ca-2eac7a832dbmr34173771fa.42.1717663310478;
-        Thu, 06 Jun 2024 01:41:50 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aadf9d8ddsm715207a12.1.2024.06.06.01.41.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 01:41:50 -0700 (PDT)
-Date: Thu, 6 Jun 2024 11:41:45 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Joy Chakraborty <joychakr@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-rtc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
-	manugautam@google.com
-Subject: Re: [PATCH v1 07/17] misc: eeprom: at25: Change nvmem reg_read/write
- return type
-Message-ID: <f98a1d8f-e936-4798-8447-c642e8fe11d5@moroto.mountain>
-References: <20240605175953.2613260-1-joychakr@google.com>
- <20240605175953.2613260-8-joychakr@google.com>
+        d=1e100.net; s=20230601; t=1717663325; x=1718268125;
+        h=cc:to:subject:message-id:date:in-reply-to:mime-version:references
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3DTzxzZ6ElccSXzynyCH2s3XyyNG1vvqASU4bmMnRVo=;
+        b=Jvqzjsx42AmpdWCMrecvpqIE0NJTZdKbvAs1eJ5wawvk0d3z4SaVNdjhJJIvOljFwS
+         1Eh1zXlBnim1m9hJbAMUOnoVuzmvPlStTKM1kEPrhJEyJHOjSQOnwsuXlkk1WoXd6MZ6
+         3B3gqVUIuI+NkTyUBJL1AVWZxLYg0K7zg/7YatwmZyuVgRsFPqAKsn7woi4dA4BPy4ST
+         D+EVTDrlJmVE5ydXHfeHm5xlyUev80MzhvzRbr+QbCoV9cNcRW/T3VGqWzfKxWun/8lk
+         YHhC6Mv0Z4KGDXZM1ifeUXfrcslZD/tyyuefZhQGZ7ezJb7bxxbQO3AhJ7zmxjekb46z
+         Yz7A==
+X-Forwarded-Encrypted: i=1; AJvYcCWEmjOzSBhXRoWmxbTphMUFjinwsUsX+mTXxhg7Se2yLc1M4b3wXX4Dqdo6386NCZtaqfeU6Wmh/8j63QCzawPAPaihPorfn/sDHqkx
+X-Gm-Message-State: AOJu0YzInoESQNbU/aEITeGVyWZ4f0OcXJqpX8E+ABIE5d6RIPWiLaGH
+	y0fRRm3zlz7F+k8gI7Elxd/9eXngFzfcv1ywvuXEhLltIt/vT5Bt6lPJraHji5u1fV+DRg3jAhY
+	uA/48U40dkLaVm9jbZMVy3EUD8mBuz0UlCrGgurrstAv34EWxkz0w6SNSoRBu54PMElITzKqvXS
+	YGSBSPyTCokQy8L6fvO5YorE1Z2RubdGpTMgYz
+X-Received: by 2002:a05:6214:5989:b0:6af:2342:e15b with SMTP id 6a1803df08f44-6b02bf15cf4mr65772226d6.14.1717663324855;
+        Thu, 06 Jun 2024 01:42:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGnOAjXFejTbHf91B2AwD+zLjnOZXa/PeDCbknCOrG22l3HyZQ2rnnA1enJhnGJLoAEXVr6f0JTK6qz9JRxYxg=
+X-Received: by 2002:a05:6214:5989:b0:6af:2342:e15b with SMTP id
+ 6a1803df08f44-6b02bf15cf4mr65772016d6.14.1717663324427; Thu, 06 Jun 2024
+ 01:42:04 -0700 (PDT)
+Received: from 311643009450 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 6 Jun 2024 08:42:03 +0000
+From: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
+References: <20240603185647.2310748-1-amorenoz@redhat.com> <20240603185647.2310748-6-amorenoz@redhat.com>
+ <20240605195117.GY791188@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240605175953.2613260-8-joychakr@google.com>
+In-Reply-To: <20240605195117.GY791188@kernel.org>
+Date: Thu, 6 Jun 2024 08:42:03 +0000
+Message-ID: <CAG=2xmML3MusD-ro6advb389ctYwaObZE+PBEh14TcXP5AbZJA@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 5/9] net: openvswitch: add emit_sample action
+To: Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, aconole@redhat.com, echaudro@redhat.com, 
+	i.maximets@ovn.org, dev@openvswitch.org, 
+	Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Pravin B Shelar <pshelar@ovn.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jun 05, 2024 at 05:59:51PM +0000, Joy Chakraborty wrote:
-> @@ -195,10 +195,11 @@ static struct attribute *sernum_attrs[] = {
->  };
->  ATTRIBUTE_GROUPS(sernum);
->  
-> -static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
-> +static ssize_t at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
->  {
->  	struct at25_data *at25 = priv;
->  	size_t maxsz = spi_max_transfer_size(at25->spi);
-> +	size_t bytes_written = count;
->  	const char *buf = val;
->  	int			status = 0;
->  	unsigned		buf_size;
-> @@ -313,7 +314,7 @@ static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
->  	mutex_unlock(&at25->lock);
->  
->  	kfree(bounce);
-> -	return status;
-> +	return status < 0 ? status : bytes_written;
->  }
+On Wed, Jun 05, 2024 at 08:51:17PM GMT, Simon Horman wrote:
+> On Mon, Jun 03, 2024 at 08:56:39PM +0200, Adrian Moreno wrote:
+> > Add support for a new action: emit_sample.
+> >
+> > This action accepts a u32 group id and a variable-length cookie and uses
+> > the psample multicast group to make the packet available for
+> > observability.
+> >
+> > The maximum length of the user-defined cookie is set to 16, same as
+> > tc_cookie, to discourage using cookies that will not be offloadable.
+> >
+> > Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+>
+> Hi Adrian,
+>
+> Some minor nits from my side.
+>
+> ...
+>
+> > diff --git a/include/uapi/linux/openvswitch.h b/include/uapi/linux/openvswitch.h
+> > index efc82c318fa2..a0e9dde0584a 100644
+> > --- a/include/uapi/linux/openvswitch.h
+> > +++ b/include/uapi/linux/openvswitch.h
+> > @@ -914,6 +914,30 @@ struct check_pkt_len_arg {
+> >  };
+> >  #endif
+> >
+> > +#define OVS_EMIT_SAMPLE_COOKIE_MAX_SIZE 16
+> > +/**
+> > + * enum ovs_emit_sample_attr - Attributes for %OVS_ACTION_ATTR_EMIT_SAMPLE
+> > + * action.
+> > + *
+> > + * @OVS_EMIT_SAMPLE_ATTR_GROUP: 32-bit number to identify the source of the
+> > + * sample.
+> > + * @OVS_EMIT_SAMPLE_ATTR_COOKIE: A variable-length binary cookie that contains
+> > + * user-defined metadata. The maximum length is 16 bytes.
+> > + *
+> > + * Sends the packet to the psample multicast group with the specified group and
+> > + * cookie. It is possible to combine this action with the
+> > + * %OVS_ACTION_ATTR_TRUNC action to limit the size of the packet being emitted.
+> > + */
+> > +enum ovs_emit_sample_attr {
+> > +	OVS_EMIT_SAMPLE_ATTR_UNPSEC,
+> > +	OVS_EMIT_SAMPLE_ATTR_GROUP,	/* u32 number. */
+> > +	OVS_EMIT_SAMPLE_ATTR_COOKIE,	/* Optional, user specified cookie. */
+> > +	__OVS_EMIT_SAMPLE_ATTR_MAX
+> > +};
+> > +
+> > +#define OVS_EMIT_SAMPLE_ATTR_MAX (__OVS_EMIT_SAMPLE_ATTR_MAX - 1)
+> > +
+> > +
+>
+> nit: One blank line is enough.
+>
 
-So the original bug was that rmem_read() is returning positive values
-on success instead of zero[1].  That started a discussion about partial
-reads which resulted in changing the API to support partial reads[2].
-That patchset broke the build.  This patchset is trying to fix the
-build breakage.
+Ack.
 
-[1] https://lore.kernel.org/all/20240206042408.224138-1-joychakr@google.com/
-[2] https://lore.kernel.org/all/20240510082929.3792559-2-joychakr@google.com/
+>      Flagged by checkpatch.pl
+>
+> >  /**
+> >   * enum ovs_action_attr - Action types.
+> >   *
+> > @@ -1004,6 +1028,7 @@ enum ovs_action_attr {
+> >  	OVS_ACTION_ATTR_ADD_MPLS,     /* struct ovs_action_add_mpls. */
+> >  	OVS_ACTION_ATTR_DEC_TTL,      /* Nested OVS_DEC_TTL_ATTR_*. */
+> >  	OVS_ACTION_ATTR_DROP,         /* u32 error code. */
+> > +	OVS_ACTION_ATTR_EMIT_SAMPLE,  /* Nested OVS_EMIT_SAMPLE_ATTR_*. */
+>
+> nit: Please add OVS_ACTION_ATTR_EMIT_SAMPLE to the Kenrel doc
+>      for this structure.
+>
 
-The bug in rmem_read() is still not fixed.  That needs to be fixed as
-a stand alone patch.  We can discuss re-writing the API separately.
+Thanks for spotting this. Will do.
 
-These functions are used internally and exported to the user through
-sysfs via bin_attr_nvmem_read/write().  For internal users partial reads
-should be treated as failure.  What are we supposed to do with a partial
-read?  I don't think anyone has asked for partial reads to be supported
-from sysfs either except Greg was wondering about it while reading the
-code.
 
-Currently, a lot of drivers return -EINVAL for partial read/writes but
-some return success.  It is a bit messy.  But this patchset doesn't
-really improve anything.  In at24_read() we check if it's going to be a
-partial read and return -EINVAL.  Below we report a partial read as a
-full read.  It's just a more complicated way of doing exactly what we
-were doing before.
+> >
+> >  	__OVS_ACTION_ATTR_MAX,	      /* Nothing past this will be accepted
+> >  				       * from userspace. */
+>
+> ...
+>
 
-drivers/misc/eeprom/at25.c
-   198  static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
-   199  {
-   200          struct at25_data *at25 = priv;
-   201          size_t maxsz = spi_max_transfer_size(at25->spi);
-New:            size_t bytes_written = count;
-                       ^^^^^^^^^^^^^^^^^^^^^
-This is not the number of bytes written.
-
-   202          const char *buf = val;
-   203          int                     status = 0;
-   204          unsigned                buf_size;
-   205          u8                      *bounce;
-   206  
-   207          if (unlikely(off >= at25->chip.byte_len))
-   208                  return -EFBIG;
-   209          if ((off + count) > at25->chip.byte_len)
-   210                  count = at25->chip.byte_len - off;
-                        ^^^^^
-This is.
-
-   211          if (unlikely(!count))
-   212                  return -EINVAL;
-   213  
-   214          /* Temp buffer starts with command and address */
-   215          buf_size = at25->chip.page_size;
-   216          if (buf_size > io_limit)
-   217                  buf_size = io_limit;
-   218          bounce = kmalloc(buf_size + at25->addrlen + 1, GFP_KERNEL);
-   219          if (!bounce)
-   220                  return -ENOMEM;
-   221  
-
-regards,
-dan carpenter
 
