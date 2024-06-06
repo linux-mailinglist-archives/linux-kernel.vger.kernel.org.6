@@ -1,169 +1,78 @@
-Return-Path: <linux-kernel+bounces-204765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0526E8FF34C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:05:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07FB78FF351
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8F91293CCF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:05:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F17E1C24DCB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6745198E6A;
-	Thu,  6 Jun 2024 17:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B36A198E87;
+	Thu,  6 Jun 2024 17:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="psnUEsSe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rlJ8k98I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EA43AC2E;
-	Thu,  6 Jun 2024 17:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6691726AE3;
+	Thu,  6 Jun 2024 17:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717693537; cv=none; b=DDwviDSluJwGo/NJpjQNFAAvIm3rYMGBL8hGF319VfErBNGI/HtSTbTHgjPLUd+VNusnD1waku1FTaoxFmb7mgPn2c8SIm7C7PJVI0SMLAHi3j77wIgVUujWrjBz+X8ehPbw920YhWMqAaqzYztLGzyp2pHkSgmYEoI3D9+gRKc=
+	t=1717693623; cv=none; b=H5rKFVlUYy3QYPlOegzRa0Rsf/HBWPX6nOW6AhH5OuvQ57dFil26vhNSxxPCXJ0iFnO3LmjSxjNok3mVMvpOP0OX6wT/p3UOFDvzWlN3DFFKwWAYJzNjbW+SzSk7+ZYuC3mjfrQ7gD+FRcs0eUVoWl6wGhqlRDPteodAF1zP0wI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717693537; c=relaxed/simple;
-	bh=12E14gZ2QAVnMNIwYrxVZwM9VywDI+b+6wOtVi7+4Qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PACHe4Eiu2zBpHI086vYyhZVNvg++dvdCiMcD++kCXBFTKJ/5kBkzl1hzGd6b4LWXOmoc93Rl+oDCp5LcbxcBAl9ZaTIVbXrBBU4fgHR79UaIGHnz2a5anSzbBNzBbCwIlZZSECqDymFIRhpBcILGeW4p3fAlvbT8/L+qJ0sTyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=psnUEsSe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0329C32782;
-	Thu,  6 Jun 2024 17:05:32 +0000 (UTC)
+	s=arc-20240116; t=1717693623; c=relaxed/simple;
+	bh=S/8x/45CPvrugAN4JH93A19CpjVt/ALoFE8Jgrvv3zw=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=eGL0tT1L9hxJUDNpIuK18Ty0E2d15cAHS9b4t3jQGq6wCiQO7FqD1HJhHg3jPrNYAec55tfPRfiUqDVyV6oCHfIbwm9AGTVmrf0/5PhBuoYqs8SBuAyvIES7DKIroTXy+UGg1w90lVzfnS3pYqgD0c0JCCDzZCWzzRtzx+rLRqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rlJ8k98I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 40B78C32782;
+	Thu,  6 Jun 2024 17:07:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717693536;
-	bh=12E14gZ2QAVnMNIwYrxVZwM9VywDI+b+6wOtVi7+4Qc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=psnUEsSea+eKkkjw5n7TpdK5/LBJ1+DobMAK6WYLPPxBBfQ+EBq0vBV2RZiU4D7I0
-	 fcoIzRVXWRhVpXPqbryYVLeyDUuVhgBNuKNLES386QFENIiVFrER26zRLtKVolmLuQ
-	 rw5B4f3jLDzwsQhNE570Q+IUuDKD1m61O3LRD0Q5TwQrqyPgxtY63n6FsQhCnmD2yS
-	 MwvQ5RxGe6jq5oEdp/RGBRodueLukB2iS2YIDY8XzkjlPOFzj1OJLETDI6g2ZTIeIY
-	 hAepgIuESGPbYrZOe7w4pI8H+InLbYomIEWsrIAYdLdxOKpVElqruG0/RY5P5iV9Yr
-	 3DXThSnx6yBMg==
-Date: Thu, 6 Jun 2024 18:05:30 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Haylen Chu <heylenay@outlook.com>
-Cc: Inochi Amaoto <inochiama@outlook.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: thermal: sophgo,cv180x-thermal: Add
- Sophgo CV180x thermal
-Message-ID: <20240606-reaction-thirsting-8c22d1b5ab72@spud>
-References: <SG2PR01MB4218013241B3EED779D3BAE8D7F82@SG2PR01MB4218.apcprd01.prod.exchangelabs.com>
- <SG2PR01MB42189977B4172405F5704CC4D7F82@SG2PR01MB4218.apcprd01.prod.exchangelabs.com>
- <IA1PR20MB49531F55C8D7DC5D0050CAF9BBF92@IA1PR20MB4953.namprd20.prod.outlook.com>
- <20240605-tightwad-janitor-82cfceb1469d@spud>
- <SEYPR01MB4221F0E46F600E013974F21BD7FA2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+	s=k20201202; t=1717693623;
+	bh=S/8x/45CPvrugAN4JH93A19CpjVt/ALoFE8Jgrvv3zw=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=rlJ8k98IBDEEkLmUyWpk4Oi2qKz7pBg3NuF+QAfgMkHCny2KYJDj0BfFciuzYayNE
+	 sq5rjuAUyRQl2zT7BDKFbBAl8fZZvy81Ui2cLmULOg3psLTKMxBVGYmlYvoyUfNCyE
+	 hbNNCLhDgM+D8s00xkITlFBasXUujN5sGQTARkuojmBII0ZkuANoWItdwy822h1PPc
+	 8x/jOoR9Y7Yz310h8JigPAxaTHJiFhVZ8UKMBV1DNlVwcjCytxOxmRuq4+b9VUIrcs
+	 clr97Qqv1L9Yovs5BpNHjqXOtiRFHjk+Q1LtR6M+yLQeDMBZ1cIz/oFczttIyyxRc/
+	 4bjvG4Y4rhN8w==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 3653FD20380;
+	Thu,  6 Jun 2024 17:07:03 +0000 (UTC)
+Subject: Re: [GIT PULL] Networking for v6.10-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240606162217.3203895-1-kuba@kernel.org>
+References: <20240606162217.3203895-1-kuba@kernel.org>
+X-PR-Tracked-List-Id: <bpf.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240606162217.3203895-1-kuba@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.10-rc3
+X-PR-Tracked-Commit-Id: 27bc86540899ee793ab2f4c846e745aa0de443f1
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: d30d0e49da71de8df10bf3ff1b3de880653af562
+Message-Id: <171769362321.23076.7425920420760200165.pr-tracker-bot@kernel.org>
+Date: Thu, 06 Jun 2024 17:07:03 +0000
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com, bpf@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="xNgNBLWP/RMLxW5/"
-Content-Disposition: inline
-In-Reply-To: <SEYPR01MB4221F0E46F600E013974F21BD7FA2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
 
+The pull request you sent on Thu,  6 Jun 2024 09:22:17 -0700:
 
---xNgNBLWP/RMLxW5/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.10-rc3
 
-On Thu, Jun 06, 2024 at 01:32:46PM +0000, Haylen Chu wrote:
-> On Wed, Jun 05, 2024 at 06:54:17PM +0100, Conor Dooley wrote:
-> > > > +  accumulation-period:
-> > > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > > +    description: Accumulation period for a sample
-> > > > +    oneOf:
-> > > > +      - const: 0
-> > > > +        description: 512 ticks
-> > > > +      - const: 1
-> > > > +        description: 1024 ticks
-> > > > +      - const: 2
-> > > > +        description: 2048 ticks
-> > > > +      - const: 3
-> > > > +        description: 4096 ticks
-> > > > +    default: 2
-> > > > +
-> > > > +  chop-period:
-> > > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > > +    description: ADC chop period
-> >=20
-> > What's a "chop" and why is either this or the accumulation-period a
-> > fixed property of the hardware? Shouldn't this choice really be up to
-> > the user?
->=20
-> The chop-period is an ADC parameter.
->=20
-> Both accumulation-period and chop-period specify how the sensor
-> measures temperature. Making these parameters up to end users brings
-> extra unnecessary code complexity. Being configurable for each board
-> should be enough and other thermal drivers have been doing things in
-> this way.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/d30d0e49da71de8df10bf3ff1b3de880653af562
 
-Other systems may well have properties for this, but something being
-done in the past doesn't mean it might be the right thing to do now.
-I don't really buy that this is something you set to a fixed value per
-board, but rather the use case of a particular board would factor into
-whether or not you would want to use a shorter or longer accumulation
-period.
+Thank you!
 
-> > > > +    oneOf:
-> > > > +      - const: 0
-> > > > +        description: 128 ticks
-> > > > +      - const: 1
-> > > > +        description: 256 ticks
-> > > > +      - const: 2
-> > > > +        description: 512 ticks
-> > > > +      - const: 3
-> > > > +        description: 1024 ticks
-> >=20
-> > Can we just make the number of ticks the unit here, and above?
-> > Also, a "oneOf: - const" structure is just an enum.
->=20
-> I do not catch your idea. These values directly map to raw register
-> configuration, which simplify the implementation a lot.
-
-It should be trivial to convert them to register values in your driver.
-
-> > > > +    default: 3
-> > > > +
-> > > > +  sample-cycle-us:
-> > > > +    description: Period between samples
-> > > > +    default: 1000000
-> > No constraints?
->=20
-> Sample cycle is more flexible because of hardware designing.
-
-It quite likely has constraints, flexible or not. Is the hardware
-capable of both 1 us and uint32_max us?
-
-Thanks,
-Conor.
-
---xNgNBLWP/RMLxW5/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmHsWgAKCRB4tDGHoIJi
-0vG7AP48IalU1RGZ/KbtaGu/vPghK4eP4Nk9f7t4VJwKdTosBwD9F3Yrkl2G2Ylr
-82IeEwZmoQQrxmHthTZEV+dAIf6BJQk=
-=4835
------END PGP SIGNATURE-----
-
---xNgNBLWP/RMLxW5/--
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
