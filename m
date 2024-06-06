@@ -1,119 +1,131 @@
-Return-Path: <linux-kernel+bounces-204969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAB998FF5AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:09:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A048FF5AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:10:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A392B21693
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:09:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3352288F25
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4279C73451;
-	Thu,  6 Jun 2024 20:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF58C73449;
+	Thu,  6 Jun 2024 20:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kSrpsQnN"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BjPEoNy4"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7396D1A9;
-	Thu,  6 Jun 2024 20:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBFBE6D1A9;
+	Thu,  6 Jun 2024 20:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717704534; cv=none; b=Ee+Q8urXlYNa74SQaHsEOARvooehHn+SBad+oruBcjYvV3neOUAJFIGCua9ZOmksb29yvwG4o3AS248IL6/Z4rdd+vPSAYgkhR11yCxZGmwvN/NSdjoRy7zGCxvrVEriDYgSdIvYUBKkAM1278qH3kaL2U+cbZ2RlIsTKdy3ELs=
+	t=1717704635; cv=none; b=aatqwfwPrU8Ga/bhGiG0lNG25lh2bqPObM23F3FPtt/jK76HvyxS+9VJLwNUHwPFwe4x0kI91znsD6CS2gNAuqfeGGO684l3MgrfJwwF+LSdCfIAU7cRSVqfN+T2+yLu4SnVvqZIFIl50vVuus+3YBQgAnsdAXJuckGQidkTlgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717704534; c=relaxed/simple;
-	bh=OpNMUkwqhQfJZlVUXGLUpEuMt4+BJxuRA0BScM31vzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RNda9Zcsg/5jXNr7u8gLLxlA/8cbYtwWaMVxfmxGQZBSB4/DTYdV1cz87ebY2U+BGjbz3rApnwSrcGs19PF+2e1k5G/xHYsjBTv46g+jdyaVV7BeHew/C7wjxFl0VEha1YPFeH3PLXPp96LlTkEFiehMVWQGGHxIu+s5NMQOlP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kSrpsQnN; arc=none smtp.client-ip=209.85.210.178
+	s=arc-20240116; t=1717704635; c=relaxed/simple;
+	bh=f+0mO3lyWhRWDhdZwJ+G9tdZPcEOT4dALbeWYuTQdWA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NobLgBLdsyWms0LCy6a43WVaQR2CDCHxnJQaITlIx9/aSd7+ZgIBwwhK+SHygxzSKYfNMTaTgnz0NxLcreh06ZSKXA26fdMuJJj/aC+O/bw5kkHeLkra/uwrCZtRd9i9Dopm4vANY0uaHo/GomBr278j7HXBjZEegsJQZW157WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BjPEoNy4; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70249faa853so1157548b3a.3;
-        Thu, 06 Jun 2024 13:08:53 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2eaa80cb573so16231111fa.1;
+        Thu, 06 Jun 2024 13:10:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717704533; x=1718309333; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=S+u3B6Js2/KhMXGfn/CFs7BVqQR1ZpeRVP/jXRmHIMo=;
-        b=kSrpsQnNVEDUcssW7DHfha9LWUHv5VR9njQ+nzIq5EhxnZaybKUgwZAViN4qEYyu1i
-         ET+0DLZvWv3lSHL7P2Qt17dhBoX8JSlN4tI+eQZbBlriYHaSnXu3x79FxvsJTCqng7T0
-         VUtwKxlXp+F0mLOyyNj1wVZ4RW5csz1Kzfe8snPMqLEaQOd4mbA5FieHEO4d8wjWUEt+
-         Jay1AlsJKgbvXDAywr9bYXBGkyD4oUg9zH2SrWbMEu+ZD/WayUq5rn5nXsoUNy9Shjmn
-         BwDtJHvX8hnfHAn4slEYJ88/k1wFBk65t6zsSBNRmNpvwYISb+PRpKoHCxo5w6D/GqQk
-         7kgA==
+        d=gmail.com; s=20230601; t=1717704631; x=1718309431; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hutjf4WwE6IKhYhoDpmSZWk+TUgz4ul3jgLdpMGfmk8=;
+        b=BjPEoNy4cBa8kVaLImqSclFKfQrxUvdxLPAtwk8zCwpEV+OLg59Ra07GSPwnZRLNgE
+         u+8RYXl98neYllmkFByMFe8tE0OrmHaAGEMIhJIcUJAmPT4XFH+svtUhLOjYiymK7uHN
+         5fxM5IYvBWk9Nt9RM47Q88AQoyrPJ8PPqBQSgjMDb8w/cyFJkXL0Gqb21B5DsiR2C3U7
+         QpQX80g9Y0DAa7PDrr2kKySwTtIvUMgedzauf1rbyrnPtBELhCN/+DgoRNTTGaiFdFWr
+         kS3gqvYzwkfAPxp4nxlz0gevEzuS7L64ELZ/0jEDK1rJ5ZtJ/5yYEYdRUdqyJJ7NJNci
+         b8AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717704533; x=1718309333;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S+u3B6Js2/KhMXGfn/CFs7BVqQR1ZpeRVP/jXRmHIMo=;
-        b=e8nvT3C84u+qoKDtcP7PjXWByCPFgMWAEwA2D6nounfVT/3/Gpzcm7H27va+eE8Lae
-         rjjy0ffJhAahC4lM4ogBViIXtIaWvCiNUvnz6SoK9ifWSn7g5DrIdea2EsIDBDQ1HtSz
-         aYvVa2yrYKL2UaAucf/fG5BIl84TxdHkE6anrhTdrFhza4WT6mXMqquq2kiJwVhYFUAN
-         jK4+0bWf6zctIkiPRKbK/9HnHb1P5rmhvV5k+DIFSt3Pqg10ubp+6KSibDcvRiqrR/VP
-         eme+FfBiZExPKP5aSbqwinoC1Lhep/vrvEVtSGBYxivfgVsvWvnkvgBTH9z9yMlnKEOL
-         hERg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7TE0brBN3WzVBHosu0rhrKw2RJ7keREK0mlqZ+7xHISfuLFr8pq0GJgTiqihPtE981qKFxYMXVoGEsHeLshNGEuN3a7UVx+WMEdBDWqoL7m/Fj3NPcfxAB3m0n07WarIHye949+ahmhfl4SYtCdePD9en79ml5GevAnblTZJGW8n54N/RmL8xl+rvSw6YUj45WTRYzdjp7qohdIDHMg==
-X-Gm-Message-State: AOJu0YyFeqFSAXhLpRjmw8pgh8KpSb/hNHDonSRqkI7W+s2//YXJii6w
-	IlzyXfCG7//sJnKXhBCXpVJ2+94eO2iqn1otCu43oyl7i3wOccVTudewQTmN
-X-Google-Smtp-Source: AGHT+IEhFPmS4VDGzAQhEbOE++axuvjBfGKNH+lCuHaFUrp0RLqw8ixQKVrhd54z6BFa06rG4dP7Iw==
-X-Received: by 2002:a05:6a21:819f:b0:1b0:2b96:5f9 with SMTP id adf61e73a8af0-1b2f9bc0fccmr586226637.36.1717704532476;
-        Thu, 06 Jun 2024 13:08:52 -0700 (PDT)
-Received: from localhost ([2804:30c:167a:4100:8407:a7e5:9b87:8081])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd3b303esm1499103b3a.93.2024.06.06.13.08.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 13:08:51 -0700 (PDT)
-Date: Thu, 6 Jun 2024 17:10:04 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
-	Michael.Hennerich@analog.com, jic23@kernel.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	nuno.sa@analog.com, dlechner@baylibre.com,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/6] spi: Add SPI mode bit for MOSI idle state
- configuration
-Message-ID: <ZmIXnBSk7nlviIZ3@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1717539384.git.marcelo.schmitt@analog.com>
- <e1d5d57f7a7481c84f64a764f9898122e278739b.1717539384.git.marcelo.schmitt@analog.com>
- <21d3314355b43ecd6acc42f9dfedec501418332d.camel@gmail.com>
- <67f94cfb-6a33-4390-8032-a942f5f7b944@sirena.org.uk>
+        d=1e100.net; s=20230601; t=1717704631; x=1718309431;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Hutjf4WwE6IKhYhoDpmSZWk+TUgz4ul3jgLdpMGfmk8=;
+        b=Fxy0oP7ASe+wMv9wmaRCjY10jYuI/yz1jYy5D29E2wo/FD4r57H0ssfsvTwlquuf2k
+         2q3KzEpar1E6DkGxEGe4C53rhCcPyEbKvgTS2BHpI91nAAF+tNyhax6SrzUoEpmZK66F
+         UE6SQJs7OLIWNyMYTHwZfkKI1dsWSHoHBWeYMicdJZ7hKrg8UMAxOlh62JOmvtRq9CXn
+         QmwmKCbiDBVjLjaAHjmtd2gB/mm0rtYmeFS/X00/ez+nG8Xi4iet4nkpuS8ytOiZVVfZ
+         k9W/fTiSz8JfLQ6dlxYAfx/CUTrgWXBDGclkcoPn+QTZwjyxMUOon2ySqWU/UEdS6krB
+         YuQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUp512Rey1aog1YdB1C90m1/g4f+DK8FnbI1FmCJHic2DBC1TErb28uOUixQ6ukZOmc0I68//zAK6xoiYctJ7X9jea58n7wtwOH+eMaj++OXugu/n5ZiNZrMzLwf7nPGxAPuUfjqKPNFWY+gRHR
+X-Gm-Message-State: AOJu0YwpVmngoN6lWZDGEyqHian9ncJoxxtiGWKJTJv+7N1LAGnDoNiV
+	jWaRTT6j9gwonVgogHNDIuAebdMsaXnHTHhsCmCCQnSN3eyEKkmkT1KpzqgE9NVy1NdhI8q4MYa
+	UlOYawJRWHFMi5tkIo1mxlDQCjBB/7g==
+X-Google-Smtp-Source: AGHT+IHAsDb5+nsNxizNL0s50nQsiWVLkPf55QznG57cKaBnbaVfMJ/g6/XbUdNeCRsat4LY6v+75fSHMUV0aMYRwfU=
+X-Received: by 2002:a2e:b016:0:b0:2e1:7acb:6c40 with SMTP id
+ 38308e7fff4ca-2eadce3f9a6mr4248981fa.29.1717704630713; Thu, 06 Jun 2024
+ 13:10:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <67f94cfb-6a33-4390-8032-a942f5f7b944@sirena.org.uk>
+References: <20240606114321.30515-1-chris.lu@mediatek.com> <20240606114321.30515-2-chris.lu@mediatek.com>
+In-Reply-To: <20240606114321.30515-2-chris.lu@mediatek.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Thu, 6 Jun 2024 16:10:17 -0400
+Message-ID: <CABBYNZJdY8Oo5rwoJx7rAFPaTRhYRe7p0CEN52hv+7tBEoYCxg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] Bluetooth: net: add hci_iso_hdr function for iso data
+To: Chris Lu <chris.lu@mediatek.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
+	Sean Wang <sean.wang@mediatek.com>, Deren Wu <deren.Wu@mediatek.com>, 
+	Aaron Hou <aaron.hou@mediatek.com>, Steve Lee <steve.lee@mediatek.com>, 
+	linux-bluetooth <linux-bluetooth@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-mediatek <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 06/05, Mark Brown wrote:
-> On Wed, Jun 05, 2024 at 11:14:33AM +0200, Nuno Sá wrote:
-> > On Tue, 2024-06-04 at 19:41 -0300, Marcelo Schmitt wrote:
-> 
-> > > +	/* Check against conflicting MOSI idle configuration */
-> > > +	if ((spi->mode & SPI_MOSI_IDLE_LOW) && (spi->mode &
-> > > SPI_MOSI_IDLE_HIGH)) {
-> > > +		dev_warn(&spi->dev,
-> > > +			 "setup: erratic MOSI idle configuration. Set to idle
-> > > low\n");
-> > > +		spi->mode &= ~SPI_MOSI_IDLE_HIGH;
-> > > +	}
-> 
-> > Should we assume such a thing? IOW, should this be treated as a warning or a
-> > real error? I would assume this should be a configuration error and return -
-> > EINVAL but...
-> 
-> Right, and the error message isn't very clear.
+Hi Chris,
 
-Yeah, the message is not all that clear. I'll think of something better.
-I'm biased towards having this as a warning because I don't see this as a
-feature of usual SPI protocol but not really sure about either ...
+On Thu, Jun 6, 2024 at 7:43=E2=80=AFAM Chris Lu <chris.lu@mediatek.com> wro=
+te:
+>
+> Add function hci_iso_hdr to get skb->data when packet type is ISO.
+>
+> Signed-off-by: Chris Lu <chris.lu@mediatek.com>
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
+>  include/net/bluetooth/hci.h | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
+> index e372a88e8c3f..b9f8f91f6c7f 100644
+> --- a/include/net/bluetooth/hci.h
+> +++ b/include/net/bluetooth/hci.h
+> @@ -2898,6 +2898,11 @@ static inline struct hci_sco_hdr *hci_sco_hdr(cons=
+t struct sk_buff *skb)
+>         return (struct hci_sco_hdr *) skb->data;
+>  }
+>
+> +static inline struct hci_iso_hdr *hci_iso_hdr(const struct sk_buff *skb)
+> +{
+> +       return (struct hci_iso_hdr *) skb->data;
+> +}
+
+We might as well check the skb->len before attempting to cast
+skb->data or better yet use skb_pull_data but I guess that is not
+possible since you don't want to consume the skb?
+
+>  /* Command opcode pack/unpack */
+>  #define hci_opcode_pack(ogf, ocf)      ((__u16) ((ocf & 0x03ff)|(ogf << =
+10)))
+>  #define hci_opcode_ogf(op)             (op >> 10)
+> --
+> 2.18.0
+>
+
+
+--=20
+Luiz Augusto von Dentz
 
