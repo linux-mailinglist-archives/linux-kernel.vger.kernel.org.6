@@ -1,268 +1,182 @@
-Return-Path: <linux-kernel+bounces-204110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63AB78FE451
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:31:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABE408FE45B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEE121F27865
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:31:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EAF71F2789D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA07194ADB;
-	Thu,  6 Jun 2024 10:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA32195391;
+	Thu,  6 Jun 2024 10:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJaitnj1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ij9/iU/U"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45C513E048
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 10:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1CB194C61
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 10:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717669885; cv=none; b=M9l2lzOlvofl3uYFJBD9WhXsEHQgkyeELrBdzE+Rm/vlVxrsaK/H6tGbLPyXq3fOIp9fynY/nbaKn7bWpAgr6vaDHhG8CA6sW/yHzeGS82raZO9yUcf+CPxmWsf6k+EA3sOJPiL4pBWcjbQRbxfCmkVY4gfpIXMwlnI+b8s5tIk=
+	t=1717669926; cv=none; b=ReZK6h41T+Zur31zFwjnFFYgo73mNJfBD7RA7GaLLvhV/HOYKAGyXJ8b14gDc5KSz4RBvg2HGt3iYbHf/AUa/q3ughZ5jMTXb3doAN83k+7ZNNcuI+8xq6RlkLVUSfniBHd7TldgRnKWYDO9PJWj3QsOWd9lOyTxT7FODZ+Dhrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717669885; c=relaxed/simple;
-	bh=GYdrlfDE3VBqGRrQYoVOCv+j+7jIOcaApwD/kEhgQ8k=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=CG3el87qzgBRouKtUQ1uZek1GpKaEzgaIe04YB60HrrzcyVoWDu12E5lMfvsyTNulMDT3zN7yW7oJSdyc7wjFXaBlGduSo3VzEHfKkay1cbB961w7EOULNzyDVE+X2wWHJ59qMucTdD/1ZvxTLBO1kpEW8T8+Zl1GcpeTcSJdUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mJaitnj1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEF89C4AF0D;
-	Thu,  6 Jun 2024 10:31:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717669885;
-	bh=GYdrlfDE3VBqGRrQYoVOCv+j+7jIOcaApwD/kEhgQ8k=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=mJaitnj1dJzmCbP8CRWNLe0a5BbDsL1yNy9y/B0XEpO00si0z5fpIs7E2PEuI2+nW
-	 azhjXmxl+pwfjhs3tsvHg4gAtjqIhz5RkaRhiUQLAuy6Dn23+Cm+3beHEB3B6qn/j5
-	 pb6QDwZpezaugwf5PMnDR7b+oIzKIn8bbwFWuhIhgHUvISHzweGzVp8JqItS6l4xYx
-	 F6U8Gu7jvj35MX2yy3Pwc3Dl6P89ueNK/pZayCBaLhjrlHb/56ZioqyfJXQLXuXS1Y
-	 2owRg4/+mMe6dQD1JzbDof+eMTtO72FiyhSZAE7KI561GO2fmNAzLOlSuBWVrEY8QB
-	 C0Ilnv+Cy2nJQ==
-Message-ID: <4ac4f5cf-7748-4ee4-8d68-8842d8bf1753@kernel.org>
-Date: Thu, 6 Jun 2024 18:31:21 +0800
+	s=arc-20240116; t=1717669926; c=relaxed/simple;
+	bh=n0hrzdYnBksW+DamHG6BupTO1J0YAJybs/VDL2sugrE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uov7lggP/0YGwIvBHiIfFjDEWi42ZJFL98ws2FeWrQZ3w3tfNv89+MeZOz3y9h2K5LMhzXe3UrgwGo9wiXVadHDl+1YmIbSMA8nRwc6R15o7kz8dzcLMPoMAPrsH1h/yDpT8p7tjgeou0RIeXelIBRWV/jnEf0iLIAfAbOSPVns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ij9/iU/U; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2eaad2c673fso10432281fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 03:32:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717669923; x=1718274723; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2yOK4FlQCW+JMOCwnWP72jJymCtr5dD6IgIpna60BCY=;
+        b=Ij9/iU/Uyo6fcf8LONJ7xC09lvYBG8qaaeEz4vBXq2BTPZbQ2/pF3yyQBM4fRbFGfh
+         G2YVI79pdecNzRewdbn8sACLDUSzd7rOjlh6zMMORYPcVD1QveoeZ2kHNSsE+9FRNNbv
+         STcLcfiwZHhGsSEvRFW5mX9h4B8YphLBoSkl78uJsHCRnl9eDwrE59GFqtGknBB9mMy1
+         OSPuYgWTVQS8j2w3KVuq+5S7UftcTUbs1qQVWVzbjEhqRqb3+fKICTURvn7oWD734yHM
+         ft1saZpU5WP1Di0/lkFYY358dTnV3FFIlPJYisX1EUMUoYuw+wFXKiytWhGLxoNHAlTO
+         IcBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717669923; x=1718274723;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2yOK4FlQCW+JMOCwnWP72jJymCtr5dD6IgIpna60BCY=;
+        b=NpWxCR4WmV3TpjTam7fdAjQNQtja5IwZsk+V95ia+klBGjUoh8ajK3LiIDl9sAEjfr
+         FpWyf3UJAQa02/Ia2aG/FNZnOcGTmzdAK1KBampW8ZesvngFped5YSp+YMsfPsBEbWOn
+         fyiKbP43wpCx+80VxyAxcbTYGJIBOzSrxIkikf5bWYyCEs/jNNlDXch4KlBTcMwuAeDk
+         ykWCe/p+gVgqwc6OPfY8kd5ifJh2epxKF1gaIwpTZuv4yYhGDD7w0b0blyYGBCdDagXZ
+         b7kboQxHAfgZR/RvtZ5AUZBI36fLw/gOBlsIwcAcsQevh/gx23z+F0KFiRXaIHAdN+Ub
+         c0Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCUAxkIxY6xmQLmZ065+lzjtVmRd4bWcppEHjYJi7j85uwi9nsn9ALnu4W1hs4JjbgXqghouEJBw/OCjND0L2+jv1E9GlU/wsAlvuoF4
+X-Gm-Message-State: AOJu0Yy3st/Xe9WvMg+QTE9m9ixie11JHOIBpcgezAvQ61VxwoXHpJ2i
+	4D1Y8gGHhwP7MXfs+YMaiAERRNR4lo2KnVi2qj5XwnekyzGM4H7ltvelHJvqFErkob1dcCRtjqv
+	/GKX7IPoD0zEaxu4l09e4bdkIvR+aPRBsCAHP
+X-Google-Smtp-Source: AGHT+IHb92CvWzY0UMLIO3bnYXJ9lrbqmbf5jFApgNniI36TJ0LubnwynaglXsT5ps/3HCuaPh8FvkYR0EYkfnbTRiI=
+X-Received: by 2002:a2e:9643:0:b0:2e1:9c57:195a with SMTP id
+ 38308e7fff4ca-2eac7a5fd4dmr33302121fa.32.1717669922881; Thu, 06 Jun 2024
+ 03:32:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to avoid racing in between read
- and OPU dio write
-From: Chao Yu <chao@kernel.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-References: <20240510023906.281700-1-chao@kernel.org>
- <ZkOMwKAcKmEPQ4Xz@google.com>
- <fc0d8b1f-0c54-4447-8ceb-3722645f71c2@kernel.org>
- <ZkQ9Uo5713Xpr2n7@google.com>
- <efae597c-d334-498b-9050-1a21bf40e21d@kernel.org>
-Content-Language: en-US
-In-Reply-To: <efae597c-d334-498b-9050-1a21bf40e21d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240605175953.2613260-1-joychakr@google.com> <20240605175953.2613260-8-joychakr@google.com>
+ <f98a1d8f-e936-4798-8447-c642e8fe11d5@moroto.mountain> <CAOSNQF0Qj2CnRDWAGM8Y1wyEdgWP04RDJx1TKO-Ge4nUH=qxoQ@mail.gmail.com>
+ <2b979aa4-3a63-4010-9670-294ce7624e18@moroto.mountain>
+In-Reply-To: <2b979aa4-3a63-4010-9670-294ce7624e18@moroto.mountain>
+From: Joy Chakraborty <joychakr@google.com>
+Date: Thu, 6 Jun 2024 16:01:42 +0530
+Message-ID: <CAOSNQF02nUPZ=8re=uyruhxReQSjPoc8L-9yTnWMe4EfJ0-huA@mail.gmail.com>
+Subject: Re: [PATCH v1 07/17] misc: eeprom: at25: Change nvmem reg_read/write
+ return type
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Bingbu Cao <bingbu.cao@intel.com>, Zhihao Cheng <chengzhihao1@huawei.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-hwmon@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-mtd@lists.infradead.org, 
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, manugautam@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/5/15 14:38, Chao Yu wrote:
-> On 2024/5/15 12:42, Jaegeuk Kim wrote:
->> On 05/15, Chao Yu wrote:
->>> On 2024/5/15 0:09, Jaegeuk Kim wrote:
->>>> On 05/10, Chao Yu wrote:
->>>>> If lfs mode is on, buffered read may race w/ OPU dio write as below,
->>>>> it may cause buffered read hits unwritten data unexpectly, and for
->>>>> dio read, the race condition exists as well.
->>>>>
->>>>> Thread A                      Thread B
->>>>> - f2fs_file_write_iter
->>>>>    - f2fs_dio_write_iter
->>>>>     - __iomap_dio_rw
->>>>>      - f2fs_iomap_begin
->>>>>       - f2fs_map_blocks
->>>>>        - __allocate_data_block
->>>>>         - allocated blkaddr #x
->>>>>          - iomap_dio_submit_bio
->>>>>                                 - f2fs_file_read_iter
->>>>>                                  - filemap_read
->>>>>                                   - f2fs_read_data_folio
->>>>>                                    - f2fs_mpage_readpages
->>>>>                                     - f2fs_map_blocks
->>>>>                                      : get blkaddr #x
->>>>>                                     - f2fs_submit_read_bio
->>>>>                                 IRQ
->>>>>                                 - f2fs_read_end_io
->>>>>                                  : read IO on blkaddr #x complete
->>>>> IRQ
->>>>> - iomap_dio_bio_end_io
->>>>>    : direct write IO on blkaddr #x complete
->>>>>
->>>>> This patch introduces a new per-inode i_opu_rwsem lock to avoid
->>>>> such race condition.
->>>>
->>>> Wasn't this supposed to be managed by user-land?
->>>
->>> Actually, the test case is:
->>>
->>> 1. mount w/ lfs mode
->>> 2. touch file;
->>> 3. initialize file w/ 4k zeroed data; fsync;
->>> 4. continue triggering dio write 4k zeroed data to file;
->>> 5. and meanwhile, continue triggering buf/dio 4k read in file,
->>> use md5sum to verify the 4k data;
->>>
->>> It expects data is all zero, however it turned out it's not.
->>
->> Can we check outstanding write bios instead of abusing locks?
+On Thu, Jun 6, 2024 at 3:41=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
+org> wrote:
+>
+> On Thu, Jun 06, 2024 at 03:12:03PM +0530, Joy Chakraborty wrote:
+> > > These functions are used internally and exported to the user through
+> > > sysfs via bin_attr_nvmem_read/write().  For internal users partial re=
+ads
+> > > should be treated as failure.  What are we supposed to do with a part=
+ial
+> > > read?  I don't think anyone has asked for partial reads to be support=
+ed
+> > > from sysfs either except Greg was wondering about it while reading th=
+e
+> > > code.
+> > >
+> > > Currently, a lot of drivers return -EINVAL for partial read/writes bu=
+t
+> > > some return success.  It is a bit messy.  But this patchset doesn't
+> > > really improve anything.  In at24_read() we check if it's going to be=
+ a
+> > > partial read and return -EINVAL.  Below we report a partial read as a
+> > > full read.  It's just a more complicated way of doing exactly what we
+> > > were doing before.
+> >
+> > Currently what drivers return is up to their interpretation of int
+> > return type, there are a few drivers which also return the number of
+> > bytes written/read already like
+> > drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c .
+>
+> Returning non-zero is a bug.  It won't break bin_attr_nvmem_read/write()
+> but it will break other places like nvmem_access_with_keepouts(),
+> __nvmem_cell_read() and nvmem_cell_prepare_write_buffer() where all
+> non-zero returns from nvmem_reg_read() are treated as an error.
+>
 
-Jaegeuk, seems it can solve partial race cases, not all of them.
+Yes, I will resend the patch to fix that.
 
-Do you suggest to use this compromised solution?
+> > The objective of the patch was to handle partial reads and errors at
+> > the nvmem core and instead of leaving it up to each nvmem provider by
+> > providing a better return value to nvmem providers.
+> >
+> > Regarding drivers/misc/eeprom/at25.c which you pointed below, that is
+> > a problem in my code change. I missed that count was modified later on
+> > and should initialize bytes_written to the new value of count, will
+> > fix that when I come up with the new patch.
+> >
+> > I agree that it does not improve anything for a lot of nvmem providers
+> > for example the ones which call into other reg_map_read/write apis
+> > which do not return the number of bytes read/written but it does help
+> > us do better error handling at the nvmem core layer for nvmem
+> > providers who can return the valid number of bytes read/written.
+>
+> If we're going to support partial writes, then it needs to be done all
+> the way.  We need to audit functions like at24_read() and remove the
+> -EINVAL lines.
+>
+>    440          if (off + count > at24->byte_len)
+>    441                  return -EINVAL;
+>
+> It should be:
+>
+>         if (off + count > at24->byte_len)
+>                 count =3D at24->byte_len - off;
+>
+> Some drivers handle writing zero bytes as -EINVAL and some return 0.
+> Those changes could be done before we change the API.
+>
 
-Thanks,
+Sure, we can do it in a phased manner like you suggested in another
+reply by creating new pointers and slowly moving each driver to the
+new pointer and then deprecating the old one.
 
-> 
-> I didn't figure out a way to solve this w/o lock, due to:
-> - write bios can be issued after outstanding write bios check condition,
-> result in the race.
-> - once read() detects that there are outstanding write bios, we need to
-> delay read flow rather than fail it, right? It looks using a lock is more
-> proper here?
-> 
-> Any suggestion?
-> 
-> Thanks,
-> 
->>
->>>
->>> Thanks,
->>>
->>>>
->>>>>
->>>>> Fixes: f847c699cff3 ("f2fs: allow out-place-update for direct IO in LFS mode")
->>>>> Signed-off-by: Chao Yu <chao@kernel.org>
->>>>> ---
->>>>> v2:
->>>>> - fix to cover dio read path w/ i_opu_rwsem as well.
->>>>>    fs/f2fs/f2fs.h  |  1 +
->>>>>    fs/f2fs/file.c  | 28 ++++++++++++++++++++++++++--
->>>>>    fs/f2fs/super.c |  1 +
->>>>>    3 files changed, 28 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>>> index 30058e16a5d0..91cf4b3d6bc6 100644
->>>>> --- a/fs/f2fs/f2fs.h
->>>>> +++ b/fs/f2fs/f2fs.h
->>>>> @@ -847,6 +847,7 @@ struct f2fs_inode_info {
->>>>>         /* avoid racing between foreground op and gc */
->>>>>         struct f2fs_rwsem i_gc_rwsem[2];
->>>>>         struct f2fs_rwsem i_xattr_sem; /* avoid racing between reading and changing EAs */
->>>>> +     struct f2fs_rwsem i_opu_rwsem;  /* avoid racing between buf read and opu dio write */
->>>>>
->>>>>         int i_extra_isize;              /* size of extra space located in i_addr */
->>>>>         kprojid_t i_projid;             /* id for project quota */
->>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>>>> index 72ce1a522fb2..4ec260af321f 100644
->>>>> --- a/fs/f2fs/file.c
->>>>> +++ b/fs/f2fs/file.c
->>>>> @@ -4445,6 +4445,7 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
->>>>>         const loff_t pos = iocb->ki_pos;
->>>>>         const size_t count = iov_iter_count(to);
->>>>>         struct iomap_dio *dio;
->>>>> +     bool do_opu = f2fs_lfs_mode(sbi);
->>>>>         ssize_t ret;
->>>>>
->>>>>         if (count == 0)
->>>>> @@ -4457,8 +4458,14 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
->>>>>                         ret = -EAGAIN;
->>>>>                         goto out;
->>>>>                 }
->>>>> +             if (do_opu && !f2fs_down_read_trylock(&fi->i_opu_rwsem)) {
->>>>> +                     f2fs_up_read(&fi->i_gc_rwsem[READ]);
->>>>> +                     ret = -EAGAIN;
->>>>> +                     goto out;
->>>>> +             }
->>>>>         } else {
->>>>>                 f2fs_down_read(&fi->i_gc_rwsem[READ]);
->>>>> +             f2fs_down_read(&fi->i_opu_rwsem);
->>>>>         }
->>>>>
->>>>>         /*
->>>>> @@ -4477,6 +4484,7 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
->>>>>                 ret = iomap_dio_complete(dio);
->>>>>         }
->>>>>
->>>>> +     f2fs_up_read(&fi->i_opu_rwsem);
->>>>>         f2fs_up_read(&fi->i_gc_rwsem[READ]);
->>>>>
->>>>>         file_accessed(file);
->>>>> @@ -4523,7 +4531,13 @@ static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
->>>>>         if (f2fs_should_use_dio(inode, iocb, to)) {
->>>>>                 ret = f2fs_dio_read_iter(iocb, to);
->>>>>         } else {
->>>>> +             bool do_opu = f2fs_lfs_mode(F2FS_I_SB(inode));
->>>>> +
->>>>> +             if (do_opu)
->>>>> +                     f2fs_down_read(&F2FS_I(inode)->i_opu_rwsem);
->>>>>                 ret = filemap_read(iocb, to, 0);
->>>>> +             if (do_opu)
->>>>> +                     f2fs_up_read(&F2FS_I(inode)->i_opu_rwsem);
->>>>>                 if (ret > 0)
->>>>>                         f2fs_update_iostat(F2FS_I_SB(inode), inode,
->>>>>                                                 APP_BUFFERED_READ_IO, ret);
->>>>> @@ -4748,14 +4762,22 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
->>>>>                         ret = -EAGAIN;
->>>>>                         goto out;
->>>>>                 }
->>>>> +             if (do_opu && !f2fs_down_write_trylock(&fi->i_opu_rwsem)) {
->>>>> +                     f2fs_up_read(&fi->i_gc_rwsem[READ]);
->>>>> +                     f2fs_up_read(&fi->i_gc_rwsem[WRITE]);
->>>>> +                     ret = -EAGAIN;
->>>>> +                     goto out;
->>>>> +             }
->>>>>         } else {
->>>>>                 ret = f2fs_convert_inline_inode(inode);
->>>>>                 if (ret)
->>>>>                         goto out;
->>>>>
->>>>>                 f2fs_down_read(&fi->i_gc_rwsem[WRITE]);
->>>>> -             if (do_opu)
->>>>> +             if (do_opu) {
->>>>>                         f2fs_down_read(&fi->i_gc_rwsem[READ]);
->>>>> +                     f2fs_down_write(&fi->i_opu_rwsem);
->>>>> +             }
->>>>>         }
->>>>>
->>>>>         /*
->>>>> @@ -4779,8 +4801,10 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
->>>>>                 ret = iomap_dio_complete(dio);
->>>>>         }
->>>>>
->>>>> -     if (do_opu)
->>>>> +     if (do_opu) {
->>>>> +             f2fs_up_write(&fi->i_opu_rwsem);
->>>>>                 f2fs_up_read(&fi->i_gc_rwsem[READ]);
->>>>> +     }
->>>>>         f2fs_up_read(&fi->i_gc_rwsem[WRITE]);
->>>>>
->>>>>         if (ret < 0)
->>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>>>> index daf2c4dbe150..b4ed3b094366 100644
->>>>> --- a/fs/f2fs/super.c
->>>>> +++ b/fs/f2fs/super.c
->>>>> @@ -1428,6 +1428,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
->>>>>         init_f2fs_rwsem(&fi->i_gc_rwsem[READ]);
->>>>>         init_f2fs_rwsem(&fi->i_gc_rwsem[WRITE]);
->>>>>         init_f2fs_rwsem(&fi->i_xattr_sem);
->>>>> +     init_f2fs_rwsem(&fi->i_opu_rwsem);
->>>>>
->>>>>         /* Will be used by directory only */
->>>>>         fi->i_dir_level = F2FS_SB(sb)->dir_level;
->>>>> -- 
->>>>> 2.40.1
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> You updated nvmem_access_with_keepouts() to handle negative returns but
+> not zero returns so it could lead to a forever loop.
+>
+
+Yes, that is a possible case. Will rework it.
+
+> regards,
+> dan carpenter
+>
+Thanks
+Joy
 
