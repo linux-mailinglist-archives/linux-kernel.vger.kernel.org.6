@@ -1,221 +1,189 @@
-Return-Path: <linux-kernel+bounces-204034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0DE08FE338
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:42:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 794908FE33C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:43:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55B2F282D9A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:42:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8457B1C25EF3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB3315FCFB;
-	Thu,  6 Jun 2024 09:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E5FN9IWj"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220301527AA
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D38178CC3;
+	Thu,  6 Jun 2024 09:42:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1A51527AA;
+	Thu,  6 Jun 2024 09:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717666947; cv=none; b=F2zqXo3oo8RiUfLVXfUeFOt+YtMLjgtNF6GSgqhk2+iPNmifudNOfpx3jz0Da5gSD4ZzkH1BKz8n4TmQlrIStDHh9OAxdfEiGe4N/r/GUhvByk4LPOBcFrOxCZQvUovhliR69ptc7iRLboOoWXl4DFqQvh5uTiVY7KUyYjSuu9U=
+	t=1717666959; cv=none; b=faXbVG7Q+WipZPAtiKasMEBRo/hyKcvajYJaVGRQi8yiDOMOc74gQjOfEh6AOp8g63SXddIQK2GUXPUxcjV5UbeKyDlZfJcP/nTIo3bZQOItdNqC8UWJcl2q8nJa3JshfcyxEZgZ0hMgs6TLCvVo8ww4gTkBk8t59/B3mkJ4M8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717666947; c=relaxed/simple;
-	bh=Z+b7d3fhc4m4+HH35+El67g/rcBghxOw/7N/brUEw2o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j7IWmwdrcTfeL9BFed2FHUYLZdPk/sBLcpLar5gxJL2lBOO7WIZ27R8DuUYXM5/hmeQztwT9qfl5nJ+XstyMa/FKi9wGcek/tAbfpdiEwsT8+G33sa/FKi4NCy1j7CMPLJF+QBNcUAU+zZCXwx4Rxh/IGvPHQ9mNWRUixll9fIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E5FN9IWj; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-6c9e8c0a15bso547542a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 02:42:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717666944; x=1718271744; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pZxkAQ+JG8hv+VfYtFPLswW4j/3rOvFhx5X0N2PU448=;
-        b=E5FN9IWjmGxVoUD+OWTZamrPnXDvPSavkFVxYovj1GvPqpojMxxGK7EXOEVwM89/sj
-         BA67SJlwRC+KnFKCrGDfFXM7jHjo195s9ppGv0U/UVHyDfTEkid9rldQDO70NAQhQ33B
-         TUKIkU1Oy4v16ytVgyRDllutuHAIkahfrmzcuFWvPWzrGUtjeD52YtvBdmG0usvAFtog
-         5agnUSEhElOqDGCmKSbzHOLAwBWkyI1OwIFrNiTvuqtw3aIfyaPhl3zvgyBN6e6H9cYv
-         g7uAXYDRDtM7vr0mO/rUBZET4HlpzVE5cDs+hU2LRGGDQN6uXa3F/Vpd31FOyyXgWYpP
-         E3mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717666944; x=1718271744;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pZxkAQ+JG8hv+VfYtFPLswW4j/3rOvFhx5X0N2PU448=;
-        b=ed/z87XHugRBL4lSqgJeNpaUNL+tBxUbQqQoWmVso/bRyjJTDwUB5e426fRFUXeyow
-         MF8kWrMKh2jJp+h+uGk9nBc47YvI8dvKltU0/lmCqTxd4FQjPwcoOydIJDcdS+VIe3Cp
-         3exBXqS5OKNDaDfp5lMen6yoV9PS09PoPjnM8VvmjOkIcVTJu61tKqEnM8kyfPkcGTuE
-         aGxzzVNK3z1+cKjgH1Tui/LadfF7sytpg/qNYbXYmQg3kenhfjn27bHxNXJYlcZDk7mI
-         5a2UyO08k9oCRuKv/632KiGhCl1nWyts+vgsCFOBjfUNGp/jhGdhgSAzkt/U8O1TYlxY
-         owaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSNxEheFh/Vt1qee18lGfDpg1xl0e/CXR4NKcizOiPxwkle3Cn2vFcw/+m41OcjizUeBmzd4zUrZ5Z7sBmFv+JQDrEX1bELguWtEwL
-X-Gm-Message-State: AOJu0YwmRqQX3OZkEEpHyQQw+307sEp8qfKB7Msoe0NRjq3J9k+CRvFU
-	EAWgsJd4MMDXG71L7SC/pBDAWR5ymZqdnhHy93vuxL+QFvsVgXJRurSZVdwVWoTR0Y6E/7WJnAp
-	OB3VL4p4iAbNfb/3dn7PSynSbUgnJ3vGvzxet
-X-Google-Smtp-Source: AGHT+IEWwVSwT6aqEkrDe0tLMBSTWElwotQtqstSRStzjfIU8jhDcLm33ZWeSi7tWYVCsMsV4ghgN5gJvMEjynSIzaM=
-X-Received: by 2002:a05:6a20:daa4:b0:1a7:aabc:24ae with SMTP id
- adf61e73a8af0-1b2b6ed7966mr5928466637.18.1717666944034; Thu, 06 Jun 2024
- 02:42:24 -0700 (PDT)
+	s=arc-20240116; t=1717666959; c=relaxed/simple;
+	bh=WfZOLSDl+Ni7nETLkrLA9ZjhM4icZcFITRF4meVlCdc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VD73ViVQBtYR+AMGbvm+EsVDTFnquNQ0bhV9MWck300GYMYHJdTkxuY+em1z9xbbWr58hpEuC7lbgq3TaA7avzOqXZ1NsQ9DMHeZSCFkuT4GOxFesknXaGnSeQoubjjXa+68W84lJev3zCcq3Y2i1zNq23iUZeUQnSDzTQ+zGto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 17757339;
+	Thu,  6 Jun 2024 02:43:01 -0700 (PDT)
+Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB2743F762;
+	Thu,  6 Jun 2024 02:42:34 -0700 (PDT)
+Message-ID: <f30f676e-a1d7-4d6b-94c1-3bdbd1448887@arm.com>
+Date: Thu, 6 Jun 2024 10:42:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605175953.2613260-1-joychakr@google.com> <20240605175953.2613260-8-joychakr@google.com>
- <f98a1d8f-e936-4798-8447-c642e8fe11d5@moroto.mountain>
-In-Reply-To: <f98a1d8f-e936-4798-8447-c642e8fe11d5@moroto.mountain>
-From: Joy Chakraborty <joychakr@google.com>
-Date: Thu, 6 Jun 2024 15:12:03 +0530
-Message-ID: <CAOSNQF0Qj2CnRDWAGM8Y1wyEdgWP04RDJx1TKO-Ge4nUH=qxoQ@mail.gmail.com>
-Subject: Re: [PATCH v1 07/17] misc: eeprom: at25: Change nvmem reg_read/write
- return type
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Bingbu Cao <bingbu.cao@intel.com>, Zhihao Cheng <chengzhihao1@huawei.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-hwmon@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, manugautam@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] perf evlist: Force adding default events only to core
+ PMUs
+To: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@linux.dev>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>,
+ Dominique Martinet <asmadeus@codewreck.org>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240527105842.GB33806@debian-dev>
+ <CAP-5=fXfidyF_e=yMNi26ScgY-VbJPfxN8M7OiK9ELa3qTfXPQ@mail.gmail.com>
+ <ZlY0F_lmB37g10OK@x1>
+ <CAP-5=fWM8LxrcR4Nf+e2jRtJ-jC0Sa-HYPf56pU5GW8ySdX1CQ@mail.gmail.com>
+ <d79b18d7-6930-41fd-8157-eaa55b52df86@arm.com> <Zld3dlJHjFMFG02v@x1>
+ <CAP-5=fXKnQzfwDSr3zVeo6ChJe3+xwpBfyAi0ExmPEdhcde4ww@mail.gmail.com>
+ <CAM9d7chV8YOCj8=SGs0f60UGtf+N2+X=U+Brg246bFoPXBXS+g@mail.gmail.com>
+ <aee9254e-81c1-464a-8a28-f971615baffc@arm.com>
+ <CAP-5=fVynt-8cH6Jc5VyfBLBOqkF+v_7kknHdUPZBM1r3WwhTQ@mail.gmail.com>
+ <ZlkC_Tm6kKIL3Phc@google.com>
+ <CAM9d7ciTbHngfimDNsXS_adR7xg4ZHvSHzVhAzuQ6o-nQ2nsMQ@mail.gmail.com>
+ <CAP-5=fUq6jLCtjPNb0gngtR0cXopG+-mJ-+CnEOAXeG7VShh8A@mail.gmail.com>
+ <CAM9d7cjPe68PMb1hnbypMOQUQOybpisdqH3eTH1B9G-KG5rKXw@mail.gmail.com>
+Content-Language: en-US
+From: James Clark <james.clark@arm.com>
+In-Reply-To: <CAM9d7cjPe68PMb1hnbypMOQUQOybpisdqH3eTH1B9G-KG5rKXw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 6, 2024 at 2:11=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
-org> wrote:
->
-> On Wed, Jun 05, 2024 at 05:59:51PM +0000, Joy Chakraborty wrote:
-> > @@ -195,10 +195,11 @@ static struct attribute *sernum_attrs[] =3D {
-> >  };
-> >  ATTRIBUTE_GROUPS(sernum);
-> >
-> > -static int at25_ee_write(void *priv, unsigned int off, void *val, size=
-_t count)
-> > +static ssize_t at25_ee_write(void *priv, unsigned int off, void *val, =
-size_t count)
-> >  {
-> >       struct at25_data *at25 =3D priv;
-> >       size_t maxsz =3D spi_max_transfer_size(at25->spi);
-> > +     size_t bytes_written =3D count;
-> >       const char *buf =3D val;
-> >       int                     status =3D 0;
-> >       unsigned                buf_size;
-> > @@ -313,7 +314,7 @@ static int at25_ee_write(void *priv, unsigned int o=
-ff, void *val, size_t count)
-> >       mutex_unlock(&at25->lock);
-> >
-> >       kfree(bounce);
-> > -     return status;
-> > +     return status < 0 ? status : bytes_written;
-> >  }
->
-> So the original bug was that rmem_read() is returning positive values
-> on success instead of zero[1].  That started a discussion about partial
-> reads which resulted in changing the API to support partial reads[2].
-> That patchset broke the build.  This patchset is trying to fix the
-> build breakage.
->
-> [1] https://lore.kernel.org/all/20240206042408.224138-1-joychakr@google.c=
-om/
-> [2] https://lore.kernel.org/all/20240510082929.3792559-2-joychakr@google.=
-com/
->
-> The bug in rmem_read() is still not fixed.  That needs to be fixed as
-> a stand alone patch.  We can discuss re-writing the API separately.
->
 
-True, fixing the return type would fix that as well is what I thought
-but maybe yes we need to fix that separately as well.
 
-> These functions are used internally and exported to the user through
-> sysfs via bin_attr_nvmem_read/write().  For internal users partial reads
-> should be treated as failure.  What are we supposed to do with a partial
-> read?  I don't think anyone has asked for partial reads to be supported
-> from sysfs either except Greg was wondering about it while reading the
-> code.
->
-> Currently, a lot of drivers return -EINVAL for partial read/writes but
-> some return success.  It is a bit messy.  But this patchset doesn't
-> really improve anything.  In at24_read() we check if it's going to be a
-> partial read and return -EINVAL.  Below we report a partial read as a
-> full read.  It's just a more complicated way of doing exactly what we
-> were doing before.
+On 06/06/2024 08:09, Namhyung Kim wrote:
+> On Wed, Jun 5, 2024 at 4:02 PM Ian Rogers <irogers@google.com> wrote:
+>>
+>> On Wed, Jun 5, 2024 at 1:29 PM Namhyung Kim <namhyung@kernel.org> wrote:
+>>>
+>>> On Thu, May 30, 2024 at 3:52 PM Namhyung Kim <namhyung@kernel.org> wrote:
+>>>>
+>>>> On Thu, May 30, 2024 at 06:46:08AM -0700, Ian Rogers wrote:
+>>>>> On Thu, May 30, 2024 at 5:48 AM James Clark <james.clark@arm.com> wrote:
+>>>>>>
+>>>>>> On 30/05/2024 06:35, Namhyung Kim wrote:
+>>>>>>> It might not be a perfect solution but it could be a simple one.
+>>>>>>> Ideally I think it'd be nice if the kernel exports more information
+>>>>>>> about the PMUs like sampling and exclude capabilities.
+>>>>>>>> Thanks,
+>>>>>>> Namhyung
+>>>>>>
+>>>>>> That seems like a much better suggestion. Especially with the ever
+>>>>>> expanding retry/fallback mechanism that can never really take into
+>>>>>> account every combination of event attributes that can fail.
+>>>>>
+>>>>> I think this approach can work but we may break PMUs.
+>>>>>
+>>>>> Rather than use `is_core` on `struct pmu` we could have say a
+>>>>> `supports_sampling` and we pass to parse_events an option to exclude
+>>>>> any PMU that doesn't have that flag. Now obviously more than just core
+>>>>> PMUs support sampling. All software PMUs, tracepoints, probes. We have
+>>>>> an imprecise list of these in perf_pmu__is_software. So we can set
+>>>>> supports_sampling for perf_pmu__is_software and is_core.
+>>>>
+>>>> Yep, we can do that if the kernel provides the info.  But before that
+>>>> I think it's practical to skip uncore PMUs and hope other PMUs don't
+>>>> have event aliases clashing with the legacy names. :)
+>>>>
+>>>>>
+>>>>> I think the problem comes for things like the AMD IBS PMUs, intel_bts
+>>>>> and intel_pt. Often these only support sampling but aren't core. There
+>>>>> may be IBM S390 PMUs or other vendor PMUs that are similar. If we can
+>>>>> make a list of all these PMU names then we can use that to set
+>>>>> supports_sampling and not break event parsing for these PMUs.
+>>>>>
+>>>>> The name list sounds somewhat impractical, let's say we lazily compute
+>>>>> the supports_sampling on a PMU. We need the sampling equivalent of
+>>>>> is_event_supported:
+>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/print-events.c?h=perf-tools-next#n242
+>>>>> is_event_supported has had bugs, look at the exclude_guest workaround
+>>>>> for Apple PMUs. It also isn't clear to me how we choose the event
+>>>>> config that we're going to probe to determine whether sampling works.
+>>>>> The perf_event_open may reject the test because of a bad config and
+>>>>> not because sampling isn't supported.
+>>>>>
+>>>>> So I think we can make the approach work if we had either:
+>>>>> 1) a list of PMUs that support sampling,
+>>>>> 2) a reliable "is_sampling_supported" test.
+>>>>>
+>>>>> I'm not sure of the advantages of doing (2) rather than just creating
+>>>>> the set of evsels and ignoring those that fail to open. Ignoring
+>>>>> evsels that fail to open seems more unlikely to break anything as the
+>>>>> user is giving the events/config values for the PMUs they care about.
+>>>>
+>>>> Yep, that's also possible.  I'm ok if you want to go that direction.
+>>>
+>>> Hmm.. I thought about this again.  But it can be a problem if we ignore
+>>> any failures as it can be a real error due to other reason - e.g. not
+>>> supported configuration or other user mistakes.
+>>
+>> Right, we have two not good choices:
+>>
+>> 1) Try to detect whether sampling is supported, but any test doing
+>> this needs to guess at a configuration and we'll need to deflake this
+>> on off platforms like those that don't allow things like exclude
+>> guest.
+> 
+> I believe we don't need to try so hard to detect if sampling is
+> supported or not.  I hope we will eventually add that to the
+> kernel.  Also this is just an additional defense line, it should
+> work without it in most cases.  It'll just protect from a few edge
+> cases like uncore PMUs having events of legacy name.  For
+> other events or PMUs, I think it's ok to fail.
+> 
+> 
+>> 2) Ignore failures, possibly hiding user errors.
+>>
+>> I would prefer for (2) the errors were pr_err rather than pr_debug,
+>> something the user can clean up by getting rid of warned about PMUs.
+>> This will avoid hiding the error, but then on Neoverse cycles will
+>> warn about the arm_dsu PMU's cycles event for exactly Linus' test
+>> case. My understanding is that this is deemed a regression, hence
+>> Arnaldo proposing pr_debug to hide it.
+> 
+> Right, if we use pr_err() then users will complain.  If we use
+> pr_debug() then errors will be hidden silently.
+> 
+> Thanks,
+> Namhyung
 
-Currently what drivers return is up to their interpretation of int
-return type, there are a few drivers which also return the number of
-bytes written/read already like
-drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c .
-The objective of the patch was to handle partial reads and errors at
-the nvmem core and instead of leaving it up to each nvmem provider by
-providing a better return value to nvmem providers.
+I'm not sure if anyone would really complain about warnings for
+attempting to open but not succeeding, as long as the event that they
+really wanted is there. I'm imagining output like this:
 
-Regarding drivers/misc/eeprom/at25.c which you pointed below, that is
-a problem in my code change. I missed that count was modified later on
-and should initialize bytes_written to the new value of count, will
-fix that when I come up with the new patch.
+  $ perf record -e cycles -- ls
 
-I agree that it does not improve anything for a lot of nvmem providers
-for example the ones which call into other reg_map_read/write apis
-which do not return the number of bytes read/written but it does help
-us do better error handling at the nvmem core layer for nvmem
-providers who can return the valid number of bytes read/written.
+  Warning: skipped arm_dsu/cycles/ event(s), recording on
+    armv8_pmuv3_0/cycles/, armv8_pmuv3_1/cycles/
 
-Please let me know if you have any other suggestions on how to handle
-this better.
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.008 MB perf.data (30 samples) ]
 
-Thanks
-Joy
+You only really need to worry when no events can be opened, but
+presumably that was a warning anyway.
 
->
-> drivers/misc/eeprom/at25.c
->    198  static int at25_ee_write(void *priv, unsigned int off, void *val,=
- size_t count)
->    199  {
->    200          struct at25_data *at25 =3D priv;
->    201          size_t maxsz =3D spi_max_transfer_size(at25->spi);
-> New:            size_t bytes_written =3D count;
->                        ^^^^^^^^^^^^^^^^^^^^^
-> This is not the number of bytes written.
->
->    202          const char *buf =3D val;
->    203          int                     status =3D 0;
->    204          unsigned                buf_size;
->    205          u8                      *bounce;
->    206
->    207          if (unlikely(off >=3D at25->chip.byte_len))
->    208                  return -EFBIG;
->    209          if ((off + count) > at25->chip.byte_len)
->    210                  count =3D at25->chip.byte_len - off;
->                         ^^^^^
-> This is.
->
->    211          if (unlikely(!count))
->    212                  return -EINVAL;
->    213
->    214          /* Temp buffer starts with command and address */
->    215          buf_size =3D at25->chip.page_size;
->    216          if (buf_size > io_limit)
->    217                  buf_size =3D io_limit;
->    218          bounce =3D kmalloc(buf_size + at25->addrlen + 1, GFP_KERN=
-EL);
->    219          if (!bounce)
->    220                  return -ENOMEM;
->    221
->
-> regards,
-> dan carpenter
+And in stat mode I wouldn't expect any warnings.
 
