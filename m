@@ -1,137 +1,158 @@
-Return-Path: <linux-kernel+bounces-204360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E85F38FE7B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:27:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADBC48FE7B8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D6BD285776
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:27:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B5CDB23B47
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FA6195FDF;
-	Thu,  6 Jun 2024 13:27:33 +0000 (UTC)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6E4195FD8;
+	Thu,  6 Jun 2024 13:27:41 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56DC193080;
-	Thu,  6 Jun 2024 13:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBFE4193080
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 13:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717680453; cv=none; b=mymNBhuHR8v7g19P537tIJVI+h+36S+ZHb37ITya7C0KsnVloNCIVJ8zUkj+YO/JY0i3koi/+s6pGcu2I8G5vG59hzD19LI3vhHZDyw1TMD4cgrvQnsTqM4Y49hzSS4uc1JXZBdUSpZcyZz7RQHffOBuWchUx7E7nERFm4s8UT4=
+	t=1717680461; cv=none; b=WXKA1pz1JtkBSQkClQoHNmQlCgv2mtTNMnd0iC9EygYnxqNROfYd+VaquxXs1OtuJTl3rd8lTlJm1CAsTwURJEuH0BhTi3ywL/6rmJdI0vIB4DbRuhl8jSgHvQm+dqp793J0Q6TPp4g9clJkGr/7a5lT4veS0fjDG4EPh94Z6HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717680453; c=relaxed/simple;
-	bh=l00UI0JD6AC6Q+cJo4FKqgL09aX1TgDCu9xOfXS9uoM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ouWzw/29qlqrNXIVI0izSUYT0ofkphUiBC7ANjZBWqBzddoSo7lfRAi/mW7I88NJgfn2leEQE5py8YYa4jgFfkbtdgKAcTuliSV5O39W6rpaWgkOXt6VVxEUWU2/2PjCmNkFoSXgbu3zllJIXO/zW0zEcyCqujZi/gbO7KPBbZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57864327f6eso355401a12.1;
-        Thu, 06 Jun 2024 06:27:30 -0700 (PDT)
+	s=arc-20240116; t=1717680461; c=relaxed/simple;
+	bh=9Atm5uS1laj9xcXK2Ptt3GDwXG+HHMt76Ktgp88ag74=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=SpINtvp1H3v9CG5V5zk/WalJ5q2Nn2H6WK45tQ6PBfIY19pkcsOEdLVOXDUlgVzW5Cm13WUAb/6Yx002q/nk7VqzAl/n5BgYfrCzRsjA+X8W3YMzAOcA7Dp+lmdGjww4mX1xtnsKv3Cyak86X6eNwktYkX/aoI08GV/cZzBVOLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-374b5078c77so6821855ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 06:27:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717680449; x=1718285249;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iuF5KD5rCo57TyG5EigT3fDurZ74w1tefad8AjM+COM=;
-        b=j8ikiYHAggBd94p9/sl8QgN9K/8bcidP+7iCCwstYypOJv6K2V5LLu7R8cPCHmbrd6
-         cJ8y0fp/qaqTX9MmKaJEvPqddtF9Km9CqHht98TQYQZ4n9gN5N/619SNf5ScA2ssv1FV
-         +SkSQuZwbp1fYkv9JQi+ALfhD0fsfZ0g10aXrJk7ktgvS7cGXzvp0/2MufC5HBwhjz8l
-         nTTLtLJLWMmrgC3RT5Akjm+5D+jKXJZVOFf8ojuEJgaLvj8R6AG8a4Em0aNqLqjUXfRL
-         oi65iiSLaV6BYqCuxIH4iJWoEfFyZezM7Z/daWgDJvMYFWN39VqxiGIbpoj8wUBgn5te
-         hIcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3ws6I0ZEuxJKPUCUkt8NSTqxdLUcu+5Le4IR/z+3/dWjPfgmOQwUjtUqs5QKO85jNHIh8GSXV+VIlGnA2nQPfoSHw9M6+hUK+frCHMopbyDkXBZS98neqXAO35UvLU7ERR7ef3rRFzlnkqfw7VJYkt/4dfTTXpnUc2r0HZmJxZooNbGo=
-X-Gm-Message-State: AOJu0YxioFA+1P+SM47ZKabRc1EQ9XyRxmrPciTnv6JjDS/6suG5ZPn8
-	0ehsixZKixgAYsPCOU4gOHuA+FRYQRU4LmUFhEPR1DdZYhpHXm5s
-X-Google-Smtp-Source: AGHT+IGkCI92lpY9im28PFCaqOXR0tPwgGp8l0RK7fN48VWfjPlSf/gZ9WuRB7v6N3QBhFb+BZc/Fw==
-X-Received: by 2002:a50:ab02:0:b0:574:ebf4:f786 with SMTP id 4fb4d7f45d1cf-57aa558746amr2338378a12.16.1717680448842;
-        Thu, 06 Jun 2024 06:27:28 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-120.fbsv.net. [2a03:2880:30ff:78::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae0caa84sm1103288a12.29.2024.06.06.06.27.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 06:27:28 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: Laxman Dewangan <ldewangan@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: paulmck@kernel.org,
-	apopple@nvidia.com,
-	Michael van der Westhuizen <rmikey@meta.com>,
-	linux-i2c@vger.kernel.org (open list:I2C SUBSYSTEM HOST DRIVERS),
-	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] [i2c-tegra] Do not mark ACPI devices as irq safe
-Date: Thu,  6 Jun 2024 06:27:07 -0700
-Message-ID: <20240606132708.1610308-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1717680459; x=1718285259;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=abfphsRMbGeQRG/fK5wFoK7weNKwSUdL9kX61t+nOSI=;
+        b=Rsk6JgvgVvPd2AT8P0eRgUvrLXPcRPsTn6lT0koW2GUBozhWWsKyl8WuvPjcYVA+oG
+         BVpqLJYM1FxWZzJuyadOxMabDYpK8WiowzmCW7zJd3xkzKYwCFZDH+Mgp/XXeCcRD/C5
+         TNRzzZeb+ZVHJ2ub2xhI5BPyHG4z3PM1JhpZKEYmgTM94hgWsI9CeK5oVM3/JietfmDZ
+         gmyyRBozluwd/g4WoEC9EcmAf2rORw+Bgb2hiEDPuN1F4Vg4RQI1XvNP7krYYoL0RKOT
+         LCtGHhbqWR3LwA8Y7odRD95kCHTAmJmXlIUdBlVNpmJewpFjhpXFeS8AkDKLTiEofpJr
+         YtGQ==
+X-Gm-Message-State: AOJu0Yz2t2u5GvHOD1UYazVxeUu7qVvHWoxYAzZjKkqWusBdcnA6pWT8
+	wSySluu9JQvPx9Z5oZUKMe9OSuuA4Xj8m2yC0UGWwRkLRk5RNGhRfB+OEVMGCjRJn/MprXcd4iQ
+	RMBFTY6obgS/nPcvKUI/kU9jSmQQAtsZN34Ui0Q9XZYjsFc6wYQhnhp0=
+X-Google-Smtp-Source: AGHT+IEBNTP0cxVElXYMV+aMooYdXtchxHDigEfuk23B8rbMm9jvUm1JYt2puHsNs6vgkXRHIHHr4fMTq9AWaUrlZlSRGFbo7Igp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1909:b0:374:b161:a090 with SMTP id
+ e9e14a558f8ab-374b1ef350dmr3748455ab.2.1717680458857; Thu, 06 Jun 2024
+ 06:27:38 -0700 (PDT)
+Date: Thu, 06 Jun 2024 06:27:38 -0700
+In-Reply-To: <000000000000adb08b061413919e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009693d9061a38a541@google.com>
+Subject: Re: [syzbot] possible deadlock in trie_delete_elem
+From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On ACPI machines, the tegra i2c module encounters an issue due to a
-mutex being called inside a spinlock. This leads to the following bug:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-	BUG: sleeping function called from invalid context at kernel/locking/mutex.c:585
-	in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 1282, name: kssif0010
-	preempt_count: 0, expected: 0
-	RCU nest depth: 0, expected: 0
-	irq event stamp: 0
+***
 
-	Call trace:
-	dump_backtrace+0xf0/0x140
-	show_stack (./arch/x86/include/asm/current.h:49
-		     arch/x86/kernel/dumpstack.c:312)
-	dump_stack_lvl (lib/dump_stack.c:89 lib/dump_stack.c:115)
-	dump_stack (lib/earlycpio.c:61)
-	__might_resched (./arch/x86/include/asm/current.h:49
-			 kernel/sched/core.c:10297)
-	__might_sleep (./include/linux/lockdep.h:231
-			 kernel/sched/core.c:10236)
-	__mutex_lock_common+0x5c/0x2190
-	mutex_lock_nested (kernel/locking/mutex.c:751)
-	acpi_subsys_runtime_resume+0xb8/0x160
-	__rpm_callback+0x1cc/0x4b0
-	rpm_resume+0xa60/0x1078
-	__pm_runtime_resume+0xbc/0x130
-	tegra_i2c_xfer+0x74/0x398
-	__i2c_transfer (./include/trace/events/i2c.h:122 drivers/i2c/i2c-core-base.c:2258)
+Subject: possible deadlock in trie_delete_elem
+Author: norbert.kaminski@infogain.com
 
-The problem arises because during __pm_runtime_resume(), the spinlock
-&dev->power.lock is acquired before rpm_resume() is called. Later,
-rpm_resume() invokes acpi_subsys_runtime_resume(), which relies on
-mutexes, triggering the error.
+#syz test https://linux.googlesource.com/linux/kernel/git/torvalds/linux e3=
+77d803b65ee4130213b3c041fc25fdfec1bd90
 
-To address this issue, devices on ACPI are now marked as not IRQ-safe,
-considering the dependency of acpi_subsys_runtime_resume() on mutexes.
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 2d29bc0f21cc..75fdb8e3abaa 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -2393,12 +2393,21 @@ void __bpf_trace_run(struct bpf_raw_tp_link *link, =
+u64 *args)
+        cant_sleep();
 
-Co-developed-by: Michael van der Westhuizen <rmikey@meta.com>
-Signed-off-by: Michael van der Westhuizen <rmikey@meta.com>
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- drivers/i2c/busses/i2c-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+        // return if instrumentation disabled, see: bpf_disable_instrumenta=
+tion
+-       if (unlikely(__this_cpu_read(bpf_prog_active))) {
++       int instrumentation =3D unlikely(__this_cpu_read(bpf_prog_active));
++       if (instrumentation) {
++               printk("SKIP FOR INSTRUMENTATION: %s > %s > %p /%i =3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D\n",
++                               prog->aux->name,
++                               link->btp->tp->name, prog, instrumentation)=
+;
+                bpf_prog_inc_misses_counter(prog);
+                return;
+        }
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 85b31edc558d..6d783ecc3431 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1804,7 +1804,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	 * VI I2C device shouldn't be marked as IRQ-safe because VI I2C won't
- 	 * be used for atomic transfers.
- 	 */
--	if (!IS_VI(i2c_dev))
-+	if (!IS_VI(i2c_dev) && !ACPI_HANDLE(i2c_dev->dev))
- 		pm_runtime_irq_safe(i2c_dev->dev);
- 
- 	pm_runtime_enable(i2c_dev->dev);
--- 
-2.43.0
+-       if (unlikely(this_cpu_inc_return(*(prog->active)) !=3D 1)) {
++       int active =3D this_cpu_inc_return(*(prog->active));
++       // printk("%s > %s > %p /%i\n", prog->aux->name, link->btp->tp->nam=
+e, prog, active);
++       if (active !=3D 1) {
++               printk("SKIP FOR ACTIVE: %s > %s > %p /%i =3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D\n",
++                               prog->aux->name,
++                               link->btp->tp->name, prog, active);
+                bpf_prog_inc_misses_counter(prog);
+                goto out;
+        }
+diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+index 8d1507dd0724..e756262d8df7 100644
+--- a/kernel/tracepoint.c
++++ b/kernel/tracepoint.c
+@@ -168,12 +169,21 @@ static inline void release_probes(struct tracepoint_f=
+unc *old)
+ static void debug_print_probes(struct tracepoint_func *funcs)
+ {
+        int i;
++       struct bpf_raw_tp_link *link;
 
+        if (!tracepoint_debug || !funcs)
+                return;
+
+-       for (i =3D 0; funcs[i].func; i++)
+-               printk(KERN_DEBUG "Probe %d : %p\n", i, funcs[i].func);
++       for (i =3D 0; funcs[i].func; i++) {
++               link =3D funcs[i].data;
++               int active =3D this_cpu_read(*(link->link.prog->active));
++               printk("Probe %d : %p / %p: %s/%d / %i\n", i,
++                               funcs[i].func,
++                               link,
++                               link->link.prog->aux->name,
++                               active,
++                               funcs[i].prio);
++       }
+ }
+
+ static struct tracepoint_func *
+@@ -298,6 +308,8 @@ static enum tp_func_state nr_func_state(const struct tr=
+acepoint_func *tp_funcs)
+ {
+        if (!tp_funcs)
+                return TP_FUNC_0;
++       if (!tp_funcs[0].func)
++               return TP_FUNC_0;
+        if (!tp_funcs[1].func)
+                return TP_FUNC_1;
+        if (!tp_funcs[2].func)
+The information in this email is confidential and may be legally privileged=
+. It is intended solely for the addressee and access to it by anyone else i=
+s unauthorized. If you are not the intended recipient, any disclosure, copy=
+ing, distribution or any action taken or omitted to be taken based on it, i=
+s strictly prohibited and may be unlawful.
 
