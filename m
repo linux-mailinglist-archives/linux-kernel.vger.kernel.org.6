@@ -1,138 +1,97 @@
-Return-Path: <linux-kernel+bounces-203590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F29C8FDD8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:37:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5011D8FDD8A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 608A4B20F05
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:37:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62BCA1C22AA1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F25F1EEF7;
-	Thu,  6 Jun 2024 03:37:00 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9DB01E87F;
+	Thu,  6 Jun 2024 03:36:38 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723BA29415;
-	Thu,  6 Jun 2024 03:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5723C17;
+	Thu,  6 Jun 2024 03:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717645020; cv=none; b=oqYv+eJPKCjxzmVDNwC79CfuDmPs/WxN1QfFuBIGs3tENGuXniD3Kt+RAFJ3/3o7HIeoaouJ4YIk4wfaKjDXyLpr6D6UofD0gO+PcXFjHOcObn1updL8qJhrQJxX6BMXyYNcVca1a0X8d4RbJ8qpM2POyNM3Y3HKLMFfq6ULFUs=
+	t=1717644998; cv=none; b=JYiSp0s/j52lVSO3tijGV64iN+Y7fRo7p1tkl29ST3HjpbPaNWSshYxjNvcRzbW/HV4k3pbOXUrrxoOjielDzJrOYX8MAAc74dWVZ1bc5ieh/YTrqUX/+KuD3Y/AOLjCSX7m2jfvsHKlrRkEGXKUfc/iIGMqw1162uNnY67W6hQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717645020; c=relaxed/simple;
-	bh=rqAjxpHR7KTlsvFbPc+x691e3zDeF99vZooQi2w0+Ss=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=VmOsd0B9E/x5AFQ2XfO31jqNAOlqTQ/oUUjG2Csd0SpEfdnqPKJygStUWScNYz5SjNN68HDRbIluKXv0Ph4iVHFD83RumUyNnA32rVl0REsktnoX4sLfJ/FkCbJ2sDwCsz3EVmCoi+N03mOtH10IbWd8MMBnUShiiWu/tOsgg7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vvqkf65WMz4f3lgN;
-	Thu,  6 Jun 2024 11:36:42 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 07B301A016E;
-	Thu,  6 Jun 2024 11:36:54 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP3 (Coremail) with SMTP id _Ch0CgAn6J_VLmFmIDPrOQ--.6770S2;
-	Thu, 06 Jun 2024 11:36:53 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: willy@infradead.org,
-	akpm@linux-foundation.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] writeback: factor out balance_wb_limits to remove repeated code
-Date: Thu,  6 Jun 2024 11:35:47 +0800
-Message-Id: <20240606033547.344376-1-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
+	s=arc-20240116; t=1717644998; c=relaxed/simple;
+	bh=IIm28iCsVSosHwNqrlq/T7wI9/fOZaw8gYMnkfAx/eE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=A3WA50xJzvwTL9uxve++0xt7CxzNbCj6dbHUMMjpsckpdLujqUfsTcWi4Z2KWDPqwmdqKEuBD6dY7fvOfiMCikTh+TMKbBLFTNbOotuclWcOr3ddViH/YNhLdlxgyWAnE5qBEfoRD08uc48JOM/YdfjKLiPdyYMXHHsvC5bEh20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4VvqhL2vflz1HDBh;
+	Thu,  6 Jun 2024 11:34:42 +0800 (CST)
+Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8B60B1402D0;
+	Thu,  6 Jun 2024 11:36:30 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 6 Jun 2024 11:36:30 +0800
+Message-ID: <61b256c7-4989-44ec-83db-f34a1bd4be2d@huawei.com>
+Date: Thu, 6 Jun 2024 11:36:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgAn6J_VLmFmIDPrOQ--.6770S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WFyUKrW7Ww1ktrWxWFW3ZFb_yoW8Cw4kpF
-	Z2ya10yr4kJF1Sqa9IyFZrurWaqrsayFWfJ348Gw4ftF4fKr17KFyavry0vF17ArnrGrW5
-	Zr4DtF97Gw1rCFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCj
-	c4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4
-	CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1x
-	MIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6r
-	W3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUv
-	cSsGvfC2KfnxnUUI43ZEXa7IU1wL05UUUUU==
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build warning after merge of the mm tree
+Content-Language: en-US
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton
+	<akpm@linux-foundation.org>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+References: <20240606131954.30d0be64@canb.auug.org.au>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <20240606131954.30d0be64@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemm100001.china.huawei.com (7.185.36.93)
 
-Factor out balance_wb_limits to remove repeated code
 
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
----
- mm/page-writeback.c | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index bf050abd9053..f611272d3c5b 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -1783,6 +1783,21 @@ static inline void wb_dirty_exceeded(struct dirty_throttle_control *dtc,
- 		((dtc->dirty > dtc->thresh) || strictlimit);
- }
- 
-+/*
-+ * The limits fileds dirty_exceeded and pos_ratio won't be updated if wb is
-+ * in freerun state. Please don't use these invalid fileds in freerun case.
-+ */
-+static void balance_wb_limits(struct dirty_throttle_control *dtc,
-+			      bool strictlimit)
-+{
-+	wb_dirty_freerun(dtc, strictlimit);
-+	if (dtc->freerun)
-+		return;
-+
-+	wb_dirty_exceeded(dtc, strictlimit);
-+	wb_position_ratio(dtc);
-+}
-+
- /*
-  * balance_dirty_pages() must be called by processes which are generating dirty
-  * data.  It looks at the number of dirty pages in the machine and will force
-@@ -1869,12 +1884,9 @@ static int balance_dirty_pages(struct bdi_writeback *wb,
- 		 * Calculate global domain's pos_ratio and select the
- 		 * global dtc by default.
- 		 */
--		wb_dirty_freerun(gdtc, strictlimit);
-+		balance_wb_limits(gdtc, strictlimit);
- 		if (gdtc->freerun)
- 			goto free_running;
--
--		wb_dirty_exceeded(gdtc, strictlimit);
--		wb_position_ratio(gdtc);
- 		sdtc = gdtc;
- 
- 		if (mdtc) {
-@@ -1884,12 +1896,9 @@ static int balance_dirty_pages(struct bdi_writeback *wb,
- 			 * both global and memcg domains.  Choose the one
- 			 * w/ lower pos_ratio.
- 			 */
--			wb_dirty_freerun(mdtc, strictlimit);
-+			balance_wb_limits(mdtc, strictlimit);
- 			if (mdtc->freerun)
- 				goto free_running;
--
--			wb_dirty_exceeded(mdtc, strictlimit);
--			wb_position_ratio(mdtc);
- 			if (mdtc->pos_ratio < gdtc->pos_ratio)
- 				sdtc = mdtc;
- 		}
--- 
-2.30.0
+On 2024/6/6 11:19, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the mm tree, today's linux-next build (htmldocs) produced
+> this warning:
+> 
+> Documentation/core-api/pin_user_pages.rst:200: WARNING: Title underline too short.
+> 
+> folio_maybe_dma_pinned(): the whole point of pinning
+> ===================================================
 
+Oh, after page->folio, we need an extra "=", should I send a fix?
+
+diff --git a/Documentation/core-api/pin_user_pages.rst 
+b/Documentation/core-api/pin_user_pages.rst
+index 532ba8e8381b..57b17978e156 100644
+--- a/Documentation/core-api/pin_user_pages.rst
++++ b/Documentation/core-api/pin_user_pages.rst
+@@ -197,7 +197,7 @@ INCORRECT (uses FOLL_GET calls):
+      put_page()
+
+  folio_maybe_dma_pinned(): the whole point of pinning
+-===================================================
++====================================================
+
+
+> 
+> Introduced by commit
+> 
+>    b3d997231b4d ("mm: remove page_maybe_dma_pinned()")
+> 
 
