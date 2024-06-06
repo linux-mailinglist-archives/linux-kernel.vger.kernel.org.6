@@ -1,181 +1,113 @@
-Return-Path: <linux-kernel+bounces-204985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE7A68FF5DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:32:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E85E8FF5E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32097B22563
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:32:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70E31B24B34
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43EE6F06E;
-	Thu,  6 Jun 2024 20:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FAE0197A8C;
+	Thu,  6 Jun 2024 20:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NXCfLILu"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="TlZaNFpR"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE903FB87
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 20:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F192B139D1B;
+	Thu,  6 Jun 2024 20:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717705951; cv=none; b=t2U4gXd47NAg+TtM03XZJ/3wxfy8AU7zA3NawzOCFZWCD1c05H0XizrYqLaPmDFmvJV99h56gsws7fYHgxI5QzlZ6fQl90jin4Rn2E9HtAUmhp2VXHlnO1483wIXgQaqm92ZNfSqxiGcB5TiFl+EWYoWjwDaEK12+MKJ7d+GfCg=
+	t=1717705992; cv=none; b=ToKHnWpbKSvobeNV8OJnzSfdDSLbaBUFIhCSUsGYe+yLlyOONKt4hIT+k9ydlELqOROl4SQpbzy5C8ZccF7upAdykKIc17FMS62tr/vzHZWtd8OzDBBUjr5Jh1qBAoG1nqvu1XbnLMH4HOPjODkOdHDZjTh4wFrjYyW+5qr6hC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717705951; c=relaxed/simple;
-	bh=rm6hjsWdlJ1zBWSNJIawZTvoxBgfoKpXcHykuoeHNHg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TUrfsSM34zH3LcGq+HnniR+HYPQV+zr1qId7wtYxyVSMi4NPzr+VGJc70xekIbPZi0R6JrASRMxjmR16cpMvTm+/o0lE+IIxVrNub3faIPDWX64hO2IYefiHdGgSUwG3rtW4JyfRcUivUStRoLg45o4EI/fMZdpULrdHRgl+C2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NXCfLILu; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2eaad2c673fso20519931fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 13:32:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717705947; x=1718310747; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5YHCiTEkfpHoydmGC9AHr3146/m0kW0vBON+xrTSWjI=;
-        b=NXCfLILuBkYkCrjb+kFSWqN8tr6oItF+BL6jfAO8YwvdKFi/lsnSW3vgaqI6S8eN8v
-         ZK5rlUOINr6rEu0l2Pebz5wQyq5K01pfocMmy8c482fvZuGxowWy57FJVASMpNbrzPMx
-         8RN7l449OH82JWRIGqbJHFzBCuLuJcd+05qKt5GXdjT/s1usrkMrOMx0nqSFJIQguuGH
-         v8dJsVXEFSx5R8kPUHKaHo4QRTppl5zwLNVY3IOVmkmquxl+0JGku/jvPf1WAldWs4be
-         MxiHDKj1KVTvq4+4totH1mcG5Fcd1LyFqdpVRS+j/69MG5PegqgCQqjIoxMnL8zLMCMy
-         c7UQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717705947; x=1718310747;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5YHCiTEkfpHoydmGC9AHr3146/m0kW0vBON+xrTSWjI=;
-        b=Ghagz+4Wj39QOfl0918lsvvBdHy144MDgNKk1+FdMwNayCsIHm+aZ9JINsYE7Ibc2u
-         TLXCoqAFFb4czIfOZ3Kamnj588atSZ8pThcJD5MIdges+x35+4g9AAIFbhuAb9onTaeG
-         rFBFay1SymcopwC8HSNbR16jiR4MpQPHgtFgBdwjzfoyd2hvJvFv29K4+d3FGIkMY8ns
-         mnwY189UTUBgWGTreUOhgSYl2JxzubrEQj4W9+2Y7tb443Or1L4Wgrbf9wZrYO9GK7EJ
-         suZeFE7Cmv7SWnr6BwFYx3tjDxe67rkas/NtoYDY38Jy7gjrog6VDp+Mv0C1Yoi907IS
-         HjVw==
-X-Forwarded-Encrypted: i=1; AJvYcCVu0NsMmIf5H9Ln6jYINnQICHe83ZxShmr9pY9hImfzJKw6eeii04xLaH34u5yxWH/fBhaQbD+DkusfrENLhjscW3t6jz+ykC99iluV
-X-Gm-Message-State: AOJu0YwB2BzS7np+Cr8pUlj4UH0eJLG8EyaoXreB+CrbFz3Sy8Aq/wyG
-	L8Za2ClBny3V/bl9es6L23+EyF4ZsGsQ73LmamJ9dQzTgmKpCFE+8I7zKOWyGYsqhNsEmhFH4JG
-	4e6oLF1XrFHwdCkHHKQfGM2/rUep74zsJsp1W768wJeEeEROl50qC87w=
-X-Google-Smtp-Source: AGHT+IGjOeKVtKGgR13bQg8qW5Cv42mcnsQtbopPin8/YkTWpckfS9UiNf1pM2EeF2gbFbauRTceMriznw5KI/f+zOc=
-X-Received: by 2002:a2e:9207:0:b0:2e1:9c57:195a with SMTP id
- 38308e7fff4ca-2eadce85f26mr5383061fa.32.1717705947131; Thu, 06 Jun 2024
- 13:32:27 -0700 (PDT)
+	s=arc-20240116; t=1717705992; c=relaxed/simple;
+	bh=O/fIdSuE87jvT+rTXQIXkzqnruiLQx3ImxqfaRKWYqk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LmYzul+2zDAZXcAY9EnzhhmolRCPgIkBxFx/nXfXdRu06hwcS2+RxJGc39PAHExZ9/FgFvA54IkCu4S0Fm4Yei1sDQlDmVaewiscZrRyuzh78PzKoPm+KOylujqtTqSI4WOCQHqAZJqROQLKyWKOVVadZNf3hpj+yvs2pteIjMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=TlZaNFpR; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-To:Resent-Cc:
+	Resent-Message-ID:In-Reply-To:References;
+	bh=ncgrJTEhoRR3zBhbPk7eARi4Oy+hPL2CM+fE1z0zHPc=; t=1717705989; x=1718915589; 
+	b=TlZaNFpRMd/vNXG8faBshzjdXCDA/mHoycrg00Girak2kcS1P2t8SGUiNS2krxh7+FVjxyi9bvG
+	8r24vcYr8UfxaXcPfC7NSjBUHMy7W/yq3PrVoeujAo6JEZqx1cYNOjNZFadBYGKhe/Srr5wHPL+bs
+	77sputfYj7ZXks3PpTbF75JjwB50NzOXN/0S3kOjTAvefvbEplUMeyKMA8TrVijt1uSW1fWn4UGwH
+	e/tiRsP/poUpEHIg3s1Q6qA3rexHdLq3bJk5U77z4r08dWq1T6dIL0AiLEFLmlHhcD+u3DixaNfCr
+	lp49G3RbPO0QYmVAEidELqBRMAMlFQ/VRE6w==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1sFJn8-0000000HDhM-2x41;
+	Thu, 06 Jun 2024 22:32:59 +0200
+From: Johannes Berg <johannes@sipsolutions.net>
+To: linux-kernel@vger.kernel.org
+Cc: linux-trace-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org
+Subject: [PATCH v3 0/4] tracing: improve symbolic printing
+Date: Thu,  6 Jun 2024 22:32:00 +0200
+Message-ID: <20240606203255.49433-6-johannes@sipsolutions.net>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606184818.1566920-1-yosryahmed@google.com> <84d78362-e75c-40c8-b6c2-56d5d5292aa7@redhat.com>
-In-Reply-To: <84d78362-e75c-40c8-b6c2-56d5d5292aa7@redhat.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Thu, 6 Jun 2024 13:31:48 -0700
-Message-ID: <CAJD7tkZH9C21nx75W9Erun=oUvmad5ujmDyGYWRRHEwPCCizUw@mail.gmail.com>
-Subject: Re: [PATCH] mm: zswap: add VM_BUG_ON() if large folio swapin is attempted
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Barry Song <21cnbao@gmail.com>, 
-	Chris Li <chrisl@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 6, 2024 at 1:22=E2=80=AFPM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 06.06.24 20:48, Yosry Ahmed wrote:
-> > With ongoing work to support large folio swapin, it is important to mak=
-e
-> > sure we do not pass large folios to zswap_load() without implementing
-> > proper support.
-> >
-> > For example, if a swapin fault observes that contiguous PTEs are
-> > pointing to contiguous swap entries and tries to swap them in as a larg=
-e
-> > folio, swap_read_folio() will pass in a large folio to zswap_load(), bu=
-t
-> > zswap_load() will only effectively load the first page in the folio. If
-> > the first page is not in zswap, the folio will be read from disk, even
-> > though other pages may be in zswap.
-> >
-> > In both cases, this will lead to silent data corruption.
-> >
-> > Proper large folio swapin support needs to go into zswap before zswap
-> > can be enabled in a system that supports large folio swapin.
-> >
-> > Looking at callers of swap_read_folio(), it seems like they are either
-> > allocated from __read_swap_cache_async() or do_swap_page() in the
-> > SWP_SYNCHRONOUS_IO path. Both of which allocate order-0 folios, so we
-> > are fine for now.
-> >
-> > Add a VM_BUG_ON() in zswap_load() to make sure that we detect changes i=
-n
-> > the order of those allocations without proper handling of zswap.
-> >
-> > Alternatively, swap_read_folio() (or its callers) can be updated to hav=
-e
-> > a fallback mechanism that splits large folios or reads subpages
-> > separately. Similar logic may be needed anyway in case part of a large
-> > folio is already in the swapcache and the rest of it is swapped out.
-> >
-> > Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
-> > ---
-> >
-> > Sorry for the long CC list, I just found myself repeatedly looking at
-> > new series that add swap support for mTHPs / large folios, making sure
-> > they do not break with zswap or make incorrect assumptions. This debug
-> > check should give us some peace of mind. Hopefully this patch will also
-> > raise awareness among people who are working on this.
-> >
-> > ---
-> >   mm/zswap.c | 3 +++
-> >   1 file changed, 3 insertions(+)
-> >
-> > diff --git a/mm/zswap.c b/mm/zswap.c
-> > index b9b35ef86d9be..6007252429bb2 100644
-> > --- a/mm/zswap.c
-> > +++ b/mm/zswap.c
-> > @@ -1577,6 +1577,9 @@ bool zswap_load(struct folio *folio)
-> >       if (!entry)
-> >               return false;
-> >
-> > +     /* Zswap loads do not handle large folio swapins correctly yet */
-> > +     VM_BUG_ON(folio_test_large(folio));
-> > +
->
-> There is no way we could have a WARN_ON_ONCE() and recover, right?
+Completely forgot about this again ... here's another respin.
 
-Not without making more fundamental changes to the surrounding swap
-code. Currently zswap_load() returns either true (folio was loaded
-from zswap) or false (folio is not in zswap).
+v2 was:
+ - rebased on 6.9-rc1
+ - always search for __print_sym() and get rid of the DYNPRINT flag
+   and associated code; I think ideally we'll just remove the older
+   __print_symbolic() entirely
+ - use ':' as the separator instead of "//" since that makes searching
+   for it much easier and it's still not a valid char in an identifier
+ - fix RCU
 
-To handle this correctly zswap_load() would need to tell
-swap_read_folio() which subpages are in zswap and have been loaded,
-and then swap_read_folio() would need to read the remaining subpages
-from disk. This of course assumes that the caller of swap_read_folio()
-made sure that the entire folio is swapped out and protected against
-races with other swapins.
+v3:
+ - fix #undef issues
+ - fix drop_monitor default
+ - rebase on linux-trace/for-next (there were no conflicts)
+ - move net patches to 3/4
+ - clarify symbol name matching logic (and remove ")" from it)
 
-Also, because swap_read_folio() cannot split the folio itself, other
-swap_read_folio_*() functions that are called from it should be
-updated to handle swapping in tail subpages, which may be questionable
-in its own right.
+To recap, it's annoying to have
 
-An alternative would be that zswap_load() (or a separate interface)
-could tell swap_read_folio() that the folio is partially in zswap,
-then we can just bail and tell the caller that it cannot read the
-large folio and that it should be split.
+ irq/65-iwlwifi:-401   [000]    22.790000: kfree_skb:  ...  reason: 0x20000
 
-There may be other options as well, but the bottom line is that it is
-possible, but probably not something that we want to do right now.
+and much nicer to see
 
-A stronger protection method would be to introduce a config option or
-boot parameter for large folio swapin, and then make CONFIG_ZSWAP
-depend on it being disabled, or have zswap check it at boot and refuse
-to be enabled if it is on.
+ irq/65-iwlwifi:-401   [000]    22.790000: kfree_skb:  ...  reason: RX_DROP_MONITOR
+
+but this doesn't work now because __print_symbolic() can only
+deal with a hard-coded list (which is actually really big.)
+
+So here's __print_sym() which doesn't build the list into the
+kernel image, but creates it at runtime. For userspace, it
+will look the same as __print_symbolic() (it literally shows
+__print_symbolic() to userspace) so no changes are needed,
+but the actual list of values exposed to userspace in there
+is built dynamically. For SKB drop reasons, this then has all
+the reasons known when userspace queries the trace format.
+
+I guess patch 3/4 should go through net-next, so not sure
+how to handle this patch series. Or perhaps, as this will not
+cause conflicts, in fact I've been rebasing it for a long time,
+go through tracing anyway with an Ack from netdev? But I can
+also just wait for the trace patch(es) to land and resubmit the
+net patches after. Assuming this looks good at all :-)
+
+Thanks,
+johannes
+
+%
 
