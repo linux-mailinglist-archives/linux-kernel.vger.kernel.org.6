@@ -1,73 +1,88 @@
-Return-Path: <linux-kernel+bounces-203716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE288FDF69
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:20:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6558D8FDF77
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5D412858D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:20:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3875C1C24839
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B4913B5B9;
-	Thu,  6 Jun 2024 07:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30A113C684;
+	Thu,  6 Jun 2024 07:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BJUx2KUE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HHWp8mxF"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D939E33F7;
-	Thu,  6 Jun 2024 07:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7DD13AA47
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 07:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717658394; cv=none; b=O4QM7kGNi8FKZtgUIRP01vf1kNJhb0/AglWHS+6qgMOq9zJE0o0MvsZaLnEY5SFFrU2Jp1vRqDg9oEKVjPu58XXAhn92dU3qOwhrp/TO+N/zcMBmU/5SAp/9VL3kyyO0/EoQPjwjxUjaZQxBzvHarABaUmekYjnAny0gtjSAHCM=
+	t=1717658437; cv=none; b=PqNeQRiP5tB5TaNplq8q+HdxZpgsph4rBvJsGEWLzkSy+xDhUSuUmzgSe976o3jCwxIFz1RJRf94J8cShEIB8y7SdbVDjMXHxAtNJ9zp7R2kb9ox8y5biex12pKY2vkXygbJAHUR2dm2o6kQoOYMTaBvrafvSrMYEkJ8lxPNWtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717658394; c=relaxed/simple;
-	bh=a7uPeHNSogsl6puPap/Zhg4IvhvtmmxpELsNKC9X/44=;
+	s=arc-20240116; t=1717658437; c=relaxed/simple;
+	bh=E1UEL5t44rjWMroslFhKMMvwn7TQfKD6dRQVyrgGjGA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rCAAwSpfj2HlulloiYcSWPh7N+deMWhpS+7wW1QH009f9Y36Ekh1gu0pbuzuiRXmdT/Msi/dbBUPBgjtDixfNwW7JplfkR8YVZV1n0CkWBH15iKgBfVz3bW8t1yZb+ZavwiyzxeX87UsuvnJv/xo0YRSR8mu/iV8y4jLcFx0X50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BJUx2KUE; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717658393; x=1749194393;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=a7uPeHNSogsl6puPap/Zhg4IvhvtmmxpELsNKC9X/44=;
-  b=BJUx2KUErrq7EIUQ6LY8sv1RrwXqudYkZ4T7eiJwfkCaLRH75ysNs+5x
-   z2p3W12KPKzsk8TRxxiXTX9m6F2X3/aWW2/VG8QDbMQaGaA2Yc5m5Gb2r
-   gdn2V2jSUPpYfIo6q/uqqxk6xI360xp1RbBS+9H/PI74S7awMAxZgD2WH
-   Navvbq9sauQ0m/8Wjypr4nXvdBHX99KXEdANv5ZM3HGpEpkGfqR6ORlBa
-   Fu/3D3GmubqwURFV+x0z7r6RWZjeTZwQz7NeG1fS8olIaUscs1Sx9vzkK
-   taeDU64hAZ+hWtYzaQBfgQG+KYsYgFQbUPnB931akhTmYIhxQfG9tFN47
-   w==;
-X-CSE-ConnectionGUID: MfFqqUTcRPykuDbGIvuPgg==
-X-CSE-MsgGUID: PG0k22ftTiu2QZKZXo6UHw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="24876846"
-X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
-   d="scan'208";a="24876846"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 00:19:53 -0700
-X-CSE-ConnectionGUID: YYSkyvbXQnyCJ4XflenCyQ==
-X-CSE-MsgGUID: MC1QJTQzSpCCHGVZYVlwJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
-   d="scan'208";a="38420693"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by orviesa008.jf.intel.com with SMTP; 06 Jun 2024 00:19:50 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 06 Jun 2024 10:19:49 +0300
-Date: Thu, 6 Jun 2024 10:19:49 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH 1/1] usb: typec: tcpm: use 'time_left' variable with
- wait_for_completion_timeout()
-Message-ID: <ZmFjFSzZwE8Z97yZ@kuha.fi.intel.com>
-References: <20240604212730.4968-2-wsa+renesas@sang-engineering.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JUGAVnBnd2X5QJCdCU59p416FEE/3eNs49J6FzmpNHfrc68eA2vhPjfaGN1pqrifDAWqZsdpXM67bE21mbH1rFDD9drU4q9qF+J1mURxDBECEJFu2kJ9unKMJHyYh1Bx2DyOYW2e74ESRGlvryvWK3RyDhb5WRyRCtSl4AoAlWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HHWp8mxF; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6f943a34a83so239563a34.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 00:20:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717658434; x=1718263234; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MFC1pyOlym/b5PhJaLl2pSzHoJdyGjWFMkMHwggkOGg=;
+        b=HHWp8mxFzCgxUbpUYDEVUziaQ0Dt6DpmRIe+kp+SsWABN8ICrJe/UGhGzmLMQYN2ZR
+         vcWv25DEoQSqO/rY2FYBSaMfeZAsj4HM1iajfbAXHYj/z3gj9bb5tgxZPZPWIPnl/2Js
+         oqFbJ33s8PyglO6X4xhmc5BtR7KZige/sWDOk+8X5AJDNMRBJR4VxroEjjVw2IcXayuH
+         RDi+tamJ0rBf3VFaMIvhnu4CWFZIQfi5giZbcrUWC1FYsSMI7dQvtMkpj5Rp9mS+J1kw
+         YuxrhucAt2ftWuC1oi41F2L650ZbaN0i51KxrRu6L68iXi54z+X9kBt2/KY4dV3utpIA
+         X+oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717658434; x=1718263234;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MFC1pyOlym/b5PhJaLl2pSzHoJdyGjWFMkMHwggkOGg=;
+        b=SNT89+hHy5s/Q+AgeipXGnIGICMkNVi2+uusYxzHD3/aJt+inp2FaSCe3h6w8mdA6G
+         bnHx9124/FzNmM4zWG1BOj1QH7VHyefRdv9MRKyhpcxaSXIn5BRy3NXqPui8QzPCqTOt
+         OmSpMpJ+hxuv69UcQ+sCTFk2q+MDR7F5LH1zU+WNIaWBO6R7p59h0GJ+yE7HXZk0aIxY
+         TkZIYZ1FaGJGKoLegJzyKGI/DiWCXRjN+vYpkgDHkG91Je+l5wKVKBe+CepS0OFWfIEO
+         NglphF1R2JYeEXPkmu8C2osihX09NRe20QDTNdQKd00jSkNw2/Zi3rvZv+nKO6hg3hJ0
+         7Gjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIwxisqkFDEtxPaVANH6a7ToynCgQZQYkJOk9PphWVwgqq1TMQ1ynpmHRlLsgkuXmlkflV7eH7elHHUWtEsre7v4mZyBrUGRhgG+h7
+X-Gm-Message-State: AOJu0Yyu6uz0rBUGRAdsumdSbEtgiEI2UKmBg5wCCKnw4ytitg1Q741v
+	icbTfrT21nmsNnMMrtwOE20XDS20x6Y8DcmqkSmehlalQeSEV4FcBIfVwd7Ed/49gFQo6NfWh3W
+	p
+X-Google-Smtp-Source: AGHT+IFR27xMNkX9j6IYL/hxtDye3ZPMcS2DU0AeJAwbcGFpmW/2yupDkFD5vmiG+5sQzof0a11KtA==
+X-Received: by 2002:a05:6870:612c:b0:24f:ccbd:75e with SMTP id 586e51a60fabf-25122094c30mr5531086fac.43.1717658434284;
+        Thu, 06 Jun 2024 00:20:34 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd372a82sm557353b3a.27.2024.06.06.00.20.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 00:20:33 -0700 (PDT)
+Date: Thu, 6 Jun 2024 12:50:31 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ionela Voinescu <ionela.voinescu@arm.com>
+Cc: "liwei (JK)" <liwei728@huawei.com>,
+	Beata Michalska <beata.michalska@arm.com>,
+	Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
+	rafael@kernel.org, al.stone@linaro.org, ashwin.chaugule@linaro.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	liwei391@huawei.com, liaoyu15@huawei.com
+Subject: Re: [PATCH] cpufreq/cppc: changing highest_perf to nominal_perf in
+ cppc_cpufreq_cpu_init()
+Message-ID: <20240606072031.lxr7tykl7sdgjwva@vireshk-i7>
+References: <20240428092852.1588188-1-liwei728@huawei.com>
+ <20240429104945.esdukn6ayudgyumc@vireshk-i7>
+ <ZjoBrF4bAK5ukm7H@arm.com>
+ <be312b75-eede-44f5-b7f3-b50f50c6fb56@huawei.com>
+ <ZmB1qKucR5fXk100@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,56 +91,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240604212730.4968-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <ZmB1qKucR5fXk100@arm.com>
 
-On Tue, Jun 04, 2024 at 11:27:31PM +0200, Wolfram Sang wrote:
-> There is a confusing pattern in the kernel to use a variable named 'timeout' to
-> store the result of wait_for_completion_timeout() causing patterns like:
-> 
-> 	timeout = wait_for_completion_timeout(...)
-> 	if (!timeout) return -ETIMEDOUT;
-> 
-> with all kinds of permutations. Use 'time_left' as a variable to make the code
-> self explaining.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On 05-06-24, 15:26, Ionela Voinescu wrote:
+> > > > > 		cpufreq_start_governor() // governor: performance
+> > > > > 			new_freq = cpufreq_driver->get() // if new_freq == policy->max
+> > > > > 			if (policy->cur != new_freq)
+> > > > > 			cpufreq_out_of_sync(policy, new_freq)
+> > > > > 				...
+> > > > > 				policy->cur = new_freq
+> > > I believe the problem is here   ^^^^^^^^^^^^^^^^^^^^^^.
+> > > 
+> > > cpufreq_verify_current_freq() should not update policy->cur unless a
+> > > request to change frequency has actually reached the driver. I believe
+> > > policy->cur should always reflect the request, not the actual current
+> > > frequency of the CPU.
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+There are times when the core doesn't have any prior information about
+the frequency, for example at driver probe time and resume. And so
+needs to set policy->cur by reading it from the hardware.
 
-> ---
->  drivers/usb/typec/tcpm/tcpm.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-> index 8a1af08f71b6..e46148c19be3 100644
-> --- a/drivers/usb/typec/tcpm/tcpm.c
-> +++ b/drivers/usb/typec/tcpm/tcpm.c
-> @@ -943,7 +943,7 @@ static int tcpm_pd_transmit(struct tcpm_port *port,
->  			    enum tcpm_transmit_type tx_sop_type,
->  			    const struct pd_message *msg)
->  {
-> -	unsigned long timeout;
-> +	unsigned long time_left;
->  	int ret;
->  	unsigned int negotiated_rev;
->  
-> @@ -968,10 +968,10 @@ static int tcpm_pd_transmit(struct tcpm_port *port,
->  		return ret;
->  
->  	mutex_unlock(&port->lock);
-> -	timeout = wait_for_completion_timeout(&port->tx_complete,
-> -				msecs_to_jiffies(PD_T_TCPC_TX_TIMEOUT));
-> +	time_left = wait_for_completion_timeout(&port->tx_complete,
-> +						msecs_to_jiffies(PD_T_TCPC_TX_TIMEOUT));
->  	mutex_lock(&port->lock);
-> -	if (!timeout)
-> +	if (!time_left)
->  		return -ETIMEDOUT;
->  
->  	switch (port->tx_status) {
-> -- 
-> 2.43.0
+> > > Given that new_freq is the current (hardware) frequency of the CPU,
+> > > obtained via .get(), it can be the nominal frequency, as it is in your
+> > > case, or any frequency, if there is any firmware/hardware capping in
+> > > place.
+> > > 
+> > > This causes the issue in your scenario, in which __cpufreq_driver_target()
+> > > filters the request from the governor as it finds it equal to policy->cur,
+> > > and it believes it's already set by hardware.
 
--- 
-heikki
+I am still not sure why mismatch happens at boot time here.
+
+> > > This causes another issue in which scaling_cur_freq, which for some
+> > > systems returns policy->cur, ends up returning the hardware frequency of
+> > > the CPUs, and not the last frequency request, as it should:
+> > > 
+> > > "scaling_cur_freq
+> > > Current frequency of all of the CPUs belonging to this policy (in kHz).
+> > > 
+> > > In the majority of cases, this is the frequency of the last P-state
+> > > requested by the scaling driver from the hardware using the scaling
+> > > interface provided by it, which may or may not reflect the frequency
+> > > the CPU is actually running at (due to hardware design and other
+> > > limitations)." [1]
+
+There is discussion going on about this in another thread [1] now.
+
+> > > Therefore policy->cur gets polluted with the hardware frequency of the
+> > > CPU sampled at that one time, and this affects governor decisions, as
+> > > in your case, and scaling_cur_freq feedback as well. This bad value will
+> > > not change until there's another .target() or cpufreq_out_of_sync()
+> > > call, which will never happen for fixed frequency governors like the
+> > > performance governor.
+
+--
+viresh
+
+[1] https://lore.kernel.org/all/20240603081331.3829278-2-beata.michalska@arm.com/
 
