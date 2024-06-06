@@ -1,230 +1,210 @@
-Return-Path: <linux-kernel+bounces-204206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57FC38FE5D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:54:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C71F8FE5DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 079B1288AA8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:54:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7D9C288B23
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192B2195962;
-	Thu,  6 Jun 2024 11:54:39 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267DC13D28C;
-	Thu,  6 Jun 2024 11:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B945195974;
+	Thu,  6 Jun 2024 11:55:07 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3D0194C90;
+	Thu,  6 Jun 2024 11:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717674878; cv=none; b=U9Ck8nfyvWV3tcp9ODWj0WCdyHsLwfs5ynonQYdtCb46BFDLsQMohm/DzdfsvmKZiUyd4NCTRHNFzBhEquG170KvvXL0xpttVA8FyYqVlf2I+enVkKi+P5Gw+tCh7XVicfkxWnU/rnRAWCA53mhQyLpcJU3379e6tpgJ/wbiFXI=
+	t=1717674906; cv=none; b=i4XDljqiWJ9sEE8Z6pTOSRBCYWn1HXHbPSTDlinKCNyFIHjdKry0RGnWjCNu9F/byjtMz9LsKoZ9PFwqRmM1p6FsRYSLY0TtByk+0M1CGhRJa75rLb91HdoQ07YpPPxB5S4JQnz/sWEnsAN05a5/OFWsRlRjdsYnB5FZ9atjJR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717674878; c=relaxed/simple;
-	bh=N92kaXVmF3fufNiwIfVbcm1oBKaXy1S33HJtdH0cBJs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lCrWpIUzl/4/VOeMKgN2P7Xvqmt3budBj/oHL7gaTCEUu5ARDqJKoU4vfgqWup3sCLUwY9Mkot88Ye9iyih6zYQ/O410MyJb8v6359Be8C5UgE82LlPb9MWJC2YkRQO23BJgAIhgmEgf9x3emHwNHG0KJwl/s9VEy4Sr1J6i34Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CDA662F4;
-	Thu,  6 Jun 2024 04:54:59 -0700 (PDT)
-Received: from [10.1.28.63] (e127648.arm.com [10.1.28.63])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 24B3C3F64C;
-	Thu,  6 Jun 2024 04:54:32 -0700 (PDT)
-Message-ID: <db984b92-549a-46e1-ae3a-0e1fb4f2e5b2@arm.com>
-Date: Thu, 6 Jun 2024 12:54:31 +0100
+	s=arc-20240116; t=1717674906; c=relaxed/simple;
+	bh=5YI/F2VeI2iQgEFUoISlYAGkH60Dx6AgzEzpjQeRrzU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Rup4sKATEVrE5Klw/jpXutAxuF5EOPoEj3Fwz5TH+agalAd3IKF4wMbOh4Ev7p9UwraECN2I2eZfiLPm6aaylP4G2Ty3MOaTi58TBYTakhyVhiI8q8WE1BFMxQgrYbwSWRoY5nI7YsuVmppRNssHJUlyJrZ9idG9+jRn80WunmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8AxHuuVo2Fm9zYEAA--.17776S3;
+	Thu, 06 Jun 2024 19:55:01 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8CxbceTo2FmFN4WAA--.57347S3;
+	Thu, 06 Jun 2024 19:55:01 +0800 (CST)
+Subject: Re: [PATCH] LoongArch: KVM: Add feature passing from user space
+To: WANG Xuerui <kernel@xen0n.name>, Tianrui Zhao <zhaotianrui@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>
+Cc: kvm@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20240606074850.2651896-1-maobibo@loongson.cn>
+ <9bb552c8-fe86-43dc-9c4e-0b95c99fb25c@xen0n.name>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <2774b010-8033-2167-474a-cb1b29b27d2b@loongson.cn>
+Date: Thu, 6 Jun 2024 19:54:58 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] cpuidle: teo: fixes and improvements
-To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, rafael@kernel.org
-Cc: vincent.guittot@linaro.org, qyousef@layalina.io, peterz@infradead.org,
- daniel.lezcano@linaro.org, anna-maria@linutronix.de,
- kajetan.puchalski@arm.com, lukasz.luba@arm.com, dietmar.eggemann@arm.com
-References: <20240606090050.327614-1-christian.loehle@arm.com>
+In-Reply-To: <9bb552c8-fe86-43dc-9c4e-0b95c99fb25c@xen0n.name>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20240606090050.327614-1-christian.loehle@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAf8CxbceTo2FmFN4WAA--.57347S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxtF1DJr4UCF1ftr1xtw4kXwc_yoW7Wry8pF
+	ykAFs8GrWUGr1fCw1kt34DWry5Xr1xGw12qF17Xa1UAF42gr10qr1vgryqgF1UJw48X3WI
+	qF1Yqwn8ZF1jq3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv
+	67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
+	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
+	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jO
+	uc_UUUUU=
 
-On 6/6/24 10:00, Christian Loehle wrote:
-> Hi all,
-> so my investigation into teo lead to the following fixes and
-> improvements. Logically they are mostly independent, that's why this
-> cover letter is quite short, details are in the patches.
-> 
-> 1/6:
-> As discussed, the utilization threshold is too high, while
-> there are benefits in certain workloads, there are quite a few
-> regressions, too.
-> 2/6:
-> Especially with the new util threshold, stopping tick makes little
-> sense when utilized is detected, so don't.
-> 3/6:
-> Particularly with WFI, even if it's the only state, stopping the tick
-> has benefits, so enable that in the early bail out.
-> 4/6:
-> Stopping the tick with 0 cost (if the idle state dictates it) is too
-> aggressive IMO, so add 1ms constant cost.
-> XXX: This has the issue of now being counted as idle_miss, so we could
-> consider adding this to the states, too, but the simple implementation
-> of this would have the downside that the cost is added to deeper states
-> even if the tick is already off.
-> 5/6:
-> Remove the 'recent' intercept logic, see my findings in:
-> https://lore.kernel.org/lkml/0ce2d536-1125-4df8-9a5b-0d5e389cd8af@arm.com/
-> I haven't found a way to salvage this properly, so I removed it.
-> The regular intercept seems to decay fast enough to not need this, but
-> we could change it if that turns out to be the case.
-> 6/6:
-> The rest of the intercept logic had issues, too.
-> See the commit.
-> 
-> TODO: add some measurements of common workloads and some simple sanity
-> tests (like Vincent described in low utilization workloads if the
-> state selection looks reasonable).
-> I have some, but more (and more standardized) would be beneficial.
-> 
-> Happy for anyone to take a look and test as well.
-> 
-> Some numbers for context:
-> Maybe some numbers for context, I'll probably add them to the cover letter.
-> 
-> Comparing:
-> - IO workload (intercept heavy).
-> - Timer workload very low utilization (check for deepest state)
-> - hackbench (high utilization)
-> all on RK3399 with CONFIG_HZ=100.
-> target_residencies: 1, 900, 2000
-> 
-> 1. IO workload, 5 runs, results sorted, in read IOPS.
-> fio --minimal --time_based --name=fiotest --filename=/dev/nvme0n1 --runtime=30 --rw=randread --bs=4k --ioengine=psync --iodepth=1 --direct=1 | cut -d \; -f 8;
-> 
-> teo fixed:
-> /dev/nvme0n1
-> [4597, 4673, 4727, 4741, 4756]
-> /dev/mmcblk2
-> [5753, 5832, 5837, 5911, 5949]
-> /dev/mmcblk1
-> [2059, 2062, 2070, 2071, 2080]
-> 
-> teo mainline:
-> /dev/nvme0n1
-> [3793, 3825, 3846, 3865, 3964]
-> /dev/mmcblk2
-> [3831, 4110, 4154, 4203, 4228]
-> /dev/mmcblk1
-> [1559, 1564, 1596, 1611, 1618]
-> 
-> menu:
-> /dev/nvme0n1
-> [2571, 2630, 2804, 2813, 2917]
-> /dev/mmcblk2
-> [4181, 4260, 5062, 5260, 5329]
-> /dev/mmcblk1
-> [1567, 1581, 1585, 1603, 1769]
-> 
-> 2. Timer workload (through IO for my convenience ;) )
-> Results in read IOPS, fio same as above.
-> echo "0 2097152 zero" | dmsetup create dm-zeros
-> echo "0 2097152 delay /dev/mapper/dm-zeros 0 50" | dmsetup create dm-slow
-> (Each IO is delayed by timer of 50ms, should be mostly in state2)
-> 
-> teo fixed:
-> 3269 cpu_idle total
-> 48 cpu_idle_miss
-> 30 cpu_idle_miss above
-> 18 cpu_idle_miss below
-> 
-> teo mainline:
-> 3221 cpu_idle total
-> 1269 cpu_idle_miss
-> 22 cpu_idle_miss above
-> 1247 cpu_idle_miss below
-> 
-> menu:
-> 3433 cpu_idle total
-> 114 cpu_idle_miss
-> 61 cpu_idle_miss above
-> 53 cpu_idle_miss below
-> 
-> Residencies:
+Xuerui,
 
-Hmm, maybe actually including them would've been helpful too:
-(Over 5s workload, only showing LITTLE cluster)
-teo fixed:
-idle_state 	
-2.0 	4.813378
--1.0 	0.210820
-1.0 	0.202778
-0.0 	0.062426
+Thanks for your reviewing.
+I reply inline.
 
-teo mainline:
-idle_state
-1.0 	4.895766
--1.0 	0.098063
-0.0 	0.253069
-
-menu:
-idle_state
-2.0 	4.528356
--1.0 	0.241486
-1.0 	0.345829
-0.0 	0.202505
+On 2024/6/6 下午7:20, WANG Xuerui wrote:
+> Hi,
+> 
+> On 6/6/24 15:48, Bibo Mao wrote:
+>> Currently features defined in cpucfg CPUCFG_KVM_FEATURE comes from
+>> kvm kernel mode only. Some features are defined in user space VMM,
+> 
+> "come from kernel side only. But currently KVM is not aware of 
+> user-space VMM features which makes it hard to employ optimizations that 
+> are both (1) specific to the VM use case and (2) requiring cooperation 
+> from user space."
+Will modify in next version.
+> 
+>> however KVM module does not know. Here interface is added to update
+>> register CPUCFG_KVM_FEATURE from user space, only bit 24 - 31 is valid.
+>>
+>> Feature KVM_LOONGARCH_VCPU_FEAT_VIRT_EXTIOI is added from user mdoe.
+>> FEAT_VIRT_EXTIOI is virt EXTIOI extension which can route interrupt
+>> to 256 VCPUs rather than 4 CPUs like real hw.
+> 
+> "A new feature bit ... is added which can be set from user space. 
+> FEAT_... indicates that the VM EXTIOI can route interrupts to 256 vCPUs, 
+> rather than 4 like with real HW."
+will modify in next version.
 
 > 
-> tldr: overall teo fixed spends more time in state2 while having
-> fewer idle_miss than menu.
-> teo mainline was just way too aggressive at selecting shallow states.
+> (Am I right in paraphrasing the "EXTIOI" part?)
 > 
-> 3. Hackbench, 5 runs
-> for i in $(seq 0 4); do hackbench -l 100 -g 100 ; sleep 1; done
+>>
+>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>> ---
+>>   arch/loongarch/include/asm/kvm_host.h  |  4 +++
+>>   arch/loongarch/include/asm/loongarch.h |  5 ++++
+>>   arch/loongarch/include/uapi/asm/kvm.h  |  2 ++
+>>   arch/loongarch/kvm/exit.c              |  1 +
+>>   arch/loongarch/kvm/vcpu.c              | 36 +++++++++++++++++++++++---
+>>   5 files changed, 44 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/loongarch/include/asm/kvm_host.h 
+>> b/arch/loongarch/include/asm/kvm_host.h
+>> index 88023ab59486..8fa50d757247 100644
+>> --- a/arch/loongarch/include/asm/kvm_host.h
+>> +++ b/arch/loongarch/include/asm/kvm_host.h
+>> @@ -135,6 +135,9 @@ enum emulation_result {
+>>   #define KVM_LARCH_HWCSR_USABLE    (0x1 << 4)
+>>   #define KVM_LARCH_LBT        (0x1 << 5)
+>> +#define KVM_LOONGARCH_USR_FEAT_MASK            \
+>> +    BIT(KVM_LOONGARCH_VCPU_FEAT_VIRT_EXTIOI)
+>> +
+>>   struct kvm_vcpu_arch {
+>>       /*
+>>        * Switch pointer-to-function type to unsigned long
+>> @@ -210,6 +213,7 @@ struct kvm_vcpu_arch {
+>>           u64 last_steal;
+>>           struct gfn_to_hva_cache cache;
+>>       } st;
+>> +    unsigned int usr_features;
+>>   };
+>>   static inline unsigned long readl_sw_gcsr(struct loongarch_csrs 
+>> *csr, int reg)
+>> diff --git a/arch/loongarch/include/asm/loongarch.h 
+>> b/arch/loongarch/include/asm/loongarch.h
+>> index 7a4633ef284b..4d9837512c19 100644
+>> --- a/arch/loongarch/include/asm/loongarch.h
+>> +++ b/arch/loongarch/include/asm/loongarch.h
+>> @@ -167,9 +167,14 @@
+>>   #define CPUCFG_KVM_SIG            (CPUCFG_KVM_BASE + 0)
+>>   #define  KVM_SIGNATURE            "KVM\0"
+>> +/*
+>> + * BIT 24 - 31 is features configurable by user space vmm
+>> + */
+>>   #define CPUCFG_KVM_FEATURE        (CPUCFG_KVM_BASE + 4)
+>>   #define  KVM_FEATURE_IPI        BIT(1)
+>>   #define  KVM_FEATURE_STEAL_TIME        BIT(2)
+>> +/* With VIRT_EXTIOI feature, interrupt can route to 256 VCPUs */
+>> +#define  KVM_FEATURE_VIRT_EXTIOI    BIT(24)
+>>   #ifndef __ASSEMBLY__
 > 
-> teo fixed:
-> Time: 4.807
-> Time: 4.856
-> Time: 5.072
-> Time: 4.934
-> Time: 4.962
+> What about assigning a new CPUCFG leaf ID for separating the two kinds 
+> of feature flags very cleanly?
+For compatible issue like new kernel on old KVM host, to add a new
+CPUCFG leaf ID, a new feature need be defined on existing 
+CPUCFG_KVM_FEATURE register. Such as:
+    #define  KVM_FEATURE_EXTEND_CPUCFG        BIT(3)
+
+VM need check feature KVM_FEATURE_EXTEND_CPUCFG at first, and then read 
+the new CPUCFG leaf ID if feature EXTEND_CPUCFG is enabled.
+
+That maybe makes it complicated since feature bit is enough now.
 > 
-> teo mainline:
-> Time: 4.945
-> Time: 5.021
-> Time: 4.927
-> Time: 4.923
-> Time: 5.137
+>> @@ -896,7 +907,24 @@ static int kvm_loongarch_vcpu_get_attr(struct 
+>> kvm_vcpu *vcpu,
+>>   static int kvm_loongarch_cpucfg_set_attr(struct kvm_vcpu *vcpu,
+>>                        struct kvm_device_attr *attr)
+>>   {
+>> -    return -ENXIO;
+>> +    u64 __user *user = (u64 __user *)attr->addr;
+>> +    u64 val, valid_flags;
+>> +
+>> +    switch (attr->attr) {
+>> +    case CPUCFG_KVM_FEATURE:
+>> +        if (get_user(val, user))
+>> +            return -EFAULT;
+>> +
+>> +        valid_flags = KVM_LOONGARCH_USR_FEAT_MASK;
+>> +        if (val & ~valid_flags)
+>> +            return -EINVAL;
+>> +
+>> +        vcpu->arch.usr_features |= val;
 > 
-> menu:
-> Time: 4.991
-> Time: 4.884
-> Time: 4.880
-> Time: 4.946
-> Time: 4.980
+> Isn't this usage of "|=" instead of "=" implying that the feature bits 
+> could not get disabled after being enabled earlier, for whatever reason?
+yes, "=" is better. Will modify in next version.
+
+Regards
+Bibo Mao
 > 
-> tldr: all comparable, teo mainline slightly worse
-> 
-> Kind Regards,
-> Christian
-> 
-> Christian Loehle (6):
->   cpuidle: teo: Increase util-threshold
->   cpuidle: teo: Don't stop tick on utilized
->   cpuidle: teo: Don't always stop tick on one state
->   cpuidle: teo: Increase minimum time to stop tick
->   cpuidle: teo: Remove recent intercepts metric
->   cpuidle: teo: Don't count non-existent intercepts
-> 
->  drivers/cpuidle/governors/teo.c | 121 +++++++++++++-------------------
->  1 file changed, 48 insertions(+), 73 deletions(-)
-> 
-> --
-> 2.34.1
+>> +        return 0;
+>> +
+>> +    default:
+>> +        return -ENXIO;
+>> +    }
+>>   }
+>>   static int kvm_loongarch_vcpu_set_attr(struct kvm_vcpu *vcpu,
+>>
+>> base-commit: 2df0193e62cf887f373995fb8a91068562784adc
 > 
 
 
