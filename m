@@ -1,203 +1,119 @@
-Return-Path: <linux-kernel+bounces-204475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CE848FEF90
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:56:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B3258FEF94
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:57:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB5CD1C24A33
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:56:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 711591C25B3E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C2B198841;
-	Thu,  6 Jun 2024 14:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5641D6BD;
+	Thu,  6 Jun 2024 14:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Uqz4lGYx"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dw/iUL5g"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82ABE19884A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EB51E507
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717684175; cv=none; b=DVm1AlVyemaefZrLZMQdC5EAJkFaj9p9UVq8lWN8sNATsL0dsGDJX99v+OnsImilZQ/4HllnmhkTiGFgMdMNbPbaCMQVoDVIvldIywC7EFIiA7rzfa90e9WnBDG/KEA2nIfTaLbgrTkqRyBKyMn0YPa2qft2aAAuLFbE0E7FXAI=
+	t=1717684228; cv=none; b=agfCojQFGeTeCBGhRBWSh6sMUTb8hLF1vXUEbl3hihaMmLHrOlr6oIi4mRx+Vf4q+6IwvtxfEWiYPkcZqM/+6FCLZgaEA8SL79LYgLZoeKzfw3Z5HaydaGGlmXKM/SOkCdYzcEfX1TuPjay47nomJqkUO+xg/1CeelcBoSnh0cA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717684175; c=relaxed/simple;
-	bh=GimoAQIvtE/omE2LWe9rkmcZVAyFh7hH8t8gFFgucFY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A2rUrBqpHVsupxP1eOFwJlgIId5aeSUeXX2oN4X3ZQR45FNBYCv9mSzUvhRb7xVFPu1/Adzkp9XWfPBWADUSSh7QEwDOFPFGH0K9ZQOh0vZLCx2Xf4F7j5nggFV1GdMtDcGT25q8PYqOik/hd0NAugXZXXCQCw/hbnRX31ij7kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Uqz4lGYx; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ead2c6b553so12141721fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 07:29:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1717684171; x=1718288971; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QWrHmrBVbxL2N+yjukzrB1xNIeLZkMy2NcMIU1+JPUg=;
-        b=Uqz4lGYxdcOmil+vyxA0jJrA8cR4Acx4g2UO2V6EZYsl4TmmK6DDITf7fJ19Fyv0jy
-         g2HD7ify7eEzsC2ZTQYfCj4yB4jVILVXjRLz+8sAXwo7c95uSQCqemDN97S6W2ka7ptz
-         MLoi08vZkJM9OR36t5ZunIDtGQyTYRnabAeEH5iXOjQOg2SEy1mbYGBK09+LG0GlYxRl
-         EUM/MFxFvrn5Yog8it2E+Qzp0Pub8E84clekP/wXhwfaJfR2a5UELn229IuXIjRLKDXe
-         j75Gudw/i91V2bTlHgkapKt8EJ0Eqi6VeDcv/K5bFgi8CN891He2hQ0j5LwHKzio2aRd
-         lO4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717684171; x=1718288971;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QWrHmrBVbxL2N+yjukzrB1xNIeLZkMy2NcMIU1+JPUg=;
-        b=Nmj+1+m9JRn/sqZGH95ykpWE0uni1ad+hKNMHbXFu8i+Gb1GV4SL2U9QmThsmVa0wu
-         WZp6i/wessaMHCOMnav7Iirs5dl1F4tG0T/p6sasWYq5YbQaqbnyuCTbF8oVl9F7K6qt
-         hHyK5IEUhmLcpXHxGsUBjY+QCiBgGcKMdL7nsEmXyeM2SpjsolFusg2xnF+Cn6oyZymm
-         +RtWPMWA+i1QXsTQkD/Zk7/5NU3fqok/LEaCjYsVkYLZJpRESL+YVZnxjgsrNbeZRWcd
-         Yp7NuzDoccduuLui5heWrPOzwiIHWc5MRkJesvubPQ5wdg/QYfGeeXgisSI3JX+8cg+i
-         z+/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWB0d4dkRITSAigwRPpbsctIBKsWzfBLGzJgeu0DMr9SWJSeBIFkKO4HyBd3WILG8zJfss7v25mq3LQPwGxH6Hh+MPhBHXgNASHzgFV
-X-Gm-Message-State: AOJu0Ywqd/GfAmR8n5u50VycJmcJCrJTVsTzO7jwYtlX6u03N2addVJt
-	N8GO+kJG+yYLXgN85m62tfMLNs9C+4TTEdpX+LzbczWpi3NhRbIpYtFYmKy14uNyXnzweIjjTLe
-	FTP/kgmvaKgt77iRx64UMMfnvDaxzQeqjkb2iQg==
-X-Google-Smtp-Source: AGHT+IE7dV5ZV/18QS1Cl24O5VDU/AyKd8svwpktd8Gq/yIywl49RVlO2hEBVV/ZBTiMOrhqd5gtrUxmBJP66OQy6UM=
-X-Received: by 2002:a2e:a403:0:b0:2ea:903b:ca0e with SMTP id
- 38308e7fff4ca-2eac7a986abmr42490961fa.52.1717684171575; Thu, 06 Jun 2024
- 07:29:31 -0700 (PDT)
+	s=arc-20240116; t=1717684228; c=relaxed/simple;
+	bh=pZ1CKh3rD/Cz84c1OVJeXYmbaArg0035BD5hKW/0e0k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xx+3bdHsEW9AKz8FyGtLU6iXRHldelBb/dmJBexC5EvKs/fjjVD4d3bgLbMdxLGRs4mwwDbXRe6AW9F4ais/sf8MmbdGYTl8R/KT5hDMpBB7pJCRFoBjkS+Y9buc4lGIOiXNpTcgp06pI3dZy48NYhb6AHA0LhI+7oIpLBMywRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dw/iUL5g; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717684225;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iqw3ulTgT3WOYmTar3ZvencBj9bvK1e+eNQvYeGna2o=;
+	b=Dw/iUL5gzTTaFLaiq4HLZs0jEcGVf+lIpplZX6hLPl0p5QT2DFn6UyfKuslj132suca5S3
+	xQUvYR9Ym97hy+iNXgQxbBCfIAPopb9gqa5335M2rwVomKmJfja6pETv2h4tmoxVCNFcqg
+	hrd9xQvOvrFqiWViESKv282JZrY5xoM=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-303-bNueIWOhOgeP9J9aaoLCfA-1; Thu,
+ 06 Jun 2024 10:30:22 -0400
+X-MC-Unique: bNueIWOhOgeP9J9aaoLCfA-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5062F196DFDF;
+	Thu,  6 Jun 2024 14:30:20 +0000 (UTC)
+Received: from fedora (unknown [10.72.113.78])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6B9301959178;
+	Thu,  6 Jun 2024 14:30:11 +0000 (UTC)
+Date: Thu, 6 Jun 2024 22:30:06 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: yebin <yebin@huaweicloud.com>
+Cc: Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ye Bin <yebin10@huawei.com>, Zhang Yi <yizhan@redhat.com>,
+	"Ewan D. Milne" <emilne@redhat.com>, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH] block: bio-integrity: fix potential null-ptr-deref in
+ bio_integrity_free
+Message-ID: <ZmHH7mW0M80RaPlj@fedora>
+References: <20240606062655.2185006-1-yebin@huaweicloud.com>
+ <ZmFatW3BEzTPgR7S@infradead.org>
+ <66619EB6.4040002@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605122106.23818-1-brgl@bgdev.pl> <20240605122106.23818-2-brgl@bgdev.pl>
- <87h6e6qjuh.fsf@kernel.org> <CAMRc=MdiKxtnN+g92RUTXdOydaPV5M2u5iUdKyE2SNvDkdXAjg@mail.gmail.com>
- <871q5aqiei.fsf@kernel.org>
-In-Reply-To: <871q5aqiei.fsf@kernel.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 6 Jun 2024 16:29:20 +0200
-Message-ID: <CAMRc=McacZMP-51hjH+d8=PVe+Wgw4a8xWcv0sRPLJKL_gP=KQ@mail.gmail.com>
-Subject: Re: [PATCH v9 1/2] dt-bindings: net: wireless: qcom,ath11k: describe
- the ath11k on QCA6390
-To: Kalle Valo <kvalo@kernel.org>
-Cc: "David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	ath11k@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	ath12k@lists.infradead.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <66619EB6.4040002@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Thu, Jun 6, 2024 at 4:02=E2=80=AFPM Kalle Valo <kvalo@kernel.org> wrote:
->
-> Bartosz Golaszewski <brgl@bgdev.pl> writes:
->
-> > On Thu, Jun 6, 2024 at 3:30=E2=80=AFPM Kalle Valo <kvalo@kernel.org> wr=
-ote:
-> >
-> >>
-> >> Bartosz Golaszewski <brgl@bgdev.pl> writes:
-> >>
-> >> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >> >
-> >> > Add a PCI compatible for the ATH11K module on QCA6390 and describe t=
-he
-> >> > power inputs from the PMU that it consumes.
-> >> >
-> >> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> >> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >>
-> >> [...]
-> >>
-> >> > +allOf:
-> >> > +  - if:
-> >> > +      properties:
-> >> > +        compatible:
-> >> > +          contains:
-> >> > +            const: pci17cb,1101
-> >> > +    then:
-> >> > +      required:
-> >> > +        - vddrfacmn-supply
-> >> > +        - vddaon-supply
-> >> > +        - vddwlcx-supply
-> >> > +        - vddwlmx-supply
-> >> > +        - vddrfa0p8-supply
-> >> > +        - vddrfa1p2-supply
-> >> > +        - vddrfa1p7-supply
-> >> > +        - vddpcie0p9-supply
-> >> > +        - vddpcie1p8-supply
-> >>
-> >> Not sure if we discussed this before, but based on this I understand
-> >> that there can't be an DT entry for device pci17cb,1101 without all th=
-e
-> >> supply properties? But there are QCA6390 devices with PCI id 17cb:1101
-> >> which do not need these supplies and already work. For example, my Del=
-l
-> >> XPS 13 x86 laptop is one. Or anyone who manually installs QCA6390 boar=
-d
-> >> to their PCI slot and some of them might want to use DT, for example
-> >> setting qcom,ath11k-calibration-variant.
-> >>
-> >> This is not a blocker for me, just making sure that we are not breakin=
-g
-> >> any existing setups.
-> >>
-> >
-> > If they are already powered up without the need for the PCI pwrctl
-> > driver to do it, then they will work alright. Bindings don't affect
-> > functionality.
->
-> Sure, I'm not worried about functionality. I'm worried that if I
-> there's, for example, an ARM based setup which uses DT and wants to use
-> a similar QCA6390 board that I have, and set
-> qcom,ath11k-calibration-variant in DT. In other words, I'm worried if
-> you are looking at this only for Snapdragon family of boards?
->
+On Thu, Jun 06, 2024 at 07:34:14PM +0800, yebin wrote:
+> 
+> 
+> On 2024/6/6 14:44, Christoph Hellwig wrote:
+> > What kernel is this on?  As of Linux 6.9 we are now always freezing
+> v4.18
+> > the queue while updating the logical_block_size in the nvme driver,
+> > so there should be no inflight I/O while it is changing.
+> > 
+> The root cause of the problem is that there is no concurrency protection
+> between
+> issuing DIO checks in __ blkdev direct IO simple() and updating logical
+> block sizes ,
+> resulting in the block layer being able to see DIOs that are not aligned
+> with logical
+> blocks.
 
-No, what I'm looking at is the entire QCA6390 package. That means WLAN
-*and* Bluetooth *and* the PMU that manages power.
+Yeah, that is one area queue freezing can't cover logical block size
+change, but I'd suggest to put the logical bs check into submit_bio() or
+slow path of __bio_queue_enter() at least.
 
-If you're using the QCA6390 on a device-tree system then you should
-probably model at least the WLAN node and the PMU and the problem with
-supplies is fixed. But if you don't have the supplies, that's alright
-for downstream.
+BTW, Yi has one reproducer, and slab is corrupted just like this report
+when running 'nvme format' & IO on partitions.
 
-> Again, I don't see this as a blocker. I just want to understand how this
-> should work for all types of devices there are out there.
->
-> > But if you have a QCA6390 then you have its PMU too and the bindings
-> > model the real-world hardware.
-> >
-> > IOW: your laptop should be alright but the supplies are really there
-> > which warrants adding them to the bindings.
->
-> Sorry, not following here. Can you clarify your comment "the supplies
-> are really there"? You mean inside the PCI board? But that's not visible
-> to the kernel in anyway, the PCI board just works after I plug it in.
-> It's like a regular PCI device. So I don't understand why that should be
-> visible in DT, but I can very well be missing something.
->
+I am not sure if this kind of change can avoid the issue completely, anyway
+Yi and I can test it and see if the kind of change works.
 
-I think you're thinking about some kind of detachable PCIe board with
-this chipset on it. I refer to the QCA6390 chipset itself which is
-also more than just PCI. The Bluetooth interface doesn't use PCI at
-all. On the boards I'm working on, the chipset is just soldered to the
-main board. If your detachable board "just works" then it must be
-wired in a way that enables WLAN the moment it's plugged in but this
-doesn't happen over PCI. The chipset has a power input and GPIOs to
-enable each module.
+My concern is that nvme format is started without draining IO, and
+IO can be submitted to hardware when nvme FW is handling formatting.
+I am not sure if nvme FW can deal with this situation correctly.
+Ewan suggested to run 'nvme format' with exclusive nvme disk open, which
+needs nvme-cli change.
 
-Also: I doubt you need DT for your detachable board?
 
-Bart
 
-> --
-> https://patchwork.kernel.org/project/linux-wireless/list/
->
-> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpa=
-tches
+Thanks,
+Ming
+
 
