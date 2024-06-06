@@ -1,230 +1,121 @@
-Return-Path: <linux-kernel+bounces-203848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 759058FE12D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:39:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87C698FE135
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8C7828A9D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:39:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AA0F1F235D3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8AE13CA97;
-	Thu,  6 Jun 2024 08:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E2013F446;
+	Thu,  6 Jun 2024 08:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WZnTT1W4"
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0ssImOx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0553A13C900;
-	Thu,  6 Jun 2024 08:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D7613DB8D;
+	Thu,  6 Jun 2024 08:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717663068; cv=none; b=BwGleTDn6CfwIJUI9Wnds+UUOs8ZMzClXpnWPrKRPjWmac1QhkP+2615XqFRTR85xRJfK+QmZQk4VuAvBMs/FNLW6rqDJvHF3sDP+ECGOYXGyIjjqJutyPEaVRYIpzvm/JqKbf0iI2KqTGbZQMXMIg1n015P7zbF3HqlMo8X6Dw=
+	t=1717663088; cv=none; b=F6wS1meRTNzU6a38xI9K1hB0DRNgzAK20yGdIcIGW8876d3Nt6w0BcQ+WaH7yF1uT1gJKGXnWmAM37sfH/66SXhGPAEW/0fnkHnDCbrRwnQvDVrj3sFtU7xbwcEoRSRmPHfwIQaLm+N+1/n7PWKAwa0loVulSer50V6qdEwM85A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717663068; c=relaxed/simple;
-	bh=HYy0uBIq7a4XYMVsAB46Cm0zvk1JrXNzFX9UbTeng8k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=R1ngDzmjR0Xbe2fvj6kD27xr5tlXswBNbjsYGrpMh2hAWrSwvI8mVE/3/iZW7BvmooeHK74m3omrRM6XKr8vlGGUntFVSV+dpKC0zcxyhWFXUCee0egM5ECtUW3EH5tbzGCPDxZwjsQZQxMg6ZFxle/nIRVCou1WCrUNEAh0eo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WZnTT1W4; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-6f938c18725so375006a34.1;
-        Thu, 06 Jun 2024 01:37:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717663066; x=1718267866; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qXXhn+viEW5QNpw1s0JwBzkpEksiOVn61xZJPP4n0t4=;
-        b=WZnTT1W4wHzAVEaakNo6zXCPikupDjNgXzfzF7EGwy4sUU4SRDHCFZA+hQFWdMJ7tq
-         mXxlA6j0ansWSi80zDas8j1MozUnzNIvfFWzRA89kSe//r9mYFbXP873BUkR2QeNU2SB
-         xEkkHHRzHj03BBVboPbqxbj6u6aWxgHNaIfiq2A0BLG0tksgz3rLVE2BFtq3k2dTj6Uz
-         B8S3lHnl3UwG0r3Z+VjsAY56ivCoSkuY1DWaCrYhk6m0TD+VZUVrVNIF7rnM5ebRj2G9
-         R5k/twuVvcpl09ldwpp+KbBUKV8R8b9mFmNha7547SOQWZF+W8y+C1Kze4Aw4vlWg6r1
-         7cKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717663066; x=1718267866;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qXXhn+viEW5QNpw1s0JwBzkpEksiOVn61xZJPP4n0t4=;
-        b=jTQpB6NvPnH+Sp41SR7XF5Iusmg6DYA3FkmOh4xA5otC+bt/fzh9fFwAY8ZMrqv8Sl
-         gg/9s1PT5YggYto+2g+eiYFp4vagIi1Glu2/sKKK55xGaYWUFE6hmooobuS0BcN95q/g
-         GlHXKAlYGG1UHf4pli6OzT4zIgkfpPGso/Yf2gzhKrflqgfVUMUBVOx03vMfzm0ooEcU
-         qR9EQ/32MDm/tJauAt8EOcaJSBFXqr2kaOBkBdfE1iWBqSZuXeTJtSd4k2ehTeyn4WVX
-         dN/pKOW9LfaHd4AHOZJUrpCtSIZ3fl+zW5frn64PWb57z7f9lARCqnKnbugqpBaMzMIW
-         BmwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW33hewHSPg3rd6WZ2Dh+xDWFa37qwVN6vp0wX6wJQvaXjSGtGquWZLI9/8j19vuEOyhttYGDqEh5ea3jDHXqLL2IRYhNzg+NSFM0yb75jCAsO/e7thupGc92qHHy9mGctyxUd/B+tTLb1kpgtrVVPsZdu2QL+paagU4Zbu/jOEFqVcyQ==
-X-Gm-Message-State: AOJu0YzE1DPz77TObRv6yL+UuRq+/MU13swj5JnsY0U4s8W+qNbWFprx
-	1HeAm/hfDrLNb3Bmy/ry+DaQ020GyJDMmGjNK2B70qEdzJXL6h+J
-X-Google-Smtp-Source: AGHT+IGZlEYKLCxi0RKiEtXK7Ckj+6l6wKfH5lX8OsZs2LFvUkmtRa+80HPxCK7UHmoLIlW9SGRzaw==
-X-Received: by 2002:a05:6830:148d:b0:6f0:444c:d534 with SMTP id 46e09a7af769-6f94341474cmr5168489a34.5.1717663065958;
-        Thu, 06 Jun 2024 01:37:45 -0700 (PDT)
-Received: from localhost.localdomain ([122.8.183.87])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f94dcf4ffcsm210863a34.63.2024.06.06.01.37.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 01:37:45 -0700 (PDT)
-From: Chen Wang <unicornxw@gmail.com>
-To: aou@eecs.berkeley.edu,
-	chao.wei@sophgo.com,
-	conor@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	mturquette@baylibre.com,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	richardcochran@gmail.com,
-	robh+dt@kernel.org,
-	sboyd@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	haijiao.liu@sophgo.com,
-	xiaoguang.xing@sophgo.com,
-	guoren@kernel.org,
-	jszhang@kernel.org,
-	inochiama@outlook.com,
-	samuel.holland@sifive.com
-Cc: Chen Wang <unicorn_wang@outlook.com>
-Subject: [PATCH v16 5/5] riscv: dts: add clock generator for Sophgo SG2042 SoC
-Date: Thu,  6 Jun 2024 16:37:39 +0800
-Message-Id: <9ff7c8917a2125319316d59973a54ac12c311a19.1717661798.git.unicorn_wang@outlook.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1717661798.git.unicorn_wang@outlook.com>
-References: <cover.1717661798.git.unicorn_wang@outlook.com>
+	s=arc-20240116; t=1717663088; c=relaxed/simple;
+	bh=eZpkYN1My8L0alqfBripkdov+U6NwJDEvmRjW7H7TrM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hC+NsjHFEuH/wn9bEqply7gffMTOydT8RhN+PdIc1M4ZGhbV0wSBE+7Z55SLqnAt84VayEfhgpLf2QKcNbsvKboZSZiIhcHZcvYBrw2F5rHlMopRvR+sBpruCDaNBWNyebekCnw1H0BzTaXANmCjP3yO6hWrM9/OSXdlSVphHMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z0ssImOx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B43C2C4AF08;
+	Thu,  6 Jun 2024 08:38:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717663087;
+	bh=eZpkYN1My8L0alqfBripkdov+U6NwJDEvmRjW7H7TrM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Z0ssImOxCls3XktDCYRtinxWEpufX07d73sxQPBmsmiSTJdiqog1pXPRBfXvJAE1F
+	 /qV1iyYYBd1CY7imDXH3RWCvRWB/JfVVUlLVPh8oLYsH7gtq1HQ8WTAzFRINBL1WIG
+	 Lm+pluRreSS29ZCs4j0bc7d6RB0E2KUq1/eosEqEb2vOxTiRSDsEe0iJW4x9y94ieq
+	 nGhVzqP1kdEp/nrXw5g3dUWiLA0+v7mrcg1i0T8TokYrma3NLYGFKsDyKsT9qu1Bf9
+	 aARw43yl5+4xEQ+ZmQuK3nOMf9Jl3X6m/n1xX6j+FUyPg5e4xoaiZAN5t9VjX7NmyY
+	 1o02QNKsrzcmg==
+Message-ID: <610ee49c-e936-43d4-991e-c39dd0f439d3@kernel.org>
+Date: Thu, 6 Jun 2024 17:38:05 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5.10/5.15] ata: libata-scsi: check cdb length for
+ VARIABLE_LENGTH_CMD commands
+To: Mikhail Ukhin <mish.uxin2012@yandex.ru>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jens Axboe <axboe@kernel.dk>
+Cc: stable@vger.kernel.org, linux-ide@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Pavel Koshutin <koshutin.pavel@yandex.ru>,
+ lvc-project@linuxtesting.org, Artem Sadovnikov <ancowi69@gmail.com>,
+ Mikhail Ivanov <iwanov-23@bk.ru>
+References: <20240605213428.4040-1-mish.uxin2012@yandex.ru>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20240605213428.4040-1-mish.uxin2012@yandex.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Chen Wang <unicorn_wang@outlook.com>
+On 6/6/24 6:34 AM, Mikhail Ukhin wrote:
+> No upstream commit exists for this patch.
+> 
+> Fuzzing of 5.10 stable branch reports a slab-out-of-bounds error in
+> ata_scsi_pass_thru.
+> 
+> The error is fixed in 5.18 by commit ce70fd9a551a ("scsi: core: Remove the
+> cmd field from struct scsi_request") upstream.
+> Backporting this commit would require significant changes to the code so
+> it is bettter to use a simple fix for that particular error.
+> 
+> The problem is that the length of the received SCSI command is not
+> validated if scsi_op == VARIABLE_LENGTH_CMD. It can lead to out-of-bounds
+> reading if the user sends a request with SCSI command of length less than
+> 32.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+> 
+> Signed-off-by: Artem Sadovnikov <ancowi69@gmail.com>
+> Signed-off-by: Mikhail Ivanov <iwanov-23@bk.ru>
+> Signed-off-by: Mikhail Ukhin <mish.uxin2012@yandex.ru>
+> ---
+>  v2: The new addresses were added and the text was updated.
+>  v3: Checking has been moved to the function ata_scsi_var_len_cdb_xlat at
+>  the request of Damien Le Moal
+>  drivers/ata/libata-scsi.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+> index dfa090ccd21c..38488bd813d1 100644
+> --- a/drivers/ata/libata-scsi.c
+> +++ b/drivers/ata/libata-scsi.c
+> @@ -3948,7 +3948,11 @@ static unsigned int ata_scsi_var_len_cdb_xlat(struct ata_queued_cmd *qc)
+>  	struct scsi_cmnd *scmd = qc->scsicmd;
+>  	const u8 *cdb = scmd->cmnd;
+>  	const u16 sa = get_unaligned_be16(&cdb[8]);
+> +	u8 scsi_op = scmd->cmnd[0];
+>  
+> +	if (scsi_op == VARIABLE_LENGTH_CMD && scmd->cmd_len < 32)
 
-Add clock generator node to device tree for SG2042, and enable clock for
-uart.
+This functions is called only when the opcode is VARIABLE_LENGTH_CMD. So there
+is no need to check that again.
 
-Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-Reviewed-by: Guo Ren <guoren@kernel.org>
----
- .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  | 12 ++++
- arch/riscv/boot/dts/sophgo/sg2042.dtsi        | 55 ++++++++++++++++++-
- 2 files changed, 66 insertions(+), 1 deletion(-)
+> +        	return 1;
+> +	
+>  	/*
+>  	 * if service action represents a ata pass-thru(32) command,
+>  	 * then pass it to ata_scsi_pass_thru handler.
 
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-index 49b4b9c2c101..80cb017974d8 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-+++ b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-@@ -14,6 +14,18 @@ chosen {
- 	};
- };
- 
-+&cgi_main {
-+	clock-frequency = <25000000>;
-+};
-+
-+&cgi_dpll0 {
-+	clock-frequency = <25000000>;
-+};
-+
-+&cgi_dpll1 {
-+	clock-frequency = <25000000>;
-+};
-+
- &uart0 {
- 	status = "okay";
- };
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042.dtsi b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-index 81fda312f988..34c802bd3f9b 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-@@ -4,8 +4,10 @@
-  */
- 
- /dts-v1/;
-+#include <dt-bindings/clock/sophgo,sg2042-clkgen.h>
-+#include <dt-bindings/clock/sophgo,sg2042-pll.h>
-+#include <dt-bindings/clock/sophgo,sg2042-rpgate.h>
- #include <dt-bindings/interrupt-controller/irq.h>
--
- #include <dt-bindings/reset/sophgo,sg2042-reset.h>
- 
- #include "sg2042-cpus.dtsi"
-@@ -20,12 +22,60 @@ aliases {
- 		serial0 = &uart0;
- 	};
- 
-+	cgi_main: oscillator0 {
-+		compatible = "fixed-clock";
-+		clock-output-names = "cgi_main";
-+		#clock-cells = <0>;
-+	};
-+
-+	cgi_dpll0: oscillator1 {
-+		compatible = "fixed-clock";
-+		clock-output-names = "cgi_dpll0";
-+		#clock-cells = <0>;
-+	};
-+
-+	cgi_dpll1: oscillator2 {
-+		compatible = "fixed-clock";
-+		clock-output-names = "cgi_dpll1";
-+		#clock-cells = <0>;
-+	};
-+
- 	soc: soc {
- 		compatible = "simple-bus";
- 		#address-cells = <2>;
- 		#size-cells = <2>;
- 		ranges;
- 
-+		pllclk: clock-controller@70300100c0 {
-+			compatible = "sophgo,sg2042-pll";
-+			reg = <0x70 0x300100c0 0x0 0x40>;
-+			clocks = <&cgi_main>, <&cgi_dpll0>, <&cgi_dpll1>;
-+			clock-names = "cgi_main", "cgi_dpll0", "cgi_dpll1";
-+			#clock-cells = <1>;
-+		};
-+
-+		rpgate: clock-controller@7030010368 {
-+			compatible = "sophgo,sg2042-rpgate";
-+			reg = <0x70 0x30010368 0x0 0x98>;
-+			clocks = <&clkgen GATE_CLK_RP_CPU_NORMAL>;
-+			clock-names = "rpgate";
-+			#clock-cells = <1>;
-+		};
-+
-+		clkgen: clock-controller@7030012000 {
-+			compatible = "sophgo,sg2042-clkgen";
-+			reg = <0x70 0x30012000 0x0 0x1000>;
-+			clocks = <&pllclk MPLL_CLK>,
-+				 <&pllclk FPLL_CLK>,
-+				 <&pllclk DPLL0_CLK>,
-+				 <&pllclk DPLL1_CLK>;
-+			clock-names = "mpll",
-+				      "fpll",
-+				      "dpll0",
-+				      "dpll1";
-+			#clock-cells = <1>;
-+		};
-+
- 		clint_mswi: interrupt-controller@7094000000 {
- 			compatible = "sophgo,sg2042-aclint-mswi", "thead,c900-aclint-mswi";
- 			reg = <0x00000070 0x94000000 0x00000000 0x00004000>;
-@@ -341,6 +391,9 @@ uart0: serial@7040000000 {
- 			interrupt-parent = <&intc>;
- 			interrupts = <112 IRQ_TYPE_LEVEL_HIGH>;
- 			clock-frequency = <500000000>;
-+			clocks = <&clkgen GATE_CLK_UART_500M>,
-+				 <&clkgen GATE_CLK_APB_UART>;
-+			clock-names = "baudclk", "apb_pclk";
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
- 			resets = <&rstgen RST_UART0>;
 -- 
-2.25.1
+Damien Le Moal
+Western Digital Research
 
 
