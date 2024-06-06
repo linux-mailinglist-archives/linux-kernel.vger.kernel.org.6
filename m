@@ -1,116 +1,146 @@
-Return-Path: <linux-kernel+bounces-204726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F3178FF2D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:49:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F708FF33F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A0671F25AA8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:49:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 583D5B2CD21
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24379198A3D;
-	Thu,  6 Jun 2024 16:48:58 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B18C198A16;
+	Thu,  6 Jun 2024 16:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0H4g1rCz"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B0A198A2C
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 16:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669F5197A88
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 16:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717692537; cv=none; b=J9ieVUzLAydWz58F3oWuADN/Ernu1w2ARa1cqn3BW8YmknyK4agHN8DgFsHilMrov3NZCNMRBBwFc6qWdD/7XgbcRbUH+sWoD//9On09m7lxtShCZ4dZkvW5vVx5oZTsqcDG65G1oD3x+nSjtGzUEughO4BR08JrQl38L62k78k=
+	t=1717692555; cv=none; b=hi9iTgz/mLNZ6tx5UePG+n9KkpKHxdVtXvAWteWyp+SyR07zSaoRuN1OSBCUlxvth+yay664qZKsozWOztG84yUldOa1mw1YMu2sAam2Ej9mtpTrfwvSSwcMqSS76P+q9WORHtTtd8WefFpocYp1FZQqas1oPA0qNf+iSJ1SOuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717692537; c=relaxed/simple;
-	bh=NA592QpdHNILyqQw+YPUbhUgEevZwCv+wztjQVrzJ/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=gqog7N4UsHywNA+EmsZ94nFJX4EtQ9NScU+e14xvnS0/VpeGYYcpLxH7KN5s1sl6n8SA7YZkwv0P3b3W6AFq+zPLObohlsLjk8nDjKjCwkVzmE1NmAEnIo6VRPmFCQb4LzsxPc5+y40XFIKa2+RzRmPOH3NU03rYv7P7INXGpUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66206C2BD10;
-	Thu,  6 Jun 2024 16:48:56 +0000 (UTC)
-Date: Thu, 6 Jun 2024 12:49:08 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [for-next][PATCH] function_graph: Rename BYTE_NUMBER to CHAR_NUMBER
- in selftests
-Message-ID: <20240606124908.0d7b31e2@rorschach.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717692555; c=relaxed/simple;
+	bh=tiCDm7bQeazIveQ+TqmO+DoHjVeAxore34wgY+AIKtA=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YavJzI7uLCeuEg3nUREcoFA6+aCHwhzSWEBiEhFIKTkwtXxMZhD2nxSwMNcFtnJkySfX448lInLJrLQKy9iFAZb2PIlfBaPmojv54qI7wGLkPTMLw86tMpIgAcCPfNwm/Q4CN1ka+Xzh9Nhft33Y0un2wdYhalfwJBpDU8KtLU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0H4g1rCz; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4210aa00c94so12175015e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 09:49:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717692552; x=1718297352; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oSUOm+s6w//51hXzTTT6KSVkXugh1Bfh/htdRvH7neQ=;
+        b=0H4g1rCzcv8h6rM2GF8mN95vHh2SrC4PSELJgLqRtj4vvVwBX0jH6LrLlOw/Xv7iID
+         vyQc01cckNJ53zsK5lDkLoxD3Zk7nPIbcHhPMeTxPf9g9CJZMIrzkR8a0Gfh/6R6QMo6
+         h7/T3dLf7HM8mUvpOC5xdaFGL2glbX88SBwBYgFstAYpurfskGcVxmv1bNkTTqZQ4Sui
+         DP8Qi53QsKDAwwLkoxstaqNVBKeTEqQRzr8XC2Be6QGewdSXP/osXq8XodLxka2j49yP
+         v3mQmsXT1z6wbU6htgNo6pwtcZ7532vdGH1y6twH9vNw/IqvGYZpsLlNkeYxBlUdGUmf
+         nNDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717692552; x=1718297352;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oSUOm+s6w//51hXzTTT6KSVkXugh1Bfh/htdRvH7neQ=;
+        b=DLZ4qiEGFDDKuY1A1JiRXG1LXLUIkJDeFcxmSmuHmIZoZwAQYXunNstRU07OYX2VSK
+         lWaTaUkIbZxG7QwGPFxY6UHJ7hAjRVsm6qhqN+UicK22j2AxQkYZ165NFo+QIms5XXSe
+         yxrN5RQAXrJErquJBgMI0TgDjJe1uDUuW1xuM8DsZvBx2FJI79ACZzDSrssgx8GVY3pl
+         16GYNqVvFP60CLk+Dpx3g7F8MzsIb2hvcBWQghRIyB1jpYPG55NyhlnuddqhPh+GtxA+
+         pPj4XPooXi6vD2TybEJ1pvlzU/qy7wmCB1lTUK5gGgkMYlD+MlIKM/9eeSrjmgck4cos
+         8sQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFnG/0+RsZ+pjm4HprsGvz+pvU0oG5aah3Vd89dFdvzrhL/JzMQ32k0oX9OZkIqGCH4w/gLa/cB/Kzdf/C6PfW76eYM6vHRm451Vco
+X-Gm-Message-State: AOJu0Yy8hpDEL8KRZY5L3q5kpOBNinGXaEpf5EEPsCJ4hux8L7mEJptz
+	lkaVSZ5bYmsS4ErNX4HZKpx3eICrAaO3UbC4iSCZLh5A65sPQMOTFKenYAOAqqY=
+X-Google-Smtp-Source: AGHT+IETeVy2S0X0ToniwMemG9HWaKxUfz7+suNaSmJu6XYzskDMOIIBIvpEEBYVVz2aX5u3vA6tIw==
+X-Received: by 2002:a05:600c:3503:b0:41a:ff7d:2473 with SMTP id 5b1f17b1804b1-421649e9f54mr2318905e9.4.1717692551704;
+        Thu, 06 Jun 2024 09:49:11 -0700 (PDT)
+Received: from localhost (p509153eb.dip0.t-ipconnect.de. [80.145.83.235])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42158102af1sm61361915e9.16.2024.06.06.09.49.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 09:49:11 -0700 (PDT)
+From: "Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=" <ukleinek@baylibre.com>
+X-Google-Original-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Date: Thu, 6 Jun 2024 18:49:10 +0200
+To: Trevor Gamblin <tgamblin@baylibre.com>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	michael.hennerich@analog.com, nuno.sa@analog.com, dlechner@baylibre.com, 
+	devicetree@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
+Subject: Re: [RESEND][PATCH 0/2 v6] pwm: add axi-pwm-gen driver
+Message-ID: <wrniwk6ywjinuejn63fx7fmbck26arqtbsihz4ctqatd6coi3s@rwugd6dxsku5>
+References: <20240605203507.1934434-1-tgamblin@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="reyzrg4yf7eenh64"
+Content-Disposition: inline
+In-Reply-To: <20240605203507.1934434-1-tgamblin@baylibre.com>
 
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-ftrace/for-next
+--reyzrg4yf7eenh64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Head SHA1: 1af19b7c01061172f943ac247409626af0ba0867
+Hello Trevor,
 
+On Wed, Jun 05, 2024 at 04:35:04PM -0400, Trevor Gamblin wrote:
+> Resending due to missing real name in "From:" line.
+>=20
+> This series adds support for the AXI PWM GEN subsystem found on FPGA IP
+> cores. It can be used to generate configurable PWM outputs, and includes
+> options for external synchronization and clock signals.  The work is
+> being done on behalf of, and therefore lists maintainers from Analog
+> Devices, Inc.
+>=20
+> The series has been tested on actual hardware using an EVAL-AD7985FMCZ
+> evaluation board. An oscilloscope was used to validate that the
+> generated PWM signal matched the requested one.
+>=20
+> There was previously a follow-up series
+> (https://lore.kernel.org/linux-pwm/20240314204722.1291993-1-tgamblin@bayl=
+ibre.com/)
+> that enabled support for two different versions of the AXI PWM GEN IP.
+> Since issues were identified with the v1 IP functionality and v2's
+> regmap is the one listed on the device wiki
+> (https://analogdevicesinc.github.io/hdl/library/axi_pwm_gen/index.html),
+> the driver was changed to support only the v2 IP after squashing those
+> additions. As a result, the overall driver is simpler as it no longer
+> uses an axi_pwm_variant struct. Support for v1 IP can be added back
+> later in the event that it is required.
 
-Steven Rostedt (Google) (1):
-      function_graph: Rename BYTE_NUMBER to CHAR_NUMBER in selftests
+I found a minor nitpick in your patch. I applied it anyhow and jumped at
+the patch opportunity myself. Patch in your inbox (or at
+https://lore.kernel.org/linux-pwm/20240606164047.534741-6-u.kleine-koenig@b=
+aylibre.com)
 
-----
- kernel/trace/trace_selftest.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
----------------------------
-commit 1af19b7c01061172f943ac247409626af0ba0867
-Author: Steven Rostedt (Google) <rostedt@goodmis.org>
-Date:   Thu Jun 6 08:18:46 2024 -0400
+Best regards and thanks for your contribution!
+Uwe
 
-    function_graph: Rename BYTE_NUMBER to CHAR_NUMBER in selftests
-    
-    The function_graph selftests checks various size variables to pass from
-    the entry of the function to the exit. It tests 1, 2, 4 and 8 byte words.
-    The 1 byte macro was called BYTE_NUMBER but that is used in the sh
-    architecture: arch/sh/include/asm/bitops-op32.h
-    
-    Just rename the macro to CHAR_NUMBER.
-    
-    Link: https://lore.kernel.org/linux-trace-kernel/20240606081846.4cb82dc4@gandalf.local.home
-    
-    Cc: Masami Hiramatsu <mhiramat@kernel.org>
-    Cc: Mark Rutland <mark.rutland@arm.com>
-    Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-    Fixes: 47c3c70aa3697 ("function_graph: Add selftest for passing local variables")
-    Reported-by: kernel test robot <lkp@intel.com>
-    Closes: https://lore.kernel.org/oe-kbuild-all/202406061744.rZDXfRrG-lkp@intel.com/
-    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+--reyzrg4yf7eenh64
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/kernel/trace/trace_selftest.c b/kernel/trace/trace_selftest.c
-index 369efc569238..adf0f436d84b 100644
---- a/kernel/trace/trace_selftest.c
-+++ b/kernel/trace/trace_selftest.c
-@@ -758,7 +758,7 @@ trace_selftest_startup_function(struct tracer *trace, struct trace_array *tr)
- 
- #ifdef CONFIG_DYNAMIC_FTRACE
- 
--#define BYTE_NUMBER 123
-+#define CHAR_NUMBER 123
- #define SHORT_NUMBER 12345
- #define WORD_NUMBER 1234567890
- #define LONG_NUMBER 1234567890123456789LL
-@@ -789,7 +789,7 @@ static __init int store_entry(struct ftrace_graph_ent *trace,
- 
- 	switch (size) {
- 	case 1:
--		*(char *)p = BYTE_NUMBER;
-+		*(char *)p = CHAR_NUMBER;
- 		break;
- 	case 2:
- 		*(short *)p = SHORT_NUMBER;
-@@ -830,7 +830,7 @@ static __init void store_return(struct ftrace_graph_ret *trace,
- 
- 	switch (fixture->store_size) {
- 	case 1:
--		expect = BYTE_NUMBER;
-+		expect = CHAR_NUMBER;
- 		found = *(char *)p;
- 		break;
- 	case 2:
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZh6IIACgkQj4D7WH0S
+/k5jMgf/QgQYjCo0fHzsyrRbeEkabbKST7oz2dDGTe+6SpEgxK+krU45hdMQI7hX
+y5kpSC7CZO1u50/LUIwjXX6wrLeipcVHWhLqc2PCdQxMExWJwf/kClGEcE4lEZpm
+Kb/kJYjoz0GDmBPF8EoFnacvJSbTddC5SSGEh4+mELSSLctgp0g08/5+2NlbkX57
+rz0lh3+QTI79KQ6+AS/5RYXK/y6CHNDFv9e8k/VkexVmKuwMX9SEKPRqu07wnh+4
+y/wcwRwpvtPyR9zgAOsaui0V69Mghy6HExyhpJkcWVD5+wOK34gbq10GMvk1Cpy3
+2O4NY7enbdjhFbL3cbxKDG4aWVy5fQ==
+=5lHp
+-----END PGP SIGNATURE-----
+
+--reyzrg4yf7eenh64--
 
