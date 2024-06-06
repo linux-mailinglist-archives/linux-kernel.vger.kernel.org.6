@@ -1,506 +1,239 @@
-Return-Path: <linux-kernel+bounces-204907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7913A8FF4E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:46:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54FCE8FF4E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D97FD1F2717D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:46:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFE61289EE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAF84F1F2;
-	Thu,  6 Jun 2024 18:46:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC594F615;
+	Thu,  6 Jun 2024 18:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N7O/ZA6B"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="doPTXVA1"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2075.outbound.protection.outlook.com [40.107.21.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B1944C73;
-	Thu,  6 Jun 2024 18:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717699573; cv=none; b=paPWE/dlCJzOmkHSxOgWEMJ3kvEY/kx+orBTzejZG3WifMyyl5pyLwY6xxHUwB38AuTAvOFOpT2hBXNkikWomlEw8p+1E/ab/ADExCjXYuyiRjxVugzY87TSnn5+xPvil4AgFws5+5GkfFqAbyA+QoH4NBiGp2XTjIMFsDTba58=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717699573; c=relaxed/simple;
-	bh=KWkApAjfkQMb9tbwDmHBJttC1PLW2IgoH3n2/ahabng=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AnAlOkqXITkISFuNRTIaDKzGxI0u6NH9mNC0nAbXSZYjaGLPhv1dc3bYWZvhCDO6wc5rfLs0os7Lx6LCGqIIL06r4aVK+6e4LYDnO/JklKq7Q1IgiIeeHZs+XmGjoDdAED74P5WSqaRw8uKlBGwYxOB5kDrkTiWXTzlAvG6PRIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N7O/ZA6B; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a68e7538cfaso173360366b.0;
-        Thu, 06 Jun 2024 11:46:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717699570; x=1718304370; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fZhRGCddhzDppgR2oYpDJaWzjmMIWmcsbVelwBQpSao=;
-        b=N7O/ZA6ByEdci43wqmNdfHG5JFsdpRRXU+MEk4yziXpVWo4HdV0D1gZwnnj7s0yO0g
-         htAoZPaLy5cRneyZhQBbY2e8yFy/IZ4LcdGhzVQGeHkrY29NUD4r1KMe6HkELmDbdHMl
-         m5Ws68Mok0EHRAS0Ny3xFb52ja6iL6jrSfHxUDThO2nw7Hl/w12VUt8YwFDv8eq9evd8
-         CMCVQ3JT2sYsclqHRl+g/hEZEqwbMHvnOiANEB00vH+t/vbpXghZYUcBltHl9Lkln3RS
-         fSLkQeOZiCNdZIOpRJuII6gmTITsC21bIWJZDRy76b0UvWVxOh+yRGI22TCyuSWgeC9l
-         VaRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717699570; x=1718304370;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fZhRGCddhzDppgR2oYpDJaWzjmMIWmcsbVelwBQpSao=;
-        b=w4dCZh+1TvW92f+OFM1hiH/4P7qUCdfXAY0AgVRxp0szd+hALXnkq+urLZxZ3CTPso
-         fBiHqafLxjXD345oK/pfN88cIlOmD/G5z8Bogv72P0KmNFCjbLeZyUYb6wV6fjRUVpjD
-         eL9B13Kcv4SjrmP29Vu8a0uL0yf8jDCHbboIWy08OaD44WhCtMh/1lEH1cGnvPC5lHAj
-         SAz71WxVjevYUnhvg8M3A5bMtZdErokOjoRR288UtmzqCdVj0wq6/nmgzIQ7ZL6XgnCY
-         roDI9Vdab8bosMN6xiIrusuFlwuORgJwW1tLVOalLMuR6iwGPqI/bi59sfCmQ79GYsuK
-         b2Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYN9ggx29IvIMpPuyrUi7T1ZnIYfhYMEk0p3XDttgVDKx75JIsBlGCCGXJDUw5JxLec7tzdRCXaclrFWP+oSWTXx9ltMdComEAeHLKAa7imRiCVruukl9DM4kmAz+vna0zkB/Huym+X1gFMQ==
-X-Gm-Message-State: AOJu0Yx1g09FJ5X0hBlOmPTaXH0ddcQTWaU9at9u3NRZ76t5tSajj5IB
-	pwHFfBhNf7frIWIJNLmaPE7AOaEGV4y4Kn+C7KwjtoJa96YQB0eGaO5cb0HLd9sDajHj9QIVW02
-	TTbxwkSjNjSr58awNzD+cO1Aj+Nc=
-X-Google-Smtp-Source: AGHT+IE6ArkX0xYdgFlf5pp7VO3nd9wgFHmNApbiJwgBXe6BuVzc/wdqWHxWNWaj0P0jziL+FCArHEmB1DGUF961tH8=
-X-Received: by 2002:a17:906:b74c:b0:a67:e4e3:99d with SMTP id
- a640c23a62f3a-a6cdb1ee33amr26321866b.59.1717699569867; Thu, 06 Jun 2024
- 11:46:09 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E394652D;
+	Thu,  6 Jun 2024 18:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717699642; cv=fail; b=RRTDuZI6bKpoCv0bJstsh98fDdFoDccAfTgZ9NnGi8zGo5KJbEZHQ8BawebjAmoX9kgQeG7r3gkgOuoxPOA347eehx7d02jwhoIMTIGDVjPwq8QEBJpieSewdKOWwi8B78fQPD4T7l+Js84iCXJPUf+syoAoLh8jEHm/8b+xjsQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717699642; c=relaxed/simple;
+	bh=3VvEvAI7+MkFSCQT3+NlABP8Hpakf4WexKH83iHPpWw=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=mZthtm+he/gEDsD5+cdyDg4zJPIvDwy2g53jxNYFHsJlVC1344zeWHzJCG6X5/w6xsw0/Z6SFcSL5nfyjqUhNh8E6fhXYoTLDQxJPFIhEvdpWcQ6wd/UBZ2fkhW+7e54xgdyHfEWZXHZYKkJm/WU/kB9RGkVgBmFHyB94gIPJRM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=doPTXVA1; arc=fail smtp.client-ip=40.107.21.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Gp7ek9HGNG4hTG5UiDVubO5muyMCDbiQPl5GX1DSgp7D+w/yunM2Mz0WJoVTM62uwmfBAh4o1XUwskOZw8rhverELKMRgqE0BlpwCPCwhztJcpGwDl3g+VsooMrQzqREfeK4fx3gS2EOKclGQ6jGDQsE69ygkVN80pRBAWQM9xUZQYPpHxRygTURGLmS6ST8dlUVyY2lq8YX6nHmAP9bwMST8vxeBtMB3PGQvXn0HJQu0k//aN3mFjluGmeFPz7uHXRFIDLaA+Djuv+27rGsgXYcRTif8ZC64KjzTO3Bx2hUjqK1dH4jtclG4txL4UyoXxA4b3wyu4SUkU1U5gmlFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=v58d4d3VM+rzzM4K0krVNZ6yKq0yL2fiUmYYYcs1CJA=;
+ b=eJ/9vKDx4pmdDiGpuSAJ/oqSTss8EsLZLzL0NXP5yXSYDj6gJr5fTZu5LZntTQb4mTncL/Ee8kROP7srYD9CmVS7ivsoh/8OtxGSnNgqpvbRl+UOXK0OGCBx/qZmkNrvcSkPrtnbCQJEbJnePQTSKT38H+yobnj0CIWO8qcdFEihGYf9doOKOM8fxJRYS/rR3kLBlTUiKzKAeXiwJIxscsPOXxG1bJPC6lAqHhllKsXwCGJkHmOZbTZeDXHfRbrIQD34yiJlMvGzqc0+RZj23NKq3e+AUQE050iSqgFf0DanOiZfV/n/XWfXYiIXo6H8GhUdH1jp8/ahRoS8Ymbvgg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=v58d4d3VM+rzzM4K0krVNZ6yKq0yL2fiUmYYYcs1CJA=;
+ b=doPTXVA1DPjQYwfdB441CmejqYk4U9N6QkPV04NPX4Wy8nsy+Hb6eyt2Elt+5AZGOEzGDnDJCt+1d7T3BlsvGJ6LGGL3mipEP4F+9UZUclZ3CiCGldhZ4rDtQ7/5DNoZvsCRcwpQ9E6Bv2DgZkNvfnnqj4HqnJT1TLjuHao8FCA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by VI0PR04MB11069.eurprd04.prod.outlook.com (2603:10a6:800:266::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.27; Thu, 6 Jun
+ 2024 18:47:16 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7633.021; Thu, 6 Jun 2024
+ 18:47:16 +0000
+From: Frank Li <Frank.Li@nxp.com>
+Subject: [PATCH 0/7] arm64: dts: imx8qm: add subsystem lvds and mipi
+Date: Thu, 06 Jun 2024 14:46:54 -0400
+Message-Id: <20240606-imx8qm-dts-usb-v1-0-565721b64f25@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAB4EYmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDMwMz3czcCovCXN2UkmLd0uIkXctkU9MUo6S0VFMjMyWgpoKi1LTMCrC
+ B0bG1tQAD14nCYAAAAA==
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Dong Aisheng <aisheng.dong@nxp.com>
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Frank Li <Frank.Li@nxp.com>, stable@vger.kernel.org
+X-Mailer: b4 0.13-dev-e586c
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717699632; l=3032;
+ i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
+ bh=3VvEvAI7+MkFSCQT3+NlABP8Hpakf4WexKH83iHPpWw=;
+ b=YukJV2sG54+c0+F4jiBDwrpVDpwL+jvIouDLfmA711uefkGQxDiMwFwGsg1VYYPggHJt72eny
+ rc01240ReMhBuTsr0A7EIiXzWj6NVcyTq5VknXweLGdfdTtIV1laTmu
+X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
+ pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
+X-ClientProxiedBy: SJ0PR05CA0178.namprd05.prod.outlook.com
+ (2603:10b6:a03:339::33) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606140515.216424-1-mjguzik@gmail.com> <20240606163116.fnblztdlbp7sqjt6@quack3>
-In-Reply-To: <20240606163116.fnblztdlbp7sqjt6@quack3>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 6 Jun 2024 20:45:57 +0200
-Message-ID: <CAGudoHGmq2spTXMV+02xqrcpcQYqwJ-hEAoD7WojhY-LV_JY4Q@mail.gmail.com>
-Subject: Re: [RFC PATCH] vfs: add rcu-based find_inode variants for iget ops
-To: Jan Kara <jack@suse.cz>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI0PR04MB11069:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8e11de12-3727-4fef-ebc9-08dc865915b2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|52116005|376005|1800799015|7416005|366007|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SEVUWU90NytkYVJKaTVJcjhXMlZqb1ZxalJMYUhVckZzcUI2OUEyOGRlcUFu?=
+ =?utf-8?B?Nzc3NzRpL0tOU3lBUDB0WVJ3NHNrdWxkTmpFcWxtWW5URWUxbFJnWkppQmxQ?=
+ =?utf-8?B?enBwZzkzM3lBZ0liVGd3dlZzZjdFN2pZaUt1RkRZbmVWS25lVWFabGt5RzVG?=
+ =?utf-8?B?dUJBZi9ONy9yN0xzaUppb051NXNrU0FhbmVPbnpvRnVDNFRQQWlHMHhPSjVL?=
+ =?utf-8?B?aGRDNTNreWk2YzR4eHVpUXlTZWl6VXp1R0tpZ0FyaFdsLzdCNG5UTVF1bFVE?=
+ =?utf-8?B?ekprdWtOdml5dFljbStYcWtaalAvQVBCZmpzVkYyWXRBUDkxOTBZeTVIajhT?=
+ =?utf-8?B?dUlYbkprQWFYWWdrVHJvK2l0KzVTdkV3aWUzTjFuek1Hc3NIZ1R2bTNSTUJP?=
+ =?utf-8?B?SGpQNVR6MXhBcEdsWFY3cFUrS3ZJaEVhR2ZSdXdDQnExeS9uSnBVdUpqdjlB?=
+ =?utf-8?B?MzBTVHd2VFl4dFRYblJnMXQxbDhUdDYvRnhGdFdFdEdPdWM4ZXdZeVdRaGZi?=
+ =?utf-8?B?Z2VvUi9Ud3pmK0RDdlNudFZhdTM2dzYrN2RDT1RSVG9ibTY3bVRqZU1tQ28r?=
+ =?utf-8?B?NlNJR0p2OSs2dVJKWHh0YURuRzg4a0dDUzRJYUVhOWJEbEQ3Q25kMitTSGxR?=
+ =?utf-8?B?K0IwKy9laTBvWHlkVnBxTEd2SDNMQi85K3dPNjgycFJCMSszejN4NTNMSFYv?=
+ =?utf-8?B?LzNUU0JmYkpLc1QzalZUV2JLWFFFRFF6Tko0YXZXVmZyczZ6T0MxL05oVHdI?=
+ =?utf-8?B?Y3VCWVFrZUhoTHM3Q1dXLzFoZlVSTnV6Z2M4WlZLSzg1d1VLNlFiTUEyYkhK?=
+ =?utf-8?B?RFNUendBZGV5bUZ4TFh6ak9RNVNPU0NsL04yK1l5Wk5tWWN1c1lvTHRMWC9i?=
+ =?utf-8?B?U1FDd3lOdDFTdVl3WFJhMXcrV2NxTFhZbk1TSUczVnNFQjE2R1lLVlJneXdP?=
+ =?utf-8?B?bGhvSE5FRTgxMFFOR2lXalFIbXc4UG11U2ZZWm9EVDREengvbDU3QWkrclBa?=
+ =?utf-8?B?YkZ1TWlOVmhWTDZLbVBNVlFwSXczTWdScGZqU2NkRFJBa1NUL2pzbG04YTlt?=
+ =?utf-8?B?U21rMXFvN1FBQWZSSkRybndHQmRsSXdkNjZKV2hxUnB1bFppS0tMY0tJaVVs?=
+ =?utf-8?B?T08xWU1Oek5rVDNQbGlVYTdMOFZQR3Rra1ZYUjBqdm8rOW9WTSt4dFExYVZs?=
+ =?utf-8?B?aFd1UThrZmQ1ekF1cUQ1RkJIV091WFo4NFl3aXJJaVV3OTBHQnZVM0wwZHNI?=
+ =?utf-8?B?UUJ2bFVNNDE3Tzd4cVdtK0kvOXBQRFJpUEUrbEYrNzVJUWJxdTVMa2E3dEVp?=
+ =?utf-8?B?bUlRbXZBYjA3eVJOWjJVcGlnODI4VVc0cW9NWmVnUHNQbFZHUDBQKyt6V3Q2?=
+ =?utf-8?B?ejFodHZ0MHNUemFWN2o1bWxQdWxFbFQrVUY3VXhuRHlEZFlNUUswd0VPU2tV?=
+ =?utf-8?B?Qjg1N1lhQlJYM2s2M1hWemtQT2l4am1lV3kwOHptZ24wcHFmWVpUT0VvblRy?=
+ =?utf-8?B?R0Rsc0gzK0RWdU9BUmlna0VxNUFnRis3SzJrbFhDSGxQSW1nWWNXWHFQZXI3?=
+ =?utf-8?B?NVhlcDllR2U4aEcvS213WU5IUHdBOE9aK2RIdm5waTM5bGowOUpUR3ArWk9S?=
+ =?utf-8?B?QjFSRDQ0cGRlZVAyOFc4TGJmNEZsaGc3VUVPeTJ2VGh4TElad2pDS2kxalQ4?=
+ =?utf-8?B?TFZVS1hxUFVjdExqY1ZycVg1WFRVNVJsNy81RDgvQUUzeDNqVlZmTzFuY2NS?=
+ =?utf-8?Q?kR4HCGiITYeXmBJqDQespaxlRC6NSYX2tKIp4K4?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(52116005)(376005)(1800799015)(7416005)(366007)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bkpFaFZwU21kMTFIWUo3aHIrUS9vb1hDa1NMWVBkRWluUlBPQ21haG5CclZ6?=
+ =?utf-8?B?cHBTYWFocE9XVHhwcnhYV2N2SUdEa3REMGdna2R1TUZoc282MnA2VTFYSVM1?=
+ =?utf-8?B?elA1Qjd4ZzRlcTBiWXVZbnYvTytpSEsyK3dxUzlxSnFKK2k5MGxvR25INGRG?=
+ =?utf-8?B?eDF5bFJ2RFZRN1NxNHlMY2l0NlVuaVlNdlJsVUZDSlhvOW0vZDEvMjBvZVBC?=
+ =?utf-8?B?VGZFbFRpbW1wQmdPYzFxVmlHbmVjU0dqc2tGNDFybHhJSVJLMnMzQUFBVjR5?=
+ =?utf-8?B?QkdsTVlnMDEydzZ6T2NXMFliUEpRMjRDbmdSZTVTT0s4N3ZlQWZQUUdOb0NQ?=
+ =?utf-8?B?VjVncWZnTTgvV0Y1aGVHZ1pnNjdUUEpzdGdIVjlWT2hUdEY2dFIxbFkyQVlr?=
+ =?utf-8?B?NXV6aGw3NmQ4MDlCeTlLZkdlY1lPTERyYlpJejJNTFFHTHU3UmxaYk1QTEgr?=
+ =?utf-8?B?Q3FBN25VOGc3VFRuakVNdlp3Y2twVUp3NDJIYStqR0IvSDBmM0Z1Tk0wNDZQ?=
+ =?utf-8?B?SFN4akt4LzlhaEF0SFZ6bkg4aVNQZldkbWYvU3NTOElYTks5NGk5QTlBSW5J?=
+ =?utf-8?B?YVRaRlhWd1AvZ1ZXYjN3SmlvN1BUM1pIZm8xbkJFRHRlRmRRdDVjRWo3Qk1j?=
+ =?utf-8?B?WENCZXpuekdUMWNMZURVM3JBcGF3M21GdkZIYWxDVWx2NFpVQnpqbnNHNlFS?=
+ =?utf-8?B?ekYzR1JIZmd2ZlUvc1dJUytQWUl6cTdxdUtlQ1Z4cEU5N0hIcUtqaHY5RXps?=
+ =?utf-8?B?eGRtc2N2bm03L1ZkRDhFTjNZMUhSMXgyZlZmenJuOGVBb01iQlF0K2hGQzVW?=
+ =?utf-8?B?dXB6YXMyQ3V4RG01eUVTVS92WkxIR29PeWFRamlJZzgwYnBJZXRsY0czb2Jy?=
+ =?utf-8?B?dnhMWXFyc1U3Szc1K2ZjUTg4NHY1c3YxNnNhYmFiU2pkZThMVDZaQnNpdHk0?=
+ =?utf-8?B?Y0tWQkRDSWZIQzJPc0wyQjNvTjNGRFpldjhoQ1JHRFM0SXlnb1dmbXBpNUpy?=
+ =?utf-8?B?eTZjVXZMQnpJVkkrZWROSlpVVnNGeGJ3RW13TDVCSlFVQWhRWGIra1JWajNo?=
+ =?utf-8?B?clF4TTNQODRid0Q5MkhlazlsN0xMRVQ5T1FWc1g2aUJMbENlQUpiN2NPWHpW?=
+ =?utf-8?B?d3BjQk53VlB4aGxpbGhUeEdqNTlBb0FnYzRuUlNFa3E2UWpJcVFaRXBYUHZx?=
+ =?utf-8?B?S04xMTV4UWhwT3BOY3lrRkRZQ2dROHkybVg2WFpFTktCY2ozWVV3SjkxZ0xW?=
+ =?utf-8?B?Q2s2V3I3QnY0VzQzODZzdHlqa0ovcmN6NFpEcTg2SHAyYUFRRW1ncW9uUkww?=
+ =?utf-8?B?U0h6TjdVaUZnM2NMYnJXZm5KQWZ6a0NxeC9FSmp6ejA3MS9RQmVZMWNJRG1a?=
+ =?utf-8?B?UGNhM2Zla0ZqZU5HNWJqRkU2MXNyZm5YdHcyUXE3QlRLMlgwd1YrY0J3MXg3?=
+ =?utf-8?B?ZEY5SFAybDM3b1VhWjYvRmNGbUhLK3hOZ0YzNjV3dThLYXJxYzBOdEllSzZy?=
+ =?utf-8?B?clhtZUEyai9IZ3J2NG9WVlZOQ1Z5dmt2NUphdEtPQTVMN1VBVEVhZTNZSFdK?=
+ =?utf-8?B?TkVaN0M2dFJyaUlsQXAxOHhEVGJvU3RReTIvd2t3UXJWeGFKYzAxVHFEbytU?=
+ =?utf-8?B?dVNVZlg5MzlsZEo3SnpnVnlQUlQwWXN2OHV6alkvSjM2cHBwWFJXOCtWKzFM?=
+ =?utf-8?B?eDJicnI4WlhUWmM3NlFJVnNYbWFtS1pkc0lZU1VOWFhCL0lSOUxZSlV2SXBu?=
+ =?utf-8?B?ZkxoK0ZySTJZVFNlWUt3bjg5MG5vMm9NNHpISUo3MmFMTXBpOXpCNXZVNmJP?=
+ =?utf-8?B?bm9SSW9xUHJucThONXRqanVsUEs3d3ZCMC9YK21ua3o4enI5NU1XdDN0WjVh?=
+ =?utf-8?B?K2JKbUlhdEMyZ2NEOXN5bVk2VGRTNHZoMVJFeVYvSkMxQkZXaEhUMFdjaE9k?=
+ =?utf-8?B?MEJ3UnRnaVR6NXBwbVVCek5SRDZmbDE3UmkvdWxyM3hJWVFMSy9MbXpLdzNn?=
+ =?utf-8?B?ZnI5RDcxMWtNb0tlWnF4U2tOemhlR2E5ZCs5RGlPRjhyajhtM3BCdTBJYjBj?=
+ =?utf-8?B?dWFtcWlWZnkrZUZKNlFPTHR4dGJIT0QvZWI1RzJIem5yQlFpUlFFTUZPcmQv?=
+ =?utf-8?Q?t9mv2upCe+DGHB8VRbK0hon7g?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e11de12-3727-4fef-ebc9-08dc865915b2
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 18:47:15.4834
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FA3RemG05rUvtXw/Z85DgV2W6YSeheDYLPaFjUmjgUNntfkcAu7Kggzrkyhb/EWAcy1bOol4icnG6kKKpZanwA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB11069
 
-On Thu, Jun 6, 2024 at 6:31=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Thu 06-06-24 16:05:15, Mateusz Guzik wrote:
-> > Instantiating a new inode normally takes the global inode hash lock
-> > twice:
-> > 1. once to check if it happens to already be present
-> > 2. once to add it to the hash
-> >
-> > The back-to-back lock/unlock pattern is known to degrade performance
-> > significantly, which is further exacerbated if the hash is heavily
-> > populated (long chains to walk, extending hold time). Arguably hash
-> > sizing and hashing algo need to be revisited, but that's beyond the
-> > scope of this patch.
-> >
-> > A long term fix would introduce fine-grained locking, this was attempte=
-d
-> > in [1], but that patchset was already posted several times and appears
-> > stalled.
-> >
-> > A simpler idea which solves majority of the problem and which may be
-> > good enough for the time being is to use RCU for the initial lookup.
-> > Basic RCU support is already present in the hash, it is just not being
-> > used for lookup on inode creation.
-> >
-> > iget_locked consumers (notably ext4) get away without any changes
-> > because inode comparison method is built-in.
-> >
-> > iget5_locked and ilookup5_nowait consumers pass a custom callback. Sinc=
-e
-> > removal of locking adds more problems (inode can be changing) it's not
-> > safe to assume all filesystems happen to cope.  Thus iget5_locked_rcu
-> > ilookup5_nowait_rcu get added, requiring manual conversion.
->
-> BTW, why not ilookup5_rcu() as well? To keep symmetry with non-RCU APIs a=
-nd
-> iget5_locked_rcu() could then use ilookup5_rcu().
+Add subsystem lvds and mipi. Add pwm and i2c in lvds and mipi.
+imx8qm-mek:
+- add remove-proc
+- fixed gpio number error for vmmc
+- add usb3 and typec
+- add pwm and i2c in lvds and mipi
 
-I don't have a strong opinion. Note that the routine as implemented
-right now mimicks iget_locked.
+DTB_CHECK warning fixed by seperate patches.
+arch/arm64/boot/dts/freescale/imx8qm-mek.dtb: usb@5b110000: usb@5b120000: 'port', 'usb-role-switch' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/usb/fsl,imx8qm-cdns3.yaml#
+arch/arm64/boot/dts/freescale/imx8qm-mek.dtb: usb@5b120000: 'port', 'usb-role-switch' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/usb/cdns,usb3.yaml#
 
-> I presume eventually we'd like to trasition everything to these RCU based=
- methods?
->
+** binding fix patch:  https://lore.kernel.org/imx/20240606161509.3201080-1-Frank.Li@nxp.com/T/#u
 
-That is up in the air, but I would not go for it. Note every
-iget5_locked consumer would have to get reviewed for safety of the
-callback, which is a lot of work for no real gain for vast majority of
-filesystems out there.
+arch/arm64/boot/dts/freescale/imx8qm-mek.dtb: interrupt-controller@56240000: 'power-domains' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/interrupt-controller/fsl,irqsteer.yaml#
 
-Also note the rcu variants are only used in cases which tolerate a
-false negative -- if the inode fails to match, the caller is expected
-to cope by creating a new inode and performing a locked lookup. It
-does not have to be this way, but I find it less error prone.
+** binding fix patch: https://lore.kernel.org/imx/20240528071141.92003-1-alexander.stein@ew.tq-group.com/T/#me3425d580ba9a086866c3053ef854810ac7a0ef6
 
-> > In order to reduce code duplication find_inode and find_inode_fast grow
-> > an argument indicating whether inode hash lock is held, which is passed
-> > down should sleeping be necessary. They always rcu_read_lock, which is
-> > redundant but harmless. Doing it conditionally reduces readability for
-> > no real gain that I can see. RCU-alike restrictions were already put on
-> > callbacks due to the hash spinlock being held.
-> >
-> > Benchmarked with the following: a 32-core vm with 24GB of RAM, a
-> > dedicated fs partition. 20 separate trees with 1000 directories * 1000
-> > files.  Then walked by 20 processes issuing stat on files, each on a
-> > dedicated tree. Testcase is at [2].
-> >
-> > In this particular workload, mimicking a real-world setup $elsewhere,
-> > the initial lookup is guaranteed to fail, guaranteeing the 2 lock
-> > acquires. At the same time RAM is scarce enough enough compared to the
-> > demand that inodes keep needing to be recycled.
-> >
-> > Total real time fluctuates by 1-2s, sample results:
-> >
-> > ext4 (needed mkfs.ext4 -N 24000000):
-> > before:       3.77s user 890.90s system 1939% cpu 46.118 total
-> > after:  3.24s user 397.73s system 1858% cpu 21.581 total (-53%)
-> >
-> > btrfs (s/iget5_locked/iget5_locked_rcu in fs/btrfs/inode.c):
-> > before: 3.54s user 892.30s system 1966% cpu 45.549 total
-> > after:  3.28s user 738.66s system 1955% cpu 37.932 total (-16.7%)
-> >
-> > btrfs is heavily bottlenecked on its own locks, so the improvement is
-> > small in comparison.
-> >
-> > [1] https://lore.kernel.org/all/20231206060629.2827226-1-david@fromorbi=
-t.com/
-> > [2] https://people.freebsd.org/~mjg/fstree.tgz
->
-> Nice results. I've looked through the patch and otherwise I didn't find a=
-ny
-> issue.
->
->                                                                 Honza
->
-> >
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > ---
-> >
-> > This is an initial submission to gauge interest.
-> >
-> > I do claim this provides great bang for the buck, I don't claim it
-> > solves the problem overall. *something* finer-grained will need to
-> > land.
-> >
-> > I wanted to add bcachefs to the list, but I ran into memory reclamation
-> > issues again (first time here:
-> > https://lore.kernel.org/all/CAGudoHGenxzk0ZqPXXi1_QDbfqQhGHu+wUwzyS6Wmf=
-kUZ1HiXA@mail.gmail.com/),
-> > did not have time to mess with diagnostic to write a report yet.
-> >
-> > I'll post a patchset with this (+ tidy ups to comments and whatnot) +
-> > btrfs + bcachefs conversion after the above gets reported and sorted
-> > out.
-> >
-> > Also interestingly things improved since last year, when Linux needed
-> > about a minute.
-> >
-> >  fs/inode.c         | 106 +++++++++++++++++++++++++++++++++++++--------
-> >  include/linux/fs.h |  10 ++++-
-> >  2 files changed, 98 insertions(+), 18 deletions(-)
-> >
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index 3a41f83a4ba5..f40b868f491f 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -886,36 +886,43 @@ long prune_icache_sb(struct super_block *sb, stru=
-ct shrink_control *sc)
-> >       return freed;
-> >  }
-> >
-> > -static void __wait_on_freeing_inode(struct inode *inode);
-> > +static void __wait_on_freeing_inode(struct inode *inode, bool locked);
-> >  /*
-> >   * Called with the inode lock held.
-> >   */
-> >  static struct inode *find_inode(struct super_block *sb,
-> >                               struct hlist_head *head,
-> >                               int (*test)(struct inode *, void *),
-> > -                             void *data)
-> > +                             void *data, bool locked)
-> >  {
-> >       struct inode *inode =3D NULL;
-> >
-> > +     if (locked)
-> > +             lockdep_assert_held(&inode_hash_lock);
-> > +
-> > +     rcu_read_lock();
-> >  repeat:
-> > -     hlist_for_each_entry(inode, head, i_hash) {
-> > +     hlist_for_each_entry_rcu(inode, head, i_hash) {
-> >               if (inode->i_sb !=3D sb)
-> >                       continue;
-> >               if (!test(inode, data))
-> >                       continue;
-> >               spin_lock(&inode->i_lock);
-> >               if (inode->i_state & (I_FREEING|I_WILL_FREE)) {
-> > -                     __wait_on_freeing_inode(inode);
-> > +                     __wait_on_freeing_inode(inode, locked);
-> >                       goto repeat;
-> >               }
-> >               if (unlikely(inode->i_state & I_CREATING)) {
-> >                       spin_unlock(&inode->i_lock);
-> > +                     rcu_read_unlock();
-> >                       return ERR_PTR(-ESTALE);
-> >               }
-> >               __iget(inode);
-> >               spin_unlock(&inode->i_lock);
-> > +             rcu_read_unlock();
-> >               return inode;
-> >       }
-> > +     rcu_read_unlock();
-> >       return NULL;
-> >  }
-> >
-> > @@ -924,29 +931,37 @@ static struct inode *find_inode(struct super_bloc=
-k *sb,
-> >   * iget_locked for details.
-> >   */
-> >  static struct inode *find_inode_fast(struct super_block *sb,
-> > -                             struct hlist_head *head, unsigned long in=
-o)
-> > +                             struct hlist_head *head, unsigned long in=
-o,
-> > +                             bool locked)
-> >  {
-> >       struct inode *inode =3D NULL;
-> >
-> > +     if (locked)
-> > +             lockdep_assert_held(&inode_hash_lock);
-> > +
-> > +     rcu_read_lock();
-> >  repeat:
-> > -     hlist_for_each_entry(inode, head, i_hash) {
-> > +     hlist_for_each_entry_rcu(inode, head, i_hash) {
-> >               if (inode->i_ino !=3D ino)
-> >                       continue;
-> >               if (inode->i_sb !=3D sb)
-> >                       continue;
-> >               spin_lock(&inode->i_lock);
-> >               if (inode->i_state & (I_FREEING|I_WILL_FREE)) {
-> > -                     __wait_on_freeing_inode(inode);
-> > +                     __wait_on_freeing_inode(inode, locked);
-> >                       goto repeat;
-> >               }
-> >               if (unlikely(inode->i_state & I_CREATING)) {
-> >                       spin_unlock(&inode->i_lock);
-> > +                     rcu_read_unlock();
-> >                       return ERR_PTR(-ESTALE);
-> >               }
-> >               __iget(inode);
-> >               spin_unlock(&inode->i_lock);
-> > +             rcu_read_unlock();
-> >               return inode;
-> >       }
-> > +     rcu_read_unlock();
-> >       return NULL;
-> >  }
-> >
-> > @@ -1161,7 +1176,7 @@ struct inode *inode_insert5(struct inode *inode, =
-unsigned long hashval,
-> >
-> >  again:
-> >       spin_lock(&inode_hash_lock);
-> > -     old =3D find_inode(inode->i_sb, head, test, data);
-> > +     old =3D find_inode(inode->i_sb, head, test, data, true);
-> >       if (unlikely(old)) {
-> >               /*
-> >                * Uhhuh, somebody else created the same inode under us.
-> > @@ -1245,6 +1260,43 @@ struct inode *iget5_locked(struct super_block *s=
-b, unsigned long hashval,
-> >  }
-> >  EXPORT_SYMBOL(iget5_locked);
-> >
-> > +/**
-> > + * iget5_locked_rcu - obtain an inode from a mounted file system
-> > + *
-> > + * This is equivalent to iget5_locked, except the @test callback must
-> > + * tolerate inode not being stable, including being mid-teardown.
-> > + */
-> > +struct inode *iget5_locked_rcu(struct super_block *sb, unsigned long h=
-ashval,
-> > +             int (*test)(struct inode *, void *),
-> > +             int (*set)(struct inode *, void *), void *data)
-> > +{
-> > +     struct hlist_head *head =3D inode_hashtable + hash(sb, hashval);
-> > +     struct inode *inode, *new;
-> > +
-> > +again:
-> > +     inode =3D find_inode(sb, head, test, data, false);
-> > +     if (inode) {
-> > +             if (IS_ERR(inode))
-> > +                     return NULL;
-> > +             wait_on_inode(inode);
-> > +             if (unlikely(inode_unhashed(inode))) {
-> > +                     iput(inode);
-> > +                     goto again;
-> > +             }
-> > +             return inode;
-> > +     }
-> > +
-> > +     new =3D alloc_inode(sb);
-> > +     if (new) {
-> > +             new->i_state =3D 0;
-> > +             inode =3D inode_insert5(new, hashval, test, set, data);
-> > +             if (unlikely(inode !=3D new))
-> > +                     destroy_inode(new);
-> > +     }
-> > +     return inode;
-> > +}
-> > +EXPORT_SYMBOL(iget5_locked_rcu);
-> > +
-> >  /**
-> >   * iget_locked - obtain an inode from a mounted file system
-> >   * @sb:              super block of file system
-> > @@ -1263,9 +1315,7 @@ struct inode *iget_locked(struct super_block *sb,=
- unsigned long ino)
-> >       struct hlist_head *head =3D inode_hashtable + hash(sb, ino);
-> >       struct inode *inode;
-> >  again:
-> > -     spin_lock(&inode_hash_lock);
-> > -     inode =3D find_inode_fast(sb, head, ino);
-> > -     spin_unlock(&inode_hash_lock);
-> > +     inode =3D find_inode_fast(sb, head, ino, false);
-> >       if (inode) {
-> >               if (IS_ERR(inode))
-> >                       return NULL;
-> > @@ -1283,7 +1333,7 @@ struct inode *iget_locked(struct super_block *sb,=
- unsigned long ino)
-> >
-> >               spin_lock(&inode_hash_lock);
-> >               /* We released the lock, so.. */
-> > -             old =3D find_inode_fast(sb, head, ino);
-> > +             old =3D find_inode_fast(sb, head, ino, true);
-> >               if (!old) {
-> >                       inode->i_ino =3D ino;
-> >                       spin_lock(&inode->i_lock);
-> > @@ -1419,13 +1469,31 @@ struct inode *ilookup5_nowait(struct super_bloc=
-k *sb, unsigned long hashval,
-> >       struct inode *inode;
-> >
-> >       spin_lock(&inode_hash_lock);
-> > -     inode =3D find_inode(sb, head, test, data);
-> > +     inode =3D find_inode(sb, head, test, data, true);
-> >       spin_unlock(&inode_hash_lock);
-> >
-> >       return IS_ERR(inode) ? NULL : inode;
-> >  }
-> >  EXPORT_SYMBOL(ilookup5_nowait);
-> >
-> > +/**
-> > + * ilookup5_nowait_rcu - search for an inode in the inode cache
-> > + *
-> > + * This is equivalent to ilookup5_nowait, except the @test callback mu=
-st
-> > + * tolerate inode not being stable, including being mid-teardown.
-> > + */
-> > +struct inode *ilookup5_nowait_rcu(struct super_block *sb, unsigned lon=
-g hashval,
-> > +             int (*test)(struct inode *, void *), void *data)
-> > +{
-> > +     struct hlist_head *head =3D inode_hashtable + hash(sb, hashval);
-> > +     struct inode *inode;
-> > +
-> > +     inode =3D find_inode(sb, head, test, data, false);
-> > +
-> > +     return IS_ERR(inode) ? NULL : inode;
-> > +}
-> > +EXPORT_SYMBOL(ilookup5_nowait_rcu);
-> > +
-> >  /**
-> >   * ilookup5 - search for an inode in the inode cache
-> >   * @sb:              super block of file system to search
-> > @@ -1474,7 +1542,7 @@ struct inode *ilookup(struct super_block *sb, uns=
-igned long ino)
-> >       struct inode *inode;
-> >  again:
-> >       spin_lock(&inode_hash_lock);
-> > -     inode =3D find_inode_fast(sb, head, ino);
-> > +     inode =3D find_inode_fast(sb, head, ino, true);
-> >       spin_unlock(&inode_hash_lock);
-> >
-> >       if (inode) {
-> > @@ -2235,17 +2303,21 @@ EXPORT_SYMBOL(inode_needs_sync);
-> >   * wake_up_bit(&inode->i_state, __I_NEW) after removing from the hash =
-list
-> >   * will DTRT.
-> >   */
-> > -static void __wait_on_freeing_inode(struct inode *inode)
-> > +static void __wait_on_freeing_inode(struct inode *inode, bool locked)
-> >  {
-> >       wait_queue_head_t *wq;
-> >       DEFINE_WAIT_BIT(wait, &inode->i_state, __I_NEW);
-> >       wq =3D bit_waitqueue(&inode->i_state, __I_NEW);
-> >       prepare_to_wait(wq, &wait.wq_entry, TASK_UNINTERRUPTIBLE);
-> >       spin_unlock(&inode->i_lock);
-> > -     spin_unlock(&inode_hash_lock);
-> > +     rcu_read_unlock();
-> > +     if (locked)
-> > +             spin_unlock(&inode_hash_lock);
-> >       schedule();
-> >       finish_wait(wq, &wait.wq_entry);
-> > -     spin_lock(&inode_hash_lock);
-> > +     if (locked)
-> > +             spin_lock(&inode_hash_lock);
-> > +     rcu_read_lock();
-> >  }
-> >
-> >  static __initdata unsigned long ihash_entries;
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 0283cf366c2a..2817c915d355 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -3021,6 +3021,9 @@ extern void d_mark_dontcache(struct inode *inode)=
-;
-> >  extern struct inode *ilookup5_nowait(struct super_block *sb,
-> >               unsigned long hashval, int (*test)(struct inode *, void *=
-),
-> >               void *data);
-> > +extern struct inode *ilookup5_nowait_rcu(struct super_block *sb,
-> > +             unsigned long hashval, int (*test)(struct inode *, void *=
-),
-> > +             void *data);
-> >  extern struct inode *ilookup5(struct super_block *sb, unsigned long ha=
-shval,
-> >               int (*test)(struct inode *, void *), void *data);
-> >  extern struct inode *ilookup(struct super_block *sb, unsigned long ino=
-);
-> > @@ -3029,7 +3032,12 @@ extern struct inode *inode_insert5(struct inode =
-*inode, unsigned long hashval,
-> >               int (*test)(struct inode *, void *),
-> >               int (*set)(struct inode *, void *),
-> >               void *data);
-> > -extern struct inode * iget5_locked(struct super_block *, unsigned long=
-, int (*test)(struct inode *, void *), int (*set)(struct inode *, void *), =
-void *);
-> > +extern struct inode * iget5_locked(struct super_block *, unsigned long=
-,
-> > +                                int (*test)(struct inode *, void *),
-> > +                                int (*set)(struct inode *, void *), vo=
-id *);
-> > +extern struct inode * iget5_locked_rcu(struct super_block *, unsigned =
-long,
-> > +                                    int (*test)(struct inode *, void *=
-),
-> > +                                    int (*set)(struct inode *, void *)=
-, void *);
-> >  extern struct inode * iget_locked(struct super_block *, unsigned long)=
-;
-> >  extern struct inode *find_inode_nowait(struct super_block *,
-> >                                      unsigned long,
-> > --
-> > 2.43.0
-> >
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+arch/arm64/boot/dts/freescale/imx8qm-mek.dtb: pwm@56244000: 'oneOf' conditional failed, one must be fixed:
+	'interrupts' is a required property
+	'interrupts-extended' is a required property
+	from schema $id: http://devicetree.org/schemas/pwm/imx-pwm.yaml#
 
+** binding fix patch: https://lore.kernel.org/imx/dc9accba-78af-45ec-a516-b89f2d4f4b03@kernel.org/T/#t 
 
+	from schema $id: http://devicetree.org/schemas/interrupt-controller/fsl,irqsteer.yaml#
+arch/arm64/boot/dts/freescale/imx8qm-mek.dtb: imx8qm-cm4-0: power-domains: [[15, 278], [15, 297]] is too short
+	from schema $id: http://devicetree.org/schemas/remoteproc/fsl,imx-rproc.yaml#
+arch/arm64/boot/dts/freescale/imx8qm-mek.dtb: imx8qm-cm4-1: power-domains: [[15, 298], [15, 317]] is too short
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+** binding fix patch: https://lore.kernel.org/imx/20240606150030.3067015-1-Frank.Li@nxp.com/T/#u
+
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+Frank Li (7):
+      arm64: dts: imx8qm: add lvds subsystem
+      arm64: dts: imx8qm: add mipi subsystem
+      arm64: dts: imx8qm-mek: add cm4 remote-proc and related memory region
+      arm64: dts: imx8qm-mek: add pwm and i2c in lvds subsystem
+      arm64: dts: imx8qm-mek: add i2c in mipi[0,1] subsystem
+      arm64: dts: imx8qm-mek: fix gpio number for reg_usdhc2_vmmc
+      arm64: dts: imx8qm-mek: add usb 3.0 and related type C nodes
+
+ arch/arm64/boot/dts/freescale/imx8qm-mek.dts      | 308 +++++++++++++++++++++-
+ arch/arm64/boot/dts/freescale/imx8qm-ss-lvds.dtsi | 231 ++++++++++++++++
+ arch/arm64/boot/dts/freescale/imx8qm-ss-mipi.dtsi | 286 ++++++++++++++++++++
+ arch/arm64/boot/dts/freescale/imx8qm.dtsi         |   2 +
+ 4 files changed, 826 insertions(+), 1 deletion(-)
+---
+base-commit: ee78a17615ad0cfdbbc27182b1047cd36c9d4d5f
+change-id: 20240606-imx8qm-dts-usb-9c55d2bfe526
+
+Best regards,
+---
+Frank Li <Frank.Li@nxp.com>
+
 
