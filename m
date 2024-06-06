@@ -1,121 +1,88 @@
-Return-Path: <linux-kernel+bounces-204351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BBFE8FE793
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:21:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F8C8FE769
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9554B25505
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:21:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 883481F26CFA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB09198E76;
-	Thu,  6 Jun 2024 13:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dr0D+icq"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18C4195993;
+	Thu,  6 Jun 2024 13:17:04 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADA1198A02
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 13:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE30645
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 13:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717679866; cv=none; b=gcaNfhDNrMbQ7qOAkVsVqfQmoe2qkrX9kARmneYW16hcA1Azj4Kf39p/HhWNN28ftORFzcStVCBnVAH6T6lgxpf9+1YJs/PV51YwKy+Z9e0qxAazhmekuVz7XHLkVSSVuzV1dVEQjyH1YWyUpoI3anoUPEhfW1BLMNX0unmaM14=
+	t=1717679824; cv=none; b=nbCp3een7RVm0E/sImRY+Xveh9WVLXBLAQ8vORKf5Y/Zs7dBW9CElVLypDjm/VfObR4XEZ8D172kJeSKDQEDwokxKVOF8HGgnFHnKUOXK14wpYbXLAj0DCcYh7yWogKdBmLQ8oQ35X48IK6bbVOnpRs8pSIYF4sZqrQdoH7PhRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717679866; c=relaxed/simple;
-	bh=Avo2Fleh4ujjt70o15EeficxKnpelBo2TOFCLUdZKFI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=teSNtIYDdgTz1K8dGWOFKTRsTwdFdgYg9MNP3nKRV1Uy2vHX1fMImbsOhzD8GZqbSaZF+w+VPStXER8Ay8oZXRjAcGlYfGDneRMEqTz4agDWQx1bgFquhN2+TLz0PIMOa031OG/or5bKs1a0SpXQxINjSfhg+ctAiaAabEVjhc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dr0D+icq; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6ae60725ea1so5388936d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 06:17:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717679863; x=1718284663; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2o9uFpZwETiKeZWYLVPp/h/C01HBTzSktsioUGg06Ew=;
-        b=dr0D+icqsuyL2nuQ7p7S3Vud/E3YjHXXW6VdaFnIvukhdpS6XoVSxygvcFuE3lurd4
-         ElRlCgM7ovhhl4r98jnxmqNfFGAemoaFK95QcAr78CbdyY7YSZRiDvoAgDLT1m3Hjd6n
-         yrt+P0n5v7LJW1e/NjwPDP670UOhdTjCZpvfM=
+	s=arc-20240116; t=1717679824; c=relaxed/simple;
+	bh=NSR54bD7P5KNnPSlPs4dhmlt/V2i7pKFpYXVlC9JkWE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=eeSUxkLpctP0QCfpmAmv2c6itc357aGqLocAH0X3vjfHmP5t80VXAqWy21Tn9Mi8ZjlbpZCaAwLUk53HXD65bU2LeMgrXmRoZjVB66gubuAtBolsdSLV/r0aS3ZinWJsIDFeK24GRTArtDCdrlx743lBTomjX8uaWKROCzTe0Cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3747f1b958bso9616375ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 06:17:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717679863; x=1718284663;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2o9uFpZwETiKeZWYLVPp/h/C01HBTzSktsioUGg06Ew=;
-        b=Yk8Dag6ukm1yCvrzH7JGtiKpztKH8ZWT8ukQe3AmghbBa0C3y/A4SCFKVHbE87RhyC
-         u6oCSudrMBfjBeUek4eJ4or5SvS7dMC+rDX/Qb8lIYOqCSw28ps5lXoeXwWFrklQtDsN
-         A8ERNZALPQGWALQP2Or69TrIHjhufZJwHplAcfPaW05aU/KXVGhg4MbJwKwddE8QaxT3
-         Dc8UffR6bzX+km1srDcZZfIrO/9GF1J3jdSjjxoGjrCr2Z7eZFpym9EVfA+LSSdVeerC
-         el5rz0OE2K0ncxTtInREaOYdE5WilxsVqMyIxWR7T9ZzKAZwjfFD7tLNr/+kWbAbo4FO
-         1wtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmiAGI5aRoZJTVtTc2fIHj8nQqCwGQja3BsxweBpJPbNl2JfAR7zUz04f7GWEv5qEBxCPe5RbUwIVihS9JnFDXclylBpepBFP5k8mP
-X-Gm-Message-State: AOJu0YyJF5CvkyzklUmDJfztDxkLsdHeFlQQVD3buiSRaAqTS5Q3Wk6t
-	rce1BveykZbQp3GmQZ58YybJBhZg0Avb5Sbt5JKzLbCiVN0ezB/IAYtDAJbOrg==
-X-Google-Smtp-Source: AGHT+IE8jXrmgfRC91PfzOqBRQfeMgy1DzBFB7+DOjFIBnca6lzwJN2RUcERx9LU43E0vr3vRV6ErQ==
-X-Received: by 2002:a05:6214:3f91:b0:6af:cdb3:5db with SMTP id 6a1803df08f44-6b031cecca9mr63488376d6.63.1717679863024;
-        Thu, 06 Jun 2024 06:17:43 -0700 (PDT)
-Received: from denia.c.googlers.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b04f6607f5sm6118036d6.31.2024.06.06.06.17.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 06:17:42 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 06 Jun 2024 13:16:45 +0000
-Subject: [PATCH v4 11/11] media: venus: Refactor
- hfi_buffer_alloc_mode_supported
+        d=1e100.net; s=20230601; t=1717679822; x=1718284622;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=beKx2y9tr4j0XFeY8QaqlP3ofACHCvbC4fKCms+Ea/w=;
+        b=Tgkt3EaFRBwf4Lc0bbCf8JrBgs69KeojN0J6pSePaav9Oahfn8X0As0BJUsNMEkZJk
+         ZaccOlkeUFrcSFTUgw7i1FREkceZEan0C4bNsdSV+NfnDLV2oX+e9n09jMDI7O4dPJHG
+         4ZI/VvSisuOs5If3YbmrXjaI/a4aV8TQXAYzMFfHnTalmQc8/Sc9Tbksus5hF/m9iVvr
+         ozPT8yWsPDqhVQ43HLsmNVDjYYpA+jl3dnE8OQSqRLvENK0hFpHLepDFHtYOUa97uCFS
+         yKODAgFbhY1uJ+d+aqCX76JkXp8dKloDM8s9ZIgOPiQXncqpuf5moyQgkYpdnSD19IOm
+         i/WA==
+X-Gm-Message-State: AOJu0YzYUVK1k5c+g/grd1uvKDuFUSPID3kgHTaBXo8tUduH605qVLCw
+	IDmwx1CUKZrkcTbo4qPQOPUX2t8z8ERh1O2gN1uEBLeAZ8iymU7vvlb8t+gbCc2uVGmk3Npo9D4
+	Q1bxSZtJYhyHrFd20apVxslXP1cI8N6wLGgqmEo0/3QfxMWiMp+cLm6A=
+X-Google-Smtp-Source: AGHT+IG8BjAG7qxkCE/A1O3XYjuFzwSAADE2SK4KNxSXhdnC7/mplwOvcBgCMR1G7QqbA/MYYc+cQxcNK/FilULG7Vo7IEzwJM2h
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240606-cocci-flexarray-v4-11-3379ee5eed28@chromium.org>
-References: <20240606-cocci-flexarray-v4-0-3379ee5eed28@chromium.org>
-In-Reply-To: <20240606-cocci-flexarray-v4-0-3379ee5eed28@chromium.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
- Vikash Garodia <quic_vgarodia@quicinc.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.12.4
+X-Received: by 2002:a05:6e02:b27:b0:374:968e:7ee3 with SMTP id
+ e9e14a558f8ab-374b1f59084mr3446575ab.3.1717679822243; Thu, 06 Jun 2024
+ 06:17:02 -0700 (PDT)
+Date: Thu, 06 Jun 2024 06:17:02 -0700
+In-Reply-To: <PN2PR01MB489146FC0041ED737236BE64FCFA2@PN2PR01MB4891.INDPRD01.PROD.OUTLOOK.COM>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a49ef5061a387fd3@google.com>
+Subject: Re: [syzbot] [bpf?] possible deadlock in trie_delete_elem
+From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	wojciech.gladysz@infogain.com
+Content-Type: text/plain; charset="UTF-8"
 
-Replace the old style single element array at the end of the struct with
-a flex array.
+Hello,
 
-The code does not allocate this structure, so the size change should not
-be a problem.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-This fixes the following cocci warning:
-drivers/media/platform/qcom/venus/hfi_helper.h:1233:5-9: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
+failed to apply patch:
+checking file kernel/trace/bpf_trace.c
+patch: **** malformed patch at line 7: diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/platform/qcom/venus/hfi_helper.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/qcom/venus/hfi_helper.h b/drivers/media/platform/qcom/venus/hfi_helper.h
-index dee439ea4d2e..9545c964a428 100644
---- a/drivers/media/platform/qcom/venus/hfi_helper.h
-+++ b/drivers/media/platform/qcom/venus/hfi_helper.h
-@@ -1230,7 +1230,7 @@ struct hfi_interlace_format_supported {
- struct hfi_buffer_alloc_mode_supported {
- 	u32 buffer_type;
- 	u32 num_entries;
--	u32 data[1];
-+	u32 data[];
- };
- 
- struct hfi_metadata_pass_through {
 
--- 
-2.45.2.505.gda0bf45e8d-goog
+
+Tested on:
+
+commit:         e377d803 kernel/trace: fix possible deadlock in trie_d..
+git tree:       https://linux.googlesource.com/linux/kernel/git/torvalds/linux
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9d7ea7de0cb32587
+dashboard link: https://syzkaller.appspot.com/bug?extid=9d95beb2a3c260622518
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14224362980000
 
 
