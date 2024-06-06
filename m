@@ -1,224 +1,158 @@
-Return-Path: <linux-kernel+bounces-203601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A49C8FDDB1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:05:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7DB08FDDB3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6BB61C238C9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 04:05:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3098A285034
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 04:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41FE208B6;
-	Thu,  6 Jun 2024 04:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92741219FF;
+	Thu,  6 Jun 2024 04:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SepihYV8"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mE6xNVQ0"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ADB2114;
-	Thu,  6 Jun 2024 04:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85DC92114;
+	Thu,  6 Jun 2024 04:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717646744; cv=none; b=hIuQHlXZ5j0VTNINbC5K/vQzPJVw+GADKePlPWtSyCGwN1thWp1IxrdZLkjixa/1HXBIA+3Wpe2G5al2879y8cjBHaXpbBhgFeR89D92lDsL1z7VNmm5X/o/UELR9IdBlrO30YT6YFr7aBsza8BZzuABbTZUBWj3dShdeBRCX3Q=
+	t=1717647155; cv=none; b=VPVkBqfdrS/O6OaHJcmhR9hqU9J9Sc5wuo2KNmd6gq2zamjsS5QSeOZ4OrF4XlhnbHfs0gIcyelXg8I96m/JP6CpEVhADlsvhyev7ahxmKuV5LYNzr6KKuTgRXMbD+ehwAUTIKl9BI+cERj3P7LynOQTP/MIO6ZusjlMsxAkMo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717646744; c=relaxed/simple;
-	bh=p6a5pdP9a15oGecBROZueV3dKmS8yv8D3takQtLrHnA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=B6ZldnPaMG4yt/jTUUhwOKKZpcce0nVb09ysgETg+n5t3aAF0MSCz6yPdI2EFs6mlBqgldTaiXaDxFW1vg+B/nThqDEak91O74pyY5MH1JRDzGaknT8obX4tIQ7/FtXvXDGN+rmtQ7OU1Yk5+EQiC+MmWbdYPKNyqpliBzd8Nac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SepihYV8; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45645VF7105201;
-	Wed, 5 Jun 2024 23:05:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717646731;
-	bh=mdvTzOkLikM46VzU6/78jqQPkp9ny5FpHczJhZOmO88=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=SepihYV8gXDemmp40p69RPrQxdvGztmfZYX5aXwW7xPjfaQG+fM4bYbdODfAKJavH
-	 wvmoyMJdGYYDo0glj1fz+FTSrVzGR/mHuUKNOd68AlpnSpILmJFlFKo1IZt6nzvWdP
-	 BxOWW5nwkDTdVXEseldeiJXTZtCvHus8sXb+7DJw=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45645Vs8044068
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 5 Jun 2024 23:05:31 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 5
- Jun 2024 23:05:30 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 5 Jun 2024 23:05:30 -0500
-Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45645QhE031850;
-	Wed, 5 Jun 2024 23:05:27 -0500
-Message-ID: <79eedaea-bf4f-4a20-8a52-751ce7187523@ti.com>
-Date: Thu, 6 Jun 2024 09:35:25 +0530
+	s=arc-20240116; t=1717647155; c=relaxed/simple;
+	bh=NB6cPiw9QlP2ojVCT09yRXI9z2MUnWRnPHxnNyRD9HQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UVgMG0A6WtYHCKHpTKFF1l+G8Z80gtIX54AZN1/05JtBJxUUTFoCX9UdFrjUE5cLP8qfp5+X0Sjx9lKHOXvQXkHZ6XD+I1JRpar1cYAZ236GvDplya+uz8Sz1sH3YPXoTgimr71ZOot8CV+VoH3ELuaIwCTyoh0I/MvuODmyxwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mE6xNVQ0; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f64ecb1766so4671295ad.1;
+        Wed, 05 Jun 2024 21:12:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717647154; x=1718251954; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EyTDFfYIkacZajwzGy5k7LzB0jww/Lew61Qql3uF2Lg=;
+        b=mE6xNVQ0zkRfn8aG8XILUgtkdJYhI4Qe6YoMWK0haHAz/7RCJHsem/Z4LLY4cDGm6Z
+         sPoZQn9MOYPtQU9ryrv4JWhjwrv8C26AJ53D5tZDJtqc+ndvbKSZgi2xKnhapku1IjGn
+         nKidYeCa924cSL8/wmJE1+fGKE3yxDU+HC9ElyvlooYiQ4PwuTFvK60ouqZmGqYoSc0E
+         G9RCtKdYYAsSsP3OmXQP/d4oJDNsP4Ng94I4vNzj91/QPMi6f5pkIbLumGqTFNh+p5BS
+         EVNRYk/bRMuQxHOqDNHPbKIaQyt6cnSrXhkgO9eA6fHd720zQjevQn0zLlV9x9EWT9mi
+         9lMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717647154; x=1718251954;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EyTDFfYIkacZajwzGy5k7LzB0jww/Lew61Qql3uF2Lg=;
+        b=eyzIYRkl+k/L5hhfbZO9xl9Z/lRdxPlAJEIoMED/dfaKfwDVRkHv0KFgFONSE9WOYX
+         CJwqzp7qQL3lJbIGp75SkOiCRnN1Wfe6N7F15+oka/oagce1lBUB8LZ7UboIsD2c3iu4
+         lBpMzQf0OFdJRXy0Muoxan5UmNAOIoIpYoPUvqGcAlQuxQTe0wJLDyE7NFGZppgCd8H2
+         D2GUpIQ8bVMkfvC1eFdS9eTd+RlvNRRZpU+yu/6IFTyjNoGVZ1brM3g774aiSpGz2TXi
+         IfxTbC9oDg5m3m//ejPC95UhhIwAaevsd4Zcv5OFE+rTFz8qtiUC55Y/XvfU1IC8g8tK
+         PNlg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQpFgu6WN0YqI7xctslsN6O9r8L4mLayWb4pARtQOlORDLJ9YCoRdadflHJzoSdntyeGUvLckROhSV56USTCdThGG7DifsO5eNSfOHQU/WtoXE+5FJFfVPLKdhLCnCVIlRYd5IDhXW0rYOjVR9zUKuioFEtcCVpGz9pL5wxNLbArNfaNoi
+X-Gm-Message-State: AOJu0Ywnzaus4k5OksVjwF4NUWu6pOUiH/+mHRaQMANbIj28tWxDXmcx
+	Vu4elIfoZwVdzuIhqoZXVRlRbMUPZSzHa8S6iK/ieqUzpVB2f7V/
+X-Google-Smtp-Source: AGHT+IFjhgLWKGemUun+RuvBiwWwF+aM1HrUn2VP9ZH6D0o14oF/urTXICoS2jKwPrvQo4918tGSnQ==
+X-Received: by 2002:a17:902:f681:b0:1f6:1ef5:8841 with SMTP id d9443c01a7336-1f6a5a26d60mr53131865ad.34.1717647153551;
+        Wed, 05 Jun 2024 21:12:33 -0700 (PDT)
+Received: from fedora.one.one.one.one ([2405:201:6013:c0b2:ea4b:30e0:4e3a:ab56])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd7e063csm3548085ad.190.2024.06.05.21.12.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 21:12:33 -0700 (PDT)
+From: Animesh Agarwal <animeshagarwal28@gmail.com>
+To: 
+Cc: animeshagarwal28@gmail.com,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ASoC: dt-bindings: linux,spdif: Convert spdif-reciever.txt to dtschema
+Date: Thu,  6 Jun 2024 09:42:00 +0530
+Message-ID: <20240606041212.78428-1-animeshagarwal28@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/7] arm64: dts: ti: k3-j722s: Switch to
- k3-am62p-j722s-common.dtsi
-To: Siddharth Vadapalli <s-vadapalli@ti.com>, <nm@ti.com>, <afd@ti.com>,
-        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <rogerq@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <u-kumar1@ti.com>,
-        <danishanwar@ti.com>, <srk@ti.com>
-References: <20240604085252.3686037-1-s-vadapalli@ti.com>
- <20240604085252.3686037-5-s-vadapalli@ti.com>
-From: Vignesh Raghavendra <vigneshr@ti.com>
-Content-Language: en-US
-In-Reply-To: <20240604085252.3686037-5-s-vadapalli@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 
+Convert the dummy SPDIF receiver bindings to DT schema.
 
+Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>
 
-On 04/06/24 14:22, Siddharth Vadapalli wrote:
-> Update "k3-j722s.dtsi" to use "k3-am62p-j722s-common.dtsi" which
-> contains the nodes shared with AM62P, followed by including the J722S
-> specific main domain peripherals contained in "k3-j722s-main.dtsi".
-> 
-> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> ---
-> v4:
-> https://lore.kernel.org/r/20240601121554.2860403-5-s-vadapalli@ti.com/
-> No changes since v4.
-> 
->  arch/arm64/boot/dts/ti/k3-j722s.dtsi | 97 +++++++++++++++++++++++++++-
->  1 file changed, 96 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-j722s.dtsi b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
-> index c75744edb143..9e04e6a5c0fd 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j722s.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
-> @@ -10,12 +10,107 @@
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/soc/ti,sci_pm_domain.h>
->  
-> -#include "k3-am62p5.dtsi"
-> +#include "k3-am62p-j722s-common.dtsi"
-> +#include "k3-j722s-main.dtsi"
->  
->  / {
->  	model = "Texas Instruments K3 J722S SoC";
->  	compatible = "ti,j722s";
->  
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		cpu-map {
-> +			cluster0: cluster0 {
-> +				core0 {
-> +					cpu = <&cpu0>;
-> +				};
-> +
-> +				core1 {
-> +					cpu = <&cpu1>;
-> +				};
-> +
-> +				core2 {
-> +					cpu = <&cpu2>;
-> +				};
-> +
-> +				core3 {
-> +					cpu = <&cpu3>;
-> +				};
-> +			};
-> +		};
-> +
-> +		cpu0: cpu@0 {
-> +			compatible = "arm,cortex-a53";
-> +			reg = <0x000>;
-> +			device_type = "cpu";
-> +			enable-method = "psci";
-> +			i-cache-size = <0x8000>;
-> +			i-cache-line-size = <64>;
-> +			i-cache-sets = <256>;
-> +			d-cache-size = <0x8000>;
-> +			d-cache-line-size = <64>;
-> +			d-cache-sets = <128>;
-> +			next-level-cache = <&l2_0>;
-> +			clocks = <&k3_clks 135 0>;
-> +		};
-> +
-> +		cpu1: cpu@1 {
-> +			compatible = "arm,cortex-a53";
-> +			reg = <0x001>;
-> +			device_type = "cpu";
-> +			enable-method = "psci";
-> +			i-cache-size = <0x8000>;
-> +			i-cache-line-size = <64>;
-> +			i-cache-sets = <256>;
-> +			d-cache-size = <0x8000>;
-> +			d-cache-line-size = <64>;
-> +			d-cache-sets = <128>;
-> +			next-level-cache = <&l2_0>;
-> +			clocks = <&k3_clks 136 0>;
-> +		};
-> +
-> +		cpu2: cpu@2 {
-> +			compatible = "arm,cortex-a53";
-> +			reg = <0x002>;
-> +			device_type = "cpu";
-> +			enable-method = "psci";
-> +			i-cache-size = <0x8000>;
-> +			i-cache-line-size = <64>;
-> +			i-cache-sets = <256>;
-> +			d-cache-size = <0x8000>;
-> +			d-cache-line-size = <64>;
-> +			d-cache-sets = <128>;
-> +			next-level-cache = <&l2_0>;
-> +			clocks = <&k3_clks 137 0>;
-> +		};
-> +
-> +		cpu3: cpu@3 {
-> +			compatible = "arm,cortex-a53";
-> +			reg = <0x003>;
-> +			device_type = "cpu";
-> +			enable-method = "psci";
-> +			i-cache-size = <0x8000>;
-> +			i-cache-line-size = <64>;
-> +			i-cache-sets = <256>;
-> +			d-cache-size = <0x8000>;
-> +			d-cache-line-size = <64>;
-> +			d-cache-sets = <128>;
-> +			next-level-cache = <&l2_0>;
-> +			clocks = <&k3_clks 138 0>;
-> +		};
-> +	};
-> +
-> +	l2_0: l2-cache0 {
-> +		compatible = "cache";
-> +		cache-unified;
-> +		cache-level = <2>;
-> +		cache-size = <0x80000>;
-> +		cache-line-size = <64>;
-> +		cache-sets = <512>;
-> +	};
-> +
->  	cbass_main: bus@f0000 {
->  		compatible = "simple-bus";
->  		#address-cells = <2>;
+---
+Changes	in v2:
+- Add linux,spdif-dir compatible in existing linux,spdif-dit.yaml
+instead of creating new yaml file specifically for dummy SPDIF receiver.
+- Change file name to support both transmitter and receiver bindings.
+---
+ .../sound/{linux,spdif-dit.yaml => linux,spdif.yaml}   |  8 +++++---
+ .../devicetree/bindings/sound/spdif-receiver.txt       | 10 ----------
+ 2 files changed, 5 insertions(+), 13 deletions(-)
+ rename Documentation/devicetree/bindings/sound/{linux,spdif-dit.yaml => linux,spdif.yaml} (75%)
+ delete mode 100644 Documentation/devicetree/bindings/sound/spdif-receiver.txt
 
-
-You would need to move the rest of main domain overrides and cbass_main
-definitions to k3-j722s-main.dtsi and limit this file to CPU definitions
-similar to k3-am62p5.dtsi
-
-
-
+diff --git a/Documentation/devicetree/bindings/sound/linux,spdif-dit.yaml b/Documentation/devicetree/bindings/sound/linux,spdif.yaml
+similarity index 75%
+rename from Documentation/devicetree/bindings/sound/linux,spdif-dit.yaml
+rename to Documentation/devicetree/bindings/sound/linux,spdif.yaml
+index fe5f0756af2f..0f4893e11ec4 100644
+--- a/Documentation/devicetree/bindings/sound/linux,spdif-dit.yaml
++++ b/Documentation/devicetree/bindings/sound/linux,spdif.yaml
+@@ -1,10 +1,10 @@
+ # SPDX-License-Identifier: GPL-2.0
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/sound/linux,spdif-dit.yaml#
++$id: http://devicetree.org/schemas/sound/linux,spdif.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+-title: Dummy SPDIF Transmitter
++title: Dummy SPDIF Transmitter/Receiver
+ 
+ maintainers:
+   - Mark Brown <broonie@kernel.org>
+@@ -14,7 +14,9 @@ allOf:
+ 
+ properties:
+   compatible:
+-    const: linux,spdif-dit
++    enum:
++      - linux,spdif-dit
++      - linux,spdif-dir
+ 
+   "#sound-dai-cells":
+     const: 0
+diff --git a/Documentation/devicetree/bindings/sound/spdif-receiver.txt b/Documentation/devicetree/bindings/sound/spdif-receiver.txt
+deleted file mode 100644
+index 80f807bf8a1d..000000000000
+--- a/Documentation/devicetree/bindings/sound/spdif-receiver.txt
++++ /dev/null
+@@ -1,10 +0,0 @@
+-Device-Tree bindings for dummy spdif receiver
+-
+-Required properties:
+-	- compatible: should be "linux,spdif-dir".
+-
+-Example node:
+-
+-	codec: spdif-receiver {
+-		compatible = "linux,spdif-dir";
+-	};
 -- 
-Regards
-Vignesh
+2.45.1
+
 
