@@ -1,121 +1,126 @@
-Return-Path: <linux-kernel+bounces-204852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 343F48FF43B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:04:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09AAE8FF43D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:05:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 319BC1C240D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:04:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0D8F1F25B27
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3F319923F;
-	Thu,  6 Jun 2024 18:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC30719925B;
+	Thu,  6 Jun 2024 18:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMgh7WM6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gDIS5rxm"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E28C1974E7
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 18:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857DB1991A8;
+	Thu,  6 Jun 2024 18:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717697072; cv=none; b=GsIts5h1mFM9uCP73JGxbOPGbEf5SHAj3zH4FVxvW2RzVQjlzGzXuS+V5/gR3R9jaqpvUBGiBq66SRvRrxs7af0A+ZnpYC7CjkruOJb2zU3RcsiVnEVpkhEX4W+G095jdgOeq5yvYzR1yxjc1dV31smhRgFzPrBkgpIToKiHKPI=
+	t=1717697113; cv=none; b=cgz5viwW1odIgRiuJdCe3AN1/DxPQiJoNNu3rqT1yZX7N0CbgIVj3pNwKYbehbTnd9TPRiC/V66+1jFtI+W3vL0vPI4fEERVfzgUmElA/9gagj7zbJhDF0+tZPtZZQPvja+xWqkVCd72GXRteMDdp9q2Y0jKLvp6gPhSBZfMdzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717697072; c=relaxed/simple;
-	bh=HDd6OHePqDYE5PcHNs5uUuesJqWx2FNGOr7Pj6VmAxQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OlHEtXlcfr2AOZyQrWOq+Hj1AmG4t8HhNZczcc70tsQVD/rS7qtyz4aoz5TycLRamsux/+h+CtXRXA2NYKBo+LgfAIz5/5EQqTe1Ucm/hvvYxFbTTUCq7VC+/Iv5chiFeQIewsPCBKXoxmwwTiFdiZAkSiAXS74RqK6UbLqdSMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMgh7WM6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5D7BC2BD10;
-	Thu,  6 Jun 2024 18:04:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717697070;
-	bh=HDd6OHePqDYE5PcHNs5uUuesJqWx2FNGOr7Pj6VmAxQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=nMgh7WM6GglV9bL4DSuANqJtT5P1tgI/lh3sVNg8ChLTC9tWCtZOVIkC83rdW+VFA
-	 qnEXnpx4+iLIs8tUdtXxkjEzWLpd2zLJbCbIXIat6yT9AnJZ7Yt2PEYXJL5N7w9Ryo
-	 M0EQhmRG2UYMCoFwdrYvt75GDP7LLq+JztY40t6yfMfmw0O6ff4vUgSvHjeFU+nFyt
-	 NXFz9UTXMSTzE7bXDEZwtx3QVux5z8yFl2n3h2i+0udiijoF54u4+VpHJpdY6YZCcT
-	 jNIEa47Mq/Bf64Zlm+ReFfcBXakWf1POVBcxgWxXEC6KmZsGbxls0kCvwPpQwiVgga
-	 OCW9VXD48/EcQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 6F83DCE3F34; Thu,  6 Jun 2024 11:04:30 -0700 (PDT)
-Date: Thu, 6 Jun 2024 11:04:30 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Jan Beulich <jbeulich@suse.com>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	linux-mm <linux-mm@kvack.org>, lkft-triage@lists.linaro.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: x86: WARNING: at mm/memblock.c:1339 memblock_set_node - Usage of
- MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead
-Message-ID: <b004f0be-1aa5-4f5b-8dd5-a071bcfc5179@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <CA+G9fYsGFerOtoxwpKLOYcRtyJkmgjdP=qg4Y5iP5q-4Lt17Lg@mail.gmail.com>
- <315d6873-d618-4126-b67a-de62502d7ee2@paulmck-laptop>
- <7d55b65e-331a-4ce2-8f72-d3c5c9e6eae0@suse.com>
- <e220910c-da6e-40ab-895f-87fd43c1de3f@paulmck-laptop>
- <eaa90c1a-ae96-4506-90dd-146ce85d311c@suse.com>
- <20c484a5-d797-4782-b5b5-bea5fcae9284@paulmck-laptop>
+	s=arc-20240116; t=1717697113; c=relaxed/simple;
+	bh=M8/CndtovtNZjCnSSKAAn9sDv4W6EwehhscWhv21waI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Y9VdxJLEAkeWhzrNqHhhgR+t+EnIp0pKDJOZB9ApfrmSWH3D2uYZb6AfUI85sMrkE3qjzLoR6AMeVLolNd5tH4+ms/QyzOQrNnpYqGozKqg84rxvMiEfaP5J7YvK2soHrPv5HVhLN+bp3LZCI5GGwt7lWy+EHuglg3sJDzNJ5V8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gDIS5rxm; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2c195eb9af3so1034666a91.0;
+        Thu, 06 Jun 2024 11:05:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717697111; x=1718301911; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=qqFGxZu8ztkmGXgHXrrzq8s99pAzOJgpzc98UOmJrt0=;
+        b=gDIS5rxm2yu068VE8CgxrBEFqpL3ZpQJJVch4ACwtwgUIaAioVovNTwyG0BKwjrrYr
+         cDJALxqRtpmNm72BkMC/h9ebpyFyrI+ZpL458ZY38UahjOxD9hNFI7R0UiBBIrNDpHdn
+         HnLBYyJ2MubsFdCevfD/d7jtnGM+M41I0a60Sq9+qj1d/TycyB+Am37WxXg+NUxIEw+i
+         gOdW+Z/t8pSxrFv8YQ4+HnOf6BAJpxPmRII5OTZHJr3JoCy6U2vHkL7q/KcbVsYo5XJ2
+         2/E5FudErxaSuxCVuC4gbyNGZ39m8zXhBZK68SAgKWTGPQk3IKzfj3wNSbsjIzRSOlPR
+         09Lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717697111; x=1718301911;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qqFGxZu8ztkmGXgHXrrzq8s99pAzOJgpzc98UOmJrt0=;
+        b=jgxn6evbzxqjOMTBxhVb/r7pCxWeY3oaVpsjrp5rcI9cGjRMhizeatPQ05v/8qDKw/
+         m/nQtrmkAKy/8mNG0CxngW5WUGfHiyatnSa2GljuD2FUwNo4cE0kRB+dQIJ8LiMAOlN/
+         cZHucQBwUwFNYd4TgZFfd6XpEhgU+oC44HDV1iY/IE0zyDyQ26yKWUdIisbtWJO9MRCn
+         0e3yRTozDQdbXXQmtiLXKg/Nk5EOKUhR1gs400cywmBtdDzuiskB6zJSkFMySauwE5ZZ
+         tzcLM7xnpf8ZgLaju/rjm3jPuyt2GmjisJGJxG8dizIwF1LXB+clkqv9kL6xWMbKWk1P
+         W10g==
+X-Forwarded-Encrypted: i=1; AJvYcCVDa/gOePt5a1/3idsLW7bTBXvgs3GxaYqq6StVQtkLgQI/ikTOsly3CuOKdFy40MPynzUH3OPehl0AtOA3QvhHLk6PrNBaoyxAQr3X9Bps0PGDuQwaClnZ3YwZsgmw6x+Dl9xDIgwHnuo=
+X-Gm-Message-State: AOJu0Yxt/6zBdmGYGb3FEDnKeNQtSvpVLzNBOWoibyQxLC0l+AsDj7+g
+	YH4c7DHLLeq4iPAEuqSLfW4pgjFJ/1J3sn8Nf6Az5u49n6w1BqcW
+X-Google-Smtp-Source: AGHT+IE5A0nf2n9F8l4i5CYuyQzTnGQSlckHO+heltL9kMPPAQX5ntF7cJsqltDvC68OmQfN/1cHgw==
+X-Received: by 2002:a17:90b:4f83:b0:2bd:ad66:5b14 with SMTP id 98e67ed59e1d1-2c2bcc058d6mr260340a91.25.1717697110560;
+        Thu, 06 Jun 2024 11:05:10 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c2806d2936sm3870629a91.53.2024.06.06.11.05.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 11:05:09 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: chrome-platform@lists.linux.dev,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH] hwmon: (cros-ec_hwmon) Fix access to restricted __le16
+Date: Thu,  6 Jun 2024 11:05:07 -0700
+Message-Id: <20240606180507.3332237-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20c484a5-d797-4782-b5b5-bea5fcae9284@paulmck-laptop>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 06, 2024 at 07:19:40AM -0700, Paul E. McKenney wrote:
-> On Thu, Jun 06, 2024 at 08:13:17AM +0200, Jan Beulich wrote:
-> > On 05.06.2024 22:48, Paul E. McKenney wrote:
-> > > On Wed, Jun 05, 2024 at 09:46:37PM +0200, Jan Beulich wrote:
-> > >> On 05.06.2024 21:07, Paul E. McKenney wrote:
-> > >>> On Mon, Jun 03, 2024 at 07:19:21PM +0530, Naresh Kamboju wrote:
-> > >>>> The following kernel warnings are noticed on x86 devices while booting
-> > >>>> the Linux next-20240603 tag and looks like it is expected to warn users to
-> > >>>> use NUMA_NO_NODE instead.
-> > >>>>
-> > >>>> Usage of MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead
-> > >>>>
-> > >>>> The following config is enabled
-> > >>>> CONFIG_NUMA=y
-> > >>>
-> > >>> I am seeing this as well.  Is the following commit premature?
-> > >>>
-> > >>> e0eec24e2e19 ("memblock: make memblock_set_node() also warn about use of MAX_NUMNODES")
-> > >>>
-> > >>> Maybe old ACPI tables and device trees need to catch up?
-> > >>>
-> > >>> Left to myself, I would simply remove the WARN_ON_ONCE() from the above
-> > >>> commit, but I would guess that there is a better way.
-> > >>
-> > >> Well, the warning is issued precisely to make clear that call
-> > >> sites need to change. A patch to do so for the two instances
-> > >> on x86 that I'm aware of is already pending maintainer approval.
-> > > 
-> > > Could you please point me at that patch so that I can stop repeatedly
-> > > reproducing those two particular issues?
-> > 
-> > https://lore.kernel.org/lkml/abadb736-a239-49e4-ab42-ace7acdd4278@suse.com/
-> 
-> Thank you, Jan!
-> 
-> A quick initial test shows that this clears things up.  I have started
-> a longer test to check for additional issues.  But in the meantime
-> for the issues I was already seeing in the initial test:
-> 
-> Tested-by: Paul E. McKenney <paulmck@kernel.org>
+0-day complains:
 
-And the longer test ran without errors as well, so again, thank you!
+drivers-hwmon-cros_ec_hwmon.c:sparse:sparse:cast-to-restricted-__le16
 
-Any chance of getting this into -next sooner rather than later?
+Fix by using a __le16 typed variable as parameter to le16_to_cpu().
 
-							Thanx, Paul
+Fixes: bc3e45258096 ("hwmon: add ChromeOS EC driver")
+Cc: Thomas Weißschuh <linux@weissschuh.net>
+Cc: Tzung-Bi Shih <tzungbi@kernel.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ drivers/hwmon/cros_ec_hwmon.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
+index 41f268fa8260..f586987c3502 100644
+--- a/drivers/hwmon/cros_ec_hwmon.c
++++ b/drivers/hwmon/cros_ec_hwmon.c
+@@ -26,12 +26,13 @@ struct cros_ec_hwmon_priv {
+ static int cros_ec_hwmon_read_fan_speed(struct cros_ec_device *cros_ec, u8 index, u16 *speed)
+ {
+ 	int ret;
++	__le16 __speed;
+ 
+-	ret = cros_ec_cmd_readmem(cros_ec, EC_MEMMAP_FAN + index * 2, 2, speed);
++	ret = cros_ec_cmd_readmem(cros_ec, EC_MEMMAP_FAN + index * 2, 2, &__speed);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	*speed = le16_to_cpu(*speed);
++	*speed = le16_to_cpu(__speed);
+ 	return 0;
+ }
+ 
+-- 
+2.39.2
+
 
