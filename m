@@ -1,142 +1,94 @@
-Return-Path: <linux-kernel+bounces-204840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 825B78FF422
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:54:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B4138FF424
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:54:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B78F1C20C29
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:54:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D0D91F236DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4064B199246;
-	Thu,  6 Jun 2024 17:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E34719923F;
+	Thu,  6 Jun 2024 17:54:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="khYK70Zh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KvGPwprp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1662AD33;
-	Thu,  6 Jun 2024 17:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332252AD33;
+	Thu,  6 Jun 2024 17:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717696440; cv=none; b=BncuH8F8xEO5kkmyH139cr6iGq0008xIx4YD4OGUiuyAWmdpOrS0QjgYXjW0uDss+fRWtoPB3noYXrsAjani5KMA7+7x1pbn7wukyxi3f4P/1QwO2+pqzGeOuC1f19Fc6AfCRZGW90YFEWUelTSDhQ4C8VybWHnZy5ygvfebsbQ=
+	t=1717696466; cv=none; b=JJVf/AoizMNirJCNeu8LfmDxo4ZTYWXIDYjcnwlARgYbn6U5AbRG4bjpC5vJWXmIIbonYUa8o1hwsh1iQ9eOcuD8jLbWCBhX3jF5t6UGiyvcL4Baz8JNYo74HeMqh1JrdNrPYq11pYq6D88/ZSnP5UarXJ7U7F/FO9aErSvPMFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717696440; c=relaxed/simple;
-	bh=O7AReRC5xb6JZGo0fKvZRg+gKqrOFRU8cs6WipK538k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Tkila+Xpkp8B5H2Uf8hVCf7LmSiQpi7iisNlHV5Qce5O9IZgsmIrUORVoerFo4dLZPc/Gn2SeKAX2FqqT9zVyoal4iHSCqOcFW/haHqLQeNBqwVnAg3aIR7Z0FRVXWMtSyX2c+Q9GB6HQMo05HnjBVZkvTagP6W2m8go/Z9YA5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=khYK70Zh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CE80C2BD10;
-	Thu,  6 Jun 2024 17:53:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717696440;
-	bh=O7AReRC5xb6JZGo0fKvZRg+gKqrOFRU8cs6WipK538k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=khYK70ZhfHncLIi8h9FJCvwilqFJGD+YB9tkbGVHnfny+Zxa1twT1XXUJnh1ydzJc
-	 WnfU0MaiH+xBA4V09zRbQ8lLA9OEBebLo6qZMtvooVQPb5SdcDkCbtVktBfLtIzeK5
-	 gGtf7tp2zhSTi6JxikSCr8Ie9GoudEvH5HK9KP+zuAotNudS8sSoDZ1SPLPPOReMII
-	 J5HeG1EYa3+uPdM/6ZkVQL8mBjTysQg/8m4dLv7jkIsqynrxww46IykWaolmsFndnd
-	 j5neZW5oCQz+Lx/CgSm9K7eU5CF1hcX6sqQx4KKJDxD5Lnn4la0N62atyYqqfJ61hm
-	 LMVp4qIZSvyfA==
-From: SeongJae Park <sj@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	stable@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org,
-	damon@lists.linux.dev
-Subject: Re: [PATCH 6.9 000/374] 6.9.4-rc1 review
-Date: Thu,  6 Jun 2024 10:53:56 -0700
-Message-Id: <20240606175356.20487-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240606131651.683718371@linuxfoundation.org>
-References: 
+	s=arc-20240116; t=1717696466; c=relaxed/simple;
+	bh=YQIiTGoH/7xsWc3WunGC30RQOf4K846Ne+BcGMXwERY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hp4zS6++gqwrCTnwJ3ffX/XLsZdrW2j4vbwbvbRvytSyVeIybm2noN7UDFr6+rBcxMAx5Iv9zBOU4rjJcbgO9xL5nm2DcH75Agpd+JRkhzK0aMWdwpX93FZ8unJG8EW8uEZxxxX9pCX4mW0kluRzHLl7fVCpdgUZ5IXLbniRLqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KvGPwprp; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717696465; x=1749232465;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YQIiTGoH/7xsWc3WunGC30RQOf4K846Ne+BcGMXwERY=;
+  b=KvGPwprpWQdFuDKhl0f0xTU67f8krTWeMK+BizjFHLVP6UVaXEGZpr4c
+   ohAP3ReAkrJma1qFDCkSbfRXpeXowMpZWCwYmWT+7KpBZkffkQ/1kIn72
+   sdojPP1FBhvpJdmXFPbHXKkY49QALNJBrHfs/tYDn7ZsRAfsbMBU343xi
+   YiB1bAtOeeSOFv7a1SnQgT1NCD/l1xAR/yVtK4+4dUlZFNLS+fnFgzSwu
+   xQ+g6CngO60G7Y4X4Pmd3uhG2LPLqQp69BXzD7IzH3j+I2L7UeCsaE8AE
+   WB1m0MEiP5kcfWL23QMgPGUrhpxwcUC/PoN+V9+t7/6m1HncZi5weHn+K
+   w==;
+X-CSE-ConnectionGUID: sWzi7nAQTICMG9qLBNgFmQ==
+X-CSE-MsgGUID: X9EisFG0QmiWUmaYVvzFgg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="24960470"
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="24960470"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 10:54:20 -0700
+X-CSE-ConnectionGUID: AmF52hkXQXKaxGk+y+i4sA==
+X-CSE-MsgGUID: 67DuAJyvT8WVcW3OJS89Ug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="38496504"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 10:54:17 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sFHJW-0000000EGdc-1Dv7;
+	Thu, 06 Jun 2024 20:54:14 +0300
+Date: Thu, 6 Jun 2024 20:54:14 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
+Subject: Re: [PATCH v1 1/6] leds: spi-byte: call of_node_put() on error path
+Message-ID: <ZmH3xicOvz2G-wRb@smile.fi.intel.com>
+References: <20240606173037.3091598-1-andriy.shevchenko@linux.intel.com>
+ <20240606173037.3091598-2-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606173037.3091598-2-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hello,
+On Thu, Jun 06, 2024 at 08:29:18PM +0300, Andy Shevchenko wrote:
+> Add a missing call to of_node_put(np) on error.
 
-On Thu,  6 Jun 2024 15:59:39 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+Oh, yeah, this might need the Fixes tag. depending if you want to backport
+this fix or no hurry.
 
-> This is the start of the stable review cycle for the 6.9.4 release.
-> There are 374 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 08 Jun 2024 13:15:55 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.4-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
-> and the diffstat can be found below.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-This rc kernel passes DAMON functionality test[1] on my test machine.
-Attaching the test results summary below.  Please note that I retrieved the
-kernel from linux-stable-rc tree[2].
 
-Tested-by: SeongJae Park <sj@kernel.org>
-
-[1] https://github.com/awslabs/damon-tests/tree/next/corr
-[2] fcbdac56b0ae ("Linux 6.9.4-rc1")
-
-Thanks,
-SJ
-
-[...]
-
----
-
-ok 6 selftests: damon: debugfs_duplicate_context_creation.sh
-ok 7 selftests: damon: debugfs_rm_non_contexts.sh
-ok 8 selftests: damon: debugfs_target_ids_read_before_terminate_race.sh
-ok 9 selftests: damon: debugfs_target_ids_pid_leak.sh
-ok 10 selftests: damon: sysfs.sh
-ok 11 selftests: damon: sysfs_update_removed_scheme_dir.sh
-ok 12 selftests: damon: sysfs_update_schemes_tried_regions_hang.py
-ok 13 selftests: damon: sysfs_update_schemes_tried_regions_wss_estimation.py
-ok 14 selftests: damon: damos_quota.py
-ok 15 selftests: damon: damos_apply_interval.py
-ok 16 selftests: damon: reclaim.sh
-ok 17 selftests: damon: lru_sort.sh
-ok 1 selftests: damon-tests: kunit.sh
-ok 2 selftests: damon-tests: huge_count_read_write.sh
-ok 3 selftests: damon-tests: buffer_overflow.sh
-ok 4 selftests: damon-tests: rm_contexts.sh
-ok 5 selftests: damon-tests: record_null_deref.sh
-ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
-ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
-ok 8 selftests: damon-tests: damo_tests.sh
-ok 9 selftests: damon-tests: masim-record.sh
-ok 10 selftests: damon-tests: build_i386.sh
-ok 11 selftests: damon-tests: build_arm64.sh
-ok 12 selftests: damon-tests: build_m68k.sh
-ok 13 selftests: damon-tests: build_i386_idle_flag.sh
-ok 14 selftests: damon-tests: build_i386_highpte.sh
-ok 15 selftests: damon-tests: build_nomemcg.sh
- [33m
- [92mPASS [39m
 
