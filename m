@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-205160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1F7B8FF83A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:36:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 502C18FF83C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 517BC1F25FF3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:36:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D62D6285E4C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9373D13F00C;
-	Thu,  6 Jun 2024 23:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A47A13F439;
+	Thu,  6 Jun 2024 23:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="EMXEqH0E"
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="gOCcFXGQ"
 Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8AD13BC02;
-	Thu,  6 Jun 2024 23:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53058140E4F;
+	Thu,  6 Jun 2024 23:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717716968; cv=none; b=phcR+ie4AtyujEa+NBaMmOkEq90CsfOcjT+R3gDjO3zg9E8voDAtp6ybUistQ9FI73YvxE8O5CBdxqqM2qJQxUrTTg9v3LZyF3MWBjDonTa3jem/4u/ZA+9b9ciBfoOsuVFu4ecEwC9LmyIuuleH/m8VCz8eXHjtWmQhtuaCOg0=
+	t=1717716971; cv=none; b=grvLSLpkSi1EokTGKfOuJwfetWnfJpEeEfwH9Bv2zR2HnsvfeVVM54t8QC9gEtyZUxPWV3WQ62krZglrkvoPZRxtlF2qj5QmTrNvotLM3gJYgZES+3+d4vqWoAit57fobJmrvc4M0bw7avmyG0A7eXR3PS0h61cH7rZ+1PH6wXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717716968; c=relaxed/simple;
-	bh=otV4zp1MoGFcTiETzXfR3TcxXLb4cvvRGl8k3ULZ0sA=;
+	s=arc-20240116; t=1717716971; c=relaxed/simple;
+	bh=xmPYtFq3q5IrE/3h9h8aA8hXNZK81eArdkgqdeXQ/1U=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IePemqVJEmqBasGVenCGYIJJ1C4c5f+fzF4BKlaomK8+3dNCK2/fLZ5COenThPc3UolDJIM1Ml8JheHKNm85jP258w4ulWAFuMzBkI7wev41h4okxu/yHoCtIHcF5+FBGJxSyZLJrGdsp8et3Ic2dROrbf/LDDsxG2VfglUs1IY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=EMXEqH0E; arc=none smtp.client-ip=212.227.15.19
+	 MIME-Version; b=R6Ug7vwEYm3294wMogbd+Rs8au0iMO5XzIYm0KGvdq9T09glnO4DLD0SuZx4nwHyUHickjC0MQcK3XgTpgxiIG+e+XBWv1Ht/eFCQ9NK7FR9JJ/pdkJERpBMVSbAtJbxnPhila65AporlLFhlxDVnfBx3v64s4IkBBQjmr8xB3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=gOCcFXGQ; arc=none smtp.client-ip=212.227.15.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1717716958; x=1718321758; i=w_armin@gmx.de;
-	bh=ISDNXycXxWS0qiiXv/+/ANk/YpjMLHNtNunSMSoCI94=;
+	s=s31663417; t=1717716962; x=1718321762; i=w_armin@gmx.de;
+	bh=kBzkJHv8vpR5YX8Wf5bPU4jlaFIq5F45CkO0nRM1p1w=;
 	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
 	 References:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=EMXEqH0E7UooufD5REalm+XgOuY1ZRzgM7v00fquYiQeY7sCUJ4+wwk5maSIIh7w
-	 uaizp24FDwLG85dT2snxzv55EJfM60jmj+/VxGjdHBjWQVIyOQSV0YlmE9aMHyPWQ
-	 CU2BUmOAw7R/1qll8lAtMHgWbU3ZFmEry5KFnJgmsYhk4ZSu2cQr31q17rj8ffuAT
-	 BgUBxPJkS068JkDiDr87HL+h9PYCgS12/lwSTmYl97kuedDs/92aMEpYTmJQghrB+
-	 3YTwwHdClSg5ZIoal4nUv28V4SYeS87Fl93F4gcpsoPQYtP4mt802rc5386hvmLTj
-	 i+PzVChIe8jDCDsT3g==
+	b=gOCcFXGQlufh8K3ZineuOES+qzEzYR7g6UGr9O7qaHzMvAvA+WKsZToCRvancUdk
+	 +MIPcTpXsTS/PVUmntvF4Dq3/FdakW5MOr4/G/0pEZ0wGWP3h8qfR3XwcEKO92E6d
+	 sbFfQivWVnzPb7LQn+fKH8imScs20zWhX6Drpuh7i1kZPtxo2Am6Y6ZNi0BCXHAP/
+	 ybmJJ6a6pH7aIkbivcBG1Y/LZRfdoVIr+SG46u0PWodI4QCAZtV3d7fFCDEV9my/B
+	 LnDNj6zDsHgx/czXEJflmW79vC9mQ4Dp/aTjKM5arjfoouW0OchwvOXIo35GIJwH+
+	 rIUjEekzBN8t+xqt5Q==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from mx-inspiron.fritz.box ([91.137.126.34]) by mail.gmx.net
- (mrgmx005 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1MsHs0-1sYggG02mY-014Dw8; Fri, 07 Jun 2024 01:35:58 +0200
+ (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1MYvY2-1rtLeM0RKi-00Wctn; Fri, 07 Jun 2024 01:36:02 +0200
 From: Armin Wolf <W_Armin@gmx.de>
 To: matan@svgalib.org,
 	agathe@boutmy.com
@@ -54,9 +54,9 @@ Cc: hdegoede@redhat.com,
 	ilpo.jarvinen@linux.intel.com,
 	platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] platform/x86: lg-laptop: Remove LGEX0815 hotkey handling
-Date: Fri,  7 Jun 2024 01:35:38 +0200
-Message-Id: <20240606233540.9774-3-W_Armin@gmx.de>
+Subject: [PATCH 3/4] platform/x86: lg-laptop: Change ACPI device id
+Date: Fri,  7 Jun 2024 01:35:39 +0200
+Message-Id: <20240606233540.9774-4-W_Armin@gmx.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240606233540.9774-1-W_Armin@gmx.de>
 References: <20240606233540.9774-1-W_Armin@gmx.de>
@@ -67,66 +67,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:DIdyGUYS8BPW7Q9MzAcW6zeIXzDGwemyHaDEjkBvBDmwF3sTIMx
- 8wF2cnYmpa+/deSSBjREYMcodtsv7gl4Qkii67si1G+ii/WV4Ab79D8rI0EknkQtGdH6uKE
- 7htEoZxF5sf5Bv78VCY4Dv/+W6HpgP56Bv3W1VPfoxJP2xp7MFooE8tG//fFcbCdLSkvzlc
- w9g+pdgBP3Z8Xhu1gmOtQ==
+X-Provags-ID: V03:K1:pG3fLKSVL9iZU0eNC7DQ4bvNRAXZtevo0MmTeE6ibgp4P6Yi93A
+ VuDclF+vdasupvJdWvb6ErNa5WIjWVSnYPq0IfIoa+zwzSZvf53QBNqoO7W7qhrH3qb3bNl
+ cUL8ZhGXQZyRYmIaIaS3hyf+Votr/I20P6U1uTr1e+siMhETFlG8PR6yj1H4OMN7voQK1UM
+ Q60XSBvcU0k9k3lmqaTOA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:YoPEzoASVvk=;FrKHFjjPPLCmrwJdNHNjg3KzhM/
- Y1N6w2rL6jNDzUSqfTJu2pFruthpBYZ6NmOgGqHFQIugsKU0X3ZsqSUmE/YQcNVJl+Dd7UBC6
- YNfSq999qBdvNuMKH9r3b+94CgdEybT9/JEVAOssVD/tjmK43yG9dGN5mQQmjKZ5lwcw5aEb4
- ep6kWHcAaARboq9FazJlep9dlVd2PuDLNoTfZP4C7+gFvCadYz/JqYW/hIQg3+aFKLO09DYQ4
- Y+zJkvpRiN/eFf5yzzCcxQKWkPDgigVKRzraI0wJSsbVLpwLW1sjR3DLZwY9KklbM/zOP5HXE
- DjwX49Cln9C4GIwsBU28LKXNmbYtBtQ3voNa9c2VXYbpsEp2Umk7L6ZfKftu2IX5RWkcvVYey
- IbJK05CjdygNMgi9/APxb7iyHb7QR1KaJXcRGSdIBhmO+819hczONF9oSy9LFyygQWh78crZU
- dFzK81Rwi7CsyEREAM0dUnOoIyiVlixOsbzjau6QRJsiyWenbNtNcEK+azeCzjXbRGQGJGNeq
- L8AHvYraJoCBfdwH5gQJL0gW2ZQ1+HaLIsmI7NlrQdSnx9S6QueWIaner2wAauQZfOGdeLent
- HkQ7oNQXMo2ED2ntrnQfPi/TuDR545lx8CKOdtFTsrh2GFVAXjt20heHrCmZqzSeF8xd7pkCy
- 8xD+aJGlPsSHJMHrla8op1VmQZOy1SOwOUVaX/VSz7/yB/5nKHrRlDINN/Fmk2tlplHeLZN0w
- 3iGLzViDHHY25gvBMOwQfgxZ3VC4qvAK/0BT2iVZQtkBp65YnMjkbEHtid4m3dxsB+fCvAPVS
- 54eYqvdqrRNUMvEkU8FmGEehf2lYOArhu5WsH0i2wYjdo=
+UI-OutboundReport: notjunk:1;M01:P0:Xsnv9frPWiA=;1gOONwCDNsqZdSL2AmdV3U1845z
+ gEsL4MFMJgBCwGF+U+tGCzh0GnH7coXa13HD3vXTyuBIdRqU3jRfPOQng+miji5ky/D8jy/HK
+ nuh/RVfzekvHQh6+e63qLQnWorFUW0vELDbzP4gNdHgSPAkAQau30jSl/QLA8xGRt3O7IEs7t
+ m4wzhCLW8umKbcxaTsLEq7mmCZM8aE6X/iVeghUehiQGDFOCSsdSoUVWfZY6njKgSGo03/rOL
+ cq21mDrvEPzcL9ssjzSnsMR9CUFekJ+eMIkx18pl25KiiHwzqtCV5Gcd2mDyHLGPWKES/kzEx
+ Y+mkqQ6pD5XVM0QB6jBTqcbehkfEM4pc6ZDUQfuSdAL6Z+zZR77fOl34+JoAXmSdTcriAxUEN
+ +JPox91Ya099OSoHljV5X/fUsVpmQoy/IB/dNdpy57CBdepybna1rg+awVQJOS8Sof4cPU6RL
+ o2UIXXUA49EW+fZoBnpUQKaBNc3wWXKxjJbQWUfawDOD59syyEVIgOQ2YKu/bda0z62rzxEp0
+ rJjhbpFt9i3WWAXdF669Uz1xZKpA9ajQOcGK+VbKWjrVaHcOJt6Lts43VocuxoMEDzNO/KIap
+ rJVOi0vWCoH+v3WXEwWAbol2235+sbMDKYt+TSzBZHsniiCC9rJMuFNXeVyfogrQ1xTwcRC9i
+ B/IhSeoew5bOd33ngWseJfBN7C6LnpkotwqlAj0WYcpQOdQfDqtt39SvUgWbF8XXKWRx3Gz5n
+ xg8fCXxIOtesQgGUFrBzb/zAiNCfTSRZSb5349poIsWoIB/jj0yDfUEpM9T6NJ8KYIfs9j8zI
+ J2WY8l9NfdJfQjWjla65us9pXLvzk8QNNyMrDyxiCeP1U=
 
-The rfkill hotkey handling is already provided by the wireless-hotkey
-driver. Remove the now unnecessary rfkill hotkey handling to avoid
-duplicating functionality.
+The LGEX0815 ACPI device id is used for handling hotkey events, but
+this functionality is already handled by the wireless-hotkey driver.
 
-The ACPI notify handler still prints debugging information when
-receiving ACPI notifications to aid in reverse-engineering.
+The LGEX0820 ACPI device id however is used to manage various
+platform features using the WMAB/WMBB ACPI methods. Use this ACPI
+device id to avoid blocking the wireless-hotkey driver from probing.
 
 Tested-by: Agathe Boutmy <agathe@boutmy.com>
 Signed-off-by: Armin Wolf <W_Armin@gmx.de>
 =2D--
- drivers/platform/x86/lg-laptop.c | 8 --------
- 1 file changed, 8 deletions(-)
+ drivers/platform/x86/lg-laptop.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/platform/x86/lg-laptop.c b/drivers/platform/x86/lg-la=
 ptop.c
-index d0fee5d375d7..ea83630106e8 100644
+index ea83630106e8..db8a2f79bf0a 100644
 =2D-- a/drivers/platform/x86/lg-laptop.c
 +++ b/drivers/platform/x86/lg-laptop.c
-@@ -84,7 +84,6 @@ static const struct key_entry wmi_keymap[] =3D {
- 					  * this key both sends an event and
- 					  * changes backlight level.
- 					  */
--	{KE_KEY, 0x80, {KEY_RFKILL} },
- 	{KE_END, 0}
- };
-
-@@ -272,14 +271,7 @@ static void wmi_input_setup(void)
-
- static void acpi_notify(struct acpi_device *device, u32 event)
- {
--	struct key_entry *key;
--
- 	acpi_handle_debug(device->handle, "notify: %d\n", event);
--	if (inited & INIT_SPARSE_KEYMAP) {
--		key =3D sparse_keymap_entry_from_scancode(wmi_input_dev, 0x80);
--		if (key && key->type =3D=3D KE_KEY)
--			sparse_keymap_report_entry(wmi_input_dev, key, 1, true);
--	}
+@@ -768,7 +768,7 @@ static void acpi_remove(struct acpi_device *device)
  }
 
- static ssize_t fan_mode_store(struct device *dev,
+ static const struct acpi_device_id device_ids[] =3D {
+-	{"LGEX0815", 0},
++	{"LGEX0820", 0},
+ 	{"", 0}
+ };
+ MODULE_DEVICE_TABLE(acpi, device_ids);
 =2D-
 2.39.2
 
