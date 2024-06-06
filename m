@@ -1,156 +1,145 @@
-Return-Path: <linux-kernel+bounces-204928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47B208FF516
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:01:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A47E28FF51C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:02:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 047CDB25701
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:01:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7782C1C269CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C70502B2;
-	Thu,  6 Jun 2024 19:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D39502B2;
+	Thu,  6 Jun 2024 19:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bB5TPFkr"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b="6AWs8Y5f"
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7469438DE4;
-	Thu,  6 Jun 2024 19:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA90FC13C;
+	Thu,  6 Jun 2024 19:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717700451; cv=none; b=Kzoo/NRJblJY0FLH7MOJ8TLZ8Sa58iVvhQFqygUw7w/sDtk36XnLSXfZw4INTgv7dOEpP8iTE+ysevnhcA5cMKBfpz4FDeJFwBtiE+s0X/sIEx9Hax1zxHd7JVwBwpM1Nz3WUGX/Pp/C4vyf9c0PZd23sk+DH0ykIr1vN8tcqEI=
+	t=1717700525; cv=none; b=tHHOYpzvKtNSKPpuwSdzpUCYgtXFPccmoP60SsWEOAt1qoMvhNZ5gUxOktdvYxajyZbeaaQi9iwNDC9EMoU3n4yJVfjY/R+G8bmmhRK83Jyb5MeCHLmqgMEgfFh6EHmfYgioxwDyb3NijRce7e0yVWQ/tOwJtzqSlLdwqzVA53g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717700451; c=relaxed/simple;
-	bh=M8H0xy1DWWc/H9ZG2Ee51cJpwzjTKk41amkrJ5t6vg4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XpKpK6MeJWqnZvK0aXTkolN3mrECpZOOBaIWLDaiL+NSe0Ca0LDGMBjBz54vu/8+mL9GQKwAuhQ8rOJ6HM2kQMxXTtXpGaJHb210tF8L29nhfiSydfU1Xz+fwNgxC4+XofDOOOuCpISj83/eZsuYIYpYZ/6fomcJeggoV8IEkn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bB5TPFkr; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6ad8243dba8so6196406d6.3;
-        Thu, 06 Jun 2024 12:00:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717700449; x=1718305249; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tJSI3NIhPWMG6BD/WGBLSN52oRpjiTs5BIySoaDVF5A=;
-        b=bB5TPFkrkjTe107LdClyhXoqBkLJTDKaByk9m6EmL0Q4RgtuAuCu0/Ci3Fswg5h+yq
-         nOAx2c5DORwnV1fdWINBdzGEoBg0e/DIqf8bz74fuNbZrj9mASTGr6fztrIx1qkQw+HC
-         J/WnYj2twOCnA2p+NZ6oRe4zZFX+8kTxrmDk4ehSO5RoVKTX5xZ59vYgsr8vfz5afko7
-         xMONggt+cK9z2Q4GbYbBUnRvhi4Ro8C0YEapI4wZqy5UacQM1+cStjVw8ORbiDn8y3/X
-         Cxjl6uWtFMnkA5A+JqoiFbn1Qia+tfy2TwtvORHkY/9NG4J5AIHYHv3jzLyXDx/46Jg/
-         ikIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717700449; x=1718305249;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tJSI3NIhPWMG6BD/WGBLSN52oRpjiTs5BIySoaDVF5A=;
-        b=xKI2SUuV32RFhdWmlLB9mANwLbt68/6tZUzn67KKo75HCfsc2y2OGEwZTU5AwFlzbd
-         ZfMEhlAKNIqK5U83R/v4I7emOsjLRdgMqqzjY7Bxvx1F58cFzEUpf3JkUqpfBF/AWsg0
-         9fGlOFN6YowJaKKVEXfgDg2XsEhuZKT7dNP0swdDaE8wc7hHh2zRIm0ig/LoYveUjrsw
-         jUBjIA1R30jE7Fj8v0LJGUK9dFdFEMvYYRhy/DnLRyeONs1aP9z+jPqu5KHWuF4ZJIkj
-         v4IgoMBL0kDA+Fa/tK5cofYbB0MQMXu/Yy27WyZ52/EAkhGoqirbJPN3Q8PBevInOJdB
-         Ftng==
-X-Forwarded-Encrypted: i=1; AJvYcCVWwR29kBIgKdcD8HQcOJObtN73bAthR0EV1nB40FPLm/Ex2UiL9jKbh7mB4VmqQH5hJPYTD8uwZVXDMWxudkpAfE9SL2Kss0tuBJwh3vkjlkgLf2aSFPQXDr7XzhE9d2gQN97rozvivI+XU1boApS7yaM2sj7fsAWtcsyDsBNkGaKVYNutxE4r/VxxiWoDCtU=
-X-Gm-Message-State: AOJu0YxW/ICncIkQFzWYJEQVjzhTKF6B21qgXnSgxsIXFRqCfzqazWip
-	MrNSMH5Obh/KmH600A3d96LVMKuQ/LzwB73XMQ5D75g0DNsKkBM+
-X-Google-Smtp-Source: AGHT+IFOp9gYgqV4RZHHnvLu8DoLTWoXwWYQmb0M8EL8ZoGT8LWwFmlNERK4ERZIRB3euxXxOc4okg==
-X-Received: by 2002:a05:6214:398c:b0:6ae:2f16:561e with SMTP id 6a1803df08f44-6b059f942b4mr3292806d6.59.1717700449225;
-        Thu, 06 Jun 2024 12:00:49 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b04f620e8asm8886706d6.2.2024.06.06.12.00.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 12:00:48 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 196F01200043;
-	Thu,  6 Jun 2024 15:00:47 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Thu, 06 Jun 2024 15:00:47 -0400
-X-ME-Sender: <xms:XgdiZjjzp4mBDiFlMp9IbI-xGd0sFLiT3Nql8z3gnQsRgo6S1MERRA>
-    <xme:XgdiZgD7nJDKTjFMwZexehjcn4sv66d2xnydx5hOVJA0i-PzfdaFdNmtqRXqPfj5L
-    2lYlXH2xui-QSIc5g>
-X-ME-Received: <xmr:XgdiZjE3ufdkQXuogjJ7dZL_D_cx1iIotz9jCrsX0HmjKUnMnEQ5srRLszA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdelkedgudeftdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehttdortddttddvnecuhfhrohhmpeeuohhq
-    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
-    grthhtvghrnhepjeffgeeijedvtdfgkeekhfejgeejveeuudfgheeftdekffejtdelieeu
-    hfdvfeegnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhht
-    hhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquh
-    hnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:XgdiZgTygYU-bTpl38OO-Lc9Ed4MVX-_HjizOrEDfqkQxN_qq8-H1Q>
-    <xmx:XgdiZgxot2emvToLEK0uQn0I4nKNM0StNiz66Pxd3bMp3IRc8fG96Q>
-    <xmx:XgdiZm6xiMRtMKdpDm5T-ajGdqte27LYzt25E3QZeYqBxnF7vHjc0w>
-    <xmx:XgdiZlzxoeX1vxK6sWxaMxNuWPn3_XswKdi70Ot8ahLcHCJY_qR47A>
-    <xmx:XwdiZgg5TZaG81_lRGvcWkneSN2np1aVwny1AuAsSxyX4u8zgtKsnE9A>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 6 Jun 2024 15:00:46 -0400 (EDT)
-Date: Thu, 6 Jun 2024 12:00:36 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] rust: add tracepoint support
-Message-ID: <ZmIHVIqEukWWRMgd@boqun-archlinux>
-References: <20240606-tracepoint-v1-0-6551627bf51b@google.com>
- <20240606-tracepoint-v1-3-6551627bf51b@google.com>
- <389a8c55-a169-47ef-99c0-48f58003b40c@efficios.com>
- <ZmHacqvRwBj7OvWm@boqun-archlinux>
- <20240606173544.GI8774@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1717700525; c=relaxed/simple;
+	bh=dLOTe0zOfFf2wx2GkwFTCa1WlboZXkpBx3ZTdW9qpb0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WIUIDLzxwEtw2N+Ui1vkOn7WFl6I+yuGUwrBj3mLdvl+fDJxSHdq42NG70xYxL1Nualiy8jnuEwXHi+Z2qKV3APNvX1XO+xMDOGG/QqbNL6NMBt1x1SvD0hygW3wEb7gURsEyrWtpBCszASuqzPBmNjBNu6OOP45ttsLLbbilt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz; spf=pass smtp.mailfrom=z3ntu.xyz; dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b=6AWs8Y5f; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=z3ntu.xyz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=s1;
+	t=1717700516; bh=dLOTe0zOfFf2wx2GkwFTCa1WlboZXkpBx3ZTdW9qpb0=;
+	h=From:Date:Subject:To:Cc;
+	b=6AWs8Y5fFaVUOI9E3xqm++CeJkqm2Lr9Fioz8q0o7WiJTGvuJoRC5uiaR5lahQkL+
+	 Fo8WS5j8UQCIbvtB66dojdsg+Mrb9BYoDQINvgeAo5uwY6mvW/zrY9ggwu4W6vogen
+	 6vmEtrJtW7rDWEE8zdhi59lNLx/luGbydSPKuE1k=
+From: Luca Weiss <luca@z3ntu.xyz>
+Date: Thu, 06 Jun 2024 21:01:36 +0200
+Subject: [PATCH v2] rpmsg: qcom_smd: Improve error handling for
+ qcom_smd_parse_edge
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606173544.GI8774@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240606-apcs-mboxes-v2-1-41b9e91effb6@z3ntu.xyz>
+X-B4-Tracking: v=1; b=H4sIAI8HYmYC/1XMSw7CIBSF4a00dyyGt4kj99F0AHi1DKQNVELbs
+ HexiQOH/0nOt0PC6DHBtdshYvbJT6EFP3XgRhOeSPy9NXDKJZVcEDO7RF52KpgI44jaUWaUFdA
+ ec8SHL4fWD61Hn5Yprgee2Xf9OfLPyYxQopXSTl6cVZTdNhGW97msGwy11g/4NvzIpgAAAA==
+To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Luca Weiss <luca@z3ntu.xyz>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2126; i=luca@z3ntu.xyz;
+ h=from:subject:message-id; bh=dLOTe0zOfFf2wx2GkwFTCa1WlboZXkpBx3ZTdW9qpb0=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBmYgeTBV2CHlVz8nTGb2PKIdfgFUnhX3hXJ9DWr
+ mqDvptT3qeJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZmIHkwAKCRBy2EO4nU3X
+ VtX2D/0XsWEsql04EZT3rb2O7Nc8FqfwJRRLnuNymbfypuBcK90667hlJOp2V0vbWR6ClcU4RD/
+ FdnvGd3py5D1fTPQEY8fX58tSiZFZfVkXdKZzkeEi8YxqZ173luZ+C5RKYYHCPRHywKUohhL5MK
+ v1SwGoLV7ptmURAvJwxqGa7Ls/SeS0lIEQwT78MgaVj3uG0EGDeDVFnYYNBPHmdNFtB4x55Ve8J
+ GHzsWewFeYBN7DGUDnrh1tiQ92sD6i4fmum8oH2xvts3nMMDsmUaY2OWbURnIvIg70dcAtmMXBg
+ M1oh2Ou68Vz58qRHA4oKZ2+Zk67RntBBUcKvrYc2+CBUi0MCQZcLWcESYr+BQaKYosKapnAcvy+
+ fOdHN2RkbwImB1C9YRqiA7kB5vrSCRQuJkcTOGfvkDgAl+SmTfILMdANJ6VZdEz7IiVZryBM8WC
+ w1ZNWcoJtn0YG7rgJcJxFnZhkNFIJpYCHJ5AuTyUlV2kb78fdl2/0+E0Wp8zr+OsVkrJ6NvVK9E
+ kerlfGBpuOWK6AU+JwXlrcSZ+CYmMQ6U1mCLUZkEnCY4BAeycmdjpdmYdkGpvCbdYwxLEFknAsF
+ yo976zIPpSxU2K07Y96+gTjDg03sa3Q4qyKFDES8mYOjabuVHEnTzuFJi19NvqK0TgQmrmyAc0+
+ cneUVpd95Z8csjg==
+X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
+ fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 
-On Thu, Jun 06, 2024 at 07:35:44PM +0200, Peter Zijlstra wrote:
-> On Thu, Jun 06, 2024 at 08:49:06AM -0700, Boqun Feng wrote:
-> 
-> > Long-term plan is to 1) compile the C helpers in some IR and 2) inline
-> > the helpers with Rust in IR-level, as what Gary has:
-> > 
-> > 	https://lore.kernel.org/rust-for-linux/20240529202817.3641974-1-gary@garyguo.net/
-> 
-> Urgh, that still needs us to maintain that silly list of helpers :-/
-> 
+When the mailbox driver has not probed yet, the error message "failed to
+parse smd edge" is just going to confuse users, so improve the error
+prints a bit.
 
-But it's an improvement from the current stage, right? ;-)
+Cover the last remaining exits from qcom_smd_parse_edge with proper
+error prints, especially the one for the mbox_chan deserved
+dev_err_probe to handle EPROBE_DEFER nicely. And add one for ipc_regmap
+also to be complete.
 
-> Can't we pretty please have clang parse the actual header files into IR
-> and munge that into rust? So that we don't get to manually duplicate
-> everything+dog.
+With this done, we can remove the outer print completely.
 
-That won't always work, because some of our kernel APIs are defined as
-macros, and I don't think it's a trivial job to generate a macro
-definition to a function definition so that it can be translated to
-something in IR. We will have to do the macro -> function mapping
-ourselves somewhere, if we want to inline the API across languages.
+Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+---
+Changes in v2:
+- Rebase on qcom for-next, drop dts patches which have been applied
+- Improve error printing situation (Bjorn)
+- Link to v1: https://lore.kernel.org/r/20240424-apcs-mboxes-v1-0-6556c47cb501@z3ntu.xyz
+---
+ drivers/rpmsg/qcom_smd.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Regards,
-Boqun
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 43f601c84b4f..06e6ba653ea1 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -1369,7 +1369,8 @@ static int qcom_smd_parse_edge(struct device *dev,
+ 	edge->mbox_chan = mbox_request_channel(&edge->mbox_client, 0);
+ 	if (IS_ERR(edge->mbox_chan)) {
+ 		if (PTR_ERR(edge->mbox_chan) != -ENODEV) {
+-			ret = PTR_ERR(edge->mbox_chan);
++			ret = dev_err_probe(dev, PTR_ERR(edge->mbox_chan),
++					    "failed to acquire IPC mailbox\n");
+ 			goto put_node;
+ 		}
+ 
+@@ -1386,6 +1387,7 @@ static int qcom_smd_parse_edge(struct device *dev,
+ 		of_node_put(syscon_np);
+ 		if (IS_ERR(edge->ipc_regmap)) {
+ 			ret = PTR_ERR(edge->ipc_regmap);
++			dev_err(dev, "failed to get regmap from syscon: %d\n", ret);
+ 			goto put_node;
+ 		}
+ 
+@@ -1501,10 +1503,8 @@ struct qcom_smd_edge *qcom_smd_register_edge(struct device *parent,
+ 	}
+ 
+ 	ret = qcom_smd_parse_edge(&edge->dev, node, edge);
+-	if (ret) {
+-		dev_err(&edge->dev, "failed to parse smd edge\n");
++	if (ret)
+ 		goto unregister_dev;
+-	}
+ 
+ 	ret = qcom_smd_create_chrdev(edge);
+ 	if (ret) {
+
+---
+base-commit: 2c79712cc83b172ce26c3086ced1c1fae087d8fb
+change-id: 20240423-apcs-mboxes-12ee6c01a5b3
+
+Best regards,
+-- 
+Luca Weiss <luca@z3ntu.xyz>
+
 
