@@ -1,112 +1,181 @@
-Return-Path: <linux-kernel+bounces-204228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D70AA8FE60D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:05:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C86DE8FE613
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5CA41C2510F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:05:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B40D61C21992
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC97C195974;
-	Thu,  6 Jun 2024 12:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811C319581D;
+	Thu,  6 Jun 2024 12:08:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NsOjvGcT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="gXitfN/C"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE1013C3F4;
-	Thu,  6 Jun 2024 12:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764631667E3
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717675539; cv=none; b=EL7GB/5b7qax4OIDQris19kA1/k6r0t0y5kOPPKPIoGDJYI6MdbkC5yR46yJ+1aMb/3RMVWyDpepcYPZn0Dz10SNdxHpHfMojkCvIWDJEsPKQ4wSSMg7I9d/xIkRJ0grE7mdtOF7jFmHJi15Kl2J7CwM3+5jYcejZ0cpsLMcqnQ=
+	t=1717675725; cv=none; b=f/Xg2ZWNkdHcbSxH2xozzMI4GlOjUvRRmPao9a/I1CbZWqYgD96KONpyaHlpNEiXsuhtw3jpHUrilFaEPg4GlId9Hk/bRuG5iPFUhsJzvOPp1qu+NeZigdB1zNTGP8KMKJ6DDE//y2ViV0tzMZuk8zlUK8z1TR8YKkKZbTB5KXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717675539; c=relaxed/simple;
-	bh=vo04VGdNJ9fq7X8QtlYEzJoyJaGM71TN5jI3iFBYjAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=no+uMXKnTF1GHqwuSdbVo6NzFni6b+vwFIp6eAzRZKTX60kNXTnxfFqPK/DZ62p+AMW605Oj9rVWfpTTjPN5FSNqY80OZTzmZuW7IClenydynBVc6JzV24B+OKLoRbp8bMeJPurEyQDfRVuqHKLWxlcDqFH1KKslWLkefpx1cCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NsOjvGcT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F373C2BD10;
-	Thu,  6 Jun 2024 12:05:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717675538;
-	bh=vo04VGdNJ9fq7X8QtlYEzJoyJaGM71TN5jI3iFBYjAY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NsOjvGcTV0S20I02LeeVmdqmU0E6U5C4SmN2X2Dxg7LcsN3fQs5EOO2xREgykftek
-	 uM1RwIhthtkPL6yM8INVQZ3mxEin/y4CbBFnUMh54bVE3JvrSfst4UCJfjNyu/WRrF
-	 bzvYnFRyGBdMzyhlQud0ieXDUWwL4kOXSeuhr1JJ2CrFPwj4XEnQ5sInNprP9AwExe
-	 5LK7OJIyacAV0ksdc2MHeYby+Od4wYAUfLg9/uvu44BPRKhEN21vhruJecsagNswhP
-	 8zx2sF5r3Jj3jtbxWe3oFF3fXEyRsry8wFlI7/yDzXesRUYPfR76Nu6xiE2190r4MU
-	 /4Bz5+ggejW/Q==
-Date: Thu, 6 Jun 2024 13:05:32 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [RFC PATCH 1/4] regulator: core: Ensure the cached state matches
- the hardware state in regulator_set_voltage_unlocked()
-Message-ID: <22664e29-4c7a-4544-ad32-25c3d7e342e9@sirena.org.uk>
-References: <20240605074936.578687-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240605074936.578687-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1717675725; c=relaxed/simple;
+	bh=Fu+AEkUcVMyHLVaTWPQDbBVIk1ekDPgN5l1iSOVyZiI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=psbi/bf8NnKd5zGyT6HIaK3+1hUgff/cpS2vS9kSTmKzc/6SWeoniuoBcGV8+hgxPMWbQYQmk29YfInrvcA4LPWlTiu8brqGvlkm6CcVbDXZRQt35HorsGM7k+T+nyfkNQ1KK1e+WudNqfJPFMoF1Hx2Oji+i5UF+T8g7UsmrbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=gXitfN/C; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1717675720;
+	bh=jf6I6xPOoFmyPi+Dvj7dyL+auQmhBkfhs3JRM5ezBbA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=gXitfN/C4e3dhal6n8P5VnzgZuvle7giCi3LvyFeLxuJfpTDRTz35noIN9yVgbDES
+	 48B4/WeESE4DDuEoUIrRpen03CwtCvBPwfmTFYAJQq+jZATeF7YMMr+DA2IIOr5sh/
+	 O1Hws05lhjiKo4w9wlcz0qwuUnEPJA0k7hgZaOHJ5+lz9E0L3y6s/+bPcdTFMZdjPG
+	 uTjRg1iD8qkEJYoOMb68QdTXan46rc3gSybL/dYKghoxHFrnKo90g5DTmEw81Q0nlb
+	 202ipDiC1fov69efOflXwHU5B1S++26LAkTzl1tLsWy+APhsI6QWZKTzV9vpyFuTNQ
+	 XOVsss868Z6yQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vw35N4Rfbz4wc5;
+	Thu,  6 Jun 2024 22:08:40 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Yu Zhao <yuzhao@google.com>, Erhard Furtner <erhard_f@mailbox.org>
+Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: kswapd0: page allocation failure: order:0,
+ mode:0x820(GFP_ATOMIC), nodemask=(null),cpuset=/,mems_allowed=0 (Kernel
+ v6.5.9, 32bit ppc)
+In-Reply-To: <CAOUHufacbbpS3ghEwsQ-pObttnQk__xo0vjpGWXNq1i-bsuiGw@mail.gmail.com>
+References: <20240508202111.768b7a4d@yea> <20240515224524.1c8befbe@yea>
+ <CAOUHufZ-9NmzOKjLedvZFp0=N0LvRZn77qC6k1WXK+NHtKr=0w@mail.gmail.com>
+ <CAOUHufZ36rQc8AfLtRv2QrEareysdvbprAEO5XkcG-FeDOxFLA@mail.gmail.com>
+ <45fc081c-ee8d-4774-a597-708d2924f812@redhat.com>
+ <87tti6pxxc.fsf@mail.lhotse>
+ <CAOUHufacbbpS3ghEwsQ-pObttnQk__xo0vjpGWXNq1i-bsuiGw@mail.gmail.com>
+Date: Thu, 06 Jun 2024 22:08:40 +1000
+Message-ID: <87r0dap92v.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wn7S9cxDJrFLWxbv"
-Content-Disposition: inline
-In-Reply-To: <20240605074936.578687-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Cookie: Simulated picture.
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+Yu Zhao <yuzhao@google.com> writes:
+> On Wed, Jun 5, 2024 at 9:12=E2=80=AFPM Michael Ellerman <mpe@ellerman.id.=
+au> wrote:
+>>
+>> David Hildenbrand <david@redhat.com> writes:
+>> > On 01.06.24 08:01, Yu Zhao wrote:
+>> >> On Wed, May 15, 2024 at 4:06=E2=80=AFPM Yu Zhao <yuzhao@google.com> w=
+rote:
+>> ...
+>> >>
+>> >> Your system has 2GB memory and it uses zswap with zsmalloc (which is
+>> >> good since it can allocate from the highmem zone) and zstd/lzo (which
+>> >> doesn't matter much). Somehow -- I couldn't figure out why -- it
+>> >> splits the 2GB into a 0.25GB DMA zone and a 1.75GB highmem zone:
+>> >>
+>> >> [    0.000000] Zone ranges:
+>> >> [    0.000000]   DMA      [mem 0x0000000000000000-0x000000002fffffff]
+>> >> [    0.000000]   Normal   empty
+>> >> [    0.000000]   HighMem  [mem 0x0000000030000000-0x000000007fffffff]
+>> >
+>> > That's really odd. But we are messing with "PowerMac3,6", so I don't
+>> > really know what's right or wrong ...
+>>
+>> The DMA zone exists because 9739ab7eda45 ("powerpc: enable a 30-bit
+>> ZONE_DMA for 32-bit pmac") selects it.
+>>
+>> It's 768MB (not 0.25GB) because it's clamped at max_low_pfn:
+>
+> Right. (I meant 0.75GB.)
+>
+>> #ifdef CONFIG_ZONE_DMA
+>>         max_zone_pfns[ZONE_DMA] =3D min(max_low_pfn,
+>>                                       1UL << (zone_dma_bits - PAGE_SHIFT=
+));
+>> #endif
+>>
+>> Which comes eventually from CONFIG_LOWMEM_SIZE, which defaults to 768MB.
+>
+> I see. I grep'ed VMSPLIT which is used on x86 and arm but apparently
+> not on powerpc.
 
---wn7S9cxDJrFLWxbv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Those VMSPLIT configs are nice, on powerpc it's all done manually :}
 
-On Wed, Jun 05, 2024 at 08:49:33AM +0100, Prabhakar wrote:
+>> I think it's 768MB because the user:kernel split is 3G:1G, and then the
+>> kernel needs some of that 1G virtual space for vmalloc/ioremap/highmem,
+>> so it splits it 768M:256M.
+>>
+>> Then ZONE_NORMAL is empty because it is also limited to max_low_pfn:
+>>
+>>         max_zone_pfns[ZONE_NORMAL] =3D max_low_pfn;
+>>
+>> The rest of RAM is highmem.
+>>
+>> So I think that's all behaving as expected, but I don't know 32-bit /
+>> highmem stuff that well so I could be wrong.
+>
+> Yes, the three zones work as intended.
+>
+> Erhard,
+>
+> Since your system only has 2GB memory, I'd try the 2G:2G split, which
+> would in theory allow both the kernel and userspace to all memory.
+>
+> CONFIG_LOWMEM_SIZE_BOOL=3Dy
+> CONFIG_LOWMEM_SIZE=3D0x7000000
+>
+> (Michael, please correct me if the above wouldn't work.)
 
-> Driver code flow:
-> 1> set regulator to 1.8V (BIT0 = 1)
-> 2> Regulator cached state now will be 1.8V
-> 3> Now for some reason driver issues a reset to the IP block
->    which resets the registers to default value. In this process
->    the regulator is set to 3.3V (BIT0 = 0)
-> 4> Now the driver requests the regulator core to set 1.8V
+It's a bit more complicated, in order to increase LOWMEM_SIZE you need
+to adjust all the other variables to make space.
 
-If something is resetting the regulator like this that's a problem in
-general, we need to either have the driver notify the core when that
-happens so it can reconfigure the regulator or have it reapply
-configuration directly.  Obviously it's not great to have that happen at
-all...
+To get 2G of user virtual space I think you need:
 
---wn7S9cxDJrFLWxbv
-Content-Type: application/pgp-signature; name="signature.asc"
+CONFIG_ADVANCED_OPTIONS=3Dy
+CONFIG_LOWMEM_SIZE_BOOL=3Dy
+CONFIG_LOWMEM_SIZE=3D0x60000000
+CONFIG_PAGE_OFFSET_BOOL=3Dy
+CONFIG_PAGE_OFFSET=3D0x90000000
+CONFIG_KERNEL_START_BOOL=3Dy
+CONFIG_KERNEL_START=3D0x90000000
+CONFIG_PHYSICAL_START=3D0x00000000
+CONFIG_TASK_SIZE_BOOL=3Dy
+CONFIG_TASK_SIZE=3D0x80000000
 
------BEGIN PGP SIGNATURE-----
+Which results in 1.5GB of lowmem.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZhpgsACgkQJNaLcl1U
-h9B/pgf/U9GUyfyKf99GtjHy6TsMmH6pC6aP4sdbFrkkuRvcg8XDzGqB/lFNcQd6
-TWOA0kydF00JnCm+RJGlTvgu+c72kbFLwcSPfHLGnEOeutyz+ozkOHLM7oHsEiBe
-pbNoT8wKWiK5gqxQJJheCqZyFdLVzARyJeqNbiehDNdPl2AzcC61dfMi/PNqbY2Y
-yICxjX4aXKRq1MzZeKfN5sN250F20CNUQE1K+x4Lpg16DhwlZnIqobophE66wte7
-KlXBR93ADAvKja28SqoTaOR2xTq/caVUQurl/dGYuMIgIM1Gfpi3IhyDmICfZRHl
-v/OML0PmwVuUZXkox97kbwmVBkLtXA==
-=FsHa
------END PGP SIGNATURE-----
+Or if you want to map all 2G of RAM directly in the kernel without
+highmem, but limit user virtual space to 1.5G:
 
---wn7S9cxDJrFLWxbv--
+CONFIG_ADVANCED_OPTIONS=3Dy
+CONFIG_LOWMEM_SIZE_BOOL=3Dy
+CONFIG_LOWMEM_SIZE=3D0x80000000
+CONFIG_PAGE_OFFSET_BOOL=3Dy
+CONFIG_PAGE_OFFSET=3D0x70000000
+CONFIG_KERNEL_START_BOOL=3Dy
+CONFIG_KERNEL_START=3D0x70000000
+CONFIG_PHYSICAL_START=3D0x00000000
+CONFIG_TASK_SIZE_BOOL=3Dy
+CONFIG_TASK_SIZE=3D0x60000000
+
+You can also reclaim another 256MB of virtual space if you disable
+CONFIG_MODULES.
+
+Those configs do boot on qemu. But I don't have easy access to my 32-bit
+machine to test if they boot on actual hardware.
+
+cheers
 
