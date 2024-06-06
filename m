@@ -1,154 +1,271 @@
-Return-Path: <linux-kernel+bounces-204278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3A1F8FE69F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:36:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 873028FE6A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57B4F281C03
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:36:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82C191C22377
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34329195F0F;
-	Thu,  6 Jun 2024 12:36:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7201195993;
+	Thu,  6 Jun 2024 12:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pO4mNX5D"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="eB491hCh"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3E6195B2D
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6A6195985
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717677375; cv=none; b=ejZx2HakbDS2Gi7tDdV3kBUKnC8Gn2mBJtIwE0yClL7jvbw6VqOIozihPufCHc+aJLlDVQzbl3zL0RLaLml1QrhBps+jBaR/utBPkxvcKwbd85LVDGjEbGLx39pduyt8woAn/PyZnivyeezx3PceQgwGulD3VObuJ9xrv4FtoxU=
+	t=1717677428; cv=none; b=j857s7oi34EFv0+ayEB73iqfxxLL4nxLxjRm6jW/7272+BPko1BqUhoAHPUYXO7X0aeX2sUYqtz9xP/dJ9F9/Rfgx+v0nCo83allSOrKIRnf9V8unX0LDl2r4UsGHUdRWNji2RPEisw+VVYQjR44IhN7IhMP9B8B5nr7jDFiI0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717677375; c=relaxed/simple;
-	bh=GJs62SsgmLSxQvrSOVsJLWdRFgzQ41bXC4iAy+Q0DUc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ThiKx8VnOyz3mOkyHeanfDp020eLikllfl1eQU6ztq2yG+JfdkA1le5417X9/cpL51AGtGtaMMprQt9FyovMvOHRzqM5muAt6rY2tgmC16olo+723DhaqHoczzsQEywf8rRGpXAoMUh3/Wgy+S+bN7WSogpGX5oCx4IQcmdq7fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pO4mNX5D; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52b8d483a08so1156795e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 05:36:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717677372; x=1718282172; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=CwfHtQYioR0Ch6IYzc3G8E96QHC5Vz0OXP+upCsTiZQ=;
-        b=pO4mNX5DtnQTFOFFFKoyoSOMUNd2pXspOhcR1x5sxM9CLw9HsvxhLUv2exqrgB/TX+
-         oOTUImBMzBZ+tTEIsgX4/yjuwshdWqrUG1XSJajwhEkx4TdIPKjr/0DtcHiHwuEmfRsH
-         Qicj+qoCBwlDDDmDciK8OcJ7Woht3bqhYivaF8XftivnbV+a158LffFpQVhmsursCr6e
-         b6wAfqwJgupCzhyztVByDFvKCMendD8xKoFs1S70o0aHH0Mr0Son7YC+mDzrPNeU3xz+
-         4d29iq6wL4GGAKsXClOCbppNZOrvuCRRwCJTqbRf8Q91tA95vwfVjL1HOmMsHcQkWdWl
-         Ws6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717677372; x=1718282172;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CwfHtQYioR0Ch6IYzc3G8E96QHC5Vz0OXP+upCsTiZQ=;
-        b=JS2xqmCgyHrBz7zogFAC/iYGvOAA1umfu6HncmuAfEdqHt0g/GEtukw4Gbsn2CAMHz
-         8hCyREc21vfioThZd5blxemiHG2a6v7r8ztP06nL7ot5NaZfKaHiUAij5fydgErLrI3N
-         tT7ZtJ5rEjn2tFb2e3TFPRoVEz8MST9L/DIhGmUVftgqSgzsA3ppPE9o00jNrdqSHG7t
-         s1xgYjuQkJd2pxPqCUlWBI88IS2DkMDK7Nef04SqgMCWRqgcZSTZry/l5lizsRTGoW8R
-         u+2J4YI6sYAIoFDmI4hFmZtFx5cfdNw5qKstUvznmZ6jZ8n/j79YsXCa5AY3F5tmuCpy
-         93Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCWqqazvIDhPiZacm97bM87eEba/ucdKwJJJevzh+seYfPpCc3RDdOQeeZj3dB1TA3mSlbUIwAljYtKL4HXvhivDXdH4odgiTVAJ9z5J
-X-Gm-Message-State: AOJu0YzGUMy6UIb1ychTGdvKxciY1w1znjRmQ/4AqzFuQ0ZQpYrNfSqY
-	nTVW0bgMIJO7Q6pTFuysIP918via293hi2VCWOJxEvo2Q1d646Y6R7EojpiaOOk=
-X-Google-Smtp-Source: AGHT+IFxf5AbZK0xfoIuzBycTPd0ERSVWXQofkSrXHJeZcE6CsZLV7QVG/4Dq36UAbGn4z0NplXrCg==
-X-Received: by 2002:a19:7006:0:b0:52b:98ab:6100 with SMTP id 2adb3069b0e04-52bab4c92d3mr3154822e87.15.1717677371942;
-        Thu, 06 Jun 2024 05:36:11 -0700 (PDT)
-Received: from [192.168.2.24] ([110.93.11.116])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421580fe366sm54771735e9.7.2024.06.06.05.36.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 05:36:11 -0700 (PDT)
-Message-ID: <db540adf-b03a-445c-b9a4-aa48b2a844b5@linaro.org>
-Date: Thu, 6 Jun 2024 14:36:10 +0200
+	s=arc-20240116; t=1717677428; c=relaxed/simple;
+	bh=mZh9VNwpy40z6SH+54XYvOM4ToOdJ8E6WkW1fnJ3Eo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LyKpoLuDtDrTjK3B+NAhIDOpGBVaHfcmyaGJYr07ImUZ0StyL/IJBq9kcMlQJ+I9zl64AGo+Ln28eCRj8T2F52GRYLUYxCo7SzLB05xCNEX2Qw3vbYEFHKf1+mzuNtxHKNl9zWNHmdvWepQkH7Zg2n/HdW+k/ArFtKvhFxFkZuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=eB491hCh; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1626E40E0177;
+	Thu,  6 Jun 2024 12:37:03 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id SRDpRYwsBsiw; Thu,  6 Jun 2024 12:36:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717677418; bh=hCARUglQ0EczUqMmRbsoa1+G52Dl41ypLPGzy2vyutw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eB491hChBeKYe25WOi6cJD5O/Xu0N/PlTkWceQ9dh7lxHbIxuzqoeGGMSMAWhAHAR
+	 MWYf+6gm2Dow1fBlu8pomThtvds7b7fT/m1e7FTfQiTuVixfDPT6Jnwl03Jom8zVi5
+	 mg6Istch31nNEiOZd7amqJVB7aWNQ784IP0BCa9Qb/krAwu4+q90U0xhaXX4+PXzqf
+	 UJ8kGmSwT47TXU+QQuDre4YMcKH2zPlzIbkSj8rU4N/3z+hy6AiPnhSAa+iFWVpPMq
+	 OboBsmg9ieNy8ur6ZcAYZD23qwdswvloXFwECrg/cW0b0XWFTfcYTvtdOnh3cQq0an
+	 0rs3v2RIpP/hcEOG/KR5+ahep6e+WSQQWE/sAjNWFWL3WffG2+XR4NtRNnMLrXRg7j
+	 PkEtR8xYcufwSUCpzlrBnsVYPDnwmGcZsRr5mwsIBYt7aZeTqVyf08G6HWtb2aJhnR
+	 UgaI8TekYSVosYxlVwq8OZsJp6Hs5BxkqTtmEys4oMTbCpxDPVC2GitAWLjdTkHUZT
+	 tMsshEgjJCnlIVmLOpIpN6mhBSUk8SbZ54s88gIoP+THDWItxONz0xtS4BX0bpGBd+
+	 hDcIUMMM1cs9OMCE4R7JK4lk6CWFiIjZxs/WBPUoDSxAFvE6v3WZ4vIeoAlhqTkNYx
+	 HPeBS6XHNg3K15GftN/SeW00=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6673740E016C;
+	Thu,  6 Jun 2024 12:36:44 +0000 (UTC)
+Date: Thu, 6 Jun 2024 14:36:37 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-coco@lists.linux.dev, svsm-devel@coconut-svsm.dev,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Ashish Kalra <ashish.kalra@amd.com>
+Subject: Re: [PATCH v5 03/13] x86/sev: Use kernel provided SVSM Calling Areas
+Message-ID: <20240606123637.GBZmGtVcB1BpBCwoAK@fat_crate.local>
+References: <cover.1717600736.git.thomas.lendacky@amd.com>
+ <fa8021130bcc3bcf14d722a25548cb0cdf325456.1717600736.git.thomas.lendacky@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: arm: amlogic: add support for Dreambox
- One/Two
-To: Christian Hewitt <christianshewitt@gmail.com>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240606094513.3949323-1-christianshewitt@gmail.com>
- <20240606094513.3949323-2-christianshewitt@gmail.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240606094513.3949323-2-christianshewitt@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <fa8021130bcc3bcf14d722a25548cb0cdf325456.1717600736.git.thomas.lendacky@amd.com>
 
-On 06/06/2024 11:45, Christian Hewitt wrote:
-> Dreambox One and Dreambox Two are DVBS/T2 receiver boxes based
-> on the Amlogic W400 reference board with an S922X chip.
+On Wed, Jun 05, 2024 at 10:18:46AM -0500, Tom Lendacky wrote:
+> The SVSM Calling Area (CA) is used to communicate between Linux and the
+> SVSM. Since the firmware supplied CA for the BSP is likely to be in
+> reserved memory, switch off that CA to a kernel provided CA so that access
+> and use of the CA is available during boot. The CA switch is done using
+> the SVSM core protocol SVSM_CORE_REMAP_CA call.
 > 
-> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+> An SVSM call is executed by filling out the SVSM CA and setting the proper
+> register state as documented by the SVSM protocol. The SVSM is invoked by
+> by requesting the hypervisor to run VMPL0.
+> 
+> Once it is safe to allocate/reserve memory, allocate a CA for each CPU.
+> After allocating the new CAs, the BSP will switch from the boot CA to the
+> per-CPU CA. The CA for an AP is identified to the SVSM when creating the
+> VMSA in preparation for booting the AP.
+> 
+> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
 > ---
+>  arch/x86/include/asm/sev-common.h |  13 ++
+>  arch/x86/include/asm/sev.h        |  32 +++++
+>  arch/x86/include/uapi/asm/svm.h   |   1 +
+>  arch/x86/kernel/sev-shared.c      | 128 +++++++++++++++++-
+>  arch/x86/kernel/sev.c             | 217 +++++++++++++++++++++++++-----
+>  arch/x86/mm/mem_encrypt_amd.c     |   8 +-
+>  6 files changed, 360 insertions(+), 39 deletions(-)
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Some touchups again:
 
-Best regards,
-Krzysztof
+diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
+index c101b42cb421..4145928d2874 100644
+--- a/arch/x86/include/asm/sev.h
++++ b/arch/x86/include/asm/sev.h
+@@ -290,7 +290,7 @@ void snp_accept_memory(phys_addr_t start, phys_addr_t end);
+ u64 snp_get_unsupported_features(u64 status);
+ u64 sev_get_status(void);
+ void sev_show_status(void);
+-void snp_remap_svsm_ca(void);
++void snp_update_svsm_ca(void);
+ #else
+ static inline void sev_es_ist_enter(struct pt_regs *regs) { }
+ static inline void sev_es_ist_exit(void) { }
+@@ -320,7 +320,7 @@ static inline void snp_accept_memory(phys_addr_t start, phys_addr_t end) { }
+ static inline u64 snp_get_unsupported_features(u64 status) { return 0; }
+ static inline u64 sev_get_status(void) { return 0; }
+ static inline void sev_show_status(void) { }
+-static inline void snp_remap_svsm_ca(void) { }
++static inline void snp_update_svsm_ca(void) { }
+ #endif
+ 
+ #ifdef CONFIG_KVM_AMD_SEV
+diff --git a/arch/x86/kernel/sev-shared.c b/arch/x86/kernel/sev-shared.c
+index b458f3c2242a..b5110c68d241 100644
+--- a/arch/x86/kernel/sev-shared.c
++++ b/arch/x86/kernel/sev-shared.c
+@@ -246,7 +246,7 @@ static enum es_result verify_exception_info(struct ghcb *ghcb, struct es_em_ctxt
+ 	return ES_VMM_ERROR;
+ }
+ 
+-static int process_svsm_result_codes(struct svsm_call *call)
++static inline int svsm_process_result_codes(struct svsm_call *call)
+ {
+ 	switch (call->rax_out) {
+ 	case SVSM_SUCCESS:
+@@ -274,7 +274,7 @@ static int process_svsm_result_codes(struct svsm_call *call)
+  *     - RAX specifies the SVSM protocol/callid as input and the return code
+  *       as output.
+  */
+-static __always_inline void issue_svsm_call(struct svsm_call *call, u8 *pending)
++static __always_inline void svsm_issue_call(struct svsm_call *call, u8 *pending)
+ {
+ 	register unsigned long rax asm("rax") = call->rax;
+ 	register unsigned long rcx asm("rcx") = call->rcx;
+@@ -310,7 +310,7 @@ static int svsm_perform_msr_protocol(struct svsm_call *call)
+ 
+ 	sev_es_wr_ghcb_msr(GHCB_MSR_VMPL_REQ_LEVEL(0));
+ 
+-	issue_svsm_call(call, &pending);
++	svsm_issue_call(call, &pending);
+ 
+ 	resp = sev_es_rd_ghcb_msr();
+ 
+@@ -325,7 +325,7 @@ static int svsm_perform_msr_protocol(struct svsm_call *call)
+ 	if (GHCB_MSR_VMPL_RESP_VAL(resp))
+ 		return -EINVAL;
+ 
+-	return process_svsm_result_codes(call);
++	return svsm_process_result_codes(call);
+ }
+ 
+ static int svsm_perform_ghcb_protocol(struct ghcb *ghcb, struct svsm_call *call)
+@@ -348,7 +348,7 @@ static int svsm_perform_ghcb_protocol(struct ghcb *ghcb, struct svsm_call *call)
+ 
+ 	sev_es_wr_ghcb_msr(__pa(ghcb));
+ 
+-	issue_svsm_call(call, &pending);
++	svsm_issue_call(call, &pending);
+ 
+ 	if (pending)
+ 		return -EINVAL;
+@@ -363,7 +363,7 @@ static int svsm_perform_ghcb_protocol(struct ghcb *ghcb, struct svsm_call *call)
+ 		return -EINVAL;
+ 	}
+ 
+-	return process_svsm_result_codes(call);
++	return svsm_process_result_codes(call);
+ }
+ 
+ static enum es_result sev_es_ghcb_hv_call(struct ghcb *ghcb,
+diff --git a/arch/x86/kernel/sev.c b/arch/x86/kernel/sev.c
+index 6bab3244a3b9..51a0984b422c 100644
+--- a/arch/x86/kernel/sev.c
++++ b/arch/x86/kernel/sev.c
+@@ -161,7 +161,7 @@ struct sev_config {
+ 	       * For APs, the per-CPU SVSM CA is created as part of the AP
+ 	       * bringup, so this flag can be used globally for the BSP and APs.
+ 	       */
+-	      cas_initialized	: 1,
++	      use_cas		: 1,
+ 
+ 	      __reserved	: 62;
+ };
+@@ -615,15 +615,17 @@ static __always_inline void vc_forward_exception(struct es_em_ctxt *ctxt)
+ /* Include code shared with pre-decompression boot stage */
+ #include "sev-shared.c"
+ 
+-static struct svsm_ca *svsm_get_caa(void)
++static inline struct svsm_ca *svsm_get_caa(void)
+ {
+ 	/*
+-	 * Use rip-relative references when called early in the boot. If
+-	 * cas_initialized is set, then it is late in the boot and no need
+-	 * to worry about rip-relative references.
++	 * Use rIP-relative references when called early in the boot. If
++	 * ->use_cas is set, then it is late in the boot and no need
++	 * to worry about rIP-relative references.
+ 	 */
+-	return RIP_REL_REF(sev_cfg).cas_initialized ? this_cpu_read(svsm_caa)
+-						    : RIP_REL_REF(boot_svsm_caa);
++	if (RIP_REL_REF(sev_cfg).use_cas)
++		return this_cpu_read(svsm_caa);
++	else
++		return RIP_REL_REF(boot_svsm_caa);
+ }
+ 
+ static noinstr void __sev_put_ghcb(struct ghcb_state *state)
+@@ -1517,7 +1519,7 @@ void __init sev_es_init_vc_handling(void)
+ 			panic("Can't remap the SVSM CA, ret=%d, rax_out=0x%llx\n",
+ 			      ret, call.rax_out);
+ 
+-		sev_cfg.cas_initialized = true;
++		sev_cfg.use_cas = true;
+ 
+ 		local_irq_restore(flags);
+ 	}
+@@ -2443,7 +2445,7 @@ void sev_show_status(void)
+ 	pr_cont("\n");
+ }
+ 
+-void __init snp_remap_svsm_ca(void)
++void __init snp_update_svsm_ca(void)
+ {
+ 	if (!snp_vmpl)
+ 		return;
+diff --git a/arch/x86/mm/mem_encrypt_amd.c b/arch/x86/mm/mem_encrypt_amd.c
+index 6155020e4d2d..84624ae83b71 100644
+--- a/arch/x86/mm/mem_encrypt_amd.c
++++ b/arch/x86/mm/mem_encrypt_amd.c
+@@ -515,7 +515,7 @@ void __init sme_early_init(void)
+ 	 * Switch the SVSM CA mapping (if active) from identity mapped to
+ 	 * kernel mapped.
+ 	 */
+-	snp_remap_svsm_ca();
++	snp_update_svsm_ca();
+ }
+ 
+ void __init mem_encrypt_free_decrypted_mem(void)
 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
