@@ -1,88 +1,131 @@
-Return-Path: <linux-kernel+bounces-204919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 568978FF4FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:52:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C196B8FF501
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AAF41C212C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:52:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4757128E02A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1FC4F5FB;
-	Thu,  6 Jun 2024 18:52:06 +0000 (UTC)
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id B7C204DA0F
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 18:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4E04E1D1;
+	Thu,  6 Jun 2024 18:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="W3+7CrDF"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8756845BE3
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 18:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717699925; cv=none; b=eTKY2gqFQJgWnqRotj2c7KOruQleaf8rQq+qX9Sxmf71ZErPBdg4JLgSIWc9X/4yvlornk/ehzDrDBLSh2/e1iusX91MkSTWcRvmYnHF7SOmEQrHXW+AP0s2+NII5oSPtJk4Leaj12W/bBkTxTo1YN060JuAkt8c3pGifsXvt/o=
+	t=1717700010; cv=none; b=TF8nq/5dfTBsIJcZCIMmcU6o4rldn42N6HMI3Vp6Umzoh+cbaD+AMCK2IDBdVTmst+JVFu89K21wyXOA6ay5duQq62lxOGbIcfShCcZj+7OyuStgu4OA9njPZ7Iy69b9Z20iE/cdJa2cLsZA3TWDez7zmSfN36S9TvdWFSIEkAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717699925; c=relaxed/simple;
-	bh=tT1S45dFo3TnMqFOJNXtbpzOZ2RqSOmznvA+HJXmivk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HPbmJTh+nUdRGU38uaBAI9Zsm0Uh/p5lvLq0Sn/QTq8+DAOilU9B8GhEsmaZsRYEQQdquT6R36FnVx4FgwAqMNdDTJia2Eu+TSqvAWaLjbug1cKh0c6IB1JhgltKxmvdL6wI7w5ey9N/D+2zL8UqBrXObR0/v4weDq91aqzH3fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 16315 invoked by uid 1000); 6 Jun 2024 14:52:02 -0400
-Date: Thu, 6 Jun 2024 14:52:02 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Andrea Parri <parri.andrea@gmail.com>, will@kernel.org,
-  peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-  dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-  akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
-  linux-kernel@vger.kernel.org, hernan.poncedeleon@huaweicloud.com,
-  jonas.oberhauser@huaweicloud.com
-Subject: Re: New locking test for the paulmckrcu/litmus github archive
-Message-ID: <51b94313-ed74-4507-a354-eb418389fdaf@rowland.harvard.edu>
-References: <a8c06694-098d-4b95-845c-96b40cd3ff2d@rowland.harvard.edu>
- <df851df5-0e3a-45b1-ae85-9625309766b0@paulmck-laptop>
- <1d175b42-84b4-4a48-b1fb-ab6fd3566f75@rowland.harvard.edu>
- <64d944ff-b609-4977-a491-91ffc199a4cd@paulmck-laptop>
- <26aa2333-5e54-4dcd-b6df-f8f8545b2672@rowland.harvard.edu>
- <47fe55b3-81af-4397-9769-bda25209e980@paulmck-laptop>
+	s=arc-20240116; t=1717700010; c=relaxed/simple;
+	bh=om1n47XePQtjI/lLgidIuMniQGl6BwDPK4rXrD+4YZQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sFHlq5BEGqD32vp36B2bSgfHuRDGrqel4NNgau6yUnkEXqf3FIJMqwO0w5RTeQ3YRM0zAHXab4AW0D6/cUO0FAQO7wwtjrhC130ngTKCzA4gxe2j6N8ENyDvhkTr8v1RcUM1OST379Ktjrwdu74DoP0MKNIA4CNvRbq9di13a+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=W3+7CrDF; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a690161d3ccso138155066b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 11:53:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1717700007; x=1718304807; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zeGjTLLISyTtH1AgP/c8JS96JX38uoEOXIRqVTS6/9M=;
+        b=W3+7CrDFBe+WIVTUDyjqaVB2cREbIijKrf1Kd5fReNBbsvxx0cW3FU6Fiv9HJv3PRW
+         2E7ZTFBdt/LXGWc23rUhnvCXDUVRKIHUeK3xmJnQiVAx0OnaKAP6XY7179k9RvXSLGjS
+         ToY+xGgMlF4BgNoTXf82jitUAjzIQAggp+bFD8L5drqExRN5ajuM0cDJSAIZ7UHBmN96
+         uNcGjI2Fi9NVjoJ+zpmzfd7ikq+0alik9RMyQ5Z4vU910pUHjOgXP8wI7lS1Si4Wecqz
+         AAr3tsO7U02ALhzmOrp3C9nSWA+8nF6ggrJ162GamfcnowyBy9a+IWK5cdnDHlHgFMN7
+         lJxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717700007; x=1718304807;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zeGjTLLISyTtH1AgP/c8JS96JX38uoEOXIRqVTS6/9M=;
+        b=F+9YzJir56tmwRq2vGMIJg9liGKUNKjhrARbHFm7ixtvA6f0co8tXSKgeEjsmvcEi/
+         h8HEYnris2yDsB2mQK6vVpRrtk9IgPm4s7egBRunwiFZRCV3/tR4d11J7lPFYg9LCba4
+         c/4O3kgSacOnX/NcJYIoyhjfOxjjvpb8K1h4HZSveHD811ilgSFDw46c8dx1Xb/nhl8m
+         /LwmJ3615jTogn7dVMLyu8pbHrLgBahJKxblp9WyN4Bh/w9aqo//fnsfQi4jpdcKdfbN
+         zNRI8mgHJalWtluhD/Na06t+YAObLjnmUw/XCe6Som06DtJ8pQr6s5yfM75EiVrRqwAX
+         AEbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLdsoY0x+jN/xyfPlaH0ZCXG6W5rAhy417q+xvUdEeywhs4Vl/JGSSIeoP7WRIcGef6ZI02UnGbEgrqKmRRyJF+OIWqMhTY10ls+74
+X-Gm-Message-State: AOJu0YzcSNJH4OxUO+KvRLnOmHY3QmvZmkRHt5L44a+1706ktP1IevIh
+	wqBsVEdh/vxz13ochWTYd/XR2vJ509jUNfp2CkSF4HflB5QTf1vJ0vSiu44uqzldwI1sS27EiGy
+	JIUQ=
+X-Google-Smtp-Source: AGHT+IEx6zqhhAPgHVJ3Am/Pmt3iRNX4TeauA1h0PfHvUlHWCZBgHIV+NRaAEiIgeUrw/R2X5rdpRA==
+X-Received: by 2002:a17:906:4816:b0:a59:bdb7:73e8 with SMTP id a640c23a62f3a-a6cdad238d1mr28297666b.53.1717700006767;
+        Thu, 06 Jun 2024 11:53:26 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-82-135-80-164.dynamic.mnet-online.de. [82.135.80.164])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c806ea19esm130890066b.128.2024.06.06.11.53.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 11:53:25 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: rafael@kernel.org,
+	lenb@kernel.org
+Cc: linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] ACPI/NUMA: Consolidate header includes
+Date: Thu,  6 Jun 2024 20:52:02 +0200
+Message-ID: <20240606185200.1596-3-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <47fe55b3-81af-4397-9769-bda25209e980@paulmck-laptop>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 06, 2024 at 10:57:42AM -0700, Paul E. McKenney wrote:
-> On Thu, Jun 06, 2024 at 01:21:28PM -0400, Alan Stern wrote:
-> > Okay.  Don't we already have a litmus test in the archive that really 
-> > does create a deadlock?  Something like: Lock Lock Unlock Unlock, all 
-> > using the same lock variable?
-> 
-> We do have these guys:
-> 
-> auto/C-RR-GR+RR-R+RR-R.litmus
-> auto/C-RR-GR+RR-R.litmus
-> auto/C-RW-GR+RW-R+RW-R.litmus
-> auto/C-RW-GR+RW-R.litmus
-> auto/C-WR-GR+WR-R+WR-R.litmus
-> auto/C-WR-GR+WR-R.litmus
-> auto/C-WW-GR+WW-R+WW-R.litmus
-> auto/C-WW-GR+WW-R.litmus
-> 	A synchronize_rcu() in an RCU read-side critical section.
-> 
-> I added a manual/locked/self-deadlock.litmus, which is shown at the
-> end of this email.  Omitting the nested self-deadlocking acquisition
-> and release gives one state with blank line.  ;-)
+The header file acpi/acpi_numa.h is included whether CONFIG_ACPI is
+defined or not.
 
-Hah, because there is no "exists" clause and no variables other than the 
-spinlock itself.
+Include it only once before the #ifdef/#else/#endif preprocessor
+directives and fix the following make includecheck warning:
 
-> Or should I add a spin_is_locked() in order to get a non-empty
-> state line?
+	acpi/acpi_numa.h is included more than once
 
-It's fine the way it is.
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ include/linux/acpi.h | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Alan
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index 28c3fb2bef0d..bb18e7bf8826 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -24,6 +24,7 @@ struct irq_domain_ops;
+ #define _LINUX
+ #endif
+ #include <acpi/acpi.h>
++#include <acpi/acpi_numa.h>
+ 
+ #ifdef	CONFIG_ACPI
+ 
+@@ -35,7 +36,6 @@ struct irq_domain_ops;
+ 
+ #include <acpi/acpi_bus.h>
+ #include <acpi/acpi_drivers.h>
+-#include <acpi/acpi_numa.h>
+ #include <acpi/acpi_io.h>
+ #include <asm/acpi.h>
+ 
+@@ -777,8 +777,6 @@ const char *acpi_get_subsystem_id(acpi_handle handle);
+ #define acpi_dev_uid_match(adev, uid2)			(adev && false)
+ #define acpi_dev_hid_uid_match(adev, hid2, uid2)	(adev && false)
+ 
+-#include <acpi/acpi_numa.h>
+-
+ struct fwnode_handle;
+ 
+ static inline bool acpi_dev_found(const char *hid)
+-- 
+2.45.2
+
 
