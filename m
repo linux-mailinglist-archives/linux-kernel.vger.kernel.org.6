@@ -1,107 +1,108 @@
-Return-Path: <linux-kernel+bounces-204933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C488FF525
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:09:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10C088FF529
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 466D728B00C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:09:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CECD1C269F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8615339B;
-	Thu,  6 Jun 2024 19:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A9F502B2;
+	Thu,  6 Jun 2024 19:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IiZOw4sL"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="P7nZUQUR"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25A6487BE;
-	Thu,  6 Jun 2024 19:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7C444C68;
+	Thu,  6 Jun 2024 19:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717700958; cv=none; b=kwnBgJQpv3j7XiHc6B7sX55V4lNsV48n6jMQE0TpgTUDT5w8J9+1lizst5Pj7eMGUIl7u2AdxtEjT8h4WpCn7hMmRa8Iqn4uJ57hF0JmkO8swwqpBSvGzhRLIKIDvoxXm40bU7VZ3MNsaXpipXhZ/apB+e3A668ZEibz1ukdHeg=
+	t=1717701075; cv=none; b=OF2SCzG1OJShmjgddgG38eZ9nT4fhOA2nffjGUT4NuqCCAncQ7bLJcdcrBPDDhzgfdkb3du+RAupVIy4mFuhKJRz0rRwChui1jVHLYkAcpdl+o+Tef3ys4CR7Ideq8+tWvQACH9oV1NHYoRp/RlWxqFaGqOOMd0hUIfhJhVCAEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717700958; c=relaxed/simple;
-	bh=cwKtlfrp18sije7X+ZFRSL0ktHjGOAoWT9mG1MN19/Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CfepMxsHQs7rDeAUMq/samX23IrrhQbFB5wfXg6esrjDMqrl7791D47f4B+PG3uCX5/V6bq7SFmPp0HcW7DAZUpG6sezFwVFzKNwX0RYz64McmcLImyGHhr8zTlVJv6yHhVJns3DJqyTndiaRf6P5EEfLNq5sivLvUU/xkbdy4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IiZOw4sL; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c1b542ae9eso1017830a91.1;
-        Thu, 06 Jun 2024 12:09:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717700953; x=1718305753; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cwKtlfrp18sije7X+ZFRSL0ktHjGOAoWT9mG1MN19/Y=;
-        b=IiZOw4sL2OOL8wQsjPPptSW3Ac+OZlVxery5Hx9P7IwkL2qoVyA2HMyVpLcp3y/XmX
-         MasukB3B5VXgHk7PWwQpS6xP5sE7ltV+TSPBiCzXfK18DD6RmjbL/KZqnHEPhIpOl2Qv
-         eio7d0YczLRxEhfszOUbxLMjeyP0r21YOCL6BC+/rI7YAvmL9H61WjgxxmUu/LFqcIDn
-         58duMt285c/O7/lK+o0USYhC0H7BY2wWaFz4CnTgpBHpHktGniUr5jgxsBxRLHbjWOB4
-         0GZfr/TJMDfplGU7VW2klU0wrmo3nc8BQ9SQQs48CVGrV27DdCKUN6b09Jn0wTYl8hcH
-         s2Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717700953; x=1718305753;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cwKtlfrp18sije7X+ZFRSL0ktHjGOAoWT9mG1MN19/Y=;
-        b=CwZenKScLOsPbz8hPS2NcQ/17t7SGo9KqGLcZKe7Rwtmb6fmEzqzFbIiEB6Obvhhvr
-         IXHkYqv2mW9OqSCdJqnvKQN/IMxC3GA5D7WN5yZEaZWO9t0PNF5vyIs33XAKjCrBFedD
-         U9yiTV5Ae54EokQ2+KJyom23ZDE0fFSeZE1aIoSUhZJncTHUCSK4b47Z7dM0kby49SY1
-         yWwGbotDdeI24bO69zij1bhkHEBuPXXNFxBlCj+AqvvQh2kQYik3vrf4y6vy0ADQMUjs
-         me4MVaU5q0l5nRkXBbZtSBW7vKQlfFXbkwB+swzidxUfQ9GGgeTDcji7/ONNjt1CCeKz
-         S6+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUVS2HMPjy/F+N8/Uqy8lqlqJ6OxajIvHmFOR7bmoUMSRh6NO7lbC6K6r6BhXGwgNTyJBnOvnttc4YcM7dFJhNOqIi4aPSmxnauhbTX65Iqx9C0bz6goEDQ4qY33fP+JAQVYIBShTs5E13zU6To1IuyqgZDY43+aQOJB9aZkSYSyhQwHsr9uSCqZIZTlMBIcWQ=
-X-Gm-Message-State: AOJu0YyBDKHVC7+7Lf2HGJAP08hwllFktySlQEgUbMJ3IFZ6mf1aKcgl
-	Qj0o6cEONtBBhLEHHdeO89oo65k4+J/+jiBDKbHfkCvpCghuI8sSLs3m+CoRl1Ih6vAbL9XxNzY
-	XQ3fv2Y/1YF2eFtbq19UvugX+XJw=
-X-Google-Smtp-Source: AGHT+IGZ3AsLS5Y+gx/Wv2hDNck0vASDyAJWhxk1DmvjhMzbpVyk348zqEdRS69H7h5r+jC6fOEtNlsvJBNNGywvJ8w=
-X-Received: by 2002:a17:90a:2ec2:b0:2bf:8824:c043 with SMTP id
- 98e67ed59e1d1-2c2bcacb8e7mr461250a91.18.1717700952929; Thu, 06 Jun 2024
- 12:09:12 -0700 (PDT)
+	s=arc-20240116; t=1717701075; c=relaxed/simple;
+	bh=aISHoo9eqcpGDfEfq7sQGEadbxdEPOe8NFZxhgBU8jg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nQpVBm+tcN7D4loqAIpSarwpRboZUeuOr8JOMAGq4Xobr/GS8EW8I/9LcUtHtgKdoz3crf/d0XbfJAJjyBTfL3IRLcCRTqtFU+rz/9iBTr68CBGzluxM41kWuNYrYGON5K2OxLIPK4I/l7jj4ZhPweFbJkSkANuvxbGlADQHunA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=P7nZUQUR; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717701072;
+	bh=aISHoo9eqcpGDfEfq7sQGEadbxdEPOe8NFZxhgBU8jg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P7nZUQURpBOQzSMFx1ivIMnAlTKc51oSoTL53hhjdnM46/9TwJaxSxuFf/LM3Ehhq
+	 vdT0dVZ+XBRIfc2ZC0Mjy3zBKTzxjWDO5bpq8Savkqc90SDhxfglSrHHpXmotRmJRM
+	 ss1W1Ndc2EayE+ddroBj4y+kZnDdom4lTBSAjtrX/Gx5SmG3jjDNCa+ZXWuh1FjLfO
+	 f2twwKH1qJSYP3caT+4zMcTklL33OlXh7Sn19IZQLFy/eE+y52TpZitSQxaX6h6PBm
+	 Hv5oY28vXFgXIfUvOxDgSmiGybN0iTau+ldY5O2BNF+qRC08xkdObnxMVSz+2nky2x
+	 q3CWPk+cuhg5g==
+Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2DA7E378000A;
+	Thu,  6 Jun 2024 19:11:11 +0000 (UTC)
+Date: Thu, 6 Jun 2024 15:11:09 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, kernel@collabora.com,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] remoteproc: mediatek: Don't print error when optional
+ scp handle is missing
+Message-ID: <08125ad3-e5c8-4e96-912c-986b0e08b078@notapiano>
+References: <20240605-mt8195-dma-scp-node-err-v1-1-f2cb42f24d6e@collabora.com>
+ <99d19104-875c-4214-b4a4-4c228cc08b66@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606-tracepoint-v1-0-6551627bf51b@google.com>
- <20240606-tracepoint-v1-1-6551627bf51b@google.com> <20240606171845.GE8774@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240606171845.GE8774@noisy.programming.kicks-ass.net>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 6 Jun 2024 21:09:00 +0200
-Message-ID: <CANiq72m6mc0U-Vctrnyd0WGMx9cZ04tXhJ4_tnPX2ZjX4abMsw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] rust: add static_call support
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <99d19104-875c-4214-b4a4-4c228cc08b66@collabora.com>
 
-On Thu, Jun 6, 2024 at 7:19=E2=80=AFPM Peter Zijlstra <peterz@infradead.org=
-> wrote:
->
-> This is absolutely unreadable gibberish -- how am I supposed to keep
-> this in sync with the rest of the static_call infrastructure?
+On Thu, Jun 06, 2024 at 12:50:56PM +0200, AngeloGioacchino Del Regno wrote:
+> Il 05/06/24 21:35, Nícolas F. R. A. Prado ha scritto:
+> > The scp_get() helper has two users: the mtk-vcodec and the mtk-mdp3
+> > drivers. mdp3 considers the mediatek,scp phandle optional, and when it's
+> > missing mdp3 will directly look for the scp node based on compatible.
+> > 
+> > For that reason printing an error in the helper when the handle is
+> > missing is wrong, as it's not always an actual error. Besides, the other
+> > user, vcodec, already prints an error message on its own when the helper
+> > fails so this message doesn't add that much information.
+> > 
+> > Remove the error message from the helper. This gets rid of the deceptive
+> > error on MT8195-Tomato:
+> > 
+> >    mtk-mdp3 14001000.dma-controller: can't get SCP node
+> 
+> I'm way more for giving it a SCP handle instead of silencing this print... the
+> SCP handle way *is* the correct one and I prefer it, as that'd also be the only
+> way to support Dual-Core SCP in MDP3.
+> 
+> I really want to see hardcoded stuff disappear and I really really *really* want
+> to see more consistency across DT nodes in MediaTek platforms.
+> 
+> So, still a one-line change, but do it on the devicetree instead of here please.
 
-Yeah, they are macros, which look different from "normal" Rust code.
+Sure. So the missing scp phandle case is maintained exclusively for
+backwards-compatibility. And we're ok that the old DTs will keep getting the
+error.
 
-Is there something we could do to help here? I think Alice and others
-would be happy to explain how it works and/or help maintain it in the
-future if you prefer.
+I'll send a v2 adding the phandle in the DT instead.
 
-Cheers,
-Miguel
+Thanks,
+Nícolas
 
