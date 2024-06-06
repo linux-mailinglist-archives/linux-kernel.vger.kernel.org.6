@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-203988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4003A8FE2C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:28:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B6FA8FE2BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E499B28601
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:26:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 072E21F21ECA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB4713E05C;
-	Thu,  6 Jun 2024 09:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1939F154449;
+	Thu,  6 Jun 2024 09:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="j1NbtShi"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="ITgbRBD2"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEFB13CF9C
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32534146A88
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717666004; cv=none; b=a3GTs48IeJT2JqEvmA0wDeDfNQpSvBnKlLnRief3ZNHcq0kMT11ByYXUVkPX87plKo24RW2Jju/T7etIt0nHQC4Iaryb2E96SbsyTNZqCX1WbWhew95SvhH0pP7HEH2U6xtBAj1/k128LTRZWWgIi8OrrGKkqvp/v5hfmvXxdMk=
+	t=1717666009; cv=none; b=ZZXmXJsgG74+DeCS5xtCn92imp1CUNozXayALqttewqKuHl69T4PPAo4K/eS6C0ZMCtqgxZbsKI4emvBfcb/hlwBwxPoJ8a4kRFDAkIveRtTL+qnuM3SZwRHvn7hnj5PzYw1eSdetVBb6W1Hju2SmP5RLa8UP300GgdwKxJ36AA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717666004; c=relaxed/simple;
-	bh=KmIpLkikeJV3qSL7m+5nQnVlC708ekVJJL/Hw310Xb8=;
+	s=arc-20240116; t=1717666009; c=relaxed/simple;
+	bh=K9Xx0bjIyo96H5vxp20CwsU+bJzYo9xiTSbV2gYVdxM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=as2+/O8fcXaASfkaIZ8U9M7anv4S2CtfjNh61wXxmTF5zlVfaIVpGd+00EzUANj+lv+5vGkR1C/QYS7QPAw3a51rS4ioo1g3Y8d17lWgerr645bOg4xoU+HRir+ah9Ph9z5Y0mBMnyh3bm2M2Y/SbWzRDTDw55L3yxgypJ5GYBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=j1NbtShi; arc=none smtp.client-ip=210.61.82.184
+	 MIME-Version:Content-Type; b=Bfg325y/DVSACUEq2oQBDSPPj6kTM+Z/rBKmpk1gPEzs60JclbwUx+G4ahzP6Qg2Dg6qTZeSDuYgNCWcQz7pHKM78QT6hZ3y8m0WlnPy0bMr6Omj79i1QezvLTdnEcPRkBl6A9FxmMUt2yxAVrslszDiHBs0rnFd85AA9bjH0CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=ITgbRBD2; arc=none smtp.client-ip=60.244.123.138
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: e04d4d5223e611efa22eafcdcd04c131-20240606
+X-UUID: e027c0f023e611efa54bbfbb386b949c-20240606
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=6DRaQ6hX5EYZkmcbC5c2h2WINMETdG47VRNKyHtXygs=;
-	b=j1NbtShi2DkNEOlS0UvuFZxQA5UiUHCu8bWvRAm74hUqeTMBTWVIEkjLu6o04mi8LNAVBzQWAcp8ooDGM0yh8E1ncuCOCLRACVZf/rUMzzv2NeIG14dXlTjwCQ5TMPkFc4PlYUaa0ANWV3VJ0fyDvjwcA8NPINWQ1iBE1fNznRA=;
+	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=eZKO88CO0xpIr8eEH7GyW6Q9PldkqlJN3BKnCMAVSJ4=;
+	b=ITgbRBD2J4GULJIVdpgIc+lt39Z3uJ2yA24H/BcOJ5MP1yyqyfM+ChlyI8V2/wlujVvlcruab+P8cBYpccUpSSPh6DibjighLyCylumjr5jPfLiFsfbSmkzJfBn119AbKTrwrMSGjVCI45cI4+aDnQdcdQGdlyAuObo09j/QKwQ=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.39,REQID:0877837b-de8d-4665-be17-ad09619e12f9,IP:0,U
+X-CID-O-INFO: VERSION:1.1.39,REQID:6060d798-5ac8-4fe0-9bca-9ebf4031c1b4,IP:0,U
 	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
 	release,TS:0
-X-CID-META: VersionHash:393d96e,CLOUDID:1bd24988-8d4f-477b-89d2-1e3bdbef96d1,B
+X-CID-META: VersionHash:393d96e,CLOUDID:86e0c984-4f93-4875-95e7-8c66ea833d57,B
 	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
 	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
 	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
 X-CID-BVR: 0
 X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_ULN,TF_CID_SPAM_SNR
-X-UUID: e04d4d5223e611efa22eafcdcd04c131-20240606
-Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: e027c0f023e611efa54bbfbb386b949c-20240606
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
 	(envelope-from <shawn.sung@mediatek.com>)
 	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1155626229; Thu, 06 Jun 2024 17:26:38 +0800
+	with ESMTP id 1858849808; Thu, 06 Jun 2024 17:26:38 +0800
 Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.1118.26; Thu, 6 Jun 2024 17:26:37 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
@@ -69,9 +69,9 @@ CC: Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
 	<linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, Hsiao Chien Sung
 	<shawn.sung@mediatek.com>
-Subject: [PATCH v8 06/16] drm/mediatek: Turn off the layers with zero width or height
-Date: Thu, 6 Jun 2024 17:26:25 +0800
-Message-ID: <20240606092635.27981-7-shawn.sung@mediatek.com>
+Subject: [PATCH v8 07/16] drm/mediatek: Support more 10bit formats in OVL
+Date: Thu, 6 Jun 2024 17:26:26 +0800
+Message-ID: <20240606092635.27981-8-shawn.sung@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20240606092635.27981-1-shawn.sung@mediatek.com>
 References: <20240606092635.27981-1-shawn.sung@mediatek.com>
@@ -86,52 +86,95 @@ X-MTK: N
 
 From: Hsiao Chien Sung <shawn.sung@mediatek.com>
 
-We found that IGT (Intel GPU Tool) will try to commit layers with
-zero width or height and lead to undefined behaviors in hardware.
-Disable the layers in such a situation.
-
-Fixes: 777b7bc86a0a ("UPSTREAM: drm/mediatek: Add ovl_adaptor support for MT8195")
-Fixes: fa97fe71f6f9 ("UPSTREAM: drm/mediatek: Add ETHDR support for MT8195")
+Support more 10bit formats in OVL.
 
 Reviewed-by: CK Hu <ck.hu@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c | 2 +-
- drivers/gpu/drm/mediatek/mtk_ethdr.c            | 7 ++++++-
- 2 files changed, 7 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 32 ++++++++++++++++++++++---
+ 1 file changed, 29 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
-index 02dd7dcdfedb..2b62d6475918 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
-@@ -158,7 +158,7 @@ void mtk_ovl_adaptor_layer_config(struct device *dev, unsigned int idx,
- 	merge = ovl_adaptor->ovl_adaptor_comp[OVL_ADAPTOR_MERGE0 + idx];
- 	ethdr = ovl_adaptor->ovl_adaptor_comp[OVL_ADAPTOR_ETHDR0];
+diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+index 862ab683ed1b..d970cdce06bc 100644
+--- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
++++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+@@ -71,6 +71,22 @@
+ #define	OVL_CON_VIRT_FLIP	BIT(9)
+ #define	OVL_CON_HORZ_FLIP	BIT(10)
  
--	if (!pending->enable) {
-+	if (!pending->enable || !pending->width || !pending->height) {
- 		mtk_merge_stop_cmdq(merge, cmdq_pkt);
- 		mtk_mdp_rdma_stop(rdma_l, cmdq_pkt);
- 		mtk_mdp_rdma_stop(rdma_r, cmdq_pkt);
-diff --git a/drivers/gpu/drm/mediatek/mtk_ethdr.c b/drivers/gpu/drm/mediatek/mtk_ethdr.c
-index 156c6ff547e8..4ffd0a064861 100644
---- a/drivers/gpu/drm/mediatek/mtk_ethdr.c
-+++ b/drivers/gpu/drm/mediatek/mtk_ethdr.c
-@@ -160,7 +160,12 @@ void mtk_ethdr_layer_config(struct device *dev, unsigned int idx,
- 	if (idx >= 4)
- 		return;
++static inline bool is_10bit_rgb(u32 fmt)
++{
++	switch (fmt) {
++	case DRM_FORMAT_XRGB2101010:
++	case DRM_FORMAT_ARGB2101010:
++	case DRM_FORMAT_RGBX1010102:
++	case DRM_FORMAT_RGBA1010102:
++	case DRM_FORMAT_XBGR2101010:
++	case DRM_FORMAT_ABGR2101010:
++	case DRM_FORMAT_BGRX1010102:
++	case DRM_FORMAT_BGRA1010102:
++		return true;
++	}
++	return false;
++}
++
+ static const u32 mt8173_formats[] = {
+ 	DRM_FORMAT_XRGB8888,
+ 	DRM_FORMAT_ARGB8888,
+@@ -88,12 +104,18 @@ static const u32 mt8173_formats[] = {
+ static const u32 mt8195_formats[] = {
+ 	DRM_FORMAT_XRGB8888,
+ 	DRM_FORMAT_ARGB8888,
++	DRM_FORMAT_XRGB2101010,
+ 	DRM_FORMAT_ARGB2101010,
+ 	DRM_FORMAT_BGRX8888,
+ 	DRM_FORMAT_BGRA8888,
++	DRM_FORMAT_BGRX1010102,
+ 	DRM_FORMAT_BGRA1010102,
+ 	DRM_FORMAT_ABGR8888,
+ 	DRM_FORMAT_XBGR8888,
++	DRM_FORMAT_XBGR2101010,
++	DRM_FORMAT_ABGR2101010,
++	DRM_FORMAT_RGBX1010102,
++	DRM_FORMAT_RGBA1010102,
+ 	DRM_FORMAT_RGB888,
+ 	DRM_FORMAT_BGR888,
+ 	DRM_FORMAT_RGB565,
+@@ -253,9 +275,7 @@ static void mtk_ovl_set_bit_depth(struct device *dev, int idx, u32 format,
+ 	reg = readl(ovl->regs + DISP_REG_OVL_CLRFMT_EXT);
+ 	reg &= ~OVL_CON_CLRFMT_BIT_DEPTH_MASK(idx);
  
--	if (!pending->enable) {
-+	if (!pending->enable || !pending->width || !pending->height) {
-+		/*
-+		 * instead of disabling layer with MIX_SRC_CON directly
-+		 * set the size to 0 to avoid screen shift due to mixer
-+		 * mode switch (hardware behavior)
-+		 */
- 		mtk_ddp_write(cmdq_pkt, 0, &mixer->cmdq_base, mixer->regs, MIX_L_SRC_SIZE(idx));
- 		return;
- 	}
+-	if (format == DRM_FORMAT_RGBA1010102 ||
+-	    format == DRM_FORMAT_BGRA1010102 ||
+-	    format == DRM_FORMAT_ARGB2101010)
++	if (is_10bit_rgb(format))
+ 		bit_depth = OVL_CON_CLRFMT_10_BIT;
+ 
+ 	reg |= OVL_CON_CLRFMT_BIT_DEPTH(bit_depth, idx);
+@@ -368,17 +388,23 @@ static unsigned int ovl_fmt_convert(struct mtk_disp_ovl *ovl, unsigned int fmt)
+ 		return OVL_CON_CLRFMT_RGB888(ovl) | OVL_CON_BYTE_SWAP;
+ 	case DRM_FORMAT_RGBX8888:
+ 	case DRM_FORMAT_RGBA8888:
++	case DRM_FORMAT_RGBX1010102:
++	case DRM_FORMAT_RGBA1010102:
+ 		return OVL_CON_CLRFMT_ARGB8888;
+ 	case DRM_FORMAT_BGRX8888:
+ 	case DRM_FORMAT_BGRA8888:
++	case DRM_FORMAT_BGRX1010102:
+ 	case DRM_FORMAT_BGRA1010102:
+ 		return OVL_CON_CLRFMT_ARGB8888 | OVL_CON_BYTE_SWAP;
+ 	case DRM_FORMAT_XRGB8888:
+ 	case DRM_FORMAT_ARGB8888:
++	case DRM_FORMAT_XRGB2101010:
+ 	case DRM_FORMAT_ARGB2101010:
+ 		return OVL_CON_CLRFMT_RGBA8888;
+ 	case DRM_FORMAT_XBGR8888:
+ 	case DRM_FORMAT_ABGR8888:
++	case DRM_FORMAT_XBGR2101010:
++	case DRM_FORMAT_ABGR2101010:
+ 		return OVL_CON_CLRFMT_RGBA8888 | OVL_CON_BYTE_SWAP;
+ 	case DRM_FORMAT_UYVY:
+ 		return OVL_CON_CLRFMT_UYVY | OVL_CON_MTX_YUV_TO_RGB;
 -- 
 2.18.0
 
