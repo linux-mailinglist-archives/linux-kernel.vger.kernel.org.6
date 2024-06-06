@@ -1,81 +1,94 @@
-Return-Path: <linux-kernel+bounces-205073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 315068FF6D0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:29:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 157D58FF6DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 737E9B252CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:28:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91EFB287319
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6A819EED1;
-	Thu,  6 Jun 2024 21:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40040197A65;
+	Thu,  6 Jun 2024 21:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dVdP5VuN"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2055.outbound.protection.outlook.com [40.107.243.55])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="NnIcilgh"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2078.outbound.protection.outlook.com [40.107.241.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7847419B599
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 21:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0DC13BC02;
+	Thu,  6 Jun 2024 21:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.78
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717709054; cv=fail; b=cE/y342jZLG5EOwHsI7QM/aX7nsgJ6Edk0ZJ8WJIzbjXY9HVLvmV6b8hAhVOirzCfLoEwibTfpmsFoKYFY6xtFXA0hlwwPzu6RxEdgAwSydzQxz7z9A2jKi8h83NS5WqfI82gmEsV+KCDgkDhVgsZ9WQZejsd4KaJXv0bq93ZLE=
+	t=1717709115; cv=fail; b=K5Od5S10PhtKyuGySdYU6DD62DHTKARw/wTxZhK67tUh+zu7swRqARmnKBMlFyRi6GUbJ0tPZ/e7ceKkvvZReCWSi6C+4HkO7ChCNOEKqMzzfi6SovEKAg3KLtb/40E4wumuJBBipxIumug5OY7KqiCd6gzRHYC+afwFje51U6k=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717709054; c=relaxed/simple;
-	bh=1A4E2DHWAa8GxO1GjQAl+jmYM6Ux0YPY6cXZgHKVC1g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qdCcwUg4Nn4bC/qH5nmG7BqZR6eZnEHUPRqiIRcwCGA7mPa00y3cDGiwHr6g9O8kUBrfl4/4cipEqsQN8tjHQBukiTNaDehbo85jpyEWeXEOwC69H5w8cMq/PkWNRhqfhc2NHXG6uZryKecGmIE/WqbVpr+JlQxbOZsYguLGCAk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dVdP5VuN; arc=fail smtp.client-ip=40.107.243.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1717709115; c=relaxed/simple;
+	bh=HmfdxGopgWDB60wy2mjFdkdQovhRBY2kxpfNvHUqe4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=lZVIRKnqAIo1G4Y/RFONBUy7MMcrrRRE6BGf5rA/jNm2hP/5YR3OsYV46Rf2g56ye6yR99AFJr15mEEBfIRKhYaHC1MhoZUbhxfMrUD6nys8AnHPX+WAUdDLhiLpWJPwXJwAu5KR3gPd3kaarcjdlx9eL3T7oVzlA2OeMf1OQXk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=NnIcilgh; arc=fail smtp.client-ip=40.107.241.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SbQnhnhkEoMwKE8pkTHY6INhSOGRUfjJauFX77520BOewlxSF/t9r2meyL3qnJK9VU8nxVwk7QVke6tqBVFRP0lvYrLwz90H+77V5rcPYFLsH/sFbAhDmQc7Xk+f6FziyugdHmncDbHV3l6TAVCB+cfBrqURQKJVDVV6tTP4+OYGp4lMprOdCKLYiZ5hCjWX2S7q0Fmupq4Cbd2pcy//kHi7dOiPVVLzayK5CUFv7xtbvRNnGLjTA53YwXyIhzleeJKJpCQAn1ZMJXfYvABpTxs68OLksqoeTdt8sOTO5vn+A3gunyfg5G/6pk6ds0J3cQYy1TVuBciMHeEcDGzoGw==
+ b=IrQILZc303gVNM4AOXs8lHafeFeYwtag/09x+BTWcCylhLU/bHtqxsvu1dPRTtAbKcBUy/YrvFinDtKmlF7SirRj0r5TNSOHN2leDc8oPuj22vMICYwCZFVB0Yaz2WwUYYIzI7PoIlJmmnRdXSJAqAItofyA4xVkV9adq5KJNlTsUXkNBKKvCkLI0SMphQ5AK+/9tIt0KUgNqsFSLzLGnIvRHlFDEpzO7lVpTo82RF6hnbyKoMzd4dyRfkyLPm21cWohcHkYvgzmAjfLcvuoqTXuIVntM5Bgy6fjnapSGm+lm7F1phpM1A1PEegIfHBjmrmqlORG65SJ+iskCUfLgA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fNoBCc5DGfVIbRcvoZhQe8byZNi1NJRbfd/l1Gyu/x4=;
- b=bNPlas2ahB2pMiH2rh/0wZ7Z92jd6MoVMT77eKIheIlyX0zZ3ZMfsCP44s5UVHfZNhp+rzl0xtbnuWp+wyqDLfyA/pEgCUH3Vbl9NaWcqln5Pmg8S3D+NVLMc+86aL2/KP94qXKMopoQur1SnOvI59MHAEvX899h9m5kCGX4WxC2Ip04AGnO+oWMEdVdYGVW6/PKjkpDk+eYRwpHyHWPFf9yBerrV8WPOy6BWVZ51oc7k5TerQSofKWpMMHt1D9XM5KaYK/M2PRzuAhCd+w0dAJjFmeboMIovYmRek6BA7FLRvsr4UNz1TDgheGfFp8nnAtitPb9cFNYSYxmxVoj9A==
+ bh=Ym67aj83xOqAGGtJMxPJEvtdQTLXLGaJyzz1q5CNVPs=;
+ b=D3AwgDcp7ruQP96bP4RN7C11OdyBigBvNzQmoc0q8qLgyo4CBL5KUm03Xvcj3u1kVmpPsij6k88gsdUQ82/wiULDSBw1bHnNUtZgj2gZc9aEtijxoXWBUHcSxjXNA3uQaI+VeM9rgPyIgRjt5hpaigxjsuC9q27j/ymVowxpnHwck5yZG7rSCnLwKjTvL+TYPC/yu5KixzjUsWf2Oc2l08dlBeNuf3/ad7CJ8Ed3x0Y/cGWwePXORKaCUxvgEpx2F2s98H6vuBWCOogYWH/ITxrjZyuvht1S0v3mzQw5R2IW+xzohmglkzo2UVpeNPpC1++yWStYAmswApkp3emOdg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fNoBCc5DGfVIbRcvoZhQe8byZNi1NJRbfd/l1Gyu/x4=;
- b=dVdP5VuNumnYvheT55dEsP+9VTDvU2WfyJIjTF718btKuVLYbYSsayxrVFG14YkaAO9Lk1B78iRejsr5ik/v4y7HElJdbtG+liBhEh66SrzmrczSIOj6sa/THWRo3/0FjpjD1UtXPaKI+c6PjdB57aFGW0w5/7zECzmZymyVS5zqCoSv5xHXAjNs1jg9mKenMKUbiMybwpzXYvbLBeY5e1EcqK2uMKzn5w9U75oGc3LzIhpAIhfDJ+VMVASvKgN80XxaNwWZYtE2kdVt+LZZWcK4h2/uKS8cb4KrXYYfB9EtHHJdYfwdrm3kjsbwJnLH0zHWJii9M/20gNuyS4HCvA==
+ bh=Ym67aj83xOqAGGtJMxPJEvtdQTLXLGaJyzz1q5CNVPs=;
+ b=NnIcilghv73LKWZDT2XvR7wVcad4jdrtdcbgDowXEEeiItIAB39FKmscESF1izlezdQgOLvwSoZvFnDtOTgKErIzenGuwNYyTuLy9Q5lpGgkQ1scNay4UY8XSl0Zhc52ndsO7sMn2KJjw4GM8G0MNplyrjWp68XwY781lFnSyvI=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB5744.namprd12.prod.outlook.com (2603:10b6:8:73::18) by
- DS7PR12MB6264.namprd12.prod.outlook.com (2603:10b6:8:94::18) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.22; Thu, 6 Jun 2024 21:24:09 +0000
-Received: from DS7PR12MB5744.namprd12.prod.outlook.com
- ([fe80::f018:13a9:e165:6b7e]) by DS7PR12MB5744.namprd12.prod.outlook.com
- ([fe80::f018:13a9:e165:6b7e%4]) with mapi id 15.20.7633.021; Thu, 6 Jun 2024
- 21:24:09 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Barry Song <21cnbao@gmail.com>
-Cc: xu.xin16@zte.com.cn, david@redhat.com, v-songbaohua@oppo.com,
- akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- mhocko@kernel.org, yang.yang29@zte.com.cn, ran.xiaokai@zte.com.cn,
- Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH linux-next v2] mm: huge_memory: fix misused
- mapping_large_folio_support() for anon folios
-Date: Thu, 06 Jun 2024 14:24:04 -0700
-X-Mailer: MailMate (1.14r6030)
-Message-ID: <B7796F09-BAA6-4555-A9FE-F44DF1CBFA6F@nvidia.com>
-In-Reply-To: <CAGsJ_4w9cRZUEF7PaVjz1HQoUr1pxHEO15gpbsnAoJHMZG0djQ@mail.gmail.com>
-References: <20240606174203124_OW-VQZ_ZLm4lGEimA-K9@zte.com.cn>
- <51DED95F-832A-4836-AA81-556968F6B645@nvidia.com>
- <CAGsJ_4w9cRZUEF7PaVjz1HQoUr1pxHEO15gpbsnAoJHMZG0djQ@mail.gmail.com>
-Content-Type: multipart/signed;
- boundary="=_MailMate_4994FFA7-ECB1-43E7-8EBB-49D68C234227_=";
- micalg=pgp-sha512; protocol="application/pgp-signature"
-X-ClientProxiedBy: SJ0PR05CA0045.namprd05.prod.outlook.com
- (2603:10b6:a03:33f::20) To DS7PR12MB5744.namprd12.prod.outlook.com
- (2603:10b6:8:73::18)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PAXPR04MB9092.eurprd04.prod.outlook.com (2603:10a6:102:22a::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.34; Thu, 6 Jun
+ 2024 21:25:09 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7633.021; Thu, 6 Jun 2024
+ 21:25:09 +0000
+Date: Thu, 6 Jun 2024 17:24:59 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-pci@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, devicetree@vger.kernel.org,
+	Jason Liu <jason.hui.liu@nxp.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v5 00/12] PCI: imx6: Fix\rename\clean up and add lut
+ information for imx95
+Message-ID: <ZmIpK4l6fdZ9BZu/@lizhi-Precision-Tower-5810>
+References: <20240528-pci2_upstream-v5-0-750aa7edb8e2@nxp.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240528-pci2_upstream-v5-0-750aa7edb8e2@nxp.com>
+X-ClientProxiedBy: BYAPR06CA0018.namprd06.prod.outlook.com
+ (2603:10b6:a03:d4::31) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,297 +96,217 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB5744:EE_|DS7PR12MB6264:EE_
-X-MS-Office365-Filtering-Correlation-Id: f2b179dd-470c-4657-efb5-08dc866f0097
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB9092:EE_
+X-MS-Office365-Filtering-Correlation-Id: fb8154de-c5e9-4168-150c-08dc866f2490
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|7416005|1800799015;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|366007|52116005|1800799015|7416005|376005|921011|38350700005;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?REh4M3lyTmJSNjdLVHk5SHNNUVc4amtGbUl3UUJISGl2S1pOYVdDVy9CL0h6?=
- =?utf-8?B?ejJuUS9KZk1qQWhpWXpEbkZ6OUZkSURoRlNtVFJsMWJnWTcvVVJhY3o0emty?=
- =?utf-8?B?bjZmb0svZGQwYTViV0V5eWxxVU9BcUcyc3hJOXluVXM5cCtYazliRFNaQ2du?=
- =?utf-8?B?NDlXMEFaNmFMWXBzUTZESDFhUng3ZjVuRnp3eDhsaitkYTFPK3ZBd2RpY3cw?=
- =?utf-8?B?MXkvck9STmpCYVZUQ2g1VFFneW8xQ3hZSUV2MjA1OFFVTWd1UTlQb0JCeTN4?=
- =?utf-8?B?RzlXZUZpS3BwZXoybE5lKzFxUGxZbkxZSDV6QXVhOUZKc2dzWHBUNHJaS0dO?=
- =?utf-8?B?TkNmeWFZRk5wN3pxbnVyZi9MSVZrWVViV1V0UW9OOVpqRmRjeDBoSGYvaTBU?=
- =?utf-8?B?UlpITzgySmNBZjlWejRjNnlHd3E1a1o0Z2VWaUU3Q1hiRFM5NU9sdkFyTngv?=
- =?utf-8?B?cWs1eTkrSVlXa3crSk5hYVQrb1F3UG4wempBU3RQR3V6RE9TWENYMGpVN1Y4?=
- =?utf-8?B?ZDhWeFlLZTQyWWxXYlErZjQ1WW5MNkhOc2hzYlpJNzRGY2VVNmxJYkdJWGta?=
- =?utf-8?B?NUtnVjdDbUszRFB6UG9PcG1WRVg2cG83NWZ4UkxJTkJYZGxtU2dBV2pTa3hn?=
- =?utf-8?B?V1ozaDBNRk1LbkIzRXlCdmhHR3NKRGE5bGFiNmFwYlQ4S1B2U0l0cVN6ekM0?=
- =?utf-8?B?UXVaNTBzanZPdzQ3QTZXUTB4YVVpWU9TRTdkVlUwam5HcVltVUxsZlB0Skxt?=
- =?utf-8?B?QVRCMkk2YnJRdFl4OFg1SHQ4djRzaklEN25RZjhLVEhNbEF4Qm5VUmxiRUEw?=
- =?utf-8?B?NE9QSjZTSU1hcGpuMDNBaXd4ekRVVXBDNWxYSjVmSTZXV01GWUxHMnNVZTFm?=
- =?utf-8?B?bitnemxLeWxPaTRWTHlrZmdpTkhXQnozOFNYQ2F3NVBBamduTDBKWlFDTFVL?=
- =?utf-8?B?RVE5Y0ZWTFVoR1lSKy96MGl4MVV4d0ZpSmZlYWt5U28vSGs2N0xLL2FmU0sr?=
- =?utf-8?B?RnpTa285ekc0aTIrbWpMak5rWTNLT3hsQnFhN3hNNVBxTkRkUzJkeldtbXAv?=
- =?utf-8?B?ZHVVcVhIYzBWazRBRUJsVG1JcktHbGpkRjF5R3FMUGswTVVLamExdTAvcGYw?=
- =?utf-8?B?bXlTZ0NZTTVDWENuSmNlQ1hQUURra3lxNFIzZFY4T3MwRTJRSDlXTVhVN3Vw?=
- =?utf-8?B?UkV2V0VxbktkSjUxV0JxWDE0ckdXRGFqU2kyUTFwNXRIcWV3eWlML0tRdjgz?=
- =?utf-8?B?Mm5ETDVnNHhsa2MrVXdiTWUrcHJ4VE5JUEswUmxsZlNpZk84MmNCL2x2SmNQ?=
- =?utf-8?B?a294RjhTSGtMdUJhNzhQN21rVVM3QW1jaWVrUGMvNm9HSm5DVG1ITDZYMGln?=
- =?utf-8?B?ZTlUTExLVkpsNXpMWGpYNDVTVktMMG9HK25iVnZNeHFiWTE0NTBaclprOElJ?=
- =?utf-8?B?QTNEd3hBcDlaTFZhck9Ua1RnK2hZMU5YaDd6c1N5KytjYXlUZ0g4VXRtWkIr?=
- =?utf-8?B?OE9kWURwaE10Skc2SUtJaGc1TG42bmtORTJmclZYa0FKb2JYci81QXhWRDFF?=
- =?utf-8?B?dFdxNDBnSlNSb1NFcWs4RUtMMVcxU3JtNHBubUEyaEF2ZG16V25qV1RpZG9Q?=
- =?utf-8?B?OG8wUnk4YzVCWnZhaHhwT1I0UStsVnZ4VGR4aU9JOGZJVDZpZFp2ZG95Nzhm?=
- =?utf-8?B?dmtCNlA2NnE0YnBxaGUzTEtLeXk4WlNNb1ZJYXZuNGYvSDNNUUhrbXhDV2ow?=
- =?utf-8?Q?IT9mk7FuvmhlE7h0McZdyqPfEakWjgw3IIbRgxA?=
+	=?utf-8?B?Q0hCckxha3dISmYyUldXNnhhZlhpNkVuRDE3dERyaGF4M0pGcXEyaFloTUtV?=
+ =?utf-8?B?TEJ4ZnhSaDhqM1N3MFZBb294L05xbjQwQTh6dlZDK2tLT083OC8rSTNNaFlk?=
+ =?utf-8?B?RS8xOSswaURmc091dHRTcWY0RExQR1BTSGE5M0ZGTHN2QXg0eWtpR2MwYnUx?=
+ =?utf-8?B?K3FqV1c5cGlMcGU5RjVGTTN4bnZCbWpKUzdnN3U5WWVNdGdQZEJxdkg4YkRy?=
+ =?utf-8?B?K3ZmTXZLLzlvQ3RDM3pCenZReElQMG5QRTNDamtDdXNIOE1wMS9ZREV0WjRj?=
+ =?utf-8?B?T1hPc1JpVEFNMnRHTGEyK1haSGRibUV3b29oc0NuaWlaRFRQTkZWZnRjYXkr?=
+ =?utf-8?B?Yms2cHZ3QUtDdVUrNGl2V3Q4czkvSWtUUWRrd1VuYjJCOGJzWGJVREMzK3BW?=
+ =?utf-8?B?TVZUWCtJalQ0ODV6SFpYTmpQVnpjTW9YcVpvcERKR0oxWFdvc1pWbDFXcjAv?=
+ =?utf-8?B?ek1vTEJseDVUVnJ1WnBGWXBWd3pZaU4rcnRUV0h6bFlmeFBEK3pVWEF5ckdr?=
+ =?utf-8?B?RDAxdll5dWNrME02Znhocm00N0M0SkxBWllRS0NGdkg5MDFOSnhNSlZLQlpi?=
+ =?utf-8?B?b3JSd2xpNjNaT3laZ2YzODBFZmRiU09PMFVtT2tyeGtHcW82cWZyaC9WczJ1?=
+ =?utf-8?B?ajJVRDU3V2FrTVJ4TCtRWm1FWnBWUnVPTXZDQ0lucTR2OE12L1RTQlRlQVNJ?=
+ =?utf-8?B?dG1VRWgyTGIwVUVMNFAyY1k1TnFOUmFPQ3pEdnZyK0U0RWg5clpzb3A4Ulho?=
+ =?utf-8?B?UGJxeHAwYzkyRlRLbzArMmI1QkRZZVNSYlB6UElTSGJybisrRzFEZEpTeGgy?=
+ =?utf-8?B?NXFuYzlLRXFyNzFCY1duT3A1eEY0NndVSENUQmdwNzdpYzdXckcrbDVnVVht?=
+ =?utf-8?B?WFJrODFFYy9kTUN3L3ByUk1nbStkUU9TVS9XQUhaNVQ2ZlBKT3JFditJMEc1?=
+ =?utf-8?B?NWE0c0N6ZTdnOE1LQU9lNHhFZ2JFV0hwVGVJMEJpT2M0NFFKZnBVTTVpeHZN?=
+ =?utf-8?B?NmNJaUR0bW1wSDh2S0t6clo5Skc2OVYzNXNsS1dsY3NzK3NYVUJuT3o1clZW?=
+ =?utf-8?B?VzBVQ0dWc0kwVDA4Zk5tUFBRNUs4RGd0c1ljTGhaWUtDZmczcWJrcWpxdGNl?=
+ =?utf-8?B?ZVdnV1VSZFRQSFZzNWVCOEJFWDdzMkRoVXFvczVLUXBSbE5JZW93RUliQjdF?=
+ =?utf-8?B?dGkzSUxwZEJPV3hSYzF2RXJnZFdsRHhoYThBSmlIaFYzTFBWOXJRYklpbDJv?=
+ =?utf-8?B?WXVaUUJTWjAyMS9Rekdkd3FpOVU0bzhwZVJzdU9iL281TU1nbEMwV1JxNmVC?=
+ =?utf-8?B?SkVKSmZRbEdJcS9ZNitxQlk4T0FoeFZUT2JoamJHR1hXQkY2MVFLVEpKS25R?=
+ =?utf-8?B?UTlnZmhGYit3d1lLamhXV2hPUzlBY2JLQ2tyanYzbGJxWTBUTVlQRW5haHha?=
+ =?utf-8?B?Q0RVdzhSdDlFM1A2TnprKzFha3dUWi8wSjNWbTRVQms1VGJhK2NmTlU1cFBV?=
+ =?utf-8?B?bU8zRTErd20xeWNqSDZVSDlqNzhKdlI4K0tYVjBwdCtLV2xpQllNQ0RtOGw2?=
+ =?utf-8?B?RER3bnhBUUdlNm9PVVpDNi8xWUs2ZGZUcmUxWnp3bnRWLzFIRUNzTjdRODJB?=
+ =?utf-8?B?MXBFclRmbzBwdEIvWjZxUVFLanRPNkIrejJqT2VXODhKb29NYWVudHRPVkRk?=
+ =?utf-8?B?eUpxS0VESXZJOEdPQnhvNDJwSU56a3ZTU001WHlEREhKL0NRTU1URC9sbDZN?=
+ =?utf-8?B?QUtVVmZ2NVVXS0VxeGVaKzJLS1d1dEFIaWdUc2FlVjRsUERoaTEzSGh6aStj?=
+ =?utf-8?B?R2pnT0VSSVFqVzl4OGY1VkxRekQ0ZDlDcDd4ZWQxM2N3QXFsait4M1YyQ1VJ?=
+ =?utf-8?Q?hH1cQBUnrB57S?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB5744.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(7416005)(1800799015);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(52116005)(1800799015)(7416005)(376005)(921011)(38350700005);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cWpSTDZISmtwUzJHOXdwR0JYODRIRGdHWlpYY05rOFdCeHEvQ1JUYkp1bDRy?=
- =?utf-8?B?MER6WnliTGZWR2NXdThRdWJ4NnVOM3lZQmgraXhqaERGUitVTGlucE1qbHcr?=
- =?utf-8?B?c0o5eWl3RHh6UlNEYTJNdmJqTTlxRnRyVkVYNEFDZ2JCUGYwS1pLaldKcHl4?=
- =?utf-8?B?UFJuQ0RmVFJtR2UrZDh3RzU3bXBWWUZFZ0d6WGRidTU5aEJBV3hacDRTeGNl?=
- =?utf-8?B?OEN6TWN1Yk0rVFNiUXdGUlBkR3pHM0w0NGhFNzdoSlJWczdCYjZNQlFHZlR0?=
- =?utf-8?B?ZzIrKzlQYUNHaFJQZkRJZ3BLZm1tQ3hHUlF0NlcrMkxIK0sxcllRcGZRTzdl?=
- =?utf-8?B?Qk8wWEJMelBQTHVtQlRtbjZVTXRqdkl0RWowcFlRUHgzbzlxQWQzMTQ2Zktu?=
- =?utf-8?B?YktVMWlsMHVyUjM0bHRJTDJqLzBxODE3VjNJZStlNzFNMEVSK0hnQW5sdUE0?=
- =?utf-8?B?ZHNhYXdRdDFSb1lUeVliNWNESUFBTjJBY1Q2bGY5N1VsS0E4N1FnRFNvcDIz?=
- =?utf-8?B?azBYaGF6UTlaVG9HZHp0ZnBZZDc5dFNVeGFLZFA0Qm1zVm5CVlQyOG9zeUJ6?=
- =?utf-8?B?UG1lRWdNNzRXT0plUEk2UDg4eXRtWmE1NXEzeFR0QWZIUlNVK1JnVXZZbmI0?=
- =?utf-8?B?b2YvSzlDdVpOeXdqeGZpZVdIQVNhbVIrcTBsR0dsNGs4WlZGaTM1Qjhwc0tR?=
- =?utf-8?B?VFgxTnhFUXdLcWhMdSs2L2kvSHNJcys1OFJFY1JOajhiRktzVHR6MHIzZTlD?=
- =?utf-8?B?QkFia25BRFVkZU1uNkRtNUIxelNrRS9CaHQ4L1Z5YVNEcUpBUFBqbWVUaDJ4?=
- =?utf-8?B?YXhMUkk4MXRyLzl0cmE2OGxFRGpWekx6YVNPeFJRVXEyemx5UzVOL2xTVFRY?=
- =?utf-8?B?VG95Qk5QMzFVWXozSHdDblFBc29QbThKYzZPNmpLMWNKNHY5VWZiUktLYjNp?=
- =?utf-8?B?OUYrTDhBTHIxMUxreHJ2TWpQczg4SUUwM3NOUVRsV1pxbDV5eVdVTnVTbTZG?=
- =?utf-8?B?M3oyMzVGc0xWMS9PZmVlUS9NWlpEK0pSS0ppUkFIbHdkZ1JUd0gxdnpkSm12?=
- =?utf-8?B?NzlhR093VzJpL3gzbXpwVjYwM01lays3QWZaMW1BVzIrTCtNL25KcnhWK1Zn?=
- =?utf-8?B?WFFaWUkyckFJcWd1WHFlRG1QcjJ1VU9oUmZ4WDJlbU41LzZrdkVOYmlmNjZK?=
- =?utf-8?B?aVFoYUEvYy9XY2c1K241ZEFUR3UrNDVhMzBaSG41clcrTzNlS0RqdmFEbXZH?=
- =?utf-8?B?ZlVmK1JQcmJLQjF6M2VlTUczd0Z5REszN2lIQ2NkTERWTDl6cmNvSXJZY05q?=
- =?utf-8?B?RzBLcUFtZG81YlI0ZlhPUmtib0FrSW5QQkdJYTJXWXFFVmE4bW41aWV4OUxj?=
- =?utf-8?B?Vk4xU2luN21mbTF5SFRjMURoeGFacC81RW5Eb2I5bjZNRDA1TGwzSDBqS3kx?=
- =?utf-8?B?WUM5U1B4UkhqQ3BvNzMwYkZDbHFhSlBFV3drNDBYVmFlOE00SHNqM0RUaUVh?=
- =?utf-8?B?eWFyNVVvaWVFenVjQmVINjNpUTJlR0V2dm9aWHRKMHNkWVkyL3RIUjA2WEgw?=
- =?utf-8?B?bitCZVZCRWx5SWxuZEZPQk5kcVJHT3hkVHlrNHpPSUsreHd0K0RiT2VOd0Iw?=
- =?utf-8?B?RDRieGcrUnlIV3A5Q1duaWNnVi9OWkZycHJDWjZ6WmNSTndUY3lGeXMxekVt?=
- =?utf-8?B?UXRUdHNmb29mK2xhMUIrdE85UGVZUTNkWDA3VGMrdllWanhwQU55RjBtMC9k?=
- =?utf-8?B?aE4wZ2pMUE12eEkzcFVYZXoraU1saWhsYkk5ak5Kak9qWEY3NTFmWDc1LzdI?=
- =?utf-8?B?L3Jham16M2NHQWNvTzNVTFQzcStBZ3lhU08rOVh4WHNFSHkxb3pGVGRIRkJY?=
- =?utf-8?B?V2JWSVlqdzd6WFBxakc5akUzcGI0Z09KTm1BRDNQK3ZOdHV2VXVlTjRRbHdI?=
- =?utf-8?B?b05Tb1NrdnY5REljRDJvOVlUVTBlNUJ4MW9ISTUwRlhyc21OcHhlYUNGa3BQ?=
- =?utf-8?B?SEpSaHMxZFVBcnBjY0pDNlJTdFBVWEU4N2kwajlNOXdGWHRsZmFWbXFod0lz?=
- =?utf-8?B?djVabjMya2tTd3hDaTcwMGZVVUF2WnVuWnhWWEJIR3NEeit1TVJHTXFlYkpL?=
- =?utf-8?Q?Lttg=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2b179dd-470c-4657-efb5-08dc866f0097
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB5744.namprd12.prod.outlook.com
+	=?utf-8?B?anFWcThVeXJpd2ZGNVFOeHZVTnZRUEgza1gzc0RVVDVVWVUxOG5ZbkpleVpj?=
+ =?utf-8?B?WVRmWlBHU2oxR2JIMFlzeDRhMHp0aGhqWnFiOUhIRExodGNlV1NTYkZwRHRK?=
+ =?utf-8?B?N3NmbFduUURSYUlvTFRqeFN4RExDYlB5T3NWSFMySUE2TkRycERJRGwxOGlT?=
+ =?utf-8?B?MllrRXVOQjR2UHNxTVJlSEhCbkVZVDNlZStubjhWWTVwNGFoRzlESUVuYjB2?=
+ =?utf-8?B?Q0NybDlpcmpuZExqVmtTYkxMNXdmSUlSS0h4Y3JYQzBBNzl2UC8vTnF4S0Fs?=
+ =?utf-8?B?VVNQTzVBV0JybnV3UTNGK0twbHhrVEMxZ3UrUjFNUHI1eTNLdFB2RWFxa1pN?=
+ =?utf-8?B?ZkQyMVdMNDJIYVdEbDVaTkxQWnJsTHZtbjBXc25VY3NmUDk2Ulk3RG5hMFVM?=
+ =?utf-8?B?ZG5BSUJVK2tmRXJwQ2c2aHd3cHl3UTg1anNHeUt5dWE4Wnd2R1RXUWF5SytS?=
+ =?utf-8?B?RU9hSnJJaTU0NExLK2gyR0UxTEx0YTJpbXE4bVFoaTRHMWkwd3oxc3c1Nitt?=
+ =?utf-8?B?RFV3b3huem1kNkZ5L2JzbTN6TXVPcm1ieTd6VVUrN2RodW5sV0FZc3VFeTdN?=
+ =?utf-8?B?U2pPM20vclNzTDAxUlM2bEp4alpVUHVrWTlFekJIbWdLTHJqeTI4ZStJdU5S?=
+ =?utf-8?B?ZFdHeFhISjJyQnhpa2wrKzJXN050ck4waEp6ZkRyNWpLcFV6Nkk4bk14WXdx?=
+ =?utf-8?B?ZWFvVGFxZ1JnN3czdnQ1SDdicm9OT1NOQlYvQ2V5TVBTcW5uMjdsWGljRVJI?=
+ =?utf-8?B?dEJSWDFvOWNzbENibTdyMmIyUkhZTWZ6VzB2bnBTdVdremgyRHJjQXFQQ0xl?=
+ =?utf-8?B?cWlTZzhjYXRlc09ydXJaVmQxNFZvdTloZ1NJVEJyaytaOVh6TVNkT1A3R2FQ?=
+ =?utf-8?B?YlorWjhYc2NyWGx2WDJaOGxQREFjZmFlUGk0THpnTkV3Qmwza2t3cFA4bkpF?=
+ =?utf-8?B?OEJvMTJycmwrTTB1c3AxNzh3ZjZ1U3JFT29MWkl5TjVncld4SU1Pb2VMMHho?=
+ =?utf-8?B?RGs1bmJDWi9KLy9OU3hTZjVoejdNa210RWwvSXBSQ096bVgrVHZpZVNPWDV4?=
+ =?utf-8?B?RlVkOEdRcFhZTktIdkpzNjZOQlNhYlpDeFBRL0tIc3FiY3NuRVlnYnRDbVJz?=
+ =?utf-8?B?dHNybmtEeStlYUdqdDFDZXZJV2RVRU9mMWxKRk40QzVzM2czM2ZvU2RIUmdi?=
+ =?utf-8?B?cVFUVUJQdFNERlpFZFlQaXF3RitTZWJSOGtJdUUzZWd4MVd4ZjBDQmJtY3Mz?=
+ =?utf-8?B?OE1Ka3l4aWFLaVc1enR2S3B5TFEyemY2dHRiQ3c2cG1DQ1lVK0ZGUllnbVdk?=
+ =?utf-8?B?QUlidmkwQTl0NzdRWEIrWlJPZzZiM1NVNElHU241UnNCc1pQMjhrUnJlNGRC?=
+ =?utf-8?B?TnY5WFp1U09nbkRMQ2hlblNFdFI2cnpUdnJIemtZTzdKT2ljRW0yeVZiSVFX?=
+ =?utf-8?B?T2JYQXQ4QlFSTk1VQkFLc1JVSFFMZFZOTHpxSExCekh2ZlZyb3BVQllxS2lL?=
+ =?utf-8?B?SXJTQ01tRHlneXdId3QzS1Ntbk5jamhTanZGaHNNcHZPbGRHZHcrbnZ5NFAv?=
+ =?utf-8?B?VFZqS2tsNjFEYjVYdVQzN1psSldCR2U1V0VtZXdQQ2Y5OXVWOTYvbUhPOU8y?=
+ =?utf-8?B?SGJicnBXRzZOQ2lHK25iR0ZxTUtJZE82Vzc4djlYZUh4SzVzcFFhL0tncUdq?=
+ =?utf-8?B?cVpIODRjTFdMT3NSYUFxMmIyeGNNMDlyNysrQmJDZ3BMOGo4dWI4WDNnbzR3?=
+ =?utf-8?B?RFB3SmlxYmVkQ1IyNG5aQ0lVRGxtdFkySWhaRUxCT2M3TzdMZHRhZGllNld2?=
+ =?utf-8?B?ekx0TVZrZmlwemlnNUc3QXYxQlo3UUE0a0czR0VoUzF1MllianNlWStvc3U1?=
+ =?utf-8?B?Ti9rTW9obFNrVUIvNWViY0h1bTFxS3FBQmkvSG5ZNFlUS0ZqMjJKTW1jQ3dC?=
+ =?utf-8?B?b0F4TWUwQ01JRm5jWlRYc2pOSm1mWXFJTFUvcHdoMGhLM1FvK2VEbkpyOHlD?=
+ =?utf-8?B?WXBOZW1JcUtjeElDSFpjcTRXN05oWjZmdmJ6Mm0xSjVGYXYzdmlMVUJ2NFVC?=
+ =?utf-8?B?aUJiOS9tOFFNWVNzN1pPZHBsVzh1S0ZaVXI0enl5YllqY2Z5Y1U4NEZYQWhv?=
+ =?utf-8?Q?NTPw=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb8154de-c5e9-4168-150c-08dc866f2490
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 21:24:09.1200
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 21:25:09.3740
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sUKz8NPbJWlLePI+vJIyuHA/a17GuUKPGxE9XXFGwOYx8y/4KqJu/dBLQnQaWfcE
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6264
+X-MS-Exchange-CrossTenant-UserPrincipalName: iim0MBHXov983LWy7iAYq2FN2kvtJNAmVHbDirH+HMlAUnsVjIkaL8I1Eo/CLzmaDQa+cS/aDw8YyZ/1Oeatbw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9092
 
---=_MailMate_4994FFA7-ECB1-43E7-8EBB-49D68C234227_=
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-On 6 Jun 2024, at 14:00, Barry Song wrote:
-
-> On Fri, Jun 7, 2024 at 2:35=E2=80=AFAM Zi Yan <ziy@nvidia.com> wrote:
->>
->> +Matthew
->>
->> For mapping_large_folio_support() changes.
->>
->> On 6 Jun 2024, at 2:42, xu.xin16@zte.com.cn wrote:
->>
->>> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
->>>
->>> When I did a large folios split test, a WARNING
->>> "[ 5059.122759][  T166] Cannot split file folio to non-0 order"
->>> was triggered. But the test cases are only for anonmous folios.
->>> while mapping_large_folio_support() is only reasonable for page
->>> cache folios.
->>>
->>> In split_huge_page_to_list_to_order(), the folio passed to
->>> mapping_large_folio_support() maybe anonmous folio. The
->>> folio_test_anon() check is missing. So the split of the anonmous THP
->>> is failed. This is also the same for shmem_mapping(). We'd better add=
-
->>> a check for both. But the shmem_mapping() in __split_huge_page() is
->>> not involved, as for anonmous folios, the end parameter is set to -1,=
- so
->>> (head[i].index >=3D end) is always false. shmem_mapping() is not call=
-ed.
->>>
->>> Also add a VM_WARN_ON_ONCE() in mapping_large_folio_support()
->>> for anon mapping, So we can detect the wrong use more easily.
->>>
->>> THP folios maybe exist in the pagecache even the file system doesn't
->>> support large folio, it is because when CONFIG_TRANSPARENT_HUGEPAGE
->>> is enabled, khugepaged will try to collapse read-only file-backed pag=
-es
->>> to THP. But the mapping does not actually support multi order
->>> large folios properly.
->>>
->>> Using /sys/kernel/debug/split_huge_pages to verify this, with this
->>> patch, large anon THP is successfully split and the warning is ceased=
-=2E
->>>
->>> Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
->>> ---
->>>  include/linux/pagemap.h |  4 ++++
->>>  mm/huge_memory.c        | 27 ++++++++++++++++-----------
->>>  2 files changed, 20 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
->>> index ee633712bba0..59f1df0cde5a 100644
->>> --- a/include/linux/pagemap.h
->>> +++ b/include/linux/pagemap.h
->>> @@ -381,6 +381,10 @@ static inline void mapping_set_large_folios(stru=
-ct address_space *mapping)
->>>   */
->>>  static inline bool mapping_large_folio_support(struct address_space =
-*mapping)
->>>  {
->>> +     /* AS_LARGE_FOLIO_SUPPORT is only reasonable for pagecache foli=
-os */
->>> +     VM_WARN_ONCE((unsigned long)mapping & PAGE_MAPPING_ANON,
->>> +                     "Anonymous mapping always supports large folio"=
-);
->>> +
->>>       return IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
->>>               test_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
->>>  }
->>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>> index 317de2afd371..62d57270b08e 100644
->>> --- a/mm/huge_memory.c
->>> +++ b/mm/huge_memory.c
->>> @@ -3009,30 +3009,35 @@ int split_huge_page_to_list_to_order(struct p=
-age *page, struct list_head *list,
->>>       if (new_order >=3D folio_order(folio))
->>>               return -EINVAL;
->>>
->>> -     /* Cannot split anonymous THP to order-1 */
->>> -     if (new_order =3D=3D 1 && folio_test_anon(folio)) {
->>> -             VM_WARN_ONCE(1, "Cannot split to order-1 folio");
->>> -             return -EINVAL;
->>> -     }
->>> -
->>> -     if (new_order) {
->>> -             /* Only swapping a whole PMD-mapped folio is supported =
-*/
->>> -             if (folio_test_swapcache(folio))
->>> +     if (folio_test_anon(folio)) {
->>> +             /* Cannot split anonymous THP to order-1 */
->>> +             if (new_order =3D=3D 1) {
->>> +                     VM_WARN_ONCE(1, "Cannot split to order-1 folio"=
-);
->>>                       return -EINVAL;
->>> +             }
->>> +     } else if (new_order) {
->>>               /* Split shmem folio to non-zero order not supported */=
-
->>>               if (shmem_mapping(folio->mapping)) {
->>>                       VM_WARN_ONCE(1,
->>>                               "Cannot split shmem folio to non-0 orde=
-r");
->>>                       return -EINVAL;
->>>               }
->>> -             /* No split if the file system does not support large f=
-olio */
->>> -             if (!mapping_large_folio_support(folio->mapping)) {
->>> +             /* No split if the file system does not support large f=
-olio.
->>> +              * Note that we might still have THPs in such mappings =
-due to
->>> +              * CONFIG_READ_ONLY_THP_FOR_FS. But in that case, the m=
-apping
->>> +              * does not actually support large folios properly.
->>> +              */
->>> +             if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) &&
->>> +                     !mapping_large_folio_support(folio->mapping)) {=
-
->>
->> Shouldn=E2=80=99t this be
->>
->> if (!IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) &&
->>         !mapping_large_folio_support(folio->mapping)) {
->>
->> ?
->>
->> When CONFIG_READ_ONLY_THP_FOR_FS is not set, we need to check
->> mapping_large_folio_support(), otherwise we do not.
->
-> while CONFIG_READ_ONLY_THP_FOR_FS is not set, that is no way
-> a large folio can be mapped to a filesystem which doesn't support
-> large folio mapping. i think
-
-That is why we have the warning below to catch this undesired
-case.
-
-> if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS)) is correct.
-
-When it is set, khugepaged can create a large pagecache folio
-on a filesystem without large folio support and the warning
-will be triggered once the created large pagecache folio
-is split. That is not what we want.
-
->
-> The below means a BUG which has never a chance to happen if it
-> is true.
->
-> !IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) &&
->         !mapping_large_folio_support(folio->mapping));
->
->>
->>>                       VM_WARN_ONCE(1,
->>>                               "Cannot split file folio to non-0 order=
-");
->>>                       return -EINVAL;
->>>               }
->>>       }
->>>
->>> +     /* Only swapping a whole PMD-mapped folio is supported */
->>> +     if (folio_test_swapcache(folio) && new_order)
->>> +             return -EINVAL;
->>>
->>>       is_hzp =3D is_huge_zero_folio(folio);
->>>       if (is_hzp) {
->>> --
->>> 2.15.2
->>
->>
->> Best Regards,
->> Yan, Zi
->
-> Thanks
-> Barry
+On Tue, May 28, 2024 at 03:39:13PM -0400, Frank Li wrote:
+> Fixed 8mp EP mode problem.
 
 
-Best Regards,
-Yan, Zi
+hi Manivannan:
 
---=_MailMate_4994FFA7-ECB1-43E7-8EBB-49D68C234227_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename=signature.asc
-Content-Type: application/pgp-signature; name=signature.asc
+	Do you have any additional comments except for the patch
+Config look up table(LUT) to support MSI ITS and IOMMU for i.MX95?
 
------BEGIN PGP SIGNATURE-----
 
-iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAmZiKPUPHHppeUBudmlk
-aWEuY29tAAoJEJ2yUfNrYfqK8AEP/RD20aIxWlwDqUKIq9+EJQGm8AR4il7BeTm9
-E1wPu6ojZ5gBMf4roKsDyLZLgG24CzoDAiFPA+KR3h8E5JjxG9YVomGEFLoi99uf
-DrsidmklQJPS8SL+KnepK05cbpibgpZ5ugLUjSV3GcPdxvb9mjOBjKHg2cVc4j7i
-ApYEIBdMD3ROLHIDa92AT3DYXE5WphW32AaEitMttnXtxxGpKCEXERp4iJ9sqw9B
-ddDiBoBE6+xxbsBYHFue/QWTYH6ffI1KtURbr0QemesPrsc4kqs1cDh9omNCSA2V
-e4EHR/8OtCGywUx+2X/AI65n7U1r4qcPjQ9Rq1xY+ecxwlmsgCw4S5lQq3ZUyZrM
-THLb9mAZGlID68azXxt/qDZklKIUHk18Wof4035ARUA0q1dkwh8m8AHF+XCdWw3v
-OoSUQ7Bv+yCvvpDa9+57XpUhUt6Hs0D5pyWD+/ioXkb5lMqNkweX51SwTiVIRB5Z
-AsIqeVeYsfGKlARJjHq5Nb1QdakgMtfiG7huH91kMW/feB9UqTbIkPSAsFOcwVh/
-DjeyAZeoKnpwS9a7wdzG/8ZX+GG6yIoJeEr2Iz+0LS54cpaxRxeTWOQo3pfjyN0p
-9owXcV3c7dxTr0LMIRjXhUSUYvapQXR40Sae+50JpwjF4Ibyzkb5OEcVeigR/pIs
-Za6zIUWM
-=APGl
------END PGP SIGNATURE-----
+Frank Li
 
---=_MailMate_4994FFA7-ECB1-43E7-8EBB-49D68C234227_=--
+> 
+> imx6 actaully for all imx chips (imx6*, imx7*, imx8*, imx9*). To avoid     
+> confuse, rename all imx6_* to imx_*, IMX6_* to IMX_*. pci-imx6.c to        
+> pci-imx.c to avoid confuse.                                                
+> 
+> Using callback to reduce switch case for core reset and refclk.            
+> 
+> Add imx95 iommux and its stream id information.                            
+> 
+> Base on linux-pci/controller/imx
+> 
+> To: Richard Zhu <hongxing.zhu@nxp.com>
+> To: Lucas Stach <l.stach@pengutronix.de>
+> To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> To: Krzysztof Wilczyński <kw@linux.com>
+> To: Rob Herring <robh@kernel.org>
+> To: Bjorn Helgaas <bhelgaas@google.com>
+> To: Shawn Guo <shawnguo@kernel.org>
+> To: Sascha Hauer <s.hauer@pengutronix.de>
+> To: Pengutronix Kernel Team <kernel@pengutronix.de>
+> To: Fabio Estevam <festevam@gmail.com>
+> To: NXP Linux Team <linux-imx@nxp.com>
+> To: Philipp Zabel <p.zabel@pengutronix.de>
+> To: Liam Girdwood <lgirdwood@gmail.com>
+> To: Mark Brown <broonie@kernel.org>
+> To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+> To: Conor Dooley <conor+dt@kernel.org>
+> Cc: linux-pci@vger.kernel.org
+> Cc: imx@lists.linux.dev
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: bpf@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> 
+> Changes in v5:                                                             
+> - Rebase to linux-pci next. fix conflict with gpiod change                    
+> - Add rob and cornor's review tag                         
+> - Link to v4: https://lore.kernel.org/r/20240507-pci2_upstream-v4-0-e8c80d874057@nxp.com
+> 
+> Changes in v4:                                                             
+> - Improve comment message for patch 1 and 2.
+> - Rework commit message for patch 3 and add mani's review tag
+> - Remove file rename patch and update maintainer patch
+> - [PATCH v3 06/11] PCI: imx: Simplify switch-case logic by involve set_ref_clk callback
+> 	remove extra space.
+> 	keep original comments format (wrap at 80 column width)
+> 	update error message "'Failed to enable PCIe REFCLK'"
+> - PATCH v3 07/11] PCI: imx: Simplify switch-case logic by involve core_reset callback
+> 	keep exact the logic as original code
+> - Add patch to update comment about workaround ERR010728
+> - Add patch about help function imx_pcie_match_device()
+> - Using bus device notify to update LUT information for imx95 to avoid
+> parse iommu-map and msi-map in driver code.  Bus notify will better and
+> only update lut when device added.
+> - split patch call PHY interface function.
+> - Improve commit message for imx8q. remove local-address dts proptery. and
+> use standard "range" to convert cpu address to bus address.             
+> - Check entry in cpu_fix function is too late. Check it at probe
+> - Link to v3: https://lore.kernel.org/r/20240402-pci2_upstream-v3-0-803414bdb430@nxp.com
+> 
+> Changes in v3:
+> - Add an EP fixed patch
+>   PCI: imx6: Fix PCIe link down when i.MX8MM and i.MX8MP PCIe is EP mode
+>   PCI: imx6: Fix i.MX8MP PCIe EP can not trigger MSI
+> - Add 8qxp rc support
+> dt-bing yaml pass binding check
+> make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8  dt_binding_check DT_SCHEMA_FILES=fsl,imx6q-pcie.yaml
+>   LINT    Documentation/devicetree/bindings
+>   DTEX    Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.example.dts
+>   CHKDT   Documentation/devicetree/bindings/processed-schema.json
+>   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+>   DTC_CHK Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.example.dtb
+> 
+> - Link to v2: https://lore.kernel.org/r/20240304-pci2_upstream-v2-0-ad07c5eb6d67@nxp.com
+> 
+> Changes in v2:
+> - remove file to 'pcie-imx.c'
+> - keep CONFIG unchange.
+> - Link to v1: https://lore.kernel.org/r/20240227-pci2_upstream-v1-0-b952f8333606@nxp.com
+> 
+> ---
+> Frank Li (8):
+>       PCI: imx6: Rename imx6_* with imx_*
+>       PCI: imx6: Introduce SoC specific callbacks for controlling REFCLK
+>       PCI: imx6: Simplify switch-case logic by involve core_reset callback
+>       PCI: imx6: Improve comment for workaround ERR010728
+>       PCI: imx6: Add help function imx_pcie_match_device()
+>       PCI: imx6: Config look up table(LUT) to support MSI ITS and IOMMU for i.MX95
+>       PCI: imx6: Consolidate redundant if-checks
+>       PCI: imx6: Call: Common PHY API to set mode, speed, and submode
+> 
+> Richard Zhu (4):
+>       PCI: imx6: Fix establish link failure in EP mode for iMX8MM and iMX8MP
+>       PCI: imx6: Fix i.MX8MP PCIe EP's occasional failure to trigger MSI
+>       dt-bindings: imx6q-pcie: Add i.MX8Q pcie compatible string
+>       PCI: imx6: Add i.MX8Q PCIe root complex (RC) support
+> 
+>  .../devicetree/bindings/pci/fsl,imx6q-pcie.yaml    |   16 +
+>  drivers/pci/controller/dwc/pci-imx6.c              | 1181 ++++++++++++--------
+>  2 files changed, 730 insertions(+), 467 deletions(-)
+> ---
+> base-commit: 50d96936b7b1be01bcc7b9ff898191214ee72697
+> change-id: 20240227-pci2_upstream-0cdd19a15163
+> 
+> Best regards,
+> ---
+> Frank Li <Frank.Li@nxp.com>
+> 
 
