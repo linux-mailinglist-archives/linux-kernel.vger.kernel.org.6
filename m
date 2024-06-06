@@ -1,58 +1,86 @@
-Return-Path: <linux-kernel+bounces-204042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D5BD8FE349
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:44:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B142E8FE34D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20DE61C262CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:44:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60F4B287EC6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24A113E3FF;
-	Thu,  6 Jun 2024 09:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C722A178398;
+	Thu,  6 Jun 2024 09:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="oynOZHFf"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WRvbFSbG"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31D11527AA
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9AC178383;
+	Thu,  6 Jun 2024 09:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717667070; cv=none; b=jJOrSFwkM51r3ATZcYzW1gJd2wKH5QOi1YJZlfWOD0pNxQxOO29r14mYG6jwLEy1FwokUu9RucbVbxYdecz2L+i7Xb2X9cXnk3dUkPA5LENkSkFSDynkV1u7ApEZoGsARhW43MVZPhcdMzQ9FPBWW/WBqnPe4PzqLrqJcE3bHlU=
+	t=1717667121; cv=none; b=jvW+EHxoxv/tkOANPsxCaPTO5t9AcvuaIpCT1mXy3M8SZn7RmkCA9koAWbVuJc3Ww6qq+DuzHIkE9mw724P1j9hq/l9ILNkuKqm3KAiHBicKQ3KGjxfLmSrPJ7tCf7xwsambxWqGRa19ziwYB/V2PonGjw2PEnZJRDZ13nIwJ3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717667070; c=relaxed/simple;
-	bh=Pj3Bnmqstms8fZSSC1sofjL8XbwRm80mDXfwIAZA8e8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=as/L9kUyKuYsqmxAmRWD84m+VVVV8ozDPMhI4mA+GZ/vZhkitMNtrP2Nq3b+p/U9pkn0aQpWzJfgtuLz09LrVYDbvKgHidkw3eZhCxBFFYMnY/BL60ePmmXj4QS5GVJHusQQwynaFL9qQ9wLPFiLUTUO0w6rDSWfuY0rIGCfwAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=oynOZHFf; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1717667064; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=SSDpadhDayKYDhxfcnPmHvLUUqjwwCKH0DV0DmvwUWk=;
-	b=oynOZHFfRtC0kEcoq0VXSQ/yrkDWddzjp6jXmKEFaWiJiRtCLKXaTziyXl/NQqNWRWUo+aqktZ3CGZr2hXGc/ui0h2D8Y7XE5d7YduF5DxMWO4ae/+BMjzFILrf3ng6gb7VADmP8rY3MEsJKsDuVPcBIVYsHwdlE+VinON8O6I0=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0W7xs-ya_1717667055;
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W7xs-ya_1717667055)
-          by smtp.aliyun-inc.com;
-          Thu, 06 Jun 2024 17:44:24 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: alexander.deucher@amd.com
-Cc: christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH] drm/amd/display: clean up some inconsistent indenting
-Date: Thu,  6 Jun 2024 17:44:14 +0800
-Message-Id: <20240606094414.703-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+	s=arc-20240116; t=1717667121; c=relaxed/simple;
+	bh=zwS8aRpk2PjtiWNBIc6j/DUCkzUhH6Dfqs4PqpkLx5g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WFLQQpnkyp2unWd6ggDdlKiuxy0z0ZX/VNsOHG13mJ3vjJwKtQrlez64pUuOKDKL+W7LEDu61wRN8gH7UnIZycaRX7fTZT5PQ287ZTGSe6E/W3lqoWwaiWbv44fE38x2NCTBahdPJrmI1nCy0UTxWTMxkH2YG+8rm/VIc350jgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WRvbFSbG; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-35e5c6600f0so623654f8f.3;
+        Thu, 06 Jun 2024 02:45:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717667118; x=1718271918; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZB61FsXEvdeTva0wKHZGI63+eRsL4trnKbQfk9L9rtI=;
+        b=WRvbFSbGMnAPOwvWMxOubyYk+dHSJHyBOEEJIVPsOm35JKm8irIu5mySnEmuo0JLKK
+         WSMxOH1f/zQmzRnJFNzGFkLjaZL64XHQkgRCB+Ap65LCtA3jS8dsoXgQfqp54YtfnpcY
+         BfjUnt8NPhVo9Auoca5ochLiuINOH8y61awvgW6VxJzw8mRfTu32bHt1QAfhBh+lM9eN
+         s3xN6toV3cB4D31rYBSB+32hKUdOiioeBRc8M9phtv3sSZhB+EG8d1bKX35mgsT+bYle
+         0S/dZ+LzUBqYs2BS/GRzZKE3oXnWC9+0q0r8ogJuQFkxaFmkgp9/BOf7rb9J/O0u/hYj
+         xU1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717667118; x=1718271918;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZB61FsXEvdeTva0wKHZGI63+eRsL4trnKbQfk9L9rtI=;
+        b=auQcOWNR2nxXTZwBYFNxzNIScanRkAfL8k4DARtu8H58GFosDZTDornv5H7zx0/x/x
+         JSyKhtROxMVK5IGg84RAb8qDA3WC0fRNV0oZ+nsRWCxpT5HKesBoc8WxDB98cRV54oGo
+         0/WgRR6TtH5YkPslc09wf32ucYNMURoY5urk+RSOI9BxPdtfvex+oKeBfXlo1EX7/6kb
+         e91Nsm1wYIRvmjhe6tAUC8g9/4EVtTiaQZiuHzg9t+Gpz5hVPKoRcjMxD27T+dbCpPDh
+         1dTL84N2gJgluTHXWf102i29uwMC2dHzlEgnhcfyIWHz3PaCtu/uWx+lrfdh/xDKuMwF
+         +GBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXVVXkCPMJgqEZ/keo097qX98neLE3d7Xvwp0nAx2VgrxudOZwqpFgipTegPt4iR/WrCDiZaW01YpjQd4y2q5dLU3/oS/U8cUZRYXUpvFxgtSBMOpGC24FZUMTNiY4U6PnjVWS/C5txIw==
+X-Gm-Message-State: AOJu0YykzESwPa87Bx2j/Gmv96xRGsRf1vL4Z8B6jLWDNDoSl/lbT3gM
+	oalSukSON/BAi6Z2uskdqe1ExmkEhZRyDbEJOyLSL8YDroSnMPUg
+X-Google-Smtp-Source: AGHT+IEYqlkNtr2dIqwmiztFMsgFnSBixadRM5Vl8vwGezMTvxuiQnVcKhqjqfys2YOKPQVjWIxxIQ==
+X-Received: by 2002:a05:6000:1749:b0:355:52a:eb37 with SMTP id ffacd0b85a97d-35e8ef861bcmr3676931f8f.67.1717667117732;
+        Thu, 06 Jun 2024 02:45:17 -0700 (PDT)
+Received: from toolbox.. ([87.200.95.144])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d47930sm1094817f8f.29.2024.06.06.02.45.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 02:45:17 -0700 (PDT)
+From: Christian Hewitt <christianshewitt@gmail.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Christian Hewitt <christianshewitt@gmail.com>
+Subject: [PATCH 1/3] dt-bindings: add dream vendor prefix
+Date: Thu,  6 Jun 2024 09:45:11 +0000
+Message-Id: <20240606094513.3949323-1-christianshewitt@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,65 +89,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-No functional modification involved.
+Add a vendor prefix for Dream Property GmbH
 
-drivers/gpu/drm/amd/amdgpu/../display/dc/clk_mgr/dcn32/dcn32_clk_mgr.c:529 dcn32_auto_dpm_test_log() warn: inconsistent indenting.
-
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9294
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
 ---
- .../display/dc/clk_mgr/dcn32/dcn32_clk_mgr.c  | 36 +++++++++----------
- 1 file changed, 17 insertions(+), 19 deletions(-)
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn32/dcn32_clk_mgr.c b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn32/dcn32_clk_mgr.c
-index ff5fdc7b1198..7300e793d506 100644
---- a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn32/dcn32_clk_mgr.c
-+++ b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn32/dcn32_clk_mgr.c
-@@ -525,25 +525,23 @@ static void dcn32_auto_dpm_test_log(
- 
- 	mall_ss_size_bytes = context->bw_ctx.bw.dcn.mall_ss_size_bytes;
- 
--    dispclk_khz_reg    = REG_READ(CLK1_CLK0_CURRENT_CNT); // DISPCLK
--    dppclk_khz_reg     = REG_READ(CLK1_CLK1_CURRENT_CNT); // DPPCLK
--    dprefclk_khz_reg   = REG_READ(CLK1_CLK2_CURRENT_CNT); // DPREFCLK
--    dcfclk_khz_reg     = REG_READ(CLK1_CLK3_CURRENT_CNT); // DCFCLK
--    dtbclk_khz_reg     = REG_READ(CLK1_CLK4_CURRENT_CNT); // DTBCLK
--    fclk_khz_reg       = REG_READ(CLK4_CLK0_CURRENT_CNT); // FCLK
--
--    // Overrides for these clocks in case there is no p_state change support
--    dramclk_khz_override = new_clocks->dramclk_khz;
--    fclk_khz_override = new_clocks->fclk_khz;
--
--    num_fclk_levels = clk_mgr->base.bw_params->clk_table.num_entries_per_clk.num_fclk_levels - 1;
--
--    if (!new_clocks->p_state_change_support) {
--	    dramclk_khz_override = clk_mgr->base.bw_params->max_memclk_mhz * 1000;
--    }
--    if (!new_clocks->fclk_p_state_change_support) {
--	    fclk_khz_override = clk_mgr->base.bw_params->clk_table.entries[num_fclk_levels].fclk_mhz * 1000;
--    }
-+	dispclk_khz_reg    = REG_READ(CLK1_CLK0_CURRENT_CNT); // DISPCLK
-+	dppclk_khz_reg     = REG_READ(CLK1_CLK1_CURRENT_CNT); // DPPCLK
-+	dprefclk_khz_reg   = REG_READ(CLK1_CLK2_CURRENT_CNT); // DPREFCLK
-+	dcfclk_khz_reg     = REG_READ(CLK1_CLK3_CURRENT_CNT); // DCFCLK
-+	dtbclk_khz_reg     = REG_READ(CLK1_CLK4_CURRENT_CNT); // DTBCLK
-+	fclk_khz_reg       = REG_READ(CLK4_CLK0_CURRENT_CNT); // FCLK
-+
-+	// Overrides for these clocks in case there is no p_state change support
-+	dramclk_khz_override = new_clocks->dramclk_khz;
-+	fclk_khz_override = new_clocks->fclk_khz;
-+
-+	num_fclk_levels = clk_mgr->base.bw_params->clk_table.num_entries_per_clk.num_fclk_levels - 1;
-+
-+	if (!new_clocks->p_state_change_support)
-+		dramclk_khz_override = clk_mgr->base.bw_params->max_memclk_mhz * 1000;
-+	if (!new_clocks->fclk_p_state_change_support)
-+		fclk_khz_override = clk_mgr->base.bw_params->clk_table.entries[num_fclk_levels].fclk_mhz * 1000;
- 
- 	////////////////////////////////////////////////////////////////////////////
- 	//	IMPORTANT: 	When adding more clocks to these logs, do NOT put a newline
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index fbf47f0bacf1..a6cb1eb8e5e0 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -394,6 +394,8 @@ patternProperties:
+     description: DPTechnics
+   "^dragino,.*":
+     description: Dragino Technology Co., Limited
++  "^dream,.*":
++    description: Dream Property GmbH
+   "^ds,.*":
+     description: DaSheng, Inc.
+   "^dserve,.*":
 -- 
-2.20.1.7.g153144c
+2.34.1
 
 
