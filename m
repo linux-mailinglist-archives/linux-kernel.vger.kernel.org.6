@@ -1,335 +1,131 @@
-Return-Path: <linux-kernel+bounces-203534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094B58FDCBB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 04:29:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC0B8FDCCA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 04:33:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83BC91F21C27
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 02:29:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CEE71F23C8E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 02:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D5B199B8;
-	Thu,  6 Jun 2024 02:29:01 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27E7199B8;
+	Thu,  6 Jun 2024 02:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IvamltEO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A817440C
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 02:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BC018638;
+	Thu,  6 Jun 2024 02:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717640941; cv=none; b=ZtTXuiA7FmcSpW6Hx4U4fhGHzFSdWbjoiylsgBfP5aRq4kV6zmfIVAFhyDi5ebo859+wZljOw+ovIydTCtLnY63n/bDniLc6DuUyfM8llFvSYnOk18614PMY7vayl52KbTerehVwDog+g/jqk+spe4P3xL7pBHU+QNCU7+UV2tI=
+	t=1717641200; cv=none; b=eky+eLyswsK5Kkp5MaXUfmiQrsX8nMqzorq1HvdjZf++zNflft8bVucvd3Sc9QZDruRfQbAtakC/W6oHkq5zVLndosTZt2nzf0CtknT+ku6zaaOnfAKTUkZtQ9+Ou9FfAsXY6+D1mN63/3IcmVv4P/zNOwE7CXjBr5cKdMrCgEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717640941; c=relaxed/simple;
-	bh=2AMkdPZKWvsmYsD3O+AX8oQXTToIpdh1ZGXeChHjSqg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sxPB/Ejrsap7NZVWC6Oc/Z9+P8U7DPjpfl2/GLHHXaU3JHj3vIjRBU6F22HkUlayTn8j9kfJ/Yn1niErMyv3wTh+4U9m2QklBUxVBoRdGJKDn75kbe1vDVeOr6TJFuOY369xDgVbvxKjgM8DliRySYY+iki0mt/9gbynSrEn5uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 820b9f9423ac11ef9305a59a3cc225df-20240606
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:de1b0203-e0e8-4176-94ec-70658eecebe5,IP:20,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:15
-X-CID-INFO: VERSION:1.1.38,REQID:de1b0203-e0e8-4176-94ec-70658eecebe5,IP:20,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:15
-X-CID-META: VersionHash:82c5f88,CLOUDID:ef59916cf3e3bdb1ea0193934f573148,BulkI
-	D:240606102255V77OWLIM,BulkQuantity:1,Recheck:0,SF:72|19|44|66|24|102,TC:n
-	il,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil,COL
-	:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_FSI,TF_CID_SPAM_SNR,TF_CID_SPAM_FSD
-X-UUID: 820b9f9423ac11ef9305a59a3cc225df-20240606
-Received: from node4.com.cn [(39.156.73.12)] by mailgw.kylinos.cn
-	(envelope-from <xialonglong@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1940339978; Thu, 06 Jun 2024 10:28:49 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id 470D516002081;
-	Thu,  6 Jun 2024 10:28:49 +0800 (CST)
-X-ns-mid: postfix-66611EE1-139648339
-Received: from kylin-pc.. (unknown [172.25.130.133])
-	by node4.com.cn (NSMail) with ESMTPA id 560E416002081;
-	Thu,  6 Jun 2024 02:28:46 +0000 (UTC)
-From: Longlong Xia <xialonglong@kylinos.cn>
-To: mark@fasheh.com
-Cc: jlbec@evilplan.org,
-	joseph.qi@linux.alibaba.com,
-	ocfs2-devel@lists.linux.dev,
+	s=arc-20240116; t=1717641200; c=relaxed/simple;
+	bh=muKFlTEZQ/AQ40SVi7FdGPUE3Q7TaOqoPMNhx6FRIis=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pjx9NOEP/H78kAvAb6mGgjgClB9/P60kd/iysJ8nk3a8rCpBwAK6eJs7rDxRS3QIZMXNgLRhykERj/41lW3/yzey6kZD91Dff3AtNxacPGuhmyq3FCHCffIQh5Es1WR1FAQmya6lL9oqLTdkwHnNndYUK6bCiCba0spPrgooMMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IvamltEO; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717641198; x=1749177198;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=muKFlTEZQ/AQ40SVi7FdGPUE3Q7TaOqoPMNhx6FRIis=;
+  b=IvamltEOgtXMtxdEw4ntO/A1LSgGO+X15yYXIAVjxFR7fX7Pg58M6mpb
+   rbqgrMPa8+sRo1yJ7B2eUx9YPd4mn+z4OU/bIoOce/ALLng7lJKJcXmXk
+   l8GIP/uVx9IKmCDsCf3lyi8sotouyRh7z3KY0D0mKTKqG8eNTlH+pWzbo
+   5BgnzmVvug/sW0EjZ4EjTTjeouS8kgUsuc1PLDTp9V/iiP5pTa4BukFkz
+   L8pgb+LgrKlwrha+YW7H/+epocu6VReyJHDXABVibgg9J2V52lgOmWNlO
+   wAnyc5CK5HBC6kPSn1kvjbuD9mWz9joQ6VpRHdEOJ0YPspgjWih6lLqpU
+   A==;
+X-CSE-ConnectionGUID: nhMFWSdRQx63ePPHmkAb2g==
+X-CSE-MsgGUID: xe+3TQPGQeSAfoQjFuntbw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="14126980"
+X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
+   d="scan'208";a="14126980"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 19:33:17 -0700
+X-CSE-ConnectionGUID: BrP0J7NBQcSH/Fh3z9CL0g==
+X-CSE-MsgGUID: z9U+ODy6T/WnF0YSM+WryQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
+   d="scan'208";a="68621101"
+Received: from unknown (HELO yhuang6-mobl2.sh.intel.com) ([10.238.6.133])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 19:33:14 -0700
+From: Huang Ying <ying.huang@intel.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>
+Cc: linux-acpi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Longlong Xia <xialonglong@kylinos.cn>
-Subject: [PATCH] ocfs2: convert to pr_fmt
-Date: Thu,  6 Jun 2024 10:28:23 +0800
-Message-ID: <20240606022823.1296737-1-xialonglong@kylinos.cn>
-X-Mailer: git-send-email 2.45.1
+	Huang Ying <ying.huang@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Bharata B Rao <bharata@amd.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
+Subject: [PATCH] acpi,hmat: Use ACCESS_COORDINATE_CPU when appropriate
+Date: Thu,  6 Jun 2024 10:28:45 +0800
+Message-Id: <20240606022845.189710-1-ying.huang@intel.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Use the pr_fmt() macro to prefix all the output with "o2net: ".
-while at it, convert printk(<LEVEL>) to pr_<level>().
+To improve the readability of the code via replacing the magic number
+"1" with ACCESS_COORDINATE_CPU when appropriate.  No functionality
+change.
 
-Signed-off-by: Longlong Xia <xialonglong@kylinos.cn>
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Bharata B Rao <bharata@amd.com>
+Cc: Alistair Popple <apopple@nvidia.com>
+Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 ---
- fs/ocfs2/cluster/tcp.c | 109 ++++++++++++++++++-----------------------
- 1 file changed, 49 insertions(+), 60 deletions(-)
+ drivers/acpi/numa/hmat.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/ocfs2/cluster/tcp.c b/fs/ocfs2/cluster/tcp.c
-index 2b8fa3e782fb..fc483c7c4fb4 100644
---- a/fs/ocfs2/cluster/tcp.c
-+++ b/fs/ocfs2/cluster/tcp.c
-@@ -37,6 +37,8 @@
-  * and only accepts the connection if the higher numbered node is heartb=
-eating.
-  */
-=20
-+#define pr_fmt(fmt) "o2net: " fmt
-+
- #include <linux/kernel.h>
- #include <linux/sched/mm.h>
- #include <linux/jiffies.h>
-@@ -528,18 +530,16 @@ static void o2net_set_nn_state(struct o2net_node *n=
-n,
-=20
- 	if (was_valid && !valid) {
- 		if (old_sc)
--			printk(KERN_NOTICE "o2net: No longer connected to "
--				SC_NODEF_FMT "\n", SC_NODEF_ARGS(old_sc));
-+			pr_notice("No longer connected to " SC_NODEF_FMT "\n",
-+				  SC_NODEF_ARGS(old_sc));
- 		o2net_complete_nodes_nsw(nn);
- 	}
-=20
- 	if (!was_valid && valid) {
- 		o2quo_conn_up(o2net_num_from_nn(nn));
- 		cancel_delayed_work(&nn->nn_connect_expired);
--		printk(KERN_NOTICE "o2net: %s " SC_NODEF_FMT "\n",
--		       o2nm_this_node() > sc->sc_node->nd_num ?
--		       "Connected to" : "Accepted connection from",
--		       SC_NODEF_ARGS(sc));
-+		pr_notice("%s " SC_NODEF_FMT "\n", o2nm_this_node() > sc->sc_node->nd_=
-num ?
-+			  "Connected to" : "Accepted connection from", SC_NODEF_ARGS(sc));
- 	}
-=20
- 	/* trigger the connecting worker func as long as we're not valid,
-@@ -629,9 +629,8 @@ static void o2net_state_change(struct sock *sk)
- 		o2net_sc_queue_work(sc, &sc->sc_connect_work);
- 		break;
- 	default:
--		printk(KERN_INFO "o2net: Connection to " SC_NODEF_FMT
--			" shutdown, state %d\n",
--			SC_NODEF_ARGS(sc), sk->sk_state);
-+		pr_notice("Connection to " SC_NODEF_FMT " shutdown, state %d\n",
-+			  SC_NODEF_ARGS(sc), sk->sk_state);
- 		o2net_sc_queue_work(sc, &sc->sc_shutdown_work);
- 		break;
- 	}
-@@ -1260,11 +1259,10 @@ static int o2net_check_handshake(struct o2net_soc=
-k_container *sc)
- 	struct o2net_node *nn =3D o2net_nn_from_num(sc->sc_node->nd_num);
-=20
- 	if (hand->protocol_version !=3D cpu_to_be64(O2NET_PROTOCOL_VERSION)) {
--		printk(KERN_NOTICE "o2net: " SC_NODEF_FMT " Advertised net "
--		       "protocol version %llu but %llu is required. "
--		       "Disconnecting.\n", SC_NODEF_ARGS(sc),
--		       (unsigned long long)be64_to_cpu(hand->protocol_version),
--		       O2NET_PROTOCOL_VERSION);
-+		pr_notice(SC_NODEF_FMT " Advertised net protocol version %llu but %llu=
- is required. Disconnecting.\n",
-+			SC_NODEF_ARGS(sc),
-+			(unsigned long long)be64_to_cpu(hand->protocol_version),
-+			O2NET_PROTOCOL_VERSION);
-=20
- 		/* don't bother reconnecting if its the wrong version. */
- 		o2net_ensure_shutdown(nn, sc, -ENOTCONN);
-@@ -1278,33 +1276,30 @@ static int o2net_check_handshake(struct o2net_soc=
-k_container *sc)
- 	 */
- 	if (be32_to_cpu(hand->o2net_idle_timeout_ms) !=3D
- 				o2net_idle_timeout()) {
--		printk(KERN_NOTICE "o2net: " SC_NODEF_FMT " uses a network "
--		       "idle timeout of %u ms, but we use %u ms locally. "
--		       "Disconnecting.\n", SC_NODEF_ARGS(sc),
--		       be32_to_cpu(hand->o2net_idle_timeout_ms),
--		       o2net_idle_timeout());
-+		pr_notice(SC_NODEF_FMT " uses a network idle timeout of %u ms, but we =
-use %u ms locally. Disconnecting.\n",
-+			  SC_NODEF_ARGS(sc),
-+			  be32_to_cpu(hand->o2net_idle_timeout_ms),
-+			  o2net_idle_timeout());
- 		o2net_ensure_shutdown(nn, sc, -ENOTCONN);
- 		return -1;
- 	}
-=20
- 	if (be32_to_cpu(hand->o2net_keepalive_delay_ms) !=3D
- 			o2net_keepalive_delay()) {
--		printk(KERN_NOTICE "o2net: " SC_NODEF_FMT " uses a keepalive "
--		       "delay of %u ms, but we use %u ms locally. "
--		       "Disconnecting.\n", SC_NODEF_ARGS(sc),
--		       be32_to_cpu(hand->o2net_keepalive_delay_ms),
--		       o2net_keepalive_delay());
-+		pr_notice(SC_NODEF_FMT " uses a keepalive delay of %u ms, but we use %=
-u ms locally. Disconnecting.\n",
-+			  SC_NODEF_ARGS(sc),
-+			  be32_to_cpu(hand->o2net_keepalive_delay_ms),
-+			  o2net_keepalive_delay());
- 		o2net_ensure_shutdown(nn, sc, -ENOTCONN);
- 		return -1;
- 	}
-=20
- 	if (be32_to_cpu(hand->o2hb_heartbeat_timeout_ms) !=3D
- 			O2HB_MAX_WRITE_TIMEOUT_MS) {
--		printk(KERN_NOTICE "o2net: " SC_NODEF_FMT " uses a heartbeat "
--		       "timeout of %u ms, but we use %u ms locally. "
--		       "Disconnecting.\n", SC_NODEF_ARGS(sc),
--		       be32_to_cpu(hand->o2hb_heartbeat_timeout_ms),
--		       O2HB_MAX_WRITE_TIMEOUT_MS);
-+		pr_notice(SC_NODEF_FMT " uses a heartbeat timeout of %u ms, but we use=
- %u ms locally. Disconnecting.\n",
-+			  SC_NODEF_ARGS(sc),
-+			  be32_to_cpu(hand->o2hb_heartbeat_timeout_ms),
-+			  O2HB_MAX_WRITE_TIMEOUT_MS);
- 		o2net_ensure_shutdown(nn, sc, -ENOTCONN);
- 		return -1;
- 	}
-@@ -1497,9 +1492,8 @@ static void o2net_idle_timer(struct timer_list *t)
- 	unsigned long msecs =3D o2net_idle_timeout();
- #endif
-=20
--	printk(KERN_NOTICE "o2net: Connection to " SC_NODEF_FMT " has been "
--	       "idle for %lu.%lu secs.\n",
--	       SC_NODEF_ARGS(sc), msecs / 1000, msecs % 1000);
-+	pr_notice("Connection to " SC_NODEF_FMT " has been idle for %lu.%lu sec=
-s.\n",
-+		  SC_NODEF_ARGS(sc), msecs / 1000, msecs % 1000);
-=20
- 	/* idle timerout happen, don't shutdown the connection, but
- 	 * make fence decision. Maybe the connection can recover before
-@@ -1645,8 +1639,8 @@ static void o2net_start_connect(struct work_struct =
-*work)
-=20
- out:
- 	if (ret && sc) {
--		printk(KERN_NOTICE "o2net: Connect attempt to " SC_NODEF_FMT
--		       " failed with errno %d\n", SC_NODEF_ARGS(sc), ret);
-+		pr_notice("Connect attempt to " SC_NODEF_FMT " failed with errno %d\n"=
-,
-+			  SC_NODEF_ARGS(sc), ret);
- 		/* 0 err so that another will be queued and attempted
- 		 * from set_nn_state */
- 		o2net_ensure_shutdown(nn, sc, 0);
-@@ -1669,12 +1663,10 @@ static void o2net_connect_expired(struct work_str=
-uct *work)
-=20
- 	spin_lock(&nn->nn_lock);
- 	if (!nn->nn_sc_valid) {
--		printk(KERN_NOTICE "o2net: No connection established with "
--		       "node %u after %u.%u seconds, check network and"
--		       " cluster configuration.\n",
--		     o2net_num_from_nn(nn),
--		     o2net_idle_timeout() / 1000,
--		     o2net_idle_timeout() % 1000);
-+		pr_notice("No connection established with node %u after %u.%u seconds,=
- check network and cluster configuration.\n",
-+			  o2net_num_from_nn(nn),
-+			  o2net_idle_timeout() / 1000,
-+			  o2net_idle_timeout() % 1000);
-=20
- 		o2net_set_nn_state(nn, NULL, 0, 0);
- 	}
-@@ -1821,9 +1813,9 @@ static int o2net_accept_one(struct socket *sock, in=
-t *more)
-=20
- 	node =3D o2nm_get_node_by_ip(sin.sin_addr.s_addr);
- 	if (node =3D=3D NULL) {
--		printk(KERN_NOTICE "o2net: Attempt to connect from unknown "
--		       "node at %pI4:%d\n", &sin.sin_addr.s_addr,
--		       ntohs(sin.sin_port));
-+		pr_notice("Attempt to connect from unknown node at %pI4:%d\n",
-+			  &sin.sin_addr.s_addr,
-+			  ntohs(sin.sin_port));
- 		ret =3D -EINVAL;
- 		goto out;
- 	}
-@@ -1831,15 +1823,13 @@ static int o2net_accept_one(struct socket *sock, =
-int *more)
- 	if (o2nm_this_node() >=3D node->nd_num) {
- 		local_node =3D o2nm_get_node_by_num(o2nm_this_node());
- 		if (local_node)
--			printk(KERN_NOTICE "o2net: Unexpected connect attempt "
--					"seen at node '%s' (%u, %pI4:%d) from "
--					"node '%s' (%u, %pI4:%d)\n",
--					local_node->nd_name, local_node->nd_num,
--					&(local_node->nd_ipv4_address),
--					ntohs(local_node->nd_ipv4_port),
--					node->nd_name,
--					node->nd_num, &sin.sin_addr.s_addr,
--					ntohs(sin.sin_port));
-+			pr_notice("Unexpected connect attempt seen at node '%s' (%u, %pI4:%d)=
- from node '%s' (%u, %pI4:%d)\n",
-+				  local_node->nd_name, local_node->nd_num,
-+				  &(local_node->nd_ipv4_address),
-+				  ntohs(local_node->nd_ipv4_port),
-+				  node->nd_name,
-+				  node->nd_num, &sin.sin_addr.s_addr,
-+				  ntohs(sin.sin_port));
- 		ret =3D -EINVAL;
- 		goto out;
- 	}
-@@ -1864,10 +1854,9 @@ static int o2net_accept_one(struct socket *sock, i=
-nt *more)
- 		ret =3D 0;
- 	spin_unlock(&nn->nn_lock);
- 	if (ret) {
--		printk(KERN_NOTICE "o2net: Attempt to connect from node '%s' "
--		       "at %pI4:%d but it already has an open connection\n",
--		       node->nd_name, &sin.sin_addr.s_addr,
--		       ntohs(sin.sin_port));
-+		pr_notice("Attempt to connect from node '%s' at %pI4:%d but it already=
- has an open connection\n",
-+			  node->nd_name, &sin.sin_addr.s_addr,
-+			  ntohs(sin.sin_port));
- 		goto out;
- 	}
-=20
-@@ -1986,7 +1975,7 @@ static int o2net_open_listening_sock(__be32 addr, _=
-_be16 port)
-=20
- 	ret =3D sock_create(PF_INET, SOCK_STREAM, IPPROTO_TCP, &sock);
- 	if (ret < 0) {
--		printk(KERN_ERR "o2net: Error %d while creating socket\n", ret);
-+		pr_err("Error %d while creating socket\n", ret);
- 		goto out;
- 	}
-=20
-@@ -2003,14 +1992,14 @@ static int o2net_open_listening_sock(__be32 addr,=
- __be16 port)
- 	sock->sk->sk_reuse =3D SK_CAN_REUSE;
- 	ret =3D sock->ops->bind(sock, (struct sockaddr *)&sin, sizeof(sin));
- 	if (ret < 0) {
--		printk(KERN_ERR "o2net: Error %d while binding socket at "
--		       "%pI4:%u\n", ret, &addr, ntohs(port));=20
-+		pr_err("Error %d while binding socket at %pI4:%u\n",
-+		       ret, &addr, ntohs(port));
- 		goto out;
- 	}
-=20
- 	ret =3D sock->ops->listen(sock, 64);
- 	if (ret < 0)
--		printk(KERN_ERR "o2net: Error %d while listening on %pI4:%u\n",
-+		pr_err("Error %d while listening on %pI4:%u\n",
- 		       ret, &addr, ntohs(port));
-=20
- out:
---=20
-2.45.1
+diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
+index 2c8ccc91ebe6..febd9e51350b 100644
+--- a/drivers/acpi/numa/hmat.c
++++ b/drivers/acpi/numa/hmat.c
+@@ -408,7 +408,7 @@ static __init void hmat_update_target(unsigned int tgt_pxm, unsigned int init_px
+ 	if (target && target->processor_pxm == init_pxm) {
+ 		hmat_update_target_access(target, type, value,
+ 					  ACCESS_COORDINATE_LOCAL);
+-		/* If the node has a CPU, update access 1 */
++		/* If the node has a CPU, update access ACCESS_COORDINATE_CPU */
+ 		if (node_state(pxm_to_node(init_pxm), N_CPU))
+ 			hmat_update_target_access(target, type, value,
+ 						  ACCESS_COORDINATE_CPU);
+@@ -948,7 +948,7 @@ static int hmat_set_default_dram_perf(void)
+ 		target = find_mem_target(pxm);
+ 		if (!target)
+ 			continue;
+-		attrs = &target->coord[1];
++		attrs = &target->coord[ACCESS_COORDINATE_CPU];
+ 		rc = mt_set_default_dram_perf(nid, attrs, "ACPI HMAT");
+ 		if (rc)
+ 			return rc;
+@@ -975,7 +975,7 @@ static int hmat_calculate_adistance(struct notifier_block *self,
+ 	hmat_update_target_attrs(target, p_nodes, ACCESS_COORDINATE_CPU);
+ 	mutex_unlock(&target_lock);
+ 
+-	perf = &target->coord[1];
++	perf = &target->coord[ACCESS_COORDINATE_CPU];
+ 
+ 	if (mt_perf_to_adistance(perf, adist))
+ 		return NOTIFY_OK;
+-- 
+2.39.2
 
 
