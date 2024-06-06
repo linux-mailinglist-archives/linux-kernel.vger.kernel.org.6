@@ -1,289 +1,115 @@
-Return-Path: <linux-kernel+bounces-204447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C2478FEEE2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:47:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCD448FEE25
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D45B42882F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:47:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C96CE1C25273
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B731C89F9;
-	Thu,  6 Jun 2024 14:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEFC19751F;
+	Thu,  6 Jun 2024 14:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="8ML/ykKc"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JEAj96XI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695641A1870;
-	Thu,  6 Jun 2024 14:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4F2196C78
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717683711; cv=none; b=Oxr1oKr6hCsIT+1hN8s2QhLVbfOQiFcKKKjyyh5iBInhVR7pQ9f05nbYpKTY53pPHTNgOz83dltOlQI9Dx8VcqDiqfSHThfEHqMeXDjtL7a9DddP/QPpC8NBsdTpUsak4n9DDJvdj7oIwa8hHxnLpMzr5/kog++P3+C8Lbo5zdA=
+	t=1717683581; cv=none; b=aWDOGIxVxE4j39l5oBQZjBoxOicKS1ZhWoEZ/idiiu8HTl9THg6miWdMk0G/umHpZCNZF6NMQ/kX6aKXseWEwxQRhZQJ/Oayu/lCxXMVR9tJcldpAuoFj/HwkFcYBVyeIWReAXx8u25O8ti6Cj8lCqvTVDQF1gjNP8z24IK2Bg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717683711; c=relaxed/simple;
-	bh=asA+uMOznSQ+uh+OJ3HJvC8ffuxHhFvXpmLgqwzby2s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WMEA9f6J6pQJB6+pXE7v/fz4ekTX654wND8rotGDIGWk+khASlpTgAuTnd46IW1x6i3Wo5ulIYd9bYl2Votc4sCNtp8ooTBja6vSsfBV5AURjNiZAHSMNIlLwcmxlaaVxU0fvs9ijH2quBCU+Zd9728KjFuQv2qwP9BPdmYUAHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=8ML/ykKc; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 456DATsk011720;
-	Thu, 6 Jun 2024 16:21:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	YuWBowVYFdiavONSsRxqhorTe84oDx2sCtAFnnT47NE=; b=8ML/ykKcjyjJmz6l
-	4iDFAIR1sqVmecSVa6YEpkdePS0uOYmuYnFGXBzvlcSOGST35g5SpQrwEW4giOPd
-	5b7bnZEnTCHVB0FW1a9OlWLPgExMC6bAtmQYc8RA3hWX9k3NMuYnLs1AB8ALP6tx
-	U4TH+NOIcfy8mPEEwLLDpYrgAIqqMFG7uFGX7ayvGT2TMftQCSgtYA6gv+vCIylB
-	51xxQFA6dqoreCeYV4aMiOT4klBibSLeKyFSwKmbzBfYuocZ6x7VGXS+nlPWLAUp
-	5xEcCbjtyzmhesZ5HP5+jaCAO7B5BeN76+BYaXbGj570VWNtwAZJphftBZE9ftzz
-	2wiEtg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ygekj4nex-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Jun 2024 16:21:00 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A671B40044;
-	Thu,  6 Jun 2024 16:20:54 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AF6C3217B8E;
-	Thu,  6 Jun 2024 16:19:38 +0200 (CEST)
-Received: from [10.48.86.164] (10.48.86.164) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 6 Jun
- 2024 16:19:37 +0200
-Message-ID: <73f7b4a4-31d1-4907-b83b-2ac7758edf0d@foss.st.com>
-Date: Thu, 6 Jun 2024 16:19:36 +0200
+	s=arc-20240116; t=1717683581; c=relaxed/simple;
+	bh=xmEdPDXw1k/BWduDyUVJLV259V5w3Fa90zom/EWQBFk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bxhG44Lc46v+RG+87NwfUM4cki9O6rTITGVXzvLsrqRR0Xb1tWtxwaj4+yUjV9bhX4yKTu1mwSlhmYfDmEzjtxqApzT85edicFfgDl1SYCjJUaBwKD1tnQY+XKYxbbz2O1ZuQUgsfg3HOpylBSapZD1hEU6WCLJfpyOJr4hg2ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JEAj96XI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0939EC2BD10;
+	Thu,  6 Jun 2024 14:19:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717683581;
+	bh=xmEdPDXw1k/BWduDyUVJLV259V5w3Fa90zom/EWQBFk=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=JEAj96XIpIO8CBmuyI6nhs3Mj9yer+/ii3D4GgzK/9cOYp60HZaQxY3fZkRAXORVv
+	 2lfgYC70M+Db7+Ht/VjPrFhuErIvi8H5nR71Df8qsUoL5+JnMzdHW2NZ/gHpO5w1qA
+	 HV4O4GnnG0P6toiMR2QXOP2ISFR8VIW1DHYtOG9PIAt6LGmNUyCJJVl1wpIBmg+DbL
+	 eNkKk+5hGmT9dQfY4mS7C2MXukA0aAaNrCoNfr3/BMoX9B/0xxUzJGZNn2/dgdbpEQ
+	 8jpVdwmjGxN44DkJyZVrRuY0cIkVLMjYM5UYd5BCJjSxUDZjE1tHqTkwxuMgQT9Lyd
+	 j0Z4249u5aIpw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 9512FCE3F34; Thu,  6 Jun 2024 07:19:40 -0700 (PDT)
+Date: Thu, 6 Jun 2024 07:19:40 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Jan Beulich <jbeulich@suse.com>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	linux-mm <linux-mm@kvack.org>, lkft-triage@lists.linaro.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: x86: WARNING: at mm/memblock.c:1339 memblock_set_node - Usage of
+ MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead
+Message-ID: <20c484a5-d797-4782-b5b5-bea5fcae9284@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <CA+G9fYsGFerOtoxwpKLOYcRtyJkmgjdP=qg4Y5iP5q-4Lt17Lg@mail.gmail.com>
+ <315d6873-d618-4126-b67a-de62502d7ee2@paulmck-laptop>
+ <7d55b65e-331a-4ce2-8f72-d3c5c9e6eae0@suse.com>
+ <e220910c-da6e-40ab-895f-87fd43c1de3f@paulmck-laptop>
+ <eaa90c1a-ae96-4506-90dd-146ce85d311c@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/11] net: ethernet: stmmac: add management of
- stm32mp13 for stm32
-To: Marek Vasut <marex@denx.de>, "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo
- Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre
- Torgue <alexandre.torgue@foss.st.com>,
-        Richard Cochran
-	<richardcochran@gmail.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Liam Girdwood
-	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240604143502.154463-1-christophe.roullier@foss.st.com>
- <20240604143502.154463-8-christophe.roullier@foss.st.com>
- <3c40352b-ad69-4847-b665-e7b2df86a684@denx.de>
-Content-Language: en-US
-From: Christophe ROULLIER <christophe.roullier@foss.st.com>
-In-Reply-To: <3c40352b-ad69-4847-b665-e7b2df86a684@denx.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-06_01,2024-06-06_02,2024-05-17_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eaa90c1a-ae96-4506-90dd-146ce85d311c@suse.com>
 
+On Thu, Jun 06, 2024 at 08:13:17AM +0200, Jan Beulich wrote:
+> On 05.06.2024 22:48, Paul E. McKenney wrote:
+> > On Wed, Jun 05, 2024 at 09:46:37PM +0200, Jan Beulich wrote:
+> >> On 05.06.2024 21:07, Paul E. McKenney wrote:
+> >>> On Mon, Jun 03, 2024 at 07:19:21PM +0530, Naresh Kamboju wrote:
+> >>>> The following kernel warnings are noticed on x86 devices while booting
+> >>>> the Linux next-20240603 tag and looks like it is expected to warn users to
+> >>>> use NUMA_NO_NODE instead.
+> >>>>
+> >>>> Usage of MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead
+> >>>>
+> >>>> The following config is enabled
+> >>>> CONFIG_NUMA=y
+> >>>
+> >>> I am seeing this as well.  Is the following commit premature?
+> >>>
+> >>> e0eec24e2e19 ("memblock: make memblock_set_node() also warn about use of MAX_NUMNODES")
+> >>>
+> >>> Maybe old ACPI tables and device trees need to catch up?
+> >>>
+> >>> Left to myself, I would simply remove the WARN_ON_ONCE() from the above
+> >>> commit, but I would guess that there is a better way.
+> >>
+> >> Well, the warning is issued precisely to make clear that call
+> >> sites need to change. A patch to do so for the two instances
+> >> on x86 that I'm aware of is already pending maintainer approval.
+> > 
+> > Could you please point me at that patch so that I can stop repeatedly
+> > reproducing those two particular issues?
+> 
+> https://lore.kernel.org/lkml/abadb736-a239-49e4-ab42-ace7acdd4278@suse.com/
 
-On 6/4/24 19:05, Marek Vasut wrote:
-> On 6/4/24 4:34 PM, Christophe Roullier wrote:
->> Add Ethernet support for STM32MP13.
->> STM32MP13 is STM32 SOC with 2 GMACs instances.
->> GMAC IP version is SNPS 4.20.
->> GMAC IP configure with 1 RX and 1 TX queue.
->> DMA HW capability register supported
->> RX Checksum Offload Engine supported
->> TX Checksum insertion supported
->> Wake-Up On Lan supported
->> TSO supported
->>
->> Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
->> ---
->>   .../net/ethernet/stmicro/stmmac/dwmac-stm32.c | 50 +++++++++++++++----
->>   1 file changed, 40 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c 
->> b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
->> index bed2be129b2d2..e59f8a845e01e 100644
->> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
->> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
->> @@ -84,12 +84,14 @@ struct stm32_dwmac {
->>       struct clk *clk_eth_ck;
->>       struct clk *clk_ethstp;
->>       struct clk *syscfg_clk;
->> +    bool is_mp13;
->>       int ext_phyclk;
->>       int enable_eth_ck;
->>       int eth_clk_sel_reg;
->>       int eth_ref_clk_sel_reg;
->>       int irq_pwr_wakeup;
->>       u32 mode_reg;         /* MAC glue-logic mode register */
->> +    u32 mode_mask;
->>       struct regmap *regmap;
->>       u32 speed;
->>       const struct stm32_ops *ops;
->> @@ -102,8 +104,8 @@ struct stm32_ops {
->>       void (*resume)(struct stm32_dwmac *dwmac);
->>       int (*parse_data)(struct stm32_dwmac *dwmac,
->>                 struct device *dev);
->> -    u32 syscfg_eth_mask;
->>       bool clk_rx_enable_in_suspend;
->> +    u32 syscfg_clr_off;
->>   };
->>     static int stm32_dwmac_clk_enable(struct stm32_dwmac *dwmac, bool 
->> resume)
->> @@ -227,7 +229,14 @@ static int stm32mp1_configure_pmcr(struct 
->> plat_stmmacenet_data *plat_dat)
->>         switch (plat_dat->mac_interface) {
->>       case PHY_INTERFACE_MODE_MII:
->> -        val = SYSCFG_PMCR_ETH_SEL_MII;
->> +        /*
->> +         * STM32MP15xx supports both MII and GMII, STM32MP13xx MII 
->> only.
->> +         * SYSCFG_PMCSETR ETH_SELMII is present only on STM32MP15xx and
->> +         * acts as a selector between 0:GMII and 1:MII. As STM32MP13xx
->> +         * supports only MII, ETH_SELMII is not present.
->> +         */
->> +        if (!dwmac->is_mp13)    /* Select MII mode on STM32MP15xx */
->> +            val |= SYSCFG_PMCR_ETH_SEL_MII;
->>           break;
->>       case PHY_INTERFACE_MODE_GMII:
->>           val = SYSCFG_PMCR_ETH_SEL_GMII;
->> @@ -256,13 +265,16 @@ static int stm32mp1_configure_pmcr(struct 
->> plat_stmmacenet_data *plat_dat)
->>         dev_dbg(dwmac->dev, "Mode %s", 
->> phy_modes(plat_dat->mac_interface));
->>   +    /* Shift value at correct ethernet MAC offset in 
->> SYSCFG_PMCSETR */
->> +    val <<= ffs(dwmac->mode_mask) - ffs(SYSCFG_MP1_ETH_MASK);
->> +
->>       /* Need to update PMCCLRR (clear register) */
->> -    regmap_write(dwmac->regmap, reg + SYSCFG_PMCCLRR_OFFSET,
->> -             dwmac->ops->syscfg_eth_mask);
->> +    regmap_write(dwmac->regmap, dwmac->ops->syscfg_clr_off,
->> +             dwmac->mode_mask);
->>         /* Update PMCSETR (set register) */
->>       return regmap_update_bits(dwmac->regmap, reg,
->> -                 dwmac->ops->syscfg_eth_mask, val);
->> +                 dwmac->mode_mask, val);
->>   }
->>     static int stm32mp1_set_mode(struct plat_stmmacenet_data *plat_dat)
->> @@ -303,7 +315,7 @@ static int stm32mcu_set_mode(struct 
->> plat_stmmacenet_data *plat_dat)
->>       dev_dbg(dwmac->dev, "Mode %s", 
->> phy_modes(plat_dat->mac_interface));
->>         return regmap_update_bits(dwmac->regmap, reg,
->> -                 dwmac->ops->syscfg_eth_mask, val << 23);
->> +                 SYSCFG_MCU_ETH_MASK, val << 23);
->>   }
->>     static void stm32_dwmac_clk_disable(struct stm32_dwmac *dwmac, 
->> bool suspend)
->> @@ -348,8 +360,15 @@ static int stm32_dwmac_parse_data(struct 
->> stm32_dwmac *dwmac,
->>           return PTR_ERR(dwmac->regmap);
->>         err = of_property_read_u32_index(np, "st,syscon", 1, 
->> &dwmac->mode_reg);
->> -    if (err)
->> +    if (err) {
->>           dev_err(dev, "Can't get sysconfig mode offset (%d)\n", err);
->> +        return err;
->> +    }
->> +
->> +    dwmac->mode_mask = SYSCFG_MP1_ETH_MASK;
->> +    err = of_property_read_u32_index(np, "st,syscon", 2, 
->> &dwmac->mode_mask);
->> +    if (err)
->> +        pr_debug("Warning sysconfig register mask not set\n");
->
-> I _think_ you need to left-shift the mode mask by 8 for STM32MP13xx 
-> second GMAC somewhere in here, right ?
->
-The shift is performed in function stm32mp1_configure_pmcr:
+Thank you, Jan!
 
-     /* Shift value at correct ethernet MAC offset in SYSCFG_PMCSETR */
-     val <<= ffs(dwmac->mode_mask) - ffs(SYSCFG_MP1_ETH_MASK);
+A quick initial test shows that this clears things up.  I have started
+a longer test to check for additional issues.  But in the meantime
+for the issues I was already seeing in the initial test:
 
-In case of MP13 Ethernet1 or MP15, shift equal 0
+Tested-by: Paul E. McKenney <paulmck@kernel.org>
 
-In case of MP13 Ethernet2 , shift equal 8  ;-)
-
->>       return err;
->>   }
->> @@ -361,6 +380,8 @@ static int stm32mp1_parse_data(struct stm32_dwmac 
->> *dwmac,
->>       struct device_node *np = dev->of_node;
->>       int err = 0;
->>   +    dwmac->is_mp13 = of_device_is_compatible(np, 
->> "st,stm32mp13-dwmac");
->
-> You could make is_mp13 part of struct stm32_ops {} just like 
-> syscfg_clr_off is part of struct stm32_ops {} .
-ok
->
->>       /* Ethernet PHY have no crystal */
->>       dwmac->ext_phyclk = of_property_read_bool(np, "st,ext-phyclk");
->>   @@ -540,8 +561,7 @@ static SIMPLE_DEV_PM_OPS(stm32_dwmac_pm_ops,
->>       stm32_dwmac_suspend, stm32_dwmac_resume);
->>     static struct stm32_ops stm32mcu_dwmac_data = {
->> -    .set_mode = stm32mcu_set_mode,
->> -    .syscfg_eth_mask = SYSCFG_MCU_ETH_MASK
->> +    .set_mode = stm32mcu_set_mode
->
-> It is not necessary to remove the trailing comma ','
-ok
->
->>   };
->>     static struct stm32_ops stm32mp1_dwmac_data = {
->> @@ -549,13 +569,23 @@ static struct stm32_ops stm32mp1_dwmac_data = {
->>       .suspend = stm32mp1_suspend,
->>       .resume = stm32mp1_resume,
->>       .parse_data = stm32mp1_parse_data,
->> -    .syscfg_eth_mask = SYSCFG_MP1_ETH_MASK,
->> +    .syscfg_clr_off = 0x44,
->> +    .clk_rx_enable_in_suspend = true
->> +};
->> +
->> +static struct stm32_ops stm32mp13_dwmac_data = {
->> +    .set_mode = stm32mp1_set_mode,
->> +    .suspend = stm32mp1_suspend,
->> +    .resume = stm32mp1_resume,
->> +    .parse_data = stm32mp1_parse_data,
->> +    .syscfg_clr_off = 0x08,
->>       .clk_rx_enable_in_suspend = true
->>   };
->>     static const struct of_device_id stm32_dwmac_match[] = {
->>       { .compatible = "st,stm32-dwmac", .data = &stm32mcu_dwmac_data},
->>       { .compatible = "st,stm32mp1-dwmac", .data = 
->> &stm32mp1_dwmac_data},
->> +    { .compatible = "st,stm32mp13-dwmac", .data = 
->> &stm32mp13_dwmac_data},
->>       { }
->>   };
->>   MODULE_DEVICE_TABLE(of, stm32_dwmac_match);
->
-> This patch definitely looks MUCH better than what this series started 
-> with, it is much easier to grasp the MP13 specific changes.
->
-> You could possibly improve this further and split the 
-> dwmac->ops->syscfg_eth_mask to dwmac->mode_mask conversion into 
-> separate preparatory patch (as a 6.5/11 in context of this series), 
-> and then add the few MP13 changes on top (as 7/11 patch).
-ok
+							Thanx, Paul
 
