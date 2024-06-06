@@ -1,219 +1,406 @@
-Return-Path: <linux-kernel+bounces-203694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC958FDF23
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:52:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D178FDF1F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E06C28D4BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:52:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72E63B257B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF7F13AA42;
-	Thu,  6 Jun 2024 06:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B984E13A3E2;
+	Thu,  6 Jun 2024 06:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tdUOIgq+"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PaiC5FDh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E8612B17C;
-	Thu,  6 Jun 2024 06:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0C119D898;
+	Thu,  6 Jun 2024 06:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717656759; cv=none; b=BWQVIfk+ZW6G7exR605Oq9vujNh/22EQLFhZBzAPkr0ju1Mrv1c6K+bVsiJizG1YJENQuORrjABw/AftWtEG9lRj801P77U+5EDMoKclmMFwiA4IRo0sMPfjiAqiV5Wk5ZIcdsiDn6VpyoUepgUFVHXV6hnm6RtIsMtWeQqFK+A=
+	t=1717656727; cv=none; b=AW/85CPP5eZHPcRQyp0axmUt06hCTlgK24draXaexBWPjh4yOekJkpTcokmLs+bYDoz/7woRi9oLe2NqyE394Zn8u9sQMCINWgeHGOVi7h7hwaUOHKW+4NPgECNIprcD6z1ci2DaiLChwqfrmpQSJum5So3Khcce/V4cL2VxxKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717656759; c=relaxed/simple;
-	bh=0mjjMGe367OYg5qoD1T9yoMijPlKQtT0gPZ5+U4wZrI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ocWuKlU5temMq5IVv077EnYzPfOIi8xFdqHI6O/sM3RZ3lRPreR4Fj6XygQoiO45+JC6y9ItAZtIcFo52AppRQHgiIrxRxQFkTCTbXF9WM+ecFRBPceiMaStfZ1xTi89LdYSplSekuOfbXiDPesR4eMibhnWbSAmUCCnsYTHg1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tdUOIgq+; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4566q532069189;
-	Thu, 6 Jun 2024 01:52:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717656725;
-	bh=KbbDyP4RKxjaOkCv02Y6AO/CjOQIQ/JQJ8NahY4g11A=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=tdUOIgq+Wom6F7mkCWT/Xez1YG4kE4YrFlnCHd4PXNHfE08lsCV6PCYWVIW1Q48ge
-	 UDpnUy2SRLh1ll7GNhVHGAshsmZbZLyWzbqES1yFtl8lznIO3KGnke4i61ikwrAwlt
-	 czyV2OK0OiP86wzcrOsOw/6rx/qHMSTbcHT2fSiE=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4566q5Bv112149
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 6 Jun 2024 01:52:05 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 6
- Jun 2024 01:52:05 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 6 Jun 2024 01:52:05 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4566q43h080133;
-	Thu, 6 Jun 2024 01:52:05 -0500
-Date: Thu, 6 Jun 2024 12:22:04 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <davem@davemloft.net>,
-        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        <corbet@lwn.net>, <rogerq@kernel.org>, <danishanwar@ti.com>,
-        <vladimir.oltean@nxp.com>, <netdev@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <vigneshr@ti.com>,
-        <misael.lopez@ti.com>, <srk@ti.com>
-Subject: Re: [RFC PATCH net-next 01/28] docs: networking: ti: add driver doc
- for CPSW Proxy Client
-Message-ID: <3586d2d1-1f03-47b0-94c0-258e48525a9d@ti.com>
-References: <20240518124234.2671651-1-s-vadapalli@ti.com>
- <20240518124234.2671651-2-s-vadapalli@ti.com>
- <642c8217-49fe-4c54-8d62-9550202c02c9@lunn.ch>
- <6e520ad0-0f9b-4fee-87fe-44477b01912b@ti.com>
- <287322d3-d3ee-4de6-9189-97067bc4835c@lunn.ch>
+	s=arc-20240116; t=1717656727; c=relaxed/simple;
+	bh=aVZFhiIpqTKVnjdLgL8jJJWTtDahdSBgcm8WObNGDZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TZ2LYo4qzcfPQFoKxuA94OCUJVA5VoaHHD44TU3cGaEuocfT6ztK7//rFxg+AKRMuJiT671ZJoa6wX8qaSyEf9+IUm5GFfMGnY7otiPcMRiBJ2m4Z7KlKa6B12jub7l5YpZSFvp0YZ1DJ3iAnlhVHFyYRrJhBN9Levtl6TjJTvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PaiC5FDh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AACBCC2BD10;
+	Thu,  6 Jun 2024 06:52:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717656727;
+	bh=aVZFhiIpqTKVnjdLgL8jJJWTtDahdSBgcm8WObNGDZ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PaiC5FDhxjkXPXOd01cb4MzBHU7YcQobjTq10qEMNZhEXFQyCVxVDs4OhuB5MptLG
+	 Upv9FJUnRJwjc7HKBZilZmPJIoNh8o2G8zhCqbSHViVNDEKro22ee9d1MqmmOG54G9
+	 QcD1884LVgUC7Bs/yebPEVKfy4pRh5N1odpBUbtEkCcm0kvYOvsba37DICuUUD/M29
+	 /4CLzkl6kTdiepz6YW/E6A7OiT/JVu72+mq+oBIZZqba+UQJhkJW+OmH2cABr5wvC9
+	 rys2aA4RhWyzJv1PxI1BguPKw3enKaihOP+4KG1tWen5akxpPswrdfbUQ5ko2+W5J9
+	 weZCWEf0ET7rw==
+Date: Wed, 5 Jun 2024 23:52:05 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Cc: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
+	irogers@google.com, segher@kernel.crashing.org,
+	christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	akanksha@linux.ibm.com, maddy@linux.ibm.com, kjain@linux.ibm.com,
+	disgoel@linux.vnet.ibm.com
+Subject: Re: [PATCH V3 06/14] tools/perf: Update parameters for reg extract
+ functions to use raw instruction on powerpc
+Message-ID: <ZmFclbqQytaZt1Ep@google.com>
+References: <20240601060941.13692-1-atrajeev@linux.vnet.ibm.com>
+ <20240601060941.13692-7-atrajeev@linux.vnet.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <287322d3-d3ee-4de6-9189-97067bc4835c@lunn.ch>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20240601060941.13692-7-atrajeev@linux.vnet.ibm.com>
 
-On Tue, Jun 04, 2024 at 04:20:16PM +0200, Andrew Lunn wrote:
-> On Sun, Jun 02, 2024 at 09:36:05AM +0530, Siddharth Vadapalli wrote:
-
-[...]
+On Sat, Jun 01, 2024 at 11:39:33AM +0530, Athira Rajeev wrote:
+> Use the raw instruction code and macros to identify memory instructions,
+> extract register fields and also offset. The implementation addresses
+> the D-form, X-form, DS-form instructions. Two main functions are added.
+> New parse function "load_store__parse" as instruction ops parser for
+> memory instructions. Unlink other parser (like mov__parse), this parser
+> fills in the "raw_insn" field for source/target and new added "mem_ref"
+> field. Also set if it is multi_regs and opcode as well. No other fields
+> are set because, here there is no need to parse the disassembled
+> code and arch specific macros will take care of extracting offset and
+> regs which is easier and will be precise.
 > 
-> If you do want to add a third model, where Linux has some insight into
-> the switch, you need to coordinate with other vendors in the
-> automotive world, and come up with a model which everybody can
-> use. What i don't want is a TI model, followed by a Realtek model,
-> followed by a vendor XYZ model. So if you need more than what the
-> first model above provides, you will need to get a consortium of
-> vendors together to design a new model a few vendors agree on.
+> In powerpc, all instructions with a primary opcode from 32 to 63
+> are memory instructions. Update "ins__find" function to have "raw_insn"
+> also as a parameter. Don't use the "extract_reg_offset", instead use
+> newly added function "get_arch_regs" which will set these fields: reg1,
+> reg2, offset depending of where it is source or target ops.
+> 
+> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+> ---
+>  .../perf/arch/powerpc/annotate/instructions.c | 16 +++++
+>  tools/perf/arch/powerpc/util/dwarf-regs.c     | 44 +++++++++++++
+>  tools/perf/util/annotate.c                    | 25 +++++++-
+>  tools/perf/util/disasm.c                      | 64 +++++++++++++++++--
+>  tools/perf/util/disasm.h                      |  4 +-
+>  tools/perf/util/include/dwarf-regs.h          |  3 +
+>  6 files changed, 147 insertions(+), 9 deletions(-)
+> 
+> diff --git a/tools/perf/arch/powerpc/annotate/instructions.c b/tools/perf/arch/powerpc/annotate/instructions.c
+> index d57fd023ef9c..10fea5e5cf4c 100644
+> --- a/tools/perf/arch/powerpc/annotate/instructions.c
+> +++ b/tools/perf/arch/powerpc/annotate/instructions.c
+> @@ -49,6 +49,22 @@ static struct ins_ops *powerpc__associate_instruction_ops(struct arch *arch, con
+>  	return ops;
+>  }
+>  
+> +#define PPC_OP(op)      (((op) >> 26) & 0x3F)
+> +
+> +static struct ins_ops *check_ppc_insn(int raw_insn)
+> +{
+> +	int opcode = PPC_OP(raw_insn);
+> +
+> +	/*
+> +	 * Instructions with opcode 32 to 63 are memory
+> +	 * instructions in powerpc
+> +	 */
+> +	if ((opcode & 0x20))
+> +		return &load_store_ops;
+> +
+> +	return NULL;
+> +}
+> +
+>  static int powerpc__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
+>  {
+>  	if (!arch->initialized) {
+> diff --git a/tools/perf/arch/powerpc/util/dwarf-regs.c b/tools/perf/arch/powerpc/util/dwarf-regs.c
+> index 430623ca5612..38b74fa01d8b 100644
+> --- a/tools/perf/arch/powerpc/util/dwarf-regs.c
+> +++ b/tools/perf/arch/powerpc/util/dwarf-regs.c
+> @@ -107,3 +107,47 @@ int regs_query_register_offset(const char *name)
+>  #define PPC_DS(DS)	((DS) & 0xfffc)
+>  #define OP_LD	58
+>  #define OP_STD	62
+> +
+> +static int get_source_reg(unsigned int raw_insn)
+> +{
+> +	return PPC_RA(raw_insn);
+> +}
+> +
+> +static int get_target_reg(unsigned int raw_insn)
+> +{
+> +	return PPC_RT(raw_insn);
+> +}
+> +
+> +static int get_offset_opcode(int raw_insn __maybe_unused)
 
-I believe that a third model is required given the System Architecture
-and the use-case that it must cater to. I agree completely that having a
-vendor specific implementation should always be the last step when it is
-just not possible to generalize any portion of the implementation. I will
-describe the existing Architecture on the TI SoC and will also attempt to
-generalize the implementation below. I hope that you could review it and
-guide me towards the generic, vendor-agnostic implementation which will
-also address the use-case that this series corresponds to. I am willing
-to work on the generic implementation since I assume that this series
-does keep it generic enough that it could be extended to be vendor
-independent. So there might be minor changes required when switching to
-the generic model. On the other hand, based on the description that I
-provide below, if you think that the existing models can also be slightly
-modified to accomodate the use-case, I will surely take that into
-consideration and work on the corresponding implementation.
+The argument is used below, no need for __maybe_unused.
 
-System Architecture and Implementation Details
-==============================================
+> +{
+> +	int opcode = PPC_OP(raw_insn);
+> +
+> +	/* DS- form */
+> +	if ((opcode == OP_LD) || (opcode == OP_STD))
+> +		return PPC_DS(raw_insn);
+> +	else
+> +		return PPC_D(raw_insn);
+> +}
+> +
+> +/*
+> + * Fills the required fields for op_loc depending on if it
+> + * is a source or target.
+> + * D form: ins RT,D(RA) -> src_reg1 = RA, offset = D, dst_reg1 = RT
+> + * DS form: ins RT,DS(RA) -> src_reg1 = RA, offset = DS, dst_reg1 = RT
+> + * X form: ins RT,RA,RB -> src_reg1 = RA, src_reg2 = RB, dst_reg1 = RT
+> + */
+> +void get_arch_regs(int raw_insn __maybe_unused, int is_source __maybe_unused,
+> +		struct annotated_op_loc *op_loc __maybe_unused)
 
-The CPSW Ethernet Switch has a single Host Port (CPU facing port) through
-which it can receive data from the Host(s) and transmit data to the
-Host(s). The exchange of data occurs via TX/RX DMA Channels (Hardware
-Queues). These Hardware Queues are a limited resource (8 TX Channels and
-up to 64 RX Flows). If the Operating System on any of the cores is the
-sole user of CPSW then all of these Hardware Queues can be claimed by that
-OS. However, when CPSW has to be shared across the Operating Systems on
-various cores with the aim of enabling Ethernet Functionality for the
-Applications running on different cores, it is necessary to share these
-Hardware Queues in a manner that prevents conflicts. On the control path
-which corresponds to the configuration of CPSW to get it up and running,
-since there is no Integrated Processor within CPSW that can be programmed
-with a startup configuration, either the Operating System or Firmware
-running on one of the cores has to take the responsibility of setting it.
-One option in this case happens to be the Ethernet Switch Firmware (EthFw)
-which is loaded by the Bootloader on a remote core at the same time that
-Linux and other Operating Systems begin booting. EthFw quickly powers on
-and configures CPSW getting the Forwarding Path functional. Once Linux and
-other Operating Systems on various cores are ready, they can communicate
-with EthFw to obtain details of the Hardware Queues allocated to them to
-exchange data with CPSW. With the knowledge of the Hardware Queues that
-have been allocated, Linux can use the DMA APIs to setup these queues
-to exchange data with CPSW.
+Ditto.
 
-Setting up the Hardware Queues alone isn't sufficient to exchange data
-with the external network. Consider the following example:
-The ethX interface in userspace which has been created to transmit/receive
-data to/from CPSW has the user-assigned MAC Address of "M". The ping
-command is run with the destination IP of "D". This results in an ARP
-request sent from ethX which is transmitted out of all MAC Ports of CPSW
-since it is a Broadcast request. Assuming that "D" is a valid
-destination IP, the ARP reply is received on one of the MAC Ports which
-is now a Unicast reply with the destination MAC Address of "M". The ALE
-(Address Lookup Engine) in CPSW has learnt that the MAC Address "M"
-corresponds to the Host Port when the ARP request was sent out. So the
-Unicast reply isn't dropped. The challenge however is determining which
-RX DMA Channel (Flow) to send the Unicast reply on. In the case of a
-single Operating System owning all Hardware Queues, sending it on any of
-the RX DMA Channels would have worked. In the current case where the RX
-DMA Channels map to different Hosts (Operating Systems and Applications),
-the mapping between the MAC Address "M" and the RX DMA Channel has to be
-setup to ensure that the correct Host receives the ARP reply. This
-necessitates a method to inform the MAC Address "M" associated with the
-interface ethX to EthFw so that EthFw can setup the MAC Address "M" to
-RX DMA Channel map accordingly.
+Thanks,
+Namhyung
 
-At this point, Linux can exchange data with the external network via CPSW,
-but no device on the external network can initiate the communication by
-itself unless it already has the ARP entry for the IP Address of ethX.
-That's because CPSW doesn't support packet replication implying that any
-Broadcast/Multicast packets received on the MAC Ports can only be sent
-on one of the RX DMA Channels. So the Broadcast/Multicast packets can
-only be received by one Host. Consider the following example:
-A PC on the network tries to ping the IP Address of ethX. In both of the
-following cases:
-1. Linux hasn't yet exchanged data with the PC via ethX.
-2. The MAC Address of ethX has changed.
-the PC sends an ARP request to one of the MAC Ports on CPSW to figure
-out the MAC Address of ethX. Since the ARP request is a Broadcast
-request, it is not possible for CPSW to determine the correct Host,
-since the Broadcast MAC isn't unique to any Host. So CPSW is forced
-to send the Broadcast request to a preconfigured RX DMA Channel which
-in this case happens to be the one mapped to EthFw. Thus, if EthFw
-is aware of the IP Address of ethX, it can generate and send the ARP
-reply containing the MAC Address "M" of ethX that it was informed of.
-With this, the PC can initiate communication with Linux as well.
 
-Similarly, in the case of Multicast packets, if Linux wishes to receive
-certain Multicast packets, it needs to inform the same to EthFw which
-shall then replicate the Multicast packets it received from CPSW and
-transmit them via alternate means (Shared Memory for example) to Linux.
-
-The following is a summary of the steps so far required to enable
-Ethernet Functionality for applications running on Linux:
-1. Determine and setup the Hardware Queues allocated to Linux
-2. Inform the MAC Address of ethX to EthFw
-3. Inform the IP Address of ethX to EthFw
-4. Inform any of the Multicast Addresses associated with ethX to EthFw
-
-All data between Linux (Or any Operating System) and EthFw is exchanged
-via the Hardware Mailboxes with the help of the RPMsg framework. Since
-all the resource allocation information comes from EthFw, the
-vendor-specific implementation in the Linux Client is limited to the DMA
-APIs used to setup the Hardware Queues and to transmit/receive data with
-the Ethernet Switch. Therefore, it might be possible to move most of the
-vendor specific implementation to the Switch Configuration Firmware
-(similar to EthFw), to make the Linux Client implementation as generic
-and vendor agnostic as possible. I believe that this series more or less
-does the same, just using custom terminology which can be made generic.
-
-I can update this series to a generic implementation along with proper
-documentation and naming convention to enable any vendor to reuse the
-same without having to modify the implementation. The RPMsg ABIs can
-be given generic names with extensive documentation and also designed
-to be extensible enough to cater to functional enhancements over time.
-
-Kindly let me know your thoughts on this.
-
-Regards,
-Siddharth.
+> +{
+> +	if (is_source)
+> +		op_loc->reg1 = get_source_reg(raw_insn);
+> +	else
+> +		op_loc->reg1 = get_target_reg(raw_insn);
+> +
+> +	if (op_loc->multi_regs)
+> +		op_loc->reg2 = PPC_RB(raw_insn);
+> +
+> +	/* TODO: Implement offset handling for X Form */
+> +	if ((op_loc->mem_ref) && (PPC_OP(raw_insn) != 31))
+> +		op_loc->offset = get_offset_opcode(raw_insn);
+> +}
+> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> index 1451caf25e77..2b8cc759ae35 100644
+> --- a/tools/perf/util/annotate.c
+> +++ b/tools/perf/util/annotate.c
+> @@ -2079,6 +2079,12 @@ static int extract_reg_offset(struct arch *arch, const char *str,
+>  	return 0;
+>  }
+>  
+> +__weak void get_arch_regs(int raw_insn __maybe_unused, int is_source __maybe_unused,
+> +		struct annotated_op_loc *op_loc __maybe_unused)
+> +{
+> +	return;
+> +}
+> +
+>  /**
+>   * annotate_get_insn_location - Get location of instruction
+>   * @arch: the architecture info
+> @@ -2123,20 +2129,33 @@ int annotate_get_insn_location(struct arch *arch, struct disasm_line *dl,
+>  	for_each_insn_op_loc(loc, i, op_loc) {
+>  		const char *insn_str = ops->source.raw;
+>  		bool multi_regs = ops->source.multi_regs;
+> +		bool mem_ref = ops->source.mem_ref;
+>  
+>  		if (i == INSN_OP_TARGET) {
+>  			insn_str = ops->target.raw;
+>  			multi_regs = ops->target.multi_regs;
+> +			mem_ref = ops->target.mem_ref;
+>  		}
+>  
+>  		/* Invalidate the register by default */
+>  		op_loc->reg1 = -1;
+>  		op_loc->reg2 = -1;
+>  
+> -		if (insn_str == NULL)
+> -			continue;
+> +		if (insn_str == NULL) {
+> +			if (!arch__is(arch, "powerpc"))
+> +				continue;
+> +		}
+>  
+> -		if (strchr(insn_str, arch->objdump.memory_ref_char)) {
+> +		/*
+> +		 * For powerpc, call get_arch_regs function which extracts the
+> +		 * required fields for op_loc, ie reg1, reg2, offset from the
+> +		 * raw instruction.
+> +		 */
+> +		if (arch__is(arch, "powerpc")) {
+> +			op_loc->mem_ref = mem_ref;
+> +			op_loc->multi_regs = multi_regs;
+> +			get_arch_regs(ops->raw_insn, !i, op_loc);
+> +		} else if (strchr(insn_str, arch->objdump.memory_ref_char)) {
+>  			op_loc->mem_ref = true;
+>  			op_loc->multi_regs = multi_regs;
+>  			extract_reg_offset(arch, insn_str, op_loc);
+> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
+> index 61f0f1656f82..252cb0d1f5d1 100644
+> --- a/tools/perf/util/disasm.c
+> +++ b/tools/perf/util/disasm.c
+> @@ -37,6 +37,7 @@ static struct ins_ops mov_ops;
+>  static struct ins_ops nop_ops;
+>  static struct ins_ops lock_ops;
+>  static struct ins_ops ret_ops;
+> +static struct ins_ops load_store_ops;
+>  
+>  static int jump__scnprintf(struct ins *ins, char *bf, size_t size,
+>  			   struct ins_operands *ops, int max_ins_name);
+> @@ -517,7 +518,7 @@ static int lock__parse(struct arch *arch, struct ins_operands *ops, struct map_s
+>  	if (disasm_line__parse(ops->raw, &ops->locked.ins.name, &ops->locked.ops->raw) < 0)
+>  		goto out_free_ops;
+>  
+> -	ops->locked.ins.ops = ins__find(arch, ops->locked.ins.name);
+> +	ops->locked.ins.ops = ins__find(arch, ops->locked.ins.name, 0);
+>  
+>  	if (ops->locked.ins.ops == NULL)
+>  		goto out_free_ops;
+> @@ -672,6 +673,47 @@ static struct ins_ops mov_ops = {
+>  	.scnprintf = mov__scnprintf,
+>  };
+>  
+> +static int load_store__scnprintf(struct ins *ins, char *bf, size_t size,
+> +		struct ins_operands *ops, int max_ins_name)
+> +{
+> +	return scnprintf(bf, size, "%-*s %s", max_ins_name, ins->name,
+> +			ops->raw);
+> +}
+> +
+> +/*
+> + * Sets the fields: "raw_insn", opcode, multi_regs and "mem_ref".
+> + * "mem_ref" is set for ops->source which is later used to
+> + * fill the objdump->memory_ref-char field. This ops is currently
+> + * used by powerpc and since binary instruction code is used to
+> + * extract opcode, regs and offset, no other parsing is needed here
+> + */
+> +static int load_store__parse(struct arch *arch __maybe_unused, struct ins_operands *ops,
+> +		struct map_symbol *ms __maybe_unused)
+> +{
+> +	ops->source.raw_insn = ops->raw_insn;
+> +	ops->source.mem_ref = true;
+> +	ops->source.opcode = ops->opcode;
+> +	ops->source.multi_regs = false;
+> +
+> +	if (!ops->source.raw_insn)
+> +		return -1;
+> +
+> +	ops->target.raw_insn = ops->raw_insn;
+> +	ops->target.mem_ref = false;
+> +	ops->target.multi_regs = false;
+> +	ops->target.opcode = ops->opcode;
+> +
+> +	if (!ops->target.raw_insn)
+> +		return -1;
+> +
+> +	return 0;
+> +}
+> +
+> +static struct ins_ops load_store_ops = {
+> +	.parse     = load_store__parse,
+> +	.scnprintf = load_store__scnprintf,
+> +};
+> +
+>  static int dec__parse(struct arch *arch __maybe_unused, struct ins_operands *ops, struct map_symbol *ms __maybe_unused)
+>  {
+>  	char *target, *comment, *s, prev;
+> @@ -762,11 +804,23 @@ static void ins__sort(struct arch *arch)
+>  	qsort(arch->instructions, nmemb, sizeof(struct ins), ins__cmp);
+>  }
+>  
+> -static struct ins_ops *__ins__find(struct arch *arch, const char *name)
+> +static struct ins_ops *__ins__find(struct arch *arch, const char *name, int raw_insn)
+>  {
+>  	struct ins *ins;
+>  	const int nmemb = arch->nr_instructions;
+>  
+> +	if (arch__is(arch, "powerpc")) {
+> +		/*
+> +		 * For powerpc, identify the instruction ops
+> +		 * from the opcode using raw_insn.
+> +		 */
+> +		struct ins_ops *ops;
+> +
+> +		ops = check_ppc_insn(raw_insn);
+> +		if (ops)
+> +			return ops;
+> +	}
+> +
+>  	if (!arch->sorted_instructions) {
+>  		ins__sort(arch);
+>  		arch->sorted_instructions = true;
+> @@ -796,9 +850,9 @@ static struct ins_ops *__ins__find(struct arch *arch, const char *name)
+>  	return ins ? ins->ops : NULL;
+>  }
+>  
+> -struct ins_ops *ins__find(struct arch *arch, const char *name)
+> +struct ins_ops *ins__find(struct arch *arch, const char *name, int raw_insn)
+>  {
+> -	struct ins_ops *ops = __ins__find(arch, name);
+> +	struct ins_ops *ops = __ins__find(arch, name, raw_insn);
+>  
+>  	if (!ops && arch->associate_instruction_ops)
+>  		ops = arch->associate_instruction_ops(arch, name);
+> @@ -808,7 +862,7 @@ struct ins_ops *ins__find(struct arch *arch, const char *name)
+>  
+>  static void disasm_line__init_ins(struct disasm_line *dl, struct arch *arch, struct map_symbol *ms)
+>  {
+> -	dl->ins.ops = ins__find(arch, dl->ins.name);
+> +	dl->ins.ops = ins__find(arch, dl->ins.name, dl->ops.raw_insn);
+>  
+>  	if (!dl->ins.ops)
+>  		return;
+> diff --git a/tools/perf/util/disasm.h b/tools/perf/util/disasm.h
+> index a391e1bb81f7..831ebcc329cd 100644
+> --- a/tools/perf/util/disasm.h
+> +++ b/tools/perf/util/disasm.h
+> @@ -62,6 +62,7 @@ struct ins_operands {
+>  		bool	offset_avail;
+>  		bool	outside;
+>  		bool	multi_regs;
+> +		bool	mem_ref;
+>  	} target;
+>  	union {
+>  		struct {
+> @@ -71,6 +72,7 @@ struct ins_operands {
+>  			int	raw_insn;
+>  			u64	addr;
+>  			bool	multi_regs;
+> +			bool	mem_ref;
+>  		} source;
+>  		struct {
+>  			struct ins	    ins;
+> @@ -104,7 +106,7 @@ struct annotate_args {
+>  struct arch *arch__find(const char *name);
+>  bool arch__is(struct arch *arch, const char *name);
+>  
+> -struct ins_ops *ins__find(struct arch *arch, const char *name);
+> +struct ins_ops *ins__find(struct arch *arch, const char *name, int raw_insn);
+>  int ins__scnprintf(struct ins *ins, char *bf, size_t size,
+>  		   struct ins_operands *ops, int max_ins_name);
+>  
+> diff --git a/tools/perf/util/include/dwarf-regs.h b/tools/perf/util/include/dwarf-regs.h
+> index 01fb25a1150a..7ea39362ecaf 100644
+> --- a/tools/perf/util/include/dwarf-regs.h
+> +++ b/tools/perf/util/include/dwarf-regs.h
+> @@ -1,6 +1,7 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+>  #ifndef _PERF_DWARF_REGS_H_
+>  #define _PERF_DWARF_REGS_H_
+> +#include "annotate.h"
+>  
+>  #define DWARF_REG_PC  0xd3af9c /* random number */
+>  #define DWARF_REG_FB  0xd3affb /* random number */
+> @@ -31,6 +32,8 @@ static inline int get_dwarf_regnum(const char *name __maybe_unused,
+>  }
+>  #endif
+>  
+> +void get_arch_regs(int raw_insn, int is_source, struct annotated_op_loc *op_loc);
+> +
+>  #ifdef HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET
+>  /*
+>   * Arch should support fetching the offset of a register in pt_regs
+> -- 
+> 2.43.0
+> 
 
