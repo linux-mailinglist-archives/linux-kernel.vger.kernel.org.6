@@ -1,105 +1,143 @@
-Return-Path: <linux-kernel+bounces-204148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C15FD8FE4C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:57:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB118FE4CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:58:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DFCA1F272A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:57:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1440CB2295C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D7C195391;
-	Thu,  6 Jun 2024 10:56:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D839450;
-	Thu,  6 Jun 2024 10:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DD5195395;
+	Thu,  6 Jun 2024 10:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jRGQkBAH"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73EB195387
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 10:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717671413; cv=none; b=oUnIGlVnIdzFVH+0g2Fw/unbS7ai0m4HDhF81wRnHFPO5Hbl+vjEukF607VR4t6KW0sofDkKk7AAKJiC6HNcLU9SXX6Lgqh6kle+gjQG6tUQ/nRjYupsdf780n/I7wGYO96kHanblqv13jLoy9ywtYwvzRDn9yRCw3rbKDF3omM=
+	t=1717671508; cv=none; b=HKqI2pSIEvYH16KYmMh3cV+ind4HyHWfenHX2OMO4GzZXpTa/GGfRr+xLGZm+waeDRK9ZjzjOGGxC0FK/ARdKBF+posx33h5r7tsVLzE/zSzTxWLySQzvPJH8OxZLmmC+QMmXxmJryGPU1hL0UHSfXUALpSv70N6Cpze2FSOaPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717671413; c=relaxed/simple;
-	bh=/vkBos92LXJ32FjgGFlGb6tlMPdz4UD7Ft2JSbxto3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=hZApwFlL6nqn/a+3k3x7Ct/dqCdJF3NJkdwrBCGhcDVn2eDYv3t7kOgiBTPhIuwthele6wTFqS198nsuUQmD3OZrSIOFzri3tAnbMBfRJZDhGkSLl5/25cagqRCDfz+5W6DS+SJ6frqfWGSGD0r7E3EHTrpKhXN8S40RXYpq0V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 15BED2F4;
-	Thu,  6 Jun 2024 03:57:15 -0700 (PDT)
-Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D20B3F762;
-	Thu,  6 Jun 2024 03:56:48 -0700 (PDT)
-Message-ID: <bc34d0aa-7152-4f0b-a3c4-11b1a63fba9b@arm.com>
-Date: Thu, 6 Jun 2024 11:56:46 +0100
+	s=arc-20240116; t=1717671508; c=relaxed/simple;
+	bh=ZftVfaISYDUW/kUT3woHl6rH2FScfbgcr0GiyC6d54E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t5erhno7X0XY5STs5aqY2RqxrpeOt1Hiy4yI0XfZgQzjT8/SboWU46frqUWlVFqLDJnSuIvOfQhQnBniZTqw5f011yZkDxDcY8DhYAP0MuL7E7U8ksjaADsjwXlfgdxbgli8gJwiaZj+O5greu5gJ5GaLukkmiAWxDsNyb/yx/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jRGQkBAH; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-702492172e3so703210b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 03:58:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717671506; x=1718276306; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2ruAkQ6oEawGzBgH/lU0TOJn1AL8q+mkUlNk35sZfO0=;
+        b=jRGQkBAHjSrNXcdphLyAvBTnMd+vrDF2dvNjoYFVsm4P8RruGAIvsMFI2+1XAGAo0t
+         WiFiJJ2FeJ4xVQ+HtfpMGf6+uC4KbWRDhbuZIPDpgNtor9j96e6AJkwooV2T+U5E39eG
+         xcoWtbXy1xkBY9ciBIsMChrg2sbPekTKzShPnwhrXsHqESYLbul9AzTbqyx7GhGrW7Jt
+         R5T8z6XMt4JJUiZHISvExEcM2kyzSmKSkh8ErETz0uOaRo2dfwjQddrLGMEMige/5cmy
+         J4prUhd2rF0YWbqUA7iZR7ads87bA2Ugf0dnJkApWI/+PjjK6cuAgTyYNFKckhMd0o7h
+         4EKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717671506; x=1718276306;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2ruAkQ6oEawGzBgH/lU0TOJn1AL8q+mkUlNk35sZfO0=;
+        b=owovcgXtiegjjklYda9XFQHNk9NhfOaIcDd4/rApdK3rjxw7+jb+dRQEBmg+qTY1gZ
+         TlaAfNpq6lDjc4mrXCH30+tA1kK8TbfpbiGMheq+1ZbhGzq+I/hLpPn58q/1qgj/DMoc
+         aIudlN/c60/waowEeHV5Yf+F+AKGhNtLyTqC7MeXEvAHxkvu3cAeuQgjAVz5kfAFvCKo
+         wDyjvFMgZDOxuSGVyasD4Jb6hiu0ulLg28rXoFIDa4BuikokIKl7mB+ymvF5N242D5fJ
+         Xh73tsmdRH6nIO1Uc4eocCNqw4vPm32hO2lZ1CLYK3koAEF+Da6dSC7yEWh0t3kVsnx9
+         tqVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHifpOjgiYSrN1R8oCeofr6jE6GrDe/olRgrCcCg4KA6pn5uz/JhcuiDk0ol4HNbpQuoodLxnb9AIWOwXgIXi7EgymRotLjSyzlHin
+X-Gm-Message-State: AOJu0YyYOH11VVkhUGySu6W0G+BlpNbXzQAiqQ0hcgjV/pmnGWH50dds
+	RhByV2Stl/sW+YOtlX7XEE1b1GR84bxVl1hLUffcX3+1v0+0bFevZ/85DNYhe0Q=
+X-Google-Smtp-Source: AGHT+IEyykOFtvqGDbkSW5sWldA9ne0lhoNR9r1NCjGXJVY06J2Fxl8+x7uCzXCMceSjSs/esbsRQQ==
+X-Received: by 2002:a05:6a00:189f:b0:6f3:f970:9f2a with SMTP id d2e1a72fcca58-703e596472amr5682219b3a.10.1717671505861;
+        Thu, 06 Jun 2024 03:58:25 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd396b0dsm887093b3a.74.2024.06.06.03.58.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 03:58:25 -0700 (PDT)
+Date: Thu, 6 Jun 2024 16:28:22 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Primoz Fiser <primoz.fiser@norik.com>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, upstream@lists.phytec.de
+Subject: Re: [PATCH] OPP: ti: Fix ti_opp_supply_probe wrong return values
+Message-ID: <20240606105822.a7giftun56dsnbgc@vireshk-i7>
+References: <20240606070127.3506240-1-primoz.fiser@norik.com>
+ <20240606085956.wsp3ecyfqck5tltt@vireshk-i7>
+ <ed06bac9-6396-426a-b0ea-4932bc5fa7ed@norik.com>
+ <20240606094859.6yclnarvlrzl74bj@vireshk-i7>
+ <81919640-b0c4-437c-a04f-1673e8189435@norik.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/3] Fix and improve __maps__fixup_overlap_and_insert
-To: Ian Rogers <irogers@google.com>
-References: <20240521165109.708593-1-irogers@google.com>
-Content-Language: en-US
-Cc: "Steinar H . Gunderson" <sesse@google.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: James Clark <james.clark@arm.com>
-In-Reply-To: <20240521165109.708593-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <81919640-b0c4-437c-a04f-1673e8189435@norik.com>
 
+On 06-06-24, 12:34, Primoz Fiser wrote:
+> > Ah, I forgot about the token that is returned here. I think the driver
+> > should be fixed properly once and for all here.
+> > 
+> > The token must be used to clean the module removal part. Else if you
+> > try to insert this module, remove it, insert again, you will get some
+> > errors as the resources aren't cleaned well.
+> > 
+> > So either provide a remove() callback to the driver, or use
+> > devm_pm_opp_set_config() here.
+> > 
+> 
+> So basically, you want v2 with:
+> 
+> > diff --git a/drivers/opp/ti-opp-supply.c b/drivers/opp/ti-opp-supply.c
+> > index e3b97cd1fbbf..8a4bcc5fb9dc 100644
+> > --- a/drivers/opp/ti-opp-supply.c
+> > +++ b/drivers/opp/ti-opp-supply.c
+> > @@ -392,7 +392,7 @@ static int ti_opp_supply_probe(struct platform_device *pdev)
+> >                         return ret;
+> >         }
+> >  
+> > -       ret = dev_pm_opp_set_config_regulators(cpu_dev, ti_opp_config_regulators);
+> > +       ret = devm_pm_opp_set_config_regulators(cpu_dev, ti_opp_config_regulators);
+> >         if (ret < 0)
+> >                 _free_optimized_voltages(dev, &opp_data);
+> >  
+> > diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+> > index dd7c8441af42..a2401878d1d9 100644
+> > --- a/include/linux/pm_opp.h
+> > +++ b/include/linux/pm_opp.h
+> > @@ -654,14 +654,14 @@ static inline int devm_pm_opp_set_clkname(struct device *dev, const char *name)
+> >  }
+> >  
+> >  /* config-regulators helpers */
+> > -static inline int dev_pm_opp_set_config_regulators(struct device *dev,
 
+Don't remove this, add a new devm_ counterpart.
 
-On 21/05/2024 17:51, Ian Rogers wrote:
-> Fix latent unlikely bugs in __maps__fixup_overlap_and_insert.
-> 
-> Improve __maps__fixup_overlap_and_insert's performance 21x in the case
-> of overlapping mmaps. sesse@google.com reported slowness opening
-> perf.data files from chromium where the files contained a large number
-> of overlapping mappings. Improve this case primarily by avoiding
-> unnecessary sorting.
-> 
-> Unscientific timing data processing a perf.data file with overlapping
-> mmap events from chromium:
-> 
-> Before:
-> real    0m9.856s
-> user    0m9.637s
-> sys     0m0.204s
-> 
-> After:
-> real    0m0.675s
-> user    0m0.454s
-> sys     0m0.196s
-> 
-> Tested with address/leak sanitizer, invariant checks and validating
-> the before and after output are identical.
-> 
-> Ian Rogers (3):
->   perf maps: Fix use after free in __maps__fixup_overlap_and_insert
->   perf maps: Reduce sorting for overlapping mappings
->   perf maps: Add/use a sorted insert for fixup overlap and insert
-> 
->  tools/perf/util/maps.c | 113 +++++++++++++++++++++++++++++++++--------
->  1 file changed, 92 insertions(+), 21 deletions(-)
-> 
+> > +static inline int devm_pm_opp_set_config_regulators(struct device *dev,
+> >                                                    config_regulators_t helper)
+> >  {
+> >         struct dev_pm_opp_config config = {
+> >                 .config_regulators = helper,
+> >         };
+> >  
+> > -       return dev_pm_opp_set_config(dev, &config);
+> > +       return devm_pm_opp_set_config(dev, &config);
+> >  }
 
-Reviewed-by: James Clark <james.clark@arm.com>
-
-I'm wondering if there is any point in the non sorted insert any more?
-
-Maps could be always either sorted by name or sorted by address and
-insert() is always a sorted/fixup-overlaps insert depending on the sort
-style of the list.
-
+-- 
+viresh
 
