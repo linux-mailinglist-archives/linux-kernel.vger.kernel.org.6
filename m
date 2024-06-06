@@ -1,92 +1,147 @@
-Return-Path: <linux-kernel+bounces-203651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6F978FDEAA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:24:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 077618FDEAC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 704412852E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:24:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DEC61C23B73
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:26:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2006F7346A;
-	Thu,  6 Jun 2024 06:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5809B73472;
+	Thu,  6 Jun 2024 06:25:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V6a3uCBz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ap+aB7M7"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F9417BD5;
-	Thu,  6 Jun 2024 06:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690D12E3E5;
+	Thu,  6 Jun 2024 06:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717655045; cv=none; b=eNoXex+ofo4giKjHAQzcg983iB8nhZIZ6GHn7Cw1HXuCfC0YiXwD8dCU/geO4TrzTlJBYuZdi2u0XXcj8DDp647idhl39RVsxgiRXpB5b9zr7rV9quXk0TS542jyKSDhLVnRJH/T48qz+hxXCU6njb/37jUWreAjwPgn87ZbQGU=
+	t=1717655156; cv=none; b=uUl5Aoemt+xfkajQtvFKjMlrLc3/kyDBW9x1CU9IWTZLUxWx4UTYhHcptTcshLHa5djoHapv/rleQbPrriz5Pga71NC5Dd7woYdBsEwTm51gf6nAOG1qlBeb4LpMb79Jf7SmsVBC8by1HCz0PuIHxGgL8RtPET8Cv6krxEQ0Qag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717655045; c=relaxed/simple;
-	bh=Xmf+9W3CuWTJtgo6IQWETLoxYV8aWEsYyhvAl4to5BI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=MtDX6pIoFAJhT8ZcwVuL/+RlgFJJ1PxkGb1Bv+Xfdi7sScXIxqOOzp9OkWbqOSxl+atUI3PzEF/eOOSUpBUBAPBG/DoGxswhEzU0KHtN4g7UUxA51nkVNIfdNiIW9fjk4r3kJivqzpS2rRrnRD5GkhqrFb2T/9mCsx3FcmeJ10U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V6a3uCBz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52FB0C2BD10;
-	Thu,  6 Jun 2024 06:24:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717655044;
-	bh=Xmf+9W3CuWTJtgo6IQWETLoxYV8aWEsYyhvAl4to5BI=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=V6a3uCBzKKrXFU0sf5Wio7VKNFk/R+sFFVccK40BceTOBRmpggbf/7GL5usUiHpVT
-	 F7gHqNe/M8rpWA6oAIaJvtxatNMjowRWXNTAgji3i4ivJnpFRqxJ34nTgLHKAdCxu3
-	 oXoqKyrYtbYjL6Mz5PgVF0d+GLfmYaAnTnYIo8YrFYgVgFDLanMbID3cJFdErVQuJg
-	 PVZjN9x+qc0s0EC4LTOD7i4NuU0tLLbiy7ZRSSGrIqqIG2ahSOiusGWnXr1dUkv4Td
-	 nowd9hYqGEMTNBddwSYaxqD8Diyp6Z94nRNJeScCS22oXvoVchPylY/4eGAh/Fk5bl
-	 3uEpd+nCPa4QQ==
+	s=arc-20240116; t=1717655156; c=relaxed/simple;
+	bh=Wfeg8GAi9GwSyPrICtL0MY874pcQ+nuX+//SQF4Q63U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R+aSEPRVkltBXQe7RYZWPI4074npWMZWrH+YrbR5eRcFnVIiaLEt4BCRsFkttawp4PcNfAcZ/sI3nVRYmNbB0WDKFQi9hCpTvLF4kIMUbE6/agC6nywhGY6iBQHt7sFKTdrIZL399M1NrQJae5ZdPGHKqJkF0xCbt+eZreHk9qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ap+aB7M7; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1717655145;
+	bh=Wfeg8GAi9GwSyPrICtL0MY874pcQ+nuX+//SQF4Q63U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ap+aB7M7eNNAVWFNB2wesEkU4e+ielGbEoJAtWC2AXSaK71bYdLmrZz2sBOxDf+oy
+	 gPIdX+GOTSLEqMs4oG9uMHcRo2QJP9Zy1aPaPP12FbdZFFgKY+JOUm7Td/j/o1t+lr
+	 IoQOALg1kOo23Xw3657kI//xdH6vkp8ZqcrygMyA=
+Date: Thu, 6 Jun 2024 08:25:45 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Mario Limonciello <mario.limonciello@amd.com>, 
+	Matt Hartley <matt.hartley@gmail.com>
+Cc: Dustin Howett <dustin@howett.net>, Benson Leung <bleung@chromium.org>, 
+	Guenter Roeck <groeck@chromium.org>, Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>, 
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Stephen Horvath <s.horvath@outlook.com.au>, Rajas Paranjpe <paranjperajas@gmail.com>
+Subject: Re: [PATCH v2 0/3] ChromeOS Embedded Controller charge control driver
+Message-ID: <ed6e5fd4-2be1-4a72-8041-5087ebc93203@t-8ch.de>
+References: <20240528-cros_ec-charge-control-v2-0-81fb27e1cff4@weissschuh.net>
+ <CA+BfgNJByawxkZukaCXYcmOo_K9aQ0W1x8B6Y+Hyg_fZaJ4axw@mail.gmail.com>
+ <5baf3caf-dc09-4829-96db-2666fc902710@t-8ch.de>
+ <CA+BfgN+LE3YyF3te4m8sWbtH85tU+ERUDW7YR_BFecusVTAWWw@mail.gmail.com>
+ <a527a3fd-1458-43cc-aac0-0b360beeb349@t-8ch.de>
+ <db20a640-5323-4866-9968-c57391fbb6bc@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 06 Jun 2024 09:23:58 +0300
-Message-Id: <D1SPW7EF9CTN.1BY6S0JCPDPPY@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Huang, Kai"
- <kai.huang@intel.com>, "Haitao Huang" <haitao.huang@linux.intel.com>,
- <dave.hansen@linux.intel.com>, <tj@kernel.org>, <mkoutny@suse.com>,
- <linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
- <x86@kernel.org>, <cgroups@vger.kernel.org>, <tglx@linutronix.de>,
- <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
- <sohil.mehta@intel.com>, <tim.c.chen@linux.intel.com>
-Cc: <zhiquan1.li@intel.com>, <kristen@linux.intel.com>, <seanjc@google.com>,
- <zhanb@microsoft.com>, <anakrish@microsoft.com>,
- <mikko.ylinen@linux.intel.com>, <yangjie@microsoft.com>,
- <chrisyan@microsoft.com>
-Subject: Re: [PATCH v14 14/14] selftests/sgx: Add scripts for EPC cgroup
- testing
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240531222630.4634-1-haitao.huang@linux.intel.com>
- <20240531222630.4634-15-haitao.huang@linux.intel.com>
- <D1RKK8CENNXI.1KMNDADV9C1YM@kernel.org>
- <op.2owf5xiwwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <7cbf3583-a23e-4437-afc2-1faeb4a1f436@intel.com>
- <D1SPTDBBDU6F.2WLRZKYZWWTRB@kernel.org>
-In-Reply-To: <D1SPTDBBDU6F.2WLRZKYZWWTRB@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <db20a640-5323-4866-9968-c57391fbb6bc@amd.com>
 
-On Thu Jun 6, 2024 at 9:20 AM EEST, Jarkko Sakkinen wrote:
-> > There are existing code where BUG_ON() is used during the kernel early=
-=20
-> > boot code when memory allocation fails (e.g., see cgroup_init_subsys())=
-,=20
-> > so it might be acceptable to use BUG_ON() here, but it's up to=20
-> > maintainers to decide whether it is OK.
->
-> When it is not possible continue to run the system at all, and only
-> then.
->
-> Here it is possible. Without SGX.
++Matt, the Linux support lead for Framework.
 
-With this logic sgx_init() should call BUG() in the error paths.
+Hi Matt,
 
-BR, Jarkko
+below we are discussing on how to implement charge controls for ChromeOS
+EC devices including Framework laptops in mainline Linux.
+Some feedback would be great.
+
+On 2024-06-05 15:32:33+0000, Mario Limonciello wrote:
+> On 6/5/2024 04:33, Thomas Weißschuh wrote:
+> > On 2024-06-04 20:27:57+0000, Dustin Howett wrote:
+> > > On Mon, Jun 3, 2024 at 3:59 PM Thomas Weißschuh <linux@weissschuh.net> wrote:
+> > > > 
+> > > > Can you try disabling all of the Framework-specific charge control
+> > > > settings and test again?
+> > > > Probably the different, disparate logics in the Framework ECs are
+> > > > conflicting with each other.
+> > > 
+> > > Fascinating! This board does indeed support charge limiting through
+> > > both interfaces. It looks like the most recently set one wins for a
+> > > time.
+> > 
+> > If it is the most recent one, shouldn't the driver have worked?
+> > What does "for a time" mean?
+> > I'm using only the upstream EC command and that seems to work fine.
+> > 
+> > > The UEFI setup utility only sets the framework-specific charge limit value.
+> > > 
+> > > We should probably find some way to converge them, for all of the
+> > > supported Framework Laptop programs.
+> > 
+> > In the long term, Framework should align their implementation with
+> > upstream CrOS EC and either drop their custom command or make it a thin
+> > wrapper around the normal the upstream command.
+> > 
+> > (As you are familiar with EC programming maybe you want to tackle this?)
+> > 
+> > Until then I think we can detect at probe-time if the Framework APIs are
+> > available and use them to disable the Framework-specific mechanism.
+> > Then the CrOS EC commands should be usable.
+> > 
+> > The drawback is, that userspace using the Framework APIs will break
+> > the driver. That userspace would need to migrate to the standard UAPI.
+> 
+> How does userspace access the Framework APIs?  Surely it needs to go through
+> the kernel?  Could you "filter" the userspace calls to block them?
+> 
+> For example this is something that currently happens in the dell-pc driver
+> to block userspace from doing thermal calls and instead guide people to the
+> proper API that the driver exports.
+
+This would work when userspace uses /dev/cros_ec.
+But the EC can also used via raw port IO which wouldn't be covered.
+Given that /dev/cros_ec wasn't usable on Framework AMD until v6.9 it's
+not unlikely users are using that.
+
+And technically both aproaches would break userspace.
+
+Another aproach would be to not load the module on Framework devices
+which implement their custom command (overwritable by module parameter).
+
+Framework unifies the implementation of their command with the core
+CrOS EC logic so both commands work on the same data.
+The custom command is adapted to also implement a new command version.
+This is completely transparent as the old version will continue to work.
+
+We update the Linux driver to recognize that new command version, know
+that they are now compatible and probe the driver.
+
+Newer devices could also drop the custom command and the driver would
+start working.
+
+This scheme requires some cooperation from Framework, though.
+
+> > 
+> > Also the settings set in the firmware would be ignored at that point.
+> > 
+> > I don't want to use the functionality of the Framework command because
+> > it's less featureful and I really hope it will go away at some point.
+> 
 
