@@ -1,74 +1,39 @@
-Return-Path: <linux-kernel+bounces-204419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B95E8FE956
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:14:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C56058FE965
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:14:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1490286602
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:14:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48CEC1F22FB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9AA6199E95;
-	Thu,  6 Jun 2024 14:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X0DribLY"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EDA19938F
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C34719A299;
+	Thu,  6 Jun 2024 14:10:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9044D19938F;
+	Thu,  6 Jun 2024 14:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717683007; cv=none; b=hLeRdcBN/fKXdDXVBKqEjtFhUsW8fNsEiGQq25Hd+/FiFhxIhGUm61GCIq1a0s/yRiq3fGBFQBDe0zl9kd/H/G4mCKvjB9OUxqEHjNI9YujK1LjcVxoSIMjWALqr+jXT3T1g/8VRavaiRlyjOu1kBJW1oUeuQBBKbS46W+v4zQA=
+	t=1717683014; cv=none; b=j+o/BAPa7Ox61Yzy3q4jLtxGSLq2GsJYxx/YHpTevh7dBuKumpQFoTo1Cdxk3xg/j+yzssvOeNqKnYcB9SZDjANIwjNAUef7N/xFLep3FpDGNcn/A/sLycVZbEbSFue/+xWBX6pyQ8ljTkm2RYeT5kcx7kWPRQi68EBNxtOHsJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717683007; c=relaxed/simple;
-	bh=24pglO9E/bRowOuSke4wLZiUYaZTC9VWRxyynjJ5zIU=;
+	s=arc-20240116; t=1717683014; c=relaxed/simple;
+	bh=Tr00E08R+1a3U59ibWItlfEiKh/3LAEHOtQNKYwyTWw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dCpKdUVLnXm4wVJ3V3BOCy8lLZmscW5dqwHKNhXffpnRT5WPmPngs2PWB2AsY0e+x3aSNs+kKzsuMgqKwgebhUWTzlwNHTvAPv/cl+VQnE+dbxUq0a5VAIbIO5FTudyeG5uMl5HtjD1fkiMSZN8jY0Fq2tvb2K8fWf2twoCJ/es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X0DribLY; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57a85cc2d96so1267593a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 07:10:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717683004; x=1718287804; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=bo+hF5pSAYXFKM3WEz/kBQqU6EXGseq0xVutr/9kK1s=;
-        b=X0DribLYBxrPl93h/VGVt5eZZJVVf4FkTrhhdxEOGfijNaESjMR0+FFvq8wwCXcmhy
-         oJ/qcIs5rj9Vg0VqSaF1pGDJtLQClKxBloafcYLVheiTC2RmrU6kqzcBRqzbRCcSjdq3
-         wfq7TsY+0jDcqnBns6j5VNNB5uK625sgL+wIigz01qW8yONoCBo/PIejqXR8ComhX13O
-         zfH4Dj8zzjU0s74GF9IuJVgK6xPCPxa0d+27sCH7qmKbYbhVUV6pwnfRdoQ2hcjHQGHv
-         zzuQCQ6ATfxz5z5Y6LnLCru90jGqIb6jIS4JUSosHcl+muHlC7OJjrmUStRW3PsC51b5
-         ey3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717683004; x=1718287804;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bo+hF5pSAYXFKM3WEz/kBQqU6EXGseq0xVutr/9kK1s=;
-        b=xQDABDzxDcfbeZRr2XxWMrAqk/HQQ4hLo1lNnh0z2+EHaYOVewbYRiflwcEmPCmwfy
-         ObclWO2HEd5JzJx5b7v79udoIozBYPBtCqWyxSvrG8NQX5zPLOWfcKmT2fa6AxF03lPA
-         r/b3iFYlmo1xocWFkxbdVx4p653yLTUBYI4/1tHZEDGvU7NUjksm4+oacwurY1yxtLlL
-         0gxwzRBbC4FoTA3QWqBLHctTUYW4KjhOX/h5sny4Vyvzu0o+NndsW/fT30wbiFVzsFSC
-         zSwdCLjxxsI41k1IF3uJRNbgLXZUQqh1E4zixG9ygE6Bngwx+gOm53MC7qKN/j5hvhqZ
-         dO4A==
-X-Forwarded-Encrypted: i=1; AJvYcCXrlXY1FxPalJanb4sENhbIevuKljNzBZW1GD/tBqBhIw9Oqu7JDfqDJ85+EiChZ3IdpVFIF1C0E3ro6c/V6VvTsxKX77z2bXyYDeTE
-X-Gm-Message-State: AOJu0Yylt5+pMl2OFRaLHTPH+5GkaCH2AnrXmut/Sypd7rgB4FLFsoOw
-	zFUPfjnhSMvSJ7ku+KauBhI+iwSh2KGDKX7kqgR3l7tTQvwidswZJgwZSdUceeA=
-X-Google-Smtp-Source: AGHT+IHFQRWk4cqhYfNcA5PshAJp1zb63+Yb8p2vJT7vBfHQjtW7rLfoo86TbXCGGrO8+6cH1E51Bg==
-X-Received: by 2002:a50:cc88:0:b0:578:6865:3227 with SMTP id 4fb4d7f45d1cf-57a8bca20f6mr3504813a12.30.1717683002343;
-        Thu, 06 Jun 2024 07:10:02 -0700 (PDT)
-Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae13d1aesm1162969a12.55.2024.06.06.07.09.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 07:10:01 -0700 (PDT)
-Message-ID: <4e61ff55-bd2d-4f01-bd16-1ae6153504df@linaro.org>
-Date: Thu, 6 Jun 2024 16:09:59 +0200
+	 In-Reply-To:Content-Type; b=XeMT7zbMaBxj50brNL9O/qxMOpu90wXjDZO4Zt49p1GlbL8ThzU1pu41X8RNNZZ4awL1Nqeq2s71WNcEtNFRg2fV0QlsPGyvdunKvOxpqSnM6P0J16AAj9pfx5/eZyM+hISwxbOVIxVaEFet5xd+7mhl0mcvT5IEiC0uia6nBjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 43DA52F4;
+	Thu,  6 Jun 2024 07:10:36 -0700 (PDT)
+Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 327693F64C;
+	Thu,  6 Jun 2024 07:10:09 -0700 (PDT)
+Message-ID: <e6b436f0-3d1b-47c4-836f-5d5a2a0a0a31@arm.com>
+Date: Thu, 6 Jun 2024 15:10:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,98 +41,218 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 8/8] arm64: dts: qcom: sm4450: add camera, display and
- gpu clock controller
-To: Ajit Pandey <quic_ajipan@quicinc.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Vinod Koul <vkoul@kernel.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-References: <20240416182005.75422-1-quic_ajipan@quicinc.com>
- <20240416182005.75422-9-quic_ajipan@quicinc.com>
+Subject: Re: [PATCH v2 11/16] coresight: Expose map arguments in trace ID API
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, John Garry
+ <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org,
+ coresight@lists.linaro.org, gankulkarni@os.amperecomputing.com,
+ mike.leach@linaro.org, leo.yan@linux.dev, anshuman.khandual@arm.com
+References: <20240604143030.519906-1-james.clark@arm.com>
+ <20240604143030.519906-12-james.clark@arm.com>
+ <d8b016dc-2ab0-442b-97b9-00ae352553c6@arm.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240416182005.75422-9-quic_ajipan@quicinc.com>
+From: James Clark <james.clark@arm.com>
+In-Reply-To: <d8b016dc-2ab0-442b-97b9-00ae352553c6@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 16.04.2024 8:20 PM, Ajit Pandey wrote:
-> Add device node for camera, display and graphics clock controller on
-> Qualcomm SM4450 platform.
+
+
+On 06/06/2024 14:50, Suzuki K Poulose wrote:
+> On 04/06/2024 15:30, James Clark wrote:
+>> The trace ID API is currently hard coded to always use the global map.
+>> Add public versions that allow the map to be passed in so that Perf
+>> mode can use per-sink maps. Keep the non-map versions so that sysfs
+>> mode can continue to use the default global map.
+>>
+>> System ID functions are unchanged because they will always use the
+>> default map.
+>>
+>> Signed-off-by: James Clark <james.clark@arm.com>
+>> ---
+>>   .../hwtracing/coresight/coresight-trace-id.c  | 36 ++++++++++++++-----
+>>   .../hwtracing/coresight/coresight-trace-id.h  | 20 +++++++++--
+>>   2 files changed, 45 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c
+>> b/drivers/hwtracing/coresight/coresight-trace-id.c
+>> index 19005b5b4dc4..5561989a03fa 100644
+>> --- a/drivers/hwtracing/coresight/coresight-trace-id.c
+>> +++ b/drivers/hwtracing/coresight/coresight-trace-id.c
+>> @@ -12,7 +12,7 @@
+>>     #include "coresight-trace-id.h"
+>>   -/* Default trace ID map. Used on systems that don't require per
+>> sink mappings */
+>> +/* Default trace ID map. Used in sysfs mode and for system sources */
+>>   static struct coresight_trace_id_map id_map_default;
+>>     /* maintain a record of the mapping of IDs and pending releases
+>> per cpu */
+>> @@ -47,7 +47,7 @@ static void coresight_trace_id_dump_table(struct
+>> coresight_trace_id_map *id_map,
+>>   #endif
+>>     /* unlocked read of current trace ID value for given CPU */
+>> -static int _coresight_trace_id_read_cpu_id(int cpu)
+>> +static int _coresight_trace_id_read_cpu_id(int cpu, struct
+>> coresight_trace_id_map *id_map)
+>>   {
+>>       return atomic_read(&per_cpu(cpu_id, cpu));
+>>   }
+>> @@ -152,7 +152,7 @@ static void
+>> coresight_trace_id_release_all_pending(void)
+>>       DUMP_ID_MAP(id_map);
+>>   }
+>>   -static int coresight_trace_id_map_get_cpu_id(int cpu, struct
+>> coresight_trace_id_map *id_map)
+>> +static int _coresight_trace_id_get_cpu_id(int cpu, struct
+>> coresight_trace_id_map *id_map)
+>>   {
+>>       unsigned long flags;
+>>       int id;
+>> @@ -160,7 +160,7 @@ static int coresight_trace_id_map_get_cpu_id(int
+>> cpu, struct coresight_trace_id_
+>>       spin_lock_irqsave(&id_map_lock, flags);
 > 
-> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sm4450.dtsi | 35 ++++++++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
+> Could we also reduce the contention on the id_map_lock, by moving the
+> spinlock per map ? It can be a separate patch.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sm4450.dtsi b/arch/arm64/boot/dts/qcom/sm4450.dtsi
-> index 603c962661cc..c78b793f5d6a 100644
-> --- a/arch/arm64/boot/dts/qcom/sm4450.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm4450.dtsi
-> @@ -364,6 +364,41 @@ gcc: clock-controller@100000 {
->  				 <0>;
->  		};
->  
-> +		camcc: clock-controller@ade0000 {
-> +			compatible = "qcom,sm4450-camcc";
-> +			reg = <0x0 0xade0000 0x0 0x20000>;
+> This patch as such looks good to me.
+> 
+> Suzuki
+> 
+> 
 
-Please keep the non-zero address part padded to 8 hex digits
+Good point yes we can do that.
 
-> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&gcc GCC_CAMERA_AHB_CLK>;
-> +			#clock-cells = <1>;
-> +			#reset-cells = <1>;
-> +			#power-domain-cells = <1>;
-> +		};
-> +
-> +		dispcc: clock-controller@af00000 {
-> +			compatible = "qcom,sm4450-dispcc";
-> +			reg = <0 0x0af00000 0 0x20000>;
-
-You used 0x0 above and 0 here.. Consistency is key! :P
-
-Konrad
+>>         /* check for existing allocation for this CPU */
+>> -    id = _coresight_trace_id_read_cpu_id(cpu);
+>> +    id = _coresight_trace_id_read_cpu_id(cpu, id_map);
+>>       if (id)
+>>           goto get_cpu_id_clr_pend;
+>>   @@ -196,13 +196,13 @@ static int
+>> coresight_trace_id_map_get_cpu_id(int cpu, struct coresight_trace_id_
+>>       return id;
+>>   }
+>>   -static void coresight_trace_id_map_put_cpu_id(int cpu, struct
+>> coresight_trace_id_map *id_map)
+>> +static void _coresight_trace_id_put_cpu_id(int cpu, struct
+>> coresight_trace_id_map *id_map)
+>>   {
+>>       unsigned long flags;
+>>       int id;
+>>         /* check for existing allocation for this CPU */
+>> -    id = _coresight_trace_id_read_cpu_id(cpu);
+>> +    id = _coresight_trace_id_read_cpu_id(cpu, id_map);
+>>       if (!id)
+>>           return;
+>>   @@ -254,22 +254,40 @@ static void
+>> coresight_trace_id_map_put_system_id(struct coresight_trace_id_map *
+>>     int coresight_trace_id_get_cpu_id(int cpu)
+>>   {
+>> -    return coresight_trace_id_map_get_cpu_id(cpu, &id_map_default);
+>> +    return _coresight_trace_id_get_cpu_id(cpu, &id_map_default);
+>>   }
+>>   EXPORT_SYMBOL_GPL(coresight_trace_id_get_cpu_id);
+>>   +int coresight_trace_id_get_cpu_id_map(int cpu, struct
+>> coresight_trace_id_map *id_map)
+>> +{
+>> +    return _coresight_trace_id_get_cpu_id(cpu, id_map);
+>> +}
+>> +EXPORT_SYMBOL_GPL(coresight_trace_id_get_cpu_id_map);
+>> +
+>>   void coresight_trace_id_put_cpu_id(int cpu)
+>>   {
+>> -    coresight_trace_id_map_put_cpu_id(cpu, &id_map_default);
+>> +    _coresight_trace_id_put_cpu_id(cpu, &id_map_default);
+>>   }
+>>   EXPORT_SYMBOL_GPL(coresight_trace_id_put_cpu_id);
+>>   +void coresight_trace_id_put_cpu_id_map(int cpu, struct
+>> coresight_trace_id_map *id_map)
+>> +{
+>> +    _coresight_trace_id_put_cpu_id(cpu, id_map);
+>> +}
+>> +EXPORT_SYMBOL_GPL(coresight_trace_id_put_cpu_id_map);
+>> +
+>>   int coresight_trace_id_read_cpu_id(int cpu)
+>>   {
+>> -    return _coresight_trace_id_read_cpu_id(cpu);
+>> +    return _coresight_trace_id_read_cpu_id(cpu, &id_map_default);
+>>   }
+>>   EXPORT_SYMBOL_GPL(coresight_trace_id_read_cpu_id);
+>>   +int coresight_trace_id_read_cpu_id_map(int cpu, struct
+>> coresight_trace_id_map *id_map)
+>> +{
+>> +    return _coresight_trace_id_read_cpu_id(cpu, id_map);
+>> +}
+>> +EXPORT_SYMBOL_GPL(coresight_trace_id_read_cpu_id_map);
+>> +
+>>   int coresight_trace_id_get_system_id(void)
+>>   {
+>>       return coresight_trace_id_map_get_system_id(&id_map_default);
+>> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.h
+>> b/drivers/hwtracing/coresight/coresight-trace-id.h
+>> index 49438a96fcc6..840babdd0794 100644
+>> --- a/drivers/hwtracing/coresight/coresight-trace-id.h
+>> +++ b/drivers/hwtracing/coresight/coresight-trace-id.h
+>> @@ -42,8 +42,6 @@
+>>   #define IS_VALID_CS_TRACE_ID(id)    \
+>>       ((id > CORESIGHT_TRACE_ID_RES_0) && (id <
+>> CORESIGHT_TRACE_ID_RES_TOP))
+>>   -/* Allocate and release IDs for a single default trace ID map */
+>> -
+>>   /**
+>>    * Read and optionally allocate a CoreSight trace ID and associate
+>> with a CPU.
+>>    *
+>> @@ -59,6 +57,12 @@
+>>    */
+>>   int coresight_trace_id_get_cpu_id(int cpu);
+>>   +/**
+>> + * Version of coresight_trace_id_get_cpu_id() that allows the ID map
+>> to operate
+>> + * on to be provided.
+>> + */
+>> +int coresight_trace_id_get_cpu_id_map(int cpu, struct
+>> coresight_trace_id_map *id_map);
+>> +
+>>   /**
+>>    * Release an allocated trace ID associated with the CPU.
+>>    *
+>> @@ -72,6 +76,12 @@ int coresight_trace_id_get_cpu_id(int cpu);
+>>    */
+>>   void coresight_trace_id_put_cpu_id(int cpu);
+>>   +/**
+>> + * Version of coresight_trace_id_put_cpu_id() that allows the ID map
+>> to operate
+>> + * on to be provided.
+>> + */
+>> +void coresight_trace_id_put_cpu_id_map(int cpu, struct
+>> coresight_trace_id_map *id_map);
+>> +
+>>   /**
+>>    * Read the current allocated CoreSight Trace ID value for the CPU.
+>>    *
+>> @@ -92,6 +102,12 @@ void coresight_trace_id_put_cpu_id(int cpu);
+>>    */
+>>   int coresight_trace_id_read_cpu_id(int cpu);
+>>   +/**
+>> + * Version of coresight_trace_id_read_cpu_id() that allows the ID map
+>> to operate
+>> + * on to be provided.
+>> + */
+>> +int coresight_trace_id_read_cpu_id_map(int cpu, struct
+>> coresight_trace_id_map *id_map);
+>> +
+>>   /**
+>>    * Allocate a CoreSight trace ID for a system component.
+>>    *
+> 
 
