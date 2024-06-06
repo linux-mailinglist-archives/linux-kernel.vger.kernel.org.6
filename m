@@ -1,150 +1,157 @@
-Return-Path: <linux-kernel+bounces-204011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E7338FE2E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:33:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 962F28FE2E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:33:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45CE01C235F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:33:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 384D928222D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143CE152DE4;
-	Thu,  6 Jun 2024 09:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383F715357A;
+	Thu,  6 Jun 2024 09:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tZ8xo+U3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="eiXEEJDn"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479611514C5;
-	Thu,  6 Jun 2024 09:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CE9153517
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717666277; cv=none; b=IOnRujWyEdpTDsYHDlThjeXecTlMPGMEFd2O7uQbsLQVwzV3kmPGHdkV7HBtRe34Gr6MXabHRTezlZlCzHIMaZsKPeeExeOSAWOWced94deornXN629EyGR/YLEs1dJpMOS9ECSOeq0UuOgKrsSEVJ599cJMFsBczf7f5BbupuU=
+	t=1717666296; cv=none; b=I7hau2YZkGbxUT8ZUAzxxoZ4y9EbfokMYgKAEZU051/HQfIIEubEKCFahiD/vAVi2m1jy8B4aHBt2BvQ7YjjKVhc3HVSNG2hZvwwtEBHKJl3fMGyzYPQhV74pR/bLSG6c7uJdC/FjRXEZaR+hICturUNmH0PmaMdX35aPsC28F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717666277; c=relaxed/simple;
-	bh=CFO64hNu4O0O2Zq2TabiJL0VZcZDe4c7WLR83D5xKD8=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=ByZ9LJuzvliNhai1iyLMVKhgh/WbKs8yQhId+LDp/v86Yk4heWXEN3Ns3ItwpQG8YWLAxUROCqpybaoknLqRqGBHQHDoVU1a2q+GxmMHMUoFKauq5jnvq+7YfxWuLrQVg75O5ViMsxds2EDSmg5ZzL5n3Zt8BuzY04QjZR7PpCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tZ8xo+U3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D85A8C4AF0C;
-	Thu,  6 Jun 2024 09:31:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717666276;
-	bh=CFO64hNu4O0O2Zq2TabiJL0VZcZDe4c7WLR83D5xKD8=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=tZ8xo+U3FZxE1dJ+0YxEzLzpgbY90xPAIwScSKcEe0FjKEvM1kwMotRSb5dC0WVon
-	 RO1Do1x0aOOpZnAfJIQ6/nvtXWPd0fWY9V/kICmGlBXJhigIp52ryPGh04wXBIfypT
-	 ElQ1oVItS19u+/Vu15Ic+59c6v0KKDJhpyLP/fjSTn6+bI9PgIdP5E/u68HhiFzcTx
-	 KQa981GixvpiS7lqIX+DX/Zy0p7yDuZbjr0Vh5buDiGEx6eH+qNfenp5+BaVOBhkpa
-	 oq6uZFVRP2rvWh4DMa0Pjt/+hfoRg6r9IK3dlYTn8QLOksybtKh6FjzZE58K+e4bH/
-	 Cmn2SQga/pv/g==
-From: Kalle Valo <kvalo@kernel.org>
-To: Kenton Groombridge <concord@gentoo.org>
-Cc: johannes@sipsolutions.net,  davem@davemloft.net,  edumazet@google.com,
-  kuba@kernel.org,  pabeni@redhat.com,  linux-wireless@vger.kernel.org,
-  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-hardening@vger.kernel.org,  Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v3] wifi: mac80211: Avoid address calculations via out
- of bounds array indexing
-References: <20240605152218.236061-1-concord@gentoo.org>
-Date: Thu, 06 Jun 2024 12:31:13 +0300
-In-Reply-To: <20240605152218.236061-1-concord@gentoo.org> (Kenton
-	Groombridge's message of "Wed, 5 Jun 2024 11:22:18 -0400")
-Message-ID: <871q5amn8e.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1717666296; c=relaxed/simple;
+	bh=lhNvlZLKk6LbkWN2wiQs55+WfQxtSjp304vt1wWAFNQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DiPoOyjCwWZvCVebRTLKBwTbGsjvJoqKBKjkJv8d0l9G65xs7/GbgHNpbSZcOkicir3eo803VJZW9sgwfGmGbQuIuL4xVb7oft6/4eBnxOewQBDBErAc7GhyWc4KFvUJt73IeMq9H2fjvD59raick643QTweLSxdKSjk6J06goo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=eiXEEJDn; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1717666286; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=8q8Fkl2jA1U5hSAvLLBPc/Mm5V5YlZfvuHx62cOLGLY=;
+	b=eiXEEJDnRadImuDaFAYchG6cd16iRfW/i4iqCeEbr0Y0IBEoKrzWGv6+Qc4dUPTi9MhN6TfGF7BcZKyiAkphIvRvVnPpjX95Utx9Er2h6d8zzb643BWNx1bIv3b0h1Oo4WyaH587tGhaJpz8cbLT/E9Wmxv97UE/DlU0J32J5Iw=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0W7xuZWn_1717666283;
+Received: from 30.97.56.72(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W7xuZWn_1717666283)
+          by smtp.aliyun-inc.com;
+          Thu, 06 Jun 2024 17:31:24 +0800
+Message-ID: <cc73bbfe-b61f-4e81-aa47-670d3db29dbe@linux.alibaba.com>
+Date: Thu, 6 Jun 2024 17:31:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/6] add mTHP support for anonymous shmem
+To: David Hildenbrand <david@redhat.com>, Daniel Gomez <da.gomez@samsung.com>
+Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "hughd@google.com" <hughd@google.com>,
+ "willy@infradead.org" <willy@infradead.org>,
+ "wangkefeng.wang@huawei.com" <wangkefeng.wang@huawei.com>,
+ "ying.huang@intel.com" <ying.huang@intel.com>,
+ "21cnbao@gmail.com" <21cnbao@gmail.com>,
+ "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+ "shy828301@gmail.com" <shy828301@gmail.com>, "ziy@nvidia.com"
+ <ziy@nvidia.com>, "ioworker0@gmail.com" <ioworker0@gmail.com>,
+ Pankaj Raghav <p.raghav@samsung.com>, "linux-mm@kvack.org"
+ <linux-mm@kvack.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <cover.1717033868.git.baolin.wang@linux.alibaba.com>
+ <f1783ff0-65bd-4b2b-8952-52b6822a0835@redhat.com>
+ <db3517d0-54b1-4d3a-b798-1c13572d07be@linux.alibaba.com>
+ <CGME20240531111357eucas1p2338be7f326d8d9176d2ee212a10fc9db@eucas1p2.samsung.com>
+ <502fb3df-b42b-4f0c-a98d-348c3d544721@redhat.com>
+ <slkkien5nc3weyzebdlxs5jjvealqzmctbom7sfvijvkolhsjj@athcc2aqq77p>
+ <f11c1b52-67d1-4c2a-834b-47302b0054bc@linux.alibaba.com>
+ <5mezgqzg7wmd4iq2d2q3aentziosetwcll3tgdbl3mhriseyv3@pgxsux7qvxno>
+ <e7b4aaa1-170d-4500-bf7a-63672e4d81b8@linux.alibaba.com>
+ <d5a22158-e663-43d2-a43e-8ad54bae16c8@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <d5a22158-e663-43d2-a43e-8ad54bae16c8@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Kenton Groombridge <concord@gentoo.org> writes:
 
-> req->n_channels must be set before req->channels[] can be used.
->
-> This patch fixes one of the issues encountered in [1].
->
-> [   83.964252] ------------[ cut here ]------------
-> [   83.964255] UBSAN: array-index-out-of-bounds in net/mac80211/scan.c:364:4
-> [   83.964258] index 0 is out of range for type 'struct ieee80211_channel *[]'
-> [   83.964260] CPU: 0 PID: 1695 Comm: iwd Tainted: G           O    T 6.8.9-gentoo-hardened1 #1
-> [   83.964262] Hardware name: System76 Pangolin/Pangolin, BIOS ARB928_V00.01_T0025ASY1_ms 04/20/2023
-> [   83.964264] Call Trace:
-> [   83.964267]  <TASK>
-> [   83.964269]  dump_stack_lvl+0x3f/0xc0
-> [   83.964274]  __ubsan_handle_out_of_bounds+0xec/0x110
-> [   83.964278]  ieee80211_prep_hw_scan+0x2db/0x4b0
-> [   83.964281]  __ieee80211_start_scan+0x601/0x990
-> [   83.964284]  ? srso_alias_return_thunk+0x5/0xfbef5
-> [   83.964287]  ? cfg80211_scan+0x149/0x250
-> [   83.964291]  nl80211_trigger_scan+0x874/0x980
-> [   83.964295]  genl_family_rcv_msg_doit+0xe8/0x160
-> [   83.964298]  genl_rcv_msg+0x240/0x270
-> [   83.964301]  ? __cfi_nl80211_trigger_scan+0x10/0x10
-> [   83.964302]  ? __cfi_nl80211_post_doit+0x10/0x10
-> [   83.964304]  ? __cfi_nl80211_pre_doit+0x10/0x10
-> [   83.964307]  ? __cfi_genl_rcv_msg+0x10/0x10
-> [   83.964309]  netlink_rcv_skb+0x102/0x130
-> [   83.964312]  genl_rcv+0x23/0x40
-> [   83.964314]  netlink_unicast+0x23b/0x340
-> [   83.964316]  netlink_sendmsg+0x3a9/0x450
-> [   83.964319]  __sys_sendto+0x3ae/0x3c0
-> [   83.964324]  __x64_sys_sendto+0x21/0x40
-> [   83.964326]  do_syscall_64+0x90/0x150
-> [   83.964329]  ? srso_alias_return_thunk+0x5/0xfbef5
-> [   83.964331]  ? syscall_exit_work+0xc2/0xf0
-> [   83.964333]  ? srso_alias_return_thunk+0x5/0xfbef5
-> [   83.964335]  ? syscall_exit_to_user_mode+0x74/0xa0
-> [   83.964337]  ? srso_alias_return_thunk+0x5/0xfbef5
-> [   83.964339]  ? do_syscall_64+0x9c/0x150
-> [   83.964340]  ? srso_alias_return_thunk+0x5/0xfbef5
-> [   83.964342]  ? syscall_exit_to_user_mode+0x74/0xa0
-> [   83.964344]  ? srso_alias_return_thunk+0x5/0xfbef5
-> [   83.964346]  ? do_syscall_64+0x9c/0x150
-> [   83.964347]  ? srso_alias_return_thunk+0x5/0xfbef5
-> [   83.964349]  ? do_syscall_64+0x9c/0x150
-> [   83.964351]  ? srso_alias_return_thunk+0x5/0xfbef5
-> [   83.964353]  ? syscall_exit_work+0xc2/0xf0
-> [   83.964354]  ? srso_alias_return_thunk+0x5/0xfbef5
-> [   83.964356]  ? syscall_exit_to_user_mode+0x74/0xa0
-> [   83.964358]  ? srso_alias_return_thunk+0x5/0xfbef5
-> [   83.964359]  ? do_syscall_64+0x9c/0x150
-> [   83.964361]  ? srso_alias_return_thunk+0x5/0xfbef5
-> [   83.964362]  ? do_user_addr_fault+0x488/0x620
-> [   83.964366]  ? srso_alias_return_thunk+0x5/0xfbef5
-> [   83.964367]  ? srso_alias_return_thunk+0x5/0xfbef5
-> [   83.964369]  entry_SYSCALL_64_after_hwframe+0x55/0x5d
-> [   83.964372] RIP: 0033:0x6200808578d7
-> [ 83.964374] Code: 00 00 90 f3 0f 1e fa 41 56 55 41 89 ce 48 83 ec 28
-> 80 3d 7b f7 0d 00 00 74 29 45 31 c9 45 31 c0 41 89 ca b8 2c 00 00 00
-> 0f 05 <48> 3d 00 f0 ff ff 77 71 48 83 c4 28 5d 41 5e c3 66 0f 1f 84 00
-> 00
-> [   83.964375] RSP: 002b:0000730c4e821530 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
-> [   83.964378] RAX: ffffffffffffffda RBX: 000006dbc456c570 RCX: 00006200808578d7
-> [   83.964379] RDX: 000000000000005c RSI: 000006dbc45884f0 RDI: 0000000000000004
-> [   83.964381] RBP: 0000000000000004 R08: 0000000000000000 R09: 0000000000000000
-> [   83.964382] R10: 0000000000000000 R11: 0000000000000246 R12: 000006dbc456c480
-> [   83.964383] R13: 000006dbc456c450 R14: 0000000000000000 R15: 000006dbc456c610
-> [   83.964386]  </TASK>
-> [   83.964386] ---[ end trace ]---
->
-> [1] https://bugzilla.kernel.org/show_bug.cgi?id=218810
->
-> v3:
-> - Fix incorrect channel copying
-> v2:
-> - Drop changes in cfg80211 as requested by Johannes
 
-In wireless we prefer to have the version changelog after '---' line so
-that it's not included in the actual commit. Not sure if Johannes can
-fix this during commit.
+On 2024/6/6 16:38, David Hildenbrand wrote:
+> On 06.06.24 05:31, Baolin Wang wrote:
+>>
+>>
+>> On 2024/6/4 20:05, Daniel Gomez wrote:
+>>> On Tue, Jun 04, 2024 at 05:45:20PM +0800, Baolin Wang wrote:
+>>>>
+>>>>
+>>>> On 2024/6/4 16:18, Daniel Gomez wrote:
+>>>>> On Fri, May 31, 2024 at 01:13:48PM +0200, David Hildenbrand wrote:
+>>>>>>>>
+>>>>>>>> As a default, we should not be using large folios / mTHP for any 
+>>>>>>>> shmem,
+>>>>>>>> just like we did with THP via shmem_enabled. This is what this 
+>>>>>>>> series
+>>>>>>>> currently does, and is aprt of the whole mTHP user-space 
+>>>>>>>> interface design.
+>>>>>>>>
+>>>>>>>> Further, the mTHP controls should control all of shmem, not only
+>>>>>>>> "anonymous shmem".
+>>>>>>>
+>>>>>>> Yes, that's what I thought and in my TODO list.
+>>>>>>
+>>>>>> Good, it would be helpful to coordinate with Daniel and Pankaj.
+>>>>>
+>>>>> I've integrated patches 11 and 12 from the lsf RFC thread [1] on 
+>>>>> top of Baolin's
+>>>>> v3 patches. You may find a version in my integration branch here 
+>>>>> [2]. I can
+>>>>> attach them here if it's preferred.
+>>>>>
+>>>>> [1] 
+>>>>> https://lore.kernel.org/all/20240515055719.32577-1-da.gomez@samsung.com/
+>>>>> [2] 
+>>>>> https://protect2.fireeye.com/v1/url?k=a23e7c06-c3b56926-a23ff749-74fe485fb347-371ca2bfd5d9869f&q=1&e=6974304e-a786-4255-93a7-57498540241c&u=https%3A%2F%2Fgitlab.com%2Fdkruces%2Flinux-next%2F-%2Fcommits%2Fnext-20240604-shmem-mthp
+>>>>>
+>>>>> The point here is to combine the large folios strategy I proposed 
+>>>>> with mTHP
+>>>>> user controls. Would it make sense to limit the orders to the 
+>>>>> mapping order
+>>>>> calculated based on the size and index?
+>>>>
+>>>> IMO, for !anon shmem, this change makes sense to me. We should 
+>>>> respect the
+>>>> size and mTHP should act as a order filter.
+>>>
+>>> What about respecing the size when within_size flag is enabled? Then, 
+>>> 'always'
+>>> would allocate mTHP enabled folios, regardless of the size. And 'never'
+>>> would ignore mTHP and size. So, 'never' can be used for this 'safe' 
+>>> boot case
+>>> mentioned in the discussion.
+>>
+>> Looks reasonable to me. What do you think, David?
+>>
+> 
+> That mimics existing PMD-THP behavior, right?
+> 
+> With "within_size", we must not exceed the size, with "always", we may 
+> exceed the size.
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+Yes, I think so.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+>> And what about 'advise' option? Silimar to 'within_size'?
+> 
+> Good question. What's the behavior of PMD-THP? I would assume it behaves 
+> like "within_size", because in the common case we mmap (+advise) only 
+> within the size of the file, not exceeding it.
+
+Yes, that is also my understanding.
+
+> (the always option, as I learned during the meeting, is primarily 
+> helpful when writing to tmpfs files in an append-fashion. With 
+> mmap()+madvise() that doesn't quite happen)
+> 
 
