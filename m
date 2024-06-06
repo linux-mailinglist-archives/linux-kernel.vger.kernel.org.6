@@ -1,97 +1,134 @@
-Return-Path: <linux-kernel+bounces-204575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 540F08FF0AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:29:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09DF78FF0AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 060B91F24FB4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:29:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B205D1F2547A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A27196C9C;
-	Thu,  6 Jun 2024 15:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F84B1974EB;
+	Thu,  6 Jun 2024 15:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="LvVi4t/Y"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="A3LjRNJB"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E6113BAEB;
-	Thu,  6 Jun 2024 15:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3A5196C72;
+	Thu,  6 Jun 2024 15:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717687748; cv=none; b=BpAxkGeWCBGPJ24aHh6iWrsF9N0yJOp0i3xO6Zo/FCWSsjoAgCSDQgMyi35tbBrEXa/wjVItKEXoA+5oVXjNcmmocwIiGSzZmX14cPIcwt4cZK23Wl7lmiPOt5uQsV9D/AW/cfWG+CmYhhP3axxnlTJ2B1cQyHppnSGJ1vFH9tQ=
+	t=1717687757; cv=none; b=bSlZ+QtORlqDGeXap+J31IKFPPdiXFnwIaIf2BGX8PPUBhinS9SyZUzGKzJpo+kBdoIG1dK6EzjFcrEHzGA1YaegOh5vUC5PuWe9ppugC5dK5vQKPDk/1+Jt6YaFPtIoLv37YYTXFuH5zWGlgMWSF7d9y0OLyDfIhhj1exsuXj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717687748; c=relaxed/simple;
-	bh=vblmY0V4eAr6aMQr22rhxQQNFS3uYSQ222eApKlL8vg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d3VCIvoSGTWlItEAuIvyXutild3nHKIRuQSLW4xHE8nb5+aNUkV/Ek6SDbGddKzQNhROLDz2u18Dy3EN8yBPq0/Ye9prEvgE/1JKc6a/eKMFso1pWzBtP8LNvuJklvYFLRQskGoALhO1z2ZfJkHtrW2/0Rb7AJtqwetKrbCKXUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=LvVi4t/Y; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Vw7XZ2y3hz9sq3;
-	Thu,  6 Jun 2024 17:29:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1717687742;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sHfJnp2lcftRA6X7UnUOG6z9rpZyMvNccJKHK19bpqc=;
-	b=LvVi4t/Y+JebtJu90GV9FYjqoscL8pKkggLe38PrTSDSMZo9hdjB+mAopTSegccbb4HViK
-	jEdpQvAPqv0A7OTxY4mJHxa6rIxV84WwV0Z0Kz8+c77WOI4b/YjHXJO7pMTyDXgQoObxrb
-	kfEUhB4NgDvh5fMKFbExU1LpjV1b87HsQIWbi/wGc/F8Q/gK1zWqx1Cw/sdZSB1vDpgkrs
-	JtQ3wmsLWQUAF6MnNzqPV6dHjyyT4gZgacEAUHge2VlAgCRZVCePmiNOfl7FpyTn7hDPAq
-	zyUoQots/+9NRT8V/GupLseBbSqcC1xTzeGRznKZtgALr5NyjtIUzAiQCYW01w==
-Date: Thu, 6 Jun 2024 15:28:58 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Shuah Khan <shuah@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	gost.dev@samsung.com, mcgrof@kernel.org,
-	linux-kselftest@vger.kernel.org, Zi Yan <zi.yan@sent.com>,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH] selftests/mm: use volatile keyword to not optimize mmap
- read variable
-Message-ID: <20240606152858.hmtnmieyesv7o5i3@quentin>
-References: <20240606135835.600022-1-kernel@pankajraghav.com>
- <ZmHJMyo37QdtTWee@casper.infradead.org>
+	s=arc-20240116; t=1717687757; c=relaxed/simple;
+	bh=eBB9aBsiHmO7WU3mW/9YuXTak8tCclcTkOS/Rq6E7qk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FgJhwY6lGBl9FQJU/UcnvMuKru/SMuGTSPV+919KhWFwYVnNRcwb4Q6hHqL0Z+UWSb8JBYYrKSLLid7NUA37wzrErGoMbnj4fZBWKItb5H2JtQ2TZzUQzUo8kHE05kQO1sMQGwyYHZuUjsbPXthK7xHi4YHWLXr8qMaGrKPdBKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=A3LjRNJB; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1717687754;
+	bh=eBB9aBsiHmO7WU3mW/9YuXTak8tCclcTkOS/Rq6E7qk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=A3LjRNJBEERCPjwPScg2ylCa5gji25832C322+S371TeZM/YKkxh0OPo7S/9Fc9jY
+	 QKmCofOGy8HweZsq1Mze1B/jrfqevddKdNyyVOXfYlIO/b9QDfVlD+2mJ6mUtF4+Ik
+	 pvjWsScyQtxDbtHGtimWQph+F70cAVEac222LcrSnRebRmWIysrodQR6BFhFwWZiHX
+	 h9cPNQ4pFk91vERkOaia81xFrhCpNZspEJR0sPuPvPJguln0WjehwQQrjJ7+9aI0Kj
+	 2jLxTO9kmp+3igDS52Jn1sFxayMBry45PyVJ9W+gczgCQ6alF8fY5mC1cAhD7jycLL
+	 4AUaPKpc6L9GQ==
+Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Vw7Xp3yhGz13B5;
+	Thu,  6 Jun 2024 11:29:14 -0400 (EDT)
+Message-ID: <389a8c55-a169-47ef-99c0-48f58003b40c@efficios.com>
+Date: Thu, 6 Jun 2024 11:30:03 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmHJMyo37QdtTWee@casper.infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] rust: add tracepoint support
+To: Alice Ryhl <aliceryhl@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
+ <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>
+Cc: linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240606-tracepoint-v1-0-6551627bf51b@google.com>
+ <20240606-tracepoint-v1-3-6551627bf51b@google.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20240606-tracepoint-v1-3-6551627bf51b@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 06, 2024 at 03:35:31PM +0100, Matthew Wilcox wrote:
-> On Thu, Jun 06, 2024 at 01:58:35PM +0000, Pankaj Raghav (Samsung) wrote:
-> > +++ b/tools/testing/selftests/mm/split_huge_page_test.c
-> > @@ -300,7 +300,7 @@ int create_pagecache_thp_and_fd(const char *testfile, size_t fd_size, int *fd,
-> >  		char **addr)
-> >  {
-> >  	size_t i;
-> > -	int __attribute__((unused)) dummy = 0;
-> > +	volatile int __attribute__((unused)) dummy = 0;
+On 2024-06-06 11:05, Alice Ryhl wrote:
+> Make it possible to have Rust code call into tracepoints defined by C
+> code. It is still required that the tracepoint is declared in a C
+> header, and that this header is included in the input to bindgen.
 > 
-> The mistake made by whoever wrote this test was making 'dummy' a stack
-> variable.  That lets the compiler figure out that it's unused.  If you
-> make it a top-level variable (not static) so the compiler can't tell
-> whether it's referenced by a different compilation unit, it can't make
-> that deduction.  And you don't need the stupid attibute or volatile on it.
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-I did cringe a little before adding the volatile keyword. While not a 
-fan of global variables, that might be better than all these keywords.
+[...]
 
-I will send a v2 right away! Thanks.
+> diff --git a/rust/helpers.c b/rust/helpers.c
+> index 2c37a0f5d7a8..0560cc2a512a 100644
+> --- a/rust/helpers.c
+> +++ b/rust/helpers.c
+> @@ -165,6 +165,30 @@ rust_helper_krealloc(const void *objp, size_t new_size, gfp_t flags)
+>   }
+>   EXPORT_SYMBOL_GPL(rust_helper_krealloc);
+>   
+> +void rust_helper_preempt_enable_notrace(void)
+> +{
+> +	preempt_enable_notrace();
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_preempt_enable_notrace);
+> +
+> +void rust_helper_preempt_disable_notrace(void)
+> +{
+> +	preempt_disable_notrace();
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_preempt_disable_notrace);
+> +
+> +bool rust_helper_current_cpu_online(void)
+> +{
+> +	return cpu_online(raw_smp_processor_id());
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_current_cpu_online);
+> +
+> +void *rust_helper___rcu_dereference_raw(void **p)
+> +{
+> +	return rcu_dereference_raw(p);
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper___rcu_dereference_raw);
 
---
-Pankaj
+Ouch. Doing a function call for each of those small operations will
+have a rather large performance impact when tracing is active. If it is
+not possible to inline those in Rust, then implementing __DO_TRACE in
+a C function would at least allow Rust to only do a single call to C
+rather than go back and forth between Rust and C.
+
+What prevents inlining those helpers in Rust ?
+
+Thanks,
+
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
