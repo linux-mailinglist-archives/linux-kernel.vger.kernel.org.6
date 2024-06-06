@@ -1,115 +1,154 @@
-Return-Path: <linux-kernel+bounces-204536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BF458FF031
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:15:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92DEB8FF0A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:26:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A07C1C238D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:15:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3B24B30A7F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23A11A2557;
-	Thu,  6 Jun 2024 14:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22ED6198E63;
+	Thu,  6 Jun 2024 14:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rlw+lGM2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wH+V+yHr"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437131E494;
-	Thu,  6 Jun 2024 14:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D2D1A38D5
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717685532; cv=none; b=AY+SDucKsnk5fNKhdRgDnoxxiaxswAHx9QaleaHkWr10cHlcuhWspYfYVPD08Cw/5LM5DX3GSLEzb2xr01uiT1bhX/mWELTynW89S1ABYD5WmbVGGSfnHjoN699W3pgnglLLLD+MrvIzALferxelzLVa8VXN72QsNvNc37QyqwE=
+	t=1717685564; cv=none; b=UeDKnA9a1jgnv5PfUrdYvvUYMYNt9klvpizgXgY0OYqP3Qxe96gEvaQBIttxRHxyjH8uFtZgaqkVy5PffaXdONMCW7WluOgKCz8qP0bVChSDmvqZUjQbVtzVWEpPocqw47+e3ReJ4TJOCuyiME8YPaGG31MvOdj7z/RRzTNN/1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717685532; c=relaxed/simple;
-	bh=ih5KlinNy99KtipdP5e9vfFOB8HH84JHruKk/DTM7Nc=;
-	h=Content-Type:To:Cc:Subject:References:Date:MIME-Version:From:
-	 Message-ID:In-Reply-To; b=NVn37fxvEjRze5UOqPB1ezjdXLpZGVOrdXB3HetqzBCVvn15J2aEYbIqH2D+q7ly2uYe8E6DMB6dXlHXKvyKcQj4JzCXPKCwO6OgFRKtsWHRXaC/9EFJ4fu37hsDueFJU9l1KxWgaknRUhF5JYo648T+YHwksaPhw5Eu+O3It4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rlw+lGM2; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717685530; x=1749221530;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=ih5KlinNy99KtipdP5e9vfFOB8HH84JHruKk/DTM7Nc=;
-  b=Rlw+lGM20SCbtTpGX9R9Y09o6a71J7ol1i6rtc+fDQ6YglQshpRiV5ck
-   /GjOWtLKD3r3FAzunDpl0UGzq+Q7xZhaNC7s4ZhPjTZXqrKRJeVhZJL6G
-   h8Jgzp0qJJ4VTpb//yeLTCv6MgTT2SkhLvccJn8iy5KKTlZaxoRTbFmQu
-   o/wZDJb1mRz77/GK1LtNlDVNf66F5vmSKPnhNBeGJ41l1Gxwlnt/78qiJ
-   0+oXRy+Ezi6SCzhnW5QFqmVlysXiVzMjbu8/Qm1vBv/Mlv30ESWCP8A0Y
-   Ea0VXs3/CYt4y6Kd3/Z2iHJ34om1ADMl48Cg9Pvz+nkj3VZqkYBln/Rp7
-   g==;
-X-CSE-ConnectionGUID: 8sfd12fuTvOhlUO+eOjq+w==
-X-CSE-MsgGUID: MjhTErU/S/SEOsOBdrC4Qw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="17292290"
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="17292290"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 07:51:59 -0700
-X-CSE-ConnectionGUID: 4AS7pECdTOShdbhz3z/Icw==
-X-CSE-MsgGUID: Yob9KelaRo6dwLNTOd73AQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="75459722"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.17.168])
-  by smtpauth.intel.com with ESMTP/TLS/AES256-SHA; 06 Jun 2024 07:51:57 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To: jarkko@kernel.org, dave.hansen@linux.intel.com, kai.huang@intel.com,
- tj@kernel.org, mkoutny@suse.com, linux-kernel@vger.kernel.org,
- linux-sgx@vger.kernel.org, x86@kernel.org, cgroups@vger.kernel.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
- sohil.mehta@intel.com, tim.c.chen@linux.intel.com, chenridong
- <chenridong@huawei.com>
-Cc: zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com,
- zhanb@microsoft.com, anakrish@microsoft.com, mikko.ylinen@linux.intel.com,
- yangjie@microsoft.com, chrisyan@microsoft.com
-Subject: Re: [PATCH v14 02/14] cgroup/misc: Add per resource callbacks for CSS
- events
-References: <20240531222630.4634-1-haitao.huang@linux.intel.com>
- <20240531222630.4634-3-haitao.huang@linux.intel.com>
- <eeb1f936-2989-4de0-8353-b2373ce47474@huawei.com>
-Date: Thu, 06 Jun 2024 09:51:55 -0500
+	s=arc-20240116; t=1717685564; c=relaxed/simple;
+	bh=k79YCzazeOdNIxSjb/y4BIQNbI4IPx0L7GI9H+oZirg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=paBU9HOaA5T+AFIeB0sFGu9Ie2wwTnJ40WyKOCXQu8U6A6pvxaqjkVSYBo0tiJFM2vjt9OCz4Q7jYJcG4bEdL1UJoEqaHKeq1gg2cdr5CNlX98qp7t82TIhuu5C8Ti3fo+pWe9JUCjRTikK+NXQkdJ91K15qPq59TwHIEeKjjIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wH+V+yHr; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57a9a3bc085so1468736a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 07:52:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717685558; x=1718290358; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HGCRKwKRmXUWhTx00oNcButD2nQ+Saa5TZxkHFCVpsQ=;
+        b=wH+V+yHrQPx9w80fn3L/o4zSxZleSFjkuGMQPBHn1euiCavwPzpljubO7DSpB5cMA4
+         3L/1MPRSFTbkLiGugVnkXw77tknbvewN0Wv8qqJ9a0ecZQjW/0QkKo8e6RL+tCL0Wirz
+         JpyP1KLxIBi/1WFWgtvIJpIE8UWamajf8+74RG918PrZTNVNeAzp8qO080JOmDl9A2ah
+         pZFTgGVln9i5BoU6FAwelsx4e6lCPDeZn225XjZVsafmWA3tFvc+Ixkk20qVCUZYc624
+         W5eeDqJdbYVq+NirDAZgs0JkrvEUM6LztB3OrFvm7jJlLwpoofWhiiWY8Q7ZEJABNj0Z
+         pNOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717685558; x=1718290358;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HGCRKwKRmXUWhTx00oNcButD2nQ+Saa5TZxkHFCVpsQ=;
+        b=Z1Ik9KNSXO5XbcpXvuHQdAtxWnEy14SyaOuamuLLF3bpPkdn24NH9rjlm32oKoTFod
+         WSYyRj2ZUsY4xHzP3t79crMNvWtP2lBHWaJdgfL97Hgu2npKgVUGWtUt/zknDvc5YdR3
+         cBHPBndjUjMiwcjneS3iHPVmGwBreYRStaMGMb3AWtNNUpoP6IDLYjdv4NUCpIdpDRNc
+         hQTneTD6MHXXJ7X00Mf7EQgpL6CpdKjh+SNAnE0hnena3NGEr+NQqlWbfoCU2D8E7+70
+         ciJHM+kVTD8d00GRo0VLriFH6NXdTmVFYMmK/6h3G0TyLKmR9nu7k62Q3FMP8erBM54+
+         /MHA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3gNzJ/ZPVOCD7AK7LCqfuOxLOZegd2wJoaXefShF7fESrh478Gq9u/hTvB2sswxEwnHCqTtD+NiBScd7tBNZtn3lfcp/Gixoeezwt
+X-Gm-Message-State: AOJu0YxbbRVd0WDX7dg52X5VdZnBjdZTy8wRe31I1DC5i4coFAH7vnYs
+	jnGtFMlgYVNQPvW41jPFY9F9oIi1FXWZGB2mmwFar6YCHQJQa+VposAlT8ghr78=
+X-Google-Smtp-Source: AGHT+IHqQQw7O0OBRYnOeA/8BGBR9rC3YntBdKFGChqnPpJwodZEx81cRjSeCp8zfYk3krebBnLanQ==
+X-Received: by 2002:a50:bb03:0:b0:57a:1c44:581c with SMTP id 4fb4d7f45d1cf-57a8bc91223mr4966328a12.32.1717685557803;
+        Thu, 06 Jun 2024 07:52:37 -0700 (PDT)
+Received: from [192.168.2.107] ([79.115.63.17])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae202341sm1197473a12.70.2024.06.06.07.52.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 07:52:37 -0700 (PDT)
+Message-ID: <48719b0f-1a7f-47f9-948a-c981a0a29b41@linaro.org>
+Date: Thu, 6 Jun 2024 15:52:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] mtd: spi-nor: core: add flag for doing optional
+ SFDP
+To: Michael Walle <mwalle@kernel.org>, Esben Haabendal <esben@geanix.com>,
+ Pratyush Yadav <pratyush@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+References: <20240603-macronix-mx25l3205d-fixups-v2-0-ff98da26835c@geanix.com>
+ <20240603-macronix-mx25l3205d-fixups-v2-1-ff98da26835c@geanix.com>
+ <a379a411-2c9e-4d9d-aa8f-4c4f3463cc27@linaro.org>
+ <D1SZKLZBDDBA.1Z7ZD4UEOX05F@kernel.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <D1SZKLZBDDBA.1Z7ZD4UEOX05F@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-From: "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2ox8wt11wjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <eeb1f936-2989-4de0-8353-b2373ce47474@huawei.com>
-User-Agent: Opera Mail/1.0 (Win32)
 
-On Thu, 06 Jun 2024 08:37:31 -0500, chenridong <chenridong@huawei.com>  
-wrote:
 
->
->    
-> If _misc_cg_res_alloc fails, maybe some types do not call ->alloc(), but  
-> all types ->free() callback >will be called, is that ok?
->
-Not sure I understand. Are you suggesting we ignore failures from  
-->alloc() callback in _misc_cg_res_alloc() as it is per-resource, and have  
-->free() callback and resource provider of the failing type to handle the  
-failure internally?
 
-IIUC, this failure only happens when a specific subcgroup is created  
-(memory running out for allocation) so failing that subcgroup as a whole  
-seems fine to me. Note the root node is static and no pre-resource  
-callbacks invoked by misc. And resource provider handles its own  
-allocations for root. In SGX case we too declare a static object for  
-corresponding root sgx_cgroup struct.
+On 6/6/24 14:59, Michael Walle wrote:
+> On Thu Jun 6, 2024 at 3:31 PM CEST, Tudor Ambarus wrote:
+>> On 6/3/24 14:09, Esben Haabendal wrote:
+>>> A dedicated flag for triggering call to
+>>> spi_nor_sfdp_init_params_deprecated() allows enabling optional SFDP read
+>>> and parse, with fallback to legacy flash parameters, without having dual,
+>>> quad or octal parameters set in the legacy flash parameters.
+>>>
+>>> With this, spi-nor flash parts without SFDP that is replaced with a
+>>> different flash NOR flash part that does have SFDP, but shares the same
+>>> manufacturer and device ID is easily handled.
+>>>
+>>> Signed-off-by: Esben Haabendal <esben@geanix.com>
+>>> ---
+>>>  drivers/mtd/spi-nor/core.c | 3 ++-
+>>>  drivers/mtd/spi-nor/core.h | 1 +
+>>>  2 files changed, 3 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
+>>> index 3e1f1913536b..1c4d66fc993b 100644
+>>> --- a/drivers/mtd/spi-nor/core.c
+>>> +++ b/drivers/mtd/spi-nor/core.c
+>>> @@ -2933,7 +2933,8 @@ static void spi_nor_init_params_deprecated(struct spi_nor *nor)
+>>>  
+>>>  	spi_nor_manufacturer_init_params(nor);
+>>>  
+>>> -	if (nor->info->no_sfdp_flags & (SPI_NOR_DUAL_READ |
+>>> +	if (nor->info->no_sfdp_flags & (SPI_NOR_TRY_SFDP |
+>>
+>> I don't like that we update deprecated methods. The solution though is
+>> elegant.
+> 
+> I actually had the same concern. But currently there is no
+> non-deprecated way to handle this case, right?
+> 
+> Right now we have the following cases:
+>  (1) pure SFDP parsing
+>  (2) non-SFDP flashes with static configuration only
+>  (3) legacy implementation, where the magic flags decide whether we
+>      use SFDP
+> 
+> Which case is eventually used depends on the ID of the flash -
+> assuming there will only be IDs which either fall into (1) *or* (2).
+> That assumption is clearly wrong :)
+> 
+> I'd propose a new case in spi_nor_init_params()
+>  (4) try SFDP with a fallback to the static flags from the
+>      flash_info db.
+> 
 
-Note also misc cgroup (except for setting capacity[res] = 0 at root) is  
-all or nothing so no mechanism to tell user "this resource does not work  
-but others are fine in this particular cgroup."
+that's not that bad, but I would avoid doing it if it's not common. You
+also have to update the core a bit, you can't use no_sfdp_flags &
+TRY_SFDP, it's misleading. Does it worth it?
 
-Thanks
-Haitao
+I won't oppose too much, but to me it feels that we're trying to keep
+alive a dead man.
 
