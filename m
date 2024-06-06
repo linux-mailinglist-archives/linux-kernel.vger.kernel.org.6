@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-204883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E6AC8FF4A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:31:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83E388FF4B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:31:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F2D11C2657E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:31:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3854A1F26D1A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8691347A53;
-	Thu,  6 Jun 2024 18:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6564DA1F;
+	Thu,  6 Jun 2024 18:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="BGHcMQ3O"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="38zXRAQw"
 Received: from mail2.andi.de1.cc (vmd64148.contaboserver.net [161.97.139.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5682C3B1BC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1588821;
 	Thu,  6 Jun 2024 18:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.97.139.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717698647; cv=none; b=fE6kZFMXpQj7TN2119QLcoqnieBXFT9+h4eqWPy8wFe+/WMmYY2XrDezSkEautd3oVo5GWNx7THo0ly2D85wikWRK3sJyYq5R3BBguKkk7oXnuRUjAahfyuKGfuY2WOwNyoTbgNBFch8FP5csBLBqs7j2mCv7qvw9UexTcwYVcs=
+	t=1717698649; cv=none; b=s8Hya2vKUUYd8JfxU/gzyomF25cKHZsKMojbZeRQlh+/vMYF1baIjfzjn3hprMBG8yPVK3smHxXxH/rmiO/cI8flrnSfOqTAY1csqQsXNhHwT9+Bv3wWNsc1Lp75Y05EyoGUFrcmxfb9fNDiFWEMNrzqE1Kj7m4HUQsLP8qqWgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717698647; c=relaxed/simple;
-	bh=eiFOztAyht4OQS06fzz0niDBbZpbcltfMxTe5TVsVLU=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=Il/i04EnDoXim77I8ZRWvFIkqFuXCfpSUpiaXmL4kM/djtItLWwOMBpGzjV9XWhQu0fcVsZ2P3beqhV2wa70/UzTSXPwlOGvIhil0OUbGPVmmI1iflZT1WN6A/WpNc8sFU2026+sk/OazHpD6rKfmWFDHZDxGeL8iBbdcRTZHKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=BGHcMQ3O; arc=none smtp.client-ip=161.97.139.27
+	s=arc-20240116; t=1717698649; c=relaxed/simple;
+	bh=6kMGZvbbwAVpUY7o/3Mo1hVEWC+DsN8qKwLMZzsvR7s=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ri94dSsUHRyLx5nGLGkEK4wNCboOCzFizowrw+cXLFzYnibpES3g5kpRhDumAaNo8CW1Zigc9cKfgw5dqix5D4KbrWbXClyUVd+JdbIl32KtNsgOLm+IAmdeArhegJebXX2s9PdBn2J4KfZEJGGVqQttOTE/MCweCmF6OscY+8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=38zXRAQw; arc=none smtp.client-ip=161.97.139.27
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Received: from mail.andi.de1.cc ([2a02:c205:3004:2154::1])
 	by mail2.andi.de1.cc with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <andreas@kemnade.info>)
-	id 1sFHso-0090wq-34;
+	id 1sFHsp-0090x2-1w;
 	Thu, 06 Jun 2024 20:30:44 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:MIME-Version:
-	Message-Id:Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ychHDkTsgy+jS6D/8C9orKrwj+iW1wCK5Xyhu/ynjbg=; b=BGHcMQ3O39NECSs5U0lIjPkcxi
-	8qfTfTt9TBD1iCEicDKWq6d/DdFXk7aX8I+24YODZgqniX28vFPilJU4KNODgGS5Lc8BvMM3X9DXj
-	KX1V66fyJFSwCw09bgcpNpSAE1cU0MaSoBuiLqQADQtjrrHj0S5hIjzZ+1GlXMVmMp52mH72pBS6p
-	EhFwz+L2okX1H9huaOv5LKCOEOnmlZUWDVoOv6CjsawqumfThyq6c03tcoLD+NIJwgS2D/Rk+is0w
-	TzH4h7Gw1U7c6vNaS5n6mxts5F6sKB5iAwAC5uk7iEJMMDeCm6MZi4xSbVv364vGTkXIFV4/nCkTs
-	8DpMruFw==;
+	References:In-Reply-To:Message-Id:Date:Subject:To:From:Sender:Reply-To:Cc:
+	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=bMF1CyWf3RbQIO/q5KxisncBbMfKZqOgAKsNghJdEpk=; b=38zXRAQwrZf5v55378iG5mrHDN
+	dnjBtwe3L7TTqMIrhQ01F9rzGUXQR2AQlVySak0cI8T3ukDyWbxwVYk74h8iMFEMtFsDDfNGOkDRL
+	hxjkLxfpIoRa6wII02JeCaLHOMF+VkaOdNfZC04k+9BeDQTVPSS8HSOoDwwNYcsBSvon4fDqU85Me
+	zhA/hMNY4D/qQhmjyzxp9Hwc1Z4T7Z1gL11pL/T6zTIr3f4THEWr7pr9W6vv+mvnK/ba3CClqOJAu
+	is8xiaBLSqtD6RpX+W7/mdg3Nzch1zbic+1sVNNTL1aAVdRd+gL9KG2zofb7Ykaq9U0BUTyCrRKuA
+	Mybcgqbg==;
 Received: from p200300c20737c2001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:c2:737:c200:1a3d:a2ff:febf:d33a] helo=aktux)
 	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <andreas@kemnade.info>)
-	id 1sFHsj-002nvS-1W;
+	id 1sFHsj-002nvT-31;
 	Thu, 06 Jun 2024 20:30:39 +0200
 Received: from andi by aktux with local (Exim 4.96)
 	(envelope-from <andreas@kemnade.info>)
-	id 1sFHsk-002s4M-01;
+	id 1sFHsk-002s4Q-2z;
 	Thu, 06 Jun 2024 20:30:38 +0200
 From: Andreas Kemnade <andreas@kemnade.info>
 To: marcel@holtmann.org,
@@ -73,10 +74,12 @@ To: marcel@holtmann.org,
 	=?UTF-8?q?P=C3=A9ter=20Ujfalusi?= <peter.ujfalusi@gmail.com>,
 	robh@kernel.org,
 	hns@goldelico.com
-Subject: [PATCH v4 0/4] Bluetooth/gnss: GNSS support for TiWi chips
-Date: Thu,  6 Jun 2024 20:30:28 +0200
-Message-Id: <20240606183032.684481-1-andreas@kemnade.info>
+Subject: [PATCH v4 1/4] gnss: Add AI2 protocol used by some TI combo chips
+Date: Thu,  6 Jun 2024 20:30:29 +0200
+Message-Id: <20240606183032.684481-2-andreas@kemnade.info>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240606183032.684481-1-andreas@kemnade.info>
+References: <20240606183032.684481-1-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,53 +88,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some of these chips have GNSS support. In some vendor kernels
-a driver on top of misc/ti-st can be found providing a /dev/tigps
-device which speaks the secretive Air Independent Interface (AI2) protocol.
+Texas Instruments uses something called Air Independent Interface (AI2) for
+their WLAN/BT/GPS combo chips.
 
-To be more compatible with userspace send out NMEA by default but
-allow a more raw mode by using a module parameter.
+No public documentation is available, but allow that protocol to be
+specified.
 
-This was tested on the Epson Moverio BT-200.
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+---
+ drivers/gnss/core.c  | 1 +
+ include/linux/gnss.h | 1 +
+ 2 files changed, 2 insertions(+)
 
-Who will take this series (1-3)? GNSS with ack from Bluetooth?
-
-Changes since V3:
-- Finally remove the period from 1/4 subject
-- include things directly for get_unaligned_le16() to fix 0-day issues
-
-Changes since V2:
-- Optimize waits
-- Fix some packet analysis / checksum computation issue
-- Adding a proposal for removing those waits as RFC
-- Minor spell corrections and improved descriptions
-
-Changes since V1:
-- Set up things for NMEA output
-- Powerup/down at open()/close()
-- split out logic between drivers/bluetooth and drivers/gnss
-- leave out drivers/misc/ti-st driver removal to avoid
-  filling up mailboxes during the iterations, this series is
-  still a proof that it is not needed, will take the brush after
-  this series is accepted.
-
-
-Andreas Kemnade (4):
-  gnss: Add AI2 protocol used by some TI combo chips
-  Bluetooth: ti-st: Add GNSS subdevice for TI Wilink chips
-  gnss: Add driver for AI2 protocol
-  gnss: ai2: replace long sleeps by wait for acks
-
- drivers/bluetooth/hci_ll.c   |  81 +++++
- drivers/gnss/Kconfig         |  13 +
- drivers/gnss/Makefile        |   3 +
- drivers/gnss/ai2.c           | 560 +++++++++++++++++++++++++++++++++++
- drivers/gnss/core.c          |   1 +
- include/linux/gnss.h         |   1 +
- include/linux/ti_wilink_st.h |   8 +
- 7 files changed, 667 insertions(+)
- create mode 100644 drivers/gnss/ai2.c
-
+diff --git a/drivers/gnss/core.c b/drivers/gnss/core.c
+index 48f2ee0f78c4d..cac9f45aec4b2 100644
+--- a/drivers/gnss/core.c
++++ b/drivers/gnss/core.c
+@@ -335,6 +335,7 @@ static const char * const gnss_type_names[GNSS_TYPE_COUNT] = {
+ 	[GNSS_TYPE_SIRF]	= "SiRF",
+ 	[GNSS_TYPE_UBX]		= "UBX",
+ 	[GNSS_TYPE_MTK]		= "MTK",
++	[GNSS_TYPE_AI2]		= "AI2",
+ };
+ 
+ static const char *gnss_type_name(const struct gnss_device *gdev)
+diff --git a/include/linux/gnss.h b/include/linux/gnss.h
+index 36968a0f33e8d..16b565dab83ea 100644
+--- a/include/linux/gnss.h
++++ b/include/linux/gnss.h
+@@ -23,6 +23,7 @@ enum gnss_type {
+ 	GNSS_TYPE_SIRF,
+ 	GNSS_TYPE_UBX,
+ 	GNSS_TYPE_MTK,
++	GNSS_TYPE_AI2,
+ 
+ 	GNSS_TYPE_COUNT
+ };
 -- 
 2.39.2
 
