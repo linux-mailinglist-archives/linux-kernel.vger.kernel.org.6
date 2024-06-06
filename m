@@ -1,78 +1,155 @@
-Return-Path: <linux-kernel+bounces-205097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 659918FF705
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:47:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 980C38FF709
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:51:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 196C71F23529
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:47:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DE671C21AB8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B039913C694;
-	Thu,  6 Jun 2024 21:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC8D13C67B;
+	Thu,  6 Jun 2024 21:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CYR6Z/Jl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XF0+T9vu";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HO9NPha7";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XF0+T9vu";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HO9NPha7"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F4211219E1;
-	Thu,  6 Jun 2024 21:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0256D53C;
+	Thu,  6 Jun 2024 21:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717710457; cv=none; b=bLVxt5Om9WoSbTPYW2njhNyjasryi4T4zRGkpA6DwyPWcw1eGHr8ZPXPhwmDs2hN/5sTRo8Ft9twegO0aBVO4IgLij6gltmPr3pw46eYJgKFNG84yaI/iSl6/oQW+KQnG8iDTLHyQJepeNkuraI/DVwN5EDIVQHQodGrlobJi2w=
+	t=1717710656; cv=none; b=Ml1k73Z9aN7+C3enFbGjV/Wj5lwCm2HhygnRTawAoKysXkaM3Jw0ITdvIpes27LE8VgR4VJwMDUQxiToQrrqPQ54Nl1+qITiJKvqlsU+y0VMbxVk9lxtOBUG0g+zRcSegWcUfZ6ZNZbHPzXQYe5Mq0T3OtuQ3OsL+JJ1cDu28DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717710457; c=relaxed/simple;
-	bh=dFn3yhVpa+oQpm7LH+q+Fv7OwlwNnf8gBKcAQhVyqqA=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=mOOeCkOn0mt4JkKMWvbwnOBY5ZnNv9Etm8ZrDQ3ScnfAWPjz2bIvpODFYFRBehIyavDsDuSGLmfPOwEtsZ2EQC57h3N3vNCKOVgwHrq5DlbpSEkWXNU4DlGVUdxpu4EZfyDRkGNbOSJFlYKKpk63OnAo3z8yZEObHeIB1EVYM/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CYR6Z/Jl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BE172C2BD10;
-	Thu,  6 Jun 2024 21:47:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717710456;
-	bh=dFn3yhVpa+oQpm7LH+q+Fv7OwlwNnf8gBKcAQhVyqqA=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=CYR6Z/JlB6ftpHdY7pBeCJAp4gZTDi3eqSV4B89/DhwjrnA6WW+qKK9ppPHeH2JeN
-	 BjJViAjCo8PPH4zTWpxAI354KV9UXVT4xquY0gg4XPry7q+WZx5dq86YkPDhjazdwV
-	 MiYly/JQzH/ycRxBvv1njwbwm2Z4ti12vSnx15nW4Aj8Man8HPw81l5sCGj9x9uj7/
-	 tOi0qtw36O+UdpRzCY3U3RvEKo+gNAMhdD/Uhv3AWggQ4pml80WoQb2BLcQJkESn6J
-	 L5W0LEXgN98GRMG+KbavMcTU8plhs+o2XHgAhv8bZZaUXYTIylG4xGFfNQODCnakGl
-	 HHDGa0xFNqHig==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B3302D2039D;
-	Thu,  6 Jun 2024 21:47:36 +0000 (UTC)
-Subject: Re: [GIT PULL] PCI fixes for v6.10
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240606185925.GA810710@bhelgaas>
-References: <20240606185925.GA810710@bhelgaas>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240606185925.GA810710@bhelgaas>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.10-fixes-1
-X-PR-Tracked-Commit-Id: c9d52fb313d3719d69a040f4ca78a3e2e95fba21
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d91e656262aeef16f6a296a2b6c8b0f7243f408a
-Message-Id: <171771045672.14151.4527047493477849116.pr-tracker-bot@kernel.org>
-Date: Thu, 06 Jun 2024 21:47:36 +0000
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Dan Williams <dan.j.williams@intel.com>, Imre Deak <imre.deak@intel.com>, Hans de Goede <hdegoede@redhat.com>, Kalle Valo <kvalo@kernel.org>, Dave Jiang <dave.jiang@intel.com>, Jani Saarinen <jani.saarinen@intel.com>, Leon Romanovsky <leonro@nvidia.com>
+	s=arc-20240116; t=1717710656; c=relaxed/simple;
+	bh=yRlzVq1f85dbcOPA1niy6gpUdxU/LAv6b1KRhJ4sF1A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=e07X9yAMy5/IYq0fhi9E2Uh3TFib2MroUQf0tFbaTNW63u9+JRbiwgIYUAT0FqGokP8XcFCGHyttmneJQ3Fd1UdfoCb08MKUcqXYrctPr7kIIEUlcLDu6xaR21Q8K++75bxNHCSzdDTpHNhBIIj7e3TwtkNrYOrVPpYrBfs/4kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XF0+T9vu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HO9NPha7; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XF0+T9vu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HO9NPha7; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5B7351FB5A;
+	Thu,  6 Jun 2024 21:50:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717710650; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PQTf0zBkx+6dYehfEwHIIeqVqSDrnQHWK9tVjpEW7s4=;
+	b=XF0+T9vu3aR4QBcisT3dppVXlPEF6SyNqm6k9wGy24cFhwtxuQNSfqsQu4lliWc5St//hy
+	txATNenfL3qtEnEze4CdH4Whz1UU0uGdZC8JQEePOJUC3ZGiIF5ukiox5bmcCpggWtGCpu
+	RtxcJNOMth9Y2JGfkbufuqe49WVj7V8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717710650;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PQTf0zBkx+6dYehfEwHIIeqVqSDrnQHWK9tVjpEW7s4=;
+	b=HO9NPha7lz19I5x9wkNaD7XGnXuuqb7e+TSrgf1sGir4rQMJ2RT+JrTf3Qiob7SGgJTY3R
+	QTLl5ogL0xScvUCA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717710650; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PQTf0zBkx+6dYehfEwHIIeqVqSDrnQHWK9tVjpEW7s4=;
+	b=XF0+T9vu3aR4QBcisT3dppVXlPEF6SyNqm6k9wGy24cFhwtxuQNSfqsQu4lliWc5St//hy
+	txATNenfL3qtEnEze4CdH4Whz1UU0uGdZC8JQEePOJUC3ZGiIF5ukiox5bmcCpggWtGCpu
+	RtxcJNOMth9Y2JGfkbufuqe49WVj7V8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717710650;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PQTf0zBkx+6dYehfEwHIIeqVqSDrnQHWK9tVjpEW7s4=;
+	b=HO9NPha7lz19I5x9wkNaD7XGnXuuqb7e+TSrgf1sGir4rQMJ2RT+JrTf3Qiob7SGgJTY3R
+	QTLl5ogL0xScvUCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1394313A79;
+	Thu,  6 Jun 2024 21:50:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 4jzcOTkvYmaTXAAAD6G6ig
+	(envelope-from <krisman@suse.de>); Thu, 06 Jun 2024 21:50:49 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: "Eugen Hristev" <eugen.hristev@collabora.com>, "Christian Brauner"
+ <christian@brauner.io>
+Cc: linux-ext4@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-f2fs-devel@lists.sourceforge.net,  linux-fsdevel@vger.kernel.org,
+  jaegeuk@kernel.org,  adilger.kernel@dilger.ca,  tytso@mit.edu,
+  chao@kernel.org,  viro@zeniv.linux.org.uk,  brauner@kernel.org,
+  jack@suse.cz,  ebiggers@google.com,  kernel@collabora.com
+Subject: Re: [PATCH v18 0/7] Case insensitive cleanup for ext4/f2fs
+In-Reply-To: <20240606073353.47130-1-eugen.hristev@collabora.com> (Eugen
+	Hristev's message of "Thu, 6 Jun 2024 10:33:46 +0300")
+Organization: SUSE
+References: <20240606073353.47130-1-eugen.hristev@collabora.com>
+Date: Thu, 06 Jun 2024 17:50:38 -0400
+Message-ID: <87v82livv5.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.981];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	HAS_ORG_HEADER(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-The pull request you sent on Thu, 6 Jun 2024 13:59:25 -0500:
+Eugen Hristev <eugen.hristev@collabora.com> writes:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.10-fixes-1
+> Hello,
+>
+> I am trying to respin the series here :
+> https://www.spinics.net/lists/linux-ext4/msg85081.html
+>
+> I resent some of the v9 patches and got some reviews from Gabriel,
+> I did changes as requested and here is v18.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d91e656262aeef16f6a296a2b6c8b0f7243f408a
+The patchset looks good to me.  Feel free to add:
 
-Thank you!
+Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
+
+Bringing Christian into the loop, since this is getting ready and it
+should go through the VFS tree, as it touches libfs and a couple
+filesystems.
+
+Christian, can you please take a look? Eric has also been involved in
+the review, so we should give him a few days to see if he has more
+comments.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Gabriel Krisman Bertazi
 
