@@ -1,298 +1,225 @@
-Return-Path: <linux-kernel+bounces-203807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D929D8FE0AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:14:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22A48FE0B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:15:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D34371C23CC5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:14:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC344B22CE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B569913C673;
-	Thu,  6 Jun 2024 08:14:30 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520DA13A898
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1D213C822;
+	Thu,  6 Jun 2024 08:14:42 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876C813A898;
+	Thu,  6 Jun 2024 08:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717661670; cv=none; b=u6VZO9XlTJgt2xFFFIOw0JmGBrji6YrJBGPGT/HcdzaERvicTuspSwrRmpK4VxSv4bbYzPSqOU9/T9itDJVE0xij8xb8F5zmC+yc6aCdcuxw5xvTMaNdl/2OOPeCQWoHKUOkEAs8HQIZiMONxaBog3Xx2Fou03zNn2upkXpevok=
+	t=1717661681; cv=none; b=SUmasPxUS+x6XoBoLX8fzPBYj54Yh0DbWXYpp/aMWWke52DrjYWdD9Lit93+0CyvylN3+JY113nGh7GX/p8wsEZg7BtVxMZm7WodHdyE25BS1Whsa5ecjIu0er71pUq02yMjRoL/I0bnV272Hcooep9x7hEhMkMJkBt52b3yQxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717661670; c=relaxed/simple;
-	bh=LDSQqOl+OJl03Ml/7OIYVgt/p58ir6WP469EFDT17XQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZC4BilgAgIwlSNdtiD6K0rjJUg4/XVTFWt8HiYF3A2YGX7kHp9lVxtbw4ClEbVCV5jC5NFW7J4758AHx86RGUsnrhXfh29Rdbf7D36SreXAY8cHtlIEpDRTn8qb5otfFxoEUDPybQDHa7nxQ0pO4wH030pGogyGeQa2KTyPYo8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-374b7648ab3so7622685ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 01:14:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717661667; x=1718266467;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=B+ouDivlT1UsPVZhY1dEBo1XO973QOPuJP8MaEC6UFM=;
-        b=WgboZlfS/4QqLL+CmgbY/EzJ4RDyLat6Y6lRyCskiZq2KTesH9HlfxCtM0EUTPH8vi
-         WusQF5QC0RYyAjybeJeamfrEinRSiFtPLep8vK/3PskVQkbKmUAUl/Jv78/DgXVqzbcr
-         OLqUg7rHmCoI/05ChZqvGh26lLk5c9QhkfS7VgIhTKYhn7ajZhuDGySiLkMXBeqmIbsj
-         QTanhNYf8f2fi0ZFvI+eyrO1Shdgjm08btYVLEEe8Y9Fe7dhkXTAQVxTLb4N99WK1k9R
-         Mk/cyfhGO9yelu1J1IAUPzAheKfbdhV3oNxtroQgnHzAOeS4I0722XqwmFp0PlONO8Bl
-         ZlGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWL5Pnlf+U40bjNU48dOOwcQVzP5HS/0d/jblTQOjXkfxkbeIQkwThg6JFTa/hCypXZDeODJKykE0RMQV8IUtsJSI94T0SFQqxdbNhz
-X-Gm-Message-State: AOJu0YzoGlOW/lrPgRy1Guhft+xYliexcx0wnUMBb52UKBsU6gt9hYkU
-	d0aHkish2oGXtwLOIEJFLeJsm/YE0GFVqxcFagm/C0kDO9dQEDhHf6n1Yqsj0KZ+V21xip903Dr
-	2k7QWTCJZFGbTzhcsy/+H4OTMOCea7duY9K+qdfJrMIRcuCRtYrXszYY=
-X-Google-Smtp-Source: AGHT+IFnuukPoUH3TWr9eYPpzA6nwhvaBxMKmgpKeVyzSestLETYqAdjt7NsfjBJQSfvTWKvo7GLL7vNf+6ZJfsA9dB6BW2NhYWR
+	s=arc-20240116; t=1717661681; c=relaxed/simple;
+	bh=/+/BknMHLrihbmijqoFbVLzfZtNPqhWBdI3sHAuudyA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IFSvK7rEVSSc0bQOJ9G/ajvOKSwKoyBGvYhwDcyJvzOo1X8Oo8QTonHAwpnhlRdCrRuZ7Ic/4175lbqwkRhfju1L7a94P1arDnrSCm9OPEGzM2ihrkljhfrIaglBd519l2j8o9N+XZKT5dM/0WWnub6s9aYLh9QLhDR83vnvlc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-IronPort-AV: E=Sophos;i="6.08,218,1712588400"; 
+   d="asc'?scan'208";a="210885326"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 06 Jun 2024 17:14:37 +0900
+Received: from [10.226.93.107] (unknown [10.226.93.107])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 72C8C41FD116;
+	Thu,  6 Jun 2024 17:14:34 +0900 (JST)
+Message-ID: <13e77ad1-7ff0-453b-b8f9-7962d15b49a1@bp.renesas.com>
+Date: Thu, 6 Jun 2024 09:14:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b0d:b0:374:491c:6567 with SMTP id
- e9e14a558f8ab-374b1f82795mr2511185ab.5.1717661667495; Thu, 06 Jun 2024
- 01:14:27 -0700 (PDT)
-Date: Thu, 06 Jun 2024 01:14:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000892280061a344581@google.com>
-Subject: [syzbot] [btrfs?] possible deadlock in btrfs_commit_inode_delayed_inode
-From: syzbot <syzbot+3dad89b3993a4b275e72@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] docs: stable-kernel-rules: provide example of
+ specifying target series
+To: Shung-Hsi Yu <shung-hsi.yu@suse.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sasha Levin <sashal@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ stable@vger.kernel.org, workflows@vger.kernel.org
+References: <20240606064311.18678-1-shung-hsi.yu@suse.com>
+Content-Language: en-GB
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+Organization: Renesas Electronics Corporation
+In-Reply-To: <20240606064311.18678-1-shung-hsi.yu@suse.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------xI3MkB3bqz4WF3eJ5X8zp2y7"
 
-Hello,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------xI3MkB3bqz4WF3eJ5X8zp2y7
+Content-Type: multipart/mixed; boundary="------------cuym2VioR9YeBxcmeIilliEz";
+ protected-headers="v1"
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+To: Shung-Hsi Yu <shung-hsi.yu@suse.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sasha Levin <sashal@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ stable@vger.kernel.org, workflows@vger.kernel.org
+Message-ID: <13e77ad1-7ff0-453b-b8f9-7962d15b49a1@bp.renesas.com>
+Subject: Re: [PATCH 1/2] docs: stable-kernel-rules: provide example of
+ specifying target series
+References: <20240606064311.18678-1-shung-hsi.yu@suse.com>
+In-Reply-To: <20240606064311.18678-1-shung-hsi.yu@suse.com>
 
-syzbot found the following issue on:
+--------------cuym2VioR9YeBxcmeIilliEz
+Content-Type: multipart/mixed; boundary="------------cwYi1y9yKe2mdo4v6vJz18ui"
 
-HEAD commit:    2ab795141095 Merge tag 'cxl-fixes-6.10-rc3' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=118fff2c980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=998c63c06e77f5e7
-dashboard link: https://syzkaller.appspot.com/bug?extid=3dad89b3993a4b275e72
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+--------------cwYi1y9yKe2mdo4v6vJz18ui
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Unfortunately, I don't have any reproducer for this issue yet.
+On 06/06/2024 07:43, Shung-Hsi Yu wrote:
+> Provide a concrete example of how to specify what stable series should
+> be targeted for change inclusion. Looking around on the stable mailing
+> list this seems like a common practice already, so let's mention that i=
+n
+> the documentation as well (but worded so it is not interpreted as the
+> only way to do so).
+>=20
+> Signed-off-by: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+> ---
+>  Documentation/process/stable-kernel-rules.rst | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/Documentation/process/stable-kernel-rules.rst b/Documentat=
+ion/process/stable-kernel-rules.rst
+> index edf90bbe30f4..daa542988095 100644
+> --- a/Documentation/process/stable-kernel-rules.rst
+> +++ b/Documentation/process/stable-kernel-rules.rst
+> @@ -57,10 +57,13 @@ options for cases where a mainlined patch needs adj=
+ustments to apply in older
+>  series (for example due to API changes).
+> =20
+>  When using option 2 or 3 you can ask for your change to be included in=
+ specific
+> -stable series. When doing so, ensure the fix or an equivalent is appli=
+cable,
+> -submitted, or already present in all newer stable trees still supporte=
+d. This is
+> -meant to prevent regressions that users might later encounter on updat=
+ing, if
+> -e.g. a fix merged for 5.19-rc1 would be backported to 5.10.y, but not =
+to 5.15.y.
+> +stable series, one way to do so is by specifying the target series in =
+the
+> +subject prefix (e.g. '[PATCH stable 5.15 5.10]' asks that the patch to=
+ be
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2ab79514.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/31177e3311d1/vmlinux-2ab79514.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a9fa69e4242e/bzImage-2ab79514.xz
+"that the patch is included in..." would be slightly better.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3dad89b3993a4b275e72@syzkaller.appspotmail.com
+> +included in both 5.10.y and 5.15.y). When doing so, ensure the fix or =
+an
+> +equivalent is applicable, submitted, or already present in all newer s=
+table
+> +trees still supported. This is meant to prevent regressions that users=
+ might
+> +later encounter on updating, if e.g. a fix merged for 5.19-rc1 would b=
+e
+> +backported to 5.10.y, but not to 5.15.y.
+> =20
+>  .. _option_1:
+> =20
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.10.0-rc2-syzkaller-00010-g2ab795141095 #0 Not tainted
-------------------------------------------------------
-kswapd0/111 is trying to acquire lock:
-ffff88801eae4610 (sb_internal#3){.+.+}-{0:0}, at: btrfs_commit_inode_delayed_inode+0x110/0x330 fs/btrfs/delayed-inode.c:1275
+This is a helpful clarification and I like seeing an example. With the
+trivial change above:
 
-but task is already holding lock:
-ffffffff8dd3a9a0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0xa88/0x1970 mm/vmscan.c:6924
+Reviewed-by: Paul Barker <paul.barker.ct@bp.renesas.com>
 
-which lock already depends on the new lock.
+--=20
+Paul Barker
+--------------cwYi1y9yKe2mdo4v6vJz18ui
+Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
+Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-the existing dependency chain (in reverse order) is:
+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3D
+=3DsIIN
+-----END PGP PUBLIC KEY BLOCK-----
 
--> #3 (fs_reclaim){+.+.}-{0:0}:
-       __fs_reclaim_acquire mm/page_alloc.c:3783 [inline]
-       fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3797
-       might_alloc include/linux/sched/mm.h:334 [inline]
-       slab_pre_alloc_hook mm/slub.c:3890 [inline]
-       slab_alloc_node mm/slub.c:3980 [inline]
-       kmem_cache_alloc_lru_noprof+0x58/0x2f0 mm/slub.c:4019
-       btrfs_alloc_inode+0x118/0xb20 fs/btrfs/inode.c:8411
-       alloc_inode+0x5d/0x230 fs/inode.c:261
-       iget5_locked fs/inode.c:1235 [inline]
-       iget5_locked+0x1c9/0x2c0 fs/inode.c:1228
-       btrfs_iget_locked fs/btrfs/inode.c:5590 [inline]
-       btrfs_iget_path fs/btrfs/inode.c:5607 [inline]
-       btrfs_iget+0xfb/0x230 fs/btrfs/inode.c:5636
-       create_reloc_inode+0x403/0x820 fs/btrfs/relocation.c:3911
-       btrfs_relocate_block_group+0x471/0xe60 fs/btrfs/relocation.c:4114
-       btrfs_relocate_chunk+0x143/0x450 fs/btrfs/volumes.c:3373
-       __btrfs_balance fs/btrfs/volumes.c:4157 [inline]
-       btrfs_balance+0x211a/0x3f00 fs/btrfs/volumes.c:4534
-       btrfs_ioctl_balance fs/btrfs/ioctl.c:3675 [inline]
-       btrfs_ioctl+0x12ed/0x8290 fs/btrfs/ioctl.c:4742
-       __do_compat_sys_ioctl+0x2c3/0x330 fs/ioctl.c:1007
-       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
-       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
-       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
-       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+--------------cwYi1y9yKe2mdo4v6vJz18ui--
 
--> #2 (btrfs_trans_num_extwriters){++++}-{0:0}:
-       join_transaction+0x164/0xf40 fs/btrfs/transaction.c:315
-       start_transaction+0x427/0x1a70 fs/btrfs/transaction.c:700
-       btrfs_rebuild_free_space_tree+0xaa/0x480 fs/btrfs/free-space-tree.c:1323
-       btrfs_start_pre_rw_mount+0x218/0xf60 fs/btrfs/disk-io.c:2999
-       open_ctree+0x41ab/0x52e0 fs/btrfs/disk-io.c:3554
-       btrfs_fill_super fs/btrfs/super.c:946 [inline]
-       btrfs_get_tree_super fs/btrfs/super.c:1863 [inline]
-       btrfs_get_tree+0x11e9/0x1b90 fs/btrfs/super.c:2089
-       vfs_get_tree+0x8f/0x380 fs/super.c:1780
-       fc_mount+0x16/0xc0 fs/namespace.c:1125
-       btrfs_get_tree_subvol fs/btrfs/super.c:2052 [inline]
-       btrfs_get_tree+0xa53/0x1b90 fs/btrfs/super.c:2090
-       vfs_get_tree+0x8f/0x380 fs/super.c:1780
-       do_new_mount fs/namespace.c:3352 [inline]
-       path_mount+0x6e1/0x1f10 fs/namespace.c:3679
-       do_mount fs/namespace.c:3692 [inline]
-       __do_sys_mount fs/namespace.c:3898 [inline]
-       __se_sys_mount fs/namespace.c:3875 [inline]
-       __ia32_sys_mount+0x295/0x320 fs/namespace.c:3875
-       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
-       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
-       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
-       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+--------------cuym2VioR9YeBxcmeIilliEz--
 
--> #1 (btrfs_trans_num_writers){++++}-{0:0}:
-       join_transaction+0x148/0xf40 fs/btrfs/transaction.c:314
-       start_transaction+0x427/0x1a70 fs/btrfs/transaction.c:700
-       btrfs_rebuild_free_space_tree+0xaa/0x480 fs/btrfs/free-space-tree.c:1323
-       btrfs_start_pre_rw_mount+0x218/0xf60 fs/btrfs/disk-io.c:2999
-       open_ctree+0x41ab/0x52e0 fs/btrfs/disk-io.c:3554
-       btrfs_fill_super fs/btrfs/super.c:946 [inline]
-       btrfs_get_tree_super fs/btrfs/super.c:1863 [inline]
-       btrfs_get_tree+0x11e9/0x1b90 fs/btrfs/super.c:2089
-       vfs_get_tree+0x8f/0x380 fs/super.c:1780
-       fc_mount+0x16/0xc0 fs/namespace.c:1125
-       btrfs_get_tree_subvol fs/btrfs/super.c:2052 [inline]
-       btrfs_get_tree+0xa53/0x1b90 fs/btrfs/super.c:2090
-       vfs_get_tree+0x8f/0x380 fs/super.c:1780
-       do_new_mount fs/namespace.c:3352 [inline]
-       path_mount+0x6e1/0x1f10 fs/namespace.c:3679
-       do_mount fs/namespace.c:3692 [inline]
-       __do_sys_mount fs/namespace.c:3898 [inline]
-       __se_sys_mount fs/namespace.c:3875 [inline]
-       __ia32_sys_mount+0x295/0x320 fs/namespace.c:3875
-       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
-       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
-       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
-       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+--------------xI3MkB3bqz4WF3eJ5X8zp2y7
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
--> #0 (sb_internal#3){.+.+}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain kernel/locking/lockdep.c:3869 [inline]
-       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
-       lock_acquire kernel/locking/lockdep.c:5754 [inline]
-       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1655 [inline]
-       sb_start_intwrite include/linux/fs.h:1838 [inline]
-       start_transaction+0xbc1/0x1a70 fs/btrfs/transaction.c:694
-       btrfs_commit_inode_delayed_inode+0x110/0x330 fs/btrfs/delayed-inode.c:1275
-       btrfs_evict_inode+0x960/0xe80 fs/btrfs/inode.c:5291
-       evict+0x2ed/0x6c0 fs/inode.c:667
-       iput_final fs/inode.c:1741 [inline]
-       iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
-       iput+0x5c/0x80 fs/inode.c:1757
-       btrfs_scan_root fs/btrfs/extent_map.c:1118 [inline]
-       btrfs_free_extent_maps+0xbd3/0x1320 fs/btrfs/extent_map.c:1189
-       super_cache_scan+0x409/0x550 fs/super.c:227
-       do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
-       shrink_slab+0x18a/0x1310 mm/shrinker.c:662
-       shrink_one+0x493/0x7c0 mm/vmscan.c:4790
-       shrink_many mm/vmscan.c:4851 [inline]
-       lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4951
-       shrink_node mm/vmscan.c:5910 [inline]
-       kswapd_shrink_node mm/vmscan.c:6720 [inline]
-       balance_pgdat+0x1105/0x1970 mm/vmscan.c:6911
-       kswapd+0x5ea/0xbf0 mm/vmscan.c:7180
-       kthread+0x2c1/0x3a0 kernel/kthread.c:389
-       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+-----BEGIN PGP SIGNATURE-----
 
-other info that might help us debug this:
+wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZmFv6QUDAAAAAAAKCRDbaV4Vf/JGvWU6
+AQDSsAO3bvQOfdU4uSNy9JHsga8OyLIF2Rs7Fda7u/NyOAEAq6KIJw4g73ZA4mkNsnOM7kUpXq1+
+KcKZU1/hFlLX2wM=
+=jN5l
+-----END PGP SIGNATURE-----
 
-Chain exists of:
-  sb_internal#3 --> btrfs_trans_num_extwriters --> fs_reclaim
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(fs_reclaim);
-                               lock(btrfs_trans_num_extwriters);
-                               lock(fs_reclaim);
-  rlock(sb_internal#3);
-
- *** DEADLOCK ***
-
-2 locks held by kswapd0/111:
- #0: ffffffff8dd3a9a0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0xa88/0x1970 mm/vmscan.c:6924
- #1: ffff88801eae40e0 (&type->s_umount_key#62){++++}-{3:3}, at: super_trylock_shared fs/super.c:562 [inline]
- #1: ffff88801eae40e0 (&type->s_umount_key#62){++++}-{3:3}, at: super_cache_scan+0x96/0x550 fs/super.c:196
-
-stack backtrace:
-CPU: 0 PID: 111 Comm: kswapd0 Not tainted 6.10.0-rc2-syzkaller-00010-g2ab795141095 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain kernel/locking/lockdep.c:3869 [inline]
- __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
- lock_acquire kernel/locking/lockdep.c:5754 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
- percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
- __sb_start_write include/linux/fs.h:1655 [inline]
- sb_start_intwrite include/linux/fs.h:1838 [inline]
- start_transaction+0xbc1/0x1a70 fs/btrfs/transaction.c:694
- btrfs_commit_inode_delayed_inode+0x110/0x330 fs/btrfs/delayed-inode.c:1275
- btrfs_evict_inode+0x960/0xe80 fs/btrfs/inode.c:5291
- evict+0x2ed/0x6c0 fs/inode.c:667
- iput_final fs/inode.c:1741 [inline]
- iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
- iput+0x5c/0x80 fs/inode.c:1757
- btrfs_scan_root fs/btrfs/extent_map.c:1118 [inline]
- btrfs_free_extent_maps+0xbd3/0x1320 fs/btrfs/extent_map.c:1189
- super_cache_scan+0x409/0x550 fs/super.c:227
- do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
- shrink_slab+0x18a/0x1310 mm/shrinker.c:662
- shrink_one+0x493/0x7c0 mm/vmscan.c:4790
- shrink_many mm/vmscan.c:4851 [inline]
- lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4951
- shrink_node mm/vmscan.c:5910 [inline]
- kswapd_shrink_node mm/vmscan.c:6720 [inline]
- balance_pgdat+0x1105/0x1970 mm/vmscan.c:6911
- kswapd+0x5ea/0xbf0 mm/vmscan.c:7180
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+--------------xI3MkB3bqz4WF3eJ5X8zp2y7--
 
