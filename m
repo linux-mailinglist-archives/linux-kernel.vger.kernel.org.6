@@ -1,54 +1,39 @@
-Return-Path: <linux-kernel+bounces-204147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B00C8FE4C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:56:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C15FD8FE4C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:57:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4043F1F27271
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:56:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DFCA1F272A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3151B195397;
-	Thu,  6 Jun 2024 10:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="coLYoUY/"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5AC2E639;
-	Thu,  6 Jun 2024 10:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D7C195391;
+	Thu,  6 Jun 2024 10:56:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D839450;
+	Thu,  6 Jun 2024 10:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717671364; cv=none; b=BJZHTxGLDpzUJ3zevS8WN6L6OYNJ4ZMN5B2tzh7mw2BlkDH49EcJ3nLiaM/7MClz5Lc8KuqZ10Bzv5I7cb4ozeFLkbKtORfxxa2OdHYJnendn3+Ep4f0UxkcdiP/qyKFZuaeEpX+sEzrZW8qDOJMq8+PDCqQQaR9DVH0DYPxmfg=
+	t=1717671413; cv=none; b=oUnIGlVnIdzFVH+0g2Fw/unbS7ai0m4HDhF81wRnHFPO5Hbl+vjEukF607VR4t6KW0sofDkKk7AAKJiC6HNcLU9SXX6Lgqh6kle+gjQG6tUQ/nRjYupsdf780n/I7wGYO96kHanblqv13jLoy9ywtYwvzRDn9yRCw3rbKDF3omM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717671364; c=relaxed/simple;
-	bh=YgzEeSRn9SjAt09HXi0BbwcLxwl/BddzUZDCbdf390Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W+vEGfW7jPllxyuYtN3b1xvMaWBSSW1z1JvQPdcu7V7TENkDVQbK5zX52oEsoqWyfFSmJJqyk6w9QXIa0XZCHJx8aqUD73APKoIYCLo3jekP924dJCqFdNB8RUmlCGESP87U1DO3UK66obPlmxRiHGMVXo4TeIfUCCBbp08+iWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=coLYoUY/; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717671359;
-	bh=YgzEeSRn9SjAt09HXi0BbwcLxwl/BddzUZDCbdf390Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=coLYoUY//s6wa9jmOGWFcJFmosndgvzmNXIMsqq9uXubkcn9Y1qJ0Q3Z54G0FGq8K
-	 gC8CWJ+K/bcyFPUO8lGMxg0HkqTaa5Q9uuYSZ2nZz4osYQvM+vsUIjoncFnfsH/fpq
-	 8yJKrhqg4PQ/fPAQwsugMQLJCSITrYhQZ+hOtGR61zKVYBp04JgvyIozX4yEHZ0g4C
-	 mCdZFludSE6yxpSnpFOhfP2WQmeKC30KpTQo3YSFLd8dIHOhnnUqPJUl2sYg//vJkU
-	 mSK+ExpYi1wQlHdMFZGr+kFGQgxhFqax5RkLoFzfjQ58vK8qMwtiS/cNVkhgnRMXJo
-	 mP5N6WKI7TCfw==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B29EB3780627;
-	Thu,  6 Jun 2024 10:55:58 +0000 (UTC)
-Message-ID: <07664707-6482-4b17-91fd-251cf73cbee9@collabora.com>
-Date: Thu, 6 Jun 2024 12:55:57 +0200
+	s=arc-20240116; t=1717671413; c=relaxed/simple;
+	bh=/vkBos92LXJ32FjgGFlGb6tlMPdz4UD7Ft2JSbxto3w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=hZApwFlL6nqn/a+3k3x7Ct/dqCdJF3NJkdwrBCGhcDVn2eDYv3t7kOgiBTPhIuwthele6wTFqS198nsuUQmD3OZrSIOFzri3tAnbMBfRJZDhGkSLl5/25cagqRCDfz+5W6DS+SJ6frqfWGSGD0r7E3EHTrpKhXN8S40RXYpq0V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 15BED2F4;
+	Thu,  6 Jun 2024 03:57:15 -0700 (PDT)
+Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D20B3F762;
+	Thu,  6 Jun 2024 03:56:48 -0700 (PDT)
+Message-ID: <bc34d0aa-7152-4f0b-a3c4-11b1a63fba9b@arm.com>
+Date: Thu, 6 Jun 2024 11:56:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,67 +41,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.10/5.15/6.1] clk: mediatek: mt8183: Add memory
-To: Aleksandr Mishin <amishin@t-argos.ru>, Weiyi Lu <weiyi.lu@mediatek.com>,
- stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Sasha Levin <sashal@kernel.org>, Markus Schneider-Pargmann
- <msp@baylibre.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-References: <20240606103402.23912-1-amishin@t-argos.ru>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v1 0/3] Fix and improve __maps__fixup_overlap_and_insert
+To: Ian Rogers <irogers@google.com>
+References: <20240521165109.708593-1-irogers@google.com>
 Content-Language: en-US
-In-Reply-To: <20240606103402.23912-1-amishin@t-argos.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Cc: "Steinar H . Gunderson" <sesse@google.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: James Clark <james.clark@arm.com>
+In-Reply-To: <20240521165109.708593-1-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Il 06/06/24 12:34, Aleksandr Mishin ha scritto:
-> No upstream commit exists for this commit.
+
+
+On 21/05/2024 17:51, Ian Rogers wrote:
+> Fix latent unlikely bugs in __maps__fixup_overlap_and_insert.
 > 
-> The issue was introduced with commit c93d059a8045 ("clk: mediatek: mt8183:
-> Register 13MHz clock earlier for clocksource")
+> Improve __maps__fixup_overlap_and_insert's performance 21x in the case
+> of overlapping mmaps. sesse@google.com reported slowness opening
+> perf.data files from chromium where the files contained a large number
+> of overlapping mappings. Improve this case primarily by avoiding
+> unnecessary sorting.
 > 
-> In case of memory allocation fail in clk_mt8183_top_init_early()
-> 'top_clk_data' will be set to NULL and later dereferenced without check.
-> Fix this bug by adding NULL-return check.
+> Unscientific timing data processing a perf.data file with overlapping
+> mmap events from chromium:
 > 
-> Upstream branch code has been significantly refactored and can't be
-> backported directly.
+> Before:
+> real    0m9.856s
+> user    0m9.637s
+> sys     0m0.204s
 > 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> After:
+> real    0m0.675s
+> user    0m0.454s
+> sys     0m0.196s
+> 
+> Tested with address/leak sanitizer, invariant checks and validating
+> the before and after output are identical.
+> 
+> Ian Rogers (3):
+>   perf maps: Fix use after free in __maps__fixup_overlap_and_insert
+>   perf maps: Reduce sorting for overlapping mappings
+>   perf maps: Add/use a sorted insert for fixup overlap and insert
+> 
+>  tools/perf/util/maps.c | 113 +++++++++++++++++++++++++++++++++--------
+>  1 file changed, 92 insertions(+), 21 deletions(-)
 > 
 
-There's no fixes tag, and the commit title shall be fixed, you're not
-"adding memory".
+Reviewed-by: James Clark <james.clark@arm.com>
 
-Please fix - after which, it kind of makes sense to add this to stable.
+I'm wondering if there is any point in the non sorted insert any more?
 
-Cheers,
-Angelo
-
-> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
-> ---
->   drivers/clk/mediatek/clk-mt8183.c | 5 +++++
->   1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
-> index 78620244144e..8377a877d9e3 100644
-> --- a/drivers/clk/mediatek/clk-mt8183.c
-> +++ b/drivers/clk/mediatek/clk-mt8183.c
-> @@ -1185,6 +1185,11 @@ static void clk_mt8183_top_init_early(struct device_node *node)
->   	int i;
->   
->   	top_clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
-> +	if (!top_clk_data) {
-> +		pr_err("%s(): could not register clock provider: %d\n",
-> +			__func__, -ENOMEM);
-> +		return;
-> +	}
->   
->   	for (i = 0; i < CLK_TOP_NR_CLK; i++)
->   		top_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
-
+Maps could be always either sorted by name or sorted by address and
+insert() is always a sorted/fixup-overlaps insert depending on the sort
+style of the list.
 
 
