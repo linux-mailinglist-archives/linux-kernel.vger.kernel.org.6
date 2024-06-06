@@ -1,188 +1,216 @@
-Return-Path: <linux-kernel+bounces-204470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F367F8FEF92
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:56:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 190AB8FEF8D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E6C3B2BA5F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:55:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA686B2B00B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8981197A96;
-	Thu,  6 Jun 2024 14:27:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12D119AA4E;
+	Thu,  6 Jun 2024 14:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="caaUIcMX"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ypGtmARm"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44523197A93
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70757195F10
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717684060; cv=none; b=XR+ilXGHVXF92BK8NoT2twffJLHjaFH+pIZWR5T0BA8HjYCW7zAzLASYGnw8MvBrqwnxzSBkuF0UMvl1QUHNmOj77+EEcvu9aa1xVUJhyw+CSQuQuEBfSMRICoP8YXO28KPr+C82pL0800cevEFHR8JbW/32C8MQreUNxL4K9no=
+	t=1717684088; cv=none; b=SIgxMsdm4N8TQ6lYRCH4zDW4bVSQGBjIssJ5qAIYzhbAUxizSiwZIPNZqnle7RGxj9QLRbWxukQWSeJ65+vJ62ah/D6fIaRbdcYcmteGwXlved2lSdpZUM9PG3/RFdqRlFTWCXvtxH60sBaWT4YR2IFuf/49Ja6APnTUF/hEoRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717684060; c=relaxed/simple;
-	bh=kBCPNlDnaF5A/j93fXd8C0p9oaSwJeDVY9kAHOruRoo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uf0nzYMKm8VtxmxLYE705msWEJlYJBQcqW4rBw2EIrQHsRoPGYL3HHthS0+7EImeFhaAwFifSb5vSgbZqSnDHrCua4MX7O4+57fO0dPLuNZK0nNG4f1fjX+57JtLOiMkAaTm0jAm5J9oRfTZh3o+as0ekQ+mNthsX+K9kL+cbm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=caaUIcMX; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57a677d3d79so4078438a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 07:27:38 -0700 (PDT)
+	s=arc-20240116; t=1717684088; c=relaxed/simple;
+	bh=2010hG4iABBo1ahAxQfVMNrsbmnxPlFm5STPyt+3t+8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TJfZ/2jAKyjcHelDFIBuI+4bQta6fN9QxF/yAVbrDlZ7oWTOS0UFDkR/vqwrqdDrhtuG65YCITJw4nHjVT7/3kMkRxCizIdmJd7zPIZSrDJKTbSqyryAd3islB2tvs1j3RfnG+87wWpcuL6NNF9yNpjCVNINDy8RluYSvYmtxIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ypGtmARm; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5750a8737e5so16427a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 07:28:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717684057; x=1718288857; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4hLEV7cEhYqs364TwznzdmQhJORPUoZ782mB7mIsyO8=;
-        b=caaUIcMXoZ9RcFH9Uzv8B4l7JixqMj57w71tCNMjNEDLqgzWrJ/cAiE+vmauPvp6ui
-         nDLa/y5Raue+ci9JBbpZNLyQLr1AlDrYn5osbB+5eLdwZR5z2fe3EFk7q2ROwtZ11TYg
-         XaqkeHq8AFl90OAwfxBXOfMaaWGkQwitmA5hCAqGi/kUtfW7mP53FnuqZJlFFLTIR6HE
-         GesSJp6VUqfi6ITL6Cp+2eZ8PdPrVAzoGOuwA5be9tN83MjaJoEo6kbIEpy96xBiIiXU
-         3cMk/hDSwK4TAp8qAxtAp2rwsjemtINBdE8BKECxQmGxUpJDvQeCUErW4Clsxdt2RMm4
-         n2KA==
+        d=google.com; s=20230601; t=1717684084; x=1718288884; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EHOeVkduEhimJCash5Ne5E2HPSt4JUJn9g5gWE3wRFw=;
+        b=ypGtmARmR/1gxyhyzCC8jbb6CvsKc7Xio2GhdtA7SlYjl+zjbwkkEUa+MPqY3JlDi+
+         qMcMMh6yz4ZvpWAIw415FmDvuaouvJgjXkXwRdq5ARqIPt8pPevU2ByCpkbFwmYjxP6X
+         Dm4yBVRENdR/P5DWgynL5TO9yG5ycdj9b8w9AgCarb7/hK9L/QVW1NFMaFES9UDuIr5b
+         Oy+jKAtVvm+sFY5TX+Oo/HX9BPLFTcfWE228BVvKGgAkFFzEJxQwGFoxitQ255rRsVO7
+         jZRGl37/8mPUxFm+sETNf9dItZNdcunjrDKVetOjKcyFGFv8hsEcV0dTB6TobuzRXcax
+         PFhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717684057; x=1718288857;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4hLEV7cEhYqs364TwznzdmQhJORPUoZ782mB7mIsyO8=;
-        b=hqsILIXL2WzUTF9V+NnHaeFLbH26tE6Cupid3+u2tN7mBNCKtEtdqiDY47PUUBTQxN
-         vRgcMtk3HXDiPwwUjaYWrwtDSO2f7ZCKQabeslcUvETV+O/I84ZLZDT0hpXvee2S5TpH
-         EijKc6IfP/kyq2SWHzdOCB3/DhMuZvjWNZh6SHPPtEzYxA2A47Inm33DqfpEN7V1IAQr
-         nB6likStAPJzLeDAXj4gqxJhX3P8aSbnj4g0qqyNHxtfcYwDLLfQEm0rW727NtGhv8TK
-         aTqXP/Xr5cEQzr7DoXFTfO3v8+NaQyKubH1Vay4TklItjpFTsr5lNZ1qd9kj72zWnYDO
-         jEMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVieiTJzQzyqTzJLYuM30rrCe23OomlXcp6dCGkaP7UP1SiRCWwsC3jPjyrnpuf07C+laKAhdF/RFCpEKiXIXnMHu4db5rjKKynQ/2b
-X-Gm-Message-State: AOJu0YymwO+6p8WEXELrtoEKEyLYT/LJA/0aofLpAzTeln5aoxG20t3X
-	0kBuOQZmQ1j6EvJ91jHvyfPy/6LQs9V8uini+PGqSBRQqkI6u8ooFChgAA9Xo3s=
-X-Google-Smtp-Source: AGHT+IHsP59EudlMYpMNXIptWO+FeQmE0ifFlSNcVw/Ot9lSWaCM41xaUl8Qj6EICFDnAC/IPJ3ITg==
-X-Received: by 2002:a17:906:5ac8:b0:a68:88a3:3645 with SMTP id a640c23a62f3a-a6c7650ae43mr235613366b.27.1717684056579;
-        Thu, 06 Jun 2024 07:27:36 -0700 (PDT)
-Received: from [192.168.2.107] ([79.115.63.17])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c8070e1c1sm102862566b.168.2024.06.06.07.27.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 07:27:35 -0700 (PDT)
-Message-ID: <9e304860-b4e9-4193-9bb3-ebcc3611032f@linaro.org>
-Date: Thu, 6 Jun 2024 15:27:34 +0100
+        d=1e100.net; s=20230601; t=1717684084; x=1718288884;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EHOeVkduEhimJCash5Ne5E2HPSt4JUJn9g5gWE3wRFw=;
+        b=IIWdktFdPAlNSomfbrnuqc/zeLw0wRXk+0yQF6/aQMd0JASSjrxH3Ojk/7ks2UQA0U
+         fUJm9zO+Y6w4kseEU4/4QW8wc73WdXjH+GtZIQdzKXMtzMbsIySf6cLqklLDle57vc8T
+         en8bIIVi6roFFlyEyWKjfymVVTN8+fX7H+9Yax4UM53wbdyxZmI5TGHWgbpaKQMogFLn
+         vBrkJDzCnlWH6XX9uPX+bieVR225SYZF1hpuzMo2C1LUnkahJlH5Lg+Hd9tiXUgoAgbt
+         dqDz7NSZkbzJcvkQBbF6FkjCHcqvRAQzAM68GG/RrIoKKG+ZEQYfr0WoTkWFmh6aJNJ7
+         H70Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUfmo1+VfHu9F9i7rWab84hTl9PoutFX7tP5YDbAQ6DKizhoTqaVkDeYvaLGj0PYa9UM4Fg0UuLeMohxrjy83+2uf7/DZnwMswAmX88
+X-Gm-Message-State: AOJu0YzsOm9rXmbl/WptOPOPjk/aRQp0NP5o9gYSLDVW41vv/uVVKd9l
+	oUbnqeKFfPH8NvRQOtgeCRIriYHrohSO1AL6GvBY4gTDOrFc0lwy4kOMlNzOewunRxYmvKTtfRW
+	1+sOqUO7D/PzK+eiICpR7+nG9IDvxv5ED2U6fRylGQdHTMgaVWUqh
+X-Google-Smtp-Source: AGHT+IFOE/+JyMH6/CKDFNZouqC5GGkV8bt8ynYn5TTi25PVwy/8Tu7Fn4wUXOICF5VBGWZUUvjxprFdohSvRE/FgnY=
+X-Received: by 2002:a05:6402:2d7:b0:57a:22c8:2d3c with SMTP id
+ 4fb4d7f45d1cf-57aa680b57bmr235474a12.0.1717684083312; Thu, 06 Jun 2024
+ 07:28:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mtd: spi-nor: macronix: workaround for device id re-use
-To: Michael Walle <mwalle@kernel.org>, Esben Haabendal <esben@geanix.com>,
- Pratyush Yadav <pratyush@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
- Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-References: <20240524-macronix-mx25l3205d-fixups-v1-1-ee152e56afb3@geanix.com>
- <D1Q7BU6PJ356.1CTXPUZE8U6XX@kernel.org>
- <8513a828-6669-4bf3-91d3-799771866f32@linaro.org>
- <D1SZA4ZDM06P.CJC0EQ9ULA04@kernel.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <D1SZA4ZDM06P.CJC0EQ9ULA04@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240606141450.44709-1-arefev@swemel.ru>
+In-Reply-To: <20240606141450.44709-1-arefev@swemel.ru>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 6 Jun 2024 16:27:49 +0200
+Message-ID: <CANn89iLkcg1bkngfZ-U-5+tyq-uYiHfzdRCH2BwUzd_Nvpt6Qg@mail.gmail.com>
+Subject: Re: [PATCH] net: missing check
+To: Denis Arefev <arefev@swemel.ru>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	lvc-project@linuxtesting.org, Willem de Bruijn <willemb@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jun 6, 2024 at 4:14=E2=80=AFPM Denis Arefev <arefev@swemel.ru> wrot=
+e:
+>
+> Two missing check in virtio_net_hdr_to_skb() allowed syzbot
+> to crash kernels again
+>
+> 1. After the skb_segment function the buffer may become non-linear
+> (nr_frags !=3D 0), but since the SKBTX_SHARED_FRAG flag is not set anywhe=
+re
+> the __skb_linearize function will not be executed, then the buffer will
+> remain non-linear. Then the condition (offset >=3D skb_headlen(skb))
+> becomes true, which causes WARN_ON_ONCE in skb_checksum_help.
+>
+> 2. The struct sk_buff and struct virtio_net_hdr members must be
+> mathematically related.
+> (gso_size) must be greater than (needed) otherwise WARN_ON_ONCE.
+> (remainder) must be greater than (needed) otherwise WARN_ON_ONCE.
+> (remainder) may be 0 if division is without remainder.
+>
+> offset+2 (4191) > skb_headlen() (1116)
+> WARNING: CPU: 1 PID: 5084 at net/core/dev.c:3303 skb_checksum_help+0x5e2/=
+0x740 net/core/dev.c:3303
+> Modules linked in:
+> CPU: 1 PID: 5084 Comm: syz-executor336 Not tainted 6.7.0-rc3-syzkaller-00=
+014-gdf60cee26a2e #0
+> Hardware name: Google Compute Engine/Google Compute Engine, BIOS Google 1=
+1/10/2023
+> RIP: 0010:skb_checksum_help+0x5e2/0x740 net/core/dev.c:3303
+> Code: 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 52 01 00 00 44 89 e=
+2 2b 53 74 4c 89 ee 48 c7 c7 40 57 e9 8b e8 af 8f dd f8 90 <0f> 0b 90 90 e9=
+ 87 fe ff ff e8 40 0f 6e f9 e9 4b fa ff ff 48 89 ef
+> RSP: 0018:ffffc90003a9f338 EFLAGS: 00010286
+> RAX: 0000000000000000 RBX: ffff888025125780 RCX: ffffffff814db209
+> RDX: ffff888015393b80 RSI: ffffffff814db216 RDI: 0000000000000001
+> RBP: ffff8880251257f4 R08: 0000000000000001 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000001 R12: 000000000000045c
+> R13: 000000000000105f R14: ffff8880251257f0 R15: 000000000000105d
+> FS:  0000555555c24380(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000000002000f000 CR3: 0000000023151000 CR4: 00000000003506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  ip_do_fragment+0xa1b/0x18b0 net/ipv4/ip_output.c:777
+>  ip_fragment.constprop.0+0x161/0x230 net/ipv4/ip_output.c:584
+>  ip_finish_output_gso net/ipv4/ip_output.c:286 [inline]
+>  __ip_finish_output net/ipv4/ip_output.c:308 [inline]
+>  __ip_finish_output+0x49c/0x650 net/ipv4/ip_output.c:295
+>  ip_finish_output+0x31/0x310 net/ipv4/ip_output.c:323
+>  NF_HOOK_COND include/linux/netfilter.h:303 [inline]
+>  ip_output+0x13b/0x2a0 net/ipv4/ip_output.c:433
+>  dst_output include/net/dst.h:451 [inline]
+>  ip_local_out+0xaf/0x1a0 net/ipv4/ip_output.c:129
+>  iptunnel_xmit+0x5b4/0x9b0 net/ipv4/ip_tunnel_core.c:82
+>  ipip6_tunnel_xmit net/ipv6/sit.c:1034 [inline]
+>  sit_tunnel_xmit+0xed2/0x28f0 net/ipv6/sit.c:1076
+>  __netdev_start_xmit include/linux/netdevice.h:4940 [inline]
+>  netdev_start_xmit include/linux/netdevice.h:4954 [inline]
+>  xmit_one net/core/dev.c:3545 [inline]
+>  dev_hard_start_xmit+0x13d/0x6d0 net/core/dev.c:3561
+>  __dev_queue_xmit+0x7c1/0x3d60 net/core/dev.c:4346
+>  dev_queue_xmit include/linux/netdevice.h:3134 [inline]
+>  packet_xmit+0x257/0x380 net/packet/af_packet.c:276
+>  packet_snd net/packet/af_packet.c:3087 [inline]
+>  packet_sendmsg+0x24ca/0x5240 net/packet/af_packet.c:3119
+>  sock_sendmsg_nosec net/socket.c:730 [inline]
+>  __sock_sendmsg+0xd5/0x180 net/socket.c:745
+>  __sys_sendto+0x255/0x340 net/socket.c:2190
+>  __do_sys_sendto net/socket.c:2202 [inline]
+>  __se_sys_sendto net/socket.c:2198 [inline]
+>  __x64_sys_sendto+0xe0/0x1b0 net/socket.c:2198
+>  do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+>  do_syscall_64+0x40/0x110 arch/x86/entry/common.c:82
+>  entry_SYSCALL_64_after_hwframe+0x63/0x6b
+>
+> Signed-off-by: Denis Arefev <arefev@swemel.ru>
+> ---
+>  include/linux/virtio_net.h | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/include/linux/virtio_net.h b/include/linux/virtio_net.h
+> index 4dfa9b69ca8d..77ebe908d746 100644
+> --- a/include/linux/virtio_net.h
+> +++ b/include/linux/virtio_net.h
+> @@ -56,6 +56,7 @@ static inline int virtio_net_hdr_to_skb(struct sk_buff =
+*skb,
+>         unsigned int thlen =3D 0;
+>         unsigned int p_off =3D 0;
+>         unsigned int ip_proto;
+> +       u64 ret, remainder;
+>
+>         if (hdr->gso_type !=3D VIRTIO_NET_HDR_GSO_NONE) {
+>                 switch (hdr->gso_type & ~VIRTIO_NET_HDR_GSO_ECN) {
+> @@ -98,6 +99,15 @@ static inline int virtio_net_hdr_to_skb(struct sk_buff=
+ *skb,
+>                 u32 off =3D __virtio16_to_cpu(little_endian, hdr->csum_of=
+fset);
+>                 u32 needed =3D start + max_t(u32, thlen, off + sizeof(__s=
+um16));
+>
+> +               if (hdr->gso_size) {
+> +                       ret =3D div64_u64_rem(skb->len, hdr->gso_size, &r=
+emainder);
+> +                       if (!(ret && (hdr->gso_size > needed) &&
+> +                                               ((remainder > needed) || =
+(remainder =3D=3D 0)))) {
+> +                               return -EINVAL;
+> +                       }
+> +                       skb_shinfo(skb)->tx_flags |=3D SKBFL_SHARED_FRAG;
+> +               }
+> +
+>                 if (!pskb_may_pull(skb, needed))
+>                         return -EINVAL;
+>
+Hi Denis
 
+Please please please cc netdev@ for this kind of patch.
 
-On 6/6/24 14:45, Michael Walle wrote:
->>>> + */
->>>> +static int
->>>> +mx25l3205d_late_init(struct spi_nor *nor)
->>>> +{
->>>> +	struct spi_nor_flash_parameter *params = nor->params;
->>>> +
->>>> +	/*                          DREAD  2READ  QREAD  4READ
->>>> +	 *                          1-1-2  1-2-2  1-1-4  1-4-4
->>>> +	 * Before SFDP parse          1      0      1      0
->>>> +	 * 3206e after SFDP parse     1      0      0      0
->>>> +	 * 3233f after SFDP parse     1      1      1      1
->>>> +	 * 3205d after this func      0      1      0      0
->>>> +	 */
->>>> +	if ((params->hwcaps.mask & SNOR_HWCAPS_READ_1_1_4) &&
->>>> +	    !(params->hwcaps.mask & SNOR_HWCAPS_READ_1_4_4)) {
->>>> +		/* Should be MX25L3205D */
->>>> +		params->hwcaps.mask &= ~SNOR_HWCAPS_READ_1_1_2;
->>>> +		spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_1_1_2],
->>>> +					  0, 0, 0, 0);
->>>> +		params->hwcaps.mask &= ~SNOR_HWCAPS_READ_1_1_4;
->>>> +		spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_1_1_4],
->>>> +					  0, 0, 0, 0);
->>>> +		params->hwcaps.mask |= SNOR_HWCAPS_READ_1_2_2;
->>>> +		spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_1_2_2],
->>>> +					  0, 4, SPINOR_OP_READ_1_2_2,
->>>> +					  SNOR_PROTO_1_2_2);
->>>> +	}
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static const struct spi_nor_fixups mx25l3205d_fixups = {
->>>> +	.late_init = mx25l3205d_late_init,
->>>> +};
->>>> +
->>>>  static int
->>>>  mx25l25635_post_bfpt_fixups(struct spi_nor *nor,
->>>>  			    const struct sfdp_parameter_header *bfpt_header,
->>>> @@ -61,7 +118,8 @@ static const struct flash_info macronix_nor_parts[] = {
->>>>  		.id = SNOR_ID(0xc2, 0x20, 0x16),
->>>>  		.name = "mx25l3205d",
->>>>  		.size = SZ_4M,
->>>> -		.no_sfdp_flags = SECT_4K,
->>>> +		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
->>>> +		.fixups = &mx25l3205d_fixups
->>>>  	}, {
->>>>  		.id = SNOR_ID(0xc2, 0x20, 0x17),
->>>>  		.name = "mx25l6405d",
->>>>
->>
->> If all support 1-1-2, (seems MX25L3205D doesn't), then we may have a
->> change to don't update the core.
->>
->> Frankly I don't care too much about what happens in the manufacturer
->> drivers, but I do care about the core and to not extend it with . This
->> patch is not too heavy to be unmaintainable and shows clear where the
->> problem is, we can keep this as well.
-> 
-> It's a horrible hack. For example I'm working on a patch to clean up
-> the spi_nor_set_read_settings() handling. So just throwing any code
-> into vendor drivers doesn't make it any better in terms of
-> maintainability. I'd need to touch all the code anyway. In fact it
-> makes it even worse, because it looks like the manufacturer drivers
-> are just a dumping ground for bad things. Thus, I'd really have it
-> handled in a correct way inside the core.
-> 
-> Also, this is not device specific. Let there be two different
-> flashes with the same ID, but one support SFDP and one doesn't.
-> Right now, you have to have any of the magic flags (dual, quad,
-> etc) set to trigger an SFDP parsing. If the flash without SFDP
-> doesn't support any of these, like in this case, we are screwed.
-> Hence we might need such a flag also for other flashes.
+gso_size has no relation to @needed.
 
-maybe. How many such flashes have you seen in the last 3 years?
-> 
->> Other option that I'd like you to consider is whether we just remove
->> support for MX25L3205D, thus the entry altogether, and instead rely on
->> SFDP to set everything.
-> 
-> Well, this will break boards with this flash :) And we don't know if
-> there are any.
+I doubt div64_u64_rem() is needed.
 
-The flash (MX25L3205D) was already deprecated in two iterations by the
-manufacturer. First migration being done in 2011 [1]. Having to maintain
-all flavors is a pain, thus let's remove support for the old flash. If
-anyone complains we can bring it back to life, but let's not complicate
-our existence yet.
+SKBFL_SHARED_FRAG should not be abused like that.
 
-[1]
-https://www.mxic.com.tw/Lists/ApplicationNote/Attachments/1858/AN058-Migrating%20from%20MX25L3205D%20to%20MX25L3206E-1.2.pdf
+Bug must be elsewhere. Do you have a repro ?
+
+I think syzbot has a similar report.
 
