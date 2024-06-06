@@ -1,178 +1,181 @@
-Return-Path: <linux-kernel+bounces-204137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C23618FE4A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:51:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 121E28FE4A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3202BB2236A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:51:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 617C8B27E2C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96EE195396;
-	Thu,  6 Jun 2024 10:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEE8195974;
+	Thu,  6 Jun 2024 10:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LT1xlnTH"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YKkS4aDL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533A819538E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 10:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DAA1953A6;
+	Thu,  6 Jun 2024 10:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717671019; cv=none; b=kcxTVAS8XQ2I/iA9aVUwxcn7fMUZns/9iQMV+55ussNt0mZnse8cfWU8CERPrGrjwOxLuhEBv0pDty5b6LbZvyXtlEHlDaEEFI1UCis/VLgYm4nAJQMbrAWknRacTR83zaY/UXnqUKumTEQuJXJd40CFsAfA31ImlGXUlm+cv0k=
+	t=1717671038; cv=none; b=NZhnhMOpdYY9+o11IXdPu0h8BWEXUf4KnpmUtzUwZkgvaVw9J/bQY9C4rZ36fcOmn2PE63ONb9JLo7A93RCpeoJ+f4SS4MbLIUEd8fUjy0/zYhC1Y5O9c6aClKfZIVoFNStbW0Jc4OBu+Dy7hTGCQSveIZk0bdkA9O1v93IELro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717671019; c=relaxed/simple;
-	bh=lBpSg8Lv9yUtdVyrD0zIyZn+NBaMN/0TwzLyC0E371M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FPkqAs+CrD1vi8yjXyNfdKkTwtU9kUJM9Ezfbc8t9NHkVcMrzDdNsrKqLoQTgv6MQ3JKSLhEpdYDz/uSb/eUpa2uyVQtgVArU3sU2Zjii4iW6yyaDoE8bfFQmzVx1sHHI6sDlphH4zPtwCEGIpWbT3do2/APKTlP8npx0lZA7pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LT1xlnTH; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57a7dc13aabso926912a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 03:50:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717671017; x=1718275817; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=rLnV9lT0RMBL8QGwcM84QsnzjUdPdV6KvK9KQAXkj0U=;
-        b=LT1xlnTHOw+IJv/3G4D54cxSQ6rG63yD/gy+K4WRc7NzD17L+pIlWGJs4JX3G3Jm4e
-         EhXx9TjlcgsLxaHLsqBtw4xV5uNCCRHGh5k05JXtKfUTIokS5BPqU9662D7AH6IG2euM
-         7sAg8nODvuN0B+MA+BZLmISj8bvCh5Cc+dkWg0UMvj3nbskO9s/GFMJyiuYuRBMFhZPQ
-         hZu1+pyGn9dEQJVtAY7pXVjJ95MAZzyYv9oyvIN5ldX5C1wQdhueFNpH/f4fQ+fgjMOd
-         b6gIe8LeoKSE66J3JY7AQX/0qWVLlSv+ZlbspKIlHteCRsecCpjyu1DSK/yPoxeiqxi5
-         M3zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717671017; x=1718275817;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rLnV9lT0RMBL8QGwcM84QsnzjUdPdV6KvK9KQAXkj0U=;
-        b=RRni4wCN3MdY9jm30nwyyuNY2lRUAKHLHrbcsLmrsNTdUkmOAeFICSBwESlM8mNhr/
-         Bo+S/8TAZnmKYWEPgjEvScVaEk5tj4GtK6sLbCaYCqO9QkO0qi+juAoj6QAqQCnWZuWd
-         pQHOSa2lbdvkIU3TigMJ1cfZeDwRO9oyGk3sI8LRR+478iigsRLkMCt5s6qYGGoBhCKE
-         apRohNtXITJtl2i6JnFW99XE2F8lSzPIvSIElYUZOP5vHzLtAViO0Isvu9AbuG1jfMEb
-         eLIH/zHv9mfDRP5Dqb+KIONnWDCuyuiVHACNdjozpsF52TET1oPfjqbZKQRdf5uGzcbd
-         8Sww==
-X-Forwarded-Encrypted: i=1; AJvYcCVJDaMiMYYdOsCVOeI80L8A/U3WVCNvQbtPJ7SHn3Zz96EfrgWz6ezwQGH66SqXdhRIiL+QL3at4p1sjRqA7r6jU+243zqLOt4afsL0
-X-Gm-Message-State: AOJu0YznaEpi+78Z7cj5IJvytldILo7yA5Xe0bntbB43tAhLuE2pdbz5
-	VWxecAiQhIBptkV+VxM0srk82aefF1UBEt/YeGY0DPdff7lVZxMi1KxdoTWI524=
-X-Google-Smtp-Source: AGHT+IEf8D6a3Fss655zcntCKNrqfpoiWNAqqz5twNeanQNxrZBHbWufZrKTjPS8aOjMyasKbiArWw==
-X-Received: by 2002:a50:d592:0:b0:57a:48c:c0f4 with SMTP id 4fb4d7f45d1cf-57a8b6a69efmr3604817a12.17.1717671016695;
-        Thu, 06 Jun 2024 03:50:16 -0700 (PDT)
-Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae2366a4sm867633a12.92.2024.06.06.03.50.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 03:50:16 -0700 (PDT)
-Message-ID: <80f6c943-71af-4200-89ac-d42736514390@linaro.org>
-Date: Thu, 6 Jun 2024 12:50:14 +0200
+	s=arc-20240116; t=1717671038; c=relaxed/simple;
+	bh=h6KYXJFHQc+mvtWcnYwa8pq9IgUKG9NU+TZNQUHrWBg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UYPbg9aqq8xbhkdXU29P1OtZT2XRCgviQgOIKd/ZZ7erOfOlHmlNe6PE8xfdBL1gKvhXP8XGE0qsRrnXGmtOpAbe8IHI5VZV+8HhG0wyLbmHHMefLMg3y8Z4FJ3IeiFk9HL8Og6SF5BntL3V03ep4aqL1VH5Ex42GOyegKI06Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YKkS4aDL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CF8EC4AF07;
+	Thu,  6 Jun 2024 10:50:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717671038;
+	bh=h6KYXJFHQc+mvtWcnYwa8pq9IgUKG9NU+TZNQUHrWBg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YKkS4aDLqIUaST3xTej8wzC1v80nowkkqWRUFrh+6i+PVWqkXenE1ZJIlaeWIiG+Y
+	 Goe6dKflV4loAbp/wforpzwYHCecs32J5pKicHr842xVZrk+Xf3PnfEDk6YNcSo/uU
+	 dmU0E8XnqQjl5kwkqdo++HefvFGygx6aLDXr5Xh2E7S4yjCpdrMGETCwk+nMLGgMg/
+	 61ibOaPg+oahTjf8vX5SJ1GkkHM9AWzDNKzwuVlX9ZhCr2maP8HL6fGM7q6vdm/c1C
+	 vjZuvIUFeemrX4RajzGa6sd5IUHKQKV6xubzwQx9iiI9q4kSaVml9SC7f79TMVHp2g
+	 xCiuBQfkrs0Eg==
+Date: Thu, 6 Jun 2024 13:50:33 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Konstantin Taranov <kotaranov@microsoft.com>
+Cc: Konstantin Taranov <kotaranov@linux.microsoft.com>,
+	Wei Hu <weh@microsoft.com>,
+	"sharmaajay@microsoft.com" <sharmaajay@microsoft.com>,
+	Long Li <longli@microsoft.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH rdma-next 1/1] RDMA/mana_ib: process QP error events
+Message-ID: <20240606105033.GF13732@unreal>
+References: <1717500963-1108-1-git-send-email-kotaranov@linux.microsoft.com>
+ <20240604120846.GQ3884@unreal>
+ <PAXPR83MB0559D385C1AD343A506C45E3B4F82@PAXPR83MB0559.EURPRD83.prod.outlook.com>
+ <20240606080136.GB13732@unreal>
+ <PAXPR83MB0559D46DC010185AD7F7D531B4FA2@PAXPR83MB0559.EURPRD83.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 31/31] arm64: dts: qcom: sm8650-*: Remove thermal zone
- polling delays
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240510-topic-msm-polling-cleanup-v2-0-436ca4218da2@linaro.org>
- <20240510-topic-msm-polling-cleanup-v2-31-436ca4218da2@linaro.org>
- <a6e75f97-0479-4346-af84-5d7bd05f0063@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <a6e75f97-0479-4346-af84-5d7bd05f0063@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR83MB0559D46DC010185AD7F7D531B4FA2@PAXPR83MB0559.EURPRD83.prod.outlook.com>
 
-On 10.05.2024 2:47 PM, Bryan O'Donoghue wrote:
-> On 10/05/2024 12:59, Konrad Dybcio wrote:
->> All of the thermal zone suppliers are interrupt-driven, remove the
->> bogus and unnecessary polling that only wastes CPU time.
->>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->> ---
->>   arch/arm64/boot/dts/qcom/sm8650.dtsi | 88 +++++++-----------------------------
->>   1 file changed, 16 insertions(+), 72 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
->> index 62a6e77730bc..39e789b21acc 100644
->> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
->> @@ -5328,8 +5328,6 @@ compute-cb@12 {
->>         thermal-zones {
->>           aoss0-thermal {
->> -            polling-delay-passive = <0>;
->> -            polling-delay = <0>;
+On Thu, Jun 06, 2024 at 09:30:51AM +0000, Konstantin Taranov wrote:
+> > > > > +static void
+> > > > > +mana_ib_event_handler(void *ctx, struct gdma_queue *q, struct
+> > > > > +gdma_event *event) {
+> > > > > +	struct mana_ib_dev *mdev = (struct mana_ib_dev *)ctx;
+> > > > > +	struct mana_ib_qp *qp;
+> > > > > +	struct ib_event ev;
+> > > > > +	unsigned long flag;
+> > > > > +	u32 qpn;
+> > > > > +
+> > > > > +	switch (event->type) {
+> > > > > +	case GDMA_EQE_RNIC_QP_FATAL:
+> > > > > +		qpn = event->details[0];
+> > > > > +		xa_lock_irqsave(&mdev->qp_table_rq, flag);
+> > > > > +		qp = xa_load(&mdev->qp_table_rq, qpn);
+> > > > > +		if (qp)
+> > > > > +			refcount_inc(&qp->refcount);
+> > > > > +		xa_unlock_irqrestore(&mdev->qp_table_rq, flag);
+> > > > > +		if (!qp)
+> > > > > +			break;
+> > > > > +		if (qp->ibqp.event_handler) {
+> > > > > +			ev.device = qp->ibqp.device;
+> > > > > +			ev.element.qp = &qp->ibqp;
+> > > > > +			ev.event = IB_EVENT_QP_FATAL;
+> > > > > +			qp->ibqp.event_handler(&ev, qp->ibqp.qp_context);
+> > > > > +		}
+> > > > > +		if (refcount_dec_and_test(&qp->refcount))
+> > > > > +			complete(&qp->free);
+> > > > > +		break;
+> > > > > +	default:
+> > > > > +		break;
+> > > > > +	}
+> > > > > +}
+> > > >
+> > > > <...>
+> > > >
+> > > > > @@ -620,6 +626,11 @@ static int mana_ib_destroy_rc_qp(struct
+> > > > mana_ib_qp *qp, struct ib_udata *udata)
+> > > > >  		container_of(qp->ibqp.device, struct mana_ib_dev, ib_dev);
+> > > > >  	int i;
+> > > > >
+> > > > > +	xa_erase_irq(&mdev->qp_table_rq, qp->ibqp.qp_num);
+> > > > > +	if (refcount_dec_and_test(&qp->refcount))
+> > > > > +		complete(&qp->free);
+> > > > > +	wait_for_completion(&qp->free);
+> > > >
+> > > > This flow is unclear to me. You are destroying the QP and need to
+> > > > make sure that mana_ib_event_handler is not running at that point
+> > > > and not mess with refcount and complete.
+> > >
+> > > Hi, Leon. Thanks for the concern. Here is the clarification:
+> > > The flow is similar to what mlx5 does with mlx5_get_rsc and
+> > mlx5_core_put_rsc.
+> > > When we get a QP resource, we increment the counter while holding the xa
+> > lock.
+> > > So, when we destroy a QP, the code first removes the QP from the xa to
+> > ensure that nobody can get it.
+> > > And then we check whether mana_ib_event_handler is holding it with
+> > refcount_dec_and_test.
+> > > If the QP is held, then we wait for the mana_ib_event_handler to call
+> > complete.
+> > > Once the wait returns, it is impossible to get the QP referenced, since it is
+> > not in the xa and all references have been removed.
+> > > So now we can release the QP in HW, so the QPN can be assigned to new
+> > QPs.
+> > >
+> > > Leon, have you spotted a bug? Or just wanted to understand the flow?
+> > 
+> > I understand the "general" flow, but think that implementation is very
+> > convoluted here. In addition, mlx5 and other drivers make sure sure that HW
+> > object is not free before they free it. They don't "mess" with ibqp, and
+> > probably you should do the same.
 > 
-> Commit log doesn't really match the values being subtracted
+> I can make the code more readable by introducing 4 helpers: add_qp_ref, get_qp_ref, put_qp_ref, destroy_qp_ref.
+> Would it make the code less convoluted for you?
+
+The thing is that you are trying to open-code part of restrack logic,
+which already has xarray DB per-QPN, maybe you should extend it to support
+your case, by adding some sort of barrier to prevent QP from being used.
+
 > 
-> polling-delay:
->   $ref: /schemas/types.yaml#/definitions/uint32
->   description:
->     The maximum number of milliseconds to wait between polls when
->     checking this thermal zone. Setting this to 0 disables the polling
->     timers setup by the thermal framework and assumes that the thermal
->     sensors in this zone support interrupts.
+> The devices are different. Mana can do EQE with QPN, which can be destroyed by OS. With that reference counting I make sure
+> we do not destroy QP which is used in EQE processing. We still destroy the HW resource at same time as before the change.
+> The xa table is just a lookup table, which says whether object can be referenced or not. The change just dictates that we first
+> make a QP not referenceable.
 > 
+> Note, that if we remove the QP from the table after we destroy it in HW, we can have a bug due to the collision in the xa table when
+> at the same time another entity creates a QP. Since the QPN is released in HW, it will most likely given to the next create_qp (so mana, unlike mlx,
+> does not assign QPNs with an increment and gives recently used QPN). So, the create_qp can fail as the QPN is still used in the xa.
+> 
+> And what do you mean that "don't "mess" with ibqp"? Are you saying that we cannot process QP-related interrupts?
+> What do you propose to change? In any case it will be the same logic:
+> 1) remove from table
+> 2) make sure that current IRQ does not hold a reference
+> I use counters for that as most of other IB providers.
+> 
+> I would also appreciate a list of changes to make this patch approved or confirmation that no changes are required.
 
-OK I suppose there are 3 things at play:
+I'm not asking to change anything at this point, just trying to see if
+there is more general way to solve this problem, which exists in all
+drivers now and in the future.
 
-1) for devices with polling-delay = <non_zero> without this patchset, the
-   polling is removed and threshold crossings are defered to the PMIC periph
-   or TSENS interrupts
+Thanks
 
-2) for devices with polling-delay = <0>, this is a NOP cleanup, saving LoC
-
-3) for devices with polling-delay-passive = <0>, this is a NOP, however in 99%
-   of cases, this was a misconfiguration in the first place. I can leave such
-   entries so that somebody has an easier time spotting it down the line. I'm not
-   however willing to go over each one of them and assess what the value should be,
-   as that requires significant effort across tens of platforms
-
-Konrad
+> Thanks
+> 
+> > Thanks
+> > 
+> > > Thanks
+> > >
+> > > >
+> > > > Thanks
 
