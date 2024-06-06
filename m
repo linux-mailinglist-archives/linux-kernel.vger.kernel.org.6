@@ -1,124 +1,169 @@
-Return-Path: <linux-kernel+bounces-204725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28FA88FF31C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:57:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 759BF8FF2CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0645B2BCE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:48:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EBBAB26679
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660D41991AD;
-	Thu,  6 Jun 2024 16:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4839D198A2D;
+	Thu,  6 Jun 2024 16:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UNIkGz+4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3gnpkh8"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB00198E70
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 16:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CC51E87F;
+	Thu,  6 Jun 2024 16:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717692446; cv=none; b=PHYT/11A8cNp3IAQYToEbsG/V4xbziksf1z3ej1/UKWuy2Ka+ejhb3HxQ/yslweuusNo0QAgFC/RDACjdxHrcHW0E/oz4lX1mf+JS4/37KQZlJblxNbSXW69aUQ3Zee8EAqAiz1ze473v9s8fxZiD5yz2WnQAdo7I6CzGVWG3rU=
+	t=1717692393; cv=none; b=epTzFHaEIDe2Sdd2VTHDJKpf5xXaQpZzzAUTbljlElVHNLDw6X87Evpx5ci2XfDL4lnVH1RktC45Y3BWo6Ng5KvjZPyqObBH1N09Y/RcMICfGxu6+CejwwIMeeIEyQCi81/udEFBaqEHaIqVTuXvg+khJ+lEcCWxlVzQ6w1saig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717692446; c=relaxed/simple;
-	bh=T6gLK4Xhn6yVmKQMI4ularKMV+lLmcOSTs0tDmhhchQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V+YogUPlVPaiwVXGMW2J4hoGbgMmMusDXuTbr7gLkcAD1nP/3uMVvVlcyGMjxo8nzmTP8eTYP9YnmzZaWlp2buPkJRKxsH0NpiVT6psdv/1weFUYTvldBZ/CJdh7VEI8GZQEAi3Gv4RH1yaZUkJ4hc42KP+HPEkb5tWYHcVYWq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UNIkGz+4; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717692445; x=1749228445;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=T6gLK4Xhn6yVmKQMI4ularKMV+lLmcOSTs0tDmhhchQ=;
-  b=UNIkGz+4gUcEfTLqMC70xLllwPhZewW/AWrDVfbhCeyVsGcVKllgs04T
-   ExFgptU3kmaec94EXELQl25cFko+jZjykINQBPIWyFtDa0KYEYeyCQWQL
-   5FInGefVr0U/InV9tdKLB2LQau16rf8+56W5zdqWhmvZAr/VK+wkrcQ+g
-   eHRqmeLR0GY+Q2g1O833hc/luIKvOpeAgZWQoXlYZXr3ijUCsLI6twB/U
-   NMRHxktcqQhe1Q+NvyFuEeNG74HE2CmhBQaGaQFiCTwYOFlxHQmsM/ckk
-   CiwP2U9b7ClJRngqvfM25hOko2wDVX2UUA6ZXGzGVUjNSPuPN8+hVKziQ
-   g==;
-X-CSE-ConnectionGUID: PEe7vukoSM6CSw0+R7CyCw==
-X-CSE-MsgGUID: xxJZHO0gQnKu6nCWuEbgpw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="14531942"
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="14531942"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 09:47:21 -0700
-X-CSE-ConnectionGUID: kPBrPhZJQBq/JOJdCyogdA==
-X-CSE-MsgGUID: c1BP5ct6QlSic9YG4VK5/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="38475879"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa006.jf.intel.com with ESMTP; 06 Jun 2024 09:47:20 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id DBCC52CF; Thu, 06 Jun 2024 19:47:18 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: [PATCH v1 4/4] regmap: maple: Switch to use kmemdup_array()
-Date: Thu,  6 Jun 2024 19:46:25 +0300
-Message-ID: <20240606164717.3031107-5-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20240606164717.3031107-1-andriy.shevchenko@linux.intel.com>
-References: <20240606164717.3031107-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1717692393; c=relaxed/simple;
+	bh=YbCpow6g62s4Y/IsFXF+iWJNO0YFFPiz7b2876a3LhA=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mPqMRxC45nP3zvjetClq6VRwfdtbKrFt3DOYIgmOz5+XWzIpy7H6z9EEWpuXj0uamYsGgb8b1QyeGC88qzOFI7oSEXhb0lcycMRzqJx4QWnDQSQU1ZC5MmO6FlmJxeWfUDvfXwNovl4KPrl+Sv3Du4jRY305eCH4utEFMytDx18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l3gnpkh8; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so7169515e9.1;
+        Thu, 06 Jun 2024 09:46:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717692390; x=1718297190; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2+sr+zYDiUtTeri95usC9+OHaSQ8DEfZldxCyLfldlE=;
+        b=l3gnpkh8pivsu9hxmWWMOQpcNfgvO/ojU6CgyVg+XTyUEqQWV5qxPtYps7ZPC84BAU
+         Z0SvImA/jJioIjjuPmSFTY40uy7RsvqRLambEGUdtwpHFg6/IY3T70CgXS032EeGrSgs
+         bxti6LDq2RWOcF0obFK9i/L1Qo/fycf41CNwjse86B4/giv7sJccCTTFLZjYKDdo5Lj7
+         Ic3+5mtOePqtamUuczFkFKHKKLPerQu6mpruX1yhYBI47vqU7YKzC+pW0+PlOJ1v1sPG
+         JVjcuYzrOUWCg9O1X5ZlNdZ/qfDlCVPpNn98rlsWWivCoWJZeKf+vJhigLKhFuykiNR+
+         Y2bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717692390; x=1718297190;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2+sr+zYDiUtTeri95usC9+OHaSQ8DEfZldxCyLfldlE=;
+        b=K6o/ClsOHWjV2smCaA8Mxc3yll5CJrkqOvyIEm+I3kbzOU3DV/6VKbCh4MXtshTjCN
+         b2SazABnf4XbMl8FZMZS3mxVpYrywRUSmipT/28m4p2vrhHH41cryjepvQHOafosKJcY
+         SwChUGQX2X+046ZoEH5UjKokr09oI7B5HtaZrIg1M91z2OLm7gK9qkpj4/cCbC2WLGlr
+         o6z9JA8XrknA6+VMjysukAOWigcWRRN6dNqLOaq9CfYGu2ECP68rHTdakVK5ET4WZZiq
+         y9zIxuNI2A7xnIQkuEBDMGkIyzNzt6hoYduNDrego8rBNofzws3xcDKaYZxk/Btdzecs
+         h01g==
+X-Forwarded-Encrypted: i=1; AJvYcCXDAkdSBAGimfP2oKL5DuLCyICrc7vLQW5KjIYvw8teW6aua2Q0uHM2GrTpfWrLbvMz+xFVCGU97xeJVJhOvX2RVbL6g1rJZLvi1PX2k9jVtcrKpxuoOEhEEAua5dAGWn0KU0OlX2P2hKvg1lG0PbdA1UtbTAld9D1s26AxGgQbjGO/NLoF
+X-Gm-Message-State: AOJu0Yw9ltCh65hT7HCruJpM9faw7UkKbv/IQ+7IXWB13/9qGO5QhD1R
+	TBeyp6LkwieAkUavNVWzQ8RDlEywpJz6qApQ/fYwZ0J0ROSTNJFw
+X-Google-Smtp-Source: AGHT+IH26w+K+rCueYkQ75KLKyYrpzWeYSPuvSZSCvTtwn2ih1yFE/aHnp8z6WQnOYEM6J5EWvVolg==
+X-Received: by 2002:a05:600c:3b84:b0:421:28e6:9934 with SMTP id 5b1f17b1804b1-4215ad1f8a4mr31762835e9.15.1717692390122;
+        Thu, 06 Jun 2024 09:46:30 -0700 (PDT)
+Received: from krava (ip4-95-82-160-96.cust.nbox.cz. [95.82.160.96])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215811d49esm59509825e9.27.2024.06.06.09.46.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 09:46:29 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Thu, 6 Jun 2024 18:46:27 +0200
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [RFC bpf-next 01/10] uprobe: Add session callbacks to
+ uprobe_consumer
+Message-ID: <ZmHn43Af4Kwlxoyc@krava>
+References: <20240604200221.377848-1-jolsa@kernel.org>
+ <20240604200221.377848-2-jolsa@kernel.org>
+ <CAEf4BzbzgTzvnPRJ24gdhuxN02_w8iNNFn4URh0vEp-t69oPnA@mail.gmail.com>
+ <20240605175619.GH25006@redhat.com>
+ <ZmDPQH2uiPYTA_df@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmDPQH2uiPYTA_df@krava>
 
-Let the kememdup_array() take care about multiplication and possible
-overflows.
+On Wed, Jun 05, 2024 at 10:50:11PM +0200, Jiri Olsa wrote:
+> On Wed, Jun 05, 2024 at 07:56:19PM +0200, Oleg Nesterov wrote:
+> > On 06/05, Andrii Nakryiko wrote:
+> > >
+> > > so any such
+> > > limitations will cause problems, issue reports, investigation, etc.
+> > 
+> > Agreed...
+> > 
+> > > As one possible solution, what if we do
+> > >
+> > > struct return_instance {
+> > >     ...
+> > >     u64 session_cookies[];
+> > > };
+> > >
+> > > and allocate sizeof(struct return_instance) + 8 *
+> > > <num-of-session-consumers> and then at runtime pass
+> > > &session_cookies[i] as data pointer to session-aware callbacks?
+> > 
+> > I too thought about this, but I guess it is not that simple.
+> > 
+> > Just for example. Suppose we have 2 session-consumers C1 and C2.
+> > What if uprobe_unregister(C1) comes before the probed function
+> > returns?
+> > 
+> > We need something like map_cookie_to_consumer().
+> 
+> I guess we could have hash table in return_instance that gets 'consumer -> cookie' ?
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/base/regmap/regcache-maple.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ok, hash table is probably too big for this.. I guess some solution that
+would iterate consumers and cookies made sure it matches would be fine
 
-diff --git a/drivers/base/regmap/regcache-maple.c b/drivers/base/regmap/regcache-maple.c
-index e42433404854..f0df2da6d522 100644
---- a/drivers/base/regmap/regcache-maple.c
-+++ b/drivers/base/regmap/regcache-maple.c
-@@ -132,9 +132,9 @@ static int regcache_maple_drop(struct regmap *map, unsigned int min,
- 			lower_index = mas.index;
- 			lower_last = min -1;
- 
--			lower = kmemdup(entry, ((min - mas.index) *
--						sizeof(unsigned long)),
--					map->alloc_flags);
-+			lower = kmemdup_array(entry,
-+					      min - mas.index, sizeof(*lower),
-+					      map->alloc_flags);
- 			if (!lower) {
- 				ret = -ENOMEM;
- 				goto out_unlocked;
-@@ -145,10 +145,9 @@ static int regcache_maple_drop(struct regmap *map, unsigned int min,
- 			upper_index = max + 1;
- 			upper_last = mas.last;
- 
--			upper = kmemdup(&entry[max - mas.index + 1],
--					((mas.last - max) *
--					 sizeof(unsigned long)),
--					map->alloc_flags);
-+			upper = kmemdup_array(&entry[max - mas.index + 1],
-+					      mas.last - max, sizeof(*upper),
-+					      map->alloc_flags);
- 			if (!upper) {
- 				ret = -ENOMEM;
- 				goto out_unlocked;
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+jirka
 
+> 
+> return instance is freed after the consumers' return handlers are executed,
+> so there's no leak if some consumer gets unregistered before that
+> 
+> > 
+> > > > +       /* The handler_session callback return value controls execution of
+> > > > +        * the return uprobe and ret_handler_session callback.
+> > > > +        *  0 on success
+> > > > +        *  1 on failure, DO NOT install/execute the return uprobe
+> > > > +        *    console warning for anything else
+> > > > +        */
+> > > > +       int (*handler_session)(struct uprobe_consumer *self, struct pt_regs *regs,
+> > > > +                              unsigned long *data);
+> > > > +       int (*ret_handler_session)(struct uprobe_consumer *self, unsigned long func,
+> > > > +                                  struct pt_regs *regs, unsigned long *data);
+> > > > +
+> > >
+> > > We should try to avoid an alternative set of callbacks, IMO. Let's
+> > > extend existing ones with `unsigned long *data`,
+> > 
+> > Oh yes, agreed.
+> > 
+> > And the comment about the return value looks confusing too. I mean, the
+> > logic doesn't differ from the ret-code from ->handler().
+> > 
+> > "DO NOT install/execute the return uprobe" is not true if another
+> > non-session-consumer returns 0.
+> 
+> well they are meant to be exclusive, so there'd be no other non-session-consumer
+> 
+> jirka
 
