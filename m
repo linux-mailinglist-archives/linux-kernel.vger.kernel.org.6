@@ -1,81 +1,89 @@
-Return-Path: <linux-kernel+bounces-204329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D8A8FE74C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:13:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45DDB8FE751
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:13:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 234AE1C24D25
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:13:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42FD31C25977
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C52195FCB;
-	Thu,  6 Jun 2024 13:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9FC19642D;
+	Thu,  6 Jun 2024 13:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fgWk78SX"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="FI0Wio6W"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F22195FC1
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 13:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95419195F34;
+	Thu,  6 Jun 2024 13:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717679539; cv=none; b=W1oo8JdllFnYj7RUX0vwIs1qvJUPFdIyLO7LE4rkZ3PeSdRXVkUfynAFqb3EqB3n6K+fnjZ8fTAlQna7pLseR1d6l8WSjTgWY9BBPJKCMBGCjt/xaHuzwOrQTeXX7m7NFCEOLrNgJx+Qif1t3fcUhlk3pLOjXBfC+80Ed9a2994=
+	t=1717679554; cv=none; b=u61y0U0kcjrJJ8aQbe2Ip9+RX3YVQ965PxAZmQnOnrECBDpOFPx8SHkwOCLHThq4Lh7BmbtIJOWvtBBLs+2glfD7W+K8pdkJNdWZWDZS9dPA15Z42esCn57zBx2eE38jyoukKJ7MINtG1kWfbqBDa+BTJ4egzU4EoREnKM9ZmHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717679539; c=relaxed/simple;
-	bh=me6Ty41cRCSnMOmdHM0XNnCYCzQRzAGcL0KUR6aAOg0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mNTOXHtq6bIg/1/Dd/8kMLzHpNTfRe+l+WECbfElPvwn+LluRmDfnODRbhO282rg2zai+z8cT+JYfYau8EYiU8E1UaiWoG42G6sumlrJJuBo1TBAWxnuIB4UfLaPIR4o7iUIjfSSfQ+HpKT4d7tDlKbw7dSKvSlIfUCDFP2YuQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fgWk78SX; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a689ad8d1f6so116996766b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 06:12:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717679536; x=1718284336; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PxE7l690bffTKUzQL4YoKYab1ziPbqqN+8E58otRGxA=;
-        b=fgWk78SX8ddpC3EEREr42d64HI1y7nQ22Omr+c54YWBSAgm1ki4ftHxPuX/dFbrmax
-         Vydb4RhUhLaI/5Qo1SU3NBCD40CpR2mab47hE4T6g/HAkZrTdg4pH5TO+SXWJygrmtGE
-         1RTev4hbteS8gej3t/w6KljVdQRL/mslxzIGxYYdu9Zl3NKjlXPA7CZfrpDp7zse0pJp
-         U2iuwZ7DG/+/aDsgKANoRzmVD0ds0xAXjqJFTrBcN1Hv6LaWP5kzlVLDsTMlawHrZtL1
-         pn7LHVIjUj5gXUJN0mKs2A7hjbd/UnuUobLRcscDga1WQoJIrYYu/sOPCoh/vR9qJYuc
-         zICQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717679536; x=1718284336;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PxE7l690bffTKUzQL4YoKYab1ziPbqqN+8E58otRGxA=;
-        b=AXtduM41ZOrTJoCNWGiYmA7DrFomsg/kR93BBK7QM7ujO+HICdlmaeOBUowBSPKUjJ
-         VOJoP7AJMI48wYFFOYJmSlDzacoIX7sFb0gMqSsOHTWBXT/rmFSRoINRUN8o554BpRnp
-         uP39btM+gBHmVU0ogLmlJtM30U8765lXIHjU5eGREnq6xfFPdwYbL6gknSRxqCNk4/G0
-         jjpfvUwYX8JDP9EFd0JIFqALPMtc20TWrahOz3FxECMar5QOgNjQL0HbQdeEEPna5Z5s
-         HLV4lW8bAYz+Vj7hiUOhPUGiHy9UOf65X7zXGy7qlzLSFdrCJiRUMvv8zmBHmdZxd+Fb
-         q90Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWB8SYhWRFw0+7TEmNXUD8aVOz1FxgwWcdjXlQEiuOS21QgjcpxG06q0QadjiopkHqxiIbOu+GSS6CJjvjlqinTmZSqGcSlMwG5b8V3
-X-Gm-Message-State: AOJu0YziGzsNyDfftyRMrRlk0nUkPitx0k1pWPQ8A6FdNmji4xEBVsfK
-	wK/AHH+TGj1bXNaLHkF7GdgwQm+TRmm/VINj77muw+VuHpYhi7+V/mrKTuipAgk=
-X-Google-Smtp-Source: AGHT+IEz8YfL+SCPuHJF+3F2Q+2LZ4go3JrKNs5304zCp0iKQZ2Bs1sP4ET868nj7mSwau9p+NP6xg==
-X-Received: by 2002:a17:906:390f:b0:a62:5ff6:c728 with SMTP id a640c23a62f3a-a69a025318amr374676066b.76.1717679535821;
-        Thu, 06 Jun 2024 06:12:15 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c805ccb1csm96890166b.80.2024.06.06.06.12.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 06:12:15 -0700 (PDT)
-Date: Thu, 6 Jun 2024 16:12:11 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@weissschuh.net>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] hwmon: (cros_ec) Prevent read overflow in probe()
-Message-ID: <42331b70-bd3c-496c-8c79-3ec4faad40b8@moroto.mountain>
+	s=arc-20240116; t=1717679554; c=relaxed/simple;
+	bh=t4Yrc4YSgi5aw6OYsIIwbSUEnB+XhTy6yQ2BhFHTQ3Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HYcMfdU4jK7cb1NrwdKgfinXCPkuRC2iX4u41ZUAgOerIB3rSOHOJkGWI26+8hi1noVpC/33HCbsJ1blnNj48JGioK8r6mLdJjFNrEPQuKjX2LT16kJQ3SXUiDoUM/68ciBltxjDmEQbLAqQrLUbpeDOONLJJL2VjRa0AY9yJTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=FI0Wio6W; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=qxLXUJYoql242lphy3eB+73ttg/HGC3RBqjvzOTKpt8=; b=FI0Wio6Wp9bZlIiHYC86O6Md3M
+	bgzBQ9NSbW0xJ6UuYewHJcqVK1VWZsS+zXMbeO7hasU7Ue4gFSczKss/PrrccYG6GFrMZi/X8NpbA
+	p1R9rPmcXFPGq8RV58jNrlDgI11e0hugrGwZP1bPIKQIA6IqG9SedElqPvGTcwVPzE0c=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sFCuZ-00H19p-O0; Thu, 06 Jun 2024 15:12:11 +0200
+Date: Thu, 6 Jun 2024 15:12:11 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Selvamani Rajagopal <Selvamani.Rajagopal@onsemi.com>
+Cc: "Parthiban.Veerasooran@microchip.com" <Parthiban.Veerasooran@microchip.com>,
+	Piergiorgio Beruto <Pier.Beruto@onsemi.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"saeedm@nvidia.com" <saeedm@nvidia.com>,
+	"anthony.l.nguyen@intel.com" <anthony.l.nguyen@intel.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"corbet@lwn.net" <corbet@lwn.net>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"Horatiu.Vultur@microchip.com" <Horatiu.Vultur@microchip.com>,
+	"ruanjinjie@huawei.com" <ruanjinjie@huawei.com>,
+	"Steen.Hegelund@microchip.com" <Steen.Hegelund@microchip.com>,
+	"vladimir.oltean@nxp.com" <vladimir.oltean@nxp.com>,
+	"UNGLinuxDriver@microchip.com" <UNGLinuxDriver@microchip.com>,
+	"Thorsten.Kummermehr@microchip.com" <Thorsten.Kummermehr@microchip.com>,
+	"Nicolas.Ferre@microchip.com" <Nicolas.Ferre@microchip.com>,
+	"benjamin.bigler@bernformulastudent.ch" <benjamin.bigler@bernformulastudent.ch>,
+	Viliam Vozar <Viliam.Vozar@onsemi.com>,
+	Arndt Schuebel <Arndt.Schuebel@onsemi.com>
+Subject: Re: [PATCH net-next v4 00/12] Add support for OPEN Alliance
+ 10BASE-T1x MACPHY Serial Interface
+Message-ID: <79f61e42-c32f-4314-8b77-99880c2d7eeb@lunn.ch>
+References: <BY5PR02MB6786619C0A0FCB2BEDC2F90D9DF52@BY5PR02MB6786.namprd02.prod.outlook.com>
+ <0581b64a-dd7a-43d7-83f7-657ae93cefe5@lunn.ch>
+ <BY5PR02MB6786FC4808B2947CA03977429DF32@BY5PR02MB6786.namprd02.prod.outlook.com>
+ <39a62649-813a-426c-a2a6-4991e66de36e@microchip.com>
+ <585d7709-bcee-4a0e-9879-612bf798ed45@lunn.ch>
+ <BY5PR02MB6786649AEE8D66E4472BB9679DFC2@BY5PR02MB6786.namprd02.prod.outlook.com>
+ <cbe5043b-5bb5-4b9f-ac09-5c767ceced36@microchip.com>
+ <BYAPR02MB5958BD922DAE2D31F18241B283F92@BYAPR02MB5958.namprd02.prod.outlook.com>
+ <732ce616-9ddc-4564-ab1f-ac7bbc591292@lunn.ch>
+ <BYAPR02MB5958DE3C4FE820216153894B83FA2@BYAPR02MB5958.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,34 +92,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <BYAPR02MB5958DE3C4FE820216153894B83FA2@BYAPR02MB5958.namprd02.prod.outlook.com>
 
-The "resp.sensor_name" comes from cros_ec_cmd() and it hasn't necessarily
-been NUL terminated.  We had not intended to read past "sensor_name_size"
-bytes, however, there is a width vs precision bug in the format string.
-The format needs to be precision '%.*s' instead of width '%*s'.
-Precision prevents an out of bounds read, but width is a no-op.
+> I believe my client is configured to wrap at 70th characters. 
+> Not sure why it is not doing it.
 
-Fixes: bc3e45258096 ("hwmon: add ChromeOS EC driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/hwmon/cros_ec_hwmon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
-index 41f268fa8260..b3ba7247e06b 100644
---- a/drivers/hwmon/cros_ec_hwmon.c
-+++ b/drivers/hwmon/cros_ec_hwmon.c
-@@ -212,7 +212,7 @@ static void cros_ec_hwmon_probe_temp_sensors(struct device *dev, struct cros_ec_
- 			continue;
- 
- 		sensor_name_size = strnlen(resp.sensor_name, sizeof(resp.sensor_name));
--		priv->temp_sensor_names[i] = devm_kasprintf(dev, GFP_KERNEL, "%*s",
-+		priv->temp_sensor_names[i] = devm_kasprintf(dev, GFP_KERNEL, "%.*s",
- 							    (int)sensor_name_size,
- 							    resp.sensor_name);
- 	}
--- 
-2.43.0
+It could be you also send a MIME obfuscated copy which is not wrapped
+correctly?
 
+> > > 1) Can we move memory map selector definitions
+> > (OA_TC6_PHY_C45_PCS_MMS2 and other 4 definitions) to the header
+> > file
+> > >      include/linux/oa_tc6.h?
+> > >      Also, if possible, could we add the MMS0, MMS1?. Our driver is
+> > using them. Of course, we could add it when we submit our driver.
+> > 
+> > Interesting. So you have vendor registers outside of MMS 10-15?
+> 
+> This is not about vendor registers. The current oa_tc6 defines 
+> MMS selector values for 2, 3, 4, 5, 6. I am asking, if 0, 1 can be added, 
+> which are meant for "Standard Control and Status" and MAC respectively, 
+> according to MMS assignment table 6 on OA standard.
+
+But why would a MAC driver need access to those? Everything using
+those registers should be defined in the standard. So the framework
+should handle them.
+
+> One example I can think of is, to handle PHYINT status bit
+> that may be set in STATUS0 register. Another example could be,
+> to give a vendor flexibility to not to use interrupt mode.
+
+But that is part of the standard. Why would a driver need to do
+anything, the framework should handle PHYINT, calling
+phy_mac_interrupt(phydev).
+
+I really think you need to post patches. We can then discuss each use
+case, and i can give you concrete feedback.
+
+But in general, if it is part of the standard it should be in the
+framework. Support for features which are not part of the standard,
+and workarounds for where a device violates the standard, should be in
+the MAC driver, or the PHY driver.
+
+	Andrew
 
