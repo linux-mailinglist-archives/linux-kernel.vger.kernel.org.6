@@ -1,189 +1,148 @@
-Return-Path: <linux-kernel+bounces-204120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9FFD8FE470
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:39:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 379FF8FE476
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35A631F24DB9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:39:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4240F1C248A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28AB194C7F;
-	Thu,  6 Jun 2024 10:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CA4195380;
+	Thu,  6 Jun 2024 10:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LZ8Nor8T"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XfgDWMe+"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C9A2561D;
-	Thu,  6 Jun 2024 10:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3637013D28C;
+	Thu,  6 Jun 2024 10:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717670375; cv=none; b=d8rtOofgwRueMnCcbQ+HsJ2WADymQdWucjK+Wymw/VRO/0KLqS3TfmaJbxcYIsm2yQHDcN13lCpQR0vDouXVhYfM0Ow7u1bj+SrrOAtHBBBPFKleS1wQRQ7nYoPoPBf9h/MePJgQOXIsuB1jFN3mSyXa/oACZQdg5kXEC4nuOcU=
+	t=1717670402; cv=none; b=Y69aSqapJa+/7G8hgqm+48XMEUqZUX8w1zqYd4oq5JoNsZGFIX1/QBbG6c0eMZO6tOgu2hX6wB/RHjScvd7X0qXA+Cdj2iPwCBRvC0uiRb72dPBEW5QwoTvrC0ti31AvLdg7f/Crm+NlK2iTfTg3PzPOh+9CWuJomjbpVzZkSMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717670375; c=relaxed/simple;
-	bh=D0uunvsoqzLWPDiha1RwJom/MhZWK4E2NrSHDqVy/Ck=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Oj/yq37woPKMVJe3dWapseI9/CdOXHtUWnA3fYar0mm0Q0Gz0quDzd2zVyINYkY3OsO0rEEaoc87/7UUah3CES/e2pcZhy96GNq33Aeo5EgzEA/+2cp5njcBxArur/FDFLN/Uznq4IOBk2Xnj1t9nlTL1waSLKTtiFz8e12/AIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LZ8Nor8T; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717670371;
-	bh=D0uunvsoqzLWPDiha1RwJom/MhZWK4E2NrSHDqVy/Ck=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=LZ8Nor8TvPK+ZdBUExhw0FqgdlmpE2nc5iWn4+ZbaJKbQf5ejCTkOR0lqbPQrdrfz
-	 zVbRSMty8z/GVB0lioNFVDSwJQE6AeO1zMcU4F7VXUEOXXh9QwvYadV/1UlApEl6vQ
-	 vw19Lx7Kbi61E48WXpgqsBJkXETyjZHbFfwv0IHtMtfGTUz0YPZOY4BuCBABM2BGFn
-	 coisQyjDD4KkLEcpqTWBxAU1+BB+KEe6rnzyIKIdYpCROrAjWx3Q5mVZMJSfiAoNkg
-	 XQZ0nKf9B8Gztk9OnxXD7JDMYJKTmkzoy30HxEq36xCOvW+fcNVL8z22BE08KNddcI
-	 7Qg3iqFjkUMAQ==
-Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 82C303780627;
-	Thu,  6 Jun 2024 10:39:28 +0000 (UTC)
-Message-ID: <4f7e6f1b-bce1-41ec-b26f-f4fb53c3b276@collabora.com>
-Date: Thu, 6 Jun 2024 15:38:55 +0500
+	s=arc-20240116; t=1717670402; c=relaxed/simple;
+	bh=0tpDrSbDB1WEN1VQ/gQejKZ3K7jqpkDNOQq66XzDTNU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OOpsTBKO/lXN4wfJ0NBPk0qDW4BHmbBP0m6JSTmryvwCa94hRK/xDNhWUrSVSZeV96XeSngYTxV+kyEJSfzcwADQdVsC9IaNvt/gDuAcqKzH+l8AU4HZUiEU/eUmHd/uC2Fvx2/9RcuDi72xALPN1OvTuI/wxf4dvgYwCXM3244=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XfgDWMe+; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 456Ad1ok093099;
+	Thu, 6 Jun 2024 05:39:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717670341;
+	bh=qzRU3NjJ1d8c/C2020uLuMVnu7LuuPICJYaQN3jl9Co=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=XfgDWMe+BQyCpPRKKo/C86Fku2TS+SS/V4UKkHuNgaVvXBlkwRzYWDLpdnOeoG1Df
+	 88wsCO4NciJyu+tAYaTqHLYvtP8etsj4rZYRrhX1eSRqFIhSL1TIEmraNT2M+q67P/
+	 CMmCxbafjX3Vh1d0veRVVX+mlr8XP4f11VWswtxw=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 456Ad14c006785
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 6 Jun 2024 05:39:01 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 6
+ Jun 2024 05:39:01 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 6 Jun 2024 05:39:01 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 456Ad0SS128334;
+	Thu, 6 Jun 2024 05:39:01 -0500
+Date: Thu, 6 Jun 2024 16:08:59 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: Vignesh Raghavendra <vigneshr@ti.com>,
+        Siddharth Vadapalli
+	<s-vadapalli@ti.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof
+ =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha
+ Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team
+	<kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Minghuan Lian
+	<minghuan.Lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang
+	<roy.zang@nxp.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jingoo Han
+	<jingoohan1@gmail.com>,
+        Srikanth Thokala <srikanth.thokala@intel.com>,
+        Marek
+ Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda
+	<yoshihiro.shimoda.uh@renesas.com>,
+        Thierry Reding
+	<thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko
+ Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu
+	<mhiramat@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <imx@lists.linux.dev>, <linuxppc-dev@lists.ozlabs.org>,
+        <linux-arm-kernel@axis.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <mhi@lists.linux.dev>, Niklas Cassel <cassel@kernel.org>
+Subject: Re: [PATCH 2/5] PCI: endpoint: Introduce 'epc_deinit' event and
+ notify the EPF drivers
+Message-ID: <62430183-a413-454e-a485-a5347b80ce84@ti.com>
+References: <20240606-pci-deinit-v1-0-4395534520dc@linaro.org>
+ <20240606-pci-deinit-v1-2-4395534520dc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Ryan Roberts <ryan.roberts@arm.com>, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: mm: Make map_fixed_noreplace test names stable
-To: Mark Brown <broonie@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>
-References: <20240605-kselftest-mm-fixed-noreplace-v1-1-a235db8b9be9@kernel.org>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20240605-kselftest-mm-fixed-noreplace-v1-1-a235db8b9be9@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240606-pci-deinit-v1-2-4395534520dc@linaro.org>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 6/6/24 3:36 AM, Mark Brown wrote:
-> KTAP parsers interpret the output of ksft_test_result_*() as being the
-> name of the test.  The map_fixed_noreplace test uses a dynamically
-> allocated base address for the mmap()s that it tests and currently
-> includes this in the test names that it logs so the test names that are
-> logged are not stable between runs.  It also uses multiples of PAGE_SIZE
-> which mean that runs for kernels with different PAGE_SIZE configurations
-> can't be directly compared.  Both these factors cause issues for CI
-> systems when interpreting and displaying results.
+On Thu, Jun 06, 2024 at 12:56:35PM +0530, Manivannan Sadhasivam wrote:
+> As like the 'epc_init' event, that is used to signal the EPF drivers about
+> the EPC initialization, let's introduce 'epc_deinit' event that is used to
+> signal EPC deinitialization.
 > 
-> Fix this by replacing the current test names with fixed strings
-> describing the intent of the mappings that are logged, the existing
-> messages with the actual addresses and sizes are retained as diagnostic
-> prints to aid in debugging.
+> The EPC deinitialization applies only when any sort of fundamental reset
+> is supported by the endpoint controller as per the PCIe spec.
 > 
-> Fixes: 4838cf70e539 ("selftests/mm: map_fixed_noreplace: conform test to TAP format output")
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> Reference: PCIe Base spec v5.0, sections 4.2.4.9.1 and 6.6.1.
+> 
+> Currently, some EPC drivers like pcie-qcom-ep and pcie-tegra194 support
+> PERST# as the fundamental reset. So the 'deinit' event will be notified to
+> the EPF drivers when PERST# assert happens in the above mentioned EPC
+> drivers.
+> 
+> The EPF drivers, on receiving the event through the epc_deinit() callback
+> should reset the EPF state machine and also cleanup any configuration that
+> got affected by the fundamental reset like BAR, DMA etc...
+> 
+> This change also warrants skipping the cleanups in unbind() if already done
+> in epc_deinit().
+> 
+> Reviewed-by: Niklas Cassel <cassel@kernel.org>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-> ---
->  tools/testing/selftests/mm/map_fixed_noreplace.c | 24 ++++++++++++++++--------
->  1 file changed, 16 insertions(+), 8 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/mm/map_fixed_noreplace.c b/tools/testing/selftests/mm/map_fixed_noreplace.c
-> index b74813fdc951..d53de2486080 100644
-> --- a/tools/testing/selftests/mm/map_fixed_noreplace.c
-> +++ b/tools/testing/selftests/mm/map_fixed_noreplace.c
-> @@ -67,7 +67,8 @@ int main(void)
->  		dump_maps();
->  		ksft_exit_fail_msg("Error: munmap failed!?\n");
->  	}
-> -	ksft_test_result_pass("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-> +	ksft_print_msg("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-> +	ksft_test_result_pass("mmap() 5*PAGE_SIZE at base\n");
->  
->  	addr = base_addr + page_size;
->  	size = 3 * page_size;
-> @@ -76,7 +77,8 @@ int main(void)
->  		dump_maps();
->  		ksft_exit_fail_msg("Error: first mmap() failed unexpectedly\n");
->  	}
-> -	ksft_test_result_pass("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-> +	ksft_print_msg("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-> +	ksft_test_result_pass("mmap() 3*PAGE_SIZE at base+PAGE_SIZE\n");
->  
->  	/*
->  	 * Exact same mapping again:
-> @@ -93,7 +95,8 @@ int main(void)
->  		dump_maps();
->  		ksft_exit_fail_msg("Error:1: mmap() succeeded when it shouldn't have\n");
->  	}
-> -	ksft_test_result_pass("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-> +	ksft_print_msg("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-> +	ksft_test_result_pass("mmap() 5*PAGE_SIZE at base\n");
->  
->  	/*
->  	 * Second mapping contained within first:
-> @@ -111,7 +114,8 @@ int main(void)
->  		dump_maps();
->  		ksft_exit_fail_msg("Error:2: mmap() succeeded when it shouldn't have\n");
->  	}
-> -	ksft_test_result_pass("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-> +	ksft_print_msg("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-> +	ksft_test_result_pass("mmap() 2*PAGE_SIZE at base+PAGE_SIZE\n");
->  
->  	/*
->  	 * Overlap end of existing mapping:
-> @@ -128,7 +132,8 @@ int main(void)
->  		dump_maps();
->  		ksft_exit_fail_msg("Error:3: mmap() succeeded when it shouldn't have\n");
->  	}
-> -	ksft_test_result_pass("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-> +	ksft_print_msg("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-> +	ksft_test_result_pass("mmap() 2*PAGE_SIZE  at base+(3*PAGE_SIZE)\n");
->  
->  	/*
->  	 * Overlap start of existing mapping:
-> @@ -145,7 +150,8 @@ int main(void)
->  		dump_maps();
->  		ksft_exit_fail_msg("Error:4: mmap() succeeded when it shouldn't have\n");
->  	}
-> -	ksft_test_result_pass("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-> +	ksft_print_msg("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-> +	ksft_test_result_pass("mmap() 2*PAGE_SIZE bytes at base\n");
->  
->  	/*
->  	 * Adjacent to start of existing mapping:
-> @@ -162,7 +168,8 @@ int main(void)
->  		dump_maps();
->  		ksft_exit_fail_msg("Error:5: mmap() failed when it shouldn't have\n");
->  	}
-> -	ksft_test_result_pass("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-> +	ksft_print_msg("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-> +	ksft_test_result_pass("mmap() PAGE_SIZE at base\n");
->  
->  	/*
->  	 * Adjacent to end of existing mapping:
-> @@ -179,7 +186,8 @@ int main(void)
->  		dump_maps();
->  		ksft_exit_fail_msg("Error:6: mmap() failed when it shouldn't have\n");
->  	}
-> -	ksft_test_result_pass("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-> +	ksft_print_msg("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
-> +	ksft_test_result_pass("mmap() PAGE_SIZE at base+(4*PAGE_SIZE)\n");
->  
->  	addr = base_addr;
->  	size = 5 * page_size;
-> 
-> ---
-> base-commit: c3f38fa61af77b49866b006939479069cd451173
-> change-id: 20240605-kselftest-mm-fixed-noreplace-44e7e55c861a
-> 
-> Best regards,
+Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
 
--- 
-BR,
-Muhammad Usama Anjum
+[...]
+
+Regards,
+Siddharth.
 
