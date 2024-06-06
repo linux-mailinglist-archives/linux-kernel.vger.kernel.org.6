@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-204252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A9178FE641
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:14:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D4D8FE640
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35B0CB23153
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:14:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4F4D1C22883
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E7A19883C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C02219883B;
 	Thu,  6 Jun 2024 12:11:03 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9D1197524
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D989197523
 	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717675862; cv=none; b=DuZsRdtWuVAY4Oa58LMkt68K1Z8QTe92zwUJTywM9YPmcP1j2OK1IK1whXLTWsnTAv/uhLBa18luAI7M6ebAohiBhwLrpSOv/PQiuqHXCGKgB8rWF4ca+amR5YWOW0NV6BgoMXKPNccCyHkWKQnbKZMyzNyEKYP05JaQcuWOxkc=
+	t=1717675862; cv=none; b=KvIpcKEmw9LkZYB4eZ3vwRtWBPy6vz/hDjTPL2ePPKJtEx5jHCdQv4CMLb9VGg/X2Cp54MbiRbD2VJTfT3APCoLhtFh7zyxP+L3NWGlqQxPciWX9YUUa+oShZJ1d4gN623M66ykEQyPu3TwarL6o16DLpZAJ2TTiTymu1M5J/oE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717675862; c=relaxed/simple;
-	bh=Mh8Nc2PUn8WQF6A4kwG6AMoIRiTAM/kSAgU2FgOhyiU=;
+	bh=O4Z8RIZmGILc7wFuWKxh23fcOr7gMxekIIMSeGbJnB0=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=F/6XJX8i9nE+225KVKyPnofudNDVmaMam2rrZCwsCF534ZF94Jd/cJCNUTaENIT2kis6rL0pZco0LGc12Oijd9QftzvsZ3qxjbxUCvwvPl0ScCWiLjalzsP7FFk2vTGpkW1SNMnED0R7InRBc25B5Au3zZfA3vUzpoQJagaiqnE=
+	 Content-Type; b=UgR5RRyGmV5I+ZgGdnUprj/ZOp0NZ9EQ7fe9ylT+W1pN/zII36dlOebTs7C08nlwpXd5xoBDAgL3cSXjur59FJYwDNGMtdDmCj0AECzI8lM6pPqTnQrdtMCjAZKwjGShCpcVjtesfFrrNtqZEX+Dv2Z3KvzasaBmWGe9Wt/QLn8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1567C32782;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8865C4AF5F;
 	Thu,  6 Jun 2024 12:11:01 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.97)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1sFBxS-00000000nNo-1Avm;
+	id 1sFBxS-00000000nOK-1qO2;
 	Thu, 06 Jun 2024 08:11:06 -0400
-Message-ID: <20240606121106.141319090@goodmis.org>
+Message-ID: <20240606121106.299363966@goodmis.org>
 User-Agent: quilt/0.68
-Date: Thu, 06 Jun 2024 08:10:15 -0400
+Date: Thu, 06 Jun 2024 08:10:16 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
@@ -42,7 +42,7 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>,
  kernel test robot <lkp@intel.com>
-Subject: [for-next][PATCH 11/15] ftrace: Fix prototypes for ftrace_startup/shutdown_subops()
+Subject: [for-next][PATCH 12/15] function_graph: Make fgraph_do_direct static key static
 References: <20240606121004.857581251@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -54,63 +54,36 @@ Content-Type: text/plain; charset=UTF-8
 
 From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
 
-The ftrace_startup_subops() was in the wrong header, and both functions
-were not defined on !CONFIG_DYNAMIC_FTRACE.
+The static branch key "fgraph_do_direct" was not declared static but is
+only used in one file. Change it to a static variable.
 
-Link: https://lore.kernel.org/linux-trace-kernel/20240605202708.773583114@goodmis.org
+Link: https://lore.kernel.org/linux-trace-kernel/20240605202708.936515302@goodmis.org
 
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
-Fixes: 5fccc7552ccbc ("ftrace: Add subops logic to allow one ops to manage many")
+Fixes: cc60ee813b503 ("function_graph: Use static_call and branch to optimize entry function")
 Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202406051524.a12JqLqx-lkp@intel.com/
+Closes: https://lore.kernel.org/oe-kbuild-all/202406051711.dS1sQZ9n-lkp@intel.com/
 Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/ftrace_internal.h | 9 +++++++++
- kernel/trace/trace.h           | 1 -
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ kernel/trace/fgraph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/ftrace_internal.h b/kernel/trace/ftrace_internal.h
-index bfba10c2fcf1..4bb1e881154a 100644
---- a/kernel/trace/ftrace_internal.h
-+++ b/kernel/trace/ftrace_internal.h
-@@ -15,6 +15,7 @@ extern struct ftrace_ops global_ops;
- int ftrace_startup(struct ftrace_ops *ops, int command);
- int ftrace_shutdown(struct ftrace_ops *ops, int command);
- int ftrace_ops_test(struct ftrace_ops *ops, unsigned long ip, void *regs);
-+int ftrace_startup_subops(struct ftrace_ops *ops, struct ftrace_ops *subops, int command);
- int ftrace_shutdown_subops(struct ftrace_ops *ops, struct ftrace_ops *subops, int command);
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index 4bf91eebbb08..63d828054c79 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -515,7 +515,7 @@ static struct fgraph_ops fgraph_stub = {
+ static struct fgraph_ops *fgraph_direct_gops = &fgraph_stub;
+ DEFINE_STATIC_CALL(fgraph_func, ftrace_graph_entry_stub);
+ DEFINE_STATIC_CALL(fgraph_retfunc, ftrace_graph_ret_stub);
+-DEFINE_STATIC_KEY_TRUE(fgraph_do_direct);
++static DEFINE_STATIC_KEY_TRUE(fgraph_do_direct);
  
- #else /* !CONFIG_DYNAMIC_FTRACE */
-@@ -39,6 +40,14 @@ ftrace_ops_test(struct ftrace_ops *ops, unsigned long ip, void *regs)
- {
- 	return 1;
- }
-+static inline int ftrace_startup_subops(struct ftrace_ops *ops, struct ftrace_ops *subops, int command)
-+{
-+	return -EINVAL;
-+}
-+static inline int ftrace_shutdown_subops(struct ftrace_ops *ops, struct ftrace_ops *subops, int command)
-+{
-+	return -EINVAL;
-+}
- #endif /* CONFIG_DYNAMIC_FTRACE */
- 
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index b37402e3f0c9..8783bebd0562 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -1186,7 +1186,6 @@ extern int ftrace_set_filter(struct ftrace_ops *ops, unsigned char *buf,
- 			     int len, int reset);
- extern int ftrace_set_notrace(struct ftrace_ops *ops, unsigned char *buf,
- 			      int len, int reset);
--extern int ftrace_startup_subops(struct ftrace_ops *ops, struct ftrace_ops *subops, int command);
- #else
- struct ftrace_func_command;
- 
+ /**
+  * ftrace_graph_stop - set to permanently disable function graph tracing
 -- 
 2.43.0
 
