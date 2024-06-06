@@ -1,143 +1,108 @@
-Return-Path: <linux-kernel+bounces-204149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AB118FE4CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:58:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4BD78FE4CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:00:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1440CB2295C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:58:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B2DF1F22FD7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DD5195395;
-	Thu,  6 Jun 2024 10:58:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4D1194C9A;
+	Thu,  6 Jun 2024 11:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jRGQkBAH"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="0ZmMNiJf"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73EB195387
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 10:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2642B3A8C0;
+	Thu,  6 Jun 2024 11:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717671508; cv=none; b=HKqI2pSIEvYH16KYmMh3cV+ind4HyHWfenHX2OMO4GzZXpTa/GGfRr+xLGZm+waeDRK9ZjzjOGGxC0FK/ARdKBF+posx33h5r7tsVLzE/zSzTxWLySQzvPJH8OxZLmmC+QMmXxmJryGPU1hL0UHSfXUALpSv70N6Cpze2FSOaPw=
+	t=1717671616; cv=none; b=XXBWCd50JVVxABMIyTwPqnXZmpxjuhr08vTKhPK5hUVX0JU2ply2xsODEYZ5aLnz9rJfAeG/n+QFYH6zr/D0U3NNvzb0vFmBHcrQpVg6vo9ToAg76p6fdajNGfQvehSxDI+MXZTm/RAD3/VPsLiauSp7bWNxhDlshJoBymRDPfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717671508; c=relaxed/simple;
-	bh=ZftVfaISYDUW/kUT3woHl6rH2FScfbgcr0GiyC6d54E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t5erhno7X0XY5STs5aqY2RqxrpeOt1Hiy4yI0XfZgQzjT8/SboWU46frqUWlVFqLDJnSuIvOfQhQnBniZTqw5f011yZkDxDcY8DhYAP0MuL7E7U8ksjaADsjwXlfgdxbgli8gJwiaZj+O5greu5gJ5GaLukkmiAWxDsNyb/yx/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jRGQkBAH; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-702492172e3so703210b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 03:58:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717671506; x=1718276306; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2ruAkQ6oEawGzBgH/lU0TOJn1AL8q+mkUlNk35sZfO0=;
-        b=jRGQkBAHjSrNXcdphLyAvBTnMd+vrDF2dvNjoYFVsm4P8RruGAIvsMFI2+1XAGAo0t
-         WiFiJJ2FeJ4xVQ+HtfpMGf6+uC4KbWRDhbuZIPDpgNtor9j96e6AJkwooV2T+U5E39eG
-         xcoWtbXy1xkBY9ciBIsMChrg2sbPekTKzShPnwhrXsHqESYLbul9AzTbqyx7GhGrW7Jt
-         R5T8z6XMt4JJUiZHISvExEcM2kyzSmKSkh8ErETz0uOaRo2dfwjQddrLGMEMige/5cmy
-         J4prUhd2rF0YWbqUA7iZR7ads87bA2Ugf0dnJkApWI/+PjjK6cuAgTyYNFKckhMd0o7h
-         4EKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717671506; x=1718276306;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2ruAkQ6oEawGzBgH/lU0TOJn1AL8q+mkUlNk35sZfO0=;
-        b=owovcgXtiegjjklYda9XFQHNk9NhfOaIcDd4/rApdK3rjxw7+jb+dRQEBmg+qTY1gZ
-         TlaAfNpq6lDjc4mrXCH30+tA1kK8TbfpbiGMheq+1ZbhGzq+I/hLpPn58q/1qgj/DMoc
-         aIudlN/c60/waowEeHV5Yf+F+AKGhNtLyTqC7MeXEvAHxkvu3cAeuQgjAVz5kfAFvCKo
-         wDyjvFMgZDOxuSGVyasD4Jb6hiu0ulLg28rXoFIDa4BuikokIKl7mB+ymvF5N242D5fJ
-         Xh73tsmdRH6nIO1Uc4eocCNqw4vPm32hO2lZ1CLYK3koAEF+Da6dSC7yEWh0t3kVsnx9
-         tqVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWHifpOjgiYSrN1R8oCeofr6jE6GrDe/olRgrCcCg4KA6pn5uz/JhcuiDk0ol4HNbpQuoodLxnb9AIWOwXgIXi7EgymRotLjSyzlHin
-X-Gm-Message-State: AOJu0YyYOH11VVkhUGySu6W0G+BlpNbXzQAiqQ0hcgjV/pmnGWH50dds
-	RhByV2Stl/sW+YOtlX7XEE1b1GR84bxVl1hLUffcX3+1v0+0bFevZ/85DNYhe0Q=
-X-Google-Smtp-Source: AGHT+IEyykOFtvqGDbkSW5sWldA9ne0lhoNR9r1NCjGXJVY06J2Fxl8+x7uCzXCMceSjSs/esbsRQQ==
-X-Received: by 2002:a05:6a00:189f:b0:6f3:f970:9f2a with SMTP id d2e1a72fcca58-703e596472amr5682219b3a.10.1717671505861;
-        Thu, 06 Jun 2024 03:58:25 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd396b0dsm887093b3a.74.2024.06.06.03.58.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 03:58:25 -0700 (PDT)
-Date: Thu, 6 Jun 2024 16:28:22 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Primoz Fiser <primoz.fiser@norik.com>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, upstream@lists.phytec.de
-Subject: Re: [PATCH] OPP: ti: Fix ti_opp_supply_probe wrong return values
-Message-ID: <20240606105822.a7giftun56dsnbgc@vireshk-i7>
-References: <20240606070127.3506240-1-primoz.fiser@norik.com>
- <20240606085956.wsp3ecyfqck5tltt@vireshk-i7>
- <ed06bac9-6396-426a-b0ea-4932bc5fa7ed@norik.com>
- <20240606094859.6yclnarvlrzl74bj@vireshk-i7>
- <81919640-b0c4-437c-a04f-1673e8189435@norik.com>
+	s=arc-20240116; t=1717671616; c=relaxed/simple;
+	bh=JzIE2Q/8PA+vyQON4VFwI2P8T+iJyPY9/E/Fb2Kzq1M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q9/2tqkVwsKCbUeCFJtN0Ud+CWMVwuHwY/rAc71x5Qmmy4uDhx1q3Ad1iYzsPSetICbkqdmLsy3Kpb6HWVK/0Jc/IDLw/h6AnuMdqirqobe8N5qsKZGCLr45TkFPPqo83/W3C/3fiGFZmcyDFiUiCod1ZekJNITByWyf5H/J7Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=0ZmMNiJf; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717671613;
+	bh=JzIE2Q/8PA+vyQON4VFwI2P8T+iJyPY9/E/Fb2Kzq1M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=0ZmMNiJfCXQNZ6B1t1p8nN0KJbN3Y0lJhaKaOnM2yopq9SmacDqCwiU8+zV7oxQ/G
+	 LKkFhKvRkS/2g63MVpQl9pOg7mvmm7QzilHpD0emoMusur0ee4XPB5RuH3peLHPA2+
+	 sDAkdrPgB6XjEfnqOEFBZjdEYOLGD0SmlLImdnZPIAytjjtbDpyWSsSKZqfCe+zEJV
+	 MZpdwPL5ylCgJHhPnVRbGEw5XdH8+OhCF13Srg8PN7C9JDaDC2dF8JZE8r+GjWtPG9
+	 Zi0qA0Sq9DDXUOhV5d23SAa0G1lFYv/0jjYywDb0csSEZgKMe8bPDzgBeqp1ApdJxR
+	 /g+6RaZExrYHQ==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 9813C3780627;
+	Thu,  6 Jun 2024 11:00:12 +0000 (UTC)
+Message-ID: <bc12b046-d2fb-48ae-bd5b-a6ef6cc78c07@collabora.com>
+Date: Thu, 6 Jun 2024 13:00:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <81919640-b0c4-437c-a04f-1673e8189435@norik.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] remoteproc: mediatek: Increase MT8188 SCP core0 DRAM size
+To: jason-ch chen <jason-ch.chen@mediatek.corp-partner.google.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Project_Global_Chrome_Upstream_Group@mediatek.com,
+ linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Jason Chen <Jason-ch.Chen@mediatek.com>
+References: <20240606090609.3199-1-jason-ch.chen@mediatek.corp-partner.google.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240606090609.3199-1-jason-ch.chen@mediatek.corp-partner.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 06-06-24, 12:34, Primoz Fiser wrote:
-> > Ah, I forgot about the token that is returned here. I think the driver
-> > should be fixed properly once and for all here.
-> > 
-> > The token must be used to clean the module removal part. Else if you
-> > try to insert this module, remove it, insert again, you will get some
-> > errors as the resources aren't cleaned well.
-> > 
-> > So either provide a remove() callback to the driver, or use
-> > devm_pm_opp_set_config() here.
-> > 
+Il 06/06/24 11:06, jason-ch chen ha scritto:
+> From: Jason Chen <Jason-ch.Chen@mediatek.com>
 > 
-> So basically, you want v2 with:
+> Increase MT8188 SCP core0 DRAM size for HEVC driver.
 > 
-> > diff --git a/drivers/opp/ti-opp-supply.c b/drivers/opp/ti-opp-supply.c
-> > index e3b97cd1fbbf..8a4bcc5fb9dc 100644
-> > --- a/drivers/opp/ti-opp-supply.c
-> > +++ b/drivers/opp/ti-opp-supply.c
-> > @@ -392,7 +392,7 @@ static int ti_opp_supply_probe(struct platform_device *pdev)
-> >                         return ret;
-> >         }
-> >  
-> > -       ret = dev_pm_opp_set_config_regulators(cpu_dev, ti_opp_config_regulators);
-> > +       ret = devm_pm_opp_set_config_regulators(cpu_dev, ti_opp_config_regulators);
-> >         if (ret < 0)
-> >                 _free_optimized_voltages(dev, &opp_data);
-> >  
-> > diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-> > index dd7c8441af42..a2401878d1d9 100644
-> > --- a/include/linux/pm_opp.h
-> > +++ b/include/linux/pm_opp.h
-> > @@ -654,14 +654,14 @@ static inline int devm_pm_opp_set_clkname(struct device *dev, const char *name)
-> >  }
-> >  
-> >  /* config-regulators helpers */
-> > -static inline int dev_pm_opp_set_config_regulators(struct device *dev,
 
-Don't remove this, add a new devm_ counterpart.
+....so the second core only gets a maximum of 0x200000 of SRAM?
+I'm not sure how useful is the secondary SCP core, at this point, with so little
+available SRAM but... okay, as you wish.
 
-> > +static inline int devm_pm_opp_set_config_regulators(struct device *dev,
-> >                                                    config_regulators_t helper)
-> >  {
-> >         struct dev_pm_opp_config config = {
-> >                 .config_regulators = helper,
-> >         };
-> >  
-> > -       return dev_pm_opp_set_config(dev, &config);
-> > +       return devm_pm_opp_set_config(dev, &config);
-> >  }
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
--- 
-viresh
+
+> Signed-off-by: Jason Chen <Jason-ch.Chen@mediatek.com>
+> ---
+>   drivers/remoteproc/mtk_scp.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index b885a9a041e4..2119fc62c3f2 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -1390,7 +1390,7 @@ static const struct mtk_scp_sizes_data default_scp_sizes = {
+>   };
+>   
+>   static const struct mtk_scp_sizes_data mt8188_scp_sizes = {
+> -	.max_dram_size = 0x500000,
+> +	.max_dram_size = 0x800000,
+>   	.ipi_share_buffer_size = 600,
+>   };
+>   
+
+
 
