@@ -1,117 +1,107 @@
-Return-Path: <linux-kernel+bounces-204731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C77398FF2E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:50:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 805778FF2E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79D791F27AE4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:50:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA36D28E9BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A528198E8B;
-	Thu,  6 Jun 2024 16:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 560A6198E90;
+	Thu,  6 Jun 2024 16:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e3yfbXCA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jitzm3Gs"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D3E198E88;
-	Thu,  6 Jun 2024 16:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB53197A8E;
+	Thu,  6 Jun 2024 16:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717692600; cv=none; b=WwOaUKXeclN9obyHduYSEO/bmQ6JeTpEMbXabr1dTo5xu6dpyjMm1/AU53yr9QBp4C7gR/pO2VmaD25DbJfp48aemIAgU8HrGGSYFJxwmplUcarDUYusiEzgnhExKdjZ8xEtl9W9AdKBof6F6GVrZpVJ1CJNt6VVcIpYeCF6F8s=
+	t=1717692611; cv=none; b=RqIjey/F/6HdjTiJBTfyX3aL81Cc6QSjoRh1Kl9L81p2wM7hnh84GQuCbt28LItXkbvL6y5U0DLgcnf2y9/yGgoLqUBzX+rUp0c7rFEZPEXvf50tVPGS++pobnM2T8LI9ya5TxsM0iD+n9oU2wb3JHHKX6H4MOBLE5PFZDdPsaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717692600; c=relaxed/simple;
-	bh=Hg4pytPcshJ5Vzw0x241oxxxQys6HoLuHWw6mFPLn8E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SWhIiDaJuuBVMT6fRHBFGdV6YI37uyHdb+RLz2Fjf3x4ZpjL7O45oQvtSK/TEgbyHpOSNN49XobWUg7IOQrk/zAfJ0jcFN3IVNQS1VZ3+zdJKqToFrGPlfmrpbkD3gQYqra1+P/dbdvMnvdEL7vy8G2E6yG6Ehva37+eP8T2VqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e3yfbXCA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED54DC2BD10;
-	Thu,  6 Jun 2024 16:49:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717692600;
-	bh=Hg4pytPcshJ5Vzw0x241oxxxQys6HoLuHWw6mFPLn8E=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=e3yfbXCAXuC3R6OV8jc4OSsJCSGMdLDXIpC9Mg5QkQkblbPsf/ViCa/8PdzjmhzBN
-	 e9hVL3PeCaJCFkn00KUNpywqYQhDaXS1WOTriYDioxkcEI4cpbEaL2aiSzEq72MqQR
-	 CTrlnQ1RQKL5rI+kqUL8zSTJkVz6mF+P11dl+XpVOnSh/m1nR/z79qUID/TEZaJzT+
-	 zfhYkqgAmlnbbNWZu9wAtkxJzMBfMYeb5y1aZSRUsvPMTmdkxm1GeSSSHfU9y3JNX1
-	 MOZP8/42JlzXe2uy5WxvHNn9D+HDxzDGtakyXjG0Z0gAAUu8LSoYgq/xO1XBRLW6HU
-	 LOzr8KkKPkzYw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 88570CE3F34; Thu,  6 Jun 2024 09:49:59 -0700 (PDT)
-Date: Thu, 6 Jun 2024 09:49:59 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org
-Subject: Re: [PATCH rcu 2/9] rcu: Reduce synchronize_rcu() delays when all
- wait heads are in use
-Message-ID: <a0aa3d5e-006c-475d-bd2f-b15fca47deee@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
- <20240604222355.2370768-2-paulmck@kernel.org>
- <ZmBVfpyEZeTIAHJn@localhost.localdomain>
- <c7d07e5d-34a0-4874-8e7e-1c576c14c8e6@paulmck-laptop>
- <fbc30c3a-ecd3-4525-9434-307c7769bb4c@amd.com>
+	s=arc-20240116; t=1717692611; c=relaxed/simple;
+	bh=tlaOqTIhOPntNJcdksoYStm3FquF+/nT90DemPfbmLU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dwAbPpkkpAQL8lqJSUt09zQfSuMJVWTUOaRQgNAr5tuW5XePmxKJyT4V+pxuZQdrwzy4V1Rno68VuBM+rb8P7KFzG7eBZof9oQ4/955JkXdeGOn++5xsnSyPnYWobDn1G3Xv2HH+dwb0TWSOBq0LVWwznj+4X3o6rYHScXnZ4ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jitzm3Gs; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717692610; x=1749228610;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=tlaOqTIhOPntNJcdksoYStm3FquF+/nT90DemPfbmLU=;
+  b=Jitzm3GsCl6kzm+nW9yLofnKXeVevHjqh/d6nANLexGmI4bJ2+tU9ih8
+   HqnyfZclH2EMEuxK4Lfe3NaeICYhHgjy0UGF82oktEw751uHaEGPyINNX
+   5rspd2i2poAzT1ZAK74f6HlVAH1bXd1/IoPwTwsj/iuD4zM4NyLZHRKlv
+   K4IZ2cKSw/xmlZ4UUTZ+kfkwgQEb31V28P56Bo+Q6o01LX70Swh0hvK+C
+   65csc8i821tlIYtyx3XybD4QaAGLRVJzYM4i0Mxb5HGCc7GALiuucL+UD
+   gi4Nj6JuMoJDf5gAV2J3yw0Z8i/4yajLS0XB8YI/ke9lKCyzavdtSF10z
+   Q==;
+X-CSE-ConnectionGUID: IASmFAx7TReJM+cnQmEFsg==
+X-CSE-MsgGUID: 9aFuuGaVQcKBR/G7/LIWlg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="25009192"
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="25009192"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 09:50:09 -0700
+X-CSE-ConnectionGUID: DdXhLnLjRm6K4xL53TTMzg==
+X-CSE-MsgGUID: e8p8eG7JTEmDCX/ObJeFsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="38591644"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa008.jf.intel.com with ESMTP; 06 Jun 2024 09:50:08 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 1AF702A4; Thu, 06 Jun 2024 19:50:06 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] ACPI/IORT: Switch to use kmemdup_array()
+Date: Thu,  6 Jun 2024 19:50:05 +0300
+Message-ID: <20240606165005.3031490-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <fbc30c3a-ecd3-4525-9434-307c7769bb4c@amd.com>
 
-On Thu, Jun 06, 2024 at 09:16:08AM +0530, Neeraj Upadhyay wrote:
-> 
-> 
-> On 6/6/2024 12:08 AM, Paul E. McKenney wrote:
-> > On Wed, Jun 05, 2024 at 02:09:34PM +0200, Frederic Weisbecker wrote:
-> >> Le Tue, Jun 04, 2024 at 03:23:48PM -0700, Paul E. McKenney a écrit :
-> >>> From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-> >>>
-> >>> When all wait heads are in use, which can happen when
-> >>> rcu_sr_normal_gp_cleanup_work()'s callback processing
-> >>> is slow, any new synchronize_rcu() user's rcu_synchronize
-> >>> node's processing is deferred to future GP periods. This
-> >>> can result in long list of synchronize_rcu() invocations
-> >>> waiting for full grace period processing, which can delay
-> >>> freeing of memory. Mitigate this problem by using first
-> >>> node in the list as wait tail when all wait heads are in use.
-> >>> While methods to speed up callback processing would be needed
-> >>> to recover from this situation, allowing new nodes to complete
-> >>> their grace period can help prevent delays due to a fixed
-> >>> number of wait head nodes.
-> >>>
-> >>> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-> >>> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> >>
-> >> IIRC we agreed that this patch could be a step too far that
-> >> made an already not so simple state machine even less simple,
-> >> breaking the wait_head based flow.
-> > 
-> > True, which is why we agreed not to submit it into the v6.10 merge window.
-> > 
-> > And I don't recall us saying what merge window to send it to.
-> > 
-> >> Should we postpone this change until it is observed that a workqueue
-> >> not being scheduled for 5 grace periods is a real issue?
-> > 
-> > Neeraj, thoughts?  Or, better yet, test results?  ;-)
-> 
-> Yes I agree that we postpone this change until we see it as a real
-> problem. I had run a test to invoke synchronize_rcu() from all CPUs
-> on a 96 core system in parallel. I didn't specifically check if this
-> scenario was hit. Will run RCU torture test with this change.
+Let the kememdup_array() take care about multiplication and possible
+overflows.
 
-Very well, I will drop this patch with the expectation that you will
-re-post it if a problem does arise.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/acpi/arm64/iort.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-							Thanx, Paul
+diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
+index c0b1c2c19444..e596dff20f1e 100644
+--- a/drivers/acpi/arm64/iort.c
++++ b/drivers/acpi/arm64/iort.c
+@@ -822,7 +822,7 @@ static struct iommu_iort_rmr_data *iort_rmr_alloc(
+ 		return NULL;
+ 
+ 	/* Create a copy of SIDs array to associate with this rmr_data */
+-	sids_copy = kmemdup(sids, num_sids * sizeof(*sids), GFP_KERNEL);
++	sids_copy = kmemdup_array(sids, num_sids, sizeof(*sids), GFP_KERNEL);
+ 	if (!sids_copy) {
+ 		kfree(rmr_data);
+ 		return NULL;
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
 
