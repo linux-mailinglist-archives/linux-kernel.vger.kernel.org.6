@@ -1,111 +1,218 @@
-Return-Path: <linux-kernel+bounces-204768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1C998FF354
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:07:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F5F58FF355
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D52551C26426
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:07:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F21F28C109
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87DF1990BE;
-	Thu,  6 Jun 2024 17:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5362198E87;
+	Thu,  6 Jun 2024 17:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="tEjzMInL"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LAeVzddM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC38198E9D;
-	Thu,  6 Jun 2024 17:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1001B197A65
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 17:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717693647; cv=none; b=ANmZBDrUQ8QL5AQ5q0LARg3c5uNy0GFdU2XbVEjJ3xKkfqKAigC7Ua3XrJ1h5xXwccYWoW5NxvOXmnvAI6TBPbdTIddAg7YY661vvkDdFc+x7irF/BozB02VREBevQD7z78Lx8ru3kKjlIWOJOeGFoU62ss/nbsxItO2dP4rpdw=
+	t=1717693656; cv=none; b=HF5KVdYyIDdaa8vZ2Aw+Kgz9jMKdsouwzywMk3GJlDaa0ZmzdUbzSpLxykrRlss+9a4GyKr24rhK99XMkZJSBqAvq2SAzAG+hkwurcDk0/AkmjRlxNT9jT8Pe1+7ebUKAUOjMGyjPeojIBO5ub/W7JrwsipZXOvvA9XeRvqk99Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717693647; c=relaxed/simple;
-	bh=VHeCFpZ4RLjLPsgfwnjzI/Q85iwyJ+RtoWl8FIrsD88=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c3zR5wUbjjkixFtMHUYhsh/0JmSyXHQSWXn/6n8bE1vMiQjY82oJLr4h5F4VU5tgDNHitUxz3rTfNckvq4FXKf66M13oCSkwpbtvfxEH2LpiTTs9FFI/XVMpBqFbAY6uwf1Z/5FeZtLT0BEJ0PvJY62vAj4Ww0ceeb+6xi6on+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=tEjzMInL; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=q3W5rfNL8guHDyhomXxmXikuxMu9J7xD/p7JIYr3z+U=;
-	t=1717693645; x=1718125645; b=tEjzMInLsMiSxTU0DZuZ8+deZ/8km6kNwnYgfYK8BPU48fl
-	ZjNqAd91d0lt1QaOibYLY6TxIH8xJ6LCnO/EzHmq6MsABOSmr9FXKEw1XAluuzA5I2jg0xc7DnKFT
-	kLtKPm+0RQcxMYCdRWtlfLfuheWRSaqB96zYsMrEjbOOT5aIo/zop8LmLFJ7Uwidp8NMxV8IwW1BQ
-	Mw25zGvmXqNROJ4nFZ90Suxpp4h3kYO+ERJEEEX0mR3F4yYzK8wvGR5B482hjfdYqy+CSU9rRXyXY
-	7AyOCUu4xrHqI5SrCqR7YMr2XUBsG4vxqrBsoJgqNnRqRhn+Kh7G/7udDOHztHLw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sFGa9-0005yl-1v; Thu, 06 Jun 2024 19:07:21 +0200
-Message-ID: <7fb5f0d6-f105-4219-839b-908c96c42972@leemhuis.info>
-Date: Thu, 6 Jun 2024 19:07:20 +0200
+	s=arc-20240116; t=1717693656; c=relaxed/simple;
+	bh=rnxZ0Vr8B1WHr2j8vKiyhdo52e1nn+9bFC48qwBjGHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S76b/8nLiR/8rVESOlCK1Uq/Itw52drNppVFp3sZS+ESM+0bVag4IU2+6adOTAG6UECy6qx+6xtsumTq7RKEwL8ltgN7vLV0qtv2KTODr9gysvy03zN3xQtFUjuJI4JGIUj4eEwaU0HnDFIPMM7KfZc4/Qu64ngQUk4WAf+XoQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LAeVzddM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7925CC2BD10;
+	Thu,  6 Jun 2024 17:07:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717693655;
+	bh=rnxZ0Vr8B1WHr2j8vKiyhdo52e1nn+9bFC48qwBjGHY=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=LAeVzddMwEr6BhZRSGxQn6Ivb/mVmHpO08XeXSYMykqhYmO4ceIejY7urgvEzqdUG
+	 oJn7y8S76JARjbHCgjLrj0AcoCH+605KtDPSQfnlHqpwZsVOQewSqq+IGEWP7rb2sY
+	 A3olXglV+rfctm72BmpWMeL4o1axETDGX8QKICzezJEoJBjjPd1nbVlvyZqRlpN1As
+	 E8K+2D6j23z3c6qpS9XoeVbAOK2wjnNnEzRU6Q4M0eAfuolqH8z92zkhHPc9LO1Aih
+	 eiZRrNEY9fb1ZxYBdKofOmSHimAu8Qp3whvUW4rpdygxfD8lpAj5owHsZc0bupQXYd
+	 4FJUF+xRyUM9g==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 1E783CE3F34; Thu,  6 Jun 2024 10:07:35 -0700 (PDT)
+Date: Thu, 6 Jun 2024 10:07:35 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Andrea Parri <parri.andrea@gmail.com>, will@kernel.org,
+	peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+	dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+	akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, hernan.poncedeleon@huaweicloud.com,
+	jonas.oberhauser@huaweicloud.com
+Subject: Re: New locking test for the paulmckrcu/litmus github archive
+Message-ID: <64d944ff-b609-4977-a491-91ffc199a4cd@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <a8c06694-098d-4b95-845c-96b40cd3ff2d@rowland.harvard.edu>
+ <df851df5-0e3a-45b1-ae85-9625309766b0@paulmck-laptop>
+ <1d175b42-84b4-4a48-b1fb-ab6fd3566f75@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: 6.10-rc1 : crash in mei_csi_probe
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Genes Lists <lists@sapience.com>
-Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org,
- hverkuil-cisco@xs4all.nl, laurent.pinchart@ideasonboard.com,
- wentong.wu@intel.com, linux-media@vger.kernel.org,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- "Rafael J. Wysocki" <rafael@kernel.org>
-References: <8afe9391b96ff3e1c60e624c1b8a3b2bd5039560.camel@sapience.com>
- <ZlTllJeZBiGapHwZ@kekkonen.localdomain>
- <988e48090982c89ce0c906954832fdfb09a1ce34.camel@sapience.com>
- <eb10620deecc8feeae1e308c22de199be7c48ca6.camel@sapience.com>
- <ZmHasj3hfwwKimZF@kekkonen.localdomain>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <ZmHasj3hfwwKimZF@kekkonen.localdomain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1717693645;9f33a5f1;
-X-HE-SMSGID: 1sFGa9-0005yl-1v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1d175b42-84b4-4a48-b1fb-ab6fd3566f75@rowland.harvard.edu>
 
-On 06.06.24 17:50, Sakari Ailus wrote:
-> On Thu, Jun 06, 2024 at 11:39:35AM -0400, Genes Lists wrote:
->> On Mon, 2024-05-27 at 16:58 -0400, Genes Lists wrote:
->>> On Mon, 2024-05-27 at 19:57 +0000, Sakari Ailus wrote:
->>>>
->>>> Thanks for reporting this.
->>>>
->>>> On Mon, May 27, 2024 at 12:34:41PM -0400, Genes Lists wrote:
->>>>>
->>>>> First happened in 6.10-rc1 (6.9.2 stable is fine)  
->>>>
->>>> Do you happen to have .config available? A full dmesg would also be
->>>> helpful.
->>>>
->>>> Does the system crash after the warning or not?
->>>
->>> System stays up and remains quite usable.
->>>
->>> config and dmesg attached.
->>
->> Hi Sakari - just to let you know this is still happening in 6.10-rc2.
+On Wed, Jun 05, 2024 at 02:40:05PM -0400, Alan Stern wrote:
+> On Wed, Jun 05, 2024 at 11:25:11AM -0700, Paul E. McKenney wrote:
+> > Thank you both!
+> > 
+> > I queued and pushed the following commit, please let me know if it
+> > needs adjustment.
+> > 
+> > 							Thanx, Paul
+> > 
+> > ------------------------------------------------------------------------
+> > 
+> > commit fb65813a7a181cd86c50bb03f9df1f6a398fa22b
+> > Author: Alan Stern <stern@rowland.harvard.edu>
+> > Date:   Wed Jun 5 11:20:47 2024 -0700
+> > 
+> >     manual/locked: Add single-threaded spin_is_locked() test
+> >     
+> >     This new litmus test demonstrates a bug in the current LKMM lock.cat file.
+> >     This bug results in the following output:
+> >     
+> >             Test CoWWW+sil-lock-sil-unlock-sil Allowed
+> >             States 0
+> >             No
+> >             Witnesses
+> >             Positive: 0 Negative: 0
+> >             Condition exists (0:r0=0 /\ 0:r1=1 /\ 0:r2=0)
+> >             Observation CoWWW+sil-lock-sil-unlock-sil Never 0 0
+> >             Time CoWWW+sil-lock-sil-unlock-sil 0.01
+> >             Hash=cf12d53b4d1afec2e46bf9886af219c8
+> >     
+> >     This is consistent with a deadlock.  After the fix, there should be one
+> >     execution that matches the "exists" clause, hence an "Always" result.
 > 
-> It'll disappear once this patch is in:
-> <URL:https://lore.kernel.org/linux-acpi/MW5PR11MB5787C81ABF0C9FFF5A17E4888DF32@MW5PR11MB5787.namprd11.prod.outlook.com/T/#t>.
+> The part about being consistent with a deadlock is not very important; 
+> I'd omit it.  Also, the second sentence is ambiguous; change it to:
 
-Do you plan to submit this again while fixing the typo Wentong Wu
-pointed out? Or should Rafael (now CCed here) fix this while picking it
-up? He might not have seen it as he's not in the list of recipients; he
-furthermore is likely not aware that this is a regression fix, as it
-lacks Fixes, Reported-by and Closes tags.
+Good point, the deadlock is irrelevant.  If I want to make that point,
+I can add a test that really does deadlock.  ;-)
 
-Ciao, Thorsten
+> 	After the fix, there should be one execution that matches the 
+> 	"exists" clause and no executions that don't match, hence an 
+> 	"Always" result.
+
+I ended up with the following:
+
+	This has no executions.  After the fix, there is one execution
+	that matches the "exists" clause and no executions that do not
+	match, hence an "Always" result.
+
+The reason for explicitly stating "This has no executions" is that a
+lot of people never have seen such a thing.
+
+> > diff --git a/manual/locked/CoWWW+sil-lock-sil-unlock-sil.litmus b/manual/locked/CoWWW+sil-lock-sil-unlock-sil.litmus
+> > new file mode 100644
+> > index 00000000..cee5abf4
+> > --- /dev/null
+> > +++ b/manual/locked/CoWWW+sil-lock-sil-unlock-sil.litmus
+> > @@ -0,0 +1,24 @@
+> > +C CoWWW+sil-lock-sil-unlock-sil.litmus
+> 
+> Where does the "CoWWW" part of the name come from?  If it refers to 
+> coherence order and three writes, I'll point out that the litmus test 
+> contains only two writes -- which would better be described as a lock 
+> and an unlock.  (Or are you counting the "write" that sets the lock's 
+> initial value?)
+
+The CoWWW comes from me having been confused.  The new filename is
+CoWW+sil-lock-sil-unlock-sil.litmus.  Thank you for spotting this!
+
+> > +
+> > +(*
+> > + * Result: Always
+> > + *
+> > + * This tests the memory model's implementation of spin_is_locked().
+> > + *)
+> > +
+> > +{}
+> > +
+> > +P0(spinlock_t *x)
+> > +{
+> > +        int r0;
+> 
+> Oops!  Apparently I managed not to convert the spaces on that line to a 
+> tab.  Can you take care of that?
+
+Done!  Please see below for the updated commit.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+commit d4d216a08b4bedb8cdb0f57a224a4e331b35b931
+Author: Alan Stern <stern@rowland.harvard.edu>
+Date:   Wed Jun 5 11:20:47 2024 -0700
+
+    manual/locked: Add single-threaded spin_is_locked() test
+    
+    This new litmus test demonstrates a bug in the current LKMM lock.cat file.
+    This bug results in the following output:
+    
+            Test CoWW+sil-lock-sil-unlock-sil Allowed
+            States 0
+            No
+            Witnesses
+            Positive: 0 Negative: 0
+            Condition exists (0:r0=0 /\ 0:r1=1 /\ 0:r2=0)
+            Observation CoWWW+sil-lock-sil-unlock-sil Never 0 0
+            Time CoWWW+sil-lock-sil-unlock-sil 0.01
+            Hash=cf12d53b4d1afec2e46bf9886af219c8
+    
+    This has no executions.  After the fix, there is one execution that
+    matches the "exists" clause and no executions that do not match, hence an
+    "Always" result.
+    
+    Suggested-by: Andrea Parri <parri.andrea@gmail.com>
+    Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+
+diff --git a/manual/locked/CoWW+sil-lock-sil-unlock-sil.litmus b/manual/locked/CoWW+sil-lock-sil-unlock-sil.litmus
+new file mode 100644
+index 00000000..aadc4ceb
+--- /dev/null
++++ b/manual/locked/CoWW+sil-lock-sil-unlock-sil.litmus
+@@ -0,0 +1,24 @@
++C CoWWW+sil-lock-sil-unlock-sil.litmus
++
++(*
++ * Result: Always
++ *
++ * This tests the memory model's implementation of spin_is_locked().
++ *)
++
++{}
++
++P0(spinlock_t *x)
++{
++	int r0;
++	int r1;
++	int r2;
++
++	r0 = spin_is_locked(x);
++	spin_lock(x);
++	r1 = spin_is_locked(x);
++	spin_unlock(x);
++	r2 = spin_is_locked(x);
++}
++
++exists (0:r0=0 /\ 0:r1=1 /\ 0:r2=0)
 
