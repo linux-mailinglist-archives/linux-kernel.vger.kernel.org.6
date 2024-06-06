@@ -1,755 +1,137 @@
-Return-Path: <linux-kernel+bounces-205172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AFE28FF856
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:52:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 399E98FF858
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:53:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E34C286498
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:52:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9876284913
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0548213E8BE;
-	Thu,  6 Jun 2024 23:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B25613F457;
+	Thu,  6 Jun 2024 23:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qJ6m9E21"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VdUsvxNc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC8C482F6
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 23:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A41D71B5B;
+	Thu,  6 Jun 2024 23:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717717961; cv=none; b=hxpTP3G9y38bLSWJYSmAXPQLJeVh+LLUj3OJxiRpXulXJqAohRFqmfsydkTDt950R8+e6IJKpaVJu9H/lkUJbZxzbo3ql6MQteND2HAo1KzECYHSooPS84cXD5AUNnRn9isA8vnhUdHOaUBHzvqbr8Z7nHPj0rwTNDw+m3142NM=
+	t=1717718007; cv=none; b=JTSVSWnl70kxrcq8v81YpKgCdhdeVDvTqoFqDPQWW9vSM9AxNV8FP1zC8TDT+bka6ORBbHs6JBAwkRqbk8VoKVmXypGZQbhXaX9rMCQWtI332HoA5b1u6vSgjqeNSRaJYDhCNNjG+zKpjNAS0JTqKaDFe5+dlkP1fMh2vO67L9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717717961; c=relaxed/simple;
-	bh=Bcjd6fmV/5pnYq9RDaTqo9kbUWUEvFjybXOe74R4hxw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HRl/EngCq+FCiiENgCsbsW49AlBA0C/IJcHttumTPs0RXJhGt0032Iict4VYdtk0FY4jRsFZONr76Xit+9at9Ey3HcRj8osp+rdYL0R13ICVoor6H8PmojV3pc6PDD5ugzEMANRKdHYEH9pxs/zfMdwoNsswiKZMF0erbW2cRf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qJ6m9E21; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717717957;
-	bh=Bcjd6fmV/5pnYq9RDaTqo9kbUWUEvFjybXOe74R4hxw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=qJ6m9E21zz6CYSv+zRTQEolZaZAPC0Rv/BeNmql4kWrYVHUc78jhXM8x2dOIIP293
-	 zGxzMPkc3ZJRoLSUF9pJBySJPIKWC6Q4qxtrbhAWqPtsxbmJx7w61mLXwBIruVEBT/
-	 zuT80l+FMAnQi432FwrzCRVJ65K2ozefLPkq6WvQFDq3FLu89k25yO2miY6338FP88
-	 Z7cl4/x6ocN+rypsZg8Cfl5jaMVD0hsL6g0OZ7/rLKVrFo9AenUNgmYZq2KYgqLkrP
-	 9on6wz3v22jnVWxUBzPDx6WcUz4BG5sMvmxoE1BWnWWanJUSSZnFVUGZL7EEgsc/m2
-	 njI057Hv6Qz5Q==
-Received: from [192.168.1.216] (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 8C15D37821C1;
-	Thu,  6 Jun 2024 23:52:34 +0000 (UTC)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Thu, 06 Jun 2024 19:52:29 -0400
-Subject: [PATCH v2] drm/mediatek: Log errors in probe with dev_err_probe()
+	s=arc-20240116; t=1717718007; c=relaxed/simple;
+	bh=E/psiguQLxhslxk3Ia2n2N/Obzi4NeEoU2JEow9x5zs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=duBEGQQE8tn0aUd0BfQw4OfpFrlsIjxJItsWLFOD7Iifm6VKbp/4qTkWo58+s45wjDr/m9L0dTtdktwkk+zTjYr0mhbhQ/EdE0RiGo87+TR8dz2LlLguV11tyoroqzcG9lUGDzUbVtKyQ0AwSJ6mqqezdAG4sXrZGWjBsxE46GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VdUsvxNc; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717718006; x=1749254006;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=E/psiguQLxhslxk3Ia2n2N/Obzi4NeEoU2JEow9x5zs=;
+  b=VdUsvxNc5mZQB+HrpNGPIbvVIXwkUXWNSzfErSeLSAqpJbfAfD/JWsW+
+   lSAJyuK+5FlSrgc3iEpIStd7Qx5Zh6qLTVqunXi6QKjgxhE3RsJUtoU6m
+   wd4ySzwpTy/28c1nv/f41zhV7tlQuU6TkE+KtLzH/4CbAlLPzIu9F6JNU
+   ikoR0/k5BaY8DPqINtB7TskN8JCe6IZuWlWhL5AfVVK1nUt29i9YdZzXd
+   tSonMZW0+DguskG5GuQ8YdP5JQz3TrDkg9VFTdVnFnKUSgayV3xQDRrwI
+   jiY8R16jtT9/5ofKvLfQ3/o+bhbBQrHhIZCiskkAOsdMd/wihDLFQtRxi
+   w==;
+X-CSE-ConnectionGUID: wMuYTFsBSTGS6BHNUv63jw==
+X-CSE-MsgGUID: Osxiw/cWTHiMTstJmnf+7w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="14256665"
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="14256665"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 16:53:26 -0700
+X-CSE-ConnectionGUID: qzxj3XGARuOCaxb2qIW7vg==
+X-CSE-MsgGUID: ZUVJ06S5QWeSRKnoNgHKqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="69310958"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 06 Jun 2024 16:53:23 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sFMv2-0003se-2y;
+	Thu, 06 Jun 2024 23:53:20 +0000
+Date: Fri, 7 Jun 2024 07:52:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chris Lu <chris.lu@mediatek.com>, Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Von Dentz <luiz.dentz@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Sean Wang <sean.wang@mediatek.com>,
+	Deren Wu <deren.Wu@mediatek.com>,
+	Aaron Hou <aaron.hou@mediatek.com>,
+	Steve Lee <steve.lee@mediatek.com>,
+	linux-bluetooth <linux-bluetooth@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-mediatek <linux-mediatek@lists.infradead.org>,
+	Chris Lu <chris.lu@mediatek.com>
+Subject: Re: [PATCH v4 4/4] Bluetooth: btusb: mediatek: add ISO data
+ transmission functions
+Message-ID: <202406070759.EDNrdv4q-lkp@intel.com>
+References: <20240606114321.30515-5-chris.lu@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240606-mtk-disp-rdma-dev-err-probe-v2-1-3898621767b8@collabora.com>
-X-B4-Tracking: v=1; b=H4sIALxLYmYC/43NQQ6CMBCF4auQWTumU8SkrryHYVHaQRqBkilpN
- IS7WzmBy+8t/rdBYgmc4FZtIJxDCnEu0KcK3GDnJ2PwxaCVvqiranBaX+hDWlD8ZNFzRhbBRWL
- HyL1xpCxZQwylsAj34X3UH23xENIa5XOcZfqt/3UzIaEh3RgmX1tT310cR9tFsWcXJ2j3ff8Cn
- vxyosoAAAA=
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
- Daniel Vetter <daniel@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606114321.30515-5-chris.lu@mediatek.com>
 
-Use dev_err_probe() to log errors in the probe function of all drm
-mediatek drivers. This avoids -EPROBE_DEFER return values from being
-logged as errors, like the following:
+Hi Chris,
 
-  mediatek-disp-rdma 1c002000.rdma: Failed to add component: -517
+kernel test robot noticed the following build errors:
 
-As a side benefit it also standardizes the format of the error in the
-log messages.
+[auto build test ERROR on bluetooth-next/master]
+[also build test ERROR on next-20240606]
+[cannot apply to bluetooth/master linus/master v6.10-rc2]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
-Changes in v2:
-- Converted all dev_err() in probe functions to dev_err_probe() instead
-  of just the ones in the component_add() error path
-- Link to v1: https://lore.kernel.org/r/20240605-mtk-disp-rdma-dev-err-probe-v1-1-91259e1d3a93@collabora.com
----
- drivers/gpu/drm/mediatek/mtk_cec.c              | 28 ++++++++--------------
- drivers/gpu/drm/mediatek/mtk_disp_aal.c         | 18 +++++++-------
- drivers/gpu/drm/mediatek/mtk_disp_ccorr.c       | 18 +++++++-------
- drivers/gpu/drm/mediatek/mtk_disp_color.c       | 18 +++++++-------
- drivers/gpu/drm/mediatek/mtk_disp_gamma.c       | 18 +++++++-------
- drivers/gpu/drm/mediatek/mtk_disp_merge.c       | 25 +++++++++-----------
- drivers/gpu/drm/mediatek/mtk_disp_ovl.c         | 24 ++++++++-----------
- drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c |  4 ++--
- drivers/gpu/drm/mediatek/mtk_disp_rdma.c        | 31 +++++++++++--------------
- drivers/gpu/drm/mediatek/mtk_dp.c               |  8 +++----
- drivers/gpu/drm/mediatek/mtk_ethdr.c            | 19 +++++++--------
- drivers/gpu/drm/mediatek/mtk_hdmi.c             | 31 ++++++++++---------------
- drivers/gpu/drm/mediatek/mtk_hdmi_ddc.c         | 21 ++++++-----------
- drivers/gpu/drm/mediatek/mtk_mdp_rdma.c         | 18 +++++++-------
- drivers/gpu/drm/mediatek/mtk_padding.c          | 20 +++++++---------
- 15 files changed, 125 insertions(+), 176 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Chris-Lu/Bluetooth-net-add-hci_iso_hdr-function-for-iso-data/20240606-194619
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git master
+patch link:    https://lore.kernel.org/r/20240606114321.30515-5-chris.lu%40mediatek.com
+patch subject: [PATCH v4 4/4] Bluetooth: btusb: mediatek: add ISO data transmission functions
+config: x86_64-buildonly-randconfig-003-20240607 (https://download.01.org/0day-ci/archive/20240607/202406070759.EDNrdv4q-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240607/202406070759.EDNrdv4q-lkp@intel.com/reproduce)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_cec.c b/drivers/gpu/drm/mediatek/mtk_cec.c
-index 8519e9bade36..2de248443147 100644
---- a/drivers/gpu/drm/mediatek/mtk_cec.c
-+++ b/drivers/gpu/drm/mediatek/mtk_cec.c
-@@ -195,18 +195,14 @@ static int mtk_cec_probe(struct platform_device *pdev)
- 	spin_lock_init(&cec->lock);
- 
- 	cec->regs = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(cec->regs)) {
--		ret = PTR_ERR(cec->regs);
--		dev_err(dev, "Failed to ioremap cec: %d\n", ret);
--		return ret;
--	}
-+	if (IS_ERR(cec->regs))
-+		return dev_err_probe(dev, PTR_ERR(cec->regs),
-+				     "Failed to ioremap cec\n");
- 
- 	cec->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(cec->clk)) {
--		ret = PTR_ERR(cec->clk);
--		dev_err(dev, "Failed to get cec clock: %d\n", ret);
--		return ret;
--	}
-+	if (IS_ERR(cec->clk))
-+		return dev_err_probe(dev, PTR_ERR(cec->clk),
-+				     "Failed to get cec clock\n");
- 
- 	cec->irq = platform_get_irq(pdev, 0);
- 	if (cec->irq < 0)
-@@ -216,16 +212,12 @@ static int mtk_cec_probe(struct platform_device *pdev)
- 					mtk_cec_htplg_isr_thread,
- 					IRQF_SHARED | IRQF_TRIGGER_LOW |
- 					IRQF_ONESHOT, "hdmi hpd", dev);
--	if (ret) {
--		dev_err(dev, "Failed to register cec irq: %d\n", ret);
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to register cec irq\n");
- 
- 	ret = clk_prepare_enable(cec->clk);
--	if (ret) {
--		dev_err(dev, "Failed to enable cec clock: %d\n", ret);
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to enable cec clock\n");
- 
- 	mtk_cec_htplg_irq_init(cec);
- 	mtk_cec_htplg_irq_enable(cec);
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_aal.c b/drivers/gpu/drm/mediatek/mtk_disp_aal.c
-index 3ce8f32b06d5..59fb9a08d54b 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_aal.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_aal.c
-@@ -175,16 +175,14 @@ static int mtk_disp_aal_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	priv->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(priv->clk)) {
--		dev_err(dev, "failed to get aal clk\n");
--		return PTR_ERR(priv->clk);
--	}
-+	if (IS_ERR(priv->clk))
-+		return dev_err_probe(dev, PTR_ERR(priv->clk),
-+				     "failed to get aal clk\n");
- 
- 	priv->regs = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(priv->regs)) {
--		dev_err(dev, "failed to ioremap aal\n");
--		return PTR_ERR(priv->regs);
--	}
-+	if (IS_ERR(priv->regs))
-+		return dev_err_probe(dev, PTR_ERR(priv->regs),
-+				     "failed to ioremap aal\n");
- 
- #if IS_REACHABLE(CONFIG_MTK_CMDQ)
- 	ret = cmdq_dev_get_client_reg(dev, &priv->cmdq_reg, 0);
-@@ -197,9 +195,9 @@ static int mtk_disp_aal_probe(struct platform_device *pdev)
- 
- 	ret = component_add(dev, &mtk_disp_aal_component_ops);
- 	if (ret)
--		dev_err(dev, "Failed to add component: %d\n", ret);
-+		return dev_err_probe(dev, ret, "Failed to add component\n");
- 
--	return ret;
-+	return 0;
- }
- 
- static void mtk_disp_aal_remove(struct platform_device *pdev)
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ccorr.c b/drivers/gpu/drm/mediatek/mtk_disp_ccorr.c
-index df35e90dd25f..9b75727e0861 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_ccorr.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_ccorr.c
-@@ -160,16 +160,14 @@ static int mtk_disp_ccorr_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	priv->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(priv->clk)) {
--		dev_err(dev, "failed to get ccorr clk\n");
--		return PTR_ERR(priv->clk);
--	}
-+	if (IS_ERR(priv->clk))
-+		return dev_err_probe(dev, PTR_ERR(priv->clk),
-+				     "failed to get ccorr clk\n");
- 
- 	priv->regs = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(priv->regs)) {
--		dev_err(dev, "failed to ioremap ccorr\n");
--		return PTR_ERR(priv->regs);
--	}
-+	if (IS_ERR(priv->regs))
-+		return dev_err_probe(dev, PTR_ERR(priv->regs),
-+				     "failed to ioremap ccorr\n");
- 
- #if IS_REACHABLE(CONFIG_MTK_CMDQ)
- 	ret = cmdq_dev_get_client_reg(dev, &priv->cmdq_reg, 0);
-@@ -182,9 +180,9 @@ static int mtk_disp_ccorr_probe(struct platform_device *pdev)
- 
- 	ret = component_add(dev, &mtk_disp_ccorr_component_ops);
- 	if (ret)
--		dev_err(dev, "Failed to add component: %d\n", ret);
-+		return dev_err_probe(dev, ret, "Failed to add component\n");
- 
--	return ret;
-+	return 0;
- }
- 
- static void mtk_disp_ccorr_remove(struct platform_device *pdev)
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_color.c b/drivers/gpu/drm/mediatek/mtk_disp_color.c
-index 7f0085be5671..2fd5e7dc9e24 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_color.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_color.c
-@@ -104,17 +104,15 @@ static int mtk_disp_color_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	priv->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(priv->clk)) {
--		dev_err(dev, "failed to get color clk\n");
--		return PTR_ERR(priv->clk);
--	}
-+	if (IS_ERR(priv->clk))
-+		return dev_err_probe(dev, PTR_ERR(priv->clk),
-+				     "failed to get color clk\n");
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	priv->regs = devm_ioremap_resource(dev, res);
--	if (IS_ERR(priv->regs)) {
--		dev_err(dev, "failed to ioremap color\n");
--		return PTR_ERR(priv->regs);
--	}
-+	if (IS_ERR(priv->regs))
-+		return dev_err_probe(dev, PTR_ERR(priv->regs),
-+				     "failed to ioremap color\n");
- #if IS_REACHABLE(CONFIG_MTK_CMDQ)
- 	ret = cmdq_dev_get_client_reg(dev, &priv->cmdq_reg, 0);
- 	if (ret)
-@@ -126,9 +124,9 @@ static int mtk_disp_color_probe(struct platform_device *pdev)
- 
- 	ret = component_add(dev, &mtk_disp_color_component_ops);
- 	if (ret)
--		dev_err(dev, "Failed to add component: %d\n", ret);
-+		return dev_err_probe(dev, ret, "Failed to add component\n");
- 
--	return ret;
-+	return 0;
- }
- 
- static void mtk_disp_color_remove(struct platform_device *pdev)
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_gamma.c b/drivers/gpu/drm/mediatek/mtk_disp_gamma.c
-index ca8d1f3aca03..f0b38817ba6c 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_gamma.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_gamma.c
-@@ -264,17 +264,15 @@ static int mtk_disp_gamma_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	priv->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(priv->clk)) {
--		dev_err(dev, "failed to get gamma clk\n");
--		return PTR_ERR(priv->clk);
--	}
-+	if (IS_ERR(priv->clk))
-+		return dev_err_probe(dev, PTR_ERR(priv->clk),
-+				     "failed to get gamma clk\n");
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	priv->regs = devm_ioremap_resource(dev, res);
--	if (IS_ERR(priv->regs)) {
--		dev_err(dev, "failed to ioremap gamma\n");
--		return PTR_ERR(priv->regs);
--	}
-+	if (IS_ERR(priv->regs))
-+		return dev_err_probe(dev, PTR_ERR(priv->regs),
-+				     "failed to ioremap gamma\n");
- 
- #if IS_REACHABLE(CONFIG_MTK_CMDQ)
- 	ret = cmdq_dev_get_client_reg(dev, &priv->cmdq_reg, 0);
-@@ -287,9 +285,9 @@ static int mtk_disp_gamma_probe(struct platform_device *pdev)
- 
- 	ret = component_add(dev, &mtk_disp_gamma_component_ops);
- 	if (ret)
--		dev_err(dev, "Failed to add component: %d\n", ret);
-+		return dev_err_probe(dev, ret, "Failed to add component\n");
- 
--	return ret;
-+	return 0;
- }
- 
- static void mtk_disp_gamma_remove(struct platform_device *pdev)
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_merge.c b/drivers/gpu/drm/mediatek/mtk_disp_merge.c
-index 77c057e0e671..435e5d9c8520 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_merge.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_merge.c
-@@ -316,22 +316,19 @@ static int mtk_disp_merge_probe(struct platform_device *pdev)
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	priv->regs = devm_ioremap_resource(dev, res);
--	if (IS_ERR(priv->regs)) {
--		dev_err(dev, "failed to ioremap merge\n");
--		return PTR_ERR(priv->regs);
--	}
-+	if (IS_ERR(priv->regs))
-+		return dev_err_probe(dev, PTR_ERR(priv->regs),
-+				     "failed to ioremap merge\n");
- 
- 	priv->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(priv->clk)) {
--		dev_err(dev, "failed to get merge clk\n");
--		return PTR_ERR(priv->clk);
--	}
-+	if (IS_ERR(priv->clk))
-+		return dev_err_probe(dev, PTR_ERR(priv->clk),
-+				     "failed to get merge clk\n");
- 
- 	priv->async_clk = devm_clk_get_optional(dev, "merge_async");
--	if (IS_ERR(priv->async_clk)) {
--		dev_err(dev, "failed to get merge async clock\n");
--		return PTR_ERR(priv->async_clk);
--	}
-+	if (IS_ERR(priv->async_clk))
-+		return dev_err_probe(dev, PTR_ERR(priv->async_clk),
-+				     "failed to get merge async clock\n");
- 
- 	if (priv->async_clk) {
- 		priv->reset_ctl = devm_reset_control_get_optional_exclusive(dev, NULL);
-@@ -354,9 +351,9 @@ static int mtk_disp_merge_probe(struct platform_device *pdev)
- 
- 	ret = component_add(dev, &mtk_disp_merge_component_ops);
- 	if (ret != 0)
--		dev_err(dev, "Failed to add component: %d\n", ret);
-+		return dev_err_probe(dev, ret, "Failed to add component\n");
- 
--	return ret;
-+	return 0;
- }
- 
- static void mtk_disp_merge_remove(struct platform_device *pdev)
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-index b552a02d7eae..4dd8bb8e8457 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-@@ -523,17 +523,15 @@ static int mtk_disp_ovl_probe(struct platform_device *pdev)
- 		return irq;
- 
- 	priv->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(priv->clk)) {
--		dev_err(dev, "failed to get ovl clk\n");
--		return PTR_ERR(priv->clk);
--	}
-+	if (IS_ERR(priv->clk))
-+		return dev_err_probe(dev, PTR_ERR(priv->clk),
-+				     "failed to get ovl clk\n");
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	priv->regs = devm_ioremap_resource(dev, res);
--	if (IS_ERR(priv->regs)) {
--		dev_err(dev, "failed to ioremap ovl\n");
--		return PTR_ERR(priv->regs);
--	}
-+	if (IS_ERR(priv->regs))
-+		return dev_err_probe(dev, PTR_ERR(priv->regs),
-+				     "failed to ioremap ovl\n");
- #if IS_REACHABLE(CONFIG_MTK_CMDQ)
- 	ret = cmdq_dev_get_client_reg(dev, &priv->cmdq_reg, 0);
- 	if (ret)
-@@ -545,20 +543,18 @@ static int mtk_disp_ovl_probe(struct platform_device *pdev)
- 
- 	ret = devm_request_irq(dev, irq, mtk_disp_ovl_irq_handler,
- 			       IRQF_TRIGGER_NONE, dev_name(dev), priv);
--	if (ret < 0) {
--		dev_err(dev, "Failed to request irq %d: %d\n", irq, ret);
--		return ret;
--	}
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "Failed to request irq %d\n", irq);
- 
- 	pm_runtime_enable(dev);
- 
- 	ret = component_add(dev, &mtk_disp_ovl_component_ops);
- 	if (ret) {
- 		pm_runtime_disable(dev);
--		dev_err(dev, "Failed to add component: %d\n", ret);
-+		return dev_err_probe(dev, ret, "Failed to add component\n");
- 	}
- 
--	return ret;
-+	return 0;
- }
- 
- static void mtk_disp_ovl_remove(struct platform_device *pdev)
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
-index 02dd7dcdfedb..0744da867d4e 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
-@@ -612,10 +612,10 @@ static int mtk_disp_ovl_adaptor_probe(struct platform_device *pdev)
- 	ret = component_add(dev, &mtk_disp_ovl_adaptor_comp_ops);
- 	if (ret != 0) {
- 		pm_runtime_disable(dev);
--		dev_err(dev, "Failed to add component: %d\n", ret);
-+		return dev_err_probe(dev, ret, "Failed to add component\n");
- 	}
- 
--	return ret;
-+	return 0;
- }
- 
- static void mtk_disp_ovl_adaptor_remove(struct platform_device *pdev)
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-index 7b1a6e631200..634bbba5d43f 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-@@ -326,17 +326,15 @@ static int mtk_disp_rdma_probe(struct platform_device *pdev)
- 		return irq;
- 
- 	priv->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(priv->clk)) {
--		dev_err(dev, "failed to get rdma clk\n");
--		return PTR_ERR(priv->clk);
--	}
-+	if (IS_ERR(priv->clk))
-+		return dev_err_probe(dev, PTR_ERR(priv->clk),
-+				     "failed to get rdma clk\n");
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	priv->regs = devm_ioremap_resource(dev, res);
--	if (IS_ERR(priv->regs)) {
--		dev_err(dev, "failed to ioremap rdma\n");
--		return PTR_ERR(priv->regs);
--	}
-+	if (IS_ERR(priv->regs))
-+		return dev_err_probe(dev, PTR_ERR(priv->regs),
-+				     "failed to ioremap rdma\n");
- #if IS_REACHABLE(CONFIG_MTK_CMDQ)
- 	ret = cmdq_dev_get_client_reg(dev, &priv->cmdq_reg, 0);
- 	if (ret)
-@@ -347,10 +345,9 @@ static int mtk_disp_rdma_probe(struct platform_device *pdev)
- 		ret = of_property_read_u32(dev->of_node,
- 					   "mediatek,rdma-fifo-size",
- 					   &priv->fifo_size);
--		if (ret) {
--			dev_err(dev, "Failed to get rdma fifo size\n");
--			return ret;
--		}
-+		if (ret)
-+			return dev_err_probe(dev, ret,
-+					     "Failed to get rdma fifo size\n");
- 	}
- 
- 	/* Disable and clear pending interrupts */
-@@ -359,10 +356,8 @@ static int mtk_disp_rdma_probe(struct platform_device *pdev)
- 
- 	ret = devm_request_irq(dev, irq, mtk_disp_rdma_irq_handler,
- 			       IRQF_TRIGGER_NONE, dev_name(dev), priv);
--	if (ret < 0) {
--		dev_err(dev, "Failed to request irq %d: %d\n", irq, ret);
--		return ret;
--	}
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "Failed to request irq %d\n", irq);
- 
- 	priv->data = of_device_get_match_data(dev);
- 
-@@ -373,10 +368,10 @@ static int mtk_disp_rdma_probe(struct platform_device *pdev)
- 	ret = component_add(dev, &mtk_disp_rdma_component_ops);
- 	if (ret) {
- 		pm_runtime_disable(dev);
--		dev_err(dev, "Failed to add component: %d\n", ret);
-+		return dev_err_probe(dev, ret, "Failed to add component\n");
- 	}
- 
--	return ret;
-+	return 0;
- }
- 
- static void mtk_disp_rdma_remove(struct platform_device *pdev)
-diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
-index 536366956447..ed335d888b2f 100644
---- a/drivers/gpu/drm/mediatek/mtk_dp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dp.c
-@@ -2655,11 +2655,9 @@ static int mtk_dp_probe(struct platform_device *pdev)
- 		mutex_init(&mtk_dp->update_plugged_status_lock);
- 
- 		ret = mtk_dp_register_audio_driver(dev);
--		if (ret) {
--			dev_err(dev, "Failed to register audio driver: %d\n",
--				ret);
--			return ret;
--		}
-+		if (ret)
-+			return dev_err_probe(dev, ret,
-+					     "Failed to register audio driver\n");
- 	}
- 
- 	ret = mtk_dp_register_phy(mtk_dp);
-diff --git a/drivers/gpu/drm/mediatek/mtk_ethdr.c b/drivers/gpu/drm/mediatek/mtk_ethdr.c
-index 156c6ff547e8..b367a080500c 100644
---- a/drivers/gpu/drm/mediatek/mtk_ethdr.c
-+++ b/drivers/gpu/drm/mediatek/mtk_ethdr.c
-@@ -325,25 +325,24 @@ static int mtk_ethdr_probe(struct platform_device *pdev)
- 	if (priv->irq) {
- 		ret = devm_request_irq(dev, priv->irq, mtk_ethdr_irq_handler,
- 				       IRQF_TRIGGER_NONE, dev_name(dev), priv);
--		if (ret < 0) {
--			dev_err(dev, "Failed to request irq %d: %d\n", priv->irq, ret);
--			return ret;
--		}
-+		if (ret < 0)
-+			return dev_err_probe(dev, ret,
-+					     "Failed to request irq %d\n",
-+					     priv->irq);
- 	}
- 
- 	priv->reset_ctl = devm_reset_control_array_get_optional_exclusive(dev);
--	if (IS_ERR(priv->reset_ctl)) {
--		dev_err_probe(dev, PTR_ERR(priv->reset_ctl), "cannot get ethdr reset control\n");
--		return PTR_ERR(priv->reset_ctl);
--	}
-+	if (IS_ERR(priv->reset_ctl))
-+		return dev_err_probe(dev, PTR_ERR(priv->reset_ctl),
-+				     "cannot get ethdr reset control\n");
- 
- 	platform_set_drvdata(pdev, priv);
- 
- 	ret = component_add(dev, &mtk_ethdr_component_ops);
- 	if (ret)
--		dev_notice(dev, "Failed to add component: %d\n", ret);
-+		return dev_err_probe(dev, ret, "Failed to add component\n");
- 
--	return ret;
-+	return 0;
- }
- 
- static void mtk_ethdr_remove(struct platform_device *pdev)
-diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-index 6e1cca97a654..3790d0b433cc 100644
---- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-@@ -1713,26 +1713,22 @@ static int mtk_hdmi_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	hdmi->phy = devm_phy_get(dev, "hdmi");
--	if (IS_ERR(hdmi->phy)) {
--		ret = PTR_ERR(hdmi->phy);
--		dev_err(dev, "Failed to get HDMI PHY: %d\n", ret);
--		return ret;
--	}
-+	if (IS_ERR(hdmi->phy))
-+		return dev_err_probe(dev, PTR_ERR(hdmi->phy),
-+				     "Failed to get HDMI PHY\n");
- 
- 	mutex_init(&hdmi->update_plugged_status_lock);
- 	platform_set_drvdata(pdev, hdmi);
- 
- 	ret = mtk_hdmi_output_init(hdmi);
--	if (ret) {
--		dev_err(dev, "Failed to initialize hdmi output\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "Failed to initialize hdmi output\n");
- 
- 	ret = mtk_hdmi_register_audio_driver(dev);
--	if (ret) {
--		dev_err(dev, "Failed to register audio driver: %d\n", ret);
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "Failed to register audio driver\n");
- 
- 	hdmi->bridge.funcs = &mtk_hdmi_bridge_funcs;
- 	hdmi->bridge.of_node = pdev->dev.of_node;
-@@ -1743,15 +1739,12 @@ static int mtk_hdmi_probe(struct platform_device *pdev)
- 
- 	ret = mtk_hdmi_clk_enable_audio(hdmi);
- 	if (ret) {
--		dev_err(dev, "Failed to enable audio clocks: %d\n", ret);
--		goto err_bridge_remove;
-+		drm_bridge_remove(&hdmi->bridge);
-+		return dev_err_probe(dev, ret,
-+				     "Failed to enable audio clocks\n");
- 	}
- 
- 	return 0;
--
--err_bridge_remove:
--	drm_bridge_remove(&hdmi->bridge);
--	return ret;
- }
- 
- static void mtk_hdmi_remove(struct platform_device *pdev)
-diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_ddc.c b/drivers/gpu/drm/mediatek/mtk_hdmi_ddc.c
-index 52d55861f954..8e60631d4cd2 100644
---- a/drivers/gpu/drm/mediatek/mtk_hdmi_ddc.c
-+++ b/drivers/gpu/drm/mediatek/mtk_hdmi_ddc.c
-@@ -279,20 +279,17 @@ static int mtk_hdmi_ddc_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	ddc->clk = devm_clk_get(dev, "ddc-i2c");
--	if (IS_ERR(ddc->clk)) {
--		dev_err(dev, "get ddc_clk failed: %p ,\n", ddc->clk);
--		return PTR_ERR(ddc->clk);
--	}
-+	if (IS_ERR(ddc->clk))
-+		return dev_err_probe(dev, PTR_ERR(ddc->clk),
-+				     "get ddc_clk failed\n");
- 
- 	ddc->regs = devm_platform_get_and_ioremap_resource(pdev, 0, &mem);
- 	if (IS_ERR(ddc->regs))
- 		return PTR_ERR(ddc->regs);
- 
- 	ret = clk_prepare_enable(ddc->clk);
--	if (ret) {
--		dev_err(dev, "enable ddc clk failed!\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "enable ddc clk failed!\n");
- 
- 	strscpy(ddc->adap.name, "mediatek-hdmi-ddc", sizeof(ddc->adap.name));
- 	ddc->adap.owner = THIS_MODULE;
-@@ -304,8 +301,8 @@ static int mtk_hdmi_ddc_probe(struct platform_device *pdev)
- 
- 	ret = i2c_add_adapter(&ddc->adap);
- 	if (ret < 0) {
--		dev_err(dev, "failed to add bus to i2c core\n");
--		goto err_clk_disable;
-+		clk_disable_unprepare(ddc->clk);
-+		return dev_err_probe(dev, ret, "failed to add bus to i2c core\n");
- 	}
- 
- 	platform_set_drvdata(pdev, ddc);
-@@ -316,10 +313,6 @@ static int mtk_hdmi_ddc_probe(struct platform_device *pdev)
- 		&mem->end);
- 
- 	return 0;
--
--err_clk_disable:
--	clk_disable_unprepare(ddc->clk);
--	return ret;
- }
- 
- static void mtk_hdmi_ddc_remove(struct platform_device *pdev)
-diff --git a/drivers/gpu/drm/mediatek/mtk_mdp_rdma.c b/drivers/gpu/drm/mediatek/mtk_mdp_rdma.c
-index 925cbb7471ec..7c1a8c796833 100644
---- a/drivers/gpu/drm/mediatek/mtk_mdp_rdma.c
-+++ b/drivers/gpu/drm/mediatek/mtk_mdp_rdma.c
-@@ -301,16 +301,14 @@ static int mtk_mdp_rdma_probe(struct platform_device *pdev)
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	priv->regs = devm_ioremap_resource(dev, res);
--	if (IS_ERR(priv->regs)) {
--		dev_err(dev, "failed to ioremap rdma\n");
--		return PTR_ERR(priv->regs);
--	}
-+	if (IS_ERR(priv->regs))
-+		return dev_err_probe(dev, PTR_ERR(priv->regs),
-+				     "failed to ioremap rdma\n");
- 
- 	priv->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(priv->clk)) {
--		dev_err(dev, "failed to get rdma clk\n");
--		return PTR_ERR(priv->clk);
--	}
-+	if (IS_ERR(priv->clk))
-+		return dev_err_probe(dev, PTR_ERR(priv->clk),
-+				     "failed to get rdma clk\n");
- 
- #if IS_REACHABLE(CONFIG_MTK_CMDQ)
- 	ret = cmdq_dev_get_client_reg(dev, &priv->cmdq_reg, 0);
-@@ -324,9 +322,9 @@ static int mtk_mdp_rdma_probe(struct platform_device *pdev)
- 	ret = component_add(dev, &mtk_mdp_rdma_component_ops);
- 	if (ret != 0) {
- 		pm_runtime_disable(dev);
--		dev_err(dev, "Failed to add component: %d\n", ret);
-+		return dev_err_probe(dev, ret, "Failed to add component\n");
- 	}
--	return ret;
-+	return 0;
- }
- 
- static void mtk_mdp_rdma_remove(struct platform_device *pdev)
-diff --git a/drivers/gpu/drm/mediatek/mtk_padding.c b/drivers/gpu/drm/mediatek/mtk_padding.c
-index 85bc6768b6bc..bbda590ca76e 100644
---- a/drivers/gpu/drm/mediatek/mtk_padding.c
-+++ b/drivers/gpu/drm/mediatek/mtk_padding.c
-@@ -103,23 +103,19 @@ static int mtk_padding_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	priv->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(priv->clk)) {
--		dev_err(dev, "failed to get clk\n");
--		return PTR_ERR(priv->clk);
--	}
-+	if (IS_ERR(priv->clk))
-+		return dev_err_probe(dev, PTR_ERR(priv->clk),
-+				     "failed to get clk\n");
- 
- 	priv->reg = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
--	if (IS_ERR(priv->reg)) {
--		dev_err(dev, "failed to do ioremap\n");
--		return PTR_ERR(priv->reg);
--	}
-+	if (IS_ERR(priv->reg))
-+		return dev_err_probe(dev, PTR_ERR(priv->reg),
-+				     "failed to do ioremap\n");
- 
- #if IS_REACHABLE(CONFIG_MTK_CMDQ)
- 	ret = cmdq_dev_get_client_reg(dev, &priv->cmdq_reg, 0);
--	if (ret) {
--		dev_err(dev, "failed to get gce client reg\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to get gce client reg\n");
- #endif
- 
- 	platform_set_drvdata(pdev, priv);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406070759.EDNrdv4q-lkp@intel.com/
 
----
-base-commit: ee78a17615ad0cfdbbc27182b1047cd36c9d4d5f
-change-id: 20240605-mtk-disp-rdma-dev-err-probe-ef9c10a1a91e
+All errors (new ones prefixed by >>):
 
-Best regards,
+   In file included from drivers/bluetooth/btusb.c:28:
+>> drivers/bluetooth/btmtk.h:259:9: error: incompatible pointer to integer conversion returning 'void *' from a function with result type 'int' [-Wint-conversion]
+     259 |         return ERR_PTR(-EOPNOTSUPP);
+         |                ^~~~~~~~~~~~~~~~~~~~
+   1 error generated.
+
+
+vim +259 drivers/bluetooth/btmtk.h
+
+   256	
+   257	static int btmtk_isopkt_pad(struct hci_dev *hdev, struct sk_buff *skb)
+   258	{
+ > 259		return ERR_PTR(-EOPNOTSUPP);
+   260	}
+   261	
+
 -- 
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
