@@ -1,119 +1,123 @@
-Return-Path: <linux-kernel+bounces-205035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0498E8FF684
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:12:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5E848FF686
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A163F2848C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:12:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 264DE1F22DDF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A7413B5AB;
-	Thu,  6 Jun 2024 21:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE4D13B583;
+	Thu,  6 Jun 2024 21:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ou8kv5IN"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="brhWhJEN"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128B81BDEF;
-	Thu,  6 Jun 2024 21:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8F01BDEF
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 21:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717708370; cv=none; b=VWHbXWn6G5Btp4S29XUbhfYSDjtkeoV9mWL7x0kYGZtTUUn0MR+A3rOrgZ4qt28tcSt/LOx5laaufmqA1lSgTtvCTdID9XjgmV1REeN9oZwvVkbz5HYS4orGkNaFh4WUIedz7VyOrIH8ygUBeg5HRdsFRRbRFsxISFAB7oXFjk4=
+	t=1717708495; cv=none; b=ZtSQytOcjPds9draZQYqmo9LbwpksZ5lRq0jo/aHtP9WO+q83W0rAphDHcjY6BlYHlDly/QIsielOGrymJvg4OE9EUnqCKWFP0Ibb3+9Nr/ZBfQAjNoaS5C58UocZdGE+OdfJ3x/PrBhLvhWOm4MnYBU4/i6HtMa09wximYlvY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717708370; c=relaxed/simple;
-	bh=gfnupUAPz/WWhzeYdhaephd6S8G+uSgDbb6ssPacr2I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NfPV21OR7dmEGSaxKLNPl0UgQk2YmiZxs0TxWGBlxyyf/Wf6MF/HaSFpT3BOyY3cXzXvgI7gmxQb6tw+6Q6d12sh3uHw1miY+WXpZ84rX3kiVTjlSvpfsdLST1TUa4HTa4lNzxi3zvVZCfarczCJ5TtEOcatQENFVVwHCAn4XZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ou8kv5IN; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717708367;
-	bh=gfnupUAPz/WWhzeYdhaephd6S8G+uSgDbb6ssPacr2I=;
-	h=From:Date:Subject:To:Cc:From;
-	b=ou8kv5INNIPOe3y4ZRitv2E8GiMeLDqmhO0agsTUR5lVsRLxNeknvaBhN6raFEzoc
-	 WeuUIZOtMhHhBspNI+KeOet0L6HTZ0XSg71Ylfg/EpGde5h5uqslJ5rZFiB79wlf8h
-	 F19SzZAP4FWnPt6wI76tI5KqzXgqc7k2Gey5PIG+yFffnRGGrRqhuyPunF8VTRlISM
-	 XliylfIFW4Vk3dDzePOgxGSi/tqJf31C7Smfb1r+feNfQ9f6ohYvFkaOGxIJMJi89N
-	 QkGC9KL+WRJzRp4NDX09avtNHAUjVqF9rANgTHflIydBq7YxwMdF7xHIQGFD4S8zcX
-	 gyTTkzdDuw/aQ==
-Received: from [192.168.1.216] (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 403E9378143B;
-	Thu,  6 Jun 2024 21:12:45 +0000 (UTC)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Thu, 06 Jun 2024 17:12:04 -0400
-Subject: [PATCH v2] arm64: dts: mediatek: mt8195: Add SCP phandle to MDP3
- DMA controller
+	s=arc-20240116; t=1717708495; c=relaxed/simple;
+	bh=uASrRaaNIPleT81KqJeH7ZqkpA5crPcBqO/J9DucjOk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZVChTZZtoXqLB6jBgGqgMP+POCRLM0Vvi2QobsbLd7V66mn0/TZMDTzNEmZ4ReHmGgKjLhgOOjV7R7c/IcbYoknoNIqumqkWJperOGkLvwJtlAzIjuOQaniW5MhrYHOf5aeLLHjGOCgLr3vUVdRBVmIABAhOSOomaOC2U1DGwsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=brhWhJEN; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f66ad03847so13395ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 14:14:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717708493; x=1718313293; darn=vger.kernel.org;
+        h=mime-version:user-agent:message-id:date:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=94HPMGFdkkFtMhK+L0rsETIDjOUrIR1+Un6FLl7ojx4=;
+        b=brhWhJEN5XL6qTvVEyWsHSIRfLCMm2fK6BiT4Dn+268KKTq848J9yg/kSQZ/BJ8MNz
+         mCWfKNf2MnlcgqkdkuXS6tbwY51DHX87y3ibpzbVsIG5IXVJnFRw2eRez6xFI8RCVhIk
+         1tjr5ckHzzAPCTzqQdwDrQka/UuHIALlnjyVJfkydlXWQwtdYqnh/0m4TOHsJoPcS6ZU
+         vepHs4aNMeBkrqTx3/yEbYpEYv+9b58UYXCkExjNKsE1BZgdY26Rwo0F3DT1vsgAs2xy
+         JbpAfG5SiSocdJNxlt9ZjlKWUgiDs9gs/DRaRvCggAVWi0MZVgvvS3+iZPWlqkSEeZcV
+         +0Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717708493; x=1718313293;
+        h=mime-version:user-agent:message-id:date:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=94HPMGFdkkFtMhK+L0rsETIDjOUrIR1+Un6FLl7ojx4=;
+        b=CP6ICdUc18br/s/g3n4X8EbYxaTB0v7qap0Nb8hTuRbYSp4CMMVS8dLTfouxnw5ZL+
+         i14eWxw45Courv9twU32bq7SBYV5oO22RE1rNfraFTQeEoPpQ4qoBZ5aI1zTLar4Py0T
+         Reh3de+LGpVu6uhlv9pawinhAoavFa+WXipvgNeyHPuHaTMoWqiGTBIkw6Q902nDKgGk
+         Xmhbpz5pFJE4/1BBQEJ/t80C+yNPiat+2JllRJy+ND1WxlXYaui7YaOtp8U0LnfV3+LD
+         q6iAp3WUQq2OVKyUXQgQwToPnvoZaCB3tNp+4C4VQxmuCldmwT7S1aYG4c0oPO16QXcG
+         JCnQ==
+X-Gm-Message-State: AOJu0Yze20op9xVDNSiHcjmTgNZf6RPgpH9gRywOBJz67IhoRLu4uaFp
+	pjc6GJRrgDo1iA+oNPnxYfQdhTxmJOPosF9qOiBFjetrm6kBg1kUCV8GZUbTvw==
+X-Google-Smtp-Source: AGHT+IG4YSrUYEJsYDnDX8bP4L6bxoj6p28U3Wcy8nnxdH71kno/GxSa+3YuyU+Ltch68ibCOLDx8Q==
+X-Received: by 2002:a17:902:ce0c:b0:1f6:4131:c4e8 with SMTP id d9443c01a7336-1f6ba654f9bmr4987435ad.26.1717708492569;
+        Thu, 06 Jun 2024 14:14:52 -0700 (PDT)
+Received: from bsegall.svl.corp.google.com.localhost ([2620:15c:2a3:200:6b67:c4ee:d9da:ac15])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd7ee168sm19878885ad.257.2024.06.06.14.14.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 14:14:52 -0700 (PDT)
+From: Benjamin Segall <bsegall@google.com>
+To: linux-efi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, Arvind
+ Sankar <nivedita@alum.mit.edu>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Subject: [PATCH] x86/boot: Don't add the EFI stub to targets, again
+Date: Thu, 06 Jun 2024 14:14:50 -0700
+Message-ID: <xm26bk4dlqnp.fsf@bsegall.svl.corp.google.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240606-mt8195-dma-scp-node-err-v2-1-e14702e9d3f2@collabora.com>
-X-B4-Tracking: v=1; b=H4sIACMmYmYC/4WNQQqDMBBFryKz7hQzxGC76j2Ki5hMakCNTERax
- Ls39QJdvgf//R0yS+QM92oH4S3mmOYCdKnADXZ+MUZfGKgmXZu6wWlt1a1BP1nMbsE5eUYWQWN
- bz5aM16GBsl6EQ3yf5WdXeIh5TfI5jzb1s/+bm0KFgVyvKZD2hh8ujaPtk9irSxN0x3F8AWOwz
- jLCAAAA
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Moudy Ho <moudy.ho@mediatek.com>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain
 
-While the MDP3 DMA controller can look for the SCP node based on
-compatible, it's best practice to supply the MDP3 node with a phandle to
-the SCP since that allows supporting dual core SCP as well. Besides,
-relying on the compatible search causes an error to be printed, since
-the phandle is tried first:
+This is a re-commit of the commit da05b143a308 ("x86/boot: Don't add the
+EFI stub to targets") after the tagged patch incorrectly reverted it.
 
-  mtk-mdp3 14001000.dma-controller: can't get SCP node
+To summarize: vmlinux-objs-y is added to targets, with an assumption
+that they are all relative to $(obj); adding a $(objtree)/drivers/...
+path causes the build to incorrectly create a useless
+arch/x86/boot/compressed/drivers/... directory tree.
 
-Add the missing phandle to follow the best practice and get rid of the
-error.
+Fix this just by using a different make variable for the EFI stub.
 
-Fixes: 5710462a116c ("arm64: dts: mediatek: mt8195: add MDP3 nodes")
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Fixes: cb8bda8ad443 ("x86/boot/compressed: Rename efi_thunk_64.S to efi-mixed.S")
+Signed-off-by: Ben Segall <bsegall@google.com>
 ---
-Changes in v2:
-- Added scp phandle property in DT instead of removing the error message
-- Link to v1: https://lore.kernel.org/r/20240605-mt8195-dma-scp-node-err-v1-1-f2cb42f24d6e@collabora.com
----
- arch/arm64/boot/dts/mediatek/mt8195.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/boot/compressed/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-index 2ee45752583c..a46062258603 100644
---- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-@@ -2037,6 +2037,7 @@ dma-controller@14001000 {
- 			mediatek,gce-client-reg = <&gce1 SUBSYS_1400XXXX 0x1000 0x1000>;
- 			mediatek,gce-events = <CMDQ_EVENT_VPP0_MDP_RDMA_SOF>,
- 					      <CMDQ_EVENT_VPP0_MDP_RDMA_FRAME_DONE>;
-+			mediatek,scp = <&scp>;
- 			power-domains = <&spm MT8195_POWER_DOMAIN_VPPSYS0>;
- 			iommus = <&iommu_vpp M4U_PORT_L4_MDP_RDMA>;
- 			clocks = <&vppsys0 CLK_VPP0_MDP_RDMA>;
-
----
-base-commit: d97496ca23a2d4ee80b7302849404859d9058bcd
-change-id: 20240605-mt8195-dma-scp-node-err-6a8dea26d4f5
-
-Best regards,
+diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+index 243ee86cb1b1..5245c8fedc17 100644
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@ -103,13 +103,13 @@ vmlinux-objs-$(CONFIG_ACPI) += $(obj)/acpi.o
+ vmlinux-objs-$(CONFIG_INTEL_TDX_GUEST) += $(obj)/tdx.o $(obj)/tdcall.o $(obj)/tdx-shared.o
+ vmlinux-objs-$(CONFIG_UNACCEPTED_MEMORY) += $(obj)/mem.o
+ 
+ vmlinux-objs-$(CONFIG_EFI) += $(obj)/efi.o
+ vmlinux-objs-$(CONFIG_EFI_MIXED) += $(obj)/efi_mixed.o
+-vmlinux-objs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
++efi-obj-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
+ 
+-$(obj)/vmlinux: $(vmlinux-objs-y) FORCE
++$(obj)/vmlinux: $(vmlinux-objs-y) $(efi-obj-y) FORCE
+ 	$(call if_changed,ld)
+ 
+ OBJCOPYFLAGS_vmlinux.bin :=  -R .comment -S
+ $(obj)/vmlinux.bin: vmlinux FORCE
+ 	$(call if_changed,objcopy)
 -- 
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
+2.45.2.505.gda0bf45e8d-goog
 
 
