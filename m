@@ -1,166 +1,154 @@
-Return-Path: <linux-kernel+bounces-204966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D21268FF59C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:00:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ED568FF59F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:04:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49E42287EE3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:00:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC7C91F260B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B3973448;
-	Thu,  6 Jun 2024 20:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D1B6A8A3;
+	Thu,  6 Jun 2024 20:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SVVG3Zkx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cuihxeWH"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C978347F6C;
-	Thu,  6 Jun 2024 20:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8E81FAA;
+	Thu,  6 Jun 2024 20:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717704017; cv=none; b=X8C+2l3AWmUoV13C/ffZXv3qZ6en8sGnQsd1q8nHUc52mD2VHI5G4kNpJCSNupy/l3K/f+TRM5Pg0w5jpmJg50ZJoRJf1qZ6Mb/Zleho43/vPBYTBw9Fl3E0MG4USF+y/l+ceGdYxcxZcKt+7HCDtMPKrMnyU9TjhE2Qqhoo0uU=
+	t=1717704267; cv=none; b=MR35sbfMpPBXZPWQPDOf93vG+me3lrzejHXUS8SRRdB1Z2s3BmXdiX0eZ1CMAWWiT5X0PBzKs1u0gK6l5Hu7QM6UR6A8663Z4H7iuiVp7zJ7FcTPkz44lNdXsi5DXov4g9Ll8NmX1qypBtl8vjRu+iT3L6PBN8NJsuA3Zx56qY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717704017; c=relaxed/simple;
-	bh=r0HycEYtsjvfDnG31XB6I1WnxKmQ18iLPI5NxGMDrHU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=hfggioW8uS6NuKocn3m7u7X3a8gHlLQ/m1/ANyfNyLyzUDO/LZqssxM0Vtn9+b/NXwrdfivrd4db82cPLni1hsE/SuZO43ZoLv8w2Me1r0j3o5s24dHnwIV9YxeqFdQJfFwK1SMlTmRN7Ioat/nUDv3v2XpqoODBWQWauGBnoYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SVVG3Zkx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 456Akb3J026749;
-	Thu, 6 Jun 2024 20:00:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Km97lP73CsYhkQfOtqG4O7
-	VDuPXW2wmATbHUzQ//8iI=; b=SVVG3ZkxJ+vpP+ySoqlQ4fItnOnwOBjUXBi76Y
-	dLsrnQGS3pLdr2Y4yeZ09cruUOiURG9C7QHuJhSnPnKnCvXSD2N2r3hlcjX3R1ji
-	T64A8vnG6FpSkBvsAEgor3UOC1hc5VHB02bJqwloEAwWzpaVOhRGHtR4nTtMAfIk
-	QbuGsdGlpqawlQKp2w5qa/D6jyQK2k4WfI5hFA3AdwCyhzkuCJzyn79K1eqcSTPr
-	GJ2hZiYKY4gQSSVAhKKYEKVmvSxLuuORFUkgrqYuepPYSMHh2+RUDzLBpn7H+Xs7
-	0J/qxbWFb+tk7h9s2VwcJhJGzZzoZ/z+Ta5024/RtF5tlmfA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjq2tm1kf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Jun 2024 20:00:09 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 456K08WS001766
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 6 Jun 2024 20:00:08 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 6 Jun 2024
- 13:00:02 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 6 Jun 2024 13:00:01 -0700
-Subject: [PATCH v2] dmaengine: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1717704267; c=relaxed/simple;
+	bh=/G3jstf66m0MVDwW/vbsLQCy0RU2r+Dp06fH2y3b4T0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kD+NLOj4KxAhZWvJC9eu8WJnPFf9Jlx1wZKS132g2pt4h8dEDom6ObVR0VPnYWylETsx9iI8+0zw4AIE2V0y6QePWUjFLcmpvRJOcWjk7qFDHLQqUMyYHRjKHW6TmaKeZ9Yrw5A2sEKi8jKcQGMl2wXVK1Rg2BMsuUkshU+ruEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cuihxeWH; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2eaccc097e2so15704211fa.0;
+        Thu, 06 Jun 2024 13:04:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717704264; x=1718309064; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s8zBiOnzctc1Ld3pBSWs+XeG/g5v5NHQpM9V6CGdabk=;
+        b=cuihxeWHToMumF8P9ZjfmKSNcKHkOAF1xBmpjxy8t2BBszmy3FrrTdwBDMwUHUcAZX
+         0Tg4r5nv7Kr9QxLYvCp2eljgZKJSM7WPTTkTSQC9Wbo53LN260IHsU/ZvRTgS82uiK+O
+         JDC4Ig6WS+aK/tNGalNWwlJARx5LiGYwacmQuJuVIPdQm9dLIDFHxorqB6hvhRjEFijh
+         0RsewhY6C1+eMYSIz2EBbo/i+5rGaqoEm2FCXP1ntzGfGJvNyQecnrc/MnjVAF2dd6c6
+         u+RXx768Bsxk3YcArSFOAkH/3IQIyzTUDYn3VbfjVnz4AZmcbVrx2UFvJtpnxzVbOmvt
+         az9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717704264; x=1718309064;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s8zBiOnzctc1Ld3pBSWs+XeG/g5v5NHQpM9V6CGdabk=;
+        b=iM+U4GvijWmbizNND9vHkgiqvsbc9OYGpvvL+8T7R9xX0C0HfsiPtzu3mpxBmEn4jn
+         MrQki0bV0rw66oXd3YcxcJJUcvjJiPTPlnZVKTl0FMbtJrk4C4KH/IUuijNixD+q+z+g
+         ztACxPkHCt9tDCFq+SghwLRYPjnO8PrAcD4t3Uyp7ge/9bjA+PVv6CCgqioStWRJmcnu
+         jDt2yKDCC1Z1qx1o6Kdnr+Dd27KDxle9skiM8ws8NpdwrV7+0msWYrS37rTw8J+LABng
+         MZpWTl4L8G4ICZp4oMV9M3JJRNSAzNTMoRG5A8Egw/j3DWTY+FEnZl3nb+jUQQ0n7h8x
+         9SxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVg5tKZwmpNgCle6QcpzKxlem6IqFvLUJ21cSt2wVF8/gO4daxplUGRuJxjTKw1ZSaNtm8DKEQRR8UknzP/MQCNGc3Q/NMo2oO3XYSWupwM+iV3OUeo30qdpvZVs/rrOgY418+cXibGRifG6gIb
+X-Gm-Message-State: AOJu0YysxWus66onUzflyfR5tlDkKTFSpW8xWT97WKa7dZ4Dk/kM34VC
+	YrPy696CCWDOVuGbla399ATjawc037WDIhTvm4XhSWqlSkkYZ6yax+2BTFJ6tPXjtPYFX0av9e7
+	glcYcUDMtDQ5+VdgPkOGKOhTmbnz7kA==
+X-Google-Smtp-Source: AGHT+IEPatTRNz4t3IlZrrARONOfqpJodkwoY1B33k2VOZpGRppSY/lcC+zUbX86vGLB2+n8TDuKrhpCnoWPGZbt2pc=
+X-Received: by 2002:a2e:9c53:0:b0:2ea:d13b:cc38 with SMTP id
+ 38308e7fff4ca-2eadce16e40mr4413171fa.3.1717704263707; Thu, 06 Jun 2024
+ 13:04:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-ID: <20240606-md-drivers-dma-v2-1-0770dfdf74dd@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAEAVYmYC/3WNyw6CMBBFf4V07ZhSeURX/odh0ccgk9iiU2gwh
- H+3sHd5knvPWUVEJoziVqyCMVGkMWRQp0LYQYcnArnMQklVyUbW4B04poQcwXkNqpS1aU3Tq+o
- i8unN2NNyCB9dZqMjgmEd7LBrXhTmBbyOE/I+HyhOI3+PfCr3099SKqEEY43t3dViK5v7ZyZLw
- Z7t6EW3bdsP2aB2Xs0AAAA=
-To: Vinod Koul <vkoul@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>,
-        "Dave
- Jiang" <dave.jiang@intel.com>,
-        Peter Ujfalusi <peter.ujfalusi@gmail.com>
-CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 6E180usvlq6nDlfgIwMRz4EmPFCT9INs
-X-Proofpoint-ORIG-GUID: 6E180usvlq6nDlfgIwMRz4EmPFCT9INs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-06_16,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 impostorscore=0 clxscore=1015 spamscore=0 malwarescore=0
- mlxlogscore=999 mlxscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406060138
+References: <20240606183032.684481-1-andreas@kemnade.info>
+In-Reply-To: <20240606183032.684481-1-andreas@kemnade.info>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Thu, 6 Jun 2024 16:04:10 -0400
+Message-ID: <CABBYNZ+Fz2TLSNa28H3kjVKOSA7C-XOzdQJiHdJs3FKxnq01DA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/4] Bluetooth/gnss: GNSS support for TiWi chips
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: marcel@holtmann.org, johan@kernel.org, pmenzel@molgen.mpg.de, 
+	jirislaby@kernel.org, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
+	Adam Ford <aford173@gmail.com>, Tony Lindgren <tony@atomide.com>, tomi.valkeinen@ideasonboard.com, 
+	=?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>, robh@kernel.org, 
+	hns@goldelico.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/idxd/idxd.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/ti/omap-dma.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/dmatest.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/ioat/ioatdma.o
+Hi Andreas,
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+On Thu, Jun 6, 2024 at 2:30=E2=80=AFPM Andreas Kemnade <andreas@kemnade.inf=
+o> wrote:
+>
+> Some of these chips have GNSS support. In some vendor kernels
+> a driver on top of misc/ti-st can be found providing a /dev/tigps
+> device which speaks the secretive Air Independent Interface (AI2) protoco=
+l.
+>
+> To be more compatible with userspace send out NMEA by default but
+> allow a more raw mode by using a module parameter.
+>
+> This was tested on the Epson Moverio BT-200.
+>
+> Who will take this series (1-3)? GNSS with ack from Bluetooth?
+>
+> Changes since V3:
+> - Finally remove the period from 1/4 subject
+> - include things directly for get_unaligned_le16() to fix 0-day issues
+>
+> Changes since V2:
+> - Optimize waits
+> - Fix some packet analysis / checksum computation issue
+> - Adding a proposal for removing those waits as RFC
+> - Minor spell corrections and improved descriptions
+>
+> Changes since V1:
+> - Set up things for NMEA output
+> - Powerup/down at open()/close()
+> - split out logic between drivers/bluetooth and drivers/gnss
+> - leave out drivers/misc/ti-st driver removal to avoid
+>   filling up mailboxes during the iterations, this series is
+>   still a proof that it is not needed, will take the brush after
+>   this series is accepted.
+>
+>
+> Andreas Kemnade (4):
+>   gnss: Add AI2 protocol used by some TI combo chips
+>   Bluetooth: ti-st: Add GNSS subdevice for TI Wilink chips
 
-Acked-by: Dave Jiang <dave.jiang@intel.com>
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
-Changes in v2:
-- Updated drivers/dma/idxd/init.c with description from Dave Jiang
-- Updated drivers/dma/ti/omap-dma.c with description from Péter Ujfalusi
-- Link to v1: https://lore.kernel.org/r/20240605-md-drivers-dma-v1-1-bcbcfd9ce706@quicinc.com
----
- drivers/dma/dmatest.c     | 1 +
- drivers/dma/idxd/init.c   | 1 +
- drivers/dma/ioat/init.c   | 1 +
- drivers/dma/ti/omap-dma.c | 1 +
- 4 files changed, 4 insertions(+)
+The bluetooth one looks relatively simple so I could take that one and
+push to bluetooth-next if there are no dependencies on the other
+changes.
 
-diff --git a/drivers/dma/dmatest.c b/drivers/dma/dmatest.c
-index a4f608837849..1f201a542b37 100644
---- a/drivers/dma/dmatest.c
-+++ b/drivers/dma/dmatest.c
-@@ -1372,4 +1372,5 @@ static void __exit dmatest_exit(void)
- module_exit(dmatest_exit);
- 
- MODULE_AUTHOR("Haavard Skinnemoen (Atmel)");
-+MODULE_DESCRIPTION("DMA Engine test module");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-index a7295943fa22..e37faa709d9b 100644
---- a/drivers/dma/idxd/init.c
-+++ b/drivers/dma/idxd/init.c
-@@ -22,6 +22,7 @@
- #include "perfmon.h"
- 
- MODULE_VERSION(IDXD_DRIVER_VERSION);
-+MODULE_DESCRIPTION("Intel Data Streaming Accelerator and In-Memory Analytics Accelerator common driver");
- MODULE_LICENSE("GPL v2");
- MODULE_AUTHOR("Intel Corporation");
- MODULE_IMPORT_NS(IDXD);
-diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
-index 9c364e92cb82..d84d95321f43 100644
---- a/drivers/dma/ioat/init.c
-+++ b/drivers/dma/ioat/init.c
-@@ -23,6 +23,7 @@
- #include "../dmaengine.h"
- 
- MODULE_VERSION(IOAT_DMA_VERSION);
-+MODULE_DESCRIPTION("Intel I/OAT DMA Linux driver");
- MODULE_LICENSE("Dual BSD/GPL");
- MODULE_AUTHOR("Intel Corporation");
- 
-diff --git a/drivers/dma/ti/omap-dma.c b/drivers/dma/ti/omap-dma.c
-index b9e0e22383b7..7e6c04afbe89 100644
---- a/drivers/dma/ti/omap-dma.c
-+++ b/drivers/dma/ti/omap-dma.c
-@@ -1950,4 +1950,5 @@ static void __exit omap_dma_exit(void)
- module_exit(omap_dma_exit);
- 
- MODULE_AUTHOR("Russell King");
-+MODULE_DESCRIPTION("Texas Instruments sDMA DMAengine support");
- MODULE_LICENSE("GPL");
+>   gnss: Add driver for AI2 protocol
+>   gnss: ai2: replace long sleeps by wait for acks
+>
+>  drivers/bluetooth/hci_ll.c   |  81 +++++
+>  drivers/gnss/Kconfig         |  13 +
+>  drivers/gnss/Makefile        |   3 +
+>  drivers/gnss/ai2.c           | 560 +++++++++++++++++++++++++++++++++++
+>  drivers/gnss/core.c          |   1 +
+>  include/linux/gnss.h         |   1 +
+>  include/linux/ti_wilink_st.h |   8 +
+>  7 files changed, 667 insertions(+)
+>  create mode 100644 drivers/gnss/ai2.c
+>
+> --
+> 2.39.2
+>
 
----
-base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-change-id: 20240605-md-drivers-dma-2105b7b6f243
 
+--=20
+Luiz Augusto von Dentz
 
