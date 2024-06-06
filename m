@@ -1,178 +1,120 @@
-Return-Path: <linux-kernel+bounces-204710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 434C88FF2B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:39:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D82BF8FF2B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:41:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDAB11F21542
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:39:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61E672871A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB0B198A1D;
-	Thu,  6 Jun 2024 16:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DC9198A2F;
+	Thu,  6 Jun 2024 16:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LrmS2OSU"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nfclylo3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C4C197A8A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 16:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6261419885E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 16:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717691946; cv=none; b=tmYhiqUvxrsEDQ8s10D/+T+B1GZwluRVoiUGJ8Da8ntc7lIkb0dzU+2Y4rb9CqBLRp8gp98OOB+tuZ+dNDOYS0glRm/pSazs/LNkeuNvLE2ya0htUecCjBJNWBPgMNA1qLS0OoegdxtGc8df/K1pfphyZmcodNq3jEXEuSszwxs=
+	t=1717692057; cv=none; b=Z66REWcpvKZNqy9mFlcIF6xCGeVt5Nqo+fYiZIZuORhxtWfJU7qTQikfgDpQqXBmt6DsMfJ2fU8bINZyP+OtEB+I3+CTXpPrY4Ft2NrQIokciP7XQAYHEf5eyX/rbsovpFEoFQAm7TT8vXkevKGRfRA8SEvtJ/xDNPY4XvH010w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717691946; c=relaxed/simple;
-	bh=0sUhzePxA5ILJh6kcxhT9jhNMheNOJsBhpMUA+zrAr4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FU3QaZUEqZY2OiRKpRYjqPHvAqShmgEPlPIT7vVFtCAmF55GyXHr3wYrjB7aiPn4Yu3IwevrZbb46Kb937gPHOlyM88W4P719lDcSt7kk++0n8jmaOR25lX8XZd4PVwW8+airos8lw5pW8OtQzob4DaRAZ8HMLKVB9IPbeI13lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LrmS2OSU; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-35e573c0334so1382362f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 09:39:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717691943; x=1718296743; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BXdSRq/xXQtY4fK65pJyyKeGGdpvh+lT4zYhLPfTB4c=;
-        b=LrmS2OSUCUbTBiodfAgWSYWBnMDqVBYu654UCCncw8BnmKEab2fmtG3UBUnMs/iZ4U
-         Y6rR4or+YvlJn3ET8aiaNNIMcJh8yC2MqGvhYuFS9fM/aGPSHmwYXKdaSbKfCFfsOdU2
-         mdkhX48BAncBwkaRhRb3JlYBtUyqkoz+iL6HwJpYZEvxVScQtXMKno38jZpOzuLt0leq
-         w50y1EQSsgPA0+YNZK36o9GjH8ixnSawCSVNUnzlLZRqCJGYBm5bHo7Ciyt6E0SG2HS7
-         vVzeFAOPa7hESOy3Zaa0LmlnB1sHGLAsWo63dAkbMTRo7r2iM9HXh7mr0oFH1CJR//B0
-         vUQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717691943; x=1718296743;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BXdSRq/xXQtY4fK65pJyyKeGGdpvh+lT4zYhLPfTB4c=;
-        b=CRU+H8LIhIarcQcPbVf/KmqmaOGdojjJD93QJ+eglf88dX+nClBkEjrRojC21g3uWl
-         z6lZ2yxVEaMqZar2kfjLdYGXmMrWvzb98OaqvCFtlh+9cEfDdfTld+vGRaTm5GuD0Hey
-         feK2H5nVLSvEy4Vuz7w6jgwUvTXtr8S79LmwzPK0b+YtzTpMkF5smaSWy1smuJkhCeAK
-         aJUr86/bv/o3JCll0hxArnDe05KkTsqWC2Ppwx01UZMFZ42O6v1AVPrxNN1C3dpGTkMj
-         kLwEZJEWKjJjPNMigSF5aRINFGPEcI/nHb62oK2IASuIjyU3Z9PjWe6qvl5Al54C5XaO
-         AKFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1wsdEpuHOEaO9P49otVrsmbdiGKTUWMdOiNvlt0W2g9/9oLc5cMyjFGm0o69WdxuK4wCbEPYxhygSyy6MnGxQaglQ0yr6xaIpr+Aj
-X-Gm-Message-State: AOJu0YwcL8QmLWy6r9dMBOQK5ubt7LrLE4VOS6AqthwGoO5JQSwzwozq
-	ryIcQigzhivXMA3zLvdCAM860pry1eMhzZpFB2HNqx7XXMeAMbBO9rxgrAu5f4Y=
-X-Google-Smtp-Source: AGHT+IFtjI2uG5kxWT0xfMI3B/djVg1/Aj63CZXkzzrEcegz3u68SQVBpTCW8tUcw72ZesSgllhIjA==
-X-Received: by 2002:adf:ed52:0:b0:355:b9d2:4667 with SMTP id ffacd0b85a97d-35efea6fa89mr211455f8f.29.1717691943486;
-        Thu, 06 Jun 2024 09:39:03 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:f9a9:3740:b905:9995? ([2a05:6e02:1041:c10:f9a9:3740:b905:9995])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-35ef5d4a827sm1984629f8f.36.2024.06.06.09.39.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 09:39:03 -0700 (PDT)
-Message-ID: <a5476bdb-da6f-40d5-baa9-fa2caea72e3d@linaro.org>
-Date: Thu, 6 Jun 2024 18:39:02 +0200
+	s=arc-20240116; t=1717692057; c=relaxed/simple;
+	bh=Tmd4QY5T/e3nEEkLhLHnslTNEt9LzYjz5iyl8yEdajM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ax3zQSJxU0B/EIoVurvUvdqXf88355R3EgAYTIRf7fOQ3kBJIfHBQjZX1YFGiKtyyOE/vt7YYjKKkdFjoqiXI31ElA4gDaKuLlpGkyN8v4Vlv3moO/qGv62I8LuSvC1ocfAhNFq79omiZG+MPWEupF+VtlfIKlsbhib1GP/BDNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nfclylo3; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717692055; x=1749228055;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Tmd4QY5T/e3nEEkLhLHnslTNEt9LzYjz5iyl8yEdajM=;
+  b=Nfclylo3rYRvAP6s+BhKrJi4/o+A7p02ayOeIsMuQU0zYJm9+asX6702
+   vjJAsz5UsggZy0QVy201mZM+nlB77AZMGI0SXrM914gMDLuExX5VitR02
+   tp/sZgrpOwRY+l4XhdamURF+Ou24C9+bzW7srSXRqPDXI0CMUQv29Upjg
+   78aETfcsg9WdzMNzTS8yojoEXLSmnGJNDz6+7HAJF2fnw6xgGt3lIxi5F
+   xbClkuRoGsZLqQQr9ebnsm+EgU/SRdf+v1boKqTAMowDx+PX09Z3xjp7u
+   Caqg2FkMNkO1fAyeOeYBK/8ieThT6dIYDc10GfaEYwBGYNwuuHxrORB2C
+   g==;
+X-CSE-ConnectionGUID: EepVNBW4RaWfYgzaPwL9ww==
+X-CSE-MsgGUID: e2NdUwDBTrmPIkD2wSrkHg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="14214908"
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="14214908"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 09:40:55 -0700
+X-CSE-ConnectionGUID: h3W48DblTlWbxb0o5m/wfA==
+X-CSE-MsgGUID: 5QazQ67pT4eIApzhqXCodg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="38033088"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 09:40:54 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v3 0/2] Add and use get_cpu_cacheinfo_level()
+Date: Thu,  6 Jun 2024 09:40:45 -0700
+Message-ID: <20240606164047.318378-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] thermal: core: Do not fail cdev registration because
- of invalid initial state
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>, Laura Nao <laura.nao@collabora.com>
-Cc: Linux ACPI <linux-acpi@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>
-References: <6056838.lOV4Wx5bFT@kreacher>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <6056838.lOV4Wx5bFT@kreacher>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 06/06/2024 18:08, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> It is reported that commit 31a0fa0019b0 ("thermal/debugfs: Pass cooling
-> device state to thermal_debug_cdev_add()") causes the ACPI fan driver
-> to fail probing on some systems which turns out to be due to the _FST
-> control method returning an invalid value until _FSL is first evaluated
-> for the given fan.  If this happens, the .get_cur_state() cooling device
-> callback returns an error and __thermal_cooling_device_register() fails
-> as uses that callback after commit 31a0fa0019b0.
-> 
-> Arguably, _FST should not return an invalid value even if it is
-> evaluated before _FSL, so this may be regarded as a platform firmware
-> issue, but at the same time it is not a good enough reason for failing
-> the cooling device registration where the initial cooling device state
-> is only needed to initialize a thermal debug facility.
-> 
-> Accordingly, modify __thermal_cooling_device_register() to avoid calling
-> thermal_debug_cdev_add() instead of returning an error if the initial
-> .get_cur_state() callback invocation fails.
-> 
-> Fixes: 31a0fa0019b0 ("thermal/debugfs: Pass cooling device state to thermal_debug_cdev_add()")
-> Closes: https://lore.kernel.org/linux-acpi/20240530153727.843378-1-laura.nao@collabora.com
-> Reported-by: Laura Nao <laura.nao@collabora.com>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> v1 -> v2:
->     * Instead of making the thermal debug code effectively ignore the invalid
->       initial cooling device state, simply don't register thermal debugfs for
->       a cooling device if its initial state returned by the driver's
->       .get_cur_state() is invalid (Daniel).
-> 
-> Laura, please test this one even though I don't see why it wouldn't work for
-> you if the v1 did.
-> 
-> ---
->   drivers/thermal/thermal_core.c |    5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> Index: linux-pm/drivers/thermal/thermal_core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> +++ linux-pm/drivers/thermal/thermal_core.c
-> @@ -1001,7 +1001,7 @@ __thermal_cooling_device_register(struct
->   
->   	ret = cdev->ops->get_cur_state(cdev, &current_state);
->   	if (ret)
-> -		goto out_cdev_type;
-> +		current_state = ULONG_MAX;
+This helper function came up in discussion of the resctrl patches
+for Sub-NUMA Cluster (SNC) support. Reinette pointed out[1] that there
+are already two places where it would clean things up by avoiding
+open coding. The SNC patches will add two additional call sites.
 
-Why not move the section ? So we end up below.
+So rather than have this jammed up as part of the SNC series, I'm
+posting it as a simple standalone cleanup.
 
->   
->   	thermal_cooling_device_setup_sysfs(cdev);
->   
-> @@ -1016,7 +1016,8 @@ __thermal_cooling_device_register(struct
->   		return ERR_PTR(ret);
->   	}
->   
-> -	thermal_debug_cdev_add(cdev, current_state);
-> +	if (current_state <= cdev->max_state)
-> +		thermal_debug_cdev_add(cdev, current_state);
+Signed-off-by: Tony Luck <tony.luck@intel.com>
 
-	ret = cdev->ops->get_cur_state(cdev, &current_state);
-	if (!ret)
-		thermal_debug_cdev_add(cdev, current_state);
+[1] https://lore.kernel.org/all/050c64b3-20b3-4db6-b782-f5124ebaab31@intel.com/
 
-Additionally a comment here to explain why get_cur_state can fail and 
-telling it is up to the driver to fix its routine?
+---
+Changes since v2:
+
+Add lockdep_assert_cpus_held() to enforce what was simply a comment.
+
+Combine patches 2 & 3. Both functions using get_cpu_cacheinfo_level()
+are called inside rdtgroup_kn_lock_live()/rdtgroup_kn_unlock() code
+blocks. So cpuhp lock is held.
+
+Tony Luck (2):
+  cacheinfo: Add function to get cacheinfo for a given (cpu, cachelevel)
+  x86/resctrl: Replace open code cacheinfo searches
+
+ include/linux/cacheinfo.h                 | 25 ++++++++++++++++++-----
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 17 ++++++---------
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 14 +++++--------
+ 3 files changed, 31 insertions(+), 25 deletions(-)
 
 
->   	/* Add 'this' new cdev to the global cdev list */
->   	mutex_lock(&thermal_list_lock);
-> 
-> 
-> 
-
+base-commit: c3f38fa61af77b49866b006939479069cd451173
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.45.0
 
 
