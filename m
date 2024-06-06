@@ -1,110 +1,93 @@
-Return-Path: <linux-kernel+bounces-204655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D74638FF1CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:12:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BB3B8FF1C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE3F81C249F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:12:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E35701F25E87
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2511A1990D7;
-	Thu,  6 Jun 2024 16:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8881990C8;
+	Thu,  6 Jun 2024 16:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UFdMrZ1G"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O7+WvXZ5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45C51991A7;
-	Thu,  6 Jun 2024 16:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5981990B5;
+	Thu,  6 Jun 2024 16:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717690237; cv=none; b=bjh4bmJDAAWhzpkgDVSHfqGuTCzMZDmdfxVLAXfe4IQKBimjgdU3kwi2u3FC8dqxpXUtPBQ+/NZFPVMTRyEvYP4+c8ELcNTUJ8whSrD420MSN/eBhMovbGgN1ubPo2lvS3fc02e+p6XyEr4OkpOTpWd7nmtHooWjr1PMnnkunQg=
+	t=1717690175; cv=none; b=fVRJBas+qQQf8yWNogo4ZkJ9i4ph3qmofcQyEzt7SzanRFyj+Z28h24ADnCAiz7OCVm5HAcjqcn5MDCAJBKIqu70B23wG7I+kzzkel5dAa3F7HwwYF3DAlGCIoV/lIMZ5bQoWriNy3aHkZ/AORcWkUKImxKDIpC3WZzBb/oGEok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717690237; c=relaxed/simple;
-	bh=je0DYBuKhWYW4JpL97m6nmOv4z/QoM1eIcNvWJ+BGJY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mt+1VyyB44OTkybg5PcwYU/CY3zbsbPZ0DTBoOhJ1p6QUqYHT+6wYI4iW+KRqZGHyNxJnRYCFWt+pCOAXu8TyZgtSUGkSD6NBUmLRJ3ZgbxcIggNpumPjtv/9OSZpoLn3MW2pdqgUadd7jog3eJhRtnPqk96K99xbIMFB4AMEB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UFdMrZ1G; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717690236; x=1749226236;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=je0DYBuKhWYW4JpL97m6nmOv4z/QoM1eIcNvWJ+BGJY=;
-  b=UFdMrZ1GfxjDqJUR3mR1sMujMHwYLbWlGKtL78M2ggr3dFjywpvvXbA2
-   Tsib6sdhDPZxjvxsf5vMBD+pXBgzzGA9RWBzm7CnS3AVuCXV1KmD/ZXw6
-   QkSjl13oJspvBHL3clLyHe1a116tBGOkdE0L+K9R53UpXWjPXDZe31vKn
-   8mDi4LMpaDhi8mzgDVtedqCRKBGhRAL1s8KOzRrwQE0JMnj5zMuuwfBbe
-   pNoRDmy5QTOOcqnDb5BjUeh+mdUDAqj1zSmR9DvMgyNUyQaA/9017EQi8
-   oPrgT1/loct11vT0w50yvVV+pw94s0LyfKSRtwFUsK+zYYVuf6h7bs41Q
-   w==;
-X-CSE-ConnectionGUID: d0iNDyqkS4a9Ejc7IcInvw==
-X-CSE-MsgGUID: ELl6U3UMTZm5GvgMDM7uPA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="14525073"
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="14525073"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 09:10:36 -0700
-X-CSE-ConnectionGUID: SEfdrqv7QsChJC8hWYOwtA==
-X-CSE-MsgGUID: uMf6eAe2QZ6v/8IuWzVlkA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="38695666"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP; 06 Jun 2024 09:10:32 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 515D12A4; Thu, 06 Jun 2024 19:10:30 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+	s=arc-20240116; t=1717690175; c=relaxed/simple;
+	bh=Y1FSBBDktAab0PFUzo939Grq4Np65U4h7zGSymdlWNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YTRQefAeu7aVaFtx1vjQy0DlCPEahOY9mq6R1s/LXVsxyYmd838QSK0BAC8K4cp/XQcaKe+EblXBdDPv51jBahP2UjAzp5cNGq9zcQRlkjMgA3ogcJlXua7Z++PUI7NT3KqwF9ATQDX43DT73wn2H0Z3iJFrKn7E0cx9HFECFzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O7+WvXZ5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6EA4C2BD10;
+	Thu,  6 Jun 2024 16:09:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717690175;
+	bh=Y1FSBBDktAab0PFUzo939Grq4Np65U4h7zGSymdlWNU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O7+WvXZ5MN6Afpj3/aCgcCbfucfC4eknHYJFO7H8w8+oHVCbRbuK2xt1OXm8ScUNE
+	 8cqhN296vT0hXcwAmOJ7+APtaMgyo7tAdBWc74r/i7mZySygQKUDK6JzrM+aOv5mdl
+	 zWVZGgHgcV9QByA3GFV7IZjr6INxXVForKcqxpRMvnOj75LlapxDQZ6O1NPYoXBAWX
+	 1gJNiGQW+Xczch6ZSw8lg5wG+dlHBXRR9ZMI69+vE9w4CREiyV1F+lKSinnzADQN/7
+	 TX5qZvHSnzrcfvyDJKdb7/pjryXYykXdKW4magflnPUPKpDcxm6rZP8ZYNyIcR/Skr
+	 X9Ckn+sZx5neg==
+Date: Thu, 6 Jun 2024 17:09:30 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alex Bee <knaerzche@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Heiko Stuebner <heiko@sntech.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: [PATCH v1 0/4] clk: Switch to use kmemdup_array()
-Date: Thu,  6 Jun 2024 19:09:30 +0300
-Message-ID: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 2/5 RESEND] dt-bindings: clock: rk3128: Drop
+ CLK_NR_CLKS
+Message-ID: <20240606-dispersal-buffed-27a6e7540d4c@spud>
+References: <20240605210049.232284-1-knaerzche@gmail.com>
+ <20240605210049.232284-3-knaerzche@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="FGgIfamJBCS86e7A"
+Content-Disposition: inline
+In-Reply-To: <20240605210049.232284-3-knaerzche@gmail.com>
 
-Replace open coded kmemdup_array(), which does an additional
-overflow check.
 
-Andy Shevchenko (4):
-  clk: mmp: Switch to use kmemdup_array()
-  clk: rockchip: Switch to use kmemdup_array()
-  clk: samsung: Switch to use kmemdup_array()
-  clk: visconti: Switch to use kmemdup_array()
+--FGgIfamJBCS86e7A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- drivers/clk/mmp/clk-mix.c      | 10 ++++------
- drivers/clk/rockchip/clk-cpu.c |  5 ++---
- drivers/clk/rockchip/clk-pll.c |  8 ++++----
- drivers/clk/samsung/clk-cpu.c  |  4 ++--
- drivers/clk/samsung/clk-pll.c  |  8 ++++----
- drivers/clk/visconti/pll.c     |  6 +++---
- 6 files changed, 19 insertions(+), 22 deletions(-)
+On Wed, Jun 05, 2024 at 11:00:46PM +0200, Alex Bee wrote:
+> CLK_NR_CLKS should not be part of the binding. Let's drop it, since
+> the kernel code no longer uses it either.
 
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+What about other operating systems etc, e.g. U-Boot or barebox?
 
+--FGgIfamJBCS86e7A
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmHfOgAKCRB4tDGHoIJi
+0qlIAQDozQlHl2khmv09nvKM+QpHUNjjvRIOFTm/lWr50Grs+wEAnAI+XEvELGi9
+OJrYfVp3WYbfWtOMfAmKx5KoDCQ4lwI=
+=1vL8
+-----END PGP SIGNATURE-----
+
+--FGgIfamJBCS86e7A--
 
