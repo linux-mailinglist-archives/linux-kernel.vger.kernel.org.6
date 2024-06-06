@@ -1,44 +1,46 @@
-Return-Path: <linux-kernel+bounces-203642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C52C8FDE8A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:14:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 901368FDE8B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2696A1F23317
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:14:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BA3A284351
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D5945025;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24164503A;
 	Thu,  6 Jun 2024 06:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=eh5.me header.i=@eh5.me header.b="lbDyrS7e"
+	dkim=pass (1024-bit key) header.d=eh5.me header.i=@eh5.me header.b="sQyl9k2s"
 Received: from mail.eh5.me (mail.eh5.me [45.76.111.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE3940BF2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A2944361;
 	Thu,  6 Jun 2024 06:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.76.111.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717654438; cv=none; b=LQjdqjQNHe9KPPfA7XLq1ctME/3i36tpTLNz+iTW1NEjZp3HkWGn6H04kLWp5lueGXZfttaDVFK3bZ3iuyG79nuTI/AiIomjZ2YCrH1S41o3u1/HPpAC4A7z6LzbLxiZPzTxLnhRKI1kIrizqc1rc0+VqKL6urWqkwv/sDToeWg=
+	t=1717654438; cv=none; b=LBDTWllKfEqsncx1kMgxGAUnIam33J53NEAJxC+13GghFjLSRyMJf8HzJkHbaKMruLxev5RLS7/WdqKfkdqF6hNbaTGHzCtaHSpmMV45PhNFdIChUc/p1elZ3uWHGmPYu61kksAY1icT8A93SAQxEkoV4mi46QYfQsF4eNtEraM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717654438; c=relaxed/simple;
-	bh=1FbzqOuIUQRbo7rAgErLXS2ed9dfsCghKLThPMcoGiI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iBHLS0E7IWBSVJzdZ0/wUWgHZ2toFQ/Kxz1/GoRhLfAIAeus++gDcYNuaQ2joycbA6VPWdA6LrbT9+6Xa2anLKVEG64/sLWlYuDuzOm7r1GS54PbEXSHG7tTb7+qDGS/CrFGgQdM+PFMBNg/cw4oOjXG3a6qgtXGVb/QwyDlhs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=eh5.me; spf=pass smtp.mailfrom=eh5.me; dkim=pass (1024-bit key) header.d=eh5.me header.i=@eh5.me header.b=lbDyrS7e; arc=none smtp.client-ip=45.76.111.223
+	bh=jePjYwzuWCmU1CZ9/Yom3hqaS1sdLARMt2yKSuKSyTM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=CdeflIGusEx8RQCfihL2dkPugrVSuL82q6HpOBAYxmxrkN2foBCSK5dxo1DcemVmLx2ZPo1midFz0cXvdtH4vRpqrQ1/YQ4S6GykKmAQaTc+ps+4dkEs84OanT2nqG1E6I3rtqkvVkuSi8pg/c6tyKt7OUdqj8fb0/o2t4czyiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=eh5.me; spf=pass smtp.mailfrom=eh5.me; dkim=pass (1024-bit key) header.d=eh5.me header.i=@eh5.me header.b=sQyl9k2s; arc=none smtp.client-ip=45.76.111.223
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=eh5.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eh5.me
 From: Huang-Huang Bao <i@eh5.me>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=eh5.me; s=dkim;
-	t=1717653883;
+	t=1717653885;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=QMXP4D7iL2Jw3xOBudLgXxOe6NslpIdO9kJBig+lh+o=;
-	b=lbDyrS7euNYKlPciL76y/GFuuUgrhivXJhlxcOe/ILAOJSbo7+JnggWVBtdD1DiRy1iUKh
-	1W3sfW2DYWiRCOxUBXqL9VWsP8xAGaioMRnadGlkNSeA6o4I5hBg/5ZxZgrfdwRvOXx2/a
-	C9tUfj7OFGi3DRUcQ/ra/FCt/44myg8=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SJyrvJEgIUfczl/GlGYofH0Vf0eBCOnBoq6FdTDHbXo=;
+	b=sQyl9k2s0D2SH6FdsfLkix0QKLdkdaz/12yR2F0BtoD3a0vC2Bsq9F/lXmo77blf507v5V
+	W4dU28yVFLH59Xp+stzowAfar160U97QNsqZjBtC0fb5aQ+sGjjYc0a+KgLXGZduWhZrOc
+	Zq7hKtNo61+NEEiR1XgsbxDg9h6U2P8=
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Heiko Stuebner <heiko@sntech.de>
 Cc: linux-gpio@vger.kernel.org,
@@ -46,9 +48,11 @@ Cc: linux-gpio@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Huang-Huang Bao <i@eh5.me>
-Subject: [PATCH 0/3] pinctrl: rockchip: fix RK3328 pinmux bits
-Date: Thu,  6 Jun 2024 14:04:32 +0800
-Message-ID: <20240606060435.765716-1-i@mail.eh5.me>
+Subject: [PATCH 1/3] pinctrl: rockchip: fix RK3328 pinmux bits
+Date: Thu,  6 Jun 2024 14:04:33 +0800
+Message-ID: <20240606060435.765716-2-i@mail.eh5.me>
+In-Reply-To: <20240606060435.765716-1-i@eh5.me>
+References: <20240606060435.765716-1-i@eh5.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,30 +61,116 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The pinmux settings for RK3328 is incomplete, correct the pin bank
-settings and recalced mux data according to RK3328 TRM.
+The pinmux bits for GPIO2-B0 to GPIO2-B6 actually have 2 bits width,
+correct the bank flag for GPIO2-B. The pinmux bits for GPIO2-B7 is
+recalculated so it remain unchanged.
 
-There was a patch[1] in rockchip-linux kernel repo that cover part of
-missing mux settings, unfortunatly it never got into upstream kernel
-source.
+The pinmux bits for GPIO3-B1 to GPIO3-B6 have different register offset
+than common rockhip pinmux, set the correct value for those pins in
+rk3328_mux_recalced_data.
 
-The last patch fixes an issue in rockchip_pmx_set which is general for
-all rockchip platforms that might cause unexpected pinmux to be set to
-0.
+The pinmux bits for those pins are not explicitly specified in RK3328
+TRM, however we can get hint from pad name and its correspinding IOMUX
+setting for pins in interface descriptions, e.g.
+IO_SPIclkm0_GPIO2B0vccio5 with GRF_GPIO2B_IOMUX[1:0]=2'b01 setting.
 
-[1]: https://github.com/rockchip-linux/kernel/commit/d69af8ab6534bb28c1556076f08d2a5ab4935d95
+This fix has been tested on NanoPi R2S for fixing confliting pinmux bits
+between GPIO2-15 with GPIO2-13.
 
-Huang-Huang Bao (3):
-  pinctrl: rockchip: fix RK3328 pinmux bits
-  pinctrl: rockchip: use dedicated pinctrl type for RK3328
-  pinctrl: rockchip: fix pinmux reset in rockchip_pmx_set
+Signed-off-by: Huang-Huang Bao <i@eh5.me>
+---
+ drivers/pinctrl/pinctrl-rockchip.c | 59 ++++++++++++++++++++++++++----
+ 1 file changed, 52 insertions(+), 7 deletions(-)
 
- drivers/pinctrl/pinctrl-rockchip.c | 68 ++++++++++++++++++++++++++----
- drivers/pinctrl/pinctrl-rockchip.h |  1 +
- 2 files changed, 60 insertions(+), 9 deletions(-)
-
-
-base-commit: 2df0193e62cf887f373995fb8a91068562784adc
---
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index 3bedf36a0019..23531ea0d088 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -634,23 +634,68 @@ static struct rockchip_mux_recalced_data rk3308_mux_recalced_data[] = {
+ 
+ static struct rockchip_mux_recalced_data rk3328_mux_recalced_data[] = {
+ 	{
+-		.num = 2,
+-		.pin = 12,
+-		.reg = 0x24,
+-		.bit = 8,
+-		.mask = 0x3
+-	}, {
++		/* gpio2_b7_sel */
+ 		.num = 2,
+ 		.pin = 15,
+ 		.reg = 0x28,
+ 		.bit = 0,
+ 		.mask = 0x7
+ 	}, {
++		/* gpio2_c7_sel */
+ 		.num = 2,
+ 		.pin = 23,
+ 		.reg = 0x30,
+ 		.bit = 14,
+ 		.mask = 0x3
++	}, {
++		/* gpio3_b1_sel */
++		.num = 3,
++		.pin = 9,
++		.reg = 0x44,
++		.bit = 2,
++		.mask = 0x3
++	}, {
++		/* gpio3_b2_sel */
++		.num = 3,
++		.pin = 10,
++		.reg = 0x44,
++		.bit = 4,
++		.mask = 0x3
++	}, {
++		/* gpio3_b3_sel */
++		.num = 3,
++		.pin = 11,
++		.reg = 0x44,
++		.bit = 6,
++		.mask = 0x3
++	}, {
++		/* gpio3_b4_sel */
++		.num = 3,
++		.pin = 12,
++		.reg = 0x44,
++		.bit = 8,
++		.mask = 0x3
++	}, {
++		/* gpio3_b5_sel */
++		.num = 3,
++		.pin = 13,
++		.reg = 0x44,
++		.bit = 10,
++		.mask = 0x3
++	}, {
++		/* gpio3_b6_sel */
++		.num = 3,
++		.pin = 14,
++		.reg = 0x44,
++		.bit = 12,
++		.mask = 0x3
++	}, {
++		/* gpio3_b7_sel */
++		.num = 3,
++		.pin = 15,
++		.reg = 0x44,
++		.bit = 14,
++		.mask = 0x3
+ 	},
+ };
+ 
+@@ -3763,7 +3808,7 @@ static struct rockchip_pin_bank rk3328_pin_banks[] = {
+ 	PIN_BANK_IOMUX_FLAGS(0, 32, "gpio0", 0, 0, 0, 0),
+ 	PIN_BANK_IOMUX_FLAGS(1, 32, "gpio1", 0, 0, 0, 0),
+ 	PIN_BANK_IOMUX_FLAGS(2, 32, "gpio2", 0,
+-			     IOMUX_WIDTH_3BIT,
++			     0,
+ 			     IOMUX_WIDTH_3BIT,
+ 			     0),
+ 	PIN_BANK_IOMUX_FLAGS(3, 32, "gpio3",
+-- 
 2.45.2
+
 
