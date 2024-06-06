@@ -1,258 +1,132 @@
-Return-Path: <linux-kernel+bounces-204420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56058FE965
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:14:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 399698FE99F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48CEC1F22FB1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:14:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5B191F23209
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C34719A299;
-	Thu,  6 Jun 2024 14:10:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9044D19938F;
-	Thu,  6 Jun 2024 14:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D6019AD7B;
+	Thu,  6 Jun 2024 14:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NqPlybz9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED7E19AD5C;
+	Thu,  6 Jun 2024 14:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717683014; cv=none; b=j+o/BAPa7Ox61Yzy3q4jLtxGSLq2GsJYxx/YHpTevh7dBuKumpQFoTo1Cdxk3xg/j+yzssvOeNqKnYcB9SZDjANIwjNAUef7N/xFLep3FpDGNcn/A/sLycVZbEbSFue/+xWBX6pyQ8ljTkm2RYeT5kcx7kWPRQi68EBNxtOHsJE=
+	t=1717683045; cv=none; b=hoCny5thMzQ8FCgMEY1tee2jHuA/M2n9T7HFgNp7eZggVtINPRpyWW3C5/2o6RghuQiGcr1MEzBYTi+Mah4a7SXkb3v2pXNAipY8jxJE6yFYeMB1UUsCWkMI+WxcsI5iyt/ZoYJUpqp3ORPiSKOuJBidYwz4F0V8ogFmHWM1278=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717683014; c=relaxed/simple;
-	bh=Tr00E08R+1a3U59ibWItlfEiKh/3LAEHOtQNKYwyTWw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XeMT7zbMaBxj50brNL9O/qxMOpu90wXjDZO4Zt49p1GlbL8ThzU1pu41X8RNNZZ4awL1Nqeq2s71WNcEtNFRg2fV0QlsPGyvdunKvOxpqSnM6P0J16AAj9pfx5/eZyM+hISwxbOVIxVaEFet5xd+7mhl0mcvT5IEiC0uia6nBjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 43DA52F4;
-	Thu,  6 Jun 2024 07:10:36 -0700 (PDT)
-Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 327693F64C;
-	Thu,  6 Jun 2024 07:10:09 -0700 (PDT)
-Message-ID: <e6b436f0-3d1b-47c4-836f-5d5a2a0a0a31@arm.com>
-Date: Thu, 6 Jun 2024 15:10:08 +0100
+	s=arc-20240116; t=1717683045; c=relaxed/simple;
+	bh=MUI6PIsAE4F5Czr38Qw9LN4nLxY0Y714ALhc4YdR7Ig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ckJ2To8mQ19QNg7hBFWqSJfiyF4U7OusBjYlVMfLi1m38fqqEvYrH3QOSq/JmBDPSL8YKtmoQC337JDfd4jYRZZQjgPAFa1+vqNCc7VyIFFkKGeQr77UG3LyykDGPnYZXyzfOZYHVjcmjSwAtwBn/buM7H8Ilmx8BSi2Sliay3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NqPlybz9; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717683044; x=1749219044;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MUI6PIsAE4F5Czr38Qw9LN4nLxY0Y714ALhc4YdR7Ig=;
+  b=NqPlybz9L5vuu97ai4SV1SZw1lS4AbohjcGeSD73eNa/mO5TaXdSNbHr
+   QluLD2sHkVHaj+dCHLOhGSLU/xr2so9yCimCfpHZhBbnfiutjereK16bl
+   SiLslH9DjTARhsTdlRCmv0VuM/KOvVJsvFirlT6yMo+udVUNPtPwIsUlf
+   Pk51zyzbLu2CdfyC00w/zhuPgzQeDXbQfey+XeO0oTa8N139Dt4IdO9pg
+   9CPrmBdaombLwDDrfSjoa1a7X8ywGXUT419YhZ+bTwRRrDrXC2pvy8X63
+   s7c/1lSP1TEiQjytaYe/fViyux7ZB1d/Sto2HRiSswhbXIevrOVjTHRsA
+   Q==;
+X-CSE-ConnectionGUID: teN4sAQsTJuFMgtrRgKyvg==
+X-CSE-MsgGUID: QotK4DpwSR23w2ChglR5Aw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="18144821"
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="18144821"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 07:10:43 -0700
+X-CSE-ConnectionGUID: 3UNBXoQ1QG+szVQWA/DKGA==
+X-CSE-MsgGUID: 8x0BivwhSzSELBrM4WHGhQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="42444804"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 07:10:38 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sFDp4-0000000ECQy-0sFQ;
+	Thu, 06 Jun 2024 17:10:34 +0300
+Date: Thu, 6 Jun 2024 17:10:33 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Sebastian Fricke <sebastian.fricke@collabora.com>
+Cc: Devarsh Thakkar <devarsht@ti.com>, mchehab@kernel.org,
+	hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, benjamin.gaignard@collabora.com,
+	dri-devel@lists.freedesktop.org, laurent.pinchart@ideasonboard.com,
+	praneeth@ti.com, nm@ti.com, vigneshr@ti.com, a-bhatia1@ti.com,
+	j-luthra@ti.com, b-brnich@ti.com, detheridge@ti.com,
+	p-mantena@ti.com, vijayp@ti.com, andrzej.p@collabora.com,
+	nicolas@ndufresne.ca, p.zabel@pengutronix.de, airlied@gmail.com,
+	daniel@ffwll.ch, akpm@linux-foundation.org,
+	gregkh@linuxfoundation.org, adobriyan@gmail.com,
+	jani.nikula@intel.com
+Subject: Re: [PATCH v12 12/13] media: imagination: Round to closest multiple
+ for cropping region
+Message-ID: <ZmHDWeuezCEgj20m@smile.fi.intel.com>
+References: <20240604104001.2235082-1-devarsht@ti.com>
+ <20240604105335.2257629-1-devarsht@ti.com>
+ <20240606114459.x73yebdu7kg7re52@basti-XPS-13-9310>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/16] coresight: Expose map arguments in trace ID API
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, John Garry
- <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org,
- coresight@lists.linaro.org, gankulkarni@os.amperecomputing.com,
- mike.leach@linaro.org, leo.yan@linux.dev, anshuman.khandual@arm.com
-References: <20240604143030.519906-1-james.clark@arm.com>
- <20240604143030.519906-12-james.clark@arm.com>
- <d8b016dc-2ab0-442b-97b9-00ae352553c6@arm.com>
-Content-Language: en-US
-From: James Clark <james.clark@arm.com>
-In-Reply-To: <d8b016dc-2ab0-442b-97b9-00ae352553c6@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606114459.x73yebdu7kg7re52@basti-XPS-13-9310>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+
+On Thu, Jun 06, 2024 at 01:44:59PM +0200, Sebastian Fricke wrote:
+> Hey,
+> 
+> On 04.06.2024 16:23, Devarsh Thakkar wrote:
+> > If neither of the flags to round down (V4L2_SEL_FLAG_LE) or round up
+> > (V4L2_SEL_FLAG_GE) are specified by the user, then round to nearest
+> > multiple of requested value while updating the crop rectangle coordinates.
+> > 
+> > Use the rounding macro which gives preference to rounding down in case two
+> > nearest values (high and low) are possible to raise the probability of
+> > cropping rectangle falling inside the bound region.
+> > 
+> > This complies with the VIDIOC_G_SELECTION, VIDIOC_S_SELECTION ioctl
+> > description as documented in v4l uapi [1] which specifies that driver
+> > should choose crop rectangle as close as possible if no flags are passed by
+> > user-space, as quoted below :
+> > 
+> > "``0`` - The driver can adjust the rectangle size freely and shall choose a
+> > crop/compose rectangle as close as possible to the requested
+> > one."
+> > 
+> > Link: https://www.kernel.org/doc/Documentation/userspace-api/media/v4l/vidioc-g-selection.rst [1]
+> > Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+> 
+> Acked-by: Sebastian Fricke <sebastian.fricke@collabora.com>
+> 
+> Can, whoever picks up the math changes, pick up this change as well?
+> I will send 1-6 via the media subsystem.
+
+math.h is orphaned, meaning any Tier-1 maintainer may push this through.
+So, there is nobody behind it.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-
-On 06/06/2024 14:50, Suzuki K Poulose wrote:
-> On 04/06/2024 15:30, James Clark wrote:
->> The trace ID API is currently hard coded to always use the global map.
->> Add public versions that allow the map to be passed in so that Perf
->> mode can use per-sink maps. Keep the non-map versions so that sysfs
->> mode can continue to use the default global map.
->>
->> System ID functions are unchanged because they will always use the
->> default map.
->>
->> Signed-off-by: James Clark <james.clark@arm.com>
->> ---
->>   .../hwtracing/coresight/coresight-trace-id.c  | 36 ++++++++++++++-----
->>   .../hwtracing/coresight/coresight-trace-id.h  | 20 +++++++++--
->>   2 files changed, 45 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c
->> b/drivers/hwtracing/coresight/coresight-trace-id.c
->> index 19005b5b4dc4..5561989a03fa 100644
->> --- a/drivers/hwtracing/coresight/coresight-trace-id.c
->> +++ b/drivers/hwtracing/coresight/coresight-trace-id.c
->> @@ -12,7 +12,7 @@
->>     #include "coresight-trace-id.h"
->>   -/* Default trace ID map. Used on systems that don't require per
->> sink mappings */
->> +/* Default trace ID map. Used in sysfs mode and for system sources */
->>   static struct coresight_trace_id_map id_map_default;
->>     /* maintain a record of the mapping of IDs and pending releases
->> per cpu */
->> @@ -47,7 +47,7 @@ static void coresight_trace_id_dump_table(struct
->> coresight_trace_id_map *id_map,
->>   #endif
->>     /* unlocked read of current trace ID value for given CPU */
->> -static int _coresight_trace_id_read_cpu_id(int cpu)
->> +static int _coresight_trace_id_read_cpu_id(int cpu, struct
->> coresight_trace_id_map *id_map)
->>   {
->>       return atomic_read(&per_cpu(cpu_id, cpu));
->>   }
->> @@ -152,7 +152,7 @@ static void
->> coresight_trace_id_release_all_pending(void)
->>       DUMP_ID_MAP(id_map);
->>   }
->>   -static int coresight_trace_id_map_get_cpu_id(int cpu, struct
->> coresight_trace_id_map *id_map)
->> +static int _coresight_trace_id_get_cpu_id(int cpu, struct
->> coresight_trace_id_map *id_map)
->>   {
->>       unsigned long flags;
->>       int id;
->> @@ -160,7 +160,7 @@ static int coresight_trace_id_map_get_cpu_id(int
->> cpu, struct coresight_trace_id_
->>       spin_lock_irqsave(&id_map_lock, flags);
-> 
-> Could we also reduce the contention on the id_map_lock, by moving the
-> spinlock per map ? It can be a separate patch.
-> 
-> This patch as such looks good to me.
-> 
-> Suzuki
-> 
-> 
-
-Good point yes we can do that.
-
->>         /* check for existing allocation for this CPU */
->> -    id = _coresight_trace_id_read_cpu_id(cpu);
->> +    id = _coresight_trace_id_read_cpu_id(cpu, id_map);
->>       if (id)
->>           goto get_cpu_id_clr_pend;
->>   @@ -196,13 +196,13 @@ static int
->> coresight_trace_id_map_get_cpu_id(int cpu, struct coresight_trace_id_
->>       return id;
->>   }
->>   -static void coresight_trace_id_map_put_cpu_id(int cpu, struct
->> coresight_trace_id_map *id_map)
->> +static void _coresight_trace_id_put_cpu_id(int cpu, struct
->> coresight_trace_id_map *id_map)
->>   {
->>       unsigned long flags;
->>       int id;
->>         /* check for existing allocation for this CPU */
->> -    id = _coresight_trace_id_read_cpu_id(cpu);
->> +    id = _coresight_trace_id_read_cpu_id(cpu, id_map);
->>       if (!id)
->>           return;
->>   @@ -254,22 +254,40 @@ static void
->> coresight_trace_id_map_put_system_id(struct coresight_trace_id_map *
->>     int coresight_trace_id_get_cpu_id(int cpu)
->>   {
->> -    return coresight_trace_id_map_get_cpu_id(cpu, &id_map_default);
->> +    return _coresight_trace_id_get_cpu_id(cpu, &id_map_default);
->>   }
->>   EXPORT_SYMBOL_GPL(coresight_trace_id_get_cpu_id);
->>   +int coresight_trace_id_get_cpu_id_map(int cpu, struct
->> coresight_trace_id_map *id_map)
->> +{
->> +    return _coresight_trace_id_get_cpu_id(cpu, id_map);
->> +}
->> +EXPORT_SYMBOL_GPL(coresight_trace_id_get_cpu_id_map);
->> +
->>   void coresight_trace_id_put_cpu_id(int cpu)
->>   {
->> -    coresight_trace_id_map_put_cpu_id(cpu, &id_map_default);
->> +    _coresight_trace_id_put_cpu_id(cpu, &id_map_default);
->>   }
->>   EXPORT_SYMBOL_GPL(coresight_trace_id_put_cpu_id);
->>   +void coresight_trace_id_put_cpu_id_map(int cpu, struct
->> coresight_trace_id_map *id_map)
->> +{
->> +    _coresight_trace_id_put_cpu_id(cpu, id_map);
->> +}
->> +EXPORT_SYMBOL_GPL(coresight_trace_id_put_cpu_id_map);
->> +
->>   int coresight_trace_id_read_cpu_id(int cpu)
->>   {
->> -    return _coresight_trace_id_read_cpu_id(cpu);
->> +    return _coresight_trace_id_read_cpu_id(cpu, &id_map_default);
->>   }
->>   EXPORT_SYMBOL_GPL(coresight_trace_id_read_cpu_id);
->>   +int coresight_trace_id_read_cpu_id_map(int cpu, struct
->> coresight_trace_id_map *id_map)
->> +{
->> +    return _coresight_trace_id_read_cpu_id(cpu, id_map);
->> +}
->> +EXPORT_SYMBOL_GPL(coresight_trace_id_read_cpu_id_map);
->> +
->>   int coresight_trace_id_get_system_id(void)
->>   {
->>       return coresight_trace_id_map_get_system_id(&id_map_default);
->> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.h
->> b/drivers/hwtracing/coresight/coresight-trace-id.h
->> index 49438a96fcc6..840babdd0794 100644
->> --- a/drivers/hwtracing/coresight/coresight-trace-id.h
->> +++ b/drivers/hwtracing/coresight/coresight-trace-id.h
->> @@ -42,8 +42,6 @@
->>   #define IS_VALID_CS_TRACE_ID(id)    \
->>       ((id > CORESIGHT_TRACE_ID_RES_0) && (id <
->> CORESIGHT_TRACE_ID_RES_TOP))
->>   -/* Allocate and release IDs for a single default trace ID map */
->> -
->>   /**
->>    * Read and optionally allocate a CoreSight trace ID and associate
->> with a CPU.
->>    *
->> @@ -59,6 +57,12 @@
->>    */
->>   int coresight_trace_id_get_cpu_id(int cpu);
->>   +/**
->> + * Version of coresight_trace_id_get_cpu_id() that allows the ID map
->> to operate
->> + * on to be provided.
->> + */
->> +int coresight_trace_id_get_cpu_id_map(int cpu, struct
->> coresight_trace_id_map *id_map);
->> +
->>   /**
->>    * Release an allocated trace ID associated with the CPU.
->>    *
->> @@ -72,6 +76,12 @@ int coresight_trace_id_get_cpu_id(int cpu);
->>    */
->>   void coresight_trace_id_put_cpu_id(int cpu);
->>   +/**
->> + * Version of coresight_trace_id_put_cpu_id() that allows the ID map
->> to operate
->> + * on to be provided.
->> + */
->> +void coresight_trace_id_put_cpu_id_map(int cpu, struct
->> coresight_trace_id_map *id_map);
->> +
->>   /**
->>    * Read the current allocated CoreSight Trace ID value for the CPU.
->>    *
->> @@ -92,6 +102,12 @@ void coresight_trace_id_put_cpu_id(int cpu);
->>    */
->>   int coresight_trace_id_read_cpu_id(int cpu);
->>   +/**
->> + * Version of coresight_trace_id_read_cpu_id() that allows the ID map
->> to operate
->> + * on to be provided.
->> + */
->> +int coresight_trace_id_read_cpu_id_map(int cpu, struct
->> coresight_trace_id_map *id_map);
->> +
->>   /**
->>    * Allocate a CoreSight trace ID for a system component.
->>    *
-> 
 
