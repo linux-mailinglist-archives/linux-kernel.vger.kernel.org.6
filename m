@@ -1,132 +1,275 @@
-Return-Path: <linux-kernel+bounces-204284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6BF38FE6B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:40:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E7B88FE6BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:43:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 653BB283873
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:40:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85974B2158B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:43:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D792195B26;
-	Thu,  6 Jun 2024 12:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51CA2195B0E;
+	Thu,  6 Jun 2024 12:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jwRFQG9r"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KrPhtBIC"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217A7195B08;
-	Thu,  6 Jun 2024 12:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92444195981
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717677595; cv=none; b=E0sM+3RWgBV2o5UxQFdzIUyOL+uNYw3KaYTliEL5o6lKItLEYkWBIdsNJ2MHGBCnZL61+nkW4sUcGvI32y+bPBg1qNBTB5X0poi7F9v4Pq27jK+1bnWFuLxtt4c5Np085xmUzzHL38wFrLVehoSnygBddavRLRhAWTQW5opZB0Q=
+	t=1717677797; cv=none; b=QxTpL/Jdz04Qcw+hvXqamTr/ZYHqb0mSMlkSqT5BfdqF9f/0AMQ/1RvNUVs5b72SG34miBI8+GAcB2s1GNdbZAdSwjizqaaCSRRpPv3J6eu73j2T70KZuwZq70k9yQr6YTuc+hLMhR60yzIM63Wsfl7bpObcLJbsidk8vBNjscE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717677595; c=relaxed/simple;
-	bh=8j0QTwBVqBlEew+vXzNvM2j0bxIyUPIq7t89df/Ovig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rOgF8CmHDcuLH9saR+cYsD50KdUhStJ9P1g/+luhkcOkNqLI9mx8hHHtVjPUCjMLos6MBbkExHFhhL7PWBsDGods08IkKv4oBkh55WABj7+O6PjLz31NxBRTskXUx6cvs+lG0qZgGS5JmWizciQEmvAIuGTQr60tK00qBOqoaQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jwRFQG9r; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717677594; x=1749213594;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8j0QTwBVqBlEew+vXzNvM2j0bxIyUPIq7t89df/Ovig=;
-  b=jwRFQG9rzCvzAebTGvIRpq64S4GhVy2/nx2NA5zPhxs7+qU2yDAkLDCK
-   NLxR9AlfQ6T8R0al2BovCpH8qEL4tdcN026MB5gu5XxiG/TN2JlFcXuig
-   wwTKS67tZfbxMBcv8sYvY1Aqhd2CVbtwNK8j0cZTBCbghEeRiauwDj1/T
-   4xYA62szx7H7+JZvh6ReADssXT4bffhUMoGneJ+ZdtyfJ1T1WLGnVJXeK
-   EK/BfTnOkq/nb9cupcd4ojzuwI1BvDc5BvBTpJa1B2xOmcH4HqgKXGRmu
-   ozcciifKEgZF4hlMyC5q7I0jCVsaEMpNJPRfqGCD+IQrNsV3ya99lyfB9
-   Q==;
-X-CSE-ConnectionGUID: mg0+IGHyS52Mj63PWZvW0w==
-X-CSE-MsgGUID: P5ETKNCfRBaPjk47uwqfOw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="31839965"
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="31839965"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 05:39:53 -0700
-X-CSE-ConnectionGUID: uwimgMbWSnCttp4dnD+tsw==
-X-CSE-MsgGUID: fBNz2Le5QS25iPTszSSU9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="37812017"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa007.fm.intel.com with ESMTP; 06 Jun 2024 05:39:47 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id E8F782A4; Thu, 06 Jun 2024 15:39:45 +0300 (EEST)
-Date: Thu, 6 Jun 2024 15:39:45 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@intel.com>, adrian.hunter@intel.com, 
-	ardb@kernel.org, ashish.kalra@amd.com, bhe@redhat.com, 
-	dave.hansen@linux.intel.com, elena.reshetova@intel.com, haiyangz@microsoft.com, hpa@zytor.com, 
-	jun.nakajima@intel.com, kai.huang@intel.com, kexec@lists.infradead.org, 
-	kys@microsoft.com, linux-acpi@vger.kernel.org, linux-coco@lists.linux.dev, 
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, ltao@redhat.com, mingo@redhat.com, 
-	peterz@infradead.org, rafael@kernel.org, rick.p.edgecombe@intel.com, 
-	sathyanarayanan.kuppuswamy@linux.intel.com, seanjc@google.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
-	x86@kernel.org
-Subject: Re: [PATCHv11.1 11/19] x86/tdx: Convert shared memory back to
- private on kexec
-Message-ID: <thox3qsdozhcl3xk5zmdjhz6xdkhhz6xefknj2ib427q4qw22q@uizbc32vuu55>
-References: <20240531151442.GMZlnpYkDCRlg1_YS0@fat_crate.local>
- <20240602142303.3263551-1-kirill.shutemov@linux.intel.com>
- <20240603083754.GAZl2A4uXvVB5w4l9u@fat_crate.local>
- <noym2bqgxqcyhhdzoax7gvdfzhh7rtw7cv236fhzpqh3wqf76e@2jj733skv7y4>
- <78d33a31-0ef2-417b-a240-b2880b64518e@intel.com>
- <u3hg3fqc2nxsjtfugjmmzlahwriyqlebnkxrbzgrxlkj6l3k36@yd3yudglgevi>
- <20240604180554.GIZl9XgscEI3PUvR-W@fat_crate.local>
- <alkew673cceojzmhsp3wj43yv76cek5ydh2iosfcphuv6ro26q@pj6whxcoetht>
- <20240605162419.GJZmCRM8V6xooyvm9H@fat_crate.local>
+	s=arc-20240116; t=1717677797; c=relaxed/simple;
+	bh=PzL3Agibp2BwAUGKAq4VnWqww86W93usoupJOjzqlQk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CtKu0DPAZoflCJBOE/dRWpfV9MUbL+1qQqdcVN9QjBKVVs8Ozy0epPTo31++nnuO04mNczIgyC8qy37hrtmILzEJ+cFTF1z0McHRxoKC9Y4qbu8LO9sVEBvPyNR9IHydy3R1uiU4o+HSXCjtBqnLHOz2wiof99tI+nHIr3WJjjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KrPhtBIC; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 456CfLTs113415;
+	Thu, 6 Jun 2024 07:41:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717677681;
+	bh=swyYL/UTh/fJIrJdY36x8AgMYNmXTYRmwCF34ITHoj4=;
+	h=From:To:CC:Subject:Date;
+	b=KrPhtBICtQCzyNuZnJ8b7wwxW8OP4WMYICJHklMQAM5zM2+q57syNvTz0Ik8OByNF
+	 aWfa5DCMffEKHwbNJkN/Tx3gwI0fP3GHfG3sm4TAr/XE6+Geh0mIJFXTo7YQzXeIE1
+	 BD7gIoLzPImGPpY7mGVazwQ8ijGj5nBFV2Hc8t4I=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 456CfLbq006673
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 6 Jun 2024 07:41:21 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 6
+ Jun 2024 07:41:20 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 6 Jun 2024 07:41:20 -0500
+Received: from LT5CG31242FY.dhcp.ti.com ([10.250.160.158])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 456CfAJt103595;
+	Thu, 6 Jun 2024 07:41:11 -0500
+From: Shenghao Ding <shenghao-ding@ti.com>
+To: <broonie@kernel.org>
+CC: <andriy.shevchenko@linux.intel.com>, <lgirdwood@gmail.com>,
+        <perex@perex.cz>, <pierre-louis.bossart@linux.intel.com>,
+        <13916275206@139.com>, <zhourui@huaqin.com>,
+        <alsa-devel@alsa-project.org>, <i-salazar@ti.com>,
+        <linux-kernel@vger.kernel.org>, <j-chadha@ti.com>,
+        <liam.r.girdwood@intel.com>, <jaden-yue@ti.com>,
+        <yung-chuan.liao@linux.intel.com>, <dipa@ti.com>, <yuhsuan@google.com>,
+        <henry.lo@ti.com>, <tiwai@suse.de>, <baojun.xu@ti.com>, <soyer@irl.hu>,
+        <Baojun.Xu@fpt.com>, <judyhsiao@google.com>, <navada@ti.com>,
+        <cujomalainey@google.com>, <aanya@ti.com>, <nayeem.mahmud@ti.com>,
+        <savyasanchi.shukla@netradyne.com>, <flaviopr@microsoft.com>,
+        <jesse-ji@ti.com>, <darren.ye@mediatek.com>,
+        Shenghao Ding
+	<shenghao-ding@ti.com>
+Subject: [RESEND PATCH v4] ASoc: tas2781: Enable RCA-based playback without DSP firmware download
+Date: Thu, 6 Jun 2024 20:41:03 +0800
+Message-ID: <20240606124105.1492-1-shenghao-ding@ti.com>
+X-Mailer: git-send-email 2.33.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240605162419.GJZmCRM8V6xooyvm9H@fat_crate.local>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Wed, Jun 05, 2024 at 06:24:19PM +0200, Borislav Petkov wrote:
-> On Wed, Jun 05, 2024 at 03:21:42PM +0300, Kirill A. Shutemov wrote:
-> > If a page can be accessed via private mapping is determined by the
-> > presence in Secure EPT. This state persist across kexec.
-> 
-> I just love it how I tickle out details each time I touch this comment
-> because we three can't write a single concise and self-contained
-> explanation. :-(
-> 
-> Ok, next version:
-> 
-> "Private mappings persist across kexec. If tdx_enc_status_changed() fails
+In only RCA (Reconfigurable Architecture) binary case, no DSP program will
+be working inside tas2563/tas2781, that is dsp-bypass mode, do not support
+speaker protection, and audio acoustic algorithms in this mode.
 
-s/Private mappings persist /Memory encryption state persists /
+Fixes: ef3bcde75d06 ("ASoC: tas2781: Add tas2781 driver")
+Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
 
-> in the first kernel, it leaves memory in an unknown state.
-> 
-> If that memory remains shared, accessing it in the *next* kernel through
-> a private mapping will result in an unrecoverable guest shutdown.
-> 
-> The kdump kernel boot is not impacted as it uses a pre-reserved memory
-> range that is always private.  However, gathering crash information
-> could lead to a crash if it accesses unconverted memory through
-> a private mapping which is possible when accessing that memory through
-> /proc/vmcore, for example.
-> 
-> In all cases, print error info in order to leave enough bread crumbs for
-> debugging."
-> 
-> I think this is getting in the right direction as it actually makes
-> sense now.
+---
+v4:
+ - add a description of what the state machine looks like, and why
+   FW_PENDING/FAIL remain but are not used.
+ - Remove TASDEVICE_DSP_FW_NONE because of unused.
+ - Remove stray change.
+ - Fix broken indentation.
+v3:
+ - Add description on RCA is Reconfigurable Architecture.
+ - Add the description on enabling
+ - Reword the commit
+ - Remove question mark in the comments.
+ - Add spaces in comments.
+v2:
+ - Correct comment.
+ - Add Fixes.
+ - Move header file to the first.
+v1:
+ - Split out the different logical changes into different patches.
+ - rename tasdevice_dsp_fw_state -> tasdevice_fw_state, the fw are not
+   only DSP fw, but also RCA(Reconfigurable data, such as acoustic data
+   and register setting, etc).
+ - Add TASDEVICE_RCA_FW_OK in tasdevice_fw_state to identify the state
+   that only RCA binary file has been download successfully, but DSP fw
+   is not loaded or loading failure.
+ - Add the this strategy into tasdevice_tuning_switch.
+ - If one side of the if/else has a braces both should in
+   tasdevice_tuning_switch.
+ - Identify whehter both RCA and DSP have been loaded or only RCA has
+   been loaded in tasdevice_fw_ready.
+ - Add check fw load status in tasdevice_startup.
+ - remove ret in tasdevice_startup to make the code neater.
+---
+ include/sound/tas2781-dsp.h       | 11 ++++++++--
+ sound/soc/codecs/tas2781-fmwlib.c | 18 +++++++++++-----
+ sound/soc/codecs/tas2781-i2c.c    | 34 +++++++++++++++++++------------
+ 3 files changed, 43 insertions(+), 20 deletions(-)
 
-Otherwise looks good to me.
-
+diff --git a/include/sound/tas2781-dsp.h b/include/sound/tas2781-dsp.h
+index 7fba7ea26a4b..3cda9da14f6d 100644
+--- a/include/sound/tas2781-dsp.h
++++ b/include/sound/tas2781-dsp.h
+@@ -117,10 +117,17 @@ struct tasdevice_fw {
+ 	struct device *dev;
+ };
+ 
+-enum tasdevice_dsp_fw_state {
+-	TASDEVICE_DSP_FW_NONE = 0,
++enum tasdevice_fw_state {
++	/* Driver in startup mode, not load any firmware. */
+ 	TASDEVICE_DSP_FW_PENDING,
++	/* DSP firmware in the system, but parsing error. */
+ 	TASDEVICE_DSP_FW_FAIL,
++	/*
++	 * Only RCA (Reconfigurable Architecture) firmware load
++	 * successfully.
++	 */
++	TASDEVICE_RCA_FW_OK,
++	/* Both RCA and DSP firmware load successfully. */
+ 	TASDEVICE_DSP_FW_ALL_OK,
+ };
+ 
+diff --git a/sound/soc/codecs/tas2781-fmwlib.c b/sound/soc/codecs/tas2781-fmwlib.c
+index 265a8ca25cbb..838d29fead96 100644
+--- a/sound/soc/codecs/tas2781-fmwlib.c
++++ b/sound/soc/codecs/tas2781-fmwlib.c
+@@ -2324,14 +2324,21 @@ void tasdevice_tuning_switch(void *context, int state)
+ 	struct tasdevice_fw *tas_fmw = tas_priv->fmw;
+ 	int profile_cfg_id = tas_priv->rcabin.profile_cfg_id;
+ 
+-	if (tas_priv->fw_state == TASDEVICE_DSP_FW_FAIL) {
+-		dev_err(tas_priv->dev, "DSP bin file not loaded\n");
++	/*
++	 * Only RCA-based Playback can still work with no dsp program running
++	 * inside the chip.
++	 */
++	switch (tas_priv->fw_state) {
++	case TASDEVICE_RCA_FW_OK:
++	case TASDEVICE_DSP_FW_ALL_OK:
++		break;
++	default:
+ 		return;
+ 	}
+ 
+ 	if (state == 0) {
+-		if (tas_priv->cur_prog < tas_fmw->nr_programs) {
+-			/*dsp mode or tuning mode*/
++		if (tas_fmw && tas_priv->cur_prog < tas_fmw->nr_programs) {
++			/* dsp mode or tuning mode */
+ 			profile_cfg_id = tas_priv->rcabin.profile_cfg_id;
+ 			tasdevice_select_tuningprm_cfg(tas_priv,
+ 				tas_priv->cur_prog, tas_priv->cur_conf,
+@@ -2340,9 +2347,10 @@ void tasdevice_tuning_switch(void *context, int state)
+ 
+ 		tasdevice_select_cfg_blk(tas_priv, profile_cfg_id,
+ 			TASDEVICE_BIN_BLK_PRE_POWER_UP);
+-	} else
++	} else {
+ 		tasdevice_select_cfg_blk(tas_priv, profile_cfg_id,
+ 			TASDEVICE_BIN_BLK_PRE_SHUTDOWN);
++	}
+ }
+ EXPORT_SYMBOL_NS_GPL(tasdevice_tuning_switch,
+ 	SND_SOC_TAS2781_FMWLIB);
+diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
+index 9350972dfefe..9c3c89cb36de 100644
+--- a/sound/soc/codecs/tas2781-i2c.c
++++ b/sound/soc/codecs/tas2781-i2c.c
+@@ -380,23 +380,32 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
+ 	mutex_lock(&tas_priv->codec_lock);
+ 
+ 	ret = tasdevice_rca_parser(tas_priv, fmw);
+-	if (ret)
++	if (ret) {
++		tasdevice_config_info_remove(tas_priv);
+ 		goto out;
++	}
+ 	tasdevice_create_control(tas_priv);
+ 
+ 	tasdevice_dsp_remove(tas_priv);
+ 	tasdevice_calbin_remove(tas_priv);
+-	tas_priv->fw_state = TASDEVICE_DSP_FW_PENDING;
++	tas_priv->fw_state = TASDEVICE_RCA_FW_OK;
+ 	scnprintf(tas_priv->coef_binaryname, 64, "%s_coef.bin",
+ 		tas_priv->dev_name);
+ 	ret = tasdevice_dsp_parser(tas_priv);
+ 	if (ret) {
+ 		dev_err(tas_priv->dev, "dspfw load %s error\n",
+ 			tas_priv->coef_binaryname);
+-		tas_priv->fw_state = TASDEVICE_DSP_FW_FAIL;
+ 		goto out;
+ 	}
+-	tasdevice_dsp_create_ctrls(tas_priv);
++
++	/*
++	 * If no dsp-related kcontrol created, the dsp resource will be freed.
++	 */
++	ret = tasdevice_dsp_create_ctrls(tas_priv);
++	if (ret) {
++		dev_err(tas_priv->dev, "dsp controls error\n");
++		goto out;
++	}
+ 
+ 	tas_priv->fw_state = TASDEVICE_DSP_FW_ALL_OK;
+ 
+@@ -417,9 +426,8 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
+ 	tasdevice_prmg_load(tas_priv, 0);
+ 	tas_priv->cur_prog = 0;
+ out:
+-	if (tas_priv->fw_state == TASDEVICE_DSP_FW_FAIL) {
+-		/*If DSP FW fail, kcontrol won't be created */
+-		tasdevice_config_info_remove(tas_priv);
++	if (tas_priv->fw_state == TASDEVICE_RCA_FW_OK) {
++		/* If DSP FW fail, DSP kcontrol won't be created. */
+ 		tasdevice_dsp_remove(tas_priv);
+ 	}
+ 	mutex_unlock(&tas_priv->codec_lock);
+@@ -466,14 +474,14 @@ static int tasdevice_startup(struct snd_pcm_substream *substream,
+ {
+ 	struct snd_soc_component *codec = dai->component;
+ 	struct tasdevice_priv *tas_priv = snd_soc_component_get_drvdata(codec);
+-	int ret = 0;
+ 
+-	if (tas_priv->fw_state != TASDEVICE_DSP_FW_ALL_OK) {
+-		dev_err(tas_priv->dev, "DSP bin file not loaded\n");
+-		ret = -EINVAL;
++	switch (tas_priv->fw_state) {
++	case TASDEVICE_RCA_FW_OK:
++	case TASDEVICE_DSP_FW_ALL_OK:
++		return 0;
++	default:
++		return -EINVAL;
+ 	}
+-
+-	return ret;
+ }
+ 
+ static int tasdevice_hw_params(struct snd_pcm_substream *substream,
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.34.1
+
 
