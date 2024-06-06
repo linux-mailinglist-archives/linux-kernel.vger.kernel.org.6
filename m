@@ -1,104 +1,250 @@
-Return-Path: <linux-kernel+bounces-204776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 527388FF36D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:13:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E668FF38B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:17:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEAC228C77E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:13:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDF91B285FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A23198E8E;
-	Thu,  6 Jun 2024 17:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BC41991A6;
+	Thu,  6 Jun 2024 17:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NW99UE9o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZfHKPHd8"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F271E495;
-	Thu,  6 Jun 2024 17:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE9D198E86
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 17:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717693976; cv=none; b=CSeGYZmn8zD7mS0vex3u7BTAgxZ6MqHVj9XE9zOa38QAFa0mg/Z0Py1uaAOSPclBRXwqRF2YVNwI7VWpHif60OdnxmL54g/Di7yzyj/glI6dSRiu4DZB6WaWNCAj0+0n6cnwUbO/mhss6rpKKrnz55bfxAmcXIY9n0DwKF8r0+U=
+	t=1717694048; cv=none; b=FHyiAXuXzFVBrqIwYb7iAkncUwHFPE/byLQuV/oqOuVLtIJSoKcuhU+Xi6bMJKxZSzQel7ZbWfVFwXiZDvhFWTLkHmsebm9uiYa5DOtNgjrBMvwLzddsKahjvJMSERQ81Cqho5h9ifEERfI12/4sbT3o/7xSbNTKRw7xCfsWqps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717693976; c=relaxed/simple;
-	bh=yNzSGMzBPpeJxQaqXhbDJgrlYAct+LNjRn53sZZoCBc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RJ3wdhj7wmUWOM3ur81hwhTF4qfF+qLuJirZ8DYxqaaIMwugmeYaG7/pRqWZ+b9DxklPhHJ7TO2YxPwTfQiKsICr6mKXHbe8gPmRam0bIV17d4/OTxXx7tuSrm7OGlUQwMh0Xw5zDxkS0P2A+X+V5cpp89Q2DcjHoBlKu/SvZXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NW99UE9o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43CA3C2BD10;
-	Thu,  6 Jun 2024 17:12:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717693975;
-	bh=yNzSGMzBPpeJxQaqXhbDJgrlYAct+LNjRn53sZZoCBc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NW99UE9ol72yWu8MgmnC9Dt3kKTxzcj+FrIvKXR4YzpclPRCy/uHN2SVJXrIzkYev
-	 qBtSG4wO1IUhq/QkvjFSXanhWQ14Vm3kKDwubQxW1f3sWGmouPl/dasGn1k76DkgKR
-	 C5KN8DAfDX9aqEoy3eAtfDTN/SWewyp/fKJyl3fb6v3LwdKOerDrm5BWwnBbQewKlP
-	 Ye2BtsBrlShxUR7CpASU3eZMR3cjQZflGtPWXo6k4iHRlIjRHWgcigMVrFhRZlYi3v
-	 7/mEuH0ZCTamuIHNJgr7UD9qXWjqSJgPHQ3LN37+wmTMgADzBgJkrTEZG4oKcFPyfx
-	 HmOwQsry8p/ow==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>,
-	James Clark <james.clark@arm.com>,
-	=?UTF-8?q?Cl=C3=A9ment=20Le=20Goffic?= <clement.legoffic@foss.st.com>
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] perf: parse-events: Fix compilation error while defining DEBUG_PARSER
-Date: Thu,  6 Jun 2024 10:12:52 -0700
-Message-ID: <171769393997.2340193.15187370089504659355.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
-In-Reply-To: <20240605140453.614862-1-clement.legoffic@foss.st.com>
-References: <20240605140453.614862-1-clement.legoffic@foss.st.com>
+	s=arc-20240116; t=1717694048; c=relaxed/simple;
+	bh=3PcZbTSvMIet1KvRH/3UIizXiqdHfZwbn62ekU7BeTk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MJ/6OdgOuLDl3lZgqfRIj8McYQXpGkT0SVJauOeTsbVLASQczru1yMeQeaz3DXoMztE2cpn7PMwRvR+fQhthrtqZyHS5O8Q1gIx+yvXk509O4zXAFLSqWlZqZuvalVAzwOL21gp/UVVbJ4+1DhV//+9yGXbwHHQi6Lxc3AOTFxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZfHKPHd8; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-62a0809c805so12054077b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 10:14:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717694045; x=1718298845; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hRK/mnhg9puUTTzwI/wwQsIKXT3wkOFAvZtn/HKANeU=;
+        b=ZfHKPHd88/pQdXDhSx7rj+OQOYhlJT8Ziy+oVtQGDenFjzFnp1lY1uDONjpIbY6C6L
+         T0SbIYjboXx1e02tAi3c3ZD3Gq+G2goZHggWjMm33l5djEuEPgfApdzrTlQsVSUKx1NT
+         STiUjeurb7q9QslwoKoU9kU6oYDOqZkkXO+LgaFSf6sv3L/fTb5ekW0oqxuv34FoqNxA
+         T5PcV+YIq8Lh/fwjRYzWA/oIS3a3kfdo+pTp/iOWhEUJXrhxNxbjCaYVw3m+oPnMl0pm
+         qbpCxk7rC7UMkgI24mawWB4sAvdATgJ0ztfcCGzylZuwZLWS+CzpSmGIURkswJap463h
+         4b2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717694045; x=1718298845;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hRK/mnhg9puUTTzwI/wwQsIKXT3wkOFAvZtn/HKANeU=;
+        b=cyvmyl2nu8BmZ3w9s7AlkcPaIG/SKJPVOQdG1FamIpVPL++u4Cu5iAUpFhjdlZC+qi
+         XbaC3R5KxFticGxXS7X1T/ORVrlGuz0hrMW3kGbTmA/cCNAoRUjQvxGlUu1Drn2BiwNf
+         S9nHLdRgi+jQLBrAgRPt24SPxLIkOF/GyrjHTbWe6TmnYuyvfGshpsNs2aWmB7prZQF5
+         7bQ0hhrZOIZrKh2iItOtK7SuE+QdctzYlPxy37xRRl06qh3dUrgJjmsUcrBOXkZR10Sm
+         DHoRt2+CWfzacUZ6CANDUXY9qXx1i0W4cgPxL2PuKnmhCg56zBSsLGycvlmq92Xewn89
+         Ozmw==
+X-Forwarded-Encrypted: i=1; AJvYcCW31x5uYZpSw/Fwz90XtXxjGKnZ2UdhlsrzS77UpIhuA0eQhcgYg6+ADp7jwSzwDnE5UKoQhLn58LtG6rIlgqsV21HMgsGCWoRbwnKJ
+X-Gm-Message-State: AOJu0YxkP2ZvALq0qI0/u/EdZRWz+g5Sk3sBd1zQonqXHlYTUEWo2Hgd
+	L44CSM0XKaqTPwLFDo63AgUS6fSKiKx3jEIu+D2vig+amjmigIB8PDGFAL0CipuNviAfqn5Gr23
+	OztCUmjh8oz2/AAU61YNEHk6jzHbPRFJgmUC2
+X-Google-Smtp-Source: AGHT+IE6g1Qt1a0uWEMeEkhuX3E8E0Aujra9U26A4am4FT81CMUGmJmJOs73aDziKCtCgxpH2azFXeJj7iJZZjlkoqQ=
+X-Received: by 2002:a0d:d709:0:b0:615:1a0:78ea with SMTP id
+ 00721157ae682-62cbff3b0eamr45661767b3.34.1717694044790; Thu, 06 Jun 2024
+ 10:14:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20240605002459.4091285-1-andrii@kernel.org> <20240605002459.4091285-2-andrii@kernel.org>
+ <Zl-38XrUw9entlFR@casper.infradead.org> <uevtozlryyqw5vj2duuzowupknfynmreruiw6m7bcxryjppqpm@7g766emooxfh>
+ <CAEf4BzZFpidjJzRMWboZYY03U8M22Yo1sqXconi36V11XA-ZfA@mail.gmail.com>
+ <CAEf4BzYDhtkYt=qn2YgrnRkZ0tpa3EPAiCUcBkdUa-9DKN22dQ@mail.gmail.com>
+ <CAEf4Bzbzj55LfgTom9KiM1Xe8pfXvpWBd6ETjXQCh7M===G5aw@mail.gmail.com>
+ <5fmylram4hhrrdl7vf6odyvuxcrvhipsx2ij5z4dsfciuzf4on@qwk7qzze6gbt>
+ <CAJuCfpER9qUSGbWBcHhT1=ssH41Xv8--XVA5BEPCM7uf=z_GLw@mail.gmail.com> <CAEf4Bzax2E1JS=MUm=sBJvcMb+CyWaPdxmr2mDuODs2cc3_mTg@mail.gmail.com>
+In-Reply-To: <CAEf4Bzax2E1JS=MUm=sBJvcMb+CyWaPdxmr2mDuODs2cc3_mTg@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 6 Jun 2024 10:13:52 -0700
+Message-ID: <CAJuCfpFKA9KChaunoYo-yH4GipvGjRpKqyneOhwi-E6n3Lfq3g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/9] mm: add find_vma()-like API but RCU protected and
+ taking VMA lock
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
+	linux-mm@kvack.org, rppt@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 05 Jun 2024 16:04:53 +0200, Clément Le Goffic wrote:
+On Thu, Jun 6, 2024 at 9:52=E2=80=AFAM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Wed, Jun 5, 2024 at 4:22=E2=80=AFPM Suren Baghdasaryan <surenb@google.=
+com> wrote:
+> >
+> > On Wed, Jun 5, 2024 at 10:03=E2=80=AFAM Liam R. Howlett <Liam.Howlett@o=
+racle.com> wrote:
+> > >
+> > > * Andrii Nakryiko <andrii.nakryiko@gmail.com> [240605 12:27]:
+> > > > On Wed, Jun 5, 2024 at 9:24=E2=80=AFAM Andrii Nakryiko
+> > > > <andrii.nakryiko@gmail.com> wrote:
+> > > > >
+> > > > > On Wed, Jun 5, 2024 at 9:13=E2=80=AFAM Andrii Nakryiko
+> > > > > <andrii.nakryiko@gmail.com> wrote:
+> > > > > >
+> > > > > > On Wed, Jun 5, 2024 at 6:33=E2=80=AFAM Liam R. Howlett <Liam.Ho=
+wlett@oracle.com> wrote:
+> > > > > > >
+> > > > > > > * Matthew Wilcox <willy@infradead.org> [240604 20:57]:
+> > > > > > > > On Tue, Jun 04, 2024 at 05:24:46PM -0700, Andrii Nakryiko w=
+rote:
+> > > > > > > > > +/*
+> > > > > > > > > + * find_and_lock_vma_rcu() - Find and lock the VMA for a=
+ given address, or the
+> > > > > > > > > + * next VMA. Search is done under RCU protection, withou=
+t taking or assuming
+> > > > > > > > > + * mmap_lock. Returned VMA is guaranteed to be stable an=
+d not isolated.
+> > > > > > > >
+> > > > > > > > You know this is supposed to be the _short_ description, ri=
+ght?
+> > > > > > > > Three lines is way too long.  The full description goes bet=
+ween the
+> > > > > > > > arguments and the Return: line.
+> > > > > >
+> > > > > > Sure, I'll adjust.
+> > > > > >
+> > > > > > > >
+> > > > > > > > > + * @mm: The mm_struct to check
+> > > > > > > > > + * @addr: The address
+> > > > > > > > > + *
+> > > > > > > > > + * Returns: The VMA associated with addr, or the next VM=
+A.
+> > > > > > > > > + * May return %NULL in the case of no VMA at addr or abo=
+ve.
+> > > > > > > > > + * If the VMA is being modified and can't be locked, -EB=
+USY is returned.
+> > > > > > > > > + */
+> > > > > > > > > +struct vm_area_struct *find_and_lock_vma_rcu(struct mm_s=
+truct *mm,
+> > > > > > > > > +                                        unsigned long ad=
+dress)
+> > > > > > > > > +{
+> > > > > > > > > +   MA_STATE(mas, &mm->mm_mt, address, address);
+> > > > > > > > > +   struct vm_area_struct *vma;
+> > > > > > > > > +   int err;
+> > > > > > > > > +
+> > > > > > > > > +   rcu_read_lock();
+> > > > > > > > > +retry:
+> > > > > > > > > +   vma =3D mas_find(&mas, ULONG_MAX);
+> > > > > > > > > +   if (!vma) {
+> > > > > > > > > +           err =3D 0; /* no VMA, return NULL */
+> > > > > > > > > +           goto inval;
+> > > > > > > > > +   }
+> > > > > > > > > +
+> > > > > > > > > +   if (!vma_start_read(vma)) {
+> > > > > > > > > +           err =3D -EBUSY;
+> > > > > > > > > +           goto inval;
+> > > > > > > > > +   }
+> > > > > > > > > +
+> > > > > > > > > +   /*
+> > > > > > > > > +    * Check since vm_start/vm_end might change before we=
+ lock the VMA.
+> > > > > > > > > +    * Note, unlike lock_vma_under_rcu() we are searching=
+ for VMA covering
+> > > > > > > > > +    * address or the next one, so we only make sure VMA =
+wasn't updated to
+> > > > > > > > > +    * end before the address.
+> > > > > > > > > +    */
+> > > > > > > > > +   if (unlikely(vma->vm_end <=3D address)) {
+> > > > > > > > > +           err =3D -EBUSY;
+> > > > > > > > > +           goto inval_end_read;
+> > > > > > > > > +   }
+> > > > > > > > > +
+> > > > > > > > > +   /* Check if the VMA got isolated after we found it */
+> > > > > > > > > +   if (vma->detached) {
+> > > > > > > > > +           vma_end_read(vma);
+> > > > > > > > > +           count_vm_vma_lock_event(VMA_LOCK_MISS);
+> > > > > > > > > +           /* The area was replaced with another one */
+> > > > > > > >
+> > > > > > > > Surely you need to mas_reset() before you goto retry?
+> > > > > > >
+> > > > > > > Probably more than that.  We've found and may have adjusted t=
+he
+> > > > > > > index/last; we should reconfigure the maple state.  You shoul=
+d probably
+> > > > > > > use mas_set(), which will reset the maple state and set the i=
+ndex and
+> > > > > > > long to address.
+> > > > > >
+> > > > > > Yep, makes sense, thanks. As for the `unlikely(vma->vm_end <=3D
+> > > > > > address)` case, I presume we want to do the same, right? Basica=
+lly, on
+> > > > > > each retry start from the `address` unconditionally, no matter =
+what's
+> > > > > > the reason for retry.
+> > > > >
+> > > > > ah, never mind, we don't retry in that situation, I'll just put
+> > > > > `mas_set(&mas, address);` right before `goto retry;`. Unless we s=
+hould
+> > > > > actually retry in the case when VMA got moved before the requeste=
+d
+> > > > > address, not sure, let me know what you think. Presumably retryin=
+g
+> > > > > will allow us to get the correct VMA without the need to fall bac=
+k to
+> > > > > mmap_lock?
+> > > >
+> > > > sorry, one more question as I look some more around this (unfamilia=
+r
+> > > > to me) piece of code. I see that lock_vma_under_rcu counts
+> > > > VMA_LOCK_MISS on retry, but I see that there is actually a
+> > > > VMA_LOCK_RETRY stat as well. Any reason it's a MISS instead of RETR=
+Y?
+> > > > Should I use MISS as well, or actually count a RETRY?
+> > > >
+> > >
+> > > VMA_LOCK_MISS is used here because we missed the VMA due to a write
+> > > happening to move the vma (rather rare).  The VMA_LOCK missed the vma=
+.
+> > >
+> > > VMA_LOCK_RETRY is used to indicate we need to retry under the mmap lo=
+ck.
+> > > A retry is needed after the VMA_LOCK did not work under rcu locking.
+> >
+> > Originally lock_vma_under_rcu() was used only inside page fault path,
+> > so these counters helped us quantify how effective VMA locking is when
+> > handling page faults. With more users of that function these counters
+> > will be affected by other paths as well. I'm not sure but I think it
+> > makes sense to use them only inside page fault path, IOW we should
+> > probably move count_vm_vma_lock_event() calls outside of
+> > lock_vma_under_rcu() and add them only when handling page faults.
+>
+> Alright, seems like I should then just drop count_vm_vma_lock_event()
+> from the API I'm adding.
 
-> Compiling perf tool with 'DEBUG_PARSER=1' leads to errors:
-> 
-> $> make -C tools/perf PARSER_DEBUG=1 NO_LIBTRACEEVENT=1
-> ...
->   CC      util/expr-flex.o
->   CC      util/expr.o
-> util/parse-events.c:33:12: error: redundant redeclaration of ‘parse_events_debug’ [-Werror=redundant-decls]
->    33 | extern int parse_events_debug;
->       |            ^~~~~~~~~~~~~~~~~~
-> In file included from util/parse-events.c:18:
-> util/parse-events-bison.h:43:12: note: previous declaration of ‘parse_events_debug’ with type ‘int’
->    43 | extern int parse_events_debug;
->       |            ^~~~~~~~~~~~~~~~~~
-> util/expr.c:27:12: error: redundant redeclaration of ‘expr_debug’ [-Werror=redundant-decls]
->    27 | extern int expr_debug;
->       |            ^~~~~~~~~~
-> In file included from util/expr.c:11:
-> util/expr-bison.h:43:12: note: previous declaration of ‘expr_debug’ with type ‘int’
->    43 | extern int expr_debug;
->       |            ^~~~~~~~~~
-> cc-1: all warnings being treated as errors
-> 
-> [...]
+That would be my preference but as I said, I'm not 100% sure about
+this direction.
 
-Applied to perf-tools-next, thanks!
-
-
-Best regards,
-Namhyung
+>
+> >
+> > >
+> > > Thanks,
+> > > Liam
 
