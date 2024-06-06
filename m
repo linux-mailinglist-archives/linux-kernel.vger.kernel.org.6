@@ -1,144 +1,92 @@
-Return-Path: <linux-kernel+bounces-204861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9022C8FF463
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:11:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 975618FF467
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:12:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 424821F2540F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:11:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A40801C214DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C78A19939D;
-	Thu,  6 Jun 2024 18:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QiPBf+kf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vMrg0N6/"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815A11993A6;
+	Thu,  6 Jun 2024 18:12:04 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B551198E77;
-	Thu,  6 Jun 2024 18:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC81D1991B5
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 18:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717697488; cv=none; b=H3qytlFNfVIgnMxM6ekeauqVpyqOEmN7fShYNLZvieBtjQDjqQbUS15Jbr/8zDVGwkRU4p+FGD82IR+vi+OGe6LFoOsBnmmNEfvo3v67KpLjIa+3WkWDidLTJv5T8GJYvk6uvlHfigXUnhClorhBQ8OITNos7KsXHojoxeSM+kM=
+	t=1717697524; cv=none; b=aXHvF7SVoM0bvjkH0Rx+Pk93peD9PNxIh5/RL14LnuK2EJD9KLikkuV1fwTa+EyLYMY6aVlWDMTrLN1LzYgEvbhhdtXDLLozXqn4PpZtWH8icm/2JGef0I1C/UZlNRHz3DwnCcBKo2U3YQcyi4ATNDdflyvVfJhPOnxXaC39fGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717697488; c=relaxed/simple;
-	bh=89Ru1MLL6Cw+HAnFNn4QiwBAQvIvZ9iwfGCkgjAjm7Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pE3sKZZcuRwf976zAn7euuEwnfYwZ+glRFFJSxsnyM2n1QBG5WgC/EIjbw5X3TqgCRqiBivOubh7IohxXPc6ynpRkmrVNnHVBhRyRsUpO7iY61Bzbzo99RHr6MyIe5vyE43TvtLeYojpyxoVaclLQXidZVO2V7j+kcfY2r5yloY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QiPBf+kf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vMrg0N6/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717697483;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=frfCPswA5SjtUbmGVelHx9IJDTg2Th8/q6fkTUzp43c=;
-	b=QiPBf+kfR3zAriOR0mOk1x5Wyxn/wc9za+nQXOB0mLq8Re+DgHNl2AOOWGnZyPM+8MFxBP
-	K3j2oKjG+HB3ATQPAJe2U3xPSqVPpY185Gn6Epju80mscIHQiR0kDbKGdrEzxHWoDd7ge6
-	5uNiOcMN7/DpKtOhi2IbGTsStdEMQ/M2AQ7VyGkW5TojCbrNUEsUJZXhmoyq/KdTjfM2JP
-	XF8ZI7VK0VnDztd9gvLOZvCaAnNdM9yXBal4vnXNM8QrTNBiK9p1O8YIrzFNKXgc9Y9b0t
-	+w7H97VK+TzovFRKmD0TOfvttYOGzq8RufL1sh2QGhli5/+5pnosD9NxhSLYow==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717697483;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=frfCPswA5SjtUbmGVelHx9IJDTg2Th8/q6fkTUzp43c=;
-	b=vMrg0N6/F32h/+a1DZ4ylDqXYjFaK+sYf6iWmGib1GdhW3obULexnVUhwOg1Rbes/reboj
-	6oT7igbzdKdpZEAA==
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Simon Horman <horms@kernel.org>, Sai Krishna Gajula
- <saikrishnag@marvell.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Lee Jones
- <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Horatiu Vultur
- <horatiu.vultur@microchip.com>, UNGLinuxDriver@microchip.com, Andrew Lunn
- <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Saravana Kannan <saravanak@google.com>, Bjorn
- Helgaas <bhelgaas@google.com>, Philipp Zabel <p.zabel@pengutronix.de>, Lars
- Povlsen <lars.povlsen@microchip.com>, Steen Hegelund
- <Steen.Hegelund@microchip.com>, Daniel Machon
- <daniel.machon@microchip.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, netdev@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Allan
- Nielsen <allan.nielsen@microchip.com>, Luca Ceresoli
- <luca.ceresoli@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 10/19] irqdomain: Introduce irq_domain_alloc() and
- irq_domain_publish()
-In-Reply-To: <20240606175258.0e36ea98@bootlin.com>
-References: <20240527161450.326615-1-herve.codina@bootlin.com>
- <20240527161450.326615-11-herve.codina@bootlin.com> <8734pr5yq1.ffs@tglx>
- <20240606175258.0e36ea98@bootlin.com>
-Date: Thu, 06 Jun 2024 20:11:23 +0200
-Message-ID: <87v82m0wms.ffs@tglx>
+	s=arc-20240116; t=1717697524; c=relaxed/simple;
+	bh=kLYzDmWA3pyQdK7Jqxoe6qobWlNGmt2GYRUgM8Acftk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=XTpCKegJZw/U/xCwDXEuJqyXBiQss7IkYYKPr5QKuN9xAUEHDPIz4/6mWqERXbwBWBS2CCI0qrsoD0jC+ELEPr298dbOonG6J+7C4dc/3K8w3aYsXVlJwkjYmJRsDYiKDi4AWMM7vsBpXQMW/wj0iBVUQ+FQ/5X0dp77cQip/P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7eb3978abc6so135520439f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 11:12:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717697522; x=1718302322;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V2rWMF7FdfmFH841KzQGtKomeowBbSw4OlbWNTnW3+w=;
+        b=R653AfS96a+1QdUdzQ2cm5v4aqKxQ8LNdbNWTNdVzI7eIvKdMRSiaDCbAwgigK9ca+
+         whXwDCBEtZtE71w6m2IUKHGZnZSpp6BEWk+t8CJLa8HQKf9+2UquiWOvfc907g/bz3Xw
+         MWHtX28WlKeV69TDKQa5UCak79iDQl4SbY6cSfc1MpKw/Ivhoqt1DVbiRyI+uKx1iLHI
+         xPS4vFfnuHGO8RqINhYvXOoCOiZszET6Fn9ZukuA/i6z1wEH/Jp6bVWqKKEFMhXTkAqA
+         KmZ+DpQX6eL4JXlbtvgqfvSgKv4jPkmUsux9sm9/QTRIEINgXhBW3rNQhj+2SmYOLe24
+         GPpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVA3Ph89HLg0LzfbkVc16VDhHjssMC3xMYnltzCf4QwCy3YVHIR5spCJU53YlnNlVv3EBqvbfnW28hSeEN1Q4lQbPrdUtjIXOOXKA5a
+X-Gm-Message-State: AOJu0YzPOurZ0Gu4MKkONfdXMTbFH24SLn8gnlHW0NxNMHKxsDsOWJwy
+	43XzDEA6D9hrYLgQyV8gXjA1Dd9fr2wEJWetXJdHcQK5Hmr7u6LqSJrjCl028t5+k4ECAAexlOq
+	2dsTcxerbUW5R9ItyXbnsLriDS778BxVhpkhdpQ6rkzBFpd7miGVJajg=
+X-Google-Smtp-Source: AGHT+IFGDmcj0wx+kVc+721VYPwAJWApv5UjdfNQomzhQk27c2MwrVZ6VKmhSC0C4BXLfF0sU7CPtxrdwgX6u/8lRNfAOUrtmhtX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:6e02:1c49:b0:374:a2db:d6b0 with SMTP id
+ e9e14a558f8ab-375802fd4b9mr301405ab.2.1717697521927; Thu, 06 Jun 2024
+ 11:12:01 -0700 (PDT)
+Date: Thu, 06 Jun 2024 11:12:01 -0700
+In-Reply-To: <0000000000005221690619d26681@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a05a05061a3c9e19@google.com>
+Subject: Re: [syzbot] [bcachefs?] kernel BUG in gc_bucket
+From: syzbot <syzbot+246b47da27f8e7e7d6fb@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Herve!
+syzbot has bisected this issue to:
 
-On Thu, Jun 06 2024 at 17:52, Herve Codina wrote:
-> On Wed, 05 Jun 2024 15:02:46 +0200
-> Thomas Gleixner <tglx@linutronix.de> wrote:
->> On Mon, May 27 2024 at 18:14, Herve Codina wrote:
->> > To avoid a window where the domain is published but not yet ready to be  
->> 
->> I can see the point, but why is this suddenly a problem? There are tons
->> of interrupt chip drivers which have exactly that pattern.
->
-> I thing the issue was not triggered because these interrupt chip driver
-> are usually builtin compiled and the probe sequence is the linear one
-> done at boot time. Consumers/supplier are probe sequentially without any
-> parallel execution issues.
->
-> In the LAN966x PCI device driver use case, the drivers were built as
-> modules. Modules loading and drivers .probe() calls for the irqs supplier
-> and irqs consumers are done in parallel. This reveals the race condition.
+commit 228e1c91ae5ec44f38aa8852aa3953005badce82
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Wed Dec 27 23:31:46 2023 +0000
 
-So how is that supposed to work? There is clearly a requirement that the
-interrupt controller is ready to use when the network driver is probed, no?
+    bcachefs: KEY_TYPE_accounting
 
->> Also why is all of this burried in a series which aims to add a network
->> driver and touches the world and some more. If you had sent the two irq
->> domain patches seperately w/o spamming 100 people on CC then this would
->> have been solved long ago. That's documented clearly, no?
->
-> Yes, the main idea of the series, as mentioned in the cover letter, is to
-> give the big picture of the LAN966x PCI device use case in order to have
-> all the impacted subsystems and drivers maintainers be aware of the global
-> use case: DT overlay on top of PCI device.
-> Of course, the plan is to split this series into smaller ones once parts
-> get discussed in the DT overlay on top of PCI use case and reach some kind
-> of maturity at least on the way to implement a solution.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16a17f16980000
+start commit:   0e1980c40b6e Add linux-next specific files for 20240531
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=15a17f16980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a17f16980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d9c3ca4e54577b88
+dashboard link: https://syzkaller.appspot.com/bug?extid=246b47da27f8e7e7d6fb
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11ca95fc980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12a49ef2980000
 
-Fair enough.
+Reported-by: syzbot+246b47da27f8e7e7d6fb@syzkaller.appspotmail.com
+Fixes: 228e1c91ae5e ("bcachefs: KEY_TYPE_accounting")
 
-> Thomas, do you prefer to have all the IRQ related patches extracted right
-> now from this big picture series ?
-
-I think the interrupt controller problem is completely orthogonal to the
-PCI/DT issue.
-
-So yes, please split them out as preparatory work which is probably also
-not that interesting for the PCI/DT/net folks.
-
-If the template approach holds, then the infrastructure change is
-definitely worth it on its own and the actual driver just falls in place
-and is off your backlog list.
-
-Thanks,
-
-        tglx
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
