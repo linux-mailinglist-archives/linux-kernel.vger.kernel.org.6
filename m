@@ -1,174 +1,123 @@
-Return-Path: <linux-kernel+bounces-204871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9BB38FF489
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:19:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 570B38FF48D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:20:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3CD71C23A4D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:19:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1F4A1F272DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DD019939E;
-	Thu,  6 Jun 2024 18:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2081993B0;
+	Thu,  6 Jun 2024 18:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="XHRm6rwC"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pjaFbB1H"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B922110E;
-	Thu,  6 Jun 2024 18:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF392110E;
+	Thu,  6 Jun 2024 18:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717697955; cv=none; b=sL7B0xlDx0Wq5c4ftyC25fwVP3boFWb0w6trKqPF7xHwvaCgtqipcrLSWjC4TuQ8AR4QYmONfRudgilXCn8ATZfVPaI5NZuHK3ILNbcVEqHBeQr/3q59AdMlGaIaAbcOxse/MBTagkTzrcI1vUdpPAU22ypeDT5LDMjv5R/WkHc=
+	t=1717697999; cv=none; b=lQ95uQ5cyePO4eZqE5J2ghPK2F61r104YDOunMlUYvVKymXhvnRgLGDgSvQccLnJYP8/ote1txvaGG7XCzNR09SBndl9X8jXMKzWsRey7RElup2EyXkw3dgzJvYlTCHNpx8NGOZld9d8yJTpQSPccEjHPosTg0D0Y5TUdUlFPys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717697955; c=relaxed/simple;
-	bh=7l/9m2A69mnEewixzR4lQaoYU6S2P+mVA/9ddRZfgF0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O64DOpVdBwZJAzIJUpgvdpyslDA9ZMFrIuHAQadiyj0vlNVqVfsZi9djnHflQIRUnTROyIp88zWu1id1b3uRwtNNIT1mJTloOBWcntcI78tiqS21YmErxpmirxy5DpkdL+ldxcdE2EfbibiSQJ2fVilGXht1KLVdjEsMmPfJBCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=XHRm6rwC reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.1.0)
- id 665309e4c6a46bd9; Thu, 6 Jun 2024 20:19:09 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 851116A65D3;
-	Thu,  6 Jun 2024 20:19:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1717697949;
-	bh=7l/9m2A69mnEewixzR4lQaoYU6S2P+mVA/9ddRZfgF0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=XHRm6rwCYQzUSYHD33mtzMe/s+iwXg/3mJvahkvc467O8uTfnUUWEAVj1Cf2p1eRP
-	 AUCzrIa1vtMbUPeJyUIGQFgBk+ZVeMK+gaof3GKv6WOH87XkHChNqgsivq80j0vqbi
-	 03biuv84PC2EllChhnSdROzIzkz0ZcfvRAoycYSZSdYx3t5DSxqoZXcJzqDkAeHcoT
-	 tTqb7fCCO579PbRLzFYilqCFW4tsPr5mWjFEYe8qOhEy2QBdCZq/HfkBMsBe4v0dpF
-	 DXxUQ1XfNTVY8RLEJONqO2MeZsjSjkIF9CTS0jFDmyaxMqU3VCOa17yxDzHmeoIadS
-	 dCR0SKXtHmt0A==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>, Laura Nao <laura.nao@collabora.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Linux ACPI <linux-acpi@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>
-Subject:
- Re: [PATCH v2] thermal: core: Do not fail cdev registration because of
- invalid initial state
-Date: Thu, 06 Jun 2024 20:19:08 +0200
-Message-ID: <4931647.31r3eYUQgx@kreacher>
-In-Reply-To: <a5476bdb-da6f-40d5-baa9-fa2caea72e3d@linaro.org>
-References:
- <6056838.lOV4Wx5bFT@kreacher>
- <a5476bdb-da6f-40d5-baa9-fa2caea72e3d@linaro.org>
+	s=arc-20240116; t=1717697999; c=relaxed/simple;
+	bh=69zQpjAYtvwRFnrv/J4UIrzjMDYCSMX8xFrTmgQ3yHQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NxCxor63HmiPUjY6CZQAYzXCfFEYlIU7YXlJoaMo5v0TVqRoeGly5hRIxndm4p+M89bkghw+BSbI26sgQ1lMs600Im/UqhkYqfyvrsIWsvxFwvtCLJJdvaalFmRV4PJKy+PnQRTNi3Ms99egZAwj3X5oC5T6DwZb2vDVFG7/dms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pjaFbB1H; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 456GHpB3013966;
+	Thu, 6 Jun 2024 18:19:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jgHHZLFc42AkrFsoO0x+siraOmLlalkQoI+WyMiSkbk=; b=pjaFbB1HSFFdGluU
+	LroCspppBFTMZvnU9gjOxlmSoCkcOMha6/eXcgY9awr077xH6kYRioXUiGW7qYsT
+	lJoEA/DNv8NDgox+oLBYUjdLbzFucxNUlwXlOwtpGykqRN5wXocL7Sb/U4I7NXcO
+	CLw/fP+dpykYgGIvDEBQIc1XxsSVtS0JOxRnaI7fnGZvoWXwBKCDdxADt84S1IMX
+	wQ9FdVJ26bQzo42rJ04iKSK2BT71zWXfaaJklVduAapv3NawGZWrRrciCNLAg4ou
+	y0kHzWUCq5kZUFSAAIKMRBdg6Dx6qTRRY7jHeDTrQLpqIMenY6p8ojIKPQOJKLOb
+	AEOaPg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjvxyax98-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Jun 2024 18:19:46 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 456IJjUv023792
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 6 Jun 2024 18:19:45 GMT
+Received: from [10.48.241.109] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 6 Jun 2024
+ 11:19:44 -0700
+Message-ID: <08b18db2-63f2-4eb9-ad7a-318cd7a207ee@quicinc.com>
+Date: Thu, 6 Jun 2024 11:19:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 0/2] dt-bindings: describe the ath1X modules on QCom
+ BT/WLAN chipsets
+Content-Language: en-US
+To: Kalle Valo <kvalo@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+CC: "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Jeff Johnson
+	<jjohnson@kernel.org>, <linux-wireless@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <ath11k@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <ath12k@lists.infradead.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>
+References: <20240605122106.23818-1-brgl@bgdev.pl> <878qziqjn5.fsf@kernel.org>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <878qziqjn5.fsf@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrvdelkedguddvvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeefudduuedtuefgleffudeigeeitdeufeelvdejgefftdethffhhfethfeljefgteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepkedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlrghurhgrrdhnrghosegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghr
- rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=8 Fuz1=8 Fuz2=8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: FEhgh-xv4AfcdpCcpXYjCI7RdTDSgPn2
+X-Proofpoint-GUID: FEhgh-xv4AfcdpCcpXYjCI7RdTDSgPn2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-06_14,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 spamscore=0
+ mlxscore=0 adultscore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ lowpriorityscore=0 mlxlogscore=703 impostorscore=0 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406060127
 
-On Thursday, June 6, 2024 6:39:02 PM CEST Daniel Lezcano wrote:
-> On 06/06/2024 18:08, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > 
-> > It is reported that commit 31a0fa0019b0 ("thermal/debugfs: Pass cooling
-> > device state to thermal_debug_cdev_add()") causes the ACPI fan driver
-> > to fail probing on some systems which turns out to be due to the _FST
-> > control method returning an invalid value until _FSL is first evaluated
-> > for the given fan.  If this happens, the .get_cur_state() cooling device
-> > callback returns an error and __thermal_cooling_device_register() fails
-> > as uses that callback after commit 31a0fa0019b0.
-> > 
-> > Arguably, _FST should not return an invalid value even if it is
-> > evaluated before _FSL, so this may be regarded as a platform firmware
-> > issue, but at the same time it is not a good enough reason for failing
-> > the cooling device registration where the initial cooling device state
-> > is only needed to initialize a thermal debug facility.
-> > 
-> > Accordingly, modify __thermal_cooling_device_register() to avoid calling
-> > thermal_debug_cdev_add() instead of returning an error if the initial
-> > .get_cur_state() callback invocation fails.
-> > 
-> > Fixes: 31a0fa0019b0 ("thermal/debugfs: Pass cooling device state to thermal_debug_cdev_add()")
-> > Closes: https://lore.kernel.org/linux-acpi/20240530153727.843378-1-laura.nao@collabora.com
-> > Reported-by: Laura Nao <laura.nao@collabora.com>
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> > 
-> > v1 -> v2:
-> >     * Instead of making the thermal debug code effectively ignore the invalid
-> >       initial cooling device state, simply don't register thermal debugfs for
-> >       a cooling device if its initial state returned by the driver's
-> >       .get_cur_state() is invalid (Daniel).
-> > 
-> > Laura, please test this one even though I don't see why it wouldn't work for
-> > you if the v1 did.
-> > 
-> > ---
-> >   drivers/thermal/thermal_core.c |    5 +++--
-> >   1 file changed, 3 insertions(+), 2 deletions(-)
-> > 
-> > Index: linux-pm/drivers/thermal/thermal_core.c
-> > ===================================================================
-> > --- linux-pm.orig/drivers/thermal/thermal_core.c
-> > +++ linux-pm/drivers/thermal/thermal_core.c
-> > @@ -1001,7 +1001,7 @@ __thermal_cooling_device_register(struct
-> >   
-> >   	ret = cdev->ops->get_cur_state(cdev, &current_state);
-> >   	if (ret)
-> > -		goto out_cdev_type;
-> > +		current_state = ULONG_MAX;
+On 6/6/2024 6:35 AM, Kalle Valo wrote:
+> Bartosz Golaszewski <brgl@bgdev.pl> writes:
 > 
-> Why not move the section ? So we end up below.
-
-Because it's fewer changes in this patch and it doesn't matter.
-
-> >   
-> >   	thermal_cooling_device_setup_sysfs(cdev);
-> >   
-> > @@ -1016,7 +1016,8 @@ __thermal_cooling_device_register(struct
-> >   		return ERR_PTR(ret);
-> >   	}
-> >   
-> > -	thermal_debug_cdev_add(cdev, current_state);
-> > +	if (current_state <= cdev->max_state)
-> > +		thermal_debug_cdev_add(cdev, current_state);
+>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>
+>> Here are the two dt-binding patches from the power-sequencing series
+>> targeting the wireless subsystem. To keep the cover-letter short, I
+>> won't repeat all the details, they can be found in the cover-letter for
+>> v8. Please consider picking them up into your tree, they were reviewed
+>> by Krzysztof earlier.
 > 
-> 	ret = cdev->ops->get_cur_state(cdev, &current_state);
-> 	if (!ret)
-> 		thermal_debug_cdev_add(cdev, current_state);
-
-So the current_state <= cdev->max_state is actually useful regardless and
-consistent with the analogous check in thermal_cooling_device_update().
-
-> Additionally a comment here to explain why get_cur_state can fail and 
-> telling it is up to the driver to fix its routine?
-
-I've added a comment in v3.
-
-> 
-> >   	/* Add 'this' new cdev to the global cdev list */
-> >   	mutex_lock(&thermal_list_lock);
-> > 
-> > 
-> > 
-> 
+> Is it ok for everyone that I'll take these to our ath.git tree?
 > 
 
-
-
+Kalle, if you take through your tree can you:
+s/quic_jjohnson@quicinc.com/jjohnson@kernel.org/
 
 
