@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-204981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E178FF5CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:22:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05EF18FF5CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BCA71C26780
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:22:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6695B1F23701
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F5376036;
-	Thu,  6 Jun 2024 20:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1CB76033;
+	Thu,  6 Jun 2024 20:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FPpNpuET"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BnS9aOos"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9ED1DFD1
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 20:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F115E7346D
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 20:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717705323; cv=none; b=KhRlkd593mnHQWcfXkntls98pet2x6lDcZ2qA4Nhw4GSSrOy6rSoq5npxWVTazafYmud/so31oTlhTd0hGpqQqqSjICOtuontXPUElvbjN8dDWDN4k+Y+8kt/MDDD9Gbw2R5oD58bOFkDJBoLea3hHqzIS1aAJjlHuypikSgyc8=
+	t=1717705367; cv=none; b=RZ3ISdNa9YR/XyQCgD31HnOekE0yE3r33XNwlg3g+C3LJY6yAQdIvWws43738o/TuI/SEFI/KQXQ9oEspLZMXn0NT2ulj/z4Km9qglojRHukUuzljVzzLS3JPON98vhQtl53NBQGzvqpkpJpR5NIpYcBCtechs5VBvdAXzn8lK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717705323; c=relaxed/simple;
-	bh=IeQiZi+uIaknNhW7RKTsnQtNTcGv+qZMLSeODc7m2DQ=;
+	s=arc-20240116; t=1717705367; c=relaxed/simple;
+	bh=JeBUDnMKVfpJr0TkZJcp1wl/7X4cDkMaDDX0xVYHZWE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tQ/nqryXNYXN7wSYxQtbh3jjUBHtMA8NYADbIyRXYayS8zkfdmOz1RTvFQLfCHknG9rGWR2rJreGBZo1V4fmTwBnI2fOg43Pt9plZBGNUayzTnk1y0hbDISggjITg+UJ/RUkc81R+RKSoLKkNv26dAp6XRRuF3WcdzAMqFbCgeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FPpNpuET; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=BDP7qQg4LW5rjRps/evD32yXUKzPffMd2oGUplDhJc/kC7K/VHj1Hweh3kh8H7XpSbp+b6xBfiqNPC09CDmviTPgExuyLHYGXiZxiFdI9RUlkEbfCRtL9H6cxSGLfuVNlKpXHae/NxVlsMyg8ePKP1STcIJ0YCMsXz2Z2tLVMr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BnS9aOos; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717705320;
+	s=mimecast20190719; t=1717705365;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1l57qOS6QDJXrwd8hP4TJWOIQI8tbRyEdMQkDoTT9Io=;
-	b=FPpNpuETAflIjm1idUB6Zj7f8M4UbW4awKzGbW3ezmq/IwwdZNbs6UDp4bF9VzykLzWzlF
-	K0+PPaGPvQS3fO0syLdva75wFO6Yr51Dn3arcUr8S/Em1f1Sm6VWHdiEkG+90BfIVg+auS
-	sXrcNL1n7SuZJOCREwQHSIKsRCVNeYY=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=UJYConuOmjxkpxSYYb3zweMZ2ZL8lD/f7tr+L1VdyrA=;
+	b=BnS9aOosdi9484w0BOzMU6oEqYcGnfklxC/iqaHwfYWgewdO+LUGBGS0VnlvM0F4FRfIKe
+	cHf5BO4kf55umjP8/jGRZKLvjF3Bz0SaCkhZEA3s8Vo3ZB4BdGktG+Wt7ad/jj/ZZNAf8L
+	8C3y9Roy+LMKNJin6gxLQtkJ6M76eeY=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-662-nA_LwDUBOy-yPbLdX0NFyQ-1; Thu, 06 Jun 2024 16:21:55 -0400
-X-MC-Unique: nA_LwDUBOy-yPbLdX0NFyQ-1
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52b88765386so1296413e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 13:21:55 -0700 (PDT)
+ us-mta-383-ORU42ZwWMUOvPv7FMWsfpQ-1; Thu, 06 Jun 2024 16:22:43 -0400
+X-MC-Unique: ORU42ZwWMUOvPv7FMWsfpQ-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-35e7cce4c32so946074f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 13:22:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717705314; x=1718310114;
+        d=1e100.net; s=20230601; t=1717705362; x=1718310162;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=1l57qOS6QDJXrwd8hP4TJWOIQI8tbRyEdMQkDoTT9Io=;
-        b=FDm/m2Vn3yTrHjYRDFTurqmobGET2jqiG5Wevv9RM4nFf5dtlOMcchn+aaLpda20Q3
-         M3U6SxY8BaMSxYNRB0W5vEtyGD6FEWUHpB/xb3mK2vk9FomaRGc6FQCxtj9sgf/KUKfW
-         bYkf7b52BxhkPfXSkzmdjTjEtntr7FU5stlTRTH2lEAsEjlokaw+xytHsJHdT/OtqCoA
-         Q6193kXGiAmv5lYCvEouvvON3weKdzNnPileFB56hvIh2cN+LGq3lysT6C7cqkQi2JwX
-         Tu2qQXnTJlb2bF3dg7xxH8jSPFl5y19fspvPNd3ntkElE9/0bp1ehtl5QSYcmNe28fY9
-         S4YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPICc1RSIJmxlhdKMusYFZAuCEwlVOBqYl5ArdzZSL08zYnrrxEin2VQfsYcBFAkMN4U1fkahTsSKMgD53I+DswghaSKHb6OIOR0fv
-X-Gm-Message-State: AOJu0YwI8mWLMbYBtsYe+lC93FWM6fpwM8CZ0jEAJEGBFxbqV7pIxKfn
-	Zzh/pksYXgixELbGF/N1uGEM4tNvEHqerVgjuqb5bV6XdZuaaE3uL6q5VUsegVFUTzw4WLfGOLB
-	EN5ZeSmiC1X1zoTKTbvGVTc5qkGJ3FcMCR/4PBHo0Cb/fEKilzLWalsIHM9ngKxoCSjX33Q==
-X-Received: by 2002:a19:8c5d:0:b0:52a:d87f:60d7 with SMTP id 2adb3069b0e04-52bb9fcc98emr427846e87.46.1717705314114;
-        Thu, 06 Jun 2024 13:21:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHFWLjXQOaf77v5Xw3xeqPeDl/4Gaz1r7tflgoHLN/F5UFlfqaQexN4a4/AM7p8Mq2vrnkRwQ==
-X-Received: by 2002:a19:8c5d:0:b0:52a:d87f:60d7 with SMTP id 2adb3069b0e04-52bb9fcc98emr427839e87.46.1717705313659;
-        Thu, 06 Jun 2024 13:21:53 -0700 (PDT)
+        bh=UJYConuOmjxkpxSYYb3zweMZ2ZL8lD/f7tr+L1VdyrA=;
+        b=EnRNnyc0eDz5YGeohGPAIqQv4812+nZllOTIv44t1LLtwDRLwflTda3UvSO9IDscEo
+         SV9Sbuf0kUaQ6VlmxEnV/N7bmbTX9XgPQK/0p7pU3HFLsyOKZRj3qA+bSxUOSL1ADrU/
+         Zk2wkM4FvqsEJ8hLu+416BWnDCED5lCwNw5ty4IKBCP+yXUvfPyV5wGBR+jsRgxa/oBY
+         6VLuj8SdsgtBEOLfOOZ4i3pyqj45VLBI9Plb/NTvnAWp838f5yrwXP+ffYccqA1EHG0r
+         z08cWXmmzawPeoc0yYuOa6qYwWsPUclaFI9ylu8xqnZJUZU2eSoqB43DSPZnhN1iF/W4
+         iJIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXhc7ts1VkrqBw2yk9Oztk+0kOyiD/M/DohnP1gT14HrVtYc4bfeOmMc6OK3SYZQuhb0jI/MSnazvql7B3TTL/Hjjw+xFECHCWgD75
+X-Gm-Message-State: AOJu0Yx1s7UVVMxOCnXFkrad9uOgbL/CCR2XEeyj3vluwdVfK3DTUk0/
+	p3YbRNnnAyxncm//yrkad4kmNE897RxGkFj/WVSY6oGfY7zSF/Z1/0aaoe9hjRqj5al+OvHkGrF
+	0L1fWO/RYRDjkF03aq8xQNBLS5EUcCzLasXHPiNpSEa/92JqA6qORSegi4d2FOg==
+X-Received: by 2002:a05:600c:3b9f:b0:41b:97c5:ccc7 with SMTP id 5b1f17b1804b1-421649eb530mr5963205e9.8.1717705362565;
+        Thu, 06 Jun 2024 13:22:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFeYyehxptnmcB69vL9Row5RFnohDXbcJmbkKt5kqshziMO7lhLav48rNll5703KmaiZ9WnzQ==
+X-Received: by 2002:a05:600c:3b9f:b0:41b:97c5:ccc7 with SMTP id 5b1f17b1804b1-421649eb530mr5963045e9.8.1717705362080;
+        Thu, 06 Jun 2024 13:22:42 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c710:8800:a73c:ec5b:c02c:5e0b? (p200300cbc7108800a73cec5bc02c5e0b.dip0.t-ipconnect.de. [2003:cb:c710:8800:a73c:ec5b:c02c:5e0b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c19d52dsm33484935e9.8.2024.06.06.13.21.52
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42161147811sm17904025e9.18.2024.06.06.13.22.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 13:21:53 -0700 (PDT)
-Message-ID: <b50bc8dd-bb1c-4859-83b9-ab90559452e9@redhat.com>
-Date: Thu, 6 Jun 2024 22:21:51 +0200
+        Thu, 06 Jun 2024 13:22:41 -0700 (PDT)
+Message-ID: <84d78362-e75c-40c8-b6c2-56d5d5292aa7@redhat.com>
+Date: Thu, 6 Jun 2024 22:22:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,17 +82,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/mm: use volatile keyword to not optimize mmap
- read variable
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: Shuah Khan <shuah@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- willy@infradead.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- gost.dev@samsung.com, mcgrof@kernel.org, linux-kselftest@vger.kernel.org,
- Zi Yan <zi.yan@sent.com>, Pankaj Raghav <p.raghav@samsung.com>
-References: <20240606135835.600022-1-kernel@pankajraghav.com>
- <5b4e7ef2-3ced-4d4a-989c-e99b06598d32@redhat.com>
- <f199d120-2347-4bc0-8940-155c3c465de9@redhat.com>
- <20240606201831.ywmawi7xl6jgj3p4@quentin>
+Subject: Re: [PATCH] mm: zswap: add VM_BUG_ON() if large folio swapin is
+ attempted
+To: Yosry Ahmed <yosryahmed@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
+ Chengming Zhou <chengming.zhou@linux.dev>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Barry Song <21cnbao@gmail.com>,
+ Chris Li <chrisl@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20240606184818.1566920-1-yosryahmed@google.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -140,78 +140,66 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20240606201831.ywmawi7xl6jgj3p4@quentin>
+In-Reply-To: <20240606184818.1566920-1-yosryahmed@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 06.06.24 22:18, Pankaj Raghav (Samsung) wrote:
-> On Thu, Jun 06, 2024 at 05:57:21PM +0200, David Hildenbrand wrote:
->> On 06.06.24 17:56, David Hildenbrand wrote:
->>> On 06.06.24 15:58, Pankaj Raghav (Samsung) wrote:
->>>> From: Pankaj Raghav <p.raghav@samsung.com>
->>>>
->>>> create_pagecache_thp_and_fd() in split_huge_page_test.c used the
->>>> variable dummy to perform mmap read.
->>>>
->>>> However, this test was skipped even on XFS which has large folio
->>>> support. The issue was compiler (gcc 13.2.0) was optimizing out the
->>>> dummy variable, therefore, not creating huge page in the page cache.
->>>>
->>>> Add volatile keyword to force compiler not to optimize out the loop
->>>> where we read from the mmaped addr.
->>>>
->>>> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
->>>> ---
->>>>     tools/testing/selftests/mm/split_huge_page_test.c | 2 +-
->>>>     1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
->>>> index d3c7f5fb3e7b..c573a58f80ab 100644
->>>> --- a/tools/testing/selftests/mm/split_huge_page_test.c
->>>> +++ b/tools/testing/selftests/mm/split_huge_page_test.c
->>>> @@ -300,7 +300,7 @@ int create_pagecache_thp_and_fd(const char *testfile, size_t fd_size, int *fd,
->>>>     		char **addr)
->>>>     {
->>>>     	size_t i;
->>>> -	int __attribute__((unused)) dummy = 0;
->>>> +	volatile int __attribute__((unused)) dummy = 0;
->>>>     	srand(time(NULL));
->>>>
->>>> base-commit: d97496ca23a2d4ee80b7302849404859d9058bcd
->>>
->>> The rick we do in some other tests is:
->>>
->>> char *tmp;
->>>
->>> tmp = *whatever;
->>> asm volatile("" : "+r" (tmp));
->>
->> char tmp; of course. See cow.c as an example.
-> Thanks David! I remember also seeing this when I grepped for volatile in
-> the selftests directory.
+On 06.06.24 20:48, Yosry Ahmed wrote:
+> With ongoing work to support large folio swapin, it is important to make
+> sure we do not pass large folios to zswap_load() without implementing
+> proper support.
 > 
-> Willy gave the idea of making it as a global variable [1]. But your
-> trick also works :)
+> For example, if a swapin fault observes that contiguous PTEs are
+> pointing to contiguous swap entries and tries to swap them in as a large
+> folio, swap_read_folio() will pass in a large folio to zswap_load(), but
+> zswap_load() will only effectively load the first page in the folio. If
+> the first page is not in zswap, the folio will be read from disk, even
+> though other pages may be in zswap.
 > 
-> diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
-> index d3c7f5fb3e7b..9c957703c1f7 100644
-> --- a/tools/testing/selftests/mm/split_huge_page_test.c
-> +++ b/tools/testing/selftests/mm/split_huge_page_test.c
-> @@ -341,6 +341,7 @@ int create_pagecache_thp_and_fd(const char *testfile, size_t fd_size, int *fd,
+> In both cases, this will lead to silent data corruption.
+> 
+> Proper large folio swapin support needs to go into zswap before zswap
+> can be enabled in a system that supports large folio swapin.
+> 
+> Looking at callers of swap_read_folio(), it seems like they are either
+> allocated from __read_swap_cache_async() or do_swap_page() in the
+> SWP_SYNCHRONOUS_IO path. Both of which allocate order-0 folios, so we
+> are fine for now.
+> 
+> Add a VM_BUG_ON() in zswap_load() to make sure that we detect changes in
+> the order of those allocations without proper handling of zswap.
+> 
+> Alternatively, swap_read_folio() (or its callers) can be updated to have
+> a fallback mechanism that splits large folios or reads subpages
+> separately. Similar logic may be needed anyway in case part of a large
+> folio is already in the swapcache and the rest of it is swapped out.
+> 
+> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+> ---
+> 
+> Sorry for the long CC list, I just found myself repeatedly looking at
+> new series that add swap support for mTHPs / large folios, making sure
+> they do not break with zswap or make incorrect assumptions. This debug
+> check should give us some peace of mind. Hopefully this patch will also
+> raise awareness among people who are working on this.
+> 
+> ---
+>   mm/zswap.c | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index b9b35ef86d9be..6007252429bb2 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -1577,6 +1577,9 @@ bool zswap_load(struct folio *folio)
+>   	if (!entry)
+>   		return false;
 >   
->          for (size_t i = 0; i < fd_size; i++)
->                  dummy += *(*addr + i);
-> +       asm volatile("" : "+r" (dummy));
->   
->          if (!check_huge_file(*addr, fd_size / pmd_pagesize, pmd_pagesize)) {
->                  ksft_print_msg("No large pagecache folio generated, please provide a filesystem supporting large folio\n");
-> 
-> I am fine with either solutions. But using the trick asm volatile is more
-> cleaner than making it a global variable IMO and makes it more uniform
-> across the other mm tests.
+> +	/* Zswap loads do not handle large folio swapins correctly yet */
+> +	VM_BUG_ON(folio_test_large(folio));
+> +
 
-You can then even the "__attribute__((unused))", because the compile 
-must assume that it is used inside the asm statement.
+There is no way we could have a WARN_ON_ONCE() and recover, right?
 
 -- 
 Cheers,
