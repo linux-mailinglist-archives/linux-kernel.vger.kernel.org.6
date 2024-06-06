@@ -1,130 +1,146 @@
-Return-Path: <linux-kernel+bounces-203859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D59858FE159
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:44:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE9F8FE15D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7743728CEF4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:44:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F80C1C20B1B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBD113C8E0;
-	Thu,  6 Jun 2024 08:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GCBrD5a8"
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1332B13D242;
+	Thu,  6 Jun 2024 08:45:01 +0000 (UTC)
+Received: from mx2.zhaoxin.com (mx2.zhaoxin.com [203.110.167.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25633C28;
-	Thu,  6 Jun 2024 08:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF48713AD06
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.110.167.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717663443; cv=none; b=NhhT+xXzveU5p/Iw3aRkP2eCLcJ23AbpeH1QIk3jZLvvw3p5sfZzxFK+M6vzgmHXMiTZ7cj0Rv5nyBPAlliwtuZJDjUMi4FvK+58Xx1veS2QG4Kb62Nks0tJEvB87bIEfRwT0F28xXVf5CY+l8A/yn2bH6IL0xA0UWjkQBGSF50=
+	t=1717663500; cv=none; b=NGfDVD9qLwZmo0HaFJXy3qzgTlkuH+W0i4sygX80s/bb4lT/3dqiJFf6Wcz/vR/2nLwd6gOVjcewERvKUm7HEL3/m6Is9vy3qiwDcaKX8UA6cibgn6ahdCixdKqkXZyr49W79hZSJbkVPxjuGRD8e7dpvFe2lxop9PLn/MKPjnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717663443; c=relaxed/simple;
-	bh=9Wjn0rKQIsqEkygiKupj4QiFc9X5IGn0hTrtv+A3hjs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cSE3ii6or9gDiGtzkV6LJY7Ok5FWh6UzJN5ovXg+Kw1gH9WOSnvpjusJXOARxzi7lesRUYz3Izh/4YttaLremRMqEiRcLLoorFHjDzhvOlZM315xvf3eoB/kNycS5ZbapPORaUW0SuyqyVOkj+QWGqlN4Cvr3GJ7vgPPKIonwuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GCBrD5a8; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-4eb12b7702cso203149e0c.3;
-        Thu, 06 Jun 2024 01:44:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717663440; x=1718268240; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9Wjn0rKQIsqEkygiKupj4QiFc9X5IGn0hTrtv+A3hjs=;
-        b=GCBrD5a8v2KgW8F2/0Gtle9LIh+OH+E8Rhctm0t8kkDwY8IsPSg7viLA0P5QObFU0R
-         gng5wpgCLcI5D1R3Zolwd1fmRh/vJpLM83Krh1q9f+wuPy1tsBpPj+yFDK6Q0CffJsf3
-         tV+F3Sex6ZLIr9QRWmIqmsdErg0rvafqzpjcZP3E/MgzD9wN92tBnrsBlq28UjCRYvBk
-         RukJzOENvdYj8mvHfJCyEDuBFhzXvx3D18ffmQaJUwVyNnl5OZNcbTS7mdvAeh3rjJR+
-         iH+GoRdW0PjLy/+PCAjXEFooL0iqGPQ1LgUpgGLZs0J2v9PsjdoTE4PIXswZFY8gwCvc
-         shnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717663440; x=1718268240;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9Wjn0rKQIsqEkygiKupj4QiFc9X5IGn0hTrtv+A3hjs=;
-        b=Xfb+YVRQqYHxuFlHOEHBsxqPIrDJk2PQDP8CwrK5RybkeZcFLsr7W1YfvD1fV37mw1
-         yBuc6fN1iH/9XZm09bRS3hWCIlN1lkePonLgXBnsZZU/RkD5x8uZldCNXEh2Ah9gRNJo
-         cygGmdDrYSr17LE2tR4vmJjMZLM1PTmUt6yXTpk2IahshgthRhpeTmu24GVIfrsa726a
-         ot6swggQ8a8OrcApTpIdeiP4sOu4mzgEUvBNEHr1ZEnv4sBd8Y1ILXeth1d4oMhkEuuZ
-         BUAq+T+/XBh4m+oZ30KL0s/8NqXubKtnrIh/8+WTCIHzd2E4MMi/q9w35ThG8CjlceMx
-         MG9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWbx0bu23/vj2MRch9vaRGxR7n3IW5QrzkRpJ1EG6+b3/dS9nUv1KqdgvMsd0AuBq7BVGYV+JRwiI0squT4eg9Qpy/iSjFaozjl+HPw8cm2nvDjvDKU6WbZTeZZvk68I3hYSrcpQEkP7dpB0IwDU1ZvXvU1kZvdiowVcS3z2tqkGTWFpgAiy1+JjNGwniZ3M6OTVth4jrDYkhX41rOyuKbkhB5UCAcB7w==
-X-Gm-Message-State: AOJu0YweEPDo6nQ0BWisFx1qhGHm1S0nHyz1Ucg/2ZsmXGwmwRK26djU
-	95P2hc5R4N7scBS9UoiW/+ejtCmSQz3Yl1qLGrgbw6TMbMUtw1B0GRi8nnAYrg2n6rwrkhq4YlU
-	jAKi9PC7ilHodEDbxxkyFghWOV5o=
-X-Google-Smtp-Source: AGHT+IHU0aLExsKVLD858HqQEhLFIENgyEE8ujTbs/GcflFqQ3FAyiSnMUqPgKP9mID96GkxwS/CDjfZXQqq4w3tsFE=
-X-Received: by 2002:a05:6122:31a4:b0:4dc:b486:e4a5 with SMTP id
- 71dfb90a1353d-4eb3a27fe04mr6435825e0c.0.1717663439051; Thu, 06 Jun 2024
- 01:43:59 -0700 (PDT)
+	s=arc-20240116; t=1717663500; c=relaxed/simple;
+	bh=cXuF/BWQZ89YFbsWT4c4SuCikNyWWk9/fkG6XTn4U90=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LVx9vDMq23fNyvvUYb96vt0cRBA9nf/jJjQtSRvF6WMjvAMTDT0+W6eiyyLDqoY/6JiTThKO+4liLqJ2h564gNtoD6/+WWKeMSpvYqvWnjaTxPaVuqv2BZBnX/90qH6xTgSgLaT7sEIBKebGVv0iuFv3jrIBVpbgLpix/Hg3blc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=203.110.167.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
+X-ASG-Debug-ID: 1717663487-1eb14e15751a540001-xx1T2L
+Received: from ZXSHMBX1.zhaoxin.com (ZXSHMBX1.zhaoxin.com [10.28.252.163]) by mx2.zhaoxin.com with ESMTP id ZMf1DOmNJyk7ZEa1 (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Thu, 06 Jun 2024 16:44:47 +0800 (CST)
+X-Barracuda-Envelope-From: TonyWWang-oc@zhaoxin.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
+Received: from ZXBJMBX03.zhaoxin.com (10.29.252.7) by ZXSHMBX1.zhaoxin.com
+ (10.28.252.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.27; Thu, 6 Jun
+ 2024 16:44:46 +0800
+Received: from [10.32.65.162] (10.32.65.162) by ZXBJMBX03.zhaoxin.com
+ (10.29.252.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.27; Thu, 6 Jun
+ 2024 16:44:44 +0800
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
+Message-ID: <d4079e9f-07cf-4893-9fc5-5d319b592aa5@zhaoxin.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.32.65.162
+Date: Thu, 6 Jun 2024 16:44:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530173857.164073-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240530173857.164073-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240604153612.GA839371-robh@kernel.org> <CA+V-a8tWxGBkuOY=G3RaB_0NXS3ShE-nL+5t49=_mJGvo6j6yQ@mail.gmail.com>
- <CAMuHMdWvdvmt42Wy=5Do2MeCRNbLOd2c8Nra2RFQtumnmZod_g@mail.gmail.com>
- <CA+V-a8sbjD=KghOmw6OEWXxbbPkmW-ycwuxFxh43GL3nKhLWxQ@mail.gmail.com> <CAMuHMdWE3ZsNZ_WgwhmOEEqCMNUdoskVf6C=QJgThsK0kJK8Jw@mail.gmail.com>
-In-Reply-To: <CAMuHMdWE3ZsNZ_WgwhmOEEqCMNUdoskVf6C=QJgThsK0kJK8Jw@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 6 Jun 2024 09:43:33 +0100
-Message-ID: <CA+V-a8uLjUTadK17rpwG8iW9Vh=WQ4WdccuccMkQnGue9Yqbiw@mail.gmail.com>
-Subject: Re: [PATCH v3 01/15] dt-bindings: pinctrl: renesas: Document
- RZ/V2H(P) SoC
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Rob Herring <robh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Paul Barker <paul.barker.ct@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/hpet: Read HPET directly if panic in progress
+To: "Luck, Tony" <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>
+X-ASG-Orig-Subj: Re: [PATCH] x86/hpet: Read HPET directly if panic in progress
+CC: Thomas Gleixner <tglx@linutronix.de>, Linus Torvalds
+	<torvalds@linux-foundation.org>, "Hansen, Dave" <dave.hansen@intel.com>,
+	"mingo@redhat.com" <mingo@redhat.com>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>,
+	"hpa@zytor.com" <hpa@zytor.com>, "keescook@chromium.org"
+	<keescook@chromium.org>, "gpiccoli@igalia.com" <gpiccoli@igalia.com>,
+	"mat.jonczyk@o2.pl" <mat.jonczyk@o2.pl>, "rdunlap@infradead.org"
+	<rdunlap@infradead.org>, "alexandre.belloni@bootlin.com"
+	<alexandre.belloni@bootlin.com>, "mario.limonciello@amd.com"
+	<mario.limonciello@amd.com>, "yaolu@kylinos.cn" <yaolu@kylinos.cn>,
+	"bhelgaas@google.com" <bhelgaas@google.com>, "justinstitt@google.com"
+	<justinstitt@google.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-hardening@vger.kernel.org"
+	<linux-hardening@vger.kernel.org>, "CobeChen@zhaoxin.com"
+	<CobeChen@zhaoxin.com>, "TimGuo@zhaoxin.com" <TimGuo@zhaoxin.com>,
+	"LeoLiu-oc@zhaoxin.com" <LeoLiu-oc@zhaoxin.com>
+References: <20240528063836.5248-1-TonyWWang-oc@zhaoxin.com>
+ <50fc1bd3-909e-41c4-a991-9d81e32ef92c@intel.com> <87wmnda8mc.ffs@tglx>
+ <CAHk-=wgMoeOTL1V3wTO=o=U1OXn7xF8OWv2hB9NF9Z=G4KotfQ@mail.gmail.com>
+ <87le3t9i8c.ffs@tglx> <0aff3f62-a8a5-4358-ae3f-2ded339aface@zhaoxin.com>
+ <20240605093609.GCZmAxidNIBP5bkDcX@fat_crate.local>
+ <e4f307dd-3264-45f6-82eb-0102f7fb99d7@zhaoxin.com>
+ <20240605113323.GFZmBNA7ec2s191_2w@fat_crate.local>
+ <46741fad-425c-4ed2-97be-3f2679da63eb@zhaoxin.com>
+ <SJ1PR11MB60833ACD1E6C946F72C58736FCF92@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+In-Reply-To: <SJ1PR11MB60833ACD1E6C946F72C58736FCF92@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ZXSHCAS2.zhaoxin.com (10.28.252.162) To
+ ZXBJMBX03.zhaoxin.com (10.29.252.7)
+X-Barracuda-Connect: ZXSHMBX1.zhaoxin.com[10.28.252.163]
+X-Barracuda-Start-Time: 1717663487
+X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
+X-Barracuda-URL: https://10.28.252.36:4443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at zhaoxin.com
+X-Barracuda-Scan-Msg-Size: 1311
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
+X-Barracuda-Spam-Score: -2.02
+X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.125870
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
 
-Hi Geert,
 
-On Thu, Jun 6, 2024 at 9:41=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68k=
-.org> wrote:
->
-> Hi Prabhakar,
->
-> On Thu, Jun 6, 2024 at 10:38=E2=80=AFAM Lad, Prabhakar
-> <prabhakar.csengg@gmail.com> wrote:
-> > On Thu, Jun 6, 2024 at 8:13=E2=80=AFAM Geert Uytterhoeven <geert@linux-=
-m68k.org> wrote:
-> > > On Wed, Jun 5, 2024 at 11:39=E2=80=AFAM Lad, Prabhakar
-> > > <prabhakar.csengg@gmail.com> wrote:
-> > > > OK, I will fix the above and send a v6 series.
-> > >
-> > > Please don't drag it out that long ;-)
-> > Oops, that was a typo.
-> >
-> > > As the rest of the series looks fine, a v4 should be sufficient.
-> > > Actually a v4 of just the first patch would be fine for me, too.
-> > >
-> > As agreed patch 02/15 needs dropping, with that patch 07/14 ("pinctrl:
-> > renesas: pinctrl-rzg2l: Add function pointer for locking/unlocking the
-> > PFC register") does not apply cleanly anymore. Maybe I'll just send v4
-> > for the entire patches?
->
-> Fine for me, and up to you.
-> I can easily drop 02/15, and do a s/BOWI/B0WI/g before applying.
->
-Thanks, in that case I'll send a v4 for patch #1 only.
 
-Cheers,
-Prabhakar
+On 2024/6/5 23:51, Luck, Tony wrote:
+> 
+> 
+> [这封邮件来自外部发件人 谨防风险]
+> 
+>>> Which types exactly do you mean when you're looking at the severities[]
+>>> array in severity.c?
+>>>
+>>> And what scenario are you talking about?
+>>>
+>>> To get an #MC exception and detect only UCNA/SRAO errors? Can that even
+>>> happen on any hardware?
+>>>
+>>
+>> Yes, I mean an #MC exception happened and detect only like SRAO errors
+>> like below:
+>>
+>>           MCESEV(
+>>                   AO, "Action optional: memory scrubbing error",
+>>                   SER, MASK(MCI_UC_AR|MCACOD_SCRUBMSK,
+>> MCI_STATUS_UC|MCACOD_SCRUB)
+>>                   ),
+>>           MCESEV(
+>>                   AO, "Action optional: last level cache writeback error",
+>>                   SER, MASK(MCI_UC_AR|MCACOD, MCI_STATUS_UC|MCACOD_L3WB)
+>>                   ),
+>>
+>> I think these errors are actually encountered on some platforms that
+>> support these type of errors report to the #MC.
+> 
+> Intel servers from Nehalem through Cascade Lake reported memory controller
+> patrol scrub uncorrected error with #MC and SRAO signature.
+> 
+> Icelake and newer use CMCI with a UCNA signature.
+> 
+
+I have a question, does Intel use #MC to report UCNA errors?
+
+Sincerely
+TonyWWang-oc
 
