@@ -1,88 +1,97 @@
-Return-Path: <linux-kernel+bounces-204339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F8C8FE769
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:17:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D50BA8FE79A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 883481F26CFA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:17:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71C3A28748F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18C4195993;
-	Thu,  6 Jun 2024 13:17:04 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0369D195FDA;
+	Thu,  6 Jun 2024 13:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTbQkU0J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE30645
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 13:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7FB1607B2;
+	Thu,  6 Jun 2024 13:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717679824; cv=none; b=nbCp3een7RVm0E/sImRY+Xveh9WVLXBLAQ8vORKf5Y/Zs7dBW9CElVLypDjm/VfObR4XEZ8D172kJeSKDQEDwokxKVOF8HGgnFHnKUOXK14wpYbXLAj0DCcYh7yWogKdBmLQ8oQ35X48IK6bbVOnpRs8pSIYF4sZqrQdoH7PhRk=
+	t=1717680029; cv=none; b=EMcmSIPoFhHKp7NygC9axyP+kzW04RdNdAYkzU+dWxDUfM43BOCrh2xA2Q8Y7Kf/WW86SbmW/lSUrsyGQZcZPhf88YK/hI20Wn4TJRe4cCrGGjqrHYDN7QtHafblkdI1ZXQ64T19UeCwI25HiFp29JdxmmsHVxkGWpPJg+aCTMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717679824; c=relaxed/simple;
-	bh=NSR54bD7P5KNnPSlPs4dhmlt/V2i7pKFpYXVlC9JkWE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=eeSUxkLpctP0QCfpmAmv2c6itc357aGqLocAH0X3vjfHmP5t80VXAqWy21Tn9Mi8ZjlbpZCaAwLUk53HXD65bU2LeMgrXmRoZjVB66gubuAtBolsdSLV/r0aS3ZinWJsIDFeK24GRTArtDCdrlx743lBTomjX8uaWKROCzTe0Cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3747f1b958bso9616375ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 06:17:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717679822; x=1718284622;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=beKx2y9tr4j0XFeY8QaqlP3ofACHCvbC4fKCms+Ea/w=;
-        b=Tgkt3EaFRBwf4Lc0bbCf8JrBgs69KeojN0J6pSePaav9Oahfn8X0As0BJUsNMEkZJk
-         ZaccOlkeUFrcSFTUgw7i1FREkceZEan0C4bNsdSV+NfnDLV2oX+e9n09jMDI7O4dPJHG
-         4ZI/VvSisuOs5If3YbmrXjaI/a4aV8TQXAYzMFfHnTalmQc8/Sc9Tbksus5hF/m9iVvr
-         ozPT8yWsPDqhVQ43HLsmNVDjYYpA+jl3dnE8OQSqRLvENK0hFpHLepDFHtYOUa97uCFS
-         yKODAgFbhY1uJ+d+aqCX76JkXp8dKloDM8s9ZIgOPiQXncqpuf5moyQgkYpdnSD19IOm
-         i/WA==
-X-Gm-Message-State: AOJu0YzYUVK1k5c+g/grd1uvKDuFUSPID3kgHTaBXo8tUduH605qVLCw
-	IDmwx1CUKZrkcTbo4qPQOPUX2t8z8ERh1O2gN1uEBLeAZ8iymU7vvlb8t+gbCc2uVGmk3Npo9D4
-	Q1bxSZtJYhyHrFd20apVxslXP1cI8N6wLGgqmEo0/3QfxMWiMp+cLm6A=
-X-Google-Smtp-Source: AGHT+IG8BjAG7qxkCE/A1O3XYjuFzwSAADE2SK4KNxSXhdnC7/mplwOvcBgCMR1G7QqbA/MYYc+cQxcNK/FilULG7Vo7IEzwJM2h
+	s=arc-20240116; t=1717680029; c=relaxed/simple;
+	bh=5iz8CAc0Z176SxxNcjKNqcapz4skKcl/itNcGZhmJyw=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=mK/5HI3uWoUI7gAJXaPAWsWNl7Oft3ZqWuperqYoY+sjVqTefRpF+S8SradXKYL5fkk2KwIn6pfCjE0N/JH+gbRtRXHK//M/0H1SsSqZd/WCdbq7NoiIuR6OgOFJL02KxOtODRMjda1zqE5zA4EG4qas9BKrE2+ewUW/j0GaLBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZTbQkU0J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B163BC32786;
+	Thu,  6 Jun 2024 13:20:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717680028;
+	bh=5iz8CAc0Z176SxxNcjKNqcapz4skKcl/itNcGZhmJyw=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ZTbQkU0JLdPBo0etm50uh6QTFTugMAATXS4YtUgJotLrvfLRoGN0pkPqn0SQ3TTbg
+	 ye2vaHvHp/ZvAK6rjZ5olAK3z48prPoJr5GpcZquF5xec7JQJasmMK64GucQsv9+Kv
+	 GsNcmz6qdCu6BrK9Ym2ddXS2sRc8tVZh11pMocFaph2CDNjjMatckYGYs3xsJ22Xuk
+	 m5NApJ7zNHp+Uw34uShaDE/DwFiZ3znzy4BnNq1IdrDC1czKFGCx0rOobqMDV4NnpP
+	 3KmI0CA0JzvZXyFmoFwll6NQ2doYKhdKlBHxxGb6ER8doT3PGJ7yNsJMLMYHgzGl0g
+	 XfnpEjZ2JXy/Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 94650D20380;
+	Thu,  6 Jun 2024 13:20:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b27:b0:374:968e:7ee3 with SMTP id
- e9e14a558f8ab-374b1f59084mr3446575ab.3.1717679822243; Thu, 06 Jun 2024
- 06:17:02 -0700 (PDT)
-Date: Thu, 06 Jun 2024 06:17:02 -0700
-In-Reply-To: <PN2PR01MB489146FC0041ED737236BE64FCFA2@PN2PR01MB4891.INDPRD01.PROD.OUTLOOK.COM>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a49ef5061a387fd3@google.com>
-Subject: Re: [syzbot] [bpf?] possible deadlock in trie_delete_elem
-From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	wojciech.gladysz@infogain.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next 0/3] mptcp: misc. cleanups
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171768002860.7454.11835229356797799300.git-patchwork-notify@kernel.org>
+Date: Thu, 06 Jun 2024 13:20:28 +0000
+References: <20240605-upstream-net-next-20240604-misc-cleanup-v1-0-ae2e35c3ecc5@kernel.org>
+In-Reply-To: <20240605-upstream-net-next-20240604-misc-cleanup-v1-0-ae2e35c3ecc5@kernel.org>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, martineau@kernel.org, geliang@kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, tanggeliang@kylinos.cn,
+ dcaratti@redhat.com
 
-Hello,
+Hello:
 
-syzbot tried to test the proposed patch but the build/boot failed:
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-failed to apply patch:
-checking file kernel/trace/bpf_trace.c
-patch: **** malformed patch at line 7: diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+On Wed, 05 Jun 2024 09:15:39 +0200 you wrote:
+> Here is a small collection of miscellaneous cleanups:
+> 
+> - Patch 1 uses an MPTCP helper, instead of a TCP one, to do the same
+>   thing.
+> 
+> - Patch 2 adds a similar MPTCP helper, instead of using a TCP one
+>   directly.
+> 
+> [...]
 
+Here is the summary with links:
+  - [net-next,1/3] mptcp: use mptcp_win_from_space helper
+    https://git.kernel.org/netdev/net-next/c/5f0d0649c83f
+  - [net-next,2/3] mptcp: add mptcp_space_from_win helper
+    https://git.kernel.org/netdev/net-next/c/5cdedad62eab
+  - [net-next,3/3] mptcp: refer to 'MPTCP' socket in comments
+    https://git.kernel.org/netdev/net-next/c/92f74c1e05b0
 
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-
-Tested on:
-
-commit:         e377d803 kernel/trace: fix possible deadlock in trie_d..
-git tree:       https://linux.googlesource.com/linux/kernel/git/torvalds/linux
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9d7ea7de0cb32587
-dashboard link: https://syzkaller.appspot.com/bug?extid=9d95beb2a3c260622518
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14224362980000
 
 
