@@ -1,155 +1,147 @@
-Return-Path: <linux-kernel+bounces-203450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24DA58FDB6C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 02:25:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B7528FDB71
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 02:26:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8FC92869FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 00:25:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 458971C21E35
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 00:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90736748F;
-	Thu,  6 Jun 2024 00:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2CC79F6;
+	Thu,  6 Jun 2024 00:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="reB9rPFk"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LN2eheQr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459ADDDBE
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 00:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864236FD0;
+	Thu,  6 Jun 2024 00:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717633536; cv=none; b=fKyEBkuhbILgT2NPizd56bQOVTsWGbxlsPdRQ//+T2b9Cc1uwZExP9i2RVeNigCkosZTDLZS+wuh5lKaIznTMh4zbQoSiz16ab/F4KVjI+pB5YvJJYruVQsa22TTxcmc3ea5nJjxxK7bQaeQVcvaOmh6oTsePIKbt0BN12q84hI=
+	t=1717633609; cv=none; b=bzivyi1sJz3ZTGG5fDYIF8rb+fcafy/K4X2L0VGYqUBYEl9vX7BuGeiy+Oyw5VzA1beQkExWFMqYcOzFIXu7FfsA/YEAo79bJDAC5tjIEEtPns7v8DJ3//LEKcLCu2gIxsTWdCqUQ3KYWsdVGzSOo3l5etB2xUJXDGvwdycpPSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717633536; c=relaxed/simple;
-	bh=dYRha53t4NxTSTFvRcE2NzVlp85LN/L+1WqHltJNom8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M7zL3aB8xZZOQMO6XdnncEpxuG6UalIs4vX/+Sj5Ubct11ExfoGiU74vI1IeyJMyW0qyiZWVRTaOHF8AYvo9KDiAoU6akKvzz/vz4gr6dCW/owshF7N9q7dslVxa02JYYhqmGvAE3013RHD4+ZjgA7J8RO0JMbFy2o0E1RYdotc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=reB9rPFk; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7951da82ea7so21251285a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 17:25:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1717633534; x=1718238334; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G1s4PX2KCyvcBADkbBYVK0pP1bkY3AHPso5o+d0yEf4=;
-        b=reB9rPFkpz+CEYX3u/AXIbOZTiof1xGTIKyiGObTMwaMgQJwaYEVQ4CeqJaHzw8LPl
-         65ec/Vu5pKlHqH2Vvmfy/jGpYTLf5hOv0qMGJ0fQIxV8MX6uYkeq+mpbVv14n2b114Vx
-         aN8kUATgpB00TJ0+bWxPuHYAje4UWxnKSE9s/+nvVNukG1u08T/H14AQBIoKENGVcWra
-         imYLPgalY0APPzOMyj7XE8M34vxAiq/lH5jlHQW36y39KKmsASElvqVrK+3mO9MyNEHG
-         7Extk8ADTILMcM5aGnRIKhQEtKxKViUJxDIe1CODHfBpwjkitjG/tUfOalNDnfdhoftA
-         xMJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717633534; x=1718238334;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G1s4PX2KCyvcBADkbBYVK0pP1bkY3AHPso5o+d0yEf4=;
-        b=fvONfrhXKzIqjGwMSVbtO3kfVFlISPF8RLITRS5kSrzzoyLY5Eb+WzwLNv8xuCfJN4
-         OT1gCs/TsiAny/JDjxIxRfnKSrKrwZc5Ef27Uwfr2LjIAakOoQkkYq7Z3tkEeyPrVXe0
-         D5wIlDaydFVm/TOJDjbh5ALzAZd2tW2KXFsksRxVxMKQQ62jGHx++u1p84S+TcTbxUb1
-         wEffo+b8haLlSgksHLGSowlVQabyWNqaMsVzRgWLaV5PKAUPq3QcRbF0pyOtO4UFAFG4
-         HebarhNqAFqYeNbEyqgb8M4PqV9UQJlBYaHErbzyU994m0f7GfjpG/AiToG/qQNZZFCJ
-         mpoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhCrqP5Ax+iT06yX3fsuEqi20wqHPVF2rR6lapaqIJdNpQMTmuHzGZw3eb245Ev1YFCb3P3qJyKwOwy3fU3ZS82kgooLAsYvo7d32d
-X-Gm-Message-State: AOJu0YznmIkTXJyUxC2XrGnEk5Ipl78tY9OXTvz3jfjtAIEzFR431PLO
-	bry+JnotzP8uZMs24+y/Ro5pH7CpwTIlLWobv0b8Ys4RLQozFRGZNUsy0tmcQIIZwiRAdP+2LjR
-	AGbH4Mw3w1JUm6z9TA6ECcGSg124v0H5HijfwZg==
-X-Google-Smtp-Source: AGHT+IEv5O+VTVcNzKe+sdpf8DdQPjO4FPLYUjb0gFxY2yKveF0NVL6NkUVNTkQHOMsQhotZMBaeOCsjA535Rk9etHw=
-X-Received: by 2002:a05:620a:4d3:b0:792:91e0:e236 with SMTP id
- af79cd13be357-79523d6df6fmr425892385a.30.1717633534136; Wed, 05 Jun 2024
- 17:25:34 -0700 (PDT)
+	s=arc-20240116; t=1717633609; c=relaxed/simple;
+	bh=MM2QMsLe0ZgjuDnS73yE9zszh8M3oKt5xpWPRXHXlmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OQnqfrTnqMD3D30bHG+bC+5R8tsaCuSc7QNRPRirOnhgLVAbRfFjENhHGid0O+VZanqMn25ExqNAHIEET0i3QOsJuFD22UlPZhCiTpqu9u0OMfs5l/+mGbSMz4+pSnUBDBi6Ypypsvr0e8gQBtHE57kKdBB59GSc2gtFLfYyISw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LN2eheQr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B69C8C2BD11;
+	Thu,  6 Jun 2024 00:26:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717633609;
+	bh=MM2QMsLe0ZgjuDnS73yE9zszh8M3oKt5xpWPRXHXlmA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LN2eheQrWpwtH/IqSC6KHJvOdTTmeEc3ZOyb68UIJETLdERLNTpkxSfytI/fI+gfY
+	 PAyNBZ6frbn/j0Dy1Bxmrxyp8JKWZof9Vw5Y9+KdY7LMxBgFA6ijG2LvAiZ1DlI9cE
+	 g42vtbuwRqYVhh2fXww+1nMBCYb3TFI28HDPqawaH/dMtLr9yotqPZvADWOrwFblcb
+	 pDO/M97IvRnBEFNQDfsEz1t9dH93Vnx56oCNyM0VXnKfMTGnK86fKLYhYjcJQ5IKfK
+	 4dXwo1628JeOHqAn4OvWThps3oxN+56OAImLj/0dVRPPJA3jl8WzLpp+GwW2VnjpT3
+	 5VmLiIKMzuUKQ==
+Date: Wed, 5 Jun 2024 18:26:46 -0600
+From: Rob Herring <robh@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [RFC PATCH 3/4] dt-bindings: mmc: renesas,sdhi: Document
+ RZ/V2H(P) support
+Message-ID: <20240606002646.GA3509352-robh@kernel.org>
+References: <20240605074936.578687-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240605074936.578687-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605212146.994486-1-peterx@redhat.com> <CA+CK2bCCeamiaoTFybTd5nW39ixVPDM2gV2rMmK+2PfFAyE+9w@mail.gmail.com>
- <666100d39dee4_2d412294b3@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-In-Reply-To: <666100d39dee4_2d412294b3@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Wed, 5 Jun 2024 20:24:55 -0400
-Message-ID: <CA+CK2bD2=Nd+wDtvphS-x+2xQWnMKwy-V4jVD2drV=xxKhqUnA@mail.gmail.com>
-Subject: Re: [PATCH] mm/page_table_check: Fix crash on ZONE_DEVICE
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605074936.578687-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Wed, Jun 5, 2024 at 8:20=E2=80=AFPM Dan Williams <dan.j.williams@intel.c=
-om> wrote:
->
-> Pasha Tatashin wrote:
-> > On Wed, Jun 5, 2024 at 5:21=E2=80=AFPM Peter Xu <peterx@redhat.com> wro=
-te:
-> > >
-> > > Not all pages may apply to pgtable check.  One example is ZONE_DEVICE
-> > > pages: they map PFNs directly, and they don't allocate page_ext at al=
-l even
-> > > if there's struct page around.  One may reference devm_memremap_pages=
-().
-> > >
-> > > When both ZONE_DEVICE and page-table-check enabled, then try to map s=
-ome
-> > > dax memories, one can trigger kernel bug constantly now when the kern=
-el was
-> > > trying to inject some pfn maps on the dax device:
-> > >
-> > >  kernel BUG at mm/page_table_check.c:55!
-> > >
-> > > While it's pretty legal to use set_pxx_at() for ZONE_DEVICE pages for=
- page
-> > > fault resolutions, skip all the checks if page_ext doesn't even exist=
- in
-> > > pgtable checker, which applies to ZONE_DEVICE but maybe more.
-> >
-> > Thank you for reporting this bug. A few comments below:
-> >
-> > >
-> > > Cc: Dan Williams <dan.j.williams@intel.com>
-> > > Cc: Pasha Tatashin <pasha.tatashin@soleen.com>
-> > > Signed-off-by: Peter Xu <peterx@redhat.com>
-> > > ---
-> > >  mm/page_table_check.c | 11 ++++++++++-
-> > >  1 file changed, 10 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/mm/page_table_check.c b/mm/page_table_check.c
-> > > index 4169576bed72..509c6ef8de40 100644
-> > > --- a/mm/page_table_check.c
-> > > +++ b/mm/page_table_check.c
-> > > @@ -73,6 +73,9 @@ static void page_table_check_clear(unsigned long pf=
-n, unsigned long pgcnt)
-> > >         page =3D pfn_to_page(pfn);
-> > >         page_ext =3D page_ext_get(page);
-> > >
-> > > +       if (!page_ext)
-> > > +               return;
-> >
-> > I would replace the above with the following, here and in other places:
-> >
-> > if (!page_ext) {
-> >   WARN_ONCE(!is_zone_device_page(page),
-> >                           "page_ext is missing for a non-device page\n"=
-);
-> >   return;
-> > }
->
-> Hmm, but this function is silent for the !pfn_valid(@pfn) case, and the
-> old cold has BUG_ON(!page_ext). So we know the caller is not being
-> careful about @pfn, and existing code is likely avoiding the BUG_ON().
->
-> The justification for the WARN_ONCE(), or maybe VM_WARN_ONCE(), would
-> be if there is a high likelihood that ongoing kernel changes introduce
-> more pfn_valid() but not page_ext covered pages? Is that a realistic
-> scenario?
+On Wed, Jun 05, 2024 at 08:49:35AM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> The SD/MMC block on the RZ/V2H(P) ("R9A09G057") SoC is similar to that
+> of the R-Car Gen3, but it has some differences:
+> - HS400 is not supported.
+> - It supports the SD_IOVS bit to control the IO voltage level.
+> - It supports fixed address mode.
+> 
+> To accommodate these differences, a SoC-specific 'renesas,sdhi-r9a09g057'
+> compatible string is added.
+> 
+> A "vqmmc-r9a09g057-regulator" regulator object is added to handle the
+> voltage level switch of the SD/MMC pins.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  .../devicetree/bindings/mmc/renesas,sdhi.yaml | 20 ++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> index 3d0e61e59856..154f5767cf03 100644
+> --- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> @@ -18,6 +18,7 @@ properties:
+>            - renesas,sdhi-r7s9210 # SH-Mobile AG5
+>            - renesas,sdhi-r8a73a4 # R-Mobile APE6
+>            - renesas,sdhi-r8a7740 # R-Mobile A1
+> +          - renesas,sdhi-r9a09g057 # RZ/V2H(P)
+>            - renesas,sdhi-sh73a0  # R-Mobile APE6
+>        - items:
+>            - enum:
+> @@ -118,7 +119,9 @@ allOf:
+>        properties:
+>          compatible:
+>            contains:
+> -            const: renesas,rzg2l-sdhi
+> +            enum:
+> +              - renesas,sdhi-r9a09g057
+> +              - renesas,rzg2l-sdhi
+>      then:
+>        properties:
+>          clocks:
+> @@ -204,6 +207,21 @@ allOf:
+>          sectioned off to be run by a separate second clock source to allow
+>          the main core clock to be turned off to save power.
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,sdhi-r9a09g057
+> +    then:
+> +      properties:
+> +        vqmmc-r9a09g057-regulator:
 
-Good point, it is unlikely we will have scenarios without page_ext.
-Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+The node is already conditional on the compatible, so why the chip name? 
+Then it doesn't work when the 2nd chip needs this.
+
+
+> +          type: object
+> +          description: VQMMC SD regulator
+> +          $ref: /schemas/regulator/regulator.yaml#
+> +          unevaluatedProperties: false
+> +      required:
+> +        - vqmmc-r9a09g057-regulator
+> +
+>  required:
+>    - compatible
+>    - reg
+> -- 
+> 2.34.1
+> 
 
