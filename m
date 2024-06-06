@@ -1,302 +1,185 @@
-Return-Path: <linux-kernel+bounces-203943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EBAC8FE244
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:15:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26C788FE225
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 160BFB2AD18
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:11:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 373F9B29D66
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA9815B112;
-	Thu,  6 Jun 2024 09:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1606C155C9D;
+	Thu,  6 Jun 2024 09:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dVfoqeZm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ugkwibh9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6667F158D97;
-	Thu,  6 Jun 2024 09:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F69315574D
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717664585; cv=none; b=HO0GG+T243u1APCstdlmMLPhpGzs2VvO9SAUYheAzeD6axCTYNMn6/hvB44mVHxgZOwZwUjnJUqnIAP9ZBRFrOfL+EvGCVncm49kjfPQEK3vlpQ431EkH45UW+v8A4DX4cjkyQdLMufqNuiVUpE41QD6fhXCW9OVH5WMM5h+feE=
+	t=1717664565; cv=none; b=IQHM1GxZ02KQPw3TDVjEK+5P2HRDyssuMZgRYVjjUPSTM6RIVKAh8qnb9bybgik3JgeDHATr2npAbSlih6C+on9l1XcdQgCFNECqleKpNiMsWye0p6FmeHvEKcKYMQs3dDaVjKW9MYfFg7jEdEJVLcfBM2gtA54e0OBRQ7cpKCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717664585; c=relaxed/simple;
-	bh=5+BkHA78fCbCQTiNzIg43RTLJ7E3srGkuferiHfXMDI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kXcHNImpXPje8iK26Ul/DNiJlFV3gBvGtsvHKaFFGRPYwG8Oh6XqfThTvec5KMw6CXkvF1OVHI30sVd+t80G7v7s7Vsv0ByuYEzuH0dVXQdu4o+oip6i/rPW1wO3FOF+63ozt3YYcwIuov6pk8kpVifUZtYtqiRaaZnp3SmzcGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dVfoqeZm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01122C4AF17;
-	Thu,  6 Jun 2024 09:03:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717664585;
-	bh=5+BkHA78fCbCQTiNzIg43RTLJ7E3srGkuferiHfXMDI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dVfoqeZmmPu/kKKKz+jF3vDB94xG7189a7LpX2GEpnlVbhAZQO9vcjyrL668LkleR
-	 widWe9vyIsE7iq4vwDt2SQL4sdQvWSXxtBE0u0D2B2n3wg6RlF5BTFffsklygri+ZR
-	 ASYUdC3NLjbx2xFQxROB319aM8/JGta9Wyg9L4PeCExHOX8x0FPlcdgMR1OU9ajk3k
-	 16l/50w68ywlyFi1ISAStkropey2Ip8Y0quIAHgr+J0NF5eKcKFt4rOYFps3pNzqAM
-	 gei+GO5wje2Ig8WW4cBRhd3H+M8p2M4ecoXQROee/Wgkb5exRuLtRjSEE3/AJBNJ7w
-	 3bbBfz58ew6/g==
-From: Michael Walle <mwalle@kernel.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Li Yang <leoyang.li@nxp.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Priit Laes <plaes@plaes.org>,
-	Michael Grzeschik <m.grzeschik@pengutronix.de>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Walle <mwalle@kernel.org>
-Subject: [PATCH v2 13/13] ARM: dts: imx6qdl-kontron-samx6i: add actual device trees
-Date: Thu,  6 Jun 2024 11:02:06 +0200
-Message-Id: <20240606090206.2021237-14-mwalle@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240606090206.2021237-1-mwalle@kernel.org>
-References: <20240606090206.2021237-1-mwalle@kernel.org>
+	s=arc-20240116; t=1717664565; c=relaxed/simple;
+	bh=9icnmEfpu4qV4+inQ0UmDn7/E9tga/lNpi/8MPeEJbs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kT5q+qCoZc24Qn3fGm0ThS0hWJd3WS3wNL+JgrzkMzxlENAi9fWH42fqqBd6QwGm9hJ3TcWCQH+8Pef/UnSn3c/YGvnJeep34jKPm/pe/8YKBTUqA2CEBqt79zQi7CFSP5iYgUQOS0kT6T3+2RH5Xi+7NUq5Ij+6j7Zbt27JLQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ugkwibh9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717664562;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LeIpi3AlPo5Ron82kvJE1KgranvjfzkDt2CgEkhJ+AQ=;
+	b=Ugkwibh9ObNUwxUzUflWNFLSW+xxazEU2+5WitymlKdYfBz6kBH3fLJtO79X2UvnwHJmZe
+	T02SB+RPCFbbCgH3icvwhDnpu10sD9nFcEo6QDkiX8PjCV10owKEa4+xXemclB6RZsMr8P
+	Bn/Zm/uEFhocem/03vHR5lQovTg95uk=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-219-KtvURmmHOEOHZXqGUnOUMA-1; Thu,
+ 06 Jun 2024 05:02:40 -0400
+X-MC-Unique: KtvURmmHOEOHZXqGUnOUMA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DB4F529AA387;
+	Thu,  6 Jun 2024 09:02:39 +0000 (UTC)
+Received: from fedora (unknown [10.72.113.78])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 16B6B20229B8;
+	Thu,  6 Jun 2024 09:02:34 +0000 (UTC)
+Date: Thu, 6 Jun 2024 17:02:30 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: YangYang <yang.yang@vivo.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	"yukuai (C)" <yukuai3@huawei.com>,
+	Yu Kuai <yukuai1@huaweicloud.com>
+Subject: Re: [PATCH v2] sbitmap: fix io hung due to race on
+ sbitmap_word::cleared
+Message-ID: <ZmF7JsJYlUmp5xTj@fedora>
+References: <20240604031124.2261-1-yang.yang@vivo.com>
+ <CAFj5m9KV7OJ4_KjbSkpdtfrKamoLzV6EH-mJP3=y+VvoYOzC3w@mail.gmail.com>
+ <aa7246f9-f7df-3054-077e-eb21c7f423ac@huaweicloud.com>
+ <ZmEpIBL2Ot5cwRyv@fedora>
+ <bebf237c-1223-43e9-93f1-10a32c4923af@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <bebf237c-1223-43e9-93f1-10a32c4923af@vivo.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-For now, there wasn't any in-tree users of the dtsi files for the
-Kontron SMARC-sAMX6i board. Let's add device trees, for this board on a
-Kontron SMARC Eval 2.0 Carrier.
+On Thu, Jun 06, 2024 at 03:21:38PM +0800, YangYang wrote:
+> On 2024/6/6 11:12, Ming Lei wrote:
+> > On Tue, Jun 04, 2024 at 02:12:22PM +0800, Yu Kuai wrote:
+> > > Hi,
+> > > 
+> > > 在 2024/06/04 11:25, Ming Lei 写道:
+> > > > On Tue, Jun 4, 2024 at 11:12 AM Yang Yang <yang.yang@vivo.com> wrote:
+> > > > > 
+> > > > > Configuration for sbq:
+> > > > >     depth=64, wake_batch=6, shift=6, map_nr=1
+> > > > > 
+> > > > > 1. There are 64 requests in progress:
+> > > > >     map->word = 0xFFFFFFFFFFFFFFFF
+> > > > > 2. After all the 64 requests complete, and no more requests come:
+> > > > >     map->word = 0xFFFFFFFFFFFFFFFF, map->cleared = 0xFFFFFFFFFFFFFFFF
+> > > > > 3. Now two tasks try to allocate requests:
+> > > > >     T1:                                       T2:
+> > > > >     __blk_mq_get_tag                          .
+> > > > >     __sbitmap_queue_get                       .
+> > > > >     sbitmap_get                               .
+> > > > >     sbitmap_find_bit                          .
+> > > > >     sbitmap_find_bit_in_word                  .
+> > > > >     __sbitmap_get_word  -> nr=-1              __blk_mq_get_tag
+> > > > >     sbitmap_deferred_clear                    __sbitmap_queue_get
+> > > > >     /* map->cleared=0xFFFFFFFFFFFFFFFF */     sbitmap_find_bit
+> > > > >       if (!READ_ONCE(map->cleared))           sbitmap_find_bit_in_word
+> > > > >         return false;                         __sbitmap_get_word -> nr=-1
+> > > > >       mask = xchg(&map->cleared, 0)           sbitmap_deferred_clear
+> > > > >       atomic_long_andnot()                    /* map->cleared=0 */
+> > > > >                                                 if (!(map->cleared))
+> > > > >                                                   return false;
+> > > > >                                        /*
+> > > > >                                         * map->cleared is cleared by T1
+> > > > >                                         * T2 fail to acquire the tag
+> > > > >                                         */
+> > > > > 
+> > > > > 4. T2 is the sole tag waiter. When T1 puts the tag, T2 cannot be woken
+> > > > > up due to the wake_batch being set at 6. If no more requests come, T1
+> > > > > will wait here indefinitely.
+> > > > > 
+> > > > > To fix this issue, simply revert commit 661d4f55a794 ("sbitmap:
+> > > > > remove swap_lock"), which causes this issue.
+> > > > 
+> > > > I'd suggest to add the following words in commit log:
+> > > > 
+> > > > Check on ->cleared and update on both ->cleared and ->word need to be
+> > > > done atomically, and using spinlock could be the simplest solution.
+> > > > 
+> > > > Otherwise, the patch looks fine for me.
+> > > 
+> > > Maybe I'm noob, but I'm confused how can this fix the problem, looks
+> > > like the race condition doesn't change.
+> > > 
+> > > In sbitmap_find_bit_in_word:
+> > > 
+> > > 1) __sbitmap_get_word read word;
+> > > 2) sbitmap_deferred_clear clear cleared;
+> > > 3) sbitmap_deferred_clear update word;
+> > > 
+> > > 2) and 3) are done atomically while 1) can still concurrent with 3):
+> > 
+> > After 1) fails, sbitmap_deferred_clear() is called with spinlock,
+> > then it is pretty easy to solve the race, such as, the following patch
+> > against the revert patch.
+> > 
+> > 
+> > diff --git a/lib/sbitmap.c b/lib/sbitmap.c
+> > index dee02a0266a6..c015ecd8e10e 100644
+> > --- a/lib/sbitmap.c
+> > +++ b/lib/sbitmap.c
+> > @@ -63,13 +63,15 @@ static inline void update_alloc_hint_after_get(struct sbitmap *sb,
+> >   static inline bool sbitmap_deferred_clear(struct sbitmap_word *map)
+> >   {
+> >   	unsigned long mask;
+> > -	bool ret = false;
+> >   	unsigned long flags;
+> > +	bool ret;
+> >   	spin_lock_irqsave(&map->swap_lock, flags);
+> > -	if (!map->cleared)
+> > +	if (!map->cleared) {
+> > +		ret = !!map->word;
+> 
+> After atomic_long_andnot(mask, (atomic_long_t *)&map->word), map->word
+> may be 0 if all requests have completed, or not 0 if some requests are
+> still in flight.
 
-Signed-off-by: Michael Walle <mwalle@kernel.org>
----
- arch/arm/boot/dts/nxp/imx/Makefile            |   2 +
- .../nxp/imx/imx6dl-kontron-samx6i-ads2.dts    |  12 ++
- .../dts/nxp/imx/imx6q-kontron-samx6i-ads2.dts |  12 ++
- .../nxp/imx/imx6qdl-kontron-samx6i-ads2.dtsi  | 148 ++++++++++++++++++
- 4 files changed, 174 insertions(+)
- create mode 100644 arch/arm/boot/dts/nxp/imx/imx6dl-kontron-samx6i-ads2.dts
- create mode 100644 arch/arm/boot/dts/nxp/imx/imx6q-kontron-samx6i-ads2.dts
- create mode 100644 arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i-ads2.dtsi
+setting ->word is lockless, but zeroing ->word is serialized with ->swap_lock.
 
-diff --git a/arch/arm/boot/dts/nxp/imx/Makefile b/arch/arm/boot/dts/nxp/imx/Makefile
-index 231c0d73a53e..92e291603ea1 100644
---- a/arch/arm/boot/dts/nxp/imx/Makefile
-+++ b/arch/arm/boot/dts/nxp/imx/Makefile
-@@ -99,6 +99,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
- 	imx6dl-icore.dtb \
- 	imx6dl-icore-mipi.dtb \
- 	imx6dl-icore-rqs.dtb \
-+	imx6dl-kontron-samx6i-ads2.dtb \
- 	imx6dl-lanmcu.dtb \
- 	imx6dl-mamoj.dtb \
- 	imx6dl-mba6a.dtb \
-@@ -207,6 +208,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
- 	imx6q-icore-ofcap10.dtb \
- 	imx6q-icore-ofcap12.dtb \
- 	imx6q-icore-rqs.dtb \
-+	imx6q-kontron-samx6i-ads2.dtb \
- 	imx6q-kp-tpc.dtb \
- 	imx6q-logicpd.dtb \
- 	imx6q-marsboard.dtb \
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-kontron-samx6i-ads2.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-kontron-samx6i-ads2.dts
-new file mode 100644
-index 000000000000..6a0c53f23a15
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/imx/imx6dl-kontron-samx6i-ads2.dts
-@@ -0,0 +1,12 @@
-+// SPDX-License-Identifier: GPL-2.0 OR X11
-+
-+/dts-v1/;
-+
-+#include "imx6dl.dtsi"
-+#include "imx6qdl-kontron-samx6i.dtsi"
-+#include "imx6qdl-kontron-samx6i-ads2.dtsi"
-+
-+/ {
-+	model = "Kontron SMARC-sAMX6i Dual-Lite/Solo on SMARC Eval 2.0 carrier";
-+	compatible = "kontron,imx6dl-samx6i-ads2", "kontron,imx6dl-samx6i", "fsl,imx6dl";
-+};
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-kontron-samx6i-ads2.dts b/arch/arm/boot/dts/nxp/imx/imx6q-kontron-samx6i-ads2.dts
-new file mode 100644
-index 000000000000..94c395cc020e
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/imx/imx6q-kontron-samx6i-ads2.dts
-@@ -0,0 +1,12 @@
-+// SPDX-License-Identifier: GPL-2.0 OR X11
-+
-+/dts-v1/;
-+
-+#include "imx6q.dtsi"
-+#include "imx6qdl-kontron-samx6i.dtsi"
-+#include "imx6qdl-kontron-samx6i-ads2.dtsi"
-+
-+/ {
-+	model = "Kontron SMARC-sAMX6i Quad/Dual on SMARC Eval 2.0 carrier";
-+	compatible = "kontron,imx6q-samx6i-ads2", "kontron,imx6q-samx6i", "fsl,imx6q";
-+};
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i-ads2.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i-ads2.dtsi
-new file mode 100644
-index 000000000000..15a87ee4159d
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i-ads2.dtsi
-@@ -0,0 +1,148 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Device Tree include for the Kontron SMARC-sAMX6i board on a SMARC Eval
-+ * 2.0 carrier (ADS2).
-+ *
-+ */
-+
-+/ {
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	sound {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "simple-audio-card";
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,bitclock-master = <&dailink_master>;
-+		simple-audio-card,frame-master = <&dailink_master>;
-+		simple-audio-card,widgets =
-+			"Headphone", "Headphone Jack",
-+			"Line", "Line Out Jack",
-+			"Microphone", "Microphone Jack",
-+			"Line", "Line In Jack";
-+		simple-audio-card,routing =
-+			"Line Out Jack", "LINEOUTR",
-+			"Line Out Jack", "LINEOUTL",
-+			"Headphone Jack", "HPOUTR",
-+			"Headphone Jack", "HPOUTL",
-+			"IN1L", "Line In Jack",
-+			"IN1R", "Line In Jack",
-+			"Microphone Jack", "MICBIAS",
-+			"IN2L", "Microphone Jack",
-+			"IN2R", "Microphone Jack";
-+
-+		simple-audio-card,cpu {
-+			sound-dai = <&ssi1>;
-+		};
-+
-+		dailink_master: simple-audio-card,codec {
-+			sound-dai = <&wm8904>;
-+		};
-+	};
-+
-+	reg_codec_mic: regulator-codec-mic {
-+		compatible = "regulator-fixed";
-+		regulator-name = "V_3V3_MIC";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	reg_codec_1p8v: regulator-codec-1p8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "V_1V8_S0_CODEC";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+};
-+
-+&audmux {
-+	status = "okay";
-+};
-+
-+&can1 {
-+	status = "okay";
-+};
-+
-+&can2 {
-+	status = "okay";
-+};
-+
-+&ecspi4 {
-+	flash@1 {
-+		compatible = "jedec,spi-nor";
-+		m25p,fast-read;
-+		spi-max-frequency = <100000000>;
-+		reg = <1>;
-+	};
-+};
-+
-+&fec {
-+	status = "okay";
-+};
-+
-+&i2c1 {
-+	status = "okay";
-+
-+	wm8904: audio-codec@1a {
-+		#sound-dai-cells = <0>;
-+		compatible = "wlf,wm8904";
-+		reg = <0x1a>;
-+		clocks = <&clks IMX6QDL_CLK_CKO2>;
-+		clock-names = "mclk";
-+		AVDD-supply = <&reg_codec_1p8v>;
-+		CPVDD-supply = <&reg_codec_1p8v>;
-+		DBVDD-supply = <&reg_codec_1p8v>;
-+		DCVDD-supply = <&reg_codec_1p8v>;
-+		MICVDD-supply = <&reg_codec_mic>;
-+	};
-+};
-+
-+&i2c3 {
-+	eeprom@57 {
-+		compatible = "atmel,24c64";
-+		reg = <0x57>;
-+		pagesize = <32>;
-+	};
-+};
-+
-+&pcie {
-+	status = "okay";
-+};
-+
-+&ssi1 {
-+	status = "okay";
-+};
-+
-+&uart1 {
-+	status = "okay";
-+};
-+
-+&uart2 {
-+	status = "okay";
-+};
-+
-+&uart4 {
-+	status = "okay";
-+};
-+
-+&uart5 {
-+	status = "okay";
-+};
-+
-+&usbh1 {
-+	status = "okay";
-+};
-+
-+&usbotg {
-+	status = "okay";
-+};
-+
-+&usdhc3 {
-+	status = "okay";
-+};
--- 
-2.39.2
+> Therefore, using !!map->word to determine the
+> availability of free tags is inaccurate.
+
+The check should be changed to decide if any free bit is available in
+map->word instead of !!map->word, and 'shift' need to be passed in
+sbitmap_deferred_clear().
+
+Just be curious, do you have reproducer for this issue?
+
+Thanks,
+Ming
 
 
