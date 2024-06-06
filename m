@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-203753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF4DD8FE006
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:38:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7189F8FE009
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D3BA1F22121
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:38:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0022528365E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEC113AD38;
-	Thu,  6 Jun 2024 07:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA84013AD0F;
+	Thu,  6 Jun 2024 07:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0Lfx+Jo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+zeswCk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12CD3AC16;
-	Thu,  6 Jun 2024 07:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3179F2260C;
+	Thu,  6 Jun 2024 07:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717659518; cv=none; b=OTST3MJp4Jw4sxbWtk/GpMK/iF9TOHTMnK9cvbY/2hZ/R3ZUId1AD6Vke/v7I7aDXCW9oVKK/XztJi5doariZtvPNEHSvE1MHCZ63VuTj94exfdB6j52I9anULO5SkzYcmevo1Z7cc9JlKwY5tIvEWg9T83lDqol9EmkPpVROQk=
+	t=1717659553; cv=none; b=a965dGQ+TNJYpQAdNPdqtmLdnwtnEPtX3vEII4GfTw0r17uY40yhIY2rfrR8sLXwTztjRlgLCRWazvaNU5J1NLwpT9dk+rgO6UvYvzh6rDTqBrkeIlGbmXtsXvW2XttnxzxVD6Oxg2I+SUFSmxfXpq/CKkq5NPv9VufLxGT2PzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717659518; c=relaxed/simple;
-	bh=uzbmRocbQ9LOXh5KTH3zx35ZlmDByyOImILk7ZIutSY=;
+	s=arc-20240116; t=1717659553; c=relaxed/simple;
+	bh=9ToNO8UqtxmtUcT/i5YWkStYTJTG1Jt7tmVsyM0TZFk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M20paryqQXPQvzFQg7zGOJuwKzzBBaV3LvvS5BHYcfftANL9xANrfVjAc/jgOGBhnqhPSPDWenu/9dQG5afKCxrHEopCLA+21S8LfiPq15ET80D4Gd3BGdLH4UNBu7XrP3P3AVyA7WyLIFdq1X+1Zv44X9Zlpz04N2Wb1uvxbDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G0Lfx+Jo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 524F3C3277B;
-	Thu,  6 Jun 2024 07:38:34 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=p89Y3C1n4jVEWYd905JMCDys0yg9fnjmlh+PPy6vvVtBWRX0s5yYXxC1oCzUal0J1KTESkuQjY8IKhz8eHtTN+S7mhobHHbuK+Ap98jmrz5LRNgqtzEDuxI0YtULwshqDb2Hf4jpKyxmSCdqvwj3JMqe78t0d4UGMcXL4rYgyPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+zeswCk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF188C2BD10;
+	Thu,  6 Jun 2024 07:39:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717659518;
-	bh=uzbmRocbQ9LOXh5KTH3zx35ZlmDByyOImILk7ZIutSY=;
+	s=k20201202; t=1717659552;
+	bh=9ToNO8UqtxmtUcT/i5YWkStYTJTG1Jt7tmVsyM0TZFk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=G0Lfx+JoxEXmvGeroKuPPIAbA+h9nmSf6RksRzzOFCmeBbM7YmVtPVhte4e/bGAAm
-	 RrQp49zuIhEAReb3c6JRMbcqi7k/3Mm9Ztk4E7XKWDF3kXIXKW35ePxn7lWuU32FqM
-	 u7OQ/Wd3t/77I2kpYocKOXv1jUkOpiT3aWTu8BwKZNKZQ2KCjW+gJcpwf24X/ZLBNW
-	 oUsvDC8iXABy2C4Ps9AV63ZPooboKiqWdHiTdAFs+4XwtOI7VHuOM1ejU263ZWmaaf
-	 +svTdMnyfs7Y7Umv5d3jvQ/9ZuTMoBQJfmpI97XE5ved0afKmBnK4WtLBMWADPGkIm
-	 m3fvVHZO74Mqw==
-Message-ID: <cec7d99f-dcee-4e32-9f9c-1507cc8af8b9@kernel.org>
-Date: Thu, 6 Jun 2024 09:38:32 +0200
+	b=U+zeswCkEoLMKQ0Hw4Of9QU1K6oJRZQSjHwD1rCQjsSm2gH+e43xkiSpQ9TWkNGNr
+	 2c8QAPd0pAcQn12UKwz2wV9tPBujtqI7kJzZdWCPoe1/jpAEfilxhoUGCzoB8unS7i
+	 A+E+8Lzk1sFZfF36ksjuEnjI35SxxVAAt5eM8Syo7JEI5cNVdqpJXPx8GgD5hERdkU
+	 2WXKnpGe0FmdHT/SQglK7mQPGShhBxAf5U9eMMN7O3JL2nM35U7sce6CSxWGNkxhR4
+	 6bsgWHWaEZFiz751R5N5Cd762t67Z3qT9/F0/c6ZMzvMrYl5Ic1nmX0D78WO9CRLbB
+	 g3qw/Ejx/ZUgw==
+Message-ID: <5331af7e-307c-4cb4-b639-6325b269452f@kernel.org>
+Date: Thu, 6 Jun 2024 09:39:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: display: simple: Add PrimeView PM070WL4
- panel
+Subject: Re: [PATCH 1/3] dt-bindings: Add vendor prefix for PrimeView
 To: Primoz Fiser <primoz.fiser@norik.com>,
  Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -62,7 +61,6 @@ To: Primoz Fiser <primoz.fiser@norik.com>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: upstream@lists.phytec.de
 References: <20240606072814.3572965-1-primoz.fiser@norik.com>
- <20240606072814.3572965-2-primoz.fiser@norik.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,28 +106,37 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240606072814.3572965-2-primoz.fiser@norik.com>
+In-Reply-To: <20240606072814.3572965-1-primoz.fiser@norik.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 06/06/2024 09:28, Primoz Fiser wrote:
-> Add PrimeView PM070WL4 7.0" 800x480 TFT LCD panel compatible string.
+> The Prime View International (PVI) is a LCD panel manufacturer.
 > 
+
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+
+dt-bindings: vendor-prefixes:
+
 > Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
 > ---
->  .../devicetree/bindings/display/panel/panel-simple.yaml         | 2 ++
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
 >  1 file changed, 2 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-> index 5067f5c0a272..671da4991a5d 100644
-> --- a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-> +++ b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-> @@ -276,6 +276,8 @@ properties:
->        - osddisplays,osd070t1718-19ts
->          # One Stop Displays OSD101T2045-53TS 10.1" 1920x1200 panel
->        - osddisplays,osd101t2045-53ts
-> +        # PrimeView PM070WL4 7.0" 800x480 TFT LCD panel
-> +      - primeview,pm070wl4
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> index fbf47f0bacf1..2bdfeaa3cc8f 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> @@ -1154,6 +1154,8 @@ patternProperties:
+>      description: Poslab Technology Co., Ltd.
+>    "^pov,.*":
+>      description: Point of View International B.V.
+> +  "^primeview,.*":
+> +    description: Prime View International (PVI)
 
 Keep things sorted.
 
