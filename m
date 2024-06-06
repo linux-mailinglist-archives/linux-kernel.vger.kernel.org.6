@@ -1,148 +1,191 @@
-Return-Path: <linux-kernel+bounces-203761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E998FE029
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:51:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CFD78FE02C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB8DA284538
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:51:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A883B212E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0A713B5A9;
-	Thu,  6 Jun 2024 07:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDA613AD38;
+	Thu,  6 Jun 2024 07:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nyeVwCmT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qY1XC7u/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E87DF44;
-	Thu,  6 Jun 2024 07:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15F0DF44;
+	Thu,  6 Jun 2024 07:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717660257; cv=none; b=e1nbRokBa8zqkmBnR9amfITeACUVt0VxtWT7kWfp08oh90ZGoXf8xXc4eS6Jt76F4cAdtVS7rGocV4yr/MPw3cQInOmJAiWvxMRLTtzM927uxfyJjsTK4uU18GEefxobmHs1UzPaCocPZlf9MO2dfYNd0qzLMNGJD6aKV10P3WA=
+	t=1717660294; cv=none; b=ZeRzzE+e7laNcVgOAwSord74BDt2g9ky7NlNe09IVkKmwNQUXrNL2b3Pj+LIxdshiJz4ZYO6QTKbK21cQqGPUEV8D+402iy3FD+imNTUfeCRXAjNdGmwRWfpkHYZkc7RFXeZjC1ndcvtzwh1JQXQ7RS619lr5/BjyFdPdi7PsXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717660257; c=relaxed/simple;
-	bh=KbKt7/g1FIVQl+e686tRBTUARQfsnnzl+KTMOBV11GM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZdaJo0rsWxypvuEA25xXok6V4FLO/vqYGYum4DpHK2FAuMURMlGjiqa2FKnzqIUz3lRlqM4LH8Z80NUem8Hqbyx0+7ibamlaAMfr94z6VdVRh8V3B72qt2+LAK/WEupr9UZuvWK9lqAM6POgtfZwojb8C3lwIQI2q67y3Be+V1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nyeVwCmT; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717660255; x=1749196255;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=KbKt7/g1FIVQl+e686tRBTUARQfsnnzl+KTMOBV11GM=;
-  b=nyeVwCmTjzY0f6CllUF0rka7wDHi0PFxX+GZ1HsU3uhsQtYxq0jRh/sD
-   oJehUKPWY5NolNaB2wJhTlN+t7fg00FL2LUFatKQQgkDxRFqR5rgMwqwc
-   O9Vw8Mdzd8rz6km6E05x+7+BXm9SL7N3EDeGbOTsibGkfyyyBUW5URhiK
-   jcOEaKGxEpOzLK0jaqQEkRf46Rjjay8EfBmXoXThs6WLpOyeiiiR2RuKS
-   q+XCAOIbvMsgXeMU61R+JPAYyGMpLfKPatvdCqDw5ejQ5OekH2JnY7tAk
-   RjIVe6IICxUoXHkAqpMomaBSeFxYo+5l7QUBX2ZJnwcg2ju+gvA6yj0tX
-   A==;
-X-CSE-ConnectionGUID: r98B2grqSAeSE+FQGgQUEw==
-X-CSE-MsgGUID: 9SbnLWjgRDyH9kCt/JUkTA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="24966544"
-X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
-   d="scan'208";a="24966544"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 00:50:55 -0700
-X-CSE-ConnectionGUID: ASUIEKgwTyCLrIwxWuK8sg==
-X-CSE-MsgGUID: aRNYetmaRNa8KejmhwBAJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
-   d="scan'208";a="68689466"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by orviesa002.jf.intel.com with SMTP; 06 Jun 2024 00:50:52 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 06 Jun 2024 10:50:51 +0300
-Date: Thu, 6 Jun 2024 10:50:51 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Xin Ji <xji@analogixsemi.com>, LKML <linux-kernel@vger.kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH] usb: typec: anx7411: Use scope-based resource management
- in anx7411_typec_port_probe()
-Message-ID: <ZmFqWxqOsd6FxD3l@kuha.fi.intel.com>
-References: <889729ac-3fc5-4666-b9f5-ce6e588a341a@web.de>
+	s=arc-20240116; t=1717660294; c=relaxed/simple;
+	bh=3OwO3/H69nwhm+8pvR63/ovgEqlUeLfYprL9yzUtT00=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bwrSrZu+WVkF+Ju/Xvd4o2VoI7kY8AMhWwuptmlDJqsRSvIqkVjvV+C9jvV+TiHCMXP9yPwIl/X6tK80zg0oLgpee/07r2b8uSkxSHM7MOhOa6SpWfKCZUY0z/WHTSI2ACdHIVXsK4zGraHUgHmuGS+lJqHJFEFVIDz55eOKcWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qY1XC7u/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6226BC3277B;
+	Thu,  6 Jun 2024 07:51:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717660293;
+	bh=3OwO3/H69nwhm+8pvR63/ovgEqlUeLfYprL9yzUtT00=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qY1XC7u/68GFrD6LoNxyQ4U48UIEGVvcp5m6MvZxuE7KALkcOVNxVBVNFf7FKwxfj
+	 nUOhzx3BLu/rIsHgjiC10ce//QBX9fXmcRB0jHlJARRa6OceE+hu0outCTOc/iyirN
+	 S/xI6SgypPRbZNTtKpKp3Ezt4ft600/ggjyBQS5PzFHaNHpdmqWGohcC5ibnVwPswA
+	 GxtJkC4YAZIC7oZvKjYeLRgS8OvKEsTERUV83TFObu7A20bTNQgDHYM7uSFOkNgCIh
+	 QWK+9wh0GK8N5RFRuLkBTNlDImV7YfowYNDqpCPVoHOXvaj0MBr7inCEvhY+A30eE7
+	 nl/KicPYfZ0eA==
+Message-ID: <92af5f36-0c21-4b6e-adde-fcf21b540291@kernel.org>
+Date: Thu, 6 Jun 2024 10:51:27 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <889729ac-3fc5-4666-b9f5-ce6e588a341a@web.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/7] arm64: dts: ti: am62p: Rename am62p-{}.dtsi to
+ am62p-j722s-common-{}.dtsi
+To: Siddharth Vadapalli <s-vadapalli@ti.com>, nm@ti.com, vigneshr@ti.com,
+ afd@ti.com, kristo@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, u-kumar1@ti.com, danishanwar@ti.com,
+ srk@ti.com
+References: <20240604085252.3686037-1-s-vadapalli@ti.com>
+ <20240604085252.3686037-2-s-vadapalli@ti.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20240604085252.3686037-2-s-vadapalli@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 05, 2024 at 07:11:04PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 5 Jun 2024 18:56:19 +0200
-> 
-> Scope-based resource management became supported also for another
-> programming interface by contributions of Jonathan Cameron on 2024-02-17.
-> See also the commit 59ed5e2d505bf5f9b4af64d0021cd0c96aec1f7c ("device
-> property: Add cleanup.h based fwnode_handle_put() scope based cleanup.").
-> 
-> * Thus use the attribute “__free(fwnode_handle)”.
-> 
-> * Reduce the scope for the local variable “fwnode”.
-> 
-> Fixes: fe6d8a9c8e64 ("usb: typec: anx7411: Add Analogix PD ANX7411 support")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Was the fwnode leaked, or why else is this a "fix"? It's not clear
-from the commit message. In any case:
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
+On 04/06/2024 11:52, Siddharth Vadapalli wrote:
+> The AM62P and J722S SoCs share most of the peripherals. With the aim of
+> reusing the existing k3-am62p-{mcu,main,wakeup}.dtsi files for J722S SoC,
+> rename them to indicate that they are shared with J722S SoC.
+> 
+> The peripherals that are not shared will be moved in the upcoming patches
+> to the respective k3-{soc}-{mcu,main,wakeup}.dtsi files without "common" in
+> the filename, emphasizing that they are not shared.
+> 
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> Acked-by: Andrew Davis <afd@ti.com>
 > ---
->  drivers/usb/typec/anx7411.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+> v4:
+> https://lore.kernel.org/r/20240601121554.2860403-2-s-vadapalli@ti.com/
+> Changes since v4:
+> - Based on Andrew's feedback at:
+>   https://lore.kernel.org/r/086fa11e-10f8-463d-8966-1a33a52a3146@ti.com/
+>   MCU was retained as-is while main and wakeup were changed to MAIN and
+>   WAKEUP in the respective shared files.
+> - Newline has been added between the file description and the Copyright
+>   in all the files.
+> - Collected Acked-by tag since these changes have been made.
 > 
-> diff --git a/drivers/usb/typec/anx7411.c b/drivers/usb/typec/anx7411.c
-> index b12a07edc71b..9fb52f233a30 100644
-> --- a/drivers/usb/typec/anx7411.c
-> +++ b/drivers/usb/typec/anx7411.c
-> @@ -16,6 +16,7 @@
->  #include <linux/of_graph.h>
->  #include <linux/of_platform.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/property.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/slab.h>
->  #include <linux/types.h>
-> @@ -1142,11 +1143,11 @@ static int anx7411_typec_port_probe(struct anx7411_data *ctx,
->  {
->  	struct typec_capability *cap = &ctx->typec.caps;
->  	struct typec_params *typecp = &ctx->typec;
-> -	struct fwnode_handle *fwnode;
->  	const char *buf;
->  	int ret, i;
-> 
-> -	fwnode = device_get_named_child_node(dev, "connector");
-> +	struct fwnode_handle *fwnode __free(fwnode_handle)
-> +				     = device_get_named_child_node(dev, "connector");
->  	if (!fwnode)
->  		return -EINVAL;
-> 
-> @@ -1237,7 +1238,7 @@ static int anx7411_typec_port_probe(struct anx7411_data *ctx,
->  		typecp->caps_flags |= HAS_SINK_WATT;
->  	}
-> 
-> -	cap->fwnode = fwnode;
-> +	cap->fwnode = no_free_ptr(fwnode);
-> 
->  	ctx->typec.role_sw = usb_role_switch_get(dev);
->  	if (IS_ERR(ctx->typec.role_sw)) {
-> --
-> 2.45.1
+>  .../{k3-am62p-main.dtsi => k3-am62p-j722s-common-main.dtsi} | 3 ++-
+>  .../{k3-am62p-mcu.dtsi => k3-am62p-j722s-common-mcu.dtsi}   | 3 ++-
+>  ...-am62p-wakeup.dtsi => k3-am62p-j722s-common-wakeup.dtsi} | 3 ++-
+>  .../dts/ti/{k3-am62p.dtsi => k3-am62p-j722s-common.dtsi}    | 6 +++---
+>  arch/arm64/boot/dts/ti/k3-am62p5.dtsi                       | 2 +-
+>  5 files changed, 10 insertions(+), 7 deletions(-)
+>  rename arch/arm64/boot/dts/ti/{k3-am62p-main.dtsi => k3-am62p-j722s-common-main.dtsi} (99%)
+>  rename arch/arm64/boot/dts/ti/{k3-am62p-mcu.dtsi => k3-am62p-j722s-common-mcu.dtsi} (98%)
+>  rename arch/arm64/boot/dts/ti/{k3-am62p-wakeup.dtsi => k3-am62p-j722s-common-wakeup.dtsi} (97%)
+>  rename arch/arm64/boot/dts/ti/{k3-am62p.dtsi => k3-am62p-j722s-common.dtsi} (97%)
 
--- 
-heikki
+This is not correct.
+If J722 has different CBASS components than AM62p then we should leave k3-am62p.dtsi
+as it is and introduce a new k3-j722.dtsi with relevant CBASS components.
+
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+> similarity index 99%
+> rename from arch/arm64/boot/dts/ti/k3-am62p-main.dtsi
+> rename to arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+> index 900d1f9530a2..bf6384ba824a 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0-only OR MIT
+>  /*
+> - * Device Tree file for the AM62P main domain peripherals
+> + * Device Tree file for the MAIN domain peripherals shared by AM62P and J722S
+> + *
+>   * Copyright (C) 2023-2024 Texas Instruments Incorporated - https://www.ti.com/
+>   */
+>  
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62p-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi
+> similarity index 98%
+> rename from arch/arm64/boot/dts/ti/k3-am62p-mcu.dtsi
+> rename to arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi
+> index b973b550eb9d..1d4e5fc8b4e0 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62p-mcu.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0-only OR MIT
+>  /*
+> - * Device Tree file for the AM62P MCU domain peripherals
+> + * Device Tree file for the MCU domain peripherals shared by AM62P and J722S
+> + *
+>   * Copyright (C) 2023-2024 Texas Instruments Incorporated - https://www.ti.com/
+>   */
+>  
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62p-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi
+> similarity index 97%
+> rename from arch/arm64/boot/dts/ti/k3-am62p-wakeup.dtsi
+> rename to arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi
+> index c71d9624ea27..f6ec6e8e171d 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62p-wakeup.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0-only OR MIT
+>  /*
+> - * Device Tree file for the AM62P wakeup domain peripherals
+> + * Device Tree file for the WAKEUP domain peripherals shared by AM62P and J722S
+> + *
+>   * Copyright (C) 2023-2024 Texas Instruments Incorporated - https://www.ti.com/
+>   */
+>  
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62p.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common.dtsi
+> similarity index 97%
+> rename from arch/arm64/boot/dts/ti/k3-am62p.dtsi
+> rename to arch/arm64/boot/dts/ti/k3-am62p-j722s-common.dtsi
+> index 94babc412575..d85d05e0792a 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62p.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common.dtsi
+> @@ -120,6 +120,6 @@ cbass_wakeup: bus@b00000 {
+>  };
+>  
+>  /* Now include peripherals for each bus segment */
+> -#include "k3-am62p-main.dtsi"
+> -#include "k3-am62p-mcu.dtsi"
+> -#include "k3-am62p-wakeup.dtsi"
+> +#include "k3-am62p-j722s-common-main.dtsi"
+> +#include "k3-am62p-j722s-common-mcu.dtsi"
+> +#include "k3-am62p-j722s-common-wakeup.dtsi"
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62p5.dtsi b/arch/arm64/boot/dts/ti/k3-am62p5.dtsi
+> index 41f479dca455..b7bb04a7968f 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62p5.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62p5.dtsi
+> @@ -8,7 +8,7 @@
+>  
+>  /dts-v1/;
+>  
+> -#include "k3-am62p.dtsi"
+> +#include "k3-am62p-j722s-common.dtsi"
+>  
+>  / {
+>  	cpus {
+
+--
+cheers,
+-roger
 
