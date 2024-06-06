@@ -1,109 +1,214 @@
-Return-Path: <linux-kernel+bounces-204589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98E088FF0DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:39:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B4308FF125
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A76461C22345
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:39:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39213B29575
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2AF9197523;
-	Thu,  6 Jun 2024 15:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1BB197A6A;
+	Thu,  6 Jun 2024 15:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b="MNHRvRGF"
-Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [208.88.110.44])
+	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="jcOHJJiJ";
+	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="asht6AzM"
+Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8C91974FB;
-	Thu,  6 Jun 2024 15:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.88.110.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717688376; cv=none; b=SYF7sVvtweCNnefbDgNWWPVTxovTBaFYRcwmNocHYSCHKy1MyOcJbkpjSF5Zd26IW7EHjVW9gUuVxX3GgaQU+DJoPP0xDpzLFIAlzTIq3STEWWwXwh0mB65Mqvor5WnMlSh8GwXTfw313ipxvFdJg5Y6N4oG/IYK4rh7g7E+bIQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717688376; c=relaxed/simple;
-	bh=gE1Kj3xuMoCiY4bdyzCrXSApgzBD60tymyxKW4bbTTM=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=mWT6x9ZUYGLParqhoaRiWcNF/xt0mPWaCUnNFKtQHPt6ctkayM1pQynuLNnMb/r2M33SBNjFngPDTBXWEOZiLzIH+8SjAF0U45WlPZroilMy7RO/0DkiZWxQ4ML8I6k3YOMlpkiNVZbnaWlEsETGveA1a6KlLun0/Ja+r4WCHBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com; spf=pass smtp.mailfrom=savoirfairelinux.com; dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b=MNHRvRGF; arc=none smtp.client-ip=208.88.110.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=savoirfairelinux.com
-Received: from localhost (localhost [127.0.0.1])
-	by mail.savoirfairelinux.com (Postfix) with ESMTP id 2698D9C2AA2;
-	Thu,  6 Jun 2024 11:39:25 -0400 (EDT)
-Received: from mail.savoirfairelinux.com ([127.0.0.1])
- by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10032)
- with ESMTP id HrID-BG8ze49; Thu,  6 Jun 2024 11:39:24 -0400 (EDT)
-Received: from localhost (localhost [127.0.0.1])
-	by mail.savoirfairelinux.com (Postfix) with ESMTP id 888079C5ABA;
-	Thu,  6 Jun 2024 11:39:24 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.savoirfairelinux.com 888079C5ABA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=savoirfairelinux.com; s=DFC430D2-D198-11EC-948E-34200CB392D2;
-	t=1717688364; bh=rYRVIIw22ZVkSQXnTBWHvN7qfAPVVfCh/LRBnQMA1mw=;
-	h=Date:From:To:Message-ID:MIME-Version;
-	b=MNHRvRGFyj67QeHiozGPa24sXXRlCMyLfd7jNHNA5jveZIw1fEh2VzMUM8F1eT+rD
-	 lwk4iYhNLjA70F5wA6ZGWuYV1MwyONWNZ2Q1TL0NzdGiF/A9Coxc95tA+hAB7T/QgI
-	 kmBgd1NfRVqUpiQYsNGpvBhNTskeGmFZiWy5RGkC1qoLweYdojg5mUdmi+fAy0oLpN
-	 M0eDRwuz8BImBwfN/U453mrzZAC6ZxfpCbriv2KLdHhPn7ez/mfuhAFaKY/4oA/lBe
-	 s9Ra9Q6ckJDy1JDMXHijrmuj7Hm4RpGtGTPK5RfzonZdM6fnBRN9O9STLBPYkp7KoY
-	 gbNO0HthXgqYw==
-X-Virus-Scanned: amavis at mail.savoirfairelinux.com
-Received: from mail.savoirfairelinux.com ([127.0.0.1])
- by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10026)
- with ESMTP id ijXDkcF8BT_c; Thu,  6 Jun 2024 11:39:24 -0400 (EDT)
-Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [192.168.48.237])
-	by mail.savoirfairelinux.com (Postfix) with ESMTP id 457D19C2AA2;
-	Thu,  6 Jun 2024 11:39:24 -0400 (EDT)
-Date: Thu, 6 Jun 2024 11:39:24 -0400 (EDT)
-From: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, 
-	shengjiu wang <shengjiu.wang@gmail.com>, 
-	Xiubo Lee <Xiubo.Lee@gmail.com>, Fabio Estevam <festevam@gmail.com>, 
-	Nicolin Chen <nicoleotsuka@gmail.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	linux-sound <linux-sound@vger.kernel.org>, 
-	devicetree <devicetree@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	alsa-devel <alsa-devel@alsa-project.org>, 
-	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Message-ID: <1976575756.1264121.1717688364234.JavaMail.zimbra@savoirfairelinux.com>
-In-Reply-To: <47a7a618-31d5-4dfc-9b6b-9426c6409e80@sirena.org.uk>
-References: <20240515135411.343333-1-elinor.montmasson@savoirfairelinux.com> <ce9a87c6-4a5c-4f0a-a8df-1fdce8c1f5df@sirena.org.uk> <599489232.349333.1715936741672.JavaMail.zimbra@savoirfairelinux.com> <500db9de-6113-4e73-ba92-6e52ea292b32@sirena.org.uk> <1598202415.701258.1717159684103.JavaMail.zimbra@savoirfairelinux.com> <291daed8-a2e1-44d4-9a71-5bca2c585720@sirena.org.uk> <1220272166.706254.1717166894551.JavaMail.zimbra@savoirfairelinux.com> <47a7a618-31d5-4dfc-9b6b-9426c6409e80@sirena.org.uk>
-Subject: Re: [PATCHv4 9/9] ASoC: dt-bindings: fsl-asoc-card: add compatible
- for generic codec
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5A919753A;
+	Thu,  6 Jun 2024 15:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717688379; cv=fail; b=M/VYLRuIw+TdqGxeDZH0UKkrsJn3YW0Y1WI0FgXuS5N4lH/WZEvPNQk7iTFsFznsYOUnCGpEXJywXFYFfE95kigiWie3UP14dMQ6lTWF2y+A8HCwxHJFl2PkjN7zMErKbaW/+ALh26+cNsk49WLxHkkRR/KBOnwsDWi9ZsALui4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717688379; c=relaxed/simple;
+	bh=q90MOgC3ZwUfcgGCNnOYc7vZxPdGJZVWSHcbXB8BBYk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=km9X1+yhk4TqhnixReqeeKsl+9g+Q2yrDum8EaC6AREIEd70QgIPFlM+ADuCwC03LN0b15V8Zk7Z/F8D4TU8a4siBH7dBGW3k5SOucCXY4zBr5AbDChseq3q7cj/HdwjHwh83A4L+MtmG0Blf9j3GtzseDmQwvsaWnYibPg7xKw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=jcOHJJiJ; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=asht6AzM; arc=fail smtp.client-ip=72.84.236.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
+Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
+   signature) header.d=sapience.com header.i=@sapience.com 
+   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
+   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
+Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by s1.sapience.com (Postfix) with ESMTPS id 004C94809FC;
+	Thu, 06 Jun 2024 11:39:36 -0400 (EDT)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1717688376;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=en9XJh0Afrw9YgdF3uo0asjudsUJS3VfsQdgW0yEr5g=;
+ b=jcOHJJiJHSoDzigiLuvDg0jLsukaKzBDxHcv/wnSzaJUhK6VpyP05GpEa087dYhfIwNog
+ iCUtYb6mtckdVSqBw==
+ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1717688376;
+	cv=none; b=RPG6+ah8dfRp2u9xVD1qJ+9bhFYQ1O2ImAuuxVuIDM79t1YG5TiiolnZUXNHF1y/YV0V02yd9M1eLZum6PfCKKDqL/Pzi3kAAeXaaVg6vyMJGoWMVvP8+2ST7+DR7Dcp3OJoTf0yGfCbvWp0IQHWuYWGYMjZKPux4uwHb+1nQHIKyxaCqEJqW/OzB/zg/j2zwAlp0v0OOgSKqlREmO0HPQ4A7C+iHBnPN92X1GCIvi0t1UEemfHidEdA+69DCR2IU1IENKzIi5E4I9dSH+Y298VAXSOxRJIjNvQcsrvg22rilFGcgZVcmqRePnQLEQ/bHUa4mq+k6RcRYjYtW+0tCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
+	t=1717688376; c=relaxed/simple;
+	bh=q90MOgC3ZwUfcgGCNnOYc7vZxPdGJZVWSHcbXB8BBYk=;
+	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
+	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
+	 MIME-Version; b=KeWc6p1t3zldTlmWMchDyw2QIg9YU5Q6Sh6sHeb9j/K5uMT5j6cN+7K0rQVgNA2Z5xV6VPL2kmICWLsdbHJFDavo935yHYjvRCtP1lQSN+M33072jx056o/QPV097nyQRGiIWD41rg2N7bV0xVCrka9HrgiHnKgZ2ef8Xh1r9RwJSVVTk2G2mVJsKINdQrIbSyDUdf36KkvUC6466LpGPfF+QMDgrh9oExMOyUjBM84XgFokcnAAFWnxGhugzyz09BWInNXUoCQPhbB5vc75NyETzSWXBMPIqN3F9wHfMovXpdKuXwQYVKh9RHhrY9XPCb0Iwl4jFiuIw+rUPA3cfg==
+ARC-Authentication-Results: i=1; arc-srv8.sapience.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1717688376;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=en9XJh0Afrw9YgdF3uo0asjudsUJS3VfsQdgW0yEr5g=;
+ b=asht6AzMWxjrSOs5BwZ243DyOItVGv+T4CS18ewN/4N/JQ67OzLs4LznyFO/ze5FuQUfI
+ yYfjrlX792oZO4IqNfsfh4wXfEkvdDoh17UxqgY2qyZkoa2CrAOzXOhj0jvSZuNwrIjWHYA
+ j5KSL9aBBkwIeAIqLymginxmmG82r3H5MaLVYOxKRS2abs3wVZ6g3QiEfuhwTZoYwyRW4na
+ CB3H4Zi/xuPLGICAsB8/3ztW5bVg7Pp0pWEoZ+UpCcFK0rBbf3KiYS7qXjHRr0HEONpr3xS
+ Xo83iA3DxRPrp04RtcqF0gdjsbZUds8LkcO0yY3LJnJUOcfYJmFEPwh9+Lxw==
+Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by srv8.sapience.com (Postfix) with ESMTPS id C9530280074;
+	Thu, 06 Jun 2024 11:39:36 -0400 (EDT)
+Message-ID: <eb10620deecc8feeae1e308c22de199be7c48ca6.camel@sapience.com>
+Subject: Re: 6.10-rc1 : crash in mei_csi_probe
+From: Genes Lists <lists@sapience.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org,
+ hverkuil-cisco@xs4all.nl,  laurent.pinchart@ideasonboard.com,
+ wentong.wu@intel.com,  linux-media@vger.kernel.org, Linux regressions
+ mailing list <regressions@lists.linux.dev>
+Date: Thu, 06 Jun 2024 11:39:35 -0400
+In-Reply-To: <988e48090982c89ce0c906954832fdfb09a1ce34.camel@sapience.com>
+References: <8afe9391b96ff3e1c60e624c1b8a3b2bd5039560.camel@sapience.com>
+	 <ZlTllJeZBiGapHwZ@kekkonen.localdomain>
+	 <988e48090982c89ce0c906954832fdfb09a1ce34.camel@sapience.com>
+Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
+ keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
+ 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
+ sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
+ vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
+ BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
+Content-Type: multipart/signed; micalg="pgp-sha384";
+	protocol="application/pgp-signature"; boundary="=-3iaXZ9E4DkMvi3CQXNrj"
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.15_GA_4581 (ZimbraWebClient - GC112 (Linux)/8.8.15_GA_4581)
-Thread-Topic: ASoC: dt-bindings: fsl-asoc-card: add compatible for generic codec
-Thread-Index: M+CiOw9Z1pP82SMivcOcvVDKOApGiw==
 
-> From: "Mark Brown" <broonie@kernel.org>
-> Sent: Friday, 31 May, 2024 18:06:30
 
-> On Fri, May 31, 2024 at 10:48:14AM -0400, Elinor Montmasson wrote:
->> From: "Mark Brown" <broonie@kernel.org>
-> 
->> > Why not just use the existing compatible - why would someone not want to
->> > be able to use the ASRC if it's available in their system?
-> 
->> That's true but it will be a problem if both `fsl-asoc-card.c` and
->> `imx-spdif.c` drivers have the same compatible, and they don't
->> have the same DT properties.
-> 
-> So merge the two then?
+--=-3iaXZ9E4DkMvi3CQXNrj
+Content-Type: multipart/alternative; boundary="=-PrDfqDW0NuzkgkEY0JLQ"
 
-It would avoid having duplicate drivers yes, I will do this for the v5 of this contribution.
-Thank you for the review.
+--=-PrDfqDW0NuzkgkEY0JLQ
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, 2024-05-27 at 16:58 -0400, Genes Lists wrote:
+> On Mon, 2024-05-27 at 19:57 +0000, Sakari Ailus wrote:
+> > Hi,
+> >=20
+> > Thanks for reporting this.
+> >=20
+> > On Mon, May 27, 2024 at 12:34:41PM -0400, Genes Lists wrote:
+> > >=20
+> > > First happened in 6.10-rc1 (6.9.2 stable is fine) =C2=A0
+> >=20
+> > Do you happen to have .config available? A full dmesg would also be
+> > helpful.
+> >=20
+> > Does the system crash after the warning or not?
+> >=20
+>=20
+> System stays up and remains quite usable.
+>=20
+> config and dmesg attached.
+>=20
+>=20
+
+Hi Sakari - just to let you know this is still happening in 6.10-rc2.
+
+Best
+
+
+--=20
+Gene
+
+
+--=-PrDfqDW0NuzkgkEY0JLQ
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+<html><head><style>pre,code,address {
+  margin: 0px;
+}
+h1,h2,h3,h4,h5,h6 {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+ol,ul {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+blockquote {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+</style><style>pre,code,address {
+  margin: 0px;
+}
+h1,h2,h3,h4,h5,h6 {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+ol,ul {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+blockquote {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+</style></head><body><div>On Mon, 2024-05-27 at 16:58 -0400, Genes Lists wr=
+ote:</div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8ex; border-left=
+:2px #729fcf solid;padding-left:1ex"><div>On Mon, 2024-05-27 at 19:57 +0000=
+, Sakari Ailus wrote:</div><blockquote type=3D"cite" style=3D"margin:0 0 0 =
+.8ex; border-left:2px #729fcf solid;padding-left:1ex"><div>Hi,<br></div><di=
+v><br></div><div>Thanks for reporting this.<br></div><div><br></div><div>On=
+ Mon, May 27, 2024 at 12:34:41PM -0400, Genes Lists wrote:<br></div><blockq=
+uote type=3D"cite" style=3D"margin:0 0 0 .8ex; border-left:2px #729fcf soli=
+d;padding-left:1ex"><div><br></div><div>First happened in 6.10-rc1 (6.9.2 s=
+table is fine) &nbsp;<br></div></blockquote><div><br></div><div>Do you happ=
+en to have .config available? A full dmesg would also be<br></div><div>help=
+ful.<br></div><div><br></div><div>Does the system crash after the warning o=
+r not?<br></div><div><br></div></blockquote><div><br></div><div>System stay=
+s up and remains quite usable.</div><div><br></div><div>config and dmesg at=
+tached.</div><div><br></div><div><br></div><div><span><pre></pre></span></d=
+iv></blockquote><div><br></div><div>Hi Sakari - just to let you know this i=
+s still happening in 6.10-rc2.</div><div><br></div><div>Best</div><div><br>=
+</div><div><br></div><div><span><pre>-- <br></pre><div><span style=3D"backg=
+round-color: inherit;">Gene</span></div><div><br></div></span></div></body>=
+</html>
+
+--=-PrDfqDW0NuzkgkEY0JLQ--
+
+--=-3iaXZ9E4DkMvi3CQXNrj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZmHYOAAKCRA5BdB0L6Ze
+24j2AQChBIEva8vdHfa2desP8x1GwNDMKU29rImqdLQh8uYWHAD9Fs1jDRlcv1ii
+F/oIod3IoSkHEG7Kuo1XmJ/N0Hip9Ao=
+=eGuq
+-----END PGP SIGNATURE-----
+
+--=-3iaXZ9E4DkMvi3CQXNrj--
 
