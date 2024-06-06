@@ -1,120 +1,202 @@
-Return-Path: <linux-kernel+bounces-204610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 078AB8FF183
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:04:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9FF88FF196
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CFEDB27CEC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:51:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78E14B22512
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BED198A3F;
-	Thu,  6 Jun 2024 15:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23F3196DB0;
+	Thu,  6 Jun 2024 15:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="OJWfsYXr"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G9RA+PO1"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12393196C75;
-	Thu,  6 Jun 2024 15:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4101974E7;
+	Thu,  6 Jun 2024 15:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717688987; cv=none; b=pSa/n9lss9DQ05o8hHZNHENvdbqpYUYNovrBsMqoWkbrQBQXuXLy4kcg3/6O7W8uy5ja61tKUzbSTqs4aFN1DKphoT+RnGKtKUd8eHtDZo8g8DpaCMt2ltw/DHy9/JTDtKteqb5jIhUSDZIjtq/+GHQmXpZlAuu7JIQp2ja5428=
+	t=1717688959; cv=none; b=dSCxlIkIuSD9j7JZFnc2e7hxbq/VOn+9XBou7QNFqQ8mHWHqe53WIWzx2XvcrXDt3NMCf04hSmAZbCN7lNkPWXaoxwc4hJgDEdGFVF9wvInR15BZKXkYWpYzD+cdx5K0WlKUKI0BU2eFcE5Ac5SQRqRtsfhFDkca64yRMFivPwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717688987; c=relaxed/simple;
-	bh=wAkkySakwtpXetpqy216hr8Mf/oM3hJIoPHEJd0ks+s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gdc8an+Al82DrdN/WQMjKoHSO11Qr+oeX6eR96vd5Kaxu50X6opHPyKoD4O8OhFoj2RjJC6aLrhENppFbreFOGk03hB79gix6J7WRnMWLisakpuGaKjN2E0KblFiGUR97fNlbttvriYHyrmS391cXY5+hrCiTb4L2g8UBfPzk7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=OJWfsYXr; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 7DB4187F5C;
-	Thu,  6 Jun 2024 17:49:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1717688984;
-	bh=oZ6AjegqpphtNzQqTVjigVkYVuIdij5lsm+LsTd1UtQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OJWfsYXrkT/xrqKKC8f0G7vpTqRVoG/3UxJo5NH1cdn0JC9Yt9dabTFrY4oPXk+W9
-	 9WAFIGbDvbHPI6Ox8lgHVYwEnf1xv3jwzZYpXtslutOdUt7HNrKlXZWsCVuETRBJ/8
-	 OjZ7JHCqWqSLXK3cXJaUkg/H9I7ECaLbr0y8usap/gU2Yk8HWgCel7gD5UPQhy5Jq+
-	 aSRxUxkQgw4vP49wQ/ikXJJyrFeieaVg/yZ1NqhJwtcJ5e9PoHbXCtee6PPFiXhfr9
-	 DTLsqYlSqWXaCBYawwS7t8z7izIKQTHpyWvaN8lNmjzd67mWPu3r/69eUI65g1/OQP
-	 lvkC69ao7ueuQ==
-Message-ID: <ee9a4da7-8b7a-4bd5-8a34-19e0e7cb49ff@denx.de>
-Date: Thu, 6 Jun 2024 17:47:11 +0200
+	s=arc-20240116; t=1717688959; c=relaxed/simple;
+	bh=qKBLsTXNP6vC+txyf96Pbii9gskyvekAxKhkwXaTg08=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ILXUm2cIdAOApiI2vHKxQseyazoikhe51MkyGKa2ZwCLU8oQuFhGyc/3+HbbpRDm/QL9RIF6TY/1zelyj323Ph4rluAuQHBlXiwqVUNZDCiPgjxFe79w78ZbD7KRU8esvJbhE9W8QLA8+N4hCASYbNxMCxsBVjnBpAc43dsOELc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G9RA+PO1; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7952b60b4d7so68013785a.1;
+        Thu, 06 Jun 2024 08:49:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717688956; x=1718293756; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gzKkLAKlqoZUCODC8uK1zfRTl8mdtLcn1fcJfh9jcFU=;
+        b=G9RA+PO11hjIRwK1TfodEhGydCiuJZoi7FcqCN2WeN33nNa3twFUCP1zPAZaPsP73W
+         MxcGAqq0k8LCS2DwxX9OcJyT4MuPfjX9nPp7O2vNi2qiJfDjsJ3WA2DNhy424R7V3F6s
+         UFTyso0UEkckb3TEZAbFTJd1ZsWpsA4XdsbIgHmYqmR10wFjDNR5TscGD9tXB/eodZ20
+         fLCOIV5mrLi5JlR2MAcJokVesF4pQZynCcxicy29TRdy1Zo3n+JCn9zr6BKIDUFczJzL
+         q1pY4PK/AGuWeZg7VOtyS1vTULbOxC4VNVoSHr2OYLLsKTWHNwNXkOqZhabNPHKPVwd+
+         EsbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717688956; x=1718293756;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gzKkLAKlqoZUCODC8uK1zfRTl8mdtLcn1fcJfh9jcFU=;
+        b=CUmQcyGGyEss48yltgMNcUKjRGdCH9aez4lMV4qDSqt92+aWpUoPr8SC1oIq9ExYEC
+         mSms8E8P+ECFciLq2SRT6qti8xRWtsIwrVgZhOMUiZvn5qnnnrK5baFN7Twd2Nu9MNEv
+         0hwW8o2MzylpFlot+bcBk8PiEqNYk8Ix9x1pZCDK0o82csyuZmH1s6tfkOx422/4VPQi
+         QPWQgaC7L7JEezzuqVGlsfuP/fW2OfVuPMJv8S6av5XrokQAN22VNH46BhbaLPYe74oQ
+         eEoWy2oP+FY7GVa0MpRSVKMqeOzwUh85ECS7cj11RYddTUujYGU1UoTZmVOdM76bC8/z
+         I6uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUHEhEwV3uW1fL7mqTSDwR//XPVJI6XaFRAIpjNISpTBhgqA5CLTztP0BJUTbwOjTEht7uSa0qS6DXUjPBHYXgasRBRUF0uS8Ej9vtZWOlasbKAB3qtkQm+f4FZ+R1xU1GVL1ud53c0TqIQJ7EuxZZpclOjtJpQYnkSMSF7dNiPQRJD0y9UIOoixIuqvyZhR4=
+X-Gm-Message-State: AOJu0YyKjDcRfeMNkROtLiGjqdwpwt4ytE92M2+uYz+cD9StPlNHdAME
+	JSZzyFVWoSIYQagBzqegycLKT4ubIPe+/pz2+BFGCQWUUOBeUMUQrBTe6A==
+X-Google-Smtp-Source: AGHT+IEFetjUuprranDmw5ZJd0GeJKi72Itx5uTqS/pls2I9jPyyGvrMahCfHgf3e26E4HEjVZYsdw==
+X-Received: by 2002:a05:620a:2ea:b0:795:2891:12df with SMTP id af79cd13be357-79528911570mr468163285a.47.1717688956356;
+        Thu, 06 Jun 2024 08:49:16 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-795330b7198sm71192185a.90.2024.06.06.08.49.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 08:49:16 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 537D11200043;
+	Thu,  6 Jun 2024 11:49:15 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Thu, 06 Jun 2024 11:49:15 -0400
+X-ME-Sender: <xms:e9phZuktlMhXYjnSHguXm6OfJRRfYrfGA4UwMfqlJaBs0xwYBwyCEQ>
+    <xme:e9phZl3-GDFB2xgTpu3XI5Jbypqr6rrnDkWJuT3TkXujXXRZHOPrL5MSJj1XcaS_N
+    r63Kqt-dGZU6ppmqA>
+X-ME-Received: <xmr:e9phZsozSHfFYDA7ykoIoAqeRpAx7QTPohdQVzW4konswY18aZk82i6lyXE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdelkedgleefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeetffehgffhieetuefgjeffveektdejgfetueekvdehhedvvdegveekiefh
+    heefudenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhdpvg
+    hffhhitghiohhsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehm
+    rghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthi
+    dqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghi
+    lhdrtghomhesfhhigihmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:e9phZin1YNe2_r_ALQcMD-NUy8M1xqu8jyo5GgIL1Wez4MXL8WFJuQ>
+    <xmx:e9phZs38mpx3G7AEbhJ0kFcr9otaZW1agHN78O64tz4e0byaS5LRbA>
+    <xmx:e9phZpttAEGG_fPgoEGwtNub35n1iU8gm2Kck_OAbP492io2GIJJfw>
+    <xmx:e9phZoV-KfexwDEIcrrNJoVWyzmKtRdk2EXpwsuFLNzF-XlSdkfz4g>
+    <xmx:e9phZn0po4UT8M4EZKy8Qzev0BJ-BcIh_Q-Nv46mbzFtM_QEOmWSajsM>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 6 Jun 2024 11:49:14 -0400 (EDT)
+Date: Thu, 6 Jun 2024 08:49:06 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] rust: add tracepoint support
+Message-ID: <ZmHacqvRwBj7OvWm@boqun-archlinux>
+References: <20240606-tracepoint-v1-0-6551627bf51b@google.com>
+ <20240606-tracepoint-v1-3-6551627bf51b@google.com>
+ <389a8c55-a169-47ef-99c0-48f58003b40c@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/11] net: ethernet: stmmac: add management of
- stm32mp13 for stm32
-To: Christophe ROULLIER <christophe.roullier@foss.st.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Richard Cochran <richardcochran@gmail.com>, Jose Abreu
- <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240604143502.154463-1-christophe.roullier@foss.st.com>
- <20240604143502.154463-8-christophe.roullier@foss.st.com>
- <3c40352b-ad69-4847-b665-e7b2df86a684@denx.de>
- <73f7b4a4-31d1-4907-b83b-2ac7758edf0d@foss.st.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <73f7b4a4-31d1-4907-b83b-2ac7758edf0d@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <389a8c55-a169-47ef-99c0-48f58003b40c@efficios.com>
 
-On 6/6/24 4:19 PM, Christophe ROULLIER wrote:
-
-Hi,
-
->>> @@ -348,8 +360,15 @@ static int stm32_dwmac_parse_data(struct 
->>> stm32_dwmac *dwmac,
->>>           return PTR_ERR(dwmac->regmap);
->>>         err = of_property_read_u32_index(np, "st,syscon", 1, 
->>> &dwmac->mode_reg);
->>> -    if (err)
->>> +    if (err) {
->>>           dev_err(dev, "Can't get sysconfig mode offset (%d)\n", err);
->>> +        return err;
->>> +    }
->>> +
->>> +    dwmac->mode_mask = SYSCFG_MP1_ETH_MASK;
->>> +    err = of_property_read_u32_index(np, "st,syscon", 2, 
->>> &dwmac->mode_mask);
->>> +    if (err)
->>> +        pr_debug("Warning sysconfig register mask not set\n");
->>
->> I _think_ you need to left-shift the mode mask by 8 for STM32MP13xx 
->> second GMAC somewhere in here, right ?
->>
-> The shift is performed in function stm32mp1_configure_pmcr:
+On Thu, Jun 06, 2024 at 11:30:03AM -0400, Mathieu Desnoyers wrote:
+> On 2024-06-06 11:05, Alice Ryhl wrote:
+> > Make it possible to have Rust code call into tracepoints defined by C
+> > code. It is still required that the tracepoint is declared in a C
+> > header, and that this header is included in the input to bindgen.
+> > 
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 > 
->      /* Shift value at correct ethernet MAC offset in SYSCFG_PMCSETR */
->      val <<= ffs(dwmac->mode_mask) - ffs(SYSCFG_MP1_ETH_MASK);
+> [...]
 > 
-> In case of MP13 Ethernet1 or MP15, shift equal 0
+> > diff --git a/rust/helpers.c b/rust/helpers.c
+> > index 2c37a0f5d7a8..0560cc2a512a 100644
+> > --- a/rust/helpers.c
+> > +++ b/rust/helpers.c
+> > @@ -165,6 +165,30 @@ rust_helper_krealloc(const void *objp, size_t new_size, gfp_t flags)
+> >   }
+> >   EXPORT_SYMBOL_GPL(rust_helper_krealloc);
+> > +void rust_helper_preempt_enable_notrace(void)
+> > +{
+> > +	preempt_enable_notrace();
+> > +}
+> > +EXPORT_SYMBOL_GPL(rust_helper_preempt_enable_notrace);
+> > +
+> > +void rust_helper_preempt_disable_notrace(void)
+> > +{
+> > +	preempt_disable_notrace();
+> > +}
+> > +EXPORT_SYMBOL_GPL(rust_helper_preempt_disable_notrace);
+> > +
+> > +bool rust_helper_current_cpu_online(void)
+> > +{
+> > +	return cpu_online(raw_smp_processor_id());
+> > +}
+> > +EXPORT_SYMBOL_GPL(rust_helper_current_cpu_online);
+> > +
+> > +void *rust_helper___rcu_dereference_raw(void **p)
+> > +{
+> > +	return rcu_dereference_raw(p);
+> > +}
+> > +EXPORT_SYMBOL_GPL(rust_helper___rcu_dereference_raw);
 > 
-> In case of MP13 Ethernet2 , shift equal 8  ;-)
+> Ouch. Doing a function call for each of those small operations will
+> have a rather large performance impact when tracing is active. If it is
 
-Oh, good, thanks !
+Long-term plan is to 1) compile the C helpers in some IR and 2) inline
+the helpers with Rust in IR-level, as what Gary has:
+
+	https://lore.kernel.org/rust-for-linux/20240529202817.3641974-1-gary@garyguo.net/
+
+and I use it for the upcoming atomic API support:
+
+	https://github.com/fbq/linux/tree/dev/rust/atomic-rfc
+
+and it works very well.
+	
+Regards,
+Boqun
+
+> not possible to inline those in Rust, then implementing __DO_TRACE in
+> a C function would at least allow Rust to only do a single call to C
+> rather than go back and forth between Rust and C.
+> 
+> What prevents inlining those helpers in Rust ?
+> 
+> Thanks,
+> 
+> Mathieu
+> 
+> -- 
+> Mathieu Desnoyers
+> EfficiOS Inc.
+> https://www.efficios.com
+> 
 
