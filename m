@@ -1,179 +1,151 @@
-Return-Path: <linux-kernel+bounces-204663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 974A08FF1EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:14:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFA638FF1EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:14:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 826491C24E32
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:14:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 721891F265B6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5FC19AA54;
-	Thu,  6 Jun 2024 16:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB53119AA65;
+	Thu,  6 Jun 2024 16:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GZsH5F47"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y4U0ezGW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3862819A2AE
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 16:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D5819AA57;
+	Thu,  6 Jun 2024 16:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717690270; cv=none; b=E3I1g+KqFJwVEKPKzXOq5kaOtTMRlarebVQaDfDjkqLio/b9UuTh8cNaguG89JuaolbAK29M8P+nN0FOFIt5JF7KM/q3Gmd9F30iOfv8/hLilD07chVKmM1AbbpG7Zes+M1wmJWbxDm8+ALA1loFKDr28QUAVK+T4EpqWw9sGzc=
+	t=1717690271; cv=none; b=g8f8JV0Mi4p3GZwpYZG0Lag5t7yYOq+VUUcpiBY3ZZXagdCzt/9VEQjIiD0aXDSkZSQCvJhjawrQhAXvQZYTQcA5dxbOzBjNNXI+7t+80y6sTKnx9hzHnV1t2PhxwuYKS9OiplQ0/n647dW08+ALduLTTLp788MOTBBeCpm/uPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717690270; c=relaxed/simple;
-	bh=C6xOxQ9P1I2nAifuPJPu4NYJEtpJMNEvDpiLCEcU+FU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hd56cW44Iqt2s6uyeTPC71a84vqDUcJkXOpQuMxoca62ZAbEYSMhMMSeZ9Rp08HE3l+WsDkF1Lzfk3oyb9Oqja5Po/aGNJ5q5M2bcPo0qGaoFz2US6TjV2gaxbxSPv1/FRIgJAD4vhRlaLNKfXLnjfV7KQVB1zdK7fEOpID2yiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GZsH5F47; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717690267;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bMxHuzTNqwoExnxxNXUTJ+We8jv8Inb+JPwzg5VCJYY=;
-	b=GZsH5F47oDtmiJr1IQIQWRPvvttvvqXZOiqblioOtSwiyk8zkW5Ow0Bk17BbDESS1Cjthf
-	AetgSEULhMbAXMBTcdpmAwPe+yU7MZLFkNSi1EgYdBOX+Jzo6Zb+5XPFVk1eIgr+lccPBS
-	95541d91HSOfxKYbyDxgrOda9Hk/+es=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-196-MXMRIsdiNpOUl2O-yQ1tVQ-1; Thu, 06 Jun 2024 12:11:03 -0400
-X-MC-Unique: MXMRIsdiNpOUl2O-yQ1tVQ-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-35e5b42c85fso782761f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 09:11:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717690261; x=1718295061;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bMxHuzTNqwoExnxxNXUTJ+We8jv8Inb+JPwzg5VCJYY=;
-        b=G/1rMg9hUvh56ebUjH+u4DY87cN/9Zb/2EV0Z9L7PP8SblJxbtsXD+MwLCwb8EFrCI
-         SERL3Mt+QtTgCOJD/twCdt9SoqbXlB0s4tx/tf/AxRv+nCljjmTY3OyH+KZf3ELBJlzR
-         7xi4slG6X/crKioDxKSLp4ahcbi2k+h+H3D7FbCerwgGxKdjZphAUIUdTFCH4kEHY6yl
-         J6I1q4C0rDqS79CsSCudq8d9R3YlUmDcnxG4DrtwdhVo2MHmOQ6qoO2tkQk+sUYAnaF3
-         J3+TCEMUOqy7ai7V+h8KICQwdQZ+umFoCsyKhv5WjEwH7Hk0hZ+I+w+OWT1rW8+8pqo2
-         PNHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUywnkVcS/WWbieRAnaEsS9vc9kD1oY46SYQJaXoPBmEx0tIbfbV5skr9baRn8n8ji45AHc5oUgG48UiqEDAfdVvFjGvMehlXhDJneb
-X-Gm-Message-State: AOJu0YxJHN6gPGFgwec3lHcpfRIU8EIQBTdnccv0hRFfLGDhHVYANpmR
-	PiTXZctsBelKwyy81TN9tRbq2y1Vz4PmgCHRrbSvfYxy54DtvJ+95CRLTFNJVPUA7WvIzF7bClj
-	4msc/F76j769cYUpAnWvNkG7EnrOukawz5FFvyoU8x4Jea441B2XmC4PZG6+NLCdovvC4R5gJW5
-	WivmcptB7+8pLbVbGiJJ0fReSu0Nj+JcJnYflB
-X-Received: by 2002:a5d:4a10:0:b0:35e:f25f:6c9 with SMTP id ffacd0b85a97d-35efea7e179mr96641f8f.0.1717690261395;
-        Thu, 06 Jun 2024 09:11:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF1Es/YGWhv/S13Xa529CXDzdBf9/542vQsdMCXTwyiGCXBRAw5/xXSrsUeTWLoCWoMiQ8MJfY8HjgEvFhux/g=
-X-Received: by 2002:a5d:4a10:0:b0:35e:f25f:6c9 with SMTP id
- ffacd0b85a97d-35efea7e179mr96619f8f.0.1717690261123; Thu, 06 Jun 2024
- 09:11:01 -0700 (PDT)
+	s=arc-20240116; t=1717690271; c=relaxed/simple;
+	bh=LMioPdhm8GU+5HKM5CEWwiaydEuPaHLYUpKUi8mNzW8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CYJqbCH+g52/IMJrFwSTwQGG5duWMYkPj+b5/7q5PVej4t1slF5KXgqFmoaJ/gzTJYDx5TSYB0buIjOP3XQ3YoRmNjo69LrYxrto2TBci9FSmMbsUNyoSr4VCWr5Q0DNWWYsUz4f/hxvJFOi5JmpqW8Wd16nzS9EaKEZQoLevys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y4U0ezGW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30BF3C4AF08;
+	Thu,  6 Jun 2024 16:11:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717690270;
+	bh=LMioPdhm8GU+5HKM5CEWwiaydEuPaHLYUpKUi8mNzW8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y4U0ezGWvlsN3sFRlxF1uzRpu3fxzalM3dAkAuL5UTBiu3Za9g36J/uHbipeI6Oa0
+	 WPbnGuJuFifKg5VoPTaqYjFiceSXkWf+ML9oNU+wReJnI3rFZ0E0rM6hsAtDASHptA
+	 lDuc9pu2Ki7KKQsw1EU/Fvi48Mhlfgl27L8TjGDDPgTWhZi035gDkN34CWjweKzWg4
+	 kV6D2hj2VvTc6yVH/1P8EL/ktTcDN2qjn3K19SoAiPlIbZqsqBBWt4h5YpYDpN9ktH
+	 1pD6QUFPKWn5mSUfQzAJW1tviZmQ20nhgv1EjrS+8D8PJnO/U6rf5moU59dDRJ+V4o
+	 XctgqxlrcAtWQ==
+Date: Thu, 6 Jun 2024 18:11:08 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Matteo Martelli <matteomartelli3@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Marcus Cooper <codekipper@gmail.com>, =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>, 
+	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] ASoC: sunxi: sun4i-i2s: fix LRCLK polarity in i2s
+ mode
+Message-ID: <20240606-savvy-wallaby-of-champagne-d4a50e@houat>
+References: <20240529140658.180966-2-matteomartelli3@gmail.com>
+ <20240529140658.180966-3-matteomartelli3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530210714.364118-1-rick.p.edgecombe@intel.com> <20240530210714.364118-6-rick.p.edgecombe@intel.com>
-In-Reply-To: <20240530210714.364118-6-rick.p.edgecombe@intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Thu, 6 Jun 2024 18:10:49 +0200
-Message-ID: <CABgObfYgF9gcokAg2gOjXqfuxj_oDBmEu4HfDaRc0CLSkmWhoA@mail.gmail.com>
-Subject: Re: [PATCH v2 05/15] KVM: x86/mmu: Make kvm_tdp_mmu_alloc_root()
- return void
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: seanjc@google.com, kvm@vger.kernel.org, kai.huang@intel.com, 
-	dmatlack@google.com, erdemaktas@google.com, isaku.yamahata@gmail.com, 
-	linux-kernel@vger.kernel.org, sagis@google.com, yan.y.zhao@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="4nk5dehwshah5pj6"
+Content-Disposition: inline
+In-Reply-To: <20240529140658.180966-3-matteomartelli3@gmail.com>
+
+
+--4nk5dehwshah5pj6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 30, 2024 at 11:07=E2=80=AFPM Rick Edgecombe
-<rick.p.edgecombe@intel.com> wrote:
->
-> The kvm_tdp_mmu_alloc_root() function currently always returns 0. This
-> allows for the caller, mmu_alloc_direct_roots(), to call
-> kvm_tdp_mmu_alloc_root() and also return 0 in one line:
->    return kvm_tdp_mmu_alloc_root(vcpu);
->
-> So it is useful even though the return value of kvm_tdp_mmu_alloc_root()
-> is always the same. However, in future changes, kvm_tdp_mmu_alloc_root()
-> will be called twice in mmu_alloc_direct_roots(). This will force the
-> first call to either awkwardly handle the return value that will always
-> be zero or ignore it. So change kvm_tdp_mmu_alloc_root() to return void.
-> Do it in a separate change so the future change will be cleaner.
->
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Hi,
 
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-
+On Wed, May 29, 2024 at 04:00:15PM GMT, Matteo Martelli wrote:
+> This fixes the LRCLK polarity for sun8i-h3 and sun50i-h6 in i2s mode
+> which was wrongly inverted.
+>=20
+> The LRCLK was being set in reversed logic compared to the DAI format:
+> inverted LRCLK for SND_SOC_DAIFMT_IB_NF and SND_SOC_DAIFMT_NB_NF; normal
+> LRCLK for SND_SOC_DAIFMT_IB_IF and SND_SOC_DAIFMT_NB_IF. Such reversed
+> logic applies properly for DSP_A, DSP_B, LEFT_J and RIGHT_J modes but
+> not for I2S mode, for which the LRCLK signal results reversed to what
+> expected on the bus. The issue is due to a misinterpretation of the
+> LRCLK polarity bit of the H3 and H6 i2s controllers. Such bit in this
+> case does not mean "0 =3D> normal" or "1 =3D> inverted" according to the
+> expected bus operation, but it means "0 =3D> frame starts on low edge" and
+> "1 =3D> frame starts on high edge" (from the User Manuals).
+>=20
+> This commit fixes the LRCLK polarity by setting the LRCLK polarity bit
+> according to the selected bus mode and renames the LRCLK polarity bit
+> definition to avoid further confusion.
+>=20
+> Fixes: dd657eae8164 ("ASoC: sun4i-i2s: Fix the LRCK polarity")
+> Fixes: 73adf87b7a58 ("ASoC: sun4i-i2s: Add support for H6 I2S")
+> Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
 > ---
-> TDX MMU Prep:
->  - New patch
-> ---
->  arch/x86/kvm/mmu/mmu.c     | 6 ++++--
->  arch/x86/kvm/mmu/tdp_mmu.c | 3 +--
->  arch/x86/kvm/mmu/tdp_mmu.h | 2 +-
->  3 files changed, 6 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 5070ba7c6e89..12178945922f 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -3700,8 +3700,10 @@ static int mmu_alloc_direct_roots(struct kvm_vcpu =
-*vcpu)
->         unsigned i;
->         int r;
->
-> -       if (tdp_mmu_enabled)
-> -               return kvm_tdp_mmu_alloc_root(vcpu);
-> +       if (tdp_mmu_enabled) {
-> +               kvm_tdp_mmu_alloc_root(vcpu);
-> +               return 0;
-> +       }
->
->         write_lock(&vcpu->kvm->mmu_lock);
->         r =3D make_mmu_pages_available(vcpu);
-> diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-> index e7cd4921afe7..2770230a5636 100644
-> --- a/arch/x86/kvm/mmu/tdp_mmu.c
-> +++ b/arch/x86/kvm/mmu/tdp_mmu.c
-> @@ -224,7 +224,7 @@ static void tdp_mmu_init_child_sp(struct kvm_mmu_page=
- *child_sp,
->         tdp_mmu_init_sp(child_sp, iter->sptep, iter->gfn, role);
->  }
->
-> -int kvm_tdp_mmu_alloc_root(struct kvm_vcpu *vcpu)
-> +void kvm_tdp_mmu_alloc_root(struct kvm_vcpu *vcpu)
+>  sound/soc/sunxi/sun4i-i2s.c | 143 ++++++++++++++++++------------------
+>  1 file changed, 73 insertions(+), 70 deletions(-)
+>=20
+> diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
+> index 5f8d979585b6..a200ba41679a 100644
+> --- a/sound/soc/sunxi/sun4i-i2s.c
+> +++ b/sound/soc/sunxi/sun4i-i2s.c
+> @@ -100,8 +100,8 @@
+>  #define SUN8I_I2S_CTRL_MODE_PCM			(0 << 4)
+> =20
+>  #define SUN8I_I2S_FMT0_LRCLK_POLARITY_MASK	BIT(19)
+> -#define SUN8I_I2S_FMT0_LRCLK_POLARITY_INVERTED		(1 << 19)
+> -#define SUN8I_I2S_FMT0_LRCLK_POLARITY_NORMAL		(0 << 19)
+> +#define SUN8I_I2S_FMT0_LRCLK_POLARITY_START_HIGH	(1 << 19)
+> +#define SUN8I_I2S_FMT0_LRCLK_POLARITY_START_LOW		(0 << 19)
+>  #define SUN8I_I2S_FMT0_LRCK_PERIOD_MASK		GENMASK(17, 8)
+>  #define SUN8I_I2S_FMT0_LRCK_PERIOD(period)	((period - 1) << 8)
+>  #define SUN8I_I2S_FMT0_BCLK_POLARITY_MASK	BIT(7)
+> @@ -729,65 +729,37 @@ static int sun4i_i2s_set_soc_fmt(const struct sun4i=
+_i2s *i2s,
+>  static int sun8i_i2s_set_soc_fmt(const struct sun4i_i2s *i2s,
+>  				 unsigned int fmt)
 >  {
->         struct kvm_mmu *mmu =3D vcpu->arch.mmu;
->         union kvm_mmu_page_role role =3D mmu->root_role;
-> @@ -285,7 +285,6 @@ int kvm_tdp_mmu_alloc_root(struct kvm_vcpu *vcpu)
->          */
->         mmu->root.hpa =3D __pa(root->spt);
->         mmu->root.pgd =3D 0;
-> -       return 0;
->  }
->
->  static void handle_changed_spte(struct kvm *kvm, int as_id, gfn_t gfn,
-> diff --git a/arch/x86/kvm/mmu/tdp_mmu.h b/arch/x86/kvm/mmu/tdp_mmu.h
-> index 58b55e61bd33..437ddd4937a9 100644
-> --- a/arch/x86/kvm/mmu/tdp_mmu.h
-> +++ b/arch/x86/kvm/mmu/tdp_mmu.h
-> @@ -10,7 +10,7 @@
->  void kvm_mmu_init_tdp_mmu(struct kvm *kvm);
->  void kvm_mmu_uninit_tdp_mmu(struct kvm *kvm);
->
-> -int kvm_tdp_mmu_alloc_root(struct kvm_vcpu *vcpu);
-> +void kvm_tdp_mmu_alloc_root(struct kvm_vcpu *vcpu);
->
->  __must_check static inline bool kvm_tdp_mmu_get_root(struct kvm_mmu_page=
- *root)
->  {
-> --
-> 2.34.1
->
+> -	u32 mode, val;
+> +	u32 mode, lrclk_pol, bclk_pol, val;
+>  	u8 offset;
+> =20
+> -	/*
+> -	 * DAI clock polarity
+> -	 *
+> -	 * The setup for LRCK contradicts the datasheet, but under a
+> -	 * scope it's clear that the LRCK polarity is reversed
+> -	 * compared to the expected polarity on the bus.
+> -	 */
 
+I think we should keep that comment somewhere.
+
+Maxime
+
+--4nk5dehwshah5pj6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZmHflAAKCRAnX84Zoj2+
+dkp4AYDD2C89et3GX+eTXxMU3fw2ApYremNJgsBVdE7CDulWRzcHlpW2kUP83Bfd
+pT1zxkcBfR2hOGFtRyy3sMoLOytPZezcLRdE7sh1OTYn1SAPA/T5otrsqk1PkCp0
+t7BzSI8rzw==
+=ri98
+-----END PGP SIGNATURE-----
+
+--4nk5dehwshah5pj6--
 
