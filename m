@@ -1,80 +1,75 @@
-Return-Path: <linux-kernel+bounces-203769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 282988FE044
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:56:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CFD78FE048
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB5E61F26AB6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:56:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0B08B2456C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D034B13B598;
-	Thu,  6 Jun 2024 07:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E9213C807;
+	Thu,  6 Jun 2024 07:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cK5IsBIT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JTMZTjTG"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AF829CE7
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 07:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94CAE13C695
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 07:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717660604; cv=none; b=V0qo8JF9COu+aetjjbljt+Cxovg1tEjdqPtf29bK7Wfmig7ufRZ8s7qqvzIBztskxm9QU/IFlr9E8AJMRjGz0CvmivLSEheGNM+c4nEZjat1lTgpy2HouCAvTROAuYD7cnrvf7x6e3jSMYbhV0poIa4scCtxfHuSba+XyFABPTE=
+	t=1717660646; cv=none; b=G2G5Y/gaypQzjaCycO9rQ47j7aDzriVFdkbla/B5Bx6qE6SiJc310ChsaJhyvE+Kx2U8fK5vxNhYMe5k0gNFOCcuvlQAdeNss/Mhu6yFbqKzyklfR36NPkF+PGXi4VaicbTe0SCM92+4ZkWU7EeUWG2uHUkL6FWlIRiExCICvBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717660604; c=relaxed/simple;
-	bh=dV3kwawE/kfLJB+LYdxL1FWQU0MFeBUHH8U/xvmZmUA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e3jVUZPlWf9a+Z5vr4xbbfbXAer0O174EtOXy+fD+GYpGBWdBqX4n8yqO+CUonQJll40e5CewBAC5EUxaA1UmLf+0rlJMsRHsIJ6GXf7+7nLgUw3+Qr28/yqsg2Z2j9IBbw8Pf0+eOxgOeTaMOYt56kCEJY27QQMc1ECiRhesH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cK5IsBIT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717660601;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=rxuGaMa3iEou3xAKxypqJ8B8Fj8/s+85QxHLocgvst0=;
-	b=cK5IsBITNwVC0iq2ayAzgJ7wo0+yhxMqJ23O6guiPnXr96WGjk9LmDLXYohMzac1Mw3SCn
-	hrfkKFNr8AeDmoyBVvBTfDNOFN6n1NlRfj+qg/9lXy0a6nbp8dScbauFJj85tB1adcCGBT
-	NarabG9wCBxRavfsIDRYUs8BSXEA0BA=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-577-yHJGu_WaOtCMXYyCJXGKvw-1; Thu, 06 Jun 2024 03:56:38 -0400
-X-MC-Unique: yHJGu_WaOtCMXYyCJXGKvw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42108822a8eso9025795e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 00:56:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717660597; x=1718265397;
+	s=arc-20240116; t=1717660646; c=relaxed/simple;
+	bh=n0zFL/hKs4u8O5/+08+Z+hRtcKMUCKI8n1GYa4WzNIY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=nMqDE0rOdQqKh5/nhBCEyJf8hqAGVpHYYVJLuhJKOXAce1KeKBLsS9VQ+BObWmTuwjTVhjQKOr+KQoiO70CINDbBcJ6tYU5y3EWcBsMCtAg9528Knf9Q5Wegq/aPJNIPi7S+KnuHjgL5/wIFqkF3IbcMThyyOFOR+YJGlbeK+8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JTMZTjTG; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ea903cd11bso8558171fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 00:57:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717660643; x=1718265443; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e+7voCuL0AH5jCZ1l630xQ06ZEcQjIwkbAF5IbOgHUE=;
+        b=JTMZTjTG+Ea+fkXuhP63ZfUke1weoYEHoBFDfOHW54xVuqHcYBdgiNRU01VBvpjLbB
+         GLCfgzeWwfyH2OFZ4RiyLdsroqS8OSgmy9uarYwpg5T/keul6PWW9XS0jPlEzOi1+mik
+         DBhAQvlK3OuD/uePWFipOjCUbgoD8bSMxsdPxpZ9d6r8iedMJVOGPGvRNtAizGIiQVKP
+         phHUtCWy60YyNp4PxxZfhV+SGeOrmk9z0dQlGZObUJWJTo6mIGaX54BYzo3hKiyfGeOS
+         p7o9F/lGP5uiXujJrJjJBdGeppY9KgqHDGCYTHA3dJ884OSZGXEv4kLS5Oa6KcMA3wBB
+         dD/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717660643; x=1718265443;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=rxuGaMa3iEou3xAKxypqJ8B8Fj8/s+85QxHLocgvst0=;
-        b=v4fgfJ45a18BOifTxPRMtvFR5IIveh38Gzzy+QSYztsxMH3xFfBQQ5o/Bpj1ZcON6d
-         3Znb5bVB6KalEYfw6ls8WizuorqXf7YyGoIHW60UvuMw1OrzN4XXlKw9GSGNlb6wFbKU
-         N5aZMoOJFDcp7Stcd/947QoSziabNsvaXyhxxwePJHhY1btP0IjwjcyN0dPvsG2R1kv1
-         lORFXhqAOzueLcIcS3F0x+gJH6lTqesiEmJosBvmu5JDtGI/oSNbH8dIaY3FzK6jhSgY
-         rJbtB96XVk9cltVmmPNCGjKXjVDIAAyA7u6NbmGNWrarvSw+J+aUumAh8PcXgWo3P3ko
-         eMkw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+Ni7UW9WmUPfpa6s0p7jKflljZJghOxwGy7Y8KaEvCE5bPK7USqLxi/aDV7B8MGPIz18cR2brjv04vS+yubHqkwjnkVx1Nn+x7m36
-X-Gm-Message-State: AOJu0YyYYobm77hUNF1K3ztPE7KxiZC4pY4gV/cNLLOVRhYO8RlnPS3K
-	kHt40yss2NqHjBD3NOPDobJF78hvj3lgudYzXP37DnGbRipQ+OaRJnW+nCK5MCm8EwrU+s2AKi6
-	iMvBuYVFarjwLYBM0TtX8igeYZTaOMU7eqb6rNlLVdrS5uUhPA0/VnsnzH0wPrA==
-X-Received: by 2002:a05:6000:154c:b0:357:398a:b94f with SMTP id ffacd0b85a97d-35ef0da7fcfmr1734277f8f.26.1717660597748;
-        Thu, 06 Jun 2024 00:56:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGTYvjFvw7OyUtdlL0ayqtVWVUSXcPDrSa+0/rmsAeZ6ATMntdxTI8S76GyuSkQgub9I5FWNA==
-X-Received: by 2002:a05:6000:154c:b0:357:398a:b94f with SMTP id ffacd0b85a97d-35ef0da7fcfmr1734249f8f.26.1717660597210;
-        Thu, 06 Jun 2024 00:56:37 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c710:8800:a73c:ec5b:c02c:5e0b? (p200300cbc7108800a73cec5bc02c5e0b.dip0.t-ipconnect.de. [2003:cb:c710:8800:a73c:ec5b:c02c:5e0b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d29090sm845523f8f.5.2024.06.06.00.56.36
+        bh=e+7voCuL0AH5jCZ1l630xQ06ZEcQjIwkbAF5IbOgHUE=;
+        b=NKJ80G19lfPbjHdV8/6SEx72zGWUwF6FaqVDArHX1VvskePppVrcj+uLKIOSYRpdJ8
+         TWgvC0tMzCB+ejqaSZ2tkIs0VpqMjcC2uFNKu7SkhdBlFna6wRj3wNfgYv0Gx79wekB8
+         wI0WVDAniAAbXtyrzzuhfXmyr+b7qqh9h81kL7UoRYaW6wCjUcv2NH8FifeNa6o5BWPV
+         XsOCXUCrdExYlcjwvhuuoq9k2uijhVAA3Grh+hSOpHXu30fq91oZgtj2ZjxKz3Old29c
+         sBfrcqmVB1eWj/pTlONFLtVUMn67zN1KbjobeCkp72TA0uXtTvgoXnWyRTDMrKFnflYF
+         lLKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfpHhlGE0LwV3cRNeU/QEcET/blhwF16Ze1LSGZbEj0x5OrYbMRRFP8Zwy6W2uhj5JVpe9g2sF2Q3h2ZXA6ry5DtIsRd06HaYGLlRA
+X-Gm-Message-State: AOJu0Ywac4xE+42390MO/2n68kIa7QLFeD2W3e7dL9Dur7ZaZbiZFgvy
+	2daoE+31l12YZmKk9vdFx848o48knO73auN+4N+hZDkI45LGsw01D8pi0dDTKOo=
+X-Google-Smtp-Source: AGHT+IHQTlXCaes2WPs1tS4SO/ZeAXtqzWbLEzAFaTEeJVA/bQtoNUFUtqIAg2EYkzJMWCFSPexC9Q==
+X-Received: by 2002:a2e:a378:0:b0:2e9:845a:8f1c with SMTP id 38308e7fff4ca-2eac7a92009mr30708851fa.51.1717660642753;
+        Thu, 06 Jun 2024 00:57:22 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:22fd:4ae6:287f:17f2? ([2a01:e0a:982:cbb0:22fd:4ae6:287f:17f2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5fc6d75sm839939f8f.110.2024.06.06.00.57.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 00:56:36 -0700 (PDT)
-Message-ID: <3a368e38-a4cb-413e-a6d9-41c6b3dbd5ae@redhat.com>
-Date: Thu, 6 Jun 2024 09:56:35 +0200
+        Thu, 06 Jun 2024 00:57:22 -0700 (PDT)
+Message-ID: <b41a781f-33bb-434c-adcf-97f494c689e5@linaro.org>
+Date: Thu, 6 Jun 2024 09:57:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,147 +77,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/gup: don't check page lru flag before draining it
-To: Baolin Wang <baolin.wang@linux.alibaba.com>,
- yangge1116 <yangge1116@126.com>, akpm@linux-foundation.org,
- Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, liuzixing@hygon.cn
-References: <1717498121-20926-1-git-send-email-yangge1116@126.com>
- <0d7a4405-9a2e-4bd1-ba89-a31486155233@redhat.com>
- <dc7a0b61-8d3f-7205-2f6d-c2b12500947a@126.com>
- <776de760-e817-43b2-bd00-8ce96f4e37a8@redhat.com>
- <7063920f-963a-4b3e-a3f3-c5cc227bc877@redhat.com>
- <48150a28-ed48-49ff-9432-9cd30cda4da4@linux.alibaba.com>
- <11ef3deb-d1e3-46d5-97ed-9ba3c1fbbba9@redhat.com>
- <697a9bc2-a655-4035-aa5e-7d3acb23e79d@redhat.com>
- <d6deb928-3466-45ea-939b-cb5aca9bc7b4@linux.alibaba.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <d6deb928-3466-45ea-939b-cb5aca9bc7b4@linux.alibaba.com>
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] ASoC: dt-bindings: linux,spdif-dir: Convert to dtschema
+To: Animesh Agarwal <animeshagarwal28@gmail.com>,
+ Rob Herring <robh@kernel.org>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240605112301.8171-1-animeshagarwal28@gmail.com>
+ <20240606005332.GA3526959-robh@kernel.org>
+ <CAE3Oz82TsuDq5wAW4TSNeUuR0DTixAQPtJnCc3-5J7MnBYtuRw@mail.gmail.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <CAE3Oz82TsuDq5wAW4TSNeUuR0DTixAQPtJnCc3-5J7MnBYtuRw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
->> Some random thoughts about some folio_test_lru() users:
+On 06/06/2024 04:19, Animesh Agarwal wrote:
+> On Thu, Jun 6, 2024 at 6:23 AM Rob Herring <robh@kernel.org> wrote:
 >>
->> mm/khugepaged.c: skips pages if !folio_test_lru(), but would fail skip
->> it either way if there is the unexpected reference from the LRU batch!
+>> On Wed, Jun 05, 2024 at 04:52:55PM +0530, Animesh Agarwal wrote:
+>>> Convert the dummy SPDIF receiver bindings to DT schema. Make bindings
+>>> complete by adding property "#sound-dai-cells"
 >>
->> mm/compaction.c: skips pages if !folio_test_lru(), but would fail skip
->> it either way if there is the unexpected reference from the LRU batch!
+>> 2 conversions of the same thing in one day:
 >>
->> mm/memory.c: would love to identify this case and to a lru_add_drain()
->> to free up that reference.
+>> https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-convert-spdif-receiver-v1-1-262465adbac2@linaro.org/
 >>
->> mm/huge_memory.c: splitting with the additional reference will fail
->> already. Maybe we'd want to drain the LRU batch.
-> 
-> Agree.
-> 
+>> As I said there, I would just add the compatible to
+>> linux,spdif-dit.yaml. But this is fine too.
 >>
->> mm/madvise.c: skips pages if !folio_test_lru(). I wonder what happens if
->> we have the same page twice in an LRU batch with different target goals ...
+>>>
+>>> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+>>> Cc: Daniel Baluta <daniel.baluta@nxp.com>
+>>> ---
+>>>   .../bindings/sound/linux,spdif-dir.yaml       | 34 +++++++++++++++++++
+>>>   .../bindings/sound/spdif-receiver.txt         | 10 ------
+>>>   2 files changed, 34 insertions(+), 10 deletions(-)
+>>>   create mode 100644 Documentation/devicetree/bindings/sound/linux,spdif-dir.yaml
+>>>   delete mode 100644 Documentation/devicetree/bindings/sound/spdif-receiver.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/sound/linux,spdif-dir.yaml b/Documentation/devicetree/bindings/sound/linux,spdif-dir.yaml
+>>> new file mode 100644
+>>> index 000000000000..61767873200f
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/sound/linux,spdif-dir.yaml
+>>> @@ -0,0 +1,34 @@
+>>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/sound/linux,spdif-dir.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Dummy SPDIF receiver
+>>> +
+>>> +maintainers:
+>>> +  - Liam Girdwood <lgirdwood@gmail.com>
+>>> +  - Mark Brown <broonie@kernel.org>
+>>> +
+>>> +allOf:
+>>> +  - $ref: dai-common.yaml#
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: linux,spdif-dir
+>>> +
+>>> +  "#sound-dai-cells":
+>>> +    const: 0
+>>
+>> It wasn't in the txt binding, but users also use 'sound-name-prefix'
+>> property, so that should be added here.
+> linux,spdif-dir.yaml
 > 
-> IIUC, LRU batch can ignore this folio since it's LRU flag is cleared by
-> folio_isolate_lru(), then will call folios_put() to frop the reference.
-> 
+> If this is the case, I'll add the linux,spdif-dir compatible in
+> linux,spdif-dit.yaml instead of creating a new file in v2 of this
+> patch.
 
-I think what's interesting to highlight in the current design is that a 
-folio might end up in multiple LRU batches, and whatever the result will 
-be is determined by the sequence of them getting flushed. Doesn't sound 
-quite right but maybe there was a reason for it (which could just have 
-been "simpler implementation").
+OK but perhaps rename into dummy-spdif.yaml, no ?
 
-> 
->> Some other users (there are not that many that don't use it for sanity
->> checks though) might likely be a bit different.
 
-There are also some PageLRU checks, but not that many.
+Thanks,
+Neil
 
 > 
-> mm/page_isolation.c: fail to set pageblock migratetype to isolate if
-> !folio_test_lru(), then alloc_contig_range_noprof() can be failed. But
-> the original code could set pageblock migratetype to isolate, then
-> calling drain_all_pages() in alloc_contig_range_noprof() to drop
-> reference of the LRU batch.
-> 
-> mm/vmscan.c: will call lru_add_drain() before calling
-> isolate_lru_folios(), so seems no impact.
-
-lru_add_drain() will only drain the local CPU. So if the folio would be 
-stuck on another CPU's LRU batch, right now we could isolate it. When 
-processing that LRU batch while the folio is still isolated, it would 
-currently simply skip the operation.
-
-So right now we can call isolate_lru_folios() even if the folio is stuck 
-on another CPU's LRU batch.
-
-We cannot really reclaim the folio as long is it is in another CPU's LRU 
-batch, though (unexpected reference).
-
-> 
-> BTW, we also need to look at the usage of folio_isolate_lru().
-
-Yes.
-
-> 
-> It doesn’t seem to have major obstacles, but there are many details to
-> analyze :)
-
-Yes, we're only scratching the surface.
-
-Having a way to identify "this folio is very likely some CPU's LRU 
-batch"  could end up being quite valuable, because likely we don't want 
-to blindly drain the LRU simply because there is some unexpected 
-reference on a folio [as we would in this patch].
-
--- 
-Cheers,
-
-David / dhildenb
+> Regards,
+> Animesh Agarwal
 
 
