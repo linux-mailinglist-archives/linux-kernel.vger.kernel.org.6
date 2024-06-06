@@ -1,216 +1,136 @@
-Return-Path: <linux-kernel+bounces-204095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E97318FE40F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:17:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 883528FE411
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F5861F24ED5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:17:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3845E1F234FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B87194AF2;
-	Thu,  6 Jun 2024 10:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C224194C9B;
+	Thu,  6 Jun 2024 10:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uiEWhhEz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UiyYus/d"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B873158848;
-	Thu,  6 Jun 2024 10:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110B8194C70;
+	Thu,  6 Jun 2024 10:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717669060; cv=none; b=FV3/lPzwqTvHWWXqqSmh51ImAbajYrnBfPn++1ZgUweBk0kuAlf38cknp7PRPQSxHScZ88tEOLgaSW/kNSHDysIudbsTd/pEY10X5n185VXmr4wCvqqSqyDkmvACO5WapIRLzshiAtuenHqFkXbiJqhr70gu5BB/1INEhXOhgQk=
+	t=1717669067; cv=none; b=bXck0rA//It1ShO0jz5BS9gAwd2ljpjOx2V2zu/CJuC3h9u8FVmxrJEJ/CkRPtB440tfxXiS2L5uUYT0t+uukQ92Vvt3wB7hV5F89f3FW33OLWUjr9s1+j3LSKDS/hJ6mm6MBFzRdw6ucbXRKjAY6sP/9Sy+BhkVd7H1KdzN6l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717669060; c=relaxed/simple;
-	bh=W9kbQ3pOCWummTxiokP7SZcsLeHBrYY6Qzq/MV72KTU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ll5e/OPt2kAbbBDKs6l2nqrJiWbc0ASdP7a8Eki37HA2vrxdkiL+Fm0/7lfXRkeePgYbRGY+r3lzZX6OYiaKOE1aqjwzufpgipqPLZzP7pybbmhI/bpvQnW7+ZtbrWhfb5V0xEyE1Jaiczai9LoOXeGK1YzjYMviJEgIUmLhsEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uiEWhhEz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D96D3C32782;
-	Thu,  6 Jun 2024 10:17:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717669059;
-	bh=W9kbQ3pOCWummTxiokP7SZcsLeHBrYY6Qzq/MV72KTU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uiEWhhEzoZzCIGqYIZyzZELj/haUQGSJYnc/PlYcDgqUSC+04XGE+M+Tzy36Jqpso
-	 I4B8nKfrhcD+XTJPPvcyuINb4gGoyzJipMtkwRp7X0fqGZw7thxFDzT+qaAd6DOc9T
-	 QBvq9FMfIsHUTsjV38OTk1T8r1ewNiaQYBW/7WFHcCJfVMrArKP4FF2eUjYCCgPsA1
-	 6Tjjgrm9HSl+IZVOcW3vsUHWvSXPOXJA894X2JupawEqiGdJ2N8+LVKJqegLeNFow3
-	 7R9xEkjRyNPAxeI84GiTRczFdUBT8YJCJnuGxyakUMHsf4RiuMWtgfuQ+vATZ5VKwV
-	 C39dwBzegKSSQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sFABd-001G9O-CB;
-	Thu, 06 Jun 2024 11:17:37 +0100
-Date: Thu, 06 Jun 2024 11:17:36 +0100
-Message-ID: <867cf2l6in.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu
- <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Subject: Re: [PATCH v3 12/14] arm64: realm: Support nonsecure ITS emulation shared
-In-Reply-To: <4c363476-e5b5-42ff-9f30-a02a92b6751b@arm.com>
-References: <20240605093006.145492-1-steven.price@arm.com>
-	<20240605093006.145492-13-steven.price@arm.com>
-	<86a5jzld9g.wl-maz@kernel.org>
-	<4c363476-e5b5-42ff-9f30-a02a92b6751b@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1717669067; c=relaxed/simple;
+	bh=izQg9vdBQ3XHJ+BM/CW9WhLY3IAzyIj2Vi9Wn6+3sKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DCAINWIAYWzB43Nfxl4rOX0WYlraD5GZZVPzqbqUcpMc3cGWs3VwYN5gM2kKbBA16F67xnBIJzHIhB/fyyx9V249/Sga7rm6J4iJBupLDNenN9dStPKARcl5l64iYzXAisDB07l3T5MvZPkezGy07YT9kwRhXzh7Ve8qZHx6uDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UiyYus/d; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717669066; x=1749205066;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=izQg9vdBQ3XHJ+BM/CW9WhLY3IAzyIj2Vi9Wn6+3sKA=;
+  b=UiyYus/dCpbzaiW6z/TQi4yq5dKehwHd4BopldaZAmwEnvLoArcevq8l
+   qOTtZ5e0xWtSNJaLlmusxts5Wa7jxaAn9Scy3XpPswN03BmRz7BI/vYfz
+   NSbEDxf9I+xB5rW207+W4nGp6x3d29ioaJ6uVERoDhi82i1qMRsNYN9nn
+   NcQYEBkWgMT6wsh8gD3KTwmX7gu/DeRl2CFUDBHi25QSPa4x165//K7ms
+   IZcbtPqlbWtAqkkau+eTvFqinV+JEpVAM+ds9/zNpcrafce6kPiHzRLiB
+   d/pyekLDXv0iWeBBbpxcoscfQfyUFbTRk/VhSAeWObho6VqVmyen7Fmj0
+   Q==;
+X-CSE-ConnectionGUID: Xwh2F62+SCS9h5C1RW6ueg==
+X-CSE-MsgGUID: 8U2WxuKbSnGbi1Vggzo5dQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="14130021"
+X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
+   d="scan'208";a="14130021"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 03:17:45 -0700
+X-CSE-ConnectionGUID: rltQj9RWSieZBDm9RlCi6w==
+X-CSE-MsgGUID: iemh3MQ0TOqj84jpUIA+Ow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
+   d="scan'208";a="37881331"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 03:17:42 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sFABf-0000000E8Fy-2JP4;
+	Thu, 06 Jun 2024 13:17:39 +0300
+Date: Thu, 6 Jun 2024 13:17:39 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Nuno Sa <nuno.sa@analog.com>
+Cc: Petr Mladek <pmladek@suse.com>, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Jyoti Bhayana <jbhayana@google.com>,
+	Chris Down <chris@chrisdown.name>,
+	John Ogness <john.ogness@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andi Shyti <andi.shyti@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] iio: temperature: ltc2983: convert to
+ dev_err_probe()
+Message-ID: <ZmGMwwglUlS6_NI_@smile.fi.intel.com>
+References: <20240606-dev-add_dev_errp_probe-v3-0-51bb229edd79@analog.com>
+ <20240606-dev-add_dev_errp_probe-v3-2-51bb229edd79@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: steven.price@arm.com, kvm@vger.kernel.org, kvmarm@lists.linux.dev, catalin.marinas@arm.com, will@kernel.org, james.morse@arm.com, oliver.upton@linux.dev, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, joey.gouly@arm.com, alexandru.elisei@arm.com, christoffer.dall@arm.com, tabba@google.com, linux-coco@lists.linux.dev, gankulkarni@os.amperecomputing.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606-dev-add_dev_errp_probe-v3-2-51bb229edd79@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, 05 Jun 2024 16:08:49 +0100,
-Steven Price <steven.price@arm.com> wrote:
-> 
-> Hi Marc,
-> 
-> On 05/06/2024 14:39, Marc Zyngier wrote:
-> > The subject line is... odd. I'd expect something like:
-> > 
-> > "irqchip/gic-v3-its: Share ITS tables with a non-trusted hypervisor"
-> > 
-> > because nothing here should be CCA specific.
-> 
-> Good point - that's a much better subject.
-> 
-> > On Wed, 05 Jun 2024 10:30:04 +0100,
-> > Steven Price <steven.price@arm.com> wrote:
-> >>
-> >> Within a realm guest the ITS is emulated by the host. This means the
-> >> allocations must have been made available to the host by a call to
-> >> set_memory_decrypted(). Introduce an allocation function which performs
-> >> this extra call.
-> > 
-> > This doesn't mention that this patch radically changes the allocation
-> > of some tables.
-> 
-> I guess that depends on your definition of radical, see below.
+On Thu, Jun 06, 2024 at 09:22:38AM +0200, Nuno Sa wrote:
+> Use dev_err_probe() (and variants) in the probe() path. While at it, made
+> some simple improvements:
+>  * Explicitly included the err.h and errno.h headers;
+>  * Removed some unnecessary line breaks;
+>  * Removed a redundant 'else';
+>  * Added some missing \n to prink.
 
-It's election time, I'm all about making bold statements!
+...
 
-[...]
+> -		if (ret) {
+> +		if (ret)
+>  			/*
+>  			 * This would be catched later but we can just return
+>  			 * the error right away.
+>  			 */
+> -			dev_err(&st->spi->dev, "Property reg must be given\n");
+> -			return ERR_PTR(ret);
+> -		}
+> +			return dev_err_ptr_probe(&st->spi->dev, ret,
+> +						 "Property reg must be given\n");
 
-> >> @@ -3334,8 +3365,9 @@ static bool its_alloc_table_entry(struct its_node *its,
-> >>  
-> >>  	/* Allocate memory for 2nd level table */
-> >>  	if (!table[idx]) {
-> >> -		page = alloc_pages_node(its->numa_node, GFP_KERNEL | __GFP_ZERO,
-> >> -					get_order(baser->psz));
-> >> +		page = its_alloc_pages_node(its->numa_node,
-> >> +					    GFP_KERNEL | __GFP_ZERO,
-> >> +					    get_order(baser->psz));
-> >>  		if (!page)
-> >>  			return false;
-> >>  
-> >> @@ -3418,7 +3450,9 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
-> >>  	unsigned long *lpi_map = NULL;
-> >>  	unsigned long flags;
-> >>  	u16 *col_map = NULL;
-> >> +	struct page *page;
-> >>  	void *itt;
-> >> +	int itt_order;
-> >>  	int lpi_base;
-> >>  	int nr_lpis;
-> >>  	int nr_ites;
-> >> @@ -3430,7 +3464,6 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
-> >>  	if (WARN_ON(!is_power_of_2(nvecs)))
-> >>  		nvecs = roundup_pow_of_two(nvecs);
-> >>  
-> >> -	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-> >>  	/*
-> >>  	 * Even if the device wants a single LPI, the ITT must be
-> >>  	 * sized as a power of two (and you need at least one bit...).
-> >> @@ -3438,7 +3471,16 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
-> >>  	nr_ites = max(2, nvecs);
-> >>  	sz = nr_ites * (FIELD_GET(GITS_TYPER_ITT_ENTRY_SIZE, its->typer) + 1);
-> >>  	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
-> >> -	itt = kzalloc_node(sz, GFP_KERNEL, its->numa_node);
-> >> +	itt_order = get_order(sz);
-> >> +	page = its_alloc_pages_node(its->numa_node,
-> >> +				    GFP_KERNEL | __GFP_ZERO,
-> >> +				    itt_order);
-> > 
-> > So we go from an allocation that was so far measured in *bytes* to
-> > something that is now at least a page. Per device. This seems a bit
-> > excessive to me, specially when it isn't conditioned on anything and
-> > is now imposed on all platforms, including the non-CCA systems (which
-> > are exactly 100% of the machines).
-> 
-> Catalin asked about this in v2:
-> https://lore.kernel.org/lkml/c329ae18-2b61-4851-8d6a-9e691a2007c8@arm.com/
-> 
-> To be honest, I don't have a great handle on how much memory is being
-> wasted here. Within the realm guest I was testing this is rounding up an
-> otherwise 511 byte allocation to a 4k page, and there are 3 of them.
-> Which seems reasonable from a realm guest perspective.
+Even if it becomes a one line of code, it's still a multiline branch, due to
+comment. I think {} is better to be there. What does checkpatch say about this?
 
-And not that reasonable on a smaller system, such as my own router VM
-that has a whole lot of devices and very little memory. Not to mention
-that while CCA is stuck with 4k pages (duh!), the world is moving
-towards larger pages, meaning that this is wasting even more memory.
 
-> 
-> I can see two options to improve here:
-> 
-> 1. Add a !is_realm_world() check and return to the previous behaviour
-> when not running in a realm. It's ugly, and doesn't deal with any other
-> potential future memory encryption. cc_platform_has(CC_ATTR_MEM_ENCRYPT)
-> might be preferable? But this means no impact to non-realm guests.
+...
 
-No, this is way too ugly, and doesn't help with things like pKVM.
+> +			return dev_err_ptr_probe(&st->spi->dev, -EINVAL,
 
-> 
-> 2. Use a special (global) memory allocator that does the
-> set_memory_decrypted() dance on the pages that it allocates but allows
-> packing the allocations. I'm not aware of an existing kernel API for
-> this, so it's potentially quite a bit of code. The benefit is that it
-> reduces memory consumption in a realm guest, although fragmentation
-> still means we're likely to see a (small) growth.
-> 
-> Any thoughts on what you think would be best?
+You can make all these lines shorter by using
 
-I would expect that something similar to kmem_cache could be of help,
-only with the ability to deal with variable object sizes (in this
-case: minimum of 256 bytes, in increments defined by the
-implementation, and with a 256 byte alignment).
+	struct device *dev = &st->spi->dev; // or analogue
 
-I don't think the ITS is particularly special here, and we should come
-up with something that is generic enough to support sharing of
-non-page-sized objects.
+at the top of the function.
 
-Thanks,
-
-	M.
+> +						 "Invalid chann:%d for RTD\n",
+> +						 sensor->chan);
 
 -- 
-Without deviation from the norm, progress is not possible.
+With Best Regards,
+Andy Shevchenko
+
+
 
