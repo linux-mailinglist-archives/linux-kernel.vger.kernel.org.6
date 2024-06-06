@@ -1,95 +1,185 @@
-Return-Path: <linux-kernel+bounces-204821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F0DF8FF3E4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:36:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B40998FF3E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:37:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 485101F22B63
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:36:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC3DE1C27767
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DFA19938C;
-	Thu,  6 Jun 2024 17:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80DA1990C0;
+	Thu,  6 Jun 2024 17:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="l0DHKAp9"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="W6dYG13w"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50861991BD;
-	Thu,  6 Jun 2024 17:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB66196C97
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 17:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717695358; cv=none; b=jlwh9MiF5OJfPl1KR1Y6TvPTzOkkvwI7qUxgvMuaSx5pSsV4iE5l3f35WQJFij1st3AW9xOXqRd0V72xRmeSwjeE+iFZJ7X/PWLs9L7YN2yLnoUnw+IBvNwiISyCMCl7xr16VoW3p5NZT1h0OwQ+V4frl5/Z8NDTIGEL21EvEsU=
+	t=1717695423; cv=none; b=D6lH1lt9MnyXEaV1z3vtkPHz9Hd3iK3s/sr5iOPHjXaXKwEgAak7cqVhjW5n7/DE17zkuMujIWMvJIEt9Y62KdtLqNBCtoiIX/DcrVZV2eqHSuHbgnLdNl/l/XMo4BlaZ/NLW4zwYQFSJrfxOrVEt0bb+nEo8Hj8b+cpWtOuKeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717695358; c=relaxed/simple;
-	bh=K95UY5fmgibcQQ6sthv1S5/PdLYNFoyPKt9sEpSCbeg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WwqQIxUWXBQ3eeitP4IqhMunjStPnSqSgZefic71HNvFxu+P1+P+Tl8ynbYa06b5CP3SkbnIqHNYWVHUqaaxXilw0+qfGy15ub4DHCoRukPExjGoLXuVKzVApxU25XUffNmq5Pcj8Ir+6Pa14ojrMcLXE0nRYUXHchBMdOtOMv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=l0DHKAp9; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Rey5qJ7BY13ky3bigo4MWBL8ulxyTtDItl78FrbFPQE=; b=l0DHKAp9pgwOYJGy6q17IxAKYk
-	InZ8CQSKwrYAb46Fg4KCTzN0hqcA6Dse+Q+x9G57PSijSP0134gUjHRdPavJ79WSIX7dEMkbz93QU
-	Ak/4eVkq9cFudul86GtuBwn5f6BsMhNAi3HHmYdDU67cgiROZ0a3SOWbF8OmAPX7eBCh4sXDTBHeL
-	mm9e72L3F2C0zI7Kz+v54fJUrG//TSU1Oqpp7LPaZany+XqCeWqqoO0omgFXfKSZxVZXFVu+Qvk1b
-	OLlXB5X7JmZ4xv/eEK+EON/AXSs9gCkVe21PhVDJssmS+P9//zSPOLxhNuK798NJXn+tjo2u6HBEk
-	XR4zCXiQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sFH1g-00000001g1c-19xi;
-	Thu, 06 Jun 2024 17:35:48 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id BBAD930047C; Thu,  6 Jun 2024 19:35:44 +0200 (CEST)
-Date: Thu, 6 Jun 2024 19:35:44 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] rust: add tracepoint support
-Message-ID: <20240606173544.GI8774@noisy.programming.kicks-ass.net>
-References: <20240606-tracepoint-v1-0-6551627bf51b@google.com>
- <20240606-tracepoint-v1-3-6551627bf51b@google.com>
- <389a8c55-a169-47ef-99c0-48f58003b40c@efficios.com>
- <ZmHacqvRwBj7OvWm@boqun-archlinux>
+	s=arc-20240116; t=1717695423; c=relaxed/simple;
+	bh=NbrcxYhB1eDaH+bTjj8oPjgy4mCCdG3gUUY33h7AeYk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=EHEaiknlDgdhR/dTPSlYsCAC0C7Qmw+yFIP1KWeRfv2mLii0bHvqGGWaJ3DThZApOzn4a2N1VarhYqnHvyYJwwivmmXGk3afoyiJ7Sr47wjWD92ZhJFzHLCvyrGseQ5nJsWZwqrRfo0ol8QMdYkziIg5/mMLZyqra8G7kCTWXnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=W6dYG13w; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=6qFVrr8UMxkjnVSjfYeV875ZoYSDNtc8lpGP0ayboO8=; b=W6dYG13wKODjfZ2o3y7BAAhO+2
+	GFhWv6RSkgo+uiS4wl30uo60WnUBmT2kfnxi4Dat1dI6xVIxrmm1VyGdC0wcPuDM39S39Y9G/I0tm
+	pgx0+1ySKi4sDiiKrK53jP1wjEPhSl93l7ZRd3MH3QQvvv55JAwEcX9ip0rTAonW3mGN2PkkVnMmq
+	CWC3JtvXyzZa2TkwNkCG6grFmDRgKE4AkLpTMEHWNMjeoEFvgCBr0xASYZT4MdaN3R6WWcsA8RqBk
+	owEntDcnVb5aj3E/NLRTb80xE5PLbpPRdW/wwtFWGiWWEUQKsPuqKH1/VeLZ9pqiSU6yew+IUeeO1
+	h6v985Mw==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <esben@geanix.com>)
+	id 1sFH2t-0004NN-1a; Thu, 06 Jun 2024 19:36:59 +0200
+Received: from [80.62.117.184] (helo=localhost)
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <esben@geanix.com>)
+	id 1sFH2p-000EGh-0t;
+	Thu, 06 Jun 2024 19:36:59 +0200
+From: Esben Haabendal <esben@geanix.com>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Michael Walle <mwalle@kernel.org>,  Pratyush Yadav
+ <pratyush@kernel.org>,  Miquel Raynal <miquel.raynal@bootlin.com>,
+  Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
+ <vigneshr@ti.com>,  linux-mtd@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  Rasmus Villemoes
+ <rasmus.villemoes@prevas.dk>
+Subject: Re: [PATCH] mtd: spi-nor: macronix: workaround for device id re-use
+In-Reply-To: <9e304860-b4e9-4193-9bb3-ebcc3611032f@linaro.org> (Tudor
+	Ambarus's message of "Thu, 6 Jun 2024 15:27:34 +0100")
+References: <20240524-macronix-mx25l3205d-fixups-v1-1-ee152e56afb3@geanix.com>
+	<D1Q7BU6PJ356.1CTXPUZE8U6XX@kernel.org>
+	<8513a828-6669-4bf3-91d3-799771866f32@linaro.org>
+	<D1SZA4ZDM06P.CJC0EQ9ULA04@kernel.org>
+	<9e304860-b4e9-4193-9bb3-ebcc3611032f@linaro.org>
+Date: Thu, 06 Jun 2024 19:36:58 +0200
+Message-ID: <87ikym9dmt.fsf@geanix.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmHacqvRwBj7OvWm@boqun-archlinux>
+Content-Type: text/plain
+X-Authenticated-Sender: esben@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27298/Thu Jun  6 10:30:08 2024)
 
-On Thu, Jun 06, 2024 at 08:49:06AM -0700, Boqun Feng wrote:
+Tudor Ambarus <tudor.ambarus@linaro.org> writes:
 
-> Long-term plan is to 1) compile the C helpers in some IR and 2) inline
-> the helpers with Rust in IR-level, as what Gary has:
-> 
-> 	https://lore.kernel.org/rust-for-linux/20240529202817.3641974-1-gary@garyguo.net/
+> On 6/6/24 14:45, Michael Walle wrote:
+>>>>> + */
+>>>>> +static int
+>>>>> +mx25l3205d_late_init(struct spi_nor *nor)
+>>>>> +{
+>>>>> +	struct spi_nor_flash_parameter *params = nor->params;
+>>>>> +
+>>>>> +	/*                          DREAD  2READ  QREAD  4READ
+>>>>> +	 *                          1-1-2  1-2-2  1-1-4  1-4-4
+>>>>> +	 * Before SFDP parse          1      0      1      0
+>>>>> +	 * 3206e after SFDP parse     1      0      0      0
+>>>>> +	 * 3233f after SFDP parse     1      1      1      1
+>>>>> +	 * 3205d after this func      0      1      0      0
+>>>>> +	 */
+>>>>> +	if ((params->hwcaps.mask & SNOR_HWCAPS_READ_1_1_4) &&
+>>>>> +	    !(params->hwcaps.mask & SNOR_HWCAPS_READ_1_4_4)) {
+>>>>> +		/* Should be MX25L3205D */
+>>>>> +		params->hwcaps.mask &= ~SNOR_HWCAPS_READ_1_1_2;
+>>>>> +		spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_1_1_2],
+>>>>> +					  0, 0, 0, 0);
+>>>>> +		params->hwcaps.mask &= ~SNOR_HWCAPS_READ_1_1_4;
+>>>>> +		spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_1_1_4],
+>>>>> +					  0, 0, 0, 0);
+>>>>> +		params->hwcaps.mask |= SNOR_HWCAPS_READ_1_2_2;
+>>>>> +		spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_1_2_2],
+>>>>> +					  0, 4, SPINOR_OP_READ_1_2_2,
+>>>>> +					  SNOR_PROTO_1_2_2);
+>>>>> +	}
+>>>>> +
+>>>>> +	return 0;
+>>>>> +}
+>>>>> +
+>>>>> +static const struct spi_nor_fixups mx25l3205d_fixups = {
+>>>>> +	.late_init = mx25l3205d_late_init,
+>>>>> +};
+>>>>> +
+>>>>>  static int
+>>>>>  mx25l25635_post_bfpt_fixups(struct spi_nor *nor,
+>>>>>  			    const struct sfdp_parameter_header *bfpt_header,
+>>>>> @@ -61,7 +118,8 @@ static const struct flash_info macronix_nor_parts[] = {
+>>>>>  		.id = SNOR_ID(0xc2, 0x20, 0x16),
+>>>>>  		.name = "mx25l3205d",
+>>>>>  		.size = SZ_4M,
+>>>>> -		.no_sfdp_flags = SECT_4K,
+>>>>> +		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+>>>>> +		.fixups = &mx25l3205d_fixups
+>>>>>  	}, {
+>>>>>  		.id = SNOR_ID(0xc2, 0x20, 0x17),
+>>>>>  		.name = "mx25l6405d",
+>>>>>
+>>>
+>>> If all support 1-1-2, (seems MX25L3205D doesn't), then we may have a
+>>> change to don't update the core.
+>>>
+>>> Frankly I don't care too much about what happens in the manufacturer
+>>> drivers, but I do care about the core and to not extend it with . This
+>>> patch is not too heavy to be unmaintainable and shows clear where the
+>>> problem is, we can keep this as well.
+>> 
+>> It's a horrible hack. For example I'm working on a patch to clean up
+>> the spi_nor_set_read_settings() handling. So just throwing any code
+>> into vendor drivers doesn't make it any better in terms of
+>> maintainability. I'd need to touch all the code anyway. In fact it
+>> makes it even worse, because it looks like the manufacturer drivers
+>> are just a dumping ground for bad things. Thus, I'd really have it
+>> handled in a correct way inside the core.
+>> 
+>> Also, this is not device specific. Let there be two different
+>> flashes with the same ID, but one support SFDP and one doesn't.
+>> Right now, you have to have any of the magic flags (dual, quad,
+>> etc) set to trigger an SFDP parsing. If the flash without SFDP
+>> doesn't support any of these, like in this case, we are screwed.
+>> Hence we might need such a flag also for other flashes.
+>
+> maybe. How many such flashes have you seen in the last 3 years?
 
-Urgh, that still needs us to maintain that silly list of helpers :-/
+How big a procentage of embedded Linux hardware do we have a realistic
+chance to know anything about?
 
-Can't we pretty please have clang parse the actual header files into IR
-and munge that into rust? So that we don't get to manually duplicate
-everything+dog.
+>>> Other option that I'd like you to consider is whether we just remove
+>>> support for MX25L3205D, thus the entry altogether, and instead rely on
+>>> SFDP to set everything.
+>> 
+>> Well, this will break boards with this flash :) And we don't know if
+>> there are any.
+>
+> The flash (MX25L3205D) was already deprecated in two iterations by the
+> manufacturer. First migration being done in 2011 [1]. Having to maintain
+> all flavors is a pain, thus let's remove support for the old flash. If
+> anyone complains we can bring it back to life, but let's not complicate
+> our existence yet.
+>
+> [1]
+> https://www.mxic.com.tw/Lists/ApplicationNote/Attachments/1858/AN058-Migrating%20from%20MX25L3205D%20to%20MX25L3206E-1.2.pdf
+
+How should we communicate the removal of support for MX25L3205D?
+And should we then rename the entry to "mx23l3206e"?
+
+/Esben
 
