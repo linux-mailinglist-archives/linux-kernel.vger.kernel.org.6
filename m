@@ -1,378 +1,248 @@
-Return-Path: <linux-kernel+bounces-204894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B79B38FF4C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:33:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A6D8FF4BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BE00B26E7E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:33:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA3071F28E69
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8424481C4;
-	Thu,  6 Jun 2024 18:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A564CB4E;
+	Thu,  6 Jun 2024 18:32:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="XGfxfz1h"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="iaHKsNFo";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="d5RC35XK"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F0E45023
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 18:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717698778; cv=none; b=XtRrk1itkHPspDZUUeg9eAgT8rr+Rbyaek0G2Gp29g1sDToCG3/a3PILnAjVFGwKsLvs3Epk7DzBmbbHEcp5n5tNcFtx3X1GB8e/xW0N8+yoYdHE0CzwXF3F6kh88i0F5xOicX3TDIeDKbGq219EbK1393HwPk/j8hvaNOYWR8U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717698778; c=relaxed/simple;
-	bh=R9e+OJonG9hTJudPVCEGrHNRbNb8rze+vl5k6pesrRI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s5D460OEckzw/hmPbyLVRvh+GZue/ytJtTK4ls+AWq+oG+0PMuZdxXyusfmNfAMeWZ68xPvCnGpRtCHjFzyX7PkZ2Ydrl6TCLCJgLE1efH0VkVj9iVOOsmd5b3t6nWZCyYjihBOeVkD/soSULBuV+D4luw7zq7AZTW6Re1uWC2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=XGfxfz1h; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-703ed15b273so1084284b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 11:32:56 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89D8487BE;
+	Thu,  6 Jun 2024 18:32:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717698759; cv=fail; b=uiurqGmMkBj/jyfyvChXoB1cbzSdkew+eSlPkZIV87p24HD7H1/1YkcwAHYOwVfVgb9qUNAIAdyYWY2KAbsokMjI3Tl4tVqYV7V73ZntnNuYPqI9EBKXVcMWgvwEBg0F7f8ZBQy1tJjslr0qIZi54lXMh+BQJUuwOzpQVFUj1+s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717698759; c=relaxed/simple;
+	bh=wMakqjEkUSYyLjxjQ0BOSKaymg1ZZ2wssnZqRdvBJRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=HEUqm/eaBqdl5imyo9K7p7c/LRAryrN6GAEv3oWs1iFQgFK8PsDlUDD4mzuezHnqj/jy/KKMgXFgC7j+B70E+ZAochOgZEPhMbzRtUihur5EJD/pr8EmEJ7d2HD52V6uPoC8gzcxUCmQHOtLZ/ijk3m8N9Oiv0Ntbek5IwF0zzY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=iaHKsNFo; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=d5RC35XK; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 456HxTfF032746;
+	Thu, 6 Jun 2024 18:32:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc : content-type :
+ date : from : in-reply-to : message-id : mime-version : references :
+ subject : to; s=corp-2023-11-20;
+ bh=1XspzRE/M8yFhU99MQmhQ1sWUsBZgff1FUl9gZ5evAQ=;
+ b=iaHKsNFoB18Oi2yBONJfjkeRCr0s25hNSA4IRWcBtaBwQu3qn2f7iinz7ET4NfW28dj0
+ 0miIQiJVXXPzc2vs8CcjnBTllQjDnJfSCePhqQNvMXSK55JFdgejyDPg6czFHMhlEFS6
+ EaAlHdod+HK/B/V0sUmr/Y50W4VoySqQTvBUO7hmlj2BCRXWpFFomtUcvieU8QdYDkKB
+ 3SonfER3USdoz1HV7CH28yFRvuXot1h3yoGYQs8ZR/zdhm1JgAwssKMEJ+HISUNVSrDs
+ FlwSSbQj7hBEQhdDSGLKFvs2xVl1iyXBKd1UN4yHDTHxPx17ja1aWje5VZy3Ye2KfDuC Vg== 
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yjbqn45mt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 06 Jun 2024 18:32:26 +0000
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 456H3YRO024024;
+	Thu, 6 Jun 2024 18:32:24 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2047.outbound.protection.outlook.com [104.47.70.47])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3ygrr180pd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 06 Jun 2024 18:32:24 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jz3Ps9l1VCMXniLrS87gJvHSd/hjBA0wOC2TPrgNNSn5TWmsES2AP7FpEY7ZIM5YCDe8YPBGTHTMLV+17Y9M7j+hDDD3Zayoh5gDYpfad5U8xOE+Cyk/E1tS1ripBbecDXYr6msg5Jx5PV7xcVdwG30DpSFTmXn/FJGCNifRhy91CuW0bdTImTv2K6LjF1g2KQCGnuwz4uUazrDum3LLAI+owgebshyFytO4divA/RyeQF6OV70ToQVifaGQR0AAe9y2cqGjdIKVuayBSnPRD6uIu1JkeIlLQjE9s1uxrOc4QmwsU+9H4cIprrmgTkLNschgcBzCQw7uExut5UmqKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1XspzRE/M8yFhU99MQmhQ1sWUsBZgff1FUl9gZ5evAQ=;
+ b=KVe2hP6ZXlR1M1c2xbVwu3wakw2x1zCkcIu62CVXgE1VNx8o53VCo3UCHPKgHUjA2E+QwSQSSePUzZFYG1MBSz5CAklODBz7xhVlzuWNSF02uskfvKfSKxUg2CfPniAvkzLwztSCQdvEFM5lMWTgH2h/AB0Oo58WCBTBKG3o5D5cyJAa/TFlNKAnIg+qJSfPZEiWN9f91IBxZDN0Uv+ns5ROCrzj8w556ZF3zvPRQ/h2fIvkvNcz0HtZMgt0pqxgh8Y1H/r0xHL+/V8WgWgedgFm3IVQoERFYDATSK6zPqXXSSA++1nqxmM2dst9hTJnNmctdkXKXTZJRz9cOClXcQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717698776; x=1718303576; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FTCo6iw3qYCJOh6dWog5zUrd/3sc/6HIZQBQ6tsnado=;
-        b=XGfxfz1h3MF4ti55yOEG3Fv2YJau1Aa3CZ57s87x4HwNezIpBgposYma1IH6tnI0mv
-         XUaXuizXxNsLjc8q1gQbRwiwSw4/0PcbGyJmmzbLHWWEP6CkMzDqlpwypWC4rmrf13uL
-         z3E0e+tipiZL/9Ox4XRGnCBHu1xiLT91H66rImhHLpWDlhi2/J39wkAvgA3LYLObMoO1
-         InvDfUf5gnTqRoIhuDlO2fBRbKdMC7FZiIJipxZaJWrMCMkJQBwB3AX0+o91iDlaQiCs
-         d2OFfwobZxRD+GUBqzHnbGfhMwUIXWQWcSlU+OjE8ccGKuFFT7u1kaXiMzl10q8wGGdC
-         MRQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717698776; x=1718303576;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FTCo6iw3qYCJOh6dWog5zUrd/3sc/6HIZQBQ6tsnado=;
-        b=ud8jK6B8Rm4+7Kxol2Rsax3Xon49IA2PkcTsfIok+oImkmbwhIIOpGtEU5WUMO4Sep
-         6JnfpOulCJdDblYcyeqtUJvVCYd0xv2FpLrtXRmlmh7AzXG40VEnnu6CQ17pmy0LcsDf
-         308oUj1SXrw6GM6LwtZhx7GKlH0ipgBDNwTIe9Qw6SXHpfcR/r97Oxa1fjpD6wN9fDOG
-         ngWAlKiuaE5Fj1y5/x1LF/zarP9DwIJB8tADCvUpCFLiikzQt+lQ/OypzZekhWy4KYli
-         nzQh8oc+Gu4DM5hzIeEnhWqJzJq0ThFUfmH4XJYhoOfforWQhHeU+vggk7qEqjMXkM6d
-         omlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMbJPyqsqXIm8IeEyN5TArRwI9RPy+6TPjlL1RVv1Cy/p4AhdM12Foy2gygsaDt3cgx0h9WzdsJav51FVYjxyaqGA6NQrRRRUQPMJP
-X-Gm-Message-State: AOJu0YzM/mxn3Bah6GJcO3cnuGQheawDwxXwZtwTa4c9j4y/CTmwXPvY
-	jPNwN1qTSQy/0K1X6N8JquCCM0Gkjx63Uzw65aPvParrqRfJPVGGCqS4UePMQn8=
-X-Google-Smtp-Source: AGHT+IEy5nJyoQhR8PCml6MnPCvzafczRf8zu1KTTmbIZw4PXOhL3vYyCL85RpQksfdkL3hG+FuEHQ==
-X-Received: by 2002:a05:6a00:4fc3:b0:702:1be9:eb37 with SMTP id d2e1a72fcca58-7040c74dac4mr265187b3a.28.1717698775902;
-        Thu, 06 Jun 2024 11:32:55 -0700 (PDT)
-Received: from jesse-desktop.. (pool-108-26-179-17.bstnma.fios.verizon.net. [108.26.179.17])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd50f0c6sm1378400b3a.191.2024.06.06.11.32.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 11:32:55 -0700 (PDT)
-From: Jesse Taube <jesse@rivosinc.com>
-To: linux-riscv@lists.infradead.org
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Evan Green <evan@rivosinc.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Jesse Taube <jesse@rivosinc.com>,
-	Xiao Wang <xiao.w.wang@intel.com>,
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
-	Andy Chiu <andy.chiu@sifive.com>,
-	Greentime Hu <greentime.hu@sifive.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Guo Ren <guoren@kernel.org>,
-	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
-	Costa Shulyupin <costa.shul@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Zong Li <zong.li@sifive.com>,
-	Ben Dooks <ben.dooks@codethink.co.uk>,
-	Erick Archer <erick.archer@gmx.com>,
-	Vincent Chen <vincent.chen@sifive.com>,
-	Joel Granados <j.granados@samsung.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] RISC-V: Report vector unaligned accesse speed hwprobe
-Date: Thu,  6 Jun 2024 14:32:15 -0400
-Message-ID: <20240606183215.416829-3-jesse@rivosinc.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240606183215.416829-1-jesse@rivosinc.com>
-References: <20240606183215.416829-1-jesse@rivosinc.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1XspzRE/M8yFhU99MQmhQ1sWUsBZgff1FUl9gZ5evAQ=;
+ b=d5RC35XK+ZlDwNYRdLm+DB6JuVFq4moF9CPIgwwrh+8wfnB8ruzDIQiFCMG2OL3i5ExcXpqHevobgvBlQsXlmuRFBStTypOwj4C2yNDHR26YFmUI9JbbwFMmXxStFunLann1H7XEmcahgBpre02P2wWUfeoQIc0DnrmXwzNUFPA=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by CO1PR10MB4419.namprd10.prod.outlook.com (2603:10b6:303:95::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.34; Thu, 6 Jun
+ 2024 18:32:22 +0000
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490%7]) with mapi id 15.20.7633.033; Thu, 6 Jun 2024
+ 18:32:22 +0000
+Date: Thu, 6 Jun 2024 14:32:20 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+        Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org,
+        brauner@kernel.org, viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        gregkh@linuxfoundation.org, linux-mm@kvack.org, rppt@kernel.org
+Subject: Re: [PATCH v3 4/9] fs/procfs: use per-VMA RCU-protected locking in
+ PROCMAP_QUERY API
+Message-ID: <7rm3izyq2vjp5evdjc7c6z4crdd3oerpiknumdnmmemwyiwx7t@hleldw7iozi3>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, gregkh@linuxfoundation.org, linux-mm@kvack.org, rppt@kernel.org
+References: <20240605002459.4091285-1-andrii@kernel.org>
+ <20240605002459.4091285-5-andrii@kernel.org>
+ <CAJuCfpFp38X-tbiRAqS36zXG_ho2wyoRas0hCFLo07pN1noSmg@mail.gmail.com>
+ <CAEf4BzYv0Ys+NpMMuXBYEVwAaOow=oBgUhBwen7g=68_5qKznQ@mail.gmail.com>
+ <ue44yftirugr6u4ewl5cvgatpqnheuho7rgax3jyg6ox5vruyq@7k6harvobd2q>
+ <CAEf4Bzaac0Di+mCfrxRVsZT0sfWWoOJi6ByW0XA5YEh1h7dwuw@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEf4Bzaac0Di+mCfrxRVsZT0sfWWoOJi6ByW0XA5YEh1h7dwuw@mail.gmail.com>
+User-Agent: NeoMutt/20231103
+X-ClientProxiedBy: YT4PR01CA0479.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:d6::19) To DS0PR10MB7933.namprd10.prod.outlook.com
+ (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|CO1PR10MB4419:EE_
+X-MS-Office365-Filtering-Correlation-Id: 02fbe869-ee6b-4dab-d2cd-08dc86570188
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|1800799015|376005|366007;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?6BlLXMFV2NfZtjTOZOynnGVk4+GooB0hw9N6NwHBUw5uFpdgYug/ugLGDEZx?=
+ =?us-ascii?Q?KX05gh8P/1WMBuuFEy5gqq+ODCRSxhrz2kiSI0DuBgkzdiozo9dufnrfNkTL?=
+ =?us-ascii?Q?Kd1d4bUieS+IJGP++DeEw5Zt5pLsdyXgnDLV1cpS/LwK2HcAazZAK0sYw+CB?=
+ =?us-ascii?Q?vVOOb3I7GFYgqV2y3LckzNd6OvUuuQEWrg+EUwO2FOaNPAvC2iipX32KK3KR?=
+ =?us-ascii?Q?XnigCLyKnT5w6KAWXNjNuDuBhHzjWWvawyf04o9HQwjFllD0dYX5OKqphngh?=
+ =?us-ascii?Q?EVYCIKbLysbUArzdoKIvg+rDmE0IWBJDOHr5AunQsxiLfXknbeC25Ahyl2B7?=
+ =?us-ascii?Q?1mXlbAO/8Mh1YuUZxKwYjygsYwl5kUIkIpxCoCUilu7FWW+aHxEnauvT5vST?=
+ =?us-ascii?Q?QUyTH8bmbvRDP5luKGUsW7hG7s1IQmrK2jUiSxhnMNIS4SoV2ebmgzeQYOwz?=
+ =?us-ascii?Q?R9ClNXKbpwjeMtQ5BxUwYe+KQYh+vDaMXukrUYV+F1Vy8VHErAiuJMyIjZMI?=
+ =?us-ascii?Q?EJiHazmf9ZG6miB914aIkts7Y/T86uRa1Rd+ttG4iAhTc4tleWqJuOyjK6hR?=
+ =?us-ascii?Q?VAI8Z+Vmf82N8VTJa9oDvUCdKYvDUxc+WtEPoWlPBziAxQRs3nK1mD0dbkQr?=
+ =?us-ascii?Q?Z4Fhqc1ti5Mo5v1bIu1GLe0P4OeTtSjw1yjNag1dto4GJdnFGbbGYBlThRIB?=
+ =?us-ascii?Q?s4icMyQ1UojOwPkUXfdplVmNXuXPnjz/oIwQ67lw30nd4pnLPlJJfrggwVEq?=
+ =?us-ascii?Q?dKKhYgMxJbZwa0VcVRLK8TGBiAFSQHWhoxzYwY4hf0mCFljKO2ri+WBm72sg?=
+ =?us-ascii?Q?K+jrT1LKjR0qEXOPd87kBGqT7IK7WILZ1jQwermySpvkf3FAyO+WxP2/YzIp?=
+ =?us-ascii?Q?IS/Q6ZjZKM5AoFK46U5yFMxvszV/bVIcZlKlbDlw3xZHNJPTk9VYZFRVYnT4?=
+ =?us-ascii?Q?XVpuT8Z2+9bO1ys6MbmoD6Gf0W+YN53asOU4hpEQOeU9d36BJHnpT3vDaOis?=
+ =?us-ascii?Q?eKmj0HRgOUDTO8fBW/cUQOqqcxHpHZ7kC/wL5Rj/TOzaiV6dPKHlpMM1s+1/?=
+ =?us-ascii?Q?I6LRYxSPrCNLQI/np6la5m2I7G3612y5+JeiAE7bj5AqPHVE9hscJBH6RcDR?=
+ =?us-ascii?Q?grQM0RBLt3kD7F8l+T4W3+Vup3QBSmqxMb7ADPmySdDmoeiXNn9DsteEiHMr?=
+ =?us-ascii?Q?uJ296IJqZiw5H+g+5c021AoXaU2rqWqFo9THjxViOaXrWvSvLn750uaQK93J?=
+ =?us-ascii?Q?s33U16XEmb+FDecZCkBsHgIJt9QtA+FexGhX51Frrvw1MCxMFeTcxalRljeO?=
+ =?us-ascii?Q?eLpsCiQIHXHbwDFdZlUwMzvz?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?nLkB++4CCXSaP4Y/ww66KZaLVki18NFBKA2/67B9J3Pz7lOOA9FyROcLmsO+?=
+ =?us-ascii?Q?noaG6JIfFdb8D5DKGqWEGCrg3jbcqrC4trmHD1YDNXSXrqSpDkQzbuh6SBUD?=
+ =?us-ascii?Q?hmTj3CBRJ7DAdKb3JMxTSwh3/HA8GCgy8tiBhdBnlKI+vw9EsEvmLJerxpBn?=
+ =?us-ascii?Q?s91ybXX2CWWVu5FjEHsGbZNUeujsvt4gS5yxqVKR1255mGkPgr24u15gbG4a?=
+ =?us-ascii?Q?fPlDVg9NdQ3UyP+m7dnFbyXQvXQGC+WyMh/O+UZ3IDO2zlz3v0RzpTykTB74?=
+ =?us-ascii?Q?1K7gPw736MLQPadzFuzQ4INHXZOo6fKc87VwIZQW0YPp2ieAFgOJdaMggD3Z?=
+ =?us-ascii?Q?KLL85EdU3tNdTMxhYsSvvd44VKL41v4JnkReYg68BgXDcn/shVef5lTLAqVl?=
+ =?us-ascii?Q?WTOWv9qxiN67g3Cpx8ALGGrhitkcxAqyIlBnX78viHCpDVx8WALU//fM9+qa?=
+ =?us-ascii?Q?ahCix9ix7OVEdclQdoM+fcT8dDByLsUaZbptAlXWB0CDb3smj1jwUUu6Ar5t?=
+ =?us-ascii?Q?cSbfj4FQfz6uEtLVLAWec9bjH/Vv5IzaJTMb65D1OtQx1zcttRmBZAJKOp5B?=
+ =?us-ascii?Q?cBdhsYubbfVztGbBgh1ty9kcO+tApBR4AziTfJ8aeexGrl5PAUv+8R6P4rpw?=
+ =?us-ascii?Q?jqUpbAlh6jJWfAI+8R5NS5ctpllz71cr/lWCFYTf7aFdl14fUQlijzR0bi0D?=
+ =?us-ascii?Q?nJTvU9T+FxF27Ejuj4Tl6LMnhQl3LuLLFu6kUOsG+WxzmEpqm19gfz9UBFQX?=
+ =?us-ascii?Q?c3uCm6x4gYiqk+YdSlMfUVxI8biDygwlZl7eIc7xvIcLtqkeJZ0QMgbmRLtP?=
+ =?us-ascii?Q?HjbXnTBXcyLPGLI+xF2acyC2/XCWuRMAzN+53HbFL4463fllYrAKzQkESobK?=
+ =?us-ascii?Q?oSReE8RjAfoOe0RZ5cWeI1HxiHWIk24Y5mS9AUUVAGmiQaLYBnLjgIL9zwG8?=
+ =?us-ascii?Q?ivCqMZQR8Z+R/vG38mM2aVTGqLcAS+XC1UWwJsCi8zYkN4CpcwZu0ZaH0WGT?=
+ =?us-ascii?Q?4GH+YCyxKKehzSGfFdbs77xDIpWS1WMsQTc/771PcpT/msjxTw49qqHgkbL1?=
+ =?us-ascii?Q?VrCWZcyDB/6GdgOfXOdF3zESPfQtxznGTcVpaSdfYV4M5UUe5Y2S+uBvkpTt?=
+ =?us-ascii?Q?xBM0FqdIBpyME1W2ADomidLGqDdpvkKXctyZ7ZwCzhar1MOC1opfhyaSqO6Q?=
+ =?us-ascii?Q?AGrgSfS5bOS1JS7jZG17WtyPO4UtHueRGrrXkCH+g1RkY1TQaDElZqKdqMTq?=
+ =?us-ascii?Q?Lk6U/4pcrYf3yLcts/WTgbxrvA5XkILUzjuU0k4mHT4jrfE3UTQwOmHWGgKB?=
+ =?us-ascii?Q?ohqJecjYpMWC38ZPt9H521Ok9iTsrchFlwUh+M4Fuj8NHq5BiLQmXmaTCCGL?=
+ =?us-ascii?Q?VbOYk3+7ITSArWiNBv1rS8yhmrYT234Q6EEzoUhftB34vJj7ww/ABHuIByAo?=
+ =?us-ascii?Q?wXaioYPDv8sg3l8NBgWgM6Wgju7qahItpCEHBoyBgdpUl4UN7b5shX5PiUb5?=
+ =?us-ascii?Q?o9b2hGcCv7a2xqxK2isOSkVfofkVdEfeL9YnDJQcJLCu8S/Dfkn5hqSzPlkt?=
+ =?us-ascii?Q?GUbNE6w/RZVwcStc4I0bSr4TF87kCsefRw0FnM+C?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	lA1Wh32qWzSszZwH7CrVlsy0v2uR00Us1JdigxjJLnlF4DX8xnwaSyYyOk9bIr/y2S+VW2Ofywfh6uEKct8HIMTx9drXiOquXfzXcxTrWPUO7DvXHa6uEF+OOnJ0ldCuubTdkTzkWdUlmx7f3pQ6BAGTBplxv6rQUvR6Dy9KfQt9L5ZsgbiCs3IOz+55S5yXeoaqQO6tGCpyGAtOsjKXSDNuctJAW+E7ocML/zY7iaKBYBcQidMPgkdL3oYjpIHvCgEs0ejHUFoFUML7tF2L8Bmf0hUGmwvjx2atw7MIkGHHDmDhhL/CCnlesRXP+U2rXV0bSGjNfnWRKtoejXLqNczAlB85PYznc3sMwBK+SI5CidkSm9pAThgBWWiMMVjXDROgPaMhkvBCT+zk0r8etAX2r5HXfNxPa/eG+cwmZF2/GsGVVKjaoE3NFOwjA1u/mxB9VEWRAfoZYRAbQ+O7aysBH9+knUNYaysD5t0Aq5ahz/kUP9cxTt7+qGKQZvvsxGEVMjsKnVYW9VNQuL+nVmIxfUt8HOuyHmbLACdI7AEE8sHSNV4U7CJ5g17KYqmTOWkPt/FZKJ0z7a6GS0p259L/0CpVbv0tfeytc2GAESg=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02fbe869-ee6b-4dab-d2cd-08dc86570188
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 18:32:22.7097
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Eeu4XymBhAUfzY9SAedRhxpw+fFoQCFDoufP1ksi34ss7AM7eM+DtpBIglTfmZ9Iifcnyx0oE3eftlHCptvcNw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4419
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-06_14,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 adultscore=0
+ phishscore=0 suspectscore=0 bulkscore=0 spamscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2406060128
+X-Proofpoint-ORIG-GUID: SwA5s9mgP81oLeAY5CY00b18BLaOWQCr
+X-Proofpoint-GUID: SwA5s9mgP81oLeAY5CY00b18BLaOWQCr
 
-Detect if vector misaligned accesses are faster or slower than
-equivalent vector byte accesses. This is useful for usermode to know
-whether vector byte accesses or vector misaligned accesses have a better
-bandwidth for operations like memcpy.
+* Andrii Nakryiko <andrii.nakryiko@gmail.com> [240606 14:09]:
 
-Signed-off-by: Jesse Taube <jesse@rivosinc.com>
----
- arch/riscv/kernel/Makefile                 |   3 +
- arch/riscv/kernel/copy-unaligned.h         |   5 +
- arch/riscv/kernel/unaligned_access_speed.c | 127 ++++++++++++++++++++-
- arch/riscv/kernel/vec-copy-unaligned.S     |  58 ++++++++++
- 4 files changed, 192 insertions(+), 1 deletion(-)
- create mode 100644 arch/riscv/kernel/vec-copy-unaligned.S
+...
 
-diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-index 81d94a8ee10f..61cec0688559 100644
---- a/arch/riscv/kernel/Makefile
-+++ b/arch/riscv/kernel/Makefile
-@@ -65,6 +65,9 @@ obj-$(CONFIG_MMU) += vdso.o vdso/
- obj-$(CONFIG_RISCV_MISALIGNED)	+= traps_misaligned.o
- obj-$(CONFIG_RISCV_MISALIGNED)	+= unaligned_access_speed.o
- obj-$(CONFIG_RISCV_PROBE_UNALIGNED_ACCESS)	+= copy-unaligned.o
-+ifeq ($(CONFIG_RISCV_ISA_V), y)
-+obj-$(CONFIG_RISCV_PROBE_UNALIGNED_ACCESS)	+= vec-copy-unaligned.o
-+endif
- 
- obj-$(CONFIG_FPU)		+= fpu.o
- obj-$(CONFIG_RISCV_ISA_V)	+= vector.o
-diff --git a/arch/riscv/kernel/copy-unaligned.h b/arch/riscv/kernel/copy-unaligned.h
-index e3d70d35b708..88be070085cb 100644
---- a/arch/riscv/kernel/copy-unaligned.h
-+++ b/arch/riscv/kernel/copy-unaligned.h
-@@ -10,4 +10,9 @@
- void __riscv_copy_words_unaligned(void *dst, const void *src, size_t size);
- void __riscv_copy_bytes_unaligned(void *dst, const void *src, size_t size);
- 
-+#ifdef CONFIG_RISCV_ISA_V
-+void __riscv_copy_vec_words_unaligned(void *dst, const void *src, size_t size);
-+void __riscv_copy_vec_bytes_unaligned(void *dst, const void *src, size_t size);
-+#endif
-+
- #endif /* __RISCV_KERNEL_COPY_UNALIGNED_H */
-diff --git a/arch/riscv/kernel/unaligned_access_speed.c b/arch/riscv/kernel/unaligned_access_speed.c
-index 92a84239beaa..4e6f753b659a 100644
---- a/arch/riscv/kernel/unaligned_access_speed.c
-+++ b/arch/riscv/kernel/unaligned_access_speed.c
-@@ -8,9 +8,11 @@
- #include <linux/jump_label.h>
- #include <linux/mm.h>
- #include <linux/smp.h>
-+#include <linux/kthread.h>
- #include <linux/types.h>
- #include <asm/cpufeature.h>
- #include <asm/hwprobe.h>
-+#include <asm/vector.h>
- 
- #include "copy-unaligned.h"
- 
-@@ -128,6 +130,107 @@ static void check_unaligned_access_nonboot_cpu(void *param)
- 		check_unaligned_access(pages[cpu]);
- }
- 
-+#ifdef CONFIG_RISCV_ISA_V
-+static void check_vector_unaligned_access(struct work_struct *unused)
-+{
-+	int cpu = smp_processor_id();
-+	u64 start_cycles, end_cycles;
-+	u64 word_cycles;
-+	u64 byte_cycles;
-+	int ratio;
-+	unsigned long start_jiffies, now;
-+	struct page *page;
-+	void *dst;
-+	void *src;
-+	long speed = RISCV_HWPROBE_VEC_MISALIGNED_SLOW;
-+
-+	if (per_cpu(vector_misaligned_access, cpu) != RISCV_HWPROBE_VEC_MISALIGNED_SUPPORTED)
-+		return;
-+
-+	page = alloc_pages(GFP_KERNEL, MISALIGNED_BUFFER_ORDER);
-+	if (!page) {
-+		pr_warn("Allocation failure, not measuring vector misaligned performance\n");
-+		return;
-+	}
-+
-+	/* Make an unaligned destination buffer. */
-+	dst = (void *)((unsigned long)page_address(page) | 0x1);
-+	/* Unalign src as well, but differently (off by 1 + 2 = 3). */
-+	src = dst + (MISALIGNED_BUFFER_SIZE / 2);
-+	src += 2;
-+	word_cycles = -1ULL;
-+
-+	/* Do a warmup. */
-+	local_irq_enable();
-+	kernel_vector_begin();
-+	__riscv_copy_vec_words_unaligned(dst, src, MISALIGNED_COPY_SIZE);
-+
-+	start_jiffies = jiffies;
-+	while ((now = jiffies) == start_jiffies)
-+		cpu_relax();
-+
-+	/*
-+	 * For a fixed amount of time, repeatedly try the function, and take
-+	 * the best time in cycles as the measurement.
-+	 */
-+	while (time_before(jiffies, now + (1 << MISALIGNED_ACCESS_JIFFIES_LG2))) {
-+		start_cycles = get_cycles64();
-+		/* Ensure the CSR read can't reorder WRT to the copy. */
-+		mb();
-+		__riscv_copy_vec_words_unaligned(dst, src, MISALIGNED_COPY_SIZE);
-+		/* Ensure the copy ends before the end time is snapped. */
-+		mb();
-+		end_cycles = get_cycles64();
-+		if ((end_cycles - start_cycles) < word_cycles)
-+			word_cycles = end_cycles - start_cycles;
-+	}
-+
-+	byte_cycles = -1ULL;
-+	__riscv_copy_vec_bytes_unaligned(dst, src, MISALIGNED_COPY_SIZE);
-+	start_jiffies = jiffies;
-+	while ((now = jiffies) == start_jiffies)
-+		cpu_relax();
-+
-+	while (time_before(jiffies, now + (1 << MISALIGNED_ACCESS_JIFFIES_LG2))) {
-+		start_cycles = get_cycles64();
-+		mb();
-+		__riscv_copy_vec_bytes_unaligned(dst, src, MISALIGNED_COPY_SIZE);
-+		mb();
-+		end_cycles = get_cycles64();
-+		if ((end_cycles - start_cycles) < byte_cycles)
-+			byte_cycles = end_cycles - start_cycles;
-+	}
-+
-+	kernel_vector_end();
-+
-+	/* Don't divide by zero. */
-+	if (!word_cycles || !byte_cycles) {
-+		pr_warn("cpu%d: rdtime lacks granularity needed to measure unaligned vector access speed\n",
-+			cpu);
-+
-+		return;
-+	}
-+
-+	if (word_cycles < byte_cycles)
-+		speed = RISCV_HWPROBE_VEC_MISALIGNED_FAST;
-+
-+	ratio = div_u64((byte_cycles * 100), word_cycles);
-+	pr_info("cpu%d: Ratio of vector byte access time to vector unaligned word access is %d.%02d, unaligned accesses are %s\n",
-+		cpu,
-+		ratio / 100,
-+		ratio % 100,
-+		(speed ==  RISCV_HWPROBE_VEC_MISALIGNED_FAST) ? "fast" : "slow");
-+
-+	per_cpu(vector_misaligned_access, cpu) = speed;
-+}
-+
-+static int riscv_online_cpu_vec(unsigned int cpu)
-+{
-+	check_vector_unaligned_access(NULL);
-+	return 0;
-+}
-+#endif
-+
- DEFINE_STATIC_KEY_FALSE(fast_unaligned_access_speed_key);
- 
- static void modify_unaligned_access_branches(cpumask_t *mask, int weight)
-@@ -261,11 +364,33 @@ static int check_unaligned_access_speed_all_cpus(void)
- 	return 0;
- }
- 
-+/* Measure unaligned access speed on all CPUs present at boot in parallel. */
-+static int vec_check_unaligned_access_speed_all_cpus(void *unused)
-+{
-+	schedule_on_each_cpu(check_vector_unaligned_access);
-+
-+	/*
-+	 * Setup hotplug callbacks for any new CPUs that come online or go
-+	 * offline.
-+	 */
-+	cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN, "riscv:online",
-+				  riscv_online_cpu_vec, NULL);
-+
-+	return 0;
-+}
-+
- static int check_unaligned_access_all_cpus(void)
- {
- 	bool all_cpus_emulated = check_unaligned_access_emulated_all_cpus();
- 
--	check_vector_unaligned_access_all_cpus();
-+#ifdef CONFIG_RISCV_ISA_V
-+	bool all_cpus_vec_supported = check_vector_unaligned_access_all_cpus();
-+
-+	if (all_cpus_vec_supported) {
-+		kthread_run(vec_check_unaligned_access_speed_all_cpus,
-+			    NULL, "thebestthread");
-+	}
-+#endif
- 
- 	if (!all_cpus_emulated)
- 		return check_unaligned_access_speed_all_cpus();
-diff --git a/arch/riscv/kernel/vec-copy-unaligned.S b/arch/riscv/kernel/vec-copy-unaligned.S
-new file mode 100644
-index 000000000000..11522ec8f0a8
---- /dev/null
-+++ b/arch/riscv/kernel/vec-copy-unaligned.S
-@@ -0,0 +1,58 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (C) 2024 Rivos Inc. */
-+
-+#include <linux/linkage.h>
-+#include <asm/asm.h>
-+#include <linux/args.h>
-+
-+	.text
-+
-+#define WORD_EEW 64
-+
-+#define WORD_SEW CONCATENATE(e, WORD_EEW)
-+#define VEC_L CONCATENATE(vle, WORD_EEW).v
-+#define VEC_S CONCATENATE(vle, WORD_EEW).v
-+
-+/* void __riscv_copy_vec_words_unaligned(void *, const void *, size_t) */
-+/* Performs a memcpy without aligning buffers, using word loads and stores. */
-+/* Note: The size is truncated to a multiple of WORD_EEW */
-+SYM_FUNC_START(__riscv_copy_vec_words_unaligned)
-+	andi  a4, a2, ~(WORD_EEW-1)
-+	beqz  a4, 2f
-+	add   a3, a1, a4
-+	.option push
-+	.option arch, +v
-+1:
-+	vsetivli t0, 8, WORD_SEW, m8, ta, ma
-+	VEC_L v0, (a1)
-+	VEC_S v0, (a0)
-+	addi  a0, a0, WORD_EEW
-+	addi  a1, a1, WORD_EEW
-+	bltu  a1, a3, 1b
-+
-+2:
-+	.option pop
-+	ret
-+SYM_FUNC_END(__riscv_copy_vec_words_unaligned)
-+
-+/* void __riscv_copy_vec_bytes_unaligned(void *, const void *, size_t) */
-+/* Performs a memcpy without aligning buffers, using only byte accesses. */
-+/* Note: The size is truncated to a multiple of 8 */
-+SYM_FUNC_START(__riscv_copy_vec_bytes_unaligned)
-+	andi a4, a2, ~(8-1)
-+	beqz a4, 2f
-+	add  a3, a1, a4
-+	.option push
-+	.option arch, +v
-+1:
-+	vsetivli t0, 8, e8, m8, ta, ma
-+	vle8.v v0, (a1)
-+	vse8.v v0, (a0)
-+	addi a0, a0, 8
-+	addi a1, a1, 8
-+	bltu a1, a3, 1b
-+
-+2:
-+	.option pop
-+	ret
-+SYM_FUNC_END(__riscv_copy_vec_bytes_unaligned)
--- 
-2.43.0
+> > > Liam, any objections to this? The whole point of this patch set is to
+> > > add a new API, not all the CONFIG_PER_VMA_LOCK gotchas. My
+> > > implementation is structured in a way that should be easily amenable
+> > > to CONFIG_PER_VMA_LOCK changes, but if there are a few more subtle
+> > > things that need to be figured for existing text-based
+> > > /proc/<pid>/maps anyways, I think it would be best to use mmap_lock
+> > > for now for this new API, and then adopt the same final
+> > > CONFIG_PER_VMA_LOCK-aware solution.
+> >
+> > The reason I was hoping to have the new interface use the per-vma
+> > locking from the start is to ensure the guarantees that we provide to
+> > the users would not change.  We'd also avoid shifting to yet another
+> > mmap_lock users.
+> >
+> 
+> Yep, it's completely understandable. And you see that I changed the
+> structure quite a lot to abstract away mmap_lock vs vm_lock details.
+> I'm afraid anon_vma_name() is quite an obstacle, unfortunately, and
+> seems like it should be addressed first, but I'm just not qualified
+> enough to do this.
+> 
+> > I also didn't think it would complicate your series too much, so I
+> > understand why you want to revert to the old locking semantics.  I'm
+> > fine with you continuing with the series on the old lock.  Thanks for
+> > trying to make this work.
+> >
+> 
+> I'm happy to keep the existing structure of the code, and
+> (intentionally) all the CONFIG_PER_VMA_LOCK logic is in separate
+> patches, so it's easy to do. I'd love to help adopt a per-VMA lock
+> once all the pieces are figured out. Hopefully anon_vma_name() is the
+> last one remaining :) So please keep me cc'ed on relevant patches.
+> 
+> As I mentioned, I just don't feel like I would be able to solve the
+> anon_vma_name() problem, but of course I wouldn't want to be
+> completely blocked by it as well.
+> 
 
+Absolutely.  Thanks for trying.  To be clear, I'm fine with you dropping
+the per-vma locking from this interface as well.
+
+Thanks,
+Liam
 
