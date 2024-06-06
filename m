@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-204224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E5CE8FE602
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:03:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E61D8FE604
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:03:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54C8CB23C66
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:03:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A4B728922E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A34919581D;
-	Thu,  6 Jun 2024 12:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DDCF195991;
+	Thu,  6 Jun 2024 12:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i3xxWfNA"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yNdGafmt"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE67EC153
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B692DC153
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 12:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717675410; cv=none; b=FxYHmxJrKgDPCBpQ+sT7vTa47LCh73RDsU4YjtUAxuFTKMBCZKt+zQB27zEWg5ipKBJifrHnz+/eVJFBFRFcKzTbJgA7o12Ub6RZt5g4Y7rdd1L9TjFgCqWaGHJtBjUksBfjUbSRqr5/7DJCAQMH5vArnbHt+Ijb0M/fB5x3txs=
+	t=1717675417; cv=none; b=NRCmNmItSH/Te+dXYBKMUw2CEn2+0Q6/HehnshcdqdVTsXSRao+w0OE8lJUU6Z9lxWcNin/LShASIsPxdWuBtCKsp2NQ7+YkVxbq5V4ljxA7bGkcpjQcui1D6mSvP5giVKZ0byJOTpQ53Ne2WSZmSQrHNZV3n47jnqK9/gYB+0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717675410; c=relaxed/simple;
-	bh=ZC64W4+d+w1mCtWVvbgfFjvEH56VmkQcN4glvoyhyJc=;
+	s=arc-20240116; t=1717675417; c=relaxed/simple;
+	bh=aNpXvfN77ldJ43zIxp6GfuvwOV+4cBY5Tw8CrZX/K4k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QFeipT+YM9ZGAfLn2qL85bOn7nH6q/F0oqLYEp9YRvPOuNyhamJpZbU00dRLzrsGKZx2C+emvuT5rjchpkIff8xRXIWLhl1s8YCO8j/6CBTyUoPzYkPjiPsNISlfLMSBLotUjR553KuOALEecYNN6IzZRulsLHEzHbigmhQo0HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i3xxWfNA; arc=none smtp.client-ip=209.85.218.45
+	 In-Reply-To:Content-Type; b=hMhcDk+LecKdk7IBFTl9lnNiuiCeDZaYPqVGmcyZT9oDZyHMDqc4hh6VbB6hJacYf9UQG5TEVkIirzPk16CAK1osmhyv1n3+0jNk1MX2rv0PyT5HcY1ouJuEiMiQ6WfRydYroISuF+/89QHuTjqfP8ThIq7Wg+FwkKH8WL0P5b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yNdGafmt; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a68ee841138so104212466b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 05:03:28 -0700 (PDT)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6266ffdba8so77655966b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 05:03:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717675407; x=1718280207; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=EhzgN21teDTF/ZW3qgf+NvcxVJfop3KgFTk3I1MLoU0=;
-        b=i3xxWfNAx7aUVvtHaboUeK7VrdjgDsVq2xCS1IM8l78h/wwDe75WFzV8tpQ/V6h072
-         G6iBP0ngjE9HmJSRtuMVsUp3Jg9YRGmeC+pdfaSLwSsZxSmUDIe9EKs0KEFIS5iPtvw6
-         0Eqp45QGbMqdOObg/WnWdwhoDha2OSYGdHTM+X8M+r1KfI1DAW8NZP2hCABGu9Uw1Vk5
-         Tm7dPwG7OVFVsAJowi38/m9kiY0wlQzCmFZiOVWtMWSYpVX5uaOectfb1fiJtp5nTnGg
-         eMOamuoi0y0bdWYEGTvl3++l1DROKvo3MBpwKMXoF/TzeQmAMY+Q2D+ha5qNxKnCpOk8
-         QKTw==
+        d=linaro.org; s=google; t=1717675414; x=1718280214; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+vPS4Wu3K1+SNHP7/UCC3zuql6I1R/Uod3WHUVV4Y/k=;
+        b=yNdGafmtvMWC9nFxaK2Ca0EctQhOJeDEgbruhnDMEOB3/GpzKlrmtit8tQoMguOZon
+         hBkr/ygCs9ZEovohKzry0CKndQA9rCn1KkuaQqrm079p1sSjjfv5ljh5E2wZStjHVfwn
+         WG0MoGJYzeSvVmu233WFh+14X+7SVv8FtBxbQ5quEDb7/HQ4j1q+qmAVkRDfAYJCbUeO
+         mn8dXORNcD6DcKn/ly3q9iy7NAGiWDxEbU0Dwx4UyaTpnCLlZ90n7ev4he+6WIgrc4Bo
+         1r6Vf1PPsLxDmLJtRHo7M+2/ox7oRe/fj/4LoRkduGS86vwc3o4jTVUs8LNpr8cSyOoA
+         5HWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717675407; x=1718280207;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EhzgN21teDTF/ZW3qgf+NvcxVJfop3KgFTk3I1MLoU0=;
-        b=DRJt/gQLJGFaXYuHVvTkn09NqCIQ4cKrkq3CIY0gAMPqL7qx8uIK3d/3HLvGdJyxKM
-         o7t6CqmNo+Tvmm/VgZ2supH+70KvYKWGAQ8WlMdYLMnW/ZYfG5giBY4dZSJBGR/CvdGu
-         dx34vP9PxyT41V58z5bBBsLdD0rQ9z9CYPKroA3N0gd8HL73epkv/MKQ+ZGBmOb2HCrx
-         gYEN/pkqCXrII3mvj+Vqa9/ZM7/ufPXpWQoTC0Dm66HbJVp9TahtQMQA61MvbW5KZNTj
-         MPIhlJxpy+OMW0nj7zCB1N8v/baTG0neI8aDIVsny9WRF0NElGUeOZH6RY9plAPsB7Df
-         /qtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXX0wHXPAr6shF3IJQw5IHzaMjSJr037xn84bIQ0KhoH1M+h4rAobTJn0kPBWnHeLm+bX/vyXKzikv4RQW7SSS2QJ/fu3WdHlq5Fure
-X-Gm-Message-State: AOJu0YzBH2wWjaESUzTUBb9lPzHUpAqPGh0nDd8bXIkPSNNa8SxnAclU
-	qmRJqn4NXUt+933USl+s6dBO6Ow3dX2NwRO3Spc71LSpHcvYoAqlCgYuFCYvljA=
-X-Google-Smtp-Source: AGHT+IFxfjWGrWlEFaeC88RJhH+tXUQS7F8xlGUVGHn8bDw/cok9mz5kkvNfMjnQ9TIj9poiaHp4OA==
-X-Received: by 2002:a17:906:c44d:b0:a6b:c993:7ede with SMTP id a640c23a62f3a-a6bc9938015mr258898966b.11.1717675407204;
-        Thu, 06 Jun 2024 05:03:27 -0700 (PDT)
-Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c806ebd48sm88558666b.108.2024.06.06.05.03.25
+        d=1e100.net; s=20230601; t=1717675414; x=1718280214;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+vPS4Wu3K1+SNHP7/UCC3zuql6I1R/Uod3WHUVV4Y/k=;
+        b=T5iQNyoo5qsZAu9MFCu9DAE+AZSzryymZnXnnBsrwIfHfPmHb1YV/ASPDWvAbIx6V1
+         kWZPbfn7xvxVHccb7LMW6d3NOsyQ8ZkcRkGmhEgZLfpV9nKnlYkJm/7OcmcFqWrsAL7Z
+         0H6bB9uKPEtlliImF7cmIVBMnyF263jdWhYyQO6mm775JAgKFe/Fyx2C0jw+JFg5jmVC
+         6XayS66j11BhhZHpSq2nlltydDLYOM8BK1/St9ZmOI4tW3rrMWD6ET3+KtPj/gbDM9CO
+         +qLTq+H6ISRxqE/NWNGXBhblN2WbwwcttL/B2AL5nKGP1MjL6FWAPBwX6NWhL8onBHId
+         M0HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5Y0NRuqIIJ0ietMgqMlnZPzm5DG0FLIF3J0M93zw7Bi9i3q0py6iHDIvUFmeQ8mHK7nY4JBiVg+wiiOosZxfAVFkLV//5eHfKEOxT
+X-Gm-Message-State: AOJu0Ywl5hO+SPovbPNTcTG40WiPhR8bId9vyIomDDrSxa/+0lDzjkC1
+	EiBTfPgB5JKl/DbWi/Ty1NFFms7gkNUGkUPImRrCIKxMX2Xg685NpZEuVpExN6ekdyfpDljV87/
+	w
+X-Google-Smtp-Source: AGHT+IFmMz1GmHTUvHk6s/qP+CRB/I1EcEnEfMew6pgb89m5yDF7bhdBICxRyQM/+EXeB1BQOKXDcQ==
+X-Received: by 2002:a17:906:4915:b0:a66:d1a1:f92f with SMTP id a640c23a62f3a-a699f34da1emr363268166b.14.1717675414101;
+        Thu, 06 Jun 2024 05:03:34 -0700 (PDT)
+Received: from [192.168.2.107] ([79.115.63.17])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c8070e839sm89223766b.176.2024.06.06.05.03.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 05:03:26 -0700 (PDT)
-Message-ID: <444f6a34-6636-44b0-850b-777c44fd62dd@linaro.org>
-Date: Thu, 6 Jun 2024 14:03:24 +0200
+        Thu, 06 Jun 2024 05:03:33 -0700 (PDT)
+Message-ID: <0bb5cdc8-37fe-42c1-a18e-bb1494924095@linaro.org>
+Date: Thu, 6 Jun 2024 13:03:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,121 +76,145 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/adreno: De-spaghettify the use of memory barriers
-To: Will Deacon <will@kernel.org>, Andrew Halaney <ahalaney@redhat.com>
-Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>, Rob Clark
- <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Clark <robdclark@chromium.org>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240508-topic-adreno-v1-1-1babd05c119d@linaro.org>
- <20240514183849.6lpyplifero5u35r@hu-akhilpo-hyd.qualcomm.com>
- <ae4a77wt3kc73ejshptldqx6ugzrqguyq7etbbu54y4avhbdlt@qyt4r6gma7ev>
- <20240516145005.gdksmvxp35m45ifh@hu-akhilpo-hyd.qualcomm.com>
- <5vyrmxvkurdstqfiatxfqcqljwyiswda2vpkea27ighb2eqbav@n24yzdykbc23>
- <20240604144055.GE20384@willie-the-truck>
+Subject: Re: [PATCH] dt-bindings: mtd: spi-nor: deprecate Everspin MRAM
+ devices
+To: Conor Dooley <conor@kernel.org>, Michael Walle <mwalle@kernel.org>
+Cc: Pratyush Yadav <pratyush@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Thorsten Scherer <t.scherer@eckelmann.de>, Marek Vasut <marex@denx.de>,
+ Imre Kaloz <kaloz@openwrt.org>, Andrew Lunn <andrew@lunn.ch>,
+ Flavio Suligoi <f.suligoi@asem.it>,
+ Takahiro Kuwano <Takahiro.Kuwano@infineon.com>, Bacem.Daassi@infineon.com
+References: <20240604074231.1874972-1-mwalle@kernel.org>
+ <20240604-ladylike-gout-6fd6ae992712@spud>
+ <D1RF2GI60GXE.3A3W7Q3W19GPN@kernel.org>
+ <20240605-cosmetics-upgrade-837934256ede@spud>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240604144055.GE20384@willie-the-truck>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20240605-cosmetics-upgrade-837934256ede@spud>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 4.06.2024 4:40 PM, Will Deacon wrote:
-> On Thu, May 16, 2024 at 01:55:26PM -0500, Andrew Halaney wrote:
->> On Thu, May 16, 2024 at 08:20:05PM GMT, Akhil P Oommen wrote:
->>> On Thu, May 16, 2024 at 08:15:34AM -0500, Andrew Halaney wrote:
->>>> If I understand correctly, you don't need any memory barrier.
->>>> writel()/readl()'s are ordered to the same endpoint. That goes for all
->>>> the reordering/barrier comments mentioned below too.
+
+
+On 6/5/24 18:40, Conor Dooley wrote:
+> On Tue, Jun 04, 2024 at 07:42:16PM +0200, Michael Walle wrote:
+>> On Tue Jun 4, 2024 at 7:01 PM CEST, Conor Dooley wrote:
+>>> On Tue, Jun 04, 2024 at 09:42:31AM +0200, Michael Walle wrote:
+>>>> These devices are more like an AT25 compatible EEPROM instead of
+>>>> flashes. Like an EEPROM the user doesn't need to explicitly erase the
+>>>> memory, nor are there sectors or pages. Thus, instead of the SPI-NOR
+>>>> (flash) driver, one should instead use the at25 EEPROM driver.
 >>>>
->>>> device-io.rst:
+>>>> Signed-off-by: Michael Walle <mwalle@kernel.org>
+>>>> Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+>>>> Cc: Thorsten Scherer <t.scherer@eckelmann.de>
+>>>> Cc: Marek Vasut <marex@denx.de>
+>>>> Cc: Imre Kaloz <kaloz@openwrt.org>
+>>>> Cc: Andrew Lunn <andrew@lunn.ch>
+>>>> Cc: Flavio Suligoi <f.suligoi@asem.it>
+>>>> ---
+>>>> The referenced binding only supports the true AT25 compatible EEPROMs
+>>>> where you have to specify additional properties like size and page size
+>>>> or cypress FRAM devices where all the properties are discovered by the
+>>>> driver. I don't have the actual hardware, therefore I can't work on a
+>>>> proper driver and binding. But I really want to deprecate the use of
+>>>> these EEPROM like devices in SPI-NOR. So as a first step, mark the
+>>>> devices in the DT bindings as deprecated.
 >>>>
->>>>     The read and write functions are defined to be ordered. That is the
->>>>     compiler is not permitted to reorder the I/O sequence. When the ordering
->>>>     can be compiler optimised, you can use __readb() and friends to
->>>>     indicate the relaxed ordering. Use this with care.
+>>>> There are three in-tree users of this. I hope I've CCed all the relevant
+>>>> people. With the switch to the at25 driver also comes a user-space
+>>>> facing change: there is no more MTD device. Instead there is an "eeprom"
+>>>> file in /sys now, just like for every other EEPROM.
 >>>>
->>>> memory-barriers.txt:
+>>>> Marek already expressed, that the sps1 dts can likely be removed
+>>>> altogether. I'd like to hear from the other board DTS maintainers if
+>>>> they seem some problems moving to the EEPROM interface - or maybe that
+>>>> device isn't used at all anyway. So in the end, we can hopefully move
+>>>> all the users over to the at25 driver.
+>>>> ---
+>>>>  Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml | 9 ++++++++-
+>>>>  1 file changed, 8 insertions(+), 1 deletion(-)
 >>>>
->>>>      (*) readX(), writeX():
->>>>
->>>> 	    The readX() and writeX() MMIO accessors take a pointer to the
->>>> 	    peripheral being accessed as an __iomem * parameter. For pointers
->>>> 	    mapped with the default I/O attributes (e.g. those returned by
->>>> 	    ioremap()), the ordering guarantees are as follows:
->>>>
->>>> 	    1. All readX() and writeX() accesses to the same peripheral are ordered
->>>> 	       with respect to each other. This ensures that MMIO register accesses
->>>> 	       by the same CPU thread to a particular device will arrive in program
->>>> 	       order.
->>>>
+>>>> diff --git a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+>>>> index 6e3afb42926e..2dccb6b049ea 100644
+>>>> --- a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+>>>> +++ b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+>>>> @@ -21,7 +21,6 @@ properties:
+>>>>                (m25p(40|80|16|32|64|128)|\
+>>>>                n25q(32b|064|128a11|128a13|256a|512a|164k)))|\
+>>>>                atmel,at25df(321a|641|081a)|\
+>>>> -              everspin,mr25h(10|40|128|256)|\
+>>>>                (mxicy|macronix),mx25l(4005a|1606e|6405d|8005|12805d|25635e)|\
+>>>>                (mxicy|macronix),mx25u(4033|4035)|\
+>>>>                (spansion,)?s25fl(128s|256s1|512s|008k|064k|164k)|\
+>>>> @@ -42,6 +41,14 @@ properties:
+>>>>                - spansion,s25fs512s
+>>>>            - const: jedec,spi-nor
+>>>>        - const: jedec,spi-nor
+>>>> +
+>>>> +      # Deprecated bindings
+>>>> +      - items:
+>>>> +          - pattern: "^everspin,mr25h(10|40|128|256)$"
+>>>> +          - const: jedec,spi-nor
+>>>> +        description:
+>>>> +          Deprecated binding, use Documentation/devicetree/bindings/eeprom/at25.yaml.
+>>>> +        deprecated: true
 >>>
->>> In arm64, a writel followed by readl translates to roughly the following
->>> sequence: dmb_wmb(), __raw_writel(), __raw_readl(), dmb_rmb(). I am not
->>> sure what is stopping compiler from reordering  __raw_writel() and __raw_readl()
->>> above? I am assuming iomem cookie is ignored during compilation.
+>>> The idea here seems okay, but directing people to use the at25 binding,
+>>> without actually documenting the replacement compatibles etc is far from
+>>> ideal. I think even a wording change that points out that that these
+>>> devices need to be documented in that file would be an improvement, the
+>>> current wording makes it seem like the works been done.
+>>> Until there's a replacement driver, I don't think you could really
+>>> expect anyone to move to a new binding anyway.
 >>
->> It seems to me that is due to some usage of volatile there in
->> __raw_writel() etc, but to be honest after reading about volatile and
->> some threads from gcc mailing lists, I don't have a confident answer :)
+>> Fair enough. The driver is already there and it basically works -
+>> Flavio is already using it. It is just, that at the moment you have
+>> to use the (deprecated) "atmel,at25" compatible and you'll have to
+>> specify pagesize etc. That is really hacky, because F/MRAM devices
+>> doesn't have a pagesize.
 >>
->>>
->>> Added Will to this thread if he can throw some light on this.
->>
->> Hopefully Will can school us.
-> 
-> The ordering in this case is ensured by the memory attributes used for
-> ioremap(). When an MMIO region is mapped using Device-nGnRE attributes
-> (as it the case for ioremap()), the "nR" part means "no reordering", so
-> readX() and writeX() to that region are ordered wrt each other.
-> 
-> Note that guarantee _doesn't_ apply to other flavours of ioremap(), so
-> e.g. ioremap_wc() won't give you the ordering.
-> 
-> Hope that helps,
+>> Anyway, I was already working on the at25 binding but then I've
+>> noticed that the current FRAM binding is really hardcoded to cypress
+>> devices and as mentioned in the commit message, I don't have any
 
-Just to make sure I'm following, would mapping things as nGnRnE effectively
-get rid of write buffering, perhaps being a way of debugging whether that
-in particular is causing issues (at the cost of speed)?
+Takahiro from cc may help with the cypress FRAM testing.
 
-Konrad
+>> hardware to actually write the proper driver support. Maybe we
+>> should settle on the binding first, i.e.
+>>
+>>  compatible = "everspin,mr25", "atmel,at25";
+>>  size = <N>;
+>>
+>> vs
+>>
+>>  compatible = "everspin,mr25h256"; # no size needed
+> 
+> I dunno, I am usually biased to having the more specific compatible
+> and not needing the extra properties.
+
+I agree with the more specific compatible idea, but we shall aim that
+the specific compatible to be generic: "spi-fram" and maybe "spi-mram".
+Can it be done?
+
+> 
+>>
+>> For reference, the already supported cypress fram has the following:
+>>
+>>  compatible = "cypress,fm25", "atmel,at25";
+>>  # no size needed, because the driver will figure it out by reading
+>>  # the ID
+>>
+>> Besides that, I would really get some feedback from the three
+>> in-tree users on migrating to the EEPROM driver and thus away from
+>> MTD.
+>>
+>> -michael
+>>
 
