@@ -1,178 +1,146 @@
-Return-Path: <linux-kernel+bounces-204686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76BEC8FF253
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:22:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 722518FF24F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:21:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 081E028746E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:22:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CC121F26B3B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF98F19925C;
-	Thu,  6 Jun 2024 16:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4FEA19AA6C;
+	Thu,  6 Jun 2024 16:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="/C4ELpKq";
-	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="OfscBZh3"
-Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="JmSHwzaF"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1C61990A1;
-	Thu,  6 Jun 2024 16:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717690638; cv=fail; b=Uv4UUxkQScvG9ko9nSApzWS0bmsGR3+WBeTiDt5B9Sbqe820iCvVKj4eg1wc/Gc4S7plYWp8X3lE15i9RqpQe+nMc4qSY+9AVjG5aTDmLCIMMU6xyeSlSY7fTQFalgob+b26i3i7NIBByJbgpbC2hmlT+HZi7mpnuCnj37szz3Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717690638; c=relaxed/simple;
-	bh=T+h1Ne4Z+Nus3xIRHnouZB6uatVfxpMENDpkUC19kdY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SVenfGGFhtdxmJBXk45pnXg6FXsQxnnxPBoc7fEcyL0TEK6KM1RWoAKCMdjQKCnrbICyEmi+QJj0jN7yt9Pffl/4N1c1YCNwbIIZqYx0kCu0qqbNCyn6hIUMh7AdbRMaTKVraZ69MHcmXhDNXRbcdxryG/dGz2evvUqC+xGUvJo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=/C4ELpKq; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=OfscBZh3; arc=fail smtp.client-ip=72.84.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
-Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
-   signature) header.d=sapience.com header.i=@sapience.com 
-   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
-   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
-Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by s1.sapience.com (Postfix) with ESMTPS id E3B634809ED;
-	Thu, 06 Jun 2024 12:17:15 -0400 (EDT)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1717690635;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=5xqiDvD8y4z/a7m1hJYP7K3YCF/4hF8rsxrnE5ysmcM=;
- b=/C4ELpKq28JnfAjBJD485HOYv1DgVMA5zjqHvv/SLjLzrl6ZYWRbsnnL/b/b3bzfvMgct
- vT+TIsjFJ1xEsaNDg==
-ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1717690635;
-	cv=none; b=KE2yikQ+LZZqVo7YxDSNE1ww0qqDcE1KmUdTtTxOGi1z2qYMd/5hZ/lS4MaI/04HcTpmLvdrZ7aQR8UCWhNvlhPijdfUAm0nAtBWNJJJbYzvbZUtpJySmFrXJqsQsK12qRcOWCRKnB+r3SAmy2E19Sf8eFlYYt9a0VbtQHpeTy2lQGJRt2fTIPFefaGYWH1wFBmjarQGtC4T9ypHctB+7GVYdtsGbb8U3bkuGmi2WwL/nM84B242N+gh57bBAYlM9dY0IVdMZx2tO0QlpR3V+rmPX7aobZjTFRb/Z3Cs5hqO7zrh4at5YkZP2i7bzJR2QgakrvhHmylQb3Bf7T4ROA==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
-	t=1717690635; c=relaxed/simple;
-	bh=T+h1Ne4Z+Nus3xIRHnouZB6uatVfxpMENDpkUC19kdY=;
-	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
-	 MIME-Version; b=CVBpGFk1vpB7f4ZcPpVv96BaTtjtJjAS/8aCmRLqDJef1Ow0uaA8s+/gcSAs5M9CC4QgSC49KaPYREEumYjq1AkCsqBAwn61jKmxxlvgdM5mj7ayOTEiH+yN76j5yMXUiOzjj0+FbngJCbAhn+q7SeCegsTtQaoSk6ldBZzmtJyxdy06BkAbwYfC0+lStNGRD10eki3qwJSjtAL8E1YcpO6XfmcRpS2c0PcmxpPk8bEDJ4xDMzbAeUPMWka6/nJhvnCJjObOUySW7LYsRX+k2TvUUN8ANUnVVppMxblNILL3cWoNu/lS10WTfnM+IREfkIZkK1KK9Y4lFE4TyvHdIg==
-ARC-Authentication-Results: i=1; arc-srv8.sapience.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1717690635;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=5xqiDvD8y4z/a7m1hJYP7K3YCF/4hF8rsxrnE5ysmcM=;
- b=OfscBZh31McAx9uDkwWIjfiAVKJKObsXTos8aUBzK4nDNHOPIgyN01RhnOx8LS6MuLO2z
- RIesYDiLvLJPAmCmUfTMpDziDkaXtR3vMKx5F3cApdYKt8LvQaVacWnQPZ74wbeMcs2Uy7r
- LlDL/vTlu+5iWhZLiJLWLUXS29MIQG7zToQuu7jsHPdhbp6QSwj5b0nxcJ4cgFfp1aZ4FUk
- Q4kCegacPjUJ6bzHooIc8q7e7j7PrczXFkcibnEtljdNg3B5BdN8zqmD78w+0PbqYO4allM
- L3D70y1j9OxiqaW/+gDglIjnQHi9wmvPNRhZLl7CU/wBHOXbniBSkGYaQ0dQ==
-Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by srv8.sapience.com (Postfix) with ESMTPS id BDCCB280074;
-	Thu, 06 Jun 2024 12:17:15 -0400 (EDT)
-Message-ID: <7892aaab41a9332718ecafe997127244feb9a9c4.camel@sapience.com>
-Subject: Re: 6.10-rc1 : crash in mei_csi_probe
-From: Genes Lists <lists@sapience.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org,
- hverkuil-cisco@xs4all.nl,  laurent.pinchart@ideasonboard.com,
- wentong.wu@intel.com,  linux-media@vger.kernel.org, Linux regressions
- mailing list <regressions@lists.linux.dev>
-Date: Thu, 06 Jun 2024 12:17:15 -0400
-In-Reply-To: <ZmHasj3hfwwKimZF@kekkonen.localdomain>
-References: <8afe9391b96ff3e1c60e624c1b8a3b2bd5039560.camel@sapience.com>
-	 <ZlTllJeZBiGapHwZ@kekkonen.localdomain>
-	 <988e48090982c89ce0c906954832fdfb09a1ce34.camel@sapience.com>
-	 <eb10620deecc8feeae1e308c22de199be7c48ca6.camel@sapience.com>
-	 <ZmHasj3hfwwKimZF@kekkonen.localdomain>
-Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
- keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
- 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
- sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
- vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
- BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
-Content-Type: multipart/signed; micalg="pgp-sha384";
-	protocol="application/pgp-signature"; boundary="=-3WOw2xXKzNBIwItK7RL4"
-User-Agent: Evolution 3.52.2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3FF1991BC;
+	Thu,  6 Jun 2024 16:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717690594; cv=none; b=GcJiw5v941bmbErtnrn3ydXWF61mkPSILEXkahgsH5f2xB9kAkUIoXoHweCndtvqmEbGC38lpaiqsoSrJsqzTDXT9C4dIZJiUWwfCebaPw2q6y6Ky9sy8saUc/DXhu3K5TCPzP4HZL+z3MVC/Gw1gLPZc3/K8SgPVsZqMDwaU1k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717690594; c=relaxed/simple;
+	bh=RFc53pBgTWIlv5uA9fwIBtYs0TJgbzdzSpuTpFwpyqQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IZeycAklbQAKFBy+E7vHBEN/AlP3+GFrZNTQCG2NR0D1GeGkQjPDyhkKEE1QsfYd3kRLFLH9c+zW9L0HDDzsPzwqgMio6gNriOi+3fuzgUmC/zhqjLdhPTOIw2bJyr45uqioDk+D4DOzrYLozRbI8h/fkeVmedulQ538EwZTF5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=JmSHwzaF; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1717690591;
+	bh=RFc53pBgTWIlv5uA9fwIBtYs0TJgbzdzSpuTpFwpyqQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JmSHwzaFzu5SZrgopaWVwEeGeBkdOI8GYilDbZyBQxj1UWZ40zg57BrACmyBRrXS1
+	 RU2+cQVfa+AYKlK5sNsujG3oNh4Mrhu8xSJoLx7Wt9zZNvqNe9ZxMkFJfq6Co2xHa6
+	 mpDOruR1cNxGcxowWufaEBgvB5yrUKcgKxXaFheK0Dpw6wYg+Lrgrqrnr+4TqjuQ8J
+	 EcSsSF9cUJ5PzxS/M96hvHYtfgRtTS6VeWEbDm+hCvSRKKYMoIVcq3I0lHY7fA7kgn
+	 CIyHFTAjTpY1S5OpF3wpMSnMMGh2QCg+onAL+cwzmDVGZBlvNI/z0CEQdZ2iPV0Nos
+	 oELz9YHBotlGA==
+Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Vw8bL6v4lz12m8;
+	Thu,  6 Jun 2024 12:16:30 -0400 (EDT)
+Message-ID: <d04042cd-0d17-48e7-ae9f-9a4a409408ab@efficios.com>
+Date: Thu, 6 Jun 2024 12:17:20 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Tracepoints and static branch/call in Rust
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
+ <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>,
+ linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240606-tracepoint-v1-0-6551627bf51b@google.com>
+ <cd4a58d9-3e0a-49d1-8a74-bc9d53fc2dfd@efficios.com>
+ <CAH5fLgi4zs5ehDCEgkxPzaamNKn_2cP5+qH8KTy4ujdf2_D-vA@mail.gmail.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <CAH5fLgi4zs5ehDCEgkxPzaamNKn_2cP5+qH8KTy4ujdf2_D-vA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 2024-06-06 11:46, Alice Ryhl wrote:
+> On Thu, Jun 6, 2024 at 5:25 PM Mathieu Desnoyers
+> <mathieu.desnoyers@efficios.com> wrote:
+>>
+>> On 2024-06-06 11:05, Alice Ryhl wrote:
+>>> This implementation implements support for static keys in Rust so that
+>>> the actual static branch will end up in the Rust object file. However,
+>>> it would also be possible to just wrap the trace_##name generated by
+>>> __DECLARE_TRACE in an extern C function and then call that from Rust.
+>>> This will simplify the Rust code by removing the need for static
+>>> branches and calls, but it places the static branch behind an external
+>>> call, which has performance implications.
+>>
+>> The tracepoints try very hard to minimize overhead of dormant tracepoints
+>> so it is not frowned-upon to have them built into production binaries.
+>> This is needed to make sure distribution vendors keep those tracepoints
+>> in the kernel binaries that reach end-users.
+>>
+>> Adding a function call before evaluation of the static branch goes against
+>> this major goal.
+>>
+>>>
+>>> A possible middle ground would be to place just the __DO_TRACE body in
+>>> an extern C function and to implement the Rust wrapper by doing the
+>>> static branch in Rust, and then calling into C the code that contains
+>>> __DO_TRACE when the tracepoint is active. However, this would need some
+>>> changes to include/linux/tracepoint.h to generate and export a function
+>>> containing the body of __DO_TRACE when the tracepoint should be callable
+>>> from Rust.
+>>
+>> This tradeoff is more acceptable than having a function call before
+>> evaluation of the static branch, but I wonder what is the upside of
+>> this tradeoff compared to inlining the whole __DO_TRACE in Rust ?
+>>
+>>> So in general, there is a tradeoff between placing parts of the
+>>> tracepoint (which is perf sensitive) behind an external call, and having
+>>> code duplicated in both C and Rust (which must be kept in sync when
+>>> changes are made). This is an important point that I would like feedback
+>>> on from the C maintainers.
+>>
+>> I don't see how the duplication happens there: __DO_TRACE is meant to be
+>> inlined into each C tracepoint caller site, so the code is already meant
+>> to be duplicated. Having an explicit function wrapping the tracepoint
+>> for Rust would just create an extra instance of __DO_TRACE if it happens
+>> to be also inlined into C code.
+>>
+>> Or do you meant you would like to prevent having to duplicate the
+>> implementation of __DO_TRACE in both C and Rust ?
+>>
+>> I'm not sure if you mean to prevent source code duplication between
+>> C and Rust or duplication of binary code (instructions).
+> 
+> It's a question of maintenance burden. If you change how __DO_TRACE is
+> implemented, then those changes must also be reflected in the Rust
+> version. There's no issue in the binary code.
 
---=-3WOw2xXKzNBIwItK7RL4
-Content-Type: multipart/alternative; boundary="=-xOWo/GJJnUGNRnVrtydb"
+As long as it is only __DO_TRACE that is duplicated between C and Rust,
+I don't see it as a large burden.
 
---=-xOWo/GJJnUGNRnVrtydb
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Thanks,
 
-On Thu, 2024-06-06 at 15:50 +0000, Sakari Ailus wrote:
-> Hi,
->=20
-> It'll disappear once this patch is in:
-> <URL:
-> https://lore.kernel.org/linux-acpi/MW5PR11MB5787C81ABF0C9FFF5A17E4888DF32=
-@MW5PR11MB5787.namprd11.prod.outlook.com/T/#t
-> >.
->=20
+Mathieu
 
-Terrific - thank you!
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
-
---=20
-Gene
-
-
---=-xOWo/GJJnUGNRnVrtydb
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-<html><head><style>pre,code,address {
-  margin: 0px;
-}
-h1,h2,h3,h4,h5,h6 {
-  margin-top: 0.2em;
-  margin-bottom: 0.2em;
-}
-ol,ul {
-  margin-top: 0em;
-  margin-bottom: 0em;
-}
-blockquote {
-  margin-top: 0em;
-  margin-bottom: 0em;
-}
-</style></head><body><div>On Thu, 2024-06-06 at 15:50 +0000, Sakari Ailus w=
-rote:</div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8ex; border-lef=
-t:2px #729fcf solid;padding-left:1ex"><div>Hi,<br></div><div><br></div><div=
->It'll disappear once this patch is in:<br></div><div>&lt;URL:<a href=3D"ht=
-tps://lore.kernel.org/linux-acpi/MW5PR11MB5787C81ABF0C9FFF5A17E4888DF32@MW5=
-PR11MB5787.namprd11.prod.outlook.com/T/#t">https://lore.kernel.org/linux-ac=
-pi/MW5PR11MB5787C81ABF0C9FFF5A17E4888DF32@MW5PR11MB5787.namprd11.prod.outlo=
-ok.com/T/#t</a>&gt;.<br></div><div><br></div></blockquote><div><br></div><d=
-iv>Terrific - thank you!</div><div><br></div><div><br></div><div><span><pre=
->-- <br></pre><div><span style=3D"background-color: inherit;">Gene</span></=
-div><div><br></div></span></div></body></html>
-
---=-xOWo/GJJnUGNRnVrtydb--
-
---=-3WOw2xXKzNBIwItK7RL4
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZmHhCwAKCRA5BdB0L6Ze
-202uAQC3Ar3+V5TBBDOxG0kL2t/ZaEbg2Jgo8+UvffVvnMaB1QD+J1CIIAMWPchk
-P6mw0Qtb7ZCa9kEmKzAEGAKrKavzmgE=
-=6+Me
------END PGP SIGNATURE-----
-
---=-3WOw2xXKzNBIwItK7RL4--
 
