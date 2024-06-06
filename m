@@ -1,223 +1,112 @@
-Return-Path: <linux-kernel+bounces-204227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5678FE609
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:05:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D70AA8FE60D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 760D428687B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:05:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5CA41C2510F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF0119596E;
-	Thu,  6 Jun 2024 12:05:23 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F0C1FAA;
-	Thu,  6 Jun 2024 12:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC97C195974;
+	Thu,  6 Jun 2024 12:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NsOjvGcT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE1013C3F4;
+	Thu,  6 Jun 2024 12:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717675523; cv=none; b=FKYEqsfQslK9Wh6raZFRX23L1nkDIBui5dDNdMdSjjo/Kp5+rvh/WgKynYHXYR2/9c1uH6AOcfC/NuY1/akVVgsDON1/VBJslxajhkaBwPm4BHobe9HetX94jQtggYGznpwxhDdoRABo13QhEmG8PjwfYKyONzQottqnFRzJVjQ=
+	t=1717675539; cv=none; b=EL7GB/5b7qax4OIDQris19kA1/k6r0t0y5kOPPKPIoGDJYI6MdbkC5yR46yJ+1aMb/3RMVWyDpepcYPZn0Dz10SNdxHpHfMojkCvIWDJEsPKQ4wSSMg7I9d/xIkRJ0grE7mdtOF7jFmHJi15Kl2J7CwM3+5jYcejZ0cpsLMcqnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717675523; c=relaxed/simple;
-	bh=vfyoX5kteCRR1xD8K7FFTepZ0enm4dufLuYIW1N4V9E=;
-	h=Subject:From:To:Cc:References:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=t5/Y+cEjFgRVphosky0x+C/QmNICkZFfMrV9m66JHEncGgFor1cc4Qr5K6MXilhGQ6ud+bq+HpLGydMEhPrM3vIoF4Q4X60CbJtPQ/c1mysXR6Ip52fR4UGzF2dxBBcyyVogDFNZeyYzST78ySv6qLG+XIDPIYMVj+QsV0hEG4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8CxyOn9pWFmqDcEAA--.4986S3;
-	Thu, 06 Jun 2024 20:05:17 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8Dxusb7pWFmauAWAA--.57600S3;
-	Thu, 06 Jun 2024 20:05:17 +0800 (CST)
-Subject: Re: [PATCH] LoongArch: KVM: Add feature passing from user space
-From: maobibo <maobibo@loongson.cn>
-To: WANG Xuerui <kernel@xen0n.name>, Tianrui Zhao <zhaotianrui@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>
-Cc: kvm@vger.kernel.org, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240606074850.2651896-1-maobibo@loongson.cn>
- <9bb552c8-fe86-43dc-9c4e-0b95c99fb25c@xen0n.name>
- <2774b010-8033-2167-474a-cb1b29b27d2b@loongson.cn>
-Message-ID: <ca286a23-f22b-092c-20d0-6ab20fd0883f@loongson.cn>
-Date: Thu, 6 Jun 2024 20:05:14 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1717675539; c=relaxed/simple;
+	bh=vo04VGdNJ9fq7X8QtlYEzJoyJaGM71TN5jI3iFBYjAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=no+uMXKnTF1GHqwuSdbVo6NzFni6b+vwFIp6eAzRZKTX60kNXTnxfFqPK/DZ62p+AMW605Oj9rVWfpTTjPN5FSNqY80OZTzmZuW7IClenydynBVc6JzV24B+OKLoRbp8bMeJPurEyQDfRVuqHKLWxlcDqFH1KKslWLkefpx1cCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NsOjvGcT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F373C2BD10;
+	Thu,  6 Jun 2024 12:05:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717675538;
+	bh=vo04VGdNJ9fq7X8QtlYEzJoyJaGM71TN5jI3iFBYjAY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NsOjvGcTV0S20I02LeeVmdqmU0E6U5C4SmN2X2Dxg7LcsN3fQs5EOO2xREgykftek
+	 uM1RwIhthtkPL6yM8INVQZ3mxEin/y4CbBFnUMh54bVE3JvrSfst4UCJfjNyu/WRrF
+	 bzvYnFRyGBdMzyhlQud0ieXDUWwL4kOXSeuhr1JJ2CrFPwj4XEnQ5sInNprP9AwExe
+	 5LK7OJIyacAV0ksdc2MHeYby+Od4wYAUfLg9/uvu44BPRKhEN21vhruJecsagNswhP
+	 8zx2sF5r3Jj3jtbxWe3oFF3fXEyRsry8wFlI7/yDzXesRUYPfR76Nu6xiE2190r4MU
+	 /4Bz5+ggejW/Q==
+Date: Thu, 6 Jun 2024 13:05:32 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [RFC PATCH 1/4] regulator: core: Ensure the cached state matches
+ the hardware state in regulator_set_voltage_unlocked()
+Message-ID: <22664e29-4c7a-4544-ad32-25c3d7e342e9@sirena.org.uk>
+References: <20240605074936.578687-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240605074936.578687-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <2774b010-8033-2167-474a-cb1b29b27d2b@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8Dxusb7pWFmauAWAA--.57600S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxKFykXFyfuw15Aw4rXw1fAFc_yoW7ZF47pr
-	yvyFs8GrWUGr1fCr1kta4DXryUJr1xGw12qF17X3W8JF47Kr12gr1vgryqgF1DJw48X3W0
-	qF1Yqw13ZF1YqwcCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9Sb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv
-	67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
-	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C2
-	67AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI
-	8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWU
-	CwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r
-	1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBI
-	daVFxhVjvjDU0xZFpf9x07jY38nUUUUU=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wn7S9cxDJrFLWxbv"
+Content-Disposition: inline
+In-Reply-To: <20240605074936.578687-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Cookie: Simulated picture.
 
 
+--wn7S9cxDJrFLWxbv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2024/6/6 下午7:54, maobibo wrote:
-> Xuerui,
-> 
-> Thanks for your reviewing.
-> I reply inline.
-> 
-> On 2024/6/6 下午7:20, WANG Xuerui wrote:
->> Hi,
->>
->> On 6/6/24 15:48, Bibo Mao wrote:
->>> Currently features defined in cpucfg CPUCFG_KVM_FEATURE comes from
->>> kvm kernel mode only. Some features are defined in user space VMM,
->>
->> "come from kernel side only. But currently KVM is not aware of 
->> user-space VMM features which makes it hard to employ optimizations 
->> that are both (1) specific to the VM use case and (2) requiring 
->> cooperation from user space."
-> Will modify in next version.
->>
->>> however KVM module does not know. Here interface is added to update
->>> register CPUCFG_KVM_FEATURE from user space, only bit 24 - 31 is valid.
->>>
->>> Feature KVM_LOONGARCH_VCPU_FEAT_VIRT_EXTIOI is added from user mdoe.
->>> FEAT_VIRT_EXTIOI is virt EXTIOI extension which can route interrupt
->>> to 256 VCPUs rather than 4 CPUs like real hw.
->>
->> "A new feature bit ... is added which can be set from user space. 
->> FEAT_... indicates that the VM EXTIOI can route interrupts to 256 
->> vCPUs, rather than 4 like with real HW."
-> will modify in next version.
-> 
->>
->> (Am I right in paraphrasing the "EXTIOI" part?)
->>
->>>
->>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
->>> ---
->>>   arch/loongarch/include/asm/kvm_host.h  |  4 +++
->>>   arch/loongarch/include/asm/loongarch.h |  5 ++++
->>>   arch/loongarch/include/uapi/asm/kvm.h  |  2 ++
->>>   arch/loongarch/kvm/exit.c              |  1 +
->>>   arch/loongarch/kvm/vcpu.c              | 36 +++++++++++++++++++++++---
->>>   5 files changed, 44 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/arch/loongarch/include/asm/kvm_host.h 
->>> b/arch/loongarch/include/asm/kvm_host.h
->>> index 88023ab59486..8fa50d757247 100644
->>> --- a/arch/loongarch/include/asm/kvm_host.h
->>> +++ b/arch/loongarch/include/asm/kvm_host.h
->>> @@ -135,6 +135,9 @@ enum emulation_result {
->>>   #define KVM_LARCH_HWCSR_USABLE    (0x1 << 4)
->>>   #define KVM_LARCH_LBT        (0x1 << 5)
->>> +#define KVM_LOONGARCH_USR_FEAT_MASK            \
->>> +    BIT(KVM_LOONGARCH_VCPU_FEAT_VIRT_EXTIOI)
->>> +
->>>   struct kvm_vcpu_arch {
->>>       /*
->>>        * Switch pointer-to-function type to unsigned long
->>> @@ -210,6 +213,7 @@ struct kvm_vcpu_arch {
->>>           u64 last_steal;
->>>           struct gfn_to_hva_cache cache;
->>>       } st;
->>> +    unsigned int usr_features;
->>>   };
->>>   static inline unsigned long readl_sw_gcsr(struct loongarch_csrs 
->>> *csr, int reg)
->>> diff --git a/arch/loongarch/include/asm/loongarch.h 
->>> b/arch/loongarch/include/asm/loongarch.h
->>> index 7a4633ef284b..4d9837512c19 100644
->>> --- a/arch/loongarch/include/asm/loongarch.h
->>> +++ b/arch/loongarch/include/asm/loongarch.h
->>> @@ -167,9 +167,14 @@
->>>   #define CPUCFG_KVM_SIG            (CPUCFG_KVM_BASE + 0)
->>>   #define  KVM_SIGNATURE            "KVM\0"
->>> +/*
->>> + * BIT 24 - 31 is features configurable by user space vmm
->>> + */
->>>   #define CPUCFG_KVM_FEATURE        (CPUCFG_KVM_BASE + 4)
->>>   #define  KVM_FEATURE_IPI        BIT(1)
->>>   #define  KVM_FEATURE_STEAL_TIME        BIT(2)
->>> +/* With VIRT_EXTIOI feature, interrupt can route to 256 VCPUs */
->>> +#define  KVM_FEATURE_VIRT_EXTIOI    BIT(24)
->>>   #ifndef __ASSEMBLY__
->>
->> What about assigning a new CPUCFG leaf ID for separating the two kinds 
->> of feature flags very cleanly?
-> For compatible issue like new kernel on old KVM host, to add a new
-> CPUCFG leaf ID, a new feature need be defined on existing 
-> CPUCFG_KVM_FEATURE register. Such as:
->     #define  KVM_FEATURE_EXTEND_CPUCFG        BIT(3)
-> 
-> VM need check feature KVM_FEATURE_EXTEND_CPUCFG at first, and then read 
-> the new CPUCFG leaf ID if feature EXTEND_CPUCFG is enabled.
-> 
-> That maybe makes it complicated since feature bit is enough now.
-The default return value is zero with old kvm host, it is possible to
-use a new CPUCFG leaf ID. Both methods are ok for me.
+On Wed, Jun 05, 2024 at 08:49:33AM +0100, Prabhakar wrote:
 
-Huacai,
-What is your optnion about this?
+> Driver code flow:
+> 1> set regulator to 1.8V (BIT0 = 1)
+> 2> Regulator cached state now will be 1.8V
+> 3> Now for some reason driver issues a reset to the IP block
+>    which resets the registers to default value. In this process
+>    the regulator is set to 3.3V (BIT0 = 0)
+> 4> Now the driver requests the regulator core to set 1.8V
 
-Regards
-Bibo Mao
->>
->>> @@ -896,7 +907,24 @@ static int kvm_loongarch_vcpu_get_attr(struct 
->>> kvm_vcpu *vcpu,
->>>   static int kvm_loongarch_cpucfg_set_attr(struct kvm_vcpu *vcpu,
->>>                        struct kvm_device_attr *attr)
->>>   {
->>> -    return -ENXIO;
->>> +    u64 __user *user = (u64 __user *)attr->addr;
->>> +    u64 val, valid_flags;
->>> +
->>> +    switch (attr->attr) {
->>> +    case CPUCFG_KVM_FEATURE:
->>> +        if (get_user(val, user))
->>> +            return -EFAULT;
->>> +
->>> +        valid_flags = KVM_LOONGARCH_USR_FEAT_MASK;
->>> +        if (val & ~valid_flags)
->>> +            return -EINVAL;
->>> +
->>> +        vcpu->arch.usr_features |= val;
->>
->> Isn't this usage of "|=" instead of "=" implying that the feature bits 
->> could not get disabled after being enabled earlier, for whatever reason?
-> yes, "=" is better. Will modify in next version.
-> 
-> Regards
-> Bibo Mao
->>
->>> +        return 0;
->>> +
->>> +    default:
->>> +        return -ENXIO;
->>> +    }
->>>   }
->>>   static int kvm_loongarch_vcpu_set_attr(struct kvm_vcpu *vcpu,
->>>
->>> base-commit: 2df0193e62cf887f373995fb8a91068562784adc
->>
-> 
+If something is resetting the regulator like this that's a problem in
+general, we need to either have the driver notify the core when that
+happens so it can reconfigure the regulator or have it reapply
+configuration directly.  Obviously it's not great to have that happen at
+all...
 
+--wn7S9cxDJrFLWxbv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZhpgsACgkQJNaLcl1U
+h9B/pgf/U9GUyfyKf99GtjHy6TsMmH6pC6aP4sdbFrkkuRvcg8XDzGqB/lFNcQd6
+TWOA0kydF00JnCm+RJGlTvgu+c72kbFLwcSPfHLGnEOeutyz+ozkOHLM7oHsEiBe
+pbNoT8wKWiK5gqxQJJheCqZyFdLVzARyJeqNbiehDNdPl2AzcC61dfMi/PNqbY2Y
+yICxjX4aXKRq1MzZeKfN5sN250F20CNUQE1K+x4Lpg16DhwlZnIqobophE66wte7
+KlXBR93ADAvKja28SqoTaOR2xTq/caVUQurl/dGYuMIgIM1Gfpi3IhyDmICfZRHl
+v/OML0PmwVuUZXkox97kbwmVBkLtXA==
+=FsHa
+-----END PGP SIGNATURE-----
+
+--wn7S9cxDJrFLWxbv--
 
