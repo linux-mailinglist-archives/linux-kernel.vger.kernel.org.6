@@ -1,160 +1,175 @@
-Return-Path: <linux-kernel+bounces-204789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B3D58FF399
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:21:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 243738FF39A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:21:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2D11B25204
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:21:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA5EF1F2770B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2966E1990D0;
-	Thu,  6 Jun 2024 17:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="dhda/dQ/"
-Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-vi1eur04olkn2018.outbound.protection.outlook.com [40.92.75.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9037A198E90;
-	Thu,  6 Jun 2024 17:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.75.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717694489; cv=fail; b=aVP45UwSWMYaZ7haJXJAwgDX8HQSBzbENPRewp67gyifKRuTg4zFXlcB/1+xp61Tk344JRR4vrCe9a+ybr+RVYHT3DI43EIaBGkNRdLP6ZDZrgIiO2ChPVdUc4nHWo5plxYGT8ByfePbYP0eau4Mk2yb19M+xVEj8TZzKyiBMvk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717694489; c=relaxed/simple;
-	bh=VZGERjzbL60MzoqjfiAJ3AEI6UBzN3vih0OviVL0Uok=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=VocbVHQETxc7ckTd83qbqjGEAep8HdptW3kYGKjJ6PenTPOP+S72+pWiYWId2L7DrguTYzQmoDrc+zls//uaeYRFvSstKS2gs8NIE7FDjkafdTRe7BOyq5VEZmQezwOqLCKtEyN+daqLKq/0/jPl50P0jQeoDkUpwrhlMPTqzYI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=dhda/dQ/; arc=fail smtp.client-ip=40.92.75.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZMZG4pEjETNEUZyL2/yneHirfUyrCpcIo1Xcpy7QYwmXTDpRURwKS90iuhrPeV6+Bj5E/0QYwYWOq8+PBEKcqXJoziopdW50LCywYzCn7yPDx+A1pBSmFTxrZMwUkVZ4Ci/unwroNKSwEH+iU6nOWL4nNIkYvUZYXRQVO3kUykafrYa3YmJf4hpNknPC/LNlf9uZaHPPZQAPMapkvuYAWthuEXseRZeGeXRiomZ0bJoA/EzxagdaDD69xnTal5ojWgRi4HEMPKK56+Iv44TWntgio0ltV6rpkkfh0gDp2hLBQVCvvqTtXbUfGvAZ95vbde8UHgEuOllbmrvEYYOdng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zyO4tSKZqFwRg1zNY4P33R6TDcVqkS4+rIZOFFxcFxg=;
- b=alMqjxqRzJqu/8YM6gYfoYxjfWeHcUpQtfONv8Qjq4ayYzpPnOUezhc+/kAdl5NCzuB2aJJ8VkOytLFFSV13gv8eXqHwX6mh0UUUnjjZqJrRmTXiStnK0El7KMD2EoQych5LHkRUtFkAshnu7hs0QfHlGYfqum0ptrdGbAx5Wq2X0RG5r0BCYbOSre8vCMSqvGo3P3Jq3U4qPWOAT78AXFQ7u8zZ8VZLRBywf0XOlFW1vNcXALNUnZsRBmVzS1Aa9IuK2zoemA80wWbUBOiM5P6Ntu3jgGYRdBHiOR4tFXsNNGXrCWlcu5rn9+GQ5407Nd4gMgCRWxK3Zx/aJUOvHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zyO4tSKZqFwRg1zNY4P33R6TDcVqkS4+rIZOFFxcFxg=;
- b=dhda/dQ/OJfHrsF2fNef1zqC+N6BEaXgveuFKN+B6xkMeVwm7QqtPqeh3BGLD4spdwfCG+dHhjn/JXY0psvDiU62U4h77xuFsR/6RITk9C9OcDTlb04G7255oQJmRX90uF/wbODY9IFhPRscB1i43ZbHgdF3g5NxONHvoQEc/M27vPwlXL9T1/CQfsCEX+C4OGXySqdeEf1c8A4P6OW2uFDsu5/gw2+4F//0ZOiZgngF0UZi4wKqIOlXc7zorTq+JGTKTDOBJ8dgJUXvnt0mLMlYAPCfV9a2BVv72VByOd9AjM6etUEuap1gIySrqRvONoI+Yh7J3UyWyb0XAgcMXw==
-Received: from AS8PR02MB7237.eurprd02.prod.outlook.com (2603:10a6:20b:3f1::10)
- by PA6PR02MB10849.eurprd02.prod.outlook.com (2603:10a6:102:3d3::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.31; Thu, 6 Jun
- 2024 17:21:24 +0000
-Received: from AS8PR02MB7237.eurprd02.prod.outlook.com
- ([fe80::409b:1407:979b:f658]) by AS8PR02MB7237.eurprd02.prod.outlook.com
- ([fe80::409b:1407:979b:f658%5]) with mapi id 15.20.7633.033; Thu, 6 Jun 2024
- 17:21:24 +0000
-From: Erick Archer <erick.archer@outlook.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	srinivas pandruvada <srinivas.pandruvada@linux.intel.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>,
-	Erick Archer <erick.archer@outlook.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Kees Cook <keescook@chromium.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Justin Stitt <justinstitt@google.com>
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] thermal: int3400: Use sizeof(*pointer) instead of sizeof(type)
-Date: Thu,  6 Jun 2024 19:21:06 +0200
-Message-ID:
- <AS8PR02MB723748EF627AEB253C437FD48BFA2@AS8PR02MB7237.eurprd02.prod.outlook.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [FmGoVqeLnBqQlYolfgiRZAtXZrDID43L]
-X-ClientProxiedBy: MA2P292CA0026.ESPP292.PROD.OUTLOOK.COM (2603:10a6:250::12)
- To AS8PR02MB7237.eurprd02.prod.outlook.com (2603:10a6:20b:3f1::10)
-X-Microsoft-Original-Message-ID:
- <20240606172106.7052-1-erick.archer@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11131990DE;
+	Thu,  6 Jun 2024 17:21:37 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 6F204266AB
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 17:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717694497; cv=none; b=eSLn5CTnCqTv9/k7+4fjXeI2TNrzgaYelx0FiqKDOiRPY7am9MOBJB/cOwqYM7W0LsZHfpEa2q0PMTQVGuzGOv6sFST5gUDB2uG+zaDMcg/DOikbgMYiR7qELWeTnZypiSl4MRWrPdBSaR97U1eZdKNSd2lj8Y3os/jWHiOi36c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717694497; c=relaxed/simple;
+	bh=frS/UngMOUTMkvobfMhI/dDnG5z34IDT7+8i/Wni88Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uxskTRQpfEJbl6HlHY+iQRqJgHOjlJC3t0a8UvHn1KGDz3eOKZRvTTVU2B59E5brDahjWCTv0ZNnoMXAZLobDon7Llnf4U2ZMbTIUUwFdI2uk0wRGlqRZShMwtNqlb7to/U15k+5o9lz+d2O4cLSKeQNuEWp/FJFWiN9itXbhGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 13406 invoked by uid 1000); 6 Jun 2024 13:21:28 -0400
+Date: Thu, 6 Jun 2024 13:21:28 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Andrea Parri <parri.andrea@gmail.com>, will@kernel.org,
+  peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+  dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+  akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+  linux-kernel@vger.kernel.org, hernan.poncedeleon@huaweicloud.com,
+  jonas.oberhauser@huaweicloud.com
+Subject: Re: New locking test for the paulmckrcu/litmus github archive
+Message-ID: <26aa2333-5e54-4dcd-b6df-f8f8545b2672@rowland.harvard.edu>
+References: <a8c06694-098d-4b95-845c-96b40cd3ff2d@rowland.harvard.edu>
+ <df851df5-0e3a-45b1-ae85-9625309766b0@paulmck-laptop>
+ <1d175b42-84b4-4a48-b1fb-ab6fd3566f75@rowland.harvard.edu>
+ <64d944ff-b609-4977-a491-91ffc199a4cd@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR02MB7237:EE_|PA6PR02MB10849:EE_
-X-MS-Office365-Filtering-Correlation-Id: bbecf4f0-7755-427e-50a8-08dc864d1609
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199019|3412199016|440099019|1710799017;
-X-Microsoft-Antispam-Message-Info:
-	sOB3l3i+W7XmA+NMywdXKshUulJxelHUAy6scUqOScGIj/E+5ZkhBH8B4pmHl/BXzJBwY8TGhnkW9GHpOCK3I4qK3x5ixgaw0dzlNAc7qKgUe5b7f9flXo2ZryhD54OPoIK7jazG6m8zqvmftb/jaw1jBlCIfymKJBL4wf4k5YFZKVQApXRfSdVi9QX8kGc25U1zPNTXSZ9H+Eesn/fOQ65NwyxWsjQjqLkyYIW8rsRKoxpzNL71iYfKbn/SsT+Z5OaJcMJ5a8rjTPukmd3gloE0ueTV+CF2bZdmVEuJqG2dh/qV533Mqd88PYMf9IJ5+EuW1f3qQUN3pv/jvxrcWqUE52V3QyxVP6CKHVfjIXNupyfEgOlMDUyCnwKMiIMIHbygNMIbJWFqkNiZRu3WMrulE9z7cSVPBhNutG/NVxrG690DbbSPGBaHSwNgrho2ZN9O8WxnQiRgW2HIN1cB/ZAu7u9R2H1Dm5UXdk/zNYyiKcvgX2GUfHfj/sPu2+Vs198Vj7LbuITllqt4d/k7ezck4KFmCmm4oCjFLlvH2ZS0l+a7itIsLaC9bU/qrn0/fg2xt8sBkllFS6m3+rW/Zaam7dXY5pINzElZSrOvL+EpuDynkSE1ZDIOe9DdXyGx
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YN2fIkrhV/0qcT/sOqFlI5NxBXYcFbwJr6hDrHxmQHMjfkVRSvO/zjVJp+Nk?=
- =?us-ascii?Q?czOe2rMsS88T8XTmfLI2I/qXHETZo5tzfOVn2DgBsLYr5AmmZYJlvYu87VvF?=
- =?us-ascii?Q?vFRDQrVPhY3NI114nEXXOaegkizgrxvR/fA5e/89e7IjysI6Sjmn18h9bOpL?=
- =?us-ascii?Q?LBgTCNHxrV2OWwZj1gK9uu+f1VlBySqvEsXK8ix04XGVtQs8BIeV4yo1/fhZ?=
- =?us-ascii?Q?5fz7un6G5RoGbz26IEOTL/eldVXiFkJ2b2GsE1ZcNwuWuPYYq2lipocLnWPK?=
- =?us-ascii?Q?SNJp1YVxQ6R9YvnCTTW9HFRm/iznqCBdVw8/e7j9ukVaUD29iBnbEQJIaSDG?=
- =?us-ascii?Q?lmyEHbQxE+pK4kDSZuoIB/B9GeEpivsy215ga7qowSjIG3CxfxUdsjxSFkDL?=
- =?us-ascii?Q?uVGx32jq48jE6Uq5XT63Ah698ZgBsIGqkzpbaJyKtjcNhMAH1krWGVMEo2aA?=
- =?us-ascii?Q?3zewXR16wB4GhayPAYf1ass99SO101ZS0Dy4HbUyFqRUnxWuCWgjGJQzE1pi?=
- =?us-ascii?Q?JYdhDom1dn8VAX1oOayZpWFOcOyBWyK28s/byf3cHaaYzfjnlGbhEAkmrnOt?=
- =?us-ascii?Q?ZB3+eaix4+RW47E47WHCVTWjHmyyESjHaXO9pvdXtfCGpbzDfklA9ymekVCf?=
- =?us-ascii?Q?4AGMl4dbQNNbRao7SvdKId0EnWi8mRJRVt8ZyeDZET9HLgfJObXfqddYRJRJ?=
- =?us-ascii?Q?11LJkKbb0fW3fn4Zt14hS9XLXsXc4Ih08FYHgYc2lv3egpW4KyGtNMQ13rdY?=
- =?us-ascii?Q?qzpTuiEogu3NA4KpzvitbZMSsWB1++xr+Znz2K/vS4BF29agL3Dx2kEEvNMz?=
- =?us-ascii?Q?oTG3xM1hgowMCMFwn9h0KfRFWg05BJFH080gtQwqV1j3c/xmYfR10c4dkIuo?=
- =?us-ascii?Q?oPfAugferRX8vRYpSOOw8zo1yLdEi5SCBeCyINXDoiQwhmjtxUX5XdA2+Im5?=
- =?us-ascii?Q?7/yQx1Yr2GTKrM22oS9nnCBXzFGE4/GLo3HroDS+RXn9UOWos5oQLb/xw+7F?=
- =?us-ascii?Q?tL+JF9gy15VcKcjFnkmLLvcewhBhBLTA39EM6uhid8p8BhqKLraN6JfjsOYu?=
- =?us-ascii?Q?CbDgtI2fUPyqN8KyEw+sa39MvMf21W9H1CZLmZHi9thH/IjENE5e8Tips20L?=
- =?us-ascii?Q?iG9sNWP+xdTfPTs6fCd1NLmVkUCo9OnHm70uVaojsNwmde/UhhBM3TRlqdpP?=
- =?us-ascii?Q?HW3s2bgs/0Tj3CWXWrWy76QpvUpFCuU1Fr/NxCyruKz6UZRBKH+gpLg4rote?=
- =?us-ascii?Q?wAlkJCrBm0df8KFQMuvf?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bbecf4f0-7755-427e-50a8-08dc864d1609
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR02MB7237.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 17:21:24.2706
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA6PR02MB10849
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <64d944ff-b609-4977-a491-91ffc199a4cd@paulmck-laptop>
 
-It is preferred to use sizeof(*pointer) instead of sizeof(type)
-due to the type of the variable can change and one needs not
-change the former (unlike the latter). This patch has no effect
-on runtime behavior.
+On Thu, Jun 06, 2024 at 10:07:35AM -0700, Paul E. McKenney wrote:
+> On Wed, Jun 05, 2024 at 02:40:05PM -0400, Alan Stern wrote:
+> > On Wed, Jun 05, 2024 at 11:25:11AM -0700, Paul E. McKenney wrote:
+> > > Thank you both!
+> > > 
+> > > I queued and pushed the following commit, please let me know if it
+> > > needs adjustment.
+> > > 
+> > > 							Thanx, Paul
+> > > 
+> > > ------------------------------------------------------------------------
+> > > 
+> > > commit fb65813a7a181cd86c50bb03f9df1f6a398fa22b
+> > > Author: Alan Stern <stern@rowland.harvard.edu>
+> > > Date:   Wed Jun 5 11:20:47 2024 -0700
+> > > 
+> > >     manual/locked: Add single-threaded spin_is_locked() test
+> > >     
+> > >     This new litmus test demonstrates a bug in the current LKMM lock.cat file.
+> > >     This bug results in the following output:
+> > >     
+> > >             Test CoWWW+sil-lock-sil-unlock-sil Allowed
+> > >             States 0
+> > >             No
+> > >             Witnesses
+> > >             Positive: 0 Negative: 0
+> > >             Condition exists (0:r0=0 /\ 0:r1=1 /\ 0:r2=0)
+> > >             Observation CoWWW+sil-lock-sil-unlock-sil Never 0 0
+> > >             Time CoWWW+sil-lock-sil-unlock-sil 0.01
+> > >             Hash=cf12d53b4d1afec2e46bf9886af219c8
+> > >     
+> > >     This is consistent with a deadlock.  After the fix, there should be one
+> > >     execution that matches the "exists" clause, hence an "Always" result.
+> > 
+> > The part about being consistent with a deadlock is not very important; 
+> > I'd omit it.  Also, the second sentence is ambiguous; change it to:
+> 
+> Good point, the deadlock is irrelevant.  If I want to make that point,
+> I can add a test that really does deadlock.  ;-)
+> 
+> > 	After the fix, there should be one execution that matches the 
+> > 	"exists" clause and no executions that don't match, hence an 
+> > 	"Always" result.
+> 
+> I ended up with the following:
+> 
+> 	This has no executions.  After the fix, there is one execution
+> 	that matches the "exists" clause and no executions that do not
+> 	match, hence an "Always" result.
+> 
+> The reason for explicitly stating "This has no executions" is that a
+> lot of people never have seen such a thing.
 
-Signed-off-by: Erick Archer <erick.archer@outlook.com>
----
- drivers/thermal/intel/int340x_thermal/int3400_thermal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Okay.  Don't we already have a litmus test in the archive that really 
+does create a deadlock?  Something like: Lock Lock Unlock Unlock, all 
+using the same lock variable?
 
-diff --git a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
-index fa96972266e4..b0c0f0ffdcb0 100644
---- a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
-+++ b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
-@@ -571,7 +571,7 @@ static int int3400_thermal_probe(struct platform_device *pdev)
- 	if (!adev)
- 		return -ENODEV;
- 
--	priv = kzalloc(sizeof(struct int3400_thermal_priv), GFP_KERNEL);
-+	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
- 
--- 
-2.25.1
+> > > diff --git a/manual/locked/CoWWW+sil-lock-sil-unlock-sil.litmus b/manual/locked/CoWWW+sil-lock-sil-unlock-sil.litmus
+> > > new file mode 100644
+> > > index 00000000..cee5abf4
+> > > --- /dev/null
+> > > +++ b/manual/locked/CoWWW+sil-lock-sil-unlock-sil.litmus
+> > > @@ -0,0 +1,24 @@
+> > > +C CoWWW+sil-lock-sil-unlock-sil.litmus
+> > 
+> > Where does the "CoWWW" part of the name come from?  If it refers to 
+> > coherence order and three writes, I'll point out that the litmus test 
+> > contains only two writes -- which would better be described as a lock 
+> > and an unlock.  (Or are you counting the "write" that sets the lock's 
+> > initial value?)
+> 
+> The CoWWW comes from me having been confused.  The new filename is
+> CoWW+sil-lock-sil-unlock-sil.litmus.  Thank you for spotting this!
 
+All right, but what does the "CoWW" part stand for?
+
+> > > +
+> > > +(*
+> > > + * Result: Always
+> > > + *
+> > > + * This tests the memory model's implementation of spin_is_locked().
+> > > + *)
+> > > +
+> > > +{}
+> > > +
+> > > +P0(spinlock_t *x)
+> > > +{
+> > > +        int r0;
+> > 
+> > Oops!  Apparently I managed not to convert the spaces on that line to a 
+> > tab.  Can you take care of that?
+> 
+> Done!  Please see below for the updated commit.
+> 
+> 							Thanx, Paul
+> 
+> ------------------------------------------------------------------------
+> 
+> commit d4d216a08b4bedb8cdb0f57a224a4e331b35b931
+> Author: Alan Stern <stern@rowland.harvard.edu>
+> Date:   Wed Jun 5 11:20:47 2024 -0700
+> 
+>     manual/locked: Add single-threaded spin_is_locked() test
+>     
+>     This new litmus test demonstrates a bug in the current LKMM lock.cat file.
+>     This bug results in the following output:
+>     
+>             Test CoWW+sil-lock-sil-unlock-sil Allowed
+>             States 0
+>             No
+>             Witnesses
+>             Positive: 0 Negative: 0
+>             Condition exists (0:r0=0 /\ 0:r1=1 /\ 0:r2=0)
+>             Observation CoWWW+sil-lock-sil-unlock-sil Never 0 0
+>             Time CoWWW+sil-lock-sil-unlock-sil 0.01
+
+Maybe you better re-run this with the updated litmus test file.  Those 
+two lines aren't right.
+
+Alan
 
