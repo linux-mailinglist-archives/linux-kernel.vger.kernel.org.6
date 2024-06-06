@@ -1,244 +1,168 @@
-Return-Path: <linux-kernel+bounces-204902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80178FF4D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:42:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99AB28FF4D8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6026B289775
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:42:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8262B25269
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E52F47A62;
-	Thu,  6 Jun 2024 18:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74AB347A53;
+	Thu,  6 Jun 2024 18:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I3sJN3/2"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JfBAd8Ge"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C35E45C06;
-	Thu,  6 Jun 2024 18:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A4545012
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 18:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717699346; cv=none; b=kdiawf4j+CqqQqQ//Kwd/lKoYjxtz/idNw/bxYfkhRz7ZF8bC+3FH+Ls/+M/Hr2SncWMxzHNPDCAPMqcPa4PLxqghZyDuO8FUq8CgxK6DKB0qa/POVAzX0s4sRHcrjblgfpTYI/NBjuOPK9iXrG+6k/+p5l1lQehmt11WGblT2g=
+	t=1717699355; cv=none; b=Qou9FCx2MLL40Bk7KCBJujlsudjS/oP9Vl8rsyZ7is+s1B5+q2hsIixJC7ALIwQEnCP4F6DlT1xVYIPeMgl8MoRnmHwNUxOizkv54Fyx/Io4k4aRuMOlHRJ6JgdkwyOJ2MBqkqSkSSEt7owBhxvck61JrBFcoVkIwjBfkJEArm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717699346; c=relaxed/simple;
-	bh=2h8Vxw5mpU42JmfFgTGuiFo4V0nj7ZmBz9Em/NBHfjQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OCHXwb7QLSo+kYbYLwy/mLYRNLUeeOAN/DE+zZTCxIssBZ6jEW7SQ6j2Fa9UMW8E3SvbbDQRonTbPydUx9qvialnKc3wmE79Z+xioStPq15NoaXWK1EA782g2doPfSFfW0lD4PLtOISol8yF73UpJp0WcztGOtwaEI9he7yf+p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I3sJN3/2; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f61f775738so11896845ad.2;
-        Thu, 06 Jun 2024 11:42:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717699344; x=1718304144; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4iZQmT4vxNQolNnYp5zIseeWy4wyJJ76G+a9PWEi2OQ=;
-        b=I3sJN3/2dovvoF5j3ktyW8wodIzy41omvFaLyGgQtoequqXUmsU8pexLTTDxaCETpC
-         xoiqywbesixxZReUD+5hzqs7EnC9akSunxK1PdCAZV4U8cTzoZgstNqpiQiq3aAeUcqJ
-         1go2NFAN3lfpCGSIUW1vTcLmYor0Y97Lk4ByDfn9/lXo+HM29agm+3prmxGEo0dJ8Mqt
-         YdKbju5Tz2EQuMRxZ+z/uN3aZLReqVWEqdfT/iRiBjX4GPSdcro1ErlnfBNlnWKF87E9
-         cH3/jTgzLLSUGBkcF0atGBPHwfLAQp6GXOCUMegcnLU61qiR4vOYX3nkNehSvfSd1iq4
-         fofg==
+	s=arc-20240116; t=1717699355; c=relaxed/simple;
+	bh=2V49E/B6BWL8skLBcpq2oCIhdd36FF2nWRGhN2dTWPg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tEl7L3/NB85+gWgiN26hLDoew0LBCUK4pgOAjSeDmJPLvOy1R3uBXJBUM7wAAj2MR+T16KwA+9f6GT7J+pksWJ+YZ6YMFHZgtf7huX1N4tmPdZTotCwDB3G3/qZgpaK9W2YreAQdMj1AxmUwRe5CWOpA/q6rwaq7jxJtWWxdaX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JfBAd8Ge; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717699352;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WGuIH4TVekos8V6QPEp5pobse7mh1XHdJCXaTSpOv44=;
+	b=JfBAd8GemEWiBQ5BilUoOQaWk1estV5RwYb0IgBNdcdgdTsrUFW8LItS87eubM7iAt/SmQ
+	QU7dl/uApYHA2PH/jSQGcfskYGYaKrsAniU9fRO+KN+ripzdi9JlPmhW1CCTs7aScsATBV
+	eU9jLFIWu74n5VR0x4CQfVZC4FDO3XA=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-28-8JdUYJFaPZeOit0ponIF6Q-1; Thu, 06 Jun 2024 14:42:31 -0400
+X-MC-Unique: 8JdUYJFaPZeOit0ponIF6Q-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-35e0e59dcf7so916441f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 11:42:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717699344; x=1718304144;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4iZQmT4vxNQolNnYp5zIseeWy4wyJJ76G+a9PWEi2OQ=;
-        b=tn59N0xT/O8BHFCWktYy1ztCAcTcUlm7HLfg89iFLEaTrLzdIkbOXZbwGZRsFO8wWD
-         llsXg/pUuBT2l3uSRqvm5KFd16HqpLjohiQPFGbsg5lQyAkHOmB3t+Plv1/v4vzIK+Ic
-         LV/Qf7PHSO8IFdNczE7OqmTciB7Yet5TOvHEJ5gdUnjmlx0LQW2ToyC0r8OMub3KV5LH
-         9dnCLlielc/4K/JIzTT9j+RVPoGlyiN/B7XaxRiTkRpWNxsQwmtAzpz4qEftRcgUjn8X
-         sn+dpUgZpOl6YSlIViN177PslYcguSQ75vT/BPYJTQeB7cZWa0ZNA+oSyujNvKLGIVKJ
-         RWEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpTSxAtGmZpUMB6xCZRhFVm4D7YHO3wPLno1qtlGGusxg/qJN9+jtShsWge9EVJRYHtX5aClBTieVW7dTLYrqEBZ5XCF5n96hUW4xSM4CCm2cSCStGqLVbWgZB3h+1G4dt0fU6z9SjvQ==
-X-Gm-Message-State: AOJu0YwRAWtRpsw/LkQQ3RvCNl8XC6io+pQzJu/lNYvpYTXzsH1URSQN
-	xOtCCFCroxxtQXJwhc1cTOxVnAQPAxf4nJ+sKFicy8Gg0OUZPMXD
-X-Google-Smtp-Source: AGHT+IFkQ8Z6wzTxzhMDbB5Ba2CM0TWh/R5abXx0fHzeL39jtPW0SNgr7hl/LnynWuc0TSMqC4UxAg==
-X-Received: by 2002:a17:902:e849:b0:1f6:6c3f:1664 with SMTP id d9443c01a7336-1f6d0301bb0mr4632405ad.38.1717699344437;
-        Thu, 06 Jun 2024 11:42:24 -0700 (PDT)
-Received: from shresth-aspirea71576g.abesec.ac.in ([117.55.241.163])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd81bca0sm18446625ad.305.2024.06.06.11.42.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 11:42:24 -0700 (PDT)
-From: Shresth Prasad <shresthprasad7@gmail.com>
-To: vkoul@kernel.org,
-	kishon@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heiko@sntech.de
-Cc: linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	javier.carrasco.cruz@gmail.com,
-	Shresth Prasad <shresthprasad7@gmail.com>
-Subject: [PATCH] dt-bindings: phy: rockchip-emmc-phy: Convert to dtschema
-Date: Fri,  7 Jun 2024 00:11:36 +0530
-Message-ID: <20240606184135.11065-2-shresthprasad7@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1717699350; x=1718304150;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WGuIH4TVekos8V6QPEp5pobse7mh1XHdJCXaTSpOv44=;
+        b=tjZa1a1F8djXAo58ahykmV5RcPYVy+2zgU5Qxsoe9cif/XmIKNEIaEcByVuXz0Nkon
+         kvB8Z9rjKJN/ZZJrwc9J/0s2kc9hu7b7xGpXlRL4/aeGj1o0K+NR7LHaFyTMNZ+0N8yh
+         CGtru+cnovuSSzdV5XMMZeKwMC2QnYYjicWK3cuN/e7Z5nkwG7x6cX3z2+StkohcAK+z
+         3uYJGc8WQIXtMb3gxPzI7NxpT8Jz7Jm5THGFBoSRNC4TLujmHJLI62wZ86BqZ6hgN2/r
+         EVxMnJBCtG1ympzahV3lh9EqgIWEJSUeC12mRWgcm6ch01m7bz/m/JaJ868HLt35rNrk
+         8Zkg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmOaI4wXK4kpWp5x7Yush35usbCCRRpMvOPB91p6WSxxE688oQQP1H2BmSD8l9VFD+l4KTBK2pYRr98HyYIXDLpVspbxyGk1z8c0iG
+X-Gm-Message-State: AOJu0YxD02dvxcjQ9LbZpLRlKjF1auTXdYWbkDetK+nlibtQyiUq33uS
+	Jz5V5/vqGyWJmjtDu6dPa/YqLudm+DzFrfMwjn3bniIux34rBKHDms8JxkNnGqiOyVOAhpLwfFo
+	TQVqfoRbF+8yZ0IM4nfg7iXFoh7ES60dMLIv9+WjXlbfy2OUVKPchIPZdZUhAgQ==
+X-Received: by 2002:a5d:42c6:0:b0:355:673:dd95 with SMTP id ffacd0b85a97d-35efed787c8mr325378f8f.38.1717699350138;
+        Thu, 06 Jun 2024 11:42:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEkIGBFM36tQWjEQnpVyrq/gAD6TbKjDuAG+r7isvr23LbsmJqwxIVvQ35j6DINVipFO0gY4A==
+X-Received: by 2002:a5d:42c6:0:b0:355:673:dd95 with SMTP id ffacd0b85a97d-35efed787c8mr325370f8f.38.1717699349697;
+        Thu, 06 Jun 2024 11:42:29 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c710:8800:a73c:ec5b:c02c:5e0b? (p200300cbc7108800a73cec5bc02c5e0b.dip0.t-ipconnect.de. [2003:cb:c710:8800:a73c:ec5b:c02c:5e0b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d69e71sm2220595f8f.65.2024.06.06.11.42.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 11:42:29 -0700 (PDT)
+Message-ID: <b96b3d41-cf6d-4c5e-bf42-01fa168510a5@redhat.com>
+Date: Thu, 6 Jun 2024 20:42:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: convert page type macros to enum
+To: Stephen Brennan <stephen.s.brennan@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Omar Sandoval <osandov@osandov.com>, Hao Ge <gehao@kylinos.cn>,
+ Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+ "Vishal Moola (Oracle)" <vishal.moola@gmail.com>, linux-mm@kvack.org,
+ linux-debuggers@vger.kernel.org,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>
+References: <20240606182630.851750-1-stephen.s.brennan@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240606182630.851750-1-stephen.s.brennan@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Convert txt bindings of Rockchip EMMC PHY to dtschema to allow
-for validation.
+On 06.06.24 20:26, Stephen Brennan wrote:
+> Changing PG_slab from a page flag to a page type in commit 46df8e73a4a3
+> ("mm: free up PG_slab") in has the unintended consequence of removing
+> the PG_slab constant from kernel debuginfo. The commit does add the
+> value to the vmcoreinfo note, which allows debuggers to find the value
+> without hardcoding it. However it's most flexible to continue
+> representing the constant with an enum. To that end, convert the page
+> type fields into an enum. Debuggers will now be able to detect that
+> PG_slab's type has changed from enum pageflags to enum page_type.
+> 
+> Fixes: 46df8e73a4a3 ("mm: free up PG_slab")
+> 
+> Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
+> ---
+> v1 -> v2: include PAGE_TYPE_BASE and PAGE_MAPCOUNT_RESERVE
 
-Signed-off-by: Shresth Prasad <shresthprasad7@gmail.com>
----
-Tested against `rockchip/rk3399-firefly.dtb`, `rockchip/rk3399-orangepi.dtb`
-and `rockchip/rk3399-pinebook-pro.dtb`.
+This has a conflict with mm/mm-unstable.
 
- .../bindings/phy/rockchip,emmc-phy.yaml       | 78 +++++++++++++++++++
- .../bindings/phy/rockchip-emmc-phy.txt        | 43 ----------
- 2 files changed, 78 insertions(+), 43 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/rockchip,emmc-phy.yaml
- delete mode 100644 Documentation/devicetree/bindings/phy/rockchip-emmc-phy.txt
-
-diff --git a/Documentation/devicetree/bindings/phy/rockchip,emmc-phy.yaml b/Documentation/devicetree/bindings/phy/rockchip,emmc-phy.yaml
-new file mode 100644
-index 000000000000..bd8485c77bfe
---- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/rockchip,emmc-phy.yaml
-@@ -0,0 +1,78 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/phy/rockchip,emmc-phy.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Rockchip EMMC PHY
-+
-+maintainers:
-+  - Shresth Prasad <shresthprasad7@gmail.com>
-+
-+properties:
-+  "#phy-cells":
-+    const: 0
-+
-+  compatible:
-+    const: rockchip,rk3399-emmc-phy
-+
-+  reg:
-+    description:
-+      PHY register address offset and length in "general register files"
-+    maxItems: 1
-+
-+  clock-names:
-+    description: |
-+      Although this is not a required property (because most boards can get
-+      basic functionality without having access to it), it is strongly
-+      suggested.
-+    const: emmcclk
-+
-+  clocks:
-+    description:
-+      Should have a phandle to the card clock exported by the SDHCI driver.
-+    maxItems: 1
-+
-+  drive-impedance-ohm:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      Specifies the drive impedance in Ohm.
-+    enum: [33, 40, 50, 66, 100]
-+    default: 50
-+
-+  rockchip,enable-strobe-pulldown:
-+    type: boolean
-+    description: |
-+      Enable internal pull-down for the strobe
-+      line.  If not set, pull-down is not used.
-+
-+  rockchip,output-tapdelay-select:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      Specifies the phyctrl_otapdlysec register.
-+    default: 0x4
-+    maximum: 0xf
-+
-+required:
-+  - "#phy-cells"
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    grf {
-+      compatible = "rockchip,rk3399-grf", "syscon", "simple-mfd";
-+      #address-cells = <1>;
-+      #size-cells = <1>;
-+
-+      emmcphy: phy@f780 {
-+        #phy-cells = <0>;
-+        compatible = "rockchip,rk3399-emmc-phy";
-+        reg = <0xf780 0x20>;
-+        clocks = <&sdhci>;
-+        clock-names = "emmcclk";
-+        drive-impedance-ohm = <50>;
-+      };
-+    };
-diff --git a/Documentation/devicetree/bindings/phy/rockchip-emmc-phy.txt b/Documentation/devicetree/bindings/phy/rockchip-emmc-phy.txt
-deleted file mode 100644
-index 57d28c0d5696..000000000000
---- a/Documentation/devicetree/bindings/phy/rockchip-emmc-phy.txt
-+++ /dev/null
-@@ -1,43 +0,0 @@
--Rockchip EMMC PHY
-------------------------
--
--Required properties:
-- - compatible: rockchip,rk3399-emmc-phy
-- - #phy-cells: must be 0
-- - reg: PHY register address offset and length in "general
--   register files"
--
--Optional properties:
-- - clock-names: Should contain "emmcclk".  Although this is listed as optional
--		(because most boards can get basic functionality without having
--		access to it), it is strongly suggested.
--		See ../clock/clock-bindings.txt for details.
-- - clocks: Should have a phandle to the card clock exported by the SDHCI driver.
-- - drive-impedance-ohm: Specifies the drive impedance in Ohm.
--                        Possible values are 33, 40, 50, 66 and 100.
--                        If not set, the default value of 50 will be applied.
-- - rockchip,enable-strobe-pulldown: Enable internal pull-down for the strobe
--                                    line.  If not set, pull-down is not used.
-- - rockchip,output-tapdelay-select: Specifies the phyctrl_otapdlysec register.
--                                    If not set, the register defaults to 0x4.
--                                    Maximum value 0xf.
--
--Example:
--
--
--grf: syscon@ff770000 {
--	compatible = "rockchip,rk3399-grf", "syscon", "simple-mfd";
--	#address-cells = <1>;
--	#size-cells = <1>;
--
--...
--
--	emmcphy: phy@f780 {
--		compatible = "rockchip,rk3399-emmc-phy";
--		reg = <0xf780 0x20>;
--		clocks = <&sdhci>;
--		clock-names = "emmcclk";
--		drive-impedance-ohm = <50>;
--		#phy-cells = <0>;
--	};
--};
 -- 
-2.45.2
+Cheers,
+
+David / dhildenb
 
 
