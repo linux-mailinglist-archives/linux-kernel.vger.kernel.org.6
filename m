@@ -1,94 +1,137 @@
-Return-Path: <linux-kernel+bounces-204358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E0E08FE7B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:26:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E85F38FE7B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:27:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACF74B21A0A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:26:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D6BD285776
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51996195FF3;
-	Thu,  6 Jun 2024 13:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="BEQ2Sg2h"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FA6195FDF;
+	Thu,  6 Jun 2024 13:27:33 +0000 (UTC)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201B4FC02;
-	Thu,  6 Jun 2024 13:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56DC193080;
+	Thu,  6 Jun 2024 13:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717680368; cv=none; b=mo3pgwldfb5GXUUe0+B5lOTTp2Tc1HyAChKY+yUxg0hIqVLytqcJ+bMpKzNGQr8KXnDxfey60e2XKB0bS3NlJr0u4LaiEzUuMSFwXAJFq94Q+a0cUbKkXdcKVST90PLGYIINyirS6/edOVoaWTa//jQyqG4YzNEXBwn0gG7jrLM=
+	t=1717680453; cv=none; b=mymNBhuHR8v7g19P537tIJVI+h+36S+ZHb37ITya7C0KsnVloNCIVJ8zUkj+YO/JY0i3koi/+s6pGcu2I8G5vG59hzD19LI3vhHZDyw1TMD4cgrvQnsTqM4Y49hzSS4uc1JXZBdUSpZcyZz7RQHffOBuWchUx7E7nERFm4s8UT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717680368; c=relaxed/simple;
-	bh=Da94MbDvCzudQyDztnqyQOKY9skofvJFvAJNp1KTIcI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gieaXsHP8HeHZ2Del1BwTAvXF15KAZ9DkHmDNOgwd3De+Yiig384+w/kuyPFDs5BE5xUSMOPyrW6WXJwdJegZDLMHAR8MEsJRANbWVaqzX/8qzoPv7NIEwZjHRGhrahVz9pSsAXBgOJ1j204dPpwHZrSAfELGYH4Kt+ths2OHcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=BEQ2Sg2h; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=QehpudYNwQn/+EF5t8WXc8vQI3VYnM/EWDpwkUDEZHI=; b=BEQ2Sg2hRkMyI04nmbrlG0HbLo
-	QeO7iB/STgiK0VKfWXCGl2sd4tRbx5MAgMZ9LWf63lpyYEFkYk4g6YyOsCBRaL6wqcc/iMAGBoUZ0
-	+cN1km/L3X73Hqjk5o0FlagS1JwYR7HdhDrOZmTBtipc3cdJhEStoQJjYmllVZH48tYg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sFD7o-00H1FE-DV; Thu, 06 Jun 2024 15:25:52 +0200
-Date: Thu, 6 Jun 2024 15:25:52 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Swathi K S <swathi.ks@samsung.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	richardcochran@gmail.com, alexandre.torgue@foss.st.com,
-	joabreu@synopsys.com, mcoquelin.stm32@gmail.com,
-	alim.akhtar@samsung.com, linux-fsd@tesla.com,
-	pankaj.dubey@samsung.com, ravi.patel@samsung.com,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/4] dt-bindings: net: Add FSD EQoS device tree
- bindings
-Message-ID: <22eae086-0f77-4df7-9d70-e7249d67b106@lunn.ch>
-References: <20230814112539.70453-1-sriranjani.p@samsung.com>
- <CGME20230814112605epcas5p31aca7b23e70e8d93df11414291f7ce66@epcas5p3.samsung.com>
- <20230814112539.70453-2-sriranjani.p@samsung.com>
- <4e745c2a-57bd-45da-8bd2-ee1cb2bab84f@lunn.ch>
- <000201dab7f2$1c8d4580$55a7d080$@samsung.com>
+	s=arc-20240116; t=1717680453; c=relaxed/simple;
+	bh=l00UI0JD6AC6Q+cJo4FKqgL09aX1TgDCu9xOfXS9uoM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ouWzw/29qlqrNXIVI0izSUYT0ofkphUiBC7ANjZBWqBzddoSo7lfRAi/mW7I88NJgfn2leEQE5py8YYa4jgFfkbtdgKAcTuliSV5O39W6rpaWgkOXt6VVxEUWU2/2PjCmNkFoSXgbu3zllJIXO/zW0zEcyCqujZi/gbO7KPBbZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57864327f6eso355401a12.1;
+        Thu, 06 Jun 2024 06:27:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717680449; x=1718285249;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iuF5KD5rCo57TyG5EigT3fDurZ74w1tefad8AjM+COM=;
+        b=j8ikiYHAggBd94p9/sl8QgN9K/8bcidP+7iCCwstYypOJv6K2V5LLu7R8cPCHmbrd6
+         cJ8y0fp/qaqTX9MmKaJEvPqddtF9Km9CqHht98TQYQZ4n9gN5N/619SNf5ScA2ssv1FV
+         +SkSQuZwbp1fYkv9JQi+ALfhD0fsfZ0g10aXrJk7ktgvS7cGXzvp0/2MufC5HBwhjz8l
+         nTTLtLJLWMmrgC3RT5Akjm+5D+jKXJZVOFf8ojuEJgaLvj8R6AG8a4Em0aNqLqjUXfRL
+         oi65iiSLaV6BYqCuxIH4iJWoEfFyZezM7Z/daWgDJvMYFWN39VqxiGIbpoj8wUBgn5te
+         hIcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3ws6I0ZEuxJKPUCUkt8NSTqxdLUcu+5Le4IR/z+3/dWjPfgmOQwUjtUqs5QKO85jNHIh8GSXV+VIlGnA2nQPfoSHw9M6+hUK+frCHMopbyDkXBZS98neqXAO35UvLU7ERR7ef3rRFzlnkqfw7VJYkt/4dfTTXpnUc2r0HZmJxZooNbGo=
+X-Gm-Message-State: AOJu0YxioFA+1P+SM47ZKabRc1EQ9XyRxmrPciTnv6JjDS/6suG5ZPn8
+	0ehsixZKixgAYsPCOU4gOHuA+FRYQRU4LmUFhEPR1DdZYhpHXm5s
+X-Google-Smtp-Source: AGHT+IGkCI92lpY9im28PFCaqOXR0tPwgGp8l0RK7fN48VWfjPlSf/gZ9WuRB7v6N3QBhFb+BZc/Fw==
+X-Received: by 2002:a50:ab02:0:b0:574:ebf4:f786 with SMTP id 4fb4d7f45d1cf-57aa558746amr2338378a12.16.1717680448842;
+        Thu, 06 Jun 2024 06:27:28 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-120.fbsv.net. [2a03:2880:30ff:78::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae0caa84sm1103288a12.29.2024.06.06.06.27.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 06:27:28 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: paulmck@kernel.org,
+	apopple@nvidia.com,
+	Michael van der Westhuizen <rmikey@meta.com>,
+	linux-i2c@vger.kernel.org (open list:I2C SUBSYSTEM HOST DRIVERS),
+	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] [i2c-tegra] Do not mark ACPI devices as irq safe
+Date: Thu,  6 Jun 2024 06:27:07 -0700
+Message-ID: <20240606132708.1610308-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000201dab7f2$1c8d4580$55a7d080$@samsung.com>
+Content-Transfer-Encoding: 8bit
 
-> > > +  fsd-rx-clock-skew:
-> > > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> > > +    items:
-> > > +      - items:
-> > > +          - description: phandle to the syscon node
-> > > +          - description: offset of the control register
-> > > +    description:
-> > > +      Should be phandle/offset pair. The phandle to the syscon node.
-> > 
-> > What clock are you skew-ing here? And why?
-> 
-> As per customer's requirement, we need 2ns delay in fsys block both in TX
-> and RX path.
+On ACPI machines, the tegra i2c module encounters an issue due to a
+mutex being called inside a spinlock. This leads to the following bug:
 
-Lots of people get RGMII delays wrong. Please look back at the mailing
-list where there is plenty of discussion about this. I don't want to
-have to repeat myself yet again...
+	BUG: sleeping function called from invalid context at kernel/locking/mutex.c:585
+	in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 1282, name: kssif0010
+	preempt_count: 0, expected: 0
+	RCU nest depth: 0, expected: 0
+	irq event stamp: 0
 
-     Andrew
+	Call trace:
+	dump_backtrace+0xf0/0x140
+	show_stack (./arch/x86/include/asm/current.h:49
+		     arch/x86/kernel/dumpstack.c:312)
+	dump_stack_lvl (lib/dump_stack.c:89 lib/dump_stack.c:115)
+	dump_stack (lib/earlycpio.c:61)
+	__might_resched (./arch/x86/include/asm/current.h:49
+			 kernel/sched/core.c:10297)
+	__might_sleep (./include/linux/lockdep.h:231
+			 kernel/sched/core.c:10236)
+	__mutex_lock_common+0x5c/0x2190
+	mutex_lock_nested (kernel/locking/mutex.c:751)
+	acpi_subsys_runtime_resume+0xb8/0x160
+	__rpm_callback+0x1cc/0x4b0
+	rpm_resume+0xa60/0x1078
+	__pm_runtime_resume+0xbc/0x130
+	tegra_i2c_xfer+0x74/0x398
+	__i2c_transfer (./include/trace/events/i2c.h:122 drivers/i2c/i2c-core-base.c:2258)
+
+The problem arises because during __pm_runtime_resume(), the spinlock
+&dev->power.lock is acquired before rpm_resume() is called. Later,
+rpm_resume() invokes acpi_subsys_runtime_resume(), which relies on
+mutexes, triggering the error.
+
+To address this issue, devices on ACPI are now marked as not IRQ-safe,
+considering the dependency of acpi_subsys_runtime_resume() on mutexes.
+
+Co-developed-by: Michael van der Westhuizen <rmikey@meta.com>
+Signed-off-by: Michael van der Westhuizen <rmikey@meta.com>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ drivers/i2c/busses/i2c-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 85b31edc558d..6d783ecc3431 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -1804,7 +1804,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	 * VI I2C device shouldn't be marked as IRQ-safe because VI I2C won't
+ 	 * be used for atomic transfers.
+ 	 */
+-	if (!IS_VI(i2c_dev))
++	if (!IS_VI(i2c_dev) && !ACPI_HANDLE(i2c_dev->dev))
+ 		pm_runtime_irq_safe(i2c_dev->dev);
+ 
+ 	pm_runtime_enable(i2c_dev->dev);
+-- 
+2.43.0
+
 
