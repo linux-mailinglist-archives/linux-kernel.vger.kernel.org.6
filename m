@@ -1,170 +1,226 @@
-Return-Path: <linux-kernel+bounces-204568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 883528FF0B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:30:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C878FF11D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9886B31635
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:25:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B57E7B3180D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE1A196C9C;
-	Thu,  6 Jun 2024 15:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77E2197A81;
+	Thu,  6 Jun 2024 15:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bGDQ3Nz9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OG/jdByn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E53195FC4;
-	Thu,  6 Jun 2024 15:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9640160883
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 15:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717687413; cv=none; b=BLRLht+k/wqXEaC2/aGSoZepMrU441mL8XnJilNWyB+dqVXvsui/VhcB+p1P/PlUusuNyEjAInkbzSRxpPsfYnKprVbeu5THq6geIUMkgj6e1rONU+O7Js1yDz8lQ3s26pxv6UvSsStrqRHgfr8YApRSV/SclsD59svpwwT+CFo=
+	t=1717687476; cv=none; b=BAYawR2P4wRB0yUZQOSJpclfUZKqHRRTuIIRxEWHm1RiAttQ/UPL56D8Xw8dXHRLWaDx6NUhrm9OTiR8s+rUMR7a5yQhAqwB+iSl44lF2+No/9NDrmLrpu09/m+RoxxmAXCkC2Y+dM20iWhXLMJ7hjcVkAmeaAN8hruiooE1vtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717687413; c=relaxed/simple;
-	bh=n8Yr0UeoP6wPmeyQGK/cVLGthNtM0TGWP7koLQxIank=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=U7wc7JLUDcTd0Ul92MxvtHIi77i5bTyydXHUjRJbsJR0rrUzxekcUq5a6UyTkQbcAUheSYwzblhTwlgqsbdD7yGS/f4h59DiIGuV96oQKIOQMNQjBS5fFrGUWN4RTvrYWO+mAF1ZjlILqWGJo6HZ12Q0WIgOaDM/pre7VNp2a9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bGDQ3Nz9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FE53C2BD10;
-	Thu,  6 Jun 2024 15:23:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717687412;
-	bh=n8Yr0UeoP6wPmeyQGK/cVLGthNtM0TGWP7koLQxIank=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=bGDQ3Nz9FJaTI03nkHRRI8Rkbmqyr8quCZRGkaHPS78qF5hhbIu4lQZVvtyfMCwaJ
-	 HNNQFCq99KG4QMX5sAPumvaa8eOxjVdP0f17ulhpsskQ7G4f0MWGcAe45aou2zPUIo
-	 puEO9reNGbm2iTeM2JO3MKqGYKuBjyDajfpZP6CH1fdj1EcSZRdM4UxCM95p1BzN+1
-	 d2W44/s7KjAFeuSgy6+WD9SocKtMJeh7WRL68waquEN4l2jQv20b7Dcv1Jfj+I/yQc
-	 kPZbyvhjJzExje/AobiV3kGiteGFOJxgnfi5obYxJpmbDqewG2Y1hzqQkn2G+xMaPb
-	 LBWRr86Qk3guQ==
-Message-ID: <025da51b45c5234dc05c4bfc6b0570e5.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1717687476; c=relaxed/simple;
+	bh=kh1ZRq7+mQwAXyeWRTRpXkFxDV3IdN1rrcsYL+c6s/o=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=LWfsU26/XSu7mPiN9xtiaWX5IIB8sNuZ/R5CV/Ra7Cvuw/Z20V1e34EZy60Qw0EmZ84xyDYF9wfmkZ9BU+LhOdiGrd6tnXHi+LOBusJF6MLWr18VQAfh9R2FdIuC+6CcmQWuic2k91oqKc0hf74uZD8S+69EM332EMKi0ic708U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OG/jdByn; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717687475; x=1749223475;
+  h=date:from:to:cc:subject:message-id;
+  bh=kh1ZRq7+mQwAXyeWRTRpXkFxDV3IdN1rrcsYL+c6s/o=;
+  b=OG/jdBynMtvcx138aWBmDNI5Bi2q9BuEfb6J/BJcq1NJvqSHAwX4EhVy
+   oiCGnkk8G2NkyMm0FOyHW9LIOaibdyeLMz5TEl2LhwWaNzVhIiY+IEI+s
+   pKkduN/A8/DO+IRZTdKyue/vSgES6ZSWp0+nzMg6CZy5BwUWt4SPGgsNP
+   8GSUQuh9CqNk2VS7wZfFjO8kBj10OImA+F9KkW9MeS6fPH1tuqhLVwa2V
+   cnhZlV0UjNDG43GHYQSd+EVyNaFcw6ddEWX1iVwZ7jiHzp+zMjb9K8Dl8
+   FGICirSHoZx6urZAqTeJC0w3/VaGDYhfV4PNtdThUWu1rpan2OA+BR4HC
+   w==;
+X-CSE-ConnectionGUID: o6CZsh9aQsWSIqqU7dEqvA==
+X-CSE-MsgGUID: deVBfENiRNC/HA1YYZjLfA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="14587627"
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="14587627"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 08:24:34 -0700
+X-CSE-ConnectionGUID: Xrl8b00RSMmDwP+M+CculQ==
+X-CSE-MsgGUID: p56ckk1ZT8Kcux3XPGAeTA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="69156412"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 06 Jun 2024 08:24:33 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sFEyd-0003HW-0H;
+	Thu, 06 Jun 2024 15:24:31 +0000
+Date: Thu, 06 Jun 2024 23:23:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:sched/core] BUILD SUCCESS
+ f90cc919f9e5cbfcd0b952290c57ef1317f4e91e
+Message-ID: <202406062333.SikrtcyW-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240605234720.GA3441001-robh@kernel.org>
-References: <20240603223811.3815762-1-sboyd@kernel.org> <20240603223811.3815762-6-sboyd@kernel.org> <20240605234720.GA3441001-robh@kernel.org>
-Subject: Re: [PATCH v5 05/11] of: Add a KUnit test for overlays and test managed APIs
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J . Wysocki <rafael@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>
-To: Rob Herring <robh@kernel.org>
-Date: Thu, 06 Jun 2024 08:23:30 -0700
-User-Agent: alot/0.10
 
-Quoting Rob Herring (2024-06-05 16:47:20)
-> On Mon, Jun 03, 2024 at 03:38:02PM -0700, Stephen Boyd wrote:
-> > diff --git a/drivers/of/Makefile b/drivers/of/Makefile
-> > index 2ae909adde49..abd9c578343b 100644
-> > diff --git a/drivers/of/overlay_test.c b/drivers/of/overlay_test.c
-> > new file mode 100644
-> > index 000000000000..9a8083c3a659
-> > --- /dev/null
-> > +++ b/drivers/of/overlay_test.c
-> > @@ -0,0 +1,116 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * KUnit tests for device tree overlays
-> > + */
-> > +#include <linux/device/bus.h>
-> > +#include <linux/kconfig.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_platform.h>
-> > +#include <linux/platform_device.h>
-> > +
-> > +#include <kunit/of.h>
-> > +#include <kunit/test.h>
-> > +
-> > +static const char * const kunit_node_name =3D "kunit-test";
-> > +static const char * const kunit_compatible =3D "test,empty";
-> > +
-> > +/* Test that of_overlay_apply_kunit() adds a node to the live tree */
-> > +static void of_overlay_apply_kunit_apply(struct kunit *test)
-> > +{
-> > +     struct device_node *np;
-> > +
-> > +     KUNIT_ASSERT_EQ(test, 0,
-> > +                     of_overlay_apply_kunit(test, kunit_overlay_test));
-> > +
-> > +     np =3D of_find_node_by_name(NULL, kunit_node_name);
-> > +     KUNIT_EXPECT_NOT_ERR_OR_NULL(test, np);
-> > +     of_node_put(np);
-> > +}
-> > +
-> > +/*
-> > + * Test that of_overlay_apply_kunit() creates platform devices with the
-> > + * expected device_node
-> > + */
-> > +static void of_overlay_apply_kunit_platform_device(struct kunit *test)
-> > +{
-> > +     struct platform_device *pdev;
-> > +     struct device_node *np;
-> > +
-> > +     KUNIT_ASSERT_EQ(test, 0,
-> > +                     of_overlay_apply_kunit(test, kunit_overlay_test));
-> > +
-> > +     np =3D of_find_node_by_name(NULL, kunit_node_name);
-> > +     of_node_put_kunit(test, np);
->=20
-> Moving target, but we now have of_node_put() cleanups. Would that work=20
-> here instead?
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
+branch HEAD: f90cc919f9e5cbfcd0b952290c57ef1317f4e91e  sched/balance: Skip unnecessary updates to idle load balancer's flags
 
-Do you mean cleanup.h? I don't think it will work. The assert logic is
-like an exception handler. If the assertion fails we basically jump out
-of the test and run any test exit code, including kunit resource exits.
-I could introduce another kunit wrapper for of_find_node_by_name() and
-use that here so that the reference is dropped when the test exits.
+elapsed time: 1459m
 
->=20
-> > +     KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
-> > +
-> > +     pdev =3D of_find_device_by_node(np);
-> > +     KUNIT_EXPECT_NOT_ERR_OR_NULL(test, pdev);
-> > +     if (pdev)
-> > +             put_device(&pdev->dev);
-> > +}
-> > +
-> > +static int of_overlay_bus_match_compatible(struct device *dev, const v=
-oid *data)
-> > +{
-> > +     return of_device_is_compatible(dev->of_node, data);
-> > +}
-> > +
-> > +/* Test that of_overlay_apply_kunit() cleans up after the test is fini=
-shed */
-> > +static void of_overlay_apply_kunit_cleanup(struct kunit *test)
-> > +{
-> > +     struct kunit fake;
-> > +     struct platform_device *pdev;
-> > +     struct device *dev;
-> > +     struct device_node *np;
-> > +
-> > +     if (!IS_ENABLED(CONFIG_OF_OVERLAY))
-> > +             kunit_skip(test, "requires CONFIG_OF_OVERLAY");
-> > +     if (!IS_ENABLED(CONFIG_OF_EARLY_FLATTREE))
-> > +             kunit_skip(test, "requires CONFIG_OF_EARLY_FLATTREE for r=
-oot node");
-> > +
-> > +     kunit_init_test(&fake, "fake test", NULL);
-> > +     KUNIT_ASSERT_EQ(test, fake.status, KUNIT_SUCCESS);
-> > +
-> > +     KUNIT_ASSERT_EQ(test, 0,
-> > +                     of_overlay_apply_kunit(&fake, kunit_overlay_test)=
-);
-> > +
-> > +     np =3D of_find_node_by_name(NULL, kunit_node_name);
-> > +     of_node_put(np); /* Not derefing 'np' after this */
-> > +     KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
-> > +
-> > +     pdev =3D of_find_device_by_node(np);
->=20
-> Don't you need to hold a ref on np until here?
+configs tested: 134
+configs skipped: 3
 
-Oh, good catch. We need an of_find_node_by_name_kunit() wrapper then.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                             allnoconfig   gcc  
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+arc                              allmodconfig   gcc  
+arc                               allnoconfig   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arc                   randconfig-001-20240606   gcc  
+arc                   randconfig-002-20240606   gcc  
+arm                              allmodconfig   gcc  
+arm                               allnoconfig   clang
+arm                                 defconfig   clang
+arm                   randconfig-001-20240606   clang
+arm                   randconfig-002-20240606   clang
+arm                   randconfig-003-20240606   clang
+arm                   randconfig-004-20240606   clang
+arm64                             allnoconfig   gcc  
+arm64                               defconfig   gcc  
+arm64                 randconfig-001-20240606   clang
+arm64                 randconfig-002-20240606   gcc  
+arm64                 randconfig-003-20240606   clang
+arm64                 randconfig-004-20240606   clang
+csky                              allnoconfig   gcc  
+csky                                defconfig   gcc  
+csky                  randconfig-001-20240606   gcc  
+csky                  randconfig-002-20240606   gcc  
+hexagon                          allmodconfig   clang
+hexagon                           allnoconfig   clang
+hexagon                          allyesconfig   clang
+hexagon                             defconfig   clang
+hexagon               randconfig-001-20240606   clang
+hexagon               randconfig-002-20240606   clang
+i386                             allmodconfig   gcc  
+i386                              allnoconfig   gcc  
+i386                             allyesconfig   gcc  
+i386         buildonly-randconfig-001-20240606   clang
+i386         buildonly-randconfig-002-20240606   clang
+i386         buildonly-randconfig-003-20240606   clang
+i386         buildonly-randconfig-004-20240606   gcc  
+i386         buildonly-randconfig-005-20240606   clang
+i386         buildonly-randconfig-006-20240606   gcc  
+i386                                defconfig   clang
+i386                  randconfig-001-20240606   clang
+i386                  randconfig-002-20240606   clang
+i386                  randconfig-003-20240606   clang
+i386                  randconfig-004-20240606   clang
+i386                  randconfig-005-20240606   clang
+i386                  randconfig-006-20240606   clang
+i386                  randconfig-011-20240606   clang
+i386                  randconfig-012-20240606   gcc  
+i386                  randconfig-013-20240606   gcc  
+i386                  randconfig-014-20240606   gcc  
+i386                  randconfig-015-20240606   gcc  
+i386                  randconfig-016-20240606   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                           defconfig   gcc  
+loongarch             randconfig-001-20240606   gcc  
+loongarch             randconfig-002-20240606   gcc  
+m68k                             allmodconfig   gcc  
+m68k                              allnoconfig   gcc  
+m68k                             allyesconfig   gcc  
+m68k                                defconfig   gcc  
+microblaze                       allmodconfig   gcc  
+microblaze                        allnoconfig   gcc  
+microblaze                       allyesconfig   gcc  
+microblaze                          defconfig   gcc  
+mips                              allnoconfig   gcc  
+mips                             allyesconfig   gcc  
+nios2                            allmodconfig   gcc  
+nios2                             allnoconfig   gcc  
+nios2                            allyesconfig   gcc  
+nios2                               defconfig   gcc  
+nios2                 randconfig-001-20240606   gcc  
+nios2                 randconfig-002-20240606   gcc  
+openrisc                          allnoconfig   gcc  
+openrisc                            defconfig   gcc  
+parisc                            allnoconfig   gcc  
+parisc                              defconfig   gcc  
+parisc                randconfig-001-20240606   gcc  
+parisc                randconfig-002-20240606   gcc  
+parisc64                            defconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc               randconfig-001-20240606   gcc  
+powerpc               randconfig-002-20240606   gcc  
+powerpc               randconfig-003-20240606   gcc  
+powerpc64             randconfig-001-20240606   clang
+powerpc64             randconfig-002-20240606   clang
+powerpc64             randconfig-003-20240606   gcc  
+riscv                             allnoconfig   gcc  
+riscv                               defconfig   clang
+riscv                 randconfig-001-20240606   gcc  
+riscv                 randconfig-002-20240606   clang
+s390                             allmodconfig   clang
+s390                              allnoconfig   clang
+s390                             allyesconfig   gcc  
+s390                                defconfig   clang
+s390                  randconfig-001-20240606   gcc  
+s390                  randconfig-002-20240606   gcc  
+sh                               allmodconfig   gcc  
+sh                                allnoconfig   gcc  
+sh                               allyesconfig   gcc  
+sh                                  defconfig   gcc  
+sh                    randconfig-001-20240606   gcc  
+sh                    randconfig-002-20240606   gcc  
+sparc                            allmodconfig   gcc  
+sparc                             allnoconfig   gcc  
+sparc                               defconfig   gcc  
+sparc64                          allmodconfig   gcc  
+sparc64                          allyesconfig   gcc  
+sparc64                             defconfig   gcc  
+sparc64               randconfig-001-20240606   gcc  
+sparc64               randconfig-002-20240606   gcc  
+um                               allmodconfig   clang
+um                                allnoconfig   clang
+um                               allyesconfig   gcc  
+um                                  defconfig   clang
+um                             i386_defconfig   gcc  
+um                    randconfig-001-20240606   clang
+um                    randconfig-002-20240606   gcc  
+um                           x86_64_defconfig   clang
+x86_64                            allnoconfig   clang
+x86_64                           allyesconfig   clang
+x86_64       buildonly-randconfig-001-20240606   gcc  
+x86_64       buildonly-randconfig-002-20240606   clang
+x86_64       buildonly-randconfig-003-20240606   gcc  
+x86_64       buildonly-randconfig-004-20240606   gcc  
+x86_64       buildonly-randconfig-005-20240606   gcc  
+x86_64       buildonly-randconfig-006-20240606   clang
+x86_64                              defconfig   gcc  
+x86_64                          rhel-8.3-rust   clang
+xtensa                            allnoconfig   gcc  
+xtensa                randconfig-001-20240606   gcc  
+xtensa                randconfig-002-20240606   gcc  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
