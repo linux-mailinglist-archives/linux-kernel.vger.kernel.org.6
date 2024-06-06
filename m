@@ -1,83 +1,82 @@
-Return-Path: <linux-kernel+bounces-203964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCEDD8FE25A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:18:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E0B8FE2C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:29:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6957128382B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:18:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A56A4B2E16B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE273153BFB;
-	Thu,  6 Jun 2024 09:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C8213F43C;
+	Thu,  6 Jun 2024 09:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eAfALXqk"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A64w3Pbr"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8707E13E04F
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3687813DDC5
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 09:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717665219; cv=none; b=CloVZ1e6FdeXjsU5aEQFuzfxDTt3LfvDnNyS+XbJjfuwgWxeSFhRf45qsL11EXgVhHQqFtCLr8NpUJQ8scl3aoopQEvPM7kGFzmWjrKuNUguLJm4U3PEVGidAGhyH2D8Xae0DLUhEy4Woptjt9kXRFlEkmiZmuDNBAniEiYFN1s=
+	t=1717665219; cv=none; b=TQtAF5c27lUzS8nCt4iZaGLmuPBctWBAvQOEAILBWE+bMxAznChjR6zjZTJEBrH2opmdr6vGEIQODiCpsDd2dRbAJGpFpD4e0wGwABe9aapfRU8PiB0ET6LTTq9QQBHDt3lq9cAo6+mUo5shmheAOFGqN87HmXQvdS8gl6GxQYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717665219; c=relaxed/simple;
-	bh=tLjnEJxTEbTUEOSitLDXul844uJlercAoqbBN7ytkNY=;
+	bh=675Kr1uZ6lGtfybtFdJlmhLpwlYNE2CQBKQqnZWuZII=;
 	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=tDpPu8jF8RmAs6mPbeWh++UCQT8VaR9wzwrmArLXtjDz0BSpHLFnYdJK8ydzdfbprJVc5pzUgQPX2RIHIyw5d0Wr/LGAyTuqm77uiLigoGj9EiKUkVUwW7ofiDivyhAMOSHgktu3AshIqmkjUudDwvopZvHRKwhApfDxK8L+WqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eAfALXqk; arc=none smtp.client-ip=209.85.128.51
+	 MIME-Version:Content-Type; b=fPcZGDgx2/pwaskwga7unQ8RzQZbspUey7tz0OgYjkWUBBctcAgup+g0oFvvLIWrdU4rlqfZBnHQstEwrg0ue+y7WiaNgMqB/H+Duo7jgw8i0v/UvlEjBTjF1h5C84JMuz4wBalmC90h1h8Ip6imx/dzFaNdolS2jkvPND7+yH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A64w3Pbr; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42147970772so4767015e9.0
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4214f803606so7958135e9.0
         for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 02:13:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1717665216; x=1718270016; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FeksLIX2BzaZCNAN7y72dDwBN6DfppMxjFM7Q5oi4xQ=;
-        b=eAfALXqkuq+XB7rnL9sdxqyhCN0zq1cJZajhAUFQXBlbD1u9IfB8ZfjrJ13s1sBOGx
-         M9L/5K7DCAq548EpVgw94MSreKROQ1IDVbhDo9w994oXL927R2YrZKDXQG7vhEt1/N74
-         JDBKyNLTP4qvSroz86b20K9wla6rkHSWjWohNFsB/8pZUtotY3g5Z6Hq/JWyODKJ3OgM
-         H8LMzAMkPJLgThik/oDXEd5hwZau+ZtOa6VMQa2KqydJseUHf1wRE8KFI2T8AT/Vyd27
-         KpNgn8214G8bmaEW2SYFU/yXwpEmqyrow5IIZFCIbjEp5rGwcdkkjYTJWcWFmLZ63W1r
-         rKzA==
+        bh=u7hiDQFRdRBFfKeqxCjHkLufjUfT0buj2+w6oCqBN/o=;
+        b=A64w3PbrE1TqxOW152YkxRlQ9JLZLOzkTgPPIyjUQGCrqnqT6RTDaMJ5nqXIfTtV4f
+         F+mDzOEVtUwnHUw/6izTUzGcM17qr0k0AKDOKf5idjoyyIfnW5Hvg5ZqvCnLmvq9ZHcK
+         TTPq8/FMCM4EDLaMhgeCQ7+2mDPJSPSYD7DkPISRRbFaMN0dOHEK0NCO2oxeH/49O64l
+         BJIpCItdDV5UlSFeGUpx90m3O25THOOPGTfjXwb467gSAQqpUzBrImDG9EXme0lxkJyt
+         VE5C4ZyTGdaZWp1rX+to/J6UKoU0OI68LHL7gABLvoc30nVETqslun6wp6CuBLBvlzD7
+         L8Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1717665216; x=1718270016;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FeksLIX2BzaZCNAN7y72dDwBN6DfppMxjFM7Q5oi4xQ=;
-        b=d+et6Ga8p0k+H0Ii6sCm7n6oOXGz3fZp0boe+AANSYcFisCr0GQBdWoAUBZqNM1BOt
-         5+ng6pTDOAZbEvxWDO7p12jctaqg3nx6iXhW88Uu79x6kCPtHx2ZBSPsthWOuszRgPde
-         WI5BqSmotkkZxlaFDy7lQW8FmKT2vYQO8cmnGjKMZ5V+I1RAmSDTNB6vkKRL1QJh8I3d
-         H6revrnd/bf6bWClWhXrrJoMBT6ks9hgso0i1O+0+fPhGpEU073OE/wMLip8Vd5L6I7+
-         hM2kNPUtvwZUYxEePeh4qV6RGKAJULkztO7wpyoFOB70CWBXeWc4T1DpQ4BgiSeN3Xri
-         Stgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSdRaweqTITXrOlzdpT73MKdpeU0KQKiIexoOdj1loU/R77GJyK3l3GtKgE73mNarK0JOs5H+rQqFUkAEeofupCUCLgw7JhcQQ3GqZ
-X-Gm-Message-State: AOJu0Yw7n5zV4H/t3RZ4/Gkd2XbUrFYYbR24NwrH3iWTAbIEwXqfQdyY
-	ujDW+wMHskrknzNZev8kpV8zuc0lTpfQLX/HhymaMA+qCO3peh2Yu7sUdTB9KCU=
-X-Google-Smtp-Source: AGHT+IGiTcenUwmrVbwMZ8CWLNgOE8eMGra87A9ikPjy4LKrOALDBu62I+rUPEWsyHUIPgFuKNgcsw==
-X-Received: by 2002:a05:600c:a03:b0:421:1d8:add4 with SMTP id 5b1f17b1804b1-4215634e602mr46190305e9.35.1717665215936;
-        Thu, 06 Jun 2024 02:13:35 -0700 (PDT)
+        bh=u7hiDQFRdRBFfKeqxCjHkLufjUfT0buj2+w6oCqBN/o=;
+        b=Tx+5yMiqGoQA7GJk3jMt/kxqlMOboYypigmBceZHL3uSCQyVO3+jLIkyu/UqaszuAT
+         3Xx8NDMZlbHchTATmhPiOmVGHUGykAHSw0Mm5IyEvbsCjW/OKznNuNeXVoCJ4onKiVjF
+         ykkomhNfVy9IJfUr6N0FON81g9+Ha3aQYTk06/8S3EFvwFGqjqryJisyxMLK6p3shIhh
+         bRnmE3K4dHeJJgK9ceJtqupdzmwxnN7f9BHTwQIIfQmdN5slzpC4Yw0HcFYCQCDt7zTR
+         ezl0VYS+WSXEYt8JXM4VT1z+51GQUSxuH641W/h1Mdx+EvrqTOT37yA7bW2zMy4YcaXZ
+         lTQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCEfaVpO++65qPMmoVhcOaaPGQmgVdyiNg21GVhnRRmXGiqylUInASXdRq6sL/i73EeyMNj+h7q/BRWNUMjBGa+KXikSrImydgvVjg
+X-Gm-Message-State: AOJu0Yw0zR2p422UHXN11VL1Tmga54RbzPvNUSIS7wRL454UAU9YJpxa
+	DjMcFcsJO/mE4tWDM2MdkJlrb7bTujV9uiUGk20zU3wZC7pOUXTPegoTb+OwXmM=
+X-Google-Smtp-Source: AGHT+IHtyCwh9CmHAU8WBlcMrLbk+Z5UM643qQi3c42FsuzxsDGC7SvGqqn2rUSLfqFXsl549PS0sQ==
+X-Received: by 2002:a05:600c:45c8:b0:420:d54:7003 with SMTP id 5b1f17b1804b1-421562de063mr35200745e9.20.1717665216650;
+        Thu, 06 Jun 2024 02:13:36 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c2a544bsm15038175e9.21.2024.06.06.02.13.35
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c2a544bsm15038175e9.21.2024.06.06.02.13.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 02:13:35 -0700 (PDT)
+        Thu, 06 Jun 2024 02:13:36 -0700 (PDT)
 From: Neil Armstrong <neil.armstrong@linaro.org>
 To: Kevin Hilman <khilman@baylibre.com>, 
  Jerome Brunet <jbrunet@baylibre.com>, 
  Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Christian Hewitt <christianshewitt@gmail.com>
-In-Reply-To: <20240604050752.3312468-1-christianshewitt@gmail.com>
-References: <20240604050752.3312468-1-christianshewitt@gmail.com>
-Subject: Re: [PATCH] soc: amlogic: meson-gx-socinfo: Add S905L ID
-Message-Id: <171766521524.3911648.14792995642693649032.b4-ty@linaro.org>
-Date: Thu, 06 Jun 2024 11:13:35 +0200
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org, Viacheslav Bocharov <adeep@lexina.in>
+In-Reply-To: <20240604140612.1179323-1-adeep@lexina.in>
+References: <20240604140612.1179323-1-adeep@lexina.in>
+Subject: Re: [PATCH] soc: amlogic: meson-gx-socinfo: add new A113X SoC id
+Message-Id: <171766521601.3911648.2220702176918701226.b4-ty@linaro.org>
+Date: Thu, 06 Jun 2024 11:13:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,17 +89,17 @@ X-Mailer: b4 0.13.0
 
 Hi,
 
-On Tue, 04 Jun 2024 05:07:52 +0000, Christian Hewitt wrote:
-> Add the S905L SoC ID observed in several P271 boards:
+On Tue, 04 Jun 2024 17:04:51 +0300, Viacheslav Bocharov wrote:
+> Add new definition for Amlogix A113X SoC found in JetHub D1/D1+ devices:
 > 
-> kernel: soc soc0: Amlogic Meson GXLX (S905L) Revision 26:a (c1:2) Detected
+> soc soc0: Amlogic Meson AXG (A113X) Revision 25:b (43:2) Detected
 > 
 > 
 
 Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.11/drivers)
 
-[1/1] soc: amlogic: meson-gx-socinfo: Add S905L ID
-      https://git.kernel.org/amlogic/c/d1d0f1f6ff6013211e3ee00237e4cc25ad0cd64b
+[1/1] soc: amlogic: meson-gx-socinfo: add new A113X SoC id
+      https://git.kernel.org/amlogic/c/2faaab64de0e89697e01f1a0c5d401ea74d52447
 
 These changes has been applied on the intermediate git tree [1].
 
