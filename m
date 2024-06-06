@@ -1,113 +1,212 @@
-Return-Path: <linux-kernel+bounces-204945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 619DB8FF555
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:36:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F5F8FF558
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:36:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05AB81C25152
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:36:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE730B23A84
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BAA86E611;
-	Thu,  6 Jun 2024 19:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7572571B47;
+	Thu,  6 Jun 2024 19:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="xsioIHNI"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t5Wp4aDV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599E240BF2;
-	Thu,  6 Jun 2024 19:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE196A33A;
+	Thu,  6 Jun 2024 19:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717702557; cv=none; b=j6Boera3KVOAe3XJCeo5QJOF/HLaSrVrQNArCfABCoPsctshdw6LHIf0muV8syg4/B790sYwseYfR5H2VR7pP0ZZa4qrkgGHjnm+CcbDhqAWNrSeyxHXOQAYtfP3nodYv6Z9ZvR43GIWouJXpyBdLBjkJeq3XDwnS7G1LUX9QW0=
+	t=1717702569; cv=none; b=UXSf6fgGkJGb1ipndVviImDZhGjbRuAO/h/eP0HVdAIz9lGVhN30g6oJ/khzaSU6Es6UfdCMuUnxDst6lYFEAMb+XL1W3LO5ffSncsHIiCcK2pp3g9Me6Z9RBBxbjhZ98yVNh6TCFQXEE0Gc3IFGBB0uumMvne5E20FnKgq2FHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717702557; c=relaxed/simple;
-	bh=H27hoj1nfn9GzggmVmGwqXbjeJ4fcxrxqUBO0i0JXQs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rxZBmTxjsNFsLmRyQhHgyoDZ6YNBsR3otPV1l6LShncmkxSNrQy80ewmKpxvAU6SJbAJyz3BOksNykV8qinVO32Xz6Iv8FY/UL60Ash/AYSXe1QtpUVS3MuYJbBrfSaydMK9kmnIVKECRbDw1o8m2208KtONpqKR5VCZ+xm1D6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=xsioIHNI; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hauke-m.de
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4VwF1F1F3Rz9sm2;
-	Thu,  6 Jun 2024 21:35:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-	t=1717702545;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5ti/gtAOsi7bk/Co8d96IivmCKwGH4Pyj8tKfTA/ydc=;
-	b=xsioIHNILiHEtEtsQrA7zTiRxRF6QESvmnAswAjyrczLA1q1Ap9w5naa2yl+prZ+/TLcWi
-	PIDSS42BUxStAHMjBFOoExJ1iUzrweLb6VJjN0l5S+C6ko+3u0Jl4/z+EJvipTbkd/Eq/7
-	jWaJzf1OL2AK9q46oVpYSSiecq+u6fMC/KxEOEpQ9u+SMriV6sOAa8wf1jMEXOlW7zgxRn
-	ntG3gKYlNbiTqeoP9j4Lr1L6uuYyFzUhbpwv1iAYjHnpHDchZjA0EucqgUCUp63ryElIkk
-	AgTMMgk16ryFApwjF7e3L0Bs9FP7FvQHxhMEEjXLnESK8vaTgGFrIXdHwaMIlg==
-Message-ID: <90e5cb5e-6f3b-4a8d-825f-baa6bb1815d1@hauke-m.de>
-Date: Thu, 6 Jun 2024 21:35:38 +0200
+	s=arc-20240116; t=1717702569; c=relaxed/simple;
+	bh=lv7c8HiJJOW7q/l0CDVhRhitLvBX6XdJyjW9NlIOMEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IAWmrN/XtI5AEslP4HL5Z/Ruk5MIS510i5xEUYZTXmH9yEhROFjNLzVB4utLXVsXQBFeIo0eYzWQeo6g+vcbm7AGj6eiSEeLUtC2wI5N3xyF1zGNpSo2bxjMWjIm+Z/stx/5ank9PaV8flljqMU6I2U2yzhMNzaNMr0wXCtSBts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t5Wp4aDV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F28DCC2BD10;
+	Thu,  6 Jun 2024 19:36:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717702569;
+	bh=lv7c8HiJJOW7q/l0CDVhRhitLvBX6XdJyjW9NlIOMEU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=t5Wp4aDV2bFdpIJKS9F0WevnJzM+TYkdmdOG0wOOctJq00nNPgGu1VD4MjC6QcGFh
+	 7ZnceV/KC0thZe9gI3BaKofsdLd309mVEbKacJfCr8+b1lIRwNqlCW1WTLbXLGZ9nu
+	 73DV2K0IPkRjN3/ISGuC2Q5oH6r6cJU/DiBQJylStD0a6gW2So23HshrSQWzt5XHC2
+	 2Zn/DJwvqfh2HHYvVchloQF6/6Lz416a0UdThMswgPDpM1go+gFfWnxjTuyfS5lim4
+	 sxCIxNvXLYX7RKuSkn97y36qTSufeCDJLEodT9kVmf0T9+TVY7gbrYXE2S33eV1JpC
+	 XNG1JLYbanaSQ==
+Date: Thu, 6 Jun 2024 20:36:03 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, himanshujha199640@gmail.com, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH v1 11/17] iio: chemical: bme680: Use bulk reads for
+ calibration data
+Message-ID: <20240606203603.18e9a17b@jic23-huawei>
+In-Reply-To: <20240603203003.GA444780@vamoiridPC>
+References: <20240527183805.311501-1-vassilisamir@gmail.com>
+	<20240527183805.311501-12-vassilisamir@gmail.com>
+	<20240602135726.2f10fd2b@jic23-huawei>
+	<20240602193023.GD387181@vamoiridPC>
+	<20240603202537.4b40c80a@jic23-huawei>
+	<20240603203003.GA444780@vamoiridPC>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next 00/13] net: dsa: lantiq_gswip: code improvements
-To: Martin Schiller <ms@dev.tdt.de>, martin.blumenstingl@googlemail.com,
- andrew@lunn.ch, f.fainelli@gmail.com, olteanv@gmail.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240606085234.565551-1-ms@dev.tdt.de>
-Content-Language: en-US
-From: Hauke Mehrtens <hauke@hauke-m.de>
-In-Reply-To: <20240606085234.565551-1-ms@dev.tdt.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 4VwF1F1F3Rz9sm2
 
-On 6/6/24 10:52, Martin Schiller wrote:
-> This patchset for the lantiq_gswip driver is a collection of minor fixes
-> and coding improvements by Martin Blumenstingl without any real changes
-> in the actual functionality.
-> 
-> Martin Blumenstingl (12):
->    dt-bindings: net: dsa: lantiq_gswip: Add missing phy-mode and
->      fixed-link
->    net: dsa: lantiq_gswip: Only allow phy-mode = "internal" on the CPU
->      port
->    net: dsa: lantiq_gswip: Use dev_err_probe where appropriate
->    net: dsa: lantiq_gswip: Don't manually call gswip_port_enable()
->    net: dsa: lantiq_gswip: Use dsa_is_cpu_port() in
->      gswip_port_change_mtu()
->    net: dsa: lantiq_gswip: Change literal 6 to ETH_ALEN
->    net: dsa: lantiq_gswip: Consistently use macros for the mac bridge
->      table
->    net: dsa: lantiq_gswip: Forbid gswip_add_single_port_br on the CPU
->      port
->    net: dsa: lantiq_gswip: Fix error message in
->      gswip_add_single_port_br()
->    net: dsa: lantiq_gswip: Fix comments in gswip_port_vlan_filtering()
->    net: dsa: lantiq_gswip: Add and use a GSWIP_TABLE_MAC_BRIDGE_FID macro
->    net: dsa: lantiq_gswip: Improve error message in gswip_port_fdb()
-> 
-> Martin Schiller (1):
->    net: dsa: lantiq_gswip: do also enable or disable cpu port
-> 
->   .../bindings/net/dsa/lantiq-gswip.txt         |   6 +
->   drivers/net/dsa/lantiq_gswip.c                | 110 +++++++++---------
->   2 files changed, 58 insertions(+), 58 deletions(-)
-> 
-Thanks for sending this upstream. I had this on my list for a long time 
-but never started it.
+On Mon, 3 Jun 2024 22:30:03 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-For all patches:
-Acked-by: Hauke Mehrtens <hauke@hauke-m.de>
+> On Mon, Jun 03, 2024 at 08:25:37PM +0100, Jonathan Cameron wrote:
+> > On Sun, 2 Jun 2024 21:30:23 +0200
+> > Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> >   
+> > > On Sun, Jun 02, 2024 at 01:57:26PM +0100, Jonathan Cameron wrote:  
+> > > > On Mon, 27 May 2024 20:37:59 +0200
+> > > > Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> > > >     
+> > > > > Calibration data are located in contiguous-ish registers
+> > > > > inside the chip. For that reason we can use bulk reads as is
+> > > > > done as well in the BME68x Sensor API [1].
+> > > > > 
+> > > > > The arrays that are used for reading the data out of the sensor
+> > > > > are located inside DMA safe buffer.    
+> > > > 
+> > > > See below. I think in this case that isn't necessary.
+> > > > However it's a quirk of how the custom regmap works. Whilst
+> > > > we can't rely on regmap core spi implementations continuing to
+> > > > bounce buffer, we can rely on one local to our particular driver.
+> > > >     
+> > > 
+> > > What about the I2C implementation though? I watched recently a video
+> > > from Wolfram Sang [1] and as far as I understood, the buffers are not
+> > > provided by the I2C API, but you have to provide them. In any case, I
+> > > should maybe check both SPI and I2C reads to understand the internals.
+> > > 
+> > > [1]: https://www.youtube.com/watch?v=JDwaMClvV-s
+> > >   
+> > 
+> > I'm not sure Wolfram got far with his desire for generally avoiding the
+> > bounce buffers for i2c.  I think it's strictly opt in only so don't opt in
+> > unless your code is safe for it and regmap never will by default as too
+> > many drivers will be subtly broken.
+> >   
+> 
+> The things that I found about DMA "safety" in I2C are [1] and [2] so I think
+> that the IIO_DMA_MINALIGN should remain because in the future, in case it's
+> needed for triggered buffers to do buffer reads from the volatile registers
+> of the device, then it might be a problem for I2C. 
+> 
+> [1]: https://elixir.bootlin.com/linux/latest/source/drivers/i2c/i2c-core-base.c#L2627
+> [2]: https://elixir.bootlin.com/linux/latest/source/include/linux/i2c.h#L92
+> 
 
-Hauke
+Those will remain opt in for a very long time if not for ever.
+
+I suspect they will actually go away as a result of Catalin's 
+https://lore.kernel.org/linux-arm-kernel/20230612153201.554742-15-catalin.marinas@arm.com/
+which bounces small or unaligned buffers and will apply to an annoying number of
+IIO buffers even though they are actually safe because it's a heuristic
+on the size part.
+
+Today only a few architectures that do non coherent DMA use it though.
+Will take the others opting in to the point where the config variable
+goes away before we can stop this dance.
+
+I don't know if anyone has yet looked at the impact on performance of that
+change on the many drivers that have to work whether that is in place
+or not and do small dma mappings.  Maybe we need to teach bus drivers
+when they need to map padding around an actually safe buffer that
+doesn't look like it.
+
+Jonathan
+
+
+> >   
+> > > > > 
+> > > > > [1]: https://github.com/boschsensortec/BME68x_SensorAPI/blob/v4.4.8/bme68x.c#L1769
+> > > > > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>    
+> > > > 
+> > > >     
+> > > > > diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
+> > > > > index 681f271f9b06..ed4cdb4d64af 100644
+> > > > > --- a/drivers/iio/chemical/bme680_core.c
+> > > > > +++ b/drivers/iio/chemical/bme680_core.c    
+> > > >     
+> > > > > +
+> > > > >  struct bme680_calib {
+> > > > >  	u16 par_t1;
+> > > > >  	s16 par_t2;
+> > > > > @@ -64,6 +109,16 @@ struct bme680_data {
+> > > > >  	 * and humidity compensation calculations.
+> > > > >  	 */
+> > > > >  	s32 t_fine;
+> > > > > +
+> > > > > +	/*
+> > > > > +	 * DMA (thus cache coherency maintenance) may require the
+> > > > > +	 * transfer buffers to live in their own cache lines.
+> > > > > +	 */
+> > > > > +	union {
+> > > > > +		u8 bme680_cal_buf_1[BME680_CALIB_RANGE_1_LEN];
+> > > > > +		u8 bme680_cal_buf_2[BME680_CALIB_RANGE_2_LEN];
+> > > > > +		u8 bme680_cal_buf_3[BME680_CALIB_RANGE_3_LEN];
+> > > > > +	} __aligned(IIO_DMA_MINALIGN);    
+> > > > Ah! I should have read ahead.  I don't think you need this alignment forcing
+> > > > because bme680_regmap_spi_read uses spi_write_then_read() which always
+> > > > bounces the data.
+> > > >     
+> > > 
+> > > Same comment. What about I2C?
+> > >   
+> > > > >  };
+> > > > >  
+> > > > >  static const struct regmap_range bme680_volatile_ranges[] = {
+> > > > > @@ -112,217 +167,73 @@ static int bme680_read_calib(struct bme680_data *data,
+> > > > >  			     struct bme680_calib *calib)
+> > > > >  {    
+> > > > 
+> > > >     
+> > > > > +	calib->par_h3 = data->bme680_cal_buf_2[H3];
+> > > > > +	calib->par_h4 = data->bme680_cal_buf_2[H4];
+> > > > > +	calib->par_h5 = data->bme680_cal_buf_2[H5];
+> > > > > +	calib->par_h6 = data->bme680_cal_buf_2[H6];
+> > > > > +	calib->par_h7 = data->bme680_cal_buf_2[H7];
+> > > > > +	calib->par_t1 = get_unaligned_le16(&data->bme680_cal_buf_2[T1_LSB]);
+> > > > > +	calib->par_gh2 = get_unaligned_le16(&data->bme680_cal_buf_2[GH2_LSB]);
+> > > > > +	calib->par_gh1 = data->bme680_cal_buf_2[GH1];
+> > > > > +	calib->par_gh3 = data->bme680_cal_buf_2[GH3];
+> > > > >  
+> > > > > -	ret = regmap_read(data->regmap, BME680_H7_REG, &tmp);
+> > > > > +	ret = regmap_bulk_read(data->regmap, BME680_REG_RES_HEAT_VAL,
+> > > > > +			       &data->bme680_cal_buf_3[0],    
+> > > > This one is always debated, but personally I'd prefer
+> > > > 				data->bme680_cal_buf_3,
+> > > >     
+> > > 
+> > > For me it's the same, I could change it to what you proposed, no problem!
+> > > 
+> > > Cheers,
+> > > Vasilis
+> > >   
+> > > > for cases like this. Up to you though.    
+> > > > > +			       sizeof(data->bme680_cal_buf_3));
+> > > > >  	if (ret < 0) {
+> > > > > -		dev_err(dev, "failed to read BME680_H7_REG\n");
+> > > > > +		dev_err(dev, "failed to read 3rd set of calib data;\n");
+> > > > >  		return ret;
+> > > > >  	}    
+> > > >     
+> >   
+
 
