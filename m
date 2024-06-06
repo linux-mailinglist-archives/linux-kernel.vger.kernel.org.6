@@ -1,50 +1,54 @@
-Return-Path: <linux-kernel+bounces-204117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CCCE8FE467
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:35:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E558FE464
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 712571C253AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:35:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6E94283108
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6C11957FC;
-	Thu,  6 Jun 2024 10:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38716194C8A;
+	Thu,  6 Jun 2024 10:34:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="ngYtts2P"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="FZOtf0Z1"
+Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3EE1953A4;
-	Thu,  6 Jun 2024 10:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D391E52A;
+	Thu,  6 Jun 2024 10:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717670080; cv=none; b=Cj/pSL0O0jMVF8I/DypPiWnDXv91epgyzKUSDL4bwgaN/xJiaxeSBN8BbemncA0g16ig5GUDoHhIMd21MMbLmA5uPuwcYcgLks8ldQwVMOoBjudBWWzS4ncpxWL8v/ENBPhABWvUKPI3IlP3Y6s1EJ9Rg9h98fPS2dbuX+AdJWI=
+	t=1717670076; cv=none; b=kVy5gCX4yDIRFueKh6F6XRUzUmfbwatJwDH2UxqA4v1R4xpEkRuoaaNyhYD90tDQ1woPhF35/DT5TohYNj2OVn2SPRLlNU1bAzbNI0/7aSfYmoOxv1MNjI3wFyIAhcrgB4ECAce0noVj8YQnHZVOyttqMyAKF7MgnzQfUrBwBj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717670080; c=relaxed/simple;
-	bh=w+Cp/U/HLDL+t89AzdC0HW8vLKiCbe4Wmt8j44QHOXc=;
+	s=arc-20240116; t=1717670076; c=relaxed/simple;
+	bh=xarlqkaYdeE+nLuxfym9PFsp9VqtRvEoIg16ppfVSTI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=THycGvBHeRiWZAOFDZEpY57nNH/VCkHH2/vsDKjfSMNMRgkndFCKlkE3SXxsdhyHwPkPg+Xi+dwb9w1jvpxr3Hgiv5ZhICG73brqy6F6sFBHds3mAgZsFQQkrvMf+p7UszavW3YvRQtaBVfE/qASrhW6oPoM/bmlesGchtuIrYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=ngYtts2P; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=w+Cp/U/HLDL+t89AzdC0HW8vLKiCbe4Wmt8j44QHOXc=; t=1717670079;
-	x=1718102079; b=ngYtts2PUCdo5pXR6KWImqh3GO5qaXjmUDfaUvOscBbjgOwMb9jZ26vBcyaT9
-	RHQ1MnDhOJufP7tmP5aY7UkW4TSpRxCSS2uTO9yguN5xlF0gGz5MGQpZm5cXLynvoYJXWrzXl0FJ+
-	3Ag1RDdn85jXJbtsWxLlDQpIOEIc3fZdfxwyeSuLQy3Tnj5uChCssFcwLZpv9ben+yNuDt6ggTo5E
-	hu6T5hoAqdVIAis7JY5mKTdb5zNzg9mpVm4Von9ixLdXirohCNCzcWvJPEVBTi9MHTkXwVMLipeT8
-	x5r+2GaXjQf1mfkw6bMn32wRw79CpqmosXG46kolv2Aiij5SAw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sFAS0-0007b3-Cf; Thu, 06 Jun 2024 12:34:32 +0200
-Message-ID: <8d1588d5-0884-469a-b1ed-322f91a4d290@leemhuis.info>
+	 In-Reply-To:Content-Type; b=AS5orAClI0rL2dEK98z3xXfXnRhLMBF/9KwjfKd+up+F+Paq6GKos1weQPokv65O+AUSYzsx1zJZ3flwu3SYr0J09bWeSPgFNJNWUCquG1wbDZVq9Z4Q7ieCE0FZ4kS1/qa/AFPDIVrGb4+KgOsVai/3QEpCWGUZCeRtYvtG6VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=FZOtf0Z1; arc=none smtp.client-ip=46.19.9.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Rc5FKMCWeViSJyUVW7Ojcp2k9qIpAlwfQMOpNh6XEuQ=; b=FZOtf0Z1lo7wYP6l6pngnnnLtU
+	MP3Fc/W/XVJOKb+oiLiVDJ+z2Ju5eGUSpZX4GP1MYKvaMLHEA2YvCUELgART5fTnYDgxxg4PNS5Kc
+	GXSWaDWwTjoUpPBKAhYAzJgWCAxS7eudXjMnpo+Ltd9ik/G9g3j93Z6+CmI/rbaVw+28jQPJEWxmh
+	DiQhPA6KAb26o4i1qtLkQS9fMxvxPQGjVABNYarYos0P31xf52DJ/f9tygjYpjHf46PPl7NeU9vAM
+	ihPPf79PvY6HzKy6HpnszCLtpbOFTjogNfnwu0C0yFtPv5cew34irtC1J0OuDrp2LdvLlW/IUHX26
+	ORFXPx0g==;
+Received: from [89.212.21.243] (port=38800 helo=[192.168.69.116])
+	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <primoz.fiser@norik.com>)
+	id 1sFAS0-00C1bQ-18;
+	Thu, 06 Jun 2024 12:34:32 +0200
+Message-ID: <81919640-b0c4-437c-a04f-1673e8189435@norik.com>
 Date: Thu, 6 Jun 2024 12:34:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -53,80 +57,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2] net: ti: icssg-prueth: Split out common
- object into module
-To: MD Danish Anwar <danishanwar@ti.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Diogo Ivo <diogo.ivo@siemens.com>, Andrew Lunn <andrew@lunn.ch>,
- Roger Quadros <rogerq@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
- "David S. Miller" <davem@davemloft.net>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, srk@ti.com,
- Vignesh Raghavendra <vigneshr@ti.com>, kernel test robot <lkp@intel.com>
-References: <20240606073639.3299252-1-danishanwar@ti.com>
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Content-Language: en-US, de-DE
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 n7RI
-In-Reply-To: <20240606073639.3299252-1-danishanwar@ti.com>
+Subject: Re: [PATCH] OPP: ti: Fix ti_opp_supply_probe wrong return values
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+ Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, upstream@lists.phytec.de
+References: <20240606070127.3506240-1-primoz.fiser@norik.com>
+ <20240606085956.wsp3ecyfqck5tltt@vireshk-i7>
+ <ed06bac9-6396-426a-b0ea-4932bc5fa7ed@norik.com>
+ <20240606094859.6yclnarvlrzl74bj@vireshk-i7>
+From: Primoz Fiser <primoz.fiser@norik.com>
+Content-Language: en-US
+Organization: Norik systems d.o.o.
+In-Reply-To: <20240606094859.6yclnarvlrzl74bj@vireshk-i7>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1717670079;7eb2a595;
-X-HE-SMSGID: 1sFAS0-0007b3-Cf
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel.siel.si
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - norik.com
+X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
+X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On 06.06.24 09:36, MD Danish Anwar wrote:
-> icssg_prueth.c and icssg_prueth_sr1.c drivers use multiple common .c
-> files. These common objects are getting added to multiple modules. As a
-> result when both drivers are enabled in .config, below warning is seen.
-> [...]
+Hi Viresh,
 
-Thx, seems that patch does the trick as well (tested it with today's
--next and assuming here that no change fixed it in between).
+On 6. 06. 24 11:48, Viresh Kumar wrote:
+> On 06-06-24, 11:43, Primoz Fiser wrote:
+>> ti_opp_supply_probe
+>>  -> dev_pm_opp_set_config_regulators
+>>   -> dev_pm_opp_set_config (returns negative if error, otherwise >= 1)
+> 
+> Ah, I forgot about the token that is returned here. I think the driver
+> should be fixed properly once and for all here.
+> 
+> The token must be used to clean the module removal part. Else if you
+> try to insert this module, remove it, insert again, you will get some
+> errors as the resources aren't cleaned well.
+> 
+> So either provide a remove() callback to the driver, or use
+> devm_pm_opp_set_config() here.
+> 
 
-Reported-and-tested-by: Thorsten Leemhuis <linux@leemhuis.info>
-Closes:
-https://lore.kernel.org/all/de980a49-b802-417a-a57e-2c47f67b08e4@leemhuis.info/
+So basically, you want v2 with:
 
-Ciao, Thorsten
+> diff --git a/drivers/opp/ti-opp-supply.c b/drivers/opp/ti-opp-supply.c
+> index e3b97cd1fbbf..8a4bcc5fb9dc 100644
+> --- a/drivers/opp/ti-opp-supply.c
+> +++ b/drivers/opp/ti-opp-supply.c
+> @@ -392,7 +392,7 @@ static int ti_opp_supply_probe(struct platform_device *pdev)
+>                         return ret;
+>         }
+>  
+> -       ret = dev_pm_opp_set_config_regulators(cpu_dev, ti_opp_config_regulators);
+> +       ret = devm_pm_opp_set_config_regulators(cpu_dev, ti_opp_config_regulators);
+>         if (ret < 0)
+>                 _free_optimized_voltages(dev, &opp_data);
+>  
+> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+> index dd7c8441af42..a2401878d1d9 100644
+> --- a/include/linux/pm_opp.h
+> +++ b/include/linux/pm_opp.h
+> @@ -654,14 +654,14 @@ static inline int devm_pm_opp_set_clkname(struct device *dev, const char *name)
+>  }
+>  
+>  /* config-regulators helpers */
+> -static inline int dev_pm_opp_set_config_regulators(struct device *dev,
+> +static inline int devm_pm_opp_set_config_regulators(struct device *dev,
+>                                                    config_regulators_t helper)
+>  {
+>         struct dev_pm_opp_config config = {
+>                 .config_regulators = helper,
+>         };
+>  
+> -       return dev_pm_opp_set_config(dev, &config);
+> +       return devm_pm_opp_set_config(dev, &config);
+>  }
+>  
+>  static inline void dev_pm_opp_put_config_regulators(int token)
+
+Right?
+
+BR,
+Primoz
+
+
+
 
