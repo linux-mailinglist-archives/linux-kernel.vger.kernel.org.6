@@ -1,225 +1,118 @@
-Return-Path: <linux-kernel+bounces-203808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A22A48FE0B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:15:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFFC48FE0B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:15:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC344B22CE1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:14:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E97891C24A32
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1D213C822;
-	Thu,  6 Jun 2024 08:14:42 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876C813A898;
-	Thu,  6 Jun 2024 08:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07B912F373;
+	Thu,  6 Jun 2024 08:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q70jBlpJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19765C96;
+	Thu,  6 Jun 2024 08:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717661681; cv=none; b=SUmasPxUS+x6XoBoLX8fzPBYj54Yh0DbWXYpp/aMWWke52DrjYWdD9Lit93+0CyvylN3+JY113nGh7GX/p8wsEZg7BtVxMZm7WodHdyE25BS1Whsa5ecjIu0er71pUq02yMjRoL/I0bnV272Hcooep9x7hEhMkMJkBt52b3yQxE=
+	t=1717661734; cv=none; b=mBZBdHOyEP/v4JlUYBZciD2Pcc/v7bKw4LYgFVmsxX7i/BdrPF1hYWeaJIfPQN3+OfVsC4ADCdkYxcFlIG04o8LkMbje1nsMRHGKQMt35uotXhXu1C2LqS2Q7BAfQSG8DA02o2+PwErofajwqR17qVYbPhbRfu3p9v93QiawH20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717661681; c=relaxed/simple;
-	bh=/+/BknMHLrihbmijqoFbVLzfZtNPqhWBdI3sHAuudyA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IFSvK7rEVSSc0bQOJ9G/ajvOKSwKoyBGvYhwDcyJvzOo1X8Oo8QTonHAwpnhlRdCrRuZ7Ic/4175lbqwkRhfju1L7a94P1arDnrSCm9OPEGzM2ihrkljhfrIaglBd519l2j8o9N+XZKT5dM/0WWnub6s9aYLh9QLhDR83vnvlc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-IronPort-AV: E=Sophos;i="6.08,218,1712588400"; 
-   d="asc'?scan'208";a="210885326"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 06 Jun 2024 17:14:37 +0900
-Received: from [10.226.93.107] (unknown [10.226.93.107])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 72C8C41FD116;
-	Thu,  6 Jun 2024 17:14:34 +0900 (JST)
-Message-ID: <13e77ad1-7ff0-453b-b8f9-7962d15b49a1@bp.renesas.com>
-Date: Thu, 6 Jun 2024 09:14:32 +0100
+	s=arc-20240116; t=1717661734; c=relaxed/simple;
+	bh=qqQC4N4qM8SKjgtTHvaS/WXpl4ugfRenh7/dnBWZlIk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BqSS4zcnaz1HQzI4zwdAuyCjyFwxRWJvuxIb0K6Tw27mkxwCBT9Xz6c/7xKdD8wHiERzP0ojWN/Kc/OGWIUvBusPq5caN4o7mG8Ip2lSZGAbem1Tyuj5SNY6cL/3W/I9npQKiwlkIVzgcdcJnCgMvpZFCdJpqZgjgdXY2Bv528A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q70jBlpJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 73914C4AF0C;
+	Thu,  6 Jun 2024 08:15:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717661733;
+	bh=qqQC4N4qM8SKjgtTHvaS/WXpl4ugfRenh7/dnBWZlIk=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=q70jBlpJMTgvIkjQdk1GFBLrKer1dglrqH9+8vDT9bfhTmSc3ggNXgD5doySKpYJ3
+	 tEwWRyrpb24i0uMClBJeig7DiI6EP5J2lm1oDE6HegJl+ICCPmSs+hMICjy7kep6Xs
+	 ZWvcyjdKCfuafPAnw8Z3TNZQ1LDejA2PW3XROyMHJgvWuzvsQkZEOUPZwMmzM+pX8f
+	 iC3d4fiX0kToJ0OMcjbJTQqzglTkbZuRIhTxEbxLwB6SWWui/XHfy3ErnlJb7nKhDC
+	 rri1YMWdZNABHZJB/N27NbYwRcfn93nzGmq573TmqUmocdY1hGUk3a2V7BPozIeTsD
+	 Q75ZGkCD6gtoA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 591EAC25B75;
+	Thu,  6 Jun 2024 08:15:33 +0000 (UTC)
+From: Nikita Shubin via B4 Relay <devnull+n.shubin.yadro.com@kernel.org>
+Date: Thu, 06 Jun 2024 11:15:19 +0300
+Subject: [PATCH] ntb: intel: Fix using link status DB's
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] docs: stable-kernel-rules: provide example of
- specifying target series
-To: Shung-Hsi Yu <shung-hsi.yu@suse.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sasha Levin <sashal@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- stable@vger.kernel.org, workflows@vger.kernel.org
-References: <20240606064311.18678-1-shung-hsi.yu@suse.com>
-Content-Language: en-GB
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-Organization: Renesas Electronics Corporation
-In-Reply-To: <20240606064311.18678-1-shung-hsi.yu@suse.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------xI3MkB3bqz4WF3eJ5X8zp2y7"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240606-ntb_intel_db_fix-v1-1-ba9033aea289@yadro.com>
+X-B4-Tracking: v=1; b=H4sIABZwYWYC/x2MWwqAIBAAryL7nWAWUl0lQnystRAWKhFEd0/6n
+ IGZBzImwgwTeyDhRZmOWKFtGLjNxBU5+cogheyFEorHYjXFgrv2Vge6ueiUHMdgrOsHqNmZsOp
+ /OS/v+wE9gs7NYgAAAA==
+To: Dave Jiang <dave.jiang@intel.com>, Jon Mason <jdmason@kudzu.us>, 
+ Allen Hubbe <allenbh@gmail.com>
+Cc: Nikita Shubin <nikita.shubin@maquefel.me>, ntb@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, linux@yadro.com, 
+ Nikita Shubin <n.shubin@yadro.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717661730; l=1211;
+ i=n.shubin@yadro.com; s=20230718; h=from:subject:message-id;
+ bh=m6Ej8L6+xmXOl3RZbV82ktzzdYahkk4scP8S6bypgnI=;
+ b=+HlydAPVVu4+ZMywh4SWhA+S6XYV8sVahCZZ6LzcQ8yNPDKz7VT9FpR+U826CFRkkiBi9zeM3ILx
+ tuiY46THD8IhJfZQ3NGDixQ4ib+QBUIj5WD61znSyHouI32j9RiA
+X-Developer-Key: i=n.shubin@yadro.com; a=ed25519;
+ pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
+X-Endpoint-Received: by B4 Relay for n.shubin@yadro.com/20230718 with
+ auth_id=161
+X-Original-From: Nikita Shubin <n.shubin@yadro.com>
+Reply-To: n.shubin@yadro.com
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------xI3MkB3bqz4WF3eJ5X8zp2y7
-Content-Type: multipart/mixed; boundary="------------cuym2VioR9YeBxcmeIilliEz";
- protected-headers="v1"
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-To: Shung-Hsi Yu <shung-hsi.yu@suse.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sasha Levin <sashal@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- stable@vger.kernel.org, workflows@vger.kernel.org
-Message-ID: <13e77ad1-7ff0-453b-b8f9-7962d15b49a1@bp.renesas.com>
-Subject: Re: [PATCH 1/2] docs: stable-kernel-rules: provide example of
- specifying target series
-References: <20240606064311.18678-1-shung-hsi.yu@suse.com>
-In-Reply-To: <20240606064311.18678-1-shung-hsi.yu@suse.com>
+From: Nikita Shubin <n.shubin@yadro.com>
 
---------------cuym2VioR9YeBxcmeIilliEz
-Content-Type: multipart/mixed; boundary="------------cwYi1y9yKe2mdo4v6vJz18ui"
+Make sure we are not using DB's which were remapped for link status.
 
---------------cwYi1y9yKe2mdo4v6vJz18ui
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Fixes: f6e51c354b60 ("ntb: intel: split out the gen3 code")
+Signed-off-by: Nikita Shubin <n.shubin@yadro.com>
+---
+Hello Dave, sending a patch as planned.
 
-On 06/06/2024 07:43, Shung-Hsi Yu wrote:
-> Provide a concrete example of how to specify what stable series should
-> be targeted for change inclusion. Looking around on the stable mailing
-> list this seems like a common practice already, so let's mention that i=
-n
-> the documentation as well (but worded so it is not interpreted as the
-> only way to do so).
->=20
-> Signed-off-by: Shung-Hsi Yu <shung-hsi.yu@suse.com>
-> ---
->  Documentation/process/stable-kernel-rules.rst | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
->=20
-> diff --git a/Documentation/process/stable-kernel-rules.rst b/Documentat=
-ion/process/stable-kernel-rules.rst
-> index edf90bbe30f4..daa542988095 100644
-> --- a/Documentation/process/stable-kernel-rules.rst
-> +++ b/Documentation/process/stable-kernel-rules.rst
-> @@ -57,10 +57,13 @@ options for cases where a mainlined patch needs adj=
-ustments to apply in older
->  series (for example due to API changes).
-> =20
->  When using option 2 or 3 you can ask for your change to be included in=
- specific
-> -stable series. When doing so, ensure the fix or an equivalent is appli=
-cable,
-> -submitted, or already present in all newer stable trees still supporte=
-d. This is
-> -meant to prevent regressions that users might later encounter on updat=
-ing, if
-> -e.g. a fix merged for 5.19-rc1 would be backported to 5.10.y, but not =
-to 5.15.y.
-> +stable series, one way to do so is by specifying the target series in =
-the
-> +subject prefix (e.g. '[PATCH stable 5.15 5.10]' asks that the patch to=
- be
+Thank you for looking into this!
 
-"that the patch is included in..." would be slightly better.
+Link: https://lore.kernel.org/all/686c55cc658564e8f37147e0d6d5ab62bb8372af.camel@maquefel.me/
+---
+ drivers/ntb/hw/intel/ntb_hw_gen3.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> +included in both 5.10.y and 5.15.y). When doing so, ensure the fix or =
-an
-> +equivalent is applicable, submitted, or already present in all newer s=
-table
-> +trees still supported. This is meant to prevent regressions that users=
- might
-> +later encounter on updating, if e.g. a fix merged for 5.19-rc1 would b=
-e
-> +backported to 5.10.y, but not to 5.15.y.
-> =20
->  .. _option_1:
-> =20
+diff --git a/drivers/ntb/hw/intel/ntb_hw_gen3.c b/drivers/ntb/hw/intel/ntb_hw_gen3.c
+index ffcfc3e02c35..a5aa96a31f4a 100644
+--- a/drivers/ntb/hw/intel/ntb_hw_gen3.c
++++ b/drivers/ntb/hw/intel/ntb_hw_gen3.c
+@@ -215,6 +215,9 @@ static int gen3_init_ntb(struct intel_ntb_dev *ndev)
+ 	}
+ 
+ 	ndev->db_valid_mask = BIT_ULL(ndev->db_count) - 1;
++	/* Make sure we are not using DB's used for link status */
++	if (ndev->hwerr_flags & NTB_HWERR_MSIX_VECTOR32_BAD)
++		ndev->db_valid_mask &= ~ndev->db_link_mask;
+ 
+ 	ndev->reg->db_iowrite(ndev->db_valid_mask,
+ 			      ndev->self_mmio +
 
-This is a helpful clarification and I like seeing an example. With the
-trivial change above:
+---
+base-commit: 2df0193e62cf887f373995fb8a91068562784adc
+change-id: 20240606-ntb_intel_db_fix-036299fabc48
 
-Reviewed-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+Best regards,
+-- 
+Nikita Shubin <n.shubin@yadro.com>
 
---=20
-Paul Barker
---------------cwYi1y9yKe2mdo4v6vJz18ui
-Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
-Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
 
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-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3D
-=3DsIIN
------END PGP PUBLIC KEY BLOCK-----
-
---------------cwYi1y9yKe2mdo4v6vJz18ui--
-
---------------cuym2VioR9YeBxcmeIilliEz--
-
---------------xI3MkB3bqz4WF3eJ5X8zp2y7
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZmFv6QUDAAAAAAAKCRDbaV4Vf/JGvWU6
-AQDSsAO3bvQOfdU4uSNy9JHsga8OyLIF2Rs7Fda7u/NyOAEAq6KIJw4g73ZA4mkNsnOM7kUpXq1+
-KcKZU1/hFlLX2wM=
-=jN5l
------END PGP SIGNATURE-----
-
---------------xI3MkB3bqz4WF3eJ5X8zp2y7--
 
