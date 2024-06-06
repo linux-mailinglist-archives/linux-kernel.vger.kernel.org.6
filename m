@@ -1,265 +1,113 @@
-Return-Path: <linux-kernel+bounces-204497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA958FEFCF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:03:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 331218FEFD5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:03:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8425F28432C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:02:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF706281F56
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBA819E7CA;
-	Thu,  6 Jun 2024 14:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52CD7196DBF;
+	Thu,  6 Jun 2024 14:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="iUn8bC65"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AG1g5oic"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DC41B011E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5031974FE;
+	Thu,  6 Jun 2024 14:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717684756; cv=none; b=jD9ESKTtEXDllnoJdP0UZL3g/tnVA5zkxwgtX5doWxneu4Zv+6iIIsMBtsxSjLX4T0WjfQYk8Eq7LkTd/NkGSGWq04A4yFljcNROwuCTdjb9Uv8s/4yKgJpv+KbopNX/7MprCbEYIZ4W8QOGuCHR1rnYYqSLLTGyFX2QAGEzqdc=
+	t=1717684817; cv=none; b=U6IpN8PNJkb9/LxnzfwtU68ZXGCuYDzJd21g3N9wDwzq7sPEvEweJumY1fN6CZkNPH/iXqqqxzL73rc0SRlYvZ49VDnBjv8tw6J+PpGNCjv5NRUSnBXaVGt+163Qxcrmi1N5Fj678U0WwSzC8gVzDJ/nLVRHmQFuEl41eKiYWyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717684756; c=relaxed/simple;
-	bh=PW0mB/Ap+iosdJhw53tmQWtAwnayyP9uDzO9zkRDuNw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xvgf7Uk28etwnBoe2e8FUCqIxlwPDs2I62SEpyho/iz8lH3wJYMGyUIT4Qno63OFtSUOybOiWjBkILIasT+bjpYL+kRTEEMg0Ldly9OIMDCG2i3vlbLm6bxUfDYgd58lVccod+/WTi7gYtK1DA9OZ1oKzZnDCzCYZwIIt0JTNRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=iUn8bC65; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2E69240E016C;
-	Thu,  6 Jun 2024 14:39:10 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id bk0JMOZU0YBh; Thu,  6 Jun 2024 14:39:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717684745; bh=+LG5ed49RtXEviXf/9mwTYPthSUWIdmD9Du5/B+SoL0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iUn8bC65hH12zSAv5Z1ZPeFgEfXppDTQC0RTZhU6a3Dtv3eN0gQ5TIRkgZ6yB7yxF
-	 qIXe0XtDmefjN7K5zKn5wi1Zo4AbaqUtTG6MqDXGK/JCAVcUi4b3E18reLYRcIyOPY
-	 5iQZTkFB3c2oD/yVnYH119lPuEhIrrN10IE3F0WRqqep8H2fBfRYE2n3DNJz6yZepe
-	 tADOSVaT7CcjfNj2xse2+VcVZF/VGrH3xDej3Bp//tnvSVSOHoMrr/jCV45PTOkmNV
-	 n3fUUljocQFNWPbus1Y562aurZ5AjEXdP/lj/8DKL6089kgfMzFyYyBWkCSTXjotxZ
-	 q51dFgeG1iS8F/kiug6ASDvef9qhgyCqGbGqYkGFE7fZNzQvAmjO1/FNEBkNZOOCzl
-	 MLXlyS1a4sT4Z3mIjBBlOW6LsBehDch9/i/aCZvZ5ULDSyhKscjP54Dq5+JzAoa3t6
-	 zvYDtkitTE6dhossGMsmKqkG5kFFzbO7uEKpR/UZ6GNnlgBTJtdfNvyDyHdWy/B5VB
-	 AmOxlIXx0QT6bodV5xRYz8ZUDvrOnn0v6JvRf8agMtJurDqpo6499tT7lsRUNK9U7f
-	 nGVOgO2rc1FdSyaWBvLDbprfpxGOf3DnzpsJvqdAEqrqYVs3w5YR8Vk45RXznDlDE4
-	 7dgC1VghNqaVjDTso2OqoxgQ=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A0A8A40E0027;
-	Thu,  6 Jun 2024 14:38:51 +0000 (UTC)
-Date: Thu, 6 Jun 2024 16:38:44 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-coco@lists.linux.dev, svsm-devel@coconut-svsm.dev,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>
-Subject: Re: [PATCH v5 04/13] x86/sev: Perform PVALIDATE using the SVSM when
- not at VMPL0
-Message-ID: <20240606143844.GDZmHJ9CK_aNoD3TSe@fat_crate.local>
-References: <cover.1717600736.git.thomas.lendacky@amd.com>
- <4c4017d8b94512d565de9ccb555b1a9f8983c69c.1717600736.git.thomas.lendacky@amd.com>
+	s=arc-20240116; t=1717684817; c=relaxed/simple;
+	bh=ZGB3juOxwVTV9EOeSwh34a8EfYqp00QVXUiUxC+Ea5I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nuBVIeoNEDaTUA/chx4ECJs+Bk/x9BTK/S+X3KDDwpxJM1Lhx7mdvwJufsO0bfl2l3zqwEnZagIdq1dwoFbB2NXO+tlK+0PxxNLVCAI7pii80zxOTAWh/vcn9i9S7thjSTAKKDH7vOFcn9gKnHcN98z7s6ZsLZGfbQ5HR4dYowI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AG1g5oic; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45699e8M016166;
+	Thu, 6 Jun 2024 14:40:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=VCPJV/VzG/M+IhNnUHL+ziLX+EjaBPDAUVTfhaUS/lA=; b=AG
+	1g5oicFc4NZ6QEWNF6Xl2Nf0HGSU3em582cnahrOLMnHwu4LZqqVNcmx23UnngYX
+	KGi568hk/+HzkZ1CuqRFYOGKGGy3AbNeUJTgnc0GrJafVBUgOf64LOjTc1GCwSkd
+	5lvtnADKP10LgH3JXs4NRKUx1pgE1wBGbJEgpkyhXvAiItiP4keHQNP9gOFHvkuD
+	hQhsmMB3EsKG+2l3yqwy94BHT+J2oTuAKMcofBu6U7VWvEhHAaIAhQTnE3F0Y8rT
+	UAFh1FEPQ8retAnv8tZYjp1Nx0eByLlGneYw4k7TP6TqygHw3PZUY8oV7Ndmc8C6
+	PP5+whaamTQ1C+ko44cA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yka7p8rjv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Jun 2024 14:40:12 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 456EeACl009445
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 6 Jun 2024 14:40:10 GMT
+Received: from hyd-e160-a01-3-01.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 6 Jun 2024 07:40:06 -0700
+From: Naina Mehta <quic_nainmeht@quicinc.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konrad.dybcio@linaro.org>, <manivannan.sadhasivam@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_nainmeht@quicinc.com>
+Subject: [PATCH 0/5] Add MPSS remoteproc support for SDX75
+Date: Thu, 6 Jun 2024 20:08:53 +0530
+Message-ID: <20240606143858.4026-1-quic_nainmeht@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <4c4017d8b94512d565de9ccb555b1a9f8983c69c.1717600736.git.thomas.lendacky@amd.com>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9PpGwCdiY-hS7m9_aHwm7xl7e4sVnC4q
+X-Proofpoint-ORIG-GUID: 9PpGwCdiY-hS7m9_aHwm7xl7e4sVnC4q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-06_01,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ malwarescore=0 adultscore=0 spamscore=0 bulkscore=0 clxscore=1011
+ phishscore=0 mlxlogscore=766 lowpriorityscore=0 impostorscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406060106
 
-On Wed, Jun 05, 2024 at 10:18:47AM -0500, Tom Lendacky wrote:
-> The PVALIDATE instruction can only be performed at VMPL0. An SVSM will
-> be present when running at VMPL1 or a lower privilege level.
-> 
-> When an SVSM is present, use the SVSM_CORE_PVALIDATE call to perform
-> memory validation instead of issuing the PVALIDATE instruction directly.
-> 
-> The validation of a single 4K page is now explicitly identified as such
-> in the function name, pvalidate_4k_page(). The pvalidate_pages() function
-> is used for validating 1 or more pages at either 4K or 2M in size. Each
-> function, however, determines whether it can issue the PVALIDATE directly
-> or whether the SVSM needs to be invoked.
-> 
-> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-> ---
->  arch/x86/boot/compressed/sev.c |  45 +++++-
->  arch/x86/include/asm/sev.h     |  26 ++++
->  arch/x86/kernel/sev-shared.c   | 250 +++++++++++++++++++++++++++++++--
->  arch/x86/kernel/sev.c          |  30 ++--
->  4 files changed, 325 insertions(+), 26 deletions(-)
+Add modem support to SDX75 using the PAS remoteproc driver.
+Also, add qlink_logging memory region and split MPSS DSM
+region into 2 separate regions.
 
-Some touchups ontop like slimming down indentation levels, etc.
+These patches were co-authored by Rohit Agarwal while at
+Qualcomm.
 
-diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
-index 226b68b4a29f..ce941a9890f8 100644
---- a/arch/x86/boot/compressed/sev.c
-+++ b/arch/x86/boot/compressed/sev.c
-@@ -284,11 +284,12 @@ void sev_es_shutdown_ghcb(void)
- 		error("SEV-ES CPU Features missing.");
- 
- 	/*
--	 * This is used to determine whether to use the GHCB MSR protocol or
--	 * the GHCB shared page to perform a GHCB request. Since the GHCB page
--	 * is being changed to encrypted, it can't be used to perform GHCB
--	 * requests. Clear the boot_ghcb variable so that the GHCB MSR protocol
--	 * is used to change the GHCB page over to an encrypted page.
-+	 * This denotes whether to use the GHCB MSR protocol or the GHCB
-+	 * shared page to perform a GHCB request. Since the GHCB page is
-+	 * being changed to encrypted, it can't be used to perform GHCB
-+	 * requests. Clear the boot_ghcb variable so that the GHCB MSR
-+	 * protocol is used to change the GHCB page over to an encrypted
-+	 * page.
- 	 */
- 	boot_ghcb = NULL;
- 
-diff --git a/arch/x86/kernel/sev-shared.c b/arch/x86/kernel/sev-shared.c
-index 8b191e313c0a..b889be32ef9c 100644
---- a/arch/x86/kernel/sev-shared.c
-+++ b/arch/x86/kernel/sev-shared.c
-@@ -1220,6 +1220,15 @@ static void __head setup_cpuid_table(const struct cc_blob_sev_info *cc_info)
- 	}
- }
- 
-+static inline void __pval_terminate(u64 pfn, bool action, unsigned int page_size,
-+				    int ret, u64 svsm_ret)
-+{
-+	WARN(1, "PVALIDATE failure: pfn: 0x%llx, action: %u, size: %u, ret: %d, svsm_ret: 0x%llx\n",
-+	     pfn, action, page_size, ret, svsm_ret);
-+
-+	sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_PVALIDATE);
-+}
-+
- static void svsm_pval_terminate(struct svsm_pvalidate_call *pc, int ret, u64 svsm_ret)
- {
- 	unsigned int page_size;
-@@ -1230,16 +1239,7 @@ static void svsm_pval_terminate(struct svsm_pvalidate_call *pc, int ret, u64 svs
- 	action = pc->entry[pc->cur_index].action;
- 	page_size = pc->entry[pc->cur_index].page_size;
- 
--	WARN(1, "PVALIDATE failure: pfn 0x%llx, action=%u, size=%u - ret=%d, svsm_ret=0x%llx\n",
--	     pfn, action, page_size, ret, svsm_ret);
--	sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_PVALIDATE);
--}
--
--static void pval_terminate(u64 pfn, bool action, unsigned int page_size, int ret)
--{
--	WARN(1, "PVALIDATE failure: pfn 0x%llx, action=%u, size=%u - ret=%d\n",
--	     pfn, action, page_size, ret);
--	sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_PVALIDATE);
-+	__pval_terminate(pfn, action, page_size, ret, svsm_ret);
- }
- 
- static void svsm_pval_4k_page(unsigned long paddr, bool validate)
-@@ -1284,7 +1284,7 @@ static void pvalidate_4k_page(unsigned long vaddr, unsigned long paddr, bool val
- 	int ret;
- 
- 	/*
--	 * This can be called very early in the boot, so use rip-relative
-+	 * This can be called very early during boot, so use rIP-relative
- 	 * references as needed.
- 	 */
- 	if (RIP_REL_REF(snp_vmpl)) {
-@@ -1292,7 +1292,7 @@ static void pvalidate_4k_page(unsigned long vaddr, unsigned long paddr, bool val
- 	} else {
- 		ret = pvalidate(vaddr, RMP_PG_SIZE_4K, validate);
- 		if (ret)
--			pval_terminate(PHYS_PFN(paddr), validate, RMP_PG_SIZE_4K, ret);
-+			__pval_terminate(PHYS_PFN(paddr), validate, RMP_PG_SIZE_4K, ret, 0);
- 	}
- }
- 
-@@ -1315,16 +1315,19 @@ static void pval_pages(struct snp_psc_desc *desc)
- 		validate = e->operation == SNP_PAGE_STATE_PRIVATE;
- 
- 		rc = pvalidate(vaddr, size, validate);
-+		if (!rc)
-+			continue;
-+
- 		if (rc == PVALIDATE_FAIL_SIZEMISMATCH && size == RMP_PG_SIZE_2M) {
- 			unsigned long vaddr_end = vaddr + PMD_SIZE;
- 
- 			for (; vaddr < vaddr_end; vaddr += PAGE_SIZE, pfn++) {
- 				rc = pvalidate(vaddr, RMP_PG_SIZE_4K, validate);
- 				if (rc)
--					pval_terminate(pfn, validate, RMP_PG_SIZE_4K, rc);
-+					__pval_terminate(pfn, validate, RMP_PG_SIZE_4K, rc, 0);
- 			}
--		} else if (rc) {
--			pval_terminate(pfn, validate, size, rc);
-+		} else {
-+			__pval_terminate(pfn, validate, size, rc, 0);
- 		}
- 	}
- }
-@@ -1429,24 +1432,26 @@ static void svsm_pval_pages(struct snp_psc_desc *desc)
- 
- 		do {
- 			ret = svsm_perform_call_protocol(&call);
--			if (ret) {
--				/*
--				 * Check if the entry failed because of an RMP mismatch (a
--				 * PVALIDATE at 2M was requested, but the page is mapped in
--				 * the RMP as 4K).
--				 */
--				if (call.rax_out == SVSM_PVALIDATE_FAIL_SIZEMISMATCH &&
--				    pc->entry[pc->cur_index].page_size == RMP_PG_SIZE_2M) {
--					/* Save this entry for post-processing at 4K */
--					pv_4k[pv_4k_count++] = pc->entry[pc->cur_index];
--
--					/* Skip to the next one unless at the end of the list */
--					pc->cur_index++;
--					if (pc->cur_index < pc->num_entries)
--						ret = -EAGAIN;
--					else
--						ret = 0;
--				}
-+			if (!ret)
-+				continue;
-+
-+			/*
-+			 * Check if the entry failed because of an RMP mismatch (a
-+			 * PVALIDATE at 2M was requested, but the page is mapped in
-+			 * the RMP as 4K).
-+			 */
-+
-+			if (call.rax_out == SVSM_PVALIDATE_FAIL_SIZEMISMATCH &&
-+			    pc->entry[pc->cur_index].page_size == RMP_PG_SIZE_2M) {
-+				/* Save this entry for post-processing at 4K */
-+				pv_4k[pv_4k_count++] = pc->entry[pc->cur_index];
-+
-+				/* Skip to the next one unless at the end of the list */
-+				pc->cur_index++;
-+				if (pc->cur_index < pc->num_entries)
-+					ret = -EAGAIN;
-+				else
-+					ret = 0;
- 			}
- 		} while (ret == -EAGAIN);
- 
+Naina Mehta (5):
+  dt-bindings: remoteproc: qcom,sm8550-pas: document the SDX75 PAS
+  remoteproc: qcom: pas: Add SDX75 remoteproc support
+  arm64: dts: qcom: sdx75: add missing qlink_logging reserved memory for
+    mpss
+  arm64: dts: qcom: sdx75: Add remoteproc node
+  arm64: dts: qcom: sdx75-idp: enable MPSS remoteproc node
+
+ .../bindings/remoteproc/qcom,sm8550-pas.yaml  |  1 +
+ arch/arm64/boot/dts/qcom/sdx75-idp.dts        |  6 ++
+ arch/arm64/boot/dts/qcom/sdx75.dtsi           | 64 +++++++++++++++++--
+ drivers/remoteproc/qcom_q6v5_pas.c            |  1 +
+ 4 files changed, 68 insertions(+), 4 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.17.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
