@@ -1,120 +1,136 @@
-Return-Path: <linux-kernel+bounces-203802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5AAF8FE0A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:10:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28EAE8FE093
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:09:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 802F01F25AA2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:10:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99BD8B2153C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8991413E3E1;
-	Thu,  6 Jun 2024 08:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3261D13C3D2;
+	Thu,  6 Jun 2024 08:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dOAT8N+A"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="mBL0lEfL"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5459713DDB6;
-	Thu,  6 Jun 2024 08:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464EE13BACE;
+	Thu,  6 Jun 2024 08:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717661370; cv=none; b=WvtFndjwGqWBLvPdr6B/UNGTcLB5ikypQVpyoGCjZvDlYEieP4vz1SoEvbTPyxsyijS2nq1aAk9hdmknHH1QwnjWQIaiURG7T6JGczG0PUEALvBelq5nEej9bIqjD2LznXV9x/F3D2DKLrv9OF/RtaRRCuH7SfxwkkemNCGQOQo=
+	t=1717661349; cv=none; b=Yx95ra0KttzZZiLUo31mgvaxxvRwG1cMcnspMuXWxYsqsq1gdFw1lg44z7wHITvcZ6QyaVKm+8euv54A3qCByhHYAvKdaJICTXYZIVV26RFGzjv0ao0SRuT8+kg8hHgeKrtzUFQXA2e1l1dOcp3EGRIHANGKJ1xcqWCUnqYGWj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717661370; c=relaxed/simple;
-	bh=LssabN+XthOn6U6NE+DSU9k1nhNWks6ad+9GAqDUaI4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=jYgtLfqKcaziRLqw1T95iB+SZ5J2V6pu0ceYDTWkfvjwe04h4boMHBtiBYm9BkS7lYdoG0XPFUt1LExPz64qMrZxsKoH8UHzKIdMJkjqMr9lIO0o3blk4m8VZ1ppYideSRnCmaSo5p397Nokgm/GIV1VVWyDmVNYXK3yXcxnCuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dOAT8N+A; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45689L2W051728;
-	Thu, 6 Jun 2024 03:09:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717661361;
-	bh=F1/xNTjUNkjPqU5B/NvgKixmWsXl5A1tcGKVBAxVZqs=;
-	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=dOAT8N+ARzkW+XmfhLrv5QGCVJ7IxCUFYUR4fMytBfWlvNZgrtu3JnmR2o9M/tSav
-	 oDtEg0aq9zhRu2eiHQ/vyZX4rqobSlW7dkGH0gMjdZQI3dBPdEHE2omqlUGTlT0UU1
-	 435qnpinm2tCBfnJaV0IHNmf9hRpMX/tkgp99GEc=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45689L0g095515
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 6 Jun 2024 03:09:21 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 6
- Jun 2024 03:09:21 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 6 Jun 2024 03:09:21 -0500
-Received: from localhost (jluthra.dhcp.ti.com [172.24.227.116])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45689KZJ017614;
-	Thu, 6 Jun 2024 03:09:20 -0500
-From: Jai Luthra <j-luthra@ti.com>
-Date: Thu, 6 Jun 2024 13:37:46 +0530
-Subject: [PATCH v2 7/7] arm64: dts: ti: k3-am62p5-sk: Fix pinmux for McASP1
- TX
+	s=arc-20240116; t=1717661349; c=relaxed/simple;
+	bh=8DZvqrIExiDGlNTQIZ70xfDwsYQlZo74CWV6y/G47dI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NsaVtB0Or9MAtc+MHKxtBcFoTpQP6FWzrxgqCeDE4Gqo7mv5iwP3kKl631ukeOB/QvUP7e4Xo5Sew+gLbllWgxMmlFmevKzXAehv65gI/mHAeguln+2CpNYuPR8rEScAOPe56/0ah1hp81e5V5az0AAhVxUIuXb93Rd+civDvCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=mBL0lEfL; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id A27ABA0748;
+	Thu,  6 Jun 2024 10:09:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=Ej9AvbdmuG6OY/rM5mr02/VBWUAX37e/AaK0xJ/MhCo=; b=
+	mBL0lEfLcjF9Du1KIu/uTM3ywQxviFLZ1i1vkXPTJ8Gq+SrSw6BfBrWH2uxHkT7Q
+	NS4ToX08UN0ZVk276+FgRiepj4CYPJ2bXYu4ZZcVfaEki3mrGK7YzuHZxbc93i7L
+	GJW1dFuE92+/KYS2EPN2l0ESfkxl2j64PHbMvyrTGN1pn4cbJGAYLvBByz3HGAi0
+	l7+TyL1R/2HTToBUYe/o1c3jNpmdgJjzCGtmQ8la430pKtFj6XDK2QUCfZeFCo9M
+	ZUdHculLf2XaefILfgCPgYHET5o/SSy1vXmy/tu1C5AQXr7WlH01YLdYi6VEgpu5
+	TFrTZGpMwWpF41SHSmtTHIAka3bbWWmMAjdnDYR+xu+rCi2SZhBKO3gGfd/KeYaU
+	Xnun4EpafeGfHRMPDsCXMb0WZrFDjfihgbLnh6oRABYgSpWI42j+UpWK1xBIK2EW
+	rCT0agw8Ht8jPmadQFo7Z63BKmh+dZ7vBCpfzvedTkxtvoKVkES1XUMmVDqmeu0l
+	cuD5MywyXx4/gaWQDlC3dOVUXvOt63YK26qgAIYKzZKi1fdGC7zXVUDA4fbpL9Zm
+	X0FnI0YO5PrQXgRLfFYXoB5Mtcs3mK8Jz3PtVTRBpicLEeGWCZIQRGKZQrdi8GbS
+	k2MlvbMN2WoQKJFBXF8hKbHDJV/wHZ7eGOflBC05CA0=
+From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>,
+	<trivial@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit
+	<hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>
+Subject: [RFC PATCH v2 2/2] net: include: mii: Refactor: Use bit ops for ADVERTISE_* bits
+Date: Thu, 6 Jun 2024 10:08:37 +0200
+Message-ID: <20240606080836.121056-2-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240606-mcasp_fifo_drop-v2-7-8c317dabdd0a@ti.com>
-References: <20240606-mcasp_fifo_drop-v2-0-8c317dabdd0a@ti.com>
-In-Reply-To: <20240606-mcasp_fifo_drop-v2-0-8c317dabdd0a@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jayesh
- Choudhary <j-choudhary@ti.com>,
-        Devarsh Thakkar <devarsht@ti.com>, Bryan
- Brattlof <bb@ti.com>,
-        Aradhya Bhatia <a-bhatia1@ti.com>,
-        Francesco Dolcini
-	<francesco.dolcini@toradex.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Devarsh Thakkar <devarsht@ti.com>,
-        Jai Luthra
-	<j-luthra@ti.com>
-X-Mailer: b4 0.12.4
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1717661341;VERSION=7972;MC=1665352353;ID=397362;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A29916D3B54627163
 
-On SK-AM62P, McASP1 uses two pins for communicating with the codec over
-I2S protocol. One of these pins (AXR0) is used for audio playback (TX)
-so the direction of the pin should be OUTPUT.
+Replace hex values with bit shift and __GENMASK() for readability
 
-Fixes: c00504ea42c0 ("arm64: dts: ti: k3-am62p5-sk: Updates for SK EVM")
-Signed-off-by: Jai Luthra <j-luthra@ti.com>
+Cc: trivial@kernel.org
+
+Signed-off-by: "Csókás, Bence" <csokas.bence@prolan.hu>
 ---
- arch/arm64/boot/dts/ti/k3-am62p5-sk.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-index 78d4d44e8bd4..fb980d46e304 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-@@ -207,7 +207,7 @@ main_mcasp1_pins_default: main-mcasp1-default-pins {
- 		pinctrl-single,pins = <
- 			AM62PX_IOPAD(0x0090, PIN_INPUT, 2) /* (U24) GPMC0_BE0n_CLE.MCASP1_ACLKX */
- 			AM62PX_IOPAD(0x0098, PIN_INPUT, 2) /* (AA24) GPMC0_WAIT0.MCASP1_AFSX */
--			AM62PX_IOPAD(0x008c, PIN_INPUT, 2) /* (T25) GPMC0_WEn.MCASP1_AXR0 */
-+			AM62PX_IOPAD(0x008c, PIN_OUTPUT, 2) /* (T25) GPMC0_WEn.MCASP1_AXR0 */
- 			AM62PX_IOPAD(0x0084, PIN_INPUT, 2) /* (R25) GPMC0_ADVn_ALE.MCASP1_AXR2 */
- 		>;
- 	};
+Notes:
+    Changes since v2:
+    * Replace BIT() with bit shift, as the macro is not exported to userspace
+    * Use __GENMASK(), exported into userspace in 3c7a8e190bc5
 
+ include/uapi/linux/mii.h | 34 +++++++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
+
+diff --git a/include/uapi/linux/mii.h b/include/uapi/linux/mii.h
+index 33e1b0c717e4..f03ac3b35850 100644
+--- a/include/uapi/linux/mii.h
++++ b/include/uapi/linux/mii.h
+@@ -69,23 +69,23 @@
+ #define BMSR_100BASE4		0x8000	/* Can do 100mbps, 4k packets  */
+ 
+ /* Advertisement control register. */
+-#define ADVERTISE_SLCT		0x001f	/* Selector bits               */
+-#define ADVERTISE_CSMA		0x0001	/* Only selector supported     */
+-#define ADVERTISE_10HALF	0x0020	/* Try for 10mbps half-duplex  */
+-#define ADVERTISE_1000XFULL	0x0020	/* Try for 1000BASE-X full-duplex */
+-#define ADVERTISE_10FULL	0x0040	/* Try for 10mbps full-duplex  */
+-#define ADVERTISE_1000XHALF	0x0040	/* Try for 1000BASE-X half-duplex */
+-#define ADVERTISE_100HALF	0x0080	/* Try for 100mbps half-duplex */
+-#define ADVERTISE_1000XPAUSE	0x0080	/* Try for 1000BASE-X pause    */
+-#define ADVERTISE_100FULL	0x0100	/* Try for 100mbps full-duplex */
+-#define ADVERTISE_1000XPSE_ASYM	0x0100	/* Try for 1000BASE-X asym pause */
+-#define ADVERTISE_100BASE4	0x0200	/* Try for 100mbps 4k packets  */
+-#define ADVERTISE_PAUSE_CAP	0x0400	/* Try for pause               */
+-#define ADVERTISE_PAUSE_ASYM	0x0800	/* Try for asymetric pause     */
+-#define ADVERTISE_RESV		0x1000	/* Unused...                   */
+-#define ADVERTISE_RFAULT	0x2000	/* Say we can detect faults    */
+-#define ADVERTISE_LPACK		0x4000	/* Ack link partners response  */
+-#define ADVERTISE_NPAGE		0x8000	/* Next page bit               */
++#define ADVERTISE_SLCT		GENMASK(4, 0)	/* Selector bits               */
++#define ADVERTISE_CSMA		BIT(0)	/* Only selector supported     */
++#define ADVERTISE_10HALF	BIT(5)	/* Try for 10mbps half-duplex  */
++#define ADVERTISE_1000XFULL	BIT(5)	/* Try for 1000BASE-X full-duplex */
++#define ADVERTISE_10FULL	BIT(6)	/* Try for 10mbps full-duplex  */
++#define ADVERTISE_1000XHALF	BIT(6)	/* Try for 1000BASE-X half-duplex */
++#define ADVERTISE_100HALF	BIT(7)	/* Try for 100mbps half-duplex */
++#define ADVERTISE_1000XPAUSE	BIT(7)	/* Try for 1000BASE-X pause    */
++#define ADVERTISE_100FULL	BIT(8)	/* Try for 100mbps full-duplex */
++#define ADVERTISE_1000XPSE_ASYM	BIT(8)	/* Try for 1000BASE-X asym pause */
++#define ADVERTISE_100BASE4	BIT(9)	/* Try for 100mbps 4k packets  */
++#define ADVERTISE_PAUSE_CAP	BIT(10)	/* Try for pause               */
++#define ADVERTISE_PAUSE_ASYM	BIT(11)	/* Try for asymmetric pause     */
++#define ADVERTISE_RESV		BIT(12)	/* Unused...                   */
++#define ADVERTISE_RFAULT	BIT(13)	/* Say we can detect faults    */
++#define ADVERTISE_LPACK		BIT(14)	/* Ack link partners response  */
++#define ADVERTISE_NPAGE		BIT(15)	/* Next page bit               */
+ 
+ #define ADVERTISE_FULL		(ADVERTISE_100FULL | ADVERTISE_10FULL | \
+ 				  ADVERTISE_CSMA)
 -- 
-2.43.0
+2.34.1
+
 
 
