@@ -1,183 +1,116 @@
-Return-Path: <linux-kernel+bounces-205168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F2818FF84E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:51:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69DC38FF84F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C54B1C23A5F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:51:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90CA21C23B0C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01CB413F457;
-	Thu,  6 Jun 2024 23:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C193A13F42B;
+	Thu,  6 Jun 2024 23:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a89D7I0q"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="Ozhe14ne";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RvRJ654r"
+Received: from wfhigh4-smtp.messagingengine.com (wfhigh4-smtp.messagingengine.com [64.147.123.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1958482F6;
-	Thu,  6 Jun 2024 23:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D1113DDCD
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 23:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717717866; cv=none; b=UvDFCQt12v17Y8aGU2zVDslc8ouavwBZ1ZzAz7fSzDnNM5JLa9TrJkEnxuDMVrydO4N0cXbgpYIg/izPO/Gykr8g7a4jGD1SKeZsZ72XTyLIrJGIb2d0KfqNgtjjLUA/rQ75gCJfuIVWGsrK21kPKYdqgCnBfncQPpq3Sr/oAuc=
+	t=1717717901; cv=none; b=PIEuU//m2sLy2buvGNir1PGTXgx6czfg5+5W1dhE1LgpG2PMHWlMfMGgh+NQZ6rpMb9xxJA5pbhKLNQoUOFzDb/jZqswn49SM+nSEtDbB3gqilvhU+rUSSs5EUAIc10suUkEeDjP+KSLwf2MlC6crUHN2PtXogGvj14y1gVNci8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717717866; c=relaxed/simple;
-	bh=bbVleMmmMakhROC+VISatQueB3wussVSW+M+2HzXVsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LoWGH3uIp0NMpELibNZtmDdqnuwU+1jxUUW7SCTVnXTm4pFTZ4JCkJmBqcPOhB1L1mlYvW9fNS1JW9uiO+w1LG9ojtRwzc8B7jnAyUQuRGgMegITnz/TYSj+GQfoDmzsMQVPFoqOLHxrKOnPYTwYHZrLHvrcPHt5eixnUADO+ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a89D7I0q; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6f945b242easo1400413a34.1;
-        Thu, 06 Jun 2024 16:51:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717717864; x=1718322664; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yxRFb8jNZD704/30Zm3Ud+U3UJ7d2I13EMGRbHwqT3Y=;
-        b=a89D7I0q/3Wuvz2B2r7Kf4wCxTqfa6K2HM4HATO7SPehDGvl8kZfw5uec/TO8821Rb
-         t28DrBFqxT4cyl0RhK8RvwGvqH7UpSruJS/ustCjl8gz28fU785dygqEoUBju7V/0J74
-         NdinWE0vXdJQHCvthkC2X3KMzVxTIW/cpVHiLnZ6B3KQq8PcrSZiWB4EnXePXASMx3Nz
-         rs1OY4EM38mkYCPaY3mNJwwK39buWOzTjqL71LdkCb6AoT+3tV6dWiLZz/7GTduGLjr3
-         I1KdbjOW7EOAP4UyXcOjKCPmDfmfI8a/bOBiLXiV9WGxvFFbEGsgHUC5n/C4lP6KsCHb
-         bWCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717717864; x=1718322664;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yxRFb8jNZD704/30Zm3Ud+U3UJ7d2I13EMGRbHwqT3Y=;
-        b=TdKC0REkJq7uWjLAaa0IMXUEFDfpSLFbPTrbK2heW+iX1VaGLy04y8i1H/bfLudPGm
-         uyD7VN99fnUGA6Q3aeQuNOL0NaUydJLz7VXTCjUYQINOI0aV5ZueeEh3iJWfAkp1YJnv
-         jE7XI5L4n6aU5FZQ9AqveGsTOkPBCym9cTFECRbjuSbTxKznvzYhCDtatAjeNA6SFPIE
-         dBWzo022gOFvrT/NYgqW/pj1TH/9NY2/5EAollawVC2l0aAUq1I62wdKULYmB8hclZSA
-         xo2rRFTKDSd46QQ9N5fR46SNt00X0arui0OPzCi6DmdVanYPhYAPN7vSY9vY8nl7MAb4
-         u9ww==
-X-Forwarded-Encrypted: i=1; AJvYcCXgL5IvMT7sUyOqF87guM/UEczsrl8Wi6L5r4jjjrDSAt7Q4Ywqhs9jHLLTleLt8piC+I2euj+nipasCWV36kXh/JhN2JHmVhmS9GHcIbRa+Tcgt39jRYOuqPbVEFRzuBzAs4I9dd3zIalIXqPwyevXo7Eud867bjltnmIxh+Qxs7a1vxDmMU5F0DDHsIIvCpw=
-X-Gm-Message-State: AOJu0YxzztmF5QfrZaPH76Ow+GxqX1TL9jbRryjucrSvQvfBRD9gM9Kk
-	L3Le9fGNdsLxUOYigLWEXB7l73BFX369Ifq1U1GYH0zkCd81Whgc
-X-Google-Smtp-Source: AGHT+IFuzcYU+uA6LX/vYx9r/+oQDDEQSuMV0Oemf+DdwTHJ9qBvX0k0i7ke0HkdjstOhtn9py4nlg==
-X-Received: by 2002:a05:6830:2049:b0:6f9:1b6a:1e66 with SMTP id 46e09a7af769-6f95721b518mr941006a34.16.1717717863703;
-        Thu, 06 Jun 2024 16:51:03 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7953286feb2sm105196185a.56.2024.06.06.16.51.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 16:51:03 -0700 (PDT)
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 737B71200043;
-	Thu,  6 Jun 2024 19:51:02 -0400 (EDT)
+	s=arc-20240116; t=1717717901; c=relaxed/simple;
+	bh=ABohHHYnFGCHQQ0QDcs3l3ntJWi1Qy/K6W1Ae0bUfnA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lowSTWa8pJB9warlKWQNYAz7O3dKgNF8Iz+nXmg9Fe1BKlO8UzYDUprg+t08hGpOBiN6gyhyMAcYyWBb2ryNCsAIKOb6GfnZE88MOd1kHt6MaLvd/glOg8zbQ93LGIDMpADBDRQ1AIh7n+KYJNoPsdDHHdmkD8psRK68UJXLnZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=Ozhe14ne; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RvRJ654r; arc=none smtp.client-ip=64.147.123.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 16A3E18000BD;
+	Thu,  6 Jun 2024 19:51:39 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute7.internal (MEProxy); Thu, 06 Jun 2024 19:51:02 -0400
-X-ME-Sender: <xms:ZktiZsH4aZsVUspSdFzpOEcEVAij3zCRcE02mGlcHio889FJyI6saw>
-    <xme:ZktiZlVsflnRrml9apd5_f8cqMGJhmOkwzUyxTfls6ZKNZ6UbJK6-TU_JC1i7_HLQ
-    bkZW5v8FSP-1Iq_pw>
-X-ME-Received: <xmr:ZktiZmLW5DvQFZ_F3rNK0V4x7WdPDAROp8OsiQ3eDI--rSkIo8NKDCLZFeIsrA>
+  by compute2.internal (MEProxy); Thu, 06 Jun 2024 19:51:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm1; t=1717717898; x=1717804298; bh=sbGYsNm3EA
+	X9zOM5lpa8OVKFNwjt6nSlwmTErxltP9E=; b=Ozhe14neVtqdfE6HxMlDBpme2t
+	UspFX9oV4hSNMM0iQQSFkP3I45hz/GoFbe/L06h7uA361EtLf3YvYQKY2kadm/hH
+	mnY9gG0/jkpy41NIpyTJYfSp9AfoCTIEE8VbeoumvMO397LVooDXFiAiJX9Ju1Rz
+	DyJ6l+XxcZWuDZKNn8RDoHHnI3mR7qQMQWp5FpKMhreHwwOzEXKax7YFZEqtfy7H
+	b7xr4oq2/5MwCe2RmRL826COYtiHU8PFJeOzPFV0aR/3i80C0SiGwwaFcMKbbq32
+	OOxtk5FdH1lZfJsalpF5hQ9h2QwcJNPH8Cfgi0H8H6TwQUC4/CSWn+UAQl/Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1717717898; x=1717804298; bh=sbGYsNm3EAX9zOM5lpa8OVKFNwjt
+	6nSlwmTErxltP9E=; b=RvRJ654rPuK4cXr1gcIE9Bpf7/rmZ0CqUfL+mnVxSwQQ
+	DfWi1pj/2P7d7BRmkqWvtHkx0LejkYXUVSUcYIKQMNjjUqIbyA23FUhfB257/ui3
+	pG+FBiCjewuDM4skM91/hP1JqHCmZ6NuDnvZPDlt8a5ilG4YiQMrX87VYkGSfy12
+	sWfZiMacavcE2IX2LO7IYIdMzH/+G8VFKhBtoHE0FFgKkxApE/WmU82TWEI/cvw5
+	jyZe4NVVzMJZTnoD6y+3d83uadXkJNqhVZWzgQGvMkTgX5ueDliUxuxFSuiU8w3R
+	Ax92SLexaIuT9jtdqrdD00WNRf2fWBBrglwvzwCb2w==
+X-ME-Sender: <xms:iktiZtQ1TyciYjdZIvjiXQ6K69e3rWXzNYzJwrB2YLIJhDgsfI-i1w>
+    <xme:iktiZmx_fKbdcc8_4uEasX0Pw-X9tvFYu0ckwEOwy-o2m7LZnQSAbxQm5U4u8t3js
+    JxdJkOm1U_C6eMIW7c>
+X-ME-Received: <xmr:iktiZi2hbdQH0htPzpSEXsp9DUF2OTedyIsN917qypx61BRgMY24nhoxDRH91ElNk39IXRdVO5fEmwNpbm2tBZx2PjtFG_AaMjEYb4uvM6iV5A>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdelledgvdejucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedvteehuddujedvkedtkeefgedv
-    vdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhh
-    phgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunh
-    drfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:ZktiZuG_RvyCgWk6Ifqoxu7O-LKSWSFZ3onBDVihVDholxptnBNrJQ>
-    <xmx:ZktiZiWdMzhoLT4WxVgZRg9JNtBNX2iDJ86jPKCVPrJ591D-QiSNCw>
-    <xmx:ZktiZhPDK8IIMAjRzfdT8frumB1S0qInFbIwsxjAsyo9zXQyH5imBg>
-    <xmx:ZktiZp2yBsA8CHXedkxGLqyZXy7G7LjLkwt59Cz48JIMng4OBnpdeA>
-    <xmx:ZktiZrXnv577hIbiXo2I_-EucD7YefaCI6qrzHwPANqjL4OHZZszvyhA>
-Feedback-ID: iad51458e:Fastmail
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertd
+    ertddtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghs
+    hhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeffvdeuleffve
+    ekudfhteejudffgefhtedtgfeutdfgvdfgueefudehveehveekkeenucevlhhushhtvghr
+    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhisehsrg
+    hkrghmohgttghhihdrjhhp
+X-ME-Proxy: <xmx:iktiZlB629F4SpCCiDuNgsQ3kPhgDmNAeNH2RTAdOg3_tHa9N6hD5Q>
+    <xmx:iktiZmi4WuhaH9Tf0T0KyeuWwbwjJBTifNqmdDAlHEwJqtQgGRI1Jg>
+    <xmx:iktiZpqQFCGcx51z4KRjmmvoPMNUrNzQVUxvVCeDpOWrfGKWTqU83A>
+    <xmx:iktiZhh_QdymlzSURVFARojBB4bifAgSgyb4D3DzRZF_g8tsEtfbHw>
+    <xmx:iktiZptqDUhSFUqg-VBoQILGLkfcyg2A387rHEo5QP_4dcIzJsLrS9Sl>
+Feedback-ID: ie8e14432:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 6 Jun 2024 19:51:01 -0400 (EDT)
-Date: Thu, 6 Jun 2024 16:50:52 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] rust: add tracepoint support
-Message-ID: <ZmJLXDWo3gL8gkID@boqun-archlinux>
-References: <20240606-tracepoint-v1-0-6551627bf51b@google.com>
- <20240606-tracepoint-v1-3-6551627bf51b@google.com>
- <389a8c55-a169-47ef-99c0-48f58003b40c@efficios.com>
- <ZmHacqvRwBj7OvWm@boqun-archlinux>
- <20240606173544.GI8774@noisy.programming.kicks-ass.net>
- <ZmIHVIqEukWWRMgd@boqun-archlinux>
- <20240606192951.GJ8774@noisy.programming.kicks-ass.net>
+ 6 Jun 2024 19:51:37 -0400 (EDT)
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] firewire: add helper functions for phy configuration packet
+Date: Fri,  7 Jun 2024 08:51:31 +0900
+Message-ID: <20240606235133.231543-1-o-takashi@sakamocchi.jp>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606192951.GJ8774@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 06, 2024 at 09:29:51PM +0200, Peter Zijlstra wrote:
-> On Thu, Jun 06, 2024 at 12:00:36PM -0700, Boqun Feng wrote:
-> > On Thu, Jun 06, 2024 at 07:35:44PM +0200, Peter Zijlstra wrote:
-> > > On Thu, Jun 06, 2024 at 08:49:06AM -0700, Boqun Feng wrote:
-> > > 
-> > > > Long-term plan is to 1) compile the C helpers in some IR and 2) inline
-> > > > the helpers with Rust in IR-level, as what Gary has:
-> > > > 
-> > > > 	https://lore.kernel.org/rust-for-linux/20240529202817.3641974-1-gary@garyguo.net/
-> > > 
-> > > Urgh, that still needs us to maintain that silly list of helpers :-/
-> > > 
-> > 
-> > But it's an improvement from the current stage, right? ;-)
-> 
-> Somewhat, but only marginal.
-> 
-> > > Can't we pretty please have clang parse the actual header files into IR
-> > > and munge that into rust? So that we don't get to manually duplicate
-> > > everything+dog.
-> > 
-> > That won't always work, because some of our kernel APIs are defined as
-> > macros, and I don't think it's a trivial job to generate a macro
-> > definition to a function definition so that it can be translated to
-> > something in IR. We will have to do the macro -> function mapping
-> > ourselves somewhere, if we want to inline the API across languages.
-> 
-> We can try and see how far we can get with moving a bunch of stuff into
-> inlines. There's quite a bit of simple CPP that could be inlines or
-> const objects I suppose.
-> 
+Hi,
 
-We can, but I'd first stick with what we have, improve it and make it
-stable until we go to the next stage. Plus, there's benefit of keeping
-an explicit helper list: it's clear what APIs are called by Rust, and
-moreover, it's easier to modify the helpers if you were to change an
-API, other than chasing where Rust code calls it. (Don't make me wrong,
-I'm happy if you want to do that ;-))
+In recent months, the batch of helper functions was added to serialize
+and deserialize content of packet in IEEE 1394 protocol. This series of
+changes includes some helper functions for phy configuration packet as
+well as some KUnit tests for them.
 
-Regards,
-Boqun
+Takashi Sakamoto (2):
+  firewire: core: add tests for serialization/deserialization of phy
+    config packet
+  firewire: core: use inline helper functions to serialize phy config
+    packet
 
-> Things like the tracepoints are of course glorious CPP abuse and are
-> never going to work.
-> 
-> But perhaps you can have an explicit 'eval-CPP on this here' construct
-> or whatnot. If I squit I see this paste! thingy (WTF's up with that !
-> operator?) to munge function names in the static_call thing. So
-> something like apply CPP from over there on this here can also be done
-> :-)
+ drivers/firewire/core-transaction.c       | 22 +++----
+ drivers/firewire/packet-serdes-test.c     | 79 +++++++++++++++++++++++
+ drivers/firewire/phy-packet-definitions.h | 55 ++++++++++++++++
+ 3 files changed, 144 insertions(+), 12 deletions(-)
+
+-- 
+2.43.0
+
 
