@@ -1,254 +1,303 @@
-Return-Path: <linux-kernel+bounces-203827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 273358FE0F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:30:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96A748FE0F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A19E21F222B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:30:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 877231C23827
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D95573477;
-	Thu,  6 Jun 2024 08:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21AEF13C690;
+	Thu,  6 Jun 2024 08:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GVR1Hcmc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gLJukwDZ"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BFC282FE
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E89C1DDF5
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717662632; cv=none; b=lJM1sgC+t3hHTRgwqSjaj6GItVz9EmPio4zkE4vARcvefjQ0DpUc6VjV53H4DunCozrXLISWopj25OT/58hmxl/1Q0v+OKDQSerO+cU5P9VHRTVAQjGW4ksy4jxDZnIK4VYXlqv8+C61OFCNDR7urke8Ox4ZeTjK4pM863Cd0bg=
+	t=1717662666; cv=none; b=enpR0rVSLTF92P5BuLOC6tbcSLyt1oE8ES+AkI1RyFBDpVRmVOHo06lxPntAxFLvfwC1H5oDNAeVEVPOh4Y0gbbV6kscN5kT0/jVoIS4EAIfVFf3vtaTgYXS/10pLl04Ig9hI4pM5gHM+KFr2SRui3GXUWs6GpOMfa2gOyWVQlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717662632; c=relaxed/simple;
-	bh=2XvdTb/gEDNTaX0zm75lWwl9b3VWTLnpEBk+g9saNJc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ExWxz4s/srp2lmZZrlPD7tgu2FH88c9TlfLVz+wzbVAfXT619Pq8eMKGm3sA/q8tHuK+kdJLu5uiZ+hGTfiTk2rwFOClkHWPujDoWyAruXVXJb5TlExYFqo+nDkc4+qnzyFlLL/aH7Dnetmgqi0JOgZqRgzEhZEPEVCQwceSx7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GVR1Hcmc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717662629;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3Cz1uU2NyZQqvmRwUEa7bRb467YlxBktFO04VlGLtzA=;
-	b=GVR1HcmcgW0ddUjlR1J6E27Fj/X06FNsfaylRjoTKCKEUhkBhBTazcpK6vXRuY21T4Nion
-	B7eBDa5l+XHxIV6ZW7T8n8Vc2Lfz+ZEaY+pQ2fb2xlYMBkQ8To9iCTmQ3qnv4RULkShssT
-	Vxaxnn3R+2Cz8wBxcO2rBG6CNS1Zfyo=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-605-MB30AbQFMIS9QsyPPnenFA-1; Thu, 06 Jun 2024 04:30:26 -0400
-X-MC-Unique: MB30AbQFMIS9QsyPPnenFA-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-35e0f8bcc3cso507799f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 01:30:26 -0700 (PDT)
+	s=arc-20240116; t=1717662666; c=relaxed/simple;
+	bh=3JRhOtjQp6XWQBITHCADEEQ3bdyOEsXbCaposfdMkYs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NrT3989+kF8dwX3TOPTOm6CAsKgpzU3NKo4emW4lmJe3dICbAfiSXoKwM+g5Fw7wZfjV6M/kGNC2Gz5yvuMk+Kl0ngDiMemn+fL9LQ9ozjx9DpQq2l96OTEDtJBHDkYd4YhEBZjrxurBJ7H36tOtEhpS7D2UYlIn1X1ZDjmEL90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gLJukwDZ; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-35ef3a037a0so311466f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 01:31:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717662662; x=1718267462; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BvPjvPVzmHEuJP2lMNchMySQh4QTQAmKpk+Itak28sU=;
+        b=gLJukwDZ4kK0t2FgGVXrwynwBLycWxpnolEzMyZoM/TtTPw0K8/4QaNWHh3nxlBKnm
+         C5JEUVvRIUprNIDHJ/hSpKQSCr2vUqg+4iLci53fYAlJm+jcVBX77bv1g8TP9E3SEPlI
+         F9AxtBBvO5giTHpUmRqxA1aXTT5Vg5DlLVjbDN1Ohrubk/z0rbEzcWCv9Gx1Yr/wK+Ae
+         ZW7/aBDjToV25U0IGfhUnnPrXdgeJyjLyh9/f9EYOnj3LoAgxJ1TaeGO4cMUSqyjABvx
+         lJwANdiUt7Hu6o2ur/Pi1jCI4W/Q25Uqkpf82l8zbzXVM8r5id4uoQSjvKL4sN+5O60t
+         LLRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717662625; x=1718267425;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3Cz1uU2NyZQqvmRwUEa7bRb467YlxBktFO04VlGLtzA=;
-        b=eBydWAhCEkkz/GkXQIfLd0kGG5b4ubqIErvOEHvxA3iLM2X8q0M+hoDJU7h2QpYoQT
-         iO/U0Var5tTm1LYFG/MgIlRwUvHQIZcU6Ra9yKAo0ae+bER4HuaNdKtSsotgRdGrm4Y8
-         4uLGgb/dIbqZSq0CBomXAeeldgJ3PlnxTo+/ISdahHysF3HcNsbK7My9J1ni1O+q4Np/
-         uqt/7fvvw3l9maKpMm7izHdWjSPJlamLVKtCJEE8iGH7s6c9FAGEof5ENQnnJlM3TLcj
-         678uomq1xXU+9066lVcbiUZ9pPH/tdrbOg2Wyf2NLtoIa1hrriKJ2WZeveXrHYeJW9Cl
-         9McA==
-X-Forwarded-Encrypted: i=1; AJvYcCXiWIevNczBmsFvBsHpBwu8JfC6P4IdQvVCp7q5Q4SRz5PaqyKeZusMp5d5vNwfZ0CmaVFzhXBbiwwMfTr1xahLXJ7tz26EJ3y9eOTx
-X-Gm-Message-State: AOJu0YwV5R2IeUwzY64YxNdrNkaEX75C7C/SSgmLJ6jXSKmhrL1VkWSh
-	sNz8GU3rPXdJblIbxSBSRO5mxWCQHipMr3K0rJCwzctJiD/eU8uvjNvdG0P5+h4kqTdBn0oupQD
-	TgHpHxp28UwomHKDIFuWyUyl2tgAAg0LgowpLc48nV63qsUdnS1dQkPLnjhilZw==
-X-Received: by 2002:adf:e8d0:0:b0:356:2afb:7a62 with SMTP id ffacd0b85a97d-35e84068ab4mr4114527f8f.6.1717662625300;
-        Thu, 06 Jun 2024 01:30:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHqMP6fUFyuO3Pdl6y6nz9tj+3ZkFKr+W+nlwDJvBrDwLUKlZM2oPDBMP2k9VSxD6eAyklg+Q==
-X-Received: by 2002:adf:e8d0:0:b0:356:2afb:7a62 with SMTP id ffacd0b85a97d-35e84068ab4mr4114504f8f.6.1717662624830;
-        Thu, 06 Jun 2024 01:30:24 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c710:8800:a73c:ec5b:c02c:5e0b? (p200300cbc7108800a73cec5bc02c5e0b.dip0.t-ipconnect.de. [2003:cb:c710:8800:a73c:ec5b:c02c:5e0b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5fc0ccasm910536f8f.103.2024.06.06.01.30.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 01:30:24 -0700 (PDT)
-Message-ID: <be130a96-a27e-4240-ad78-776802f57cad@redhat.com>
-Date: Thu, 6 Jun 2024 10:30:23 +0200
+        d=1e100.net; s=20230601; t=1717662662; x=1718267462;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BvPjvPVzmHEuJP2lMNchMySQh4QTQAmKpk+Itak28sU=;
+        b=fazbH15AkR+aE0hKtu4JOfHM2y6LD+FxKfN3ANadJhcrPMqpgXDJPRAMU+ZZuaBeCO
+         xx3efCN8t8JpAafMoNOU1HXVLSSXgVcJCXum8FAQ/H1uBSC3KqoZSjyApmQum8frh2Hc
+         zMSMr3Fq1ebAUusuiGqLIpz64jGoBDULHNLVKKYQ60kQPeQyGR2WiIbb5m5F4axQhPcz
+         jhwvdk7np9SNtuLIjNLa0jV9u6pBh9TBn9VevKjMy9CLZXrbuHG52xxcEjatHcdrgUW1
+         KEYvJC16tabuP6tjLRGORT8oDavbTPHUA3tZ5wWTheBQwIMKbNRJZbIyw6vp1hheHKEt
+         0YfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtnEj75EZwOBCYWNPgGjcf9vLuzafxXMAOe4vPtbvS4K9OM8FHvAI3K771mR4/4DZQ4Q7Ayw0ndBzWgQg9/NnpfH1PfA0W0KyaqoXb
+X-Gm-Message-State: AOJu0Yw/Ng2g7aN0OPEN7kHKerklF0KuL+D84hNUAnAQtWtprQvMno2h
+	VjGC0nyG4FdRHbXDjjTr50SMSaUlGHitK1qWJzt9xBqNIKrSsjWDbjevcrzV
+X-Google-Smtp-Source: AGHT+IF3owUHIv+1XwNKtIBJAiuBSCg78musHqrkBVmraK1LmrG+rLKezT9jR5bBKvyz15YTiZ5iCA==
+X-Received: by 2002:adf:ce85:0:b0:35e:4d47:b5b8 with SMTP id ffacd0b85a97d-35ef0dc9b35mr1638144f8f.27.1717662662015;
+        Thu, 06 Jun 2024 01:31:02 -0700 (PDT)
+Received: from gmail.com (1F2EF20A.nat.pool.telekom.hu. [31.46.242.10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4216008bceesm1361125e9.1.2024.06.06.01.30.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 01:31:00 -0700 (PDT)
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date: Thu, 6 Jun 2024 10:30:58 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org,
+	Andy Lutomirski <luto@amacapital.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dave Hansen <dave@sr71.net>, Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uros Bizjak <ubizjak@gmail.com>
+Subject: [PATCH 3/3, v4] x86/fpu: Remove init_task FPU state dependencies,
+ add debugging warning for PF_KTHREAD tasks
+Message-ID: <ZmFziN0i10sILaIo@gmail.com>
+References: <20240605083557.2051480-1-mingo@kernel.org>
+ <20240605083557.2051480-4-mingo@kernel.org>
+ <20240605141733.GC25006@redhat.com>
+ <CAHk-=wi4773Ls82kqVbPmM1deghS2NXkHNCCzWPc270kcByXPA@mail.gmail.com>
+ <20240605162610.GF25006@redhat.com>
+ <CAHk-=wg2zJgy69j8n6C9T4YARkxcJ09SFkpMiqrCqhChf0s3NQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] A Solution to Re-enable hugetlb vmemmap optimize
-To: Yu Zhao <yuzhao@google.com>, Muchun Song <muchun.song@linux.dev>,
- Frank van der Linden <fvdl@google.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Jane Chu <jane.chu@oracle.com>,
- Will Deacon <will@kernel.org>, Nanyong Sun <sunnanyong@huawei.com>,
- Catalin Marinas <catalin.marinas@arm.com>, akpm@linux-foundation.org,
- anshuman.khandual@arm.com, wangkefeng.wang@huawei.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20240113094436.2506396-1-sunnanyong@huawei.com>
- <ZbKjHHeEdFYY1xR5@arm.com> <d1671959-74a4-8ea5-81f0-539df8d9c0f0@huawei.com>
- <20240207111252.GA22167@willie-the-truck>
- <ZcNnrdlb3fe0kGHK@casper.infradead.org>
- <20240207121125.GA22234@willie-the-truck>
- <ZcOQ-0pzA16AEbct@casper.infradead.org>
- <908066c7-b749-4f95-b006-ce9b5bd1a909@oracle.com>
- <ZcT4DH7VE1XLBvVc@casper.infradead.org>
- <917FFC7F-0615-44DD-90EE-9F85F8EA9974@linux.dev>
- <CAOUHufYF2E-hM-u8eZc+APZAsMX3pOAmto7kB3orH5_MRgvSkA@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CAOUHufYF2E-hM-u8eZc+APZAsMX3pOAmto7kB3orH5_MRgvSkA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wg2zJgy69j8n6C9T4YARkxcJ09SFkpMiqrCqhChf0s3NQ@mail.gmail.com>
 
->> Additionally, we also should alter RO permission of those 7 tail pages
->> to RW to avoid panic().
+
+* Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> On Wed, 5 Jun 2024 at 09:27, Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > Yes, but kernel_fpu_begin() never does save_fpregs_to_fpstate() if
+> > current->flags & PF_KTHREAD ?
 > 
-> We can use RCU, which IMO is a better choice, as the following:
+> Ahh, and init_thread does have PF_KTHREAD.
 > 
-> get_page_unless_zero()
-> {
->    int rc = false;
+> Ok, looks fine to me, except I think the commit message should be cleared up.
 > 
->    rcu_read_lock();
+> The whole sentence about
 > 
->    if (page_is_fake_head(page) || !page_ref_count(page)) {
->          smp_mb(); // implied by atomic_add_unless()
->          goto unlock;
->    }
+>  "But the init task isn't supposed to be using the FPU in any case ..."
 > 
->    rc = page_ref_add_unless();
-> 
-> unlock:
->    rcu_read_unlock();
-> 
->    return rc;
-> }
-> 
-> And on the HVO/de-HOV sides:
-> 
->    folio_ref_unfreeze();
->    synchronize_rcu();
->    HVO/de-HVO;
-> 
-> I think this is a lot better than making tail page metadata RW because:
-> 1. it helps debug, IMO, a lot;
-> 2. I don't think HVO is the only one that needs this.
-> 
-> David (we missed you in today's THP meeting),
+> is just simply not true.
+>
+> It should be more along the lines of "kernel threads don't need an FPU
+> save area, because their FPU use is not preemptible or reentrant and
+> they don't return to user space".
 
-Sorry, I had a private meeting conflict :)
+Indeed - I fixed & clarified the changelog accordingly - see the new patch 
+further below.
 
-> 
-> Please correct me if I'm wrong -- I think virtio-mem also suffers from
-> the same problem when freeing offlined struct page, since I wasn't
-> able to find anything that would prevent a **speculative** struct page
-> walker from trying to access struct pages belonging to pages being
-> concurrently offlined.
+I changed the debug check to test for PF_KTHREAD, and to return NULL:
 
-virtio-mem does currently not yet optimize fake-offlined memory like HVO 
-would. So the only way we really remove "struct page" metadata is by 
-actually offlining+removing a complete Linux memory block, like ordinary 
-memory hotunplug would.
++#ifdef CONFIG_X86_DEBUG_FPU
++struct fpu *x86_task_fpu(struct task_struct *task)
++{
++	if (WARN_ON_ONCE(task->flags & PF_KTHREAD))
++		return NULL;
++
++	return (void *)task + sizeof(*task);
++}
++#endif
 
-It might be an interesting project to optimize "struct page" metadata 
-consumption for fake-offlined memory chunks within an online Linux 
-memory block.
+... and the NULL we return will likely crash & exit any kthreads attempting 
+to use the FPU context area - which I think is preferable to returning 
+invalid memory that may then be corrupted.
 
-The biggest challenge might be interaction with memory hotplug, which 
-requires all "struct page" metadata to be allocated. So that would make 
-cases where virtio-mem hot-plugs a Linux memory block but keeps parts of 
-it fake-offline a bit more problematic to handle .
+Hopefully this remains a hypothethical concern. :-)
 
-In a world with memdesc this might all be nicer to handle I think :)
+Alternatively, this may be one of the very few cases where a BUG_ON() might 
+be justified? This condition is not recoverable in any sane fashion IMO.
 
+Thanks,
 
-There is one possible interaction between virtio-mem and speculative 
-page references: all fake-offline chunks in a Linux memory block do have 
-on each page a refcount of 1 and PageOffline() set. When actually 
-offlining the Linux memory block to remove it, virtio-mem will drop that 
-reference during MEM_GOING_OFFLINE, such that memory offlining can 
-proceed (seeing refcount==0 and PageOffline()).
+	Ingo
 
-In virtio_mem_fake_offline_going_offline() we have:
+============================>
+From: Ingo Molnar <mingo@kernel.org>
+Date: Wed, 5 Jun 2024 10:35:57 +0200
+Subject: [PATCH] x86/fpu: Remove init_task FPU state dependencies, add debugging warning for PF_KTHREAD tasks
 
-if (WARN_ON(!page_ref_dec_and_test(page)))
-	dump_page(page, "fake-offline page referenced");
+init_task's FPU state initialization was a bit of a hack:
 
-which would trigger on a speculative reference.
+		__x86_init_fpu_begin = .;
+		. = __x86_init_fpu_begin + 128*PAGE_SIZE;
+		__x86_init_fpu_end = .;
 
-We never saw that trigger so far because quite a long time must have 
-passed ever since a page might have been part of the page cache / page 
-tables, before virtio-mem fake-offlined it (using alloc_contig_range()) 
-and the Linux memory block actually gets offlined.
+But the init task isn't supposed to be using the FPU context
+in any case, so remove the hack and add in some debug warnings.
 
-But yes, RCU (e.g., on the memory offlining path) would likely be the 
-right approach to make sure GUP-fast and the pagecache will no longer 
-grab this page by accident.
+As Linus noted in the discussion, the init task (and other
+PF_KTHREAD tasks) *can* use the FPU via kernel_fpu_begin()/_end(),
+but they don't need the context area because their FPU use is not
+preemptible or reentrant, and they don't return to user-space.
 
-> 
-> If this is true, we might want to map a "zero struct page" rather than
-> leave a hole in vmemmap when offlining pages. And the logic on the hot
-> removal side would be similar to that of HVO.
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Uros Bizjak <ubizjak@gmail.com>
+Link: https://lore.kernel.org/r/20240605083557.2051480-4-mingo@kernel.org
+---
+ arch/x86/include/asm/processor.h |  6 +++++-
+ arch/x86/kernel/fpu/core.c       | 13 ++++++++++---
+ arch/x86/kernel/fpu/init.c       |  5 ++---
+ arch/x86/kernel/fpu/xstate.c     |  3 ---
+ arch/x86/kernel/vmlinux.lds.S    |  4 ----
+ 5 files changed, 17 insertions(+), 14 deletions(-)
 
-Once virtio-mem would do something like HVO, yes. Right now virtio-mem 
-only removes struct-page metadata by removing/unplugging its owned Linux 
-memory blocks once they are fully "logically offline".
-
--- 
-Cheers,
-
-David / dhildenb
-
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 249c5fa20de4..ed8981866f4d 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -504,7 +504,11 @@ struct thread_struct {
+ #endif
+ };
+ 
+-#define x86_task_fpu(task) ((struct fpu *)((void *)task + sizeof(*task)))
++#ifdef CONFIG_X86_DEBUG_FPU
++extern struct fpu *x86_task_fpu(struct task_struct *task);
++#else
++# define x86_task_fpu(task) ((struct fpu *)((void *)task + sizeof(*task)))
++#endif
+ 
+ /*
+  * X86 doesn't need any embedded-FPU-struct quirks:
+diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+index 0ccabcd3bf62..d9ff8ca5b32d 100644
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -51,6 +51,16 @@ static DEFINE_PER_CPU(bool, in_kernel_fpu);
+  */
+ DEFINE_PER_CPU(struct fpu *, fpu_fpregs_owner_ctx);
+ 
++#ifdef CONFIG_X86_DEBUG_FPU
++struct fpu *x86_task_fpu(struct task_struct *task)
++{
++	if (WARN_ON_ONCE(task->flags & PF_KTHREAD))
++		return NULL;
++
++	return (void *)task + sizeof(*task);
++}
++#endif
++
+ /*
+  * Can we use the FPU in kernel mode with the
+  * whole "kernel_fpu_begin/end()" sequence?
+@@ -591,10 +601,8 @@ int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
+ 	 * This is safe because task_struct size is a multiple of cacheline size.
+ 	 */
+ 	struct fpu *dst_fpu = (void *)dst + sizeof(*dst);
+-	struct fpu *src_fpu = x86_task_fpu(current);
+ 
+ 	BUILD_BUG_ON(sizeof(*dst) % SMP_CACHE_BYTES != 0);
+-	BUG_ON(!src_fpu);
+ 
+ 	/* The new task's FPU state cannot be valid in the hardware. */
+ 	dst_fpu->last_cpu = -1;
+@@ -657,7 +665,6 @@ int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
+ 	if (update_fpu_shstk(dst, ssp))
+ 		return 1;
+ 
+-	trace_x86_fpu_copy_src(src_fpu);
+ 	trace_x86_fpu_copy_dst(dst_fpu);
+ 
+ 	return 0;
+diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
+index 11aa31410df2..53580e59e5db 100644
+--- a/arch/x86/kernel/fpu/init.c
++++ b/arch/x86/kernel/fpu/init.c
+@@ -38,7 +38,7 @@ static void fpu__init_cpu_generic(void)
+ 	/* Flush out any pending x87 state: */
+ #ifdef CONFIG_MATH_EMULATION
+ 	if (!boot_cpu_has(X86_FEATURE_FPU))
+-		fpstate_init_soft(&x86_task_fpu(current)->fpstate->regs.soft);
++		;
+ 	else
+ #endif
+ 		asm volatile ("fninit");
+@@ -164,7 +164,7 @@ static void __init fpu__init_task_struct_size(void)
+ 	 * Subtract off the static size of the register state.
+ 	 * It potentially has a bunch of padding.
+ 	 */
+-	task_size -= sizeof(x86_task_fpu(current)->__fpstate.regs);
++	task_size -= sizeof(union fpregs_state);
+ 
+ 	/*
+ 	 * Add back the dynamically-calculated register state
+@@ -209,7 +209,6 @@ static void __init fpu__init_system_xstate_size_legacy(void)
+ 	fpu_kernel_cfg.default_size = size;
+ 	fpu_user_cfg.max_size = size;
+ 	fpu_user_cfg.default_size = size;
+-	fpstate_reset(x86_task_fpu(current));
+ }
+ 
+ /*
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index 90b11671e943..1f37da22ddbe 100644
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -844,9 +844,6 @@ void __init fpu__init_system_xstate(unsigned int legacy_size)
+ 	if (err)
+ 		goto out_disable;
+ 
+-	/* Reset the state for the current task */
+-	fpstate_reset(x86_task_fpu(current));
+-
+ 	/*
+ 	 * Update info used for ptrace frames; use standard-format size and no
+ 	 * supervisor xstates:
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 226244a894da..3509afc6a672 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -170,10 +170,6 @@ SECTIONS
+ 		/* equivalent to task_pt_regs(&init_task) */
+ 		__top_init_kernel_stack = __end_init_stack - TOP_OF_KERNEL_STACK_PADDING - PTREGS_SIZE;
+ 
+-		__x86_init_fpu_begin = .;
+-		. = __x86_init_fpu_begin + 128*PAGE_SIZE;
+-		__x86_init_fpu_end = .;
+-
+ #ifdef CONFIG_X86_32
+ 		/* 32 bit has nosave before _edata */
+ 		NOSAVE_DATA
 
