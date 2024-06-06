@@ -1,164 +1,259 @@
-Return-Path: <linux-kernel+bounces-204430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B38368FEBE1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:28:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 407838FEC2E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:30:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49918B27148
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:28:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC7F11F298E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E2F1ABE3A;
-	Thu,  6 Jun 2024 14:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="UNkLxppg"
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B5D19AD67;
+	Thu,  6 Jun 2024 14:15:39 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F8E1ABCC4
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BCA1AD9CD;
+	Thu,  6 Jun 2024 14:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717683303; cv=none; b=LU1KB+9l2LeoYMHusE5Ol9vIvkW6EMFbAdwxHQlbr/6SPXbeHIFoiKlD4QrataYSY04BuC6bagDOpVcRSsKB/sPxUb8BPl9k+rfnWV1oY0dF731FJdV3Q4SBYBzUHnnFpij0RaDfDsmr7fCns8zdsIIjFn5QsblsYYoGM7aMhWA=
+	t=1717683338; cv=none; b=XEo82gBpmcHgExr2CQT8gJhVs/3XjPQDQqbfekoP/K1uyyswtZftN/L28qCahPLMnPE7lrblH2lqzkKN2CKeDzdEZWmIScXg2KS+AYyyfMo7SY6Qh9Bo2X9R6nI3XcXyyKIke+KaRF6Vxiou+cL0rueiuFEsuxFRdr4L3nOdvx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717683303; c=relaxed/simple;
-	bh=ZUbLJWzrVFp5hRr3gjeeVs7ODqsrEQjN+fQEaarZvnU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ThV+EF8YQiAPBY6aWchrmX/2qeXRxBshn0L4heHHfauGIa3m4oR6nlbLb2OQzkyyBLPsyaffd9uFjUzJ8wIAPa2LBj8eenb3unRaRmIIDkQ5DdzL94JU0nFGolakDTKhlZ1vT/Z2g4NURTeb+MRTYfuM76gsQTLiMnKxl+m9YMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=UNkLxppg; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
-From: Denis Arefev <arefev@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1717683290;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=+yI3L0DiCjO1k/d0iEefXHLYJTNXUYNikkROyQYFDhQ=;
-	b=UNkLxppgn2wl6TMeleifbtKzoyEL6fmlzyUwnUEU+X4VQqCLsx3BpYeE9pWByUGoGG647/
-	VKcUjiAEe+DzpQvU2DWMLB4UlJpsaEYVwcolOD5iFbvoNFVN5qYWM5n2qCeQrIkF+A0RiI
-	mpFKuQWiBpRqPoRH8+LLK/uTQBhJDok=
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] net: missing check
-Date: Thu,  6 Jun 2024 17:14:50 +0300
-Message-Id: <20240606141450.44709-1-arefev@swemel.ru>
+	s=arc-20240116; t=1717683338; c=relaxed/simple;
+	bh=BrBTZ77UoeB+OHe4E6Sd25A/0q2z7NYbR6O/Hqx1lPs=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Vp0KCjxAap5md8NKoZjxYOXOtj1TCyOkKYhOE4R9StJbpA8X1MZiZltitJq6wMH8fFTmcaSY8ut+JQcEEbK7lAwkcCjkFIWCXOKdbxXwcpjz8t9QzGzwqonRVxe55N/DJTzrt8ZfDd2CLPcwrXgWrALIvT3jWsd7BvGl8R6lvxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Vw5pP4gqMz6K6TJ;
+	Thu,  6 Jun 2024 22:10:53 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6B434140DB0;
+	Thu,  6 Jun 2024 22:15:33 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 6 Jun
+ 2024 15:15:22 +0100
+Date: Thu, 6 Jun 2024 15:15:21 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+CC: Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] cxl: add missing MODULE_DESCRIPTION() macros
+Message-ID: <20240606151521.000018fd@Huawei.com>
+In-Reply-To: <362fccea-707f-4430-8da3-8acc6ac5fbe9@quicinc.com>
+References: <20240603-md-drivers-cxl-v1-1-f2940f5c0836@quicinc.com>
+	<20240604170445.00005c67@Huawei.com>
+	<362fccea-707f-4430-8da3-8acc6ac5fbe9@quicinc.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Two missing check in virtio_net_hdr_to_skb() allowed syzbot 
-to crash kernels again 
+On Tue, 4 Jun 2024 13:21:52 -0700
+Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
 
-1. After the skb_segment function the buffer may become non-linear 
-(nr_frags != 0), but since the SKBTX_SHARED_FRAG flag is not set anywhere
-the __skb_linearize function will not be executed, then the buffer will 
-remain non-linear. Then the condition (offset >= skb_headlen(skb))
-becomes true, which causes WARN_ON_ONCE in skb_checksum_help.
+> On 6/4/2024 9:04 AM, Jonathan Cameron wrote:
+> > On Mon, 3 Jun 2024 21:48:53 -0700
+> > Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+> >   
+> >> make allmodconfig && make W=1 C=1 reports:
+> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/core/cxl_core.o
+> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pci.o
+> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_mem.o
+> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_acpi.o
+> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pmem.o
+> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_port.o
+> >>
+> >> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> >>
+> >> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>  
+> > 
+> > This has been irritating me as well.  Need to do
+> > drivers/perf/cxl_pmu.c at somepoint as well but given that goes through
+> > a different maintainer makes sense to do separately.
+> > 
+> > Only comment I have is that we should probably strive for more consistency
+> > than you currently have.  Always expand CXL or never do, use
+> > colons consistently, use Support everywhere or nowhere.  
+> 
+> I'm going through a bunch of these tree-wide, and usually just copy/paste
+> either from existing comments in the .c file or the description of any
+> associated Kconfig item.
+> 
+> >> ---
+> >>  drivers/cxl/acpi.c      | 1 +
+> >>  drivers/cxl/core/port.c | 1 +
+> >>  drivers/cxl/mem.c       | 1 +
+> >>  drivers/cxl/pci.c       | 1 +
+> >>  drivers/cxl/pmem.c      | 1 +
+> >>  drivers/cxl/port.c      | 1 +
+> >>  6 files changed, 6 insertions(+)
+> >>
+> >> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+> >> index 571069863c62..e51315ea4a6a 100644
+> >> --- a/drivers/cxl/acpi.c
+> >> +++ b/drivers/cxl/acpi.c
+> >> @@ -921,6 +921,7 @@ static void __exit cxl_acpi_exit(void)
+> >>  /* load before dax_hmem sees 'Soft Reserved' CXL ranges */
+> >>  subsys_initcall(cxl_acpi_init);
+> >>  module_exit(cxl_acpi_exit);
+> >> +MODULE_DESCRIPTION("CXL ACPI: Platform Support");  
+> 
+> From Kconfig:
+> config CXL_ACPI
+>         tristate "CXL ACPI: Platform Support"
+OK
+> 
+> >>  MODULE_LICENSE("GPL v2");
+> >>  MODULE_IMPORT_NS(CXL);
+> >>  MODULE_IMPORT_NS(ACPI);
+> >> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+> >> index 887ed6e358fb..ccaa00cd0321 100644
+> >> --- a/drivers/cxl/core/port.c
+> >> +++ b/drivers/cxl/core/port.c
+> >> @@ -2356,5 +2356,6 @@ static void cxl_core_exit(void)
+> >>  
+> >>  subsys_initcall(cxl_core_init);
+> >>  module_exit(cxl_core_exit);
+> >> +MODULE_DESCRIPTION("CXL (Compute Express Link) Devices Support");  
+> > 
+> > Why the expanded version for this one?
+> > 
+> > I'm not sure Devices really makes sense here, particularly as it
+> > likely a range of other driver will make some use of this core
+> > functionality over time.  Maybe "CXL core" is sufficient?
+> >   
+> 
+> From Kconfig:
+> menuconfig CXL_BUS
+>         tristate "CXL (Compute Express Link) Devices Support"
 
-2. The struct sk_buff and struct virtio_net_hdr members must be 
-mathematically related.
-(gso_size) must be greater than (needed) otherwise WARN_ON_ONCE.
-(remainder) must be greater than (needed) otherwise WARN_ON_ONCE.
-(remainder) may be 0 if division is without remainder.
+Understood, but that is expanded because it's the first use of
+CXL in the make file. Here we have no ordering as across many
+files and resulting modules.
 
-offset+2 (4191) > skb_headlen() (1116)
-WARNING: CPU: 1 PID: 5084 at net/core/dev.c:3303 skb_checksum_help+0x5e2/0x740 net/core/dev.c:3303
-Modules linked in:
-CPU: 1 PID: 5084 Comm: syz-executor336 Not tainted 6.7.0-rc3-syzkaller-00014-gdf60cee26a2e #0
-Hardware name: Google Compute Engine/Google Compute Engine, BIOS Google 11/10/2023
-RIP: 0010:skb_checksum_help+0x5e2/0x740 net/core/dev.c:3303
-Code: 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 52 01 00 00 44 89 e2 2b 53 74 4c 89 ee 48 c7 c7 40 57 e9 8b e8 af 8f dd f8 90 <0f> 0b 90 90 e9 87 fe ff ff e8 40 0f 6e f9 e9 4b fa ff ff 48 89 ef
-RSP: 0018:ffffc90003a9f338 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffff888025125780 RCX: ffffffff814db209
-RDX: ffff888015393b80 RSI: ffffffff814db216 RDI: 0000000000000001
-RBP: ffff8880251257f4 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000001 R12: 000000000000045c
-R13: 000000000000105f R14: ffff8880251257f0 R15: 000000000000105d
-FS:  0000555555c24380(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000002000f000 CR3: 0000000023151000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ip_do_fragment+0xa1b/0x18b0 net/ipv4/ip_output.c:777
- ip_fragment.constprop.0+0x161/0x230 net/ipv4/ip_output.c:584
- ip_finish_output_gso net/ipv4/ip_output.c:286 [inline]
- __ip_finish_output net/ipv4/ip_output.c:308 [inline]
- __ip_finish_output+0x49c/0x650 net/ipv4/ip_output.c:295
- ip_finish_output+0x31/0x310 net/ipv4/ip_output.c:323
- NF_HOOK_COND include/linux/netfilter.h:303 [inline]
- ip_output+0x13b/0x2a0 net/ipv4/ip_output.c:433
- dst_output include/net/dst.h:451 [inline]
- ip_local_out+0xaf/0x1a0 net/ipv4/ip_output.c:129
- iptunnel_xmit+0x5b4/0x9b0 net/ipv4/ip_tunnel_core.c:82
- ipip6_tunnel_xmit net/ipv6/sit.c:1034 [inline]
- sit_tunnel_xmit+0xed2/0x28f0 net/ipv6/sit.c:1076
- __netdev_start_xmit include/linux/netdevice.h:4940 [inline]
- netdev_start_xmit include/linux/netdevice.h:4954 [inline]
- xmit_one net/core/dev.c:3545 [inline]
- dev_hard_start_xmit+0x13d/0x6d0 net/core/dev.c:3561
- __dev_queue_xmit+0x7c1/0x3d60 net/core/dev.c:4346
- dev_queue_xmit include/linux/netdevice.h:3134 [inline]
- packet_xmit+0x257/0x380 net/packet/af_packet.c:276
- packet_snd net/packet/af_packet.c:3087 [inline]
- packet_sendmsg+0x24ca/0x5240 net/packet/af_packet.c:3119
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0xd5/0x180 net/socket.c:745
- __sys_sendto+0x255/0x340 net/socket.c:2190
- __do_sys_sendto net/socket.c:2202 [inline]
- __se_sys_sendto net/socket.c:2198 [inline]
- __x64_sys_sendto+0xe0/0x1b0 net/socket.c:2198
- do_syscall_x64 arch/x86/entry/common.c:51 [inline]
- do_syscall_64+0x40/0x110 arch/x86/entry/common.c:82
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
+"CXL: Core Compute Express Link support"
 
-Signed-off-by: Denis Arefev <arefev@swemel.ru>
----
- include/linux/virtio_net.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Would work I think.
 
-diff --git a/include/linux/virtio_net.h b/include/linux/virtio_net.h
-index 4dfa9b69ca8d..77ebe908d746 100644
---- a/include/linux/virtio_net.h
-+++ b/include/linux/virtio_net.h
-@@ -56,6 +56,7 @@ static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
- 	unsigned int thlen = 0;
- 	unsigned int p_off = 0;
- 	unsigned int ip_proto;
-+	u64 ret, remainder;
- 
- 	if (hdr->gso_type != VIRTIO_NET_HDR_GSO_NONE) {
- 		switch (hdr->gso_type & ~VIRTIO_NET_HDR_GSO_ECN) {
-@@ -98,6 +99,15 @@ static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
- 		u32 off = __virtio16_to_cpu(little_endian, hdr->csum_offset);
- 		u32 needed = start + max_t(u32, thlen, off + sizeof(__sum16));
- 
-+		if (hdr->gso_size) {
-+			ret = div64_u64_rem(skb->len, hdr->gso_size, &remainder);
-+			if (!(ret && (hdr->gso_size > needed) &&
-+						((remainder > needed) || (remainder == 0)))) {
-+				return -EINVAL;
-+			}
-+			skb_shinfo(skb)->tx_flags |= SKBFL_SHARED_FRAG;
-+		}
-+
- 		if (!pskb_may_pull(skb, needed))
- 			return -EINVAL;
- 
--- 
-2.25.1
+> 
+> >>  MODULE_LICENSE("GPL v2");
+> >>  MODULE_IMPORT_NS(CXL);
+> >> diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
+> >> index 0c79d9ce877c..1afb0e78082b 100644
+> >> --- a/drivers/cxl/mem.c
+> >> +++ b/drivers/cxl/mem.c
+> >> @@ -252,6 +252,7 @@ static struct cxl_driver cxl_mem_driver = {
+> >>  
+> >>  module_cxl_driver(cxl_mem_driver);
+> >>  
+> >> +MODULE_DESCRIPTION("CXL: Memory Expansion");  
+> > 
+> > Why does this one get a colon? Also no Support at the end?  
+> 
+> From Kconfig:
+> config CXL_MEM
+>         tristate "CXL: Memory Expansion"
+
+OK.  Could add Support but then all code is supporting something,
+so fine to leave it without.
+
+
+> 
+> >   
+> >>  MODULE_LICENSE("GPL v2");
+> >>  MODULE_IMPORT_NS(CXL);
+> >>  MODULE_ALIAS_CXL(CXL_DEVICE_MEMORY_EXPANDER);
+> >> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
+> >> index e53646e9f2fb..2c17fcb1b4ee 100644
+> >> --- a/drivers/cxl/pci.c
+> >> +++ b/drivers/cxl/pci.c
+> >> @@ -1066,5 +1066,6 @@ static void __exit cxl_pci_driver_exit(void)
+> >>  
+> >>  module_init(cxl_pci_driver_init);
+> >>  module_exit(cxl_pci_driver_exit);
+> >> +MODULE_DESCRIPTION("CXL PCI manageability");  
+> 
+> Kconfig just has:
+> config CXL_PCI
+>         tristate "PCI manageability"
+> 
+> I added CXL
+
+CXL: PCI manageability
+
+
+> 
+> >>  MODULE_LICENSE("GPL v2");
+> >>  MODULE_IMPORT_NS(CXL);
+> >> diff --git a/drivers/cxl/pmem.c b/drivers/cxl/pmem.c
+> >> index 2ecdaee63021..4ef93da22335 100644
+> >> --- a/drivers/cxl/pmem.c
+> >> +++ b/drivers/cxl/pmem.c
+> >> @@ -453,6 +453,7 @@ static __exit void cxl_pmem_exit(void)
+> >>  	cxl_driver_unregister(&cxl_nvdimm_bridge_driver);
+> >>  }
+> >>  
+> >> +MODULE_DESCRIPTION("CXL PMEM: Persistent Memory Support");  
+> 
+> From Kconfig:
+> config CXL_PMEM
+>         tristate "CXL PMEM: Persistent Memory Support"
+OK
+> 
+> >>  MODULE_LICENSE("GPL v2");
+> >>  module_init(cxl_pmem_init);
+> >>  module_exit(cxl_pmem_exit);
+> >> diff --git a/drivers/cxl/port.c b/drivers/cxl/port.c
+> >> index 97c21566677a..5ceff1df60db 100644
+> >> --- a/drivers/cxl/port.c
+> >> +++ b/drivers/cxl/port.c
+> >> @@ -209,6 +209,7 @@ static struct cxl_driver cxl_port_driver = {
+> >>  };
+> >>  
+> >>  module_cxl_driver(cxl_port_driver);
+> >> +MODULE_DESCRIPTION("CXL Port Support");  
+> 
+> This I just made up from the others since config CXL_PORT doesn't have a menu
+> description or help text and the .c file begins with:
+>  * DOC: cxl port
+
+"CXL: Port Support"
+
+Not that informative, but I can't immediately think of better text.
+
+>
+> 
+> >>  MODULE_LICENSE("GPL v2");
+> >>  MODULE_IMPORT_NS(CXL);
+> >>  MODULE_ALIAS_CXL(CXL_DEVICE_PORT);  
+> 
+> If you have specific edits you'd like me to make, I'm happy to make them.
+> I have no opinion on the content -- I just want to get rid of the warnings :)
+
+With the suggestions above it would look more consistent I think.
+
+Jonathan
+
+
+> 
+> /jeff
+> 
 
 
