@@ -1,140 +1,161 @@
-Return-Path: <linux-kernel+bounces-204400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE5BF8FE83E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:58:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB1D8FE848
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:59:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2A221C2482D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:58:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECB3C287171
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC010196451;
-	Thu,  6 Jun 2024 13:57:58 +0000 (UTC)
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id A039A195998
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 13:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0AA196C79;
+	Thu,  6 Jun 2024 13:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="roeL9wHu"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97541196456;
+	Thu,  6 Jun 2024 13:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717682278; cv=none; b=EhbQ5WiTW4sM+KC+OD7yPBEBCRwDUfuIQwsB+w09UCMTZXLbLbo/cv7wrzq9Yv6WPqVkwmrBstRA+NNuBaDyTdomAGLgEAwgiYy0/tCl0Ct0POyxEn+oz94pmX+JOgV8WW57XJmxv7K/klysNm8yeABY+QobamlEBJLicrYkB5s=
+	t=1717682357; cv=none; b=U7ND0sXSczdGmDEpbYqeUzMog4mp5u/ZawUPuGfzAX2QuHYEhUAfrZi6395wyRm51tGb25cr6SLr74U0aGC/xH79drrdi4CF4v7lc9QRgpH4ACIhJ9V6zJRbE1dAatkjlpzeJ858xaGk5bs9+JuJ7mKMA/xPT1AJCBkPhVbDD4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717682278; c=relaxed/simple;
-	bh=b/IaQER0MTYnAfXxKI9/hVZr+pfP+z0ECFHNGnD9BGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Eu48lSEEgLGopAO+oBxhtwvRw9+3fb4xgCChhL5TnQjiwceg1lBSqJxhTSrhFZa7kJaF8LamEEIpKynnc0zQO5p2Gx0qOrqHWVPaMk0EKpm9YuDVNDQXc67donDPE8S+ibsLwBiz2Ar/LoDe2fj4nWoFq2vcMpSCC9eQW2HFfEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 231164 invoked by uid 1000); 6 Jun 2024 09:57:55 -0400
-Date: Thu, 6 Jun 2024 09:57:55 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Andrea Parri <parri.andrea@gmail.com>, will@kernel.org,
-  peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-  dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-  akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
-  linux-kernel@vger.kernel.org, hernan.poncedeleon@huaweicloud.com,
-  jonas.oberhauser@huaweicloud.com
-Subject: [PATCH 1/2] tools/memory-model: Fix bug in lock.cat
-Message-ID: <eb202b3b-7408-4ab9-be82-81ca554b7603@rowland.harvard.edu>
+	s=arc-20240116; t=1717682357; c=relaxed/simple;
+	bh=DmOMiIjbrQUbLc+fS9w2SijXg8UZYWX9YmlObtBW1Bs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PgAB08Oc8Qh49FH4+3PlQ+4bn84IjKsGJzPHsHOlKNAWilx9oke7QRDwHG2aKC5cm9oKVPDNTs4m+xSRG4Y/O6sLY9NrZjI7flXOmKJ2pKdM60tiWdm//6kIkKYSZhGBGYfxDGNUgd2HQMjz0A9lLkCkfqMr+iXs8bkhgoowtjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=roeL9wHu; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 456DjchQ004065;
+	Thu, 6 Jun 2024 13:58:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=pp1;
+ bh=0XrutT6mLZuu53qQauJy0ICKhvEuE23LhIYHOVtselU=;
+ b=roeL9wHuNHOVifN0/IKBQ6ANvmeqlnIgzqy82t7knSTk19pyE1YzRigmohXNMPRgriKS
+ FUS5FyVKkaVRwY6AKhzBGr5guyvp9QSYHuIcESTmVqKbUz/qny6dvHntFSvhycbgsmee
+ 1YUCwHcuFnYk7J2uW16gOL9eQdhz2Y9YuhEgQoVqZC807kW6KuAOrKIiS2FDYQFotAYx
+ 6XP9nBFrBY5r+o8rULvyA+sUKmIip0Xy2Cknm8uPtu/HLQ9sUm7CaP6sn+2337OknopA
+ ZGOg76HsEQYP3CHaOBVv4wevAOUfSH53XdnI3qYZZUg8+b2WTMFfrHvCbE5FPuGT4vWs Lw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yke5xr22r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Jun 2024 13:58:41 +0000
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 456DwfPg026289;
+	Thu, 6 Jun 2024 13:58:41 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yke5xr22m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Jun 2024 13:58:41 +0000
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 456Ae5Oe026509;
+	Thu, 6 Jun 2024 13:58:40 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yggp3acqy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Jun 2024 13:58:40 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 456Dwcpt9044526
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 6 Jun 2024 13:58:40 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 92CB758058;
+	Thu,  6 Jun 2024 13:58:36 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 79A6558076;
+	Thu,  6 Jun 2024 13:58:32 +0000 (GMT)
+Received: from [9.109.245.191] (unknown [9.109.245.191])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  6 Jun 2024 13:58:32 +0000 (GMT)
+Message-ID: <d0938d2d-dcb9-43c4-b5a3-2fad9de161b8@linux.ibm.com>
+Date: Thu, 6 Jun 2024 19:28:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftest: mm: Test if hugepage does not get leaked during
+ __bio_release_pages()
+To: Pankaj Raghav <p.raghav@samsung.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+        ritesh.list@gmail.com, rppt@kernel.org, shuah@kernel.org,
+        songmuchun@bytedance.com, tonyb@cybernetics.com, willy@infradead.org
+References: <20240604132801.23377-1-donettom@linux.ibm.com>
+ <20240606131436.592793-1-p.raghav@samsung.com>
+Content-Language: en-US
+From: Donet Tom <donettom@linux.ibm.com>
+In-Reply-To: <20240606131436.592793-1-p.raghav@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Yb7zQ8oy9ZSTaBxNQ3IIcYO3I3G1AC5K
+X-Proofpoint-ORIG-GUID: Jt3fCppTgPHM1ILa5KzCxDNzf_Wwh0MN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-06_01,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=799
+ impostorscore=0 phishscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0
+ priorityscore=1501 clxscore=1011 bulkscore=0 spamscore=0 adultscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2406060101
 
-Andrea reported that the following innocuous litmus test:
 
-C T
+On 6/6/24 18:44, Pankaj Raghav wrote:
+>> +void run_dio_using_hugetlb(unsigned int start_off, unsigned int end_off)
+>> +{
+>> +	int fd;
+>> +	char *buffer =  NULL;
+>> +	char *orig_buffer = NULL;
+>> +	size_t h_pagesize = 0;
+>> +	size_t writesize;
+>> +	int free_hpage_b = 0;
+>> +	int free_hpage_a = 0;
+>> +
+>> +	writesize = end_off - start_off;
+>> +
+>> +	/* Get the default huge page size */
+>> +	h_pagesize = default_huge_page_size();
+>> +	if (!h_pagesize)
+>> +		ksft_exit_fail_msg("Unable to determine huge page size\n");
+>> +
+>> +	/* Open the file to DIO */
+>> +	fd = open("/tmp", O_TMPFILE | O_RDWR | O_DIRECT);
+> I encountered a build error as follows in NixOS:
+>
+> In file included from /nix/store/fwh4fxd747m0py3ib3s5abamia9nrf90-glibc-2.39-52-dev/include/fcntl.h:342,
+>                   from hugetlb_dio.c:15:
+> In function ‘open’,
+>      inlined from ‘run_dio_using_hugetlb’ at hugetlb_dio.c:41:7:
+> /nix/store/fwh4fxd747m0py3ib3s5abamia9nrf90-glibc-2.39-52-dev/include/bits/fcntl2.h:50:11: error: call to ‘__open_missing_mode’ declared with attribute error: open with O_CREAT or O_TMPFILE in second argument needs 3 arguments
+>     50 |           __open_missing_mode ();
+>
+>
+> I saw a commit that fixed similar issues with open syscall before:
+> 8b65ef5ad486 ("selftests/mm: Fix build with _FORTIFY_SOURCE")
+>
+> So something like this should fix the issue?
+>
+> -       fd = open("/tmp", O_TMPFILE | O_RDWR | O_DIRECT);
+> +       fd = open("/tmp", O_TMPFILE | O_RDWR | O_DIRECT, 0664);
 
-{}
+Thank you Pankaj.
 
-P0(spinlock_t *x)
-{
-	int r0;
+I am able to reproduce this error with "-D_FORTIFY_SOURCE=2 -O2".  I will post v3 with this fix.
 
-	spin_lock(x);
-	spin_unlock(x);
-	r0 = spin_is_locked(x);
-}
+-donet
 
-gives rise to a nonsensical empty result with no executions:
 
-$ herd7 -conf linux-kernel.cfg T.litmus
-Test T Required
-States 0
-Ok
-Witnesses
-Positive: 0 Negative: 0
-Condition forall (true)
-Observation T Never 0 0
-Time T 0.00
-Hash=6fa204e139ddddf2cb6fa963bad117c0
-
-The problem is caused by a bug in the lock.cat part of the LKMM.  Its
-computation of the rf relation for RU (read-unlocked) events is
-faulty; it implicitly assumes that every RU event must read from
-either a UL (unlock) event in another thread or from the lock's
-initial state.  Neither is true in the litmus test above, so the
-computation yields no possible executions.
-
-The lock.cat code tries to make up for this deficiency by allowing RU
-events outside of critical sections to read from the last po-previous
-UL event.  But it does this incorrectly, trying to keep these rfi links
-separate from the rfe links that might also be needed, and passing only
-the latter to herd7's cross() macro.
-
-The problem is fixed by merging the two sets of possible rf links for
-RU events and using them all in the call to cross().
-
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Reported-and-tested-by: Andrea Parri <parri.andrea@gmail.com>
-Closes: https://lore.kernel.org/linux-arch/ZlC0IkzpQdeGj+a3@andrea/
-Fixes: 15553dcbca06 ("tools/memory-model: Add model support for spin_is_locked()")
-CC: <stable@vger.kernel.org>
-
----
-
- tools/memory-model/lock.cat |   20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-Index: usb-devel/tools/memory-model/lock.cat
-===================================================================
---- usb-devel.orig/tools/memory-model/lock.cat
-+++ usb-devel/tools/memory-model/lock.cat
-@@ -102,19 +102,19 @@ let rf-lf = rfe-lf | rfi-lf
-  * within one of the lock's critical sections returns False.
-  *)
- 
--(* rfi for RU events: an RU may read from the last po-previous UL *)
--let rfi-ru = ([UL] ; po-loc ; [RU]) \ ([UL] ; po-loc ; [LKW] ; po-loc)
--
--(* rfe for RU events: an RU may read from an external UL or the initial write *)
--let all-possible-rfe-ru =
--	let possible-rfe-ru r =
-+(*
-+ * rf for RU events: an RU may read from an external UL or the initial write,
-+ * or from the last po-previous UL
-+ *)
-+let all-possible-rf-ru =
-+	let possible-rf-ru r =
- 		let pair-to-relation p = p ++ 0
--		in map pair-to-relation (((UL | IW) * {r}) & loc & ext)
--	in map possible-rfe-ru RU
-+		in map pair-to-relation ((((UL | IW) * {r}) & loc & ext) |
-+			(((UL * {r}) & po-loc) \ ([UL] ; po-loc ; [LKW] ; po-loc)))
-+	in map possible-rf-ru RU
- 
- (* Generate all rf relations for RU events *)
--with rfe-ru from cross(all-possible-rfe-ru)
--let rf-ru = rfe-ru | rfi-ru
-+with rf-ru from cross(all-possible-rf-ru)
- 
- (* Final rf relation *)
- let rf = rf | rf-lf | rf-ru
-
+>
+>> +	if (fd < 0)
+>> +		ksft_exit_fail_msg("Error opening file");
+>> +
 
