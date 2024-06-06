@@ -1,151 +1,198 @@
-Return-Path: <linux-kernel+bounces-203722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6558D8FDF77
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:21:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1692F8FDF7B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3875C1C24839
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:21:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AC901F271C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30A113C684;
-	Thu,  6 Jun 2024 07:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254D413C3F4;
+	Thu,  6 Jun 2024 07:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HHWp8mxF"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W13iCal+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7DD13AA47
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 07:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993053D56D
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 07:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717658437; cv=none; b=PqNeQRiP5tB5TaNplq8q+HdxZpgsph4rBvJsGEWLzkSy+xDhUSuUmzgSe976o3jCwxIFz1RJRf94J8cShEIB8y7SdbVDjMXHxAtNJ9zp7R2kb9ox8y5biex12pKY2vkXygbJAHUR2dm2o6kQoOYMTaBvrafvSrMYEkJ8lxPNWtE=
+	t=1717658476; cv=none; b=W/bhOPJvEAl+5PmzWO5aJGJJlqdcHimEz9RoBH35ZTEKwOc6Dl9bkzhQcXIWQdKRlqs9hie0/CEvDt4IM6fTUN3Wk81DUDYomEVlR7FvkgirJSWvB/Vh50IfWgswk80R9CYFK8LcubUW0TFxLsS8yPG14kNl+L6+lTxgOZHj4EI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717658437; c=relaxed/simple;
-	bh=E1UEL5t44rjWMroslFhKMMvwn7TQfKD6dRQVyrgGjGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JUGAVnBnd2X5QJCdCU59p416FEE/3eNs49J6FzmpNHfrc68eA2vhPjfaGN1pqrifDAWqZsdpXM67bE21mbH1rFDD9drU4q9qF+J1mURxDBECEJFu2kJ9unKMJHyYh1Bx2DyOYW2e74ESRGlvryvWK3RyDhb5WRyRCtSl4AoAlWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HHWp8mxF; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6f943a34a83so239563a34.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 00:20:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717658434; x=1718263234; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MFC1pyOlym/b5PhJaLl2pSzHoJdyGjWFMkMHwggkOGg=;
-        b=HHWp8mxFzCgxUbpUYDEVUziaQ0Dt6DpmRIe+kp+SsWABN8ICrJe/UGhGzmLMQYN2ZR
-         vcWv25DEoQSqO/rY2FYBSaMfeZAsj4HM1iajfbAXHYj/z3gj9bb5tgxZPZPWIPnl/2Js
-         oqFbJ33s8PyglO6X4xhmc5BtR7KZige/sWDOk+8X5AJDNMRBJR4VxroEjjVw2IcXayuH
-         RDi+tamJ0rBf3VFaMIvhnu4CWFZIQfi5giZbcrUWC1FYsSMI7dQvtMkpj5Rp9mS+J1kw
-         YuxrhucAt2ftWuC1oi41F2L650ZbaN0i51KxrRu6L68iXi54z+X9kBt2/KY4dV3utpIA
-         X+oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717658434; x=1718263234;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MFC1pyOlym/b5PhJaLl2pSzHoJdyGjWFMkMHwggkOGg=;
-        b=SNT89+hHy5s/Q+AgeipXGnIGICMkNVi2+uusYxzHD3/aJt+inp2FaSCe3h6w8mdA6G
-         bnHx9124/FzNmM4zWG1BOj1QH7VHyefRdv9MRKyhpcxaSXIn5BRy3NXqPui8QzPCqTOt
-         OmSpMpJ+hxuv69UcQ+sCTFk2q+MDR7F5LH1zU+WNIaWBO6R7p59h0GJ+yE7HXZk0aIxY
-         TkZIYZ1FaGJGKoLegJzyKGI/DiWCXRjN+vYpkgDHkG91Je+l5wKVKBe+CepS0OFWfIEO
-         NglphF1R2JYeEXPkmu8C2osihX09NRe20QDTNdQKd00jSkNw2/Zi3rvZv+nKO6hg3hJ0
-         7Gjg==
-X-Forwarded-Encrypted: i=1; AJvYcCVIwxisqkFDEtxPaVANH6a7ToynCgQZQYkJOk9PphWVwgqq1TMQ1ynpmHRlLsgkuXmlkflV7eH7elHHUWtEsre7v4mZyBrUGRhgG+h7
-X-Gm-Message-State: AOJu0Yyu6uz0rBUGRAdsumdSbEtgiEI2UKmBg5wCCKnw4ytitg1Q741v
-	icbTfrT21nmsNnMMrtwOE20XDS20x6Y8DcmqkSmehlalQeSEV4FcBIfVwd7Ed/49gFQo6NfWh3W
-	p
-X-Google-Smtp-Source: AGHT+IFR27xMNkX9j6IYL/hxtDye3ZPMcS2DU0AeJAwbcGFpmW/2yupDkFD5vmiG+5sQzof0a11KtA==
-X-Received: by 2002:a05:6870:612c:b0:24f:ccbd:75e with SMTP id 586e51a60fabf-25122094c30mr5531086fac.43.1717658434284;
-        Thu, 06 Jun 2024 00:20:34 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd372a82sm557353b3a.27.2024.06.06.00.20.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 00:20:33 -0700 (PDT)
-Date: Thu, 6 Jun 2024 12:50:31 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ionela Voinescu <ionela.voinescu@arm.com>
-Cc: "liwei (JK)" <liwei728@huawei.com>,
-	Beata Michalska <beata.michalska@arm.com>,
-	Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
-	rafael@kernel.org, al.stone@linaro.org, ashwin.chaugule@linaro.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	liwei391@huawei.com, liaoyu15@huawei.com
-Subject: Re: [PATCH] cpufreq/cppc: changing highest_perf to nominal_perf in
- cppc_cpufreq_cpu_init()
-Message-ID: <20240606072031.lxr7tykl7sdgjwva@vireshk-i7>
-References: <20240428092852.1588188-1-liwei728@huawei.com>
- <20240429104945.esdukn6ayudgyumc@vireshk-i7>
- <ZjoBrF4bAK5ukm7H@arm.com>
- <be312b75-eede-44f5-b7f3-b50f50c6fb56@huawei.com>
- <ZmB1qKucR5fXk100@arm.com>
+	s=arc-20240116; t=1717658476; c=relaxed/simple;
+	bh=QD4Dh8MLYOkud3AMPflq2aHwK8HUP7fobAgy/H0UKDA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=W7be2c5j5JV7Rb0IJmxKwxDDdHtXe8vrs+Cgr2gRXC7V2BHzlNnCsRzkfPTHF0VFBvuk85RvRnmDHjx4OSQq5bdG5Jo04XH7e+y3oLSwmpt6VYJNQHdXJ9i6RVRegRfE6TLYlkhVDaCdgfe5tsHg53nsYpHTfGwcxq4xFK5QvCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W13iCal+; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717658474; x=1749194474;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=QD4Dh8MLYOkud3AMPflq2aHwK8HUP7fobAgy/H0UKDA=;
+  b=W13iCal+q0SluhaypB2NOFgKTY8lHrdacPljpzmliv/ds1RJLG1nAXtB
+   epeOOhFhfinZRuTYii/Vx3xsHy5t/1nvv+Eg+7VML5gVudeRCMfVXjxwr
+   SAIDrxZOT8qoTxlDBKUwmy5NPk5he2f189b0S3i7bSG8BJPSgua3MaziW
+   iQKeK8Rc/jsuYVY+JBxrBer4M+XXQ6f0acwc4II//OSaatTq6CSPCZa32
+   1PXC/60FvwdX84NBN7NSHN37rmDNyTjBQdl4J1qNGwn+r56OnURevUhMY
+   jEqeDxYAmO6m5cCsccOmInZEjZcNla/7TnjzW96ecY8F/HN9q208upbAl
+   g==;
+X-CSE-ConnectionGUID: ozJJMAXSRV6JLY1zC+UbGA==
+X-CSE-MsgGUID: p0kBJBhXQgWziV9DGVc0bQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="14147843"
+X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
+   d="scan'208";a="14147843"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 00:21:14 -0700
+X-CSE-ConnectionGUID: v/EJ7GX4RJOkNXeZvA21Fg==
+X-CSE-MsgGUID: dO3Tae8ZQJKIx4SLwrVfQw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
+   d="scan'208";a="42794382"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.9])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 00:21:10 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Chris Bainbridge <chris.bainbridge@gmail.com>, kernel test robot
+ <lkp@intel.com>
+Cc: Mario Limonciello <mario.limonciello@amd.com>,
+ dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+ hughsient@gmail.com
+Subject: Re: [PATCH v2] drm/client: Detect when ACPI lid is closed during
+ initialization
+In-Reply-To: <ZmB_cs-7GU-m3GXX@debian.local>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240528210319.1242-1-mario.limonciello@amd.com>
+ <202406040928.Eu1gRIWv-lkp@intel.com> <ZmB_cs-7GU-m3GXX@debian.local>
+Date: Thu, 06 Jun 2024 10:21:07 +0300
+Message-ID: <87h6e6bkpo.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmB1qKucR5fXk100@arm.com>
+Content-Type: text/plain
 
-On 05-06-24, 15:26, Ionela Voinescu wrote:
-> > > > > 		cpufreq_start_governor() // governor: performance
-> > > > > 			new_freq = cpufreq_driver->get() // if new_freq == policy->max
-> > > > > 			if (policy->cur != new_freq)
-> > > > > 			cpufreq_out_of_sync(policy, new_freq)
-> > > > > 				...
-> > > > > 				policy->cur = new_freq
-> > > I believe the problem is here   ^^^^^^^^^^^^^^^^^^^^^^.
-> > > 
-> > > cpufreq_verify_current_freq() should not update policy->cur unless a
-> > > request to change frequency has actually reached the driver. I believe
-> > > policy->cur should always reflect the request, not the actual current
-> > > frequency of the CPU.
+On Wed, 05 Jun 2024, Chris Bainbridge <chris.bainbridge@gmail.com> wrote:
+> On Tue, Jun 04, 2024 at 10:02:29AM +0800, kernel test robot wrote:
+>> Hi Mario,
+>> 
+>> kernel test robot noticed the following build errors:
+>> 
+>> [auto build test ERROR on drm-misc/drm-misc-next]
+>> [also build test ERROR on drm/drm-next drm-exynos/exynos-drm-next drm-intel/for-linux-next drm-intel/for-linux-next-fixes drm-tip/drm-tip linus/master v6.10-rc2 next-20240603]
+>> [If your patch is applied to the wrong git tree, kindly drop us a note.
+>> And when submitting patch, we suggest to use '--base' as documented in
+>> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>> 
+>> url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/drm-client-Detect-when-ACPI-lid-is-closed-during-initialization/20240529-050440
+>> base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+>> patch link:    https://lore.kernel.org/r/20240528210319.1242-1-mario.limonciello%40amd.com
+>> patch subject: [PATCH v2] drm/client: Detect when ACPI lid is closed during initialization
+>> config: i386-randconfig-053-20240604 (https://download.01.org/0day-ci/archive/20240604/202406040928.Eu1gRIWv-lkp@intel.com/config)
+>> compiler: gcc-9 (Ubuntu 9.5.0-4ubuntu2) 9.5.0
+>> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240604/202406040928.Eu1gRIWv-lkp@intel.com/reproduce)
+>> 
+>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>> the same patch/commit), kindly add following tags
+>> | Reported-by: kernel test robot <lkp@intel.com>
+>> | Closes: https://lore.kernel.org/oe-kbuild-all/202406040928.Eu1gRIWv-lkp@intel.com/
+>> 
+>> All errors (new ones prefixed by >>):
+>> 
+>>    ld: drivers/gpu/drm/drm_client_modeset.o: in function `drm_client_match_edp_lid':
+>> >> drivers/gpu/drm/drm_client_modeset.c:281:(.text+0x221b): undefined reference to `acpi_lid_open'
+>> 
+>> 
+>> vim +281 drivers/gpu/drm/drm_client_modeset.c
+>> 
+>>    260	
+>>    261	static void drm_client_match_edp_lid(struct drm_device *dev,
+>>    262					     struct drm_connector **connectors,
+>>    263					     unsigned int connector_count,
+>>    264					     bool *enabled)
+>>    265	{
+>>    266		int i;
+>>    267	
+>>    268		for (i = 0; i < connector_count; i++) {
+>>    269			struct drm_connector *connector = connectors[i];
+>>    270	
+>>    271			switch (connector->connector_type) {
+>>    272			case DRM_MODE_CONNECTOR_LVDS:
+>>    273			case DRM_MODE_CONNECTOR_eDP:
+>>    274				if (!enabled[i])
+>>    275					continue;
+>>    276				break;
+>>    277			default:
+>>    278				continue;
+>>    279			}
+>>    280	
+>>  > 281			if (!acpi_lid_open()) {
+>>    282				drm_dbg_kms(dev, "[CONNECTOR:%d:%s] lid is closed, disabling\n",
+>>    283					    connector->base.id, connector->name);
+>>    284				enabled[i] = false;
+>>    285			}
+>>    286		}
+>>    287	}
+>>    288	
+>> 
+>> -- 
+>> 0-DAY CI Kernel Test Service
+>> https://github.com/intel/lkp-tests/wiki
+>
+> The failed config has CONFIG_ACPI_BUTTON=m. The build failure can be
+> fixed with:
+>
+> diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
+> index b76438c31761..0271e66f44f8 100644
+> --- a/drivers/gpu/drm/drm_client_modeset.c
+> +++ b/drivers/gpu/drm/drm_client_modeset.c
+> @@ -271,11 +271,13 @@ static void drm_client_match_edp_lid(struct drm_device *dev,
+>                 if (connector->connector_type != DRM_MODE_CONNECTOR_eDP || !enabled[i])
+>                         continue;
+>
+> +#if defined(CONFIG_ACPI_BUTTON)
+>                 if (!acpi_lid_open()) {
+>                         drm_dbg_kms(dev, "[CONNECTOR:%d:%s] lid is closed, disabling\n",
+>                                     connector->base.id, connector->name);
+>                         enabled[i] = false;
+>                 }
+> +#endif
+>         }
+>  }
 
-There are times when the core doesn't have any prior information about
-the frequency, for example at driver probe time and resume. And so
-needs to set policy->cur by reading it from the hardware.
+No. This is because
 
-> > > Given that new_freq is the current (hardware) frequency of the CPU,
-> > > obtained via .get(), it can be the nominal frequency, as it is in your
-> > > case, or any frequency, if there is any firmware/hardware capping in
-> > > place.
-> > > 
-> > > This causes the issue in your scenario, in which __cpufreq_driver_target()
-> > > filters the request from the governor as it finds it equal to policy->cur,
-> > > and it believes it's already set by hardware.
+CONFIG_DRM=y
+CONFIG_ACPI_BUTTON=m
 
-I am still not sure why mismatch happens at boot time here.
+The pedantically correct fix is probably having DRM
 
-> > > This causes another issue in which scaling_cur_freq, which for some
-> > > systems returns policy->cur, ends up returning the hardware frequency of
-> > > the CPUs, and not the last frequency request, as it should:
-> > > 
-> > > "scaling_cur_freq
-> > > Current frequency of all of the CPUs belonging to this policy (in kHz).
-> > > 
-> > > In the majority of cases, this is the frequency of the last P-state
-> > > requested by the scaling driver from the hardware using the scaling
-> > > interface provided by it, which may or may not reflect the frequency
-> > > the CPU is actually running at (due to hardware design and other
-> > > limitations)." [1]
+	depends on ACPI_BUTTON || ACPI_BUTTON=n
 
-There is discussion going on about this in another thread [1] now.
+but seeing how i915 and xe just
 
-> > > Therefore policy->cur gets polluted with the hardware frequency of the
-> > > CPU sampled at that one time, and this affects governor decisions, as
-> > > in your case, and scaling_cur_freq feedback as well. This bad value will
-> > > not change until there's another .target() or cpufreq_out_of_sync()
-> > > call, which will never happen for fixed frequency governors like the
-> > > performance governor.
+	select ACPI_BUTTON if ACPI
 
---
-viresh
+and nouveau basically uses acpi_lid_open() it if it's reachable with no
+regard to kconfig, it's anyone's guess what will work.
 
-[1] https://lore.kernel.org/all/20240603081331.3829278-2-beata.michalska@arm.com/
+
+BR,
+Jani.
+
+
+
+-- 
+Jani Nikula, Intel
 
