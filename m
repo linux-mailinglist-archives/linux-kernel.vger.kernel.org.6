@@ -1,167 +1,115 @@
-Return-Path: <linux-kernel+bounces-203726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BE4B8FDF81
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:24:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1166C8FDF83
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06D5F281D6C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:24:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2C6D1C247D6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0E313AD1D;
-	Thu,  6 Jun 2024 07:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE3F13AD1D;
+	Thu,  6 Jun 2024 07:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="I6RLl4RT";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="YWBU5sB8"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eyz90bN/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7AE1BDEF;
-	Thu,  6 Jun 2024 07:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F7B38DE0
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 07:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717658654; cv=none; b=Z5aBAz70GMVbC7xu1d8JCB3dyp8MNbkbvxBuhTBykHAC79F62pB+58RD6VraMAm3dVFi8xXN/20AKef8yVF4FIKF6cyGi9rmHYCpFovmy4oVe4DPptY+FenCcnJYm//SpHJayUU1uwIiwZeeyXJP9oiehMPwCJQPJqAuacQl9MY=
+	t=1717658703; cv=none; b=GVwrNBMN+gkfA4wcSopoK7B8OcFIOC890OHOp3+dn7987nqcCGaYb2bIMX1RdnTq2j0QmPCCopAoMPd4o9fB4CB98WWioYL29v+tj1IzpZjEgd6qmSUMkDghg3xZmTkTNjdqRaOIxA7/Y+Thvi7ClUaJJnJhMyIXOXnbSv2f6Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717658654; c=relaxed/simple;
-	bh=jXYEynwSQ/kS6Y2DZCqgLn0Xi95jhH4Mfjku3tq6uV8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=InfsNNijnyvkqpVAZGRV7fFGQltTUP0xt7dyXqqf3Y9hJ7G38on3VPt+UN93wCW+nWoUE6jTBTdiRM70WNoT7+JyqBzdLBuuvbggLm6YG6xfu4epnichYT/PRUW9fhWBpKbevwoKFaaOq1ImRMq4pTzFNOzBfPFtM14Q3AX6hig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=I6RLl4RT; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=YWBU5sB8; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DEB0521A84;
-	Thu,  6 Jun 2024 07:24:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1717658650; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dV+8uG3NWP7Z2WVw8rJlpezXlpJJAU6quHjqjCAuUvg=;
-	b=I6RLl4RTFv4iNm7RZk3oBzz1X4U9wTNmf++6TiYnwSjlgBzTnp/ljntV/374TuQ6sb1U0P
-	w78+ysogjl1D35qof9jCd54F1SLwGyi604q2F0UQmdUrsbd0U7o2WKoK2kxnZPNOHtLndx
-	j+4gpxqNtyWYaqwMc+09upJmlQUC/K4=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=YWBU5sB8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1717658649; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dV+8uG3NWP7Z2WVw8rJlpezXlpJJAU6quHjqjCAuUvg=;
-	b=YWBU5sB8RlKNt2fwTCRD3FIIKW2t72h7Ml+CqY9t0gBQC3Kq+xjuwBIBk3ByKnMyzjFdfs
-	UBnR1OJ4dJET6uT5HsViBzkUz+tbSd6ScKOJrtNglepjY85ZlsO2l7lXptvRy5TPdg0SQe
-	tX1gGABBxJBt3T2PC3Cag5d/FWVjZvc=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C631513A79;
-	Thu,  6 Jun 2024 07:24:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /GBaLRlkYWbETgAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Thu, 06 Jun 2024 07:24:09 +0000
-Date: Thu, 6 Jun 2024 09:24:09 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
-	linux-cve-announce@vger.kernel.org,
-	Kees Cook <keescook@chromium.org>
-Subject: Re: CVE-2023-52734: net: sched: sch: Bounds check priority
-Message-ID: <ZmFkGWitjXvyOtbK@tiehlicka>
-References: <2024052100-CVE-2023-52734-c8c2@gregkh>
- <ZlWNaIMC3NCkIFxv@tiehlicka>
- <2024052824-justice-lair-14e6@gregkh>
- <ZlbIZ8bdBK4tZcBa@tiehlicka>
- <2024052930-dealt-class-f845@gregkh>
+	s=arc-20240116; t=1717658703; c=relaxed/simple;
+	bh=6ArXguUdE1tEHqkTMArHl/jywTYi8V4U84K1ePj0AoI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LkIdHAs8PoLd66bYbSZko2H3JaWeBc0LdWp+xeWr0Ya1S1wJ9uj07idJhM3cuXtWQHctEb6dhj3sipO/d5mUQ4nMLOYjn+xe1eOsHcX0nyXe5hFBjorCO+En5qpZ681rCrQHj2/PL1c9EMgt7cGOpUt7AbxCHGwbXre+rC+LXh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eyz90bN/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15335C2BD10;
+	Thu,  6 Jun 2024 07:24:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717658702;
+	bh=6ArXguUdE1tEHqkTMArHl/jywTYi8V4U84K1ePj0AoI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eyz90bN/icwoyAAxZFaUXkgseagaj2+gtayVvlpSEO85FPkYRqDSaed7AKTltqH1P
+	 Gnx4K273UguPCqIpoIGhVPhu93b4OwT1dENhWnEBqJkGXXHCn+feY5bujIXE0dC8hZ
+	 cutWHUYG3O/eEQ5TsOiWO/9/K3YBctwGgDMXp4SW3Pqow5dCGg8kGuu83Fm9lT5oQD
+	 +diJGGWlE2oX9IPx1XfRecSCr1sJkDOR0x/ZvHdbaCD+8Bq1w1ozRjrpfSEaRBFpjq
+	 4MMgKh9Ubu5JJt1tHLXFcVY0Gx3b0Y7aFuGCCuGK6Lp+STOdppusIoXuNTojDozxoL
+	 5LYs9ZPnUKn2g==
+Message-ID: <fd7fafb9-09be-48b1-ba52-57e52c6d973a@kernel.org>
+Date: Thu, 6 Jun 2024 09:24:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024052930-dealt-class-f845@gregkh>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: DEB0521A84
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
+User-Agent: Mozilla Thunderbird
+Subject: Re: kswapd0: page allocation failure: order:0,
+ mode:0x820(GFP_ATOMIC), nodemask=(null),cpuset=/,mems_allowed=0 (Kernel
+ v6.5.9, 32bit ppc)
+To: Yosry Ahmed <yosryahmed@google.com>, Erhard Furtner <erhard_f@mailbox.org>
+Cc: Yu Zhao <yuzhao@google.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
+ Chengming Zhou <chengming.zhou@linux.dev>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Minchan Kim <minchan@kernel.org>, Michal Hocko <mhocko@kernel.org>
+References: <20240508202111.768b7a4d@yea> <20240515224524.1c8befbe@yea>
+ <CAOUHufZ-9NmzOKjLedvZFp0=N0LvRZn77qC6k1WXK+NHtKr=0w@mail.gmail.com>
+ <CAOUHufZ36rQc8AfLtRv2QrEareysdvbprAEO5XkcG-FeDOxFLA@mail.gmail.com>
+ <20240602200332.3e531ff1@yea> <20240604001304.5420284f@yea>
+ <CAJD7tkbCRLdy0vD2Pd17fNrxHgkzW1VucN4qMkohLFLBLaaeCQ@mail.gmail.com>
+ <20240604134458.3ae4396a@yea>
+ <CAJD7tkYjJJGthQ_8NukGw6Q9EYbLA=8sAH_7=B90KXEL6HWdSw@mail.gmail.com>
+ <CAOUHufa0Fpj6SjNgB-z0n5Jg63q1ewkbOAU65forpDwQVs45qg@mail.gmail.com>
+ <CAJD7tkb=5GJ9SNUwDsu1Zy3Tus4rjsNo60Hg9N7=gGth409Diw@mail.gmail.com>
+ <CAOUHufb6zXr14Wm3T-4-OJh7iAq+vzDKwVYfHLhMMt96SpiZXg@mail.gmail.com>
+ <CAJD7tkZ+QY55GTzW9A7ZCm=rxAEfrW76cWXf8o5nwiKSXp8z=w@mail.gmail.com>
+ <20240604231019.18e2f373@yea>
+ <CAJD7tkYq5u7B+0UH2XKpeWJnUxoO2kJ1_XZ2JOgYpyNEVR7u0g@mail.gmail.com>
+ <20240606010431.2b33318c@yea>
+ <CAJD7tkbhWYzx=6YmzAh0F+cK-_Bn8mPOH7gMbQS7YVXmaFSgFg@mail.gmail.com>
+Content-Language: en-US
+From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+In-Reply-To: <CAJD7tkbhWYzx=6YmzAh0F+cK-_Bn8mPOH7gMbQS7YVXmaFSgFg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed 29-05-24 11:51:10, Greg KH wrote:
-> On Wed, May 29, 2024 at 09:30:08AM +0200, Michal Hocko wrote:
-[...]
-> > I am questioning the decision to make it a CVE. Because if that was a
-> > real deal then WARN_ON is something kernel CNA is considering a CVE worth
-> > problem! So a CVE has been filed with a fix that is CVE itself.
-> > Seriously how could this pass through the CVE review process?
+On 6/6/24 1:41 AM, Yosry Ahmed wrote:
+> On Wed, Jun 5, 2024 at 4:04 PM Erhard Furtner <erhard_f@mailbox.org> wrote:
 > 
-> "How" is "this was part of the entries in the GSD records that MITRE
-> asked us to back-fill as CVE entries".  Those entries already went
-> through two different rounds of review last year for the GSD record, and
-> I did another one as well now before the CVE creation happened.  
+> I am personally leaning toward (c), but I want to hear the opinions of
+> other people here. Yu, Vlastimil, Johannes, Nhat? Anyone else?
 
-I am sorry but I have no idea how that is supposed to justify assigning
-a CVE to a non-issue with a fix that is clearly considered a CVE on its
-own. An overlook, sure. That is understandable but the above doesn't
-make any sense to me.
+Besides the zpool commit which might have just pushed the machine over the
+edge, but it was probably close to it already. I've noticed a more general
+problem that there are GFP_KERNEL allocations failing from kswapd. Those
+could probably use be __GFP_NOMEMALLOC (or scoped variant, is there one?)
+since it's the case of "allocating memory to free memory". Or use mempools
+if the progress (success will lead to freeing memory) is really guaranteed.
 
-> It was in a batch where I reviewed 124 entries at once,
+Another interesting data point could be to see if traditional reclaim
+behaves any better on this machine than MGLRU. I saw in the config:
 
-OK, this makes much more sense and I do not mean to blame you for
-overlooking a particular things. But ...
+CONFIG_LRU_GEN=y
+CONFIG_LRU_GEN_ENABLED=y
 
-> and if I only got one
-> wrong, hey, that's a very good % overall, don't you think?  Especially
-> as it has been a publicily listed "vulnerability fix" for well over a
-> year now in the GSD system, and no one objected to it there.
+So disabling at least the second one would revert to the traditional reclaim
+and we could see if it handles such a constrained system better or not.
 
-... it is unavoidable to overlook completely bogus or even harmfull CVE
-fixes if they are generated in the current volumes. It is much worse
-that it is easier to overlook those which really are important.
-Especially during CVSS assessment. This simply cannot scale!
+> In the long-term, I think we may want to address the lock contention
+> in zsmalloc itself instead of zswap spawning multiple zpools.
+> 
+>>
+>> The patch did not apply cleanly on v6.9.3 so I applied it on v6.10-rc2. dmesg of the current v6.10-rc2 run attached.
+>>
+>> Regards,
+>> Erhard
+> 
 
-[...]
-
-> I welcome others to help out with this work, including yourself, if you
-> so desire.  That would help out a lot.
-
-I am sorry but I fundamentally disagree with the way how CVEs are
-processed _now_ and therefore I will not put my name under that. I am
-still hopeful that this is just the new process finding its own way and
-it will settle on something much more reasonable and _useful_.
-
--- 
-Michal Hocko
-SUSE Labs
 
