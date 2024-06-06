@@ -1,198 +1,106 @@
-Return-Path: <linux-kernel+bounces-203707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E9228FDF4F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:09:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53E638FDF53
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BD811C23894
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:09:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E71831F25886
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D995A13AD1D;
-	Thu,  6 Jun 2024 07:09:47 +0000 (UTC)
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B75F713B583;
+	Thu,  6 Jun 2024 07:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="clylkcG6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67F619D890;
-	Thu,  6 Jun 2024 07:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F101D19D890;
+	Thu,  6 Jun 2024 07:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717657787; cv=none; b=YaMQStQqrqBXPAm9PuXMCmdb5/GVmiIMklDbOxjae1gUtkeO0pcCpfWv8W5y6kixR/0vLZEuC/DRC/4cispfSATJKM1SH1MZiaaJIQulUq4wKBMwJ9m5UPJTrkRX/AEF9ORQmu0BVihhQshWC9NQ4OFRD0BxO0CE1kSUN/ZaLR4=
+	t=1717657850; cv=none; b=akObOPmIn3/X5c7EU7k5qFz2gu9eZQZtyK5jNeuTt7OqlA8ZA10gDK4StVIJB2bNvoloM22gqQ4pW7/El9oHkwMFhpGWoo/9mvQSCRpZ+AjahfMBHXUlk+N4aMHlwRhsuyajwSfv+GudRdTlLTF8Jg3FrA+NaEg2f12Cm8Fw/tY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717657787; c=relaxed/simple;
-	bh=T3FIcYCGvpLO0Es2jtoQNLujuS2R1njurpgfnkXnNBo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hRExMIzbQ7XCAukTudLbEbIjzvujPyhfgAGAiOfS5xSZmI6hKVnRrUGCnLdtf+EAYSZRIlpm9YbsdSKdrJdBylxF7vkMHjOPGZZxVNJmqx3vJXUKKyjO9FoogfK0AdkXf70rbV/yzkbCCqkFHb4BFbxRLlhIZevYr1D4XiUvEi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7024426c75dso589704b3a.1;
-        Thu, 06 Jun 2024 00:09:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717657785; x=1718262585;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D5K2xyTAzxaR0U9go7UapE5gZnzt95HLEb+vCp9VKKQ=;
-        b=ZK0A+fqr851lYBGdKbCmgKRePrndXKfHYgA+8fAV1j5IqKOMSIprbONuKTVW+JQeUi
-         qGMePfndJJOd3P0+oR1L+lKaG5Smv2m7A9aftZcXi9bQsu93eLaLjmqYq/w4TuXZPTTQ
-         9sjx200UuEd9KpjcttfY1UrdrLIP2JtiQxzDfYLBkmynLJdnPBEs7KOX/Df7OaFZnsLW
-         Lh2ql3EhNFcENh9C8P+BNFkwR9isD0TIxa5uSCkUBKbDuM1IiY7dmdZLFNL5I3ZhlvAz
-         AMKl/ME1LF7QK7/W0RGUOAe5MPW+3UWW9N5vkcHXzpBLaq2AIdxZJArjDODs72G7YnL5
-         uYzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9ZTJfOYefQnEm2RQRs1L2JlrkWax/65S2i2czsd3fnLIgPtPzH7C2GOGMOuzfS9YChV3/O4Qs10LKpVJhc/sIk9SCreqIAeTHEbdmJowpF5EKI1YPswaEKmgNiYMH//uw4+sHxjXdF8f/GTfOtA==
-X-Gm-Message-State: AOJu0Yx6LK7d87q9i0CKuGOsjlnUvghOhjE+Tzlo91k06nG4guF5vBQB
-	doTIWsU36LNHO3RK+uofz/AEH6tfyt3lAuDSJBRRuNIxkaez1Cygbs7D8GMhCt1fcAqHYDw9vid
-	JBr75WiDqUW4nq4JgNqo9tjpkaqA=
-X-Google-Smtp-Source: AGHT+IGUQVD5oP/h+g7p4Z9RknbNvOeKZgxHu7O0FIq6dNXT/Ihg9tfh8TRxNh5txyJ6lqp6Cc9fijGMoWo084p0Rcs=
-X-Received: by 2002:a05:6a20:7348:b0:1b2:3ab8:5194 with SMTP id
- adf61e73a8af0-1b2b6f4efedmr6283266637.23.1717657784964; Thu, 06 Jun 2024
- 00:09:44 -0700 (PDT)
+	s=arc-20240116; t=1717657850; c=relaxed/simple;
+	bh=feUC7cgN4kEHonWqGpsmtZb0vkD5Y70RcFg1PgquXUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t+kalPppC7gOPatdy6pK5Oy/kBfQ72gQBtGFf/69gjLTXVPxsLFkIq3po3Ax9pBvUE2MN6Vt4RzdSEJQLQ6V5PFZgLZq5NwjkMfsVQ1aodP6Cx+9oD/wW5tteWsiDFZJi+IJMTMH4SE5j4jITU07g6IBiillB24T5R1tVOC96VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=clylkcG6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72C50C2BD10;
+	Thu,  6 Jun 2024 07:10:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717657849;
+	bh=feUC7cgN4kEHonWqGpsmtZb0vkD5Y70RcFg1PgquXUE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=clylkcG6wLV/z+p3wpI6arQjgogf9c/Q3ru7LBfLNte7GDZ/7PUgTzROqXsr0Mycx
+	 soEKFSLYjNIO8+b7tv8TRJhmOPrObPJxtKCLsOSgVnLXWWfGRMgJ9QsUf1rCpLz3cS
+	 CsoDingtqACw80UNr2STQ3O3n+ctcOlD5HUIils7PXu51IdCXvKzgA4OOQ7EUnlhOw
+	 MaKIr1wHDLhH6YC9JTGJYPWFzRDnMw8u+0deSpls3jAo93GefB736hcJy/g35i51EC
+	 A2+XcEA7gRE0ZP+v6hiY4nLwDR8hKbPwAG7TEL2KLACOsiY8wnbXhPPjwuXX2l09xR
+	 4Hxrnsrcj+ljA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sF7Gs-000000007R6-0dz0;
+	Thu, 06 Jun 2024 09:10:50 +0200
+Date: Thu, 6 Jun 2024 09:10:50 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] HID/arm64: dts: qcom: sc8280xp-x13s: fix
+ touchscreen power on
+Message-ID: <ZmFg-uBodIMkINof@hovoldconsulting.com>
+References: <20240507144821.12275-1-johan+linaro@kernel.org>
+ <ZmBZPHbDv7ma_JaJ@hovoldconsulting.com>
+ <fupsiajh2za5r7itt2naxtynyqiwpw3efubrjmydd5ohypo3jg@2u44rbhbvmym>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527105842.GB33806@debian-dev> <CAP-5=fXfidyF_e=yMNi26ScgY-VbJPfxN8M7OiK9ELa3qTfXPQ@mail.gmail.com>
- <ZlY0F_lmB37g10OK@x1> <CAP-5=fWM8LxrcR4Nf+e2jRtJ-jC0Sa-HYPf56pU5GW8ySdX1CQ@mail.gmail.com>
- <d79b18d7-6930-41fd-8157-eaa55b52df86@arm.com> <Zld3dlJHjFMFG02v@x1>
- <CAP-5=fXKnQzfwDSr3zVeo6ChJe3+xwpBfyAi0ExmPEdhcde4ww@mail.gmail.com>
- <CAM9d7chV8YOCj8=SGs0f60UGtf+N2+X=U+Brg246bFoPXBXS+g@mail.gmail.com>
- <aee9254e-81c1-464a-8a28-f971615baffc@arm.com> <CAP-5=fVynt-8cH6Jc5VyfBLBOqkF+v_7kknHdUPZBM1r3WwhTQ@mail.gmail.com>
- <ZlkC_Tm6kKIL3Phc@google.com> <CAM9d7ciTbHngfimDNsXS_adR7xg4ZHvSHzVhAzuQ6o-nQ2nsMQ@mail.gmail.com>
- <CAP-5=fUq6jLCtjPNb0gngtR0cXopG+-mJ-+CnEOAXeG7VShh8A@mail.gmail.com>
-In-Reply-To: <CAP-5=fUq6jLCtjPNb0gngtR0cXopG+-mJ-+CnEOAXeG7VShh8A@mail.gmail.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Thu, 6 Jun 2024 00:09:33 -0700
-Message-ID: <CAM9d7cjPe68PMb1hnbypMOQUQOybpisdqH3eTH1B9G-KG5rKXw@mail.gmail.com>
-Subject: Re: [PATCH v1] perf evlist: Force adding default events only to core PMUs
-To: Ian Rogers <irogers@google.com>
-Cc: James Clark <james.clark@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@linux.dev>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Dominique Martinet <asmadeus@codewreck.org>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fupsiajh2za5r7itt2naxtynyqiwpw3efubrjmydd5ohypo3jg@2u44rbhbvmym>
 
-On Wed, Jun 5, 2024 at 4:02=E2=80=AFPM Ian Rogers <irogers@google.com> wrot=
-e:
->
-> On Wed, Jun 5, 2024 at 1:29=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
- wrote:
-> >
-> > On Thu, May 30, 2024 at 3:52=E2=80=AFPM Namhyung Kim <namhyung@kernel.o=
-rg> wrote:
-> > >
-> > > On Thu, May 30, 2024 at 06:46:08AM -0700, Ian Rogers wrote:
-> > > > On Thu, May 30, 2024 at 5:48=E2=80=AFAM James Clark <james.clark@ar=
-m.com> wrote:
-> > > > >
-> > > > > On 30/05/2024 06:35, Namhyung Kim wrote:
-> > > > > > It might not be a perfect solution but it could be a simple one=
-.
-> > > > > > Ideally I think it'd be nice if the kernel exports more informa=
-tion
-> > > > > > about the PMUs like sampling and exclude capabilities.
-> > > > > > > Thanks,
-> > > > > > Namhyung
-> > > > >
-> > > > > That seems like a much better suggestion. Especially with the eve=
-r
-> > > > > expanding retry/fallback mechanism that can never really take int=
-o
-> > > > > account every combination of event attributes that can fail.
-> > > >
-> > > > I think this approach can work but we may break PMUs.
-> > > >
-> > > > Rather than use `is_core` on `struct pmu` we could have say a
-> > > > `supports_sampling` and we pass to parse_events an option to exclud=
-e
-> > > > any PMU that doesn't have that flag. Now obviously more than just c=
-ore
-> > > > PMUs support sampling. All software PMUs, tracepoints, probes. We h=
-ave
-> > > > an imprecise list of these in perf_pmu__is_software. So we can set
-> > > > supports_sampling for perf_pmu__is_software and is_core.
-> > >
-> > > Yep, we can do that if the kernel provides the info.  But before that
-> > > I think it's practical to skip uncore PMUs and hope other PMUs don't
-> > > have event aliases clashing with the legacy names. :)
-> > >
-> > > >
-> > > > I think the problem comes for things like the AMD IBS PMUs, intel_b=
-ts
-> > > > and intel_pt. Often these only support sampling but aren't core. Th=
-ere
-> > > > may be IBM S390 PMUs or other vendor PMUs that are similar. If we c=
-an
-> > > > make a list of all these PMU names then we can use that to set
-> > > > supports_sampling and not break event parsing for these PMUs.
-> > > >
-> > > > The name list sounds somewhat impractical, let's say we lazily comp=
-ute
-> > > > the supports_sampling on a PMU. We need the sampling equivalent of
-> > > > is_event_supported:
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-nex=
-t.git/tree/tools/perf/util/print-events.c?h=3Dperf-tools-next#n242
-> > > > is_event_supported has had bugs, look at the exclude_guest workarou=
-nd
-> > > > for Apple PMUs. It also isn't clear to me how we choose the event
-> > > > config that we're going to probe to determine whether sampling work=
-s.
-> > > > The perf_event_open may reject the test because of a bad config and
-> > > > not because sampling isn't supported.
-> > > >
-> > > > So I think we can make the approach work if we had either:
-> > > > 1) a list of PMUs that support sampling,
-> > > > 2) a reliable "is_sampling_supported" test.
-> > > >
-> > > > I'm not sure of the advantages of doing (2) rather than just creati=
-ng
-> > > > the set of evsels and ignoring those that fail to open. Ignoring
-> > > > evsels that fail to open seems more unlikely to break anything as t=
-he
-> > > > user is giving the events/config values for the PMUs they care abou=
-t.
-> > >
-> > > Yep, that's also possible.  I'm ok if you want to go that direction.
-> >
-> > Hmm.. I thought about this again.  But it can be a problem if we ignore
-> > any failures as it can be a real error due to other reason - e.g. not
-> > supported configuration or other user mistakes.
->
-> Right, we have two not good choices:
->
-> 1) Try to detect whether sampling is supported, but any test doing
-> this needs to guess at a configuration and we'll need to deflake this
-> on off platforms like those that don't allow things like exclude
-> guest.
+On Thu, Jun 06, 2024 at 08:57:47AM +0200, Benjamin Tissoires wrote:
+> On Jun 05 2024, Johan Hovold wrote:
+> > Hi Jiri and Benjamin,
+> > 
+> > On Tue, May 07, 2024 at 04:48:14PM +0200, Johan Hovold wrote:
 
-I believe we don't need to try so hard to detect if sampling is
-supported or not.  I hope we will eventually add that to the
-kernel.  Also this is just an additional defense line, it should
-work without it in most cases.  It'll just protect from a few edge
-cases like uncore PMUs having events of legacy name.  For
-other events or PMUs, I think it's ok to fail.
+> > > Johan Hovold (7):
+> > >   dt-bindings: HID: i2c-hid: add dedicated Ilitek ILI2901 schema
+> > >   dt-bindings: HID: i2c-hid: elan: add Elan eKTH5015M
+> > >   dt-bindings: HID: i2c-hid: elan: add 'no-reset-on-power-off' property
+> > >   HID: i2c-hid: elan: fix reset suspend current leakage
+> > 
+> > Could you consider picking the first four patches up for 6.10-rc3 so
+> > that Bjorn can take the devicetree changes?
+> 
+> We definitely can. But if it makes things easier, Bjorn can also take
+> the whole series through his tree with my Acked-by.
 
+Thanks, but it should be fine to take this through two different trees.
 
-> 2) Ignore failures, possibly hiding user errors.
->
-> I would prefer for (2) the errors were pr_err rather than pr_debug,
-> something the user can clean up by getting rid of warned about PMUs.
-> This will avoid hiding the error, but then on Neoverse cycles will
-> warn about the arm_dsu PMU's cycles event for exactly Linus' test
-> case. My understanding is that this is deemed a regression, hence
-> Arnaldo proposing pr_debug to hide it.
+It will probably take a little longer to get the DT changes into
+mainline anyway as they will also go through the SoC tree.
 
-Right, if we use pr_err() then users will complain.  If we use
-pr_debug() then errors will be hidden silently.
+> > >   arm64: dts: qcom: sc8280xp-x13s: fix touchscreen power on
+> > >   arm64: dts: qcom: sc8280xp-crd: use external pull up for touch reset
+> > >   arm64: defconfig: enable Elan i2c-hid driver
 
-Thanks,
-Namhyung
+Johan
 
