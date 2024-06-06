@@ -1,190 +1,172 @@
-Return-Path: <linux-kernel+bounces-204582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A970C8FF0BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:33:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E9388FF090
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:24:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B1961C253AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:33:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67BFF28CE29
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41355198858;
-	Thu,  6 Jun 2024 15:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15F6196D8E;
+	Thu,  6 Jun 2024 15:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FzVOJ3lr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="c52DHjTf";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="c52DHjTf"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB78198841;
-	Thu,  6 Jun 2024 15:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3300195802;
+	Thu,  6 Jun 2024 15:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717687931; cv=none; b=ItFHUj4YkhajYzswyLixV2Acgn26d5EdqN0wLx2KQ2tW6kacmYEhaQPhQbFbaH+PU4Uh/cSnjOzGGZoZXT1RXpjmAYyYyKLMP/P4VMsQJZQAdWaFNi9iqalDuG2/Gno4cBEh+r0NzqSqlAtGQGaZSImkR2YIBHAj7X62eg2MkHY=
+	t=1717687366; cv=none; b=dG1juvT8AohU0dM3fj8CwIck42uVXtJjqsev5AZgf3Xqo5k/B5iTf1O7CH8aH5V7Q06qvWDQaQZJIVoQZMTA5hMYmY7mY4ADyBxcjx+Pe9UQJIG8pD5EeHU3uRu08tCkGnZQz462bGNNxyU+jOEeSQJkLa3/ymNrfbGlpXCSVL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717687931; c=relaxed/simple;
-	bh=I+qiD9f7AIjkeTzE7i3sCyRtTk9/3BCUmNFuB2K/uis=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=R12ggYLF0Ioyk8S5pscidaTg9+iPTXtxqmihx1qG96jte9nacyTybZ9TXxAdrKeumU2SIshPeH3cJiYRfQ8/EEaOYMLFLItOYNHQPD9usn+uXaFXsi2U2FLZfxMajhWt7krXSMUBNDcKOVO0vRLiK4mRWfYTUiiNaCYyb1VAijU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FzVOJ3lr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FAD8C32786;
-	Thu,  6 Jun 2024 15:32:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717687931;
-	bh=I+qiD9f7AIjkeTzE7i3sCyRtTk9/3BCUmNFuB2K/uis=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=FzVOJ3lr0INEoHiotznW8SDe8HJ3POVh31xzThqGfrbaYnu8dnMoWcphOGtUdd8j3
-	 fGEVK2Uv1kZIjzDdwPAex6g+Ql9BRD+LwJshrYKl3i3jZXUuxsHg5U/XhVB3osR7iQ
-	 RX7ifnqYXVtIYg9+u536CHTaf5j6ZKSMnuZG4S4PN+A+FHQCGvQ6kAiuZWuTbaGy6S
-	 k+Xt9SCm2S10ktQWQtJZ9IqBtXSZqUVHWLmYGQscqG0ikcZ7phbkQFbqVj1mlHv6Mf
-	 CIwrVVw47NMqcj/uqwqnsGjtSFmieEx66sD0HZJ9Ah6h0zdf+aRYcYuZ/HLlS+EbM9
-	 vqD6jUEe3Jvkg==
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 06 Jun 2024 16:21:46 +0100
-Subject: [PATCH v2 4/4] KVM: arm64: Avoid underallocating storage for host
- SVE state
+	s=arc-20240116; t=1717687366; c=relaxed/simple;
+	bh=NDmh2xK9KL5BY3LXtKqrYFW8U7nU7cON6KAQh7Vw1AI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A2B4u8ax0/WC4DPV0iwcJRjvJxuqpCHDO8dPIOfe/Q408xLGgQsRir636L2DrKq1KBtAxovVXA6ldq+R3RKGEzYN4Jw/BVY1/xOpMwAivcIeAXHHgvCqpDUv1/Av0xNtQkhxPVsF43nv1UbfDTgskPwyOI1CS6ez/yz7uDv0tp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=c52DHjTf; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=c52DHjTf; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C7C942198C;
+	Thu,  6 Jun 2024 15:22:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1717687361; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=NVBrEhkQ/SUTCVD/ZxuFTIDe7cANiTexdjnYFfXgLAA=;
+	b=c52DHjTf3tz5dLkltT4ybFvvfqEqeP7VMxVhebZGrZjSxJZTqFA2ujwnKNLd3/PUd3aLWh
+	fmdUzRrs+qpFz5x0C5YT2Nq+hT0dbUWCkoqFNMkU6lwUpZTyvMObCWR+daUXWP38DnSQsa
+	kg2Fba2IanT4uhU1ZPr5hPAgPTSvYoE=
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1717687361; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=NVBrEhkQ/SUTCVD/ZxuFTIDe7cANiTexdjnYFfXgLAA=;
+	b=c52DHjTf3tz5dLkltT4ybFvvfqEqeP7VMxVhebZGrZjSxJZTqFA2ujwnKNLd3/PUd3aLWh
+	fmdUzRrs+qpFz5x0C5YT2Nq+hT0dbUWCkoqFNMkU6lwUpZTyvMObCWR+daUXWP38DnSQsa
+	kg2Fba2IanT4uhU1ZPr5hPAgPTSvYoE=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B5ED913A79;
+	Thu,  6 Jun 2024 15:22:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Xy04LEHUYWbGbwAAD6G6ig
+	(envelope-from <mkoutny@suse.com>); Thu, 06 Jun 2024 15:22:41 +0000
+From: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
+To: cgroups@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Jan Kratochvil (Azul)" <jkratochvil@azul.com>
+Subject: [RFC PATCH v5 0/3] Add memory.max.effective for application's allocators
+Date: Thu,  6 Jun 2024 17:22:29 +0200
+Message-ID: <20240606152232.20253-1-mkoutny@suse.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240606-kvm-arm64-fix-pkvm-sve-vl-v2-4-c88f4eb4b14b@kernel.org>
-References: <20240606-kvm-arm64-fix-pkvm-sve-vl-v2-0-c88f4eb4b14b@kernel.org>
-In-Reply-To: <20240606-kvm-arm64-fix-pkvm-sve-vl-v2-0-c88f4eb4b14b@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
- Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
- Suzuki K Poulose <suzuki.poulose@arm.com>, Fuad Tabba <tabba@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kvmarm@lists.linux.dev, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.14-dev-d4707
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4775; i=broonie@kernel.org;
- h=from:subject:message-id; bh=I+qiD9f7AIjkeTzE7i3sCyRtTk9/3BCUmNFuB2K/uis=;
- b=owGbwMvMwMWocq27KDak/QLjabUkhrTEa7mvI+ar1U3OnsL6Nva70cesxpJ3GkoX2WMlhBQubvJj
- qjXrZDRmYWDkYpAVU2RZ+yxjVXq4xNb5j+a/ghnEygQyhYGLUwAmYv6d/RdTYQPTVbuJk9KDhWZwhp
- z/yPjEt+unpW90p8eq6RMcNn5O5p9m6qr2313lRf/bbzuvls0t/tQovtx/i5tsvPn/DVt1Wep1Opbm
- ZUubM8hrGe14vVOg6dW8qVpJCQ//fpz1Vq5LZ+sm3rsVgs7PHoh6aoReimdZxxpoNLX8W9OMkpyYpS
- YqlaZTbitwLd6UmaJ/36hutctiB69pEx/xTO0SsVZ9en3O0yxNsXvG2xldyu6Ilsu+uxie4FX+qDa8
- 8tqCY2niga5qwSUbm56waUeaXpC0/8UltC6I+bqu94/lVuk/hEMl13032qnSULPw6t5gkYJbM9SarK
- yLLv3ubG9/YMy6n3f2l08H2Hp1AQ==
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -1.02
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.02 / 50.00];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	BAYES_HAM(-0.72)[83.70%];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
 
-We size the allocation for the host SVE state using the maximum VL
-shared by all CPUs in the host.  As observed during review on an
-asymmetric system this may be less than the maximum VL supported on some
-of the CPUs.  Since the pKVM hypervisor saves and restores the host
-state using the maximum VL for the current CPU this may lead to buffer
-overflows, fix this by changing pKVM to use the maximum VL for any CPU
-to size allocations and limit host configurations.
+Some applications use memory cgroup limits to scale their own memory
+needs. Reading of the immediate membership cgroup's memory.max is not
+sufficient because of possible ancestral limits. The application could
+traverse upwards to figure out the tightest limit but this would not
+work in cgroup namespace where the view of cgroup hierarchy is
+incomplete and the limit may apply from outer world.
+Additionally, applications should respond to limit changes.
 
-Fixes: 66d5b53e20a6 ("KVM: arm64: Allocate memory mapped at hyp for host sve state in pKVM")
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- arch/arm64/include/asm/kvm_host.h  | 2 +-
- arch/arm64/include/asm/kvm_hyp.h   | 2 +-
- arch/arm64/include/asm/kvm_pkvm.h  | 2 +-
- arch/arm64/kvm/hyp/nvhe/hyp-main.c | 4 ++--
- arch/arm64/kvm/hyp/nvhe/pkvm.c     | 2 +-
- arch/arm64/kvm/reset.c             | 6 +++---
- 6 files changed, 9 insertions(+), 9 deletions(-)
+(cgroup v1 used memory.stat:hierarchical_memory_limit to report the
+value but there's no such counterpart in cgroup v2 memory.stat.)
 
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index 36b8e97bf49e..a28fae10596f 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -76,7 +76,7 @@ static inline enum kvm_mode kvm_get_mode(void) { return KVM_MODE_NONE; };
- DECLARE_STATIC_KEY_FALSE(userspace_irqchip_in_use);
- 
- extern unsigned int __ro_after_init kvm_sve_max_vl;
--extern unsigned int __ro_after_init kvm_host_sve_max_vl;
-+extern unsigned int __ro_after_init kvm_host_sve_max_cpu_vl;
- int __init kvm_arm_init_sve(void);
- 
- u32 __attribute_const__ kvm_target_cpu(void);
-diff --git a/arch/arm64/include/asm/kvm_hyp.h b/arch/arm64/include/asm/kvm_hyp.h
-index 7510383d78a6..47426df69875 100644
---- a/arch/arm64/include/asm/kvm_hyp.h
-+++ b/arch/arm64/include/asm/kvm_hyp.h
-@@ -144,6 +144,6 @@ extern u64 kvm_nvhe_sym(id_aa64smfr0_el1_sys_val);
- 
- extern unsigned long kvm_nvhe_sym(__icache_flags);
- extern unsigned int kvm_nvhe_sym(kvm_arm_vmid_bits);
--extern unsigned int kvm_nvhe_sym(kvm_host_sve_max_vl);
-+extern unsigned int kvm_nvhe_sym(kvm_host_sve_max_cpu_vl);
- 
- #endif /* __ARM64_KVM_HYP_H__ */
-diff --git a/arch/arm64/include/asm/kvm_pkvm.h b/arch/arm64/include/asm/kvm_pkvm.h
-index cd56acd9a842..6fc0cf42fca3 100644
---- a/arch/arm64/include/asm/kvm_pkvm.h
-+++ b/arch/arm64/include/asm/kvm_pkvm.h
-@@ -134,7 +134,7 @@ static inline size_t pkvm_host_sve_state_size(void)
- 		return 0;
- 
- 	return size_add(sizeof(struct cpu_sve_state),
--			SVE_SIG_REGS_SIZE(sve_vq_from_vl(kvm_host_sve_max_vl)));
-+			SVE_SIG_REGS_SIZE(sve_vq_from_vl(kvm_host_sve_max_cpu_vl)));
- }
- 
- #endif	/* __ARM64_KVM_PKVM_H__ */
-diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-index bd8f671e848c..d232775b72c9 100644
---- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-+++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-@@ -90,8 +90,8 @@ static void flush_hyp_vcpu(struct pkvm_hyp_vcpu *hyp_vcpu)
- 	hyp_vcpu->vcpu.arch.ctxt	= host_vcpu->arch.ctxt;
- 
- 	hyp_vcpu->vcpu.arch.sve_state	= kern_hyp_va(host_vcpu->arch.sve_state);
--	/* Limit guest vector length to the maximum supported by the host.  */
--	hyp_vcpu->vcpu.arch.sve_max_vl	= min(host_vcpu->arch.sve_max_vl, kvm_host_sve_max_vl);
-+	/* Limit guest vector length to the maximum supported by any CPU.  */
-+	hyp_vcpu->vcpu.arch.sve_max_vl	= min(host_vcpu->arch.sve_max_vl, kvm_host_sve_max_cpu_vl);
- 
- 	hyp_vcpu->vcpu.arch.hw_mmu	= host_vcpu->arch.hw_mmu;
- 
-diff --git a/arch/arm64/kvm/hyp/nvhe/pkvm.c b/arch/arm64/kvm/hyp/nvhe/pkvm.c
-index 95cf18574251..08e825de09d1 100644
---- a/arch/arm64/kvm/hyp/nvhe/pkvm.c
-+++ b/arch/arm64/kvm/hyp/nvhe/pkvm.c
-@@ -18,7 +18,7 @@ unsigned long __icache_flags;
- /* Used by kvm_get_vttbr(). */
- unsigned int kvm_arm_vmid_bits;
- 
--unsigned int kvm_host_sve_max_vl;
-+unsigned int kvm_host_sve_max_cpu_vl;
- 
- /*
-  * Set trap register values based on features in ID_AA64PFR0.
-diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
-index 3fc8ca164dbe..59cccb477cf3 100644
---- a/arch/arm64/kvm/reset.c
-+++ b/arch/arm64/kvm/reset.c
-@@ -32,7 +32,7 @@
- 
- /* Maximum phys_shift supported for any VM on this host */
- static u32 __ro_after_init kvm_ipa_limit;
--unsigned int __ro_after_init kvm_host_sve_max_vl;
-+unsigned int __ro_after_init kvm_host_sve_max_cpu_vl;
- 
- /*
-  * ARMv8 Reset Values
-@@ -52,8 +52,8 @@ int __init kvm_arm_init_sve(void)
- {
- 	if (system_supports_sve()) {
- 		kvm_sve_max_vl = sve_max_virtualisable_vl();
--		kvm_host_sve_max_vl = sve_max_vl();
--		kvm_nvhe_sym(kvm_host_sve_max_vl) = kvm_host_sve_max_vl;
-+		kvm_host_sve_max_cpu_vl = sve_max_cpu_vl();
-+		kvm_nvhe_sym(kvm_host_sve_max_cpu_vl) = kvm_host_sve_max_cpu_vl;
- 
- 		/*
- 		 * The get_sve_reg()/set_sve_reg() ioctl interface will need
+Introduce a new memcg attribute file that contains the effective value
+of memory limit for given cgroup (following cpuset.cpus.effective
+pattern) and that sends notifications like memory.events when the
+effective limit changes.
 
+Reasons for RFC:
+1) Should global limit be included? (And respond to memory hotplug?)
+2) Is swap.max.effective needed? (in v2 without memsw accounting)
+3) Should memory.high be also handled?
+4) What would be an alternative?
+
+My answers to RFC:
+
+1) No (there's no memory.max in global root memcg)
+2) No (app doesn't have full control of memory that's swapped out)
+3) No (scaling the allocator against the "soft" limit could end up in
+   dynamics difficult to reason and admin)
+4)
+- PSI (too obscure for traditional users but better semantics for limit
+  shrinking)
+- memory.stat field (like v1 but separate attribute is better for
+  notifications, cpuset precedent)
+
+Changes from v4 (https://lore.kernel.org/r/ZcvlhOZ4VBEX9raZ@host1.jankratochvil.net)
+- split the patch for swap.max.effetive
+- add Documentation/
+- reword commit messages
+- add notification support
+
+Michal Koutný (3):
+  memcg: Add memory.max.effective attribute
+  memcg: Add memory.swap.max.effective like hierarchical_memsw_limit
+  memcg: Notify on memory.max.effective changes
+
+ Documentation/admin-guide/cgroup-v2.rst |  6 ++++
+ include/linux/memcontrol.h              |  2 ++
+ mm/memcontrol.c                         | 46 +++++++++++++++++++++++++
+ 3 files changed, 54 insertions(+)
+
+
+base-commit: 2df0193e62cf887f373995fb8a91068562784adc
 -- 
-2.39.2
+2.45.1
 
 
