@@ -1,94 +1,140 @@
-Return-Path: <linux-kernel+bounces-203751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE40A8FE000
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:38:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE608FE002
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 09:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 532B9B2287C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:38:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71A541C24912
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 07:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A2913B5B9;
-	Thu,  6 Jun 2024 07:37:48 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8DC13BC23;
+	Thu,  6 Jun 2024 07:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDDoI2mm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6B813AD06;
-	Thu,  6 Jun 2024 07:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CD93AC16;
+	Thu,  6 Jun 2024 07:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717659467; cv=none; b=nZ76Gjs9sWrFrWqBTCg2bKqH6ZWxTSJJhTeDP+2JhiDThz6IyHdf/uPSozdJvcXGEYUzmYrwmUpj3IQDAYOlUylOdbA7zYmeWEmKqKMTcGKe6yk7RI7J8TsuKVVeVBQB4Yyfm4k/RLtS47/LpB/vRHStkePDBT5nQDIFq4liyhY=
+	t=1717659487; cv=none; b=b00IJgNcT63eT35kWN4hZkexjTu9ImKrsN3DAPHPJKiQ+q6D7Qb9agUyDoM3kUqR67fV44c/SfVsDoV6A5bMiTeGhjBKSSYtL993MzvD0P9CQ3SpG85m8rJIQtvGy3MoRFQmPPPF0mrU6v1fsL45P86f1Xf5Fch7qlbuovII8wU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717659467; c=relaxed/simple;
-	bh=a2LuMo4gSmwdzRlaVNt1YnokeK3if9obfVCp+HFlEZs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BwcqF/dRg5shKnx1YzXLqzC5J1GPXhCQU5HdoTf5FKY38xQQIU7y45KBRcY6el3FDwJeCTIfYqgRVV2rDTXlUE6rorU+9gM/u0beYqJLew1OAgoMdDykkWsLR9V6gWOxPJf+A6Bf67Kv/AeVpqBraW9Jxfknta+LMbG5BbzsVcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875b65.versanet.de ([83.135.91.101] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sF7gh-0006li-LF; Thu, 06 Jun 2024 09:37:31 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Alex Bee <knaerzche@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] Add SFC support for RK3128
-Date: Thu, 06 Jun 2024 09:37:29 +0200
-Message-ID: <7129744.aoefvbuG5b@diego>
-In-Reply-To: <fcff0181-b6de-4e47-b7ff-47baac061b3e@kernel.org>
-References:
- <20240605205209.232005-1-knaerzche@gmail.com>
- <20240605205209.232005-6-knaerzche@gmail.com>
- <fcff0181-b6de-4e47-b7ff-47baac061b3e@kernel.org>
+	s=arc-20240116; t=1717659487; c=relaxed/simple;
+	bh=BjRy2bONDnwpsYh5J5sDM+y5cxV/N4RQdfo+TuyNLsA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VPsf3EhWiwx8AZX3pyatJ+9mjNN+UxoTvyDR36ZRe/oL+7CbjftrshOq3tPoszdJToZsBYlJePI0D3frxJE3zh9cnT3M0qzAtUbvbzUxpEVFb8V0iGYvSyDR2TgGtg/Rax525yAqCZOvf/0PeT9Vro1RdFz1+iBQTnHyqi60sHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hDDoI2mm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1607BC4AF12;
+	Thu,  6 Jun 2024 07:38:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717659486;
+	bh=BjRy2bONDnwpsYh5J5sDM+y5cxV/N4RQdfo+TuyNLsA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hDDoI2mm06p/NCVDMo41ApIhrMhZ2MQL2aIZG3NVsqLoRbI68S2PR1qR8xX5jXnXl
+	 F66QPwka8MSRV/7VVK95YTMKgCdznjxm+snZrvQW5T3gRW1NqhXW/XKCa7qM+VK9VV
+	 ufh5QEwOTEm4zKrV+0/yAy6SXeOdx8ZqMBsv9T8LA3QLWIH9xWash0LCfJG4B/ADku
+	 iA3Yl0gJj6MMMMg7J8j9jM1etcIDjEQ/YSFlPH8Nitgov+hSfG5LSd/vKPZqu/ePw8
+	 ajhy5OyhWJd5E9M3U0jkLPxHMI0MQ/nF2FtOrxE/Suv4F6K1gGDKucvuiLesMwMEGU
+	 C5xKoonVhFVfA==
+Date: Thu, 6 Jun 2024 10:38:01 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Hillf Danton <hdanton@sina.com>
+Cc: Tejun Heo <tj@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, linux-kernel@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
+	RDMA mailing list <linux-rdma@vger.kernel.org>
+Subject: Re: [PATCH -rc] workqueue: Reimplement UAF fix to avoid lockdep
+ worning
+Message-ID: <20240606073801.GA13732@unreal>
+References: <4c4f1fb769a609a61010cb6d884ab2841ef716d3.1716885172.git.leon@kernel.org>
+ <ZljyqODpCD0_5-YD@slm.duckdns.org>
+ <20240531034851.GF3884@unreal>
+ <Zl4jPImmEeRuYQjz@slm.duckdns.org>
+ <20240604105456.1668-1-hdanton@sina.com>
+ <20240604113834.GO3884@unreal>
+ <Zl9BOaPDsQBc8hSL@slm.duckdns.org>
+ <20240605111055.1843-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605111055.1843-1-hdanton@sina.com>
 
-Am Donnerstag, 6. Juni 2024, 08:41:19 CEST schrieb Krzysztof Kozlowski:
-> On 05/06/2024 22:52, Alex Bee wrote:
-> > This series adds support for the Serial Flash Controller (SFC) found in
-> > RK3128 SoCs.
+On Wed, Jun 05, 2024 at 07:10:55PM +0800, Hillf Danton wrote:
+> On Tue, 4 Jun 2024 21:58:04 +0300 Leon Romanovsky <leon@kernel.org>
+> > On Tue, Jun 04, 2024 at 06:30:49AM -1000, Tejun Heo wrote:
+> > > On Tue, Jun 04, 2024 at 02:38:34PM +0300, Leon Romanovsky wrote:
+> > > > Thanks, it is very rare situation where call to flush/drain queue
+> > > > (in our case kthread_flush_worker) in the middle of the allocation
+> > > > flow can be correct. I can't remember any such case.
+> > > >
+> > > > So even we don't fully understand the root cause, the reimplementation
+> > > > is still valid and improves existing code.
+> > > 
+> > > It's not valid. pwq release is async and while wq free in the error path
+> > > isn't. The flush is there so that we finish the async part before
+> > > synchronize error handling. The patch you posted will can lead to double
+> > > free after a pwq allocation failure. We can make the error path synchronous
+> > > but the pwq free path should be updated first so that it stays synchronous
+> > > in the error path. Note that it *needs* to be asynchronous in non-error
+> > > paths, so it's going to be a bit subtle one way or the other.
 > > 
-> > As without using some "id holes" we would run out clock ids in the binding
-> > and would have to touch the ABI, I added patches which removes the
-> > CLK_NR_CLKS macro and uses the recently introduced
-> > rockchip_clk_find_max_clk_id helper instead to find the highest clock id.
+> > But at that point, we didn't add newly created WQ to any list which will execute
+> > that asynchronous release. Did I miss something?
 > > 
-> > changes since v1:
-> >  - added patches to remove CLK_NR_CLKS (Connor)
-> > 
+> Maybe it is more subtle than thought, but not difficult to make the wq
+> allocation path sync. See if the patch could survive your test.
+
+Thanks, I started to run our tests with Dan's revert.
+https://lore.kernel.org/all/171711745834.1628941.5259278474013108507.stgit@dwillia2-xfh.jf.intel.com/
+
+As premature results, it fixed my lockdep warnings, but it will take time till I get full confidence.
+If not, I will try your patch.
+
+Thanks
+
 > 
-> Do not attach (thread) your patchsets to some other threads (unrelated
-> or older versions). This buries them deep in the mailbox and might
-> interfere with applying entire sets.
+> --- x/include/linux/workqueue.h
+> +++ y/include/linux/workqueue.h
+> @@ -402,6 +402,7 @@ enum wq_flags {
+>  	 */
+>  	WQ_POWER_EFFICIENT	= 1 << 7,
+>  
+> +	__WQ_INITIALIZING 	= 1 << 14, /* internal: workqueue is initializing */
+>  	__WQ_DESTROYING		= 1 << 15, /* internal: workqueue is destroying */
+>  	__WQ_DRAINING		= 1 << 16, /* internal: workqueue is draining */
+>  	__WQ_ORDERED		= 1 << 17, /* internal: workqueue is ordered */
+> --- x/kernel/workqueue.c
+> +++ y/kernel/workqueue.c
+> @@ -5080,6 +5080,8 @@ static void pwq_release_workfn(struct kt
+>  	 * is gonna access it anymore.  Schedule RCU free.
+>  	 */
+>  	if (is_last) {
+> +		if (wq->flags & __WQ_INITIALIZING)
+> +			return;
+>  		wq_unregister_lockdep(wq);
+>  		call_rcu(&wq->rcu, rcu_free_wq);
+>  	}
+> @@ -5714,8 +5716,10 @@ struct workqueue_struct *alloc_workqueue
+>  			goto err_unreg_lockdep;
+>  	}
+>  
+> +	wq->flags |= __WQ_INITIALIZING;
+>  	if (alloc_and_link_pwqs(wq) < 0)
+>  		goto err_free_node_nr_active;
+> +	wq->flags &= ~__WQ_INITIALIZING;
+>  
+>  	if (wq_online && init_rescuer(wq) < 0)
+>  		goto err_destroy;
+> --
 > 
-> You sent now v2 immediately after. Confused.
-
-it looks like Alex had some mail trouble yesterday.
-
-The thread you Acked patches in actually is v2, just missing the label.
-
-- original v1: https://lore.kernel.org/linux-rockchip/20240605172154.193047-1-knaerzche@gmail.com
-
-- "unlabeled" v2: https://lore.kernel.org/linux-rockchip/20240605205209.232005-1-knaerzche@gmail.com/
-- this as v2, but as reply to the previous
-- real v2: https://lore.kernel.org/linux-rockchip/20240605210049.232284-1-knaerzche@gmail.com/
-
-The last 3 are identical, just the sending process was somehow fumbled.
-
-
 
