@@ -1,161 +1,123 @@
-Return-Path: <linux-kernel+bounces-204551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23EAF8FF05B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:20:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 371E98FF05F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F34B28E00E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:19:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41D041C237F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89ABA19D093;
-	Thu,  6 Jun 2024 15:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yud4c4G8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983681667E6;
+	Thu,  6 Jun 2024 15:06:56 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC79F197513
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 15:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB531974FD;
+	Thu,  6 Jun 2024 15:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717686395; cv=none; b=n5H3H94KIzSbO9wV0Jx2cdPhsZnBXTPYTrhYBAqM7gKSTf3LARW8+JRGcbSbXgUExNrYy868jAbak84Wp61U/H7rAZ0ccu+zGbRmMXZRqjspIENqOMPyne4W2zYEmyyfczY4i/h0VtJt+iqn5RXWigsza1J3AUjkAMGwh0no9jw=
+	t=1717686416; cv=none; b=HyE6BbKHLif6+UYGkCaxLeZVDvxZY9/hdETVCuHQfOcxeHwJvC28t2esunQtmm7m0/zr2iCmXdJxONF5+vLkVBvGXP0Zsrzw17kLcyUyGOxKNYYB8G6KGWc8Aq3T9W55SfGf/BKiQ47KZVkl4o9mCRs/4LbT6ixnyW4dgxp1tWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717686395; c=relaxed/simple;
-	bh=t5xQJkmzKQzOdNcS+FJKDDzMs96fqnEU6mLD06I3cxM=;
-	h=Content-Type:Date:Message-Id:Cc:From:To:Subject:References:
-	 In-Reply-To; b=h5LTqKoLok1N7ekWtcsB/LrCxCdOMDAnXMS2Ee6yHlzfoSz8Lnq4pP6/luTbvrATxj3VnWNHqSZM/X96eQrhNc7r/7TNHeBO0YoShUrUCg2VD4WghjwJAk7XQkBk4juQL9oJEZyL1pSqORgKwtyYxta8PiJnHGFo6wTbXJ2BMJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yud4c4G8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0488DC2BD10;
-	Thu,  6 Jun 2024 15:06:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717686395;
-	bh=t5xQJkmzKQzOdNcS+FJKDDzMs96fqnEU6mLD06I3cxM=;
-	h=Date:Cc:From:To:Subject:References:In-Reply-To:From;
-	b=Yud4c4G8n2reoXZ4gev4eOF90XOJMKiea9vZJVbueAADAVoWBb+nvL5rJOrR7Ezkd
-	 U6GrOrIg2rov/yXVuYmEz22ysYgzj5XppVKU8J4dowaZw7bynyWm97aP2nzqbn1s6s
-	 VMIiKqwqIM05C6sB9sASYpOJqpslWF9mif24mDx9r1oLlUNt8Irz8cO05+w830pIBQ
-	 XIplwXTNtyg1bPb8O0eZ1WCPLFpke0oEuhYNa/l3J8ISkrMtYlvoFIQhRMuVqQydGz
-	 /VmWdAbSFp0PHpmvL5EahTCHDIqF6EZI9LawuGJ2cAHnuT7vOdq2MpVGRAwQ3jVyjM
-	 iQks4fxpuciNw==
-Content-Type: multipart/signed;
- boundary=48bbdfa44b4d289b745038c01d8a032d6d7c501116f3081de0c010ed1031;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Thu, 06 Jun 2024 17:06:31 +0200
-Message-Id: <D1T10API5U80.1OKB56YTFGMTN@kernel.org>
-Cc: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>, "Rasmus
- Villemoes" <rasmus.villemoes@prevas.dk>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Tudor Ambarus" <tudor.ambarus@linaro.org>, "Esben Haabendal"
- <esben@geanix.com>, "Pratyush Yadav" <pratyush@kernel.org>, "Miquel Raynal"
- <miquel.raynal@bootlin.com>, "Richard Weinberger" <richard@nod.at>,
- "Vignesh Raghavendra" <vigneshr@ti.com>
-Subject: Re: [PATCH v2 1/2] mtd: spi-nor: core: add flag for doing optional
- SFDP
-X-Mailer: aerc 0.16.0
-References: <20240603-macronix-mx25l3205d-fixups-v2-0-ff98da26835c@geanix.com> <20240603-macronix-mx25l3205d-fixups-v2-1-ff98da26835c@geanix.com> <a379a411-2c9e-4d9d-aa8f-4c4f3463cc27@linaro.org> <D1SZKLZBDDBA.1Z7ZD4UEOX05F@kernel.org> <48719b0f-1a7f-47f9-948a-c981a0a29b41@linaro.org>
-In-Reply-To: <48719b0f-1a7f-47f9-948a-c981a0a29b41@linaro.org>
+	s=arc-20240116; t=1717686416; c=relaxed/simple;
+	bh=NVtXbfi1Fxpue1uOXHgT6xQdyJX7ERW4BwtKOGOXE6U=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NbQbje3xWCqNEzefSaTllJB4EYs/cDBPAscB6nz03i93Uxe6ZWybEcduO1nBw/O4Z4c1JAsf5yAxnLU6dVluyeyDW62VggKuMWm+MU8GBur4RXCibHn5eBdpxje1uQvCNyUMVFikEbQXvKHPrYzQedSADl3O+fcR47u2tDaPFNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Vw6xw2ZG0z6HJbs;
+	Thu,  6 Jun 2024 23:02:28 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id C2658140B63;
+	Thu,  6 Jun 2024 23:06:49 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 6 Jun
+ 2024 16:06:48 +0100
+Date: Thu, 6 Jun 2024 16:06:47 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Zhenzhong Duan <zhenzhong.duan@intel.com>
+CC: <linux-pci@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<linux-acpi@vger.kernel.org>, <rafael@kernel.org>, <lenb@kernel.org>,
+	<james.morse@arm.com>, <tony.luck@intel.com>, <bp@alien8.de>,
+	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>, <bhelgaas@google.com>,
+	<helgaas@kernel.org>, <mahesh@linux.ibm.com>, <oohall@gmail.com>,
+	<linmiaohe@huawei.com>, <shiju.jose@huawei.com>, <adam.c.preble@intel.com>,
+	<lukas@wunner.de>, <Smita.KoralahalliChannabasappa@amd.com>,
+	<rrichter@amd.com>, <linux-cxl@vger.kernel.org>,
+	<linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<erwin.tsaur@intel.com>, <sathyanarayanan.kuppuswamy@intel.com>,
+	<dan.j.williams@intel.com>, <feiting.wanyan@intel.com>,
+	<yudong.wang@intel.com>, <chao.p.peng@intel.com>,
+	<qingshun.wang@linux.intel.com>
+Subject: Re: [PATCH v4 1/3] PCI/AER: Store UNCOR_STATUS bits that might be
+ ANFE in aer_err_info
+Message-ID: <20240606160647.0000644e@Huawei.com>
+In-Reply-To: <20240509084833.2147767-2-zhenzhong.duan@intel.com>
+References: <20240509084833.2147767-1-zhenzhong.duan@intel.com>
+	<20240509084833.2147767-2-zhenzhong.duan@intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
---48bbdfa44b4d289b745038c01d8a032d6d7c501116f3081de0c010ed1031
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Thu,  9 May 2024 16:48:31 +0800
+Zhenzhong Duan <zhenzhong.duan@intel.com> wrote:
 
-On Thu Jun 6, 2024 at 4:52 PM CEST, Tudor Ambarus wrote:
-> On 6/6/24 14:59, Michael Walle wrote:
-> > On Thu Jun 6, 2024 at 3:31 PM CEST, Tudor Ambarus wrote:
-> >> On 6/3/24 14:09, Esben Haabendal wrote:
-> >>> A dedicated flag for triggering call to
-> >>> spi_nor_sfdp_init_params_deprecated() allows enabling optional SFDP r=
-ead
-> >>> and parse, with fallback to legacy flash parameters, without having d=
-ual,
-> >>> quad or octal parameters set in the legacy flash parameters.
-> >>>
-> >>> With this, spi-nor flash parts without SFDP that is replaced with a
-> >>> different flash NOR flash part that does have SFDP, but shares the sa=
-me
-> >>> manufacturer and device ID is easily handled.
-> >>>
-> >>> Signed-off-by: Esben Haabendal <esben@geanix.com>
-> >>> ---
-> >>>  drivers/mtd/spi-nor/core.c | 3 ++-
-> >>>  drivers/mtd/spi-nor/core.h | 1 +
-> >>>  2 files changed, 3 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
-> >>> index 3e1f1913536b..1c4d66fc993b 100644
-> >>> --- a/drivers/mtd/spi-nor/core.c
-> >>> +++ b/drivers/mtd/spi-nor/core.c
-> >>> @@ -2933,7 +2933,8 @@ static void spi_nor_init_params_deprecated(stru=
-ct spi_nor *nor)
-> >>> =20
-> >>>  	spi_nor_manufacturer_init_params(nor);
-> >>> =20
-> >>> -	if (nor->info->no_sfdp_flags & (SPI_NOR_DUAL_READ |
-> >>> +	if (nor->info->no_sfdp_flags & (SPI_NOR_TRY_SFDP |
-> >>
-> >> I don't like that we update deprecated methods. The solution though is
-> >> elegant.
-> >=20
-> > I actually had the same concern. But currently there is no
-> > non-deprecated way to handle this case, right?
-> >=20
-> > Right now we have the following cases:
-> >  (1) pure SFDP parsing
-> >  (2) non-SFDP flashes with static configuration only
-> >  (3) legacy implementation, where the magic flags decide whether we
-> >      use SFDP
-> >=20
-> > Which case is eventually used depends on the ID of the flash -
-> > assuming there will only be IDs which either fall into (1) *or* (2).
-> > That assumption is clearly wrong :)
-> >=20
-> > I'd propose a new case in spi_nor_init_params()
-> >  (4) try SFDP with a fallback to the static flags from the
-> >      flash_info db.
-> >=20
->
-> that's not that bad, but I would avoid doing it if it's not common. You
-> also have to update the core a bit, you can't use no_sfdp_flags &
-> TRY_SFDP, it's misleading. Does it worth it?
+> In some cases the detector of a Non-Fatal Error(NFE) is not the most
+> appropriate agent to determine the type of the error. For example,
+> when software performs a configuration read from a non-existent
+> device or Function, completer will send an ERR_NONFATAL Message.
+> On some platforms, ERR_NONFATAL results in a System Error, which
+> breaks normal software probing.
+> 
+> Advisory Non-Fatal Error(ANFE) is a special case that can be used
+> in above scenario. It is predominantly determined by the role of the
+> detecting agent (Requester, Completer, or Receiver) and the specific
+> error. In such cases, an agent with AER signals the NFE (if enabled)
+> by sending an ERR_COR Message as an advisory to software, instead of
+> sending ERR_NONFATAL.
+> 
+> When processing an ANFE, ideally both correctable error(CE) status and
+> uncorrectable error(UE) status should be cleared. However, there is no
+> way to fully identify the UE associated with ANFE. Even worse, Non-Fatal
+> Error(NFE) may set the same UE status bit as ANFE. Treating an ANFE as
+> NFE will reproduce above mentioned issue, i.e., breaking softwore probing;
+> treating NFE as ANFE will make us ignoring some UEs which need active
+> recover operation. To avoid clearing UEs that are not ANFE by accident,
+> the most conservative route is taken here: If any of the NFE Detected
+> bits is set in Device Status, do not touch UE status, they should be
+> cleared later by the UE handler. Otherwise, a specific set of UEs that
+> may be raised as ANFE according to the PCIe specification will be cleared
+> if their corresponding severity is Non-Fatal.
+> 
+> To achieve above purpose, store UNCOR_STATUS bits that might be ANFE
+> in aer_err_info.anfe_status. So that those bits could be printed and
+> processed later.
+> 
+> Tested-by: Yudong Wang <yudong.wang@intel.com>
+> Co-developed-by: "Wang, Qingshun" <qingshun.wang@linux.intel.com>
+> Signed-off-by: "Wang, Qingshun" <qingshun.wang@linux.intel.com>
+> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@intel.com>
 
-IMHO no_sfdp_flags is the correct place (maybe TRY_SFDP is wrong,
-maybe SFDP_FALLBACK?) because the flash is first treated like in
-case (2). Then SFDP is tried based on that flag. Is it worth it? I
-don't know, Esben is doing the development here ;) So up to him.
+Not my most confident review ever as this is nasty and gives
+me a headache but your description is good and I think the
+implementation looks reasonable.
 
-> I won't oppose too much, but to me it feels that we're trying to keep
-> alive a dead man.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-Maybe, but we'd have a readily solution if we face a similar
-problem in the future. I'm really not sure, how many flashes there
-are, but I think these magic bits (which tells the legacy
-implementation to try SFDP) will mask quite a few of these.
-I.e. in an ideal world where we could finally drop case (3) and
-you'd need to split the flashes between case (1) or (2), I think
-there will be quite some in (4).
 
--michael
-
---48bbdfa44b4d289b745038c01d8a032d6d7c501116f3081de0c010ed1031
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZmHQeBIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/hHwgGAywOWh3khxUUBqo9KpBYthNWyTwg5r+JC
-QA2h6D760/WVfmcw3eos2/NR2VaD7UbnAYClrniZd4iKs+P3e7UCcwIUApI2SWvo
-BQnsunTQYn1An7jxuUEtvWHBVYB5Mj4rGXM=
-=2+Ya
------END PGP SIGNATURE-----
-
---48bbdfa44b4d289b745038c01d8a032d6d7c501116f3081de0c010ed1031--
 
