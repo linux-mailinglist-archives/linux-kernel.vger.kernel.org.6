@@ -1,147 +1,195 @@
-Return-Path: <linux-kernel+bounces-203652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 077618FDEAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:26:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 503908FDEBD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DEC61C23B73
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:26:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C05E41F21497
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5809B73472;
-	Thu,  6 Jun 2024 06:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ap+aB7M7"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1986E13AD3E;
+	Thu,  6 Jun 2024 06:27:44 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690D12E3E5;
-	Thu,  6 Jun 2024 06:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1592E3E5;
+	Thu,  6 Jun 2024 06:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717655156; cv=none; b=uUl5Aoemt+xfkajQtvFKjMlrLc3/kyDBW9x1CU9IWTZLUxWx4UTYhHcptTcshLHa5djoHapv/rleQbPrriz5Pga71NC5Dd7woYdBsEwTm51gf6nAOG1qlBeb4LpMb79Jf7SmsVBC8by1HCz0PuIHxGgL8RtPET8Cv6krxEQ0Qag=
+	t=1717655263; cv=none; b=R2ukA0cat5VwjsNywTdiCReqn7ZdGnkB+P5Vd5rKxG9dgkaylvRT0uD+4HdHNoxA2v79sH4Lh99VfbRydBVf/mFtHZVYxIK43D/tcaH53a8AVabgBvWW2IICnJRfdYRHiX9BfK/x6KanLfjGGffWb1rMOgBdmA7I3GmUPV5KQIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717655156; c=relaxed/simple;
-	bh=Wfeg8GAi9GwSyPrICtL0MY874pcQ+nuX+//SQF4Q63U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R+aSEPRVkltBXQe7RYZWPI4074npWMZWrH+YrbR5eRcFnVIiaLEt4BCRsFkttawp4PcNfAcZ/sI3nVRYmNbB0WDKFQi9hCpTvLF4kIMUbE6/agC6nywhGY6iBQHt7sFKTdrIZL399M1NrQJae5ZdPGHKqJkF0xCbt+eZreHk9qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ap+aB7M7; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1717655145;
-	bh=Wfeg8GAi9GwSyPrICtL0MY874pcQ+nuX+//SQF4Q63U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ap+aB7M7eNNAVWFNB2wesEkU4e+ielGbEoJAtWC2AXSaK71bYdLmrZz2sBOxDf+oy
-	 gPIdX+GOTSLEqMs4oG9uMHcRo2QJP9Zy1aPaPP12FbdZFFgKY+JOUm7Td/j/o1t+lr
-	 IoQOALg1kOo23Xw3657kI//xdH6vkp8ZqcrygMyA=
-Date: Thu, 6 Jun 2024 08:25:45 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Mario Limonciello <mario.limonciello@amd.com>, 
-	Matt Hartley <matt.hartley@gmail.com>
-Cc: Dustin Howett <dustin@howett.net>, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>, 
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Stephen Horvath <s.horvath@outlook.com.au>, Rajas Paranjpe <paranjperajas@gmail.com>
-Subject: Re: [PATCH v2 0/3] ChromeOS Embedded Controller charge control driver
-Message-ID: <ed6e5fd4-2be1-4a72-8041-5087ebc93203@t-8ch.de>
-References: <20240528-cros_ec-charge-control-v2-0-81fb27e1cff4@weissschuh.net>
- <CA+BfgNJByawxkZukaCXYcmOo_K9aQ0W1x8B6Y+Hyg_fZaJ4axw@mail.gmail.com>
- <5baf3caf-dc09-4829-96db-2666fc902710@t-8ch.de>
- <CA+BfgN+LE3YyF3te4m8sWbtH85tU+ERUDW7YR_BFecusVTAWWw@mail.gmail.com>
- <a527a3fd-1458-43cc-aac0-0b360beeb349@t-8ch.de>
- <db20a640-5323-4866-9968-c57391fbb6bc@amd.com>
+	s=arc-20240116; t=1717655263; c=relaxed/simple;
+	bh=VdLJkVUrOXVXeMvr//H+2daYj3psYGBQ/AWWezkYvt4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eN9ZFKvGTWhaR6HoQUshw/6j3rZlmXu+QmIMjdYtzRko1tEI90KL426FeJ52wCaUkBzh5FUBQrVOXIGZCXrBjstuOM+yCxHppK0okhW3bjHMXejZFP8C9qG2o77+8CJNFFlwniEpzIgNBwDbwvj8I1PqwntE5FVgwupH2rjrAMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VvvWj3rS1z4f3jtj;
+	Thu,  6 Jun 2024 14:27:29 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id DCAFB1A018A;
+	Thu,  6 Jun 2024 14:27:35 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.127.227])
+	by APP1 (Coremail) with SMTP id cCh0CgCXaBHWVmFm7ZfTOg--.40699S4;
+	Thu, 06 Jun 2024 14:27:35 +0800 (CST)
+From: Ye Bin <yebin@huaweicloud.com>
+To: axboe@kernel.dk,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ming.lei@redhat.com,
+	Ye Bin <yebin10@huawei.com>
+Subject: [PATCH] block: bio-integrity: fix potential null-ptr-deref in bio_integrity_free
+Date: Thu,  6 Jun 2024 14:26:55 +0800
+Message-Id: <20240606062655.2185006-1-yebin@huaweicloud.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <db20a640-5323-4866-9968-c57391fbb6bc@amd.com>
+X-CM-TRANSID:cCh0CgCXaBHWVmFm7ZfTOg--.40699S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxCr1xWr4kArW7XFWkZr1DWrg_yoW7Jw4xpr
+	43KF45Kr4xXF17CanrAF1rAF48KwsrAF1UGrsxZr15JFn8C34qqr1DGryjqF15Gr4ruryU
+	Xrn8t3409w1DJaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUgCb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Y
+	z7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zV
+	AF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4l
+	IxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s
+	0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsG
+	vfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
+X-CM-SenderInfo: p1hex046kxt4xhlfz01xgou0bp/
 
-+Matt, the Linux support lead for Framework.
+From: Ye Bin <yebin10@huawei.com>
 
-Hi Matt,
+There's a issue as follows when do format NVME with IO:
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+PGD 101727f067 P4D 1011fae067 PUD fbed78067 PMD 0
+Oops: 0000 [#1] SMP NOPTI
+RIP: 0010:kfree+0x4f/0x160
+RSP: 0018:ff705a800912b910 EFLAGS: 00010247
+RAX: 0000000000000000 RBX: 0d06d30000000000 RCX: ff4fb320260ad990
+RDX: ff4fb30ee7acba40 RSI: 0000000000000000 RDI: 00b04cff80000000
+RBP: ff4fb30ee7acba40 R08: 0000000000000200 R09: ff705a800912bb60
+R10: 0000000000000000 R11: ff4fb3103b67c750 R12: ffffffff9a62d566
+R13: ff4fb30aa0530000 R14: 0000000000000000 R15: 000000000000000a
+FS:  00007f4399b6b700(0000) GS:ff4fb31040140000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000008 CR3: 0000001014cd4002 CR4: 0000000000761ee0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 0000000000000400
+PKRU: 55555554
+Call Trace:
+ bio_integrity_free+0xa6/0xb0
+ __bio_integrity_endio+0x8c/0xa0
+ bio_endio+0x2b/0x130
+ blk_update_request+0x78/0x2b0
+ blk_mq_end_request+0x1a/0x140
+ blk_mq_try_issue_directly+0x5d/0xc0
+ blk_mq_make_request+0x46b/0x540
+ generic_make_request+0x121/0x300
+ submit_bio+0x6c/0x140
+ __blkdev_direct_IO_simple+0x1ca/0x3a0
+ blkdev_direct_IO+0x3d9/0x460
+ generic_file_read_iter+0xb4/0xc60
+ new_sync_read+0x121/0x170
+ vfs_read+0x89/0x130
+ ksys_read+0x52/0xc0
+ do_syscall_64+0x5d/0x1d0
+ entry_SYSCALL_64_after_hwframe+0x65/0xca
 
-below we are discussing on how to implement charge controls for ChromeOS
-EC devices including Framework laptops in mainline Linux.
-Some feedback would be great.
+Assuming a 512 byte directIO is issued, the initial logical block size of
+the state block device is 512 bytes, and then modified to 4096 bytes.
+Above issue may happen as follows:
+         Direct read                    format NVME
+__blkdev_direct_IO_simple(iocb, iter, nr_pages);
+  if ((pos | iov_iter_alignment(iter)) & (bdev_logical_block_size(bdev) - 1))
+	-->The logical block size is 512, and the IO issued is 512 bytes,
+	   which can be checked
+    return -EINVAL;
+  submit_bio(&bio);
+                                      nvme_dev_ioctl
+                                        case NVME_IOCTL_RESCAN:
+                                          nvme_queue_scan(ctrl);
+                                             ...
+                                            nvme_update_disk_info(disk, ns, id);
+                                              blk_queue_logical_block_size(disk->queue, bs);
+                                                --> 512->4096
+     blk_queue_enter(q, flags)
+     blk_mq_make_request(q, bio)
+       bio_integrity_prep(bio)
+	 len = bio_integrity_bytes(bi, bio_sectors(bio));
+	   -->At this point, because the logical block size has increased to
+	      4096 bytes, the calculated 'len' here is 0
+         buf = kmalloc(len, GFP_NOIO | q->bounce_gfp);
+	   -->Passed in len=0 and returned buf=16
+         end = (((unsigned long) buf) + len + PAGE_SIZE - 1) >> PAGE_SHIFT;
+         start = ((unsigned long) buf) >> PAGE_SHIFT;
+         nr_pages = end - start;  -->nr_pages == 1
+         bip->bip_flags |= BIP_BLOCK_INTEGRITY;
+         for (i = 0 ; i < nr_pages ; i++) {
+           if (len <= 0)
+              -->Not initializing the bip_vec of bio_integrity, will result
+		 in null pointer access during subsequent releases. Even if
+		 initialized, it will still cause subsequent releases access
+		 null pointer because the buffer address is incorrect.
+             break;
 
-On 2024-06-05 15:32:33+0000, Mario Limonciello wrote:
-> On 6/5/2024 04:33, Thomas Weißschuh wrote:
-> > On 2024-06-04 20:27:57+0000, Dustin Howett wrote:
-> > > On Mon, Jun 3, 2024 at 3:59 PM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> > > > 
-> > > > Can you try disabling all of the Framework-specific charge control
-> > > > settings and test again?
-> > > > Probably the different, disparate logics in the Framework ECs are
-> > > > conflicting with each other.
-> > > 
-> > > Fascinating! This board does indeed support charge limiting through
-> > > both interfaces. It looks like the most recently set one wins for a
-> > > time.
-> > 
-> > If it is the most recent one, shouldn't the driver have worked?
-> > What does "for a time" mean?
-> > I'm using only the upstream EC command and that seems to work fine.
-> > 
-> > > The UEFI setup utility only sets the framework-specific charge limit value.
-> > > 
-> > > We should probably find some way to converge them, for all of the
-> > > supported Framework Laptop programs.
-> > 
-> > In the long term, Framework should align their implementation with
-> > upstream CrOS EC and either drop their custom command or make it a thin
-> > wrapper around the normal the upstream command.
-> > 
-> > (As you are familiar with EC programming maybe you want to tackle this?)
-> > 
-> > Until then I think we can detect at probe-time if the Framework APIs are
-> > available and use them to disable the Framework-specific mechanism.
-> > Then the CrOS EC commands should be usable.
-> > 
-> > The drawback is, that userspace using the Framework APIs will break
-> > the driver. That userspace would need to migrate to the standard UAPI.
-> 
-> How does userspace access the Framework APIs?  Surely it needs to go through
-> the kernel?  Could you "filter" the userspace calls to block them?
-> 
-> For example this is something that currently happens in the dell-pc driver
-> to block userspace from doing thermal calls and instead guide people to the
-> proper API that the driver exports.
+Firstly, it is unreasonable to format NVME in the presence of IO. It is also
+possible to see IO smaller than the logical block size in the block layer for
+this type of concurrency. It is expected that this type of IO device will
+return an error, so exception handling should also be done for this type of
+IO to prevent null pointer access from causing system crashes.
+The root cause of this issue is the concurrency between the write process
+and the block size update process. However, this concurrency does not exist
+in actual production environments. To solve above issue, Verify if the
+segments of BIO are aligned with integrity intervals.
 
-This would work when userspace uses /dev/cros_ec.
-But the EC can also used via raw port IO which wouldn't be covered.
-Given that /dev/cros_ec wasn't usable on Framework AMD until v6.9 it's
-not unlikely users are using that.
+Signed-off-by: Ye Bin <yebin10@huawei.com>
+---
+ block/bio-integrity.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-And technically both aproaches would break userspace.
+diff --git a/block/bio-integrity.c b/block/bio-integrity.c
+index 2e3e8e04961e..00a0d1bafe06 100644
+--- a/block/bio-integrity.c
++++ b/block/bio-integrity.c
+@@ -431,7 +431,7 @@ bool bio_integrity_prep(struct bio *bio)
+ 	void *buf;
+ 	unsigned long start, end;
+ 	unsigned int len, nr_pages;
+-	unsigned int bytes, offset, i;
++	unsigned int bytes, offset, i, intervals;
+ 
+ 	if (!bi)
+ 		return true;
+@@ -457,7 +457,13 @@ bool bio_integrity_prep(struct bio *bio)
+ 	}
+ 
+ 	/* Allocate kernel buffer for protection data */
+-	len = bio_integrity_bytes(bi, bio_sectors(bio));
++	intervals = bio_integrity_intervals(bi, bio_sectors(bio));
++	if (unlikely((bio->bi_vcnt && intervals < bio->bi_vcnt) ||
++		     (!bio->bi_vcnt && intervals < bio_segments(bio)))) {
++		printk(KERN_ERR"BIO segments are not aligned according to integrity interval\n");
++		goto err_end_io;
++	}
++	len = intervals * bi->tuple_size;
+ 	buf = kmalloc(len, GFP_NOIO);
+ 	if (unlikely(buf == NULL)) {
+ 		printk(KERN_ERR "could not allocate integrity buffer\n");
+-- 
+2.31.1
 
-Another aproach would be to not load the module on Framework devices
-which implement their custom command (overwritable by module parameter).
-
-Framework unifies the implementation of their command with the core
-CrOS EC logic so both commands work on the same data.
-The custom command is adapted to also implement a new command version.
-This is completely transparent as the old version will continue to work.
-
-We update the Linux driver to recognize that new command version, know
-that they are now compatible and probe the driver.
-
-Newer devices could also drop the custom command and the driver would
-start working.
-
-This scheme requires some cooperation from Framework, though.
-
-> > 
-> > Also the settings set in the firmware would be ignored at that point.
-> > 
-> > I don't want to use the functionality of the Framework command because
-> > it's less featureful and I really hope it will go away at some point.
-> 
 
