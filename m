@@ -1,267 +1,140 @@
-Return-Path: <linux-kernel+bounces-204143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67FFA8FE4B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:53:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85FD58FE4BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB482B22F83
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:53:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F16761F26244
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B26195395;
-	Thu,  6 Jun 2024 10:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C683C195396;
+	Thu,  6 Jun 2024 10:54:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RKnpftcq"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kKRRccB4"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20312E639;
-	Thu,  6 Jun 2024 10:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3EB13C90A
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 10:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717671228; cv=none; b=NslVh2vc8Zio6axRiXceXuepSRdqe4Kqcvl0/jvpg9bDZ/xnODy7nHaQOtikxs58UxWYF4D40+Rm2GeFChXv1469sfNJj8tBWlwVdSNj/cL5RQoJDCcWm21xV3go6/AMKeHKPSrd2IjDhB9Nw4Yi/eSsOxQiKnNYRK/dbh5rh1g=
+	t=1717671250; cv=none; b=IQQ+oqsGTcmG/uVwwGnRnTdAZpSl3dbB4vpUlSx4CQxliwXnx/STX/wsYHMNVOu76aXfqoya/rGo7KafBZIIrmVQtumIKHR0oSbquVB+hLyOV911pS5U3Rui99amManEuJ8TT1AyAC1j1yXWXqxK1glK+Exu9zQmLBhcfuEjySA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717671228; c=relaxed/simple;
-	bh=IwvdKHEGFEfuaUJOTiyFszzjDelzpkHXySk7OYxTe2Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P4BQ2qRC+YI4L3qBFElfSnwRHLEhF5Rs2y2+rF+Qpyuwn1OHpclhbrtTniI2Ct+pCEj4Uk37vNJ3TXwjK4RS9wXsKszrn6uPqd8Uw6Zg/ya1YqCdBvcyAajjJ78ZTnmq/PAsiQFmSG3dnC9RUVbfNSspnkxcfB0bvdNyYyehnfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RKnpftcq; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-579fa270e53so1084316a12.3;
-        Thu, 06 Jun 2024 03:53:46 -0700 (PDT)
+	s=arc-20240116; t=1717671250; c=relaxed/simple;
+	bh=wFppIJZHeloBqTOK6qMIjTICv60K4xHai2ukz5SBvTE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jsyaUffMIWnzs7ZqmkGq1rk8X19rHlKufflDvNknFHjKTMvNUEHoA8+xP/lR9xY4ItSKddCTEqAOl7J+NT0iUV8RIt6AIaxfqIFi0ej+P9j9ZAFV/d6qU0vs3icGUo7u4nBcsbTfGob7vBuTnYuvChVgxqwakmv1ZiUTjLy1SRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kKRRccB4; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57a1fe63947so931400a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 03:54:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717671225; x=1718276025; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=935StyJmCjoE4Ghn59CDu5In+96Jm1afri4FQ4OW13w=;
-        b=RKnpftcqRgiNirkGErcvS5e6Bpr24PpWVDboT+hVlx0Jf1OiKHVv02/LnmphsyTSoz
-         oxEQnn2UW5gRB2O9zMEvJCD5RNS1pMI2F3NWToGsQhGtatF+UORQjmMrB2vZmjglFGkD
-         qWYgutzUFSEDv53vmrisPkn4Oq74udG1JTaXZbz0oCbp/JzZXd77O3Z9Rxg+9evpr1w8
-         /7/jT5ET4JQeO/QV/nmx8glGKbzOAt1qchyCEJpmfGpFN9iq6gW2YCeU8vRjt5Hgipj/
-         Oc2rjFvcRlthCkSpuiTDFBJKeVoQgUejIq9PbQpA2YzWvJDi5xCFIIPMo0+m5AhtjaGQ
-         WF9Q==
+        d=linaro.org; s=google; t=1717671245; x=1718276045; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=HsKlNAPTp7DFztmntnvpUmaYjnl9ptCfXLwQZujELBc=;
+        b=kKRRccB4q5pXrXT9YCrlmhkuO/CHYEX4J0ak/L/ZbV3BSOR3SHH8rZU//sCDn4DmSz
+         iLz9YG0cKYRpwyw8ozMYswJKxJVVEaWXff7kuMLEDUTig/6xNc9CddEeQCUs2xPbIdxO
+         7HxpKwbComDUI8gp+jpj80olaofKxuKdW1Z+pEDVmvBWxFhd5ll0lZqwueqIvNgtnYY9
+         X+Au8keId7I6vYxo2My5AIWRLPSL9enKM3WBJc7l+UL+SMrLn1xCVZ50Wusfc78ffoQL
+         GG6W/6AF8f04Hw0cxtSfhRqPijYAgtLL8JyRWkWO5nGHuaWZUK68i8o5AD9mgFvmL6vn
+         3dMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717671225; x=1718276025;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=935StyJmCjoE4Ghn59CDu5In+96Jm1afri4FQ4OW13w=;
-        b=R10fpSJr2tXWvgnvFxN2vmu358/Q0YlWA4H/d+Aa2LfF8vJXfIs/zX+KG2zsmib6JE
-         3G5yL2czj4kAyRV7KNDYaiXkYC8IBHwch92R9y2wqTSMkSkWSNUowgRCKRDm0LsqGqRb
-         nttlr+IcoaCJl0m5ETwxLXjrcqTIScRkuSPzz0Pzs4ASrYjjDAbd/fXFZtTPScKJ2DaU
-         LKc6NefBNdi1d940uWIucPY+lYT8Vant/VGawyXyxDsgPLcNlptGSSD7mq3glHFAIn/v
-         n2ZfcFrILFkJF3Q2/0zeXpUaok+QS/NikyxzGg31KWCwpMxUy/GNa4oUYsKqx0FnzuJh
-         Q+VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4lHZC5n93FRnJRotGe9mmbVwhcoG8Q4wF2mshSLbcKI5Kio4NA6oiddc2SE2FDpn+S95De3yKDmrg4rZahlrzuTnGIHx6jfMPulqtQqHEQybAMuByDlLbJ0eUtAb5uQoxrdxjwVqsmqW+YzfQfIew0ZDgifSC/ECd279eRb2hCs+DBdo=
-X-Gm-Message-State: AOJu0YxhsRrAvvPFN+kjknH0lQFxW6tmWUCC4MIntmXBfLCgmsUoPsjR
-	lGd04qkifgyYVes8MF3FVGI0vMZjyH/scQETJcVjWcM+hnF7Q/FjiZz46uN9GOlnm5TZXcFNCkZ
-	nTw+aC1Wa4JHmDY1EkegySK9pdao=
-X-Google-Smtp-Source: AGHT+IE0J+VGwd0Ea7QUc/PFc4yHChLtDGJkWcYqgbuGIHKRsfdwqpE5pP07w0oAGDb9xZmHKtpmnWMeMuH42TH1CSc=
-X-Received: by 2002:a50:8d54:0:b0:579:c3f8:5923 with SMTP id
- 4fb4d7f45d1cf-57a8b6a8778mr4076479a12.13.1717671224760; Thu, 06 Jun 2024
- 03:53:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717671245; x=1718276045;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HsKlNAPTp7DFztmntnvpUmaYjnl9ptCfXLwQZujELBc=;
+        b=plvo+no0IpX+t8CxTPpOPURMkfh+teJAbl1fiGp1LthYjmOAaY7zGp2MWb+OHtClU/
+         2DlbIhhh7RbLLR8SCk01UQY2rZf40UeFg5beH7encl0MVybD9vDmQKdnNDCQEp34CU8g
+         FWdavvGJU72Gy5VnkBzHC7VZyZJyiTg4iLPdmTO0OBfa5nPeDOknDXMQPNEsAWT1E6gW
+         pAQHvzGeHr3FSKE12IF/QikWPvbl009f8km5OAD5S/TUh+zpRFo7U/hPfd2NJnkaI+OR
+         iOA6NnCCpNnvfsIITi3pX5pVJld8tCaj6Kin4dfmaaP4/UOglLWSrmLxvT5yMQbvTZ3O
+         pvfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUquog7EYFlbzL05R3IGPOQ/LAch0kNrqLAtJ/BFIUUlSvUbjtkoNbcYJqCRMWfxjsuxPT2aUz1BmdpDCW7Z3UiMaWMFztq0xke6T0h
+X-Gm-Message-State: AOJu0YxNIstMXSodsP4qdy+k2COz0q+pSa3W0eJASsJcCN8EKzFUuW3D
+	k8AePZxPMKJaIdXmVmOqQnhrIltw63XDzhrR2eWHPOEzad7eUCUfDUfYvo5Tr6E=
+X-Google-Smtp-Source: AGHT+IFHLPjbCxlr+r6bukG4PbAxEps2cJxXL6zyNPSuUBRW0eea3VxOAVGe3RHTWvhYXk2KqF3fhA==
+X-Received: by 2002:a50:aad8:0:b0:57a:27ee:4246 with SMTP id 4fb4d7f45d1cf-57a8b6a64eamr3142987a12.14.1717671245476;
+        Thu, 06 Jun 2024 03:54:05 -0700 (PDT)
+Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae0ca5e3sm886314a12.25.2024.06.06.03.54.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 03:54:04 -0700 (PDT)
+Message-ID: <75319028-3b91-42b2-82f8-59e995360b5a@linaro.org>
+Date: Thu, 6 Jun 2024 12:54:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240430-loongson1-nand-v7-0-60787c314fa4@gmail.com>
- <20240430-loongson1-nand-v7-1-60787c314fa4@gmail.com> <20240506091444.59228fa9@xps-13>
- <CAJhJPsV1aCvji1G2F94A=pJa8+x6Aw7ndkQUBPtFeeKSxJK9Nw@mail.gmail.com> <20240518124732.584f441d@xps-13>
-In-Reply-To: <20240518124732.584f441d@xps-13>
-From: Keguang Zhang <keguang.zhang@gmail.com>
-Date: Thu, 6 Jun 2024 18:53:08 +0800
-Message-ID: <CAJhJPsW9gVe2F1qvxvOkQUX_K1BsK5q_1XjT0u2+QH2gRMNqXA@mail.gmail.com>
-Subject: Re: [PATCH v7 1/3] dt-bindings: mtd: Add Loongson-1 NAND Controller
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mips@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: x1e80100-qcp: Add pmic-glink
+ node with all 3 connectors
+To: Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240606-x1e80100-dts-pmic-glink-v2-0-972c902e3e6b@linaro.org>
+ <20240606-x1e80100-dts-pmic-glink-v2-3-972c902e3e6b@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
+ BB/OmIWU6X+LZW6P88ZmHe+KeyABLMP5s1tJNK1j4ntT7mECcWZDzafPWF4F6m4WJOG27kTJ
+ HGWdmtO+RvadOVi6CoUDqALsmfS3MUG5Pj2Ne9+0jRg4hEnB92AyF9rW2G3qisFcwPgvatt7
+ TXD5E38mLyOPOUyXNj9XpDbt1hNwKQfiidmPh5e7VNAWRnW1iCMMoKqzM1Anzq7e5Afyeifz
+ zRcQPLaqrPjnKqZGL2BKQSZDh6NkI5ZLRhhHQf61fkWcUpTp1oDC6jWVfT7hwRVIQLrrNj9G
+ MpPzrlN4YuAqKeIer1FMt8cq64ifgTzxHzXsMcUdclzq2LTk2RXaPl6Jg/IXWqUClJHbamSk
+ t1bfif3SnmhA6TiNvEpDKPiT3IDs42THU6ygslrBxyROQPWLI9IL1y8S6RtEh8H+NZQWZNzm
+ UQ3imZirlPjxZtvz1BtnnBWS06e7x/UEAguj7VHCuymVgpl2Za17d1jj81YN5Rp5L9GXxkV1
+ aUEwONM3eCI3qcYm5JNc5X+JthZOWsbIPSC1Rhxz3JmWIwP1udr5E3oNRe9u2LIEq+wH/toH
+ kpPDhTeMkvt4KfE5m5ercid9+ZXAqoaYLUL4HCEw+HW0DXcKDwARAQABzShLb25yYWQgRHli
+ Y2lvIDxrb25yYWQuZHliY2lvQGxpbmFyby5vcmc+wsGOBBMBCAA4FiEEU24if9oCL2zdAAQV
+ R4cBcg5dfFgFAmQ5bqwCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQR4cBcg5dfFjO
+ BQ//YQV6fkbqQCceYebGg6TiisWCy8LG77zV7DB0VMIWJv7Km7Sz0QQrHQVzhEr3trNenZrf
+ yy+o2tQOF2biICzbLM8oyQPY8B///KJTWI2khoB8IJSJq3kNG68NjPg2vkP6CMltC/X3ohAo
+ xL2UgwN5vj74QnlNneOjc0vGbtA7zURNhTz5P/YuTudCqcAbxJkbqZM4WymjQhe0XgwHLkiH
+ 5LHSZ31MRKp/+4Kqs4DTXMctc7vFhtUdmatAExDKw8oEz5NbskKbW+qHjW1XUcUIrxRr667V
+ GWH6MkVceT9ZBrtLoSzMLYaQXvi3sSAup0qiJiBYszc/VOu3RbIpNLRcXN3KYuxdQAptacTE
+ mA+5+4Y4DfC3rUSun+hWLDeac9z9jjHm5rE998OqZnOU9aztbd6zQG5VL6EKgsVXAZD4D3RP
+ x1NaAjdA3MD06eyvbOWiA5NSzIcC8UIQvgx09xm7dThCuQYJR4Yxjd+9JPJHI6apzNZpDGvQ
+ BBZzvwxV6L1CojUEpnilmMG1ZOTstktWpNzw3G2Gis0XihDUef0MWVsQYJAl0wfiv/0By+XK
+ mm2zRR+l/dnzxnlbgJ5pO0imC2w0TVxLkAp0eo0LHw619finad2u6UPQAkZ4oj++iIGrJkt5
+ Lkn2XgB+IW8ESflz6nDY3b5KQRF8Z6XLP0+IEdLOOARkOW7yEgorBgEEAZdVAQUBAQdAwmUx
+ xrbSCx2ksDxz7rFFGX1KmTkdRtcgC6F3NfuNYkYDAQgHwsF2BBgBCAAgFiEEU24if9oCL2zd
+ AAQVR4cBcg5dfFgFAmQ5bvICGwwACgkQR4cBcg5dfFju1Q//Xta1ShwL0MLSC1KL1lXGXeRM
+ 8arzfyiB5wJ9tb9U/nZvhhdfilEDLe0jKJY0RJErbdRHsalwQCrtq/1ewQpMpsRxXzAjgfRN
+ jc4tgxRWmI+aVTzSRpywNahzZBT695hMz81cVZJoZzaV0KaMTlSnBkrviPz1nIGHYCHJxF9r
+ cIu0GSIyUjZ/7xslxdvjpLth16H27JCWDzDqIQMtg61063gNyEyWgt1qRSaK14JIH/DoYRfn
+ jfFQSC8bffFjat7BQGFz4ZpRavkMUFuDirn5Tf28oc5ebe2cIHp4/kajTx/7JOxWZ80U70mA
+ cBgEeYSrYYnX+UJsSxpzLc/0sT1eRJDEhI4XIQM4ClIzpsCIN5HnVF76UQXh3a9zpwh3dk8i
+ bhN/URmCOTH+LHNJYN/MxY8wuukq877DWB7k86pBs5IDLAXmW8v3gIDWyIcgYqb2v8QO2Mqx
+ YMqL7UZxVLul4/JbllsQB8F/fNI8AfttmAQL9cwo6C8yDTXKdho920W4WUR9k8NT/OBqWSyk
+ bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
+ nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
+ izWDgYvmBE8=
+In-Reply-To: <20240606-x1e80100-dts-pmic-glink-v2-3-972c902e3e6b@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Miquel,
-Sorry for the late reply.
+On 6.06.2024 12:41 PM, Abel Vesa wrote:
+> Add the pmic-glink node and describe all 3 USB Type-C connectors. Do this
+> for USB only, for now. The DP ports will come at a later stage since
+> they use muxes.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
 
-On Sat, May 18, 2024 at 6:47=E2=80=AFPM Miquel Raynal <miquel.raynal@bootli=
-n.com> wrote:
->
-> Hi,
->
-> keguang.zhang@gmail.com wrote on Sat, 18 May 2024 16:01:01 +0800:
->
-> > On Mon, May 6, 2024 at 3:14=E2=80=AFPM Miquel Raynal <miquel.raynal@boo=
-tlin.com> wrote:
-> > >
-> > > Hello,
-> > >
-> > > devnull+keguang.zhang.gmail.com@kernel.org wrote on Tue, 30 Apr 2024
-> > > 19:11:10 +0800:
-> > >
-> > > > From: Keguang Zhang <keguang.zhang@gmail.com>
-> > > >
-> > > > Add devicetree binding document for Loongson-1 NAND Controller.
-> > > >
-> > > > Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
-> > > > ---
-> > > > Changes in v7:
-> > > > - rename the file to loongson,ls1b-nfc.yaml
-> > > >
-> > > > Changes in v6:
-> > > > - A newly added patch
-> > > > ---
-> > > >  .../devicetree/bindings/mtd/loongson,ls1b-nfc.yaml | 66 ++++++++++=
-++++++++++++
-> > > >  1 file changed, 66 insertions(+)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/mtd/loongson,ls1b-nf=
-c.yaml b/Documentation/devicetree/bindings/mtd/loongson,ls1b-nfc.yaml
-> > > > new file mode 100644
-> > > > index 000000000000..a69f22b9fd9e
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/mtd/loongson,ls1b-nfc.yaml
-> > > > @@ -0,0 +1,66 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/mtd/loongson,ls1b-nfc.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: Loongson-1 NAND Controller
-> > > > +
-> > > > +maintainers:
-> > > > +  - Keguang Zhang <keguang.zhang@gmail.com>
-> > > > +
-> > > > +allOf:
-> > > > +  - $ref: nand-controller.yaml
-> > > > +
-> > > > +properties:
-> > > > +  compatible:
-> > > > +    oneOf:
-> > > > +      - const: loongson,ls1b-nfc
-> > >
-> > > What is the rationale behind this choice? Seems like the b variant ha=
-s
-> > > two possible implementations and should always be preceded by a more
-> > > specific compatible.
-> > >
-> > > As there is currently no description of this controller upstream, I
-> > > would not care too much about any out-of-tree description and directl=
-y
-> > > go for a clean description.
-> > >
-> > Excuse me, should I add a description for this property?
->
-> No, description is not needed. But you are allowing the
-> "loongson,ls1b-nfc" compatible alone, which I think is not relevant,
-> unless you convince me it is :-)
->
-"loongson,ls1b-nfc" itself is a specific implementation.
-I was suggested to set up a fallback before.
-https://lore.kernel.org/all/20231007-untapped-masses-01f80b7c13c7@spud/
-Then "loongson,ls1b-nfc" became the fallback.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-> > > > +      - items:
-> > > > +          - enum:
-> > > > +              - loongson,ls1a-nfc
-> > > > +              - loongson,ls1c-nfc
-> > > > +          - const: loongson,ls1b-nfc
-> > > > +
-> > > > +  reg:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  dmas:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  dma-names:
-> > > > +    const: rxtx
-> > > > +
-> > > > +patternProperties:
-> > > > +  "^nand@[0-3]$":
-> > > > +    type: object
-> > > > +    $ref: raw-nand-chip.yaml
-> > > > +
-> > > > +    unevaluatedProperties: false
-> > > > +
-> > > > +required:
-> > > > +  - compatible
-> > > > +  - reg
-> > > > +  - dmas
-> > > > +  - dma-names
-> > >
-> > > Should DMA props be required?
-> > >
-> > Yes. This NAND controller only works with DMA, which means the DMA is n=
-ecessary.
->
-> Ok
->
-> >
-> > > > +
-> > > > +unevaluatedProperties: false
-> > > > +
-> > > > +examples:
-> > > > +  - |
-> > > > +    nand-controller@1fe78000 {
-> > > > +        compatible =3D "loongson,ls1b-nfc";
-> > > > +        reg =3D <0x1fe78000 0x40>;
-> > > > +
-> > > > +        #address-cells =3D <1>;
-> > > > +        #size-cells =3D <0>;
-> > > > +
-> > > > +        dmas =3D <&dma 0>;
-> > > > +        dma-names =3D "rxtx";
-> > >
-> > > There is a preferred spacing for DT nodes, see:
-> > > https://docs.kernel.org/devicetree/bindings/dts-coding-style.html
-> > >
-> > Sorry. I don't get the meaning of preferred spacing.
-> > https://docs.kernel.org/devicetree/bindings/writing-schema.html says
-> > "For DTS examples in the schema, preferred is four-space indentation."
-> > Then I used four-space indentation.
->
-> I'm talking about the new lines (\n) between the properties.
->
-Will remove the superfluous new lines.
-> >
-> > > > +
-> > > > +        nand@0 {
-> > > > +            reg =3D <0>;
-> > > > +            nand-use-soft-ecc-engine;
-> > > > +            nand-ecc-algo =3D "hamming";
-> > >
-> > > These two properties are not needed. Unless there is no hardware ECC
-> > > capability on this controller and in this case you need to ensure the
-> > > properties are present in the schema.
-> >
-> > Exactly. This NAND controller doesn't support hardware ECC.
-> > 'nand-use-soft-ecc-engine' and 'nand-ecc-algo' are present in nand-chip=
-.yaml.
-> > Is there anything else I should do?
->
-> Thry are in nand-chip.yaml, which means they are allowed, but I want
-> them mandatory:
->
-Will do.
-
-> required:
->   - foo
->   - bar
->
-> Thanks,
-> Miqu=C3=A8l
-
-
-
---=20
-Best regards,
-
-Keguang Zhang
+Konrad
 
