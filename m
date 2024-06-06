@@ -1,228 +1,516 @@
-Return-Path: <linux-kernel+bounces-203496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E594A8FDC18
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:17:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 455A68FDC10
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 914AD287CA7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:17:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB9391F25196
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF9F101CE;
-	Thu,  6 Jun 2024 01:16:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E767F10A11;
+	Thu,  6 Jun 2024 01:16:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SQ5Kg11C"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T7mVVapB"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D261DA21;
-	Thu,  6 Jun 2024 01:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6818F19D884;
+	Thu,  6 Jun 2024 01:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717636601; cv=none; b=rXaDESWbi/GZGldNdBOMBOH94oP0J4p5wsK9ToV7/bIGQN2bh2lT03Byt9d9he5HuPeHTtPVA7dIYddLLEZcHNTpB5zah+dTwkwZGW4vvesl4VOj60PjBZECR/S5elxRDE7seQ9aJFbAXkq3QZTg0NSgPEaYTiVOY0ieX5Fs9+k=
+	t=1717636585; cv=none; b=aJsxvegyo+bTQnqhxilUbHeQ2l+YHOD4hPZA4TxKYk3xe+rvR6hKxVQwhtkhr1n+rmNDji8YaTtLCdkNm9KX7vvqxO6meYjNmKm2rStAYMEmm/yFEWccPqVVf8F3zAeGUxrzfEHWrvKzU6sCyZgtlVrNHwfyIMVSw+tZPy1loPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717636601; c=relaxed/simple;
-	bh=XatycHO7VMZ0EQIY9hx3Nb47G42PwMSEtepwIgWK9Jc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oY3kjybidHJHuTTL4zCIbhRYDIK615vaT5GIeL9VSb1VU3dYnErEy9+tCAq9+S5/EWyCufDJT4wAXfJ755nuZ78TUflsKg6JsbwfDEL3zwzWf5IFAydoDdFu5brZQGkSGKEGvU7g/RFREUz5NeQqDZSlfKhEjGdc9VkpRonmER0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SQ5Kg11C; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1717636585; c=relaxed/simple;
+	bh=UPfw2rQiVEjw+rnno9eCBwxveOieh6/KEE+rEF9Oufo=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=Tf9os8EepXBIsdEVSY8nSDCGJWDQhPC43Gta15XHnUiWjZhcKmFKSnnZvNfkO1cEKS5WaPmmf0BkM6xhPGiFjA+33HOcaxL52VZT29EJ+yqPnjKMeH5j3Wxo7KGOJzcdVtq7gNUDzYvfociIISY58oMbLijS57vRYQu0dC0Yz6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T7mVVapB; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717636599; x=1749172599;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=XatycHO7VMZ0EQIY9hx3Nb47G42PwMSEtepwIgWK9Jc=;
-  b=SQ5Kg11Cbq0iyrslOy8GS25ip3d5QDOLRiFzOY0nYaOVzaZxORTskma2
-   /VqBBlY6dS7Pccji7FmDJXKUA8UGUNo8yON4H27dAvgIXzdS/7ifbjL97
-   kt1MjfHpSRA2bMiLWabSkUjTpktqhUTLY3NZwtD1KIEQcNsZguv8pnTF6
-   IpBNBMDb0POCZx04Fdo2SZit4PbpnNKP75nXKbhuTvPrEvWIqoGTppdzS
-   62rqWoFB0hQS4fprrQ7p7iPcQ+bAT+Ra5KqzCvTYcRIYJ03PxvXZdZLOH
-   ZN/aE7CbcaaMuuAVGTbMIXOZ7ugGwYpH1lCvEZEOqZAcHvQbN4GUKzbPA
+  t=1717636583; x=1749172583;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=UPfw2rQiVEjw+rnno9eCBwxveOieh6/KEE+rEF9Oufo=;
+  b=T7mVVapByKH39/70pq6n0Pv2Up2OZJAfLnqYWL55szZO0qUiEGxD2rbO
+   CNxFtL7lSsPc98JaMXSYeBa7QiD/jLCNhpT0nIJjjP+u6jVYsLOCjP5iI
+   KojceaaFXzJApOCJbFd86QsVMlD/g5MXLgfkluM2reFiZLDPpl+CwtuMQ
+   1MMGRKuqS1US2/CuhNyWgcTNVM2dIbHF0DOIZkyaaFMrhFm0HXSMpo4Xb
+   6W8mm4K0dW+GXeDyl+ptQWEJdAGS0UaskYhFW3Cz/DcGmeYu1C+0e7IeU
+   XtdawxvXBQZ4oA4jQCNqv4iyhoOfdfI2xk6JgZe2m9t48a2M3ZCKa6fbM
    Q==;
-X-CSE-ConnectionGUID: 58JHEeOIQ8uEyYTrwuhnDA==
-X-CSE-MsgGUID: hCwDcudWQfG3ly8DInU5iQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="14084237"
+X-CSE-ConnectionGUID: m40XUyVwQcCVGwx8GVor1A==
+X-CSE-MsgGUID: KZbnRLWIRmSqePRWwXxs7w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="14084173"
 X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
-   d="scan'208";a="14084237"
+   d="scan'208";a="14084173"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 18:16:38 -0700
-X-CSE-ConnectionGUID: a8eyrfpRT0qJ8CG6gZ8upw==
-X-CSE-MsgGUID: XBW1xq7LQ3a/4IBtNPoV9w==
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 18:16:22 -0700
+X-CSE-ConnectionGUID: W8UpD3lcSGmXYGZSNuk50w==
+X-CSE-MsgGUID: R90FU2/NTc2xGMgMFCtXLw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
-   d="scan'208";a="37889884"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 18:16:36 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,  <linux-cxl@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  Andrew Morton
- <akpm@linux-foundation.org>,  Dave Jiang <dave.jiang@intel.com>,  Bharata
- B Rao <bharata@amd.com>,  "Alistair Popple" <apopple@nvidia.com>,  "Aneesh
- Kumar K . V" <aneesh.kumar@linux.ibm.com>
-Subject: Re: [PATCH] cxl/region: Support to calculate memory tier abstract
- distance
-In-Reply-To: <20240605131017.000069b6@Huawei.com> (Jonathan Cameron's message
-	of "Wed, 5 Jun 2024 13:10:17 +0100")
-References: <20240531024852.282767-1-ying.huang@intel.com>
-	<20240605131017.000069b6@Huawei.com>
-Date: Thu, 06 Jun 2024 09:14:45 +0800
-Message-ID: <87a5jy98je.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+   d="scan'208";a="37889782"
+Received: from mhlooi-mobl1.amr.corp.intel.com (HELO debox1-desk4.lan) ([10.212.212.220])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 18:16:22 -0700
+From: "David E. Box" <david.e.box@linux.intel.com>
+To: linux-doc@vger.kernel.org,
+	david.e.box@linux.intel.com,
+	ilpo.jarvinen@linux.intel.com,
+	hdegoede@redhat.com,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org
+Subject: [PATCH V3 1/3] platform/x86/intel/sdsi: Add ioctl SPDM transport
+Date: Wed,  5 Jun 2024 18:16:15 -0700
+Message-Id: <20240606011617.557264-1-david.e.box@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Transfer-Encoding: 8bit
 
-Hi, Jonathan,
+Intel On Demand adds attestation and firmware measurement retrieval
+services through use of the protocols defined the Security Protocols and
+Data Measurement (SPDM) specification. SPDM messages exchanges are used to
+authenticate On Demand hardware and to retrieve signed measurements of the
+NVRAM state used to track feature provisioning and the NVRAM state used for
+metering services. These allow software to verify the authenticity of the
+On Demand hardware as well as the integrity of the reported silicon
+configuration.
 
-Thank you very much for review!
+Add an ioctl interface for sending SPDM messages through the On Demand
+mailbox. Provides commands to get a list of SPDM enabled devices, get the
+message size limits for SPDM Requesters and Responders, and perform an SPDM
+message exchange.
 
-Jonathan Cameron <Jonathan.Cameron@Huawei.com> writes:
+Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+Link: https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.0.1.pdf [1]
+---
+V3
+   - Use %zu format for size_t
+   - Simplify return in sdsi_spdm_ioctl()
 
-> On Fri, 31 May 2024 10:48:52 +0800
-> Huang Ying <ying.huang@intel.com> wrote:
->
->> To place memory nodes backed by CXL regions in the appropriate memory
->> tiers.  So that, pages can be promoted/demoted with the existing
->> memory tiering mechanism.
->> 
->> The abstract distance is calculated based on the memory access latency
->> and bandwidth of CXL regions.  Which in turn comes from the HMAT
->> and CDAT, etc.
->> 
->> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->> Cc: Dave Jiang <dave.jiang@intel.com>
->> Cc: Dan Williams <dan.j.williams@intel.com>
->> Cc: Bharata B Rao <bharata@amd.com>
->> Cc: Alistair Popple <apopple@nvidia.com>
->> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
->
-> Minor comments inline.  Otherwise, looks good to me.
->
-> Jonathan
->
->
->> ---
->>  drivers/cxl/core/region.c | 40 +++++++++++++++++++++++++++++++++++----
->>  drivers/cxl/cxl.h         |  1 +
->>  2 files changed, 37 insertions(+), 4 deletions(-)
->> 
->> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
->> index 00a9f0eef8dd..1f8f71a034ae 100644
->> --- a/drivers/cxl/core/region.c
->> +++ b/drivers/cxl/core/region.c
->> @@ -9,6 +9,7 @@
->>  #include <linux/uuid.h>
->>  #include <linux/sort.h>
->>  #include <linux/idr.h>
->> +#include <linux/memory-tiers.h>
->>  #include <cxlmem.h>
->>  #include <cxl.h>
->>  #include "core.h"
->> @@ -2304,14 +2305,20 @@ static bool cxl_region_update_coordinates(struct cxl_region *cxlr, int nid)
->>  	return true;
->>  }
->>  
->> +static int cxl_region_nid(struct cxl_region *cxlr)
->> +{
->> +	struct cxl_region_params *p = &cxlr->params;
->> +	struct cxl_endpoint_decoder *cxled = p->targets[0];
->> +	struct cxl_decoder *cxld = &cxled->cxld;
->> +
->> +	return phys_to_target_node(cxld->hpa_range.start);
->> +}
->> +
->>  static int cxl_region_perf_attrs_callback(struct notifier_block *nb,
->>  					  unsigned long action, void *arg)
->>  {
->>  	struct cxl_region *cxlr = container_of(nb, struct cxl_region,
->>  					       memory_notifier);
->> -	struct cxl_region_params *p = &cxlr->params;
->> -	struct cxl_endpoint_decoder *cxled = p->targets[0];
->> -	struct cxl_decoder *cxld = &cxled->cxld;
->>  	struct memory_notify *mnb = arg;
->>  	int nid = mnb->status_change_nid;
->>  	int region_nid;
->> @@ -2319,7 +2326,7 @@ static int cxl_region_perf_attrs_callback(struct notifier_block *nb,
->>  	if (nid == NUMA_NO_NODE || action != MEM_ONLINE)
->>  		return NOTIFY_DONE;
->>  
->> -	region_nid = phys_to_target_node(cxld->hpa_range.start);
->> +	region_nid = cxl_region_nid(cxlr);
->>  	if (nid != region_nid)
->>  		return NOTIFY_DONE;
->>  
->> @@ -2329,6 +2336,27 @@ static int cxl_region_perf_attrs_callback(struct notifier_block *nb,
->>  	return NOTIFY_OK;
->>  }
->>  
->> +static int cxl_region_calculate_adistance(struct notifier_block *nb,
->> +					  unsigned long nid, void *data)
->> +{
->> +	struct cxl_region *cxlr = container_of(nb, struct cxl_region,
->> +					       adist_notifier);
->> +	int region_nid;
->> +	struct access_coordinate *perf;
->> +	int *adist = data;
-> Local style looks to be reverse xmas tree subject to any dependencies etc.
+V2
+   - Move size < 4 check into sdsi_spdm_exchange() and add comment
+     clarifying return values of that function.
+   - Use SZ_4K and add helpers
+   - Use devm_kasprintf()
+   - Remove unnecessary parens
+   - Use --attest for long option
 
-Sure.  Will change this to follow reverse xmas tree.
+ .../userspace-api/ioctl/ioctl-number.rst      |   1 +
+ MAINTAINERS                                   |   1 +
+ drivers/platform/x86/intel/sdsi.c             | 207 +++++++++++++++++-
+ include/uapi/linux/intel_sdsi.h               |  81 +++++++
+ 4 files changed, 289 insertions(+), 1 deletion(-)
+ create mode 100644 include/uapi/linux/intel_sdsi.h
 
->> +
->> +	region_nid = cxl_region_nid(cxlr);
->> +	if (nid != region_nid)
->> +		return NOTIFY_OK;
->> +
->> +	perf = &cxlr->coord[ACCESS_COORDINATE_CPU];
->> +
->> +	if (mt_perf_to_adistance(perf, adist))
->> +		return NOTIFY_OK;
->> +
->> +	return NOTIFY_STOP;
->> +}
->> +
->>  /**
->>   * devm_cxl_add_region - Adds a region to a decoder
->>   * @cxlrd: root decoder
->> @@ -2380,6 +2408,10 @@ static struct cxl_region *devm_cxl_add_region(struct cxl_root_decoder *cxlrd,
->>  	cxlr->memory_notifier.priority = CXL_CALLBACK_PRI;
->>  	register_memory_notifier(&cxlr->memory_notifier);
->>  
->> +	cxlr->adist_notifier.notifier_call = cxl_region_calculate_adistance;
->> +	cxlr->adist_notifier.priority = 100;
->> +	register_mt_adistance_algorithm(&cxlr->adist_notifier);
->> +
->>  	rc = devm_add_action_or_reset(port->uport_dev, unregister_region, cxlr);
->>  	if (rc)
->>  		return ERR_PTR(rc);
->> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
->> index 603c0120cff8..6891f87f8ef7 100644
->> --- a/drivers/cxl/cxl.h
->> +++ b/drivers/cxl/cxl.h
->> @@ -534,6 +534,7 @@ struct cxl_region {
-> This has docs that need an updte.
+diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+index a141e8e65c5d..17a0b4a90bac 100644
+--- a/Documentation/userspace-api/ioctl/ioctl-number.rst
++++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+@@ -384,6 +384,7 @@ Code  Seq#    Include File                                           Comments
+                                                                      <mailto:mathieu.desnoyers@efficios.com>
+ 0xF8  all    arch/x86/include/uapi/asm/amd_hsmp.h                    AMD HSMP EPYC system management interface driver
+                                                                      <mailto:nchatrad@amd.com>
++0xFC  all    linux/intel_sdsi.h
+ 0xFD  all    linux/dm-ioctl.h
+ 0xFE  all    linux/isst_if.h
+ ====  =====  ======================================================= ================================================================
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8754ac2c259d..df5adb49ccc6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11343,6 +11343,7 @@ INTEL SDSI DRIVER
+ M:	David E. Box <david.e.box@linux.intel.com>
+ S:	Supported
+ F:	drivers/platform/x86/intel/sdsi.c
++F:	include/uapi/linux/intel_sdsi.h
+ F:	tools/arch/x86/intel_sdsi/
+ F:	tools/testing/selftests/drivers/sdsi/
+ 
+diff --git a/drivers/platform/x86/intel/sdsi.c b/drivers/platform/x86/intel/sdsi.c
+index 277e4f4b20ac..9834301052c4 100644
+--- a/drivers/platform/x86/intel/sdsi.c
++++ b/drivers/platform/x86/intel/sdsi.c
+@@ -11,9 +11,12 @@
+ #include <linux/auxiliary_bus.h>
+ #include <linux/bits.h>
+ #include <linux/bitfield.h>
++#include <linux/cleanup.h>
+ #include <linux/device.h>
+ #include <linux/iopoll.h>
++#include <linux/intel_sdsi.h>
+ #include <linux/kernel.h>
++#include <linux/miscdevice.h>
+ #include <linux/module.h>
+ #include <linux/overflow.h>
+ #include <linux/pci.h>
+@@ -42,6 +45,7 @@
+ 
+ #define SDSI_ENABLED_FEATURES_OFFSET	16
+ #define SDSI_FEATURE_SDSI		BIT(3)
++#define SDSI_FEATURE_ATTESTATION	BIT(12)
+ #define SDSI_FEATURE_METERING		BIT(26)
+ 
+ #define SDSI_SOCKET_ID_OFFSET		64
+@@ -91,6 +95,7 @@ enum sdsi_command {
+ 	SDSI_CMD_PROVISION_CAP		= 0x0008,
+ 	SDSI_CMD_READ_STATE		= 0x0010,
+ 	SDSI_CMD_READ_METER		= 0x0014,
++	SDSI_CMD_ATTESTATION		= 0x1012,
+ };
+ 
+ struct sdsi_mbox_info {
+@@ -109,12 +114,14 @@ struct disc_table {
+ struct sdsi_priv {
+ 	struct mutex		mb_lock;	/* Mailbox access lock */
+ 	struct device		*dev;
++	struct miscdevice	miscdev;
+ 	void __iomem		*control_addr;
+ 	void __iomem		*mbox_addr;
+ 	void __iomem		*regs_addr;
+ 	int			control_size;
+ 	int			maibox_size;
+ 	int			registers_size;
++	int			id;
+ 	u32			guid;
+ 	u32			features;
+ };
+@@ -582,6 +589,97 @@ static const struct attribute_group sdsi_group = {
+ };
+ __ATTRIBUTE_GROUPS(sdsi);
+ 
++/*
++ * SPDM transport
++ * Returns size of the response message or an error code on failure.
++ */
++static int sdsi_spdm_exchange(void *private, const void *request,
++			      size_t request_sz, void *response,
++			      size_t response_sz)
++{
++	struct sdsi_priv *priv = private;
++	struct sdsi_mbox_info info = {};
++	size_t spdm_msg_size, size;
++	int ret;
++
++	/*
++	 * For the attestation command, the mailbox write size is the sum of:
++	 *     Size of the SPDM request payload, padded for qword alignment
++	 *     8 bytes for the mailbox command
++	 *     8 bytes for the actual (non-padded) size of the SPDM request
++	 */
++	if (request_sz > SDSI_SIZE_WRITE_MSG - 2 * sizeof(u64))
++		return -EOVERFLOW;
++
++	info.size = round_up(request_sz, sizeof(u64)) + 2 * sizeof(u64);
++
++	u64 *payload __free(kfree) = kzalloc(info.size, GFP_KERNEL);
++	if (!payload)
++		return -ENOMEM;
++
++	memcpy(payload, request, request_sz);
++
++	/* The non-padded SPDM payload size is the 2nd-to-last qword */
++	payload[(info.size / sizeof(u64)) - 2] = request_sz;
++
++	/* Attestation mailbox command is the last qword of payload buffer */
++	payload[(info.size / sizeof(u64)) - 1] = SDSI_CMD_ATTESTATION;
++
++	info.payload = payload;
++	info.buffer = response;
++
++	ret = mutex_lock_interruptible(&priv->mb_lock);
++	if (ret)
++		return ret;
++	ret = sdsi_mbox_write(priv, &info, &size);
++	mutex_unlock(&priv->mb_lock);
++
++	if (ret < 0)
++		return ret;
++
++	/*
++	 * The read size is the sum of:
++	 *     Size of the SPDM response payload, padded for qword alignment
++	 *     8 bytes for the actual (non-padded) size of the SPDM payload
++	 */
++
++	if (size < sizeof(u64)) {
++		dev_err(priv->dev,
++			"Attestation error: Mailbox reply size, %zu, too small\n",
++			size);
++		return -EPROTO;
++	}
++
++	if (!IS_ALIGNED(size, sizeof(u64))) {
++		dev_err(priv->dev,
++			"Attestation error: Mailbox reply size, %zu, is not aligned\n",
++			size);
++		return -EPROTO;
++	}
++
++	/*
++	 * Get the SPDM response size from the last QWORD and check it fits
++	 * with no more than 7 bytes of padding
++	 */
++	spdm_msg_size = ((u64 *)info.buffer)[(size - sizeof(u64)) / sizeof(u64)];
++	if (!in_range(size - spdm_msg_size - sizeof(u64), 0, 8)) {
++		dev_err(priv->dev,
++			"Attestation error: Invalid SPDM response size, %zu\n",
++			spdm_msg_size);
++		return -EPROTO;
++	}
++
++	if (spdm_msg_size > response_sz || spdm_msg_size < SPDM_HEADER_SIZE) {
++		dev_err(priv->dev, "Attestation error: Expected response size %zu, got %zu\n",
++			response_sz, spdm_msg_size);
++		return -EOVERFLOW;
++	}
++
++	memcpy(response, info.buffer, spdm_msg_size);
++
++	return spdm_msg_size;
++}
++
+ static int sdsi_get_layout(struct sdsi_priv *priv, struct disc_table *table)
+ {
+ 	switch (table->guid) {
+@@ -649,6 +747,89 @@ static int sdsi_map_mbox_registers(struct sdsi_priv *priv, struct pci_dev *paren
+ 	return 0;
+ }
+ 
++#define SDSI_SPDM_DRIVER_VERSION	1
++
++static int sdsi_spdm_get_info(struct sdsi_priv *priv,
++			      struct sdsi_spdm_info __user *argp)
++{
++	struct sdsi_spdm_info info;
++
++	info.driver_version = SDSI_SPDM_DRIVER_VERSION;
++	info.api_version = priv->guid;
++	info.dev_no = priv->id;
++	info.max_request_size = SDSI_SIZE_WRITE_MSG - 2 * sizeof(u64);
++	info.max_response_size = SDSI_SIZE_READ_MSG - sizeof(u64);
++
++	if (copy_to_user(argp, &info, sizeof(info)))
++		return -EFAULT;
++
++	return 0;
++}
++
++static int sdsi_spdm_do_command(struct sdsi_priv *priv,
++				struct sdsi_spdm_command __user *argp)
++{
++	u32 req_size, rsp_size;
++
++	if (get_user(req_size, &argp->size))
++		return -EFAULT;
++
++	if (req_size < 4 || req_size > sizeof(struct sdsi_spdm_message))
++		return -EINVAL;
++
++	struct sdsi_spdm_message *request __free(kfree) =
++		kmalloc(req_size, GFP_KERNEL);
++	if (!request)
++		return -ENOMEM;
++
++	struct sdsi_spdm_command *response __free(kfree) =
++		kmalloc(SDSI_SIZE_READ_MSG, GFP_KERNEL);
++	if (!response)
++		return -ENOMEM;
++
++	if (copy_from_user(request, &argp->message, req_size))
++		return -EFAULT;
++
++	rsp_size = sdsi_spdm_exchange(priv, request, req_size, response,
++				      SDSI_SIZE_READ_MSG);
++	if (rsp_size < 0)
++		return rsp_size;
++
++	if (put_user(rsp_size, &argp->size))
++		return -EFAULT;
++
++	if (copy_to_user(&argp->message, response, rsp_size))
++		return -EFAULT;
++
++	return 0;
++}
++
++static long sdsi_spdm_ioctl(struct file *file, unsigned int cmd,
++			    unsigned long arg)
++{
++	struct sdsi_priv *priv;
++
++	priv = container_of(file->private_data, struct sdsi_priv, miscdev);
++
++	switch (cmd) {
++	case SDSI_IF_SPDM_INFO:
++		return sdsi_spdm_get_info(priv,
++				(struct sdsi_spdm_info __user *)arg);
++	case SDSI_IF_SPDM_COMMAND:
++		return sdsi_spdm_do_command(priv,
++				(struct sdsi_spdm_command __user *)arg);
++	default:
++		break;
++	}
++
++	return -ENOTTY;
++}
++
++static const struct file_operations sdsi_spdm_ops = {
++	.owner = THIS_MODULE,
++	.unlocked_ioctl = sdsi_spdm_ioctl,
++};
++
+ static int sdsi_probe(struct auxiliary_device *auxdev, const struct auxiliary_device_id *id)
+ {
+ 	struct intel_vsec_device *intel_cap_dev = auxdev_to_ivdev(auxdev);
+@@ -663,6 +844,7 @@ static int sdsi_probe(struct auxiliary_device *auxdev, const struct auxiliary_de
+ 		return -ENOMEM;
+ 
+ 	priv->dev = &auxdev->dev;
++	priv->id = auxdev->id;
+ 	mutex_init(&priv->mb_lock);
+ 	auxiliary_set_drvdata(auxdev, priv);
+ 
+@@ -686,9 +868,32 @@ static int sdsi_probe(struct auxiliary_device *auxdev, const struct auxiliary_de
+ 	if (ret)
+ 		return ret;
+ 
++	/* Attestation miscdevice */
++	if (priv->features & SDSI_FEATURE_ATTESTATION) {
++		priv->miscdev.name = devm_kasprintf(&auxdev->dev, GFP_KERNEL,
++						    "isdsi%d", priv->id);
++		if (!priv->miscdev.name)
++			return -ENOMEM;
++
++		priv->miscdev.minor = MISC_DYNAMIC_MINOR;
++		priv->miscdev.fops = &sdsi_spdm_ops;
++
++		ret = misc_register(&priv->miscdev);
++		if (ret)
++			return ret;
++	}
++
+ 	return 0;
+ }
+ 
++static void sdsi_remove(struct auxiliary_device *auxdev)
++{
++	struct sdsi_priv *priv = auxiliary_get_drvdata(auxdev);
++
++	if (priv->features & SDSI_FEATURE_ATTESTATION)
++		misc_deregister(&priv->miscdev);
++}
++
+ static const struct auxiliary_device_id sdsi_aux_id_table[] = {
+ 	{ .name = "intel_vsec.sdsi" },
+ 	{}
+@@ -701,7 +906,7 @@ static struct auxiliary_driver sdsi_aux_driver = {
+ 	},
+ 	.id_table	= sdsi_aux_id_table,
+ 	.probe		= sdsi_probe,
+-	/* No remove. All resources are handled under devm */
++	.remove		= sdsi_remove,
+ };
+ module_auxiliary_driver(sdsi_aux_driver);
+ 
+diff --git a/include/uapi/linux/intel_sdsi.h b/include/uapi/linux/intel_sdsi.h
+new file mode 100644
+index 000000000000..8e28764f4a98
+--- /dev/null
++++ b/include/uapi/linux/intel_sdsi.h
+@@ -0,0 +1,81 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++/*
++ * Intel On Demand (SDSi) Interface for SPDM based attestation.
++ * Copyright (c) 2019, Intel Corporation.
++ * All rights reserved.
++ *
++ * Author: David E. Box <david.e.box@linux.intel.com>
++ */
++
++#ifndef __SDSI_H
++#define __SDSI_H
++
++#include <linux/sizes.h>
++#include <linux/types.h>
++
++/**
++ * struct sdsi_spdm_info - Define platform information
++ * @api_version:	Version of the firmware document, which this driver
++ *			can communicate
++ * @driver_version:	Driver version, which will help user to send right
++ *			commands. Even if the firmware is capable, driver may
++ *			not be ready
++ * @dev_no:		Returns the auxiliary device number the corresponding
++ *			sdsi instance
++ * @max_request_size:	Returns the maximum allowed size for SPDM request
++ *			messages
++ * @max_response_size:	Returns the maximum size of an SPDM response message
++ *
++ * Used to return output of IOCTL SDSI_SPDM_INFO. This
++ * information can be used by the user space, to get the driver, firmware
++ * support and also number of commands to send in a single IOCTL request.
++ */
++struct sdsi_spdm_info {
++	__u32 api_version;
++	__u16 driver_version;
++	__u16 dev_no;
++	__u16 max_request_size;
++	__u16 max_response_size;
++};
++
++#define SPDM_HEADER				\
++	struct {				\
++		__u8 spdm_version;		\
++		__u8 request_response_code;	\
++		__u8 param1;			\
++		__u8 param2;			\
++	}
++#define SPDM_HEADER_SIZE	sizeof(SPDM_HEADER)
++
++/**
++ * struct sdsi_spdm_message - The SPDM message sent and received from the device
++ * @spdm_version:		Supported SPDM version
++ * @request_response_code:	The SPDM message code for requests and responses
++ * @param1:			Parameter 1
++ * @param2:			Parameter 2
++ * @buffer:			SDPM message specific buffer
++ *
++ */
++struct sdsi_spdm_message {
++	SPDM_HEADER;
++	__u8 buffer[SZ_4K - SPDM_HEADER_SIZE];
++};
++
++#define SDSI_SPDM_BUF_SIZE	(sizeof(struct sdsi_spdm_message) - SPDM_HEADER_SIZE)
++
++/**
++ * struct sdsi_spdm_command - The SPDM command
++ * @ size:		The size of the SPDM message
++ * @ message:		The SPDM message
++ *
++ * Used to return output of IOCTL SDSI_SPDM_COMMAND.
++ */
++struct sdsi_spdm_command {
++	__u32 size;
++	struct sdsi_spdm_message message;
++};
++
++#define SDSI_IF_MAGIC		0xFC
++#define SDSI_IF_SPDM_INFO	_IOR(SDSI_IF_MAGIC, 0, struct sdsi_spdm_info *)
++#define SDSI_IF_SPDM_COMMAND	_IOWR(SDSI_IF_MAGIC, 1, struct sdsi_spdm_command *)
++#endif
 
-Yes.  Thanks for reminding!
+base-commit: c3f38fa61af77b49866b006939479069cd451173
+-- 
+2.34.1
 
->>  	struct cxl_region_params params;
->>  	struct access_coordinate coord[ACCESS_COORDINATE_MAX];
->>  	struct notifier_block memory_notifier;
->> +	struct notifier_block adist_notifier;
->>  };
->>  
->>  struct cxl_nvdimm_bridge {
-
---
-Best Regards,
-Huang, Ying
 
