@@ -1,128 +1,203 @@
-Return-Path: <linux-kernel+bounces-204474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3C4C8FEF8E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:56:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CE848FEF90
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:56:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E49811C2350E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:56:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB5CD1C24A33
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2AD19883B;
-	Thu,  6 Jun 2024 14:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C2B198841;
+	Thu,  6 Jun 2024 14:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GE9OG3gr"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Uqz4lGYx"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C1E197A9B
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82ABE19884A
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717684131; cv=none; b=N8gK31HjljxSkUj3RtNHB1lg3Ip5/yqkW460ioXi6PRFZI47UxVzmn4GVT37VjuydPeyCwIelm975gk6CyK4DCfL+MFOrt4R2KOMrCuGs+iCd7TKMX5H9sG/DQ0m6sAqK6dhkwC/rbb2BgJc1Q4V7ZDKPjJsis/ySjucTmHGpSA=
+	t=1717684175; cv=none; b=DVm1AlVyemaefZrLZMQdC5EAJkFaj9p9UVq8lWN8sNATsL0dsGDJX99v+OnsImilZQ/4HllnmhkTiGFgMdMNbPbaCMQVoDVIvldIywC7EFIiA7rzfa90e9WnBDG/KEA2nIfTaLbgrTkqRyBKyMn0YPa2qft2aAAuLFbE0E7FXAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717684131; c=relaxed/simple;
-	bh=SuESpoipjH2XBuKfLdMHPYPL7Cn4gPPdzQBAHmXOeUc=;
+	s=arc-20240116; t=1717684175; c=relaxed/simple;
+	bh=GimoAQIvtE/omE2LWe9rkmcZVAyFh7hH8t8gFFgucFY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZPAtbb5Ogd1Kt2mc4y6MYwr9n7tXufzjdSu0dYZkTvhMhw9tHpUyAbOWxBkQviV6AJhyoXZ/Atxqb8iGW/c0aJ/t6SkxD07+owlNowQ7L+1EZH6YPVHucz3SenZ5VgbU8tJs93be12R4c3tIqcFJ47DDNDFfeqIg1UWNI4Pc9MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GE9OG3gr; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a690c8e64bdso58072366b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 07:28:50 -0700 (PDT)
+	 To:Cc:Content-Type; b=A2rUrBqpHVsupxP1eOFwJlgIId5aeSUeXX2oN4X3ZQR45FNBYCv9mSzUvhRb7xVFPu1/Adzkp9XWfPBWADUSSh7QEwDOFPFGH0K9ZQOh0vZLCx2Xf4F7j5nggFV1GdMtDcGT25q8PYqOik/hd0NAugXZXXCQCw/hbnRX31ij7kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Uqz4lGYx; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ead2c6b553so12141721fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 07:29:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717684129; x=1718288929; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=eWeMi1z4JCK+XMEvQCFUyZ6qEqWXaYSEpXs/63PCyO4=;
-        b=GE9OG3gr6teeIM1KJnJLDYDmOPqpwHQbbPJVJWWRa8e+qvNahDSuBP9EMHB1Z9zCfS
-         DzNtEaVZJJ4hwL/z53TzutQUT24hSRl6vbiND4bdn6PgnyWdAkAouTpQqx3hix5dexEG
-         Tw8bNQQp+8XYUV1FNKoIkNbGyZS17Cbwni7AgaebK0j/Q00SVjM7qMXb+ha3Bf9aF/yk
-         dCTxuw2+l6l3WLVfqbRE9JribsHXEiX8Arcmt1rVT80LET2F4DugZsoHkP5lSN5VWE7X
-         2PmVnHPZe8vtZjOMA31F+a1+FJhF4m5011HBWuVUFIGBbED+puBLT5foYVRTEXYBuMO2
-         ziBg==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1717684171; x=1718288971; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QWrHmrBVbxL2N+yjukzrB1xNIeLZkMy2NcMIU1+JPUg=;
+        b=Uqz4lGYxdcOmil+vyxA0jJrA8cR4Acx4g2UO2V6EZYsl4TmmK6DDITf7fJ19Fyv0jy
+         g2HD7ify7eEzsC2ZTQYfCj4yB4jVILVXjRLz+8sAXwo7c95uSQCqemDN97S6W2ka7ptz
+         MLoi08vZkJM9OR36t5ZunIDtGQyTYRnabAeEH5iXOjQOg2SEy1mbYGBK09+LG0GlYxRl
+         EUM/MFxFvrn5Yog8it2E+Qzp0Pub8E84clekP/wXhwfaJfR2a5UELn229IuXIjRLKDXe
+         j75Gudw/i91V2bTlHgkapKt8EJ0Eqi6VeDcv/K5bFgi8CN891He2hQ0j5LwHKzio2aRd
+         lO4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717684129; x=1718288929;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eWeMi1z4JCK+XMEvQCFUyZ6qEqWXaYSEpXs/63PCyO4=;
-        b=EFgjGZAVtAc0vMGMV8liO7GAGmGzTkYqO2OKZoVvm1dsjPf0Ki1ysRwKMAvwTWAk41
-         Sf0613Voq01qVbYnhNg/cM7ji6EmFaeh4rUDZjxSBVZeW3B1jx/PgsEgj9s+RyPeMPT3
-         ek0m2ygCtVSD2B/i4WOHOPVE7kRAnaC4peTS7FYOKm65JvKF6XiYztHkSietgqo7fLZx
-         6HN+AFXJ8FaCwkX32c1DCWii7XEhiAclZvxOJ9FWZMPlc5LQfHN0cL/zrmfTdgBWZwrn
-         0zvrlAGQHqvlCrcbb2eLJVH9Z9cIzZM1NAsdb0VnKg5agrgoX4kGzYOq6lMhvVmtV6la
-         /Q0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVNWMWaczSaUhmVuLzKGs/qui8Z6wzpLfhtphWJI3xZa17ifX/YuJhhfWerSYTGhBuT2ueYQclw3n4vkNsfmHCqnmpjVjkfvSIGVt5g
-X-Gm-Message-State: AOJu0Yyt0qvLNTQz1wBH+1FwqKDD4mBqkJMPKglu1zam5nhfQMKjYr1I
-	uepddtRrAC1Jy05NcMY9+ug0zfeXH2mhE//C5LhdKxL7HR6Ee4Z+QOVUak9SRn0EVzt5hZe/dEg
-	fDhV0OdmHVWWB5MU8Gdr09z1bpMS/Rk0wV6TVSEzEzLQBa3L3WS3FCQ==
-X-Google-Smtp-Source: AGHT+IG8pQ7JMnVsI3Te2WeC+Hdtmyjd7l9vtYflmm0/97yZOaS7cvIZtnWYmC1G8hdhlyHcRvLuuSiYPVSyaA6Wfbc=
-X-Received: by 2002:a50:c315:0:b0:57c:4200:a958 with SMTP id
- 4fb4d7f45d1cf-57c4200af44mr1264695a12.35.1717684128664; Thu, 06 Jun 2024
- 07:28:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717684171; x=1718288971;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QWrHmrBVbxL2N+yjukzrB1xNIeLZkMy2NcMIU1+JPUg=;
+        b=Nmj+1+m9JRn/sqZGH95ykpWE0uni1ad+hKNMHbXFu8i+Gb1GV4SL2U9QmThsmVa0wu
+         WZp6i/wessaMHCOMnav7Iirs5dl1F4tG0T/p6sasWYq5YbQaqbnyuCTbF8oVl9F7K6qt
+         hHyK5IEUhmLcpXHxGsUBjY+QCiBgGcKMdL7nsEmXyeM2SpjsolFusg2xnF+Cn6oyZymm
+         +RtWPMWA+i1QXsTQkD/Zk7/5NU3fqok/LEaCjYsVkYLZJpRESL+YVZnxjgsrNbeZRWcd
+         Yp7NuzDoccduuLui5heWrPOzwiIHWc5MRkJesvubPQ5wdg/QYfGeeXgisSI3JX+8cg+i
+         z+/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWB0d4dkRITSAigwRPpbsctIBKsWzfBLGzJgeu0DMr9SWJSeBIFkKO4HyBd3WILG8zJfss7v25mq3LQPwGxH6Hh+MPhBHXgNASHzgFV
+X-Gm-Message-State: AOJu0Ywqd/GfAmR8n5u50VycJmcJCrJTVsTzO7jwYtlX6u03N2addVJt
+	N8GO+kJG+yYLXgN85m62tfMLNs9C+4TTEdpX+LzbczWpi3NhRbIpYtFYmKy14uNyXnzweIjjTLe
+	FTP/kgmvaKgt77iRx64UMMfnvDaxzQeqjkb2iQg==
+X-Google-Smtp-Source: AGHT+IE7dV5ZV/18QS1Cl24O5VDU/AyKd8svwpktd8Gq/yIywl49RVlO2hEBVV/ZBTiMOrhqd5gtrUxmBJP66OQy6UM=
+X-Received: by 2002:a2e:a403:0:b0:2ea:903b:ca0e with SMTP id
+ 38308e7fff4ca-2eac7a986abmr42490961fa.52.1717684171575; Thu, 06 Jun 2024
+ 07:29:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606131732.440653204@linuxfoundation.org>
-In-Reply-To: <20240606131732.440653204@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 6 Jun 2024 19:58:34 +0530
-Message-ID: <CA+G9fYu2_bDqLixtW385KX5Vsnrmsi=FxQVgwUgnZ9qztSLW=A@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/744] 6.6.33-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
+References: <20240605122106.23818-1-brgl@bgdev.pl> <20240605122106.23818-2-brgl@bgdev.pl>
+ <87h6e6qjuh.fsf@kernel.org> <CAMRc=MdiKxtnN+g92RUTXdOydaPV5M2u5iUdKyE2SNvDkdXAjg@mail.gmail.com>
+ <871q5aqiei.fsf@kernel.org>
+In-Reply-To: <871q5aqiei.fsf@kernel.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 6 Jun 2024 16:29:20 +0200
+Message-ID: <CAMRc=McacZMP-51hjH+d8=PVe+Wgw4a8xWcv0sRPLJKL_gP=KQ@mail.gmail.com>
+Subject: Re: [PATCH v9 1/2] dt-bindings: net: wireless: qcom,ath11k: describe
+ the ath11k on QCA6390
+To: Kalle Valo <kvalo@kernel.org>
+Cc: "David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	ath11k@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	ath12k@lists.infradead.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 6 Jun 2024 at 19:41, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Thu, Jun 6, 2024 at 4:02=E2=80=AFPM Kalle Valo <kvalo@kernel.org> wrote:
 >
-> This is the start of the stable review cycle for the 6.6.33 release.
-> There are 744 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> Bartosz Golaszewski <brgl@bgdev.pl> writes:
 >
-> Responses should be made by Sat, 08 Jun 2024 13:15:55 +0000.
-> Anything received after that time might be too late.
+> > On Thu, Jun 6, 2024 at 3:30=E2=80=AFPM Kalle Valo <kvalo@kernel.org> wr=
+ote:
+> >
+> >>
+> >> Bartosz Golaszewski <brgl@bgdev.pl> writes:
+> >>
+> >> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >> >
+> >> > Add a PCI compatible for the ATH11K module on QCA6390 and describe t=
+he
+> >> > power inputs from the PMU that it consumes.
+> >> >
+> >> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> >> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >>
+> >> [...]
+> >>
+> >> > +allOf:
+> >> > +  - if:
+> >> > +      properties:
+> >> > +        compatible:
+> >> > +          contains:
+> >> > +            const: pci17cb,1101
+> >> > +    then:
+> >> > +      required:
+> >> > +        - vddrfacmn-supply
+> >> > +        - vddaon-supply
+> >> > +        - vddwlcx-supply
+> >> > +        - vddwlmx-supply
+> >> > +        - vddrfa0p8-supply
+> >> > +        - vddrfa1p2-supply
+> >> > +        - vddrfa1p7-supply
+> >> > +        - vddpcie0p9-supply
+> >> > +        - vddpcie1p8-supply
+> >>
+> >> Not sure if we discussed this before, but based on this I understand
+> >> that there can't be an DT entry for device pci17cb,1101 without all th=
+e
+> >> supply properties? But there are QCA6390 devices with PCI id 17cb:1101
+> >> which do not need these supplies and already work. For example, my Del=
+l
+> >> XPS 13 x86 laptop is one. Or anyone who manually installs QCA6390 boar=
+d
+> >> to their PCI slot and some of them might want to use DT, for example
+> >> setting qcom,ath11k-calibration-variant.
+> >>
+> >> This is not a blocker for me, just making sure that we are not breakin=
+g
+> >> any existing setups.
+> >>
+> >
+> > If they are already powered up without the need for the PCI pwrctl
+> > driver to do it, then they will work alright. Bindings don't affect
+> > functionality.
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.33-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
+> Sure, I'm not worried about functionality. I'm worried that if I
+> there's, for example, an ARM based setup which uses DT and wants to use
+> a similar QCA6390 board that I have, and set
+> qcom,ath11k-calibration-variant in DT. In other words, I'm worried if
+> you are looking at this only for Snapdragon family of boards?
 >
-> thanks,
+
+No, what I'm looking at is the entire QCA6390 package. That means WLAN
+*and* Bluetooth *and* the PMU that manages power.
+
+If you're using the QCA6390 on a device-tree system then you should
+probably model at least the WLAN node and the PMU and the problem with
+supplies is fixed. But if you don't have the supplies, that's alright
+for downstream.
+
+> Again, I don't see this as a blocker. I just want to understand how this
+> should work for all types of devices there are out there.
 >
-> greg k-h
+> > But if you have a QCA6390 then you have its PMU too and the bindings
+> > model the real-world hardware.
+> >
+> > IOW: your laptop should be alright but the supplies are really there
+> > which warrants adding them to the bindings.
+>
+> Sorry, not following here. Can you clarify your comment "the supplies
+> are really there"? You mean inside the PCI board? But that's not visible
+> to the kernel in anyway, the PCI board just works after I plug it in.
+> It's like a regular PCI device. So I don't understand why that should be
+> visible in DT, but I can very well be missing something.
+>
 
-The Powerpc build failures were noticed on stable-rc 6.9, 6.6 and 6.1.
-Powerpc:
- - maple_defconfig - gcc-13 - failed
+I think you're thinking about some kind of detachable PCIe board with
+this chipset on it. I refer to the QCA6390 chipset itself which is
+also more than just PCI. The Bluetooth interface doesn't use PCI at
+all. On the boards I'm working on, the chipset is just soldered to the
+main board. If your detachable board "just works" then it must be
+wired in a way that enables WLAN the moment it's plugged in but this
+doesn't happen over PCI. The chipset has a power input and GPIOs to
+enable each module.
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Also: I doubt you need DT for your detachable board?
 
-arch/powerpc/include/asm/inst.h: In function '__copy_inst_from_kernel_nofault':
-arch/powerpc/include/asm/uaccess.h:177:19: error: expected string
-literal before 'DS_FORM_CONSTRAINT'
-  177 |                 : DS_FORM_CONSTRAINT (*addr)                    \
-      |                   ^~~~~~~~~~~~~~~~~~
+Bart
 
-Links:
- - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.9.y/build/v6.9.2-803-gfcbdac56b0ae/testrun/24217279/suite/build/test/gcc-13-maple_defconfig/log
- - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.9.y/build/v6.9.2-803-gfcbdac56b0ae/testrun/24217279/suite/build/test/gcc-13-maple_defconfig/history/
-
---
-Linaro LKFT
-https://lkft.linaro.org
+> --
+> https://patchwork.kernel.org/project/linux-wireless/list/
+>
+> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpa=
+tches
 
