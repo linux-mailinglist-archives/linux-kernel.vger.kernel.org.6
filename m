@@ -1,76 +1,49 @@
-Return-Path: <linux-kernel+bounces-203538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC0B8FDCCA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 04:33:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D57E88FDCC4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 04:30:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CEE71F23C8E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 02:33:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 473B7283E6F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 02:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27E7199B8;
-	Thu,  6 Jun 2024 02:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976CB1DFE4;
+	Thu,  6 Jun 2024 02:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IvamltEO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mAdemrmi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BC018638;
-	Thu,  6 Jun 2024 02:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0180199B8;
+	Thu,  6 Jun 2024 02:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717641200; cv=none; b=eky+eLyswsK5Kkp5MaXUfmiQrsX8nMqzorq1HvdjZf++zNflft8bVucvd3Sc9QZDruRfQbAtakC/W6oHkq5zVLndosTZt2nzf0CtknT+ku6zaaOnfAKTUkZtQ9+Ou9FfAsXY6+D1mN63/3IcmVv4P/zNOwE7CXjBr5cKdMrCgEc=
+	t=1717641032; cv=none; b=snlMka764TD4eM5K9AedHWTxEC9WebfvryKQbUW1qOnCFl6KilB5CBYmHUQxX/78dXATDu1oohDL7m9ZDbNdXuvom5iX55ATfXcbN1jUmp9+O0huCyQ6SDkRSDxJ2v3gCUW5VHiy3Qo4HRZjRIsZ6zC9cy0jDzY6xxKaPdyDalI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717641200; c=relaxed/simple;
-	bh=muKFlTEZQ/AQ40SVi7FdGPUE3Q7TaOqoPMNhx6FRIis=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pjx9NOEP/H78kAvAb6mGgjgClB9/P60kd/iysJ8nk3a8rCpBwAK6eJs7rDxRS3QIZMXNgLRhykERj/41lW3/yzey6kZD91Dff3AtNxacPGuhmyq3FCHCffIQh5Es1WR1FAQmya6lL9oqLTdkwHnNndYUK6bCiCba0spPrgooMMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IvamltEO; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717641198; x=1749177198;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=muKFlTEZQ/AQ40SVi7FdGPUE3Q7TaOqoPMNhx6FRIis=;
-  b=IvamltEOgtXMtxdEw4ntO/A1LSgGO+X15yYXIAVjxFR7fX7Pg58M6mpb
-   rbqgrMPa8+sRo1yJ7B2eUx9YPd4mn+z4OU/bIoOce/ALLng7lJKJcXmXk
-   l8GIP/uVx9IKmCDsCf3lyi8sotouyRh7z3KY0D0mKTKqG8eNTlH+pWzbo
-   5BgnzmVvug/sW0EjZ4EjTTjeouS8kgUsuc1PLDTp9V/iiP5pTa4BukFkz
-   L8pgb+LgrKlwrha+YW7H/+epocu6VReyJHDXABVibgg9J2V52lgOmWNlO
-   wAnyc5CK5HBC6kPSn1kvjbuD9mWz9joQ6VpRHdEOJ0YPspgjWih6lLqpU
-   A==;
-X-CSE-ConnectionGUID: nhMFWSdRQx63ePPHmkAb2g==
-X-CSE-MsgGUID: xe+3TQPGQeSAfoQjFuntbw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="14126980"
-X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
-   d="scan'208";a="14126980"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 19:33:17 -0700
-X-CSE-ConnectionGUID: BrP0J7NBQcSH/Fh3z9CL0g==
-X-CSE-MsgGUID: z9U+ODy6T/WnF0YSM+WryQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,218,1712646000"; 
-   d="scan'208";a="68621101"
-Received: from unknown (HELO yhuang6-mobl2.sh.intel.com) ([10.238.6.133])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 19:33:14 -0700
-From: Huang Ying <ying.huang@intel.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>
-Cc: linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Huang Ying <ying.huang@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Bharata B Rao <bharata@amd.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
-Subject: [PATCH] acpi,hmat: Use ACCESS_COORDINATE_CPU when appropriate
-Date: Thu,  6 Jun 2024 10:28:45 +0800
-Message-Id: <20240606022845.189710-1-ying.huang@intel.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1717641032; c=relaxed/simple;
+	bh=3U+iDnACpZRpRUjZPACLMO+CtjRyATslJry5JmeZRAY=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=famBVOrNU/YeUz3Tt1mdSsYaq6ZzMKN04vHKf8LPkil7PNpBXvCQwIdEKZVaKQbj11amBC0fzdUtBn6xRJ1Igvi06w9KufdpM5gaeWQYYSO3OeeWUrPWBVd9x/PRxbecRdR/ng+6wbaR3CYMYp7+6WBUWwxb1IToR4P5gHvNrmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mAdemrmi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 27EA8C4AF0F;
+	Thu,  6 Jun 2024 02:30:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717641032;
+	bh=3U+iDnACpZRpRUjZPACLMO+CtjRyATslJry5JmeZRAY=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=mAdemrmibkCws598NOoG+9P9gC/N3ztL0ccyPBi4TZeRjA/juzK1boFTkHMaZDWF7
+	 LJLPb+UPWm2iFbFx5nZWXbcGuJwaBmtwd50lDmoOWbRsptWqAKbt1e1bAZoFPjbRk8
+	 0wA52q0cKTUnHWtXUEYDEnN8eiff84axgK6wloABwpKYYD2IS5pn1cflvcd7rNxb7q
+	 6RYkXQ/Yp2cuYrm2WpHx1vQ7tGeOOLeGkUxQNBIN5SxyzWps4qb4XrsJjp7Y26Q1A1
+	 Jz4E7ZQiwpSYJ7cpO8+cLGa9rVUkIAn5RoCjmP7I1Fz0pA3GPl8fZyy5vNGnupdfdL
+	 1c+jQ8KeYDC5g==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0CA35D3E997;
+	Thu,  6 Jun 2024 02:30:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,54 +51,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] selftests: hsr: Extend the hsr_redbox.sh test to use
+ fixed MAC addresses
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171764103204.23267.6023664663218256417.git-patchwork-notify@kernel.org>
+Date: Thu, 06 Jun 2024 02:30:32 +0000
+References: <20240603093322.3150030-2-lukma@denx.de>
+In-Reply-To: <20240603093322.3150030-2-lukma@denx.de>
+To: Lukasz Majewski <lukma@denx.de>
+Cc: kuba@kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ edumazet@google.com, olteanv@gmail.com, davem@davemloft.net,
+ o.rempel@pengutronix.de, Tristram.Ha@microchip.com, bigeasy@linutronix.de,
+ r-gunasekaran@ti.com, horms@kernel.org, n.zhandarovich@fintech.ru,
+ m-karicheri2@ti.com, Arvid.Brodin@xdin.com, dan.carpenter@linaro.org,
+ ricardo@marliere.net, casper.casan@gmail.com, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, liuhangbin@gmail.com,
+ tanggeliang@kylinos.cn, shuah@kernel.org
 
-To improve the readability of the code via replacing the magic number
-"1" with ACCESS_COORDINATE_CPU when appropriate.  No functionality
-change.
+Hello:
 
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Bharata B Rao <bharata@amd.com>
-Cc: Alistair Popple <apopple@nvidia.com>
-Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
----
- drivers/acpi/numa/hmat.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
-index 2c8ccc91ebe6..febd9e51350b 100644
---- a/drivers/acpi/numa/hmat.c
-+++ b/drivers/acpi/numa/hmat.c
-@@ -408,7 +408,7 @@ static __init void hmat_update_target(unsigned int tgt_pxm, unsigned int init_px
- 	if (target && target->processor_pxm == init_pxm) {
- 		hmat_update_target_access(target, type, value,
- 					  ACCESS_COORDINATE_LOCAL);
--		/* If the node has a CPU, update access 1 */
-+		/* If the node has a CPU, update access ACCESS_COORDINATE_CPU */
- 		if (node_state(pxm_to_node(init_pxm), N_CPU))
- 			hmat_update_target_access(target, type, value,
- 						  ACCESS_COORDINATE_CPU);
-@@ -948,7 +948,7 @@ static int hmat_set_default_dram_perf(void)
- 		target = find_mem_target(pxm);
- 		if (!target)
- 			continue;
--		attrs = &target->coord[1];
-+		attrs = &target->coord[ACCESS_COORDINATE_CPU];
- 		rc = mt_set_default_dram_perf(nid, attrs, "ACPI HMAT");
- 		if (rc)
- 			return rc;
-@@ -975,7 +975,7 @@ static int hmat_calculate_adistance(struct notifier_block *self,
- 	hmat_update_target_attrs(target, p_nodes, ACCESS_COORDINATE_CPU);
- 	mutex_unlock(&target_lock);
- 
--	perf = &target->coord[1];
-+	perf = &target->coord[ACCESS_COORDINATE_CPU];
- 
- 	if (mt_perf_to_adistance(perf, adist))
- 		return NOTIFY_OK;
+On Mon,  3 Jun 2024 11:33:22 +0200 you wrote:
+> Fixed MAC addresses help with debugging as last four bytes identify the
+> network namespace.
+> 
+> Moreover, it allows to mimic the real life setup with for example bridge
+> having the same MAC address on each port.
+> 
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next] selftests: hsr: Extend the hsr_redbox.sh test to use fixed MAC addresses
+    https://git.kernel.org/netdev/net-next/c/955edd872baf
+
+You are awesome, thank you!
 -- 
-2.39.2
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
