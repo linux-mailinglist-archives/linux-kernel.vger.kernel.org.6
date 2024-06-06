@@ -1,183 +1,215 @@
-Return-Path: <linux-kernel+bounces-204169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A2968FE54E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:26:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D142D8FE54D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 086381F259EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:26:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55444B21F7F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FFA195802;
-	Thu,  6 Jun 2024 11:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28671957F5;
+	Thu,  6 Jun 2024 11:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xen0n.name header.i=@xen0n.name header.b="XO4TPrtj"
-Received: from mailbox.box.xen0n.name (mail.xen0n.name [115.28.160.31])
+	dkim=pass (1024-bit key) header.d=eh5.me header.i=@eh5.me header.b="feYgjcSG"
+Received: from mail.eh5.me (mail.eh5.me [45.76.111.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E66160865;
-	Thu,  6 Jun 2024 11:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.28.160.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2525A160865;
+	Thu,  6 Jun 2024 11:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.76.111.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717673185; cv=none; b=CKa7xefSiIUznTxKlAIPYtqIotpv1oNmDXFlRBjw1CfZmoHc6FqH0FWnvaj9W1HHa9xOO5VK/gNF5ccCMfsxRl++pd+85BvG42AA//XTnpIW114D6YWbQT/D8wBhqYQAsG59Ojf1i41f8ZtGXBCLJHTq3Mx8/R8SU1bVkhkcaUY=
+	t=1717673126; cv=none; b=Yl8ldJcJZgHIyoeW15BI8T2/COpBu3Cg1TBFAKN7eo4OiUkeNZErCP0c7vBue9a0heLgVNlKA/X4OuhLkB+dikfK7IlpxUoNM3d2MFxvF5BnW9KFpLdvjAMiAUwYkan7dZv2AWtdVBrx0Z8FSGk/BksKlumUTQTMXNe6CxfuV8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717673185; c=relaxed/simple;
-	bh=I8eXEpEHYSS55mlqLSfygn5zlOeg8Bj8Bwky7Y1Nbrw=;
+	s=arc-20240116; t=1717673126; c=relaxed/simple;
+	bh=h/xa4eI3k6X86KwGTxpdw1YXWi5nn9xiWeQAYUex1Ts=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d0V5FvuOAmEKyR9Ium2l00YDd+j+3B48rmxJlnUtPvp8LlDBGHbtFPtUvWxcjFjtwBlhB3d6rI55T48/FMZ7UzyjuPbZDmp8MdFBd7Ivm4KYAIr7KeqNh40XUPSdoVTzek3ee+uNZPq40q5RvfchWCEZGpFrsUkE/P+/NrFR8Bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xen0n.name; spf=pass smtp.mailfrom=xen0n.name; dkim=pass (1024-bit key) header.d=xen0n.name header.i=@xen0n.name header.b=XO4TPrtj; arc=none smtp.client-ip=115.28.160.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xen0n.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xen0n.name
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xen0n.name; s=mail;
-	t=1717672811; bh=I8eXEpEHYSS55mlqLSfygn5zlOeg8Bj8Bwky7Y1Nbrw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XO4TPrtjuDeNDFtuGW0qyMyddDdy90rW98a4gM2MLl5ynzT8L3JcC/7jc8MSHN207
-	 Eh5ylgeMaWqmoFtrAkwvCQYZ9wMktoNGJlOP0VfdQnhpqnkil3Sxs2SEmIs25DjT8S
-	 Pzt6lsOi+C0S9CD9aj/joRq06QdadcJqsDlfTPlE=
-Received: from [IPV6:240e:46c:8500:3a6c:c01f:bf1e:942:ff23] (unknown [IPv6:240e:46c:8500:3a6c:c01f:bf1e:942:ff23])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mailbox.box.xen0n.name (Postfix) with ESMTPSA id A1ABF60096;
-	Thu,  6 Jun 2024 19:20:10 +0800 (CST)
-Message-ID: <9bb552c8-fe86-43dc-9c4e-0b95c99fb25c@xen0n.name>
-Date: Thu, 6 Jun 2024 19:20:10 +0800
+	 In-Reply-To:Content-Type; b=icdoBuxR0H2nuWPhMEPImXtxO9TvE9KdURhlzmPagxjCV+ONMj/BrcjCiW3WkJ0gbu1OaUa2QID39vOoEZAyrJVuXXxKVXquIegV7uTvWVZ0cQq/LZmlaewKttoeLxU7bmxnMuoUjtiNYSkCk5n3GWedzzjrFoVfqgMeppkp6B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=eh5.me; spf=pass smtp.mailfrom=eh5.me; dkim=pass (1024-bit key) header.d=eh5.me header.i=@eh5.me header.b=feYgjcSG; arc=none smtp.client-ip=45.76.111.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=eh5.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eh5.me
+Message-ID: <a4e639fa-090c-481f-ae36-7d04d7a2cc17@eh5.me>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=eh5.me; s=dkim;
+	t=1717673121;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=00XnzfKyvFc8UCi5vg7ycZAPYKRfP4qnEUVe/4uYGYc=;
+	b=feYgjcSGrXSBzYcCMRnEjsfaeVtDHixqKtJOI1H6dUdgZP5sOU+sqNyV+fB+P6b5td39fw
+	FbmOs60EQFuB978YYMf8NrV1egw8JdOO5l55Asl8TGbu1gVuT/Q0ZwrekbhJAke2iY08EU
+	/K+WNCJxAfJ/gaYnrpOV3DhLkFlNsng=
+Date: Thu, 6 Jun 2024 19:25:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] LoongArch: KVM: Add feature passing from user space
-To: Bibo Mao <maobibo@loongson.cn>, Tianrui Zhao <zhaotianrui@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>
-Cc: kvm@vger.kernel.org, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240606074850.2651896-1-maobibo@loongson.cn>
+Subject: Re: [PATCH 1/3] pinctrl: rockchip: fix RK3328 pinmux bits
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240606060435.765716-1-i@eh5.me>
+ <20240606060435.765716-2-i@mail.eh5.me> <3862456.FjKLVJYuhi@diego>
 Content-Language: en-US
-From: WANG Xuerui <kernel@xen0n.name>
-In-Reply-To: <20240606074850.2651896-1-maobibo@loongson.cn>
+From: Huang-Huang Bao <i@eh5.me>
+In-Reply-To: <3862456.FjKLVJYuhi@diego>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
 
-On 6/6/24 15:48, Bibo Mao wrote:
-> Currently features defined in cpucfg CPUCFG_KVM_FEATURE comes from
-> kvm kernel mode only. Some features are defined in user space VMM,
 
-"come from kernel side only. But currently KVM is not aware of 
-user-space VMM features which makes it hard to employ optimizations that 
-are both (1) specific to the VM use case and (2) requiring cooperation 
-from user space."
-
-> however KVM module does not know. Here interface is added to update
-> register CPUCFG_KVM_FEATURE from user space, only bit 24 - 31 is valid.
+On 6/6/24 18:08, Heiko Stübner wrote:
+> Hi,
 > 
-> Feature KVM_LOONGARCH_VCPU_FEAT_VIRT_EXTIOI is added from user mdoe.
-> FEAT_VIRT_EXTIOI is virt EXTIOI extension which can route interrupt
-> to 256 VCPUs rather than 4 CPUs like real hw.
+> Am Donnerstag, 6. Juni 2024, 08:04:33 CEST schrieb Huang-Huang Bao:
+>> The pinmux bits for GPIO2-B0 to GPIO2-B6 actually have 2 bits width,
+>> correct the bank flag for GPIO2-B. The pinmux bits for GPIO2-B7 is
+>> recalculated so it remain unchanged.
+> 
+> I've verified the gpio2-related pin settings via the TRM, so this part
+> looks good :-)
+> 
+> 
+>> The pinmux bits for GPIO3-B1 to GPIO3-B6 have different register offset
+>> than common rockhip pinmux, set the correct value for those pins in
+>> rk3328_mux_recalced_data.
+>>
+>> The pinmux bits for those pins are not explicitly specified in RK3328
+>> TRM, however we can get hint from pad name and its correspinding IOMUX
+>> setting for pins in interface descriptions, e.g.
+>> IO_SPIclkm0_GPIO2B0vccio5 with GRF_GPIO2B_IOMUX[1:0]=2'b01 setting.
+>>
+>> This fix has been tested on NanoPi R2S for fixing confliting pinmux bits
+>> between GPIO2-15 with GPIO2-13.
+> 
+> As you said, the gpio3-based pins are not documented in the TRM,
+> but in your description above you're talking about pins in the gpio2-
+> group?
+> 
+> So where did the gpio3-related pin information come from?
 
-"A new feature bit ... is added which can be set from user space. 
-FEAT_... indicates that the VM EXTIOI can route interrupts to 256 vCPUs, 
-rather than 4 like with real HW."
+Sorry I didn't explained it clearly, gpio3 information is inferred from
+pad name in interface descriptions similar to gpio2's, all those pad
+name has format of "*GPIO<bank><pin number>*". So I just search up
+interface description rows with pad name from "GPIO2B0" to "GPIO2B6" and
+from "GPIO3B1" to "GPIO4B7" to find potential IOMUX bits definitions.
+For example, there is IO_TSPd5m0_CIFdata5m0_GPIO3B1vccio6 with
+GRF_GPIO3BH_iomux[3:2] = 2'b01 setting for GPIO3B1.
 
-(Am I right in paraphrasing the "EXTIOI" part?)
+Maybe I can list all these occurrences in v2.
 
 > 
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> ---
->   arch/loongarch/include/asm/kvm_host.h  |  4 +++
->   arch/loongarch/include/asm/loongarch.h |  5 ++++
->   arch/loongarch/include/uapi/asm/kvm.h  |  2 ++
->   arch/loongarch/kvm/exit.c              |  1 +
->   arch/loongarch/kvm/vcpu.c              | 36 +++++++++++++++++++++++---
->   5 files changed, 44 insertions(+), 4 deletions(-)
+> Also, could you please split this patch in two pieces, one fixing the
+> gpio2-area and one for the new gpio3 pins please?
+
+Sure.
+
 > 
-> diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
-> index 88023ab59486..8fa50d757247 100644
-> --- a/arch/loongarch/include/asm/kvm_host.h
-> +++ b/arch/loongarch/include/asm/kvm_host.h
-> @@ -135,6 +135,9 @@ enum emulation_result {
->   #define KVM_LARCH_HWCSR_USABLE	(0x1 << 4)
->   #define KVM_LARCH_LBT		(0x1 << 5)
->   
-> +#define KVM_LOONGARCH_USR_FEAT_MASK			\
-> +	BIT(KVM_LOONGARCH_VCPU_FEAT_VIRT_EXTIOI)
-> +
->   struct kvm_vcpu_arch {
->   	/*
->   	 * Switch pointer-to-function type to unsigned long
-> @@ -210,6 +213,7 @@ struct kvm_vcpu_arch {
->   		u64 last_steal;
->   		struct gfn_to_hva_cache cache;
->   	} st;
-> +	unsigned int usr_features;
->   };
->   
->   static inline unsigned long readl_sw_gcsr(struct loongarch_csrs *csr, int reg)
-> diff --git a/arch/loongarch/include/asm/loongarch.h b/arch/loongarch/include/asm/loongarch.h
-> index 7a4633ef284b..4d9837512c19 100644
-> --- a/arch/loongarch/include/asm/loongarch.h
-> +++ b/arch/loongarch/include/asm/loongarch.h
-> @@ -167,9 +167,14 @@
->   
->   #define CPUCFG_KVM_SIG			(CPUCFG_KVM_BASE + 0)
->   #define  KVM_SIGNATURE			"KVM\0"
-> +/*
-> + * BIT 24 - 31 is features configurable by user space vmm
-> + */
->   #define CPUCFG_KVM_FEATURE		(CPUCFG_KVM_BASE + 4)
->   #define  KVM_FEATURE_IPI		BIT(1)
->   #define  KVM_FEATURE_STEAL_TIME		BIT(2)
-> +/* With VIRT_EXTIOI feature, interrupt can route to 256 VCPUs */
-> +#define  KVM_FEATURE_VIRT_EXTIOI	BIT(24)
->   
->   #ifndef __ASSEMBLY__
->   
-
-What about assigning a new CPUCFG leaf ID for separating the two kinds 
-of feature flags very cleanly?
-
-> @@ -896,7 +907,24 @@ static int kvm_loongarch_vcpu_get_attr(struct kvm_vcpu *vcpu,
->   static int kvm_loongarch_cpucfg_set_attr(struct kvm_vcpu *vcpu,
->   					 struct kvm_device_attr *attr)
->   {
-> -	return -ENXIO;
-> +	u64 __user *user = (u64 __user *)attr->addr;
-> +	u64 val, valid_flags;
-> +
-> +	switch (attr->attr) {
-> +	case CPUCFG_KVM_FEATURE:
-> +		if (get_user(val, user))
-> +			return -EFAULT;
-> +
-> +		valid_flags = KVM_LOONGARCH_USR_FEAT_MASK;
-> +		if (val & ~valid_flags)
-> +			return -EINVAL;
-> +
-> +		vcpu->arch.usr_features |= val;
-
-Isn't this usage of "|=" instead of "=" implying that the feature bits 
-could not get disabled after being enabled earlier, for whatever reason?
-
-> +		return 0;
-> +
-> +	default:
-> +		return -ENXIO;
-> +	}
->   }
->   
->   static int kvm_loongarch_vcpu_set_attr(struct kvm_vcpu *vcpu,
 > 
-> base-commit: 2df0193e62cf887f373995fb8a91068562784adc
-
--- 
-WANG "xen0n" Xuerui
-
-Linux/LoongArch mailing list: https://lore.kernel.org/loongarch/
-
+> Thanks
+> Heiko
+> 
+>> Signed-off-by: Huang-Huang Bao <i@eh5.me>
+>> ---
+>>   drivers/pinctrl/pinctrl-rockchip.c | 59 ++++++++++++++++++++++++++----
+>>   1 file changed, 52 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+>> index 3bedf36a0019..23531ea0d088 100644
+>> --- a/drivers/pinctrl/pinctrl-rockchip.c
+>> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+>> @@ -634,23 +634,68 @@ static struct rockchip_mux_recalced_data rk3308_mux_recalced_data[] = {
+>>   
+>>   static struct rockchip_mux_recalced_data rk3328_mux_recalced_data[] = {
+>>   	{
+>> -		.num = 2,
+>> -		.pin = 12,
+>> -		.reg = 0x24,
+>> -		.bit = 8,
+>> -		.mask = 0x3
+>> -	}, {
+>> +		/* gpio2_b7_sel */
+>>   		.num = 2,
+>>   		.pin = 15,
+>>   		.reg = 0x28,
+>>   		.bit = 0,
+>>   		.mask = 0x7
+>>   	}, {
+>> +		/* gpio2_c7_sel */
+>>   		.num = 2,
+>>   		.pin = 23,
+>>   		.reg = 0x30,
+>>   		.bit = 14,
+>>   		.mask = 0x3
+>> +	}, {
+>> +		/* gpio3_b1_sel */
+>> +		.num = 3,
+>> +		.pin = 9,
+>> +		.reg = 0x44,
+>> +		.bit = 2,
+>> +		.mask = 0x3
+>> +	}, {
+>> +		/* gpio3_b2_sel */
+>> +		.num = 3,
+>> +		.pin = 10,
+>> +		.reg = 0x44,
+>> +		.bit = 4,
+>> +		.mask = 0x3
+>> +	}, {
+>> +		/* gpio3_b3_sel */
+>> +		.num = 3,
+>> +		.pin = 11,
+>> +		.reg = 0x44,
+>> +		.bit = 6,
+>> +		.mask = 0x3
+>> +	}, {
+>> +		/* gpio3_b4_sel */
+>> +		.num = 3,
+>> +		.pin = 12,
+>> +		.reg = 0x44,
+>> +		.bit = 8,
+>> +		.mask = 0x3
+>> +	}, {
+>> +		/* gpio3_b5_sel */
+>> +		.num = 3,
+>> +		.pin = 13,
+>> +		.reg = 0x44,
+>> +		.bit = 10,
+>> +		.mask = 0x3
+>> +	}, {
+>> +		/* gpio3_b6_sel */
+>> +		.num = 3,
+>> +		.pin = 14,
+>> +		.reg = 0x44,
+>> +		.bit = 12,
+>> +		.mask = 0x3
+>> +	}, {
+>> +		/* gpio3_b7_sel */
+>> +		.num = 3,
+>> +		.pin = 15,
+>> +		.reg = 0x44,
+>> +		.bit = 14,
+>> +		.mask = 0x3
+>>   	},
+>>   };
+>>   
+>> @@ -3763,7 +3808,7 @@ static struct rockchip_pin_bank rk3328_pin_banks[] = {
+>>   	PIN_BANK_IOMUX_FLAGS(0, 32, "gpio0", 0, 0, 0, 0),
+>>   	PIN_BANK_IOMUX_FLAGS(1, 32, "gpio1", 0, 0, 0, 0),
+>>   	PIN_BANK_IOMUX_FLAGS(2, 32, "gpio2", 0,
+>> -			     IOMUX_WIDTH_3BIT,
+>> +			     0,
+>>   			     IOMUX_WIDTH_3BIT,
+>>   			     0),
+>>   	PIN_BANK_IOMUX_FLAGS(3, 32, "gpio3",
+>>
+> 
+> 
+> 
+> 
 
