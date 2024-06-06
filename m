@@ -1,154 +1,130 @@
-Return-Path: <linux-kernel+bounces-204967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED568FF59F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:04:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C73F8FF5A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC7C91F260B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:04:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A132C1C25497
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D1B6A8A3;
-	Thu,  6 Jun 2024 20:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A987E69D3C;
+	Thu,  6 Jun 2024 20:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cuihxeWH"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="DPMN2ScE"
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8E81FAA;
-	Thu,  6 Jun 2024 20:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717704267; cv=none; b=MR35sbfMpPBXZPWQPDOf93vG+me3lrzejHXUS8SRRdB1Z2s3BmXdiX0eZ1CMAWWiT5X0PBzKs1u0gK6l5Hu7QM6UR6A8663Z4H7iuiVp7zJ7FcTPkz44lNdXsi5DXov4g9Ll8NmX1qypBtl8vjRu+iT3L6PBN8NJsuA3Zx56qY8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717704267; c=relaxed/simple;
-	bh=/G3jstf66m0MVDwW/vbsLQCy0RU2r+Dp06fH2y3b4T0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kD+NLOj4KxAhZWvJC9eu8WJnPFf9Jlx1wZKS132g2pt4h8dEDom6ObVR0VPnYWylETsx9iI8+0zw4AIE2V0y6QePWUjFLcmpvRJOcWjk7qFDHLQqUMyYHRjKHW6TmaKeZ9Yrw5A2sEKi8jKcQGMl2wXVK1Rg2BMsuUkshU+ruEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cuihxeWH; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2eaccc097e2so15704211fa.0;
-        Thu, 06 Jun 2024 13:04:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717704264; x=1718309064; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s8zBiOnzctc1Ld3pBSWs+XeG/g5v5NHQpM9V6CGdabk=;
-        b=cuihxeWHToMumF8P9ZjfmKSNcKHkOAF1xBmpjxy8t2BBszmy3FrrTdwBDMwUHUcAZX
-         0Tg4r5nv7Kr9QxLYvCp2eljgZKJSM7WPTTkTSQC9Wbo53LN260IHsU/ZvRTgS82uiK+O
-         JDC4Ig6WS+aK/tNGalNWwlJARx5LiGYwacmQuJuVIPdQm9dLIDFHxorqB6hvhRjEFijh
-         0RsewhY6C1+eMYSIz2EBbo/i+5rGaqoEm2FCXP1ntzGfGJvNyQecnrc/MnjVAF2dd6c6
-         u+RXx768Bsxk3YcArSFOAkH/3IQIyzTUDYn3VbfjVnz4AZmcbVrx2UFvJtpnxzVbOmvt
-         az9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717704264; x=1718309064;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s8zBiOnzctc1Ld3pBSWs+XeG/g5v5NHQpM9V6CGdabk=;
-        b=iM+U4GvijWmbizNND9vHkgiqvsbc9OYGpvvL+8T7R9xX0C0HfsiPtzu3mpxBmEn4jn
-         MrQki0bV0rw66oXd3YcxcJJUcvjJiPTPlnZVKTl0FMbtJrk4C4KH/IUuijNixD+q+z+g
-         ztACxPkHCt9tDCFq+SghwLRYPjnO8PrAcD4t3Uyp7ge/9bjA+PVv6CCgqioStWRJmcnu
-         jDt2yKDCC1Z1qx1o6Kdnr+Dd27KDxle9skiM8ws8NpdwrV7+0msWYrS37rTw8J+LABng
-         MZpWTl4L8G4ICZp4oMV9M3JJRNSAzNTMoRG5A8Egw/j3DWTY+FEnZl3nb+jUQQ0n7h8x
-         9SxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVg5tKZwmpNgCle6QcpzKxlem6IqFvLUJ21cSt2wVF8/gO4daxplUGRuJxjTKw1ZSaNtm8DKEQRR8UknzP/MQCNGc3Q/NMo2oO3XYSWupwM+iV3OUeo30qdpvZVs/rrOgY418+cXibGRifG6gIb
-X-Gm-Message-State: AOJu0YysxWus66onUzflyfR5tlDkKTFSpW8xWT97WKa7dZ4Dk/kM34VC
-	YrPy696CCWDOVuGbla399ATjawc037WDIhTvm4XhSWqlSkkYZ6yax+2BTFJ6tPXjtPYFX0av9e7
-	glcYcUDMtDQ5+VdgPkOGKOhTmbnz7kA==
-X-Google-Smtp-Source: AGHT+IEPatTRNz4t3IlZrrARONOfqpJodkwoY1B33k2VOZpGRppSY/lcC+zUbX86vGLB2+n8TDuKrhpCnoWPGZbt2pc=
-X-Received: by 2002:a2e:9c53:0:b0:2ea:d13b:cc38 with SMTP id
- 38308e7fff4ca-2eadce16e40mr4413171fa.3.1717704263707; Thu, 06 Jun 2024
- 13:04:23 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B0D1FAA;
+	Thu,  6 Jun 2024 20:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717704274; cv=pass; b=VxUL5t8fqYKDFJs58VIp3yUinnqdiHIVPENkuDK3RpgMN8pCpAJIM7TqNznSoj8/0VU4puCHfgp+Feq7y56ZV0p1mHPRT02Y31cLpahro1NZxi22mX01wQBbzKE44fudIHV0anYt+Gdr2QamhSPXl5u4eQaIUDrs51cp/rKl/bY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717704274; c=relaxed/simple;
+	bh=t/QRjov8o1xd9sV/wTGbFC/xycKAroLSt9xxW428i2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GawhvqTMldFmkGMw8oJSMFIbDe4dYwY9/9zbE0R0LdSE9Mc5vRPhAyiINrZChNhiCqasCJWMWY3D2kQy5u+GkDtxbSzmM2Cfs79fQBCVyol+LruToHY6FYojldW3TF05yPQv5gd53IuJzP00m4nTLruKn5JmOJfUfvcThgpQaa4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=DPMN2ScE; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from darkstar.musicnaut.iki.fi (85-76-74-208-nat.elisa-mobile.fi [85.76.74.208])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: aaro.koskinen)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4VwFfC39jNzyPV;
+	Thu,  6 Jun 2024 23:04:18 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1717704264;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1uMICLpSAgkmnnEnROxEEBbssd3pa/fn+ZCfeEb1oMs=;
+	b=DPMN2ScEBbDaD+IKYQRG8oEhlc8vifkXEzEBWFE4yUBKkGaybMl3Xl/kvmpwAMyptpPOTq
+	qv3tYIlgqTIXjgYnZ0cqM1DvznFZ+MYp4MStKh2+P4R9RnmKQ8ukHvvpysM9ToEBWOCOez
+	14oMkgWUOiFlHRHKetSgdGsTEvDhlyQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1717704264;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1uMICLpSAgkmnnEnROxEEBbssd3pa/fn+ZCfeEb1oMs=;
+	b=LbFr3JgBm62/EJZWz6cOa2zEyQWPW1EsAQKi98wJbBMZ48kgj+SELTMHufS7gS8SQTCRBg
+	QfJxGHQ9R4kZ42Mnnh7YT2OtM3BYzMOJQfLJwfOn3J94IHxCPmyBlkVRteC8Wl6jnwwWaW
+	fcDc249jlJv8UpvK5+fu/80y2awiNmo=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=aaro.koskinen smtp.mailfrom=aaro.koskinen@iki.fi
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1717704264; a=rsa-sha256; cv=none;
+	b=kaqtSd1p1cnSUTkFgRYhRYD9EBLybg/OmRGDnP5P3AwEG2LQLLQxopiBeIVoKNzhdbfFLf
+	4SlRgHlBTlV4ty0oZwhY5dDy+2OCHUyV55FlwWT6V9qe3EqnG+vheN5gFLN3WkaF+/zN6T
+	v9ysDQVOvkugxBArBMH97AZZVXgPGD0=
+Date: Thu, 6 Jun 2024 23:04:16 +0300
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
+To: linux@treblig.org
+Cc: tony@atomide.com, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: omap1: Remove unused struct 'dma_link_info'
+Message-ID: <20240606200416.GF9487@darkstar.musicnaut.iki.fi>
+References: <20240505202214.623612-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606183032.684481-1-andreas@kemnade.info>
-In-Reply-To: <20240606183032.684481-1-andreas@kemnade.info>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Thu, 6 Jun 2024 16:04:10 -0400
-Message-ID: <CABBYNZ+Fz2TLSNa28H3kjVKOSA7C-XOzdQJiHdJs3FKxnq01DA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] Bluetooth/gnss: GNSS support for TiWi chips
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: marcel@holtmann.org, johan@kernel.org, pmenzel@molgen.mpg.de, 
-	jirislaby@kernel.org, gregkh@linuxfoundation.org, 
-	linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
-	Adam Ford <aford173@gmail.com>, Tony Lindgren <tony@atomide.com>, tomi.valkeinen@ideasonboard.com, 
-	=?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>, robh@kernel.org, 
-	hns@goldelico.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240505202214.623612-1-linux@treblig.org>
 
-Hi Andreas,
+Hi,
 
-On Thu, Jun 6, 2024 at 2:30=E2=80=AFPM Andreas Kemnade <andreas@kemnade.inf=
-o> wrote:
->
-> Some of these chips have GNSS support. In some vendor kernels
-> a driver on top of misc/ti-st can be found providing a /dev/tigps
-> device which speaks the secretive Air Independent Interface (AI2) protoco=
-l.
->
-> To be more compatible with userspace send out NMEA by default but
-> allow a more raw mode by using a module parameter.
->
-> This was tested on the Epson Moverio BT-200.
->
-> Who will take this series (1-3)? GNSS with ack from Bluetooth?
->
-> Changes since V3:
-> - Finally remove the period from 1/4 subject
-> - include things directly for get_unaligned_le16() to fix 0-day issues
->
-> Changes since V2:
-> - Optimize waits
-> - Fix some packet analysis / checksum computation issue
-> - Adding a proposal for removing those waits as RFC
-> - Minor spell corrections and improved descriptions
->
-> Changes since V1:
-> - Set up things for NMEA output
-> - Powerup/down at open()/close()
-> - split out logic between drivers/bluetooth and drivers/gnss
-> - leave out drivers/misc/ti-st driver removal to avoid
->   filling up mailboxes during the iterations, this series is
->   still a proof that it is not needed, will take the brush after
->   this series is accepted.
->
->
-> Andreas Kemnade (4):
->   gnss: Add AI2 protocol used by some TI combo chips
->   Bluetooth: ti-st: Add GNSS subdevice for TI Wilink chips
+On Sun, May 05, 2024 at 09:22:14PM +0100, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> I think the last use of this was removed somewhere
+> around the two:
+> Commit 755cbfd8cf89 ("ARM: OMAP2+: Drop sdma interrupt handling for
+> mach-omap2")
+> and
+> Commit 16630718ee46 ("ARM: omap1: move plat/dma.c to mach/omap-dma.c")
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-The bluetooth one looks relatively simple so I could take that one and
-push to bluetooth-next if there are no dependencies on the other
-changes.
+Acked-by: Aaro Koskinen <aaro.koskinen@iki.fi>
 
->   gnss: Add driver for AI2 protocol
->   gnss: ai2: replace long sleeps by wait for acks
->
->  drivers/bluetooth/hci_ll.c   |  81 +++++
->  drivers/gnss/Kconfig         |  13 +
->  drivers/gnss/Makefile        |   3 +
->  drivers/gnss/ai2.c           | 560 +++++++++++++++++++++++++++++++++++
->  drivers/gnss/core.c          |   1 +
->  include/linux/gnss.h         |   1 +
->  include/linux/ti_wilink_st.h |   8 +
->  7 files changed, 667 insertions(+)
->  create mode 100644 drivers/gnss/ai2.c
->
-> --
-> 2.39.2
->
-
-
---=20
-Luiz Augusto von Dentz
+> ---
+>  arch/arm/mach-omap1/omap-dma.c | 13 -------------
+>  1 file changed, 13 deletions(-)
+> 
+> diff --git a/arch/arm/mach-omap1/omap-dma.c b/arch/arm/mach-omap1/omap-dma.c
+> index 9ee472f8ead12..f091f78631d09 100644
+> --- a/arch/arm/mach-omap1/omap-dma.c
+> +++ b/arch/arm/mach-omap1/omap-dma.c
+> @@ -59,19 +59,6 @@ static struct omap_dma_dev_attr *d;
+>  static int enable_1510_mode;
+>  static u32 errata;
+>  
+> -struct dma_link_info {
+> -	int *linked_dmach_q;
+> -	int no_of_lchs_linked;
+> -
+> -	int q_count;
+> -	int q_tail;
+> -	int q_head;
+> -
+> -	int chain_state;
+> -	int chain_mode;
+> -
+> -};
+> -
+>  static int dma_lch_count;
+>  static int dma_chan_count;
+>  static int omap_dma_reserve_channels;
+> -- 
+> 2.45.0
+> 
 
