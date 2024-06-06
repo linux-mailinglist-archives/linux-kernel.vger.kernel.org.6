@@ -1,149 +1,236 @@
-Return-Path: <linux-kernel+bounces-203839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4ED38FE114
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:37:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A861D8FE116
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC3761C24A99
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:36:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 499292888DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C1513F43C;
-	Thu,  6 Jun 2024 08:35:20 +0000 (UTC)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE2D13C807;
+	Thu,  6 Jun 2024 08:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1+yU8Cs3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D38aEflB";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aZz9x/m5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fOo/jCg2"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B018013DDBF;
-	Thu,  6 Jun 2024 08:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E212E1DFEB
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717662920; cv=none; b=U1pKZjvLdtXVv/mWq+JFXeY+myTjxKiHc5r+Ug1Oskiw5Sm48jJWmeoCq3HehQf/eHfndB5tKMXI/2bdKXPSSN4Jab+wewKnfpZU3OVhnf802FBZ2j8q+upb49a2QWTSkcN5ljLMl/HfvjGOkdKzw+wfVHMBxQySt+ClrzzTLqc=
+	t=1717662936; cv=none; b=UIZI5yPqIIy5cPDKVxAE8WZKLRvC1AKOjpSJ/goshHtCQEGBl1isFf+YOnfcM0MeWw/qFjSmc6FLhgBvQAxpT/8tDJTxnL3FXzkI+h5WGtNV34lvIeeWM5PNpT7KemX4KT/d0vVpgA+3py0f96zt5gB+QHFIHvwUdbjUMANasLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717662920; c=relaxed/simple;
-	bh=3pmduSBiMNsWuEWUGOxI1Upi2a10FpWxiV8qu2tjxLU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ld8gY/iUR2Kz+JP4tgJYkZMPapQvQoXUBkp+QrbFuPUM8sig5tsNawh+Ib9y1CV6coZqylpzr49nntgNqSAbOatJYBj5R2BpoLeVQeRWOI+V019uQEKcr9UhsaTjJFr5D1kiUDf4JjPS6C7b0gdIVtA4kHQp1v1/Hi2ymT7zLrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5751bcb3139so645346a12.1;
-        Thu, 06 Jun 2024 01:35:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717662917; x=1718267717;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IgqPMyWKMKZbOFk3FEtGJsccK6vNPBLPV72bI7O2nGk=;
-        b=KsCC+ScjdQAwnv2kbXmYfvY2IYdew4q3hASBSDZOb4maqU5JQf5lkeFpaEya0hKKWP
-         0aOttNKmA52El4CscxHwK7xGuOw+3vXKECml7KcDKeRK7p5/nI4vb8bIkEQ4lD0Jl0ya
-         iSLxBEANZC+fMBbc3X8elzNVBSAvFRvVXl26FDyLf1I9o9YFLJsm7e/90O5Pa8tI8pzn
-         T/pRKf3/7aVLFUIAlhrrBMzg1S/3cmVHFHwq5+DBFt3bAa3wjAasmcDqb0n39f3461tY
-         U9YY2WMf0PB2mRyg0OvbeMnHJbuN4pEZ56N3slhWLcT3hBRSDTUADXFvg+bmnaIyw/W1
-         FvYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKglt3cyesfFlR+w8Mp77mVFS6v20ID4ZJdQeAIN6lSBHwyl/24eGXuuTPmXmk5VEI7T0WtZI57Z3pbbCbF+73oWfRdH9Vm9kBNBd1
-X-Gm-Message-State: AOJu0YzuJUgh+aVRze9E0KMxaJbnzLMI3nY+Qe3PSjymY3CHcTHLsgMU
-	rDrfJDd3P1+5t6Q709SR5D2HAMztV2TKrmxoahHba/o7OHg/MTwZ
-X-Google-Smtp-Source: AGHT+IEgzPbpXSg6oj4xJJlxYy7SNnAuHVzjVssF7tG8XBiDGWFJK763FFPFkGPEYc5slvM9yCS3DQ==
-X-Received: by 2002:a50:a41b:0:b0:57a:1501:38c with SMTP id 4fb4d7f45d1cf-57a8b7c7cb3mr3072840a12.26.1717662916934;
-        Thu, 06 Jun 2024 01:35:16 -0700 (PDT)
-Received: from [127.0.0.1] (p200300f6f7253800fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f725:3800:fa63:3fff:fe02:74c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aadf9e99asm701338a12.17.2024.06.06.01.35.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 01:35:16 -0700 (PDT)
-From: Johannes Thumshirn <jth@kernel.org>
-Date: Thu, 06 Jun 2024 10:35:04 +0200
-Subject: [PATCH v2 6/6] btrfs: pass reloc_control to
- setup_relocation_extent_mapping
+	s=arc-20240116; t=1717662936; c=relaxed/simple;
+	bh=EwO14/mEgbQRHzXhPbzNnk8eNjPwE+X1Ypz6bQX5UkM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NRjy/nonughP2XDjNjeI6RW1IzXTDN/2j+Fz4xruRqldVunWgfD7h2S8WlT19urBafm7jvpth76K/grsjgX25UwUxJVWjLflfhEWwa1PuT2ocrPqBHKqjxz3mPBWw9rVnk81ReKJ+pOLcR4jLgilzcBlxfz7rPcY/xw7ZHRLrRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1+yU8Cs3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D38aEflB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aZz9x/m5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fOo/jCg2; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2592021AD8;
+	Thu,  6 Jun 2024 08:35:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717662933; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=y7WK71CX1bWFgxub7m1jJiwAutqf8GRVZ6L2udibCoE=;
+	b=1+yU8Cs3Fnfu77s+0HXV08KzmvPMw4TTCk3Cajtn8uXj2eN3e5zBeRJa/x5cLu8cI26OyJ
+	0T5MTNl01fDdZsEDRwr0VasgO00DsbH9ZwxN9Udl0cVugFuMeqpcW0yqWCIhgOI33NgCyM
+	ctGYewYBr+mHFUPkoY9UiTvRtOXim1A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717662933;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=y7WK71CX1bWFgxub7m1jJiwAutqf8GRVZ6L2udibCoE=;
+	b=D38aEflBbVq6FR9fgQijRg7PQh/cIBqQ/6drnOB9uq4F1IYZssfil/+9kjYwrJtCFAGhW6
+	QAUDpDV0o0j9X4CA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717662932; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=y7WK71CX1bWFgxub7m1jJiwAutqf8GRVZ6L2udibCoE=;
+	b=aZz9x/m5tfre4ZFI2mQS8qD9g0d7CFHDBBh5g+84pap6U+zxtU7V2pxNVH/SBjdjiGTRRY
+	SUrFqjg+5IdrF/2f/1lV2YdFV+2qw02ZUrmRUI/LgQWcyWPqpmHxEkd3K6s5L43rKOa0tZ
+	Wmxn5cwmCrt5I0lu5Haul+Sk6ppwp3g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717662932;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=y7WK71CX1bWFgxub7m1jJiwAutqf8GRVZ6L2udibCoE=;
+	b=fOo/jCg2XkK24Xb5Lc2XfrsaUS8ZJisGpxBZk9XXhAAyK3D36+cRBk7aoPI0MQOPLnWDJx
+	kwl19X88vkddTIDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0F16713A1E;
+	Thu,  6 Jun 2024 08:35:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jIFHA9R0YWbTZQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 06 Jun 2024 08:35:32 +0000
+Message-ID: <96b67998-213c-49c1-8f67-07d43f89715b@suse.cz>
+Date: Thu, 6 Jun 2024 10:35:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] slab: don't put freepointer outside of object if
+ only orig_size
+Content-Language: en-US
+To: Chengming Zhou <chengming.zhou@linux.dev>,
+ Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+ David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Feng Tang <feng.tang@intel.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ zhouchengming@bytedance.com
+References: <20240605-b4-slab-debug-v2-0-c535b9cd361c@linux.dev>
+ <20240605-b4-slab-debug-v2-2-c535b9cd361c@linux.dev>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240605-b4-slab-debug-v2-2-c535b9cd361c@linux.dev>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240606-reloc-cleanups-v2-6-5172a6926f62@kernel.org>
-References: <20240606-reloc-cleanups-v2-0-5172a6926f62@kernel.org>
-In-Reply-To: <20240606-reloc-cleanups-v2-0-5172a6926f62@kernel.org>
-To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
- David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Johannes Thumshirn <johannes.thumshirn@wdc.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2252; i=jth@kernel.org;
- h=from:subject:message-id; bh=Uk/h9ZXJECyqPaI91QMuPfBVGZxkVB5F+nx7U12iegY=;
- b=owGbwMvMwCV2ad4npfVdsu8YT6slMaQlluwT1PZZseVIrS3v0xPqwku7rVws8mQX5Zay+3UJx
- 2y3u/Kqo4SFQYyLQVZMkeV4qO1+CdMj7FMOvTaDmcPKBDKEgYtTACYidYbhm93a17u5VYxVfVoq
- 7b7EVy7qnNqaW3us1cNTedKenjkJDP/USnakM5+celL0/I4rvhFztxaJzTio8+J1u9mmAiO96Hh
- WAA==
-X-Developer-Key: i=jth@kernel.org; a=openpgp;
- fpr=EC389CABC2C4F25D8600D0D00393969D2D760850
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.79 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[linux.dev,linux.com,kernel.org,google.com,lge.com,linux-foundation.org,gmail.com,intel.com];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,intel.com:email]
+X-Spam-Score: -2.79
+X-Spam-Flag: NO
 
-From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+On 6/5/24 9:13 AM, Chengming Zhou wrote:
+> The commit 946fa0dbf2d8 ("mm/slub: extend redzone check to extra
+> allocated kmalloc space than requested") will extend right redzone
+> when allocating for orig_size < object_size. So we can't overlay the
+> freepointer in the object space in this case.
+> 
+> But the code looks like it forgot to check SLAB_RED_ZONE, since there
+> won't be extended right redzone if only orig_size enabled.
+> 
+> As we are here, make this complex conditional expressions a little
+> prettier and add some comments about extending right redzone when
+> slub_debug_orig_size() enabled.
+> 
+> Reviewed-by: Feng Tang <feng.tang@intel.com>
+> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
 
-All parameters passed into setup_relocation_extent_mapping() can be
-derived from 'struct reloc_control', so only pass in a 'struct
-reloc_control'.
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
- fs/btrfs/relocation.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
-
-diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
-index c138d08cce76..320e4362d9cf 100644
---- a/fs/btrfs/relocation.c
-+++ b/fs/btrfs/relocation.c
-@@ -2899,11 +2899,14 @@ static noinline_for_stack int prealloc_file_extent_cluster(struct reloc_control
- 	return ret;
- }
- 
--static noinline_for_stack int setup_relocation_extent_mapping(struct inode *inode,
--				u64 start, u64 end, u64 block_start)
-+static noinline_for_stack int setup_relocation_extent_mapping(struct reloc_control *rc)
- {
-+	struct btrfs_inode *inode = BTRFS_I(rc->data_inode);
- 	struct extent_map *em;
- 	struct extent_state *cached_state = NULL;
-+	u64 offset = inode->reloc_block_group_start;
-+	u64 start = rc->cluster.start - offset;
-+	u64 end = rc->cluster.end - offset;
- 	int ret = 0;
- 
- 	em = alloc_extent_map();
-@@ -2912,14 +2915,14 @@ static noinline_for_stack int setup_relocation_extent_mapping(struct inode *inod
- 
- 	em->start = start;
- 	em->len = end + 1 - start;
--	em->disk_bytenr = block_start;
-+	em->disk_bytenr = rc->cluster.start;
- 	em->disk_num_bytes = em->len;
- 	em->ram_bytes = em->len;
- 	em->flags |= EXTENT_FLAG_PINNED;
- 
--	lock_extent(&BTRFS_I(inode)->io_tree, start, end, &cached_state);
--	ret = btrfs_replace_extent_map_range(BTRFS_I(inode), em, false);
--	unlock_extent(&BTRFS_I(inode)->io_tree, start, end, &cached_state);
-+	lock_extent(&inode->io_tree, start, end, &cached_state);
-+	ret = btrfs_replace_extent_map_range(inode, em, false);
-+	unlock_extent(&inode->io_tree, start, end, &cached_state);
- 	free_extent_map(em);
- 
- 	return ret;
-@@ -3110,8 +3113,7 @@ static int relocate_file_extent_cluster(struct reloc_control *rc)
- 
- 	file_ra_state_init(ra, inode->i_mapping);
- 
--	ret = setup_relocation_extent_mapping(inode, cluster->start - offset,
--				   cluster->end - offset, cluster->start);
-+	ret = setup_relocation_extent_mapping(rc);
- 	if (ret)
- 		goto out;
- 
-
--- 
-2.43.0
+> ---
+>  mm/slub.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 7fbd5ce4320a..704c662227e6 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -5152,10 +5152,9 @@ static int calculate_sizes(struct kmem_cache *s)
+>  	 */
+>  	s->inuse = size;
+>  
+> -	if (slub_debug_orig_size(s) ||
+> -	    (flags & (SLAB_TYPESAFE_BY_RCU | SLAB_POISON)) ||
+> -	    ((flags & SLAB_RED_ZONE) && s->object_size < sizeof(void *)) ||
+> -	    s->ctor) {
+> +	if ((flags & (SLAB_TYPESAFE_BY_RCU | SLAB_POISON)) || s->ctor ||
+> +	    ((flags & SLAB_RED_ZONE) &&
+> +	     (s->object_size < sizeof(void *) || slub_debug_orig_size(s)))) {
+>  		/*
+>  		 * Relocate free pointer after the object if it is not
+>  		 * permitted to overwrite the first word of the object on
+> @@ -5163,7 +5162,9 @@ static int calculate_sizes(struct kmem_cache *s)
+>  		 *
+>  		 * This is the case if we do RCU, have a constructor or
+>  		 * destructor, are poisoning the objects, or are
+> -		 * redzoning an object smaller than sizeof(void *).
+> +		 * redzoning an object smaller than sizeof(void *) or are
+> +		 * redzoning an object with slub_debug_orig_size() enabled,
+> +		 * in which case the right redzone may be extended.
+>  		 *
+>  		 * The assumption that s->offset >= s->inuse means free
+>  		 * pointer is outside of the object is used in the
+> 
 
 
