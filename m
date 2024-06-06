@@ -1,172 +1,185 @@
-Return-Path: <linux-kernel+bounces-203805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F1C28FE0AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:13:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC4258FE0AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 479AD1C23F14
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:13:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17A74B24199
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490CA13BC26;
-	Thu,  6 Jun 2024 08:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39D613BC26;
+	Thu,  6 Jun 2024 08:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="WMtzT8xv";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CZDnFYgU"
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I5k+5/z/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB30617C68
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5535F13A898
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717661590; cv=none; b=No5nFzyYBHvSVOg8zFboHOhWYlCjydBhVdlEp4E0gPSxz9NKIhfNnjmSx4VAJ5FJS6OWRDTAowt/hVo2qjzfiKJSR2BPq8I6QXNpaJ4OUOtsV2uFox21AYzvabLMW7FYS/5eKF9jnU71Nfw+1iVLzJBQ6yOoakekVlkWCZ24cWk=
+	t=1717661637; cv=none; b=VDWrCAZ9ypo2X1N+LnOhlpNQ35z7RPfZfr+cDPlwBmjVSCifXu9E2yFfGN9MOS9hjAV4Kpy2w5wv584O4dzyKDliDLc3RtIuGvpaZ4Thc27o5TADhEQgM4644bpDaLOybNWYQtdpmX5xhfNqaK0ZskRhcFhZVsR++umlST7WdJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717661590; c=relaxed/simple;
-	bh=DOwIjxXIFCa/DQrl0N5I/6WB9HOrHgtlzJXowgPVYZM=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:
-	 Subject:Content-Type; b=NPvwFT/Z64FAQWEiIeTnHRxSR0jDlpNcX1ay3K2qnZGqgb6eHR35Q6lbEmZM3sjqRdm03G288+Vk8ivZgO1KC6fEORZsYvgG84eOzaRyGPpwrU3xXCf5yVlVvg/c4e9xDwpkdJesRcwbRW/hI9KVylgyYzvSO6HaVYZPB/vZJQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=WMtzT8xv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CZDnFYgU; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 0BEBC13800F1;
-	Thu,  6 Jun 2024 04:13:07 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Thu, 06 Jun 2024 04:13:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1717661587; x=1717747987; bh=ApS+F0AL0L
-	gfZs4QA3k3GlB2yIxzLtKfENXLTqHjBsI=; b=WMtzT8xvotuax8NYZgTeIvXB2l
-	wA/ZYjxqfwZUGStae0l8UN9bKkJOKlfunQ/G+nAMLsUhi8nbJza8wjuchLIkJcnX
-	kzVV0WNfqInkOOEhN8R8zAVTLPI598r2XCgpR7hCA1lobGO/fiCyC29/dQPhNHY7
-	Mp+a3lUETwQyIoTAZRUA60PsYXaGEn5f0y+IbqQDbWV7VHBTi11fouOHwxe6o29s
-	KYWp150w96Wo1IynErqCH69aOC9pkMKcWIIBGZg2RUh78M0ekKehgsYjSNyqP7B6
-	SRo5q4nXs6sbK9/8sed06Xb8kbVFGcv+2aDKj49QfEhNSPFKAqmT27oJkwcA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1717661587; x=1717747987; bh=ApS+F0AL0LgfZs4QA3k3GlB2yIxz
-	LtKfENXLTqHjBsI=; b=CZDnFYgUzOTciOkV3ngx30DhwFZginMvNE7OigUC8Wps
-	RXhQt0JvHD1+YVa6yvLPqmxHzCOVr9vANKrIUxVdxRdCFpbkW/udshuUUUWdNs6L
-	hmlb3jRxMQD+eIy39OHpZ8Ba8nTZkn2G93wj7fLNpU9t31eTOFiJ63g6gnuDH5GB
-	O0E4Bqb2xqCvT3TUa5L72B0sR6cjmcoMv9jk8cWeIjQXU6qwfmHkTCFlu/EIM1Hf
-	OEJ8Vz9dGrj0XEVjsDHi/jio4r1crYD1L7fnBWm6GQOs5GnDZqXlHzCdVHJiSxUr
-	36PruQYrZlQ8BLhLk9mvIDJBlO/CxEfByksj0AYMtA==
-X-ME-Sender: <xms:km9hZo3EQZrqrJ8rVEA-9pCpuTpsF74es1E8XlVYhL8pkkiqp3M9tg>
-    <xme:km9hZjF6iYQzLv0Z5HHAmYrdUCrpyop-GyCSlGB2W6TsWBgzfoN5JsIajDCatY6Qk
-    kdf2r7KRsD-UOvyNqs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdelkecutefuodetggdotefrodftvfcurf
-    hrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehrnhguuceu
-    vghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvghrnh
-    epffegffdutddvhefffeeltefhjeejgedvleffjeeigeeuteelvdettddulefgudfgnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhguse
-    grrhhnuggsrdguvg
-X-ME-Proxy: <xmx:km9hZg5l3QzWC3NqjFpIoxBw2bTrIEVdT27UHUjKWjFNZ3Ods10UkQ>
-    <xmx:km9hZh0H2vTONecLgw9u4HkmbcW3hzmiXUL-VqJJKK1b_Z8eBAKEyA>
-    <xmx:km9hZrHZOBQH17t8_t3yLsM58BBHATrj1oNuZTmATlC1tekywO2W-Q>
-    <xmx:km9hZq9S3F2Q7WmnZCQndWA0T6DfcxjqRhp0pqtpkJmf9BtlXq-ucw>
-    <xmx:k29hZjC_tHqDYPJjXL9Szrt12wBSaEie5n_DOjzW-7vYupm1CAOtgeV2>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 25F2FB6008D; Thu,  6 Jun 2024 04:13:06 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-497-g97f96844c-fm-20240526.001-g97f96844
+	s=arc-20240116; t=1717661637; c=relaxed/simple;
+	bh=m6kggCWyoo1jG+ph/k5GuYO/v1WOziXgW2/+xkEzjvM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=matF8sGIZjxHJNmjWK3bhvkZoFp8ucHWm0eEJ+DZDrI9d0Povz7ydcNUJEcf1L8mvRjzFMotVzFMuFAKCT29MJbphREKyReGCFaRxrKvH64Ji/OWMKvPvjsxYnRZEtScebw6zT9SyNn4Fp0nq0p7YAMR00+RdV6cUgLX983Uidw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I5k+5/z/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717661634;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WdxyzghmFFitc8Rrh31w2EHwBg5wAxQHRBZrWVev8SA=;
+	b=I5k+5/z/jyZ8ynk8oY1kfV9KSgQ87a7gF3a64NEBRJYdPHi20GfuybPA4i8z4yJa+LESUR
+	7nJ1859WHYZ9xlOiUbCy0CuONFN6M8XtNewkAiHp27ifHGMkIP5Y416ZYRLFWV40l0mdQk
+	mYQDfXzLDZfqeRVBV2UJMJ/DMh2OlNU=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-252-wx9RiJdNNz6ZY3h3PnypJw-1; Thu, 06 Jun 2024 04:13:52 -0400
+X-MC-Unique: wx9RiJdNNz6ZY3h3PnypJw-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4210d151c5bso6610985e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 01:13:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717661631; x=1718266431;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WdxyzghmFFitc8Rrh31w2EHwBg5wAxQHRBZrWVev8SA=;
+        b=Y5zQckUKoVCYi+0O3FZNJ0jcYzPDFDw9jSujGIfky+ms+flcrnkicwZFQsVPOKPgO/
+         jsgETRGcPX+HBFiCACg5mqA5mYsAuYkDOMpAPaUVWScBd6kh7S/hyX4Qkv3wkqvG/eFi
+         R60L0jY8Sfcbt8eaQgE9KfNXP5eKP6FPbJX7B63eIyMym5mAphJiDbvhuuVeVoAz0MFM
+         8tDp/hPuysgAMrGXPpyz6+AQIBNYmnQjAceekZGSNb7hz2ETYrKGMlckW2AfwQpw2nBw
+         vgc0mbtJNbFf2aOPvE6WeYQSPXVXtR/e/m/uqQLxrBE7orZT0cRh2OQqU54sQtniCwm9
+         hdcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjfAoYzJ/tD8rCoMO6oPrBgk38Rp2AsY1KovOwjCIMQCEfSenvGNuqnlpDDshgS4VVQtLUoD7chO0n3Jc4owCpDyRD6G4c2LhRGw+F
+X-Gm-Message-State: AOJu0YwxhHVWys1TLIqq/zyCPZxgtn53r1aw1egg7RczuUBudakO3X39
+	D36d+rLzvkDKTqZ/2i1xTMfszkNEoqrVimPaB43g0suyd9r7qX5/s+I5S0QbwPx8gpv1PZwbISq
+	J815gX5GRiwpipL2XACxErCaXTs55JdSe4ZhVxiMkKSA2jZY3uD4RrJBxnSlxBQ==
+X-Received: by 2002:a05:600c:3ca1:b0:41a:ff7d:2473 with SMTP id 5b1f17b1804b1-421562df268mr37691155e9.4.1717661631199;
+        Thu, 06 Jun 2024 01:13:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH2qQc9HZD3CqwAoQ8BTpFkF3/Bnvvc/9e9nelc3Ay+VnbkGLFuQMpV053sk5h80kB80PqUuQ==
+X-Received: by 2002:a05:600c:3ca1:b0:41a:ff7d:2473 with SMTP id 5b1f17b1804b1-421562df268mr37690995e9.4.1717661630821;
+        Thu, 06 Jun 2024 01:13:50 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c710:8800:a73c:ec5b:c02c:5e0b? (p200300cbc7108800a73cec5bc02c5e0b.dip0.t-ipconnect.de. [2003:cb:c710:8800:a73c:ec5b:c02c:5e0b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d49de3sm872356f8f.37.2024.06.06.01.13.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 01:13:49 -0700 (PDT)
+Message-ID: <01c1e542-867a-437f-8abd-8f06cf3812cf@redhat.com>
+Date: Thu, 6 Jun 2024 10:13:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <acfe6adb-2070-445c-aecc-ec0972355d8a@app.fastmail.com>
-In-Reply-To: <20240606061342.2142527-1-zhe.he@windriver.com>
-References: <20240606061342.2142527-1-zhe.he@windriver.com>
-Date: Thu, 06 Jun 2024 10:12:45 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "He Zhe" <zhe.he@windriver.com>, "Clemens Ladisch" <clemens@ladisch.de>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hpet: Support 32-bit userspace
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm/memory_hotplug: prevent accessing by index=-1
+To: Anastasia Belova <abelova@astralinux.ru>
+Cc: Oscar Salvador <osalvador@suse.de>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+References: <20240606080659.18525-1-abelova@astralinux.ru>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240606080659.18525-1-abelova@astralinux.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 6, 2024, at 08:13, He Zhe wrote:
-> diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
-> index d51fc8321d41..025a5905a370 100644
-> --- a/drivers/char/hpet.c
-> +++ b/drivers/char/hpet.c
-> @@ -269,7 +269,8 @@ hpet_read(struct file *file, char __user *buf, 
-> size_t count, loff_t * ppos)
->  	if (!devp->hd_ireqfreq)
->  		return -EIO;
+On 06.06.24 10:06, Anastasia Belova wrote:
+> nid may be equal to NUMA_NO_NODE=-1. Prevent accessing node_data
+> array by invalid index with check for nid.
 > 
-> -	if (count < sizeof(unsigned long))
-> +	if ((sizeof(int) != sizeof(long) && count < sizeof(compat_ulong_t)) ||
-> +	    (sizeof(int) == sizeof(long) && count < sizeof(unsigned long)))
->  		return -EINVAL;
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 > 
->  	add_wait_queue(&devp->hd_waitqueue, &wait);
-> @@ -294,9 +295,15 @@ hpet_read(struct file *file, char __user *buf, 
-> size_t count, loff_t * ppos)
->  		schedule();
->  	}
+> Fixes: e83a437faa62 ("mm/memory_hotplug: introduce "auto-movable" online policy")
+> Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+> ---
+>   mm/memory_hotplug.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> -	retval = put_user(data, (unsigned long __user *)buf);
-> -	if (!retval)
-> -		retval = sizeof(unsigned long);
-> +	if (sizeof(int) != sizeof(long) && count == sizeof(compat_ulong_t)) {
-> +		retval = put_user(data, (compat_ulong_t __user *)buf);
-> +		if (!retval)
-> +			retval = sizeof(compat_ulong_t);
-> +	} else {
-> +		retval = put_user(data, (unsigned long __user *)buf);
-> +		if (!retval)
-> +			retval = sizeof(unsigned long);
-> +	}
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 431b1f6753c0..db78d1b725fc 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -846,7 +846,6 @@ static bool auto_movable_can_online_movable(int nid, struct memory_group *group,
+>   	unsigned long kernel_early_pages, movable_pages;
+>   	struct auto_movable_group_stats group_stats = {};
+>   	struct auto_movable_stats stats = {};
+> -	pg_data_t *pgdat = NODE_DATA(nid);
+>   	struct zone *zone;
+>   	int i;
+>   
+> @@ -857,6 +856,8 @@ static bool auto_movable_can_online_movable(int nid, struct memory_group *group,
+>   			auto_movable_stats_account_zone(&stats, zone);
+>   	} else {
+>   		for (i = 0; i < MAX_NR_ZONES; i++) {
+> +			pg_data_t *pgdat = NODE_DATA(nid);
+> +
+>   			zone = pgdat->node_zones + i;
+>   			if (populated_zone(zone))
+>   				auto_movable_stats_account_zone(&stats, zone);
 
-This does not look right: you are changing the behavior for
-both 32-bit and 64-bit mode, and now choose the output based
-on how many bytes userspace asked for. This has at least two
-problems:
+Acked-by: David Hildenbrand <david@redhat.com>
 
-- if userspace asks for 5 to 7 bytes on a 64-bit kernel,
-  it returns 8 bytes, overflowing the provided buffer.
-- when 32-bit userspace asks for 8 or more bytes, it
-  gets 8 bytes instead of 4.
+Thanks!
 
-Instead, you should check in_compat_syscall() to see
-which output matches the running task.
+-- 
+Cheers,
 
-> @@ -651,14 +658,23 @@ struct compat_hpet_info {
->  	unsigned short hi_timer;
->  };
-> 
-> +#define COMPAT_HPET_INFO       _IOR('h', 0x03, struct compat_hpet_info)
-> +#define COMPAT_HPET_IRQFREQ    _IOW('h', 0x6, compat_ulong_t)
+David / dhildenb
 
-Right, it looks this was missing from my original change 54066a57c584
-("hpet: kill BKL, add compat_ioctl").
-
-COMPAT_HPET_IRQFREQ should probably have a comment about the
-command code being wrong.
-
->  	mutex_lock(&hpet_mutex);
-> -	err = hpet_ioctl_common(file->private_data, cmd, arg, &info);
-> +	err = hpet_ioctl_common(file->private_data, cmd, (unsigned 
-> long)compat_ptr(arg), &info);
->  	mutex_unlock(&hpet_mutex);
-
-While this works on x86, this is not a correct use of
-compat_ptr() on architectures that modify the pointer
-in compat_ptr(). Since HPET_INFO is the only one that
-passes a pointer and that one is handled separately,
-you should just drop the compat_ptr() conversion here.
-
-    Arnd
 
