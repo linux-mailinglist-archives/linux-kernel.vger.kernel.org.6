@@ -1,305 +1,188 @@
-Return-Path: <linux-kernel+bounces-203885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B17A88FE19C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:53:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1EDD8FE1A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6B2C1C22CEA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:53:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F43E28807A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3654913FD8F;
-	Thu,  6 Jun 2024 08:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817A91422AA;
+	Thu,  6 Jun 2024 08:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BUpI2OBC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HjjamAc7"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F2E137C37
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C2A13FD9F
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717663869; cv=none; b=Xgf54BQ4FIblBJnoqoiR6e4TV4tcpVZWiu4WF5kIZrU5FlSzxCqfWiEJUYqeKFOhtiXkw32nieu5/n3a3rG+S9fNfr9f1SpKUi1PK0P+qrIi33P/OKhHtj8nEMWFbWlXP9d6WLsR90uxH+rVRruBUv7FYDEeWB0R6FnqJw0ExG8=
+	t=1717663872; cv=none; b=NWNEi74XUZo2CoemK1CfvOVyM1f77Nap8VmYoAhxe3PKcte52ys5dqt1CANFn2lgr81WqrIFXXYKnW7et8+GAxH8qgQq7tcIA18y4dwjvDShuRVc5rJMP0PasjMQgjEbPUCve8nsAG8g1FP/vS8gM2ooG3A+OUwRro6nyAypf+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717663869; c=relaxed/simple;
-	bh=TFSbATPmebpuP2bR539uiM0+hjJ0146cll+cxhdq0hU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Pf0cLH4fbm9kRczk/jEEIObowA6a9U4aleQ8kAcG79UI+lGBOTA4Tm1wnBb7EKQQwqKaflmjO5407BkcrnbEz1VMoTrLMuc6ll/B75RudMkM82Lg/qrbFWmEurnrvx7plIVMIFOHDO+orWZplPKIEMQpFg+Fwg4r7W95uSF0zh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BUpI2OBC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717663866;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vdPrLiuvgF40hw2ph4ky+Dm5Z/cv/SLXir6p9KYzpaI=;
-	b=BUpI2OBCxocCp4BPpo9HL13PkI0olqSHO70Dnw11xhspj7+3y4sgFbWzQxey0/cq4mQHJ8
-	BMd+EIN3PWOvTnwGybz7f4DkPq2duRdLgsQnWtwzrzadp9PDfQ3hBDE/XeFaI30ClvH3mn
-	EJxEKccKu102nvttCD7UugKrtZKDxwc=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-304-JzAYE-7eNRGY9BEUuYC3bQ-1; Thu, 06 Jun 2024 04:51:04 -0400
-X-MC-Unique: JzAYE-7eNRGY9BEUuYC3bQ-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4215ee79896so196125e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 01:51:04 -0700 (PDT)
+	s=arc-20240116; t=1717663872; c=relaxed/simple;
+	bh=qVFJC1If1D6uv3pLst+yrXqJjI6YjN+U64oD0mcE4jA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=crP6YMuDCWuBo9OLoktDEm56NnzVJDCtmC7cejdBbPMNmvy74926F4wKa2ZFhbyi9IbD1L2J0SJZAptIq5Dn9GLUmq6yP5gAgsas76ts5WJ0iWlMW/zUAUTjNDySMr9mhqUnKigO7NXBBeRlRlX0UB8pftDWMcim6hJUMp26Vbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HjjamAc7; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4215b0c4b7dso8286915e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 01:51:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717663869; x=1718268669; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZI5zO681dIZ5q8bqEnHAbUgRlM/vYadx+NmJdrvw+DY=;
+        b=HjjamAc7otO1worU4UhGl8o+pinIbBWSUA3xhDpo7ahmxN1uH6hxGQmNDKkZBznMh9
+         /lb6tgaowzPIVMAkABi7VhAOK9USW6J6zaeWt3YZoLt20mvTxode1ni3MA7jypyo1WON
+         LuFgCJZdELOHjlmji5GExpTPPs7A7/l63kCasy3N3GFQLRYGa+fweqWW6kBiidjlwZNY
+         P1lDAaQnBTw+V08eKSGg4U0fWRNWn026KudloCePxnBTJVWr/r6eucFkDRMf5w0SiavY
+         195YmFbWpjUnbkdZg6ZuimaqgCsoAazGr2ZDRca2dY8JazZ62K/08eLbEfN0o7gIOr17
+         nHLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717663863; x=1718268663;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vdPrLiuvgF40hw2ph4ky+Dm5Z/cv/SLXir6p9KYzpaI=;
-        b=m9Ta/wZW5MM1vajQJlgz/QWZ4KAkP0CCWSACMsqjID5ai5mFc9IWZzzSMbi2O1CGlu
-         /fG/ldNDs2xqvVJ9qhjpx90AcRSXc3x6QcLDo2z4cxKWl2EtVnHvf6HYYzbXWpuUhuK2
-         4UQC5FXLGMpZVVUBy57EzJgHXgdwShuLcn5BmfP2RWioYd+OuTP6BcdIJS2cy/t5QLv4
-         FsxCxagTG/G0IfNDxvXZ4GaFOlhSdMsc7RuG2VEC9rCw6NHxO5gQzWFPysAOF9Ff2zqy
-         o08vBJp+D3gfbBSG/oKKczFUAAUTemIGwGaY9V0kPgj90CGWUHf4NkXbb2KPUxnLbs/F
-         ACQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXICvTEGmMddiHyYp4wopRqawmE958wIHNbXlgNjmwmEskbyn9cAs8A22xz6+FGDW4vINGcD3AwovLZVMxHOXtu3oV3xC97Qmfcfibu
-X-Gm-Message-State: AOJu0YwLcRbuczt3uwD6HL5A7zQHh5l5lVR2858mNw6glF5bl+Ko0rcB
-	Ej3pf8i1g8te3XUtfIg2Z7hk7UZbMj++11QTPYHABFMgCMwsHHz4GzBWT1tUihg7VNkkQ1OeTk1
-	dOdPCTwJaJTujCxzHRcnTAZj1xH+Cjrh/GqGueegBBEiMxPrAf4LfJ01/kCDctg==
-X-Received: by 2002:a05:600c:138c:b0:421:2aea:b479 with SMTP id 5b1f17b1804b1-4215635b96emr37911235e9.4.1717663863462;
-        Thu, 06 Jun 2024 01:51:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG8s8yZmXzKDQSPCBrtCVu/3/bL08d+OMP9LznsQgb/Zj0mLu7ZjOjLPan5c8CCbpBCqAjvHw==
-X-Received: by 2002:a05:600c:138c:b0:421:2aea:b479 with SMTP id 5b1f17b1804b1-4215635b96emr37910875e9.4.1717663862478;
-        Thu, 06 Jun 2024 01:51:02 -0700 (PDT)
-Received: from gerbillo.redhat.com ([2a0d:3344:1b74:3a10::f71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c364bcdsm13731365e9.19.2024.06.06.01.51.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 01:51:02 -0700 (PDT)
-Message-ID: <e962a2e2ba7856a6e5282238819637204feed2ba.camel@redhat.com>
-Subject: Re: [PATCH v2 net-next] net: hsr: Send supervisory frames to HSR
- network with ProxyNodeTable data
-From: Paolo Abeni <pabeni@redhat.com>
-To: Lukasz Majewski <lukma@denx.de>, Jakub Kicinski <kuba@kernel.org>, 
-	netdev@vger.kernel.org, Wojciech Drewek <wojciech.drewek@intel.com>
-Cc: Eric Dumazet <edumazet@google.com>, Vladimir Oltean <olteanv@gmail.com>,
-  "David S. Miller" <davem@davemloft.net>, Oleksij Rempel
- <o.rempel@pengutronix.de>, Tristram.Ha@microchip.com,  Sebastian Andrzej
- Siewior <bigeasy@linutronix.de>, Ravi Gunasekaran <r-gunasekaran@ti.com>,
- Simon Horman <horms@kernel.org>, Nikita Zhandarovich
- <n.zhandarovich@fintech.ru>, Murali Karicheri <m-karicheri2@ti.com>, Arvid
- Brodin <Arvid.Brodin@xdin.com>, Dan Carpenter <dan.carpenter@linaro.org>,
- "Ricardo B. Marliere" <ricardo@marliere.net>,  Casper Andersson
- <casper.casan@gmail.com>, linux-kernel@vger.kernel.org, Hangbin Liu
- <liuhangbin@gmail.com>,  Geliang Tang <tanggeliang@kylinos.cn>, Shuah Khan
- <shuah@kernel.org>, Shigeru Yoshida <syoshida@redhat.com>
-Date: Thu, 06 Jun 2024 10:51:00 +0200
-In-Reply-To: <20240604084348.3259917-1-lukma@denx.de>
-References: <20240604084348.3259917-1-lukma@denx.de>
-Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+        d=1e100.net; s=20230601; t=1717663869; x=1718268669;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZI5zO681dIZ5q8bqEnHAbUgRlM/vYadx+NmJdrvw+DY=;
+        b=J8mJgPtyZXQscEXXeYIqcOqndHc5+11xMEghyNZoIqlmKcbM3Q9BgwXoRouxH+8E2j
+         s//vh9m/uAd8Ffg3exI/cof8TF2l8/ZgQQ4Hqi5dcdoB+8yhksFdJyNAHPtwRKThyMYc
+         e4vqQbRhnNciIAnzL+69Kyd8kFpcr1Ipoi0//FwSdXHM6HYUMRkRHfL9npchTzps6VuV
+         LfakbXS/zgxIc49uJlJZxduT7vecGcri5sm4BEufHR4/OvrQA2rq7I385l/Vll8wYjL6
+         MQJK0lQkt4sKXZH5VdTciIzl34E2x06fzxoK2uzC9qZMxctHVFiT2rZWLdNhi/755QiP
+         7X9g==
+X-Forwarded-Encrypted: i=1; AJvYcCWkk4M6BxuKEpCwIddlpjn9HlZTscYknJfhBhUScAIB6TAVFQe573ZLGxh64LGPJMEFuP5T7bv+v42hkETWCLnsPWhZ+Fs2d3nO951z
+X-Gm-Message-State: AOJu0YyxlPn//s9o806QvopaDZI8CeeXCn3N4a6c+FlRrSyxTnsabDQq
+	w6CgT4txGHAjLG2bVzKZWTh9Y9Japt6+LOXQMWYVtF8jpK8o55t2g9VLzrwFxpY=
+X-Google-Smtp-Source: AGHT+IESxvRQoF/gagRjviYpc/SnR8a0ifFLan5H7+GDdNM95jrQIk7lkTGWJoL2Z9fRMGQKoi/Rxg==
+X-Received: by 2002:a05:600c:1f8e:b0:421:29e1:998 with SMTP id 5b1f17b1804b1-421563392dbmr36961795e9.39.1717663869196;
+        Thu, 06 Jun 2024 01:51:09 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:22fd:4ae6:287f:17f2? ([2a01:e0a:982:cbb0:22fd:4ae6:287f:17f2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4214bf59f60sm67973595e9.1.2024.06.06.01.51.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 01:51:08 -0700 (PDT)
+Message-ID: <a5f7c9bc-49fb-4b20-bfed-0f65606c5e3b@linaro.org>
+Date: Thu, 6 Jun 2024 10:51:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 3/3] drm/panel: simple: Add PrimeView PM070WL4 support
+To: Primoz Fiser <primoz.fiser@norik.com>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner
+ <heiko.stuebner@cherry.de>, Chris Morgan <macromorgan@hotmail.com>,
+ Sebastian Reichel <sre@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: upstream@lists.phytec.de
+References: <20240606080104.3663355-1-primoz.fiser@norik.com>
+ <20240606080104.3663355-3-primoz.fiser@norik.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240606080104.3663355-3-primoz.fiser@norik.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2024-06-04 at 10:43 +0200, Lukasz Majewski wrote:
-> This patch provides support for sending supervision HSR frames with
-> MAC addresses stored in ProxyNodeTable when RedBox (i.e. HSR-SAN) is
-> enabled.
->=20
-> Supervision frames with RedBox MAC address (appended as second TLV)
-> are only send for ProxyNodeTable nodes.
->=20
-> This patch series shall be tested with hsr_redbox.sh script.
-
-I don't see any specific check for mac addresses in hsr_redbox.sh, am I
-missing something? Otherwise please update the self-tests, too.
-
->=20
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+On 06/06/2024 10:01, Primoz Fiser wrote:
+> Add support for PrimeView PM070WL4 7.0" (800x480) TFT-LCD panel.
+> Datasheet can be found at [1].
+> 
+> [1] https://www.beyondinfinite.com/lcd/Library/Pvi/PM070WL4-V1.0.pdf
+> 
+> Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
 > ---
->=20
-> Changes for v2:
-> - Fix the Reverse Christmas Tree formatting
-> - Return directly values from hsr_is_node_in_db() and ether_addr_equal()
-> - Change the internal variable check
-> ---
->  net/hsr/hsr_device.c   | 63 ++++++++++++++++++++++++++++++++++--------
->  net/hsr/hsr_forward.c  | 37 +++++++++++++++++++++++--
->  net/hsr/hsr_framereg.c | 12 ++++++++
->  net/hsr/hsr_framereg.h |  2 ++
->  net/hsr/hsr_main.h     |  4 ++-
->  net/hsr/hsr_netlink.c  |  1 +
->  6 files changed, 105 insertions(+), 14 deletions(-)
->=20
-> diff --git a/net/hsr/hsr_device.c b/net/hsr/hsr_device.c
-> index e6904288d40d..ad7cb9b29273 100644
-> --- a/net/hsr/hsr_device.c
-> +++ b/net/hsr/hsr_device.c
-> @@ -73,9 +73,15 @@ static void hsr_check_announce(struct net_device *hsr_=
-dev)
->  			mod_timer(&hsr->announce_timer, jiffies +
->  				  msecs_to_jiffies(HSR_ANNOUNCE_INTERVAL));
->  		}
+> Changes in v2:
+> - sort alphabetically
+> 
+>   drivers/gpu/drm/panel/panel-simple.c | 29 ++++++++++++++++++++++++++++
+>   1 file changed, 29 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+> index dcb6d0b6ced0..80cca841db15 100644
+> --- a/drivers/gpu/drm/panel/panel-simple.c
+> +++ b/drivers/gpu/drm/panel/panel-simple.c
+> @@ -3567,6 +3567,32 @@ static const struct panel_desc powertip_ph800480t013_idf02  = {
+>   	.connector_type = DRM_MODE_CONNECTOR_DPI,
+>   };
+>   
+> +static const struct drm_display_mode primeview_pm070wl4_mode = {
+> +	.clock = 32000,
+> +	.hdisplay = 800,
+> +	.hsync_start = 800 + 42,
+> +	.hsync_end = 800 + 42 + 128,
+> +	.htotal = 800 + 42 + 128 + 86,
+> +	.vdisplay = 480,
+> +	.vsync_start = 480 + 10,
+> +	.vsync_end = 480 + 10 + 2,
+> +	.vtotal = 480 + 10 + 2 + 33,
+> +	.flags = DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC,
+> +};
 > +
-> +		if (hsr->redbox && !timer_pending(&hsr->announce_proxy_timer))
-> +			mod_timer(&hsr->announce_proxy_timer, jiffies +
-> +				  msecs_to_jiffies(HSR_ANNOUNCE_INTERVAL) / 2);
->  	} else {
->  		/* Deactivate the announce timer  */
->  		timer_delete(&hsr->announce_timer);
-> +		if (hsr->redbox)
-> +			timer_delete(&hsr->announce_proxy_timer);
->  	}
->  }
-> =20
-> @@ -279,10 +285,11 @@ static struct sk_buff *hsr_init_skb(struct hsr_port=
- *master)
->  	return NULL;
->  }
-> =20
-> -static void send_hsr_supervision_frame(struct hsr_port *master,
-> -				       unsigned long *interval)
-> +static void send_hsr_supervision_frame(struct hsr_port *port,
-> +				       unsigned long *interval,
-> +				       const unsigned char addr[ETH_ALEN])
-
-please use 'const unsigned char *addr' instead. The above syntax is
-misleading
-
->  {
-> -	struct hsr_priv *hsr =3D master->hsr;
-> +	struct hsr_priv *hsr =3D port->hsr;
->  	__u8 type =3D HSR_TLV_LIFE_CHECK;
->  	struct hsr_sup_payload *hsr_sp;
->  	struct hsr_sup_tlv *hsr_stlv;
-
-[...]
-
-> @@ -340,13 +348,14 @@ static void send_hsr_supervision_frame(struct hsr_p=
-ort *master,
->  		return;
->  	}
-> =20
-> -	hsr_forward_skb(skb, master);
-> +	hsr_forward_skb(skb, port);
->  	spin_unlock_bh(&hsr->seqnr_lock);
->  	return;
->  }
-> =20
->  static void send_prp_supervision_frame(struct hsr_port *master,
-> -				       unsigned long *interval)
-> +				       unsigned long *interval,
-> +				       const unsigned char addr[ETH_ALEN])
-
-Same here.
-
->  {
->  	struct hsr_priv *hsr =3D master->hsr;
->  	struct hsr_sup_payload *hsr_sp;
-> @@ -396,7 +405,7 @@ static void hsr_announce(struct timer_list *t)
-> =20
->  	rcu_read_lock();
->  	master =3D hsr_port_get_hsr(hsr, HSR_PT_MASTER);
-> -	hsr->proto_ops->send_sv_frame(master, &interval);
-> +	hsr->proto_ops->send_sv_frame(master, &interval, master->dev->dev_addr)=
-;
-> =20
->  	if (is_admin_up(master->dev))
->  		mod_timer(&hsr->announce_timer, jiffies + interval);
-> @@ -404,6 +413,37 @@ static void hsr_announce(struct timer_list *t)
->  	rcu_read_unlock();
->  }
-> =20
-> +/* Announce (supervision frame) timer function for RedBox
-> + */
-> +static void hsr_proxy_announce(struct timer_list *t)
-> +{
-> +	struct hsr_priv *hsr =3D from_timer(hsr, t, announce_proxy_timer);
-> +	struct hsr_port *interlink;
-> +	unsigned long interval =3D 0;
-> +	struct hsr_node *node;
+> +static const struct panel_desc primeview_pm070wl4 = {
+> +	.modes = &primeview_pm070wl4_mode,
+> +	.num_modes = 1,
+> +	.bpc = 6,
+> +	.size = {
+> +		.width = 152,
+> +		.height = 91,
+> +	},
+> +	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE,
+> +	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
+> +	.connector_type = DRM_MODE_CONNECTOR_DPI,
+> +};
 > +
-> +	rcu_read_lock();
-> +	/* RedBOX sends supervisory frames to HSR network with MAC addresses
-> +	 * of SAN nodes stored in ProxyNodeTable.
-> +	 */
-> +	interlink =3D hsr_port_get_hsr(hsr, HSR_PT_INTERLINK);
-> +	list_for_each_entry_rcu(node, &hsr->proxy_node_db, mac_list) {
-> +		if (hsr_addr_is_redbox(hsr, node->macaddress_A))
-> +			continue;
-> +		hsr->proto_ops->send_sv_frame(interlink, &interval,
-> +					      node->macaddress_A);
-> +	}
-> +
-> +	if (is_admin_up(interlink->dev)) {
-> +		if (!interval)
-> +			interval =3D msecs_to_jiffies(HSR_ANNOUNCE_INTERVAL);
-> +
-> +		mod_timer(&hsr->announce_proxy_timer, jiffies + interval);
-> +	}
-> +
-> +	rcu_read_unlock();
-> +}
-> +
->  void hsr_del_ports(struct hsr_priv *hsr)
->  {
->  	struct hsr_port *port;
-> @@ -590,6 +630,7 @@ int hsr_dev_finalize(struct net_device *hsr_dev, stru=
-ct net_device *slave[2],
->  	timer_setup(&hsr->announce_timer, hsr_announce, 0);
->  	timer_setup(&hsr->prune_timer, hsr_prune_nodes, 0);
->  	timer_setup(&hsr->prune_proxy_timer, hsr_prune_proxy_nodes, 0);
-> +	timer_setup(&hsr->announce_proxy_timer, hsr_proxy_announce, 0);
-> =20
->  	ether_addr_copy(hsr->sup_multicast_addr, def_multicast_addr);
->  	hsr->sup_multicast_addr[ETH_ALEN - 1] =3D multicast_spec;
-> diff --git a/net/hsr/hsr_forward.c b/net/hsr/hsr_forward.c
-> index 05a61b8286ec..003070dbfcb4 100644
-> --- a/net/hsr/hsr_forward.c
-> +++ b/net/hsr/hsr_forward.c
-> @@ -117,6 +117,35 @@ static bool is_supervision_frame(struct hsr_priv *hs=
-r, struct sk_buff *skb)
->  	return true;
->  }
-> =20
-> +static bool is_proxy_supervision_frame(struct hsr_priv *hsr,
-> +				       struct sk_buff *skb)
-> +{
-> +	struct hsr_sup_payload *payload;
-> +	struct ethhdr *eth_hdr;
-> +	u16 total_length =3D 0;
-> +
-> +	eth_hdr =3D (struct ethhdr *)skb_mac_header(skb);
-> +
-> +	/* Get the HSR protocol revision. */
-> +	if (eth_hdr->h_proto =3D=3D htons(ETH_P_HSR))
-> +		total_length =3D sizeof(struct hsrv1_ethhdr_sp);
-> +	else
-> +		total_length =3D sizeof(struct hsrv0_ethhdr_sp);
-> +
-> +	if (!pskb_may_pull(skb, total_length))
+>   static const struct drm_display_mode qd43003c0_40_mode = {
+>   	.clock = 9000,
+>   	.hdisplay = 480,
+> @@ -4725,6 +4751,9 @@ static const struct of_device_id platform_of_match[] = {
+>   	}, {
+>   		.compatible = "powertip,ph800480t013-idf02",
+>   		.data = &powertip_ph800480t013_idf02,
+> +	}, {
+> +		.compatible = "primeview,pm070wl4",
+> +		.data = &primeview_pm070wl4,
+>   	}, {
+>   		.compatible = "qiaodian,qd43003c0-40",
+>   		.data = &qd43003c0_40,
 
-It looks like 'total_length' does not include 'sizeof hsr_sup_payload'?
-
-> +		return false;
-> +
-> +	skb_pull(skb, total_length);
-> +	payload =3D (struct hsr_sup_payload *)skb->data;
-> +	skb_push(skb, total_length);
-
-No need to actually pull the data, you could do directly:
-
-	payload =3D (struct hsr_sup_payload *)skb->data[total_length];
-
-
-
-Thanks,
-
-Paolo
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
