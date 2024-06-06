@@ -1,130 +1,121 @@
-Return-Path: <linux-kernel+bounces-204851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A6258FF439
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:04:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 343F48FF43B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E74A284B1E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:04:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 319BC1C240D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A6119925A;
-	Thu,  6 Jun 2024 18:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3F319923F;
+	Thu,  6 Jun 2024 18:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FP+oP4FE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMgh7WM6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF0F1991D3
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 18:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E28C1974E7
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 18:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717697061; cv=none; b=BTSMSF7lYJz6XvizdSeoeVJx5/69sjdRUN5bbffnlJmhcno1+oXQo2otRnUGNRnidCiKGohtOSRUb72QbleUG7OQ3Di7pk+d73tcZUdomE21gWcOatUIypZ1b14OCWOTv9S/VcFqHU4kZbfp7FijNXkc8Qc2NfvJMU3eHeaOJes=
+	t=1717697072; cv=none; b=GsIts5h1mFM9uCP73JGxbOPGbEf5SHAj3zH4FVxvW2RzVQjlzGzXuS+V5/gR3R9jaqpvUBGiBq66SRvRrxs7af0A+ZnpYC7CjkruOJb2zU3RcsiVnEVpkhEX4W+G095jdgOeq5yvYzR1yxjc1dV31smhRgFzPrBkgpIToKiHKPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717697061; c=relaxed/simple;
-	bh=da+imw45i6WbUyYnjdn/vso5vMNu8F/aTdzRiRx0Jm8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oTyZfxKEmncPVKqJgAvpoFmdjsfctWFY0+Y1i83i249Jr/iNhsRNnMQLAefjiCivpxpl+4iYm7RfYscZ44+ngHoOOr2KvHmqhxZFZ5eFWFEx0gBoOkIUnz0650ixiGlqJrwRLvgpWaAV/0iDcgM5HcIIKDanZoIz7/12w3FjSnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FP+oP4FE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717697058;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6CO0g1e2iEYIKJ/eo72YLUJTNuT2OqKeA+f4WWAhCUA=;
-	b=FP+oP4FEDgh2HaiiWpZlKv9XuMtjsKEejf3C+FrrL9e1V2x8Qn2j7Tmzy8Vo9NR7nKcwKQ
-	39bbsofuPdJ5uoBmTB4QfUI5ha84g5ATk/1nrrXFlvEdZ59y2xJJJgdSlgfayg5N91NsVF
-	Jck9rfOvqCIn0B0e0e/cMh5igltyoV0=
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
- [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-210-8ypqWJbzPAWP3SCrROSlnA-1; Thu, 06 Jun 2024 14:04:17 -0400
-X-MC-Unique: 8ypqWJbzPAWP3SCrROSlnA-1
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3d1ff776f69so937915b6e.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 11:04:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717697056; x=1718301856;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6CO0g1e2iEYIKJ/eo72YLUJTNuT2OqKeA+f4WWAhCUA=;
-        b=PweA8Ctrx2CefIwnIjnp15XeJRng8IfqMFJi9tMNUtccMNnhs+bF+QTh00I4Uz5cgM
-         9aAWwDiYdrE5ZSR7qpVEF7lWX57yoodu7h/UPLObE1zNWpdzrD6parQl20Y52xvi5r4r
-         PtlVOKRoJw4LBdvmpNof1e6iXDU8XtroI6Gbl4LFi+v2oZ9RpHjHcC+IsPlCYLMDHslo
-         Si4C4piKxayfa+5YMbaCSRebcokjta06X6dgZ7F1GI85hdaRCn+2kwVDkU9x5i7uei3d
-         hkKySsUXZMNavZ7kWZAp6uFlAyO1SmsGYZTrk+rRNs9u5rbMewRmR+cj0TeDob4g9FHR
-         Xewg==
-X-Forwarded-Encrypted: i=1; AJvYcCUV25QHMB3BtlMAjMiVS5LC9TiyVn4e2KeztVk/KxV3D+B2d1gdlNrPC95bXEm6TggBjv0f1gp3aGOxPCiqf5ZV6n+QFxE/yKP0F03C
-X-Gm-Message-State: AOJu0Yz3Xwshj/rtpO/w8SuJHrtpsECB2+YQwC+qhUIKLv9hZEcvtmkx
-	C+9sbG/rxbzBE1nSNLV/YIe44Du41LKYHUtYqC16BLMVPfYIoYQV9adVVV/KRUbgQZAlekeHHGJ
-	4Xaq9sqWI35kLmapH5/rUrtruIsCOjHoqJYtotIyyMwSoy7k08UPPU1fKPt0TSOCotZKkU3QV5F
-	qmyjzIoEDaKx/VOY/PP1+bC0uwa1fmMBwK7UZ0qQQW35fe
-X-Received: by 2002:a05:6808:f01:b0:3c9:c350:bd40 with SMTP id 5614622812f47-3d210c5c58dmr321906b6e.0.1717697055854;
-        Thu, 06 Jun 2024 11:04:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEMNpxDILxVYdYF+MIzB3EnzNYH3beUywsvqC9vv7lHss0Xq69PNun6Ju9dhGLMdY0RV9kmGV1cAXkq3BMPIBY=
-X-Received: by 2002:a05:6808:f01:b0:3c9:c350:bd40 with SMTP id
- 5614622812f47-3d210c5c58dmr321852b6e.0.1717697055422; Thu, 06 Jun 2024
- 11:04:15 -0700 (PDT)
+	s=arc-20240116; t=1717697072; c=relaxed/simple;
+	bh=HDd6OHePqDYE5PcHNs5uUuesJqWx2FNGOr7Pj6VmAxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OlHEtXlcfr2AOZyQrWOq+Hj1AmG4t8HhNZczcc70tsQVD/rS7qtyz4aoz5TycLRamsux/+h+CtXRXA2NYKBo+LgfAIz5/5EQqTe1Ucm/hvvYxFbTTUCq7VC+/Iv5chiFeQIewsPCBKXoxmwwTiFdiZAkSiAXS74RqK6UbLqdSMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMgh7WM6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5D7BC2BD10;
+	Thu,  6 Jun 2024 18:04:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717697070;
+	bh=HDd6OHePqDYE5PcHNs5uUuesJqWx2FNGOr7Pj6VmAxQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=nMgh7WM6GglV9bL4DSuANqJtT5P1tgI/lh3sVNg8ChLTC9tWCtZOVIkC83rdW+VFA
+	 qnEXnpx4+iLIs8tUdtXxkjEzWLpd2zLJbCbIXIat6yT9AnJZ7Yt2PEYXJL5N7w9Ryo
+	 M0EQhmRG2UYMCoFwdrYvt75GDP7LLq+JztY40t6yfMfmw0O6ff4vUgSvHjeFU+nFyt
+	 NXFz9UTXMSTzE7bXDEZwtx3QVux5z8yFl2n3h2i+0udiijoF54u4+VpHJpdY6YZCcT
+	 jNIEa47Mq/Bf64Zlm+ReFfcBXakWf1POVBcxgWxXEC6KmZsGbxls0kCvwPpQwiVgga
+	 OCW9VXD48/EcQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 6F83DCE3F34; Thu,  6 Jun 2024 11:04:30 -0700 (PDT)
+Date: Thu, 6 Jun 2024 11:04:30 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Jan Beulich <jbeulich@suse.com>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	linux-mm <linux-mm@kvack.org>, lkft-triage@lists.linaro.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: x86: WARNING: at mm/memblock.c:1339 memblock_set_node - Usage of
+ MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead
+Message-ID: <b004f0be-1aa5-4f5b-8dd5-a071bcfc5179@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <CA+G9fYsGFerOtoxwpKLOYcRtyJkmgjdP=qg4Y5iP5q-4Lt17Lg@mail.gmail.com>
+ <315d6873-d618-4126-b67a-de62502d7ee2@paulmck-laptop>
+ <7d55b65e-331a-4ce2-8f72-d3c5c9e6eae0@suse.com>
+ <e220910c-da6e-40ab-895f-87fd43c1de3f@paulmck-laptop>
+ <eaa90c1a-ae96-4506-90dd-146ce85d311c@suse.com>
+ <20c484a5-d797-4782-b5b5-bea5fcae9284@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <alpine.LSU.2.21.2405311304250.8344@pobox.suse.cz> <20240606135348.4708-1-rysulliv@redhat.com>
-In-Reply-To: <20240606135348.4708-1-rysulliv@redhat.com>
-From: Joel Savitz <jsavitz@redhat.com>
-Date: Thu, 6 Jun 2024 14:03:59 -0400
-Message-ID: <CAL1p7m7oHwX_OqyUiXqKh=x24d9b9x9gqNA6YEec6s58adAE0A@mail.gmail.com>
-Subject: Re: [PATCH] selftests/livepatch: define max test-syscall processes
-To: Ryan Sullivan <rysulliv@redhat.com>
-Cc: live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mpdesouza@suse.com, jpoimboe@kernel.org, 
-	jikos@kernel.org, mbenes@suse.cz, pmladek@suse.com, joe.lawrence@redhat.com, 
-	shuah@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20c484a5-d797-4782-b5b5-bea5fcae9284@paulmck-laptop>
 
-On Thu, Jun 6, 2024 at 9:54=E2=80=AFAM Ryan Sullivan <rysulliv@redhat.com> =
-wrote:
->
-> Define a maximum allowable number of pids that can be livepatched in
-> test-syscall.sh as with extremely large machines the output from a
-> large number of processes overflows the dev/kmsg "expect" buffer in
-> the "check_result" function and causes a false error.
->
-> Reported-by: CKI Project <cki-project@redhat.com>
-> Signed-off-by: Ryan Sullivan <rysulliv@redhat.com>
-> ---
->  tools/testing/selftests/livepatch/test-syscall.sh | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/testing/selftests/livepatch/test-syscall.sh b/tools/te=
-sting/selftests/livepatch/test-syscall.sh
-> index b76a881d4013..289eb7d4c4b3 100755
-> --- a/tools/testing/selftests/livepatch/test-syscall.sh
-> +++ b/tools/testing/selftests/livepatch/test-syscall.sh
-> @@ -15,7 +15,10 @@ setup_config
->
->  start_test "patch getpid syscall while being heavily hammered"
->
-> -for i in $(seq 1 $(getconf _NPROCESSORS_ONLN)); do
-> +NPROC=3D$(getconf _NPROCESSORS_ONLN)
-> +MAXPROC=3D128
-> +
-> +for i in $(seq 1 $(($NPROC < $MAXPROC ? $NPROC : $MAXPROC))); do
->         ./test_klp-call_getpid &
->         pids[$i]=3D"$!"
->  done
-> --
-> 2.44.0
->
->
-Acked-by: Joel Savitz <jsavitz@redhat.com>
+On Thu, Jun 06, 2024 at 07:19:40AM -0700, Paul E. McKenney wrote:
+> On Thu, Jun 06, 2024 at 08:13:17AM +0200, Jan Beulich wrote:
+> > On 05.06.2024 22:48, Paul E. McKenney wrote:
+> > > On Wed, Jun 05, 2024 at 09:46:37PM +0200, Jan Beulich wrote:
+> > >> On 05.06.2024 21:07, Paul E. McKenney wrote:
+> > >>> On Mon, Jun 03, 2024 at 07:19:21PM +0530, Naresh Kamboju wrote:
+> > >>>> The following kernel warnings are noticed on x86 devices while booting
+> > >>>> the Linux next-20240603 tag and looks like it is expected to warn users to
+> > >>>> use NUMA_NO_NODE instead.
+> > >>>>
+> > >>>> Usage of MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead
+> > >>>>
+> > >>>> The following config is enabled
+> > >>>> CONFIG_NUMA=y
+> > >>>
+> > >>> I am seeing this as well.  Is the following commit premature?
+> > >>>
+> > >>> e0eec24e2e19 ("memblock: make memblock_set_node() also warn about use of MAX_NUMNODES")
+> > >>>
+> > >>> Maybe old ACPI tables and device trees need to catch up?
+> > >>>
+> > >>> Left to myself, I would simply remove the WARN_ON_ONCE() from the above
+> > >>> commit, but I would guess that there is a better way.
+> > >>
+> > >> Well, the warning is issued precisely to make clear that call
+> > >> sites need to change. A patch to do so for the two instances
+> > >> on x86 that I'm aware of is already pending maintainer approval.
+> > > 
+> > > Could you please point me at that patch so that I can stop repeatedly
+> > > reproducing those two particular issues?
+> > 
+> > https://lore.kernel.org/lkml/abadb736-a239-49e4-ab42-ace7acdd4278@suse.com/
+> 
+> Thank you, Jan!
+> 
+> A quick initial test shows that this clears things up.  I have started
+> a longer test to check for additional issues.  But in the meantime
+> for the issues I was already seeing in the initial test:
+> 
+> Tested-by: Paul E. McKenney <paulmck@kernel.org>
 
+And the longer test ran without errors as well, so again, thank you!
+
+Any chance of getting this into -next sooner rather than later?
+
+							Thanx, Paul
 
