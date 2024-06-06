@@ -1,150 +1,97 @@
-Return-Path: <linux-kernel+bounces-204801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 938E58FF3BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:29:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AC2A8FF3C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2598A1F24269
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:29:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CBF41C26899
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3BD1991A8;
-	Thu,  6 Jun 2024 17:28:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621A919923B;
+	Thu,  6 Jun 2024 17:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dP3yt6rB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yr3RWC3a"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3E21990CE;
-	Thu,  6 Jun 2024 17:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484961990D1;
+	Thu,  6 Jun 2024 17:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717694938; cv=none; b=AC7K6X2WmDK7WIx1wbiG4MzqfHcupcQAQwKKWifbFcd18NXa/2lcY2coGSrwvFrK+7d6PC7XSIThjhdveXKVqNX6549/EVF1ri4XZj0Mjk2AAHInjOsGNHCRcYELXX+yDON5G+wKb66XI7vR0WbOYGaRinLSKAsa0u5r3mBB5rs=
+	t=1717695045; cv=none; b=M0iGQ84+94hliE4f43GJQb+G6Tt209mU4R+D0XuccA4sXmNoWQIo/shCSITA04X7hGAyTsLTbMrJDkXGLwoPGsD99uBq9E82BOwAiUG+twTGY6h7GVNCrXP0dRIjCj+K6jSNG2CTPyOtVIGCtWYlXOMSbRGRN6k/dVjmJ9LClLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717694938; c=relaxed/simple;
-	bh=0VOTymSltSm46M0tWgnYW1sxiIawEOkUL0FrWY5YCPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dZ3BSYpVTwZ7y82ZT30BaPoZZqcEQy3pwpN9p2eIIBwH8mAaaMbyMSglYPHAr6Pg1kULvPkRX3Bc+UPTRqi7BhZRTiFecZH8HIQZPhbbDOxfWXbZEjGPHwXMrtnvWg4VNaxWpGrI0xRcs+B6sqRePCJFPml377jBjrZY0qHENAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dP3yt6rB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C49D7C2BD10;
-	Thu,  6 Jun 2024 17:28:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717694938;
-	bh=0VOTymSltSm46M0tWgnYW1sxiIawEOkUL0FrWY5YCPI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dP3yt6rBauKLyUXSmvUQlKMv9b+IZxxP5U5a9chY/5DoATvlBY+jPRJfZjGzufEzK
-	 I4cFzo9XU1/Q6vPMcVBsrP45WiA8bmK3xJx6wk300XvvAzrp0DJZSaWW1tztjieZJ5
-	 +81x+uZjb7UWRhCXjEOEQqz1nQzx9n58qg5f9tRuecRkM4znRbyTMNPwZTwMIlaGZS
-	 ztwbh33zNyncdklSDwYeXSmdxnkW9FBBwvHN6IQX0dNLHKHvHY/KVcxqLGQbhpU5XY
-	 TvaJ+VAbB45PxsYntGZ8TM2+JeEGQk3P5rcdHlgG2a4NhpuDMVmHnX7FVi1QK75u7s
-	 HxwLBGk97+R+Q==
-Date: Thu, 6 Jun 2024 10:28:56 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Leo Yan <leo.yan@arm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	James Clark <james.clark@arm.com>, Ian Rogers <irogers@google.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Nick Terrell <terrelln@fb.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Changbin Du <changbin.du@huawei.com>,
-	Fangrui Song <maskray@google.com>,
-	Mateusz Kowalczyk <fuuzetsu@fuuzetsu.co.uk>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v1 1/6] perf: build: Setup PKG_CONFIG_LIBDIR for cross
- compilation
-Message-ID: <ZmHx2EFK9cSWgUIK@google.com>
-References: <20240604093223.1934236-1-leo.yan@arm.com>
- <20240604093223.1934236-2-leo.yan@arm.com>
+	s=arc-20240116; t=1717695045; c=relaxed/simple;
+	bh=AsNGC/SfaUzypCoArTiibGVg3sLEs0lg8sOOJXXENq0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CxL6Wd8xqyGL6IvZb1GiSJgZ53d1J0B0q8zKZRpZWu3IC3rsPUpKha+a6zWLB8WF2ukjXi7BtLd5Lt7E0SB0NL3KVnIeqdQr63/YKtdU0zD9tYsBLt+a6IRPttJwR/deM3cbjgXofp6sbkP+ftTZldCinFinFqWfKZicN5eMCOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yr3RWC3a; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717695044; x=1749231044;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=AsNGC/SfaUzypCoArTiibGVg3sLEs0lg8sOOJXXENq0=;
+  b=Yr3RWC3aC6mXVTXcDbl8YtWieXVcbTe8DyEo1YWsvgOgM2phTynqLg6s
+   vD8bropSSG880sAYa4jgncPaRIoog3zO2HLd+GUoNog+jX6AaNmo6R0Nr
+   WLtIS5gZ6W4ZBQ024YgCr0K3oTAc5SfezRTtQV58aR/2fE/A7zNSshBfd
+   9mTResXDCGs5hqesGDtJx2xuzFWT/Ij63ugK2MHHs8TKW/KPeKplBvIS6
+   j06qU4e28shX6rhC0phmie6RfI8sME6NjfDWVlaPXlPTIll5QGqKaE/Us
+   KfmwltEVQILq0XkQEPpGuhDJGV8mySBcYcICCITGh6ZydusmK5446OrV+
+   g==;
+X-CSE-ConnectionGUID: RHn2DPp8TnCqHiNykmZgHQ==
+X-CSE-MsgGUID: E/JXdWV+ThyS70lJplwNwg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="14192005"
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="14192005"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 10:30:42 -0700
+X-CSE-ConnectionGUID: H1Cw4nhbQxG5yPNRVgxCkw==
+X-CSE-MsgGUID: lXdEpxSoSfKI+XyK/qWgsQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="38164426"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa009.fm.intel.com with ESMTP; 06 Jun 2024 10:30:40 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 57D9D1C9; Thu, 06 Jun 2024 20:30:39 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>
+Subject: [PATCH v1 0/6] leds: spi-byte: Cleanup, fix a leak, and make it agnostic
+Date: Thu,  6 Jun 2024 20:29:17 +0300
+Message-ID: <20240606173037.3091598-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240604093223.1934236-2-leo.yan@arm.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Leo,
+Clean up the driver, fix one leak, and make it possible to use outside
+of OF systems.
 
-On Tue, Jun 04, 2024 at 10:32:18AM +0100, Leo Yan wrote:
-> On recent Linux distros like Ubuntu Noble and Debian Bookworm, the
-> 'pkg-config-aarch64-linux-gnu' package is missing. As a result, the
-> aarch64-linux-gnu-pkg-config command is not available, which causes
-> build failures.
-> 
-> Alternatively, this commit sets the PKG_CONFIG_LIBDIR environment
-> variable dynamically based on the cross compiler to ensure the correct
-> package configurations.
-> 
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
-> ---
->  tools/build/feature/Makefile | 14 +++++++++++++-
->  tools/perf/Makefile.perf     | 15 ++++++++++++++-
->  2 files changed, 27 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-> index ed54cef450f5..6f52f892f9a3 100644
-> --- a/tools/build/feature/Makefile
-> +++ b/tools/build/feature/Makefile
-> @@ -82,7 +82,19 @@ FILES=                                          \
->  
->  FILES := $(addprefix $(OUTPUT),$(FILES))
->  
-> -PKG_CONFIG ?= $(CROSS_COMPILE)pkg-config
-> +PKG_CONFIG ?= pkg-config
-> +
-> +ifdef CROSS_COMPILE
-> +  ifndef PKG_CONFIG_LIBDIR
+Andy Shevchenko (6):
+  leds: spi-byte: call of_node_put() on error path
+  leds: spi-byte: Get rid of custom led_init_default_state_get()
+  leds: spi-byte: Make use of device properties
+  leds: spi-byte: Utilise temporary variable for struct device
+  leds: spi-byte: Use devm_mutex_init() for mutex initialization
+  leds: spi-byte: Move OF ID table closer to their user
 
-Can we do that only if the cross-compile-pkg-config is not available?
+ drivers/leds/Kconfig         |  1 -
+ drivers/leds/leds-spi-byte.c | 63 +++++++++++++-----------------------
+ 2 files changed, 22 insertions(+), 42 deletions(-)
 
-Thanks,
-Namhyung
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-
-> +    CROSS_ARCH = $(shell $(CC) -dumpmachine)
-> +    PKG_CONFIG_LIBDIR := /usr/local/$(CROSS_ARCH)/lib/pkgconfig/
-> +    PKG_CONFIG_LIBDIR := $(PKG_CONFIG_LIBDIR):/usr/local/share/pkgconfig/
-> +    PKG_CONFIG_LIBDIR := $(PKG_CONFIG_LIBDIR):/usr/local/lib/$(CROSS_ARCH)/pkgconfig/
-> +    PKG_CONFIG_LIBDIR := $(PKG_CONFIG_LIBDIR):/usr/lib/$(CROSS_ARCH)/pkgconfig/
-> +    PKG_CONFIG_LIBDIR := $(PKG_CONFIG_LIBDIR):/usr/share/pkgconfig/
-> +    export PKG_CONFIG_LIBDIR
-> +  endif
-> +endif
->  
->  all: $(FILES)
->  
-> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-> index 5c35c0d89306..c1553a546a4f 100644
-> --- a/tools/perf/Makefile.perf
-> +++ b/tools/perf/Makefile.perf
-> @@ -193,7 +193,20 @@ HOSTLD  ?= ld
->  HOSTAR  ?= ar
->  CLANG   ?= clang
->  
-> -PKG_CONFIG = $(CROSS_COMPILE)pkg-config
-> +PKG_CONFIG ?= pkg-config
-> +
-> +# Set the PKG_CONFIG_LIBDIR for cross compilation.
-> +ifdef CROSS_COMPILE
-> +  ifndef PKG_CONFIG_LIBDIR
-> +    CROSS_ARCH = $(shell $(CC) -dumpmachine)
-> +    PKG_CONFIG_LIBDIR := /usr/local/$(CROSS_ARCH)/lib/pkgconfig/
-> +    PKG_CONFIG_LIBDIR := $(PKG_CONFIG_LIBDIR):/usr/local/share/pkgconfig/
-> +    PKG_CONFIG_LIBDIR := $(PKG_CONFIG_LIBDIR):/usr/local/lib/$(CROSS_ARCH)/pkgconfig/
-> +    PKG_CONFIG_LIBDIR := $(PKG_CONFIG_LIBDIR):/usr/lib/$(CROSS_ARCH)/pkgconfig/
-> +    PKG_CONFIG_LIBDIR := $(PKG_CONFIG_LIBDIR):/usr/share/pkgconfig/
-> +    export PKG_CONFIG_LIBDIR
-> +  endif
-> +endif
->  
->  RM      = rm -f
->  LN      = ln -f
-> -- 
-> 2.34.1
-> 
 
