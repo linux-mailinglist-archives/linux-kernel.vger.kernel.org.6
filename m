@@ -1,218 +1,97 @@
-Return-Path: <linux-kernel+bounces-205012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFE9A8FF623
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:55:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 823CF8FF621
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 22:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7234A2866E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:55:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 239DA286756
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 20:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9655E196DAB;
-	Thu,  6 Jun 2024 20:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FFA13AA41;
+	Thu,  6 Jun 2024 20:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FD79WkSl"
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Klky7R6T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397EE13C67B
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 20:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791316F08E;
+	Thu,  6 Jun 2024 20:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717707310; cv=none; b=UyKjyXA2uStx1laXA/+Lqcmh3zJC7MPOX7VHnLqezynF5YWCAlypg/eJkgcePxH8g1+aqJE+xprenIfb1ZpOIdA96m/Qmk7MikEMGkdlJY7AWd6P3qR78Qn/UgXMnO/Ab7/80G7hqSQBxv8EYN/ESMzELZPvxJsC3b/AyEGwBI8=
+	t=1717707307; cv=none; b=gJrcgh7OO5T7SOQLRfI485c6iG5VoawhGNP8+nPkOZbe/Qax6eu7ZvznfR92qpeFAgxqonaVrEMhPLgJY5n3R8xbkkHM9a7trrT1JfK0LpifjkcuB/Ff8eeBFY6NeXYlOU9ixhf0FhWYgjULGEBZnmDp+lZ01bKIy8OdCLg7HDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717707310; c=relaxed/simple;
-	bh=umOIhey/oqSigy9oxZ9JmAIfpr4+c1V6FQJLEtzPmQQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tuLpaNEf4DzBHXjDzJMW75R7FVYo6qil8gQuuYVtxLq1GouoMXeNvcuihoeRMVedKwoNeDnItGkBBFZoptt1e0bulX26ebjkQjGwS0XmRqXTtDKbFpnihJ79RqupuSm5JInarXvrW4UReWas7m2qAEee1wfb0Z7ccKMiBocr1yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FD79WkSl; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-80acf1bca86so436214241.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 13:55:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717707308; x=1718312108; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yL7tTfGLqeY7hfzIjcIfo8g+rxb0Tacathwl6LUj7oY=;
-        b=FD79WkSlPFGyoU+TZIgQnjTvZ/6QwdlGBZdXlfLpVBbAfc0Vw2/6OczpafSdQP0ROI
-         orNmddU6w5q5rD5J2FkckrHvUijhlj3F16a9lVz2LHfhBckjYdC8kpLNq/T2vtoM2c+X
-         9mjkEvfcifrAf0ZycsierhZjevt/G47F/R0+4lkyk8C63TFm+zrbjELXqxJzC+0ajsaP
-         uD8R54YsuaJ1SK4yEj3cSV+x5uMWoyVMPXTCmv1YrQ7tGrjbOFa4+xtpgFTgYouSxJ86
-         BIkV0I5I7uzTY9iZ0Vd2zkeKjVlMQNfzJnA/IvSewIb8yFkdhrlNspPs5QSVoDeZ9TTz
-         n0kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717707308; x=1718312108;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yL7tTfGLqeY7hfzIjcIfo8g+rxb0Tacathwl6LUj7oY=;
-        b=DUtqYi8MCrCOVt4uYm+1H8f0SltDRrAkn1BHOCqA65JbnQzzfRyJBkaJgquy/Oi5HB
-         oSlkDz+v2nGpTCVNhaGfPkWtYRpOB/0v3mQYRzUZ/zXB7P6V3GKPg9EVPDUaogX6gMTQ
-         Yke1EQfPv6xsiXlyAPZKURPJcSDZuUURDy7h97LpJLPQ+7TPnZia45oV+YBdEwK7eaWu
-         AEHrTPqFrIWUR3vIcvEE9H9wBXenkjJc6NpS5qx+UlemnCpdMXOpmKKKAPlwCHICRbWp
-         Ekth16x5swEl3ZD56fWbnKXgmQ3dwpXCXYnZoA6lahMzc59/ff3beEoH/GjljqbpTAZJ
-         6XxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrMUzd2S2fa9PLkIZqsuNgGYqlF72/5aJ6vZcawdj0g+FfC3mimrbZ+oa1A3XD+yKOKBrNn6goHSr74XK4kK4Zeg88znEpTS2b1v2/
-X-Gm-Message-State: AOJu0Ywu4Fr5mc09gCy/2IZMrN+O9u1kRhiXwLXoGKpmPPv9Y0YkD9oH
-	Z9Ppzk1WDo6pz60VHz6KGouA6uma23FktkYXv85JLHS3QEO7AbsUcRD582jCQ9C/qHsSk6gWzIA
-	EH87kr+urezKTFLr7+47yPoFgGA8=
-X-Google-Smtp-Source: AGHT+IGEMm31cV6zs8jOV7+Yxw+4wnR4rELpKUYSMnjAOhP+TMsXQ2LRqbi3mM2zzDUNVWV26FKc/C7VjbgOi0dPltU=
-X-Received: by 2002:a05:6102:216a:b0:47b:d70c:ca9d with SMTP id
- ada2fe7eead31-48c275342e2mr468266137.29.1717707307769; Thu, 06 Jun 2024
- 13:55:07 -0700 (PDT)
+	s=arc-20240116; t=1717707307; c=relaxed/simple;
+	bh=Z8HC3+x9qczXYWa/ofXyj/rI+neSSVhiNEmmwFi1TnM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iO2/XBCVJ4k33N+DhRQpJiMqeGoSmpyQyrceFpHe1WzBKhyVbd/Nr2DGJ6jzfcaXhkzbMssu8S/xLR+M+TvCRcgzc9vEi6EaY82/WyZjBr5GKsh0odO9AEZltTp1yisRc4u5ewIGx0p0U0KzoRvYSimr6mA0rTbX65Hl+Btko0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Klky7R6T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEF90C2BD10;
+	Thu,  6 Jun 2024 20:55:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717707307;
+	bh=Z8HC3+x9qczXYWa/ofXyj/rI+neSSVhiNEmmwFi1TnM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Klky7R6TvA/SWXm/3TuVDEjMLW3UqxspVLmDYT/2iTA4/7C6i4efRD9ro7cSI/aDp
+	 XeJppgwIqMwU8TJKQ8Kq2LqDq2GN3EuRN20lpzB6RyAR/A8XvSucBFfIEg1EhMdHwr
+	 T62FuL+zpYjoyYlOH5DUt9oPeZx1qZ11Omx2ajIYWPct9oxVWI64xE3P1GEu39+xqA
+	 2eaejkBazyqIckLhLZlvCHR1BdtNQGZyB3b+or6Nt7JI8F0M9MrZPZpivxKEv84vhH
+	 3LE4SZlLxMVA9BSQ2dAP8UhR9VRPdorkm13Pnh1EIuuMwRs1yIWkotJ5SjPVOKHNFP
+	 fpyJIKqlJiRVw==
+Date: Thu, 6 Jun 2024 14:55:04 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org,
+	Caleb Connolly <caleb.connolly@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org,
+	David Wronek <david@mainlining.org>,
+	Daniel Vetter <daniel@ffwll.ch>, Conor Dooley <conor+dt@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	David Airlie <airlied@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: [PATCH] dt-bindings: display: panel: constrain 'reg' in DSI
+ panels (part two)
+Message-ID: <171770730263.3844490.8634760691751503375.robh@kernel.org>
+References: <20240605105659.27433-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606184818.1566920-1-yosryahmed@google.com>
- <84d78362-e75c-40c8-b6c2-56d5d5292aa7@redhat.com> <CAJD7tkZH9C21nx75W9Erun=oUvmad5ujmDyGYWRRHEwPCCizUw@mail.gmail.com>
-In-Reply-To: <CAJD7tkZH9C21nx75W9Erun=oUvmad5ujmDyGYWRRHEwPCCizUw@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 7 Jun 2024 08:54:56 +1200
-Message-ID: <CAGsJ_4zTJgOgkXE=4a=w=ZsuC4WuwoBNHf0v0BwP7tatkkJZqA@mail.gmail.com>
-Subject: Re: [PATCH] mm: zswap: add VM_BUG_ON() if large folio swapin is attempted
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: David Hildenbrand <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chris Li <chrisl@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605105659.27433-1-krzysztof.kozlowski@linaro.org>
 
-On Fri, Jun 7, 2024 at 8:32=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com> =
-wrote:
->
-> On Thu, Jun 6, 2024 at 1:22=E2=80=AFPM David Hildenbrand <david@redhat.co=
-m> wrote:
-> >
-> > On 06.06.24 20:48, Yosry Ahmed wrote:
-> > > With ongoing work to support large folio swapin, it is important to m=
-ake
-> > > sure we do not pass large folios to zswap_load() without implementing
-> > > proper support.
-> > >
-> > > For example, if a swapin fault observes that contiguous PTEs are
-> > > pointing to contiguous swap entries and tries to swap them in as a la=
-rge
-> > > folio, swap_read_folio() will pass in a large folio to zswap_load(), =
-but
-> > > zswap_load() will only effectively load the first page in the folio. =
-If
-> > > the first page is not in zswap, the folio will be read from disk, eve=
-n
-> > > though other pages may be in zswap.
-> > >
-> > > In both cases, this will lead to silent data corruption.
-> > >
-> > > Proper large folio swapin support needs to go into zswap before zswap
-> > > can be enabled in a system that supports large folio swapin.
-> > >
-> > > Looking at callers of swap_read_folio(), it seems like they are eithe=
-r
-> > > allocated from __read_swap_cache_async() or do_swap_page() in the
-> > > SWP_SYNCHRONOUS_IO path. Both of which allocate order-0 folios, so we
-> > > are fine for now.
-> > >
-> > > Add a VM_BUG_ON() in zswap_load() to make sure that we detect changes=
- in
-> > > the order of those allocations without proper handling of zswap.
-> > >
-> > > Alternatively, swap_read_folio() (or its callers) can be updated to h=
-ave
-> > > a fallback mechanism that splits large folios or reads subpages
-> > > separately. Similar logic may be needed anyway in case part of a larg=
-e
-> > > folio is already in the swapcache and the rest of it is swapped out.
-> > >
-> > > Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
 
-Acked-by: Barry Song <baohua@kernel.org>
+On Wed, 05 Jun 2024 12:56:59 +0200, Krzysztof Kozlowski wrote:
+> DSI-attached devices could respond to more than one virtual channel
+> number, thus their bindings are supposed to constrain the 'reg' property
+> to match hardware.  Add missing 'reg' constrain for DSI-attached display
+> panels, based on DTS sources in Linux kernel (assume all devices take
+> only one channel number).
+> 
+> Few bindings missed previous fixup: LG SW43408 and Raydium RM69380.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> This should apply on any tree.
+> ---
+>  .../devicetree/bindings/display/panel/lg,sw43408.yaml        | 4 +++-
+>  .../devicetree/bindings/display/panel/raydium,rm69380.yaml   | 5 +++--
+>  2 files changed, 6 insertions(+), 3 deletions(-)
+> 
 
-this has been observed by me[1], that's why you can find the below
-code in my swapin patch
+Applied, thanks!
 
-+static struct folio *alloc_swap_folio(struct vm_fault *vmf)
-+{
-+      ...
-+      /*
-+      * a large folio being swapped-in could be partially in
-+      * zswap and partially in swap devices, zswap doesn't
-+      * support large folios yet, we might get corrupted
-+      * zero-filled data by reading all subpages from swap
-+      * devices while some of them are actually in zswap
-+      */
-+      if (is_zswap_enabled())
-+           goto fallback;
-
-[1] https://lore.kernel.org/linux-mm/20240304081348.197341-6-21cnbao@gmail.=
-com/
-
-> > > ---
-> > >
-> > > Sorry for the long CC list, I just found myself repeatedly looking at
-> > > new series that add swap support for mTHPs / large folios, making sur=
-e
-> > > they do not break with zswap or make incorrect assumptions. This debu=
-g
-> > > check should give us some peace of mind. Hopefully this patch will al=
-so
-> > > raise awareness among people who are working on this.
-> > >
-> > > ---
-> > >   mm/zswap.c | 3 +++
-> > >   1 file changed, 3 insertions(+)
-> > >
-> > > diff --git a/mm/zswap.c b/mm/zswap.c
-> > > index b9b35ef86d9be..6007252429bb2 100644
-> > > --- a/mm/zswap.c
-> > > +++ b/mm/zswap.c
-> > > @@ -1577,6 +1577,9 @@ bool zswap_load(struct folio *folio)
-> > >       if (!entry)
-> > >               return false;
-> > >
-> > > +     /* Zswap loads do not handle large folio swapins correctly yet =
-*/
-> > > +     VM_BUG_ON(folio_test_large(folio));
-> > > +
-> >
-> > There is no way we could have a WARN_ON_ONCE() and recover, right?
->
-> Not without making more fundamental changes to the surrounding swap
-> code. Currently zswap_load() returns either true (folio was loaded
-> from zswap) or false (folio is not in zswap).
->
-> To handle this correctly zswap_load() would need to tell
-> swap_read_folio() which subpages are in zswap and have been loaded,
-> and then swap_read_folio() would need to read the remaining subpages
-> from disk. This of course assumes that the caller of swap_read_folio()
-> made sure that the entire folio is swapped out and protected against
-> races with other swapins.
->
-> Also, because swap_read_folio() cannot split the folio itself, other
-> swap_read_folio_*() functions that are called from it should be
-> updated to handle swapping in tail subpages, which may be questionable
-> in its own right.
->
-> An alternative would be that zswap_load() (or a separate interface)
-> could tell swap_read_folio() that the folio is partially in zswap,
-> then we can just bail and tell the caller that it cannot read the
-> large folio and that it should be split.
->
-> There may be other options as well, but the bottom line is that it is
-> possible, but probably not something that we want to do right now.
->
-> A stronger protection method would be to introduce a config option or
-> boot parameter for large folio swapin, and then make CONFIG_ZSWAP
-> depend on it being disabled, or have zswap check it at boot and refuse
-> to be enabled if it is on.
-
-Thanks
-Barry
 
