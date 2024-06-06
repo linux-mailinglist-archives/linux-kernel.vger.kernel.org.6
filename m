@@ -1,224 +1,286 @@
-Return-Path: <linux-kernel+bounces-204717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B470F8FF2C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:43:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C9768FF2C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A52D51C25EC4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:43:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F17A91C21FF5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69453198A17;
-	Thu,  6 Jun 2024 16:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5602198A0F;
+	Thu,  6 Jun 2024 16:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hRe9ouoj"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="rdBXanAf"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055411CAA9
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 16:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717692183; cv=none; b=rc9Fm+FqR9LqGcZk5UiVjPZdENerCQSsZwsAaEPRfk4LWyaHzbo6Lkam1RurbCwNZni7YXYti20Tulg0vry2LDE+BmZ0xb5Jnk6UiXHU0N5v0Y4d0rmf1qyioUqLuOzotlvHNtZPlNaZg/91rLfi/Go+4c5B7+RV2mVkN5Nn3SI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717692183; c=relaxed/simple;
-	bh=AJAGh2u2V4Tk6rAVOOJogH71dvDxba8eyU1Mqdojbzs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ehJHw0+YPDMHRWysBr68Gkj5I3e8x63NIF9tDwvKcO/tt2ep58gFVl9gHA0Z8Q8yZdMXoZKhpV9/BoITM21rhEwgu5M8wJqDcldiM/WChHk34zBFi3I3mGXxklUUKmicq1xDY61OWN5++cwoLDwVNgsq2TgWOAxcmRz1NdFDIR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hRe9ouoj; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3c9cc681e4fso628122b6e.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 09:43:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717692181; x=1718296981; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AJAGh2u2V4Tk6rAVOOJogH71dvDxba8eyU1Mqdojbzs=;
-        b=hRe9ouoj+zjoXqs45pkT4hnhTjD1/JXfX4+R645zYamVcshpCyYaIUvgmWFcR1apPF
-         U03JQkwtCxzJJj1iWiETFIDMNUREIDzGGpO+0Q6Xfj3vZ+EggipQXrykbpTQTMFoM0Ej
-         Jf9V9cckM2PrnvS6BlEgvHsARQnIVv+9QtZ3XOiop7OSUzcuJy6OwEAkv/DqGIpbhZo0
-         py458+P4Z7ss8VyLUYJyAU3ycPETO2+OJ8H0bTSU94pT20zxftZPiWVijThMudyUwpxB
-         VHHOxzTWl8Vt0Bg1J9JABOCISOzzCOxp8t1VgQH/x5O95RNYgDTHYAwXYal0IoUASeQb
-         3dLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717692181; x=1718296981;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AJAGh2u2V4Tk6rAVOOJogH71dvDxba8eyU1Mqdojbzs=;
-        b=VXD7zM6hYQ6b6zeuh5PHO8t/mGAQItcQwIdLE8QOP8XjbLxPv6dKX+CazsZS0h4p9b
-         039mlYmhkE3Trjv9bD2K5alZ2D/qfSh4v8u05tpJJwm4ZNXg8ywIEQSwlkX9Yfg0Fi/T
-         K7b7+VYK81NGIwj2iPlxyYvQD48f+Sh+5jnVYEP/ga1By4UXVlFI9biBOjiOIeYYpXsl
-         ufBN1o010tlHJn3ZWPZv2+luKi1tbYMTdJD43oWBNxRdOz2ZYcyuST2Fr0BBGiAxl8l0
-         l5mX/iWo59a/gZlBiRkC/Sqjf6RHFiE7Uja1c59SovNuXTXaRGivcU4o+jK0CRpz81TD
-         9JpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVN8MPmro6hD2zrnq/IcykVRF6JEP598c2FoS72x6stdtvk5AZsicHN5iVmLoxKeGKvzcUt0K9QNfX2NIRLpciAsE76Bzhe4CX9fAEl
-X-Gm-Message-State: AOJu0Yybw3VjFcLGdrx9KgDnxDoApVo9vmWLQXiaDdWz4KNE/BSyUVIK
-	KTbseaJa0ESfEuJl1wWwmObxb+oMjCkThW2ajsHGMQ0K+sM/yzA62ZOg3bxzyonwBcWth34MqAG
-	3t2gedfoDptviR4lre2rgv5PYtwWaH1KbFlYx6rxuPGv5Z2yg/4nbQps=
-X-Google-Smtp-Source: AGHT+IERasBuiqHdx/CCrfgVVuGNQ623zgMJ03/a4UqBThWZ9fbNc1TBReaGQpa20gK0M9sgOEpWNx7/XFo7+8WGkqg=
-X-Received: by 2002:a54:448c:0:b0:3d2:368:9251 with SMTP id
- 5614622812f47-3d2044e5e2bmr6367048b6e.38.1717692180748; Thu, 06 Jun 2024
- 09:43:00 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2814317BC9
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 16:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.156.173
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717692163; cv=fail; b=hTS5Ls/0vnItphr+/DsG36ydMojwKow86ba8LWkxr31iAEy1/VLjKLJtqm+a+mDFXlf/7qryXMUHVCh8kRwaQwmgl85SGZrL0SWhjfWw9KTi+k7X99iKau11Y+8TA5U08f5gdClIW27qscoixxmj2P/cZK7pBVtklTMOqvED+c4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717692163; c=relaxed/simple;
+	bh=iA0CdC5c7jq3R9m5c608/kBOffx4pgY3ZUqz0ftXbMY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=aPnpcdGVfflAzFCZ7LAL4EqCtL1m2BvKPtTuVZHRgsPup2MF8oLQLxOBZcAKta/roC0HriBcNE3uLV0yXpyOwBvZUv9W1sNNiRmcy+LbHlLDY06oJ0z8MG096gZzHu0ZN4qalr6WxS6I6bMZ5NT40OUo31sO5XRywVZGOs3ygfo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=rdBXanAf; arc=fail smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 456Atpn2008656;
+	Thu, 6 Jun 2024 09:42:37 -0700
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2169.outbound.protection.outlook.com [104.47.56.169])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3ykbq71s1r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Jun 2024 09:42:37 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YH95WFuZVBwVY+HgvBGP3U8nUmhlcGkTVy5j7+QbdQE1wiQ6AQpHL1H24x8MQqYb5qxoWSQ3C0PwSyljxmD21MVj2BVsWlgwtzcq7SMFFi7daIkHYnYRJKgoEeL/EjJlKW/s2hCXSmsoAArUv5LPtZAeajF4xaHgsharNCZ1XaBXlFBJ10+pLq0ut6DI3hyVFXUprG7JF5A3Oh3TMGUMw+r3s7CQ3h10Y6SRqd8Zx1TLXtbYk2iODdtB+87Mm/V5xbhY5NV9j/eE5LZNA/ihFFkWZHYFkfH2ANDR3qAc7XIRJQSqeZIr7qyF9MiOhnu9FxdfPGJnVO3eXG8mB94kOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kjaRVUjEU9fZaRzLuniGfALAOkDwKP7KoQU8TJM9/Cw=;
+ b=SWO/w/LfHu2Trxel0ZG3RV6fKyGE+A608rVdLauUD4Q17s1jEc5IyoIhpsTSXHa3iW2dblYdQdT3X5bAvouQuawZll8+6oalgpEDRk91GdnnwsV1x7lUQJtlDsv3ehGIqzY0y4quod1TfvnDiZcVIjnDKBDpBMcujJDNDchmpgcodoCufoasbmCOh9Vd+UP37zncVZiLzg5xjJ4EXw5W98r19+c3dlX184sv7R+of2DGTgrN2XxNxcHjoJVO+YZdJ6rVqbG/L68FFV7bJPH+pOwjA6tw8XrEM9GfXB+XAZv0hZzYARWoOSjFmnUxmfmRoNNzYS/SfKbhcZbWJtTZXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kjaRVUjEU9fZaRzLuniGfALAOkDwKP7KoQU8TJM9/Cw=;
+ b=rdBXanAfucAl0ZyGOkW++oqdAlo6oH6VCV+UcrWmiv9U2mq5WIxYbSULrjzzg2eqmC/c9D70c88PuGmVFmi0CZK/vyoa6+b3DoTcshA7boruIXf8lgRgOKfWixwdYs87oFVMxaYxflzlWNTjCuX+e8Du6T7WlY0XQDDBWY97x0Q=
+Received: from MW4PR18MB5244.namprd18.prod.outlook.com (2603:10b6:303:1e0::16)
+ by SA1PR18MB4776.namprd18.prod.outlook.com (2603:10b6:806:1df::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.33; Thu, 6 Jun
+ 2024 16:42:34 +0000
+Received: from MW4PR18MB5244.namprd18.prod.outlook.com
+ ([fe80::52f3:9792:ee42:90b]) by MW4PR18MB5244.namprd18.prod.outlook.com
+ ([fe80::52f3:9792:ee42:90b%6]) with mapi id 15.20.7633.033; Thu, 6 Jun 2024
+ 16:42:34 +0000
+From: Vamsi Krishna Attunuru <vattunuru@marvell.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: Jerin Jacob <jerinj@marvell.com>, Srujana Challa <schalla@marvell.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [EXTERNAL] Re: [PATCH v7 1/1] misc: mrvl-cn10k-dpi: add Octeon
+ CN10K DPI administrative driver
+Thread-Topic: [EXTERNAL] Re: [PATCH v7 1/1] misc: mrvl-cn10k-dpi: add Octeon
+ CN10K DPI administrative driver
+Thread-Index: AQHaqqXUeJduCBvv+0e3+QVunpJsgbG32TAAgAAF9zCAAyjT4A==
+Date: Thu, 6 Jun 2024 16:42:34 +0000
+Message-ID: 
+ <MW4PR18MB524422223AC92181942C75E2A6FA2@MW4PR18MB5244.namprd18.prod.outlook.com>
+References: <2024042950-refurbish-duckbill-77b4@gregkh>
+ <20240520110630.2568767-1-vattunuru@marvell.com>
+ <2024060412-amulet-unflawed-f37a@gregkh>
+ <SJ0PR18MB52462AA2A9F15103D5198CC5A6F82@SJ0PR18MB5246.namprd18.prod.outlook.com>
+In-Reply-To: 
+ <SJ0PR18MB52462AA2A9F15103D5198CC5A6F82@SJ0PR18MB5246.namprd18.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MW4PR18MB5244:EE_|SA1PR18MB4776:EE_
+x-ms-office365-filtering-correlation-id: c63848c7-4b18-44b4-b742-08dc8647aae4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|376005|1800799015|366007|38070700009;
+x-microsoft-antispam-message-info: 
+ =?us-ascii?Q?g8PtnklHvddAMwdFXHojXhQ/hXJ2LA7ZQUfQS1bnd+gbAqMRM5y6of9MhFDi?=
+ =?us-ascii?Q?8NOKbpcCbB9B+DJ4SsUhbcHJKYWOB3LJlaJlnljLnUz7wLbrnWb5kc7Zn34q?=
+ =?us-ascii?Q?hkdx+uZTvrRLpMYmLGxOr1OSLnJOUtwPK0lk2Dutv2pmuyzp6F+P5XkZyB+C?=
+ =?us-ascii?Q?Y/a50T1106E4BCFAWygiVGP3WEAift/XyMSDr9WFOQ4Y9zeT64LMerpfKFRg?=
+ =?us-ascii?Q?3uyFJ9A1HikMwTumUAEcMahIPVZaEMWW5cPVo/fdF8mou53KkOrD6ISeC9xw?=
+ =?us-ascii?Q?x3gzMFMD82kYFoTkRnmiOQ/pQsrptbIaM+9vQaUvPNBW8QUKioWsH5AbknpX?=
+ =?us-ascii?Q?Rb9/mzzu1ML9ESFkpQhAvw9JuflMKT7dnmNTp9FMzSuNT3/3dBZ7LxDyCnlQ?=
+ =?us-ascii?Q?CjySD8J2WE5TeFeChIcvVCuK8xBxGkuPvVhR4MdD+zOXtUD2g1LaOooiMe3E?=
+ =?us-ascii?Q?t18mtW+SXlq1CDkxJh3YHurSlfBIOrZbS54VNOsk6Yc8QeBfcM7N8qKinL7j?=
+ =?us-ascii?Q?qdCv/s/UHeQK7XsdIJCPFMmlAFzQXDFzOJNWLfpibnpZkbE2SZVwVL6nqRrH?=
+ =?us-ascii?Q?ZQ/yF4Pqn6t/qjd/GulWZI1FeafaepTfWDwNlWpSXtYuMWXqgVqBtld2tJWz?=
+ =?us-ascii?Q?NSUVwr6wokRCJoeGVxzbCJtcANw80lhInEClr0VhLFm1hMfJAPPk/3KgRU4L?=
+ =?us-ascii?Q?Z73960bflCunjxYCq75MW+v4Jkg3pP8DQrVBipebVMGiGbZZF98NIPJepn2k?=
+ =?us-ascii?Q?GnQQNHhdxchFinVPjoCfQxZ9gV8lyD7PMEziMCZR0jjJ6AE+tq1GaiDsL0qe?=
+ =?us-ascii?Q?4zwmWj8gPxQACp6Ojy0/zWMlpHDtMtWysKE+TMa7UNr3hkJAFtrPT4Zl6aXd?=
+ =?us-ascii?Q?ya9UiyxUct8sXnpo2immJr/o7nNZpXCJy1OKUR6S6AEAVoqq7yrQuqkOfqc3?=
+ =?us-ascii?Q?pIKw1+vv8KVhUFe3QCLxIE4MIXaRUhobdWnH9QboNILY2jry2ynK8B1mX6F9?=
+ =?us-ascii?Q?IU83Ld/d54ABnvxXV/xmfWg8eSi694JOecU1WacPuLfrLoRTi/ZcxE8cmudT?=
+ =?us-ascii?Q?tCua3KgIq+R/9iCt/kcDYoZ8tqQGt/tuyEf4w1QSsvXsDlxkEhIdg/KMU+ac?=
+ =?us-ascii?Q?FBm+pVumuS+YUOgSpiRW5nXWBBPMKiSGnobPeWUNpDM4h5dVGmQPxqytRFHZ?=
+ =?us-ascii?Q?eM/KtlP8c16B/UTF3mX/jCKCsnt/x7cVFbMWWklh0OS01VCuuaIBIFySpDxN?=
+ =?us-ascii?Q?LeGQHP0UPSCldQmZqYenaujgGGiltJUSjQg/rcJ2iF0567uMhcag+YWyr40T?=
+ =?us-ascii?Q?RxGC34xsC0btOyXNadNOn8FFDOW0QZSzc03uPohdwYm/XVZqTZiLuOsBuJbz?=
+ =?us-ascii?Q?VRkCQbc=3D?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR18MB5244.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?us-ascii?Q?GWKI5sQtQymulZ3gs7SRmdzh63fUcV7TZt9vDN3wQJUdt0PRVD0Rm4LCbd8z?=
+ =?us-ascii?Q?CJM+BIm3WOaSn8CUB1RuaKZkkGj+mPOKX12Ly0GuqJDV5ER5rMkHXjTRGWlY?=
+ =?us-ascii?Q?ofnuHLHVfsR9ReAS8U4JYW9l0DCgGJy70IfBf5o6q9xv7OxXpykXtg6VYZLv?=
+ =?us-ascii?Q?K9y6PzU6dPCupl/hVcAtgcrnlAH2AS5K0IkrOOnWxX38Wa16Zq0kcRC1cp2a?=
+ =?us-ascii?Q?C5mGqehcTtm5mRPbInh3swBjLwfXsvuEUjn7qb0LMq1RaE4djsngfLD7iy1s?=
+ =?us-ascii?Q?jbGJPfYpiJc7EQJM5zBd1SRIQJl4D+XZvZUyrNAmkZXb9zYc+D654VCA7uy7?=
+ =?us-ascii?Q?Jr42rd+O0/txoJXRWWENEQTDdF3SYFRBvUPWIdEOAzG2nDyt4VgrpoPSySFS?=
+ =?us-ascii?Q?9+dBEZ2cDM9rX2AHdmT5tKlgTiNOr/XTbfvLDPD3ScH3qhp0X8VHhispA6Sq?=
+ =?us-ascii?Q?zzeupOCuBl+xWORDJVsIHDJ9T1rDY0Wo/6ihtDT0O/+Y9+WYi3b48x6LTfPw?=
+ =?us-ascii?Q?B6gUkWc5lfNLxZzjwSxYERTpDkRSfc4YKXX0A8ROajYM6QCHMQCOfYcmD6dz?=
+ =?us-ascii?Q?kE5KB7ghJgdoXxLi/QGYGznBnp/nMKku5v2dvizNDXHCoi5VbAGTVS1goCev?=
+ =?us-ascii?Q?/gTDSZZfhe6ysbu8AhLWdS5z+7RlPzdOzcRQq5VIN13kvDJO4Se0SW67gi1T?=
+ =?us-ascii?Q?ZTk7u2ygNbE6IOserZcF1sc5oiY1Usxuo0epX6ZPJM/w/l8IZOtvsjSPwojk?=
+ =?us-ascii?Q?VFIBt+PXIhuDr9cNsjdnu7vR1pdGychW4vScbV+z7tUKt5h50UeavNFAWhs1?=
+ =?us-ascii?Q?McG9dNwHtAlLBPQZWU181J4d0ivhwFZb3N2BknUHek3lq5ERUBr1STG53xpI?=
+ =?us-ascii?Q?QNxKBMRry5rOb9DqlNnbLBN8KLzHchAf/nkukl6a217Ixvqn49lQBCYzhJmq?=
+ =?us-ascii?Q?6fbS1vQsmOLWKxdxX2AGK3YRA+2E8vLBEUmkT2dilDceE4JSIuZhdoSEvhL/?=
+ =?us-ascii?Q?KiWU8lz0Skkn1wSJJ/D+qD8KfwhqkYQL/xGaQRGDhCuv8AZYCu//6+GuoFvC?=
+ =?us-ascii?Q?295M9PNyXQwOoTNb0niMKJQN7JW2Ae1xs1hRv+MoloNL2BEG+kA+fDMRPrwz?=
+ =?us-ascii?Q?oGt5524cJoJaoJ+miRxKcvyvfM+FBO31o7mNDSlTQlzoo9nDHadgDGpTFka2?=
+ =?us-ascii?Q?l2BTETHfx9b0yArON2Xt9zWI62q4dM7swSyg6ELywHLGFgMvNK7o2F91DXtj?=
+ =?us-ascii?Q?PKfojSC7KIOBtzK23LjBSUOC7soICWn7j3mSjxRr4q+zTpq6gF+ia03Wcec8?=
+ =?us-ascii?Q?+eSQAqwduYjQT+vWxqED5A8UcTwDBdDGqAuVz2KV2e+XYhuCo/A/2uK8Jny4?=
+ =?us-ascii?Q?0f/w4FY1SCGKW3rTc5h8Bbmv5BPDGKfhBh7dE0HSKYbqO6XhKw3RbjgWTpaa?=
+ =?us-ascii?Q?V8nb9z3Ik+We7hANjZG6CGUfzTJEaM9rYAG7mLyCTmPMe/j4bQbe/ArBWIEI?=
+ =?us-ascii?Q?lchf0bCXUHBnUA7lWPXla2zl7084rq1BFYzdOWmneADFUxT4SnAed3pWJzhT?=
+ =?us-ascii?Q?TIoJ1N9uAUymfZgCyrVpXXyolpdz9pvSUQgB5hHv?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240508202111.768b7a4d@yea> <CAOUHufZ36rQc8AfLtRv2QrEareysdvbprAEO5XkcG-FeDOxFLA@mail.gmail.com>
- <20240602200332.3e531ff1@yea> <20240604001304.5420284f@yea>
- <CAJD7tkbCRLdy0vD2Pd17fNrxHgkzW1VucN4qMkohLFLBLaaeCQ@mail.gmail.com>
- <20240604134458.3ae4396a@yea> <CAJD7tkYjJJGthQ_8NukGw6Q9EYbLA=8sAH_7=B90KXEL6HWdSw@mail.gmail.com>
- <CAOUHufa0Fpj6SjNgB-z0n5Jg63q1ewkbOAU65forpDwQVs45qg@mail.gmail.com>
- <CAJD7tkb=5GJ9SNUwDsu1Zy3Tus4rjsNo60Hg9N7=gGth409Diw@mail.gmail.com>
- <CAOUHufb6zXr14Wm3T-4-OJh7iAq+vzDKwVYfHLhMMt96SpiZXg@mail.gmail.com>
- <CAJD7tkZ+QY55GTzW9A7ZCm=rxAEfrW76cWXf8o5nwiKSXp8z=w@mail.gmail.com>
- <20240604231019.18e2f373@yea> <CAJD7tkYq5u7B+0UH2XKpeWJnUxoO2kJ1_XZ2JOgYpyNEVR7u0g@mail.gmail.com>
- <20240606010431.2b33318c@yea> <CAJD7tkbhWYzx=6YmzAh0F+cK-_Bn8mPOH7gMbQS7YVXmaFSgFg@mail.gmail.com>
- <CAOUHufZ8BTTx1LoXHjHGnzJE9dzyv8EnvhpXMUm0NOt=P5KHVg@mail.gmail.com>
- <CAJD7tkai+e39hFDJkQRZ_Zg_Yp8OWx2uQfawT28ZZTD=Jvh9EQ@mail.gmail.com> <20240606152802.28a38817@yea>
-In-Reply-To: <20240606152802.28a38817@yea>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Thu, 6 Jun 2024 09:42:21 -0700
-Message-ID: <CAJD7tkbhHDLttSC8i93G2Sq3LtC_vh=rqOuh3PEjU=NrbNrABg@mail.gmail.com>
-Subject: Re: kswapd0: page allocation failure: order:0, mode:0x820(GFP_ATOMIC),
- nodemask=(null),cpuset=/,mems_allowed=0 (Kernel v6.5.9, 32bit ppc)
-To: Erhard Furtner <erhard_f@mailbox.org>
-Cc: Yu Zhao <yuzhao@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, Johannes Weiner <hannes@cmpxchg.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Minchan Kim <minchan@kernel.org>, 
-	"Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR18MB5244.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c63848c7-4b18-44b4-b742-08dc8647aae4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2024 16:42:34.7067
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: G86LyoXbBSafxe9VkI5Ly8GhICU+7jA5kXNYOC+IRflLVpwmoK+lGQtspUmL3JqBSZ45F8KXafy8Uk4Z7Sa9mA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR18MB4776
+X-Proofpoint-GUID: 5jzwqnbQS126sLH8m8xOWvTqT728KiYT
+X-Proofpoint-ORIG-GUID: 5jzwqnbQS126sLH8m8xOWvTqT728KiYT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-06_13,2024-06-06_02,2024-05-17_01
 
-On Thu, Jun 6, 2024 at 6:28=E2=80=AFAM Erhard Furtner <erhard_f@mailbox.org=
-> wrote:
->
-> On Wed, 5 Jun 2024 16:58:11 -0700
-> Yosry Ahmed <yosryahmed@google.com> wrote:
->
-> > On Wed, Jun 5, 2024 at 4:53=E2=80=AFPM Yu Zhao <yuzhao@google.com> wrot=
-e:
-> > >
-> > > On Wed, Jun 5, 2024 at 5:42=E2=80=AFPM Yosry Ahmed <yosryahmed@google=
-.com> wrote:
-> > > >
-> > > > On Wed, Jun 5, 2024 at 4:04=E2=80=AFPM Erhard Furtner <erhard_f@mai=
-lbox.org> wrote:
-> > > > >
-> > > > > On Tue, 4 Jun 2024 20:03:27 -0700
-> > > > > Yosry Ahmed <yosryahmed@google.com> wrote:
-> > > > >
-> > > > > > Could you check if the attached patch helps? It basically chang=
-es the
-> > > > > > number of zpools from 32 to min(32, nr_cpus).
-> > > > >
-> > > > > Thanks! The patch does not fix the issue but it helps.
-> > > > >
-> > > > > Means I still get to see the 'kswapd0: page allocation failure' i=
-n the dmesg, a 'stress-ng-vm: page allocation failure' later on, another ks=
-wapd0 error later on, etc. _but_ the machine keeps running the workload, st=
-ays usable via VNC and I get no hard crash any longer.
-> > > > >
-> > > > > Without patch kswapd0 error and hard crash (need to power-cycle) =
-<3min. With patch several kswapd0 errors but running for 2 hrs now. I doubl=
-e checked this to be sure.
-> > > >
-> > > > Thanks for trying this out. This is interesting, so even two zpools=
- is
-> > > > too much fragmentation for your use case.
-> > >
-> > > Now I'm a little bit skeptical that the problem is due to fragmentati=
-on.
-> > >
-> > > > I think there are multiple ways to go forward here:
-> > > > (a) Make the number of zpools a config option, leave the default as
-> > > > 32, but allow special use cases to set it to 1 or similar. This is
-> > > > probably not preferable because it is not clear to users how to set
-> > > > it, but the idea is that no one will have to set it except special =
-use
-> > > > cases such as Erhard's (who will want to set it to 1 in this case).
-> > > >
-> > > > (b) Make the number of zpools scale linearly with the number of CPU=
-s.
-> > > > Maybe something like nr_cpus/4 or nr_cpus/8. The problem with this
-> > > > approach is that with a large number of CPUs, too many zpools will
-> > > > start having diminishing returns. Fragmentation will keep increasin=
-g,
-> > > > while the scalability/concurrency gains will diminish.
-> > > >
-> > > > (c) Make the number of zpools scale logarithmically with the number=
- of
-> > > > CPUs. Maybe something like 4log2(nr_cpus). This will keep the numbe=
-r
-> > > > of zpools from increasing too much and close to the status quo. The
-> > > > problem is that at a small number of CPUs (e.g. 2), 4log2(nr_cpus)
-> > > > will actually give a nr_zpools > nr_cpus. So we will need to come u=
-p
-> > > > with a more fancy magic equation (e.g. 4log2(nr_cpus/4)).
-> > > >
-> > > > (d) Make the number of zpools scale linearly with memory. This make=
-s
-> > > > more sense than scaling with CPUs because increasing the number of
-> > > > zpools increases fragmentation, so it makes sense to limit it by th=
-e
-> > > > available memory. This is also more consistent with other magic
-> > > > numbers we have (e.g. SWAP_ADDRESS_SPACE_SHIFT).
-> > > >
-> > > > The problem is that unlike zswap trees, the zswap pool is not
-> > > > connected to the swapfile size, so we don't have an indication for =
-how
-> > > > much memory will be in the zswap pool. We can scale the number of
-> > > > zpools with the entire memory on the machine during boot, but this
-> > > > seems like it would be difficult to figure out, and will not take i=
-nto
-> > > > consideration memory hotplugging and the zswap global limit changin=
-g.
-> > > >
-> > > > (e) A creative mix of the above.
-> > > >
-> > > > (f) Something else (probably simpler).
-> > > >
-> > > > I am personally leaning toward (c), but I want to hear the opinions=
- of
-> > > > other people here. Yu, Vlastimil, Johannes, Nhat? Anyone else?
-> > >
-> > > I double checked that commit and didn't find anything wrong. If we ar=
-e
-> > > all in the mood of getting to the bottom, can we try using only 1
-> > > zpool while there are 2 available? I.e.,
+
+
+> -----Original Message-----
+> From: Vamsi Krishna Attunuru
+> Sent: Tuesday, June 4, 2024 9:51 PM
+> To: 'Greg KH' <gregkh@linuxfoundation.org>
+> Cc: Jerin Jacob <jerinj@marvell.com>; Srujana Challa <schalla@marvell.com=
+>;
+> arnd@arndb.de; linux-kernel@vger.kernel.org
+> Subject: RE: [EXTERNAL] Re: [PATCH v7 1/1] misc: mrvl-cn10k-dpi: add Octe=
+on
+> CN10K DPI administrative driver
+>=20
+>=20
+>=20
+> > -----Original Message-----
+> > From: Greg KH <gregkh@linuxfoundation.org>
+> > Sent: Tuesday, June 4, 2024 9:23 PM
+> > To: Vamsi Krishna Attunuru <vattunuru@marvell.com>
+> > Cc: Jerin Jacob <jerinj@marvell.com>; Srujana Challa
+> > <schalla@marvell.com>; arnd@arndb.de; linux-kernel@vger.kernel.org
+> > Subject: [EXTERNAL] Re: [PATCH v7 1/1] misc: mrvl-cn10k-dpi: add
+> > Octeon CN10K DPI administrative driver
 > >
-> > Erhard, do you mind checking if Yu's diff below to use a single zpool
-> > fixes the problem completely? There is also an attached patch that
-> > does the same thing if this is easier to apply for you.
->
-> No, setting ZSWAP_NR_ZPOOLS to 1 does not fix the problem unfortunately (=
-that being the only patch applied on v6.10-rc2).
+> > Prioritize security for external emails: Confirm sender and content
+> > safety before clicking links or opening attachments
+> >
+> > ----------------------------------------------------------------------
+> > On Mon, May 20, 2024 at 04:06:30AM -0700, Vamsi Attunuru wrote:
+> > > +union dpi_mbox_message {
+> > > +	u64 word[2];
+> > > +	struct {
+> > > +#if defined(__BIG_ENDIAN_BITFIELD)
+> > > +		/* SSO PF function */
+> > > +		u64 sso_pf_func  :16;
+> > > +		/* Aura of the command buffer */
+> > > +		u64 aura         :20;
+> > > +		/* Command buffer size in 8-byte words */
+> > > +		u64 csize        :16;
+> > > +		/* Command code */
+> > > +		u64 cmd          :4;
+> > > +		/* VF ID to configure */
+> > > +		u64 vfid         :8;
+> > > +		/* Reserved for future use */
+> > > +		u64 rsvd_85_127  :40;
+> > > +		/* Work queue completion status byte offset */
+> > > +		u64 wqecsoff     :7;
+> > > +		/* Work queue completion status enable */
+> > > +		u64 wqecs        :1;
+> > > +		/* NPA PF function */
+> > > +		u64 npa_pf_func  :16;
+> > > +#else
+> > > +		/* VF ID to configure */
+> > > +		u64 vfid         :8;
+> > > +		/* Command code */
+> > > +		u64 cmd          :4;
+> > > +		/* Command buffer size in 8-byte words */
+> > > +		u64 csize        :16;
+> > > +		/* Aura of the command buffer */
+> > > +		u64 aura         :20;
+> > > +		/* SSO PF function */
+> > > +		u64 sso_pf_func  :16;
+> > > +		/* NPA PF function */
+> > > +		u64 npa_pf_func  :16;
+> > > +		/* Work queue completion status enable */
+> > > +		u64 wqecs        :1;
+> > > +		/* Work queue completion status byte offset */
+> > > +		u64 wqecsoff     :7;
+> > > +		/* Reserved for future use */
+> > > +		u64 rsvd_85_127  :40;
+> > > +#endif
+> > > +	};
+> > > +};
+> >
+> > The ifdef is cute, but not correct, sorry.  Please use bit shifts to
+> > handle this properly without any #ifdef needed at all.
+> >
+> Ack, will fix it next version. Thanks for the suggestion.
+>=20
 
-This confirms Yu's theory that the zpools fragmentation is not the
-main reason for the problem. As Vlastimil said, the setup is already
-tight on memory and that commit may have just pushed it over the edge.
-Since setting ZSWAP_NR_ZPOOLS to 1 (which effectively reverts the
-commit) does not help in v6.10-rc2, then something else that came
-after the commit would have pushed it over the edge anyway.
+Hi Greg, the ARM64 cores on the Octeon CN10K hardware platform always run i=
+n LE mode and this CN10K DPI PF driver is only supported on Octeon CN10K pl=
+atforms as the DPI PF device is an onboard PCIe device. Can I remove the BE=
+ format and only define the LE format for the dpi_mbox_message structure?, =
+other HW device drivers of Octeon CN10K platform also only support LE forma=
+t.
 
->
-> Trying to alter the lowmem and virtual mem limits next as Michael suggest=
-ed.
+Regards
+Vamsi
 
-I saw that this worked. So it seems like we don't need to worry about
-the number of zpools, for now at least :)
-
-Thanks for helping with the testing, and thanks to everyone else who
-helped on this thread.
-
->
-> Regards,
-> Erhard
+> >
+> >
+> >
+> > > +
+> > > +static inline void dpi_reg_write(struct dpipf *dpi, u64 offset, u64
+> > > +val) {
+> > > +	writeq(val, dpi->reg_base + offset);
+> >
+> > No read needed after a write to ensure the write made it to the
+> > hardware properly?
+>=20
+> Yes, as it's an onboard PCIe device, writes will happen properly. I will =
+modify
+> it as write followed by a write barrier to avoid any reordering.
+>=20
+> Thanks
+> Vamsi
+> >
+> > thanks,
+> >
+> > greg k-h
 
