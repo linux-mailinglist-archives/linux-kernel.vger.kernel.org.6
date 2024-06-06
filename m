@@ -1,174 +1,124 @@
-Return-Path: <linux-kernel+bounces-203680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E35578FDEFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:43:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 368848FDEFF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:43:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5865E28D618
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:43:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBC3AB226CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 06:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC556131E38;
-	Thu,  6 Jun 2024 06:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1506E7D07E;
+	Thu,  6 Jun 2024 06:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nsb83SIM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EWfcv31u"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0577E43AB7;
-	Thu,  6 Jun 2024 06:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947EA77A03
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 06:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717656176; cv=none; b=NBHRFvsyj3z6g8kOqps5sKzthR2W4tQ8ewIwg+cMO8QChuCQE1CtKZzvwRr79EcuarbZ4kkJCBUidPm2O1zJIbCcHrdS4lDbC9uj1p/gQqsyCiCbTV8H+If5kwTsRu1bA+8suPPrEZcSaScSYhZG5AdXPEOHFbqmzIiLiHJbTPk=
+	t=1717656205; cv=none; b=H0F0r5nvK3kQvDA57F4Hbff1dQThCe3uVm7D4OZDyDQzuXXadeIYoshvTgt0qvzaoMBvPotZut9yyp3Q8B9UCXbrufMM03jTXNBZUP0aUy9uQ3OoaMqnGe28G8MPGFpSV7JcrwY3RUKkT8K1zYS/UhWwqsR0g6LulMAwhCgcFCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717656176; c=relaxed/simple;
-	bh=IVm4GBK+EUL7qtaYcd3QzD3U1t+bEREQP2cYVxz4d/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=LouuWxZaVmYnHlSPzyaQBJGQsl4YtdXp8ZSxTRH4BMyrt60MFvtBH3EDcpCnnOV4J49wkpxOUI6iMf005nh7QXa0j/L2C9RExHEcAmMW+Rs4t3oa0Yl52CLt7ryzICL7LNZKROcdA6giWlEgAls61lvi/arnTJ0tYZhJ7ZIkF6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nsb83SIM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4708C3277B;
-	Thu,  6 Jun 2024 06:42:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717656175;
-	bh=IVm4GBK+EUL7qtaYcd3QzD3U1t+bEREQP2cYVxz4d/M=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=Nsb83SIMVtw+ghHxIM2giiqGIlGzPuX7YNekKTNZNk6IQVJaEDDRiKTCelplHLdaJ
-	 sNDn31y/YHTSGIFy/K383Z+XjWPVJVY0ydW9Njy16uOyZpEKnwj4e5XWD0ITjwBoxn
-	 hRwyfxUvplo27U3yxgYAcUam83yYPRQVKxI91I0Bbb2Vcm0PsjXC/qnrE4w+EFm06e
-	 6I9RVh5VO6kPhB+fIExmM44yF6V5pH1NUK+tewQS9R1MjoE5dIwRGzoxzZpQgenfsd
-	 pwvVEoIIUeW7JLv0dOpcHTvjg5E7rchjC/hfrsrl15QwBn1ijs8jBuY6clcDVc+v32
-	 XoNa3UC+hZLuw==
-Message-ID: <5f8ccd9b-d419-4a77-9e05-c2290c40b9d0@kernel.org>
-Date: Thu, 6 Jun 2024 08:42:50 +0200
+	s=arc-20240116; t=1717656205; c=relaxed/simple;
+	bh=dRNutEV6Irzt0DuSYxtF3OmJPSVdRGj+rXxKF2Yers4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TNI6sRoeQ/2swkk9MG0Ym0WCgxPMKRiTGi7J/C8PEMK2+zx/eo+aAGCC+1puSIcrXvOMW65me6SQBNqp3gqPQBp9Zq7YzKHiNrkVYxrTACrFaMXTH0dHabPhB8I+rG6B7f/Ee7jZughpQDuk8D2H9s6ycTh8J5XNF5QtSYV+Ol0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EWfcv31u; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2e724bc46c4so6216991fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 23:43:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1717656201; x=1718261001; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zHyc1Tt3pV1FQtb9e1735Ph8tUakhCj1D2RUXjVww7w=;
+        b=EWfcv31ujQG+2Z8kIPY8ZXJpO7H0eRco60b90p0+RjsI3xBPnJxpa3tzZGppxSvkzm
+         7YjVi8i9zdAqlleSjt6idMdy7KIkOPmIol5HG26M5xa9Bj30eWLvyP8C1IoxZ4I9xZ8W
+         7VMFOgStFDXmMnTX8Cwoik9kv0CI5gecQVAmWWTspK9YPnMYvw9UqjCxW9gwqT80C2WY
+         PzIx6XoOeN6/BocRHq/WwAtrdPq0D6oqeJEZzo6W4pB4pNypiSVjkq2U7paicbeYWDhL
+         deYfH7x4khJC3aE+hCQvnQY7qo7OrgfuW9m895A3fLRJx04uIFGb0GuG0tACvRMQTecv
+         Zuyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717656201; x=1718261001;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zHyc1Tt3pV1FQtb9e1735Ph8tUakhCj1D2RUXjVww7w=;
+        b=H7UTRmy8GgEH+e1HCa7li7AjloyTTXu7t9a4erDxU1JC+Qz9eDoRqlwoBCBNjeXzov
+         Mvu8WZf10WNL4q8R09V9YFjBghrO3TW/0cT10bIrMXUdTDaHkrJLi1dZwfGrLWDwQiHr
+         ItlmEzFicLAtC1U8tMXDiHdRdotuhiEwQVQtunwYjRIzin4wR5n2eXlqc4yTkIzH75iJ
+         SPyDA6A5nP2ZM5Fy9ryaBGvQe2c273DJyMRuIHpfmxcCY6j63gcZLrdEmXdDinY0QJAU
+         En+aBsSFQMgAWeV4hp1Z1UKyrQeo0whSqi7apvPR+USYhFgty89Q06pcUVrBAKtrrzJB
+         /tdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvRsfouSNDF9Jw9QDmvr54BafRMSmcCxPFfO1lGOmloviWqGUxfPHMPKxAL7idAOJNgMr0gyxIay74nyy6/scZUd/36sD9IW8XMjak
+X-Gm-Message-State: AOJu0YyNkoGb2LI2lPSN4HMuCljyYvO+GVvijtd9K4gtPL6pG8f5dPyO
+	Qf/7KXT7Lh7YyEE8Tz5LE6SgfNxMQs6pMRqTDocXfDuHph+nA4CKC1aLI9DSnFA=
+X-Google-Smtp-Source: AGHT+IGAEevHPMa1Q4hJfThfhSVeLwcacpZB+ndTosr+5ZZ71YchIkHJHegUKocqZHRkD83kPgRVCA==
+X-Received: by 2002:a2e:8ed4:0:b0:2ea:7f57:5a74 with SMTP id 38308e7fff4ca-2eac7a6c3ccmr25251421fa.42.1717656200730;
+        Wed, 05 Jun 2024 23:43:20 -0700 (PDT)
+Received: from localhost ([2401:e180:8882:8af3:26fa:edbd:5679:640c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd8136easm6473025ad.278.2024.06.05.23.43.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 23:43:20 -0700 (PDT)
+From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+To: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sasha Levin <sashal@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	stable@vger.kernel.org,
+	workflows@vger.kernel.org,
+	Shung-Hsi Yu <shung-hsi.yu@suse.com>
+Subject: [PATCH 1/2] docs: stable-kernel-rules: provide example of specifying target series
+Date: Thu,  6 Jun 2024 14:43:08 +0800
+Message-ID: <20240606064311.18678-1-shung-hsi.yu@suse.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] dt-bindings: remoteproc: imx_rproc: add minItems for
- power-domain
-To: Frank Li <Frank.Li@nxp.com>, Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
- "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM"
- <linux-remoteproc@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
- "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
- "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240605193409.1131220-1-Frank.Li@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240605193409.1131220-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 05/06/2024 21:34, Frank Li wrote:
-> "fsl,imx8qxp-cm4" just need 2 power domains. Keep the same restriction for
-> other compatible string.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> 
-> Notes:
->     pass dt_binding_check.
->     
->     make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8  dt_binding_check DT_SCHEMA_FILES=fsl,imx-rproc.yaml
->       SCHEMA  Documentation/devicetree/bindings/processed-schema.json
->       CHKDT   Documentation/devicetree/bindings
->       LINT    Documentation/devicetree/bindings
->       DTEX    Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.example.dts
->       DTC_CHK Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.example.dtb
-> 
->  .../bindings/remoteproc/fsl,imx-rproc.yaml       | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> index df36e29d974ca..60267c1ba94e0 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> @@ -59,6 +59,7 @@ properties:
->      maxItems: 32
->  
->    power-domains:
-> +    minItems: 1
+Provide a concrete example of how to specify what stable series should
+be targeted for change inclusion. Looking around on the stable mailing
+list this seems like a common practice already, so let's mention that in
+the documentation as well (but worded so it is not interpreted as the
+only way to do so).
 
-Then here should be 2.
+Signed-off-by: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+---
+ Documentation/process/stable-kernel-rules.rst | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
->      maxItems: 8
->  
->    fsl,auto-boot:
-> @@ -99,6 +100,21 @@ allOf:
->        properties:
->          fsl,iomuxc-gpr: false
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - fsl,imx8qxp-cm4
-> +    then:
-> +      properties:
-> +        power-domains:
-> +          minItems: 2
-
-
-
-Best regards,
-Krzysztof
+diff --git a/Documentation/process/stable-kernel-rules.rst b/Documentation/process/stable-kernel-rules.rst
+index edf90bbe30f4..daa542988095 100644
+--- a/Documentation/process/stable-kernel-rules.rst
++++ b/Documentation/process/stable-kernel-rules.rst
+@@ -57,10 +57,13 @@ options for cases where a mainlined patch needs adjustments to apply in older
+ series (for example due to API changes).
+ 
+ When using option 2 or 3 you can ask for your change to be included in specific
+-stable series. When doing so, ensure the fix or an equivalent is applicable,
+-submitted, or already present in all newer stable trees still supported. This is
+-meant to prevent regressions that users might later encounter on updating, if
+-e.g. a fix merged for 5.19-rc1 would be backported to 5.10.y, but not to 5.15.y.
++stable series, one way to do so is by specifying the target series in the
++subject prefix (e.g. '[PATCH stable 5.15 5.10]' asks that the patch to be
++included in both 5.10.y and 5.15.y). When doing so, ensure the fix or an
++equivalent is applicable, submitted, or already present in all newer stable
++trees still supported. This is meant to prevent regressions that users might
++later encounter on updating, if e.g. a fix merged for 5.19-rc1 would be
++backported to 5.10.y, but not to 5.15.y.
+ 
+ .. _option_1:
+ 
+-- 
+2.45.1
 
 
