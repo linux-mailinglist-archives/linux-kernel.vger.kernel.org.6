@@ -1,183 +1,136 @@
-Return-Path: <linux-kernel+bounces-204747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87CCB8FF324
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 18:58:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB9C8FF327
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:00:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EF9029242E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:58:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD2D81C22115
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFCC1990B5;
-	Thu,  6 Jun 2024 16:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224F8198E6E;
+	Thu,  6 Jun 2024 16:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ymO+zb85"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="he4tNRxK"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F4E198A24
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 16:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2001D17BC9;
+	Thu,  6 Jun 2024 16:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717693100; cv=none; b=P5KYS5lpsTqI8lndwnlkG+6WqFMLn/gUuaOWbK+hBWtbxxVzJzPuSc7VIFeqC09rT7Pz+HYLo8AN2krgA6Njf+SHnNqt2i9MiHqGZe2HNW+UOVgKctprcR7NUqeGGqP3x1EMCeQwxIghvEWxk0RmjeKlqW/xjOq4vo3gpC1w798=
+	t=1717693195; cv=none; b=RuR0Mk7ZUdFLLa2xS7uMJaZusHi5Rl6VUcQWhr/LsBiILIeCN5hU022GSqT5TK+k1kT290SF+BHP+vcIHcX3SqEnhfxG+vCkX8hCJi61IgUHBAGs/Mq6lGPJcdi3LtEWunYgVzxOo2NPj9hCQnL/eTvrsqTkx9SWHInFE2KvvVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717693100; c=relaxed/simple;
-	bh=4LAT/qwUx+hpUWMrCfCLSnOxPPMN46bQKs4JM+ecNVs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gLsa74cph1q0so/KkwG4QVXe+F80zNsWwGQ3bUyp3byfdR5d7+3dbMu0LymKyNh7GlyxLnwTNmn1noFpWt2MwWZFYHfRV7ajsUUt1rK7dx+zRsow1RAV/Usu1CQM0xaAcMh37yLB1Hp2uxia8T4WghT4M2N73tirGiWElsuGMdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ymO+zb85; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a68c8b90c85so156084366b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 09:58:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717693097; x=1718297897; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jylD5VdLotA86Z7MUVU8wz6TNgXb9980vHa3X2PNUNQ=;
-        b=ymO+zb85cAZLDHJE/Q2j4AcadlWeBcb6wnlFVDkSgfUydQUphDuqPFEh3fzOICf5Ug
-         S6930QhLrCEFBqOeEvijakHaPdZb4pcvdZFNyeeFn5OIxKUmLmreD+uAz4FxLtUYaT4i
-         8+igBhkXPEi91hwoCvk6LCC83a751kELtVORkwxyasdVO+JjZ9bJCP+8DK6PbIpkcdTA
-         DayoEFDxalP1IemDK6Al3zp7ltoiff5/CA5SRhaQ12t6LjsFDAwWv5EjIXHW/QUYoU+s
-         fADBKLlGmzTxFwErv1j3cfv/f94mdc6pGuUDPQBLNsyScEte5k+Kutvy5sJZYWR9Zqis
-         Yg7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717693097; x=1718297897;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jylD5VdLotA86Z7MUVU8wz6TNgXb9980vHa3X2PNUNQ=;
-        b=gvoBm5L+JcCuvRnJIH7gG5GTuJJh+C5WnEO5SobuO0Cz+EnH650sRbAY6sAaTINf7F
-         Xs8Z0sEk/Lkjz8gD4JOwg46SjDkXWcxDtSSegP9G5MVsEHeW4r7z1A4ptBOYnidDSO5v
-         oPw6efaz84gxaag5RRFwdfwb/usqogOZmEGaQSS/2HYIizaIW0fOtb9Bh2kRHRczggD1
-         ZXjq6PEsPTwcuSAvN4QpbyrgJErsXP8mGkW9aCZp7mzXCzYEJ1t+IPfP6m9bZUKBO9wQ
-         t21DFk1zngAyu0VXW25JYNQPUdmTNmNTwZRoUClctLb52z3hNuPI8we+IQ27MXh89GFX
-         4TNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWP/kqidi801ELx+JntKzeWxfy1HAAechMBu2o5/oEAwG5TYksf6OJY5t+4u6u0ewXxheZeXrYq6cSrd4k6HNZS+KCT6z1gWeo+rOYK
-X-Gm-Message-State: AOJu0Yz/YEvz8KnMngZDWcn8ZEzsdey3RJLxaTyhDQ5SjonfOjCxYXyJ
-	MsElxSpGYTSheS5A2Jvy3gy0Zd2QEV2cH7+xBCZsfQU2KKOfvqybHVg9HfWtgcAi3Gsn4bjna0d
-	uQVNJJsrc7pdhxivYhulvk1AzNAltsGfw2GlH
-X-Google-Smtp-Source: AGHT+IEy8tF4w5nFKpMjgp4LNCeJXDsMNuKu99RJBZQa2eob/f6gFlNSUxoAYqR0tlHBDkAdRThFWqNLt5Xt32HaUnk=
-X-Received: by 2002:a17:906:1453:b0:a68:3e32:384 with SMTP id
- a640c23a62f3a-a6cd7a7eb86mr10614366b.46.1717693096783; Thu, 06 Jun 2024
- 09:58:16 -0700 (PDT)
+	s=arc-20240116; t=1717693195; c=relaxed/simple;
+	bh=D4/sJ7G579ATfdpKyIQhqkiqbzrwiBfBbEjEgztDuto=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EmzQ8ceCxw7bQZY9cEMcHryuZeDXOGujmiqHufEfgqY71YOElJa+kLXE/ChlWoOTGm6r06vQVsap+xAlpe21mGfKZxA3GOodrQGSMafn86w0Jxt7Xqv40s65ALC6fUr/9HiFFMlAamM5/w3sIMhj0uDAAm/X/0pAULT0xZUUBH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=he4tNRxK; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 456995eW015810;
+	Thu, 6 Jun 2024 16:59:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=/qrU+GuE1okq3wtihZllgU
+	nZf/gejM7uP6FOIwJ0O4A=; b=he4tNRxK+/3NAnFAWMwmcWMAh3oMjBGEWA5d3J
+	hjKCcQuXR+DUhJ0o6t735HFPSPbALdKZGaw9q7m7qa2FYKJzmDGr9XE4pskG4ML0
+	kO0NDIn6Qzn0UeRkYeCGQJ3g/PblGbEdlSF5tp3IYtqi6lZLPXs+5b0ivjUh6qky
+	eyEKKnxvacvvu3K/5tbbqYyhzIvXLXNN8y07FTOJVQAFGOIDPbKWYe5rF9xh3yaj
+	syj76oRtDTFQd1n2QZr9yc26mw4kUB1QKh6mySXeJpcfe6M/3ebBsxewFwWdIawA
+	QDsGGlsUeHqpDpcdzuGJL3RBOqazjxMjG3v9Ga7N+zlbG/MQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yka7p939w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Jun 2024 16:59:51 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 456Gxotg005966
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 6 Jun 2024 16:59:50 GMT
+Received: from hu-ekangupt-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 6 Jun 2024 09:59:47 -0700
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+To: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
+CC: <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
+        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>
+Subject: [PATCH v4 00/11] Add missing features to FastRPC driver
+Date: Thu, 6 Jun 2024 22:29:20 +0530
+Message-ID: <20240606165939.12950-1-quic_ekangupt@quicinc.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530201616.1316526-1-almasrymina@google.com>
- <20240530201616.1316526-11-almasrymina@google.com> <84162ef4c695cb764454087ca0bc81082d4fac8d.camel@redhat.com>
- <CAHS8izNupu9u1zx9YD9KaNxahBeZeaajOUUSFePbQk+rfUFn+Q@mail.gmail.com>
-In-Reply-To: <CAHS8izNupu9u1zx9YD9KaNxahBeZeaajOUUSFePbQk+rfUFn+Q@mail.gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Thu, 6 Jun 2024 09:58:04 -0700
-Message-ID: <CAHS8izPw-R8MjZdgZTLcKoTe6=gSp1rh3GKZ9Q-Z7Txgc_RVjw@mail.gmail.com>
-Subject: Re: [PATCH net-next v10 10/14] net: add support for skbs with
- unreadable frags
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, 
-	Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: RxXvF9gBkk74CquWFlmVughuB-pj7vFF
+X-Proofpoint-ORIG-GUID: RxXvF9gBkk74CquWFlmVughuB-pj7vFF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-06_13,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ malwarescore=0 adultscore=0 spamscore=0 bulkscore=0 clxscore=1015
+ phishscore=0 mlxlogscore=772 lowpriorityscore=0 impostorscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406060120
 
-On Thu, Jun 6, 2024 at 9:49=E2=80=AFAM Mina Almasry <almasrymina@google.com=
-> wrote:
->
-> On Tue, Jun 4, 2024 at 3:46=E2=80=AFAM Paolo Abeni <pabeni@redhat.com> wr=
-ote:
-> >
-> > On Thu, 2024-05-30 at 20:16 +0000, Mina Almasry wrote:
-> > > diff --git a/net/core/gro.c b/net/core/gro.c
-> > > index 26f09c3e830b7..7b9d018f552bd 100644
-> > > --- a/net/core/gro.c
-> > > +++ b/net/core/gro.c
-> > > @@ -422,6 +422,9 @@ static void gro_pull_from_frag0(struct sk_buff *s=
-kb, int grow)
-> > >  {
-> > >       struct skb_shared_info *pinfo =3D skb_shinfo(skb);
-> > >
-> > > +     if (WARN_ON_ONCE(!skb_frags_readable(skb)))
-> > > +             return;
-> > > +
-> > >       BUG_ON(skb->end - skb->tail < grow);
-> > >
-> > >       memcpy(skb_tail_pointer(skb), NAPI_GRO_CB(skb)->frag0, grow);
-> > > @@ -443,7 +446,7 @@ static void gro_try_pull_from_frag0(struct sk_buf=
-f *skb)
-> > >  {
-> > >       int grow =3D skb_gro_offset(skb) - skb_headlen(skb);
-> > >
-> > > -     if (grow > 0)
-> > > +     if (grow > 0 && skb_frags_readable(skb))
-> > >               gro_pull_from_frag0(skb, grow);
-> > >  }
-> >
-> > I'm unsure if this was already mentioned, so please pardon the eventual
-> > duplicate...
-> >
-> > The above code is quite critical performance wise, and the previous
-> > patch already prevent frag0 from being set to a non paged frag,
->
->
-> Hi Paolo!
->
-> The last patch, d4d25dd237a61 ("net: support non paged skb frags"),
-> AFAICT doesn't prevent frag0 from being a non-paged frag. What we do
-> is set ->frag0=3Dskb->data, then prevent it from being reset to
-> skb_frag_address() for non-paged skbs. ->frag0 will likely actually be
-> a bad value for non-paged frags, so we need to check in
-> gro_pul_from_frag0() so that we don't accidentally pull from a bad
-> ->frag0 value.
->
-> What I think I should do here is what you said. I should make sure
-> frag0 and frag0_len is not set if it's a non-paged frag. Then, we
-> don't need special checks in gro_pull_from_frag0 I think, because
-> skb_gro_may_pull() should detect that frag0_len is 0 and should
-> prevent a pull.
->
-> I will apply this fix to the next iteration for your review. Let me
-> know if I missed something.
->
->
+This patch series adds the listed features that have been missing
+in upstream fastRPC driver.
+- Add missing bug fixes.
+- Add static PD restart support for audio and sensors PD using
+  PDR framework.
+- Redesign and improve remote heap management.
+- Add fixes for unsigned PD. Unsigned PD can be enabled
+  using userspace API:
+  https://git.codelinaro.org/linaro/qcomlt/fastrpc/-/blob/master/src/fastrpc_apps_user.c?ref_type=heads#L1173
 
-Actually, sorry you're right. As written, d4d25dd237a61 ("net: support
-non paged skb frags") prevents frag0 from being a non-paged frag. I
-can just drop these excessive checks with no downside. Sorry for the
-noise!
+Changes in v2:
+- Added separate patch to add newlines in dev_err.
+- Added a bug fix in fastrpc capability function.
+- Added a new patch to save and restore interrupted context.
+- Fixed config dependency for PDR support.
 
---=20
-Thanks,
-Mina
+Changes in v3:
+- Dropped interrupted context patch.
+- Splitted few of the bug fix patches.
+- Added Fixes tag wherever applicable.
+- Updated proper commit message for few of the patches.
+
+Changes in v4:
+- Dropped untrusted process and system unsigned PD patches.
+- Updated proper commit message for few of the patches.
+- Splitted patches in more meaningful way.
+- Added helped functions for fastrpc_req_mmap.
+
+Ekansh Gupta (11):
+  misc: fastrpc: Add missing dev_err newlines
+  misc: fastrpc: Fix DSP capabilities request
+  misc: fastrpc: Copy the complete capability structure to user
+  misc: fastrpc: Avoid updating PD type for capability request
+  misc: fastrpc: Add static PD restart support
+  misc: fastrpc: Fix memory leak in audio daemon attach operation
+  misc: fastrpc: Redesign remote heap management
+  misc: fastrpc: Fix ownership reassignment of remote heap
+  misc: fastrpc: Fix remote heap alloc and free user request
+  misc: fastrpc: Fix unsigned PD support
+  misc: fastrpc: Restrict untrusted app to attach to privileged PD
+
+ drivers/misc/Kconfig        |   2 +
+ drivers/misc/fastrpc.c      | 635 +++++++++++++++++++++++++++++-------
+ include/uapi/misc/fastrpc.h |   3 +
+ 3 files changed, 527 insertions(+), 113 deletions(-)
+
+-- 
+2.43.0
+
 
