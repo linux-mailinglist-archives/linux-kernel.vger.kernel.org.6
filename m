@@ -1,95 +1,122 @@
-Return-Path: <linux-kernel+bounces-204594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 791508FF0FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:44:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C7DA8FF103
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 17:44:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0847128DDBD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:44:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B21028DD25
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 15:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBABD197553;
-	Thu,  6 Jun 2024 15:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D685119753C;
+	Thu,  6 Jun 2024 15:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="j+2+QVzm"
-Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="bgFJKe5R"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBE119752E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 15:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6A319751B;
+	Thu,  6 Jun 2024 15:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717688640; cv=none; b=HJfAln+dgQ6X/eP5n++lCQ9m/pNI40cRtNB35/antaTvTvC31sBw1DcZTj1qf86DKUX3nOic0CDXuqMRqXBGKQ1xd6NCHIzD/JBf18/eZK7aOqKhCo4skcN+yR1F7E5z3YfzWVLa9o3CtcaXf3rxARlSL6fRHn49Q7SERwGUOCE=
+	t=1717688681; cv=none; b=juBrSkbv3K3Tncip8ZesNQC2TkGaZmZshhUYXnTPt/BQWYIRyCvhuDK/DcmTKN9eSNcoWMmA47a4Uz/8yzSCzgch5uZ9+HX8O6T/D80qH6PRjWbBSqD3OjWCQXgtZlvwDYDUjpBS0T+HTs5eNaGiyReoy0xkwPyYh82PqRd3Tv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717688640; c=relaxed/simple;
-	bh=g0ka9Yi/6e35bQZKWyOqyvyBXHQ2ygEVahWRGWso0iM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fAVmm3QNtNr6FPTJhV6QiQJOZbB2FSALoWL4WNsv/shbcPNwkiezuiWIQPIoJD4ztYeK5Ll84fsJLh1K0SPtFiIBEbrpTid+0HqMuX3icymHMLP3+LS6gPfC34S2/Q0ozm1meKrM+tsxPbZBlknBYlyhCpjHEHbjnLjD6vN1yu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (1024-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=j+2+QVzm; arc=none smtp.client-ip=185.136.64.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20240606154348b42ee745429a6a3bac
-        for <linux-kernel@vger.kernel.org>;
-        Thu, 06 Jun 2024 17:43:48 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=diogo.ivo@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=XbyzhJfWKUAGEPA2NhfvVHDBuogfHdsp7Gu4BWpi/40=;
- b=j+2+QVzm+DUQAZjogAWHPmpQJ35666hy5aZvOS81p+XlGSKsKVHWqUzLPctRbPsIO7gu9b
- pTlpOFV5CHZIOsF9ujIu2k3nHGbo/n/91brnCBbT4fM9/pnXhpwN+2vmoK+FguvlN2n5opyH
- 3r6LVsXKFRuyllnM/9M0hdNhoZLJg=;
-Message-ID: <852e7697-449c-49ea-9d83-d166fd235ff1@siemens.com>
-Date: Thu, 6 Jun 2024 16:43:46 +0100
+	s=arc-20240116; t=1717688681; c=relaxed/simple;
+	bh=p3+HcpSv7KTH1ay6GWfjRUjkVsJ8ZSafrdi9MyeRX6I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WdZi8u9HHx6+xVLlfO/ckwiRoV+1NEy8JAX5XYL2B6IhkUP0DEmmo5wVET6MrxVKqH34nNxkJEIaoJy2kRzBVRXkkJsDmyYHd90DtR4vKm3LF7ILtqS2W7AOcZrmd2M4/9AYvu9ClPIHa7Y6qr4BtGo61UmQ0QByPiYFObglnAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=bgFJKe5R; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Vw7tW20YWz9sp2;
+	Thu,  6 Jun 2024 17:44:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1717688675;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QZa52MMCmXYplUj6krZ/HIOPht+wCpFtBELuCgPO92c=;
+	b=bgFJKe5RQ9IuY8O2Z+SUI1nDjmdpsIDw2Nb50qS2PsLJ+LOwn7ApW5s1ky5g6Zgws/gLtB
+	eI+GIZcEL1LMTGmT5dJCmABS/CiEKj/reeZTElDZ2GXagdunszv95XA8vn51cvzfmWWIUl
+	XEi2NdOt19+9R27wXfaxkQtlAMTV8Va4tabVAfdLqfqfXEQ7b2zIS4KdD6VbFBEpmBwR00
+	GHj18TX3CK6gIjnYpHiW9AH2WkKl9Q/+qN6IeZ8Do/dFhnK3G7oqxAtLfUJYUU1LgngaOy
+	agd+/reIa7GtDAv6o0aodN0bjRZQkLqJ+YyX2rcuAhpvOK9+rR6llodljOYAFg==
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Shuah Khan <shuah@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Zi Yan <zi.yan@sent.com>,
+	linux-mm@kvack.org,
+	gost.dev@samsung.com,
+	mcgrof@kernel.org,
+	willy@infradead.org,
+	kernel@pankajraghav.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: [PATCH v2] selftests/mm: use global variable to not optimize mmap read variable
+Date: Thu,  6 Jun 2024 15:44:28 +0000
+Message-ID: <20240606154428.672643-1-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v2 2/3] net: ti: icss-iep: Enable compare events
-To: Paolo Abeni <pabeni@redhat.com>, MD Danish Anwar <danishanwar@ti.com>,
- Roger Quadros <rogerq@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Richard Cochran <richardcochran@gmail.com>, Nishanth Menon <nm@ti.com>,
- Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jan Kiszka <jan.kiszka@siemens.com>,
- Jacob Keller <jacob.e.keller@intel.com>, Simon Horman <horms@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240604-iep-v2-0-ea8e1c0a5686@siemens.com>
- <20240604-iep-v2-2-ea8e1c0a5686@siemens.com>
- <c518f6dd6cf9e92469d37a7317a6881ebed6a8c1.camel@redhat.com>
- <a08ff9c7-eac7-409e-8f22-5ad1fa0cf212@siemens.com>
- <c0de46a0bd15350620d5d611f07cf87b2a223d27.camel@redhat.com>
-Content-Language: en-US
-From: Diogo Ivo <diogo.ivo@siemens.com>
-In-Reply-To: <c0de46a0bd15350620d5d611f07cf87b2a223d27.camel@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1320519:519-21489:flowmailer
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4Vw7tW20YWz9sp2
 
-On 6/6/24 2:49 PM, Paolo Abeni wrote:
-> On Thu, 2024-06-06 at 14:28 +0100, Diogo Ivo wrote:
->> With this said it should be possible to change this spinlock to a mutex as
->> well, since all the possibilities for concurrency happen outside of
->> interrupt context. I can add a patch to this series doing that if you
->> agree with my reasoning above and find it beneficial. For this some
->> comments from TI would also be good to have in case I missed something
->> or there is some other factor that I am not aware of.
-> 
-> It looks like that most critical section protected by iep->irq_lock are
-> already under ptp_clk_mutex protection. AFAICS all except the one
-> introduced by this patch.
-> 
-> If so, you could acquire such mutex even in icss_iep_cap_cmp_work() and
-> completely remove iep->irq_lock.
+From: Pankaj Raghav <p.raghav@samsung.com>
 
-That is a much better approach, I'll do that and post v3.
+create_pagecache_thp_and_fd() in split_huge_page_test.c used the
+variable dummy to perform mmap read.
 
-Best regards,
-Diogo
+However, this test was skipped even on XFS which has large folio
+support. The issue was compiler (gcc 13.2.0) was optimizing out the
+dummy variable, therefore, not creating huge page in the page cache.
+
+Make it as a global variable to force the compiler not to optimize out
+the loop where we read from the mmaped addr.
+
+Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+---
+Changes since v1:
+- Make the dummy variable as a global variable(willy).
+
+ tools/testing/selftests/mm/split_huge_page_test.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
+index d3c7f5fb3e7b..c4857de2c042 100644
+--- a/tools/testing/selftests/mm/split_huge_page_test.c
++++ b/tools/testing/selftests/mm/split_huge_page_test.c
+@@ -23,6 +23,11 @@
+ uint64_t pagesize;
+ unsigned int pageshift;
+ uint64_t pmd_pagesize;
++/*
++ * Used by create_pagecache_thp_and_fd() to do mmap read.
++ * Made it as global to avoid compiler optimizing out the variable.
++ */
++int dummy;
+ 
+ #define SPLIT_DEBUGFS "/sys/kernel/debug/split_huge_pages"
+ #define SMAP_PATH "/proc/self/smaps"
+@@ -300,7 +305,6 @@ int create_pagecache_thp_and_fd(const char *testfile, size_t fd_size, int *fd,
+ 		char **addr)
+ {
+ 	size_t i;
+-	int __attribute__((unused)) dummy = 0;
+ 
+ 	srand(time(NULL));
+ 
+
+base-commit: d97496ca23a2d4ee80b7302849404859d9058bcd
+-- 
+2.44.1
+
 
