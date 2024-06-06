@@ -1,129 +1,128 @@
-Return-Path: <linux-kernel+bounces-203853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C42618FE142
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:41:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABAF68FE146
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67144B24316
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:41:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFD3B1C21599
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050B713C8E0;
-	Thu,  6 Jun 2024 08:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iTaJJJdi"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C431313D25D;
+	Thu,  6 Jun 2024 08:41:10 +0000 (UTC)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5AB3C28;
-	Thu,  6 Jun 2024 08:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8331213C69A;
+	Thu,  6 Jun 2024 08:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717663268; cv=none; b=Dmwhgn6/sb+ea8CX80/F3hwSLR/+iYfVWoZaP1mHCTC6lhg5VO0oP2LRF22TD7QJHkGPHOW7uJRdh2e4Avsu7Rb0RqMlbXa5etw3BksVj5zJE6VOMTiR+z5oMNtoLqReE52eII7LpXk0rWGXj6DocB1y91u7GLC2uICiF4Ztoy0=
+	t=1717663270; cv=none; b=sVR/Vp/Y9PyRd5vEf0GYfSmMyB8nEFxsY2jm3PHsIVl7v5mWHDoXr2pIm4HCur+ecdL7M8Y9rJv+EvPUgVYeCZtsQcJiHI8QeN5eizKtuzBnayMP9N6FnObxyxZOnCc8QQacZK8TuEyFMSSbrmz8Zj5CuCLJ709jIXQ3S0141as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717663268; c=relaxed/simple;
-	bh=e/VCNqfFaWy7ItYcqEMDM5/mC8drdFcJnkaRYXy5E1o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qeqj/NPkXuv+6cz1qvmB5bnMVmVQzXprP7NY3CG/dSdQOElTRThCuu6B3Zhig5v6rGaYKkALfrZCReDJhbmdOmc0G8+nquRH+tDAJipoivnOj2I6s/GbW6fdo1m7R5b4haIxqJMCJvu61CYbbopgfSgpz7hj05GqPy8HP4QIwd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iTaJJJdi; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1717663246; x=1718268046; i=markus.elfring@web.de;
-	bh=e/VCNqfFaWy7ItYcqEMDM5/mC8drdFcJnkaRYXy5E1o=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=iTaJJJdiHHoU2vqr6/pTK33mLIrxRUtim6UtXSwArVU0EkuO5Q1Xgldt7Z5i5xTf
-	 E4MAxX1igCPy4GxnZ3mSEbnt7ugujb1jUQ90g+44KJC5keH7fiqCofMbZ2atUYrOl
-	 uQQr47xzX77QNX0xU2qlq+vLNyBLOYNPN+GHrSDet/nj6H21ytMyZoumCXcm54J3N
-	 PIg7KdaIZ3jXmumtpW/l9k8jJ2YXtdUu1n+exJAlK4KkXtS+/ru/Y8mws751S/mmp
-	 lwlJ4kCboeBXG/UvhteMKzVgFwMZUGGppoRnEIMyUsa+JQpp1i3CZAwNQdb0bj3kP
-	 RI6B+n+uLl9LBMXt2w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MsrhU-1sZ12U0G2C-010a0Z; Thu, 06
- Jun 2024 10:40:46 +0200
-Message-ID: <a3363ad5-26ff-45a6-841b-b090baa5a19d@web.de>
-Date: Thu, 6 Jun 2024 10:40:44 +0200
+	s=arc-20240116; t=1717663270; c=relaxed/simple;
+	bh=kLTF0LF86rZ6TPdKMpFHXRAynse2+A4IFt/K7Y1MS70=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uiIK6IDn+DWQTo0oOqUBjCsNChZ6HX0uv6lZC9N5qIM39O2/eOWX8b3kC5uP0u42JW4fTEdi+wMAD15+kVllunVrY+Egy91gjNoZJkU3GBjpGcuKbwPGnHb6S1svfGWnoyPy8/Cu5VCD3t7+VRhtaVANs5fhn+mrjYLA11nBujM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-df771b6cc9cso769464276.3;
+        Thu, 06 Jun 2024 01:41:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717663267; x=1718268067;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7rJJ6wIAGO4z93hTC8lSOsbCqJndTTd+qtAeIcf8Fus=;
+        b=f5kyYoLvcn5+GN0aS8N90BrEcw65dfRkwKqHtfN0fuFDSecYxTggcsqTe0I8zon435
+         YTurHrtkjcQ8171JaHIA/oo6nDCB3UUR4cwomfCW/wk763amrYxr1mmQVHyYKs/izpFP
+         R6zQtT/2cqHQnJ7fGfTL1baHMp38z+qknXKXr/KCEtB3Led1D2j54NLqJDG7IM9TBbfd
+         XQPsqf17mQMO8SJ1r3ME74y9xpOM3iMuYgxrSYR1oHJL/J9ldeR2E9W2SGqS/dX8upjo
+         +s5aYaoGBjDbXD7XXiFgo3S/OjB0MKRXmUrHyDxXyIJVp3FBg7Zx72C64a0KTdnSAZ4I
+         r7sA==
+X-Forwarded-Encrypted: i=1; AJvYcCXEsM6s7WwTnlDG4SMTCqaT/uN7CU+wxSEJN+BJ89ZkttsvZFXltUrg2qGrSEGiW90pB/3WuU2B5hnbAPRnNCuJFZ+CYIopwavv0iMuc98mTb8Gb9apuFmXbOy8tARqG4I3bvKws5QYhTAxpgSSeZKrfMc7C7Jj6dZib3HADutTZovnf3SghugNfVwH32G2yDralUhMkFVWGJmmIxxkshd67vLyZqzHiA==
+X-Gm-Message-State: AOJu0YxW9xvht2r6iCxXy6zIfmYFFsK3/RGy7TrbOMqN2MbOYxIUZV99
+	fOsl/YE2Yo/gzEItKcSHYCQvtUrAnUXrIGg/xBY/eIG1DQSK2SytJ+SlX4L6
+X-Google-Smtp-Source: AGHT+IFj2XrgSOkLCdkhrx7rLI/AhecH+wnyPU0ydigPIFlIDaLicwSVWuTSA8MkE4PaXgGrdk6d7w==
+X-Received: by 2002:a25:6fc5:0:b0:de6:1a66:3e4d with SMTP id 3f1490d57ef6-dfacad0c760mr5104885276.59.1717663266640;
+        Thu, 06 Jun 2024 01:41:06 -0700 (PDT)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dfae52bc078sm204469276.7.2024.06.06.01.41.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 01:41:06 -0700 (PDT)
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dfab4779d95so736549276.0;
+        Thu, 06 Jun 2024 01:41:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVa09VyOL9KZ0WRNH6u9h8ll9Qr641bTFkvUl9lnm2CLAbgMD4Giq4G3Qgp6Y3MuAcX9yJ5+ir50F6xkdYnq7jhQYuOvGYeSgB8LEdtdbuc2TU6QA6FuwFWQDa27uT0jjh7gT9arOeSR2X98tKUiJ0rmXeqpcCSC4EKKwVRY1wu90OfpkdlxTfz6SDr5p9/iVQsmSvaGiCfTQZEtvsHmaO8ObG8IIIqdA==
+X-Received: by 2002:a25:948:0:b0:de5:507a:7378 with SMTP id
+ 3f1490d57ef6-dfacacedf3emr5460184276.45.1717663266094; Thu, 06 Jun 2024
+ 01:41:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: usb: typec: anx7411: Use scope-based resource management in
- anx7411_typec_port_probe()
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Xin Ji <xji@analogixsemi.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <889729ac-3fc5-4666-b9f5-ce6e588a341a@web.de>
- <ZmFqWxqOsd6FxD3l@kuha.fi.intel.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ZmFqWxqOsd6FxD3l@kuha.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20240530173857.164073-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240530173857.164073-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240604153612.GA839371-robh@kernel.org> <CA+V-a8tWxGBkuOY=G3RaB_0NXS3ShE-nL+5t49=_mJGvo6j6yQ@mail.gmail.com>
+ <CAMuHMdWvdvmt42Wy=5Do2MeCRNbLOd2c8Nra2RFQtumnmZod_g@mail.gmail.com> <CA+V-a8sbjD=KghOmw6OEWXxbbPkmW-ycwuxFxh43GL3nKhLWxQ@mail.gmail.com>
+In-Reply-To: <CA+V-a8sbjD=KghOmw6OEWXxbbPkmW-ycwuxFxh43GL3nKhLWxQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Jun 2024 10:40:54 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWE3ZsNZ_WgwhmOEEqCMNUdoskVf6C=QJgThsK0kJK8Jw@mail.gmail.com>
+Message-ID: <CAMuHMdWE3ZsNZ_WgwhmOEEqCMNUdoskVf6C=QJgThsK0kJK8Jw@mail.gmail.com>
+Subject: Re: [PATCH v3 01/15] dt-bindings: pinctrl: renesas: Document
+ RZ/V2H(P) SoC
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Paul Barker <paul.barker.ct@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:XYMNeB+wdOJ+rY7H6hGuDKhAA3nTC8k5yav9AqBoPIX5FWvDPnH
- 6ApVFN7ysrNQIhsKvfWF8eYigC+mk26QUPsxczK1hO3iTxqCBa0CK4pu46VcTme5WF2kJCu
- 8CCrJNUDUzmaOmKsUBBO+DyJioOWkdDEtzVwCtyUDesLERN/gYVwty4xuNxte490MelW7kY
- JaWu0TrzB41dMqZjEzXvA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:krzoOp3aQ5A=;zesfMb/xqfq0vCU8okDGwkUCe4q
- 1pVB9tV7kv4OE5lAC/LxHwRibJirnVTsd8mymXfoE4o3rQhxzudx1W4UXBy9X0jt9EWq5iOAz
- Kw5exO/AAJl0swJbMiT71OgSZ4TMnX+laK2ilm4zYlMbaUM/4/859jBMXkw7mYsHFh/5MLe/k
- lVoJvLAv6GBiPASdVx3bQwrPj0X/KLwPWcj1gbMv++wa5Yf5BmJLWpSmxRFwcE0yDpVrrjE7Q
- 4YemhtGbSUsGfTaU/g8JM7mIKaIqo2Qr3lwjq4WhIxuZNb6jTv/r6viJAvEu8vn5rODOedjpi
- LH7OPslCj86E3dIsGWXFTaO1HnRxF3eoed6psPfZ31lvsuLv1HKPJ38kqZf5Mq10X/M+IYRiy
- 8ea7k4CARWwtIhrzD4zO27xE8hyg5fK3jlfv+wk96M5jIsvqkZ2HBc3XfYnPbPtxkB5148Kmi
- AtYhOQvypXnJt1rqNexM1M2/179p8ctEhnYDV7Ee6IIYVKg+i7JeioDssWOtpJIEiF3/NUAZ0
- vp+lZaT7XQ1avb6Bf9mFrOXWVc5lq3h2J/86uWuIaS4Gj6Bns/qCzNdTf9Ph7QvHEtxjfxbxI
- FnAtJ3CKa5qBTyiIJ/1S5jzq4e7Khy7J/4PKIj7N/P/QIqF5KIMT+Xh4tyVYNWynaK1y7ajZt
- 53pZHOvGSEHtSG+C0Lcj/ZWHV3Za5wJ3D//JdLola6FbklRwj+G4BnGYsjxwxisbiyfoKmVJU
- 4eY42iCq3IsH2eEFE5pLpMXebuWyELR/GBeaVGly+sqVKgI3rcysLmbWwuBKxf9JVa4c5PU1m
- pjQ1rpq0thtZL2A1YnN4LlFglq46zgkrWpRCaVS56AC1w=
 
->> Scope-based resource management became supported also for another
->> programming interface by contributions of Jonathan Cameron on 2024-02-1=
-7.
->> See also the commit 59ed5e2d505bf5f9b4af64d0021cd0c96aec1f7c ("device
->> property: Add cleanup.h based fwnode_handle_put() scope based cleanup."=
-).
->>
->> * Thus use the attribute =E2=80=9C__free(fwnode_handle)=E2=80=9D.
->>
->> * Reduce the scope for the local variable =E2=80=9Cfwnode=E2=80=9D.
->>
->> Fixes: fe6d8a9c8e64 ("usb: typec: anx7411: Add Analogix PD ANX7411 supp=
-ort")
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Hi Prabhakar,
+
+On Thu, Jun 6, 2024 at 10:38=E2=80=AFAM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+> On Thu, Jun 6, 2024 at 8:13=E2=80=AFAM Geert Uytterhoeven <geert@linux-m6=
+8k.org> wrote:
+> > On Wed, Jun 5, 2024 at 11:39=E2=80=AFAM Lad, Prabhakar
+> > <prabhakar.csengg@gmail.com> wrote:
+> > > OK, I will fix the above and send a v6 series.
+> >
+> > Please don't drag it out that long ;-)
+> Oops, that was a typo.
 >
-> Was the fwnode leaked, or why else is this a "fix"? It's not clear
-> from the commit message.
-Can you notice that fwnode_handle_put() calls were forgotten
-in the mentioned function implementation?
-https://elixir.bootlin.com/linux/v6.10-rc2/source/drivers/usb/typec/anx741=
-1.c#L1140
+> > As the rest of the series looks fine, a v4 should be sufficient.
+> > Actually a v4 of just the first patch would be fine for me, too.
+> >
+> As agreed patch 02/15 needs dropping, with that patch 07/14 ("pinctrl:
+> renesas: pinctrl-rzg2l: Add function pointer for locking/unlocking the
+> PFC register") does not apply cleanly anymore. Maybe I'll just send v4
+> for the entire patches?
 
-I propose another code cleanup accordingly.
+Fine for me, and up to you.
+I can easily drop 02/15, and do a s/BOWI/B0WI/g before applying.
 
+Gr{oetje,eeting}s,
 
-Will development attention grow anyhow for information in the available
-API documentation?
+                        Geert
 
-Example:
-device_get_named_child_node()
-https://elixir.bootlin.com/linux/v6.10-rc2/source/drivers/base/property.c#=
-L839
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Regards,
-Markus
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
