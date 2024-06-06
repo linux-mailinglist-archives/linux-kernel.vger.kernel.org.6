@@ -1,104 +1,103 @@
-Return-Path: <linux-kernel+bounces-205032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF4A18FF67A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:10:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C268FF680
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 611121F21B4B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:10:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B4231F257F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3011713C819;
-	Thu,  6 Jun 2024 21:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9944196C7D;
+	Thu,  6 Jun 2024 21:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ku4tgJoO";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="SHosXewM"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="DUUoGUVc"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2058.outbound.protection.outlook.com [40.107.241.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DB51BDEF;
-	Thu,  6 Jun 2024 21:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7261BDEF;
+	Thu,  6 Jun 2024 21:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.58
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717708188; cv=fail; b=Q0O24gD70FRMBfcKd70ag38QGWNlp8Y28cjkIOrTkwXNRHXCR5s9LqmlBbZPULdG8JLIqQUL7uW24t5z7wQlLvWdxb/pQr8T/C1iKVSWkvcsGc4b5WRG2XD2hKnO/9VJ9tLS1yMgYfbucZIzVSxfaRpfyjsOPk4tP4/yJALmrFs=
+	t=1717708249; cv=fail; b=iC9cP7QgNfwrxNx9dTeDKQLi5c9Tc2FN5Rvd5C/W59wdSYjlA4/O98xDuud5zr9AJsTulO4UfQc+jbYFVSLGg8/U/me4d6AXATUu9IC7a2lR3H3C2Gi17JLi2XnVYF4N6AYMikrKm5Bt+s9psTmwLcGAqzcc8nIpVrQGTW7D+bs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717708188; c=relaxed/simple;
-	bh=bPDcZkNEwSZbH9P5Pava8NE3ob6CQvHZXzuheIJomwA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OokqA5sj7BO9lbaxI50DLu4Ong2dw2batK9xj1ZUycpXEycFxpfpoYyfBrdnKqItiutmuCiXIWeqI6OoxHddTkBh/peyxv+9xblLH4k2H+cv5fd7qlLGBoZ8OJyrq7Qs9aI/XaJgskJEyOO/pFaMbKt7Zuj7fxQ1uyIFJqMAlP4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Ku4tgJoO; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=SHosXewM; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 456HxBeF029657;
-	Thu, 6 Jun 2024 21:09:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc :
- content-transfer-encoding : content-type : date : from : in-reply-to :
- message-id : mime-version : references : subject : to; s=corp-2023-11-20;
- bh=As5PO6k2M7mRNxjxlKEvDb0g+n/YMxT6DVRY7tB4/Zg=;
- b=Ku4tgJoOGPkkcWD4OSUiMNOvzE5yOpjtr8tI9fypXrI0fwZG6FuJDCJXnabo2IjNYhFu
- Yv/q1TBtm/MuKBSaid/gXm1G6/FaIU12i7na49+1QoT3Geq3QoU5AnK1o87o6/3vjlbA
- GG6ESLWZFssgugILSSaO9T1We96osbUPzS11DoadxrTgQ4dmZycf/sYuplLzS7MRAq0T
- 8ePL5xOQG8EAXLLjL8uxev61gbblu272LepGfImg6ysWnj9tWNen/UH5RSXIOtju7Vbw
- L/0277ue/FZjNfTEMMp6zVxYxUReb//PVLPpOZPJBEgqeD/PJSyQqnG7zyLrmuhfPR30 ow== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yjbtwce4x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 06 Jun 2024 21:09:39 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 456Jmnmn016141;
-	Thu, 6 Jun 2024 21:09:38 GMT
-Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2041.outbound.protection.outlook.com [104.47.57.41])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3ygrsdnwk3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 06 Jun 2024 21:09:38 +0000
+	s=arc-20240116; t=1717708249; c=relaxed/simple;
+	bh=sc/W3ZGLU6emYBsb8gg7QIEFeBry2xuOgQ0hqq4aaT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=D9oXu48UsB5CpkPOoCMcZr+Kke9Fe5Rh3cKiKgRKEsp1ACf4lpHE4Jzs6o/RWGC7StFBBI7V5T/8FpoexcR+2zyM2qa9w/5/ePBqFRPiZTnC/EiMQvAOs3XjifGfeVC55ETvHn2wdxOLo3AasooMDQ22HFLwpXXx7slbv5VkDo8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=DUUoGUVc; arc=fail smtp.client-ip=40.107.241.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dG9yYtGoPpunPnDbwcaYUhVECjntpmRqpchNrvmnZQ/QGmoc/mNZ28bqYOw6JIaRd3QuAzDw4IggorWSKk0T/XOvmt+OMj5mcr12x4eT4OSWuxvReetcMadoV30MYrhvyCcbr/S3RpfwLC6e3InfWiM3P8e64coRrimkXEDpEWz7iqIpWBqQAdmE2oPLHIPJvi+umget1iPShSQE1WaAQK5raz52ZTETvjmhZ3idK/puRMg4qvyv4UUZE3v0osRH/aqSvQSDLU5TJCUClBE3fXwbJtXBq0QBmjKoUzLLFBz6svc5TXViaXtrXbfX3VAMnGCefqPbkOw9g3wws7cq1g==
+ b=CbKyAYUzLjzd81SlrjO9K2Fm/VqOHuH+5aN3GLdAgz14rVHnPHEPs3dRI7vhNVV3Nox3fo5HaQvb7V12Ls0zBqp9DCvXreTzG7tXrlIxKk+X8L4sZ/RYgp9OF8Vz7pqRzCE/zHZQtbHrbstcUZ9lYW4LFZckLKrFDrHY+9Y+GGGtHEMeQI4hykF7DGY5ctVHgMF3In2TVgWiyprOZu6io7H8YjqDdbfIWfWSJBM01mExkAZ1fK/yxMFVwRllPbVJZiqd1j+BoxP5CAb0UvuSN+hrozMDmnloeTAg9tDIDSCgsgd35ZibCzwfjd/YebSLCMQWI0ZGLow5p4pSibr5/g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=As5PO6k2M7mRNxjxlKEvDb0g+n/YMxT6DVRY7tB4/Zg=;
- b=j1cSjhDTI3gR/QwmjhRvSPDbGqEvoifymykoo/s0VtufzY6PQgdQRmVJdEcwudHLDB/H33GDVzvcYdeKhXB3aeYiCedDoaP/TmHrASIZuMf/up+6lgZT8VhcnQursKi1GhImblaYQFdlqL8rdSV8y24grdyB/XdleLazzMfVP9L9XqEeuUdYnhydeptV/HIhoQL0eCKVQBnZC8B3gtJ9k8aAlx3xqew2LPEWrSDwBGkPZXo6zw56ZjUETVuiaisZUkMIjLlP6swsNZ4lNBzgm0A9MBRIiknd6mv6Zfzcha27V/cQl9pzkxSUlrsT+ZQsexY6PK+2nOrdyW0k5PoCDQ==
+ bh=pLjwML3+LJqJe0egmg4+SzXghL6iZlUrjvqiCwPG3WM=;
+ b=XBpEc3nfuIpPYBqr4FXAym+0h4wi6fWETK9Z2nSiut0xAJolWLPG8JTHThNmV1zntJl3xcVTPzAUgsIqwdSOSZ7E8CRokdruc4LVM+uJ8ZSqCsTTPczdmwMcYd9zWiJQwYGKxOoY6ZdB6YZhenoIO/kZv0MWz0nyTyyL79+V58hoCowSTl01mwPvu9DcC9mLBjHZi6+4bEy+ywbYcxbe6lUwx3T2xAqeTSw3exO7TbY8YdqDVhlzEPxkzsCvTE+HhIyI4oC2zKeEBMpPNeBlKOO4gQ2FEVoN/gs0eRAKaJkHCFYSzmo3YgUlVF3haMI9cvWy7a9z7JyTtZ4CnwmI8w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=As5PO6k2M7mRNxjxlKEvDb0g+n/YMxT6DVRY7tB4/Zg=;
- b=SHosXewM/hVbZd9SJV4fgQc8/eGt/Gp1Y4sPm5Ky58G+Gh9pcX6A/wLVYLB3lP/1dH14SHQiBpc/JZCkODvd/cPyvPUPQgQoPEcr5bNt7ykqudwyIwQLOppMmfwa/6Q2BwnITW6ZbAvBeV6EREpmTr42qZ+pyUURZtI5S7DYHvs=
-Received: from DS7PR10MB5280.namprd10.prod.outlook.com (2603:10b6:5:3a7::5) by
- CH3PR10MB6691.namprd10.prod.outlook.com (2603:10b6:610:142::10) with
+ bh=pLjwML3+LJqJe0egmg4+SzXghL6iZlUrjvqiCwPG3WM=;
+ b=DUUoGUVcYK4bjDs4WFZ/CBM+4l//Yl9hNUvk7wXYQENMWU+UtgAMhtUc3vaCcFwwFSmLME0a3v8Wbboi4UT8TDt96WV7T83Osez9lteRwzNVCj1d+HSFh0E11Q14ZzU2JiNRlapo1vym68c1rOSjBoh+emvEAC5sxcV81/2fDo4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PA1PR04MB10208.eurprd04.prod.outlook.com (2603:10a6:102:454::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.34; Thu, 6 Jun
- 2024 21:09:33 +0000
-Received: from DS7PR10MB5280.namprd10.prod.outlook.com
- ([fe80::da22:796e:d798:14da]) by DS7PR10MB5280.namprd10.prod.outlook.com
- ([fe80::da22:796e:d798:14da%7]) with mapi id 15.20.7633.033; Thu, 6 Jun 2024
- 21:09:33 +0000
-Message-ID: <06e6b7c6-ba5d-4fb0-9a77-30ac44f6935a@oracle.com>
-Date: Thu, 6 Jun 2024 17:09:11 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] KVM: x86: Add vCPU stat for APICv interrupt
- injections causing #VMEXIT
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, pbonzini@redhat.com, linux-kernel@vger.kernel.org,
-        suravee.suthikulpanit@amd.com, vashegde@amd.com, mlevitsk@redhat.com,
-        joao.m.martins@oracle.com, boris.ostrovsky@oracle.com,
-        mark.kanda@oracle.com
-References: <20240429155738.990025-1-alejandro.j.jimenez@oracle.com>
- <20240429155738.990025-5-alejandro.j.jimenez@oracle.com>
- <Zl5cUwGiMrng2zcc@google.com>
-Content-Language: en-US
-From: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
-In-Reply-To: <Zl5cUwGiMrng2zcc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR08CA0060.namprd08.prod.outlook.com
- (2603:10b6:a03:117::37) To DS7PR10MB5280.namprd10.prod.outlook.com
- (2603:10b6:5:3a7::5)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.33; Thu, 6 Jun
+ 2024 21:10:42 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7633.021; Thu, 6 Jun 2024
+ 21:10:42 +0000
+Date: Thu, 6 Jun 2024 17:10:29 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Minghuan Lian <minghuan.Lian@nxp.com>,
+	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+	Jesper Nilsson <jesper.nilsson@axis.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Srikanth Thokala <srikanth.thokala@intel.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+	mhi@lists.linux.dev, Niklas Cassel <cassel@kernel.org>
+Subject: Re: [PATCH 2/5] PCI: endpoint: Introduce 'epc_deinit' event and
+ notify the EPF drivers
+Message-ID: <ZmIlxSQ8ffDk4Dau@lizhi-Precision-Tower-5810>
+References: <20240606-pci-deinit-v1-0-4395534520dc@linaro.org>
+ <20240606-pci-deinit-v1-2-4395534520dc@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606-pci-deinit-v1-2-4395534520dc@linaro.org>
+X-ClientProxiedBy: SJ0PR13CA0188.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c3::13) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,236 +105,328 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR10MB5280:EE_|CH3PR10MB6691:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4e131ce2-e4cf-4e40-ff61-08dc866cf67b
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA1PR04MB10208:EE_
+X-MS-Office365-Filtering-Correlation-Id: f9585b62-22e6-40bb-3067-08dc866d1fcc
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?Qi9XYjE5c0xkSkc5TE5uNU9hYlV4TXdZSVZMNmw2QjBnbEk0NFhLSHBUcmp1?=
- =?utf-8?B?MzI5a3NmZGttZjBzYmFqT24wdXAwOXVtdzZOei81NmJnNFN4MXZscW5RdzBw?=
- =?utf-8?B?UjJ3a2dJcHBxbU5iRzI1eWNmV09CWVZzVjZVeTRyaEJLT2lxUVNLbEJYWk5u?=
- =?utf-8?B?QitnM1NkT21wL2htcDJrL0prZW1QaTNKUFp5NE1yUmZrS1V4THdXLzF0T0hI?=
- =?utf-8?B?ZHFQaWNkUkwwOExPdnk2QWVDR1JNaFhrTllMblh4U2pqUHRvSG5sL2V4SGtu?=
- =?utf-8?B?SURacit6VFBERDZnWFp3QzhnTE8vT2RVeCtyYWVrMEJuMUpYV2hHY01hOU5Q?=
- =?utf-8?B?Wk42ODBtUGZvUjdLQmxMS3dKbjhZVDVIUXB1ZDBCM0VTMGszQWtJOFBGYWth?=
- =?utf-8?B?Z2RTQWtPTDlmOHl3dG1jZmJDa2g5SnBzd1ZQNVErMk5UYnRhaG42bWEyVjBC?=
- =?utf-8?B?QmxST1JGSGFPZ1BPSjF3STc2Z0ZRYjlUMFhKK1NYbVpnNm1kc2lsL2paMWk1?=
- =?utf-8?B?YVgwVGUvYnhzRWxlSjBIdDBua2VmV1lSUDk0L0dNWXhMbURVNk51V3UvZDFH?=
- =?utf-8?B?WVM0YmlXMG1zdjFOd1RveE85NkpuOE8wNjd3Y1l0UWdueStJR013MVNDTmR4?=
- =?utf-8?B?ZlpKN1pKYXpuRkpWUEJFUU9WL2F2L2t4MWI1T1lDNUxLUkZmdG9zU0J5djkv?=
- =?utf-8?B?eWFSdWFwT1YzcEZDRXk2K2lKYktaT3NFWVc4YVRBUkVQTkN5MHA0MmdQeWY1?=
- =?utf-8?B?WTB6b01xNGFRY3BKbXRvZWMyVVd4ZnVoV0Jyck5ybEtWSDRZN2tJUkZncVRv?=
- =?utf-8?B?R3Q2N2hWVUdZOGY3WlNBeFNUcnVPT1VRcnBtUWlwN1BsUS94NkFuN0tpWVBK?=
- =?utf-8?B?UDdkclEwR20yanpiVGFJR2pPdVpLOVdRSUNha3FXa2RrWTlaRXRLOGhkS1M0?=
- =?utf-8?B?eU5JZ0RqR1R6V013YTBIQThQSWxBQUpmdG85bEM1NVVXUG56YjVES0xseXdJ?=
- =?utf-8?B?NmNua29Yb043R1JJY1ZqVENTMDhYelljeVJ3YU03QWZRNlBnYnlZQmJaN0V3?=
- =?utf-8?B?Y1lJUGdzOFlsUFdlMHNoV3RuK1pucEJ1dWkvaFVUYUxKU2ZWN3pjU3duU21l?=
- =?utf-8?B?M240QUpDaE8zNUN4ZDBOZ3k0eVRXMnhxeTdqb1pXNGNoczBLbFUrNC9xdlZp?=
- =?utf-8?B?SWdJVzFkWTZ1eW9aMW4vbDdNdWNxNlVzRWNiUzJ3SmVsc2tjNWxvUGF1TCtY?=
- =?utf-8?B?K3RnYkdsZWhuek5raHg4R1c2bTlTT0N5c2FhNmQxVkhyeElGTFdnaVJFR3dJ?=
- =?utf-8?B?bld2ZVMvTTdDbXVLYWduWHIvandoN09UMVRGdDdTZXY2dnlSK1d1Yi8vWG5q?=
- =?utf-8?B?REdGZ0V0T2M2d2VCZEdwSzdrVUJmU3R5dmJDbmNxQzR5eVVablNWem91Y0lZ?=
- =?utf-8?B?ZUxDTlFzVEgvUGN5QlZkVzRFbTBvTG9FRmdEQkdNajRyTmNUNTBEalVsdGFo?=
- =?utf-8?B?NTQ5TTFJNEVsMmVXb2RvVSt4Y3hwYlNMNEtCMVFXWExXYkp1eXl4b1BCaGhZ?=
- =?utf-8?B?amFXelMrSlVWcmJsYU4ycEtSK2EvNk16RmtWa0RWZElqMTU1NlE1UGh5aURo?=
- =?utf-8?B?bDdGQ0VZc2R5S2JSaXhtN0tDYlJ5MkIzVlM3eVZZZmlWeEUyY1I0QjBKcDhh?=
- =?utf-8?B?Yk1uaWozZXdJTmNCa2NGd2RLNldyUnpIZWQzMUMwOTNYTVJiV3lGVkdpSlgz?=
- =?utf-8?Q?yhx/JcTU0ZC/z0bqWMHlyJI1bawwNhYtem6ma36?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR10MB5280.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|366007|7416005|52116005|376005|1800799015|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?imY6PnzkWIsks1J2DWujzNdheRbLCnZNtaA0GHhRbzyeV+aUfUF4T+Pa4gWq?=
+ =?us-ascii?Q?KX9m/nzGUg/JF+LaxnOd0YZcVrCMILs1b3XBWZBBzSc8KKgyXtTGZv/JAq4W?=
+ =?us-ascii?Q?B5po1zMoNMUDhL0uwYPi8M52kXDVe2UxNG+zircP+YZyy1EHg+gZS/UPxQJY?=
+ =?us-ascii?Q?8cZiFDF+QKUohec47oEHo6NQSxQJKBoowgfiWk6apVlEQGFUb/3vSI5mACsV?=
+ =?us-ascii?Q?tsg2vWiAYTyFJwgW2rCz1jyTPbB9KfrgvZhTxQ2SRfywgsC9hBz0/qYS3V1W?=
+ =?us-ascii?Q?IzNqQjC/beOARM8PU92VpdlT0SleYDfWSLCHf/ASBwXz9N/1GtrRmoDmcg/U?=
+ =?us-ascii?Q?1hIp/Sbkxl0P+X6F30Js46nKvBNTDTCr1/4HfeXuMnjD3rAgnAg5Lwx5yf78?=
+ =?us-ascii?Q?f8mm/y2b+a8TQ+zzjTZbjy3Ti6dEnsS6wOSxIFGPr7BRTAOZXvaxVcklKwWS?=
+ =?us-ascii?Q?v3WGE6ApVaf5WvNUOqAJkaPCnNmvKPEDyf127rGD6h8TIzg4+Q8SzCN4lqzY?=
+ =?us-ascii?Q?8PMDy2XGdtFwha+V3ga9ex7a6nAqEJZ0SIxAMjkIZfi7TrJgwemo/h8SWdEU?=
+ =?us-ascii?Q?67w1I9h/7qvjRBQ7gTq3Rghr3NNvTAgJp3LEnYmyNrSY+jNJubcCi5/66IZe?=
+ =?us-ascii?Q?bxcXBxVcJMO4E4V4BQNi9dXAJdqDimif7maKlfju+CplyzlMm6WyWcCUyxbM?=
+ =?us-ascii?Q?AGiAd4C3suNsw4C9i3VWZYe1OfJ0eUxTVcQpGjvK6Yf3y0CZRAUJg8ZvMAHJ?=
+ =?us-ascii?Q?/clxzj/xxS56GfQFkyqSIRb816PJt5/MF1lboVIiyBLprg9v1SaJJXZWXiCv?=
+ =?us-ascii?Q?Eoki1ufdvXCcN1w32cEvsdQ8aci8XmkOV5PoyO7iGmMIatv8WSL4JXtiAk7z?=
+ =?us-ascii?Q?SsgNlH+ILgkYzDUwXrZx3itRcmGyTxovpZEuoKRuCp3DIvYJx7dEz4RSpc4A?=
+ =?us-ascii?Q?ERwpOxAEdUZFwFGxHSvPrRVrJ8JxjS6py4rcaBSmfpEH2o7aNHEdcpI45o2M?=
+ =?us-ascii?Q?zhOuJa8qJiRkMbh5VOsmmZNU2mUo8Q8SSJbatoxxxJk6vLly6ocx1qjb11Ni?=
+ =?us-ascii?Q?fBv3bsFb78XvQ7Be59MEd2uj9YAoTKMsJDlREmaiWZhaa7n4LH1Ur9O/N9iw?=
+ =?us-ascii?Q?0YbHrNwYzRlxvG5lp10l/37+62xLfkvj0EwwKO+fhnlAMv9Ld0Aakx5ewXzp?=
+ =?us-ascii?Q?454KrLrpFVkTMzIKIF35xjNiTU+jxFdwtp1lTJZYoKCs4OZaqEwb+e1MKVf4?=
+ =?us-ascii?Q?I//K2Go8TZglvcCi+31a+Yl2LWifA1KmZn8if5R/3xUy6QdDH3qT7xNfbRBN?=
+ =?us-ascii?Q?kpaKO5WfKIuqAlljL3o9SYY+BBjsbfxW65KnxtaUe7p+Ik8jw2+iYbPnSt2c?=
+ =?us-ascii?Q?/szKkbo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(7416005)(52116005)(376005)(1800799015)(38350700005);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?bmV0VThuK05LcnNyNTlRSVI1Y0tzMmxhM0RnM2FlUk50djZDdUU5b3hSNHBZ?=
- =?utf-8?B?Vy94YXFtbmlFWk9CblloWFhEb1FjSnZNKzJlL2h2ak9UR21JSTVZVmdhajRW?=
- =?utf-8?B?UjNaY3NTMzJweDRORDZ2KzBGTDdYekZzeGk4MzQ5OTlUSlVDd2dKbVAxMi91?=
- =?utf-8?B?NW80S25IeFVPa2NOdU9DR01ETGI1VzNrU3F1M0tVRzNQS2ZKS1RIcHhuNmRB?=
- =?utf-8?B?RDlneUsxdXNlUHlXMkowQVR0ck0xeVVjamQ1dnpHcUdidUk1aWJTanRmZmwz?=
- =?utf-8?B?eENtOXRpTE5BTERQRkZ4QzBUVG5JMWhyU3hKaVZkOW9jdVhxbE9tcjhaL3pD?=
- =?utf-8?B?UzFFTVRSV0ladlF4ODhYcEdOSlNmM3RiMHozRzhNU24rWExyUXVsL1J4NlVS?=
- =?utf-8?B?eVhxLzdGdGx0YkFXd090RFJpK0VhNms1eHI4NUxYYUVjcFRFaGc5WWcwNDlG?=
- =?utf-8?B?ekxqVk81TTc5alZWaWFJcW52WlJWNXF2Y04va2dHMTNOY0hkNVdlOUFZOEow?=
- =?utf-8?B?azRKOVRXYXRkUFltT1BtS0N2TUl1LzkvODVsVk51am5uQVlZTkNDWkNWTURj?=
- =?utf-8?B?M2RMTHlDbDFDRHNZK090K3AwOEo5elU5STgxZWpRRHpRcHozVmRFTjh3Uzhw?=
- =?utf-8?B?WG1pLzduZ3JJdkovZWJJSzlrNmxZY3UvRkJaUTBkemNCRUloQ0MwbTVvVEp1?=
- =?utf-8?B?N0s2OG5OZUFjUm5lQmFUNjVXdjUxN3FJMzl3SHQwWVU0b1BtbGFSUnZnclNO?=
- =?utf-8?B?Kzg4ek0vZDEwVy9RRTEyL0FFdmYzYUNjRkVOWGVVYlpMSDNGblhzcE9RcnJn?=
- =?utf-8?B?QlIwV2thR21jZ09HeHdIcDRGd0JvTWF3ZHhoaTNtUmx5b3duVHZRQno1T2Nt?=
- =?utf-8?B?NEFiUGlCKzJoZXYyQVh0eFV1NmpmQkgxZ3VRZy9qRnl0aFh1ejhMUEwxZm9D?=
- =?utf-8?B?UndRRXV0VU5KR1IvVDhWeXVVb01maFBkZElCUjdCYlJ2VjVna0VmUFBZc3d0?=
- =?utf-8?B?RHdQcC9RalJYZFNlZFArd3VDTnZ4aEpJdmYwbzJVNUMwU2k1STNrOUp3M3NQ?=
- =?utf-8?B?S1JIUUVTZ1pVZ0R5bDQ5SEpUaUwrcjB5RHBRQjhMTmpiZ1hlU09JWCt0T0lH?=
- =?utf-8?B?RGRjSTBVRVlaSVFBUjJDOUNRdjZTall6Y3dCV1pDUzdpQVNDUGpsaGtORHQw?=
- =?utf-8?B?U2Jva1RrRmhPRmVvZktma0NHSXFXdVZ6bnByUXh4WFN0bUlxZUU0RmRxWk85?=
- =?utf-8?B?eDhRdDRxMEdjc3g2N1oyVUFXd1JaQndTR0k3TFQzYzdZdldFS053VEp0OU1P?=
- =?utf-8?B?SElXczFoTVd5eDY4c0dIV3V6eGV2YmVDaUVQNnEzNTlCMG1CUnZDM0JnRmhN?=
- =?utf-8?B?aGVMZlhHNUNSMzNRaUYvV1NtdklYUUdLUGhQb3VIcXdnWFc0eDF6bjlRdmc0?=
- =?utf-8?B?eU9KUDh6eE1ZbEdKOWJZRENHaG1YZzJrYklZQ0NsTnhoNThDZWZjaFFwR3JX?=
- =?utf-8?B?Q2J1b1RWd3ozV2lHVmdHYnlOUlNPaklhSWgrN3lxMXVCUFZRM3FUbThrQ2N3?=
- =?utf-8?B?WllPTllvMWhsa0Q1YUcwemd3WERTQXl0K0liT3A1czNXakhPVWlxcm53WXl3?=
- =?utf-8?B?WVpQS015KzVFQlFIVjVMTEo5alB6bGdRVTNNeVFKYmFyRk55a2lIRkVBNEtU?=
- =?utf-8?B?MWJTVHRZdnljWkI4Qlc5WEFLekF1Z1NqcVZBMG1uNnNJUHNSNFpBSmM1OThS?=
- =?utf-8?B?NFNaaHJTUHhJbVJnTytJTEhUVjVEaHFmWEg0RVlaUEhwcWlpdXQyaDdHMng3?=
- =?utf-8?B?TkxkbVRwczFMRnNPVHhQaFcxNzhSRUJpVWIyRGJSaHhOWDYvUU83VVB2bjg5?=
- =?utf-8?B?MXJpT0tSSk8xSnRsWW5RclhncWFNM3RjRzNUVnM4MDk1VElLbmpILzMyVkha?=
- =?utf-8?B?NEl5TU4wTTRRZi9odE5uRDNWZEVWMUNhRk11VVVBdjc2b1dHYUUvUXVEWCto?=
- =?utf-8?B?TGZLTDdyZEYzb1RYVEh2TnBMNWJsdTV1U0x2SGZGcHlRRkNCbkRLckkwT3lE?=
- =?utf-8?B?UTcrVFZNeUltRWNXb1FKbzRzbG9DcUc1V0pibkJpakorRUFKZzZIUjJOZHJC?=
- =?utf-8?B?ZUpUU2lBcnlKZXlzM1Y1Tmo4aURyMU9KQ2N1VUFNN0hpWlRMejJ3MDlUMlFO?=
- =?utf-8?Q?Asd3sI748jvNux1aT7vADzk=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	c5TMBsxQalAweHpzj9b4i6HdP2pUe5JUhxETXjIBKfELX0aLxOZNoJAtpePImXNrJr+GYp0kzeoPOSGFd+myw3U+iWkX7ajdHY//M2AxCq52sVg9rA5U/b1F+KneVZI7JZm7bcXnrVzENea/BK7MKSm2kzJozYJy5dlolXnvPNedchbJ3GTYHIcH91n93w6tVqfOq7kyGmafU+LQIFD1WSD1umalSBYrfXuwUXtvnEmZORS1JVtB5I3OWIPayUv4vVX4JXQFSPk1LWWoDQLjnH6Pp7zZ9RgiN4fNG0JldCREWQnkpXPoI/b/rrN3g/PheoyP0v9Q/JdQqBaBohcjC0ISRHZZON65Wiaps3zsvH+VW4y/PDucyKZ+jarbrcGcM+SPnnDnyziparpWZrjezbesCYkMAwDl8vN8LrRydHdqJ75u5w6EV2TBCLJV2QaWOv9yU8K4c9DntvTxmPAr3Jn/gBpQFMxKnHtaDpBcqaVVVhx4sAQ8n3iDZsv1RAQg4aOq4jx6Qmx4gUuvwuAKi5TJqUKAScgkxPMOsMRMkFeLWftu//7TbsyvdyZjdMAScUi+kLxFE2a42m1xNByWXdmpnHCXFd9vU41bVLSruaY=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e131ce2-e4cf-4e40-ff61-08dc866cf67b
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR10MB5280.namprd10.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?pDhM/hW/FbWSQ/bthLswklRDmLtj9asDyCQRpqHu6xHbcB3rlad+rwPSSLjB?=
+ =?us-ascii?Q?k2baVqoLi3N+6Xon2JY8JhLACI8u1k8S2Feso46u517OMSwgHGNjs3QKEhlY?=
+ =?us-ascii?Q?4mNVO30fVacJt1SSw2sfYu+VSnGN6QTpaNkX+aeLChAosm26xWKyH2WJxcVT?=
+ =?us-ascii?Q?i1cCp73pgbKq17eMYKIyOqr5MSIBufWstW7DpKvVsfZjl7tCVVd2MlGRe2JU?=
+ =?us-ascii?Q?F+kYnoYhEW+ITd6Jrj7dL5TtBwkum9fQeRT0MugihGzk7J5r2J7Re23zDCNm?=
+ =?us-ascii?Q?iFe6hcl+CP/E1cXGIlJz7UmA0m3GykmZXVAFp4BEyZxKh6+kmsmW5hOPFtYB?=
+ =?us-ascii?Q?kKZQUnHnf1z9NEKfX0lIHtJsmqYvbUqaCqh5L4+76eNGtIKt8a3Bh4my7Fuk?=
+ =?us-ascii?Q?udZRnGeyVbs8/VmzilmqHSsTGgiHBt2FT1K1nHC3DeX417pvi0S6Yf8H7WDI?=
+ =?us-ascii?Q?f1eAXpNnYGpuhC21VH6JY5FSoTOaWBNTPannhahxKKAqfEalHBQ6gfglBJGY?=
+ =?us-ascii?Q?4feaEfxlPTluy7ME5L+e+RfSqmNS4i3VM5d4gccLedGj6EQDoQxq5zGkEzDj?=
+ =?us-ascii?Q?Xqqf2OhoBXH7O2Z+FvvKHBlpuMoWiEtOtH5xy3K55qgeN72EFKw6LDi25t3L?=
+ =?us-ascii?Q?s7hiQRm9OC/+TKjAH0Vucvsb/zZTx8obcWRITSaTu075XJD1uJWCpgTQW4ol?=
+ =?us-ascii?Q?VQXedHjhEophE2hyuECoBLS/AjDOsAyyQeI30L/Zv9AAZC+Oq9PR7xVTsQSj?=
+ =?us-ascii?Q?oyW4fA37X5YPl5N5mWZ0LCL/ijPUxnmpP0lwvohESy+ZJLKXZw5jjXmOUrs2?=
+ =?us-ascii?Q?X0X919m+Z/HpltIug6hzFxF62uboIccCxRaRKcXemmsx4mHFkVwH+DOV53za?=
+ =?us-ascii?Q?Ts5Jb/wa93sUTNzwvk/OCH7Na54uJCZF8LWqaJ941UN9wo240kjVeOrRndov?=
+ =?us-ascii?Q?FLk+1VAZ6mxFHDI8aYDXfy28Nxf79+2ylAjBunrSNoCciOpeyWjz8/REoNRu?=
+ =?us-ascii?Q?o6TlU2FYCw/5GBi8m8pNPjXpBsInj8PMv3ubcsY/Fq5iiqlfGZRFkv52lEkm?=
+ =?us-ascii?Q?q7+kVheByxmQxbCiEQEU7qE1zGplTCkckIs9lVKmejNLdk/9lOBGMKtmY141?=
+ =?us-ascii?Q?R98plPBA4jShbbVDTVLUO/z3QOFVIZ+lgtVT4tZssNopUIgDp86GWePDphTr?=
+ =?us-ascii?Q?+61CavN00T0er3r7hJcLLpGyrnBFLKT907nLi4BtmhHUxXdW2hVacZsdfWEE?=
+ =?us-ascii?Q?7ENRPM5AjWYny/LYjqIG4qSiJqA1aUTnZXsWrbE1HXXxFwpA7wJ/y8d6p4GZ?=
+ =?us-ascii?Q?MSt+CBL7HGmaRTIFtUpIj8gMpwxFltjEDNeHTkdAcm/0Hqj/j8exwFR0uPAv?=
+ =?us-ascii?Q?WpQj6FocuVlVhcellWSpP3/0t2bDiv1HswN1X5tc7wjTmucFynpCCSVEnJx0?=
+ =?us-ascii?Q?vXslR+lUaSG4MmPE/JPrRzNiVOidUIdECKxSWBejJ9H0nJ7x2s1qohRcP6XN?=
+ =?us-ascii?Q?zjDyRVfkFFtmLgFC327IoXEEpvCwh/MsgXhNlicLnKXIIoXriTwSKCy8nB1c?=
+ =?us-ascii?Q?jpKcPp09j3iVRU01TG4=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9585b62-22e6-40bb-3067-08dc866d1fcc
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 21:09:33.1546
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 21:10:42.3718
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xblTMNfSOJURl3FlKUuh8dsDxRoOX4stOSx0t8rzBZM9RZPoCqZ0yeYn2PhDZeXjBhv46mZhpOzrvROHD9T/4amAIOGqJljQ3wl6beJUfkY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB6691
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-06_17,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 spamscore=0
- malwarescore=0 suspectscore=0 phishscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
- definitions=main-2406060147
-X-Proofpoint-GUID: p9lU9gF99TugI0vNVEjYlbeGXbYHEzou
-X-Proofpoint-ORIG-GUID: p9lU9gF99TugI0vNVEjYlbeGXbYHEzou
+X-MS-Exchange-CrossTenant-UserPrincipalName: L7bt6Tm2qzfEz4k3+o+nNFIX6XnQrhsskUdRmtbHritonSUiDhaN0OPH9ZC9LbtnJHu8YLFpHuFA1ZuTtdI6eg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10208
 
-
-
-On 6/3/24 20:14, Sean Christopherson wrote:
-> On Mon, Apr 29, 2024, Alejandro Jimenez wrote:
->> Even when APICv/AVIC is active, certain guest accesses to its local APIC(s)
->> cannot be fully accelerated, and cause a #VMEXIT to allow the VMM to
->> emulate the behavior and side effects. Expose a counter stat for these
->> specific #VMEXIT types.
->>
->> Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
->> Signed-off-by: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
->> ---
->>   arch/x86/include/asm/kvm_host.h | 1 +
->>   arch/x86/kvm/svm/avic.c         | 7 +++++++
->>   arch/x86/kvm/vmx/vmx.c          | 2 ++
->>   arch/x86/kvm/x86.c              | 1 +
->>   4 files changed, 11 insertions(+)
->>
->> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
->> index e7e3213cefae..388979dfe9f3 100644
->> --- a/arch/x86/include/asm/kvm_host.h
->> +++ b/arch/x86/include/asm/kvm_host.h
->> @@ -1576,6 +1576,7 @@ struct kvm_vcpu_stat {
->>   	u64 guest_mode;
->>   	u64 notify_window_exits;
->>   	u64 apicv_active;
->> +	u64 apicv_unaccelerated_inj;
+On Thu, Jun 06, 2024 at 12:56:35PM +0530, Manivannan Sadhasivam wrote:
+> As like the 'epc_init' event, that is used to signal the EPF drivers about
+> the EPC initialization, let's introduce 'epc_deinit' event that is used to
+> signal EPC deinitialization.
 > 
-> The stat name doesn't match the changelog or the code.  The AVIC updates in
-> avic_incomplete_ipi_interception() are unaccelerated _injection_, they're
-> unaccelarated _delivery_.  And in those cases, the fact that delivery wasn't
-> accelerated is relatively uninteresting in most cases.
+> The EPC deinitialization applies only when any sort of fundamental reset
+> is supported by the endpoint controller as per the PCIe spec.
 > 
-
-Yeah, this was my flawed attempt to interpret/implement Paolo's comment in the RFC thread:
-
-"... for example I'd add an interrupt_injections stat for unaccelerated injections causing a vmexit or otherwise hitting lapic.c"
-
-so I incorrectly bundled together APIC accesses that result in #VMEXIT and end up requiring additional emulation (while managing to miss the handle_apic_access() case).
-
-
-> And avic_unaccelerated_access_interception() and handle_apic_write() don't
-> necessarily have anything to do with injection.
-
-apicv_unaccelerated_acccess is perhaps a better name (assuming stat is updated in handle_apic_access() as well)?
-
+> Reference: PCIe Base spec v5.0, sections 4.2.4.9.1 and 6.6.1.
 > 
-> On the flip side, the slow paths for {svm,vmx}_deliver_interrupt() are very
-> explicitly unnaccelerated injection.
-
-Now that you highlight this, I think it might be closer to Paolo's idea. i.e. a stat for the slow path on these can be contrasted/compared with the kvm_apicv_accept_irq tracepoint that is hit on the fast path.
-My initial reaction would be to update a stat for the fast path, as a confirmation that apicv is active which is how/why I typically use the kvm_apicv_accept_irq tracepoint, but that becomes redundant by having the apicv_active stat on PATCH 1.
-
-So, if you don't think it is useful to have a general apicv_unaccelerated_acccess counter, I can drop this patch.
-
-Thank you,
-
-Alejandro
-
+> Currently, some EPC drivers like pcie-qcom-ep and pcie-tegra194 support
+> PERST# as the fundamental reset. So the 'deinit' event will be notified to
+> the EPF drivers when PERST# assert happens in the above mentioned EPC
+> drivers.
 > 
-> It's not entirely clear from the changelog what the end goal of this stat is.
-> A singular stat for all APICv/AVIC access VM-Exits seems uninteresting, as such
-> a stat essentially just captures that the guest is active.  Maaaybe someone could
-> glean info from comparing two VMs, but even that is dubious.  E.g. if a guest is
-> doing something function and generating a lot of avic_incomplete_ipi_interception()
-> exits, those will likely be in the noise due to the total volume of other AVIC
-> exits.
+> The EPF drivers, on receiving the event through the epc_deinit() callback
+> should reset the EPF state machine and also cleanup any configuration that
+> got affected by the fundamental reset like BAR, DMA etc...
 > 
->>   };
->>   
->>   struct x86_instruction_info;
->> diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
->> index 4b74ea91f4e6..274041d3cf66 100644
->> --- a/arch/x86/kvm/svm/avic.c
->> +++ b/arch/x86/kvm/svm/avic.c
->> @@ -517,6 +517,8 @@ int avic_incomplete_ipi_interception(struct kvm_vcpu *vcpu)
->>   			kvm_apic_write_nodecode(vcpu, APIC_ICR);
->>   		else
->>   			kvm_apic_send_ipi(apic, icrl, icrh);
->> +
->> +		++vcpu->stat.apicv_unaccelerated_inj;
->>   		break;
->>   	case AVIC_IPI_FAILURE_TARGET_NOT_RUNNING:
->>   		/*
->> @@ -525,6 +527,8 @@ int avic_incomplete_ipi_interception(struct kvm_vcpu *vcpu)
->>   		 * vcpus. So, we just need to kick the appropriate vcpu.
->>   		 */
->>   		avic_kick_target_vcpus(vcpu->kvm, apic, icrl, icrh, index);
->> +
->> +		++vcpu->stat.apicv_unaccelerated_inj;
->>   		break;
->>   	case AVIC_IPI_FAILURE_INVALID_BACKING_PAGE:
->>   		WARN_ONCE(1, "Invalid backing page\n");
->> @@ -704,6 +708,9 @@ int avic_unaccelerated_access_interception(struct kvm_vcpu *vcpu)
->>   
->>   	trace_kvm_avic_unaccelerated_access(vcpu->vcpu_id, offset,
->>   					    trap, write, vector);
->> +
->> +	++vcpu->stat.apicv_unaccelerated_inj;
->> +
->>   	if (trap) {
->>   		/* Handling Trap */
->>   		WARN_ONCE(!write, "svm: Handling trap read.\n");
->> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
->> index f10b5f8f364b..a7487f12ded1 100644
->> --- a/arch/x86/kvm/vmx/vmx.c
->> +++ b/arch/x86/kvm/vmx/vmx.c
->> @@ -5657,6 +5657,8 @@ static int handle_apic_write(struct kvm_vcpu *vcpu)
->>   {
->>   	unsigned long exit_qualification = vmx_get_exit_qual(vcpu);
->>   
->> +	++vcpu->stat.apicv_unaccelerated_inj;
->> +
->>   	/*
->>   	 * APIC-write VM-Exit is trap-like, KVM doesn't need to advance RIP and
->>   	 * hardware has done any necessary aliasing, offset adjustments, etc...
->> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
->> index 03cb933920cb..c8730b0fac87 100644
->> --- a/arch/x86/kvm/x86.c
->> +++ b/arch/x86/kvm/x86.c
->> @@ -307,6 +307,7 @@ const struct _kvm_stats_desc kvm_vcpu_stats_desc[] = {
->>   	STATS_DESC_IBOOLEAN(VCPU, guest_mode),
->>   	STATS_DESC_COUNTER(VCPU, notify_window_exits),
->>   	STATS_DESC_IBOOLEAN(VCPU, apicv_active),
->> +	STATS_DESC_COUNTER(VCPU, apicv_unaccelerated_inj),
->>   };
->>   
->>   const struct kvm_stats_header kvm_vcpu_stats_header = {
->> -- 
->> 2.39.3
->>
+> This change also warrants skipping the cleanups in unbind() if already done
+> in epc_deinit().
+> 
+> Reviewed-by: Niklas Cassel <cassel@kernel.org>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+
+> ---
+>  drivers/pci/controller/dwc/pcie-designware-ep.c |  1 -
+>  drivers/pci/controller/dwc/pcie-qcom-ep.c       |  1 +
+>  drivers/pci/controller/dwc/pcie-tegra194.c      |  1 +
+>  drivers/pci/endpoint/functions/pci-epf-mhi.c    | 19 +++++++++++++++++++
+>  drivers/pci/endpoint/functions/pci-epf-test.c   | 17 +++++++++++++++--
+>  drivers/pci/endpoint/pci-epc-core.c             | 25 +++++++++++++++++++++++++
+>  include/linux/pci-epc.h                         | 13 +++++++++++++
+>  include/linux/pci-epf.h                         |  2 ++
+>  8 files changed, 76 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> index 2e69f81baf99..78d5fc72c9cb 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> @@ -620,7 +620,6 @@ void dw_pcie_ep_cleanup(struct dw_pcie_ep *ep)
+>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>  
+>  	dw_pcie_edma_remove(pci);
+> -	ep->epc->init_complete = false;
+>  }
+>  EXPORT_SYMBOL_GPL(dw_pcie_ep_cleanup);
+>  
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> index 4d2d7457dcb3..2324e56c9bfc 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> @@ -507,6 +507,7 @@ static void qcom_pcie_perst_assert(struct dw_pcie *pci)
+>  		return;
+>  	}
+>  
+> +	pci_epc_deinit_notify(pci->ep.epc);
+>  	dw_pcie_ep_cleanup(&pci->ep);
+>  	qcom_pcie_disable_resources(pcie_ep);
+>  	pcie_ep->link_status = QCOM_PCIE_EP_LINK_DISABLED;
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index 432ed9d9a463..4ca7404246a3 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -1715,6 +1715,7 @@ static void pex_ep_event_pex_rst_assert(struct tegra_pcie_dw *pcie)
+>  	if (ret)
+>  		dev_err(pcie->dev, "Failed to go Detect state: %d\n", ret);
+>  
+> +	pci_epc_deinit_notify(pcie->pci.ep.epc);
+>  	dw_pcie_ep_cleanup(&pcie->pci.ep);
+>  
+>  	reset_control_assert(pcie->core_rst);
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-mhi.c b/drivers/pci/endpoint/functions/pci-epf-mhi.c
+> index 205c02953f25..5832989e55e8 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-mhi.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-mhi.c
+> @@ -764,6 +764,24 @@ static int pci_epf_mhi_epc_init(struct pci_epf *epf)
+>  	return 0;
+>  }
+>  
+> +static void pci_epf_mhi_epc_deinit(struct pci_epf *epf)
+> +{
+> +	struct pci_epf_mhi *epf_mhi = epf_get_drvdata(epf);
+> +	const struct pci_epf_mhi_ep_info *info = epf_mhi->info;
+> +	struct pci_epf_bar *epf_bar = &epf->bar[info->bar_num];
+> +	struct mhi_ep_cntrl *mhi_cntrl = &epf_mhi->mhi_cntrl;
+> +	struct pci_epc *epc = epf->epc;
+> +
+> +	if (mhi_cntrl->mhi_dev) {
+> +		mhi_ep_power_down(mhi_cntrl);
+> +		if (info->flags & MHI_EPF_USE_DMA)
+> +			pci_epf_mhi_dma_deinit(epf_mhi);
+> +		mhi_ep_unregister_controller(mhi_cntrl);
+> +	}
+> +
+> +	pci_epc_clear_bar(epc, epf->func_no, epf->vfunc_no, epf_bar);
+> +}
+> +
+>  static int pci_epf_mhi_link_up(struct pci_epf *epf)
+>  {
+>  	struct pci_epf_mhi *epf_mhi = epf_get_drvdata(epf);
+> @@ -898,6 +916,7 @@ static void pci_epf_mhi_unbind(struct pci_epf *epf)
+>  
+>  static const struct pci_epc_event_ops pci_epf_mhi_event_ops = {
+>  	.epc_init = pci_epf_mhi_epc_init,
+> +	.epc_deinit = pci_epf_mhi_epc_deinit,
+>  	.link_up = pci_epf_mhi_link_up,
+>  	.link_down = pci_epf_mhi_link_down,
+>  	.bus_master_enable = pci_epf_mhi_bus_master_enable,
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> index e771be7512a1..7c2ed6eae53a 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> @@ -782,6 +782,15 @@ static int pci_epf_test_epc_init(struct pci_epf *epf)
+>  	return 0;
+>  }
+>  
+> +static void pci_epf_test_epc_deinit(struct pci_epf *epf)
+> +{
+> +	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
+> +
+> +	cancel_delayed_work(&epf_test->cmd_handler);
+> +	pci_epf_test_clean_dma_chan(epf_test);
+> +	pci_epf_test_clear_bar(epf);
+> +}
+> +
+>  static int pci_epf_test_link_up(struct pci_epf *epf)
+>  {
+>  	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
+> @@ -803,6 +812,7 @@ static int pci_epf_test_link_down(struct pci_epf *epf)
+>  
+>  static const struct pci_epc_event_ops pci_epf_test_event_ops = {
+>  	.epc_init = pci_epf_test_epc_init,
+> +	.epc_deinit = pci_epf_test_epc_deinit,
+>  	.link_up = pci_epf_test_link_up,
+>  	.link_down = pci_epf_test_link_down,
+>  };
+> @@ -905,10 +915,13 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+>  static void pci_epf_test_unbind(struct pci_epf *epf)
+>  {
+>  	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
+> +	struct pci_epc *epc = epf->epc;
+>  
+>  	cancel_delayed_work(&epf_test->cmd_handler);
+> -	pci_epf_test_clean_dma_chan(epf_test);
+> -	pci_epf_test_clear_bar(epf);
+> +	if (epc->init_complete) {
+> +		pci_epf_test_clean_dma_chan(epf_test);
+> +		pci_epf_test_clear_bar(epf);
+> +	}
+>  	pci_epf_test_free_space(epf);
+>  }
+>  
+> diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+> index 56b60330355d..47a91dcb07d7 100644
+> --- a/drivers/pci/endpoint/pci-epc-core.c
+> +++ b/drivers/pci/endpoint/pci-epc-core.c
+> @@ -774,6 +774,31 @@ void pci_epc_notify_pending_init(struct pci_epc *epc, struct pci_epf *epf)
+>  }
+>  EXPORT_SYMBOL_GPL(pci_epc_notify_pending_init);
+>  
+> +/**
+> + * pci_epc_deinit_notify() - Notify the EPF device about EPC deinitialization
+> + * @epc: the EPC device whose deinitialization is completed
+> + *
+> + * Invoke to notify the EPF device that the EPC deinitialization is completed.
+> + */
+> +void pci_epc_deinit_notify(struct pci_epc *epc)
+> +{
+> +	struct pci_epf *epf;
+> +
+> +	if (IS_ERR_OR_NULL(epc))
+> +		return;
+> +
+> +	mutex_lock(&epc->list_lock);
+> +	list_for_each_entry(epf, &epc->pci_epf, list) {
+> +		mutex_lock(&epf->lock);
+> +		if (epf->event_ops && epf->event_ops->epc_deinit)
+> +			epf->event_ops->epc_deinit(epf);
+> +		mutex_unlock(&epf->lock);
+> +	}
+> +	epc->init_complete = false;
+> +	mutex_unlock(&epc->list_lock);
+> +}
+> +EXPORT_SYMBOL_GPL(pci_epc_deinit_notify);
+> +
+>  /**
+>   * pci_epc_bus_master_enable_notify() - Notify the EPF device that the EPC
+>   *					device has received the Bus Master
+> diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
+> index 11115cd0fe5b..85bdf2adb760 100644
+> --- a/include/linux/pci-epc.h
+> +++ b/include/linux/pci-epc.h
+> @@ -197,6 +197,8 @@ struct pci_epc_features {
+>  
+>  #define to_pci_epc(device) container_of((device), struct pci_epc, dev)
+>  
+> +#ifdef CONFIG_PCI_ENDPOINT
+> +
+>  #define pci_epc_create(dev, ops)    \
+>  		__pci_epc_create((dev), (ops), THIS_MODULE)
+>  #define devm_pci_epc_create(dev, ops)    \
+> @@ -226,6 +228,7 @@ void pci_epc_linkup(struct pci_epc *epc);
+>  void pci_epc_linkdown(struct pci_epc *epc);
+>  void pci_epc_init_notify(struct pci_epc *epc);
+>  void pci_epc_notify_pending_init(struct pci_epc *epc, struct pci_epf *epf);
+> +void pci_epc_deinit_notify(struct pci_epc *epc);
+>  void pci_epc_bus_master_enable_notify(struct pci_epc *epc);
+>  void pci_epc_remove_epf(struct pci_epc *epc, struct pci_epf *epf,
+>  			enum pci_epc_interface_type type);
+> @@ -272,4 +275,14 @@ void __iomem *pci_epc_mem_alloc_addr(struct pci_epc *epc,
+>  				     phys_addr_t *phys_addr, size_t size);
+>  void pci_epc_mem_free_addr(struct pci_epc *epc, phys_addr_t phys_addr,
+>  			   void __iomem *virt_addr, size_t size);
+> +
+> +#else
+> +static inline void pci_epc_init_notify(struct pci_epc *epc)
+> +{
+> +}
+> +
+> +static inline void pci_epc_deinit_notify(struct pci_epc *epc)
+> +{
+> +}
+> +#endif /* CONFIG_PCI_ENDPOINT */
+>  #endif /* __LINUX_PCI_EPC_H */
+> diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
+> index dc759eb7157c..0639d4dc8986 100644
+> --- a/include/linux/pci-epf.h
+> +++ b/include/linux/pci-epf.h
+> @@ -71,12 +71,14 @@ struct pci_epf_ops {
+>  /**
+>   * struct pci_epc_event_ops - Callbacks for capturing the EPC events
+>   * @epc_init: Callback for the EPC initialization complete event
+> + * @epc_deinit: Callback for the EPC deinitialization event
+>   * @link_up: Callback for the EPC link up event
+>   * @link_down: Callback for the EPC link down event
+>   * @bus_master_enable: Callback for the EPC Bus Master Enable event
+>   */
+>  struct pci_epc_event_ops {
+>  	int (*epc_init)(struct pci_epf *epf);
+> +	void (*epc_deinit)(struct pci_epf *epf);
+>  	int (*link_up)(struct pci_epf *epf);
+>  	int (*link_down)(struct pci_epf *epf);
+>  	int (*bus_master_enable)(struct pci_epf *epf);
+> 
+> -- 
+> 2.25.1
+> 
 
