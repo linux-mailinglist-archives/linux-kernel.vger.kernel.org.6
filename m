@@ -1,269 +1,268 @@
-Return-Path: <linux-kernel+bounces-204125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30BA38FE489
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:43:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EF088FE48A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:43:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 426A4B21FC1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:43:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 973111C25EC5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F9E195977;
-	Thu,  6 Jun 2024 10:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218F2195381;
+	Thu,  6 Jun 2024 10:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sKGI3hRH"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="krpwgOhL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFC21953A0
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 10:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E7A13AD25;
+	Thu,  6 Jun 2024 10:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717670534; cv=none; b=ZW0lXVa6snK7wVCoiX8daENXuX/QFJVca/X7TwK7Zmxw4PpHhu9BR/xhWrUgQaXK4Fhdk2QFAyeMJXzjCQdo3Cxjc6JitJxaUjK3LhaOjfzAOJVdH6tmpq4Jp40Rh+kDp5ywSqjO9cb69R94VV6Y0A5Lm8kH9EH9kHno4KFSG7o=
+	t=1717670574; cv=none; b=Aew80mSO3Lw3+zT8V8Tr/BKGzDzd+aXtaE/j3AJzSGT29RxRe+Wp6UD6vAwYBGm6zgzPFHtM/IzBns9Gi/28gxDQaLJTER1PSWRSA8tAIf6rdNE/Ma/z2/eoGcSxPDcwEB5iTzb9EuBdX7+SXLWAMR/q6trKCD1JwgC2rxWjnPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717670534; c=relaxed/simple;
-	bh=aJ9OjcTgat+F6sTE/hsja9zDEG32gQvtNbnEwIjisvc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QDStyykro7/A2QS7dj1irQ+N1nWSviIKHeGql9ZUfPFmdkpiXXW71u5dJucWw6v75TO/2SUTkkbH2JnGFB6gSfdNtc9a4AjwnyzDKddXK+RI34u22NWA0I2iu3oZyolv3qayWJYDWLzgexFUVKSgrksxP0LEIPN3AW6Hb0OxDb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sKGI3hRH; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eabd22d3f4so9224851fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 03:42:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717670530; x=1718275330; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gIJHJCpT+527V6EZcYZp/w+XcLy7CxaeC7wb+8Py1Zc=;
-        b=sKGI3hRHReZa6DjRfP8HILrfE5t0ikaJj782vmKFhpyJt0SB/2M7YQ24jz0PJHbiie
-         nbo7zNT/YsW/fqOdhhFE4r0nDengMESXiv0iulB/eZ6szMrQ5pm0KoYAyVoytWDB9Y46
-         Os7qObbLloQ5u3sUsviW3LWh6gVNUSI+tkgY4QI1MoiBeNul52E0CYWzsI/V8iM6Rage
-         GtKqYpkeuEWV/Ggn3FKumguUtDeWIRROwLxNjcjK5gfFM7wQF16HZQKiNdMgaGE/95ae
-         8gY59lBNEx9ob4hiwkA/j/khDjwnfAdC3XUbgg9VO3ofEDhAvqlj3vdlNoWubmDTKklr
-         ez5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717670530; x=1718275330;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gIJHJCpT+527V6EZcYZp/w+XcLy7CxaeC7wb+8Py1Zc=;
-        b=mx5IgSX1f7jqoUAFICgvUaBUb1v/8TkBbu+mohIcl/Td5gZDTTE3vb0Cb3wUDelC+g
-         ybZ5gv6a6PoH/nSC0hp4qbvHe6smxyXzPskUHJrHIxLHGaZKGOrRUchek8cpY2siecfM
-         ummb1q65mQMTXoBKjZTI2yPXn3eq9Lkl58ckKJmtigFdEIDSDac1H3aXYyZk9VZ2WQef
-         SKZhA8CwZ6UjpJV33zXr6ZfKnHyAZ0KE5QL6BmrCNGVdZrq+SNxPCLeCLeN3SFnTJGgR
-         LdX+LSPV3dZqa2Rocuag8gJIB7qoqdgdzgp5o1JaUI7SlcE7/BhE2k5bJvETPFTKbT02
-         +S7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVA+Ju+4pnaaPtBBLDtqrrsNPljYR0nrFRleWSoq4vChlLoApLtFcRtBy+zCINrdthCZ+q4GN1irw29+0f2ASuwj6GWYFoee4tDPR1b
-X-Gm-Message-State: AOJu0YxvKsFnH50jGs3fiAOrZ5WZ2YT7F3bxKGfBuXDob3HRCz1l3SOr
-	2Vn5b0Va1ewVSoca0JZ6JbuxeQ8IeyzVnF1pxTb1wv82wgdVTCW+XoQ0Q5rovcw=
-X-Google-Smtp-Source: AGHT+IEs4nyIXOwiybt87yuy7bldf+hQUEp70WtOT+9ymEQUzmQMAfNfoUNzWpQZjWSvXpoI66m8cg==
-X-Received: by 2002:a05:651c:1028:b0:2e0:c81c:25da with SMTP id 38308e7fff4ca-2eac7a09e27mr30904201fa.30.1717670530235;
-        Thu, 06 Jun 2024 03:42:10 -0700 (PDT)
-Received: from [127.0.1.1] ([188.27.161.69])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae0cc36bsm871477a12.26.2024.06.06.03.42.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 03:42:09 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Thu, 06 Jun 2024 13:41:54 +0300
-Subject: [PATCH v2 3/3] arm64: dts: qcom: x1e80100-qcp: Add pmic-glink node
- with all 3 connectors
+	s=arc-20240116; t=1717670574; c=relaxed/simple;
+	bh=gcyhBTjSNVb7wu268JcVK1apAHBGJ38qvCp2uwXmZ1s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c+29GgC9XcWNag/5DIPudznSQmKKZAeMJtOcQt6x6LalCvOcizpKHFJwbuQTg/ZbAJQp61RHUegmauNffBI0Gsqr6Bu+bWYXceVFBUG2+3pibSCZj8YzC/F4DW41xBFdhGUzUZq2w6v0gVfvJsLrsVCqXDEYHy3jPsvw39eTxys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=krpwgOhL; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717670572; x=1749206572;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=gcyhBTjSNVb7wu268JcVK1apAHBGJ38qvCp2uwXmZ1s=;
+  b=krpwgOhLBnipgo5Fnn0y3On4QczWGAiM4fJTUM26P0ut5d49w2q3xQTt
+   cfnjpGjsAMWaaqQBMULY2FW1HtgOCT13ZTi50JO338mjMPRPYgO34k5lY
+   aW7dLPRaZac/+kBPtT6aAf0ClgUMn8kxkpRm5AZivfzGM0uHA7KCDi2Sx
+   DUwAA3ZMKDUMLj4xsfGKBnCjoWDQ4epDjFyi8Fqp2JBGLz7lJSfVPtXK4
+   7uKujRZ4kMPRWPcEOuq8MZJBq2HAFCQF43nznDBn7yTYybjVQ8CrTK6/s
+   LijaXkN0ew0zvFmgoLniQ4sNpN0a//Y4Oi62y2T5/VvDP23kuuPt7RgJ6
+   g==;
+X-CSE-ConnectionGUID: HPmJ5SygRcq098tuSA5/Hg==
+X-CSE-MsgGUID: jUgR1S1ARtGQpDcTtzCKNQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="24962861"
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="24962861"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 03:42:51 -0700
+X-CSE-ConnectionGUID: E4XLhoBnRnGlO87Bzez5OQ==
+X-CSE-MsgGUID: DGZC0NvkQUyZvd7qqdLNxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="37989265"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.29])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 03:42:48 -0700
+From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v6] cxl/events: Use a common struct for DRAM and General Media
+ events
+Date: Thu, 06 Jun 2024 12:42:44 +0200
+Message-ID: <4881660.OV4Wx5bFTl@fdefranc-mobl3>
+In-Reply-To: <20240605123000.00001e8f@Huawei.com>
+References:
+ <20240602191238.27712-1-fabio.m.de.francesco@linux.intel.com>
+ <20240605123000.00001e8f@Huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240606-x1e80100-dts-pmic-glink-v2-3-972c902e3e6b@linaro.org>
-References: <20240606-x1e80100-dts-pmic-glink-v2-0-972c902e3e6b@linaro.org>
-In-Reply-To: <20240606-x1e80100-dts-pmic-glink-v2-0-972c902e3e6b@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3442; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=aJ9OjcTgat+F6sTE/hsja9zDEG32gQvtNbnEwIjisvc=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmYZJ7DxpONl0Co5WG2H3c4LtBBfMdHpyX2Drqo
- B/lDPAenI2JAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZmGSewAKCRAbX0TJAJUV
- Vq0iEACgpJlxfXrSiB0ReWnhOTCez4jdHpNYc5vUP48qKi9S3bUcGS2Ut4tlMpu2/OiAO7/Fn3+
- +T6GbqLQl2+G6JTmRHwAtR0hys+Ab65Ewvs4Tuzm17s8E0fa0CSN4L79Wuy/JcqnLQEgYhmnd6u
- /DiT6HjL3pSkAB6O8mCimvfZaaz4nu9s0yDamClTn/d5PbfixtzdsSqly36nKqJRDNRuoA+wzgy
- ikdLqtbiPnZv8dCrKVfNy6T5rSX0h3uouefKvVPSY8FkzW7sPodUWJkBdUTFXrvp4GnsIXuC2lk
- /XAEc0uI6C/GFD4KMVb8sG5vulZ7MqkETpZLGb5zOWhwKLhYUHJ5Aq/L1WGQd2sQ3hMPm5L5JQz
- Flso3DU5olvDDgdvrB8AwF5UDpy3k05JfcbG+Q9OFUHSCltApSfvFFnZrQtz0osZKL2prUoP60p
- c8niBI0VX3V5RMorn+6keNEHaSEjUq4lNsSx2b+Bnp7FbD/nrkvo2c1t3lWkp/kYlg18ntfpIvT
- J4T0iV+nzW5y/QXWcOwEX6rlARUrFAnQrLWOvMy4nXzTxNujGOnklEq8b6TAnYKcoyK+ZEpaKSw
- +xAqcheN0iQBwlilD9/7YHnWCjkDiMl2WyP6f2Nr0oPrxwXCTUU0wwuwei8+yIbSCvetCfacjtB
- +r58ZKLa7dWm1GA==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-Add the pmic-glink node and describe all 3 USB Type-C connectors. Do this
-for USB only, for now. The DP ports will come at a later stage since
-they use muxes.
+On Wednesday, June 5, 2024 1:30:00=E2=80=AFPM GMT+2 Jonathan Cameron wrote:
+> On Sun,  2 Jun 2024 21:12:25 +0200
+> "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com> wrote:
+>=20
+> > cxl_event_common was an unfortunate naming choice and caused confusion=
+=20
+with
+> > the existing Common Event Record. Furthermore, its fields didn't map all
+> > the common information between DRAM and General Media Events.
+> >=20
+> > Remove cxl_event_common and introduce cxl_event_media_hdr to record com=
+mon
+> > information between DRAM and General Media events.
+> >=20
+> > cxl_event_media_hdr, which is embedded in both cxl_event_gen_media and
+> > cxl_event_dram, leverages the commonalities between the two events to
+> > simplify their respective handling.
+> >=20
+> > Suggested-by: Dan Williams <dan.j.williams@intel.com>
+> > Reviewed-by: Alison Schofield <alison.schofield@intel.com>
+> > Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> > Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> > Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.=
+com>
+> > ---
+> >=20
+> > - Changes for v6 -
+> >=20
+> > 	- Add "Reviewed-by" tags
+> Hi Fabio,
 
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 119 ++++++++++++++++++++++++++++++
- 1 file changed, 119 insertions(+)
+Hi Jonathan,
+=20
+> Adding tags doesn't need a new version. b4 or however Dave is picking the=
+se
+> up will gather them up from the v5 posting.
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-index a8d0f743228a..e021af54e643 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-@@ -23,6 +23,101 @@ chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	pmic-glink {
-+		compatible = "qcom,x1e80100-pmic-glink",
-+			     "qcom,sm8550-pmic-glink",
-+			     "qcom,pmic-glink";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		orientation-gpios = <&tlmm 121 GPIO_ACTIVE_HIGH>,
-+				    <&tlmm 123 GPIO_ACTIVE_HIGH>,
-+				    <&tlmm 125 GPIO_ACTIVE_HIGH>;
-+
-+		connector@0 {
-+			compatible = "usb-c-connector";
-+			reg = <0>;
-+			power-role = "dual";
-+			data-role = "dual";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					pmic_glink_ss0_hs_in: endpoint {
-+						remote-endpoint = <&usb_1_ss0_dwc3_hs>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					pmic_glink_ss0_ss_in: endpoint {
-+						remote-endpoint = <&usb_1_ss0_qmpphy_out>;
-+					};
-+				};
-+			};
-+		};
-+
-+		connector@1 {
-+			compatible = "usb-c-connector";
-+			reg = <1>;
-+			power-role = "dual";
-+			data-role = "dual";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					pmic_glink_ss1_hs_in: endpoint {
-+						remote-endpoint = <&usb_1_ss1_dwc3_hs>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					pmic_glink_ss1_ss_in: endpoint {
-+						remote-endpoint = <&usb_1_ss1_qmpphy_out>;
-+					};
-+				};
-+			};
-+		};
-+
-+		connector@2 {
-+			compatible = "usb-c-connector";
-+			reg = <2>;
-+			power-role = "dual";
-+			data-role = "dual";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					pmic_glink_ss2_hs_in: endpoint {
-+						remote-endpoint = <&usb_1_ss2_dwc3_hs>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					pmic_glink_ss2_ss_in: endpoint {
-+						remote-endpoint = <&usb_1_ss2_qmpphy_out>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+
- 	reserved-memory {
- 		linux,cma {
- 			compatible = "shared-dma-pool";
-@@ -611,6 +706,14 @@ &usb_1_ss0_dwc3 {
- 	dr_mode = "host";
- };
- 
-+&usb_1_ss0_dwc3_hs {
-+	remote-endpoint = <&pmic_glink_ss0_hs_in>;
-+};
-+
-+&usb_1_ss0_qmpphy_out {
-+	remote-endpoint = <&pmic_glink_ss0_ss_in>;
-+};
-+
- &usb_1_ss1_hsphy {
- 	vdd-supply = <&vreg_l2e_0p8>;
- 	vdda12-supply = <&vreg_l2j_1p2>;
-@@ -635,6 +738,14 @@ &usb_1_ss1_dwc3 {
- 	dr_mode = "host";
- };
- 
-+&usb_1_ss1_dwc3_hs {
-+	remote-endpoint = <&pmic_glink_ss1_hs_in>;
-+};
-+
-+&usb_1_ss1_qmpphy_out {
-+	remote-endpoint = <&pmic_glink_ss1_ss_in>;
-+};
-+
- &usb_1_ss2_hsphy {
- 	vdd-supply = <&vreg_l2e_0p8>;
- 	vdda12-supply = <&vreg_l2j_1p2>;
-@@ -658,3 +769,11 @@ &usb_1_ss2 {
- &usb_1_ss2_dwc3 {
- 	dr_mode = "host";
- };
-+
-+&usb_1_ss2_dwc3_hs {
-+	remote-endpoint = <&pmic_glink_ss2_hs_in>;
-+};
-+
-+&usb_1_ss2_qmpphy_out {
-+	remote-endpoint = <&pmic_glink_ss2_ss_in>;
-+};
+I just read  what you replied in the v5 thread and know that now it makes m=
+ore=20
+sense.
 
--- 
-2.34.1
+> My one nervousness about this is the impression it perhaps gives that the=
+=20
+contents
+> of validity flags has the same meaning in both records.
+>=20
+> Maybe a comment to that effect next to it's definition makes sense?
+
+Yes, sure.=20
+I'll add it.
+
+> I think the alternative of not including that or the remaining elements in
+> your common structure would be worse.
+>=20
+> Jonathan
+>=20
+
+Thank you,
+
+=46abio
+
+>=20
+> >=20
+> > - Changes for v5 -
+> >=20
+> > 	- Rebase on v6.10-rc1
+> >=20
+> > - Changes for v4 -
+> >=20
+> >         - Initialise cxl_test_dram and cxl_test_gen_media without=20
+> >           unnecessary extra de-references (Dan)
+> >         - Add a comment for media_hdr in union cxl_event (Alison)
+> >=20
+> > - Changes for v3 -
+> >=20
+> >         - Rework the layout of cxl_event_dram and cxl_event_gen_media to
+> >           make a simpler change (Dan)
+> >         - Remove a "Fixes" tag (Dan)
+> >         - Don't use unnecessary struct_group[_tagged] (Jonathan, Ira)
+> >         - Rewrite end extend the commit message
+> >=20
+> > - Link to v4 -
+> >=20
+> > https://lore.kernel.org/linux-cxl/20240521140750.26035-1-fabio.m.de.fra=
+ncesco@linux.intel.com/
+> >=20
+> >  drivers/cxl/core/mbox.c      |  2 +-
+> >  drivers/cxl/core/trace.h     | 32 ++++++++++-----------
+> >  include/linux/cxl-event.h    | 41 ++++++++++-----------------
+> >  tools/testing/cxl/test/mem.c | 54 +++++++++++++++++++-----------------
+> >  4 files changed, 61 insertions(+), 68 deletions(-)
+>=20
+>=20
+>=20
+> > diff --git a/include/linux/cxl-event.h b/include/linux/cxl-event.h
+> > index 60b25020281f..1119d0bbb091 100644
+> > --- a/include/linux/cxl-event.h
+> > +++ b/include/linux/cxl-event.h
+> > @@ -21,6 +21,17 @@ struct cxl_event_record_hdr {
+> >  	u8 reserved[15];
+> >  } __packed;
+> > =20
+> > +struct cxl_event_media_hdr {
+> > +	struct cxl_event_record_hdr hdr;
+> > +	__le64 phys_addr;
+> > +	u8 descriptor;
+> > +	u8 type;
+> > +	u8 transaction_type;
+> > +	u8 validity_flags[2];
+>=20
+> Perhaps a comment to say that validity_flags meaning after bit 2
+> varies across the different records?
+>=20
+> > +	u8 channel;
+> > +	u8 rank;
+> > +} __packed;
+> > +
+> >  #define CXL_EVENT_RECORD_DATA_LENGTH 0x50
+> >  struct cxl_event_generic {
+> >  	struct cxl_event_record_hdr hdr;
+> > @@ -33,14 +44,7 @@ struct cxl_event_generic {
+> >   */
+> >  #define CXL_EVENT_GEN_MED_COMP_ID_SIZE	0x10
+> >  struct cxl_event_gen_media {
+> > -	struct cxl_event_record_hdr hdr;
+> > -	__le64 phys_addr;
+> > -	u8 descriptor;
+> > -	u8 type;
+> > -	u8 transaction_type;
+> > -	u8 validity_flags[2];
+> > -	u8 channel;
+> > -	u8 rank;
+> > +	struct cxl_event_media_hdr media_hdr;
+> >  	u8 device[3];
+> >  	u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
+> >  	u8 reserved[46];
+> > @@ -52,14 +56,7 @@ struct cxl_event_gen_media {
+> >   */
+> >  #define CXL_EVENT_DER_CORRECTION_MASK_SIZE	0x20
+> >  struct cxl_event_dram {
+> > -	struct cxl_event_record_hdr hdr;
+> > -	__le64 phys_addr;
+> > -	u8 descriptor;
+> > -	u8 type;
+> > -	u8 transaction_type;
+> > -	u8 validity_flags[2];
+> > -	u8 channel;
+> > -	u8 rank;
+> > +	struct cxl_event_media_hdr media_hdr;
+> >  	u8 nibble_mask[3];
+> >  	u8 bank_group;
+> >  	u8 bank;
+> > @@ -95,21 +92,13 @@ struct cxl_event_mem_module {
+> >  	u8 reserved[0x3d];
+> >  } __packed;
+> > =20
+> > -/*
+> > - * General Media or DRAM Event Common Fields
+> > - * - provides common access to phys_addr
+> > - */
+> > -struct cxl_event_common {
+> > -	struct cxl_event_record_hdr hdr;
+> > -	__le64 phys_addr;
+> > -} __packed;
+> > -
+> >  union cxl_event {
+> >  	struct cxl_event_generic generic;
+> >  	struct cxl_event_gen_media gen_media;
+> >  	struct cxl_event_dram dram;
+> >  	struct cxl_event_mem_module mem_module;
+> > -	struct cxl_event_common common;
+> > +	/* dram & gen_media event header */
+> > +	struct cxl_event_media_hdr media_hdr;
+> >  } __packed;
+>=20
+>=20
+>=20
+>=20
+>=20
+
+
+
 
 
