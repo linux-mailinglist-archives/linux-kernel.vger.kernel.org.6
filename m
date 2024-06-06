@@ -1,177 +1,221 @@
-Return-Path: <linux-kernel+bounces-205139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B6AB8FF7F5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:11:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88CE58FF7FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 731C61C236C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:11:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 212E928A493
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 23:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F19713DDAA;
-	Thu,  6 Jun 2024 23:11:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DCC13E8AE;
+	Thu,  6 Jun 2024 23:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NTAVzUDP"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mNLKB2Df"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1C513DBBE
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 23:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3323613C9AF;
+	Thu,  6 Jun 2024 23:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717715498; cv=none; b=IXuYBADsimEnfIYRLo4ClCaRgix108FkIlDohnvSuQkghjo+4c2VMQfB0e1bjhKM4en9OiOZEzrJi5MkB031Cr8qBBmF3WArXl2HulB44XTaCjeTmt/1NWbwlf5kXAIUNPrTwVMKJZUEc/w0/0KGPi6HbIAZ63GoLXrzeLUZLO4=
+	t=1717715544; cv=none; b=rUWAOQtb+Rp++cHTkmIVNaUCo4j3rretswHmH6i4L6itt4wizV3daCbbz29xyF4HIDyFVXfnzk201m3kci+x20v+oujSMztYkNt3XMrSQv5skdV6Up1CZMGX2My6l5AuLOUda0mcN8XF3D5uX8PrwuBZj1NnvP7sGuW3ajv0LgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717715498; c=relaxed/simple;
-	bh=q+3KPt2nJvf1TgYW57/HxN+zoujEHesZU8KKVd4ivnY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XmlUTIXhQDPr81Dts8zVrcrczCyYEEABDJGdxQ2W3vzAJ/NrqOXZ9W8pDfi7x9bADAuCzjBKRW+Jqlfug65rl4H+ArRwSQh1yjCjTX2MpNKpMXVl4+xoUsZWDNAeca4AF36LXmTOv7XGEhEj3x/R96Wj4AqBwhepRCLziJT13w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NTAVzUDP; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57a1fe63947so1896783a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 16:11:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717715495; x=1718320295; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q+3KPt2nJvf1TgYW57/HxN+zoujEHesZU8KKVd4ivnY=;
-        b=NTAVzUDPYYfzE3FIDRBM/Cmodkl/f6IlxK+vhKlIz+GqfWncNAH4E6Vkf4MOi5ukjw
-         061SwqhqhT9Vr3HXO5NFcJU36UNnBDYKHs9nqI9HKYIMmmoZl90Qqta6A+U5mAFv9Lw2
-         9w8Nst8dvJahjlfj4L/4W3fCv7NMF8JU6neUV8InC4Z6euqjp2iSqu+N2CAI+ZYg2H3P
-         7xComUas08VJKd7r5u430EhSHh4O81I6pW18XxJoFJNfSDOT3TEwcl/DUWC6BRRYzxiZ
-         3bYNO/JMaYYUtVpzL58Q2Ni00UaGgCy1v2K6/iH2D4+ZTCOmcwdr6dChpMvh2UtRunSs
-         CltQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717715495; x=1718320295;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q+3KPt2nJvf1TgYW57/HxN+zoujEHesZU8KKVd4ivnY=;
-        b=PlfPar29GvVYaGCM2eKabDPZJNw8Gto9tFo4ocw0GW+moVDqP/7jPYLxo/gW8KCSM2
-         c5Iafn7RgtzThI+DTMyg6FsvTe3rNIaAcq7SOd5zEsSHR8vPYylJby7Gl3wiTKZvo9ne
-         iJNXGJ+EwE+eAzQM67eLI9JekfSvRl+QZ7FkGnp/lmKuiM+CrN+xzuoGcKFMEja9aiMv
-         o1caIePANk87negu6eh33OUbXa4xwKCMq1u/YOZ77rLNnkE/1TqpOOM7962gC7ELbrB2
-         hLjNk6WI3aVi98ixbqs5Gs5eUnbRmxMZScGxqfxIVtZJo3pANFIOr1U4owo/WdbZlUcX
-         rXHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpN5RsTiuvUhZGuiecfyaSvix1PGYiClf6sMQCPNxnHRHOzSHM5U9HzuaP+DfA7uakz9Jc0jV/PXaw2P69fUVGOPDmpdk6Q4AyzVME
-X-Gm-Message-State: AOJu0YxGbuLy/h7Paprf25iVU4C4GdAZww0aCgkU4GLjkMQ9gomZhED3
-	ulk39LU9auYZ3vF3a67tRYDbL7GGmLFLtooiJHg44kSsY3XdTooyRDcNsamkcK+3Rt4Vsd44FmP
-	RyP5uIfhebieEhrtqZDyFR9xBN7wYL+/BGZJcSAyYYFv6djCp6YtK
-X-Google-Smtp-Source: AGHT+IFNiFFnhENwqOI+298n5J5418oaFJcQaIba1KTvkhnfSk8Pre1KoxQy4qsGY35MzxINLXH7AW0DYULAth/OFgc=
-X-Received: by 2002:a17:906:694e:b0:a68:d2c:2a23 with SMTP id
- a640c23a62f3a-a6cdc0e0f9dmr54481066b.76.1717715494736; Thu, 06 Jun 2024
- 16:11:34 -0700 (PDT)
+	s=arc-20240116; t=1717715544; c=relaxed/simple;
+	bh=RndAAMxTu9JW+h1dAfHpTIJdE+aymqxTfBB/KA/nySA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pgi89Jnlshm1Xg2Q8HXrpEftwdsFuDtv77YIslCZQ9m0Ert3/SgyYWjBgxId1USe0WFC8F5p4iAq9RyoZ6hYyFu8LSlEX7w2/Qi3CBnPzSOKCKPkQzA+gTEsvdVGvBd2hhGBsNyfqCgcNMQ8Rx/Yd/SUUuMipupNyy7VqKnC9s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mNLKB2Df; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717715541; x=1749251541;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RndAAMxTu9JW+h1dAfHpTIJdE+aymqxTfBB/KA/nySA=;
+  b=mNLKB2Dfz3velQ1qkmjt7mqj42+3eIRsqArS8O6lL1s62NBiF8hZoYqb
+   QfyiHI3WqqAOfTOQT3nEYAY+UF0lEgs6IvqqiAo+eFCeZX/Gtkf+B7NX9
+   +A/EFj7Fy2aQz5XR4yz2XzpD56UFhzzj6tULzUa/J1MJQNli4F0wZSQAv
+   d0ZZtz4DNe3E23HKTYVQdmkpuag472si1QNMkH+Vn2mhmAkB5bN1Z+i2x
+   de/DI46gknn+E3xsLxfaYptXwq4rrQn+brHgyY06WAvRaTzCpoWga6KoH
+   qBX6ZnokDr0y2LjTzEKqe2D3FlB7N2PUnVX9bdkIHTm9k6GKPzPVKmP5h
+   g==;
+X-CSE-ConnectionGUID: BI+GQFBbRRCz2WJrOTG+WQ==
+X-CSE-MsgGUID: /O8hbLolQf+KlTYsRnrqwA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="25521276"
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="25521276"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 16:12:21 -0700
+X-CSE-ConnectionGUID: aoIxobw6SPm+cKIoA2ttTw==
+X-CSE-MsgGUID: nLcwAksGSKSn47nFg2RCzQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="42589661"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 06 Jun 2024 16:12:17 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sFMHG-0003qC-2r;
+	Thu, 06 Jun 2024 23:12:14 +0000
+Date: Fri, 7 Jun 2024 07:11:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Fred Griffoul <fgriffo@amazon.co.uk>
+Cc: oe-kbuild-all@lists.linux.dev, griffoul@gmail.com,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Eric Auger <eric.auger@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Ye Bin <yebin10@huawei.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] vfio/pci: add msi interrupt affinity support
+Message-ID: <202406070659.pYu6zNrx-lkp@intel.com>
+References: <20240605155509.53536-1-fgriffo@amazon.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240604175340.218175-1-yosryahmed@google.com>
- <ZmI573n9-SoK4dIg@google.com> <CAJD7tkbO+ZLdhs-9BpthztZX32i8C4=QEnoiXGS7bM399nqwzg@mail.gmail.com>
-In-Reply-To: <CAJD7tkbO+ZLdhs-9BpthztZX32i8C4=QEnoiXGS7bM399nqwzg@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Thu, 6 Jun 2024 16:10:58 -0700
-Message-ID: <CAJD7tkYtZPv26raSsXZrn=t_P8=6A0QCfgSjBjq_WRDu=BntLA@mail.gmail.com>
-Subject: Re: [PATCH] mm: zsmalloc: share slab caches for all zsmalloc zpools
-To: Minchan Kim <minchan@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	David Rientjes <rientjes@google.com>, Christoph Lameter <cl@linux.com>, 
-	Erhard Furtner <erhard_f@mailbox.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Yu Zhao <yuzhao@google.com>, Chengming Zhou <chengming.zhou@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605155509.53536-1-fgriffo@amazon.co.uk>
 
-On Thu, Jun 6, 2024 at 4:03=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com> =
-wrote:
->
-> On Thu, Jun 6, 2024 at 3:36=E2=80=AFPM Minchan Kim <minchan@kernel.org> w=
-rote:
-> >
-> > On Tue, Jun 04, 2024 at 05:53:40PM +0000, Yosry Ahmed wrote:
-> > > Zswap creates multiple zpools to improve concurrency. Each zsmalloc
-> > > zpool creates its own 'zs_handle' and 'zspage' slab caches. Currently=
- we
-> > > end up with 32 slab caches of each type.
-> > >
-> > > Since each slab cache holds some free objects, we end up with a lot o=
-f
-> > > free objects distributed among the separate zpool caches. Slab caches
-> > > are designed to handle concurrent allocations by using percpu
-> > > structures, so having a single instance of each cache should be enoug=
-h,
-> > > and avoids wasting more memory than needed due to fragmentation.
-> > >
-> > > Additionally, having more slab caches than needed unnecessarily slows
-> > > down code paths that iterate slab_caches.
-> > >
-> > > In the results reported by Eric in [1], the amount of unused slab mem=
-ory
-> > > in these caches goes down from 242808 bytes to 29216 bytes (-88%). Th=
-is
-> > > is calculated by (num_objs - active_objs) * objsize for each 'zs_hand=
-le'
-> > > and 'zspage' cache. Although this patch did not help with the allocat=
-ion
-> > > failure reported by Eric with zswap + zsmalloc, I think it is still
-> > > worth merging on its own.
-> > >
-> > > [1]https://lore.kernel.org/lkml/20240604134458.3ae4396a@yea/
-> >
-> > I doubt this is the right direction.
-> >
-> > Zsmalloc is used for various purposes, each with different object
-> > lifecycles. For example, swap operations relatively involve short-lived
-> > objects, while filesystem use cases might have longer-lived objects.
-> > This mix of lifecycles could lead to fragmentation with this approach.
->
-> Even in a swapfile, some objects can be short-lived and some objects
-> can be long-lived, and the line between swap and file systems both
-> becomes blurry with shmem/tmpfs. I don't think having separate caches
-> here is vital, but I am not generally familiar with the file system
-> use cases and I don't have data to prove/disprove it.
->
-> >
-> > I believe the original problem arose when zsmalloc reduced its lock
-> > granularity from the class level to a global level. And then, Zswap wen=
-t
-> > to mitigate the issue with multiple zpools, but it's essentially anothe=
-r
-> > bandaid on top of the existing problem, IMO.
->
-> IIRC we reduced the granularity when we added writeback support to
-> zsmalloc, which was relatively recent. I think we have seen lock
-> contention with zsmalloc long before that. We have had a similar patch
-> internally to use multiple zpools in zswap for many years now.
->
-> +Yu Zhao
->
-> Yu has more historical context about this, I am hoping he will shed
-> more light about this.
->
-> >
-> > The correct approach would be to further reduce the zsmalloc lock
-> > granularity.
->
-> I definitely agree that the correct approach should be to fix the lock
-> contention at the source and drop zswap's usage of multiple zpools.
-> Nonetheless, I think this patch provides value in the meantime. The
-> fragmentation within the slab caches is real with zswap's use case.
-> OTOH, sharing a cache between swap and file system use cases leading
-> to fragmentation within the same slab cache is a less severe problem
-> in my opinion.
->
-> That being said, I don't feel strongly. If you really don't like this
-> patch I am fine with dropping it.
+Hi Fred,
 
-Oh and I forgot to mention, Chengming said he is already working on
-restoring the per-class lock and collecting lock contention data, so
-maybe that will be enough after all. Ideally we want to compare:
-- single zpool with per-pool lock
-- multiple zpools with per-pool lock (current)
-- single zpool with per-class locks
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on awilliam-vfio/next]
+[also build test ERROR on awilliam-vfio/for-linus linus/master v6.10-rc2 next-20240606]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Fred-Griffoul/vfio-pci-add-msi-interrupt-affinity-support/20240605-235753
+base:   https://github.com/awilliam/linux-vfio.git next
+patch link:    https://lore.kernel.org/r/20240605155509.53536-1-fgriffo%40amazon.co.uk
+patch subject: [PATCH v2] vfio/pci: add msi interrupt affinity support
+config: arm64-randconfig-001-20240607 (https://download.01.org/0day-ci/archive/20240607/202406070659.pYu6zNrx-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240607/202406070659.pYu6zNrx-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406070659.pYu6zNrx-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-infra_ao.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-img.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-ipe.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-mdp.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-mfg.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-mm.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-vdec.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-venc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-wpe.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-img.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-ipe.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-venc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-wpe.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-cam.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-ccu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-img.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-ipe.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-vdec.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-venc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-vpp0.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-vpp1.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-wpe.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-apmixedsys.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-mfg.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-vdec.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-venc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/qcom/lpass-gfm-sm8250.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sprd/clk-sprd.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun50i-a64-ccu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun50i-h6-r-ccu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun50i-h616-ccu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun6i-rtc-ccu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-a33-ccu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-a83t-ccu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-r40-ccu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-v3s-ccu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun9i-a80-ccu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun9i-a80-de-ccu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun9i-a80-usb-ccu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/qcom/hdma_mgmt.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/ixp4xx/ixp4xx-qmgr.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pmdomain/amlogic/meson-ee-pwrc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/max20411-regulator.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/tps6286x-regulator.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/owl-uart.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/lp.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/hw_random/omap-rng.o
+WARNING: modpost: drivers/char/hw_random/mxc-rnga: section mismatch in reference: mxc_rnga_driver+0x10 (section: .data) -> mxc_rnga_remove (section: .exit.text)
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/hw_random/arm_smccc_trng.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iommu/iova.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-i2c.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-slimbus.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-w1.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/ublk_drv.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/misc/open-dice.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/pcf50633-gpio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/timberdale.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/ssbi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/vexpress-sysreg.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/rt4831.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/qcom-pm8008.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dax/dax.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dax/device_dax.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dax/kmem.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/core/cxl_core.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pci.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_mem.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pmem.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_port.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_mf624.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cdrom/cdrom.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/touchscreen/cyttsp_i2c_common.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/i2c/busses/i2c-ccgx-ucsi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/i2c/busses/i2c-pxa.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/rc/rc-core.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/mr75203.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/ufs/host/ufs-qcom.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/leds/blink/leds-bcm63138.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_performance.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/fsl_imx8_ddr_perf.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwtracing/intel_th/intel_th_msu_sink.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvmem/nvmem_u-boot-env.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/parport/parport.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/libnvdimm.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/nd_pmem.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/of_pmem.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/nd_virtio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/parsers/brcm_u-boot.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/parsers/tplink_safeloader.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/chips/cfi_util.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/maps/map_funcs.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-core.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-hub.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-aspeed.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-gpio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-scom.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/counter/ftm-quaddec.o
+>> ERROR: modpost: "arm64_mismatched_32bit_el0" [drivers/vfio/pci/vfio-pci-core.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
