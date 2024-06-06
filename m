@@ -1,96 +1,131 @@
-Return-Path: <linux-kernel+bounces-204948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4477B8FF55F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:40:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF0F88FF563
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 21:41:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AEA11C25273
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:40:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6000284134
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 19:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB4E6F099;
-	Thu,  6 Jun 2024 19:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654456F08B;
+	Thu,  6 Jun 2024 19:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oxIGAvkp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="he6berez"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83B161FC5;
-	Thu,  6 Jun 2024 19:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180934CB4E;
+	Thu,  6 Jun 2024 19:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717702830; cv=none; b=YAwR3RqmJ4x2pEw1vWdwKQ7TX51QrUQa6mUP0TdycjOmyzLqHD2w6ec8i98x3ttkKaKOYUN1QSO1n9EAc4wFTF+4IzymxbRFzDANiBrkxHdoedd4CwwqAQ1h/LdMSv6VOKHMcgAlpGF6mqQZ5jRoL3ME6sW8QC8w6r//Z8fKXrU=
+	t=1717702858; cv=none; b=pT1t4kebPSi5wHO7Dh5c6yJScDbwA+sANvg0ditn4z+WeVZBz0uZ5iCdPIzdmGe2bk+puDOAe2bLGdddEAshhzwlv0hC7at4shd+xcm+eZQFZaxW852RBfj0iNWl4kPdi1ZjJM2CZuH+lujpHtcdX2+OKXjxgcaM+KmsfeQ+dDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717702830; c=relaxed/simple;
-	bh=f3k9PHy+8tQvuHXSHVcmvybWcHCsGpAomL+yq5Dn7iU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=a+hZyuhySovXjOAqixWX2M/LwUku74LBtI8fgIa3KI5PzFDze6T0/WD9JP/UaH5jPV6bzjqEHwHBWJ8omCgTPxjq3eARdOsm5TT3xJAUzyhCM9/EAr8kzcz1wNSAYUbciRMtBnc+QmKJplXLB3nm/o5+zG+gsEm24IuE4whzV2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oxIGAvkp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5BDE0C3277B;
-	Thu,  6 Jun 2024 19:40:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717702829;
-	bh=f3k9PHy+8tQvuHXSHVcmvybWcHCsGpAomL+yq5Dn7iU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=oxIGAvkp9xGgiOszw8XVA7BlfMNXTBIRZ1fIvBtgi3bPUOQ158fPCbouXWPYIykQH
-	 efYHi2KZbc+osnPJ9xnThCVtxjy1886tQ+ex0u+yY5a7nSio/PrSlLdlrWgXCfeiqY
-	 /obKKxPFnH5evZTGJ6TS3rZp6VB2M7c8AdbdHEVPAd5j8Z9WmMjX6LhT/YVOCeMKHx
-	 1tY3eVDULcvmdxMxfFAzFymhrAtaDpE7kGV6CL9Uje6RO89WKomeDxv8I4vSN8XIRu
-	 gj9Whpw44SC4Ybl16L+KqK51KoYU/hBEtQV9nd1qGhnIwIcVITcdCImwsw6gbcCxe4
-	 RMh9SJL9NHxHA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 468C8D2039C;
-	Thu,  6 Jun 2024 19:40:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1717702858; c=relaxed/simple;
+	bh=nqmuZAXsgJT3L7yyO+ZftJF3F/VTtxhZgZWGgav0uu8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NwnFQLHWDZjMHmHDNMcgRRKfzC3CaA4qiFG21abQwq0TJCJR/O/X5b6TTFNcnvXMlbF5qmXkMxRumAfJY4ny6wQu3q72IHzrjKsSegAXHkmQ6XQxHEqQfZ3Sx/mxcD7OcnmiQ4N8Sa9VXV7gxwdTevixgK3IBHelmfev+eFHovs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=he6berez; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52b840cfecdso1605875e87.3;
+        Thu, 06 Jun 2024 12:40:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717702855; x=1718307655; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eMRXXzQeW24r8GaqJHGXoIgaMljSxkuiM6e9jAW3pTw=;
+        b=he6berez0DEV7GfkZLNyvgX/2KIDou2WtqF2zd0WtoudQh7twXCMr9cQizS1GfHW/k
+         YhcJZ+FklNHiOiOjpNbV4asYOlndm+eaVsPVc25NisQOFYE+3wJGkZ10bUVQbe6XRrBh
+         zuNdLbRJ+LiFc2maeYxQLaOO8t7ipmKgPbe8Xh+kdPjKystN6VEdeT73/92DNhjNpvoC
+         a6UTBAlQ2nJp+CnW7utSzl5SMwpZ/wEbgUe3AEVOepT2XtstA/UON4ul2CUmXRIuFnpH
+         48TZt11qwjzmZLU/PPztNiSxmCFVv13WsfFXoRVqDqIi+M8TG6lcsIICP4VajoYLQ/IM
+         kvnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717702855; x=1718307655;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eMRXXzQeW24r8GaqJHGXoIgaMljSxkuiM6e9jAW3pTw=;
+        b=Rl54dmV0gBw+wigkOIZCCGmGljDWoTlpvNHw67nKi6ZJR5jQ3J5mUxl2buUm4pIqxD
+         BftnlrteQTCeTmGmtqsoYsXdr81rlpeKVB9ERusuuK0mrOQMNW+Mn/qfoJGyilL1QSMF
+         Aw7jexUx0xYVpDFwmu4INMljiafc1eEM48bVmQMztd3k7PmaSubYGaD0UU2ieVEnzyEX
+         boiWYdQ0ja9/3ojY8rje1dhjPjlSy2ralKO7FlcMokrDtlGDuAq0AQMYYy1B7fxwZEZg
+         YB6GfL/2uuNFUUd+qEJidIk7nYFiVgGIQzIjRmWc0xWwyMHOfecAknrk/VQ4Cf+q9RGh
+         UfkA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/Iy2NW2rlTi1t8ff2Pis9CaHZpCbOrk8bxza5Xds/aRb/YvM7m8KyclD3ql0x7EmaUKZsFoUsL8gQ6vkKRM7+YvfGOPX3PLHsYut+
+X-Gm-Message-State: AOJu0YzhU5VH13MbAfOsOcSLh5e++5tqxPEvVEpeeWLavqWBJbvYjFr+
+	PCePjers2QRjzv1V/NR+O4m2uNZQ77bmXSK+JM4xGXlYfck6V5xRiAMYmqUKiCXsd8G/7zHdeqJ
+	yRcgTTGF+fdO0BW636yWbNn6bzZBM0WNfyDE=
+X-Google-Smtp-Source: AGHT+IEYCxL4GarMdI2OkQmF2JRvblmJC//Gllac9FduCd87A7ycmNqnpgR7waQyN9efknDTvW04bPvXf47SbugZfxo=
+X-Received: by 2002:a2e:9a96:0:b0:2ea:8037:29f5 with SMTP id
+ 38308e7fff4ca-2eadce28272mr4399651fa.14.1717702854962; Thu, 06 Jun 2024
+ 12:40:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] Bluetooth: hci_bcm4377: Add BCM4388 support
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <171770282928.6851.17710724113724214544.git-patchwork-notify@kernel.org>
-Date: Thu, 06 Jun 2024 19:40:29 +0000
-References: <20240602-btbcm4388-v1-1-210e4b4eeb3b@svenpeter.dev>
-In-Reply-To: <20240602-btbcm4388-v1-1-210e4b4eeb3b@svenpeter.dev>
-To: Sven Peter via B4 Relay <devnull+sven.svenpeter.dev@kernel.org>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com, marcan@marcan.st,
- alyssa@rosenzweig.io, linux-bluetooth@vger.kernel.org,
- linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, sven@svenpeter.dev
+References: <20240606183921.1128911-1-masahiroy@kernel.org>
+In-Reply-To: <20240606183921.1128911-1-masahiroy@kernel.org>
+From: Vincenzo Palazzo <vincenzopalazzodev@gmail.com>
+Date: Thu, 6 Jun 2024 21:40:43 +0200
+Message-ID: <CAKy8djTXYt=g_YZbyHJNNYLBKuBGDp4Ur-vGLU9LTnYgvp-L+A@mail.gmail.com>
+Subject: Re: [PATCH] modpost: do not warn about missing MODULE_DESCRIPTION()
+ for vmlinux.o
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+LGMT, thanks
 
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
-
-On Sun, 02 Jun 2024 09:57:05 +0000 you wrote:
-> From: Hector Martin <marcan@marcan.st>
-> 
-> This new variant needs a different core2_window1 and always uses
-> beamforming.
-> The BAR2 also has an offset (RAM start, presumably), so add that.
-> 
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> Reviewed-by: Sven Peter <sven@svenpeter.dev>
-> [sven: rebased, updated some comments, mentioned 4388 in Kconfig]
-> Signed-off-by: Sven Peter <sven@svenpeter.dev>
-> 
-> [...]
-
-Here is the summary with links:
-  - Bluetooth: hci_bcm4377: Add BCM4388 support
-    https://git.kernel.org/bluetooth/bluetooth-next/c/0b22b7f8aef3
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Reviewed-by: Vincenzo Palazzo <vincenzopalazzodev@gmail.com>
 
 
+On Thu, Jun 6, 2024 at 8:39=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.or=
+g> wrote:
+>
+> Building with W=3D1 incorrectly emits the following warning:
+>
+>   WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
+>
+> This check should apply only to modules.
+>
+> Fixes: 1fffe7a34c89 ("script: modpost: emit a warning when the descriptio=
+n is missing")
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+>
+>  scripts/mod/modpost.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> index 937294ff164f..f48d72d22dc2 100644
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -1647,10 +1647,11 @@ static void read_symbols(const char *modname)
+>                         namespace =3D get_next_modinfo(&info, "import_ns"=
+,
+>                                                      namespace);
+>                 }
+> +
+> +               if (extra_warn && !get_modinfo(&info, "description"))
+> +                       warn("missing MODULE_DESCRIPTION() in %s\n", modn=
+ame);
+>         }
+>
+> -       if (extra_warn && !get_modinfo(&info, "description"))
+> -               warn("missing MODULE_DESCRIPTION() in %s\n", modname);
+>         for (sym =3D info.symtab_start; sym < info.symtab_stop; sym++) {
+>                 symname =3D remove_dot(info.strtab + sym->st_name);
+>
+> --
+> 2.43.0
+>
 
