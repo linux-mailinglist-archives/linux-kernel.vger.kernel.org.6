@@ -1,39 +1,55 @@
-Return-Path: <linux-kernel+bounces-204151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAEF98FE4CE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:01:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 365978FE4D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 13:02:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44813284CF6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:01:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC4CE1F25477
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 11:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B997194C7D;
-	Thu,  6 Jun 2024 11:01:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540F63A8C0;
-	Thu,  6 Jun 2024 11:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C458195397;
+	Thu,  6 Jun 2024 11:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="LYtv5Z21"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A14D3D56D;
+	Thu,  6 Jun 2024 11:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717671690; cv=none; b=LVyeDQGPac88AuNH2hAOjv77Sz3Hhnr3KWMoiaWj0s7DtkTEVGDpT+pLXuNXxb7QWQ7Tntnzqcj3MidtJvdpnADcvarSKrcoGo3Rpqz/ABRtTXw9GxeXTO2zIyM6FMlXq9T/f1h0gGoEr6QQgapeJdt/BFQ9ELjYzMlzdGYS74Q=
+	t=1717671722; cv=none; b=HSkEkAHtFTjRgi9kL8R4byiDqFXxCwkFiPoQ2vRZqpwR9ir4/ZnJSGBaeOzGjLRmzcno09TYlDSrnXxg82Gt5zeNqPtoozhnZakaFXDJfrZ9MxVtCJI23eKvIzOCGHsCa/GPjdJ+HRF4nOibCho4OS9v28Z4nrlrnH9uGa+jvSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717671690; c=relaxed/simple;
-	bh=XOb74sq0KCeqPlWTLiQ4TrJW2NPp7b949OWlKC/giPM=;
+	s=arc-20240116; t=1717671722; c=relaxed/simple;
+	bh=62CrMwnBsDesJfBbj4JdA6nLwnTrPFPozSa6mWTBTjg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VoCnwdLqvVHpiks6H5bbCLmlePH8TwPIYPxoJABhZ6A+21KwQjwbbMZCck8+Aty73W7DUWz1sy67MaiF/jJGJM3ckRxflQLvNzTPvCLb74XAadfonSwbG8LBOJQCwTGE5IWxzYUD1MM4NY0fA2kfvBPhVi1WZWz7ih6CLKFpnG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3886B2F4;
-	Thu,  6 Jun 2024 04:01:52 -0700 (PDT)
-Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E0B283F762;
-	Thu,  6 Jun 2024 04:01:25 -0700 (PDT)
-Message-ID: <5e968259-2fd5-49fa-940f-e019b35966b2@arm.com>
-Date: Thu, 6 Jun 2024 12:01:25 +0100
+	 In-Reply-To:Content-Type; b=IFVeP9PmmO+grqbAkxkfyo+vP/QOU8EyYjwG1ThPD/A8SGAaywV9MzuY+VsJpSjrbY2fxcbjnLxjQaM/OXqBMzv0uy1do1RNm78QjKb29kAVqv6j4GZ0qM1ZeFL6rq+bE+4gQYaot4pQgy85Fzjf1/wWjNWuOCUkPuOaP51pTfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=LYtv5Z21; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1717671696; x=1718276496; i=markus.elfring@web.de;
+	bh=fbrojDn0VDdn0L3EW1XYF97yJqxtpi3UOK2VLs7ulp0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=LYtv5Z21OpbjF02YgCTqGl/K15aq6Hez0UbRlIO5aaBciJaoAGZ1m8Iht+qhSYEV
+	 tagLKVk6my66ej5CfUCVJDAddet96+95Ln6IU1CHLAro/V2sPVD0c9V+ZL5Olr8fM
+	 WWLNG4qfVMJj5Sjy9CTTTiPJr1Pganv6r5ElLrHsxVErLpNpc+9zsgcaOIjLYgVNj
+	 04t5XAwi+37ORrya8E/lfiWTgtnlqSFMrg8zYpkgG0Vna2mujmahCagNQ4kZ/uUln
+	 l5Qoggeyb4wtd7DNedzDZ9aqSPW/HdBUUfIoA3Muy+eSqeOVy37auEFvVboTaKQDI
+	 3aWB0nihTdszQmwyhg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N14ta-1sQhFd3w0Q-00rGUS; Thu, 06
+ Jun 2024 13:01:35 +0200
+Message-ID: <204dc14f-1f58-4425-b613-85538eb4d947@web.de>
+Date: Thu, 6 Jun 2024 13:01:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,409 +57,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V17 0/9] arm64/perf: Enable branch stack sampling
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- Mark Rutland <mark.rutland@arm.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Marc Zyngier <maz@kernel.org>, Suzuki Poulose <suzuki.poulose@arm.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, will@kernel.org, catalin.marinas@arm.com
-References: <20240405024639.1179064-1-anshuman.khandual@arm.com>
- <80d33844-bdd2-4fee-81dd-9cd37c63d42c@arm.com> <Zli6Ot0TwK3Qy-ee@J2N7QTR9R3>
- <5dcfbebe-f9f1-4767-bf21-7717f20af5d0@arm.com>
-Content-Language: en-US
-From: James Clark <james.clark@arm.com>
-In-Reply-To: <5dcfbebe-f9f1-4767-bf21-7717f20af5d0@arm.com>
+Subject: Re: usb: typec: anx7411: Use scope-based resource management in
+ anx7411_typec_port_probe()
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
+ linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Xin Ji <xji@analogixsemi.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <889729ac-3fc5-4666-b9f5-ce6e588a341a@web.de>
+ <20240606101757.0000331f@Huawei.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240606101757.0000331f@Huawei.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:+TjG99r+XNmlKF6SwclUrVxDdMTNQkCcRDjGzvh01/WEkKXLCTs
+ 8SyL/Aay6KAsy3sM1C+dyMCaVelTWmyZFONT1jOsovzYxEh5i9M2KYJ1uVTqqbnaZwfvOen
+ W3Bn7BjhhjqRhGrF9jxxl05jobJ3HFe7jAnotPL3tKKe76hFpb+9bf3epKG2wMVRcZyD3IB
+ +xQf59yiUk7/vijNhlZUQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:h0TlJMfNPT8=;buw75irrEL0dwYIUtjk0vsyLbxT
+ A4i5U6FotW7xRr3WUT/bv7tNybBAp0Y5N9UJEmIyPSrE59jK8eTpBQhZ9+GD6n9nd8SlxyP0X
+ ioS+hdwR3MRP8l/LUvxWlnBDAMj6Nld1Mwm7apyVo/ootiSXSM0IYWA2UpkP/BQaeSmxb/+OU
+ vDFOhom4mWhGpoFnRouiJxIBk4bKmYwst/Qof9TBgrDiaZnh2nx6tpeh57sASUHtucPDZxn8Q
+ DrfmMiUHa+kSppYnRueQ+4UPtNKaaYHLP04EdSo7wdXUiOXs2bHiICpF1V4fRTEw+2ezEfo25
+ OV1taok/oNcJCeictql5z/DHrlXMIsfF2NP6fR+3u5/g96S/VijY4/0wt3dlS+wj418jSN05b
+ x90G/7AH2KSQmbeqiwgxrkdFXyzddI5/sh6dUj65znRoR0Qns9jYJdJYnPKyOpJd8XytUrGIG
+ 0qHVMlO+WPKa0ppXmaQW8gQ2sdHvK9cfvEjii1zZYGO3eizaO8sFVdPPvXtiPCNEEoymccG+K
+ LLehTl0Zc2IxbdyKkWeRPN1HrMdNY2ifvGegyLKK6mY5cV9V1WvrDd1K8pFY+Y1knNf9xx+8n
+ 0WWo/NdtGG/NXDKLn5Gd6t9/Y6OwZM88izNtPchF7dhJg3qOXkWBRXijoIVp4yn78gYsivOeo
+ p8+LAZRpNfiOvEQ4w2XmhJVOdWORZo0e360um7F5VvHFbsiIksRXw66dYUCghf7BG595KZCSP
+ v3wTdrMuKP7eiOuCorDmcY+xOKZGEqD3hYIUcfI+El2E/I3nT6EM//mML/PKEDqHF3KShUinF
+ u9VEkXEPqFocJRzwD5vV1KsFWTJNMeIZRWdvVVQjWnePo=
 
+> That makes it tricky to use no_free_ptr() so I wonder if this is
+> a case where the old fashioned fix of adding all the relevant
+> fwnode_handle_put() calls is the better option.  The __free()
+> approach doesn't always fit.
 
+Can involved development concerns be clarified better anyhow?
 
-On 06/06/2024 05:58, Anshuman Khandual wrote:
-> On 5/30/24 23:11, Mark Rutland wrote:
->> On Thu, May 30, 2024 at 10:47:34AM +0100, James Clark wrote:
->>> On 05/04/2024 03:46, Anshuman Khandual wrote:
->>>> This series enables perf branch stack sampling support on arm64 platform
->>>> via a new arch feature called Branch Record Buffer Extension (BRBE). All
->>>> the relevant register definitions could be accessed here.
->>>>
->>>> https://developer.arm.com/documentation/ddi0601/2021-12/AArch64-Registers
->>>>
->>>> This series applies on 6.9-rc2.
->>>>
->>>> Also this series is being hosted below for quick access, review and test.
->>>>
->>>> https://git.gitlab.arm.com/linux-arm/linux-anshuman.git (brbe_v17)
->>>>
->>>> There are still some open questions regarding handling multiple perf events
->>>> with different privilege branch filters getting on the same PMU, supporting
->>>> guest branch stack tracing from the host etc. Finally also looking for some
->>>> suggestions regarding supporting BRBE inside the guest. The series has been
->>>> re-organized completely as suggested earlier.
->>>>
->>>> - Anshuman
->>>>
->>> [...]
->>>>
->>>> ------------------ Possible 'branch_sample_type' Mismatch -----------------
->>>>
->>>> Branch stack sampling attributes 'event->attr.branch_sample_type' generally
->>>> remain the same for all the events during a perf record session.
->>>>
->>>> $perf record -e <event_1> -e <event_2> -j <branch_filters> [workload]
->>>>
->>>> event_1->attr.branch_sample_type == event_2->attr.branch_sample_type
->>>>
->>>> This 'branch_sample_type' is used to configure the BRBE hardware, when both
->>>> events i.e <event_1> and <event_2> get scheduled on a given PMU. But during
->>>> PMU HW event's privilege filter inheritance, 'branch_sample_type' does not
->>>> remain the same for all events. Let's consider the following example
->>>>
->>>> $perf record -e cycles:u -e instructions:k -j any,save_type ls
->>>>
->>>> cycles->attr.branch_sample_type != instructions->attr.branch_sample_type
->>>>
->>>> Because cycles event inherits PERF_SAMPLE_BRANCH_USER and instruction event
->>>> inherits PERF_SAMPLE_BRANCH_KERNEL. The proposed solution here configures
->>>> BRBE hardware with 'branch_sample_type' from last event to be added in the
->>>> PMU and hence captured branch records only get passed on to matching events
->>>> during a PMU interrupt.
->>>>
->>>
->>> Hi Anshuman,
->>>
->>> Surely because of this example we should merge? At least we have to try
->>> to make the most common basic command lines work. Unless we expect all
->>> tools to know whether the branch buffer is shared between PMUs on each
->>> architecture or not. The driver knows though, so can merge the settings
->>> because it all has to go into one BRBE.
->>
->> The difficulty here is that these are opened as independent events (not
->> in the same event group), and so from the driver's PoV, this is no
->> different two two users independently doing:
->>
->> 	perf record -e event:u -j any,save_type -p ${SOME_PID}
->>
->> 	perf record -e event:k -j any,save_type -p ${SOME_PID}
->>
->> ... where either would be surprised to get the merged result.
-> 
-> Right, that's the problem. The proposed idea here ensures that each event
-> here will get only expected branch records, even though sample size might
-> get reduced as the HW filters overrides might not be evenly split between
-> them during the perf session.
-> 
->>
->> So, if we merge the filters into the most permissive set, we *must*
->> filter them when handing them to userspace so that each event gets the
->> expected set of branch records.
-> 
-> Agreed, if the branch filters get merged to the most permissive set via
-> an OR semantics, then results must be filtered before being pushed into
-> the ring buffer for each individual event that has overflown during the
-> PMU IRQ.
-> 
->>
->> Assuming we do that, for Anshuman's case above:
->>
->> 	perf record -e cycles:u -e instructions:k -j any,save_type ls	
->>
->> ... the overflow of the cycles evnt will only record user branch
->> records, and the overflow of the instructions event will only record
->> kernel branch records.
-> 
-> Right.
-> 
->>
->> I think it's arguable either way as to whether users want that or merged
->> records; we should probably figure out with the tools folk what the
->> desired behaviour is for that command line, but as above I don't think
->> that we can have the kernel give both events merged records unless
->> userspace asks for that explicitly.
-> 
-> Right, we should not give merged results unless explicitly asked by the
-> event. Otherwise that might break the semantics.
-> 
->>
->>> Merging the settings in tools would be a much harder problem.
->>
->> I can see that it'd be harder to do that up-front when parsing each
->> event independently, but there is a phase where the tool knows about all
->> of the events and *might* be able to do that, where the driver doesn't
->> really know at any point that these events are related.
->>
->> Regardless, I assume that if the user passes:
->>
->> 	perf record -e cycles:u -e instructions:k -k any,u,k,save_type ls
->>
->> ... both events will be opened with PERF_SAMPLE_BRANCH_USER and
->> PERF_SAMPLE_BRANCH_KERNEL, so maybe that's good, and in-kernel filtering
->> is sufficient.
-> Kernel filtering will not be required in this case as "-j any,u,k," overrides
-> both event's individual privilege request i.e cycles:u and instructions:k. So
-> both the events will receive branch records related to PERF_SAMPLE_BRANCH_USER
-> and PERF_SAMPLE_BRANCH_KERNEL. From branch sample perspective privilege filter
-> is (PERF_SAMPLE_BRANCH_USER | PERF_SAMPLE_BRANCH_KERNEL).
-> 
->>
->>> Any user that doesn't have permission for anything in the merged result
->>> can continue to get nothing.
->>>
->>> And we can always add filtering in the kernel later on if we want to to
->>> make it appear to behave even more normally.
->>
->> As above, I think if we merge the HW filters in the kernel then the
->> kernel must do SW filtering. I don't think that's something we can leave
->> for later.
-> 
-> Alright.
-> 
->>
->>>> static int
->>>> armpmu_add(struct perf_event *event, int flags)
->>>> {
->>>> 	........
->>>> 	if (has_branch_stack(event)) {
->>>> 		/*
->>>> 		 * Reset branch records buffer if a new task event gets
->>>> 		 * scheduled on a PMU which might have existing records.
->>>> 		 * Otherwise older branch records present in the buffer
->>>> 		 * might leak into the new task event.
->>>> 		 */
->>>> 		if (event->ctx->task && hw_events->brbe_context != event->ctx) {
->>>> 			hw_events->brbe_context = event->ctx;
->>>> 			if (armpmu->branch_reset)
->>>> 				armpmu->branch_reset();
->>>> 		}
->>>> 		hw_events->brbe_users++;
->>>> Here ------->	hw_events->brbe_sample_type = event->attr.branch_sample_type;
->>>> 	}
->>>> 	........
->>>> }
->>>>
->>>> Instead of overriding existing 'branch_sample_type', both could be merged.
->>>>
->>>
->>> I can't see any use case where anyone would want the override behavior.
->>> Especially if you imagine multiple users not even aware of each other.
->>
->> I completely agree that one event overriding another is not an
->> acceptable solution.
->>
->>> Either the current "no records for mismatches" or the merged one make sense.
->>
->> I think our options are:
->>
->> 1) Do not allow events with conflicting HW filters to be scheduled (e.g.
->>    treating this like a counter constraint).
-> 
-> That's the easiest solution and will keep things simple but downside being
-> the sample size will probably get much reduced. But such scenarios will be
-> rare, and hence won't matter much.
-> 
->>
->> 2) Allow events with conflicting HW filters to be scheduled, merge the
->>    active HW filters, and SW filter the records in the kernel.
->>
->> 3) Allow events with conflicting branch filters to be scheduled, but
->>    only those which match the "active" filter get records.
-> 
-> That's the proposed solution. "Active" filter gets decided on which event
-> comes last thus override the previous and PMU interrupt handler delivers
-> branch records only to the matching events.
-> 
->>
->> So far (2) seems to me like the best option, and IIUC that's what x86
->> does with LBR. I suspect that also justifies discarding records at
->> context switch time, since we can't know how many relevant records were
->> discarded due to conflicting records (and so cannot safely stitch
->> records), and users have to expect that they may get fewer records than
->> may exist in HW anyway.
-> 
-> So if we implement merging branch filters requests and SW filtering for the
-> captured branch records, we should also drop saving and stitching mechanism
-> completely ?
-> 
-> Coming back to the implementation for option (2), the following code change
-> (tentative and untested) will merge branch filter requests and drop the event
-> filter check during PMU interrupt.
-> 
-> diff --git a/drivers/perf/arm_brbe.c b/drivers/perf/arm_brbe.c
-> index 45ac2d0ca04c..9afa4e48d957 100644
-> --- a/drivers/perf/arm_brbe.c
-> +++ b/drivers/perf/arm_brbe.c
-> @@ -286,7 +286,13 @@ void armv8pmu_branch_stack_add(struct perf_event *event, struct pmu_hw_events *h
->                 armv8pmu_branch_stack_reset();
->         }
->         hw_events->branch_users++;
-> -       hw_events->branch_sample_type = event->attr.branch_sample_type;
-> +
-> +       /*
-> +        * Merge all branch filter requests from different perf
-> +        * events being added into this PMU. This includes both
-> +        * privilege and branch type filters.
-> +        */
-> +       hw_events->branch_sample_type |= event->attr.branch_sample_type;
->  }
->  
->  void armv8pmu_branch_stack_del(struct perf_event *event, struct pmu_hw_events *hw_events)
-> diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
-> index 6137ae4ba7c3..c5311d5365cc 100644
-> --- a/drivers/perf/arm_pmuv3.c
-> +++ b/drivers/perf/arm_pmuv3.c
-> @@ -856,15 +856,12 @@ static void read_branch_records(struct pmu_hw_events *cpuc,
->                 return;
->  
->         /*
-> -        * Overflowed event's branch_sample_type does not match the configured
-> -        * branch filters in the BRBE HW. So the captured branch records here
-> -        * cannot be co-related to the overflowed event. Report to the user as
-> -        * if no branch records have been captured, and flush branch records.
-> -        * The same scenario is applicable when the current task context does
-> -        * not match with overflown event.
-> +        * When the current task context does not match with the PMU overflown
-> +        * event, the captured branch records here cannot be co-related to the
-> +        * overflowed event. Report to the user as if no branch records have
-> +        * been captured, and flush branch records.
->          */
-> -       if ((cpuc->branch_sample_type != event->attr.branch_sample_type) ||
-> -           (event->ctx->task && cpuc->branch_context != event->ctx))
-> +       if (event->ctx->task && cpuc->branch_context != event->ctx)
->                 return;
->  
->         /*
-> 
-> and something like the following change (tentative and untested) implements the
-> required SW branch records filtering.
-> 
-> diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
-> index c5311d5365cc..d2390657c466 100644
-> --- a/drivers/perf/arm_pmuv3.c
-> +++ b/drivers/perf/arm_pmuv3.c
-> @@ -843,11 +843,97 @@ static void armv8pmu_stop(struct arm_pmu *cpu_pmu)
->         armv8pmu_pmcr_write(armv8pmu_pmcr_read() & ~ARMV8_PMU_PMCR_E);
->  }
->  
-> +static bool filter_branch_type(struct perf_event *event, struct perf_branch_entry *entry)
-> +{
-> +       u64 br_type = event->attr.branch_sample_type;
-> +       u64 mask = PERF_BR_UNCOND;
-> +
-> +       if (br_type & PERF_SAMPLE_BRANCH_ANY)
-> +               return true;
-> +
-> +       if (entry->type == PERF_BR_UNKNOWN)
-> +               return true;
-> +
-> +       if (br_type & PERF_SAMPLE_BRANCH_IND_JUMP)
-> +               mask |= PERF_BR_IND;
-> +
-> +       if (br_type & PERF_SAMPLE_BRANCH_COND) {
-> +               mask &= ~PERF_BR_UNCOND;
-> +               mask |= PERF_BR_COND;
-> +       }
-> +
-> +       if (br_type & PERF_SAMPLE_BRANCH_CALL)
-> +               mask |= PERF_BR_CALL;
-> +
-> +       if (br_type & PERF_SAMPLE_BRANCH_IND_CALL)
-> +               mask |= PERF_BR_IND_CALL;
-> +
-> +       if (br_type & PERF_SAMPLE_BRANCH_ANY_CALL) {
-> +               mask |= PERF_BR_CALL;
-> +               mask |= PERF_BR_IRQ;
-> +               mask |= PERF_BR_SYSCALL;
-> +               mask |= PERF_BR_SERROR;
-> +               if (br_type & PERF_SAMPLE_BRANCH_COND)
-> +                       mask |= PERF_BR_COND_CALL;
-> +       }
-> +
-> +       if (br_type & PERF_SAMPLE_BRANCH_ANY_RETURN) {
-> +               mask |= PERF_BR_RET;
-> +               mask |= PERF_BR_ERET;
-> +               mask |= PERF_BR_SYSRET;
-> +               if (br_type & PERF_SAMPLE_BRANCH_COND)
-> +                       mask |= PERF_BR_COND_RET;
-> +       }
-> +       return mask & entry->type;
-> +}
-
-You can build this mask once for each event because the options don't
-change. At the moment it's built for each record which seems excessive.
-
-> +
-> +static bool filter_branch_privilege(struct perf_event *event, struct perf_branch_entry *entry)
-> +{
-> +       u64 br_type = event->attr.branch_sample_type;
-> +
-> +       if (!(br_type & PERF_SAMPLE_BRANCH_USER)) {
-> +               if (is_ttbr0_addr(entry->from) || is_ttbr0_addr(entry->to))
-> +                       return false;
-> +       }
-> +
-> +       if (!(br_type & PERF_SAMPLE_BRANCH_KERNEL)) {
-> +               if (is_ttbr1_addr(entry->from) || is_ttbr1_addr(entry->to))
-> +                       return false;
-> +       }
-> +
-> +       if (!(br_type & PERF_SAMPLE_BRANCH_HV)) {
-> +               if (is_kernel_in_hyp_mode()) {
-> +                       if (is_ttbr1_addr(entry->from) || is_ttbr1_addr(entry->to))
-> +                               return false;
-> +               }
-> +       }
-> +       return true;
-> +}
-> +
-> +static void filter_branch_records(struct perf_event *event, struct pmu_hw_events *cpuc,
-> +                                 struct branch_records *event_records)
-> +{
-> +       struct perf_branch_entry *entry;
-> +       int idx, count;
-> +
-> +       memset(event_records, 0, sizeof(struct branch_records));
-> +       for (idx = 0, count = 0; idx < cpuc->branches->branch_stack.nr; idx++) {
-> +               entry = &cpuc->branches->branch_entries[idx];
-> +               if (!filter_branch_privilege(event, entry) || !filter_branch_type(event, entry))
-> +                       continue;
-> +
-> +               memcpy(&event_records->branch_entries[count], &entry, sizeof(struct perf_branch_entry));
-> +               count++;
-> +       }
-> +}
-> +
->  static void read_branch_records(struct pmu_hw_events *cpuc,
->                                 struct perf_event *event,
->                                 struct perf_sample_data *data,
->                                 bool *branch_captured)
->  {
-> +       struct branch_records event_records;
-> +
->         /*
->          * CPU specific branch records buffer must have been allocated already
->          * for the hardware records to be captured and processed further.
-> @@ -874,6 +960,20 @@ static void read_branch_records(struct pmu_hw_events *cpuc,
->                 armv8pmu_branch_read(cpuc, event);
->                 *branch_captured = true;
->         }
-> +
-> +       /*
-> +        * Filter captured branch records
-> +        *
-> +        * PMU captured branch records would contain samples applicable for
-> +        * the agregated branch filters, for all events that got scheduled
-> +        * on this PMU. Hence the branch records need to be filtered first
-> +        * so that each individual event get samples they had requested.
-> +        */
-> +       if (cpuc->branch_sample_type != event->attr.branch_sample_type) {
-> +               filter_branch_records(event, cpuc, &event_records);
-> +               perf_sample_save_brstack(data, event, &event_records.branch_stack, NULL);
-> +               return;
-> +       }
->         perf_sample_save_brstack(data, event, &cpuc->branches->branch_stack, NULL);
->  }
->  
-> 
+Regards,
+Markus
 
