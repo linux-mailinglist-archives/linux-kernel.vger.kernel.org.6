@@ -1,208 +1,335 @@
-Return-Path: <linux-kernel+bounces-203533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC06B8FDCBA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 04:28:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 094B58FDCBB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 04:29:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C36391C21997
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 02:28:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83BC91F21C27
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 02:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2842618E29;
-	Thu,  6 Jun 2024 02:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IZ6JPv3f"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D5B199B8;
+	Thu,  6 Jun 2024 02:29:01 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7837A1B285
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 02:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A817440C
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 02:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717640899; cv=none; b=QpZG+f/sKYOV0cJfSGEtn/mqV4ATUjHQNthZvIf7TeFyskxX2ClN+uNHo8XKPO6COWPnlhIVu1pzBYdzpnmfZsQ+kEfkb5gH08WueoOXCT1PYGCvCS2W0onTWyS7x0aAb7Gt2ekvD+kaSb2VVDfSTCf/bAbhhcuwZ9q1csxiMAQ=
+	t=1717640941; cv=none; b=ZtTXuiA7FmcSpW6Hx4U4fhGHzFSdWbjoiylsgBfP5aRq4kV6zmfIVAFhyDi5ebo859+wZljOw+ovIydTCtLnY63n/bDniLc6DuUyfM8llFvSYnOk18614PMY7vayl52KbTerehVwDog+g/jqk+spe4P3xL7pBHU+QNCU7+UV2tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717640899; c=relaxed/simple;
-	bh=MQ6zr58kRmReZXOMjg8EaWksghH8iS+5N907X2sBLno=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hj3yGyUJns9+f4hIR9Kpy5DftPXj7Cixo00hr+vZ2QvSN8tUnXPic/xLF6NEFMWZg8UKxDiR51SCOdrqctL5RMybP9wYQho9p+S8+cj4eLTyhjs3rJytLr5F8SNHkB+EPj3mT/sEd6X7r2q2uY45Xy/eKG9PBDtRSZeXQP4i3DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IZ6JPv3f; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52b9dda4906so653885e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 19:28:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717640895; x=1718245695; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VHMh/PZ5hRlBQq//Nja97uI/czGva41PtV0OcxeHB5I=;
-        b=IZ6JPv3f7ykxMPtcgkHmWJEhi3nICUukfQqS0Nh0sf8slnMvn1qE6EFqFefzHlt/xl
-         xUckQ+Il5eXB3PFPlbzReGqftInNkxmH3ffRSPMpoCIPKEZPsMUWHNGTJTM/MVEGiFax
-         i62wEAhNM5NnQmzUzdpP+TgubQHPYoKJf4VbH+wF/oAN6jWjkxGJTDfz1Nxv7kLQZzrS
-         jnsX6ivZ1JoeGUxGRc+A8X7/+M3WMwKaKWpDbOdjGvMFoa6Q+K9q4JYWK+MF1op5Fnzt
-         d69goAwQ964Uu5u4B8QbxHoX689L8+bLIJA/axKsaahTxqhI2L7FWQsEhvMCx8m1nIbs
-         jtvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717640895; x=1718245695;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VHMh/PZ5hRlBQq//Nja97uI/czGva41PtV0OcxeHB5I=;
-        b=rKcNZz9NU9uzyleeoliofuFGh/zdL0NlnWZsPFWIFTOcuI9koSksI+OUHhlcP/oU/T
-         MFYXFI0WXInr3sASkxpn0cZY/8Qvfo3JkKGlEU9DAWbNGcuZcZe9kSf8mbWlsf8WzFHW
-         8NMRh9pcqAmsizPJ0NeRzWIKrtzV/qwPFqq7QMTjMhmpFMjLkQ+4d3rurG/954UBMH+T
-         YiyPAEozMMORmFTPWBMa/LL7rM1Ye68h9C4wxV1GdE7xcORB+62TkV3mmHbNOvuGkXT7
-         5YMPARaC97IZDPT5pUWES0Szx4qEoNV8yqXhkZchMVSh1WxbXwLcHssraFTRjpBYRDpF
-         RSgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWf967f/fBP626sQHQoIojuhe7dP9yQGnqkgme0lZn6tWGCk8sw7UcR/FrIIUY9EwQC6I4otpunJyi1V6V/J1QjKIlpntrnOkQvYFg
-X-Gm-Message-State: AOJu0YzS6x7pcFNZQCCn88/6kTa6zT+XhuaQgWyJknHT/HJ6wHvstME3
-	Pkh9w5AP4cInQdhanq+rtJb1TnaqtzmTDhMVCDkaB5xVCf9ys1OsI49uz5JydFhFAl+r4cH8+0N
-	nnHN0L4POztoyg0wXfgJmapPqYWc=
-X-Google-Smtp-Source: AGHT+IFiNiF6n0TTdIzUtQYTp1Y4mPTYhbra86Wu7SO1hrfpM3738KffG5vCrSHmT7IK1z17wS3Ot1njFKQJTLRWJM4=
-X-Received: by 2002:a19:e053:0:b0:52b:8411:20e5 with SMTP id
- 2adb3069b0e04-52bab4dd189mr2947152e87.15.1717640895226; Wed, 05 Jun 2024
- 19:28:15 -0700 (PDT)
+	s=arc-20240116; t=1717640941; c=relaxed/simple;
+	bh=2AMkdPZKWvsmYsD3O+AX8oQXTToIpdh1ZGXeChHjSqg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sxPB/Ejrsap7NZVWC6Oc/Z9+P8U7DPjpfl2/GLHHXaU3JHj3vIjRBU6F22HkUlayTn8j9kfJ/Yn1niErMyv3wTh+4U9m2QklBUxVBoRdGJKDn75kbe1vDVeOr6TJFuOY369xDgVbvxKjgM8DliRySYY+iki0mt/9gbynSrEn5uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 820b9f9423ac11ef9305a59a3cc225df-20240606
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:de1b0203-e0e8-4176-94ec-70658eecebe5,IP:20,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:15
+X-CID-INFO: VERSION:1.1.38,REQID:de1b0203-e0e8-4176-94ec-70658eecebe5,IP:20,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:15
+X-CID-META: VersionHash:82c5f88,CLOUDID:ef59916cf3e3bdb1ea0193934f573148,BulkI
+	D:240606102255V77OWLIM,BulkQuantity:1,Recheck:0,SF:72|19|44|66|24|102,TC:n
+	il,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil,COL
+	:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_FSI,TF_CID_SPAM_SNR,TF_CID_SPAM_FSD
+X-UUID: 820b9f9423ac11ef9305a59a3cc225df-20240606
+Received: from node4.com.cn [(39.156.73.12)] by mailgw.kylinos.cn
+	(envelope-from <xialonglong@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1940339978; Thu, 06 Jun 2024 10:28:49 +0800
+Received: from node4.com.cn (localhost [127.0.0.1])
+	by node4.com.cn (NSMail) with SMTP id 470D516002081;
+	Thu,  6 Jun 2024 10:28:49 +0800 (CST)
+X-ns-mid: postfix-66611EE1-139648339
+Received: from kylin-pc.. (unknown [172.25.130.133])
+	by node4.com.cn (NSMail) with ESMTPA id 560E416002081;
+	Thu,  6 Jun 2024 02:28:46 +0000 (UTC)
+From: Longlong Xia <xialonglong@kylinos.cn>
+To: mark@fasheh.com
+Cc: jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com,
+	ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Longlong Xia <xialonglong@kylinos.cn>
+Subject: [PATCH] ocfs2: convert to pr_fmt
+Date: Thu,  6 Jun 2024 10:28:23 +0800
+Message-ID: <20240606022823.1296737-1-xialonglong@kylinos.cn>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240604022232.1669983-1-zhaoyang.huang@unisoc.com>
-In-Reply-To: <20240604022232.1669983-1-zhaoyang.huang@unisoc.com>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Thu, 6 Jun 2024 10:28:04 +0800
-Message-ID: <CAGWkznHt3p=+bW=+CKCDdXEjqDkUqj89AO1F=zje-A_cDkx2NA@mail.gmail.com>
-Subject: Re: [PATCHv4 1/1] mm: fix incorrect vbq reference in purge_fragmented_block
-To: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Uladzislau Rezki <urezki@gmail.com>, 
-	Christoph Hellwig <hch@infradead.org>, Lorenzo Stoakes <lstoakes@gmail.com>, Baoquan He <bhe@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, hailong liu <hailong.liu@oppo.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, steve.kang@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-This patch is urgent for the Android world which uses v6.6 now. Is
-there any comments on this? Thanks!
+Use the pr_fmt() macro to prefix all the output with "o2net: ".
+while at it, convert printk(<LEVEL>) to pr_<level>().
 
-On Tue, Jun 4, 2024 at 10:23=E2=80=AFAM zhaoyang.huang
-<zhaoyang.huang@unisoc.com> wrote:
->
-> From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
->
-> vmalloc area runs out in our ARM64 system during an erofs test as
-> vm_map_ram failed[1]. By following the debug log, we find that
-> vm_map_ram()->vb_alloc() will allocate new vb->va which corresponding
-> to 4MB vmalloc area as list_for_each_entry_rcu returns immediately
-> when vbq->free->next points to vbq->free. That is to say, 65536 times
-> of page fault after the list's broken will run out of the whole
-> vmalloc area. This should be introduced by one vbq->free->next point to
-> vbq->free which makes list_for_each_entry_rcu can not iterate the list
-> and find the BUG.
->
-> [1]
-> PID: 1        TASK: ffffff80802b4e00  CPU: 6    COMMAND: "init"
->  #0 [ffffffc08006afe0] __switch_to at ffffffc08111d5cc
->  #1 [ffffffc08006b040] __schedule at ffffffc08111dde0
->  #2 [ffffffc08006b0a0] schedule at ffffffc08111e294
->  #3 [ffffffc08006b0d0] schedule_preempt_disabled at ffffffc08111e3f0
->  #4 [ffffffc08006b140] __mutex_lock at ffffffc08112068c
->  #5 [ffffffc08006b180] __mutex_lock_slowpath at ffffffc08111f8f8
->  #6 [ffffffc08006b1a0] mutex_lock at ffffffc08111f834
->  #7 [ffffffc08006b1d0] reclaim_and_purge_vmap_areas at ffffffc0803ebc3c
->  #8 [ffffffc08006b290] alloc_vmap_area at ffffffc0803e83fc
->  #9 [ffffffc08006b300] vm_map_ram at ffffffc0803e78c0
->
-> Fixes: fc1e0d980037 ("mm/vmalloc: prevent stale TLBs in fully utilized bl=
-ocks")
->
-> For detailed reason of broken list, please refer to below URL
-> https://lore.kernel.org/all/20240531024820.5507-1-hailong.liu@oppo.com/
->
-> Suggested-by: Hailong.Liu <hailong.liu@oppo.com>
-> Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> ---
-> v2: introduce cpu in vmap_block to record the right CPU number
-> v3: use get_cpu/put_cpu to prevent schedule between core
-> v4: replace get_cpu/put_cpu by another API to avoid disabling preemption
-> ---
-> ---
->  mm/vmalloc.c | 21 +++++++++++++++------
->  1 file changed, 15 insertions(+), 6 deletions(-)
->
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 22aa63f4ef63..89eb034f4ac6 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -2458,6 +2458,7 @@ struct vmap_block {
->         struct list_head free_list;
->         struct rcu_head rcu_head;
->         struct list_head purge;
-> +       unsigned int cpu;
->  };
->
->  /* Queue of free and dirty vmap blocks, for allocation and flushing purp=
-oses */
-> @@ -2585,8 +2586,15 @@ static void *new_vmap_block(unsigned int order, gf=
-p_t gfp_mask)
->                 free_vmap_area(va);
->                 return ERR_PTR(err);
->         }
-> -
-> -       vbq =3D raw_cpu_ptr(&vmap_block_queue);
-> +       /*
-> +        * list_add_tail_rcu could happened in another core
-> +        * rather than vb->cpu due to task migration, which
-> +        * is safe as list_add_tail_rcu will ensure the list's
-> +        * integrity together with list_for_each_rcu from read
-> +        * side.
-> +        */
-> +       vb->cpu =3D raw_smp_processor_id();
-> +       vbq =3D per_cpu_ptr(&vmap_block_queue, vb->cpu);
->         spin_lock(&vbq->lock);
->         list_add_tail_rcu(&vb->free_list, &vbq->free);
->         spin_unlock(&vbq->lock);
-> @@ -2614,9 +2622,10 @@ static void free_vmap_block(struct vmap_block *vb)
->  }
->
->  static bool purge_fragmented_block(struct vmap_block *vb,
-> -               struct vmap_block_queue *vbq, struct list_head *purge_lis=
-t,
-> -               bool force_purge)
-> +               struct list_head *purge_list, bool force_purge)
->  {
-> +       struct vmap_block_queue *vbq =3D &per_cpu(vmap_block_queue, vb->c=
-pu);
-> +
->         if (vb->free + vb->dirty !=3D VMAP_BBMAP_BITS ||
->             vb->dirty =3D=3D VMAP_BBMAP_BITS)
->                 return false;
-> @@ -2664,7 +2673,7 @@ static void purge_fragmented_blocks(int cpu)
->                         continue;
->
->                 spin_lock(&vb->lock);
-> -               purge_fragmented_block(vb, vbq, &purge, true);
-> +               purge_fragmented_block(vb, &purge, true);
->                 spin_unlock(&vb->lock);
->         }
->         rcu_read_unlock();
-> @@ -2801,7 +2810,7 @@ static void _vm_unmap_aliases(unsigned long start, =
-unsigned long end, int flush)
->                          * not purgeable, check whether there is dirty
->                          * space to be flushed.
->                          */
-> -                       if (!purge_fragmented_block(vb, vbq, &purge_list,=
- false) &&
-> +                       if (!purge_fragmented_block(vb, &purge_list, fals=
-e) &&
->                             vb->dirty_max && vb->dirty !=3D VMAP_BBMAP_BI=
-TS) {
->                                 unsigned long va_start =3D vb->va->va_sta=
-rt;
->                                 unsigned long s, e;
-> --
-> 2.25.1
->
+Signed-off-by: Longlong Xia <xialonglong@kylinos.cn>
+---
+ fs/ocfs2/cluster/tcp.c | 109 ++++++++++++++++++-----------------------
+ 1 file changed, 49 insertions(+), 60 deletions(-)
+
+diff --git a/fs/ocfs2/cluster/tcp.c b/fs/ocfs2/cluster/tcp.c
+index 2b8fa3e782fb..fc483c7c4fb4 100644
+--- a/fs/ocfs2/cluster/tcp.c
++++ b/fs/ocfs2/cluster/tcp.c
+@@ -37,6 +37,8 @@
+  * and only accepts the connection if the higher numbered node is heartb=
+eating.
+  */
+=20
++#define pr_fmt(fmt) "o2net: " fmt
++
+ #include <linux/kernel.h>
+ #include <linux/sched/mm.h>
+ #include <linux/jiffies.h>
+@@ -528,18 +530,16 @@ static void o2net_set_nn_state(struct o2net_node *n=
+n,
+=20
+ 	if (was_valid && !valid) {
+ 		if (old_sc)
+-			printk(KERN_NOTICE "o2net: No longer connected to "
+-				SC_NODEF_FMT "\n", SC_NODEF_ARGS(old_sc));
++			pr_notice("No longer connected to " SC_NODEF_FMT "\n",
++				  SC_NODEF_ARGS(old_sc));
+ 		o2net_complete_nodes_nsw(nn);
+ 	}
+=20
+ 	if (!was_valid && valid) {
+ 		o2quo_conn_up(o2net_num_from_nn(nn));
+ 		cancel_delayed_work(&nn->nn_connect_expired);
+-		printk(KERN_NOTICE "o2net: %s " SC_NODEF_FMT "\n",
+-		       o2nm_this_node() > sc->sc_node->nd_num ?
+-		       "Connected to" : "Accepted connection from",
+-		       SC_NODEF_ARGS(sc));
++		pr_notice("%s " SC_NODEF_FMT "\n", o2nm_this_node() > sc->sc_node->nd_=
+num ?
++			  "Connected to" : "Accepted connection from", SC_NODEF_ARGS(sc));
+ 	}
+=20
+ 	/* trigger the connecting worker func as long as we're not valid,
+@@ -629,9 +629,8 @@ static void o2net_state_change(struct sock *sk)
+ 		o2net_sc_queue_work(sc, &sc->sc_connect_work);
+ 		break;
+ 	default:
+-		printk(KERN_INFO "o2net: Connection to " SC_NODEF_FMT
+-			" shutdown, state %d\n",
+-			SC_NODEF_ARGS(sc), sk->sk_state);
++		pr_notice("Connection to " SC_NODEF_FMT " shutdown, state %d\n",
++			  SC_NODEF_ARGS(sc), sk->sk_state);
+ 		o2net_sc_queue_work(sc, &sc->sc_shutdown_work);
+ 		break;
+ 	}
+@@ -1260,11 +1259,10 @@ static int o2net_check_handshake(struct o2net_soc=
+k_container *sc)
+ 	struct o2net_node *nn =3D o2net_nn_from_num(sc->sc_node->nd_num);
+=20
+ 	if (hand->protocol_version !=3D cpu_to_be64(O2NET_PROTOCOL_VERSION)) {
+-		printk(KERN_NOTICE "o2net: " SC_NODEF_FMT " Advertised net "
+-		       "protocol version %llu but %llu is required. "
+-		       "Disconnecting.\n", SC_NODEF_ARGS(sc),
+-		       (unsigned long long)be64_to_cpu(hand->protocol_version),
+-		       O2NET_PROTOCOL_VERSION);
++		pr_notice(SC_NODEF_FMT " Advertised net protocol version %llu but %llu=
+ is required. Disconnecting.\n",
++			SC_NODEF_ARGS(sc),
++			(unsigned long long)be64_to_cpu(hand->protocol_version),
++			O2NET_PROTOCOL_VERSION);
+=20
+ 		/* don't bother reconnecting if its the wrong version. */
+ 		o2net_ensure_shutdown(nn, sc, -ENOTCONN);
+@@ -1278,33 +1276,30 @@ static int o2net_check_handshake(struct o2net_soc=
+k_container *sc)
+ 	 */
+ 	if (be32_to_cpu(hand->o2net_idle_timeout_ms) !=3D
+ 				o2net_idle_timeout()) {
+-		printk(KERN_NOTICE "o2net: " SC_NODEF_FMT " uses a network "
+-		       "idle timeout of %u ms, but we use %u ms locally. "
+-		       "Disconnecting.\n", SC_NODEF_ARGS(sc),
+-		       be32_to_cpu(hand->o2net_idle_timeout_ms),
+-		       o2net_idle_timeout());
++		pr_notice(SC_NODEF_FMT " uses a network idle timeout of %u ms, but we =
+use %u ms locally. Disconnecting.\n",
++			  SC_NODEF_ARGS(sc),
++			  be32_to_cpu(hand->o2net_idle_timeout_ms),
++			  o2net_idle_timeout());
+ 		o2net_ensure_shutdown(nn, sc, -ENOTCONN);
+ 		return -1;
+ 	}
+=20
+ 	if (be32_to_cpu(hand->o2net_keepalive_delay_ms) !=3D
+ 			o2net_keepalive_delay()) {
+-		printk(KERN_NOTICE "o2net: " SC_NODEF_FMT " uses a keepalive "
+-		       "delay of %u ms, but we use %u ms locally. "
+-		       "Disconnecting.\n", SC_NODEF_ARGS(sc),
+-		       be32_to_cpu(hand->o2net_keepalive_delay_ms),
+-		       o2net_keepalive_delay());
++		pr_notice(SC_NODEF_FMT " uses a keepalive delay of %u ms, but we use %=
+u ms locally. Disconnecting.\n",
++			  SC_NODEF_ARGS(sc),
++			  be32_to_cpu(hand->o2net_keepalive_delay_ms),
++			  o2net_keepalive_delay());
+ 		o2net_ensure_shutdown(nn, sc, -ENOTCONN);
+ 		return -1;
+ 	}
+=20
+ 	if (be32_to_cpu(hand->o2hb_heartbeat_timeout_ms) !=3D
+ 			O2HB_MAX_WRITE_TIMEOUT_MS) {
+-		printk(KERN_NOTICE "o2net: " SC_NODEF_FMT " uses a heartbeat "
+-		       "timeout of %u ms, but we use %u ms locally. "
+-		       "Disconnecting.\n", SC_NODEF_ARGS(sc),
+-		       be32_to_cpu(hand->o2hb_heartbeat_timeout_ms),
+-		       O2HB_MAX_WRITE_TIMEOUT_MS);
++		pr_notice(SC_NODEF_FMT " uses a heartbeat timeout of %u ms, but we use=
+ %u ms locally. Disconnecting.\n",
++			  SC_NODEF_ARGS(sc),
++			  be32_to_cpu(hand->o2hb_heartbeat_timeout_ms),
++			  O2HB_MAX_WRITE_TIMEOUT_MS);
+ 		o2net_ensure_shutdown(nn, sc, -ENOTCONN);
+ 		return -1;
+ 	}
+@@ -1497,9 +1492,8 @@ static void o2net_idle_timer(struct timer_list *t)
+ 	unsigned long msecs =3D o2net_idle_timeout();
+ #endif
+=20
+-	printk(KERN_NOTICE "o2net: Connection to " SC_NODEF_FMT " has been "
+-	       "idle for %lu.%lu secs.\n",
+-	       SC_NODEF_ARGS(sc), msecs / 1000, msecs % 1000);
++	pr_notice("Connection to " SC_NODEF_FMT " has been idle for %lu.%lu sec=
+s.\n",
++		  SC_NODEF_ARGS(sc), msecs / 1000, msecs % 1000);
+=20
+ 	/* idle timerout happen, don't shutdown the connection, but
+ 	 * make fence decision. Maybe the connection can recover before
+@@ -1645,8 +1639,8 @@ static void o2net_start_connect(struct work_struct =
+*work)
+=20
+ out:
+ 	if (ret && sc) {
+-		printk(KERN_NOTICE "o2net: Connect attempt to " SC_NODEF_FMT
+-		       " failed with errno %d\n", SC_NODEF_ARGS(sc), ret);
++		pr_notice("Connect attempt to " SC_NODEF_FMT " failed with errno %d\n"=
+,
++			  SC_NODEF_ARGS(sc), ret);
+ 		/* 0 err so that another will be queued and attempted
+ 		 * from set_nn_state */
+ 		o2net_ensure_shutdown(nn, sc, 0);
+@@ -1669,12 +1663,10 @@ static void o2net_connect_expired(struct work_str=
+uct *work)
+=20
+ 	spin_lock(&nn->nn_lock);
+ 	if (!nn->nn_sc_valid) {
+-		printk(KERN_NOTICE "o2net: No connection established with "
+-		       "node %u after %u.%u seconds, check network and"
+-		       " cluster configuration.\n",
+-		     o2net_num_from_nn(nn),
+-		     o2net_idle_timeout() / 1000,
+-		     o2net_idle_timeout() % 1000);
++		pr_notice("No connection established with node %u after %u.%u seconds,=
+ check network and cluster configuration.\n",
++			  o2net_num_from_nn(nn),
++			  o2net_idle_timeout() / 1000,
++			  o2net_idle_timeout() % 1000);
+=20
+ 		o2net_set_nn_state(nn, NULL, 0, 0);
+ 	}
+@@ -1821,9 +1813,9 @@ static int o2net_accept_one(struct socket *sock, in=
+t *more)
+=20
+ 	node =3D o2nm_get_node_by_ip(sin.sin_addr.s_addr);
+ 	if (node =3D=3D NULL) {
+-		printk(KERN_NOTICE "o2net: Attempt to connect from unknown "
+-		       "node at %pI4:%d\n", &sin.sin_addr.s_addr,
+-		       ntohs(sin.sin_port));
++		pr_notice("Attempt to connect from unknown node at %pI4:%d\n",
++			  &sin.sin_addr.s_addr,
++			  ntohs(sin.sin_port));
+ 		ret =3D -EINVAL;
+ 		goto out;
+ 	}
+@@ -1831,15 +1823,13 @@ static int o2net_accept_one(struct socket *sock, =
+int *more)
+ 	if (o2nm_this_node() >=3D node->nd_num) {
+ 		local_node =3D o2nm_get_node_by_num(o2nm_this_node());
+ 		if (local_node)
+-			printk(KERN_NOTICE "o2net: Unexpected connect attempt "
+-					"seen at node '%s' (%u, %pI4:%d) from "
+-					"node '%s' (%u, %pI4:%d)\n",
+-					local_node->nd_name, local_node->nd_num,
+-					&(local_node->nd_ipv4_address),
+-					ntohs(local_node->nd_ipv4_port),
+-					node->nd_name,
+-					node->nd_num, &sin.sin_addr.s_addr,
+-					ntohs(sin.sin_port));
++			pr_notice("Unexpected connect attempt seen at node '%s' (%u, %pI4:%d)=
+ from node '%s' (%u, %pI4:%d)\n",
++				  local_node->nd_name, local_node->nd_num,
++				  &(local_node->nd_ipv4_address),
++				  ntohs(local_node->nd_ipv4_port),
++				  node->nd_name,
++				  node->nd_num, &sin.sin_addr.s_addr,
++				  ntohs(sin.sin_port));
+ 		ret =3D -EINVAL;
+ 		goto out;
+ 	}
+@@ -1864,10 +1854,9 @@ static int o2net_accept_one(struct socket *sock, i=
+nt *more)
+ 		ret =3D 0;
+ 	spin_unlock(&nn->nn_lock);
+ 	if (ret) {
+-		printk(KERN_NOTICE "o2net: Attempt to connect from node '%s' "
+-		       "at %pI4:%d but it already has an open connection\n",
+-		       node->nd_name, &sin.sin_addr.s_addr,
+-		       ntohs(sin.sin_port));
++		pr_notice("Attempt to connect from node '%s' at %pI4:%d but it already=
+ has an open connection\n",
++			  node->nd_name, &sin.sin_addr.s_addr,
++			  ntohs(sin.sin_port));
+ 		goto out;
+ 	}
+=20
+@@ -1986,7 +1975,7 @@ static int o2net_open_listening_sock(__be32 addr, _=
+_be16 port)
+=20
+ 	ret =3D sock_create(PF_INET, SOCK_STREAM, IPPROTO_TCP, &sock);
+ 	if (ret < 0) {
+-		printk(KERN_ERR "o2net: Error %d while creating socket\n", ret);
++		pr_err("Error %d while creating socket\n", ret);
+ 		goto out;
+ 	}
+=20
+@@ -2003,14 +1992,14 @@ static int o2net_open_listening_sock(__be32 addr,=
+ __be16 port)
+ 	sock->sk->sk_reuse =3D SK_CAN_REUSE;
+ 	ret =3D sock->ops->bind(sock, (struct sockaddr *)&sin, sizeof(sin));
+ 	if (ret < 0) {
+-		printk(KERN_ERR "o2net: Error %d while binding socket at "
+-		       "%pI4:%u\n", ret, &addr, ntohs(port));=20
++		pr_err("Error %d while binding socket at %pI4:%u\n",
++		       ret, &addr, ntohs(port));
+ 		goto out;
+ 	}
+=20
+ 	ret =3D sock->ops->listen(sock, 64);
+ 	if (ret < 0)
+-		printk(KERN_ERR "o2net: Error %d while listening on %pI4:%u\n",
++		pr_err("Error %d while listening on %pI4:%u\n",
+ 		       ret, &addr, ntohs(port));
+=20
+ out:
+--=20
+2.45.1
+
 
