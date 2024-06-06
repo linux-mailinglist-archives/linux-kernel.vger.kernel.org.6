@@ -1,113 +1,137 @@
-Return-Path: <linux-kernel+bounces-204239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80978FE633
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:12:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0D518FE61B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 485D4B24615
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:12:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85C6B286382
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 12:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5991A196DB7;
-	Thu,  6 Jun 2024 12:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F333E195983;
+	Thu,  6 Jun 2024 12:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MlynfY2f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ex+NapCY"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92581195B2F;
-	Thu,  6 Jun 2024 12:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E661953A4;
+	Thu,  6 Jun 2024 12:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717675813; cv=none; b=Iva2ZvKIvBtCPWPWTMR9XwK9lfVg9A2Po3LXQ8rs4Y0CbHfsMkxC74EOOfAiwNi53UNxgtVvot5rNF3fpHfiuj+qAZo2QPWcE69kK1tolbW74ZYii5EwWxKlHEIPHolEWqHWqEZWoKtdWrkowByme7N/EQdx5tNV+FgX+TvpLsc=
+	t=1717675780; cv=none; b=u3pnJ0eLQemVKDOIfDygTW4nQmU3CQO4wE6L7NrNi7Mwqzn4sacLS4NmY0cZ/1joK+65CLg06N+7ub//oNwQXlqcqttE2DfsMCSnlHRvpoNMuHa8dyMGrcdgwgDPZy/q+0lG1mxMTDMnOFH/1tn/GJwGJeLqxHyhBjzyLJmJ598=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717675813; c=relaxed/simple;
-	bh=9gvRWld+0F7eOJkm5HDn0iZvrcoNruU+wwvFd26mihw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=r5cm038rWE48G1AXXM/9n92yw2hQo23g2OxgOGYJUukxG4mVGKL+41rhf0ANUER+SCwzQJeilvaAHyU+yWtYpiB4dYYNFQQPbVOandYc4ItaAD2UkV/uDaPBzHov1IqBXcu6ZVo9uwyuEp9tNAD+1GEvHmsm7hznFNMN9a6nifI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MlynfY2f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53FF0C2BD10;
-	Thu,  6 Jun 2024 12:10:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717675813;
-	bh=9gvRWld+0F7eOJkm5HDn0iZvrcoNruU+wwvFd26mihw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=MlynfY2frYY4bCzmSpFENjNTXNGdiXXaXA7dlcKqKms99ZisDhXgbj9Ecjo5iHM7f
-	 Wx0UPnnAbvRu6/gUB8WsNAQ2M1KFHo7JNIuwWASoYIRwmHJJCL7l6HA+G57rJCJSYL
-	 E+MolKgcmxNXUujUcTQLYUj1DK8v1gqp0RxPts3jSx7Wh/6oaJonY/72JfMCc/61X/
-	 xDx1UgcQTl46KUhbG3Iv4Qg7P1t0fEV3JG6NZ8h897CkQ+KA4/aRJT+P1sqOt+cOLV
-	 M9O8g7u8trPJF8x+nmrMEgrosII9Ki/DW5XyiMDmzsXXJ86CbhCdhyj8Seu0gCM3K0
-	 M5cKGU8Zcrygg==
-From: Roger Quadros <rogerq@kernel.org>
-Date: Thu, 06 Jun 2024 15:09:23 +0300
-Subject: [PATCH RFC net-next 7/7] net: ethernet: ti: am65-cpsw: setup
- priority to flow mapping
+	s=arc-20240116; t=1717675780; c=relaxed/simple;
+	bh=d/jCCF0NCqOhRllSWhbYbAQCzOnOV4aDMEeLQSfza+0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=O879sNiuzhRksO/ucuLH77jPytbgrBxcWWlobhxlKXOfp5Q45u7Z+GYc3IGp+en+3FiGn0Vl4y3wu+woPdyThVHs15sjz20Vi2ZeJr7P2kN/k6X/83W/nrQJH+GHN232o96GkBVJkVpl2texU47TqwR0mY1NWoow0JdbilVXtyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ex+NapCY; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717675777;
+	bh=d/jCCF0NCqOhRllSWhbYbAQCzOnOV4aDMEeLQSfza+0=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=ex+NapCYaV6uQigRxoz9OgZuuxLinAt+ffhPwDJQBgGlx2SPufS1v3P+AztsrF40y
+	 dRz3GUhZMHA2YYKyeXhuBGMbG9HldE7vrKp5Z0aMkk7TJDryuZgGDfB6vIuUmaN5Jh
+	 ZtaoW+WFg76wAWKZsxuc9ptVjZ6wJAFaEFmmrrdiBvJ/OcdNeb1n1sjacYJ08NifXs
+	 gJXda7TmOb3v0I06XyPOME2H9GCfAv25M4/IRnJcZmn5FRz6dl9OI7Bt36nIC2i+vy
+	 6ozyecsSOFutlgR3Bx0/B/YDrWkIdTEhWye8VrqdgyMs7MzMaplLnHAA1p7tZ0ul1V
+	 Dy86HOeJ8iz6A==
+Received: from [100.93.89.217] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: benjamin.gaignard)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 8ACD83781022;
+	Thu,  6 Jun 2024 12:09:36 +0000 (UTC)
+Message-ID: <657ef910-e6fd-4791-988e-4aba03104c20@collabora.com>
+Date: Thu, 6 Jun 2024 14:09:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240606-am65-cpsw-multi-rx-v1-7-0704b0cb6fdc@kernel.org>
-References: <20240606-am65-cpsw-multi-rx-v1-0-0704b0cb6fdc@kernel.org>
-In-Reply-To: <20240606-am65-cpsw-multi-rx-v1-0-0704b0cb6fdc@kernel.org>
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, srk@ti.com, vigneshr@ti.com, 
- danishanwar@ti.com, pekka Varis <p-varis@ti.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, 
- Roger Quadros <rogerq@kernel.org>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=973; i=rogerq@kernel.org;
- h=from:subject:message-id; bh=9gvRWld+0F7eOJkm5HDn0iZvrcoNruU+wwvFd26mihw=;
- b=owEBbQKS/ZANAwAIAdJaa9O+djCTAcsmYgBmYacIOrfYYLF3V/R88Xdvg4iwQBkvTvEvF1jGG
- 93WvlCbY9WJAjMEAAEIAB0WIQRBIWXUTJ9SeA+rEFjSWmvTvnYwkwUCZmGnCAAKCRDSWmvTvnYw
- k17lEAC3C+yCYk4I8XKIhjG//nL3J80N2xjxzMnP2EvvBo+sMF4C6TAZsC/k3dqJCQ4IOk6X9kE
- /cuGdyTh24Fqg41+W4ZHArrSb7XyG3rRra9Wbr8doZL5zRsJq1afdqv4e/uYF/EZPmUxSpmu4h1
- AJaAJ3oMWgNhGPDnTA21d/9V/Eh+amFhSTb9+a0mi29f7u3U99HrpqNbSMSQ6VSknp7CUhUIwO/
- USgvoZ9a60UWMvi0D9JN+/ISrUmPQnl/INyOWy/eWeb3B9ZcOihYPUXBXNNwrHTKt2K53Q09yP1
- oWfNIQJeoptQYrt8APKU2GUnZNDq/94p2GpjJ/HvYCBOBdlTA9k3FFWEYS+QKcIsP9ioQnVpuH8
- P1vMimYmwx4Pm68QE5jXEGhBoLqVMfC66r7dWYOcTmhnbb4Z4dGQFssQfd1DoOg9qFg3YQLlkcS
- O0AhT9pM9JQYZB1GZvZh4FHQODLs8H/nupXyiAPzjFslIvmRvy/+xCeMbIzOet4qI1cL2EaSu9P
- 3so6H902XSMbQGZoCsc6sO3RidRSutoAwZAiqnfUok2WnNtJfQpFOa0mz6wvZlUiXOQmplc4OcI
- FeQ0aEbSru0hf8KGt8ldEExTIqsRdyrLKZ0tOkZos6mL4HsCpVaxtVSvvcQH4QAMz/9f+TEFLXt
- z1/FKod1W+HP9AA==
-X-Developer-Key: i=rogerq@kernel.org; a=openpgp;
- fpr=412165D44C9F52780FAB1058D25A6BD3BE763093
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 10/12] media: platform: mtk-mdp3: Get fine-grain
+ control of cmdq_pkt_finalize()
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Moudy Ho
+ <moudy.ho@mediatek.com>, "Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org
+References: <20240222154120.16959-1-chunkuang.hu@kernel.org>
+ <20240222154120.16959-11-chunkuang.hu@kernel.org>
+Content-Language: en-US
+From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+In-Reply-To: <20240222154120.16959-11-chunkuang.hu@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Now that we support multiple RX queues, enable default priority
-to flow mapping so that higher priority packets come on higher
-channels (flows).
 
-The Classifier checks for PCP/DSCP priority in the packet and
-routes them to the appropriate flow.
+Le 22/02/2024 à 16:41, Chun-Kuang Hu a écrit :
+> In order to have fine-grained control, use cmdq_pkt_eoc() and
+> cmdq_pkt_jump_rel() to replace cmdq_pkt_finalize().
+>
+> Signed-off-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+> ---
+>   drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c | 3 ++-
+>   drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c | 2 ++
+>   drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.h | 1 +
+>   3 files changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
+> index 6adac857a477..b720e69b341d 100644
+> --- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
+> +++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
+> @@ -471,7 +471,8 @@ int mdp_cmdq_send(struct mdp_dev *mdp, struct mdp_cmdq_param *param)
+>   		dev_err(dev, "mdp_path_config error\n");
+>   		goto err_free_path;
+>   	}
+> -	cmdq_pkt_finalize(&cmd->pkt);
+> +	cmdq_pkt_eoc(&cmd->pkt);
+> +	cmdq_pkt_jump_rel(&cmd->pkt, CMDQ_INST_SIZE, mdp->cmdq_shift_pa);
+>   
+>   	for (i = 0; i < num_comp; i++)
+>   		memcpy(&comps[i], path->comps[i].comp,
+> diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c
+> index 94f4ed78523b..2214744c937c 100644
+> --- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c
+> +++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c
+> @@ -231,6 +231,8 @@ static int mdp_probe(struct platform_device *pdev)
+>   		goto err_put_scp;
+>   	}
+>   
+> +	mdp->cmdq_shift_pa = cmdq_get_shift_pa(mdp->cmdq_clt->chan);
+> +
+>   	init_waitqueue_head(&mdp->callback_wq);
+>   	ida_init(&mdp->mdp_ida);
+>   	platform_set_drvdata(pdev, mdp);
+> diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.h b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.h
+> index 7e21d226ceb8..ed61e0bb69ee 100644
+> --- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.h
+> +++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.h
+> @@ -83,6 +83,7 @@ struct mdp_dev {
+>   	u32					id_count;
+>   	struct ida				mdp_ida;
+>   	struct cmdq_client			*cmdq_clt;
+> +	u8					cmdq_shift_pa;
 
-Signed-off-by: Roger Quadros <rogerq@kernel.org>
----
- drivers/net/ethernet/ti/am65-cpsw-nuss.c | 3 +++
- 1 file changed, 3 insertions(+)
+Can send a new version of this series because this patch can't
+be applied on media_tree/master branch.
+The code look correct for me but we need to be able to applied it
+to perform more checks.
 
-diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-index 1e718d4671c9..7d810b143248 100644
---- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-+++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-@@ -1952,6 +1952,9 @@ static int am65_cpsw_nuss_init_rx_chns(struct am65_cpsw_common *common)
- 		}
- 	}
- 
-+	/* setup classifier to route priorities to flows */
-+	cpsw_ale_classifier_setup_default(common->ale, common->rx_ch_num_flows);
-+
- err:
- 	i = devm_add_action(dev, am65_cpsw_nuss_free_rx_chns, common);
- 	if (i) {
+Regards,
+Benjamin
 
--- 
-2.34.1
-
+>   	wait_queue_head_t			callback_wq;
+>   
+>   	struct v4l2_device			v4l2_dev;
 
