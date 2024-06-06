@@ -1,97 +1,186 @@
-Return-Path: <linux-kernel+bounces-203855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29E178FE148
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:41:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11EA28FE14E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 10:42:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC81B1F24105
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:41:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 042881C24DB9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 08:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89F513C91A;
-	Thu,  6 Jun 2024 08:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CEE613D2BB;
+	Thu,  6 Jun 2024 08:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f9BkKMe0"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BV2vGp8+"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FAE19D89A;
-	Thu,  6 Jun 2024 08:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A245C26292
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 08:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717663301; cv=none; b=KTjkc2hJqxR1Zz8wwRwTcruTfbfmLRijIBfyzV8nvlEd/FTPHh/Ka3XfyvNcO80Ti76O5D8Xk/+oeSqT/jmmZHMGYMgUos9CTV4gb3ld3sKmoGqPe0+KU6Q/QvzjfoRtmH5aRNbnKATrFSPgRhJVf9cs/J5+tsAlEMX1NUPpHKc=
+	t=1717663314; cv=none; b=UCX7aQbJPBDZ9aGZkXzgvoxlOLg6lAiZMr59pcG6J8mquUf8h0fMitpoiDOSUV1zZUMupVXmMcbB1cwkh4Dxo/80nLrTsNsEwakDnADgUtZjAch4cV1iXQZT4jP+avp+CQO1TClwJAy2TqgbBdc8oj8T3F5/8EcIhZK9lSWImfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717663301; c=relaxed/simple;
-	bh=EoyaGw1A4h+VCG9rJx8NmSKJzlh6fEw3DCXv7QkXl2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BvYJUp6Z+YnIoHVtsITe3Vf/TiGPN7yllqzwRdB5Xx6M19RSyYJnhJ7ZHaxho4zjXiLLXuzJ+wKS3WyR0lNV23SdALaw+ztk8ORC8mahObm/eUHhkjtO2YHKP7LrxeDGeYsnEFUzlvbbrH3RdcTBzJBd+WOQ+MPlz6uUNOnamiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f9BkKMe0; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AEBCBC0002;
-	Thu,  6 Jun 2024 08:41:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1717663291;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sMtvqFFLEqL2SjbNwyELJMYS5t5iIw2nNf41UsERVgM=;
-	b=f9BkKMe0PdFR6PJ5U/70w1adfe0YuIzB0MeSC1RxKfJu9RbReWEeeK+mD7zHCILpSYGrfJ
-	tAPdtU4NWgRZH1iF1vbZtfrhrOqVNag0PPReZxAWuZF37fZKQH7KupxwK3kZOMwFk7ieik
-	n4izgVeKiZ/O66riUbr0IF2SVrmjXPZmzkdFmanIvhADdoz+BIAeuSbfIAKb+2OPL+40xI
-	OEqUcNWp/Yh6F+U4QAO4KKz2RW5arwvpJssbHTppWZvc4wyRoOSFuhEqPjaEb3EaIE6vfw
-	nhr50aTz4WbQ3b3fZmodZjT6ScoNE4DURregM4fgqeXg8KU5o5k63zC7vNnLdA==
-Date: Thu, 6 Jun 2024 10:41:25 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
- <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell King
- <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Herve Codina
- <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Heiner
- Kallweit <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- Jesse Brandeburg <jesse.brandeburg@intel.com>, Marek =?UTF-8?B?QmVow7pu?=
- <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
- <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
- mwojtas@chromium.org, Nathan Chancellor <nathan@kernel.org>, Antoine Tenart
- <atenart@kernel.org>
-Subject: Re: [PATCH net-next v12 10/13] net: ethtool: pse-pd: Target the
- command to the requested PHY
-Message-ID: <20240606104125.4ece706a@kmaincent-XPS-13-7390>
-In-Reply-To: <20240605124920.720690-11-maxime.chevallier@bootlin.com>
-References: <20240605124920.720690-1-maxime.chevallier@bootlin.com>
-	<20240605124920.720690-11-maxime.chevallier@bootlin.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717663314; c=relaxed/simple;
+	bh=Tnid5tfB5kBNwDescW1YCizAMVKFdBOYhN6ibNA8jrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xjfi+QgM5c0SVVeZCwcEKc04PMAZ6S1WER3IHCxkG2khPv6NVRS9ULuZEp5UkrfmZx+1wpIqTDvv5UAXlxozdaQVwPFd+QWabWdADAPJVp71B13Zx6rjYPfFg+PKc4b6u2T5/y/02wR66uq2YLm0hQYr1IyFrFflHXnOVeDNZ38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BV2vGp8+; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ea903cd11bso9064411fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 01:41:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717663311; x=1718268111; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lboqGDLkSlZiXGaj/uzeRuz104hFq0ngZ+Ud/fj/+Ag=;
+        b=BV2vGp8+YXaLnNH1waaAKaquOhikkhb2BWhRfWW9k7Va0KXcavSwNjREuP+jVgWRLC
+         kQjGxdFGcqbd3zvl+gqz8Fcghyrx9Aqpzn8lyrBSJ9rmmgboMhMwFpY+R6FTTemamxUb
+         PbXk39YVIv3VUg2MAlbkHP7QqLUdeLPq3vtviteGDSYQHqH7bQgBr/VAbAWwIIMLzhuN
+         YcGS76bZiWWFKOLnJYMQphXg0yszLXxR6NDzfzXgAL9h+t0MVo3CJYxGmVpc/W2KPPTn
+         muuE/nh3uL5T+aX4GON7WzoiUjwUSH5rMSA8ZdSKRljIlkkcqCFN2kwr3VKScvrdNGRX
+         OKCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717663311; x=1718268111;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lboqGDLkSlZiXGaj/uzeRuz104hFq0ngZ+Ud/fj/+Ag=;
+        b=rHjnyCDRI/iOA4zNUsNDzm/EfEhGdCPwndO4vBbnvGtLLTlAre6cXJ3WdP5kSgZWXG
+         3yvTOgK5mw7ln9JTgKq8ywjiup4nlCw79neRB196MQbEi4htCK/t65k0krYS41mXOsBH
+         Wny5LSnQKBXeEklYogHOCbpST9tpTDTbcviwlyDyna9xrtrGQht8P9LTYB1sBaLEXyMV
+         rUmxFe8MRHoAUffcdw/CMQcIL1zE87qo6i2VCdU8AaoOIa/qqCRvZ/4U/NNepWsaNqai
+         LK44LYucj1ZUFpm32zWO9Kbrv7CvGyBYX57ZLN8tRsdfxDoSXjEhLm/9ZBuw3uvlkt1k
+         extA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0LAzdzgoAQHe5Fqb3OEadNFFc9vwM6cBU00cNapI2P5S5nhNBUPJ1MLHOUO9qhUtxgtIZhjyXifkFuOZaC0W1swhFkyt3ch/2VJNt
+X-Gm-Message-State: AOJu0YyCNw18z8kuCYhYWIQhXl9ESsf3t7odMsGpkckEPa9h607GaXTI
+	JESVAuSfAFaJrqNNF5ust1Ua9uG4netGRu2c/x3NLmmY7OY5Iy+aPynbHZGPDQw=
+X-Google-Smtp-Source: AGHT+IEzdn9+piYZ1x5EsTOIWqi/J/85mLEB4Nr/4e4HHjN18eVZC+5BHKwFvsEHZndySpOVd4em4g==
+X-Received: by 2002:a2e:8550:0:b0:2e6:d1fb:4470 with SMTP id 38308e7fff4ca-2eac7a832dbmr34173771fa.42.1717663310478;
+        Thu, 06 Jun 2024 01:41:50 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aadf9d8ddsm715207a12.1.2024.06.06.01.41.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 01:41:50 -0700 (PDT)
+Date: Thu, 6 Jun 2024 11:41:45 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Joy Chakraborty <joychakr@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Zhihao Cheng <chengzhihao1@huawei.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-mtd@lists.infradead.org, linux-rtc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
+	manugautam@google.com
+Subject: Re: [PATCH v1 07/17] misc: eeprom: at25: Change nvmem reg_read/write
+ return type
+Message-ID: <f98a1d8f-e936-4798-8447-c642e8fe11d5@moroto.mountain>
+References: <20240605175953.2613260-1-joychakr@google.com>
+ <20240605175953.2613260-8-joychakr@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605175953.2613260-8-joychakr@google.com>
 
-On Wed,  5 Jun 2024 14:49:15 +0200
-Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
+On Wed, Jun 05, 2024 at 05:59:51PM +0000, Joy Chakraborty wrote:
+> @@ -195,10 +195,11 @@ static struct attribute *sernum_attrs[] = {
+>  };
+>  ATTRIBUTE_GROUPS(sernum);
+>  
+> -static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
+> +static ssize_t at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
+>  {
+>  	struct at25_data *at25 = priv;
+>  	size_t maxsz = spi_max_transfer_size(at25->spi);
+> +	size_t bytes_written = count;
+>  	const char *buf = val;
+>  	int			status = 0;
+>  	unsigned		buf_size;
+> @@ -313,7 +314,7 @@ static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
+>  	mutex_unlock(&at25->lock);
+>  
+>  	kfree(bounce);
+> -	return status;
+> +	return status < 0 ? status : bytes_written;
+>  }
 
-> PSE and PD configuration is a PHY-specific command. Instead of targeting
-> the command towards dev->phydev, use the request to pick the targeted
-> PHY device.
->=20
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+So the original bug was that rmem_read() is returning positive values
+on success instead of zero[1].  That started a discussion about partial
+reads which resulted in changing the API to support partial reads[2].
+That patchset broke the build.  This patchset is trying to fix the
+build breakage.
 
-Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
+[1] https://lore.kernel.org/all/20240206042408.224138-1-joychakr@google.com/
+[2] https://lore.kernel.org/all/20240510082929.3792559-2-joychakr@google.com/
 
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+The bug in rmem_read() is still not fixed.  That needs to be fixed as
+a stand alone patch.  We can discuss re-writing the API separately.
+
+These functions are used internally and exported to the user through
+sysfs via bin_attr_nvmem_read/write().  For internal users partial reads
+should be treated as failure.  What are we supposed to do with a partial
+read?  I don't think anyone has asked for partial reads to be supported
+from sysfs either except Greg was wondering about it while reading the
+code.
+
+Currently, a lot of drivers return -EINVAL for partial read/writes but
+some return success.  It is a bit messy.  But this patchset doesn't
+really improve anything.  In at24_read() we check if it's going to be a
+partial read and return -EINVAL.  Below we report a partial read as a
+full read.  It's just a more complicated way of doing exactly what we
+were doing before.
+
+drivers/misc/eeprom/at25.c
+   198  static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
+   199  {
+   200          struct at25_data *at25 = priv;
+   201          size_t maxsz = spi_max_transfer_size(at25->spi);
+New:            size_t bytes_written = count;
+                       ^^^^^^^^^^^^^^^^^^^^^
+This is not the number of bytes written.
+
+   202          const char *buf = val;
+   203          int                     status = 0;
+   204          unsigned                buf_size;
+   205          u8                      *bounce;
+   206  
+   207          if (unlikely(off >= at25->chip.byte_len))
+   208                  return -EFBIG;
+   209          if ((off + count) > at25->chip.byte_len)
+   210                  count = at25->chip.byte_len - off;
+                        ^^^^^
+This is.
+
+   211          if (unlikely(!count))
+   212                  return -EINVAL;
+   213  
+   214          /* Temp buffer starts with command and address */
+   215          buf_size = at25->chip.page_size;
+   216          if (buf_size > io_limit)
+   217                  buf_size = io_limit;
+   218          bounce = kmalloc(buf_size + at25->addrlen + 1, GFP_KERNEL);
+   219          if (!bounce)
+   220                  return -ENOMEM;
+   221  
+
+regards,
+dan carpenter
 
