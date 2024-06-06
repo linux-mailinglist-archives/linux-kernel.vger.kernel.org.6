@@ -1,224 +1,210 @@
-Return-Path: <linux-kernel+bounces-203501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 334B68FDC2C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:34:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4312D8FDC2E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:35:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91EE41F24CF3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:34:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD424285661
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3871119A;
-	Thu,  6 Jun 2024 01:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64FE12E5D;
+	Thu,  6 Jun 2024 01:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P0WcE+K4"
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="VwFfR0NI"
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2079.outbound.protection.outlook.com [40.107.249.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65A410F7
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 01:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717637671; cv=none; b=XmFzgzOpEHfDltwV7wMuSsgkexGsSaVPud0ET1PCwuNsF/OW89LnS9Yo94RNHL0SkCHm3M7QJos0yafZvNHZxK6Q03TX3vZiZB4d/IXYbCJdVmwCCgi5qweabnCg8NFIaHGpQ7QFbr5KVsZDqKoBOpe5CTiTvhGAY6/TXpI5iD8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717637671; c=relaxed/simple;
-	bh=YUHzooVVNX8IzjheUSL76YM6S3DIu6xXVkg7MCW5LAA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qjUGaq1I35C2wgzy7+2bpYjg+wpjtYS9ms1UGWl5/oVvAk3Gg7FJGAYxu7uQrrOBX1/CIkfAGPom3e83PMu0rxUd7ICwQ/t6ssinwkJEqG8ylkDbZyDfT/zGVkqTVNThNM9vFe75vCJI2tWl7ONQl/pgdIzfKq/a33jsV6TAklo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P0WcE+K4; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-48baea0acfdso171485137.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 18:34:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717637669; x=1718242469; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=06T7JD9TzLagw1HoaEfo4EvOvyoWt/K/eu8qOPbaOiI=;
-        b=P0WcE+K4v7Y6r6Fc9tosFa2ne4nveLa1nYIJTBq6nUVd8eGXm/dBIjr3olT95pOntF
-         SH87ye55CA/LcaAA3J6lg+opUC4mqvxFhxT0EaY4fowYukpCH8ICIzOiADZRdKSO8mQ1
-         x5PjHzJcejVO5hKwXoMEOaiZVz2jAOUYlZntFIiGS1IArGbn86EURORwzPjvDmFexqpq
-         LPu91bVbbLZY3nEt+Zg0KSogqpXMpUW4f8GFus3Yp45uI7g1ImbV8pwWAlYpiIYfF/bg
-         +OwQA3I3Wi/gBkXnd7VrK7Pb7gPPCtE4dmmOR5KYHzw/kSGFTQn+UdjqrT5wXCtmkiz0
-         CEew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717637669; x=1718242469;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=06T7JD9TzLagw1HoaEfo4EvOvyoWt/K/eu8qOPbaOiI=;
-        b=B6C/i1fpI3n7lx5Dw5IpST/4578R7Qx3Hf4iNg+fJTzmj3eQYAhLBm5cEfX81wSl2t
-         FHGlKJKAjamPlRfeCKsBl9JDsrAeP0jndGja+AtJRziJG7OuVR9sgLfTVDt5T8LHtmWG
-         37ch2f+Cl3EiUcHj0Yau0U/G9lqfj95aRVqaB2zcKV2az9IVBbZ6QVxrieAZDQfJ5FXV
-         o+rznq+70Vj03dAvpBP7g1LZuGD5fhI+PeLx/YxmCNW3gI5aXXqRdgZkNBA9hVRMjjeg
-         sj6xwW0zxXzm/p3dl9m10OAPB01xfEgiYbLRn9+Ku0NjU9JJEUHZ3NkI84cJF/WPzUr1
-         J+wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+xzvs6l67Td3GboLueJYWXoQEgQ2tAkkrd/luz8UfrJdHd+FASiF+H2Hwk0QiZ0dPVY1sarax0h26cUBq/kTROtxXtlBVow+C5YIk
-X-Gm-Message-State: AOJu0YxWnne81T80GdLa8wrnm5PXetWk+sT2opeNbjCSEHGjAgK41qP3
-	sjNtPzOUViVwggalC0Knuh9OaVjeSynSwUh+d9KxOut9V/mMPBC1WUS1D/fsBKoQuWGS65gEssc
-	2y6xaolD8m9SWCsw9P0qwy/pKbSg=
-X-Google-Smtp-Source: AGHT+IFvvwHmoVJKz690HPDRcgdEvbUevNN1TCtSrXCMBvkBg5/9zEakDVu+eMDfsczVMmmtvf9T00c21CIp/iQlT+0=
-X-Received: by 2002:a05:6102:22d2:b0:47a:2386:268d with SMTP id
- ada2fe7eead31-48c048482d3mr4365244137.12.1717637668515; Wed, 05 Jun 2024
- 18:34:28 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157EC10F7;
+	Thu,  6 Jun 2024 01:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717637738; cv=fail; b=RRbQpsFfVbV4w+53nsHVFdxFX08pwIs3hH3Io0z6aQbUE2YV+xQf2CJW1F3Y9lMEAxSlDhDnV664XR5hHaNNJ/icn+vmZlwRx7dpAjEnhq7fX+DkO3PyqvPXjLnz1+e52dnpu6g6wNThl5ZYixjLcQrJ3tfuAvRS90BIRYuEBRs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717637738; c=relaxed/simple;
+	bh=kpZlSfTJ5S7OkgT/DpW0WjTR59u37ir8DjdRXHQb3RQ=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=eLoDb8bsSNxg5Zf+D5l3ByOB3hzrpL0dSm5UiclW/ZUPv+A8zv/sEa06+wdt7Nvcj9viKsWFA5q6perk+xcAc/WktlMYmZJtExpUFxKvJUJSFR8AIwXDWmHrdG43DXARovzDgsG6Sxg0JsBz3WJrqdqwltXeoqUo+D0NUCckv2g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=VwFfR0NI; arc=fail smtp.client-ip=40.107.249.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IuQ+rb9D9muAaykUZ0LOQxmt2xQGNM4THwXuI7qbcMOFsiGVgjnPVpc/Byy52syuNw0SIagCzy5+yefkJxPOYYi0EfymfTwPuk4AzbcqnWFUIsnVKx8j/h3SAA46B06TvXhPqZiSJc5NC03nyz2FtvUe6NRPOdr8cF0xYi6CcmYea7015D+NqgA6lCA2rl0QJlhmVAoSAriQvT1NGmVhQa9MpfRIjm2IpCLhzMN7jPFJuokPolMVqFDsYL2F4+qjjIw0OGy02gWexsOOolkH5UcZDpAd18++m08fWEt/W1qyIpjguHa8pzziwpagJ8RNzSjjeYUUs1v9dk7GqwzwzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bka6or4ljsvZdRW8c5v8iYRwb4aOHKGKpM8nmHtEEwE=;
+ b=Y4amrjeiQyhYkwpdB5R0fD1GIOPB3wgB3KY5FpftSu0qvNmoTWEo0ePXdcqZWMwleLezf0Zm1lnji8Z4rpVwLovixs8EqWGqaQwwgTvrY2Rz3DC0rhAAw0jKBqPYGJY9zL4nwk24F2+wAbymnyK2GYmRcDe6dDXAqeflqEQh8EITAprczeBpX1f8yZMzJ9tDgjWotZrwix+U7Sn31BgnrLXNrEO82Sj1BKGLhsTLD5x/9s1FyeiBLCF7/S73wKl/la6RPpxLsY3ivqEB+kbFbsyAcKuRpI7jIHfi4A/yIoiMn8h793tjf7UwxSfRPXBFeGJ7IB/vbtfW3Z9iw8WtQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bka6or4ljsvZdRW8c5v8iYRwb4aOHKGKpM8nmHtEEwE=;
+ b=VwFfR0NIzKYGGYG9xYIX2DkAzL4V350vxAmQ3yMe1XebxdsSR/UcnS4wZDnT36OLK7Ce5yjEmCctTELkuZPedFmqZRIRB2YjKWU04zTL2F0gK3jSbLxBW6IVt5zyk4YPMjs0XUwB2+0H2Qn4V91FmS/3s69MqV5Wy1xBdRlPuhQ=
+Received: from AM6PR04MB5941.eurprd04.prod.outlook.com (2603:10a6:20b:9e::16)
+ by PAXPR04MB8476.eurprd04.prod.outlook.com (2603:10a6:102:1df::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.26; Thu, 6 Jun
+ 2024 01:35:34 +0000
+Received: from AM6PR04MB5941.eurprd04.prod.outlook.com
+ ([fe80::9f4e:b695:f5f0:5256]) by AM6PR04MB5941.eurprd04.prod.outlook.com
+ ([fe80::9f4e:b695:f5f0:5256%5]) with mapi id 15.20.7611.030; Thu, 6 Jun 2024
+ 01:35:34 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Shawn Guo
+	<shawnguo@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sascha Hauer
+	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: RE: [PATCH 2/3] arm64: dts: ls208xa: use defines for timer interrupts
+Thread-Topic: [PATCH 2/3] arm64: dts: ls208xa: use defines for timer
+ interrupts
+Thread-Index: AQHat11PCxo8mkOSqUq1hmTP0k1Y37G59LcA
+Date: Thu, 6 Jun 2024 01:35:34 +0000
+Message-ID:
+ <AM6PR04MB59416C0123F3102652DABC5A88FA2@AM6PR04MB5941.eurprd04.prod.outlook.com>
+References: <20240605153020.104717-1-krzysztof.kozlowski@linaro.org>
+ <20240605153020.104717-2-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240605153020.104717-2-krzysztof.kozlowski@linaro.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM6PR04MB5941:EE_|PAXPR04MB8476:EE_
+x-ms-office365-filtering-correlation-id: b864640e-00ff-4d32-2fe4-08dc85c8f5b7
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230031|376005|366007|1800799015|7416005|921011|38070700009;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?piVAp4NK0AzGJM06qiaAq5t5eHrfuD0cFLm2qj2wvkDbd02vS85JEho9R77p?=
+ =?us-ascii?Q?zBebr5/WicBML6cuDURpo5AsV04INIYiLYb/1boz956EXi1eafy/CRG/7Rc9?=
+ =?us-ascii?Q?B/q+Q5Zc9QkYyfu+5ydxcnnTAWcCPzuJOXi66gvDfnYJRcROEGLmZvrFBcWC?=
+ =?us-ascii?Q?dpwYAX29k6AsWSi3R64rjI+AQLINmbN8MneDxleMcb04iaD70r5+K9s8bM6p?=
+ =?us-ascii?Q?Ai9FdQGg4C+3xBFGneA6p8EQ303xVtmcMcDS1xObB2VkMcrASZYXD1Y5bpMw?=
+ =?us-ascii?Q?duhLxMJITA2qGh3fDDQltpIJSXMeB1zUtvmzQ3VDBVUuEUovypmxG/uHnFcE?=
+ =?us-ascii?Q?UcbFLNGlqCdGlySNkNMg6grOKWkPhW6ppGpu4BvuI97oZX2CXsjgV7fwQuc6?=
+ =?us-ascii?Q?g0xgqZVSL8AUy2gYBqB6hp9TcijwfVn6Bjr6vh8d9rdNlpfu8LnCkHaOW/qS?=
+ =?us-ascii?Q?t0A17tXfObq345xugXyFvR+UK+TjWgHqUoSY7z3GRUTQoEenEq1Dv/V7ZlXP?=
+ =?us-ascii?Q?9rTnrw2aEEwTA6+HYtVpZUtt/233jt813q/JOnupe3XtqPbqYYZkGISxw9Hm?=
+ =?us-ascii?Q?ZqaFFEPGzurpI4xfYsVWUtU16h6IE/ajo5xxn5jPHdo/tEte2w5CFZxDWkCH?=
+ =?us-ascii?Q?yNpQGQ5eTTKgxN5We5njzDmuT8lDzMWbpMqojhKlXQ91NR/rP1v9my/9HtFH?=
+ =?us-ascii?Q?4mrQ9hUbKhfy2wNk7nCKXZHMJS9cn2w6a0pMVieVXj8GrsjU//WW/q2/fS7l?=
+ =?us-ascii?Q?R1A2yzbKwYz5TejpVHko3D4l+TQJHj2qVfVkZ0BtI5/ZeF7OQFKOMOXxSUVD?=
+ =?us-ascii?Q?bVy9CoIexK9CK8bYDBwU3KcK2kf7u8vhEA/v4xqHzwAgoUuMW/v5OyLs8vzE?=
+ =?us-ascii?Q?6MpyIB2m/OmIJ/Ug+LJd2g7XXSiO9ouyV56Cwy4J8aUiYq0zbLP9a3lKp9XN?=
+ =?us-ascii?Q?LGUGz0IZZSENoFmw1nwL0+SB/rTt+cXX1k+YbBu30KIZqU65ncB4KrwYJ6Bk?=
+ =?us-ascii?Q?gvEOafREx+7iUioDa1hUFq07xV6O9AEnDOq7OnqYFD2ajMz2SeNK1f60NuOS?=
+ =?us-ascii?Q?DIhm4ZRkQKyji7ToJbZctzpEDAAxBCKBL2RcwPmZdE615SvmtwpFbYWaQpDa?=
+ =?us-ascii?Q?hlT2lGChUR4xIMeb3C4bgNjPqDmfUB63PHDoN7hbFpL53rEKrnQZlWhSMK6N?=
+ =?us-ascii?Q?AKfgTR0ahp8WiSNQ9afduN6rlvttRv4EZXcCcQhwdZVsyC63OZ2pjHORVNBi?=
+ =?us-ascii?Q?HCNCQczhJpA/MdvmoLlYYA6PZ9ZVbyg9T8r3O6M2SmFUEC+vv4V3gGWTt6nJ?=
+ =?us-ascii?Q?ZG+cPBrw3wT9T09MdVOxs+SqDlW/Iy2qLN2mw4Xf8buzDnVQWYDO1GfQd9H+?=
+ =?us-ascii?Q?qPVYavM=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015)(7416005)(921011)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?N2aAVppOfTvJ7TzN3ED7hn3hw3WrVhTHB5Yl/OyjyFmbwbbVVt2jWfJRSh8v?=
+ =?us-ascii?Q?0smqictYA6vcl4JTpXRuLTTLqQMkNYPxdMy1Ku+RrmpNNL3W/GtmIwFkg9Ud?=
+ =?us-ascii?Q?83Ce22pTTjAC0r5zm3arvDzlAJ7XZhb9OItbjDju7CxKqexvoktV+nhEOk9V?=
+ =?us-ascii?Q?ICzD/q27+FBuCzdxskT4ehZ9m/LqyDzfGKERjqnVmqdFNZEGDB981Icfw2bK?=
+ =?us-ascii?Q?OhPmHmRL/YtcqwrkTv0Sb45tdcGKH24ynAexzYIeH3NO/sqXz07t/k+8qRqk?=
+ =?us-ascii?Q?9JMo6YrzG2vIIN8xIUobyH0Jy6sEGPAbgpCAjRcjFZVwe7aFxo0PnaMmj21v?=
+ =?us-ascii?Q?6EYd93X/9qxBb97SMKjoyrt2tV0LPo8D9Bwe/x/DggmbrsX8r9KCgHc1Qrvn?=
+ =?us-ascii?Q?xbI2ewNYnmfVq2iCbFqAgeDKKtb1lz09yneS4U4PrJNZcItPyZuwJe/kwQ8W?=
+ =?us-ascii?Q?q3rzSlPlVejN9bDts0wtFpios6Pb7f/gHG1CS14m2jGxOYw+iq4UZRSJRe1b?=
+ =?us-ascii?Q?sPOFFJ7K3NifwHaO1Q/I2KaL0RTaSNnmyaowhAYryYg0bMBSQGwMvg+iVoJt?=
+ =?us-ascii?Q?N/Hj2KgizEjrWWU7+KxjWsWto2Q+wND7bp3CXSkpWeM4CN3zR55VHJ6lEaud?=
+ =?us-ascii?Q?kzFKUnWXH66Ciu9sxc7KRJXeViBPKWo5sIlrCplwYks64bHtgF/Fa9TXcqDV?=
+ =?us-ascii?Q?D+s8nxBW70375SGqJEAr4fu+PivXn1BMLZ/QlFsaP9UIpVavDEDxmgp9dGh3?=
+ =?us-ascii?Q?7a0CNWGtQXE8X5Bcj5nNBbFC5wUeKQw4VEpGZ+GovkbwEwUMajX/amuDhX+V?=
+ =?us-ascii?Q?MMWdmG69Q2dI3iNjZzav+kM64BmLtWA0E1YUa6X91T/7c/6zj7tYiF8lTvFp?=
+ =?us-ascii?Q?4g+C7AJr4nnSV4fFPGbv+AJOiVCVnkK2vIr+divVjdEuYANuuLYHt+PaSJ3v?=
+ =?us-ascii?Q?H8duvcD9tT2bh2UMvdaaUWp+az8p0LoCAYW4YkU31HDXWjwbtyfjEgWMIa/D?=
+ =?us-ascii?Q?HCa/bn0DPL439bG6/dLOl7IGYaMRUlt6j8ABqpKKPGbWqw3SoMJXSTvqDS+i?=
+ =?us-ascii?Q?9O34pIvDZ2RKZ2VxFMbaMw+86O2P5Kvl3pdq1J/kRZjFA4RllWNveHvfYwMM?=
+ =?us-ascii?Q?wNyl83pHiinZ3yYw4rmYxjsnbw9LfioAnrAhcIvvKhsD/iY233MYrOI4905n?=
+ =?us-ascii?Q?CirodR0ZuQFA/kGAZ35oNviJ5qLSTdFcAQY/gsNpmgvChHLSYiE5hShTgRLN?=
+ =?us-ascii?Q?HBF2kWGdvNlTtQ42pzFcP9C/iLwxchHHQ0joOGdEg7gGa8HCm8aE+PHUGyc1?=
+ =?us-ascii?Q?fhFBc4T0zOs58AuoB9cHgkDPsK3ohxvBLldtS6mtoOh0gnYBgfVWbgoI78Lw?=
+ =?us-ascii?Q?FN1WWbZY7lBqDY0c+Qh2Bj5pBsfrFXwBv9syjonFPFlpaQ3s0Zko9kDfbmDT?=
+ =?us-ascii?Q?XWaIqpVxFjuTkTjR2Cg8re88ZjCXgcrUpIEQKhr2s4CgowTeGVj6edpxsmyB?=
+ =?us-ascii?Q?sJQ6Pd3axY/tTcrsVG1pfxHl3UUfwDfNfgh7VFyrkEoS/hk42HAAEsLYoX3V?=
+ =?us-ascii?Q?6303+XBxnsi9QjtRlRU=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGsJ_4wFyFBTDDfsBpi0sKs1WOH2jaKKoYWWj9Ln_PsNjP2uuA@mail.gmail.com>
- <20240605095406.891512-1-ranxiaokai627@163.com> <D667F08C-0CCE-4D5E-89A3-56674B0893DE@nvidia.com>
- <c110eb46-3c9d-40c3-ab16-5bd9f75b6501@redhat.com>
-In-Reply-To: <c110eb46-3c9d-40c3-ab16-5bd9f75b6501@redhat.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 6 Jun 2024 13:34:17 +1200
-Message-ID: <CAGsJ_4yBqBTLKBNME1vUTqz6XMdngVSp3V5RP7HqiQkLU-NWtA@mail.gmail.com>
-Subject: Re: [PATCH linux-next] mm: huge_memory: fix misused
- mapping_large_folio_support() for anon folios
-To: David Hildenbrand <david@redhat.com>
-Cc: Zi Yan <ziy@nvidia.com>, ran xiaokai <ranxiaokai627@163.com>, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@kernel.org, 
-	v-songbaohua@oppo.com, xu.xin16@zte.com.cn, yang.yang29@zte.com.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB5941.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b864640e-00ff-4d32-2fe4-08dc85c8f5b7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2024 01:35:34.1969
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: QAatBDEAcNIWjsrZEzqplTFN2TMFsvLOM6Ek2oCtPQZ3MxoU1NifnxEFAWyk7RfOLqZIyx5qF/8K0O7T5dPRxg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8476
 
-On Thu, Jun 6, 2024 at 2:42=E2=80=AFAM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 05.06.24 16:08, Zi Yan wrote:
-> > On 5 Jun 2024, at 2:54, ran xiaokai wrote:
-> >
-> >>> On Tue, Jun 4, 2024 at 5:47?PM <xu.xin16@zte.com.cn> wrote:
-> >>>>
-> >>>> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> >>>>
-> >>>> When I did a large folios split test, a WARNING
-> >>>> "[ 5059.122759][  T166] Cannot split file folio to non-0 order"
-> >>>> was triggered. But my test cases are only for anonmous folios.
-> >>>> while mapping_large_folio_support() is only reasonable for page
-> >>>> cache folios.
-> >>>>
-> >>>> In split_huge_page_to_list_to_order(), the folio passed to
-> >>>> mapping_large_folio_support() maybe anonmous folio. The
-> >>>> folio_test_anon() check is missing. So the split of the anonmous THP
-> >>>> is failed. This is also the same for shmem_mapping(). We'd better ad=
-d
-> >>>> a check for both. But the shmem_mapping() in __split_huge_page() is
-> >>>> not involved, as for anonmous folios, the end parameter is set to -1=
-, so
-> >>>> (head[i].index >=3D end) is always false. shmem_mapping() is not cal=
-led.
-> >>>>
-> >>>> Using /sys/kernel/debug/split_huge_pages to verify this, with this
-> >>>> patch, large anon THP is successfully split and the warning is cease=
-d.
-> >>>>
-> >>>> Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> >>>> Cc: xu xin <xu.xin16@zte.com.cn>
-> >>>> Cc: Yang Yang <yang.yang29@zte.com.cn>
-> >>>> ---
-> >>>>   mm/huge_memory.c | 38 ++++++++++++++++++++------------------
-> >>>>   1 file changed, 20 insertions(+), 18 deletions(-)
-> >>>>
-> >>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> >>>> index 317de2afd371..4c9c7e5ea20c 100644
-> >>>> --- a/mm/huge_memory.c
-> >>>> +++ b/mm/huge_memory.c
-> >>>> @@ -3009,31 +3009,33 @@ int split_huge_page_to_list_to_order(struct =
-page *page, struct list_head *list,
-> >>>>          if (new_order >=3D folio_order(folio))
-> >>>>                  return -EINVAL;
-> >>>>
-> >>>> -       /* Cannot split anonymous THP to order-1 */
-> >>>> -       if (new_order =3D=3D 1 && folio_test_anon(folio)) {
-> >>>> -               VM_WARN_ONCE(1, "Cannot split to order-1 folio");
-> >>>> -               return -EINVAL;
-> >>>> -       }
-> >>>> -
-> >>>>          if (new_order) {
-> >>>>                  /* Only swapping a whole PMD-mapped folio is suppor=
-ted */
-> >>>>                  if (folio_test_swapcache(folio))
-> >>>>                          return -EINVAL;
-> >>>> -               /* Split shmem folio to non-zero order not supported=
- */
-> >>>> -               if (shmem_mapping(folio->mapping)) {
-> >>>> -                       VM_WARN_ONCE(1,
-> >>>> -                               "Cannot split shmem folio to non-0 o=
-rder");
-> >>>> -                       return -EINVAL;
-> >>>> -               }
-> >>>> -               /* No split if the file system does not support larg=
-e folio */
-> >>>> -               if (!mapping_large_folio_support(folio->mapping)) {
-> >>>> -                       VM_WARN_ONCE(1,
-> >>>> -                               "Cannot split file folio to non-0 or=
-der");
-> >>>> -                       return -EINVAL;
-> >>>> +
-> >>>> +               if (folio_test_anon(folio)) {
-> >>>> +                       /* Cannot split anonymous THP to order-1 */
-> >>>> +                       if (new_order =3D=3D 1) {
-> >>>> +                               VM_WARN_ONCE(1, "Cannot split to ord=
-er-1 folio");
-> >>>> +                               return -EINVAL;
-> >>>> +                       }
-> >>>> +               } else {
-> >>>> +                       /* Split shmem folio to non-zero order not s=
-upported */
-> >>>> +                       if (shmem_mapping(folio->mapping)) {
-> >>>> +                               VM_WARN_ONCE(1,
-> >>>> +                                       "Cannot split shmem folio to=
- non-0 order");
-> >>>> +                               return -EINVAL;
-> >>>> +                       }
-> >>>> +                       /* No split if the file system does not supp=
-ort large folio */
-> >>>> +                       if (!mapping_large_folio_support(folio->mapp=
-ing)) {
-> >>>> +                               VM_WARN_ONCE(1,
-> >>>> +                                       "Cannot split file folio to =
-non-0 order");
-> >>>> +                               return -EINVAL;
-> >>>> +                       }
-> >>>
-> >>> Am I missing something? if file system doesn't support large folio,
-> >>> how could the large folio start to exist from the first place while i=
-ts
-> >>> mapping points to a file which doesn't support large folio?
-> >>
-> >> I think it is the CONFIG_READ_ONLY_THP_FOR_FS case.
-> >> khugepaged will try to collapse read-only file-backed pages to 2M THP.
-> >
-> > Can you add this information to the commit log in your next version?
->
-> Can we also add that as a comment to that function, like "Note that we
-> might still
-> have THPs in such mappings due to CONFIG_READ_ONLY_THP_FOR_FS. But in
-> that case,
-> the mapping does not actually support large folios properly.
-> "Or sth. like that.
+> Subject: [PATCH 2/3] arm64: dts: ls208xa: use defines for timer interrupt=
+s
+>=20
+> Replace hard-coded interrupt parts (GIC, flags) with standard defines for
+> readability.  No changes in resulting DTBs.  The comment was saying inter=
+rupt
+> was active low, but the actual used value was active high, so assume that=
+ the
+> code, not the comment, is correct.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-+1. Otherwise, the code appears quite confusing.
-Would using "#ifdef" help to further clarify it?
-
-#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-            if (!mapping_large_folio_support(folio->mapping)) {
-                          ....
-            }
-#endif
-
->
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
+> b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
+> index cc305e629bdc..040a48c88fab 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
+> @@ -241,10 +241,10 @@ map0 {
+>=20
+>  	timer: timer {
+>  		compatible =3D "arm,armv8-timer";
+> -		interrupts =3D <1 13 4>, /* Physical Secure PPI, active-low */
+> -			     <1 14 4>, /* Physical Non-Secure PPI, active-low
+> */
+> -			     <1 11 4>, /* Virtual PPI, active-low */
+> -			     <1 10 4>; /* Hypervisor PPI, active-low */
+> +		interrupts =3D <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>, /* Physical
+> Secure PPI */
+> +			     <GIC_PPI 14 IRQ_TYPE_LEVEL_HIGH>, /* Physical
+> Non-Secure PPI */
+> +			     <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>, /* Virtual
+> PPI */
+> +			     <GIC_PPI 10 IRQ_TYPE_LEVEL_HIGH>; /*
+> Hypervisor PPI */
+>  	};
+>=20
+>  	psci {
 > --
-> Cheers,
->
-> David / dhildenb
->
+> 2.43.0
+>=20
 
-Thanks
-Barry
 
