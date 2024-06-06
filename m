@@ -1,107 +1,85 @@
-Return-Path: <linux-kernel+bounces-203569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE5C08FDD45
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:20:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A2BE8FDD49
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 05:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EAFF286170
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:20:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23745286249
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 03:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404B91DFEB;
-	Thu,  6 Jun 2024 03:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73141E87F;
+	Thu,  6 Jun 2024 03:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="p7Fnx9XM"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UoksV4wo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AAED2E5;
-	Thu,  6 Jun 2024 03:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F59440C;
+	Thu,  6 Jun 2024 03:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717644002; cv=none; b=e7uM0Pjg8X+HA8zGfNP6gB9kwQ81TYGiN6oOU2eYIQWjYqLaME7B9Lfnq8uWheBWcE86ZQH+OAYj5/9NzLWect2ApQr4hA83UzsT5KRPnriFMecogm572g55FcBZw91423BID8uOJjfBOpWi0UuRMITE72Gaw25oWjwYpJnOgN0=
+	t=1717644040; cv=none; b=aA0SB6riK2pkaEaKKsYQ0a0uzTrbLqwDHauUAGINQmRAlTcY7BHmaGwSZ+HCu8c45CNZAwgI+080akP+XTAVGQQeq8/SPdOBY4UtjN7eTvB3jvCbfgSxl/rgw5hgrzUpBvkUpFr9FEIxw4aJc85k5+fq9o2V9O5TRmi7HaOmCyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717644002; c=relaxed/simple;
-	bh=ZrMPiWxvwy5CarjZpm3ms8Sov2kUQYQ9uFMqqHUGfUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ZS/7OgzXeaRMe8vDOL7FZ4s7GXbjpHnKLRVoibhaSyro36lCiKs9OCMS6+4JwrVyGMweKnek9Jxtfr6VlVDnjJrXncwoFRp1MJ6KbcUjWNIqZbtDkvHgrgropPrgkva3JLGY3H0dXfzzrpjAr5Gn7p/ew77rQhHlu5r18ZJYPRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=p7Fnx9XM; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1717643997;
-	bh=09+knktZzC0sqZwcGDI/pVenFhSdqzQR8qpRT/6fu60=;
-	h=Date:From:To:Cc:Subject:From;
-	b=p7Fnx9XMrM8E2P3t2yLA8PdZGgwL5j4KfRq6xKK0sKtjodK30UTffpP9EGbzMxNR7
-	 gw+Cx74E/OMtBDdgAnO2n+m7CbQ4F4i/VOCF2W4j+iVYkieXZ11LsIYIPQB0hI5v/O
-	 DDm1BFNkjyqggUhsKGTCc+zFk8GpKU9cfi84mHEDxN2VFgyyi6sFqSv/tKS+mWbH0u
-	 kX/Q8LV2NFyWklmZQYCfa5aJMoHPd867hC8KTj/5HZhwPDJcEtYkrC9rqyneZm8sde
-	 y+7LeTOP1QgwM1GVFaY+9MtdZpjWG7781/oE18XhN7h5meHWEZ3W2KsxW0ppQhWP4w
-	 rX5TC7x+srCUQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VvqMJ16Nbz4wc4;
-	Thu,  6 Jun 2024 13:19:55 +1000 (AEST)
-Date: Thu, 6 Jun 2024 13:19:54 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kefeng Wang <wangkefeng.wang@huawei.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the mm tree
-Message-ID: <20240606131954.30d0be64@canb.auug.org.au>
+	s=arc-20240116; t=1717644040; c=relaxed/simple;
+	bh=jphOjgoz1IXbJxdYycZLQ2ACa7IfKebep1DTx2YA0uQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=poEZkmY0Oi7Xb7spth5r5Eroo2f/C/fPqdaOaTJ82c035Lisx4jJ8xKX3pupqXr9r6N87vKjBqhGHOQQYhHUlEsY2NQg32G636Tui5cC9yODr/0Lg1vkxq+CjSKlG0kxqGP5hgca0EFRCQ4WS1bZ0R2lkXaTgupyzzG1btWoOGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UoksV4wo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BB28C2BD10;
+	Thu,  6 Jun 2024 03:20:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717644039;
+	bh=jphOjgoz1IXbJxdYycZLQ2ACa7IfKebep1DTx2YA0uQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=UoksV4wo4wysryJGSDVhCv0cATV7YiIeJxFAk6cf0ZtXKBGZjywBYSaiEWB9D1rDV
+	 Pr/qZlJqI6Iido0GZGvrC8pAa0/S1cME+dalj72U6TuC52avhg9HDeDbwYMAQcmbEJ
+	 LrOlTdA7On3K9yApJKX8QcW9eBUx1d+z3i+N6hIrYJzimv+6EQqxhceZIHGd2NgdiL
+	 1h37ym769dTXfohEB3O8d3/4O9tabm6pBlJ4OJMLFI4jQOXLLMmfo0ShJt58EgXbLb
+	 FCP7B/wk6c9D0YfYVXt/3RtQS/n6+Du55GN4Dx1CNqocqIkNkum9cAQcWgYreUCZoH
+	 mstSbUtY/TybA==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v2] arm64: dts: qcom: x1e80100: Disable the SMB2360 4th instance by default
+Date: Wed,  5 Jun 2024 22:20:26 -0500
+Message-ID: <171764403333.730206.143061270623156081.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240603-x1e80100-dts-pmics-drop-4th-smb2360-from-crd-v2-1-fb63973cc07d@linaro.org>
+References: <20240603-x1e80100-dts-pmics-drop-4th-smb2360-from-crd-v2-1-fb63973cc07d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/O=55nBMs05ljFKC8K7amw7j";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
---Sig_/O=55nBMs05ljFKC8K7amw7j
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Mon, 03 Jun 2024 11:17:17 +0300, Abel Vesa wrote:
+> The CRD board doesn't have the 4th SMB2360 PMIC populated while the QCP
+> does. So enable it on QCP only. This fixes the warning for the missing
+> PMIC on CRD as well.
+> 
+> 
 
-After merging the mm tree, today's linux-next build (htmldocs) produced
-this warning:
+Applied, thanks!
 
-Documentation/core-api/pin_user_pages.rst:200: WARNING: Title underline too=
- short.
+[1/1] arm64: dts: qcom: x1e80100: Disable the SMB2360 4th instance by default
+      commit: 0e500122d0e9932f985ba13b9f66e191ff604ffd
 
-folio_maybe_dma_pinned(): the whole point of pinning
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-
-Introduced by commit
-
-  b3d997231b4d ("mm: remove page_maybe_dma_pinned()")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/O=55nBMs05ljFKC8K7amw7j
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZhKtoACgkQAVBC80lX
-0Gx45AgAmJhIN6H4V3z8GPcjvjRKP65q6jqSOFACkM1Gref3nf4qwzKbTZ4/zwKT
-Hbwo8+75y3KnWf+CbGJV9U0PJO5y8lrorP8OyXWRTBijBz9nLncs2li0NvNlewqZ
-Fib5ySqNWpZC9vnksKBCJqShF3yqzvd+K9+C+CI4W1KRPibM/H041KBx8JdUcPms
-beZEnHhO1oiM1ep5R/O5ou+HA/KWe9xhrLQT56NeuoXjX4tWn7OS8igvPfLR76Oh
-SMOp1TEjGT/0m0DvJ0M6WpexB5GFJkD8+yNzFQ0XUKyIq+5RxhifwZ1E1qwPIKDv
-WtZ6zoAfZHRZn9Pc+5foD3zerJNMzA==
-=gWND
------END PGP SIGNATURE-----
-
---Sig_/O=55nBMs05ljFKC8K7amw7j--
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
 
