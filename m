@@ -1,161 +1,164 @@
-Return-Path: <linux-kernel+bounces-204429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-204430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4944F8FEB9D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:26:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B38368FEBE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 16:28:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEC641F28D79
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:26:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49918B27148
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 14:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F28E1AB8FA;
-	Thu,  6 Jun 2024 14:14:33 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E2F1ABE3A;
+	Thu,  6 Jun 2024 14:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="UNkLxppg"
+Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A6919A295
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F8E1ABCC4
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 14:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717683273; cv=none; b=cpzskNLyL2LDPN8ioAaWKXq15+a3BIvNWWjZHwx0sb7AMW1lZMzpjJsDHBhXUdfasyLp3IsB3SnTCVhPxTzKHANECl3OKLlHcejk+dS8Z0FQvMkgXZ1Ny8T2YSqWtGwjEES2rOV8JANotVg+jypgT68Jo1kP5DqQ7cegUtnnQTs=
+	t=1717683303; cv=none; b=LU1KB+9l2LeoYMHusE5Ol9vIvkW6EMFbAdwxHQlbr/6SPXbeHIFoiKlD4QrataYSY04BuC6bagDOpVcRSsKB/sPxUb8BPl9k+rfnWV1oY0dF731FJdV3Q4SBYBzUHnnFpij0RaDfDsmr7fCns8zdsIIjFn5QsblsYYoGM7aMhWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717683273; c=relaxed/simple;
-	bh=Pwl+Ph8+3XYeth7wyt/AmydUz4nZL/6HcBeIPvZXsRE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=bmWcvG/0igTzOH8FDQispcjar/K4pCQmk1oZ+iLQZhvBEC68Z1Sgli7XQhrY/py5OQQHKAmlV8uIrLMhxaXU/NI4mQMPurk99GGYeELYKq4OsDYP49MoFkofIWsdPALpM6cB/X+4/zic0ctipCuejI+hGPUfOXnIJZfNYcFvE8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-374ad7fa4bbso10089955ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 07:14:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717683270; x=1718288070;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MpKPMPp72E39a98DYqNubx0t6d1WZdls3EbkjhEyXDg=;
-        b=P20bFn4dV4et3KuzugVNoh9lvCXfYemVxQe82FvNwxQrlBda2NBKNHZ+lE8ICVE0EO
-         7SK7F2cTyuiEsTXGwrOb+giXROnOR+2lPuNIbTJM8Q2GaTd1ZtX0PumuqAW4RtURKN8a
-         sRv9vol/2agXUS6vHyg4AnTsVLRwt4AiVZltjQxYdEGXPn0OojBRz4MDk91AcuTjq/Km
-         MkwnaYrZk8LhgZ+NGOU9uYk6/k/dsbbxftaNh+itBtlVEaFC+qBIaz/q7Ay39tZQIB4E
-         jTUpJ8ahg8MYmzEUoONyJcP875RKT6GCaxdxecPe1dQvi+YElQZzVU3JSZsKhckA81Ba
-         7F+w==
-X-Gm-Message-State: AOJu0YxMeI12qX4cpfUUDD+8z21jqBCI4nmTF9mNdl8Drsw1J4laVl77
-	Pj+ptgWFeDoMGX1qtFKBTWPTgGOX4XzN3JMDmOga5UkeYZgf8LbrVLLLA5He7jui+ID/mTPbYSr
-	Dny7kuMFubvwx3Vkrg0hnofoT0PHkMbUvUvT4YMbJofgvRAspwU9b1io=
-X-Google-Smtp-Source: AGHT+IHHmX5X1ULzOzng/upfRocUoEOv/1IM52Yfa9EKkY1SuGZ+colljbASDJtMnxfDAR5WIJvxl/ekp7Bzzfq2BJ7KNwUPT7IV
+	s=arc-20240116; t=1717683303; c=relaxed/simple;
+	bh=ZUbLJWzrVFp5hRr3gjeeVs7ODqsrEQjN+fQEaarZvnU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ThV+EF8YQiAPBY6aWchrmX/2qeXRxBshn0L4heHHfauGIa3m4oR6nlbLb2OQzkyyBLPsyaffd9uFjUzJ8wIAPa2LBj8eenb3unRaRmIIDkQ5DdzL94JU0nFGolakDTKhlZ1vT/Z2g4NURTeb+MRTYfuM76gsQTLiMnKxl+m9YMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=UNkLxppg; arc=none smtp.client-ip=95.143.211.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+From: Denis Arefev <arefev@swemel.ru>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
+	t=1717683290;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+yI3L0DiCjO1k/d0iEefXHLYJTNXUYNikkROyQYFDhQ=;
+	b=UNkLxppgn2wl6TMeleifbtKzoyEL6fmlzyUwnUEU+X4VQqCLsx3BpYeE9pWByUGoGG647/
+	VKcUjiAEe+DzpQvU2DWMLB4UlJpsaEYVwcolOD5iFbvoNFVN5qYWM5n2qCeQrIkF+A0RiI
+	mpFKuQWiBpRqPoRH8+LLK/uTQBhJDok=
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] net: missing check
+Date: Thu,  6 Jun 2024 17:14:50 +0300
+Message-Id: <20240606141450.44709-1-arefev@swemel.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c26b:0:b0:36c:5228:462 with SMTP id
- e9e14a558f8ab-374b1f56c81mr3614015ab.3.1717683270146; Thu, 06 Jun 2024
- 07:14:30 -0700 (PDT)
-Date: Thu, 06 Jun 2024 07:14:30 -0700
-In-Reply-To: <000000000000adb08b061413919e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000277099061a394d13@google.com>
-Subject: Re: [syzbot] possible deadlock in trie_delete_elem
-From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Two missing check in virtio_net_hdr_to_skb() allowed syzbot 
+to crash kernels again 
 
-***
+1. After the skb_segment function the buffer may become non-linear 
+(nr_frags != 0), but since the SKBTX_SHARED_FRAG flag is not set anywhere
+the __skb_linearize function will not be executed, then the buffer will 
+remain non-linear. Then the condition (offset >= skb_headlen(skb))
+becomes true, which causes WARN_ON_ONCE in skb_checksum_help.
 
-Subject: possible deadlock in trie_delete_elem
-Author: norkam41@gmail.com
+2. The struct sk_buff and struct virtio_net_hdr members must be 
+mathematically related.
+(gso_size) must be greater than (needed) otherwise WARN_ON_ONCE.
+(remainder) must be greater than (needed) otherwise WARN_ON_ONCE.
+(remainder) may be 0 if division is without remainder.
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.g=
-it c3f38fa61af77b49866b006939479069cd451173
+offset+2 (4191) > skb_headlen() (1116)
+WARNING: CPU: 1 PID: 5084 at net/core/dev.c:3303 skb_checksum_help+0x5e2/0x740 net/core/dev.c:3303
+Modules linked in:
+CPU: 1 PID: 5084 Comm: syz-executor336 Not tainted 6.7.0-rc3-syzkaller-00014-gdf60cee26a2e #0
+Hardware name: Google Compute Engine/Google Compute Engine, BIOS Google 11/10/2023
+RIP: 0010:skb_checksum_help+0x5e2/0x740 net/core/dev.c:3303
+Code: 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 52 01 00 00 44 89 e2 2b 53 74 4c 89 ee 48 c7 c7 40 57 e9 8b e8 af 8f dd f8 90 <0f> 0b 90 90 e9 87 fe ff ff e8 40 0f 6e f9 e9 4b fa ff ff 48 89 ef
+RSP: 0018:ffffc90003a9f338 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffff888025125780 RCX: ffffffff814db209
+RDX: ffff888015393b80 RSI: ffffffff814db216 RDI: 0000000000000001
+RBP: ffff8880251257f4 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: 000000000000045c
+R13: 000000000000105f R14: ffff8880251257f0 R15: 000000000000105d
+FS:  0000555555c24380(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000002000f000 CR3: 0000000023151000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ip_do_fragment+0xa1b/0x18b0 net/ipv4/ip_output.c:777
+ ip_fragment.constprop.0+0x161/0x230 net/ipv4/ip_output.c:584
+ ip_finish_output_gso net/ipv4/ip_output.c:286 [inline]
+ __ip_finish_output net/ipv4/ip_output.c:308 [inline]
+ __ip_finish_output+0x49c/0x650 net/ipv4/ip_output.c:295
+ ip_finish_output+0x31/0x310 net/ipv4/ip_output.c:323
+ NF_HOOK_COND include/linux/netfilter.h:303 [inline]
+ ip_output+0x13b/0x2a0 net/ipv4/ip_output.c:433
+ dst_output include/net/dst.h:451 [inline]
+ ip_local_out+0xaf/0x1a0 net/ipv4/ip_output.c:129
+ iptunnel_xmit+0x5b4/0x9b0 net/ipv4/ip_tunnel_core.c:82
+ ipip6_tunnel_xmit net/ipv6/sit.c:1034 [inline]
+ sit_tunnel_xmit+0xed2/0x28f0 net/ipv6/sit.c:1076
+ __netdev_start_xmit include/linux/netdevice.h:4940 [inline]
+ netdev_start_xmit include/linux/netdevice.h:4954 [inline]
+ xmit_one net/core/dev.c:3545 [inline]
+ dev_hard_start_xmit+0x13d/0x6d0 net/core/dev.c:3561
+ __dev_queue_xmit+0x7c1/0x3d60 net/core/dev.c:4346
+ dev_queue_xmit include/linux/netdevice.h:3134 [inline]
+ packet_xmit+0x257/0x380 net/packet/af_packet.c:276
+ packet_snd net/packet/af_packet.c:3087 [inline]
+ packet_sendmsg+0x24ca/0x5240 net/packet/af_packet.c:3119
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0xd5/0x180 net/socket.c:745
+ __sys_sendto+0x255/0x340 net/socket.c:2190
+ __do_sys_sendto net/socket.c:2202 [inline]
+ __se_sys_sendto net/socket.c:2198 [inline]
+ __x64_sys_sendto+0xe0/0x1b0 net/socket.c:2198
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x40/0x110 arch/x86/entry/common.c:82
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
 
-Signed-off-by: Norbert Kami=C5=84ski <norkam41@gmail.com>
+Signed-off-by: Denis Arefev <arefev@swemel.ru>
 ---
- kernel/trace/bpf_trace.c | 18 +++++++++++++++++-
- kernel/tracepoint.c      | 15 +++++++++++++--
- 2 files changed, 30 insertions(+), 3 deletions(-)
+ include/linux/virtio_net.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 6249dac61701..75fdb8e3abaa 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -2391,7 +2391,23 @@ void __bpf_trace_run(struct bpf_raw_tp_link *link, u=
-64 *args)
- 	struct bpf_trace_run_ctx run_ctx;
-=20
- 	cant_sleep();
--	if (unlikely(this_cpu_inc_return(*(prog->active)) !=3D 1)) {
+diff --git a/include/linux/virtio_net.h b/include/linux/virtio_net.h
+index 4dfa9b69ca8d..77ebe908d746 100644
+--- a/include/linux/virtio_net.h
++++ b/include/linux/virtio_net.h
+@@ -56,6 +56,7 @@ static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
+ 	unsigned int thlen = 0;
+ 	unsigned int p_off = 0;
+ 	unsigned int ip_proto;
++	u64 ret, remainder;
+ 
+ 	if (hdr->gso_type != VIRTIO_NET_HDR_GSO_NONE) {
+ 		switch (hdr->gso_type & ~VIRTIO_NET_HDR_GSO_ECN) {
+@@ -98,6 +99,15 @@ static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
+ 		u32 off = __virtio16_to_cpu(little_endian, hdr->csum_offset);
+ 		u32 needed = start + max_t(u32, thlen, off + sizeof(__sum16));
+ 
++		if (hdr->gso_size) {
++			ret = div64_u64_rem(skb->len, hdr->gso_size, &remainder);
++			if (!(ret && (hdr->gso_size > needed) &&
++						((remainder > needed) || (remainder == 0)))) {
++				return -EINVAL;
++			}
++			skb_shinfo(skb)->tx_flags |= SKBFL_SHARED_FRAG;
++		}
 +
-+	// return if instrumentation disabled, see: bpf_disable_instrumentation
-+	int instrumentation =3D unlikely(__this_cpu_read(bpf_prog_active));
-+	if (instrumentation) {
-+		printk("SKIP FOR INSTRUMENTATION: %s > %s > %p /%i =3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D\n",
-+				prog->aux->name,
-+				link->btp->tp->name, prog, instrumentation);
-+		bpf_prog_inc_misses_counter(prog);
-+		return;
-+	}
-+
-+	int active =3D this_cpu_inc_return(*(prog->active));
-+	// printk("%s > %s > %p /%i\n", prog->aux->name, link->btp->tp->name, pro=
-g, active);
-+	if (active !=3D 1) {
-+		printk("SKIP FOR ACTIVE: %s > %s > %p /%i =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D\n",
-+				prog->aux->name,
-+				link->btp->tp->name, prog, active);
- 		bpf_prog_inc_misses_counter(prog);
- 		goto out;
- 	}
-diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-index 8d1507dd0724..a0a0d8b16b41 100644
---- a/kernel/tracepoint.c
-+++ b/kernel/tracepoint.c
-@@ -168,12 +168,21 @@ static inline void release_probes(struct tracepoint_f=
-unc *old)
- static void debug_print_probes(struct tracepoint_func *funcs)
- {
- 	int i;
-+	struct bpf_raw_tp_link *link;
-=20
- 	if (!tracepoint_debug || !funcs)
- 		return;
-=20
--	for (i =3D 0; funcs[i].func; i++)
--		printk(KERN_DEBUG "Probe %d : %p\n", i, funcs[i].func);
-+	for (i =3D 0; funcs[i].func; i++) {
-+		link =3D funcs[i].data;
-+		int active =3D this_cpu_read(*(link->link.prog->active));
-+		printk("Probe %d : %p / %p: %s/%d / %i\n", i,
-+				funcs[i].func,
-+				link,
-+				link->link.prog->aux->name,
-+				active,
-+				funcs[i].prio);
-+	}
- }
-=20
- static struct tracepoint_func *
-@@ -298,6 +307,8 @@ static enum tp_func_state nr_func_state(const struct tr=
-acepoint_func *tp_funcs)
- {
- 	if (!tp_funcs)
- 		return TP_FUNC_0;
-+	if (!tp_funcs[0].func)
-+		return TP_FUNC_0;
- 	if (!tp_funcs[1].func)
- 		return TP_FUNC_1;
- 	if (!tp_funcs[2].func)
---=20
-2.34.1
+ 		if (!pskb_may_pull(skb, needed))
+ 			return -EINVAL;
+ 
+-- 
+2.25.1
 
 
