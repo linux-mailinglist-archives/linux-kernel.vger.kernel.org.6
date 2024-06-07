@@ -1,115 +1,107 @@
-Return-Path: <linux-kernel+bounces-205575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 038998FFDAB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:57:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3CAD8FFDAE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14E4A1C226FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:57:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3454028879C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5251615AAC1;
-	Fri,  7 Jun 2024 07:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9514815ADB3;
+	Fri,  7 Jun 2024 07:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PJs4S3fw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="o+yaSPp5"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D55B155CAB;
-	Fri,  7 Jun 2024 07:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DEB155324;
+	Fri,  7 Jun 2024 07:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717747039; cv=none; b=KPm3AOatRX0OwqR8zK0B3ELdlyAzXdpa3QxynpU3rXOWDYSxiVgWSKNIX3U4jGhF4BfN4muKhPg+9gsfYb5nVDdCQ4R2C36CowyfBuDEUJbZWodgPUChPQLS8NU8nbqkjZIG3hQjCQoQ7KdV2eItBSMNLy2M673eWyD3CEke6Io=
+	t=1717747046; cv=none; b=PdKZtC5K1r3eI3pyfdUOo2ZyR+hLf/d7qC46PZgobAXkKivVbiqgS3c2vs089UyZXRtojCN9BCsVIohEJQrmjQt7sZkTEf+0KcVNvPWY1YWib+77NAZPPepQDCkWG0E1rd4EyruRtSFJhMObEKn2YFtS7uY++0DGx4q9f6/sEyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717747039; c=relaxed/simple;
-	bh=g6Va+Z0ohKfz7eXfxYO9xCRun7LJHKXk2sadRvB2F0U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WoAsMutxxZgHYdUcZ46qlxqMB7jNLJCqSH+WlK2EzJmZLD44eYPAY4v1AALjdO1hqCmS/etZaLmo/aLbrVa6RbPlGkvzmJrtl4o6OOlgn9Z5IRokP2IMavxjviPBvwawm5Lx0EyW9B0of+TEChj5NL5C/iSaA+WlcWSIC2KhL3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PJs4S3fw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FF12C3277B;
-	Fri,  7 Jun 2024 07:57:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717747039;
-	bh=g6Va+Z0ohKfz7eXfxYO9xCRun7LJHKXk2sadRvB2F0U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PJs4S3fw1EGitDf0NXmloONiujMf8NmNpf7PDpsUBeWeqQIob0QfXd4deu66xgFx7
-	 p0XXWgJ40BjT7+c3iE+JZiFenHZBkUCBKxTLA6GZ0L8O7pAB7I0l7EpGka82MoSf2Z
-	 CX/+PuLVG5w1YyHJTTwj8uCefGQGbY+MlHcy6Is5Q+O74LppLnJWblfdrbbVQv8To2
-	 k08ckos4WJw4QJna8S56xFnn4Ar3RypHUsYtcf8u5x4C5IMkWYM7425MlYVTLktHcS
-	 6A1SSlLCdsXIdfthvdWBRDhnsrHcVIe4G3Nkpfqe3Ly0ZCH7kLbstI2nMvpHis0vGQ
-	 5v1R/SptOV2hA==
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5ba68c30395so210788eaf.1;
-        Fri, 07 Jun 2024 00:57:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUqcVt/eH0SIIROlplTlrME5EvC+Ukyv/amOWfl1p6w0bJOhq/jtHuh67c031Ukz6qvyKMW7RI7NPiDkOEM0cKssJckhZHFKfGs7Ys2oMgtziK93m7m89Mng/7hFKNiVXeBkxUqiLxYwBo=
-X-Gm-Message-State: AOJu0Ywqt6Q1goQ51d//XpZVislD4mk0wV7lpH2ZPVox9/LQxht+VXjw
-	vWidQSpVZKVKJ7LjAib6YjdbdSRtg7+q0/Kw0uxz9c74JzKSjBZTbKK8uUardgRvlH85eeRApR8
-	gJeby2e2/y1rr7zMyVNH+Np4yOJA=
-X-Google-Smtp-Source: AGHT+IGwbuLlETCCLw3LCaMkCnEI4XyLlbw9QF1Bs42Bhc6zhHL+C2mbuQ2AnEtralKPc1ICNO5qpkJjGvOD5+/JJ1Y=
-X-Received: by 2002:a4a:ac08:0:b0:5aa:3e4f:f01e with SMTP id
- 006d021491bc7-5baae73b688mr1654053eaf.1.1717747038386; Fri, 07 Jun 2024
- 00:57:18 -0700 (PDT)
+	s=arc-20240116; t=1717747046; c=relaxed/simple;
+	bh=/rVVT93v1VgA2sZlK0W8IMOluwnn164CpDFtGBdE3ww=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=imnLuh3zuOOumEe5iX8STvKdoiQChmYXHrfLNmlSkTNN3v2d8iubYR88IJk/Vx/wDLhDrrlRpx3jM9cQ1wslWg9N0xn4InlsKCv7Bp5BuoKOrhXSgEdUkJ2mOLpS8YckZlhAxjHsXCL8fNj43jW+Y8q5aoKpoZ9xcFc2XKN1YhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=o+yaSPp5; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7049820002;
+	Fri,  7 Jun 2024 07:57:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1717747036;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G0iQZF+fCUGILMJfsI2XW5jxgsXGqak3K4quThjAXuY=;
+	b=o+yaSPp5GSiAk5XrXWOc4/wuaulu7pPFfkMsGzE+Fe8I7uASyQpXwPs0wXZ3Y4KBzUWUfJ
+	qaykxdmuLRick47EMukQ0UXJH/z/b1GiWSYAX0IcG0/LYfvH7lJA3Ij6XEsiN5TfIc0iKc
+	izgcx9i0V2hqRkd02JGaClSNNqZzzh+pZJ/vorUdinu5dwzCJ7GuUFMyokDPqDVCy+OkuP
+	mOOlZy2uDqvaK1AXlj5YC65KgXJyvxCdmaGEmcogOekUcu/sm1iTfNSWzPZwOTTrvm962O
+	5vDY1oaY7zRq+HxBsweJgseSySdzx+O3gud8aLImXDiKAoLQap3l06pn122m1w==
+Date: Fri, 7 Jun 2024 09:57:12 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
+ kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
+ <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Richard
+ Cochran <richardcochran@gmail.com>, Radu Pirea
+ <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh <j.vosburgh@gmail.com>, Andy
+ Gospodarek <andy@greyhouse.net>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
+ <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
+ UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>, Vladimir
+ Oltean <vladimir.oltean@nxp.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>,
+ Willem de Bruijn <willemb@google.com>, Alexandra Winter
+ <wintera@linux.ibm.com>
+Subject: Re: [PATCH net-next v14 00/14] net: Make timestamping selectable
+Message-ID: <20240607095712.386c2b8c@kmaincent-XPS-13-7390>
+In-Reply-To: <eb5da634b85993977f086ee72c2a1056ea0f6bfc.camel@redhat.com>
+References: <20240604-feature_ptp_netnext-v14-0-77b6f6efea40@bootlin.com>
+	<eb5da634b85993977f086ee72c2a1056ea0f6bfc.camel@redhat.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <8afe9391b96ff3e1c60e624c1b8a3b2bd5039560.camel@sapience.com>
- <ZlTllJeZBiGapHwZ@kekkonen.localdomain> <988e48090982c89ce0c906954832fdfb09a1ce34.camel@sapience.com>
- <eb10620deecc8feeae1e308c22de199be7c48ca6.camel@sapience.com>
- <ZmHasj3hfwwKimZF@kekkonen.localdomain> <7fb5f0d6-f105-4219-839b-908c96c42972@leemhuis.info>
-In-Reply-To: <7fb5f0d6-f105-4219-839b-908c96c42972@leemhuis.info>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 7 Jun 2024 09:57:06 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hnELQtpRsC1JdsExr48yjdjB9B_u8hj+_CmpEQSUeRSQ@mail.gmail.com>
-Message-ID: <CAJZ5v0hnELQtpRsC1JdsExr48yjdjB9B_u8hj+_CmpEQSUeRSQ@mail.gmail.com>
-Subject: Re: 6.10-rc1 : crash in mei_csi_probe
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, Genes Lists <lists@sapience.com>, 
-	linux-kernel@vger.kernel.org, mchehab@kernel.org, hverkuil-cisco@xs4all.nl, 
-	laurent.pinchart@ideasonboard.com, wentong.wu@intel.com, 
-	linux-media@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Thu, Jun 6, 2024 at 7:07=E2=80=AFPM Linux regression tracking (Thorsten
-Leemhuis) <regressions@leemhuis.info> wrote:
->
-> On 06.06.24 17:50, Sakari Ailus wrote:
-> > On Thu, Jun 06, 2024 at 11:39:35AM -0400, Genes Lists wrote:
-> >> On Mon, 2024-05-27 at 16:58 -0400, Genes Lists wrote:
-> >>> On Mon, 2024-05-27 at 19:57 +0000, Sakari Ailus wrote:
-> >>>>
-> >>>> Thanks for reporting this.
-> >>>>
-> >>>> On Mon, May 27, 2024 at 12:34:41PM -0400, Genes Lists wrote:
-> >>>>>
-> >>>>> First happened in 6.10-rc1 (6.9.2 stable is fine)
-> >>>>
-> >>>> Do you happen to have .config available? A full dmesg would also be
-> >>>> helpful.
-> >>>>
-> >>>> Does the system crash after the warning or not?
-> >>>
-> >>> System stays up and remains quite usable.
-> >>>
-> >>> config and dmesg attached.
-> >>
-> >> Hi Sakari - just to let you know this is still happening in 6.10-rc2.
-> >
-> > It'll disappear once this patch is in:
-> > <URL:https://lore.kernel.org/linux-acpi/MW5PR11MB5787C81ABF0C9FFF5A17E4=
-888DF32@MW5PR11MB5787.namprd11.prod.outlook.com/T/#t>.
->
-> Do you plan to submit this again while fixing the typo Wentong Wu
-> pointed out? Or should Rafael (now CCed here) fix this while picking it
-> up? He might not have seen it as he's not in the list of recipients; he
-> furthermore is likely not aware that this is a regression fix, as it
-> lacks Fixes, Reported-by and Closes tags.
+Hello Paolo,
 
-Please see my reply to the patch:
-https://lore.kernel.org/linux-acpi/CAJZ5v0i1NxGHMKskP7W+hAusjt=3D5jYYWTF2vg=
-JPR0gnrNTgFaw@mail.gmail.com/
+On Thu, 06 Jun 2024 15:28:28 +0200
+Paolo Abeni <pabeni@redhat.com> wrote:
+
+> On Tue, 2024-06-04 at 12:39 +0200, Kory Maincent wrote:
+>  [...] =20
+>=20
+> I'm sorry to ask the question this late, but are there any plan to
+> introduce self-tests, eventually in a follow-up patch/series?
+
+There was no plan about it but it could change if it is needed.
+rxtimestamp.sh and txtimestammp.sh should still work. I will verify that ne=
+xt
+week.
+Before writing tests the next patch series will be in ethtool.
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
