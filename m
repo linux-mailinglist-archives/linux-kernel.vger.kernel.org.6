@@ -1,195 +1,174 @@
-Return-Path: <linux-kernel+bounces-205750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E93358FFFC9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:43:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E35A8FFFCA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:43:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 742B5281B28
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:43:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD7041F26E59
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4445215B969;
-	Fri,  7 Jun 2024 09:43:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3C013790B
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA0715B98F;
+	Fri,  7 Jun 2024 09:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0DdUoUPH"
+Received: from mail-lf1-f73.google.com (mail-lf1-f73.google.com [209.85.167.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23FB15B13C
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717753400; cv=none; b=Uj7NV4DPlNgwSHOFNochnhP4VxPWYcLbA++mb4HjT4fj0amrB+A4EibdkFCCALqjzkqIhdSAgGadunacVCM9JIZHRPSxAu6pm8cWUtsNJuKIbnQ8h7uStWbYiZAKOQCusWWOP7c2rrF3+Hp/dvPbtiEO1pG6G4rFPRXq6H/Tetc=
+	t=1717753415; cv=none; b=I0B0nMjcaz1bGak5Ngd1TXryJtVehV32SdPlq7X5f/qrRx3qMwpNRogerZhfHfgZKwEGzuHqRE33GjFf1hNcR3dUsN98dk5oXSc5nlQskjZMBxSD0f7kgM9+i1p1gysGJN+qJkleyz38gIoQhLAgNo0OFoRm/EwFoBNdPcUMsLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717753400; c=relaxed/simple;
-	bh=aYxAMbiC9GFuHLeU5OXRDfs9gVY0Lm4yjtRm2oC83Qk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wa55gcHvDJbfNg6ZzvjZg9I9Uv3ihcXxAQOuiN88MkBcvq7gCKziSC7okfigyu6J0iECzUgaFFk9rFzZht6Lsb8oWwHEPWWpi+frtiZwiZyKmhftNBCk60AeIrMT06UZIHRgFpunNd8pYMuUUH1HxSvhdGDgf+RVgBoUi6Xt4o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 96B9F2F4;
-	Fri,  7 Jun 2024 02:43:42 -0700 (PDT)
-Received: from [10.57.70.246] (unknown [10.57.70.246])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30C913F762;
-	Fri,  7 Jun 2024 02:43:17 -0700 (PDT)
-Message-ID: <968fec1a-9a54-4b2d-a54c-653d84393c82@arm.com>
-Date: Fri, 7 Jun 2024 10:43:15 +0100
+	s=arc-20240116; t=1717753415; c=relaxed/simple;
+	bh=VeVSJnLlRH/miBgW1vozdVuS6TLtZvGfRxG/7G2ETMY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=FZowLDC5FAY1wC9eBO61Q+YbdqeDPGh18k+LbJ3AjdsJQj2g6QF+qHF4VzDBYcU9dkRyxAgxdW2r28/2IpR0M9+LfjDAzlIdGQf+zjxh27UWePlyTqQ8I0VddHD8Rr8XpoAjnf3GWwTtkA6c8aOKEo09QuuW+BQddEl/rhBuEg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0DdUoUPH; arc=none smtp.client-ip=209.85.167.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-lf1-f73.google.com with SMTP id 2adb3069b0e04-52bc277a9f7so72244e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 02:43:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717753412; x=1718358212; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0/YN8NbApmrplnThMGLuKQX7kmaVgfISdJYXyZPraf4=;
+        b=0DdUoUPHWOp7ZOsnqYmoChdqHZqsExA2MyNEVGWixSYqX3UcTEOTc7V9GkhQaQ8iN7
+         3atmRcyIxD5Hh71jFvaFKJuCg44lZrQb+G0Ile8ylbcfj1ysnuvickT7J15bo35Dhe/K
+         MWD6Tx3a/tvHPnH2qPGk3z/dEEl8XNqvXbEbVlArsj9J6kX0NjJirfQ4qeZdb5tqh4T1
+         i6f/1Rc9jdoDFXqS7MwNxKQOEKA2usYgBJJ6rjl9KW9/T/hIB/kUO4k02eQNRAck8Xr4
+         KWvog0ujEWXfUtLKZfADgpzUQvde1T1kVlwkQ53MJGIo1EVq+addxotUgB4gxNwSscFy
+         U2Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717753412; x=1718358212;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0/YN8NbApmrplnThMGLuKQX7kmaVgfISdJYXyZPraf4=;
+        b=jCAT7ZxiNO79Fajz6N+IMSaFe2OkLnSO6VtwPWsLNd5B4WFRapr7z275caG8CYdrwR
+         7EX0v294RjQM+xKfo/xodF0PlIVNcEGpPzZHMzv92XXcQyjb2qnSdEzMnEGV2G32K1KD
+         Thkh/mS+IE9xt+tvuFJKbipghY8Xe2Ah7x3WXiYmldGuXeMXLhoXKFgmLO76ekMSq0fk
+         4dU47zYjupLM7tyRKHzJKesmOj6q9y100cKeXWaDmVB4x5OB+rYxKjY/HkCqplHksdmF
+         UjapeC+s2LGudb5aIA4v8DplnlBLQmiGYMjy4XQ26yEVOcdTL5bbTjBsPXL+0oVpIXgF
+         dHiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWs60wWQyn+PBu5eNtJM8PV7ulkt9v4d0jFw7sKkQLEAJGr1MMQpmzxTIsNcboOW3uoGLQ33VPZR2cZD+d2ojq9/X120vKXWBy5nQ0h
+X-Gm-Message-State: AOJu0YwIJcx5L9gKT6FGd3IsNv2/iuyrx0hCKU/ozjpAgqGXTwNjY0wp
+	uObamGV/013vIWfYOeN3N8iyPfvbEq443s/gzvGUuuPPBjfWZBEXMzgZCKoiYXGGL1iRh2Y4R6q
+	K3tQY7IQExyn6XA==
+X-Google-Smtp-Source: AGHT+IE7NAXSKHEZJR73S0J+KkqobFZvO93f/V0dPMCOMhXIEXFB0cuBoB/UlBUY6YBl7cWQkLstuSti/tQ9kp8=
+X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
+ (user=aliceryhl job=sendgmr) by 2002:ac2:5687:0:b0:52b:7a59:5199 with SMTP id
+ 2adb3069b0e04-52bb9fcb16amr2622e87.11.1717753412145; Fri, 07 Jun 2024
+ 02:43:32 -0700 (PDT)
+Date: Fri,  7 Jun 2024 09:43:29 +0000
+In-Reply-To: <20240606193318.GK8774@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] mm: swap: mTHP swap allocator base on swap cluster
- order
-Content-Language: en-GB
-To: Chris Li <chrisl@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Kairui Song <kasong@tencent.com>, "Huang, Ying" <ying.huang@intel.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Barry Song <baohua@kernel.org>
-References: <20240524-swap-allocator-v1-0-47861b423b26@kernel.org>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240524-swap-allocator-v1-0-47861b423b26@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240606193318.GK8774@noisy.programming.kicks-ass.net>
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+Message-ID: <20240607094329.3878781-1-aliceryhl@google.com>
+Subject: Re: [PATCH 1/3] rust: add static_call support
+From: Alice Ryhl <aliceryhl@google.com>
+To: peterz@infradead.org
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com, 
+	ardb@kernel.org, benno.lossin@proton.me, bjorn3_gh@protonmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, jbaron@akamai.com, 
+	jpoimboe@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com, 
+	mhiramat@kernel.org, miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, 
+	rostedt@goodmis.org, rust-for-linux@vger.kernel.org, wedsonaf@gmail.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sorry I'm late to the discussion - I've been out for the last 3.5 weeks and just
-getting through my mail now...
+Peter Zijlstra <peterz@infradead.org> wrote:
+> On Thu, Jun 06, 2024 at 09:09:00PM +0200, Miguel Ojeda wrote:
+> > On Thu, Jun 6, 2024 at 7:19=E2=80=AFPM Peter Zijlstra <peterz@infradead=
+.org> wrote:
+> > >
+> > > This is absolutely unreadable gibberish -- how am I supposed to keep
+> > > this in sync with the rest of the static_call infrastructure?
+> >=20
+> > Yeah, they are macros, which look different from "normal" Rust code.
+>=20
+> Macros like CPP ?
+
+Yes, this patch series uses declarative macros, which are the closest
+that Rust has to the C preprocessor. They are powerful, but just like
+CPP, they can become pretty complicated and hard to read if you are
+doing something non-trivial.
+
+The macro_rules! block is how you define a new declarative macro.
+
+The ($name:ident($($args:expr),* $(,)?)) part defines the arguments to
+the declarative macro. This syntax means:
+
+1. The input starts with any identifier, which we call $name.
+2. Then there must be a ( token.
+3. Then the $(),* part defines a repetition group. The contents inside
+   the parenthesises are what is being repeated. The comma means that
+   repetitions are separated by commas. The asterisk means that the
+   contents may be repeated any number of times, including zero times.
+   (Alternatives are + which means repeated at least once, and ? which
+   means that the contents may be repeated zero or one time.)
+4. The contents of the repetition group will be an expression, which we
+   call $args.
+5. After the last expression, we have $(,)? which means that you can
+   have zero or one commas after the last expression. Rust usually
+   allows trailing commas in lists, which is why I included it.
+6. And finally, you must close the input with a ) token.
+
+So for example, you might invoke the macro like this:
+
+static_call!(tp_func_my_tracepoint(__data, &mut my_task_struct));
+
+Here, $name will be tp_func_my_tracepoint, and the repetition group is
+repeated twice, with $args first corresponding to `__data` and then to
+`&mut my_task_struct` when the macro is expanded. The $(,)? group is
+repeated zero times.
 
 
-On 24/05/2024 18:17, Chris Li wrote:
-> This is the short term solutiolns "swap cluster order" listed
-> in my "Swap Abstraction" discussion slice 8 in the recent
-> LSF/MM conference.
+Inside the macro, you will see things such as:
+$crate::macros::paste! { $crate::bindings:: [<__SCK__ $name >]; }
 
-I've read the article on lwn and look forward to watching the video once
-available. The longer term plans look interesting.
+The Rust syntax for invoking a macro has an exclamation mark after the
+name, so you know that $crate::macros::paste is a macro. The `paste`
+macro just emits its input unchanged, except that any identifiers
+between [< and >] are concatenated into a single identifier. So if $name
+is my_static_key, then the above invocation of paste! emits:
 
-> 
-> When commit 845982eb264bc "mm: swap: allow storage of all mTHP
-> orders" is introduced, it only allocates the mTHP swap entries
-> from new empty cluster list. That works well for PMD size THP,
-> but it has a serius fragmentation issue reported by Barry.
+	$crate::bindings::__SCK__my_static_key;
 
-Yes, that was a deliberate initial approach to be conservative, just like the
-original PMD-size THP support. I'm glad to see work to improve the situation!
+The $crate::bindings module is where the output of bindgen goes, so this
+should correspond to the C symbol called __SCK__my_static_key.
 
-> 
-> https://lore.kernel.org/all/CAGsJ_4zAcJkuW016Cfi6wicRr8N9X+GJJhgMQdSMp+Ah+NSgNQ@mail.gmail.com/
-> 
-> The mTHP allocation failure rate raises to almost 100% after a few
-> hours in Barry's test run.
-> 
-> The reason is that all the empty cluster has been exhausted while
-> there are planty of free swap entries to in the cluster that is
-> not 100% free.
-> 
-> Address this by remember the swap allocation order in the cluster.
-> Keep track of the per order non full cluster list for later allocation.
+> > Is there something we could do to help here? I think Alice and others
+> > would be happy to explain how it works and/or help maintain it in the
+> > future if you prefer.
+>=20
+> Write a new language that looks more like C -- pretty please ? :-)
+>=20
+> Mostly I would just really like you to just use arm/jump_label.h,
+> they're inline functions and should be doable with IR, no weirdo CPP
+> involved in this case.
 
-I don't immediately see how this helps because memory is swapped back in
-per-page (currently), so just because a given cluster was initially filled with
-entries of a given order, doesn't mean that those entries are freed in atomic
-units; only specific pages could have been swapped back in, meaning the holes
-are not of the required order. Additionally, scanning could lead to order-0
-pages being populated in random places.
+I assume that you're referring to static_key_false here? I don't think
+that function can be exposed using IR because it passes the function
+argument called key as an "i" argument to an inline assembly block. Any
+attempt to compile static_key_false without knowing the value of key at
+compile time will surely fail to compile with the
 
-My naive assumption was that the obvious way to solve this problem in the short
-term would be to extend the scanning logic to be able to scan for an arbitrary
-order. That way you could find an allocation of the required order in any of the
-clusters, even a cluster that was not originally allocated for the required order.
+	invalid operand for inline asm constraint 'i'
 
-I guess I should read your patches to understand exactly what you are doing
-rather than making assumptions...
+error.
 
-Thanks,
-Ryan
-
-> 
-> This greatly improve the sucess rate of the mTHP swap allocation.
-> While I am still waiting for Barry's test result. I paste Kairui's test
-> result here:
-> 
-> I'm able to reproduce such an issue with a simple script (enabling all order of mthp):
-> 
-> modprobe brd rd_nr=1 rd_size=$(( 10 * 1024 * 1024))
-> swapoff -a
-> mkswap /dev/ram0
-> swapon /dev/ram0
-> 
-> rmdir /sys/fs/cgroup/benchmark
-> mkdir -p /sys/fs/cgroup/benchmark
-> cd /sys/fs/cgroup/benchmark
-> echo 8G > memory.max
-> echo $$ > cgroup.procs
-> 
-> memcached -u nobody -m 16384 -s /tmp/memcached.socket -a 0766 -t 32 -B binary &
-> 
-> /usr/local/bin/memtier_benchmark -S /tmp/memcached.socket \
->         -P memcache_binary -n allkeys --key-minimum=1 \
->         --key-maximum=18000000 --key-pattern=P:P -c 1 -t 32 \
->         --ratio 1:0 --pipeline 8 -d 1024
-> 
-> Before:
-> Totals      48805.63         0.00         0.00         5.26045         1.19100        38.91100        59.64700     51063.98
-> After:
-> Totals      71098.84         0.00         0.00         3.60585         0.71100        26.36700        39.16700     74388.74
-> 
-> And the fallback ratio dropped by a lot:
-> Before:
-> hugepages-32kB/stats/anon_swpout_fallback:15997
-> hugepages-32kB/stats/anon_swpout:18712
-> hugepages-512kB/stats/anon_swpout_fallback:192
-> hugepages-512kB/stats/anon_swpout:0
-> hugepages-2048kB/stats/anon_swpout_fallback:2
-> hugepages-2048kB/stats/anon_swpout:0
-> hugepages-1024kB/stats/anon_swpout_fallback:0
-> hugepages-1024kB/stats/anon_swpout:0
-> hugepages-64kB/stats/anon_swpout_fallback:18246
-> hugepages-64kB/stats/anon_swpout:17644
-> hugepages-16kB/stats/anon_swpout_fallback:13701
-> hugepages-16kB/stats/anon_swpout:18234
-> hugepages-256kB/stats/anon_swpout_fallback:8642
-> hugepages-256kB/stats/anon_swpout:93
-> hugepages-128kB/stats/anon_swpout_fallback:21497
-> hugepages-128kB/stats/anon_swpout:7596
-> 
-> (Still collecting more data, the success swpout was mostly done early, then the fallback began to increase, nearly 100% failure rate)
-> 
-> After:
-> hugepages-32kB/stats/swpout:34445
-> hugepages-32kB/stats/swpout_fallback:0
-> hugepages-512kB/stats/swpout:1
-> hugepages-512kB/stats/swpout_fallback:134
-> hugepages-2048kB/stats/swpout:1
-> hugepages-2048kB/stats/swpout_fallback:1
-> hugepages-1024kB/stats/swpout:6
-> hugepages-1024kB/stats/swpout_fallback:0
-> hugepages-64kB/stats/swpout:35495
-> hugepages-64kB/stats/swpout_fallback:0
-> hugepages-16kB/stats/swpout:32441
-> hugepages-16kB/stats/swpout_fallback:0
-> hugepages-256kB/stats/swpout:2223
-> hugepages-256kB/stats/swpout_fallback:6278
-> hugepages-128kB/stats/swpout:29136
-> hugepages-128kB/stats/swpout_fallback:52
-> 
-> Reported-by: Barry Song <21cnbao@gmail.com>
-> Tested-by: Kairui Song <kasong@tencent.com>
-> Signed-off-by: Chris Li <chrisl@kernel.org>
-> ---
-> Chris Li (2):
->       mm: swap: swap cluster switch to double link list
->       mm: swap: mTHP allocate swap entries from nonfull list
-> 
->  include/linux/swap.h |  18 ++--
->  mm/swapfile.c        | 252 +++++++++++++++++----------------------------------
->  2 files changed, 93 insertions(+), 177 deletions(-)
-> ---
-> base-commit: c65920c76a977c2b73c3a8b03b4c0c00cc1285ed
-> change-id: 20240523-swap-allocator-1534c480ece4
-> 
-> Best regards,
-
+Alice
 
