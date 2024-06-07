@@ -1,413 +1,519 @@
-Return-Path: <linux-kernel+bounces-206510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BAE3900ABB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:49:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE8B6900AB9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB39528493A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:49:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF2CB1C21DFE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F55019AD51;
-	Fri,  7 Jun 2024 16:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3928919AA6D;
+	Fri,  7 Jun 2024 16:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QD13S1gv"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d1ivDIMf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290AB19007A
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 16:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717778959; cv=none; b=sJbgUuQK0Hx/oX0xdoiGfxB1f/0QVa/zbn1E81bf93CMsgSYi7YlLB7I7+9HUKtfOSFA8pf/ZSQUvg1FZiFHEtV6IA4XFUevLik5Sz38uNkd3KmgDotSMm61RHp2NA9Z7h80nIviIy01Jz4dy5ikxnrr+8Ahca0XTd+M+8Ku89Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717778959; c=relaxed/simple;
-	bh=Di5A8LPnmhwJzeMLt1uEvLIy5ioqrIfxl0SdvcNbxZY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=UfcVaKtIOXC2zElLGkTEZPaGHpurMmvZxS4vQsQKjp4CBjss2W3xBp0AfFERO1hwyaiKijh/i8HWiJqfep84MMkAe7a1K1b2UXOvDXnCoA/DYp6Kc0F9Db3c0ewfx3TOUpp+2HF123RrO7WRyQXW75tiKmKY3miVYu8ASkLuIIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QD13S1gv; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 457GFI2P012334;
-	Fri, 7 Jun 2024 16:48:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
- content-transfer-encoding : content-type : date : from : in-reply-to :
- message-id : mime-version : references : subject : to; s=pp1;
- bh=WFeEPbzwDYfzW5+rKmDa6gD+6sj3N898ljKT8Dy9bGg=;
- b=QD13S1gv8fu4ba7P2OgJ9oSfe3KHgsUqsrR0nGe6g/LyscbFxDIYkqlLGbT5YTEsil9L
- 9Lv2VW81QVkp+UeSP8riSijidl19noAKHAS45Rekvcvub4G6XFCNtIQz5o72zMc2lmS2
- PtJri2/2il6I7KEtGgRkLx2UDkJegfeIMMKXsUdt/098T9d7Xbu2CcJpqOiQQ0HMExk2
- vrEdormZdBA7K7gczePxwhbyHsriI6xDzF9XOk/Lsi6YpfcOcS3FRc3ewSDz8mPI6gTQ
- 3G+KPZHccP0bpZwE2W26D4keu0hZUPxJxVkiKAp+Un6dcy8RWb4dQBZ9I9I/+IgtPvVZ ug== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ym5j4g3d1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 16:48:41 +0000
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 457GmeOr004818;
-	Fri, 7 Jun 2024 16:48:40 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ym5j4g3cv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 16:48:40 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 457Gk8h2022835;
-	Fri, 7 Jun 2024 16:48:39 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ygg6mshsc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 16:48:39 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 457Gmbxm56230392
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 7 Jun 2024 16:48:39 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 089E55806D;
-	Fri,  7 Jun 2024 16:48:37 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E5A5158054;
-	Fri,  7 Jun 2024 16:48:32 +0000 (GMT)
-Received: from [9.195.40.55] (unknown [9.195.40.55])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  7 Jun 2024 16:48:32 +0000 (GMT)
-Message-ID: <bbeca067-ae70-43ff-afab-6d06648c5481@linux.ibm.com>
-Date: Fri, 7 Jun 2024 22:18:31 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DDF18059
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 16:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717778957; cv=fail; b=LX11nxfWSuW+AFU6OlQsAKuQlWCN7ki4s+AxzTbYP4nK5mjWGIyRgf6aLs5nRbqH+0YPfZFWC/qa8j+NiYl5YTiiDtPyOPechwfgc4LAEMOlGtCzFySA1dkMscXk8KkgUf/wAw76f31arziMvmLZtAsZYndboj6sUS6v9CBedrA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717778957; c=relaxed/simple;
+	bh=box+siwQOS3k1rhs3IJw3OhqahsWFsfS57frBYuqOm4=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=I9CQY4ngPQpIvqc0Tu58nwWKexBVIAM2qfrfhMlrGoPqgPPc6g7q+/Z4noTWa+1ejZ0VIYRYTAVcJZpXa86iLeM7bV9+x1P4LcAYOJVDV6c/MgKlMF1d4jKxxsHkkOdbCWqBr0YcPyWBdrd6iWBAc76OIEDphQVMp4EvNhoDm1c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d1ivDIMf; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717778956; x=1749314956;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=box+siwQOS3k1rhs3IJw3OhqahsWFsfS57frBYuqOm4=;
+  b=d1ivDIMfLGL9VAbe7z6k3TfipLQjQ1UL/RADZZP5S+iqZ4kMUK4ArKtu
+   d8HQok8HTaJcF5zzlS8yvE/uTII5CeucmPvtv2onDCGWGa1BaCQcu/JdL
+   5FPJJAdy5sIXe+1/AR+fcjHNUcKLjFQB9HNrpRtIdACtWX4paLGwbg0sF
+   VuJY4OaQeSK05zFSmiPFoDFDVHvCg1CB0WvvjU7w3Ywr6E3DVJAQGklHK
+   Mw/WoQRQu4uB8s7DsQpzJmokUKRbBXiuXM+PbD0pYp80Nkok0LKafLX/L
+   UTa+8ZIGRXFx6KW4uuF9BzJzgg4/F6KBP74tAea2wbD8el5g5ozR5O8G2
+   A==;
+X-CSE-ConnectionGUID: b+fMMoXTQuSlhTC79F2A0Q==
+X-CSE-MsgGUID: S0fWh/NXT6KUd9mUSpMUxQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="17435879"
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="17435879"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 09:49:15 -0700
+X-CSE-ConnectionGUID: r95Bg/ztS7qtg9ZMT7sLvg==
+X-CSE-MsgGUID: KAU4Gp4BRqmlJbZwtwsPYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="38501480"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Jun 2024 09:49:15 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 7 Jun 2024 09:49:14 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 7 Jun 2024 09:49:13 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 7 Jun 2024 09:49:13 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.41) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 7 Jun 2024 09:49:13 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cSFdqbSDM3VxP9VYHqJLjFzgx8SepcTy2y9HgYebXWmRth+cfB1kyNJ6trpydHXpNh+7esK6MjoWfEqlNn29PtwFBa2zyuDXecwASYBXE8mqBjMQvz/QOqGU7C4ufwbU7JSy+zFHkM6gGcUnjurJM6rJ0izhhyRLVWHPS7hrD5vvzzLcF5net2iJIc95wV19R9ndCeP1rRiAF9mc5Y7T4amgRRM1+UTZqPKNUl/1PjA04vtkfA0PiaxbrHQZCYOW8192LMVLlhtZmofSDifaJafoNDi2nJ/siTwwkRY2skA4QqFMK2MiqEjT7fSVDuqht0etjo/A9KqaOELEqV84nA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uQJP/F6i1LkrUYv/qnUh3vUUz8NflW6sL6Ajg1XQF/Q=;
+ b=aUdr4n5t38g7GlkSkI/VGxSgG9WneqlsdkTHNGTY2BsYDhiLOtDjxyGiDfMy0WmhVF+SEmGJciXWkXVEhNxHjzDi+IfApfdgFl63Boqxz/FQ1hJlSOCRVsQzjJoM9zfGoqekbiJVIv09oY6lAq/nTnX2FUT96W55OzK0iXONpX5fsAAL5yDtleKTpKNijfvHGYiMLD5RQ7PRwoNlCph39KQusE2reU6vBf/D0B7mGmKDT6j8EE+s7U5AK+U9Yz2p/ZY8lfu2F5GzLjFr73Hf+bCgAZyl8lj99NxLRSzXRT+9/g3XgUZ90lfZ2tfHAG1sdvIenXyl7eAFsgJQJMe3zQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by IA1PR11MB6146.namprd11.prod.outlook.com (2603:10b6:208:3ee::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.27; Fri, 7 Jun
+ 2024 16:49:06 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7633.017; Fri, 7 Jun 2024
+ 16:49:06 +0000
+Message-ID: <7bdd42be-f469-40a8-88b1-418cc427b30a@intel.com>
+Date: Fri, 7 Jun 2024 09:49:04 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v19 06/20] x86/resctrl: Introduce snc_nodes_per_l3_cache
+To: Tony Luck <tony.luck@intel.com>
+CC: Fenghua Yu <fenghua.yu@intel.com>, Maciej Wieczor-Retman
+	<maciej.wieczor-retman@intel.com>, Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, "Drew
+ Fustini" <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>,
+	<x86@kernel.org>, <linux-kernel@vger.kernel.org>, <patches@lists.linux.dev>
+References: <20240528222006.58283-1-tony.luck@intel.com>
+ <20240528222006.58283-7-tony.luck@intel.com>
+ <b0e17f5e-210d-4aa3-9410-f1829b570c4b@intel.com>
+ <ZloUKaU9tm_lIe05@agluck-desk3.sc.intel.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <ZloUKaU9tm_lIe05@agluck-desk3.sc.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR04CA0324.namprd04.prod.outlook.com
+ (2603:10b6:303:82::29) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/35] PREEMPT_AUTO: support lazy rescheduling
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: tglx@linutronix.de, peterz@infradead.org, torvalds@linux-foundation.org,
-        paulmck@kernel.org, rostedt@goodmis.org, mark.rutland@arm.com,
-        juri.lelli@redhat.com, joel@joelfernandes.org, raghavendra.kt@amd.com,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20240528003521.979836-1-ankur.a.arora@oracle.com>
- <2d6ef6d8-6aef-4703-a9c7-90501537cdc5@linux.ibm.com>
- <8734pw51he.fsf@oracle.com>
- <71efae1a-6a27-4e1f-adac-19c1b18e0f0c@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <71efae1a-6a27-4e1f-adac-19c1b18e0f0c@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: A4k5-a5BaDfWxnsTCmzn1ciBq9U-N50S
-X-Proofpoint-GUID: 4oSboUBhM73G8sthSfZ-vgIMYyreEG_C
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-07_10,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- clxscore=1015 phishscore=0 impostorscore=0 mlxlogscore=999
- priorityscore=1501 suspectscore=0 spamscore=0 adultscore=0 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2406070124
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|IA1PR11MB6146:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0c1792f0-ecd4-470a-80d4-08dc8711be77
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|366007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?d1FXZG1rUnVWY3BOUlhYYzd5dVJWeVZtSlNRR3YvUmJ2QmVLQkYrYVpXVkUw?=
+ =?utf-8?B?SlVqNy8vRHlhWEFDejd2SkVRVDdlbHkzcDRUeFVkYURyZ0dqV0k2dThZUmlt?=
+ =?utf-8?B?VW15RGNKUXR2a2R6MFBTUU9lY2c3d0NGSEZQT0pwczhpeW4rWEN6Y0xOdzVU?=
+ =?utf-8?B?T250NHRZTlk0NTlSUGdqZVJITEx2Vm5TUnFsazEydHNPOUVXeFJ0MGJoVzBP?=
+ =?utf-8?B?azZOREpIOGpqUVhSemVrWDk3ZjRLOEJENFNyRjkyaGJIUHI0dytxUkFCSmEr?=
+ =?utf-8?B?L3NtWkdnMVVhQ2FSdmpKMytOV3RKVUJPaVhqM3cwOFJjNDVoZnJkM0hwdlpR?=
+ =?utf-8?B?ZGZGTUtzY3lvRFJDSEtpSHlBZlRPWVVqT2FvMnNXdC9LUS9MY2k4ZFNSaFpU?=
+ =?utf-8?B?ajAybHVDc2kwalBKT1oxV3ZxSnBOdUpXdStTSlJoc2M5NEZLY1RUa0IzZFpp?=
+ =?utf-8?B?S3ArUGVFRzAvVDJ6V3ZBT1BpLzdsSFZoYTd1eUw2bm5qZ1dKVjRsQkg3RzlB?=
+ =?utf-8?B?bVlyb2hvL2FVRVhFMTFaWHVnNHV6WGNTdEV5ZFNES25rczNTU3BDcm1VTWNx?=
+ =?utf-8?B?dlJGMnZzOTZpejgvMGgwSy9KSllWNTNtdUNIdkVPeVNQVCt0S00wQmlIbWtn?=
+ =?utf-8?B?TFdoY3JoVmJvaGwzMXlaVWxDUXQzTm4wdEpVMDcxNEVJMFM4VVU0VjkxQWty?=
+ =?utf-8?B?MXlvYWtWaEZLa2JRZ1lMdVpMU1JoRDF0OVdIQ2FzaG12ZFdwSTRPUWJTbmNO?=
+ =?utf-8?B?bDJWelBHT0VSN1k4NGNmcXRoNERpSkJ4ZEN6cU1RcDVzVXJZaVAvcFJkS005?=
+ =?utf-8?B?UGROdklGMVB3MjJDbm5Hb0J0RVpiMDA0c3J2MGpDR0IzMWl1d2NnUElLeFgv?=
+ =?utf-8?B?ZnpWalMzRHJPbVlaeXZ3Wk13RENPSldtZGtzT1E3bUhFU0RmSnUxdjFYRVNu?=
+ =?utf-8?B?TnVIdVFBOHFtcXdxc1MxL0FjK0pYZTl2d1pxS2RlRWlrNTA4aDE5ZzFqQW93?=
+ =?utf-8?B?TXYzU0NtenhuOWlLOGUvd2FhL2VIRloxSS8rNGg4aXhHTHJacDIyaGZBa0tF?=
+ =?utf-8?B?TG9wRHBNWEE2UXltVHFJa1pIZjA5SFFIaXJNVGVIcnVVaHR1S1JzUE04NzJi?=
+ =?utf-8?B?SmxhK3ZudGo1ZGEzZkd1WUZPdDBzMDRDSTJEalFteEhFMVlsbjRzNnFwcjN1?=
+ =?utf-8?B?ZDFhZVhRazNCWHRBY0c3a1d2bkhlU2E0REd3VE9oZFpraW5zOVQ2RmF0WWFY?=
+ =?utf-8?B?OWRHeXVhSFdVOUVLK0lTZ09Vak0vSnR6VnZQbjZsZ0ZQRlVOOCttanhGTy9Q?=
+ =?utf-8?B?cnkwK2dCdUIvbEJReWROTUZvVDU1TTBRM0NkNVpKN0xkTGJtUXM2SlRpYWNG?=
+ =?utf-8?B?dm5PdFJuSXdsNnFtYWI4dkZBdzZmcmZ0RTNEbzUwVjdYcCt4d29FUFN1UlFx?=
+ =?utf-8?B?ZklVU0JiMUVkTHN0MUIxRVlOaHQzakFYMmh6MVkrbWJkd3p4RlpHSzJ3TDgz?=
+ =?utf-8?B?aVFoQytRcEYxbDg5Q29nNjJwZ2NwM3R1bENIR1BrMW0yNWNsMSsxTURKNVkv?=
+ =?utf-8?B?Z1FlSGJLZ2R4T3VxdS9tMm8xZGlDYXcrcE5JL2NVTkdueEhoQUowUXBhWHgy?=
+ =?utf-8?B?dHN6SVFwZTIxQmxBT2JQSlJVY0pSTmJQT2tvS3JQdHMrSU9EWGtOY3EwajZ2?=
+ =?utf-8?B?WUdMckxXYmhRdFkxQTlUZUt5dFBFZHYzemdIbmVQNkZWNE9oMEx5Y05WcTBY?=
+ =?utf-8?Q?dJBW6t+zbmTwRdPk8IDuSJ/zNFNqXp2qz4qC8xE?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MHRTRW1uZjRqbnNUVWJKSGMyaFBVdURWQVVrWFloa1lUWU9TRjhsdlhZTmpL?=
+ =?utf-8?B?djdkdTdqTnJqOGN3OFdqUklYUFNKc3V1V3dKMmNVOGtjMDNSbzFnNnpPU3RR?=
+ =?utf-8?B?SmFyZnhIK3F6M2kxNjJrZFN2ZktaV2N5cTRGbW9kTjZWK2IwQms0RnlWZGFt?=
+ =?utf-8?B?VXZZZitCMDNnbDdNTzNtaXJEN1E5VnZVUnVxWDRSODRWOUtKSGJqWmlkcjJw?=
+ =?utf-8?B?SlFnTVRmYWNhQUF2VDNQdWo4dSt1MXBjWXd1OGUvcXltWGI3aXpidWxXVTdM?=
+ =?utf-8?B?a0lpZTJydUh6WG1hYnFFRFZaM1lPY2JrdDR4YmI1T0NpQndnMEtCSzViUE00?=
+ =?utf-8?B?RTRxWnNoUlEzbHRveWZ5dDd6YUVqS1g4clZsWWpqWEE3QjlWZVJGZUhHVXg0?=
+ =?utf-8?B?QnVuT3FHUzBKY0RvOWZRcmUyRUlVN21ZRkpNYlFwRG1wU2tjandlbjh4eUIv?=
+ =?utf-8?B?VFJFRnp1OUI2cDlISlhaUVl5U2l1WVpDWEhiK0wwSGNKMUJvS0JTZjFxWkFs?=
+ =?utf-8?B?M1M1Yzd0dnFGbWVkVEJjR0ZSVnZGNXZVdTdPcjI3SEt0S1h6ZVdvY1Mra1BR?=
+ =?utf-8?B?VzRDUkNxdDZJNFFhc1VQc1JsbytXSk8wbGNYeVpqNE90WlczQ0FhcDhGdUlK?=
+ =?utf-8?B?cHVVMVA3TktteE1XR3pRazVLTmJKYnJWQ0MwcnlwMTluN3AwbXozTS92dDVu?=
+ =?utf-8?B?NXpDTUJpNWNOTWc1U00ySC90UDVyUVNkb0RhSUMzOFRkTHdHSnZvREErbnhH?=
+ =?utf-8?B?eEhXeWlNc2lLeE1rbHVDRk1ObHliYzh3dFU2OE83S25FRUtJWlhwRkZpcGli?=
+ =?utf-8?B?REwxRTJ5U3BLZHZ2dFNXc2lsc2dWdkc2bCtFMjQwYUM3aU92MUIzL2lPM1ZF?=
+ =?utf-8?B?UzJNZEw4cnVOOGt6S0hxOXp0MEtpMVVmM0lUMzc4SFRaSFdnV1llOWxLbVN6?=
+ =?utf-8?B?ZTkrNTVsQkh1YXQ3Umk4NnpSWndkSU4rNkdxdU1tUklkeitDaHROVVF4WkdR?=
+ =?utf-8?B?WFkrUTZydzlCMkpJNitlK1NDSFEzRmlicEQ1eklPaFU2RTlJTWpTRVdMdFUr?=
+ =?utf-8?B?dkpZSXJ1c05ScVNwM3hFVEpKOHJiajEvN0Zaa3Z3OEZzWnhkWEVkTzVBM3FU?=
+ =?utf-8?B?aUY0RkU1aUNpb0VzSGJHMVFLWEk5ekZZRlp3ZEVIQ2pyNE9kc3QybmN2cGNq?=
+ =?utf-8?B?VE5mdDQ5ZTVnMUlnZ0x3YTE0a2oyamF6aFUxR3JBay9PNnZKRkRacEZhcmVj?=
+ =?utf-8?B?Y1dQeHBaR2ZFVExaaUxrcjIwNWxMdnB5K3BXYklWdjBtcVNTVXoxUUx5VFBT?=
+ =?utf-8?B?clJ1dG5Zelc1SXFrN01iTWVqSEhHdjdnWVA3eTQ2TUR3b0pxU3lzL1o2R05B?=
+ =?utf-8?B?c2xTN01CdWtzV010YThzd2xPR3R2akdVS0VjeS85K09abTNIYVUza2Rnb2dH?=
+ =?utf-8?B?QjhPdXBjczNGQ1JIVzR0MUYxU0MvR2tHVmhabmNOeEF5Y3JySWNPOHpXeUts?=
+ =?utf-8?B?TmZpaUZZWEc1UU1FMGJUT1grMFJtdDZIQVcwdTUvaXhOMEZqMDRrSzBMekFV?=
+ =?utf-8?B?cU9TK0tONlVub0s3NXpabUdtc0xzeGR1WGd1aklpNFppeGgxMEZLakNiTFJm?=
+ =?utf-8?B?RkcxWm1XRDlBOG5UWlRlcGVJN1hyY2hMN2tUd1FiMVhwczV3ekJhaWlHU3Fs?=
+ =?utf-8?B?b3ozMmFNb05VQk9YVlF2WmI3bTNzWElNSzc2VE8zZlNOck5wUkVPNVB1MTNq?=
+ =?utf-8?B?SVcvV3A4cmpZZENRaFJsOE1OdjdIZi9FQzdrTkJZbDdhQy9XcVhIU29idnV2?=
+ =?utf-8?B?RVZGblFmRzFhV1d4WG9uSjdEUXpDVnVyUjlUZjdRUlpIc3BVeVpWV0Z0WVRD?=
+ =?utf-8?B?Q2x4Q2ErbHlQT2RHSm5yaVVxdU5tSElaRG1PcFc0R3NZN0hKQlA3OU9QdHk3?=
+ =?utf-8?B?aGJxY3RyTUQydHJEZUhIWGpkc2RsU0VXNWQ0UWhBTWR2M2swcVpDVUpKcDQr?=
+ =?utf-8?B?L1BueU55dEM1ZkFmRlJERGV2MjNZUFp6YzVXQ0FOM1RBLzQ5NTFPeWduUEVV?=
+ =?utf-8?B?T1JuTURRc25IS21iUkdCb2tzU1RaVER0RVpBTHkvazFGanljMTlMWjd6YXEz?=
+ =?utf-8?B?aG5PcitGSjZYVEFiTUpiOXdaOVNRZVJOd2Y5MnlRQzFncXFiemx3M0dDSmtx?=
+ =?utf-8?B?WEE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0c1792f0-ecd4-470a-80d4-08dc8711be77
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2024 16:49:06.0770
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WDfHRPdj5u6QaQD2hQOkvJFtN17U43l59f3k3My3q5Dtm8s3OR1Ng6jP5oU0DOER+bMLhyEDyfZR727gmbaMeC3RwanZbidIvQrq8GHF140=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6146
+X-OriginatorOrg: intel.com
 
+Hi Tony,
 
-
-On 6/4/24 1:02 PM, Shrikanth Hegde wrote:
-> 
-> 
-> On 6/1/24 5:17 PM, Ankur Arora wrote:
+On 5/31/24 11:17 AM, Tony Luck wrote:
+> On Thu, May 30, 2024 at 01:20:39PM -0700, Reinette Chatre wrote:
+>> Hi Tony,
 >>
->> Shrikanth Hegde <sshegde@linux.ibm.com> writes:
->>
->>> On 5/28/24 6:04 AM, Ankur Arora wrote:
->>>> Hi,
->>>>
->>>> This series adds a new scheduling model PREEMPT_AUTO, which like
->>>> PREEMPT_DYNAMIC allows dynamic switching between a none/voluntary/full
->>>> preemption model. Unlike, PREEMPT_DYNAMIC, it doesn't depend
->>>> on explicit preemption points for the voluntary models.
->>>>
->>>> The series is based on Thomas' original proposal which he outlined
->>>> in [1], [2] and in his PoC [3].
->>>>
->>>> v2 mostly reworks v1, with one of the main changes having less
->>>> noisy need-resched-lazy related interfaces.
->>>> More details in the changelog below.
->>>>
+>> On 5/28/24 3:19 PM, Tony Luck wrote:
+>>> Intel Sub-NUMA Cluster (SNC) is a feature that subdivides the CPU cores
+>>> and memory controllers on a socket into two or more groups. These are
+>>> presented to the operating system as NUMA nodes.
 >>>
->>> Hi Ankur. Thanks for the series.
+>>> This may enable some workloads to have slightly lower latency to memory
+>>> as the memory controller(s) in an SNC node are electrically closer to the
+>>> CPU cores on that SNC node. This cost may be offset by lower bandwidth
+>>> since the memory accesses for each core can only be interleaved between
+>>> the memory controllers on the same SNC node.
 >>>
->>> nit: had to manually patch 11,12,13 since it didnt apply cleanly on
->>> tip/master and tip/sched/core. Mostly due some word differences in the change.
+>>> Resctrl monitoring on an Intel system depends upon attaching RMIDs to tasks
+>>> to track L3 cache occupancy and memory bandwidth. There is an MSR that
+>>> controls how the RMIDs are shared between SNC nodes.
 >>>
->>> tip/master was at:
->>> commit e874df84d4a5f3ce50b04662b62b91e55b0760fc (HEAD -> master, origin/master, origin/HEAD)
->>> Merge: 5d145493a139 47ff30cc1be7
->>> Author: Ingo Molnar <mingo@kernel.org>
->>> Date:   Tue May 28 12:44:26 2024 +0200
+>>> The default mode divides them numerically. E.g. when there are two SNC
+>>> nodes on a socket the lower number half of the RMIDs are given to the
+>>> first node, the remainder to the second node. This would be difficult
+>>> to use with the Linux resctrl interface as specific RMID values assigned
+>>> to resctrl groups are not visible to users.
 >>>
->>>     Merge branch into tip/master: 'x86/percpu'
+>>> The other mode divides the RMIDs and renumbers the ones on the second
+>>> SNC node to start from zero.
 >>>
+>>> Even with this renumbering SNC mode requires several changes in resctrl
+>>> behavior for correct operation.
 >>>
+>>> Add a static global to arch/x86/kernel/cpu/resctrl/monitor.c to indicate
+>>> how many SNC domains share an L3 cache instance.  Initialize this to
+>>> "1". Runtime detection of SNC mode will adjust this value.
 >>>
->>>> The v1 of the series is at [4] and the RFC at [5].
->>>>
->>>> Design
->>>> ==
->>>>
->>>> PREEMPT_AUTO works by always enabling CONFIG_PREEMPTION (and thus
->>>> PREEMPT_COUNT). This means that the scheduler can always safely
->>>> preempt. (This is identical to CONFIG_PREEMPT.)
->>>>
->>>> Having that, the next step is to make the rescheduling policy dependent
->>>> on the chosen scheduling model. Currently, the scheduler uses a single
->>>> need-resched bit (TIF_NEED_RESCHED) which it uses to state that a
->>>> reschedule is needed.
->>>> PREEMPT_AUTO extends this by adding an additional need-resched bit
->>>> (TIF_NEED_RESCHED_LAZY) which, with TIF_NEED_RESCHED now allows the
->>>> scheduler to express two kinds of rescheduling intent: schedule at
->>>> the earliest opportunity (TIF_NEED_RESCHED), or express a need for
->>>> rescheduling while allowing the task on the runqueue to run to
->>>> timeslice completion (TIF_NEED_RESCHED_LAZY).
->>>>
->>>> The scheduler decides which need-resched bits are chosen based on
->>>> the preemption model in use:
->>>>
->>>> 	       TIF_NEED_RESCHED        TIF_NEED_RESCHED_LAZY
->>>>
->>>> none		never   		always [*]
->>>> voluntary       higher sched class	other tasks [*]
->>>> full 		always                  never
->>>>
->>>> [*] some details elided.
->>>>
->>>> The last part of the puzzle is, when does preemption happen, or
->>>> alternately stated, when are the need-resched bits checked:
->>>>
->>>>                  exit-to-user    ret-to-kernel    preempt_count()
->>>>
->>>> NEED_RESCHED_LAZY     Y               N                N
->>>> NEED_RESCHED          Y               Y                Y
->>>>
->>>> Using NEED_RESCHED_LAZY allows for run-to-completion semantics when
->>>> none/voluntary preemption policies are in effect. And eager semantics
->>>> under full preemption.
->>>>
->>>> In addition, since this is driven purely by the scheduler (not
->>>> depending on cond_resched() placement and the like), there is enough
->>>> flexibility in the scheduler to cope with edge cases -- ex. a kernel
->>>> task not relinquishing CPU under NEED_RESCHED_LAZY can be handled by
->>>> simply upgrading to a full NEED_RESCHED which can use more coercive
->>>> instruments like resched IPI to induce a context-switch.
->>>>
->>>> Performance
->>>> ==
->>>> The performance in the basic tests (perf bench sched messaging, kernbench,
->>>> cyclictest) matches or improves what we see under PREEMPT_DYNAMIC.
->>>> (See patches
->>>>   "sched: support preempt=none under PREEMPT_AUTO"
->>>>   "sched: support preempt=full under PREEMPT_AUTO"
->>>>   "sched: handle preempt=voluntary under PREEMPT_AUTO")
->>>>
->>>> For a macro test, a colleague in Oracle's Exadata team tried two
->>>> OLTP benchmarks (on a 5.4.17 based Oracle kernel, with the v1 series
->>>> backported.)
->>>>
->>>> In both tests the data was cached on remote nodes (cells), and the
->>>> database nodes (compute) served client queries, with clients being
->>>> local in the first test and remote in the second.
->>>>
->>>> Compute node: Oracle E5, dual socket AMD EPYC 9J14, KVM guest (380 CPUs)
->>>> Cells (11 nodes): Oracle E5, dual socket AMD EPYC 9334, 128 CPUs
->>>>
->>>>
->>>> 				  PREEMPT_VOLUNTARY                        PREEMPT_AUTO
->>>> 				                                        (preempt=voluntary)
->>>>                               ==============================      =============================
->>>>                       clients  throughput    cpu-usage            throughput     cpu-usage         Gain
->>>>                                (tx/min)    (utime %/stime %)      (tx/min)    (utime %/stime %)
->>>> 		      -------  ----------  -----------------      ----------  -----------------   -------
->>>>
->>>>
->>>>   OLTP                  384     9,315,653     25/ 6                9,253,252       25/ 6            -0.7%
->>>>   benchmark	       1536    13,177,565     50/10               13,657,306       50/10            +3.6%
->>>>  (local clients)       3456    14,063,017     63/12               14,179,706       64/12            +0.8%
->>>>
->>>>
->>>>   OLTP                   96     8,973,985     17/ 2                8,924,926       17/ 2            -0.5%
->>>>   benchmark	        384    22,577,254     60/ 8               22,211,419       59/ 8            -1.6%
->>>>  (remote clients,      2304    25,882,857     82/11               25,536,100       82/11            -1.3%
->>>>   90/10 RW ratio)
->>>>
->>>>
->>>> (Both sets of tests have a fair amount of NW traffic since the query
->>>> tables etc are cached on the cells. Additionally, the first set,
->>>> given the local clients, stress the scheduler a bit more than the
->>>> second.)
->>>>
->>>> The comparative performance for both the tests is fairly close,
->>>> more or less within a margin of error.
->>>>
->>>> Raghu KT also tested v1 on an AMD Milan (2 node, 256 cpu,  512GB RAM):
->>>>
->>>> "
->>>>  a) Base kernel (6.7),
->>>>  b) v1, PREEMPT_AUTO, preempt=voluntary
->>>>  c) v1, PREEMPT_DYNAMIC, preempt=voluntary
->>>>  d) v1, PREEMPT_AUTO=y, preempt=voluntary, PREEMPT_RCU = y
->>>>
->>>>  Workloads I tested and their %gain,
->>>>                     case b           case c       case d
->>>>  NAS                +2.7%              +1.9%         +2.1%
->>>>  Hashjoin,          +0.0%              +0.0%         +0.0%
->>>>  Graph500,          -6.0%              +0.0%         +0.0%
->>>>  XSBench            +1.7%              +0.0%         +1.2%
->>>>
->>>>  (Note about the Graph500 numbers at [8].)
->>>>
->>>>  Did kernbench etc test from Mel's mmtests suite also. Did not notice
->>>>  much difference.
->>>> "
->>>>
->>>> One case where there is a significant performance drop is on powerpc,
->>>> seen running hackbench on a 320 core system (a test on a smaller system is
->>>> fine.) In theory there's no reason for this to only happen on powerpc
->>>> since most of the code is common, but I haven't been able to reproduce
->>>> it on x86 so far.
->>>>
->>>> All in all, I think the tests above show that this scheduling model has legs.
->>>> However, the none/voluntary models under PREEMPT_AUTO are conceptually
->>>> different enough from the current none/voluntary models that there
->>>> likely are workloads where performance would be subpar. That needs more
->>>> extensive testing to figure out the weak points.
->>>>
->>>>
->>>>
->>> Did test it again on PowerPC. Unfortunately numbers shows there is regression
->>> still compared to 6.10-rc1. This is done with preempt=none. I tried again on the
->>> smaller system too to confirm. For now I have done the comparison for the hackbench
->>> where highest regression was seen in v1.
+>>> Update all places to take appropriate action when SNC mode is enabled:
+>>> 1) The number of logical RMIDs per L3 cache available for use is the
+>>>      number of physical RMIDs divided by the number of SNC nodes.
+>>> 2) Likewise the "mon_scale" value must be divided by the number of SNC
+>>>      nodes.
+>>> 3) Add a function to convert from logical RMID values (assigned to
+>>>      tasks and loaded into the IA32_PQR_ASSOC MSR on context switch)
+>>>      to physical RMID values to load into IA32_QM_EVTSEL MSR when
+>>>      reading counters on each SNC node.
 >>>
->>> perf stat collected for 20 iterations show higher context switch and higher migrations.
->>> Could it be that LAZY bit is causing more context switches? or could it be something
->>> else? Could it be that more exit-to-user happens in PowerPC? will continue to debug.
+>>> Signed-off-by: Tony Luck <tony.luck@intel.com>
+>>> ---
+>>>    arch/x86/kernel/cpu/resctrl/monitor.c | 37 ++++++++++++++++++++++++---
+>>>    1 file changed, 33 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
+>>> index 89d7e6fcbaa1..b9b4d2b5ca82 100644
+>>> --- a/arch/x86/kernel/cpu/resctrl/monitor.c
+>>> +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
+>>> @@ -97,6 +97,8 @@ unsigned int resctrl_rmid_realloc_limit;
+>>>    #define CF(cf)	((unsigned long)(1048576 * (cf) + 0.5))
+>>> +static int snc_nodes_per_l3_cache = 1;
+>>> +
+>>>    /*
+>>>     * The correction factor table is documented in Documentation/arch/x86/resctrl.rst.
+>>>     * If rmid > rmid threshold, MBM total and local values should be multiplied
+>>> @@ -185,10 +187,37 @@ static inline struct rmid_entry *__rmid_entry(u32 idx)
+>>>    	return entry;
+>>>    }
+>>> -static int __rmid_read(u32 rmid, enum resctrl_event_id eventid, u64 *val)
+>>> +/*
+>>> + * When Sub-NUMA Cluster (SNC) mode is not enabled, the physical RMID
+>>> + * is the same as the logical RMID.
+>>> + *
+>>> + * When SNC mode is enabled the physical RMIDs are distributed across
+>>> + * the SNC nodes. E.g. with two SNC nodes per L3 cache and 200 physical
+>>> + * RMIDs are divided with 0..99 on the first node and 100..199 on
+>>> + * the second node. Compute the value of the physical RMID to pass to
+>>> + * resctrl_arch_rmid_read().
 >>
->> Thanks for trying it out.
+>> Please stop rushing version after version. I do not think you read the
+>> above after you wrote it. The sentences run into each other.
+> 
+> Re-written. Would you like to try reviewing these patches one at a time
+> as I fix them? That will:
+> 
+> a) Slow me down.
+> b) Avoid me building subsequent patches on earlier mistakes.
+> c) Give you bite-sized chunks to review in each sitting (I think
+>     the overall direction of the series is well enough understood
+>     at this point).
+
+I've been thinking about this a lot ... but I am not able to understand
+how you could draw your conclusions based on what I wrote.
+
+I do not believe we need a new process. I find the basic patch
+review process sufficient and would appreciate if that can be followed.
+What I mean by this is: after a patch series is submitted it is reviewed,
+any disagreement or clarification of review feedback is discussed during
+review of that series, next series is submitted with all review feedback
+addressed. Exceptions may be when there are such big changes that
+a new version may be needed just to create a new baseline, but that does
+not apply here.
+
+> I've attached the updated version of patch 6 at the end of this e-mail.
+> 
+>> Could this be specific about what is meant by "physical" and "logical" RMID?
+>> To me "physical RMID" implies the RMID used by hardware and "logical RMID"
+>> is the RMID used by software ... but when it comes to SNC it is actually:
+>> "physical RMID" - RMID used by MSR_IA32_QM_EVTSEL
+>> "logical RMID" - RMID used by software and the MSR_IA32_PQR_ASSOC register
 >>
->> As you point out, context-switches and migrations are signficantly higher.
+>>> + *
+>>> + * Caller is responsible to make sure execution running on a CPU in
 >>
->> Definitely unexpected. I ran the same test on an x86 box
->> (Milan, 2x64 cores, 256 threads) and there I see no more than a ~4% difference.
+>> "is responsible" and "make sure" means the same, no?
 >>
->>   6.9.0/none.process.pipe.60:       170,719,761      context-switches          #    0.022 M/sec                    ( +-  0.19% )
->>   6.9.0/none.process.pipe.60:        16,871,449      cpu-migrations            #    0.002 M/sec                    ( +-  0.16% )
->>   6.9.0/none.process.pipe.60:      30.833112186 seconds time elapsed                                          ( +-  0.11% )
+>> "make sure execution running"?
+> 
+> Also re-written.
+> 
+>> (Looking ahead in this series and coming back to this, this looks like
+>> rushed work that you in turn expect folks spend quality time reviewing.)
 >>
->>   6.9.0-00035-gc90017e055a6/none.process.pipe.60:       177,889,639      context-switches          #    0.023 M/sec                    ( +-  0.21% )
->>   6.9.0-00035-gc90017e055a6/none.process.pipe.60:        17,426,670      cpu-migrations            #    0.002 M/sec                    ( +-  0.41% )
->>   6.9.0-00035-gc90017e055a6/none.process.pipe.60:      30.731126312 seconds time elapsed                                          ( +-  0.07% )
+>>> + * the domain to be read.
+>>> + */
+>>> +static int logical_rmid_to_physical_rmid(int lrmid)
+>>> +{
+>>> +	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
+>>> +	int cpu = smp_processor_id();
+>>> +
+>>> +	if (snc_nodes_per_l3_cache  == 1)
+>>> +		return lrmid;
+>>> +
+>>> +	return lrmid + (cpu_to_node(cpu) % snc_nodes_per_l3_cache) * r->num_rmid;
+>>> +}
+>>> +
+>>> +static int __rmid_read(u32 lrmid,
+>>> +		       enum resctrl_event_id eventid, u64 *val)
 >>
->> Clearly there's something different going on powerpc. I'm travelling
->> right now, but will dig deeper into this once I get back.
+>> This line does not need to be split.
+> 
+> Joined now. I also pulled in your suggestion from a later patch to
+> rename this __rmid_read_phys() and do the logical to physical RMID
+> translation at the two callsites.
+> 
+>>>    {
+>>>    	u64 msr_val;
+>>> +	int prmid;
+>>> +	prmid = logical_rmid_to_physical_rmid(lrmid);
+>>>    	/*
+>>>    	 * As per the SDM, when IA32_QM_EVTSEL.EvtID (bits 7:0) is configured
+>>>    	 * with a valid event code for supported resource type and the bits
+>>> @@ -197,7 +226,7 @@ static int __rmid_read(u32 rmid, enum resctrl_event_id eventid, u64 *val)
+>>>    	 * IA32_QM_CTR.Error (bit 63) and IA32_QM_CTR.Unavailable (bit 62)
+>>>    	 * are error bits.
+>>>    	 */
+>>> -	wrmsr(MSR_IA32_QM_EVTSEL, eventid, rmid);
+>>> +	wrmsr(MSR_IA32_QM_EVTSEL, eventid, prmid);
+>>>    	rdmsrl(MSR_IA32_QM_CTR, msr_val);
+>>>    	if (msr_val & RMID_VAL_ERROR)
+>>> @@ -1022,8 +1051,8 @@ int __init rdt_get_mon_l3_config(struct rdt_resource *r)
+>>>    	int ret;
+>>>    	resctrl_rmid_realloc_limit = boot_cpu_data.x86_cache_size * 1024;
+>>> -	hw_res->mon_scale = boot_cpu_data.x86_cache_occ_scale;
+>>> -	r->num_rmid = boot_cpu_data.x86_cache_max_rmid + 1;
+>>> +	hw_res->mon_scale = boot_cpu_data.x86_cache_occ_scale / snc_nodes_per_l3_cache;
+>>> +	r->num_rmid = (boot_cpu_data.x86_cache_max_rmid + 1) / snc_nodes_per_l3_cache;
+>>>    	hw_res->mbm_width = MBM_CNTR_WIDTH_BASE;
+>>>    	if (mbm_offset > 0 && mbm_offset <= MBM_CNTR_WIDTH_OFFSET_MAX)
 >>
->> Meanwhile can you check if the increased context-switches are voluntary or
->> involuntary (or what the division is)?
+>> Reinette
 > 
+> -Tony
 > 
-> Used "pidstat -w -p ALL 1 10" to capture 10 seconds data at 1 second interval for 
-> context switches per second while running "hackbench -pipe 60 process 100000 loops" 
+> Proposed v6 patch with fixes applied. I didn't include a URL
+> to the RDT architecture spec I reference in the comment  for
+> logical_rmid_to_physical_rmid() because Intel URLs are notoriously
+> unstable. But I did check that a web search finds the document based on
+> the title. With Google it was second hit for me. Bing lists it as first
+> result.
 > 
+>  From ab33bacb9bf4dcf7b04310c1296b9dacddc4cd80 Mon Sep 17 00:00:00 2001
+> From: Tony Luck <tony.luck@intel.com>
+> Date: Thu, 30 May 2024 09:45:35 -0700
+> Subject: [PATCH] x86/resctrl: Introduce snc_nodes_per_l3_cache
 > 
-> preempt=none				6.10			preempt_auto
-> =============================================================================
-> voluntary context switches	    	7632166.19	        9391636.34(+23%)
-> involuntary context switches		2305544.07		3527293.94(+53%)
+> Intel Sub-NUMA Cluster (SNC) is a feature that subdivides the CPU cores
+> and memory controllers on a socket into two or more groups. These are
+> presented to the operating system as NUMA nodes.
 > 
-> Numbers vary between multiple runs. But trend seems to be similar. Both the context switches increase 
-> involuntary seems to increase at higher rate. 
+> This may enable some workloads to have slightly lower latency to memory
+> as the memory controller(s) in an SNC node are electrically closer to the
+> CPU cores on that SNC node. This cost may be offset by lower bandwidth
+> since the memory accesses for each core can only be interleaved between
+> the memory controllers on the same SNC node.
 > 
+> Resctrl monitoring on an Intel system depends upon attaching RMIDs to tasks
+> to track L3 cache occupancy and memory bandwidth. There is an MSR that
+> controls how the RMIDs are shared between SNC nodes.
 > 
+> The default mode divides them numerically. E.g. when there are two SNC
+> nodes on a socket the lower number half of the RMIDs are given to the
+> first node, the remainder to the second node. This would be difficult
+> to use with the Linux resctrl interface as specific RMID values assigned
+> to resctrl groups are not visible to users.
+> 
+> RMID sahring mode divides the RMIDs and renumbers the ones on the second
 
+sahring -> sharing
 
-Continued data from hackbench regression. preempt=none in both the cases.
-From mpstat, I see slightly higher idle time and more irq time with preempt_auto. 
+> SNC node to start from zero.
+> 
+> Even with this renumbering SNC mode requires several changes in resctrl
+> behavior for correct operation.
+> 
+> Add a static global to arch/x86/kernel/cpu/resctrl/monitor.c to indicate
+> how many SNC domains share an L3 cache instance.  Initialize this to
+> "1". Runtime detection of SNC mode will adjust this value.
+> 
+> Update all places to take appropriate action when SNC mode is enabled:
+> 1) The number of logical RMIDs per L3 cache available for use is the
+>     number of physical RMIDs divided by the number of SNC nodes.
+> 2) Likewise the "mon_scale" value must be divided by the number of SNC
+>     nodes.
+> 3) Add a function to convert from logical RMID values (assigned to
+>     tasks and loaded into the IA32_PQR_ASSOC MSR on context switch)
+>     to physical RMID values to load into IA32_QM_EVTSEL MSR when
+>     reading counters on each SNC node.
+> 
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> ---
+>   arch/x86/kernel/cpu/resctrl/monitor.c | 52 +++++++++++++++++++++++----
+>   1 file changed, 46 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
+> index 89d7e6fcbaa1..0b05dfb5ab67 100644
+> --- a/arch/x86/kernel/cpu/resctrl/monitor.c
+> +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
+> @@ -97,6 +97,8 @@ unsigned int resctrl_rmid_realloc_limit;
+>   
+>   #define CF(cf)	((unsigned long)(1048576 * (cf) + 0.5))
+>   
+> +static int snc_nodes_per_l3_cache = 1;
+> +
+>   /*
+>    * The correction factor table is documented in Documentation/arch/x86/resctrl.rst.
+>    * If rmid > rmid threshold, MBM total and local values should be multiplied
+> @@ -185,7 +187,39 @@ static inline struct rmid_entry *__rmid_entry(u32 idx)
+>   	return entry;
+>   }
+>   
+> -static int __rmid_read(u32 rmid, enum resctrl_event_id eventid, u64 *val)
+> +/*
+> + * When Sub-NUMA Cluster (SNC) mode is not enabled the RMID value
+> + * loaded into IA32_PQR_ASSOC for the CPU to accumulate data is
+> + * the same as the RMID value loaded into IA32_QM_EVTSEL to
+> + * retrieve the current value of counters from IA32_QM_CTR.
 
-6.10-rc1:
-=========
-10:09:50 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-09:45:23 AM  all    4.14    0.00   77.57    0.00   16.92    0.00    0.00    0.00    0.00    1.37
-09:45:24 AM  all    4.42    0.00   77.62    0.00   16.76    0.00    0.00    0.00    0.00    1.20
-09:45:25 AM  all    4.43    0.00   77.45    0.00   16.94    0.00    0.00    0.00    0.00    1.18
-09:45:26 AM  all    4.45    0.00   77.87    0.00   16.68    0.00    0.00    0.00    0.00    0.99
+The function is logical_rmid_to_physical_rmid() and it is called
+whether SNC is enabled or not. Above provides summary of expectations
+when SNC is not enabled but there is no mention of "logical" or
+"physical" RMID to understand what this means for non SNC.
 
-PREEMPT_AUTO:
-===========
-10:09:50 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-10:09:56 AM  all    3.11    0.00   72.59    0.00   21.34    0.00    0.00    0.00    0.00    2.96
-10:09:57 AM  all    3.31    0.00   73.10    0.00   20.99    0.00    0.00    0.00    0.00    2.60
-10:09:58 AM  all    3.40    0.00   72.83    0.00   20.85    0.00    0.00    0.00    0.00    2.92
-10:10:00 AM  all    3.21    0.00   72.87    0.00   21.19    0.00    0.00    0.00    0.00    2.73
-10:10:01 AM  all    3.02    0.00   72.18    0.00   21.08    0.00    0.00    0.00    0.00    3.71
+> + *
+> + * When SNC mode is enabled in RMID sharing mode there are fewer
 
-Used bcc tools hardirq and softirq to see if irq are increasing. softirq implied there are more 
-timer,sched softirq. Numbers vary between different samples, but trend seems to be similar. 
+What is difference between "SNC mode" and "RMID sharing mode"?
+Please provide explanations about what terms mean and then be
+consistent in their use.
+This new version seems to be the first time "RMID sharing mode"
+is used but there is no explanation about what that means.
+Only previous mention was in subject of patch #18 but the comment
+of  arch_mon_domain_online() has no mention of the term
+"RMID sharing mode" in the place where that mode is actually
+enabled.
 
-6.10-rc1:
-=========
-SOFTIRQ          TOTAL_usecs
-tasklet                   71
-block                    145
-net_rx                  7914
-rcu                   136988
-timer                 304357
-sched                1404497
+> + * RMID values available to accumulate data (RMIDs are divided
+> + * evenly between SNC nodes that share an L3 cache). Here we refer
+> + * to the value loaded into IA32_PQR_ASSOC as the "logical RMID".
 
+Please do not use "we".
 
+> + *
+> + * Data is collected independently on each SNC node and can be retrieved
+> + * using the "physical RMID" value computed by this function. The
+> + * cpu argument can be any CPU in the SNC domain for the node.
 
-PREEMPT_AUTO:
-===========
-SOFTIRQ          TOTAL_usecs
-tasklet                   80
-block                    139
-net_rx                  6907
-rcu                   223508
-timer                 492767
-sched                1794441
+"The cpu argument" -> "@cpu"
 
+"SNC domain for the node" - what does "the node" refer to in this context?
+Later it becomes "SNC node domain"? So far this comment has "SNC node",
+"SNC domain for the node", "SNC node domain" that all seem to refer to
+the same thing. Inconsistent terminology adds unnecessary complication.
 
-Would any specific setting of RCU matter for this? 
-This is what I have in config. 
+> + *
+> + * Note that the scope of the IA32_QM_EVTSEL and IA32_QM_CTR MSRs is
+> + * still at the L3 cache scope. So a physical RMID may be read from any
 
-# RCU Subsystem
-#
-CONFIG_TREE_RCU=y
-# CONFIG_RCU_EXPERT is not set
-CONFIG_TREE_SRCU=y
-CONFIG_NEED_SRCU_NMI_SAFE=y
-CONFIG_TASKS_RCU_GENERIC=y
-CONFIG_NEED_TASKS_RCU=y
-CONFIG_TASKS_RCU=y
-CONFIG_TASKS_RUDE_RCU=y
-CONFIG_TASKS_TRACE_RCU=y
-CONFIG_RCU_STALL_COMMON=y
-CONFIG_RCU_NEED_SEGCBLIST=y
-CONFIG_RCU_NOCB_CPU=y
-# CONFIG_RCU_NOCB_CPU_DEFAULT_ALL is not set
-# CONFIG_RCU_LAZY is not set
-# end of RCU Subsystem
+"The scope of the IA32_QM_EVTSEL and IA32_QM_CTR MSRs is at the L3 cache."
 
+Pick if you want "physical RMID" in quotes or not and then stick to it.
 
-# Timers subsystem
-#
-CONFIG_TICK_ONESHOT=y
-CONFIG_NO_HZ_COMMON=y
-# CONFIG_HZ_PERIODIC is not set
-# CONFIG_NO_HZ_IDLE is not set
-CONFIG_NO_HZ_FULL=y
-CONFIG_CONTEXT_TRACKING_USER=y
-# CONFIG_CONTEXT_TRACKING_USER_FORCE is not set
-CONFIG_NO_HZ=y
-CONFIG_HIGH_RES_TIMERS=y
-# end of Timers subsystem
+> + * CPU that shares the L3 cache with the desired SNC node domain.
+> + *
+> + * For more details and examples see the "RMID Sharing Mode" section
+> + * in the "Intel Resource Director Technology Architecture Specification".
+> + */
 
+Reinette
 
