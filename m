@@ -1,200 +1,223 @@
-Return-Path: <linux-kernel+bounces-205700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A47318FFF0C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:16:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15BE08FFF0E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:16:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0F372862A5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:16:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2112C1C2252D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FB215B143;
-	Fri,  7 Jun 2024 09:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB0D15B972;
+	Fri,  7 Jun 2024 09:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LNlg/biH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kK7KAn+b";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LNlg/biH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kK7KAn+b"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gheovIQd"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4571405F8;
-	Fri,  7 Jun 2024 09:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A854415B576
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717751789; cv=none; b=BQDEIf5g5IOgU/FGdnspmVw//OsxM7PRqwW53i5eX10OVhbg5cGy/HlN2NS9dUNDx6y5b9NTbU3wzUCtqNtAGFu2K3YB0HFipxv9LP6XgXEZVm/4KO0aInsMnfQMif364I/DRuhkycKYnvCX8Jgwurp1AfPFTiowPn+VwvzWl7k=
+	t=1717751793; cv=none; b=qhSwPcjII5SRtHjkZQ35QyJPW9fsJy7OV8/QPkw+TvY4zpq68ORd/77TimaBb2soaIb6VthpeoaHeJIo8CU9N2Np4gYWE6HRgucyfvRgdu5+cq7r/dc1+uxltRyacyVKxssLrpkNjkgjqWPYQCMWu6IrbBeqSF6XNuikT3uMc4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717751789; c=relaxed/simple;
-	bh=J1iEPJ3kSS7y0Kh1gVO3QoyMg5RlWljzZPeVPqAGHWQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qj4jXhN474zMK3WkbmUClM2bE5veuGzaHRW65Z1bCWvW+2W9by91U7SdOeUCMZqIpmO7lllFKStd35yXQWZkq4zPUof2ZLgajgk+KPWmpZo6TUHAw4CCg+k+EgOpgKlnZvqukefjAVPelMQ5DVSYdjhxk8eeblc4i3A0UWga5Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LNlg/biH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kK7KAn+b; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LNlg/biH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kK7KAn+b; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A52CC21991;
-	Fri,  7 Jun 2024 09:16:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717751785; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=yvfvtJ2vwLjq4w/MiB+bS7Kf8HpDDJ7m58lQDYUYOx0=;
-	b=LNlg/biHGPum4Bc4R1OrKDL9eSYMepFT1pXWpUzrN76bDqQzhgmGdvOlLJOfhgOXX2/27y
-	KBDW+uJ4pIq7ITXlS6f/cAWT3juzQjfWdE+ZQ/82pBhKrb3rV7juQBjzltJ5OcG+VPUL7L
-	iw7EyloetoN347RpdJ84PWDJtsl14rQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717751785;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=yvfvtJ2vwLjq4w/MiB+bS7Kf8HpDDJ7m58lQDYUYOx0=;
-	b=kK7KAn+bBIHtsosPc98UNh1lRiQxt05qFsr2PkDnQgCOCxLMKJ7n6lbi+HP97WQYr6MryR
-	d0KwLRox+kHE0dBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="LNlg/biH";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=kK7KAn+b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717751785; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=yvfvtJ2vwLjq4w/MiB+bS7Kf8HpDDJ7m58lQDYUYOx0=;
-	b=LNlg/biHGPum4Bc4R1OrKDL9eSYMepFT1pXWpUzrN76bDqQzhgmGdvOlLJOfhgOXX2/27y
-	KBDW+uJ4pIq7ITXlS6f/cAWT3juzQjfWdE+ZQ/82pBhKrb3rV7juQBjzltJ5OcG+VPUL7L
-	iw7EyloetoN347RpdJ84PWDJtsl14rQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717751785;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=yvfvtJ2vwLjq4w/MiB+bS7Kf8HpDDJ7m58lQDYUYOx0=;
-	b=kK7KAn+bBIHtsosPc98UNh1lRiQxt05qFsr2PkDnQgCOCxLMKJ7n6lbi+HP97WQYr6MryR
-	d0KwLRox+kHE0dBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 94AFB13A42;
-	Fri,  7 Jun 2024 09:16:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 6nsrI+nPYmZZHQAAD6G6ig
-	(envelope-from <chrubis@suse.cz>); Fri, 07 Jun 2024 09:16:25 +0000
-From: Cyril Hrubis <chrubis@suse.cz>
-To: Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Cyril Hrubis <chrubis@suse.cz>,
-	Jan Kara <jack@suse.cz>
-Subject: [PATCH] loop: Disable fallocate() zero and discard if not supported
-Date: Fri,  7 Jun 2024 11:15:55 +0200
-Message-ID: <20240607091555.2504-1-chrubis@suse.cz>
-X-Mailer: git-send-email 2.44.2
+	s=arc-20240116; t=1717751793; c=relaxed/simple;
+	bh=zIdt3Vb+Dr/QTS2l+2fvCqhwbM0oGZEPKaE2bmeBW9w=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=rIOtzIOfr3paKQHkjm1A4ot3L7jQ0ALEx5iqMDomEIOWbec/uhXrJbZDKp3srKStaRGOlFSKoAP2GYPD3uQgQw+ivvFsgoO7PIORnA6N8g0Xsrwiy+x7DmKYIn6KPX/8A2R7qOwJwkeoLDPh+pTx7rl1ykhXNzAPnBtxLXCW1G4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gheovIQd; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4215f694749so12533675e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 02:16:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717751790; x=1718356590; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RKhcW2Pv1TQb63OYj0Ad4PZwEbdEXdKfu9Ta+939bwE=;
+        b=gheovIQdX8MqCeEPYnxqkKy87TZqDaoReQVAHtPOSW8xk9EVop6rItgwqA1Z8q+qbc
+         GSWz4No0t/KYRKfiI64BK+uMGqYxjwjMaCeo1vEZginzaAr+MHdnhdHfSltMvx+FJHpw
+         m9pNJu4Wpj8XkOkxFIStpHhmGl8J8Hr+bpmYZO2X7IzFGG2wMKphHowfgYPQyqSTGhfH
+         6niqMTB+ULEQJ7pZ7tIRSQHPSa3WewijOeX6AOXqfMP5xQF12wY4tcfDOkLuiTiKfHOi
+         M/pRdqvUYAHeS616hutggdE3XCc1J8Qf/PXdRG6B3Hw+G1LkJ9CxyJcJmrMU77JlrhQy
+         nj6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717751790; x=1718356590;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RKhcW2Pv1TQb63OYj0Ad4PZwEbdEXdKfu9Ta+939bwE=;
+        b=Gbx04wvhRWhAE6zKGRkCkzhImX1rawc/LHWmAUoeHaNHXuxn5DmYhKQvX7aTnvmycg
+         xeyBdPtdn1AaH5CFZwOJRR1TcXX2YGJ714QwzsFmxIolQYXTeR4qMs7OWnEo1E2DbCxM
+         8JeHHsh1nlUMzVAbSspCJ3k+naIeMrj5zTpYv/MGrmZxBA8AY+3Ysj0bRGevF1ikEt0u
+         c4x7B465XvcegCH1CFrkYJEjMpjRF1IpptSGlxIJe96WmvRDvCoC0JZQhCYxTf86FhSv
+         KVSYmvm67sjwxiXxAgeU0LLC6m3FYe4XxVSxEdTEomUp8Lucr0iNuI13vdTLJwkOgzda
+         PJyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVf3opNI2lXBUxXpc4dm/hr531yb32wcnVDibf09BQpe+qbQZjsQiKWjiQvcOqZQibxWMA5w5A3innD70i/SV8fLLMyc131Wkz+0Q03
+X-Gm-Message-State: AOJu0YzTH+p0e7c/2N3TywLfF3xJVM8SO/HPPDcNuFg4M/gYmItF6JsV
+	6L8aSxlytKjPBKgY+MhVPZeYc7OBfRA44mhg+xDn58HhWPGco5o7OOTYfbo98fU=
+X-Google-Smtp-Source: AGHT+IH6lSQLjPhb+rH7MhIJCz8VcmYFFOPCXGM2LCapictgRME7AWqPy+I8YzSDVKMGrNP+Ca47Lg==
+X-Received: by 2002:a05:600c:4f4a:b0:421:20aa:6048 with SMTP id 5b1f17b1804b1-42164a20b24mr16134255e9.26.1717751789789;
+        Fri, 07 Jun 2024 02:16:29 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:7e4b:b0d3:6a34:6404? ([2a01:e0a:982:cbb0:7e4b:b0d3:6a34:6404])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421580fe37csm82143035e9.3.2024.06.07.02.16.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jun 2024 02:16:29 -0700 (PDT)
+Message-ID: <88119323-bd54-4d2b-bb63-366c5fe77e39@linaro.org>
+Date: Fri, 7 Jun 2024 11:16:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: A52CC21991
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email]
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 00/12] arm64: meson: bunch of DT fixes, take 4 (final one
+ ??)
+To: Kevin Hilman <khilman@baylibre.com>, Jerome Brunet
+ <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240606-topic-amlogic-upstream-bindings-fixes-dts-v1-0-62e812729541@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240606-topic-amlogic-upstream-bindings-fixes-dts-v1-0-62e812729541@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-If fallcate is implemented but zero and discard operations are not
-supported by the filesystem the backing file is on we continue to fill
-dmesg with errors from the blk_mq_end_request() since each time we call
-fallocate() on the loop device the EOPNOTSUPP error from lo_fallocate()
-ends up propagated into the block layer. In the end syscall succeeds
-since the blkdev_issue_zeroout() falls back to writing zeroes which
-makes the errors even more misleading and confusing.
+On 06/06/2024 10:48, Neil Armstrong wrote:
+> Along with the following:
+> - https://lore.kernel.org/all/20240422-t7-reset-v2-1-cb82271d3296@amlogic.com/
+> - https://lore.kernel.org/all/20240513224552.800153-1-jan.dakinevich@salutedevices.com/
+> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-power-domains-spifc-v1-1-380f29ba4a16@linaro.org/
+> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-convert-spdif-receiver-v1-1-262465adbac2@linaro.org/
+> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-power-domains-mmc-v1-1-4acbb8cc2626@linaro.org/
+> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-power-domains-nvmem-v1-1-ef6f10c86a63@linaro.org/
+> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-power-domains-phy-v1-1-c819b0ecd8c8@linaro.org/
+> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-power-domains-rng-v1-1-0a55a7ba55e4@linaro.org/
+> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-audio-widgets-v1-1-65bd7cc2e09b@linaro.org/
+> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-power-domains-sardac-v1-1-40a8de6baa59@linaro.org/
+> - https://lore.kernel.org/all/20240606-topic-amlogic-upstream-bindings-convert-g12a-tohdmitx-v2-1-70d44fa30790@linaro.org/
+> 
+> this bunch of changes fixes 99% of the remaining dts check errors.
+> 
+> The two remaining bindings conversions for arm64/amlogic are:
+> - ti,tas5707
+> - everest,es7241
+> 
+> I'm too lazy to do them right now, so if someone is interested
+> in doing the conversion, please do it!
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+> Neil Armstrong (12):
+>        arm64: dts: amlogic: meson-g12b-bananapi: remove invalid fan on wrong pwm_cd controller
+>        arm64: dts: amlogic: move ao_pinctrl into aobus
+>        arm64: dts: amlogic: move assigned-clocks* from sound to clkc_audio node
+>        arm64: dts: amlogic: sm1: fix tdm audio-controller clock order
+>        arm64: dts: amlogic: sm1: fix tdm controllers compatible
+>        arm64: dts: amlogic: g12a-u200: drop invalid sound-dai-cells
+>        arm64: dts: amlogic: g12a-u200: add missing AVDD-supply to acodec
+>        arm64: dts: amlogic: axg: fix tdm audio-controller clock order
+>        arm64: dts: amlogic: c3: use correct compatible for gpio_intc node
+>        arm64: dts: amlogic: a1: use correct node name for mmc controller
+>        arm64: dts: amlogic: a1: drop the invalid reset-name for usb@fe004400
+>        arm64: dts: amlogic: gxbb-odroidc2: fix invalid reset-gpio property
+> 
+>   arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi        |   3 +-
+>   arch/arm64/boot/dts/amlogic/meson-a1.dtsi          |   3 +-
+>   arch/arm64/boot/dts/amlogic/meson-axg-s400.dts     |  17 +-
+>   arch/arm64/boot/dts/amlogic/meson-axg.dtsi         |  24 +-
+>   arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi  | 427 ++++++++++-----------
+>   arch/arm64/boot/dts/amlogic/meson-g12a-fbx8am.dts  |  16 +-
+>   .../boot/dts/amlogic/meson-g12a-radxa-zero.dts     |  16 +-
+>   arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts  |  16 +-
+>   arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts    |  18 +-
+>   arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts |  16 +-
+>   .../dts/amlogic/meson-g12b-bananapi-cm4-cm4io.dts  |  18 +-
+>   .../meson-g12b-bananapi-cm4-mnt-reform2.dts        |  18 +-
+>   .../boot/dts/amlogic/meson-g12b-bananapi.dtsi      |  30 +-
+>   .../arm64/boot/dts/amlogic/meson-g12b-gsking-x.dts |  16 +-
+>   .../boot/dts/amlogic/meson-g12b-gtking-pro.dts     |  16 +-
+>   arch/arm64/boot/dts/amlogic/meson-g12b-gtking.dts  |  16 +-
+>   .../dts/amlogic/meson-g12b-odroid-go-ultra.dts     |  16 +-
+>   .../boot/dts/amlogic/meson-g12b-odroid-n2.dtsi     |  18 +-
+>   .../boot/dts/amlogic/meson-g12b-odroid-n2l.dts     |  18 +-
+>   .../boot/dts/amlogic/meson-g12b-radxa-zero2.dts    |  16 +-
+>   .../boot/dts/amlogic/meson-g12b-ugoos-am6.dts      |  16 +-
+>   .../boot/dts/amlogic/meson-gx-libretech-pc.dtsi    |  17 +-
+>   .../arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi |  18 +-
+>   arch/arm64/boot/dts/amlogic/meson-gxbb-kii-pro.dts |  17 +-
+>   .../boot/dts/amlogic/meson-gxbb-nanopi-k2.dts      |  17 +-
+>   .../boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts    |  17 +-
+>   .../arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts |  19 +-
+>   arch/arm64/boot/dts/amlogic/meson-gxbb-p200.dts    |  17 +-
+>   arch/arm64/boot/dts/amlogic/meson-gxbb-p201.dts    |  17 +-
+>   .../boot/dts/amlogic/meson-gxbb-vega-s95.dtsi      |  17 +-
+>   .../boot/dts/amlogic/meson-gxbb-wetek-hub.dts      |  17 +-
+>   .../boot/dts/amlogic/meson-gxbb-wetek-play2.dts    |  17 +-
+>   .../dts/amlogic/meson-gxl-s805x-libretech-ac.dts   |  17 +-
+>   .../boot/dts/amlogic/meson-gxl-s805x-p241.dts      |  17 +-
+>   .../dts/amlogic/meson-gxl-s905x-khadas-vim.dts     |  17 +-
+>   .../amlogic/meson-gxl-s905x-libretech-cc-v2.dts    |  17 +-
+>   .../dts/amlogic/meson-gxl-s905x-libretech-cc.dts   |  17 +-
+>   .../boot/dts/amlogic/meson-gxl-s905x-p212.dts      |  17 +-
+>   .../boot/dts/amlogic/meson-gxm-khadas-vim2.dts     |  17 +-
+>   .../arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts |  17 +-
+>   arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts |  17 +-
+>   arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi |  16 +-
+>   .../dts/amlogic/meson-libretech-cottonwood.dtsi    |  16 +-
+>   .../boot/dts/amlogic/meson-sm1-a95xf3-air-gbit.dts |  16 +-
+>   .../boot/dts/amlogic/meson-sm1-a95xf3-air.dts      |  16 +-
+>   .../boot/dts/amlogic/meson-sm1-bananapi-m2-pro.dts |  16 +-
+>   .../boot/dts/amlogic/meson-sm1-bananapi-m5.dts     |  16 +-
+>   arch/arm64/boot/dts/amlogic/meson-sm1-h96-max.dts  |  16 +-
+>   arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi  |  16 +-
+>   arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts   |  16 +-
+>   .../boot/dts/amlogic/meson-sm1-x96-air-gbit.dts    |  16 +-
+>   arch/arm64/boot/dts/amlogic/meson-sm1-x96-air.dts  |  16 +-
+>   arch/arm64/boot/dts/amlogic/meson-sm1.dtsi         |  36 +-
+>   53 files changed, 679 insertions(+), 630 deletions(-)
+> ---
+> base-commit: c3f38fa61af77b49866b006939479069cd451173
+> change-id: 20240606-topic-amlogic-upstream-bindings-fixes-dts-6a572ad54324
+> 
+> Best regards,
 
-How to reproduce:
+I'll postpone applying patch 3 to be sure it's the right solution,
+but the other ones are trivial and I'll apply them now.
 
-1. make sure /tmp is mounted as tmpfs
-2. dd if=/dev/zero of=/tmp/disk.img bs=1M count=100
-3. losetup /dev/loop0 /tmp/disk.img
-4. mkfs.ext2 /dev/loop0
-5. dmesg |tail
-
-[710690.898214] operation not supported error, dev loop0, sector 204672 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-[710690.898279] operation not supported error, dev loop0, sector 522 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-[710690.898603] operation not supported error, dev loop0, sector 16906 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-[710690.898917] operation not supported error, dev loop0, sector 32774 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-[710690.899218] operation not supported error, dev loop0, sector 49674 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-[710690.899484] operation not supported error, dev loop0, sector 65542 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-[710690.899743] operation not supported error, dev loop0, sector 82442 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-[710690.900015] operation not supported error, dev loop0, sector 98310 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-[710690.900276] operation not supported error, dev loop0, sector 115210 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-[710690.900546] operation not supported error, dev loop0, sector 131078 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-
-This patch changes the lo_fallocate() to clear the flags for zero and
-discard operations if we get EOPNOTSUPP from the backing file fallocate
-callback, that way we at least stop spewing errors after the first
-unsuccessful try.
-
-CC: Jan Kara <jack@suse.cz>
-Signed-off-by: Cyril Hrubis <chrubis@suse.cz>
----
- drivers/block/loop.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 93780f41646b..315c76e3ef4a 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -320,6 +320,21 @@ static int lo_fallocate(struct loop_device *lo, struct request *rq, loff_t pos,
- 	ret = file->f_op->fallocate(file, mode, pos, blk_rq_bytes(rq));
- 	if (unlikely(ret && ret != -EINVAL && ret != -EOPNOTSUPP))
- 		return -EIO;
-+
-+	if (ret == -EOPNOTSUPP) {
-+		struct queue_limits lim = queue_limits_start_update(lo->lo_queue);
-+
-+		if (mode & FALLOC_FL_ZERO_RANGE)
-+			lim.max_write_zeroes_sectors = 0;
-+
-+		if (mode & FALLOC_FL_PUNCH_HOLE) {
-+			lim.max_hw_discard_sectors = 0;
-+			lim.discard_granularity = 0;
-+		}
-+
-+		queue_limits_commit_update(lo->lo_queue, &lim);
-+	}
-+
- 	return ret;
- }
- 
--- 
-2.44.2
-
+Neil
 
