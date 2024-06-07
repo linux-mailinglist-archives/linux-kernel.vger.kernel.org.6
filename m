@@ -1,131 +1,107 @@
-Return-Path: <linux-kernel+bounces-205926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7061190023F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:35:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 541AD900241
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 267A21F27F9E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:35:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AD9C1F281E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C600718F2D9;
-	Fri,  7 Jun 2024 11:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51B718F2C9;
+	Fri,  7 Jun 2024 11:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hNoIhkN/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SOOuwWsj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B203F2837F;
-	Fri,  7 Jun 2024 11:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3992837F;
+	Fri,  7 Jun 2024 11:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717760112; cv=none; b=I8q4NuirYuxPgF1Waj1KGSIaIgtC8njebnt1TJX7GbSmA5Jj0PlABARfeNF2ON97iydS4ZTMIbj28nnSKVk+FdgRWm9eH7T885DZByeG8IkkrK+06Isx1jisjifMh6zYInCFx0VwZQtCIAm29xjv2Pa/EtJzPkMCBgdg9AgU5g0=
+	t=1717760129; cv=none; b=bGj9ogAE6UAX+E0wKdRzs3JNAz9IEjsWK45X1B073wrQhSYW6ZXlbFqjsidx1tpqypNnbpb+3oMy8foTawCwM3Y/kHrbx6nVbrmhcUowxsdI/b7npjM92Nh+AhXy4l6feQpRX0SYIHapwYQJ3C6/E4wRwteVFyzY6CQlSff6gj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717760112; c=relaxed/simple;
-	bh=/kbLTCxrHbwf56ynyvIbJjEEZktlB0hG7QhbDg3RaGY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=le2DHtGh+3o9uHjXhCK9hpl7NiOr5QSy5fVTwBIae8Q4frdZEGrCUhz2be0d+JXxxHLJHbnU6lifaabHSq4BgCP4cH6yC84h6Vj4wFsIUvdI2KFsM3znh7oaqDyp5dv+7qB3p61W9FZNCpA/yuhlxjze6UiBiZPNse3B7tocd3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hNoIhkN/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 457BF75B026761;
-	Fri, 7 Jun 2024 11:35:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=98ffrLViHhUBJ6gaUpb/ni
-	3uAB8Etx5f4yMxRQqCv8U=; b=hNoIhkN/yvC2zX/JakhtvEsb8trT76rF/CSB54
-	6dvh01STmrJgTMblqGd71oFzWSkLo9ena1hDPDT/SosYAJ/7v07QzlmxJayJ6X6k
-	2zm1By9oBU3ArF1Qm9lLB1SSiDydsOc1athYaGIiFl/0hIu88x2/+ip8Hm2mStA8
-	HBRmzr1P8IRxBnuSViWSQsc/pRwL71ndWUjx0YxCMnWrzxHrV/qbS6EckLT46VLz
-	qUbb9XmzPjW2RTRUpVOXfbAPctIjv12aOHCF4eTaLDvmFvg+keMe7e7bRVzMlsFQ
-	xFcxeAPL7rg+Mi+yt1FfRiYGzGo+HydjL3vULFkrHnQ7f8KA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjq2tnndq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 11:35:06 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 457BZ5k4005439
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 7 Jun 2024 11:35:05 GMT
-Received: from hu-kbajaj-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 7 Jun 2024 04:35:02 -0700
-From: Komal Bajaj <quic_kbajaj@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Komal Bajaj <quic_kbajaj@quicinc.com>
-Subject: [PATCH] arm64: dts: qcom: qdu1000: Add secure qfprom node
-Date: Fri, 7 Jun 2024 17:04:45 +0530
-Message-ID: <20240607113445.2909-1-quic_kbajaj@quicinc.com>
-X-Mailer: git-send-email 2.42.0
+	s=arc-20240116; t=1717760129; c=relaxed/simple;
+	bh=y7+8ojeWaklXFdnopbOqrkFJH6Oh8Z5R/PffM5vSdfg=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=V+dKywj8yaASab290sdb3Gi2kBiHlAVD4GsLCRdI3anyMjVNLPrhpejcNt35VrbVcrRZAITDQkdEtP0TIxuYV7LjS5/3t9fdYPSXXmjIlP8VRczyUoPmWieE0SSKgURV0RKO+ccrAVmh8ertfP03hRCb1CNulFWzzPiSkBlWBCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SOOuwWsj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4913FC2BBFC;
+	Fri,  7 Jun 2024 11:35:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717760128;
+	bh=y7+8ojeWaklXFdnopbOqrkFJH6Oh8Z5R/PffM5vSdfg=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=SOOuwWsj5QcciH77iaCxUtsiio48wUTC8mcnND+OlApkTD7emSSH/tZ3qCHkG1LYA
+	 Brhqf+roHNXGCQKUX9M3eGuUeOYLDdhDvg4FE1MWMxDfwXZehoMsdztnwEQNd6DTZj
+	 PVXdjLiWnXLxJzS9I2AScHWqD6FC6Jizn1rSC+2HzL0EJ970MeahFUO9S2CjzOV7wt
+	 8SHu/TH8VSVGiagQoQ9c17sT08LM3A76RWzmYsvPt6wTjJWaexzD33E/rNMwgBucaS
+	 VW1fg+ErnDwVlk2SMgvdMljfvv6nRWrmrYXz0/YBgjkKjbZRlLQUTji8bEjiEelC65
+	 DhAeuLxS94vkw==
+Date: Fri, 07 Jun 2024 05:35:27 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 1-dExAvQjMVsDND-MK99iC_lL1Pdm7r9
-X-Proofpoint-ORIG-GUID: 1-dExAvQjMVsDND-MK99iC_lL1Pdm7r9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-07_06,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 impostorscore=0 clxscore=1011 spamscore=0 malwarescore=0
- mlxlogscore=741 mlxscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406070084
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Ricard Wanderlof <ricard.wanderlof@axis.com>
+Cc: Ricard Wanderlof <ricardw@axis.com>, Takashi Iwai <tiwai@suse.com>, 
+ linux-sound@vger.kernel.org, Baojun Xu <baojun.xu@ti.com>, 
+ Shenghao Ding <shenghao-ding@ti.com>, devicetree@vger.kernel.org, 
+ kernel@axis.com, Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, alsa-devel@alsa-project.org, 
+ Jaroslav Kysela <perex@perex.cz>, linux-kernel@vger.kernel.org, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Kevin Lu <kevin-lu@ti.com>
+In-Reply-To: <20240607-tlv320adc3xxx-micbias-gpo-v2-1-b140a45ffffe@axis.com>
+References: <20240607-tlv320adc3xxx-micbias-gpo-v2-0-b140a45ffffe@axis.com>
+ <20240607-tlv320adc3xxx-micbias-gpo-v2-1-b140a45ffffe@axis.com>
+Message-Id: <171776012736.1713547.9580962210836921996.robh@kernel.org>
+Subject: Re: [PATCH v2 1/2] ASoC: dt-bindings: tlv320adc3xxx: Add
+ MICBIAS-as-GPO properties
 
-Add secure qfprom node and also add properties for multi channel
-DDR. This will be required for LLCC driver to pick the correct
-LLCC configuration.
 
-Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qdu1000.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+On Fri, 07 Jun 2024 12:00:45 +0200, Ricard Wanderlof wrote:
+> Add properties for configuring the MICBIAS pins as general purpose
+> outputs, with some limitations: The voltage on the pin when activated
+> may be set using another property to 2.0 V, 2.5 V or AVDD.
+> When deactivated the pin will float.
+> 
+> Signed-off-by: Ricard Wanderlof <ricard.wanderlof@axis.com>
+> ---
+>  .../bindings/sound/ti,tlv320adc3xxx.yaml           | 24 ++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
 
-diff --git a/arch/arm64/boot/dts/qcom/qdu1000.dtsi b/arch/arm64/boot/dts/qcom/qdu1000.dtsi
-index 7a77f7a55498..d8df1bab63d5 100644
---- a/arch/arm64/boot/dts/qcom/qdu1000.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qdu1000.dtsi
-@@ -1584,6 +1584,21 @@ system-cache-controller@19200000 {
- 			reg-names = "llcc0_base",
- 				    "llcc_broadcast_base";
- 			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			nvmem-cell-names = "multi-chan-ddr";
-+			nvmem-cells = <&multi_chan_ddr>;
-+		};
-+
-+		sec_qfprom: efuse@221c8000 {
-+			compatible = "qcom,qdu1000-sec-qfprom", "qcom,sec-qfprom";
-+			reg = <0 0x221c8000 0 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			multi_chan_ddr: multi-chan-ddr@12b {
-+				reg = <0x12b 0x1>;
-+				bits = <0 2>;
-+			};
- 		};
- 	};
+My bot found errors running 'make dt_binding_check' on your patch:
 
---
-2.42.0
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/sound/ti,tlv320adc3xxx.yaml:128:25: [warning] too few spaces after comma (commas)
+./Documentation/devicetree/bindings/sound/ti,tlv320adc3xxx.yaml:129:25: [warning] too few spaces after comma (commas)
+
+dtschema/dtc warnings/errors:
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240607-tlv320adc3xxx-micbias-gpo-v2-1-b140a45ffffe@axis.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
