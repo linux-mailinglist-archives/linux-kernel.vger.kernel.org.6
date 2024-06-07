@@ -1,120 +1,164 @@
-Return-Path: <linux-kernel+bounces-206662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBA0B900C74
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:26:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C051900C7A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14CC71C21580
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:26:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2876DB2199C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8D314B06C;
-	Fri,  7 Jun 2024 19:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB6314D2A6;
+	Fri,  7 Jun 2024 19:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B+wUjyI3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nt8k8nv/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A66AD2E5;
-	Fri,  7 Jun 2024 19:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED32DDC9;
+	Fri,  7 Jun 2024 19:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717788392; cv=none; b=Vs+w0tBGQteBLbsiYxfjK7BwoZ4HZtudQih5b9SP23r5LaSFsTi2BppOtQ2AMY7v5Ha60jV0UpnmiQnDUAVFCTWfYDF01JFH75FlDqnpT0sPsTz+7xn32ybaOlBwKH9VxfoRYbYKMIo4nsRXL7XsUooaUx6verJzlIP2o0tG2Sg=
+	t=1717788659; cv=none; b=jI+3SQg7yHfWQDJwcAA52/JDN1kZaeNsV4NffZDZ8mQ3QhUypaK2NCvfk/6w5bOey7AofzR+SwZ9NgT5FtozYPIpggwXwRsSXA1Y34ccW6iHoBgdlH3AswmmwOrJg38rJc/hkaHpR8IPxra8KG5R8DyV7J54D+o9zBSVX3JWKKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717788392; c=relaxed/simple;
-	bh=G79+bqVInJHcymuYBymhLDPTm1SW8aHugZAKnQjXQoM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tA3idvXg74cPdlIG4EJNzcZFxwOEyEAZIPX09HJwu/I5RtMwIaVBEsx3awDlWIHo23eC0uqDDsFyLX+aQfnqYGS6ihM17XorZvKSX9GCEf/0p5yGj3AGhlPSDMTNZkpPB17BzyubCyCmheXIeHzqCqeDos0NkNFHcELUn1FJD+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B+wUjyI3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1B8AC32786;
-	Fri,  7 Jun 2024 19:26:31 +0000 (UTC)
+	s=arc-20240116; t=1717788659; c=relaxed/simple;
+	bh=D3j+/yjnNIGv7J2RoQZW6oh/+NmHkvPnpEUbKX+xt1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Q7MLo0EDRgC+PhM95geJzIb0LKDUYg/WeuJxoLfviHFywdsFEmUuwmm4uY4M96VZXB9LVXdVtU2/SR92GQctVd1pBRI6WAoKhxgRkwwzKeEZriPfuKrcxyrsF9ZQpBd3pleCzdRcKiODtxFBm/If/RF36gD5BXofYYa+vM74uWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nt8k8nv/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B38BC2BBFC;
+	Fri,  7 Jun 2024 19:30:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717788391;
-	bh=G79+bqVInJHcymuYBymhLDPTm1SW8aHugZAKnQjXQoM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=B+wUjyI3GdObFOF2X8xCI8HV4H3u+nkcrMGrDH2+DwfwB1e0Tb/5FJVtL6i/dpEH8
-	 AUXWisqNYutnJOF+iphclC3qHtL68TD1J7UvDTJyf0EccOyN/OSw2SoyNdJzy5vZRl
-	 Tv3rdS2AEO8fp8/Evh7Sq+zdHUCIUIoDss4CK3FFK98WwoApb0JCtWV9b0DWxb9eP6
-	 5cPA1n5BL28Zmavk8fKD20Bvolan4gQG00so1x7nuibFrE8pbWMqKovGcETbTQ1akZ
-	 lY7dqeLqfsZ/1ucCRgKPrT7q3qErDIt3d8Lu4Y39hOA2cszfevcN6hng1zS65q9C4i
-	 QT8B2NhNlEyAQ==
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3d21c5b48f5so14167b6e.0;
-        Fri, 07 Jun 2024 12:26:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV4NiPGHuHfQs8d/fjZPKbb5QpPsFej7pHcMRIYTrgkyKsqlg/+XS3aqU3c2Td1yiwXthsrxcAK0Ktq/D/VjmcLTpDb3yzPjDJiP6x/9pZzGv3wxJuumAsenOCu98yk/hCM5iMBZNI=
-X-Gm-Message-State: AOJu0YyZC+wlMfv74PQqq0S12+fym/rU0Czep1QJGUlMyosJm7UojVvm
-	6pE9RNvr8OpyPyZxBfxzg1NdbyJVdu1baD7LmPORA42k6XCNtJ0Fc0W/OR1L+8OsjO9IgBkYm6i
-	M10aeQLhcd1HLSFJ+eCeYhjMeNYA=
-X-Google-Smtp-Source: AGHT+IGe4YDLMC1VPuov6ECazHzXXBggKeKCmQyWizyYIsOCWRXbjCnXLn9qaBtY+SGk+U99r0LI7eIRNJn/lvgUIis=
-X-Received: by 2002:a4a:a7c9:0:b0:5ba:6959:edf8 with SMTP id
- 006d021491bc7-5baae6da3bfmr3588960eaf.1.1717788391242; Fri, 07 Jun 2024
- 12:26:31 -0700 (PDT)
+	s=k20201202; t=1717788658;
+	bh=D3j+/yjnNIGv7J2RoQZW6oh/+NmHkvPnpEUbKX+xt1I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=nt8k8nv/j9c0E53eFscg2s+72y2p8Z1M1saOXCrq5RBsOHkjTDdtObZlW5ALXU/Gt
+	 4ShFkTj4ji1MM06yyw3B2Sn2lUlfsVi5VxNXKJLPv1pKO9t/IwPUZh1Q4OPq4gWlw2
+	 TJQb9KxS1YrQwhBzH0GfcjYiNWH5N1rDv9mxqEa9YrLZyphVdtFEP7M95b3b6BEIbM
+	 cVy4tFEVCOfyKRFRR6/8WxTVkK8zc4aYgL/9eJutTEuv0U2wXj3R7N9MA/F7M1kvGV
+	 gL6xkER04J7inUbibhVa87LWNucBGnRkGIB4a4mgx7PhdiDJlZ+SPrVKgKxSWDtlJf
+	 xjve7Ue/M7LCQ==
+Date: Fri, 7 Jun 2024 14:30:55 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Vidya Sagar <vidyas@nvidia.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, "corbet@lwn.net" <corbet@lwn.net>,
+	"bhelgaas@google.com" <bhelgaas@google.com>,
+	Gal Shalom <galshalom@nvidia.com>,
+	Leon Romanovsky <leonro@nvidia.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Masoud Moshref Javadi <mmoshrefjava@nvidia.com>,
+	Shahaf Shuler <shahafs@nvidia.com>,
+	Vikram Sethi <vsethi@nvidia.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Jiandi An <jan@nvidia.com>, Tushar Dave <tdave@nvidia.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Krishna Thota <kthota@nvidia.com>,
+	Manikanta Maddireddy <mmaddireddy@nvidia.com>,
+	"sagar.tv@gmail.com" <sagar.tv@gmail.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>
+Subject: Re: [PATCH V3] PCI: Extend ACS configurability
+Message-ID: <20240607193055.GA855605@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530151704.282453-1-rui.zhang@intel.com>
-In-Reply-To: <20240530151704.282453-1-rui.zhang@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 7 Jun 2024 21:26:19 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iVtb8K0ww8REum6T90bu321sWoKCVUN0t-8Wzv9ZvkYw@mail.gmail.com>
-Message-ID: <CAJZ5v0iVtb8K0ww8REum6T90bu321sWoKCVUN0t-8Wzv9ZvkYw@mail.gmail.com>
-Subject: Re: [PATCH] thermal: intel: intel_pch: Improve cooling log
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, pmenzel@molgen.mpg.de, len.brown@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PH8PR12MB667431B8552D271F906F8F4BB8FF2@PH8PR12MB6674.namprd12.prod.outlook.com>
 
-On Thu, May 30, 2024 at 5:17=E2=80=AFPM Zhang Rui <rui.zhang@intel.com> wro=
-te:
->
-> The intel_pch_thermal cooling mechanism currently only provides one of
-> the following final conclusions:
-> 1. intel_pch_thermal 0000:00:12.0: CPU-PCH is cool [48C]
-> 2. intel_pch_thermal 0000:00:12.0: CPU-PCH is cool [49C] after 30700 ms d=
-elay
-> 3. intel_pch_thermal 0000:00:12.0: CPU-PCH is hot [60C] after 60000 ms de=
-lay. S0ix might fail
-> 4. intel_pch_thermal 0000:00:12.0: Wakeup event detected, abort cooling
->
-> This does not provide sufficient context about what is happening,
-> especially for case 4.
->
-> Add one line log to indicate when PCH overheats and the cooling delay
-> has started.
->
-> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
-> ---
->  drivers/thermal/intel/intel_pch_thermal.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/drivers/thermal/intel/intel_pch_thermal.c b/drivers/thermal/=
-intel/intel_pch_thermal.c
-> index f5be2c389351..fc326985796c 100644
-> --- a/drivers/thermal/intel/intel_pch_thermal.c
-> +++ b/drivers/thermal/intel/intel_pch_thermal.c
-> @@ -298,6 +298,11 @@ static int intel_pch_thermal_suspend_noirq(struct de=
-vice *device)
->         /* Get the PCH current temperature value */
->         pch_cur_temp =3D GET_PCH_TEMP(WPT_TEMP_TSR & readw(ptd->hw_base +=
- WPT_TEMP));
->
-> +       if (pch_cur_temp >=3D pch_thr_temp)
-> +               dev_warn(&ptd->pdev->dev,
-> +                       "CPU-PCH current temp [%dC] higher than the thres=
-hold temp [%dC], S0ix might fail. Start cooling...\n",
-> +                       pch_cur_temp, pch_thr_temp);
-> +
->         /*
->          * If current PCH temperature is higher than configured PCH thres=
-hold
->          * value, run some delay loop with sleep to let the current tempe=
-rature
-> --
+On Mon, Jun 03, 2024 at 07:50:59AM +0000, Vidya Sagar wrote:
+> Hi Bjorn,
+> Could you let me know if Jason's reply answers your question?
+> Please let me know if you are looking for any more information.
 
-Applied as 6.11 material, thanks!
+I think we should add some of that content to the commit log.  It
+needs:
+
+  - Subject line that advertises some good thing.
+
+  - A description of why users want this.  I have no idea what the
+    actual benefit is, but I'm looking for something at the level of
+    "The default ACS settings put A and B in different IOMMU groups,
+    preventing P2PDMA between them.  If we disable ACS X, A and B will
+    be put in the same group and P2PDMA will work".
+
+  - A primer on how users can affect IOMMU groups by enabling/
+    disabling ACS settings so they can use this without just blind
+    trial and error.  A note that this is immutable except at boot
+    time.
+
+  - A pointer to the code that determines IOMMU groups based on the
+    ACS settings.  Similar to the above, but more useful for
+    developers.
+
+If we assert "for iommu_groups to form correctly ...", a hint about
+why/where this is so would be helpful.
+
+"Correctly" is not quite the right word here; it's just a fact that
+the ACS settings determined at boot time result in certain IOMMU
+groups.  If the user desires different groups, it's not that something
+is "incorrect"; it's just that the user may have to accept less
+isolation to get the desired IOMMU groups.
+
+> > -----Original Message-----
+> > From: Jason Gunthorpe <jgg@nvidia.com>
+> > ...
+> > 
+> > On Thu, May 23, 2024 at 09:59:36AM -0500, Bjorn Helgaas wrote:
+> > > [+cc iommu folks]
+> > >
+> > > On Thu, May 23, 2024 at 12:05:28PM +0530, Vidya Sagar wrote:
+> > > > For iommu_groups to form correctly, the ACS settings in the PCIe
+> > > > fabric need to be setup early in the boot process, either via the
+> > > > BIOS or via the kernel disable_acs_redir parameter.
+> > >
+> > > Can you point to the iommu code that is involved here?  It sounds like
+> > > the iommu_groups are built at boot time and are immutable after that?
+> > 
+> > They are created when the struct device is plugged in. pci_device_group() does the
+> > logic.
+> > 
+> > Notably groups can't/don't change if details like ACS change after the groups are
+> > setup.
+> > 
+> > There are alot of instructions out there telling people to boot their servers and then
+> > manually change the ACS flags with set_pci or something, and these are not good
+> > instructions since it defeats the VFIO group based security mechanisms.
+> > 
+> > > If we need per-device ACS config that depends on the workload, it
+> > > seems kind of problematic to only be able to specify this at boot
+> > > time.  I guess we would need to reboot if we want to run a workload
+> > > that needs a different config?
+> > 
+> > Basically. The main difference I'd see is if the server is a VM host or running bare
+> > metal apps. You can get more efficicenty if you change things for the bare metal case,
+> > and often bare metal will want to turn the iommu off while a VM host often wants
+> > more of it turned on.
+> > 
+> > > Is this the iommu usage model we want in the long term?
+> > 
+> > There is some path to more dynamic behavior here, but it would require separating
+> > groups into two components - devices that are together because they are physically
+> > sharing translation (aliases and things) from devices that are together because they
+> > share a security boundary (ACS).
+> > 
+> > It is more believable we could dynamically change security group assigments for VFIO
+> > than translation group assignment. I don't know anyone interested in this right now -
+> > Alex and I have only talked about it as a possibility a while back.
+> > 
+> > FWIW I don't view patch as excluding more dynamisism in the future, but it is the best
+> > way to work with the current state of affairs, and definitely better than set_pci
+> > instructions.
+> > 
+> > Thanks,
+> > Jason
 
