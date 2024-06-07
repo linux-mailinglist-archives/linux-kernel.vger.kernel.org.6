@@ -1,56 +1,94 @@
-Return-Path: <linux-kernel+bounces-206826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E97900E4C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 01:03:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2A65900E4E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 01:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 376451C21E8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 23:03:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDC20B22C4F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 23:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3948613C3E6;
-	Fri,  7 Jun 2024 23:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45581C6A1;
+	Fri,  7 Jun 2024 23:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SZYzWvP6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="FWMdH3qE";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RCO2KBq0"
+Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7130F73473;
-	Fri,  7 Jun 2024 23:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4125D49646
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 23:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717801392; cv=none; b=Zpv9uaAuZqUJ+n4k8vZLwZ5INvOn+84tt8uRbXbSor9YT7rcc6+TKZjfOkrzxB8280kxN+SB6lwQ17Nqoc6BxgbgZnawR3VuIgcZ+kfc0soDvHQzQcLXJ22+RJ5wgr3rlyX6oJz+/nDGMmBtyh+qGDQIRTl3ubnU7uoV0MpcEt4=
+	t=1717801676; cv=none; b=CO8TR7ruZDqcEKPuM/VErxXPjnjQIZPA1+zgUPNV+YURsWpXXeb2aBJexIbcItICYeLFSBzpvLr6rk37MchPljG1+AYTcDBbxfk8XRIpPZd4hBg2aSlBuWbqom7AdQI2/Wa3BGHFgNigKdqo4jW60NZMS8GsyOFnZoWmCxyKDZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717801392; c=relaxed/simple;
-	bh=Tb0j3EBei+kALnLa+H4KZkSPMvY9CdcHeBoA3BM1ESU=;
+	s=arc-20240116; t=1717801676; c=relaxed/simple;
+	bh=TEq1TDDxfQv6GNFB8iorRs0IOxBof4X8S2dkmZfg4pU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VD26jYBQGmEU3x+lqKcL0hS7glJiNTncfCPiEbXnjhoC+T1gH7bspqRqpIg6DT7e5wST0cUSQpBdBKi2TAqcvuL3z7AHvA0CQbO6wRcW8ktXsg2LbpY2mb3wz3zPGYh+rJCZv3IawuZuUinzfqBQfAJTDjPcuPbsa/ioI2rHdbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SZYzWvP6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3BB5C4AF07;
-	Fri,  7 Jun 2024 23:03:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717801392;
-	bh=Tb0j3EBei+kALnLa+H4KZkSPMvY9CdcHeBoA3BM1ESU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SZYzWvP6XmivM98pvEdDsoqEXgz2mOjmHXr/2lntK8ylsw755ibSuK8/pUcJVZCQc
-	 oIlWU16e9KqLx6qKtNBcSWqU0/1N1fWgl1Qn79a/BfYFZtMK9v9gblyxVQosjvsvSy
-	 btGSCnaVSY3d+n76Nu0YIPRADVAYdtXBE4NF28Fdwh72lcAx40onlQW2izy8AYpZEu
-	 yhGQPoNDfDT3ZB/IdwhNFgqg0kMR8gRUBgUsF8BnyCFo/ZFdOKl5yB/pMdIX+WBw2P
-	 JTtmacdS71JDsQpRYErolLgYSa/GSpiXfVmtheGnELqHNrHRmBcTnwlTXUT0zoaLkA
-	 ep2yVgbWcFMbw==
-Date: Fri, 7 Jun 2024 18:03:08 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Anjelique Melendez <quic_amelende@quicinc.com>
-Cc: pavel@ucw.cz, lee@kernel.org, robh@kernel.org, 
-	u.kleine-koenig@pengutronix.de, marijn.suijten@somainline.org, kees@kernel.org, 
-	morf3089@gmail.com, quic_gurus@quicinc.com, quic_subbaram@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] leds: rgb: leds-qcom-lpg: Add PPG check for
- setting/clearing PBS triggers
-Message-ID: <jjkw3hcwxey6kjagkwmr6q2eg2vwpvbewh6ieg3qqhsmoro5dc@7sg7ppeqbn2u>
-References: <20240607005250.4047135-1-quic_amelende@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O9rr01oumGT5x3LDM7gvWqAGE6BMU3DCGioBdjrh4ImpSEg6b2pVmLCP98y20bRuOxfNwZlvI26nis3qb6276qxtkAvxdWVO8C1VAuUfShbrFRE+gfT6hc+E3YHwPus4F7ABsgEWjgk0KCsKOsSNztwJqlkfN81YpIqGrFOhfJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=FWMdH3qE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RCO2KBq0; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 4FE4F13800E8;
+	Fri,  7 Jun 2024 19:07:53 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Fri, 07 Jun 2024 19:07:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1717801673; x=
+	1717888073; bh=6pdC/PPeU998+RzKdeO9cLmW7uSwlM/TVhAEkUWbOIU=; b=F
+	WMdH3qE+jPjMD8O2/Op8RnY5tdJV0XoKg9eYvS367FiOcKEoDbVpor4tZUOBgm2/
+	csuf8Fj+Rmb9O+zt8ByM8fUA4QMZctZbGGqYsghQJQGwFHyX5mfzPyvjIneNUEqN
+	Qj2Z0AJPJhARIzUMruGN3XcPGuRFtdng6RtG6/mbwc0Ha40Af0V+FDRSFsMkw+4x
+	ytXaD/7dRj8LSiM+mkIIQr5r29EJ8DhRRbqQEgbFaM9jmGqsKsFfdipu2wF2qwrs
+	h+t6kYiTQ7S//o7KYG2jQQwvCnQlaSCaNi3N86yHxS9JdnD4EIsRrbIM9EkVqIaE
+	ZJIKUM9kmnrEBL6vjBXkw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1717801673; x=1717888073; bh=6pdC/PPeU998+RzKdeO9cLmW7uSw
+	lM/TVhAEkUWbOIU=; b=RCO2KBq05P6gGDqe4NNlfUr7IgrNKydICWP76NHHCC35
+	UBT+kZ4lyAb1++FSnZEmlhwc64QfxPdBMzIcfnIH6Bl4sBQr0+EVgTus7KUjr+IY
+	TOFTVkwKLwqbf5h1DgSTeKMi1SotyaNvdbBfMx4P/U1tZ8LX2celSjDqCfhQe7Dr
+	YE3Ip0JBguRX1agMurAY76cgwlOpjSQwRoHiFVyEg74XB8M4JYLY4sgI4wr2E0YX
+	lxWIesqVFLPkQ6nViragSHye6a4dQqSKE9z3mH17DEQKuqw55etazoO/brt2V+UD
+	Rnx+MpzY4VFhEcmI1C2BJllmGssSpKnGhmDDmycCfg==
+X-ME-Sender: <xms:yZJjZhFr4vFF4EraFQ-4rC6GwqwGFKgafKSrL65cu6OHM3KutOKmXg>
+    <xme:yZJjZmX4OiNTeuhfKT8XUQTxB7kcTeKuvZFOmr_Uq3UGzgCd4t3ajeuaIvJSCMORs
+    PRPK3g4yutWKZ53hOA>
+X-ME-Received: <xmr:yZJjZjLZwoXdRjRY5oZ_0GfVcu2NVYN1Q-IF9DHMWa-n23snUQ_00pQ4dOGfh34sSPAew8nLg6Km5VGNavoZQS8yXrCF9EGankE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedtvddgudejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfhfgggtuggjsehttd
+    ertddttddvnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghk
+    rghshhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeehhffhte
+    etgfekvdeiueffveevueeftdelhfejieeitedvleeftdfgfeeuudekueenucevlhhushht
+    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhise
+    hsrghkrghmohgttghhihdrjhhp
+X-ME-Proxy: <xmx:yZJjZnHSFN5UpnqqZuvBWQEu1YrWL_LeupTNYdOJrma1DK7QMwotPw>
+    <xmx:yZJjZnXkXn5M5L4n3PvBTfO-oOlmhhgqDp0bte-6ira8lTLgtw1Q4Q>
+    <xmx:yZJjZiMAa6JmRfCDlk40DENcxjfq2QWqgMOhm9vt6SAGB93OTI5CDg>
+    <xmx:yZJjZm0SkDbKVFf4lO-P4PlZaRVf1YnKm71wkcov8_n6a0Q8JxPJrw>
+    <xmx:yZJjZkgr1KaL4r5AKGa74HKh2IM9TTnz92Zhz21ucinYzC_CSOciOgDs>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 7 Jun 2024 19:07:52 -0400 (EDT)
+Date: Sat, 8 Jun 2024 08:07:49 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] firewire: add helper functions for phy configuration
+ packet
+Message-ID: <20240607230749.GA245773@workstation.local>
+Mail-Followup-To: linux1394-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+References: <20240606235133.231543-1-o-takashi@sakamocchi.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,63 +97,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240607005250.4047135-1-quic_amelende@quicinc.com>
+In-Reply-To: <20240606235133.231543-1-o-takashi@sakamocchi.jp>
 
-On Thu, Jun 06, 2024 at 05:52:50PM GMT, Anjelique Melendez wrote:
-> Currently, all LED LPG devices will call lpg_{set,clear}_pbs_trigger()
-> when setting brightness regardless of if they support PPG and have PBS
-> triggers. Check if device supports PPG before setting/clearing PBS
-> triggers.
+On Fri, Jun 07, 2024 at 08:51:31AM +0900, Takashi Sakamoto wrote:
+> Hi,
 > 
-> Fixes: 6ab1f766a80a ("leds: rgb: leds-qcom-lpg: Add support for PPG through single SDAM")
-> Fixes: 5e9ff626861a ("leds: rgb: leds-qcom-lpg: Include support for PPG with dedicated LUT SDAM")
-> Signed-off-by: Anjelique Melendez <quic_amelende@quicinc.com>
-
-Looks to align with sdam code paths.
-
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
-
-Regards,
-Bjorn
-
-> ---
->  drivers/leds/rgb/leds-qcom-lpg.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+> In recent months, the batch of helper functions was added to serialize
+> and deserialize content of packet in IEEE 1394 protocol. This series of
+> changes includes some helper functions for phy configuration packet as
+> well as some KUnit tests for them.
 > 
-> diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
-> index 9467c796bd04..e74b2ceed1c2 100644
-> --- a/drivers/leds/rgb/leds-qcom-lpg.c
-> +++ b/drivers/leds/rgb/leds-qcom-lpg.c
-> @@ -2,7 +2,7 @@
->  /*
->   * Copyright (c) 2017-2022 Linaro Ltd
->   * Copyright (c) 2010-2012, The Linux Foundation. All rights reserved.
-> - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
->   */
->  #include <linux/bits.h>
->  #include <linux/bitfield.h>
-> @@ -254,6 +254,9 @@ static int lpg_clear_pbs_trigger(struct lpg *lpg, unsigned int lut_mask)
->  	u8 val = 0;
->  	int rc;
->  
-> +	if (!lpg->lpg_chan_sdam)
-> +		return 0;
-> +
->  	lpg->pbs_en_bitmap &= (~lut_mask);
->  	if (!lpg->pbs_en_bitmap) {
->  		rc = nvmem_device_write(lpg->lpg_chan_sdam, SDAM_REG_PBS_SEQ_EN, 1, &val);
-> @@ -276,6 +279,9 @@ static int lpg_set_pbs_trigger(struct lpg *lpg, unsigned int lut_mask)
->  	u8 val = PBS_SW_TRIG_BIT;
->  	int rc;
->  
-> +	if (!lpg->lpg_chan_sdam)
-> +		return 0;
-> +
->  	if (!lpg->pbs_en_bitmap) {
->  		rc = nvmem_device_write(lpg->lpg_chan_sdam, SDAM_REG_PBS_SEQ_EN, 1, &val);
->  		if (rc < 0)
-> -- 
-> 2.34.1
+> Takashi Sakamoto (2):
+>   firewire: core: add tests for serialization/deserialization of phy
+>     config packet
+>   firewire: core: use inline helper functions to serialize phy config
+>     packet
 > 
+>  drivers/firewire/core-transaction.c       | 22 +++----
+>  drivers/firewire/packet-serdes-test.c     | 79 +++++++++++++++++++++++
+>  drivers/firewire/phy-packet-definitions.h | 55 ++++++++++++++++
+>  3 files changed, 144 insertions(+), 12 deletions(-)
+
+Applied to for-next branch.
+
+
+Regards
+
+Takashi Sakamoto
 
