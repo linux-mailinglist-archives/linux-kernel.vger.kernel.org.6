@@ -1,121 +1,280 @@
-Return-Path: <linux-kernel+bounces-206387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AACBF9008C2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:26:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A5739008CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 484881F21B17
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:26:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF2C31F21ADF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8968198846;
-	Fri,  7 Jun 2024 15:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UdNzeCOP"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0311219752F;
+	Fri,  7 Jun 2024 15:26:31 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C09194AC2;
-	Fri,  7 Jun 2024 15:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2831854660;
+	Fri,  7 Jun 2024 15:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717773940; cv=none; b=u//SxNFFjEs2MC9c5diOFsHW8Yk6o3L0ZiYkIW215n3aTYKdH+tT38XSne6z6PiU3lbQmJu6k5hXUJCg/h0wvE8YkbjFAJw1Q9VKGQKRd+F1CNop2nqHj6/7JLMZoyXNb0Hhb4gNo1cje+Tkk5XDZa5fP8VS/z337Jr9pDrOxN4=
+	t=1717773990; cv=none; b=pmWs+TqyGfDjgduMpkSEBy0/G0CTr2HL77iMQ6mbOtmTmxp0OYmO3tXMMc8L9jL+v6plJ6lFEeZUqJo+NIXXPNBv28Jtr7A19TF7gsmRb2J0UJcGUiIxpOs0skPMHWqHwUMzPdqnnh2YiaSRqq6832dsVLQ2zm55NtVMNK+9BSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717773940; c=relaxed/simple;
-	bh=wwNKMN84Hed198AibGQVitq1sUiDKwI0ufHAfH0xtRI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O70pmY4Aed9qTybJBr8gKrQNiqQrVrOwmBh8IOScAlpvppxzLu9WiredOp4hNAtkdgp7hLutYQX4HkLkpXqkrfZKp5t2XNckksPyapPkV/fH4G1EzTaKBLBY2CKZjcFlgs8ZvChNkiGJXT8AVCww7S/oUkytM6G/zF0v9uuLm+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UdNzeCOP; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4217926991fso1462915e9.3;
-        Fri, 07 Jun 2024 08:25:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717773937; x=1718378737; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=TuyYIFFv4coVUtE6SznjWB/DFY1udQE67Js2ht0hux8=;
-        b=UdNzeCOPzhRSZAbhu6G1OqWdde3sFsNGFRRktQNeI5JOy0uptzioOz9ePbxE7ljqx5
-         rz9VGV0zj9TjRIUfLh+z4+BSAWhOrbG33qo+36wV8YM0YIuiR9apsY480H5qDgZzPCeq
-         vlq/oaNqk+a4HAlymuA1xtMIu4xbcSJJw3yJObtGX6xRl11ifG63F7oZz9tzgPWsbWcZ
-         Y4wTBOX+7iFXwNBgNmz/kGpvm7kzIq52j9WeK3/RHOvjiCS81QwcRSZVQhZkd2UHzf9i
-         I4xK5z1gt0s+aQ7e9ujSYMhdciYIIuOl2LQO2BZi8v1oKyH9Ey/Y3drlgrvKWktrLhcp
-         kG0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717773937; x=1718378737;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TuyYIFFv4coVUtE6SznjWB/DFY1udQE67Js2ht0hux8=;
-        b=biWZZaACVRga2Q+jT1Y2gS0oxyUOxuIqD++ILFAWxg/Ngak8NaX/dVjhPcjn4vMhQ3
-         NKu5xF758KXcYMdT0E9gXxSi0u8jeSSghwgerN2leT4emRbaGt72XlzaAQTZ/Q0GlIrz
-         2N/Blam9x4Nz5OTHjDwqLf4pUyGD9nRFgOGh9iT/8q4f98wRNLl5B/P8/RZv0xyy/srY
-         Xy+9Q9IXlToSQ/Okhcmqi2k9OK5XofNekzvmyDTTqiftnfV54Fqexr91PpaAPApAp3jF
-         fzuql9K2poTk7PiuPKeTx6nv1lfHV1sCOK6yShpDL1d72H+9BGHpQ3YEEuLJgLjkh+NE
-         C1SA==
-X-Forwarded-Encrypted: i=1; AJvYcCUv5ZJpLXF3QeljuNyyBh/CmeL6MBVAdteQ33H6SYhiA75hoABpuhXdHEM+AziKR1Uwr3J6NXpYLvI5XnLGlBdDUSKooMTlrzZQ2SGf0AvzY72ZLaozZfMXFrUHR//BC5STIZbvUPRxXMHDnZyaaYCYRtf++fdYMYenVLrqDu6n/9raSSce2pjK8obB/w==
-X-Gm-Message-State: AOJu0YzuYQH5btcVWfHAnuqZwPilWYs1cSrNQZ/5RMJuTpgZzu5JaFAk
-	hIRj8w5rYReW/oFajhxLNbmxEI2wF4Sx7ynWtVOB3l0UPNSeOxI=
-X-Google-Smtp-Source: AGHT+IGXtYC4WLdTBer9j1GZeuSmKlkiVkz9fUSgbMoshOxZmCikz3Ij32lopCDxzZ9ZKjioE5UHUA==
-X-Received: by 2002:a05:600c:3c94:b0:41a:b54a:9ad8 with SMTP id 5b1f17b1804b1-4216499c726mr30425595e9.0.1717773936724;
-        Fri, 07 Jun 2024 08:25:36 -0700 (PDT)
-Received: from p183 ([46.53.249.224])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f0bdce051sm1017515f8f.75.2024.06.07.08.25.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 08:25:36 -0700 (PDT)
-Date: Fri, 7 Jun 2024 18:25:34 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Amer Al Shanawany <amer.shanawany@gmail.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Swarup Laxman Kotiaklapudi <swarupkotikalapudi@gmail.com>,
-	Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] selftests: proc: remove unreached code and fix build
- warning
-Message-ID: <eb9b2d6e-91eb-4fdc-b352-b3d0c290da2f@p183>
-References: <202404010211.ygidvMwa-lkp@intel.com>
- <20240603124220.33778-1-amer.shanawany@gmail.com>
- <14f55053-2ff8-4086-8aac-b8ee2d50a427@p183>
- <20240604202531.5d559ec4daed484a7a23592c@linux-foundation.org>
+	s=arc-20240116; t=1717773990; c=relaxed/simple;
+	bh=lBO/t1yfjg2Yjj4AQQYnYMarQ3NUyTiqyq8jIAHT2YE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lXhSPtL8fq9yac7T0wP28xxH6wPlzolf8tbqp0IsBmTJM+bBW0kbQvYszHAVuRmLlhYJfWyOz2QMvyelP7Z142t6yCLZ5RH0mlS0T4emSu2pqdRaV/driKCpcg2ZxZrUwq1kbvt3B3DbjgLFvt797OHA2O1SvJlTPSO4VYJ7m2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VwlPf1hbLz6D95T;
+	Fri,  7 Jun 2024 23:25:10 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4ACC91400CD;
+	Fri,  7 Jun 2024 23:26:24 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 7 Jun
+ 2024 16:26:23 +0100
+Date: Fri, 7 Jun 2024 16:26:22 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+CC: Alison Schofield <alison.schofield@intel.com>,
+	<linux-efi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Yazen Ghannam <yazen.ghannam@amd.com>, "Bowman
+ Terry" <terry.bowman@amd.com>
+Subject: Re: [PATCH 2/4] acpi/ghes, efi/cper: Recognize and process CXL
+ Protocol Errors.
+Message-ID: <20240607162622.00000819@Huawei.com>
+In-Reply-To: <09e0d961-e19f-30d6-5306-1b35609b7d79@amd.com>
+References: <20240522150839.27578-1-Smita.KoralahalliChannabasappa@amd.com>
+	<20240522150839.27578-3-Smita.KoralahalliChannabasappa@amd.com>
+	<Zk6H5jTdVfN4aFhF@aschofie-mobl2>
+	<09e0d961-e19f-30d6-5306-1b35609b7d79@amd.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240604202531.5d559ec4daed484a7a23592c@linux-foundation.org>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Tue, Jun 04, 2024 at 08:25:31PM -0700, Andrew Morton wrote:
-> On Mon, 3 Jun 2024 17:24:47 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> 
-> > On Mon, Jun 03, 2024 at 02:42:20PM +0200, Amer Al Shanawany wrote:
-> > > fix the following warning:
-> > > proc-empty-vm.c:385:17: warning: ignoring return value of ‘write’
-> > 
-> > > --- a/tools/testing/selftests/proc/proc-empty-vm.c
-> > > +++ b/tools/testing/selftests/proc/proc-empty-vm.c
-> > > @@ -381,9 +381,6 @@ static int test_proc_pid_statm(pid_t pid)
-> > 
-> > > -	if (0) {
-> > > -		write(1, buf, rv);
-> > > -	}
-> > 
-> > no thanks
-> 
-> Why not?
-> 
-> Why does that code exist anyway?  It at least needs a comment.
+On Thu, 23 May 2024 14:21:40 -0700
+Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com> wrote:
 
-OK, whatever.
+> Hi Alison,
+> 
+> On 5/22/2024 5:03 PM, Alison Schofield wrote:
+> > On Wed, May 22, 2024 at 03:08:37PM +0000, Smita Koralahalli wrote:  
+> >> UEFI v2.10 section N.2.13 defines a CPER record for CXL Protocol errors.
+> >>
+> >> Add GHES support to detect CXL CPER Protocol Error Record and Cache Error
+> >> Severity, Device ID, Device Serial number and CXL RAS capability struct in
+> >> struct cxl_cper_prot_err. Include this struct as a member of struct
+> >> cxl_cper_work_data.
+> >>
+> >> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+> >> ---
+> >>   drivers/acpi/apei/ghes.c        | 10 +++++
+> >>   drivers/firmware/efi/cper_cxl.c | 66 +++++++++++++++++++++++++++++++++
+> >>   include/linux/cxl-event.h       | 26 +++++++++++++
+> >>   3 files changed, 102 insertions(+)
+> >>
+> >> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> >> index 623cc0cb4a65..1a58032770ee 100644
+> >> --- a/drivers/acpi/apei/ghes.c
+> >> +++ b/drivers/acpi/apei/ghes.c
+> >> @@ -717,6 +717,14 @@ static void cxl_cper_post_event(enum cxl_event_type event_type,
+> >>   	schedule_work(cxl_cper_work);
+> >>   }
+> >>   
+> >> +static void cxl_cper_handle_prot_err(struct acpi_hest_generic_data *gdata)
+> >> +{
+> >> +	struct cxl_cper_work_data wd;
+> >> +
+> >> +	if (cxl_cper_handle_prot_err_info(gdata, &wd.p_err))
+> >> +		return;
+> >> +}
+> >> +
+> >>   int cxl_cper_register_work(struct work_struct *work)
+> >>   {
+> >>   	if (cxl_cper_work)
+> >> @@ -791,6 +799,8 @@ static bool ghes_do_proc(struct ghes *ghes,
+> >>   			struct cxl_cper_event_rec *rec = acpi_hest_get_payload(gdata);
+> >>   
+> >>   			cxl_cper_post_event(CXL_CPER_EVENT_MEM_MODULE, rec);
+> >> +		} else if (guid_equal(sec_type, &CPER_SEC_CXL_PROT_ERR)) {
+> >> +			cxl_cper_handle_prot_err(gdata);
+> >>   		} else {
+> >>   			void *err = acpi_hest_get_payload(gdata);
+> >>   
+> >> diff --git a/drivers/firmware/efi/cper_cxl.c b/drivers/firmware/efi/cper_cxl.c
+> >> index 4fd8d783993e..03b9839f3b73 100644
+> >> --- a/drivers/firmware/efi/cper_cxl.c
+> >> +++ b/drivers/firmware/efi/cper_cxl.c
+> >> @@ -8,6 +8,7 @@
+> >>    */
+> >>   
+> >>   #include <linux/cper.h>
+> >> +#include <acpi/ghes.h>
+> >>   #include "cper_cxl.h"
+> >>   
+> >>   #define PROT_ERR_VALID_AGENT_TYPE		BIT_ULL(0)
+> >> @@ -44,6 +45,17 @@ enum {
+> >>   	USP,	/* CXL Upstream Switch Port */
+> >>   };
+> >>   
+> >> +static enum cxl_aer_err_type cper_severity_cxl_aer(int cper_severity)
+> >> +{
+> >> +	switch (cper_severity) {
+> >> +	case CPER_SEV_RECOVERABLE:
+> >> +	case CPER_SEV_FATAL:
+> >> +		return CXL_AER_UNCORRECTABLE;
+> >> +	default:
+> >> +		return CXL_AER_CORRECTABLE;
+> >> +	}
+> >> +}
+> >> +
+> >>   void cper_print_prot_err(const char *pfx, const struct cper_sec_prot_err *prot_err)
+> >>   {
+> >>   	if (prot_err->valid_bits & PROT_ERR_VALID_AGENT_TYPE)
+> >> @@ -176,3 +188,57 @@ void cper_print_prot_err(const char *pfx, const struct cper_sec_prot_err *prot_e
+> >>   			       sizeof(cxl_ras->header_log), 0);
+> >>   	}
+> >>   }
+> >> +
+> >> +int cxl_cper_handle_prot_err_info(struct acpi_hest_generic_data *gdata,
+> >> +				  struct cxl_cper_prot_err *p_err)
+> >> +{
+> >> +	struct cper_sec_prot_err *prot_err = acpi_hest_get_payload(gdata);
+> >> +	u8 *dvsec_start, *cap_start;
+> >> +
+> >> +	if (!(prot_err->valid_bits & PROT_ERR_VALID_DEVICE_ID)) {
+> >> +		pr_err(FW_WARN "No Device ID\n");
+> >> +		return -EINVAL;
+> >> +	}
+> >> +
+> >> +	/*
+> >> +	 * The device ID or agent address is required for CXL RCD, CXL
+> >> +	 * SLD, CXL LD, CXL Fabric Manager Managed LD, CXL Root Port,
+> >> +	 * CXL Downstream Switch Port and CXL Upstream Switch Port.
+> >> +	 */
+> >> +	if (prot_err->agent_type <= 0x7 && prot_err->agent_type != RCH_DP) {  
+> > 
+> > For this check against agent_type, and the similar one below, would a boolean
+> > array indexed by the agent type work? That would avoid the <= 0x7 and > 0x4
+> > below. It seems one array would suffice for this case, but naming it isn't obvious
+> > to me. Maybe it'll be to you.
+> > 
+> > Something similar to what is done for prot_err_agent_type_strs[]
+> > 
+> > static const bool agent_requires_id_address_serial[] = {
+> > 	true,	/* RDC */ 	
+> > 	false,	/* RCH_DP */
+	[RCD] = false,
 
-If test fails, it better record buggy output somewhere (to coredump or to terminal).
+etc rather than comments would be neater.
+Given two similar things already. Maybe time for a little structure.
+
+//with better name than this
+struct agent_reqs {
+	bool sn;
+	bool sbdf;
+};
+
+static const agent_reqs agent_reqs[] = {
+	[RCD] = { .sn = false, .sbdf = true, },
+};
+
+etc.
+
+Maybe just bring the the string in as well
+
+struct agent_info {
+	const char *string;
+	bool req_sn;
+	bool req_sbdf;
+};
+
+static const agent_info agent_info[] = {
+	[RD] = {
+		.string = "Restricted CXL Device",
+		.req_sn = false,
+		.req_sbdf = true,
+	},
+};
+
+Values made up, but hopefully conveys that moving to having
+all the data in one place makes it harder to forget stuff
+for new entries etc.
+
+> > 	.
+> > 	.
+> > 	.
+> > };
+> > 
+> >   
+> 
+> Noted. Will implement it this way!
+> 
+> Thanks
+> Smita
+> 
+> >> +		p_err->segment = prot_err->agent_addr.segment;
+> >> +		p_err->bus = prot_err->agent_addr.bus;
+> >> +		p_err->device = prot_err->agent_addr.device;
+> >> +		p_err->function = prot_err->agent_addr.function;
+> >> +	} else {
+> >> +		pr_err(FW_WARN "Invalid agent type\n");
+> >> +		return -EINVAL;
+> >> +	}
+> >> +
+> >> +	if (!(prot_err->valid_bits & PROT_ERR_VALID_ERROR_LOG)) {
+> >> +		pr_err(FW_WARN "Invalid Protocol Error log\n");
+> >> +		return -EINVAL;
+> >> +	}
+> >> +
+> >> +	dvsec_start = (u8 *)(prot_err + 1);
+> >> +	cap_start = dvsec_start + prot_err->dvsec_len;
+> >> +	p_err->cxl_ras = *(struct cxl_ras_capability_regs *)cap_start;
+> >> +
+> >> +	/*
+> >> +	 * Set device serial number unconditionally.
+> >> +	 *
+> >> +	 * Print a warning message if it is not valid. The device serial
+> >> +	 * number is required for CXL RCD, CXL SLD, CXL LD and CXL Fabric
+> >> +	 * Manager Managed LD.
+> >> +	 */
+> >> +	if (!(prot_err->valid_bits & PROT_ERR_VALID_SERIAL_NUMBER) ||
+> >> +	      prot_err->agent_type > 0x4 || prot_err->agent_type == RCH_DP)  
+> > 
+> > then this also can be replaced with
+> > 		agent_requires_id_address_serial[prot_err->agent_type]
+> > 
+> > 
+> > -- Alison
+> > 
+> >   
+> >> +		pr_warn(FW_WARN "No Device Serial number\n");
+> >> +
+> >> +	p_err->lower_dw = prot_err->dev_serial_num.lower_dw;
+> >> +	p_err->upper_dw = prot_err->dev_serial_num.upper_dw;
+> >> +
+> >> +	p_err->severity = cper_severity_cxl_aer(gdata->error_severity);
+> >> +
+> >> +	return 0;
+> >> +}  
+> > 
+> > snip
+> >   
+
 
