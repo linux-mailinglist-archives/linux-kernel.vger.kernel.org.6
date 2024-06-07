@@ -1,77 +1,138 @@
-Return-Path: <linux-kernel+bounces-206810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7472D900E10
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:29:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CC77900E11
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12E0F286B02
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:29:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0F96287548
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A3D155724;
-	Fri,  7 Jun 2024 22:29:11 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7995B155724;
+	Fri,  7 Jun 2024 22:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VRmpg5sz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0264A13DDDE;
-	Fri,  7 Jun 2024 22:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BFD13DDDE;
+	Fri,  7 Jun 2024 22:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717799351; cv=none; b=H0uddCk6I0lodIbPCuHQstafC7TpzgoTf/ew+AiDPoe+8uc24XYQZUL/upTzLSINbnvNWXvIVrhJ+HC2XlQYadkP4ZTzjV3gDC6B5Ud8kSVe8dc7mEQ3nUIfx7q107lbAoau5bdC6wiyvauL+9Rbv0FjpL/6VnaOdiajY/pxwWo=
+	t=1717799385; cv=none; b=maLrYit1MHOuCdhQFLPkFIsiU4/hY/H82efpcgK9rpvfBDW3XkWbpclb2SgZ3VUeNQPmDFLM1lWjq1SeozxCD6vQNpdWbcua6MPM11GDm52P81iaczRTOuODslE07pRAf55dvxaIYbdi7+ByqQ55VgDaK4z9/36mjzp94ulptCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717799351; c=relaxed/simple;
-	bh=V3HQbZ3wuv5zYhd30+NdTvy5VMSJaBLXWQp47NLHwwQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I0MPruwvHGF+JvmtHR2WaUfv0mHoWy5rszUTkXsh1OhSzTFpbwbnhPTfbRAABfJBp0M13NRRT2u+uyKrJ086voWdY/O+fpA8PQQYzhkvtqJSZvtJvufm8joaJtjGadqUAtvN0mOL4hhV/Io/HoyxvzYLVwInMKgTJFYmFzi7m9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875b65.versanet.de ([83.135.91.101] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sFi4u-0007Lq-Mp; Sat, 08 Jun 2024 00:28:56 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alex Bee <knaerzche@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Alex Bee <knaerzche@gmail.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v3 2/5] dt-bindings: clock: rk3128: Drop CLK_NR_CLKS
-Date: Sat, 08 Jun 2024 00:28:55 +0200
-Message-ID: <2004624.2IRrRt1zHL@diego>
-In-Reply-To: <20240606143401.32454-4-knaerzche@gmail.com>
-References:
- <20240606143401.32454-2-knaerzche@gmail.com>
- <20240606143401.32454-4-knaerzche@gmail.com>
+	s=arc-20240116; t=1717799385; c=relaxed/simple;
+	bh=v2UKkW6fQa0poQx5QJNWEOedTwnRsNr2lgrl9pVMRMI=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=VD52MMUdccJSvx/ukJC9iiaBlJaV/m4hlZ1V2JZ8rcZ4fuAUI6Rq2CZImX94cXORauWRpfyONFGkMsW0/YnuZfUlDDEJvrJQ7gyqeKBcOx1JLxW7QXdmlRM47q9A+TySlASkVurvMITLhXxFwg4skqwm33aCuU95H0bDr2Lzi+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VRmpg5sz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E6CEC2BBFC;
+	Fri,  7 Jun 2024 22:29:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1717799385;
+	bh=v2UKkW6fQa0poQx5QJNWEOedTwnRsNr2lgrl9pVMRMI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=VRmpg5szHAmkA8WhgqWJykHUohf9FW4nUzIg8p2ZY0yaTi2gWJN9CwOW9dvmo6b36
+	 S3gZu3YEa74m9+BU1rx7bY2oR9CEBRDwV0CwBfWO3Mcmnzo9bHft9tI+K2NKPqx5bY
+	 R1dL3p3nLCNAjJuVJ1TKOPfPqKP5aJlJr+ZYh+ac=
+Date: Fri, 7 Jun 2024 15:29:44 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: mm-commits@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hotfixes for 6.10-rc3
+Message-Id: <20240607152944.60722ce87f5a4b1a74d1145d@linux-foundation.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-
-Am Donnerstag, 6. Juni 2024, 16:33:59 CEST schrieb Alex Bee:
-> CLK_NR_CLKS should not be part of the binding. Let's drop it, since
-> the kernel code no longer uses it either.
-> 
-> Signed-off-by: Alex Bee <knaerzche@gmail.com>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Just carrying over an Ack, in v2 [0] Connor provided an
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
 
-[0] https://lore.kernel.org/all/20240607-dealer-vertebrae-9b22db3dc43b@spud/
+Linus, please merge this batch of hotfixes, thanks.
 
 
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-06-07-15-24
+
+for you to fetch changes up to 7373a51e7998b508af7136530f3a997b286ce81c:
+
+  nilfs2: fix nilfs_empty_dir() misjudgment and long loop on I/O errors (2024-06-05 19:19:27 -0700)
+
+----------------------------------------------------------------
+14 hotfixes, 6 of which are cc:stable.
+
+All except the nilfs2 fix affect MM and all are singletons - see the
+chagelogs for details.
+
+----------------------------------------------------------------
+Alexander Potapenko (1):
+      kmsan: do not wipe out origin when doing partial unpoisoning
+
+Baolin Wang (1):
+      mm: drop the 'anon_' prefix for swap-out mTHP counters
+
+Barry Song (2):
+      mm: huge_mm: fix undefined reference to `mthp_stats' for CONFIG_SYSFS=n
+      mm: arm64: fix the out-of-bounds issue in contpte_clear_young_dirty_ptes
+
+Chengming Zhou (2):
+      mm/ksm: fix ksm_pages_scanned accounting
+      mm/ksm: fix ksm_zero_pages accounting
+
+Cong Wang (1):
+      vmalloc: check CONFIG_EXECMEM in is_vmalloc_or_module_addr()
+
+Johannes Weiner (1):
+      mm: page_alloc: fix highatomic typing in multi-block buddies
+
+Oscar Salvador (1):
+      mm/hugetlb: do not call vma_add_reservation upon ENOMEM
+
+Ryusuke Konishi (2):
+      nilfs2: fix potential kernel bug due to lack of writeback flag waiting
+      nilfs2: fix nilfs_empty_dir() misjudgment and long loop on I/O errors
+
+Sebastian Andrzej Siewior (1):
+      memcg: remove the lockdep assert from __mod_objcg_mlstate()
+
+Suren Baghdasaryan (1):
+      mm: fix xyz_noprof functions calling profiled functions
+
+Thadeu Lima de Souza Cascardo (1):
+      codetag: avoid race at alloc_slab_obj_exts
+
+ Documentation/admin-guide/mm/transhuge.rst |  4 +--
+ arch/arm64/mm/contpte.c                    |  4 +--
+ fs/nilfs2/dir.c                            |  2 +-
+ fs/nilfs2/segment.c                        |  3 ++
+ fs/proc/base.c                             |  2 +-
+ include/linux/huge_mm.h                    | 10 ++++--
+ include/linux/ksm.h                        | 17 ++++++++--
+ include/linux/mm_types.h                   |  2 +-
+ mm/filemap.c                               |  2 +-
+ mm/huge_memory.c                           |  8 ++---
+ mm/hugetlb.c                               | 16 ++++++++--
+ mm/kmsan/core.c                            | 15 ++++++---
+ mm/ksm.c                                   | 17 +++++-----
+ mm/memcontrol.c                            |  2 --
+ mm/mempool.c                               |  2 +-
+ mm/page_alloc.c                            | 50 ++++++++++++++++++++----------
+ mm/page_io.c                               |  2 +-
+ mm/slub.c                                  |  5 +--
+ mm/util.c                                  | 10 +++---
+ mm/vmalloc.c                               |  2 +-
+ mm/vmscan.c                                |  2 +-
+ 21 files changed, 115 insertions(+), 62 deletions(-)
 
 
