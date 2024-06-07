@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-205333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFD9C8FFAA4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:39:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDA568FFAA6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12A491C239E0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:39:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65A67284D9B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744A815B0F2;
-	Fri,  7 Jun 2024 04:27:31 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F55515B102;
+	Fri,  7 Jun 2024 04:27:32 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457FE15A876
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7A415A87D
 	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 04:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717734449; cv=none; b=L2+cbFwFj/2Hl+jVjGjBFx9H8fp+1r7oU5qW20ZaekFQ7Kss3OfuJA4zo4WHIMxGFrZBxwxxmghR9g/+DYXiY9H1a9Ejt77zqCSS/HXtvHcd3abZbb+4kErdi1UlP8+HX6qqUYvvfDSm4gxwZa7nkJW4EoL3uVDM7SMmL7FOtSE=
+	t=1717734450; cv=none; b=jkdLtrdxpJhNR3F1iocp4kWvch8vEux4aPDa69NlBtoeARFJdlRCfehD44ozRIViWNfyCdYVym/rktrevm+UrD3ZGVOPCHbQO8H61buBq37uxzTwkQOnUQXjYqn9PentdpxkEFtldnl7Q8lcSvWh8r3G6t5R2iXPr9X8p9VxxVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717734449; c=relaxed/simple;
-	bh=XQPyQMojxW5RtOF3L7ouQNOfNKX1oIYNKutrjAC9qr0=;
+	s=arc-20240116; t=1717734450; c=relaxed/simple;
+	bh=7gl1AN5VoGYDAloRBlrC9gntFL0DEWYQ21UCfP9EHRA=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jgJ+k+NK5kLjSTfWPDyEzO62pBf0akJLy6BFQmw079baZsEkCt0Nl2pA627X/M3YWBh6puwTPkgqFdM7+IBfSdmOTQRHaFS8i98zdHfax4nDQWs4gUuxk1plOOh2iLocQ1626CsUCIR2xqI3X3ekRGdJPR/xefFSdHly7cl1lSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+	 MIME-Version:Content-Type; b=qJyEbCPq9OaAMCbIe9fz/DwSo3l6A6TcClfzlr5549R1+KWSmXHUJ2Q4mrQKAUVcSi66qqMwOii9YrbcgWhb2rZl5OxozfCstpH6whwEmwnDnuJkBTpTgmp1jYLXq42bmUsQPgBKcROU5TqtBCWE+YC3x5kMHasNZs26ZyyFAOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VwSk63LHtzwPFT;
-	Fri,  7 Jun 2024 12:23:26 +0800 (CST)
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4VwSkt13WFzPpnL;
+	Fri,  7 Jun 2024 12:24:06 +0800 (CST)
 Received: from kwepemm600013.china.huawei.com (unknown [7.193.23.68])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5EC5D180AA6;
+	by mail.maildlp.com (Postfix) with ESMTPS id 6E979180085;
 	Fri,  7 Jun 2024 12:27:25 +0800 (CST)
 Received: from huawei.com (10.175.104.67) by kwepemm600013.china.huawei.com
  (7.193.23.68) with Microsoft SMTP Server (version=TLS1_2,
@@ -43,9 +43,9 @@ To: <richard@nod.at>, <david.oberhollenzer@sigma-star.at>,
 	<miquel.raynal@bootlin.com>, <yi.zhang@huawei.com>, <xiangyang3@huawei.com>,
 	<huangxiaojia2@huawei.com>
 CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH mtd-utils 053/110] ubifs-utils: Move ubifs-media.h in libubifs
-Date: Fri, 7 Jun 2024 12:25:18 +0800
-Message-ID: <20240607042615.2069840-54-chengzhihao1@huawei.com>
+Subject: [RFC PATCH mtd-utils 054/110] ubifs-utils: Add descriptions for new lib files in libubifs/README
+Date: Fri, 7 Jun 2024 12:25:19 +0800
+Message-ID: <20240607042615.2069840-55-chengzhihao1@huawei.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240607042615.2069840-1-chengzhihao1@huawei.com>
 References: <20240607042615.2069840-1-chengzhihao1@huawei.com>
@@ -60,56 +60,65 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  kwepemm600013.china.huawei.com (7.193.23.68)
 
-Since ubifs-media.h is only used for ubifs-utils, move it under
-ubifs-utils/libubifs.
+There are many linux kernel source files have been adapted into
+ubifs-utils, add descriptions for these source files in README.
 
 Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
 ---
- ubifs-utils/Makemodule.am                           | 4 ++--
- ubifs-utils/common/ubifs.h                          | 2 +-
- {include/mtd => ubifs-utils/libubifs}/ubifs-media.h | 0
- 3 files changed, 3 insertions(+), 3 deletions(-)
- rename {include/mtd => ubifs-utils/libubifs}/ubifs-media.h (100%)
+ ubifs-utils/Makemodule.am   |  2 +-
+ ubifs-utils/libubifs/README | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 31 insertions(+), 1 deletion(-)
+ create mode 100644 ubifs-utils/libubifs/README
 
 diff --git a/ubifs-utils/Makemodule.am b/ubifs-utils/Makemodule.am
-index cb4e1cf1..d297f7a2 100644
+index d297f7a2..c02ec313 100644
 --- a/ubifs-utils/Makemodule.am
 +++ b/ubifs-utils/Makemodule.am
-@@ -31,7 +31,7 @@ common_SOURCES = \
- 	ubifs-utils/common/lpt.c \
- 	ubifs-utils/common/super.c \
- 	ubifs-utils/common/sign.h \
--	include/mtd/ubifs-media.h
-+	ubifs-utils/libubifs/ubifs-media.h
- 
- if WITH_CRYPTO
- common_SOURCES += ubifs-utils/common/crypto.c \
-@@ -47,7 +47,7 @@ mkfs_ubifs_SOURCES = \
- 
- mkfs_ubifs_LDADD = libmtd.a libubi.a $(ZLIB_LIBS) $(LZO_LIBS) $(ZSTD_LIBS) $(UUID_LIBS) $(LIBSELINUX_LIBS) $(OPENSSL_LIBS) -lm -lpthread
+@@ -49,7 +49,7 @@ mkfs_ubifs_LDADD = libmtd.a libubi.a $(ZLIB_LIBS) $(LZO_LIBS) $(ZSTD_LIBS) $(UUI
  mkfs_ubifs_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_CFLAGS) $(LZO_CFLAGS) $(ZSTD_CFLAGS) $(UUID_CFLAGS) $(LIBSELINUX_CFLAGS) \
--	-I$(top_srcdir)/ubi-utils/include -I$(top_srcdir)/ubifs-utils/common -rdynamic
-+	-I$(top_srcdir)/ubi-utils/include -I$(top_srcdir)/ubifs-utils/common -I $(top_srcdir)/ubifs-utils/libubifs -rdynamic
+ 	-I$(top_srcdir)/ubi-utils/include -I$(top_srcdir)/ubifs-utils/common -I $(top_srcdir)/ubifs-utils/libubifs -rdynamic
  
- EXTRA_DIST += ubifs-utils/common/README
+-EXTRA_DIST += ubifs-utils/common/README
++EXTRA_DIST += ubifs-utils/common/README ubifs-utils/libubifs/README
  
-diff --git a/ubifs-utils/common/ubifs.h b/ubifs-utils/common/ubifs.h
-index 5a909f63..ed297cc7 100644
---- a/ubifs-utils/common/ubifs.h
-+++ b/ubifs-utils/common/ubifs.h
-@@ -25,7 +25,7 @@
- #ifndef __UBIFS_H__
- #define __UBIFS_H__
+ dist_sbin_SCRIPTS = ubifs-utils/mount.ubifs
  
--#include <mtd/ubifs-media.h>
-+#include "ubifs-media.h"
- #include "libubi.h"
- 
- /* Maximum logical eraseblock size in bytes */
-diff --git a/include/mtd/ubifs-media.h b/ubifs-utils/libubifs/ubifs-media.h
-similarity index 100%
-rename from include/mtd/ubifs-media.h
-rename to ubifs-utils/libubifs/ubifs-media.h
+diff --git a/ubifs-utils/libubifs/README b/ubifs-utils/libubifs/README
+new file mode 100644
+index 00000000..551ed8e6
+--- /dev/null
++++ b/ubifs-utils/libubifs/README
+@@ -0,0 +1,30 @@
++UBIFS Library (Imported from linux kernel 6.8-rc2 41bccc98fb7931d63)
++
++* ubifs.h is a selection of definitions from fs/ubifs/ubifs.h from the linux kernel.
++* key.h is copied from fs/ubifs/key.h from the linux kernel.
++* ubifs-media.h is copied from fs/ubifs/ubifs-media.h from the linux kernel.
++* find.c is copied from fs/ubifs/find.c from the linux kernel.
++* scan.c is copied from fs/ubifs/scan.c from the linux kernel.
++* gc.c is copied from fs/ubifs/gc.c from the linux kernel.
++* log.c is copied from fs/ubifs/log.c from the linux kernel, and amended.
++* tnc_commit.c is copied from fs/ubifs/tnc_commit.c from the linux kernel, and amended.
++* master.c is copied from fs/ubifs/master.c from the linux kernel, and amended.
++* recovery.c is copied from fs/ubifs/recovery.c from the linux kernel, and amended.
++* lpt.c is a selection of functions copied from fs/ubifs/lpt.c from the linux kernel, and amended.
++* auth.c is a selection of functions copied from fs/ubifs/auth.c from the linux kernel, and amended.
++* budget.c is a selection of functions copied from fs/ubifs/budget.c from the linux kernel, and amended.
++* commit.c is a selection of functions copied from fs/ubifs/commit.c from the linux kernel, and amended.
++* debug.c is a selection of functions copied from fs/ubifs/debug.c from the linux kernel, and amended.
++* debug.h is a selection of functions copied from fs/ubifs/debug.h from the linux kernel, and amended.
++* io.c is a selection of functions copied from fs/ubifs/io.c from the linux kernel, and amended.
++* lprops.c is a selection of functions copied from fs/ubifs/lprops.c from the linux kernel, and amended.
++* lpt_commit.c is a selection of functions copied from fs/ubifs/lpt_commit.c from the linux kernel, and amended.
++* misc.h is a selection of functions copied from fs/ubifs/misc.h from the linux kernel, and amended.
++* orphan.c is a selection of functions copied from fs/ubifs/orphan.c from the linux kernel, and amended.
++* replay.c is a selection of functions copied from fs/ubifs/replay.c from the linux kernel, and amended.
++* sb.c is a selection of functions copied from fs/ubifs/sb.c from the linux kernel, and amended.
++* super.c is a selection of functions copied from fs/ubifs/super.c from the linux kernel, and amended.
++* tnc.c is a selection of functions copied from fs/ubifs/tnc.c from the linux kernel, and amended.
++* tnc_misc.c is a selection of functions copied from fs/ubifs/tnc_misc.c from the linux kernel, and amended.
++* journal.c is a selection of functions copied from fs/ubifs/journal.c from the linux kernel, and amended.
++* dir.c is a selection of functions copied from fs/ubifs/dir.c from the linux kernel, and amended.
 -- 
 2.13.6
 
