@@ -1,64 +1,52 @@
-Return-Path: <linux-kernel+bounces-206463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41CAE900A1E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:14:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D47A900A29
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 555F51C22678
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:14:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEF8AB23596
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055B919AA68;
-	Fri,  7 Jun 2024 16:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4BC19AD63;
+	Fri,  7 Jun 2024 16:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RdwDewYH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b="BBIh0yCR"
+Received: from ale.deltatee.com (ale.deltatee.com [204.191.154.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55B019A2BA
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 16:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2624119AA63;
+	Fri,  7 Jun 2024 16:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=204.191.154.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717776873; cv=none; b=gl3oU3VEo++2cDtLVgKbdbTeEoZzH4quf+vSRbuavZIr0MPOhoOp9cC+57ZS70Tr98VTQlLaKkj3eY32ziicHg/aGPXq9zcH0ULdqlP7qWFd0jJzftuft3gdQbXD70qH+tQ2QhDGjcivbuvQQ6C71wTkzwWb38Zfhf12BiZzzpc=
+	t=1717777049; cv=none; b=DTseyb3ghVdANX5oLmXd5vMTGxzfb74SM702vlhL1vZF6zmnmvwUBVC9yT+yxAoFb5b3nnMljZfWcyXmWh7KatkvLAMV6dA0+uKQOWmgxf6+ThFaltItKFVhdn6bx67i39Cyd2yBD4HFGOMakfcEDXXdBlyKcOyCwkXALvKOnE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717776873; c=relaxed/simple;
-	bh=9strxmh/teWZJ6BahDMnrBoMEOAPAaV0j6k+qZDc3x4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pOIl3aIiYfI5OdLn22dno0t0zPKYTkj356pZnjgQ/Y5ulnMMGgMUsJg72/rV3NpBr3lg/QaRrjZa1Bi8kCLuA+sHm7a0Bnqq3iUdn0bj9yl+H9LEQzeHCckdWsmi4hLooZIhDTKDgFR254KaKA9/J0YnX1gor8p/ZQnUVd3NszM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RdwDewYH; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717776872; x=1749312872;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=9strxmh/teWZJ6BahDMnrBoMEOAPAaV0j6k+qZDc3x4=;
-  b=RdwDewYH+2rwRhotCXyfMnOPaFphdqURVGVPRX0Ttoqo7TMlDZownIpS
-   ae7eCUiLmMPHaLlVHFD5OM5D8G1/TkZ5YTAj7CIdlnlN7tM+xzDBGkitJ
-   792zETVE7AfffcJ0yLErfVIbHw13cMw0KokWzizGeViqVfQQ2UtW7Ye3q
-   8zevSGATH3Lkkay/aWttGOMDOdramhtiO+9vxYIWzVdgXpaPdYkHzuvWQ
-   ZHSEKsEdMACnC6qzmcXBRSnJqxBzMSRAd2xvHl9IGoQgwPpC7tssAHCdY
-   OGm6fhaywkURlwLk51wrD2bDPBORbmNdiRH1chvW2FLaIc3TygEbeHgOi
-   Q==;
-X-CSE-ConnectionGUID: HrbxdaxkS7q5rAQFUGA4MQ==
-X-CSE-MsgGUID: dOnXFeKFSAen5vB5K6QazA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="18359437"
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="18359437"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 09:14:31 -0700
-X-CSE-ConnectionGUID: 2euzQzGZQgGl5iqkTtXFtQ==
-X-CSE-MsgGUID: Aw/uYym3Twiv/vbsFrFnCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="38298218"
-Received: from djiang5-mobl3.amr.corp.intel.com (HELO [10.125.109.239]) ([10.125.109.239])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 09:14:30 -0700
-Message-ID: <1f393cc9-7195-4d58-b1ab-3616a184a88f@intel.com>
-Date: Fri, 7 Jun 2024 09:14:29 -0700
+	s=arc-20240116; t=1717777049; c=relaxed/simple;
+	bh=QfF9Bb7X32F8nICu81y4HThudduzWvXoFg1jEZTpPhE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:In-Reply-To:
+	 Content-Type:Subject; b=NjQlgc/e/wYsgH5HdTzU1q2tHcUZgYoWwBZlXwBS++87Z2uFLEWpSJQTdffGMna6AnHDztmYSolAohUvBvtrjE6ka2yYPDVbGAJInnZxoEzBUNUQlpR+NLSKxYuOqbm0IIR1RGoBxY6NaimzO5cFZlRaHOEEOy96R2wE/Ar9jF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com; spf=pass smtp.mailfrom=deltatee.com; dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b=BBIh0yCR; arc=none smtp.client-ip=204.191.154.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deltatee.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=deltatee.com; s=20200525; h=Subject:In-Reply-To:From:References:Cc:To:
+	MIME-Version:Date:Message-ID:content-disposition;
+	bh=qkDEkc3600QydwZ7dLx85k/1FneEqzK/z4bkuCI+5S8=; b=BBIh0yCRXnuFy/KVqsXSN0Ylfu
+	RvrfX04VdJB3Fw2avS7C17nDPoTwlpTf9XQi3wuBbfvzX3ZFNHVCl1NwYu2/PPOGLE7QkR2tET3Iq
+	B5ktVUDPG8MF7I3G89kYngU4gEfVeHZXrG3i1NMqVinkvy8Pzh9+q9QZRhpQYxeYyvN+wwFTlmGHE
+	dp7tguHBZtRWbAX+rITl46AsNMZ/uAofdIz8MGNGDSIF/A/sI6fT37NqJOUFeKQbzlybKJT1QWEIg
+	rHMS8X2tz+58WNHlo7DNN9t+cGoZGKYId1dXBKtTy+E4tdiT3RNoJqNdo9RRG7v4Qe2GcxlNJg/eP
+	VofAp7tA==;
+Received: from d104-157-31-28.abhsia.telus.net ([104.157.31.28] helo=[192.168.1.250])
+	by ale.deltatee.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <logang@deltatee.com>)
+	id 1sFcHC-002ro5-1t;
+	Fri, 07 Jun 2024 10:17:15 -0600
+Message-ID: <69dc6610-e70a-46ca-a6e9-7ca183eb055c@deltatee.com>
+Date: Fri, 7 Jun 2024 10:16:58 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,50 +54,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next v2] ntb: Fix kernel-doc param for
- ntb_transport_create_queue
-To: Yang Li <yang.lee@linux.alibaba.com>, jdmason@kudzu.us, allenbh@gmail.com
-Cc: ntb@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240607075720.77136-1-yang.lee@linux.alibaba.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20240607075720.77136-1-yang.lee@linux.alibaba.com>
+To: Christoph Hellwig <hch@infradead.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Martin Oliveira <martin.oliveira@eideticom.com>,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-mm@kvack.org, Jason Gunthorpe
+ <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Tejun Heo <tj@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Mike Marciniszyn <mike.marciniszyn@intel.com>,
+ Michael Guralnik <michaelgur@nvidia.com>,
+ Dan Williams <dan.j.williams@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Valentine Sinitsyn <valesini@yandex-team.ru>, Lukas Wunner <lukas@wunner.de>
+References: <20240605192934.742369-1-martin.oliveira@eideticom.com>
+ <20240605192934.742369-2-martin.oliveira@eideticom.com>
+ <2024060658-ember-unblessed-4c74@gregkh> <ZmKUpXQmMLpH8vf5@infradead.org>
+Content-Language: en-CA
+From: Logan Gunthorpe <logang@deltatee.com>
+In-Reply-To: <ZmKUpXQmMLpH8vf5@infradead.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 104.157.31.28
+X-SA-Exim-Rcpt-To: hch@infradead.org, gregkh@linuxfoundation.org, martin.oliveira@eideticom.com, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-mm@kvack.org, jgg@ziepe.ca, leon@kernel.org, bhelgaas@google.com, tj@kernel.org, rafael@kernel.org, akpm@linux-foundation.org, mike.marciniszyn@intel.com, michaelgur@nvidia.com, dan.j.williams@intel.com, ardb@kernel.org, valesini@yandex-team.ru, lukas@wunner.de
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Level: 
+Subject: Re: [PATCH 1/6] kernfs: create vm_operations_struct without
+ page_mkwrite()
+X-SA-Exim-Version: 4.2.1 (built Wed, 06 Jul 2022 17:57:39 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 
 
 
-On 6/7/24 12:57 AM, Yang Li wrote:
-> The patch updates ntb_transport_create_queue() kdoc header to specify the
-> correct input parameters used by the function.
+On 2024-06-06 23:03, Christoph Hellwig wrote:
+> On Thu, Jun 06, 2024 at 10:54:06PM +0200, Greg Kroah-Hartman wrote:
+>> On Wed, Jun 05, 2024 at 01:29:29PM -0600, Martin Oliveira wrote:
+>>> The standard kernfs vm_ops installs a page_mkwrite() operator which
+>>> modifies the file update time on write.
+>>>
+>>> This not always required (or makes sense), such as in the P2PDMA, which
+>>> uses the sysfs file as an allocator from userspace.
+>>
+>> That's not a good idea, please don't do that.  sysfs binary files are
+>> "pass through", why would you want to use this as an allocator?
 > 
-> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+> I think the real question is why sysfs binary files implement
+> page_mkwrite by default.  page_mkwrite is needed for file systems that
+> need to allocate space from a free space pool, which seems odd for
+> sysfs.
 
-Thank you!
+The default page_mkwrite in kernfs just calls file_update_time() but, as
+I understand it, the fault code should call file_update_time() if
+page_mkwrite isn't set. So perhaps the easiest thing is to simply not
+add a page_mkwrite unless the vm_ops adds one.
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
+It's not the easiest thing to trace, but as best as I can tell there are
+no kernfs binary attributes that use page_mkwrite. So alternatively,
+perhaps we could just disallow page_mkwrite in kernfs entirely?
 
-I do recommend attaching the revision history below the '---' line next time for common patch posting practice. Thanks
->  drivers/ntb/ntb_transport.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
-> index f9e7847a378e..5d466a3f117b 100644
-> --- a/drivers/ntb/ntb_transport.c
-> +++ b/drivers/ntb/ntb_transport.c
-> @@ -1966,9 +1966,10 @@ static bool ntb_dma_filter_fn(struct dma_chan *chan, void *node)
->  
->  /**
->   * ntb_transport_create_queue - Create a new NTB transport layer queue
-> - * @rx_handler: receive callback function
-> - * @tx_handler: transmit callback function
-> - * @event_handler: event callback function
-> + * @data: user-defined data to associate with the queue
-> + * @client_dev: the device structure of the NTB client
-> + * @handlers: structure containing receive, transmit, and event callback
-> + *	      functions
->   *
->   * Create a new NTB transport layer queue and provide the queue with a callback
->   * routine for both transmit and receive.  The receive callback routine will be
+Logan
 
