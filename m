@@ -1,171 +1,113 @@
-Return-Path: <linux-kernel+bounces-205461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1241B8FFC66
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:46:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E55658FFC6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64C68B25354
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:46:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31844287774
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D48C4D112;
-	Fri,  7 Jun 2024 06:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UaKJInBY"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26B2153597;
+	Fri,  7 Jun 2024 06:46:35 +0000 (UTC)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6EB94204E
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 06:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6EA4204E;
+	Fri,  7 Jun 2024 06:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717742776; cv=none; b=Z+2SDZeszMDLIKecrVMElY90selt8CW/2o8vK2qNDxTQXF8zGWzh62hkpWnKh4y43AhvAqck7u2i0ugU25MZRyCn1QpOnmJydSgaWT+tfG8JYSqL2NeYazbsG8RdzUw4lydVzltt0zhHSJXAi79nub1M3waV1eLw7qYe3+nb5GE=
+	t=1717742795; cv=none; b=NWzHVT2eMYFpyuqGHmkt5ThRvNOyd0e7wwF9pRPv8OkpueSmprduO9Qtv7SWxfULET/SF/rJCnlXgxPDDqmM8S/Zn14Cl6WkKIQp20iUehTc4eNJrkEgtmkuq/xtXVQ7q89/32Zdlz85MIa1P0NUfl4O98GaUUmpoyA8qXO6NHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717742776; c=relaxed/simple;
-	bh=HNv9Qs6Djj31IvEPg/GplsTToM3nXwpGglo7o2V/O9k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p5ow/idC1sBTLv/s28T8afeSVf2KxNULuhdFAGj0HqBDg62GjvbFyVN/ytgU+j9iqDjBDeS2TA5nosF6KlD655tkz6mSwmdcwx3lCSF8i4xlSfiJwgqiL1DyJQLPlr1e0dXZhOr06stu+lKo6ZW47EN9keINAXbNfEor/LhxmrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UaKJInBY; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-35dce610207so2038601f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 23:46:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717742773; x=1718347573; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=TgM4htnI+X4TgZ0Tu9HzazlKE8pD1poXdLHXcMZJBPc=;
-        b=UaKJInBYYWxXHohcjMhISgk1f6KTYS7P4Xalxg2DtBadWjo71AQtojLL/RRAYfSDA2
-         lpE3uBTIwVFiAvi1bikYZ4iA11thjPcAZ+aDc70M+gkWLB4LZbXpEjoJtRf3NXY9zY+I
-         W3aQkhBlR1AiFnwhM85zLAkBlH3G73jDDm27HszcsxrXjEMDa/+Wcn9APiriYYercT2S
-         29F+IODozj/R3tBF6bN30YvtKxcEXcZMWL2v2ckrIWrIBYvjwdgHsPxSd/ewr5Fa33Pd
-         1ezL3+2cMXZrTdVN5/DmWvzpZSNZDYxADyrgK93LFc5uNNpyZSJ6w3FKxHvnS69KRhKk
-         lN4A==
+	s=arc-20240116; t=1717742795; c=relaxed/simple;
+	bh=m+AxGavw6qf3DguFuG/0KLvq43YRxheits2J8pXupWE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lSKPtWF1JcPsutZBtXEg/N0HjmLlzVenPhxmbYDnRmrpYYcS9zDBF+Nsxd6tZuyB74DmefAQrad7ZzfzHyVS5scYyTUnXRK03iDfuxLp35CKjUZj3bla4gP1pCTEUxXa23RgZgRNLoSswR4x2/5T4h2ivdVVL0o2i7VLtw/uX5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dfa79233c48so1788432276.1;
+        Thu, 06 Jun 2024 23:46:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717742773; x=1718347573;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TgM4htnI+X4TgZ0Tu9HzazlKE8pD1poXdLHXcMZJBPc=;
-        b=DzPkl0j4Uj32z+1FNEwX2sY4OWBkdp2NA7vNDZOlqcBLbhCk1uTrpv1f3ZTHV8uWUP
-         NtdAqyd5M8l3XUtiO2NlrJjMfUJOPXlAMb/J5uQLP85GK06Gm9P4ylIIrs4SA08jmbO6
-         jTqrC/JaGMJMoLAfnfEWmzQBKhiIeAnhAcM0/DGplaLv+5PCvrsTeVcE3sAKO6ATjspr
-         U7SDodDnGDsyuQjHv36vHn85qXJ9ADsTI/Onip66sQ6Dw1q8kDAi+Mz5xqNGUvV5hbrJ
-         SORLpkP/+w8ODXmgegZymq5KmJyclDlk/60x1Ur8yRW32Ez5Q7sReh6EN+W+yVrzyrOR
-         BWqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUo8xFDOmZDtaoEgUonOH2gbLCm7JA7oz9TC3g4JfUMtcU5pubqPvg0JpedDXcmXtrqDTP9BGTXO/s05xcrBwliNxp257xsOsqeb8Jv
-X-Gm-Message-State: AOJu0YzpmxCazbt8NMMHCuqXEYKyx25Xz0JFn9HhqqqsG9VC9fmVYAd5
-	YqJJfmYJnSXLEkNeflNs6LELmrOhBNNaAwdPyPfFI4SRKaQnOeZxNQh2Jn3lb4I=
-X-Google-Smtp-Source: AGHT+IH9OxWfO16xiy/w9qCKD6ug6UJ5lS56XXORWzx+b1YzITZIZNI7kcB6tLngBoMN30NxoBzegg==
-X-Received: by 2002:adf:fd08:0:b0:34e:93c1:7979 with SMTP id ffacd0b85a97d-35efed5d77dmr1461398f8f.38.1717742772977;
-        Thu, 06 Jun 2024 23:46:12 -0700 (PDT)
-Received: from [192.168.2.24] ([110.93.11.116])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42160a19ae5sm30662635e9.18.2024.06.06.23.46.11
+        d=1e100.net; s=20230601; t=1717742792; x=1718347592;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+CEEs7bAPn2yXK6wMOvbkOCpzTOjIzYTwlHnAovymsg=;
+        b=IZ9Iha8zabD9J0fAkR39371SpQPqrBY8GbDgINVIYDae0b4EW5jus8KFBzunf9W41x
+         nfNHDfda0XMko5/OhqoRiFR+LF+Y9YIq9Xu2v5Lx51ApBVMO5MmsUZ1n6pafYVkuddVY
+         RdZ5gR7wp1A3GTKuNvG0zBSTqMokg4gPxQh71q49HEzjKWKdpV1+/esShwkvMk8/ZswE
+         GtTULrk7bTawE/0gHP2Bd0ksaNS4bgxiSgEjyn9OwzPBNShuWpBOb10RKXxMiIilrxqr
+         0dSfoFPevRLJD/JCJZs3X5yyYWK+B46uij0yJubk3tJu3B75tmZEmPWyLJejkoRhWiSj
+         oMIg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkAOaWo0PsWKZpm6mIXjfQAgdaZLndYwN5ztUitar9sxvcdhTK+MD12bYG/C+JBZmud1UVk8MKct7azX0ekB1WTwgK56vIeIZrJhz4WRu1dIG4/wUIYkt8c4qIPrq5BdnidYrO44XR7AzqIsVXfGEANJVf62/25LV+xQF+WcEqmRO3Mv07nYrmXudxeuT3hy9bn/+wqHuGnLwWsWvcCl58unwdUNmd
+X-Gm-Message-State: AOJu0YxR5+ByR/yyeg6P5a75GDCJhFHCU5qFyIowZbK7+YQKnqyk1ZRB
+	4NyhNS929ybOMUuq54hXb7Pj+JG/8qI+pUp2YP3j5SCCQEhYBfb6WoNByHtF
+X-Google-Smtp-Source: AGHT+IFRk5bGOhHUw/P/axkd+o0QA7Z1k5Y9iiuR6koLpSxSbl3Osc8QH6yYbfcEtNr2QD92ropFag==
+X-Received: by 2002:a25:aba3:0:b0:df4:dcb6:75bd with SMTP id 3f1490d57ef6-dfaf64e7195mr1591044276.9.1717742791765;
+        Thu, 06 Jun 2024 23:46:31 -0700 (PDT)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dfae53027b5sm566333276.38.2024.06.06.23.46.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 23:46:12 -0700 (PDT)
-Message-ID: <31a9060a-aef3-4b1a-8db8-ada5e57833cc@linaro.org>
-Date: Fri, 7 Jun 2024 08:46:10 +0200
+        Thu, 06 Jun 2024 23:46:31 -0700 (PDT)
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dfa629b4e0eso1815616276.2;
+        Thu, 06 Jun 2024 23:46:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWLzNd8tRyJVPmpCojnT6swHRngbMa1Pve6rqaCNEGcH2ze07CkTBfQP0T4JKgUW3y2odH6C09mhU9fKesb0i71/hv4J+C21qaQZNImXFjXOMrQD0AdTKr7XJBDHUS2MRy+1NkrD7ORNdb+AtpS45sagomb7zyDt/TTAciXx7FdS4yS/50ccTDmZ8T2J8OkxEq/BUbOxH6MDCNIO3hYPGRK33Lbf58Y
+X-Received: by 2002:a25:ad50:0:b0:df7:89e3:c8d with SMTP id
+ 3f1490d57ef6-dfaf662699amr1759515276.47.1717742790990; Thu, 06 Jun 2024
+ 23:46:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] i2c: muxes: pca954x: Allow sharing reset GPIO
-To: Eddie James <eajames@linux.ibm.com>,
- Chris Packham <chris.packham@alliedtelesis.co.nz>, peda@axentia.se,
- p.zabel@pengutronix.de
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240311041412.3858710-1-chris.packham@alliedtelesis.co.nz>
- <a8f8aefa-9013-4ede-adce-0f585d3e528f@linux.ibm.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <a8f8aefa-9013-4ede-adce-0f585d3e528f@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240606161047.663833-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240606161047.663833-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 7 Jun 2024 08:46:19 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV9NK2eAh9rYk1vRBSMc_iGkmVQdxh4-kapxR=Mn1S9pw@mail.gmail.com>
+Message-ID: <CAMuHMdV9NK2eAh9rYk1vRBSMc_iGkmVQdxh4-kapxR=Mn1S9pw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: renesas,rzg2l-cpg: Update description
+ for #reset-cells
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 06/06/2024 23:58, Eddie James wrote:
-> 
-> On 3/10/24 23:14, Chris Packham wrote:
->> Some hardware designs with multiple PCA954x devices use a reset GPIO
->> connected to all the muxes. Support this configuration by making use of
->> the reset controller framework which can deal with the shared reset
->> GPIOs. Fall back to the old GPIO descriptor method if the reset
->> controller framework is not enabled.
-> 
-> 
-> Hello Chris, Krzysztof,
-> 
-> 
-> This change makes it so that the reset subsystem reset doesn't behave in 
-> the same way as the fallback gpio reset. The gpio, as part of acquiring 
-> it, gets set high, and then set low in the mux driver. So, the device 
-> reset is toggled. In the case of the reset subsystem option, the reset 
-> is only de-asserted (so the device is taken out of reset).
-> 
-> 
-> I'm interested in preserving the previous behavior but with the shared 
-> reset line. This can't be done just by doing "assert" first because the 
-> shared reset subsystem doesn't allow that. So the reset-gpio driver 
-> would have to implement the reset operation - no problem. However, how 
-> to specify the wait time for the reset-gpio driver here? Something like 
-> the simple reset driver maybe? Or a function call from the reset 
-> consumer driver to specify the wait time for that reset?
+On Thu, Jun 6, 2024 at 6:11=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.co=
+m> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> For the RZ/G2L and similar SoCs, the reset specifier is the reset number
+> and not the module number. Reflect this in the description for the
+> '#reset-cells' property.
+>
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-You can check my slides from EOSS/OSSNA this year:
-https://ossna2024.sched.com/event/1aPvr?iframe=no
-maybe links to original work will help you.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.11.
 
-Best regards,
-Krzysztof
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
