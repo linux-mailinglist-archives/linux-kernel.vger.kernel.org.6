@@ -1,109 +1,157 @@
-Return-Path: <linux-kernel+bounces-206819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B27900E2D
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:41:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 265CD900E33
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D14F1F23F9D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:41:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF122285FF6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3345615572E;
-	Fri,  7 Jun 2024 22:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C461552E4;
+	Fri,  7 Jun 2024 22:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ElzCuoM/"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CN1sNR/h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B5F1CAB5;
-	Fri,  7 Jun 2024 22:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BB51CAB5
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 22:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717800101; cv=none; b=EKcMaonsQziRjnbRs2f91vzjku9eVCY6FN0de74sCacshaQaPvlrJoMBpM2lQAKDZ34uQO03JSepbbkQXmLGK6uYZCnxTJ+ogJnRPjz4khBMF/crj1+lKEI/hHaoqJX9PXrvDHpchpr28B73QW9Fqc+49aqEXdfNfLlkTrB6mVM=
+	t=1717800384; cv=none; b=R57KQK8GEBR6nruNsED4NRL3QQgOoIDKwYS6e2hO5s6qG5Wb1CTfvqudfY4/mA0dyTmoPCmPZ/VXg7UEgoWFQdUEq7p6toZFiTADk5INq/Eh4pa7H5umDb5/jvX79Fwfh5S+hduB9jiiVjN1ypesMZzr/RjZ5PCqaMAjcwTCvVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717800101; c=relaxed/simple;
-	bh=+IuQFkkqLSoWNP9W+SV0SqW5zUBggkLlwkd1gyMuErA=;
+	s=arc-20240116; t=1717800384; c=relaxed/simple;
+	bh=GjJb35OraHi0SzFdMQYu8ta0vOZOofLfX73CdwH1hRg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tl4dJf/8ocXDGN4r/71zZ5RPmRmK3o2dhtdyFwy57IfQn5Ww3WcJ3+cZCOyTBoen1WluYv4Oi2uLd89j7UgxdkplZuur3gkzSW28v0IQ+x/P4RYmsAd4HHBUg5JtqZqXYFSahj1pdvki6MNuRoSMYMIi1PPeroUnGJzHQ/FLty8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ElzCuoM/; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7041b6b7be0so538707b3a.1;
-        Fri, 07 Jun 2024 15:41:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717800099; x=1718404899; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4/KdDowqYo96aSv1CYH3iSuRTeh3ItM7eTh0NzlWdFI=;
-        b=ElzCuoM/oySPI9B+cpL5q/+8eoCKim4HgbdtvLVyfsC6becRN7EY/NfPsa1yeI9D3I
-         GaOn9t8sBGjUMBRcJsDVEeN6oVZxpTWn/cWHWck2NKa9FDp+BTM+FqWMC5tfWFfI9qW+
-         mV6EciV17w8mpCRbFMk4EeUY/lyc5H80rkH6KW672JGr8TC4rYpnhUota7wvvMCaWUG8
-         b5b4IDJi2gUw9noBA0sOPncnzLL3/8TtgJZF9tlPTd9D8ho8bo7rOFQduqpKZtguS2PD
-         TVhKMBxBN23zaV9sY3tfON4hxXRWLJyLJIcN06OVa0G2OiJvGEFo1Qpuf2HZmhCKIM2n
-         4VRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717800099; x=1718404899;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4/KdDowqYo96aSv1CYH3iSuRTeh3ItM7eTh0NzlWdFI=;
-        b=uC0tD/+u1R2goNnp8+aZGAauB1KLGPsF49gHrQkie92sLGJ2RI83rRu6TAeJLpf/8o
-         +cW97wTwS6B9gevpAySi8ooQMA+3gcqtO+TWD7LxvWXOwRsyznsDBo96jHCq9yS9u8/3
-         KFb0j1ajFrGFWsftlZwiHBJ8dHikSjkhrBX45Qz1+AV9oZ+88JAwtpM6n3S0EYLvCpVH
-         mmPqotkfptdqWmzR9hg8twyEyodW+8x4b8ni/bgzBgtZ7XWkredb9f4efTVm+WfRY9K7
-         itppQ9ckipWadQsrycwI4W+RCUuR7P7pn5EQPVQfZBnANt1we7hshQl4HrTBTujySktA
-         k9mw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtLepDsU6Y2h6ETZeqGV0AfhGtvNPnYcIRA1xSLKPmlP9AtS3ZSh9JQXqZolun2ADHf9iNZkXL/6jK5okBuM3497U7tua9JOAYV3F7KwdwiFZ5a8wvqvgCEeJfert3ShVsfC/qVliT2sbVzRGBG4VyzOoaV+sszI2eS82dtHv4H6JC2MMQe0Q+RCc=
-X-Gm-Message-State: AOJu0Ywzef4AWCKmKR+1wrqIDwLQErLKNtF4hWYi5eDU1FU3FnEllSNE
-	fM6ElilWMAnOHvZfBhxigYg8k9vHN/uODVHJwaSI/SStDk/ZsjQn
-X-Google-Smtp-Source: AGHT+IFIzlWtLmb3WDjJxsQtiaaET4AU+WeoM3KRDoIHcKGxmDKnUzr+ow5HgXlo1ZLvS5CIQbgBhQ==
-X-Received: by 2002:a05:6a20:6a24:b0:1b2:a8e3:4a3f with SMTP id adf61e73a8af0-1b2e6920b70mr5902899637.4.1717800099246;
-        Fri, 07 Jun 2024 15:41:39 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-704197a644csm1090967b3a.46.2024.06.07.15.41.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 15:41:38 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 7 Jun 2024 15:41:37 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Luca Tettamanti <kronos.it@gmail.com>, Jean Delvare <jdelvare@suse.com>,
-	Marius Zachmann <mail@mariuszachmann.de>,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] hwmon: add missing MODULE_DESCRIPTION() macros
-Message-ID: <9eb6ecb9-63d1-43c4-80a6-04323040b9bc@roeck-us.net>
-References: <20240607-md-drivers-hwmon-v1-1-1ea6d6fe61e3@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QHpl89pPzAjBOZIZMqNp1fiDeM9ltdUCHLmX5Gh5157PGBPPLn4pzG5CEEa8Y0EcRFdFyN0s6dIYNlcS6uLVenpe6LFhamIKWX2T2CzzR3wyKQEGwAyjSRwv1OORm6CPhUiKuJKtAVkbh3/EYygCOE/L+vgvmc8KOTJhqDb42I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CN1sNR/h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C39B2C2BBFC;
+	Fri,  7 Jun 2024 22:46:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717800384;
+	bh=GjJb35OraHi0SzFdMQYu8ta0vOZOofLfX73CdwH1hRg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CN1sNR/hK2tkp1kTtzSZFm4lO60PkEXYuV/Z+2Fn3XGcJXpeznutuCCoR/8K+1hm3
+	 0aZo0qUVG1FvY6xwNSfLA19KtLc4ZbBC0lD4c6E4bTWfxj4D6S4ynwYm3GRqALQUXS
+	 zXpRLx0HvAcA75f0OtYeDBGPCPBNtqxyqMB8Bg8mz9HahqyLPWQGq7KtsZUedTYtsY
+	 0wVQrrwjH2qCZFWluTe+r1MTVq5g0wT8W2FQ7FJH8gZtGo5wP/Ymh863GLI18Q9uwR
+	 gFQlhbsPRkc9xxjvW6t7sSH4JmpLbWLth4Hd94PnziORQurGfFQV4mvyK1uJZIx9gH
+	 ESqnBBLa3Na3w==
+Date: Sat, 8 Jun 2024 00:46:21 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Ze Gao <zegao2021@gmail.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@elte.hu>,
+	Cruz Zhao <CruzZhao@linux.alibaba.com>,
+	linux-kernel@vger.kernel.org, Ze Gao <zegao@tencent.com>
+Subject: Re: [RFC PATCH 1/2] timer: Use is_idle_task() check instead of
+ idle_cpu() on irq exit
+Message-ID: <ZmONvY8q_lVOdjvu@pavilion.home>
+References: <20240530122401.3826022-1-zegao@tencent.com>
+ <20240530122401.3826022-2-zegao@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240607-md-drivers-hwmon-v1-1-1ea6d6fe61e3@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240530122401.3826022-2-zegao@tencent.com>
 
-On Fri, Jun 07, 2024 at 03:27:59PM -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/asus_atk0110.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/corsair-cpro.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/mr75203.o
+Le Thu, May 30, 2024 at 08:24:00AM -0400, Ze Gao a écrit :
+> idle_cpu() was initially introduced in irq_enter()/exit() to check
+> whether an irq interrupts an idle cpu or not since commit
+> 79bf2bb335b8 ("[PATCH] tick-management: dyntick / highres functionality")
+> and at that time, it's implemented via a simple check if the curr
+> of task of that rq is idle or not. And then commit 6378ddb59215 ("time:
+> track accurate idle time with tick_sched.idle_sleeptime") uses the same
+> check to do accurate idle time accounting.
 > 
-> Add all missing invocations of the MODULE_DESCRIPTION() macro.
+> But since commit 908a3283728d ("sched: Fix idle_cpu()"), idle_cpu()
+> takes scheduler stats into consideration and becomes more constrained,
+> and therefore it tells more than if we have interrupted an idle
+> process but also whether a cpu is going to be idle or not since it
+> takes queued tasks and queued to be woken tasks into account.
 > 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> However for tick user, it is too much as now we only rely on this check
+> to do nohz idle time accounting in tick_nohz_start_idle() just in case
+> that tick_nohz_stop_idle() is called upon irq_enter() if we actually
+> rupture an idle cpu(process). The use of idle_cpu() simply complicates
+> things here, and the introduction of sched_core_idle_cpu() in
+> commit 548796e2e70b ("sched/core: introduce sched_core_idle_cpu()")
+> proves this.
+> 
+> The use of is_idle_task() just like in commit 0a8a2e78b7ee ("timer: Fix
+> bad idle check on irq entry") helps to save one unnecessary fix for idle
+> time accounting for the newly force idle state. Note this also preps for
+> the remove of sched_core_idle_cpu() in the following patch.
+> 
+> Signed-off-by: Ze Gao <zegao@tencent.com>
+> ---
+>  kernel/softirq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/softirq.c b/kernel/softirq.c
+> index 02582017759a..24c7bf3c3f6c 100644
+> --- a/kernel/softirq.c
+> +++ b/kernel/softirq.c
+> @@ -617,7 +617,7 @@ static inline void tick_irq_exit(void)
+>  	int cpu = smp_processor_id();
+>  
+>  	/* Make sure that timer wheel updates are propagated */
+> -	if ((sched_core_idle_cpu(cpu) && !need_resched()) || tick_nohz_full_cpu(cpu)) {
+> +	if ((is_idle_task(current) && !need_resched()) || tick_nohz_full_cpu(cpu)) {
 
-Applied.
+The reason why there is a check here for idle_cpu() (or sched_core_idle_cpu())
+is to avoid calling again tick_nohz_start_idle() and then again
+tick_nohz_stop_idle() later from tick_nohz_idle_exit(). This can save two costly
+calls to ktime_get() when a real task is waiting for the CPU. So any quick clue to
+know if a task is going to be scheduled is good to get. And idle_cpu() gives
+them all:
 
-Makes me wonder though why that is deemed to be a warning. Module
-descriptions used to be optional, and are (or at least used to be)
-documented as such.
+int idle_cpu(int cpu)
+{
+	struct rq *rq = cpu_rq(cpu);
 
-Ah .. I see .. a recent addition. Oh well, if it makes people happy.
+	if (rq->curr != rq->idle)
+		return 0;
 
-Guenter
+// This is the necessary is_idle_task() check
+
+	if (rq->nr_running)
+		return 0;
+
+// This tells if there is a real task pending. Ok that check
+// is perhaps a bit redundant with need_resched()...
+
+#ifdef CONFIG_SMP
+	if (rq->ttwu_pending)
+		return 0;
+#endif
+
+// This one tells if there is a remote wakeup pending for this CPU.
+// And need_resched() doesn't tell about that yet...
+
+	return 1;
+}
+
+So it looks to me that idle_cpu() is still a good fit at this place.
+And sched_core_idle_cpu() doesn't bring more overhead since the static
+key in sched_core_enabled() is rarely active (I guess...). And if it is,
+then the check is even more simple.
+
+Thanks.
+
+>  		if (!in_hardirq())
+>  			tick_nohz_irq_exit();
+>  	}
+> -- 
+> 2.41.0
+> 
 
