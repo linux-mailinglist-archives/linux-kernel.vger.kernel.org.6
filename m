@@ -1,157 +1,133 @@
-Return-Path: <linux-kernel+bounces-205266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 152DD8FFA25
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 05:24:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF348FFA2D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 05:26:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7036AB22402
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 03:24:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A7111C22396
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 03:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3292617BBA;
-	Fri,  7 Jun 2024 03:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lnVuw2mA"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B9017C6C;
+	Fri,  7 Jun 2024 03:26:28 +0000 (UTC)
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBED112B73;
-	Fri,  7 Jun 2024 03:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD9112B73;
+	Fri,  7 Jun 2024 03:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717730639; cv=none; b=eXnTHQ3ofj7u3G1XvOcSNkRMLYqCg64Ft4EXey6q/3l8fqGvgLuVGKpF1OJW0U709ABSgkcfJMES1yxifrUelvrE+xNHa7iASGxl3W5rRLS3ORoanxyY/LS1Ut8eRgjXHA4ZHo+bPv9DRmJQ8XXtdsO3K7xWjLZOpKVQJqQdiio=
+	t=1717730787; cv=none; b=SnlDNbOGijQHCjMNfgTsppf/ubh85aTKy2wZqVVhQ9EZpwfqJG9nmRRYgzxlquCFauEv3dzBdOXlq+VgdqHjPvW6hWBHo9N50wOqf+YoLUM5lLc74IWZbTtmDe6QhYZIety3aJ0eP4Yv4w9H4xgsXcfhXx1VqxqpKtPXU9mPSwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717730639; c=relaxed/simple;
-	bh=CQgdrK73eqvXbqj9CacWb//XxR+wykDhDlZpTq6JnJU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=HjKeK4hZ29gUqPhHaSJ8zWT/CKe4r08n181xMLHgwxRRkfVa0aK2+ZMu2nAbl0zYHfJSWhvGBg1yU+44U3EjVRzmYA3iUtGGCuVeZ5NAn1LrIlbNjCfifTil9Lv87TVL0f2WP8sMCzCqQJoheq12u18WEgOhqGIlmSvPGYKquqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lnVuw2mA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 456J2fQ0015423;
-	Fri, 7 Jun 2024 03:23:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=NnzBQFYFvsSEyC/wOyCOCs
-	r+MntuBtN0BB3SdmENJNY=; b=lnVuw2mA9w/5ID3w4uSZhlaiBC7FBlhWqrPgeC
-	sn2BN1miKLFwLFRwwuJGuLORF/wxM2xyBkFqp12vbcfJ2jP+Ae9l1zNNzg20RaTc
-	RKJUeusmU/hJKpTRAfnH54KRWIUdqgZzmvetUKQXIwdkzlTF4cWDhC4YB1Tu9Vc5
-	8xdgJuUbUF2sHGrjf9odTr6GbcVSvXbFxWREW3L5lxJPTjxEbjHBD/rArkCv4NqX
-	xHpM5t2GdXgDheLt8CVKEPoLbwXNSrCFFUwZISNrdNtpg+ArKNFJAg0Ko5T5oQ32
-	HPvJ/kjRr0IWN5eS/mxklvUOxkfN2L2wm7t+/S8fM44giCVA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yka7pa2es-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 03:23:54 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4573Nrm4021818
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 7 Jun 2024 03:23:53 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 6 Jun 2024
- 20:23:53 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 6 Jun 2024 20:23:50 -0700
-Subject: [PATCH] gpio: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1717730787; c=relaxed/simple;
+	bh=og1W7CQ5dnT/fxo+VgP79WpVi3mZdb507tWx9OolfGo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GW+J5b+tsAwfcjdg+fUjvlzWpcvYWwSnaS10RIN3UHlsE4CU4pldvJc4ZsPezk1VE1wFRTHJreOZ5qkvsCE+pYnqLDkIicWHlCpm4In/Qkmq9OBxj4l016oK1cXyAxFrG7evR+cFewi0ZCKqaSde57IUGgCkpAwVud17q+Pc51Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f68834bfdfso13070705ad.3;
+        Thu, 06 Jun 2024 20:26:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717730785; x=1718335585;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oRHXhwV5J6FLgsfFL2J905n4RcD+iK2n31FrCkpHF6A=;
+        b=nlskBK4kyU+QCtqgI0F2vqhUQvddldDhXR84XmNtxZPNN8RMB4NlS4FZ5rYW+D0Le6
+         xoYGMFSZ1qFSidIxNEDDrg/GyaZHJ5gBfVE7O7VbjcMzctlIDabt13ab39Mob1sKHKDb
+         ySkk/2EYJQImmuGmZPxzAtujCHYxO/BMfhPMSTQbN4YoU2xVUE/sKF7PAbDTFNyQw+AM
+         nwHyRA86IDCDwFV7rbWJ2vtngOvHecIbid/0FMCEl4xCpvnk1YgL+h6Iszhpeeg7Xf3T
+         S8Yy7UT5CRAoaAwFCfz1xAsnjSAy9NwB/W8fKATQrjxZBR5lAkGAcEgDUjx8xQEDA3lr
+         BM7w==
+X-Forwarded-Encrypted: i=1; AJvYcCX8v+Es8ODsJjbg8lsIe/xPN/scSUj+rSdhF/BLGUxFs7tjnPxyOLjVoabFXUIUMiSgfRY0ZqmTnrNb03+2p3hS3f7FptGF9LOViEPDRKItnhpsKuF51ApgH2lAmIdvTf1yVg5LG2NxaHwIQqV3EC6QgVbqGX2THVJQw9NSerj8
+X-Gm-Message-State: AOJu0Ywqdk9MQNj5vxMRy7/oM13IYGaGxWgMSWj+wDJitzi+uk7HiHf2
+	PC0SMsYZsHsvLFrT3kRHQfilW0d8+lZvh+b9ZMQa9yNFBGnvFm+jRHAo2Z8ljUwJk4+lIL83HoV
+	MRphVgxfdo9hJcmJE1yd7Uu8qHXs=
+X-Google-Smtp-Source: AGHT+IEcC+4RIunglw2wr0+8bQvV2bXA9Hu1tE0poFcN42DMBYLae/uLzBgvCm76tx8Dvg1VFSiJojtDZRkQneEAg+8=
+X-Received: by 2002:a17:903:2b0e:b0:1f4:5dc0:5fe8 with SMTP id
+ d9443c01a7336-1f6d02e22efmr16652065ad.15.1717730785287; Thu, 06 Jun 2024
+ 20:26:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240606-md-drivers-gpio-v1-1-cb42d240ca5c@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAEV9YmYC/x3MMQ6DMAxA0asgz7WUppChV6k6OIkBSxCQXRAS4
- u5NO77h/xOMVdjg2ZygvIvJUirutwbSSGVglFwN3vnWBRdwzphVdlbDYZUFo2cKXXq0HQWo1ar
- cy/E/vt7VkYwxKpU0/j6TlO3AmezDCtf1BYR/3hiAAAAA
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski
-	<brgl@bgdev.pl>
-CC: <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: xRcF-FshvRDuHdA6rLXP4-Axy5AXzXhT
-X-Proofpoint-ORIG-GUID: xRcF-FshvRDuHdA6rLXP4-Axy5AXzXhT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-06_20,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- malwarescore=0 adultscore=0 spamscore=0 bulkscore=0 clxscore=1011
- phishscore=0 mlxlogscore=999 lowpriorityscore=0 impostorscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406070023
+References: <20240606142424.129709-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240606142424.129709-1-krzysztof.kozlowski@linaro.org>
+From: Vincent MAILHOL <mailhol.vincent@wanadoo.fr>
+Date: Fri, 7 Jun 2024 12:26:13 +0900
+Message-ID: <CAMZ6RqKCWzzbd-P7rOMEryd=31pdD_PJJvtQFYcmS+wAf8q+CQ@mail.gmail.com>
+Subject: Re: [PATCH net-next 1/3] can: hi311x: simplify with spi_get_device_match_data()
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Thomas Kopp <thomas.kopp@microchip.com>, 
+	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpio/gpio-gw-pld.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpio/gpio-mc33880.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpio/gpio-pcf857x.o
+Hi Krzysztof,
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro,
-including the one missing in gpio-pl061.c, which is not built for x86.
+On Thu. 6 Jun. 2024 =C3=A0 23:24, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> Use spi_get_device_match_data() helper to simplify a bit the driver.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/gpio/gpio-gw-pld.c  | 1 +
- drivers/gpio/gpio-mc33880.c | 1 +
- drivers/gpio/gpio-pcf857x.c | 1 +
- drivers/gpio/gpio-pl061.c   | 1 +
- 4 files changed, 4 insertions(+)
+Thanks for this clean up.
 
-diff --git a/drivers/gpio/gpio-gw-pld.c b/drivers/gpio/gpio-gw-pld.c
-index 899335da93c7..7e29a2d8de1a 100644
---- a/drivers/gpio/gpio-gw-pld.c
-+++ b/drivers/gpio/gpio-gw-pld.c
-@@ -130,5 +130,6 @@ static struct i2c_driver gw_pld_driver = {
- };
- module_i2c_driver(gw_pld_driver);
- 
-+MODULE_DESCRIPTION("Gateworks I2C PLD GPIO expander");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Linus Walleij <linus.walleij@linaro.org>");
-diff --git a/drivers/gpio/gpio-mc33880.c b/drivers/gpio/gpio-mc33880.c
-index cd9b16dbe1a9..94f6fefc011b 100644
---- a/drivers/gpio/gpio-mc33880.c
-+++ b/drivers/gpio/gpio-mc33880.c
-@@ -168,5 +168,6 @@ static void __exit mc33880_exit(void)
- module_exit(mc33880_exit);
- 
- MODULE_AUTHOR("Mocean Laboratories <info@mocean-labs.com>");
-+MODULE_DESCRIPTION("MC33880 high-side/low-side switch GPIO driver");
- MODULE_LICENSE("GPL v2");
- 
-diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
-index 53b69abe6787..7c57eaeb0afe 100644
---- a/drivers/gpio/gpio-pcf857x.c
-+++ b/drivers/gpio/gpio-pcf857x.c
-@@ -438,5 +438,6 @@ static void __exit pcf857x_exit(void)
- }
- module_exit(pcf857x_exit);
- 
-+MODULE_DESCRIPTION("Driver for pcf857x, pca857x, and pca967x I2C GPIO expanders");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("David Brownell");
-diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-index 9fc1f3dd4190..a211a02d4b4a 100644
---- a/drivers/gpio/gpio-pl061.c
-+++ b/drivers/gpio/gpio-pl061.c
-@@ -438,4 +438,5 @@ static struct amba_driver pl061_gpio_driver = {
- };
- module_amba_driver(pl061_gpio_driver);
- 
-+MODULE_DESCRIPTION("Driver for the ARM PrimeCell(tm) General Purpose Input/Output (PL061)");
- MODULE_LICENSE("GPL v2");
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/net/can/spi/hi311x.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+>
+> diff --git a/drivers/net/can/spi/hi311x.c b/drivers/net/can/spi/hi311x.c
+> index e1b8533a602e..5d2c80f05611 100644
+> --- a/drivers/net/can/spi/hi311x.c
+> +++ b/drivers/net/can/spi/hi311x.c
+> @@ -830,7 +830,6 @@ static int hi3110_can_probe(struct spi_device *spi)
+>         struct device *dev =3D &spi->dev;
+>         struct net_device *net;
+>         struct hi3110_priv *priv;
+> -       const void *match;
+>         struct clk *clk;
+>         u32 freq;
+>         int ret;
+> @@ -874,11 +873,7 @@ static int hi3110_can_probe(struct spi_device *spi)
+>                 CAN_CTRLMODE_LISTENONLY |
+>                 CAN_CTRLMODE_BERR_REPORTING;
+>
+> -       match =3D device_get_match_data(dev);
+> -       if (match)
+> -               priv->model =3D (enum hi3110_model)(uintptr_t)match;
+> -       else
+> -               priv->model =3D spi_get_device_id(spi)->driver_data;
+> +       priv->model =3D (enum hi3110_model)spi_get_device_match_data(spi)=
+;
 
----
-base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
-change-id: 20240606-md-drivers-gpio-b2ea65c345a6
+Here, you are dropping the (uintptr_t) cast. Casting a pointer to an
+enum type can trigger a zealous -Wvoid-pointer-to-enum-cast clang
+warning, and the (uintptr_t) cast is the defacto standard to silence
+such warnings, thus the double (enum hi3110_model)(uintptr_t) cast in
+the initial version.
 
+Refer to this thread for examples:
+
+  https://lore.kernel.org/linux-can/20210527084532.1384031-12-mkl@pengutron=
+ix.de/
+
+Unless you are able to add a rationale in the patch description of why
+this cast can now be removed, I suggest you to keep it:
+
+          priv->model =3D (enum
+hi3110_model)(uintptr_t)spi_get_device_match_data(spi);
+
+>         priv->net =3D net;
+>         priv->clk =3D clk;
+
+Yours sincerely,
+Vincent Mailhol
 
