@@ -1,198 +1,145 @@
-Return-Path: <linux-kernel+bounces-206306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0AB590079E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:54:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AC229007A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:55:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 052961C2474C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:54:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26970291451
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A77619CCFF;
-	Fri,  7 Jun 2024 14:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9E4199220;
+	Fri,  7 Jun 2024 14:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=eh5.me header.i=@eh5.me header.b="P3P6vckA"
-Received: from mail.eh5.me (mail.eh5.me [45.76.111.223])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F0pt8R5C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE87919752F;
-	Fri,  7 Jun 2024 14:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.76.111.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D721615748C;
+	Fri,  7 Jun 2024 14:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717771604; cv=none; b=Ooj05DezlXFCAhXZyZOBik8TT1Gn52X7jVuFUWWi5TGRXJ6HJXae/UtOONG56iPJwlK5Sq4U+0mnSg8GNR0LLGauP3zTKKXq+jVmFSeye4UTAlFVd+CM7Te0/nWX8121d7Ci6dPyCjnqkz1D/IFoSj0V5c67c9JCJxpFj3PENE8=
+	t=1717771751; cv=none; b=TgwdTf8lm/k1ixMwM23rMXcQ2Tgha3NEMzoERsj1b/1LOtFrBkpnQ4USf/fx552aHaJllRKiAgUghcpLmkqmtQ2zwTnJpGG/tusDlZG+VfGIdS/vtQd2+wZhkAfGy+AJD9UhktJwsNAmF+mbBZkhR84mNSOlJL4wfYz8v1Usx/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717771604; c=relaxed/simple;
-	bh=Gt0HkIEfUxbCWkwENOJ1j6PQBdm4XvC9znlgCeBcdyw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QLH9AXn07y8vERh7BeTh4ugCDP1wi4K2soYWZ4nRPf+DhOuSCU7UFI3jFDHDj9mz3Z9qScTmAQGz7Qo4/dMUmworffmika24jBRPvz8cpr/hyCN4yrFa7bdUGOK8hIdoKTriMnELJQeiY+tPMR7tj3gQedj/tlXDLwUlzCaOZbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=eh5.me; spf=pass smtp.mailfrom=eh5.me; dkim=pass (1024-bit key) header.d=eh5.me header.i=@eh5.me header.b=P3P6vckA; arc=none smtp.client-ip=45.76.111.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=eh5.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eh5.me
-Message-ID: <3dab2269-a048-4750-bea8-cce245df075a@eh5.me>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=eh5.me; s=dkim;
-	t=1717771593;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=706MONW8kwoOXWqy8lP/xTe9KGJQQ7km3fno9upjptk=;
-	b=P3P6vckAe+9O51qpHIr+vhuqx+or43Mdi2J3KmjjDmpZdnZ5GpVvg0ejQr1GkPyGv9t9sz
-	uv0N/Q/MYxWm8fBGq0HkyUT5HN1lGOE5xQHeJa23B1/QS5p1EdRK3+ckhKGVQkvNWGlzjT
-	LD0u9azQVehcATSjJhF8ueFykN0P8ps=
-Date: Fri, 7 Jun 2024 22:46:19 +0800
+	s=arc-20240116; t=1717771751; c=relaxed/simple;
+	bh=Dah+ChQ30COmYKoOSkEp/ZOZCouT1BnT04Y9qNO3bFs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pvHROvybcqglNqId/JmR704kjvJpsE5RRyBmXiXH29NjBl0IZh1BmPl+Mes9ZQKxEE+2iP3nF4ycIG7rsBsZl+uPwo+HHuRiVh2hARQ1TAuCNWf4fB0WJQfg5SP70RoyjF/0c4HrolJMCkm3jeL4F/+3uR+mQME8xlaJrnZx6UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F0pt8R5C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 803CFC2BBFC;
+	Fri,  7 Jun 2024 14:49:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717771750;
+	bh=Dah+ChQ30COmYKoOSkEp/ZOZCouT1BnT04Y9qNO3bFs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F0pt8R5CXyV/cemvv21kVco3FGaAkegSMt9veVJm8QdOmEewdp6v2prpOTdK8KqYR
+	 X08/kOkeDW1WRz2D2oerNVjDqpzzAxXe8vW7a6NsvEsuqxfAcIpZk7Ty8OWkaf/mvJ
+	 A78sQx4NdqRKLekmTLXyQ88TCgidS0ldFng0qSylRUzumtGfPaM3Us0fr+vXtLI4lG
+	 i6oD0YBFWTBQI4VRuJYi0rv6HgQTDH3yzXWn/+TxP70fbXXmCrEUSFshmdNFexwxss
+	 5JqThMZbY2K866L/GWanFdtNgo2gFMZkjWK3hQY9Pnz0Xl8deaSb1W9YDZ0pB6pq3G
+	 v9VO+G2u3XgXQ==
+Date: Fri, 7 Jun 2024 15:49:05 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
+	lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] dt-bindings: iio: adc: Add AD4000
+Message-ID: <20240607-declared-chubby-df1c81646794@spud>
+References: <cover.1717539384.git.marcelo.schmitt@analog.com>
+ <b8a211e09c17f5a9f0a6aa6e11d6375ff398c918.1717539384.git.marcelo.schmitt@analog.com>
+ <20240605-tables-pectin-66d4d4dd12b5@spud>
+ <ZmMawAukzpOcdJqy@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 2/4] pinctrl: rockchip: fix pinmux bits for RK3328
- GPIO3-B pins
-To: Heiko Stuebner <heiko@sntech.de>, Linus Walleij
- <linus.walleij@linaro.org>, kever.yang@rock-chips.com
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240606125755.53778-1-i@eh5.me>
- <20240606125755.53778-3-i@eh5.me> <4786379.ElGaqSPkdT@phil>
-Content-Language: en-US
-From: Huang-Huang Bao <i@eh5.me>
-In-Reply-To: <4786379.ElGaqSPkdT@phil>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="mGYo5D1kJPq130vJ"
+Content-Disposition: inline
+In-Reply-To: <ZmMawAukzpOcdJqy@debian-BULLSEYE-live-builder-AMD64>
 
 
+--mGYo5D1kJPq130vJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 6/7/24 20:32, Heiko Stuebner wrote:
-> Am Donnerstag, 6. Juni 2024, 14:57:53 CEST schrieb Huang-Huang Bao:
->> The pinmux bits for GPIO3-B1 to GPIO3-B6 pins are not explicitly
->> specified in RK3328 TRM, however we can get hint from pad name and its
->> correspinding IOMUX setting for pins in interface descriptions. The
->> correspinding IOMIX settings for these pins can be found in the same
->> row next to occurrences of following pad names in RK3328 TRM.
->>
->> GPIO3-B1:  IO_TSPd5m0_CIFdata5m0_GPIO3B1vccio6
->> GPIO3-B2: IO_TSPd6m0_CIFdata6m0_GPIO3B2vccio6
->> GPIO3-B3: IO_TSPd7m0_CIFdata7m0_GPIO3B3vccio6
->> GPIO3-B4: IO_CARDclkm0_GPIO3B4vccio6
->> GPIO3-B5: IO_CARDrstm0_GPIO3B5vccio6
->> GPIO3-B6: IO_CARDdetm0_GPIO3B6vccio6
->>
->> Add pinmux data to rk3328_mux_recalced_data as mux register offset for
->> these pins does not follow rockchip convention.
->>
->> Signed-off-by: Huang-Huang Bao <i@eh5.me>
-> 
-> This matches the information that I found in my TRM, thanks to your
-> detailed explanation.
-> 
-> Though I of course can't say if the TRM is just wrong or the hardware
-> changed after the pads-description was written.
-> 
-> Did you test the usage of these pins on your board?
-> 
+On Fri, Jun 07, 2024 at 11:35:44AM -0300, Marcelo Schmitt wrote:
+> On 06/05, Conor Dooley wrote:
+> > On Tue, Jun 04, 2024 at 07:43:53PM -0300, Marcelo Schmitt wrote:
+> > > Add device tree documentation for AD4000 series of ADC devices.
+> > > +properties:
+> > > +  compatible:
+> > > +    enum:
+> > > +      - adi,ad4000
+> > > +      - adi,ad4001
+> > > +      - adi,ad4002
+> > > +      - adi,ad4003
+> > > +      - adi,ad4004
+> > > +      - adi,ad4005
+> > > +      - adi,ad4006
+> > > +      - adi,ad4007
+> > > +      - adi,ad4008
+> > > +      - adi,ad4010
+> > > +      - adi,ad4011
+> > > +      - adi,ad4020
+> > > +      - adi,ad4021
+> > > +      - adi,ad4022
+> > > +      - adi,adaq4001
+> > > +      - adi,adaq4003
+> >=20
+> > Are all these actually incompatible? I'd like a note in the commit
+> > message as to why that's the case. A quick look at the driver showed
+> > that the differences in the driver between the ad402{0,1,2} are limited
+> > to the "dev_name". Same went for some other devices, like the
+> > ad40{02,06,10}.
+>=20
+> Yes, that's correct. Some chips only vary by name and max sample rate whi=
+ch
+> boils down to only having a different dev_name in the driver.
+> Can those have grouped compatible strings?
+> dt_binding_check fails if curly brackets are used.
+> properties:
+>   compatible:
+>     enum:
+>       - adi,ad402{0,1,2}
 
-My board(NanoPi R2S) is kinda integrated and does not have GPIO3 pins so
-I can't test these pins directly.
+compatible:
+  oneOf:
+    - const: adi,ad4020
+    - items:
+        - enum:
+            - adi,ad4021
+            - adi,ad4022
+        - const: adi,ad4020
 
- From DTS for RK3328(arch/arm64/boot/dts/rockchip/rk3328*.dts*), there is
-pinctrl/cif-0/dvp_d2d9_m0 referencing part of GPIO3-B1+ pins(GPIO3-B1 to
-GPIO3-B4) that indeed matches "Table 15-1 TSP interface description"
-which contains hint pad names. And this DTS node exists from
-initial commit to add RK3328 dtsi
-(52e02d377a72 "arm64: dts: rockchip: add core dtsi file for RK3328 SoCs").
+>=20
+> The groups of similar chips are:
+> AD4020/AD4021/AD4022
+> AD4003/AD4007/AD4011
+> AD4002/AD4006/AD4010
+> AD4001/AD4005
+> AD4000/AD4004/AD4008
 
-Though this node is not actually used in any RK3328 DTSs. So I can't
-test indirectly either.
 
-Huang-Huang
+--mGYo5D1kJPq130vJ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> Heiko
-> 
-> 
-> 
->> ---
->>   drivers/pinctrl/pinctrl-rockchip.c | 51 ++++++++++++++++++++++++++++++
->>   1 file changed, 51 insertions(+)
->>
->> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
->> index 78dcf4daccde..23531ea0d088 100644
->> --- a/drivers/pinctrl/pinctrl-rockchip.c
->> +++ b/drivers/pinctrl/pinctrl-rockchip.c
->> @@ -634,17 +634,68 @@ static struct rockchip_mux_recalced_data rk3308_mux_recalced_data[] = {
->>   
->>   static struct rockchip_mux_recalced_data rk3328_mux_recalced_data[] = {
->>   	{
->> +		/* gpio2_b7_sel */
->>   		.num = 2,
->>   		.pin = 15,
->>   		.reg = 0x28,
->>   		.bit = 0,
->>   		.mask = 0x7
->>   	}, {
->> +		/* gpio2_c7_sel */
->>   		.num = 2,
->>   		.pin = 23,
->>   		.reg = 0x30,
->>   		.bit = 14,
->>   		.mask = 0x3
->> +	}, {
->> +		/* gpio3_b1_sel */
->> +		.num = 3,
->> +		.pin = 9,
->> +		.reg = 0x44,
->> +		.bit = 2,
->> +		.mask = 0x3
->> +	}, {
->> +		/* gpio3_b2_sel */
->> +		.num = 3,
->> +		.pin = 10,
->> +		.reg = 0x44,
->> +		.bit = 4,
->> +		.mask = 0x3
->> +	}, {
->> +		/* gpio3_b3_sel */
->> +		.num = 3,
->> +		.pin = 11,
->> +		.reg = 0x44,
->> +		.bit = 6,
->> +		.mask = 0x3
->> +	}, {
->> +		/* gpio3_b4_sel */
->> +		.num = 3,
->> +		.pin = 12,
->> +		.reg = 0x44,
->> +		.bit = 8,
->> +		.mask = 0x3
->> +	}, {
->> +		/* gpio3_b5_sel */
->> +		.num = 3,
->> +		.pin = 13,
->> +		.reg = 0x44,
->> +		.bit = 10,
->> +		.mask = 0x3
->> +	}, {
->> +		/* gpio3_b6_sel */
->> +		.num = 3,
->> +		.pin = 14,
->> +		.reg = 0x44,
->> +		.bit = 12,
->> +		.mask = 0x3
->> +	}, {
->> +		/* gpio3_b7_sel */
->> +		.num = 3,
->> +		.pin = 15,
->> +		.reg = 0x44,
->> +		.bit = 14,
->> +		.mask = 0x3
->>   	},
->>   };
->>   
->>
-> 
-> 
-> 
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmMd4QAKCRB4tDGHoIJi
+0m3aAQCqm1iAmlqMMULyvGG/jj/YF3eqzO7Wj9CXKpMOs3OTgQD9Hl43+DrEc4x2
+0bmGjvUv5UElOQKUwtXj9J6IRcWdhw8=
+=/nSM
+-----END PGP SIGNATURE-----
+
+--mGYo5D1kJPq130vJ--
 
