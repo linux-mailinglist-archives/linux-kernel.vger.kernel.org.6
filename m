@@ -1,104 +1,130 @@
-Return-Path: <linux-kernel+bounces-206432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B0959009AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:55:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C7219009AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E1EC1C22B3C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:55:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 526481C22B21
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014BF199EAB;
-	Fri,  7 Jun 2024 15:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E6119A28C;
+	Fri,  7 Jun 2024 15:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ojhec4HR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r6nk7L8h"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC2A196C6C;
-	Fri,  7 Jun 2024 15:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A379B196C6C;
+	Fri,  7 Jun 2024 15:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717775724; cv=none; b=uxqdkv9rXnAY4EahKx5NBbKSu+1/IL6ZsBLumXio8IYCftSKfoRNDIr9nmq0EX3VDldOdnPQMYfPfnfd60iIB+Vjdmi7vxzlXKX6ZYuzCzVZeLFI3shTxpftOdO2lPERCu/IyRxmQU+PLC9P74m0IAhmk0QeQnOb7iMxLlWji2s=
+	t=1717775727; cv=none; b=KA9oIbqRnSQm0kUL9T+FWEpkl8Dh7DH7BOGeCSO2lc1nReQF6WPY+2q1GeCUgdhQu2UrfjDrXOw4ahjynvpFWFhyF7wNfxsjmGuWWS0nzsM2BcHcc2Xzs0scfypYky8nv44KhO30B4i+AdK/xNbzlFxGBcAs7Z4UnWjPB+G/wA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717775724; c=relaxed/simple;
-	bh=+5SSt91MLmEkhxneIY0OpWc81jVc8hlzIQH9a+p7YNQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vEFUqUmO6jBNGk+4e/CVseSKfiSib5ZRTmO/buS4yvqwQ55e0kt0SYRWvyvouSPe3nDHNxpFWHOQvmHRHLhOvsg6d6OfH47TgDRgtuSa6NxkdzPI681fw8shh+r/mJUAC5UWQeFSguu5o17x9HmiFAA3Wga7/RAdvlhdVpFrvSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ojhec4HR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6BFBC2BBFC;
-	Fri,  7 Jun 2024 15:55:23 +0000 (UTC)
+	s=arc-20240116; t=1717775727; c=relaxed/simple;
+	bh=xOhvRrUwDuC1Lk1Zuk8ngN5rgaOSWInQ819VOlEP/pA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jIRQNTkp4HlZF0AeFqFXewthGMiVz6MQU0Cuik3GBNsCvXC3MuXlYDhaLVlor7IV+apszphNjqLU7t2Ev88IcpY9BgaySlhVL9Ldq0RaHFX24T/s+qVUghDDI7Q0NNRvbtBJCoJKJ16HrN+tGq+Zn2RXfpIoKdE2X7waY5T/Qjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r6nk7L8h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D52E0C3277B;
+	Fri,  7 Jun 2024 15:55:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717775723;
-	bh=+5SSt91MLmEkhxneIY0OpWc81jVc8hlzIQH9a+p7YNQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Ojhec4HR3E1Gv95pi9zdji5jlhCPiX6Bi5yi4iF73//EsgP/6k2uLWQxOu1XqPpTv
-	 z8EbVsPDs76Qw6SiPUuusWCWFrV/QumBZ3+L6HEVH73nZPegZY92yrcWxa62lEIOWu
-	 qD4BUThvqx7jgpTyEj1xfNckx2IHE226UMhzuNS+O75ciX7cy2jh+ACoY3OX+d9jt5
-	 PHxhMxSr5CXd2Q9Sv3a9dwaEbkhQdPvR4qex7V/WC0+7kFjsZ779DnYGxOi3mV3iGm
-	 FsX6GT1xdj86Y+j8v3LAbatiZNRZrFOcXAdlJemN3IkeAKMMNjP8O74QhWh/uzuryi
-	 gl5RmwL2RdzNw==
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5b97f09cde3so294027eaf.0;
-        Fri, 07 Jun 2024 08:55:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXaYgiCd+05sd4BImDNF3mmh7F4q+InXDsWZs9+YPUxhBPmgzowyejJ9xX2SmsUZ4nT+pIf+xeMJ7j/93T7orthatEHQeG6l3vKmrgq
-X-Gm-Message-State: AOJu0YzR5JRVLljDvFYTCsGRNOf++mZeyFiBpj8BGbM4E8m3qOjBcwOv
-	mEdP9mq9jx9luOxyiL1ThYz4JbZOQL6xGArJweSdc5Kh9DPiZ0HnsmGpythWUiAT6RdrnmHRdNr
-	HeLHKoAyvVRStbH6hxlIpjoqySfc=
-X-Google-Smtp-Source: AGHT+IGJ/ANh0Gv9TL8hyLAz5Z2PqeGWqW6wCg5RWaW2p+a8mVte0ggd4wehdUnGcgKJd+8PGoPXy3TC6DIg+Ed2TQc=
-X-Received: by 2002:a05:6871:3a13:b0:24f:cabc:4fa3 with SMTP id
- 586e51a60fabf-25463e7c2cdmr2987780fac.0.1717775723066; Fri, 07 Jun 2024
- 08:55:23 -0700 (PDT)
+	s=k20201202; t=1717775727;
+	bh=xOhvRrUwDuC1Lk1Zuk8ngN5rgaOSWInQ819VOlEP/pA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r6nk7L8hG6D8Tp1B1C4AaE+9n+1am4qeelXE6BcB3H007R9KkwWTfbOEnanKTw00S
+	 FPy5gpquzgY/IQjivBfPP+tkTuORdn6DhRClF+QWNqtt+ajbFHZzCWBWB6MjuNo5gQ
+	 vrcOUG6I2S0VlACXHYLWv2OyDu8eETVCW67uqSbErcYYCwPpDlfTgR2Y9k86m9LIfT
+	 WtBQXcwdsGW4vIP3dWfj2+BkJiFWnHGAUTkR6kThhoHG5zspmgDEXF2qOuc1q/wfgi
+	 JWFRH4Qsqxj1Z9ZOsjEWO06ZkyjxYHfPWeX7M5PEHixupBDEokRZodKY0eXPUp84EH
+	 vCVHgzEkJZGMg==
+Date: Fri, 7 Jun 2024 16:55:23 +0100
+From: Mark Brown <broonie@kernel.org>
+To: =?utf-8?B?U3rFkWtl?= Benjamin <egyszeregy@freemail.hu>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] spidev: Introduce "linux,spidev-name" property for
+ device tree of spidev.
+Message-ID: <ZmMta036RTH4CTng@finisterre.sirena.org.uk>
+References: <20240519211346.30323-1-egyszeregy@freemail.hu>
+ <1ec9e8e5-0818-42b0-8776-d9cfb0585f42@sirena.org.uk>
+ <9ae65e3c-f1fa-4ca9-8d74-12d92c51c5c6@freemail.hu>
+ <e8837fe0-e93c-4133-aac1-f8f0a010f6de@sirena.org.uk>
+ <30944fda-6d18-4fc1-8c73-bcda4814a417@freemail.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJZ5v0hV6ruOVOO7GFP42vFYj70G=q=bhEOOG4vawyih5hiKFg@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hV6ruOVOO7GFP42vFYj70G=q=bhEOOG4vawyih5hiKFg@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 7 Jun 2024 17:55:12 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jhL_TT15zRUobAM6ayXbQWv=bTDdSu1sDdZd4q0_pjbg@mail.gmail.com>
-Message-ID: <CAJZ5v0jhL_TT15zRUobAM6ayXbQWv=bTDdSu1sDdZd4q0_pjbg@mail.gmail.com>
-Subject: Re: [CfP] LPC 2024: Power Management and Thermal Control Micro-Conference
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Viresh Kumar <viresh.kumar@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jVB9davYYuXPVNQ+"
+Content-Disposition: inline
+In-Reply-To: <30944fda-6d18-4fc1-8c73-bcda4814a417@freemail.hu>
+X-Cookie: Your love life will be... interesting.
+
+
+--jVB9davYYuXPVNQ+
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 7, 2024 at 5:51=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
-> wrote:
->
-> Hi Everyone,
->
-> A Power Management and Thermal Control session will be held during the
-> LPC this year, as it has been the case for a few years now, and it is
-> now open for topic submissions.
->
-> The Power Management and Thermal Control microconference is about all
-> things related to saving energy and managing heat. Among other things,
-> we care about thermal control infrastructure, CPU and device
-> power-management mechanisms, energy models, and power capping. In
-> particular, we are interested in improving and extending thermal
-> control support in the Linux kernel and utilizing energy-saving
-> features of modern hardware.
->
-> The general goal is to facilitate cross-framework and cross-platform
-> discussions that can help improve energy-awareness and thermal control
-> in Linux.
->
-> If you have a topic to discuss in this session (please note that the
-> topics should not be about work that has already been completed, as it
-> is the case for the LPC in general), please go to
->
-> https://lpc.events/login/?next=3D/event/18/abstracts/%23submit-abstract
->
-> and select "Power Management and Thermal Control MC" in the Track field.
+On Sun, Jun 02, 2024 at 05:31:10PM +0200, Sz=C5=91ke Benjamin wrote:
 
-The deadline for submitting topics to this track is Sunday, July 7,
-2024 (EOD in all time zones).
+> As i understand "axi_quad_spi@a00a0000" can be mapped via udev to a custom
+> symlink name but in a new adaptive SoC HWs like AMD ZynqMP, Intel Stratix,
+> Microchip PolarFire Soc etc. it is not possible and not good solution
+> because this axi reg address can be different and become to
+> non-deterministic in day to next when there is a new PL FW update for the=
+ir
+> FPGA part in the silicon.
+
+> What udev rules have to use for it if you say it can be perfectly done via
+> udev and "axi_quad_spi@a00a0000" cannot be used for making this rule?
+
+This feels like something I'd expect the FPGA tools to help with, having
+to run around adding random properties to individual bindings to figure
+out what the IPs that the tooling has decided to instantiate doesn't
+seem scalable.
+
+> > > DT binding would need to be documented later in a separated patch as a
+> > > guideline mentioned it in Linux repo.
+
+> > No, that needs to happen along with the code change.
+
+> The official documentation says totally different:
+> "The Documentation/ and include/dt-bindings/ portion of the patch should =
+be
+> a separate patch. ..."
+
+In the same series.  We can document bindings without code but we don't
+take code without bindings.
+
+> https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bi=
+ndings/submitting-patches.rst
+
+> By the way where can i find .yml or .txt dt-bindings documentation of spi=
+dev driver?
+
+The binding documentation describes the hardware, spidev is an
+implementation detail of Linux so should not have a binding.  A bunch of
+the devices should be in the trivial bindings document.
+
+--jVB9davYYuXPVNQ+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZjLWIACgkQJNaLcl1U
+h9BFZAf+LlGVWXXbcXDfyaer7OdhD7BBWlnH/BtblDtd2c/cAHJJLzyiTRq9rnwe
+5giPGCGAK4j/56/G+pvVo99yUhsytQk8UzWYNLcleavf/x2OhBn4kZt8oo+Bi01X
+P1B0IRVbYNSEF11NUcql30W2VKWC61B89rVrKREXjiWfb2DUizShBXCSIs6dmmHz
+bAxoJntmkNLHis5LMJZr+MykWqm5CZp/YYj83Y8T4FLwD2XSGYH8crTcUQxexiAd
+hoC0aQGd0w08QhMqIceW1LVZBlhz7SZ4vGYtwH5fweNgQP8VSlx97TvYCMXfZe4C
+/9gicxZHAEBAYDFxzVTGh+uj+H16nA==
+=ddyZ
+-----END PGP SIGNATURE-----
+
+--jVB9davYYuXPVNQ+--
 
