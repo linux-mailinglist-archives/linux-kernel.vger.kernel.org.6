@@ -1,85 +1,67 @@
-Return-Path: <linux-kernel+bounces-206655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FF89900C62
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:18:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CDE8900C65
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F583B24601
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:18:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86FA12886FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F20814EC4C;
-	Fri,  7 Jun 2024 19:17:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AAE14B076;
+	Fri,  7 Jun 2024 19:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLQ0LTbk"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jYrXTcVt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF06C1474D6;
-	Fri,  7 Jun 2024 19:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D387C139588;
+	Fri,  7 Jun 2024 19:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717787875; cv=none; b=Vz07yO1wRZu3BppeQBgpTf3w9DcBc+bl8zVxssWtEeytX2qXQDaIAvWXLzK3xgrhNCEOOczkKco0kr/EEWJGg9cnUMnsSoIiZoRAH2Es633hCYjko2BRqgI2NdQOqpp4GXhz92WHE2aXcZphdayhmtCwyQkfBqjmqQhrXpYOokY=
+	t=1717787886; cv=none; b=itrrWQ03OYdY3ckAzalCB7zV7/xaYUQqrJBWnbpxbRnIGMWmKtaGCxkQR6Hve1Fn4/i7rYJlaEkC1/CfPiLS7fEKh/CnqZPh1D/yXLBjK1BC8XQqvAH1nGhJ86rYEvrkbDiGhKhXePiozSstA0c2r52JnYVNHA61MLntvWEHUyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717787875; c=relaxed/simple;
-	bh=lE+hbzleT40pRbQC9hUhbSV33FyjJxrobady59a7HFc=;
+	s=arc-20240116; t=1717787886; c=relaxed/simple;
+	bh=l2TuVuG5EfkG98JENqnCwFuIerVqcUyCRo5aD5PVxpw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SJUQqw6kHj+x3ixeBINTyIB2cdggtIsvQwTDCnino2q31Nx35SrOEEsYI87zxb3kDSWRUD3I2PHthGqbYtKMg6oaEgCq6p4nFOL25KcpslgKGuk98vU+U0ARc/7riEXlHFPzvEpuq/JL7XjR2GJVSC+Gb8Q5uHsGkcVN7Vwlkv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLQ0LTbk; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7041cda5dcfso417785b3a.2;
-        Fri, 07 Jun 2024 12:17:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717787873; x=1718392673; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TuFWZ4xdFKT1wd42DIq0bkyJqXHcrP0kLkzse0qhyyo=;
-        b=kLQ0LTbko1G0YAxSQEtr5QGUGR7ExOns+pD38MSg/afJGq1A/GcWRSkLHxyDRq7jQO
-         3qb51wgSmV7CSfF1GBfZPF8Jtst3rj/gMUL+LrFuVKUkriKydlP2+X9IkWazvKuJWMoN
-         uo1RkNCF/M9p04XJbWDV2WA2/d329+w2rlrZcD6BCaxbLDF7H+2j4sS2Mq3PK3bfLow0
-         d/06oP+ZUltgNMsbywbLr+B8tf6I17Sw3v6cA84jqo0e6d/TMRbQqFPF4RqVq7d5XXzE
-         hoPKwdt4kqEl9jbFBOgNPQaLJYg5d2VI98aKELl8G90T7PxvlPPGeKeq0Dg5LuPRX6gi
-         Lekg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717787873; x=1718392673;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TuFWZ4xdFKT1wd42DIq0bkyJqXHcrP0kLkzse0qhyyo=;
-        b=Lw1gTCHQIivGCfSZNJsFOV1lIs9KFVEtk6P8LbjQLDLlQ1xRcxWpqcVH+etpj+of2E
-         u5xdaxSOwWZw7BuNd9nq/Z2P3cM26/6ho4WsmVKol0ku5zzRWIxvUa4EnPAS22kYUQRU
-         +q5TnHh3VWfEWN0i9c0bCido3u7clV83zd4qyr69Tj4faPKJtYAA8g/+nqrkzqKUG2++
-         vncNrp73ryHGSBq55BKNoVbBzJ1GiivabPRX2VEhonO+xY6+2SI4KqxHuUfDe/Vdr2rr
-         Z46Lz3I+GmHthPv4H5K7DdEq1tVAhFEDLiFsOck1PgzXopTP3qmhHlY/c4tzMk2M0H3B
-         qLNw==
-X-Forwarded-Encrypted: i=1; AJvYcCXo84IZpWRJvo+oWWYkDKe9EcZLe6Ck4VLiFhezhxOzc1yYFno9DMirRy6TzBH0VX4XkOAj5Fnk33n5blOz4rem20Np2SkTsUsqABylJzo6HOmvz5ROJ7qIBJwaRSivhQ5L9z7oC4rlWPPjsG7A4/Z0s1JDBdjaBIxEeMUgGHN33xe6yGEcHS+EX5k=
-X-Gm-Message-State: AOJu0Yw3SSWRHmRqpoRd/PHALcpDlIfMCY4JkUQrcZh6JVZDnWNK2St1
-	/AS2pNN0HNukaxSIsUoHXf7YfGpFGLOk0L7VAK0fucjJ1PhqyFna
-X-Google-Smtp-Source: AGHT+IGvnCd1ZhEC7tWgZoWLPhwhcjJXrVRrP0pRcwhh1RNUz6vR+7plk7CLlZ2BtQ7FGZukUyOjaQ==
-X-Received: by 2002:a05:6a00:1791:b0:702:824a:2a33 with SMTP id d2e1a72fcca58-7040c619520mr4036005b3a.7.1717787872874;
-        Fri, 07 Jun 2024 12:17:52 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:b8e9:3447:a54a:310b])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd4dba2bsm2900679b3a.156.2024.06.07.12.17.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 12:17:52 -0700 (PDT)
-Date: Fri, 7 Jun 2024 12:17:50 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Erick Archer <erick.archer@outlook.com>
-Cc: Niklas Schnelle <schnelle@linux.ibm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@kernel.org>,
-	"Ricardo B. Marliere" <ricardo@marliere.net>,
-	Kees Cook <keescook@chromium.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Justin Stitt <justinstitt@google.com>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] Input: gameport - use sizeof(*pointer) instead of
- sizeof(type)
-Message-ID: <ZmNc3oBiVhl2m2XU@google.com>
-References: <PAXPR02MB72483F512F863C74A4AECA2B8BFB2@PAXPR02MB7248.eurprd02.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n/sn/4e2wqt1SIvnOm8BllnkY3WgLVwjbXgw0jFtQhFcH4uynMtf3tbALOBSILdc3TIsy1UJD7PLGZyOxy2sTMrtdvt6eAf7WDo3K/4y+iQ0qFLOFKFPIIAwjZcAhh3bgCe2Yx9cIu0NnCANBR8YCqdu2zpHjc4JHGJPx1qhBlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jYrXTcVt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FE86C2BBFC;
+	Fri,  7 Jun 2024 19:18:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1717787886;
+	bh=l2TuVuG5EfkG98JENqnCwFuIerVqcUyCRo5aD5PVxpw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jYrXTcVtp+1UVrzguQzrm278C0/EpbOO3MlDJqNv1hK0Bedkt7ZbaWgfHzWaHoi3D
+	 /9V4Kd7tpSIK/SWejp6BOcYOVyjvSjQWT1wycjFkeubwHKddtzBkQQ2Po4ruKLmdTx
+	 YwULqF186a190ebh5hC/cFAZqwgjgrjtkja6MvaA=
+Date: Fri, 7 Jun 2024 21:18:04 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Martin Oliveira <martin.oliveira@eideticom.com>,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-mm@kvack.org,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Tejun Heo <tj@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	Michael Guralnik <michaelgur@nvidia.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Valentine Sinitsyn <valesini@yandex-team.ru>,
+	Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH 1/6] kernfs: create vm_operations_struct without
+ page_mkwrite()
+Message-ID: <2024060755-stimuli-unworthy-61a8@gregkh>
+References: <20240605192934.742369-1-martin.oliveira@eideticom.com>
+ <20240605192934.742369-2-martin.oliveira@eideticom.com>
+ <2024060658-ember-unblessed-4c74@gregkh>
+ <ZmKUpXQmMLpH8vf5@infradead.org>
+ <69dc6610-e70a-46ca-a6e9-7ca183eb055c@deltatee.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,18 +70,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <PAXPR02MB72483F512F863C74A4AECA2B8BFB2@PAXPR02MB7248.eurprd02.prod.outlook.com>
+In-Reply-To: <69dc6610-e70a-46ca-a6e9-7ca183eb055c@deltatee.com>
 
-On Fri, Jun 07, 2024 at 07:17:55PM +0200, Erick Archer wrote:
-> It is preferred to use sizeof(*pointer) instead of sizeof(type)
-> due to the type of the variable can change and one needs not
-> change the former (unlike the latter). This patch has no effect
-> on runtime behavior.
+On Fri, Jun 07, 2024 at 10:16:58AM -0600, Logan Gunthorpe wrote:
 > 
-> Signed-off-by: Erick Archer <erick.archer@outlook.com>
+> 
+> On 2024-06-06 23:03, Christoph Hellwig wrote:
+> > On Thu, Jun 06, 2024 at 10:54:06PM +0200, Greg Kroah-Hartman wrote:
+> >> On Wed, Jun 05, 2024 at 01:29:29PM -0600, Martin Oliveira wrote:
+> >>> The standard kernfs vm_ops installs a page_mkwrite() operator which
+> >>> modifies the file update time on write.
+> >>>
+> >>> This not always required (or makes sense), such as in the P2PDMA, which
+> >>> uses the sysfs file as an allocator from userspace.
+> >>
+> >> That's not a good idea, please don't do that.  sysfs binary files are
+> >> "pass through", why would you want to use this as an allocator?
+> > 
+> > I think the real question is why sysfs binary files implement
+> > page_mkwrite by default.  page_mkwrite is needed for file systems that
+> > need to allocate space from a free space pool, which seems odd for
+> > sysfs.
+> 
+> The default page_mkwrite in kernfs just calls file_update_time() but, as
+> I understand it, the fault code should call file_update_time() if
+> page_mkwrite isn't set. So perhaps the easiest thing is to simply not
+> add a page_mkwrite unless the vm_ops adds one.
+> 
+> It's not the easiest thing to trace, but as best as I can tell there are
+> no kernfs binary attributes that use page_mkwrite. So alternatively,
+> perhaps we could just disallow page_mkwrite in kernfs entirely?
 
-Applied, thank you.
-
--- 
-Dmitry
+Sure, let's do that.
 
