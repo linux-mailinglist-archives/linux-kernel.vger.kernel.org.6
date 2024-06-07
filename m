@@ -1,173 +1,130 @@
-Return-Path: <linux-kernel+bounces-205917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3054900226
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:29:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC04C900224
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E34081C21CC9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:29:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BF2FB246B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9145190069;
-	Fri,  7 Jun 2024 11:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B1318C326;
+	Fri,  7 Jun 2024 11:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="G6QPPreJ";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="G6QPPreJ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QJW606xc"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B89C15D5C4;
-	Fri,  7 Jun 2024 11:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529FB15B127;
+	Fri,  7 Jun 2024 11:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717759729; cv=none; b=bpTLF9UOX3w8dbEyiVAjOh685GJjgGKYfu+rYVCotA+z/aiLnV7u0E/tnZNoChokJ1ORRoLn9P/GW+OE5YdWWzyfNb4rVqAj0QWsSM0RC1P+VY4eoiysHbN0Gv2SKZO76TOY/F0bHLE48yElDnaQk+WAYbz7OqR1aWKz/uZOVbE=
+	t=1717759726; cv=none; b=piSwfIB41EtdoPIxotR4MnCWPKkp3koBYWRoctnqoKFqNyIe3bAaQgU1MSAcykbqLfOR0QGJscIr7gBUZpdhBTomC+T57Q+Y4vv4BnSBFf81IvfJKnUgFZ2E9sLy7RJcPwf7Yv1NRN0x7vPnJpvVGHu71JW7u6tiuwY+JU8Q23k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717759729; c=relaxed/simple;
-	bh=lGVekpOpu0hFaMCcw8TXxUtQP82zcqL53fs6/Yj7cuE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OYiCXJvHpNfwnFSV4RE391CBdyl1sdwaFb1B6DRkysBVdiHlIWoWG0A2sFUIUHaaTByq+KhR43XbnREqogyWvif8yVfqvIuKVVf3s/7ZONw7MNQxK0AR1+3O3PftCcFh9oaSSNaopDeydF40SXO5igc9rA34T8GvodKOtmDNIwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=G6QPPreJ; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=G6QPPreJ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 65C761FB92;
-	Fri,  7 Jun 2024 11:28:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1717759723; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=qBWJaQMATiMCgZBZiTX1t+DzoiMKislBbI7FLeunnSg=;
-	b=G6QPPreJY3nceL5yPpRCJmw30G1yn8kxtLktHkW0KiIn3T8v2sQnUgP0Bc/zA+Gxd1I9UO
-	m34OaHUAsIStLQMSM+jmmX8Mx81BNicwzSLiuqMGAQuueyWMYW9qfRdJSVZMQMJTwXNLG3
-	ZG+zzpZ/Tm/UvqqxWlBNecdgtKWC+nw=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=G6QPPreJ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1717759723; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=qBWJaQMATiMCgZBZiTX1t+DzoiMKislBbI7FLeunnSg=;
-	b=G6QPPreJY3nceL5yPpRCJmw30G1yn8kxtLktHkW0KiIn3T8v2sQnUgP0Bc/zA+Gxd1I9UO
-	m34OaHUAsIStLQMSM+jmmX8Mx81BNicwzSLiuqMGAQuueyWMYW9qfRdJSVZMQMJTwXNLG3
-	ZG+zzpZ/Tm/UvqqxWlBNecdgtKWC+nw=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4750B13A42;
-	Fri,  7 Jun 2024 11:28:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qrYyEevuYmZhSgAAD6G6ig
-	(envelope-from <petr.pavlu@suse.com>); Fri, 07 Jun 2024 11:28:43 +0000
-From: Petr Pavlu <petr.pavlu@suse.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	David Ahern <dsahern@kernel.org>
-Cc: Kui-Feng Lee <thinker.li@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Petr Pavlu <petr.pavlu@suse.com>
-Subject: [PATCH net v2] net/ipv6: Fix the RT cache flush via sysctl using a previous delay
-Date: Fri,  7 Jun 2024 13:28:28 +0200
-Message-Id: <20240607112828.30285-1-petr.pavlu@suse.com>
-X-Mailer: git-send-email 2.35.3
+	s=arc-20240116; t=1717759726; c=relaxed/simple;
+	bh=8Z5iJEZWYuzdQo1qOjmBdsXY1Ha0sWF1gHheR8vm0Zs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PVxNUN/8+0JbchuL+FQSv0EuQBpJQM5BZTeIYATPLFVY7sIS3yXY3+beLul+uQe9qEhHd2tsQt7vGNLE8y9RhnFun83DsgLsFYzAMGxMcJucl10eghc2xO1Idwmbrcp/migdTnZLXz3q3NAXtPO4wYEY0LiJHITeFwO5BvGpggk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QJW606xc; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 457BSa7M091775;
+	Fri, 7 Jun 2024 06:28:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717759716;
+	bh=WGlF8+GJkHVfeFjfWNrZMjHbi01VWT2jUmPu//YWwwM=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=QJW606xcNstiB3bhr1XyeX5ipmThRwBvgcAAn5ydXCT1X6cPK5MdVeDGG4UotoZ9j
+	 ENatJ4RBK8rO2+po2Kc3H7nP6AonQNZpdPtcJJrh4NNBxCXR2blFekTifPM3A10HDr
+	 0V7WzoHPLDdiBcFMXhNS1ew6qMjwfD7k0Lxcdj6k=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 457BSanu025666
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 7 Jun 2024 06:28:36 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 7
+ Jun 2024 06:28:35 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 7 Jun 2024 06:28:35 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 457BSZh8108543;
+	Fri, 7 Jun 2024 06:28:35 -0500
+Date: Fri, 7 Jun 2024 16:58:34 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Roger Quadros <rogerq@kernel.org>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <afd@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <u-kumar1@ti.com>,
+        <danishanwar@ti.com>, <srk@ti.com>
+Subject: Re: [PATCH v5 1/7] arm64: dts: ti: am62p: Rename am62p-{}.dtsi to
+ am62p-j722s-common-{}.dtsi
+Message-ID: <902f024a-b0a1-4a0a-94e2-7cec064a91c6@ti.com>
+References: <20240604085252.3686037-1-s-vadapalli@ti.com>
+ <20240604085252.3686037-2-s-vadapalli@ti.com>
+ <92af5f36-0c21-4b6e-adde-fcf21b540291@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: *
-X-Spamd-Result: default: False [1.12 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	BAYES_HAM(-0.37)[76.90%];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,suse.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:dkim,suse.com:email];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.com:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com]
-X-Spam-Score: 1.12
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 65C761FB92
-X-Spamd-Bar: +
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <92af5f36-0c21-4b6e-adde-fcf21b540291@kernel.org>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-The net.ipv6.route.flush system parameter takes a value which specifies
-a delay used during the flush operation for aging exception routes. The
-written value is however not used in the currently requested flush and
-instead utilized only in the next one.
+On Thu, Jun 06, 2024 at 10:51:27AM +0300, Roger Quadros wrote:
 
-A problem is that ipv6_sysctl_rtcache_flush() first reads the old value
-of net->ipv6.sysctl.flush_delay into a local delay variable and then
-calls proc_dointvec() which actually updates the sysctl based on the
-provided input.
+[...]
 
-Fix the problem by switching the order of the two operations.
+> >  5 files changed, 10 insertions(+), 7 deletions(-)
+> >  rename arch/arm64/boot/dts/ti/{k3-am62p-main.dtsi => k3-am62p-j722s-common-main.dtsi} (99%)
+> >  rename arch/arm64/boot/dts/ti/{k3-am62p-mcu.dtsi => k3-am62p-j722s-common-mcu.dtsi} (98%)
+> >  rename arch/arm64/boot/dts/ti/{k3-am62p-wakeup.dtsi => k3-am62p-j722s-common-wakeup.dtsi} (97%)
+> >  rename arch/arm64/boot/dts/ti/{k3-am62p.dtsi => k3-am62p-j722s-common.dtsi} (97%)
+> 
+> This is not correct.
+> If J722 has different CBASS components than AM62p then we should leave k3-am62p.dtsi
+> as it is and introduce a new k3-j722.dtsi with relevant CBASS components.
 
-Fixes: 4990509f19e8 ("[NETNS][IPV6]: Make sysctls route per namespace.")
-Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
----
+Roger,
 
-Changes since v1 [1]:
-- Minimize the fix, correct only the order of operations in
-  ipv6_sysctl_rtcache_flush().
+The existing hierarchy prior to this series is as follows:
+k3-am62p.dtsi = k3-am62p-main.dtsi + k3-am62p-mcu.dtsi +
+		k3-am62p-wakeup.dtsi + k3-am62p-thermal.dtsi + <delta-1>
+k3-am62p5.dtsi = k3-am62p.dtsi + <delta-2>
+k3-j722s.dtsi = k3-am62p5.dtsi + <delta-3>
+k3-j722s-evm.dts = k3-j722s.dtsi + <detla-4>
 
-[1] https://lore.kernel.org/netdev/20240529135251.4074-1-petr.pavlu@suse.com/
+Based on your suggestion, you seem to propose the following hierarchy:
+k3-am62p-{main,mcu,thermal,wakeup}.dtsi = AM62P specific data
+k3-am62p.dtsi = k3-am62p-j722s-common-main.dtsi +
+		k3-am62p-j722s-common-mcu.dtsi +
+		k3-am62p-j722s-common-wakeup.dtsi +
+		k3-am62p-j722s-common-thermal.dtsi +
+		k3-am62p-{main,mcu,thermal,wakeup}.dtsi +
+		<delta-5>
+k3-am62p5.dtsi = k3-am62p.dtsi + <delta-2>
+k3-j722s-{main,mcu,thermal,wakeup}.dtsi = J722S specific data
+k3-j722s.dtsi = k3-am62p-j722s-common-main.dtsi +
+		k3-am62p-j722s-common-mcu.dtsi +
+		k3-am62p-j722s-common-wakeup.dtsi +
+		k3-am62p-j722s-common-thermal.dtsi +
+		k3-j722s-{main,mcu,thermal,wakeup}.dtsi +
+		<delta-6>
+k3-j722s-evm.dts = k3-j722s.dtsi + <delta-4>
 
- net/ipv6/route.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Please let me know whether the above organization of files matches what you
+expect it to look like. I will post the v6 series based on your feedback.
 
-diff --git a/net/ipv6/route.c b/net/ipv6/route.c
-index f083d9faba6b..952c2bf11709 100644
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -6343,12 +6343,12 @@ static int ipv6_sysctl_rtcache_flush(struct ctl_table *ctl, int write,
- 	if (!write)
- 		return -EINVAL;
- 
--	net = (struct net *)ctl->extra1;
--	delay = net->ipv6.sysctl.flush_delay;
- 	ret = proc_dointvec(ctl, write, buffer, lenp, ppos);
- 	if (ret)
- 		return ret;
- 
-+	net = (struct net *)ctl->extra1;
-+	delay = net->ipv6.sysctl.flush_delay;
- 	fib6_run_gc(delay <= 0 ? 0 : (unsigned long)delay, net, delay > 0);
- 	return 0;
- }
-
-base-commit: 8a92980606e3585d72d510a03b59906e96755b8a
--- 
-2.35.3
-
+Regards,
+Siddharth.
 
