@@ -1,342 +1,206 @@
-Return-Path: <linux-kernel+bounces-205825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91C2F9000DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:33:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBA7A9000E1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F88A1F25DBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:33:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 534BF287355
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C8515E5C8;
-	Fri,  7 Jun 2024 10:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002A415ECE0;
+	Fri,  7 Jun 2024 10:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lOpIc55N"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wunUnyRc"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D4515B967
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 10:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6AF15B12A
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 10:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717756364; cv=none; b=m8HOzZauil8o1YglxRp1lZHssAUipvutsgBUuoME4Wjph7JAVyf/QPfdO1Oa/0tGT5VcNm/V/Q7wjsqYUylgntTFYffXhYt3YFlozp0QngQK28QrhKqABHl3GCqC2Fyv6jQnJ6x2Rr6kYN7cTDl9WRkHU6tkI2ymGOWgbyx2uQY=
+	t=1717756364; cv=none; b=DbdtyRdWS7+GLTGJ26iv+HaUeI6t2w2Eu9RCI6cR1nUG6UanZRSRKE4caUTXxC9N/+IqydoMPnAd66bahq1+hYA1sybascgF4j9R2zu8JtthKFKUTwMT/U2WmJMg+aktLpWS70zpS5djG1cREdL7aJgFyzecfix7vuPtiLSUQkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717756364; c=relaxed/simple;
-	bh=os0cVuPzw+jWCbn9VAhGFBwppdv0iftcBV0RHdJQu8c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I50MJ72uHBOMRryUO0G12Vw98U4MsS7CRbN46cL/+jzB/hW6bKYGpClfrypVuB9bkHlb3a7/IB+BGH6eHch41p0Dzr3Gyzgejq9waRCIgdHTZf0FdsjW2FznqkTQWoZKV3UuoryisKTx6014zDhCkT+Zdp14us7duQTFFE8bHdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lOpIc55N; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2547e1c7bbeso75899fac.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 03:32:42 -0700 (PDT)
+	bh=xvt5m4Jlh1y+ovh7kSIJW1gyiD5eGzqYSOeOJW+BqiA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EJrBUYLtlXCueGnf8yK9vbQ/AhTpeGErRZwhe1eNVDiKUn9/yaLVWW8gUggLjNWIPyySdGpiY7ar7A/OHFAKgelC9WT9yg9/A3rKfsaYzhf8kVEXkAqYQdH4IsH3s0fiQnAyJhOZIozw9KFKYtdD5C57u1hUe19JasRNuzSLlxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wunUnyRc; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52b8b638437so2200497e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 03:32:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717756361; x=1718361161; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CNWU6NevmfP/UVY2xrrnkXoHv1zTsYjWHUFESWwCj/8=;
-        b=lOpIc55N8Y9hKOX+QQK0VogJcX1sBx4gMqlfnuR6egxHndcMsPSsAqiTQaTFSCngxb
-         ZY4+VfGO12xonkUftx11B5/D5UiOH2zkooJUrYsZGqkwKE0nFt0OSdg2LgvIeSQKKE7V
-         e8hrp7dqFDWGXIurWckKW8RVYnUgpcW+yfZ6nidwsSwloNdFvTSZ90Pgp5m8U0ikTIbs
-         NH5rGt986F9PH36hxINXX35SVsWjbIBLMjHRLphDdRbQqdToPp7Hq7dCGM8umBmliOJR
-         +/JEyaABNHneJxaS6uYewh22PYKE4nQ0gill0LOves+OZI2Z93m3ydVEvvICHm6Z37uX
-         tU8Q==
+        d=linaro.org; s=google; t=1717756360; x=1718361160; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5itY4RhKi9EGd/T0IPjWMpqNRJQ1/SokdqN1IoH3jZk=;
+        b=wunUnyRcFqB5j5M5rq4rAtVr1q+IwydzrlOCdmzbU58Xltaxx+R9UiNAQtDpjIeAuU
+         L/AD1i/OdrpuJIStPb41pRuVDfC6UECqpZsHIRWJ70AR1eL04fRxPcfVH7UD1VS/7DXh
+         3+78ea4VPlHlBWqgKLEhMjZCayNbReM4JDlWaUhoaZuNJLlgbVZoS3pNQLEpDZbhPwsW
+         TP4pmgjHuKoLGx08mSewTj6Noc5l/i60uwiy+xfdHGvxx3FDxOpVnKM98yMO+USO7lIe
+         1PpMDVylEiXglSkF77e1FKW/JfcDwLH+mlrnKdc6fIVyJWzfUOaahRbW2blCR16pOwR/
+         qd0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717756361; x=1718361161;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CNWU6NevmfP/UVY2xrrnkXoHv1zTsYjWHUFESWwCj/8=;
-        b=CbfvqER8fLdVfAi5wBCjDLNu75lL/DJbjVK2sY713zTFGkjX8mNa4aQhNVd7P/SM03
-         yIwoodhNSkazz2g0ELFPmBqLbzKhr6toJgw5lPNCqDC5jbdVmOS/ltQWPY+coe41FbrE
-         kuDuOeIY2FHvYhn2zOPOQeDf7XpR+Zoyq9TKrEIwDo7HAZSeRbTr5BOvY2p9OazHT8ZF
-         YaDt/dhHEKuMZ+VS381/FHk4mtN8zhYi/A0YToH2OuRAem/pc7ZucEUWJR7y6wklJRlF
-         rfXwwHBBRNNstD7H/WP685VVOICTsm6lFLMuORVD1Mu+XJ17dB9aSs7OJv1x+7MzMQny
-         hC5w==
-X-Forwarded-Encrypted: i=1; AJvYcCVRZTpvox2nzGleVhKm2A42/W93u7Y0SdfjVdTd8ukRM08d4sDMnf2DyU6wmmQNH12xcouJEjnfORhM811wdheGz9DYGpQWylNNtPrd
-X-Gm-Message-State: AOJu0YzyTluFLJQNSCQ8l3jfTjGyGhVuWzJhVMM759cCE0LIKQJKri46
-	gDFqXXFTNK/0BAs9NUO4S+mWbCZlIKEzXmtV8/GcIhX+yf1CETAAziWHtQANJ1lILWlPp8ajO7c
-	/1Qp1kVFKb7QcbHX00eiEbpf+IqM=
-X-Google-Smtp-Source: AGHT+IFihNgTHkTKtEHFmdxD5PcHYYJNrfIij0oP9vRuroIVk4WKeGn8wwbTlwgWwdeXzuj9/dJJxtR2CNBOz/zQ2mY=
-X-Received: by 2002:a05:6870:c1d4:b0:250:129a:d0ef with SMTP id
- 586e51a60fabf-25464e9e9a6mr2164048fac.36.1717756361069; Fri, 07 Jun 2024
- 03:32:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717756360; x=1718361160;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5itY4RhKi9EGd/T0IPjWMpqNRJQ1/SokdqN1IoH3jZk=;
+        b=vK3bQVNbAc6JncHLR886XVYV5rUYsSkprTnsUzTP/Xmv6M2R3CO3iwC8c5ofVyWpo1
+         VbcPaXrmHkUEAjGxQhBGRWy5bPngmqWDzqPys+u3t3W06IVZGTGTmG9MxYneqPk84rgp
+         gc0FYHUWPIBYZkHecysNVmckXR1T0azPalfYvdlCNZCKMoURq80PQ0mosvbmxjJhn4hA
+         WGBkOTiYKXLK1Gi+rWhEwHQEfDV/UAodjwyi7DKm+R71RAPWY2qTEzui9gwLF8eLXvkt
+         ECE64bEk22D8C0btiMFHQUbftuRimGtIpzLNEDx91vmf4PR+gUMA2s0cvQp2dGl5+pYi
+         FIyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVuhgBq/T5ZpX6piEL+c6US9ECNc0/+oxJOK6WEB7A6qRSwY5LXLZcVT3IynyX7pxATJRflpG6SDQSBBfeziJSPetxllDNfWlt4o4e2
+X-Gm-Message-State: AOJu0YzITSwZUXgC6zwMF845sSeXGhCzlnRg034uNGp2Fw1LWYCXfHH/
+	NSN4cd6lZKeqzqhtMygOOnUpFrDtHJjaEG52dOvCgK3EbeTyo/DCrsDR2bWtJ8Y=
+X-Google-Smtp-Source: AGHT+IHhod+l49aRiiKMj7mDaCpAkinn0yA7FL4cBp5PJtT0eHAkde4rBn/etlB/H1vtvFvVoUJuHg==
+X-Received: by 2002:a19:5e4a:0:b0:523:88d8:67cf with SMTP id 2adb3069b0e04-52bb9f81522mr1189290e87.36.1717756360045;
+        Fri, 07 Jun 2024 03:32:40 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb433ccdbsm483448e87.283.2024.06.07.03.32.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 03:32:39 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v5 0/6] power: supply: Lenovo Yoga C630 EC
+Date: Fri, 07 Jun 2024 13:32:35 +0300
+Message-Id: <20240607-yoga-ec-driver-v5-0-1ac91a0b4326@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507072242.585-1-xuewen.yan@unisoc.com> <ZmLavE/tO66VUP3D@linux.ibm.com>
-In-Reply-To: <ZmLavE/tO66VUP3D@linux.ibm.com>
-From: Xuewen Yan <xuewen.yan94@gmail.com>
-Date: Fri, 7 Jun 2024 18:32:30 +0800
-Message-ID: <CAB8ipk8N5MjmPDJzBdc-FZdtVAG7-Wa1YNjq2U05sDPCxE3tgQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] sched: Clear user_cpus_ptr only when no intersection
- with the new mask
-To: Saket Kumar Bhaskar <skb99@linux.ibm.com>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, mingo@redhat.com, peterz@infradead.org, 
-	juri.lelli@redhat.com, vincent.guittot@linaro.org, longman@redhat.com, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, ke.wang@unisoc.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMPhYmYC/3WOy2rDMBAAfyXo3DWyHpbSU/+j5LCJVrZoY5WVE
+ THB/145UEgpPc5hhrmLQpyoiNfDXTDVVFKeG9iXg7hMOI8EKTQWSiojrXKw5hGBLhA4VWJwQww
+ u2hCQvGjSF1NMt0fw/dQ4cr7CMjHhT0ZLJW1vlZfHTimtjR6gh3BNC6/dGXkt00eub59pRs5d5
+ nHPTqksmdfHZtV7/N+jqkGCVg6P3vYBg31O7UvVPPv+j2+abyL6EBHJnYdf/rZt38MjJcY0AQA
+ A
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+ linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Nikita Travkin <nikita@trvn.ru>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4434;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=xvt5m4Jlh1y+ovh7kSIJW1gyiD5eGzqYSOeOJW+BqiA=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmYuHG/5FW+we87ynSKCH/7Psskmx4E6tEpczmM
+ uz37tA+3DSJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZmLhxgAKCRCLPIo+Aiko
+ 1Y+7B/9XoTuBxr2ReB46vcPQzaeoAQ7xneC9zq117TItcNWQbvHvqqE7rL2/bzOomGmUBRT7315
+ LkhdpEfW2pfjw6RkrTnrZOuF8qWq1dtmKT9BhQlELc4JAYlB0kt3n6aCGyzRG8WKwpkCh3bOTr2
+ qDuuOF6Ie5RvmM+0xSGyHbxbfuIyu/Ti4xygWE0kVuICgrlX6VMUcI4IfWGYa8MNjUjXBdyKbHy
+ TT5l14fuM29YMiaWL13t6VrCc6LfQbXgigZNANTl59BcuBX09lAfhmzDSYc5/Vm0WZjFpVAoVuD
+ mTYHgV20Q/avwzNYdXoxppccPFBux3wniJG9vB86O5HbL/fJ
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Hi Saket
+This adds binding, driver and the DT support for the Lenovo Yoga C630
+Embedded Controller, to provide battery information.
 
-On Fri, Jun 7, 2024 at 6:02=E2=80=AFPM Saket Kumar Bhaskar <skb99@linux.ibm=
-.com> wrote:
->
-> On Tue, May 07, 2024 at 03:22:42PM +0800, Xuewen Yan wrote:
-> > The commit 851a723e45d1c("sched: Always clear user_cpus_ptr in do_set_c=
-pus_allowed()")
-> > would cause that online/offline cpu will produce different results
-> > for the !top-cpuset task.
-> > For example:
-> >
-> > If the task was running, then offline task's cpus, would lead to clear
-> > its user-mask.
-> >
-> > unisoc:/ # while true; do sleep 600; done&
-> > [1] 6786
-> > unisoc:/ # echo 6786 > /dev/cpuset/top-app/tasks
-> > unisoc:/ # cat /dev/cpuset/top-app/cpus
-> > 0-7
-> > unisoc:/ # cat /proc/6786/status | grep Cpus
-> > Cpus_allowed:   ff
-> > Cpus_allowed_list:      0-7
-> >
-> > unisoc:/ # taskset -p c0 6786
-> > pid 6786's current affinity mask: ff
-> > pid 6786's new affinity mask: c0
-> > unisoc:/ # cat /proc/6786/status | grep Cpus
-> > Cpus_allowed:   c0
-> > Cpus_allowed_list:      6-7
-> >
-> > After offline the cpu6 and cpu7, the user-mask would be cleared:
-> >
-> > unisoc:/ # echo 0 > /sys/devices/system/cpu/cpu7/online
-> > unisoc:/ # cat /proc/6786/status | grep Cpus
-> > Cpus_allowed:   40
-> > Cpus_allowed_list:      6
-> > ums9621_1h10:/ # echo 0 > /sys/devices/system/cpu/cpu6/online
-> > ums9621_1h10:/ # cat /proc/6786/status | grep Cpus
-> > Cpus_allowed:   3f
-> > Cpus_allowed_list:      0-5
-> >
-> > When online the cpu6/7, the user-mask can not bring back:
-> >
-> > unisoc:/ # echo 1 > /sys/devices/system/cpu/cpu6/online
-> > unisoc:/ # echo 1 > /sys/devices/system/cpu/cpu7/online
-> > unisoc:/ # cat /proc/6786/status | grep Cpus
-> > Cpus_allowed:   ff
-> > Cpus_allowed_list:      0-6
-> >
-> > However, if we offline the cpu when the task is sleeping, at this
-> > time, because would not call the fallback_cpu(), its user-mask will
-> > not be cleared.
-> >
-> > unisoc:/ # while true; do sleep 600; done&
-> > [1] 5990
-> > unisoc:/ # echo 5990 > /dev/cpuset/top-app/tasks
-> > unisoc:/ # cat /proc/5990/status | grep Cpus
-> > Cpus_allowed:   ff
-> > Cpus_allowed_list:      0-7
-> >
-> > unisoc:/ # taskset -p c0 5990
-> > pid 5990's current affinity mask: ff
-> > pid 5990's new affinity mask: c0
-> > unisoc:/ # cat /proc/5990/status | grep Cpus
-> > Cpus_allowed:   c0
-> > Cpus_allowed_list:      6-7
-> >
-> > unisoc:/ # echo 0 > /sys/devices/system/cpu/cpu6/online
-> > unisoc:/ # cat /proc/5990/status | grep Cpus
-> > Cpus_allowed:   80
-> > Cpus_allowed_list:      7
-> > unisoc:/ # echo 0 > /sys/devices/system/cpu/cpu7/online
-> > unisoc:/ # cat /proc/5990/status | grep Cpus
-> > Cpus_allowed:   3f
-> > Cpus_allowed_list:      0-5
-> >
-> > After 10 minutes, it was waked up, it can also keep its user-mask:
-> > ums9621_1h10:/ # cat /proc/5990/status | grep Cpus
-> > Cpus_allowed:   3f
-> > Cpus_allowed_list:      0-5
-> >
-> > And when online the cpu6/7,the user-mask could bring back.
-> > unisoc:/ # echo 1 > /sys/devices/system/cpu/cpu6/online
-> > unisoc:/ # echo 1 > /sys/devices/system/cpu/cpu7/online
-> > unisoc:/ # cat /proc/6786/status | grep Cpus
-> > Cpus_allowed:   c0
-> > Cpus_allowed_list:      6-7
-> >
-> > Indeed, there is no need to clear the user_cpus_ptr if there is an
-> > intersection between user_cpus_ptr and new_mask.
-> > So add the judgement of whether there is an intersection between them.
-> > Clear user_cpus_ptr only when no intersection with the new mask.
-> > In this way, the above problems can also be solved.
-> >
-> > Suggested-by: Waiman Long <longman@redhat.com>
-> > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
-> > ---
-> > previous discussion:
-> >  https://lore.kernel.org/all/e402d623-1875-47a2-9db3-8299a54502ef@redha=
-t.com/
-> > ---
-> >  kernel/sched/core.c | 9 ++++++---
-> >  1 file changed, 6 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index 7019a40457a6..bbb8e88949f4 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -2796,21 +2796,24 @@ __do_set_cpus_allowed(struct task_struct *p, st=
-ruct affinity_context *ctx)
-> >  }
-> >
-> >  /*
-> > - * Used for kthread_bind() and select_fallback_rq(), in both cases the=
- user
-> > - * affinity (if any) should be destroyed too.
-> > + * Used for kthread_bind() and select_fallback_rq().
-> > + * Destroy user affinity if no intersection with the new_mask.
-> >   */
-> >  void do_set_cpus_allowed(struct task_struct *p, const struct cpumask *=
-new_mask)
-> >  {
-> >       struct affinity_context ac =3D {
-> >               .new_mask  =3D new_mask,
-> >               .user_mask =3D NULL,
-> > -             .flags     =3D SCA_USER,  /* clear the user requested mas=
-k */
-> > +             .flags     =3D 0,
-> >       };
-> >       union cpumask_rcuhead {
-> >               cpumask_t cpumask;
-> >               struct rcu_head rcu;
-> >       };
-> >
-> > +     if (p->user_cpus_ptr && !cpumask_intersects(p->user_cpus_ptr, new=
-_mask))
-> > +             ac.flags =3D SCA_USER;    /* clear the user requested mas=
-k */
-> > +
-> >       __do_set_cpus_allowed(p, &ac);
-> >
-> >       /*
-> > --
-> > 2.25.1
-> >
->
-> Hi Xuewen,
->
-> I have a query here:
->
-> 1. From the example where task is running, " while true; do sleep 600; do=
-ne& "
->    is being used, which is a sleeping task. How running task is emulated =
-here?
->
-> 2. Tried without patch (6.9.0-rc4) on a 64 CPUs system. Results are:
->
->    For a task that is running:
->
->    # stress-ng -l 100 --cpu 1
->    stress-ng: info:  [2307] defaulting to a 86400 second (1 day, 0.00 sec=
-s) run per stressor
->    stress-ng: info:  [2307] dispatching hogs: 1 cpu
->
->    #taskset -p c0 2308
->    pid 2308's current affinity mask: ffffffffffffffff
->    pid 2308's new affinity mask: c0
->
->    # cat /proc/2308/status |grep Cpus
->    Cpus_allowed:        00000000,000000c0
->    Cpus_allowed_list:   6-7
->
->    #chcpu -d 6,7
->    CPU 6 disabled
->    CPU 7 disabled
->
->    After disabling CPUs 6 and 7:
->
->    # cat /proc/2308/status |grep Cpus
->    Cpus_allowed:        ffffffff,ffffffff
->    Cpus_allowed_list:   0-63
->
->    After enabling CPUs 6 and 7:
->
->    ## chcpu -e 6,7
->    CPU 6 enabled
->    CPU 7 enabled
->
->    # cat /proc/2308/status |grep Cpus
->    Cpus_allowed:        ffffffff,ffffffff
->    Cpus_allowed_list:   0-63
->
->    From the above output, after disabling CPUs 6 and 7, all the CPUs in t=
-he
->    system are displayed rather than showing only remaining online CPUs(as
->    shown in above example).
->
->    For a task that is sleeping:
->
->    # while true; do sleep 60; done&
->    [1] 2541
->
->    # taskset -p c0 2541
->    pid 2541's current affinity mask: ffffffffffffffff
->    pid 2541's new affinity mask: c0
->
->    # cat /proc/2541/status |grep Cpus
->    Cpus_allowed:        00000000,000000c0
->    Cpus_allowed_list:   6-7
->
->    After disabling CPUs 6 and 7:
->
->    # chcpu -d 6,7
->    CPU 6 disabled
->    CPU 7 disabled
->
->    # cat /proc/2541/status |grep Cpus
->    Cpus_allowed:        00000000,000000c0
->    Cpus_allowed_list:   6-7
->
->    After 1 minute:
->
->    # cat /proc/2541/status |grep Cpus
->    Cpus_allowed:        ffffffff,ffffffff
->    Cpus_allowed_list:   0-63
->
->    # chcpu -e 6,7
->    CPU 6 enabled
->    CPU 7 enabled
->
->    # cat /proc/2541/status |grep Cpus
->    Cpus_allowed:        ffffffff,ffffffff
->    Cpus_allowed_list:   0-63
->
->    From the above output, after disabling CPUs 6 and 7, it waked up after
->    1 minute and Cpus_allowed_list got changed to 0-63 (which is contrary
->    to the above example).
->
->    So, there is some deviation in behaviour seen without the patch,
->    than reported or am I missing something?
+Support for this EC was implemented by Bjorn, who later could not work
+on this driver. I've picked this patchset up and updated it following
+the pending review comments.
 
-Whether the thread you are testing belongs to top-cpuset? If so, I
-think is normal.
-And you can see the patch: 3fb906e7fabbb (group/cpuset: Don't filter
-offline CPUs in cpuset_cpus_allowed() for top cpuset tasks).
+DisplayPort support is still not a part of this patchset. It uses EC
+messages to provide AltMode information rather than implementing
+corresponding UCSI commands. However to have a cleaner uAPI story, the
+AltMode should be handled via the same Type-C port.
 
-BR
+Merge strategy: the driver bits depend on the platform/arm64 patch,
+which adds interface for the subdrivers. I'd either ask to get that
+patch merged to the immutable branch, which then can be picked up by
+power/supply and USB trees or, to make life simpler, ack merging all
+driver bits e.g. through USB subsystem (I'm biased here since I plan to
+send more cleanups for the UCSI subsystem, which would otherwise result
+in cross-subsystem conflicts).
+
 ---
-xuewen
->
-> Thanks and regards,
-> Saket Kumar Bhaskar
+Changes in v5:
+- Added missing article in the commit message (Bryan)
+- Changed yoga_c630_ec_ucsi_get_version() to explicitly set the register
+  instead of just incrementing it (Bryan)
+- Dropped spurious debugging pr_info (Bryan)
+- Added missing includes all over the place (Ilpo)
+- Switched to scoped_guard() where it's suitable (Ilpo)
+- Defined register bits (Ilpo, Bryan)
+- Whitespace cleanup (Ilpo, Bryan)
+- Reworked yoga_c630_ucsi_notify() to use switch-case (Bryan)
+- Use ternary operators instead of if()s (Ilpo)
+- Switched power supply driver to use fwnode (Sebastian)
+- Fixed handling of the adapter's type vs usb_type (Sebastian)
+- Added SCOPE property to the battery (Sebastian)
+- Link to v4: https://lore.kernel.org/r/20240528-yoga-ec-driver-v4-0-4fa8dfaae7b6@linaro.org
+
+Changes in v4:
+- Moved bindings to platform/ to follow example of other Acer Aspire1 EC
+  (Nikita Travkin)
+- Fixed dt validation for EC interrupt pin (Rob Herring)
+- Dropped separate 'scale' property (Oliver Neukum)
+- Link to v3: https://lore.kernel.org/r/20240527-yoga-ec-driver-v3-0-327a9851dad5@linaro.org
+
+Changes in v3:
+- Split the driver into core and power supply drivers,
+- Added UCSI driver part, handling USB connections,
+- Fixed Bjorn's address in DT bindings (Brian Masney)
+- Changed power-role for both ports to be "dual" per UCSI
+- Link to v2: https://lore.kernel.org/linux-arm-msm/20230205152809.2233436-1-dmitry.baryshkov@linaro.org/
+
+Changes in v2:
+- Dropped DP support for now, as the bindings are in process of being
+  discussed separately,
+- Merged dt patch into the same patchseries,
+- Removed the fixed serial number battery property,
+- Fixed indentation of dt bindings example,
+- Added property: reg and unevaluatedProperties to the connector
+  bindings.
+- Link to v1: https://lore.kernel.org/linux-arm-msm/20220810035424.2796777-1-bjorn.andersson@linaro.org/
+
+---
+Bjorn Andersson (2):
+      dt-bindings: platform: Add Lenovo Yoga C630 EC
+      arm64: dts: qcom: c630: Add Embedded Controller node
+
+Dmitry Baryshkov (4):
+      platform: arm64: add Lenovo Yoga C630 WOS EC driver
+      usb: typec: ucsi: add Lenovo Yoga C630 glue driver
+      power: supply: lenovo_yoga_c630_battery: add Lenovo C630 driver
+      arm64: dts: qcom: sdm845: describe connections of USB/DP port
+
+ .../bindings/platform/lenovo,yoga-c630-ec.yaml     |  83 ++++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi               |  53 ++-
+ .../boot/dts/qcom/sdm850-lenovo-yoga-c630.dts      |  75 ++++
+ drivers/platform/arm64/Kconfig                     |  14 +
+ drivers/platform/arm64/Makefile                    |   1 +
+ drivers/platform/arm64/lenovo-yoga-c630.c          | 283 ++++++++++++
+ drivers/power/supply/Kconfig                       |   9 +
+ drivers/power/supply/Makefile                      |   1 +
+ drivers/power/supply/lenovo_yoga_c630_battery.c    | 500 +++++++++++++++++++++
+ drivers/usb/typec/ucsi/Kconfig                     |   9 +
+ drivers/usb/typec/ucsi/Makefile                    |   1 +
+ drivers/usb/typec/ucsi/ucsi_yoga_c630.c            | 202 +++++++++
+ include/linux/platform_data/lenovo-yoga-c630.h     |  43 ++
+ 13 files changed, 1273 insertions(+), 1 deletion(-)
+---
+base-commit: ee78a17615ad0cfdbbc27182b1047cd36c9d4d5f
+change-id: 20240527-yoga-ec-driver-76fd7f5ddae8
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
