@@ -1,154 +1,159 @@
-Return-Path: <linux-kernel+bounces-206435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 822299009B5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:56:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5F359009BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 587DFB2029A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:56:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9FD81C231D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9318199EAD;
-	Fri,  7 Jun 2024 15:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BzLxpzFL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD9C199EB0;
+	Fri,  7 Jun 2024 15:57:00 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E74419885E;
-	Fri,  7 Jun 2024 15:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038BE1990D0;
+	Fri,  7 Jun 2024 15:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717775787; cv=none; b=kMy0UVq2CObOCnU5ehg7CJSdtAwRKkZOCbOCoYE/tU8mGm7oamNN5WP/Kn04I8WG3qOfGsf2/ANLY+ZsSIYCMSM6x2F8t0AJ/e8Ytv/dr1mKTLflwIPUXbDkRXDmj1e+VQbpRX7VyjH6iIe3pCL1UjKFCNT4knk48xNxeIjdPEg=
+	t=1717775820; cv=none; b=t0/C2ByX04vB/upcauDUXdFPGdBPH54IiST/wR/PjjyBZYR5XZ6oiUX+s+MG+zNnbEnBOf2HMMNh9VidxCeOhmNmK6WctpjGrP5QXD+BKi/cwxhBiLsyqbZ32TyCy3Hphepdi3Odg1BLT6POwjyMAAZA/2eCCRtCSaARmeYHQ44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717775787; c=relaxed/simple;
-	bh=QyCtiVbsdznSlYWboPZDIQv5by3PO7uwRbT+3Y5ZKtM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZpgA9vRTHfLoIXyS7/rXDav545xjViu/hWYaUX2UKSR3PdICoo6YwIQH9MTLoYcURkcDXyu+ztGj8f9CTtelpO0uX9bCZG2edM0Erhk1J8LsXGlK8bYUraAH8oWM+Xs/GW7cDO3Kjq5Fog1ZBn+8BvGJjTzMKmNSLZR8OzxkDUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BzLxpzFL; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717775785; x=1749311785;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QyCtiVbsdznSlYWboPZDIQv5by3PO7uwRbT+3Y5ZKtM=;
-  b=BzLxpzFLS6raLIy/5L+Ac0Lf5GxXxQv7pgaZ1lJMnve1dBGtt8xw0+NT
-   HrO2yhxhCA1GYFxpk7n7dB5rs/Mnpgg39yLIlIFbbTGLKh4yLjUPCyLII
-   nwQ6u7ybT0tm6kDfnGG47bSBUDgPbHG8tPMfN+t/5Ypy7MGGNm8zW3wiB
-   bUm7ntCSu/t/2utlrYek8A5F9TfMMxZLzen51AJxcM2dO6EncXLsJAuk0
-   /l6b3KOllD3FyBbGWK+K1e7Ib0hQCarMnsPOD4vskyny8OosLpzo1mzFH
-   MaTVRiTLciHPLfX8my5Kha8r5bupneBSoFIwog43aLVbLEwX9ApjHxsXc
-   A==;
-X-CSE-ConnectionGUID: 0p8+7MUsTha5IXfZ2730LQ==
-X-CSE-MsgGUID: /grvQ6toRkOI8QrFd9ohrw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="32048728"
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="32048728"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 08:56:20 -0700
-X-CSE-ConnectionGUID: O7MLN+YwS7qkXvFqrSto5Q==
-X-CSE-MsgGUID: A6v6P8j/RamywGIt98zkDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="43495677"
-Received: from lkp-server01.sh.intel.com (HELO 472b94a103a1) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 07 Jun 2024 08:56:17 -0700
-Received: from kbuild by 472b94a103a1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sFbws-00004s-30;
-	Fri, 07 Jun 2024 15:56:14 +0000
-Date: Fri, 7 Jun 2024 23:55:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, mka@chromium.org,
-	gregkh@linuxfoundation.org, javier.carrasco@wolfvision.net,
-	benjamin.bara@skidata.com, m.felsch@pengutronix.de,
-	jbrunet@baylibre.com, frieder.schrempf@kontron.de,
-	stefan.eichenberger@toradex.com, michal.simek@amd.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, git@amd.com,
-	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Subject: Re: [PATCH] usb: misc: add Microchip usb5744 SMBus programming
- support
-Message-ID: <202406072332.qRphZq3E-lkp@intel.com>
-References: <1717676883-2876611-1-git-send-email-radhey.shyam.pandey@amd.com>
+	s=arc-20240116; t=1717775820; c=relaxed/simple;
+	bh=AvfwU2peuip8Rxw2RQR7kZaaaxxe71BZQ8M6oVTESCo=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U39M26V8kTx6kJ4I317YQm9/qerNkCTkqX/n9HHPW3ZANCWc7P/oqVHwbzS8BtzCSRUfkXMeC9m6/UNDyrla7Tmc0Pm3GZvg6UEm9dcf0W0ooBbaIn12QeXRU7nShZLTh5bFe/ZvzPmoZlluABqDYH7GSjjSvCgGZkJHpwMv7fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Vwm4r0W1zz6D94q;
+	Fri,  7 Jun 2024 23:55:40 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2BF87140A70;
+	Fri,  7 Jun 2024 23:56:54 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 7 Jun
+ 2024 16:56:53 +0100
+Date: Fri, 7 Jun 2024 16:56:51 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Wei Huang <wei.huang2@amd.com>
+CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <netdev@vger.kernel.org>, <bhelgaas@google.com>,
+	<corbet@lwn.net>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <alex.williamson@redhat.com>,
+	<gospo@broadcom.com>, <michael.chan@broadcom.com>,
+	<ajit.khaparde@broadcom.com>, <somnath.kotur@broadcom.com>,
+	<andrew.gospodarek@broadcom.com>, <manoj.panicker2@amd.com>,
+	<Eric.VanTassell@amd.com>, <vadim.fedorenko@linux.dev>, <horms@kernel.org>,
+	<bagasdotme@gmail.com>
+Subject: Re: [PATCH V2 1/9] PCI: Introduce PCIe TPH support framework
+Message-ID: <20240607165651.00006554@Huawei.com>
+In-Reply-To: <20240531213841.3246055-2-wei.huang2@amd.com>
+References: <20240531213841.3246055-1-wei.huang2@amd.com>
+	<20240531213841.3246055-2-wei.huang2@amd.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1717676883-2876611-1-git-send-email-radhey.shyam.pandey@amd.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Hi Radhey,
+On Fri, 31 May 2024 16:38:33 -0500
+Wei Huang <wei.huang2@amd.com> wrote:
 
-kernel test robot noticed the following build warnings:
+> This patch implements the framework for PCIe TPH support. It introduces
+> tph.c source file, along with CONFIG_PCIE_TPH, to Linux PCIe subsystem.
+> A new member, named tph_cap, is also introduced in pci_dev to cache TPH
+> capability offset.
+> 
+> Co-developed-by: Eric Van Tassell <Eric.VanTassell@amd.com>
+> Signed-off-by: Eric Van Tassell <Eric.VanTassell@amd.com>
+> Signed-off-by: Wei Huang <wei.huang2@amd.com>
+> Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
+> Reviewed-by: Somnath Kotur <somnath.kotur@broadcom.com> 
+> Reviewed-by: Andy Gospodarek <andrew.gospodarek@broadcom.com>
 
-[auto build test WARNING on usb/usb-testing]
-[also build test WARNING on usb/usb-next usb/usb-linus linus/master v6.10-rc2 next-20240607]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Radhey-Shyam-Pandey/usb-misc-add-Microchip-usb5744-SMBus-programming-support/20240606-203028
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-patch link:    https://lore.kernel.org/r/1717676883-2876611-1-git-send-email-radhey.shyam.pandey%40amd.com
-patch subject: [PATCH] usb: misc: add Microchip usb5744 SMBus programming support
-config: i386-randconfig-063-20240607 (https://download.01.org/0day-ci/archive/20240607/202406072332.qRphZq3E-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240607/202406072332.qRphZq3E-lkp@intel.com/reproduce)
+One trivial comment inline.
+With that fixed.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406072332.qRphZq3E-lkp@intel.com/
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/usb/misc/onboard_usb_dev.c:311:55: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected unsigned short [usertype] value @@     got restricted __be16 [usertype] @@
-   drivers/usb/misc/onboard_usb_dev.c:311:55: sparse:     expected unsigned short [usertype] value
-   drivers/usb/misc/onboard_usb_dev.c:311:55: sparse:     got restricted __be16 [usertype]
-   drivers/usb/misc/onboard_usb_dev.c:316:55: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected unsigned short [usertype] value @@     got restricted __be16 [usertype] @@
-   drivers/usb/misc/onboard_usb_dev.c:316:55: sparse:     expected unsigned short [usertype] value
-   drivers/usb/misc/onboard_usb_dev.c:316:55: sparse:     got restricted __be16 [usertype]
-   drivers/usb/misc/onboard_usb_dev.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/xarray.h, ...):
-   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
-   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
-   drivers/usb/misc/onboard_usb_dev.c: note: in included file (through include/linux/mutex.h, include/linux/notifier.h, include/linux/clk.h):
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+> diff --git a/drivers/pci/pcie/tph.c b/drivers/pci/pcie/tph.c
+> new file mode 100644
+> index 000000000000..5f0cc06b74bb
+> --- /dev/null
+> +++ b/drivers/pci/pcie/tph.c
+> @@ -0,0 +1,28 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * TPH (TLP Processing Hints) support
+> + *
+> + * Copyright (C) 2024 Advanced Micro Devices, Inc.
+> + *     Eric Van Tassell <Eric.VanTassell@amd.com>
+> + *     Wei Huang <wei.huang2@amd.com>
+> + */
+> +
+> +#define pr_fmt(fmt) "TPH: " fmt
+> +#define dev_fmt pr_fmt
+> +
+> +#include <linux/acpi.h>
+> +#include <uapi/linux/pci_regs.h>
+> +#include <linux/kernel.h>
+> +#include <linux/errno.h>
+> +#include <linux/msi.h>
+> +#include <linux/pci.h>
+> +#include <linux/msi.h>
+> +#include <linux/pci-acpi.h>
 
-vim +311 drivers/usb/misc/onboard_usb_dev.c
+Introduce headers as you first use them.  That way we can more
+easily see if there are unused ones in this list.
 
-   299	
-   300	int onboard_dev_5744_i2c_init(struct i2c_client *client)
-   301	{
-   302		struct device *dev = &client->dev;
-   303		int ret;
-   304	
-   305		char wr_buf[7] = {0x00, 0x05, 0x00, 0x01, 0x41, 0x1D, 0x08};
-   306	
-   307		ret = i2c_smbus_write_block_data(client, 0, sizeof(wr_buf), wr_buf);
-   308		if (ret)
-   309			return dev_err_probe(dev, ret, "BYPASS_UDC_SUSPEND bit configuration failed\n");
-   310	
- > 311		ret = i2c_smbus_write_word_data(client, 0x99, htons(0x3700));
-   312		if (ret)
-   313			return dev_err_probe(dev, ret, "Configuration Register Access Command failed\n");
-   314	
-   315		/* Send SMBus command to boot hub. */
-   316		ret = i2c_smbus_write_word_data(client, 0xAA, htons(0x5600));
-   317		if (ret < 0)
-   318			return dev_err_probe(dev, ret, "USB Attach with SMBus command failed\n");
-   319	
-   320		return ret;
-   321	}
-   322	
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +
+> +#include "../pci.h"
+> +
+> +void pcie_tph_init(struct pci_dev *dev)
+> +{
+> +	dev->tph_cap = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_TPH);
+> +}
+> +
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index 15168881ec94..1f1ae55a5f83 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -2484,6 +2484,7 @@ static void pci_init_capabilities(struct pci_dev *dev)
+>  	pci_dpc_init(dev);		/* Downstream Port Containment */
+>  	pci_rcec_init(dev);		/* Root Complex Event Collector */
+>  	pci_doe_init(dev);		/* Data Object Exchange */
+> +	pcie_tph_init(dev);             /* TLP Processing Hints */
+>  
+>  	pcie_report_downtraining(dev);
+>  	pci_init_reset_methods(dev);
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 5bece7fd11f8..d75a88ec5136 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -530,6 +530,10 @@ struct pci_dev {
+>  
+>  	/* These methods index pci_reset_fn_methods[] */
+>  	u8 reset_methods[PCI_NUM_RESET_METHODS]; /* In priority order */
+> +
+> +#ifdef CONFIG_PCIE_TPH
+> +	u16 tph_cap; /* TPH capability offset */
+> +#endif
+>  };
+>  
+>  static inline struct pci_dev *pci_physfn(struct pci_dev *dev)
+
 
