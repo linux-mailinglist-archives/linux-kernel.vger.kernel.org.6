@@ -1,343 +1,207 @@
-Return-Path: <linux-kernel+bounces-206754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A72900D56
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 23:08:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55A7F900D5A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 23:14:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B25D2876FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:08:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D7821C21414
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313081552EB;
-	Fri,  7 Jun 2024 21:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18B61552EB;
+	Fri,  7 Jun 2024 21:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LOX2ALN/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rFbKTBnQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D15C2D600
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 21:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717794530; cv=fail; b=N56nZBejX0xH3DvhDTSZ63HNoWCaknNTPAYEaLgzmMGMMwe/G+HBMmzpC5laJ5RBGrXpmOYlFJ24KAZhSOcuncF/DHrH+Z6BAb7jndzoqZMGpAmFIpL1Q4RhJ+LUPw+VCzQsNkSeaKt+VVNnMrfIUrtPkYZz7BlMdOdvvE4gJIM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717794530; c=relaxed/simple;
-	bh=OCzADJfiSQIPxbpWLQXovvJ6nyKHeWY9VyokB9iydDI=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=b5rv+MVyVXdOi2ZAbptkUYMXNpIRhHMPROMd+IjB94q66QHfOFn2lMcUrYQUkpAupFUQo7aom5STLrzBSTG/XNjamKGOFtvol3KdH1mSxIUlqBNlcZ0PxGbH+7ybaeE2QFzSaZ59Xix/bmaYn2vB9wbGzrcMHt4wHGnEQeqmFpY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LOX2ALN/; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717794528; x=1749330528;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=OCzADJfiSQIPxbpWLQXovvJ6nyKHeWY9VyokB9iydDI=;
-  b=LOX2ALN/sIq1BvDRuOwb83IiKIg07dArxmv7RroowlwaQLva+2ai0wM+
-   PCq3+UvrK3L84L+/xvmb9PJ4pTH3LQaeM7P+eUsHzcMPGMORCDCYTPEXn
-   uujPGBjoLlkPhAKZ9AORndmO7fcw1fbW0bV/9rR7WUJfVyL9KaM4CdrGD
-   rBKcB3WJ92+V4X61IGidozziv3YrZ8DFx80b3snHYEx73fpGmcGkHhYKV
-   Al6mcSrgOpnMK5rflm5k4RkUGZtjptnTjYMRPIMYTb7AfIV35FXdNa4pe
-   TwkyiL4RS9szjLGEoaguRPFulabHOao/RVgjWdnWEL8Qc1Itih9XxnfPH
-   Q==;
-X-CSE-ConnectionGUID: u133f9nQRLyPa1bRBxvDgA==
-X-CSE-MsgGUID: tvhujZFlScOC00KY9GhaiQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="14768626"
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="14768626"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 14:08:47 -0700
-X-CSE-ConnectionGUID: TpnPdRfRSJm2w7yX0icrkA==
-X-CSE-MsgGUID: Oeh4z5HtS/mXtWkrFd75gw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="38439855"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Jun 2024 14:08:48 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 7 Jun 2024 14:08:47 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 7 Jun 2024 14:08:47 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 7 Jun 2024 14:08:47 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.169)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 7 Jun 2024 14:08:46 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EJ+1paQ770wkUqmXkVEZqJzP5yp/9VgAEBzpPAn6hvYzBnmQtY/KNy8lhxJQclgCZXbCy0rpyLY2lrrD2s5Ssfr4CbcJsmRhy/+cSuArDw7tAEcgGsZvmW0hs7IkQGvoRnCwYMjO0xtHuek2OKR1eu0EuEaZ+wrRqZwXIk+n4tqMM57GxF9QGsFqJDL6T8+Om28PjsuonN0DoNSgMBPpDFqOFCdQ3RIZ4dYzv4fF7bOr6w5IVH4erPP1TlPHFWxBu4cjtbikRAZANsSvFN+knmad0o8q96qLZ+LFPUMP7iKqG+8z+YS98Qb7DKFCC4eVYZtf4/rukPGZOhY4MdB51g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dbdWrZwy9OvZKxdBeTXwJ/yYiEEgEOZMZcdeoIux6Ns=;
- b=bPGRhKUH3r5TDsi7dglVQhUCddVuX9AIl7szxs6bDJ+W1jw0Bhjp6Pl3DAm1lATuFaxodSUvyZaC0Uv8FEanPmAtr5qCftN3VaPkCBNqqCkON3NMygvuS8VRewwfpEAf7eev6BCmFtOoR4SRuJN7Uzoua09S9ASoPE7zY+r1PPkv+WLgiWDdOOahJWZL3tw3bb4NCWaTaJtf+1+ybvrpwHnzOJW4+LOci5ux8ELRlEHjBrGcBNRuqCLbyixOlffrWhWzXBVJRAB/JdygjzuzDdKRnM2zDVWIvR1foYUSyYpvqi15K1CjfkBWLtc5yTmrYfTiNyVV6whQ8k4s+uwr8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by PH7PR11MB7608.namprd11.prod.outlook.com (2603:10b6:510:269::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.21; Fri, 7 Jun
- 2024 21:08:39 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7633.017; Fri, 7 Jun 2024
- 21:08:39 +0000
-Message-ID: <0e6ab67e-bdff-440a-8772-8d462b71cb42@intel.com>
-Date: Fri, 7 Jun 2024 14:08:36 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v19 16/20] x86/resctrl: Make resctrl_arch_rmid_read()
- handle sum over domains
-To: "Luck, Tony" <tony.luck@intel.com>
-CC: "Yu, Fenghua" <fenghua.yu@intel.com>, "Wieczor-Retman, Maciej"
-	<maciej.wieczor-retman@intel.com>, Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, "Drew
- Fustini" <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>,
-	"x86@kernel.org" <x86@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "patches@lists.linux.dev"
-	<patches@lists.linux.dev>
-References: <20240528222006.58283-1-tony.luck@intel.com>
- <20240528222006.58283-17-tony.luck@intel.com>
- <9818c304-9056-4d79-acbe-2b35cb847ecd@intel.com>
- <Zl5OmVWFpBtA509j@agluck-desk3.sc.intel.com>
- <03ab405b-d7e4-4c35-8a3f-546ffd590954@intel.com>
- <SJ1PR11MB6083EE537A820BB7CD42D2BEFCFB2@SJ1PR11MB6083.namprd11.prod.outlook.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <SJ1PR11MB6083EE537A820BB7CD42D2BEFCFB2@SJ1PR11MB6083.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0287.namprd04.prod.outlook.com
- (2603:10b6:303:89::22) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85CD2D600
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 21:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717794847; cv=none; b=RYiuXYuU27e30fRZGEVAZXeR6O/zwVwjIg50nXHWJm5kIqkU/ozCwGjhSwsW26fwI/luIch1L8EnnmQxXJqlzrGch8cZg8itBCNr/mZ1lhItF6UmT3kWbF0EEtv5XJMij8WasSNHvVPfdRwzXGdWPI1/7Sp/urXWIycWUnXuECk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717794847; c=relaxed/simple;
+	bh=+F1gR/dF9qEEeQEG7p+hJ6wJAsGgF2g2/pyS9AE0bOA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gghiZDI5Zp23TzDnHAI1ZpYb+svdCKCvFxYCeALNlIYDzIkC+3nop8dZRkqblXi9qRWsSIhipBJkRJApBLuc2T3MG4yz+ywGGwVxgLGtnXMNUxYR0zwsKuqZ+ZYm4krzyXcJY+OPhXGCaHpRQMbBr+c1YQhE+LcZ5S25bUN0+Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rFbKTBnQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4821AC32781
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 21:14:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717794847;
+	bh=+F1gR/dF9qEEeQEG7p+hJ6wJAsGgF2g2/pyS9AE0bOA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rFbKTBnQOqZ1IL0pKtYSkXZfZRC7/3LMGtJtC2ljhd8mslHEuwYpCmMtIkRD03pEc
+	 op5rZlVeAGRQnAtvwTM0GEZFCXEKfiHEGuAd9UFZAYsJ/CwGCnu3xUY8PdrbIg7t95
+	 h4GQu30T4bpPKaBFzi5Ne5QHw/5cmkj4pVamGiEeJo3OuyDVJJ7mudoX2i4XhAz9Oe
+	 K2oC5JhgXSipPglBGlvTYGDQE9sCxmcLyleIwvv3ehP4VMgyhYgUH4L7LcbtQicutk
+	 XSlBXMV5YFUHXP97nj1auiVSOJ72e8Byl821lgJymc+Z3XAEcmeVn/eiVeKNKONSj4
+	 puFQE4R2yc7Bg==
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eabd22d441so40310251fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 14:14:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXbkdoq05WfMNiyo/H/P6rRoLmrP/us6d08gkpaQ7oaZn5czNecyXhF/iLHH3tO0sjcDQ4zfrxCb/tXaIy6tLRbqgw9VU4HrWnX1deI
+X-Gm-Message-State: AOJu0YzklM6u6Rd16qR4xWuGRbucioDVwtE7cEkx1KdC1BMPo6OcVJML
+	JLOQE9/qVGkUe2h8I6o9KCCwn9ouFenmWG/APEpHg7fQIcGeREqEPX1fnUnLZMF6gun7f4vwEn+
+	X13mmqniESb9XmHqNCkZQ8mz8UA==
+X-Google-Smtp-Source: AGHT+IHHbwv2ef+TwD1olLISbgN32rX4SJw+PxqN0i4K6h3fv6l1Rz9SwNIbpusaKtmI6pg1LWA/DtkMtXIdngK0iZw=
+X-Received: by 2002:a2e:3612:0:b0:2eb:17fe:a144 with SMTP id
+ 38308e7fff4ca-2eb17fea1c5mr7866711fa.34.1717794845911; Fri, 07 Jun 2024
+ 14:14:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|PH7PR11MB7608:EE_
-X-MS-Office365-Filtering-Correlation-Id: fb9b3bb4-453b-43ad-de95-08dc873600d5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?Kzk1UE9QMjlNVk5naHU2dmp6NjQrZWkwc0hNdEUzbU1lTW9FWHNwRThVdVBa?=
- =?utf-8?B?anU5VUhMK0RNR3FGZnB4TFdTZ2VuWU1sLzJ5TGl6aG04WXhWUXppMHArR29Z?=
- =?utf-8?B?ZFQ4NjlkaUtNREFFcTFYTGxSNmIxSHY2VmNyR0RURGF6YXF3bjJWcXVXSjFU?=
- =?utf-8?B?QWdzOUkwNU1FZmwzSGI5WUoyTHhUeUtxRHJvNmdsR0RoTk5uQXFaK2xVVVF0?=
- =?utf-8?B?RkRBWm9qMTA4cCtRWi9rZnI3Y21YNTQrL1lRYzQ4NUJmd3RhTWlyRyt0WWpT?=
- =?utf-8?B?TGI5b2t3bTJFdS9QdmRpMDMyajg2QUNlaCtCdUFZUCs5NFZPcy9pSktteFQ3?=
- =?utf-8?B?SUpFZTNMeDNDSnVROWFMTHZONm1PbGtWeU4vUjU2Zjh4dEhqaEdJOE1qK0hm?=
- =?utf-8?B?ZVMxNUViLzlkZXdYS3V3U0Rua3A5WVYwdFVadmRLaXZTUTA5UGFkWkRsbStN?=
- =?utf-8?B?UkgyQnZWZzhucVdjSE9ydCs3ZnVadzdMSjV0THFUL2hDQm1NenpTc3IwYzBv?=
- =?utf-8?B?RVBPQXhQV09UY0tzRUkzYzVoa2Jyd29PS2NrN2NWcjN1QlRMTGYxSVNnd1N2?=
- =?utf-8?B?azhpVHNFQVRoS01WL1FHK2R6MTZoMnNyT3pXdC9EY0lVTWJGUHk4T3RkWGJQ?=
- =?utf-8?B?OFhzR3NRSDVYVjIvUFQ4U3NGYWd0SzBQY0w3bmpjODA1Zm8zU1NHRllrb2sy?=
- =?utf-8?B?cHI5T3lPK0dtL3Z5Ymt6bnJOMDFQOGtlcXl1MzBTanVIbGtjRGo4VGpCck9y?=
- =?utf-8?B?d1FaWHc4aStaMUEwQUFSQTNEYit0WTFZTllIUy9RSmJsNEhwU2ZFMUlJSjZD?=
- =?utf-8?B?bEVwTTVRUGhlVEJuc2EzV0JDMWhpRmNBOXZ1MkRkaTNNQ1ROem9abVlJZWFj?=
- =?utf-8?B?R0NxMk9RRDVJOHp2UEVaVTVYUlVTa2VRRWNJSXVxZGp4N1dNRmJuRXF1U0sw?=
- =?utf-8?B?SkFBN2dBa0loeGhOSHIxSFB1UDRKZkdFZmlpRllkNzd2SkNJREppMTZ4eG04?=
- =?utf-8?B?cE5mMXlTM2hvaVVyeEp5azVadlUzWHhPUzc0azM0RGZZUXVCNlNGZGh1cEY5?=
- =?utf-8?B?S0tYdm5mM1UvSG9BTzk0S1cwbDhZY1FGOUJaNytyV0E1cGQyMHpoWDZPb0h5?=
- =?utf-8?B?ZTlubWMzWlAwWHVEUmMzdHd0bDc0eFErNTBNSTUxczVweVdVTU9sMWdlK01a?=
- =?utf-8?B?VlByeXgxUTQyNWtxK0FPcklWUHM4NzRhV3BRT3JoOWxDTjRFdHJHMDBVR3Y5?=
- =?utf-8?B?QjR0WndSbjJ3U0w4R2ZmYjFJR2RPL21qZkZTcnFxUHZxMGpwMnF0alhFcFZi?=
- =?utf-8?B?Z1ZxU0xoTTZwd3FsSFJxQUtYaVUzSnpaMEF1L3dRZjYyYjVyajRCb0xiVHov?=
- =?utf-8?B?dVBhYjJodnkvMklxeGVDQmxoSDcycmhCR2FhU01NVG03ODhXTEdFamIyNVVI?=
- =?utf-8?B?U3RYMXI3eXRPUmVaOXZnNldHYjdqdWs5aThYZ0tEd1Z5TjBOeCt4SHg5VUta?=
- =?utf-8?B?cGVrTDJ4RmFQS0Z1QmRtcGpDSDVJM3FMaTR6U2JwNnREc0FrYVkzR2R4SlA5?=
- =?utf-8?B?NWNBZDlYRFN5K2VyN2c3T3pGb2ZtS2dlYWJrSmI2c1JPM2R4TnpzQjZMWWsz?=
- =?utf-8?B?cFVxNnpIQWpLSFlNYVFBY0w1dWtVN25IdWt4T1lSVCtUaXJGdm5DUHRBNk9k?=
- =?utf-8?B?L1Q2cldYS1YvWEZvTUs1WkdWRWdtMi94cWZHTUNXQzN5c2JKVVZMbnY0cU9w?=
- =?utf-8?Q?foWZDUmCun+ZIWsZeGrFgTCDX4e5Go08dglaet1?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cWRKRUwwdTNPaUxZRHBjQ0VaQzBiblFsblp6OGlTdXNwR1hGUTdYUlZjYmxa?=
- =?utf-8?B?eGdZZTBlTUwyNURua2pwQlAydSthTml2cm9xYmRkcXV5QmlOOC9vdzJXMVF3?=
- =?utf-8?B?TTM1QW4ycXNmMzAzNzNtcmxxSzBuRFBuWjVPSnVFbGxtdnc4clZXUnlJdklw?=
- =?utf-8?B?NWl0Uy9jSzRIMExzUlowNURBSHNqTWlNY0M5RFQxOWpBdUFqOENrQmJWdi9i?=
- =?utf-8?B?VGJSMkdTdHRYMHl2bk5KK3BuV3RrZTV0YjNvTzJHd3h6OTNaSzQ1U3dLcy9S?=
- =?utf-8?B?S3lUK0JPZU0xbldHSldQMDRUWUZxRUpxQkhtVWtCVHIxVlN0TE5IS0kweWJT?=
- =?utf-8?B?N0hZcGdMMUEvdFlwM3o2Y2JwUW8wUTIxa3huZXY3WlZlbVFXWUY0bm5hQW5E?=
- =?utf-8?B?SnZWOHcreU9VQXB6WnNIZWhwSU9Fam5aclR1Q2g3c3RFSUtEbTJzb29rYmdn?=
- =?utf-8?B?UTVOYUhKVkRZWjIzTTQrVVJpYThFMkZpYTN2UkFuL242VkhyTGUvZElYMEwy?=
- =?utf-8?B?aS9UdHMreWQ3T3dRT0ptSFdGb1NOTWlaUEZQSy85YVNhUE96L0NkWjRGTjdV?=
- =?utf-8?B?b1Jmdk54Z3RkblZKM243RXVVMUQ3cE1PTTdDd3hhT3JlL3pabERmSU1uNy85?=
- =?utf-8?B?Um13aXVWdFY5V3ZSWUJLVGtESytyR2tzTXFDaEdRNk45S0IxM1ZrbjBmdC9n?=
- =?utf-8?B?ejJOcGFGK2ZzOTdBTWhlNXZVbnFMT2xFb2RWdU5LL2UvVm5teVlNLzZNQkY2?=
- =?utf-8?B?aFFsdm9yQWp5TDd4VEIvMXB2Y0xmK01pMWorTkRCdVNoRVRvZENNbWV5RE5a?=
- =?utf-8?B?VjhiT2tjM0tNazFrdm9CR3BocU50bXlVTU9iVXF4Sk1DNmMwaVo1WmVBbGZB?=
- =?utf-8?B?T0hlZEV1RklyU2JmYUFZWE51dDRiUThCbXpZV29iY2o1VFFjY08wUGJ0R09Y?=
- =?utf-8?B?NnRFb1JwMzVLOUVLNGw1S0pXUmFHMS9LMkQ0dDhkcFhJMTFSbCsrV2daOWln?=
- =?utf-8?B?T0hMei90VHpiak5YNGFxbHpZam9Xd04xVklLVVZDNEs1WWdNUit0SklKWklU?=
- =?utf-8?B?UHR5dzBNR3o0RG5uWFBUTzg0ekU2N2EwaUFONUlXVHhCQlo2SUpYSnc4VlUv?=
- =?utf-8?B?TGV2ZzVDVHBWd2dkWlJLNkxOK0RvWlltVFpqYUY1K3VJT3dxWmRkZnVqOHJ1?=
- =?utf-8?B?b1YxZjQ5dlAzQnZSUFBjU1dTRW13eDgvRHQ5TEVxWTVuN2xSZDZtNklNN0N2?=
- =?utf-8?B?ZGZJRjFCdlRMTkRHTHV0alA5UFRycm9iQThhQUN5MTBrV1BoOUZWYnE1WUh0?=
- =?utf-8?B?NFhrZjFpWno5ajlTQTdsYk5YZkV6ZHNnUkZZUVdkUVoxaDZQeW5aT0NXSlpo?=
- =?utf-8?B?UmM4VmxpOUdSaDNrR28raG1mbnJkbSs1d0xmQk9IOFN3dEJqRC9WL2tKOFd6?=
- =?utf-8?B?RFFMMGpwZU1KS0R1SjJETU9Ldjk2SVhTTU4rakJlWHBJNTU3OFJVSFdzMzBQ?=
- =?utf-8?B?emZxQVo2NDl3U0ppVWtLRTM1K3A0clJEVWxHVFFYSGNHdkgra3MvVHIxdWpJ?=
- =?utf-8?B?RmNMUUtMYVNVYWlQM2lrQnpIZHlPWlF1MlJEY0VRVVkrODRBckMxY0VieUJ6?=
- =?utf-8?B?OTlGSDBXQWw4SDFxUmtqRXA4eTJOYlJoVzJvUW1na2xUOVNKMEF3SjVqaWpH?=
- =?utf-8?B?RjlPSXQ3aVJtV255dXgrOWhib2xia25TOWVYWUNHdUtMbXFEbjNvNHMvMkov?=
- =?utf-8?B?VVNtMnF5Y0s5YTFmM0JNT2JYdlA3cTRCMXFrdVdiOHc3b3lRK0NiS0hyS3BX?=
- =?utf-8?B?MjIxYnZHU3oxME5mYUwrZ1kwdS9JQTJiajI5MFdNVUZZTSs5UXBkdGNJRGEy?=
- =?utf-8?B?SW9QZ25TdlhBUUQxQXVzUDJhdktiUTloOVJBbkc4WEcwNTQ5c1RuMm1tRTdT?=
- =?utf-8?B?RjdERU9zYzlNZmEyTzZCVVBDa0xuZnU1ZmI4U2JxMXAzclRkcDlpZE5WQ0V1?=
- =?utf-8?B?Zkw1RU54RmtubVhiTVM3bGwrU1gvL0tJL2RaVHJTNlNwdC9UdTlpZ2JYUzZz?=
- =?utf-8?B?MGdBNlNrc0NwWVhtYjM2V3h3N3VDRW56K2RZRlFNeEhoZTFCQktteEVCbTFU?=
- =?utf-8?B?Z0Nza3JNSjMxejEvRkErMldFS2FaOHJjZ3AzRGlMSkNzSUtYOE1ZcGZldG1L?=
- =?utf-8?B?enc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: fb9b3bb4-453b-43ad-de95-08dc873600d5
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2024 21:08:39.2806
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 17cLw3f56Xyc/arbt7QSa7yjtn8DvJviVWGEFmfv5FxxLny167rjpwzKEAEqG08brz6/GXJHU/AtzeFqGuAOn0561tFm17GkW3OITaGj+E8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7608
-X-OriginatorOrg: intel.com
+References: <20240606184818.1566920-1-yosryahmed@google.com>
+ <84d78362-e75c-40c8-b6c2-56d5d5292aa7@redhat.com> <CAJD7tkZH9C21nx75W9Erun=oUvmad5ujmDyGYWRRHEwPCCizUw@mail.gmail.com>
+ <7507d075-9f4d-4a9b-836c-1fbb2fbd2257@redhat.com> <CAGsJ_4w_dEyLsPhdJCtRMReXDD116p+U979Yk-8EBu=zx5FWgQ@mail.gmail.com>
+ <CAJD7tkYnZCvwUSTAx-N-08b+mVF4yHEdDTbp9oqYrVQXX8M1Cw@mail.gmail.com>
+ <CAGsJ_4wAYbofjg99iEr7cEAptH9Ve9WcrSXho8A-Sw54vb8Msw@mail.gmail.com>
+ <9374758d-9f81-4e4f-8405-1f972234173e@redhat.com> <CAJD7tkZBzSB_6pAZP0n0nq+W=J1XKQGFzZZLzPmSH0apwaqTNg@mail.gmail.com>
+ <424c6430-e40d-4a60-8297-438fc33056c9@redhat.com> <CAJD7tkbaX-8OQm0JispxWWbuzX+PJrH=HN6yqEjqL2yxRcu=Aw@mail.gmail.com>
+In-Reply-To: <CAJD7tkbaX-8OQm0JispxWWbuzX+PJrH=HN6yqEjqL2yxRcu=Aw@mail.gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Fri, 7 Jun 2024 14:13:54 -0700
+X-Gmail-Original-Message-ID: <CANeU7QkrXyv8f4JE+iUte2iTUg-dP_Q1==g2JwMjS4TEyiLovA@mail.gmail.com>
+Message-ID: <CANeU7QkrXyv8f4JE+iUte2iTUg-dP_Q1==g2JwMjS4TEyiLovA@mail.gmail.com>
+Subject: Re: [PATCH] mm: zswap: add VM_BUG_ON() if large folio swapin is attempted
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: David Hildenbrand <david@redhat.com>, Barry Song <21cnbao@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Tony,
+On Fri, Jun 7, 2024 at 11:58=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com>=
+ wrote:
+>
+> On Fri, Jun 7, 2024 at 11:52=E2=80=AFAM David Hildenbrand <david@redhat.c=
+om> wrote:
+> >
+> > >> I have no strong opinion on this one, but likely a VM_WARN_ON would =
+also
+> > >> be sufficient to find such issues early during testing. No need to c=
+rash
+> > >> the machine.
+> > >
+> > > I thought VM_BUG_ON() was less frowned-upon than BUG_ON(), but after
+> > > some digging I found your patches to checkpatch and Linus clearly
+> > > stating that it isn't.
+> >
+> > :) yes.
+> >
+> > VM_BUG_ON is not particularly helpful IMHO. If you want something to be
+> > found early during testing, VM_WARN_ON is good enough.
+> >
+> > Ever since Fedora stopped enabling CONFIG_DEBUG_VM, VM_* friends are
+> > primarily reported during early/development testing only. But maybe som=
+e
+> > distro out there still sets it.
+> >
+> > >
+> > > How about something like the following (untested), it is the minimal
+> > > recovery we can do but should work for a lot of cases, and does
+> > > nothing beyond a warning if we can swapin the large folio from disk:
+> > >
+> > > diff --git a/mm/page_io.c b/mm/page_io.c
+> > > index f1a9cfab6e748..8f441dd8e109f 100644
+> > > --- a/mm/page_io.c
+> > > +++ b/mm/page_io.c
+> > > @@ -517,7 +517,6 @@ void swap_read_folio(struct folio *folio, struct
+> > > swap_iocb **plug)
+> > >          delayacct_swapin_start();
+> > >
+> > >          if (zswap_load(folio)) {
+> > > -               folio_mark_uptodate(folio);
+> > >                  folio_unlock(folio);
+> > >          } else if (data_race(sis->flags & SWP_FS_OPS)) {
+> > >                  swap_read_folio_fs(folio, plug);
+> > > diff --git a/mm/zswap.c b/mm/zswap.c
+> > > index 6007252429bb2..cc04db6bb217e 100644
+> > > --- a/mm/zswap.c
+> > > +++ b/mm/zswap.c
+> > > @@ -1557,6 +1557,22 @@ bool zswap_load(struct folio *folio)
+> > >
+> > >          VM_WARN_ON_ONCE(!folio_test_locked(folio));
+> > >
+> > > +       /*
+> > > +        * Large folios should not be swapped in while zswap is being=
+ used, as
+> > > +        * they are not properly handled.
+> > > +        *
+> > > +        * If any of the subpages are in zswap, reading from disk wou=
+ld result
+> > > +        * in data corruption, so return true without marking the fol=
+io uptodate
+> > > +        * so that an IO error is emitted (e.g. do_swap_page() will s=
+igfault).
+> > > +        *
+> > > +        * Otherwise, return false and read the folio from disk.
+> > > +        */
+> > > +       if (WARN_ON_ONCE(folio_test_large(folio))) {
+> > > +               if (xa_find(tree, &offset, offset +
+> > > folio_nr_pages(folio) - 1, 0))
+> > > +                       return true;
+> > > +               return false;
+> > > +       }
+> > > +
+> > >          /*
+> > >           * When reading into the swapcache, invalidate our entry. Th=
+e
+> > >           * swapcache can be the authoritative owner of the page and
+> > > @@ -1593,7 +1609,7 @@ bool zswap_load(struct folio *folio)
+> > >                  zswap_entry_free(entry);
+> > >                  folio_mark_dirty(folio);
+> > >          }
+> > > -
+> > > +       folio_mark_uptodate(folio);
+> > >          return true;
+> > >   }
+> > >
+> > > One problem is that even if zswap was never enabled, the warning will
+> > > be emitted just if CONFIG_ZSWAP is on. Perhaps we need a variable or
+> > > static key if zswap was "ever" enabled.
+> >
+> > We should use WARN_ON_ONCE() only for things that cannot happen. So if
+> > there are cases where this could be triggered today, it would be
+> > problematic -- especially if it can be triggered from unprivileged user
+> > space. But if we're concerned of other code messing up our invariant in
+> > the future (e.g., enabling large folios without taking proper care abou=
+t
+> > zswap etc), we're good to add it.
+>
+> Right now I can't see any paths allocating large folios for swapin, so
+> I think it cannot happen. Once someone tries adding it, the warning
+> will fire if CONFIG_ZSWAP is used, even if zswap is disabled.
+> At this point we will have several options:
 
-On 6/7/24 12:51 PM, Luck, Tony wrote:
->> Hi Tony,
->>
->> On 6/3/24 4:15 PM, Tony Luck wrote:
->>> On Thu, May 30, 2024 at 01:24:57PM -0700, Reinette Chatre wrote:
->>>> On 5/28/24 3:20 PM, Tony Luck wrote:
->> ...
->>
->>>>> +
->>>>> + return 0;
->>>>> +}
->>>>> +
->>>>> +int resctrl_arch_rmid_read(struct rdt_resource *r, struct rdt_mon_domain *d,
->>>>> +                    u32 unused, u32 rmid, enum resctrl_event_id eventid,
->>>>> +                    u64 *val, bool sum, struct cacheinfo *ci, void *ignored)
->>>>
->>>> This is not architecture specific code.
->>>
->>> Can you explain further? I've dropped the "sum" argument. As you pointed
->>> out elsewhere this can be inferred from "d == NULL".  But I do need the
->>> cacheinfo information in resctrl_arch_rmid_read() to:
->>> 1) determine which domains to sum (those that match ci->id).
->>> 2) sanity check code is executing on a CPU in ci->shared_cpu_map.
->>>
->>
->> "resctrl_arch_*" is the prefix of functions needed to be implemented
->> by every architecture. As I understand there is nothing architecture
->> specific about what this function does and every architecture's function
->> would thus end up looking identical. I expected the cacheinfo
->> information to be available from all architectures. If this is not
->> the case then it does not belong in struct rdt_mon_domain but should
->> instead be moved to struct rdt_hw_mon_domain ... but since cacheinfo
->> has already made its way into the filesystem code it is not clear
->> to me how you envision the arch/fs split.
-> 
-> Hi Reinette,
-> 
-> Files in resctrl that sum over resources are going to be a necessary feature
+Here is my take on this:
 
-Sum over resources? That is something entirely different from SNC, no?
+> - Make large folios swapin depend on !CONFIG_ZSWAP for now.
 
-> for backwards compatibility. I'm doing it for the first time here for SNC, but
-> I know of another platform topology change on the horizon that could also
-> benefit from this.
-> 
-> Looking at the end-point of the James Morse/Dave Martin patch series to
-> split out the arch independent layer to fs/resctrl/ I see that fs/monitor.c
-> makes calls to resctrl_arch_rmid_read(). The x86 version of this remains
-> in arch/x86/kernel/cpu/resctrl/monitor.c (I don't see an MPAM version).
-> 
-> James already added two arguments that MPAM needs and x86 doesn't
-> (hence "u32 unused" and "void *ignored" in the argument list). I confess
-> that my thought had been "If he can pad out the argument list for MPAM,
-> then I can do it too for x86". But that leads to madness, so time to reconsider.
-> 
-> I can see a couple of paths.
-> 
-> 1) MPAM/others will also want to have files that sum things, so maybe they want
-> an extra argument that shows what to add up. Though even if they do, their
-> requirement may not be met by a "cacheinfo" pointer.
-> 
-> 2) Only x86 (Intel) will use this. Maybe in this case the answer is to do some
-> renaming so the "void *unused" argument can be used to pass architecture
-> specific information.
+I think a WARON or BUG_ON is better. I would need to revert this
+change when I am working on 3).  It is a make up rule, not a real
+dependency any way.
 
-By creating the new "sub" monitor files the sum of data has become a feature
-of resctrl fs.
+> - Keep track if zswap was ever enabled and make the warning
+> conditional on it. We should also always fallback to order-0 if zswap
+> was ever enabled.
 
-By including a pointer to struct cacheinfo in struct rdt_mon_domain as well as
-struct rmid_read it surely is not just for Intel. If you want to make this just for
-Intel then the whole solution needs to be changed.
+IMHO, falling back to order-0 inside zswap is not desired because it
+complicates the zswap code. We should not pass large folio to zswap if
+zswap is not ready to handle large folio. The core swap already has
+the fall back to order-0. If we get to 3), then this fall back in
+zswap needs to be removed. It is a transitional thing then maybe not
+introduce it in the first place.
 
-> 
-> Sketch for option #2. Currently the code does:
-> ---------------------
-> 
-> That void *argument is currently supplied by a call. E.g.
-> 
-> 	void *arch_mon_ctx;
-> 
-> 	arch_mon_ctx = resctrl_arch_mon_ctx_alloc(r, QOS_L3_OCCUP_EVENT_ID);
-> 
-> 
-> 	resctrl_arch_rmid_read(r, d, entry->closid, entry->rmid,
-> 				QOS_L3_OCCUP_EVENT_ID, &val,
-> 				arch_mon_ctx);
-> 
-> 	resctrl_arch_mon_ctx_free(r, QOS_L3_OCCUP_EVENT_ID, arch_mon_ctx);
-> 
-> The x86 version of resctrl_arch_mon_ctx_alloc() just does "might_sleep(); return NULL;"
-> and resctrl_arch_mon_ctx_free() does nothing.
-> 
-> New version makes these changes:
-> ---------------------
-> 
-> Add rdt_mon_domain * as a new argument to resctrl_arch_mon_ctx_alloc() (which MPAM can
-> ignore).
-> 
-> x86 alloc function becomes:
-> 
-> void *resctrl_arch_mon_ctx_alloc(struct rdt_resource *r, struct rdt_mon_domain *d, int evtid)
-> {
-> 	might_sleep();
-> 
-> 	return d->ci;
-> }
-> 
-> resctrl_arch_mon_ctx_free() remains an empty stub.
-> 
-> 
-> Is this a reasonable way to split the independent fs layer code from the architecture specific?
+> - Properly handle large folio swapin with zswap.
+That obviously is ideal.
 
-Why is this necessary at all? The new variant of resctrl_arch_rmid_read() introduced in this
-patch does not contain anything that is architecture specific and thus it is filesystem code.
-It is this code that uses the information in struct cacheinfo to set the correct domain, if
-needed. In this patch you rewrite resctrl_arch_rmid_read() as something architecture specific
-but I cannot see what is architecture specific about it at all. Why not just call this new
-function resctrl_rmid_read() that stays in filesystem code and then what you have in this
-patch as resctrl_arch_rmid_read_one() should be what is already known as the architecture
-specific resctrl_arch_rmid_read(). It is the architecture specific RMID read function that
-does not need struct cacheinfo.
-
-Reinette
-
+Chris
 
