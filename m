@@ -1,117 +1,125 @@
-Return-Path: <linux-kernel+bounces-206549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D869D900B49
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:33:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F435900B5A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C93EF1C20ED8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:33:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2294B233A1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3400195808;
-	Fri,  7 Jun 2024 17:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA49519B3D4;
+	Fri,  7 Jun 2024 17:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IhL/6QVb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Q+6EE1we"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F2B19478
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 17:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0681990C7;
+	Fri,  7 Jun 2024 17:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717781604; cv=none; b=r8tliAOm9NJxZHRGd4aJ15FmWKppuX8hvZZgWLAWmnakRRJXatWRN2pQcvnBlZHmGl9mP+faJp02blrlz7yYptT5P990I50+eYuDaICd9yfsV93PUoBrr0aLH4Ycf9AdRxeDyrx8rsnYTosa7OsqpilRzJMY3SthhBW60yZo+2o=
+	t=1717782020; cv=none; b=dk7wLFva+LkdJwxfm3IZxWUXy5VbfG2ZDVFNchc1CydKsb8NBRDhz/4byDJ5h/JMcbr3hFRtdFdIk4t1B22k3zizJfXQUYHVrjJEavEAfB/S1Ila2rSULt8W7UXmKeuTNcaFbJ29SWxPOhgMk0altuW2VKFqkJYF853ajGTTjrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717781604; c=relaxed/simple;
-	bh=DJkQykK9Jx8Er6B2H79K1ibbQjfGa6B7jp8dJp37if8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bh1Ig7b0eaRmb2+bpHoQd69Yl/1tn0uA+sMpdqJ8fbMXVAvX+ngozN54pOmvV74PbnmlNAEBdWqutzOAxzV0rI/x7ZaymxY58D5IH2czLiX07bhUofK9ns16K8QbteDuxZfwQy/yDPzbl+pObcBIr2zQF3vw2wLNRRC+qSVvzK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IhL/6QVb; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717781603; x=1749317603;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=DJkQykK9Jx8Er6B2H79K1ibbQjfGa6B7jp8dJp37if8=;
-  b=IhL/6QVbEcHioKcFnbfh+jswziPyN+7X5Pyfkll1PAdBcBUqR7Nm0TgL
-   2gt9XOBCBR+CzJgzQ0WUc3Mi3I0/9rPYkIWZac3tsWiEP51bBX6gRgBvO
-   txHq1EzZQU/X4598fOAXhUMUhV5C8m+Exz8/xCeGx/CrXrY9zCyyyx+jJ
-   CuhHSS/3H75Xo7aYXplBcLncMxVlhUwFBcusLNJmFTwnNSY8kCjv+RdMq
-   KcEMgrBsLAtqa2JTna+SY9PxuCIElUR+DUXemeWcZMVm0Zof/n1LUhCuT
-   cLdd5/+OF4Am+NQdnhxPC6TYaZiXenSSjsJIXaVUKj0U782pGYcZspfQA
-   w==;
-X-CSE-ConnectionGUID: gly0ZibDT4+P/x2JRMSLKA==
-X-CSE-MsgGUID: ctTqKdF1S4G7yMbkqh3pxw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="18340859"
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="18340859"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 10:33:23 -0700
-X-CSE-ConnectionGUID: /8hFgTybQ6WQEnECxLAI0Q==
-X-CSE-MsgGUID: x027f1S3ROuFajdE0DBjig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="38494227"
-Received: from jacob-builder.jf.intel.com ([10.54.39.125])
-  by fmviesa010.fm.intel.com with ESMTP; 07 Jun 2024 10:33:22 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: "Lu Baolu" <baolu.lu@linux.intel.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	iommu@lists.linux.dev
-Cc: "Tian, Kevin" <kevin.tian@intel.com>,
-	Yi Liu <yi.l.liu@intel.com>,
-	sanjay.k.kumar@intel.com,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH] iommu/vt-d: Handle volatile descriptor status read
-Date: Fri,  7 Jun 2024 10:38:17 -0700
-Message-Id: <20240607173817.3914600-1-jacob.jun.pan@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1717782020; c=relaxed/simple;
+	bh=5ehjn2LZqwpSxZUdIEwtBAwcjwj0nCHl2AY28EQYwAY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=akWCW5kLpvOTdB4EBiUXP9e4vT5HG1saMYYpccy0GhDKEZgdIoTwjRwIgH69KeQ3tkI5AgZ0e21Ja8YVrFfSe5fHn+bjPi4bCOxDkJyQBd6c1pUptV5yC9MsXDM9pMYwG7s7iutvDiv/u22QG7ESsEoyNet+vVB+IAY7ia7slLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Q+6EE1we; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 457HZUvr007842;
+	Fri, 7 Jun 2024 17:40:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=5IKUAiqbsySEKKfuRunWhtwKGIhajIoajUUF2vUjRY0=; b=Q+
+	6EE1weqSdNrtg4YwThDjWMx0jmFpP8pLA4vD2xyDZT8IFNm8NMieqKHuu+cV+DIC
+	mr5xar3fdxvTgPwByEyRPP1Uwiyjug34oQOD37G3GkaRvSQ2mkCEYTfUSl2w3gFw
+	ngNnJe0tap8Ia2X649/QAsKothL5QkGUZPdj/4/VCVxTj00X90CSp+L/PRJrQ1Kx
+	SgfZPQZz4eiUShwQQCUPZobZ9i7XhAUfsS/n/9GQFTA/mFKOst0ddlrhL7T/uuWm
+	3tl5dAGTCua7Iop0P+oPtA2Mrxjd+92QUv0+Kdk3ozDVrfRBKBhbl0+jvXSkpZ1+
+	EDnkiHcXy0ljofywBgaQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yka7pc28y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 17:40:14 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 457HeCF5020059
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 7 Jun 2024 17:40:12 GMT
+Received: from hu-okukatla-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 7 Jun 2024 10:40:07 -0700
+From: Odelu Kukatla <quic_okukatla@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Georgi Djakov <djakov@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Kees Cook <keescook@chromium.org>, <cros-qcom-dts-watchers@chromium.org>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>, <quic_rlaggysh@quicinc.com>,
+        <quic_mdtipton@quicinc.com>, <quic_okukatla@quicinc.com>
+Subject: [PATCH v5 0/4] Add support for QoS configuration
+Date: Fri, 7 Jun 2024 23:09:23 +0530
+Message-ID: <20240607173927.26321-1-quic_okukatla@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Dx8Ucj6W1Rxdxh1gFd0TL2eZejeybnCd
+X-Proofpoint-ORIG-GUID: Dx8Ucj6W1Rxdxh1gFd0TL2eZejeybnCd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-07_10,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ malwarescore=0 adultscore=0 spamscore=0 bulkscore=0 clxscore=1015
+ phishscore=0 mlxlogscore=875 lowpriorityscore=0 impostorscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406070130
 
-Queued invalidation wait descriptor status is volatile in that IOMMU hardware
-writes the data upon completion.
+This series adds QoS support for QNOC type device which can be found on
+SC7280 platform. It adds support for programming priority,
+priority forward disable and urgency forwarding. This helps in
+priortizing the traffic originating from different interconnect masters
+at NOC (Network On Chip).
 
-Use READ_ONCE() to prevent compiler optimizations which ensures memory
-reads every time. As a side effect, READ_ONCE() also enforces strict types and
-may add an extra instruction. But it should not have negative
-performance impact since we use cpu_relax anyway and the extra time(by
-adding an instruction) may allow IOMMU HW request cacheline ownership easier.
+Changes in v5:
+ - Replaced platform_get_resource() and devm_ioremap_resource() with
+   devm_platform_ioremap_resource() API.
+ - Initialized the qosbox pointer in ICC node using compound literal.
+ - Added conditional check for clock property in dt-bindings to the 
+   providers which need clocks.
 
-e.g. gcc 12.3
-BEFORE:
-	81 38 ad de 00 00       cmpl   $0x2,(%rax)
+Odelu Kukatla (4):
+  interconnect: qcom: icc-rpmh: Add QoS configuration support
+  interconnect: qcom: sc7280: enable QoS configuration
+  dt-bindings: interconnect: add clock property to enable QOS on SC7280
+  arm64: dts: qcom: sc7280: Add clocks for QOS configuration
 
-AFTER (with READ_ONCE())
-    772f:       8b 00                   mov    (%rax),%eax
-    7731:       3d ad de 00 00          cmp    $0x2,%eax //status data is 32 bit
+ .../interconnect/qcom,sc7280-rpmh.yaml        |  53 ++++
+ arch/arm64/boot/dts/qcom/sc7280.dtsi          |   3 +
+ drivers/interconnect/qcom/icc-rpmh.c          |  93 ++++++
+ drivers/interconnect/qcom/icc-rpmh.h          |  35 +++
+ drivers/interconnect/qcom/sc7280.c            | 274 ++++++++++++++++++
+ 5 files changed, 458 insertions(+)
 
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
----
- drivers/iommu/intel/dmar.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/intel/dmar.c b/drivers/iommu/intel/dmar.c
-index 304e84949ca7..1c8d3141cb55 100644
---- a/drivers/iommu/intel/dmar.c
-+++ b/drivers/iommu/intel/dmar.c
-@@ -1446,7 +1446,7 @@ int qi_submit_sync(struct intel_iommu *iommu, struct qi_desc *desc,
- 	 */
- 	writel(qi->free_head << shift, iommu->reg + DMAR_IQT_REG);
- 
--	while (qi->desc_status[wait_index] != QI_DONE) {
-+	while (READ_ONCE(qi->desc_status[wait_index]) != QI_DONE) {
- 		/*
- 		 * We will leave the interrupts disabled, to prevent interrupt
- 		 * context to queue another cmd while a cmd is already submitted
 -- 
-2.25.1
+2.17.1
 
 
