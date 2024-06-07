@@ -1,124 +1,76 @@
-Return-Path: <linux-kernel+bounces-206586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 417B9900BBA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:11:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5927C900BBD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:13:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C87EE1F22186
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:11:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8C742820BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE61219AD68;
-	Fri,  7 Jun 2024 18:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 232FF19ADA8;
+	Fri,  7 Jun 2024 18:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="grDTLYT9"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DBC13793E;
-	Fri,  7 Jun 2024 18:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="h+wvZN29"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBF51805A;
+	Fri,  7 Jun 2024 18:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717783879; cv=none; b=Zvr0GZx986qqBzknjF/4H8PFrZXS+w52SQYOv0hzgnb8v9TXDOiWZrBtio9f753h6Kd2xO2pK8JYgYq29hC5kZuZJzisKdnWyBBxb0ArQOVO/ARMfyBZ24jw3AUG/m0xjbOAJvVD/D3hMzRUSeqrIeUyJGo/8QvHrLPvwCveQUI=
+	t=1717784015; cv=none; b=WwBLgdXWQ04plAZtJHdxR1eIH5hiJ7nPN1qu2RD9c+3TY8LYr6hKOmeQUQ0h/KStMffHJrOAS8R061wyJA2rXE2TaDjdPHpvVD5tiLJx7G6YEf7OC4R1pa9rpwzO8AugDGSozJQzRlOSErI9zvXGp1qLp1xP40m4fsAcmAShRVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717783879; c=relaxed/simple;
-	bh=uP6g4ZiyWGtPQ7RHo7iYlw0mMYp0OieY9LHKtLNrOrk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=qLleepPxvc7BnckRDUIH7zZ6iCZP7Xt22wdXyaDl8My7mgosThCiIEVXlltMWq9Sb0jM+Ae7BndKMwBCrcDl1PMMmYVxHNwwiBdB0WmnXWB/CSeCmjWVWR+J8PUdDTsgyVezNNFwGbLsqeSGVlg2K89jzo0DS9wlRqCqpmZq+BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=grDTLYT9; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 457IB8qc084349;
-	Fri, 7 Jun 2024 13:11:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717783868;
-	bh=1NbOSS+4rivslz6nKFc+8bXVa0m/UsOBAIGS0ru8ukg=;
-	h=From:Date:Subject:To:CC;
-	b=grDTLYT90srjuBoZvfUFkjM143ofl3i5zfoh4N9yTXUBt6pR1/HurXe05CTGtf34U
-	 cl3iPYQT/z5H42N36j12692D7c4LeL0G72dUoQWhl6Jh5fm0hj8/NtHfQsZL1t7TFW
-	 YU9NSdHMF1+P2qoYxow6aRp9d3ZMW2rrUNaCvrZs=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 457IB8Mp034461
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 7 Jun 2024 13:11:08 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 7
- Jun 2024 13:11:08 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 7 Jun 2024 13:11:08 -0500
-Received: from localhost (jluthra.dhcp.ti.com [172.24.227.116])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 457IB7ew118297;
-	Fri, 7 Jun 2024 13:11:08 -0500
-From: Jai Luthra <j-luthra@ti.com>
-Date: Fri, 7 Jun 2024 23:41:03 +0530
-Subject: [PATCH v2] dmaengine: ti: k3-udma: Fix BCHAN count with UHC and HC
- channels
+	s=arc-20240116; t=1717784015; c=relaxed/simple;
+	bh=s5GSFaFoJcsg/hAU2dY/KMvqsMAVK1Cf04UTs2129N8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=bWfQHpF10NXKiswQ94R3eEkzE1OxGSpMUsP1pFPrK68CSx8tiiNenq+uuEz8eiHBa4i+H+uBrSEgGixcwFAKVs1nZy5e3h1J6atnHkrYuavqBy117i6QLTRLaPZv9loY65XTBkYgPRTMkX5E5jwREoveiAQ1lIIaN2Joj9opCA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=h+wvZN29; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.49.54] (c-73-118-245-227.hsd1.wa.comcast.net [73.118.245.227])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 0434E20B915A;
+	Fri,  7 Jun 2024 11:13:32 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0434E20B915A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1717784013;
+	bh=aXOI8I3hDZWU29vODgReaIQCdEBRorPPInPYeuxKqCQ=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=h+wvZN295NR2froIv2yYq2O9EWCYJfvCb5LYzNhr2NBU8AENEBflZGzyyKVQDXCHr
+	 zv5AOxXzeaGaDCTmCD7GVQhQt/kFphLn5vn5BUC+NDscnoTQ6ijoOefPgmMng3N5Av
+	 ZCpyZJHlzjIIqzwjjWLKcJhmeydE0djoqX1Xr310=
+Message-ID: <b50da76e-bb46-4761-87ed-116e06d19ff5@linux.microsoft.com>
+Date: Fri, 7 Jun 2024 11:13:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Cc: eahariha@linux.microsoft.com, Andi Shyti <andi.shyti@kernel.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] docs: i2c: summary: start sentences consistently.
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org
+References: <20240607111726.12678-1-wsa+renesas@sang-engineering.com>
+ <20240607111726.12678-2-wsa+renesas@sang-engineering.com>
+Content-Language: en-US
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+In-Reply-To: <20240607111726.12678-2-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240607-bcdma_chan_cnt-v2-1-bf1a55529d91@ti.com>
-X-B4-Tracking: v=1; b=H4sIADZNY2YC/3WMQQ6DIBREr2L+ujRIlUhXvUdjDHyw/oXYACFtD
- Hcvum9m9WYyb4foArkI92aH4DJF2nwFcWkAF+1fjpGtDIKLjkveMYN21dOxTegTMwYlclS96BX
- U0zu4mT6n8DlWXiimLXxPf26P9q8qt6zGDeomZjlY1I9EV9xWGEspPyTVN9epAAAA
-To: Peter Ujfalusi <peter.ujfalusi@gmail.com>, Vinod Koul <vkoul@kernel.org>
-CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Devarsh Thakkar <devarsht@ti.com>,
-        Jayesh Choudhary <j-choudhary@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>, Jai Luthra <j-luthra@ti.com>
-X-Mailer: b4 0.12.4
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-From: Vignesh Raghavendra <vigneshr@ti.com>
+On 6/7/2024 4:17 AM, Wolfram Sang wrote:
+> Change the first paragraphs to contain only one space after the end of
+> the previous sentence like in the rest of the document.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  Documentation/i2c/summary.rst | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
 
-Unlike other channel counts in CAPx registers, BCDMA BCHAN CNT doesn't
-include UHC and HC BC channels. So include them explicitly to arrive at
-total BC channel in the instance.
+Looks good to me.
 
-Fixes: 8844898028d4 ("dmaengine: ti: k3-udma: Add support for BCDMA channel TPL handling")
-Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
-Signed-off-by: Jai Luthra <j-luthra@ti.com>
----
-Changes in v2:
-- Add all BCHANs in a single operation
-- Update the Fixes tag to the commit adding TPL support
-- Link to v1: https://lore.kernel.org/r/20240604-bcdma_chan_cnt-v1-1-1e8932f68dca@ti.com
----
- drivers/dma/ti/k3-udma.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/dma/ti/k3-udma.c b/drivers/dma/ti/k3-udma.c
-index 6400d06588a2..df507d96660b 100644
---- a/drivers/dma/ti/k3-udma.c
-+++ b/drivers/dma/ti/k3-udma.c
-@@ -4472,7 +4472,9 @@ static int udma_get_mmrs(struct platform_device *pdev, struct udma_dev *ud)
- 		ud->rchan_cnt = UDMA_CAP2_RCHAN_CNT(cap2);
- 		break;
- 	case DMA_TYPE_BCDMA:
--		ud->bchan_cnt = BCDMA_CAP2_BCHAN_CNT(cap2);
-+		ud->bchan_cnt = BCDMA_CAP2_BCHAN_CNT(cap2) +
-+				BCDMA_CAP3_HBCHAN_CNT(cap3) +
-+				BCDMA_CAP3_UBCHAN_CNT(cap3);
- 		ud->tchan_cnt = BCDMA_CAP2_TCHAN_CNT(cap2);
- 		ud->rchan_cnt = BCDMA_CAP2_RCHAN_CNT(cap2);
- 		ud->rflow_cnt = ud->rchan_cnt;
-
----
-base-commit: d97496ca23a2d4ee80b7302849404859d9058bcd
-change-id: 20240604-bcdma_chan_cnt-bbc6c0c95259
-
-Best regards,
--- 
-Jai Luthra <j-luthra@ti.com>
-
+Reviewed-by: Easwar Hariharan <eahariha@linux.microsoft.com>
 
