@@ -1,168 +1,159 @@
-Return-Path: <linux-kernel+bounces-206371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 679A590088A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:18:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0BD1900887
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 058131F235D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:18:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E2CD1C22669
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9BA194121;
-	Fri,  7 Jun 2024 15:18:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DBBD195808;
+	Fri,  7 Jun 2024 15:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="JK9nUzKZ"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X7v4NTKD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B381615B133;
-	Fri,  7 Jun 2024 15:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479411922FD;
+	Fri,  7 Jun 2024 15:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717773523; cv=none; b=bQ0zhDCRFd5UYqFZyMMveoqVoVqfNbKQtnEB0DtY68M3+qgk+IL6+6ituLMfy+PYiFXyyz2vJKL4dkvc6PbFwn344iz5s625C14N05oCu1ql08flzV3/95pfeBlN4G9iZIhYg3Ql0DvEiCbtKOkuSOu203GWImKD1dsd5qB7ZAY=
+	t=1717773511; cv=none; b=DyYAIRmcmTjoSI0v2iYX5yFpwHuqX3EiWhy4eCDvwt1WC/2vaxqpIEzkw5sua39YbQgKZiOTinTlvRxBxY+Etuj2p/Xtq5yzvYpLdeAdv1bi/tVpcT3y0h4vM2LGUf1zSZRM/7k0y29JoHitSbPJ01s801tkEXTiirTqfHJhsRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717773523; c=relaxed/simple;
-	bh=cHicvuNsB6FBsP+p24Oei7cf3LE105dI1jDELbVa/L8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qp4Ka2B6FVMinIaGjMnoUVnM2DGfO+XjHTphay12DdmebXnfZA4ASs7DDhMqSeVOR1Y2kYIgawTUzkomIWj4MD50Ejx3/Vvm02+IqXMdm6GMkOC58XOGex1+DPtEuWeeenlEBWBUxnMEYJDfOnZXHF0ddiaT+W0zrV1lNZEVEGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=JK9nUzKZ; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 457AErQ2014896;
-	Fri, 7 Jun 2024 08:18:36 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=q
-	HWv3FV88gHLyPrpIGGB1AAf2zkoSjgvgaCyZbzsiAY=; b=JK9nUzKZT82UeZPPF
-	Aghut2iUYcMiCXBLaxPgk0sFOj2f1wOSRJlf8Bm7iGmmaHXz87AHYDMg8fG4L0kr
-	2BOVZqMRykw1NNkxzwyxLwpfbujtKTEnhCJ4ZMkm3Bf1iE7axrkRovczZT3CJIem
-	AlXWg+11gAGXv59Cj075qlrL97nBE/Z79PKA+hmnnPgqR4j/f4xQBceXNScKxm2V
-	MkDbk6vkOhSopatD0msJFsdE8cZ9EyWLj0HwjfOuwF6BLXKmpBZ8TaCmNSk19Eul
-	FIb0Q0W26TOHU9kWCd+lNf0cJUo1nCHoAT3S2DvEoExp28iWT7OQzwX98IbJjoxO
-	79Ocg==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3ym09ngx2t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 08:18:36 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 7 Jun 2024 08:18:35 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 7 Jun 2024 08:18:35 -0700
-Received: from Dell2s-9.sclab.marvell.com (unknown [10.110.150.250])
-	by maili.marvell.com (Postfix) with ESMTP id 6D5443F7097;
-	Fri,  7 Jun 2024 08:18:35 -0700 (PDT)
-From: Witold Sadowski <wsadowski@marvell.com>
-To: <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC: <broonie@kernel.org>, <robh@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <pthombar@cadence.com>, Witold Sadowski <wsadowski@marvell.com>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v8 1/4] spi: dt-bindings: cadence: Add Marvell overlay bindings documentation for Cadence XSPI
-Date: Fri, 7 Jun 2024 08:18:28 -0700
-Message-ID: <20240607151831.3858304-2-wsadowski@marvell.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240607151831.3858304-1-wsadowski@marvell.com>
-References: <20240607151831.3858304-1-wsadowski@marvell.com>
+	s=arc-20240116; t=1717773511; c=relaxed/simple;
+	bh=mx+HUEjgAJNMiC9UnPN48IwI2aMt7Q4WkoEfs7332KA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ncqRUMeSYKRFqKBBXyVGAt9T/TNq/KWj09L8tfq3BQZbc+wKz/baxB8W3w+2geJnyKk48MulZFR9NavpWndCI3UxXysDHrhRz4lI2736h5ql1WjwrR6SwNzTQ22SG3evX2vUF6tqM0FYJvS/tgwinRSqWmmilI7yAw0GGwat5aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X7v4NTKD; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717773511; x=1749309511;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=mx+HUEjgAJNMiC9UnPN48IwI2aMt7Q4WkoEfs7332KA=;
+  b=X7v4NTKDS6+VW7mTYImdN7IaNVh/UeqRIWWU+z0Slg30p4i3tZUpY0lQ
+   Wi9T6blpyuzZ/PsR2CxJBrg4Rj1CDSInF7ZUKGSiqsV6GVLUY2zbQvX/C
+   xJMDTk+k5b0QF/9JZa/Y2xj4iq29E5vh0moVmVTjbmocwoATO3ZGVul2l
+   bwe/j9VuxIdrrCigP+g5WpsZI6yNRsZFxI2LMhs4ziE3MNKZZOkUm54mx
+   5SGXOMbgydWjMaV/GRBJMVz5UVWLwmrYgHp4OzRH3Hr5Mv2lcncQElRJR
+   z3YGhWZznyXGnF1H5SC0Uyz+hbbZYC1PihEUaBNU40oCtqGNRz93Ylb74
+   w==;
+X-CSE-ConnectionGUID: fet2cx53Q+K1irDaY+WkBA==
+X-CSE-MsgGUID: 0pKbWhI7S2KWhPuFq4p5Qg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="37028793"
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="37028793"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 08:18:30 -0700
+X-CSE-ConnectionGUID: sJPDrhkSQHC0MIwJ+Xr9Qw==
+X-CSE-MsgGUID: gozCqHLWQa6HT+JxZPxvww==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="43295641"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 08:18:30 -0700
+Message-ID: <4fe39e45c117a976b60dfb37234551391050b199.camel@linux.intel.com>
+Subject: Re: [PATCH v1 2/6] cpufreq: intel_pstate: Do not update
+ global.turbo_disabled after initialization
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Xi Ruoyao <xry111@xry111.site>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+  Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Date: Fri, 07 Jun 2024 08:18:29 -0700
+In-Reply-To: <CAJZ5v0gvY6FGwhzTKrmNnKc48ixWAgTeT3Sw2tOUfshDwq3NcA@mail.gmail.com>
+References: <13494237.uLZWGnKmhe@kreacher> <8366982.T7Z3S40VBb@kreacher>
+	 <bf3ebf1571a4788e97daf861eb493c12d42639a3.camel@xry111.site>
+	 <6d5ee74605bd9574baa5ed111cb54e959414437a.camel@linux.intel.com>
+	 <6ebadacd8aaa307a5766cdb1b4d4a5c69acd87ac.camel@xry111.site>
+	 <30a30c5107a47a2cc3fd39306728f70dd649d7fe.camel@linux.intel.com>
+	 <f382e06635b3b52841d1e0c11dcf639d225edae0.camel@xry111.site>
+	 <29d69252dcdc398f147c9139a8666d09e7bd831d.camel@linux.intel.com>
+	 <0324bc3a88654855719cd48a5ed69a34eea31037.camel@xry111.site>
+	 <c3526e7a0e80ec1a3a011259c38ab4b772040ea4.camel@linux.intel.com>
+	 <48eba83030e155f703b4248e9c1ae65aa44b1a83.camel@xry111.site>
+	 <CAJZ5v0jjLgG3VY_kBYc4mTrL2ybD2LfBTk2_H7xY0+Aq5g827A@mail.gmail.com>
+	 <f34c20ae3feac0e3570125f124e440d51c5e4d9b.camel@linux.intel.com>
+	 <1da736da33a61de92314934ecf7fa0420d6d6b81.camel@linux.intel.com>
+	 <aa643910265b9d92a397d5148b31d37b2c421b8b.camel@xry111.site>
+	 <63e98f2151ef64de92cf7e3da796937755ea5552.camel@linux.intel.com>
+	 <258ce61c155c28937620f6abe57a39f2b4b0ff56.camel@xry111.site>
+	 <101b903e58f2ebae60934edc374c7cda09f83de1.camel@linux.intel.com>
+	 <CAJZ5v0jBBgjBny0Ps9bvHc7q1Un_6sdudpNL0==Z5HB+gHH0Hw@mail.gmail.com>
+	 <651d11578646200cdb0a91c46ed09a22f29e94a0.camel@linux.intel.com>
+	 <1031cc4e4b507628531d9115ce7e4bc588dbab1c.camel@xry111.site>
+	 <a2f992adc034063de7f63e9065976f39f9929503.camel@linux.intel.com>
+	 <CAJZ5v0gvY6FGwhzTKrmNnKc48ixWAgTeT3Sw2tOUfshDwq3NcA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: -pPalRsH_V91tp1wSFGpPqfKhDs7CdPq
-X-Proofpoint-ORIG-GUID: -pPalRsH_V91tp1wSFGpPqfKhDs7CdPq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-07_09,2024-06-06_02,2024-05-17_01
 
-Add new bindings for the v2 Marvell xSPI overlay: marvell,cn10-xspi-nor
-compatible string. This new compatible string distinguishes between the
-original and modified xSPI block.
+On Fri, 2024-06-07 at 17:04 +0200, Rafael J. Wysocki wrote:
+> On Wed, Jun 5, 2024 at 2:05=E2=80=AFPM srinivas pandruvada
+> <srinivas.pandruvada@linux.intel.com> wrote:
+> >=20
+> > On Wed, 2024-06-05 at 13:21 +0800, Xi Ruoyao wrote:
+> > > On Tue, 2024-06-04 at 09:56 -0700, srinivas pandruvada wrote:
+> > > > > > With such a delay, I am not sure how this even worked
+> > > > > > before.
+> > >=20
+> > > It didn't work out of box but it worked after manually writing 0
+> > > to
+> > > no_turbo after 20 seconds, see
+> > > https://bugzilla.kernel.org/show_bug.cgi?id=3D218702.
+> >=20
+> > That make sense. So it never worked out of box. The
+> > store_no_turbo()
+> > has additional read for turbo flag before, which is removed now. I
+> > think adding that back will will restore old behavior.
+> >=20
+> > diff --git a/drivers/cpufreq/intel_pstate.c
+> > b/drivers/cpufreq/intel_pstate.c
+> > index 4b986c044741..0d5330e5b96b 100644
+> > --- a/drivers/cpufreq/intel_pstate.c
+> > +++ b/drivers/cpufreq/intel_pstate.c
+> > @@ -1301,6 +1301,8 @@ static ssize_t store_no_turbo(struct kobject
+> > *a,
+> > struct kobj_attribute *b,
+> >=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 no_turbo =3D !!clamp_t(int, =
+input, 0, 1);
+> >=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 global.turbo_disabled =3D turbo_i=
+s_disabled();
+> > +
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (no_turbo =3D=3D global.n=
+o_turbo)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 goto unlock_driver;
+> >=20
+> >=20
+> > Need to adjust the mutex around it also.
+>=20
+> Anyhow, it can be made work.
+>=20
+> global.turbo_disabled can be updated right before it is checked in
+> store_no_turbo(), so if 0 is written to no_turbo (and global.no_turbo
+> is 1), it will succeed if global.turbo_disabled changes from 1 to 0.
+>=20
+> Something like the attached (untested) patch.
 
-Also add an optional base for the xfer register set with an additional
-reg field to allocate the xSPI Marvell overlay XFER block.
+Should work.
 
-Signed-off-by: Witold Sadowski <wsadowski@marvell.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../devicetree/bindings/spi/cdns,xspi.yaml    | 32 ++++++++++++++++---
- 1 file changed, 28 insertions(+), 4 deletions(-)
+Xi,
+Please test so that we can close this issue.
 
-diff --git a/Documentation/devicetree/bindings/spi/cdns,xspi.yaml b/Documentation/devicetree/bindings/spi/cdns,xspi.yaml
-index eb0f92468185..38a5795589de 100644
---- a/Documentation/devicetree/bindings/spi/cdns,xspi.yaml
-+++ b/Documentation/devicetree/bindings/spi/cdns,xspi.yaml
-@@ -15,24 +15,27 @@ description: |
-   single, dual, quad or octal wire transmission modes for
-   read/write access to slaves such as SPI-NOR flash.
- 
--allOf:
--  - $ref: spi-controller.yaml#
--
- properties:
-   compatible:
--    const: cdns,xspi-nor
-+    enum:
-+      - cdns,xspi-nor
-+      - marvell,cn10-xspi-nor
- 
-   reg:
-     items:
-       - description: address and length of the controller register set
-       - description: address and length of the Slave DMA data port
-       - description: address and length of the auxiliary registers
-+      - description: address and length of the xfer registers
-+    minItems: 3
- 
-   reg-names:
-     items:
-       - const: io
-       - const: sdma
-       - const: aux
-+      - const: xfer
-+    minItems: 3
- 
-   interrupts:
-     maxItems: 1
-@@ -42,6 +45,27 @@ required:
-   - reg
-   - interrupts
- 
-+allOf:
-+  - $ref: spi-controller.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - marvell,cn10-xspi-nor
-+    then:
-+      properties:
-+        reg:
-+          minItems: 4
-+        reg-names:
-+          minItems: 4
-+    else:
-+      properties:
-+        reg:
-+          maxItems: 3
-+        reg-names:
-+          maxItems: 3
-+
- unevaluatedProperties: false
- 
- examples:
--- 
-2.43.0
+Thanks,
+Srinivas
 
 
