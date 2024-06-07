@@ -1,116 +1,198 @@
-Return-Path: <linux-kernel+bounces-205239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79FCF8FF9DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:05:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E3A8FF9E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15F0DB21BA4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:05:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 782F01C22241
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F27F12B77;
-	Fri,  7 Jun 2024 02:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E2911718;
+	Fri,  7 Jun 2024 02:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="robFGF0U"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpEoAvwV"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2DFB64E
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 02:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C09AB64E
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 02:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717725904; cv=none; b=B0azSX17KrYZ6IKOis8jiWLP+EQDr+ABmovhe6+VTIHD5ZsexQJG/m9LdJ+ZHyV4Bf9P/Vkqm07MU+LhSTD+qbg/DsfTJtQ+O3gV61LF6bX+GWdNnle2oGqbqvkyubAcUPagiwsYFpG1qqApgLTxJ8yRvEgzNvtlHlvIcaoOEmU=
+	t=1717725964; cv=none; b=htAUlIcjMgDkz0PRpLDMSkPSwvxyxLIqK7Vl551rgn4GyVTAdQbWSxDo5BU2LpLwh26RXwCEzFIDLNgyac3MjOZqzaLEM/VTEoq1a4HTo5UZ3Fo9OcDlBLtqdKwfARbjOYy/kmseeOoeqCKFFlm91vNDfAHGRTMDw9dyT1tvgp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717725904; c=relaxed/simple;
-	bh=zWikLDUbPHzpkyuMa9SvJfhr99C0pRruMAI38ekM2cs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NQU8kPz70koOgjq2m73UcmyESdzCnoPs/GV/QI+Dy6NT1+93hkcsypGurXSYRHv2Y1kHLJk1+FCVIaTAfoej0sq6ktNzGk8txDu2IoMsg9RX14CxkTayOzlSC6/Evd9ElCoO/Mcl2vGpNjvtjpK43MpUhCeYjCoKk7WZSXmwcEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=robFGF0U; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2508320e62dso811928fac.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 19:05:02 -0700 (PDT)
+	s=arc-20240116; t=1717725964; c=relaxed/simple;
+	bh=xMeczsdAlv4UoRd1dy3o2EX9IC+SZrtDX6ksBtcaQK8=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=coYOY2m+MnO9lU16FpWgNtg13aTuuyhHEmX1ZRXlyQlbuzBvVdxJDbTyL5h+12ee6KvehFkPSwaqXJD8z2GmMt+jY/xR19eUpXu8Blx8sFGAqUZFY/eGiVN+rDpK1yQJNNssItxso8GIUvaBzY/s+NhhUfCWdps795o12NrMFh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cpEoAvwV; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52b992fd796so1672134e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 19:06:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1717725902; x=1718330702; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HKuuaXk4YNdRbMNXNWT/TcuUhZ1SuAkFriq95pCZdUs=;
-        b=robFGF0UW7hpXvpys9yc0fpSd1xUkDYMAWmRxVUvpe8dKxtOzxflIC9sxnD3fUKQbt
-         QdraQkBgdwY5NQqtm4TW+vXv26p+JFU/s+0YqtqKGbPMC54ggKEUdCquIZRcKkNL75q6
-         iG8P8I4tNToh/GKO86BPnodiQTZ86b6OoNMFg1Z4/bkEBzLiHRtLCvdFr9CH4rX3NM4O
-         xU0Kldy2k3K/EqRc+ML9BtbH6nn6rrcZloW91Gi8KzJ1ZAeMnr6z3MnmBMsK8/2TEbUA
-         9AbygJfucBr7El+fkzvw1P/RXlLG4teq/AYyiNEvR04UoRnB4cEyG0qWBnff8S21mopR
-         VEtA==
+        d=gmail.com; s=20230601; t=1717725961; x=1718330761; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QmdigPbiZh7u73WyQrLPcTJkkfoD9rCWbKcRqUVrOeI=;
+        b=cpEoAvwVwCA/Nb7rybs4U+fb5vcW/IqcQVrB9ksi9rpuH4bFefH91GRvZ1lP+qu95V
+         +/YojcWmSd1kAL2hB4V2oGXbrGt6fDhs255GzQmannjagBql96jH+k2rHzg7jeCl8iy7
+         CPDn/V0QO+MhLX+BP9c/lJuxn39As0EkuH2EU7pzmJxBn1dMfB28WfqYQA3FEH//+YeX
+         swex8ee7xh8zteOkcEdep63RG6kcUROjkMvSRjVy3N4EiOXsqmQqaDgLo2Pa7jV5hfmP
+         YnVRH496//ULEspBxHdc4rkYIoMC20a09Vo9/m4NOB+MgVSKZSo7M9p3ACAE3rQ4NMXQ
+         oPvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717725902; x=1718330702;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HKuuaXk4YNdRbMNXNWT/TcuUhZ1SuAkFriq95pCZdUs=;
-        b=jRQpSHuSP3I5gxGsEuJi1BuFNzdttD9QtUaGSiscyOvJARG3H+rV0nGS7eNnmqbHwR
-         T1uBxLaR6YDe0+co7502PlW4n+7buDY91KH/q5P/6bTVoIGCDJf2rtyEKLEGAG1+NEl2
-         sil6sZml4eLJn0rX7b9hCieVo4xPFaHGZGL1qM0eQe71KtIpE2IazRERd3cSd9nsWIrq
-         PxvctUubVC+j8auWB2H9XZX/jExq/JodxyJzXtYm+3E1i7gTyFiFh68sFXKoIE/ernt/
-         gS2UIdbTM5BLFcAISUePxDmtrhAbzUXVK+30nWXn/Lflnca9AZLae4LUMLntYBmAL2IQ
-         CgUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWEX0ULUX18W3iYpMadbtQrtt08KIkocL7TYrLR88WYa9cjo6TREJtyJX9WaOHV4I1gq3JcdhOvXC1DhN4SarBn3vzNKk/V1n6EQfHQ
-X-Gm-Message-State: AOJu0YxNTBFo/IzajS1YYo35SBhfkWI+raHstk4ZUVFeeOt72CVZ3CWb
-	zWY4CVHlN2wL0zJ1RJ15naPrgTXYK+LuI05Zzw2ERkuFxXktmeEeimAsqcXath4=
-X-Google-Smtp-Source: AGHT+IG0TPOxnGysWka2PW7vDNgAiA6BVNC6fKtQ+0c898BXoBu9nsrqdblxPQrgncIqEfCUsLuOCQ==
-X-Received: by 2002:a05:6870:548c:b0:24f:ebcd:6aa9 with SMTP id 586e51a60fabf-25464384754mr1399622fac.1.1717725901930;
-        Thu, 06 Jun 2024 19:05:01 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd495083sm1682576b3a.136.2024.06.06.19.05.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 19:05:01 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sFOyQ-0070gF-0J;
-	Fri, 07 Jun 2024 12:04:58 +1000
-Date: Fri, 7 Jun 2024 12:04:58 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] vfs: add rcu-based find_inode variants for iget ops
-Message-ID: <ZmJqyrgPXXjY2Iem@dread.disaster.area>
-References: <20240606140515.216424-1-mjguzik@gmail.com>
+        d=1e100.net; s=20230601; t=1717725961; x=1718330761;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QmdigPbiZh7u73WyQrLPcTJkkfoD9rCWbKcRqUVrOeI=;
+        b=JLrfX5c7cpGh7btELXzWu8D1+YpGui/SYqVTX846n/a68Wv/UhJdfkR+NrFwgj4n3L
+         znsrXtrAzYQLchQ3YCSq1vZUhJd0pVtNqbo1X+jFhkGqpBYkCWTxiojbKnlIJfZLBFQZ
+         dkHt8VNXqtR0YmcJOv8O1q7wMoiLImv2S56L8GTmutqX7nCvHq9j3/TgxXIj7ZFyXPze
+         wknTdboTI7WkMMVBylWOb223/bkTHgI+KM7W+OmHpByrNrWsTOstR1kkfAvb6qRheAWg
+         g5f8NCpqo5NM9SRB4sxU/40dRlYybdqt5aDbjTLpux3JfudSjzMM1V3XF9odI/EUJovK
+         vsxA==
+X-Forwarded-Encrypted: i=1; AJvYcCWoCmDQZqNIqu4HbA82p7N/7GqxVFAseiDYmR7lQQgb9fPsLHCdb6puNO4JEbVEVLdFuGBDzz9jKF0EoTssb1GrMcuDKASRvGWekCt7
+X-Gm-Message-State: AOJu0Ywyhcw95BlXvTSJrB85rPQsad9b0RMK+4ZuN/3FQDEijcr/g11h
+	TFfsz3BUJkjvw3X2gIeAkxaIgTanhmcUXQf29slHvVfH545BmrQknmEYIhmixBAnmoR/+leay3r
+	7YIlZ6sP67J1N7sYffeGELEdTBbU=
+X-Google-Smtp-Source: AGHT+IFQlGkIbJhF9IM0XawMYHjSy8OtNnb4ijLh5dvdjX1Odn7hgcWDHLCBTdhu8/9XzpTX36XSKzRXzES+6SGR3qY=
+X-Received: by 2002:a05:6512:3e14:b0:52b:bb10:6c19 with SMTP id
+ 2adb3069b0e04-52bbb106d7cmr554972e87.23.1717725960650; Thu, 06 Jun 2024
+ 19:06:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606140515.216424-1-mjguzik@gmail.com>
+From: Dave Airlie <airlied@gmail.com>
+Date: Fri, 7 Jun 2024 12:05:49 +1000
+Message-ID: <CAPM=9tyvjs75_Op_yXD=vD_ZLQwZRzio0=_oM=vGkeOkaGW=TA@mail.gmail.com>
+Subject: [git pull] drm fixes for 6.10-rc3
+To: Linus Torvalds <torvalds@linux-foundation.org>, Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jun 06, 2024 at 04:05:15PM +0200, Mateusz Guzik wrote:
-> Instantiating a new inode normally takes the global inode hash lock
-> twice:
-> 1. once to check if it happens to already be present
-> 2. once to add it to the hash
-> 
-> The back-to-back lock/unlock pattern is known to degrade performance
-> significantly, which is further exacerbated if the hash is heavily
-> populated (long chains to walk, extending hold time). Arguably hash
-> sizing and hashing algo need to be revisited, but that's beyond the
-> scope of this patch.
-> 
-> A long term fix would introduce fine-grained locking, this was attempted
-> in [1], but that patchset was already posted several times and appears
-> stalled.
+Hi Linus,
 
-Why not just pick up those patches and drive them to completion?
+Weekly fixes, vmwgfx leads the way this week, with minor changes in xe
+and amdgpu and a couple of other small fixes.
 
-I have no issues with somebody else doing the finishing work for
-that code; several of the patches in that series were originally
-written by other people in the first place...
+Seems quiet enough.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Dave.
+
+drm-fixes-2024-06-07:
+drm fixes for 6.10-rc3
+
+xe:
+- Update the LMTT when freeing VF GT config
+
+amdgpu:
+- Fix shutdown issues on some SMU 13.x platforms
+- Silence some UBSAN flexible array warnings
+
+panel:
+- sitronix-st7789v: handle of_drm_get_panel_orientation
+  failing error.
+
+vmwgfx:
+- filter modes greater than available graphics memory
+- fix 3D vs STDU enable
+- remove STDU logic from mode valid
+- logging fix
+- memcmp pointers fix
+- remove unused struct
+- screen target lifetime fix
+
+komeda:
+- unused struct removal
+The following changes since commit c3f38fa61af77b49866b006939479069cd451173:
+
+  Linux 6.10-rc2 (2024-06-02 15:44:56 -0700)
+
+are available in the Git repository at:
+
+  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2024-06-07
+
+for you to fetch changes up to eb55943aab89be99a26e34fc2175ebb3583a2778:
+
+  Merge tag 'drm-misc-next-fixes-2024-06-07' of
+https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
+(2024-06-07 08:40:58 +1000)
+
+----------------------------------------------------------------
+drm fixes for 6.10-rc3
+
+xe:
+- Update the LMTT when freeing VF GT config
+
+amdgpu:
+- Fix shutdown issues on some SMU 13.x platforms
+- Silence some UBSAN flexible array warnings
+
+panel:
+- sitronix-st7789v: handle of_drm_get_panel_orientation
+  failing error.
+
+vmwgfx:
+- filter modes greater than available graphics memory
+- fix 3D vs STDU enable
+- remove STDU logic from mode valid
+- logging fix
+- memcmp pointers fix
+- remove unused struct
+- screen target lifetime fix
+
+komeda:
+- unused struct removal
+
+----------------------------------------------------------------
+Chen Ni (1):
+      drm/panel: sitronix-st7789v: Add check for of_drm_get_panel_orientation
+
+Dave Airlie (4):
+      Merge tag 'drm-xe-fixes-2024-06-04' of
+https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
+      Merge tag 'amd-drm-fixes-6.10-2024-06-06' of
+https://gitlab.freedesktop.org/agd5f/linux into drm-fixes
+      Merge tag 'drm-misc-fixes-2024-06-07' of
+https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
+      Merge tag 'drm-misc-next-fixes-2024-06-07' of
+https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
+
+Dr. David Alan Gilbert (2):
+      drm/komeda: remove unused struct 'gamma_curve_segment'
+      drm/vmwgfx: remove unused struct 'vmw_stdu_dma'
+
+Ian Forbes (6):
+      drm/vmwgfx: Filter modes which exceed graphics memory
+      drm/vmwgfx: 3D disabled should not effect STDU memory limits
+      drm/vmwgfx: Remove STDU logic from generic mode_valid function
+      drm/vmwgfx: Standardize use of kibibytes when logging
+      drm/vmwgfx: Don't destroy Screen Target when CRTC is enabled but inactive
+      drm/vmwgfx: Don't memcmp equivalent pointers
+
+Mario Limonciello (1):
+      drm/amd: Fix shutdown (again) on some SMU v13.0.4/11 platforms
+
+Michal Wajdeczko (1):
+      drm/xe/pf: Update the LMTT when freeing VF GT config
+
+Tasos Sahanidis (1):
+      drm/amdgpu/pptable: Fix UBSAN array-index-out-of-bounds
+
+ drivers/gpu/drm/amd/include/pptable.h              | 91 ++++++++++++----------
+ .../gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_4_ppt.c   | 20 ++---
+ .../gpu/drm/arm/display/komeda/komeda_color_mgmt.c |  5 --
+ drivers/gpu/drm/panel/panel-sitronix-st7789v.c     |  4 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.c                | 19 ++---
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.h                |  3 -
+ drivers/gpu/drm/vmwgfx/vmwgfx_gmrid_manager.c      |  4 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.c                | 28 +++----
+ drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c               | 60 ++++++++++++--
+ drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c         |  1 +
+ 10 files changed, 135 insertions(+), 100 deletions(-)
 
