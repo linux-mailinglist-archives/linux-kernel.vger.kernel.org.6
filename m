@@ -1,223 +1,157 @@
-Return-Path: <linux-kernel+bounces-205522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6B88FFD09
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:24:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E65ED8FFD0C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D619F1C20A27
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:24:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86A691F21B20
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE76815534A;
-	Fri,  7 Jun 2024 07:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F228115380D;
+	Fri,  7 Jun 2024 07:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="R7RHFVQ7"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cLOvVjG/"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC355153BF6;
-	Fri,  7 Jun 2024 07:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A54153BF6;
+	Fri,  7 Jun 2024 07:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717744953; cv=none; b=ABJITls0Jz8ir24IPnGFXLWXjcVadHuAHpjnBQjfGGCQ1TZKgGB6yX1MZEktXMVsmfGys/0BnPHQyhEakp6ZykSCg6e8NjN0tgFP6cpiF3AHQ6+GhQfQUyASQKkn3QLP2BfwCuXaGnLkunTaAe5d1FsI0g+vbniyV3ALzX/g6/A=
+	t=1717745021; cv=none; b=GOhJmxaYJW0zSx5/gwoqYj6gV22kwDnyxrVQuLfo+1XmOdHr6dFo0aeJ+D8KDMWrB5Pkwfiv5BrqCg+WUTPROhRsLnzikU2X8VhdvnzKcKojCWwlWQi4hPT7CUeDOiYf98VECtc8wiMH29oSZpct2Ns1YVHboiJbveTXLY/UESA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717744953; c=relaxed/simple;
-	bh=8FgdtkmI6xFEuhnErHtI49QG7efrDkPTcNTO2g4FoXY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JFgIN53B/V1bYvY/sVDBj8Lf3r/Rgq42PI6y28aD3fM3dWT+6lghULbgfXW3ttSHQyLmX/FfGlAHnuZYkwaPcN1BbWCH2G8i3gEz1yHIJqI/dfA7bp321TfEoJ/LOvAWJyTBZcfLmgZ32pNyrL2DFApGZ2r2OX+4tdiF+tcr6Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=R7RHFVQ7; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4576wO5u014427;
-	Fri, 7 Jun 2024 07:22:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
- content-transfer-encoding : content-type : date : from : in-reply-to :
- message-id : mime-version : references : subject : to; s=pp1;
- bh=fFJS4yh38VY53xVb/V9wThVVeVXDCBlv8lVrbQejh/0=;
- b=R7RHFVQ7DhZXg896d6/VmA1daPHUDRKapTYQ2I/xkISHbf3eEjicmZjAo2SB6cmkvUiG
- RCwtsICPdrYHgdCvGBSdz2ZlEV6QfKax61OCgYwLhzWJAdkDSJH+xbv0spuV0Kvh7nC4
- yBqglBXkmeOxtjuFjeMsnAH0pSTwVUalCmMayDP6QLNIYOpGlXBuUL11rUp8WxJBVluK
- IvENIZOf0C+aILvpt+EzbQMtXyzDX2Q5gntODQrS/ETyD97AkGu6jmAF2g5Ne6a7JUni
- p4vAt24F+dGoqqxqJATLahfySXmJ6sTk5mxeOMqN+T9199jOCM0aeGGzqp8asOCAqStg Ig== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ykwdb023w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 07:22:16 +0000
-Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4577MGha019157;
-	Fri, 7 Jun 2024 07:22:16 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ykwdb023s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 07:22:15 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4576iS0h022786;
-	Fri, 7 Jun 2024 07:22:15 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ygg6mq2um-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 07:22:15 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4577MB7N9962238
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 7 Jun 2024 07:22:13 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 63BDD58059;
-	Fri,  7 Jun 2024 07:22:11 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 747DC58043;
-	Fri,  7 Jun 2024 07:22:02 +0000 (GMT)
-Received: from [9.43.49.13] (unknown [9.43.49.13])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  7 Jun 2024 07:22:02 +0000 (GMT)
-Message-ID: <54073c0c-62b1-433a-85cc-06e412af44bf@linux.ibm.com>
-Date: Fri, 7 Jun 2024 12:52:00 +0530
+	s=arc-20240116; t=1717745021; c=relaxed/simple;
+	bh=6AjstlSgvqy5Myga4SE3f4mOcGOy21gQsyvN4ZBIWe0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=W9kyaZSAzJMuYHiw1y1L1SAHKznUkCepUroKWLVntCszkB0sxz4pPo+3e5uhairHXkrVBsFI2p/klrQ8bHnXoJyBcrTMbFQtQNde6Z3fuMXR2F22MGiEqL92Z1YanK9NaWIS3FZnkK0B/vYeiYI/g+l3eDAjOHIYBSd9k6fEIFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cLOvVjG/; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CA9C41BF204;
+	Fri,  7 Jun 2024 07:23:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1717745017;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I6tMAb+dn3fe7Mnc885F0j2M5rYeGbZyeUY/YOGiMQ4=;
+	b=cLOvVjG/AGwEYg9ropFA8ur+BGiRrnLmuSl/vLSQgHkj1UB7y1577VXzoiE2NsjoWTBU1d
+	4Pm3o6+BcL18ql7j5+tM2Tjp5kQFN7XFQJJA5h8rBW4weCEkNSYqnBcyNmUjlpyk/QKXAI
+	8J4+8k8efAgaoRYKYme5R2ePqfNCeQDX6CYXTtnKfV83kg1TBHuPpbA+9QvzcgJItzCMlJ
+	AxqI0Ryuop8xRqDo+yb4i0+w7I38cBnr8yWxmm60GTIJpQLR4mGmcmdPGRHyqR8OVWj5w2
+	VGBRHXEX7+2ZR2WyDhv5V+Bhu7lYhBb51pbOokVs93fEbXwQ2RmuWSulFdwOJg==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kamel BOUHARA
+ <kamel.bouhara@bootlin.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Marco Felsch
+ <m.felsch@pengutronix.de>, Jeff LaBundy <jeff@labundy.com>,
+ catalin.popescu@leica-geosystems.com, mark.satterthwaite@touchnetix.com,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ bsp-development.geo@leica-geosystems.com
+Subject: Re: [PATCH v13 3/3] Input: Add TouchNetix axiom i2c touchscreen driver
+In-Reply-To: <ZmIq9jmkZtEaGw19@google.com>
+References: <20240603153929.29218-1-kamel.bouhara@bootlin.com>
+ <20240603153929.29218-4-kamel.bouhara@bootlin.com>
+ <Zl5ZmYyntq7OJOvZ@google.com> <20240605124746.GA57733@tpx1.home>
+ <7ca4a22f903313128de5c0f65a49b319@bootlin.com>
+ <ZmIq9jmkZtEaGw19@google.com>
+Date: Fri, 07 Jun 2024 09:23:36 +0200
+Message-ID: <87bk4dfc7b.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf sched map: Add command-name option to filter the
- output map
-To: Chen Yu <yu.c.chen@intel.com>
-Cc: acme@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
-        acme@redhat.com, atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-References: <20240417152521.80340-1-vineethr@linux.ibm.com>
- <ZmKtlQdwk5uwha06@chenyu5-mobl2>
-Content-Language: en-US
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-In-Reply-To: <ZmKtlQdwk5uwha06@chenyu5-mobl2>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: BDHmvPaXKfg8XF2TqWwANnMnCMhxMX0g
-X-Proofpoint-ORIG-GUID: nz61hUFU2PvCFxgGYpciql2kCzpq5rqA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-07_02,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
- mlxscore=0 malwarescore=0 suspectscore=0 impostorscore=0
- lowpriorityscore=0 priorityscore=1501 mlxlogscore=999 adultscore=0
- bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2406070050
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: gregory.clement@bootlin.com
 
-Hi Chen Yu,
+Hello Dmitry,
 
-On 07/06/24 12:19, Chen Yu wrote:
-> On 2024-04-17 at 20:55:21 +0530, Madadi Vineeth Reddy wrote:
->> By default, perf sched map prints sched-in events for all the tasks
->> which may not be required all the time as it prints lot of symbols
->> and rows to the terminal.
->>
->> With --command-name option, one could specify the specific command
->> for which the map has to be shown. This would help in analyzing the
->> CPU usage patterns easier for that specific command. Since multiple
->> PID's might have the same command name, using command-name filter
->> would be more useful for debugging.
->>
->> For other tasks, instead of printing the symbol, ** is printed and
->> the same . is used to represent idle. ** is used instead of symbol
->> for other tasks because it helps in clear visualization of command
->> of interest and secondly the symbol itself doesn't mean anything
->> because the sched-in of that symbol will not be printed(first sched-in
->> contains pid and the corresponding symbol).
->>
->> 6.8.0
->> ======
->>   *A0                   213864.670142 secs A0 => migration/0:18
->>   *.                    213864.670148 secs .  => swapper:0
->>    .  *B0               213864.670217 secs B0 => migration/1:21
->>    .  *.                213864.670223 secs
->>    .   .  *C0           213864.670247 secs C0 => migration/2:26
->>    .   .  *.            213864.670252 secs
->>
->> 6.8.0 + patch (--command-name = schbench)
->> =============
->>    **  .   ** *A0       213864.671055 secs A0 => schbench:104834
->>   *B0  .   .   A0       213864.671156 secs B0 => schbench:104835
->>   *C0  .   .   A0       213864.671187 secs C0 => schbench:104836
->>   *D0  .   .   A0       213864.671219 secs D0 => schbench:104837
->>   *E0  .   .   A0       213864.671250 secs E0 => schbench:104838
->>    E0  .  *D0  A0
->>
->> This helps in visualizing how a benchmark like schbench is spread over
->> the available cpus while also knowing which cpus are idle(.) and which
->> are not(**). This will be more useful as number of CPUs increase.
->>
->> Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
->> ---
->>  tools/perf/Documentation/perf-sched.txt |  4 ++++
->>  tools/perf/builtin-sched.c              | 17 ++++++++++++++---
->>  2 files changed, 18 insertions(+), 3 deletions(-)
->>
->> diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
->> index 5fbe42bd599b..b04a37560935 100644
->> --- a/tools/perf/Documentation/perf-sched.txt
->> +++ b/tools/perf/Documentation/perf-sched.txt
->> @@ -94,6 +94,10 @@ OPTIONS for 'perf sched map'
->>  --color-pids::
->>  	Highlight the given pids.
->>  
->> +--command-name::
->> +	Map output only for the given command name.
->> +	(** indicates other tasks while . is idle).
->> +
->>  OPTIONS for 'perf sched timehist'
->>  ---------------------------------
->>  -k::
->> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
->> index 0fce7d8986c0..e60836da53e5 100644
->> --- a/tools/perf/builtin-sched.c
->> +++ b/tools/perf/builtin-sched.c
->> @@ -156,6 +156,7 @@ struct perf_sched_map {
->>  	const char		*color_pids_str;
->>  	struct perf_cpu_map	*color_cpus;
->>  	const char		*color_cpus_str;
->> +	const char		*command;
->>  	struct perf_cpu_map	*cpus;
->>  	const char		*cpus_str;
->>  };
->> @@ -1594,8 +1595,6 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->>  
->>  	sched->curr_thread[this_cpu.cpu] = thread__get(sched_in);
->>  
->> -	printf("  ");
->> -
->>  	new_shortname = 0;
->>  	if (!tr->shortname[0]) {
->>  		if (!strcmp(thread__comm_str(sched_in), "swapper")) {
->> @@ -1605,7 +1604,8 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->>  			 */
->>  			tr->shortname[0] = '.';
->>  			tr->shortname[1] = ' ';
->> -		} else {
->> +		} else if (!sched->map.command || !strcmp(thread__comm_str(sched_in),
->> +								sched->map.command)) {
->>
-> 
-> I've tested on my machine and it looks good. One minor question, can we do
-> fuzzy name matching? Say, there are many tasks 'a-taskname-b',
-> and we can filter them via
-> perf sched map --command-name=taskname
+> On Wed, Jun 05, 2024 at 03:48:20PM +0200, Kamel BOUHARA wrote:
+>> [...]
+>>=20
+>> > > > +
+>> > > > +	error =3D devm_request_threaded_irq(dev, client->irq, NULL,
+>> > > > +					  axiom_irq, IRQF_ONESHOT, dev_name(dev), ts);
+>> > > > +	if (error) {
+>> > > > +		dev_info(dev, "Request irq failed, falling back to polling mode=
+");
+>> > >=20
+>> > > I do not think you should fall back to polling mode if you fail to g=
+et
+>> > > interrupt. If it was not specified (client->irq) then I can see that
+>> > > we
+>> > > might want to fall back, but if the system configured for using
+>> > > interrupt and you can not get it you should bail out.
+>> > >=20
+>> >=20
+>> > Yes, clear, the polling mode can be decorrelated to the irq not provid=
+ed
+>> > case.
+>>=20
+>> Just to make sure I understood, is this what you propose ?
+>>=20
+>> if (client->irq) {
+>>         error =3D devm_request_threaded_irq(...)
+>>         if (error) {
+>> 		dev_warn(dev, "failed to request IRQ\n");
+>> 		client->irq =3D 0;
+>>          }
+>> }
+>>=20
+>> if(!client->irq)=C2=A0{
+>>     // setup polling stuff
+>>     ...
+>> }
+>
+> No, if you fail to acquire interrupt that was described in ACPI/DT it
+> should be treated as an error, like this:
+>
+> 	if (client->irq) {
+> 		error =3D devm_request_threaded_irq(...)
+> 		if (error)
+> 			return dev_err_probe(...);
+> 	} else {
+> 		.. set up polling ..
+> 	}
+>
+> This also makes sure that if interrupt controller is not ready and
+> requests probe deferral we will not end up with device in polling
+> mode.
 
-Yes, maybe I will try to find a way to do both fuzzy name matching and exact name matching.
-Thanks for taking a look. I will implement it in v2.
+In the case of probe deferral, I see the benefit of treating it as an
+error. However, in the other case, I find it better to fall back to
+polling mode with a big error message than just exiting in error. As a
+user, I think we prefer having a degraded feature over not having the
+feature at all.
 
-Thanks and Regards
-Madadi Vineeth Reddy
+So what about something like:
 
-> 
-> thanks,
-> Chenyu
+	if (client->irq) {
+		error =3D devm_request_threaded_irq(...)
+		if (error =3D=3D -EPROBE_DEFER)
+			return dev_err_probe(...);
+		dev_warn("Big error message");
+                client->irq =3D 0;
+	}
+	if (!client->irq) {
+		.. set up polling ..
+	}
 
+Gregory
+
+>
+> Thanks.
+>
+> --=20
+> Dmitry
 
