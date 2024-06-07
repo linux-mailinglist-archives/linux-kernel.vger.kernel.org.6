@@ -1,296 +1,147 @@
-Return-Path: <linux-kernel+bounces-206828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09078900E59
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 01:10:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2101900E5C
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 01:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FFDD28393A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 23:10:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0466A282FB1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 23:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D32A7345B;
-	Fri,  7 Jun 2024 23:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A54A74E11;
+	Fri,  7 Jun 2024 23:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GV5rTm4W"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U9UOmWtR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D218D1C6A1;
-	Fri,  7 Jun 2024 23:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761914EB38;
+	Fri,  7 Jun 2024 23:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717801842; cv=none; b=PH66id+JxdFzZRKOrbzBFkAgtr7bvsaWJyJgOSq4iD4gy2k3bYbIRPd3p06Et/p25wTCN/yJznlwkmKYTJnfm0rj7aAal087ZlU0FvXBxpcsI2czkxpqSBEZKsh2lug7EPgaqiTD2RxY9tI3z1ot6imUQvpPqyQdYvaSLSWfz0k=
+	t=1717802035; cv=none; b=F4+96QW8iZvylShbj80M3GHyl4WzOcLJTs4her3T2oh3S7sXRezlN6DTtNDyP+GB7YKF0xRL1IXP6imEhrFPfIAFCuBdKILUAeW4NQgpcJQGiV0ALv2ec6SKwLiwDNqbvwmMF+Gtry19A0IEjJp99TEV/ZYpbiLL+Kcx+arBIWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717801842; c=relaxed/simple;
-	bh=KcRUThBuR5QNs+vXJjr2HlSRy23gPY2N/ly3/vJIUAI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=YcnLqdj+IWwrrO88/R2g/jZy30QGPCyHv/h6TpGgwa/x82DZ1sddTMl1iwEZDcsYwCBwXkMd8azSxr24L1T8Zadcs5jtpSr+qxE76vdDcSqFmon9O2uM+Mgws2ZWn2wAXsOiR6rTh8KVdIwyfcQpIJxc3tuSgEnTCmiVCgFKQzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GV5rTm4W; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 457HZpg4010206;
-	Fri, 7 Jun 2024 23:10:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=1BOu5b63kmJJ0cXnevJLGT
-	smnqAF6DrUJxjUPNnnbA0=; b=GV5rTm4WsLqEYPDfgNbkFII8woOcRMHKbI4FeO
-	fw5K6zq6IUMhspTg5XBa4Dcu3XbqEhYkXcNebBvhSp8YYWMyICD0cXxQ9wQomEKF
-	aVyMPtADjKAQoK6o9lvdDUqIPTVYXDUBaEEIQdNOZU6bKAcKaTYbe7FxMy4ggRse
-	lrDuRqYTK+NZScF5j0T+uW00cSGMTHha3uW+ndZOVqnOoUm0sscd1sTjjPsSpL1z
-	MAs4NMF9BR6EMFgCQYtXyPssLI8zS1EylLu1nUqKRyrDM9xClxBymY0g13ApF1ze
-	fo1+Z34GqIYzkClrhVhKyBwcSo4N1/soCkEqGK70F2aumeLw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjk89fvea-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 23:10:24 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 457NANVU011407
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 7 Jun 2024 23:10:23 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 7 Jun 2024
- 16:10:22 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Fri, 7 Jun 2024 16:10:20 -0700
-Subject: [PATCH] tty: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1717802035; c=relaxed/simple;
+	bh=2q2MxS0PnAoB7ta6Xve9stwAf+iHBMYFHvuKsBomFdo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ubV4p4FAZbrJ9Y9YAztTjPK0LXH6EByXgY2Ja3N6wov0b8ImA483s71xb5STzN+AaGaJmWIm47C+thl1OJxmsNqGyytIA8eQVUpmk3kWJJ3u6h3ccWowJ7Pb+As3KjvNukgSxarsSxLadr8lPnrYbFu10rHZOn+mzKCLcXLjct8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U9UOmWtR; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717802033; x=1749338033;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2q2MxS0PnAoB7ta6Xve9stwAf+iHBMYFHvuKsBomFdo=;
+  b=U9UOmWtRjtg/fPW4q397VyAU8O54g5GmBLaIZpEzV4QJtY+xKrJ5W+q3
+   f5ZaKIowPMzD00/K3sq+soh3si6JowkfyZ0nYylkkakVzCZCoRdkAIjxe
+   99qg7tYRpwgPWRrBrK+l/YLRsfK/RozMNUxmP8nazKTtq54+9gXzYjD+U
+   lOaaqrcj6+xjeVFsy1QcBxzpkDMuNWqkvZf3jGIceE6UrGsOkI34IedKK
+   mRRz9YkraxIBuR87tFNEpSGQpi9M/3B3ljJJauM46l/3KKGfW2sJ/SQw/
+   UX5eGAyN7QoP55o3Yq69nXZ1q5RHkAsr5+hueBtFz19Q3bbPaZZ5xdwCJ
+   Q==;
+X-CSE-ConnectionGUID: XgxktWHkQvCTH/NzAvGoeg==
+X-CSE-MsgGUID: I4JLj3aQQRWBWjOJfxOvvg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="14779161"
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="14779161"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 16:13:53 -0700
+X-CSE-ConnectionGUID: gS9eduv5R+2Zina7itibXA==
+X-CSE-MsgGUID: huPaYgdESsWna5lAxNy27Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="75957644"
+Received: from lkp-server01.sh.intel.com (HELO 472b94a103a1) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 07 Jun 2024 16:13:50 -0700
+Received: from kbuild by 472b94a103a1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sFimK-0000g2-0A;
+	Fri, 07 Jun 2024 23:13:48 +0000
+Date: Sat, 8 Jun 2024 07:13:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH] ASoC: dt-bindings: convert tas571x.txt to dt-schema
+Message-ID: <202406080603.d9mWzFV2-lkp@intel.com>
+References: <20240607-topic-amlogic-upstream-bindings-convert-tas57xx-v1-1-ebf1e4919bb1@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240607-md-drivers-tty-v1-1-50a7efb8bed8@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAFuTY2YC/x3MTQ6CQAxA4auQrm1SRvyJVzEsClOkiYymHQmEc
- HdHl9/ivQ1cTMXhVm1gMqvrKxXUhwr6kdNDUGMxBAoNnemCU8RoOos55ryi1Ec+XUMciAKU6G0
- y6PIf3tvijl2wM079+Ns8NX0WnNizGOz7F5qLGoZ/AAAA
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby
-	<jirislaby@kernel.org>,
-        "James E.J. Bottomley"
-	<James.Bottomley@HansenPartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <linux-parisc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-actions@lists.infradead.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: fU1wOBfN5rbKVGkvaH0Z_XRRxLPs3Qme
-X-Proofpoint-ORIG-GUID: fU1wOBfN5rbKVGkvaH0Z_XRRxLPs3Qme
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-07_15,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 impostorscore=0 phishscore=0 mlxscore=0 bulkscore=0
- adultscore=0 malwarescore=0 priorityscore=1501 clxscore=1011
- suspectscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2405170001 definitions=main-2406070171
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607-topic-amlogic-upstream-bindings-convert-tas57xx-v1-1-ebf1e4919bb1@linaro.org>
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/8250/8250_base.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/8250/8250_pxa.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/8250/serial_cs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/esp32_uart.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/esp32_acm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/owl-uart.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/n_hdlc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/n_gsm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/ttynull.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/goldfish.o
+Hi Neil,
 
-Add all missing invocations of the MODULE_DESCRIPTION() macro.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/tty/amiserial.c                | 1 +
- drivers/tty/goldfish.c                 | 1 +
- drivers/tty/n_gsm.c                    | 1 +
- drivers/tty/n_hdlc.c                   | 1 +
- drivers/tty/serial/8250/8250_parisc.c  | 1 +
- drivers/tty/serial/8250/8250_pcilib.c  | 1 +
- drivers/tty/serial/8250/8250_port.c    | 1 +
- drivers/tty/serial/8250/8250_pxa.c     | 1 +
- drivers/tty/serial/8250/serial_cs.c    | 1 +
- drivers/tty/serial/esp32_acm.c         | 1 +
- drivers/tty/serial/esp32_uart.c        | 1 +
- drivers/tty/serial/owl-uart.c          | 1 +
- drivers/tty/serial/serial_mctrl_gpio.c | 1 +
- drivers/tty/synclink_gt.c              | 1 +
- drivers/tty/ttynull.c                  | 1 +
- 15 files changed, 15 insertions(+)
+[auto build test WARNING on c3f38fa61af77b49866b006939479069cd451173]
 
-diff --git a/drivers/tty/amiserial.c b/drivers/tty/amiserial.c
-index 8c964da75f2d..37164289277b 100644
---- a/drivers/tty/amiserial.c
-+++ b/drivers/tty/amiserial.c
-@@ -1660,5 +1660,6 @@ console_initcall(amiserial_console_init);
- 
- #endif /* CONFIG_SERIAL_CONSOLE && !MODULE */
- 
-+MODULE_DESCRIPTION("Serial driver for the amiga builtin port");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS("platform:amiga-serial");
-diff --git a/drivers/tty/goldfish.c b/drivers/tty/goldfish.c
-index 34421ec06a69..c60745f8e621 100644
---- a/drivers/tty/goldfish.c
-+++ b/drivers/tty/goldfish.c
-@@ -470,4 +470,5 @@ static struct platform_driver goldfish_tty_platform_driver = {
- 
- module_platform_driver(goldfish_tty_platform_driver);
- 
-+MODULE_DESCRIPTION("Goldfish TTY Driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
-index be35f7334ecd..5d37a0984916 100644
---- a/drivers/tty/n_gsm.c
-+++ b/drivers/tty/n_gsm.c
-@@ -4634,5 +4634,6 @@ module_init(gsm_init);
- module_exit(gsm_exit);
- 
- 
-+MODULE_DESCRIPTION("GSM 0710 tty multiplexor");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS_LDISC(N_GSM0710);
-diff --git a/drivers/tty/n_hdlc.c b/drivers/tty/n_hdlc.c
-index 1615f074ab86..4a4dc58b866a 100644
---- a/drivers/tty/n_hdlc.c
-+++ b/drivers/tty/n_hdlc.c
-@@ -822,6 +822,7 @@ static void __exit n_hdlc_exit(void)
- module_init(n_hdlc_init);
- module_exit(n_hdlc_exit);
- 
-+MODULE_DESCRIPTION("HDLC line discipline support");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Paul Fulghum paulkf@microgate.com");
- module_param(maxframe, int, 0);
-diff --git a/drivers/tty/serial/8250/8250_parisc.c b/drivers/tty/serial/8250/8250_parisc.c
-index 948d0a1c6ae8..4ba05a98791c 100644
---- a/drivers/tty/serial/8250/8250_parisc.c
-+++ b/drivers/tty/serial/8250/8250_parisc.c
-@@ -127,4 +127,5 @@ static int __init probe_serial_gsc(void)
- 
- module_init(probe_serial_gsc);
- 
-+MODULE_DESCRIPTION("Serial Device Initialisation for Lasi/Asp/Wax/Dino");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/tty/serial/8250/8250_pcilib.c b/drivers/tty/serial/8250/8250_pcilib.c
-index d234e9194feb..ea906d721b2c 100644
---- a/drivers/tty/serial/8250/8250_pcilib.c
-+++ b/drivers/tty/serial/8250/8250_pcilib.c
-@@ -37,4 +37,5 @@ int serial8250_pci_setup_port(struct pci_dev *dev, struct uart_8250_port *port,
- 	return 0;
- }
- EXPORT_SYMBOL_NS_GPL(serial8250_pci_setup_port, SERIAL_8250_PCI);
-+MODULE_DESCRIPTION("8250 PCI library");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index 893bc493f662..2786918aea98 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -3473,4 +3473,5 @@ int serial8250_console_exit(struct uart_port *port)
- 
- #endif /* CONFIG_SERIAL_8250_CONSOLE */
- 
-+MODULE_DESCRIPTION("Base port operations for 8250/16550-type serial ports");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/tty/serial/8250/8250_pxa.c b/drivers/tty/serial/8250/8250_pxa.c
-index f1a51b00b1b9..dc3870026bc6 100644
---- a/drivers/tty/serial/8250/8250_pxa.c
-+++ b/drivers/tty/serial/8250/8250_pxa.c
-@@ -181,5 +181,6 @@ OF_EARLYCON_DECLARE(mmp, "mrvl,mmp-uart", early_serial_pxa_setup);
- #endif
- 
- MODULE_AUTHOR("Sergei Ianovich");
-+MODULE_DESCRIPTION("driver for PXA on-board UARTS");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS("platform:pxa2xx-uart");
-diff --git a/drivers/tty/serial/8250/serial_cs.c b/drivers/tty/serial/8250/serial_cs.c
-index 2056aed46688..58e279ea7ee0 100644
---- a/drivers/tty/serial/8250/serial_cs.c
-+++ b/drivers/tty/serial/8250/serial_cs.c
-@@ -864,4 +864,5 @@ static struct pcmcia_driver serial_cs_driver = {
- };
- module_pcmcia_driver(serial_cs_driver);
- 
-+MODULE_DESCRIPTION("driver for PCMCIA serial devices");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/tty/serial/esp32_acm.c b/drivers/tty/serial/esp32_acm.c
-index d4e8bdb1cdef..85eb0392e379 100644
---- a/drivers/tty/serial/esp32_acm.c
-+++ b/drivers/tty/serial/esp32_acm.c
-@@ -455,4 +455,5 @@ module_init(esp32s3_acm_init);
- module_exit(esp32s3_acm_exit);
- 
- MODULE_AUTHOR("Max Filippov <jcmvbkbc@gmail.com>");
-+MODULE_DESCRIPTION("Espressif ESP32 USB ACM gadget support");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/tty/serial/esp32_uart.c b/drivers/tty/serial/esp32_uart.c
-index 6fc61f323355..8c86cf9cb763 100644
---- a/drivers/tty/serial/esp32_uart.c
-+++ b/drivers/tty/serial/esp32_uart.c
-@@ -775,4 +775,5 @@ module_init(esp32_uart_init);
- module_exit(esp32_uart_exit);
- 
- MODULE_AUTHOR("Max Filippov <jcmvbkbc@gmail.com>");
-+MODULE_DESCRIPTION("Espressif ESP32 UART support");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/tty/serial/owl-uart.c b/drivers/tty/serial/owl-uart.c
-index 8b60ac0ad7cd..ecec483d4d59 100644
---- a/drivers/tty/serial/owl-uart.c
-+++ b/drivers/tty/serial/owl-uart.c
-@@ -761,4 +761,5 @@ static void __exit owl_uart_exit(void)
- module_init(owl_uart_init);
- module_exit(owl_uart_exit);
- 
-+MODULE_DESCRIPTION("Actions Semi Owl family serial console");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/tty/serial/serial_mctrl_gpio.c b/drivers/tty/serial/serial_mctrl_gpio.c
-index e51ca593ab86..8855688a5b6c 100644
---- a/drivers/tty/serial/serial_mctrl_gpio.c
-+++ b/drivers/tty/serial/serial_mctrl_gpio.c
-@@ -385,4 +385,5 @@ void mctrl_gpio_disable_irq_wake(struct mctrl_gpios *gpios)
- }
- EXPORT_SYMBOL_GPL(mctrl_gpio_disable_irq_wake);
- 
-+MODULE_DESCRIPTION("Helpers for controlling modem lines via GPIO");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/tty/synclink_gt.c b/drivers/tty/synclink_gt.c
-index 8112d9d5a0d8..bd8d92ee7c53 100644
---- a/drivers/tty/synclink_gt.c
-+++ b/drivers/tty/synclink_gt.c
-@@ -89,6 +89,7 @@
-  */
- static const char driver_name[] = "SyncLink GT";
- static const char tty_dev_prefix[] = "ttySLG";
-+MODULE_DESCRIPTION("Device driver for Microgate SyncLink GT serial adapters");
- MODULE_LICENSE("GPL");
- #define MAX_DEVICES 32
- 
-diff --git a/drivers/tty/ttynull.c b/drivers/tty/ttynull.c
-index e4c4273993bc..6b2f7208b564 100644
---- a/drivers/tty/ttynull.c
-+++ b/drivers/tty/ttynull.c
-@@ -106,4 +106,5 @@ static void __exit ttynull_exit(void)
- module_init(ttynull_init);
- module_exit(ttynull_exit);
- 
-+MODULE_DESCRIPTION("NULL TTY driver");
- MODULE_LICENSE("GPL v2");
+url:    https://github.com/intel-lab-lkp/linux/commits/Neil-Armstrong/ASoC-dt-bindings-convert-tas571x-txt-to-dt-schema/20240607-175726
+base:   c3f38fa61af77b49866b006939479069cd451173
+patch link:    https://lore.kernel.org/r/20240607-topic-amlogic-upstream-bindings-convert-tas57xx-v1-1-ebf1e4919bb1%40linaro.org
+patch subject: [PATCH] ASoC: dt-bindings: convert tas571x.txt to dt-schema
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
+dtschema version: 2024.6.dev1+g833054f
+reproduce: (https://download.01.org/0day-ci/archive/20240608/202406080603.d9mWzFV2-lkp@intel.com/reproduce)
 
----
-base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
-change-id: 20240607-md-drivers-tty-e13a582df002
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406080603.d9mWzFV2-lkp@intel.com/
 
+dtcheck warnings: (new ones prefixed by >>)
+   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:263.22-266.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@3: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:268.22-273.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@4: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:275.24-278.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@5: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:280.22-283.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@6: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:285.22-288.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@7: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:290.29-293.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@8: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:305.11-309.6: Warning (unit_address_vs_reg): /soc@0/codec@57900000/port@0: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:311.11-315.6: Warning (unit_address_vs_reg): /soc@0/codec@57900000/port@1: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts:71.10-75.5: Warning (unit_address_vs_reg): /spdif-out/port@0: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts:82.10-86.5: Warning (unit_address_vs_reg): /comp-spdif-out/port@0: node has a unit name, but no reg or ranges property
+>> arch/arm64/boot/dts/socionext/uniphier-ld11-global.dtb: audio-codec@1d: Unevaluated properties are not allowed ('port' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/sound/ti,tas57xx.yaml#
+   arch/arm64/boot/dts/socionext/uniphier-ld11-global.dtb: /soc@0/smpctrl@59801000: failed to match any schema with compatible: ['socionext,uniphier-smpctrl']
+   arch/arm64/boot/dts/socionext/uniphier-ld11-global.dtb: spdif-out: 'port@0' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/sound/linux,spdif-dit.yaml#
+   arch/arm64/boot/dts/socionext/uniphier-ld11-global.dtb: comp-spdif-out: 'port@0' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/sound/linux,spdif-dit.yaml#
+--
+   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:396.22-399.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@3: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:401.22-406.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@4: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:408.24-411.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@5: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:413.22-416.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@6: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:418.22-421.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@7: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:423.29-426.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@8: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:438.11-442.6: Warning (unit_address_vs_reg): /soc@0/codec@57900000/port@0: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:444.11-448.6: Warning (unit_address_vs_reg): /soc@0/codec@57900000/port@1: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts:71.10-75.5: Warning (unit_address_vs_reg): /spdif-out/port@0: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts:82.10-86.5: Warning (unit_address_vs_reg): /comp-spdif-out/port@0: node has a unit name, but no reg or ranges property
+>> arch/arm64/boot/dts/socionext/uniphier-ld20-global.dtb: audio-codec@1b: Unevaluated properties are not allowed ('port' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/sound/ti,tas57xx.yaml#
+   arch/arm64/boot/dts/socionext/uniphier-ld20-global.dtb: /soc@0/smpctrl@59801000: failed to match any schema with compatible: ['socionext,uniphier-smpctrl']
+   arch/arm64/boot/dts/socionext/uniphier-ld20-global.dtb: /soc@0/usb@65a00000: failed to match any schema with compatible: ['socionext,uniphier-dwc3', 'snps,dwc3']
+   arch/arm64/boot/dts/socionext/uniphier-ld20-global.dtb: spdif-out: 'port@0' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/sound/linux,spdif-dit.yaml#
+   arch/arm64/boot/dts/socionext/uniphier-ld20-global.dtb: comp-spdif-out: 'port@0' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/sound/linux,spdif-dit.yaml#
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
