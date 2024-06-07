@@ -1,137 +1,146 @@
-Return-Path: <linux-kernel+bounces-205494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE4B8FFCC4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:10:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68E668FFCC6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0E5E2924AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:10:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E94DBB264FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBAC01553A6;
-	Fri,  7 Jun 2024 07:06:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9121515574B;
+	Fri,  7 Jun 2024 07:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="URFvW2rS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="dz4Wbqm4"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2BF15531D;
-	Fri,  7 Jun 2024 07:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2306153578
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 07:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717744013; cv=none; b=OPsVLDDvEZGQdnwU23D1rzimLxbg5eUXNXZvAbjF2COfPzAMx7Rdt40pHkZyXbcD4H+A3VHE4W5V1nPfXVzZ9IqMUecbRd7H5r8vW0mnoQdd4wqNjdgD/fgb8blQcj26G20VPZhHnB57m8ysSaxmNbQhEvQkoXwIWnXtOsBvJE8=
+	t=1717744034; cv=none; b=fPIXwfGEyNvJtF+I77+iih/+bcCrJ3965/hcwTM7o7MWNIRI/49x4BPfs58AjSbUKGDKKx0IYBuBjX0e89akwpvHH1VyVJy/nutXfCsTMOd/F22JtW/rGir98EHyOPOrNklz0A8ER+K3mGwXDSgDN7FFr6gjKfXyfDJJrZuvqjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717744013; c=relaxed/simple;
-	bh=KgqoOJeSFNIyWCBpAOWyOJN4QooMZnuPEsdUrLFh01c=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Qu/wEQhljfw0rVpA31+WzWF82lte+wZui4Drf92iGTOK8pfWKb7BBSMVwXaS/k+eh0jndXcN81Gx6xLsf5gp7op67aRnxt/8K1RG26+5/I9YT2X4xFMMi1HcbSu+24plem8WxviJOyBJx+L5gPpwCnjqey2+DNsrn1enVF4AHTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=URFvW2rS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 456MYhTW003946;
-	Fri, 7 Jun 2024 07:06:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kzt/KIUz2qA8B7BByBmBPdsXSQdi7Zqbug/nL928Tiw=; b=URFvW2rSKyHzney4
-	r6RpsyuAbjX+L6C8ZE/oxnZcM6y0JPP/KAAsTdyCAYGwX6LyGt8O3aIhROWCUUKR
-	a0ka+H5wjxbJLCXgJc50xoOVwT1u1US3YcbNiwm36Nv14QJGZOEnuTEnJPtOn35i
-	Q+/MCmWYN6k3if7UpGiQWHxEmeAwOnyZrsQ6ax4z7wTc0l5GzyvC9SbITC6hfXxp
-	N9x5PYUKEU9sq+9g0fpq3xywcQ1MU7cbC76H3rUR00x8j0ILb0LF+cz2wl400xVe
-	oYUyQF5aQ1IUVYydkW6pRuVdmKoM6TXJqRtDQwWrwwSHg71KPWlKppCm0g+fhkO4
-	AVDMow==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjxxaup1c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 07:06:48 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 45776lRf026669
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 7 Jun 2024 07:06:47 GMT
-Received: from [10.214.66.219] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 7 Jun 2024
- 00:06:44 -0700
-Subject: Re: [PATCH 1/5] dt-bindings: remoteproc: qcom,sm8550-pas: document
- the SDX75 PAS
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <konrad.dybcio@linaro.org>,
-        <manivannan.sadhasivam@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240606143858.4026-1-quic_nainmeht@quicinc.com>
- <20240606143858.4026-2-quic_nainmeht@quicinc.com>
- <4ed45f6d-fcc7-45d7-8df0-5470f7f75d0e@kernel.org>
-From: Naina Mehta <quic_nainmeht@quicinc.com>
-Message-ID: <6176567c-dbfd-b752-1e17-d0a5eb8f1379@quicinc.com>
-Date: Fri, 7 Jun 2024 12:36:41 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1717744034; c=relaxed/simple;
+	bh=uDKsXWnZBq8B1TZSbGrBofUZF8hvuJaCCCMe9c3tno4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j8gKL0TZMd07BkgjrjVFJbPiRVTHqdh6a2S7XdsGxd+AeHoXwaUyX2A5iKAtc3eoUk5Ny6vTv38Jr3goqu2pegp6fs0SLxWu94pECCTuVxTH86mSLzgUAJkwMIYLgdub/E9ohyUEVm5oI+TRrktG7ILztdUg1tbq6AzDuBw9tuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=dz4Wbqm4; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-375833acc98so1260515ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 00:07:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1717744032; x=1718348832; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8CLx8I7uIS4yN2qY8IP79uDVs9k1SwxKuZrHLU/16hk=;
+        b=dz4Wbqm42Bp05zD47ZT5UJX5xNZD2rHUqo2J5ey6CCNtibMXbhYzHBZhM80zEb+Ed+
+         moeaEH16tN8wYgyesy/ZoccwkUTa+FLo3f8GcBTC4VEkTmeIe+0TwZP0m/l2LPkcp0sb
+         MxpCYALqvOj9FGaWdZBJpDqQ9qlaHJTak7pfs6NZVlwGdE+8t3kAKd0BS15gI9WO1Xsv
+         rxAWmqvR5XYIkKZkUfQ4Lkz7CO7jdHrZkG7YoRGtbQN2PXmx0zPp3BALadVJN2xhMsVN
+         +72etnPkar/szOeg7ZxdkLwuoOaol71KoJHlj4ZoJXFNKjWHsxroguMsbr/6rSdDPrhm
+         hqDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717744032; x=1718348832;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8CLx8I7uIS4yN2qY8IP79uDVs9k1SwxKuZrHLU/16hk=;
+        b=wvM6HI1RsBejknMlFoGxqzZkM2yTO2vHJ9PuUc8TEpTlSO3naNgOOQFlj6wKUYHJ+7
+         fml2rEhTBc0M8u2OonDrltstxk9Y8Qjk22iTqkXvNCehuzO8sxtQjMO2HeqQSG9qjj9t
+         Y5UXz20Xb6eGcQxTE3zXIfzRqf6voky9iFq8Bp1ahxnplNk4zj4AsAJXci3Z2yhqxX2n
+         1Wzj/5UJjVLj0rKGKFzhcnO9u0HRblCmw/eR8WDWE4WjWj2mf2mlu5vkQgWnI20Q+BhP
+         7sm9sj3cXwyYanWWvIOBcbDRHEqFowyT25dWobc99jM6nzBXMspkV85wiRPI+DgILWSi
+         hA9g==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ/JhVjo4vUviwyO2cfR/Q3UdkcENKVbWKVx5FFDkjhpKXKblPL6Qfr06LML0zcRxx1RpXZ/It+P7ud8eCiB0JsffTzaJOUuN8zAlx
+X-Gm-Message-State: AOJu0YxxgTquW5TaLHD5U1de4Ai/6MPt07nQfrynXAQfJJYWyP0w4RdR
+	CbSUQlpMB4nBkS10XzqadX7jit3l0vhTpqGfNu5MXshdu/B8PoOPUAOEXhioWUrgM/NziFRVBAf
+	HaieGfesy7dWvd4xpWf+rT+PDPgMn7sPd5fZG5w==
+X-Google-Smtp-Source: AGHT+IFE09PTLjj0080/0bN8m/3yMGgMYsDcLZaSLR2FjJm1yUQBETVhznGnzF1DLd7cgzFg+hOq9wxArotyxseBiWU=
+X-Received: by 2002:a05:6e02:20e8:b0:374:9e82:7b51 with SMTP id
+ e9e14a558f8ab-375802fcc9bmr22082355ab.9.1717744031764; Fri, 07 Jun 2024
+ 00:07:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <4ed45f6d-fcc7-45d7-8df0-5470f7f75d0e@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: VuiD_dvzIC44Agy3-um7E9xH5u54F9Ur
-X-Proofpoint-GUID: VuiD_dvzIC44Agy3-um7E9xH5u54F9Ur
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-07_02,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
- priorityscore=1501 spamscore=0 malwarescore=0 mlxscore=0 bulkscore=0
- phishscore=0 suspectscore=0 lowpriorityscore=0 clxscore=1015
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406070049
+References: <20240429092113.70695-1-betterman5240@gmail.com>
+In-Reply-To: <20240429092113.70695-1-betterman5240@gmail.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Fri, 7 Jun 2024 12:37:01 +0530
+Message-ID: <CAAhSdy3HPGS48TeG5LxiECAtNyzmzsJPzo+_eicgxL28nAgoHg@mail.gmail.com>
+Subject: Re: [PATCH] RISC-V:KVM: Add AMO load/store access fault traps to
+ redirect to guest
+To: Yu-Wei Hsu <betterman5240@gmail.com>
+Cc: atishp@atishpatra.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/6/2024 8:19 PM, Krzysztof Kozlowski wrote:
-> On 06/06/2024 16:38, Naina Mehta wrote:
->> Document the MPSS Peripheral Authentication Service on SDX75 platform.
->>
->> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
->> ---
->>   .../devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml          | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
->> index 73fda7565cd1..02e15b1f78ab 100644
->> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
->> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
->> @@ -16,6 +16,7 @@ description:
->>   properties:
->>     compatible:
->>       enum:
->> +      - qcom,sdx75-mpss-pas
->>         - qcom,sm8550-adsp-pas
->>         - qcom,sm8550-cdsp-pas
->>         - qcom,sm8550-mpss-pas
-> 
-> Missing updates to allOf constraints. Are you sure this is the binding
-> for SDX75?
-SDX75 diverged from SDX55 due to introduction of separate DTB firmware 
-binary and addition of DSM and Qlink logging memory regions. Considering 
-these additions, SM8550 PAS bindings seem closest.
-Thanks for catching updates required for allOf constraints. I will add 
-sdx75 compatible in-line with qcom,sm8650-mpss-pas.
-Please let me know if you recommend creating new bindings for SDX75.
+On Mon, Apr 29, 2024 at 2:51=E2=80=AFPM Yu-Wei Hsu <betterman5240@gmail.com=
+> wrote:
+>
+> When unhandled AMO load/store access fault traps are not delegated to
+> VS mode (hedeleg), M mode redirects them back to S mode.
+> However, upon returning from M mode,the KVM executed in HS mode terminate=
+s
+> VS mode software.
+> KVM should redirect traps back to VS mode and let the VS mode trap handle=
+r
+> determine the next steps.
+> This is one approach to handling access fault traps in KVM,
+> not only redirecting them to VS mode or terminating it.
+>
+> Signed-off-by: Yu-Wei Hsu <betterman5240@gmail.com>
 
-Regards,
-Naina
+Overall this patch looks good to me but the patch subject and
+description can further simplified as follows:
 
-> 
-> Best regards,
-> Krzysztof
-> 
+    RISC-V: KVM: Redirect AMO load/store access fault traps to guest
+
+    The KVM RISC-V does not delegate AMO load/store access fault traps to
+    VS-mode (hedeleg) so typically M-mode takes these traps and redirects
+    them back to HS-mode. However, upon returning from M-mode, the KVM
+    RISC-V running in HS-mode terminates VS-mode software.
+
+    The KVM RISC-V should redirect AMO load/store access fault traps back
+    to VS-mode and let the VS-mode trap handler determine the next steps.
+
+I have taken care of the above at the time of queuing this patch.
+
+Reviewed-by: Anup Patel <anup@brainfault.org>
+
+Queued this patch for Linux-6.11
+
+Thanks,
+Anup
+
+> ---
+>  arch/riscv/kvm/vcpu_exit.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/riscv/kvm/vcpu_exit.c b/arch/riscv/kvm/vcpu_exit.c
+> index 2415722c01b8..ef8c5e3ec8a0 100644
+> --- a/arch/riscv/kvm/vcpu_exit.c
+> +++ b/arch/riscv/kvm/vcpu_exit.c
+> @@ -185,6 +185,8 @@ int kvm_riscv_vcpu_exit(struct kvm_vcpu *vcpu, struct=
+ kvm_run *run,
+>         case EXC_INST_ILLEGAL:
+>         case EXC_LOAD_MISALIGNED:
+>         case EXC_STORE_MISALIGNED:
+> +       case EXC_LOAD_ACCESS:
+> +       case EXC_STORE_ACCESS:
+>                 if (vcpu->arch.guest_context.hstatus & HSTATUS_SPV) {
+>                         kvm_riscv_vcpu_trap_redirect(vcpu, trap);
+>                         ret =3D 1;
+> --
+> 2.25.1
+>
 
