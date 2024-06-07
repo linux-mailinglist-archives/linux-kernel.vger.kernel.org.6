@@ -1,78 +1,103 @@
-Return-Path: <linux-kernel+bounces-206797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C4C900DE3
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:08:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5811F900DE5
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8896286CEA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:08:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67C351C214AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A8915572C;
-	Fri,  7 Jun 2024 22:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF49B155300;
+	Fri,  7 Jun 2024 22:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eyEHQaJM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="liYB0M3B"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469921552F5
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 22:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EEA153517;
+	Fri,  7 Jun 2024 22:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717798080; cv=none; b=c0LN3sqeDe0RrxB3gmdBsVnubltUa2uD+3VVcrSNi5UwIApx2BvPM0FPIxvfPb/9AeJo41kT9Dbp9x8eHqR9DVPhf2XVRiiY9Py0pZrNdo5Bm692ZPrDW/9Z0d6HmQ5mLAamSaJe/Ygnpqh/sfMuG+Dk4bPxvBjcgWNWKECF2d4=
+	t=1717798116; cv=none; b=YU3FcM25ZMm5gzTJndnZbmqlzACoC0YbAqWSJudAg1BhatNnLkDk7iaedB3GzNp8FyaiO2bRbX8O5IHiVeB7EhdsEHx4Qntnq3uHnoIDy7By/5fAe8sks99IvnPH7OggtUoGoPgIDRMWlBu8g5f80lQrnT0PaRBBMDNwYx/9kUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717798080; c=relaxed/simple;
-	bh=gFCX/2+fe+TC92v/LNNuECOPuo+VqmHtOgpUKdTkALg=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=FlShcDVYAklZq7wE5qD4wfGzisdwqh3XaWnQ8V3SVioqpfgtxYW7u0FhIt23Nv75NSWKSlrSyrvajnLhcNs25nHn/AXFOo/J2IJQ/vp3ESYZmYw4Np+UxJkXCk1HSoqE2V7WD2Mr3N3X3Uao9HX1QKAIxaKkVL8hsUyjJ7UnisM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eyEHQaJM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E41DCC32781;
-	Fri,  7 Jun 2024 22:07:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717798079;
-	bh=gFCX/2+fe+TC92v/LNNuECOPuo+VqmHtOgpUKdTkALg=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=eyEHQaJMuIZGvwJPSMOaGTa+dkZGRlZOp2XxEt1NPAB3A3yFvIfqEl/I7spf9NIn1
-	 RR8QLVKujjGyeXtDa34hHgfEL3fn7AIdgPH6cruhb4x52VJzf7TZx2+2AXFo23zoTz
-	 AaFPi0v/NdxyFnQxty+4YNMTEaLSY4GL9y4UFZIK9J0XEnaoswGxU4RJJY94m4e/Zs
-	 ny0CjxJ7WnHRtVmFX5Of2maocSX0QKb8BgjiA8pnIPl9CTG79Ac5cIPAcgfFYAO7CN
-	 W89lBb/TE2RhrpWASPF10lSo6hWa3gexdg6dc041YN21XFHVjjWwsYH33aWA6JpTEV
-	 LS4CA0om5bVIA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D9396C43168;
-	Fri,  7 Jun 2024 22:07:59 +0000 (UTC)
-Subject: Re: [GIT PULL] RISC-V Fixes for 6.10-rc3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <mhng-1afb5c2b-25de-4eb4-a911-523495ad3939@palmer-ri-x1c9>
-References: <mhng-1afb5c2b-25de-4eb4-a911-523495ad3939@palmer-ri-x1c9>
-X-PR-Tracked-List-Id: <linux-riscv.lists.infradead.org>
-X-PR-Tracked-Message-Id: <mhng-1afb5c2b-25de-4eb4-a911-523495ad3939@palmer-ri-x1c9>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-6.10-rc3
-X-PR-Tracked-Commit-Id: e2c79b4c5c4d83520abb570ca633ded09621c0a6
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0a02756d9145725c1b9979f0486c268f91471a48
-Message-Id: <171779807988.32288.747862417457855949.pr-tracker-bot@kernel.org>
-Date: Fri, 07 Jun 2024 22:07:59 +0000
-To: Palmer Dabbelt <palmer@rivosinc.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1717798116; c=relaxed/simple;
+	bh=X0XqUrYOJ+/axRTziCgVjNc+Zqgi8AfvSjUQVzmbmZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R0LRSXci457jLSBd1O2+7DjCQWUQjQ5dy5XMIk5RBLyk78bdc9XDI0pHEVAacMN/rl3FoWg4XoxnzaeI9QkX0ug56eLLGk4ugWPrNdEWo3n6fRQT2NrEip0Nchwqgobs73lCILG6gBatTVGtrdM9WOxoZbiGoP8KYggwK/wgJEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=liYB0M3B; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c1ab9e17f6so2324421a91.1;
+        Fri, 07 Jun 2024 15:08:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717798114; x=1718402914; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tjL1fI/IK1fmmOTt7dCYi2cVdCScqaBbh8g2CZYU+V0=;
+        b=liYB0M3B02DGx9P26+TTL/tPUzWnl4r5MdoA4hbQy5BeJ2WUjhmvqPNd9NUyNArOK+
+         xbas/3hQQZN9D1JC7jnuEaAtfUUjemtJUrnQp7LkZmggewbFXYjZsz1CgAmWtuzaAJbM
+         qZKp+Y7eqLI2oFM96IGQPtGQrf03jSyZfl3HZcPqsD/mtw3x2SRhESxaSRtqdpLT8as9
+         styvefFzpiSSIaxfp6395DMxn/pgcBGescVjV1WxI5kylCWs57EH04AQprKtstHQm6Rl
+         4BrmcUdHLmYVDvd7rX3g3uhhwwN0wfL15Wu4LLWFp/QU+Nh+4nq5u2/1n3ARWg/s52jX
+         CI8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717798114; x=1718402914;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tjL1fI/IK1fmmOTt7dCYi2cVdCScqaBbh8g2CZYU+V0=;
+        b=ObI4HM93uQnNVcmNxEE5zrUTzYN7nPP7KAoaIUNAWmgHBvEr/FJspv7HGsrfU/h/sn
+         WB+8PImSwAnHY8y+EHSJ+0c0481+C7QST65GOxYerADM0DRsErDK7/H9HOx2muODp+xb
+         qEsJBaVxtrc2Bc+RIDc3G+nQmOUhw7Pgigu+Rd5hQLS0Hv76Kfa2vVJl//9MNAwMricA
+         QdTrcof2Jn7zmICHIihPAPKCa0V+XYPEEXQijbOCNLYvnL2dbVnLE9A+SexWTz0NW/h3
+         qRsQL3ZVrp4rpAgQ7DQP4xwoCwczvi5L2sWa3YfC6qdNaQvvsGvIlgVoekrdasyKtExO
+         xFRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVm69D6QD1NUjVpPHmEV+7TswyWi4LA2fq8cjnxCQdRgiubSVnRjaDIAulsv0txaFIN9z2cXT9z0YsGT1441G+ZKyaAOoqcx2bXbMxAQQr4usIrbflFHkLuE6MC0iuZKvDYwZcTxtldkGc=
+X-Gm-Message-State: AOJu0YxPppjzDUzAjaBLMiMZtkpRSRElgIgV1VT9c4ijc7Cl2xGxnmM0
+	em+vrb64n/I6UjkJf9xMbpBdu9W8DFVX4ny46o2eQgIg0NjAW5LR
+X-Google-Smtp-Source: AGHT+IGChmawK4zkE+D9W9szWfv9Cxmt5l6QBRHfW8hRCsjYoduvbVXQaWQ2Qc380gHB0D26TQ55eg==
+X-Received: by 2002:a17:90a:788d:b0:2c1:ff35:78f5 with SMTP id 98e67ed59e1d1-2c2bcaf6920mr3740683a91.15.1717798113686;
+        Fri, 07 Jun 2024 15:08:33 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c2c661f8basm1830971a91.12.2024.06.07.15.08.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 15:08:32 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 7 Jun 2024 15:08:30 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Tim Harvey <tharvey@gateworks.com>, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] hwmon: (ltc2991) use
+ device_for_each_child_node_scoped()
+Message-ID: <6416e24b-ea6d-4b3c-9803-b87ca5aa43ca@roeck-us.net>
+References: <20240404-hwmon_device_for_each_child_node_scoped-v1-0-53997abde43c@gmail.com>
+ <20240404-hwmon_device_for_each_child_node_scoped-v1-1-53997abde43c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240404-hwmon_device_for_each_child_node_scoped-v1-1-53997abde43c@gmail.com>
 
-The pull request you sent on Fri, 07 Jun 2024 07:25:49 -0700 (PDT):
+On Thu, Apr 04, 2024 at 01:13:27PM +0200, Javier Carrasco wrote:
+> Switch to the _scoped() version introduced in commit 365130fd47af
+> ("device property: Introduce device_for_each_child_node_scoped()")
+> to remove the need for manual calling of fwnode_handle_put() in the
+> paths where the code exits the loop early.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-6.10-rc3
+Applied, and sorry for the confusion.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0a02756d9145725c1b9979f0486c268f91471a48
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Guenter
 
