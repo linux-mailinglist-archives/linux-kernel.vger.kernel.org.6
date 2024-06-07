@@ -1,180 +1,92 @@
-Return-Path: <linux-kernel+bounces-206444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D444E9009D4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:00:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB6C29009D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:02:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48EEC1F24D1C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:00:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 468DD1F24DBB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C63188CA1;
-	Fri,  7 Jun 2024 16:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936AB199E9A;
+	Fri,  7 Jun 2024 16:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="Ztllsmqo"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ty0t64Zd"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E66443AA1;
-	Fri,  7 Jun 2024 16:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2628C168DE
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 16:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717776031; cv=none; b=bkjYoA8XO/6ecqtOG6p5CfL1FH4ugVqo4rMc6kwb6tbzS0DS7AiQqHzUNcd0m9A5eVX5n8hFG5JGzPNvKNJqV+ogu4lhGO+MPbRcqSr1/Q90NlqboHjqW6zLS0aiNb4ORA6nM8VPSrAi4ZEyVKLCC/WRHPL7bYdXLGpMd8iqLh0=
+	t=1717776130; cv=none; b=p7f8DJpmPNBMXKZPsj2DOzvM6j020xTxBwt+Q27Uam75XEuVCBzi1d0BMOicA4MvdbY8WT6fhFSl2e13ycKE0ChBRFRz/sIn8k4xSwo9zpFb5I5SW9xtK6WuutfxBJ3eIjAB1ZMmo/fh0gduLIzp01Pqyb8Rhv4QG3od/u/TrP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717776031; c=relaxed/simple;
-	bh=ipN6NcG+tPJzPSaA+JuANoD3xQXwFm7y+dIl2bp/uhc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bs8vQYN1R68qeP/p39XyaGS/gCT1HHZN8YWTZDA62ox7evSgVL6lUEAtaoEGnsVhchzUKqmCwpVGXx50totXRfLuFHhLKCTw04HOUKHI9lt39MpMVVT/QZ7eszeTm+ZiEtojCZsO5ZZFXRUybYG+BO9lavaYvj1cIwQ156ewkZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=Ztllsmqo; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1717776000; x=1718380800; i=w_armin@gmx.de;
-	bh=ipN6NcG+tPJzPSaA+JuANoD3xQXwFm7y+dIl2bp/uhc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ZtllsmqoYaaNqy0hHE6wovbGb4j13GI2uK4s0Vk3iiZGNgThWWl14KOXsfazQwSc
-	 Kqmk9NUK9Mxd/i3ZJV+uqBjqoq6EYgQFIZpH3lmtkdQgq/Iz5CCy3vVX5OuUxS6sJ
-	 7kUqQAV6ONPSE4xPJ7FzSgpeR+GUm3jLixL6qWH6RpKD92TD/CwTfe91OoWv1IOWn
-	 VjptevYb/EusNgMQygOpsWUGBgP6yW8pOacrY/alTJGj/rKquXtR8/rDLeEAx/HG6
-	 xf45usxPOEFh9cQgJWAnh987hPNnmBvvha9yeGWvSMWjPr/kkLSRf5n9BF6Oh/z76
-	 LOriN1LY5eRbozbmaw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N0oG5-1scehx12mr-00z4Ju; Fri, 07
- Jun 2024 18:00:00 +0200
-Message-ID: <c6f398f2-a16c-462a-8c79-d2eda3dbd56e@gmx.de>
-Date: Fri, 7 Jun 2024 17:59:59 +0200
+	s=arc-20240116; t=1717776130; c=relaxed/simple;
+	bh=Z+9m/qleTaeVNnE9xwb25COrIGPFFrhTCVuB+fYOh/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lHNkA7Cgz8RZz5ceFB7iQT5twItCQCTaabMtP6GKLCAlgL7gebCFoPF95zihGuxjgO5NzKDi782TOLblQJi88w2UEdUt7jWshGvYvXmnyz9v4F7FJs5/MTu+e0QNzCL1kUteNb2ElokXrWD4Fo/ANhlGyAyl2HA6nGFIo+A3dzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ty0t64Zd; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=eCTR4eCQnyDJGr3WoiKlq3Zd4xvRFUfx0w1DxTE2FHk=; b=ty0t64Zdm+td/YOTBVUkZPDwzU
+	M7TU31sGn1m9AbG7scYTTj89O6P47eFre0P1XyqEm1C4Uo7n5uq5f4jv+JZtgn3MGp6+til+mO9cz
+	XG414ub1uno8xMDJcLQIgIOTLNxklDaaW3397qu3Q9rSYpGbJCPlhh6DtuxCG0+HUGTY3s0POD5nQ
+	8KJ2FF4ZNboZsDXFiymYpaXNhDNp9z17dHfYwWdOADhqCK+FVLzyjeUxpTss022hzyHfqHKOgiPfs
+	jU4Rs/tDvhRSnntiOTDPcc3DiWkr5K0CviCLv93oiheSC1SGJ61AbJFC5FaVGOzIhhBo+C7cj0mBw
+	SPg7c1Gw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sFc2Z-00000006NPs-02yC;
+	Fri, 07 Jun 2024 16:02:07 +0000
+Date: Fri, 7 Jun 2024 17:02:06 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] f2fs: get rid of buffer_head use
+Message-ID: <ZmMu_tnbqZtGJCsE@casper.infradead.org>
+References: <20240607101829.389015-1-chao@kernel.org>
+ <ZmMMDy9eeCU2igqj@casper.infradead.org>
+ <e56b6166-1bb4-411a-a701-51bf452d2369@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/6] hwmon: (spd5118) Add support for reading SPD data
-To: Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- =?UTF-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Stephen Horvath <s.horvath@outlook.com.au>
-References: <20240604040237.1064024-1-linux@roeck-us.net>
- <20240604040237.1064024-5-linux@roeck-us.net>
- <4cfe1004-77d4-432b-b07e-557a2e57de58@gmx.de>
- <2c94220a-29e9-4b83-a427-5ad406ff1c48@roeck-us.net>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <2c94220a-29e9-4b83-a427-5ad406ff1c48@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0qDdKGw61X87nQFLHvowo2G5k240GD/KA+cotLxrnQr4berymYb
- wB1CETpGS2SrWjIHwlcssRK6enPLMKMNfrZ2DZARjqgyntnFWoC9Bu5Nkjp8SnXFKAEO5kL
- iq+Dd2+XmHgVCTz7xFytLw8oSYLZ6RqCUwqQ+JpjXYPSaiT153hZFvkanO2BAZ0m1mC68VH
- yWU6d6459Ed314UPd+P4Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:wZGDi/oXCIM=;vYmL5x6uzzRQTVhF2LXO3SJZGYa
- +MFZ5gk2HrpjbVxGHGcRMSDsnCBoSCbgmRMPalOWosmL+RxOtNccoo22PjH2dvQcvNntRv8Ip
- qWaAoLgBgZ3RTTeZ1aXXwzGaCBkkFml4VErK+8p+vQ32PN2SEEEaexbHGTvMg1Y6zrSvQ3Ky/
- bUJAnRXzTPVvnt59G3e5YpmygFGmxZP6Ev0IWAhMzOHfa8NjTB4ZhOVZthVH24nDwokr1EYWH
- EKddhxKiwIVpgdGyntHIsKBbo5m4HkzPIK4zSUFLyW8of+GsUMJAjA659uiRCcUHQduEmjk6+
- VnKAkhLNWgLlYal/QTOGYI3W6nez6ezXpdkkLeGQV+Iqhw7HkYsLLP2mgHPOKnYKwR55jTrkn
- 9Kz3HBBxlnH64VRhKQ4trYwgDvwFVFdjXTpx9ibOsYIaead1P1i1qV4Uy3ofaapf/5Tes/Nh4
- 39VGPwk31EZbol0Q5FAzvnjW5Bedf20Jn9D+D/VVkopW9WhLGvlBEldDGNfR//DxShrycXGsg
- eCHO1ONCScDqBuo9lOPHiAJhbIaRNEFJGYM3s+WXe7v9AU4N7w3oQM5LXHyo+xIRTK3yQrBpn
- bLnoDQCIua3AYnNxrNlqPkEbfeAySCwTFAdy0SopyVc8ft8SfWguKaP0yGPeK1xHXC+QvL3sA
- Mzoa0zWI4AE1tYQ5hUtQTMQ7INI5b1Qoxqc027dhdEsqRIqGUYLVe30FG83Koft5+Z7JzXY3r
- +tR5Vb8i4Qu7oS3K9htnKVYfFLZbRBxpmkabf5p7P1rm8KbK08oENEBp1IKj1220C6xoOccgQ
- 1KF8Z/3jzfVRj3w8fxSwBwohCK2bMzKIAgCe2mfscZ0bc=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e56b6166-1bb4-411a-a701-51bf452d2369@kernel.org>
 
-Am 04.06.24 um 16:30 schrieb Guenter Roeck:
+On Fri, Jun 07, 2024 at 10:10:52PM +0800, Chao Yu wrote:
+> On 2024/6/7 21:33, Matthew Wilcox wrote:
+> > On Fri, Jun 07, 2024 at 06:18:29PM +0800, Chao Yu wrote:
+> > > @@ -1990,6 +1989,12 @@ static inline struct f2fs_super_block *F2FS_RAW_SUPER(struct f2fs_sb_info *sbi)
+> > >   	return (struct f2fs_super_block *)(sbi->raw_super);
+> > >   }
+> > > +static inline struct f2fs_super_block *F2FS_SUPER_BLOCK(struct folio *folio)
+> > > +{
+> > > +	return (struct f2fs_super_block *)(page_address(folio_page(folio, 0)) +
+> > > +							F2FS_SUPER_OFFSET);
+> > > +}
+> > 
+> > This assumes that the superblock is in the first page of the folio.
+> > That's not necessarily guaranteed; let's say you have a 64KiB folio
+> > that covers the start of the bdev.
+> 
+> Oh, I missed to add large folio support in this version.
+> 
+> For the case: page size is 4KiB, and folio size is 64KiB,
+> read_mapping_folio(mapping, 0, NULL) and read_mapping_folio(mapping,
+> 1, NULL) will return the same #0 folio, right?
 
-> On 6/4/24 04:58, Armin Wolf wrote:
->> Am 04.06.24 um 06:02 schrieb Guenter Roeck:
->>
->>> Add support for reading SPD NVMEM data from SPD5118 (Jedec JESD300)
->>> compliant memory modules. NVMEM write operation is not supported.
->>>
->>> NVMEM support is optional. If CONFIG_NVMEM is disabled, the driver wil=
-l
->>> still instantiate but not provide NVMEM attribute files.
->>>
->>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
->>> ---
->>> v4: Use NVMEM_DEVID_NONE instead of NVMEM_DEVID_AUTO
->>> =C2=A0=C2=A0=C2=A0=C2=A0 Ignore nvmem registration failure if nvmem su=
-pport is disabled
->>>
->>> v3: New patch
->>>
->>> =C2=A0 Documentation/hwmon/spd5118.rst |=C2=A0=C2=A0 8 ++
->>> =C2=A0 drivers/hwmon/spd5118.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 147
->>> +++++++++++++++++++++++++++++++-
->
->
-> [ ... ]
->
->>> +static int spd5118_nvmem_init(struct device *dev, struct
->>> spd5118_data *data)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0 struct nvmem_config nvmem_config =3D {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .type =3D NVMEM_TYPE_EEPRO=
-M,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name =3D dev_name(dev),
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .id =3D NVMEM_DEVID_NONE,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .dev =3D dev,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .base_dev =3D dev,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .read_only =3D true,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .root_only =3D false,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .owner =3D THIS_MODULE,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .compat =3D true,
->>
->> Hi,
->>
->> do we really need this setting here?
->>
->
-> The "eeprom" file is only created if both "base_dev" and "compat" are
-> set.
-> decode-dimms depends on it. While decode-dimms has to be updated anyway,
-> I did not want to make that more complicated than necessary.
->
-I understand.
-
-> Another option would be not to use the nvmem subsystem in the first
-> place,
-> similar to the ee1004 driver, but my understanding is that the use of th=
-e
-> nvmem subsystem is preferred.
->
-> [ ... ]
->
->>> +
->>> +=C2=A0=C2=A0=C2=A0 err =3D spd5118_nvmem_init(dev, data);
->>> +=C2=A0=C2=A0=C2=A0 /* Ignore if NVMEM support is disabled */
->>> +=C2=A0=C2=A0=C2=A0 if (err && err !=3D -EOPNOTSUPP) {
->>
->> Maybe we can use IS_REACHABLE(CONFIG_NVMEM) here?
->>
->
-> We could, but I prefer to avoid conditionals in the code if possible,
-> the dummy devm_nvmem_register() is there specifically to cover that
-> situation, and no other driver does that. Also, since the underlying
-> functions are dummy, the compiler should optimize it all away if
-> CONFIG_NVMEM=3Dn.
->
-> Thanks,
-> Guenter
->
-Ok, then i am ok with with this patch.
-
-Tested-by: Armin Wolf <W_Armin@gmx.de>
+That's right.  If you want to pass a page into F2FS_SUPER_BLOCK, that
+would be fine.  Assuming you're not trying to support fs blocksize !=
+PAGE_SIZE.
 
 
