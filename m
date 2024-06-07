@@ -1,104 +1,120 @@
-Return-Path: <linux-kernel+bounces-206743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67FC9900D39
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:53:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B0DB900D3C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:53:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 585FB1C20F36
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:53:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DB571F25032
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F33B1552EF;
-	Fri,  7 Jun 2024 20:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05253154BF7;
+	Fri,  7 Jun 2024 20:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="GFZ9KF6+"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h/e4QyA+"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9654F154BFB;
-	Fri,  7 Jun 2024 20:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC990154429
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 20:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717793576; cv=none; b=J5LnbssOv9C4yEZkAFnAQ2UccunpGSs9Vsz2FqvaJpuW3UikYVE9cdJVfOVNTTpMEnenpFgiM6IdDGjt5Vof9YKWYL8jOFF2IkXcf4ITIhL2gvYBggzMcBVbB41qsohBW8MsHtdsHpS8nBfNDJVOP46N4BiE5KsEGKmUKroiF5Q=
+	t=1717793593; cv=none; b=JDaFcaQTyWSUVuxecr6dZv6TmWNYj07yE+8rx+Ye9AZg7s6xZ7L7BRO4VMFCNcIUbFq4lTXx1/+iIoG4FvsBcHiyipBRqBLAoQpgWb2OPAAcDbdTagZUZo0SaQJQWgCFZ1D5kh+ZD1OTv/xo/Li/KXbHr4eMTorS8en/yEZ1uDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717793576; c=relaxed/simple;
-	bh=VMLxmXz/u3qMiTiYWYaIgTSjlhBqu0PyuRoBOBtThgY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GZz1HVNw+LSvzowPVDGil6ZimO8o/vf7AVeF7tZojOQ3xxHjMJ3ovtGHkfxGTMmANd1IuXcBctA8GDdmS9DzXIdDk51hMasYMFApmDmeDPGWjF7VGp1kGgJ8S39ywtIAGaLMSn3ELpfngLsJDY+ygwE82gEE5FLstvOk0YHFGBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=GFZ9KF6+; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Vwtgk3THBz9sGk;
-	Fri,  7 Jun 2024 22:52:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1717793570;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GYQp9dC3UpZGBuYImicESfmUl6H1CygZfqRoSmgI07M=;
-	b=GFZ9KF6+TkSf21PJjhZ4xQoUU2T7OJrIN0wiyXn9te1gMwhL8I+ZOTrDBEj7B1aul3hKhC
-	ruUhiFiEpkmjpsMZLd9S6BUTUCiJl6enb/lTyCJVNIPgP59Uu43TGIgV3JzEllNNDXBu5L
-	PRsMgKT2cTd9G6uHkmrak67jlPrSR3NDdtvY9qXMF0DAjM3JCwzDqnki82q0t/Fmmpn/K/
-	qH/9eiiuaQuP1SuH5fjp0syHQE7pgt2JIotwB93EBjH67OcHOi1LiDTd3w+1DgLU9ClHWG
-	mMIQmwnslL42WT8ZbP401PvI2fnmldonX8gsnFQyo/Cov3dFW1t/m9Ky1NQqvQ==
-Date: Fri, 7 Jun 2024 20:52:47 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Donet Tom <donettom@linux.ibm.com>, Shuah Khan <shuah@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Tony Battersby <tonyb@cybernetics.com>, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ritesh Harjani <ritesh.list@gmail.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Muchun Song <songmuchun@bytedance.com>,
-	David Hildenbrand <david@redhat.com>, p.raghav@samsung.com,
-	usama.anjum@collabora.com
-Subject: Re: [PATCH v4] selftest: mm: Test if hugepage does not get leaked
- during __bio_release_pages()
-Message-ID: <20240607205247.b7touyyblwcpamfm@quentin>
-References: <20240607182000.6494-1-donettom@linux.ibm.com>
- <20240607130623.76ba44371f8f406f5d1678b7@linux-foundation.org>
+	s=arc-20240116; t=1717793593; c=relaxed/simple;
+	bh=P4GqccFemYCv3Ph3Tj4HFzTepeQOmwXMVKjFNfsdrHo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PQ0Q9gUCX2FlgBcqNPp05KfjubPlrSw8bTd1g1fMwOL+2C9H8YpPZgr/f7fOkzXc0gCitFrJkltDabU/Tbod76I2hr0gu+YHK1lT0gTPHBQ9B67Cz2OxwYvWoOzMSS87o0bgHhD94QkUVpujOHW2gOAA+I5z3cw2HRfzpr0Mn9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h/e4QyA+; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52bc274f438so1114077e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 13:53:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717793590; x=1718398390; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ALL6wLm/pEiklAzdrlD0fFMMB40OeFD3F6hHrSjlWrg=;
+        b=h/e4QyA+1ti/beho16Kp4vdAb0lDLmCZV4QKM3S0hk9uEttg2m+h5TFNkenQo0oPJD
+         V5XWLpcycgDrm+5UlxBQN4FU/VzBLWGk27Lzo+4r1OilY9k6fdtuHaf4/4R4wbzb6h4J
+         6MWtQZKGhpie5sPDVhLErJaRfErYl4R56FDZ2FbJUYmYqRT3JC9PDFA51kR1cpXOv56Q
+         i65WBgD7XumtJOlgrTaN/knWx/mFInRK8jCwGDFdRzZkflyQuFVJp1odCh5QBPAyTTzV
+         n3rK7foI+BzQVrzePFa29iIqFAlKgPck+oDfBxXhGuQIFeQlUlgjxsSQF0IC3XwXAxU2
+         jziw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717793590; x=1718398390;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ALL6wLm/pEiklAzdrlD0fFMMB40OeFD3F6hHrSjlWrg=;
+        b=Xdk7tS9baIny3LSTI4zCrWat2uT+/m6b+3YcyTQBb3hIbBSLaNhj/cukY5Mesr8Ug/
+         2fV+t3+MUbIKb8mH7MQRrVmKSgs3TjTHYH/l0uxf6ziuk6y6VUR7ytTyIhkYGsy+/RsP
+         ZxvqwXSE5yw37Nlz7jyrxjrcRR6vq4XNJFPBuKSs7Z0vaVTM40P2LflEknJPMZx90kKa
+         wP1PVYH83r3Ml/qSg6dFwXHEcmt3KLl75SP/yekFZuyjKi+aFKd7sL99/ngMQJoT7wx+
+         kAoU9UM19Vwnhmxu1G/kqunj2nQl4U5qdxUdB8qk1nTg5rt5fEJBbriHR3BpJrETRqNB
+         zSIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWP5YJn0MUcMItCb/GKXhzV+wystZDtc5eDWnHO2J5GKgVdAPuDB2nVhQEyVhB7kIHvAO2N1mnJHB6J42tPLtlalFBnWsTAfFoxUipc
+X-Gm-Message-State: AOJu0Yzd63rdR/glutKJkmsv3XATL6nRPy1X8rBOiozxAMHOxn9IKFsz
+	9jdOILbWPbtHLS68fgbgo+05l/bnjEAx9Ykt9jXbxr+km8OZfYgfjwy1GAWPfjsiEdfZ1Ia2Twa
+	QHRr/qJH7ou+d0b6s0OkWMDIB3NWgh9jnLxuNQw==
+X-Google-Smtp-Source: AGHT+IGhGBYgYkG9ZA8FAwO0qaapJnnGVds+RrxgL96B4r78rFR4O2xGdaFmnclK8Gfv5k8zd5MDW6bRfsiVqyeC1S0=
+X-Received: by 2002:a19:7502:0:b0:52c:50ff:6567 with SMTP id
+ 2adb3069b0e04-52c50ff65b2mr228916e87.22.1717793589914; Fri, 07 Jun 2024
+ 13:53:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240607130623.76ba44371f8f406f5d1678b7@linux-foundation.org>
+References: <20240529162958.18081-1-johan+linaro@kernel.org> <20240529162958.18081-9-johan+linaro@kernel.org>
+In-Reply-To: <20240529162958.18081-9-johan+linaro@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 7 Jun 2024 22:52:59 +0200
+Message-ID: <CACRpkdavOBqVe2gON=5Zk6JVWJfjy3E80YFEsyo0-94d1bX8FQ@mail.gmail.com>
+Subject: Re: [PATCH v2 08/14] pinctrl: qcom: spmi-gpio: drop broken pm8008 support
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Das Srinagesh <quic_gurus@quicinc.com>, 
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Stephen Boyd <swboyd@chromium.org>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 07, 2024 at 01:06:23PM -0700, Andrew Morton wrote:
-> On Fri,  7 Jun 2024 13:20:00 -0500 Donet Tom <donettom@linux.ibm.com> wrote:
-> 
-> > V4:
-> > - Added this test to run_vmtests.sh.
-> 
-> v4 also contains this change:
+On Wed, May 29, 2024 at 6:30=E2=80=AFPM Johan Hovold <johan+linaro@kernel.o=
+rg> wrote:
 
-I think v3 already had these changes [1]
+> The SPMI GPIO driver assumes that the parent device is an SPMI device
+> and accesses random data when backcasting the parent struct device
+> pointer for non-SPMI devices.
+>
+> Fortunately this does not seem to cause any issues currently when the
+> parent device is an I2C client like the PM8008, but this could change if
+> the structures are reorganised (e.g. using structure randomisation).
+>
+> Notably the interrupt implementation is also broken for non-SPMI devices.
+>
+> Also note that the two GPIO pins on PM8008 are used for interrupts and
+> reset so their practical use should be limited.
+>
+> Drop the broken GPIO support for PM8008 for now.
+>
+> Fixes: ea119e5a482a ("pinctrl: qcom-pmic-gpio: Add support for pm8008")
+> Cc: stable@vger.kernel.org      # 5.13
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 
-V3:
-- Fixed the build error when it is compiled with _FORTIFY_SOURCE.
+This patch applied to pinctrl fixes.
 
-[1] https://lore.kernel.org/linux-kselftest/20240607055046.138650-1-donettom@linux.ibm.com/
-> 
-> --- a/tools/testing/selftests/mm/hugetlb_dio.c~selftest-mm-test-if-hugepage-does-not-get-leaked-during-__bio_release_pages-v4
-> +++ a/tools/testing/selftests/mm/hugetlb_dio.c
-> @@ -40,7 +40,7 @@ void run_dio_using_hugetlb(unsigned int
->  		ksft_exit_fail_msg("Unable to determine huge page size\n");
->  
->  	/* Open the file to DIO */
-> -	fd = open("/tmp", O_TMPFILE | O_RDWR | O_DIRECT);
-> +	fd = open("/tmp", O_TMPFILE | O_RDWR | O_DIRECT, 0664);
->  	if (fd < 0)
->  		ksft_exit_fail_perror("Error opening file\n");
->  
-> 
+Yours,
+Linus Walleij
 
