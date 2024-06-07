@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-206756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 398DE900D5B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 23:14:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7AF0900D5C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 23:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE9D8287730
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:14:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 063AA1C21358
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B2C155306;
-	Fri,  7 Jun 2024 21:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59F315532B;
+	Fri,  7 Jun 2024 21:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mMcEpWaE"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KjsVL9Jh"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1578C2D600
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 21:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5312D600
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 21:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717794861; cv=none; b=BUJSoOeLj8si6bN1r1tuUfYttEcNYNvE6FddLB0pwUKb4topHM7GuqIjpolUjr+qJEWka1AYe2AMuv/B7MnyurLP4P7W5WQWhyhXjxWERTDmrSgUs3vbqr0SEHCdNItwYUK/nmUO6HdykFWtHsBpKB/HhUggigdEscJ/go+NFoE=
+	t=1717794866; cv=none; b=a3Y8Jr7ygSLuhz76UpRTz47wRfnSi2MSG1bYLsTqTeQ2IG33t8E/dwwngUICEaLOeKv3LTMySuiXa6fDfTpalCVWrFGDXFs5EdjRPAOaEBqxYgBsKyRq2x1AQGAEsylSdS1i6nn9XzrziKHWoxS3XIUUJcN0+GuqJwC4IPf3qbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717794861; c=relaxed/simple;
-	bh=xafOhFlAPGLrq1slliGFgBaJ+5TK9UaGi33bOcLbnf8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ltoF0x3oU2VFv4/tN/hnhzAaSLCVZbsGovI5VKgiwO42glIudxWdgZBEGur6z1vJ28jFuBQhL9PwgbIUDlgkanZ7nIcC0xLwi3e0nfYJrOtT94q/LAQtb7iRWqnSwAW7ARetTFP0LdSrn36R5oqz180xvqt+PpPY5ShMOcCIgjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mMcEpWaE; arc=none smtp.client-ip=209.85.214.179
+	s=arc-20240116; t=1717794866; c=relaxed/simple;
+	bh=H42gb2DitcbJvZ0il0BlBxvvhBZnL9oKHsL4JaAXjtk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PFSN/Xl3V3bx+Bb6Php2cwryzqJsnBTjenBkFrdrMh1Egj4+EPWhbtCRZkRhNknZnrzO3fyqapwH/JZfkbfW87Aai8hwB+HTMlg1izEpuLMxhxnicwd48H23QQZdTVT5OrVSBFq9CkZh0sXdHYayPTbbKEwmOCerQLk79/6AI6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KjsVL9Jh; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f6c7cded01so14781575ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 14:14:19 -0700 (PDT)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-702508bf0a9so2147251b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 14:14:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717794859; x=1718399659; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SgcxjirVqsAvgUPWOPPhW9cui9hZtZdtPFLjs4Py2VQ=;
-        b=mMcEpWaEFOfmILXZro29xvbIv/nMEEh9M+SWVdWHyQ+uT1/ZDSpCRFLNHR8ANIDmro
-         0ROdPsFEfZdOFLM1jWEYye70iv2U8Ev6Vz8PH5MoM7Q5M1QM4RS4KiydtBhp67lxZcKC
-         CRgGjGH0U2p8VODhemurcax14tjS7D8QNec84tCF2Z27yIyO3UaQ49rgGBCA4zDgDRDf
-         EiPC+UQp8NiCFEVlOAFEuSrVlKURe+I8z6FVzwB3xFfngJW9M6v14TBXJh67tOHehVjK
-         3cXmgexq5JIcNGsOpn6vLdR0+kfjDAQkO3ZkT83svoZVwyqWQJ09FPxkq78PCWEFf4T2
-         vB0Q==
+        d=gmail.com; s=20230601; t=1717794864; x=1718399664; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3EhyAEXMHGWRHoN2nWQIucIAZ80NTOZFSo695eAloq0=;
+        b=KjsVL9JhtFSXAIONZN3TySiV5+Fba/mknISo7SoOpgcOTib/GCz+0ZwC7aAcroI3D8
+         EcUBlSlFHCgpan5UKeHhvvt2Q4oqf4byNbmFa+HTb3blBvDKg8Ue3UDHFZhV9cGLbdI9
+         cVZFCRn69OCGhE+vLH2zs9JmsYN79JRZTJRcVTB/qGatz0tGRwBI80Jde93bbvFdmDXh
+         OqnyWAcLhgM+YMhWmRBm0CGPFa4yv2kVAE2CbfSFiTaSUyZDwykcnJhpLeqTsWHJqrSM
+         pVWEM5XR8Y8xoVe2sRYDgCQ7Xix05/ZZ8buLy4LrGNN+Z0UgsbWIRimhmz77WStLYIOY
+         lqQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717794859; x=1718399659;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SgcxjirVqsAvgUPWOPPhW9cui9hZtZdtPFLjs4Py2VQ=;
-        b=w7wSMmXZ41BHN1FLNn6H4vMwcDvH87uPpsGGff5hWYahvCbiMdcX0WiVA2g0T1/4fm
-         sAAqIc4X+QG2jRn2s6fnCe+nVma2+VFn6BG25OOGZw1ypOnLCNdw9zUd/M2WU1LOV2xG
-         F9m2DW1x8M69dVlOX2ayDNf3aVrma9qXEC3WsfMpx933sRmCHgRAb7fvexqLX/oxCVtZ
-         s9lQnny20o/3z+USYYViA4LZkvnPhs2n0b3Ap8jsCYNk4gmtXJNO663BSBiMxzeF1X1j
-         5JsyRbonSksbUXbzLZ5ADXl06hzlgya/selXAlJYE1X4H46TyJbahQoFpr+wXvHlRSTf
-         FkeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUM+m4JSJxsGKsCM2QTmrosNNoSKxNla8gbi/DMKNq7vFHgPKE2dkxo8sTjx+racN127THUAavA3q3yZlKTbD+hTkUuWIItpNZZz3Tc
-X-Gm-Message-State: AOJu0YwkpwuYp0umzoh1p1gIgFv71W1uMid8iiiBHSNagDKW91d0nVZa
-	iaByQr8KuEW/qntyUPGhzs2hh/bIC6oWLAO8i/wx7xXlecRpSQrg
-X-Google-Smtp-Source: AGHT+IHTd8X/qWpPzrmVP3cjEjhpM6LTclHmUzVMfHbR6wSNSFbYa4J+jFqkRsLLUl8yINr0c7mPyQ==
-X-Received: by 2002:a17:903:1c7:b0:1f4:8faa:cd68 with SMTP id d9443c01a7336-1f6d02f1b75mr38515985ad.29.1717794859212;
-        Fri, 07 Jun 2024 14:14:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717794864; x=1718399664;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3EhyAEXMHGWRHoN2nWQIucIAZ80NTOZFSo695eAloq0=;
+        b=wTPCeywNlGhLv7kmHqM/d7BOREpz/k3/wW+CjrM7RKcI0dKPrk8Ca5wjQHOeavz7wg
+         QyI19ZDz0R7iD1j3V8JMYlpGBJhIDrikEzJe7ZjAXJR4uWpSPWwbm2rucMO/ojOmZt+a
+         PVwULlJf0QbKs5IgTD+PMn2mmXHgtCFuBWF/e0W741Huaniw+THUEHGVI88KoafEd5be
+         Yz7IN/KYKJYYqxIESGBnrgLdqpSkwXC+E51ZmCmRqu4e801E05l/8fn59bmxhjiJtm+9
+         SrPaksdhMSAk/E1j9hddmir99OtYZ2oIYLYzIfGmIsg8cvmoew0VbvuCKVv9uMaWXQI+
+         YE7w==
+X-Forwarded-Encrypted: i=1; AJvYcCVrwzmENFeUF40EKWW7ZDflgHI20ROk3yL8Ynxv5VYhREnWrsMTwHgmSlFBRKqzriUqJpg03nceEh34eG5aM8cdln4UQFn1PFqtV9sD
+X-Gm-Message-State: AOJu0YyOmw6Db4CaLwvDNfaGBL6K8mVn2ZrqJZJakejm34QsUN1A214W
+	kuIWqYfysiVjsVWqPBtN7H0RzBsqR+n8ri2u06bvKDBtjzxAEd0R
+X-Google-Smtp-Source: AGHT+IGVoYiDVigicI/nhRgC8cicg0NVdYKQ8BhxWWU6cBhpa44pUV1eORXN83dUfhdGXGQ3pcR2lA==
+X-Received: by 2002:a05:6a20:918f:b0:1a9:dd82:a42a with SMTP id adf61e73a8af0-1b2f9a5f4f4mr4021460637.31.1717794863849;
+        Fri, 07 Jun 2024 14:14:23 -0700 (PDT)
 Received: from barry-desktop.hub ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6d859ea3csm17912255ad.178.2024.06.07.14.14.14
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6d859ea3csm17912255ad.178.2024.06.07.14.14.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 14:14:18 -0700 (PDT)
+        Fri, 07 Jun 2024 14:14:23 -0700 (PDT)
 From: Barry Song <21cnbao@gmail.com>
 To: akpm@linux-foundation.org,
 	david@redhat.com,
@@ -76,10 +78,12 @@ Cc: chrisl@kernel.org,
 	surenb@google.com,
 	v-songbaohua@oppo.com,
 	willy@infradead.org
-Subject: [PATCH v2 0/2] mm: introduce pmd|pte_needs_soft_dirty_wp helpers and utilize them
-Date: Sat,  8 Jun 2024 09:13:56 +1200
-Message-Id: <20240607211358.4660-1-21cnbao@gmail.com>
+Subject: [PATCH v2 1/2] mm: introduce pmd|pte_needs_soft_dirty_wp helpers for softdirty write-protect
+Date: Sat,  8 Jun 2024 09:13:57 +1200
+Message-Id: <20240607211358.4660-2-21cnbao@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240607211358.4660-1-21cnbao@gmail.com>
+References: <20240607211358.4660-1-21cnbao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,31 +94,90 @@ Content-Transfer-Encoding: 8bit
 
 From: Barry Song <v-songbaohua@oppo.com>
 
-This patchset introduces the pte_need_soft_dirty_wp and pmd_need_soft_dirty_wp
-helpers to determine if write protection is required for softdirty tracking.
-These helpers enhance code readability and improve the overall appearance.
+This patch introduces the pte_needs_soft_dirty_wp and
+pmd_needs_soft_dirty_wp helpers to determine if write protection is
+required for softdirty tracking. This can enhance code readability
+and improve its overall appearance.
+These new helpers are then utilized in gup, huge_memory, and mprotect.
 
-They are then utilized in gup, mprotect, swap, and other related functions.
-
--v2:
- * rename "need" to "needs" per David;
- * separate the change of do_swap_page() per david;
-
-Thanks to David for his original suggestions on this[1].
-[1] https://lore.kernel.org/linux-mm/baf84b51-7e8a-4da8-9662-3f5cf14ad6f6@redhat.com/
-
-Barry Song (2):
-  mm: introduce pmd|pte_needs_soft_dirty_wp helpers for softdirty
-    write-protect
-  mm: set pte writable while pmd_soft_dirty() is true in do_swap_page()
-
+Suggested-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+---
  mm/gup.c         |  4 ++--
  mm/huge_memory.c |  2 +-
  mm/internal.h    | 10 ++++++++++
- mm/memory.c      |  2 +-
  mm/mprotect.c    |  2 +-
- 5 files changed, 15 insertions(+), 5 deletions(-)
+ 4 files changed, 14 insertions(+), 4 deletions(-)
 
+diff --git a/mm/gup.c b/mm/gup.c
+index 83e279731d1b..f15756a3646a 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -820,7 +820,7 @@ static inline bool can_follow_write_pmd(pmd_t pmd, struct page *page,
+ 		return false;
+ 
+ 	/* ... and a write-fault isn't required for other reasons. */
+-	if (vma_soft_dirty_enabled(vma) && !pmd_soft_dirty(pmd))
++	if (pmd_needs_soft_dirty_wp(vma, pmd))
+ 		return false;
+ 	return !userfaultfd_huge_pmd_wp(vma, pmd);
+ }
+@@ -941,7 +941,7 @@ static inline bool can_follow_write_pte(pte_t pte, struct page *page,
+ 		return false;
+ 
+ 	/* ... and a write-fault isn't required for other reasons. */
+-	if (vma_soft_dirty_enabled(vma) && !pte_soft_dirty(pte))
++	if (pte_needs_soft_dirty_wp(vma, pte))
+ 		return false;
+ 	return !userfaultfd_pte_wp(vma, pte);
+ }
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 3fbcd77f5957..b29daea9c317 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1625,7 +1625,7 @@ static inline bool can_change_pmd_writable(struct vm_area_struct *vma,
+ 		return false;
+ 
+ 	/* Do we need write faults for softdirty tracking? */
+-	if (vma_soft_dirty_enabled(vma) && !pmd_soft_dirty(pmd))
++	if (pmd_needs_soft_dirty_wp(vma, pmd))
+ 		return false;
+ 
+ 	/* Do we need write faults for uffd-wp tracking? */
+diff --git a/mm/internal.h b/mm/internal.h
+index 12e95fdf61e9..b7853fd57d9a 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -1348,6 +1348,16 @@ static inline bool vma_soft_dirty_enabled(struct vm_area_struct *vma)
+ 	return !(vma->vm_flags & VM_SOFTDIRTY);
+ }
+ 
++static inline bool pmd_needs_soft_dirty_wp(struct vm_area_struct *vma, pmd_t pmd)
++{
++	return vma_soft_dirty_enabled(vma) && !pmd_soft_dirty(pmd);
++}
++
++static inline bool pte_needs_soft_dirty_wp(struct vm_area_struct *vma, pte_t pte)
++{
++	return vma_soft_dirty_enabled(vma) && !pte_soft_dirty(pte);
++}
++
+ static inline void vma_iter_config(struct vma_iterator *vmi,
+ 		unsigned long index, unsigned long last)
+ {
+diff --git a/mm/mprotect.c b/mm/mprotect.c
+index 888ef66468db..222ab434da54 100644
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@ -53,7 +53,7 @@ bool can_change_pte_writable(struct vm_area_struct *vma, unsigned long addr,
+ 		return false;
+ 
+ 	/* Do we need write faults for softdirty tracking? */
+-	if (vma_soft_dirty_enabled(vma) && !pte_soft_dirty(pte))
++	if (pte_needs_soft_dirty_wp(vma, pte))
+ 		return false;
+ 
+ 	/* Do we need write faults for uffd-wp tracking? */
 -- 
 2.34.1
 
