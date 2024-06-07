@@ -1,83 +1,120 @@
-Return-Path: <linux-kernel+bounces-206566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD006900B86
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:47:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE5A900B96
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAFE71C220C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:47:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D65571F230F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EE419CD08;
-	Fri,  7 Jun 2024 17:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A9419B3E4;
+	Fri,  7 Jun 2024 17:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FC5dhQ8k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OFzDW8cs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECDC19924F;
-	Fri,  7 Jun 2024 17:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4FC19AD90;
+	Fri,  7 Jun 2024 17:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717782437; cv=none; b=FeJpdx6gFDgRF8xCbyqYRTeDpaRNNXjLerji/2RkAiQFppkuGrVH/5t2JPcb0JX8Dj4+OLT8I07XRA7j/F3qdX6pCxVAoqPNVbCEUGepHwXa+a+dWrBgY5/tab3c/Y4sApdAAddpLivSB+PAPpDDrM4mhFXnlxlgHg6ClUpaqIg=
+	t=1717782939; cv=none; b=k0Aed2Mo/67tuaBz9OUOEAEBXIGo5UJ74Oh9g9uYtt65oe7C+WadW7CnBElglxKK7vnzx5N/RTdKj9vZ/DNH5SiVGYTiMgt4Nq6EjkMeOkSJ76vYn7ShyLnGorYzZow47jOGrU+EqSw8z15CXlFdCRylgtj7R1Qojnp93uCxBlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717782437; c=relaxed/simple;
-	bh=Ah3xD2VYfWteOXiiI1LPCE0B+4+uVAXtyTUN+YThnGE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=H2gjsS3YkH08iJYYeA+U+eK+JYVPFP0xWvIRA/d7OEES2X4i0XMApqBz7RTGbjdUsL52HuMB7wJ1YZNcxFk7CnmnKwoSO84nJmOAcT7p+7LZPLRhNoiPStpyw2iHR9w9j2m1S9Uxo9VFjqvkxFWRMx2wHzNfk8VrRepuT4ILggo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FC5dhQ8k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 078E4C32786;
-	Fri,  7 Jun 2024 17:47:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717782437;
-	bh=Ah3xD2VYfWteOXiiI1LPCE0B+4+uVAXtyTUN+YThnGE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=FC5dhQ8k1oE23ig1HbTMiS4JdLzl6fnAdrdp4nKcndmm9XKwBaMkfQK8RiMPnwayd
-	 u4+X0+bwcvil/ueng01fss6gFXTkrGXKRgTR5MsRGSvSn+KA2uxGia8poZvGrzLhLy
-	 4cogYwIf2k8joqOd3OuZlzA4xjGAeIOHOyYeh3PV/qaNBrnijf0qX1Nc5V6hhzUz6A
-	 vtTi8DBWwNWseCP8uCYgnHWzZ1SesQeu9U0CIQkYsi6LO6d73o/MNYKpIcrODpT7wb
-	 KZxaZAL/+MNV+wpG/lprYffVAXLL7vVeNMcZ8ZFpmbXV9Gt0MVI3kl1dRoNxrMkTjy
-	 vnCLVcCwwHRsQ==
-From: Vinod Koul <vkoul@kernel.org>
-To: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, dmaengine@vger.kernel.org, 
- devicetree@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240605003356.46458-1-animeshagarwal28@gmail.com>
-References: <20240605003356.46458-1-animeshagarwal28@gmail.com>
-Subject: Re: [PATCH v3] dt-bindings: dma: fsl,imx-dma: Convert to dtschema
-Message-Id: <171778243367.276050.5441148149906303737.b4-ty@kernel.org>
-Date: Fri, 07 Jun 2024 23:17:13 +0530
+	s=arc-20240116; t=1717782939; c=relaxed/simple;
+	bh=9pY0lakFOJQMli3EsSUnKuQMKYfcQqGOb4o+kPooLL8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E1xmIObCWe/sAYQ81oh5U0YcNSIvQerUC1mqus001TcOhc7T/zhwkkXvNWc6OFAvMaWssRNH+/B3J3z3rl4ggKIaxdNWHEdp3wa/UWWvmAn8ska0bsm/mxyfC9OcMtrzSZtT1dFpYSnxrV7Wh55GFjFKl2MRtHZdNLR9vrOnSJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OFzDW8cs; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717782938; x=1749318938;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=9pY0lakFOJQMli3EsSUnKuQMKYfcQqGOb4o+kPooLL8=;
+  b=OFzDW8csi+R2LLymnh+qi9vK6d/EdniXqoKNhY56yZavbqgVdPkOv18O
+   l88pqtFuC2iwV3Ko8J9Vvggx1DQMcUH8xBWdBXzMSRF298Mqw8ADpAOTr
+   xnBwZyipZOd531OoOCfOfdX13NdZbDS4ntp0KvRr+GMJGTt0Jec8qZ206
+   HbRRwrA9QeB8zwnNgRltBLCxtl71KvcpwphCiuBqFUA1eR3fMPblgS7IY
+   1Xb36o4ONVHvoQ9mkr/vyAqKT+F2Lp6CDFe5ZPN7WE+tF/NrBwt7n5o2z
+   dMykbEfbrjGzylRIHywyk7i2PeIcFNyM03ADdmKp2KH/ufXrhz9BhBKYX
+   g==;
+X-CSE-ConnectionGUID: quC/DEBaS6CxxzqdFYYxuA==
+X-CSE-MsgGUID: GoPI3i91R9SISJXLhK5BVg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="14357840"
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="14357840"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 10:55:38 -0700
+X-CSE-ConnectionGUID: yRJ/o2lLRbyqJ4NPFMy+6g==
+X-CSE-MsgGUID: 6fQUVGT8SzGNU2eGYa4iDA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="38517697"
+Received: from mehlow-prequal01.jf.intel.com ([10.54.102.156])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 10:55:37 -0700
+From: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
+To: dave.hansen@intel.com
+Cc: dave.hansen@linux.intel.com,
+	dmitrii.kuvaiskii@intel.com,
+	haitao.huang@linux.intel.com,
+	jarkko@kernel.org,
+	kai.huang@intel.com,
+	kailun.qin@intel.com,
+	linux-kernel@vger.kernel.org,
+	linux-sgx@vger.kernel.org,
+	mona.vij@intel.com,
+	reinette.chatre@intel.com
+Subject: Re: [PATCH v3 0/2] x86/sgx: Fix two data races in EAUG/EREMOVE flows
+Date: Fri,  7 Jun 2024 10:47:18 -0700
+Message-Id: <20240607174718.751068-1-dmitrii.kuvaiskii@intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <2dd91299-650a-4e0e-97f4-0d4e472db9a0@intel.com>
+References: <2dd91299-650a-4e0e-97f4-0d4e472db9a0@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=UTF-8
+Organization: Intel Deutschland GmbH - Registered Address: Am Campeon 10, 85579 Neubiberg, Germany
+Content-Transfer-Encoding: 8bit
 
+On Tue, May 28, 2024 at 09:01:10AM -0700, Dave Hansen wrote:
+> On 5/17/24 04:06, Dmitrii Kuvaiskii wrote:
+> > We wrote a trivial stress test to reproduce the hangs observed in
+> > real-world applications. The test stresses #PF-based page allocation and
+> > SGX_IOC_ENCLAVE_REMOVE_PAGES flows in the SGX driver:
+>
+> This seems like something we'd want in the kernel SGX selftests.
 
-On Wed, 05 Jun 2024 06:03:49 +0530, Animesh Agarwal wrote:
-> Convert the fsl i.MX DMA controller bindings to DT schema. Remove old
-> and deprecated properties #dma-channels and #dma-requests.
-> 
-> 
+I looked at tools/testing/selftests/sgx/ and I observe several
+complications:
 
-Applied, thanks!
+1. The stress test requires creation of several threads (at least two,
+   ideally more). However, current SGX selftests are single-threaded.
+   Adding the scaffolding to add multi-threading support to SGX selftests
+   seems like a non-trivial task.
 
-[1/1] dt-bindings: dma: fsl,imx-dma: Convert to dtschema
-      commit: 45a24e40581db95f9c7ee08e0f27874daf7d3e7b
+2. Catching the data race would require a for loop with some threshold.
+   - First, there are no such looping tests in current SGX selftests. Is
+     it normal to add such a test?
+   - Second, what would be the threshold to loop for? I.e., after how many
+     iterations should we consider the data race not manifesting, and
+     report success?
+   - Third, the data race may hang the test. Is this something that is
+     allowed in selftests? (I mean the test can have only two outcomes --
+     either it hangs, meaning the data race was not fixed, or it runs to
+     completion. There is no result that we could EXCEPT or ASSERT on.)
 
-Best regards,
--- 
-Vinod Koul <vkoul@kernel.org>
+Do we still want to add such a selftest? Or could we maybe piggy-back on
+Gramine CI (that will include the test I mentioned in the cover letter)?
 
+--
+Dmitrii Kuvaiskii
 
