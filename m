@@ -1,79 +1,134 @@
-Return-Path: <linux-kernel+bounces-206313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 339B19007B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:56:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D208C9007C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A94392873CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:56:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8C861C23652
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FACA19A2B4;
-	Fri,  7 Jun 2024 14:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C3119EEAD;
+	Fri,  7 Jun 2024 14:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VMW+3IuN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="hQJmj9FG"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A74519A286;
-	Fri,  7 Jun 2024 14:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9561619EEA4
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 14:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717771947; cv=none; b=iG62xQp+k0YC5HTyHT7QqJPpm7JjkOfKs59sCW0fc1Ses37QxZ6BsFPk7/FJQbllbpqJ6Wj5i8aqbpU2GSGARbEGH1zM/lxkSIt4W8KBt8pJr9PiJMYLCCcY7tir61X7jXqvjIaUs8l2DcOpbmJbAZ8MEEUO1+CtbQ96c/dgAFE=
+	t=1717771971; cv=none; b=HhHhnFT9WPkAWYjREqJmBjcm1p3tv8rF511ia4QQRrbaFucZj3VYpsV/NMnFJri2NRhx0mJr/rdkvuP/TqbNpmi+nvwIhHQt/Mb19G61y5JAQ+gm0zy/ZSnGogXpdNtZWtXTAlZ8mgzR6oBPptUPJFAmqkW46qclnNXFpc5HVA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717771947; c=relaxed/simple;
-	bh=OMgQGpWCIfcLB/7YN1u3KXCXoBIYpa43uuqf3QD8gsY=;
+	s=arc-20240116; t=1717771971; c=relaxed/simple;
+	bh=lRtTAdTXNw3RVPrpvvNKKuuzE413bhtwKVpiQVvurek=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Db5D65oS2nAFZKD/TrreLtiZuKbpew6PNkG0bqoLTyi+6WdUKgF4QzJ2nvaJ91ildlIG7xkpHKfFMbFxRClYhqObNq6nrCpzioW60v3e86huzRleytqNDOaSrLt+N11tYLpQ2qShY5VOLZQDKjM8EyJrMSyrbTHPXLvaxaZ2YGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VMW+3IuN; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717771945; x=1749307945;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OMgQGpWCIfcLB/7YN1u3KXCXoBIYpa43uuqf3QD8gsY=;
-  b=VMW+3IuN3zYA1Jxs66NeMfUs9IUihBUX12HgJbwXNgKm/UsUy1SW1djn
-   h/xDnXhF6B+H5r+CL/Z0yor7HnOt3+P+kq4iyrYaBH1UyPcgrRV6X+iRI
-   n8QjVyyPuXw8pBUivVLLX6xMhTj1TVmcDT4jggSeDtvt/7vDoiFnfRV6s
-   MdRa8y9vf2YWwyfgwzbzoPk4ISsGAS9+e0+tQRKbZzBuSwvvuszVgsIyr
-   V6ULJToQf8yRze/cpjR3iw6UFBTM66ZKE7vIU8+qcWGbrt8n2ZFAhSLXt
-   0P70QXel5zTYp4ivLjYN9OkctKw/nBDLYkX1dzbMpUr3zhu+PEhb5pzhx
-   g==;
-X-CSE-ConnectionGUID: 5/FTs6ohStShYFO6WrNnXg==
-X-CSE-MsgGUID: R4G10qkpT7SQ+Z1BVPBc/Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="14614559"
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="14614559"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 07:52:25 -0700
-X-CSE-ConnectionGUID: +rbaR/4bRy+zZldqdbxGRQ==
-X-CSE-MsgGUID: BKBABKoMTk2MEMi3EGRRtw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="75834739"
-Received: from lkp-server01.sh.intel.com (HELO 7b447d911354) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 07 Jun 2024 07:52:21 -0700
-Received: from kbuild by 7b447d911354 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sFax0-00002y-1E;
-	Fri, 07 Jun 2024 14:52:18 +0000
-Date: Fri, 7 Jun 2024 22:52:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Xiaolei Wang <xiaolei.wang@windriver.com>, olteanv@gmail.com,
-	linux@armlinux.org.uk, andrew@lunn.ch, alexandre.torgue@foss.st.com,
-	joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [net PATCH] net: stmmac: replace priv->speed with the
- portTransmitRate from the tc-cbs parameters
-Message-ID: <202406072254.05ysEMg1-lkp@intel.com>
-References: <20240607103327.438455-1-xiaolei.wang@windriver.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=p04ZY4oTzEJqeUiCbPKRS3C2Vi9U23hvxxtp5+uPHKI41qJpIQkODxtgcC0p9eUKNy6dxJWnAcfTuIO1yrBJ37s9m57vMVTFISmXQH1cRMkruZ8ltmxIket32nmcsIFaW2KQxDGfQegGu6zYGEuksuG8hI0H2kqLicWJaxEwwfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=hQJmj9FG; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-79523244ccfso172435785a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 07:52:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1717771968; x=1718376768; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=be9t9+ReZ6YBtow20QbHH2FmkX+nC7rbtPeGa2mS4as=;
+        b=hQJmj9FGqkDWyCgt/SU+4tUjCosWn1r7jPWCOxSoQcFLTAHBHmCt1UPHWUfacLPk0A
+         J27M3PHiZT4a/3dgSP410VtO8nsNQzDfKUKFxJN3iIePAPaAXbaP+l6LyEKYF4CkTy48
+         W7AEcymnLWnS3+i8chqAC7sLqibivCTcSwkpGR1xtaFDOarqDm2RsDk88kHT7kdlDC/+
+         9Z8FIQqtXasRprzwCsdTxihilrlaHvGsr45MSTgHsNCW06TV4YSXg9RXEoJSh9JliJhN
+         EElPiNvBU31l6J6yWS1+Pv/JSZLa707wvYnKwDocL0pue06OzOB0p871OIuyts6x8rd8
+         zTsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717771968; x=1718376768;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=be9t9+ReZ6YBtow20QbHH2FmkX+nC7rbtPeGa2mS4as=;
+        b=eUCq2U483n/l7eccYEsqQZXU0r/3oKa2PgSl0fpvYrSHjCc8KoXkW2Fn8vywHl+EYR
+         drX0h1otbT2q3KjUQ4JePFfW/c3XbXmZ3SQw8JxFlkYfk8VcQYyANYJu4Wo6jQcpPkq6
+         nrF6I9gjXAeK9mhcX/X+PLeDFBQ3lPDmMfEy+ZkXwcY2WI5nin1wrYu80w294345fXOI
+         3iKq/Tq+UgGMz3PZ1Yvn87+t8ZMvjQYhiFZhAxANwlet59uPn2qIMI+uUgYWFWbCfxt6
+         z1k6J6xPJQpCa5EV+gcgk/+CKcc5fBR9tmjN1QUlTx9QRZ+FG2sjl1ke6KgVE2I1N9zt
+         QGQg==
+X-Forwarded-Encrypted: i=1; AJvYcCWlJTgNwYXOFXjOH3SXWb8pPyo67+awYPfHnc+M/0mINjHSvtJp2L8QVd7hV6rAzHK2UDxrsuJC1SQWsbezJgFgL9bfV5klyxK6GCgf
+X-Gm-Message-State: AOJu0YyT1NIs1LrgCcNZvFgyN6VIO8IAhAlMeG0X09u5XnFiXB7s5ZW9
+	QIoy5A/D4ryS1yOgKL66E/R1DWiap8IiJnPAmLeL3jxI2VkcUZcsxBeqSIim1KA=
+X-Google-Smtp-Source: AGHT+IEol1YR1WI0zC3A5eIuWJjKcIm2ZGRprGfgrv26PYx2gMqkRphUST2lY2DmLHNeG4xW82MRzw==
+X-Received: by 2002:a05:620a:31a8:b0:795:4e67:1ef5 with SMTP id af79cd13be357-7954e672231mr106304685a.11.1717771968557;
+        Fri, 07 Jun 2024 07:52:48 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79532870231sm173090885a.60.2024.06.07.07.52.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 07:52:48 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sFaxT-00HGBa-Cf;
+	Fri, 07 Jun 2024 11:52:47 -0300
+Date: Fri, 7 Jun 2024 11:52:47 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: David Ahern <dsahern@kernel.org>
+Cc: Pavel Begunkov <asml.silence@gmail.com>,
+	Mina Almasry <almasrymina@google.com>,
+	Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	David Wei <dw@davidwei.uk>, Yunsheng Lin <linyunsheng@huawei.com>,
+	Shailend Chand <shailend@google.com>,
+	Harshitha Ramamurthy <hramamurthy@google.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Jeroen de Borst <jeroendb@google.com>,
+	Praveen Kaligineedi <pkaligineedi@google.com>
+Subject: Re: [PATCH net-next v10 02/14] net: page_pool: create hooks for
+ custom page providers
+Message-ID: <20240607145247.GG791043@ziepe.ca>
+References: <20240530201616.1316526-1-almasrymina@google.com>
+ <20240530201616.1316526-3-almasrymina@google.com>
+ <ZlqzER_ufrhlB28v@infradead.org>
+ <CAHS8izMU_nMEr04J9kXiX6rJqK4nQKA+W-enKLhNxvK7=H2pgA@mail.gmail.com>
+ <5aee4bba-ca65-443c-bd78-e5599b814a13@gmail.com>
+ <CAHS8izNmT_NzgCu1pY1RKgJh+kP2rCL_90Gqau2Pkd3-48Q1_w@mail.gmail.com>
+ <eb237e6e-3626-4435-8af5-11ed3931b0ac@gmail.com>
+ <be2d140f-db0f-4d15-967c-972ea6586b5c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,140 +137,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240607103327.438455-1-xiaolei.wang@windriver.com>
+In-Reply-To: <be2d140f-db0f-4d15-967c-972ea6586b5c@kernel.org>
 
-Hi Xiaolei,
+On Fri, Jun 07, 2024 at 08:27:29AM -0600, David Ahern wrote:
+> On 6/7/24 7:42 AM, Pavel Begunkov wrote:
+> > I haven't seen any arguments against from the (net) maintainers so
+> > far. Nor I see any objection against callbacks from them (considering
+> > that either option adds an if).
+> 
+> I have said before I do not understand why the dmabuf paradigm is not
+> sufficient for both device memory and host memory. A less than ideal
+> control path to put hostmem in a dmabuf wrapper vs extra checks and
+> changes in the datapath. The former should always be preferred.
 
-kernel test robot noticed the following build warnings:
+I think Pavel explained this - his project is principally to replace
+the lifetime policy of pages in the data plane. He wants to change
+when a page is considered available for re-allocation because
+userspace may continue to use the page after the netstack thinks it is
+done with it. It sounds like having a different source of the pages is
+the less important part.
 
-[auto build test WARNING on net/main]
+IMHO it seems to compose poorly if you can only use the io_uring
+lifecycle model with io_uring registered memory, and not with DMABUF
+memory registered through Mina's mechanism.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Xiaolei-Wang/net-stmmac-replace-priv-speed-with-the-portTransmitRate-from-the-tc-cbs-parameters/20240607-183700
-base:   net/main
-patch link:    https://lore.kernel.org/r/20240607103327.438455-1-xiaolei.wang%40windriver.com
-patch subject: [net PATCH] net: stmmac: replace priv->speed with the portTransmitRate from the tc-cbs parameters
-config: riscv-defconfig (https://download.01.org/0day-ci/archive/20240607/202406072254.05ysEMg1-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240607/202406072254.05ysEMg1-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406072254.05ysEMg1-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c:7:
-   In file included from include/net/pkt_cls.h:7:
-   In file included from include/net/sch_generic.h:5:
-   In file included from include/linux/netdevice.h:38:
-   In file included from include/net/net_namespace.h:43:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:8:
-   In file included from include/linux/cacheflush.h:5:
-   In file included from arch/riscv/include/asm/cacheflush.h:9:
-   In file included from include/linux/mm.h:2253:
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c:347:11: warning: unused variable 'speed_div' [-Wunused-variable]
-     347 |         u32 ptr, speed_div;
-         |                  ^~~~~~~~~
-   2 warnings generated.
-
-
-vim +/speed_div +347 drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-
-4dbbe8dde8485b Jose Abreu                 2018-05-04  341  
-1f705bc61aee5f Jose Abreu                 2018-06-27  342  static int tc_setup_cbs(struct stmmac_priv *priv,
-1f705bc61aee5f Jose Abreu                 2018-06-27  343  			struct tc_cbs_qopt_offload *qopt)
-1f705bc61aee5f Jose Abreu                 2018-06-27  344  {
-1f705bc61aee5f Jose Abreu                 2018-06-27  345  	u32 tx_queues_count = priv->plat->tx_queues_to_use;
-1f705bc61aee5f Jose Abreu                 2018-06-27  346  	u32 queue = qopt->queue;
-1f705bc61aee5f Jose Abreu                 2018-06-27 @347  	u32 ptr, speed_div;
-1f705bc61aee5f Jose Abreu                 2018-06-27  348  	u32 mode_to_use;
-1f705bc61aee5f Jose Abreu                 2018-06-27  349  	u64 value;
-1f705bc61aee5f Jose Abreu                 2018-06-27  350  	int ret;
-09685c7b815a3c Xiaolei Wang               2024-06-07  351  	s64 port_transmit_rate_kbps;
-1f705bc61aee5f Jose Abreu                 2018-06-27  352  
-1f705bc61aee5f Jose Abreu                 2018-06-27  353  	/* Queue 0 is not AVB capable */
-1f705bc61aee5f Jose Abreu                 2018-06-27  354  	if (queue <= 0 || queue >= tx_queues_count)
-1f705bc61aee5f Jose Abreu                 2018-06-27  355  		return -EINVAL;
-0650d4017f4d2e Jose Abreu                 2019-01-09  356  	if (!priv->dma_cap.av)
-0650d4017f4d2e Jose Abreu                 2019-01-09  357  		return -EOPNOTSUPP;
-1f705bc61aee5f Jose Abreu                 2018-06-27  358  
-09685c7b815a3c Xiaolei Wang               2024-06-07  359  	port_transmit_rate_kbps = qopt->idleslope - qopt->sendslope;
-09685c7b815a3c Xiaolei Wang               2024-06-07  360  
-24877687b375f2 Song, Yoong Siang          2021-02-18  361  	/* Port Transmit Rate and Speed Divider */
-09685c7b815a3c Xiaolei Wang               2024-06-07  362  	switch (div_s64(port_transmit_rate_kbps, 1000)) {
-24877687b375f2 Song, Yoong Siang          2021-02-18  363  	case SPEED_10000:
-24877687b375f2 Song, Yoong Siang          2021-02-18  364  		ptr = 32;
-24877687b375f2 Song, Yoong Siang          2021-02-18  365  		break;
-24877687b375f2 Song, Yoong Siang          2021-02-18  366  	case SPEED_5000:
-24877687b375f2 Song, Yoong Siang          2021-02-18  367  		ptr = 32;
-24877687b375f2 Song, Yoong Siang          2021-02-18  368  		break;
-24877687b375f2 Song, Yoong Siang          2021-02-18  369  	case SPEED_2500:
-24877687b375f2 Song, Yoong Siang          2021-02-18  370  		ptr = 8;
-24877687b375f2 Song, Yoong Siang          2021-02-18  371  		break;
-24877687b375f2 Song, Yoong Siang          2021-02-18  372  	case SPEED_1000:
-24877687b375f2 Song, Yoong Siang          2021-02-18  373  		ptr = 8;
-24877687b375f2 Song, Yoong Siang          2021-02-18  374  		break;
-24877687b375f2 Song, Yoong Siang          2021-02-18  375  	case SPEED_100:
-24877687b375f2 Song, Yoong Siang          2021-02-18  376  		ptr = 4;
-24877687b375f2 Song, Yoong Siang          2021-02-18  377  		break;
-24877687b375f2 Song, Yoong Siang          2021-02-18  378  	default:
-24877687b375f2 Song, Yoong Siang          2021-02-18  379  		return -EOPNOTSUPP;
-24877687b375f2 Song, Yoong Siang          2021-02-18  380  	}
-24877687b375f2 Song, Yoong Siang          2021-02-18  381  
-1f705bc61aee5f Jose Abreu                 2018-06-27  382  	mode_to_use = priv->plat->tx_queues_cfg[queue].mode_to_use;
-1f705bc61aee5f Jose Abreu                 2018-06-27  383  	if (mode_to_use == MTL_QUEUE_DCB && qopt->enable) {
-1f705bc61aee5f Jose Abreu                 2018-06-27  384  		ret = stmmac_dma_qmode(priv, priv->ioaddr, queue, MTL_QUEUE_AVB);
-1f705bc61aee5f Jose Abreu                 2018-06-27  385  		if (ret)
-1f705bc61aee5f Jose Abreu                 2018-06-27  386  			return ret;
-1f705bc61aee5f Jose Abreu                 2018-06-27  387  
-1f705bc61aee5f Jose Abreu                 2018-06-27  388  		priv->plat->tx_queues_cfg[queue].mode_to_use = MTL_QUEUE_AVB;
-1f705bc61aee5f Jose Abreu                 2018-06-27  389  	} else if (!qopt->enable) {
-f317e2ea8c8873 Mohammad Athari Bin Ismail 2021-02-04  390  		ret = stmmac_dma_qmode(priv, priv->ioaddr, queue,
-f317e2ea8c8873 Mohammad Athari Bin Ismail 2021-02-04  391  				       MTL_QUEUE_DCB);
-f317e2ea8c8873 Mohammad Athari Bin Ismail 2021-02-04  392  		if (ret)
-f317e2ea8c8873 Mohammad Athari Bin Ismail 2021-02-04  393  			return ret;
-f317e2ea8c8873 Mohammad Athari Bin Ismail 2021-02-04  394  
-f317e2ea8c8873 Mohammad Athari Bin Ismail 2021-02-04  395  		priv->plat->tx_queues_cfg[queue].mode_to_use = MTL_QUEUE_DCB;
-1f705bc61aee5f Jose Abreu                 2018-06-27  396  	}
-1f705bc61aee5f Jose Abreu                 2018-06-27  397  
-09685c7b815a3c Xiaolei Wang               2024-06-07  398  	port_transmit_rate_kbps = qopt->idleslope - qopt->sendslope;
-09685c7b815a3c Xiaolei Wang               2024-06-07  399  
-1f705bc61aee5f Jose Abreu                 2018-06-27  400  	/* Final adjustments for HW */
-09685c7b815a3c Xiaolei Wang               2024-06-07  401  	value = div_s64(qopt->idleslope * 1024ll * ptr, port_transmit_rate_kbps);
-1f705bc61aee5f Jose Abreu                 2018-06-27  402  	priv->plat->tx_queues_cfg[queue].idle_slope = value & GENMASK(31, 0);
-1f705bc61aee5f Jose Abreu                 2018-06-27  403  
-09685c7b815a3c Xiaolei Wang               2024-06-07  404  	value = div_s64(-qopt->sendslope * 1024ll * ptr, port_transmit_rate_kbps);
-1f705bc61aee5f Jose Abreu                 2018-06-27  405  	priv->plat->tx_queues_cfg[queue].send_slope = value & GENMASK(31, 0);
-1f705bc61aee5f Jose Abreu                 2018-06-27  406  
-8f704ef666406f Arnd Bergmann              2018-07-06  407  	value = qopt->hicredit * 1024ll * 8;
-1f705bc61aee5f Jose Abreu                 2018-06-27  408  	priv->plat->tx_queues_cfg[queue].high_credit = value & GENMASK(31, 0);
-1f705bc61aee5f Jose Abreu                 2018-06-27  409  
-8f704ef666406f Arnd Bergmann              2018-07-06  410  	value = qopt->locredit * 1024ll * 8;
-1f705bc61aee5f Jose Abreu                 2018-06-27  411  	priv->plat->tx_queues_cfg[queue].low_credit = value & GENMASK(31, 0);
-1f705bc61aee5f Jose Abreu                 2018-06-27  412  
-1f705bc61aee5f Jose Abreu                 2018-06-27  413  	ret = stmmac_config_cbs(priv, priv->hw,
-1f705bc61aee5f Jose Abreu                 2018-06-27  414  				priv->plat->tx_queues_cfg[queue].send_slope,
-1f705bc61aee5f Jose Abreu                 2018-06-27  415  				priv->plat->tx_queues_cfg[queue].idle_slope,
-1f705bc61aee5f Jose Abreu                 2018-06-27  416  				priv->plat->tx_queues_cfg[queue].high_credit,
-1f705bc61aee5f Jose Abreu                 2018-06-27  417  				priv->plat->tx_queues_cfg[queue].low_credit,
-1f705bc61aee5f Jose Abreu                 2018-06-27  418  				queue);
-1f705bc61aee5f Jose Abreu                 2018-06-27  419  	if (ret)
-1f705bc61aee5f Jose Abreu                 2018-06-27  420  		return ret;
-1f705bc61aee5f Jose Abreu                 2018-06-27  421  
-1f705bc61aee5f Jose Abreu                 2018-06-27  422  	dev_info(priv->device, "CBS queue %d: send %d, idle %d, hi %d, lo %d\n",
-1f705bc61aee5f Jose Abreu                 2018-06-27  423  			queue, qopt->sendslope, qopt->idleslope,
-1f705bc61aee5f Jose Abreu                 2018-06-27  424  			qopt->hicredit, qopt->locredit);
-1f705bc61aee5f Jose Abreu                 2018-06-27  425  	return 0;
-1f705bc61aee5f Jose Abreu                 2018-06-27  426  }
-1f705bc61aee5f Jose Abreu                 2018-06-27  427  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jason
 
