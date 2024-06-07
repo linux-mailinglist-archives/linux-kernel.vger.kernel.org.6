@@ -1,119 +1,164 @@
-Return-Path: <linux-kernel+bounces-206165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BDB8900506
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:34:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA5190050C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1537028C8AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:34:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E7E61F217F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F53194A7F;
-	Fri,  7 Jun 2024 13:32:04 +0000 (UTC)
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCB81991CC;
+	Fri,  7 Jun 2024 13:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mdu1SN37"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441BE19413D;
-	Fri,  7 Jun 2024 13:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.37.255.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E241922F9;
+	Fri,  7 Jun 2024 13:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717767124; cv=none; b=lDnjOuxPeuMyh87CQ+qDoAwdNWBipa1KlWvEfyEJsvwklQSlBfm/qZiNbZnRKQ7sRlv9MiTtN6II9HVMR/HdTg1a+RgyGWWilSRUYwSTneT3WgHLdpu4/xtgThQMaUg9+/pqovkqhiOWTXbVsxc/Lt9MX1+6uuWxOWX1MOy8FMw=
+	t=1717767158; cv=none; b=MOdAr4il4jlcKqf8DrnIQNCzd7h5+8z2ZblZvZLv1AVkbbC2YDv9AOL3g/9SwgAjMvv8lCvq0xCFSedfKwy88DyjMwb2vEMcU4k2aMgbw3pcRkHKW3tIsn67isbnGfPQeqcuQ0u1K25naAajfmYmuHNWB0vFEfTzE8ai4q8xkw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717767124; c=relaxed/simple;
-	bh=jK1d3o1QAPsjxRL7F/RTi+01I3SDRcHu6QO1eAUSOe0=;
-	h=MIME-Version:Content-Type:Date:From:To:Cc:Subject:In-Reply-To:
-	 References:Message-ID; b=tkS7k2f0pt5AFvTH2Sgck3OwHPvzOU6EQbg6WAxl5DjH6SY8GSF9wrcC8yx4qet7GBs0BIC1xnCxg2CjzHSYHYkiLMFhrYLrZpYmZf1iqn2JF/Tkp4dsMvEc5q9etoryA7XKL19Atv6SHdP2iG2b7ICR98ZGyL/mmuzxoehcBFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; arc=none smtp.client-ip=194.37.255.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
-Received: from [127.0.0.1] (helo=localhost)
-	by relay.expurgate.net with smtp (Exim 4.92)
-	(envelope-from <prvs=990276a841=ms@dev.tdt.de>)
-	id 1sFZhH-005xIM-G8; Fri, 07 Jun 2024 15:31:59 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ms@dev.tdt.de>)
-	id 1sFZhG-00EM7R-UE; Fri, 07 Jun 2024 15:31:58 +0200
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-	by securemail.tdt.de (Postfix) with ESMTP id 8F565240053;
-	Fri,  7 Jun 2024 15:31:58 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-	by securemail.tdt.de (Postfix) with ESMTP id 1974C240050;
-	Fri,  7 Jun 2024 15:31:58 +0200 (CEST)
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-	by mail.dev.tdt.de (Postfix) with ESMTP id 9D59A381D6;
-	Fri,  7 Jun 2024 15:31:57 +0200 (CEST)
+	s=arc-20240116; t=1717767158; c=relaxed/simple;
+	bh=OB9nuMUaz2RJ7fDsZfmD6NlU0tEuo2P3GDvpOX39uHs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Fh9mZEHtJrh5hJ/aeZy8oDTewI7C2JeMywzjtsmSLjxGdZaB4l1Fl71rq3zm5ClVgDNHgKD6b1b4QdBCR0Xus/xHbDoWkFR/fvXZJwjkW+bLEu5Gw65DJQvtThnju3IeXiUiZ88mNnGtyfLeLVMzA03RC+Tp1GlsRsNOoR1/nic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=mdu1SN37; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 457DWKYH086877;
+	Fri, 7 Jun 2024 08:32:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717767140;
+	bh=cxjK4DYOMf+01WJ2Qh8aciagA8IuXgOO5npXQIszqls=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=mdu1SN37oY8CfEk05w2niFM7d5+o3Hn11jSxwb9H44ylAIKMBoLCzB4RTHjVKyXxF
+	 qCMIK5RuWkgWvZFY13d41lf48NzXPBUXyo3xyP82CZ13G415F9+wrdphcH3X9Fo6uy
+	 FVYjm0VKlrOFhugL0gnyxe7QfZpRo/SHyHEpxSIU=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 457DWKt4099910
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 7 Jun 2024 08:32:20 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 7
+ Jun 2024 08:32:20 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 7 Jun 2024 08:32:20 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 457DWJ85046487;
+	Fri, 7 Jun 2024 08:32:20 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <devarsht@ti.com>, <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>,
+        <akpm@linux-foundation.org>, <gregkh@linuxfoundation.org>,
+        <andriy.shevchenko@linux.intel.com>, <adobriyan@gmail.com>,
+        <jani.nikula@intel.com>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+        <daniel@ffwll.ch>, <dri-devel@lists.freedesktop.org>
+CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, <andrzej.p@collabora.com>, <nicolas@ndufresne.ca>,
+        <davidgow@google.com>, <dlatypov@google.com>
+Subject: [PATCH v13 11/13] lib: math_kunit: Add tests for new macros related to rounding to nearest value
+Date: Fri, 7 Jun 2024 19:02:19 +0530
+Message-ID: <20240607133219.3558319-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20240607131900.3535250-1-devarsht@ti.com>
+References: <20240607131900.3535250-1-devarsht@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Fri, 07 Jun 2024 15:31:57 +0200
-From: Martin Schiller <ms@dev.tdt.de>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: martin.blumenstingl@googlemail.com, hauke@hauke-m.de, andrew@lunn.ch,
- f.fainelli@gmail.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 09/13] net: dsa: lantiq_gswip: Forbid
- gswip_add_single_port_br on the CPU port
-Organization: TDT AG
-In-Reply-To: <20240607112628.igcf6ytqe6wbmbq5@skbuf>
-References: <20240606085234.565551-1-ms@dev.tdt.de>
- <20240606085234.565551-10-ms@dev.tdt.de>
- <20240607112628.igcf6ytqe6wbmbq5@skbuf>
-Message-ID: <e2439e7d01c4484c59ce3df2707c2e00@dev.tdt.de>
-X-Sender: ms@dev.tdt.de
-User-Agent: Roundcube Webmail/1.3.17
-X-purgate-type: clean
-X-purgate-ID: 151534::1717767119-36129522-4EAB40DD/0/0
-X-purgate: clean
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 2024-06-07 13:26, Vladimir Oltean wrote:
-> On Thu, Jun 06, 2024 at 10:52:30AM +0200, Martin Schiller wrote:
->> From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
->> 
->> Calling gswip_add_single_port_br() with the CPU port would be a bug
->> because then only the CPU port could talk to itself. Add the CPU port 
->> to
->> the validation at the beginning of gswip_add_single_port_br().
->> 
->> Signed-off-by: Martin Blumenstingl 
->> <martin.blumenstingl@googlemail.com>
->> ---
->>  drivers/net/dsa/lantiq_gswip.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> diff --git a/drivers/net/dsa/lantiq_gswip.c 
->> b/drivers/net/dsa/lantiq_gswip.c
->> index ee8296d5b901..d2195271ffe9 100644
->> --- a/drivers/net/dsa/lantiq_gswip.c
->> +++ b/drivers/net/dsa/lantiq_gswip.c
->> @@ -657,7 +657,7 @@ static int gswip_add_single_port_br(struct 
->> gswip_priv *priv, int port, bool add)
->>  	unsigned int max_ports = priv->hw_info->max_ports;
->>  	int err;
->> 
->> -	if (port >= max_ports) {
->> +	if (port >= max_ports || dsa_is_cpu_port(priv->ds, port)) {
->>  		dev_err(priv->dev, "single port for %i supported\n", port);
->>  		return -EIO;
->>  	}
->> --
->> 2.39.2
->> 
-> 
-> Isn't the new check effectively dead code?
+Add tests for round_closest_up/down and roundclosest macros which round
+to nearest multiple of specified argument. These are tested with kunit
+tool as shared here [1] :
 
-As long as the dsa_switch_ops .port_bridge_join and .port_bridge_leave 
-are not
-executed for the cpu port, I agree with you.
+Link: https://gist.github.com/devarsht/3f9042825be3da4e133b8f4eda067876 [1]
+Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+V1->V13 (No change, patch introduced in V8)
+ lib/math/math_kunit.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+
+diff --git a/lib/math/math_kunit.c b/lib/math/math_kunit.c
+index be27f2afb8e4..05022f010be6 100644
+--- a/lib/math/math_kunit.c
++++ b/lib/math/math_kunit.c
+@@ -70,6 +70,26 @@ static void round_down_test(struct kunit *test)
+ 	KUNIT_EXPECT_EQ(test, round_down((1 << 30) - 1, 1 << 29), 1 << 29);
+ }
+ 
++static void round_closest_up_test(struct kunit *test)
++{
++	KUNIT_EXPECT_EQ(test, round_closest_up(17, 4), 16);
++	KUNIT_EXPECT_EQ(test, round_closest_up(15, 4), 16);
++	KUNIT_EXPECT_EQ(test, round_closest_up(14, 4), 16);
++	KUNIT_EXPECT_EQ(test, round_closest_up((1 << 30) - 1, 1 << 30), 1 << 30);
++	KUNIT_EXPECT_EQ(test, round_closest_up((1 << 30) + 1, 1 << 30), 1 << 30);
++	KUNIT_EXPECT_EQ(test, round_closest_up((1 << 30) - 1, 2), 1 << 30);
++}
++
++static void round_closest_down_test(struct kunit *test)
++{
++	KUNIT_EXPECT_EQ(test, round_closest_down(17, 4), 16);
++	KUNIT_EXPECT_EQ(test, round_closest_down(15, 4), 16);
++	KUNIT_EXPECT_EQ(test, round_closest_down(14, 4), 12);
++	KUNIT_EXPECT_EQ(test, round_closest_down((1 << 30) - 1, 1 << 30), 1 << 30);
++	KUNIT_EXPECT_EQ(test, round_closest_down((1 << 30) + 1, 1 << 30), 1 << 30);
++	KUNIT_EXPECT_EQ(test, round_closest_down((1 << 30) - 1, 2), (1 << 30) - 2);
++}
++
+ /* These versions can round to numbers that aren't a power of two */
+ static void roundup_test(struct kunit *test)
+ {
+@@ -95,6 +115,18 @@ static void rounddown_test(struct kunit *test)
+ 	KUNIT_EXPECT_EQ(test, rounddown(4, 3), 3);
+ }
+ 
++static void roundclosest_test(struct kunit *test)
++{
++	KUNIT_EXPECT_EQ(test, roundclosest(21, 5), 20);
++	KUNIT_EXPECT_EQ(test, roundclosest(19, 5), 20);
++	KUNIT_EXPECT_EQ(test, roundclosest(17, 5), 15);
++	KUNIT_EXPECT_EQ(test, roundclosest((1 << 30), 3), (1 << 30) - 1);
++	KUNIT_EXPECT_EQ(test, roundclosest((1 << 30) - 1, 1 << 29), 1 << 30);
++
++	KUNIT_EXPECT_EQ(test, roundclosest(4, 3), 3);
++	KUNIT_EXPECT_EQ(test, roundclosest(5, 3), 6);
++}
++
+ static void div_round_up_test(struct kunit *test)
+ {
+ 	KUNIT_EXPECT_EQ(test, DIV_ROUND_UP(0, 1), 0);
+@@ -272,8 +304,11 @@ static struct kunit_case math_test_cases[] = {
+ 	KUNIT_CASE(int_sqrt_test),
+ 	KUNIT_CASE(round_up_test),
+ 	KUNIT_CASE(round_down_test),
++	KUNIT_CASE(round_closest_up_test),
++	KUNIT_CASE(round_closest_down_test),
+ 	KUNIT_CASE(roundup_test),
+ 	KUNIT_CASE(rounddown_test),
++	KUNIT_CASE(roundclosest_test),
+ 	KUNIT_CASE(div_round_up_test),
+ 	KUNIT_CASE(div_round_closest_test),
+ 	KUNIT_CASE_PARAM(gcd_test, gcd_gen_params),
+-- 
+2.39.1
+
 
