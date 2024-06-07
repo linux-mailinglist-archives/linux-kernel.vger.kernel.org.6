@@ -1,123 +1,189 @@
-Return-Path: <linux-kernel+bounces-206735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3880900D26
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:46:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 750ED900D27
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 983851F280AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:46:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D38A2B22E0F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26ECC154C05;
-	Fri,  7 Jun 2024 20:46:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67A9154BE4;
+	Fri,  7 Jun 2024 20:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="0CerIIJO"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C/M/sFvv"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B455213E04F;
-	Fri,  7 Jun 2024 20:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AAC3D2EE
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 20:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717793169; cv=none; b=osbbtweoJnF7EqY40wdXiiK6pVbYwUYn9tSKJzVAK+d5roDGZb5mNHbGFxBLyxLnDh9mBnkcGVGihQNtnITuetxXqgT24neZwXZs/14UGVGtR1GRDMSS+XLKFVWesoHNysThGCcr+GM8P79rVDmjJPaPNzES5SBaE38G3ji1tMk=
+	t=1717793267; cv=none; b=aKwOFubKrBzk7V8PXexJJ70CHlP+GuM2ls/XWwxC7dThmf0jzsf3B/QL3WHn+Dc6wehVganfvwkPy5eYpFBrFq+ZWsyFCwG/XkYPHtx+o3KjrT21QiyoJhxLhqdaIRlZUtRu9CcyfoOIwOrEqu2b9e36Q+EgYupbRK7IEQ8s4cQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717793169; c=relaxed/simple;
-	bh=6BVzj3qh2Mv5XAwPAz+fAtU5sQPKfffASaDwumP+ZJ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bph641zhCEvXXFsXF3v3PHEatRYV59fi20zY52l9iS5IVKPXvx/f5eT/0YG6j/63r8E1n266HLHuvtlmoJ3v/wzA8zl+CvwdyDam6+s8rcZ7tcuHb/a+gRK1Gvhc/uuLpf2sgKCa3AAHKVrahtCGEfCHsCyzhV6pd0BRSCNfdGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=0CerIIJO; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4VwtWp1Fnrz9sdB;
-	Fri,  7 Jun 2024 22:45:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1717793158;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F+CsyygnqyIZppE2kuEE0dMrpi3Kb0fFXtIf8csIUsc=;
-	b=0CerIIJO76D4qaq2U+ap75V3Xmmgwbnq8MsQR/5VN4bigHS8rckc9wzrnA4/H5dbmsI8Zh
-	9I1e/wTe04B0VACuXXOHKZmVTD3HYKSCrJhJ8EKCid2ynzOOOhQfRZg6bqFmB6Ae2niqeu
-	QUX2J2v5nU9QXqP6+6dtAqO0YnkgDRKueWHnPjC3AAF7Y60/CX74Fg4evPXnlBvn9Y0cU6
-	HcEny3zKyT7k5l9Tlu+ozF1BdU0dz7BPBP7tYNN2Z6ovBSnj3tlsCD8iSlD/LdV87IVbbC
-	HqjjkvJxZ/23VUv4sEOEm6WBfBpxGBsXlBO9bz/yJCmyanWDuXZOJ9NACFI2Hg==
-Date: Fri, 7 Jun 2024 20:45:52 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Zi Yan <ziy@nvidia.com>, david@fromorbit.com, djwong@kernel.org,
-	chandan.babu@oracle.com, brauner@kernel.org,
-	akpm@linux-foundation.org, mcgrof@kernel.org, linux-mm@kvack.org,
-	hare@suse.de, linux-kernel@vger.kernel.org,
-	yang@os.amperecomputing.com, linux-xfs@vger.kernel.org,
-	p.raghav@samsung.com, linux-fsdevel@vger.kernel.org, hch@lst.de,
-	gost.dev@samsung.com, cl@os.amperecomputing.com,
-	john.g.garry@oracle.com, kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH v7 05/11] mm: split a folio in minimum folio order chunks
-Message-ID: <20240607204552.7bmjf36bsupeznkq@quentin>
-References: <20240607145902.1137853-1-kernel@pankajraghav.com>
- <20240607145902.1137853-6-kernel@pankajraghav.com>
- <75CCE180-EC90-4BDC-B5D8-0ED1B710BE49@nvidia.com>
- <ZmM9BBzU4ySqvxjV@casper.infradead.org>
+	s=arc-20240116; t=1717793267; c=relaxed/simple;
+	bh=rll9k0tB7NHEIjBp2+3dI4iswXfAKzJ6/WWKFna/ZK4=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Cc:Content-Type; b=KK5pk4eFulWyPIQOaZEwoGrzM+TR2fN3bRShEuvPAnnSmH+WDxpgVFvPxokm0Nb3iSTqqqV61SzIqll6up6Z+jiQOsQr4CIQljDqfADGxuQT/KQ+XBtFA95AFyYkEamDq+gkJaxfizM9dk1p/fK05tSd1zwktVe413OxqIyyw8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C/M/sFvv; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-df773f9471fso4751483276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 13:47:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717793264; x=1718398064; darn=vger.kernel.org;
+        h=cc:to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9fYtvobquZVKvp1QHiSBNzMAcMNlZnXn1wwJ7y/l2IU=;
+        b=C/M/sFvvKcYH8aMSzHE2adwBFRrZDtQNzV+tVLi5Tv6lttm7LtV6nGtgzqywFh1k4q
+         q8NHUtov3NS7UWH5sW0XdvdvVWfIgCDuCUgrUXnSsND50QwYG7hsVMndX9DqM8xuoELA
+         dWD9aZliYT+TKoDhTvSDOooZ3it3YUawkr0s34j6EGJ+XFeBuRRoNYQYMzFb35R+1D3S
+         nCdSrI0k/ghAcbaxBGd63AEF1DRYC0hM5UqszWVrdomGGSszb0HgTEUBo0vO3Yga+lcY
+         GbnLiXjwhLR9yesbQEy5AQnc/kcyhyhxwwG8tJimmYZuGAC5I84hqii0FGrODQGI4wPa
+         TN4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717793264; x=1718398064;
+        h=cc:to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9fYtvobquZVKvp1QHiSBNzMAcMNlZnXn1wwJ7y/l2IU=;
+        b=pBk551YYOrmdWvjNYfYKnb5as3Ej5rjQPlUA6hJl4iF0ofnAdl/BPWPg8py5cqv84w
+         7UZ9XxF93h1w2KRgvtN0HdDo9uu8t1inj0G/uPPXmZdRD+414wbudNK3zyoGT68FOwy+
+         YJZStibKZU59KE2/Vuffl9jnnMJpRc4midWOk/qZyeHEx2d40ApkMWMxDR0U3N+IcDIx
+         qO/hgnLaWy8ZMLshNClr3p1LrCx5kzfB1ovzFcws7X9zExjuYgtui26uhET8bjbUBlx3
+         og2eWFRNCmdfiYSg0tDURm1jHS7NoaRohx8yIkZO4WpzGRDufVvQGzprGUZLveQjo/gl
+         7tJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWa3VaffR6Gp195Is9oTmCAC+sEG5L1H8baxGA4/rFMNK3/TrCXWfWFUu9dDbH8T03v59UB3n07e8gZ+feS+mL//eMtJZDx3av+ONzx
+X-Gm-Message-State: AOJu0Yxhs4zemw4vvc80IOmwTXPRLdv5Dh6yFDUzwbh6cqqOqgDA+677
+	b+xsYMLoDIiPZjItJyNp2EqyWqNIOdsbqS0jqMPlbmLEEvj1NhvQrJ339crrWL6zo3WRd3yKQoo
+	XzrhgWQ==
+X-Google-Smtp-Source: AGHT+IHZSdHOzA3rR55KrquWkQlvr81kHdqwOwsqdbbLZkkcSIQXNLLe15qynRNB5SsDXtDh+pVt2HHTEgv+
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:5f56:330e:c132:da6b])
+ (user=irogers job=sendgmr) by 2002:a05:6902:1145:b0:df4:e7aa:590b with SMTP
+ id 3f1490d57ef6-dfaf66c8998mr966135276.13.1717793264537; Fri, 07 Jun 2024
+ 13:47:44 -0700 (PDT)
+Date: Fri,  7 Jun 2024 13:47:27 -0700
+Message-Id: <20240607204727.849174-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmM9BBzU4ySqvxjV@casper.infradead.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+Subject: [PATCH v1] perf record: Ensure space for lost samples
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: Milian Wolff <milian.wolff@kdab.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jun 07, 2024 at 06:01:56PM +0100, Matthew Wilcox wrote:
-> On Fri, Jun 07, 2024 at 12:58:33PM -0400, Zi Yan wrote:
-> > > +int split_folio_to_list(struct folio *folio, struct list_head *list)
-> > > +{
-> > > +	unsigned int min_order = 0;
-> > > +
-> > > +	if (!folio_test_anon(folio)) {
-> > > +		if (!folio->mapping) {
-> > > +			count_vm_event(THP_SPLIT_PAGE_FAILED);
-> > 
-> > You should only increase this counter when the input folio is a THP, namely
-> > folio_test_pmd_mappable(folio) is true. For other large folios, we will
-> > need a separate counter. Something like MTHP_STAT_FILE_SPLIT_FAILED.
-> > See enum mthp_stat_item in include/linux/huge_mm.h.
-> 
-> Also, why should this count as a split failure?  If we see a NULL
-> mapping, the folio has been truncated and so no longer needs to be
-> split.  I understand we currently count it as a failure, but I
-> don't think we should.
+Previous allocation didn't account for sample ID written after the
+lost samples event. Switch from malloc/free to a stack allocation.
 
-I also thought about this. Because if the folio was under writeback, we
-don't account it as a failure but we do it if it was truncated?
+Reported-by: Milian Wolff <milian.wolff@kdab.com>
+Closes: https://lore.kernel.org/linux-perf-users/23879991.0LEYPuXRzz@milian-workstation/
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/lib/perf/include/perf/event.h |  3 +++
+ tools/perf/builtin-record.c         | 37 ++++++++++-------------------
+ 2 files changed, 15 insertions(+), 25 deletions(-)
 
-I can remove the accounting that we added as a part of this series in
-the next version but address the upstream changes [1] in a separate
-standalone patch?
-I prefer to address these kind of open discussion upstream changes
-separately so that we don't delay this series.
-
-Let me know what you think. CCing Kirill as he made those changes.
-
-[1]
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 399a4f5125c7..21f2dd5eb4c5 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -3152,10 +3152,8 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
-                mapping = folio->mapping;
+diff --git a/tools/lib/perf/include/perf/event.h b/tools/lib/perf/include/perf/event.h
+index ae64090184d3..8f3cefef9069 100644
+--- a/tools/lib/perf/include/perf/event.h
++++ b/tools/lib/perf/include/perf/event.h
+@@ -77,6 +77,9 @@ struct perf_record_lost_samples {
+ 	__u64			 lost;
+ };
  
-                /* Truncated ? */
--               if (!mapping) {
-+               if (!mapping)
-                        ret = -EBUSY;
--                       goto out;
--               }
++#define MAX_ID_HDR_ENTRIES  6
++#define PERF_RECORD_MAX_LOST_SAMPLE_AND_ID_SIZE \
++	(sizeof(struct perf_record_lost_samples) + MAX_ID_HDR_ENTRIES * sizeof(__u64))
+ /*
+  * PERF_FORMAT_ENABLED | PERF_FORMAT_RUNNING | PERF_FORMAT_ID | PERF_FORMAT_LOST
+  */
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 66a3de8ac661..1615a1723fb9 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -1926,7 +1926,10 @@ static void __record__save_lost_samples(struct record *rec, struct evsel *evsel,
+ static void record__read_lost_samples(struct record *rec)
+ {
+ 	struct perf_session *session = rec->session;
+-	struct perf_record_lost_samples *lost = NULL;
++	union {
++		struct perf_record_lost_samples lost;
++		char lost_and_sample_id[PERF_RECORD_MAX_LOST_SAMPLE_AND_ID_SIZE];
++	} lost;
+ 	struct evsel *evsel;
  
+ 	/* there was an error during record__open */
+@@ -1951,20 +1954,13 @@ static void record__read_lost_samples(struct record *rec)
+ 
+ 				if (perf_evsel__read(&evsel->core, x, y, &count) < 0) {
+ 					pr_debug("read LOST count failed\n");
+-					goto out;
++					return;
+ 				}
+ 
+ 				if (count.lost) {
+-					if (!lost) {
+-						lost = zalloc(sizeof(*lost) +
+-							      session->machines.host.id_hdr_size);
+-						if (!lost) {
+-							pr_debug("Memory allocation failed\n");
+-							return;
+-						}
+-						lost->header.type = PERF_RECORD_LOST_SAMPLES;
+-					}
+-					__record__save_lost_samples(rec, evsel, lost,
++					memset(&lost, 0, sizeof(lost));
++					lost.lost.header.type = PERF_RECORD_LOST_SAMPLES;
++					__record__save_lost_samples(rec, evsel, &lost.lost,
+ 								    x, y, count.lost, 0);
+ 				}
+ 			}
+@@ -1972,21 +1968,12 @@ static void record__read_lost_samples(struct record *rec)
+ 
+ 		lost_count = perf_bpf_filter__lost_count(evsel);
+ 		if (lost_count) {
+-			if (!lost) {
+-				lost = zalloc(sizeof(*lost) +
+-					      session->machines.host.id_hdr_size);
+-				if (!lost) {
+-					pr_debug("Memory allocation failed\n");
+-					return;
+-				}
+-				lost->header.type = PERF_RECORD_LOST_SAMPLES;
+-			}
+-			__record__save_lost_samples(rec, evsel, lost, 0, 0, lost_count,
++			memset(&lost, 0, sizeof(lost));
++			lost.lost.header.type = PERF_RECORD_LOST_SAMPLES;
++			__record__save_lost_samples(rec, evsel, &lost.lost, 0, 0, lost_count,
+ 						    PERF_RECORD_MISC_LOST_SAMPLES_BPF);
+ 		}
+ 	}
+-out:
+-	free(lost);
+ }
+ 
+ static volatile sig_atomic_t workload_exec_errno;
+@@ -3198,7 +3185,7 @@ static int switch_output_setup(struct record *rec)
+ 	unsigned long val;
+ 
+ 	/*
+-	 * If we're using --switch-output-events, then we imply its 
++	 * If we're using --switch-output-events, then we imply its
+ 	 * --switch-output=signal, as we'll send a SIGUSR2 from the side band
+ 	 *  thread to its parent.
+ 	 */
+-- 
+2.45.2.505.gda0bf45e8d-goog
+
 
