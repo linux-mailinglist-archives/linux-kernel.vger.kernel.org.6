@@ -1,76 +1,75 @@
-Return-Path: <linux-kernel+bounces-205711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B55C48FFF3F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:22:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 495048FFF48
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:23:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06F8CB24455
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:22:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2D1D1F281AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB8015B97D;
-	Fri,  7 Jun 2024 09:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719BA15B96F;
+	Fri,  7 Jun 2024 09:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fHQ0Qfz3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q70QGk70"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84FC15443F
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014A415B966
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717752157; cv=none; b=IMLuha2QOYJGdPVXur/6Z14R8yt9Z50zOGuO8egnmaNzxvwMnEg4v4MZrYiZARtFg/hPMj0n4sc69oJknPq/zVoyfiTEvGfxQ9rB2nLxMXECwTIycnzW/kOqT64RvNuoXV+qyKIrtHeExY181a4CM4jwOov8yHHK3kHqsMcx66o=
+	t=1717752180; cv=none; b=VmuJJrESE+qdkE6LlKxSi4tXGVMmzZun2+RxG6tsjVNAD4JDivelq9jyIPCLRi6WWEfXV9pAh5+P0QNhlkSQMupUw0TlM4utk/H79aRNpSWJjZJ8geKV2ZumAAO4Fyjc42Mv1btmG3KCWouGG1m9CoMtqwaLbuZ+/o46fdbl7U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717752157; c=relaxed/simple;
-	bh=PxPoCnti8PmsO0RZO4P2cppfylAFmUMCeYLiTq60OZ8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=cp2QporPlO10UpolKH4/wLRTXciGuLyeLYLbRT6sq0C/jKHYqNfxRFgYXzk8cc0MfhlPOE0EVE2angjTZwWFUZFKL/sA30crpw7ejY80rPvYTvISrZRGnNBoCkJ4DJcmcNelsK01RxGDM/tW0fjz3x21yIIVxki6cAn9AKctk9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fHQ0Qfz3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717752154;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=SRqQ/AWbxoxEZebHKh1nFKhD+CG00A7FWiDUssUfhzw=;
-	b=fHQ0Qfz3WmugUGjm1I0WZGPXTBeaJNM937/p+ZrPae/9k53YRbl2SJLFi0Fe0xzU7a019C
-	cgdztOFWIU2jL7BgtSrmweb8DqwYu+M8hYTXKBG7zQb2GGpAdBc2bJtD1Bd6E5ROrqJ4IN
-	RA4FWBqL9poF350+Cm0G5kVfWNu/QFs=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-54-_PqQxFEgP16EavU4SNhyxg-1; Fri, 07 Jun 2024 05:22:33 -0400
-X-MC-Unique: _PqQxFEgP16EavU4SNhyxg-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a592c35ac06so189693766b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 02:22:33 -0700 (PDT)
+	s=arc-20240116; t=1717752180; c=relaxed/simple;
+	bh=YwoUri3ktWMFoZow1yFuIzi/afm7rRFS1XgwQ1LDl9U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZPyUKZzGpEKjbrlysPk4QH74RCTp2JshNgsBOIeQ3a0NjTZbQgur4XAPSFmC3Ws2HbLTvMNt2mTnRfvQCmB1ty2r5lUNA0MEnSo7Bidjgk6DfBt/5Vkgv1Hyizj6fbwERgTX/kCPKtmw2jhGvyLagUDVgai9f9eLhmEMhkyV3Cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q70QGk70; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-35e4be5bd7fso1647831f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 02:22:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717752177; x=1718356977; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:reply-to
+         :autocrypt:from:content-language:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u0T4B4BXzv7yNTZXWNQwkT6ayKsObAY6eNGwzmrTqAk=;
+        b=q70QGk70GVQHAU2c7EGhfjPd2EFcMJUqqGLi7o+6ToU4BWJ8NeNrAh9QZkq3qZGlZr
+         Uj25mXQjBN+srKogIwoo1y2v0AH5fpm2DWgmclsjN42NRF4IYSWTu8/+z7NFalsdbRbD
+         hpaMWycqGxqTWvMM3PgUP8/A0ZsjgXQDNPIIHal1eV/9yjHdtMS4qGCH1durAj8X7ubw
+         eXxHx3W/ApMWqE7+P3Y/UvWqNH08xzu/gpj4xsrY9z8p4g+Q5wFgvt2ATiI1gyRfMEwP
+         N+jrmWRYyF5FAjukZ6cliguRxsYoIek5AhGXPUb9YGhhHdRLGnkY0UAnc1ugFlYXplQc
+         K9CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717752152; x=1718356952;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SRqQ/AWbxoxEZebHKh1nFKhD+CG00A7FWiDUssUfhzw=;
-        b=Tn58AcdYd5JZ4rh7pxkQAI4AYzIve4nTC8uM+FjKKOOmfVMPrKk0xU/IX/m9p58RMQ
-         RVHF2EHNSFBPTCKXgABk/G0cU4jVVxq6hL5BB0+HFM9pB7ahTfn7S6/kwHsMYISwGMyQ
-         RjiPPaBbwSU10VW/c2TdIRxoPsWnQYo38zdYWisqXToESjDMvaFKys5LxBqBlJ4RgbRA
-         ZwlHm9HKnkTNW8pVC7rsjHEynsDpqSkOwT3SXTo10M03jdnSsQupSvbgaDvq7rDhqwmB
-         /UQWvi7fPtam6GLnrGTSjdAjiM5nNtVzzpPkrNXAgfLWDafUJFfhul/ya9uY10QNkPOa
-         OKPw==
-X-Gm-Message-State: AOJu0Yx2Hey8iGh8ho9ozUmBUr0f8leBgULTBAOg6F3G1yEjvJY7nQK9
-	9bg0+BpdVKgl7eEBfFMg/PGWyDmVrKmynEo7xXxw79US/RWpzw84QBh7e0E+m9syApmdc5IMp/W
-	IWAPuN/WtzDFA3dkBIFr2ywTNb424vA3rbaMApkcLIZGuXvRogYl75NKHLAD8Jw==
-X-Received: by 2002:a17:906:684a:b0:a68:5fb6:1a7f with SMTP id a640c23a62f3a-a6c7629781cmr423081666b.21.1717752152160;
-        Fri, 07 Jun 2024 02:22:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGfabF485ZdkmsAwzX+jysrYwcbJShkygx3TpR3C7b7Kchhjzr88ulzEmZ6cuvF8E9LLmrfJQ==
-X-Received: by 2002:a17:906:684a:b0:a68:5fb6:1a7f with SMTP id a640c23a62f3a-a6c7629781cmr423080466b.21.1717752151697;
-        Fri, 07 Jun 2024 02:22:31 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c80586f8csm219107566b.40.2024.06.07.02.22.30
+        d=1e100.net; s=20230601; t=1717752177; x=1718356977;
+        h=content-transfer-encoding:in-reply-to:organization:reply-to
+         :autocrypt:from:content-language:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=u0T4B4BXzv7yNTZXWNQwkT6ayKsObAY6eNGwzmrTqAk=;
+        b=C2InAD/dq+oA4MCLBq57oSH6IUBcI8hpBniBCVCd1ubch1sCf6jlLXY9+MtJCN5TDh
+         etggMHUXjfX40ilBPaUe3/nYa6wBF+snLWkPvfS+fiPp6aUncpx0UBulPvLSX5+2FXzY
+         OyRGvxDs/44/ExFGtuRDHjWGL9F/qx5+/JaLhDuPVnijgC6NXUDdwkqNKAnxiFL+hMrZ
+         9woE+eJaiBfkYVl5PAu5B5hega1wIUfgZskfCOx5nmSQna56ZiFg+0lyUg40JLTSHrDo
+         VCVxr6RA6fiXU3VEE2A6HhjGkF2pC0qPTYesNb5j7Hd9OQc1EYyvwQFZNiCQlLV2wMeE
+         8BjA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJA0s+F/F0D6k6EUrskRKTrzDzFefy3gL0wOcrK4wdtFeRF0glwsEoxOeDP1d7d+XYgn5p1SLITr+6KNbwoHJshurlrNdhWMCIGVVc
+X-Gm-Message-State: AOJu0YyFKyOq0upFRnL1ZlLQUh/pudwijEyYpbDqhW7aisQqlGUH4beT
+	5Ezm1Zq3pJ5Zq7eaU9tLiQ4e/RK4cL5FhFFxXBt5laEWiZBlwsBKSnoKVIG+gwg=
+X-Google-Smtp-Source: AGHT+IHI/SRbC76tGKuWAIzzK3sqU7ca676FAKWmmkTRFEoO4cno8PeQyR6PowYlGkQDamtVdfzs9g==
+X-Received: by 2002:a5d:6c65:0:b0:354:b7f0:b09d with SMTP id ffacd0b85a97d-35efed2b454mr1715011f8f.2.1717752177192;
+        Fri, 07 Jun 2024 02:22:57 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:7e4b:b0d3:6a34:6404? ([2a01:e0a:982:cbb0:7e4b:b0d3:6a34:6404])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5fd1d7asm3585930f8f.116.2024.06.07.02.22.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jun 2024 02:22:31 -0700 (PDT)
-Message-ID: <6d69dc47-67e5-468b-aa7c-879bbad7ef77@redhat.com>
-Date: Fri, 7 Jun 2024 11:22:30 +0200
+        Fri, 07 Jun 2024 02:22:56 -0700 (PDT)
+Message-ID: <3b46ff8b-3095-4170-ab94-3410cf841383@linaro.org>
+Date: Fri, 7 Jun 2024 11:22:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,98 +77,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: [GIT PULL] platform-drivers-x86 for 6.10-3
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- platform-driver-x86@vger.kernel.org,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Content-Language: en-US, nl
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v2] ASoC: dt-bindings: linux,spdif: Convert
+ spdif-reciever.txt to dtschema
+To: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240606041212.78428-1-animeshagarwal28@gmail.com>
+Content-Language: en-US, fr
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Reply-To: neil.armstrong@linaro.org
+Organization: Linaro
+In-Reply-To: <20240606041212.78428-1-animeshagarwal28@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On 06/06/2024 06:12, Animesh Agarwal wrote:
+> Convert the dummy SPDIF receiver bindings to DT schema.
+> 
+> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+> Cc: Daniel Baluta <daniel.baluta@nxp.com>
+> 
+> ---
+> Changes	in v2:
+> - Add linux,spdif-dir compatible in existing linux,spdif-dit.yaml
+> instead of creating new yaml file specifically for dummy SPDIF receiver.
+> - Change file name to support both transmitter and receiver bindings.
+> ---
+>   .../sound/{linux,spdif-dit.yaml => linux,spdif.yaml}   |  8 +++++---
+>   .../devicetree/bindings/sound/spdif-receiver.txt       | 10 ----------
+>   2 files changed, 5 insertions(+), 13 deletions(-)
+>   rename Documentation/devicetree/bindings/sound/{linux,spdif-dit.yaml => linux,spdif.yaml} (75%)
+>   delete mode 100644 Documentation/devicetree/bindings/sound/spdif-receiver.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/linux,spdif-dit.yaml b/Documentation/devicetree/bindings/sound/linux,spdif.yaml
+> similarity index 75%
+> rename from Documentation/devicetree/bindings/sound/linux,spdif-dit.yaml
+> rename to Documentation/devicetree/bindings/sound/linux,spdif.yaml
+> index fe5f0756af2f..0f4893e11ec4 100644
+> --- a/Documentation/devicetree/bindings/sound/linux,spdif-dit.yaml
+> +++ b/Documentation/devicetree/bindings/sound/linux,spdif.yaml
+> @@ -1,10 +1,10 @@
+>   # SPDX-License-Identifier: GPL-2.0
+>   %YAML 1.2
+>   ---
+> -$id: http://devicetree.org/schemas/sound/linux,spdif-dit.yaml#
+> +$id: http://devicetree.org/schemas/sound/linux,spdif.yaml#
+>   $schema: http://devicetree.org/meta-schemas/core.yaml#
+>   
+> -title: Dummy SPDIF Transmitter
+> +title: Dummy SPDIF Transmitter/Receiver
+>   
+>   maintainers:
+>     - Mark Brown <broonie@kernel.org>
+> @@ -14,7 +14,9 @@ allOf:
+>   
+>   properties:
+>     compatible:
+> -    const: linux,spdif-dit
+> +    enum:
+> +      - linux,spdif-dit
+> +      - linux,spdif-dir
+>   
+>     "#sound-dai-cells":
+>       const: 0
+> diff --git a/Documentation/devicetree/bindings/sound/spdif-receiver.txt b/Documentation/devicetree/bindings/sound/spdif-receiver.txt
+> deleted file mode 100644
+> index 80f807bf8a1d..000000000000
+> --- a/Documentation/devicetree/bindings/sound/spdif-receiver.txt
+> +++ /dev/null
+> @@ -1,10 +0,0 @@
+> -Device-Tree bindings for dummy spdif receiver
+> -
+> -Required properties:
+> -	- compatible: should be "linux,spdif-dir".
+> -
+> -Example node:
+> -
+> -	codec: spdif-receiver {
+> -		compatible = "linux,spdif-dir";
+> -	};
 
-Here is the second round of fixes for platform-drivers-x86 for 6.10.
-
-Highlights:
- -  Default silead touchscreen driver to 10 fingers and drop 10 finger setting
-    from all DMI quirks. More of a cleanup then a pure fix, but since the DMI
-    quirks always get updated through the fixes branch this avoids conflicts.
- -  Kconfig fix for randconfig builds
- -  dell-smbios: Fix wrong token data in sysfs
- -  amd-hsmp: Fix driver poking unsupported hw when loaded manually
-
-Regards,
-
-Hans
-
-
-The following changes since commit 3050052613790e75b5e4a8536930426b0a8b0774:
-
-  platform/x86: touchscreen_dmi: Add info for the EZpad 6s Pro (2024-05-27 11:43:03 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.10-3
-
-for you to fetch changes up to 77f1972bdcf7513293e8bbe376b9fe837310ee9c:
-
-  platform/x86/amd/hsmp: Check HSMP support on AMD family of processors (2024-06-03 11:57:28 +0200)
-
-----------------------------------------------------------------
-platform-drivers-x86 for v6.10-3
-
-Highlights:
- -  Default silead touchscreen driver to 10 fingers and drop 10 finger setting
-    from all DMI quirks. More of a cleanup then a pure fix, but since the DMI
-    quirks always get updated through the fixes branch this avoids conflicts.
- -  Kconfig fix for randconfig builds
- -  dell-smbios: Fix wrong token data in sysfs
- -  amd-hsmp: Fix driver poking unsupported hw when loaded manually
-
-The following is an automated git shortlog grouped by driver:
-
-Input:
- -  silead - Always support 10 fingers
-
-dell-smbios:
- -  Simplify error handling
- -  Fix wrong token data in sysfs
-
-platform/x86/amd/hsmp:
- -  Check HSMP support on AMD family of processors
-
-touchscreen_dmi:
- -  Use 2-argument strscpy()
- -  Drop "silead,max-fingers" property
-
-yt2-1380:
- -  add CONFIG_EXTCON dependency
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      platform/x86: touchscreen_dmi: Use 2-argument strscpy()
-
-Armin Wolf (2):
-      platform/x86: dell-smbios: Fix wrong token data in sysfs
-      platform/x86: dell-smbios: Simplify error handling
-
-Arnd Bergmann (1):
-      platform/x86: yt2-1380: add CONFIG_EXTCON dependency
-
-Hans de Goede (2):
-      Input: silead - Always support 10 fingers
-      platform/x86: touchscreen_dmi: Drop "silead,max-fingers" property
-
-Suma Hegde (1):
-      platform/x86/amd/hsmp: Check HSMP support on AMD family of processors
-
- drivers/input/touchscreen/silead.c           |  19 ++---
- drivers/platform/x86/Kconfig                 |   1 +
- drivers/platform/x86/amd/hsmp.c              |  50 +++++++++++--
- drivers/platform/x86/dell/dell-smbios-base.c | 101 +++++++++++----------------
- drivers/platform/x86/touchscreen_dmi.c       |  59 +---------------
- 5 files changed, 89 insertions(+), 141 deletions(-)
-
+Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
 
