@@ -1,123 +1,339 @@
-Return-Path: <linux-kernel+bounces-206595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AB45900BD4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:19:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10CA9900BDA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 677BE285CA6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:19:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF1182862C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EFFB139CF6;
-	Fri,  7 Jun 2024 18:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D4D13CA8C;
+	Fri,  7 Jun 2024 18:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MWCPrez7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nQuJRPll"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB061DFEB;
-	Fri,  7 Jun 2024 18:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C3C4DA08;
+	Fri,  7 Jun 2024 18:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717784339; cv=none; b=iBuDjpmMilQfYfd/deBIVi4spjWVbxrOf+37LGEzR2hZ8kYg4Y62n0O9XJAQxebUGMzcWqo2QNEKqvMYxrak6rFCO9Mv9G8T7lZEEkRtzAJ+e04HetT7Ftug0tMZs5KUGLRoH37Ym5Q56Fbvkmr2xEgl8sPa+21oLSD4JtheKtk=
+	t=1717784439; cv=none; b=QvaPmK60mGIcBCvwjN2RV1cYIgQkQAEbK+Q1q0QvAZX4Th+ph69nUlagL33QQjEV4Cgeo/j/+sg+8uhrPWjHYZJq/PFP1lvBTyyWb/d+OluFgvFp0wg29vn5Es8jtJA/FN/5PosSMgUhTioxpfQZPTF7pcTpK8CjBqab0CobzWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717784339; c=relaxed/simple;
-	bh=7JYVFmwVoYI/lP50oTlJEVeX/T08uLhbxMC9TIDM7nE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cQe2wvTZJTW1MeUAaGc/xweIuJ7YPP8xIy4PWT5X7qwrCRCA3tJBjfjqV1nILqSrvUKJdVrrVVJJTXHRNts/JT5gDbPuCaEIKXe/cviRSJHdViLvEoSxQZe0PPWu/GqR+UAk2mN0xAPNtUQA8+b0ECsAutqauUJ5vhKfCDod+l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MWCPrez7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B98E5C2BBFC;
-	Fri,  7 Jun 2024 18:18:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717784339;
-	bh=7JYVFmwVoYI/lP50oTlJEVeX/T08uLhbxMC9TIDM7nE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MWCPrez7FGeAkANPGfxIeYmx07QUAwFyhD8vh/L/HTocNCr437ymHdYqQioBUAuvL
-	 S3MG1Krb85pg3dzrx7ZQ4T8p+1W60XilMuXi377zvTX+8R5UEQeSB4PifTPKxi8JNg
-	 3kLda/jmf4d8k12u527coaQMM4g4zRvfqYcJr7eDwpiMYYExwPHlitF8rB8SnCq5OI
-	 JS9XlMNGAv3DIFmrNN0DBmSaici4mEuuTsGM8HUUBPsMh4hpX9vkB0DYi3fiTheLA8
-	 Z9Op9H5dNqvW2eDt5WpIKomyElnM9fb2q8Ya+4pD1CfnNY2ZhLIBYdZfEgk58Ugrdz
-	 BEti3c9OCtw8Q==
-Date: Fri, 7 Jun 2024 11:18:57 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ravi Bangoria <ravi.bangoria@amd.com>, Ian Rogers <irogers@google.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Changbin Du <changbin.du@huawei.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH v1] perf top: Make zeroing histogram on refresh the
- default
-Message-ID: <ZmNPETT8oxWSpg72@google.com>
-References: <20240516222159.3710131-1-irogers@google.com>
- <86136e0d-45e9-4bf4-826b-359e4993488f@amd.com>
- <ZmHDmrLCoYPUCv3n@x1>
+	s=arc-20240116; t=1717784439; c=relaxed/simple;
+	bh=RZ12aQi9yAohDKUTn0IKAy4katTS2pulT3gqwEHruZg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cPIrmfaUQGvK/gQLM9MuMlBH1CJJhzKOqkNdSXJBTOi3y8RpSTlMxmZP/679ZW7NZPilh95f+iMfGPPD/TbMaciy1RhsRT0t6DHJ4iVuH8Gu9CKjtO6W4a/tL/TX9QfRNoujRqUb5ciVrQVybb5Tp3YC0ryDI1uajyL2V2ncbv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nQuJRPll; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 457IBJGK028460;
+	Fri, 7 Jun 2024 18:20:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
+ content-transfer-encoding : date : from : message-id : mime-version :
+ subject : to; s=pp1; bh=8Of3jtOtNBCqPysJASfdDL2S3JSFKdLpSXFzpLYj2PY=;
+ b=nQuJRPllzByViz+Rnhu6mjt/SumqpxoyCeOwsm+X8P6K+7I7izig3HceiEPOIBn0OiFO
+ T7OyKtbvbPwbSnEygyzWU4BFp0hiBSwRDjEBH3hrw0CMlr2RULEKO/hfhrfDzvq3bVCz
+ Tyyy+KC+ORFXzmNHTXQQ859t5TRufnLf8rwIFLDGPZ205+AJu1K+kobAwQDs0lWX6p0d
+ pce0J9L4MkHMVDS03zPowdZe9O+MkmK+tYKFESvoWelMdGN7ou+vEsYASOlFMz3TpgSx
+ 9k+fl2ZxV+5+ToIdOSM/Jn/95rYr62evb+SJZkMzJ7yja5oS9HuA6TdEVYuv4VO5Q22r 7w== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ym6yx030s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 18:20:09 +0000
+Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 457IK9Km015675;
+	Fri, 7 Jun 2024 18:20:09 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ym6yx030n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 18:20:09 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 457GnIBP026671;
+	Fri, 7 Jun 2024 18:20:07 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ygffnj0j7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 18:20:07 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 457IK31D44826968
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 7 Jun 2024 18:20:05 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A2AD520049;
+	Fri,  7 Jun 2024 18:20:03 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A62D520040;
+	Fri,  7 Jun 2024 18:20:01 +0000 (GMT)
+Received: from ltczz402-lp1.aus.stglabs.ibm.com (unknown [9.40.194.31])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  7 Jun 2024 18:20:01 +0000 (GMT)
+From: Donet Tom <donettom@linux.ibm.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Tony Battersby <tonyb@cybernetics.com>
+Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Muchun Song <songmuchun@bytedance.com>,
+        David Hildenbrand <david@redhat.com>, p.raghav@samsung.com,
+        usama.anjum@collabora.com
+Subject: [PATCH v4] selftest: mm: Test if hugepage does not get leaked during __bio_release_pages()
+Date: Fri,  7 Jun 2024 13:20:00 -0500
+Message-ID: <20240607182000.6494-1-donettom@linux.ibm.com>
+X-Mailer: git-send-email 2.43.0
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Mt-ewEyqWzwNqnyY4Mdcwcwb3rVuufCr
+X-Proofpoint-GUID: H5jiUjmYy4Zoi_JUgEFfVW_eamQBcxgh
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZmHDmrLCoYPUCv3n@x1>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-07_11,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ clxscore=1015 mlxscore=0 malwarescore=0 mlxlogscore=999 suspectscore=0
+ priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2406070135
 
-On Thu, Jun 06, 2024 at 11:11:38AM -0300, Arnaldo Carvalho de Melo wrote:
-> On Thu, Jun 06, 2024 at 10:15:00AM +0530, Ravi Bangoria wrote:
-> > On 5/17/2024 3:51 AM, Ian Rogers wrote:
-> > > Instead of decaying histograms over time change it so that they are
-> > > zero-ed on each perf top refresh. Previously the option '-z', or
-> > > pressing 'z' in tui mode, would enable this behavior. Decaying samples
-> > > is non-intuitive as it isn't how "top" works. Make zeroing on refresh
-> > > the default and rename the command line options from 'z' to 'Z' and
-> > > 'zero' to 'decay'.
-> 
-> > I've also felt `perf top` decay as non-intuitive. Esp. when system becomes
-> > idle after some heavy workload, even decayed samples are far more compared
-> > to samples from currently running processes and thus `perf top` keeps
-> > showing already finished processes at the top, which is kind of confusing.
-> > fwiw:
->  
-> > Acked-by: Ravi Bangoria <ravi.bangoria@amd.com>
-> 
-> Thanks for voicing your opinion, that is really helpful.
-> 
-> Changing tool behaviour can have unintended consequences even when done
-> with the best intentions and analysis, that is why I'm wary of doing it.
-> 
-> The --children case generated complaints when we made it the default, so
-> we ended up with a ~/.perfconfig option to disable it:
-> 
-> root@number:~# perf config top.children=false
-> root@number:~# perf top -g
-> 
-> Or enable explicitely:
-> 
-> root@number:~# perf config top.children=true
-> root@number:~# perf top -g
-> 
-> Same thing with the build id cache, where one can disable it using 'perf
-> config', etc.
-> 
-> So I'd do this initially with a 'perf config top.refresh=zero' instead
-> of changing something so few people complained as not being intuitive
-> after all those years of having that default.
+Commit 1b151e2435fc ("block: Remove special-casing of compound
+pages") caused a change in behaviour when releasing the pages
+if the buffer does not start at the beginning of the page. This
+was because the calculation of the number of pages to release
+was incorrect.
+This was fixed by commit 38b43539d64b ("block: Fix page refcounts
+for unaligned buffers in __bio_release_pages()").
 
-This kind of thing happens periodically, I guess we can add some message
-to help users to set the default config when it's not set.  In TUI, it
-can even set the config directly according to the users response.
+We pin the user buffer during direct I/O writes. If this buffer is a
+hugepage, bio_release_page() will unpin it and decrement all references
+and pin counts at ->bi_end_io. However, if any references to the hugepage
+remain post-I/O, the hugepage will not be freed upon unmap, leading
+to a memory leak.
 
-Thanks,
-Namhyung
+This patch verifies that a hugepage, used as a user buffer for DIO
+operations, is correctly freed upon unmapping, regardless of whether
+the offsets are aligned or unaligned w.r.t page boundary.
+
+Test Result  Fail Scenario (Without the fix)
+--------------------------------------------------------
+[]# ./hugetlb_dio
+TAP version 13
+1..4
+No. Free pages before allocation : 7
+No. Free pages after munmap : 7
+ok 1 : Huge pages freed successfully !
+No. Free pages before allocation : 7
+No. Free pages after munmap : 7
+ok 2 : Huge pages freed successfully !
+No. Free pages before allocation : 7
+No. Free pages after munmap : 7
+ok 3 : Huge pages freed successfully !
+No. Free pages before allocation : 7
+No. Free pages after munmap : 6
+not ok 4 : Huge pages not freed!
+Totals: pass:3 fail:1 xfail:0 xpass:0 skip:0 error:0
+
+Test Result  PASS Scenario (With the fix)
+---------------------------------------------------------
+[]#./hugetlb_dio
+TAP version 13
+1..4
+No. Free pages before allocation : 7
+No. Free pages after munmap : 7
+ok 1 : Huge pages freed successfully !
+No. Free pages before allocation : 7
+No. Free pages after munmap : 7
+ok 2 : Huge pages freed successfully !
+No. Free pages before allocation : 7
+No. Free pages after munmap : 7
+ok 3 : Huge pages freed successfully !
+No. Free pages before allocation : 7
+No. Free pages after munmap : 7
+ok 4 : Huge pages freed successfully !
+Totals: pass:4 fail:0 xfail:0 xpass:0 skip:0 error:0
+
+V4:
+- Added this test to run_vmtests.sh.
+
+V3:
+- Fixed the build error when it is compiled with _FORTIFY_SOURCE.
+
+V2:
+- Addressed all review commets from Muhammad Usama Anjum
+https://lore.kernel.org/all/20240604132801.23377-1-donettom@linux.ibm.com/
+
+V1:
+https://lore.kernel.org/all/20240523063905.3173-1-donettom@linux.ibm.com/#t
+
+Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+Co-developed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+ tools/testing/selftests/mm/Makefile       |   1 +
+ tools/testing/selftests/mm/hugetlb_dio.c  | 118 ++++++++++++++++++++++
+ tools/testing/selftests/mm/run_vmtests.sh |   1 +
+ 3 files changed, 120 insertions(+)
+ create mode 100644 tools/testing/selftests/mm/hugetlb_dio.c
+
+diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
+index 3b49bc3d0a3b..a1748a4c7df1 100644
+--- a/tools/testing/selftests/mm/Makefile
++++ b/tools/testing/selftests/mm/Makefile
+@@ -73,6 +73,7 @@ TEST_GEN_FILES += ksm_functional_tests
+ TEST_GEN_FILES += mdwe_test
+ TEST_GEN_FILES += hugetlb_fault_after_madv
+ TEST_GEN_FILES += hugetlb_madv_vs_map
++TEST_GEN_FILES += hugetlb_dio
+ 
+ ifneq ($(ARCH),arm64)
+ TEST_GEN_FILES += soft-dirty
+diff --git a/tools/testing/selftests/mm/hugetlb_dio.c b/tools/testing/selftests/mm/hugetlb_dio.c
+new file mode 100644
+index 000000000000..986f3b6c7f7b
+--- /dev/null
++++ b/tools/testing/selftests/mm/hugetlb_dio.c
+@@ -0,0 +1,118 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * This program tests for hugepage leaks after DIO writes to a file using a
++ * hugepage as the user buffer. During DIO, the user buffer is pinned and
++ * should be properly unpinned upon completion. This patch verifies that the
++ * kernel correctly unpins the buffer at DIO completion for both aligned and
++ * unaligned user buffer offsets (w.r.t page boundary), ensuring the hugepage
++ * is freed upon unmapping.
++ */
++
++#define _GNU_SOURCE
++#include <stdio.h>
++#include <sys/stat.h>
++#include <stdlib.h>
++#include <fcntl.h>
++#include <stdint.h>
++#include <unistd.h>
++#include <string.h>
++#include <sys/mman.h>
++#include "vm_util.h"
++#include "../kselftest.h"
++
++void run_dio_using_hugetlb(unsigned int start_off, unsigned int end_off)
++{
++	int fd;
++	char *buffer =  NULL;
++	char *orig_buffer = NULL;
++	size_t h_pagesize = 0;
++	size_t writesize;
++	int free_hpage_b = 0;
++	int free_hpage_a = 0;
++	const int mmap_flags = MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB;
++	const int mmap_prot  = PROT_READ | PROT_WRITE;
++
++	writesize = end_off - start_off;
++
++	/* Get the default huge page size */
++	h_pagesize = default_huge_page_size();
++	if (!h_pagesize)
++		ksft_exit_fail_msg("Unable to determine huge page size\n");
++
++	/* Open the file to DIO */
++	fd = open("/tmp", O_TMPFILE | O_RDWR | O_DIRECT, 0664);
++	if (fd < 0)
++		ksft_exit_fail_perror("Error opening file\n");
++
++	/* Get the free huge pages before allocation */
++	free_hpage_b = get_free_hugepages();
++	if (free_hpage_b == 0) {
++		close(fd);
++		ksft_exit_skip("No free hugepage, exiting!\n");
++	}
++
++	/* Allocate a hugetlb page */
++	orig_buffer = mmap(NULL, h_pagesize, mmap_prot, mmap_flags, -1, 0);
++	if (orig_buffer == MAP_FAILED) {
++		close(fd);
++		ksft_exit_fail_perror("Error mapping memory\n");
++	}
++	buffer = orig_buffer;
++	buffer += start_off;
++
++	memset(buffer, 'A', writesize);
++
++	/* Write the buffer to the file */
++	if (write(fd, buffer, writesize) != (writesize)) {
++		munmap(orig_buffer, h_pagesize);
++		close(fd);
++		ksft_exit_fail_perror("Error writing to file\n");
++	}
++
++	/* unmap the huge page */
++	munmap(orig_buffer, h_pagesize);
++	close(fd);
++
++	/* Get the free huge pages after unmap*/
++	free_hpage_a = get_free_hugepages();
++
++	/*
++	 * If the no. of free hugepages before allocation and after unmap does
++	 * not match - that means there could still be a page which is pinned.
++	 */
++	if (free_hpage_a != free_hpage_b) {
++		ksft_print_msg("No. Free pages before allocation : %d\n", free_hpage_b);
++		ksft_print_msg("No. Free pages after munmap : %d\n", free_hpage_a);
++		ksft_test_result_fail(": Huge pages not freed!\n");
++	} else {
++		ksft_print_msg("No. Free pages before allocation : %d\n", free_hpage_b);
++		ksft_print_msg("No. Free pages after munmap : %d\n", free_hpage_a);
++		ksft_test_result_pass(": Huge pages freed successfully !\n");
++	}
++}
++
++int main(void)
++{
++	size_t pagesize = 0;
++
++	ksft_print_header();
++	ksft_set_plan(4);
++
++	/* Get base page size */
++	pagesize  = psize();
++
++	/* start and end is aligned to pagesize */
++	run_dio_using_hugetlb(0, (pagesize * 3));
++
++	/* start is aligned but end is not aligned */
++	run_dio_using_hugetlb(0, (pagesize * 3) - (pagesize / 2));
++
++	/* start is unaligned and end is aligned */
++	run_dio_using_hugetlb(pagesize / 2, (pagesize * 3));
++
++	/* both start and end are unaligned */
++	run_dio_using_hugetlb(pagesize / 2, (pagesize * 3) + (pagesize / 2));
++
++	ksft_finished();
++}
++
+diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/selftests/mm/run_vmtests.sh
+index 3157204b9047..5698d519170d 100755
+--- a/tools/testing/selftests/mm/run_vmtests.sh
++++ b/tools/testing/selftests/mm/run_vmtests.sh
+@@ -265,6 +265,7 @@ CATEGORY="hugetlb" run_test ./map_hugetlb
+ CATEGORY="hugetlb" run_test ./hugepage-mremap
+ CATEGORY="hugetlb" run_test ./hugepage-vmemmap
+ CATEGORY="hugetlb" run_test ./hugetlb-madvise
++CATEGORY="hugetlb" run_test ./hugetlb_dio
+ 
+ nr_hugepages_tmp=$(cat /proc/sys/vm/nr_hugepages)
+ # For this test, we need one and just one huge page
+-- 
+2.43.0
 
 
