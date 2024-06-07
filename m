@@ -1,167 +1,202 @@
-Return-Path: <linux-kernel+bounces-205934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FBB490025F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:38:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADA2E900263
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:39:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4EF0288118
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:38:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DC45289149
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A6A18F2CD;
-	Fri,  7 Jun 2024 11:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070ED190661;
+	Fri,  7 Jun 2024 11:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XWiZghsI"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q9IuoY5v"
+Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656DD18733D
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94EE918C328
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717760312; cv=none; b=fTJBr5AtgMOOL0NHbDrsIyPMtv8SVRYijrebxhltPhvmq3SZjNriyc9EtYLFk3v/LC1aI6u+ai/jXgLmojfCitOAQFNpo+TngP1VBxwOTOLWLOe27FdZNflq5L/SazX7gzPrUnNyj8NHv7MVIXij1K0te8DWrrrbkantKa2FBec=
+	t=1717760328; cv=none; b=rWenvMJbj7nglsQFsddlzw5T/mMVWYw6yHXShNyMr4mOExN1W0LN3+qO54BtIxh85eanLcYyiaaXgPQZAoK7q+p7BlkZOm6xjuAvC6mfuHqdRgofm36/y1p4ZQl0uqWx0+VfG/jSNUS4nnXuKqLup3QSu78KyQ6ENHJkf4wh1Tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717760312; c=relaxed/simple;
-	bh=3hTKFMPSmGLjj9u6jzdgVpZDmoz1qONT5rdoiGd6O/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sjg6VqLv3YBu90xrEiZ5fJpFzGaum7A7ZWP+JGpxElwHsq2PQPEZGy6+Bu+DRF7FUgQWap2Lh5hkSci8AAiRE3uGY3j073Z6WSTE4tqrbqJNDpcsnpyZt2ur9n15yXQhhfnQ17cGshqsS8bdJDScXC1Q44y7VkBGMGv5VRFlt0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XWiZghsI; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-35e5c6600f0so1625055f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 04:38:30 -0700 (PDT)
+	s=arc-20240116; t=1717760328; c=relaxed/simple;
+	bh=g5NIzpldAX/x2PqDjE5gpEKwkCFUjBNp6qqB3ZdMf10=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LwcqlXGjWYORF2WCjQxoV5u2tFcPAazSemd7rl8chOGim37VU3L/2hToNO0/EuE1VCkkuqs+yYJ7MV3X20QU9lGyvByvaNgfl0XMJUAbXz3U0GHDKchsmzk9pZVoFu3h9e/1Pr5hGL2LYSkbs88QxFFXzt6gQ6LScInOZC2hlkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q9IuoY5v; arc=none smtp.client-ip=209.85.208.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
+Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-57a30dbdb7fso2665550a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 04:38:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717760309; x=1718365109; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0LpJsMUWr2U7Wpg2FjmxpI2q+B2egTwJaHeHULXYY/M=;
-        b=XWiZghsIHw4WIYPSPOUUxHd82JIT3pALjqQFSI88bAX9rosoddRbQtyrcBsIm/QbRm
-         tYphky6Q/lKYl8WzPS3wvH8+r5kuRoocqxJyMuhpPBO42qyBgKwTaieE9Ys9nUIJu+O1
-         uckkvXeMMTaSbMG8xmSDVKYtjPdx6sYELPPZmRZwDVfvbj6BEBBfpYURpLZShms2Ju/o
-         01bTqOx9zdQVt5BNewu5Rx863kI84biZufCv6xZmbg2RROZGliGSqAOyv+aTxw0CgExv
-         0NTTBfndRc5sijzXnbG4f+GwdQmMbyrm5tvgo8lJU+bHO+jpp61qaaNoK9VRg6O3fNKA
-         mO9w==
+        d=google.com; s=20230601; t=1717760325; x=1718365125; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o8M78VWmRUtxavNJng3PwXKm0bXhbM1TSJ/3rMl6z+Q=;
+        b=q9IuoY5vY8gNZYN/FQrnRdTtxQvoLxDnKqOcqYeNCwfSnBTabpZLPBqHwiTstTGWZZ
+         JlvRaU09E2opPkkr+H2bruKIX+c26pXTSa8vhVx513AIFVL7IeRFeHm94uv0ke+cje5l
+         0IQ2lSoMXgAXFwpNh2OF2X8SBZjLFqr8115RZZFuwdguAU+AkanIoSuEZkCBvAtU/Jpo
+         JiJ5/L8papYH93tw6FvZ4VmmTbbOhVmV76RCfnNHX9wuzvGOi73sC+HGIm55ifDpGLZI
+         4FEsxhsdjUl5JzR8t3xnmFvTa5TuxZzeNIDIShj4Ai8+9WQzm7AZUIdI9iNUb2wLQ56d
+         HkuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717760309; x=1718365109;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0LpJsMUWr2U7Wpg2FjmxpI2q+B2egTwJaHeHULXYY/M=;
-        b=uOXhjYQVu95xs6FNEQ4iOS2fLbvEFF/OP9MDqjUo708n8ywvcTLY6fwQuudAtZxQVt
-         DFyP1JymTPTMFqmAo/jRvy+C0wf0WszgR8CUcwcNrhrIxU2gt0MBxPX9WKSwYDVmnyku
-         5brZdQhwcuvdrsx6qq/EqGspDaAtfRMWgDHRFpJ4YeVhnjeIUfYPWhou5OA0YvDtytQ6
-         8Wmyl0NTCkbT9eNBFI/UHAlMg/Z3uxSBKZbiXJbb19zwe9r4Pw/BQQSsa7JreLO3crcc
-         DdFcb5LYoEG4uQvbeQbU/GjLr6g1k+JWovqkeDDHL8EKpEukTXV/QMd99JPKoOiX1yUa
-         zwxg==
-X-Gm-Message-State: AOJu0YyY7myfcFngAI2Sb2Mhf1PpMRuHEBQSA2l31bdukyIDMqShiSli
-	eTsoDcF27PnusyeWnAVcEeE9cnAPbQvBeZ32pk/xMxwpoLItvtcM
-X-Google-Smtp-Source: AGHT+IGHwu+1dKN6+si/QubGBSPFSh4ECNE6gtZL3XVuz/4vy8JqdVJCbFWWVL8EkKfQ2/wo+GKw/w==
-X-Received: by 2002:a5d:4588:0:b0:35f:636:f2f6 with SMTP id ffacd0b85a97d-35f0636f344mr1029842f8f.29.1717760308253;
-        Fri, 07 Jun 2024 04:38:28 -0700 (PDT)
-Received: from gmail.com (1F2EF20A.nat.pool.telekom.hu. [31.46.242.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5e989c9sm3823958f8f.73.2024.06.07.04.38.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 04:38:27 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Fri, 7 Jun 2024 13:38:25 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Brian Gerst <brgerst@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dave Hansen <dave@sr71.net>, Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uros Bizjak <ubizjak@gmail.com>
-Subject: Re: [PATCH] x86/fpu: Introduce the x86_task_fpu() helper method
-Message-ID: <ZmLxMaXd-qtLBoK2@gmail.com>
-References: <20240605083557.2051480-1-mingo@kernel.org>
- <CAMzpN2hms-cpsaief4j_1LhXXznreE+it8nnsH2-8yoQ2Bn0Rw@mail.gmail.com>
- <ZmF8AH0TX_lgkxS5@gmail.com>
- <CAMzpN2gL04UbRUP5HDkz9hxdyxXVkFcXBrDc+hGmvR0rxt2Onw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1717760325; x=1718365125;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o8M78VWmRUtxavNJng3PwXKm0bXhbM1TSJ/3rMl6z+Q=;
+        b=STkR6S1SCzYKrN77seZfmyZHPhb0UUYV3luzeqzxJFIREnVcbPUal06G4n6HzOn7wh
+         T2fwhfMlCtPnefq/4q//7anYXHR7Kkb3A7Hdzi9RL0JqllJ76FqFx8dQ5EM8jY+cHWpz
+         IZuDQxUXFDbonu87T1uqoEuc12fQmYttOqkRApmd7Xnar1tGfE9KnUtapo5PPnR4QQj5
+         WAZownGTUGRdGPM3nZ5tSXBdck14YS/0vgBeWK4BNOCOlEcWUs4GBiQ66UyTpq0s19Yx
+         Nk52+cubbEKzq7xCiGzgo7ePSumU45pAy+06E/E0Hu7MwNrCNQ/Lx3NeKlr3uo3/ccdP
+         6Emw==
+X-Forwarded-Encrypted: i=1; AJvYcCVO59Ib0bjdLGliTD40ocCxyaIypzcLWn2U5XZJuiLqQMZ9gVRUVypmY+UzSywUxTUc0c5KSxVpdrrLFBKmWrSVtGNAXBOL5NsmMh7X
+X-Gm-Message-State: AOJu0Yw+EzFYaXCpuxjPp3DwLlKwI9A2/KeYFPrIHm3kailp0rhZMHU2
+	Di8FB/r5GpAUkCIX4V+2zU/J1JAVTqhajMN29dkJrgitB8DrnGYkEkz5HE4KMFkAld+rJ9fk8pP
+	94EmiqmIzDTU8ULAWcx7jqhzE/lJJFahPi2wz5g==
+X-Google-Smtp-Source: AGHT+IHSz32XzeyC24xOqlXfd0HDZNyhYS94xu0F5/pKnlVGfUOTS+SKqxPkF7GX/GJxRk+DUQoCkwugHUJ9MNuXE8c=
+X-Received: by 2002:a50:8a92:0:b0:57a:1d0f:47f7 with SMTP id
+ 4fb4d7f45d1cf-57c5091b0d8mr1210103a12.17.1717760324720; Fri, 07 Jun 2024
+ 04:38:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMzpN2gL04UbRUP5HDkz9hxdyxXVkFcXBrDc+hGmvR0rxt2Onw@mail.gmail.com>
+References: <20240601084528.22502-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+ <20240601084528.22502-2-lvzhaoxiong@huaqin.corp-partner.google.com> <oo6gggt2kpufvbwg6emoblg4opj2izdfjad4hzojbe7ddp57rp@a5vf23zrk22o>
+In-Reply-To: <oo6gggt2kpufvbwg6emoblg4opj2izdfjad4hzojbe7ddp57rp@a5vf23zrk22o>
+From: zhaoxiong lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+Date: Fri, 7 Jun 2024 19:38:33 +0800
+Message-ID: <CA+6=WdTPJxtGUt6pSanmwdYKz2wqCFv73K=BPb+9oDHrQcW=Sw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: display: panel: Add KD101NE3-40TI support
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: dmitry.torokhov@gmail.com, robh@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, jikos@kernel.org, 
+	benjamin.tissoires@redhat.co, dianders@google.com, hsinyi@google.com, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+hi Dmitry Baryshkov
+
+Because this is a separate mipi dsi driver, I did not put it in
+panel-sample-dsi.yaml.
 
 
-* Brian Gerst <brgerst@gmail.com> wrote:
-
-> On Thu, Jun 6, 2024 at 5:06 AM Ingo Molnar <mingo@kernel.org> wrote:
+On Sun, Jun 2, 2024 at 12:28=E2=80=AFAM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> On Sat, Jun 01, 2024 at 04:45:25PM +0800, Zhaoxiong Lv wrote:
+> > Create a new dt-scheam for the kd101ne3-40ti.
+> > The bias IC of this kindisplay-kd101ne3 panel is placed
+> > on the panel side, so when the panel is powered on,
+> > there is no need to control AVDD and AVEE in the driver.
 > >
-> >
-> > * Brian Gerst <brgerst@gmail.com> wrote:
-> >
-> > > >  17 files changed, 104 insertions(+), 107 deletions(-)
-> > >
-> > > This series would be better if you added the x86_task_fpu() helper in
-> > > an initial patch without any other changes.  That would make the
-> > > actual changes more visible with less code churn.
-> >
-> > Makes sense - I've split out the patch below and adjusted the rest of the
-> > series. Is this what you had in mind?
-> >
-> > Note that I also robustified the macro a bit:
-> >
-> >  -# define x86_task_fpu(task) ((struct fpu *)((void *)task + sizeof(*task)))
-> >  +# define x86_task_fpu(task) ((struct fpu *)((void *)(task) + sizeof(*(task))))
-> >
-> > Thanks,
-> >
-> >         Ingo
-> >
-> > ========================>
-> > From: Ingo Molnar <mingo@kernel.org>
-> > Date: Thu, 6 Jun 2024 11:01:14 +0200
-> > Subject: [PATCH] x86/fpu: Introduce the x86_task_fpu() helper method
-> >
-> > The per-task FPU context/save area is allocated right
-> > next to task_struct() - introduce the x86_task_fpu()
-> > helper that calculates this explicitly from the
-> > task pointer.
-> >
-> > Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> > Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com=
+>
 > > ---
-> >  arch/x86/include/asm/processor.h | 2 ++
-> >  1 file changed, 2 insertions(+)
 > >
-> > diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-> > index 920b0beebd11..fb6f030f0692 100644
-> > --- a/arch/x86/include/asm/processor.h
-> > +++ b/arch/x86/include/asm/processor.h
-> > @@ -507,6 +507,8 @@ struct thread_struct {
-> >         struct fpu              *fpu;
-> >  };
+> > Chage since V2:
 > >
-> > +#define x86_task_fpu(task) ((struct fpu *)((void *)(task) + sizeof(*(task))))
+> > -  Drop some properties that have already been defined in panel-common.
+> > -  The header file 'dt-bindings/gpio/gpio.h' is not used, delete it
+> >
+> > V1: https://lore.kernel.org/all/20240418081548.12160-2-lvzhaoxiong@huaq=
+in.corp-partner.google.com/
+> >
+> > ---
+> >  .../panel/kingdisplay,kd101ne3-40ti.yaml      | 59 +++++++++++++++++++
+> >  1 file changed, 59 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/display/panel/kin=
+gdisplay,kd101ne3-40ti.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/panel/kingdispla=
+y,kd101ne3-40ti.yaml b/Documentation/devicetree/bindings/display/panel/king=
+display,kd101ne3-40ti.yaml
+> > new file mode 100644
+> > index 000000000000..b0cf12bb727d
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/display/panel/kingdisplay,kd101=
+ne3-40ti.yaml
+> > @@ -0,0 +1,59 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/display/panel/kingdisplay,kd101ne3-=
+40ti.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > > +
-> >  /*
-> >   * X86 doesn't need any embedded-FPU-struct quirks:
-> >   */
-> 
-> Since this should be the first patch in the series, It would be:
-> 
-> #define #define x86_task_fpu(task) (&(task)->thread.fpu)
-> 
-> along with converting the existing accesses to task->thread.fpu in one
-> patch with no other functional changes. Then you could change how the
-> fpu struct is allocated without touching every access site again.
-
-Yeah, you are right of course - I've restructured the series accordingly, 
-it's now indeed a lot easier to review internally now, but has the same end 
-result. Will post it later today.
-
-Thanks,
-
-	Ingo
+> > +title: Kingdisplay KD101NE3-40TI based MIPI-DSI panels
+> > +
+> > +maintainers:
+> > +  - Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+>
+> Any reason for using a separate bindings instead of extending
+> panel-simple-dsi.yaml ?
+>
+> > +
+> > +allOf:
+> > +  - $ref: panel-common.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - enum:
+> > +          - kingdisplay,kd101ne3-40ti
+> > +
+> > +  reg:
+> > +    description: the virtual channel number of a DSI peripheral
+> > +
+> > +  pp3300-supply:
+> > +    description: core voltage supply
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - pp3300-supply
+> > +  - enable-gpios
+> > +  - backlight
+> > +  - port
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    dsi {
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <0>;
+> > +        panel: panel@0 {
+> > +            compatible =3D "kingdisplay,kd101ne3-40ti";
+> > +            reg =3D <0>;
+> > +            enable-gpios =3D <&pio 98 0>;
+> > +            pinctrl-names =3D "default";
+> > +            pinctrl-0 =3D <&panel_pins_default>;
+> > +            pp3300-supply =3D <&en_pp6000_mipi_disp>;
+> > +            backlight =3D <&backlight_lcd0>;
+> > +            rotation =3D <90>;
+> > +            port {
+> > +                panel_in: endpoint {
+> > +                    remote-endpoint =3D <&dsi_out>;
+> > +                };
+> > +            };
+> > +        };
+> > +    };
+> > +
+> > +...
+> > --
+> > 2.17.1
+> >
+>
+> --
+> With best wishes
+> Dmitry
 
