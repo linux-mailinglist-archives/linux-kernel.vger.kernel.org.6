@@ -1,132 +1,114 @@
-Return-Path: <linux-kernel+bounces-206429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C8D39009A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:53:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D7799009A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E41A31F23FEB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:53:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DEAF1F2435F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC281993B5;
-	Fri,  7 Jun 2024 15:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE991199EB4;
+	Fri,  7 Jun 2024 15:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IuvSUH0v"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="eA0aPNPg"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96670190688;
-	Fri,  7 Jun 2024 15:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26F4199234;
+	Fri,  7 Jun 2024 15:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717775596; cv=none; b=eBLmSQBF9BgA3n8hNHFnnsYGE0ubV+GPy9Z3cuWKXuOnH9iZt+S8jvweRhChjgPRlaEcrxM5BUPYP7kGvxjt3iv1UvZrTOYA4OxrKNDJ9gzLMTP4tHSxxP+oK36ufxfaBJOjkwuynQI65DKjeHbxusM4uQgbZDXzheP3pNTBH3I=
+	t=1717775683; cv=none; b=stOlsSx37E7sje1pHQKWVBfLvW9+q6isMUtPbXf6Ta3eJjO3dLxy8hRVjWlQ+/L2HZIhluBmE4AIjX4MLuliWNBaMRHsDfmDAQ58gKlrqO3mCTfWEkQ6YSwj9bHff9wEFJX/YicMqkliBkaiSYsv/6sQvO4qCJfcZ6n/Cv8LVRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717775596; c=relaxed/simple;
-	bh=oywe1mkIeynmHDRBwdvvmFRGJataxJ9ZGBEKiHkcpG4=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=VMiGEO+tSAX0fOVG+E8R/fKqW88Yd5nsP6QehaKw1TbNLQa0sbaAopUJZUnbAQQDQAeXlir6N+xd5r2kQjKAZqlwBf3oGhGJwHr+u796Pu4R7CiseAfBwNnldBqAnmPt4HgsIEuaSjdV4ctGE9KNa8W4+AlXNbPgjaZ4kIXVlgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IuvSUH0v; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717775595; x=1749311595;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=oywe1mkIeynmHDRBwdvvmFRGJataxJ9ZGBEKiHkcpG4=;
-  b=IuvSUH0vu3zDaoY1xRztBVJ23C3AVS6dnJlD3WfULbT8yvrLKpruM1s7
-   Ph6wDX1QVWBUloOq9CKga3k0flpElqVAvc1wc6vG0ZmTZdyYTJpTGM9An
-   jdHMAz57zXbnh4LJzEjGiktiZ4Ew7XaxzZ5ngPS4wTZu7reIlhO4qndxM
-   yrtOrzmzu+h+6cF5n1cQZy8MXgoFt+7CqOi4RYpas1Hy8O99L6LegdlC8
-   ygef/t3OJJSJslPQ9MvXQPSubBr7UfsdLyY0STpUEzGEf7AzrOZYJxMyq
-   GTNoibC02+xyh62YeMY67zm+LVwkgbZXG3oupTjrRj+OpzPUeFwy8mkDn
-   w==;
-X-CSE-ConnectionGUID: eOz7YVlLT/SkU+nZf9h5pg==
-X-CSE-MsgGUID: G312jb67TCuxjvlRViVEkg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="11966794"
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="11966794"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 08:53:14 -0700
-X-CSE-ConnectionGUID: 62bx5l5vTea9Pb1huVtfcw==
-X-CSE-MsgGUID: ZIpJdotQSJC+DmhhXjVFQQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="43301572"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.184])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 08:53:11 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 7 Jun 2024 18:53:08 +0300 (EEST)
-To: Shravan Kumar Ramani <shravankr@nvidia.com>
-cc: Hans de Goede <hdegoede@redhat.com>, Vadim Pasternak <vadimp@nvidia.com>, 
-    David Thompson <davthompson@nvidia.com>, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 4/4] Documentation/ABI: Add new sysfs fields to
- sysfs-platform-mellanox-pmc
-In-Reply-To: <ef3f942c1d933ef757a0de84c2890d6779471239.1717755404.git.shravankr@nvidia.com>
-Message-ID: <c7464064-d08b-ecdc-8e07-b621a466d967@linux.intel.com>
-References: <cover.1717755404.git.shravankr@nvidia.com> <ef3f942c1d933ef757a0de84c2890d6779471239.1717755404.git.shravankr@nvidia.com>
+	s=arc-20240116; t=1717775683; c=relaxed/simple;
+	bh=xmd67umfymHcJ44Kt4eIRJxEDJGDef0iHkNvcUkjnTo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=isrHyysfpM8IqBz3w/3JgE3Hj8duscV9ceehm8xKjcTDzcPyi3MPWpY3kDkJyipegdUdFno79FLaF9ePCBjZLq197cpa1HZzY6ODfLnKEVTVyDczVypZOLQwiee2C5TdG6uiTnKOEdk65jrbWeOKjZUNGrYetIv0+DEM3WYWANc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=eA0aPNPg; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45798tGw026974;
+	Fri, 7 Jun 2024 08:54:26 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=756gArjuo2v/8U2A0jAbflCts
+	ep0ltO8YlA9qtCTL1w=; b=eA0aPNPgFgSiUxyUhjmZ2kYr5Z/t6npNpunDn+fjE
+	DfMI0KdyDAihJ1c6eAf6w/OGOmbk5pFrJSC5YFFdNZov2RCLuHAVC9qNAwzYba8c
+	DAA3HiWbmuKX3CkJ41j7pPsPC+gPVWvGE1z2atti3dwI17uWXPcdlzLxNfg8YIYb
+	d+FzvOiz/Axwy21oxErfqO26XXsadJ+kaEHbXHANutKoIy2cQSgT1nhU3Pmk2Fqj
+	jUGK2k9wIJWh+9uXli1mlOckOB12L8jYM+zYeREZwx1z31+nVw6qVT1bdEok0uvX
+	LkzN3++HJoVUS7/Ff5cB7WJR1W9KKAEz4nuoTYvEF1HcA==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3ykuu21qjt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 08:54:26 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 7 Jun 2024 08:54:25 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 7 Jun 2024 08:54:25 -0700
+Received: from maili.marvell.com (unknown [10.28.36.165])
+	by maili.marvell.com (Postfix) with SMTP id 7C71E3F708F;
+	Fri,  7 Jun 2024 08:54:21 -0700 (PDT)
+Date: Fri, 7 Jun 2024 21:24:20 +0530
+From: Ratheesh Kannoth <rkannoth@marvell.com>
+To: Justin Lai <justinlai0215@realtek.com>
+CC: <kuba@kernel.org>, <davem@davemloft.net>, <edumazet@google.com>,
+        <pabeni@redhat.com>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <andrew@lunn.ch>, <jiri@resnulli.us>,
+        <horms@kernel.org>, <pkshih@realtek.com>, <larry.chiu@realtek.com>
+Subject: Re: [PATCH net-next v20 06/13] rtase: Implement .ndo_start_xmit
+ function
+Message-ID: <20240607155420.GA3743392@maili.marvell.com>
+References: <20240607084321.7254-1-justinlai0215@realtek.com>
+ <20240607084321.7254-7-justinlai0215@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240607084321.7254-7-justinlai0215@realtek.com>
+X-Proofpoint-ORIG-GUID: Rrqbr78-72hns9XLeDN7k4VOZYSi2O56
+X-Proofpoint-GUID: Rrqbr78-72hns9XLeDN7k4VOZYSi2O56
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-07_09,2024-06-06_02,2024-05-17_01
 
-On Fri, 7 Jun 2024, Shravan Kumar Ramani wrote:
-
-> Document newly added "count_clock" and "use_odd_counter" sysfs entries
-> for the Mellanox BlueField PMC driver.
-> 
-> Signed-off-by: Shravan Kumar Ramani <shravankr@nvidia.com>
-> Reviewed-by: David Thompson <davthompson@nvidia.com>
+On 2024-06-07 at 14:13:14, Justin Lai (justinlai0215@realtek.com) wrote:
+> Implement .ndo_start_xmit function to fill the information of the packet
+> to be transmitted into the tx descriptor, and then the hardware will
+> transmit the packet using the information in the tx descriptor.
+> In addition, we also implemented the tx_handler function to enable the
+> tx descriptor to be reused.
+>
+> Signed-off-by: Justin Lai <justinlai0215@realtek.com>
 > ---
->  .../ABI/testing/sysfs-platform-mellanox-pmc   | 23 +++++++++++++++++++
->  1 file changed, 23 insertions(+)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-platform-mellanox-pmc b/Documentation/ABI/testing/sysfs-platform-mellanox-pmc
-> index 9f987c6410da..ee03d066c0d9 100644
-> --- a/Documentation/ABI/testing/sysfs-platform-mellanox-pmc
-> +++ b/Documentation/ABI/testing/sysfs-platform-mellanox-pmc
-> @@ -52,3 +52,26 @@ Description:
->  		Writing 0 to the sysfs will clear the counter, writing any other
->  		value is not allowed.
->  
-> +What:		/sys/bus/platform/devices/<HID>/hwmon/hwmonX/<block>/count_clock
-> +Date:		May 2024
-> +KernelVersion:	6.10
-> +Contact:	"Shravan Kumar Ramani <shravankr@nvidia.com>"
-> +Description:
-> +		Use a counter for counting cycles. This is used to repurpose/dedicate
-> +		any of the counters in the block to counting cycles. Each counter is
-> +		represented by a bit (bit 0 for counter0, bit1 for counter1 and so on)
-> +		and setting the corresponding bit will reserve that specific counter
-> +		for counting cycles and override the event<N> setting.
-> +
-> +What:		/sys/bus/platform/devices/<HID>/hwmon/hwmonX/<block>/use_odd_counter
-> +Date:		May 2024
-> +KernelVersion:	6.10
+>  .../net/ethernet/realtek/rtase/rtase_main.c   | 285 ++++++++++++++++++
+>  1 file changed, 285 insertions(+)
+>
+> diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> index 23406c195cff..6bdb4edbfbc1 100644
+> --- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> +++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> @@ -256,6 +256,68 @@ static void rtase_mark_to_asic(union rtase_rx_desc *desc, u32 rx_buf_sz)
+>  		   cpu_to_le32(RTASE_DESC_OWN | eor | rx_buf_sz));
+>  }
+>
+> +static u32 rtase_tx_avail(struct rtase_ring *ring)
+> +{
+> +	return READ_ONCE(ring->dirty_idx) + RTASE_NUM_DESC -
+> +	       READ_ONCE(ring->cur_idx);
+> +}
+dirty_idx and cur_idx wont wrap ? its 32bit in size.
 
-6.10 ship has already sailed.
-
-> +Contact:	"Shravan Kumar Ramani <shravankr@nvidia.com>"
-> +Description:
-> +		Form 64-bit counter using 2 32-bit counters. This is used to combine
-> +		2 adjacent counters to form a single 64-bit counter. Each even counter
-> +		is represented by a bit and setting the bit will join the corresponding
-> +		even counter with the next (odd) counter. The full 64-bit value can be
-> +		accessed using the same 2 counter<N> and counter<N+1> sysfs, with each
-> +		of them holding the lower and upper 32 bits respectively.
-
-Okay, thanks for updating this, it's much clearer now what the intent of 
-each file is. One thing that is still unclear whether both bits are 
-expected to be set in count_clock when use_odd_counter is used to combine 
-two counters?
-
--- 
- i.
-
+>
 
