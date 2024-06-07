@@ -1,107 +1,158 @@
-Return-Path: <linux-kernel+bounces-205759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574EC8FFFE2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:53:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5A2E8FFFE6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E28CB283E22
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:52:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E96551C20CC9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37EB61411E4;
-	Fri,  7 Jun 2024 09:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6975E157A76;
+	Fri,  7 Jun 2024 09:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="FjgWhu+o"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jSkC3xvS"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D51438F86
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4200BDDD9;
+	Fri,  7 Jun 2024 09:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717753972; cv=none; b=NQX/5yqQp/TiULbcOw2xwRHB4RQlQLqjVmVf7WClfFGr6slwX8J6j5zV2VTEZYFzVd4haZTj7exf/K4ZF/KlxyJJiyUHYDatOC0R2+fOkvAp/F84MD2QadxDO2sDaS+dZEgwaN4+nOuzkn1r89Y4oXFug6odSM+vEn4wKxnGuKI=
+	t=1717754005; cv=none; b=MMQsdhxzay+TswcNzMuPhW0H0/O7yFRYmC8w5NP4RwHfpAOjddQPYKUJdYeMCrTAwDMcb7TdcVryXrr1sJtKGDJoHVQD3fCSNTAE6cEw6duS3QncktIkwEW+dijtSiLjful24r/kMh8Mcmq6LXywnW7hBs/1tv2sSSXDruPiyqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717753972; c=relaxed/simple;
-	bh=Y9XbEQz5UTpkOCExIuDqh+9S+D4sPrRZ3b+gwDoM7OQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=id5fJhb6POk6ZnCVc21gH21xhb67iBpQdb8d5w3pd71im9P5lux3IuALUkwNFMTGIVEShakZT7pxupJpflhbQwV0TbGcN/q4CvFoSLeVk+W+pSAC6DC/jtre0Par7LuZl+4SxH9PvnN538H12bippK7KnR2sEnn7o+50KwfWazs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk; spf=pass smtp.mailfrom=rasmusvillemoes.dk; dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=FjgWhu+o; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasmusvillemoes.dk
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2eabd22d3f4so22384401fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 02:52:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google; t=1717753969; x=1718358769; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qR4Iz/w8T5QunVswvB0VhLhJEnk9aSsxgQy1fVCW6zY=;
-        b=FjgWhu+ogqZi2e9J2ClBf7BYUZmzhSdO8dz98QAbAmjI7SwLbSh2SGaMjnCWxZhC25
-         nLxd7AiXvhia2y5tb9gdcZH/WxEzESV6V0yBWWpf8rGvtxQv93Fhfm1hzRGwbIZtKb7a
-         NDDccmsYE4LKVg9HMZabdKsxXsMGekbkXVvIs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717753969; x=1718358769;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qR4Iz/w8T5QunVswvB0VhLhJEnk9aSsxgQy1fVCW6zY=;
-        b=NUIQt16bWClY6NPdTUVSjGL9765tt79Iv98/XZErLf4BK0jUeRGLff3/zCm8q6URbq
-         LBr3vN4/z75aHp/7KPwZRoKw8HedLmzckCmi4Q/0EKQJ2ZfGmKIQOwj43fCHYJB53Qb+
-         T/QwJjixOVPfILPL9uJIq69Ts1imrfRWFSGhOJ5RWZriA3gUb3UAqRXxCQ2VA1yDkTkF
-         tIq9d4kSZugeeq6Uu0HjblCXE7xbkCurWjGQkI5xI3/7CMInP5CLMKJTLvqRVVqZs3/4
-         2K0HcImR/BIMo3Irux0NJ6W35d7U9eYkd3ajLjVb1Tl1As9dBSiD9ZkCDb0GKiq43+TM
-         moiA==
-X-Gm-Message-State: AOJu0YxPVFhS3hM/pYQ9zFngDThf/clFu43rNo4WnB1F+1v6raCcmr+F
-	CkKfx2KpXwgMikL8F+iB8XnN5VNp0lmhQBRXbr9J9DNIqR4fZ9v0SwL9pFfKaOiXGOcP3n0QhZE
-	lG/M=
-X-Google-Smtp-Source: AGHT+IERs6KSgT7z06uEjPl8AgzdUOOKwkk2FvYV+EFXZSVDeRUsuOrDBm2bg2qysEVl83IcDe8hqg==
-X-Received: by 2002:a2e:880e:0:b0:2ea:e2d2:61ff with SMTP id 38308e7fff4ca-2eae2d26485mr6110301fa.23.1717753968678;
-        Fri, 07 Jun 2024 02:52:48 -0700 (PDT)
-Received: from [172.16.11.116] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ead41b095fsm4822041fa.93.2024.06.07.02.52.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jun 2024 02:52:48 -0700 (PDT)
-Message-ID: <28c74739-e775-4813-b2f1-b588e14b3674@rasmusvillemoes.dk>
-Date: Fri, 7 Jun 2024 11:52:47 +0200
+	s=arc-20240116; t=1717754005; c=relaxed/simple;
+	bh=OEGZp0RgQUhhB+4aici91AXClSBltAqToX+N8t+Qx6A=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Wlg5tX4otwdZ5VHoa299k9q3sFLHn4rQ88by8rdfAk+jyy3HvhEzV6Z18zLgZOOct3EH7mARSPOIi2kQp0lhwnLg0LmBKdarh+Y7eY66QnuptQ0srLJm585NsAJeqpCVqiQ4f4G54ISVRX/DByxSm1MXv3GG0zcvKHtkodHz3FE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jSkC3xvS; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717754002;
+	bh=OEGZp0RgQUhhB+4aici91AXClSBltAqToX+N8t+Qx6A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=jSkC3xvSDVouWmD4Pk7BJ3si8tDuT/9kjaQ6U4KEaI15VUFfXpsRTjInbX9E4gWBF
+	 NTdsbQIePCUU8SHx+xoLaDMjPnKuF+XsIjPH/zRAo+xMRurX/IDw6ZM8DsxB/EtVI1
+	 d4DWvYuAE+BZYMtajFzE5uqecIV0pZfIfc7kvKBLs6tlVP/xLiniVZjF0Cwko4OFGY
+	 88fKFZ1eoV/++RbwMQ6dYtwN+0wi3hd9ZG/iLjYsrvzrFNk6kJqSY3YyK56VYlgNlC
+	 6VrQk6PjfkhqcCMmzsC0pJ2XpUAwnsxIr8UW0osKP7T3PBINaygvAR2UOPkdPcxucH
+	 9NyAzLx0FxKTQ==
+Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 1D43B37811D1;
+	Fri,  7 Jun 2024 09:53:22 +0000 (UTC)
+From: Laura Nao <laura.nao@collabora.com>
+To: skhan@linuxfoundation.org
+Cc: kernel@collabora.com,
+	laura.nao@collabora.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	shuah@kernel.org
+Subject: Re: [PATCH 0/2] Modify the watchdog selftest for execution with
+Date: Fri,  7 Jun 2024 11:53:47 +0200
+Message-Id: <20240607095347.127823-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <646f0597-240a-4251-b45e-e45f504734a9@linuxfoundation.org>
+References: <646f0597-240a-4251-b45e-e45f504734a9@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: objtool query: section start/end symbols?
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <CAHk-=wjHf6C_74VQPxmge-sMmu5yuhmNor1TaO0Uq--zrA13HA@mail.gmail.com>
-Content-Language: en-US, da
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-In-Reply-To: <CAHk-=wjHf6C_74VQPxmge-sMmu5yuhmNor1TaO0Uq--zrA13HA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 06/06/2024 20.42, Linus Torvalds wrote:
-> So this is related to my currently very ugly hack at
+Hi Shuah,
+
+On 6/7/24 01:03, Shuah Khan wrote:
+> On 6/6/24 03:57, Laura Nao wrote:
+>> Hi Shuah,
+>>
+>> On 5/6/24 13:13, Laura Nao wrote:
+>>> The watchdog selftest script supports various parameters for testing
+>>> different IOCTLs. The watchdog ping functionality is validated by
+>>> starting
+>>> a loop where the watchdog device is periodically pet, which can only
+>>> be
+>>> stopped by the user interrupting the script.
+>>>
+>>> This results in a timeout when running this test using the kselftest
+>>> runner
+>>> with no non-oneshot parameters (or no parameters at all):
 > 
->    https://lore.kernel.org/all/CAHk-=whFSz=usMPHHGAQBnJRVAFfuH4gFHtgyLe0YET75zYRzA@mail.gmail.com/
 > 
-> where I'm trying to do "runtime constants". 
+> Sorry for the delay on this.
+> 
+> This test isn't include in the default kselftest run? How are you
+> running this?
+>
 
-FWIW, I did a POC some years ago but either never managed to send it, or
-never got a response. It did boot in virtme and I managed to get gdb to
-do disassembly to show that the dentry hash lookup did become a 'shift
-immediate'.
+The goal of this series is to enable the test to be run using the
+kselftest runner individually, not as part of the default run. So for
+example w/out args:
 
-https://github.com/Villemoes/linux/tree/rai
+make -C tools/testing/selftests TARGETS=watchdog run_tests
 
-IIRC, I didn't bother with updating users when the boottime value was
-settled, but just had a single at-the-end-of-init call to update all
-sites; in the meantime, use sites were implemented as a jump to a piece
-of code that did the dynamic load of the constants.
+or with args:
 
-Rasmus
+KSELFTEST_WATCHDOG_TEST_ARGS='-b -d -e -s -t 12 -T 3 -n 7 -N -L' make -C
+tools/testing/selftests TARGETS=watchdog run_tests
+ 
+>>>
+>>>    TAP version 13
+>>>    1..1
+>>>    # timeout set to 45
+>>>    # selftests: watchdog: watchdog-test
+>>>    # Watchdog Ticking Away!
+>>>    # .............................................#
+>>>    not ok 1 selftests: watchdog: watchdog-test # TIMEOUT 45 seconds
+>>>
+>>> To address this issue, the first patch in this series limits the
+>>> loop
+>>> to 5
+>>> iterations by default and adds support for a new '-c' option to
+>>> customize
+>>> the number of pings as required.
+>>>
+>>> The second patch conforms the test output to the KTAP format.
+>>>
+>>
+>> Gentle ping - any thoughts on this series? It would simplify running
+>> the
+>> watchdog kselftest in CI environments by leveraging the runner.
+>>
+> 
+> This test isn't intended to be included in the default run. It
+> requires
+> loading a watchdog driver first. Do you load the driver from the
+> runner?
+>
 
+I get this test requires watchdog drivers to be loaded (which in this
+case can't be added to a config fragment that goes with the selftest, as
+they are platform-specific) and therefore cannot be included in the
+default run. However, having ktap output support and limiting the ping
+loop would allow the test to be run individually in the same way as
+other selftests (so through the kselftest runner). 
+
+Naturally, driver dependencies must be met for the test to run and
+produce valid results. From my understanding the runner itself cannot
+ensure this, so in this case it would be up to the user or CI to
+enable/load the appropriate drivers before running the test.
+If these dependencies are not satisfied, the test could just exit
+with a skip code.
+
+Does this make sense to you? or is the kselftest runner intended to be
+used to run exclusively a subset of tests in the selftests directory
+(i.e. the ones that don't have platform-specific driver requirements)?
+
+Thanks,
+
+Laura
 
