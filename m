@@ -1,217 +1,244 @@
-Return-Path: <linux-kernel+bounces-205261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31BB8FFA16
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 05:06:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B40C8FFA14
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 05:02:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBA551C222B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 03:06:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19BDF283739
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 03:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8EE17571;
-	Fri,  7 Jun 2024 03:06:21 +0000 (UTC)
-Received: from hust.edu.cn (mail.hust.edu.cn [202.114.0.240])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34144DDC9;
-	Fri,  7 Jun 2024 03:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.114.0.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A676A171BB;
+	Fri,  7 Jun 2024 03:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ic+Jp31N"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E978DDC9;
+	Fri,  7 Jun 2024 03:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717729581; cv=none; b=ZMZmKfqp6sIzoUBAICOWEF+aV/07dAhmdWBSgIQeCLgztFkvlOu8yYNqoB/6exhDzgVM2dcXoQWIaxFm0VWP2bz1uaWrrkkLOsSAwjxA3ZnwEmAyyn3PynMoGQu798uGxbmrqL+ULSLepf9z4AthQGFPM5IGO5m7B2KONPMIq94=
+	t=1717729357; cv=none; b=e9eXDns3g2FJsx+zQ/PbNbpeT7I6WKSArNVvW3KW1XYPNaM1D2X+c8ZiG09BxAjCz6GdlImeAYylZiZKPZFj22Htc8ErbZGaKAqmHLIiDcFAVeWLpzb6Kh/cGqAB3dQb2MubMVwdfe9H7vS9vEepoR5ttxoM4ynrw7AS51gHZrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717729581; c=relaxed/simple;
-	bh=r/BCZHrbUXb73Owi/ShfMwGxZYo6J6aemMtwMA69ATQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=RS8fU6NYMk8yWJe3UCl8DtF/FRtIxHZRv5Lyfhn+xfLqDVKTIp2fLBF6qjFewgJaXlfqfOsDc3BFqsXD/RBWYZYqVawQmovUrsOc0MtnXR4P6vu8Rn6GfU6QrPNVuKOIvPm7/hF4g7Dqei67MBHz8KXRtbMiBmWCF8meRuL6GiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=202.114.0.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.50])
-	by app2 (Coremail) with SMTP id HwEQrAAHOMRvd2JmCPNjAQ--.45924S2;
-	Fri, 07 Jun 2024 10:58:55 +0800 (CST)
-Received: from pride-poweredge-r740.. (unknown [222.20.126.129])
-	by gateway (Coremail) with SMTP id _____wDXEFRjd2JmnmJAAA--.16835S2;
-	Fri, 07 Jun 2024 10:58:50 +0800 (CST)
-From: Dongliang Mu <dzm91@hust.edu.cn>
-To: Alex Shi <alexs@kernel.org>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Dongliang Mu <dzm91@hust.edu.cn>,
-	Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] docs/zh_CN: update the translation of security-bugs
-Date: Fri,  7 Jun 2024 10:58:26 +0800
-Message-Id: <20240607025842.24321-1-dzm91@hust.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717729357; c=relaxed/simple;
+	bh=L1aAF7dAtjWnPMFqXiNyLMDHxg94N0lBQFrlvDFtYzc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kYKfX/Lz6J+sAyyYtHcJEFeAEinqHIHO9HYziEzg4Xoeme1E9AT8Cej5KBdKqtPV5OFhypogjUNEOqi2wfvgN2/yIFk3EiJzKxtV21HhujzPd9jt6OskliHYYJI6hA4S9ybOPVPyLkgcsd3E36s+wC2NFbu6t8l+XatC04lXsRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ic+Jp31N; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-704140292c2so39745b3a.1;
+        Thu, 06 Jun 2024 20:02:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717729356; x=1718334156; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ejDXcxSpP9icVx/1EuiWyrQGyl9TpRx/2egbprYsM3E=;
+        b=ic+Jp31N9C5VrFFm+RXin4t1+adZH1+5WIQBcy+AUqRNAcHrDGPeM21WNdU5N9xm2P
+         oHtQLEthwOrRL21s45jEJK19D3CfkMZJhmEhu6ijQwN2NwUHMfEE6v50SRfzGYBlk2aw
+         4v7TS87mRs2MWO1tp79QZyXmmp4IyB+op81r0H/nurtvvzN/O9yO26w1kGghxUrbhqNy
+         YZtumFVvrCKhX+GIjR4TAHbADoIOatp2O2gKKxcsPPZ6Jel6H2B3+7LtUUoJyIsBQCJ2
+         uer1VXyC67b+ELbP6GFz+W4XVxRfJTrl0XktVeWs2+J9fsEJj9cFGd+XJ0MLWqvzpISK
+         BlVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717729356; x=1718334156;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ejDXcxSpP9icVx/1EuiWyrQGyl9TpRx/2egbprYsM3E=;
+        b=L2phxaLso1GtXZX8ZZAE2a1jgO3nFTCuqbRp/XooRofO75M8fHz6rlLIvKddPndrwb
+         XGRoFfkqT1m1pE1ITCx1zoARIY4QnKZVo9jLZlLxg7UyOBJSxNh1Pg/CWx6teHCU6Wvl
+         jMxN1aIJ7zCb5ueIU5fD+qHRqsalwkMUPLPyBuzb+lzgL7fL4OSsffQiY6obH+7piqO4
+         qqzGtTD5bdNmjUvTnRRmGmkKzLzozXV1B5zzuTaKkJcA+n56zRJzZMVlz4+xW5txf0Po
+         PIU3XRqM0l+dQpf+OM+issgdIAm2+f5+PJS1madVb9DBe56BmwKLMfX1ZJcfU1O3ZFVS
+         rnOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVn4WZZmtiMJozBdauVpM9olnTWOnU7yOQ1BSEsLPCSqlk45rSxpZVewbDoDsphbbZWYVZqgIbo3AUIiALxtnhJV/MxEkwZfd6FAsJFXaXHOKCYc+5ijFsXPWLMQKpkHJz/
+X-Gm-Message-State: AOJu0YxpNkOOL74T3ipH+E5cfKMLSUeC3ulc/7OyQj1zOhOB6v6C5brK
+	Fzm6mbTpak8HefIHvT2uGLpAEI5JqcxnDJXli8uJ2atGlemsRSc9
+X-Google-Smtp-Source: AGHT+IEhKraLWJQ16qpMEO3KRgHYMvSBWq5cqen0fVttn2vamXfceNIRqH+V2oFSHMdiJoCtgZr/fA==
+X-Received: by 2002:a05:6a20:3c8a:b0:1ad:7e4d:2ea2 with SMTP id adf61e73a8af0-1b2f969ee1bmr1666829637.4.1717729355532;
+        Thu, 06 Jun 2024 20:02:35 -0700 (PDT)
+Received: from localhost.localdomain ([91.199.84.25])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c29c4a574bsm2429371a91.56.2024.06.06.20.02.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 20:02:35 -0700 (PDT)
+From: Wei Fu <fuweid89@gmail.com>
+To: oleg@redhat.com
+Cc: Sudhanva.Huruli@microsoft.com,
+	akpm@linux-foundation.org,
+	apais@linux.microsoft.com,
+	axboe@kernel.dk,
+	boqun.feng@gmail.com,
+	brauner@kernel.org,
+	ebiederm@xmission.com,
+	frederic@kernel.org,
+	fuweid89@gmail.com,
+	j.granados@samsung.com,
+	jiangshanlai@gmail.com,
+	joel@joelfernandes.org,
+	josh@joshtriplett.org,
+	linux-kernel@vger.kernel.org,
+	mathieu.desnoyers@efficios.com,
+	michael.christie@oracle.com,
+	mjguzik@gmail.com,
+	neeraj.upadhyay@kernel.org,
+	paulmck@kernel.org,
+	qiang.zhang1211@gmail.com,
+	rachelmenge@linux.microsoft.com,
+	rcu@vger.kernel.org,
+	rostedt@goodmis.org,
+	weifu@microsoft.com
+Subject: Re: [RCU] zombie task hung in synchronize_rcu_expedited
+Date: Fri,  7 Jun 2024 11:02:19 +0800
+Message-ID: <20240607030219.2990306-1-fuweid89@gmail.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240606172848.GC22450@redhat.com>
+References: <20240606172848.GC22450@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HwEQrAAHOMRvd2JmCPNjAQ--.45924S2
-Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoWxKFyfCw45JF4UtFyxXryDtrb_yoW3Xw15p3
-	ZFgryxKanrJ3WYkFWfKr1UGF1xGFWfC3y3Krn8Ja4fJF1kAr4vqrn8tryvgayfXryrKayD
-	ZFWFkFW3Wry2yrUanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUQab7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
-	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
-	126r1DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
-	12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj64x0Y40En7xvr7AKxV
-	W8Jr0_Cr1UMcIj6x8ErcxFaVAv8VW8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1U
-	McvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtw
-	CF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26r4fZr1UJr1l4I8I3I0E4IkC6x0Y
-	z7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
-	7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jDkucUUUUU=
-X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-Update to commit 5928d411557e ("Documentation: Document the Linux Kernel
-CVE process")
+> 
+> > ```
+> > # unshare(CLONE_NEWPID | CLONE_NEWNS)
+> >
+> > npm start (pid 2522045)
+> >     |__npm run zombie (pid 2522605)
+> >        |__ sh -c "whle true; do echo zombie; sleep 1; done" (pid 2522869)
+> > ```
+> 
+> only 3 processes? nothing is running? Is the last process 2522869 a
+> zombie too?
 
-commit 0217f3944aeb ("Documentation: security-bugs.rst: linux-distros
-relaxed their rules")
-commit 3c1897ae4b6b ("Documentation: security-bugs.rst: clarify CVE
-handling")
-commit 4fee0915e649 ("Documentation: security-bugs.rst: update
-preferences when dealing with the linux-distros group")
-commit 44ac5abac86b ("Documentation/security-bugs: move from admin-guide/
-to process/")
+Yes. The pid-2522045 sent SIGKILL to all the processes in that pid namespace,
+when it exited. The last process 2522869 was zombie as well. Sometimes, 
+`npm start` could exit before `npm run zombie` forks `sh`. You might see there
+are only two processes in that pid namespace.
 
-Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
----
- .../translations/zh_CN/admin-guide/index.rst  |  1 -
- .../translations/zh_CN/process/index.rst      |  3 +-
- .../zh_CN/process/security-bugs.rst           | 84 +++++++++++++++++++
- 3 files changed, 86 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/translations/zh_CN/process/security-bugs.rst
 
-diff --git a/Documentation/translations/zh_CN/admin-guide/index.rst b/Documentation/translations/zh_CN/admin-guide/index.rst
-index ac2960da33e6..773c53956000 100644
---- a/Documentation/translations/zh_CN/admin-guide/index.rst
-+++ b/Documentation/translations/zh_CN/admin-guide/index.rst
-@@ -37,7 +37,6 @@ Todolist:
- 
-    reporting-issues
-    reporting-regressions
--   security-bugs
-    bug-hunting
-    bug-bisect
-    tainted-kernels
-diff --git a/Documentation/translations/zh_CN/process/index.rst b/Documentation/translations/zh_CN/process/index.rst
-index 5c6c8ccdd50d..011dc2cf583a 100644
---- a/Documentation/translations/zh_CN/process/index.rst
-+++ b/Documentation/translations/zh_CN/process/index.rst
-@@ -49,10 +49,11 @@ TODOLIST:
- 
-    embargoed-hardware-issues
-    cve
-+   security-bugs
- 
- TODOLIST:
- 
--* security-bugs
-+* handling-regressions
- 
- 其它大多数开发人员感兴趣的社区指南：
- 
-diff --git a/Documentation/translations/zh_CN/process/security-bugs.rst b/Documentation/translations/zh_CN/process/security-bugs.rst
-new file mode 100644
-index 000000000000..a8f5fcbfadc9
---- /dev/null
-+++ b/Documentation/translations/zh_CN/process/security-bugs.rst
-@@ -0,0 +1,84 @@
-+.. SPDX-License-Identifier: GPL-2.0-or-later
-+
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: :doc:`../../../process/security-bugs`
-+
-+:译者:
-+
-+ 吴想成 Wu XiangCheng <bobwxc@email.cn>
-+ 慕冬亮 Dongliang Mu <dzm91@hust.edu.cn>
-+
-+安全缺陷
-+=========
-+
-+Linux内核开发人员非常重视安全性。因此我们想知道何时发现了安全漏洞，以便尽快
-+修复和披露。请向Linux内核安全团队报告安全漏洞。
-+
-+联络
-+-----
-+
-+可以通过电子邮件<security@kernel.org>联系Linux内核安全团队。这是一个安全人员
-+的私有列表，他们将帮助验证错误报告并开发和发布修复程序。如果您已经有了一个
-+修复，请将其包含在您的报告中，这样可以大大加快处理进程。安全团队可能会从区域维护
-+人员那里获得额外的帮助，以理解和修复安全漏洞。
-+
-+与任何缺陷一样，提供的信息越多，诊断和修复就越容易。如果您不清楚哪些信息有用，
-+请查看“Documentation/translations/zh_CN/admin-guide/reporting-issues.rst”中
-+概述的步骤。任何利用漏洞的攻击代码都非常有用，未经报告者同意不会对外发布，
-+除非已经公开。
-+
-+请尽可能发送无附件的纯文本电子邮件。如果所有的细节都藏在附件里，那么就很难对
-+一个复杂的问题进行上下文引用的讨论。把它想象成一个
-+:doc:`常规的补丁提交 <../process/submitting-patches>` （即使你还没有补丁）：
-+描述问题和影响，列出复现步骤，然后给出一个建议的解决方案，所有这些都是纯文本的。
-+
-+披露和限制信息
-+---------------
-+
-+安全列表不是公开渠道。为此，请参见下面的协作。
-+
-+一旦开发出了健壮的补丁，发布过程就开始了。对公开的缺陷的修复会立即发布。
-+
-+尽管我们倾向于在未公开缺陷的修复可用时即发布补丁，但应报告者或受影响方的请求，
-+这可能会被推迟到发布过程开始后的7日内，如果根据缺陷的严重性需要更多的时间，
-+则可额外延长到14天。推迟发布修复的唯一有效原因是为了适应QA的逻辑和需要发布
-+协调的大规模部署。
-+
-+虽然可能与受信任的个人共享受限信息以开发修复，但未经报告者许可，此类信息不会
-+与修复程序一起发布或发布在任何其他披露渠道上。这包括但不限于原始错误报告和
-+后续讨论（如有）、漏洞、CVE信息或报告者的身份。
-+
-+换句话说，我们唯一感兴趣的是修复缺陷。提交给安全列表的所有其他资料以及对报告
-+的任何后续讨论，即使在解除限制之后，也将永久保密。
-+
-+与其他团队协调
-+--------------
-+
-+虽然内核安全团队仅关注修复漏洞，但还有其他组织关注修复发行版上的安全问题以及协调
-+操作系统厂商的漏洞披露。协调通常由 "linux-distros" 邮件列表处理，而披露则由
-+公共 "oss-security" 邮件列表进行。两者紧密关联且被展示在 linux-distros 维基：
-+<https://oss-security.openwall.org/wiki/mailing-lists/distros>
-+
-+请注意，这三个列表的各自政策和规则是不同的，因为它们追求不同的目标。内核安全团队
-+与其他团队之间的协调很困难，因为对于内核安全团队，保密期（即最大允许天数）是从补丁
-+可用时开始，而 "linux-distros" 则从首次发布到列表时开始计算，无论是否存在补丁。
-+
-+因此，内核安全团队强烈建议，作为一位潜在安全问题的报告者，在受影响代码的维护者
-+接受补丁之前，且在您阅读上述发行版维基页面并完全理解联系 "linux-distros"
-+邮件列表会对您和内核社区施加的要求之前，不要联系 "linux-distros" 邮件列表。
-+这也意味着通常情况下不要同时抄送两个邮件列表，除非在协调时有已接受但尚未合并的补丁。
-+换句话说，在补丁被接受之前，不要抄送 "linux-distros"；在修复程序被合并之后，
-+不要抄送内核安全团队。
-+
-+CVE分配
-+--------
-+
-+安全团队不分配 CVE，同时我们也不需要 CVE 来报告或修复漏洞，因为这会使过程不必要
-+的复杂化，并可能延误漏洞处理。如果报告者希望为确认的问题分配一个 CVE 编号，
-+可以联系 :doc:`内核 CVE 分配团队 <../process/cve>` 获取。
-+
-+保密协议
-+---------
-+
-+Linux内核安全团队不是一个正式的机构实体，因此无法签订任何保密协议。
--- 
-2.34.1
+> 
+> Could you show your .config? In particular, CONFIG_PREEMPT...
 
+I'm using [6.5.0-1021-azure][1] kernel and preempt is disabled.
+Highlight part of .config.
+
+```
+$ cat /boot/config-6.5.0-1021-azure | grep _RCU
+CONFIG_TREE_RCU=y
+# CONFIG_RCU_EXPERT is not set
+CONFIG_TASKS_RCU_GENERIC=y
+CONFIG_TASKS_RUDE_RCU=y
+CONFIG_TASKS_TRACE_RCU=y
+CONFIG_RCU_STALL_COMMON=y
+CONFIG_RCU_NEED_SEGCBLIST=y
+CONFIG_RCU_NOCB_CPU=y
+# CONFIG_RCU_NOCB_CPU_DEFAULT_ALL is not set
+# CONFIG_RCU_LAZY is not set
+CONFIG_MMU_GATHER_RCU_TABLE_FREE=y
+# CONFIG_RCU_SCALE_TEST is not set
+# CONFIG_RCU_TORTURE_TEST is not set
+# CONFIG_RCU_REF_SCALE_TEST is not set
+CONFIG_RCU_CPU_STALL_TIMEOUT=60
+CONFIG_RCU_EXP_CPU_STALL_TIMEOUT=0
+CONFIG_RCU_CPU_STALL_CPUTIME=y
+# CONFIG_RCU_TRACE is not set
+# CONFIG_RCU_EQS_DEBUG is not set
+
+$ cat /boot/config-6.5.0-1021-azure | grep _PREEMPT
+CONFIG_PREEMPT_VOLUNTARY_BUILD=y
+# CONFIG_PREEMPT_NONE is not set
+CONFIG_PREEMPT_VOLUNTARY=y
+# CONFIG_PREEMPT is not set
+# CONFIG_PREEMPT_DYNAMIC is not set
+CONFIG_HAVE_PREEMPT_DYNAMIC=y
+CONFIG_HAVE_PREEMPT_DYNAMIC_CALL=y
+CONFIG_PREEMPT_NOTIFIERS=y
+CONFIG_DRM_I915_PREEMPT_TIMEOUT=640
+CONFIG_DRM_I915_PREEMPT_TIMEOUT_COMPUTE=7500
+# CONFIG_PREEMPTIRQ_DELAY_TEST is not set
+
+$ cat /boot/config-6.5.0-1021-azure | grep HZ
+CONFIG_NO_HZ_COMMON=y
+# CONFIG_HZ_PERIODIC is not set
+# CONFIG_NO_HZ_IDLE is not set
+CONFIG_NO_HZ_FULL=y
+CONFIG_NO_HZ=y
+# CONFIG_HZ_100 is not set
+CONFIG_HZ_250=y
+# CONFIG_HZ_300 is not set
+# CONFIG_HZ_1000 is not set
+CONFIG_HZ=250
+CONFIG_MACHZ_WDT=m
+```
+
+> 
+> > The `npm start (pid 2522045)` was stuck in kernel_wait4. And its child,
+> 
+> so this is the init task in this namespace,
+
+Yes~
+
+> 
+> > `npm run zombie (pid 2522605)`, has two threads. One of them was in D status.
+> ...
+> > $ sudo cat /proc/2522605/task/*/stack
+> > [<0>] synchronize_rcu_expedited+0x177/0x1f0
+> > [<0>] namespace_unlock+0xd6/0x1b0
+> > [<0>] put_mnt_ns+0x73/0xa0
+> > [<0>] free_nsproxy+0x1c/0x1b0
+> > [<0>] switch_task_namespaces+0x5d/0x70
+> > [<0>] exit_task_namespaces+0x10/0x20
+> > [<0>] do_exit+0x2ce/0x500
+> > [<0>] io_sq_thread+0x48e/0x5a0
+> > [<0>] ret_from_fork+0x3c/0x60
+> > [<0>] ret_from_fork_asm+0x1b/0x30
+> 
+> so I guess this is the trace of its sub-thread 2522645.
+
+Sorry for unclear message.
+Yes~
+
+> 
+> What about the process 2522605? Has it exited too?
+
+The process-2522605 has two threads. The main thread-2522605 was in zombie
+status. Yes. That main thread has exited as well. Only thread-2522645 was
+stuck in synchronize_rcu_expedited.
+
+> 
+> > > But zap_pid_ns_processes() shouldn't cause the soft-lockup, it should
+> > > sleep in kernel_wait4().
+> >
+> > I run `cat /proc/2522045/status` and found that the status was kept switching
+> > between running and sleeping.
+> 
+> OK, this shouldn't happen in this case. So it really looks like it spins
+> in a busy-wait loop because TIF_NOTIFY_SIGNAL is not cleared. It can be
+> reported as sleeping because do_wait() sets/clears TASK_INTERRUPTIBLE,
+> although the window is small...
+> 
+
+I can reproduce this issue in v5.15, v6.1, v6.5, v6.8, v6.9 and v6.10-rc2.
+All the kernels disable CONFIG_PREEMPT and PREEMPT_RCU. And it's very easy to
+reproduce this in v5.15.x with 8 vcores in few minutes. For the other versions
+of kernel, it could take 30 minutes or few hours.
+
+Rachel provides [golang-repro][2] which is similar to docker repro. It can be
+built as static binary which is friendly to reproduce.
+
+Hope this information can help.
+
+Thanks,
+Wei
+
+[1]: https://gist.github.com/fuweid/ae8bad349fee3e00a4f1ce82397831ac
+[2]: https://github.com/rlmenge/rcu-soft-lock-issue-repro?tab=readme-ov-file#golang-repro
 
