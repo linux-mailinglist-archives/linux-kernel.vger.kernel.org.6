@@ -1,121 +1,175 @@
-Return-Path: <linux-kernel+bounces-205712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAC7D8FFF46
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:23:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B55C48FFF3F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 471451F2418A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:23:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06F8CB24455
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9717F15CD6C;
-	Fri,  7 Jun 2024 09:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB8015B97D;
+	Fri,  7 Jun 2024 09:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wd/bO7uQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fHQ0Qfz3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C042615B98E;
-	Fri,  7 Jun 2024 09:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84FC15443F
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717752159; cv=none; b=Y6mQbmGWjDq+ViJX47e7I3lp+hS+CoqzcLq64w9IPivFRdJ2xiSkm2eYkeh4ICaowmgBReebqchUh9lIgPaRnQybOhjBbHOddniX6XXspCnfCjm1FZK8KjBc8yddgFCgvBPCFd5U626WpBbEiHBgFrt+loOgsvgraX/UsOsR83M=
+	t=1717752157; cv=none; b=IMLuha2QOYJGdPVXur/6Z14R8yt9Z50zOGuO8egnmaNzxvwMnEg4v4MZrYiZARtFg/hPMj0n4sc69oJknPq/zVoyfiTEvGfxQ9rB2nLxMXECwTIycnzW/kOqT64RvNuoXV+qyKIrtHeExY181a4CM4jwOov8yHHK3kHqsMcx66o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717752159; c=relaxed/simple;
-	bh=D7lvHQq+tZorV1+pcjIY5sjD02wKITLOPmyvKO904yI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DEmr59UCRMwM5ePKc3HTOg5MFxGv6ljg3/EDfPyFQnrhRYWcpGKhLY1Al+cZstmUdelZbUKpPE6u4aiHg5H+1bJxfqPHAE5mJAhGUFYUG7EOBHAUV+s6J9wR6pHw0IXFQ0MPzYXl4w6hVS2idUsjT4vkViGRzMS9U9AmsfUTJJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wd/bO7uQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F2B2C4AF07;
-	Fri,  7 Jun 2024 09:22:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717752159;
-	bh=D7lvHQq+tZorV1+pcjIY5sjD02wKITLOPmyvKO904yI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wd/bO7uQuUWMF88y073MEYdcJkxc/T9boJd1q64JFfETO37/4iGwJryBTybOc9dBY
-	 DY4Mx3hhpcqNSOELqeCujEVhpgMhJ5CU3Zz20fZ6Uks+q9Iwu1cuA5Ee9f/IDfJUP/
-	 7A4BQ2Pv9OFhpgJ8KT5sHHNz3Dk0rvg9rKg6AkOTs6isY+Zqf24Xlvd9geCjfS3IXS
-	 95TqGUH3d2BNJFSN9ou8DWOSXJTdrplMPW6d4/jiOi7Q3GXaqc9Pkdx3VUGF9POD/G
-	 l3vf8BeR4RCcbq+dfKMEEdjdgOr4koutz4uJh4BZVuxoN3Jt+PxxzxdXkCLhy+F/SE
-	 /WaTgN5oouNKw==
-Date: Fri, 7 Jun 2024 11:22:29 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Minghuan Lian <minghuan.Lian@nxp.com>,
-	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Srikanth Thokala <srikanth.thokala@intel.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-	mhi@lists.linux.dev, Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH 5/5] PCI: layerscape-ep: Use the generic
- dw_pcie_ep_linkdown() API to handle Link Down event
-Message-ID: <ZmLRVQgLBx457R8E@ryzen.lan>
-References: <20240606-pci-deinit-v1-0-4395534520dc@linaro.org>
- <20240606-pci-deinit-v1-5-4395534520dc@linaro.org>
+	s=arc-20240116; t=1717752157; c=relaxed/simple;
+	bh=PxPoCnti8PmsO0RZO4P2cppfylAFmUMCeYLiTq60OZ8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=cp2QporPlO10UpolKH4/wLRTXciGuLyeLYLbRT6sq0C/jKHYqNfxRFgYXzk8cc0MfhlPOE0EVE2angjTZwWFUZFKL/sA30crpw7ejY80rPvYTvISrZRGnNBoCkJ4DJcmcNelsK01RxGDM/tW0fjz3x21yIIVxki6cAn9AKctk9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fHQ0Qfz3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717752154;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=SRqQ/AWbxoxEZebHKh1nFKhD+CG00A7FWiDUssUfhzw=;
+	b=fHQ0Qfz3WmugUGjm1I0WZGPXTBeaJNM937/p+ZrPae/9k53YRbl2SJLFi0Fe0xzU7a019C
+	cgdztOFWIU2jL7BgtSrmweb8DqwYu+M8hYTXKBG7zQb2GGpAdBc2bJtD1Bd6E5ROrqJ4IN
+	RA4FWBqL9poF350+Cm0G5kVfWNu/QFs=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-54-_PqQxFEgP16EavU4SNhyxg-1; Fri, 07 Jun 2024 05:22:33 -0400
+X-MC-Unique: _PqQxFEgP16EavU4SNhyxg-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a592c35ac06so189693766b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 02:22:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717752152; x=1718356952;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SRqQ/AWbxoxEZebHKh1nFKhD+CG00A7FWiDUssUfhzw=;
+        b=Tn58AcdYd5JZ4rh7pxkQAI4AYzIve4nTC8uM+FjKKOOmfVMPrKk0xU/IX/m9p58RMQ
+         RVHF2EHNSFBPTCKXgABk/G0cU4jVVxq6hL5BB0+HFM9pB7ahTfn7S6/kwHsMYISwGMyQ
+         RjiPPaBbwSU10VW/c2TdIRxoPsWnQYo38zdYWisqXToESjDMvaFKys5LxBqBlJ4RgbRA
+         ZwlHm9HKnkTNW8pVC7rsjHEynsDpqSkOwT3SXTo10M03jdnSsQupSvbgaDvq7rDhqwmB
+         /UQWvi7fPtam6GLnrGTSjdAjiM5nNtVzzpPkrNXAgfLWDafUJFfhul/ya9uY10QNkPOa
+         OKPw==
+X-Gm-Message-State: AOJu0Yx2Hey8iGh8ho9ozUmBUr0f8leBgULTBAOg6F3G1yEjvJY7nQK9
+	9bg0+BpdVKgl7eEBfFMg/PGWyDmVrKmynEo7xXxw79US/RWpzw84QBh7e0E+m9syApmdc5IMp/W
+	IWAPuN/WtzDFA3dkBIFr2ywTNb424vA3rbaMApkcLIZGuXvRogYl75NKHLAD8Jw==
+X-Received: by 2002:a17:906:684a:b0:a68:5fb6:1a7f with SMTP id a640c23a62f3a-a6c7629781cmr423081666b.21.1717752152160;
+        Fri, 07 Jun 2024 02:22:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGfabF485ZdkmsAwzX+jysrYwcbJShkygx3TpR3C7b7Kchhjzr88ulzEmZ6cuvF8E9LLmrfJQ==
+X-Received: by 2002:a17:906:684a:b0:a68:5fb6:1a7f with SMTP id a640c23a62f3a-a6c7629781cmr423080466b.21.1717752151697;
+        Fri, 07 Jun 2024 02:22:31 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c80586f8csm219107566b.40.2024.06.07.02.22.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jun 2024 02:22:31 -0700 (PDT)
+Message-ID: <6d69dc47-67e5-468b-aa7c-879bbad7ef77@redhat.com>
+Date: Fri, 7 Jun 2024 11:22:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606-pci-deinit-v1-5-4395534520dc@linaro.org>
+User-Agent: Mozilla Thunderbird
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: [GIT PULL] platform-drivers-x86 for 6.10-3
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ platform-driver-x86@vger.kernel.org,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Content-Language: en-US, nl
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 06, 2024 at 12:56:38PM +0530, Manivannan Sadhasivam wrote:
-> Now that the API is available, let's make use of it. It also handles the
-> reinitialization of DWC non-sticky registers in addition to sending the
-> notification to EPF drivers.
-> 
-> Reported-by: Bjorn Helgaas <helgaas@kernel.org>
-> Closes: https://lore.kernel.org/linux-pci/20240528195539.GA458945@bhelgaas/
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  drivers/pci/controller/dwc/pci-layerscape-ep.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> index 35bb481564c7..a4a800699f89 100644
-> --- a/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> +++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> @@ -104,7 +104,7 @@ static irqreturn_t ls_pcie_ep_event_handler(int irq, void *dev_id)
->  		dev_dbg(pci->dev, "Link up\n");
->  	} else if (val & PEX_PF0_PME_MES_DR_LDD) {
->  		dev_dbg(pci->dev, "Link down\n");
-> -		pci_epc_linkdown(pci->ep.epc);
-> +		dw_pcie_ep_linkdown(&pci->ep);
->  	} else if (val & PEX_PF0_PME_MES_DR_HRD) {
->  		dev_dbg(pci->dev, "Hot reset\n");
->  	}
-> 
-> -- 
-> 2.25.1
-> 
+Hi Linus,
 
-Reviewed-by: Niklas Cassel <cassel@kernel.org>
+Here is the second round of fixes for platform-drivers-x86 for 6.10.
+
+Highlights:
+ -  Default silead touchscreen driver to 10 fingers and drop 10 finger setting
+    from all DMI quirks. More of a cleanup then a pure fix, but since the DMI
+    quirks always get updated through the fixes branch this avoids conflicts.
+ -  Kconfig fix for randconfig builds
+ -  dell-smbios: Fix wrong token data in sysfs
+ -  amd-hsmp: Fix driver poking unsupported hw when loaded manually
+
+Regards,
+
+Hans
+
+
+The following changes since commit 3050052613790e75b5e4a8536930426b0a8b0774:
+
+  platform/x86: touchscreen_dmi: Add info for the EZpad 6s Pro (2024-05-27 11:43:03 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.10-3
+
+for you to fetch changes up to 77f1972bdcf7513293e8bbe376b9fe837310ee9c:
+
+  platform/x86/amd/hsmp: Check HSMP support on AMD family of processors (2024-06-03 11:57:28 +0200)
+
+----------------------------------------------------------------
+platform-drivers-x86 for v6.10-3
+
+Highlights:
+ -  Default silead touchscreen driver to 10 fingers and drop 10 finger setting
+    from all DMI quirks. More of a cleanup then a pure fix, but since the DMI
+    quirks always get updated through the fixes branch this avoids conflicts.
+ -  Kconfig fix for randconfig builds
+ -  dell-smbios: Fix wrong token data in sysfs
+ -  amd-hsmp: Fix driver poking unsupported hw when loaded manually
+
+The following is an automated git shortlog grouped by driver:
+
+Input:
+ -  silead - Always support 10 fingers
+
+dell-smbios:
+ -  Simplify error handling
+ -  Fix wrong token data in sysfs
+
+platform/x86/amd/hsmp:
+ -  Check HSMP support on AMD family of processors
+
+touchscreen_dmi:
+ -  Use 2-argument strscpy()
+ -  Drop "silead,max-fingers" property
+
+yt2-1380:
+ -  add CONFIG_EXTCON dependency
+
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      platform/x86: touchscreen_dmi: Use 2-argument strscpy()
+
+Armin Wolf (2):
+      platform/x86: dell-smbios: Fix wrong token data in sysfs
+      platform/x86: dell-smbios: Simplify error handling
+
+Arnd Bergmann (1):
+      platform/x86: yt2-1380: add CONFIG_EXTCON dependency
+
+Hans de Goede (2):
+      Input: silead - Always support 10 fingers
+      platform/x86: touchscreen_dmi: Drop "silead,max-fingers" property
+
+Suma Hegde (1):
+      platform/x86/amd/hsmp: Check HSMP support on AMD family of processors
+
+ drivers/input/touchscreen/silead.c           |  19 ++---
+ drivers/platform/x86/Kconfig                 |   1 +
+ drivers/platform/x86/amd/hsmp.c              |  50 +++++++++++--
+ drivers/platform/x86/dell/dell-smbios-base.c | 101 +++++++++++----------------
+ drivers/platform/x86/touchscreen_dmi.c       |  59 +---------------
+ 5 files changed, 89 insertions(+), 141 deletions(-)
+
 
