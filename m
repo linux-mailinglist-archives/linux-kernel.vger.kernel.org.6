@@ -1,161 +1,276 @@
-Return-Path: <linux-kernel+bounces-205470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 123FA8FFC83
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:56:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB6B28FFC85
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:56:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E36631C232A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:56:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58B0D2838FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397C3153801;
-	Fri,  7 Jun 2024 06:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9628153819;
+	Fri,  7 Jun 2024 06:56:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="npy3DAGx"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nTNbwtY3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CCB2D600
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 06:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5152D600
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 06:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717743378; cv=none; b=Ll8XGf0ZiEm01p6Bwz8LhanvFGn6lpc6g5jQ2ouUWAqD9DXRwwfJ0hysJNLsCw4SvP7VkeZz0JgIB0lhXA2ACOk6WZH1tSz4Jmm4Z7R4vyIQ1cZd085nLVPwkzfQgwvPfrtKen45hKZjms8sx6clUrGSTfLpzoRs9PFHCFPXdkU=
+	t=1717743400; cv=none; b=GHjX+kGlQCzL7lzcQhk7Ol9yiTYrtzC/HemThzKsrLyIFaWVC4wdvsuqhw8LzIuirbPVKjzRzNVU+w3wlJx/bjnovu/++Rf6yRcSWH3IXcR0VKMSkU7zaAG5g0HqH44UcYCwlYTRG+SpJUinjqp/20MF8ghs5+p+TVFnN/hMe/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717743378; c=relaxed/simple;
-	bh=wrTTn6IscAXLTweuB9ogEuvEdMC0oy8USnmI6Umi4iQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TueveqTN+joOu7IOTqZv5TbcNbIaPCYsWTc61TUZFtfFEsI00BQkfDakhMtrLJ7NQ5dY3WwWn74+zcL8q7hFxQ9cDJ6hKvVldt8tyHcXZr8mmNXWpq0f2lCjKweRe3j2eUWIInlPkuJxlzG72d/eSY8Pu8MNKKPiv5P3wHuIU50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=npy3DAGx; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-356c4e926a3so1642141f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 23:56:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717743374; x=1718348174; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=+n1UbeKOejJyQ0EsFqQB0hecGgVTeSZSMyL3P00Ii1E=;
-        b=npy3DAGxRua1DGPn0Sv4tFYmbUNm6FG5lxbClogXf5UwfFEOJhZt/QOn+YkbVwJrC1
-         ENLwDtItFF4pph+zV3ru75G9Dq6XCZkAzQBSH9VJ71impeVDKlAMj1Z4nirC+kzK9Iif
-         GUKYn80TpSHpKMIzyLZdVefSAqUB3BIEKTe0SFS59afkBbHKnH8qg42Kk1DtbjgfN6Uq
-         XscCwxP0T6ngwUfqfKX9hmTBVECjFq1l6OQbJzRagUnK8Nd8xztviJoG1zxSEzM7PeRm
-         45oMhpWxPuAl+b2TehSU3XezKKsayyiy0Wc+R/3fadyDayZ8OKwDvjDIPp9Z/FoX5YqM
-         Nvxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717743374; x=1718348174;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+n1UbeKOejJyQ0EsFqQB0hecGgVTeSZSMyL3P00Ii1E=;
-        b=I4/D4rd7XzRdbpzCrrv0ULOQDa7NwHpynN7HdnAx+U5bffv/0Io9Njw5otc6X8kwMB
-         rK4FyuOqMvlyMwUphLSjMUuXOnCdDOLrJHbbBPMdL5xMpain4y11iNVHedNxjrBrlAe9
-         QdnAyronoNk5m8reywU/nzm0w/IlRE7zmqGngI2gIjTNlYQjD6c7dRiP8UiNS0YVJ5eY
-         W+Hzr8Oq4HVkM40Iy5pvpErEGTteP8RRwasMkIZeHUVOYww1YLsSIpq6CoAYb7fzLOaL
-         oiEOBaiTEop6MmdgL/ZZjseWZt1bPU1KNCb1lfANuG6cJjd2/b3Zi9p0CIGPw6mBJIbv
-         PLaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHGAoYrdF/XJiMeoCNOxAaVEi93GKlzgTv0uzssnMx1VXPoFmsPfW70WqqfrWjs+SlW/11U1L7bPxH8Ymr7mXZNdVwRzEbJyWMpqfN
-X-Gm-Message-State: AOJu0YyuJV8tPCTN5gx759RiHm/rwF6kxNfi+qgo7FCJHYNiofYxGeRc
-	xXL9t1IN1E/poMPch+OI3CjMKvhEulkgbks6bm8fG+sw4cinQ2ohR+6qbPkIviY=
-X-Google-Smtp-Source: AGHT+IHAnFvsJMX10rtGGRSCWAG59PxgESy1x9MXcjGORvB0Q46JVDA2haec2hIhIh5gy8TVv46KUA==
-X-Received: by 2002:adf:ea88:0:b0:354:f359:7355 with SMTP id ffacd0b85a97d-35efed07c42mr1240127f8f.3.1717743373907;
-        Thu, 06 Jun 2024 23:56:13 -0700 (PDT)
-Received: from [192.168.2.24] ([110.93.11.116])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d29c37sm3338413f8f.24.2024.06.06.23.56.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 23:56:12 -0700 (PDT)
-Message-ID: <b98dc404-1cf3-4042-b6aa-45995cc12294@linaro.org>
-Date: Fri, 7 Jun 2024 08:56:11 +0200
+	s=arc-20240116; t=1717743400; c=relaxed/simple;
+	bh=AzL1BIMMWlNUGqjNBs33eGem6V4wdkSkiVAHykactYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V/NibRcGK3Oof8e4GC1AaSYQvIdOM+TEulkl8vvzB/+MASJW/B7QX48UEfE/9AhT8wtQqtT2c65fXCMbTMDHouhf5IxklcrolOO9m4zMg7NwhIs2Cirpg+X5xwiT0/nQlGWL3D5P8e8O9qh5ODJXKrHiZjlgCFU/q+Lyqh9pkYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nTNbwtY3; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717743398; x=1749279398;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AzL1BIMMWlNUGqjNBs33eGem6V4wdkSkiVAHykactYY=;
+  b=nTNbwtY3rk3OXlHdldQHs+AkXigtxStvWW3gG13m0U/t9vFzUABoZjc3
+   Xmk7Fvt+adVq9o3hjpbtaS/Wapx2UAOWBcHrwKgTawtN7qbcSk62wz7XD
+   v6Z6pBbRdxSQnql1qGwrV5jXw/22pgaz6ksls7BRNYUTxauGlYvsVcFo3
+   e44s5buYSSmxdiiqQIUQg/FkIVkz3Ph31+1Iq8tqUWFs3psVHDwC3BKKa
+   8RL7s3pp7EWgikL6NiTRkdhhFi5zd3qpJ8ov1caAkaB1qnidzgj6U/ppT
+   qjFv57AFLaZ2lS8vwJnwFAsu+BHBUyy21MSoPxQWuibg0ViKg4yXa3UbE
+   g==;
+X-CSE-ConnectionGUID: GJjxbxcbTbWuQ8PAOpWYmw==
+X-CSE-MsgGUID: Q2J2kJHYQ6W6tTvwYu3nog==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="14606296"
+X-IronPort-AV: E=Sophos;i="6.08,220,1712646000"; 
+   d="scan'208";a="14606296"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 23:56:38 -0700
+X-CSE-ConnectionGUID: SEpao+7YTXaJn7Ko26gwzg==
+X-CSE-MsgGUID: aBjPzdVIRK+RDqjqxojXIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,220,1712646000"; 
+   d="scan'208";a="43167669"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 06 Jun 2024 23:56:34 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sFTWa-0004Be-1y;
+	Fri, 07 Jun 2024 06:56:32 +0000
+Date: Fri, 7 Jun 2024 14:56:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Denis Arefev <arefev@swemel.ru>, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>, lvc-project@linuxtesting.org
+Subject: Re: [PATCH] net: missing check
+Message-ID: <202406071404.OiLHfOHM-lkp@intel.com>
+References: <20240606141450.44709-1-arefev@swemel.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: dt-bindings: mt6358: Convert to dtschema
-To: Kartik Agarwala <agarwala.kartik@gmail.com>, lgirdwood@gmail.com,
- broonie@kernel.org, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- conor+dt@kernel.org, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20240518081621.63386-1-agarwala.kartik@gmail.com>
- <c05f91f5-a878-4f36-b325-0ac8e038a7e5@linaro.org>
- <c32b902e-0338-436b-85e1-827c48e0ee2b@gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <c32b902e-0338-436b-85e1-827c48e0ee2b@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606141450.44709-1-arefev@swemel.ru>
 
-On 06/06/2024 16:19, Kartik Agarwala wrote:
->>> +  Must be a child node of PMIC wrapper.
->>
->> Did you update the PMIC wrapper binding with ref to this?
->>
-> 
-> Hi Krzysztof, 
-> 
-> I apologize incase this is something obvious but I am still not sure
-> if I understand what you expect here. Could you please explain this
-> a bit more? I thought that you wanted me to convert the Mediatek PMIC 
-> wrapper but it already seems to be in DT-Schema format.[1]
-> 
-> [1]: https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/soc/mediatek/mediatek%2Cpwrap.yaml
+Hi Denis,
 
-If this is a child of some node (PMIC wrapper), then parent node should
-reference this schema. Please make the parent example complete and
-validate it. Otherwise above statement - must be a child ...- is false.
+kernel test robot noticed the following build warnings:
 
-Best regards,
-Krzysztof
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.10-rc2 next-20240607]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Denis-Arefev/net-missing-check/20240606-230540
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20240606141450.44709-1-arefev%40swemel.ru
+patch subject: [PATCH] net: missing check
+config: x86_64-randconfig-121-20240607 (https://download.01.org/0day-ci/archive/20240607/202406071404.OiLHfOHM-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240607/202406071404.OiLHfOHM-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406071404.OiLHfOHM-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+   drivers/net/virtio_net.c: note: in included file:
+>> include/linux/virtio_net.h:103:58: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected unsigned long long [usertype] divisor @@     got restricted __virtio16 const [usertype] gso_size @@
+   include/linux/virtio_net.h:103:58: sparse:     expected unsigned long long [usertype] divisor
+   include/linux/virtio_net.h:103:58: sparse:     got restricted __virtio16 const [usertype] gso_size
+>> include/linux/virtio_net.h:104:42: sparse: sparse: restricted __virtio16 degrades to integer
+
+vim +103 include/linux/virtio_net.h
+
+    49	
+    50	static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
+    51						const struct virtio_net_hdr *hdr,
+    52						bool little_endian)
+    53	{
+    54		unsigned int nh_min_len = sizeof(struct iphdr);
+    55		unsigned int gso_type = 0;
+    56		unsigned int thlen = 0;
+    57		unsigned int p_off = 0;
+    58		unsigned int ip_proto;
+    59		u64 ret, remainder;
+    60	
+    61		if (hdr->gso_type != VIRTIO_NET_HDR_GSO_NONE) {
+    62			switch (hdr->gso_type & ~VIRTIO_NET_HDR_GSO_ECN) {
+    63			case VIRTIO_NET_HDR_GSO_TCPV4:
+    64				gso_type = SKB_GSO_TCPV4;
+    65				ip_proto = IPPROTO_TCP;
+    66				thlen = sizeof(struct tcphdr);
+    67				break;
+    68			case VIRTIO_NET_HDR_GSO_TCPV6:
+    69				gso_type = SKB_GSO_TCPV6;
+    70				ip_proto = IPPROTO_TCP;
+    71				thlen = sizeof(struct tcphdr);
+    72				nh_min_len = sizeof(struct ipv6hdr);
+    73				break;
+    74			case VIRTIO_NET_HDR_GSO_UDP:
+    75				gso_type = SKB_GSO_UDP;
+    76				ip_proto = IPPROTO_UDP;
+    77				thlen = sizeof(struct udphdr);
+    78				break;
+    79			case VIRTIO_NET_HDR_GSO_UDP_L4:
+    80				gso_type = SKB_GSO_UDP_L4;
+    81				ip_proto = IPPROTO_UDP;
+    82				thlen = sizeof(struct udphdr);
+    83				break;
+    84			default:
+    85				return -EINVAL;
+    86			}
+    87	
+    88			if (hdr->gso_type & VIRTIO_NET_HDR_GSO_ECN)
+    89				gso_type |= SKB_GSO_TCP_ECN;
+    90	
+    91			if (hdr->gso_size == 0)
+    92				return -EINVAL;
+    93		}
+    94	
+    95		skb_reset_mac_header(skb);
+    96	
+    97		if (hdr->flags & VIRTIO_NET_HDR_F_NEEDS_CSUM) {
+    98			u32 start = __virtio16_to_cpu(little_endian, hdr->csum_start);
+    99			u32 off = __virtio16_to_cpu(little_endian, hdr->csum_offset);
+   100			u32 needed = start + max_t(u32, thlen, off + sizeof(__sum16));
+   101	
+   102			if (hdr->gso_size) {
+ > 103				ret = div64_u64_rem(skb->len, hdr->gso_size, &remainder);
+ > 104				if (!(ret && (hdr->gso_size > needed) &&
+   105							((remainder > needed) || (remainder == 0)))) {
+   106					return -EINVAL;
+   107				}
+   108				skb_shinfo(skb)->tx_flags |= SKBFL_SHARED_FRAG;
+   109			}
+   110	
+   111			if (!pskb_may_pull(skb, needed))
+   112				return -EINVAL;
+   113	
+   114			if (!skb_partial_csum_set(skb, start, off))
+   115				return -EINVAL;
+   116	
+   117			nh_min_len = max_t(u32, nh_min_len, skb_transport_offset(skb));
+   118			p_off = nh_min_len + thlen;
+   119			if (!pskb_may_pull(skb, p_off))
+   120				return -EINVAL;
+   121		} else {
+   122			/* gso packets without NEEDS_CSUM do not set transport_offset.
+   123			 * probe and drop if does not match one of the above types.
+   124			 */
+   125			if (gso_type && skb->network_header) {
+   126				struct flow_keys_basic keys;
+   127	
+   128				if (!skb->protocol) {
+   129					__be16 protocol = dev_parse_header_protocol(skb);
+   130	
+   131					if (!protocol)
+   132						virtio_net_hdr_set_proto(skb, hdr);
+   133					else if (!virtio_net_hdr_match_proto(protocol, hdr->gso_type))
+   134						return -EINVAL;
+   135					else
+   136						skb->protocol = protocol;
+   137				}
+   138	retry:
+   139				if (!skb_flow_dissect_flow_keys_basic(NULL, skb, &keys,
+   140								      NULL, 0, 0, 0,
+   141								      0)) {
+   142					/* UFO does not specify ipv4 or 6: try both */
+   143					if (gso_type & SKB_GSO_UDP &&
+   144					    skb->protocol == htons(ETH_P_IP)) {
+   145						skb->protocol = htons(ETH_P_IPV6);
+   146						goto retry;
+   147					}
+   148					return -EINVAL;
+   149				}
+   150	
+   151				p_off = keys.control.thoff + thlen;
+   152				if (!pskb_may_pull(skb, p_off) ||
+   153				    keys.basic.ip_proto != ip_proto)
+   154					return -EINVAL;
+   155	
+   156				skb_set_transport_header(skb, keys.control.thoff);
+   157			} else if (gso_type) {
+   158				p_off = nh_min_len + thlen;
+   159				if (!pskb_may_pull(skb, p_off))
+   160					return -EINVAL;
+   161			}
+   162		}
+   163	
+   164		if (hdr->gso_type != VIRTIO_NET_HDR_GSO_NONE) {
+   165			u16 gso_size = __virtio16_to_cpu(little_endian, hdr->gso_size);
+   166			unsigned int nh_off = p_off;
+   167			struct skb_shared_info *shinfo = skb_shinfo(skb);
+   168	
+   169			switch (gso_type & ~SKB_GSO_TCP_ECN) {
+   170			case SKB_GSO_UDP:
+   171				/* UFO may not include transport header in gso_size. */
+   172				nh_off -= thlen;
+   173				break;
+   174			case SKB_GSO_UDP_L4:
+   175				if (!(hdr->flags & VIRTIO_NET_HDR_F_NEEDS_CSUM))
+   176					return -EINVAL;
+   177				if (skb->csum_offset != offsetof(struct udphdr, check))
+   178					return -EINVAL;
+   179				if (skb->len - p_off > gso_size * UDP_MAX_SEGMENTS)
+   180					return -EINVAL;
+   181				if (gso_type != SKB_GSO_UDP_L4)
+   182					return -EINVAL;
+   183				break;
+   184			}
+   185	
+   186			/* Kernel has a special handling for GSO_BY_FRAGS. */
+   187			if (gso_size == GSO_BY_FRAGS)
+   188				return -EINVAL;
+   189	
+   190			/* Too small packets are not really GSO ones. */
+   191			if (skb->len - nh_off > gso_size) {
+   192				shinfo->gso_size = gso_size;
+   193				shinfo->gso_type = gso_type;
+   194	
+   195				/* Header must be checked, and gso_segs computed. */
+   196				shinfo->gso_type |= SKB_GSO_DODGY;
+   197				shinfo->gso_segs = 0;
+   198			}
+   199		}
+   200	
+   201		return 0;
+   202	}
+   203	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
