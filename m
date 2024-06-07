@@ -1,127 +1,125 @@
-Return-Path: <linux-kernel+bounces-205610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E7D8FFE1A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:34:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CADB8FFE23
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51C6E1C2372C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:34:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B6DD1C23A50
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC0415B11C;
-	Fri,  7 Jun 2024 08:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C8B15B127;
+	Fri,  7 Jun 2024 08:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Zg8h1t+i"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eS2FJ2Iq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2337E15AD9B;
-	Fri,  7 Jun 2024 08:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4983715443A
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 08:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717749283; cv=none; b=Eq54W5HMcsJvQHhhoA2nzqU+0N8kcgXxvReEKeSYWyNZw580iWJ2F9oX0FWL8ubEGzPfpdK97wZwIN29rV4Qgq8UXsis3LH1bNy2Dp+Ib0iWLcLKubLVQ3PomyAjUFEQ6ueSqpScdcn4fwbndm5ttg4sowYuik9HCKdTF6s0wZI=
+	t=1717749443; cv=none; b=ES5KyRdh8aiJ1WMdv4zPqlNiTpCP92ehItrBcfdVTQFNH/M7KCq7cnsdrJCDriiLOshUW/G+bLWLxS4XL8xVRYAmqCiIb++NRzljOR/AreGxhMg5/ALanl8TxJ8s2+8c5YKi1yDpP5U5vSVrqg1lgzdc+b9k9Oo/gRkhSgVgtH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717749283; c=relaxed/simple;
-	bh=zPRpjAYUt97meGMe/dTkxWNci342kzEvUmNIKExzJy0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TRSFbt9N7pOn9YE6YXM+n1Mredc/apP7Kwnr4SPC30LpOwHsuRDe1fklr2G8QvjLUgXwNUsfVq7PKLb+W0kiTApO9rTES5xJ6+qQ3089LCwPl3FP8dyO21SEpu/gCKziqSslUzSOREJkd6RfhmAseaZerl2wkaLqYLGPRTKSZF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Zg8h1t+i; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9175860002;
-	Fri,  7 Jun 2024 08:34:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1717749279;
+	s=arc-20240116; t=1717749443; c=relaxed/simple;
+	bh=g2rcMWyp8GlzCipqNrvSLZZa077Ie31QTsgAwJF3cZc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KmUAPZrIMQe/dvWXwIJg3WQzKduinpdNYKG7F5Pzmf3e6KzCjWBJJMJkxrhazBY1d+ROR0fdoZVsTlU4idVLOr6ETWPejo5huiWzxIehaooQezHsmQfacNeZe4FD3evqnEmiVh1AHO4PspXM8wdnRf5MOHgZ3zB2ROIO0H/JN28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eS2FJ2Iq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717749441;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=kC7Mkqte1GNcI58Ap7NFvmtEPtCKep5B67HlI4T5e9o=;
-	b=Zg8h1t+ieDdEbmuX3VesTFo5fRadzqvA4p5CwE/eJXnsg3o1UvORmAnp6iquxrWto4odGu
-	LiF0CfNob79FA/cAZmWMo8toGWTI7qcx+VVPHy3Zp2Z1H9yYYRntYJLNV4mfIreF4Nv2Om
-	ohqNBnRVMOY9oDfN7flr2GXLfUtLGfWWxTXo2XolLCSyYTHN6ANOevzBTutoiJsywbDXSe
-	V2sMxttnDoJzKBu5EK0y3MRw8i0puGfyFYsxrZ8ykAPCOA870jC9mFJvZuFynt/2BcfXbj
-	ZGi4YRzBg0/qyfW0WzNZK+yQpiYNnoy9rWeskilrxkCcEk/jHYBnc3acYSthdA==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Fri, 07 Jun 2024 10:34:38 +0200
-Subject: [PATCH v2] dmaengine: xilinx: xdma: Fix data synchronisation in
- xdma_channel_isr()
+	bh=M8ah2Ds86Vnl2swvOWW1huIAKIJrzy4AOAoWffTTPH0=;
+	b=eS2FJ2IqPlEm4YzQupjdA768wDome0eCCuNw4YnUEgVLD2oKC2l87XjW+JX7T6utKHDyPE
+	8RnCKCgrQuZGTg7uDhrKAMxhCunP/7pFooZo0MMfodyfPJptnWgHl+Reexjkzf0lDsH0Q8
+	V973JHleg11HYWFTOIyDB49xovcFe1U=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-202-wAHZVWDZNJy7X6xJAQaCKA-1; Fri,
+ 07 Jun 2024 04:37:17 -0400
+X-MC-Unique: wAHZVWDZNJy7X6xJAQaCKA-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7D12D1935DE8;
+	Fri,  7 Jun 2024 08:37:16 +0000 (UTC)
+Received: from t14s.fritz.box (unknown [10.39.194.94])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A84A21956048;
+	Fri,  7 Jun 2024 08:37:13 +0000 (UTC)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Wei Yang <richard.weiyang@gmail.com>
+Subject: [PATCH v1 0/2] mm/highmem: don't track highmem pages manually
+Date: Fri,  7 Jun 2024 10:37:09 +0200
+Message-ID: <20240607083711.62833-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240607-xdma-fixes-v2-1-0282319ce345@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAB3GYmYC/22MTQ6DIBBGr2JmXRoZsZqueo/GhcBYJ6lgwBAbw
- 91LXXf5vp93QKTAFOFeHRAocWTvCuClAjOP7kWCbWHAGlXdYid2u4xi4p2i6JTWhNZo0j2Uwxr
- oLMr+ORSeOW4+fE53kr/0ryZJIcXUSNUo3d56hQ/t/fZmdzV+gSHn/AUlKr6rpgAAAA==
-To: Lizhi Hou <lizhi.hou@amd.com>, Brian Xu <brian.xu@amd.com>, 
- Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>, 
- Vinod Koul <vkoul@kernel.org>, Michal Simek <michal.simek@amd.com>
-Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, markus.elfring@web.de, stable@vger.kernel.org, 
- Louis Chauvet <louis.chauvet@bootlin.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1148;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=zPRpjAYUt97meGMe/dTkxWNci342kzEvUmNIKExzJy0=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBmYsYe6MaFjYQCt+CSytoKScFCdjwkqda9Yw8IU
- LUD4haz1TOJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZmLGHgAKCRAgrS7GWxAs
- 4m6XD/42ttI5gdQT0NeEFycj9oQdOtaolq+foYxCmvvs/FJuyFmVxvsEFezkLsjjXjp9swRiwwM
- /wjKCrgggWcBKNiQ1TyuualeA5XEgzVHWC5mbcVLjZXkPVFTn7mSHH5C+p0es/6TCZ4pegjs0Jj
- HnxhKHSKzyGSBT+MZKiG5NW5W0ogzXIYBzk0NkdEeUQDIzZzYWe8fmrOcY7Dnxz0FVxi+pzRvQW
- R5qS8KHL7q8qvbNIYsAifBYqZsCaBVEydWqJPoYqmMOPdXEPg/b7AbmjQgZggLIdQ+p3eFeGvZ+
- 8FxalgcU+Bjg+s2YuQu0VEErlmk2ph0DaSBTaLIagUdUb2r/BoRhsz77r9eUG1ktwctGhGs5Bi6
- Zvf2GAcSpu+N/sf1YRim3tbn+GlPQSzbCOzoqTwPSXfv9rLJI9ZUJYWFIi/akNvzQ+tU308kD39
- TcxwztK+OcOBXjevvndKrE4LRQO/9RcCEzqjFtiWNH31LTrStXOvke49nnKmWFQzqZXf1XN8iQa
- r2PSL2Nqsomb1WRVXudK8yrE/HYG2htrrCITY+NIzPKcz8GR52nYHb+HoLJ9nDMg5WuM4egk++a
- QPGRdVQ3nI4VVmIh65P/nobvTBD1dREsogPuOZTd8MFtuTEdW2AxsBx3BlTTpUiOGAl7Z1scJrB
- KdQtP+WqkgZN2RQ==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-GND-Sasl: louis.chauvet@bootlin.com
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Requests the vchan lock before using xdma->stop_request.
+Let's remove highmem special-casing from adjust_managed_page_count(),
+to result in less confusion why memblock manually adjusts
+totalram_pages, and __free_pages_core() only adjusts the zone's
+managed pages -- what about the highmem pages that
+adjust_managed_page_count() updates?
 
-Fixes: 6a40fb824596 ("dmaengine: xilinx: xdma: Fix synchronization issue")
-Cc: stable@vger.kernel.org
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
----
-Changes in v2:
-- Apply comments from Markus
-- Link to v1: https://lore.kernel.org/r/20240527-xdma-fixes-v1-1-f31434b56842@bootlin.com
----
- drivers/dma/xilinx/xdma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Now, we only maintain totalram_pages and a zone's managed pages
+independent of highmem support. We can derive the number of highmem pages
+simply by looking at the relevant zone's managed pages. I don't think
+there is any particular fast path that needs a maximum-efficient
+totalhigh_pages() implementation.
 
-diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
-index e143a7330816..718842fdaf98 100644
---- a/drivers/dma/xilinx/xdma.c
-+++ b/drivers/dma/xilinx/xdma.c
-@@ -885,11 +885,11 @@ static irqreturn_t xdma_channel_isr(int irq, void *dev_id)
- 	u32 st;
- 	bool repeat_tx;
- 
-+	spin_lock(&xchan->vchan.lock);
-+
- 	if (xchan->stop_requested)
- 		complete(&xchan->last_interrupt);
- 
--	spin_lock(&xchan->vchan.lock);
--
- 	/* get submitted request */
- 	vd = vchan_next_desc(&xchan->vchan);
- 	if (!vd)
+Note that highmem memory is currently initialized using
+free_highmem_page()->free_reserved_page(), not __free_pages_core(). In the
+future we might want to also use __free_pages_core() to initialize
+highmem memory, to make that less special, and consider moving
+totalram_pages updates into __free_pages_core() [1], so we can just use
+adjust_managed_page_count() in there as well.
 
----
-base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-change-id: 20240527-xdma-fixes-74bbe2dcbeb8
+Booting a simple kernel in QEMU reveals no highmem accounting change:
 
-Best regards,
+Before:
+  Memory: 3095448K/3145208K available (14802K kernel code, 2073K rwdata,
+  5000K rodata, 740K init, 556K bss, 49760K reserved, 0K cma-reserved,
+  2244488K highmem)
+
+After:
+  Memory: 3095276K/3145208K available (14802K kernel code, 2073K rwdata,
+  5000K rodata, 740K init, 556K bss, 49932K reserved, 0K cma-reserved,
+  2244488K highmem)
+
+[1] https://lkml.kernel.org/r/20240601133402.2675-1-richard.weiyang@gmail.com
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Wei Yang <richard.weiyang@gmail.com>
+
+David Hildenbrand (2):
+  mm/highmem: reimplement totalhigh_pages() by walking zones
+  mm/highmem: make nr_free_highpages() return "unsigned long"
+
+ include/linux/highmem-internal.h | 17 ++++++-----------
+ include/linux/highmem.h          |  2 +-
+ mm/highmem.c                     | 20 +++++++++++++++-----
+ mm/page_alloc.c                  |  4 ----
+ 4 files changed, 22 insertions(+), 21 deletions(-)
+
+
+base-commit: 19b8422c5bd56fb5e7085995801c6543a98bda1f
 -- 
-Louis Chauvet <louis.chauvet@bootlin.com>
+2.45.1
 
 
