@@ -1,81 +1,129 @@
-Return-Path: <linux-kernel+bounces-205581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0AD78FFDBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:01:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F16458FFDC2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72F581F21CCF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:01:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B0771F231F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C870F15AD83;
-	Fri,  7 Jun 2024 08:01:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EF715AAC7;
-	Fri,  7 Jun 2024 08:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A9115AD99;
+	Fri,  7 Jun 2024 08:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TuJEPIG4"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1FA15A872;
+	Fri,  7 Jun 2024 08:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717747301; cv=none; b=fMO13MWTqqsLUdAwft89rCKy0AR27upqw9jd+/WRTa3qx7Awktg98ozuVo16F1JmFqr+OicPyXYuy32/3sDOFyFSWC8y3gzVGi7z21RjpDTdFHLtOVi1lk4xUzNhKW11a7KkkKF2Z0RugBI7pq4GXddEMV84PF81GvzsMrhXvwc=
+	t=1717747488; cv=none; b=SWYHz7+Hf5sm16c3aP9VQzXwgOWNgz6KbpKRlRoDwJUQKvx8UcOqWeY9t38GM1je2E5RqbxKASEaiTxkVLyfo520vf4fJvmZNLwidPlLXs16UuXY4ls7xNdOyT624e/OgN4V3XoK2zssuGs2bQrQBjmWO4fCREp3ils8x2dDPQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717747301; c=relaxed/simple;
-	bh=qfO5B+ddYaxpzHvaEPVjfRrfPkXTjGkIeqggJGx9Ymk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oCUu0OsDzyVoRVK/LEGMLHuwv6KI+qrKP7VY83fYPmlvMTlmvmsagMqFb/a0SJKfybcHdeo8J3g52hhm44e2pHF10bVbBffpXiz1oQ3yyWVj6s2xr7fm2Sv+p81NWnKIVrMy3AsGM/8+sOwnu2d7oPbxwkpNW655uAMgzQgCzko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 438E32F4;
-	Fri,  7 Jun 2024 01:02:03 -0700 (PDT)
-Received: from [192.168.2.88] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 204FB3F64C;
-	Fri,  7 Jun 2024 01:01:36 -0700 (PDT)
-Message-ID: <19d87e24-7c2b-4396-9514-74150b896cf3@arm.com>
-Date: Fri, 7 Jun 2024 10:01:35 +0200
+	s=arc-20240116; t=1717747488; c=relaxed/simple;
+	bh=iRk1YNV1eMtLeNp3Te4u3uEFiIR1fWxkiAtwTd6JHN4=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=G4bCfYXnlvLsSRWtw/S0tqpcHSsLlFq+gp+rvde8ufU6qtwoTPMCV+TBWjVt2W4JjtqEqRQKRq7tfFaXrDofYMul5aKGxAI7MrK5mhQiuGd2Hb1uHT5xGjK/uNPKjOsM8kcRjcctn8Nve4mncXYB4EOE0T+X3ojM7CP+tkauThM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TuJEPIG4; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a6c8537bfa0so194422666b.3;
+        Fri, 07 Jun 2024 01:04:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717747485; x=1718352285; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vHTEB/VzVlwsDqiMfVQQnNEOGkiSg21MmPi/eavWhB0=;
+        b=TuJEPIG48RSCeddpQYxijJ0YK8sXDjZSObewldM0tCyUSxE5nUiglO138FThAsURPL
+         BxWSXqHe1qaxW7OGj4phmX2d2JS1lwyM9keWz6BucVPdIaSMgHI6i9kBtt8La+cL2Mvj
+         6EIOgcW6MI/KNwkyYrXAYMfVC7872WO7jEMnpNVTRv1ESkDU5CoOHv4GchiCiW7zbasF
+         Z4LUn2RSo1mbcHwGtF5JuuQ1DRdxGxmncprkXCMgBWqztUsTxVtmNb1zzZgn/rN8zeUw
+         aph/kGx86xgAfRthRvLfZ2qfG0cYNCUw10QTBbSCIosifbsd5RY2z2KlNBdwx5FD1YzU
+         i/Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717747485; x=1718352285;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vHTEB/VzVlwsDqiMfVQQnNEOGkiSg21MmPi/eavWhB0=;
+        b=qgdL1u7a00Vm9Dr1MNPvQib+iVNmSu4QpDPA11smAp/7dxLBlG7lSBYt0+sOwuG3M8
+         kRXD6xjOednHofsof7I1791O9YxHLfybGLDM9gDjlbJ/F1b5x54zncmRcV9SA6lmkDbG
+         6DW89fPJNaNS4a9PZMobzEKQP0NSGPIRXQTQBiA8rWRnZjE0rhXrh++EsWyKSBil1NOw
+         f4m4iySTxuHYHGqRQaa+jr97nfmRhxArIhECLvWdXDURpszBro0eSurXWpie6Mdtf383
+         9TeEMFchfsXBsw9UTZiyTKD6kYRmMrjJyBgQIkVy4U+9SsBknm2wCUzcS9egcDO6X/nI
+         379g==
+X-Forwarded-Encrypted: i=1; AJvYcCXVXqMQEjixJBayi3g3obomIekZJGmyNB6rjXfSbv28H68vYBxoeZKLaYzoirYzEcHxzp7RToI1VvD9Y3kuAtC3m7Be8Q5UU6AHx0IvBmdyIa+ShyxwWfQX55fMPqRnSn0vZgfFz6MI+g8=
+X-Gm-Message-State: AOJu0Yx+AhqXAWD/mnWo50/YmVnTEZbGY8hL26empFpe4//AC29cUKO/
+	xR55AzFqGX+ub4Wjbb7Y7+sE3GucQuE2M3AlxED1aCbi5LQOsPEn
+X-Google-Smtp-Source: AGHT+IExgnAQUcrdORoGg6TV/9qPh9JBwUAmzwB2cHbzIem0i3Xhw9fMo2vk9TjEW4CIT6IHMAkpMg==
+X-Received: by 2002:a17:907:7211:b0:a6e:a97c:fc9a with SMTP id a640c23a62f3a-a6ea97cfd20mr31412166b.8.1717747485112;
+        Fri, 07 Jun 2024 01:04:45 -0700 (PDT)
+Received: from localhost (host-95-246-50-43.retail.telecomitalia.it. [95.246.50.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c84aa8351sm183122066b.142.2024.06.07.01.04.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 01:04:44 -0700 (PDT)
+Date: Fri, 07 Jun 2024 10:04:43 +0200
+From: Matteo Martelli <matteomartelli3@gmail.com>
+To: Maxime Ripard <mripard@kernel.org>, 
+ Matteo Martelli <matteomartelli3@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, 
+ Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Marcus Cooper <codekipper@gmail.com>, 
+ =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>, 
+ linux-sound@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, 
+ linux-kernel@vger.kernel.org
+Message-ID: <6662bf1b61bbc_2f51737023@njaxe.notmuch>
+In-Reply-To: <20240606-savvy-wallaby-of-champagne-d4a50e@houat>
+References: <20240529140658.180966-2-matteomartelli3@gmail.com>
+ <20240529140658.180966-3-matteomartelli3@gmail.com>
+ <20240606-savvy-wallaby-of-champagne-d4a50e@houat>
+Subject: Re: [PATCH 1/1] ASoC: sunxi: sun4i-i2s: fix LRCLK polarity in i2s
+ mode
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] cpuidle: teo: Increase util-threshold
-To: Christian Loehle <christian.loehle@arm.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, rafael@kernel.org
-Cc: vincent.guittot@linaro.org, qyousef@layalina.io, peterz@infradead.org,
- daniel.lezcano@linaro.org, anna-maria@linutronix.de,
- kajetan.puchalski@arm.com, lukasz.luba@arm.com
-References: <20240606090050.327614-1-christian.loehle@arm.com>
- <20240606090050.327614-2-christian.loehle@arm.com>
-Content-Language: en-US
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-In-Reply-To: <20240606090050.327614-2-christian.loehle@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: 7bit
 
-On 06/06/2024 11:00, Christian Loehle wrote:
-> Increase the util-threshold by a lot as it was low enough for some
-> minor load to always be active, especially on smaller CPUs.
+Maxime Ripard wrote:
+> > -	/*
+> > -	 * DAI clock polarity
+> > -	 *
+> > -	 * The setup for LRCK contradicts the datasheet, but under a
+> > -	 * scope it's clear that the LRCK polarity is reversed
+> > -	 * compared to the expected polarity on the bus.
+> > -	 */
+> 
+> I think we should keep that comment somewhere.
 
-We see the blocked part of the CPU utilization as something telling the
-task scheduler that the corresponding tasks might be runnable soon again
-on this CPU.
+I think that keeping that comment would be very misleading since the LRCLK
+setup would not contradict the datasheet anymore [1][2].
 
-This model seems to be used here as well. I guess folks are still
-debating whether the amount of blocked utilization is a good enough
-indicator for the length of idle time.
+Also, do you recall any details about the mentioned scope test setup? Was i2s
+mode tested in that occasion? It would help clarify the situation.
 
-> For small cap CPUs (Pixel6) the util threshold is as low as 1.
-> For CPUs of capacity <64 it is 0. So ensure it is at a minimum, too.
+Could anyone verify this patch against H3/H6 SoCs?
 
-So before this threshold was 16 on a 1024 CPU, now it's 256?
+[1]: https://linux-sunxi.org/images/4/4b/Allwinner_H3_Datasheet_V1.2.pdf
+section 8.6.7.2
+[2]: https://linux-sunxi.org/images/4/46/Allwinner_H6_V200_User_Manual_V1.1.pdf
+section 7.2.5.2
 
-A <= 200 CPU has now a threshold of 50.
-
-Where do those numbers come from? Just from running another workload on
-a specific device?
-
-[...]
+Thanks,
+Matteo Martelli
 
