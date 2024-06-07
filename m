@@ -1,81 +1,67 @@
-Return-Path: <linux-kernel+bounces-206709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 850FF900CEE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:30:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 108D5900CF2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21065B22712
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:30:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F0271F2375A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062921757D;
-	Fri,  7 Jun 2024 20:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68DC154C0D;
+	Fri,  7 Jun 2024 20:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jPgcznK4"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="fByf2Gpr"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5312113F43A
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 20:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D4514E2FF;
+	Fri,  7 Jun 2024 20:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717792222; cv=none; b=IhIwQg8Jeo6z+IFkQ9EhhINOQWR0wcs8tJklbJ32XXyZjOOr2YxPD+2lPPhvR+KMCxN4FMcn2MxVbJIKlMej2IhJjO5mTs+yCWOVYhr/qHOmyzI6eJiXZd9FrEazQ3tZW3eUvR7hDyGh+X+A7Z9vwX/vjPC41u8O1SRYjxEET00=
+	t=1717792239; cv=none; b=gnM5yfokh5xi4+kGhS+kkZRln2cgJGNAO/hiXRUd55qWNoiegIve0ixnJKNrb4wIuwlIyPSYiJN7eBnA+shXF62q9ybGD6G+4MI68BQ1af6YaqfDj3POtq9VWjkFYQB2RC2HbL6/Lepr/Hp/YDrW+dhE/YAdGhzF556W4h7BeMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717792222; c=relaxed/simple;
-	bh=ROYTdcM3h5PdNH7jMsNq6wgFbtlVF4K63MVqa1RfUTA=;
+	s=arc-20240116; t=1717792239; c=relaxed/simple;
+	bh=qTB7GJxp/BAurCOzmcWyP5VlAdBqLtL22rzuMxd5mic=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bPQFY0eIHyIkBVMR7GxPDfa/y8VvQHm937UYlrai/ZG43ZoILNoUJF1g3CtOLdU1hi5AUcntJsjvmGB9Gc8k+vCOf41BqCWa8H2njEJFCwYoDnQ6PNX34ASYI09xCZpW666X9plCRgk7M0d1xLq1h0YVw2zaeEWJ97q2gER1PvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jPgcznK4; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52961b77655so2862922e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 13:30:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717792217; x=1718397017; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SJTzxe5ddw3ZN3ejg2VHMhuR5Wz3A7+WGmdxaZHLCtc=;
-        b=jPgcznK4RAkh5ubL6/776sukf9fOifb8Q3nuqaIvGnB8rXMWK2r0LVjzK1Ar73g+fu
-         k1ZO6/dZrJtO+9fuDmDRuaU9r3WfxCn83Fvpw8sEg2Mtfg9XlllH+km0bd37ogiZocEX
-         ZWOir99w1mUS9LnKGy54FmCzHE4WHF+iRhRDWGqXs4ARZt2dtjIcwbYmbnRDMuOnK03F
-         71tB172xx9hiZzvXTCsYh/bA++AN1kV2QhAkaZhI7LyIRZx5BJ1F1PDu334/sHvALEmA
-         Mq4OqkumimzGq/vxxqSqHudjZBWQwPU0VBd2EeYys7T9Um5oWN6FAJQQTvZIde62wt0N
-         F+7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717792217; x=1718397017;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SJTzxe5ddw3ZN3ejg2VHMhuR5Wz3A7+WGmdxaZHLCtc=;
-        b=J1mgCr24rZQ4jzKGGjSIssMZBv/lA2rv0bCGpf7BpmLk6pMfMRODgVTthSzb0RXo1/
-         yVM3KENCYHxm5TP0pvo0lUt2DWXk5n6yhppsHjL/GoIVKG6hR8VX0cNn7tQButYcOTW0
-         r1bX3IH2V9fvKWYRGcMmvX4UTOohOsTmKupcFKO23HKy813OHhXdZG0Cewho9Oo6krcN
-         S1SGGXSOS99gaiPlxzY6mCZsspox+3UeM3H9wg6qfS3nK8UeC7PV5RZcjvAfj3rQXFSY
-         kbNYVU7kKkq5EbwQfjgBH2Xumrfkkz38cxaYSnLjVrtUrmGf+z3hiUO+wEQTTSrxPAOW
-         do4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUeEZvcLLBL0YynYhcWioIua9YQvrGeLNUjZE5Q5L0DmfMqNCU4GYwkjR66vEpNa/b+tdLr+cfHTcyeQuf3JFcEszXRiydnfn6KkxrM
-X-Gm-Message-State: AOJu0YzRTYE0cS1gfoX7mdOa6DJU/m1hn1mZonrNJyjYtc9Tnui8u1a9
-	nL9T2UnUTj2bLZDC82EvWV9d6KvHAmWy/C9ReBPfSIKLxFQ+/1aGwGApo0bFyPA=
-X-Google-Smtp-Source: AGHT+IGXgq8j9ZQSdjhR2WRP238Fqx1W2VoFAvOkFfDn+JlkqIE2s+YVCpbU2MO5IYDF067L6l+FEQ==
-X-Received: by 2002:a19:ad45:0:b0:52b:f2ab:1303 with SMTP id 2adb3069b0e04-52bf2ab143dmr524832e87.28.1717792217335;
-        Fri, 07 Jun 2024 13:30:17 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb4347001sm646147e87.288.2024.06.07.13.30.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 13:30:16 -0700 (PDT)
-Date: Fri, 7 Jun 2024 23:30:15 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Kiarash Hajian <kiarash8112hajian@gmail.com>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/a6xx: request memory region
-Message-ID: <ugh3ohzktjxyus4t43jywmrwatz6t4zqz66nm2wdfjou7zu3yd@g64z7gp27wl2>
-References: <20240607-memory-v1-1-8664f52fc2a1@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ACLlc1gk1gU+R7/7TB8v60ajlTXwtAhLinAMmtjHVJXy+FDV3BRgmtuvmndimBWrXrP5XntobtZJA4APFSJp700EtdKCwgqRJYxzEDauk49rHb2EwUVMQyjH18Pj5vZLWlUZ3AzHFGCTGY7B0EdHSyXiyMdv/52dA79RkzZhgxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=fByf2Gpr; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4VwtB06wNcz9sjn;
+	Fri,  7 Jun 2024 22:30:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1717792233;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zayrHH/z5RIcd0P8fXfRYa45JHnjwR22LFwlmddRB1I=;
+	b=fByf2GprKvSs9RDKyKm8QidRaXMK/eMvdvXxEJgsugRtXHziRyz7h1fpXuOJF08fQFThPU
+	VYKrDF8P/uUWJ/IkwJyGDQAPcE7I5dE/vKK6VToCwmy5gEW59Ly1setDhG6tHesTY99V+2
+	ZCFtAAcvM0sbIQ3GmwTuw7g+jegI+VRHhG3147VOjBsZTKWR9cQR3PffAd7M3zAhDsjrIf
+	vXZQYhEIUx7V2foDlryJPwA2vbXkicc0z5poVHJu4pZdiHTmZC/TOicmvU/u8uoQOqQGNU
+	xMIk0wR0n/9aXVxymhi6ixRI26bcZB9FlUCwrjn5gL5004atn+lqv6c913eFDw==
+Date: Fri, 7 Jun 2024 20:30:26 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
+	brauner@kernel.org, akpm@linux-foundation.org, willy@infradead.org,
+	mcgrof@kernel.org, linux-mm@kvack.org, hare@suse.de,
+	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
+	linux-fsdevel@vger.kernel.org, hch@lst.de, gost.dev@samsung.com,
+	cl@os.amperecomputing.com, john.g.garry@oracle.com
+Subject: Re: [PATCH v7 05/11] mm: split a folio in minimum folio order chunks
+Message-ID: <20240607203026.zj3akxdjeykchnnf@quentin>
+References: <20240607145902.1137853-1-kernel@pankajraghav.com>
+ <20240607145902.1137853-6-kernel@pankajraghav.com>
+ <75CCE180-EC90-4BDC-B5D8-0ED1B710BE49@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,53 +70,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240607-memory-v1-1-8664f52fc2a1@gmail.com>
+In-Reply-To: <75CCE180-EC90-4BDC-B5D8-0ED1B710BE49@nvidia.com>
 
-On Fri, Jun 07, 2024 at 10:00:04AM -0400, Kiarash Hajian wrote:
-> The driver's memory regions are currently just ioremap()ed, but not
-> reserved through a request. That's not a bug, but having the request is
-> a little more robust.
+On Fri, Jun 07, 2024 at 12:58:33PM -0400, Zi Yan wrote:
+> Hi Pankaj,
 > 
-> Implement the region-request through the corresponding managed
-> devres-function.
+> Can you use ziy@nvidia.com instead of zi.yan@sent.com? Since I just use the latter
+> to send patches. Thanks.
 
-Please at least compile-test the patch before sending.
+Got it!
 
 > 
-> Signed-off-by: Kiarash Hajian <kiarash8112hajian@gmail.com>
-> ---
-> To: Rob Clark <robdclark@gmail.com>
-> To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> To: Sean Paul <sean@poorly.run>
-> To: Marijn Suijten <marijn.suijten@somainline.org>
-> To: David Airlie <airlied@gmail.com>
-> To: Daniel Vetter <daniel@ffwll.ch>
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: freedreno@lists.freedesktop.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Kiarash Hajian <kiarash8112hajian@gmail.com>
+> On 7 Jun 2024, at 10:58, Pankaj Raghav (Samsung) wrote:
 > 
-> Changes in v5:
->     - Fix errorhanlding problems.
->     - Link to v4: https://lore.kernel.org/r/20240512-msm-adreno-memory-region-v4-1-3881a64088e6@gmail.com
->     
->     Changes in v4:
->     - Combine v3 commits into a singel commit
->     - Link to v3: https://lore.kernel.org/r/20240512-msm-adreno-memory-region-v3-0-0a728ad45010@gmail.com
->     
->     Changes in v3:
->     - Remove redundant devm_iounmap calls, relying on devres for automatic resource cleanup.
->     
->     Changes in v2:
->     - update the subject prefix to "drm/msm/a6xx:", to match the majority of other changes to this file.
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 33 +++++++++++++++------------------
->  1 file changed, 15 insertions(+), 18 deletions(-)
+> > From: Luis Chamberlain <mcgrof@kernel.org>
+> >
+> > split_folio() and split_folio_to_list() assume order 0, to support
+> > minorder for non-anonymous folios, we must expand these to check the
+> > folio mapping order and use that.
+> >
+> > Set new_order to be at least minimum folio order if it is set in
+> > split_huge_page_to_list() so that we can maintain minimum folio order
+> > requirement in the page cache.
+> >
+> > Update the debugfs write files used for testing to ensure the order
+> > is respected as well. We simply enforce the min order when a file
+> > mapping is used.
+> >
+> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> > ---
+> >  include/linux/huge_mm.h | 14 ++++++++---
+> >  mm/huge_memory.c        | 55 ++++++++++++++++++++++++++++++++++++++---
+> >  2 files changed, 61 insertions(+), 8 deletions(-)
+> >
 > 
+> <snip>
+> 
+> >
+> > +int split_folio_to_list(struct folio *folio, struct list_head *list)
+> > +{
+> > +	unsigned int min_order = 0;
+> > +
+> > +	if (!folio_test_anon(folio)) {
+> > +		if (!folio->mapping) {
+> > +			count_vm_event(THP_SPLIT_PAGE_FAILED);
+> 
+> You should only increase this counter when the input folio is a THP, namely
+> folio_test_pmd_mappable(folio) is true. For other large folios, we will
+> need a separate counter. Something like MTHP_STAT_FILE_SPLIT_FAILED.
+> See enum mthp_stat_item in include/linux/huge_mm.h.
+> 
+Hmm, but we don't have mTHP support for non-anonymous memory right? In
+that case it won't be applicable for file backed memory? 
 
--- 
-With best wishes
-Dmitry
+I am not an expert there so correct me if I am wrong.
+
+--
+Regards,
+Pankaj
+
 
