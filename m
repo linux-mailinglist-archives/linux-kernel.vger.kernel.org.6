@@ -1,112 +1,118 @@
-Return-Path: <linux-kernel+bounces-206113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE5C4900469
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:15:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A530E900453
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36491288325
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:15:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F2201F25EF0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D71A196C72;
-	Fri,  7 Jun 2024 13:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD37E1940BD;
+	Fri,  7 Jun 2024 13:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="Hts1WagL"
-Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jc8um35+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1410E1940AA
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 13:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAD618732D;
+	Fri,  7 Jun 2024 13:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717766064; cv=none; b=GDBqGJbzuC9FD/bYTsA86HFyzXM7sXMQZjKRyaVe9La2csl+iWkE5g8B81dsehy83Aa6TreOn6j1mbb1QF/3yxlBQGHhMxfOlwwiyGOOt3weaVdDwZgnOPQkGMyGfw1Df/L74UeEAY+jvbBlzsQc3Bok1Fu8N0X4sPeEKnzwsCY=
+	t=1717765621; cv=none; b=LB/7G1blH05iDX4ah1vkK33TW8Wc0+9cRIO2UtBwTkU6Chsiv8902mKgX4pVYuxF+0P9lOiq/lIwv4TOHavP8asL52JFCjmmuvD0Zp8IjZTY6mhezacTcgQRx++dkRVqDS4HrInWshuyPb99dQ/Wup4CXRtqi2oW35zon9eY+eA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717766064; c=relaxed/simple;
-	bh=NUfirnAzHuSC6GjuRr39bgT7xFG/QnrzxnLmvJJpzEw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ItYJeTUDceG/fJW7cZtkFzjLaDM3SxilIbm769e0cyoJPiDjrc017fdtJEbjjayIeALoQVuvCqkkd4KXLpODi8T7KHt5yC+any+1K6h8QJUNOMDHCmFlBzNoSLobKpJN0qbR29EOL0YiI3Hwt9ZrAdd7ty4hAcwOKTXWdOipwXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (1024-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=Hts1WagL; arc=none smtp.client-ip=185.136.65.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 2024060713141457bce1ce04e0f45061
-        for <linux-kernel@vger.kernel.org>;
-        Fri, 07 Jun 2024 15:14:14 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=diogo.ivo@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=Oycy2PZfe8iU4x5Oth2BIpAhAkhezYYXv0lKcaObIIg=;
- b=Hts1WagL1MoKxWIov/Ui/vCscCONTxpJxont7fwKKkWi4/LEr1IgyYETl3y4aAIffX3Dfs
- Za366X+F14Axcc8C8u0iCOgjcTzG8zvcdr7+WHpXwHLOzTCZ33lA9yN3GDPNerzTVvaCBwO1
- PFg55mpnDIsG2uoPPQ92d5kI7TSQQ=;
-From: Diogo Ivo <diogo.ivo@siemens.com>
-Date: Fri, 07 Jun 2024 14:02:45 +0100
-Subject: [PATCH net-next v3 4/4] arm64: dts: ti: iot2050: Add IEP
- interrupts for SR1.0 devices
+	s=arc-20240116; t=1717765621; c=relaxed/simple;
+	bh=Cl1VjJYMkumRiEN01m8cKTK5QcLM61/oHQxBE4Vr0Eg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ao2T5jMmz5vXFWFJokp5ORF6npQXVa+eRkabOole1r2UFB5x4mOxza7H0Kd8ZJooQAX8t2H/5soje4jXS607cRKakYJLSwaNZ9PvvLQ+Vx24cqJ7CqD+8Zk/3os5ZeuDp0Jc3bwZvTEdNhwvORi/2xVwPzouBQp7gJubh+PZaNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jc8um35+; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717765620; x=1749301620;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Cl1VjJYMkumRiEN01m8cKTK5QcLM61/oHQxBE4Vr0Eg=;
+  b=jc8um35+FZjaWMvmMsZyuj/4gsIWpXtm9vtp7z9q0WPdTxw92Uk8HDMG
+   +BFNEn4ch35wb/HemxG/JdDsTpAMn9LdehFLBRXp1FLMc1zGbG/dLOMV6
+   TeKknIBFIw6N9FhSfUEXjllIht3gsx0JpHl15Fd0IcI8Q5mQrJMlfQr4n
+   DYAZUnshtJsbT4kpMtoN34Nztz8yj4qmVf5WIH/bfhSfQkr+fz45D5jGP
+   TFyQX/Y6F9/TRpL+Qlu8R3lNS+IiRewFA7+UyONa2/VyHL0Q+i/GHCymY
+   Ew2lGs7rD8Bv47E4SqT5Rbp94jpNaxu4Oj/6zR32fEDjbiyeotTO9blha
+   w==;
+X-CSE-ConnectionGUID: tJtWYCpGS5KvrPdX8H/VTQ==
+X-CSE-MsgGUID: 7XsY1APRQueWQIS4njfaiQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="25587516"
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="25587516"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 06:06:59 -0700
+X-CSE-ConnectionGUID: SgtAXGKJRQSmo94SscSW+w==
+X-CSE-MsgGUID: aW0G0XJESzSS8loZJhAOCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="61522733"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 07 Jun 2024 06:06:56 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sFZJ0-0004oK-08;
+	Fri, 07 Jun 2024 13:06:54 +0000
+Date: Fri, 7 Jun 2024 21:06:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, mka@chromium.org,
+	gregkh@linuxfoundation.org, javier.carrasco@wolfvision.net,
+	benjamin.bara@skidata.com, m.felsch@pengutronix.de,
+	jbrunet@baylibre.com, frieder.schrempf@kontron.de,
+	stefan.eichenberger@toradex.com, michal.simek@amd.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, git@amd.com,
+	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Subject: Re: [PATCH] usb: misc: add Microchip usb5744 SMBus programming
+ support
+Message-ID: <202406072046.cA1Mbg1K-lkp@intel.com>
+References: <1717676883-2876611-1-git-send-email-radhey.shyam.pandey@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240607-iep-v3-4-4824224105bc@siemens.com>
-References: <20240607-iep-v3-0-4824224105bc@siemens.com>
-In-Reply-To: <20240607-iep-v3-0-4824224105bc@siemens.com>
-To: MD Danish Anwar <danishanwar@ti.com>, Roger Quadros <rogerq@kernel.org>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Richard Cochran <richardcochran@gmail.com>, Nishanth Menon <nm@ti.com>, 
- Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jan Kiszka <jan.kiszka@siemens.com>, 
- Jacob Keller <jacob.e.keller@intel.com>, Simon Horman <horms@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Diogo Ivo <diogo.ivo@siemens.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717766048; l=952;
- i=diogo.ivo@siemens.com; s=20240529; h=from:subject:message-id;
- bh=NUfirnAzHuSC6GjuRr39bgT7xFG/QnrzxnLmvJJpzEw=;
- b=JVJ6rTXzt+GHz1gD+Z/N30MZ/Qv8SCnhwWgduEiiF8LG4ZtsMShKgGLII5IOD6cKr94fXXe3Y
- uJmuByrQNPOB6tv5M516Ai3M1S9WSzouzitgYH6cNU14D0KAquJIvov
-X-Developer-Key: i=diogo.ivo@siemens.com; a=ed25519;
- pk=BRGXhMh1q5KDlZ9y2B8SodFFY8FGupal+NMtJPwRpUQ=
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1320519:519-21489:flowmailer
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1717676883-2876611-1-git-send-email-radhey.shyam.pandey@amd.com>
 
-Add the interrupts needed for PTP Hardware Clock support via IEP
-in SR1.0 devices.
+Hi Radhey,
 
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-Signed-off-by: Diogo Ivo <diogo.ivo@siemens.com>
----
- arch/arm64/boot/dts/ti/k3-am65-iot2050-common-pg1.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+kernel test robot noticed the following build errors:
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-iot2050-common-pg1.dtsi b/arch/arm64/boot/dts/ti/k3-am65-iot2050-common-pg1.dtsi
-index ef7897763ef8..0a29ed172215 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-iot2050-common-pg1.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-iot2050-common-pg1.dtsi
-@@ -73,3 +73,15 @@ &icssg0_eth {
- 		    "rx0", "rx1",
- 		    "rxmgm0", "rxmgm1";
- };
-+
-+&icssg0_iep0 {
-+	interrupt-parent = <&icssg0_intc>;
-+	interrupts = <7 7 7>;
-+	interrupt-names = "iep_cap_cmp";
-+};
-+
-+&icssg0_iep1 {
-+	interrupt-parent = <&icssg0_intc>;
-+	interrupts = <56 8 8>;
-+	interrupt-names = "iep_cap_cmp";
-+};
+[auto build test ERROR on usb/usb-testing]
+[also build test ERROR on usb/usb-next usb/usb-linus linus/master v6.10-rc2 next-20240607]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Radhey-Shyam-Pandey/usb-misc-add-Microchip-usb5744-SMBus-programming-support/20240606-203028
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+patch link:    https://lore.kernel.org/r/1717676883-2876611-1-git-send-email-radhey.shyam.pandey%40amd.com
+patch subject: [PATCH] usb: misc: add Microchip usb5744 SMBus programming support
+config: arm64-defconfig (https://download.01.org/0day-ci/archive/20240607/202406072046.cA1Mbg1K-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240607/202406072046.cA1Mbg1K-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406072046.cA1Mbg1K-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> aarch64-linux-ld: drivers/usb/misc/onboard_usb_dev_pdevs.o:(.rodata+0x1498): undefined reference to `onboard_dev_5744_i2c_init'
 
 -- 
-2.45.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
