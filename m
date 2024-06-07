@@ -1,317 +1,183 @@
-Return-Path: <linux-kernel+bounces-205491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 246CD8FFCBB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:09:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42F298FFCBE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:10:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89752B25C49
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:09:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1BB4291CA4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8958C154BF9;
-	Fri,  7 Jun 2024 07:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CB1154439;
+	Fri,  7 Jun 2024 07:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XeeHNDyO"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cNLAOAan"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAFC154439
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 07:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895F2152504
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 07:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717743899; cv=none; b=o8Mt16HqfFjx3pFv1xy0gce6Qqyxni9lC+pMweWdjnwZ53N0i4eErLEkXcauqXuqWrfbtsMCRGy4UKgvKeM9pG+WjiiPUFAKd2QwHX/yZZJ9A+qmt6TT6aEWBPJ1MCvz4dx64u31QvofQzhiUpmXSGpby68FjznrA+5g6x/GsDo=
+	t=1717743924; cv=none; b=NEPxPqZKv0HE8AqcD/plACS9BfhYIpHs/kzKcE/CNubCfQQKrTWxjDprUXODAL/xk5023+uYrFo6rXlLYfUVVJ+3WAt5QMx1k/0nvjVevM98x6hS9a3nzjboZGSiln7E6HvTJwVBHiynHEUZzwqHkjlk+sBYECRIBx71ghvK5Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717743899; c=relaxed/simple;
-	bh=ExmAffy92q5lCCHYU0DLDrpNvN/NVU0TVxBDQKH6ckc=;
+	s=arc-20240116; t=1717743924; c=relaxed/simple;
+	bh=riaMPPR2Bqj2WLQ3A95QMFWqYTpjBBSfpJuVHgUYxi4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jodlCUeRneZuRJIxcp2633LwthkYXMvcXCNWa5YfskRFHRWxTqibzKkb4oOVQGMRMnuk5QQY21wulWWCkZggFQvrhvWrOBvcETNE065EJAxXdNJj9mmYEjo8BE4g2xT+J3Czm3qxE9A+Dat6vnaEhAokPo06HTdsesKovn18etE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XeeHNDyO; arc=none smtp.client-ip=209.85.214.170
+	 To:Cc:Content-Type; b=XBypLyHPc8TPSGmv121eR4Clo9SsE3iphr7dyEMZquBRXAgY2ShLCnYyFme4gQbU62Fr3Ti7VPr3vpspgmPgCmPjOMvjh4fhF9PBHibbnlI1EFoAVO4l6naHz5q0EUWFGC103imVXxxcGvZ6Mqa07/t8jdVebPCnTMq4zBNyGAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cNLAOAan; arc=none smtp.client-ip=209.85.160.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f61742a024so127105ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 00:04:57 -0700 (PDT)
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4400cc0dad1so241331cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 00:05:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717743897; x=1718348697; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U2U6k0mvjnJXDsBrJv6XiaCwi3+ss8Cn/7fpH/m1zTA=;
-        b=XeeHNDyO5w0lfCsOopbVifYt/BPiGjOjTI629uD5OIqxaLqidu30DJar0J0IA7zWMD
-         CkJ23cAVyy5uq3dsF2htA4Pkq+SaK9JmJ50SK+91n9d6lc0z2rc6nx+fs4eaTXC/Yzvx
-         +3DyeNY33ETOfEc9JDDmu9+wPWWp0r53UAEN99mnYFktCZXaxZCZRPh41pDF282SHAn1
-         lV4jvgvHQHNFX28txwN4CHW/+6/Cl7JJsqMJxxYXvgMZwYqiusUyWodvcX0JSlIvjzee
-         uHtR0aHIBEHE0IQl1IXUiQadb4zVX4Lx36bDKpFyyHmj2kPvFVI3eS+9QwUFvqwUFKzR
-         peew==
+        d=google.com; s=20230601; t=1717743921; x=1718348721; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=riaMPPR2Bqj2WLQ3A95QMFWqYTpjBBSfpJuVHgUYxi4=;
+        b=cNLAOAansGlTr4QiDjNKzkJpBhX8WcNGZVAUv7g7e6QvHgha9FTnQbnT3LcJMz/49e
+         H/LsSGxOERMCxYDmFNEoqzArS9xGhU13qPTxFibPYf+vQXEbQc8LLjIL3XH1vfOiPKbn
+         fbyDgWgQDiVXUqW1iUOtDIIPKf41E/qdqC7QIxHhhQvzFIc41eHxEOPhfFbr7F6XA14q
+         8pnF0KPCg7pW4warC4hWGucOzhTGVBqVJGyCUYVkfcMV3hlmvbCt4sbmKqaHDrBY4sCR
+         ZqEdmarpmeI8/QjUVCNMekX6ZzhcToNIoLO4zzkOTBuqA+Pm9ulfLBGhMkN6wnoP50a3
+         MI7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717743897; x=1718348697;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U2U6k0mvjnJXDsBrJv6XiaCwi3+ss8Cn/7fpH/m1zTA=;
-        b=QXaUaPWKijoPMZhavJJLWbO1PaBCRtJLwqChjWhlY31UKIJ60maBS7kcKOG7+btfCv
-         SnEMl0bsYArVC4gvjztZjwncwJHvTzJBCJzTep6WyEZ+1Py0PPs/OmaWU3xgG7v9FBA7
-         btWubljAxltd8Pny8gHEZgBUqECpEGuCe7iAumoblbxu4p72I8yms4p3ah6L2BnCsKC0
-         6ffv1rC7jdYJXKboTVKsvNNX1S/lRN1RQQuIE0mAxqPyNvgb07nM00emyMpVMEpWRbv6
-         5/MvAp2L68NIiRa7c6EwUx6IioyTxJjwjdY8XeUSES0EmWcrvpXGrRt7w6SkYx1gI58A
-         b6hg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqa4uRwPoq5QgeZ3pOJ/xmdJ5Q5myGcY9zGnnYSCm6BS+81bfnbZwOsB58MT0cs9Na+2H6i7p0FScIVR6uk2HmiLdKUYUNLAvpffOs
-X-Gm-Message-State: AOJu0Yz04UGLP67FJAviWbtEYZBDlYF1nqff1lsSLj9okCDc5RKM+y0i
-	PkAx5cD7wy5hL6L+uo0jTTMAE8uidcmV3rH0P8G/6OcW9FP8c2l4aPk9TFeYMfIOy8Qw87O9Zvf
-	DccE8HizHzbmemAOtH38/w4b+tm5s0XYhzf9K
-X-Google-Smtp-Source: AGHT+IHwFRbTGvbN02EoS5YOHkz3ztWTsKXuk9ylfWPnj0rt4QdZrX2TvD0Xw/jkYCsfd2sez4sm4N+OUrFQt6nQ1VU=
-X-Received: by 2002:a17:902:778f:b0:1f2:fcc3:59a with SMTP id
- d9443c01a7336-1f6bd3c65f8mr5793335ad.19.1717743896666; Fri, 07 Jun 2024
- 00:04:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717743921; x=1718348721;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=riaMPPR2Bqj2WLQ3A95QMFWqYTpjBBSfpJuVHgUYxi4=;
+        b=sJE7LJ2mLYX9+7FOtI2RLiCGkgGynVagITOv5MdYfmBu2LgsqJN6OfIgwgtdv0kJ+D
+         c9QHSb0Y/f28iGD2Y9f77mYv26BM3+6Ke4QyXriwJDIwX0VAuhfjUf0/zDIwYTFcFKq7
+         1XrnhNBgBxFVSaLmKx+CC64hvjGHuLdZeJKXX0+gDg9QkMUx2rCZVRgixrBZfPdA2FLQ
+         x0R+s36szttpTHP399J+SQ4FC07e+cdW7I/zPihK6pF9iB5hcT1SOYS2MmXjrQLDFJDM
+         iq9IXL00oZ7lmnp1d9DxZqU4AGyCdbqgLOP++CKYbKYGHSEmzzyxk8kkvHHrImUL52pU
+         dSkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzB2hFJpX04Yx/W623dRqlf7XUAOC/JmZuiBrKwpObanDcu/Hci8VdtIm3S0J7ARQVgrLvh4sPT+tzw1q4Rk4excIdhdszpv2e2IEt
+X-Gm-Message-State: AOJu0YwbYgTmUoKmf2mIipmO1JPs8Rc514ltOetmu4CLQifMswYCXZ/2
+	9D/SMxNy1XYWNiswC+KI3i0it1AnPC6I7B7tYQLtkwUmZ90ntVwvkDziRdpi3IwJReLHWPEoTcE
+	4Mp1qswLgg+UJIGrlNqNskdEWptOW7MrxOyBY
+X-Google-Smtp-Source: AGHT+IH/R+cvtIHI1kAkTmVSndk1xsEvhq1ET9so2r01OzVDjHUY5mMlZ+sqfn6VluAvEL8ZVwjIKDx2tres9GCPCUQ=
+X-Received: by 2002:ac8:700e:0:b0:440:44e9:27b7 with SMTP id
+ d75a77b69052e-44044e92aafmr921121cf.4.1717743921394; Fri, 07 Jun 2024
+ 00:05:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240603092812.46616-1-yangyicong@huawei.com> <20240603092812.46616-2-yangyicong@huawei.com>
- <CAP-5=fXNumMLL=_+qXdnQPqgLSwo7Z1BFmPww63NkX5EcDRDsQ@mail.gmail.com>
- <ZmJPtZvWr3kgx4xF@google.com> <CAP-5=fUrgdNvwL-ZDMoTdvXEJBJOc_aMtAc66tgQ34Dd5K=4+g@mail.gmail.com>
-In-Reply-To: <CAP-5=fUrgdNvwL-ZDMoTdvXEJBJOc_aMtAc66tgQ34Dd5K=4+g@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 7 Jun 2024 00:04:44 -0700
-Message-ID: <CAP-5=fW=7dKExCfs0h=2xUPskbmOpv6v1AUngW7vWibHbS97dg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] perf pmu: Limit PMU cpumask to online CPUs
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Yicong Yang <yangyicong@huawei.com>, will@kernel.org, mark.rutland@arm.com, 
-	acme@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	peterz@infradead.org, mingo@redhat.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, james.clark@arm.com, dongli.zhang@oracle.com, 
-	jonathan.cameron@huawei.com, prime.zeng@hisilicon.com, linuxarm@huawei.com, 
-	yangyicong@hisilicon.com
+References: <20240601-md-lib-kunit-framework-v1-1-f406bb629bde@quicinc.com>
+In-Reply-To: <20240601-md-lib-kunit-framework-v1-1-f406bb629bde@quicinc.com>
+From: David Gow <davidgow@google.com>
+Date: Fri, 7 Jun 2024 15:05:10 +0800
+Message-ID: <CABVgOS=bpff0aejxAWr=y=k-gOkq4QYw614svbaVkXs8Md+dQQ@mail.gmail.com>
+Subject: Re: [PATCH] kunit: add missing MODULE_DESCRIPTION() macros to core modules
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000004771dc061a476cd1"
+
+--0000000000004771dc061a476cd1
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 6, 2024 at 5:36=E2=80=AFPM Ian Rogers <irogers@google.com> wrot=
-e:
+On Sun, 2 Jun 2024 at 01:19, Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
 >
-> On Thu, Jun 6, 2024 at 5:09=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
- wrote:
-> >
-> > Hello,
-> >
-> > On Mon, Jun 03, 2024 at 09:52:15AM -0700, Ian Rogers wrote:
-> > > On Mon, Jun 3, 2024 at 2:33=E2=80=AFAM Yicong Yang <yangyicong@huawei=
-.com> wrote:
-> > > >
-> > > > From: Yicong Yang <yangyicong@hisilicon.com>
-> > > >
-> > > > We'll initialize the PMU's cpumask from "cpumask" or "cpus" sysfs
-> > > > attributes if provided by the driver without checking the CPUs
-> > > > are online or not. In such case that CPUs provided by the driver
-> > > > contains the offline CPUs, we'll try to open event on the offline
-> > > > CPUs and then rejected by the kernel:
-> > > >
-> > > > [root@localhost yang]# echo 0 > /sys/devices/system/cpu/cpu0/online
-> > > > [root@localhost yang]# ./perf_static stat -e armv8_pmuv3_0/cycles/ =
---timeout 100
-> > > > Error:
-> > > > The sys_perf_event_open() syscall returned with 19 (No such device)=
- for event (cpu-clock).
-> > > > /bin/dmesg | grep -i perf may provide additional information.
-> > > >
-> > > > So it's better to do a double check in the userspace and only inclu=
-de
-> > > > the online CPUs from "cpumask" or "cpus" to avoid opening events on
-> > > > offline CPUs.
-> > >
-> > > I see where you are coming from with this but I think it is wrong. Th=
-e
-> > > cpus for an uncore PMU are a hint of the CPU to open on rather than
-> > > the set of valid CPUs. For example:
-> > > ```
-> > > $ cat /sys/devices/uncore_imc_free_running_0/cpumask
-> > > 0
-> > > $ perf stat -vv -e uncore_imc_free_running_0/data_read/ -C 1 -a sleep=
- 0.1
-> > > Using CPUID GenuineIntel-6-8D-1
-> > > Attempt to add: uncore_imc_free_running_0/data_read/
-> > > ..after resolving event: uncore_imc_free_running_0/event=3D0xff,umask=
-=3D0x20/
-> > > Control descriptor is not initialized
-> > > ------------------------------------------------------------
-> > > perf_event_attr:
-> > >   type                             24 (uncore_imc_free_running_0)
-> > >   size                             136
-> > >   config                           0x20ff (data_read)
-> > >   sample_type                      IDENTIFIER
-> > >   read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNN=
-ING
-> > >   disabled                         1
-> > >   inherit                          1
-> > >   exclude_guest                    1
-> > > ------------------------------------------------------------
-> > > sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0x8
-> > > sys_perf_event_open failed, error -22
-> > > switching off cloexec flag
-> > > ------------------------------------------------------------
-> > > perf_event_attr:
-> > >   type                             24 (uncore_imc_free_running_0)
-> > >   size                             136
-> > >   config                           0x20ff (data_read)
-> > >   sample_type                      IDENTIFIER
-> > >   read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNN=
-ING
-> > >   disabled                         1
-> > >   inherit                          1
-> > >   exclude_guest                    1
-> > > ------------------------------------------------------------
-> > > sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0
-> > > sys_perf_event_open failed, error -22
-> > > switching off exclude_guest, exclude_host
-> > > ------------------------------------------------------------
-> > > perf_event_attr:
-> > >   type                             24 (uncore_imc_free_running_0)
-> > >   size                             136
-> > >   config                           0x20ff (data_read)
-> > >   sample_type                      IDENTIFIER
-> > >   read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNN=
-ING
-> > >   disabled                         1
-> > >   inherit                          1
-> > > ------------------------------------------------------------
-> > > sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0 =3D 3
-> > > uncore_imc_free_running_0/data_read/: 1: 4005984 102338957 102338957
-> > > uncore_imc_free_running_0/data_read/: 4005984 102338957 102338957
-> > >
-> > >  Performance counter stats for 'system wide':
-> > >
-> > >             244.51 MiB  uncore_imc_free_running_0/data_read/
-> > >
-> > >        0.102320376 seconds time elapsed
-> > > ```
-> > > So the CPU mask of the PMU says to open on CPU 0, but on the command
-> > > line when I passed "-C 1" it opened it on CPU 1. If the cpumask file
-> > > contained an offline CPU then this change would make it so the CPU ma=
-p
-> > > in the tool were empty, however, a different CPU may be programmable
-> > > and online.
-> >
-> > I think Intel uncore PMU driver ignores the CPU parameter and set it to
-> > CPU 0 in this case internally.  See uncore_pmu_event_init() at
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/arch/x86/events/intel/uncore.c#n761
+> make allmodconfig && make W=1 C=1 reports in lib/kunit:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-test.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-example-test.o
 >
-> Hmm.. maybe that's just the option if not set. Wrt hot plugging, on a
-> 2 socket skylake:
-> ```
-> $ cat /sys/devices/uncore_imc_0/cpumask
-> 0,18
-> $ echo 0 > /sys/devices/system/cpu/cpu18/online
-> $ cat /sys/devices/uncore_imc_0/cpumask
-> 0,19
-> ```
-> So the cpumask should be reflecting the online/offline nature of CPUs.
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
 >
-> > >
-> > > Fwiw, the tool will determine whether the mask is for all valid or a
-> > > hint by using the notion of a PMU being "core" or not. That notion
-> > > considers whether the mask was loading from a "cpumask" or "cpus"
-> > > file:
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.=
-git/tree/tools/perf/util/pmu.c?h=3Dperf-tools-next#n810
-> > >
-> > > Thanks,
-> > > Ian
-> > >
-> > > > Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
-> > > > ---
-> > > >  tools/perf/util/pmu.c | 13 +++++++++++--
-> > > >  1 file changed, 11 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-> > > > index 888ce9912275..51e8d10ee28b 100644
-> > > > --- a/tools/perf/util/pmu.c
-> > > > +++ b/tools/perf/util/pmu.c
-> > > > @@ -771,8 +771,17 @@ static struct perf_cpu_map *pmu_cpumask(int di=
-rfd, const char *name, bool is_cor
-> > > >                         continue;
-> > > >                 cpus =3D perf_cpu_map__read(file);
-> > > >                 fclose(file);
-> > > > -               if (cpus)
-> > > > -                       return cpus;
-> > > > +               if (cpus) {
-> > > > +                       struct perf_cpu_map *intersect __maybe_unus=
-ed;
-> > > > +
-> > > > +                       if (perf_cpu_map__is_subset(cpu_map__online=
-(), cpus))
-> > > > +                               return cpus;
-> > > > +
-> > > > +                       intersect =3D perf_cpu_map__intersect(cpus,=
- cpu_map__online());
-> >
-> > So IIUC this is for core PMUs with "cpus" file, right?  I guess uncore
-> > drivers already handles "cpumask" properly..
->
-> So I think this is an ARM specific bug:
->
-> Core PMUs:
-> x86 uses /sys/devices/cpu, s390 uses cpum_cf, these lack a cpus or
-> cpumask and so we default to opening events on all online processors.
-> The fact these are core PMUs is hardcoded in the tool:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/=
-tree/tools/perf/util/pmu.c?h=3Dperf-tools-next#n1747
-> x86 hybrid /sys/devices/cpu_(core|atom)/cpus - the set of CPUs is
-> updated to reflect online and offline
-> ARM the /sys/devices/armv8_pmuv3_0 isn't a hardcoded core PMU and so
-> we expect the cpus to contain online CPUs, but it currently also
-> erroneously contains offline ones.
->
-> Uncore PMUs:
-> x86 has /sys/devices/<uncore...>/cpumask where the cpumask reflects
-> online and offline CPUs
-> ARM has things like the dmc620 PMU, it appears to be missing cpumask
-> in certain cases leading to the perf tool treating it like the x86
-> core PMU and opening events for it on every CPU:
-> ```
-> # ls /sys/devices/arm_dmc620_10008c000/
-> events  format  perf_event_mux_interval_ms  power  subsystem  type  ueven=
-t
-> ```
->
-> I think we need a PMU test so that bugs like this can be reported, but
-> we may also need to add tool workarounds for PMUs that are broken. I
-> can imagine it will be tricky to test uncore PMUs that default to CPU0
-> as often we can't offline that.
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
 
-I think we should make this an ARM specific fix up like:
-https://lore.kernel.org/lkml/20240607065343.695369-1-irogers@google.com/
-The PMU needs fixing up like in the rest of the change, but as perf
-can be run on older kernels I think this workaround will remain
-necessary. The arm_cmn PMU appears to handle CPU hot plugging, the
-arm_dmc620 lacks a cpumask altogether on the test machine I can
-access. I suspect we may want a better uncore fix as we may change a
-CPU map of 1 CPU into an empty CPU map, for example, if the cpumask is
-"0" and CPU0 is offline, then "1" would be a better alternative than
-the empty CPU map. I couldn't find a PMU to test this with.
+Reviewed-by: David Gow <davidgow@google.com>
 
-Thanks,
-Ian
+Cheers,
+-- David
 
-> Thanks,
-> Ian
->
-> > Thanks,
-> > Namhyung
-> >
-> >
-> > > > +                       perf_cpu_map__put(cpus);
-> > > > +                       if (intersect)
-> > > > +                               return intersect;
-> > > > +               }
-> > > >         }
-> > > >
-> > > >         /* Nothing found, for core PMUs assume this means all CPUs.=
- */
-> > > > --
-> > > > 2.24.0
-> > > >
+--0000000000004771dc061a476cd1
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIPqgYJKoZIhvcNAQcCoIIPmzCCD5cCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+gg0EMIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
+dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
+6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
+c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
+I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
+AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
+BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
+CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
+AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
+MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
+My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
+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
+JEfDtvHU6wy3MSBE3/TrMFcGA1UdIARQME4wCQYHZ4EMAQUBATBBBgkrBgEEAaAyASgwNDAyBggr
+BgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wDAYDVR0TAQH/
+BAIwADCBmgYIKwYBBQUHAQEEgY0wgYowPgYIKwYBBQUHMAGGMmh0dHA6Ly9vY3NwLmdsb2JhbHNp
+Z24uY29tL2NhL2dzYXRsYXNyM3NtaW1lY2EyMDIwMEgGCCsGAQUFBzAChjxodHRwOi8vc2VjdXJl
+Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcnQwHwYDVR0jBBgw
+FoAUfMwKaNei6x4schvRzV2Vb4378mMwRgYDVR0fBD8wPTA7oDmgN4Y1aHR0cDovL2NybC5nbG9i
+YWxzaWduLmNvbS9jYS9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcmwwDQYJKoZIhvcNAQELBQADggEB
+AGwXYwvLVjByVooZ+uKzQVW2nnClCIizd0jfARuMRTPNAWI2uOBSKoR0T6XWsGsVvX1vBF0FA+a9
+DQOd8GYqzEaKOiHDIjq/o455YXkiKhPpxDSIM+7st/OZnlkRbgAyq4rAhAjbZlceKp+1vj0wIvCa
+4evQZvJNnJvTb4Vcnqf4Xg2Pl57hSUAgejWvIGAxfiAKG8Zk09I9DNd84hucIS2UIgoRGGWw3eIg
+GQs0EfiilyTgsH8iMOPqUJ1h4oX9z1FpaiJzfxcvcGG46SCieSFP0USs9aMl7GeERue37kBf14Pd
+kOYIfx09Pcv/N6lHV6kXlzG0xeUuV3RxtLtszQgxggJqMIICZgIBATBoMFQxCzAJBgNVBAYTAkJF
+MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFzIFIz
+IFNNSU1FIENBIDIwMjACEAFsPHWl8lqMEwx3lAnpufYwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZI
+hvcNAQkEMSIEIGmKy0FaBQCTp2tGEOrAT4IlaVtXvDGdxJVVGtHUxviIMBgGCSqGSIb3DQEJAzEL
+BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDYwNzA3MDUyMVowaQYJKoZIhvcNAQkPMVww
+WjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkq
+hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBXLmx8
+lspNlDzkG3oPI6IOhun0mKkfImYY5mknRH0TgWF1jtQHyCOFiw+OkhpnamzbxTQPlT+aRKL33jWK
++eRs1tXwgqyxpJn4bWoK7or/zWPxB8U2YuOx+jv4cTB/vDRWIJ1AJKlmfvOjsYKxiLvTYCxcwnZ5
+yuOXwJqwWIBGnkimA5nUyOmLJur5l7xUNcA6LOD06HNiVzJtbUIHYnzJeYRxo3QBtnb9b94GaRMD
+uawWDuprn8F8YWiqtNWTM4ACWYfXKfMJlgWzu3W8pVxVUSQ/BNqjdMvBAOnTaJsSU78SMToobIba
+uU8OVDq15e2ur8uz/Tmv8hShnl7J9ni4
+--0000000000004771dc061a476cd1--
 
