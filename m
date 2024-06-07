@@ -1,120 +1,182 @@
-Return-Path: <linux-kernel+bounces-205208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEA168FF974
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 03:01:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9564C8FF977
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 03:02:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE63B1C23EE2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:01:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04F9F1F2510E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F66DC136;
-	Fri,  7 Jun 2024 01:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0CDDDD9;
+	Fri,  7 Jun 2024 01:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jK1UsKwh"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="D1/n4Mmw"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA31363
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 01:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503A319D883
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 01:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717722055; cv=none; b=FgoeXpQI3ICecaZ/aI8AbnaVPaCTjX9lGLclRyZbkkgk7GV6fH2I+lWLK50lcD2uCgjD4QWc5JyrggJriygVT4I3GsvMhGT+h58y9SYoDpasA5yv8AFKBaGfTqdNpmi3RBtQ5CicSFWIhkrMCTi/6XBqzN31pJKFC7OJmzU9RfA=
+	t=1717722133; cv=none; b=Hx04uLMRd7x3t51vUZn1thYyNJUrU19ohZIs0PoL0ikzhXFooAFUc4tF7QLZVc+w191lcWEZnMrik9mXtOJhZaxrDDjmXMDRBLMpno+zw/0E6EgOuT13GTfX129Z6Ekr/6/MhCr8Cib4SD6ofV+ySR+97WaQ4+IzdySwvbZkorA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717722055; c=relaxed/simple;
-	bh=un8+5QVIEPNxvShksi0p604Me/V+qf9NbkP6MZJTA/I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d/yD2EeV9wPgDO8MnjFuuN0RQJQa1QkjnU5ATOsMZgETEhrB73Ce1LB39jYUuVft7n4R/WzulE7SJh2huPMDj2Il3D3ffyaHD78npF7bq6cUTPSOMRsDCyqU+fDdgqABJXrbTl6ug2A5IhuLd7T+nHHNr+rTLk7N5HMj3iYxs2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jK1UsKwh; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dfa48f505a3so1690191276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 18:00:54 -0700 (PDT)
+	s=arc-20240116; t=1717722133; c=relaxed/simple;
+	bh=PymsS2+bwa3WplcCpWVaQsEHbhZcs6L5674DPfMY+OQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JVf6yg4VG1i4ERFZbyFlMs/UutNgbiXAnkUesbMeSOsDur9VTWzXtA0F7wsx8KlqxSkqmil2tNFDWltgrT6vqBrCPtsCLfHygqHxxQYPdYezhUojE9zYPn9UfQD50zNXEtHKFpfCUjnxFAuKFqfDualtHcPKK67DlGVnsrGVoo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=D1/n4Mmw; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f612d7b0f5so10491385ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 18:02:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717722053; x=1718326853; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r5QsSMEWckygigFI83mnJYXXGDc+ola7OKupBLG+pCc=;
-        b=jK1UsKwh9Z61d6bO4U5gjj1G0Q5oz9jFybC7AccPYKUzkMx16kI8nC71tL2n4yadua
-         61hUa55X69m9YB5Z+1wiH1rROJMnELYdhbiEVK8daUsfM/PZy0u7MKLquP0j5c3cCFnI
-         kuYNxzbwUZJf7XG4ZSbWT27RINGuAbg0COC9vsL3biwjw72yG6uATim+/cx47Ps9k+DI
-         zdrZV7Ku2kVHYKRmrsL24DnrqIr5wJcrTUGH1JdvOXVVpgZvOc2eC1kdc1KM1j1axy/y
-         AdiFPo2KtfaWqU1VfvC8wse6XYtYB7D+lvI4Ym7dn9u1WFtPHT7WUtoP4GwVLpSDXmsU
-         Rjbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717722053; x=1718326853;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=fastly.com; s=google; t=1717722131; x=1718326931; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=r5QsSMEWckygigFI83mnJYXXGDc+ola7OKupBLG+pCc=;
-        b=hhB9hMFf2+50IHn7i1wPD6ORRu1AIYpK8Exb4jkm8V60g0+cshUITrvOYxrHwvfjwQ
-         RFhTeoqlVRbZ8nxoSq9e0MoG6Ba2Dz8SlRMVwerWmk+3EA7xJdxM2Mt0Z5Joe0RiJwxI
-         2coRL8Kd3ZN54+IhBO5TGNz/RNWu8jZQVy86jBWwKu8KXnK1CLQK/4SQ1hzG6pKlOQb/
-         UCyCZ+BIOcXqeJRjue5C6SBbsd2rhjALHetDJ5TmvD5tJPOyX98naRonrHgGdsfCc/+P
-         kcVUROrI4S1Oby26E5YnkTZbVOXuupyQnOvyrM74ZXFMi2/+lm0AInqn6yfu5EA4dHfG
-         lBkA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5dr6iNx5/n/rE0KzFxMR/tziyWp8LPdUkdvaRC4J/gk4PwGsQg1KHJRmhpg4LwXc1pZK/3dpbKPbIzWI0/Ooxzcn39lKTYxsIOv13
-X-Gm-Message-State: AOJu0Yw80ulJSbL6fHQROGld5mYAjCXeHLqLuess1oOsSVIzjVZTnL3o
-	vq0uvRfmk/oqdGB8W6s9vmgYZAn7893T50Gdvw2m4pXcOOsMSJWiDxgxWGgHVCkMkp8c6Z88pp/
-	kxcI4uJ0FOi00oqCCsxdFiLEHLRs=
-X-Google-Smtp-Source: AGHT+IEbntKw0TZ+iqky2+3ROVE92PMozct8oAp70ngs5dFm+54BCSXy7L+xhXtRVUDDoWuOYT9ck2VsNIbmJgypQYY=
-X-Received: by 2002:a25:d38c:0:b0:dfa:599e:8b74 with SMTP id
- 3f1490d57ef6-dfaf659531fmr1169315276.10.1717722053424; Thu, 06 Jun 2024
- 18:00:53 -0700 (PDT)
+        bh=KUNbkcgn6ZFtJ0WPgugUHBmOtaRPBWaMM6dzuoXYIbI=;
+        b=D1/n4Mmw8Q6J5RnHgmTuYnnvFbUYUoCvohemen4JEyYtWVq2uDDoCoEf8T6AOvHcWb
+         VaKDQx8RUcUuCLaWnPg/lkYbYC9gQ/1o3IdVxfdesxdke26wYWJk7wR/nE8e3Y6VnkHi
+         vMI+6MdyNOVvgtGxdHZs52lr0H3Of/ow7YszY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717722131; x=1718326931;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KUNbkcgn6ZFtJ0WPgugUHBmOtaRPBWaMM6dzuoXYIbI=;
+        b=A9g/LBBsPvyUaJOVskIeHJrzaqBjWHMrGHtwGUbLCuO4TPq/SMLGE5Zoskl5Ytwn5r
+         7SvGP+kt9PnZxNzpuuO+0yHFnEhJDi6IVOHbN1kxoMPFbcXkdsQsFxFmr8Oxf9fPvARN
+         gn+DPJ56Net6ZEcGQE1VuI36Vln/AU9RLOrLccudqWn0Cf54v8T6W6OHP5NQ1T4oTto7
+         Cmhx61s2BQMPlMLTFC7W/9lTMqfJ5q/I+1HqY0erGkFtB7ca11KrrxO+hNAf5ED5PpUD
+         ZTgP+4VKkygbjnuT82bahhHn1NVzhyZ7nIhLq6tQJQQZ9q2czhhHhEmos9ZTAp8kv150
+         /R5w==
+X-Forwarded-Encrypted: i=1; AJvYcCXmAzZzsZK5knNIYA8g6wuX3yPDNjvVHP6hffq38SXE0e8PxFgcv92rjANPv0ARUcOitV4M4fOgtUvlbSS39f9GTHLDkyJ+PxHiITGl
+X-Gm-Message-State: AOJu0Yxk26qUcxUuF5EvlIVXIAWJRGj+cHGsDPM4vdWhROitL6RbBgz6
+	2/TkRg0Kn0eESTCwKwUFFFZ0jy/qoq6eiVXsp5suXfXbgmhUelZV561CkIDrqps=
+X-Google-Smtp-Source: AGHT+IFcBgdym20higsdPt+vBoI3sriQzqsZZxnlyi7NoJdl0XPH6dDC05Y4UuIX+LgQAMe7MRTE8g==
+X-Received: by 2002:a17:902:d2d2:b0:1f6:6c39:9714 with SMTP id d9443c01a7336-1f6b8f08786mr57694725ad.21.1717722131413;
+        Thu, 06 Jun 2024 18:02:11 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd76bf66sm21602655ad.104.2024.06.06.18.02.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 18:02:11 -0700 (PDT)
+Date: Thu, 6 Jun 2024 18:02:08 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Tariq Toukan <ttoukan.linux@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, nalramli@fastly.com,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>
+Subject: Re: [RFC net-next v4 2/2] net/mlx5e: Add per queue netdev-genl stats
+Message-ID: <ZmJcEM7brxivyDUV@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Tariq Toukan <ttoukan.linux@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, nalramli@fastly.com,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>
+References: <20240604004629.299699-1-jdamato@fastly.com>
+ <20240604004629.299699-3-jdamato@fastly.com>
+ <11b9c844-a56e-427f-aab3-3e223d41b165@gmail.com>
+ <ZmIwIJ9rxllqQT18@LQ3V64L9R2>
+ <20240606171942.4226a854@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606165303.431215-1-flintglass@gmail.com> <CAJD7tkZ=o3AN+4Cj5UBJv6zcrjPFW5T1_53iHB2qtShRRhKhbQ@mail.gmail.com>
-In-Reply-To: <CAJD7tkZ=o3AN+4Cj5UBJv6zcrjPFW5T1_53iHB2qtShRRhKhbQ@mail.gmail.com>
-From: Takero Funaki <flintglass@gmail.com>
-Date: Fri, 7 Jun 2024 10:00:43 +0900
-Message-ID: <CAPpoddc5ge0myLfN8burL9fEUjc0oaB0C8Yc3_J923hd_O9u4A@mail.gmail.com>
-Subject: Re: [PATCH] mm: zswap: limit number of zpools based on CPU and RAM
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606171942.4226a854@kernel.org>
 
-2024=E5=B9=B46=E6=9C=887=E6=97=A5(=E9=87=91) 2:46 Yosry Ahmed <yosryahmed@g=
-oogle.com>:
+On Thu, Jun 06, 2024 at 05:19:42PM -0700, Jakub Kicinski wrote:
+> On Thu, 6 Jun 2024 14:54:40 -0700 Joe Damato wrote:
+> > > > Compare the values in /proc/net/dev match the output of cli for the same
+> > > > device, even while the device is down.
+> > > > 
+> > > > Note that while the device is down, per queue stats output nothing
+> > > > (because the device is down there are no queues):  
+> > > 
+> > > This part is not true anymore.  
+> > 
+> > It is true with this patch applied and running the command below.
+> > Maybe I should have been more explicit that using cli.py outputs []
+> > when scope = queue, which could be an internal cli.py thing, but
+> > this is definitely true with this patch.
+> > 
+> > Did you test it and get different results?
+> 
+> To avoid drivers having their own interpretations what "closed" means,
+> core hides all queues in closed state:
+> 
+> https://elixir.bootlin.com/linux/v6.10-rc1/source/net/core/netdev-genl.c#L582
+> 
+> > > PTP RQ index is naively assigned to zero:
+> > > rq->ix           = MLX5E_PTP_CHANNEL_IX;
+> > > 
+> > > but this isn't to be used as the stats index.
+> > > Today, the PTP-RQ has no matcing rxq in the kernel level.
+> > > i.e. turning PTP-RQ on won't add a kernel-level RXQ to the
+> > > real_num_rx_queues.
+> > > Maybe we better do.
+> > > If not, and the current state is kept, the best we can do is let the PTP-RQ
+> > > naively contribute its queue-stat to channel 0.  
+> > 
+> > OK, it sounds like the easiest thing to do is just count PTP as
+> > channel 0, so if i == 0, I'll in the PTP stats.
+> > 
+> > But please see below regarding testing whether or not PTP is
+> > actually enabled or not.
+> 
+> If we can I think we should avoid making queue 0 too special. 
+> If someone configures steering and only expects certain packets on
+> queue 0 - getting PTP counted there will be a surprise. 
+> I vote to always count it towards base.
 
->
-> There are a lot of magic numbers in this patch, and it seems like it's
-> all based on theory. I don't object to making the number of zpools
-> dynamic in some way, but unless we do it in a data-driven way where we
-> understand the implications, I think the added complexity and
-> inconsistency is not justified.
->
-> For example, 2*CPU zpools is an overkill and will cause a lot of
-> fragmentation. We use 32 zpools right now for machines with 100s of
-> CPUs. I know that you are keeping 32 as the limit, but why 2*CPUs if
-> nr_cpus <=3D 16?
->
-> Also, the limitation based on memory size assumes that zsmalloc is the
-> only allocator used by zswap, which is unfortunately not the case.
->
-> The current implementation using 32 zpools all the time is not
-> perfect, and I did write a patch to make it at least be min(nr_cpus,
-> 32), but it is simple and it works. Complexity should be justified.
->
+I'm OK with reporting PTP RX in base and only in base.
 
-Thanks for your comments.
-I agree the 2*cpu is too much. it was conservatively chosen assuming
-1/2 contention while all cores are accessing zswap. Much smaller
-factor or non-linear scale as your comments in the main thread would
-be better.
+But, that would then leave PTP TX:
 
-I found your patch from the main thread.
-One point I'm afraid, this hashing will fail if nr_zswap_zpools is 1
-or is not rounded to order of 2. hash_ptr crashes when bit is 0.
+PTP TX stats are reported in mlx5e_get_queue_stats_tx because
+the user will pass in an 'i' which refers to the PTP txq. This works
+fine with the mlx5e_get_queue_stats_tx code as-is because the PTP
+txqs are mapped in the new priv->txq2sq_stats array.
 
-> +   return entry->pool->zpools[hash_ptr(entry, ilog2(nr_zswap_zpools))];
+However.... if PTP is enabled and then disabled by the user, that
+leaves us in this state:
+
+  priv->tx_ptp_opened && !test_bit(MLX5E_PTP_STATE_TX, channels.ptp->state) 
+
+e.g. PTP TX was opened at some point but is currently disabled as
+the bit is unset.
+
+In this case, when the txq2sq_stats map is built, it'll exclude PTP
+stats struct from that mapping if MLX5E_PTP_STATE_TX is not set.
+
+So, in this case, the stats have to be reported in base with
+something like this (psuedo code):
+ 
+  if (priv->tx_ptp_opened &&
+     ! test_bit(MLX5E_PTP_STATE_TX, channels.ptp->state)) {
+      for (tc = 0; tc < priv->channels.ptp->num_tc; tc++) {
+         tx->packets += ...ptp_stats.sq[tc].packets;
+         tx->bytes += ...ptp_stats.sq[tc].bytes;
+      }
+  }
+
+Right? Or am I just way off here?
 
