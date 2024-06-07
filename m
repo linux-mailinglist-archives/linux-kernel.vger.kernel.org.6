@@ -1,148 +1,110 @@
-Return-Path: <linux-kernel+bounces-206210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F5A39005CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:00:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C70609005D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E93B4286A54
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:00:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315DE284BC8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97610195B2E;
-	Fri,  7 Jun 2024 14:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C67C195F23;
+	Fri,  7 Jun 2024 14:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pWqigHdY"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="lrS8OQoe"
+Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034F8FC0A
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 14:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6914FC0A;
+	Fri,  7 Jun 2024 14:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717768827; cv=none; b=hAaU4oGG7O2cg5tKxLPAlzdrXDYs2+7e1MUOOLyfAV81+FXztIqv2H0HPRWUTQ7kz+V4FOA1CzDam558AblAM1a/RgfYIrZfww8nQyjP13Ky5Ixhm8PXFWQlIhSu0yjBlpLLIOLKKhbdMP5QHdN4VcZ8coB7ZpBScdlw9kGg+oM=
+	t=1717768880; cv=none; b=IR0wUARhX/S5d/ttvBQe1o1Pp4fkZubbyGEzSzkTSrE3Q9cjwZ9xKaL1cDOa0tzwEhNvQhYK6UmcyAaesISDoG4G4N0lWOfC3jFiJQFNTp4XQrZWK7nRGbeOjOBuC1XQnNTbF2bHfr3ZHdYSDWGsOvRZxF6GZfyFUU3lNaNIB0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717768827; c=relaxed/simple;
-	bh=OOA1+hRiYDrMPbwUCoHpN5UM+d1N1dzdE5Ks/+ep6J0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=IfZVD8cudzfGkx7k1BRzJzsgslBTdEuriU9xegrHjuikEfCZjiDmGw4TujsLqaqK3leLND2Y+ClQknAeKAarIB278dUZEyNBAlvmQgK88DPUUhjMDpgf7abk0coZjwKZpteQv3qclTD1PLcAKhEgAHIggubNpn/vcTwI7jd88ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pWqigHdY; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-356c4e926a3so2039291f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 07:00:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717768824; x=1718373624; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jKigPxOyIsTI2bSkZ71iXyzsI+rxMVn90vvi1arrb7c=;
-        b=pWqigHdY7H5UzJb/4d65Yp+BMSKX/xXgd1rRa1S1p+YwyfnSeY93A1qkWMz6rYWCuR
-         edM8qysAVJr5/J+hP43jx2spRHu3dDYmFyX5Y1b9y4hYi48MADKZAI7a2sBqfwynfWz7
-         LDKRlcAS5DQb7Y/al7xE/4Oh+f8Ub7b8ZMGbBrAoIZUod394XwL98xys6zgk1VWNkekr
-         YbVJ66BfBFv9a/3VG/C+2DLV49U8nO0OqdKisx2d5lIeWT8vn8jxSfc0p4kDesuvFTpC
-         WuqfFr4iGhiQS6avYKl3e/qL7J+7qpQVd2U/Ssg9zm0ySFlTJ7QRPi/9FdygkbYo5BKz
-         R+1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717768824; x=1718373624;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jKigPxOyIsTI2bSkZ71iXyzsI+rxMVn90vvi1arrb7c=;
-        b=dIq4OuT/nD026L8DHSS7Z4t18NPucnMZYH0jSJKDPWgRwWeAYmG+T1b86khA49Eksf
-         8Dn0h669M7r1zOV6WjWBrK/xrmM0rBO9YNUR1CwvSE/n65UMcyJCzM8MI+iPSOHnjn9F
-         0cliIOmQDtFQBUxxRbQ3ceGURXqWxecmxYaKtpEAym3GGJUyZ5vvQ7To+OpNQCb4kqIu
-         xFZFFF5ymgyMqRSF/nTd3MsyjsSe9u+42G5W+Cd3nTitpTNG7YddDlr9cpVBKh/TrbFz
-         SQuRTVSfY+YQOgwvLGZ9O8M3B9cFkjXFtDbbLkn1pNgus/YYN74+5qIhQKFKSjr0Aq1+
-         ajKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXt6WQ2YfbrRvJdp5tf8UWNI41O+jS5yDPZPfyGOhqyFZVLlHfjzCQ/k0bgEoJaI0ApEj0gBzCAVQIC553u4p7pw17xidG/0BV2sFXL
-X-Gm-Message-State: AOJu0YwFafOPYezIou+hlB1a1lcWF7BeZU0qHApQ9Apx1GrY/mT3ozIT
-	K+jRhlEINNQx2eB1SyJ4FG/aSMvf1dqca7cPPIht5OStNmTcRRQpVFmr4haLJeg=
-X-Google-Smtp-Source: AGHT+IGmS4HUnGooP5PlDCBfYxj44NfY1lReEaODhxoscoFCiBWltIk+cWqWgfLs0yNvpSTRw/DqfQ==
-X-Received: by 2002:a5d:4acb:0:b0:354:f142:65b0 with SMTP id ffacd0b85a97d-35efed534c9mr1907495f8f.37.1717768824112;
-        Fri, 07 Jun 2024 07:00:24 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:7e4b:b0d3:6a34:6404? ([2a01:e0a:982:cbb0:7e4b:b0d3:6a34:6404])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5fc11fcsm4056145f8f.99.2024.06.07.07.00.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jun 2024 07:00:23 -0700 (PDT)
-Message-ID: <ac155efa-de85-4bc0-9af3-2190d4d1a60d@linaro.org>
-Date: Fri, 7 Jun 2024 16:00:22 +0200
+	s=arc-20240116; t=1717768880; c=relaxed/simple;
+	bh=nYmRZVpz2mQNxli7JraFOtVsUbnToFRdBavC73TzA1Q=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Dw1fSOPpqFSgPG6hnnrzVMlQc1CE0uvgOscgKtd2iNAOltcPMhgtnv7MKoyuDZhsL7wixh46P2l3eXDhHb5KNaKwwLXr/hPtQEyyJ9JWUSwScfAQnOUujN3BwQDUiwhVLG9d5uxmdEzmejKRKNvAag8oc9mFEjzfLu54k90LJu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=lrS8OQoe; arc=none smtp.client-ip=49.12.199.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 310A9DB4A5;
+	Fri,  7 Jun 2024 16:01:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
+	t=1717768870; h=from:subject:date:message-id:to:mime-version:content-type;
+	bh=BK1qLsXdELqqMxnJyp/mZ3oX9UWbnQ09OculbYCqhoo=;
+	b=lrS8OQoefl4tt7TNQl6CrsVahJIMIX0lMW3TpgjTED1lSoDBYrkVYuqOis82+XvILONa2/
+	aRUNTY6SyaQgXuDeYKPyuCsDYmVLGOZPw4EA+XN4V15oRZCrNv1n4t0iTEtPswp+G1B/QC
+	G/fB/qE1jGzO2nhDEfE26vBlcn47eFKfb3sO/mDZshS0GevjycVOBgZOpX4tD3B9fO4RwO
+	0RoH38YuTk46RwAOuN/Eedb+veBOHWgNykGCOJRjOYGiH8RcVvJT/ToRuvNn/kBMMYlWOe
+	3qYEwZhf24itKwD/eHNBSJvAXs3q+2g6fcrcz+fZ0tsFMo6nNjXAYKi7uR6Y3Q==
+Date: Fri, 7 Jun 2024 16:01:05 +0200
+From: Daniel Wagner <wagi@monom.org>
+To: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org, 
+	stable-rt@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Tom Zanussi <tom.zanussi@linux.intel.com>, Clark Williams <williams@redhat.com>
+Subject: [ANNOUNCE] 4.19.315-rt135
+Message-ID: <171776879104.8091.1320953589515538722@beryllium.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2 2/4] usb: typec-mux: nb7vpq904m: unregister typec
- switch on probe error and remove
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Bjorn Andersson <andersson@kernel.org>, Luca Weiss
- <luca.weiss@fairphone.com>, linux-arm-msm@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240606-topic-sm8x50-upstream-retimer-broadcast-mode-v2-0-c6f6eae479c3@linaro.org>
- <20240606-topic-sm8x50-upstream-retimer-broadcast-mode-v2-2-c6f6eae479c3@linaro.org>
- <cnqpgfjcqqedk3xqkfbjacjikc5jwktev6c3kwmbq7cwut3eyk@xqyhgi5xgzgf>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <cnqpgfjcqqedk3xqkfbjacjikc5jwktev6c3kwmbq7cwut3eyk@xqyhgi5xgzgf>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 07/06/2024 07:50, Dmitry Baryshkov wrote:
-> On Thu, Jun 06, 2024 at 03:11:14PM +0200, Neil Armstrong wrote:
->> Add the missing call to typec_switch_put() when probe fails and
->> the nb7vpq904m_remove() call is called.
->>
->> Fixes: 348359e7c232 ("usb: typec: nb7vpq904m: Add an error handling path in nb7vpq904m_probe()")
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
->>   drivers/usb/typec/mux/nb7vpq904m.c | 7 ++++++-
->>   1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> I'd say:
-> 
-> Fixes: 88d8f3ac9c67 ("usb: typec: add support for the nb7vpq904m Type-C Linear Redriver")
+Hello RT-list!
 
-I should add both yes, it won't apply with only 88d8f3ac9c67
+I'm pleased to announce the 4.19.315-rt135 stable release.
 
-> 
-> Nevertheless:
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> 
-> 
-> 
+This is just an update to the v4.19.315 stable release, not RT specifc changes.
 
+You can get this release via the git tree at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+
+  branch: v4.19-rt
+  Head SHA1: 66fe9135e37bd5851c55180e2fa301b2968b5588
+
+Or to build 4.19.315-rt135 directly, the following patches should be applied:
+
+  https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.19.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v4.x/patch-4.19.315.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/4.19/older/patch-4.19.315-rt135.patch.xz
+
+Signing key fingerprint:
+
+  5BF6 7BC5 0826 72CA BB45  ACAE 587C 5ECA 5D0A 306C
+
+All keys used for the above files and repositories can be found on the
+following git repository:
+
+   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
+
+Enjoy!
+Daniel
+
+Changes from v4.19.312-rt134:
+---
+
+Daniel Wagner (1):
+      Linux 4.19.315-rt135
+---
+localversion-rt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+---
+diff --git a/localversion-rt b/localversion-rt
+index 6067da4c8c99..e3026053f01e 100644
+--- a/localversion-rt
++++ b/localversion-rt
+@@ -1 +1 @@
+--rt134
++-rt135
 
