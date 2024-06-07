@@ -1,123 +1,111 @@
-Return-Path: <linux-kernel+bounces-206788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8318900DB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 23:55:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D775900DBB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 23:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9049A1C2138E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:55:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7FA01F23B77
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDB115534A;
-	Fri,  7 Jun 2024 21:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DF71552F5;
+	Fri,  7 Jun 2024 21:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h4xZNx/l"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nG+nkk5W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376A244C8C
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 21:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FA644C8C
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 21:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717797350; cv=none; b=lTfoJ/0zLrrD6Pg6p9Rs+msOjKb3T/vqrVq6UjYfprzv5MukdJfDR1lW+dP2aRaK6+4JpXHkrM+YE7utjPhc1WT8T/k6gkBXXQobe0QfruXncJTh0ZOlJKVrfSjycCi2HGu/KAjHG9h3RHPZY3Q+EA+++1uuudZ/XpT+u/XCEgQ=
+	t=1717797489; cv=none; b=Qa/h6vMjlfyT31s5V7CDeiXiNJwegiToKBzmtu/DMdd3WDv9SCmbOm0GdnPzVWVr0Sy414aROnxWk81d6NxjW2xyglAhdLoCFpQLFDuHq4rXKaQBrzGIukewBeTh+8iOtA1UpHWdLiM6rvqLRl0mvNCy7enI4jPXatiWsut8YAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717797350; c=relaxed/simple;
-	bh=fu3qda++pXB4FfaZskPLyTx3TuNkpVV3W3fBsFZGP60=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LkNvjhbCijM5KqV6r8tm8ZvNlUGHEi0iZvpRq6QW1lMtKzazMJVq3mOv330Y+e72TX7k9kNbmwYp+PBnL0kDfqESQzGrQrlkxHaPBvrq5tZMibVGJR0ey6/oQVtBZ0ODEmJ311Z5TCujQqQFHxKDGIn9Jhu9eCxU8bcI4qa3Zb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h4xZNx/l; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-374a69879b8so1621595ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 14:55:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1717797348; x=1718402148; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4HcFR2Leo9TIWpo1ugxAr6wH2ocfu6VBXw5aRgto4uo=;
-        b=h4xZNx/lGHpqYcAZl3+OO36re2sObjSy4EOP+tnDRu12o8IZ3VFFpMhRoQogP6lTPJ
-         uz8OgY7YahuU8x8ze/AJevGbs6oX0bIRDn5ZfRuO5ckvMHvKDaURIMmRQja1uKU183K9
-         XYcQQCKdNoCfbr3ytR5L0Z3t19c7A81bpVO3Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717797348; x=1718402148;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4HcFR2Leo9TIWpo1ugxAr6wH2ocfu6VBXw5aRgto4uo=;
-        b=HkRhKaOWYImqY+9cNoAmIwmiSD08lIPj5ERbG0d2xlfUhfho1yRYEtyLc8/HNV9NCz
-         rVgyQLpZZjpZDaR6e7u5A97HoLfJAbBc9pqbNl/0Zm+betQdCZi31+fXCoN200z+huUB
-         X9AyRK+lwAB+bzsDm7vDXULLvEwUL6GFXmfsUAGOOhQrEENKgWO4MUwEGmz6jfECjylP
-         Gjm857vXkc0JIcmv7o0Y7Qb6uEBSfWOMq2d0Vj94O5xOde8FRg/kM8XJxDcbP5YvmQdX
-         +e8y5YJ7Iksu2CJDDa4LNDiXK1L2SpMzjYJsS5EHOlYWU0hLNiaTmvZLpQCzUHbAqwTl
-         GeuA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzbcKzk8mVHE33CE7XRzUGg7lRRjm5LxLOjy56BGZTceQVSJ/zgKnoacS+NMTmLvPvr/4HBMFlte6SCnEtW9L4xWDLfBedUFCI5eMD
-X-Gm-Message-State: AOJu0YzX1bi5zC2HprjMnaY+GZhL6FN5vslEElXCX02iGqLvmK/Vj10a
-	8liNtvg0Nf4US5my8sarH4ufGA2q+6/yWbHivsUuGjlTXzbAl7LgiWQvCGueDm8=
-X-Google-Smtp-Source: AGHT+IFsffHGIHPI2MTbTGp5eYP39jIX5DtbY1T1sgAo9afSQWM2t/LWskYhjGnvmeoAOmw6Wnp/dQ==
-X-Received: by 2002:a05:6602:2094:b0:7eb:3aa3:8b02 with SMTP id ca18e2360f4ac-7eb5724ac8fmr367981439f.2.1717797348146;
-        Fri, 07 Jun 2024 14:55:48 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b7a2386dc6sm1048276173.85.2024.06.07.14.55.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jun 2024 14:55:47 -0700 (PDT)
-Message-ID: <b16316c9-67b8-4afa-af5c-6d3fb33c3c6f@linuxfoundation.org>
-Date: Fri, 7 Jun 2024 15:55:46 -0600
+	s=arc-20240116; t=1717797489; c=relaxed/simple;
+	bh=yPc/mjrMxj7RsK5QqW45Eask2P+8u1DO9R3moqOcCKg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=KmgmtMTJoRi/LEMHAB670lAEj0taIQ2JpRT20p75uQlzpHzlHSJxrwKCTX0MFiuHwmHui4xPUx+V6TJg2TOAGK4x/HxzV1Q3B+1/tj7HJdakB6aEn+M7Blh4feEeC/X8BsTlkaSAAzEiUKQo64f3N3YsVrqrCai9VWS8JE2dzg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nG+nkk5W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3639C2BBFC;
+	Fri,  7 Jun 2024 21:58:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717797488;
+	bh=yPc/mjrMxj7RsK5QqW45Eask2P+8u1DO9R3moqOcCKg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=nG+nkk5Wm7UH9q91x2OrhEZQSV7HxrqUrZ7g6g1yzKKALB4XQpyHvMPwpGOtY04E0
+	 whjcNV2bGDW7wriaFcQGWzLnQbLY2PhUAA3su9XJgTqH5QPZFEpT/F+u6yKG7STux9
+	 8muaWFTK/wVtIluAJa4jYbAFeUb/Z0ux61HYMhug9bOrIqMUQPEp0BQ7zJoc19a3WU
+	 kizpynpQMRBlbLOOpussiI0uLYgEkbfLOjJ3h5mYgLhqZOj4i9suitYEHlIKCRXCQD
+	 z7AHsNOBj+4K47pIMjBR+kzPnt2K+OkQFURAf4G5IbXpUdqzROKPaxe9puaTwKi9xz
+	 O4YEfW3jxlv6Q==
+From: Mark Brown <broonie@kernel.org>
+To: linux-kernel@vger.kernel.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>
+In-Reply-To: <20240606164717.3031107-1-andriy.shevchenko@linux.intel.com>
+References: <20240606164717.3031107-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 0/4] regmap: Switch to use kmemdup_array()
+Message-Id: <171779748729.90702.10518297985774954502.b4-ty@kernel.org>
+Date: Fri, 07 Jun 2024 22:58:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/10] selftests/pidfd: Fix wrong expectation
-To: =?UTF-8?B?T2thbiBUw7xtw7xrbMO8?= <okantumukluu@gmail.com>,
- brauner@kernel.org
-Cc: shuah@kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>, Kees Cook <keescook@chromium.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240606180223.5527-1-okantumukluu@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240606180223.5527-1-okantumukluu@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-4c370
 
-On 6/6/24 12:02, Okan Tümüklü wrote:
-> From: Mickaël Salaün <mic@digikod.net>
+On Thu, 06 Jun 2024 19:46:21 +0300, Andy Shevchenko wrote:
+> Replace open coded kmemdup_array(), which does an additional
+> overflow check.
 > 
-> Replace a wrong EXPECT_GT(self->child_pid_exited, 0) with EXPECT_GE(),
-> which will be actually tested on the parent and child sides with a
-> following commit.
+> While at it, fix one minor issue in regcache.c.
 > 
-> Cc: Shuah Khan <skhan@linuxfoundation.org>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Reviewed-by: Christian Brauner <brauner@kernel.org>
-> Link: https://lore.kernel.org/r/20240511171445.904356-8-mic@digikod.net
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Andy Shevchenko (4):
+>   regmap: Switch to use kmemdup_array()
+>   regmap: cache: Use correct type of the rb_for_each() parameter
+>   regmap: cache: Switch to use kmemdup_array()
+>   regmap: maple: Switch to use kmemdup_array()
+> 
+> [...]
 
-FYI - This patch is already in the mainline.
+Applied to
 
-commit 821bc4a8fd2454ff6d719aae7cac93f60567fe65
-Author: Mickaël Salaün <mic@digikod.net>
-Date:   Sat May 11 19:14:42 2024 +0200
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
 
-     selftests/pidfd: Fix wrong expectation
-     
-     Replace a wrong EXPECT_GT(self->child_pid_exited, 0) with EXPECT_GE(),
-     which will be actually tested on the parent and child sides with a
-     following commit.
-     
-     Cc: Shuah Khan <skhan@linuxfoundation.org>
-     Reviewed-by: Kees Cook <keescook@chromium.org>
-     Reviewed-by: Christian Brauner <brauner@kernel.org>
-     Link: https://lore.kernel.org/r/20240511171445.904356-8-mic@digikod.net
-     Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Thanks!
 
+[1/4] regmap: Switch to use kmemdup_array()
+      commit: 540c53d158d947db1249614d47437c660ba0b959
+[2/4] regmap: cache: Use correct type of the rb_for_each() parameter
+      commit: 354662dc66f264b26c3e094162e0fad8715d009f
+[3/4] regmap: cache: Switch to use kmemdup_array()
+      commit: f755d6955338bc704168629f70b380658a4918df
+[4/4] regmap: maple: Switch to use kmemdup_array()
+      commit: bce843065804f770ac469d32a3d455b9a997b55f
 
-thanks,
--- Shuah
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
