@@ -1,146 +1,166 @@
-Return-Path: <linux-kernel+bounces-206133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A8259004B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:25:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 173A69004B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:25:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9852BB27046
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:25:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BB6228F5E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A151194152;
-	Fri,  7 Jun 2024 13:23:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4F0194089;
-	Fri,  7 Jun 2024 13:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F6815B567;
+	Fri,  7 Jun 2024 13:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YOciSxvA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2D718F2C9
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 13:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717766619; cv=none; b=BNN9blhdBH4/irFiw9sgHkHJHH6vg22R2fXWjVaqnZjBuxdU/SmmmJ/Cmcl+Bc+kJHrKQkAwBP4nnSKyVJIuUBFnjGq9isywv+g16iMAScCJAUhEkEjnJYAkKjpRuk9tlzPDP422Xg/ESrPpAvXqpQFnctpv6Z5V7PTkBzLLgJY=
+	t=1717766648; cv=none; b=EeIiXDthttihEdw8Nbq5FQgZ0HJFpVcGARnuqgHeWZXAES9Xl8XeXZkPUZUKnJlYAOWorcckXMZw0o7R7owUGkcm/jNY2jcFyUm1KpYkSE01FKwIRD7se3zQ2n+SD3c87N5F9ATGbBkBGyeOX2lOeAhe8UtE/gIDPeYpHWQ6MJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717766619; c=relaxed/simple;
-	bh=sb4DY3sXhdMEEH3Zp9IPlhiSSNzjNB4d8DC6YA/+c1Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wyv7yuYHaL0gtCQKizXUiFVautvRuHjgsJKdMWIzK7krqnQ+CNqXO9tCSJxY9+1+asrUwi7O6lYtq5fb2fTsR5xEy8tDwbRU3sNhlIHuoTwRPmNNVH5cIleHNXSy8K4it6tUQzHUoYGYQ8xUhnvzROCsb7F9xh7kkCpHJahrjhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9143F1576;
-	Fri,  7 Jun 2024 06:24:01 -0700 (PDT)
-Received: from [192.168.0.102] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 06D083F762;
-	Fri,  7 Jun 2024 06:23:31 -0700 (PDT)
-Message-ID: <5d26ac17-a50a-46c4-8fcb-68eaa6d0ce2a@arm.com>
-Date: Fri, 7 Jun 2024 18:53:27 +0530
+	s=arc-20240116; t=1717766648; c=relaxed/simple;
+	bh=4sM4q5itO1Eb5xJyANREchHwndiUR9sJ2nfSR/sd0ZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CQWTbHxYL9qOuTg2MdkfTVHYOBWPXMCvT9HJBD9EdOPSfld4eIFilMRQlRMDzmrhMjB5YUzq8ZF6XUkpuKz9OOYUQ2lzDcaI7nZAsXbiGym0qfI2twlpyvj9vuTGoF6JFHkXCWnWTxQ/kJdGnA0tkmMwghxeI3BVctYRo7eRbxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YOciSxvA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717766645;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h0njwWl4Xr7B/zKqo02JfY8aEgwHTV+DbOrvBRuVJ/0=;
+	b=YOciSxvAug6nc5BW8/tv2jzIOa+J/QxSBg5IBYPVN8QZw/SC5cgRn3zogtinPRfbGDrsk0
+	CQ0tDCJe0L5fCkMk68qowhZnJYSo87Z7UdSuXlOnpaQkWHLGZTAj6//elvQmuKO1DovreD
+	NnGqEML9XyXQAWxPaKl3Qm8PzbObshE=
+Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com
+ [209.85.160.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-552-guVw0NZpObCejEqVaaNV-Q-1; Fri, 07 Jun 2024 09:24:04 -0400
+X-MC-Unique: guVw0NZpObCejEqVaaNV-Q-1
+Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-25074cbcc9eso1962737fac.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 06:24:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717766644; x=1718371444;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h0njwWl4Xr7B/zKqo02JfY8aEgwHTV+DbOrvBRuVJ/0=;
+        b=f9vZDIdbdwM9nqzGAWkGD7kKyTAZ6JRpPiDtqMPERT+xGyHPMV5ma6iRD+N/13CdWg
+         1+m/PGe9rDCkMVy63/TC8uykKc/AHmgR0QNnuy6IwFLxXydjnIzY+Janv2JBWMdLIOJK
+         k6lqEcAkhaTmM0a+siZzugiv6pBblfu9CTGBv8CyeD9r/JyyNbi9tB8T9u4fJK00djPt
+         /T7FBmUnPtsnmRU7kgBSWlk3PumMld3NwpO56ecUdIwGBvM48mKJJjUL6pAEfaiZ7R5N
+         Gnt4lBEU5kqHykuMDwm07dAFckMS/nSR9Zu7M6dWK3Cju5LhFWVNFhXrwHyBipwxvB8G
+         NsDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXFQMuqCIu+XXh5fJkODoK5FJ9O6qnBiF9f6Uki9aT6qWqrAi832hPOAHZ/S4q7M8Z8augIlpR1RYLrIx7Cfkec7GF5jncixsVnKwe7
+X-Gm-Message-State: AOJu0Yxi1fY/u9p2SbS7cH847reUPX614AUaPV4S5Bx5k/tRPCAPE5tQ
+	IkAPVP8PHtnHXUVtcLNzNXtRVGV8oG5J7VU4ZDEJSWmb1cEfOrGC0ypLHuTEf9c/Yuqe0OIAiqf
+	N6evPi0lvhgoLlHM3koOvtoSILAmDcYfGezatf1ZKBwjwvJtGU0pUIssy1yyOVw==
+X-Received: by 2002:a05:6870:1647:b0:250:7f7e:fa6a with SMTP id 586e51a60fabf-254644ebe85mr2654540fac.23.1717766643654;
+        Fri, 07 Jun 2024 06:24:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFwA2CSDWzl4DWmECTbOWHWFKZGJkdSO88z6FFhYWwsyVS9MiJccFJLIeEIllG1fQtMcqXfeA==
+X-Received: by 2002:a05:6870:1647:b0:250:7f7e:fa6a with SMTP id 586e51a60fabf-254644ebe85mr2654518fac.23.1717766643236;
+        Fri, 07 Jun 2024 06:24:03 -0700 (PDT)
+Received: from x1gen2nano ([2600:1700:1ff0:d0e0::33])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-795332e2111sm163946885a.133.2024.06.07.06.24.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 06:24:02 -0700 (PDT)
+Date: Fri, 7 Jun 2024 08:24:00 -0500
+From: Andrew Halaney <ahalaney@redhat.com>
+To: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Jochen Henneberg <jh@henneberg-systemdesign.com>, 
+	linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH net v2] net: stmmac: dwmac-qcom-ethqos: Configure host
+ DMA width
+Message-ID: <jtalwaityx7fyakigggyahhhor23fml76yic3e3xkeoimdqoj2@i7fiqzacowq3>
+References: <20240605-configure_ethernet_host_dma_width-v2-1-4cc34edfa388@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] selftests: Add a test mangling with uc_sigmask
-To: Mark Brown <broonie@kernel.org>
-Cc: shuah@kernel.org, oleg@redhat.com, stsp2@yandex.ru, mingo@kernel.org,
- tglx@linutronix.de, mark.rutland@arm.com, ryan.roberts@arm.com,
- suzuki.poulose@arm.com, Anshuman.Khandual@arm.com,
- DeepakKumar.Mishra@arm.com, AneeshKumar.KizhakeVeetil@arm.com,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240607122319.768640-1-dev.jain@arm.com>
- <20240607122319.768640-3-dev.jain@arm.com>
- <ZmMHNZcYfNMW1Ft7@finisterre.sirena.org.uk>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <ZmMHNZcYfNMW1Ft7@finisterre.sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605-configure_ethernet_host_dma_width-v2-1-4cc34edfa388@quicinc.com>
 
+On Wed, Jun 05, 2024 at 11:57:18AM GMT, Sagar Cheluvegowda wrote:
+> Commit 070246e4674b ("net: stmmac: Fix for mismatched host/device DMA
+> address width") added support in the stmmac driver for platform drivers
+> to indicate the host DMA width, but left it up to authors of the
+> specific platforms to indicate if their width differed from the addr64
+> register read from the MAC itself.
+> 
+> Qualcomm's EMAC4 integration supports only up to 36 bit width (as
+> opposed to the addr64 register indicating 40 bit width). Let's indicate
+> that in the platform driver to avoid a scenario where the driver will
+> allocate descriptors of size that is supported by the CPU which in our
+> case is 36 bit, but as the addr64 register is still capable of 40 bits
+> the device will use two descriptors as one address.
+> 
+> Fixes: 8c4d92e82d50 ("net: stmmac: dwmac-qcom-ethqos: add support for emac4 on sa8775p platforms")
+> Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
 
-On 6/7/24 18:42, Mark Brown wrote:
-> On Fri, Jun 07, 2024 at 05:53:19PM +0530, Dev Jain wrote:
->> This test asserts the relation between blocked signal, delivered signal,
->> and ucontext. The ucontext is mangled with, by adding a signal mask to
->> it; on return from the handler, the thread must block the corresponding
->> signal.
->> @@ -1,2 +1,3 @@
->>   # SPDX-License-Identifier: GPL-2.0-only
->>   sigaltstack
->> +mangle_uc_sigmask
-> Please keep these build files sorted alphabetically, this reduces
-> spurioius conflicts between serieses.
+Reviewed-by: Andrew Halaney <ahalaney@redhat.com>
 
-
-Sure.
-
->
->> + * Author: Dev Jain <dev.jain@arm.com>
->> + *
->> + * Test describing a clear distinction between signal states - delivered and
->> + * blocked, and their relation with ucontext.
-> This would be clearer if it said more positiviely what the relationship
-> between these things is actually expected to be and how they're tested.
-> Right now it's a bit hard to tell what the test is actually verifying.
-
-
-I thought I had described that quite well in the code comments.
-
-Anyways, I shall incorporate some detail into the initial test
-
-description too.
-
->
->> +void handler_verify_ucontext(int signo, siginfo_t *info, void *uc)
->> +{
->> +	int ret;
->> +
->> +	/* Kernel dumps ucontext with USR2 blocked */
->> +	ret = sigismember(&(((ucontext_t *)uc)->uc_sigmask), SIGUSR2);
->> +	ksft_test_result(ret == 1, "USR2 in ucontext\n");
-> "USR2 blocked in ucontext".
->
->> +
->> +	raise(SIGUSR2);
->> +}
-> A comment explaining that we're verifying that the signal is blocked
-> might be good (I think that's what this is doing?).  We're also not
-> checking the return value of raise() anywhere in the program, this would
-> be a useful diagnostic.
-
-
-Sure.
-
->
->> +	/* SEGV blocked during handler execution, delivered on return */
->> +	raise(SIGPIPE);
->> +	ksft_print_msg("SEGV bypassed successfully\n");
-> SIGPIPE or SIGEGV?
->
->> +	/* SIGPIPE has been blocked in sa_mask, but ucontext is invariant */
->> +	ret = sigismember(&(((ucontext_t *)uc)->uc_sigmask), SIGPIPE);
->> +	ksft_test_result(ret == 0, "USR1 not in ucontext\n");
-> The relationship between the comment and test are not clear here, nor is
-> that between the sigismembber() call and the test name we print?
->
->> +	/* SIGUSR1 has been blocked, but ucontext is invariant */
->> +	ret = sigismember(&(((ucontext_t *)uc)->uc_sigmask), SIGUSR1);
->> +	ksft_test_result(ret == 0, "SEGV not in ucontext\n");
-> Similarly here.
->
->> +	/* add SEGV to blocked mask */
->> +	if (sigemptyset(&act.sa_mask) || sigaddset(&act.sa_mask, SIGPIPE)
->> +	    || (sigismember(&act.sa_mask, SIGPIPE) != 1))
->> +		ksft_exit_fail_msg("Cannot add SEGV to blocked mask\n");
-> SIGPIPE vs SIGSEGV.
-
-
-Ah sorry, I was testing out something else, and then I
-
-did something and it partially changed it back to SEGV.
-
-I shall revert all mentions of PIPE with SEGV. Please read
-
-all mentions of pipe, or PIPE, as segv and SEGV.
+> ---
+> Changes in v2:
+> Fix commit message to include a commit body
+> Replace the proper fixes tag
+> Remove the change-Id
+> - Link to v1: https://lore.kernel.org/r/20240529-configure_ethernet_host_dma_width-v1-1-3f2707851adf@quicinc.com
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> index e254b21fdb59..65d7370b47d5 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> @@ -93,6 +93,7 @@ struct ethqos_emac_driver_data {
+>  	bool has_emac_ge_3;
+>  	const char *link_clk_name;
+>  	bool has_integrated_pcs;
+> +	u32 dma_addr_width;
+>  	struct dwmac4_addrs dwmac4_addrs;
+>  };
+>  
+> @@ -276,6 +277,7 @@ static const struct ethqos_emac_driver_data emac_v4_0_0_data = {
+>  	.has_emac_ge_3 = true,
+>  	.link_clk_name = "phyaux",
+>  	.has_integrated_pcs = true,
+> +	.dma_addr_width = 36,
+>  	.dwmac4_addrs = {
+>  		.dma_chan = 0x00008100,
+>  		.dma_chan_offset = 0x1000,
+> @@ -845,6 +847,8 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
+>  		plat_dat->flags |= STMMAC_FLAG_RX_CLK_RUNS_IN_LPI;
+>  	if (data->has_integrated_pcs)
+>  		plat_dat->flags |= STMMAC_FLAG_HAS_INTEGRATED_PCS;
+> +	if (data->dma_addr_width)
+> +		plat_dat->host_dma_width = data->dma_addr_width;
+>  
+>  	if (ethqos->serdes_phy) {
+>  		plat_dat->serdes_powerup = qcom_ethqos_serdes_powerup;
+> 
+> ---
+> base-commit: 1b10b390d945a19747d75b34a6e01035ac7b9155
+> change-id: 20240515-configure_ethernet_host_dma_width-c619d552992d
+> 
+> Best regards,
+> -- 
+> Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+> 
 
 
