@@ -1,104 +1,90 @@
-Return-Path: <linux-kernel+bounces-205893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33E5F9001E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:20:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DAF49001D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6249B21B13
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:20:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43A481F24CF1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B940818735D;
-	Fri,  7 Jun 2024 11:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N0dr1a/z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D0018C326;
+	Fri,  7 Jun 2024 11:17:11 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5DD194ACE
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DFA15CD41;
+	Fri,  7 Jun 2024 11:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717759043; cv=none; b=RwHoGA4S1EuQjnXv6wfQLem2TolBUP9B9LgExtc5lZgXT+Lext4fIWn3SNemxbaXSNyxCdisd5xG7Cuq+eXDSjg8U/HcchbzStALYrFOXJg/R6Emm5FMlwb3tbyPc83aqgbgbgjB67wFlfF10rn2UgvS3KqBu18K/LwS7+87o/U=
+	t=1717759030; cv=none; b=KhpvKrNHajBJNAD95/i4NBrkPSQNhoC+hF27OIhNnrGboAPtNdMg4RlXYp5iZKAahZ3u1oDU03jsnvGD4HQ6CSIvlQ9O1ZG2c+RJ02owkkNWGxp6j40VtVzzohmCkoARLPBJDBxMMEVxwfhmftQ1RIALLGfvkNDLWKWDplGxdZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717759043; c=relaxed/simple;
-	bh=mpY13cDkkhjPXE7HFQg9dp0vJygGBsKGCPtYHRFiDNg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cDMrcGYgVsCOQ/t/K4T5OO/cxP+OBk7ZoPwhTMAlSw6aWVXbkqFvqXP0C6y7J+qj0nLbcxhR4+usDYoP0QFkYwoO0zZQmxSF4nDEHQ7Wjos0KRQHiXrvSFfRU6hkqtf7W/qbL7apussyNuYpieyYKn3QllOgymtB7qjeE5HE2Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N0dr1a/z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11108C32781;
-	Fri,  7 Jun 2024 11:17:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717759042;
-	bh=mpY13cDkkhjPXE7HFQg9dp0vJygGBsKGCPtYHRFiDNg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=N0dr1a/zUT0YJDJx7FZ8xtqt506EpZ5LgYMjavemuBY96qINCnQ1lYCnNtplv9pt+
-	 FARGAMMCoAIb8o/Ei8LZ4KxSlZZqkYYvvY1ytzuadGr28pWygQ/yrzkKHUf5liDPPC
-	 S7Sm0H73qxqpA1lmtUWytKZnq3reKrlPVsVRhxSDLNGgL3WnjY5ED4NXifaXq1z9aA
-	 4122btdhG1ig+qm4EpWZPP+FcR0Io1DHoDrYrBtnAVZ/rbiqpnkXs79IRNdYgaWhQP
-	 Nfk8HAa6fNm5YWKdW7pRvw8KbpBZ1ssQ6/pq/JOEuQ55UyJ00dMLv6bON0LQees03e
-	 hX1afN9dYZ+4w==
-From: Borislav Petkov <bp@kernel.org>
-To: X86 ML <x86@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>
-Subject: [PATCH v1 12/14] x86/alternative: Convert the asm ALTERNATIVE_2() macro
-Date: Fri,  7 Jun 2024 13:16:59 +0200
-Message-ID: <20240607111701.8366-13-bp@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240607111701.8366-1-bp@kernel.org>
-References: <20240607111701.8366-1-bp@kernel.org>
+	s=arc-20240116; t=1717759030; c=relaxed/simple;
+	bh=/frmM6mD7/qvXSmcyd3JtyOkH85T/WmSsWCjL0CjS98=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eLJjgnIobzbGs7MrgTAOwNtYt2yYVB7O5hAiLYy9f/1lW1RiI4j0Vj1TTIY2kGKSllb7DGxtMB6N8yfoenlTbUJe2cHf/VCIKss2K++qyJ6hEiBN1LoHirTTGt4Hdo9KishydPIRr0r6Eaq/Dyf16NfVhHAwXJM6OSp8e43fi+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sFXab-006oBW-0W;
+	Fri, 07 Jun 2024 19:16:58 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 07 Jun 2024 19:16:59 +0800
+Date: Fri, 7 Jun 2024 19:16:59 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Jia Jie Ho <jiajie.ho@starfivetech.com>
+Cc: "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: starfive - Align rsa input data to 32-bit
+Message-ID: <ZmLsK9Apy9NwNEQi@gondor.apana.org.au>
+References: <20240529002553.1372257-1-jiajie.ho@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529002553.1372257-1-jiajie.ho@starfivetech.com>
 
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
+On Wed, May 29, 2024 at 08:25:53AM +0800, Jia Jie Ho wrote:
+> Hardware expects RSA input plain/ciphertext to be 32-bit aligned.
+> Allocate aligned buffer and shift data accordingly.
+> 
+> Signed-off-by: Jia Jie Ho <jiajie.ho@starfivetech.com>
+> ---
+>  drivers/crypto/starfive/jh7110-cryp.h |  3 +--
+>  drivers/crypto/starfive/jh7110-rsa.c  | 17 ++++++++++-------
+>  2 files changed, 11 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/crypto/starfive/jh7110-cryp.h b/drivers/crypto/starfive/jh7110-cryp.h
+> index 494a74f52706..eeb4e2b9655f 100644
+> --- a/drivers/crypto/starfive/jh7110-cryp.h
+> +++ b/drivers/crypto/starfive/jh7110-cryp.h
+> @@ -217,12 +217,11 @@ struct starfive_cryp_request_ctx {
+>  	struct scatterlist			*out_sg;
+>  	struct ahash_request			ahash_fbk_req;
+>  	size_t					total;
+> -	size_t					nents;
+>  	unsigned int				blksize;
+>  	unsigned int				digsize;
+>  	unsigned long				in_sg_len;
+>  	unsigned char				*adata;
+> -	u8 rsa_data[] __aligned(sizeof(u32));
+> +	u8					*rsa_data;
 
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
- arch/x86/include/asm/alternative.h | 22 ----------------------
- 1 file changed, 22 deletions(-)
+You didn't explain why this is moving from a pre-allocated buffer
+to one that's allocated on the run.  It would appear that there is
+no reason why you can't build the extra space used for shifting
+into reqsize.
 
-diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index 31b9a47b9df9..28e07a038964 100644
---- a/arch/x86/include/asm/alternative.h
-+++ b/arch/x86/include/asm/alternative.h
-@@ -461,28 +461,6 @@ void nop_func(void);
-  * @feature2, it replaces @oldinstr with @feature2.
-  */
- .macro ALTERNATIVE_2 oldinstr, newinstr1, ft_flags1, newinstr2, ft_flags2
--140:
--	\oldinstr
--141:
--	.skip -((alt_max_2(new_len1, new_len2) - (old_len)) > 0) * \
--		(alt_max_2(new_len1, new_len2) - (old_len)),0x90
--142:
--
--	.pushsection .altinstructions,"a"
--	altinstr_entry 140b,143f,\ft_flags1,142b-140b,144f-143f
--	altinstr_entry 140b,144f,\ft_flags2,142b-140b,145f-144f
--	.popsection
--
--	.pushsection .altinstr_replacement,"ax"
--143:
--	\newinstr1
--144:
--	\newinstr2
--145:
--	.popsection
--.endm
--
--.macro N_ALTERNATIVE_2 oldinstr, newinstr1, ft_flags1, newinstr2, ft_flags2
- 	__N_ALTERNATIVE(__N_ALTERNATIVE(\oldinstr, \newinstr1, \ft_flags1),
- 		      \newinstr2, \ft_flags2)
- .endm
+Cheers,
 -- 
-2.43.0
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
