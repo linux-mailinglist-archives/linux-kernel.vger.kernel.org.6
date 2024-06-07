@@ -1,61 +1,72 @@
-Return-Path: <linux-kernel+bounces-206209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28C049005C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:58:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C8879005D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 446C3B26E2B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:57:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E537C1F22BC2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390DC196D87;
-	Fri,  7 Jun 2024 13:57:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99DA19751E;
+	Fri,  7 Jun 2024 14:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TXeE2Joq"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K921WjHJ"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41876196C68;
-	Fri,  7 Jun 2024 13:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09156196C6D;
+	Fri,  7 Jun 2024 14:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717768655; cv=none; b=Vm3ETNScPAk94DhgPTBAkngVLqymoJA7C0g+GtBwSIzuTnupKY9RBZKbWouQIMWQ2E+iHmZ7M+BnjkRaSZlyzOSB8+Gg/DKMv9b96+V+aqN+lqACqYjVQh5IIfciYcy+dVf/WvrifUBop7zOeCCFXttNe+Ai1saCef6/FOApIOU=
+	t=1717768833; cv=none; b=EXzPo4pS1jnXZrL7Rae+LArpzHH6IkL4Nml9cmb/uUTnkgt9II3JFczrCcwLLsX78Wy5ApVWOtIvXBqAIXetR4aKm/x030U+iA0P7FYLjHs3AWaa5wTkCoHnTq8L4W2+3UiUO4CsQholymFRccB3p82dmDWVeJ+iTmuypa4ZdGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717768655; c=relaxed/simple;
-	bh=K2XqmcCFd88M5gpCS+h5dZF1hou+6ifInJUri8K4X/g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=CTvxWd4QOsT2pj9AbPX/8wxJVv3pJR1AeF2wCSGHpBcTNSTbqLs/kxVANDiDGoywKo/Nz5to/kB4Jsa5WyCbJlO3odGr2OFCJ/5SDMM8wfYcQzFhKAewCvC//cFceM8KsEh6Jnj6LDdBQ+ivs1p5tN5AqR/2+CQjrYZy4/ra6e8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TXeE2Joq; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 457CDCOP020460;
-	Fri, 7 Jun 2024 13:57:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=6xBgDeNwsAKweEpikI+26H
-	999a7zQZJIy7HkOc33JS0=; b=TXeE2Joq4RlTHeWZ/d7zuV36pJ8jt/TectNxNJ
-	7X7zkpkH5/6vNHSe+C/c3NOq2IsEIKoe/qObDWuMekoRMDeif5F0az93jOnCA+O0
-	VaGvzbG6wMuqe5M9vqlSjgbldHlhzzTI22rUYF0DG2my8PmM4h2NAeRXSJ6YIIuB
-	LT6/AJDKEsuMrkOTW17JTfpzPPF6ap6PjlZje5MyKxON3UGxluM4TcIYi/MsAT0S
-	AGrKRMFJDoCkwaSWKAh75A7o8jEFaXO1H6N2v1GC9aqZUn7brRJgtW2gRZa8xBoP
-	Q1dOAyFSogBkOkLjNRhVITGScIO2PcOSeyeD49caRYqmn6VQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yk3h2vau9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 13:57:18 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 457DvHFi008619
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 7 Jun 2024 13:57:17 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 7 Jun 2024
- 06:57:16 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Fri, 7 Jun 2024 06:57:15 -0700
-Subject: [PATCH v2] cxl: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1717768833; c=relaxed/simple;
+	bh=19tlOcfJuT/2kVzSY/jYIvVZ6Y8DgteEDTklyfN/YSM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BG2hTWdlPzp9CC5XIyMdWOtxdVTzEZ4M1zv4M8GBdB5f70RVQnAdjTZPk/UOSiYr95I4DL+bVjJvS5OGkWTf/X4O14OI5KB+SkaiCXZ4VeRABlLkyR4bmZ0u57XCJj5WM0j3Wwv5SAo7jbUDr+HHbWBHkR7XxO7QS/jNBz4BIas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K921WjHJ; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2eabd22d441so33661741fa.2;
+        Fri, 07 Jun 2024 07:00:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717768829; x=1718373629; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=smHlXdeijHe0Qv4gdPnMjOi/H4/3+n74NUKh1ac6v1Y=;
+        b=K921WjHJ4rDEKHHrTK9NQrh8UwCELZeLSpXeN8p420h7OVro3zpFzTZNSUITvaOvbQ
+         +3v6vGg/p988EY98GxV8kEX5dHyBMPrLuZqabyKudb03fy2b1GZk+Svwl6kXgupi7hWu
+         +omNkHplOccoi6lZc6RoVJgkeQBTlQXjmC3+rNG3YRO0RcQGK2ubH4xGsCerOAPQjA7w
+         Sy6OdOy9u4PPkw7g9L6z54VsCTYeMpygsoO1UKOtnOyDM1hrybhTcwWJY2mGd6fXWS2K
+         LtqICjfsv1GajEyojn29G3i25DK0EHoENkrhTT7HBJDxJw7P+4BDmJNrCm+TIEC+BBRQ
+         lQoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717768829; x=1718373629;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=smHlXdeijHe0Qv4gdPnMjOi/H4/3+n74NUKh1ac6v1Y=;
+        b=nJbwlMjRathn9AqUSBeDtsEwyqLRrKKYwem9LFKP5ewx4RTG1HJu5AP8E5kbz6XYud
+         4OxVpDrqg2hCIteWPwmaPJjsI+ZFmifWIM3IQboi8a5pxDAo8hZb/1bjHXP7nuNRroms
+         1tRUCYqRnAW/x2fGQ+0+1N3OhzgbbgVNVjXE8SwLoFl9UOUhNvGXiMs3SRSpAync1fNO
+         sgD3Xi4kAwzMF1ksnhT45ckQ31eqgYRDcdExeNHoGgWulU4Poo1opTm43v8WSmWVXaMn
+         acYAEVvAD76jVz330VY+vsdXHiUPNe00L3uts15Qv5BdJItKfd9Pmc3dwO2lOuR5TV6d
+         iRDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWz9nFnavPo8I8BCj4WJ6v0qsB4mdk//Yg955vgnqscwdaxl+i1Q1iTaFvCKucR3oBbUdOiTFcbmA1JOcyK0Y4da+tBzob0/gJoXZVu
+X-Gm-Message-State: AOJu0Yy0xDFqRuIOWIruT3UDuvnyejOCAkO6BPd3JaEinwT0SXPg2D2R
+	aCKWv90cjNCg6Uf7MNz+fw7Q1MbFxQTsHXwrs5H1rJkCTke8csMt
+X-Google-Smtp-Source: AGHT+IHR81iKUplsByiF1E+L/92JPbJTbqeGnU4taIDP/6XaWJzNK7gYiRIkjw6lHphiKZY7veQvQA==
+X-Received: by 2002:a05:651c:a0f:b0:2ea:79b2:1839 with SMTP id 38308e7fff4ca-2eadce281d4mr29893421fa.2.1717768828808;
+        Fri, 07 Jun 2024 07:00:28 -0700 (PDT)
+Received: from kali.localhost (static.47.50.88.23.clients.your-server.de. [23.88.50.47])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c806ec844sm252472566b.120.2024.06.07.07.00.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 07:00:28 -0700 (PDT)
+From: Kiarash Hajian <kiarash8112hajian@gmail.com>
+Date: Fri, 07 Jun 2024 10:00:04 -0400
+Subject: [PATCH] drm/msm/a6xx: request memory region
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,140 +75,176 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240607-md-drivers-cxl-v2-1-0c61d95ee7a7@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIALoRY2YC/3WNyw6CMBBFf4V07ZhSHhZX/odhUcogk0DRKTQYw
- r9b2Ls8yb3nbMIjE3pxTzbBGMjT5CKoSyJsb9wLgdrIQkmVy1JmMLbQMgVkD3YdQBfGanlrqjL
- VIp7ejB2tp/BZR26MR2jYONsfmoHcssJo/Ix8zHvy88TfMx/S4/S3FFJIoVNVLrvCSp2Vj89Cl
- py92mkU9b7vP2sdNrvNAAAA
-To: Davidlohr Bueso <dave@stgolabs.net>,
-        Jonathan Cameron
-	<jonathan.cameron@huawei.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Alison
- Schofield" <alison.schofield@intel.com>,
-        Vishal Verma
-	<vishal.l.verma@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Dan Williams
-	<dan.j.williams@intel.com>
-CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
+Message-Id: <20240607-memory-v1-1-8664f52fc2a1@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAGMSY2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDMwNz3dzU3PyiSl0T01RD46Qkg+QUQzMloOKCotS0zAqwQdGxtbUAG2Q
+ NnlgAAAA=
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Kiarash Hajian <kiarash8112hajian@gmail.com>
 X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: PmU4ysjL4w_iMXHzSETDFXVOJiU5DyK3
-X-Proofpoint-ORIG-GUID: PmU4ysjL4w_iMXHzSETDFXVOJiU5DyK3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-07_07,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 bulkscore=0 mlxscore=0 priorityscore=1501 clxscore=1015
- suspectscore=0 spamscore=0 mlxlogscore=999 adultscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406070100
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717768825; l=4856;
+ i=kiarash8112hajian@gmail.com; s=20240409; h=from:subject:message-id;
+ bh=19tlOcfJuT/2kVzSY/jYIvVZ6Y8DgteEDTklyfN/YSM=;
+ b=LovuAN+Yw05fo0LE4TjWvASYbGMde0nyU+ekFhEVleLCWxzSTpZLgPrOfhHwJkda4m0uefexE
+ MQuMdmXQJmgAXSDd4LqRKtWw7WuMsDBrkwMhDt5JBPig0U5aBohe2hn
+X-Developer-Key: i=kiarash8112hajian@gmail.com; a=ed25519;
+ pk=ehVBr28gPcA8cMB/wneVh0Mj6WGkqZoyYRdRNi5+aI0=
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/core/cxl_core.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pci.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_mem.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_acpi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pmem.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_port.o
+The driver's memory regions are currently just ioremap()ed, but not
+reserved through a request. That's not a bug, but having the request is
+a little more robust.
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+Implement the region-request through the corresponding managed
+devres-function.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Signed-off-by: Kiarash Hajian <kiarash8112hajian@gmail.com>
 ---
-Changes in v2:
-- Updated the descriptions in drivers/cxl/core/port.c and drivers/cxl/pci.c
-  per feedback from Jonathan.
-- Updated the description in drivers/cxl/port.c per feedback from Dan.
-- Link to v1: https://lore.kernel.org/r/20240603-md-drivers-cxl-v1-1-f2940f5c0836@quicinc.com
----
- drivers/cxl/acpi.c      | 1 +
- drivers/cxl/core/port.c | 1 +
- drivers/cxl/mem.c       | 1 +
- drivers/cxl/pci.c       | 1 +
- drivers/cxl/pmem.c      | 1 +
- drivers/cxl/port.c      | 1 +
- 6 files changed, 6 insertions(+)
+To: Rob Clark <robdclark@gmail.com>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sean Paul <sean@poorly.run>
+To: Marijn Suijten <marijn.suijten@somainline.org>
+To: David Airlie <airlied@gmail.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: freedreno@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Kiarash Hajian <kiarash8112hajian@gmail.com>
 
-diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
-index 571069863c62..e51315ea4a6a 100644
---- a/drivers/cxl/acpi.c
-+++ b/drivers/cxl/acpi.c
-@@ -921,6 +921,7 @@ static void __exit cxl_acpi_exit(void)
- /* load before dax_hmem sees 'Soft Reserved' CXL ranges */
- subsys_initcall(cxl_acpi_init);
- module_exit(cxl_acpi_exit);
-+MODULE_DESCRIPTION("CXL ACPI: Platform Support");
- MODULE_LICENSE("GPL v2");
- MODULE_IMPORT_NS(CXL);
- MODULE_IMPORT_NS(ACPI);
-diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
-index 887ed6e358fb..e31c5fcd9bf8 100644
---- a/drivers/cxl/core/port.c
-+++ b/drivers/cxl/core/port.c
-@@ -2356,5 +2356,6 @@ static void cxl_core_exit(void)
+Changes in v5:
+    - Fix errorhanlding problems.
+    - Link to v4: https://lore.kernel.org/r/20240512-msm-adreno-memory-region-v4-1-3881a64088e6@gmail.com
+    
+    Changes in v4:
+    - Combine v3 commits into a singel commit
+    - Link to v3: https://lore.kernel.org/r/20240512-msm-adreno-memory-region-v3-0-0a728ad45010@gmail.com
+    
+    Changes in v3:
+    - Remove redundant devm_iounmap calls, relying on devres for automatic resource cleanup.
+    
+    Changes in v2:
+    - update the subject prefix to "drm/msm/a6xx:", to match the majority of other changes to this file.
+---
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 33 +++++++++++++++------------------
+ 1 file changed, 15 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+index 8bea8ef26f77..35323bf2d844 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+@@ -635,10 +635,12 @@ static void a6xx_gmu_rpmh_init(struct a6xx_gmu *gmu)
+ 	a6xx_rpmh_stop(gmu);
  
- subsys_initcall(cxl_core_init);
- module_exit(cxl_core_exit);
-+MODULE_DESCRIPTION("CXL: Core Compute Express Link support");
- MODULE_LICENSE("GPL v2");
- MODULE_IMPORT_NS(CXL);
-diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
-index 0c79d9ce877c..1afb0e78082b 100644
---- a/drivers/cxl/mem.c
-+++ b/drivers/cxl/mem.c
-@@ -252,6 +252,7 @@ static struct cxl_driver cxl_mem_driver = {
- 
- module_cxl_driver(cxl_mem_driver);
- 
-+MODULE_DESCRIPTION("CXL: Memory Expansion");
- MODULE_LICENSE("GPL v2");
- MODULE_IMPORT_NS(CXL);
- MODULE_ALIAS_CXL(CXL_DEVICE_MEMORY_EXPANDER);
-diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
-index e53646e9f2fb..4be35dc22202 100644
---- a/drivers/cxl/pci.c
-+++ b/drivers/cxl/pci.c
-@@ -1066,5 +1066,6 @@ static void __exit cxl_pci_driver_exit(void)
- 
- module_init(cxl_pci_driver_init);
- module_exit(cxl_pci_driver_exit);
-+MODULE_DESCRIPTION("CXL: PCI manageability");
- MODULE_LICENSE("GPL v2");
- MODULE_IMPORT_NS(CXL);
-diff --git a/drivers/cxl/pmem.c b/drivers/cxl/pmem.c
-index 2ecdaee63021..4ef93da22335 100644
---- a/drivers/cxl/pmem.c
-+++ b/drivers/cxl/pmem.c
-@@ -453,6 +453,7 @@ static __exit void cxl_pmem_exit(void)
- 	cxl_driver_unregister(&cxl_nvdimm_bridge_driver);
+ err:
+-	if (!IS_ERR_OR_NULL(pdcptr))
+-		iounmap(pdcptr);
+-	if (!IS_ERR_OR_NULL(seqptr))
+-		iounmap(seqptr);
++	if (!IS_ERR_OR_NULL(pdcptr)){
++        return ERR_PTR(-EINVAL);
++	}
++	if (!IS_ERR_OR_NULL(seqptr)){
++        return ERR_PTR(-EINVAL);
++	}
  }
  
-+MODULE_DESCRIPTION("CXL PMEM: Persistent Memory Support");
- MODULE_LICENSE("GPL v2");
- module_init(cxl_pmem_init);
- module_exit(cxl_pmem_exit);
-diff --git a/drivers/cxl/port.c b/drivers/cxl/port.c
-index 97c21566677a..d7d5d982ce69 100644
---- a/drivers/cxl/port.c
-+++ b/drivers/cxl/port.c
-@@ -209,6 +209,7 @@ static struct cxl_driver cxl_port_driver = {
- };
+ /*
+@@ -1503,7 +1505,7 @@ static void __iomem *a6xx_gmu_get_mmio(struct platform_device *pdev,
+ 		return ERR_PTR(-EINVAL);
+ 	}
  
- module_cxl_driver(cxl_port_driver);
-+MODULE_DESCRIPTION("CXL: Port enumeration and services");
- MODULE_LICENSE("GPL v2");
- MODULE_IMPORT_NS(CXL);
- MODULE_ALIAS_CXL(CXL_DEVICE_PORT);
+-	ret = ioremap(res->start, resource_size(res));
++	ret = devm_ioremap_resource(&pdev->dev, res);
+ 	if (!ret) {
+ 		DRM_DEV_ERROR(&pdev->dev, "Unable to map the %s registers\n", name);
+ 		return ERR_PTR(-EINVAL);
+@@ -1613,13 +1615,13 @@ int a6xx_gmu_wrapper_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
+ 	gmu->mmio = a6xx_gmu_get_mmio(pdev, "gmu");
+ 	if (IS_ERR(gmu->mmio)) {
+ 		ret = PTR_ERR(gmu->mmio);
+-		goto err_mmio;
++		goto err_cleanup;
+ 	}
+ 
+ 	gmu->cxpd = dev_pm_domain_attach_by_name(gmu->dev, "cx");
+ 	if (IS_ERR(gmu->cxpd)) {
+ 		ret = PTR_ERR(gmu->cxpd);
+-		goto err_mmio;
++		goto err_cleanup;
+ 	}
+ 
+ 	if (!device_link_add(gmu->dev, gmu->cxpd, DL_FLAG_PM_RUNTIME)) {
+@@ -1635,7 +1637,7 @@ int a6xx_gmu_wrapper_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
+ 	gmu->gxpd = dev_pm_domain_attach_by_name(gmu->dev, "gx");
+ 	if (IS_ERR(gmu->gxpd)) {
+ 		ret = PTR_ERR(gmu->gxpd);
+-		goto err_mmio;
++		goto err_cleanup;
+ 	}
+ 
+ 	gmu->initialized = true;
+@@ -1645,9 +1647,7 @@ int a6xx_gmu_wrapper_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
+ detach_cxpd:
+ 	dev_pm_domain_detach(gmu->cxpd, false);
+ 
+-err_mmio:
+-	iounmap(gmu->mmio);
+-
++err_cleanup:
+ 	/* Drop reference taken in of_find_device_by_node */
+ 	put_device(gmu->dev);
+ 
+@@ -1762,7 +1762,7 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
+ 		gmu->rscc = a6xx_gmu_get_mmio(pdev, "rscc");
+ 		if (IS_ERR(gmu->rscc)) {
+ 			ret = -ENODEV;
+-			goto err_mmio;
++			goto err_cleanup;
+ 		}
+ 	} else {
+ 		gmu->rscc = gmu->mmio + 0x23000;
+@@ -1774,13 +1774,13 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
+ 
+ 	if (gmu->hfi_irq < 0 || gmu->gmu_irq < 0) {
+ 		ret = -ENODEV;
+-		goto err_mmio;
++		goto err_cleanup;
+ 	}
+ 
+ 	gmu->cxpd = dev_pm_domain_attach_by_name(gmu->dev, "cx");
+ 	if (IS_ERR(gmu->cxpd)) {
+ 		ret = PTR_ERR(gmu->cxpd);
+-		goto err_mmio;
++		goto err_cleanup;
+ 	}
+ 
+ 	link = device_link_add(gmu->dev, gmu->cxpd, DL_FLAG_PM_RUNTIME);
+@@ -1824,10 +1824,7 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
+ detach_cxpd:
+ 	dev_pm_domain_detach(gmu->cxpd, false);
+ 
+-err_mmio:
+-	iounmap(gmu->mmio);
+-	if (platform_get_resource_byname(pdev, IORESOURCE_MEM, "rscc"))
+-		iounmap(gmu->rscc);
++err_cleanup:
+ 	free_irq(gmu->gmu_irq, gmu);
+ 	free_irq(gmu->hfi_irq, gmu);
+ 
 
 ---
-base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-change-id: 20240603-md-drivers-cxl-85ac807b9618
+base-commit: 1b294a1f35616977caddaddf3e9d28e576a1adbc
+change-id: 20240607-memory-45e13bb0cd16
+
+Best regards,
+-- 
+Kiarash Hajian <kiarash8112hajian@gmail.com>
 
 
