@@ -1,185 +1,112 @@
-Return-Path: <linux-kernel+bounces-205182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77ED18FF898
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:17:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA54D8FF89C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AE07287A5E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 00:17:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CF471F22444
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 00:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD72A3232;
-	Fri,  7 Jun 2024 00:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30854A39;
+	Fri,  7 Jun 2024 00:19:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L5v1hJaM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oiIDII4P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5705802;
-	Fri,  7 Jun 2024 00:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C78A802;
+	Fri,  7 Jun 2024 00:19:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717719432; cv=none; b=qS59/2zvDRMwj1k3b+DX/rxsFdtJhkSsD4TARkLYtE48hhz2xdPczwMlXg9kmk3JpRZnomuZnTbe3Z7n0F5VIzdnubYKdtfhe69OjTajY/heMpQne48xuFZwU1EapIpU7A4VsQUtsslm7eO3bHruG6zm81NUae5qGUAOXDkULwI=
+	t=1717719584; cv=none; b=fGeYXMPJTx9Zv3EcJzYMd8H3QYBMdLEg8OfB955sCRApFpx9CDzutJ/+OdH7eahsQdpdpRKTS0RltLsBEF+JvOyZqDNwGAU3HqUvP317MF/rcIf+TEE6GcQOL70pbci5u3HWvFl23maC2AVrqBRI4Q5EGHqNaYhe+rpfOqWeQ9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717719432; c=relaxed/simple;
-	bh=zQyKFE7i3cSnb1OcKCL8pH1n8i1hiqh2qkfclisckRQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hJI1M+p0opmEtxkzpmmWEmLWLmrXm2EdyhlkSWl/tQMDDg7w2pMXLwmhMQLJMQpyKzpFgkD8it9BJBxJ+OiI6bHnQi0mb3DISf/hnXmyK4uBcohpHwWlR5/09aoa6quDuUuYVHx1YcZjcxZ0S2bRRmYUIm51pjRQvg16Akxtnho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L5v1hJaM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB558C32781;
-	Fri,  7 Jun 2024 00:17:10 +0000 (UTC)
+	s=arc-20240116; t=1717719584; c=relaxed/simple;
+	bh=g3QH/J1UqGMMgv1UFdPgFNuujOHdUk7CBldWAmkk7JM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=An2lttabgbnJABaCj88d32LQ6UBBovfjVsv7G0D72akbIxytRyoMmRL93Ec4w8yULL3qR5O3cg4z/XtUtdC09CIT+JrDa6s3Aq8iAHsQ0Q6FnmIgzjql2TPrXFr9GORwPUxYkn2+8W7ODrcp3RfHYJrGoKybehJJEi6I6nYT4xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oiIDII4P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B6F6C2BD10;
+	Fri,  7 Jun 2024 00:19:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717719431;
-	bh=zQyKFE7i3cSnb1OcKCL8pH1n8i1hiqh2qkfclisckRQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L5v1hJaMVcxxJxKaKAhyIdyWRWgcXppCMx72DrHAE3ph3cyX8WUj8TG5fi21RfNnV
-	 nqlcuOaYbrDA73MFi3+j+MgwgYVAmxT8wjhTfj4iyfuIfxcH0AaXkntfrW/Bew2GpS
-	 L94Rl9iBv4DdxuLC4WilcJNjAwZ+667u9PuHXW+OTKV+WnbR6sWu811PDE7vaJ/+aN
-	 e3ay6Cdd+Z9+zbYm9N8pAeIUW/t58m0xZk3Y/uEbND+AiWCXMAO4uZDv0/ZtGm2qZ1
-	 pNYYY5DwNZyX+bO2M/yYpMJxYlU+8JiTtFFXVfBrB2lKUfZQM6I0w3UHk7CZg9qOH/
-	 gWZAqvlRLTQXw==
-Date: Thu, 6 Jun 2024 17:17:09 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Yicong Yang <yangyicong@huawei.com>
-Cc: Ian Rogers <irogers@google.com>, yangyicong@hisilicon.com,
-	will@kernel.org, mark.rutland@arm.com, acme@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	peterz@infradead.org, mingo@redhat.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	james.clark@arm.com, dongli.zhang@oracle.com,
-	jonathan.cameron@huawei.com, prime.zeng@hisilicon.com,
-	linuxarm@huawei.com
-Subject: Re: [PATCH 2/3] perf: arm_pmu: Only show online CPUs in device's
- "cpus" attribute
-Message-ID: <ZmJRhSWYxb-zLAhD@google.com>
-References: <20240603092812.46616-1-yangyicong@huawei.com>
- <20240603092812.46616-3-yangyicong@huawei.com>
- <CAP-5=fXDPor-WsO-TGB3z6QpSWZOFJC31GJpuwZUA3qz_3WsYQ@mail.gmail.com>
- <b348d9dd-75cb-6b83-a4be-cfd29e15eb99@huawei.com>
+	s=k20201202; t=1717719584;
+	bh=g3QH/J1UqGMMgv1UFdPgFNuujOHdUk7CBldWAmkk7JM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oiIDII4P8I3kgYt0Wf6S9xsjVebnxAwTbnApLdPnwJdv7o7zwSjjwbdoxUaGdQgSa
+	 1+rnYpLqGni4g7s2kiXo1VxNITAFaLZ160mNlCPP2AX06NXC5mg7Y9cDHivIG+v3i4
+	 DBTYq4x4H45ci4GnA3MCuRbo+IZ+6t+NHiwWO7hoEqwZ49EeHgcW6lDf4z8xTZUQIE
+	 RWEnefG15CzHvoBiAT3iSG6X3HCrXyJTQr4yPSpRRD+wEyK1k6j/4g8kOxQYxuXLxf
+	 HLKtKbvSyrlk74Up91TbD9tK9Sj5G8w5STIk25ccja88ZVhBgMimocXROJ4vdUlawq
+	 1dZgvVAMlbmnA==
+Date: Thu, 6 Jun 2024 17:19:42 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Joe Damato <jdamato@fastly.com>
+Cc: Tariq Toukan <ttoukan.linux@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, nalramli@fastly.com, Saeed Mahameed
+ <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, "open
+ list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>, Tariq
+ Toukan <tariqt@nvidia.com>
+Subject: Re: [RFC net-next v4 2/2] net/mlx5e: Add per queue netdev-genl
+ stats
+Message-ID: <20240606171942.4226a854@kernel.org>
+In-Reply-To: <ZmIwIJ9rxllqQT18@LQ3V64L9R2>
+References: <20240604004629.299699-1-jdamato@fastly.com>
+	<20240604004629.299699-3-jdamato@fastly.com>
+	<11b9c844-a56e-427f-aab3-3e223d41b165@gmail.com>
+	<ZmIwIJ9rxllqQT18@LQ3V64L9R2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b348d9dd-75cb-6b83-a4be-cfd29e15eb99@huawei.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 04, 2024 at 03:43:35PM +0800, Yicong Yang wrote:
-> Hi Ian,
+On Thu, 6 Jun 2024 14:54:40 -0700 Joe Damato wrote:
+> > > Compare the values in /proc/net/dev match the output of cli for the same
+> > > device, even while the device is down.
+> > > 
+> > > Note that while the device is down, per queue stats output nothing
+> > > (because the device is down there are no queues):  
+> > 
+> > This part is not true anymore.  
 > 
-> On 2024/6/4 0:20, Ian Rogers wrote:
-> > On Mon, Jun 3, 2024 at 2:33 AM Yicong Yang <yangyicong@huawei.com> wrote:
-> >>
-> >> From: Yicong Yang <yangyicong@hisilicon.com>
-> >>
-> >> When there're CPUs offline after system booting, perf will failed:
-> >> [root@localhost ~]# /home/yang/perf stat -a -e armv8_pmuv3_0/cycles/
-> >> Error:
-> >> The sys_perf_event_open() syscall returned with 19 (No such device) for event (cpu-clock).
-> >> /bin/dmesg | grep -i perf may provide additional information.
-> > 
-> > Thanks for debugging this Yicong! The fact cycles is falling back on
-> > cpu-clock I'm confused by, on ARM the PMU type generally isn't
-> > PERF_TYPE_HARDWARE and so this fallback shouldn't happen:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/evsel.c?h=perf-tools-next#n2900
-> > I note your command line is for system wide event opening rather than
-> > for a process. It is more strange the fallback is giving "No such
-> > device".
-> > 
-> >> This is due to PMU's "cpus" is not updated and still contains offline
-> >> CPUs and perf will try to open perf event on the offlined CPUs.
-> > 
-> > The perf tool will try to only open online CPUs. Unfortunately the
-> > naming around this is confusing:
-> > 
-> > - any - an event may follow a task and schedule on "any" CPU. We
-> > encode this with -1.
-> > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/include/perf/cpumap.h?h=perf-tools-next#n24
-> > - online - the set of online CPU.
-> > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/include/perf/cpumap.h?h=perf-tools-next#n33
-> > - all - I try to avoid this but it may still be in the code, "all"
-> > usually is another name for online. Hopefully when we use this name it
-> > is clearly defined:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/include/internal/evlist.h?h=perf-tools-next#n23
-> > 
-> >> Make "cpus" attribute only shows online CPUs and introduced a new
-> >> "supported_cpus" where users can get the range of the CPUs this
-> >> PMU supported monitoring.
-> > 
-> > I don't think this should be necessary as by default the CPUs the perf
-> > tool will use will be the "online" CPUs:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/evlist.c?h=perf-tools-next#n40
-> > 
-> > Could you create a reproduction of the problem you are encountering?
-> > My expectation is for a core PMU to advertise the online and offline
-> > CPUs it is valid for, and for perf to intersect:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/include/perf/cpumap.h?h=perf-tools-next#n44
-> > those CPUs with the online CPUs so the perf_event_open doesn't fail.
-> > 
+> It is true with this patch applied and running the command below.
+> Maybe I should have been more explicit that using cli.py outputs []
+> when scope = queue, which could be an internal cli.py thing, but
+> this is definitely true with this patch.
 > 
-> Thanks for the comments and detailed illustration!
-> 
-> Actually it can be reproduced easily using the armv8_pmuv3's events. Tested on 6.10-rc1 with
-> perf version 6.10.rc1.g1613e604df0c:
-> # offline any CPU
-> [root@localhost tmp]# echo 0 > /sys//devices/system/cpu/cpu1/online
-> # try any event of armv8_pmuv3, with -a or without
-> [root@localhost tmp]# ./perf stat -e armv8_pmuv3_0/ll_cache/ -vvv
-> Control descriptor is not initialized
-> Opening: armv8_pmuv3_0/ll_cache/
-> ------------------------------------------------------------
-> perf_event_attr:
->   type                             10 (armv8_pmuv3_0)
->   size                             136
->   config                           0x32 (ll_cache)
->   sample_type                      IDENTIFIER
->   read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
->   disabled                         1
->   inherit                          1
->   exclude_guest                    1
-> ------------------------------------------------------------
-> sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 3
-> Opening: armv8_pmuv3_0/ll_cache/
-> ------------------------------------------------------------
-> perf_event_attr:
->   type                             10 (armv8_pmuv3_0)
->   size                             136
->   config                           0x32 (ll_cache)
->   sample_type                      IDENTIFIER
->   read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
->   disabled                         1
->   inherit                          1
->   exclude_guest                    1
-> ------------------------------------------------------------
-> sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0x8
-> sys_perf_event_open failed, error -19
-> Error:
-> The sys_perf_event_open() syscall returned with 19 (No such device) for event (armv8_pmuv3_0/ll_cache/).
-> /bin/dmesg | grep -i perf may provide additional information.
-> 
-> As you can see, we're trying to open event on CPU 0 first (succeed) and then CPU 1 but
-> failed on CPU1. Actually we don't enter any branch which handle the evsel->cpus in
-> __perf_evlist__propagate_maps() so the evsel->cpus keeps as is which should be initialized
-> from the pmu->cpumask. You referenced to [1] but in this case perf_evsel->system_wide == false
-> as I checked. perf_evsel->system_wide will set to true in perf_evlist__go_system_wide() and it
-> maybe only set for dummy events. Please correct me if I misread here.
+> Did you test it and get different results?
 
-Yes, this is confusing.  IIRC evsel->system_wide is for tracking (dummy)
-events to collect side band events (like for Intel-PT) regardless of
-command line options (like -a or -C).
+To avoid drivers having their own interpretations what "closed" means,
+core hides all queues in closed state:
 
-Thanks,
-Namhyung
+https://elixir.bootlin.com/linux/v6.10-rc1/source/net/core/netdev-genl.c#L582
 
+> > PTP RQ index is naively assigned to zero:
+> > rq->ix           = MLX5E_PTP_CHANNEL_IX;
+> > 
+> > but this isn't to be used as the stats index.
+> > Today, the PTP-RQ has no matcing rxq in the kernel level.
+> > i.e. turning PTP-RQ on won't add a kernel-level RXQ to the
+> > real_num_rx_queues.
+> > Maybe we better do.
+> > If not, and the current state is kept, the best we can do is let the PTP-RQ
+> > naively contribute its queue-stat to channel 0.  
 > 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/evlist.c?h=perf-tools-next#n40
+> OK, it sounds like the easiest thing to do is just count PTP as
+> channel 0, so if i == 0, I'll in the PTP stats.
 > 
-> Thanks.
-> 
+> But please see below regarding testing whether or not PTP is
+> actually enabled or not.
+
+If we can I think we should avoid making queue 0 too special. 
+If someone configures steering and only expects certain packets on
+queue 0 - getting PTP counted there will be a surprise. 
+I vote to always count it towards base.
 
