@@ -1,272 +1,189 @@
-Return-Path: <linux-kernel+bounces-205798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6086C900067
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:11:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68BF2900070
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C352E287324
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:11:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E11471F23D6B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1404C15CD5C;
-	Fri,  7 Jun 2024 10:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F56715B986;
+	Fri,  7 Jun 2024 10:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ODiAS7do"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L21YRJDU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883A813F016
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 10:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D7A4C61B
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 10:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717755051; cv=none; b=dl5x2JkQJP4256UhfQLYthlgXG5Z30hvBxJZ6gqHo/erLFuGo0y9YBjRamhHb+3hIOpmruswmsmOz1iL1ufdQn05ApDpx5K+d6eLtANvbfY7puv/DHy2dFEtr0AA5wejYVLQfyAj91qz+ti8faJAwBRCYF9BXzwoLb+dP/pw5HI=
+	t=1717755203; cv=none; b=qWUIbaRK1ZqstYuwvDbzk2VDF9UoXLUGSCyCmXaqChJhSBE/6qDVaJ14IPZZtYOh6V5vgQNEyu+P7FBuxKX5XtFwUxMjwEmGvW9NN+kw9LATn+zXbuk6w62N//Zu1xr/Ws3/Szc/ycqsFgbH69nmByF5EgEHAjVAyzaMwDAedsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717755051; c=relaxed/simple;
-	bh=QW+p0LE+OA0sFKpEDoQlNfo/8sXx7142FTJZGgXwPxA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ft4EOA6yn73lB3Atx+nx79mclJNgD+TLnZ1qJ/ziCdl8LaL0eqr2qPhfXtP+xaiPR8/vdWqlZz7S/4x4R8OYK1vdsRuFqzf+6NnEbca/MsBbHjEMEXH6e2kIogGgNBn1wEKdxVCo1WRlSK4ShmsKtI+VeEZQay8m7Zhnu70ovWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ODiAS7do; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1717755203; c=relaxed/simple;
+	bh=VvAK96elp1fhijCqg1ZtqWUzXtjZWXel3Bx3FY5irOg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=RCxODJCW72cNpzO5HDlkmQGOhyID8tHH61XIryMLSRaxa5L1FrwL4801O6NvF9993V8YT/CS595BriWDKuvH0Gz0j7KpUGPDS7fzuSIG6WqJDcu3mrSJrZQUGJQW7y5qrDJmtC3/m0fFAvnaTAcJeEYwmUoaLcgvke45p6RPorc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L21YRJDU; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717755048;
+	s=mimecast20190719; t=1717755201;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V1PfJJ2X6kfxVeld9qIvWb5WqYVs7ksNnwyBTZFTZh4=;
-	b=ODiAS7dojKLCdPKPxHHlOz2Sece/Y4b8ZhKutb3vm688iEMx9OoijQhAAEKvBTj7EIYgMQ
-	qlyBK44tRE7dNFu9gy1OHCEqF4YlB2yp5JgLsY4fGh1EUrn+Q2+hGOs/bfmIwXeQ9rsrzx
-	91B72nA7iSQOWthY1exaFvs4jGZxfN4=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=aiE315yb5LhYZq9scHgmLQ1ESDeksm/m+37tIZlY1sw=;
+	b=L21YRJDUudQFiFDp5/aZ/QttkQKgp7+HXxgxeC5o6yFuahM7mgBvNsRqB0S56VUGqsiDaL
+	XpXctiRq6/rvd+5ZRkRtaWQj5o62TcAvBENWazdntbWiRM1bHSS/6wTPxylXbrMLDmqpm9
+	hToDwPVxPkg1DcngIwjhUQ1FlSO2/Qc=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-450-LQvbI_4iPoiz85H-v2ySIA-1; Fri, 07 Jun 2024 06:10:47 -0400
-X-MC-Unique: LQvbI_4iPoiz85H-v2ySIA-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-35dcd39c6ebso1939957f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 03:10:47 -0700 (PDT)
+ us-mta-567-BxwcJLe8MW2WVTnvKa9xPg-1; Fri, 07 Jun 2024 06:13:20 -0400
+X-MC-Unique: BxwcJLe8MW2WVTnvKa9xPg-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-35dcfb8ba61so1688879f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 03:13:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717755046; x=1718359846;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V1PfJJ2X6kfxVeld9qIvWb5WqYVs7ksNnwyBTZFTZh4=;
-        b=hTqmBuYI4luRaN49xuQOiaoevL9xqjz1FHhhen8Z4ABgO8JpH6njlLi+SEaHcNqiHN
-         +ROta6HUAzjhhy1aXXYc1uPxwr74IfREVIqfxC1CQOXmyt8wrlJHFWWv+SUIlh0n+Bw7
-         XiWSCnqF5AYlDceMTUDeEr0ANTVc8ku5htZ3qAKFcfD/qDU6pUixRA6aiLBTKbDHfsVx
-         A0O9dz3l1jQFaj/91cPOibPMgNeBiLMBmNzP7RMBalXkej+GEzvVaWB/vVS7PHnSUKPK
-         PBaioQufRrFdq6/9bOo1Yuqa+u/AM2KkxK4JMTeiewgb/PEgKwHwbP+pV77Q2uli/o6e
-         rEnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3SRTeQfqYih0MVu5ePIhNpGo/XIxLkdd5/lzGuQGmxVpiYexDzYuOAT93oH0m3M4gZALeiE3VLdSnIgi5KiDP8sh+bkOU3fkxWjq4
-X-Gm-Message-State: AOJu0Yzpi+AXdZv8SsII/H6Jmce750aVJIGm04Uk4Jdc5+avKKGl/WWs
-	GNN9rax4PS8cF5oq5op4TIsYaSN8YtzcdlykbyqihvM0CHLERlpVNR1OCtE8C57GNV53uuUqBV9
-	eseHhMVL4BWnmUSvRzI5aPCfPzpSA4etb6BsO5X6DDtLRKBJTf/zCpeaI4AjTVtm4krz0FQWDvs
-	4YlfrH2HK3XaXwH7ae6SFnrSPvgNNyQ41+p5Ur
-X-Received: by 2002:a5d:4e08:0:b0:34c:fd92:3359 with SMTP id ffacd0b85a97d-35efea29070mr2152890f8f.21.1717755046092;
-        Fri, 07 Jun 2024 03:10:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFtI7a6+AdMZCJmgOoWoZZH9VEawBdUDuuktV7O8VTbiwlVP+AmaIQlQPw9D70k9nVauCb1+/x3VAnFyKs8qdI=
-X-Received: by 2002:a5d:4e08:0:b0:34c:fd92:3359 with SMTP id
- ffacd0b85a97d-35efea29070mr2152844f8f.21.1717755045636; Fri, 07 Jun 2024
- 03:10:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717755199; x=1718359999;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aiE315yb5LhYZq9scHgmLQ1ESDeksm/m+37tIZlY1sw=;
+        b=eSgqAi7+Q1lV0MBp74YwqlzRTfuOvEEfx8tkyLioTjSCtqVjiD+3Akc57/Peqrx8u+
+         l2RabXukgkAR1yu+adFnFBK/SODpV+apYzBK15DgPlRoYi1uilmo7Cq5uV8xlJvu+E6c
+         K+Nvfqu2HNWlenuVfITlhf/teJJPgEt5EcddbKVYhbRpQSsug5TKS2Xj+toEqBf+JiSk
+         BUn3U7+3JEd1qZLz3j3lsNNiCIOgXq7QiQP4Ekcsr3prLf/TmSqGqsCDwJLENnPa1s31
+         BVasnaqoAyQA7MimNX/2emphgzz9xYMmQ8mybdCDgSFj5SW7A9v/IfQc7MLCqaxbS0DN
+         9rrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLqXpQP27+V/Rhtti9Udq1wOfgGwrczXgOS5CAD16neCJqRlkZJqZzTDSv8snNkwTk3S60D9ma40cmaZWnD6dnI/Z2hzy4bqSNOHSR
+X-Gm-Message-State: AOJu0YyZdbEA2P0vEEYFbbe6MufSYB6yqTmkyhl+1yBvVR6zJJCgvVMx
+	A/cV7rUzF++WHuJg/YuliRIoA9aXkKFFlgWwZ9WqUALBbIAIYYLWNhQCr9gngrDlPHFWp0kEygO
+	ztruvjJMcBWmx/0DrtyqZn6OnYwYOZkNsjdEX4vPYPK0L9bFmbiybUtWaf+I7XA==
+X-Received: by 2002:a5d:5092:0:b0:35e:f0e:1ba0 with SMTP id ffacd0b85a97d-35efed39cbamr2084727f8f.19.1717755198777;
+        Fri, 07 Jun 2024 03:13:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHSP+9P5EOVNH1xCiaehcpYZZKwXma8vCy6h69diiVUOPoDiXSRNiXWfqYATBkQwi1/HThJOQ==
+X-Received: by 2002:a5d:5092:0:b0:35e:f0e:1ba0 with SMTP id ffacd0b85a97d-35efed39cbamr2084697f8f.19.1717755198282;
+        Fri, 07 Jun 2024 03:13:18 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c71a:2200:31c4:4d18:1bdd:fb7a? (p200300cbc71a220031c44d181bddfb7a.dip0.t-ipconnect.de. [2003:cb:c71a:2200:31c4:4d18:1bdd:fb7a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5fc31adsm3663430f8f.92.2024.06.07.03.13.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jun 2024 03:13:17 -0700 (PDT)
+Message-ID: <0bd0e529-2995-4699-875a-f6b529b7d322@redhat.com>
+Date: Fri, 7 Jun 2024 12:13:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530210714.364118-1-rick.p.edgecombe@intel.com> <20240530210714.364118-11-rick.p.edgecombe@intel.com>
-In-Reply-To: <20240530210714.364118-11-rick.p.edgecombe@intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Fri, 7 Jun 2024 12:10:33 +0200
-Message-ID: <CABgObfYhKmBkqGP-d12o6W2TfiaqwP-c8pcae9-pnkaYJt6K-w@mail.gmail.com>
-Subject: Re: [PATCH v2 10/15] KVM: x86/tdp_mmu: Reflect building mirror page tables
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: seanjc@google.com, kvm@vger.kernel.org, kai.huang@intel.com, 
-	dmatlack@google.com, erdemaktas@google.com, isaku.yamahata@gmail.com, 
-	linux-kernel@vger.kernel.org, sagis@google.com, yan.y.zhao@intel.com, 
-	Isaku Yamahata <isaku.yamahata@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 1/3] mm/ksm: add anonymous check in find_mergeable_vma
+To: Alex Shi <seakeel@gmail.com>, alexs@kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, izik.eidus@ravellosystems.com,
+ willy@infradead.org, aarcange@redhat.com, chrisw@sous-sol.org,
+ hughd@google.com
+References: <20240605095304.66389-1-alexs@kernel.org>
+ <353d4f6c-ed3d-4afe-82ab-8c0b22a0178f@redhat.com>
+ <6b39db70-70ee-4370-acc3-86050562e343@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <6b39db70-70ee-4370-acc3-86050562e343@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 30, 2024 at 11:07=E2=80=AFPM Rick Edgecombe
-<rick.p.edgecombe@intel.com> wrote:
-> +       /* Update mirrored mapping with page table link */
-> +       int (*reflect_link_spt)(struct kvm *kvm, gfn_t gfn, enum pg_level=
- level,
-> +                               void *mirrored_spt);
-> +       /* Update the mirrored page table from spte getting set */
-> +       int (*reflect_set_spte)(struct kvm *kvm, gfn_t gfn, enum pg_level=
- level,
-> +                               kvm_pfn_t pfn);
-
-Possibly link_external_spt and set_external_spte, since you'll have to
-s/mirrored/external/ in the comment. But not a hard request.
-
-> +static void *get_mirrored_spt(gfn_t gfn, u64 new_spte, int level)
-> +{
-> +       if (is_shadow_present_pte(new_spte) && !is_last_spte(new_spte, le=
-vel)) {
-> +               struct kvm_mmu_page *sp =3D to_shadow_page(pfn_to_hpa(spt=
-e_to_pfn(new_spte)));
-
-I think this is spte_to_child_sp(new_spte)?
-
-> +               void *mirrored_spt =3D kvm_mmu_mirrored_spt(sp);
-> +
-> +               WARN_ON_ONCE(sp->role.level + 1 !=3D level);
-> +               WARN_ON_ONCE(sp->gfn !=3D gfn);
-> +               return mirrored_spt;
-
-Based on previous reviews this can be just "return sp->external_spt",
-removing the not-particularly-interesting kvm_mmu_mirrored_spt()
-helper.
-
-> +static int __must_check reflect_set_spte_present(struct kvm *kvm, tdp_pt=
-ep_t sptep,
-
-tdp_mmu_set_mirror_spte_atomic?
-
-> +       /*
-> +        * For mirrored page table, callbacks are needed to propagate SPT=
-E
-> +        * change into the mirrored page table. In order to atomically up=
-date
-> +        * both the SPTE and the mirrored page tables with callbacks, uti=
-lize
-> +        * freezing SPTE.
-> +        * - Freeze the SPTE. Set entry to REMOVED_SPTE.
-> +        * - Trigger callbacks for mirrored page tables.
-> +        * - Unfreeze the SPTE.  Set the entry to new_spte.
-> +        */
-
-/*
- * We need to lock out other updates to the SPTE until the external
- * page table has been modified. Use REMOVED_SPTE similar to
- * the zapping case.
- */
-
-Easy peasy. :) We may want to rename REMOVED_SPTE to FROZEN_SPTE; feel
-free to do it at the head of this series, then it can be picked for
-6.11.
-
-> -static inline int __tdp_mmu_set_spte_atomic(struct tdp_iter *iter, u64 n=
-ew_spte)
-> +static inline int __tdp_mmu_set_spte_atomic(struct kvm *kvm, struct tdp_=
-iter *iter, u64 new_spte)
->  {
->         u64 *sptep =3D rcu_dereference(iter->sptep);
->
-> @@ -571,15 +629,36 @@ static inline int __tdp_mmu_set_spte_atomic(struct =
-tdp_iter *iter, u64 new_spte)
->          */
->         WARN_ON_ONCE(iter->yielded || is_removed_spte(iter->old_spte));
->
-> -       /*
-> -        * Note, fast_pf_fix_direct_spte() can also modify TDP MMU SPTEs =
-and
-> -        * does not hold the mmu_lock.  On failure, i.e. if a different l=
-ogical
-> -        * CPU modified the SPTE, try_cmpxchg64() updates iter->old_spte =
-with
-> -        * the current value, so the caller operates on fresh data, e.g. =
-if it
-> -        * retries tdp_mmu_set_spte_atomic()
-> -        */
-> -       if (!try_cmpxchg64(sptep, &iter->old_spte, new_spte))
-> -               return -EBUSY;
-> +       if (is_mirror_sptep(iter->sptep) && !is_removed_spte(new_spte)) {
-> +               int ret;
-> +
-> +               /* Don't support atomic zapping for mirrored roots */
-
-The why is hidden in the commit message to patch 11. I wonder if it
-isn't clearer to simply squash together patches 10 and 11 (your call),
-and instead split out the addition of the new struct kvm parameters.
-
-Anyway, this comment needs a bit more info:
-
-/*
- * Users of atomic zapping don't operate on mirror roots,
- * so only need to handle present new_spte.
- */
-
-> +               if (KVM_BUG_ON(!is_shadow_present_pte(new_spte), kvm))
-> +                       return -EBUSY;
-> +               /*
-> +                * Populating case.
-> +                * - reflect_set_spte_present() implements
-> +                *   1) Freeze SPTE
-> +                *   2) call hooks to update mirrored page table,
-> +                *   3) update SPTE to new_spte
-> +                * - handle_changed_spte() only updates stats.
-> +                */
-
-Comment not needed (weird I know).
+On 07.06.24 11:33, Alex Shi wrote:
+> 
+> 
+> On 6/5/24 5:56 PM, David Hildenbrand wrote:
+>> On 05.06.24 11:53, alexs@kernel.org wrote:
+>>> From: "Alex Shi (tencent)" <alexs@kernel.org>
+>>>
+>>> We do vma_set_anonyous in do_mmap(), and then vma_is_anonymous()
+>>> checking workable, use it as a extra check since ksm only care anonymous
+>>> pages.
+>>>
+>>> Signed-off-by: Alex Shi (tencent) <alexs@kernel.org>
+>>> ---
+>>>    mm/ksm.c | 3 ++-
+>>>    1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/mm/ksm.c b/mm/ksm.c
+>>> index f5138f43f0d2..088bce39cd33 100644
+>>> --- a/mm/ksm.c
+>>> +++ b/mm/ksm.c
+>>> @@ -742,7 +742,8 @@ static struct vm_area_struct *find_mergeable_vma(struct mm_struct *mm,
+>>>        if (ksm_test_exit(mm))
+>>>            return NULL;
+>>>        vma = vma_lookup(mm, addr);
+>>> -    if (!vma || !(vma->vm_flags & VM_MERGEABLE) || !vma->anon_vma)
+>>> +    if (!vma || !(vma->vm_flags & VM_MERGEABLE) || !vma->anon_vma ||
+>>> +            !vma_is_anonymous(vma))
+>>
+>> Doesn't KSM also apply to COW'ed pages in !anon mappings? At least that's what I recall.
+> I didn't a evidence for this. :(
+> 
+> In write_protect_page(), "PageAnonExclusive(&folio->page);" has a "VM_BUG_ON_PGFLAGS(!PageAnon(page), page);"
+> So is this hints the vma also need to be anonymous one?
 
 
-> +               ret =3D reflect_set_spte_present(kvm, iter->sptep, iter->=
-gfn,
-> +                                              iter->old_spte, new_spte, =
-iter->level);
-> +               if (ret)
-> +                       return ret;
-> +       } else {
-> +               /*
-> +                * Note, fast_pf_fix_direct_spte() can also modify TDP MM=
-U SPTEs
-> +                * and does not hold the mmu_lock.  On failure, i.e. if a
-> +                * different logical CPU modified the SPTE, try_cmpxchg64=
-()
-> +                * updates iter->old_spte with the current value, so the =
-caller
-> +                * operates on fresh data, e.g. if it retries
-> +                * tdp_mmu_set_spte_atomic()
-> +                */
-> +               if (!try_cmpxchg64(sptep, &iter->old_spte, new_spte))
-> +                       return -EBUSY;
-> +       }
->
->         return 0;
->  }
-> @@ -610,7 +689,7 @@ static inline int tdp_mmu_set_spte_atomic(struct kvm =
-*kvm,
->
->         lockdep_assert_held_read(&kvm->mmu_lock);
->
-> -       ret =3D __tdp_mmu_set_spte_atomic(iter, new_spte);
-> +       ret =3D __tdp_mmu_set_spte_atomic(kvm, iter, new_spte);
->         if (ret)
->                 return ret;
->
-> @@ -636,7 +715,7 @@ static inline int tdp_mmu_zap_spte_atomic(struct kvm =
-*kvm,
->          * Delay processing of the zapped SPTE until after TLBs are flush=
-ed and
->          * the REMOVED_SPTE is replaced (see below).
->          */
-> -       ret =3D __tdp_mmu_set_spte_atomic(iter, REMOVED_SPTE);
-> +       ret =3D __tdp_mmu_set_spte_atomic(kvm, iter, REMOVED_SPTE);
->         if (ret)
->                 return ret;
->
-> @@ -698,6 +777,11 @@ static u64 tdp_mmu_set_spte(struct kvm *kvm, int as_=
-id, tdp_ptep_t sptep,
->         role =3D sptep_to_sp(sptep)->role;
->         role.level =3D level;
->         handle_changed_spte(kvm, as_id, gfn, old_spte, new_spte, role, fa=
-lse);
-> +
-> +       /* Don't support setting for the non-atomic case */
-> +       if (is_mirror_sptep(sptep))
-> +               KVM_BUG_ON(is_shadow_present_pte(new_spte), kvm);
-> +
->         return old_spte;
->  }
->
-> --
-> 2.34.1
->
+vma_is_anonymous(vma) is restricted to anonymous folios and the shared 
+zeropage, but other VMAs (MAP_PRIVATE file-backed VMAs) can contain 
+anonymous folios as well.
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
