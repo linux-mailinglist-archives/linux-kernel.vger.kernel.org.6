@@ -1,223 +1,323 @@
-Return-Path: <linux-kernel+bounces-205701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15BE08FFF0E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:16:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 715728FFF15
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2112C1C2252D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:16:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2460B24FF9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB0D15B972;
-	Fri,  7 Jun 2024 09:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010DB525D;
+	Fri,  7 Jun 2024 09:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gheovIQd"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dGCCLrTZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A854415B576
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717751793; cv=none; b=qhSwPcjII5SRtHjkZQ35QyJPW9fsJy7OV8/QPkw+TvY4zpq68ORd/77TimaBb2soaIb6VthpeoaHeJIo8CU9N2Np4gYWE6HRgucyfvRgdu5+cq7r/dc1+uxltRyacyVKxssLrpkNjkgjqWPYQCMWu6IrbBeqSF6XNuikT3uMc4U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717751793; c=relaxed/simple;
-	bh=zIdt3Vb+Dr/QTS2l+2fvCqhwbM0oGZEPKaE2bmeBW9w=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=rIOtzIOfr3paKQHkjm1A4ot3L7jQ0ALEx5iqMDomEIOWbec/uhXrJbZDKp3srKStaRGOlFSKoAP2GYPD3uQgQw+ivvFsgoO7PIORnA6N8g0Xsrwiy+x7DmKYIn6KPX/8A2R7qOwJwkeoLDPh+pTx7rl1ykhXNzAPnBtxLXCW1G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gheovIQd; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4215f694749so12533675e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 02:16:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717751790; x=1718356590; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RKhcW2Pv1TQb63OYj0Ad4PZwEbdEXdKfu9Ta+939bwE=;
-        b=gheovIQdX8MqCeEPYnxqkKy87TZqDaoReQVAHtPOSW8xk9EVop6rItgwqA1Z8q+qbc
-         GSWz4No0t/KYRKfiI64BK+uMGqYxjwjMaCeo1vEZginzaAr+MHdnhdHfSltMvx+FJHpw
-         m9pNJu4Wpj8XkOkxFIStpHhmGl8J8Hr+bpmYZO2X7IzFGG2wMKphHowfgYPQyqSTGhfH
-         6niqMTB+ULEQJ7pZ7tIRSQHPSa3WewijOeX6AOXqfMP5xQF12wY4tcfDOkLuiTiKfHOi
-         M/pRdqvUYAHeS616hutggdE3XCc1J8Qf/PXdRG6B3Hw+G1LkJ9CxyJcJmrMU77JlrhQy
-         nj6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717751790; x=1718356590;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=RKhcW2Pv1TQb63OYj0Ad4PZwEbdEXdKfu9Ta+939bwE=;
-        b=Gbx04wvhRWhAE6zKGRkCkzhImX1rawc/LHWmAUoeHaNHXuxn5DmYhKQvX7aTnvmycg
-         xeyBdPtdn1AaH5CFZwOJRR1TcXX2YGJ714QwzsFmxIolQYXTeR4qMs7OWnEo1E2DbCxM
-         8JeHHsh1nlUMzVAbSspCJ3k+naIeMrj5zTpYv/MGrmZxBA8AY+3Ysj0bRGevF1ikEt0u
-         c4x7B465XvcegCH1CFrkYJEjMpjRF1IpptSGlxIJe96WmvRDvCoC0JZQhCYxTf86FhSv
-         KVSYmvm67sjwxiXxAgeU0LLC6m3FYe4XxVSxEdTEomUp8Lucr0iNuI13vdTLJwkOgzda
-         PJyA==
-X-Forwarded-Encrypted: i=1; AJvYcCVf3opNI2lXBUxXpc4dm/hr531yb32wcnVDibf09BQpe+qbQZjsQiKWjiQvcOqZQibxWMA5w5A3innD70i/SV8fLLMyc131Wkz+0Q03
-X-Gm-Message-State: AOJu0YzTH+p0e7c/2N3TywLfF3xJVM8SO/HPPDcNuFg4M/gYmItF6JsV
-	6L8aSxlytKjPBKgY+MhVPZeYc7OBfRA44mhg+xDn58HhWPGco5o7OOTYfbo98fU=
-X-Google-Smtp-Source: AGHT+IH6lSQLjPhb+rH7MhIJCz8VcmYFFOPCXGM2LCapictgRME7AWqPy+I8YzSDVKMGrNP+Ca47Lg==
-X-Received: by 2002:a05:600c:4f4a:b0:421:20aa:6048 with SMTP id 5b1f17b1804b1-42164a20b24mr16134255e9.26.1717751789789;
-        Fri, 07 Jun 2024 02:16:29 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:7e4b:b0d3:6a34:6404? ([2a01:e0a:982:cbb0:7e4b:b0d3:6a34:6404])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421580fe37csm82143035e9.3.2024.06.07.02.16.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jun 2024 02:16:29 -0700 (PDT)
-Message-ID: <88119323-bd54-4d2b-bb63-366c5fe77e39@linaro.org>
-Date: Fri, 7 Jun 2024 11:16:28 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F17115ADA9
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717751853; cv=fail; b=b7D61USBS9TXheMK91QsU+65yKTTc6QdgEotXVKpMrvfbklNQiMy53F4XxGhTlp+jG5kBcBkEsJe4zog6063dmo7PjZdH58T6hl4UkcdnjRxbOArR/pe96b5ZmUrnJ3CfqLRBcghUWgbOaJLoFHCpehC0Dh5hQBZlgcaciR8mMI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717751853; c=relaxed/simple;
+	bh=8pXmgy6wN51M2mRb+SMi0CCjDM9y7xGSfCXj72EV82U=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=YqvzPr0aUS/MSKlmsk7SnAb0ahgkuc8RWm3wZZ/1u67kcV4L3fSXcEEqva0NVgxyeR5wt8gxhFwS4XYAb6C8w0NrpowZiOYVVhV3uv1biYZzLYdZe/hfldDuxHIptqxjeC0nuds2YJeLtVPf8vSA6EvPlNqTZOYZen7UPOOy7VM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dGCCLrTZ; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717751853; x=1749287853;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=8pXmgy6wN51M2mRb+SMi0CCjDM9y7xGSfCXj72EV82U=;
+  b=dGCCLrTZ4O9uCQxkUWaBCyulYDjSDjIf19CPXSOBklq7+vXB8jJrPlej
+   2vs7/dWjEYG3+bd771am4Qm40YmJmkuMnFED4PiCILdCQHglqI5XsiSn4
+   4bmiixOd8hholw0NGQuxhU8DuTrHEC26KQQ4itjvbPb8H1UxXhH+x5Xex
+   0rhtpZhnQMXac3ff75ryPUsO7C1GaGQrINT0i9yMZbUQVN1JEurCU3+lf
+   RdyfCW9kHK2EvNTNhUZTlezqsWX7ey/jkmi/KmIpUq2Pp1huQ2h+vgwrp
+   7HChGrl4wOrR4N0oS4db83q9M5l0bPYOFwq8JZP6388/5p7XMPlFWdDOu
+   g==;
+X-CSE-ConnectionGUID: e3ljRf8GQrmGtM9NWTfSdA==
+X-CSE-MsgGUID: GWQ5HJ6ETG61Lna0DVrAxQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="25037968"
+X-IronPort-AV: E=Sophos;i="6.08,220,1712646000"; 
+   d="scan'208";a="25037968"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 02:17:32 -0700
+X-CSE-ConnectionGUID: E9yucLX4Q32kMbyYIThDaQ==
+X-CSE-MsgGUID: I9dA24kJQEqXKAinAMeKvw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,220,1712646000"; 
+   d="scan'208";a="38188299"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Jun 2024 02:17:31 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 7 Jun 2024 02:17:30 -0700
+Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 7 Jun 2024 02:17:30 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 7 Jun 2024 02:17:30 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.45) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 7 Jun 2024 02:17:30 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=R/SN3GA2365LqRC0ab17XIg/iQyhcgH3VZ8hRiqJs3nf06ieQTnZwpHUIMp1Haq46ATLGvoqW6yXMj1QxPicic0p0VFExR++O4HZWGeOWPb1JDwatplcLqwetJoHUuvmOcF/p/T0oduwtg3o1qb9EFaBk0kNyWUtBb0OZRyXr+G3BJUPjESV+brDjwNnvhjEVJe34KezcYE3D8E6b0fxO7w7b+6NmpSra2qY2esdodmIG7kyidSip/6vB/L43InjhVH694M4LidIyKMG/2czPkDDgjSs4E1Mm4OVMdNv8v78zoTWzCCCgmV9aTIfJulS6QaYXfddtDjuUzKxNY65DQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fV3uPRcUAsdJkGvX3/2u6v8lcphUg5cr+H/S90Imco4=;
+ b=YaKxg/WvB+ERwNDr9Uu6aFBMLfMc6FmFMq3OZ74o+8h0wv5JFPBZE++y4OWfQkY0e9QasIe0Vk5JIhyoxG1khQd11Pri0B/aKf9WcRQACuHYkkADIjRTqSf5MvmqiOxQRQM5INMBG06Qg+IboteTSflfaKa6Pj71MUbByyrmVCH6icf4mItg3GY1R/W4AjlkeIAQxivjr1Ag74dlSKkojawVRCQB2v0H3xxi9BCUm1SaLx8dBTqnv/EvogrePRCjU7CezFXL2Ji/qV2QJ6B1yh+Zh5MTVJjASUrI2F2eGg+XCvCvy/Z+Gk8laMNhfVXengZTi1Tdg0wXxr5+IgbJ+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by MW3PR11MB4649.namprd11.prod.outlook.com (2603:10b6:303:5b::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.34; Fri, 7 Jun
+ 2024 09:17:28 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.7633.034; Fri, 7 Jun 2024
+ 09:17:28 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Lu Baolu <baolu.lu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	"Joerg Roedel" <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
+	<robin.murphy@arm.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Nicolin Chen <nicolinc@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>, "Jacob
+ Pan" <jacob.jun.pan@linux.intel.com>, Joel Granados <j.granados@samsung.com>
+CC: "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"virtualization@lists.linux-foundation.org"
+	<virtualization@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v6 06/10] iommufd: Add iommufd fault object
+Thread-Topic: [PATCH v6 06/10] iommufd: Add iommufd fault object
+Thread-Index: AQHar+txwPSPp6CyskanS/lKKehznrG8Efnw
+Date: Fri, 7 Jun 2024 09:17:28 +0000
+Message-ID: <BN9PR11MB527615EC664698C340A0CA878CFB2@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <20240527040517.38561-1-baolu.lu@linux.intel.com>
+ <20240527040517.38561-7-baolu.lu@linux.intel.com>
+In-Reply-To: <20240527040517.38561-7-baolu.lu@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|MW3PR11MB4649:EE_
+x-ms-office365-filtering-correlation-id: 1cbf72c1-2017-4177-f418-08dc86d2a6e8
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|366007|376005|7416005|1800799015|38070700009|921011;
+x-microsoft-antispam-message-info: =?us-ascii?Q?oq7VshmeLWajkua4wLpSvbijbG6s9/fhPUIaERrrlu51I5zmhBn642Btdqxs?=
+ =?us-ascii?Q?3ZzUHcEt2+3FzcJo2bHtS3q5rikthCCs3ii9NDjyoOQeRy2WPdzIdWxRnjrX?=
+ =?us-ascii?Q?dSUZZOuH+j/oteFNqHRravSVTplBxgZMqDVrQUCDhMrrTMDZ3emenJp7sr2y?=
+ =?us-ascii?Q?B2y/KchGdU/bZLkcpFT9GLsImNaUlNQmQ5i88aVlur8JsAq07uekYLEWViZb?=
+ =?us-ascii?Q?L4lfZjqLSdSW3tWG3PYS4XBnQtiyWeJU1vJYa+tZvH3M5dcEGA9Sdfv4AFxY?=
+ =?us-ascii?Q?tfaE9apikGWjtdobYc20tOgXsMt2A+OyJnSYYGbdGhe8W4nFi9wsPhjbHPd1?=
+ =?us-ascii?Q?wAm1p+pCh8ZV02uWiqjNu2MPulVAaqY4UtVTPCHWnGXLyDpQ8+zFmaIswqub?=
+ =?us-ascii?Q?7/g9a4T+QA1nV14gIcKF6nP1gOpjJMeIjqds8XQ/vVpXIDxhTpWXLLc0kS52?=
+ =?us-ascii?Q?r4305RiFipOfNuHPvBb/nlUjTunoniJkSxdp54+P6VuBOzf/MvVBGUEVeI1Z?=
+ =?us-ascii?Q?dZNejwNQQS3yX/pXYGKWXAWar254VFEENqNvxIR+dWYZWkqyNMg9lDZG3CLJ?=
+ =?us-ascii?Q?pHNexOakF8PUd8YokCPENCJ5FkSPyPsiU8xkuF0VAYJAorMBA6NMlIEfUACh?=
+ =?us-ascii?Q?KhoAT6GgsUaMBSKVIqGrzqknIzUwxiLBOTJAQKMy1p4QNezC1j/M9fojXMc4?=
+ =?us-ascii?Q?j5hDXEyzxEdvIkbIynFFw2+N01FGWEAyO3YsW5BoMvc+NYwEneb2PLDPRaBB?=
+ =?us-ascii?Q?9DyAGj+eUzeAbM7gkpcNJVg4/LQmnCzWXHKovkAK/RtssPWjJyotgkA2diwg?=
+ =?us-ascii?Q?+/8I2j3JLivuysVrS2h0BlQJl3eXMcVjlKVn2RZkDMabuP8c3hSqlwZqIlCZ?=
+ =?us-ascii?Q?y5NLgD0I7uKAkbOPmV8OAbvvkT8m6Oka1t7v1Sg9MwvidxBhrcaqR6z8xrc8?=
+ =?us-ascii?Q?bBXgE1o/DN1In3YqI+RxsUjW2Yss02jND2xVaDoiffeXQ9Xz/4v+SyILCs7j?=
+ =?us-ascii?Q?BCkMkxmP07dUTzM5Y9Vie2gw1UghMEcyYbow4I3myR5VIkVUBMCeT/2Q6mh3?=
+ =?us-ascii?Q?Gk45yfkuFFr3ynVtOBV/SPNTEx1UTH4JB9xZM8ugG47+D+USAcMlBjNGeykX?=
+ =?us-ascii?Q?I17lSr8yNGANkJ+9FSC1QQUpdQ+MDeuTTE4WarF8gQNs/csYr78QsgA2lyfP?=
+ =?us-ascii?Q?zyLJNA16gNejs7PlOw2dZtI0gc+5TFkkvUQY2gOhFHFXJ7+zdckf3a5HYSCc?=
+ =?us-ascii?Q?CLI7jN871YF3xWN6Azvr4ovOkhEQEANUIpMQ97gvHOnxyWimaYW/BTvKKnwZ?=
+ =?us-ascii?Q?SQblh+E7VQZMSwcBjSOtkSvUumo09r9it++AZ/ac/s9XqHdZbNOUIN2zyjm5?=
+ =?us-ascii?Q?cMFV+zkmlNRQh/JXqe24fNbclWDm?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(7416005)(1800799015)(38070700009)(921011);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Ywm39sQrVzAp6znFvosSi6Hrmy7qr52ogI8K2TTzXnf00TvhFjw4xuOHxIwC?=
+ =?us-ascii?Q?oX2e9nkj4qaV0ITbX/WKvxY70esmnLKNPhyNLWIWa3wAQpqHPlQHVqUYuu08?=
+ =?us-ascii?Q?SZaHdheco/caiR9mMR7gkqSoHYoOeslglfn5ec0EGBlgm6Z0I0wIxT4F6nOY?=
+ =?us-ascii?Q?qu05FGUFuJQdmhPjIviUNiiH698SgvCUswBn/H/8c895mkaFlm2h+yFUltf2?=
+ =?us-ascii?Q?JZRELHb3A0Po9l1oOrKrN8x1nO5BJBWdn1H31FJe6xx13SF3Jyy/CmCpxXk1?=
+ =?us-ascii?Q?UvVaZR97CbT+j97lOJaOBGekKYcL+4XSTe02cVn4561ecZatpNTAY+XD+HW/?=
+ =?us-ascii?Q?kLgQr+/nPUgF2jgerl0QTWzL4OgHg+p4A4lGirkL5u9F2aNaHQyeplpeyYG0?=
+ =?us-ascii?Q?SAwinnxnds3WIRe/ey5Yk1tctvEywPAjIIpoJ+Vi+OAqX+lTBcsV1GbL30Dt?=
+ =?us-ascii?Q?kexxtwtaalkkauqunSZMqPAF4+HfNwsOSjYPoqV4OQel4HNbQATGRcdptJZl?=
+ =?us-ascii?Q?D5iXX0Jf7FXXgHc8L+cDqNpBPTHL9pbr5zCTIxeGv9neoPHLFbH/ylc7y4ab?=
+ =?us-ascii?Q?P3GhINzBbpmAcmGPZ9/7/GozNUMNTwgmPqd+cTOU/ON6v6L13MNglxQxWimy?=
+ =?us-ascii?Q?8ywkv8yQTlBjEf4HW01Ff9bnkx+qSvde9qx6iCAWc0zXeRZHp3j/ZKXEhJMn?=
+ =?us-ascii?Q?QlpAZs/HY1Ma7cGDv7wILXoEaomCQY2p14VZpn92ASvqcC25kAh+4L/TQLpN?=
+ =?us-ascii?Q?Q+FqUoO3wjdPg6sZgWZUPiaL/Mvbw62mZb4Y7ppEt0Cx5LdQy5ro+6w3IhE3?=
+ =?us-ascii?Q?bl94gHJesfTqF9qtxlGGSZJ6Wm2x2YPYoQfNg/NRW6w9BOyqwEpTseQp17lk?=
+ =?us-ascii?Q?sAgZsJwTA1u/qkfABKRGNxZvXCeSolKyHHHUt/vHBqU8TlrYSJgvMiT6HGKz?=
+ =?us-ascii?Q?qcnjUCzjDgKuBjdEAT3yo342GddhrssUGtEKGiU7vibZKFb09PBeSNkZnSKb?=
+ =?us-ascii?Q?NzO0OTRWXEO5TjP4TcjUgguRN3+Wckf/7kTu+oGJ0Df4wn1S2CkqrkKUaNW7?=
+ =?us-ascii?Q?SFw01UTV60wDOrwaRvfDD3cJn6sTpDSIBlj5bxp3qRlpRH6qiNBn0Rroxt7a?=
+ =?us-ascii?Q?NckHGIysz7HESuV0VsyZPRqtapwBWoihemSg24D7okVmUolOGl6ozdQF0FGB?=
+ =?us-ascii?Q?kttSvnnSz8Dg4YCKuefJOSMDyn3+73rGilVUeddNK/5hYBLx1be7eFxFYb9G?=
+ =?us-ascii?Q?1kooold7Yh86aOmxF758rFZ81jAia/eXTMM+As/TVszCUgx2uCp7S4OmDZia?=
+ =?us-ascii?Q?5fj6tmVTMOvEWUJXAbItXwt+kuYsERb9oKk6FLRUn844FI+xOVIFRe0YtqKq?=
+ =?us-ascii?Q?wXG4KJm3qew94Lqw5bh4khoiFZ9+L//SbZsKeCZj2jzdnW3X3bamtak13iNU?=
+ =?us-ascii?Q?4Qztzg7jK0LDXzNbpI3omFI6FV2Fq0h4oe6kFDR9MqAJa/K43l+cTve+KuBU?=
+ =?us-ascii?Q?9x1ASjFsWoJ+Y/ZLvgZFAge/M88w1Vwr+ZO73Ih2Hk0gfuiiw+ZVOoTVhot8?=
+ =?us-ascii?Q?OBVQFkkLj40WWpKPpZxaUyJvWH5VqxAXZB9/t9Yi?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 00/12] arm64: meson: bunch of DT fixes, take 4 (final one
- ??)
-To: Kevin Hilman <khilman@baylibre.com>, Jerome Brunet
- <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240606-topic-amlogic-upstream-bindings-fixes-dts-v1-0-62e812729541@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240606-topic-amlogic-upstream-bindings-fixes-dts-v1-0-62e812729541@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1cbf72c1-2017-4177-f418-08dc86d2a6e8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jun 2024 09:17:28.1213
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: v8G0MjXx9FCwf2uBKCca4iqhC5veRpkX5hJhS4WHx8ZpvgecxgwlFaOG9LVCJi+annqXJRsZqZa+JjUc/AtGkQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4649
+X-OriginatorOrg: intel.com
 
-On 06/06/2024 10:48, Neil Armstrong wrote:
-> Along with the following:
-> - https://lore.kernel.org/all/20240422-t7-reset-v2-1-cb82271d3296@amlogic.com/
-> - https://lore.kernel.org/all/20240513224552.800153-1-jan.dakinevich@salutedevices.com/
-> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-power-domains-spifc-v1-1-380f29ba4a16@linaro.org/
-> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-convert-spdif-receiver-v1-1-262465adbac2@linaro.org/
-> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-power-domains-mmc-v1-1-4acbb8cc2626@linaro.org/
-> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-power-domains-nvmem-v1-1-ef6f10c86a63@linaro.org/
-> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-power-domains-phy-v1-1-c819b0ecd8c8@linaro.org/
-> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-power-domains-rng-v1-1-0a55a7ba55e4@linaro.org/
-> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-audio-widgets-v1-1-65bd7cc2e09b@linaro.org/
-> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-power-domains-sardac-v1-1-40a8de6baa59@linaro.org/
-> - https://lore.kernel.org/all/20240606-topic-amlogic-upstream-bindings-convert-g12a-tohdmitx-v2-1-70d44fa30790@linaro.org/
-> 
-> this bunch of changes fixes 99% of the remaining dts check errors.
-> 
-> The two remaining bindings conversions for arm64/amlogic are:
-> - ti,tas5707
-> - everest,es7241
-> 
-> I'm too lazy to do them right now, so if someone is interested
-> in doing the conversion, please do it!
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
-> Neil Armstrong (12):
->        arm64: dts: amlogic: meson-g12b-bananapi: remove invalid fan on wrong pwm_cd controller
->        arm64: dts: amlogic: move ao_pinctrl into aobus
->        arm64: dts: amlogic: move assigned-clocks* from sound to clkc_audio node
->        arm64: dts: amlogic: sm1: fix tdm audio-controller clock order
->        arm64: dts: amlogic: sm1: fix tdm controllers compatible
->        arm64: dts: amlogic: g12a-u200: drop invalid sound-dai-cells
->        arm64: dts: amlogic: g12a-u200: add missing AVDD-supply to acodec
->        arm64: dts: amlogic: axg: fix tdm audio-controller clock order
->        arm64: dts: amlogic: c3: use correct compatible for gpio_intc node
->        arm64: dts: amlogic: a1: use correct node name for mmc controller
->        arm64: dts: amlogic: a1: drop the invalid reset-name for usb@fe004400
->        arm64: dts: amlogic: gxbb-odroidc2: fix invalid reset-gpio property
-> 
->   arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi        |   3 +-
->   arch/arm64/boot/dts/amlogic/meson-a1.dtsi          |   3 +-
->   arch/arm64/boot/dts/amlogic/meson-axg-s400.dts     |  17 +-
->   arch/arm64/boot/dts/amlogic/meson-axg.dtsi         |  24 +-
->   arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi  | 427 ++++++++++-----------
->   arch/arm64/boot/dts/amlogic/meson-g12a-fbx8am.dts  |  16 +-
->   .../boot/dts/amlogic/meson-g12a-radxa-zero.dts     |  16 +-
->   arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts  |  16 +-
->   arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts    |  18 +-
->   arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts |  16 +-
->   .../dts/amlogic/meson-g12b-bananapi-cm4-cm4io.dts  |  18 +-
->   .../meson-g12b-bananapi-cm4-mnt-reform2.dts        |  18 +-
->   .../boot/dts/amlogic/meson-g12b-bananapi.dtsi      |  30 +-
->   .../arm64/boot/dts/amlogic/meson-g12b-gsking-x.dts |  16 +-
->   .../boot/dts/amlogic/meson-g12b-gtking-pro.dts     |  16 +-
->   arch/arm64/boot/dts/amlogic/meson-g12b-gtking.dts  |  16 +-
->   .../dts/amlogic/meson-g12b-odroid-go-ultra.dts     |  16 +-
->   .../boot/dts/amlogic/meson-g12b-odroid-n2.dtsi     |  18 +-
->   .../boot/dts/amlogic/meson-g12b-odroid-n2l.dts     |  18 +-
->   .../boot/dts/amlogic/meson-g12b-radxa-zero2.dts    |  16 +-
->   .../boot/dts/amlogic/meson-g12b-ugoos-am6.dts      |  16 +-
->   .../boot/dts/amlogic/meson-gx-libretech-pc.dtsi    |  17 +-
->   .../arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi |  18 +-
->   arch/arm64/boot/dts/amlogic/meson-gxbb-kii-pro.dts |  17 +-
->   .../boot/dts/amlogic/meson-gxbb-nanopi-k2.dts      |  17 +-
->   .../boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts    |  17 +-
->   .../arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts |  19 +-
->   arch/arm64/boot/dts/amlogic/meson-gxbb-p200.dts    |  17 +-
->   arch/arm64/boot/dts/amlogic/meson-gxbb-p201.dts    |  17 +-
->   .../boot/dts/amlogic/meson-gxbb-vega-s95.dtsi      |  17 +-
->   .../boot/dts/amlogic/meson-gxbb-wetek-hub.dts      |  17 +-
->   .../boot/dts/amlogic/meson-gxbb-wetek-play2.dts    |  17 +-
->   .../dts/amlogic/meson-gxl-s805x-libretech-ac.dts   |  17 +-
->   .../boot/dts/amlogic/meson-gxl-s805x-p241.dts      |  17 +-
->   .../dts/amlogic/meson-gxl-s905x-khadas-vim.dts     |  17 +-
->   .../amlogic/meson-gxl-s905x-libretech-cc-v2.dts    |  17 +-
->   .../dts/amlogic/meson-gxl-s905x-libretech-cc.dts   |  17 +-
->   .../boot/dts/amlogic/meson-gxl-s905x-p212.dts      |  17 +-
->   .../boot/dts/amlogic/meson-gxm-khadas-vim2.dts     |  17 +-
->   .../arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts |  17 +-
->   arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts |  17 +-
->   arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi |  16 +-
->   .../dts/amlogic/meson-libretech-cottonwood.dtsi    |  16 +-
->   .../boot/dts/amlogic/meson-sm1-a95xf3-air-gbit.dts |  16 +-
->   .../boot/dts/amlogic/meson-sm1-a95xf3-air.dts      |  16 +-
->   .../boot/dts/amlogic/meson-sm1-bananapi-m2-pro.dts |  16 +-
->   .../boot/dts/amlogic/meson-sm1-bananapi-m5.dts     |  16 +-
->   arch/arm64/boot/dts/amlogic/meson-sm1-h96-max.dts  |  16 +-
->   arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi  |  16 +-
->   arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts   |  16 +-
->   .../boot/dts/amlogic/meson-sm1-x96-air-gbit.dts    |  16 +-
->   arch/arm64/boot/dts/amlogic/meson-sm1-x96-air.dts  |  16 +-
->   arch/arm64/boot/dts/amlogic/meson-sm1.dtsi         |  36 +-
->   53 files changed, 679 insertions(+), 630 deletions(-)
-> ---
-> base-commit: c3f38fa61af77b49866b006939479069cd451173
-> change-id: 20240606-topic-amlogic-upstream-bindings-fixes-dts-6a572ad54324
-> 
-> Best regards,
+> From: Lu Baolu <baolu.lu@linux.intel.com>
+> Sent: Monday, May 27, 2024 12:05 PM
+>=20
+> +static ssize_t iommufd_fault_fops_read(struct file *filep, char __user *=
+buf,
+> +				       size_t count, loff_t *ppos)
+> +{
+> +	size_t fault_size =3D sizeof(struct iommu_hwpt_pgfault);
+> +	struct iommufd_fault *fault =3D filep->private_data;
+> +	struct iommu_hwpt_pgfault data;
+> +	struct iommufd_device *idev;
+> +	struct iopf_group *group;
+> +	struct iopf_fault *iopf;
+> +	size_t done =3D 0;
+> +	int rc =3D 0;
+> +
+> +	if (*ppos || count % fault_size)
+> +		return -ESPIPE;
 
-I'll postpone applying patch 3 to be sure it's the right solution,
-but the other ones are trivial and I'll apply them now.
+the man page says:
 
-Neil
+"If count is zero, read() returns zero and has no  other  results."
+
+> +
+> +	mutex_lock(&fault->mutex);
+> +	while (!list_empty(&fault->deliver) && count > done) {
+> +		group =3D list_first_entry(&fault->deliver,
+> +					 struct iopf_group, node);
+> +
+> +		if (group->fault_count * fault_size > count - done)
+> +			break;
+> +
+> +		rc =3D xa_alloc(&fault->response, &group->cookie, group,
+> +			      xa_limit_32b, GFP_KERNEL);
+> +		if (rc)
+> +			break;
+> +
+> +		idev =3D to_iommufd_handle(group->attach_handle)->idev;
+> +		list_for_each_entry(iopf, &group->faults, list) {
+> +			iommufd_compose_fault_message(&iopf->fault,
+> +						      &data, idev,
+> +						      group->cookie);
+> +			rc =3D copy_to_user(buf + done, &data, fault_size);
+> +			if (rc) {
+
+'rc' should be converted to -EFAULT.
+
+> +				xa_erase(&fault->response, group->cookie);
+> +				break;
+> +			}
+> +			done +=3D fault_size;
+> +		}
+> +
+> +		list_del(&group->node);
+> +	}
+> +	mutex_unlock(&fault->mutex);
+> +
+> +	return done =3D=3D 0 ? rc : done;
+
+again this doesn't match the manual:
+
+"On error, -1 is returned, and errno is set appropriately. "
+
+it doesn't matter whether 'done' is 0.
+
+> +
+> +static int iommufd_fault_fops_release(struct inode *inode, struct file *=
+filep)
+> +{
+> +	struct iommufd_fault *fault =3D filep->private_data;
+> +
+> +	iommufd_ctx_put(fault->ictx);
+> +	refcount_dec(&fault->obj.users);
+> +	return 0;
+> +}
+
+hmm this doesn't sound correct. the context and refcount are
+acquired in iommufd_fault_alloc() but here they are reverted when
+the fd is closed...
+
+> +
+> +	filep =3D anon_inode_getfile("[iommufd-pgfault]",
+> &iommufd_fault_fops,
+> +				   fault, O_RDWR);
+> +	if (IS_ERR(filep)) {
+> +		rc =3D PTR_ERR(filep);
+> +		goto out_abort;
+> +	}
+> +
+> +	refcount_inc(&fault->obj.users);
+> +	iommufd_ctx_get(fault->ictx);
+> +	fault->filep =3D filep;
+
+those 3 lines can be moved after below fdno get. It's reads slightly
+clearer to put file related work together before getting to the last piece
+of intiailzation.=20
+
+> +
+> +	fdno =3D get_unused_fd_flags(O_CLOEXEC);
+> +	if (fdno < 0) {
+> +		rc =3D fdno;
+> +		goto out_fput;
+> +	}
+> +
+> @@ -332,6 +332,7 @@ union ucmd_buffer {
+>  	struct iommu_ioas_unmap unmap;
+>  	struct iommu_option option;
+>  	struct iommu_vfio_ioas vfio_ioas;
+> +	struct iommu_fault_alloc fault;
+
+alphabetic=20
+
+> @@ -381,6 +382,8 @@ static const struct iommufd_ioctl_op
+> iommufd_ioctl_ops[] =3D {
+>  		 val64),
+>  	IOCTL_OP(IOMMU_VFIO_IOAS, iommufd_vfio_ioas, struct
+> iommu_vfio_ioas,
+>  		 __reserved),
+> +	IOCTL_OP(IOMMU_FAULT_QUEUE_ALLOC, iommufd_fault_alloc,
+> struct iommu_fault_alloc,
+> +		 out_fault_fd),
+
+ditto
+
+
 
