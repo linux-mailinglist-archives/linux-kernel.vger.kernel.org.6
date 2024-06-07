@@ -1,182 +1,148 @@
-Return-Path: <linux-kernel+bounces-206105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DAAD900445
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:59:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B88C0900462
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B68B6285CEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:59:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F0901F21E23
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1091719408C;
-	Fri,  7 Jun 2024 12:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278C5194A53;
+	Fri,  7 Jun 2024 13:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Co5j6d96"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="puEFBW1i"
+Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED8C18C330;
-	Fri,  7 Jun 2024 12:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9EF192B82
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 13:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717765148; cv=none; b=qgrpI8Cjli93yjxf7pSj3OpXqchTPALH1EvqH0GLlDBNPyZz0e2IAxb9X+rasnBdlHXBvHV1R3djOSqYJtSLzhR9vFXMnL7zhlKHKiUC7Iij2XZxUWcK0uHazRgB6J1yfIx53vAxlUt8YZFww4WFDpDbooOF1Gtov/WKNkq7Pbw=
+	t=1717766057; cv=none; b=tVA9sBR8EreMI4JsS9Gq0lQFMA2nYu2AfAiTt3D6K7OmARgAeXeW/gINGvPzzySC/dweS8RFZcFxOOyHgc2yjfkbeVQZaY9w3yxXFwhqMFztl/0eShFjTu2V0Haq4VdhRiinJB/jxRFEugKIwJhd58V0B2KufVsbDoyJTU4cIGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717765148; c=relaxed/simple;
-	bh=vjt1+QeSp5Sb/mevIOfvfW6Aev/mE5JAlBBwzVe8frA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h4Ea+kqRqIu4oep/KvsBXfyxNZ+pwrWeyYG2Cpultwt0VHJYzYLyVm84pJXQQeB2tbfAUzRIQv49yoCzgbKkDw23KE9VUMhceaDk2cMtkuetGUI+nJLldQqzQuzbOSVr8MMYsmxC008eySqUmZf18OxD19olFPiCdOrqhmAcKJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Co5j6d96; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57864327f6eso2460604a12.1;
-        Fri, 07 Jun 2024 05:59:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717765145; x=1718369945; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fwNu32j4Qgs9o4RZx2A4i2wz9FLKQtp05joxe1btFUA=;
-        b=Co5j6d96t47/fcPM5PsIf0vPJelgRLIcDkgwGgqW+tE0M8C0OcR1sM7phA7QSbXPa+
-         PuhSgwQZKTcnMWEHesMso8IElm+D1nTuwHvsj8vgaAqmZ9/cNpSLwR35avqqT4aOCJrR
-         ZfbT4cBfEd1rw1cH/qyK2ZHfSjZMygTJn2OIK5OK7pSTX9gXGSbjxsaEGiYbiP0D+nJL
-         G662WKWILaPYQQTSqkIVQftYSvVFPiGPFuPFllEihQedSc1aXdH4U5dV/4DyM7K7fjUa
-         0RdKkRhoP+8QCjn9PSROBWboKwXcNKQSAowhGCxL5FDWDHesj6R1LsNuWpje22hkW1tG
-         0z0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717765145; x=1718369945;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fwNu32j4Qgs9o4RZx2A4i2wz9FLKQtp05joxe1btFUA=;
-        b=WfmHUb6hNIczdB2arpSpMMV6JvQYMMGgtxv/0FBfjRSiQ88rrv9mS9F9ZqwuL7lONF
-         uJYf4ntiJSB9fv6kCmPu6Mo+H0MRIqAeWXNEm7is3d0RP73rqRnwD7FcwpNihrlqZfCx
-         c11ltShrX5wCy7vwfOKe12H9RuJ4tVTTJcmmbcXp875qje3unMZp4mlE9XpS4RS/ozz+
-         UsoJNafDn1kNWH+7YA8Od3OC78AeVAkDt2MyGlZ2arw2zSpbEpDV34dHoOyj2yC8WSDy
-         QVBhN4nZMfuMgBialARyX9YKp4DIa6y/96TIvBW6V2vImzyeg3z1KMI8Azex/UdnxQCO
-         jMQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWYuZRdM2lyuwmqke4dPlBeMrIfHceAX5ZlZJn0ql9GRqnmGzqF4KeqPmQyhgjmAIcgcSUaWdRtS+DjEUPdF5Zz5DfGlya+16jt27xWxIEgFvHkDktXkVx/rULi3//viBqgHNYo6vsyo/s=
-X-Gm-Message-State: AOJu0YzNutazsNI2ucExzTeXzbbU+3fWUpEz04sD+vtD3cgRtLbL8cLu
-	8aHnay1/EWMGB111DkAY7FpV45L0iVzUEZdYpdJUauqsp5oAFKJQ
-X-Google-Smtp-Source: AGHT+IERA8GW/ndoCYphHW5kfMnR0SWWaANqPC3SnpUYwkOtyDcZn7YAFq06omRL5dyJc8UdYz6Sgg==
-X-Received: by 2002:a50:cdc2:0:b0:574:ebf4:f786 with SMTP id 4fb4d7f45d1cf-57c4e3f5be7mr2219873a12.16.1717765144630;
-        Fri, 07 Jun 2024 05:59:04 -0700 (PDT)
-Received: from [192.168.42.79] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae229712sm2726504a12.81.2024.06.07.05.59.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jun 2024 05:59:04 -0700 (PDT)
-Message-ID: <cf8bb1db-b601-4f54-bafc-d6c58f6ce946@gmail.com>
-Date: Fri, 7 Jun 2024 13:59:07 +0100
+	s=arc-20240116; t=1717766057; c=relaxed/simple;
+	bh=M57GmtZA7uRuye5XGW7w65bnbiEuyeFO424hHO+XQY8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LHoe18ZbZQwlfsCdCZ7iCU6XX0Y4fNzsaDyUTvBrqOjWw/jcDomd2Uvw3qt7pLq/10E/Jt56LDOBMOhrvcgRqaZizFiUU4hRo1Lba2Xe80v4wlE6DZcrL+AGYB5AYB+RBs/zocCQqdwtUi2yb9KHK3WFg8Gct/wrP6A/y0irDXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (1024-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=puEFBW1i; arc=none smtp.client-ip=185.136.65.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 202406071314093d9a2f5f461098f239
+        for <linux-kernel@vger.kernel.org>;
+        Fri, 07 Jun 2024 15:14:10 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=diogo.ivo@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=sTjKOiLBJ41DZpxQsI71jhDcMjYRDYvyrj4yxx6L3Vc=;
+ b=puEFBW1ivREMLt24MKBqv3xL4egFgbQFdsko6t6gnS+ZPCsXIEYlp9XGNMdqe60wukEyA1
+ av894e3zYg66Ul5E9MZLDiIQs/4PaQnmSS3jUi1UKuBQFr1a3CpHgwthZuZn0ZAaONAuGYlY
+ gZhjxsaqF2RBP9mepK7SVcEtSMtkU=;
+From: Diogo Ivo <diogo.ivo@siemens.com>
+Subject: [PATCH net-next v3 0/4] Enable PTP timestamping/PPS for AM65x
+ SR1.0 devices
+Date: Fri, 07 Jun 2024 14:02:41 +0100
+Message-Id: <20240607-iep-v3-0-4824224105bc@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] sbitmap: fix io hung due to race on
- sbitmap_word::cleared
-To: YangYang <yang.yang@vivo.com>, Yu Kuai <yukuai1@huaweicloud.com>,
- Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240604031124.2261-1-yang.yang@vivo.com>
- <CAFj5m9KV7OJ4_KjbSkpdtfrKamoLzV6EH-mJP3=y+VvoYOzC3w@mail.gmail.com>
- <aa7246f9-f7df-3054-077e-eb21c7f423ac@huaweicloud.com>
- <e1cdf579-007b-415f-9e4d-3fadd6f97b36@vivo.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <e1cdf579-007b-415f-9e4d-3fadd6f97b36@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPEEY2YC/1WMwQ6DIBAFf8XsuTQIithT/6PpAXFb9yAaIMTG+
+ O8l9NB4fJk3s0NATxjgVu3gMVGgxeUhLxXYybg3MhrzBsFFw1vRM8KV6WFojLRDz5WG/Fw9vmg
+ rlQc4jMzhFuGZyUQhLv5T8qku/FRKNeOsE520vGt7Mcp7IJzRhatd5lJI4m8p3vwskS00GmvLT
+ au0OlvHcXwBXZs3HtgAAAA=
+To: MD Danish Anwar <danishanwar@ti.com>, Roger Quadros <rogerq@kernel.org>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Richard Cochran <richardcochran@gmail.com>, Nishanth Menon <nm@ti.com>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jan Kiszka <jan.kiszka@siemens.com>, 
+ Jacob Keller <jacob.e.keller@intel.com>, Simon Horman <horms@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Diogo Ivo <diogo.ivo@siemens.com>, 
+ Wojciech Drewek <wojciech.drewek@intel.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717766048; l=3009;
+ i=diogo.ivo@siemens.com; s=20240529; h=from:subject:message-id;
+ bh=M57GmtZA7uRuye5XGW7w65bnbiEuyeFO424hHO+XQY8=;
+ b=qIfW66+YKoQkrc5SJJN2tiHs003VGAqgW6y5350rcJBm/109jXHtPaZiTAK/yAPMRkGG2jQLh
+ 8MkaSvLmFPzC8+gyCxWEwtVlBRJoogcaKmSUfwFxeKwVZjxvI7qDBTO
+X-Developer-Key: i=diogo.ivo@siemens.com; a=ed25519;
+ pk=BRGXhMh1q5KDlZ9y2B8SodFFY8FGupal+NMtJPwRpUQ=
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1320519:519-21489:flowmailer
 
-On 6/4/24 08:03, YangYang wrote:
-> On 2024/6/4 14:12, Yu Kuai wrote:
->> Hi,
->>
->> 在 2024/06/04 11:25, Ming Lei 写道:
->>> On Tue, Jun 4, 2024 at 11:12 AM Yang Yang <yang.yang@vivo.com> wrote:
->>>>
->>>> Configuration for sbq:
->>>>    depth=64, wake_batch=6, shift=6, map_nr=1
->>>>
->>>> 1. There are 64 requests in progress:
->>>>    map->word = 0xFFFFFFFFFFFFFFFF
->>>> 2. After all the 64 requests complete, and no more requests come:
->>>>    map->word = 0xFFFFFFFFFFFFFFFF, map->cleared = 0xFFFFFFFFFFFFFFFF
->>>> 3. Now two tasks try to allocate requests:
->>>>    T1:                                       T2:
->>>>    __blk_mq_get_tag                          .
->>>>    __sbitmap_queue_get                       .
->>>>    sbitmap_get                               .
->>>>    sbitmap_find_bit                          .
->>>>    sbitmap_find_bit_in_word                  .
->>>>    __sbitmap_get_word  -> nr=-1              __blk_mq_get_tag
->>>>    sbitmap_deferred_clear                    __sbitmap_queue_get
->>>>    /* map->cleared=0xFFFFFFFFFFFFFFFF */     sbitmap_find_bit
->>>>      if (!READ_ONCE(map->cleared))           sbitmap_find_bit_in_word
->>>>        return false;                         __sbitmap_get_word -> nr=-1
->>>>      mask = xchg(&map->cleared, 0)           sbitmap_deferred_clear
->>>>      atomic_long_andnot()                    /* map->cleared=0 */
->>>>                                                if (!(map->cleared))
->>>>                                                  return false;
->>>>                                       /*
->>>>                                        * map->cleared is cleared by T1
->>>>                                        * T2 fail to acquire the tag
->>>>                                        */
->>>>
->>>> 4. T2 is the sole tag waiter. When T1 puts the tag, T2 cannot be woken
->>>> up due to the wake_batch being set at 6. If no more requests come, T1
->>>> will wait here indefinitely.
->>>>
->>>> To fix this issue, simply revert commit 661d4f55a794 ("sbitmap:
->>>> remove swap_lock"), which causes this issue.
->>>
->>> I'd suggest to add the following words in commit log:
->>>
->>> Check on ->cleared and update on both ->cleared and ->word need to be
->>> done atomically, and using spinlock could be the simplest solution.
->>>
->>> Otherwise, the patch looks fine for me.
->>
->> Maybe I'm noob, but I'm confused how can this fix the problem, looks
->> like the race condition doesn't change.
->>
->> In sbitmap_find_bit_in_word:
->>
->> 1) __sbitmap_get_word read word;
->> 2) sbitmap_deferred_clear clear cleared;
->> 3) sbitmap_deferred_clear update word;
->>
->> 2) and 3) are done atomically while 1) can still concurrent with 3):
->>
->> t1:
->> sbitmap_find_bit_in_word
->>   __sbitmap_get_word
->>   -> read old word, return -1 >          t2:
->>          sbitmap_find_bit_in_word
->>           __sbitmap_get_word
->>           -> read old word, return -1
->>   sbitmap_deferred_clear
->>   -> clear cleared and update word
->>          sbitmap_deferred_clear
->>          -> cleared is cleared, fail
-> 
-> Yes, you are right, this patch cannot fix this issue.
+This patch series enables support for PTP in AM65x SR1.0 devices.
 
-One other alternative is to kill ->cleared. It's not
-immediately clear how important it is. Do we have any
-numbers?
+This feature relies heavily on the Industrial Ethernet Peripheral
+(IEP) hardware module, which implements a hardware counter through
+which time is kept. This hardware block is the basis for exposing
+a PTP hardware clock to userspace and for issuing timestamps for
+incoming/outgoing packets, allowing for time synchronization.
 
+The IEP also has compare registers that fire an interrupt when the
+counter reaches the value stored in a compare register. This feature
+allows us to support PPS events in the kernel.
 
->> BYW, I still think it's fine to fix this problem by trying the
->> __sbitmap_get_word() at least one more time if __sbitmap_get_word()
->> failed.
-> 
-> Err, after trying one more time __sbitmap_get_word() may still fail.
+The changes are separated into four patches:
+ - PATCH 01/04: Register SR1.0 devices with the IEP infrastructure to
+		expose a PHC clock to userspace, allowing time to be
+		adjusted using standard PTP tools. The code for issuing/
+		collecting packet timestamps is already present in the
+		current state of the driver, so only this needs to be
+		done.
+ - PATCH 02/04: Remove unnecessary spinlock synchronization.
+ - PATCH 03/04: Add support for IEP compare event/interrupt handling
+		to enable PPS events.
+ - PATCH 04/04: Add the interrupts to the IOT2050 device tree.
 
+Currently every compare event generates two interrupts, the first
+corresponding to the actual event and the second being a spurious
+but otherwise harmless interrupt. The root cause of this has been
+identified and has been solved in the platform's SDK. A forward port
+of the SDK's patches also fixes the problem in upstream but is not
+included here since it's upstreaming is out of the scope of this
+series. If someone from TI would be willing to chime in and help
+get the interrupt changes upstream that would be great!
+
+Signed-off-by: Diogo Ivo <diogo.ivo@siemens.com>
+---
+Changes in v3:
+- Collect Reviewed-by tags
+- Add patch 02/04 removing spinlocks from IEP driver
+- Use mutex-based synchronization when accessing HW registers
+- Link to v2: https://lore.kernel.org/r/20240604-iep-v2-0-ea8e1c0a5686@siemens.com
+
+Changes in v2:
+- Collect Reviewed-by tags
+- PATCH 01/03: Limit line length to 80 characters
+- PATCH 02/03: Proceed with limited functionality if getting IRQ fails,
+	       limit line length to 80 characters
+- Link to v1: https://lore.kernel.org/r/20240529-iep-v1-0-7273c07592d3@siemens.com
+
+---
+Diogo Ivo (4):
+      net: ti: icssg-prueth: Enable PTP timestamping support for SR1.0 devices
+      net: ti: icss-iep: Remove spinlock-based synchronization
+      net: ti: icss-iep: Enable compare events
+      arm64: dts: ti: iot2050: Add IEP interrupts for SR1.0 devices
+
+ .../boot/dts/ti/k3-am65-iot2050-common-pg1.dtsi    | 12 ++++
+ drivers/net/ethernet/ti/icssg/icss_iep.c           | 84 +++++++++++++++++++---
+ drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c   | 51 ++++++++++++-
+ 3 files changed, 136 insertions(+), 11 deletions(-)
+---
+base-commit: 2f0e3f6a6824dfda2759225326d9c69203c06bc8
+change-id: 20240529-iep-8bb4a3cb9068
+
+Best regards,
 -- 
-Pavel Begunkov
+Diogo Ivo <diogo.ivo@siemens.com>
+
 
