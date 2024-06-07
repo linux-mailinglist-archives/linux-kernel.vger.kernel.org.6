@@ -1,142 +1,151 @@
-Return-Path: <linux-kernel+bounces-205588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA618FFDD8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:11:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29ED48FFDD4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5757C1C232B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:11:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFC0128AE89
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBB915ADB4;
-	Fri,  7 Jun 2024 08:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A941115ADA4;
+	Fri,  7 Jun 2024 08:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eftwMiAl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dgfEXFYY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58F115ADA3;
-	Fri,  7 Jun 2024 08:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929AA1C2AF
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 08:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717747877; cv=none; b=P1YzF1ZBsoTcvhDWiiqzYLI79Scu97Xok+z38pN2HE/3JH6P+ks+qJffk2usgjoMwtcxZsF/X6DN5vfUown/x8Kmq+mj04MkIdCmVYGlHgQHLgoWbqYzBoTAao/iW9lWEiK6DgFer+Nxe+5TYxlQNWw7VOiF3vSS2dnypqnYBUk=
+	t=1717747846; cv=none; b=X6ghRabEUjvuGlXDbKZIPlypWbaXaHx8dJw1v/mi/f4pVn9zKjsNU33qKcFkmvTSN1vGCzl0b/sNG40mJ0DDv/I5j5Toei6gj6OsMTkKNzhTAsEzoEpeVtkDr7CLKH0mBwUkhJZn58XW4iM0pdIRsgSeV68Yjt7/THwXIRDpmnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717747877; c=relaxed/simple;
-	bh=BjHvlPpsf1JuNh8voewB5kjC1cJt74iMWbnPuF3HdpY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZNwWXm3Fad7B9kZ+VjjIZ3ZiCT4QTrcnWxzdeDTLw1WOCYGli4i3hRIWXnntn3W58jNy2p1KfhbW2sUtGjbGUcJgayW81SliEY9+l6ojTvIUjIQ39pKyZJgfLlINYAT8Wl9KbNUrhDnJ9EZGi/sfvc7q9MPQhatLE3YAfkTZuQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eftwMiAl; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717747874; x=1749283874;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BjHvlPpsf1JuNh8voewB5kjC1cJt74iMWbnPuF3HdpY=;
-  b=eftwMiAlE+t6gMWr6LCZsJiwTgLfU99ZMiuh/QzkOpdB4lyJF+cId7SI
-   FCyKjM3bMIUtcxxRCXyU3i6kx5fNxZqOuB/Jfb+kMJv+2iFwkAT4FS56x
-   X8gwbOfOy+dhBj9klOAg2baEArDOIdNtIFh4h3FQe01/XkC7SzgbgWFoe
-   HodiXj/B/qfivtQ4SrvweRB023rxVMFON6W1cIcVqU7OZYIOEn/5cv5A2
-   vYy/u2GN+Yli5Dp1decumSy/P4Wse+RSl6HBo7yc2eflKv2P7OLmRWece
-   pPZ688i0T67npMmskJIAQz3kJ/ShKemaYdFwfCPRgCNMs0jjqCoE1MSOj
-   A==;
-X-CSE-ConnectionGUID: Rzx1xobmROq98wE6FKfg1w==
-X-CSE-MsgGUID: 5jZMsFoSQE65Zj7mqp/Rlg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="14614616"
-X-IronPort-AV: E=Sophos;i="6.08,220,1712646000"; 
-   d="scan'208";a="14614616"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 01:11:14 -0700
-X-CSE-ConnectionGUID: Yo/IX92zTnuTcmNSHjv5bA==
-X-CSE-MsgGUID: frMbXn5QSte5GkD02fumGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,220,1712646000"; 
-   d="scan'208";a="43185517"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa005.jf.intel.com with ESMTP; 07 Jun 2024 01:11:10 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sFUgm-0004F4-08;
-	Fri, 07 Jun 2024 08:11:08 +0000
-Date: Fri, 7 Jun 2024 16:10:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christian Hewitt <christianshewitt@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Christian Hewitt <christianshewitt@gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: meson: add initial support for Dreambox
- One/Two
-Message-ID: <202406071527.fnfhnkUL-lkp@intel.com>
-References: <20240606094513.3949323-3-christianshewitt@gmail.com>
+	s=arc-20240116; t=1717747846; c=relaxed/simple;
+	bh=xan89PWRu7zP6FjR4igFX3BzW5xabnOUhXxUie21/G8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dR91VtuKIeYDXeP/6Rw4kg6WzrXXUgueplzkVO2V1CJ4EFD08rSOuEKJkEZsHHe6wlC4qS9EBKmf5UhzPnpAXQJ4aX4pOJaM/4WwiChFSHDdLLl0EK4meFLLA1YP7IpT9xla+RH6fhl9jwF/NCN39H60iXPlqG27AXREnVHZIuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dgfEXFYY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717747843;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IpzQWE3Fx+gen53+97uqx2lsnAb/FfxkaVcs1hIq2p0=;
+	b=dgfEXFYYHTz5bUTOIPSvE8OCEc44NwjFXo4LEcxFSenfMSMx4jaD7hSRWon5PFjdSaBjhl
+	D8kHam+mcE5j3GQ080VkIwm/fbd8NReWM9qxV22zLBhmG3uCWdojzvcQbekzyknaHXAmLh
+	iNVMXA2bjzlYwyf2AM9thZfmbhGNxwk=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-424-zpq3coNXOVSfH-73SqPnGA-1; Fri, 07 Jun 2024 04:10:41 -0400
+X-MC-Unique: zpq3coNXOVSfH-73SqPnGA-1
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-52bc1e919deso55686e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 01:10:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717747840; x=1718352640;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IpzQWE3Fx+gen53+97uqx2lsnAb/FfxkaVcs1hIq2p0=;
+        b=mc7tTGEoL92vNNMicrXxsBmGaufMhAib+H3upbgsUbDDnb4dp4ckMo8L+H4r8ZQzHI
+         r6Tp0p2usG+79dcCVHqIU8Owv4DdO/Q0uomUEIos9puwjrjGbgeMoHdQCZYBO5z7AeSx
+         Hrdrnk1ZLhMFVRR6Ev1siUlWxIv1yt8zRK6h8JiR86p3Jy5OUkQ4K0ABSinKR6b32vGR
+         CbQhxtBBhjrawFtC2J8/BS3LDY5OaS7MQTzhKs11rFCbV2M4sUKljIbhh3bsXLTmB6lS
+         REfk887Hk0umfKdDxOlQn125VHIWXVFUy2/ZgWVUA2xWKWHev1WVKkVHvON4nFdZdBJI
+         GSlA==
+X-Forwarded-Encrypted: i=1; AJvYcCWML2+evgElF3Oul3LKcwu2rXdLq9sX7cI6czeeCt+ALwfE924KzNv9PhFNExj0e2sFrH4jwvwSKwPdX4EwXCqumF0KJN0VhemK7CRr
+X-Gm-Message-State: AOJu0YxLOL0IHtVTCzLb3cKb2ouU31ujyPpUs1dXZxh48UG6P2l6VqHK
+	zpRCpKXLS/CP4+ZOeSFX/YQkIdcIrVvJA9Ag7F5udLyX9Q94dniIuEteYIv6fcY/NF+UJYe2aDw
+	XjruwlwpTRlaaiDrHe6q/xccvoPQ7fCrNOzdh0mvYmP9uVsEoSHQ+ouYTYJQHOsWo9GKaExDXls
+	PBNfgYB6HKTCezksNGiCIivY0n8yc9ZPZtUYPh
+X-Received: by 2002:a19:ac47:0:b0:51f:3fea:cbcf with SMTP id 2adb3069b0e04-52bb9fc458fmr1131226e87.52.1717747840496;
+        Fri, 07 Jun 2024 01:10:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHE22lzSu2t1eaY4ixWZwC3DnY7OJWdzQaXo6iDo3zOQV+ZZthH0LMFdtFi7RdQRJiObbC2NGO5n46x4ubLPcE=
+X-Received: by 2002:a19:ac47:0:b0:51f:3fea:cbcf with SMTP id
+ 2adb3069b0e04-52bb9fc458fmr1131216e87.52.1717747840096; Fri, 07 Jun 2024
+ 01:10:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606094513.3949323-3-christianshewitt@gmail.com>
+References: <20240530210714.364118-1-rick.p.edgecombe@intel.com> <20240530210714.364118-9-rick.p.edgecombe@intel.com>
+In-Reply-To: <20240530210714.364118-9-rick.p.edgecombe@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Fri, 7 Jun 2024 10:10:28 +0200
+Message-ID: <CABgObfZr_YNcymua7ejapiL0+M=0CQhroheerj-1_YYxisp=Ug@mail.gmail.com>
+Subject: Re: [PATCH v2 08/15] KVM: x86/tdp_mmu: Introduce KVM MMU root types
+ to specify page table type
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: seanjc@google.com, kvm@vger.kernel.org, kai.huang@intel.com, 
+	dmatlack@google.com, erdemaktas@google.com, isaku.yamahata@gmail.com, 
+	linux-kernel@vger.kernel.org, sagis@google.com, yan.y.zhao@intel.com, 
+	Isaku Yamahata <isaku.yamahata@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Christian,
+On Thu, May 30, 2024 at 11:07=E2=80=AFPM Rick Edgecombe
+<rick.p.edgecombe@intel.com> wrote:
+> +enum kvm_tdp_mmu_root_types {
+> +       KVM_VALID_ROOTS =3D BIT(0),
+> +
+> +       KVM_ANY_ROOTS =3D 0,
+> +       KVM_ANY_VALID_ROOTS =3D KVM_VALID_ROOTS,
 
-kernel test robot noticed the following build warnings:
+I would instead define it as
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on krzk/for-next linus/master v6.10-rc2 next-20240606]
-[cannot apply to krzk-dt/for-next krzk-mem-ctrl/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+    KVM_INVALID_ROOTS =3D BIT(0),
+    KVM_VALID_ROOTS =3D BIT(1),
+    KVM_ALL_ROOTS =3D KVM_VALID_ROOTS | KVM_INVALID_ROOTS,
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Hewitt/dt-bindings-arm-amlogic-add-support-for-Dreambox-One-Two/20240606-175427
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240606094513.3949323-3-christianshewitt%40gmail.com
-patch subject: [PATCH 3/3] arm64: dts: meson: add initial support for Dreambox One/Two
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
-dtschema version: 2024.6.dev1+g833054f
-reproduce: (https://download.01.org/0day-ci/archive/20240607/202406071527.fnfhnkUL-lkp@intel.com/reproduce)
+and then
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406071527.fnfhnkUL-lkp@intel.com/
+  if (root->role.invalid)
+    return types & KVM_INVALID_ROOTS;
+  else
+    return types & KVM_VALID_ROOTS;
 
-dtcheck warnings: (new ones prefixed by >>)
-   arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:266.33-1540.7: Warning (unit_address_vs_reg): /soc/bus@ff600000/bus@34400/pinctrl@40: node has a unit name, but no reg or ranges property
-     also defined at arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:266.33-1540.7
-   arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:266.33-1540.7: Warning (simple_bus_reg): /soc/bus@ff600000/bus@34400/pinctrl@40: missing or empty reg/ranges property
-     also defined at arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:266.33-1540.7
-   arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:2220.23-2260.6: Warning (avoid_unnecessary_addr_size): /soc/bus@ffd00000/dsi@7000: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
-     also defined at arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:2220.23-2260.6
->> arch/arm64/boot/dts/amlogic/meson-g12b-dreambox-one.dtb: /soc/bus@ff600000/bus@42000/clock-controller@0: failed to match any schema with compatible: ['amlogic,g12a-audio-clkc']
-   arch/arm64/boot/dts/amlogic/meson-g12b-dreambox-one.dtb: /soc/bus@ff600000/bus@42000/audio-controller@744: failed to match any schema with compatible: ['amlogic,g12a-tohdmitx']
->> arch/arm64/boot/dts/amlogic/meson-g12b-dreambox-one.dtb: sys-ctrl@0: '#address-cells', '#size-cells', 'ranges' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml#
---
-   arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:266.33-1540.7: Warning (unit_address_vs_reg): /soc/bus@ff600000/bus@34400/pinctrl@40: node has a unit name, but no reg or ranges property
-     also defined at arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:266.33-1540.7
-   arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:266.33-1540.7: Warning (simple_bus_reg): /soc/bus@ff600000/bus@34400/pinctrl@40: missing or empty reg/ranges property
-     also defined at arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:266.33-1540.7
-   arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:2220.23-2260.6: Warning (avoid_unnecessary_addr_size): /soc/bus@ffd00000/dsi@7000: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
-     also defined at arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:2220.23-2260.6
->> arch/arm64/boot/dts/amlogic/meson-g12b-dreambox-two.dtb: /soc/bus@ff600000/bus@42000/clock-controller@0: failed to match any schema with compatible: ['amlogic,g12a-audio-clkc']
-   arch/arm64/boot/dts/amlogic/meson-g12b-dreambox-two.dtb: /soc/bus@ff600000/bus@42000/audio-controller@744: failed to match any schema with compatible: ['amlogic,g12a-tohdmitx']
->> arch/arm64/boot/dts/amlogic/meson-g12b-dreambox-two.dtb: sys-ctrl@0: '#address-cells', '#size-cells', 'ranges' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml#
+Then in the next patch you can do
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+     KVM_INVALID_ROOTS =3D BIT(0),
+-    KVM_VALID_ROOTS =3D BIT(1),
++   KVM_DIRECT_ROOTS =3D BIT(1),
++   KVM_MIRROR_ROOTS =3D BIT(2),
++   KVM_VALID_ROOTS =3D KVM_DIRECT_ROOTS | KVM_MIRROR_ROOTS,
+     KVM_ALL_ROOTS =3D KVM_VALID_ROOTS | KVM_INVALID_ROOTS,
+
+and likewise
+
+  if (root->role.invalid)
+    return types & KVM_INVALID_ROOTS;
+  else if (likely(!is_mirror_sp(root)))
+    return types & KVM_DIRECT_ROOTS;
+  else
+    return types & KVM_MIRROR_ROOTS;
+
+This removes the need for KVM_ANY_VALID_ROOTS (btw I don't know if
+it's me, but ALL sounds more grammatical than ANY in this context). So
+the resulting code should be a bit clearer.
+
+Apart from this small tweak, the overall idea is really good.
+
+Paolo
+
+> +};
+> +
+>  bool kvm_tdp_mmu_zap_leafs(struct kvm *kvm, gfn_t start, gfn_t end, bool=
+ flush);
+>  bool kvm_tdp_mmu_zap_sp(struct kvm *kvm, struct kvm_mmu_page *sp);
+>  void kvm_tdp_mmu_zap_all(struct kvm *kvm);
+> --
+> 2.34.1
+>
+
 
