@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-205468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6497F8FFC80
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:53:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 123FA8FFC83
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:56:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D40041F26D56
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:53:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E36631C232A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04B21847;
-	Fri,  7 Jun 2024 06:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397C3153801;
+	Fri,  7 Jun 2024 06:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fsvoWktV"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="npy3DAGx"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3381B1CA85
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 06:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CCB2D600
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 06:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717743229; cv=none; b=RFI5otdIDBz4VeVTtzugwHY//Pogl9puVaGIgTkj3+ymqd2mv/3Brp/61gZlJPeuRIx8HI6Bgvcf+rWZQDA2tGAL+e2oJ1+Wj9Zjo7poObsq6xAY6pNmEpP2VvXroSdXMKcujfooX9RmeS1MllZUOBlVXhia/QVbMggJ1VsY6d4=
+	t=1717743378; cv=none; b=Ll8XGf0ZiEm01p6Bwz8LhanvFGn6lpc6g5jQ2ouUWAqD9DXRwwfJ0hysJNLsCw4SvP7VkeZz0JgIB0lhXA2ACOk6WZH1tSz4Jmm4Z7R4vyIQ1cZd085nLVPwkzfQgwvPfrtKen45hKZjms8sx6clUrGSTfLpzoRs9PFHCFPXdkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717743229; c=relaxed/simple;
-	bh=KNGyQXdTnutaMvHHVdH0giLjLucmMgCVt/J+Na13hSg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=fH7kALKu6zrgYIyCvMNRko1OEUM/V2aqP5w1tpPysToile0KlkavFVcld9zfGN0dYX+jCGMlMukLj4aLdhx+mltd8VXVtUPaBLtj6BsbLg+o4Op6EemPa0IFvS0aPdP+t9O+BNQhol7mJqNv3BkXoLKTztfWBiHauA/O/Ld+cRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fsvoWktV; arc=none smtp.client-ip=209.85.128.45
+	s=arc-20240116; t=1717743378; c=relaxed/simple;
+	bh=wrTTn6IscAXLTweuB9ogEuvEdMC0oy8USnmI6Umi4iQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TueveqTN+joOu7IOTqZv5TbcNbIaPCYsWTc61TUZFtfFEsI00BQkfDakhMtrLJ7NQ5dY3WwWn74+zcL8q7hFxQ9cDJ6hKvVldt8tyHcXZr8mmNXWpq0f2lCjKweRe3j2eUWIInlPkuJxlzG72d/eSY8Pu8MNKKPiv5P3wHuIU50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=npy3DAGx; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-421572bb0f0so17933635e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 23:53:47 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-356c4e926a3so1642141f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 23:56:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717743226; x=1718348026; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1717743374; x=1718348174; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6oy9paXt3y1M6rnKNIikFuvNbwWD5iuAyif14OquD/E=;
-        b=fsvoWktVwTaWqYZNsf7Lq3m9fTPvqExM1TMNO0b0mtSosIub2tBvVYjeZ+xo05H21d
-         fdKOYRS0jIx9gG0pkfg7XdFx40hhPLIh1cO4eIlarnX+k5pWB4pjqVOktbvoHJ9R34x3
-         KRUc7iLmCWlUCnBZvFNvski68q2izOdlNXcP7ammjT8czxN3+0yk2iCqO96TudCA7uq8
-         x7f1UVSFtOKXuC6jUZNtHWR3WBaZN4P7hXLNmFSBGDqZI3mOHa8pCnEnJcV53tDvDNt9
-         rdYHpzV2Wgb1yJnbE5IxVLS/iMfi9ZE7NK1sZE3avm/S4uqgMAtvfSrGX88n0i8kk+uB
-         qC0g==
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=+n1UbeKOejJyQ0EsFqQB0hecGgVTeSZSMyL3P00Ii1E=;
+        b=npy3DAGxRua1DGPn0Sv4tFYmbUNm6FG5lxbClogXf5UwfFEOJhZt/QOn+YkbVwJrC1
+         ENLwDtItFF4pph+zV3ru75G9Dq6XCZkAzQBSH9VJ71impeVDKlAMj1Z4nirC+kzK9Iif
+         GUKYn80TpSHpKMIzyLZdVefSAqUB3BIEKTe0SFS59afkBbHKnH8qg42Kk1DtbjgfN6Uq
+         XscCwxP0T6ngwUfqfKX9hmTBVECjFq1l6OQbJzRagUnK8Nd8xztviJoG1zxSEzM7PeRm
+         45oMhpWxPuAl+b2TehSU3XezKKsayyiy0Wc+R/3fadyDayZ8OKwDvjDIPp9Z/FoX5YqM
+         Nvxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717743226; x=1718348026;
+        d=1e100.net; s=20230601; t=1717743374; x=1718348174;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6oy9paXt3y1M6rnKNIikFuvNbwWD5iuAyif14OquD/E=;
-        b=A2HM4zC6yWNiM235mUZqdoa12Xj7quvC7282Z5KqfTJ25lvq5Ih/rD1+0ZHyYQKKX2
-         94lB0kv4n0fwuUzDDkn3YqZRAQn1iSsCatwyg5oQXWzhT5g43O8wuAcncm1pTHQ62xEY
-         5/aVqCS4cYPeP34H2F9+P2bFYlvZ0WJ6GoEAyKcErWOYuVNkYTXd2FCU4nY0SrXW9gaj
-         1MF0XJNN6XzMbQva/eRRAnBRu3xXigYRhcBMVgXsKSdZGO6cyrQkHZFkI0RITfxRUZsW
-         Yrs38OybJiWTE3h9aoeDR6aNQPaOoPaD8+IOgCqSzGzUpoGKAi/gXi0vDZNP0CrpjRGp
-         1k4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVBzSS63mo/4ag4Y9Ff9iLipprDr3Kgs+VB5epOZT/i/t4FZHeuUVRrZYca3BqWra2KmkOIfzSpSS0DxSxvQJJKMw1saY/tWX3A7lOT
-X-Gm-Message-State: AOJu0YzyHYS4mNNYbDpfBNn3VgjvMhQiddzI74vGY21w1vasAES9eWEZ
-	E5lkT31i2e/wes27VdqN+Hn3TfNSaJ4Z2f8Pxo9vZpoJBdnXcHimhKVy24G0qzI=
-X-Google-Smtp-Source: AGHT+IHgA5lgH7zAw9Sqnzi5KBTiy7erUxiMScCpH9Hr5Dutp39kMuOAvdHBlzhbeOGArQ1G7E7JlA==
-X-Received: by 2002:a05:600c:35c3:b0:41b:d4a3:ad6a with SMTP id 5b1f17b1804b1-42164a02b99mr14690295e9.17.1717743226409;
-        Thu, 06 Jun 2024 23:53:46 -0700 (PDT)
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+n1UbeKOejJyQ0EsFqQB0hecGgVTeSZSMyL3P00Ii1E=;
+        b=I4/D4rd7XzRdbpzCrrv0ULOQDa7NwHpynN7HdnAx+U5bffv/0Io9Njw5otc6X8kwMB
+         rK4FyuOqMvlyMwUphLSjMUuXOnCdDOLrJHbbBPMdL5xMpain4y11iNVHedNxjrBrlAe9
+         QdnAyronoNk5m8reywU/nzm0w/IlRE7zmqGngI2gIjTNlYQjD6c7dRiP8UiNS0YVJ5eY
+         W+Hzr8Oq4HVkM40Iy5pvpErEGTteP8RRwasMkIZeHUVOYww1YLsSIpq6CoAYb7fzLOaL
+         oiEOBaiTEop6MmdgL/ZZjseWZt1bPU1KNCb1lfANuG6cJjd2/b3Zi9p0CIGPw6mBJIbv
+         PLaA==
+X-Forwarded-Encrypted: i=1; AJvYcCVHGAoYrdF/XJiMeoCNOxAaVEi93GKlzgTv0uzssnMx1VXPoFmsPfW70WqqfrWjs+SlW/11U1L7bPxH8Ymr7mXZNdVwRzEbJyWMpqfN
+X-Gm-Message-State: AOJu0YyuJV8tPCTN5gx759RiHm/rwF6kxNfi+qgo7FCJHYNiofYxGeRc
+	xXL9t1IN1E/poMPch+OI3CjMKvhEulkgbks6bm8fG+sw4cinQ2ohR+6qbPkIviY=
+X-Google-Smtp-Source: AGHT+IHAnFvsJMX10rtGGRSCWAG59PxgESy1x9MXcjGORvB0Q46JVDA2haec2hIhIh5gy8TVv46KUA==
+X-Received: by 2002:adf:ea88:0:b0:354:f359:7355 with SMTP id ffacd0b85a97d-35efed07c42mr1240127f8f.3.1717743373907;
+        Thu, 06 Jun 2024 23:56:13 -0700 (PDT)
 Received: from [192.168.2.24] ([110.93.11.116])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421581490cesm77164715e9.31.2024.06.06.23.53.45
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d29c37sm3338413f8f.24.2024.06.06.23.56.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 23:53:45 -0700 (PDT)
-Message-ID: <22de160e-d925-4295-8208-f03a44f026bc@linaro.org>
-Date: Fri, 7 Jun 2024 08:53:45 +0200
+        Thu, 06 Jun 2024 23:56:12 -0700 (PDT)
+Message-ID: <b98dc404-1cf3-4042-b6aa-45995cc12294@linaro.org>
+Date: Fri, 7 Jun 2024 08:56:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,11 +76,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hwmon: lm70: simplify with spi_get_device_match_data()
-To: Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240606142515.132504-1-krzysztof.kozlowski@linaro.org>
- <32a542a9-e338-4f8a-af24-a32c8426e619@roeck-us.net>
+Subject: Re: [PATCH] ASoC: dt-bindings: mt6358: Convert to dtschema
+To: Kartik Agarwala <agarwala.kartik@gmail.com>, lgirdwood@gmail.com,
+ broonie@kernel.org, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+References: <20240518081621.63386-1-agarwala.kartik@gmail.com>
+ <c05f91f5-a878-4f36-b325-0ac8e038a7e5@linaro.org>
+ <c32b902e-0338-436b-85e1-827c48e0ee2b@gmail.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -126,54 +132,28 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <32a542a9-e338-4f8a-af24-a32c8426e619@roeck-us.net>
+In-Reply-To: <c32b902e-0338-436b-85e1-827c48e0ee2b@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 06/06/2024 17:56, Guenter Roeck wrote:
-> On 6/6/24 07:25, Krzysztof Kozlowski wrote:
->> Use spi_get_device_match_data() helper to simplify a bit the driver.
->> Also kernel_ulong_t type is preferred for kernel code over uintptr_t
->> (needed for the cast).
+On 06/06/2024 16:19, Kartik Agarwala wrote:
+>>> +  Must be a child node of PMIC wrapper.
 >>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
->>   drivers/hwmon/lm70.c | 6 +-----
->>   1 file changed, 1 insertion(+), 5 deletions(-)
+>> Did you update the PMIC wrapper binding with ref to this?
 >>
->> diff --git a/drivers/hwmon/lm70.c b/drivers/hwmon/lm70.c
->> index 481e4e1f8f4f..0d5a250cb672 100644
->> --- a/drivers/hwmon/lm70.c
->> +++ b/drivers/hwmon/lm70.c
->> @@ -169,11 +169,7 @@ static int lm70_probe(struct spi_device *spi)
->>   	struct lm70 *p_lm70;
->>   	int chip;
->>   
->> -	if (dev_fwnode(&spi->dev))
->> -		chip = (int)(uintptr_t)device_get_match_data(&spi->dev);
->> -	else
->> -		chip = spi_get_device_id(spi)->driver_data;
->> -
->> +	chip = (kernel_ulong_t)spi_get_device_match_data(spi);
->>   
->>   	/* signaling is SPI_MODE_0 */
->>   	if ((spi->mode & SPI_MODE_X_MASK) != SPI_MODE_0)
 > 
-> I'll apply this patch, but ...
+> Hi Krzysztof, 
 > 
-> I take it that the earlier claims that driver_data must not be
-> something like "(void *) LM70_CHIP_LM70", where LM70_CHIP_LM70 is 0,
-> was wrong. I'll start reverting all patches which changed starting
-> enum values from 0 to 1 based on that wrong claim.
+> I apologize incase this is something obvious but I am still not sure
+> if I understand what you expect here. Could you please explain this
+> a bit more? I thought that you wanted me to convert the Mediatek PMIC 
+> wrapper but it already seems to be in DT-Schema format.[1]
+> 
+> [1]: https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/soc/mediatek/mediatek%2Cpwrap.yaml
 
-Yeah, they should not be 0. I think Jonathan also brought it some time
-ago for iio drivers:
-
-https://lore.kernel.org/linux-iio/20240226192555.14aa178e@jic23-huawei/
-
-but if all the ID tables are complete, the 0 will work fine:
-
-https://lore.kernel.org/all/20240413154511.52576-1-krzysztof.kozlowski@linaro.org/
+If this is a child of some node (PMIC wrapper), then parent node should
+reference this schema. Please make the parent example complete and
+validate it. Otherwise above statement - must be a child ...- is false.
 
 Best regards,
 Krzysztof
