@@ -1,169 +1,107 @@
-Return-Path: <linux-kernel+bounces-205423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F28B8FFB62
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:44:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79AE68FFB6B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:49:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE36DB22661
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 05:44:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03C712840F5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 05:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509D3224F2;
-	Fri,  7 Jun 2024 05:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70DB014EC72;
+	Fri,  7 Jun 2024 05:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="NClsQPoG"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hFIz5l6d"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CE31C2BE;
-	Fri,  7 Jun 2024 05:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CB014EC73
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 05:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717739047; cv=none; b=DHOmmti3v/EPuRMfMrytXQ4rh8iUgfQ1Cm4LpUMbh7z/xWELmNOhENgRzTsHfEC+SrN5HNpYLMNh8PnPhpFLnOWmWJuptfpzJnbK4Tqdc9B54Tc0WLWDkS+tDlooZ0IF8wltScI2KG27lWrSav9Vn+CmoOzj/Lp13RcQAo0vS48=
+	t=1717739342; cv=none; b=pasHGZX0/nnKuTyVURjLWcyZ2N/C5fOeDBOEqe66Fz4BBlM30MWgRWtFDSBdZe7ju3ETH180G4m5pF36shX+GBzuJaRRKFOCXGM1u+rimH3JM2QnfdL3MFFQ00TZ4A33Idj99B1ogbd6mJL6MSE9y+zb9i0phwiBLH/50x01YUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717739047; c=relaxed/simple;
-	bh=jJnHVCPPJIMVdgxQBlR/yGE1vDg2hPnFvywd9Z1hGRk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mlJlGXUjg8rFc/2k4hol6ASRrEAK+zJ3TQs1fUJyogOqWxJOaVTn7DPA7YP9vEdM2R3dPpANLN8Yhg0NHryRzzZq2krtz8sitN1d/pIVMuz1XOfbXxVzN+EfhmyuuCtrwFtV/wmt1WcbuVCVAT+xG6F9xdd2wgt4bP/bMFOfoX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=NClsQPoG; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4575Pxgm017082;
-	Fri, 7 Jun 2024 05:44:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
- content-transfer-encoding : date : from : message-id : mime-version :
- subject : to; s=pp1; bh=50091Fs5ys3Dh9bUPL1ogFdV1OFduwx5U9QgcNiymDU=;
- b=NClsQPoGC2N5rhnvifC5POpNihW4jdJyVtqjCan43Mz0fFEhjvkv2HLpzQSm4S15IErV
- o2Y7yjciRoz2VRfep0ixEIGCyME71Tl64G7vklRTIcfseiotcMVkANc3T7YAxQati63F
- 8rZ8XJug1CvOIdiX1E3+TcnfcimWxucW5q3/jUuQEPRNFFbGUfsX6dl21HrTxNFLzwip
- cAIVqEG4c94tBHe7/xkO7D6qZobNInv04XUHsKKXjcOL2MWitWgYzIE6zalN8isuGgaO
- qmp72zcm/Dq111KLkkWLFc/Mz/tnqt6Ytk4XfxXROx4x0HwkLoiJxyYWwi8qbkvQJhYi Eg== 
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ykumrg3d0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 05:44:01 +0000
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45750A76008479;
-	Fri, 7 Jun 2024 05:44:00 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ygec1737g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 05:44:00 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4575ht4b51839292
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 7 Jun 2024 05:43:57 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 08BDC20040;
-	Fri,  7 Jun 2024 05:43:55 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C78002004D;
-	Fri,  7 Jun 2024 05:43:54 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  7 Jun 2024 05:43:54 +0000 (GMT)
-From: Thomas Richter <tmricht@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org, namhyung@kernel.org
-Cc: svens@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
-        hca@linux.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH] perf test: Speed up test case 70 annotate basic tests
-Date: Fri,  7 Jun 2024 07:43:52 +0200
-Message-Id: <20240607054352.2774936-1-tmricht@linux.ibm.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1717739342; c=relaxed/simple;
+	bh=utoyZmJ3ad8EAeZqrHVGF5rFBfilwKGnsN7FpZP8jxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q05K8dJawqrGXvkHfuim1qm3mlQC6kV6IZem0mu5Dat2QsdE0V9rwYfqD0vb2ulIkFgbr7Ix8TFlINIICB/T7Sibp3eXF/84pFx32PG6bC95lVcMGF/MK5sNZcCQr8DhJXyBmP7DHp30HKed5jL5PQ2POy8fiIFKaF3uoLIacLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hFIz5l6d; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52bc1261f45so21577e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 22:49:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717739338; x=1718344138; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MPpS30B8oQddbNIA4e5SgwQLluo/cGUrwr2ygS5Damc=;
+        b=hFIz5l6d+MEMEVcgMdzBtM7tePyuW+t27q6n7ZRauwsN3qcybSZZvwKMyiA8clTs3G
+         mbU6k09lS68uGhnDGMGe0w7kxLA7PobSsA/cBP5QBVY+x0nlrhlgcZMHEfDny7qWoPtm
+         0FoUkAEQsOKEQ1YxN4Gd7sotpLDGptvzXQtd5+fZ4DkFs3HW5UlRDgn0mnBUnwtYwA6A
+         E/7MlhTSjADJDJ4lTyXJXJ+9VgqZMdr3BmkKD9UnWjzT3I9XwofBuTl3g+PL8Fjy/CGL
+         Oo8n1ubmS//QL/cJcJbbOMNxNZ8ydozDpssq+0u0gU/6O9QzueMaReoXOX6wz9Fc3osw
+         FAIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717739338; x=1718344138;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MPpS30B8oQddbNIA4e5SgwQLluo/cGUrwr2ygS5Damc=;
+        b=VFK4yXHvaxVgXUR0flSBKV/mgUlpOPx6OU87X4tudve7Fvdja0aksZ4UvMaeJpqA3Y
+         ykBeKjmjbpTMaOLic0RZSeho4WNCE5Yk4DjfxjIFw1ummo79hGaHiNA8dn3h2oGqYj64
+         Dypzc8A4MT26oFJzfdyxRL1qUbJOP21yXYchkD9R6Bo281tWE5edDoXmKtk8wcHs3lFC
+         QlOyfRtY0Jihig8H9nLkKgQPtA70XJvIuVOJD9i3ZaxaL4sINhh916Zu6+O8wFyH44uX
+         vQVRIc5vusKkkntCRQOtXZhiwuLoTP8Te+VFW10nIdb0n3kPK2Hqd9rHCDkzmekESixh
+         argg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsjY6Bm0dzUMt9/4u+GR+PyhX7t8LAXResk+93wlNJ/4Np2Bgyv0XoI6trP0hW8xnW4ZQPpH/WHOSrekQ/SjQExgQ1CHwKtgqAC6Yf
+X-Gm-Message-State: AOJu0YxOF8cj7uiyLWQVIH8g2MLpd/c8zXEjCIy2p+avHeh/MXIA+dmi
+	z7SKQCiBjDb6TVn8OUrusJsskilL9fHmPZcguNRlTXE4wPCgbnSkvAduVePAT5g=
+X-Google-Smtp-Source: AGHT+IGw0dCYsbVAMVTQVSr/Efue3frMR7uLAH7tvS6pOQ8ict7VhL1BeU2I9MYTimaWhuBQHujsnA==
+X-Received: by 2002:a05:6512:39d0:b0:52b:74c4:2731 with SMTP id 2adb3069b0e04-52bb9f17605mr1374676e87.0.1717739338307;
+        Thu, 06 Jun 2024 22:48:58 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bbe91a731sm55425e87.82.2024.06.06.22.48.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 22:48:57 -0700 (PDT)
+Date: Fri, 7 Jun 2024 08:48:55 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Luca Weiss <luca.weiss@fairphone.com>, linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] usb: typec-mux: ptn36502: unregister typec switch
+ on probe error and remove
+Message-ID: <ywpdbvubmgmqebekpj7vzgwicptineathd55725qkrda45sa6n@6zil2klvoj4p>
+References: <20240606-topic-sm8x50-upstream-retimer-broadcast-mode-v2-0-c6f6eae479c3@linaro.org>
+ <20240606-topic-sm8x50-upstream-retimer-broadcast-mode-v2-1-c6f6eae479c3@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: kEb9LOLbDiDfUjC1LoGM_Vzf0d2ghxOQ
-X-Proofpoint-ORIG-GUID: kEb9LOLbDiDfUjC1LoGM_Vzf0d2ghxOQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-06_20,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 priorityscore=1501 spamscore=0 clxscore=1015 suspectscore=0
- lowpriorityscore=0 mlxlogscore=898 mlxscore=0 bulkscore=0 phishscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2406070039
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606-topic-sm8x50-upstream-retimer-broadcast-mode-v2-1-c6f6eae479c3@linaro.org>
 
-On some s390 linux machine (mostly older models) and with debug
-packages installed, the test case 'perf annotate basic tests' runs
-for some longer time.
-Speed up the test and save the output of command perf annotate
-in a temporary file. This is used to perform pattern matching via
-grep command. This saves on invocation of perf annotate which
-runs for some time.
+On Thu, Jun 06, 2024 at 03:11:13PM +0200, Neil Armstrong wrote:
+> Add the missing call to typec_switch_put() when probe fails and
+> the ptn36502_remove() call is called.
+> 
+> Fixes: 8e99dc783648 ("usb: typec: add support for PTN36502 redriver")
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  drivers/usb/typec/mux/ptn36502.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+> 
 
-Output before:
- # time bash -x tests/shell/annotate.sh >/dev/null 2>&1; echo EXIT CODE $?
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
- real   4m35.543s
- user   3m19.442s
- sys    1m14.322s
- EXIT CODE 0
- #
-Output after:
- # time bash -x tests/shell/annotate.sh >/dev/null 2>&1; echo EXIT CODE $?
 
- real   2m2.881s
- user   1m30.980s
- sys    0m30.684s
- EXIT CODE 0
- #
-
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
----
- tools/perf/tests/shell/annotate.sh | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/tools/perf/tests/shell/annotate.sh b/tools/perf/tests/shell/annotate.sh
-index 1db1e8113d99..b072d9b97387 100755
---- a/tools/perf/tests/shell/annotate.sh
-+++ b/tools/perf/tests/shell/annotate.sh
-@@ -15,12 +15,13 @@ skip_test_missing_symbol ${testsym}
- 
- err=0
- perfdata=$(mktemp /tmp/__perf_test.perf.data.XXXXX)
-+perfout=$(mktemp /tmp/__perf_test.perf.out.XXXXX)
- testprog="perf test -w noploop"
- # disassembly format: "percent : offset: instruction (operands ...)"
- disasm_regex="[0-9]*\.[0-9]* *: *\w*: *\w*"
- 
- cleanup() {
--  rm -rf "${perfdata}"
-+  rm -rf "${perfdata}" "${perfout}"
-   rm -rf "${perfdata}".old
- 
-   trap - EXIT TERM INT
-@@ -41,8 +42,11 @@ test_basic() {
-     return
-   fi
- 
-+  # Generate the annotated output file
-+  perf annotate -i "${perfdata}" --stdio 2> /dev/null > "${perfout}"
-+
-   # check if it has the target symbol
--  if ! perf annotate -i "${perfdata}" 2> /dev/null | grep "${testsym}"
-+  if ! grep "${testsym}" "${perfout}"
-   then
-     echo "Basic annotate [Failed: missing target symbol]"
-     err=1
-@@ -50,7 +54,7 @@ test_basic() {
-   fi
- 
-   # check if it has the disassembly lines
--  if ! perf annotate -i "${perfdata}" 2> /dev/null | grep "${disasm_regex}"
-+  if ! grep "${disasm_regex}" "${perfout}"
-   then
-     echo "Basic annotate [Failed: missing disasm output from default disassembler]"
-     err=1
 -- 
-2.45.1
-
+With best wishes
+Dmitry
 
