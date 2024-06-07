@@ -1,238 +1,191 @@
-Return-Path: <linux-kernel+bounces-206812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 948BB900E12
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:30:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5572900E16
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A2BE1F22958
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:30:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B30B1F229E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE7E15572C;
-	Fri,  7 Jun 2024 22:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94EA0155737;
+	Fri,  7 Jun 2024 22:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j99fshAa"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N3uP4yAK"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E5D13DDCA;
-	Fri,  7 Jun 2024 22:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE4BB64E;
+	Fri,  7 Jun 2024 22:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717799418; cv=none; b=gi2VvEF9y80hFM69cZ21VxlqWCsNsp17WIJ73euMxYgcSLWYowJCvAPybp099hWSBQWhXEYCrulMDuGVURz/a8rOyWzta0eXiZmHoOQ7YNHVZAzeT3ZEFBgxLe65XCljR6My0r1smN5GEIPmj/SU9b4k9TcFZGUkFmJkWROY0oQ=
+	t=1717799480; cv=none; b=bjhXCemxdcW6VUDlgZzou0H8wR5u6+mN+BBqZHanB0N+Jovy4VdJckOpgSM1uNwsGyknVh73krM9EGeblzY/ormhs464uvuSRUS3N8+uPH/fXvRhQnuizsf5BOWN7Ircu4RtGGwfBa1T05gxXd+Fs7oNXxVrP70QuN4WxsZx9Gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717799418; c=relaxed/simple;
-	bh=Rzz2lr5jDDCxd19LGs+cCednwI0D/qvvd4uXfAbNrMk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=V1LFJV//YDeKqD3axZ7xbuUCClh8n0Aez3YFPcxAkmVINGUX9JVETQrg10le7VcLjbzpli9yPNtkuRzwI5AB2WoaSNYRGAa7kTFo6nqlWmoKQ7HV1cSF7a6rgC9V7ZwaaNjTu9FvKApxsvCNOfWEsWDH9DrbHBan+9qFBNf5lsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j99fshAa; arc=none smtp.client-ip=209.85.208.48
+	s=arc-20240116; t=1717799480; c=relaxed/simple;
+	bh=kjMCCfEMnIyHsw2hSOp7vwwON9/MC/NR8qEp0t6lYxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pcg/yePT2uPJDJWtp0jEl+7Bc+3TTiDzEctC05zKPoFw1oepPxrbVpVoLD+YGeMeC3CBWNWH2X9tWAiFEpeZGxR82U1SKULN+06eyKr+CdQCfIRoZdH57c45iW4tCXWQqL0nmilemsW1OfftLl8qAK9uq9Q5CkTYep0FvLAINio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N3uP4yAK; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57c6d3e6606so61191a12.0;
-        Fri, 07 Jun 2024 15:30:16 -0700 (PDT)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-704090c11easo1525646b3a.2;
+        Fri, 07 Jun 2024 15:31:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717799414; x=1718404214; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+CN4Fagcr9kw1yaYPk5eRmX9Rl/PBb8fEu5udOKhfOY=;
-        b=j99fshAaSa2ej10wNxuYTFSIZvLVymZd80QjhGmMbSk8gDdy4g2cjrV7nUwEY0zj5u
-         wfmNnRQ2Hn6Gv8gKMTzwPLz8diNmeEq2Y6ZIX4wHKuRjvHAwcWGDoiDDspZS7Z5ekw3O
-         qyMXpeLfm081yODb4CdKBjn3+QmlWEiSMfkZdTKmAI7BOYkfnh3hlf0O+4JCNEC1UjI1
-         mxsRj35vR0hTVXOkClvy3sFf+UQ3kJGJ1bx3edrZHYZNHRKyERU7rjTd57gOlDLcMtb0
-         kX2omymLKr/d6f59WxJyDf7WhnxsnwXJ1i79glFVOVRKeGqG869hgNwP0yXz+BIxr4So
-         NnAw==
+        d=gmail.com; s=20230601; t=1717799478; x=1718404278; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=obfZVFisODphXwHU/3O5DPDvWPieNCLI3FYHc2yEtOk=;
+        b=N3uP4yAKwKllKFEAbxyeVPuXA+OOKHzP/5JkMw0/mEqonjlpMd2BpwZdyHNXhsTpdU
+         /Xhy0KD9WS4cIPVlAetra7aX7ywZPPRIWL10Q5YeSuH1ZW9JgLS6CTxNmJNw8ruNOXTE
+         K+riMPWq4pJ8E6JKV4szP9lxIBHXa0qTDAGNkFvInQcOdqtseBXd8/PgvYSAGC7OdxFx
+         oUI05GjlhK4jYSXY8Ds09ipdEQplrNiKLtjXV9H9GIborI/ceMTjPX3b60BuRaaifEUW
+         8jH3tRa51yHd2J/XwmryMAnvNtautUAP+OK+eoLpHJr+6UeDo9SHEXPQJKWOhKgOOXNH
+         9MtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717799414; x=1718404214;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+CN4Fagcr9kw1yaYPk5eRmX9Rl/PBb8fEu5udOKhfOY=;
-        b=nVX3kxrZhjF7GfyHV+MqSr5IcTDLMzMhW4kIj7koG9W7lq2CaYMK/2Tc5kWvtfpaJC
-         66//FWHu8GMRtyUX4zbWzLYIbIT5NTRNfC4UMd0g0L+fjLIumeZIhFjSRdG0rO4HkVyE
-         klImwwYil70ioVM6DrPHkiH3tGcCX/XRefoQDzBk9OviOzeSvj7R8nO8gbKjXZDNZGJT
-         qZqdKN9Akeg1ltJ98EUJwv+B3w7dpLhHPTQykCXpLTJ0IaaLUjXcS407q/oMbH52uygi
-         Rd1dgjspWl5EtVBUDgVkNK916mpQ1mBimbtq9GMJsoBTvXLzJwWykpflQF/Wr703vx/t
-         A1bw==
-X-Forwarded-Encrypted: i=1; AJvYcCWRhga3JXGzC+SdPKP6ll1f3t61/98AJBwvSnH8mMEzxfUsLQXM8BEJLdHwF2MiDF988PhyDIl8EDe74oRJZuqYfMTz7sPyesxY3Zdyd4w=
-X-Gm-Message-State: AOJu0Yw4H+GksoE4CyiIO6ORjyA60tizSuyIvh4Ky4NfE0GBIV1yXvng
-	CCULOIc+z+2mjykY8+++TBeztgUncg1ag0G2zY9BweClLzcmkrNDQYPiZYQQ
-X-Google-Smtp-Source: AGHT+IHPgEwmpOZ+rHjWFDdF79iPXCV9lwQCFpy9QbdOdMW+rl+644y2eM/xOb5ilZlXNNr/KU/z4w==
-X-Received: by 2002:a17:906:c8c1:b0:a6d:fbed:7953 with SMTP id a640c23a62f3a-a6dfbed7a3cmr238081466b.27.1717799414057;
-        Fri, 07 Jun 2024 15:30:14 -0700 (PDT)
-Received: from [10.5.1.156] (188-22-218-164.adsl.highway.telekom.at. [188.22.218.164])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c8070bfcbsm305295866b.145.2024.06.07.15.30.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jun 2024 15:30:13 -0700 (PDT)
-Message-ID: <4e0f5932-c7bc-4878-862c-1186cbecd71d@gmail.com>
-Date: Sat, 8 Jun 2024 00:30:12 +0200
+        d=1e100.net; s=20230601; t=1717799478; x=1718404278;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=obfZVFisODphXwHU/3O5DPDvWPieNCLI3FYHc2yEtOk=;
+        b=Ld7uBwjoNMfXmFgMp+MOcQQpqGBE6809kW6+uR48AlZKCouGgkx2f9nMw669kW+bfP
+         /8cUNmHZngZdCik8TuCYn/0/Tt8Ntfvr5h5LP1gYjAIOb5GEXNEjMRgKsw8TnbdkILIn
+         tm5CDXYiZ8h4Gr1Kjx2EROBvB58/tnGxQAGd1tIx7Yc+/Sc++wIYc1MmAF+WbOYnTPVz
+         r+4AC3m4N9x9ZdTLKiaLRSlWXeUIqK6FZzsS1pRnrn/grGbi8CNKC3U8Up3E1u2eqK1M
+         x1GR153/Tt12GJRSAVzDY8Si0hZ6UktXMIsOM4VgSCtO4/pwgEZsQttk8np8CUQz9KeH
+         UoQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmFAXzKLnu5KP3q2rjTrJEOm7uxrVTtqgQvPZ0ytMzKHNDNKsotCYv5iZAndnaAjZKzNlLX03pY0LcycvGOoqifO8u82tztK76iJk++5Ji+PDTrHfMFey24zRgqPMyd1ha
+X-Gm-Message-State: AOJu0YwN4/lRADlUGE9ghibaRlfne3/u/F65mmuMYw/ZubZ/erS6UKvQ
+	3vQo22ZPF8eOUvpukQankUCaKQvdCDpZlONba0165u9WtuDjFz+l
+X-Google-Smtp-Source: AGHT+IGlQ0lxj1IEvcN59nlMqfLXuYCBh2oMVRoEcf266PGOYI1SSB4rfK1sXt2gLQisCPNFM0oxLQ==
+X-Received: by 2002:a05:6a20:12ca:b0:1a7:878f:e9a3 with SMTP id adf61e73a8af0-1b2f9a297cfmr3908259637.22.1717799478325;
+        Fri, 07 Jun 2024 15:31:18 -0700 (PDT)
+Received: from gmail.com (c-67-171-50-164.hsd1.wa.comcast.net. [67.171.50.164])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd3780absm3024193b3a.21.2024.06.07.15.31.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 15:31:17 -0700 (PDT)
+Date: Fri, 7 Jun 2024 15:31:14 -0700
+From: Andrei Vagin <avagin@gmail.com>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	gregkh@linuxfoundation.org, linux-mm@kvack.org,
+	liam.howlett@oracle.com, surenb@google.com, rppt@kernel.org
+Subject: Re: [PATCH v3 3/9] fs/procfs: implement efficient VMA querying API
+ for /proc/<pid>/maps
+Message-ID: <ZmOKMgZn_ki17UYM@gmail.com>
+References: <20240605002459.4091285-1-andrii@kernel.org>
+ <20240605002459.4091285-4-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-From: Christian Schrefl <chrisi.schrefl@gmail.com>
-Subject: [PATCH 1/1] arm: rust: Enable Rust support for ARMv7
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- rust-for-linux@vger.kernel.org
-Cc: Miguel Ojeda <ojeda@kernel.org>, Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
- Sven Van Asbroeck <thesven73@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <20240605002459.4091285-4-andrii@kernel.org>
 
-This commit allows building ARMv7 kernels with Rust support.
+On Tue, Jun 04, 2024 at 05:24:48PM -0700, Andrii Nakryiko wrote:
+> /proc/<pid>/maps file is extremely useful in practice for various tasks
+> involving figuring out process memory layout, what files are backing any
+> given memory range, etc. One important class of applications that
+> absolutely rely on this are profilers/stack symbolizers (perf tool being one
+> of them). Patterns of use differ, but they generally would fall into two
+> categories.
+> 
+> In on-demand pattern, a profiler/symbolizer would normally capture stack
+> trace containing absolute memory addresses of some functions, and would
+> then use /proc/<pid>/maps file to find corresponding backing ELF files
+> (normally, only executable VMAs are of interest), file offsets within
+> them, and then continue from there to get yet more information (ELF
+> symbols, DWARF information) to get human-readable symbolic information.
+> This pattern is used by Meta's fleet-wide profiler, as one example.
+> 
+> In preprocessing pattern, application doesn't know the set of addresses
+> of interest, so it has to fetch all relevant VMAs (again, probably only
+> executable ones), store or cache them, then proceed with profiling and
+> stack trace capture. Once done, it would do symbolization based on
+> stored VMA information. This can happen at much later point in time.
+> This patterns is used by perf tool, as an example.
+> 
+> In either case, there are both performance and correctness requirement
+> involved. This address to VMA information translation has to be done as
+> efficiently as possible, but also not miss any VMA (especially in the
+> case of loading/unloading shared libraries). In practice, correctness
+> can't be guaranteed (due to process dying before VMA data can be
+> captured, or shared library being unloaded, etc), but any effort to
+> maximize the chance of finding the VMA is appreciated.
+> 
+> Unfortunately, for all the /proc/<pid>/maps file universality and
+> usefulness, it doesn't fit the above use cases 100%.
+> 
+> First, it's main purpose is to emit all VMAs sequentially, but in
+> practice captured addresses would fall only into a smaller subset of all
+> process' VMAs, mainly containing executable text. Yet, library would
+> need to parse most or all of the contents to find needed VMAs, as there
+> is no way to skip VMAs that are of no use. Efficient library can do the
+> linear pass and it is still relatively efficient, but it's definitely an
+> overhead that can be avoided, if there was a way to do more targeted
+> querying of the relevant VMA information.
+> 
+> Second, it's a text based interface, which makes its programmatic use from
+> applications and libraries more cumbersome and inefficient due to the
+> need to handle text parsing to get necessary pieces of information. The
+> overhead is actually payed both by kernel, formatting originally binary
+> VMA data into text, and then by user space application, parsing it back
+> into binary data for further use.
 
-The rust core library expects some __eabi_... functions
-that are not implemented in the kernel.
-Those functions are some float operations and __aeabi_uldivmod.
+I was trying to solve all these issues in a more generic way:
+https://lwn.net/Articles/683371/
 
-This is based on the code by Sven Van Asbroeck from the original
-rust branch and inspired by the AArch version by Jamie Cunliffe.
+We definitely interested in this new interface to use it in CRIU.
 
-I have tested the rust samples and a custom simple MMIO module
-on on hardware (De1SoC FPGA + Arm A9 CPU).
+<snip>
 
-Signed-off-by: Christian Schrefl <chrisi.schrefl@gmail.com>
----
- Documentation/rust/arch-support.rst |  1 +
- arch/arm/Kconfig                    |  1 +
- arch/arm/Makefile                   |  1 +
- rust/Makefile                       | 10 +++++++++-
- rust/bindgen_parameters             |  4 ++++
- rust/compiler_builtins.rs           | 24 ++++++++++++++++++++++++
- scripts/generate_rust_target.rs     |  4 +++-
- 7 files changed, 43 insertions(+), 2 deletions(-)
+> +
+> +	if (karg.vma_name_size) {
+> +		size_t name_buf_sz = min_t(size_t, PATH_MAX, karg.vma_name_size);
+> +		const struct path *path;
+> +		const char *name_fmt;
+> +		size_t name_sz = 0;
+> +
+> +		get_vma_name(vma, &path, &name, &name_fmt);
+> +
+> +		if (path || name_fmt || name) {
+> +			name_buf = kmalloc(name_buf_sz, GFP_KERNEL);
+> +			if (!name_buf) {
+> +				err = -ENOMEM;
+> +				goto out;
+> +			}
+> +		}
+> +		if (path) {
+> +			name = d_path(path, name_buf, name_buf_sz);
+> +			if (IS_ERR(name)) {
+> +				err = PTR_ERR(name);
+> +				goto out;
 
-diff --git a/Documentation/rust/arch-support.rst b/Documentation/rust/arch-support.rst
-index b13e19d84744..4bf5205f526d 100644
---- a/Documentation/rust/arch-support.rst
-+++ b/Documentation/rust/arch-support.rst
-@@ -15,6 +15,7 @@ support corresponds to ``S`` values in the ``MAINTAINERS`` file.
- =============  ================  ==============================================
- Architecture   Level of support  Constraints
- =============  ================  ==============================================
-+``arm``        Maintained        ARMv7 Little Endian only.
- ``arm64``      Maintained        Little Endian only.
- ``loongarch``  Maintained        \-
- ``riscv``      Maintained        ``riscv64`` only.
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index ee5115252aac..f07149fe078b 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -126,6 +126,7 @@ config ARM
- 	select MMU_GATHER_RCU_TABLE_FREE if SMP && ARM_LPAE
- 	select HAVE_REGS_AND_STACK_ACCESS_API
- 	select HAVE_RSEQ
-+	select HAVE_RUST if CPU_LITTLE_ENDIAN && CPU_32v7
- 	select HAVE_STACKPROTECTOR
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_UID16
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index 71afdd98ddf2..9cc10e32e8be 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -150,6 +150,7 @@ endif
- KBUILD_CPPFLAGS	+=$(cpp-y)
- KBUILD_CFLAGS	+=$(CFLAGS_ABI) $(CFLAGS_ISA) $(arch-y) $(tune-y) $(call cc-option,-mshort-load-bytes,$(call cc-option,-malignment-traps,)) -msoft-float -Uarm
- KBUILD_AFLAGS	+=$(CFLAGS_ABI) $(AFLAGS_ISA) -Wa,$(arch-y) $(tune-y) -include asm/unified.h -msoft-float
-+KBUILD_RUSTFLAGS += --target=arm-unknown-linux-gnueabi
- 
- CHECKFLAGS	+= -D__arm__
- 
-diff --git a/rust/Makefile b/rust/Makefile
-index f70d5e244fee..ef177ffb68a8 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -286,7 +286,8 @@ bindgen_skip_c_flags := -mno-fp-ret-in-387 -mpreferred-stack-boundary=% \
- 
- # Derived from `scripts/Makefile.clang`.
- BINDGEN_TARGET_x86	:= x86_64-linux-gnu
--BINDGEN_TARGET_arm64	:= aarch64-linux-gnu
-+BINDGEN_TARGET_arm64:= aarch64-linux-gnu
-+BINDGEN_TARGET_arm	:= arm-linux-gnueabi
- BINDGEN_TARGET		:= $(BINDGEN_TARGET_$(SRCARCH))
- 
- # All warnings are inhibited since GCC builds are very experimental,
-@@ -413,6 +414,13 @@ redirect-intrinsics = \
- 	__muloti4 __multi3 \
- 	__udivmodti4 __udivti3 __umodti3
- 
-+ifdef CONFIG_ARM
-+	# Add eabi initrinsics for ARM 32-bit
-+	redirect-intrinsics += \
-+		__aeabi_fadd __aeabi_fmul __aeabi_fcmpeq __aeabi_fcmple __aeabi_fcmplt __aeabi_fcmpun \
-+		__aeabi_dadd __aeabi_dmul __aeabi_dcmple __aeabi_dcmplt __aeabi_dcmpun \
-+		__aeabi_uldivmod
-+endif
- ifneq ($(or $(CONFIG_ARM64),$(and $(CONFIG_RISCV),$(CONFIG_64BIT))),)
- 	# These intrinsics are defined for ARM64 and RISCV64
- 	redirect-intrinsics += \
-diff --git a/rust/bindgen_parameters b/rust/bindgen_parameters
-index a721d466bee4..bf0148b3019e 100644
---- a/rust/bindgen_parameters
-+++ b/rust/bindgen_parameters
-@@ -24,3 +24,7 @@
- # These functions use the `__preserve_most` calling convention, which neither bindgen
- # nor Rust currently understand, and which Clang currently declares to be unstable.
- --blocklist-function __list_.*_report
-+
-+# Depending on how the architecute defines ARCH_SLAB_MINALIGN, bindgen might generate a binding.
-+# Disable this here as there is a const that will always be generated in bindings_helper.c
-+--blocklist-item ARCH_SLAB_MINALIGN
-diff --git a/rust/compiler_builtins.rs b/rust/compiler_builtins.rs
-index bba2922c6ef7..c37142b16a45 100644
---- a/rust/compiler_builtins.rs
-+++ b/rust/compiler_builtins.rs
-@@ -70,5 +70,29 @@ pub extern "C" fn $ident() {
-     __umodti3,
- });
- 
-+#[cfg(target_arch = "arm")]
-+define_panicking_intrinsics!("`f32` should not be used", {
-+    __aeabi_fadd,
-+    __aeabi_fmul,
-+    __aeabi_fcmpeq,
-+    __aeabi_fcmple,
-+    __aeabi_fcmplt,
-+    __aeabi_fcmpun,
-+});
-+
-+#[cfg(target_arch = "arm")]
-+define_panicking_intrinsics!("`f64` should not be used", {
-+    __aeabi_dadd,
-+    __aeabi_dmul,
-+    __aeabi_dcmple,
-+    __aeabi_dcmplt,
-+    __aeabi_dcmpun,
-+});
-+
-+#[cfg(target_arch = "arm")]
-+define_panicking_intrinsics!("`u64` division/modulo should not be used", {
-+    __aeabi_uldivmod,
-+});
-+
- // NOTE: if you are adding a new intrinsic here, you should also add it to
- // `redirect-intrinsics` in `rust/Makefile`.
-diff --git a/scripts/generate_rust_target.rs b/scripts/generate_rust_target.rs
-index 641b713a033a..acfcf2e22e28 100644
---- a/scripts/generate_rust_target.rs
-+++ b/scripts/generate_rust_target.rs
-@@ -148,7 +148,9 @@ fn main() {
-     let mut ts = TargetSpec::new();
- 
-     // `llvm-target`s are taken from `scripts/Makefile.clang`.
--    if cfg.has("ARM64") {
-+    if cfg.has("ARM") {
-+        panic!("arm uses the builtin rustc target");
-+    } else if cfg.has("ARM64") {
-         panic!("arm64 uses the builtin rustc aarch64-unknown-none target");
-     } else if cfg.has("RISCV") {
-         if cfg.has("64BIT") {
--- 
-2.45.2
+It always fails if a file path name is longer than PATH_MAX.
 
+Can we add a flag to indicate whether file names are needed to be
+resolved? In criu, we use special names like "vvar", "vdso", but we dump
+files via /proc/pid/map_files.
+
+> +			}
+> +			name_sz = name_buf + name_buf_sz - name;
+> +		} else if (name || name_fmt) {
+> +			name_sz = 1 + snprintf(name_buf, name_buf_sz, name_fmt ?: "%s", name);
+> +			name = name_buf;
+> +		}
+> +		if (name_sz > name_buf_sz) {
+> +			err = -ENAMETOOLONG;
+> +			goto out;
+> +		}
+> +		karg.vma_name_size = name_sz;
+> +	}
+
+Thanks,
+Andrei
 
