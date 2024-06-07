@@ -1,146 +1,138 @@
-Return-Path: <linux-kernel+bounces-205495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68E668FFCC6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:10:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D43CD8FFCCD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E94DBB264FE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:10:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4A0C1C283FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9121515574B;
-	Fri,  7 Jun 2024 07:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADB615665B;
+	Fri,  7 Jun 2024 07:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="dz4Wbqm4"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UyNIXMbA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2306153578
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 07:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E08015622E;
+	Fri,  7 Jun 2024 07:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717744034; cv=none; b=fPIXwfGEyNvJtF+I77+iih/+bcCrJ3965/hcwTM7o7MWNIRI/49x4BPfs58AjSbUKGDKKx0IYBuBjX0e89akwpvHH1VyVJy/nutXfCsTMOd/F22JtW/rGir98EHyOPOrNklz0A8ER+K3mGwXDSgDN7FFr6gjKfXyfDJJrZuvqjw=
+	t=1717744072; cv=none; b=qF0WdfQ/CigyGPoU1bZ+TVXMXApaKdOfIeLC9vQU/W6gxaHD8opCHlmHcvHyjkQKDxdOdZcV6cdZKkcHxR3l5b0j8XUL2raGmlajQJlvqQAnqromKrmRi5gizfo8i35qTwqODnUfJPBQxXzBOhOXK5K04dbZiiSi0ogTKzGdnHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717744034; c=relaxed/simple;
-	bh=uDKsXWnZBq8B1TZSbGrBofUZF8hvuJaCCCMe9c3tno4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j8gKL0TZMd07BkgjrjVFJbPiRVTHqdh6a2S7XdsGxd+AeHoXwaUyX2A5iKAtc3eoUk5Ny6vTv38Jr3goqu2pegp6fs0SLxWu94pECCTuVxTH86mSLzgUAJkwMIYLgdub/E9ohyUEVm5oI+TRrktG7ILztdUg1tbq6AzDuBw9tuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=dz4Wbqm4; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-375833acc98so1260515ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 00:07:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1717744032; x=1718348832; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8CLx8I7uIS4yN2qY8IP79uDVs9k1SwxKuZrHLU/16hk=;
-        b=dz4Wbqm42Bp05zD47ZT5UJX5xNZD2rHUqo2J5ey6CCNtibMXbhYzHBZhM80zEb+Ed+
-         moeaEH16tN8wYgyesy/ZoccwkUTa+FLo3f8GcBTC4VEkTmeIe+0TwZP0m/l2LPkcp0sb
-         MxpCYALqvOj9FGaWdZBJpDqQ9qlaHJTak7pfs6NZVlwGdE+8t3kAKd0BS15gI9WO1Xsv
-         rxAWmqvR5XYIkKZkUfQ4Lkz7CO7jdHrZkG7YoRGtbQN2PXmx0zPp3BALadVJN2xhMsVN
-         +72etnPkar/szOeg7ZxdkLwuoOaol71KoJHlj4ZoJXFNKjWHsxroguMsbr/6rSdDPrhm
-         hqDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717744032; x=1718348832;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8CLx8I7uIS4yN2qY8IP79uDVs9k1SwxKuZrHLU/16hk=;
-        b=wvM6HI1RsBejknMlFoGxqzZkM2yTO2vHJ9PuUc8TEpTlSO3naNgOOQFlj6wKUYHJ+7
-         fml2rEhTBc0M8u2OonDrltstxk9Y8Qjk22iTqkXvNCehuzO8sxtQjMO2HeqQSG9qjj9t
-         Y5UXz20Xb6eGcQxTE3zXIfzRqf6voky9iFq8Bp1ahxnplNk4zj4AsAJXci3Z2yhqxX2n
-         1Wzj/5UJjVLj0rKGKFzhcnO9u0HRblCmw/eR8WDWE4WjWj2mf2mlu5vkQgWnI20Q+BhP
-         7sm9sj3cXwyYanWWvIOBcbDRHEqFowyT25dWobc99jM6nzBXMspkV85wiRPI+DgILWSi
-         hA9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ/JhVjo4vUviwyO2cfR/Q3UdkcENKVbWKVx5FFDkjhpKXKblPL6Qfr06LML0zcRxx1RpXZ/It+P7ud8eCiB0JsffTzaJOUuN8zAlx
-X-Gm-Message-State: AOJu0YxxgTquW5TaLHD5U1de4Ai/6MPt07nQfrynXAQfJJYWyP0w4RdR
-	CbSUQlpMB4nBkS10XzqadX7jit3l0vhTpqGfNu5MXshdu/B8PoOPUAOEXhioWUrgM/NziFRVBAf
-	HaieGfesy7dWvd4xpWf+rT+PDPgMn7sPd5fZG5w==
-X-Google-Smtp-Source: AGHT+IFE09PTLjj0080/0bN8m/3yMGgMYsDcLZaSLR2FjJm1yUQBETVhznGnzF1DLd7cgzFg+hOq9wxArotyxseBiWU=
-X-Received: by 2002:a05:6e02:20e8:b0:374:9e82:7b51 with SMTP id
- e9e14a558f8ab-375802fcc9bmr22082355ab.9.1717744031764; Fri, 07 Jun 2024
- 00:07:11 -0700 (PDT)
+	s=arc-20240116; t=1717744072; c=relaxed/simple;
+	bh=vND6tBPRIH6M9sigCzz668/u3ZjGc2f2xi9oV0DOp2Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KjYAVs8vojt6Qo+y/HX4KsJYD/9VvyusgxqmpuqFf6EiTcZwI7qMiD4zCXn7eOedEodmqsLx+A2WKr7sm3c3ipsz7HmHjYjQNr0HKWxdp31JYOSoAXZbEjr0I5XJg3U4NP4AodDlefEAfhaKw7y4DxVpS9ZnbNz/Cb66YDbcE78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UyNIXMbA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4628C2BBFC;
+	Fri,  7 Jun 2024 07:07:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717744072;
+	bh=vND6tBPRIH6M9sigCzz668/u3ZjGc2f2xi9oV0DOp2Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UyNIXMbA/nkk4UXSfTpBupCK1AG/OZpZsKXitxQE6xQc2VGncQrxeBEFkhCLiGsxN
+	 zoftIn2MADwxgVJD8tUZxvQ71YdSMGPl0x9WoqzEJ24IhN1zYGIT4YGIu2CObmTy1r
+	 Puq3yoPO0twTQKdkvBUMQISz4OVy1S13hLvCmeJy8SDBZBOe2LxbXhHMoX5sbidPrZ
+	 2UrWMXSmH7sc26xkqZNto+9h7W7dTa7ytIWImlWx904LQEoiy+sDPgW+RmhR+Ny3Fx
+	 iXPxSZ5rExrCLrWAOp8r4WgCPSQkH6Sh7I8mcrbiG6wZuAlzWA0TD/EY8OSpdP6HSk
+	 1opXpZR0JX+YA==
+Message-ID: <1486a1b6-4119-4121-b6df-3da21d06add7@kernel.org>
+Date: Fri, 7 Jun 2024 09:07:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240429092113.70695-1-betterman5240@gmail.com>
-In-Reply-To: <20240429092113.70695-1-betterman5240@gmail.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Fri, 7 Jun 2024 12:37:01 +0530
-Message-ID: <CAAhSdy3HPGS48TeG5LxiECAtNyzmzsJPzo+_eicgxL28nAgoHg@mail.gmail.com>
-Subject: Re: [PATCH] RISC-V:KVM: Add AMO load/store access fault traps to
- redirect to guest
-To: Yu-Wei Hsu <betterman5240@gmail.com>
-Cc: atishp@atishpatra.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXT] Re: [PATCH 1/4] dt-bindings: firmware: secvio: Add device
+ tree bindings
+To: Vabhav Sharma <vabhav.sharma@nxp.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Franck Lenormand <franck.lenormand@nxp.com>,
+ Aisheng Dong <aisheng.dong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, Varun Sethi <V.Sethi@nxp.com>,
+ Silvano Di Ninno <silvano.dininno@nxp.com>,
+ Pankaj Gupta <pankaj.gupta@nxp.com>, Frank Li <frank.li@nxp.com>,
+ Daniel Baluta <daniel.baluta@nxp.com>
+References: <20240509-secvio-v1-0-90fbe2baeda2@nxp.com>
+ <20240509-secvio-v1-1-90fbe2baeda2@nxp.com>
+ <750f5388-20f9-45a3-a1e6-ceac4b91329f@kernel.org>
+ <AS1PR04MB9358A2457AF05553457DE9B0F3FB2@AS1PR04MB9358.eurprd04.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <AS1PR04MB9358A2457AF05553457DE9B0F3FB2@AS1PR04MB9358.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Apr 29, 2024 at 2:51=E2=80=AFPM Yu-Wei Hsu <betterman5240@gmail.com=
-> wrote:
->
-> When unhandled AMO load/store access fault traps are not delegated to
-> VS mode (hedeleg), M mode redirects them back to S mode.
-> However, upon returning from M mode,the KVM executed in HS mode terminate=
-s
-> VS mode software.
-> KVM should redirect traps back to VS mode and let the VS mode trap handle=
-r
-> determine the next steps.
-> This is one approach to handling access fault traps in KVM,
-> not only redirecting them to VS mode or terminating it.
->
-> Signed-off-by: Yu-Wei Hsu <betterman5240@gmail.com>
+On 07/06/2024 06:58, Vabhav Sharma wrote:
+>>
+>> Missing SoC compatibles.
+> Ok, I will use fsl,imx8dxl-sc-secvio
+>>
+>> So no, that's just abuse of DT to instantiate driver.
+>>
+>> NAK. Drop the binding.
+> I will detail the dt binding to describe the real hardware
 
-Overall this patch looks good to me but the patch subject and
-description can further simplified as follows:
+Still looks like way just to instantiate driver. Why it cannot be part
+of existing firmware SCU node?
 
-    RISC-V: KVM: Redirect AMO load/store access fault traps to guest
+Best regards,
+Krzysztof
 
-    The KVM RISC-V does not delegate AMO load/store access fault traps to
-    VS-mode (hedeleg) so typically M-mode takes these traps and redirects
-    them back to HS-mode. However, upon returning from M-mode, the KVM
-    RISC-V running in HS-mode terminates VS-mode software.
-
-    The KVM RISC-V should redirect AMO load/store access fault traps back
-    to VS-mode and let the VS-mode trap handler determine the next steps.
-
-I have taken care of the above at the time of queuing this patch.
-
-Reviewed-by: Anup Patel <anup@brainfault.org>
-
-Queued this patch for Linux-6.11
-
-Thanks,
-Anup
-
-> ---
->  arch/riscv/kvm/vcpu_exit.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/arch/riscv/kvm/vcpu_exit.c b/arch/riscv/kvm/vcpu_exit.c
-> index 2415722c01b8..ef8c5e3ec8a0 100644
-> --- a/arch/riscv/kvm/vcpu_exit.c
-> +++ b/arch/riscv/kvm/vcpu_exit.c
-> @@ -185,6 +185,8 @@ int kvm_riscv_vcpu_exit(struct kvm_vcpu *vcpu, struct=
- kvm_run *run,
->         case EXC_INST_ILLEGAL:
->         case EXC_LOAD_MISALIGNED:
->         case EXC_STORE_MISALIGNED:
-> +       case EXC_LOAD_ACCESS:
-> +       case EXC_STORE_ACCESS:
->                 if (vcpu->arch.guest_context.hstatus & HSTATUS_SPV) {
->                         kvm_riscv_vcpu_trap_redirect(vcpu, trap);
->                         ret =3D 1;
-> --
-> 2.25.1
->
 
