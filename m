@@ -1,39 +1,73 @@
-Return-Path: <linux-kernel+bounces-205741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A8398FFFAF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:36:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83FAE8FFFB4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A020A288722
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:36:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23B8E1F230AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D222B15B55F;
-	Fri,  7 Jun 2024 09:36:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A022C132139;
-	Fri,  7 Jun 2024 09:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF7A15B55F;
+	Fri,  7 Jun 2024 09:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBPpwS5k"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786A115B141;
+	Fri,  7 Jun 2024 09:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717752960; cv=none; b=XoyG6j/0teQ/bv1e5v2rCXmEF0b01uwFcsOARU/22JGJ8KQNRvcZWKTBCwnGjPWu0VBPx15LZ6ggz3FqHkMks8bZnYcl4ujORe86nEzh2qm324fQF0hW04RpEIeugKsaphj++N9jOiUzGE7ndmvkYqty0s1RbScpSA9ple+pdwU=
+	t=1717753074; cv=none; b=uvatmYqx11kCMNbQEDR2OBl5B0m3NMd3GQtZlQtDH7zS3Y1MCX9SsZqL3MOq6YaguAd17o8ahaW5//KteIz9KSPK527ajh5/rQnjJt+oL8xiy5F2WGAu68e5FhMqdGYS71WOg/SCLbjg4upTRwk/uSpQP0b80dtSc0zisUDcR5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717752960; c=relaxed/simple;
-	bh=oTDTxjuZkTvSB42v+me5M4PJ7i/VHqUvXYJkggMqRPU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fshiX+lZI8mxyC2ox8HZH79TUt/B4ZcmPcFrbY/WJpDY0JPeP3AvPHGasRjFbvg8jBBzmu7UbO40YPXFQSXmH4iE53TtZ3kQoEt7POv9kHuo4jUoTlqOwep5u59NQ3/k6+OnMclXoLkBi9bIaJ0yefyI7Xzd2bsyRL8oTHtOkGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2BC532F4;
-	Fri,  7 Jun 2024 02:36:22 -0700 (PDT)
-Received: from [10.57.70.22] (unknown [10.57.70.22])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5BA743F762;
-	Fri,  7 Jun 2024 02:35:55 -0700 (PDT)
-Message-ID: <53190254-4e9a-4204-b09a-fb1eb31d0efb@arm.com>
-Date: Fri, 7 Jun 2024 10:35:53 +0100
+	s=arc-20240116; t=1717753074; c=relaxed/simple;
+	bh=K6gZoOQtUsHQrzfBeJp4rAsL4kI+EenvXrZYu3JA9uQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qddxfuq398wj3TRvPqEjYE03Uq/QFtW8xmSOACkgqkpelOePdOtJ6NoryZsBSbogE8yX6wZAieBbKF6zXJXGIYYeIb2+SQIPkM3SSZsUIR6V7uqL03u91alFroqoV86ljutSEeULakZ3uCrXCOJKUjYhoxIhBWPg0U43T3YXQtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KBPpwS5k; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57a30b3a6cbso2386197a12.1;
+        Fri, 07 Jun 2024 02:37:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717753071; x=1718357871; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zPkjmu28lH6Uj5/7lKqJK9Iajt8blRgiQOuvXtrYh2A=;
+        b=KBPpwS5k1LxCepuLLXotu75Lrp0/GVuufNGyaA92OtTT4C+DSvn0lORzlLzC+U09pe
+         xIX5Zjxe/mUzFYsLHbSjPNzhI688G3JgixQg3rqU9yesUIQVwAXt9aa6cWIr1jZO5TfS
+         +lM1b0+CHN+bxEebGBQZGYTE1SfzOK1b9ILrRMEHXcffYKP20l7Anpn24ylzbuPqwPnH
+         u0BIA3w9lS2hwp8thRLh4aBk4upKKtONVdifMQyMoZLTepXMDYP+nrFWQtXOzej0T46+
+         M4YFx/QCHM7tbeRsn4zYy0wpJIg1XFPD+xC158yjdEwJ3v2+sf6rmiLpULUieiGGYK93
+         /08w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717753071; x=1718357871;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zPkjmu28lH6Uj5/7lKqJK9Iajt8blRgiQOuvXtrYh2A=;
+        b=NmGXLHP2n4SMmX5uPcDISRbPbsGQ76cB9Uv95+62iQxmS0lbZy7QUr944YE2yyrxqE
+         f0mDMDY1MBiS0hwWwch3AMGhtDQbYRkK5gWaBT4qHBFRCjvsqBLfadUYTdUg7ZmGGTrF
+         CLBsq/uNjnkVwHmEAh445XEJ4X5VkLzfbKsYwv/bjepsjayr2o4XlhPj5crCrLGJN61t
+         Hhh2P7XqlNzlcaLYdMikuIz3+pG6C5oY78zE66FBfuFSOB5B43IVOY1XUmqLnE5PqEEz
+         enKvL7ntAfF7GjVvC0+TFIjE9UPwuJfiwkMDhqa7mwx1CnhMQ6hhJ8eJdnwTa2INpJiP
+         n8Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCVb/aAG7EiU/VmqHhdDRyJ+60vd3KAf5vSDsLuUxAKDbo6ddbdSMIFAZH4DUSRjp4sCajf5dcxmpPueopFEjS0I3sf3tLzawtiMEruwgycxeUlYNjrj0NthS5Q9KyOHcSNgOjuGijxwjLKSI9UInThMX0uC4IJP1aQDGiV9cTL4cxq4vQ==
+X-Gm-Message-State: AOJu0Ywrd70Ksk0/AU8yft5VG35DbKr3zk6Llm2m9JTOmOjbdUY8/QS4
+	yKnUfhka37096WQ29XErA8LNK5f+0vCCDlTxTXTd8MWxM3Gztadg
+X-Google-Smtp-Source: AGHT+IEAe5LCO3ZI2yvyOYYPO9oiA36X0Lk35OBt7QDekissxJ8NoDnTU2gFAcHjJFXYeFLZLnTTkg==
+X-Received: by 2002:a50:d59d:0:b0:579:c4f6:dee9 with SMTP id 4fb4d7f45d1cf-57c5095cea9mr998753a12.34.1717753070572;
+        Fri, 07 Jun 2024 02:37:50 -0700 (PDT)
+Received: from [192.168.0.220] ([83.103.132.21])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aadf9ea35sm2448843a12.15.2024.06.07.02.37.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jun 2024 02:37:50 -0700 (PDT)
+Message-ID: <0f230e9a-31bb-45e1-ab86-b80b30ad8502@gmail.com>
+Date: Fri, 7 Jun 2024 12:37:48 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,61 +75,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Christian Loehle <christian.loehle@arm.com>
-Subject: Re: [PATCH 1/6] cpuidle: teo: Increase util-threshold
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, rafael@kernel.org
-Cc: vincent.guittot@linaro.org, qyousef@layalina.io, peterz@infradead.org,
- daniel.lezcano@linaro.org, anna-maria@linutronix.de,
- kajetan.puchalski@arm.com, lukasz.luba@arm.com
-References: <20240606090050.327614-1-christian.loehle@arm.com>
- <20240606090050.327614-2-christian.loehle@arm.com>
- <19d87e24-7c2b-4396-9514-74150b896cf3@arm.com>
+Subject: Re: [PATCH v6 5/9] iio: adc: ad7173: refactor ain and vref selection
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ dumitru.ceclan@analog.com
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240606-ad4111-v6-0-573981fb3e2e@analog.com>
+ <20240606-ad4111-v6-5-573981fb3e2e@analog.com>
+ <8f74bb906951f56c753081af1462560fe98bc822.camel@gmail.com>
 Content-Language: en-US
-In-Reply-To: <19d87e24-7c2b-4396-9514-74150b896cf3@arm.com>
+From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
+In-Reply-To: <8f74bb906951f56c753081af1462560fe98bc822.camel@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/7/24 09:01, Dietmar Eggemann wrote:
-> On 06/06/2024 11:00, Christian Loehle wrote:
->> Increase the util-threshold by a lot as it was low enough for some
->> minor load to always be active, especially on smaller CPUs.
+On 07/06/2024 12:04, Nuno Sá wrote:
+> On Thu, 2024-06-06 at 19:07 +0300, Dumitru Ceclan via B4 Relay wrote:
+>> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>>
+>> Move validation of analog inputs and reference voltage selection to
+>> separate functions to reduce the size of the channel config parsing
+>> function and improve readability.
+>> Add defines for the number of analog inputs in a channel.
+>>
+>> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>> ---
+>>  drivers/iio/adc/ad7173.c | 68 +++++++++++++++++++++++++++++++++--------------
+>> -
+>>  1 file changed, 47 insertions(+), 21 deletions(-)
+>>
+>> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+>> index 8631f218b69e..4040edbd1c32 100644
+>> --- a/drivers/iio/adc/ad7173.c
+>> +++ b/drivers/iio/adc/ad7173.c
+>> @@ -60,6 +60,7 @@
+>>  #define AD7173_CH_SETUP_AINPOS_MASK	GENMASK(9, 5)
+>>  #define AD7173_CH_SETUP_AINNEG_MASK	GENMASK(4, 0)
+>>  
+>> +#define AD7173_NO_AINS_PER_CHANNEL	2
+>>  #define AD7173_CH_ADDRESS(pos, neg) \
+>>  	(FIELD_PREP(AD7173_CH_SETUP_AINPOS_MASK, pos) | \
+>>  	 FIELD_PREP(AD7173_CH_SETUP_AINNEG_MASK, neg))
+>> @@ -629,6 +630,7 @@ static int ad7173_setup(struct iio_dev *indio_dev)
+>>  static unsigned int ad7173_get_ref_voltage_milli(struct ad7173_state *st,
+>>  						 u8 reference_select)
+>>  {
+>> +	struct device *dev = &st->sd.spi->dev;
+>>  	int vref;
+>>  
+>>  	switch (reference_select) {
+>> @@ -652,9 +654,11 @@ static unsigned int ad7173_get_ref_voltage_milli(struct
+>> ad7173_state *st,
+>>  		return -EINVAL;
+>>  	}
+>>  
+>> -	if (vref < 0)
+>> +	if (vref < 0) {
+>> +		dev_err(dev, "Cannot use reference %u. Error:%d\n",
+>> +			reference_select, vref);
+>>  		return vref;
+>> -
+>> +	}
+>>  	return vref / (MICRO / MILLI);
+>>  }
 > 
-> We see the blocked part of the CPU utilization as something telling the
-> task scheduler that the corresponding tasks might be runnable soon again
-> on this CPU.
+> unrelated?
 > 
-> This model seems to be used here as well. I guess folks are still
-> debating whether the amount of blocked utilization is a good enough
-> indicator for the length of idle time.
+> - Nuno Sá
+> 
 
-Right, the blocked utilization is treated as an indicator that we will
-be brought out of sleep by a non-timer wakeup.
+Hmm, maybe I misunderstood "Any error log needed should be done inside ad7173_get_ref_voltage_milli()"
+https://lore.kernel.org/all/71452f6882efe6a181d477914488617d28a38e2f.camel@gmail.com/
 
-> 
->> For small cap CPUs (Pixel6) the util threshold is as low as 1.
->> For CPUs of capacity <64 it is 0. So ensure it is at a minimum, too.
-> 
-> So before this threshold was 16 on a 1024 CPU, now it's 256?
-> 
-> A <= 200 CPU has now a threshold of 50.
-> 
-> Where do those numbers come from? Just from running another workload on
-> a specific device?
-> 
-> [...]
-
-More or less yes.
-Kajetan identified two broad use-cases for the utilization-based state
-bypass: Early utilization ramp-up and high utilization scenarios.
-The reports made it clear that the former can't be handled with a
-threshold for just a single value as it will be too aggressive in
-sustained (non-ramp-up) workloads.
-To be fair, with patches 5 and 6 of this series, the ramp-up is
-also handled quite early by the intercepts logic itself.
-So as a fix I increased the value high enough to not trigger in
-low-utilization scenarios.
-There is likely room for optimization here, e.g. many wakeups
-are also IPIs more related to the general system utilization instead
-of the current CPU.
+This change should be in a different patch or should it not've been done
+this way?
 
