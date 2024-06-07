@@ -1,54 +1,48 @@
-Return-Path: <linux-kernel+bounces-205973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26C529002D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:58:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C849002CE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D03A1C22C7A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:58:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A74A71C22592
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE23219068D;
-	Fri,  7 Jun 2024 11:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="apR+ZE8Y"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D046619048A;
+	Fri,  7 Jun 2024 11:58:04 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95ECD15A4A2;
-	Fri,  7 Jun 2024 11:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A098415A4A2;
+	Fri,  7 Jun 2024 11:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717761490; cv=none; b=FR9Bmc/7C+pqcJgQf9eOAUiJ4HsycoiVc8ZH2Kt3rgPHk6z4PLcgd9e5iSomcJzwO4qmcOaTtra7IRWo2DgDQyH/6oZG+miyXtBu1qIKMqxgUNgsnVwB5kREyXUmcwDvcvug42/5n+BOvBDlX5SrONAgUvG+VhUFF3hLla5IhTk=
+	t=1717761484; cv=none; b=j3qXgmxzHy4A06zSiSJxx4+nNgFEQ9g0F7sb90NG9BXGJZ6iO7VWNBPqAru1Eagxd/BlwOkxTa46Cg8UQX34czVeBb2jhdUoLPa0CPFqEhuuwpF/JBl2Y7GcscfPwL4q5HFfTKZGiGY2R9DXvCtLWjr9MUvyQow2Otr9eLczi08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717761490; c=relaxed/simple;
-	bh=4b2ugFfalk4/kWMxtoFcpD43wGccOMs6ThCReo3lAvA=;
+	s=arc-20240116; t=1717761484; c=relaxed/simple;
+	bh=BJgA5mjSOdgFasg9fVU69D0IkoNIEebkOV1Dysjw+vw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BqvObxa1a54Rbs7qYcc0Cn0pIJoyInWj6u+gSYeMj5vUOeqzOzInR1vR6LVeGK2rYrD77AWAxShSG/c4lmHnw68kzVozSkqV4F7s4e7Ie2w/0AF9nfsLgX/GGW6KcazUb4HfnUBFbY2f0IFyVG9VXVihLPeEXKIoernLIJ+fdT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=apR+ZE8Y; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=TR/Oh9dwCvTN/XzGdtqdy+Cjahkykd+vTLsu3IoL/UA=; b=apR+ZE8YqRaZUM+25wDrxTl6Fk
-	xwylTeSR/y2FC+tp4CNZ3H8aGA4yE+kBgp64GqbxO76fK2iyntb/R7geULxJ3wwMK2gr+RpVhLhVy
-	hS7luvwm7sJ3YX2d1/NljC9tIt+zKaNwDgAGIyV+J6Wn8/4NxWekch/SFWFJBmwsnmnM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sFYEJ-00H7Lt-7V; Fri, 07 Jun 2024 13:57:59 +0200
-Date: Fri, 7 Jun 2024 13:57:59 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: f.fainelli@gmail.com, olteanv@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: dsa: Fix typo in NET_DSA_TAG_RTL4_A Kconfig
-Message-ID: <a0630e6e-d979-4856-98c7-93721006da66@lunn.ch>
-References: <20240607020843.1380735-1-chris.packham@alliedtelesis.co.nz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UAGkmDgl9pMyLmjP/AyKkX3UK73gYXiXHWB/vGA2H/sKa/W+Ef7neFxqW8liFa71n8RyW5VLMj8ZRa0I8aIvIiYA1T/V3Yfs+5kLbPrjzfKNEAk8X6PEwicxZh6A/b+sQWiiiLfaTYASGw28cOg7LhA87zTXkHywIyT688lTr4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sFYEH-006pKV-20;
+	Fri, 07 Jun 2024 19:57:58 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 07 Jun 2024 19:58:00 +0800
+Date: Fri, 7 Jun 2024 19:58:00 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Chenghai Huang <huangchenghai2@huawei.com>
+Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org, shenyang39@huawei.com,
+	liulongfang@huawei.com, qianweili@huawei.com
+Subject: Re: [PATCH V3 0/2] crypto: hisilicon - adjust vf configuration
+ sequence and optimize zip reg offset
+Message-ID: <ZmL1yH-6e6VE4Dtd@gondor.apana.org.au>
+References: <20240601025150.1660826-1-huangchenghai2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,15 +51,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240607020843.1380735-1-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20240601025150.1660826-1-huangchenghai2@huawei.com>
 
-On Fri, Jun 07, 2024 at 02:08:43PM +1200, Chris Packham wrote:
-61;7592;1c> Fix a minor typo in the help text for the NET_DSA_TAG_RTL4_A config
-> option.
+On Sat, Jun 01, 2024 at 10:51:48AM +0800, Chenghai Huang wrote:
+> The VF enabling and disabling issues are fixed, and the ZIP address
+> offset calculation is optimized.
 > 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> Chenghai Huang (2):
+>   crypto: hisilicon/qm - adjust the internal processing sequence of the
+>     vf enable and disable
+>   crypto: hisilicon/zip - optimize the address offset of the reg query
+>     function
+> 
+>  drivers/crypto/hisilicon/qm.c           | 11 ++----
+>  drivers/crypto/hisilicon/zip/zip_main.c | 48 +++++++++++--------------
+>  2 files changed, 23 insertions(+), 36 deletions(-)
+> 
+> -- 
+> 2.33.0
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+All applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
