@@ -1,202 +1,153 @@
-Return-Path: <linux-kernel+bounces-206337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A73E900814
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:03:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37144900816
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 059611F25F85
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:03:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C7C21C2542C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA9C19E7F1;
-	Fri,  7 Jun 2024 15:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9E6196444;
+	Fri,  7 Jun 2024 15:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="xI6YI1vM"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cxsJ/S8z"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E5419E7E0;
-	Fri,  7 Jun 2024 14:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D969615748C;
+	Fri,  7 Jun 2024 15:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717772399; cv=none; b=IRNziBYa/KHy0THKPC0RYW2L7UpFbN4k+8Iins3A12bSOZcuBz1E7s6677E01LZB5leycAjS2+Z3UtWUoL+UJWnzvCJF8a37/91C8CsBJCvoHV4f1we6ZloN6aCDH4t02h9Pi56LeGVBNusVayt/ndTPrNrHYax5UXtAERTCyPE=
+	t=1717772480; cv=none; b=RJLYKOoZDDI4lewJ2WIC0NHHCwex3LiYhUQOPhm7ZlCK2Vpn7QVjvL9nJAkmx9XHKx/HAzW06px/15b0Ax9NqgXJVLqdEAo+HbUC6KKziZqyGENFudFczv1wTdDF9innKJnIbU/OWda+ZQnGEJReAP+BgSPQtG+c78bHqvhqCvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717772399; c=relaxed/simple;
-	bh=EmTqGE3ZvWlOqEFX6X4AvFp9DIkmcGEg7sqUyfmuXr0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rkDZdipXDlWeUNcMx9L+ycwoaRo1l2oSGRy3cjy1Jat9j9s/OGN9ZXMfxSp0JxmuC3+NP+awZIIwTFAeM4qfiSzJnfSkBF5IBZyoyJTi9JO9Aq/kkUqTHrOQ8Bcp8pMwwsRu7eKv8aqvXIZX81/ybgOVnwKQbExQkQ11easYmUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=xI6YI1vM; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4VwkrV2rnVz9sZS;
-	Fri,  7 Jun 2024 16:59:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1717772394;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9vXYgSxRyUppcEZmCRlqS1p5lc/MCHDHslK/G0CWBeg=;
-	b=xI6YI1vM1H1/ZjtAWLYXlEyhjVfEgiFVm+IOb4aP6oO9OsaYYEFEfmH/q1rDW1In2Biwz5
-	5rIXG/pNhXxtoegWKWgJfGO3WfQLKHHfCxqjr8QK+3gX08tjTqUJ8V616NTECLo3IV2hzi
-	gIkcMCJCVJ50L/SEL5voxRVc0ElELkW64AbYcGod1KcUyz4CIaWqirZLQgFNW3goGUcA+g
-	LeN+UgpwOVClQ6AFRS2hScRrskVOJ6oYALJeagygISDlQMdz4hJWZaknxgysxDQBT5hYxj
-	7yjRzzmeXuu6xHTlv7/Y9U2IbOciSs04WqUwILZp+aKSpUbtLyQgnr6wT2O3cA==
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: david@fromorbit.com,
-	djwong@kernel.org,
-	chandan.babu@oracle.com,
-	brauner@kernel.org,
-	akpm@linux-foundation.org,
-	willy@infradead.org
-Cc: mcgrof@kernel.org,
-	linux-mm@kvack.org,
-	hare@suse.de,
-	linux-kernel@vger.kernel.org,
-	yang@os.amperecomputing.com,
-	Zi Yan <zi.yan@sent.com>,
-	linux-xfs@vger.kernel.org,
-	p.raghav@samsung.com,
-	linux-fsdevel@vger.kernel.org,
-	kernel@pankajraghav.com,
-	hch@lst.de,
-	gost.dev@samsung.com,
-	cl@os.amperecomputing.com,
-	john.g.garry@oracle.com
-Subject: [PATCH v7 11/11] xfs: enable block size larger than page size support
-Date: Fri,  7 Jun 2024 14:59:02 +0000
-Message-ID: <20240607145902.1137853-12-kernel@pankajraghav.com>
-In-Reply-To: <20240607145902.1137853-1-kernel@pankajraghav.com>
-References: <20240607145902.1137853-1-kernel@pankajraghav.com>
+	s=arc-20240116; t=1717772480; c=relaxed/simple;
+	bh=Q9lr0F6vvsDj287dKckyC5d+E36+L4qJZnU9JFJCiWE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SrO+lqIxABz77k5j5Ka310V/M77whhNiHbBwFWJdPAI0kn66TTFG+WzVYYk4dMlVnkQkOSeTM0DIquarXw7J9Rm6pQW907J7uCpCy29Jx1aiBhU5Gd9vRh2wzsV92HAX62WqVXE2iKDc6qPKGmtxQsV0ywTLVVUFLH9Anw6xtTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cxsJ/S8z; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 457DveLM023664;
+	Fri, 7 Jun 2024 15:01:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WRazLU1zxZd5fncNEZHH39V//jvuj10tbiGEof211FI=; b=cxsJ/S8z8VhXBn8p
+	mRUuJcIWMiwmWXGkN1QwCv8J2jHMWBmBsVTvq440Cf9wWIrUcCBuHAHD9mHOM4pU
+	89a3bmjKlTygAW4tInOt54gr3JfL38VMISw7nSODlVrtlqW9m9mwWVPPNcaT+RV/
+	K4uk7KxhjecBPktVt8XUxSboAFoYthxaIOFEdZ72vrexdNORMlEu1+2rFCmGBda3
+	R1lACSh//Ed5+XTmSMy98DX3YRotK32/fPha8tfDlvXnHqN3Y4pb6nwVb7z234qC
+	YqF3mcHI1Qaw9rnlgn6YDrHNEVLmVHp/6fhR9Mcel2bQfMpuvO1IjOoxoEaRCuWn
+	lhNA2g==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ym0sf0qqw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 15:01:03 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 457F12M6012420
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 7 Jun 2024 15:01:02 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 7 Jun 2024
+ 08:01:01 -0700
+Message-ID: <4370ae55-9521-d2da-62b9-42d26b6fbece@quicinc.com>
+Date: Fri, 7 Jun 2024 09:01:00 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH v1 1/2] bus: mhi: host: Import link_id item
+Content-Language: en-US
+To: Slark Xiao <slark_xiao@163.com>, <manivannan.sadhasivam@linaro.org>,
+        <loic.poulain@linaro.org>, <quic_qianyu@quicinc.com>
+CC: <mhi@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240607100114.452979-1-slark_xiao@163.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20240607100114.452979-1-slark_xiao@163.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: hvNZKNirWtan41QF6CeLjdWGwNd0doC2
+X-Proofpoint-ORIG-GUID: hvNZKNirWtan41QF6CeLjdWGwNd0doC2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-07_08,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ lowpriorityscore=0 impostorscore=0 adultscore=0 suspectscore=0 mlxscore=0
+ mlxlogscore=999 clxscore=1011 bulkscore=0 phishscore=0 priorityscore=1501
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406070110
 
-From: Pankaj Raghav <p.raghav@samsung.com>
+$Subject says this is patch 1 of 2, but I don't see a second patch nor a 
+cover letter.
 
-Page cache now has the ability to have a minimum order when allocating
-a folio which is a prerequisite to add support for block size > page
-size.
+On 6/7/2024 4:01 AM, Slark Xiao wrote:
+> For SDX72 MBIM mode, it starts data mux id from 112 instead of 0.
+> This would lead to device can't ping outside successfully.
+> Also MBIM side would report "bad packet session (112)".
+> So we add a link id default value for SDX72.
+> 
+> Signed-off-by: Slark Xiao <slark_xiao@163.com>
+> ---
+>   drivers/bus/mhi/host/pci_generic.c | 3 +++
+>   include/linux/mhi.h                | 1 +
+>   2 files changed, 4 insertions(+)
+> 
+> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> index 0b483c7c76a1..1f9de2730766 100644
+> --- a/drivers/bus/mhi/host/pci_generic.c
+> +++ b/drivers/bus/mhi/host/pci_generic.c
+> @@ -53,6 +53,7 @@ struct mhi_pci_dev_info {
+>   	unsigned int dma_data_width;
+>   	unsigned int mru_default;
+>   	bool sideband_wake;
+> +	unsigned int link_default;
+>   };
+>   
+>   #define MHI_CHANNEL_CONFIG_UL(ch_num, ch_name, el_count, ev_ring) \
+> @@ -469,6 +470,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx72_info = {
+>   	.dma_data_width = 32,
+>   	.mru_default = 32768,
+>   	.sideband_wake = false,
+> +	.link_default = 112,
+>   };
+>   
+>   static const struct mhi_channel_config mhi_mv3x_channels[] = {
+> @@ -1035,6 +1037,7 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>   	mhi_cntrl->runtime_get = mhi_pci_runtime_get;
+>   	mhi_cntrl->runtime_put = mhi_pci_runtime_put;
+>   	mhi_cntrl->mru = info->mru_default;
+> +	mhi_cntrl->link_id = info->link_default;
+>   
+>   	if (info->edl_trigger)
+>   		mhi_cntrl->edl_trigger = mhi_pci_generic_edl_trigger;
+> diff --git a/include/linux/mhi.h b/include/linux/mhi.h
+> index b573f15762f8..4da10b99c96e 100644
+> --- a/include/linux/mhi.h
+> +++ b/include/linux/mhi.h
+> @@ -445,6 +445,7 @@ struct mhi_controller {
+>   	bool wake_set;
+>   	unsigned long irq_flags;
+>   	u32 mru;
+> +	u32 link_id;
+>   };
+>   
+>   /**
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
----
- fs/xfs/libxfs/xfs_ialloc.c |  5 +++++
- fs/xfs/libxfs/xfs_shared.h |  3 +++
- fs/xfs/xfs_icache.c        |  6 ++++--
- fs/xfs/xfs_mount.c         |  1 -
- fs/xfs/xfs_super.c         | 18 ++++++++++--------
- 5 files changed, 22 insertions(+), 11 deletions(-)
+None of this is actually used.  Dead code is generally not accepted.
 
-diff --git a/fs/xfs/libxfs/xfs_ialloc.c b/fs/xfs/libxfs/xfs_ialloc.c
-index 14c81f227c5b..1e76431d75a4 100644
---- a/fs/xfs/libxfs/xfs_ialloc.c
-+++ b/fs/xfs/libxfs/xfs_ialloc.c
-@@ -3019,6 +3019,11 @@ xfs_ialloc_setup_geometry(
- 		igeo->ialloc_align = mp->m_dalign;
- 	else
- 		igeo->ialloc_align = 0;
-+
-+	if (mp->m_sb.sb_blocksize > PAGE_SIZE)
-+		igeo->min_folio_order = mp->m_sb.sb_blocklog - PAGE_SHIFT;
-+	else
-+		igeo->min_folio_order = 0;
- }
- 
- /* Compute the location of the root directory inode that is laid out by mkfs. */
-diff --git a/fs/xfs/libxfs/xfs_shared.h b/fs/xfs/libxfs/xfs_shared.h
-index 34f104ed372c..e67a1c7cc0b0 100644
---- a/fs/xfs/libxfs/xfs_shared.h
-+++ b/fs/xfs/libxfs/xfs_shared.h
-@@ -231,6 +231,9 @@ struct xfs_ino_geometry {
- 	/* precomputed value for di_flags2 */
- 	uint64_t	new_diflags2;
- 
-+	/* minimum folio order of a page cache allocation */
-+	unsigned int	min_folio_order;
-+
- };
- 
- #endif /* __XFS_SHARED_H__ */
-diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-index 0953163a2d84..5ed3dc9e7d90 100644
---- a/fs/xfs/xfs_icache.c
-+++ b/fs/xfs/xfs_icache.c
-@@ -89,7 +89,8 @@ xfs_inode_alloc(
- 	/* VFS doesn't initialise i_mode or i_state! */
- 	VFS_I(ip)->i_mode = 0;
- 	VFS_I(ip)->i_state = 0;
--	mapping_set_large_folios(VFS_I(ip)->i_mapping);
-+	mapping_set_folio_min_order(VFS_I(ip)->i_mapping,
-+				    M_IGEO(mp)->min_folio_order);
- 
- 	XFS_STATS_INC(mp, vn_active);
- 	ASSERT(atomic_read(&ip->i_pincount) == 0);
-@@ -324,7 +325,8 @@ xfs_reinit_inode(
- 	inode->i_rdev = dev;
- 	inode->i_uid = uid;
- 	inode->i_gid = gid;
--	mapping_set_large_folios(inode->i_mapping);
-+	mapping_set_folio_min_order(inode->i_mapping,
-+				    M_IGEO(mp)->min_folio_order);
- 	return error;
- }
- 
-diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-index 46cb0384143b..a99454208807 100644
---- a/fs/xfs/xfs_mount.c
-+++ b/fs/xfs/xfs_mount.c
-@@ -135,7 +135,6 @@ xfs_sb_validate_fsb_count(
- 	uint64_t		max_index;
- 	uint64_t		max_bytes;
- 
--	ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
- 	ASSERT(sbp->sb_blocklog >= BBSHIFT);
- 
- 	if (check_shl_overflow(nblocks, sbp->sb_blocklog, &max_bytes))
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 27e9f749c4c7..b8a93a8f35ca 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -1638,16 +1638,18 @@ xfs_fs_fill_super(
- 		goto out_free_sb;
- 	}
- 
--	/*
--	 * Until this is fixed only page-sized or smaller data blocks work.
--	 */
- 	if (mp->m_sb.sb_blocksize > PAGE_SIZE) {
--		xfs_warn(mp,
--		"File system with blocksize %d bytes. "
--		"Only pagesize (%ld) or less will currently work.",
-+		if (!xfs_has_crc(mp)) {
-+			xfs_warn(mp,
-+"V4 Filesystem with blocksize %d bytes. Only pagesize (%ld) or less is supported.",
- 				mp->m_sb.sb_blocksize, PAGE_SIZE);
--		error = -ENOSYS;
--		goto out_free_sb;
-+			error = -ENOSYS;
-+			goto out_free_sb;
-+		}
-+
-+		xfs_warn(mp,
-+"EXPERIMENTAL: V5 Filesystem with Large Block Size (%d bytes) enabled.",
-+			mp->m_sb.sb_blocksize);
- 	}
- 
- 	/* Ensure this filesystem fits in the page cache limits */
--- 
-2.44.1
-
+-Jeff
 
