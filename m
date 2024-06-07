@@ -1,217 +1,157 @@
-Return-Path: <linux-kernel+bounces-205607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B557C8FFE11
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:33:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B5448FFE15
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:33:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C56A1C237DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:33:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B1D31F22AC7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0994915B11F;
-	Fri,  7 Jun 2024 08:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7A715B134;
+	Fri,  7 Jun 2024 08:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="E+6pDkg7"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PpnpWZah"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E00615AD9B;
-	Fri,  7 Jun 2024 08:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.156.173
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717749209; cv=fail; b=sMO59RBpZ5RzWuIjtySml9Df/Jh2hL4AluIg0AlVJkplS9Q7hEdBRqH0vjrm+P9DEB0PCvLwK+0xZaOiDIAu+DKja9dkGmtc5iCFO1XeZIfJzqODrB4m7AbPTCp984XEMZfkOq1z3bAsEs84KxQ0hBMdJ2+oeOyGkkGpCSFJZkY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717749209; c=relaxed/simple;
-	bh=70fIuuuF2riNxInrSvanvdK4hooldUF8yWAlJiYWGMM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=vGARg4ZL2hRacW/yvOgkqrH/QED3XPROmglOi/w1Mqa8CNqSrCCIlVLKV2VYo8efN5Gyy8dZiG+a73Wx0GKy+8GLCNvTqVZ0GKdQ81tQUmJf/hWmCDup6lIXvpCTmuapXq1GoAHA3rf7NMGzrly2tyzmaF4buE+rHl8zY/pXQaw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=E+6pDkg7; arc=fail smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4575BHLJ027639;
-	Fri, 7 Jun 2024 01:33:00 -0700
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2169.outbound.protection.outlook.com [104.47.59.169])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3ykuu20ft3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 01:32:59 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=e9QHWn1Ls7dxtjLQLQ8M1wwi8hCgS6QZ0971AC5PneCmhKnvxR+JLT0lhBatUd3S2pkX05wQLo+bhctrw07MnUeyqrlLrwQoNo01/qqBltkiTUb0h1riWZBgR7W6D3H1eGoInBrRrWBUJiFgwT+gsZTZnlm/qJ/oTPuuRfd2czSLUUT35kjMqQ+3w37XeRlwvGL9Yf2LKsSEOwj4qe+f3GOFUriLwAYkt/b2Snr1uF+awc5H4ApBqPn3gWmWa9EHqqtn1vOgQKZWHgNEo/oSx6Y+EPW6YP3jtwKQM+vdK+SjSji3ZwyI/WjfFB7+hppcQuZ/S/XBu1rdWEnKieEtvg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=70fIuuuF2riNxInrSvanvdK4hooldUF8yWAlJiYWGMM=;
- b=fCPw4TGsuAcY3Ifzva/HNGoZ9hAdgJ6E1mUddyMTILQ5l6w0GNMAU+L3WMZDMdzRkghvFtKdCGlTHVNaSqTrvR/Cj0XhOsSA+ui4i2cIIXBeOYAb7486L1c2bKcfAs0vW7G6EMXXAg+lonU2OrKixn+b+9QydfyAHAQmu0Nprdm0qdtP0mjYyc+m//cskicE5euJyeb5XmovxvnzcABGI25EwICNYSfLL3wrrRACu+jsMlKCrTHuN0CyWJowI2LwFJI+GLcng6Y7qVtIscyDUCjFMVy0g4rV5VvMaBbF4jekreKxficURUkDyWkq7n7uZf5xcKSvGnQ7TLEqK+g5Vw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=70fIuuuF2riNxInrSvanvdK4hooldUF8yWAlJiYWGMM=;
- b=E+6pDkg7jRzK9A4/on8ITWk1FJtL+tEnONMPvOskntkVEPuUNg7cACSHdsikjwV98ao9QUtHmKvJlwU9DkWwUf9Q7CFmevOWCZNV9Xx1nasWZf2mCeSzhdIMq4b7yfFyq1W1V1vABB/KmZf0WrQOUR6YZxU6BuELuQ8HNOdhrsM=
-Received: from PH0PR18MB4474.namprd18.prod.outlook.com (2603:10b6:510:ea::22)
- by MW3PR18MB3500.namprd18.prod.outlook.com (2603:10b6:303:56::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.34; Fri, 7 Jun
- 2024 08:32:49 +0000
-Received: from PH0PR18MB4474.namprd18.prod.outlook.com
- ([fe80::ba6a:d051:575b:324e]) by PH0PR18MB4474.namprd18.prod.outlook.com
- ([fe80::ba6a:d051:575b:324e%4]) with mapi id 15.20.7633.021; Fri, 7 Jun 2024
- 08:32:49 +0000
-From: Hariprasad Kelam <hkelam@marvell.com>
-To: =?utf-8?B?Q3PDs2vDoXMsIEJlbmNl?= <csokas.bence@prolan.hu>,
-        "imx@lists.linux.dev" <imx@lists.linux.dev>,
-        "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>,
-        Clark
- Wang <xiaoning.wang@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>
-Subject: [PATCH v2] net: fec: Add ECR bit macros, fix FEC_ECR_EN1588 being
- cleared on link-down
-Thread-Topic: [PATCH v2] net: fec: Add ECR bit macros, fix FEC_ECR_EN1588
- being cleared on link-down
-Thread-Index: AQHauLVHxMAwfZ5cWEKU8wqwZe2dug==
-Date: Fri, 7 Jun 2024 08:32:48 +0000
-Message-ID: 
- <PH0PR18MB4474DC325887DE80C1A2D7F0DEFB2@PH0PR18MB4474.namprd18.prod.outlook.com>
-References: <20240607081855.132741-1-csokas.bence@prolan.hu>
-In-Reply-To: <20240607081855.132741-1-csokas.bence@prolan.hu>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR18MB4474:EE_|MW3PR18MB3500:EE_
-x-ms-office365-filtering-correlation-id: b099ec3b-e540-4248-db2c-08dc86cc6a19
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230031|376005|7416005|1800799015|366007|38070700009;
-x-microsoft-antispam-message-info: 
- =?utf-8?B?VTh5Yk1Pekdic2Zncjl4THY4QTdOWWxKQ3pwTVlsbTZuUVlTQnM3ekpYUnhI?=
- =?utf-8?B?akRtd3kvMkFMYklCT1NhTU0vK0M4RFE4bFRNRGFweWVjQ28wZ242TFE5Q1Ex?=
- =?utf-8?B?RU1TOUo0ZmNuem9SNHZ4R05QMGtBN012bEhtQkpTcEJhUThIb3FtejdiTFQz?=
- =?utf-8?B?dUt4aGZwQnhaei8xTXBjU2laUUoya1crUlJNVHJyQm5zMkEwYktLVUlMaDRr?=
- =?utf-8?B?bStnZndMUmZ2STBQblhCcnB4UFdMRy8vQjNSLzVKc1E5WW53ZEFxZnE2Rlp2?=
- =?utf-8?B?dGl3K2NSNXc0emc1c3dscVlLeTNzcThzZjl6UnVRc2kyMFhTWHEyeGF1QnM1?=
- =?utf-8?B?eXIvV05aYWMzKytUamhiZi80YXdqMVZ3QXZGOHNnUG1xaXVGazI1MHhtQmg4?=
- =?utf-8?B?dnFqOEcwN1hEZ0Z0YkNocFNJaSthcElnTG9lT1BFTnhrQi9lSnBIQkhnSE96?=
- =?utf-8?B?bnlxN2g2SmFuRXVvTC84UEZONUp4TTFtY3o4bW1pRzdSbWlDME9ZeHpTdzRx?=
- =?utf-8?B?TTdZVlpIUXJ3Y0tNQzk0d3lrNk5wTXZVeUg0UEkvUzc5TW5Fa2RkU2VDWTRs?=
- =?utf-8?B?ZTJhZThwRDVwRjZ5blYvU0RmbHM5N2VHekRKSHovWGx3OWJ4blJFLzhMcUU3?=
- =?utf-8?B?SEx0aDVidUtDTi9yVHFSRnRBSmJnMzhFOHF3ZFFWaXZXWjVkRllJYXcxRTJV?=
- =?utf-8?B?TS8rVTg3L2lhaitsZzdtRC84Rjk0MW5lT1dlNnZ3dTNKdFQwWi9DMm4rTlJ5?=
- =?utf-8?B?UnAxQjBseUl1Zk1FYlZGQTRyOHpJVUFuUXZHN3I5T3h0L2lFVTNKczQyVGky?=
- =?utf-8?B?WThmM28vVlBvcVRpVmxiK0tCTXUzYjhhVWNZTDhBY1hSaUs5cERmYlBHVUN3?=
- =?utf-8?B?UUNJems1YkpDYTJVS2JqNnNrTENidU9UT1YwbmVvUWplSWRVNTlmTEJIRTJo?=
- =?utf-8?B?N2JSLzQ3WEZ4SUpSZ1dPZHl6RTV4alBVTUE3OHdYbk5UZHdmTnJZam9zSjBs?=
- =?utf-8?B?VTFRaUJsVEdnWmlzd2VLZHlVWkVyUFczanR2MWdIemR1dUFITEVzMFgxc3ZM?=
- =?utf-8?B?N3E3NlRIcW9sMGhiSUJ3K1pxT3hUWlBPSUpFeEhublZDTjFLSEpNOHBSRFEx?=
- =?utf-8?B?eUg2NC9CWUFjVFora2U0WlpsaC85TGRsMDJsdkRwRkgzSHc4Mk0vb1RFYnVS?=
- =?utf-8?B?WmtvNkVyM0p3OWh2QktWcU5tQ1pUUDlyT3NLODdtVWs4U0VUQmhtbnIrWEJ3?=
- =?utf-8?B?NzgrYnhFcFAvNWIrS1VvL29VSUI0cUhyYzk1eEdnc0ppNjlDWUZpWUpLTkI3?=
- =?utf-8?B?WnNsZStEVVZsNlVzL3lOSnVhK05EeUxScnFmTis4R2MzTmZiSTdRaHZPUjNq?=
- =?utf-8?B?KzhoY0Z0cVV5SW1xeGdoREhvQWtWV09NODJNVkFsUjUrYTFxaVE5Z0s5M3c0?=
- =?utf-8?B?Y3dFUENDKytNZnBKaytMcDB2QitIc2VxSXpRM0lGWFQ1M0d1NTZTOGRXdzcz?=
- =?utf-8?B?eWNLNWEwRWtGV2VuMmJWclRZYmJtTlpjMmZ6NTlYSXBkTys5YkJkS2QwemFL?=
- =?utf-8?B?OWlMdXhFU0NVa3grWU9EbnVwR09uanlPZUdZcWk3VFREQytDbDNQb0Q3aFVv?=
- =?utf-8?B?bEdUV1Q1TzFTcWNLaHZ6RjBzWGRjSERsWG9tYlBDNVYyL0JzdXUxbzFybzJ5?=
- =?utf-8?B?YnpRalRuZlpTaGF3SDZOcUVYMXNIMFZlbS9JWjVNclhKMGZkR3gxQ3prQW0v?=
- =?utf-8?B?Y0k2YlB1YTNXMXFlVGNwVlJGZFVad1lqMlpHclRRUkFTaTd2WmtrZHFjUy9V?=
- =?utf-8?Q?XPyx+A0nmSpDl/aNULHQKn7JDFq9VKmVMzmt8=3D?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR18MB4474.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?cm95eFd0UUxOR1hNQU85Z2lGZFp2dmdlQVdWSFBDeDV1ZnhqV004MTNvYzZs?=
- =?utf-8?B?OVpBb2tjcWpUNjhRMTMvS29YdjlwUzM2cEc5VlNhV0k3ZUJpRldncXRqR3BV?=
- =?utf-8?B?Um1iMlBHUklCODRGbVB6eU5WeUVick5JSDdDdHlqR1NJQ3JNY2R5MFh0M21u?=
- =?utf-8?B?cXF6RXJad01LazlqaU1kOXROUUZ3M0RnUU9CUzFoL0FYS29xclB2amg0MUlu?=
- =?utf-8?B?WFZjSGlZKy9SL1JYalhpdlpsQXBUVDdEdnFnUzlsTUx0T0pCcThCRlhTWS9n?=
- =?utf-8?B?Znp6VVpZeGhGNVpLRVpEbkJZdmM0YWh4Z0xlU3NDZ3BEbEswWDJOdFQyY2Yy?=
- =?utf-8?B?Y0lvVXdoNkFEdjUxZmlKazFvNEhEVXBESlVQQUFmWGorUUxlMW1ETXFTTGc1?=
- =?utf-8?B?RUYxUURONGs0alB0d1VUTmFKUFZBaDE4bUhyVEdqZDFEVFo0eGxtY0J5Vi9s?=
- =?utf-8?B?MnhLQUlGNlhtWHYrNnBETVhnZFk4WFpZc1hJSlpsSXZiREJJeGkxNEZpWkZB?=
- =?utf-8?B?eGFTdHl5c1A3VzBlR2VOYnBYMHZ1V3hLY1NMNTRHRmppSW5nQnRyNHF0ZGsw?=
- =?utf-8?B?QklvTVBYOVBFY2thUU9TVHBkZ3pQV3FlUDZlL25lZDBSTzBDTVBCMlFSTDJa?=
- =?utf-8?B?OUMzMUJUVm1pVnZsWjdYSHJFZjVsdTBVUEo2NWFKRjRJc0JnS3daTWo5a295?=
- =?utf-8?B?NGxMZmZmdE5IMlZKSlF0d1BrSlkxNEFuQ2M0TWRnTFFyZ0RxeE5oUnRKTjBJ?=
- =?utf-8?B?SS9oR1Y0OGg5V2l4cmYrajJaTzJpdXNyQ1V1L25YQXVETkZhbE14T0pHbUtE?=
- =?utf-8?B?VTNyUXNOaHlZU2xnRHRjaUtKN1dsN0VhNFNITjF2R045Njl5ZCtSZTlLUFhs?=
- =?utf-8?B?RVpVUm5KNFFpdkNXK2VrZEVRZXZoTzhyaDVsWjJJT0dnTTlmTnZlNUh3Qnl6?=
- =?utf-8?B?bVNvTllXYTc5R2dqQlZscVlUcEQzZVdrWTk4cXEyRnBkNjNXaHVHYUxUbEEv?=
- =?utf-8?B?aFZWMVdxZ2xWR3ZCK3V0YUwxc0Evem9ydGdGd0RiQVphTnI3a3RXMVFLNUor?=
- =?utf-8?B?Z29rbm91dlZrT042TnFHK01Ic08vQTkrbjhVTUh4NVhxM0V1YXY2cDlnWlZv?=
- =?utf-8?B?azZidm9NaFFYaGsrZWFmVGQwU1NBM1NyZXlqSGdySzhkYVNNSlNycjVnaHp6?=
- =?utf-8?B?MjRyU3dDTnFtY1Q0QVNLSlJ1eGk2VWxFd2xvMGhzVytEcXlMeWtDQm4wd1ZE?=
- =?utf-8?B?K0FXTi96YlFmMDlmVDJpaEZhYUgyanc5Rm5GTHl5RjRJekNxWnVMaHVOdUxS?=
- =?utf-8?B?ZEF2WGNmb2hEMkY4YzZIMXNtVGFxclRJR3NqN2NvL2IvTDBQRnBtZ1lyY2hs?=
- =?utf-8?B?S2gzajEyVDJ4TkpaWGhaSnNEMC9iaWNQeTcrYjlZYnNuVnZQSWw2dXFwUEJo?=
- =?utf-8?B?MG01VnNoeXd4N1d5UDVSWCtKSC9Ienp6Z1JFa1dpM002QUsxcWs5UkZ0R1Jo?=
- =?utf-8?B?cFREbEdQbkpBa28wTUR6aDFMVzdCK002R1N1L1p1Y2xpRkpsYWRTV04vZmY0?=
- =?utf-8?B?TGRMdUZEZFFlNEpwNzdHeUhrYVQzbUo2Vmh1L2tvWlNhZkpucmM2Sk5qVGVH?=
- =?utf-8?B?d2s5dXU0TTVBMC8rcUVmVlowMk1yRWtmQ2dud1VsejY5dFdQby9zZ3VJeEU1?=
- =?utf-8?B?Ny9ibldvVVU0cFlGazlYYXJNUml3Tm9qS1RaUEFpclhuNzd5VndRMldXVW9s?=
- =?utf-8?B?THZHOEp1b0lOV0FqRTluMHB6UXdSN1NEc2FNRU1lajI2RzJTbXRSWXlSQlda?=
- =?utf-8?B?REdZOUl3WnZ5YVZocjdZQlVqbE52azBMM1BFVW1CTTFmUEQ5WHhOMW5pQWZG?=
- =?utf-8?B?MXd0ZXpJbG9XMlU4b212dWRKTC83ZkZPWFUxSmZxWUttWXpOai9sZUgzOU5B?=
- =?utf-8?B?Y2k5N004MW1idkx5ZUpCRENiSld4WENaY1M1b3k3WW5GUGdHcXNaZ2dHNTFX?=
- =?utf-8?B?ZlUvVE5UR0pkcjBpR2kvVVBCV29UbFd4TzZrOUV4bm9HWFlMUmEvYThsdUJj?=
- =?utf-8?B?ODlLamQ0b0REVnhlelVORjAxMEZNVUtKMllYZyt4U3k5VU9DTFJJcGkyOUZM?=
- =?utf-8?Q?mPj4=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D5615B0FD
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 08:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717749218; cv=none; b=Qa8wPjQJU9eVOgpBImee73cYyaHg9f0snasQT8Si0ubYhZygJtHvNtxXZFZCLP+aPWmM6HiltFMV94P0mM59E0khrhvpt4EeQKpxOLB8FMU9qUxCaIyuciutd3iFUuWHUhmgFxWquU7Mnbj6Wf3r3eIGUS34vehSa6J+x7MC40I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717749218; c=relaxed/simple;
+	bh=7MbqiQOQ+OvzpyL+/T92pYG7EEVcaWMum8a/E3BthBA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B96kaX4N0lKoGs9QIIDCRCH20z3M/ILzXWR7PquXBEYjzt8ZvpNodBfTE9qPf6uFUMW6tPnauisM6YwflEj+kRdtqtg2nhyWnlHnZ6sDT0nOeRkyrW7tM5pe8Hxz+Ubby7E9CjecHuzNaCbfUi21+nmAPb5CdhE4hTzEiR3UaKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PpnpWZah; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2eab0bc74cdso18888841fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 01:33:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1717749215; x=1718354015; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h2oEDQ4oEJDSAOydnGEzde0yFwLxpVFL6KrokDFm2YY=;
+        b=PpnpWZahoxHe0+8b34hnVXOIkWvH3yvk6oVv8umarJX7EkWdEf3T6ERI54ghbeSEpf
+         qV7JUYZNmGE/A6Y3zOUOOBPkYvyDarfiwfaAPNsrGGrEiUav+HPDE6G6Qrug/Qn9ZQP9
+         sNffxLLMpIGBKa01iXnAfp0AADHgj+r+LXzQ6FMMhopktXrMQTVjHyRcQFON7Ss+eTOu
+         op9wQlxdKfpkZePG1W367EMZaWTtjtQiz1wLzY+M/gbHHkNk0NojZRVbCZJSRP3mh8Rt
+         8HWbUCgJyKzgzg5sWtH6J3EYDTZluG8JFP7lShzAt2tqN/D6uVxZX0U4ZjxdIvHMwqnA
+         H1fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717749215; x=1718354015;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h2oEDQ4oEJDSAOydnGEzde0yFwLxpVFL6KrokDFm2YY=;
+        b=eVtBUAKUzzomuNHund5BirrhxozKgjsgm250dx5xqs0bH9XeCDzv+ToWy7jSUUajiM
+         2CVc9h8yzxVO9ZTlJPbr1/oHkKnXaU0DqkMe69erRWKhDWRrBbombe38Q6E932YSWJTq
+         MrM39mJlNjskKOPH8OI+uRuEnweJ8asDm1Sg/Sl5hSYl1KcnAst0ROE6j2eJc+E8ikcC
+         yFlldGULHiYa2Vu03mmSLm5NKzkmGdiaHiGPw13AK8GfxSGEr/MI0uF2EY6KoGqP54Bf
+         0dsrUvqcMhAxV1o/P4ss1E99+Yh/u0tJk1Y+gyyWR3r4224HqGvxzv4CoA91p4MvyEhN
+         8vHw==
+X-Forwarded-Encrypted: i=1; AJvYcCWaeuOWL4gV68GlHLxRN8HX4NH7Y/yBL1WzisJp26Xvl9AhQQQMNG2v9HmFUB94cphOeQAwZno5UXaNWbE6LcxmHp/loEwlRzf4/TOu
+X-Gm-Message-State: AOJu0Yy8GAFPwo7X8ca7h6rlH0mfQqWpU6UhY4pCSQvkPFc4TCBXIOYb
+	uxmjrfXr/T8+q3ADlcmtCQFzcCIOuuQtIfHTdCBLq0dbyVuiox5mHr5htqXr0Us=
+X-Google-Smtp-Source: AGHT+IFd5ZfiuLNyBYmLsG6n5jwcxtkp6jfGA71uDyertT8R4yhF7FEbS2GDfRdBJ5wpCJqlWfHsng==
+X-Received: by 2002:a2e:6a0e:0:b0:2ea:904b:1710 with SMTP id 38308e7fff4ca-2eadce7f8dfmr10996141fa.47.1717749214891;
+        Fri, 07 Jun 2024 01:33:34 -0700 (PDT)
+Received: from [10.100.51.161] (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d4a582sm3457775f8f.35.2024.06.07.01.33.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jun 2024 01:33:34 -0700 (PDT)
+Message-ID: <95a98eea-a6bf-423e-9ee6-9be784138b60@suse.com>
+Date: Fri, 7 Jun 2024 10:33:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR18MB4474.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b099ec3b-e540-4248-db2c-08dc86cc6a19
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jun 2024 08:32:48.9887
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: V13G/leFtsnVY5S0vXsqDKGZjacSQyxko9pSKy7ZGRGfPLMgaz6NzUWNJ5/FOw52xbLLDgQWCb14Bgwv6L9JXg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR18MB3500
-X-Proofpoint-ORIG-GUID: A6ipA2np7aQbBWPj6VT3QGuvEfVT7bEc
-X-Proofpoint-GUID: A6ipA2np7aQbBWPj6VT3QGuvEfVT7bEc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-07_02,2024-06-06_02,2024-05-17_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net/ipv6: Fix the RT cache flush via sysctl using a
+ previous delay
+Content-Language: en-US
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Kuifeng Lee <sinquersw@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240529135251.4074-1-petr.pavlu@suse.com>
+ <CAHE2DV1S4oKved063WaYzqsoiEe1hY=ZoRxjFfPX1m0-N0MsdQ@mail.gmail.com>
+ <cbd56289-c9e9-4cd1-87d8-623ae7e39347@suse.com>
+ <111ad356a137d0b69550cd73ff0cdef915c16e2e.camel@redhat.com>
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <111ad356a137d0b69550cd73ff0cdef915c16e2e.camel@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-PiBGRUNfRUNSX0VOMTU4OCBiaXQgZ2V0cyBjbGVhcmVkIGFmdGVyIE1BQyByZXNldCBpbiBgZmVj
-X3N0b3AoKWAsIHdoaWNoIG1ha2VzDQo+IGFsbCAxNTg4IGZ1bmN0aW9uYWxpdHkgc2h1dCBkb3du
-IG9uIGxpbmstZG93bi4gSG93ZXZlciwgc29tZSBmdW5jdGlvbmFsaXR5DQo+IG5lZWRzIHRvIGJl
-IHJldGFpbmVkIChlLmcuIFBQUykgZXZlbiB3aXRob3V0IGxpbmsuDQo+IA0KDQoNCiAgICBTaW5j
-ZSB0aGlzIHBhdGNoIGlzIHRhcmdldGVkIGZvciBuZXQsIHBsZWFzZSBhZGQgZml4ZXMgdGFnLg0K
-DQoNClRoYW5rcywNCkhhcmlwcmFzYWQgaw0KPiBTaWduZWQtb2ZmLWJ5OiAiQ3PDs2vDoXMsIEJl
-bmNlIiA8Y3Nva2FzLmJlbmNlQHByb2xhbi5odT4NCj4gLS0tDQo+ICBkcml2ZXJzL25ldC9ldGhl
-cm5ldC9mcmVlc2NhbGUvZmVjX21haW4uYyB8IDYgKysrKysrDQo+ICAxIGZpbGUgY2hhbmdlZCwg
-NiBpbnNlcnRpb25zKCspDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQv
-ZnJlZXNjYWxlL2ZlY19tYWluLmMNCj4gYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9mcmVlc2NhbGUv
-ZmVjX21haW4uYw0KPiBpbmRleCA4ODFlY2U3MzVkY2YuLmZiMTkyOTU1MjlhMiAxMDA2NDQNCj4g
-LS0tIGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvZnJlZXNjYWxlL2ZlY19tYWluLmMNCj4gKysrIGIv
-ZHJpdmVycy9uZXQvZXRoZXJuZXQvZnJlZXNjYWxlL2ZlY19tYWluLmMNCj4gQEAgLTEzNjEsNiAr
-MTM2MSwxMiBAQCBmZWNfc3RvcChzdHJ1Y3QgbmV0X2RldmljZSAqbmRldikNCj4gIAkJd3JpdGVs
-KEZFQ19FQ1JfRVRIRVJFTiwgZmVwLT5od3AgKyBGRUNfRUNOVFJMKTsNCj4gIAkJd3JpdGVsKHJt
-aWlfbW9kZSwgZmVwLT5od3AgKyBGRUNfUl9DTlRSTCk7DQo+ICAJfQ0KPiArDQo+ICsJaWYgKGZl
-cC0+YnVmZGVzY19leCkgew0KPiArCQl2YWwgPSByZWFkbChmZXAtPmh3cCArIEZFQ19FQ05UUkwp
-Ow0KPiArCQl2YWwgfD0gRkVDX0VDUl9FTjE1ODg7DQo+ICsJCXdyaXRlbCh2YWwsIGZlcC0+aHdw
-ICsgRkVDX0VDTlRSTCk7DQo+ICsJfQ0KPiAgfQ0KPiANCj4gIHN0YXRpYyB2b2lkDQo+IC0tDQo+
-IDIuMzQuMQ0KPiANCj4gDQoNCg==
+On 6/4/24 10:30, Paolo Abeni wrote:
+> On Fri, 2024-05-31 at 10:53 +0200, Petr Pavlu wrote:
+>> [Added back netdev@vger.kernel.org and linux-kernel@vger.kernel.org
+>> which seem to be dropped by accident.]
+>>
+>> On 5/30/24 17:59, Kuifeng Lee wrote:
+>>> On Wed, May 29, 2024 at 6:53 AM Petr Pavlu <petr.pavlu@suse.com> wrote:
+>>>>
+>>>> The net.ipv6.route.flush system parameter takes a value which specifies
+>>>> a delay used during the flush operation for aging exception routes. The
+>>>> written value is however not used in the currently requested flush and
+>>>> instead utilized only in the next one.
+>>>>
+>>>> A problem is that ipv6_sysctl_rtcache_flush() first reads the old value
+>>>> of net->ipv6.sysctl.flush_delay into a local delay variable and then
+>>>> calls proc_dointvec() which actually updates the sysctl based on the
+>>>> provided input.
+>>>
+>>> If the problem we are trying to fix is using the old value, should we move
+>>> the line reading the value to a place after updating it instead of a
+>>> local copy of
+>>> the whole ctl_table?
+>>
+>> Just moving the read of net->ipv6.sysctl.flush_delay after the
+>> proc_dointvec() call was actually my initial implementation. I then
+>> opted for the proposed version because it looked useful to me to save
+>> memory used to store net->ipv6.sysctl.flush_delay.
+> 
+> Note that due to alignment, the struct netns_sysctl_ipv6 size is not
+> going to change on 64 bits build.
+> 
+> And if the layout would change, that could have subtle performance side
+> effects (moving later fields in netns_sysctl_ipv6 in different
+> cachelines) that we want to avoid for a net patch.
+> 
+>> Another minor aspect is that these sysctl writes are not serialized. Two
+>> invocations of ipv6_sysctl_rtcache_flush() could in theory occur at the
+>> same time. It can then happen that they both first execute
+>> proc_dointvec(). One of them ends up slower and thus its value gets
+>> stored in net->ipv6.sysctl.flush_delay. Both runs then return to
+>> ipv6_sysctl_rtcache_flush(), read the stored value and execute
+>> fib6_run_gc(). It means one of them calls this function with a value
+>> different that it was actually given on input. By having a purely local
+>> variable, each write is independent and fib6_run_gc() is executed with
+>> the right input delay.
+>>
+>> The cost of making a copy of ctl_table is a few instructions and this
+>> isn't on any hot path. The same pattern is used, for example, in
+>> net/ipv6/addrconf.c, function addrconf_sysctl_forward().
+>>
+>> So overall, the proposed version looked marginally better to me than
+>> just moving the read of net->ipv6.sysctl.flush_delay later in
+>> ipv6_sysctl_rtcache_flush().
+> 
+> All in all the increased complexity vs the simple solution does not
+> look worth to me.
+> 
+> Please revert to the initial/simpler implementation for this fix,
+> thanks!
+
+Fair enough, I'll post v2 with the initial/simpler version.
+
+Thanks,
+Petr
 
