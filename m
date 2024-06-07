@@ -1,95 +1,158 @@
-Return-Path: <linux-kernel+bounces-205410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF7A8FFB24
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:03:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2482B8FFB26
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4251BB21F3B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 05:03:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C21D7287AC0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 05:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D5F1BC23;
-	Fri,  7 Jun 2024 05:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3L5H+p8b"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586A71B960;
+	Fri,  7 Jun 2024 05:05:32 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43D2D2FE;
-	Fri,  7 Jun 2024 05:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B181C33
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 05:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717736622; cv=none; b=gZn922jk8o8w0w8wHE/yJxU2qETna5sDJI6HlQTSksS37SsGxcc+OqOWK4gZXe9PeDuuOo1ifOQShSONc2451R/fWP7DYXKV+vvjEUUPHv5Ma8zh8aYbNlhe7oawKtdrgjroDVNXi0Ur4MYq8eYZWXmLlDNllYpwMVu8xwWMTVA=
+	t=1717736731; cv=none; b=m3qRI4xEhuR/xBjU0leDGtcMTZkCFKHHgq84oy++4vNmEoDULidjYh9mZmUC8E8i3M9/qEJjXfyTt+S56CRqZ5TueH8BX13BT9ESZuzD45o7zuTK6P1W4V8EsR/+3LcgvcTZyy4gEPrhkubfkoe/Yeb/fl8S58JJjyLFYV4OQOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717736622; c=relaxed/simple;
-	bh=aUYzpSZGY3TaaFu5m3ql2sMizBS7fvFJugEmGfXg2LY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g1Brzz9ly295CuVBQUNQo6KVTwRSWEmRKlsFjEu+WAXCGuIVNNeGp+OKb0zhFd8m2/y/9sIxzRg+RKX+T7Ru20V1C34280NM8BqiUcUx8ka9N4E3fXda97V5XCaYhbP4cwmefHq9XG3+ANOwfLUxCC6c1fSL1WftK5tTw92I6l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3L5H+p8b; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=t6XUBFY7DDkBX59kO/X1i0VzKzPBvUpCW3krMAMbCqE=; b=3L5H+p8bNwtH1Ds4X1s1esi8GI
-	F/XbLP4MsCreTAAhfI1hnYE6tr1kAnKVhAJH3v9xHdRaOTqLAC2AgleKeLdayCk7oiGO1nCSgYh/g
-	5LMj+BpUXSTJK2vFAGtGERXfFjDjmAt00JyB82SuOKKAngugkqC9oyPSMhcDPuqdtNvFB8ZWoQE6Y
-	KvnYe/NF3uJe77mJ7MbDCc3IYOUpmBc9+h8Bw65NlGCVZXn/Yj5KW4VTwRySfqdoV9NyZvtspuyim
-	qT+rLyKuU498q/EkXwr/cm4fsa4t+9nArSeb0c652PWps5lUeS/nO1677S8Rrz6rIgYqO3Od6jmDQ
-	9XoXG+0Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sFRlF-0000000CRj6-36hl;
-	Fri, 07 Jun 2024 05:03:33 +0000
-Date: Thu, 6 Jun 2024 22:03:33 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Martin Oliveira <martin.oliveira@eideticom.com>,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-mm@kvack.org,
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>, Tejun Heo <tj@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Marciniszyn <mike.marciniszyn@intel.com>,
-	Michael Guralnik <michaelgur@nvidia.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Valentine Sinitsyn <valesini@yandex-team.ru>,
-	Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH 1/6] kernfs: create vm_operations_struct without
- page_mkwrite()
-Message-ID: <ZmKUpXQmMLpH8vf5@infradead.org>
-References: <20240605192934.742369-1-martin.oliveira@eideticom.com>
- <20240605192934.742369-2-martin.oliveira@eideticom.com>
- <2024060658-ember-unblessed-4c74@gregkh>
+	s=arc-20240116; t=1717736731; c=relaxed/simple;
+	bh=GBrfTYKLXssvFGONI8vGBOOKuB+PqsQCbSPm4p6qEHA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=j4RR8jpXocJzKT0SO8Kl7+Q27xO/+bjp3CXepPFacontr2Y0gKLr70LKTE9sJWW58eYu4eIjTvHSXxRyetvcIlCipFdPRKfrK4UcQ2iPz98l6W0BcKecXzEpldYqxGbNO21PoG+o1Pip4gApzNUn2x0cDPX1IxrjLVgLzNV4Xgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7eb3978abc6so188797839f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 22:05:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717736729; x=1718341529;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uS8YStOSM+DHa4enbnMdyhZPkLjkUCnAEZNL/nSaHGQ=;
+        b=FdEUDvTPSfoClMbA0qEeyR3JjZGGHp6iGldvqOOB1+9PrkiRDmD1Vpu26+xhPr6Vi8
+         B3gaDv+8KF60qSjYWSjuK2tfczNWUnQrmHRMKiPaF3mLAiEwoHTvRxcEPNe07zXo8drB
+         spnBXgoH2b1A4Rl3Y98X42Oztcl32907EFAvArQAAU+mTHUQjxmsAHh+bgtPOaQpVwQN
+         B09EbGown/lEVw5a91RDQXWEs3b7/ry2moVzas/gT32yvIB2oBnSzMhk9z2igfgeeCdI
+         P4WGBFR+BWEJSes5it47/r66APCk/9m732A+W27wx+LEo2D/No3TRfnrHxBxEJCrvjBo
+         ThGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTj+bTxl1SMyjiMsLncHKuc293SegjE2Gf6Lu8jR4Vf+QFjcOj9eCJr028sBRxQQvO4oyhSh3ZuxXyR64n4ErtvLS5dIKfK5hHOEiu
+X-Gm-Message-State: AOJu0YwZfP11dRqJ2ar7YbU8z3VkLQbGCbWzPWTtzvuQ+pKIeRKnObCx
+	XrFu3UszLf8kKeTmoVFvmGDa44eqMOLEfanbtxHC+yksnhsyfaibzh5pv45KUIN7/eFZunNmEuE
+	7ZNBYuobRpORMrDtxlPymtuVg2ZTadZTTpQ63Y4r0+s7XmT+ltt5EKoA=
+X-Google-Smtp-Source: AGHT+IFuorXcgGYGy5yyFr4JYBxqv+bH6kgczzpeAsUQwr9Tv5KlSX1N2BjY/s8qGOudU5bUs8CF50nv01ZOUZ4qWXW22KuXW+MY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024060658-ember-unblessed-4c74@gregkh>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Received: by 2002:a05:6e02:1525:b0:373:874e:93be with SMTP id
+ e9e14a558f8ab-37580380f1cmr1065635ab.3.1717736729726; Thu, 06 Jun 2024
+ 22:05:29 -0700 (PDT)
+Date: Thu, 06 Jun 2024 22:05:29 -0700
+In-Reply-To: <000000000000eabe1d0619c48986@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000097e583061a45bfcf@google.com>
+Subject: Re: [syzbot] [btrfs?] kernel BUG in clear_inode
+From: syzbot <syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jun 06, 2024 at 10:54:06PM +0200, Greg Kroah-Hartman wrote:
-> On Wed, Jun 05, 2024 at 01:29:29PM -0600, Martin Oliveira wrote:
-> > The standard kernfs vm_ops installs a page_mkwrite() operator which
-> > modifies the file update time on write.
-> > 
-> > This not always required (or makes sense), such as in the P2PDMA, which
-> > uses the sysfs file as an allocator from userspace.
-> 
-> That's not a good idea, please don't do that.  sysfs binary files are
-> "pass through", why would you want to use this as an allocator?
+syzbot has found a reproducer for the following issue on:
 
-I think the real question is why sysfs binary files implement
-page_mkwrite by default.  page_mkwrite is needed for file systems that
-need to allocate space from a free space pool, which seems odd for
-sysfs.
+HEAD commit:    d30d0e49da71 Merge tag 'net-6.10-rc3' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1736820a980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=399230c250e8119c
+dashboard link: https://syzkaller.appspot.com/bug?extid=67ba3c42bcbb4665d3ad
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a9aa22980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14c57f16980000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-d30d0e49.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f1276023ed77/vmlinux-d30d0e49.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a33f372d4fb8/bzImage-d30d0e49.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/7fc863ff127d/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+kernel BUG at fs/inode.c:626!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 1 PID: 5273 Comm: syz-executor331 Not tainted 6.10.0-rc2-syzkaller-00222-gd30d0e49da71 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:clear_inode+0x15b/0x190 fs/inode.c:626
+Code: 00 00 00 5b 5d 41 5c c3 cc cc cc cc e8 5e c1 8c ff 90 0f 0b e8 56 c1 8c ff 90 0f 0b e8 4e c1 8c ff 90 0f 0b e8 46 c1 8c ff 90 <0f> 0b e8 3e c1 8c ff 90 0f 0b e8 e6 92 e8 ff e9 d2 fe ff ff e8 dc
+RSP: 0018:ffffc900036f7ac0 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff888030369e90 RCX: ffffffff82012340
+RDX: ffff888024190000 RSI: ffffffff820123aa RDI: 0000000000000007
+RBP: 0000000000000040 R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000040 R11: 0000000000000001 R12: 0000000000000020
+R13: ffff88802f942000 R14: 0000000000000000 R15: ffff888030369e90
+FS:  000055556268d380(0000) GS:ffff88806b100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555562697708 CR3: 000000001e888000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ btrfs_evict_inode+0x529/0xe80 fs/btrfs/inode.c:5262
+ evict+0x2ed/0x6c0 fs/inode.c:667
+ dispose_list+0x117/0x1e0 fs/inode.c:700
+ evict_inodes+0x34e/0x450 fs/inode.c:750
+ generic_shutdown_super+0xb5/0x3d0 fs/super.c:627
+ kill_anon_super+0x3a/0x60 fs/super.c:1226
+ btrfs_kill_super+0x3b/0x50 fs/btrfs/super.c:2096
+ deactivate_locked_super+0xbe/0x1a0 fs/super.c:473
+ deactivate_super+0xde/0x100 fs/super.c:506
+ cleanup_mnt+0x222/0x450 fs/namespace.c:1267
+ task_work_run+0x14e/0x250 kernel/task_work.c:180
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2ba3059777
+Code: 07 00 48 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007fff42f9ee78 EFLAGS: 00000206 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f2ba3059777
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007fff42f9ef30
+RBP: 00007fff42f9ef30 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000206 R12: 00007fff42f9ffa0
+R13: 000055556268f6d0 R14: 431bde82d7b634db R15: 00007fff42f9ffc0
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:clear_inode+0x15b/0x190 fs/inode.c:626
+Code: 00 00 00 5b 5d 41 5c c3 cc cc cc cc e8 5e c1 8c ff 90 0f 0b e8 56 c1 8c ff 90 0f 0b e8 4e c1 8c ff 90 0f 0b e8 46 c1 8c ff 90 <0f> 0b e8 3e c1 8c ff 90 0f 0b e8 e6 92 e8 ff e9 d2 fe ff ff e8 dc
+RSP: 0018:ffffc900036f7ac0 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff888030369e90 RCX: ffffffff82012340
+RDX: ffff888024190000 RSI: ffffffff820123aa RDI: 0000000000000007
+RBP: 0000000000000040 R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000040 R11: 0000000000000001 R12: 0000000000000020
+R13: ffff88802f942000 R14: 0000000000000000 R15: ffff888030369e90
+FS:  000055556268d380(0000) GS:ffff88806b100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555562697708 CR3: 000000001e888000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
