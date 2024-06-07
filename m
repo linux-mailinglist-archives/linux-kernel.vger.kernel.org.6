@@ -1,82 +1,115 @@
-Return-Path: <linux-kernel+bounces-206414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A364C900956
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:39:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE61D900960
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 284E5B22BC8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:39:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CBE42841C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4215A199E89;
-	Fri,  7 Jun 2024 15:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E376F1991A0;
+	Fri,  7 Jun 2024 15:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uevcA4ze"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C173C171BB;
-	Fri,  7 Jun 2024 15:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339EC15B133;
+	Fri,  7 Jun 2024 15:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717774749; cv=none; b=lMFVMVH/sEhW1Hjf0re0sFCrz9Z0aWRJJXifAzNRnw9lv+wDBTDU4M8igQdrjfV/jkKa1rsq4GvdadwgYdNZvTo4VUPDTvyAR6mY90ZgcF8bCC49U5WhS7YhK53qYnEAhfyC/AFm/sp4bYdXBgq/tBT7pK2Jz7Hmej2GdVf9wIs=
+	t=1717774942; cv=none; b=SimKsuMZ4zm1JWdEF5apwYjTKGoqd2qSm+opJw4w4NDinBIO34DdNLN/mYjFzouODtAV96s8sFSmBYkCm4i6FV5KUklHGP6gk7KkVnoHkBHBDqn1iCzOLHeDUegqrBdbqM5GfnJR3zFWnGQAeQq5NXSM2o58zLTybE8lH4bbERo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717774749; c=relaxed/simple;
-	bh=9YBVZftsl8VdYDDyZb7AS5ArgPy58OPMzPr+bbA826A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K5Y0+mj+1a/pnRX49KTw08GmBpv+8Dhsjk8XZfavUI/5SOTv++EKsHg0jVoIH857uJoYY2D2GvV3kMIpTEVMy7TnNue/5K3BZhWOgo8Fme5AVyT25fS9d2HgoWXKCS9R0O51GAY3oEnmtT9lCXwuHyZwfvlPPWr3VAObIRTU7Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF982C2BBFC;
-	Fri,  7 Jun 2024 15:39:07 +0000 (UTC)
-Date: Fri, 7 Jun 2024 11:39:22 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Zheng Yejian <zhengyejian1@huawei.com>, mcgrof@kernel.org,
- mhiramat@kernel.org, mark.rutland@arm.com, mathieu.desnoyers@efficios.com,
- jpoimboe@kernel.org, linux-modules@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-Subject: Re: [RFC PATCH] ftrace: Skip __fentry__ location of overridden weak
- functions
-Message-ID: <20240607113922.17a62f86@rorschach.local.home>
-In-Reply-To: <20240607150228.GR8774@noisy.programming.kicks-ass.net>
-References: <20240607115211.734845-1-zhengyejian1@huawei.com>
-	<20240607150228.GR8774@noisy.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717774942; c=relaxed/simple;
+	bh=iI87cZUOqwgAnhxZoQmpoNHtrK+bA3EdADRrl5mfbSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K9m697LpBLCQDll3FGVjopq/AHHKA7XYroMJ9ZGQj17u3nTtZFnaP410lKSmYS6CKxth2RfVFTWmUiLIMLewCqSvwvrTirb5E0w4JRDnyfU+ZBTrE/hRonIBCtxRbgJPkw9cEQDixSl1RIOvGv8mgX9+zHUXJRjVH/xbBAY8N0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uevcA4ze; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84E38C4AF07;
+	Fri,  7 Jun 2024 15:39:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717774941;
+	bh=iI87cZUOqwgAnhxZoQmpoNHtrK+bA3EdADRrl5mfbSY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uevcA4zeF50CTbc1ZzJK54PX9X4ppx0gXzijW8cTk3zfE4VEtc0CmqdnxRBKWLDF7
+	 LeqeA804atAfHdViHTCnBDAeJNdk8cPFHUYGZn8+uOzguKH1ZRAd75TtMuEfKAON1Q
+	 0NGIWNB/zm6n7S7l1lUM5l7sjLQ7UA/3uqTyg+dk5b5f0Fk2bSGpvqkPnylEQnjFh1
+	 wu6qw5pKQJgo8KtbrU3WmzUufbEGIiYq0a7eS/YdsqR/RP/hzKwbes/A4Lj38UlIa2
+	 fduN/n0AfOfvhapXSE3lI6Un91pzqGlw8VaGEceUa9tYvPqMMLy0Vvb3rDTWSWkHH3
+	 ToaEB3HF3BoXA==
+Date: Fri, 7 Jun 2024 16:39:33 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dev Jain <dev.jain@arm.com>
+Cc: alx@kernel.org, linux-man@vger.kernel.org, mingo@kernel.org,
+	tglx@linutronix.de, mark.rutland@arm.com, ryan.roberts@arm.com,
+	suzuki.poulose@arm.com, Anshuman.Khandual@arm.com,
+	DeepakKumar.Mishra@arm.com, AneeshKumar.KizhakeVeetil@arm.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] signal.7: Clearly describe ucontext kernel dump to
+ userspace
+Message-ID: <ZmMptdPt_Zw9Xrlt@finisterre.sirena.org.uk>
+References: <20240607123119.769044-1-dev.jain@arm.com>
+ <20240607123119.769044-2-dev.jain@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-
-On Fri, 7 Jun 2024 17:02:28 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
-
-> > There may be following resolutions:  
-> 
-> Oh gawd, sodding weak functions again.
-> 
-> I would suggest changing scipts/kallsyms.c to emit readily identifiable
-> symbol names for all the weak junk, eg:
-> 
->   __weak_junk_NNNNN
-> 
-> That instantly fixes the immediate problem and Steve's horrid hack can
-> go away.
-
-Right. And when I wrote that hack, I specifically said this should be
-fixed in kallsyms, and preferably at build time, as that's when the
-weak functions should all be resolved.
-
--- Steve
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="FgfOfkjE5YCa53Sa"
+Content-Disposition: inline
+In-Reply-To: <20240607123119.769044-2-dev.jain@arm.com>
+X-Cookie: Your love life will be... interesting.
 
 
-> 
-> Additionally, I would add a boot up pass that would INT3 fill all such
-> functions and remove/invalidate all
-> static_call/static_jump/fentry/alternative entry that is inside of them.
+--FgfOfkjE5YCa53Sa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Fri, Jun 07, 2024 at 06:01:18PM +0530, Dev Jain wrote:
+
+>  .I ucontext_t
+> -object that is pointed to by the third argument of the signal handler.)
+> +object that is pointed to by the third argument of the signal handler.
+> +We emphasize on the fact that this object contains context information
+
+s/We emphasize on the fact that/Note that/
+
+feels more idiomatic.
+
+> +of the thread, present before jumping into the handler; the set of
+> +blocked signals for the current thread would be updated from struct
+
+s/would/will/
+
+> +sigaction only after
+> +.I ucontext_t
+> +has been dumped to userspace. This semantically makes sense since the
+> +context for which the signals have been blocked, remains only during
+> +execution of the handler.)
+
+I'd drop the "this semantically makes sense" and reword the last bit to
+be something like "The ucontext reflects the state at the time the
+signal is delivered rather than in the handler" for idiom reasons.
+
+--FgfOfkjE5YCa53Sa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZjKbQACgkQJNaLcl1U
+h9DppAf/X/RgRQlFGYhnwa7n+Gun0/AE+RDnThpp7qJUCOTlC3KBN8jKNDEwdtUO
+mWctBu5dUXKBhDvTbfZwL1LddxI6sRrWgxPxsneZBCVEositfWCs7I7txE0ZjF0E
+tiqeLOLrD/KP1fCd6PbISmA4ZoMp9zC4i5yyPkzNaTTHhHIwM/wD34NaWo3savDp
+8cTVUcqHpXnMw9w2B8FiGIZgPEHLSQDRLDEwUTUefAqjJ3+O2UAlDgFfSC53vZvn
+07VqZhG3lp1u+QOparz7FyudXietZmrIhk1jLLqPJSPENSWYVdUqBweOYPMZe4AR
+lrqpSqp4CAOquBDNzksis1vthNUlgA==
+=jZG/
+-----END PGP SIGNATURE-----
+
+--FgfOfkjE5YCa53Sa--
 
