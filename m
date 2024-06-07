@@ -1,139 +1,112 @@
-Return-Path: <linux-kernel+bounces-206583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0682D900BB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:02:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1DB7900BB3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2030A1C2230B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:02:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3FD21C2197F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CF319CD13;
-	Fri,  7 Jun 2024 18:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E68219AD90;
+	Fri,  7 Jun 2024 18:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X/0vXxb+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K4yGcMz3"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43582225AE;
-	Fri,  7 Jun 2024 18:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB221957F6;
+	Fri,  7 Jun 2024 18:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717783292; cv=none; b=DEhmQesmdS4OmkEM0Uxtv9NMAUqXblhM8NbkB8KV68PVKwB0wfCqvhaoACX9nyTl5+0rTAi6PWtMfMoVytifrfuLIC68qz2YihuW3DtARWCUIe6e1oMeYojFd+yRXfkXJXyLrZzEEXWJPEfWiuxJk9maD+TFjpMT8ss3hyvH8Wg=
+	t=1717783385; cv=none; b=Gqh5d1/az8jdB+nrvV8N9DgBIshY39ORQdSwnpJHWQ83Q4RdTiVIL4BDEFKP8cIsVT+fr5rkDt/V+aMGay7PdGInD+pY1coF5J6KiZxpogIY88bHu/ebaF5E2bQZBTY5gB5bFw0bWeRops2zaOj8418JdjRJVlnt309P/q9JnzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717783292; c=relaxed/simple;
-	bh=Q2240HndQG7pznYsjZBV4QwZL2FAj/M/TuJieHCfvUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tceBFnXixIYwLyhWL8dt0q11HK3NchqjtvpOjUg86FMLfBN6USDGEBIXpFK+UhdezFas2Svfd2RC82mhAXtPGrDPZaq6E0Cq9z+0tmOuJCRITJlexD2ate1EOcf4td2PvQUIYuIqgcO59hVZ7U0wk7oV/dePOsZTkW2Or/k8bro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X/0vXxb+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD14CC32781;
-	Fri,  7 Jun 2024 18:01:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717783291;
-	bh=Q2240HndQG7pznYsjZBV4QwZL2FAj/M/TuJieHCfvUA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X/0vXxb+M4XcEfHxBu3m2ci+zkFX2M5+X6/atldRHqARKOdNrYNSkhGSDwpINX+t9
-	 tjqPBTMc1yHosbqcrP/HWutJavOJynDoUWo0fENnC6gefZ2iD51v4AmIXqReO8T6U5
-	 BfD0VNR075n8mehObEVAkwxTaaD4S9ydHMuMPlO1x3qkWA6pMlCFhVdK7IMM/MXnCf
-	 z6qzlWBayW7xInxMU98i5fjbZHP8uSfNfqsk8loJioNToUD8rOIlaDuPutJ1vKJw1S
-	 r8VgGaGJ/4AKTAhkwzA2fpiaQpl0adJqyJHdxO3Y/A0iMOdbypObREJJN8mD4Uh2wu
-	 mzb/waktMHUGg==
-Date: Fri, 7 Jun 2024 19:01:27 +0100
-From: Simon Horman <horms@kernel.org>
-To: Abhinav Jain <jain.abhinav177@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, shuah@kernel.org, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com
-Subject: Re: [PATCH] selftests: net: Add on/off checks for network interface
- non fixed features
-Message-ID: <20240607180127.GG27689@kernel.org>
-References: <20240606212714.27472-1-jain.abhinav177@gmail.com>
+	s=arc-20240116; t=1717783385; c=relaxed/simple;
+	bh=S9vlXymCuw8y2soXFtQEl6vKMBGohi8Chq1vzxf6eaU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gk96M0CtrpqlT1HvlJS3k/LrLwg6XfQ0vjjBbZoPGV4UVJSIwdtxGhQlszQEUsg1CcrqqxqWCzOWXIBJ1yLSYN5S9st6Q5Aneyg5SddKqMY2qZ3pUn3T7QmYqTu/xU58KjBAmxymnxHu3e+t2qWGe40MClbsm6iLCCCqsOcbFnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K4yGcMz3; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a68ca4d6545so435222766b.0;
+        Fri, 07 Jun 2024 11:03:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717783382; x=1718388182; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=M4JhFWYIaba6S7NZfwQpR1LZP1nrX/OWl8a4IvQCyvQ=;
+        b=K4yGcMz3YzBU7Sa83NjKsXRY4aADN4Gm88wTConYfsGmkkiGB/ZVFO727DigXotuWJ
+         Lm1JBu8FyVHCFkYzGBBkn8l+gCNbhE+kfKvmNB37CsP7ZtpMOVCc0GM40V1ziBzhcN5G
+         txOr5PMZcQwf6hDJgDnJv8LqwWItd9BQ/Zhf4l2gJBENSTyGhkjXmeiJHwPEj6MW+rEp
+         RfnW+tFzc+F1MR7nJONLFkI6KB+fM/LbitjkWXGIgQ62t+EP3nQCwZcuPO0MY99V6pu6
+         yvemboh3dfunUOE2LAln57TSlmbAR2bixjjzmoj8ZWM6hyhnh58jjEx41DzgKxScQtiO
+         ScSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717783382; x=1718388182;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M4JhFWYIaba6S7NZfwQpR1LZP1nrX/OWl8a4IvQCyvQ=;
+        b=hlpNi69JX5rYG2x1pj+YXkvJFs0q0TrLHfPevT4/jlniMA97ccUUkNJwqHxzMaXxSZ
+         GW9Tp6OK9boXoW4qREfT4lENFHcgekuQS5Op+j69S2nIjZJ7ZXYyIEqLKtr88CGxiBBs
+         bwGzwhAhoosmxxZkLQpvmr+UipoSV1uB1zihbyWZgtH9tXfmfrMqAkgdCNm5gtgULsM/
+         X79/qBiIvuYt2dL+uJbUk1OdjVzo11qm3ujugYhX7gapdDGRcGl/Ge5gRk4A4jN/2Ewe
+         3l8Sdo0UzE5csjCnAulRRDu6g8Rxo5V1+WnwM1LZLL2SJtNsFeDjKFG7J1M23LsSH8wD
+         K9YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXIn7UkUxMZZbVe0oSwBnoP0JsyBe9tPqA242cAYLAt5KU48vITNfsLLCWK/5KkBUBeC5KI5kCrwP3/H9DLh1+bj45vgY6toqZB8K+U
+X-Gm-Message-State: AOJu0YymVdoPXBUcS++LYiQ9ZqLQhlFCgim1H6PKHwHyDevEXvtnMMWi
+	SMNyl2fU6VpN1yZXvh68aSaXfl4ddyUesUQn83JW8luoIE+NA1hxEtixv6B53/okPwecKaET5t1
+	ZNvxDGQpgCOkjjpS2Sv6+A8iU4Jw=
+X-Google-Smtp-Source: AGHT+IGnj2ysUfh7SOHLkJc3CGDkP6SwlsXhwVpEmOYlNR31bDcHXd9kiuPue/wzF/0qSpCM7o3lXDUckdPju300slU=
+X-Received: by 2002:a17:906:4154:b0:a68:e268:fa30 with SMTP id
+ a640c23a62f3a-a6c7651ad4emr448512966b.38.1717783382081; Fri, 07 Jun 2024
+ 11:03:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606212714.27472-1-jain.abhinav177@gmail.com>
+References: <20240606131732.440653204@linuxfoundation.org>
+In-Reply-To: <20240606131732.440653204@linuxfoundation.org>
+From: Allen <allen.lkml@gmail.com>
+Date: Fri, 7 Jun 2024 11:02:49 -0700
+Message-ID: <CAOMdWSJr-KSGgWrv0zG+nBu=NzQVpw-z7ef5+ykoKXO1uczLzw@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/744] 6.6.33-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jun 06, 2024 at 09:27:14PM +0000, Abhinav Jain wrote:
-> This patch addresses the present TODO in the file.
-> I have tested it manually on my system and added relevant filtering to
-> ensure that the correct feature list is being checked.
-> 
-> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
-> ---
->  tools/testing/selftests/net/netdevice.sh | 21 +++++++++++++++++++--
->  1 file changed, 19 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/net/netdevice.sh b/tools/testing/selftests/net/netdevice.sh
-> index e3afcb424710..cbe2573c3827 100755
-> --- a/tools/testing/selftests/net/netdevice.sh
-> +++ b/tools/testing/selftests/net/netdevice.sh
-> @@ -117,14 +117,31 @@ kci_netdev_ethtool()
->  		return 1
->  	fi
->  
-> -	ethtool -k "$netdev" > "$TMP_ETHTOOL_FEATURES"
-> +	ethtool -k "$netdev" | tail -n +2 > "$TMP_ETHTOOL_FEATURES"
->  	if [ $? -ne 0 ];then
+> This is the start of the stable review cycle for the 6.6.33 release.
+> There are 744 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 08 Jun 2024 13:15:55 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.33-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-Hi Abhinav,
+Compiled and booted on my x86_64 and ARM64 test systems. No errors or
+regressions.
 
-I suspect this will now only report a failure if tail fails,
-but ignore ethtool failures.
+Tested-by: Allen Pais <apais@linux.microsoft.com>
 
->  		echo "FAIL: $netdev: ethtool list features"
->  		rm "$TMP_ETHTOOL_FEATURES"
->  		return 1
->  	fi
->  	echo "PASS: $netdev: ethtool list features"
-> -	#TODO for each non fixed features, try to turn them on/off
-> +
-> +	for feature in $(grep -v fixed "$TMP_ETHTOOL_FEATURES" | \
-> +		awk '{print $1}' | sed 's/://'); do
-
-Shellcheck warns that the above reads words rather than lines,
-and recommends using read instead.
-
-I think that is ok, because the construction reduces lines to single words.
-But it does seem a bit awkward to call grep, awk and sed for this.
-
-I wonder if the following construction nicer:
-
-while read -r FEATURE VALUE FIXED; do
-	[ "$FEAT" != "Features" ] || continue # Skip "Features" line
-	[ "$FIXED" != "[fixed]" ] || continue # Skip fixed features
-	feature="${FEATURE%:*}"
-	...
-done < "$TMP_ETHTOOL_FEATURES"
-
-
-> +		ethtool --offload "$netdev" "$feature" off
-> +		if [ $? -eq 0 ]; then
-> +			echo "PASS: $netdev: Turned off feature: $feature"
-> +		else
-> +			echo "FAIL: $netdev: Failed to turn off feature: $feature"
-> +		fi
-> +
-> +		ethtool --offload "$netdev" "$feature" on
-> +		if [ $? -eq 0 ]; then
-> +			echo "PASS: $netdev: Turned on feature: $feature"
-> +		else
-> +			echo "FAIL: $netdev: Failed to turn on feature: $feature"
-> +		fi
-> +	done
-> +
->  	rm "$TMP_ETHTOOL_FEATURES"
->  
->  	kci_netdev_ethtool_test 74 'dump' "ethtool -d $netdev"
-> -- 
-> 2.34.1
-> 
-> 
+Thanks.
 
