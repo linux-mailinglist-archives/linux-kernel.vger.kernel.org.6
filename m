@@ -1,107 +1,116 @@
-Return-Path: <linux-kernel+bounces-205870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA12090019D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:08:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B0079001A0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55F1DB2465D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:08:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98144B246A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B48188CAE;
-	Fri,  7 Jun 2024 11:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7D1187339;
+	Fri,  7 Jun 2024 11:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gtucker.io header.i=@gtucker.io header.b="XitJNlei"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kdRobhu9"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4930B187350;
-	Fri,  7 Jun 2024 11:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D6B1862AC
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717758478; cv=none; b=sIyrFhsBLK3IgjWJZK2PmYW5Ppdty+ZmWJw965NfOVfWbesLyMlgWi43os6QiYZVYmGVP9RIBUYKElB/vkPX0t30I7EaAZi9BYPCrSOVTsDsgbJNW12ZZyTbWbOrJBKmviSzt0BoNq6uOtw9ixB3lcuU3mOnmrD6+zn4x8YEHM0=
+	t=1717758497; cv=none; b=aslprps4TttkID4I3TIMlykX6RRVX0ORx6C0mPg/1M+ovU4G6+xiQ9hoh6AASoDXEP1m2Lwi2MbrPbPhoZdIMPgv4eCopQtNJrsB+/m82yWj8bwHrRCJpv+xJ94liWZAKHvRCvYQBuKEthshNDv/WO5zl43TgDOtzea95KKAfRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717758478; c=relaxed/simple;
-	bh=n0Kvyk+T+RtB/i+4T/qp6gEW7032T5bG4AfcmuA3ORA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qhlNmmYrX/4o1wUfT3f+JlnLrPiMZiGtqdKIbeUNBKE3KBKVpnT8Ome0GrewcGjsTvyd7hNCsup/Fnu79JYYD+RZDV8e7xqio5jdUySCXooXAd1X3OuiHTgFmJjr5IyDY4SNTp7lzBRWBEaDeYJMCsGvZyGaWUNJ+4RbyzdTCh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gtucker.io; spf=pass smtp.mailfrom=gtucker.io; dkim=pass (2048-bit key) header.d=gtucker.io header.i=@gtucker.io header.b=XitJNlei; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gtucker.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gtucker.io
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2C1BC1BF204;
-	Fri,  7 Jun 2024 11:07:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gtucker.io; s=gm1;
-	t=1717758468;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CJUCbM546q0LNVWlhbxcY9aawRMHmngLwnBnq4OdBYc=;
-	b=XitJNlei8F6drUPTvnCYDL/f93y60prNCd9OHDeWV92QxHGeTgQTsd6f9bCuk9DLPWMbSq
-	26ziB2MEtIT20BO8XyGai8wQ/nV67nEMAC8Uj+DHPO309VXac1msGXy7Dg/SXSvE7WFrXW
-	Aupejt5cq9TCsgf39zkzzzwfhYrpq7/Iove7FNg2sikueRw8aplSP0GRNYwdVNFHrmLAhF
-	+5KjvYE0TWkAcsOVmb8xfDfmLuRb5xg9d/9nFZrrNuT1eDz4Ky2iHY5JF0ga1mphGl66GQ
-	gz7iU9aDQg88jwBw2ngoXr1RwK/iD2FgPrg72sDPPiOBpJrk5b5y4Lwi6aPJSw==
-Message-ID: <e7ca4831-4e4a-4a7a-a310-459f102154e5@gtucker.io>
-Date: Fri, 7 Jun 2024 13:07:47 +0200
+	s=arc-20240116; t=1717758497; c=relaxed/simple;
+	bh=grRwC724PvUmoNcGmdXgtk47euMXChWb+9LwIxsSnRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gmZPafHDN0tJmgnaI/aCrCcZuehBkiH1kQTJkYlvQUGIdZQZwGv9TsNil4AcikIGoFjttu1pnR87z+JYy90AhALBmzyNRWMOdI65+IFHNNqaigqLxcPOvF9m6VfyBFc3XW1cJxsVWfxSVrG+ryZIAiodOQEijOMekEraN6+jK9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kdRobhu9; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5295eb47b48so2515315e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 04:08:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717758494; x=1718363294; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QwvApUeqo/GeZM3yb0HNmlUq35XuhdMdPtdEy3Zogv4=;
+        b=kdRobhu9AGcaO1stgTyvif1eN+kQNrtnOkAgo1ucPz/tBGc/g6skg+0nwYCeE0UbLI
+         Fxv3kbz0VBrT7y3TyS16KO7lA7mnJdxP3r6XAhGcE61Mc9wgzl2m1/i95aVKgESVuS9y
+         cu+xv1ePWw7fB0hLY+bmsvb1qLv1upK5DQmkDd/IqfCwvsVNfZHixRZXrUymgmyE+C8p
+         vW/nfCeWpxlGD61jNPbvbwbunxAWYDLvtAVa3e55sliT5ls7MZG/Fl8n59PhDJxY5cZQ
+         cuU2tt7tQtCkBrk09ZpC1D2Ug6KfVbfO3UpSedDpZmPd/M8VwdjACMVUg7nZt5R8XMej
+         SHYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717758494; x=1718363294;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QwvApUeqo/GeZM3yb0HNmlUq35XuhdMdPtdEy3Zogv4=;
+        b=d7lR9CleCYWAKZbkhpMEXdA8ILkaq3Rq1ek4T5d1VCDSIpLT6h/IjzA4L6oZBWWWbk
+         J7k+u8PZJNib4MMXACJ9mbzQx6RHs0KPzqH//LLfHbYABDdiirxQTIA6QzwgQrhReRlw
+         cFa5rkGeDi45sAPY/fiH6hepeyufMxH6003LDq+Cn/tG22/F0Npg8si3Ed9yZJk0nYAB
+         oeq9IM09ZvRTMYR/xotGHNAVkIPmrsIlvwdIxi+92k3fZ1JEbb1c8PoOLEuwcRh3v7/f
+         E1O4QEE6rchTuFAb5nBZohfI/t81lDGOMiLyLzerHDzO30FPce5jmEIUdZB5Q1sG0yBG
+         NFNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZEyZHUHWJFznxdpSKDISq3GExOlLsbMcxg0pmo9Ir0QeAeoCPh+l7Zb10NGvbG+Llkgz/nRsX53B1xPu1KN7BX15gQ3ZejOmnezfY
+X-Gm-Message-State: AOJu0YzMTiCrqsfXMGG9P3qUOMYv6zNhs4zAnjw8ZcCvnocD934tSaK/
+	9omcM21TJEUMXuhIUQmcxsven0v1cgH6zAqq58HUsISjWYtwOdzRGrIc1dukacs=
+X-Google-Smtp-Source: AGHT+IHMqehAzz0w5PPYFquWBtdJd6J+PcTWUMrSDVqV2ejVV83fMkFQGsrAwfj1Oh2Peqi8rq2fUQ==
+X-Received: by 2002:a05:6512:b9f:b0:52b:82d5:b369 with SMTP id 2adb3069b0e04-52bb9f7e70fmr1530867e87.27.1717758494141;
+        Fri, 07 Jun 2024 04:08:14 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb42166c9sm498491e87.164.2024.06.07.04.08.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 04:08:13 -0700 (PDT)
+Date: Fri, 7 Jun 2024 14:08:12 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Ekansh Gupta <quic_ekangupt@quicinc.com>
+Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
+	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
+	quic_chennak@quicinc.com, stable <stable@kernel.org>
+Subject: Re: [PATCH v4 02/11] misc: fastrpc: Fix DSP capabilities request
+Message-ID: <ueglf7wcoi7prt7wrjp6nfjavzksk4wybepep3qa3xmpug4hkr@ha37oovjfbbf>
+References: <20240606165939.12950-1-quic_ekangupt@quicinc.com>
+ <20240606165939.12950-3-quic_ekangupt@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Kernel Testing & Dependability Micro-Conference at LPC 2024
-From: Guillaume Tucker <gtucker@gtucker.io>
-To: automated-testing@lists.yoctoproject.org, kernelci@lists.linux.dev,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- kunit-dev@googlegroups.com
-Cc: Shuah Khan <skhan@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>
-References: <aba2b2c0-ebb9-45e3-b14a-2321b7770e03@gtucker.io>
-Content-Language: en-GB
-Organization: gtucker.io
-In-Reply-To: <aba2b2c0-ebb9-45e3-b14a-2321b7770e03@gtucker.io>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: gtucker@gtucker.io
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606165939.12950-3-quic_ekangupt@quicinc.com>
 
-On 10/05/2024 20:43, Guillaume Tucker wrote:
-> Hello,
+On Thu, Jun 06, 2024 at 10:29:22PM +0530, Ekansh Gupta wrote:
+> The DSP capability request call expects 2 arguments. First is the
+> information about the total number of attributes to be copied from
+> DSP and second is the information about the buffer where the DSP
+> needs to copy the information. The current design is passing the
+> information about te size to be copied from DSP which would be
+> considered as a bad argument to the call by DSP causing a failure
+> suggesting the same. The second argument carries the information
+> about the buffer where the DSP needs to copy the capability
+> information and the size to be copied. As the first entry of
+> capability attribute is getting skipped, same should also be
+> considered while sending the information to DSP. Add changes to
+> pass proper arguments to DSP.
 > 
-> We're pleased to announce the return of the Kernel Testing &
-> Dependability Micro-Conference at Linux Plumbers 2024:
+> Fixes: 6c16fd8bdd40 ("misc: fastrpc: Add support to get DSP capabilities")
+> Cc: stable <stable@kernel.org>
+> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+> ---
+>  drivers/misc/fastrpc.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
->   https://lpc.events/event/18/contributions/1665/
-> 
-> You can already submit proposals by selecting the micro-conf in
-> the Track drop-down list:
-> 
->   https://lpc.events/login/?next=/event/18/abstracts/%23submit-abstract
-> 
-> Please note that the deadline for submissions is *Sunday 16th June*
 
-The deadline has now been extended to *Sunday 14th July*
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-This is to be better aligned with other MCs and to give more time
-to submit topics.  The reason for having a rather early deadline
-was based on the feedback that it helps to have a response early,
-especially for those who need approval to book their trip.
 
-So the new deadline is when we'll start finalising the schedule
-to submit to the LPC organisers (Steven).  If you do require any
-earlier feedback then please let us know when sending your
-proposal and we'll take a look on a case-by-case basis.
-
-> The event description contains a list of suggested topics
-> inherited from past editions.  Is there anything in particular
-> you would like to see discussed this year?
-> 
-> Knowing people's interests helps with triaging proposals and
-> making the micro-conf as relevant as possible.  See you there!
-
-Thanks,
-Guillaume
-
+-- 
+With best wishes
+Dmitry
 
