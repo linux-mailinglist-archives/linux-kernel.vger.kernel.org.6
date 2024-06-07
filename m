@@ -1,210 +1,161 @@
-Return-Path: <linux-kernel+bounces-206726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7646D900D0D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:35:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E125900D10
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:36:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F072A1F26B01
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:35:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A2A4B23622
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B2F154BE4;
-	Fri,  7 Jun 2024 20:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330F21514FF;
+	Fri,  7 Jun 2024 20:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="fPWryk+s"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Yu8c9Syv"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B4233EE
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 20:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC006819
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 20:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717792505; cv=none; b=inmPRBZBFwOK0M7Suijg0Z7kS8N7+qSaY0dfp6VrXJJqk5SWw3rWf0n9NWWXu7QEhO6mhySWRFn2OYV2evR7tyVu/DZBE1Gs2T2fqMJ40LVwUwI5eJrnCnk99rTH5RVokoBaKL1MIzum5T4Yk9Ui9z5S86y4uZwNqeJQdIfQqrQ=
+	t=1717792556; cv=none; b=E6lR1uyREha/G6b6EVsHddaWh9aURHAKUfi3+82poji9t88yDIx4KEHckaxWsZ32slRyTggjOWyL3aVl4BaPEv0vYX69m0EkmfKN2PXTn7EPIBiUCWO3WRSCG0RGrVxPyNaYiLYuU6dsB/LTeThrC4BHHayKmfZioXu0BSl8okE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717792505; c=relaxed/simple;
-	bh=xEFU2zSTb1izVVHOW614ofveL2cN/IiLF3LT9MwPLjE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JAnDfvOF0oJmZaXfo8+UjQJTKGi0zuCo5Math8mZsAL5LtlanWKZzYXpVLZuGFk601bhiWZUUkx2AzzYujHWjC3JffXieR3C7e4AUxrwkqUtmPAMvyuBrCck3wWMOjY62z1T44NfrWQ5lAKlvYH/cGCnMqnE7YTWYOO1vDwlk4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=fPWryk+s; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-702508bf0a9so2122986b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 13:35:03 -0700 (PDT)
+	s=arc-20240116; t=1717792556; c=relaxed/simple;
+	bh=0oUY7YekuzTgZuoCTclJAAQEBpsdR68wucgu8oAuMyg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tMKkdZatJPe/vg6orecDwyD8q+ntz1AwcJk/jbUMF/dgDYOLe2L3Eu06l7Hze1DJdUvjeCMgt8SMbYoIFY+zvrdCAQ8WBbZ2y915QLmxBuXUQSKgw0dbjo3zdqr+yzKkB+ZUVmROXj8WoSFxYrcvLiUi8getI0UmF21fGikXNwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Yu8c9Syv; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-6e57506bb2dso456530a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 13:35:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717792502; x=1718397302; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cLToHBNr/z+D9LPjVFlPmqNBuwl70ZStg9nQgfuU29g=;
-        b=fPWryk+sb8CpZjGc0e5prV9EGPcrlDqodYiidVOrE/sUHfhCCQuY0Bzqa58mDNaLHu
-         ikDopfX/La177ac8Nnyh0VSdLPcBhmFJweqBPURVD3cIzfdEVM0TNzTECo/NIcA9prZT
-         8VBo0TAXacjKVUt1LvsJWPv2ZEKYsImayGj6jq8YgdtJ2nOppbny04tEHaP0QHH963jH
-         4FVRXhMMketmeXifwtb0x4dPNShDIDvHVbIifCaqdUwaoIL4uFod28PCspMRiKIEKGgz
-         G3230UdgMeounNYQ+NCwvcjR2rU99550HDtcU03jAM0I7aSK7wQPHI15y+JdmeXIZJ2y
-         XB6A==
+        d=chromium.org; s=google; t=1717792553; x=1718397353; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/aZumHyRcpOIT74DOJSEusSl9YmG7Mt7kBbt+rZmDfc=;
+        b=Yu8c9SyvgOlVfndEI1c3sF7rl+2xLUBM5r4MAKSuEpDyrc4OJaURtDXOFAjzh3w83d
+         K1lX4xG+6jC2W9XbzQpn1y0c++GYLmYIJ07eZWkmMkCocpNFvmB8TUfTWXsEEyfGi6iB
+         vfmNZ3qlNpJ9QKkuhSsO6O2ZRS1qHyLojlUmU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717792502; x=1718397302;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cLToHBNr/z+D9LPjVFlPmqNBuwl70ZStg9nQgfuU29g=;
-        b=c6Fs1nahFDb39+QuilXo7L4AgfAvRI6WATxHf93vgmXfnTrPpqCB9zc7pXF3G0DNCX
-         n1OxqhXIJ1ldi73Sf2cU9V38v/l+pwcw3yAF9TfNW7fcoK9cxnMUvX5ZeZgklEdSRjf7
-         HaoE7e6lOHWQyW5W98Iv7LA3ppVgoNjiUwAOQ5z33PhCLsq0g/jVBByX8xDc7U44SQK0
-         1x7PqtgbdcnlSbKzEVzZAGz3UdMRNJOBAyvvdtPeXEOjAc7JMfYEXoYQtHOTde0pIrWp
-         9K5qInhsIVYTeWol2AWO3x54JwucUh63LYwrpVJV5e38LCqT32FRqu2NL4M81OxckFWW
-         /mEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWK2JsEbUBcmtBKET1BWIUiICVICdmSviGQp7xys+c9YOu4NDpGj9PGnKTenfJ+Yj0zdsL53+lfcB0ES4TlpxcuXSRrYBasEa+OtJ1q
-X-Gm-Message-State: AOJu0YybwU91guM+CccND1sTzk2fF8G/DUCXDjnJsqBEn94oJWb4F3bQ
-	R/X4r8zGi6UTXVBYp7jwjqIVD6E9FBmF+mL1FEF8l3fEkdvZvVveV0yS9giLOQA=
-X-Google-Smtp-Source: AGHT+IEkCP2WsqBCckWanMFkCe+YhsGIPJ7GAX0xrzeDP2u/J64Ggzg47HO7Pjwmg9u0t5/f1aOJ5w==
-X-Received: by 2002:a05:6a00:182a:b0:6f8:d4b8:b215 with SMTP id d2e1a72fcca58-7040c615a61mr3601298b3a.6.1717792502530;
-        Fri, 07 Jun 2024 13:35:02 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd3b187fsm2944633b3a.85.2024.06.07.13.35.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 13:35:02 -0700 (PDT)
-Date: Fri, 7 Jun 2024 13:35:00 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: linux-riscv@lists.infradead.org, Palmer Dabbelt <palmer@dabbelt.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Conor Dooley <conor@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] riscv: Enable cbo.zero only when all harts support
- Zicboz
-Message-ID: <ZmNu9AkHOTGj9uvw@debug.ba.rivosinc.com>
-References: <20240605205658.184399-1-samuel.holland@sifive.com>
- <20240605205658.184399-2-samuel.holland@sifive.com>
+        d=1e100.net; s=20230601; t=1717792553; x=1718397353;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/aZumHyRcpOIT74DOJSEusSl9YmG7Mt7kBbt+rZmDfc=;
+        b=BrPHqOpxlLrhzZlBYIGqIUdd7ILKrzLUZRvf6sabKb8cEqC5ghoritlD+4iCg/1N/8
+         u3Txqo200uVXhhyrUI7Y9tOAQcGfS0d5vicQOhWQKmZ+N5aTmr4ZU3zfOpf7gbJBbf4Q
+         VZuuFdUoUkRShpOW6gSGUD+g08UWYQ9ELIcEEENPn6EAfDvzlh1qxEDnnZEtvtJYmTAY
+         joFTJVv0u2O22KlZ4g9ntQ25unumpp/6G92KzrVB+lbEKZCBPbgIe5GWzPj+VqrR/v1r
+         JyyI/qoyxUQ99M+wKqmybkxlQcgKSFtBbDz/AIUXtqnHRsqxlT/pkXP3AUEfNDmwYC1/
+         SQvA==
+X-Forwarded-Encrypted: i=1; AJvYcCXMOtWCMq2vdTC5OLK1hSkYOmxF+tcByP3VL2VXJg4gtdYqHDKPyml+AUfhmhCRjKTb/RPffLsiA8IwiJ3Nuet3F2c7Bn/Y0ylI3z8u
+X-Gm-Message-State: AOJu0Yy87wYdkoQ4wgVLTtwwwZyRFrkv6iNq0b55QAhGyASBIyPeDq71
+	Xc30DGKAPF6DSIvUMRxM8S36uLma4aumVltS2VMhf6d0MiEZn34YlJMSoWjK0Q==
+X-Google-Smtp-Source: AGHT+IG0zwY6vWwEtQpPZbj4cEzreBvdQwz6RkitHdPJvAt200tHqjh+4UzHLnKkUgI6qaWZ3+6VsA==
+X-Received: by 2002:a17:90a:ee4a:b0:2c1:aa8e:d70 with SMTP id 98e67ed59e1d1-2c2bc7cf895mr4084944a91.0.1717792553031;
+        Fri, 07 Jun 2024 13:35:53 -0700 (PDT)
+Received: from localhost (213.126.145.34.bc.googleusercontent.com. [34.145.126.213])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2c2806d1be2sm5904787a91.55.2024.06.07.13.35.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jun 2024 13:35:52 -0700 (PDT)
+From: jeffxu@chromium.org
+To: jeffxu@chromium.org
+Cc: akpm@linux-foundation.org,
+	cyphar@cyphar.com,
+	david@readahead.eu,
+	dmitry.torokhov@gmail.com,
+	dverkamp@chromium.org,
+	hughd@google.com,
+	jeffxu@google.com,
+	jorgelo@chromium.org,
+	keescook@chromium.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org,
+	pobrn@protonmail.com,
+	skhan@linuxfoundation.org,
+	stable@vger.kernel.org
+Subject: [PATCH v1 0/1] mm/memfd: add documentation for MFD_NOEXEC_SEAL
+Date: Fri,  7 Jun 2024 20:35:40 +0000
+Message-ID: <20240607203543.2151433-1-jeffxu@google.com>
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20240605205658.184399-2-samuel.holland@sifive.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 05, 2024 at 01:56:45PM -0700, Samuel Holland wrote:
->Currently, we enable cbo.zero for usermode on each hart that supports
->the Zicboz extension. This means that the [ms]envcfg CSR value may
->differ between harts. Other features, such as pointer masking and CFI,
->require setting [ms]envcfg bits on a per-thread basis. The combination
->of these two adds quite some complexity and overhead to context
->switching, as we would need to maintain two separate masks for the
->per-hart and per-thread bits. Andrew Jones, who originally added Zicboz
->support, writes[1][2]:
->
->  I've approached Zicboz the same way I would approach all
->  extensions, which is to be per-hart. I'm not currently aware of
->  a platform that is / will be composed of harts where some have
->  Zicboz and others don't, but there's nothing stopping a platform
->  like that from being built.
->
->  So, how about we add code that confirms Zicboz is on all harts.
->  If any hart does not have it, then we complain loudly and disable
->  it on all the other harts. If it was just a hardware description
->  bug, then it'll get fixed. If there's actually a platform which
->  doesn't have Zicboz on all harts, then, when the issue is reported,
->  we can decide to not support it, support it with defconfig, or
->  support it under a Kconfig guard which must be enabled by the user.
->
->Let's follow his suggested solution and require the extension to be
->available on all harts, so the envcfg CSR value does not need to change
->when a thread migrates between harts. Since we are doing this for all
->extensions with fields in envcfg, the CSR itself only needs to be saved/
->restored when it is present on all harts.
->
->This should not be a regression as no known hardware has asymmetric
->Zicboz support, but if anyone reports seeing the warning, we will
->re-evaluate our solution.
->
->Link: https://lore.kernel.org/linux-riscv/20240322-168f191eeb8479b2ea169a5e@orel/ [1]
->Link: https://lore.kernel.org/linux-riscv/20240323-28943722feb57a41fb0ff488@orel/ [2]
->Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
->---
->
-> arch/riscv/kernel/cpufeature.c | 7 ++++++-
-> arch/riscv/kernel/suspend.c    | 4 ++--
-> 2 files changed, 8 insertions(+), 3 deletions(-)
->
->diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
->index 5ef48cb20ee1..2879e26dbcd8 100644
->--- a/arch/riscv/kernel/cpufeature.c
->+++ b/arch/riscv/kernel/cpufeature.c
->@@ -27,6 +27,8 @@
->
-> #define NUM_ALPHA_EXTS ('z' - 'a' + 1)
->
->+static bool any_cpu_has_zicboz;
->+
-> unsigned long elf_hwcap __read_mostly;
->
-> /* Host ISA bitmap */
->@@ -92,6 +94,7 @@ static bool riscv_isa_extension_check(int id)
-> 			pr_err("Zicboz disabled as cboz-block-size present, but is not a power-of-2\n");
-> 			return false;
-> 		}
->+		any_cpu_has_zicboz = true;
-> 		return true;
-> 	case RISCV_ISA_EXT_INVALID:
-> 		return false;
->@@ -724,8 +727,10 @@ unsigned long riscv_get_elf_hwcap(void)
->
-> void riscv_user_isa_enable(void)
-> {
->-	if (riscv_cpu_has_extension_unlikely(smp_processor_id(), RISCV_ISA_EXT_ZICBOZ))
->+	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_ZICBOZ))
-> 		csr_set(CSR_ENVCFG, ENVCFG_CBZE);
->+	else if (any_cpu_has_zicboz)
->+		pr_warn_once("Zicboz disabled as it is unavailable on some harts\n");
+From: Jeff Xu <jeffxu@chromium.org>
 
-`riscv_has_extension_unlikely` will check bitmap `riscv_isa[0]` which I think gets populated
-by boot cpu (correct me if I am wrong here). So as long boot processor has the extension, it'll
-try to set it on CPU which doesn't have it.
+When MFD_NOEXEC_SEAL was introduced, there was one big mistake: it
+didn't have proper documentation. This led to a lot of confusion,
+especially about whether or not memfd created with the MFD_NOEXEC_SEAL
+flag is sealable. Before MFD_NOEXEC_SEAL, memfd had to explicitly set
+MFD_ALLOW_SEALING to be sealable, so it's a fair question.
 
-How about doing this
+As one might have noticed, unlike other flags in memfd_create,
+MFD_NOEXEC_SEAL is actually a combination of multiple flags. The idea
+is to make it easier to use memfd in the most common way, which is
+NOEXEC + F_SEAL_EXEC + MFD_ALLOW_SEALING. This works with sysctl
+vm.noexec to help existing applications move to a more secure way of
+using memfd.
 
-`riscv_fill_hwcap_from_isa_string` checks and enables bitmap for all CPUs.
-So make a check there and if any of the CPU dont have `Zicboz`, then set a global bool
-`zicboz_cpu_not_homogenous`.
+Proposals have been made to put MFD_NOEXEC_SEAL non-sealable, unless
+MFD_ALLOW_SEALING is set, to be consistent with other flags [1] [2],
+Those are based on the viewpoint that each flag is an atomic unit,
+which is a reasonable assumption. However, MFD_NOEXEC_SEAL was
+designed with the intent of promoting the most secure method of using
+memfd, therefore a combination of multiple functionalities into one
+bit.
 
-Now in `riscv_user_isa_enable`, check following
+Furthermore, the MFD_NOEXEC_SEAL has been added for more than one
+year, and multiple applications and distributions have backported and
+utilized it. Altering ABI now presents a degree of risk and may lead
+to disruption.
 
-If `zicboz_cpu_not_homogenous` is set, then you already detected that some of the CPUs don't
-have support for `Zicboz` and thus you wouldn't set for CPU which even has the support and
-print a warning message.
+MFD_NOEXEC_SEAL is a new flag, and applications must change their code
+to use it. There is no backward compatibility problem.
 
-If `zicboz_cpu_not_homogenous` is clear, then that means all CPUs support the feature.
-You simply enable it on hart.
+When sysctl vm.noexec == 1 or 2, applications that don't set
+MFD_NOEXEC_SEAL or MFD_EXEC will get MFD_NOEXEC_SEAL memfd. And
+old-application might break, that is by-design, in such a system
+vm.noexec = 0 shall be used. Also no backward compatibility problem.
 
-> }
->
-> #ifdef CONFIG_RISCV_ALTERNATIVE
->diff --git a/arch/riscv/kernel/suspend.c b/arch/riscv/kernel/suspend.c
->index c8cec0cc5833..9a8a0dc035b2 100644
->--- a/arch/riscv/kernel/suspend.c
->+++ b/arch/riscv/kernel/suspend.c
->@@ -14,7 +14,7 @@
->
-> void suspend_save_csrs(struct suspend_context *context)
-> {
->-	if (riscv_cpu_has_extension_unlikely(smp_processor_id(), RISCV_ISA_EXT_XLINUXENVCFG))
->+	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_XLINUXENVCFG))
-> 		context->envcfg = csr_read(CSR_ENVCFG);
-> 	context->tvec = csr_read(CSR_TVEC);
-> 	context->ie = csr_read(CSR_IE);
->@@ -37,7 +37,7 @@ void suspend_save_csrs(struct suspend_context *context)
-> void suspend_restore_csrs(struct suspend_context *context)
-> {
-> 	csr_write(CSR_SCRATCH, 0);
->-	if (riscv_cpu_has_extension_unlikely(smp_processor_id(), RISCV_ISA_EXT_XLINUXENVCFG))
->+	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_XLINUXENVCFG))
-> 		csr_write(CSR_ENVCFG, context->envcfg);
-> 	csr_write(CSR_TVEC, context->tvec);
-> 	csr_write(CSR_IE, context->ie);
->-- 
->2.44.1
->
+I propose to include this documentation patch to assist in clarifying
+the semantics of MFD_NOEXEC_SEAL, thereby preventing any potential
+future confusion.
+
+This patch supersede previous patch which is trying different
+direction [3], and please remove [2] from mm-unstable branch when
+applying this patch.
+
+Finally, I would like to express my gratitude to David Rheinsberg and
+Barnabás Pőcze for initiating the discussion on the topic of sealability.
+
+[1]
+https://lore.kernel.org/lkml/20230714114753.170814-1-david@readahead.eu/
+
+[2] 
+https://lore.kernel.org/lkml/20240513191544.94754-1-pobrn@protonmail.com/
+
+[3]
+https://lore.kernel.org/lkml/20240524033933.135049-1-jeffxu@google.com/
+
+Jeff Xu (1):
+  mm/memfd: add documentation for MFD_NOEXEC_SEAL MFD_EXEC
+
+ Documentation/userspace-api/index.rst      |  1 +
+ Documentation/userspace-api/mfd_noexec.rst | 86 ++++++++++++++++++++++
+ 2 files changed, 87 insertions(+)
+ create mode 100644 Documentation/userspace-api/mfd_noexec.rst
+
+-- 
+2.45.2.505.gda0bf45e8d-goog
+
 
