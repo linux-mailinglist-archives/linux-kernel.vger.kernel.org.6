@@ -1,214 +1,140 @@
-Return-Path: <linux-kernel+bounces-206162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 572ED9004FA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:33:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91CC19004FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB78BB28FDB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:33:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0380A28BFFF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCC8195F34;
-	Fri,  7 Jun 2024 13:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C552F196D80;
+	Fri,  7 Jun 2024 13:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="WrX6Z9ve"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kfm9fNc7"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29008194ACD
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 13:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8864019414B;
+	Fri,  7 Jun 2024 13:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717767059; cv=none; b=YAo82jEhDw7YUzWSWCxgCcTQRpNcdOkLIb8GuhEue/PWyfBJPOQBOHxabOP5RW6qre/sOCzGxb+byhFRPPXfj9S5hSQU5gFVVJqu3xVEVyu/EJA0o2lAEtudP36M943+7odP1tA+9se1nuoSDPr/wP27ZLv8v0sGBmXysaB3RRA=
+	t=1717767072; cv=none; b=TSipNGrIdMZWnlU86HObfBiIyzblmVdBDHQmpA46YqnujPHUaTyFO+LY4DOcDgXaudGa1+WmhmlCUpKfg5lr9VAhk6C79zeq2j5FeHtjVpz59CZsBHO3NAyp+rkddXHSqozTEORg1d1jjVCjYQysddh7NlsszTOVXCijAEe6aW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717767059; c=relaxed/simple;
-	bh=pOpmFmCFocAM6Qwli2bgU/R17K3mZsTuv67wgEL5VOc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=m7hdsVY4WA9u9wpRm9+3kgSi5oFZSV3H4cZU2gUJ30abrOBy70S7JH54UDgbwMZ4LyEVHXD2Jel9Jg66E/fBH0WZ38HdtxHuYeoTcxDiZafobEv49U2ouKzSCwOXCLfawJU7suOskx3k8Y7p9n5A2evE3h2N6jvg8h7t2Qj+gJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=WrX6Z9ve; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=4RK0KP7M28kJmksdDmKUG3G7jD95U6jiMrw57i0ZVTM=; b=WrX6Z9ve4U6Im4uuz46Fg4XVd8
-	JGVOITQkIYs/cPdZB1J1TAMmvmrvcg6FUzBV5GdtGYXnBM+AcTkOOyotGGRS8x9GbwytmUWIfXkRS
-	HvTJKZ3vRzhOpDs6pLBxtbNnp3X112Fr0LMY0Eg0aKgQIfUkaX6H2MJA+xNUYrS15D0kBwfo1l35u
-	TxtUrExfdcCpi3N2CY9HRqZ4eOXaFN7qg+c/00ERts9eydWnEl9U0TQVbCI7DXGi1UcHkWg/zktEE
-	i0S8TuoQOglfFCQF4Pt6sw8qeTiBvsnN2yWqEDxEB1CTXNX6LhBgBMj0UxuSDjYoYL9amoGnT09G9
-	2BAWAMgQ==;
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1sFZgE-0001N2-De; Fri, 07 Jun 2024 15:30:50 +0200
-Received: from [185.17.218.86] (helo=localhost)
-	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1sFZgA-000BVy-0C;
-	Fri, 07 Jun 2024 15:30:50 +0200
-From: Esben Haabendal <esben@geanix.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Michael Walle <mwalle@kernel.org>,  Pratyush Yadav
- <pratyush@kernel.org>,  Miquel Raynal <miquel.raynal@bootlin.com>,
-  Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  Rasmus Villemoes
- <rasmus.villemoes@prevas.dk>
-Subject: Re: [PATCH v2 1/2] mtd: spi-nor: core: add flag for doing optional
- SFDP
-In-Reply-To: <1d683b33-16db-4d81-92cb-d98e35b87cba@linaro.org> (Tudor
-	Ambarus's message of "Fri, 7 Jun 2024 10:22:55 +0100")
-References: <20240603-macronix-mx25l3205d-fixups-v2-0-ff98da26835c@geanix.com>
-	<20240603-macronix-mx25l3205d-fixups-v2-1-ff98da26835c@geanix.com>
-	<a379a411-2c9e-4d9d-aa8f-4c4f3463cc27@linaro.org>
-	<D1SZKLZBDDBA.1Z7ZD4UEOX05F@kernel.org>
-	<48719b0f-1a7f-47f9-948a-c981a0a29b41@linaro.org>
-	<D1T10API5U80.1OKB56YTFGMTN@kernel.org> <874ja6aszh.fsf@geanix.com>
-	<1d683b33-16db-4d81-92cb-d98e35b87cba@linaro.org>
-Date: Fri, 07 Jun 2024 15:30:49 +0200
-Message-ID: <87le3g283a.fsf@geanix.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1717767072; c=relaxed/simple;
+	bh=FINJunvslvsDft6X0FCW9fIW4x9HDOR96bpphV+WFCY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XQ3BiFTMfur1//35lLaUKaOiNbxGacSbmM6W2pggg6Xfon1JoRTAKq/3gOMICpZgmo4QcHA3fdQ5waScBw4im/GCnUnI+G3Fku45f6llgXaLNySIyUowNREtyKOqrrWQym81+at2R53YpOqCkI/LEl6xwjoinjrS5dKHUR76Vho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kfm9fNc7; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 457DUs0Q086595;
+	Fri, 7 Jun 2024 08:30:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717767054;
+	bh=wT+sQQdkJtU/Yzp+KDhp78KwpzqYXgXkTsAS0oqdKjo=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=kfm9fNc7bGqRLA/2gSux2n+ddxvpW/qyBK2QZeIzk79EM1qhzrkx/VnsXk+VELHQ4
+	 L1Yyqj6Tnsga/SY1Cl6hVcUPG6ASOgFmRz1y4J5jPvrK6isvMqPMSpakbkt0WVIZXc
+	 vQYdrV2PIZk2m/UUUVOjZ9uTbh65yVeEp+FahcNQ=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 457DUsUt110033
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 7 Jun 2024 08:30:54 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 7
+ Jun 2024 08:30:53 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 7 Jun 2024 08:30:53 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 457DUr5d116566;
+	Fri, 7 Jun 2024 08:30:53 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>,
+        <akpm@linux-foundation.org>, <andriy.shevchenko@linux.intel.com>,
+        <adobriyan@gmail.com>, <andi.shyti@linux.intel.com>,
+        <p.zabel@pengutronix.de>
+CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, <devarsht@ti.com>, <andrzej.p@collabora.com>,
+        <nicolas@ndufresne.ca>
+Subject: [PATCH v13 08/13] math.h: Use kernel-doc syntax for divison macros
+Date: Fri, 7 Jun 2024 19:00:52 +0530
+Message-ID: <20240607133052.3555642-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20240607131900.3535250-1-devarsht@ti.com>
+References: <20240607131900.3535250-1-devarsht@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27299/Fri Jun  7 10:27:20 2024)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Tudor Ambarus <tudor.ambarus@linaro.org> writes:
+Enable rEST documentation for divison macros DIV_ROUND_CLOSEST and
+DIV_ROUND_CLOSEST_ULL by using kernel-doc markup and syntax for documenting
+them.
 
-> On 6/6/24 18:20, Esben Haabendal wrote:
->> "Michael Walle" <mwalle@kernel.org> writes:
->> 
->>> On Thu Jun 6, 2024 at 4:52 PM CEST, Tudor Ambarus wrote:
->>>> On 6/6/24 14:59, Michael Walle wrote:
->>>>> On Thu Jun 6, 2024 at 3:31 PM CEST, Tudor Ambarus wrote:
->>>>>> On 6/3/24 14:09, Esben Haabendal wrote:
->>>>>>> A dedicated flag for triggering call to
->>>>>>> spi_nor_sfdp_init_params_deprecated() allows enabling optional SFDP read
->>>>>>> and parse, with fallback to legacy flash parameters, without having dual,
->>>>>>> quad or octal parameters set in the legacy flash parameters.
->>>>>>>
->>>>>>> With this, spi-nor flash parts without SFDP that is replaced with a
->>>>>>> different flash NOR flash part that does have SFDP, but shares the same
->>>>>>> manufacturer and device ID is easily handled.
->>>>>>>
->>>>>>> Signed-off-by: Esben Haabendal <esben@geanix.com>
->>>>>>> ---
->>>>>>>  drivers/mtd/spi-nor/core.c | 3 ++-
->>>>>>>  drivers/mtd/spi-nor/core.h | 1 +
->>>>>>>  2 files changed, 3 insertions(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
->>>>>>> index 3e1f1913536b..1c4d66fc993b 100644
->>>>>>> --- a/drivers/mtd/spi-nor/core.c
->>>>>>> +++ b/drivers/mtd/spi-nor/core.c
->>>>>>> @@ -2933,7 +2933,8 @@ static void spi_nor_init_params_deprecated(struct spi_nor *nor)
->>>>>>>  
->>>>>>>  	spi_nor_manufacturer_init_params(nor);
->>>>>>>  
->>>>>>> -	if (nor->info->no_sfdp_flags & (SPI_NOR_DUAL_READ |
->>>>>>> +	if (nor->info->no_sfdp_flags & (SPI_NOR_TRY_SFDP |
->>>>>>
->>>>>> I don't like that we update deprecated methods. The solution though is
->>>>>> elegant.
->>>>>
->>>>> I actually had the same concern. But currently there is no
->>>>> non-deprecated way to handle this case, right?
->>>>>
->>>>> Right now we have the following cases:
->>>>>  (1) pure SFDP parsing
->>>>>  (2) non-SFDP flashes with static configuration only
->>>>>  (3) legacy implementation, where the magic flags decide whether we
->>>>>      use SFDP
->>>>>
->>>>> Which case is eventually used depends on the ID of the flash -
->>>>> assuming there will only be IDs which either fall into (1) *or* (2).
->>>>> That assumption is clearly wrong :)
->>>>>
->>>>> I'd propose a new case in spi_nor_init_params()
->>>>>  (4) try SFDP with a fallback to the static flags from the
->>>>>      flash_info db.
->>>>>
->>>>
->>>> that's not that bad, but I would avoid doing it if it's not common. You
->>>> also have to update the core a bit, you can't use no_sfdp_flags &
->>>> TRY_SFDP, it's misleading. Does it worth it?
->>>
->>> IMHO no_sfdp_flags is the correct place (maybe TRY_SFDP is wrong,
->>> maybe SFDP_FALLBACK?)
->> 
->> TRY_SFDP might not be the best choice. But SFDP_FALLBACK sounds to me
->> like it is fallback _to_ SFDP, so rather counter-intuitive.
->> 
->>> because the flash is first treated like in
->>> case (2). Then SFDP is tried based on that flag.
->> 
->> It is first treated like in case (2), and then tried for case (1),
->> falling back to the result from case (2) if/when case (1) fails.
->> 
->>> Is it worth it? I
->>> don't know, Esben is doing the development here ;) So up to him.
->> 
->> I am not sure exactly how it should look like, but I do like the idea
->> proposed above, case (4). It is easier to describe and understand than
->> the current legacy implementation.
->> 
->>>> I won't oppose too much, but to me it feels that we're trying to keep
->>>> alive a dead man.
->>>
->>> Maybe, but we'd have a readily solution if we face a similar
->>> problem in the future. I'm really not sure, how many flashes there
->>> are, but I think these magic bits (which tells the legacy
->>> implementation to try SFDP) will mask quite a few of these.
->>> I.e. in an ideal world where we could finally drop case (3) and
->>> you'd need to split the flashes between case (1) or (2), I think
->>> there will be quite some in (4).
->> 
->> I like this. Judging by the way Macronix is handling this particular
->> chip, I strongly assume that there are several other examples of this
->> for other Macronix parts. Of-course, as long as the original part using
->> the particular flash id supported SFDP, and all later flashes using the
->> same id also does, none of this is needed.
->
-> okay, let's implement 4/
+Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+---
+V1->V13 : No change (Patch introduced in V12)
+ include/linux/math.h | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
 
-Great. Let's do that.
+diff --git a/include/linux/math.h b/include/linux/math.h
+index 79e3dfda77fc..2ab9489bba81 100644
+--- a/include/linux/math.h
++++ b/include/linux/math.h
+@@ -140,9 +140,14 @@
+  */
+ #define roundclosest(x, y) rounddown((x) + (y) / 2, (y))
+ 
+-/*
+- * Divide positive or negative dividend by positive or negative divisor
+- * and round to closest integer. Result is undefined for negative
++/**
++ * DIV_ROUND_CLOSEST - Divide positive or negative dividend by positive or
++ *		       negative divisor and round to closest value
++ * @x: dividend value
++ * @divisor: divisor value
++ *
++ * Divide positive or negative dividend value @x by positive or negative
++ * @divisor value and round to closest integer. Result is undefined for negative
+  * divisors if the dividend variable type is unsigned and for negative
+  * dividends if the divisor variable type is unsigned.
+  */
+@@ -157,9 +162,15 @@
+ 		(((__x) - ((__d) / 2)) / (__d));	\
+ }							\
+ )
+-/*
+- * Same as above but for u64 dividends. divisor must be a 32-bit
+- * number.
++
++/**
++ * DIV_ROUND_CLOSEST_ULL - Divide 64-bit unsigned dividend by 32-bit divisor and
++ *			   round to closest value
++ * @x: unsigned 64-bit dividend
++ * @divisor: 32-bit divisor
++ *
++ * Divide unsigned 64-bit dividend value @x by 32-bit @divisor value
++ * and round to closest integer. Result is undefined for negative divisors.
+  */
+ #define DIV_ROUND_CLOSEST_ULL(x, divisor)(		\
+ {							\
+-- 
+2.39.1
 
-But other than avoiding the "magic flags decide whether we use SFDP",
-should I be doing anything different?
-
-I assume we should still be calling the default_init() fixup functions,
-both for manufacturer and flash level. Or should we leave this for the
-deprecated case only?
-
-If the semantics is basically the same as for the deprecated, why not
-simply change the implementation of the deprecated approach to what we
-need? So having 3 cases:
-
-(1) SFDP only [indicated by size==0]
-(2) static config only [indicated by no_sfdp_flags & SPI_NOR_SKIP_SFDP]
-(3) SFDP with fallback to static config [indicated with size!=0 and
-    !(no_sfdp_flags & SPI_NOR_SKIP_SFDP]
-
-Any reason that we should not be able to easily convert existing
-depracted flash info specifications to the new SFDP with fallback to
-static config?
-
-Also I am wondering if anyone can remember or otherwise figure out why
-we are doing this memcpy() dance with nor->params in
-spi_nor_sfdp_init_params_deprecated()? Why not simply call
-spi_nor_parse_sfdp() before
-spi_nor_no_sfdp_init_params()/spi_nor_manufacturer_init_params()?
-
-/Esben
 
