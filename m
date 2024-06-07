@@ -1,315 +1,217 @@
-Return-Path: <linux-kernel+bounces-206648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CD7C900C4D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:11:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89132900C55
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:13:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2035DB23CAB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:11:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33190281A41
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4431F149E1B;
-	Fri,  7 Jun 2024 19:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE229149C67;
+	Fri,  7 Jun 2024 19:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="DnlkUCUZ"
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dEaQi6HZ"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC520D2E5;
-	Fri,  7 Jun 2024 19:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB393145341
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 19:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717787457; cv=none; b=lQPwJL7GRkK3lvGuE8kvLcY66WKirfb8lBsbgnGwxBHiaDLHl7Ka/4vTIB9iNRbMJig+4PCspCrLcc65eCdmuKmpsGYicJ3v9UCOmZdrlaxFUQ58A3KBbRHLwRF6dnhp0SwNI9TSloOI4nOgfqkXrKXzq5Ffd0X/LymlIrRD5/A=
+	t=1717787621; cv=none; b=gcmfVn4kQWpEbAU92e440g6IxhnWu07gzvEAE5twbj1meQ4KeAADG0DVWAwje5MBrgvV02nPoSw/aoI8oxgAEj5vQi8yaHIF84NvZQ/xOu+LJwGSnjAaHIJeZ05/x6HdMDLzDO0Gqj3iQ6Ppw6sPO6m7MMDnUFrHeMnAlw4Oukk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717787457; c=relaxed/simple;
-	bh=MLBjsU4I09vKzSbxgrBhP1TROF1e4jZS6L6yZ9Bowag=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pQ2j1hltRsjKnm7q0x3e8icrdKAnRO3TdY6fitLjQasAuJBABKzXYNq+F7CT0V2goXixcche9jBs6FWU6wqFvBUhb8rkQnW4mEYV5ISIkCMkgeLvcX9N61TxSqqunNtstWSoGDb4Umi4PDXwvwpxK3Cnlthyjyu69j3iCt0iFVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=DnlkUCUZ; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+	s=arc-20240116; t=1717787621; c=relaxed/simple;
+	bh=cEDTgMrXlgD0YchbLBGmUJQMZeBVMnlvkFJQntt8S1E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DQx9cpuI/pv41jC+swvb3F9c00bm7DKWrB/Dw70o+QcZqxQcWeigBar7o6MbNaOPZaMBm4I56sUxo1Cr6hsyzP+nM1sU2LcMEAGytdp0OtWfs12aZnR95OvO5TZ2W1vukqNU7fxwLCZ6uD/Dp9TOe9aAx6FGvFcq/B9ONCLNZmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dEaQi6HZ; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3d1fd550811so1415411b6e.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 12:13:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1717787456; x=1749323456;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=pvuQyB3QYdHQctMrm6MNGw6MxQLOpFvtCEVJYTSwXFM=;
-  b=DnlkUCUZ9q70r+3D8ImvXhnn0OrM4yKsCElfGPqQEzLCVRiRhyaXeJbc
-   U0ynyCAGxgG4u4+f4r2wDgIQd9MDOu1h3IflWfiTymx/1j8vsD+mP2BVO
-   AznIMgBJq9DALn304LzBg1KFMSRMNVtJBeltEnjXhAzZhKD1nv37B/pxG
-   I=;
-X-IronPort-AV: E=Sophos;i="6.08,221,1712620800"; 
-   d="scan'208";a="301930460"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 19:10:53 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [10.0.10.100:21333]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.2.117:2525] with esmtp (Farcaster)
- id 8d85155e-7d4f-438c-a225-c206bacb4100; Fri, 7 Jun 2024 19:10:50 +0000 (UTC)
-X-Farcaster-Flow-ID: 8d85155e-7d4f-438c-a225-c206bacb4100
-Received: from EX19D007EUA001.ant.amazon.com (10.252.50.133) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.155) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 7 Jun 2024 19:10:43 +0000
-Received: from EX19MTAUWC001.ant.amazon.com (10.250.64.145) by
- EX19D007EUA001.ant.amazon.com (10.252.50.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 7 Jun 2024 19:10:42 +0000
-Received: from dev-dsk-fgriffo-1c-69b51a13.eu-west-1.amazon.com
- (10.13.244.152) by mail-relay.amazon.com (10.250.64.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34 via Frontend Transport; Fri, 7 Jun 2024 19:10:38 +0000
-From: Fred Griffoul <fgriffo@amazon.co.uk>
-To: <griffoul@gmail.com>
-CC: Fred Griffoul <fgriffo@amazon.co.uk>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Alex Williamson
-	<alex.williamson@redhat.com>, Waiman Long <longman@redhat.com>, Zefan Li
-	<lizefan.x@bytedance.com>, Tejun Heo <tj@kernel.org>, Johannes Weiner
-	<hannes@cmpxchg.org>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier
-	<maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, Mark Brown
-	<broonie@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Joey Gouly
-	<joey.gouly@arm.com>, Ryan Roberts <ryan.roberts@arm.com>, Jeremy Linton
-	<jeremy.linton@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu
-	<yi.l.liu@intel.com>, Kevin Tian <kevin.tian@intel.com>, Eric Auger
-	<eric.auger@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, "Christian
- Brauner" <brauner@kernel.org>, Ankit Agrawal <ankita@nvidia.com>, "Reinette
- Chatre" <reinette.chatre@intel.com>, Ye Bin <yebin10@huawei.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<kvm@vger.kernel.org>, <cgroups@vger.kernel.org>
-Subject: [PATCH v4 2/2] vfio/pci: add msi interrupt affinity support
-Date: Fri, 7 Jun 2024 19:09:49 +0000
-Message-ID: <20240607190955.15376-3-fgriffo@amazon.co.uk>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240607190955.15376-1-fgriffo@amazon.co.uk>
-References: <20240607190955.15376-1-fgriffo@amazon.co.uk>
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717787618; x=1718392418; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=q3sLjneVKNLVUsJ1Sg3YJK9+pNgg6awuADOkTmlppuU=;
+        b=dEaQi6HZsj0Ka1JKn17qhYe3ROuPYOQA/B4KJGey47kG4p8NRO2FAjMchyFbyBcuhk
+         iImZW0Dh+s9w5aFXU+zC4dtreTpvTjE6VzzEafLLuikV/hBT4s44blP8njg1GI6YVokR
+         IvwscBKQKYvel+XGI0hnZlNUERE3K4VoLIN0unrPGiWvu7j3TX80pL07Z8fdi+dkyG/U
+         b6989J+a4bKskx4W27GgyO2qt2uMcimTo3W+hjmBfobIAsArJLX+M3t/cCL0EVYLTyJW
+         dDFYvKg5pcmeUUaFpuOHYKCR9aZgUUSefBElqQBJWKJwlyYTator0BPlIJRRY+VuHRui
+         WBBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717787618; x=1718392418;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q3sLjneVKNLVUsJ1Sg3YJK9+pNgg6awuADOkTmlppuU=;
+        b=lWIevqXiEVC636mlvJBOG4+2jccHaYMTK2SDO8ThD4+Oqm4x/Mo4wVUkQv1UWIYdId
+         nvSAhx9+F9mjwTHpoMnv/caqBPMxOTSoIa4NmnWZw7HP6mNGgNb29d4OkHmKCKr4kiLI
+         G3DgdWpbcE7U8UbD/Q0Fl+6TyzqYxwLPgshQTwhyK7cxHjVQYccIy45rv+tca1ApJT0v
+         q3tYrA+MJ3sfyGuTJ2VJFycWB+wNJfeA2+0oPRfx4qW3eGUKErmJV58BdmmnUA+n8Xy6
+         BtC+CHKiaY813TJDmF2KfBx6Zziim+HObqe/eoALmjCaiTgl5/264yJFBctfgJFwvEfZ
+         mmAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuozARjy4ai+4IdPHT4AWXFVZWpaR02Yw/kcc3BK752UYy8/0rd+k/PwykySe1fx0mDp2gv25mG35cblLTKvpox3rgF/3nw4Gyu79u
+X-Gm-Message-State: AOJu0YzKellT73lWTCGSJqJf8JxzLflQhc5K2iar9J+QgMZVkUJfS+1h
+	3IgDZnna9f+p05LyElYNlujJ2w3GPgxolBTGboeJKis1+QLirDFrTSaBkAHyDQ4=
+X-Google-Smtp-Source: AGHT+IGVJjnuB1/LVAcUwO8woWT9s8JYzSpFOfB2Lad6HmxFQ/s3LlkY+Ca7aoWJuM4DQ6E+N7H6OA==
+X-Received: by 2002:a05:6808:1b10:b0:3d1:dfd0:6aa3 with SMTP id 5614622812f47-3d210f5200emr4165117b6e.51.1717787617690;
+        Fri, 07 Jun 2024 12:13:37 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d20b69f2f2sm747128b6e.33.2024.06.07.12.13.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jun 2024 12:13:37 -0700 (PDT)
+Message-ID: <afd89c16-d9d7-43e3-b40a-a88588fd7346@baylibre.com>
+Date: Fri, 7 Jun 2024 14:13:36 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/5] iio: dac: ltc2664: Add driver for LTC2664 and
+ LTC2672
+To: "Paller, Kim Seer" <KimSeer.Paller@analog.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ kernel test robot <lkp@intel.com>
+References: <20240603012200.16589-1-kimseer.paller@analog.com>
+ <20240603012200.16589-6-kimseer.paller@analog.com>
+ <408aa030-23df-418d-a04d-a5551119624b@baylibre.com>
+ <PH0PR03MB7141405D9A40A18E1C90FF79F9FA2@PH0PR03MB7141.namprd03.prod.outlook.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <PH0PR03MB7141405D9A40A18E1C90FF79F9FA2@PH0PR03MB7141.namprd03.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The usual way to configure a device interrupt from userland is to write
-the /proc/irq/<irq>/smp_affinity or smp_affinity_list files. When using
-vfio to implement a device driver or a virtual machine monitor, this may
-not be ideal: the process managing the vfio device interrupts may not be
-granted root privilege, for security reasons. Thus it cannot directly
-control the interrupt affinity and has to rely on an external command.
+On 6/6/24 10:49 AM, Paller, Kim Seer wrote:
 
-This patch extends the VFIO_DEVICE_SET_IRQS ioctl() with a new data flag
-to specify the affinity of interrupts of a vfio pci device.
 
-The CPU affinity mask argument must be a subset of the process cpuset,
-otherwise an error -EPERM is returned.
+>>> +#define LTC2664_CHANNEL(_chan) {					\
+>>> +	.indexed = 1,							\
+>>> +	.output = 1,							\
+>>> +	.channel = (_chan),						\
+>>> +	.info_mask_separate = BIT(IIO_CHAN_INFO_SCALE) |		\
+>>> +		BIT(IIO_CHAN_INFO_OFFSET) | BIT(IIO_CHAN_INFO_RAW),
+>> 	\
+>>> +	.info_mask_separate_available = BIT(IIO_CHAN_INFO_RAW),
+>> 	\
+>>> +	.ext_info = ltc2664_ext_info,					\
+>>> +}
+>>> +
+>>> +static const struct iio_chan_spec ltc2664_channels[] = {
+>>> +	LTC2664_CHANNEL(0),
+>>> +	LTC2664_CHANNEL(1),
+>>> +	LTC2664_CHANNEL(2),
+>>> +	LTC2664_CHANNEL(3),
+>>> +};
+>>> +
+>>> +static const struct iio_chan_spec ltc2672_channels[] = {
+>>> +	LTC2664_CHANNEL(0),
+>>> +	LTC2664_CHANNEL(1),
+>>> +	LTC2664_CHANNEL(2),
+>>> +	LTC2664_CHANNEL(3),
+>>> +	LTC2664_CHANNEL(4),
+>>> +};
+>>
+>> Do we really need these since they are only used as a template anyway?
+>> We could just have a single template for one channel and copy it as
+>> manay times as needed.
+> 
+> Yes, from what I can see we need separate channel specs for both devices
+> since they have a differing number of channels. As for your suggestion about
+> having a single template for one channel and copying it as many times as
+> needed, I'm not entirely sure how to implement it in this context. Could you
+> provide something like a code snippet to illustrate this?
+> 
 
-The vfio_irq_set argument shall be set-up in the following way:
+Instead of the #define and arrays above, just have a single static struct:
 
-- the 'flags' field have the new flag VFIO_IRQ_SET_DATA_AFFINITY set
-as well as VFIO_IRQ_SET_ACTION_TRIGGER.
 
-- the variable-length 'data' field is a cpu_set_t structure, as
-for the sched_setaffinity() syscall, the size of which is derived
-from 'argsz'.
+static const struct iio_chan_spec ltc2664_channel_template = {
+	.indexed = 1,
+	.output = 1,
+	.info_mask_separate = BIT(IIO_CHAN_INFO_SCALE) |
+			      BIT(IIO_CHAN_INFO_OFFSET) |
+			      BIT(IIO_CHAN_INFO_RAW),
+	.info_mask_separate_available = BIT(IIO_CHAN_INFO_RAW),
+	.ext_info = ltc2664_ext_info,
+};
 
-Signed-off-by: Fred Griffoul <fgriffo@amazon.co.uk>
----
- drivers/vfio/pci/vfio_pci_core.c  | 26 +++++++++++++++++----
- drivers/vfio/pci/vfio_pci_intrs.c | 39 +++++++++++++++++++++++++++++++
- drivers/vfio/vfio_main.c          | 13 +++++++----
- include/uapi/linux/vfio.h         | 10 +++++++-
- 4 files changed, 79 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-index 80cae87fff36..6a3b1ca95acc 100644
---- a/drivers/vfio/pci/vfio_pci_core.c
-+++ b/drivers/vfio/pci/vfio_pci_core.c
-@@ -1192,6 +1192,7 @@ static int vfio_pci_ioctl_set_irqs(struct vfio_pci_core_device *vdev,
- {
- 	unsigned long minsz = offsetofend(struct vfio_irq_set, count);
- 	struct vfio_irq_set hdr;
-+	cpumask_var_t mask;
- 	u8 *data = NULL;
- 	int max, ret = 0;
- 	size_t data_size = 0;
-@@ -1207,9 +1208,21 @@ static int vfio_pci_ioctl_set_irqs(struct vfio_pci_core_device *vdev,
- 		return ret;
- 
- 	if (data_size) {
--		data = memdup_user(&arg->data, data_size);
--		if (IS_ERR(data))
--			return PTR_ERR(data);
-+		if (hdr.flags & VFIO_IRQ_SET_DATA_AFFINITY) {
-+			if (!zalloc_cpumask_var(&mask, GFP_KERNEL))
-+				return -ENOMEM;
-+
-+			ret = copy_from_user(mask, &arg->data, data_size);
-+			if (ret)
-+				goto out;
-+
-+			data = (u8 *)mask;
-+
-+		} else {
-+			data = memdup_user(&arg->data, data_size);
-+			if (IS_ERR(data))
-+				return PTR_ERR(data);
-+		}
- 	}
- 
- 	mutex_lock(&vdev->igate);
-@@ -1218,7 +1231,12 @@ static int vfio_pci_ioctl_set_irqs(struct vfio_pci_core_device *vdev,
- 				      hdr.count, data);
- 
- 	mutex_unlock(&vdev->igate);
--	kfree(data);
-+
-+out:
-+	if (hdr.flags & VFIO_IRQ_SET_DATA_AFFINITY && data_size)
-+		free_cpumask_var(mask);
-+	else
-+		kfree(data);
- 
- 	return ret;
- }
-diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
-index 8382c5834335..fe01303cf94e 100644
---- a/drivers/vfio/pci/vfio_pci_intrs.c
-+++ b/drivers/vfio/pci/vfio_pci_intrs.c
-@@ -19,6 +19,7 @@
- #include <linux/vfio.h>
- #include <linux/wait.h>
- #include <linux/slab.h>
-+#include <linux/cpuset.h>
- 
- #include "vfio_pci_priv.h"
- 
-@@ -675,6 +676,41 @@ static int vfio_pci_set_intx_trigger(struct vfio_pci_core_device *vdev,
- 	return 0;
- }
- 
-+static int vfio_pci_set_msi_affinity(struct vfio_pci_core_device *vdev,
-+				     unsigned int start, unsigned int count,
-+				     struct cpumask *irq_mask)
-+{
-+	struct vfio_pci_irq_ctx *ctx;
-+	cpumask_var_t allowed_mask;
-+	unsigned int i;
-+	int err = 0;
-+
-+	if (!alloc_cpumask_var(&allowed_mask, GFP_KERNEL))
-+		return -ENOMEM;
-+
-+	cpuset_cpus_allowed(current, allowed_mask);
-+	if (!cpumask_subset(irq_mask, allowed_mask)) {
-+		err = -EPERM;
-+		goto finish;
-+	}
-+
-+	for (i = start; i < start + count; i++) {
-+		ctx = vfio_irq_ctx_get(vdev, i);
-+		if (!ctx) {
-+			err = -EINVAL;
-+			break;
-+		}
-+
-+		err = irq_set_affinity(ctx->producer.irq, irq_mask);
-+		if (err)
-+			break;
-+	}
-+
-+finish:
-+	free_cpumask_var(allowed_mask);
-+	return err;
-+}
-+
- static int vfio_pci_set_msi_trigger(struct vfio_pci_core_device *vdev,
- 				    unsigned index, unsigned start,
- 				    unsigned count, uint32_t flags, void *data)
-@@ -713,6 +749,9 @@ static int vfio_pci_set_msi_trigger(struct vfio_pci_core_device *vdev,
- 	if (!irq_is(vdev, index))
- 		return -EINVAL;
- 
-+	if (flags & VFIO_IRQ_SET_DATA_AFFINITY)
-+		return vfio_pci_set_msi_affinity(vdev, start, count, data);
-+
- 	for (i = start; i < start + count; i++) {
- 		ctx = vfio_irq_ctx_get(vdev, i);
- 		if (!ctx)
-diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
-index e97d796a54fb..e87131d45059 100644
---- a/drivers/vfio/vfio_main.c
-+++ b/drivers/vfio/vfio_main.c
-@@ -1505,23 +1505,28 @@ int vfio_set_irqs_validate_and_prepare(struct vfio_irq_set *hdr, int num_irqs,
- 		size = 0;
- 		break;
- 	case VFIO_IRQ_SET_DATA_BOOL:
--		size = sizeof(uint8_t);
-+		size = hdr->count * sizeof(uint8_t);
- 		break;
- 	case VFIO_IRQ_SET_DATA_EVENTFD:
--		size = sizeof(int32_t);
-+		size = hdr->count * sizeof(int32_t);
-+		break;
-+	case VFIO_IRQ_SET_DATA_AFFINITY:
-+		size = hdr->argsz - minsz;
-+		if (size > cpumask_size())
-+			size = cpumask_size();
- 		break;
- 	default:
- 		return -EINVAL;
- 	}
- 
- 	if (size) {
--		if (hdr->argsz - minsz < hdr->count * size)
-+		if (hdr->argsz - minsz < size)
- 			return -EINVAL;
- 
- 		if (!data_size)
- 			return -EINVAL;
- 
--		*data_size = hdr->count * size;
-+		*data_size = size;
- 	}
- 
- 	return 0;
-diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-index 2b68e6cdf190..5ba2ca223550 100644
---- a/include/uapi/linux/vfio.h
-+++ b/include/uapi/linux/vfio.h
-@@ -580,6 +580,12 @@ struct vfio_irq_info {
-  *
-  * Note that ACTION_[UN]MASK specify user->kernel signaling (irqfds) while
-  * ACTION_TRIGGER specifies kernel->user signaling.
-+ *
-+ * DATA_AFFINITY specifies the affinity for the range of interrupt vectors.
-+ * It must be set with ACTION_TRIGGER in 'flags'. The variable-length 'data'
-+ * array is a CPU affinity mask 'cpu_set_t' structure, as for the
-+ * sched_setaffinity() syscall argument: the 'argsz' field is used to check
-+ * the actual cpu_set_t size.
-  */
- struct vfio_irq_set {
- 	__u32	argsz;
-@@ -587,6 +593,7 @@ struct vfio_irq_set {
- #define VFIO_IRQ_SET_DATA_NONE		(1 << 0) /* Data not present */
- #define VFIO_IRQ_SET_DATA_BOOL		(1 << 1) /* Data is bool (u8) */
- #define VFIO_IRQ_SET_DATA_EVENTFD	(1 << 2) /* Data is eventfd (s32) */
-+#define VFIO_IRQ_SET_DATA_AFFINITY	(1 << 6) /* Data is cpu_set_t */
- #define VFIO_IRQ_SET_ACTION_MASK	(1 << 3) /* Mask interrupt */
- #define VFIO_IRQ_SET_ACTION_UNMASK	(1 << 4) /* Unmask interrupt */
- #define VFIO_IRQ_SET_ACTION_TRIGGER	(1 << 5) /* Trigger interrupt */
-@@ -599,7 +606,8 @@ struct vfio_irq_set {
- 
- #define VFIO_IRQ_SET_DATA_TYPE_MASK	(VFIO_IRQ_SET_DATA_NONE | \
- 					 VFIO_IRQ_SET_DATA_BOOL | \
--					 VFIO_IRQ_SET_DATA_EVENTFD)
-+					 VFIO_IRQ_SET_DATA_EVENTFD | \
-+					 VFIO_IRQ_SET_DATA_AFFINITY)
- #define VFIO_IRQ_SET_ACTION_TYPE_MASK	(VFIO_IRQ_SET_ACTION_MASK | \
- 					 VFIO_IRQ_SET_ACTION_UNMASK | \
- 					 VFIO_IRQ_SET_ACTION_TRIGGER)
--- 
-2.40.1
+>>> +static int ltc2664_setup(struct ltc2664_state *st, struct regulator *vref)
+>>> +{
+>>> +	const struct ltc2664_chip_info *chip_info = st->chip_info;
+>>> +	struct gpio_desc *gpio;
+>>> +	int ret;
+>>> +
+>>> +	/* If we have a clr/reset pin, use that to reset the chip. */
+>>> +	gpio = devm_gpiod_get_optional(&st->spi->dev, "reset", GPIOD_OUT_HIGH);
+>>> +	if (IS_ERR(gpio))
+>>> +		return dev_err_probe(&st->spi->dev, PTR_ERR(gpio),
+>>> +				     "Failed to get reset gpio");
+>>> +	if (gpio) {
+>>> +		usleep_range(1000, 1200);
+>>> +		gpiod_set_value_cansleep(gpio, 0);
+>>> +	}
+>>> +
+>>> +	/*
+>>> +	 * Duplicate the default channel configuration as it can change during
+>>> +	 * @ltc2664_channel_config()
+>>> +	 */
+>>> +	st->iio_channels = devm_kmemdup(&st->spi->dev, chip_info->iio_chan,
+>>> +					(chip_info->num_channels + 1) *
+>>> +					sizeof(*chip_info->iio_chan),
+>>> +					GFP_KERNEL);
 
+Then here, instead of devm_kmemdup():
+
+	st->iio_channels = devm_kcalloc(&st->spi->dev,
+					chip_info->num_channels,
+					sizeof(struct iio_chan_spec),
+					GFP_KERNEL);
+	if (!st->iio_channels)
+		return -ENOMEM;
+
+	for (i = 0; i < chip_info->num_channels; i++) {
+		st->iio_channels[i] = ltc2664_channel_template;
+		st->iio_channels[i].type = chip_info->measurement_type;
+		st->iio_channels[i].channel = i;
+	}
+
+Note: the original code was missing the error check and I think
+num_channels + 1 was 1 too many, so I fixed both of those in the
+example as well.
+
+This also replaces:
+
+	st->iio_channels[chan].type = chip_info->measurement_type;
+
+from ltc2664_set_span() as it seems a bit out of place there.
+
+>>> +
+>>> +	ret = ltc2664_channel_config(st);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>> +	if (!vref)
+>>> +		return 0;
+>>> +
+>>> +	return regmap_set_bits(st->regmap, LTC2664_CMD_CONFIG, LTC2664_REF_DISABLE);
+>>> +}
 
