@@ -1,112 +1,123 @@
-Return-Path: <linux-kernel+bounces-206734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0174D900D22
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:45:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3880900D26
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:46:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BA261F27D6F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:45:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 983851F280AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:46:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124E8154C11;
-	Fri,  7 Jun 2024 20:45:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26ECC154C05;
+	Fri,  7 Jun 2024 20:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bh0nnY1s"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="0CerIIJO"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28411552EB
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 20:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B455213E04F;
+	Fri,  7 Jun 2024 20:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717793142; cv=none; b=hZwkUpJ3IKH886/dBufHl5OSzg/8XjS7dgX1BCetizZINKA16esRIHoE50j2yA3p0ubcIGydmLqXP+65nU1J3pToFz9P//JWEhWq3Afp0l7XCDEfy9nEB2rxJ+ehPE1t8+Y9EMCIIOg1++XpgYiQ47tfyTWWgXiEDlWdhSdDNlM=
+	t=1717793169; cv=none; b=osbbtweoJnF7EqY40wdXiiK6pVbYwUYn9tSKJzVAK+d5roDGZb5mNHbGFxBLyxLnDh9mBnkcGVGihQNtnITuetxXqgT24neZwXZs/14UGVGtR1GRDMSS+XLKFVWesoHNysThGCcr+GM8P79rVDmjJPaPNzES5SBaE38G3ji1tMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717793142; c=relaxed/simple;
-	bh=tF+lqoc7ry+mrtN2VK1nYhL8pQKe3mXizJvWJ3MmaUA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hpDjdX8PDNdzb8pQCbfw3a3QT34LyfpKdBMYSqGBGqPjj0MCmBwDsqe7uMKIW19+N3NO9Vxtf36uwMwalylTSnAYucK276Vxr9gzq/7ZcSwOW4LsXwjSXCUAXt/Gn+3c45h7wZiMnqovIeGOHJjYP3x49+GfpzfGMD07LgQVTsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bh0nnY1s; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52b88335dd7so3110207e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 13:45:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717793139; x=1718397939; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2/8+vnKbwdVGwXWCUHLo+YQ0seiC+NwOuFIt2xs/BGc=;
-        b=bh0nnY1skuGN1nG46aMxT+8Jnct0f/S+DlYGDMdoIgyjiCpJACTFeQElq/ntLyzpSx
-         KvURzE8tmom+rzH2WOyH2svElrpZEFruOdt9iKSpAdIZJ0FolOp3W4R9vLzBPSLB2JEE
-         ztNqnJgjJqP0niaFxe4ni9/uhQd3N+9XJgcpX/UtB/NCJisZ0fcb0qPS5Z6kxgJYu79k
-         hl+4mH0NDJJplPw39551hzAfbvmQYm+2xeBarF4bF8Zn6hjBO+3GuvdAF/hsHZP1WllI
-         NAB8uzM5KE2746625wSZ7UyzFHtkPhExFWKp51AH3eMOsIlWxyBBLuurA8G+Kdj7TiY9
-         F8zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717793139; x=1718397939;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2/8+vnKbwdVGwXWCUHLo+YQ0seiC+NwOuFIt2xs/BGc=;
-        b=SPsEZ3breAjlbj9/03DTLi5lsGbRriiog6AzoLITzRuJCoUyOQbPrp1DmQAaaTpKrv
-         GIYtHwrsMtbH6vTG08H+Fx6L4kXAGf8Y6Slk4CIby0nv6+Zmd9fQilUq1XqtvF8V293T
-         QM6ODLmz5G9CiZWECxBngFwJOV3je82lbyueN01XpLv+zRb3JM8VLTx9Z23hBdyPJjAr
-         gdr/80iwTFXpi5WZ1Gd9rjdUSCvUkO8es8GvwnUoyhqiBvT/xfTuPU9dws2+HWyjR3hV
-         zV/3qlURSOuxCo3hUI75clQGhcGWujQBc7fMKALw4g+4UtuEe2/H3t62BbNMiIuGACqG
-         54Gg==
-X-Forwarded-Encrypted: i=1; AJvYcCVagdZ4h/JHsIdrTi94FrcWWgtxBK+KOESNHFYkMbK3h0qgA7b0pyAE0aDdhM3fK1iPeI7LKOqDTiOjBX3K9AUy998C0Tta5p1aTFDC
-X-Gm-Message-State: AOJu0Yy1hLiOm/CXnRTYBOzHjsDa/Fg2xVPOXsbIc/jWXHqd1FHXjmu9
-	618j/YVX0gFWAE6UWab6mzIfD2Sc9VHyqeBmFvbeQT6PIPpB+HQLRSbRH4lE3eM9/smb1ABKer3
-	/QVbJ+Px5HI0wZKJkxi7K0sKP6wbKPWq8glvViQ==
-X-Google-Smtp-Source: AGHT+IHd129BNp9Srlbj4xlaokQuMVuM4ydYbqkksSF96LY5Xo8WmbmTC99Ge/pqhA4iwFxOEqgvchTfrPRAyuItoMw=
-X-Received: by 2002:a05:6512:689:b0:52c:7f25:dbac with SMTP id
- 2adb3069b0e04-52c7f25e446mr10179e87.20.1717793138663; Fri, 07 Jun 2024
- 13:45:38 -0700 (PDT)
+	s=arc-20240116; t=1717793169; c=relaxed/simple;
+	bh=6BVzj3qh2Mv5XAwPAz+fAtU5sQPKfffASaDwumP+ZJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bph641zhCEvXXFsXF3v3PHEatRYV59fi20zY52l9iS5IVKPXvx/f5eT/0YG6j/63r8E1n266HLHuvtlmoJ3v/wzA8zl+CvwdyDam6+s8rcZ7tcuHb/a+gRK1Gvhc/uuLpf2sgKCa3AAHKVrahtCGEfCHsCyzhV6pd0BRSCNfdGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=0CerIIJO; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4VwtWp1Fnrz9sdB;
+	Fri,  7 Jun 2024 22:45:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1717793158;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F+CsyygnqyIZppE2kuEE0dMrpi3Kb0fFXtIf8csIUsc=;
+	b=0CerIIJO76D4qaq2U+ap75V3Xmmgwbnq8MsQR/5VN4bigHS8rckc9wzrnA4/H5dbmsI8Zh
+	9I1e/wTe04B0VACuXXOHKZmVTD3HYKSCrJhJ8EKCid2ynzOOOhQfRZg6bqFmB6Ae2niqeu
+	QUX2J2v5nU9QXqP6+6dtAqO0YnkgDRKueWHnPjC3AAF7Y60/CX74Fg4evPXnlBvn9Y0cU6
+	HcEny3zKyT7k5l9Tlu+ozF1BdU0dz7BPBP7tYNN2Z6ovBSnj3tlsCD8iSlD/LdV87IVbbC
+	HqjjkvJxZ/23VUv4sEOEm6WBfBpxGBsXlBO9bz/yJCmyanWDuXZOJ9NACFI2Hg==
+Date: Fri, 7 Jun 2024 20:45:52 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Zi Yan <ziy@nvidia.com>, david@fromorbit.com, djwong@kernel.org,
+	chandan.babu@oracle.com, brauner@kernel.org,
+	akpm@linux-foundation.org, mcgrof@kernel.org, linux-mm@kvack.org,
+	hare@suse.de, linux-kernel@vger.kernel.org,
+	yang@os.amperecomputing.com, linux-xfs@vger.kernel.org,
+	p.raghav@samsung.com, linux-fsdevel@vger.kernel.org, hch@lst.de,
+	gost.dev@samsung.com, cl@os.amperecomputing.com,
+	john.g.garry@oracle.com, kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH v7 05/11] mm: split a folio in minimum folio order chunks
+Message-ID: <20240607204552.7bmjf36bsupeznkq@quentin>
+References: <20240607145902.1137853-1-kernel@pankajraghav.com>
+ <20240607145902.1137853-6-kernel@pankajraghav.com>
+ <75CCE180-EC90-4BDC-B5D8-0ED1B710BE49@nvidia.com>
+ <ZmM9BBzU4ySqvxjV@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1716974502.git.geert+renesas@glider.be> <a30fa2c5e0d07752692c5a69f5a5fc57ae719c1b.1716974502.git.geert+renesas@glider.be>
-In-Reply-To: <a30fa2c5e0d07752692c5a69f5a5fc57ae719c1b.1716974502.git.geert+renesas@glider.be>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 7 Jun 2024 22:45:27 +0200
-Message-ID: <CACRpkdZETWojdSDTT+ownbPtsr4LipT+eDxRA8YjQdGSEmEGdQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/8] pinctrl: renesas: Add R-Car Gen3 fuse support
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, devicetree@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmM9BBzU4ySqvxjV@casper.infradead.org>
 
-On Wed, May 29, 2024 at 11:29=E2=80=AFAM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Fri, Jun 07, 2024 at 06:01:56PM +0100, Matthew Wilcox wrote:
+> On Fri, Jun 07, 2024 at 12:58:33PM -0400, Zi Yan wrote:
+> > > +int split_folio_to_list(struct folio *folio, struct list_head *list)
+> > > +{
+> > > +	unsigned int min_order = 0;
+> > > +
+> > > +	if (!folio_test_anon(folio)) {
+> > > +		if (!folio->mapping) {
+> > > +			count_vm_event(THP_SPLIT_PAGE_FAILED);
+> > 
+> > You should only increase this counter when the input folio is a THP, namely
+> > folio_test_pmd_mappable(folio) is true. For other large folios, we will
+> > need a separate counter. Something like MTHP_STAT_FILE_SPLIT_FAILED.
+> > See enum mthp_stat_item in include/linux/huge_mm.h.
+> 
+> Also, why should this count as a split failure?  If we see a NULL
+> mapping, the folio has been truncated and so no longer needs to be
+> split.  I understand we currently count it as a failure, but I
+> don't think we should.
 
-> On R-Car Gen3 SoCs, the fuse registers are tightly integrated into the
-> Pin Function Controller.  Add support for them by providing the
-> rcar-fuse driver with all needed info through a platform device and
-> platform data.
->
-> Note that the number of fuse registers on R-Car V3H and V3H2 differs,
-> while their PFC blocks use the same compatible value, hence this is
-> handled by checking the top-level compatible value.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
-> v2:
->   - Add Reviewed-by.
+I also thought about this. Because if the folio was under writeback, we
+don't account it as a failure but we do it if it was truncated?
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+I can remove the accounting that we added as a part of this series in
+the next version but address the upstream changes [1] in a separate
+standalone patch?
+I prefer to address these kind of open discussion upstream changes
+separately so that we don't delay this series.
 
-In case this needs to go through some other tree than mine.
+Let me know what you think. CCing Kirill as he made those changes.
 
-Yours,
-Linus Walleij
+[1]
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 399a4f5125c7..21f2dd5eb4c5 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3152,10 +3152,8 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+                mapping = folio->mapping;
+ 
+                /* Truncated ? */
+-               if (!mapping) {
++               if (!mapping)
+                        ret = -EBUSY;
+-                       goto out;
+-               }
+ 
 
