@@ -1,145 +1,104 @@
-Return-Path: <linux-kernel+bounces-205874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB389001A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:09:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62F3590017B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2D4C1C214DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:09:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFD9E288A87
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E96418733B;
-	Fri,  7 Jun 2024 11:09:40 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C88186E4E;
+	Fri,  7 Jun 2024 11:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eFZVGfkL"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1E212FB01;
-	Fri,  7 Jun 2024 11:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B487014F9C9;
+	Fri,  7 Jun 2024 11:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717758579; cv=none; b=Yja0Hk107VCT53/LDSIauIeDrk546AjQ3HTnWHZ9pu0FhUEjcqpwaWdZvSPlOGrwN3TaTQCIQaOy982TnAR8Cx98DRCsIJBzpjsQQw9IcZJ4G7RdnG5r2aYPQsCT7b2VUDygTOc9LXWyqkPECeTyXTOC+lpO8ysZ249F6SQuvNI=
+	t=1717758205; cv=none; b=cQBPZr2uF+h4XeQZKyO460ewIMVfWtb7gSXpOWOkJNMMzJSTyyeD0n14808LYV1OOGNIH9mps8U4vnn13VdHKf2p0JNKouKpS0JSk2cvST2GS2wkbBiHs8jjvkQFZNcn1DJP27SG0lFlkeBGHNXcT/cc8r3ALRlcXC7xxO8KMfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717758579; c=relaxed/simple;
-	bh=kc8Z5wRPGLoi9gFViVuYCBwyahPZY0fAZxf1vj1H6xA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cR5z8ravLtwFPbFs2670FaGjjt7SyzIzpxn46ORGloQiHgXbFXs7rWrrYUNZtXgnHVzp68y75iPJKMkljavlz881Mv03Kbj5kM1oZ+7xT1PATILpexOy61Pv6Vp4FPhI1cFND4pYMAI9ZttVLBlIGlUcPW5erLrHY/r/CQXSi9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Vwdfs3zlzzPpbd;
-	Fri,  7 Jun 2024 19:06:13 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 273F018007E;
-	Fri,  7 Jun 2024 19:09:33 +0800 (CST)
-Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Fri, 7 Jun
- 2024 19:09:32 +0800
-From: Chen Ridong <chenridong@huawei.com>
-To: <martin.lau@linux.dev>, <ast@kernel.org>, <daniel@iogearbox.net>,
-	<andrii@kernel.org>, <eddyz87@gmail.com>, <song@kernel.org>,
-	<yonghong.song@linux.dev>, <john.fastabend@gmail.com>, <kpsingh@kernel.org>,
-	<sdf@google.com>, <haoluo@google.com>, <jolsa@kernel.org>, <tj@kernel.org>,
-	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>, <roman.gushchin@linux.dev>
-CC: <bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] cgroup: Fix AA deadlock caused by cgroup_bpf_release
-Date: Fri, 7 Jun 2024 11:03:13 +0000
-Message-ID: <20240607110313.2230669-1-chenridong@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717758205; c=relaxed/simple;
+	bh=8nw5+9QSvd75ODQl6YA/tY9wEOPBMobwqxnZqMlfGis=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jQlcrMrE0fcMfQixnTlLx0h2apN/tkFyiwwyc6aUA10qmCAfHEPV+HiayIjXFJ2OjzFGYDqIuezvsV9Auhy+Nxu5LxK986NHS7kT5bsIkRCZTpbba4I6ZTkMnK3j6Bp3jeZtH0qgSIzPQ6rJfcFvth2kBLvE2jt+9BC+7bOQckg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eFZVGfkL; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a68b54577aaso255928566b.3;
+        Fri, 07 Jun 2024 04:03:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717758202; x=1718363002; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=V+86wNrn4HfmmxGyr0WWPH87gKM8bg6dMGDirFSvqGQ=;
+        b=eFZVGfkLjsVO+SanAeCf9+MN1dv+1Yhrc/dVzQ0Ygd0U8hQghO5LBxobnLeFzmbDyp
+         RKdNKDB4G2qp2Ghu4B/zSCD2PR7NCpgMDvCd6+UetBy/GzXaOvzxk/zwbjWIJaOjXx2K
+         2/TPuAF6nI9PBL5FSWue5NtRph8AuBPWWp3YLW1DS2UUJtpZlX8XsZ6Se7qEYQjxMV3U
+         ocRiPhA2c//Y3MBLaK9EvPxYb58VWN0XjFG4qV8AazDoZNpZsBbXqZvVZYcpY85IwfV3
+         6pseFWgvamFlXWBE/yUmxDKJdfVp9An4uY23n7LaxvkTmxvYtHf6Ra0oKh7BjzTMrg78
+         fG4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717758202; x=1718363002;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V+86wNrn4HfmmxGyr0WWPH87gKM8bg6dMGDirFSvqGQ=;
+        b=LPJeNbITW8REZfXLQHZkWJrqnpqz01noILxBn3n12RQyuJu4oK24imVf6ILtK4SqLD
+         TEU1e8wEbBDE+cUWDzRM0a3p6SIb5mEjC9Gv0dpvREbjK/MITecSc1B/i2s32/Qmk0rB
+         kGqu5qRyX0WUHxn6Ukv7hHesUQ6Jgjw36B/5m96h13vbRGzMtyX7TYRkP/xIAMUhJ1S6
+         jo+xZxqIl5bMwgiKTj7uHW/fT7qA7LYSBixT0CIM77BtZickw9WevdrVvpjkxxJN+q1i
+         QzKqd96oDDuJXX7zN+Ps3xLA6Fs7Ia57IUAkkgmuObKPIDRZiqJZBjrwqlXGli0nQmRS
+         qKHg==
+X-Forwarded-Encrypted: i=1; AJvYcCUz0jfwKx13aV6wAZVHqevH1zp0k8WPC/S/XCLqUCZFBWvN1KUxLngEi2NBtBea7JpbHI+gvVMsZqDY+kbrF6fQ2juc6KLNYB0cIvih57D1Ek2HqLlAAhvmDqf3PjSZZrH95ck8+nD9nMf8GIuqy0zkczu7edOKK9NKnn4JwyQc1A==
+X-Gm-Message-State: AOJu0Yziq0PSos0jKRUvus14VjFcrBz/z6bS8GPjG936n3+eNun99AZ9
+	OkBVhscX5uYUjwn4XnYCfrn3iKfXA5YreGAyotbNeDlV3h9onEUY
+X-Google-Smtp-Source: AGHT+IH3/WlA2+Ku0SBN45ZdbPjdWwdhtqhWDCqJW88WoCxPrg6Ehh5A+2AcrjeIKVwaX7V1QKW8Hw==
+X-Received: by 2002:a17:906:7f16:b0:a68:8a2b:6e5b with SMTP id a640c23a62f3a-a6cdb000b03mr157480266b.58.1717758201768;
+        Fri, 07 Jun 2024 04:03:21 -0700 (PDT)
+Received: from skbuf ([188.25.55.166])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c805cbca9sm229440066b.65.2024.06.07.04.03.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 04:03:21 -0700 (PDT)
+Date: Fri, 7 Jun 2024 14:03:18 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Martin Schiller <ms@dev.tdt.de>
+Cc: martin.blumenstingl@googlemail.com, hauke@hauke-m.de, andrew@lunn.ch,
+	f.fainelli@gmail.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 02/13] net: dsa: lantiq_gswip: Only allow
+ phy-mode = "internal" on the CPU port
+Message-ID: <20240607110318.jujco3liryl7om3v@skbuf>
+References: <20240606085234.565551-1-ms@dev.tdt.de>
+ <20240606085234.565551-3-ms@dev.tdt.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606085234.565551-3-ms@dev.tdt.de>
 
-We found an AA deadlock problem as shown belowed:
+On Thu, Jun 06, 2024 at 10:52:23AM +0200, Martin Schiller wrote:
+> From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> 
+> Add the CPU port to gswip_xrx200_phylink_get_caps() and
+> gswip_xrx300_phylink_get_caps(). It connects through a SoC-internal bus,
+> so the only allowed phy-mode is PHY_INTERFACE_MODE_INTERNAL.
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
 
-cgroup_destroy_wq		TaskB				WatchDog			system_wq
-
-...
-css_killed_work_fn:
-P(cgroup_mutex)
-...
-								...
-								__lockup_detector_reconfigure:
-								P(cpu_hotplug_lock.read)
-								...
-				...
-				percpu_down_write:
-				P(cpu_hotplug_lock.write)
-												...
-												cgroup_bpf_release:
-												P(cgroup_mutex)
-								smp_call_on_cpu:
-								Wait system_wq
-
-cpuset_css_offline:
-P(cpu_hotplug_lock.read)
-
-WatchDog is waiting for system_wq, who is waiting for cgroup_mutex, to
-finish the jobs, but the owner of the cgroup_mutex is waiting for
-cpu_hotplug_lock. This problem caused by commit 4bfc0bb2c60e ("bpf:
-decouple the lifetime of cgroup_bpf from cgroup itself")
-puts cgroup_bpf release work into system_wq. As cgroup_bpf is a member of
-cgroup, it is reasonable to put cgroup bpf release work into
-cgroup_destroy_wq, which is only used for cgroup's release work, and the
-preblem is solved.
-
-Fixes: 4bfc0bb2c60e ("bpf: decouple the lifetime of cgroup_bpf from cgroup itself")
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- kernel/bpf/cgroup.c             | 2 +-
- kernel/cgroup/cgroup-internal.h | 1 +
- kernel/cgroup/cgroup.c          | 2 +-
- 3 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
-index 8ba73042a239..a611a1274788 100644
---- a/kernel/bpf/cgroup.c
-+++ b/kernel/bpf/cgroup.c
-@@ -334,7 +334,7 @@ static void cgroup_bpf_release_fn(struct percpu_ref *ref)
- 	struct cgroup *cgrp = container_of(ref, struct cgroup, bpf.refcnt);
- 
- 	INIT_WORK(&cgrp->bpf.release_work, cgroup_bpf_release);
--	queue_work(system_wq, &cgrp->bpf.release_work);
-+	queue_work(cgroup_destroy_wq, &cgrp->bpf.release_work);
- }
- 
- /* Get underlying bpf_prog of bpf_prog_list entry, regardless if it's through
-diff --git a/kernel/cgroup/cgroup-internal.h b/kernel/cgroup/cgroup-internal.h
-index 520b90dd97ec..9e57f3e9316e 100644
---- a/kernel/cgroup/cgroup-internal.h
-+++ b/kernel/cgroup/cgroup-internal.h
-@@ -13,6 +13,7 @@
- extern spinlock_t trace_cgroup_path_lock;
- extern char trace_cgroup_path[TRACE_CGROUP_PATH_LEN];
- extern void __init enable_debug_cgroup(void);
-+extern struct workqueue_struct *cgroup_destroy_wq;
- 
- /*
-  * cgroup_path() takes a spin lock. It is good practice not to take
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index e32b6972c478..3317e03fe2fb 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -124,7 +124,7 @@ DEFINE_PERCPU_RWSEM(cgroup_threadgroup_rwsem);
-  * destruction work items don't end up filling up max_active of system_wq
-  * which may lead to deadlock.
-  */
--static struct workqueue_struct *cgroup_destroy_wq;
-+struct workqueue_struct *cgroup_destroy_wq;
- 
- /* generate an array of cgroup subsystem pointers */
- #define SUBSYS(_x) [_x ## _cgrp_id] = &_x ## _cgrp_subsys,
--- 
-2.34.1
-
+This is for the case where those CPU port device tree properties are
+present, right? In the device trees in current circulation they are not,
+and DSA skips phylink registration.
 
