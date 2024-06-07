@@ -1,131 +1,135 @@
-Return-Path: <linux-kernel+bounces-206077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE3C39003F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:47:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B82E9003FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36577286AB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:47:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2D541F25BDA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD80192B68;
-	Fri,  7 Jun 2024 12:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD98193091;
+	Fri,  7 Jun 2024 12:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AGmTJiTS"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="O8v4kHDn"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AC5192B71
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 12:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68862192B71;
+	Fri,  7 Jun 2024 12:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717764142; cv=none; b=E4mh/eEmyO+0LkFNyeXhoofTGCbv67XHLe6Sf34LfAYYBZ3dXulmhoNbyk8HwGLxYq8s/5eSysQkFWX0bgox6cWN0t4sv/W1rG//5HsJw5Ybl7/f6//2PgeEJC3vDT9Pv3LVqvtvJe4HG7yaGAq7pZdQcgP0Mc4Cc9ytNCB2GJs=
+	t=1717764179; cv=none; b=fqpPnsDwfiQV97F4HCeuq7OItNcPOnsDtdGY6DUNZsNofNmPu46LsDO1z9/Djl47YaqZ92sjVqdWKogudUvpU1acvJy6erGnbuFnbfVD2uMLG3BZrrriaB8GtWFdGaVY/qHb9KQZ0M5IyT+tpIQmIO2heg699MJKX92eXv+eBXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717764142; c=relaxed/simple;
-	bh=a5796ySW3YMSWtbXww5SPASPZ3Nh/h6vftisfvSJZQ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NQv3WqsQEcDSC3We8YWmyLhtbySmwG8RQyhqtAKJlNPmG+0LNh1Co575CK82ijnPAtH6VpwqKsNSt6rG6fkOC8NsuD0hr66n1jAlWp4L1tlB1ap7X11xaLB6GU652KUQjVfiEF15mCBmBN6NPZgmQ9yxsJQ0VRrIWXT5aiXz3RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AGmTJiTS; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57c614c572aso265928a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 05:42:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717764139; x=1718368939; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=763OORXE2U3LdBi+kBiAJ1rdKK00vtJI0371975xlvU=;
-        b=AGmTJiTSrAOJe2jMpVDsTowCq0Ycp5iZCjYBntwS284jI2+LDeU3ikRo5wmWL8rgsg
-         zH+9qvqDY98u+qlPi/xSp3fMXv8KdOcwubNsw8d7ZWpSMqjhRBdmTSYcGfHjAsR65sFf
-         YtwTdNQISnNxIzYElJvu3PA3WCa6jCu7DRXeLh/BJDbmiKsUAUkq3gPXFOGFKnW6ol0f
-         ACYOA2hHDxEPckDjprEm4NJ+rMEH9+6bA+YmYEXRVfAHgBTDawkZCGV84N4nG8OfpzDl
-         Un5MII4zCpqg+5X57mMoBiS6dCL7RnPNenBZ2B2vU7OVH5YgKB/zbT1+gnskFA0rCiwa
-         3lGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717764139; x=1718368939;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=763OORXE2U3LdBi+kBiAJ1rdKK00vtJI0371975xlvU=;
-        b=IXJBeDp1Cc2QzUaV6sozerY0w8dpnXRTdJqAhz6NSmOT8slL+i6DCRStVG1YNPQ63n
-         30LTKQc8ZM6BMThemf8tVorX2ebPwPgHsV0eW0sChC0yia5A6bZ4KhRAkiratUJ1Pblq
-         RchoKrQgeMTtR2H7kINWrEV1aX1L+UQtFgQ1eCjo9rNCv+x3Aum/m8+EpcP64TPfiMXz
-         FDxIRnRgLbMYiyB+PioUaMAUFhqk5Vxr5855WabdbzIp6RCzRxHSdT9TYZsvNFKzdnh3
-         oxRCVjdBjmP82xkmoo3OpGhIl2zLmJsP4+fc72z7qbSEV9DKH7Emr9RFSEpNJR6JV8zD
-         +3Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCVBZ47bV1FpX6bnoXkFXlYJt1+cLigtMxw4rizlkBl2AgwP5twChMxsG7QnUcQTJq2OzG2gUirx9rzY6AtW8X6uEMvfX7DfAPUHY1iV
-X-Gm-Message-State: AOJu0YwNbb7AC2AHSmLsUF2hyTad/SOO6+A9lIKndabcw/aAzG0YLplP
-	wMSfPP+plWG3CxApkm52GBxqRXKeUzu2qPzXvti6IiZcb7lBhHfgeMRMrpvwQuFkZrOFPEwvyFP
-	/ldJWPM0C
-X-Google-Smtp-Source: AGHT+IHGCU7SOofUC5q+FlTfu45pN2L6JEbAlbXDLfaXmvVdmuyPmPykEYwb8QcVU5NVMF6CUNC2eg==
-X-Received: by 2002:a50:9509:0:b0:572:9962:7f0 with SMTP id 4fb4d7f45d1cf-57c509a841amr1347566a12.34.1717764138635;
-        Fri, 07 Jun 2024 05:42:18 -0700 (PDT)
-Received: from ?IPV6:2a02:8109:aa0d:be00::8090? ([2a02:8109:aa0d:be00::8090])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae234204sm2680408a12.87.2024.06.07.05.42.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jun 2024 05:42:18 -0700 (PDT)
-Message-ID: <da6452eb-a419-4260-aeef-f092250430ba@linaro.org>
-Date: Fri, 7 Jun 2024 14:42:17 +0200
+	s=arc-20240116; t=1717764179; c=relaxed/simple;
+	bh=qEfoIYcUTsUg3gv//R+kNqg80au3Sr4sLIrkhTYVgf4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IdVcZ+Y+opF/62e6xYMFKj5YgetGdQHjmu2oPTcghL44dzX/SQNT37ABRB51iuQdIsgpxkiHbyfZMhVlQFvjN0STx5BzQGRYwFQ1Si6nCQ0nAS0phuJ9x421fuF6r1ld8U1cBJg+efT20rmHNLZkGooNRtmIog/+QhWDZdgcFHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=O8v4kHDn; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1717764169;
+	bh=bqla57tOtU1mgzH0i+KepUx0yjfzWO1zi3pSk2wCH7k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=O8v4kHDnEusUpfTKv+k9ca6+DKUiHrGwKXNLOEj5uQVJnWaRRdXzLXMDqDNJrndoj
+	 J4JanOe0eVBq1cm+iF7iDDkGMR/NGrQwNm2N3ZCmN0Kj6X1dCwSNcjWxtKEoqOHW4A
+	 jREgJLFAA9rgjPccpjHmRcwgIM5r9GC2CW3aYpl9Py4LXWixl11AiYe7h2cbF8R5ny
+	 wMYQhVEF5bZV5JDI7n7Rkg5zmJYIKBw4dph5bKg+DdsT85S58graDqz4dF3GxZxzoL
+	 zc3LEhEG40+eUz0kTjrV3F+4yK1Chlt1GwPBU0ZiXNSN2vL4p/jERZzpzt+2W5igEq
+	 BWfVHkKqAZtaw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VwgpG42nXz4wc3;
+	Fri,  7 Jun 2024 22:42:46 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
+ <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
+ linux-kbuild@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Nicholas
+ Piggin <npiggin@gmail.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, "Naveen N. Rao"
+ <naveen.n.rao@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc: vdso: fix building with wrong-endian toolchain
+In-Reply-To: <20240607061629.530301-1-arnd@kernel.org>
+References: <20240607061629.530301-1-arnd@kernel.org>
+Date: Fri, 07 Jun 2024 22:42:44 +1000
+Message-ID: <87frtoq5yz.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/11] misc: fastrpc: Copy the complete capability
- structure to user
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>, srinivas.kandagatla@linaro.org,
- linux-arm-msm@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, quic_bkumar@quicinc.com,
- linux-kernel@vger.kernel.org, quic_chennak@quicinc.com,
- stable <stable@kernel.org>
-References: <20240606165939.12950-1-quic_ekangupt@quicinc.com>
- <20240606165939.12950-4-quic_ekangupt@quicinc.com>
-Content-Language: en-US
-From: Caleb Connolly <caleb.connolly@linaro.org>
-In-Reply-To: <20240606165939.12950-4-quic_ekangupt@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-
-
-On 06/06/2024 18:59, Ekansh Gupta wrote:
-> User is passing capability ioctl structure(argp) to get DSP
-> capabilities. This argp is copied to a local structure to get domain
-> and attribute_id information. After getting the capability, only
-> capability value is getting copied to user argp which will not be
-> useful if the use is trying to get the capability by checking the
-> capability member of fastrpc_ioctl_capability structure. Add changes
-> to copy the complete capability structure so that user can get the
-> capability value from the expected member of the structure.
-> 
-> Fixes: 6c16fd8bdd40 ("misc: fastrpc: Add support to get DSP capabilities")
-> Cc: stable <stable@kernel.org>
-> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-
-Reviewed-by: Caleb Connolly <caleb.connolly@linaro.org>
+Arnd Bergmann <arnd@kernel.org> writes:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Building powerpc64le kernels with the kernel.org crosstool toolchains
+> no longer works as the linker attempts to build a big-endian vdso:
+>
+> powerpc-linux/lib/gcc/powerpc-linux/12.3.0/../../../../powerpc-linux/bin/ld: arch/powerpc/kernel/vdso/sigtramp32-32.o: compiled for a little endian system and target is big endian
+> powerpc-linux/lib/gcc/powerpc-linux/12.3.0/../../../../powerpc-linux/bin/ld: failed to merge target specific data of file arch/powerpc/kernel/vdso/sigtramp32-32.o
+>
+> Apparently creating the vdso.lds files from the lds.S files fails to
+> pass the -mlittle-endian argument here, so the output format gets set
+> wrong. Changing the conditional to check for CONFIG_CPU_LITTLE_ENDIAN
+> instead still works, as the kernel configuration definitions are visible.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->   drivers/misc/fastrpc.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> index abf7df7c0c85..f64781c3012f 100644
-> --- a/drivers/misc/fastrpc.c
-> +++ b/drivers/misc/fastrpc.c
-> @@ -1784,7 +1784,7 @@ static int fastrpc_get_dsp_info(struct fastrpc_user *fl, char __user *argp)
->   	if (err)
->   		return err;
->   
-> -	if (copy_to_user(argp, &cap.capability, sizeof(cap.capability)))
-> +	if (copy_to_user(argp, &cap, sizeof(cap)))
->   		return -EFAULT;
->   
->   	return 0;
+> I'm fairly sure this worked in the past, but I did not try to bisect the
+> issue.
 
--- 
-// Caleb (they/them)
+It still works for me.
+
+I use the korg toolchains every day, and kisskb uses them too.
+
+What commit / defconfig are you seeing the errors with?
+
+Is it just the 12.3.0 toolchain or all of them? I just tested 12.3.0
+here and it built OK.
+
+I guess you're building on x86 or arm64? I build on ppc64le, I wonder if
+that makes a difference.
+
+The patch is probably OK regardless, but I'd rather understand what the
+actual problem is.
+
+cheers
+
+> diff --git a/arch/powerpc/kernel/vdso/vdso32.lds.S b/arch/powerpc/kernel/vdso/vdso32.lds.S
+> index 426e1ccc6971..5845ea2d1cba 100644
+> --- a/arch/powerpc/kernel/vdso/vdso32.lds.S
+> +++ b/arch/powerpc/kernel/vdso/vdso32.lds.S
+> @@ -7,7 +7,7 @@
+>  #include <asm/page.h>
+>  #include <asm-generic/vmlinux.lds.h>
+>  
+> -#ifdef __LITTLE_ENDIAN__
+> +#ifdef CONFIG_CPU_LITTLE_ENDIAN
+>  OUTPUT_FORMAT("elf32-powerpcle", "elf32-powerpcle", "elf32-powerpcle")
+>  #else
+>  OUTPUT_FORMAT("elf32-powerpc", "elf32-powerpc", "elf32-powerpc")
+> diff --git a/arch/powerpc/kernel/vdso/vdso64.lds.S b/arch/powerpc/kernel/vdso/vdso64.lds.S
+> index bda6c8cdd459..82c418b18cce 100644
+> --- a/arch/powerpc/kernel/vdso/vdso64.lds.S
+> +++ b/arch/powerpc/kernel/vdso/vdso64.lds.S
+> @@ -7,7 +7,7 @@
+>  #include <asm/page.h>
+>  #include <asm-generic/vmlinux.lds.h>
+>  
+> -#ifdef __LITTLE_ENDIAN__
+> +#ifdef CONFIG_CPU_LITTLE_ENDIAN
+>  OUTPUT_FORMAT("elf64-powerpcle", "elf64-powerpcle", "elf64-powerpcle")
+>  #else
+>  OUTPUT_FORMAT("elf64-powerpc", "elf64-powerpc", "elf64-powerpc")
+> -- 
+> 2.39.2
 
