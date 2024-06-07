@@ -1,209 +1,352 @@
-Return-Path: <linux-kernel+bounces-205179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79F438FF88F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:14:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE3C8FF893
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F5E51C226DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 00:14:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 236CA287240
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 00:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43CA31C33;
-	Fri,  7 Jun 2024 00:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177144A39;
+	Fri,  7 Jun 2024 00:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bMRRYd31"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n37H05bj"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5D8366
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 00:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926F4366
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 00:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717719257; cv=none; b=n3ZgMi3K54fjRceaAB7NMLiYtBJzm1gsCiFwY6em9g1vwFkL2fBXB+rRDe+rSAyN9lVC5/kSitwJU6WcZ9rqGxDS2AEK7csnL8K9vpo9sMmuIQ9sUZMDviqB4iRMSIOtWnm5C3jQwCNcLlJlYUzYXPE9fwa5gzKLTO9ESxIuPXg=
+	t=1717719297; cv=none; b=DyP7++X+w9GwA8gVBSUuMEWehjva7j/BqLaoRSjCVn48FrDJUv0CsdzqDBG77fjNIMUEWGh6z/09bVROwD5tAe25lepOHVVAFnl+rEuaoWNxLTbXCsUu3awBDH4wXpp2ZFDWLZUEZ21v9cZgAljo/YKnPVzk0bjv2o/55yc4uOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717719257; c=relaxed/simple;
-	bh=cz/WSYZefge7JLd6rJjUy0yylRFzp/5WcmyiF4yVJro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=afZ9AvRrYHw5r4zAL+QuwhEbSn0Lo6Z3t+tTJYwgjpyZtCE4Lzn7rbBjZUyZdpqMgBFSopkxiPRTJygoCJs7fU2xryUcs1wtj/hScvOBbtOMugpMocmxC6J7ahJuPBaUfgxs9VMhvar8QL4+lHbzN0SBs/cYjbQbSBh81eJ9Jjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bMRRYd31; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717719254;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wkfyuvv9vDVw/cqs2UH7xmbKAyB/rqBIdNxcdAHyFbs=;
-	b=bMRRYd31dGKhcm3B17d2ummn2i0rdY3G9RvwlhDu9xf0qEW8Xb6VMejHJwkMXCQnd4BYw5
-	jft6hHa+mB8eu7UJUDO2bAVyd6FdO4jTn730TZT3rL4BvE1TxGmqOTmocseDvNxRobooZz
-	19UJIJKq28ZMswJ4EsBGUm3Ahv74EBQ=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-172-d8vQ8XsiNw2PzHD9gwOo-A-1; Thu,
- 06 Jun 2024 20:14:03 -0400
-X-MC-Unique: d8vQ8XsiNw2PzHD9gwOo-A-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id ED4EC3801FE6;
-	Fri,  7 Jun 2024 00:14:02 +0000 (UTC)
-Received: from fedora (unknown [10.72.112.45])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 223C210C5622;
-	Fri,  7 Jun 2024 00:13:58 +0000 (UTC)
-Date: Fri, 7 Jun 2024 08:13:54 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Ye Bin <yebin@huaweicloud.com>
-Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Ye Bin <yebin10@huawei.com>,
-	ming.lei@redhat.com
-Subject: Re: [PATCH] block: bio-integrity: fix potential null-ptr-deref in
- bio_integrity_free
-Message-ID: <ZmJQwvBXfm3zw+Xs@fedora>
-References: <20240606062655.2185006-1-yebin@huaweicloud.com>
+	s=arc-20240116; t=1717719297; c=relaxed/simple;
+	bh=ELaO09jTIhdzgXvmdO2g4ynqTY+hfPvxTzC9Nf1ua1w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qv/8KUgEWj6zkxEYUXqx+P6Gvtx/wcIsrTocJSgT1TbP8N2E7wpOgDuSA4vR+ZKGIVYTyodn5krbJ7w9dHkUYS4mrEXx3nz8nugIIB5bcT8baXXyyd5Hwc6ltUzqVC9+YfkXv7xV5V+MEQS+6TzH+vquAciZ1tTX/Tlf40cR0fE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n37H05bj; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dfa48f505a3so1665375276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 17:14:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717719293; x=1718324093; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+eF3WC0S/6RgLrCcIQVGlYiaYG+UbXjTsmyozrkqgz8=;
+        b=n37H05bjQsoXP+fkV2I10fesDdEmCmZXQeI04FG+th9i6KEFqrSi4OhtxmjfXfPfg/
+         +tJppMBRxPh7ppBd13F31agt9JOoTKA/TmaBjapF6WLfOkFWawYQKefY1yAUuSYP5pJP
+         8MS+h33OjdccnvvR/Mmc2LxQF4eubnDJclJoVkSbj8EHviloV5sj/0PR2r8qOK+24GqE
+         FeQrhBcxlJGD1AmT0/8iURP/pa77Kh68SRqT3GBmJcNud8TfPhU9osrykztmLTo9W7Cp
+         AYJ0bnZSuY6I041mVjqeOhP+Mpvp9M5OMBxXAKG8DHk+Fkc9ZlGuliDFms74rExJ9/r0
+         z4Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717719293; x=1718324093;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+eF3WC0S/6RgLrCcIQVGlYiaYG+UbXjTsmyozrkqgz8=;
+        b=AyCJroxMPqSE84dpGK/GoiLcRU/FBy142CkKVrp3Zgj/nyUvVvNCVeDAP5cNTMJBw9
+         VAMXlKIVuaGYUq7mZkzXX56uVPCf11pyZ40G7C3XvZ966loJw0zL7LNeb61qjvZXEeK8
+         Xqd3JXHExLlt1i5l3pCtwCxyEBI3gUKjfqxPf8GqF+gTcar9bLlUdzRcRqJojSJ0vfY7
+         nOFKSaks1ZXAcxY3rjCBqVLRr0lXdcc6xhq2P72NzcGOh574DSnAwq1yKwGcPjFEdI6k
+         YwDtWvnUqgQuBGWIYzNY+tP2Un0k/wg3L0ZcNv5Cir0OjO+TtXMl6yehz14Em0oi3B+K
+         bRyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmRsjh1TIJVqnSlXEoFP8Nap3Wy0KBiXNpx/2HZDebyPK4Uk1Vzw6hDBNjFo+eMHu4Cl34wFM8rZ65FU9Ma0lEisRb+uz7B15BKWty
+X-Gm-Message-State: AOJu0Yy8eGmrJZE0PbETrtp3ow06hrdRy6KKkEUpFAJUvRCZ5D8KUEL0
+	1gPk/4sGvLHofBAU8kxEBvu5c1ZyhN02xuhJ8SKaIcIxzj47H0lDr7FqgS6NooDM54xifAKWEEw
+	IrV1D82DdNCN/dxnTnYQWRUTGH0KCBLcpTGj+
+X-Google-Smtp-Source: AGHT+IEdhMX0D8OjtW6dAblDMt6aDio5sK4QaHdcTMdMHidp0Gqnq5XSOtYVRNrhNlpXIlzh8dUCogC6KyQhG1f6eKA=
+X-Received: by 2002:a25:ef50:0:b0:df1:ce95:5490 with SMTP id
+ 3f1490d57ef6-dfaf65c6857mr944656276.18.1717719293250; Thu, 06 Jun 2024
+ 17:14:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606062655.2185006-1-yebin@huaweicloud.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
+References: <20240531163217.1584450-1-Liam.Howlett@oracle.com> <20240531163217.1584450-3-Liam.Howlett@oracle.com>
+In-Reply-To: <20240531163217.1584450-3-Liam.Howlett@oracle.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 6 Jun 2024 17:14:40 -0700
+Message-ID: <CAJuCfpFDW-=35GyRikn3-yZPPrKx_aFbaJj-yFqGut4dJfCsdw@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/5] mm/mmap: Split do_vmi_align_munmap() into a
+ gather and complete operation
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	sidhartha.kumar@oracle.com, Matthew Wilcox <willy@infradead.org>, 
+	Lorenzo Stoakes <lstoakes@gmail.com>, linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 06, 2024 at 02:26:55PM +0800, Ye Bin wrote:
-> From: Ye Bin <yebin10@huawei.com>
-> 
-> There's a issue as follows when do format NVME with IO:
-> BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-> PGD 101727f067 P4D 1011fae067 PUD fbed78067 PMD 0
-> Oops: 0000 [#1] SMP NOPTI
-> RIP: 0010:kfree+0x4f/0x160
-> RSP: 0018:ff705a800912b910 EFLAGS: 00010247
-> RAX: 0000000000000000 RBX: 0d06d30000000000 RCX: ff4fb320260ad990
-> RDX: ff4fb30ee7acba40 RSI: 0000000000000000 RDI: 00b04cff80000000
-> RBP: ff4fb30ee7acba40 R08: 0000000000000200 R09: ff705a800912bb60
-> R10: 0000000000000000 R11: ff4fb3103b67c750 R12: ffffffff9a62d566
-> R13: ff4fb30aa0530000 R14: 0000000000000000 R15: 000000000000000a
-> FS:  00007f4399b6b700(0000) GS:ff4fb31040140000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000008 CR3: 0000001014cd4002 CR4: 0000000000761ee0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 0000000000000400
-> PKRU: 55555554
-> Call Trace:
->  bio_integrity_free+0xa6/0xb0
->  __bio_integrity_endio+0x8c/0xa0
->  bio_endio+0x2b/0x130
->  blk_update_request+0x78/0x2b0
->  blk_mq_end_request+0x1a/0x140
->  blk_mq_try_issue_directly+0x5d/0xc0
->  blk_mq_make_request+0x46b/0x540
->  generic_make_request+0x121/0x300
->  submit_bio+0x6c/0x140
->  __blkdev_direct_IO_simple+0x1ca/0x3a0
->  blkdev_direct_IO+0x3d9/0x460
->  generic_file_read_iter+0xb4/0xc60
->  new_sync_read+0x121/0x170
->  vfs_read+0x89/0x130
->  ksys_read+0x52/0xc0
->  do_syscall_64+0x5d/0x1d0
->  entry_SYSCALL_64_after_hwframe+0x65/0xca
-> 
-> Assuming a 512 byte directIO is issued, the initial logical block size of
-> the state block device is 512 bytes, and then modified to 4096 bytes.
-> Above issue may happen as follows:
->          Direct read                    format NVME
-> __blkdev_direct_IO_simple(iocb, iter, nr_pages);
->   if ((pos | iov_iter_alignment(iter)) & (bdev_logical_block_size(bdev) - 1))
-> 	-->The logical block size is 512, and the IO issued is 512 bytes,
-> 	   which can be checked
->     return -EINVAL;
->   submit_bio(&bio);
->                                       nvme_dev_ioctl
->                                         case NVME_IOCTL_RESCAN:
->                                           nvme_queue_scan(ctrl);
->                                              ...
->                                             nvme_update_disk_info(disk, ns, id);
->                                               blk_queue_logical_block_size(disk->queue, bs);
->                                                 --> 512->4096
->      blk_queue_enter(q, flags)
->      blk_mq_make_request(q, bio)
->        bio_integrity_prep(bio)
-> 	 len = bio_integrity_bytes(bi, bio_sectors(bio));
-> 	   -->At this point, because the logical block size has increased to
-> 	      4096 bytes, the calculated 'len' here is 0
->          buf = kmalloc(len, GFP_NOIO | q->bounce_gfp);
-> 	   -->Passed in len=0 and returned buf=16
->          end = (((unsigned long) buf) + len + PAGE_SIZE - 1) >> PAGE_SHIFT;
->          start = ((unsigned long) buf) >> PAGE_SHIFT;
->          nr_pages = end - start;  -->nr_pages == 1
->          bip->bip_flags |= BIP_BLOCK_INTEGRITY;
->          for (i = 0 ; i < nr_pages ; i++) {
->            if (len <= 0)
->               -->Not initializing the bip_vec of bio_integrity, will result
-> 		 in null pointer access during subsequent releases. Even if
-> 		 initialized, it will still cause subsequent releases access
-> 		 null pointer because the buffer address is incorrect.
->              break;
-> 
-> Firstly, it is unreasonable to format NVME in the presence of IO. It is also
-> possible to see IO smaller than the logical block size in the block layer for
-> this type of concurrency. It is expected that this type of IO device will
-> return an error, so exception handling should also be done for this type of
-> IO to prevent null pointer access from causing system crashes.
+On Fri, May 31, 2024 at 9:33=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+>
+> Split the munmap function into a gathering of vmas and a cleanup of the
+> gathered vmas.  This is necessary for the later patches in the series.
+>
+> Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 
-Actually unaligned IO handling is one mess for nvme hardware. Yes, IO may fail,
-but it is observed that meta buffer is overwrite by DMA in read IO.
+The refactoring looks correct but it's quite painful to verify all the
+pieces. Not sure if it could have been refactored in more gradual
+steps...
 
-Ye and Yi, can you test the following patch in your 'nvme format' & IO workload?
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 
+> ---
+>  mm/mmap.c | 143 ++++++++++++++++++++++++++++++++++++++----------------
+>  1 file changed, 101 insertions(+), 42 deletions(-)
+>
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 31d464e6a656..fad40d604c64 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -2340,6 +2340,7 @@ static inline void remove_mt(struct mm_struct *mm, =
+struct ma_state *mas)
+>
+>                 if (vma->vm_flags & VM_ACCOUNT)
+>                         nr_accounted +=3D nrpages;
+> +
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 82c3ae22d76d..a41ab4a3a398 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -336,6 +336,19 @@ int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
- 	return 0;
- }
- 
-+static bool bio_unaligned(struct bio *bio)
-+{
-+	unsigned int bs = bdev_logical_block_size(bio->bi_bdev);
-+
-+	if (bio->bi_iter.bi_size & (bs - 1))
-+	        return true;
-+
-+	if ((bio->bi_iter.bi_sector << SECTOR_SHIFT) & (bs - 1))
-+	        return true;
-+
-+	return false;
-+}
-+
- int __bio_queue_enter(struct request_queue *q, struct bio *bio)
- {
- 	while (!blk_try_enter_queue(q, false)) {
-@@ -362,6 +375,15 @@ int __bio_queue_enter(struct request_queue *q, struct bio *bio)
- 			   test_bit(GD_DEAD, &disk->state));
- 		if (test_bit(GD_DEAD, &disk->state))
- 			goto dead;
-+		/*
-+		 * Not like other queue limits, logical block size is one
-+		 * fundamental limit which can't be covered by bio split.
-+		 *
-+		 * Device reconfiguration may happen and logical block size
-+		 * is changed, so fail the IO if that is true.
-+		 */
-+		if (bio_unaligned(bio))
-+			goto dead;
- 	}
- 
- 	return 0;
+nit: here and below a couple of unnecessary empty lines.
 
-Thanks, 
-Ming
-
+>                 vm_stat_account(mm, vma->vm_flags, -nrpages);
+>                 remove_vma(vma, false);
+>         }
+> @@ -2545,33 +2546,45 @@ struct vm_area_struct *vma_merge_extend(struct vm=
+a_iterator *vmi,
+>                          vma->vm_userfaultfd_ctx, anon_vma_name(vma));
+>  }
+>
+> +
+> +static inline void abort_munmap_vmas(struct ma_state *mas_detach)
+> +{
+> +       struct vm_area_struct *vma;
+> +       int limit;
+> +
+> +       limit =3D mas_detach->index;
+> +       mas_set(mas_detach, 0);
+> +       /* Re-attach any detached VMAs */
+> +       mas_for_each(mas_detach, vma, limit)
+> +               vma_mark_detached(vma, false);
+> +
+> +       __mt_destroy(mas_detach->tree);
+> +}
+> +
+>  /*
+> - * do_vmi_align_munmap() - munmap the aligned region from @start to @end=
+.
+> + * vmi_gather_munmap_vmas() - Put all VMAs within a range into a maple t=
+ree
+> + * for removal at a later date.  Handles splitting first and last if nec=
+essary
+> + * and marking the vmas as isolated.
+> + *
+>   * @vmi: The vma iterator
+>   * @vma: The starting vm_area_struct
+>   * @mm: The mm_struct
+>   * @start: The aligned start address to munmap.
+>   * @end: The aligned end address to munmap.
+>   * @uf: The userfaultfd list_head
+> - * @unlock: Set to true to drop the mmap_lock.  unlocking only happens o=
+n
+> - * success.
+> + * @mas_detach: The maple state tracking the detached tree
+>   *
+> - * Return: 0 on success and drops the lock if so directed, error and lea=
+ves the
+> - * lock held otherwise.
+> + * Return: 0 on success
+>   */
+>  static int
+> -do_vmi_align_munmap(struct vma_iterator *vmi, struct vm_area_struct *vma=
+,
+> +vmi_gather_munmap_vmas(struct vma_iterator *vmi, struct vm_area_struct *=
+vma,
+>                     struct mm_struct *mm, unsigned long start,
+> -                   unsigned long end, struct list_head *uf, bool unlock)
+> +                   unsigned long end, struct list_head *uf,
+> +                   struct ma_state *mas_detach, unsigned long *locked_vm=
+)
+>  {
+> -       struct vm_area_struct *prev, *next =3D NULL;
+> -       struct maple_tree mt_detach;
+> -       int count =3D 0;
+> +       struct vm_area_struct *next =3D NULL;
+>         int error =3D -ENOMEM;
+> -       unsigned long locked_vm =3D 0;
+> -       MA_STATE(mas_detach, &mt_detach, 0, 0);
+> -       mt_init_flags(&mt_detach, vmi->mas.tree->ma_flags & MT_FLAGS_LOCK=
+_MASK);
+> -       mt_on_stack(mt_detach);
+> +       int count =3D 0;
+>
+>         /*
+>          * If we need to split any vma, do it now to save pain later.
+> @@ -2610,15 +2623,14 @@ do_vmi_align_munmap(struct vma_iterator *vmi, str=
+uct vm_area_struct *vma,
+>                                 goto end_split_failed;
+>                 }
+>                 vma_start_write(next);
+> -               mas_set(&mas_detach, count);
+> -               error =3D mas_store_gfp(&mas_detach, next, GFP_KERNEL);
+> +               mas_set(mas_detach, count++);
+> +               if (next->vm_flags & VM_LOCKED)
+> +                       *locked_vm +=3D vma_pages(next);
+> +
+> +               error =3D mas_store_gfp(mas_detach, next, GFP_KERNEL);
+>                 if (error)
+>                         goto munmap_gather_failed;
+>                 vma_mark_detached(next, true);
+> -               if (next->vm_flags & VM_LOCKED)
+> -                       locked_vm +=3D vma_pages(next);
+> -
+> -               count++;
+>                 if (unlikely(uf)) {
+>                         /*
+>                          * If userfaultfd_unmap_prep returns an error the=
+ vmas
+> @@ -2643,7 +2655,7 @@ do_vmi_align_munmap(struct vma_iterator *vmi, struc=
+t vm_area_struct *vma,
+>  #if defined(CONFIG_DEBUG_VM_MAPLE_TREE)
+>         /* Make sure no VMAs are about to be lost. */
+>         {
+> -               MA_STATE(test, &mt_detach, 0, 0);
+> +               MA_STATE(test, mas_detach->tree, 0, 0);
+>                 struct vm_area_struct *vma_mas, *vma_test;
+>                 int test_count =3D 0;
+>
+> @@ -2663,13 +2675,29 @@ do_vmi_align_munmap(struct vma_iterator *vmi, str=
+uct vm_area_struct *vma,
+>         while (vma_iter_addr(vmi) > start)
+>                 vma_iter_prev_range(vmi);
+>
+> -       error =3D vma_iter_clear_gfp(vmi, start, end, GFP_KERNEL);
+> -       if (error)
+> -               goto clear_tree_failed;
+> +       return 0;
+>
+> -       /* Point of no return */
+> -       mm->locked_vm -=3D locked_vm;
+> +userfaultfd_error:
+> +munmap_gather_failed:
+> +end_split_failed:
+> +       abort_munmap_vmas(mas_detach);
+> +start_split_failed:
+> +map_count_exceeded:
+> +       return error;
+> +}
+> +
+> +static void
+> +vmi_complete_munmap_vmas(struct vma_iterator *vmi, struct vm_area_struct=
+ *vma,
+> +               struct mm_struct *mm, unsigned long start,
+> +               unsigned long end, bool unlock, struct ma_state *mas_deta=
+ch,
+> +               unsigned long locked_vm)
+> +{
+> +       struct vm_area_struct *prev, *next;
+> +       int count;
+> +
+> +       count =3D mas_detach->index + 1;
+>         mm->map_count -=3D count;
+> +       mm->locked_vm -=3D locked_vm;
+>         if (unlock)
+>                 mmap_write_downgrade(mm);
+>
+> @@ -2682,30 +2710,61 @@ do_vmi_align_munmap(struct vma_iterator *vmi, str=
+uct vm_area_struct *vma,
+>          * We can free page tables without write-locking mmap_lock becaus=
+e VMAs
+>          * were isolated before we downgraded mmap_lock.
+>          */
+> -       mas_set(&mas_detach, 1);
+> -       unmap_region(mm, &mas_detach, vma, prev, next, start, end, count,
+> +       mas_set(mas_detach, 1);
+> +       unmap_region(mm, mas_detach, vma, prev, next, start, end, count,
+>                      !unlock);
+>         /* Statistics and freeing VMAs */
+> -       mas_set(&mas_detach, 0);
+> -       remove_mt(mm, &mas_detach);
+> +       mas_set(mas_detach, 0);
+> +       remove_mt(mm, mas_detach);
+>         validate_mm(mm);
+>         if (unlock)
+>                 mmap_read_unlock(mm);
+>
+> -       __mt_destroy(&mt_detach);
+> -       return 0;
+> +       __mt_destroy(mas_detach->tree);
+> +}
+>
+> -clear_tree_failed:
+> -userfaultfd_error:
+> -munmap_gather_failed:
+> -end_split_failed:
+> -       mas_set(&mas_detach, 0);
+> -       mas_for_each(&mas_detach, next, end)
+> -               vma_mark_detached(next, false);
+> +/*
+> + * do_vmi_align_munmap() - munmap the aligned region from @start to @end=
+.
+> + * @vmi: The vma iterator
+> + * @vma: The starting vm_area_struct
+> + * @mm: The mm_struct
+> + * @start: The aligned start address to munmap.
+> + * @end: The aligned end address to munmap.
+> + * @uf: The userfaultfd list_head
+> + * @unlock: Set to true to drop the mmap_lock.  unlocking only happens o=
+n
+> + * success.
+> + *
+> + * Return: 0 on success and drops the lock if so directed, error and lea=
+ves the
+> + * lock held otherwise.
+> + */
+> +static int
+> +do_vmi_align_munmap(struct vma_iterator *vmi, struct vm_area_struct *vma=
+,
+> +                   struct mm_struct *mm, unsigned long start,
+> +                   unsigned long end, struct list_head *uf, bool unlock)
+> +{
+> +       struct maple_tree mt_detach;
+> +       MA_STATE(mas_detach, &mt_detach, 0, 0);
+> +       mt_init_flags(&mt_detach, vmi->mas.tree->ma_flags & MT_FLAGS_LOCK=
+_MASK);
+> +       mt_on_stack(mt_detach);
+> +       int error;
+> +       unsigned long locked_vm =3D 0;
+>
+> -       __mt_destroy(&mt_detach);
+> -start_split_failed:
+> -map_count_exceeded:
+> +       error =3D vmi_gather_munmap_vmas(vmi, vma, mm, start, end, uf,
+> +                                      &mas_detach, &locked_vm);
+> +       if (error)
+> +               goto gather_failed;
+> +
+> +       error =3D vma_iter_clear_gfp(vmi, start, end, GFP_KERNEL);
+> +       if (error)
+> +               goto clear_area_failed;
+> +
+> +       vmi_complete_munmap_vmas(vmi, vma, mm, start, end, unlock, &mas_d=
+etach,
+> +                                locked_vm);
+> +       return 0;
+> +
+> +clear_area_failed:
+> +       abort_munmap_vmas(&mas_detach);
+> +gather_failed:
+>         validate_mm(mm);
+>         return error;
+>  }
+> --
+> 2.43.0
+>
 
