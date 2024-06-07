@@ -1,240 +1,290 @@
-Return-Path: <linux-kernel+bounces-205846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3260690012B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:49:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A556B900131
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B602F1C21652
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:49:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3E281C22D12
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4579C186295;
-	Fri,  7 Jun 2024 10:49:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B515178C96
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 10:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717757369; cv=none; b=D0bvjW+o6GlCjLfvraiursIWA6ANIXJJ8jtGVhmaF4coxCU5904IQ8Y7BPgXzJCgLbigJVYVPU9SCpHy384YJqmnWZJG/MlSkidWAh4DLoyGZsY/gAZVwn9X/oawHdQu9/HI0TmPuD+cLTNHB66eLmPxwCl1U1l0LrBa3tV20F0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717757369; c=relaxed/simple;
-	bh=F5xksq+7xc24osVGuNQX063f8gRZvqxnh4DLRgjVzZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ada1IZZ/2pO3O2AVS9oVEsMHSZmZGRjCIlQwSch+qidiFfUeGavgi5g46mrZZNs24xclELqyfMXERKyYLLrUGPwT0jPo/a3vuD8y4g7mlrD+u1kExZJMiwt5GSX1aJGwl7k7bgBs2NMNdbIKd9sRsLv4zLnzMcem5EB/TKhb/Ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CCDBD2F4;
-	Fri,  7 Jun 2024 03:49:51 -0700 (PDT)
-Received: from [10.57.70.246] (unknown [10.57.70.246])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5AAC33F762;
-	Fri,  7 Jun 2024 03:49:26 -0700 (PDT)
-Message-ID: <ffafe1b9-352c-4115-9e2d-c91ba93c9cb8@arm.com>
-Date: Fri, 7 Jun 2024 11:49:24 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC7D1862A7;
+	Fri,  7 Jun 2024 10:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TL2RljVA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E271F17DE36;
+	Fri,  7 Jun 2024 10:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717757487; cv=fail; b=NckUEeUCpbCmfi2ExpAsBq9tgbpPdPPlXSZHNd9oHCiQJfL3bXgCi2WS/K5Y2Thkjdg7t9WHTc1b1pz7sPyh7uwoJ5ThkxieYoWCADD9o9t//C8Amu2AScDVzdGE7OJhsCevsF3vtROvcxO0i88hrsUAc9X4RIBvBqNZXd4VUNY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717757487; c=relaxed/simple;
+	bh=em+ZkZy4SKcvn44lwrbZRhXIRKTBZ07SGrdnB2zZjBM=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=sqYsoBl8U/JZtb68Hdbx6BfaPKUeqwzpXV0TZW6zvbFk7kaCjOU9S3bLsrPKH0JCshLlOeRU8kpdaeT5rSrERlZ7GLLblBa9Fe+AWt4rxIQZ1fgRP5QFzvz9PJHayC/IB7J9Y0sIBzS+HSQBGnvggHMtO2HpELhePyA9uIQ6o7c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TL2RljVA; arc=fail smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717757486; x=1749293486;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=em+ZkZy4SKcvn44lwrbZRhXIRKTBZ07SGrdnB2zZjBM=;
+  b=TL2RljVAAmxeWq66zk92PpmDQYrAw4HiM1fE/anSmga6V45uUSTzEfx7
+   OPDQHSIYopu50mIBtL1iBbq8aAWdOvt6/lzWXtNvRzEAmcbtVItWDOPWv
+   v2qPQXZFVRHalbyTJnPYLTR8tahOmqR3qXOSR9d8H1kZYsggCA2eYCX1L
+   rUpwqsCsCKTYeDnhdDozUvF9aMU25Kitq3CjOym+hB/xwYtyGMB2ya6bV
+   5BABn32w3WF3UvbAOR+LbFBGPnJ+y0W3epudgnITds9+BwUQrV/GAXAJ9
+   +Ktu0GNUz3bTB5SZT1tTUZdMZcdCKEBjUs7QEM3GQrCsecg4nKPf6a9Sv
+   w==;
+X-CSE-ConnectionGUID: okIcKBvJQrmWtl2oBkbtaA==
+X-CSE-MsgGUID: JYraKFCdQ921UYS6ccqyLw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="11962640"
+X-IronPort-AV: E=Sophos;i="6.08,220,1712646000"; 
+   d="scan'208";a="11962640"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 03:51:25 -0700
+X-CSE-ConnectionGUID: uN7dw4pNSfa835IwTkYvvQ==
+X-CSE-MsgGUID: VAi9BVOHRGqNdyx4MS0cYQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,220,1712646000"; 
+   d="scan'208";a="75769938"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Jun 2024 03:51:25 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 7 Jun 2024 03:51:24 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 7 Jun 2024 03:51:24 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 7 Jun 2024 03:51:24 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.169)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 7 Jun 2024 03:51:23 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EmQA9WfUKXUyKBeqCbSR1UZvbBqHR5dc6p4/wSHoAaI6LIYlBoGD0j7YlO450DwBn4zqHT9gZePyNT6D6FQXZcRy9nonxYv2usSiGV2w3bl5pA04gaG1ZKdX6YGR8BhQclwFP9HuAox9ubqm9lPyeQwhOp7RCvIfaXJF5vLFk5pg315haNsqsku6jRdZvFxyrE7I0+z6uALnWKZnG/Xky+1l9Gx2nI0v1cG647i1+gLV6InREOOhzBC8pklw7jrvpWMbLqDoL3/SKXPCAheGg2313G69DgZafAqd4Zr0RxIpliOKul2JDlvhM7UKktugIMu5VE8rWdEJy3b+b5IRxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iWND+mvEQHEd5Rngsd/jvGZZe85mNKehSwX9XeheR6A=;
+ b=QsTz6n1895grhdE5IPj0x3kQZTfsXVZyx1wB4SmpUH0G9qjd5NzdLOJ+z52SSM55n6NQXE96XDzM9nWle4WEu7jRXhEA6MqcYArp3WqTgerxpwsz23+EkjzI3x0gN8ottN9/oQEH30j+JCd9RPfYA+8iEYtqxTDJ/ovoOYL27aACFJT+V8M7SQM14JxS0oyL5PCu0hBVTejjCzmf2YMuFVJ72DP2KTtTP2PJYQ3+InWsaZ6xiPlgFXMmIiuH+PDlkWazXBIYApnGRftTvkOsJ+tsF4Jzkgi99j/8VNPim/rHJVBkNabQkTFQeZmfgRaWUUflohdLekBgXfpBNaqExA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MW4PR11MB5776.namprd11.prod.outlook.com (2603:10b6:303:183::9)
+ by PH0PR11MB7658.namprd11.prod.outlook.com (2603:10b6:510:28d::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.34; Fri, 7 Jun
+ 2024 10:51:21 +0000
+Received: from MW4PR11MB5776.namprd11.prod.outlook.com
+ ([fe80::4bea:b8f6:b86f:6942]) by MW4PR11MB5776.namprd11.prod.outlook.com
+ ([fe80::4bea:b8f6:b86f:6942%5]) with mapi id 15.20.7633.021; Fri, 7 Jun 2024
+ 10:51:21 +0000
+Message-ID: <8401211b-4b76-472b-8528-2501217beb26@intel.com>
+Date: Fri, 7 Jun 2024 12:51:14 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net PATCH] net: stmmac: replace priv->speed with the
+ portTransmitRate from the tc-cbs parameters
+To: Xiaolei Wang <xiaolei.wang@windriver.com>, <olteanv@gmail.com>,
+	<linux@armlinux.org.uk>, <andrew@lunn.ch>, <alexandre.torgue@foss.st.com>,
+	<joabreu@synopsys.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <mcoquelin.stm32@gmail.com>
+CC: <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240607103327.438455-1-xiaolei.wang@windriver.com>
+Content-Language: en-US
+From: Wojciech Drewek <wojciech.drewek@intel.com>
+In-Reply-To: <20240607103327.438455-1-xiaolei.wang@windriver.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ZR0P278CA0098.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:23::13) To MW4PR11MB5776.namprd11.prod.outlook.com
+ (2603:10b6:303:183::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] mm: swap: mTHP swap allocator base on swap cluster
- order
-Content-Language: en-GB
-To: Barry Song <baohua@kernel.org>, Chris Li <chrisl@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Kairui Song <kasong@tencent.com>, "Huang, Ying" <ying.huang@intel.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240524-swap-allocator-v1-0-47861b423b26@kernel.org>
- <CANeU7QkmQ+bJoFnr-ca-xp_dP1XgEKNSwb489MYVqynP_Q8Ddw@mail.gmail.com>
- <CAGsJ_4y1L5uA6twjjJSs3bYhFc-Urr1oUWb0Q8f3cczgbqyBMA@mail.gmail.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <CAGsJ_4y1L5uA6twjjJSs3bYhFc-Urr1oUWb0Q8f3cczgbqyBMA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR11MB5776:EE_|PH0PR11MB7658:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8aab402d-cf46-4504-57f7-08dc86dfc4c3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|7416005|1800799015|921011;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?WDd6U1FxM0xCYUx6enZkOFZoT0RneENVT1p5bkNlSUd2d24vUjdXZmRGTGVy?=
+ =?utf-8?B?Ylp5NlpyTXRsM2pINzR1U0lnMnVtcUV2SmJCZStBaFlmQUphaFgyUDNwa29v?=
+ =?utf-8?B?Q0JVNDFlTldqTmRDZGRadkx1VVdPZkZqTGQzSGRlSjJxaGh5cENBQ0lPTUVG?=
+ =?utf-8?B?MmR4RjJpOGhjM2paR2F5bERHN2J6bWNIMXFzT0QrR1JXdGcvMGVFYUE4VWdK?=
+ =?utf-8?B?RmlaMzVHSWx2aGczeDk1RzJFVnc4Zk9BVitIMkhyYmtDc2VLRG96NXV4WUV6?=
+ =?utf-8?B?dmlTK3hKQVVPZkZyTW1xb3Zpc0QzbHppUW5qc1YzczR3a0oxMzc3dHpuQzhm?=
+ =?utf-8?B?alNySjZxK25xV0tTWUpOQWxoSVA2cm81cTdJVlkxWVIvRDA5S0xmUnRQUHFY?=
+ =?utf-8?B?WXNTZ2JzSTcxZU9YU2gwM3lDUTEwb2ViMzFvanJXcXpYR3lRWVBMdUlweHFh?=
+ =?utf-8?B?MzI5d2w5UjNJQm5oZkJndllMcHZDU1R1Z1hPK0Q4Tm9FMk4yWTEwSUt0eFdI?=
+ =?utf-8?B?TTI1dDZkSEJkYndNQ2NKTHFmMm1kNFdXSFlNR1BBTjNxMXJxaWx3ell2V1ov?=
+ =?utf-8?B?ZncrK2gvTWhhM3I5VXJWaktSdFN4ZFlrZlpjdlJQNVhUSDNhOEZ4RlAvQ2Jx?=
+ =?utf-8?B?THA4b0xOd2w1Q29aWkk0R3Z2VURkdnhVQUNJQjQ4eWpTVy9BZktGaDE3aTUx?=
+ =?utf-8?B?Sjl0VEF3SVUrN29SL3Y3VjczaC9wVFozdWNnWktjR0dHdENNZzRjdEJMbHZm?=
+ =?utf-8?B?MUN6VGJLbzZ6ODdVWVpFR1dFVmpNcTRUOE16YVpuK3RPSVhYeDRiVnNoYkR6?=
+ =?utf-8?B?ZkpVRGp3NENQcTg0L0E1VVMzVjNEb1NxVkdVSFBwclgwQnVXM0FZTUVqOXNh?=
+ =?utf-8?B?UmFmS1dqNm9hK1Izc0tyUkcvaklNb3BTNTJmNnVackVmOE0zb0xmVFE1MlNr?=
+ =?utf-8?B?Wm9hOHlQMUluS3ZhV09jODg0Vkd6elRFTEp6Y09oak9McXAycDVQNzFJeE9j?=
+ =?utf-8?B?MDVkYitPdm85ZVZUWTh1NDh0Y1dSQkoxY090dTNxK3hJUXVxUXZ1a2JLaHlp?=
+ =?utf-8?B?NjhpUHVGNnhWUlVEK3R0VHZHeWY5RUpibS9KTllqcWVrcnB4TS9rSkg4K2sy?=
+ =?utf-8?B?WUF2NXEzallhajJETS85TUREWkl0eWNBYjVmbUJUY051ckpibFl6aDdCbVZ3?=
+ =?utf-8?B?KzVzaGVvRkZIQit0RklaOEJRSDZ1cTROL3dJSTY2dTRRUXA1ZXdicmRiSEJL?=
+ =?utf-8?B?aUJzU2dJZ08wSWd6NUFhQ1lFL0x1SXhhby8rampOS0RMYldIMzRRWjRiOUhT?=
+ =?utf-8?B?bHhLNkhXYkU3WS9Mc0dzNWo4K1RTUi90YXZGNkVlcllwbWpsSDFraDB3RVF0?=
+ =?utf-8?B?TS9LdndBWWpqVk9zMi9wTFZNK08rVWJHL3pBc3Ixc0t2ZEVGUGFEaEI2OGdm?=
+ =?utf-8?B?TXozdEhNYjdTVGx0eG5aS1dNY0RQcVpuMUVYK1g0UTBTM0E3R25pZUYydjBP?=
+ =?utf-8?B?WnZDY1VldTBCN0d1anhiS0Riakd2M3VJZGpiMWFaaStvVWVPc3dHU0xMNFFR?=
+ =?utf-8?B?RzF3N3diaVlUa2dtK3pNakpXUmMzWDZJNmxhUmlqRU56OEVrMlhCcUN2Qm82?=
+ =?utf-8?B?MUUrYnptOHVnYVFraFRmTkNheDNESVY3VlZnUG1hRXRYbkdIY0JZL0JQSDlP?=
+ =?utf-8?B?STlIQ0VwSXI3YjNFcUxzMUNFa0prMWt1TFhtNUswSmNGYW15QkhlbmZ5bXF0?=
+ =?utf-8?B?bDh6aFZRb1JvMzd4bjN1eXh4cnZtZUVieTlaOUVwcnBqV2pMWlUwWUlhWC90?=
+ =?utf-8?Q?ltboKYldGxqr8psof+wfUviLNQNtmdggFs2RA=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR11MB5776.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(7416005)(1800799015)(921011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WnhxYjZIOHJBZjJTMmtZbEtOTmFvdVEzaEJWVU4vdkMzZHFQbHdlRGdLVFAv?=
+ =?utf-8?B?eGRZNmR4eDRCOVZGMkN6VU1TQzFxNkFJVEJid0lZWkU4NWNHT3FOYWZib1BV?=
+ =?utf-8?B?bHZpcTczV29ManIydU5DREZ1SGc3TmtHRXVHbE9qblQ3ZmNmbjdFQVhiaHJo?=
+ =?utf-8?B?M2xoRGcwVHd2TmxENXIySWJVMGdYSmc4d3lPMFNuemkzdDFjQnI2NkQybUVq?=
+ =?utf-8?B?OVR2SjlaUmFPRnpacUpYSzNjcXFFMnZidGIvcndjVEdrSGs0alZ3VnhDNDVr?=
+ =?utf-8?B?aEJuWHRuNHpjWldCOXdqYU9lbEN1ZE5oZEIrMGt6RzVkNlo4YzlHYjJpcXBZ?=
+ =?utf-8?B?MW05N0dNbkRmNXhVNnBNUjJocFp6T1krRTgyL2ozYVBPRG5USDcrNUt6SXFx?=
+ =?utf-8?B?UWR6eVQ1emd5Ry9zZ3A1TloyRmhNMXlNZnpZZ0ZUcU1JRFVHMjZKWGY1cms0?=
+ =?utf-8?B?K2dYZGE4QXltSWFEeVVxaVNqd2Q2T2Jha3dnK2J0Z2g0b2NZVW56Uk4yRHZ4?=
+ =?utf-8?B?SUVjYjV4WHkxM3dWNlZUdUJVc0ZmRWkvOFZYQXg5QU9DT2JFZW9STkZvdkgx?=
+ =?utf-8?B?UHNzV1I3dmo5cm15dGdJQUNFblRpbm0xczhXYnY4cjNUcmtTWTJ5SzN1Nm1k?=
+ =?utf-8?B?RlYwRVRsSnBDbWRyL21xcG1SbktrY1JDMVFyUzFYbmZzVnIrenNPaWtzRlox?=
+ =?utf-8?B?NXRlYzRrN3UveTc0aThFQWhsMzFSY04wcEhaNmRBbStZanhJckxaUjVXRmJt?=
+ =?utf-8?B?dEJMNGFPQXhTdGdGbTBwN1RzUkZCQTU1VWF0UEZJL3h1enZzSkZBY0J3SUk5?=
+ =?utf-8?B?cG1pTjMyN3FFL2lvWDBpa3RJUVo0WjUyS2Z2S1VkM054cUpCOHBXcDQ0QkI2?=
+ =?utf-8?B?ZEFrVy9UMzhxcFpmVHN4T0tPNUJDWHFwdEhaRTRGRTVEdWh3Z29sdjlsWXRy?=
+ =?utf-8?B?NXF5NmFoOCtGRzcwUzNxcjF4VmpYVjcxc2xzMS9LLzdWcjFFUGxrV1poM3k0?=
+ =?utf-8?B?WjVuOHNwMmpqWDRSQjBtYmdiVlZkL3piTHY4aGloMkNxRVBHVitOcmJicjNE?=
+ =?utf-8?B?K0VSMnNVaXFNWTgzTHJ5eDJYQzVLNE16eG5lTmVtdVcyVjA5RlJoT0RsYVdH?=
+ =?utf-8?B?ZnduMzArZVkzblRUbWx0cTd2TXRiT2JlZDlEanVIdFFNU3ZlTTNLUXc2VUFS?=
+ =?utf-8?B?MFB4d1BBKzZ5c2RZR0Z6a0xrSU1hdXZxeGRsTTZLa3Bvbzd1OGwvWWpweW5B?=
+ =?utf-8?B?aTFlWklFcmhmbHlXTVVHL2IyaGRqUTB5cm1sSm9RdkRZeFpsbmJBM1d6Wnhx?=
+ =?utf-8?B?STJaSENDVzN4WGdBK3MvUVUvd2czNGxIdCtsUmVaZzlwNmxOWVBWWDd4dm4r?=
+ =?utf-8?B?OFZPT1JtNXRUK2o5MnZ4SG9qNzExeEVMOENhc3dSMHc0enlRWWxRbHp5YWlv?=
+ =?utf-8?B?ejJsM2t3M1l6djB6YUQxclRGUmU1U3VReFVoVmZ6ckk2MHplT3VkL045TDhP?=
+ =?utf-8?B?U093S3haTUFsbXN6N1M2NVNIWnV3U1ZBMWpKbU5nWENGWlU2R1dXM2cwbjRI?=
+ =?utf-8?B?SERlV0JIenBJSmh5M3VpK3VlcTI1dEcwcmw0alM0UUNSUHdZOXp6czRYNmxI?=
+ =?utf-8?B?dFIvQmFlVWpVMzlyYjZibnFmUTVmY3lJR0llcVlZZDViaGNwYjlkQ0YrOFJo?=
+ =?utf-8?B?cENNVjRTUzIycDNHN2RQMlBld0l6MmVSRkF1THpEdHRlYmhqczJnMTI0K3Zn?=
+ =?utf-8?B?bWlTdkNiRkpXbWgxZDJ3eFNGVDlzNjVmUGxYZkxXWE51M08rUFhjYlpnaW5y?=
+ =?utf-8?B?d1NVZTdFaWFXVnhraTdFSjNvWWszdmo3c3YySEV6Rk1Sa3MrR3pJakRIeW1W?=
+ =?utf-8?B?VUhCVlZ6U3RHbmJ2S1ZSTHVhU2U1b290VkJCbnRFSkQwaE9USzk0a0ZyNENY?=
+ =?utf-8?B?YzB6YWJCQnhCNUtZZS92M1JxaGFDclArKzBLQllTUEM1SUwweUN4SDdONFVj?=
+ =?utf-8?B?cnZSajBmWE5VWTIxUWx2NzNETUpXQWZ2dVRyWU9HV3Ywc0F4bjd0aTBwUWQ2?=
+ =?utf-8?B?RlBVdE00RzFCdzBHdXlCYkprbWFud0hCQnZTMzRYNWlid1NuWEk0WGU2am9x?=
+ =?utf-8?Q?KQugcPw9tolXQ3R7KH7V2jtqc?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8aab402d-cf46-4504-57f7-08dc86dfc4c3
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR11MB5776.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2024 10:51:21.9103
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TiTD0leXalfNCQZB2GW8Mf3tDAyiDdlVnjqFB1JjtxfU3MhskYj9Puk2AjxcUkyaIsMMSBz+/WFE9C/Mm2Uz3lWcVrKRwi+Iw9Jtsx2qSMQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB7658
+X-OriginatorOrg: intel.com
 
-On 30/05/2024 08:49, Barry Song wrote:
-> On Wed, May 29, 2024 at 9:04 AM Chris Li <chrisl@kernel.org> wrote:
->>
->> I am spinning a new version for this series to address two issues
->> found in this series:
->>
->> 1) Oppo discovered a bug in the following line:
->> +               ci = si->cluster_info + tmp;
->> Should be "tmp / SWAPFILE_CLUSTER" instead of "tmp".
->> That is a serious bug but trivial to fix.
->>
->> 2) order 0 allocation currently blindly scans swap_map disregarding
->> the cluster->order. Given enough order 0 swap allocations(close to the
->> swap file size) the order 0 allocation head will eventually sweep
->> across the whole swapfile and destroy other cluster order allocations.
->>
->> The short term fix is just skipping clusters that are already assigned
->> to higher orders.
->>
->> In the long term, I want to unify the non-SSD to use clusters for
->> locking and allocations as well, just try to follow the last
->> allocation (less seeking) as much as possible.
-> 
-> Hi Chris,
-> 
-> I am sharing some new test results with you. This time, we used two
-> zRAM devices by modifying get_swap_pages().
-> 
-> zram0 -> dedicated for order-0 swpout
-> zram1 -> dedicated for order-4 swpout
-> 
-> We allocate a generous amount of space for zRAM1 to ensure it never gets full
-> and always has ample free space. However, we found that Ryan's approach
-> does not perform well even in this straightforward scenario. Despite zRAM1
-> having 80% of its space remaining, we still experience issues obtaining
-> contiguous swap slots and encounter a high swpout_fallback ratio.
-> 
-> Sorry for the report, Ryan :-)
 
-No problem; clearly it needs to be fixed, and I'll help where I can. I'm pretty
-sure that this is due to fragmentation preventing clusters from being freed back
-to the free list.
 
+On 07.06.2024 12:33, Xiaolei Wang wrote:
+> Since the given offload->sendslope only applies to the
+> current link speed, and userspace may reprogram it when
+> the link speed changes, don't even bother tracking the
+> port's link speed, and deduce the port transmit rate
+> from idleslope - sentslope instead.
 > 
-> In contrast, with your patch, we consistently see the thp_swpout_fallback ratio
-> at 0%, indicating a significant improvement in the situation.
+> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+> ---
 
-Unless I've misunderstood something critical, Chris's change is just allowing a
-cpu to steal a block from another cpu's current cluster for that order. So it
-just takes longer (approx by a factor of the number of cpus in the system) to
-get to the state where fragmentation is causing fallbacks? As I said in the
-other thread, I think the more robust solution is to implement scanning for high
-order blocks.
+One nit, other than that:
+Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>
 
+>  drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
 > 
-> Although your patch still has issues supporting the mixing of order-0 and
-> order-4 pages in a swap device, it represents a significant improvement.
-> 
-> I would be delighted to witness your approach advancing with Ying
-> Huang’s assistance. However, due to my current commitments, I
-> regret that I am unable to allocate time for debugging.
-> 
->>
->> Chris
->>
->>
->>
->> On Fri, May 24, 2024 at 10:17 AM Chris Li <chrisl@kernel.org> wrote:
->>>
->>> This is the short term solutiolns "swap cluster order" listed
->>> in my "Swap Abstraction" discussion slice 8 in the recent
->>> LSF/MM conference.
->>>
->>> When commit 845982eb264bc "mm: swap: allow storage of all mTHP
->>> orders" is introduced, it only allocates the mTHP swap entries
->>> from new empty cluster list. That works well for PMD size THP,
->>> but it has a serius fragmentation issue reported by Barry.
->>>
->>> https://lore.kernel.org/all/CAGsJ_4zAcJkuW016Cfi6wicRr8N9X+GJJhgMQdSMp+Ah+NSgNQ@mail.gmail.com/
->>>
->>> The mTHP allocation failure rate raises to almost 100% after a few
->>> hours in Barry's test run.
->>>
->>> The reason is that all the empty cluster has been exhausted while
->>> there are planty of free swap entries to in the cluster that is
->>> not 100% free.
->>>
->>> Address this by remember the swap allocation order in the cluster.
->>> Keep track of the per order non full cluster list for later allocation.
->>>
->>> This greatly improve the sucess rate of the mTHP swap allocation.
->>> While I am still waiting for Barry's test result. I paste Kairui's test
->>> result here:
->>>
->>> I'm able to reproduce such an issue with a simple script (enabling all order of mthp):
->>>
->>> modprobe brd rd_nr=1 rd_size=$(( 10 * 1024 * 1024))
->>> swapoff -a
->>> mkswap /dev/ram0
->>> swapon /dev/ram0
->>>
->>> rmdir /sys/fs/cgroup/benchmark
->>> mkdir -p /sys/fs/cgroup/benchmark
->>> cd /sys/fs/cgroup/benchmark
->>> echo 8G > memory.max
->>> echo $$ > cgroup.procs
->>>
->>> memcached -u nobody -m 16384 -s /tmp/memcached.socket -a 0766 -t 32 -B binary &
->>>
->>> /usr/local/bin/memtier_benchmark -S /tmp/memcached.socket \
->>>         -P memcache_binary -n allkeys --key-minimum=1 \
->>>         --key-maximum=18000000 --key-pattern=P:P -c 1 -t 32 \
->>>         --ratio 1:0 --pipeline 8 -d 1024
->>>
->>> Before:
->>> Totals      48805.63         0.00         0.00         5.26045         1.19100        38.91100        59.64700     51063.98
->>> After:
->>> Totals      71098.84         0.00         0.00         3.60585         0.71100        26.36700        39.16700     74388.74
->>>
->>> And the fallback ratio dropped by a lot:
->>> Before:
->>> hugepages-32kB/stats/anon_swpout_fallback:15997
->>> hugepages-32kB/stats/anon_swpout:18712
->>> hugepages-512kB/stats/anon_swpout_fallback:192
->>> hugepages-512kB/stats/anon_swpout:0
->>> hugepages-2048kB/stats/anon_swpout_fallback:2
->>> hugepages-2048kB/stats/anon_swpout:0
->>> hugepages-1024kB/stats/anon_swpout_fallback:0
->>> hugepages-1024kB/stats/anon_swpout:0
->>> hugepages-64kB/stats/anon_swpout_fallback:18246
->>> hugepages-64kB/stats/anon_swpout:17644
->>> hugepages-16kB/stats/anon_swpout_fallback:13701
->>> hugepages-16kB/stats/anon_swpout:18234
->>> hugepages-256kB/stats/anon_swpout_fallback:8642
->>> hugepages-256kB/stats/anon_swpout:93
->>> hugepages-128kB/stats/anon_swpout_fallback:21497
->>> hugepages-128kB/stats/anon_swpout:7596
->>>
->>> (Still collecting more data, the success swpout was mostly done early, then the fallback began to increase, nearly 100% failure rate)
->>>
->>> After:
->>> hugepages-32kB/stats/swpout:34445
->>> hugepages-32kB/stats/swpout_fallback:0
->>> hugepages-512kB/stats/swpout:1
->>> hugepages-512kB/stats/swpout_fallback:134
->>> hugepages-2048kB/stats/swpout:1
->>> hugepages-2048kB/stats/swpout_fallback:1
->>> hugepages-1024kB/stats/swpout:6
->>> hugepages-1024kB/stats/swpout_fallback:0
->>> hugepages-64kB/stats/swpout:35495
->>> hugepages-64kB/stats/swpout_fallback:0
->>> hugepages-16kB/stats/swpout:32441
->>> hugepages-16kB/stats/swpout_fallback:0
->>> hugepages-256kB/stats/swpout:2223
->>> hugepages-256kB/stats/swpout_fallback:6278
->>> hugepages-128kB/stats/swpout:29136
->>> hugepages-128kB/stats/swpout_fallback:52
->>>
->>> Reported-by: Barry Song <21cnbao@gmail.com>
->>> Tested-by: Kairui Song <kasong@tencent.com>
->>> Signed-off-by: Chris Li <chrisl@kernel.org>
->>> ---
->>> Chris Li (2):
->>>       mm: swap: swap cluster switch to double link list
->>>       mm: swap: mTHP allocate swap entries from nonfull list
->>>
->>>  include/linux/swap.h |  18 ++--
->>>  mm/swapfile.c        | 252 +++++++++++++++++----------------------------------
->>>  2 files changed, 93 insertions(+), 177 deletions(-)
->>> ---
->>> base-commit: c65920c76a977c2b73c3a8b03b4c0c00cc1285ed
->>> change-id: 20240523-swap-allocator-1534c480ece4
->>>
->>> Best regards,
->>> --
->>> Chris Li <chrisl@kernel.org>
->>>
-> 
-> Thanks
-> Barry
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> index 222540b55480..48500864017b 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> @@ -348,6 +348,7 @@ static int tc_setup_cbs(struct stmmac_priv *priv,
+>  	u32 mode_to_use;
+>  	u64 value;
+>  	int ret;
+> +	s64 port_transmit_rate_kbps;
 
+RCT
+
+>  
+>  	/* Queue 0 is not AVB capable */
+>  	if (queue <= 0 || queue >= tx_queues_count)
+> @@ -355,27 +356,24 @@ static int tc_setup_cbs(struct stmmac_priv *priv,
+>  	if (!priv->dma_cap.av)
+>  		return -EOPNOTSUPP;
+>  
+> +	port_transmit_rate_kbps = qopt->idleslope - qopt->sendslope;
+> +
+>  	/* Port Transmit Rate and Speed Divider */
+> -	switch (priv->speed) {
+> +	switch (div_s64(port_transmit_rate_kbps, 1000)) {
+>  	case SPEED_10000:
+>  		ptr = 32;
+> -		speed_div = 10000000;
+>  		break;
+>  	case SPEED_5000:
+>  		ptr = 32;
+> -		speed_div = 5000000;
+>  		break;
+>  	case SPEED_2500:
+>  		ptr = 8;
+> -		speed_div = 2500000;
+>  		break;
+>  	case SPEED_1000:
+>  		ptr = 8;
+> -		speed_div = 1000000;
+>  		break;
+>  	case SPEED_100:
+>  		ptr = 4;
+> -		speed_div = 100000;
+>  		break;
+>  	default:
+>  		return -EOPNOTSUPP;
+> @@ -397,11 +395,13 @@ static int tc_setup_cbs(struct stmmac_priv *priv,
+>  		priv->plat->tx_queues_cfg[queue].mode_to_use = MTL_QUEUE_DCB;
+>  	}
+>  
+> +	port_transmit_rate_kbps = qopt->idleslope - qopt->sendslope;
+> +
+>  	/* Final adjustments for HW */
+> -	value = div_s64(qopt->idleslope * 1024ll * ptr, speed_div);
+> +	value = div_s64(qopt->idleslope * 1024ll * ptr, port_transmit_rate_kbps);
+>  	priv->plat->tx_queues_cfg[queue].idle_slope = value & GENMASK(31, 0);
+>  
+> -	value = div_s64(-qopt->sendslope * 1024ll * ptr, speed_div);
+> +	value = div_s64(-qopt->sendslope * 1024ll * ptr, port_transmit_rate_kbps);
+>  	priv->plat->tx_queues_cfg[queue].send_slope = value & GENMASK(31, 0);
+>  
+>  	value = qopt->hicredit * 1024ll * 8;
 
