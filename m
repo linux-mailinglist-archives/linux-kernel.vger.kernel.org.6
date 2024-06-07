@@ -1,127 +1,112 @@
-Return-Path: <linux-kernel+bounces-206581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B660900BAC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:01:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 263E4900BAE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:01:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCE8EB211EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:01:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA6DA1F23200
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AD819AD68;
-	Fri,  7 Jun 2024 18:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3DC19B5B5;
+	Fri,  7 Jun 2024 18:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hr4sjUEl"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MryGsSfo"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85821805A;
-	Fri,  7 Jun 2024 18:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8460F19B3F8;
+	Fri,  7 Jun 2024 18:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717783286; cv=none; b=iENyqbaTpXjdL2JZMWh19wY2hzzyLC111k8yg88pEJbCHTi5P1TE/xf2XPWdC/P0NN1W3+6S/d6jbbFBtE3AakMNr/q0V73aDAOVqHqUvKE34Fl12TKs6c0Mu9n7QQWTmIy8rDoX83AwM3Re6ARKaRJylqbd4/1J+Gn66dBFyHQ=
+	t=1717783288; cv=none; b=u8bZdbYYgUpKkVdTtA6hRwqxJNs0OdOmANgQb+WcJKZfyRyOP1rKXrH8bTx3PUVYwbp9YxNtB8FcAwvaQzpCN+C1w5eNpmePDvy4R14+alfzkXzcvOioZrTWBzv5M1sE9eXzvhG163B7ea+WbCT2LN7R4n7BVIjWKojPYLbR+m8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717783286; c=relaxed/simple;
-	bh=XSsSxTQpjiFDdpc1b98fcJVPUJbKI9o+V72QkYiSWvo=;
+	s=arc-20240116; t=1717783288; c=relaxed/simple;
+	bh=Y6ZGPlPk4FkOhLXv3Zk2jZLvzmkHxo2CEA9fnJyhh8Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mbTjUM0erYfQaJlLckX+J+w4eIBVHA8DaoEd+qLj9PYWMSmksH2XP7YzQipZjJe7fZmsQdqR3aM3n7t+q5CrIWFJqbdebZtp+DTjm3ZZZY4B21tlLnSmBdIrTJ8suapnx8/68pkZ0pViinZP4shiUBwI6WkHGKeexSk5oaLeCUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hr4sjUEl; arc=none smtp.client-ip=209.85.216.45
+	 To:Cc:Content-Type; b=YgY9e5qffBYsGBJeCTI5uDzlpWGZ219KxJZjKDeVBQDiQwgwbRhYMNpOVoVLThmo7CIcpwEhpzzlfHQzESWdpN3K1g0lwaLNBr9OhmlG4ouYo9jkhJgaCa529j+aVTcdz5Vpc2r+T/9qaW517zI2ao06upwja38QpKeQfw0z5WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MryGsSfo; arc=none smtp.client-ip=209.85.167.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2c1ab9e17f6so2154270a91.1;
-        Fri, 07 Jun 2024 11:01:24 -0700 (PDT)
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3c9d70d93dbso1409248b6e.3;
+        Fri, 07 Jun 2024 11:01:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717783284; x=1718388084; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sJzRZyEuNURXvkjyHbfNkt9tQwj13U1o8kBE1pEHtyA=;
-        b=Hr4sjUEl5NFbR5BomLiCVc5qHoZ/zvFyKQAbahQVD8buiCqYr0FIPfFswc3PLNik/i
-         KnpCAk92xIqre7wprLG3jAYry0tF7w9IpNUOznnKEq5BBxMhGpnn2ZwzGIdwUuZZNFDC
-         5njzEkRnA3TacpQfzcBzZQlguZRG+KCN/7QGwFdSBnjHaPKHmxfvzrne+uKxfoGmwcv/
-         ht+burK+XDM7OYCwSMpY/FwehoWZf/4x0H2X1F9E0uvyA7hrYKneN2uBujEv6jzWZp4M
-         bfnAKuCDRV2DT2uUkzNvcYBYaYlNV/n21xfaaxSEi4ALMi1EgX43LqFlO5n4S3tivbqM
-         uC7w==
+        d=gmail.com; s=20230601; t=1717783287; x=1718388087; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=pS0ds05HCCXOM+EbDOyp7PVbh5OG5LcLHQllkmtfZTU=;
+        b=MryGsSfo7DUjaCTDi46/qY9xBTbJ5bCYHSfhYGppdzm8SHZDm16hDlmC1SbDfluFOb
+         EagoUBXWGC0pGTrmA78SAm3mZwGni+A0cEBCAZE2FJt6p7f+YtXdjCAmsOVdmnd9gpSZ
+         /IZOX6I3lMSObNsvGFf0mIx2aAZaMSJd/d+sx8EACxOEuBEWfyNhRVr9/EpFMxDFXvfo
+         Wn7okFSrir1N+inP2i8XW5WDySoDK7cfPvvqjRVGxujPyiSoRMP4CSZrgiiS/Pw6xfWo
+         hepaVOFRZ2CN/W8mEpxX7Xu9bX0E/qcVBf3r5V6SJfgynZ7SxDs8H/Q/1vKhGqz90wcQ
+         d29w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717783284; x=1718388084;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sJzRZyEuNURXvkjyHbfNkt9tQwj13U1o8kBE1pEHtyA=;
-        b=ee7ac75YbTLZHfcPpRNwxxhooAWRDC7M/ON3kZ+Cyyph+L17vMWkVw9McEVaNCgr11
-         91Vjd9D2msBUSuDtxfbtulxr4DdDMxL1jf2bvPvMNNwHKGFySMFCU5lpjXjuFguv7RIk
-         xwbUdg8sBC2eV3a+ojNEHOYfpXCDcxw/dMcwG4RVKnoReEF8Rzj3ud7kB9XLMtqYHTGv
-         gywqF8GH+vFq/go626mdzdv/MYYlJURC7w0Wi3RCZ6/cAzNIR4BiYTyjP7l3hk7nR42i
-         WaJx9tIiPbxNuCG3gjaJeuQCLeD3LKCr/v6uTwFo5QBdh7OK5J97sNuryLBjxitc3TFD
-         B5iw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBBo23enpXA9waK0BdhYtkW6gQOGYGYZtRWQ1SyV+agfVk7a3vzcoRwNNtxWnhCoDpLDszWG9syUA5/TsMAUXy0eESipopeRdagPJ85bQnZZ7LjI46jwbD1NXNGkz8YdW/889yPxzm/l4=
-X-Gm-Message-State: AOJu0YxITrh8lPwOpBUpQpPcOMsRTOeu0cLfc3M3qEc4cfw6bkG+oE4y
-	0q3ua8vcBki1hxvbihCndzw+AhC97IC5Sn0Yg+jERzRIW/vZs0F+lowfflVuYa9anDCDv7U0/sl
-	d0kf6FXYMEpZMDA/RKJuWbrhi/gw=
-X-Google-Smtp-Source: AGHT+IEn95NJ9UaI1fTyhHJ0ii8HedIb+85uo/e/VYbmncSbPq0wt4KuAko6TnouF7o2ni6GcAFaM3gj4SsC/UdpfR0=
-X-Received: by 2002:a17:90a:a891:b0:2c0:29d5:3515 with SMTP id
- 98e67ed59e1d1-2c2bcac8c4dmr3100559a91.3.1717783283768; Fri, 07 Jun 2024
- 11:01:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717783287; x=1718388087;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pS0ds05HCCXOM+EbDOyp7PVbh5OG5LcLHQllkmtfZTU=;
+        b=FyY752Sg2jcgVOsBR4p2MYLnPCEuPYvTrT3ItX1sEZbJFP0dyah2UVtqgBLw4dKwV0
+         2sJpGWgNdXDCnEiJyaOkLj4YKFrJZeqpCM1xVBO32yQYDv1Liya2gwio2OwsKKaoFzMY
+         jTbxxMQ7q09tkhaPTV10VwYxKSznSZ3KBizam9HRp7G52CusI7J2oIKN+YWeqh6iFasa
+         /kEr+fU+bDqmt+OMkxX7tXSy1girjHq9vAfKawxoOmvvNzli678vuCT09NY3DTVnIPMn
+         MAJqbSy1vl2I1ivsRSQQ1kffUN5n3Mz3Gon/L4CK8omTr0cvJjcIxNvgzZrSthe5nNCb
+         jCdw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7/RNz0AvG4Se3L2WuAmRVsYkYr6txotoWkxjcxlqaNGAE49YWx5oyVF33gttbNDgac76pqk2tzFdGVt6iGTUjT1/2dPZ5difjjgLl
+X-Gm-Message-State: AOJu0YzM8PottZt//4TsVIxhNiB7qx7cYi/ajj2HHMJhxU+3S2xdjn9e
+	QdKuMEa6+CAHgxhamy1lDeNpeqJJuaSM6QqbV2k3kuLW6RrmGH+riEfIESFSsM/VTrWTvQlAgQ4
+	WLOhZb89p/RYqZhvNiFksKVv1F8w=
+X-Google-Smtp-Source: AGHT+IHOuWJjlat2L7E458dgn7PdsQdmans6AbDIbXmnipcWq3CNPFhMFfo6LZu5ztdtr8ghESzUsWn/Ly5gfmovM5I=
+X-Received: by 2002:a05:6808:489:b0:3d2:80a:644e with SMTP id
+ 5614622812f47-3d210d28aa4mr3298220b6e.4.1717783285863; Fri, 07 Jun 2024
+ 11:01:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240607-trimmer-pummel-b452ed15e103@spud> <20240607155704.GB1242@pendragon.ideasonboard.com>
- <CAPY8ntBNNOFR1nn05g4Y-SOv_tN0YJv9wygO=+S80-zA1oq7mg@mail.gmail.com> <20240607-celibacy-contend-c4a6be15804b@spud>
-In-Reply-To: <20240607-celibacy-contend-c4a6be15804b@spud>
-From: Adam Ford <aford173@gmail.com>
-Date: Fri, 7 Jun 2024 13:01:12 -0500
-Message-ID: <CAHCN7xLoJK+_=+ASL=P8x=E3ALY-Xw=+_Zg+q0Za32kgvm5iQA@mail.gmail.com>
-Subject: Re: [PATCH v1] media: i2c: imx219: fix msr access command sequence
-To: Conor Dooley <conor@kernel.org>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Andrey Konovalov <andrey.konovalov@linaro.org>, 
-	linux-kernel@vger.kernel.org, Naushir Patuck <naush@raspberrypi.com>
+References: <20240606131651.683718371@linuxfoundation.org>
+In-Reply-To: <20240606131651.683718371@linuxfoundation.org>
+From: Allen <allen.lkml@gmail.com>
+Date: Fri, 7 Jun 2024 11:01:14 -0700
+Message-ID: <CAOMdWS+Myg1+1oL7T2BuKG4=W4oNjBX1kW1_nDnmnO883h9Lqg@mail.gmail.com>
+Subject: Re: [PATCH 6.9 000/374] 6.9.4-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, broonie@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 7, 2024 at 12:55=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
-te:
+> This is the start of the stable review cycle for the 6.9.4 release.
+> There are 374 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> On Fri, Jun 07, 2024 at 06:29:49PM +0100, Dave Stevenson wrote:
+> Responses should be made by Sat, 08 Jun 2024 13:15:55 +0000.
+> Anything received after that time might be too late.
 >
-> > > > ---
-> > > > I got the report of this third hand, I don't have a device and can'=
-t
-> > > > test this. I do wonder why the RPis get away with the sequence that
-> > > > seemingly doesn't work for the guy that reported this to me. My the=
-ory
-> > > > is either that they noticed the sequence was wrong while adding som=
-e
-> > > > other MSR access that is needed on this board while either cross
-> > > > checking the values written or because the other MSR accesses didn'=
-t
-> > > > take effect.
-> >
-> > Did the change fix it for the reporter? We're using the driver with no
-> > changes to the register settings cf mainline.
-> > Why it works on the Pi but not on a Microchip board is likely to be
-> > something quite subtle.
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.4-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-I have two different platforms which can use this sensor.  I can try
-to test it this weekend and I'll report back my findings.
+Compiled and booted on my x86_64 and ARM64 test systems. No errors or
+regressions.
 
-adam
->
-> I've asked, maybe it turns out to just be the first of my suggestions,
-> and they noticed it was not matching in passing. They did introduce two
-> additional MSR accesses, both outside of the range documented in the
-> datasheets I could find online. They did have explanations for what those
-> undocumented MSRs did (0x5040 and 0x5041) in the mail I got, but given
-> it's third hand info to me, I dunno if we have the datasheet etc. I'll
-> try to find out some more next week.
->
-> Thanks,
-> Conor.
+Tested-by: Allen Pais <apais@linux.microsoft.com>
+
+Thanks.
 
