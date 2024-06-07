@@ -1,147 +1,95 @@
-Return-Path: <linux-kernel+bounces-206681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D74C4900CA4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:55:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E32F900CA5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:55:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B262B1C21BAD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:55:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DB161C21D29
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CAC14F127;
-	Fri,  7 Jun 2024 19:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1455F14F12A;
+	Fri,  7 Jun 2024 19:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="R44bug6F"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NETPHZm7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EB9D27A;
-	Fri,  7 Jun 2024 19:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B36A50263;
+	Fri,  7 Jun 2024 19:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717790104; cv=none; b=f425aOW5R6PVgxbVlOosCe3l/+mT69aoN6tqcBYT6SC8T7dVZHvVVXOwx7Odv8zfkb/V8M+hku1T99I5ugmOs9RBsNNSJlY4PkTKuXCv74PJXszOfFF93KVTzg8hNwiHIBgRz015O66FmZo5+q+rztVuqsX/0+2CZNrRG/dQL7w=
+	t=1717790104; cv=none; b=Mwy1BrKI1wFJxNIhgUva1QeKg0cvK63dRE1sMCIoYhOTfvh6Ydxe0cB8TuCNdGUELHZYjb5roq2/k+tib0TFCw8an5t0gcBaRMpVC1HV/E6o70KdloZFP27rkfzsw8c4IMkWxDw8VB8Sk+xdhyUCMiQGuTLAaMF8kErgd/k3Yp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717790104; c=relaxed/simple;
-	bh=CSYTB2dVOTn1wxVQwAkOMx1O39MevSRp/szfd1u8ONI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iSWWuYGh7YGv124ZS5TAjVnJ2BsP987oN6qxk9P5gFYLx+jAVV6eBQZBCC/bWlI+gaFSJ0O3MxkwW95jtU1mruVAxpJByu8wGlZnfqcIbmlEySSL4DZuHkTN/gzKk+Pi67JCGsB1Q7V1JSQSGLWHhYNMtOpGNBLamJCvVBdSHrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=R44bug6F; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=BTOKnMT5T2ZhEPykgSzSOI+vQfKzqcBhRm9xKY95hq0=; b=R44bug6FEwA67verN95KlbS9di
-	Fb8CAXgDV9V6Fo/fnNRkOHDlmWl+/SlxbIJARzGMbsqbqEk5f2xW5Jtp3qWZBBEzokNzzrXzz19qv
-	/WE4/VrRKejOXXQjCeYydUF4AJM86CtbacqxXsVq9zkEo/zX0yahufFC3j8avIi7xiRoCCmIe1Y4f
-	GNnHt8ZCEBxwrDWv+OmP8c2uLcuFGHUwQEKAbenoum408yBPqLakeLwpm1cJPQ6twJIhJeAGCrX6D
-	vd8ce+A19emKZNv1UETrYjdVp9du7jZkI66AmYgnp6sZgQeEWGv/gwnr/BSMxtywxUbqpZMDs1SxU
-	i3D7ZbGw==;
-Received: from [191.205.188.103] (helo=[192.168.1.60])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1sFffp-000eQE-AD; Fri, 07 Jun 2024 21:54:53 +0200
-Message-ID: <aa8c49d5-1a51-9256-6327-d47036b343fe@igalia.com>
-Date: Fri, 7 Jun 2024 16:54:41 -0300
+	bh=56EznWOcTzBf8BvoIJw9+sktcRe3Ewf5qCLugsw5GDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=hjiKMAlETdMDWbiCMCZosjrapapaHLxFM3bzoHD9wl5tPJByONarCWmMnuSovLcC6VeYPIDQPfX+F/uWEDYMGLNvnUe8wjAE+8vSRmn2qOcW3FiUlM/Kv34rq+MtK8TFdFU5Tc5mqP6qqQjIK0WxkWp9lbRK6s/rH1JkkXADJZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NETPHZm7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FE48C2BBFC;
+	Fri,  7 Jun 2024 19:55:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717790103;
+	bh=56EznWOcTzBf8BvoIJw9+sktcRe3Ewf5qCLugsw5GDA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=NETPHZm70yDZDAggk+X9Y3lyR50VhHmwYq0to80tbj6yxNOpIQtkd/HHO1NbSP6uh
+	 rjj4rMBcouFf0euj7SIJmVVsN1vkkwOK65I1H5LioiVegBnwB8f8DCFfq1k9p/JsZ7
+	 sqDvYXm/pCudZ/PYZ5iCXtvIAqizPCH5/UbydNtg2vt+4cENuRic6LlQXZE28yh6dQ
+	 kGJsGP4YTKEto/95SvGbzqTslRwI41vR2816UsZecDWu76fzAWZrCJY37KaHALQlIe
+	 fAPX0mtRSMhKGP8NoeZRfkq7E+8biGHyRKX8NCzNuKct/7zpFBT8DWPttOKY7pUnIO
+	 sK6P8eb4Zxdzw==
+Date: Fri, 7 Jun 2024 14:55:01 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Roman Kisel <romank@linux.microsoft.com>
+Cc: Saurabh Singh Sengar <ssengar@linux.microsoft.com>, arnd@arndb.de,
+	bhelgaas@google.com, bp@alien8.de, catalin.marinas@arm.com,
+	dave.hansen@linux.intel.com, decui@microsoft.com,
+	haiyangz@microsoft.com, hpa@zytor.com, kw@linux.com,
+	kys@microsoft.com, lenb@kernel.org, lpieralisi@kernel.org,
+	mingo@redhat.com, mhklinux@outlook.com, rafael@kernel.org,
+	robh@kernel.org, tglx@linutronix.de, wei.liu@kernel.org,
+	will@kernel.org, linux-acpi@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, x86@kernel.org, ssengar@microsoft.com,
+	sunilmut@microsoft.com, vdso@hexbites.dev
+Subject: Re: [PATCH v2 6/6] drivers/pci/hyperv/arm64: vPCI MSI IRQ domain
+ from DT
+Message-ID: <20240607195501.GA858122@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2 0/2] mm/memblock: Add "reserve_mem" to reserved named
- memory at boot up
-Content-Language: en-US
-To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <peterz@infradead.org>, Kees Cook <keescook@chromium.org>,
- Tony Luck <tony.luck@intel.com>, linux-hardening@vger.kernel.org,
- Guenter Roeck <linux@roeck-us.net>, Ross Zwisler <zwisler@google.com>,
- wklin@google.com, Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Suleiman Souhlal <suleiman@google.com>,
- Linus Torvalds <torvalds@linuxfoundation.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>
-References: <20240606150143.876469296@goodmis.org>
-From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <20240606150143.876469296@goodmis.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240515181238.GA2129352@bhelgaas>
 
-On 06/06/2024 12:01, Steven Rostedt wrote:
-> Reserve unspecified location of physical memory from kernel command line
-> [...]
-> Solution:
-> 
-> The solution I have come up with is to introduce a new "reserve_mem=" kernel
-> command line. This parameter takes the following format:
-> 
->   reserve_mem=nn:align:label
-> 
-> Where nn is the size of memory to reserve, the align is the alignment of
-> that memory, and label is the way for other sub-systems to find that memory.
-> This way the kernel command line could have:
-> 
->   reserve_mem=12M:4096:oops   ramoops.mem_name=oops
-> 
-> At boot up, the kernel will search for 12 megabytes in usable memory regions
-> with an alignment of 4096. It will start at the highest regions and work its
-> way down (for those old devices that want access to lower address DMA). When
-> it finds a region, it will save it off in a small table and mark it with the
-> "oops" label. Then the pstore ramoops sub-system could ask for that memory
-> and location, and it will map itself there.
-> 
-> This prototype allows for 8 different mappings (which may be overkill, 4 is
-> probably plenty) with 16 byte size to store the label.
-> 
-> I have tested this and it works for us to solve the above problem. We can
-> update the kernel and command line and increase the size of pstore without
-> needing to update the firmware, or knowing every memory layout of each
-> board. I only tested this locally, it has not been tested in the field.
-> 
+On Wed, May 15, 2024 at 01:12:38PM -0500, Bjorn Helgaas wrote:
+> On Wed, May 15, 2024 at 09:34:09AM -0700, Roman Kisel wrote:
+> > 
+> > 
+> > On 5/15/2024 2:48 AM, Saurabh Singh Sengar wrote:
+> > > On Tue, May 14, 2024 at 03:43:53PM -0700, Roman Kisel wrote:
+> > > > The hyperv-pci driver uses ACPI for MSI IRQ domain configuration
+> > > > on arm64 thereby it won't be able to do that in the VTL mode where
+> > > > only DeviceTree can be used.
+> > > > 
+> > > > Update the hyperv-pci driver to discover interrupt configuration
+> > > > via DeviceTree.
+> > > 
+> > > Subject prefix should be "PCI: hv:"
 
-Hi Steve, first of all, thanks for this work! This is much appreciated.
-The kdumpst tooling (Arch Linux) makes use of pstore when available, and
-the recommendation so far was to reserve memory somehow, like "mem=" or
-use kdump instead, if no free RAM area was available.
+I forgot to also suggest that the subject line begin with a verb,
+e.g., "Get vPCI MSI IRQ domain from DT" or similar, again so it reads
+consistently with previous commits.
 
-With your solution, things get way more "elegant". Also, I think we all
-know pstore is not 100% reliable, specially the RAM backend due to
-already mentioned reasons (like FW memory retraining, ECC memory, etc),
-but it's great we have a mechanism to **try it**. If it works, awesome -
-for statistical analysis, this is very useful; pstore has been used with
-success in the Steam Deck, for example.
+Oh, I see patch 5/6, "Get the irq number from DeviceTree" is also very
+similar.  It would be nice if they matched, e.g., both used "IRQ" and
+"DT".
 
-With all that said, I've tested your patches on top of 6.10-rc2 in 2
-qemu VMs (one running legacy BIOS - seabios - and the other UEFI - using
-ovmf) and on Steam Deck, and it's working flawlessly. I've tested only
-using ramoops as module.
-
-Some code review in the patches themselves (like a missing
-EXPORT_SYMBOL_GPL), but all in all, that's a great addition! Feel free
-to add my:
-
-Tested-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
-
-Thanks,
-
-
-Guilherme
+Bjorn
 
