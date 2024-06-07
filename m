@@ -1,158 +1,301 @@
-Return-Path: <linux-kernel+bounces-205411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2482B8FFB26
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:05:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88FD68FFB2C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C21D7287AC0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 05:05:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17ADF287671
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 05:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586A71B960;
-	Fri,  7 Jun 2024 05:05:32 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7ED1805A;
+	Fri,  7 Jun 2024 05:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eBPMGZbz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B181C33
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 05:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717736731; cv=none; b=m3qRI4xEhuR/xBjU0leDGtcMTZkCFKHHgq84oy++4vNmEoDULidjYh9mZmUC8E8i3M9/qEJjXfyTt+S56CRqZ5TueH8BX13BT9ESZuzD45o7zuTK6P1W4V8EsR/+3LcgvcTZyy4gEPrhkubfkoe/Yeb/fl8S58JJjyLFYV4OQOQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717736731; c=relaxed/simple;
-	bh=GBrfTYKLXssvFGONI8vGBOOKuB+PqsQCbSPm4p6qEHA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=j4RR8jpXocJzKT0SO8Kl7+Q27xO/+bjp3CXepPFacontr2Y0gKLr70LKTE9sJWW58eYu4eIjTvHSXxRyetvcIlCipFdPRKfrK4UcQ2iPz98l6W0BcKecXzEpldYqxGbNO21PoG+o1Pip4gApzNUn2x0cDPX1IxrjLVgLzNV4Xgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7eb3978abc6so188797839f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 22:05:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717736729; x=1718341529;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uS8YStOSM+DHa4enbnMdyhZPkLjkUCnAEZNL/nSaHGQ=;
-        b=FdEUDvTPSfoClMbA0qEeyR3JjZGGHp6iGldvqOOB1+9PrkiRDmD1Vpu26+xhPr6Vi8
-         B3gaDv+8KF60qSjYWSjuK2tfczNWUnQrmHRMKiPaF3mLAiEwoHTvRxcEPNe07zXo8drB
-         spnBXgoH2b1A4Rl3Y98X42Oztcl32907EFAvArQAAU+mTHUQjxmsAHh+bgtPOaQpVwQN
-         B09EbGown/lEVw5a91RDQXWEs3b7/ry2moVzas/gT32yvIB2oBnSzMhk9z2igfgeeCdI
-         P4WGBFR+BWEJSes5it47/r66APCk/9m732A+W27wx+LEo2D/No3TRfnrHxBxEJCrvjBo
-         ThGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTj+bTxl1SMyjiMsLncHKuc293SegjE2Gf6Lu8jR4Vf+QFjcOj9eCJr028sBRxQQvO4oyhSh3ZuxXyR64n4ErtvLS5dIKfK5hHOEiu
-X-Gm-Message-State: AOJu0YwZfP11dRqJ2ar7YbU8z3VkLQbGCbWzPWTtzvuQ+pKIeRKnObCx
-	XrFu3UszLf8kKeTmoVFvmGDa44eqMOLEfanbtxHC+yksnhsyfaibzh5pv45KUIN7/eFZunNmEuE
-	7ZNBYuobRpORMrDtxlPymtuVg2ZTadZTTpQ63Y4r0+s7XmT+ltt5EKoA=
-X-Google-Smtp-Source: AGHT+IFuorXcgGYGy5yyFr4JYBxqv+bH6kgczzpeAsUQwr9Tv5KlSX1N2BjY/s8qGOudU5bUs8CF50nv01ZOUZ4qWXW22KuXW+MY
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67E63D6B
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 05:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717736869; cv=fail; b=AiX2y9+NytCpCFWlGCQSmgT1vverRVJZ8P4ew09zqlu15r7Gz7m9lL+a8B2MS+2/rau1w7bHr1hBVunhIG9/FpUMipc0mLi8+Z0bGMZqTA7zZleDGjomNIbML3xzgCXTjXQ1LOThCeG6E46SfbBCkehFbRQFqM0feg04vdw/Jng=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717736869; c=relaxed/simple;
+	bh=4gST6swVMGx9WTIYhh0qVHKEjKBSvUvI/XuaaXMvsR8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=UOIrPt6x3B2Wy/haYalf7Kx+jc17tpehZNkb4CyJUlIPjrI1WZPk0QCAzX57OWMtT2EsIPJGhYDmB2y4SwaS5+1z9oUDjxxt/Xxusjm9mJYWRf/qF7Yx9zQkSdc5cIsFqpe6n39kLuFlsV0pObLaj/DSRmVD5/maTfO6e/JGoLg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eBPMGZbz; arc=fail smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717736867; x=1749272867;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=4gST6swVMGx9WTIYhh0qVHKEjKBSvUvI/XuaaXMvsR8=;
+  b=eBPMGZbzKfLynQmUvSxguovCpFSLr0LWw3T+5MgCUFkdt2vne7NxpBom
+   x/WBD4S7iEZ4Po4mJF6zlKZFw6yP2WDn1eK6PwCvw+uK34LeFlrD2vTUd
+   z1HXdXcugpGN7kRBqC8aovdWbzIMIHaIL/LgU2zsIpynfFdHfJvGx3K2a
+   hrOZnTY8DmCDul1aFIpL5y9y3RQPjyWi/UfZ2+yDQZxtoQK2JeTFSjxJr
+   nTPH36Hpv2cCbRjCs3zjxQNcCq+5mhWdXMH9rNx00H5oKukKuW3F7SS0h
+   cfR+oWTOhsuc0568/MbkP8R9QoMPl/e/nLONbp2HFKefVg+OZA7XfKYOy
+   g==;
+X-CSE-ConnectionGUID: 7Umcm9l8Rb2rcStCLkm9WA==
+X-CSE-MsgGUID: +W2r9K57T6qt6ph8gnd/IA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="14283464"
+X-IronPort-AV: E=Sophos;i="6.08,220,1712646000"; 
+   d="scan'208";a="14283464"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 22:07:47 -0700
+X-CSE-ConnectionGUID: Nv5tvChrTNqGSqiCfVIrPw==
+X-CSE-MsgGUID: 5KKQb1YzQ4mNpBf6A8hZGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,220,1712646000"; 
+   d="scan'208";a="38128678"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 06 Jun 2024 22:07:46 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 6 Jun 2024 22:07:45 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 6 Jun 2024 22:07:45 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.169)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 6 Jun 2024 22:07:45 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=A8taYAi4BCYihnRavgQuwGMpUP46gK1lEVQGSaP9H50/eFxcg9qyU5HumILNbwQ7+bX43sKRdXiXeYHjSYFoJ/SglVJEmicqEWouwZLjHvM2i7fR2ymHelaB08dXXoPAx2GVqjzovuvKMypukzdpcBmB6IBNG+CvANlUgXy0bo31hvsvZNN45bqD1mk3oqvkW0QQrg1dvEmhNcml6fsODAtOspLgUrOnw2z7lhXAMxCuWXNitMPHHxMIV0Kpf6fvlkqdL7ZhdlTzw0mZVkEVXl+QW/BYuMgBeDNuH4cISUhnU0BM60IU7/VBvZOVe8J/expQfrGQ98lfoRW77Wyshw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0q3/IAQ9ZA9ahhGglXa0OFodasqBIl3WlRRAXOb2Uvc=;
+ b=Z68tc7HaA1POKxRDqZLj5Y9We+wEGTKUZZujl7AZMVPhTdRqGF3GNkCP7InHfcM7UUsNYIS0+NwllWP5R7EzGThxMJ1X0uQLVaHB4gj75PRNWeNHE9NpFszb6tTe6nM1DUt8hrH+hmZccYe0npIW8Uoyujcf03gWyOQz2nkdIBFd2Hj7L9kQi/smpA+dftzqmilZ27JD17l8QHIqHSqil0rElNWgpXUBwH7+NtpHsBIRSSdC7i0zexGwZ6aPUICc0WxECOFX4Url9To6P7mgF9T60YA0ysY+iVny2MUtAFhAxPg4ZE+fW/H1IlrYbewSSv/KGn/VN91FQNQPKNRl5g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6020.namprd11.prod.outlook.com (2603:10b6:8:61::19) by
+ PH0PR11MB4887.namprd11.prod.outlook.com (2603:10b6:510:30::18) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.34; Fri, 7 Jun 2024 05:07:41 +0000
+Received: from DM4PR11MB6020.namprd11.prod.outlook.com
+ ([fe80::4af6:d44e:b6b0:fdce]) by DM4PR11MB6020.namprd11.prod.outlook.com
+ ([fe80::4af6:d44e:b6b0:fdce%6]) with mapi id 15.20.7633.021; Fri, 7 Jun 2024
+ 05:07:41 +0000
+Date: Fri, 7 Jun 2024 13:07:26 +0800
+From: Chen Yu <yu.c.chen@intel.com>
+To: Chunxin Zang <spring.cxz@gmail.com>
+CC: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
+	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+	<bristot@redhat.com>, <vschneid@redhat.com>, <jameshongleiwang@126.com>,
+	<efault@gmx.de>, <kprateek.nayak@amd.com>, <linux-kernel@vger.kernel.org>,
+	<yangchen11@lixiang.com>, <zhouchunhua@lixiang.com>,
+	<zangchunxin@lixiang.com>
+Subject: Re: [PATCH v2] sched/fair: Reschedule the cfs_rq when current is
+ ineligible
+Message-ID: <ZmKVjmuC4kGrUH5V@chenyu5-mobl2>
+References: <20240529141806.16029-1-spring.cxz@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240529141806.16029-1-spring.cxz@gmail.com>
+X-ClientProxiedBy: SG2P153CA0027.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::14)
+ To DM4PR11MB6020.namprd11.prod.outlook.com (2603:10b6:8:61::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1525:b0:373:874e:93be with SMTP id
- e9e14a558f8ab-37580380f1cmr1065635ab.3.1717736729726; Thu, 06 Jun 2024
- 22:05:29 -0700 (PDT)
-Date: Thu, 06 Jun 2024 22:05:29 -0700
-In-Reply-To: <000000000000eabe1d0619c48986@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000097e583061a45bfcf@google.com>
-Subject: Re: [syzbot] [btrfs?] kernel BUG in clear_inode
-From: syzbot <syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6020:EE_|PH0PR11MB4887:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6a8fb83f-efb3-4436-b595-08dc86afc1e2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|7416005|376005;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?HPoEunOX/35/Lpsb7Ggns3rNIw+1lpCBVq35MnOK7Mlac8uihlsdNJ9echu/?=
+ =?us-ascii?Q?vdv2sSeummto//9PaCbgspKlyn7RQYessaBZF21SnfTF1cr0mGbzbU8XYMD3?=
+ =?us-ascii?Q?Dxej7diXNlqz2M6PNfqnEKXjAi5jKdQvCk/Lq6z2X5Q9tqZTT7aygqo9UU57?=
+ =?us-ascii?Q?500KkUEGAGpu3KbgESDpX+zaKHIEK9Dl/g7TEUc7VVr5H0apTAo9J18rfIht?=
+ =?us-ascii?Q?ErFfnLIbkZLwfLHjtiN39mNx/qoQ7HXo2RmYY0GiLzol7qjSROIeRwn/tb8v?=
+ =?us-ascii?Q?anrJ1wx7rQnRd6To1rnMyly5Zx+nerFvTSWsbiz7nNJHn/YXAkYAnP7ESZgr?=
+ =?us-ascii?Q?b/KTskjh0yDYLa6sf2zywkEVZ8xHtEryxVCOqClvnk4rxLxtsEtb/HFme57G?=
+ =?us-ascii?Q?2NQN7VTZlx4pryodkHmx0f1pxJLqQAkvFQbFfg87Xxfa/Wf2f1x5C36UuCu1?=
+ =?us-ascii?Q?gaCe6iVWMSveFAJHSiXwERL4fvGkf8srA1OhLRy8MN1IM56EJYzho1cmp2KW?=
+ =?us-ascii?Q?MejQHkn4It3GC/6lzVQaKNoqQ8yQ0Jyh89hEBa8YYavkFJ1YcIvB0mvPnKR6?=
+ =?us-ascii?Q?nFAqGEyGLfkpOhsWNuPT8S9e3qEz06ldSRC2ckxvbbwfrCvuFiNLQY1ZoMLH?=
+ =?us-ascii?Q?xzoPyedk/+6cos9i+uu3PsAYnMe7cG1nbUXeBi2A12y8q7H7K7BaAZ6qBt3+?=
+ =?us-ascii?Q?v8SppVQvBra0/NlZc/E44dfBLK5FwElOvv0omgCVEgLpRlPiDHc/WykKmarf?=
+ =?us-ascii?Q?KKXqw8d4o85540mt9EMZ6G+uacCO3VjG8Tom4ocJWpahYeK/w8NaRbC7FmGS?=
+ =?us-ascii?Q?H91B8K+siR0nm3DB8xtNHLWTbZh86uvk0FyCdMtSsR7PcSGQyRlwuPF8I4hK?=
+ =?us-ascii?Q?w/cR/Es5aexPHUi3ESTRDLV5HGLCFOBOi4XmrBFSd6wQQfVuaZJCp2uKHILM?=
+ =?us-ascii?Q?VWcxP5JClFM6Em+tdAK4o4NcSyCduw8dl+haygVQZaTlMnQANWhYnaCtmv6W?=
+ =?us-ascii?Q?bGKYKxFf1lEwrtS7qwwH2NqBr2GVkr1+uALjT17KqqAC9bGjAsR9Ke16uzsc?=
+ =?us-ascii?Q?rsJZLex70myY1/kQvzvUaB1i1Qby9UgQWlJXmIUz5DPmf+a/mvNAnhE3TZmf?=
+ =?us-ascii?Q?AOC4+qLmtbrkBr9LlEtpgY/cTL1dooWbXnZvmDVFDpT0guVYKaqTVxNX76KZ?=
+ =?us-ascii?Q?ukazeA6Y6H5+Mg0bdsWMf0a3+OLTlooL0iYw9DFp+iEeikPCVwVkwSo/zEzO?=
+ =?us-ascii?Q?8YCmC894uqoLrk+8dTob?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6020.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(7416005)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?pB4vbJseY1Fjzg3zLg/HPxKrb+oTx/2B8zfDBj0muape19iYNuG6gWlkIB0K?=
+ =?us-ascii?Q?zSvhgmYZE0ksxGPIjPLnMbVFbDVZurvYm5846do+5b1iUQRebfs90HaxNazH?=
+ =?us-ascii?Q?Z6uTU4TTBJ9WW5AzhlJSIgQCDhRm1yUy0pTqasYOFBw78s9ePDwpmFZdSr73?=
+ =?us-ascii?Q?JvzCGfMd1Q0yVZt9tgeU12Yd39hgRJlfiBnolEqJo7zS2uC9Iistq8/KrwML?=
+ =?us-ascii?Q?6AzfvZ6ZY8ts+5M4vdYV3BTry/VB6YNIGthONlXtSOJnylnQmSKX6+NGCmsL?=
+ =?us-ascii?Q?fsfawYDA7O479TDTzwDudNq6CnTQdc5QLww9FitubAf4GhqKORX3HHSMmLzU?=
+ =?us-ascii?Q?MqBC3zdAXgcNMXdW+mzCHmHgbzIVF4/qoGyp7k1S9P4tnSCnrtiy87Md6kTk?=
+ =?us-ascii?Q?ChoF1mG3Hb4k9YluP6+aCiisPdt7pEbprvwCzeMEm0bbh60i73qqGaKK9vGz?=
+ =?us-ascii?Q?0ftQIs1r50k11lzPoam2WMOHrTPa/1RlPp45hgceApKWffyvzrg0qE+WZ37f?=
+ =?us-ascii?Q?GEiglkiVcfROYmuiy/eNx/4dhEYaTZgIu/VTV9kKP0hAjVK+Ft0PYQJ5eEm6?=
+ =?us-ascii?Q?BrcFYtwd0RfNkx3CwJjjHnZyA5m1tyQJ9lNTqVc7WsEutvHKZQPU49pfAPBv?=
+ =?us-ascii?Q?BJ1K8V2hZGksN3mId4WTeKajEI3aYuswLKHuMMD2sED8uFp/5htZTt8AnNEK?=
+ =?us-ascii?Q?PIRlNzJdNxzOOGo0EdvS1sIFn9KXuybqYGDI5QuaVHpbfdUa6S5HHFAdAl42?=
+ =?us-ascii?Q?E8RS9ceHp3Ho4ZdGVRXLnapBKfpCRUZikz50DEjq7fzEZRHQIcxJIFs1NjuV?=
+ =?us-ascii?Q?mvaMbdcFacTY3kUDyysQxne6CLDCVDs+zlpEf16FfiO7+GFjLHfCWSrqqRPN?=
+ =?us-ascii?Q?3nwF3mOkVISEi86ZiqmClS+otsCQE0vgAYKphklQ4LJDb1gBOtmXZ5ZKIQDQ?=
+ =?us-ascii?Q?4mZdRKiwleERGDNbuwmKKCF2m7ubXMOqH1ogqAL2MjdcmHjdUWpCEWCoo+mJ?=
+ =?us-ascii?Q?kJREIeE2dtAoW/R7/Q9ZyRJTJ165hq6TpVW8HXJah9opDvMt91xl0I5bK1yn?=
+ =?us-ascii?Q?UO5nvO7azlZevS1ojP2w/gF+g+sbIeFE98MiCyB9hg0CKzYg/80hgMmNK8Lm?=
+ =?us-ascii?Q?qVbAjuE9z0u/Rqqq8Kx3vonKP05BLLRg8IDgV9YFVb3E6gQRtcmuFezP+xwZ?=
+ =?us-ascii?Q?tblqNLPSFMMCeN0+GmbmHZ6KzJKGHAgmYTHHAhgRur6O2pDnQRlJfYUDR2JH?=
+ =?us-ascii?Q?5zRcG9BI39llDHsHE8AXMLMYtEJKuKPRlqfkBVWlUbVK/Y1dBQ5mresDybdM?=
+ =?us-ascii?Q?S70tZssSphYsnSTlVEOiYMHE8rWrM3wNPnf0SqNLKORu8TcqLigloruwVGI7?=
+ =?us-ascii?Q?pDy1SCmdFpFl0yaXCh9zorL6N3ORn+Pc7TxaDNZtE+9MLzTj/Y4rAxwQ8oOj?=
+ =?us-ascii?Q?g2RVN4nVuiCvkQ1o9vxb/NAaFfLyeW70V3gVJJ40LlaIMgcnt5ZCCs/2DuAm?=
+ =?us-ascii?Q?TjlMFc8gEmAh9CLQmv0XNcjiDJUtViXDCvz4R2YW05ZZulpRCwQR4lcejkXG?=
+ =?us-ascii?Q?/BTfY2H2Q2CYsHRhS7xAAti0TR73b0repIlv6jJy?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a8fb83f-efb3-4436-b595-08dc86afc1e2
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6020.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2024 05:07:41.1129
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kL0oSyOWTA4FzV18cPtFygsqGBYakpuWzDAGFWFloMfDuA6W3lc9Y7FHKIkdpbvKw9L+wInErPzxmZS7QFMbTA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4887
+X-OriginatorOrg: intel.com
 
-syzbot has found a reproducer for the following issue on:
+On 2024-05-29 at 22:18:06 +0800, Chunxin Zang wrote:
+> I found that some tasks have been running for a long enough time and
+> have become illegal, but they are still not releasing the CPU. This
+> will increase the scheduling delay of other processes. Therefore, I
+> tried checking the current process in wakeup_preempt and entity_tick,
+> and if it is illegal, reschedule that cfs queue.
+> 
+> When RUN_TO_PARITY is enabled, its behavior essentially remains
+> consistent with the original process. When NO_RUN_TO_PARITY is enabled,
+> some additional preemptions will be introduced, but not too many.
+> 
+> I have pasted some test results below.
+> I isolated four cores for testing and ran hackbench in the background,
+> and observed the test results of cyclictest.
+> 
+> hackbench -g 4 -l 100000000 &
+> cyclictest --mlockall -D 5m -q
+> 
+>                                  EEVDF      PATCH  EEVDF-NO_PARITY  PATCH-NO_PARITY
+> 
+>                 # Min Latencies: 00006      00006      00006      00006
+>   LNICE(-19)    # Avg Latencies: 00191      00133      00089      00066
+>                 # Max Latencies: 15442      08466      14133      07713
+> 
+>                 # Min Latencies: 00006      00010      00006      00006
+>   LNICE(0)      # Avg Latencies: 00466      00326      00289      00257
+>                 # Max Latencies: 38917      13945      32665      17710
+> 
+>                 # Min Latencies: 00019      00053      00010      00013
+>   LNICE(19)     # Avg Latencies: 37151      25852      18293      23035
+>                 # Max Latencies: 2688299    4643635    426196     425708
+> 
+> I captured and compared the number of preempt occurrences in wakeup_preempt
+> to see if it introduced any additional overhead.
+> 
+> Similarly, hackbench is used to stress the utilization of four cores to
+> 100%, and the method for capturing the number of PREEMPT occurrences is
+> referenced from [1].
+> 
+> schedstats                          EEVDF       PATCH   EEVDF-NO_PARITY  PATCH-NO_PARITY  CFS(6.5)
+> .stats.check_preempt_count          5053054     5045388    5018589    5029585
+> .stats.patch_preempt_count          -------     0020495    -------    0700670    -------
+> .stats.need_preempt_count           0570520     0458947    3380513    3116966    1140821
+> 
+> From the above test results, there is a slight increase in the number of
+> preempt occurrences in wakeup_preempt. However, the results vary with each
+> test, and sometimes the difference is not that significant.
+> 
+> [1]: https://lore.kernel.org/all/20230816134059.GC982867@hirez.programming.kicks-ass.net/T/#m52057282ceb6203318be1ce9f835363de3bef5cb
+> 
+> Signed-off-by: Chunxin Zang <zangchunxin@lixiang.com>
+> Reviewed-by: Chen Yang <yangchen11@lixiang.com>
+> 
+> ------
+> Changes in v2:
+> - Make the logic that determines the current process as ineligible and
+>   triggers preemption effective only when NO_RUN_TO_PARITY is enabled.
+> - Update the commit message
+> ---
+>  kernel/sched/fair.c | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 03be0d1330a6..fa2c512139e5 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -745,6 +745,17 @@ int entity_eligible(struct cfs_rq *cfs_rq, struct sched_entity *se)
+>  	return vruntime_eligible(cfs_rq, se->vruntime);
+>  }
+>  
+> +static bool check_entity_need_preempt(struct cfs_rq *cfs_rq, struct sched_entity *se)
+> +{
+> +	if (sched_feat(RUN_TO_PARITY) && se->vlag != se->deadline)
+> +		return true;
 
-HEAD commit:    d30d0e49da71 Merge tag 'net-6.10-rc3' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1736820a980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=399230c250e8119c
-dashboard link: https://syzkaller.appspot.com/bug?extid=67ba3c42bcbb4665d3ad
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a9aa22980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14c57f16980000
+If I understand correctly, here it intends to check if the current se
+has consumed its 1st slice after been picked at set_next_entity(), and if yes do a reschedule.
+check_entity_need_preempt() is added at the end of entity_tick(), which could overwrite
+the police to reschedule current: (entity_tick()->update_curr()->update_deadline()), only there
+are more than 1 runnable tasks will the current be preempted, even if it has expired the 1st
+requested slice.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-d30d0e49.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f1276023ed77/vmlinux-d30d0e49.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a33f372d4fb8/bzImage-d30d0e49.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/7fc863ff127d/mount_0.gz
+> +
+> +	if (!sched_feat(RUN_TO_PARITY) && !entity_eligible(cfs_rq, se))
+> +		return true;
+> +
+> +	return false;
+> +}
+> +
+>  static u64 __update_min_vruntime(struct cfs_rq *cfs_rq, u64 vruntime)
+>  {
+>  	u64 min_vruntime = cfs_rq->min_vruntime;
+> @@ -5523,6 +5534,9 @@ entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
+>  			hrtimer_active(&rq_of(cfs_rq)->hrtick_timer))
+>  		return;
+>  #endif
+> +
+> +	if (check_entity_need_preempt(cfs_rq, curr))
+> +		resched_curr(rq_of(cfs_rq));
+>  }
+>  
+>  
+> @@ -8343,6 +8357,9 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+>  	cfs_rq = cfs_rq_of(se);
+>  	update_curr(cfs_rq);
+>  
+> +	if (check_entity_need_preempt(cfs_rq, se))
+> +		goto preempt;
+> +
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com
+As we changes the preemption policy for current in two places, the tick preemption and wakeup preemption,
+do you have statistics that shows which one brings the most benefit?
 
-------------[ cut here ]------------
-kernel BUG at fs/inode.c:626!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 1 PID: 5273 Comm: syz-executor331 Not tainted 6.10.0-rc2-syzkaller-00222-gd30d0e49da71 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:clear_inode+0x15b/0x190 fs/inode.c:626
-Code: 00 00 00 5b 5d 41 5c c3 cc cc cc cc e8 5e c1 8c ff 90 0f 0b e8 56 c1 8c ff 90 0f 0b e8 4e c1 8c ff 90 0f 0b e8 46 c1 8c ff 90 <0f> 0b e8 3e c1 8c ff 90 0f 0b e8 e6 92 e8 ff e9 d2 fe ff ff e8 dc
-RSP: 0018:ffffc900036f7ac0 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff888030369e90 RCX: ffffffff82012340
-RDX: ffff888024190000 RSI: ffffffff820123aa RDI: 0000000000000007
-RBP: 0000000000000040 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000040 R11: 0000000000000001 R12: 0000000000000020
-R13: ffff88802f942000 R14: 0000000000000000 R15: ffff888030369e90
-FS:  000055556268d380(0000) GS:ffff88806b100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555562697708 CR3: 000000001e888000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- btrfs_evict_inode+0x529/0xe80 fs/btrfs/inode.c:5262
- evict+0x2ed/0x6c0 fs/inode.c:667
- dispose_list+0x117/0x1e0 fs/inode.c:700
- evict_inodes+0x34e/0x450 fs/inode.c:750
- generic_shutdown_super+0xb5/0x3d0 fs/super.c:627
- kill_anon_super+0x3a/0x60 fs/super.c:1226
- btrfs_kill_super+0x3b/0x50 fs/btrfs/super.c:2096
- deactivate_locked_super+0xbe/0x1a0 fs/super.c:473
- deactivate_super+0xde/0x100 fs/super.c:506
- cleanup_mnt+0x222/0x450 fs/namespace.c:1267
- task_work_run+0x14e/0x250 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
- do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2ba3059777
-Code: 07 00 48 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8
-RSP: 002b:00007fff42f9ee78 EFLAGS: 00000206 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f2ba3059777
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007fff42f9ef30
-RBP: 00007fff42f9ef30 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000206 R12: 00007fff42f9ffa0
-R13: 000055556268f6d0 R14: 431bde82d7b634db R15: 00007fff42f9ffc0
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:clear_inode+0x15b/0x190 fs/inode.c:626
-Code: 00 00 00 5b 5d 41 5c c3 cc cc cc cc e8 5e c1 8c ff 90 0f 0b e8 56 c1 8c ff 90 0f 0b e8 4e c1 8c ff 90 0f 0b e8 46 c1 8c ff 90 <0f> 0b e8 3e c1 8c ff 90 0f 0b e8 e6 92 e8 ff e9 d2 fe ff ff e8 dc
-RSP: 0018:ffffc900036f7ac0 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff888030369e90 RCX: ffffffff82012340
-RDX: ffff888024190000 RSI: ffffffff820123aa RDI: 0000000000000007
-RBP: 0000000000000040 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000040 R11: 0000000000000001 R12: 0000000000000020
-R13: ffff88802f942000 R14: 0000000000000000 R15: ffff888030369e90
-FS:  000055556268d380(0000) GS:ffff88806b100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555562697708 CR3: 000000001e888000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+thanks,
+Chenyu
 
