@@ -1,146 +1,189 @@
-Return-Path: <linux-kernel+bounces-206437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D46F9009BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:57:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7395E9009C4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 001561F2468F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:57:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B789287EB0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0655199EAF;
-	Fri,  7 Jun 2024 15:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA43919AA53;
+	Fri,  7 Jun 2024 15:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DkptC5or"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="nwZm3TPK"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C031198E86;
-	Fri,  7 Jun 2024 15:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290AD19414D;
+	Fri,  7 Jun 2024 15:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717775848; cv=none; b=oWsOMCfGJ1a7Imx9kXMpaPHy8BmWWABG1VqB7Yp9NFnqxfvumRlWus5/GdRYA4BgZoVduqABGC7TCWb+LEAl4mrBm2xRpo4RUOeFmct/GxLj9eVJvmadk23NvVgA9tVk7JPrSTgP7tsDfVW3M8lCsOQEHRRKwCnze9fl6BQuKSM=
+	t=1717775909; cv=none; b=tSw2GIxgyPR8pHoIf5Urjfqq3EIzx0VA5Pn0nSCyBp0XKeVqFIe6JCtJU1hJgUYnqQ4YPn089Hkm53ckDrH877pPeSFwtEOQwaIkvyNyhahp99m9ZVmlFIm0GueWUVWtkUJ0O9Sfxpj/XMZ32AEDDYqMWLCJcl/LHVkQ8t+n0qQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717775848; c=relaxed/simple;
-	bh=XB/qC7jM5fZOLA6Lr3Z/5B9poMffcOVNytBHe974sqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UmOqDV5P0FLJXs8wXim5OMKYIRhrgocVpPAUnu03aNEKDj56uUsfytfaPgx8TDHDfNjKx6y0n+fqbfu/p3yimX8tynYW3PvWT6Mt4c2JkURP0gjAbax8p68dO3zIDsoOP8sCsSbTQ1FCs4BVM313dh83+rxFuYzuRstlQetdNfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DkptC5or; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 12D56BD1;
-	Fri,  7 Jun 2024 17:57:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1717775834;
-	bh=XB/qC7jM5fZOLA6Lr3Z/5B9poMffcOVNytBHe974sqc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DkptC5orh+htsaE+i5VvzbUkQR3RobnM/ZqqstB90vwAwJchFFUtAaeI27Zq0F+/1
-	 9TDn52yumhZl0GJcSzegtL0kYsD/wOFpOClj+Nyhw/r+5a046RVf/JmYC07AsI39AQ
-	 tq+++MqY6vh6Oe7seifFsiC6JxL7ylXrXYxVeBis=
-Date: Fri, 7 Jun 2024 18:57:04 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-media@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Adam Ford <aford173@gmail.com>,
-	Andrey Konovalov <andrey.konovalov@linaro.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] media: i2c: imx219: fix msr access command sequence
-Message-ID: <20240607155704.GB1242@pendragon.ideasonboard.com>
-References: <20240607-trimmer-pummel-b452ed15e103@spud>
+	s=arc-20240116; t=1717775909; c=relaxed/simple;
+	bh=UD03nI/JRp+yg2q6GDAap0jrnL8NaMPnmCL+NxM4aTQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SenmaHzgj/Hhv0eQwsGJN5REseFB9q9apTAiJAwBqLnFH3z/q8FffPshlpZR7cHTrFUovO41fHM2VnHkZpxjgVWqoupHEZXa0t30T2aJzvVjgKP4YX+KAUOG3/vura9vQ1qLMd3KaBvJYtYVcZYH/UzdNbpb35sgLiCrtNf076A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=nwZm3TPK; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1717775877; x=1718380677; i=w_armin@gmx.de;
+	bh=LIQ5gm/XO9PGANyCnfv3D1QIlEG8awN23+y/zDLgCNs=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=nwZm3TPK3DyPglzuwo/s2RE9GzD7bO5d6HQ3U2qectprdRCxPcQJYjt5Tzsue5Eo
+	 o/sarPDGrE7fNEsPbwnQcUx1MhapS760VFSbf23mCd8NT77Auvctu4u4SgoYZaUWP
+	 oPogiAcFMaqzoTJGx/BUTGgLC5plJL7rDsq0zI6b1JJuCswbYKdhp95w+yw8xa5Ds
+	 KLdDGy1l4eSS3/aLo0utmJueNCQuyoUn2sGSyABVfJWOoO4ni+oLCA1/iXCOXS3c3
+	 fOUzpqbHhhEn6u5MTFHsxo3TJjvqyEyEMM7VQobgNySZ7CQqiO/SxrV18IEX+u6d/
+	 CoipfdpNAnEqDXdORg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M9nxt-1sKqm03Puv-00BxhP; Fri, 07
+ Jun 2024 17:57:57 +0200
+Message-ID: <59485024-f5d0-4553-b567-2a04ec3d2606@gmx.de>
+Date: Fri, 7 Jun 2024 17:57:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240607-trimmer-pummel-b452ed15e103@spud>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/6] hwmon: (spd5118) Add suspend/resume support
+To: Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ =?UTF-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Stephen Horvath <s.horvath@outlook.com.au>
+References: <20240604040237.1064024-1-linux@roeck-us.net>
+ <20240604040237.1064024-4-linux@roeck-us.net>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20240604040237.1064024-4-linux@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:LJoUkpB8DPisSiKti1MMbMgSWcI7GsvoiWg7nZeNNhGF6uE+/zq
+ nnBwf/zfLMyoSJY/atgT4C+020xT5qquiLP0Dc4udy+RRCNempCKcjCHyUzVFBwTGSKPaZM
+ q7tH+g9vZOuc+jlyeil5xBhe9VwjFNF3fWABEUWp5nHHai3tRKTPOcwnzs0IMNVnBV9DOPZ
+ KS0Mh4DlsK9HpOtpC30Kg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:2HKnl6As2Oc=;uXBA4dqF+su/aqsWgUUHwiY1Z/S
+ 0qWWDY20Qrtra1yFm12pFn4EI9WxbRymN109n+HxXaRD8Ju77jLH/46sLspiXOEscCdDlCSEc
+ 7glh3bEUuRspDqDnbWRL0IPW8ys4SafpsmeGFFZYtjS3QaW9r53JFJ73EqKX8iCy58YHLcYLo
+ MZwucYY8GatM1USmcWTe4W9Zb7OA+RoUk8mGz9DqYXIQbReYiy4/gUjX1i0I/Ls+IscNItU/y
+ 7SEgpmoEiXTeRBZihLFwfPjHBC/SzGSV1NWIeLbABMv80mWhj2r5UhsbWa8apSV5DxIUuQ/bK
+ AHdV4BlF9Zfte7onJ8iI9hRaL5Y43COzSU5/PhzMrpio+OoB9NFHqmFczlqWj6PBHRtfgDjLr
+ 9+iNxEJmVOFCrjB2sIdZciwsZrfptMTisqKz+GJ0e/bLakx4VcA3SyELdsKkt/ePHSH2N5x2M
+ 9/AqgkfWZqhzjl0+hm9K26Y6v/gDFtzg8MNu2URQ8RW7wc8MfRlxOyRp9yKTwbpYKU8hYBR72
+ G8Z5ZoEwL/j2GWCqxjZvLPuOB5HmdoVwpFRQ+R2Qkv011rF5bWyNgQQlN64lcecFgLan0OGIQ
+ bjn/DAV0AZYpTFoNuAFFLSgVLj3O8xowsWv42BEXHxS/0+5N33CEc5YFFfcOIrtjfVXEskreN
+ U9FCy3+gm0TdBxfRL8GHs3Wt9UDicOQhpPn25s61aBD6IrPImw2v6QmsAcVpc6ocaz5cJVM87
+ JFcHJ3fiBqkJjTVcWtYSAg+db/HZqIsX2ROtVPE6e+KWhJXCaUvj+D2SnXqaCcsWhoQvyhYvQ
+ UqSjji8eECvEEdS6jpc+n6oUYLjrBlkuCEAEVA0uJ/4oA=
 
-Hi Conor,
+Am 04.06.24 um 06:02 schrieb Guenter Roeck:
 
-Thank you for the patch.
+> Add suspend/resume support to ensure that limit and configuration
+> registers are updated and synchronized after a suspend/resume cycle.
 
-On Fri, Jun 07, 2024 at 04:50:23PM +0100, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
-> 
-> It was reported to me that the imx219 didn't work on one of our
-> development kits partly because the access sequence is incorrect.
-> The datasheet I could find [1] for this camera has the access sequence:
-> Seq. No. Address (Hex) data
-> 1        30EB          05
-> 2        30EB          0C
-> 3        300A          FF
-> 4        300B          FF
-> 5        30EB          05
-> 6        30EB          09
-> 
-> but the driver swaps the first two elements. Laurent pointed out on IRC
-> that the original code used the correct sequence for 1920x1080 but the
-> current sequence for 3280x2464 and 1640x1232. During refactoring of the
-> init sequence the current order was used for all formats.
-> 
-> Switch to using the documented sequence.
-> 
-> Link: https://www.opensourceinstruments.com/Electronics/Data/IMX219PQ.pdf [1]
-> Fixes: 8508455961d5 ("media: i2c: imx219: Split common registers from mode tables")
-> Fixes: 1283b3b8f82b ("media: i2c: Add driver for Sony IMX219 sensor")
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Tested-by: Armin Wolf <W_Armin@gmx.de>
 
-This looks reasonable, based on the above link.
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-Dave, could you check the impact on the Raspberry Pi kernel ? It seems
-to be shipping the incorrect sequence unconditionally.
-
-Any information about what the 12 undocumented MSRs that are programmed
-by the driver do would be appreciated too ;-)
-
+>
+> Cc: Armin Wolf <W_Armin@gmx.de>
+> Cc: Stephen Horvath <s.horvath@outlook.com.au>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 > ---
-> I got the report of this third hand, I don't have a device and can't
-> test this. I do wonder why the RPis get away with the sequence that
-> seemingly doesn't work for the guy that reported this to me. My theory
-> is either that they noticed the sequence was wrong while adding some
-> other MSR access that is needed on this board while either cross
-> checking the values written or because the other MSR accesses didn't
-> take effect.
-> 
-> CC: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> CC: Sakari Ailus <sakari.ailus@linux.intel.com>
-> CC: Mauro Carvalho Chehab <mchehab@kernel.org>
-> CC: Adam Ford <aford173@gmail.com>
-> CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> CC: Andrey Konovalov <andrey.konovalov@linaro.org>
-> CC: linux-media@vger.kernel.org
-> CC: linux-kernel@vger.kernel.org
-> ---
->  drivers/media/i2c/imx219.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> index 51ebf5453fce..e78a80b2bb2e 100644
-> --- a/drivers/media/i2c/imx219.c
-> +++ b/drivers/media/i2c/imx219.c
-> @@ -162,8 +162,8 @@ static const struct cci_reg_sequence imx219_common_regs[] = {
->  	{ IMX219_REG_MODE_SELECT, 0x00 },	/* Mode Select */
->  
->  	/* To Access Addresses 3000-5fff, send the following commands */
-> -	{ CCI_REG8(0x30eb), 0x0c },
->  	{ CCI_REG8(0x30eb), 0x05 },
-> +	{ CCI_REG8(0x30eb), 0x0c },
->  	{ CCI_REG8(0x300a), 0xff },
->  	{ CCI_REG8(0x300b), 0xff },
->  	{ CCI_REG8(0x30eb), 0x05 },
-
--- 
-Regards,
-
-Laurent Pinchart
+> v4: Fix bug seen if the enable attribute was never read prior
+>      to a suspend/resume cycle.
+>
+> v3: No change
+>
+> v2: New patch
+>
+>   drivers/hwmon/spd5118.c | 39 +++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 39 insertions(+)
+>
+> diff --git a/drivers/hwmon/spd5118.c b/drivers/hwmon/spd5118.c
+> index d3fc0ae17743..d55c073ff5fd 100644
+> --- a/drivers/hwmon/spd5118.c
+> +++ b/drivers/hwmon/spd5118.c
+> @@ -20,6 +20,7 @@
+>   #include <linux/i2c.h>
+>   #include <linux/hwmon.h>
+>   #include <linux/module.h>
+> +#include <linux/pm.h>
+>   #include <linux/regmap.h>
+>   #include <linux/units.h>
+>
+> @@ -432,6 +433,8 @@ static int spd5118_probe(struct i2c_client *client)
+>   	if (!spd5118_vendor_valid(bank, vendor))
+>   		return -ENODEV;
+>
+> +	dev_set_drvdata(dev, regmap);
+> +
+>   	hwmon_dev =3D devm_hwmon_device_register_with_info(dev, "spd5118",
+>   							 regmap, &spd5118_chip_info,
+>   							 NULL);
+> @@ -449,6 +452,41 @@ static int spd5118_probe(struct i2c_client *client)
+>   	return 0;
+>   }
+>
+> +static int spd5118_suspend(struct device *dev)
+> +{
+> +	struct regmap *regmap =3D dev_get_drvdata(dev);
+> +	u32 regval;
+> +	int err;
+> +
+> +	/*
+> +	 * Make sure the configuration register in the regmap cache is current
+> +	 * before bypassing it.
+> +	 */
+> +	err =3D regmap_read(regmap, SPD5118_REG_TEMP_CONFIG, &regval);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	regcache_cache_bypass(regmap, true);
+> +	regmap_update_bits(regmap, SPD5118_REG_TEMP_CONFIG, SPD5118_TS_DISABLE=
+,
+> +			   SPD5118_TS_DISABLE);
+> +	regcache_cache_bypass(regmap, false);
+> +
+> +	regcache_cache_only(regmap, true);
+> +	regcache_mark_dirty(regmap);
+> +
+> +	return 0;
+> +}
+> +
+> +static int spd5118_resume(struct device *dev)
+> +{
+> +	struct regmap *regmap =3D dev_get_drvdata(dev);
+> +
+> +	regcache_cache_only(regmap, false);
+> +	return regcache_sync(regmap);
+> +}
+> +
+> +static DEFINE_SIMPLE_DEV_PM_OPS(spd5118_pm_ops, spd5118_suspend, spd511=
+8_resume);
+> +
+>   static const struct i2c_device_id spd5118_id[] =3D {
+>   	{ "spd5118", 0 },
+>   	{ }
+> @@ -466,6 +504,7 @@ static struct i2c_driver spd5118_driver =3D {
+>   	.driver =3D {
+>   		.name	=3D "spd5118",
+>   		.of_match_table =3D spd5118_of_ids,
+> +		.pm =3D pm_sleep_ptr(&spd5118_pm_ops),
+>   	},
+>   	.probe		=3D spd5118_probe,
+>   	.id_table	=3D spd5118_id,
 
