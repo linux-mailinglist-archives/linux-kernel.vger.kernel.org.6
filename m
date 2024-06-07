@@ -1,124 +1,90 @@
-Return-Path: <linux-kernel+bounces-206492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AB25900A88
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:36:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EA81900A84
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A6711F23118
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:36:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFB8128623D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DAE019AA75;
-	Fri,  7 Jun 2024 16:32:57 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A442D19AA59;
+	Fri,  7 Jun 2024 16:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Cpuo8aY2"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AB217C73;
-	Fri,  7 Jun 2024 16:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75AC619AA55;
+	Fri,  7 Jun 2024 16:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717777976; cv=none; b=nISM3ZAvWDGklnanBEu1shIeOYcdHyOKRRXuUBfq+rogT6fUKVJp1+yfNyL1XYcigKt1nBTDJyuceJYpF7Rg5DKkXqcQwlFYzG4HbgGSUIE9HTYW7pY0mnjUQB8QF7mtoG6lWPARDT1hepr8PyMalWxVUSr4ck/zLv/yWYOzyfc=
+	t=1717777948; cv=none; b=SmnrvYy/fIAYHHmlmfQhHOwSmFH89+QwboHdhxcX3vS1MZ+SOaSilXzH/54pDUXU+GgYwcV5vlmDs17QU22Y7bnTIKP866tHHMh9KVgHO0QFVrycbgKRxC2y4mJuqMyZMpx/6RgkofHm4HeY7gtpPdTJ/Jc6ndVEeh1se+x5krU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717777976; c=relaxed/simple;
-	bh=xjv1zFkmCPNQYjWEzOpbV3VX1wRuOu9jH2q93dMSu1I=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RfF2AWoFwWrKfq5JfI7G4DKP8Y11AHWvBb3xmXtOJvYTHUfV/SelShLogeBXPr8hZwGmV8eM4sX0gWy/GftqatkMbWKnVRI0k5euE4VhSV3GEkmd0VjjE2DSRNTfXKqFjPFdgiGuWBIIZQ1cQsiy2/pFf0QIIFDWwbKxCsRZUsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VwmpJ5cDFz67RyC;
-	Sat,  8 Jun 2024 00:28:08 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id A9CAE140A70;
-	Sat,  8 Jun 2024 00:32:51 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 7 Jun
- 2024 17:32:51 +0100
-Date: Fri, 7 Jun 2024 17:32:50 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Wei Huang <wei.huang2@amd.com>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <netdev@vger.kernel.org>, <bhelgaas@google.com>,
-	<corbet@lwn.net>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <alex.williamson@redhat.com>,
-	<gospo@broadcom.com>, <michael.chan@broadcom.com>,
-	<ajit.khaparde@broadcom.com>, <somnath.kotur@broadcom.com>,
-	<andrew.gospodarek@broadcom.com>, <manoj.panicker2@amd.com>,
-	<Eric.VanTassell@amd.com>, <vadim.fedorenko@linux.dev>, <horms@kernel.org>,
-	<bagasdotme@gmail.com>
-Subject: Re: [PATCH V2 4/9] PCI/TPH: Implement a command line option to
- force No ST Mode
-Message-ID: <20240607173250.000065d7@Huawei.com>
-In-Reply-To: <20240531213841.3246055-5-wei.huang2@amd.com>
-References: <20240531213841.3246055-1-wei.huang2@amd.com>
-	<20240531213841.3246055-5-wei.huang2@amd.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1717777948; c=relaxed/simple;
+	bh=dmUJ+ZtKaijtW7r9kyKhmYTS9Mbgn9yVEc8Cc9w00jU=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YL3vYmwwHUdkYFB6yNnutIsIPpZhfIbinq4b9Bpd07x8JvmMCg6h5iIbEhVky2PjG1aIwidGz4KMYZzgWjwb0iOF72sv9dE9XnaQp8Es5TMYFLbUozUiN2mxJWecjPbmrjxz8ub/+aQA3HjzJAbkKg78qOz1L3bHdA7og0MYFxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Cpuo8aY2; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717777945;
+	bh=dmUJ+ZtKaijtW7r9kyKhmYTS9Mbgn9yVEc8Cc9w00jU=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=Cpuo8aY2alnUMVIYNOE+GtVX6Z5ya83g0ErQEMvfd4a91qa02U15oK+akc6lPq252
+	 q1D69YhryLDoe+CltXdnU08wouNMp44gFoIoEg7WZcfTuXtMmV1Sr0ZpNIayOOcwCK
+	 K5tdTN2WzcZ8kYiXnKmWMJGigf8oQ/8st7BdqaCRR0nsUbiFe59oTs6JwtNlIQIi8A
+	 st0fCRXgSjUctoc+/Uf+RU945y59EZXx2v5XDyYj79jBECaNV3050rKnTDp/uU3NSL
+	 3aaLQW3GX0cekhDR92tSNohyeJ7foGa5MAZFK7oqUwrw3EO6J2PQZIlvlqJ0mRCKo7
+	 JW5DKwr0k2vRw==
+Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 14E5F37821EB;
+	Fri,  7 Jun 2024 16:32:20 +0000 (UTC)
+Message-ID: <207129fd-4220-4410-b3d9-bfad8d9831ff@collabora.com>
+Date: Fri, 7 Jun 2024 21:32:56 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ritesh Harjani <ritesh.list@gmail.com>, Mike Rapoport <rppt@kernel.org>,
+ Muchun Song <songmuchun@bytedance.com>, David Hildenbrand
+ <david@redhat.com>, p.raghav@samsung.com
+Subject: Re: [PATCH v3] selftest: mm: Test if hugepage does not get leaked
+ during __bio_release_pages()
+To: Donet Tom <donettom@linux.ibm.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>, Tony Battersby <tonyb@cybernetics.com>
+References: <20240607055046.138650-1-donettom@linux.ibm.com>
+ <5ce292b6-179c-48e0-9079-ea07defbe178@collabora.com>
+ <9e54991c-3f9b-446c-8825-c0754eca1f90@linux.ibm.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <9e54991c-3f9b-446c-8825-c0754eca1f90@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 31 May 2024 16:38:36 -0500
-Wei Huang <wei.huang2@amd.com> wrote:
+On 6/7/24 9:30 PM, Donet Tom wrote:
+...
+>>>   tools/testing/selftests/mm/Makefile      |   1 +
+>>>   tools/testing/selftests/mm/hugetlb_dio.c | 118 +++++++++++++++++++++++
+>> Missed my feedback on adding the test to vm_test.sh
+> I was not able to find vm_test.sh file to add this test in selftests/mm.
+> could you please help me to get the correct vm_test.sh to add this?
+Here is the file path: tools/testing/selftests/mm/run_vmtests.sh
 
-> When "No ST mode" is enabled, end-point devices can generate TPH headers
-> but with all steering tags treated as zero. A steering tag of zero is
-> interpreted as "using the default policy" by the root complex. This is
-> essential to quantify the benefit of steering tags for some given
-> workloads.
-
-This is a good explanation. Need similar in the previous patch to
-justify the disable TPH entirely.
-
-> diff --git a/drivers/pci/pcie/tph.c b/drivers/pci/pcie/tph.c
-> index 5dc533b89a33..d5f7309fdf52 100644
-> --- a/drivers/pci/pcie/tph.c
-> +++ b/drivers/pci/pcie/tph.c
-> @@ -43,6 +43,27 @@ static int tph_set_reg_field_u32(struct pci_dev *dev, u8 offset, u32 mask,
->  	return ret;
->  }
->  
-> +int tph_set_dev_nostmode(struct pci_dev *dev)
-> +{
-> +	int ret;
-> +
-> +	/* set ST Mode Select to "No ST Mode" */
-> +	ret = tph_set_reg_field_u32(dev, PCI_TPH_CTRL,
-> +				    PCI_TPH_CTRL_MODE_SEL_MASK,
-> +				    PCI_TPH_CTRL_MODE_SEL_SHIFT,
-> +				    PCI_TPH_NO_ST_MODE);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* set "TPH Requester Enable" to "TPH only" */
-> +	ret = tph_set_reg_field_u32(dev, PCI_TPH_CTRL,
-> +				    PCI_TPH_CTRL_REQ_EN_MASK,
-> +				    PCI_TPH_CTRL_REQ_EN_SHIFT,
-> +				    PCI_TPH_REQ_TPH_ONLY);
-
-Unless these have to be two RMW operations. (if they do add a spec reference)
-then this is a good example of why a field update function may not be
-the right option.  We probably want to RMW once.
-
-return tph_set_reg_field_u32()
-
-> +
-> +	return ret;
-> +}
-> +
->  int pcie_tph_disable(struct pci_dev *dev)
->  {
->  	return  tph_set_reg_field_u32(dev, PCI_TPH_CTRL,
-
+-- 
+BR,
+Muhammad Usama Anjum
 
