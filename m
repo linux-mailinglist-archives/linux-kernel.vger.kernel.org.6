@@ -1,441 +1,229 @@
-Return-Path: <linux-kernel+bounces-206365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25C28900866
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:15:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E2DA900863
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86FB3B23645
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:15:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 732C41C2248F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C37198E8A;
-	Fri,  7 Jun 2024 15:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mbP1Lc9b"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75007194A5F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EE11953AA;
 	Fri,  7 Jun 2024 15:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BdZFikWO"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40CF215B133
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 15:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717773278; cv=none; b=tZt++x+AciXeB0iP9Bt1L4pEBnEk+E1DXfIflaX4Q6zAUvwuWAkNN2qOd8aI4ulhxVCBuGZLXkCXJX/0xNW/tRIEqP0kwXOgsPeaKaK/n2NzBVvUHjKCUOsRBwgWrSCKmE1yzK4or+rHVO0Uen3pGJollZAUKYtAeftrSKocc6o=
+	t=1717773276; cv=none; b=MToVlUV4AUmhb6mi232J7IGLczz2bcKDrPnNVa1mDbt4U2l6j7vYPcc5hKa3Uvqjj55S8G7rfIw8FhYh2dVzP/VrXv7y8NHRQzhbZrCgVFY43X3ISJzywKg8bmT38UFORSsVwMPVQtYOHJ7z/y5Wuc7gO+6cBMM0fM5Zqhpx24c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717773278; c=relaxed/simple;
-	bh=XXq1CUm0YM3BcuboGgGpWREXpzYqe98jsob87/Kz8JM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ou4xBPRxtyRGRoMrG1nQWGyJ+1KuROA4r4vHAlOeKe1Yct4RGH35vky66NiTeSZ+TLUkCLrvRicHUjKpv/0BPDX2Q2nu2wmTOyncW5YK2C+3B2krur/jDNyHzsa2YNqCCwb+KlDaPvBv0vs60p7j90dDQb/rTjUz5UllsR+DCYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mbP1Lc9b; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717773277; x=1749309277;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XXq1CUm0YM3BcuboGgGpWREXpzYqe98jsob87/Kz8JM=;
-  b=mbP1Lc9bjz3jlAGWRx2ati9EfYWspYDlb8lauOus/K5Bw2oJ3fuU86Wi
-   G4i4+8mXI3OG/2tzXARuh6O3lt+LOtn5U033tbhowY4S0izuntJ6GmZQM
-   ErwjMSRG4J9i67Mijvd5d6E032SHnTGFwpnrETt3t+tGgIntGy7Qxb1z6
-   g+IgVObLtkGFAg4nUV8a97QWSs882V2Vt7eCDvuZ4fYMkWbWS8DZbktUC
-   BGr6WV3w0N4raI32HlbfCBjqpQKBt88r4cB9asi42xGm2l/bNgmFulLMK
-   5tHwCbowC+62jXSS+TSFXd2nKcbdVo12SAX5bVqV55nBLaLgb6Wk8uRvA
-   A==;
-X-CSE-ConnectionGUID: cMAZt/+MSXyB28MQs4VPMA==
-X-CSE-MsgGUID: 9+xIDLWFTUGYB6lzKlnS4g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="31994431"
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="31994431"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 08:14:36 -0700
-X-CSE-ConnectionGUID: 1DJWudwORySimsNrY6/5dg==
-X-CSE-MsgGUID: AMPzl3/PTV+d/VteOjVbvw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="38470479"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa009.fm.intel.com with ESMTP; 07 Jun 2024 08:14:29 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 8D1922DC; Fri, 07 Jun 2024 18:14:28 +0300 (EEST)
-Date: Fri, 7 Jun 2024 18:14:28 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Elena Reshetova <elena.reshetova@intel.com>, 
-	Jun Nakajima <jun.nakajima@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, "Kalra, Ashish" <ashish.kalra@amd.com>, 
-	Sean Christopherson <seanjc@google.com>, "Huang, Kai" <kai.huang@intel.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, Baoquan He <bhe@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
-	kexec@lists.infradead.org, linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, Tao Liu <ltao@redhat.com>
-Subject: Re: [PATCHv11 18/19] x86/acpi: Add support for CPU offlining for
- ACPI MADT wakeup method
-Message-ID: <icu4yecqfwhmbexupo4zzei4lbe5sgavsfkm27jd6t6gyjynul@c2wap3jhtik7>
-References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
- <20240528095522.509667-19-kirill.shutemov@linux.intel.com>
- <20240603083930.GNZl2BQk2lQ8WtcE4o@fat_crate.local>
+	s=arc-20240116; t=1717773276; c=relaxed/simple;
+	bh=YNvEbYqDIOeQJ9EYeosxPjIWgCnYmm6K3MKS+7KrJ8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BeSQTHpCzmhJrZRCGrqPGGr71hTT0bfQ9HdOrQcCAIDpZ4H/gN6+oV+XeR03tYNXmt/BkleyuCC0Cj3KHeD/7Fi7oJk7nEroJIGBWOTutLPDZuC851QFvaD+jqdcGGY12StmQaKVecR2ws2LwByukQc9JwgNQPSPUfVQuK7iWfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BdZFikWO; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42165f6645fso7376385e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 08:14:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717773272; x=1718378072; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JN0e5P7VFDOR5oAxAAgFP2WrNug79RTU2V3y/YlwPng=;
+        b=BdZFikWO7wrA5KVl/Q1rjWYA7hp55PSDuvNu5SQCqzq7jf6R0KmUSZybf6vuU3age9
+         glNOV7sJ8e/r+Y3ktaNvvSo/He3IrO0+ZFST4pypdJc0Ib1XF+Pn2I+JSQOXlbiF5ELn
+         Njaf4xtkuUU3FykZr9BhLy/PpbRARjaU0Kdk3LEyTbDSh2aawYCVdxz0oLCFu5HqLmpI
+         pYyavddHtdBcTGXUg6yPnzDbIKfU5SU471bPfZPqlJhGMwH32fyXkMpCqJXktyZxs7Rp
+         abIzJmqUIWPy6XhWU0foGPdYgQ73AAmkawyatlr8CO5UwTOjjKEwAf8EtnUQ5JuTQkIq
+         tOzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717773272; x=1718378072;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JN0e5P7VFDOR5oAxAAgFP2WrNug79RTU2V3y/YlwPng=;
+        b=eTRYq73No1Rc0ladAmz3DP+uBWMDwA06TUPkZu72KvbqGqS5K7wSOWgP8KPXv08M3f
+         Nc48NwjTCx6LawXIAxfrT6KL3G8zICy1Tndn7IowyrqYAxKHF9DVs1ke3Vbev6eAOvlA
+         CjbaJm5DV3EtD7H9a3wu+PjqCBzO0vCs7GS2gcDwAqAQbZXTAjwd57bUC56pyZYoXmqT
+         zwjtmTyfisEwJMGsY5egP397oYD8HG60MUHnjRJy/fuRl/te96djAVhyfvBT1kU7hOay
+         WF7HQxv8JTjj5s4IBKhtQd47bzvphe8HQhWhfv7JQbPSdZOM9uDJkl+7PyFVCXyOOxTc
+         Dz6w==
+X-Gm-Message-State: AOJu0YzMpaK15WC4Gc78Ga5gZgrrakxu+e+fSD9BPj9hwTmfnF+FUGzS
+	n/7LNO+UceVzD3RQVWy03wIa0iTu1w4+ZVUMv6557APj+kOT+JMczC+l
+X-Google-Smtp-Source: AGHT+IGl969oowyESJ6gy7Xl+3jZ5Ug8ZQffJojcyoV0efokZca38DbbT+mNsyWTlZCbiO3QsMs2oQ==
+X-Received: by 2002:a05:6000:ecf:b0:35f:f3e:e7a9 with SMTP id ffacd0b85a97d-35f0f3ee8ccmr98890f8f.6.1717773272107;
+        Fri, 07 Jun 2024 08:14:32 -0700 (PDT)
+Received: from p183 ([46.53.249.224])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d6990csm4187371f8f.58.2024.06.07.08.14.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 08:14:31 -0700 (PDT)
+Date: Fri, 7 Jun 2024 18:14:29 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] proc: test "Kthread:" field
+Message-ID: <818c4c41-8668-4566-97a9-7254abf819ee@p183>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240603083930.GNZl2BQk2lQ8WtcE4o@fat_crate.local>
 
-On Mon, Jun 03, 2024 at 10:39:30AM +0200, Borislav Petkov wrote:
-> > +/*
-> > + * Make sure asm_acpi_mp_play_dead() is present in the identity mapping at
-> > + * the same place as in the kernel page tables. asm_acpi_mp_play_dead() switches
-> > + * to the identity mapping and the function has be present at the same spot in
-> > + * the virtual address space before and after switching page tables.
-> > + */
-> > +static int __init init_transition_pgtable(pgd_t *pgd)
-> 
-> This looks like a generic helper which should be in set_memory.c. And
-> looking at that file, there's populate_pgd() which does pretty much the
-> same thing, if I squint real hard.
-> 
-> Let's tone down the duplication.
+/proc/${pid}/status got Kthread field recently.
 
-Okay, there is a function called kernel_map_pages_in_pgd() in set_memory.c
-that does what we need here.
+Test that userspace program is not reported as kernel thread.
 
-I tried to use it, but encountered a few issues:
+Test that kernel thread is reported as kernel thread.
+Use kthreadd with pid 2 for this.
 
-- The code in set_memory.c allocates memory using the buddy allocator,
-  which is not yet ready. We can work around this limitation by delaying
-  the initialization of offlining until later, using a separate
-  early_initcall();
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-- I noticed a complaint that the allocation is being done from an atomic
-  context: a spinlock called cpa_lock is taken when populate_pgd()
-  allocates memory.
+ tools/testing/selftests/proc/.gitignore               |    2 
+ tools/testing/selftests/proc/Makefile                 |    2 
+ tools/testing/selftests/proc/proc-2-is-kthread.c      |   53 ++++++++++++++++++
+ tools/testing/selftests/proc/proc-self-isnt-kthread.c |   37 ++++++++++++
+ 4 files changed, 94 insertions(+)
 
-  I am not sure why this was not noticed before. kernel_map_pages_in_pgd()
-  has only been used in EFI mapping initialization so far, so maybe it is
-  somehow special, I don't know.
-
-  I was able to address this issue by switching cpa_lock to a mutex.
-  However, this solution will only work if the callers for set_memory
-  interfaces are not called from an atomic context. I need to verify if
-  this is the case.
-
-- The function __flush_tlb_all() in kernel_(un)map_pages_in_pgd() must be
-  called with preemption disabled. Once again, I am unsure why this has
-  not caused issues in the EFI case.
-
-- I discovered a bug in kernel_ident_mapping_free() when it is used on a
-  machine with 5-level paging. I will submit a proper patch to fix this
-  issue.
-
-The fixup is below.
-
-Any comments?
-
-diff --git a/arch/x86/kernel/acpi/madt_wakeup.c b/arch/x86/kernel/acpi/madt_wakeup.c
-index 6cfe762be28b..fbbfe78f7f27 100644
---- a/arch/x86/kernel/acpi/madt_wakeup.c
-+++ b/arch/x86/kernel/acpi/madt_wakeup.c
-@@ -59,82 +59,55 @@ static void acpi_mp_cpu_die(unsigned int cpu)
- 		pr_err("Failed to hand over CPU %d to BIOS\n", cpu);
- }
- 
-+static void acpi_mp_disable_offlining(struct acpi_madt_multiproc_wakeup *mp_wake)
+--- a/tools/testing/selftests/proc/.gitignore
++++ b/tools/testing/selftests/proc/.gitignore
+@@ -2,6 +2,7 @@
+ /fd-001-lookup
+ /fd-002-posix-eq
+ /fd-003-kthread
++/proc-2-is-kthread
+ /proc-fsconfig-hidepid
+ /proc-loadavg-001
+ /proc-multiple-procfs
+@@ -9,6 +10,7 @@
+ /proc-pid-vm
+ /proc-self-map-files-001
+ /proc-self-map-files-002
++/proc-self-isnt-kthread
+ /proc-self-syscall
+ /proc-self-wchan
+ /proc-subset-pid
+--- a/tools/testing/selftests/proc/Makefile
++++ b/tools/testing/selftests/proc/Makefile
+@@ -7,11 +7,13 @@ TEST_GEN_PROGS :=
+ TEST_GEN_PROGS += fd-001-lookup
+ TEST_GEN_PROGS += fd-002-posix-eq
+ TEST_GEN_PROGS += fd-003-kthread
++TEST_GEN_PROGS += proc-2-is-kthread
+ TEST_GEN_PROGS += proc-loadavg-001
+ TEST_GEN_PROGS += proc-empty-vm
+ TEST_GEN_PROGS += proc-pid-vm
+ TEST_GEN_PROGS += proc-self-map-files-001
+ TEST_GEN_PROGS += proc-self-map-files-002
++TEST_GEN_PROGS += proc-self-isnt-kthread
+ TEST_GEN_PROGS += proc-self-syscall
+ TEST_GEN_PROGS += proc-self-wchan
+ TEST_GEN_PROGS += proc-subset-pid
+new file mode 100644
+--- /dev/null
++++ b/tools/testing/selftests/proc/proc-2-is-kthread.c
+@@ -0,0 +1,53 @@
++/*
++ * Copyright (c) 2024 Alexey Dobriyan <adobriyan@gmail.com>
++ *
++ * Permission to use, copy, modify, and distribute this software for any
++ * purpose with or without fee is hereby granted, provided that the above
++ * copyright notice and this permission notice appear in all copies.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
++ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
++ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
++ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
++ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ */
++/* Test that kernel thread is reported as such. */
++#undef NDEBUG
++#include <assert.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <string.h>
++#include <unistd.h>
++
++int main(void)
 +{
-+	cpu_hotplug_disable_offlining();
-+
 +	/*
-+	 * ACPI MADT doesn't allow to offline a CPU after it was onlined. This
-+	 * limits kexec: the second kernel won't be able to use more than one CPU.
++	 * The following solutions don't really work:
 +	 *
-+	 * To prevent a kexec kernel from onlining secondary CPUs invalidate the
-+	 * mailbox address in the ACPI MADT wakeup structure which prevents a
-+	 * kexec kernel to use it.
++	 * 1) jit kernel module which creates kernel thread:
++	 * test becomes arch-specific,
++	 * problems with mandatory module signing,
++	 * problems with lockdown mode,
++	 * doesn't work with CONFIG_MODULES=n at all,
++	 * kthread creation API is formally unstable internal kernel API,
++	 * need a mechanism to report test kernel thread's PID back,
 +	 *
-+	 * This is safe as the booting kernel has the mailbox address cached
-+	 * already and acpi_wakeup_cpu() uses the cached value to bring up the
-+	 * secondary CPUs.
++	 * 2) ksoftirqd/0 and kswapd0 look like stable enough kernel threads,
++	 * but their PIDs are unstable.
 +	 *
-+	 * Note: This is a Linux specific convention and not covered by the
-+	 *       ACPI specification.
++	 * Check against kthreadd which always seem to exist under pid 2.
 +	 */
-+	mp_wake->mailbox_address = 0;
++	int fd = open("/proc/2/status", O_RDONLY);
++	assert(fd >= 0);
++
++	char buf[4096];
++	ssize_t rv = read(fd, buf, sizeof(buf));
++	assert(0 <= rv && rv < sizeof(buf));
++	buf[rv] = '\0';
++
++	assert(strstr(buf, "Kthread:\t1\n"));
++
++	return 0;
 +}
+new file mode 100644
+--- /dev/null
++++ b/tools/testing/selftests/proc/proc-self-isnt-kthread.c
+@@ -0,0 +1,37 @@
++/*
++ * Copyright (c) 2024 Alexey Dobriyan <adobriyan@gmail.com>
++ *
++ * Permission to use, copy, modify, and distribute this software for any
++ * purpose with or without fee is hereby granted, provided that the above
++ * copyright notice and this permission notice appear in all copies.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
++ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
++ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
++ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
++ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ */
++/* Test that userspace program is not kernel thread. */
++#undef NDEBUG
++#include <assert.h>
++#include <fcntl.h>
++#include <string.h>
++#include <unistd.h>
 +
- /* The argument is required to match type of x86_mapping_info::alloc_pgt_page */
- static void __init *alloc_pgt_page(void *dummy)
- {
--	return memblock_alloc(PAGE_SIZE, PAGE_SIZE);
-+	return (void *)get_zeroed_page(GFP_KERNEL);
- }
- 
- static void __init free_pgt_page(void *pgt, void *dummy)
- {
--	return memblock_free(pgt, PAGE_SIZE);
-+	return free_page((unsigned long)pgt);
- }
- 
--/*
-- * Make sure asm_acpi_mp_play_dead() is present in the identity mapping at
-- * the same place as in the kernel page tables. asm_acpi_mp_play_dead() switches
-- * to the identity mapping and the function has be present at the same spot in
-- * the virtual address space before and after switching page tables.
-- */
--static int __init init_transition_pgtable(pgd_t *pgd)
--{
--	pgprot_t prot = PAGE_KERNEL_EXEC_NOENC;
--	unsigned long vaddr, paddr;
--	p4d_t *p4d;
--	pud_t *pud;
--	pmd_t *pmd;
--	pte_t *pte;
--
--	vaddr = (unsigned long)asm_acpi_mp_play_dead;
--	pgd += pgd_index(vaddr);
--	if (!pgd_present(*pgd)) {
--		p4d = (p4d_t *)alloc_pgt_page(NULL);
--		if (!p4d)
--			return -ENOMEM;
--		set_pgd(pgd, __pgd(__pa(p4d) | _KERNPG_TABLE));
--	}
--	p4d = p4d_offset(pgd, vaddr);
--	if (!p4d_present(*p4d)) {
--		pud = (pud_t *)alloc_pgt_page(NULL);
--		if (!pud)
--			return -ENOMEM;
--		set_p4d(p4d, __p4d(__pa(pud) | _KERNPG_TABLE));
--	}
--	pud = pud_offset(p4d, vaddr);
--	if (!pud_present(*pud)) {
--		pmd = (pmd_t *)alloc_pgt_page(NULL);
--		if (!pmd)
--			return -ENOMEM;
--		set_pud(pud, __pud(__pa(pmd) | _KERNPG_TABLE));
--	}
--	pmd = pmd_offset(pud, vaddr);
--	if (!pmd_present(*pmd)) {
--		pte = (pte_t *)alloc_pgt_page(NULL);
--		if (!pte)
--			return -ENOMEM;
--		set_pmd(pmd, __pmd(__pa(pte) | _KERNPG_TABLE));
--	}
--	pte = pte_offset_kernel(pmd, vaddr);
--
--	paddr = __pa(vaddr);
--	set_pte(pte, pfn_pte(paddr >> PAGE_SHIFT, prot));
--
--	return 0;
--}
--
--static int __init acpi_mp_setup_reset(u64 reset_vector)
-+static int __init acpi_mp_setup_reset(union acpi_subtable_headers *header,
-+			      const unsigned long end)
- {
-+	struct acpi_madt_multiproc_wakeup *mp_wake;
- 	struct x86_mapping_info info = {
- 		.alloc_pgt_page = alloc_pgt_page,
- 		.free_pgt_page	= free_pgt_page,
- 		.page_flag      = __PAGE_KERNEL_LARGE_EXEC,
--		.kernpg_flag    = _KERNPG_TABLE_NOENC,
-+		.kernpg_flag    = _KERNPG_TABLE,
- 	};
-+	unsigned long vaddr, pfn;
- 	pgd_t *pgd;
- 
- 	pgd = alloc_pgt_page(NULL);
- 	if (!pgd)
--		return -ENOMEM;
-+		goto err;
- 
- 	for (int i = 0; i < nr_pfn_mapped; i++) {
- 		unsigned long mstart, mend;
-@@ -143,30 +116,45 @@ static int __init acpi_mp_setup_reset(u64 reset_vector)
- 		mend   = pfn_mapped[i].end << PAGE_SHIFT;
- 		if (kernel_ident_mapping_init(&info, pgd, mstart, mend)) {
- 			kernel_ident_mapping_free(&info, pgd);
--			return -ENOMEM;
-+			goto err;
- 		}
- 	}
- 
- 	if (kernel_ident_mapping_init(&info, pgd,
--				      PAGE_ALIGN_DOWN(reset_vector),
--				      PAGE_ALIGN(reset_vector + 1))) {
-+				      PAGE_ALIGN_DOWN(acpi_mp_reset_vector_paddr),
-+				      PAGE_ALIGN(acpi_mp_reset_vector_paddr + 1))) {
- 		kernel_ident_mapping_free(&info, pgd);
--		return -ENOMEM;
-+		goto err;
- 	}
- 
--	if (init_transition_pgtable(pgd)) {
-+	/*
-+	 * Make sure asm_acpi_mp_play_dead() is present in the identity mapping
-+	 * at the same place as in the kernel page tables.
-+	 *
-+	 * asm_acpi_mp_play_dead() switches to the identity mapping and the
-+	 * function has be present at the same spot in the virtual address space
-+	 * before and after switching page tables.
-+	 */
-+	vaddr = (unsigned long)asm_acpi_mp_play_dead;
-+	pfn = __pa(vaddr) >> PAGE_SHIFT;
-+	if (kernel_map_pages_in_pgd(pgd, pfn, vaddr, 1, _KERNPG_TABLE)) {
- 		kernel_ident_mapping_free(&info, pgd);
--		return -ENOMEM;
-+		goto err;
- 	}
- 
- 	smp_ops.play_dead = acpi_mp_play_dead;
- 	smp_ops.stop_this_cpu = acpi_mp_stop_this_cpu;
- 	smp_ops.cpu_die = acpi_mp_cpu_die;
- 
--	acpi_mp_reset_vector_paddr = reset_vector;
- 	acpi_mp_pgd = __pa(pgd);
- 
- 	return 0;
-+err:
-+	pr_warn("Failed to setup MADT reset vector\n");
-+	mp_wake = (struct acpi_madt_multiproc_wakeup *)header;
-+	acpi_mp_disable_offlining(mp_wake);
-+	return -ENOMEM;
-+
- }
- 
- static int acpi_wakeup_cpu(u32 apicid, unsigned long start_ip)
-@@ -226,28 +214,6 @@ static int acpi_wakeup_cpu(u32 apicid, unsigned long start_ip)
- 	return 0;
- }
- 
--static void acpi_mp_disable_offlining(struct acpi_madt_multiproc_wakeup *mp_wake)
--{
--	cpu_hotplug_disable_offlining();
--
--	/*
--	 * ACPI MADT doesn't allow to offline a CPU after it was onlined. This
--	 * limits kexec: the second kernel won't be able to use more than one CPU.
--	 *
--	 * To prevent a kexec kernel from onlining secondary CPUs invalidate the
--	 * mailbox address in the ACPI MADT wakeup structure which prevents a
--	 * kexec kernel to use it.
--	 *
--	 * This is safe as the booting kernel has the mailbox address cached
--	 * already and acpi_wakeup_cpu() uses the cached value to bring up the
--	 * secondary CPUs.
--	 *
--	 * Note: This is a Linux specific convention and not covered by the
--	 *       ACPI specification.
--	 */
--	mp_wake->mailbox_address = 0;
--}
--
- int __init acpi_parse_mp_wake(union acpi_subtable_headers *header,
- 			      const unsigned long end)
- {
-@@ -274,10 +240,7 @@ int __init acpi_parse_mp_wake(union acpi_subtable_headers *header,
- 
- 	if (mp_wake->version >= ACPI_MADT_MP_WAKEUP_VERSION_V1 &&
- 	    mp_wake->header.length >= ACPI_MADT_MP_WAKEUP_SIZE_V1) {
--		if (acpi_mp_setup_reset(mp_wake->reset_vector)) {
--			pr_warn("Failed to setup MADT reset vector\n");
--			acpi_mp_disable_offlining(mp_wake);
--		}
-+		acpi_mp_reset_vector_paddr = mp_wake->reset_vector;
- 	} else {
- 		/*
- 		 * CPU offlining requires version 1 of the ACPI MADT wakeup
-@@ -290,3 +253,13 @@ int __init acpi_parse_mp_wake(union acpi_subtable_headers *header,
- 
- 	return 0;
- }
-+
-+static int __init acpi_mp_offline_init(void)
++int main(void)
 +{
-+	if (!acpi_mp_reset_vector_paddr)
-+		return 0;
++	int fd = open("/proc/self/status", O_RDONLY);
++	assert(fd >= 0);
 +
-+	return acpi_table_parse_madt(ACPI_MADT_TYPE_MULTIPROC_WAKEUP,
-+				     acpi_mp_setup_reset, 1);
++	char buf[4096];
++	ssize_t rv = read(fd, buf, sizeof(buf));
++	assert(0 <= rv && rv < sizeof(buf));
++	buf[rv] = '\0';
++
++	/* This test is very much not kernel thread. */
++	assert(strstr(buf, "Kthread:\t0\n"));
++
++	return 0;
 +}
-+early_initcall(acpi_mp_offline_init);
-diff --git a/arch/x86/mm/ident_map.c b/arch/x86/mm/ident_map.c
-index 3996af7b4abf..c45127265f2f 100644
---- a/arch/x86/mm/ident_map.c
-+++ b/arch/x86/mm/ident_map.c
-@@ -60,7 +60,7 @@ static void free_p4d(struct x86_mapping_info *info, pgd_t *pgd)
- 	}
- 
- 	if (pgtable_l5_enabled())
--		info->free_pgt_page(pgd, info->context);
-+		info->free_pgt_page(p4d, info->context);
- }
- 
- void kernel_ident_mapping_free(struct x86_mapping_info *info, pgd_t *pgd)
-diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
-index 443a97e515c0..72715674f492 100644
---- a/arch/x86/mm/pat/set_memory.c
-+++ b/arch/x86/mm/pat/set_memory.c
-@@ -69,7 +69,7 @@ static const int cpa_warn_level = CPA_PROTECT;
-  * entries change the page attribute in parallel to some other cpu
-  * splitting a large page entry along with changing the attribute.
-  */
--static DEFINE_SPINLOCK(cpa_lock);
-+static DEFINE_MUTEX(cpa_lock);
- 
- #define CPA_FLUSHTLB 1
- #define CPA_ARRAY 2
-@@ -1186,10 +1186,10 @@ static int split_large_page(struct cpa_data *cpa, pte_t *kpte,
- 	struct page *base;
- 
- 	if (!debug_pagealloc_enabled())
--		spin_unlock(&cpa_lock);
-+		mutex_unlock(&cpa_lock);
- 	base = alloc_pages(GFP_KERNEL, 0);
- 	if (!debug_pagealloc_enabled())
--		spin_lock(&cpa_lock);
-+		mutex_lock(&cpa_lock);
- 	if (!base)
- 		return -ENOMEM;
- 
-@@ -1804,10 +1804,10 @@ static int __change_page_attr_set_clr(struct cpa_data *cpa, int primary)
- 			cpa->numpages = 1;
- 
- 		if (!debug_pagealloc_enabled())
--			spin_lock(&cpa_lock);
-+			mutex_lock(&cpa_lock);
- 		ret = __change_page_attr(cpa, primary);
- 		if (!debug_pagealloc_enabled())
--			spin_unlock(&cpa_lock);
-+			mutex_unlock(&cpa_lock);
- 		if (ret)
- 			goto out;
- 
-@@ -2516,7 +2516,9 @@ int __init kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
- 	cpa.mask_set = __pgprot(_PAGE_PRESENT | page_flags);
- 
- 	retval = __change_page_attr_set_clr(&cpa, 1);
-+	preempt_disable();
- 	__flush_tlb_all();
-+	preempt_enable();
- 
- out:
- 	return retval;
-@@ -2551,7 +2553,9 @@ int __init kernel_unmap_pages_in_pgd(pgd_t *pgd, unsigned long address,
- 	WARN_ONCE(num_online_cpus() > 1, "Don't call after initializing SMP");
- 
- 	retval = __change_page_attr_set_clr(&cpa, 1);
-+	preempt_disable();
- 	__flush_tlb_all();
-+	preempt_enable();
- 
- 	return retval;
- }
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
 
