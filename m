@@ -1,125 +1,108 @@
-Return-Path: <linux-kernel+bounces-205821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 164379000CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:30:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BC769000CF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30D821C22168
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:30:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4AD51F256A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC6815D5D6;
-	Fri,  7 Jun 2024 10:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJ1RE9Cq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6744B15D5BD;
-	Fri,  7 Jun 2024 10:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED8115CD75;
+	Fri,  7 Jun 2024 10:30:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8039E158214
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 10:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717756202; cv=none; b=cHASspIXKZp4AO7b0lAG12bnckTMEmusVjx/ZTPQjQfFzeQQKjqj++IEXth9eFMlQYLdVVFch8tlwH+j9pv2UnDGzJS5Y/iOthTRnwpoO9PdAkUYDuEifj3sRbfqjI5zq6gyxRHDJq/rhSRgcx46Fr36/ApsmlTQKpivM6dBo9M=
+	t=1717756219; cv=none; b=Yx+ZyociwDEHedSJhHsXD+OwExeGZAex8h/s5tU/nAJfKNYdvF3UQGDQBEFdtekc2Fe+YXGKYj8nnbVlkyU/nxHKIhgvbWVIJQrfOVn2Kz5beStBsH4RS2NOgj3HKx11HMrVmyAEack+ESbMqkIde1y3CL5sVG31LAleyjbV1kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717756202; c=relaxed/simple;
-	bh=y5IwuyaQDrnSDBJYNI75IW6lnQ2FscwzbDOcz+9Y8e8=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=f3aaAqjOkDHHFajdjFmnonFbMDil48nW30pX+XNBDBoMzRb16qFU0xU58jA5ugdF2VRuqHkVzXjfbvjcfUULBUO9pzPdp9eWfBE9JfJl3QdYRbLuoAST27+JQoGMVz4fYObX8OrqqnwjPRTp74XSx5tyjLvjcXPJnHXaaXf2h+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJ1RE9Cq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C12BC2BBFC;
-	Fri,  7 Jun 2024 10:30:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717756201;
-	bh=y5IwuyaQDrnSDBJYNI75IW6lnQ2FscwzbDOcz+9Y8e8=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=fJ1RE9CqPShL6jkbKXg+pN7edrFIkH+1YdVP8jV6lMOgeGixIMhQhGsfGUVooRVUW
-	 WmgNapo5D+ms1MWzt+u3mB9cpwxFqmhz7Pqr9P4P3ETbUKrjcAhZYL/EA6w1ODhhw7
-	 7dPcgs3WcpwrdSvMbppWn1J3TBDtmSPvIWk3tPxGCFNBB4A6A/TXOfkcXzduFpuzvu
-	 m0y3pxWD3hkRTsTmRTsPb694fsUjmEZwPK3NPUGs65ClmYdsrQRduRT9B/rKuCwI/L
-	 3q8F9PKtseEOA5mYea/nvkBXuzOPI75ZQze/eHPIMGJPNA1AcGB43HdeH1xIaZq67p
-	 1Y+1kWG3vvAyQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: Alexis =?utf-8?Q?Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,  Johannes Berg
- <johannes@sipsolutions.net>,  Wireless <linux-wireless@vger.kernel.org>,
-  Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,  Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the wireless-next tree with the
- wireless tree
-References: <20240603110023.23572803@canb.auug.org.au>
-	<875xuquyyb.fsf@kernel.org> <87tti6qt5o.fsf@kernel.org>
-	<317b515f-30fb-4b18-bb99-b65091449ec4@bootlin.com>
-Date: Fri, 07 Jun 2024 13:29:58 +0300
-In-Reply-To: <317b515f-30fb-4b18-bb99-b65091449ec4@bootlin.com> ("Alexis
-	=?utf-8?Q?Lothor=C3=A9=22's?= message of "Fri, 7 Jun 2024 11:44:10 +0200")
-Message-ID: <87frtpoxjt.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1717756219; c=relaxed/simple;
+	bh=NccNIYy2Gy7W2SjQwlZRh0VSwGC/qT4hnXlrb21+hQU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hGyaYvYW6ClvCTPaBLRnwuUnuDXTs1RCtB2ZBCPG7XGI7T9qRmfJq7Ybg6ubOTzx4GjBAxv4gT8gatJnmy5Bk4TofP7pnHNi/u7kCQydWXIR9AzPYTUPAQhmook2SCQGn3/SclVWw4yf0nee5J4lXUpFnbX9d9gpvfu4M996HbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BD8222F4;
+	Fri,  7 Jun 2024 03:30:40 -0700 (PDT)
+Received: from [192.168.2.88] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 101DD3F64C;
+	Fri,  7 Jun 2024 03:30:13 -0700 (PDT)
+Message-ID: <64115627-c6c7-416b-99f9-0df22cbdca6b@arm.com>
+Date: Fri, 7 Jun 2024 12:30:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched/fair: Prevent cpu_busy_time from exceeding
+ actual_cpu_capacity
+To: Xuewen Yan <xuewen.yan94@gmail.com>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, vincent.guittot@linaro.org,
+ mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ bristot@redhat.com, vschneid@redhat.com, vincent.donnefort@arm.com,
+ qyousef@layalina.io, ke.wang@unisoc.com, linux-kernel@vger.kernel.org
+References: <20240606070645.3295-1-xuewen.yan@unisoc.com>
+ <0763f870-e30c-46cf-aefa-b879f2ebdba4@arm.com>
+ <CAB8ipk_TjqoNetBZ7dbjRxuBHAP=nz9=ZNomnjnaCEikLQSK2A@mail.gmail.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <CAB8ipk_TjqoNetBZ7dbjRxuBHAP=nz9=ZNomnjnaCEikLQSK2A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Alexis Lothor=C3=A9 <alexis.lothore@bootlin.com> writes:
+On 07/06/2024 10:20, Xuewen Yan wrote:
+> Hi Dietmar
+> 
+> On Fri, Jun 7, 2024 at 3:19 PM Dietmar Eggemann
+> <dietmar.eggemann@arm.com> wrote:
+>>
+>> On 06/06/2024 09:06, Xuewen Yan wrote:
+>>> Because the effective_cpu_util() would return a util which
+>>> maybe bigger than the actual_cpu_capacity, this could cause
+>>> the pd_busy_time calculation errors.
+>>
+>> Doesn't return effective_cpu_util() either scale or min(scale, util)
+>> with scale = arch_scale_cpu_capacity(cpu)? So the util sum over the PD
+>> cannot exceed eenv->cpu_cap?
+> 
+> In effective_cpu_util, the scale = arch_scale_cpu_capacity(cpu);
+>  Although there is the clamp of eenv->pd_cap, but let us consider the
+> following simple scenario:
+> The pd cpus are 4-7, and the arch_scale_capacity is 1024, and because
+> of cpufreq-limit,
 
-> Hello Kalle, Stephen,
->
-> On 6/6/24 12:09, Kalle Valo wrote:
->> Kalle Valo <kvalo@kernel.org> writes:
->>=20
->>> Stephen Rothwell <sfr@canb.auug.org.au> writes:
->>>
->>>> Hi all,
->>>>
->>>> Today's linux-next merge of the wireless-next tree got a conflict in:
->>>>
->>>>   drivers/net/wireless/microchip/wilc1000/netdev.c
->>>>
->>>> between commit:
->>>>
->>>>   ebfb5e8fc8b4 ("Revert "wifi: wilc1000: convert list management to RC=
-U"")
->>>>
->>>> from the wireless tree and commit:
->>>>
->>>>   6fe46d5c0a84 ("wifi: wilc1000: set net device registration as last
->>>> step during interface creation")
->>>>
->>>> from the wireless-next tree.
->>>>
->>>> I fixed it up (see below) and can carry the fix as necessary. This
->>>> is now fixed as far as linux-next is concerned, but any non trivial
->>>> conflicts should be mentioned to your upstream maintainer when your tr=
-ee
->>>> is submitted for merging.  You may also want to consider cooperating
->>>> with the maintainer of the conflicting tree to minimise any particular=
-ly
->>>> complex conflicts.
->>>
->>> Thanks. We need to figure out how we solve this conflict, most probably
->>> we'll ask network maintainers to fix it when they pull wireless-next.
->>=20
->> Alexis, you know wilc1000 the best. Could you double check the conflict
->> resolution, it somewhat complicated:>
->> https://lore.kernel.org/all/20240603110023.23572803@canb.auug.org.au/
->>=20
->
-> LGTM, and some quick testing on the linux-next tree with the correspondin=
-g merge
-> commit showed no issue (no RCU warning, and mac address loading fix behav=
-ing
-> properly)
+Ah, this is due to:
 
-Excellent, thank you so much.
+find_energy_efficient_cpu()
 
---=20
-https://patchwork.kernel.org/project/linux-wireless/list/
+   ...
+   for (; pd; pd = pd->next)
+       ...
+       cpu_actual_cap = get_actual_cpu_capacity(cpu)
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
-hes
+       for_each_cpu(cpu, cpus)
+           ...
+           eenv.pd_cap += cpu_actual_cap
+
+and:
+
+get_actual_cpu_capacity()
+
+   ...
+   capacity = arch_scale_cpu_capacity(cpu)
+
+   capacity -= max(hw_load_avg(cpu_rq(cpu)), cpufreq_get_pressure(cpu))
+
+which got introduced by f1f8d0a22422 ("sched/cpufreq: Take cpufreq
+feedback into account").
+
+[...]
 
