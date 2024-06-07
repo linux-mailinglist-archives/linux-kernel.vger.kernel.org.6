@@ -1,127 +1,88 @@
-Return-Path: <linux-kernel+bounces-205602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5460E8FFE02
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:29:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 457A48FFE05
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D47082830A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:29:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA01D1F23A98
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC3A15B0FF;
-	Fri,  7 Jun 2024 08:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="MHI9wAYF"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E76B15B117;
+	Fri,  7 Jun 2024 08:30:14 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF82B15B0F6
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 08:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE5A73449;
+	Fri,  7 Jun 2024 08:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717748969; cv=none; b=A7npU6gAeqMWKNc+meOlB3bFOS9/WRo4oiOdxivggo+gRVGz7CMDHQ3B0IlPEzLFaW33mtkATFeLwqP+PGCH2tgMcp0P8c9ni5SL/ZAnjuaRU5QtcNaJRXlppybjYveIwEJcKd0y9UqkAZmqCY9gjJ2y6C/5S0ePMl6WNQl4RBI=
+	t=1717749014; cv=none; b=ZF+9khoLQEvNTjC46l4fo9hMwCz7db3Eh9u18sfVoZmidXcW3LbzX+vs+J9IoFUHp+OT8Oi1cccDh6TyLlM0Qy5a81JJrZtc3/ESht/+hy34vi8s68/49JnEw55nBccOPfn79BeYIOP7nLxml7Gk+pSf2Uk4z5bzyODBKxtskkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717748969; c=relaxed/simple;
-	bh=aK10eVoy1pHPzRBaMWuJDogzvbBebhllculFYvTNhSk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UXP0NDNDvcopAk1elfgB2yz82qkPhhIOk+jBTKd3DpsOErVtNZcbKAu+ycwxEUKT0By7ECQXtzhEq6CuXYH+FIk5oUq5JGscxk+F6wmyWLOgAJLh4YfLss6llf1ye7qGXW9ymjiZuetZTgN++CdWNcS5VXWi3bgIkwpqjpY+K9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=MHI9wAYF; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1717748954;
-	bh=aK10eVoy1pHPzRBaMWuJDogzvbBebhllculFYvTNhSk=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=MHI9wAYFhtYurtAizVkehIHAmwceOkFYntOBS7R63hOUkb1teR2c/+603lWI4bevD
-	 RZDCTUB1xIGLwYx0xEqV7cLsfKATMUsDTzbYxeJf2S929RFhEZs1sysIK6CKsxwti8
-	 jCyoVTysq/k2e41RpmIF0+lfXv0iohfCf9AEUX8s=
-Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 359A76709A;
-	Fri,  7 Jun 2024 04:29:11 -0400 (EDT)
-Message-ID: <329dac82e09dfc75e77ae93ebbeacdec1dc9ff7f.camel@xry111.site>
-Subject: Re: [PATCH] loongarch: Only select HAVE_OBJTOOL and allow ORC
- unwinder if the inline assembler supports R_LARCH_{32,64}_PCREL
-From: Xi Ruoyao <xry111@xry111.site>
-To: Jinyang He <hejinyang@loongson.cn>, Nathan Chancellor
- <nathan@kernel.org>,  Peter Zijlstra <peterz@infradead.org>
-Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
- Tiezhu Yang <yangtiezhu@loongson.cn>, Nick Desaulniers
- <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
- <justinstitt@google.com>, Youling Tang <tangyouling@kylinos.cn>,
- loongarch@lists.linux.dev,  linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, mengqinggang@loongson.cn,  cailulu@loongson.cn,
- wanglei@loongson.cn, luweining@loongson.cn, Yujie Liu
- <yujie.liu@intel.com>, Heng Qi <hengqi@linux.alibaba.com>, Tejun Heo
- <tj@kernel.org>
-Date: Fri, 07 Jun 2024 16:29:09 +0800
-In-Reply-To: <2bd6ae20-ec56-c1a2-c5dd-e8c978a376d3@loongson.cn>
-References: <20240604150741.30252-1-xry111@xry111.site>
-	 <20240605054328.GA279426@thelio-3990X>
-	 <b55b8cb2c52f2c3701c83353586130b8dc237ee2.camel@xry111.site>
-	 <20240605062548.GF279426@thelio-3990X>
-	 <f8ef61773b0119b8573fc0fed9ad0a8b43061efd.camel@xry111.site>
-	 <444ec2031ef6ca016cbfa8dfedc51bddc8529ba7.camel@xry111.site>
-	 <ada035690e446909c3cdbf9a43a92def96020615.camel@xry111.site>
-	 <82b7e6ea-c2cb-6364-ebe9-bff928028408@loongson.cn>
-	 <1c132209a612e2e8953f0b458fc01853120db9a9.camel@xry111.site>
-	 <2bf11cd2-8449-acda-f5ad-659c38cb018e@loongson.cn>
-	 <96a2e8a80c06772b64fcbdba42e1dae2d68a53a7.camel@xry111.site>
-	 <2bd6ae20-ec56-c1a2-c5dd-e8c978a376d3@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1717749014; c=relaxed/simple;
+	bh=0TnUzUxvZQdTx9CuUgse6TVT1R8oY0fk7XreHm3feVc=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YU+RSIRKceSdFOVrjQ5sY+PHmBNYi9YPnbJVQC+lm10FQMwf83ZyJ2IfTC4/OsMAPnCQATRMfYNxlEBs0nOgOO+KKI5nxAaPd/+z7IWh02N3WW5kfuzyHoSSKREZ/qLVxMdVRJodL9jNjOgg7CWtswEpriGGoAa9Jtq8ZPYtehY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VwZ5L2x5Vz67Zdq;
+	Fri,  7 Jun 2024 16:25:26 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3E2D4140B2F;
+	Fri,  7 Jun 2024 16:30:08 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 7 Jun
+ 2024 09:30:07 +0100
+Date: Fri, 7 Jun 2024 09:30:06 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Dan Williams <dan.j.williams@intel.com>
+CC: Jeff Johnson <quic_jjohnson@quicinc.com>, Davidlohr Bueso
+	<dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>, Alison Schofield
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, "Ira
+ Weiny" <ira.weiny@intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] cxl: add missing MODULE_DESCRIPTION() macros
+Message-ID: <20240607093006.00004335@Huawei.com>
+In-Reply-To: <6662497490e90_2177294e4@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+References: <20240603-md-drivers-cxl-v1-1-f2940f5c0836@quicinc.com>
+	<20240604170445.00005c67@Huawei.com>
+	<362fccea-707f-4430-8da3-8acc6ac5fbe9@quicinc.com>
+	<20240606151521.000018fd@Huawei.com>
+	<b3405ab7-b322-4ce9-9dfa-efb52438383a@quicinc.com>
+	<6662497490e90_2177294e4@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Fri, 2024-06-07 at 15:14 +0800, Jinyang He wrote:
-> > =C2=A0=C2=A0=C2=A0=C2=A0 Note: on RISC-V and LoongArch, the stack slot =
-for the previous frame
-> > =C2=A0=C2=A0=C2=A0=C2=A0 pointer is stored at fp[-2] instead of fp[0]. =
-See [Consider
-> > =C2=A0=C2=A0=C2=A0=C2=A0 standardising which stack slot fp points
-> > =C2=A0=C2=A0=C2=A0=C2=A0 to](https://github.com/riscv-non-isa/riscv-elf=
--psabi-doc/issues/18)
-> > =C2=A0=C2=A0=C2=A0=C2=A0 for the RISC-V discussion.
->=20
-> In most cases the $fp is saved at cfa-16. But for va args, something
-> becomes different at LoongArch (I do not know the case of riscv), the
-> $fp isn't saved at cfa-16. (e.g. printk?)
+On Thu, 6 Jun 2024 16:42:44 -0700
+Dan Williams <dan.j.williams@intel.com> wrote:
 
-Oops indeed.  Even with a very simple case:
+> Jeff Johnson wrote:
+> [..]
+> > >> This I just made up from the others since config CXL_PORT doesn't have a menu
+> > >> description or help text and the .c file begins with:
+> > >>  * DOC: cxl port  
+> > > 
+> > > "CXL: Port Support"
+> > > 
+> > > Not that informative, but I can't immediately think of better text.  
+> 
+> How about "CXL: Port enumeration and services"
+> 
 
-int sum(int a, int b) {
-	return a + b;
-}
-
-with -fno-omit-frame-pointer we get:
-
-sum:
-	addi.d	$r3,$r3,-16
-	st.d	$r22,$r3,8
-	addi.d	$r22,$r3,16
-	ld.d	$r22,$r3,8
-	add.w	$r4,$r4,$r5
-	addi.d	$r3,$r3,16
-	jr	$r1
-
-So for leaf functions (where we don't save $ra) $fp is saved at cfa-8.
-
-> I feel that the update_cfi_state should be arch specific. I believe
-> that some logic can be reused, but each arch may have its own logic.
-
-I agree it now.
-
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+LGTM
 
