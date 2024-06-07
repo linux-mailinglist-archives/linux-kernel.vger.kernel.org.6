@@ -1,115 +1,144 @@
-Return-Path: <linux-kernel+bounces-205656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D268FFE86
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:58:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 478E58FFEA0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83E4E286905
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:58:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB0B7B24576
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5756A15B141;
-	Fri,  7 Jun 2024 08:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC7315B152;
+	Fri,  7 Jun 2024 09:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZP52hWwh"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eUPUpaWR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3FA18EA1;
-	Fri,  7 Jun 2024 08:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002E517C6C
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717750730; cv=none; b=bEnpnb0eb5NZdVQx+aki9pQTixJi+GlvkroriIXOcrIeAx3loUNfSXcq4LwfXmrTAsW8gkJ78JsSUgcLCbV1v+mv8rdmnrD/M/DYuxNv/+ytGIkGWJuI8qszvQA7MGckC6CWsRMWUVdiMr1MB5/DM16TobrAalLjps0WyRhTkPw=
+	t=1717751023; cv=none; b=nDgFg7tyI8GZQyQFdlvsd9JlZFBud624tElpQmn0OBxpYeNIjosCB7UnI9onOOQ5UNzLYQIVuBPKMJtYNweBFkiHwAte41WZ+az3gv/Z/o8zzwi8FPtl82OszFdnTaxHTOADEAbZxCMS1OPUYlcN9qyhvcM80ds4NMbbhBhMr78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717750730; c=relaxed/simple;
-	bh=EStxEKykbbxUE6Xp7RiccdMIZ5upJvK19vz3oYBkq0c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EncaenaN81IGzZmA52HP/rmblkVBeF3B4NNf4XVpfTAwGzdBroawfVz+daGSmV4KWJrmFxHlNM8FhW5XB37ZiP0AloJ/1vqwvAc4dRbGJQ9t6u/Pai5983+vw1sVvaDvJ9InQW9k3nt9Ck4hcu93YFC+NR/Z24uyIVkIHa0DaEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZP52hWwh; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a68ca4d6545so338934566b.0;
-        Fri, 07 Jun 2024 01:58:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717750727; x=1718355527; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=EStxEKykbbxUE6Xp7RiccdMIZ5upJvK19vz3oYBkq0c=;
-        b=ZP52hWwhWh++d/nPMZ6j3Mjna8eBzxFVD+eirpupA2EzoJDlAqQTQQO8QzgR3ht1bs
-         HzfRETySgUfBfs5VRgrOV25Cflswmqyn0hblriYfSx5rJ8TysisvQmPb7+yU2cQN1yP4
-         /OM8kr3jmmhsachDMAmnxhe9/siBFuKqZNAFa9gCZHJRKMddqDiN/J6yVjmX1N0+F95x
-         381jZpRsRhLiPPMdP3T1W/Y5Gv4EzGw0wbrNjbml72StFeWnelHsWvGFlJnl30a0gk+M
-         4K8oOJCbYzkcSbcvhEHEPVJofnZc9f4vzL0rEaByQKJP01kCuLjKVVE5wVcP4biMPwnK
-         kuIw==
+	s=arc-20240116; t=1717751023; c=relaxed/simple;
+	bh=7X6zarJgJIAqkTEk8mUER5IEjtHSmRMyzVjoW1K8ZhY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Csz0ODHJ9xrW52wdMmJkz5g9XVg9A5Agk29k40rD72nXvUFwsp+oNhdDR+A3mPlEgYhqtP61ljeMuWystU/yH/Jq35afyPxHpK9+b6CtRaKVlRupiV7Eaeg2pc1T4VymmNWjM4JS54QprCziUwH7FMIWB2DptJlV8+dDlIxG77U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eUPUpaWR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717751020;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xqE6hPCyqXNy3D1+Jzyj9gbitemqp2I97TKEU0JKvzE=;
+	b=eUPUpaWRb7bbisO702jI6rL/5pL3y8tlUQfce7zHvGv9HI70NqsrcaDnphjrpA4eN9fPp9
+	XmsgiFGcCmfCgHGvs0M9nBMHyOy0UWtTLjIyPkEQYjY2Y2H1yj2RuOnar4xHwnf20N71S5
+	6p/3JpuNBgY7kHjvLZg2mAhjOmFa/qk=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-368-E5xHp6M0OJ--Wwy-WjMRFw-1; Fri, 07 Jun 2024 05:03:39 -0400
+X-MC-Unique: E5xHp6M0OJ--Wwy-WjMRFw-1
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52b88765386so1774513e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 02:03:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717750727; x=1718355527;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EStxEKykbbxUE6Xp7RiccdMIZ5upJvK19vz3oYBkq0c=;
-        b=m0Twv/YDowyHlenN+SfG6fJNlxYXyISMbaXQGYxpXBUyyA6cjbXGwebrH38ZfeU7sB
-         G/9y/0GbRNoHhKb+1hI+C2ju6FOG+hUpd7aHwpaDt7gAAmFacEdxc3RJmd22wTrxnG/q
-         eKrREOsFZhRfQmsppv/hBlfWEuH9ybbEMwgsVz/5iZ3P48KF5+KUjvBn43SSC66j7+7w
-         GxLfjt9Jx7apEJSW2304V1HTFLZIYj0r6iE1LBNf4j9keRhuomy7DvspEFWPIoFPkIfY
-         pm4waVvIx09zXxilwNAr/q3Kq3Q5IIgkytVuJrXB+8+DAtC+MxQysvpgjpu1lUfbzBLT
-         JpUg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3V3Pbi5BhpcNkLmfbKPREzx7TQln2ralF28kFDKNW9ymDqmjBdf0MlWhS+PkI1XJstbI3ZU8c9hmI31tRNUOSDqTbOtZi2O4LgyYifoBnaGoh978xGQQULOeQE0IY5LGCcScOPEL72hRA14gLtzpbfSNZYWJG/toe8+cbgMLbBmltSQ==
-X-Gm-Message-State: AOJu0Yx6jny2ZS97cFQiCpDmLns10Ynw5TZQ6yBRC27yRdOalZSC+YwK
-	asMEr/+ntffkNXzvGJwpB8yfsplEK7B1JVH2Cu/An8reQcHTFJNq
-X-Google-Smtp-Source: AGHT+IG14ugY9dCGRzkJv3mysSlBFDJUUGrxTZrJy1527Qhv0LcCF7CPfrrXwMk04bZAet3PTLwgEQ==
-X-Received: by 2002:a17:906:f819:b0:a6a:185a:c12e with SMTP id a640c23a62f3a-a6c75faaf9dmr441230666b.10.1717750727205;
-        Fri, 07 Jun 2024 01:58:47 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c805fb1efsm217746966b.93.2024.06.07.01.58.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 01:58:46 -0700 (PDT)
-Message-ID: <be5c166e088e28e8c1e4a09da0ed71163fae727e.camel@gmail.com>
-Subject: Re: [PATCH v6 3/9] iio: adc: ad_sigma_delta: add disable_one
- callback
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: dumitru.ceclan@analog.com
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- David Lechner <dlechner@baylibre.com>,  linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org, Dumitru Ceclan
- <mitrutzceclan@gmail.com>
-Date: Fri, 07 Jun 2024 11:02:34 +0200
-In-Reply-To: <20240606-ad4111-v6-3-573981fb3e2e@analog.com>
-References: <20240606-ad4111-v6-0-573981fb3e2e@analog.com>
-	 <20240606-ad4111-v6-3-573981fb3e2e@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+        d=1e100.net; s=20230601; t=1717751018; x=1718355818;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xqE6hPCyqXNy3D1+Jzyj9gbitemqp2I97TKEU0JKvzE=;
+        b=X4iZ+ENvt5AHYbXedCh1xr3candJ2+UKtQCzyn1qWiXiWxwE5wwhRgWW3kqUi3jDkI
+         qGCwzt/hRvSW2sBu3up0GHHL7CW02n/rdXktxYYG8bKpiV9wAJRVWRKKlaGkQlutHSXs
+         sqIq5Fmzg3VTVRklbWtLwRVDuZj2BrKU1Qemz++czGEKM04J9ti04zUf29Rws8oXR7zT
+         3EAEmT0rpD8n5A4AlRNSxSQTrFsC905jbgrP0CXL1FY17pm4CaWcp54SIWZiWcckPUZ7
+         T/jU9DAicRXOscRSv7IpEfepZmhISUXZRqcIjPuPXbB+6JNJEfGbYkF3mCu3QwLcsh6H
+         iGxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5PfNEc2K11YUX2LYJwu1jr4PREu90r3/bwj31t/gL43WWgICAf8lMFE5Kz8+z0OxdrXgvfyptiOs3ln9dxX6BFvWwv3/l7NdL2PNt
+X-Gm-Message-State: AOJu0Yy0BKw4JeP6FZQffpXNOcBneEo0FwFUv9266i0L7x24bSb3A1FH
+	D3i+ZPEBsJK0q3KWG/paAhxhCvO/CA7HFbB33K+Yix47GW0yqg9mvrL/QY5CT49USYbYEcKCU3Q
+	Nqanr/ax6Ly3oSQV1SRcQAyBoBnZ8dV3d5CspKoqXPnsfZ+tv0q9rg7qv0Xxi+3s2EXu/NctY2B
+	jI/EBCHeMv6EJZxK8QURKfpPZGxIEr0tlsIHif
+X-Received: by 2002:a19:f812:0:b0:529:9fe5:f54b with SMTP id 2adb3069b0e04-52bb9fcc495mr1260613e87.43.1717751018046;
+        Fri, 07 Jun 2024 02:03:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF3tfq7LInmTFS863fnDty0MeJZUA2Es5xSZAYprCk31HXCX5v9kTaO2IKs/xYldhZhlO5SsG8it4TA8W+b+H8=
+X-Received: by 2002:a19:f812:0:b0:529:9fe5:f54b with SMTP id
+ 2adb3069b0e04-52bb9fcc495mr1260596e87.43.1717751017623; Fri, 07 Jun 2024
+ 02:03:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240530210714.364118-1-rick.p.edgecombe@intel.com> <20240530210714.364118-15-rick.p.edgecombe@intel.com>
+In-Reply-To: <20240530210714.364118-15-rick.p.edgecombe@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Fri, 7 Jun 2024 11:03:25 +0200
+Message-ID: <CABgObfYL9uujoLTmSBW0LqoQbOGKpfZsB50BZqMo5_WOChrZ-A@mail.gmail.com>
+Subject: Re: [PATCH v2 14/15] KVM: x86/tdp_mmu: Invalidate correct roots
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: seanjc@google.com, kvm@vger.kernel.org, kai.huang@intel.com, 
+	dmatlack@google.com, erdemaktas@google.com, isaku.yamahata@gmail.com, 
+	linux-kernel@vger.kernel.org, sagis@google.com, yan.y.zhao@intel.com, 
+	Sean Christopherson <sean.j.christopherson@intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2024-06-06 at 19:07 +0300, Dumitru Ceclan via B4 Relay wrote:
-> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
->=20
-> Sigma delta ADCs with a sequencer need to disable the previously enabled
-> channel when reading using ad_sigma_delta_single_conversion(). This was
-> done manually in drivers for devices with sequencers.
->=20
-> This patch implements handling of single channel disabling after a
-> single conversion.
->=20
-> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
-> ---
+On Thu, May 30, 2024 at 11:07=E2=80=AFPM Rick Edgecombe
+<rick.p.edgecombe@intel.com> wrote:
+>
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
+>
+> When invalidating roots, respect the root type passed.
+>
+> kvm_tdp_mmu_invalidate_roots() is called with different root types. For
+> kvm_mmu_zap_all_fast() it only operates on shared roots. But when tearing
+> down a VM it needs to invalidate all roots. Check the root type in root
+> iterator.
 
-You could have this done in separate patches... Oh well, this is simple eno=
-ugh
-that I don't care much.
+This patch and patch 12 are small enough that they can be merged.
 
-Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+> @@ -1135,6 +1135,7 @@ void kvm_tdp_mmu_zap_invalidated_roots(struct kvm *=
+kvm)
+>  void kvm_tdp_mmu_invalidate_roots(struct kvm *kvm,
+>                                   enum kvm_process process_types)
+>  {
+> +       enum kvm_tdp_mmu_root_types root_types =3D kvm_process_to_root_ty=
+pes(kvm, process_types);
 
+Maybe pass directly enum kvm_tdp_mmu_root_types?
+
+Looking at patch 12:
+
++ /*
++ * The private page tables doesn't support fast zapping.  The
++ * caller should handle it by other way.
++ */
++ kvm_tdp_mmu_invalidate_roots(kvm, KVM_PROCESS_SHARED);
+
+now that we have separated private-ness and external-ness, it sounds
+much better to write:
+
+/*
+ * External page tables don't support fast zapping, therefore
+ * their mirrors must be invalidated separately by the caller.
+ */
+kvm_tdp_mmu_invalidate_roots(kvm, KVM_DIRECT_ROOTS);
+
+while kvm_mmu_uninit_tdp_mmu() can pass KVM_ANY_ROOTS. It may also be
+worth adding an
+
+if (WARN_ON_ONCE(root_types & KVM_INVALID_ROOTS))
+  root_types &=3D ~KVM_INVALID_ROOTS;
+
+to document the invariants.
+
+Paolo
 
 
