@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-205458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAF298FFC53
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:39:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A64218FFC5D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:41:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F25701C26B43
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:39:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 288801F285D7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FD4153583;
-	Fri,  7 Jun 2024 06:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D27B153597;
+	Fri,  7 Jun 2024 06:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aafw3Sxk"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T1d+RYtX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5ED615357A;
-	Fri,  7 Jun 2024 06:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3BB14EC79;
+	Fri,  7 Jun 2024 06:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717742318; cv=none; b=UtcKjdQucXNoA1srZyO+O2sakyD8I34q3JNqSFV5vUKDHOzv7SaLMnbcdvJfKEiaRBvz4E6SUG43ufIXhqsi8OYF2yevXzio0yT+/UU0hgbKMfRDkHmI3STzgf3aHfvnB9LiLgcYmBaaeLsnLEaW+iRIrYTooOC56ybu5YZtNl8=
+	t=1717742452; cv=none; b=nO/id2uteDuf760aKgzX/ffSi0wdUfTuEUx4GuYuuWw6ZF86h2yKpHIfsxNK/00kWmnsCfDMpeuC7Yu7ytVXE8eyXA3n6XBgxjt8xcgpc93I3Drtw1OA9t57HMteN+M+JM8clm29w+8vCGGBBsJaMuldCUv7crl6BJjnmBSnzFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717742318; c=relaxed/simple;
-	bh=ERJWnWVnpoGLs0blFqeBB0v+fa49FBV9uXKidkjKQ0A=;
+	s=arc-20240116; t=1717742452; c=relaxed/simple;
+	bh=o4pvJBigImph+/4WxTGAX2YQ/B+mm8RB+o9aqeUkiBk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=igGBpuEM50UBebKyOx/R4J/s139d1R1yTiDvVsx7/KemzcW55GIwB6eX+OZ+5LmhPdsf/K9GFSCnUCQcu1rp4XEy0ZW8Xh6InlgxBL8//wN8bOImTerKqgUZgsSBwcMXvNU+Xf6T5UqVGszLYPVYm6Max4/k7Rzt0KobYbtd8gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aafw3Sxk; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52b82d57963so2137633e87.2;
-        Thu, 06 Jun 2024 23:38:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717742315; x=1718347115; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FZkbWYXotXP0D+I4t3xbShikjVMWcCFV6J3lsjGVH3s=;
-        b=Aafw3SxkcgRFHi/b+KCy1TvWikvBQwg2bT+IlGnUTbk0Gar7oOX1VrjMq/qPcvt/qA
-         eyL8N7IikxTGJ5+vEwTg55EAI6uBBPmsrhyrIUYibWKJsUBb5u2CSkc9KDY5G+AwHlR7
-         t9F+z9B9mp0K8KLabG1YvMeT0hDbY/dxGaHuiv/QZzw9E4B8InMJrb6RjgxmdgAap85w
-         qbr8abEc3FtG4ryEAhB9yaQenRKA/Yj87oZY92a2Nnqhd8A7KEVLg6QCO5PyxkGIJKv1
-         7wGGbQAS00XHpXwiP6KFgaOjshMcBwYZIZ62Zxxq9tRTchUL8snwNk5dTfoSZeQ0HhID
-         4C+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717742315; x=1718347115;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FZkbWYXotXP0D+I4t3xbShikjVMWcCFV6J3lsjGVH3s=;
-        b=LGnQj6H1mxBH0NJgPQYMZffbeCXnnFB5kLj8TxNMf9g5nwRDmtbR6sInZJf7bsV9gt
-         Pxrk0qkQGF6L1dRHqL8V8CWWLJERXcP2TIEBlOSAYIXF3Q0FZnEZ7qLGftNbIL4riesy
-         l9EgtFo5i4lDkMn4LOFfovFigEiaw9v6Zby8GhCKc2/jclc/H+8wscaJu8Jn1le1jnLv
-         8zB8DSFxkkm9nrScz0bHXAWXdo+deIxQpRQmXWuCznLx0vxjxvaW8I/pFCoK8PjQ1a6a
-         8fdh0EpwW9L1xMlKuNiyrueIxXKGxCxSvNJcUPEVW2gL2WxJD3tefFEwrkhAr2yvdo1k
-         3S3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ+f56NSfC/CmokxexBAJvrb9cE/EnU0cmXgNSzlFwvN7g7ns2vZMgFEVkLGW2Rxoui6a6SYa8INArzPJDx00z22Y7X4wOgCxdI2ddrhrk/FOP+RNVDmMdSlnNqdbqIEYuyGUoCnH4XDxERnEHSTiurF5+YARBKb/zIoSD+DarsA8k0dYUq79F
-X-Gm-Message-State: AOJu0YySyNkvTcHk/86OwYMuXX2gd0N1Gu347kEQEgyOhPaj/fZPi8hy
-	pZDmj8BuUFOodk7lV+KzbUHusfUjCxq4elHPs4ualZnNj3E18qEG
-X-Google-Smtp-Source: AGHT+IEJPE2IkHyGgR9Xlx+xEEalQpxNqOZE+n3WGHVUhojllNSi1XReGieC0Pd/3yUiKOUCrBw0uA==
-X-Received: by 2002:a05:6512:3d0d:b0:528:649b:d7bb with SMTP id 2adb3069b0e04-52bb9f14411mr1284770e87.0.1717742314527;
-        Thu, 06 Jun 2024 23:38:34 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb434dd31sm425529e87.306.2024.06.06.23.38.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 23:38:33 -0700 (PDT)
-Message-ID: <045828bd-4aeb-4d8d-b152-44a816a07221@gmail.com>
-Date: Fri, 7 Jun 2024 09:38:31 +0300
+	 In-Reply-To:Content-Type; b=kH34BIMXYXh4FXvVANb4EAyjHl2HUs/DtTWbhm3rJL6ycHHIPCve/dSopl4sLRj5vrAO9z4fcs7Ug9N3/4MF6KQd0LrJilHTlwEjX/n/z40W+w2S8M6uJaJGorRfhGQKxiDC+0PDPco9BB9MV/IQV2CAIpEM95ob5FSLLELcrhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T1d+RYtX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDE1BC2BBFC;
+	Fri,  7 Jun 2024 06:40:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717742451;
+	bh=o4pvJBigImph+/4WxTGAX2YQ/B+mm8RB+o9aqeUkiBk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=T1d+RYtXCMgCPqWf0bG8FaiDQ9qYrVNW9jgDiDEa63tl0QR9uvL7Bc6/2j08QP3Wj
+	 F+R2M1U0gLlwFkHy+YoLcQUe3UK3v1ZENu4/g1qpZ71Jz4Tf+AISiq+1wCQBGLn6fO
+	 m/bOnQgZ80INfygz+9JNBm19Yy07j56kuMjRsuivs5RjNQEIhNo0NZWV9KhmD/NUW+
+	 MypX18hbrzyHTyzEI4JOvQXzo/cjwuxtqr+ec5eTBbhOpK5obwam+SbzGL5U4MP71N
+	 YEISl5BFTS3g+Xah2Vh8ChcwVxkkO6bIWZyaZNceH0sstGSvVW38MZDgcK8mfehNfA
+	 sep3CsbS2KZsA==
+Message-ID: <8db01c97-1cb2-4a86-abff-55176449e264@kernel.org>
+Date: Fri, 7 Jun 2024 08:40:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,104 +49,225 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/10] irqdomain: Allow giving name suffix for domain
-To: Thomas Gleixner <tglx@linutronix.de>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
- Herve Codina <herve.codina@bootlin.com>
-References: <cover.1717486682.git.mazziesaccount@gmail.com>
- <bbd219c95f4fe88752aee5f21232480fe9b949fb.1717486682.git.mazziesaccount@gmail.com>
- <87plst28yk.ffs@tglx>
-Content-Language: en-US, en-GB
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <87plst28yk.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v9 1/2] dt-bindings: net: wireless: qcom,ath11k: describe
+ the ath11k on QCA6390
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Kalle Valo <kvalo@kernel.org>
+Cc: "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+ linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, ath11k@lists.infradead.org,
+ linux-kernel@vger.kernel.org, ath12k@lists.infradead.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20240605122106.23818-1-brgl@bgdev.pl>
+ <20240605122106.23818-2-brgl@bgdev.pl> <87h6e6qjuh.fsf@kernel.org>
+ <CAMRc=MdiKxtnN+g92RUTXdOydaPV5M2u5iUdKyE2SNvDkdXAjg@mail.gmail.com>
+ <871q5aqiei.fsf@kernel.org>
+ <CAMRc=McacZMP-51hjH+d8=PVe+Wgw4a8xWcv0sRPLJKL_gP=KQ@mail.gmail.com>
+ <87sexqoxm9.fsf@kernel.org>
+ <CAMRc=McYAbhL5M1geYtf8LbgJG5x_+ZUFKXRuo7Vff_8ssNoUA@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAMRc=McYAbhL5M1geYtf8LbgJG5x_+ZUFKXRuo7Vff_8ssNoUA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello Thomas, Herve.
-
-On 6/6/24 21:59, Thomas Gleixner wrote:
-> Matti!
+On 06/06/2024 20:08, Bartosz Golaszewski wrote:
+> On Thu, Jun 6, 2024 at 6:16 PM Kalle Valo <kvalo@kernel.org> wrote:
+>>
+>> Bartosz Golaszewski <brgl@bgdev.pl> writes:
+>>
+>>> On Thu, Jun 6, 2024 at 4:02 PM Kalle Valo <kvalo@kernel.org> wrote:
+>>>
+>>>>
+>>>> Bartosz Golaszewski <brgl@bgdev.pl> writes:
+>>>>
+>>>>> On Thu, Jun 6, 2024 at 3:30 PM Kalle Valo <kvalo@kernel.org> wrote:
+>>>>>
+>>>>>>
+>>>>>> Bartosz Golaszewski <brgl@bgdev.pl> writes:
+>>>>>>
+>>>>>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>>>>>>
+>>>>>>> Add a PCI compatible for the ATH11K module on QCA6390 and describe the
+>>>>>>> power inputs from the PMU that it consumes.
+>>>>>>>
+>>>>>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>>>>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>>>>>
+>>>>>> [...]
+>>>>>>
+>>>>>>> +allOf:
+>>>>>>> +  - if:
+>>>>>>> +      properties:
+>>>>>>> +        compatible:
+>>>>>>> +          contains:
+>>>>>>> +            const: pci17cb,1101
+>>>>>>> +    then:
+>>>>>>> +      required:
+>>>>>>> +        - vddrfacmn-supply
+>>>>>>> +        - vddaon-supply
+>>>>>>> +        - vddwlcx-supply
+>>>>>>> +        - vddwlmx-supply
+>>>>>>> +        - vddrfa0p8-supply
+>>>>>>> +        - vddrfa1p2-supply
+>>>>>>> +        - vddrfa1p7-supply
+>>>>>>> +        - vddpcie0p9-supply
+>>>>>>> +        - vddpcie1p8-supply
+>>>>>>
+>>>>>> Not sure if we discussed this before, but based on this I understand
+>>>>>> that there can't be an DT entry for device pci17cb,1101 without all the
+>>>>>> supply properties? But there are QCA6390 devices with PCI id 17cb:1101
+>>>>>> which do not need these supplies and already work. For example, my Dell
+>>>>>> XPS 13 x86 laptop is one. Or anyone who manually installs QCA6390 board
+>>>>>> to their PCI slot and some of them might want to use DT, for example
+>>>>>> setting qcom,ath11k-calibration-variant.
+>>>>>>
+>>>>>> This is not a blocker for me, just making sure that we are not breaking
+>>>>>> any existing setups.
+>>>>>>
+>>>>>
+>>>>> If they are already powered up without the need for the PCI pwrctl
+>>>>> driver to do it, then they will work alright. Bindings don't affect
+>>>>> functionality.
+>>>>
+>>>> Sure, I'm not worried about functionality. I'm worried that if I
+>>>> there's, for example, an ARM based setup which uses DT and wants to use
+>>>> a similar QCA6390 board that I have, and set
+>>>> qcom,ath11k-calibration-variant in DT. In other words, I'm worried if
+>>>> you are looking at this only for Snapdragon family of boards?
+>>>>
+>>>
+>>> No, what I'm looking at is the entire QCA6390 package. That means WLAN
+>>> *and* Bluetooth *and* the PMU that manages power.
+>>
+>> I think we are just looking at this from different point of views. You
+>> are looking at a datasheet (most likely for a Snapdragon based system)
+>> and I'm looking what actual devices there are out in the field.
+>>
+>>> If you're using the QCA6390 on a device-tree system then you should
+>>> probably model at least the WLAN node and the PMU and the problem with
+>>> supplies is fixed.
+>>
+>> But why? If there are boards out there who don't need any of this why
+>> would they still need to model all this in DT?
+>>
 > 
-> On Tue, Jun 04 2024 at 10:55, Matti Vaittinen wrote:
->>   struct irq_domain *__irq_domain_add(struct fwnode_handle *fwnode, unsigned int size,
->>   				    irq_hw_number_t hwirq_max, int direct_max,
->>   				    const struct irq_domain_ops *ops,
->> -				    void *host_data);
->> +				    void *host_data, const char *name_suffix);
->>   struct irq_domain *irq_domain_create_simple(struct fwnode_handle *fwnode,
->>   					    unsigned int size,
->>   					    unsigned int first_irq,
->> @@ -350,7 +350,8 @@ static inline struct irq_domain *irq_domain_add_linear(struct device_node *of_no
->>   					 const struct irq_domain_ops *ops,
->>   					 void *host_data)
->>   {
->> -	return __irq_domain_add(of_node_to_fwnode(of_node), size, size, 0, ops, host_data);
->> +	return __irq_domain_add(of_node_to_fwnode(of_node), size, size, 0, ops,
->> +				host_data, NULL);
+> Because this is what is there? The goal of the device tree is to
+> describe the hardware. The fact we didn't describe it before doesn't
+> make it correct.
+
+Correct.
+
+Kalle,
+All of the devices out there need these supplies, but they are sometimes
+provided by generic PCI supply and on-board regulators. Basically your
+PCI adapter is not the same as QCA6390 chip on Snapdragon board.
+
+
 > 
-> ....
+>> Based on the discussions I have heard only Snapdragon systems who
+>> require all this configuration you describe. Of course there can be
+>> other systems but I have not heard about those.
+>>
 > 
-> Looking at the resulting amount of churn to add that argument, I'm not
-> really enthused. There is some other unrelated change required in this
-> area:
+> DT is not configuration, it is description of actual hardware. It
+> doesn't matter if Snapdragon systems are the only ones that actually
+> *require* this description to make WLAN/BT functional upstream. The
+> chipset would be the same on any PCIe board, it's just that the host
+> systems wouldn't need to take care with its power sequence. But for a
+> dynamic board like this, you don't need DT.
 > 
->    https://lore.kernel.org/all/8734pr5yq1.ffs@tglx
+
+Correct.
+
+...
+
 > 
-> My suggestion to convert all of this mess into a template based
-> mechanism would nicely solve your problem too.
+>>> If your detachable board "just works" then it must be wired in a way
+>>> that enables WLAN the moment it's plugged in but this doesn't happen
+>>> over PCI. The chipset has a power input and GPIOs to enable each
+>>> module.
+>>
+>> I don't know how the boards are implemented but it could be so. But from
+>> host system point of view it's just a regular PCI device.
+>>
+> 
+> And you don't need DT anyway for this type of devices.
 
-I am not entirely sure what you mean by template based in this context. 
-My brains are somehow fixed to start thinking of C++ templates, or C 
-macro magic with typeof() and I just can't get past that.
+Detechable board, like PCI adapter, derives these supplies from generic
+PCI whatever-3.3v through additional regulators. All these supplies are
+there - on the board.
 
-Anyways, what I picked from discussion between you and Herve, is using 
-an initialization structure (struct irq_domain_info) for the new domain 
-creation function (irq_domain_instantiate()) instead of adding bunch of 
-functions with quite a few separate arguments. So, I assume you're 
-referring to a possibility to add the name-suffix in this initialization 
-structure? I hope I got this right.
+> 
+>>> Also: I doubt you need DT for your detachable board?
+>>
+>> Sure, I don't need DT but that's not my point. My point is why require
+>> these supplies for _all_ devices having PCI id 17cb:1101 (ie. QCA6390)
+>> then clearly there are such devices which don't need it? To me that's
+>> bad design and, if I'm understanding correctly, prevents use of
+>> qcom,ath11k-calibration-variant property. To me having the supplies
+>> optional in DT is more approriate.
+>>
+> 
+> We require them because *they are physically there*.
 
-I assume there is no intention to change the existing public 
-irq_domain_creat_foo() APIs to use the new irq_domain_info - and change 
-all the callers(?) But I think changing the internal 
-__irq_domain_create() to use this new info struct should be very much 
-doable - although, in my opinion, making existing callers of the 
-__irq_domain_create() to assign their parameters to this struct so they 
-can pass it to __irq_domain_create() does not seem so nice.
+I understand that for all known DT QCA6390 hardware, the supplies should
+be provided thus they should be required. If in the future we have
+different design or we represent some pluggable PCI card, then:
+1. Probably that PCI card does not need power sequencing, thus no DT
+description,
+2. If still needs power sequencing, you can always amend bindings and
+un-require the supplies.
 
-So, even though I am not really happy about the delay (I secretly hoped 
-to get the series merged before my summer vacations ;) ) - I admit your 
-suggested change looks cleaner (again, at least to me).
 
-Herve, do you have any idea when you plan to do further sketching on 
-this? Do you want me to try seeing if I can add the struct 
-irq_domain_info and maybe use that in the __irq_domain_add() to get the 
-name-suffix added? I might be able to send one version out during next 
-week - but then I plan to be offline for couple of weeks ... so it may 
-be I am not much of a help here.
-
-> Can you please have a look and eventually team up with Herve (CC'ed) to
-> sort this out? I'm happy to help and give guidance.
-
-I appreciate the guidance! Thanks Thomas.
-
-Yours,
-	-- Matti
-
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
+Best regards,
+Krzysztof
 
 
