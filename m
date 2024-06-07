@@ -1,94 +1,163 @@
-Return-Path: <linux-kernel+bounces-205900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBA059001FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:22:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 752519001FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:22:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E58B71C20892
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:22:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D939EB22EF8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6951A18FC90;
-	Fri,  7 Jun 2024 11:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9564F19048A;
+	Fri,  7 Jun 2024 11:18:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="DKKQptKF"
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MNtTbi1T"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFD4198E72
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391E3156972;
+	Fri,  7 Jun 2024 11:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717759063; cv=none; b=cihxMLd/n6UKspYzr9MCEYQlmVlN6FuZtGpd5cecUDqxCyTr8wmIJHJkSBf/OQYfYnPTdcmG+uzYGb8K9bL9Ta0UQabn4Q5Kmd4AffWsdC3jUbxEwaCdWlbeRsmkIZSXY9oaio5rBvqWA14VZOB883wgXE6Zm5XwjNqPxX3xhqc=
+	t=1717759116; cv=none; b=q4Y3DaxbASYYqdsDTw+ujDzi6qV4FHWQ6dgTr18cebraYqMm/howYbwmxXoByNLkh0J/KndS3SK4y9GQKPlNEEYgzX0woNY8ST1SW7nVkGPwaTWCH8VSLDdYEmRTEG+Ahox4wtIQ8yubUavPZFQwHNDP4zYwjzEq2WwtTGX8Deo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717759063; c=relaxed/simple;
-	bh=odnZcUxgDH8iNZUY4fM5Fn33ZzBiYho+JebXezitud8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Fs01hfH5evqnNoL60nxdUQ6jMwWZFhQbM5dlehdSAKbRi9kne85YC71L5KUmGfzHVaCmHKfUid+BP0e5eCQhJMhU2oyP1a9JSvo4GRnaTr6gOqw19C4gBma0ZcQTlyZ+gEDPRyizbCUvp9SnPaj47czniWszTjuCTxJAqfMrP0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=DKKQptKF; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=i/9DhNw/Sqych1Hue4MHcp9y0tLeOrdKyRgfTtEuZPI=; b=DKKQpt
-	KFyxX+Ipae+BHV1d98v+lVHf+shQ8zWgFxOdaiXzVFu0HNft3a1sdGgsW3bSuuoU
-	PSCaZV3G90qTFddBDTLp2yynxrg1UQX/Vi5Hw/CQVAuGhg8jXaRLPE8QrPjic+zu
-	5K0Z/3W+YCQx0ALqk0nGdba9Z39Q5+Hc0ds7HmouAh0adC2jjor/DF8YTR7/ddc4
-	zPEhlXYToVBoIWqsKn6PkJQHm9ze4gg5xn1oDqEDQR/27EZsa5TU1cv+zzBRcRpW
-	WzolN/5cmpOQKAK6QYLbKglvrU4ZgkJgeVqxYrPpyjOvPkxBRQIFfHm7gvRbq0t6
-	FOywwCCTxYRxLIeg==
-Received: (qmail 3292291 invoked from network); 7 Jun 2024 13:17:36 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Jun 2024 13:17:36 +0200
-X-UD-Smtp-Session: l3s3148p1@FxJZ8koaMLAgAwDPXzLGAH1eNELjOc3g
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: Easwar Hariharan <eahariha@linux.microsoft.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	linux-doc@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] docs: i2c: summary: rephrase paragraph explaining the figure
-Date: Fri,  7 Jun 2024 13:17:24 +0200
-Message-ID: <20240607111726.12678-6-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240607111726.12678-1-wsa+renesas@sang-engineering.com>
-References: <20240607111726.12678-1-wsa+renesas@sang-engineering.com>
+	s=arc-20240116; t=1717759116; c=relaxed/simple;
+	bh=44+u75EqDodHqwbf+PBRqWE5SQOeRGUg3wnKokEYnzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cwpP1QJfSsQdzLbh4SA3iRBcpxxzN4VmQY4kA25yp8totjLZ1BBm6b3IKP85094YJPuAraphGoPuti2i5jxQQy0//XEO7cIUssA0E9KOaXTs4wxaT+aUP5MHq+5POQgiE7kICt3T/v7UnefmDkC/Tm6DiUp79fYv7Jq75XLQYKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MNtTbi1T; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a6c828238dcso191661266b.0;
+        Fri, 07 Jun 2024 04:18:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717759113; x=1718363913; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ihZMC8zYkmSYDgrob6mjYe5JS7698nSED6xpRSGYLKg=;
+        b=MNtTbi1TWPB8Shzn86a9XjOGyvIJyHltV/aFDk/+hqFsRAfhlEbU9epqLHKw96dbni
+         062DB7ePJbRTUn4yMvzSygXjNAPLIuUp2G5aX7bfp1DTnlw7eDAFCu3mjBr93/0FT3LN
+         X53+oJKvUvQDoVZgYTfBAZZAgvXeMaDkw3BI6vW9J6lO80Q1A+/EU/IMWgn5lq/VYaKP
+         M1Kn63e2B6J1UkVV3GTgqnk3vqNzbiV1BESV1VitjMV+04+YTctOf8rmnsexc6iCkXYS
+         baAeE3ovf1xTkn1AJDWP/UQsTpnk2VxXNaRv45MBlRkUpWy/jo7g3AtECmJM+uB8H49j
+         u58w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717759113; x=1718363913;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ihZMC8zYkmSYDgrob6mjYe5JS7698nSED6xpRSGYLKg=;
+        b=YLGP2sXRn43AYr5msNU67lW7vfqBn20zlqB9+Q3XfcjiNgnbh/5fg8rei5lYASb2uu
+         AWM2NMCLIlLKlUIMTTjH6hCBR/K1HklEAPaHNom6xM8imPqFdTmHMgKX1mmpalCVTa2u
+         1DE+6mpdnV9rxWeXog7GDNRGjggIEwqQdqTYItw7ggrj4+S6bpdj9BGP4JkrsZClGGgI
+         3qsKc5G9cLB2LD/LdrnrsdyPkyzVZEwCtv9tJ3+Y349o3I9EDo8xV9fTQOpiJ/u6DVzB
+         OR52gn+IgGR38Zr1tVSQzgAU2TlV+V5L0pKv3axvfHkuCg+Eh0/fmhQeS71kZw5eex9E
+         pTjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWApINCLgdseF6EFtPcrB98ihsO8MGyjAsfyQif7ZROu8o14dgbczzHxPdRrNQ/ggVguDwP84SI/dzsjSuiToaiwnFf5GMjGQmqZIdfC8f+P8g6yT4ym+GzDTntvPuxWW9RvgjwUvVEv2yIGjtW+YqnwEZZz/SkV/z0AsgY47hrDA==
+X-Gm-Message-State: AOJu0YwHp1MZSH2dSru8f5YspmxHWNF6ur1wE7H7ZlaN3sYDgiLdyWYw
+	qOIHwE6+NFm2QXNNsw2j+FTmZthByiMsCfWxYUUPzIjhprEfiqBF
+X-Google-Smtp-Source: AGHT+IEJOL/AU4/c7xYsb10Aa4JO9qVYLN5DE+vsGLCe54VbAbC12ABTB2xsbyG9cFl5XVrznDxWSg==
+X-Received: by 2002:a17:907:6d27:b0:a62:2eca:4f13 with SMTP id a640c23a62f3a-a6cdb0f5404mr201233266b.59.1717759113234;
+        Fri, 07 Jun 2024 04:18:33 -0700 (PDT)
+Received: from skbuf ([188.25.55.166])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c806eb64csm229420966b.117.2024.06.07.04.18.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 04:18:32 -0700 (PDT)
+Date: Fri, 7 Jun 2024 14:18:30 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Martin Schiller <ms@dev.tdt.de>
+Cc: martin.blumenstingl@googlemail.com, hauke@hauke-m.de, andrew@lunn.ch,
+	f.fainelli@gmail.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 05/13] net: dsa: lantiq_gswip: do also enable or
+ disable cpu port
+Message-ID: <20240607111830.jfi3roiry27bmwih@skbuf>
+References: <20240606085234.565551-1-ms@dev.tdt.de>
+ <20240606085234.565551-6-ms@dev.tdt.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606085234.565551-6-ms@dev.tdt.de>
 
-Use 'controller/target' and 'adapter/client' pairs consistently.
+On Thu, Jun 06, 2024 at 10:52:26AM +0200, Martin Schiller wrote:
+> Before commit 74be4babe72f ("net: dsa: do not enable or disable non user
+> ports"), gswip_port_enable/disable() were also executed for the cpu port
+> in gswip_setup() which disabled the cpu port during initialization.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- Documentation/i2c/summary.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Ah, you also noticed this.
 
-diff --git a/Documentation/i2c/summary.rst b/Documentation/i2c/summary.rst
-index b10b6aaafcec..1b5bc7ed46aa 100644
---- a/Documentation/i2c/summary.rst
-+++ b/Documentation/i2c/summary.rst
-@@ -55,9 +55,9 @@ in a directory specific to the feature they provide, for example
- ``drivers/media/gpio/`` for GPIO expanders and ``drivers/media/i2c/`` for
- video-related chips.
- 
--For the example configuration in figure, you will need a driver for your
--I2C adapter, and drivers for your I2C devices (usually one driver for each
--device).
-+For the example configuration in the figure above, you will need one adapter
-+driver for the I2C controller, and client drivers for your I2C targets. Usually
-+one driver for each client.
- 
- Outdated terminology
- --------------------
--- 
-2.43.0
+> 
+> Let's restore this by removing the dsa_is_user_port checks. Also, let's
+> clean up the gswip_port_enable() function so that we only have to check
+> for the cpu port once.
+> 
+> Fixes: 74be4babe72f ("net: dsa: do not enable or disable non user ports")
 
+Fixes tags shouldn't be taken lightly. If you think there's a functional
+user-visible problem caused by that change, you need to explain what
+that problem is and what it affects. Additionally, bug fix patches are
+sent out to the 'net' tree, not bundled up with 'net-next' material
+(unless they fix a change that's also exclusive to net-next).
+Otherwise, just drop the 'Fixes' tag.
+
+> Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+> ---
+>  drivers/net/dsa/lantiq_gswip.c | 24 ++++++++----------------
+>  1 file changed, 8 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/net/dsa/lantiq_gswip.c b/drivers/net/dsa/lantiq_gswip.c
+> index 3fd5599fca52..38b5f743e5ee 100644
+> --- a/drivers/net/dsa/lantiq_gswip.c
+> +++ b/drivers/net/dsa/lantiq_gswip.c
+> @@ -695,13 +695,18 @@ static int gswip_port_enable(struct dsa_switch *ds, int port,
+>  	struct gswip_priv *priv = ds->priv;
+>  	int err;
+>  
+> -	if (!dsa_is_user_port(ds, port))
+> -		return 0;
+> -
+>  	if (!dsa_is_cpu_port(ds, port)) {
+> +		u32 mdio_phy = 0;
+> +
+>  		err = gswip_add_single_port_br(priv, port, true);
+>  		if (err)
+>  			return err;
+> +
+> +		if (phydev)
+> +			mdio_phy = phydev->mdio.addr & GSWIP_MDIO_PHY_ADDR_MASK;
+> +
+> +		gswip_mdio_mask(priv, GSWIP_MDIO_PHY_ADDR_MASK, mdio_phy,
+> +				GSWIP_MDIO_PHYp(port));
+>  	}
+>  
+>  	/* RMON Counter Enable for port */
+> @@ -714,16 +719,6 @@ static int gswip_port_enable(struct dsa_switch *ds, int port,
+>  	gswip_switch_mask(priv, 0, GSWIP_SDMA_PCTRL_EN,
+>  			  GSWIP_SDMA_PCTRLp(port));
+>  
+> -	if (!dsa_is_cpu_port(ds, port)) {
+> -		u32 mdio_phy = 0;
+> -
+> -		if (phydev)
+> -			mdio_phy = phydev->mdio.addr & GSWIP_MDIO_PHY_ADDR_MASK;
+> -
+> -		gswip_mdio_mask(priv, GSWIP_MDIO_PHY_ADDR_MASK, mdio_phy,
+> -				GSWIP_MDIO_PHYp(port));
+> -	}
+> -
+>  	return 0;
+>  }
+
+It would be good to state in the commit message that the operation
+reordering is safe. The commit seems to be concerned mainly with code
+cleanliness, which does not always take side effects into account.
 
