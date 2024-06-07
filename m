@@ -1,148 +1,164 @@
-Return-Path: <linux-kernel+bounces-205438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D33BE8FFBD6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:06:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 483718FFBE3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:10:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87C6D1F21847
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:06:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD4EF1F22747
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E268514F133;
-	Fri,  7 Jun 2024 06:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3FDE153583;
+	Fri,  7 Jun 2024 06:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dAERxGI8"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R9MzvXSY"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD04F1BC2F;
-	Fri,  7 Jun 2024 06:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B5D14F9C6
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 06:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717740398; cv=none; b=PTakbqCD8bdce/irKTHM+VI4enkxnO8jq/C0LnrrJDUUI25yt52qxql3r0kSYqzgyYe5AJGfOJk4i3RJLS2vj3Zx7SXlwgBFtHDrdpB1fGaQBDXlSke8LSBOyJP+HUxNinV3EgTUdsT8WgqjRVxjvD5clz5gZJEmFUuIV/gEa5g=
+	t=1717740619; cv=none; b=PqVMVTVrilwKI06aqGp6UKB5UKmjCzzl4f+9F02cQjLqpiCGYZKy9YlTvO8TkEX6HsDsEtXed6vRJD65w5gU825Zi/Z1vxRk9Qb64hGXilWhiUxbHbR1F4tJ3cWdEbs4NxLbTUYoIO/yIXe5KZgn0F/STBEJ0hYgG1ydlESEig8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717740398; c=relaxed/simple;
-	bh=jNZkxBEs7U5TdwARCjZjVhwqyxR/ZXTvzrddGfOudKA=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=SU7O4GIn/WIuYula//qPWkGeSCXgR+0x9Fv6HwmeS2YxxZCZu35jsKcYxA2LZK9geiSmUGcMd3s0ylI87TE2yfgbv99yvxiRegTXUtF0PJv9NEJrlH525hm6xR4P2WcWbYyEPMPmge4Kh0yBHwN0eb+x/Wga5/KwwgGiqkD9bBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dAERxGI8; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-35dd0c06577so1779188f8f.2;
-        Thu, 06 Jun 2024 23:06:36 -0700 (PDT)
+	s=arc-20240116; t=1717740619; c=relaxed/simple;
+	bh=+yNnUVafWEFHM6Vfhx3c/ikYL4GjYaVR1FLvegx+GN4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=iuXWj9fbnM0nlhk9Pw5BtbWs8C/JWRAgPA0AVHadckGUpHzdsZ0S5sOScTgL0i+ZbHz5J3S/8os7QYGnsQfarZJuEvL4CaPLUwUDTmuy4gX0DJqvq8y/F7c6lVZ+tD+50DRTWFbsZZ67cdYEfNBSN1KVQtsowbwflWI9fDfVPHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joshwash.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R9MzvXSY; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joshwash.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1f682e7079bso23275565ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 23:10:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717740395; x=1718345195; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jNZkxBEs7U5TdwARCjZjVhwqyxR/ZXTvzrddGfOudKA=;
-        b=dAERxGI8++50YtItabwAiNuQR1Zp+tgjBNEQzMQorMHD7XbtGd53jp6qdHqzwxKxwT
-         j8SnSwJZB1EMdx4ipHxpRZm8L6CHGDlC7B8YL77evXL2OwMqk5obeMpjG3Qjf8OlPU0M
-         KQ8iTcwZYovbtpoyXfMzI9XPxFEnEeOSDMFRIUrPGj1z5tE9Ba8URgDOFMO9G3UD9o4r
-         aoJhp+mK0+vuylKY5fHPhy+MaznJqSyNjpIR8bo+lwEnQrpCG5ds0GEHqkz31Ll6IHmW
-         YXPXFr0oleBHNn18a46NHkHOl9lFjOBtd2yDteawikbiVS2XyXdHyEeR9YE2lV55fUtg
-         OTTQ==
+        d=google.com; s=20230601; t=1717740617; x=1718345417; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3IaxqkxoUHKrRAhQLcm0mCsfS9ca+q5nOq+ZwxnZnJs=;
+        b=R9MzvXSYGb3XeaVN1xdzz+MCDkgUmbY4+HIIo/RQfvh7ymY3hI+0Z/HXAR/2BppW+U
+         5vI+yoeRoK8jDlaigB87oZHfX38N7xfAM3I94o9yymeRjXPWq+TVF+6q+JB7GRT/VdNw
+         3XXrAZj6aAAJ1KpI3mRgk6PWeNQpA5jw21l9xPXY9cFhhC+0fZvEJYH5K1UYiQfxP193
+         uZZYdQM86gCONXjwMBdSiDOm/HT8z8bcss86ECIulVjcTo40v5Y8ybZCYPc92hxtGZ1T
+         WLE7y4aNRcVi3wasyo9VcGrgIXEGTLWtvrA9mps+tOMSeWAMJeemcgu3UlbI/fkRn221
+         eJrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717740395; x=1718345195;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jNZkxBEs7U5TdwARCjZjVhwqyxR/ZXTvzrddGfOudKA=;
-        b=tq7OrEpoD2uHq3yaq7dUAC4oAaQe/po5kdgjlTtkKhAW7KpG8sWbmw8qNCLgCbi5Sd
-         yMAtJ1aUd2mAcV3sOORqQ6dfrD/VoldiIQvmJs/DKBhBzoUa0dd99uCjh3ERA3JIPVaO
-         YL6+epJYxToRtXv0586vczpxmXCfY3dani+6kXiu7EYBDoWTazclOV2aM1md6S7EQaaz
-         3in/0cCmnTM5wR+zX4325IqBCrf4d66qqC5vAhSOKxaVEQnXC8p573EHoiAResqTJ1FL
-         hhShTAy/89CLkIBNQMfuTswvwjwJc71sUD/Er47V4MSjPV9KY6tnkru47w1GLf8FC1KV
-         3F/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXqnbysRUbLypYMZow3+iLFgEc9kjCv3EHtzDw4Z0xiNdpHSWQOJoz/n5lQXisB4H0SGpac4/FV6vfbZ2yDwGOa4jR/tv+zj3gF+YtvP7+AK516ZyyNHYy88+2YZFMtMna73aSyzJ8Anw==
-X-Gm-Message-State: AOJu0YyPqQ4dpbwEoNgQswDDy4JLsV2eGg2/kWrBucNtSyUV+IktiJi2
-	p6s1Fe5Qszx32W2QZU9pgMAHGT7x8EOlj40EeFzE6LUEe/QLDEWl
-X-Google-Smtp-Source: AGHT+IEgwZKufWc5FwUuSbx7D4i1LN7jDSiJEogiwEw6n1p0cNIWxHRj+ziKiW0p1rfT+aXoS165cg==
-X-Received: by 2002:a5d:45c9:0:b0:34f:f540:bdbc with SMTP id ffacd0b85a97d-35efed64bdamr1061157f8f.38.1717740394602;
-        Thu, 06 Jun 2024 23:06:34 -0700 (PDT)
-Received: from smtpclient.apple ([167.99.200.149])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d69867sm3230511f8f.57.2024.06.06.23.06.32
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Jun 2024 23:06:34 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+        d=1e100.net; s=20230601; t=1717740617; x=1718345417;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3IaxqkxoUHKrRAhQLcm0mCsfS9ca+q5nOq+ZwxnZnJs=;
+        b=ubm/G0JLcPbHryafs307BqUNaInK0p+vwODpWs0eY7U4DrRxKKO18RDaxNXOst7YmJ
+         CtJsVhLx8eZZrx1a5P9OIfImM5BtuuksFQoNp0uUrV9nHtxQZD7payNaW6AO5/gwBMV0
+         Zg2hrRvtl+7j/JHNo2+yiDXW5n5RwePRmc+X89iqLip9/39Vi9bXYFdk/ENmQmNhG7Fs
+         yqNzMofkp0gOMY9aT21y1Ftc1syqNxRUzZlBSmnBlhNht8tjIGluBCPo9HemkbTdEayu
+         tumtD1/X8Vln+JvOaxMfmStBeGv2NCj/VovbVVEepj/N5EhTq+3XK17+IEltNnFB06y2
+         fJdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2Iz+dM1hh86PRfD0KcyrzAK1v52qC2UF/YDndGABkfX4Sy+AxZXZPzfeaXVTlzZmLV8PzhX/F0Mpwb4f+ehDDeiFbIhJVHTGZKq7J
+X-Gm-Message-State: AOJu0YwP6/Yj++8+9kJDbII8TZr8nZmo13yxIazZGnVr8trhSQskwH+h
+	5Gt6bX7EkGqwKc0b1/5aqRn1tZWacPbac5EHhMdhCtqPKvCLerJrxMVeNwzft5Ql6/6lo7TvgKc
+	0hTvvUH/csw==
+X-Google-Smtp-Source: AGHT+IF0A60X0eGYChsWehMsLUt65JdkRv2Yk1dsUtkseIs2rFVb0B3papVQSfoUqB4VpiwZFIWs5WPQpoeOtg==
+X-Received: from joshwash.sea.corp.google.com ([2620:15c:11c:202:a3cf:7d53:6a60:be07])
+ (user=joshwash job=sendgmr) by 2002:a17:902:d488:b0:1f6:13fd:2473 with SMTP
+ id d9443c01a7336-1f6d02fc466mr1480655ad.10.1717740616671; Thu, 06 Jun 2024
+ 23:10:16 -0700 (PDT)
+Date: Thu,  6 Jun 2024 23:09:47 -0700
+In-Reply-To: <20240606192139.1872461-1-joshwash@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH 00/12] arm64: meson: bunch of DT fixes, take 4 (final one
- ??)
-From: Christian Hewitt <christianshewitt@gmail.com>
-In-Reply-To: <20240606-topic-amlogic-upstream-bindings-fixes-dts-v1-0-62e812729541@linaro.org>
-Date: Fri, 7 Jun 2024 10:06:20 +0400
-Cc: Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- devicetree <devicetree@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org,
- AML <linux-amlogic@lists.infradead.org>,
- LKML <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <34243887-1D78-4D1E-BBB9-607297813CC7@gmail.com>
-References: <20240606-topic-amlogic-upstream-bindings-fixes-dts-v1-0-62e812729541@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: Apple Mail (2.3774.600.62)
+Mime-Version: 1.0
+References: <20240606192139.1872461-1-joshwash@google.com>
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+Message-ID: <20240607060958.2789886-1-joshwash@google.com>
+Subject: [PATCH net v2] gve: ignore nonrelevant GSO type bits when processing
+ TSO headers
+From: joshwash@google.com
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net, kuba@kernel.org, stable@kernel.org, 
+	Joshua Washington <joshwash@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Willem de Bruijn <willemb@google.com>, 
+	Eric Dumazet <edumazet@google.com>, Andrei Vagin <avagin@gmail.com>, 
+	Jeroen de Borst <jeroendb@google.com>, Shailend Chand <shailend@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Rushil Gupta <rushilg@google.com>, Bailey Forrest <bcf@google.com>, 
+	Catherine Sullivan <csully@google.com>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-> On 6 Jun 2024, at 12:48=E2=80=AFPM, Neil Armstrong =
-<neil.armstrong@linaro.org> wrote:
->=20
-> Along with the following:
-> - =
-https://lore.kernel.org/all/20240422-t7-reset-v2-1-cb82271d3296@amlogic.co=
-m/
-> - =
-https://lore.kernel.org/all/20240513224552.800153-1-jan.dakinevich@saluted=
-evices.com/
-> - =
-https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes=
--power-domains-spifc-v1-1-380f29ba4a16@linaro.org/
-> - =
-https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-conve=
-rt-spdif-receiver-v1-1-262465adbac2@linaro.org/
-> - =
-https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes=
--power-domains-mmc-v1-1-4acbb8cc2626@linaro.org/
-> - =
-https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes=
--power-domains-nvmem-v1-1-ef6f10c86a63@linaro.org/
-> - =
-https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes=
--power-domains-phy-v1-1-c819b0ecd8c8@linaro.org/
-> - =
-https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes=
--power-domains-rng-v1-1-0a55a7ba55e4@linaro.org/
-> - =
-https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes=
--audio-widgets-v1-1-65bd7cc2e09b@linaro.org/
-> - =
-https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes=
--power-domains-sardac-v1-1-40a8de6baa59@linaro.org/
-> - =
-https://lore.kernel.org/all/20240606-topic-amlogic-upstream-bindings-conve=
-rt-g12a-tohdmitx-v2-1-70d44fa30790@linaro.org/
->=20
-> this bunch of changes fixes 99% of the remaining dts check errors.
->=20
-> The two remaining bindings conversions for arm64/amlogic are:
-> - ti,tas5707
-> - everest,es7241
->=20
-> I'm too lazy to do them right now, so if someone is interested
-> in doing the conversion, please do it!
->=20
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+From: Joshua Washington <joshwash@google.com>
 
-For the series, tested with multiple =E2=80=98meson=E2=80=99 boards =
-(GXBB/GXL/GXM/G12B):
+TSO currently fails when the skb's gso_type field has more than one bit
+set.
 
-Tested-by: Christian Hewitt <christianshewitt@gmail.com>=
+TSO packets can be passed from userspace using PF_PACKET, TUNTAP and a
+few others, using virtio_net_hdr (e.g., PACKET_VNET_HDR). This includes
+virtualization, such as QEMU, a real use-case.
+
+The gso_type and gso_size fields as passed from userspace in
+virtio_net_hdr are not trusted blindly by the kernel. It adds gso_type
+|= SKB_GSO_DODGY to force the packet to enter the software GSO stack
+for verification.
+
+This issue might similarly come up when the CWR bit is set in the TCP
+header for congestion control, causing the SKB_GSO_TCP_ECN gso_type bit
+to be set.
+
+Fixes: a57e5de476be ("gve: DQO: Add TX path")
+Signed-off-by: Joshua Washington <joshwash@google.com>
+Reviewed-by: Praveen Kaligineedi <pkaligineedi@google.com>
+Reviewed-by: Harshitha Ramamurthy <hramamurthy@google.com>
+Reviewed-by: Willem de Bruijn <willemb@google.com>
+Suggested-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Andrei Vagin <avagin@gmail.com>
+---
+ drivers/net/ethernet/google/gve/gve_tx_dqo.c | 21 +++++---------------
+ 1 file changed, 5 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/net/ethernet/google/gve/gve_tx_dqo.c b/drivers/net/ethernet/google/gve/gve_tx_dqo.c
+index fe1b26a4d736..a76b407a981b 100644
+--- a/drivers/net/ethernet/google/gve/gve_tx_dqo.c
++++ b/drivers/net/ethernet/google/gve/gve_tx_dqo.c
+@@ -551,32 +551,21 @@ static int gve_prep_tso(struct sk_buff *skb)
+ 	 * - Hypervisor enforces a limit of 9K MTU
+ 	 * - Kernel will not produce a TSO larger than 64k
+ 	 */
+-
+ 	if (unlikely(skb_shinfo(skb)->gso_size < GVE_TX_MIN_TSO_MSS_DQO))
+ 		return -1;
+ 
++	if (!(skb_shinfo(skb)->gso_type & (SKB_GSO_TCPV4 | SKB_GSO_TCPV6)))
++		return -EINVAL;
++
+ 	/* Needed because we will modify header. */
+ 	err = skb_cow_head(skb, 0);
+ 	if (err < 0)
+ 		return err;
+ 
+ 	tcp = tcp_hdr(skb);
+-
+-	/* Remove payload length from checksum. */
+ 	paylen = skb->len - skb_transport_offset(skb);
+-
+-	switch (skb_shinfo(skb)->gso_type) {
+-	case SKB_GSO_TCPV4:
+-	case SKB_GSO_TCPV6:
+-		csum_replace_by_diff(&tcp->check,
+-				     (__force __wsum)htonl(paylen));
+-
+-		/* Compute length of segmentation header. */
+-		header_len = skb_tcp_all_headers(skb);
+-		break;
+-	default:
+-		return -EINVAL;
+-	}
++	csum_replace_by_diff(&tcp->check, (__force __wsum)htonl(paylen));
++	header_len = skb_tcp_all_headers(skb);
+ 
+ 	if (unlikely(header_len > GVE_TX_MAX_HDR_SIZE_DQO))
+ 		return -EINVAL;
+-- 
+2.45.2.505.gda0bf45e8d-goog
+
 
