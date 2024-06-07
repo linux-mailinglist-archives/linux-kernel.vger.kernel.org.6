@@ -1,121 +1,106 @@
-Return-Path: <linux-kernel+bounces-205786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A64900042
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:06:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03D1E900047
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:07:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9DC028D32D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:06:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 852D828DC5A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3AC0158214;
-	Fri,  7 Jun 2024 10:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34FB1411E4;
+	Fri,  7 Jun 2024 10:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WWS2h7mK"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KRGZPq5A"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B116E15DBBA;
-	Fri,  7 Jun 2024 10:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE28157A76
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 10:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717754615; cv=none; b=t50IItQcRC+4k6yffGGBQMZ+MCjJOLn0Hunk+uCdhSGPCKKWru7xubw8HQzUVEnZAMllaDvXQX8vDPoN9FxKBwHacdd8GAkBfXQTBjArmc/mlSwR2+63fsUldRbUXBWik1aSqfMlIILR62fCtxvfpP+Fse9vFqz8OXRTKEEvE+k=
+	t=1717754798; cv=none; b=NG4uPKKp181/mCrxPss4UTCOxxH8jj/vGhUtgmmh+T+nZURuiFwlu3WIrgewn3677jnTHF8ftB1rvzMGKdclPyT+MlaDmSvoJ9J+9enaQL84wvb5tHNLzAyrlV8w6oC6HmoO0oW3X0ouSqzQHprTVUHcefBpnRox7hqtxMnvhfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717754615; c=relaxed/simple;
-	bh=amMZc6m1aRSEtTlrDesVe38Db++HH1vW/7Yeem0LOHc=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=q01kqFWv7iA2Col1oaBs8of71/o88YayZGHLGUIDRZplJ83jMzQvz+R8+1z8QeagtWK5gZrOSxjdnqU0nyTmpld50bHBAmIxxuVNtbGYqQsdXLGaVMZP99tKuGLWRWT39pYHfP2+uopkD6e05RzBLFPtKM77OK1RQ1wB9Xe8M9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WWS2h7mK; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717754612;
-	bh=amMZc6m1aRSEtTlrDesVe38Db++HH1vW/7Yeem0LOHc=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=WWS2h7mKUHQ/KjyyIMm4ZMV44uFbqpA23mdxJKsHdJ7buh3vkY7dDGJuTdJ+wHg+C
-	 hkyUxCvAUb8OpmSSwVqodtMbREdF2yIJh8oWpS3sgIfrWZGRnykvdYOjtiJvRM3WKD
-	 VrQ7ocvgE2iqIxy970gR/R/51ZwQeoGyQamDPfFUPXNtH8USjPcjkDv1Th+0X3AG0T
-	 5mmydkFWRKzfuWp9YyDh6FZFwm+vYJsiKAo+1cZtpbvJ/vc7PbuLoydZLQz4h0WgLe
-	 8t5c/hQ6z2cYB5cixQLjsDiHSIuzmGSjqAXgYLs8/A0H88hpnzVlHus8HU89ur6Rss
-	 BtW2xhMV7xurg==
-Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1717754798; c=relaxed/simple;
+	bh=yfXT27/V8eVslu1sjaWJNY2m3Cho9rYaMlS4D6NlPsY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c2+pJ17gobFs8btwJWWxHs5t7DLhvd46GU8WKYgW02ThRfiBkv0uRzfqJY+y3pb/29Ds+l+Y2TaXgOdy3BDvy/YnROGdIfBN3adv7hytGU3gXFjd/Q2jVYRI6QGVrkJkRwgelzaxZMKqbiHz1A9qVvSL0EOhNXgBiG+1rK3MFEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KRGZPq5A; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717754795;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yfXT27/V8eVslu1sjaWJNY2m3Cho9rYaMlS4D6NlPsY=;
+	b=KRGZPq5A869TYCTgSyUFtn/i5JqyR/J2XA2tuvVs0FAwH6nbfd1AGxA5Evz01hy8omeOXW
+	umBumk5m5hm0SAb8mdZ6sWheO9fsIeJ/g5qbQQZ8Z7ED8LAoSLemYJLDAYGAxgaQ15umhs
+	EV+TikG2ZeVAg2fBywC3hHbcYznheMk=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-54-4sTFOuXlMYqDBJj7T7zW-w-1; Fri,
+ 07 Jun 2024 06:06:31 -0400
+X-MC-Unique: 4sTFOuXlMYqDBJj7T7zW-w-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 517EA37811D1;
-	Fri,  7 Jun 2024 10:03:27 +0000 (UTC)
-Message-ID: <06c41273-47c3-421a-8fbe-dbcf8321de7e@collabora.com>
-Date: Fri, 7 Jun 2024 15:04:01 +0500
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CBBD21955DB5;
+	Fri,  7 Jun 2024 10:06:29 +0000 (UTC)
+Received: from localhost (unknown [10.72.113.124])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7725919560AB;
+	Fri,  7 Jun 2024 10:06:23 +0000 (UTC)
+Date: Fri, 7 Jun 2024 18:06:18 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Coiby Xu <coxu@redhat.com>
+Cc: kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>,
+	Milan Broz <gmazyland@gmail.com>,
+	Thomas Staudt <tstaudt@de.ibm.com>,
+	Daniel P =?iso-8859-1?Q?=2E_Berrang=E9?= <berrange@redhat.com>,
+	Kairui Song <ryncsn@gmail.com>,
+	Jan Pazdziora <jpazdziora@redhat.com>,
+	Pingfan Liu <kernelfans@gmail.com>, Dave Young <dyoung@redhat.com>,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Dave Hansen <dave.hansen@intel.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: Re: [PATCH v4 0/7] Support kdump with LUKS encryption by reusing
+ LUKS volume keys
+Message-ID: <ZmLbmriQYol2JHKe@MiWiFi-R3L-srv>
+References: <20240523050451.788754-1-coxu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, cmllamas@google.com,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kernel-team@android.com, llvm@lists.linux.dev, linux-mm@kvack.org
-Subject: Re: [PATCH v1 1/2] selftests/mm: Include linux/mman.h
-To: Edward Liaw <edliaw@google.com>, shuah@kernel.org,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Andrew Morton <akpm@linux-foundation.org>
-References: <20240605223637.1374969-1-edliaw@google.com>
- <20240605223637.1374969-2-edliaw@google.com>
- <b5e4ca79-8be0-4085-adfa-e8ee1c855fdb@collabora.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <b5e4ca79-8be0-4085-adfa-e8ee1c855fdb@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240523050451.788754-1-coxu@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 6/7/24 2:44 PM, Muhammad Usama Anjum wrote:
-> On 6/6/24 3:36 AM, Edward Liaw wrote:
->> thuge-gen defines MAP_HUGE_* macros that are provided by linux/mman.h
->> since 4.15. Removes the macros and includes linux/mman.h instead.
->>
->> Signed-off-by: Edward Liaw <edliaw@google.com>
->> ---
->>  tools/testing/selftests/mm/thuge-gen.c | 5 +----
->>  1 file changed, 1 insertion(+), 4 deletions(-)
->>
->> diff --git a/tools/testing/selftests/mm/thuge-gen.c b/tools/testing/selftests/mm/thuge-gen.c
->> index ea7fd8fe2876..034635317935 100644
->> --- a/tools/testing/selftests/mm/thuge-gen.c
->> +++ b/tools/testing/selftests/mm/thuge-gen.c
->> @@ -15,6 +15,7 @@
->>  
->>  #define _GNU_SOURCE 1
->>  #include <sys/mman.h>
->> +#include <linux/mman.h>
->>  #include <stdlib.h>
->>  #include <stdio.h>
->>  #include <sys/ipc.h>
->> @@ -28,10 +29,6 @@
->>  #include "vm_util.h"
->>  #include "../kselftest.h"
->>  
->> -#define MAP_HUGE_2MB    (21 << MAP_HUGE_SHIFT)
->> -#define MAP_HUGE_1GB    (30 << MAP_HUGE_SHIFT)
->> -#define MAP_HUGE_SHIFT  26
->> -#define MAP_HUGE_MASK   0x3f
-> Totally makes sense.
-> Reviewed-by: Muhammad Usama Anjum <usama.anju@collabora.com>
-Fixing typo:
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Hi Coiby,
 
-> 
->>  #if !defined(MAP_HUGETLB)
->>  #define MAP_HUGETLB	0x40000
->>  #endif
-> 
+On 05/23/24 at 01:04pm, Coiby Xu wrote:
+> LUKS is the standard for Linux disk encryption. Many users choose LUKS
+> and in some use cases like Confidential VM it's mandated. With kdump
+> enabled, when the 1st kernel crashes, the system could boot into the
+> kdump/crash kernel and dump the memory image i.e. /proc/vmcore to a
+> specified target. Currently, when dumping vmcore to a LUKS
+> encrypted device, there are two problems,
 
--- 
-BR,
-Muhammad Usama Anjum
+I am done with this round of reviewing. The overall approach looks good
+to me, while there are places to improve or fix. I have added comment on
+all things I am concerned about, please check. Thanks for the effort.
+
+By the way, do you get confirmation on the solution from encryption/keys
+developer of redhat internally or upstream? With my understanding, it
+looks good. It may need their confirmation or approval in some ways.
+
+Thanks
+Baoquan
+
 
