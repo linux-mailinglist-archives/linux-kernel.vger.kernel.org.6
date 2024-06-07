@@ -1,90 +1,245 @@
-Return-Path: <linux-kernel+bounces-206491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA81900A84
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:35:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25955900A8C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFB8128623D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:35:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CED91C218C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A442D19AA59;
-	Fri,  7 Jun 2024 16:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05EF19AD9B;
+	Fri,  7 Jun 2024 16:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Cpuo8aY2"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="bR2Zm0at"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75AC619AA55;
-	Fri,  7 Jun 2024 16:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D95190060;
+	Fri,  7 Jun 2024 16:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717777948; cv=none; b=SmnrvYy/fIAYHHmlmfQhHOwSmFH89+QwboHdhxcX3vS1MZ+SOaSilXzH/54pDUXU+GgYwcV5vlmDs17QU22Y7bnTIKP866tHHMh9KVgHO0QFVrycbgKRxC2y4mJuqMyZMpx/6RgkofHm4HeY7gtpPdTJ/Jc6ndVEeh1se+x5krU=
+	t=1717777985; cv=none; b=QH0ObAxCOnP+tORnMT95UWZdvmBWHdn3tXG3Q7E+QAJRkjO4xDQRoq3f4mWEM3AQA3VtShAMKw7X2zF1ocoKAvcdV5l+Qwg7OmZypqQT8BxoooC5kUBgVQ/pdoEWdTJ0a1VHzItwYctm8rOanNIe3z30sAKqq29c7zm2eVqEpxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717777948; c=relaxed/simple;
-	bh=dmUJ+ZtKaijtW7r9kyKhmYTS9Mbgn9yVEc8Cc9w00jU=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=YL3vYmwwHUdkYFB6yNnutIsIPpZhfIbinq4b9Bpd07x8JvmMCg6h5iIbEhVky2PjG1aIwidGz4KMYZzgWjwb0iOF72sv9dE9XnaQp8Es5TMYFLbUozUiN2mxJWecjPbmrjxz8ub/+aQA3HjzJAbkKg78qOz1L3bHdA7og0MYFxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Cpuo8aY2; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717777945;
-	bh=dmUJ+ZtKaijtW7r9kyKhmYTS9Mbgn9yVEc8Cc9w00jU=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=Cpuo8aY2alnUMVIYNOE+GtVX6Z5ya83g0ErQEMvfd4a91qa02U15oK+akc6lPq252
-	 q1D69YhryLDoe+CltXdnU08wouNMp44gFoIoEg7WZcfTuXtMmV1Sr0ZpNIayOOcwCK
-	 K5tdTN2WzcZ8kYiXnKmWMJGigf8oQ/8st7BdqaCRR0nsUbiFe59oTs6JwtNlIQIi8A
-	 st0fCRXgSjUctoc+/Uf+RU945y59EZXx2v5XDyYj79jBECaNV3050rKnTDp/uU3NSL
-	 3aaLQW3GX0cekhDR92tSNohyeJ7foGa5MAZFK7oqUwrw3EO6J2PQZIlvlqJ0mRCKo7
-	 JW5DKwr0k2vRw==
-Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 14E5F37821EB;
-	Fri,  7 Jun 2024 16:32:20 +0000 (UTC)
-Message-ID: <207129fd-4220-4410-b3d9-bfad8d9831ff@collabora.com>
-Date: Fri, 7 Jun 2024 21:32:56 +0500
+	s=arc-20240116; t=1717777985; c=relaxed/simple;
+	bh=W6g6i9oWpso+MN74XfYv84WGY25V0nmPdLTUYO4UEyo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SpCCt8l6/nag/grmG0sCsbAPjc4y93Qghnw5SPVkRJ79Zo5ES1vOQjzyR3CHff8BnfGFX8+N68uwtJFSXh1Cr84GlpzCv1gaOVXNKBPuR+7Do6bEpHji/gIYyZKu8D54vu5CuFntn4j5MLTOp3htewKLRFo0Pmoj+rEPxD7RNqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=bR2Zm0at; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11EA1C2BBFC;
+	Fri,  7 Jun 2024 16:33:03 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="bR2Zm0at"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1717777982;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=398CSylYW3aU5yDlQqUS8n51ZHJoO1PuzaIOtonBJck=;
+	b=bR2Zm0atsEJbd8EqXZHzvOaQPsgB5pUD8YS4RetAtvh5ar0R54k21SUcwwNLK8HjkKdrvr
+	3TMwokYT16HaQGS13RXsJXIScLAx8q8RxqyNrtH4J2dCVgk8PT3XT7OqJkhugUMhPLnWT+
+	FuAf2u+rIyJSIy33nuqZMJUGcLr5TYg=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id cbbbdb82 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Fri, 7 Jun 2024 16:33:02 +0000 (UTC)
+Date: Fri, 7 Jun 2024 18:32:58 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	linux-crypto@vger.kernel.org, linux-api@vger.kernel.org,
+	x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Carlos O'Donell <carlos@redhat.com>,
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	Jann Horn <jannh@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <dhildenb@redhat.com>
+Subject: Re: [PATCH v16 4/5] random: introduce generic vDSO getrandom()
+ implementation
+Message-ID: <ZmM2Olwd4hr0teMT@zx2c4.com>
+References: <20240528122352.2485958-5-Jason@zx2c4.com>
+ <874ja73xx7.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ritesh Harjani <ritesh.list@gmail.com>, Mike Rapoport <rppt@kernel.org>,
- Muchun Song <songmuchun@bytedance.com>, David Hildenbrand
- <david@redhat.com>, p.raghav@samsung.com
-Subject: Re: [PATCH v3] selftest: mm: Test if hugepage does not get leaked
- during __bio_release_pages()
-To: Donet Tom <donettom@linux.ibm.com>,
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, Tony Battersby <tonyb@cybernetics.com>
-References: <20240607055046.138650-1-donettom@linux.ibm.com>
- <5ce292b6-179c-48e0-9079-ea07defbe178@collabora.com>
- <9e54991c-3f9b-446c-8825-c0754eca1f90@linux.ibm.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <9e54991c-3f9b-446c-8825-c0754eca1f90@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <874ja73xx7.ffs@tglx>
 
-On 6/7/24 9:30 PM, Donet Tom wrote:
-...
->>>   tools/testing/selftests/mm/Makefile      |   1 +
->>>   tools/testing/selftests/mm/hugetlb_dio.c | 118 +++++++++++++++++++++++
->> Missed my feedback on adding the test to vm_test.sh
-> I was not able to find vm_test.sh file to add this test in selftests/mm.
-> could you please help me to get the correct vm_test.sh to add this?
-Here is the file path: tools/testing/selftests/mm/run_vmtests.sh
+On Wed, Jun 05, 2024 at 11:03:00PM +0200, Thomas Gleixner wrote:
+> Jason!
+Thomas!
 
--- 
-BR,
-Muhammad Usama Anjum
+> Can you please split the required defines into a seperate header
+> preferrably in include/vdso/ and include that from crypto/chacha.h
+
+Sure. It only actually uses two straight forward constants from there.
+> > +			u32	key[CHACHA_KEY_SIZE / sizeof(u32)];
+> 
+> CHACHA_STATE_WORDS ?
+
+Nah, that's for CHACHA_BLOCK_SIZE / sizeof(u32), but here is
+CHACHA_KEY_SIZE.
+
+> 
+> > +		};
+> > +		u8		batch_key[CHACHA_BLOCK_SIZE * 2];
+> 
+> What does the u8 buy here over a simple unsigned int?
+> 
+> > +	bool 			in_use;
+
+It means that the structure can be more compact, because `pos` and the
+`in_use` boolean will be closer together.
+
+
+> > diff --git a/include/vdso/types.h b/include/vdso/types.h
+> > new file mode 100644
+> > index 000000000000..ce131463aeff
+> > --- /dev/null
+> > +++ b/include/vdso/types.h
+> > @@ -0,0 +1,35 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> 
+> Why does this need an extra header when it's clearly getrandom specific?
+> Please put this into getrandom.h
+
+From your followup, I just killed the whole thing and now use u64.
+
+> > +/**
+> > + * __cvdso_getrandom_data - Generic vDSO implementation of getrandom() syscall.
+> > + * @rng_info:		Describes state of kernel RNG, memory shared with kernel.
+> > + * @buffer:		Destination buffer to fill with random bytes.
+> > + * @len:		Size of @buffer in bytes.
+> > + * @flags:		Zero or more GRND_* flags.
+> > + * @opaque_state:	Pointer to an opaque state area.
+> > + *
+> > + * This implements a "fast key erasure" RNG using ChaCha20, in the same way that the kernel's
+> > + * getrandom() syscall does. It periodically reseeds its key from the kernel's RNG, at the same
+> > + * schedule that the kernel's RNG is reseeded. If the kernel's RNG is not ready, then this always
+> > + * calls into the syscall.
+> > + *
+> > + * @opaque_state *must* be allocated using the vgetrandom_alloc() syscall.  Unless external locking
+> > + * is used, one state must be allocated per thread, as it is not safe to call this function
+> > + * concurrently with the same @opaque_state. However, it is safe to call this using the same
+> > + * @opaque_state that is shared between main code and signal handling code, within the same thread.
+> > + *
+> > + * Returns the number of random bytes written to @buffer, or a negative value indicating an error.
+> > + */
+> > +static __always_inline ssize_t
+> > +__cvdso_getrandom_data(const struct vdso_rng_data *rng_info, void *buffer, size_t len,
+> > +		       unsigned int flags, void *opaque_state)
+> > +{
+> > +	ssize_t ret = min_t(size_t, INT_MAX & PAGE_MASK /* = MAX_RW_COUNT */, len);
+> 
+> We really need to allow reading almost 2GB of random data in one go?
+
+It's just copying the precise semantics as the syscall by bounding the
+requested length. The idea is to make this have basically identical
+semantics as the syscall (while being way faster).
+
+> > +	/*
+> > +	 * @state->in_use is basic reentrancy protection against this running in a signal handler
+> > +	 * with the same @opaque_state, but obviously not atomic wrt multiple CPUs or more than one
+> > +	 * level of reentrancy. If a signal interrupts this after reading @state->in_use, but before
+> > +	 * writing @state->in_use, there is still no race, because the signal handler will run to
+> > +	 * its completion before returning execution.
+> 
+> Can you please add an explanation that the syscall does not touch the
+> state and just fills the buffer?
+
+Will do.
+
+> > +	 */
+> > +	in_use = READ_ONCE(state->in_use);
+> > +	if (unlikely(in_use))
+> > +		goto fallback_syscall;
+> > +	WRITE_ONCE(state->in_use, true);
+> > +
+> > +retry_generation:
+> > +	/*
+> > +	 * @rng_info->generation must always be read here, as it serializes @state->key with the
+> > +	 * kernel's RNG reseeding schedule.
+> > +	 */
+> > +	current_generation = READ_ONCE(rng_info->generation);
+> > +
+> > +	/*
+> > +	 * If @state->generation doesn't match the kernel RNG's generation, then it means the
+> > +	 * kernel's RNG has reseeded, and so @state->key is reseeded as well.
+> > +	 */
+> > +	if (unlikely(state->generation != current_generation)) {
+> > +		/*
+> > +		 * Write the generation before filling the key, in case of fork. If there is a fork
+> > +		 * just after this line, the two forks will get different random bytes from the
+> 
+> the two forks? You mean the parent and the child, no?
+
+Yes, nice catch, thanks.
+
+> > +		 * syscall, which is good. However, were this line to occur after the getrandom
+> > +		 * syscall, then both child and parent could have the same bytes and the same
+> > +		 * generation counter, so the fork would not be detected. Therefore, write
+> > +		 * @state->generation before the call to the getrandom syscall.
+> > +		 */
+> > +		WRITE_ONCE(state->generation, current_generation);
+> > +
+> > +		/* Prevent the syscall from being reordered wrt current_generation. */
+> > +		barrier();
+> > +
+> > +		/* Reseed @state->key using fresh bytes from the kernel. */
+> > +		if (getrandom_syscall(state->key, sizeof(state->key), 0) != sizeof(state->key)) {
+> > +			/*
+> > +			 * If the syscall failed to refresh the key, then @state->key is now
+> > +			 * invalid, so invalidate the generation so that it is not used again, and
+> > +			 * fallback to using the syscall entirely.
+> > +			 */
+> > +			WRITE_ONCE(state->generation, 0);
+> > +
+> > +			/*
+> > +			 * Set @state->in_use to false only after the last write to @state in the
+> > +			 * line above.
+> > +			 */
+> > +			WRITE_ONCE(state->in_use, false);
+> 
+> So here you rely on the compiler not reordering vs. WRITE_ONCE(),
+> i.e. volatile, but above you have a barrier() to prevent the write being
+> reordered vs. the syscall, confused.
+> 
+> But even when the compiler does not reorder, what prevents a weakly
+> ordered CPU from doing so?
+
+The issue isn't that this code will race between CPUs -- that's
+explicitly disallowed by the design. The issue is that this code is
+signal-reentrant. So it's mostly a matter of compiler ordering the
+instructions correctly. Then, in addition, the write of
+current_generation to state->generation must come before the syscall
+fires.
+
+> > +	if (!len) {
+> > +		/* Prevent the loop from being reordered wrt ->generation. */
+> > +		barrier();
+> 
+> Same question as above.
+
+This came out of discussions here:
+https://lore.kernel.org/all/878rjlr85s.fsf@oldenburg.str.redhat.com/
+And on IRC with Jann.
+
+> > +	/* Refill the batch and then overwrite the key, in order to preserve forward secrecy. */
+> 
+> 'and then overwrite'?
+> 
+> Isn't this overwriting it implicitely because batch_key and key are at
+> the same place in the union?
+
+Yes, I'll remove the `then`.
+
+Thanks for the review!
+
+Jason
 
