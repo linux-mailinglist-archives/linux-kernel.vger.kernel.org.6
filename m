@@ -1,280 +1,2031 @@
-Return-Path: <linux-kernel+bounces-206672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E95D9900C8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:41:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D2A2900C8F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B3E51F222FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:41:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EB291F2239A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:42:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F6114EC4E;
-	Fri,  7 Jun 2024 19:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB69A14D704;
+	Fri,  7 Jun 2024 19:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NOF3AI62"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kZf5I0zw"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB64A4DA08;
-	Fri,  7 Jun 2024 19:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B711CD02
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 19:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717789304; cv=none; b=b9NNDr2220Y3mZfanadLgykKUcSMMGaQAWY1egGLtc6UCmptCQGWGY+oDWgIVHnCmngRMhfS0IwCie7XcBBmvK0e9y1KJDYdCEtnGpyKqwKNz0PWMPBvtEEDNldm6l2tLUHEOkvdoRGz+1ddI980P1nWmY7WoHNEXxtiKS3wh0c=
+	t=1717789345; cv=none; b=avEwDVURAdfjGnkwAB0VqlPboovFITALY3ZJ+ogIdWwGotLnXK5sNcWG4G1ckbWbmTK6NMq26YThsGaPGfFi/7PahX0AGpDoDizoJue1WuQTyH/9IlqbWzmIESqY7yuU2Hnwcjpe7wwlIiNCB97lfY75IrI44Y0P2duOB5arJdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717789304; c=relaxed/simple;
-	bh=B5wpoJOAS1yCcn6AHTzXdnnzuJTU6sZuXi+k2Dj9i+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eFOV5DRGsfb7EpQW6e/NAmNVG3xCcxPeZxrHC6T8+iz9uI3xq1OXs1TArCLR5ZE5A1FV92ILG7DpeaaJJzvdHvamIPDIkRwIqEx2ulaU9w/G3JcV/CwkW/LkLRh2DtOzum79a4polaVmjdmwIYM7j/SfriA2kCIts1u/9gat0hI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NOF3AI62; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1717789345; c=relaxed/simple;
+	bh=9uCfXohZtt300cgR1xfm1ZTfb2k75O4d/eo2HladQ+U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YCY7EDAJXVyXIGwsIPuEaABNI/VypVMoIoPKLBxf1k8sxEskbZTJMf3/+CAX+16LCXyBRJoCwtjs4UL16tFPBeUMMD6t/ZMn7XG66gp2ah+yNGNhLM1ql+wSzGOzCaQwL6lxFCPcq17NZqnIluGAeavs5DDvq130rKuQevaSBhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kZf5I0zw; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f47f07acd3so23650615ad.0;
-        Fri, 07 Jun 2024 12:41:42 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52bc1261f45so922375e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 12:42:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717789302; x=1718394102; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=RJJyaYN0sPbNug3PyyX1s3PiVD+hYAyOGyOGOym/UzI=;
-        b=NOF3AI62XrtyTBIES/6hzDoX3p2n36YH3SG2CBvuMUEtDo8CZkXIvsbcqkTwqMQw1W
-         iU1eEk90o7tanzVcv3dFgFAQA57j0qh1TyzafPS2gl7G0itBrIWnM7bBSMXkzPxA0Ej/
-         DTQj1olYtfbcNH16IO0q3R0lsT6WlB/v6o2Oi/SOBhpCp9Qhkx3clU558dwJ9QE5h4D+
-         iBgnVsALFv2PFIihIZGUZVHq7KaajAUOJU/xIiDSudi/OcLXzN2aurDsBhidJ1Ql6oeK
-         +onOGKjbd+DH7BL1tnn8MOEOAf++sueZSgNqVwUJy8AtH4A4xTC0cX6KOyZyqn/o2Ys8
-         GyXQ==
+        d=gmail.com; s=20230601; t=1717789338; x=1718394138; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gnHfDpmokOV1g8MbAAakyCSEFJ7y3SyCsQed/Rzwa28=;
+        b=kZf5I0zwJFn4lQdFr/laEJMdXp6QBFeWPstwihXt9Ige/4loseJk8gF7PMX+2/xU89
+         usCOpDiGZFl9kveK0le/VHZ+N556OBq3ijmxBhK09Y5e9nvA6CW6TOHUTinzqYG7TdBo
+         jW5Sk8FeLwYhuh3Z9N1Ce2sW03Qr3pNVuqaefBx3eAfkvYw7f4Bmh53BveK6I00dN/ba
+         8KmuACXC86P6TtybBVL8hiTQc2EOCamAoIyag3/191a3CCCMuMIIx7IEs1ql2PS+ZYOQ
+         pUoh9kFBq93O8V6IhrI5OqLaJHMRWkm7RqjhhvDbXvfgQIeqltUgULKYZvn2WF0YZivl
+         CGXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717789302; x=1718394102;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RJJyaYN0sPbNug3PyyX1s3PiVD+hYAyOGyOGOym/UzI=;
-        b=bPjrYQu2Sv7znyXP9kQ1NMaYZNTpmOFs/JNsr8U4fZ4Mi4rEYk1rY+Pwo/cB5svXGj
-         GiAc/7DlbBXIkjcVVKoHK9H/fOpTfdcr6FHa9YtfmjJtQt1uTf2n/15C95HC4ilcHz6g
-         MN3plOuaGkER/oSz4zmvFr3hZUmGBsf5FKul+Cuj7nRSPar5w7SMw0SBzWyILQB9H3Nh
-         Cl7CnxuLYMHspwb4rXOThEA7aqGb2s0hMNcMKYjcsQbt+Mj0lZNB+l/FJQwWsKv747WG
-         kksT0jeXiJxSMch9YL+/9MTG4FI8h271Kz3tSbK12HI0M0wRkQQaIdgGOTrbRChIdZnd
-         bKmA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfwBc6f5SJ7dogp5Jvj0O9V8Dh6n1gv9dRRyxS/YTUuqIpWb+J97jhEjaMvfZDFtn9SpuTEHzL8H+VUp9xUMkHxxEoskV3vrTox5CBF5yrl2kSQJ9Nvn4vLcpPnwINK4tASrieROBQToZGXELx+bgOr+iHf0K7WkNYdg8gYm9xrVVl02bftdLyP/wh
-X-Gm-Message-State: AOJu0Yw0FluOPucJcnmDCDXUsSBAYpZA5QFDzlJRSVAdIzr4A+k8xI7B
-	FWL3KYOA/jLDXALA2yvX8q01fL+qBUqABmLS1L43OCSJc4bkAtVa
-X-Google-Smtp-Source: AGHT+IGscUbgi37qbqXXc5w7y2H8tq5p/gmvxvvmo71C1+DhTMvyNutUQJaTF7RIefH0R+RKzJ5Hlw==
-X-Received: by 2002:a17:903:2445:b0:1f6:70fe:76bf with SMTP id d9443c01a7336-1f6d02d1a99mr41772155ad.14.1717789301946;
-        Fri, 07 Jun 2024 12:41:41 -0700 (PDT)
-Received: from tahera-OptiPlex-5000 ([136.159.49.123])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd769a2esm38410355ad.66.2024.06.07.12.41.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 12:41:41 -0700 (PDT)
-Date: Fri, 7 Jun 2024 13:41:39 -0600
-From: Tahera Fahimi <fahimitahera@gmail.com>
-To: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Jann Horn <jannh@google.com>, outreachy@lists.linux.dev,
-	netdev@vger.kernel.org,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Subject: Re: [PATCH v3] landlock: Add abstract unix socket connect restriction
-Message-ID: <ZmNic8S1KtyLcp7i@tahera-OptiPlex-5000>
-References: <ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000>
- <ZmLEoBfHyUR3nKAV@google.com>
+        d=1e100.net; s=20230601; t=1717789338; x=1718394138;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gnHfDpmokOV1g8MbAAakyCSEFJ7y3SyCsQed/Rzwa28=;
+        b=i9YMSoaQ0BrkFVTvm/kb/HuUZgehHHkhDbb5dXbl32jOmHlPRlMzSHyGzSmWJ1OL+J
+         QhmHL8GlriGobR4IOHl5AXK8Oupr5Voac6nKXJH9yaUGMOUezj0H5+xvjY+gmdSW0LN+
+         ewbvyQVEPg1YJLKiLMvsRmdFoXQ/L6D9RTojejK1vKnbfq9lAx17kYjxsC4ad+i48r2V
+         +IDAGzjP8O65VO4vw1Nb05mMLZKs7zrtOozqeH3i3hZ+WkG8fWLrMM+ITTLXMDZcONN0
+         sauK7DK2Fjs6Gnm/+BToj4Mt99ovi227+Az0dGq+ts8tqi9PbavtvGiYDVrmWj+w/PA3
+         pg8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVC0ovagmrgwXnzUkNpj6tZnZkBF4sg0C4+QTwk5vshU28Is9641vAbbv3WWTYL2tfzTWvHD9GSXeMs65BHDUJXdYNMeMCuivz5dCrt
+X-Gm-Message-State: AOJu0Yyl9o8InSrKyb/3MSKEIr2OCN1ggvGnfAq0pukkei4BUVnyJues
+	/AtfimmKEteZknp/R+WpPpQ9UcXvNZbJJ9oJFjyAgJl7HC3U6No5ZhtKZd52NU5VszOtrUFO1Ce
+	zbvHo0oRgA3Pg8MAUywmkM2jZa85Rl37TN50=
+X-Google-Smtp-Source: AGHT+IHjO1JOFlWYQz1NMb7r7WKf2U/H6bv+LLoj8CwM9sjiFNs+LlOPabhLHUHUQDdnlGYMQg1o1h7MEDrIItHW9s0=
+X-Received: by 2002:a05:6512:1cd:b0:51e:f68b:d266 with SMTP id
+ 2adb3069b0e04-52bb9fcc3e7mr1938206e87.50.1717789337445; Fri, 07 Jun 2024
+ 12:42:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZmLEoBfHyUR3nKAV@google.com>
+References: <20240607011413.8839-1-wuhoipok@gmail.com> <dd92e946-144a-4624-aac9-c516b2417208@amd.com>
+ <CANyH0kCyZsZaEaGb3cweD_KD8JB1v+1Xekz78p4my1FSdZDAxA@mail.gmail.com> <771fdb3f-79ed-4c1d-b979-d1e8d046832d@amd.com>
+In-Reply-To: <771fdb3f-79ed-4c1d-b979-d1e8d046832d@amd.com>
+From: Hoi Pok Wu <wuhoipok@gmail.com>
+Date: Fri, 7 Jun 2024 15:42:05 -0400
+Message-ID: <CANyH0kDUtU50O1rYeO+2NFVXh7zaGcgchEyV7KdGY9KEGRSpQg@mail.gmail.com>
+Subject: Re: [PATCH] drm/radeon: remove load callback
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, "Pan, Xinhui" <Xinhui.Pan@amd.com>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	"open list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>, 
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 07, 2024 at 10:28:35AM +0200, Günther Noack wrote:
-> Hello Tahera!
-> 
-> Thanks for sending another revision of your patch set!
-Hello Günther, 
-Thanks for your feedback.
+no problem, thanks for your time.
 
-> On Thu, Jun 06, 2024 at 05:44:46PM -0600, Tahera Fahimi wrote:
-> > Abstract unix sockets are used for local inter-process communications
-> > without on a filesystem. Currently a sandboxed process can connect to a
-> > socket outside of the sandboxed environment, since landlock has no
-> > restriction for connecting to a unix socket in the abstract namespace.
-> > Access to such sockets for a sandboxed process should be scoped the same
-> > way ptrace is limited.
-> > 
-> > Because of compatibility reasons and since landlock should be flexible,
-> > we extend the user space interface by adding a new "scoped" field. This
-> > field optionally contains a "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to
-> > specify that the ruleset will deny any connection from within the
-> > sandbox to its parents(i.e. any parent sandbox or non-sandbox processes)
-> > 
-> > Closes: https://github.com/landlock-lsm/linux/issues/7
-> > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> > 
-> > -------
-> > V3: Added "scoped" field to landlock_ruleset_attr
-> > V2: Remove wrapper functions
-> > 
-> > -------
-> > ---
-> >  include/uapi/linux/landlock.h | 28 +++++++++++++++++++++++
-> >  security/landlock/limits.h    |  5 ++++
-> >  security/landlock/ruleset.c   | 15 ++++++++----
-> >  security/landlock/ruleset.h   | 28 +++++++++++++++++++++--
-> >  security/landlock/syscalls.c  | 12 +++++++---
-> >  security/landlock/task.c      | 43 +++++++++++++++++++++++++++++++++++
-> >  6 files changed, 121 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> > index 68625e728f43..d887e67dc0ed 100644
-> > --- a/include/uapi/linux/landlock.h
-> > +++ b/include/uapi/linux/landlock.h
-> > @@ -37,6 +37,12 @@ struct landlock_ruleset_attr {
-> >  	 * rule explicitly allow them.
-> >  	 */
-> >  	__u64 handled_access_net;
-> > +	/**
-> > +	 * scoped: Bitmask of actions (cf. `Scope access flags`_)
-> > +	 * that is handled by this ruleset and should be permitted
-> > +	 * by default if no rule explicitly deny them.
-> > +	 */
-> > +	__u64 scoped;
-> 
-> I have trouble understanding what this docstring means.
-> 
-> If those are "handled" things, shouldn't the name also start with "handled_", in
-> line with the other fields?  Also, I don't see any way to manipulate these
-> rights with a Landlock rule in this ?
+wu
 
-.scoped attribute is not defined as .handled_scope since there is no
-rule to handle/manipulate it, simply because this attribute shows either
-action is permitted or denied. 
-
-> How about:
-> 
-> /**
->  * handled_scoped: Bitmask of IPC actions (cf. `Scoped access flags`_)
->  * which are confined to only affect the current Landlock domain.
->  */
-
-This is a good docstring. I will use it. 
-
-> __u64 handled_scoped;
-> 
-> >  };
-> >  
-> >  /*
-> > @@ -266,4 +272,26 @@ struct landlock_net_port_attr {
-> >  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
-> >  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
-> >  /* clang-format on */
-> > +
-> > +/**
-> > + * DOC: scoped
-> > + *
-> > + * Scoped handles a set of restrictions on kernel IPCs.
-> > + *
-> > + * Scope access flags
-> 
-> Scoped with a "d"?
-Scoped meant to point to .scoped attribute.  
-> > + * ~~~~~~~~~~~~~~~~~~~~
-> > + * 
-> > + * These flags enable to restrict a sandboxed process from a set of
-> > + * inter-process communications actions. Setting a flag in a landlock
-> > + * domain will isolate the Landlock domain to forbid connections
-> > + * to resources outside the domain.
-> > + *
-> > + * IPCs with scoped actions:
-> > + * - %LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET: Restrict a sandbox process to
-> > + *   connect to a process outside of the sandbox domain through abstract
-> > + *   unix sockets.
-> > + */
-> > +/* clang-format off */
-> > +#define LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
-> 
-> Should the name of this #define indicate the direction that we are restricting?
-
-Since the domain of a process specifies if a process can connect or not,
-the direction of the connection does not matter. This restriction is the
-same as ptrace.
-
-> If I understand your documentation correctly, this is about *connecting out* of
-> the current Landlock domain, but incoming connections from more privileged
-> domains are OK, right?
-
-Yes, Incoming connections are allowed if they are from a higher
-privileged domain (or no domain). Consider two process P1 and P2 where
-P1 wants to connect to P2. If P1 is not landlocked, it can connect to P2
-regardless of whether P2 has a domain. If P1 is landlocked, it must have
-an equal or less domain than P2 to connect to P2. We disscussed about
-direction in [2]
-https://lore.kernel.org/outreachy/20240603.Quaes2eich5f@digikod.net/T/#m6d5c5e65e43eaa1c8c38309f1225d169be3d6f87
-
-> 
-> Also:
-> 
-> Is it intentional that you are both restricting the connection and the sending
-> with the same flag (security_unix_may_send)?  If an existing Unix Domain Socket
-> gets passed in to a program from the outside (e.g. as stdout), shouldn't it
-> still be possible that the program enables a Landlock policy and then still
-> writes to it?  (Does that work?  Am I mis-reading the patch?)
-
-security_unix_may_send checks if AF_UNIX socket can send datagrams, so
-connecting and sending datagrams happens at the same state. I am not
-sure if I understand your example correctly. Can you please explain a
-bit more?
-
-> The way that write access is normally checked for other files is at the time
-> when you open the file, not during write(), and I believe it would be more in
-> line with that normal "check at open" behaviour if we did the same here?
-
-It checks the ability to connect to a unix socket at the point of
-connecting, so I think it is aligned with the "check at point"
-behaviour. This security check is called right before finalizing the
-connection. 
-
-> 
-> > diff --git a/security/landlock/limits.h b/security/landlock/limits.h
-> > index 20fdb5ff3514..7b794b81ef05 100644
-> > --- a/security/landlock/limits.h
-> > +++ b/security/landlock/limits.h
-> > @@ -28,6 +28,11 @@
-> >  #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
-> >  #define LANDLOCK_SHIFT_ACCESS_NET	LANDLOCK_NUM_ACCESS_FS
-> >  
-> > +#define LANDLOCK_LAST_ACCESS_SCOPE       LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET
-> > +#define LANDLOCK_MASK_ACCESS_SCOPE	((LANDLOCK_LAST_ACCESS_SCOPE << 1) - 1)
-> > +#define LANDLOCK_NUM_ACCESS_SCOPE         __const_hweight64(LANDLOCK_MASK_ACCESS_SCOPE)
-> > +#define LANDLOCK_SHIFT_ACCESS_SCOPE      LANDLOCK_SHIFT_ACCESS_NET
->                                             ^^^^^^^^^^^^^^^^^^^^^^^^^
-> 
-> I believe this #define has the wrong value, and as a consequence, the code
-> suffers from the same problem as we already had on the other patch set from
-> Mikhail Ivanov -- see [1] for that discussion.
-
-Thanks for the hint. I will definitly check this. 
-
-> The LANDLOCK_SHIFT_ACCESS_FOO variable is used for determining the position of
-> your flag in the access_masks_t type, where all access masks are combined
-> together in one big bit vector.  If you are defining this the same for _SCOPE as
-> for _NET, I believe that we will start using the same bits in that vector for
-> both the _NET flags and the _SCOPE flags, and that will manifest in unwanted
-> interactions between the different types of restrictions.  (e.g. you will create
-> a policy to restrict _SCOPE, and you will find yourself unable to do some things
-> with TCP ports)
-> 
-> Please also see the other thread for more discussions about how we can avoid
-> such problems in the future.  (This code is easy to get wrong,
-> apparently... When we don't test what happens across multiple types of
-> restrictions, everything looks fine.)
-> 
-> [1] https://lore.kernel.org/all/ebd680cc-25d6-ee14-4856-310f5e5e28e4@huawei-partners.com/
-> 
-> —Günther
-> 
+On Fri, Jun 7, 2024 at 1:35=E2=80=AFPM Christian K=C3=B6nig <christian.koen=
+ig@amd.com> wrote:
+>
+> In general thanks for looking into this, but when you don't have
+> hardware to at least briefly validate your work we probably can't accept
+> that.
+>
+> I can see if I can get anybody looking into this, but the odds that
+> somebody has time and hardware are pretty low.
+>
+> Christian.
+>
+> Am 07.06.24 um 16:15 schrieb Hoi Pok Wu:
+> > i do it because it is part of the todo list
+> > where the task is to remove load/unload callback
+> > there are only 2 drm_driver that still uses thats why
+> > i thought my amdgpu could test radeonsi but no, i still send it anyway
+> >
+> > regards,
+> > wu
+> >
+> >
+> > On Fri, Jun 7, 2024 at 3:51=E2=80=AFAM Christian K=C3=B6nig <christian.=
+koenig@amd.com> wrote:
+> >> Am 07.06.24 um 03:14 schrieb wu hoi pok:
+> >>> this patch is to remove the load callback from the kms_driver,
+> >>> following closly to amdgpu, radeon_driver_load_kms and devm_drm_dev_a=
+lloc
+> >>> are used, most of the changes here are rdev->ddev to rdev_to_drm,
+> >>> which maps to adev_to_drm in amdgpu. however this patch is not tested=
+ on
+> >>> hardware, so if you are free and have a gcn1 gcn2 card please do so.
+> >> What is the motivation to do that?
+> >>
+> >> When the old interface is going to be removed the patch is probably
+> >> justified, but in general we don't really accept any larger changes li=
+ke
+> >> this for radeon any more.
+> >>
+> >> Especially without some testing of it.
+> >>
+> >> Regards,
+> >> Christian.
+> >>
+> >>> Signed-off-by: wu hoi pok <wuhoipok@gmail.com>
+> >>> ---
+> >>>    drivers/gpu/drm/radeon/atombios_encoders.c |  2 +-
+> >>>    drivers/gpu/drm/radeon/cik.c               | 14 ++--
+> >>>    drivers/gpu/drm/radeon/dce6_afmt.c         |  2 +-
+> >>>    drivers/gpu/drm/radeon/evergreen.c         | 12 ++--
+> >>>    drivers/gpu/drm/radeon/ni.c                |  2 +-
+> >>>    drivers/gpu/drm/radeon/r100.c              | 24 +++----
+> >>>    drivers/gpu/drm/radeon/r300.c              |  6 +-
+> >>>    drivers/gpu/drm/radeon/r420.c              |  6 +-
+> >>>    drivers/gpu/drm/radeon/r520.c              |  2 +-
+> >>>    drivers/gpu/drm/radeon/r600.c              | 12 ++--
+> >>>    drivers/gpu/drm/radeon/r600_cs.c           |  2 +-
+> >>>    drivers/gpu/drm/radeon/r600_dpm.c          |  4 +-
+> >>>    drivers/gpu/drm/radeon/r600_hdmi.c         |  2 +-
+> >>>    drivers/gpu/drm/radeon/radeon.h            | 11 +++-
+> >>>    drivers/gpu/drm/radeon/radeon_acpi.c       | 10 +--
+> >>>    drivers/gpu/drm/radeon/radeon_agp.c        |  2 +-
+> >>>    drivers/gpu/drm/radeon/radeon_atombios.c   |  2 +-
+> >>>    drivers/gpu/drm/radeon/radeon_audio.c      |  4 +-
+> >>>    drivers/gpu/drm/radeon/radeon_combios.c    | 12 ++--
+> >>>    drivers/gpu/drm/radeon/radeon_device.c     | 17 ++---
+> >>>    drivers/gpu/drm/radeon/radeon_display.c    | 74 +++++++++++-------=
+----
+> >>>    drivers/gpu/drm/radeon/radeon_drv.c        | 27 +++++---
+> >>>    drivers/gpu/drm/radeon/radeon_drv.h        |  1 -
+> >>>    drivers/gpu/drm/radeon/radeon_fbdev.c      | 26 ++++----
+> >>>    drivers/gpu/drm/radeon/radeon_fence.c      |  8 +--
+> >>>    drivers/gpu/drm/radeon/radeon_gem.c        |  2 +-
+> >>>    drivers/gpu/drm/radeon/radeon_i2c.c        |  2 +-
+> >>>    drivers/gpu/drm/radeon/radeon_ib.c         |  2 +-
+> >>>    drivers/gpu/drm/radeon/radeon_irq_kms.c    | 12 ++--
+> >>>    drivers/gpu/drm/radeon/radeon_kms.c        | 16 ++---
+> >>>    drivers/gpu/drm/radeon/radeon_object.c     |  2 +-
+> >>>    drivers/gpu/drm/radeon/radeon_pm.c         | 20 +++---
+> >>>    drivers/gpu/drm/radeon/radeon_ring.c       |  2 +-
+> >>>    drivers/gpu/drm/radeon/radeon_ttm.c        |  6 +-
+> >>>    drivers/gpu/drm/radeon/rs400.c             |  6 +-
+> >>>    drivers/gpu/drm/radeon/rs600.c             | 14 ++--
+> >>>    drivers/gpu/drm/radeon/rs690.c             |  2 +-
+> >>>    drivers/gpu/drm/radeon/rv515.c             |  4 +-
+> >>>    drivers/gpu/drm/radeon/rv770.c             |  2 +-
+> >>>    drivers/gpu/drm/radeon/si.c                |  4 +-
+> >>>    40 files changed, 192 insertions(+), 188 deletions(-)
+> >>>
+> >>> diff --git a/drivers/gpu/drm/radeon/atombios_encoders.c b/drivers/gpu=
+/drm/radeon/atombios_encoders.c
+> >>> index 7b11674f5d45..05f34efd7fd0 100644
+> >>> --- a/drivers/gpu/drm/radeon/atombios_encoders.c
+> >>> +++ b/drivers/gpu/drm/radeon/atombios_encoders.c
+> >>> @@ -2179,7 +2179,7 @@ int radeon_atom_pick_dig_encoder(struct drm_enc=
+oder *encoder, int fe_idx)
+> >>>    void
+> >>>    radeon_atom_encoder_init(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        struct drm_encoder *encoder;
+> >>>
+> >>>        list_for_each_entry(encoder, &dev->mode_config.encoder_list, h=
+ead) {
+> >>> diff --git a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/ci=
+k.c
+> >>> index b5e96a8fc2c1..11a492f21157 100644
+> >>> --- a/drivers/gpu/drm/radeon/cik.c
+> >>> +++ b/drivers/gpu/drm/radeon/cik.c
+> >>> @@ -7585,7 +7585,7 @@ int cik_irq_process(struct radeon_device *rdev)
+> >>>                                        DRM_DEBUG("IH: IH event w/o as=
+serted irq bit?\n");
+> >>>
+> >>>                                if (rdev->irq.crtc_vblank_int[0]) {
+> >>> -                                     drm_handle_vblank(rdev->ddev, 0=
+);
+> >>> +                                     drm_handle_vblank(rdev_to_drm(r=
+dev), 0);
+> >>>                                        rdev->pm.vblank_sync =3D true;
+> >>>                                        wake_up(&rdev->irq.vblank_queu=
+e);
+> >>>                                }
+> >>> @@ -7615,7 +7615,7 @@ int cik_irq_process(struct radeon_device *rdev)
+> >>>                                        DRM_DEBUG("IH: IH event w/o as=
+serted irq bit?\n");
+> >>>
+> >>>                                if (rdev->irq.crtc_vblank_int[1]) {
+> >>> -                                     drm_handle_vblank(rdev->ddev, 1=
+);
+> >>> +                                     drm_handle_vblank(rdev_to_drm(r=
+dev), 1);
+> >>>                                        rdev->pm.vblank_sync =3D true;
+> >>>                                        wake_up(&rdev->irq.vblank_queu=
+e);
+> >>>                                }
+> >>> @@ -7645,7 +7645,7 @@ int cik_irq_process(struct radeon_device *rdev)
+> >>>                                        DRM_DEBUG("IH: IH event w/o as=
+serted irq bit?\n");
+> >>>
+> >>>                                if (rdev->irq.crtc_vblank_int[2]) {
+> >>> -                                     drm_handle_vblank(rdev->ddev, 2=
+);
+> >>> +                                     drm_handle_vblank(rdev_to_drm(r=
+dev), 2);
+> >>>                                        rdev->pm.vblank_sync =3D true;
+> >>>                                        wake_up(&rdev->irq.vblank_queu=
+e);
+> >>>                                }
+> >>> @@ -7675,7 +7675,7 @@ int cik_irq_process(struct radeon_device *rdev)
+> >>>                                        DRM_DEBUG("IH: IH event w/o as=
+serted irq bit?\n");
+> >>>
+> >>>                                if (rdev->irq.crtc_vblank_int[3]) {
+> >>> -                                     drm_handle_vblank(rdev->ddev, 3=
+);
+> >>> +                                     drm_handle_vblank(rdev_to_drm(r=
+dev), 3);
+> >>>                                        rdev->pm.vblank_sync =3D true;
+> >>>                                        wake_up(&rdev->irq.vblank_queu=
+e);
+> >>>                                }
+> >>> @@ -7705,7 +7705,7 @@ int cik_irq_process(struct radeon_device *rdev)
+> >>>                                        DRM_DEBUG("IH: IH event w/o as=
+serted irq bit?\n");
+> >>>
+> >>>                                if (rdev->irq.crtc_vblank_int[4]) {
+> >>> -                                     drm_handle_vblank(rdev->ddev, 4=
+);
+> >>> +                                     drm_handle_vblank(rdev_to_drm(r=
+dev), 4);
+> >>>                                        rdev->pm.vblank_sync =3D true;
+> >>>                                        wake_up(&rdev->irq.vblank_queu=
+e);
+> >>>                                }
+> >>> @@ -7735,7 +7735,7 @@ int cik_irq_process(struct radeon_device *rdev)
+> >>>                                        DRM_DEBUG("IH: IH event w/o as=
+serted irq bit?\n");
+> >>>
+> >>>                                if (rdev->irq.crtc_vblank_int[5]) {
+> >>> -                                     drm_handle_vblank(rdev->ddev, 5=
+);
+> >>> +                                     drm_handle_vblank(rdev_to_drm(r=
+dev), 5);
+> >>>                                        rdev->pm.vblank_sync =3D true;
+> >>>                                        wake_up(&rdev->irq.vblank_queu=
+e);
+> >>>                                }
+> >>> @@ -8581,7 +8581,7 @@ int cik_init(struct radeon_device *rdev)
+> >>>        /* Initialize surface registers */
+> >>>        radeon_surface_init(rdev);
+> >>>        /* Initialize clocks */
+> >>> -     radeon_get_clock_info(rdev->ddev);
+> >>> +     radeon_get_clock_info(rdev_to_drm(rdev));
+> >>>
+> >>>        /* Fence driver */
+> >>>        radeon_fence_driver_init(rdev);
+> >>> diff --git a/drivers/gpu/drm/radeon/dce6_afmt.c b/drivers/gpu/drm/rad=
+eon/dce6_afmt.c
+> >>> index 4c06f47453fd..d6ab93ed9ec4 100644
+> >>> --- a/drivers/gpu/drm/radeon/dce6_afmt.c
+> >>> +++ b/drivers/gpu/drm/radeon/dce6_afmt.c
+> >>> @@ -91,7 +91,7 @@ struct r600_audio_pin *dce6_audio_get_pin(struct ra=
+deon_device *rdev)
+> >>>                        pin =3D &rdev->audio.pin[i];
+> >>>                        pin_count =3D 0;
+> >>>
+> >>> -                     list_for_each_entry(encoder, &rdev->ddev->mode_=
+config.encoder_list, head) {
+> >>> +                     list_for_each_entry(encoder, &rdev_to_drm(rdev)=
+->mode_config.encoder_list, head) {
+> >>>                                if (radeon_encoder_is_digital(encoder)=
+) {
+> >>>                                        radeon_encoder =3D to_radeon_e=
+ncoder(encoder);
+> >>>                                        dig =3D radeon_encoder->enc_pr=
+iv;
+> >>> diff --git a/drivers/gpu/drm/radeon/evergreen.c b/drivers/gpu/drm/rad=
+eon/evergreen.c
+> >>> index c634dc28e6c3..bc4ab71613a5 100644
+> >>> --- a/drivers/gpu/drm/radeon/evergreen.c
+> >>> +++ b/drivers/gpu/drm/radeon/evergreen.c
+> >>> @@ -1673,7 +1673,7 @@ void evergreen_pm_misc(struct radeon_device *rd=
+ev)
+> >>>     */
+> >>>    void evergreen_pm_prepare(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *ddev =3D rdev->ddev;
+> >>> +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >>>        struct drm_crtc *crtc;
+> >>>        struct radeon_crtc *radeon_crtc;
+> >>>        u32 tmp;
+> >>> @@ -1698,7 +1698,7 @@ void evergreen_pm_prepare(struct radeon_device =
+*rdev)
+> >>>     */
+> >>>    void evergreen_pm_finish(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *ddev =3D rdev->ddev;
+> >>> +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >>>        struct drm_crtc *crtc;
+> >>>        struct radeon_crtc *radeon_crtc;
+> >>>        u32 tmp;
+> >>> @@ -1763,7 +1763,7 @@ void evergreen_hpd_set_polarity(struct radeon_d=
+evice *rdev,
+> >>>     */
+> >>>    void evergreen_hpd_init(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        struct drm_connector *connector;
+> >>>        unsigned enabled =3D 0;
+> >>>        u32 tmp =3D DC_HPDx_CONNECTION_TIMER(0x9c4) |
+> >>> @@ -1804,7 +1804,7 @@ void evergreen_hpd_init(struct radeon_device *r=
+dev)
+> >>>     */
+> >>>    void evergreen_hpd_fini(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        struct drm_connector *connector;
+> >>>        unsigned disabled =3D 0;
+> >>>
+> >>> @@ -4753,7 +4753,7 @@ int evergreen_irq_process(struct radeon_device =
+*rdev)
+> >>>                                event_name =3D "vblank";
+> >>>
+> >>>                                if (rdev->irq.crtc_vblank_int[crtc_idx=
+]) {
+> >>> -                                     drm_handle_vblank(rdev->ddev, c=
+rtc_idx);
+> >>> +                                     drm_handle_vblank(rdev_to_drm(r=
+dev), crtc_idx);
+> >>>                                        rdev->pm.vblank_sync =3D true;
+> >>>                                        wake_up(&rdev->irq.vblank_queu=
+e);
+> >>>                                }
+> >>> @@ -5211,7 +5211,7 @@ int evergreen_init(struct radeon_device *rdev)
+> >>>        /* Initialize surface registers */
+> >>>        radeon_surface_init(rdev);
+> >>>        /* Initialize clocks */
+> >>> -     radeon_get_clock_info(rdev->ddev);
+> >>> +     radeon_get_clock_info(rdev_to_drm(rdev));
+> >>>        /* Fence driver */
+> >>>        radeon_fence_driver_init(rdev);
+> >>>        /* initialize AGP */
+> >>> diff --git a/drivers/gpu/drm/radeon/ni.c b/drivers/gpu/drm/radeon/ni.=
+c
+> >>> index 77aee99e473a..3890911fe693 100644
+> >>> --- a/drivers/gpu/drm/radeon/ni.c
+> >>> +++ b/drivers/gpu/drm/radeon/ni.c
+> >>> @@ -2360,7 +2360,7 @@ int cayman_init(struct radeon_device *rdev)
+> >>>        /* Initialize surface registers */
+> >>>        radeon_surface_init(rdev);
+> >>>        /* Initialize clocks */
+> >>> -     radeon_get_clock_info(rdev->ddev);
+> >>> +     radeon_get_clock_info(rdev_to_drm(rdev));
+> >>>        /* Fence driver */
+> >>>        radeon_fence_driver_init(rdev);
+> >>>        /* initialize memory controller */
+> >>> diff --git a/drivers/gpu/drm/radeon/r100.c b/drivers/gpu/drm/radeon/r=
+100.c
+> >>> index 0b1e19345f43..d7d7d23bf9a1 100644
+> >>> --- a/drivers/gpu/drm/radeon/r100.c
+> >>> +++ b/drivers/gpu/drm/radeon/r100.c
+> >>> @@ -459,7 +459,7 @@ void r100_pm_misc(struct radeon_device *rdev)
+> >>>     */
+> >>>    void r100_pm_prepare(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *ddev =3D rdev->ddev;
+> >>> +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >>>        struct drm_crtc *crtc;
+> >>>        struct radeon_crtc *radeon_crtc;
+> >>>        u32 tmp;
+> >>> @@ -490,7 +490,7 @@ void r100_pm_prepare(struct radeon_device *rdev)
+> >>>     */
+> >>>    void r100_pm_finish(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *ddev =3D rdev->ddev;
+> >>> +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >>>        struct drm_crtc *crtc;
+> >>>        struct radeon_crtc *radeon_crtc;
+> >>>        u32 tmp;
+> >>> @@ -603,7 +603,7 @@ void r100_hpd_set_polarity(struct radeon_device *=
+rdev,
+> >>>     */
+> >>>    void r100_hpd_init(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        struct drm_connector *connector;
+> >>>        unsigned enable =3D 0;
+> >>>
+> >>> @@ -626,7 +626,7 @@ void r100_hpd_init(struct radeon_device *rdev)
+> >>>     */
+> >>>    void r100_hpd_fini(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        struct drm_connector *connector;
+> >>>        unsigned disable =3D 0;
+> >>>
+> >>> @@ -798,7 +798,7 @@ int r100_irq_process(struct radeon_device *rdev)
+> >>>                /* Vertical blank interrupts */
+> >>>                if (status & RADEON_CRTC_VBLANK_STAT) {
+> >>>                        if (rdev->irq.crtc_vblank_int[0]) {
+> >>> -                             drm_handle_vblank(rdev->ddev, 0);
+> >>> +                             drm_handle_vblank(rdev_to_drm(rdev), 0)=
+;
+> >>>                                rdev->pm.vblank_sync =3D true;
+> >>>                                wake_up(&rdev->irq.vblank_queue);
+> >>>                        }
+> >>> @@ -807,7 +807,7 @@ int r100_irq_process(struct radeon_device *rdev)
+> >>>                }
+> >>>                if (status & RADEON_CRTC2_VBLANK_STAT) {
+> >>>                        if (rdev->irq.crtc_vblank_int[1]) {
+> >>> -                             drm_handle_vblank(rdev->ddev, 1);
+> >>> +                             drm_handle_vblank(rdev_to_drm(rdev), 1)=
+;
+> >>>                                rdev->pm.vblank_sync =3D true;
+> >>>                                wake_up(&rdev->irq.vblank_queue);
+> >>>                        }
+> >>> @@ -1471,7 +1471,7 @@ int r100_cs_packet_parse_vline(struct radeon_cs=
+_parser *p)
+> >>>        header =3D radeon_get_ib_value(p, h_idx);
+> >>>        crtc_id =3D radeon_get_ib_value(p, h_idx + 5);
+> >>>        reg =3D R100_CP_PACKET0_GET_REG(header);
+> >>> -     crtc =3D drm_crtc_find(p->rdev->ddev, p->filp, crtc_id);
+> >>> +     crtc =3D drm_crtc_find(rdev_to_drm(p->rdev), p->filp, crtc_id);
+> >>>        if (!crtc) {
+> >>>                DRM_ERROR("cannot find crtc %d\n", crtc_id);
+> >>>                return -ENOENT;
+> >>> @@ -3059,7 +3059,7 @@ DEFINE_SHOW_ATTRIBUTE(r100_debugfs_mc_info);
+> >>>    void  r100_debugfs_rbbm_init(struct radeon_device *rdev)
+> >>>    {
+> >>>    #if defined(CONFIG_DEBUG_FS)
+> >>> -     struct dentry *root =3D rdev->ddev->primary->debugfs_root;
+> >>> +     struct dentry *root =3D rdev_to_drm(rdev)->primary->debugfs_roo=
+t;
+> >>>
+> >>>        debugfs_create_file("r100_rbbm_info", 0444, root, rdev,
+> >>>                            &r100_debugfs_rbbm_info_fops);
+> >>> @@ -3069,7 +3069,7 @@ void  r100_debugfs_rbbm_init(struct radeon_devi=
+ce *rdev)
+> >>>    void r100_debugfs_cp_init(struct radeon_device *rdev)
+> >>>    {
+> >>>    #if defined(CONFIG_DEBUG_FS)
+> >>> -     struct dentry *root =3D rdev->ddev->primary->debugfs_root;
+> >>> +     struct dentry *root =3D rdev_to_drm(rdev)->primary->debugfs_roo=
+t;
+> >>>
+> >>>        debugfs_create_file("r100_cp_ring_info", 0444, root, rdev,
+> >>>                            &r100_debugfs_cp_ring_info_fops);
+> >>> @@ -3081,7 +3081,7 @@ void r100_debugfs_cp_init(struct radeon_device =
+*rdev)
+> >>>    void  r100_debugfs_mc_info_init(struct radeon_device *rdev)
+> >>>    {
+> >>>    #if defined(CONFIG_DEBUG_FS)
+> >>> -     struct dentry *root =3D rdev->ddev->primary->debugfs_root;
+> >>> +     struct dentry *root =3D rdev_to_drm(rdev)->primary->debugfs_roo=
+t;
+> >>>
+> >>>        debugfs_create_file("r100_mc_info", 0444, root, rdev,
+> >>>                            &r100_debugfs_mc_info_fops);
+> >>> @@ -3947,7 +3947,7 @@ int r100_resume(struct radeon_device *rdev)
+> >>>                        RREG32(R_0007C0_CP_STAT));
+> >>>        }
+> >>>        /* post */
+> >>> -     radeon_combios_asic_init(rdev->ddev);
+> >>> +     radeon_combios_asic_init(rdev_to_drm(rdev));
+> >>>        /* Resume clock after posting */
+> >>>        r100_clock_startup(rdev);
+> >>>        /* Initialize surface registers */
+> >>> @@ -4056,7 +4056,7 @@ int r100_init(struct radeon_device *rdev)
+> >>>        /* Set asic errata */
+> >>>        r100_errata(rdev);
+> >>>        /* Initialize clocks */
+> >>> -     radeon_get_clock_info(rdev->ddev);
+> >>> +     radeon_get_clock_info(rdev_to_drm(rdev));
+> >>>        /* initialize AGP */
+> >>>        if (rdev->flags & RADEON_IS_AGP) {
+> >>>                r =3D radeon_agp_init(rdev);
+> >>> diff --git a/drivers/gpu/drm/radeon/r300.c b/drivers/gpu/drm/radeon/r=
+300.c
+> >>> index 1620f534f55f..05c13102a8cb 100644
+> >>> --- a/drivers/gpu/drm/radeon/r300.c
+> >>> +++ b/drivers/gpu/drm/radeon/r300.c
+> >>> @@ -616,7 +616,7 @@ DEFINE_SHOW_ATTRIBUTE(rv370_debugfs_pcie_gart_inf=
+o);
+> >>>    static void rv370_debugfs_pcie_gart_info_init(struct radeon_device=
+ *rdev)
+> >>>    {
+> >>>    #if defined(CONFIG_DEBUG_FS)
+> >>> -     struct dentry *root =3D rdev->ddev->primary->debugfs_root;
+> >>> +     struct dentry *root =3D rdev_to_drm(rdev)->primary->debugfs_roo=
+t;
+> >>>
+> >>>        debugfs_create_file("rv370_pcie_gart_info", 0444, root, rdev,
+> >>>                            &rv370_debugfs_pcie_gart_info_fops);
+> >>> @@ -1452,7 +1452,7 @@ int r300_resume(struct radeon_device *rdev)
+> >>>                        RREG32(R_0007C0_CP_STAT));
+> >>>        }
+> >>>        /* post */
+> >>> -     radeon_combios_asic_init(rdev->ddev);
+> >>> +     radeon_combios_asic_init(rdev_to_drm(rdev));
+> >>>        /* Resume clock after posting */
+> >>>        r300_clock_startup(rdev);
+> >>>        /* Initialize surface registers */
+> >>> @@ -1538,7 +1538,7 @@ int r300_init(struct radeon_device *rdev)
+> >>>        /* Set asic errata */
+> >>>        r300_errata(rdev);
+> >>>        /* Initialize clocks */
+> >>> -     radeon_get_clock_info(rdev->ddev);
+> >>> +     radeon_get_clock_info(rdev_to_drm(rdev));
+> >>>        /* initialize AGP */
+> >>>        if (rdev->flags & RADEON_IS_AGP) {
+> >>>                r =3D radeon_agp_init(rdev);
+> >>> diff --git a/drivers/gpu/drm/radeon/r420.c b/drivers/gpu/drm/radeon/r=
+420.c
+> >>> index a979662eaa73..9a31cdec6415 100644
+> >>> --- a/drivers/gpu/drm/radeon/r420.c
+> >>> +++ b/drivers/gpu/drm/radeon/r420.c
+> >>> @@ -322,7 +322,7 @@ int r420_resume(struct radeon_device *rdev)
+> >>>        if (rdev->is_atom_bios) {
+> >>>                atom_asic_init(rdev->mode_info.atom_context);
+> >>>        } else {
+> >>> -             radeon_combios_asic_init(rdev->ddev);
+> >>> +             radeon_combios_asic_init(rdev_to_drm(rdev));
+> >>>        }
+> >>>        /* Resume clock after posting */
+> >>>        r420_clock_resume(rdev);
+> >>> @@ -414,7 +414,7 @@ int r420_init(struct radeon_device *rdev)
+> >>>                return -EINVAL;
+> >>>
+> >>>        /* Initialize clocks */
+> >>> -     radeon_get_clock_info(rdev->ddev);
+> >>> +     radeon_get_clock_info(rdev_to_drm(rdev));
+> >>>        /* initialize AGP */
+> >>>        if (rdev->flags & RADEON_IS_AGP) {
+> >>>                r =3D radeon_agp_init(rdev);
+> >>> @@ -493,7 +493,7 @@ DEFINE_SHOW_ATTRIBUTE(r420_debugfs_pipes_info);
+> >>>    void r420_debugfs_pipes_info_init(struct radeon_device *rdev)
+> >>>    {
+> >>>    #if defined(CONFIG_DEBUG_FS)
+> >>> -     struct dentry *root =3D rdev->ddev->primary->debugfs_root;
+> >>> +     struct dentry *root =3D rdev_to_drm(rdev)->primary->debugfs_roo=
+t;
+> >>>
+> >>>        debugfs_create_file("r420_pipes_info", 0444, root, rdev,
+> >>>                            &r420_debugfs_pipes_info_fops);
+> >>> diff --git a/drivers/gpu/drm/radeon/r520.c b/drivers/gpu/drm/radeon/r=
+520.c
+> >>> index 6cbcaa845192..08e127b3249a 100644
+> >>> --- a/drivers/gpu/drm/radeon/r520.c
+> >>> +++ b/drivers/gpu/drm/radeon/r520.c
+> >>> @@ -287,7 +287,7 @@ int r520_init(struct radeon_device *rdev)
+> >>>                atom_asic_init(rdev->mode_info.atom_context);
+> >>>        }
+> >>>        /* Initialize clocks */
+> >>> -     radeon_get_clock_info(rdev->ddev);
+> >>> +     radeon_get_clock_info(rdev_to_drm(rdev));
+> >>>        /* initialize AGP */
+> >>>        if (rdev->flags & RADEON_IS_AGP) {
+> >>>                r =3D radeon_agp_init(rdev);
+> >>> diff --git a/drivers/gpu/drm/radeon/r600.c b/drivers/gpu/drm/radeon/r=
+600.c
+> >>> index 087d41e370fd..8b62f7faa5b9 100644
+> >>> --- a/drivers/gpu/drm/radeon/r600.c
+> >>> +++ b/drivers/gpu/drm/radeon/r600.c
+> >>> @@ -950,7 +950,7 @@ void r600_hpd_set_polarity(struct radeon_device *=
+rdev,
+> >>>
+> >>>    void r600_hpd_init(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        struct drm_connector *connector;
+> >>>        unsigned enable =3D 0;
+> >>>
+> >>> @@ -1017,7 +1017,7 @@ void r600_hpd_init(struct radeon_device *rdev)
+> >>>
+> >>>    void r600_hpd_fini(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        struct drm_connector *connector;
+> >>>        unsigned disable =3D 0;
+> >>>
+> >>> @@ -3280,7 +3280,7 @@ int r600_init(struct radeon_device *rdev)
+> >>>        /* Initialize surface registers */
+> >>>        radeon_surface_init(rdev);
+> >>>        /* Initialize clocks */
+> >>> -     radeon_get_clock_info(rdev->ddev);
+> >>> +     radeon_get_clock_info(rdev_to_drm(rdev));
+> >>>        /* Fence driver */
+> >>>        radeon_fence_driver_init(rdev);
+> >>>        if (rdev->flags & RADEON_IS_AGP) {
+> >>> @@ -4136,7 +4136,7 @@ int r600_irq_process(struct radeon_device *rdev=
+)
+> >>>                                        DRM_DEBUG("IH: D1 vblank - IH =
+event w/o asserted irq bit?\n");
+> >>>
+> >>>                                if (rdev->irq.crtc_vblank_int[0]) {
+> >>> -                                     drm_handle_vblank(rdev->ddev, 0=
+);
+> >>> +                                     drm_handle_vblank(rdev_to_drm(r=
+dev), 0);
+> >>>                                        rdev->pm.vblank_sync =3D true;
+> >>>                                        wake_up(&rdev->irq.vblank_queu=
+e);
+> >>>                                }
+> >>> @@ -4166,7 +4166,7 @@ int r600_irq_process(struct radeon_device *rdev=
+)
+> >>>                                        DRM_DEBUG("IH: D2 vblank - IH =
+event w/o asserted irq bit?\n");
+> >>>
+> >>>                                if (rdev->irq.crtc_vblank_int[1]) {
+> >>> -                                     drm_handle_vblank(rdev->ddev, 1=
+);
+> >>> +                                     drm_handle_vblank(rdev_to_drm(r=
+dev), 1);
+> >>>                                        rdev->pm.vblank_sync =3D true;
+> >>>                                        wake_up(&rdev->irq.vblank_queu=
+e);
+> >>>                                }
+> >>> @@ -4358,7 +4358,7 @@ DEFINE_SHOW_ATTRIBUTE(r600_debugfs_mc_info);
+> >>>    static void r600_debugfs_mc_info_init(struct radeon_device *rdev)
+> >>>    {
+> >>>    #if defined(CONFIG_DEBUG_FS)
+> >>> -     struct dentry *root =3D rdev->ddev->primary->debugfs_root;
+> >>> +     struct dentry *root =3D rdev_to_drm(rdev)->primary->debugfs_roo=
+t;
+> >>>
+> >>>        debugfs_create_file("r600_mc_info", 0444, root, rdev,
+> >>>                            &r600_debugfs_mc_info_fops);
+> >>> diff --git a/drivers/gpu/drm/radeon/r600_cs.c b/drivers/gpu/drm/radeo=
+n/r600_cs.c
+> >>> index 6cf54a747749..1b2d31c4d77c 100644
+> >>> --- a/drivers/gpu/drm/radeon/r600_cs.c
+> >>> +++ b/drivers/gpu/drm/radeon/r600_cs.c
+> >>> @@ -884,7 +884,7 @@ int r600_cs_common_vline_parse(struct radeon_cs_p=
+arser *p,
+> >>>        crtc_id =3D radeon_get_ib_value(p, h_idx + 2 + 7 + 1);
+> >>>        reg =3D R600_CP_PACKET0_GET_REG(header);
+> >>>
+> >>> -     crtc =3D drm_crtc_find(p->rdev->ddev, p->filp, crtc_id);
+> >>> +     crtc =3D drm_crtc_find(rdev_to_drm(p->rdev), p->filp, crtc_id);
+> >>>        if (!crtc) {
+> >>>                DRM_ERROR("cannot find crtc %d\n", crtc_id);
+> >>>                return -ENOENT;
+> >>> diff --git a/drivers/gpu/drm/radeon/r600_dpm.c b/drivers/gpu/drm/rade=
+on/r600_dpm.c
+> >>> index 64980a61d38a..81d58ef667dd 100644
+> >>> --- a/drivers/gpu/drm/radeon/r600_dpm.c
+> >>> +++ b/drivers/gpu/drm/radeon/r600_dpm.c
+> >>> @@ -153,7 +153,7 @@ void r600_dpm_print_ps_status(struct radeon_devic=
+e *rdev,
+> >>>
+> >>>    u32 r600_dpm_get_vblank_time(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        struct drm_crtc *crtc;
+> >>>        struct radeon_crtc *radeon_crtc;
+> >>>        u32 vblank_in_pixels;
+> >>> @@ -180,7 +180,7 @@ u32 r600_dpm_get_vblank_time(struct radeon_device=
+ *rdev)
+> >>>
+> >>>    u32 r600_dpm_get_vrefresh(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        struct drm_crtc *crtc;
+> >>>        struct radeon_crtc *radeon_crtc;
+> >>>        u32 vrefresh =3D 0;
+> >>> diff --git a/drivers/gpu/drm/radeon/r600_hdmi.c b/drivers/gpu/drm/rad=
+eon/r600_hdmi.c
+> >>> index f3551ebaa2f0..661f374f5f27 100644
+> >>> --- a/drivers/gpu/drm/radeon/r600_hdmi.c
+> >>> +++ b/drivers/gpu/drm/radeon/r600_hdmi.c
+> >>> @@ -116,7 +116,7 @@ void r600_audio_update_hdmi(struct work_struct *w=
+ork)
+> >>>    {
+> >>>        struct radeon_device *rdev =3D container_of(work, struct radeo=
+n_device,
+> >>>                                                  audio_work);
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        struct r600_audio_pin audio_status =3D r600_audio_status(rdev)=
+;
+> >>>        struct drm_encoder *encoder;
+> >>>        bool changed =3D false;
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon.h b/drivers/gpu/drm/radeon=
+/radeon.h
+> >>> index 0999c8eaae94..69bb30ced189 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon.h
+> >>> +++ b/drivers/gpu/drm/radeon/radeon.h
+> >>> @@ -2297,7 +2297,7 @@ typedef void (*radeon_wreg_t)(struct radeon_dev=
+ice*, uint32_t, uint32_t);
+> >>>
+> >>>    struct radeon_device {
+> >>>        struct device                   *dev;
+> >>> -     struct drm_device               *ddev;
+> >>> +     struct drm_device               ddev;
+> >>>        struct pci_dev                  *pdev;
+> >>>    #ifdef __alpha__
+> >>>        struct pci_controller           *hose;
+> >>> @@ -2440,10 +2440,13 @@ struct radeon_device {
+> >>>        u64 gart_pin_size;
+> >>>    };
+> >>>
+> >>> +static inline struct drm_device *rdev_to_drm(struct radeon_device *r=
+dev)
+> >>> +{
+> >>> +     return &rdev->ddev;
+> >>> +}
+> >>> +
+> >>>    bool radeon_is_px(struct drm_device *dev);
+> >>>    int radeon_device_init(struct radeon_device *rdev,
+> >>> -                    struct drm_device *ddev,
+> >>> -                    struct pci_dev *pdev,
+> >>>                       uint32_t flags);
+> >>>    void radeon_device_fini(struct radeon_device *rdev);
+> >>>    int radeon_gpu_wait_for_idle(struct radeon_device *rdev);
+> >>> @@ -2818,6 +2821,8 @@ struct radeon_device *radeon_get_rdev(struct tt=
+m_device *bdev);
+> >>>
+> >>>    /* KMS */
+> >>>
+> >>> +int radeon_driver_load_kms(struct radeon_device *dev, unsigned long =
+flags);
+> >>> +
+> >>>    u32 radeon_get_vblank_counter_kms(struct drm_crtc *crtc);
+> >>>    int radeon_enable_vblank_kms(struct drm_crtc *crtc);
+> >>>    void radeon_disable_vblank_kms(struct drm_crtc *crtc);
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon_acpi.c b/drivers/gpu/drm/r=
+adeon/radeon_acpi.c
+> >>> index 603a78e41ba5..22ce61bdfc06 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon_acpi.c
+> >>> +++ b/drivers/gpu/drm/radeon/radeon_acpi.c
+> >>> @@ -405,11 +405,11 @@ static int radeon_atif_handler(struct radeon_de=
+vice *rdev,
+> >>>        if (req.pending & ATIF_DGPU_DISPLAY_EVENT) {
+> >>>                if ((rdev->flags & RADEON_IS_PX) &&
+> >>>                    radeon_atpx_dgpu_req_power_for_displays()) {
+> >>> -                     pm_runtime_get_sync(rdev->ddev->dev);
+> >>> +                     pm_runtime_get_sync(rdev_to_drm(rdev)->dev);
+> >>>                        /* Just fire off a uevent and let userspace te=
+ll us what to do */
+> >>> -                     drm_helper_hpd_irq_event(rdev->ddev);
+> >>> -                     pm_runtime_mark_last_busy(rdev->ddev->dev);
+> >>> -                     pm_runtime_put_autosuspend(rdev->ddev->dev);
+> >>> +                     drm_helper_hpd_irq_event(rdev_to_drm(rdev));
+> >>> +                     pm_runtime_mark_last_busy(rdev_to_drm(rdev)->de=
+v);
+> >>> +                     pm_runtime_put_autosuspend(rdev_to_drm(rdev)->d=
+ev);
+> >>>                }
+> >>>        }
+> >>>        /* TODO: check other events */
+> >>> @@ -736,7 +736,7 @@ int radeon_acpi_init(struct radeon_device *rdev)
+> >>>                struct radeon_encoder *target =3D NULL;
+> >>>
+> >>>                /* Find the encoder controlling the brightness */
+> >>> -             list_for_each_entry(tmp, &rdev->ddev->mode_config.encod=
+er_list,
+> >>> +             list_for_each_entry(tmp, &rdev_to_drm(rdev)->mode_confi=
+g.encoder_list,
+> >>>                                head) {
+> >>>                        struct radeon_encoder *enc =3D to_radeon_encod=
+er(tmp);
+> >>>
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon_agp.c b/drivers/gpu/drm/ra=
+deon/radeon_agp.c
+> >>> index a3d749e350f9..89d7b0e9e79f 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon_agp.c
+> >>> +++ b/drivers/gpu/drm/radeon/radeon_agp.c
+> >>> @@ -161,7 +161,7 @@ struct radeon_agp_head *radeon_agp_head_init(stru=
+ct drm_device *dev)
+> >>>
+> >>>    static int radeon_agp_head_acquire(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        struct pci_dev *pdev =3D to_pci_dev(dev->dev);
+> >>>
+> >>>        if (!rdev->agp)
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon_atombios.c b/drivers/gpu/d=
+rm/radeon/radeon_atombios.c
+> >>> index 10793a433bf5..97c4e10d0550 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon_atombios.c
+> >>> +++ b/drivers/gpu/drm/radeon/radeon_atombios.c
+> >>> @@ -187,7 +187,7 @@ void radeon_atombios_i2c_init(struct radeon_devic=
+e *rdev)
+> >>>
+> >>>                        if (i2c.valid) {
+> >>>                                sprintf(stmp, "0x%x", i2c.i2c_id);
+> >>> -                             rdev->i2c_bus[i] =3D radeon_i2c_create(=
+rdev->ddev, &i2c, stmp);
+> >>> +                             rdev->i2c_bus[i] =3D radeon_i2c_create(=
+rdev_to_drm(rdev), &i2c, stmp);
+> >>>                        }
+> >>>                        gpio =3D (ATOM_GPIO_I2C_ASSIGMENT *)
+> >>>                                ((u8 *)gpio + sizeof(ATOM_GPIO_I2C_ASS=
+IGMENT));
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon_audio.c b/drivers/gpu/drm/=
+radeon/radeon_audio.c
+> >>> index 74753bb26d33..31f032295497 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon_audio.c
+> >>> +++ b/drivers/gpu/drm/radeon/radeon_audio.c
+> >>> @@ -196,7 +196,7 @@ static void radeon_audio_enable(struct radeon_dev=
+ice *rdev,
+> >>>                return;
+> >>>
+> >>>        if (rdev->mode_info.mode_config_initialized) {
+> >>> -             list_for_each_entry(encoder, &rdev->ddev->mode_config.e=
+ncoder_list, head) {
+> >>> +             list_for_each_entry(encoder, &rdev_to_drm(rdev)->mode_c=
+onfig.encoder_list, head) {
+> >>>                        if (radeon_encoder_is_digital(encoder)) {
+> >>>                                radeon_encoder =3D to_radeon_encoder(e=
+ncoder);
+> >>>                                dig =3D radeon_encoder->enc_priv;
+> >>> @@ -759,7 +759,7 @@ static int radeon_audio_component_get_eld(struct =
+device *kdev, int port,
+> >>>        if (!rdev->audio.enabled || !rdev->mode_info.mode_config_initi=
+alized)
+> >>>                return 0;
+> >>>
+> >>> -     list_for_each_entry(encoder, &rdev->ddev->mode_config.encoder_l=
+ist, head) {
+> >>> +     list_for_each_entry(encoder, &rdev_to_drm(rdev)->mode_config.en=
+coder_list, head) {
+> >>>                if (!radeon_encoder_is_digital(encoder))
+> >>>                        continue;
+> >>>                radeon_encoder =3D to_radeon_encoder(encoder);
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon_combios.c b/drivers/gpu/dr=
+m/radeon/radeon_combios.c
+> >>> index 6952b1273b0f..41ddc576f8f8 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon_combios.c
+> >>> +++ b/drivers/gpu/drm/radeon/radeon_combios.c
+> >>> @@ -372,7 +372,7 @@ bool radeon_combios_check_hardcoded_edid(struct r=
+adeon_device *rdev)
+> >>>        int edid_info, size;
+> >>>        struct edid *edid;
+> >>>        unsigned char *raw;
+> >>> -     edid_info =3D combios_get_table_offset(rdev->ddev, COMBIOS_HARD=
+CODED_EDID_TABLE);
+> >>> +     edid_info =3D combios_get_table_offset(rdev_to_drm(rdev), COMBI=
+OS_HARDCODED_EDID_TABLE);
+> >>>        if (!edid_info)
+> >>>                return false;
+> >>>
+> >>> @@ -642,7 +642,7 @@ static struct radeon_i2c_bus_rec combios_setup_i2=
+c_bus(struct radeon_device *rde
+> >>>
+> >>>    static struct radeon_i2c_bus_rec radeon_combios_get_i2c_info_from_=
+table(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        struct radeon_i2c_bus_rec i2c;
+> >>>        u16 offset;
+> >>>        u8 id, blocks, clk, data;
+> >>> @@ -670,7 +670,7 @@ static struct radeon_i2c_bus_rec radeon_combios_g=
+et_i2c_info_from_table(struct r
+> >>>
+> >>>    void radeon_combios_i2c_init(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        struct radeon_i2c_bus_rec i2c;
+> >>>
+> >>>        /* actual hw pads
+> >>> @@ -812,7 +812,7 @@ bool radeon_combios_get_clock_info(struct drm_dev=
+ice *dev)
+> >>>
+> >>>    bool radeon_combios_sideport_present(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        u16 igp_info;
+> >>>
+> >>>        /* sideport is AMD only */
+> >>> @@ -915,7 +915,7 @@ struct radeon_encoder_primary_dac *radeon_combios=
+_get_primary_dac_info(struct
+> >>>    enum radeon_tv_std
+> >>>    radeon_combios_get_tv_info(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        uint16_t tv_info;
+> >>>        enum radeon_tv_std tv_std =3D TV_STD_NTSC;
+> >>>
+> >>> @@ -2637,7 +2637,7 @@ static const char *thermal_controller_names[] =
+=3D {
+> >>>
+> >>>    void radeon_combios_get_power_modes(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        u16 offset, misc, misc2 =3D 0;
+> >>>        u8 rev, tmp;
+> >>>        int state_index =3D 0;
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon_device.c b/drivers/gpu/drm=
+/radeon/radeon_device.c
+> >>> index afbb3a80c0c6..36444d739b41 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon_device.c
+> >>> +++ b/drivers/gpu/drm/radeon/radeon_device.c
+> >>> @@ -760,7 +760,7 @@ bool radeon_boot_test_post_card(struct radeon_dev=
+ice *rdev)
+> >>>                if (rdev->is_atom_bios)
+> >>>                        atom_asic_init(rdev->mode_info.atom_context);
+> >>>                else
+> >>> -                     radeon_combios_asic_init(rdev->ddev);
+> >>> +                     radeon_combios_asic_init(rdev_to_drm(rdev));
+> >>>                return true;
+> >>>        } else {
+> >>>                dev_err(rdev->dev, "Card not posted and no BIOS - igno=
+ring\n");
+> >>> @@ -980,7 +980,7 @@ int radeon_atombios_init(struct radeon_device *rd=
+ev)
+> >>>                return -ENOMEM;
+> >>>
+> >>>        rdev->mode_info.atom_card_info =3D atom_card_info;
+> >>> -     atom_card_info->dev =3D rdev->ddev;
+> >>> +     atom_card_info->dev =3D rdev_to_drm(rdev);
+> >>>        atom_card_info->reg_read =3D cail_reg_read;
+> >>>        atom_card_info->reg_write =3D cail_reg_write;
+> >>>        /* needed for iio ops */
+> >>> @@ -1005,7 +1005,7 @@ int radeon_atombios_init(struct radeon_device *=
+rdev)
+> >>>
+> >>>        mutex_init(&rdev->mode_info.atom_context->mutex);
+> >>>        mutex_init(&rdev->mode_info.atom_context->scratch_mutex);
+> >>> -     radeon_atom_initialize_bios_scratch_regs(rdev->ddev);
+> >>> +     radeon_atom_initialize_bios_scratch_regs(rdev_to_drm(rdev));
+> >>>        atom_allocate_fb_scratch(rdev->mode_info.atom_context);
+> >>>        return 0;
+> >>>    }
+> >>> @@ -1049,7 +1049,7 @@ void radeon_atombios_fini(struct radeon_device =
+*rdev)
+> >>>     */
+> >>>    int radeon_combios_init(struct radeon_device *rdev)
+> >>>    {
+> >>> -     radeon_combios_initialize_bios_scratch_regs(rdev->ddev);
+> >>> +     radeon_combios_initialize_bios_scratch_regs(rdev_to_drm(rdev));
+> >>>        return 0;
+> >>>    }
+> >>>
+> >>> @@ -1276,18 +1276,15 @@ static const struct vga_switcheroo_client_ops=
+ radeon_switcheroo_ops =3D {
+> >>>     * Called at driver startup.
+> >>>     */
+> >>>    int radeon_device_init(struct radeon_device *rdev,
+> >>> -                    struct drm_device *ddev,
+> >>> -                    struct pci_dev *pdev,
+> >>>                       uint32_t flags)
+> >>>    {
+> >>> +     struct pci_dev *pdev =3D rdev->pdev;
+> >>> +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >>>        int r, i;
+> >>>        int dma_bits;
+> >>>        bool runtime =3D false;
+> >>>
+> >>>        rdev->shutdown =3D false;
+> >>> -     rdev->dev =3D &pdev->dev;
+> >>> -     rdev->ddev =3D ddev;
+> >>> -     rdev->pdev =3D pdev;
+> >>>        rdev->flags =3D flags;
+> >>>        rdev->family =3D flags & RADEON_FAMILY_MASK;
+> >>>        rdev->is_atom_bios =3D false;
+> >>> @@ -1847,7 +1844,7 @@ int radeon_gpu_reset(struct radeon_device *rdev=
+)
+> >>>
+> >>>        downgrade_write(&rdev->exclusive_lock);
+> >>>
+> >>> -     drm_helper_resume_force_mode(rdev->ddev);
+> >>> +     drm_helper_resume_force_mode(rdev_to_drm(rdev));
+> >>>
+> >>>        /* set the power state here in case we are a PX system or head=
+less */
+> >>>        if ((rdev->pm.pm_method =3D=3D PM_METHOD_DPM) && rdev->pm.dpm_=
+enabled)
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/dr=
+m/radeon/radeon_display.c
+> >>> index 5f1d24d3120c..4b9473852c1f 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon_display.c
+> >>> +++ b/drivers/gpu/drm/radeon/radeon_display.c
+> >>> @@ -302,13 +302,13 @@ void radeon_crtc_handle_vblank(struct radeon_de=
+vice *rdev, int crtc_id)
+> >>>        if ((radeon_use_pflipirq =3D=3D 2) && ASIC_IS_DCE4(rdev))
+> >>>                return;
+> >>>
+> >>> -     spin_lock_irqsave(&rdev->ddev->event_lock, flags);
+> >>> +     spin_lock_irqsave(&rdev_to_drm(rdev)->event_lock, flags);
+> >>>        if (radeon_crtc->flip_status !=3D RADEON_FLIP_SUBMITTED) {
+> >>>                DRM_DEBUG_DRIVER("radeon_crtc->flip_status =3D %d !=3D=
+ "
+> >>>                                 "RADEON_FLIP_SUBMITTED(%d)\n",
+> >>>                                 radeon_crtc->flip_status,
+> >>>                                 RADEON_FLIP_SUBMITTED);
+> >>> -             spin_unlock_irqrestore(&rdev->ddev->event_lock, flags);
+> >>> +             spin_unlock_irqrestore(&rdev_to_drm(rdev)->event_lock, =
+flags);
+> >>>                return;
+> >>>        }
+> >>>
+> >>> @@ -334,7 +334,7 @@ void radeon_crtc_handle_vblank(struct radeon_devi=
+ce *rdev, int crtc_id)
+> >>>         */
+> >>>        if (update_pending &&
+> >>>            (DRM_SCANOUTPOS_VALID &
+> >>> -          radeon_get_crtc_scanoutpos(rdev->ddev, crtc_id,
+> >>> +          radeon_get_crtc_scanoutpos(rdev_to_drm(rdev), crtc_id,
+> >>>                                        GET_DISTANCE_TO_VBLANKSTART,
+> >>>                                        &vpos, &hpos, NULL, NULL,
+> >>>                                        &rdev->mode_info.crtcs[crtc_id=
+]->base.hwmode)) &&
+> >>> @@ -347,7 +347,7 @@ void radeon_crtc_handle_vblank(struct radeon_devi=
+ce *rdev, int crtc_id)
+> >>>                 */
+> >>>                update_pending =3D 0;
+> >>>        }
+> >>> -     spin_unlock_irqrestore(&rdev->ddev->event_lock, flags);
+> >>> +     spin_unlock_irqrestore(&rdev_to_drm(rdev)->event_lock, flags);
+> >>>        if (!update_pending)
+> >>>                radeon_crtc_handle_flip(rdev, crtc_id);
+> >>>    }
+> >>> @@ -370,14 +370,14 @@ void radeon_crtc_handle_flip(struct radeon_devi=
+ce *rdev, int crtc_id)
+> >>>        if (radeon_crtc =3D=3D NULL)
+> >>>                return;
+> >>>
+> >>> -     spin_lock_irqsave(&rdev->ddev->event_lock, flags);
+> >>> +     spin_lock_irqsave(&rdev_to_drm(rdev)->event_lock, flags);
+> >>>        work =3D radeon_crtc->flip_work;
+> >>>        if (radeon_crtc->flip_status !=3D RADEON_FLIP_SUBMITTED) {
+> >>>                DRM_DEBUG_DRIVER("radeon_crtc->flip_status =3D %d !=3D=
+ "
+> >>>                                 "RADEON_FLIP_SUBMITTED(%d)\n",
+> >>>                                 radeon_crtc->flip_status,
+> >>>                                 RADEON_FLIP_SUBMITTED);
+> >>> -             spin_unlock_irqrestore(&rdev->ddev->event_lock, flags);
+> >>> +             spin_unlock_irqrestore(&rdev_to_drm(rdev)->event_lock, =
+flags);
+> >>>                return;
+> >>>        }
+> >>>
+> >>> @@ -389,7 +389,7 @@ void radeon_crtc_handle_flip(struct radeon_device=
+ *rdev, int crtc_id)
+> >>>        if (work->event)
+> >>>                drm_crtc_send_vblank_event(&radeon_crtc->base, work->e=
+vent);
+> >>>
+> >>> -     spin_unlock_irqrestore(&rdev->ddev->event_lock, flags);
+> >>> +     spin_unlock_irqrestore(&rdev_to_drm(rdev)->event_lock, flags);
+> >>>
+> >>>        drm_crtc_vblank_put(&radeon_crtc->base);
+> >>>        radeon_irq_kms_pflip_irq_put(rdev, work->crtc_id);
+> >>> @@ -408,7 +408,7 @@ static void radeon_flip_work_func(struct work_str=
+uct *__work)
+> >>>        struct radeon_flip_work *work =3D
+> >>>                container_of(__work, struct radeon_flip_work, flip_wor=
+k);
+> >>>        struct radeon_device *rdev =3D work->rdev;
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        struct radeon_crtc *radeon_crtc =3D rdev->mode_info.crtcs[work=
+->crtc_id];
+> >>>
+> >>>        struct drm_crtc *crtc =3D &radeon_crtc->base;
+> >>> @@ -1401,7 +1401,7 @@ static int radeon_modeset_create_props(struct r=
+adeon_device *rdev)
+> >>>
+> >>>        if (rdev->is_atom_bios) {
+> >>>                rdev->mode_info.coherent_mode_property =3D
+> >>> -                     drm_property_create_range(rdev->ddev, 0 , "cohe=
+rent", 0, 1);
+> >>> +                     drm_property_create_range(rdev_to_drm(rdev), 0,=
+ "coherent", 0, 1);
+> >>>                if (!rdev->mode_info.coherent_mode_property)
+> >>>                        return -ENOMEM;
+> >>>        }
+> >>> @@ -1409,57 +1409,57 @@ static int radeon_modeset_create_props(struct=
+ radeon_device *rdev)
+> >>>        if (!ASIC_IS_AVIVO(rdev)) {
+> >>>                sz =3D ARRAY_SIZE(radeon_tmds_pll_enum_list);
+> >>>                rdev->mode_info.tmds_pll_property =3D
+> >>> -                     drm_property_create_enum(rdev->ddev, 0,
+> >>> +                     drm_property_create_enum(rdev_to_drm(rdev), 0,
+> >>>                                            "tmds_pll",
+> >>>                                            radeon_tmds_pll_enum_list,=
+ sz);
+> >>>        }
+> >>>
+> >>>        rdev->mode_info.load_detect_property =3D
+> >>> -             drm_property_create_range(rdev->ddev, 0, "load detectio=
+n", 0, 1);
+> >>> +             drm_property_create_range(rdev_to_drm(rdev), 0, "load d=
+etection", 0, 1);
+> >>>        if (!rdev->mode_info.load_detect_property)
+> >>>                return -ENOMEM;
+> >>>
+> >>> -     drm_mode_create_scaling_mode_property(rdev->ddev);
+> >>> +     drm_mode_create_scaling_mode_property(rdev_to_drm(rdev));
+> >>>
+> >>>        sz =3D ARRAY_SIZE(radeon_tv_std_enum_list);
+> >>>        rdev->mode_info.tv_std_property =3D
+> >>> -             drm_property_create_enum(rdev->ddev, 0,
+> >>> +             drm_property_create_enum(rdev_to_drm(rdev), 0,
+> >>>                                    "tv standard",
+> >>>                                    radeon_tv_std_enum_list, sz);
+> >>>
+> >>>        sz =3D ARRAY_SIZE(radeon_underscan_enum_list);
+> >>>        rdev->mode_info.underscan_property =3D
+> >>> -             drm_property_create_enum(rdev->ddev, 0,
+> >>> +             drm_property_create_enum(rdev_to_drm(rdev), 0,
+> >>>                                    "underscan",
+> >>>                                    radeon_underscan_enum_list, sz);
+> >>>
+> >>>        rdev->mode_info.underscan_hborder_property =3D
+> >>> -             drm_property_create_range(rdev->ddev, 0,
+> >>> +             drm_property_create_range(rdev_to_drm(rdev), 0,
+> >>>                                        "underscan hborder", 0, 128);
+> >>>        if (!rdev->mode_info.underscan_hborder_property)
+> >>>                return -ENOMEM;
+> >>>
+> >>>        rdev->mode_info.underscan_vborder_property =3D
+> >>> -             drm_property_create_range(rdev->ddev, 0,
+> >>> +             drm_property_create_range(rdev_to_drm(rdev), 0,
+> >>>                                        "underscan vborder", 0, 128);
+> >>>        if (!rdev->mode_info.underscan_vborder_property)
+> >>>                return -ENOMEM;
+> >>>
+> >>>        sz =3D ARRAY_SIZE(radeon_audio_enum_list);
+> >>>        rdev->mode_info.audio_property =3D
+> >>> -             drm_property_create_enum(rdev->ddev, 0,
+> >>> +             drm_property_create_enum(rdev_to_drm(rdev), 0,
+> >>>                                         "audio",
+> >>>                                         radeon_audio_enum_list, sz);
+> >>>
+> >>>        sz =3D ARRAY_SIZE(radeon_dither_enum_list);
+> >>>        rdev->mode_info.dither_property =3D
+> >>> -             drm_property_create_enum(rdev->ddev, 0,
+> >>> +             drm_property_create_enum(rdev_to_drm(rdev), 0,
+> >>>                                         "dither",
+> >>>                                         radeon_dither_enum_list, sz);
+> >>>
+> >>>        sz =3D ARRAY_SIZE(radeon_output_csc_enum_list);
+> >>>        rdev->mode_info.output_csc_property =3D
+> >>> -             drm_property_create_enum(rdev->ddev, 0,
+> >>> +             drm_property_create_enum(rdev_to_drm(rdev), 0,
+> >>>                                         "output_csc",
+> >>>                                         radeon_output_csc_enum_list, =
+sz);
+> >>>
+> >>> @@ -1578,29 +1578,29 @@ int radeon_modeset_init(struct radeon_device =
+*rdev)
+> >>>        int i;
+> >>>        int ret;
+> >>>
+> >>> -     drm_mode_config_init(rdev->ddev);
+> >>> +     drm_mode_config_init(rdev_to_drm(rdev));
+> >>>        rdev->mode_info.mode_config_initialized =3D true;
+> >>>
+> >>> -     rdev->ddev->mode_config.funcs =3D &radeon_mode_funcs;
+> >>> +     rdev_to_drm(rdev)->mode_config.funcs =3D &radeon_mode_funcs;
+> >>>
+> >>>        if (radeon_use_pflipirq =3D=3D 2 && rdev->family >=3D CHIP_R60=
+0)
+> >>> -             rdev->ddev->mode_config.async_page_flip =3D true;
+> >>> +             rdev_to_drm(rdev)->mode_config.async_page_flip =3D true=
+;
+> >>>
+> >>>        if (ASIC_IS_DCE5(rdev)) {
+> >>> -             rdev->ddev->mode_config.max_width =3D 16384;
+> >>> -             rdev->ddev->mode_config.max_height =3D 16384;
+> >>> +             rdev_to_drm(rdev)->mode_config.max_width =3D 16384;
+> >>> +             rdev_to_drm(rdev)->mode_config.max_height =3D 16384;
+> >>>        } else if (ASIC_IS_AVIVO(rdev)) {
+> >>> -             rdev->ddev->mode_config.max_width =3D 8192;
+> >>> -             rdev->ddev->mode_config.max_height =3D 8192;
+> >>> +             rdev_to_drm(rdev)->mode_config.max_width =3D 8192;
+> >>> +             rdev_to_drm(rdev)->mode_config.max_height =3D 8192;
+> >>>        } else {
+> >>> -             rdev->ddev->mode_config.max_width =3D 4096;
+> >>> -             rdev->ddev->mode_config.max_height =3D 4096;
+> >>> +             rdev_to_drm(rdev)->mode_config.max_width =3D 4096;
+> >>> +             rdev_to_drm(rdev)->mode_config.max_height =3D 4096;
+> >>>        }
+> >>>
+> >>> -     rdev->ddev->mode_config.preferred_depth =3D 24;
+> >>> -     rdev->ddev->mode_config.prefer_shadow =3D 1;
+> >>> +     rdev_to_drm(rdev)->mode_config.preferred_depth =3D 24;
+> >>> +     rdev_to_drm(rdev)->mode_config.prefer_shadow =3D 1;
+> >>>
+> >>> -     rdev->ddev->mode_config.fb_modifiers_not_supported =3D true;
+> >>> +     rdev_to_drm(rdev)->mode_config.fb_modifiers_not_supported =3D t=
+rue;
+> >>>
+> >>>        ret =3D radeon_modeset_create_props(rdev);
+> >>>        if (ret) {
+> >>> @@ -1618,11 +1618,11 @@ int radeon_modeset_init(struct radeon_device =
+*rdev)
+> >>>
+> >>>        /* allocate crtcs */
+> >>>        for (i =3D 0; i < rdev->num_crtc; i++) {
+> >>> -             radeon_crtc_init(rdev->ddev, i);
+> >>> +             radeon_crtc_init(rdev_to_drm(rdev), i);
+> >>>        }
+> >>>
+> >>>        /* okay we should have all the bios connectors */
+> >>> -     ret =3D radeon_setup_enc_conn(rdev->ddev);
+> >>> +     ret =3D radeon_setup_enc_conn(rdev_to_drm(rdev));
+> >>>        if (!ret) {
+> >>>                return ret;
+> >>>        }
+> >>> @@ -1639,7 +1639,7 @@ int radeon_modeset_init(struct radeon_device *r=
+dev)
+> >>>        /* setup afmt */
+> >>>        radeon_afmt_init(rdev);
+> >>>
+> >>> -     drm_kms_helper_poll_init(rdev->ddev);
+> >>> +     drm_kms_helper_poll_init(rdev_to_drm(rdev));
+> >>>
+> >>>        /* do pm late init */
+> >>>        ret =3D radeon_pm_late_init(rdev);
+> >>> @@ -1650,11 +1650,11 @@ int radeon_modeset_init(struct radeon_device =
+*rdev)
+> >>>    void radeon_modeset_fini(struct radeon_device *rdev)
+> >>>    {
+> >>>        if (rdev->mode_info.mode_config_initialized) {
+> >>> -             drm_kms_helper_poll_fini(rdev->ddev);
+> >>> +             drm_kms_helper_poll_fini(rdev_to_drm(rdev));
+> >>>                radeon_hpd_fini(rdev);
+> >>> -             drm_helper_force_disable_all(rdev->ddev);
+> >>> +             drm_helper_force_disable_all(rdev_to_drm(rdev));
+> >>>                radeon_afmt_fini(rdev);
+> >>> -             drm_mode_config_cleanup(rdev->ddev);
+> >>> +             drm_mode_config_cleanup(rdev_to_drm(rdev));
+> >>>                rdev->mode_info.mode_config_initialized =3D false;
+> >>>        }
+> >>>
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/ra=
+deon/radeon_drv.c
+> >>> index 7bf08164140e..89941a90e17f 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon_drv.c
+> >>> +++ b/drivers/gpu/drm/radeon/radeon_drv.c
+> >>> @@ -259,7 +259,8 @@ static int radeon_pci_probe(struct pci_dev *pdev,
+> >>>                            const struct pci_device_id *ent)
+> >>>    {
+> >>>        unsigned long flags =3D 0;
+> >>> -     struct drm_device *dev;
+> >>> +     struct drm_device *ddev;
+> >>> +     struct radeon_device *rdev;
+> >>>        int ret;
+> >>>
+> >>>        if (!ent)
+> >>> @@ -300,28 +301,36 @@ static int radeon_pci_probe(struct pci_dev *pde=
+v,
+> >>>        if (ret)
+> >>>                return ret;
+> >>>
+> >>> -     dev =3D drm_dev_alloc(&kms_driver, &pdev->dev);
+> >>> -     if (IS_ERR(dev))
+> >>> -             return PTR_ERR(dev);
+> >>> +     rdev =3D devm_drm_dev_alloc(&pdev->dev, &kms_driver, typeof(*rd=
+ev), ddev);
+> >>> +     if (IS_ERR(rdev))
+> >>> +             return PTR_ERR(rdev);
+> >>> +
+> >>> +     rdev->dev  =3D &pdev->dev;
+> >>> +     rdev->pdev =3D pdev;
+> >>> +     ddev =3D rdev_to_drm(rdev);
+> >>>
+> >>>        ret =3D pci_enable_device(pdev);
+> >>>        if (ret)
+> >>>                goto err_free;
+> >>>
+> >>> -     pci_set_drvdata(pdev, dev);
+> >>> +     pci_set_drvdata(pdev, ddev);
+> >>> +
+> >>> +     ret =3D radeon_driver_load_kms(rdev, flags);
+> >>> +     if (ret)
+> >>> +             goto err_agp;
+> >>>
+> >>> -     ret =3D drm_dev_register(dev, ent->driver_data);
+> >>> +     ret =3D drm_dev_register(ddev, flags);
+> >>>        if (ret)
+> >>>                goto err_agp;
+> >>>
+> >>> -     radeon_fbdev_setup(dev->dev_private);
+> >>> +     radeon_fbdev_setup(ddev->dev_private);
+> >>>
+> >>>        return 0;
+> >>>
+> >>>    err_agp:
+> >>>        pci_disable_device(pdev);
+> >>>    err_free:
+> >>> -     drm_dev_put(dev);
+> >>> +     drm_dev_put(ddev);
+> >>>        return ret;
+> >>>    }
+> >>>
+> >>> @@ -569,7 +578,7 @@ static const struct drm_ioctl_desc radeon_ioctls_=
+kms[] =3D {
+> >>>    static const struct drm_driver kms_driver =3D {
+> >>>        .driver_features =3D
+> >>>            DRIVER_GEM | DRIVER_RENDER | DRIVER_MODESET,
+> >>> -     .load =3D radeon_driver_load_kms,
+> >>> +     // .load =3D radeon_driver_load_kms,
+> >>>        .open =3D radeon_driver_open_kms,
+> >>>        .postclose =3D radeon_driver_postclose_kms,
+> >>>        .unload =3D radeon_driver_unload_kms,
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon_drv.h b/drivers/gpu/drm/ra=
+deon/radeon_drv.h
+> >>> index 02a65971d140..6c1eb75a951b 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon_drv.h
+> >>> +++ b/drivers/gpu/drm/radeon/radeon_drv.h
+> >>> @@ -117,7 +117,6 @@
+> >>>    long radeon_drm_ioctl(struct file *filp,
+> >>>                      unsigned int cmd, unsigned long arg);
+> >>>
+> >>> -int radeon_driver_load_kms(struct drm_device *dev, unsigned long fla=
+gs);
+> >>>    void radeon_driver_unload_kms(struct drm_device *dev);
+> >>>    int radeon_driver_open_kms(struct drm_device *dev, struct drm_file=
+ *file_priv);
+> >>>    void radeon_driver_postclose_kms(struct drm_device *dev,
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon_fbdev.c b/drivers/gpu/drm/=
+radeon/radeon_fbdev.c
+> >>> index 02bf25759059..fb70de29545c 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon_fbdev.c
+> >>> +++ b/drivers/gpu/drm/radeon/radeon_fbdev.c
+> >>> @@ -67,7 +67,7 @@ static int radeon_fbdev_create_pinned_object(struct=
+ drm_fb_helper *fb_helper,
+> >>>        int height =3D mode_cmd->height;
+> >>>        u32 cpp;
+> >>>
+> >>> -     info =3D drm_get_format_info(rdev->ddev, mode_cmd);
+> >>> +     info =3D drm_get_format_info(rdev_to_drm(rdev), mode_cmd);
+> >>>        cpp =3D info->cpp[0];
+> >>>
+> >>>        /* need to align pitch with crtc limits */
+> >>> @@ -148,15 +148,15 @@ static int radeon_fbdev_fb_open(struct fb_info =
+*info, int user)
+> >>>        struct radeon_device *rdev =3D fb_helper->dev->dev_private;
+> >>>        int ret;
+> >>>
+> >>> -     ret =3D pm_runtime_get_sync(rdev->ddev->dev);
+> >>> +     ret =3D pm_runtime_get_sync(rdev_to_drm(rdev)->dev);
+> >>>        if (ret < 0 && ret !=3D -EACCES)
+> >>>                goto err_pm_runtime_mark_last_busy;
+> >>>
+> >>>        return 0;
+> >>>
+> >>>    err_pm_runtime_mark_last_busy:
+> >>> -     pm_runtime_mark_last_busy(rdev->ddev->dev);
+> >>> -     pm_runtime_put_autosuspend(rdev->ddev->dev);
+> >>> +     pm_runtime_mark_last_busy(rdev_to_drm(rdev)->dev);
+> >>> +     pm_runtime_put_autosuspend(rdev_to_drm(rdev)->dev);
+> >>>        return ret;
+> >>>    }
+> >>>
+> >>> @@ -165,8 +165,8 @@ static int radeon_fbdev_fb_release(struct fb_info=
+ *info, int user)
+> >>>        struct drm_fb_helper *fb_helper =3D info->par;
+> >>>        struct radeon_device *rdev =3D fb_helper->dev->dev_private;
+> >>>
+> >>> -     pm_runtime_mark_last_busy(rdev->ddev->dev);
+> >>> -     pm_runtime_put_autosuspend(rdev->ddev->dev);
+> >>> +     pm_runtime_mark_last_busy(rdev_to_drm(rdev)->dev);
+> >>> +     pm_runtime_put_autosuspend(rdev_to_drm(rdev)->dev);
+> >>>
+> >>>        return 0;
+> >>>    }
+> >>> @@ -236,7 +236,7 @@ static int radeon_fbdev_fb_helper_fb_probe(struct=
+ drm_fb_helper *fb_helper,
+> >>>                ret =3D -ENOMEM;
+> >>>                goto err_radeon_fbdev_destroy_pinned_object;
+> >>>        }
+> >>> -     ret =3D radeon_framebuffer_init(rdev->ddev, fb, &mode_cmd, gobj=
+);
+> >>> +     ret =3D radeon_framebuffer_init(rdev_to_drm(rdev), fb, &mode_cm=
+d, gobj);
+> >>>        if (ret) {
+> >>>                DRM_ERROR("failed to initialize framebuffer %d\n", ret=
+);
+> >>>                goto err_kfree;
+> >>> @@ -374,12 +374,12 @@ void radeon_fbdev_setup(struct radeon_device *r=
+dev)
+> >>>        fb_helper =3D kzalloc(sizeof(*fb_helper), GFP_KERNEL);
+> >>>        if (!fb_helper)
+> >>>                return;
+> >>> -     drm_fb_helper_prepare(rdev->ddev, fb_helper, bpp_sel, &radeon_f=
+bdev_fb_helper_funcs);
+> >>> +     drm_fb_helper_prepare(rdev_to_drm(rdev), fb_helper, bpp_sel, &r=
+adeon_fbdev_fb_helper_funcs);
+> >>>
+> >>> -     ret =3D drm_client_init(rdev->ddev, &fb_helper->client, "radeon=
+-fbdev",
+> >>> +     ret =3D drm_client_init(rdev_to_drm(rdev), &fb_helper->client, =
+"radeon-fbdev",
+> >>>                              &radeon_fbdev_client_funcs);
+> >>>        if (ret) {
+> >>> -             drm_err(rdev->ddev, "Failed to register client: %d\n", =
+ret);
+> >>> +             drm_err(rdev_to_drm(rdev), "Failed to register client: =
+%d\n", ret);
+> >>>                goto err_drm_client_init;
+> >>>        }
+> >>>
+> >>> @@ -394,13 +394,13 @@ void radeon_fbdev_setup(struct radeon_device *r=
+dev)
+> >>>
+> >>>    void radeon_fbdev_set_suspend(struct radeon_device *rdev, int stat=
+e)
+> >>>    {
+> >>> -     if (rdev->ddev->fb_helper)
+> >>> -             drm_fb_helper_set_suspend(rdev->ddev->fb_helper, state)=
+;
+> >>> +     if (rdev_to_drm(rdev)->fb_helper)
+> >>> +             drm_fb_helper_set_suspend(rdev_to_drm(rdev)->fb_helper,=
+ state);
+> >>>    }
+> >>>
+> >>>    bool radeon_fbdev_robj_is_fb(struct radeon_device *rdev, struct ra=
+deon_bo *robj)
+> >>>    {
+> >>> -     struct drm_fb_helper *fb_helper =3D rdev->ddev->fb_helper;
+> >>> +     struct drm_fb_helper *fb_helper =3D rdev_to_drm(rdev)->fb_helpe=
+r;
+> >>>        struct drm_gem_object *gobj;
+> >>>
+> >>>        if (!fb_helper)
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon_fence.c b/drivers/gpu/drm/=
+radeon/radeon_fence.c
+> >>> index 4fb780d96f32..daff61586be5 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon_fence.c
+> >>> +++ b/drivers/gpu/drm/radeon/radeon_fence.c
+> >>> @@ -150,7 +150,7 @@ int radeon_fence_emit(struct radeon_device *rdev,
+> >>>                       rdev->fence_context + ring,
+> >>>                       seq);
+> >>>        radeon_fence_ring_emit(rdev, ring, *fence);
+> >>> -     trace_radeon_fence_emit(rdev->ddev, ring, (*fence)->seq);
+> >>> +     trace_radeon_fence_emit(rdev_to_drm(rdev), ring, (*fence)->seq)=
+;
+> >>>        radeon_fence_schedule_check(rdev, ring);
+> >>>        return 0;
+> >>>    }
+> >>> @@ -489,7 +489,7 @@ static long radeon_fence_wait_seq_timeout(struct =
+radeon_device *rdev,
+> >>>                if (!target_seq[i])
+> >>>                        continue;
+> >>>
+> >>> -             trace_radeon_fence_wait_begin(rdev->ddev, i, target_seq=
+[i]);
+> >>> +             trace_radeon_fence_wait_begin(rdev_to_drm(rdev), i, tar=
+get_seq[i]);
+> >>>                radeon_irq_kms_sw_irq_get(rdev, i);
+> >>>        }
+> >>>
+> >>> @@ -511,7 +511,7 @@ static long radeon_fence_wait_seq_timeout(struct =
+radeon_device *rdev,
+> >>>                        continue;
+> >>>
+> >>>                radeon_irq_kms_sw_irq_put(rdev, i);
+> >>> -             trace_radeon_fence_wait_end(rdev->ddev, i, target_seq[i=
+]);
+> >>> +             trace_radeon_fence_wait_end(rdev_to_drm(rdev), i, targe=
+t_seq[i]);
+> >>>        }
+> >>>
+> >>>        return r;
+> >>> @@ -995,7 +995,7 @@ DEFINE_DEBUGFS_ATTRIBUTE(radeon_debugfs_gpu_reset=
+_fops,
+> >>>    void radeon_debugfs_fence_init(struct radeon_device *rdev)
+> >>>    {
+> >>>    #if defined(CONFIG_DEBUG_FS)
+> >>> -     struct dentry *root =3D rdev->ddev->primary->debugfs_root;
+> >>> +     struct dentry *root =3D rdev_to_drm(rdev)->primary->debugfs_roo=
+t;
+> >>>
+> >>>        debugfs_create_file("radeon_gpu_reset", 0444, root, rdev,
+> >>>                            &radeon_debugfs_gpu_reset_fops);
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon_gem.c b/drivers/gpu/drm/ra=
+deon/radeon_gem.c
+> >>> index 2ef201a072f1..9dd4ff09d562 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon_gem.c
+> >>> +++ b/drivers/gpu/drm/radeon/radeon_gem.c
+> >>> @@ -899,7 +899,7 @@ DEFINE_SHOW_ATTRIBUTE(radeon_debugfs_gem_info);
+> >>>    void radeon_gem_debugfs_init(struct radeon_device *rdev)
+> >>>    {
+> >>>    #if defined(CONFIG_DEBUG_FS)
+> >>> -     struct dentry *root =3D rdev->ddev->primary->debugfs_root;
+> >>> +     struct dentry *root =3D rdev_to_drm(rdev)->primary->debugfs_roo=
+t;
+> >>>
+> >>>        debugfs_create_file("radeon_gem_info", 0444, root, rdev,
+> >>>                            &radeon_debugfs_gem_info_fops);
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon_i2c.c b/drivers/gpu/drm/ra=
+deon/radeon_i2c.c
+> >>> index 3d174390a8af..1f16619ed06e 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon_i2c.c
+> >>> +++ b/drivers/gpu/drm/radeon/radeon_i2c.c
+> >>> @@ -1011,7 +1011,7 @@ void radeon_i2c_add(struct radeon_device *rdev,
+> >>>                    struct radeon_i2c_bus_rec *rec,
+> >>>                    const char *name)
+> >>>    {
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        int i;
+> >>>
+> >>>        for (i =3D 0; i < RADEON_MAX_I2C_BUS; i++) {
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon_ib.c b/drivers/gpu/drm/rad=
+eon/radeon_ib.c
+> >>> index 63d914f3414d..1aa41cc3f991 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon_ib.c
+> >>> +++ b/drivers/gpu/drm/radeon/radeon_ib.c
+> >>> @@ -309,7 +309,7 @@ DEFINE_SHOW_ATTRIBUTE(radeon_debugfs_sa_info);
+> >>>    static void radeon_debugfs_sa_init(struct radeon_device *rdev)
+> >>>    {
+> >>>    #if defined(CONFIG_DEBUG_FS)
+> >>> -     struct dentry *root =3D rdev->ddev->primary->debugfs_root;
+> >>> +     struct dentry *root =3D rdev_to_drm(rdev)->primary->debugfs_roo=
+t;
+> >>>
+> >>>        debugfs_create_file("radeon_sa_info", 0444, root, rdev,
+> >>>                            &radeon_debugfs_sa_info_fops);
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon_irq_kms.c b/drivers/gpu/dr=
+m/radeon/radeon_irq_kms.c
+> >>> index c4dda908666c..9961251b44ba 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon_irq_kms.c
+> >>> +++ b/drivers/gpu/drm/radeon/radeon_irq_kms.c
+> >>> @@ -80,7 +80,7 @@ static void radeon_hotplug_work_func(struct work_st=
+ruct *work)
+> >>>    {
+> >>>        struct radeon_device *rdev =3D container_of(work, struct radeo=
+n_device,
+> >>>                                                  hotplug_work.work);
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        struct drm_mode_config *mode_config =3D &dev->mode_config;
+> >>>        struct drm_connector *connector;
+> >>>
+> >>> @@ -101,7 +101,7 @@ static void radeon_dp_work_func(struct work_struc=
+t *work)
+> >>>    {
+> >>>        struct radeon_device *rdev =3D container_of(work, struct radeo=
+n_device,
+> >>>                                                  dp_work);
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        struct drm_mode_config *mode_config =3D &dev->mode_config;
+> >>>        struct drm_connector *connector;
+> >>>
+> >>> @@ -197,7 +197,7 @@ static void radeon_driver_irq_uninstall_kms(struc=
+t drm_device *dev)
+> >>>
+> >>>    static int radeon_irq_install(struct radeon_device *rdev, int irq)
+> >>>    {
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        int ret;
+> >>>
+> >>>        if (irq =3D=3D IRQ_NOTCONNECTED)
+> >>> @@ -218,7 +218,7 @@ static int radeon_irq_install(struct radeon_devic=
+e *rdev, int irq)
+> >>>
+> >>>    static void radeon_irq_uninstall(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        struct pci_dev *pdev =3D to_pci_dev(dev->dev);
+> >>>
+> >>>        radeon_driver_irq_uninstall_kms(dev);
+> >>> @@ -322,9 +322,9 @@ int radeon_irq_kms_init(struct radeon_device *rde=
+v)
+> >>>        spin_lock_init(&rdev->irq.lock);
+> >>>
+> >>>        /* Disable vblank irqs aggressively for power-saving */
+> >>> -     rdev->ddev->vblank_disable_immediate =3D true;
+> >>> +     rdev_to_drm(rdev)->vblank_disable_immediate =3D true;
+> >>>
+> >>> -     r =3D drm_vblank_init(rdev->ddev, rdev->num_crtc);
+> >>> +     r =3D drm_vblank_init(rdev_to_drm(rdev), rdev->num_crtc);
+> >>>        if (r) {
+> >>>                return r;
+> >>>        }
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon_kms.c b/drivers/gpu/drm/ra=
+deon/radeon_kms.c
+> >>> index a16590c6247f..171f8e9fce88 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon_kms.c
+> >>> +++ b/drivers/gpu/drm/radeon/radeon_kms.c
+> >>> @@ -101,24 +101,18 @@ void radeon_driver_unload_kms(struct drm_device=
+ *dev)
+> >>>     * (crtcs, encoders, hotplug detect, etc.).
+> >>>     * Returns 0 on success, error on failure.
+> >>>     */
+> >>> -int radeon_driver_load_kms(struct drm_device *dev, unsigned long fla=
+gs)
+> >>> +int radeon_driver_load_kms(struct radeon_device *rdev, unsigned long=
+ flags)
+> >>>    {
+> >>> -     struct pci_dev *pdev =3D to_pci_dev(dev->dev);
+> >>> -     struct radeon_device *rdev;
+> >>> +     struct pci_dev *pdev =3D rdev->pdev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        int r, acpi_status;
+> >>>
+> >>> -     rdev =3D kzalloc(sizeof(struct radeon_device), GFP_KERNEL);
+> >>> -     if (rdev =3D=3D NULL) {
+> >>> -             return -ENOMEM;
+> >>> -     }
+> >>> -     dev->dev_private =3D (void *)rdev;
+> >>> -
+> >>>    #ifdef __alpha__
+> >>>        rdev->hose =3D pdev->sysdata;
+> >>>    #endif
+> >>>
+> >>>        if (pci_find_capability(pdev, PCI_CAP_ID_AGP))
+> >>> -             rdev->agp =3D radeon_agp_head_init(dev);
+> >>> +             rdev->agp =3D radeon_agp_head_init(rdev_to_drm(rdev));
+> >>>        if (rdev->agp) {
+> >>>                rdev->agp->agp_mtrr =3D arch_phys_wc_add(
+> >>>                        rdev->agp->agp_info.aper_base,
+> >>> @@ -147,7 +141,7 @@ int radeon_driver_load_kms(struct drm_device *dev=
+, unsigned long flags)
+> >>>         * properly initialize the GPU MC controller and permit
+> >>>         * VRAM allocation
+> >>>         */
+> >>> -     r =3D radeon_device_init(rdev, dev, pdev, flags);
+> >>> +     r =3D radeon_device_init(rdev, flags);
+> >>>        if (r) {
+> >>>                dev_err(dev->dev, "Fatal error during GPU init\n");
+> >>>                goto out;
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon_object.c b/drivers/gpu/drm=
+/radeon/radeon_object.c
+> >>> index a955f8a2f7fe..450ff7daa46c 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon_object.c
+> >>> +++ b/drivers/gpu/drm/radeon/radeon_object.c
+> >>> @@ -150,7 +150,7 @@ int radeon_bo_create(struct radeon_device *rdev,
+> >>>        bo =3D kzalloc(sizeof(struct radeon_bo), GFP_KERNEL);
+> >>>        if (bo =3D=3D NULL)
+> >>>                return -ENOMEM;
+> >>> -     drm_gem_private_object_init(rdev->ddev, &bo->tbo.base, size);
+> >>> +     drm_gem_private_object_init(rdev_to_drm(rdev), &bo->tbo.base, s=
+ize);
+> >>>        bo->rdev =3D rdev;
+> >>>        bo->surface_reg =3D -1;
+> >>>        INIT_LIST_HEAD(&bo->list);
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon_pm.c b/drivers/gpu/drm/rad=
+eon/radeon_pm.c
+> >>> index 2d9d9f46f243..b4fb7e70320b 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon_pm.c
+> >>> +++ b/drivers/gpu/drm/radeon/radeon_pm.c
+> >>> @@ -282,7 +282,7 @@ static void radeon_pm_set_clocks(struct radeon_de=
+vice *rdev)
+> >>>
+> >>>        if (rdev->irq.installed) {
+> >>>                i =3D 0;
+> >>> -             drm_for_each_crtc(crtc, rdev->ddev) {
+> >>> +             drm_for_each_crtc(crtc, rdev_to_drm(rdev)) {
+> >>>                        if (rdev->pm.active_crtcs & (1 << i)) {
+> >>>                                /* This can fail if a modeset is in pr=
+ogress */
+> >>>                                if (drm_crtc_vblank_get(crtc) =3D=3D 0=
+)
+> >>> @@ -299,7 +299,7 @@ static void radeon_pm_set_clocks(struct radeon_de=
+vice *rdev)
+> >>>
+> >>>        if (rdev->irq.installed) {
+> >>>                i =3D 0;
+> >>> -             drm_for_each_crtc(crtc, rdev->ddev) {
+> >>> +             drm_for_each_crtc(crtc, rdev_to_drm(rdev)) {
+> >>>                        if (rdev->pm.req_vblank & (1 << i)) {
+> >>>                                rdev->pm.req_vblank &=3D ~(1 << i);
+> >>>                                drm_crtc_vblank_put(crtc);
+> >>> @@ -671,7 +671,7 @@ static ssize_t radeon_hwmon_show_temp(struct devi=
+ce *dev,
+> >>>                                      char *buf)
+> >>>    {
+> >>>        struct radeon_device *rdev =3D dev_get_drvdata(dev);
+> >>> -     struct drm_device *ddev =3D rdev->ddev;
+> >>> +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >>>        int temp;
+> >>>
+> >>>        /* Can't get temperature when the card is off */
+> >>> @@ -715,7 +715,7 @@ static ssize_t radeon_hwmon_show_sclk(struct devi=
+ce *dev,
+> >>>                                      struct device_attribute *attr, c=
+har *buf)
+> >>>    {
+> >>>        struct radeon_device *rdev =3D dev_get_drvdata(dev);
+> >>> -     struct drm_device *ddev =3D rdev->ddev;
+> >>> +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >>>        u32 sclk =3D 0;
+> >>>
+> >>>        /* Can't get clock frequency when the card is off */
+> >>> @@ -740,7 +740,7 @@ static ssize_t radeon_hwmon_show_vddc(struct devi=
+ce *dev,
+> >>>                                      struct device_attribute *attr, c=
+har *buf)
+> >>>    {
+> >>>        struct radeon_device *rdev =3D dev_get_drvdata(dev);
+> >>> -     struct drm_device *ddev =3D rdev->ddev;
+> >>> +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >>>        u16 vddc =3D 0;
+> >>>
+> >>>        /* Can't get vddc when the card is off */
+> >>> @@ -1692,7 +1692,7 @@ void radeon_pm_fini(struct radeon_device *rdev)
+> >>>
+> >>>    static void radeon_pm_compute_clocks_old(struct radeon_device *rde=
+v)
+> >>>    {
+> >>> -     struct drm_device *ddev =3D rdev->ddev;
+> >>> +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >>>        struct drm_crtc *crtc;
+> >>>        struct radeon_crtc *radeon_crtc;
+> >>>
+> >>> @@ -1765,7 +1765,7 @@ static void radeon_pm_compute_clocks_old(struct=
+ radeon_device *rdev)
+> >>>
+> >>>    static void radeon_pm_compute_clocks_dpm(struct radeon_device *rde=
+v)
+> >>>    {
+> >>> -     struct drm_device *ddev =3D rdev->ddev;
+> >>> +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >>>        struct drm_crtc *crtc;
+> >>>        struct radeon_crtc *radeon_crtc;
+> >>>        struct radeon_connector *radeon_connector;
+> >>> @@ -1826,7 +1826,7 @@ static bool radeon_pm_in_vbl(struct radeon_devi=
+ce *rdev)
+> >>>         */
+> >>>        for (crtc =3D 0; (crtc < rdev->num_crtc) && in_vbl; crtc++) {
+> >>>                if (rdev->pm.active_crtcs & (1 << crtc)) {
+> >>> -                     vbl_status =3D radeon_get_crtc_scanoutpos(rdev-=
+>ddev,
+> >>> +                     vbl_status =3D radeon_get_crtc_scanoutpos(rdev_=
+to_drm(rdev),
+> >>>                                                                crtc,
+> >>>                                                                USE_RE=
+AL_VBLANKSTART,
+> >>>                                                                &vpos,=
+ &hpos, NULL, NULL,
+> >>> @@ -1918,7 +1918,7 @@ static void radeon_dynpm_idle_work_handler(stru=
+ct work_struct *work)
+> >>>    static int radeon_debugfs_pm_info_show(struct seq_file *m, void *u=
+nused)
+> >>>    {
+> >>>        struct radeon_device *rdev =3D m->private;
+> >>> -     struct drm_device *ddev =3D rdev->ddev;
+> >>> +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >>>
+> >>>        if  ((rdev->flags & RADEON_IS_PX) &&
+> >>>             (ddev->switch_power_state !=3D DRM_SWITCH_POWER_ON)) {
+> >>> @@ -1955,7 +1955,7 @@ DEFINE_SHOW_ATTRIBUTE(radeon_debugfs_pm_info);
+> >>>    static void radeon_debugfs_pm_init(struct radeon_device *rdev)
+> >>>    {
+> >>>    #if defined(CONFIG_DEBUG_FS)
+> >>> -     struct dentry *root =3D rdev->ddev->primary->debugfs_root;
+> >>> +     struct dentry *root =3D rdev_to_drm(rdev)->primary->debugfs_roo=
+t;
+> >>>
+> >>>        debugfs_create_file("radeon_pm_info", 0444, root, rdev,
+> >>>                            &radeon_debugfs_pm_info_fops);
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon_ring.c b/drivers/gpu/drm/r=
+adeon/radeon_ring.c
+> >>> index 8d1d458286a8..581ae20c46e4 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon_ring.c
+> >>> +++ b/drivers/gpu/drm/radeon/radeon_ring.c
+> >>> @@ -550,7 +550,7 @@ static void radeon_debugfs_ring_init(struct radeo=
+n_device *rdev, struct radeon_r
+> >>>    {
+> >>>    #if defined(CONFIG_DEBUG_FS)
+> >>>        const char *ring_name =3D radeon_debugfs_ring_idx_to_name(ring=
+->idx);
+> >>> -     struct dentry *root =3D rdev->ddev->primary->debugfs_root;
+> >>> +     struct dentry *root =3D rdev_to_drm(rdev)->primary->debugfs_roo=
+t;
+> >>>
+> >>>        if (ring_name)
+> >>>                debugfs_create_file(ring_name, 0444, root, ring,
+> >>> diff --git a/drivers/gpu/drm/radeon/radeon_ttm.c b/drivers/gpu/drm/ra=
+deon/radeon_ttm.c
+> >>> index 5c65b6dfb99a..69d0c12fa419 100644
+> >>> --- a/drivers/gpu/drm/radeon/radeon_ttm.c
+> >>> +++ b/drivers/gpu/drm/radeon/radeon_ttm.c
+> >>> @@ -682,8 +682,8 @@ int radeon_ttm_init(struct radeon_device *rdev)
+> >>>
+> >>>        /* No others user of address space so set it to 0 */
+> >>>        r =3D ttm_device_init(&rdev->mman.bdev, &radeon_bo_driver, rde=
+v->dev,
+> >>> -                            rdev->ddev->anon_inode->i_mapping,
+> >>> -                            rdev->ddev->vma_offset_manager,
+> >>> +                            rdev_to_drm(rdev)->anon_inode->i_mapping=
+,
+> >>> +                            rdev_to_drm(rdev)->vma_offset_manager,
+> >>>                               rdev->need_swiotlb,
+> >>>                               dma_addressing_limited(&rdev->pdev->dev=
+));
+> >>>        if (r) {
+> >>> @@ -890,7 +890,7 @@ static const struct file_operations radeon_ttm_gt=
+t_fops =3D {
+> >>>    static void radeon_ttm_debugfs_init(struct radeon_device *rdev)
+> >>>    {
+> >>>    #if defined(CONFIG_DEBUG_FS)
+> >>> -     struct drm_minor *minor =3D rdev->ddev->primary;
+> >>> +     struct drm_minor *minor =3D rdev_to_drm(rdev)->primary;
+> >>>        struct dentry *root =3D minor->debugfs_root;
+> >>>
+> >>>        debugfs_create_file("radeon_vram", 0444, root, rdev,
+> >>> diff --git a/drivers/gpu/drm/radeon/rs400.c b/drivers/gpu/drm/radeon/=
+rs400.c
+> >>> index d4d1501e6576..d6c18fd740ec 100644
+> >>> --- a/drivers/gpu/drm/radeon/rs400.c
+> >>> +++ b/drivers/gpu/drm/radeon/rs400.c
+> >>> @@ -379,7 +379,7 @@ DEFINE_SHOW_ATTRIBUTE(rs400_debugfs_gart_info);
+> >>>    static void rs400_debugfs_pcie_gart_info_init(struct radeon_device=
+ *rdev)
+> >>>    {
+> >>>    #if defined(CONFIG_DEBUG_FS)
+> >>> -     struct dentry *root =3D rdev->ddev->primary->debugfs_root;
+> >>> +     struct dentry *root =3D rdev_to_drm(rdev)->primary->debugfs_roo=
+t;
+> >>>
+> >>>        debugfs_create_file("rs400_gart_info", 0444, root, rdev,
+> >>>                            &rs400_debugfs_gart_info_fops);
+> >>> @@ -474,7 +474,7 @@ int rs400_resume(struct radeon_device *rdev)
+> >>>                        RREG32(R_0007C0_CP_STAT));
+> >>>        }
+> >>>        /* post */
+> >>> -     radeon_combios_asic_init(rdev->ddev);
+> >>> +     radeon_combios_asic_init(rdev_to_drm(rdev));
+> >>>        /* Resume clock after posting */
+> >>>        r300_clock_startup(rdev);
+> >>>        /* Initialize surface registers */
+> >>> @@ -552,7 +552,7 @@ int rs400_init(struct radeon_device *rdev)
+> >>>                return -EINVAL;
+> >>>
+> >>>        /* Initialize clocks */
+> >>> -     radeon_get_clock_info(rdev->ddev);
+> >>> +     radeon_get_clock_info(rdev_to_drm(rdev));
+> >>>        /* initialize memory controller */
+> >>>        rs400_mc_init(rdev);
+> >>>        /* Fence driver */
+> >>> diff --git a/drivers/gpu/drm/radeon/rs600.c b/drivers/gpu/drm/radeon/=
+rs600.c
+> >>> index 5c162778899b..88c8e91ea651 100644
+> >>> --- a/drivers/gpu/drm/radeon/rs600.c
+> >>> +++ b/drivers/gpu/drm/radeon/rs600.c
+> >>> @@ -321,7 +321,7 @@ void rs600_pm_misc(struct radeon_device *rdev)
+> >>>
+> >>>    void rs600_pm_prepare(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *ddev =3D rdev->ddev;
+> >>> +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >>>        struct drm_crtc *crtc;
+> >>>        struct radeon_crtc *radeon_crtc;
+> >>>        u32 tmp;
+> >>> @@ -339,7 +339,7 @@ void rs600_pm_prepare(struct radeon_device *rdev)
+> >>>
+> >>>    void rs600_pm_finish(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *ddev =3D rdev->ddev;
+> >>> +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >>>        struct drm_crtc *crtc;
+> >>>        struct radeon_crtc *radeon_crtc;
+> >>>        u32 tmp;
+> >>> @@ -408,7 +408,7 @@ void rs600_hpd_set_polarity(struct radeon_device =
+*rdev,
+> >>>
+> >>>    void rs600_hpd_init(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        struct drm_connector *connector;
+> >>>        unsigned enable =3D 0;
+> >>>
+> >>> @@ -435,7 +435,7 @@ void rs600_hpd_init(struct radeon_device *rdev)
+> >>>
+> >>>    void rs600_hpd_fini(struct radeon_device *rdev)
+> >>>    {
+> >>> -     struct drm_device *dev =3D rdev->ddev;
+> >>> +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >>>        struct drm_connector *connector;
+> >>>        unsigned disable =3D 0;
+> >>>
+> >>> @@ -797,7 +797,7 @@ int rs600_irq_process(struct radeon_device *rdev)
+> >>>                /* Vertical blank interrupts */
+> >>>                if (G_007EDC_LB_D1_VBLANK_INTERRUPT(rdev->irq.stat_reg=
+s.r500.disp_int)) {
+> >>>                        if (rdev->irq.crtc_vblank_int[0]) {
+> >>> -                             drm_handle_vblank(rdev->ddev, 0);
+> >>> +                             drm_handle_vblank(rdev_to_drm(rdev), 0)=
+;
+> >>>                                rdev->pm.vblank_sync =3D true;
+> >>>                                wake_up(&rdev->irq.vblank_queue);
+> >>>                        }
+> >>> @@ -806,7 +806,7 @@ int rs600_irq_process(struct radeon_device *rdev)
+> >>>                }
+> >>>                if (G_007EDC_LB_D2_VBLANK_INTERRUPT(rdev->irq.stat_reg=
+s.r500.disp_int)) {
+> >>>                        if (rdev->irq.crtc_vblank_int[1]) {
+> >>> -                             drm_handle_vblank(rdev->ddev, 1);
+> >>> +                             drm_handle_vblank(rdev_to_drm(rdev), 1)=
+;
+> >>>                                rdev->pm.vblank_sync =3D true;
+> >>>                                wake_up(&rdev->irq.vblank_queue);
+> >>>                        }
+> >>> @@ -1133,7 +1133,7 @@ int rs600_init(struct radeon_device *rdev)
+> >>>                return -EINVAL;
+> >>>
+> >>>        /* Initialize clocks */
+> >>> -     radeon_get_clock_info(rdev->ddev);
+> >>> +     radeon_get_clock_info(rdev_to_drm(rdev));
+> >>>        /* initialize memory controller */
+> >>>        rs600_mc_init(rdev);
+> >>>        r100_debugfs_rbbm_init(rdev);
+> >>> diff --git a/drivers/gpu/drm/radeon/rs690.c b/drivers/gpu/drm/radeon/=
+rs690.c
+> >>> index 14fb0819b8c1..016eb4992803 100644
+> >>> --- a/drivers/gpu/drm/radeon/rs690.c
+> >>> +++ b/drivers/gpu/drm/radeon/rs690.c
+> >>> @@ -845,7 +845,7 @@ int rs690_init(struct radeon_device *rdev)
+> >>>                return -EINVAL;
+> >>>
+> >>>        /* Initialize clocks */
+> >>> -     radeon_get_clock_info(rdev->ddev);
+> >>> +     radeon_get_clock_info(rdev_to_drm(rdev));
+> >>>        /* initialize memory controller */
+> >>>        rs690_mc_init(rdev);
+> >>>        rv515_debugfs(rdev);
+> >>> diff --git a/drivers/gpu/drm/radeon/rv515.c b/drivers/gpu/drm/radeon/=
+rv515.c
+> >>> index bbc6ccabf788..1b4dfb645585 100644
+> >>> --- a/drivers/gpu/drm/radeon/rv515.c
+> >>> +++ b/drivers/gpu/drm/radeon/rv515.c
+> >>> @@ -255,7 +255,7 @@ DEFINE_SHOW_ATTRIBUTE(rv515_debugfs_ga_info);
+> >>>    void rv515_debugfs(struct radeon_device *rdev)
+> >>>    {
+> >>>    #if defined(CONFIG_DEBUG_FS)
+> >>> -     struct dentry *root =3D rdev->ddev->primary->debugfs_root;
+> >>> +     struct dentry *root =3D rdev_to_drm(rdev)->primary->debugfs_roo=
+t;
+> >>>
+> >>>        debugfs_create_file("rv515_pipes_info", 0444, root, rdev,
+> >>>                            &rv515_debugfs_pipes_info_fops);
+> >>> @@ -636,7 +636,7 @@ int rv515_init(struct radeon_device *rdev)
+> >>>        if (radeon_boot_test_post_card(rdev) =3D=3D false)
+> >>>                return -EINVAL;
+> >>>        /* Initialize clocks */
+> >>> -     radeon_get_clock_info(rdev->ddev);
+> >>> +     radeon_get_clock_info(rdev_to_drm(rdev));
+> >>>        /* initialize AGP */
+> >>>        if (rdev->flags & RADEON_IS_AGP) {
+> >>>                r =3D radeon_agp_init(rdev);
+> >>> diff --git a/drivers/gpu/drm/radeon/rv770.c b/drivers/gpu/drm/radeon/=
+rv770.c
+> >>> index 9ce12fa3c356..7d4b0bf59109 100644
+> >>> --- a/drivers/gpu/drm/radeon/rv770.c
+> >>> +++ b/drivers/gpu/drm/radeon/rv770.c
+> >>> @@ -1935,7 +1935,7 @@ int rv770_init(struct radeon_device *rdev)
+> >>>        /* Initialize surface registers */
+> >>>        radeon_surface_init(rdev);
+> >>>        /* Initialize clocks */
+> >>> -     radeon_get_clock_info(rdev->ddev);
+> >>> +     radeon_get_clock_info(rdev_to_drm(rdev));
+> >>>        /* Fence driver */
+> >>>        radeon_fence_driver_init(rdev);
+> >>>        /* initialize AGP */
+> >>> diff --git a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.=
+c
+> >>> index 15759c8ca5b7..6c95575ce109 100644
+> >>> --- a/drivers/gpu/drm/radeon/si.c
+> >>> +++ b/drivers/gpu/drm/radeon/si.c
+> >>> @@ -6277,7 +6277,7 @@ int si_irq_process(struct radeon_device *rdev)
+> >>>                                event_name =3D "vblank";
+> >>>
+> >>>                                if (rdev->irq.crtc_vblank_int[crtc_idx=
+]) {
+> >>> -                                     drm_handle_vblank(rdev->ddev, c=
+rtc_idx);
+> >>> +                                     drm_handle_vblank(rdev_to_drm(r=
+dev), crtc_idx);
+> >>>                                        rdev->pm.vblank_sync =3D true;
+> >>>                                        wake_up(&rdev->irq.vblank_queu=
+e);
+> >>>                                }
+> >>> @@ -6839,7 +6839,7 @@ int si_init(struct radeon_device *rdev)
+> >>>        /* Initialize surface registers */
+> >>>        radeon_surface_init(rdev);
+> >>>        /* Initialize clocks */
+> >>> -     radeon_get_clock_info(rdev->ddev);
+> >>> +     radeon_get_clock_info(rdev_to_drm(rdev));
+> >>>
+> >>>        /* Fence driver */
+> >>>        radeon_fence_driver_init(rdev);
+>
 
