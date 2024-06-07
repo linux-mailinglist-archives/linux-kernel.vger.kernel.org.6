@@ -1,130 +1,171 @@
-Return-Path: <linux-kernel+bounces-206773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C648A900D84
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 23:30:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E475F900D88
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 23:33:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 698E52879D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:30:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51CA51F22EBB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E171552ED;
-	Fri,  7 Jun 2024 21:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FFC155353;
+	Fri,  7 Jun 2024 21:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="h6AyQqOb"
-Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="h+n7Bw2j"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658EB45000
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 21:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2AD84E1DD
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 21:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717795830; cv=none; b=rOcnpCZW9gqbbgvR8trK1Yyb8HpJbWxKs6/Itd4lmJuoox1tKROjPWO50q2tXEoQ9secrk0AVL+S8V7uoQa5QVuCunTD2/5BTDcvuIDKbGHsNdEQjW/2eAMpYh+GCLRVUdy8BD0oDoBZKcSMnW5yP0D3ytz/wy40e1902Cwf9/s=
+	t=1717795974; cv=none; b=m6QSWvGD88TCFHMUJ+/sWIWgi6VXyno8oUkdwvDkHjEDz+UsZj3cL6tFYoelxwq4CP4QITxnTV5C2n1VnLbLmrtx4julqEMxIHPjMclX9807R9QZDWzFxWdZ37sKnZAtlxXqvwTtCV9r+0WQCwmRviKCUAqhFmCFG9yWpNfmDZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717795830; c=relaxed/simple;
-	bh=TIoPA6q0p2ZOZfGMaw3+O8QIjm/1136G45xQI5HRsbI=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=qdONERI6ZVMvj9sC126dPZ+HJNZafgJ24Yk7/RXUNPFcsWPZxFLlFBaCQ5GROmqUE/VNvIJN8xhY9xCeZCJtxdszeltOAvVuXqKmWgChleCDJvjwqWS9crEv/SmMf72Y3dJe4bX+ehG2O4+cmpiB9DT0g5/SJePnKni2gkPWjQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=h6AyQqOb; arc=none smtp.client-ip=35.89.44.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6003a.ext.cloudfilter.net ([10.0.30.151])
-	by cmsmtp with ESMTPS
-	id FdYYs50rESLKxFhAEsXDGv; Fri, 07 Jun 2024 21:30:22 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id FhACsUMQbd4oeFhADsPvvG; Fri, 07 Jun 2024 21:30:21 +0000
-X-Authority-Analysis: v=2.4 cv=aYKqngot c=1 sm=1 tr=0 ts=66637bed
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=-Ou01B_BuAIA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=3U1NTj930rUM-GEF0QgA:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22 a=nmWuMzfKamIsx3l42hEX:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=HYjfN92MdTz2EhYaVCHHc09qeB//bbnggyFPCAgGlXs=; b=h6AyQqObUFkPiK1q157qBg3Rj+
-	VMl2FcUmqKcr9nzOexaMvkuAmVjMQmXN6rsSuCJrU4tUYFIOdx1i2zxvlO1bkU7x3lT0+LddovJsz
-	2Clo6gn28bzCIYm3bKXjQoNZOeyQirMXufFHnFYLNL41H7eUG6qg1YBCPK6+hGb+26ogydi/HXzXN
-	EOweH8t3EOO592UN+4IRtiPEPOMw/maRm2N5qXJjh8Ga+kbkLtcKOEevRnhS66dUXNBtpVh1qRNRh
-	mt9bj/NIIaGrAkvHUOEIHMcpcvvb51aiU5n7F/9ELQN3bVDuFrZtx3l5Hcz89LGKx0q+fnFja4Sq4
-	KhTGLS2Q==;
-Received: from c-98-207-139-8.hsd1.ca.comcast.net ([98.207.139.8]:42390 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1sFhA8-000r21-1H;
-	Fri, 07 Jun 2024 15:30:16 -0600
-Subject: Re: [PATCH 6.6 000/744] 6.6.33-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240606131732.440653204@linuxfoundation.org>
-In-Reply-To: <20240606131732.440653204@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <e976da68-6315-5d98-921c-49d72c56dfcb@w6rz.net>
-Date: Fri, 7 Jun 2024 14:30:05 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1717795974; c=relaxed/simple;
+	bh=8qHPzm5a5JgFK8worTleaMJ20xoqkrEwmZZqgOn913I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MdAiCqE6mTNZQxJ9VzdNSVNFxT/fnSe06cUt4CmLB5DW5gADcPCWwDiakadt6FzntkCM027lcmxZ2+4qsq5NR0ZI56/D+XrLvGJyPjLdHfdLEWuXq1IctaVgjxNEsWEEL7sZJPIQAeNmQ/GbdlBRD5rXoQ+jl6OLMZNivEsjeg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=h+n7Bw2j; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f6559668e1so22765265ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 14:32:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717795972; x=1718400772; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=en5rhVQeS4jMQZ7MYT9HPVU5AsizJ4lSBaI/jISWz7g=;
+        b=h+n7Bw2jIFjjjb2AaQFDJKBQ6fnQgmYdj6kCxAXBUGkAImlg1AJCr1erzHbODVI1xC
+         6ctSS7OTfikXmwUvHPknG+LUT2wX8AoX107B1lgQ/YV3RuajHDLmq4XtiAYypMQi9byD
+         uAUO8qqTF+CP57fVF5jwbG/k9t6YktG3cdtKwWrJ7DKmuYekf1fJj0/iuWvC2GjXFEkR
+         IUVJG1cWKNk/HNpnGHUsKOwU8rbL1Bd9xpmsraXPJ2ZUyJjcMjXXQ3FKQNR4/UJyFA09
+         YMq9Ch75RWOnNZIordgppqV+YuOLeaT0QC6a4asfrSGKpzkW3sxaD7m3s1owgF703qBc
+         7mMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717795972; x=1718400772;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=en5rhVQeS4jMQZ7MYT9HPVU5AsizJ4lSBaI/jISWz7g=;
+        b=QoiqHOikqNEGfdpBToAOh1OKaiJk3VzDQnxeZevZmQoHSQKyJW7WQitfTKpuIbhvwd
+         +vEK08ZRzwt6JgOCV/wS2Rqjrh530j3YlPy84/jGPa1H600ss5lJDt4ouMO+FkZgt0Ws
+         h+v3NXitJOteEUPfGArwccd5ZJnjjYpMkxxlN228vNpZb4nA0Eua2TNODVJ3pffevWnB
+         mEU96ebNACk2nGGpZHw2rNpezw76EHB1p3xzZD4rRcMIPBLohnew525L6fecRn02nJa1
+         q0USbYRUnGENTMWqwMkC5cfbMy2gyJcCiPoYHmDc+nC43DsLLzqqPMxD5l4riG0DjBQe
+         Os0g==
+X-Forwarded-Encrypted: i=1; AJvYcCXAdExlecHzMlrdrvOSIvIne5eU7ZYu+cpL1t0FgbhJGUrc3UwRIbtsXxvNYYsCIVfEchXqX/jK2vJRfx3w3cYED2mMWuuYrLF685Od
+X-Gm-Message-State: AOJu0Ywz28ibOadiD5mWUqJgVeywwe2+4RnsiqIXIFVHyDVze3Y2ovda
+	KXqQeRgBeAMdlPNVxeie5XQ6SaLLUn5qptDE6ahjSYZiWTYh7UWUioenNhHEok0=
+X-Google-Smtp-Source: AGHT+IEejcYKl9fBro2kSxxk5hY4d+88L6bC3+D1SvPJuq0Hk5YpcIl8tPK8uKbkJgY2r7rnpSoToA==
+X-Received: by 2002:a17:903:244b:b0:1f4:8d11:723 with SMTP id d9443c01a7336-1f6d039d26fmr43937765ad.51.1717795971902;
+        Fri, 07 Jun 2024 14:32:51 -0700 (PDT)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6e78585desm10762055ad.133.2024.06.07.14.32.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 14:32:51 -0700 (PDT)
+Date: Fri, 7 Jun 2024 14:32:48 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Jesse Taube <jesse@rivosinc.com>, linux-riscv@lists.infradead.org,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Evan Green <evan@rivosinc.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Xiao Wang <xiao.w.wang@intel.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
+	Andy Chiu <andy.chiu@sifive.com>,
+	Greentime Hu <greentime.hu@sifive.com>,
+	Heiko Stuebner <heiko@sntech.de>, Guo Ren <guoren@kernel.org>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	Costa Shulyupin <costa.shul@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Zong Li <zong.li@sifive.com>, Ben Dooks <ben.dooks@codethink.co.uk>,
+	Erick Archer <erick.archer@gmx.com>,
+	Vincent Chen <vincent.chen@sifive.com>,
+	Joel Granados <j.granados@samsung.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] RISC-V: Detect unaligned vector accesses supported.
+Message-ID: <ZmN8gER4RnyoyQT4@ghost>
+References: <20240606183215.416829-1-jesse@rivosinc.com>
+ <20240606183215.416829-2-jesse@rivosinc.com>
+ <ZmIqM3Cuui0HAwN1@ghost>
+ <ZmJCq7bsglq7olSB@ghost>
+ <a16ccf51-4b06-4c6d-94a1-cb43dc3f2945@rivosinc.com>
+ <ZmN2U6BDAYRXxHEi@ghost>
+ <20240607-wildfowl-baggage-54f622e18c4a@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 98.207.139.8
-X-Source-L: No
-X-Exim-ID: 1sFhA8-000r21-1H
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-98-207-139-8.hsd1.ca.comcast.net ([10.0.1.47]) [98.207.139.8]:42390
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 23
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfAbTTJn5s5+BJFUfqC8mgqTBQKuNh4I7XsniyxuAM0CngasFUp/8SbnlUVzHC0KgZXiGm8Fn/zGZ8eIfjIlcZ6EUO5oChHKHX8mZxlkRGeQN0HwIg1vC
- CmOVQFhgityrQWO8MmRMibCfCXlJGjkUG8VveaEMpZMY3/hel6FmiotUH9JwSp4So4Wjy3+GzNc0wyD9AnFGqgNfjAtVCnwi6u0=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607-wildfowl-baggage-54f622e18c4a@spud>
 
-On 6/6/24 6:54 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.33 release.
-> There are 744 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Fri, Jun 07, 2024 at 10:21:19PM +0100, Conor Dooley wrote:
+> On Fri, Jun 07, 2024 at 02:06:27PM -0700, Charlie Jenkins wrote:
+> > On Fri, Jun 07, 2024 at 03:53:23PM -0400, Jesse Taube wrote:
+> > > On 6/6/24 19:13, Charlie Jenkins wrote:
+> > > > On Thu, Jun 06, 2024 at 02:29:23PM -0700, Charlie Jenkins wrote:
+> > > > > On Thu, Jun 06, 2024 at 02:32:14PM -0400, Jesse Taube wrote:
+> 
+> > > > > Please use the exising UNKNOWN terminology instead of renaming to
+> > > > > SUPPORTED. Any option that is not UNSUPPORTED implies that unaligned
+> > > > > accesses are supported.
+> > > 
+> > > Conor didnt like using UNKNOWN a proxy for "SUPPORTED"
+> 
+> I did say this, but in the context of wanting you to actually add the
+> performance probing (and potentially the other infrastructure that
+> Charlie added for scalar).
+> 
+> > > Having SUPPORTED is better then assuing the speed to be slow.
+> > 
+> > The HWPROBE key is about misaligned access performance. UNKNOWN means
+> > that the performance is unknown.
+> 
+> Right. I also don't think that assuming "slow" is even problematic -
+> seemingly all extant hardware doesn't even support misaligned access.
+> But really, just whack in the probing, it shouldn't be too bad, right?
 >
-> Responses should be made by Sat, 08 Jun 2024 13:15:55 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.33-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+Yeah that's a good point, slow is a reasonable default.
 
-Tested-by: Ron Economos <re@w6rz.net>
+> > The scalar and vector names need to
+> > match up.
+> 
+> That's definitely not the case. A different hwprobe key is allowed to
+> behave differently, but...
+
+It of course can behave differently in purely technical sense, I said
+"need" because it would not be a very intuitive interface to have a
+different name for vector and scalar versions of the same thing.
+
+> 
+> > UNKNOWN was already merged and is supported by linux so if you
+> > want to use SUPPORTED here then you need to add a scalar SUPPORTED key
+> > that is an alias of the UNKNOWN key.
+> 
+> ...this suggestion of a scalar change I disagree with anyway, so it's
+> moot. Unknown should be a state that we only have internally when we
+> actually do not know, and not something that userspace should ever see,
+> unless there's a bug in the probing code IMO. Unknown gives userspace no
+> actionable information anyways.
+> 
+
+I agree, returning slow is probably always be more useful than unknown.
+
+- Charlie
+
+> > I would rather keep UNKNOWN as it
+> > is, but that's up to you.
+
 
 
