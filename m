@@ -1,298 +1,132 @@
-Return-Path: <linux-kernel+bounces-205450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE99E8FFC32
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:23:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32F198FFC33
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49B691F21672
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:23:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4793285F8B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED8D14F9FC;
-	Fri,  7 Jun 2024 06:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE89614EC75;
+	Fri,  7 Jun 2024 06:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="zssYCzMg"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xdCcH+tI"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C97914EC75;
-	Fri,  7 Jun 2024 06:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA4718AF4
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 06:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717741395; cv=none; b=Vo3Uk4k1hM+30aAvRaPGBMPD4Map48lcyntNvjJGAzzSeeSRuHjl51uWVXH7/IVTbGidSYdpAMyeKA6iix9de4j2UhCWn+6jYguwHsXOhwbhcYwo+Me4VsZxgIEXh7h9MBZMNwWwXe9c+AOhz0OMfJ/x/Yw7UkT+jgabW1op9PM=
+	t=1717741524; cv=none; b=f1xRhMQipGUfUlcTcS+7j+nEMMWMCAkhwfaD5yyhUdgAHsDQ7PU6Xn6BCWskl+fXBCMh+Kz8SOsAdnGwRFP08oTbQMrJi6sU1zubMOo9JGs0PFLU1UxUVGXOpKmk+K8DOPVu+YocY70pJyn5c8lgrW+iop7V1vPAInd9i2Ppl0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717741395; c=relaxed/simple;
-	bh=e2/8FFik4VTYyTTf7c/nXYCFl6qwMjnndsppTg6LJ7E=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=VkKgjxFze+qb4U0Cbs2Nu8U5Eq/FEEGOYY8oSMmMBwhc1Ypr5XB7lKjV9Mw4TInYN2Pgi0AGuPaooDEvfez7qmGSxe8fzsOiKskrJXhCdxgNZCaXpsawC/iqs8Q25ajGu6TFTIFVIr8RXLIUx/HypB7aw6gRgDN8bj2jKaYHq6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=zssYCzMg; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717741391;
-	bh=e2/8FFik4VTYyTTf7c/nXYCFl6qwMjnndsppTg6LJ7E=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=zssYCzMg8cUZIbxN5Hk1doFPXNhnXXuLnyj4LV3PsHSaekKBP8nnqUsqpd7YquZ8t
-	 Vyb/87TR6JPRBaC1Yv/nIZhmo5RHMIWgf41l0TjA6QjeecEbL0EGP43C+Yw2b9WB+a
-	 4gugNBJmGPTfM4rfO7JR83VWori0Qe4Rqa+a/x3T1HJEMChRVRLVxQkIXIuG1/EJbM
-	 BL7rTZ/D6Fk5eulMnjRx0d/gQ73XJpBwft7TZ1pByjyBkrWPq096CXN1/KblcbnHt0
-	 9NNKYYNFPzv1YHQThyLVeM+wRlP4Ad4PNiFpRSxqZSXmeX57CuBhskNPFTCxNGeJqE
-	 cY02QuV2101iw==
-Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 384303780EC6;
-	Fri,  7 Jun 2024 06:23:06 +0000 (UTC)
-Message-ID: <5ce292b6-179c-48e0-9079-ea07defbe178@collabora.com>
-Date: Fri, 7 Jun 2024 11:23:42 +0500
+	s=arc-20240116; t=1717741524; c=relaxed/simple;
+	bh=wE/R/t5j7RmtTx7ndh8HOfKlFGmFGqY1/Yk4tvIlyLQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ir12fAMCpk9x5GEGxfT3uJ54TK34pPsNKJAdoxxV2dD5dQnrrL5ngUMvlTRvoJDdxVxwxi+nLwDQD7IABQfs2xZF+Fo9G1RxKdaJGc8b/yRYBW1CokNev6FciXanLcbn+tjawzge3REmfkM06AWg9XM0auma1QiDJKx46H91tQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xdCcH+tI; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: hch@lst.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1717741520;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+m/nTQGXSyjTen2jr8IGQUJ8mP1sxHUVx39nE+L9CKc=;
+	b=xdCcH+tI0aeYp6KqObrL8aemNZ6sQ9PgIZCLqCjfd4gECosqAMCxlgBTERDvCymS4uBYXa
+	kzDE2j2kHq7lhuFVD5SwrTXDIB6+Tz1jR2D8B4mXxki/u0sMWzjX0L48K2BOHc/lHO3FxC
+	jPW4eRbjl/qp2jJEwNwho+jh38G9AIY=
+X-Envelope-To: f.weber@proxmox.com
+X-Envelope-To: axboe@kernel.dk
+X-Envelope-To: ming.lei@redhat.com
+X-Envelope-To: bvanassche@acm.org
+X-Envelope-To: linux-block@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: zhouchengming@bytedance.com
+X-Envelope-To: t.lamprecht@proxmox.com
+Message-ID: <2223bbb9-8bc8-4566-9c3f-ef6103422068@linux.dev>
+Date: Fri, 7 Jun 2024 14:24:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ritesh Harjani <ritesh.list@gmail.com>, Mike Rapoport <rppt@kernel.org>,
- Muchun Song <songmuchun@bytedance.com>, David Hildenbrand
- <david@redhat.com>, p.raghav@samsung.com
-Subject: Re: [PATCH v3] selftest: mm: Test if hugepage does not get leaked
- during __bio_release_pages()
-To: Donet Tom <donettom@linux.ibm.com>,
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, Tony Battersby <tonyb@cybernetics.com>
-References: <20240607055046.138650-1-donettom@linux.ibm.com>
+Subject: Re: [PATCH] block: fix request.queuelist usage in flush
 Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20240607055046.138650-1-donettom@linux.ibm.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Friedrich Weber <f.weber@proxmox.com>, axboe@kernel.dk,
+ ming.lei@redhat.com, bvanassche@acm.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, zhouchengming@bytedance.com,
+ Thomas Lamprecht <t.lamprecht@proxmox.com>
+References: <20240604064745.808610-1-chengming.zhou@linux.dev>
+ <c9d03ff7-27c5-4ebd-b3f6-5a90d96f35ba@proxmox.com>
+ <1344640f-b22d-4791-aed4-68fc62fb6e36@linux.dev>
+ <ec27da86-b84a-430b-98aa-9971f90c8c87@proxmox.com>
+ <7193e02e-7347-48db-b1a0-67b44730480b@proxmox.com>
+ <448721f2-8e0b-4c5a-9764-bde65a5ee981@linux.dev>
+ <343166f4-ac11-4f0e-ad13-6dc14dbf573d@proxmox.com>
+ <dea87c0a-1c36-4737-bea5-cb7fa273b724@linux.dev>
+ <20240607045511.GB2857@lst.de>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <20240607045511.GB2857@lst.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 6/7/24 10:50 AM, Donet Tom wrote:
-> Commit 1b151e2435fc ("block: Remove special-casing of compound
-> pages") caused a change in behaviour when releasing the pages
-> if the buffer does not start at the beginning of the page. This
-> was because the calculation of the number of pages to release
-> was incorrect.
-> This was fixed by commit 38b43539d64b ("block: Fix page refcounts
-> for unaligned buffers in __bio_release_pages()").
+On 2024/6/7 12:55, Christoph Hellwig wrote:
+> On Fri, Jun 07, 2024 at 10:37:58AM +0800, Chengming Zhou wrote:
+>> Yeah, right, it seems LVM may create this special request that only has
+>> PREFLUSH | POSTFLUSH without any DATA, goes into the flush state machine.
+>> Then, cause the request double list_add_tail() without list_del_init().
+>> I don't know the reason behind it, but well, it's allowable in the current
+>> flush code.
 > 
-> We pin the user buffer during direct I/O writes. If this buffer is a
-> hugepage, bio_release_page() will unpin it and decrement all references
-> and pin counts at ->bi_end_io. However, if any references to the hugepage
-> remain post-I/O, the hugepage will not be freed upon unmap, leading
-> to a memory leak.
+> PREFLUSH | POSTFLUSH is a weird invalid format.  We'll need to fix this
+> in dm, and probably also catch it in the block layer submission path.
 > 
-> This patch verifies that a hugepage, used as a user buffer for DIO
-> operations, is correctly freed upon unmapping, regardless of whether
-> the offsets are aligned or unaligned w.r.t page boundary.
-> 
-> Test Result  Fail Scenario (Without the fix)
-> --------------------------------------------------------
-> []# ./hugetlb_dio
-> TAP version 13
-> 1..4
-> No. Free pages before allocation : 7
-> No. Free pages after munmap : 7
-> ok 1 : Huge pages freed successfully !
-> No. Free pages before allocation : 7
-> No. Free pages after munmap : 7
-> ok 2 : Huge pages freed successfully !
-> No. Free pages before allocation : 7
-> No. Free pages after munmap : 7
-> ok 3 : Huge pages freed successfully !
-> No. Free pages before allocation : 7
-> No. Free pages after munmap : 6
-> not ok 4 : Huge pages not freed!
-> Totals: pass:3 fail:1 xfail:0 xpass:0 skip:0 error:0
-> 
-> Test Result  PASS Scenario (With the fix)
-> ---------------------------------------------------------
-> []#./hugetlb_dio
-> TAP version 13
-> 1..4
-> No. Free pages before allocation : 7
-> No. Free pages after munmap : 7
-> ok 1 : Huge pages freed successfully !
-> No. Free pages before allocation : 7
-> No. Free pages after munmap : 7
-> ok 2 : Huge pages freed successfully !
-> No. Free pages before allocation : 7
-> No. Free pages after munmap : 7
-> ok 3 : Huge pages freed successfully !
-> No. Free pages before allocation : 7
-> No. Free pages after munmap : 7
-> ok 4 : Huge pages freed successfully !
-> Totals: pass:4 fail:0 xfail:0 xpass:0 skip:0 error:0
-> 
-> V3:
-> - Fixed the build error when it is compiled with _FORTIFY_SOURCE.
-> 
-> V2:
-> - Addressed all review commets from Muhammad Usama Anjum
-> https://lore.kernel.org/all/20240604132801.23377-1-donettom@linux.ibm.com/
-> 
-> V1:
-> https://lore.kernel.org/all/20240523063905.3173-1-donettom@linux.ibm.com/#t
-> 
-> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
-> Co-developed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> ---
->  tools/testing/selftests/mm/Makefile      |   1 +
->  tools/testing/selftests/mm/hugetlb_dio.c | 118 +++++++++++++++++++++++
-Missed my feedback on adding the test to vm_test.sh
 
-Other than this, LGTM. Please add following tag after the above change:
+Right, how about add WARN here to catch it? Or just set it to PREFLUSH?
+Not familiar with dm code, need help if we need to fix it in dm. :)
 
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+diff --git a/block/blk-flush.c b/block/blk-flush.c
+index c17cf8ed8113..3ce9ed78c375 100644
+--- a/block/blk-flush.c
++++ b/block/blk-flush.c
+@@ -185,7 +185,7 @@ static void blk_flush_complete_seq(struct request *rq,
+                /* queue for flush */
+                if (list_empty(pending))
+                        fq->flush_pending_since = jiffies;
+-               list_move_tail(&rq->queuelist, pending);
++               list_add_tail(&rq->queuelist, pending);
+                break;
 
->  2 files changed, 119 insertions(+)
->  create mode 100644 tools/testing/selftests/mm/hugetlb_dio.c
-> 
-> diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
-> index 3b49bc3d0a3b..a1748a4c7df1 100644
-> --- a/tools/testing/selftests/mm/Makefile
-> +++ b/tools/testing/selftests/mm/Makefile
-> @@ -73,6 +73,7 @@ TEST_GEN_FILES += ksm_functional_tests
->  TEST_GEN_FILES += mdwe_test
->  TEST_GEN_FILES += hugetlb_fault_after_madv
->  TEST_GEN_FILES += hugetlb_madv_vs_map
-> +TEST_GEN_FILES += hugetlb_dio
->  
->  ifneq ($(ARCH),arm64)
->  TEST_GEN_FILES += soft-dirty
-> diff --git a/tools/testing/selftests/mm/hugetlb_dio.c b/tools/testing/selftests/mm/hugetlb_dio.c
-> new file mode 100644
-> index 000000000000..986f3b6c7f7b
-> --- /dev/null
-> +++ b/tools/testing/selftests/mm/hugetlb_dio.c
-> @@ -0,0 +1,118 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * This program tests for hugepage leaks after DIO writes to a file using a
-> + * hugepage as the user buffer. During DIO, the user buffer is pinned and
-> + * should be properly unpinned upon completion. This patch verifies that the
-> + * kernel correctly unpins the buffer at DIO completion for both aligned and
-> + * unaligned user buffer offsets (w.r.t page boundary), ensuring the hugepage
-> + * is freed upon unmapping.
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#include <stdio.h>
-> +#include <sys/stat.h>
-> +#include <stdlib.h>
-> +#include <fcntl.h>
-> +#include <stdint.h>
-> +#include <unistd.h>
-> +#include <string.h>
-> +#include <sys/mman.h>
-> +#include "vm_util.h"
-> +#include "../kselftest.h"
-> +
-> +void run_dio_using_hugetlb(unsigned int start_off, unsigned int end_off)
-> +{
-> +	int fd;
-> +	char *buffer =  NULL;
-> +	char *orig_buffer = NULL;
-> +	size_t h_pagesize = 0;
-> +	size_t writesize;
-> +	int free_hpage_b = 0;
-> +	int free_hpage_a = 0;
-> +	const int mmap_flags = MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB;
-> +	const int mmap_prot  = PROT_READ | PROT_WRITE;
-> +
-> +	writesize = end_off - start_off;
-> +
-> +	/* Get the default huge page size */
-> +	h_pagesize = default_huge_page_size();
-> +	if (!h_pagesize)
-> +		ksft_exit_fail_msg("Unable to determine huge page size\n");
-> +
-> +	/* Open the file to DIO */
-> +	fd = open("/tmp", O_TMPFILE | O_RDWR | O_DIRECT, 0664);
-> +	if (fd < 0)
-> +		ksft_exit_fail_perror("Error opening file\n");
-> +
-> +	/* Get the free huge pages before allocation */
-> +	free_hpage_b = get_free_hugepages();
-> +	if (free_hpage_b == 0) {
-> +		close(fd);
-> +		ksft_exit_skip("No free hugepage, exiting!\n");
-> +	}
-> +
-> +	/* Allocate a hugetlb page */
-> +	orig_buffer = mmap(NULL, h_pagesize, mmap_prot, mmap_flags, -1, 0);
-> +	if (orig_buffer == MAP_FAILED) {
-> +		close(fd);
-> +		ksft_exit_fail_perror("Error mapping memory\n");
-> +	}
-> +	buffer = orig_buffer;
-> +	buffer += start_off;
-> +
-> +	memset(buffer, 'A', writesize);
-> +
-> +	/* Write the buffer to the file */
-> +	if (write(fd, buffer, writesize) != (writesize)) {
-> +		munmap(orig_buffer, h_pagesize);
-> +		close(fd);
-> +		ksft_exit_fail_perror("Error writing to file\n");
-> +	}
-> +
-> +	/* unmap the huge page */
-> +	munmap(orig_buffer, h_pagesize);
-> +	close(fd);
-> +
-> +	/* Get the free huge pages after unmap*/
-> +	free_hpage_a = get_free_hugepages();
-> +
-> +	/*
-> +	 * If the no. of free hugepages before allocation and after unmap does
-> +	 * not match - that means there could still be a page which is pinned.
-> +	 */
-> +	if (free_hpage_a != free_hpage_b) {
-> +		ksft_print_msg("No. Free pages before allocation : %d\n", free_hpage_b);
-> +		ksft_print_msg("No. Free pages after munmap : %d\n", free_hpage_a);
-> +		ksft_test_result_fail(": Huge pages not freed!\n");
-> +	} else {
-> +		ksft_print_msg("No. Free pages before allocation : %d\n", free_hpage_b);
-> +		ksft_print_msg("No. Free pages after munmap : %d\n", free_hpage_a);
-> +		ksft_test_result_pass(": Huge pages freed successfully !\n");
-> +	}
-> +}
-> +
-> +int main(void)
-> +{
-> +	size_t pagesize = 0;
-> +
-> +	ksft_print_header();
-> +	ksft_set_plan(4);
-> +
-> +	/* Get base page size */
-> +	pagesize  = psize();
-> +
-> +	/* start and end is aligned to pagesize */
-> +	run_dio_using_hugetlb(0, (pagesize * 3));
-> +
-> +	/* start is aligned but end is not aligned */
-> +	run_dio_using_hugetlb(0, (pagesize * 3) - (pagesize / 2));
-> +
-> +	/* start is unaligned and end is aligned */
-> +	run_dio_using_hugetlb(pagesize / 2, (pagesize * 3));
-> +
-> +	/* both start and end are unaligned */
-> +	run_dio_using_hugetlb(pagesize / 2, (pagesize * 3) + (pagesize / 2));
-> +
-> +	ksft_finished();
-> +}
-> +
+        case REQ_FSEQ_DATA:
+@@ -263,6 +263,7 @@ static enum rq_end_io_ret flush_end_io(struct request *flush_rq,
+                unsigned int seq = blk_flush_cur_seq(rq);
 
--- 
-BR,
-Muhammad Usama Anjum
+                BUG_ON(seq != REQ_FSEQ_PREFLUSH && seq != REQ_FSEQ_POSTFLUSH);
++               list_del_init(&rq->queuelist);
+                blk_flush_complete_seq(rq, fq, seq, error);
+        }
+
+@@ -402,6 +403,12 @@ bool blk_insert_flush(struct request *rq)
+        unsigned int policy = blk_flush_policy(fflags, rq);
+        struct blk_flush_queue *fq = blk_get_flush_queue(q, rq->mq_ctx);
+
++       /*
++        * PREFLUSH | POSTFLUSH is a weird invalid format,
++        * need to fix in the upper layer, catch it here.
++        */
++       WARN_ON_ONCE(policy == (REQ_FSEQ_PREFLUSH | REQ_FSEQ_POSTFLUSH));
++
+        /* FLUSH/FUA request must never be merged */
+        WARN_ON_ONCE(rq->bio != rq->biotail);
+
 
