@@ -1,113 +1,115 @@
-Return-Path: <linux-kernel+bounces-206675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1630900C94
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:44:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9882B900C96
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D5C01F22481
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:44:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46A5B1F227D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D34014D717;
-	Fri,  7 Jun 2024 19:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E8A14D29D;
+	Fri,  7 Jun 2024 19:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XaqZYecR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ea29Nhr/"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4197B6A33F
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 19:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2931CAB5;
+	Fri,  7 Jun 2024 19:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717789486; cv=none; b=K0+zpuHVSco8Bk1bp18r+8GAPR1uRF45BRiRVupcSZNJGRPhGd4ZnWjkGams0M0qUDGILZoMwEEGJ2fbwxe80F+zn7ofQjpB3Of+nTyT6SxzDKqx0yIAPqYSo32CA+615akP8ze0nIarvMBkLpGJfaGrWZnYeqvMR5wqRQ1LeEE=
+	t=1717789589; cv=none; b=E5zgWVJqDg1GkWDR+rWzQDPYRpnOdKG2uBIHkR8Bp/CaiLSXGSSdMFPPhBEZpX0PzNCZJVILQ5iLzZWD04apCttjRlu0RV6R0OqPkIn9u2A1ce6r/hOa5mwbu/uegez1fzD8QYe6aeBxvALw9IubA1Ooqhzfhs2Q4zPqgQ3IdKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717789486; c=relaxed/simple;
-	bh=gQZmMdf7XESXI/62zavW8FJtnA06YyVAKvYkn83aBA0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nYMf0OUyxprOfha7F1p6/tihUsaQ0TWx4YYurEdR7G8sqNyZbsaDNFcV4SCFcdbDDz5AXF0ouYkmhqEwEPaqmJC/SAV7rxiDLiSuk0+bIeU0ognF9Nvz5Da0dIubhrWvYSpTORRYOge5uwvAxzAegpAgkBclw5PrEhjM7CikspI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XaqZYecR; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717789486; x=1749325486;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=gQZmMdf7XESXI/62zavW8FJtnA06YyVAKvYkn83aBA0=;
-  b=XaqZYecRXN2XBgBAOFO6YEZ2G6b58GOvBO1sG1enBhpqYSYxo4TLs0Kr
-   pdxgnIoaQ6mhltNhBicXqMn8Ae7vOoKJtFQq5Fkq649F/nI+1h0c4Unv+
-   nDKKzxtZo+B+6K++nl9DrLuu6X6Jf4g/cmzzgYXdU2xOIPEv+eeEkcMel
-   oRc58/STyb98u0XtgF/L36Y5BAJau/VnojggkbppX4cLroGTbTiCz4JVz
-   CAqjryZDJSi2DTz7UrkQjviylTCXFabWnfMFH5ZatSzf8hGcEhLvsZ/3r
-   m9B8+ivm3tSByi4RfBrzJHEO1IxZT+si0597i4t5N9+gQwYy4emmsKrVg
-   w==;
-X-CSE-ConnectionGUID: MDC66HpITCaT/2psrgTKYg==
-X-CSE-MsgGUID: 3TH8VR+4RbOx4O36/o03Hw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="18354695"
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="18354695"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 12:44:45 -0700
-X-CSE-ConnectionGUID: X/wxrRd5QrySQVXisIaFBQ==
-X-CSE-MsgGUID: 5v29KSBTSguuG7rsH1TPnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="43355774"
-Received: from tassilo.jf.intel.com ([10.54.38.190])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 12:44:44 -0700
-From: Andi Kleen <ak@linux.intel.com>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH v4] x86/mtrr: Check if fixed MTRRs exist before saving them
-Date: Fri,  7 Jun 2024 12:44:37 -0700
-Message-ID: <20240607194437.52939-1-ak@linux.intel.com>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1717789589; c=relaxed/simple;
+	bh=k1irwgi6FpLi68D3GV/XGf5Bn+slGqNsnRvB/NipTMc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tvYDdWaiQlHsqOvBGaz5Wc0zBwaDYTpyq3njuU9VBJMh/XhqAZw6UCw91epfvXAJR3ImV1csV0WvuA81LtLOZh5/DwjayYtLFS4zV2AAjcDTCc040NZqsLRo6f/h3Wu8GyGsLNl3p6h03+6f5qaYeozMWStTrwQ4CouaJ6JINis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ea29Nhr/; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2eaea28868dso11349291fa.3;
+        Fri, 07 Jun 2024 12:46:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717789586; x=1718394386; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TASRa7J3c3Fsi6rgHDMWx68962HVziRdA3Bk8xRP7fA=;
+        b=Ea29Nhr//SU0rlo8BqM18PVRzLoq3cm9f1UsOdwkOiim4FZlVkBBamR4DO4cELUzqr
+         YZuKTNNHY8mvEga7qdgiNIawhVptjpLftdyAtVHV9dJ2cfc7CR2GjX9NzszVRx9J4uJV
+         o/nSeDhnElyeNxYnz//7ZBIj1ITmG8ennSNVFGnV2udb3JsYpTH9Cpl1ydMGeArgd5pq
+         gFEdwEBYfKOh507oIVQ9sj/mbnGD/5LUpdWOj4Nieb90SDbgFiN1LuTAPdBSGS4+tv4J
+         6WZwatycZCjoRAwz03u722FMg1d2dNX1/wi2/1zVe4cA3NbMkDTK5V37zy24MLRU4FZb
+         ONWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717789586; x=1718394386;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TASRa7J3c3Fsi6rgHDMWx68962HVziRdA3Bk8xRP7fA=;
+        b=FiRErSko1akWNg9afAPrxAVqSzlcVb9Ue4gKSpOiKxli+WSkBxPfDXj/p7yofKh6Nf
+         +5UN8nKNvkHPXRJNJmz170Ov0XO/o+Fz8M5zz2M2akSa368hOJCAyyA+TrNcoSpNIi62
+         /dkQxH8L/Vecyh4zO+HDNQQpqGdWYFUbLSTmNNkpes0rmfaO+eXlphryKe1qWYjm17er
+         jodGosEyoPnOFlcedPl1BFG3g7zwSC4fcwYOKW43mpj2/0xj15gg86cNFHPTSMCmdKqE
+         g+hlo9Uj6T28mWT9ob5vQIgCNCGPuRM4N2zKyGVGSmfq5Ox/GcGKAQEolI9rkZj+DEyU
+         fVCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHl4QpCzUcqGH7bsd2CHeP3KN1ahDg0Ahl+fn11Z8v7RFsIqzzvOvmpRYrRgq1/cqiBtteUYYXpGlrSg1aL8uzz770i4RuHCv5JFsigY6b/rPi1vEPWV4kNBIW+xzdopd+OXDfeu39
+X-Gm-Message-State: AOJu0YyJNEUaIBb27quz+s4F9ygK6kFQtEnr+UKepSPpNYkFSd++yUOu
+	DzGB9me1cqrBuT2QAGl1H3/iKN0kRht4HShkvTMQW/DEg3vLeQSitqUoHlHL/vuT8jsZAoK18/5
+	JMwmnTPZdET4nEISg1TpjLtmY44I=
+X-Google-Smtp-Source: AGHT+IFja8mXc3yosgz7nndfFzkqXO00aH626fCWmanVCy336Tq+1BF5oj5+AkBubXnheL+aEhpp62EhPCpQIPoYzRc=
+X-Received: by 2002:a2e:99d6:0:b0:2eb:45b9:cb45 with SMTP id
+ 38308e7fff4ca-2eb45b9cd47mr6079711fa.2.1717789585475; Fri, 07 Jun 2024
+ 12:46:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240607114138.390272-1-yasin.lee.x@outlook.com>
+ <SN7PR12MB81017291E79E6B61A8DEC9A5A4FB2@SN7PR12MB8101.namprd12.prod.outlook.com>
+ <CAHp75VdYYGe7rXJm1z2a=r7ZnSU0-y+3N8juoNF-5xXi5=z5nA@mail.gmail.com>
+In-Reply-To: <CAHp75VdYYGe7rXJm1z2a=r7ZnSU0-y+3N8juoNF-5xXi5=z5nA@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 7 Jun 2024 22:45:49 +0300
+Message-ID: <CAHp75VfYhMbHK7pMTuVDZ3uc5ZjytA7uC+3fr7u3nWUEosGZHw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] iio:proximity:hx9023s: Add TYHX HX9023S sensor driver
+To: Yasin Lee <yasin.lee.x@outlook.com>
+Cc: jic23@kernel.org, lars@metafoo.de, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, nuno.a@analog.com, swboyd@chromium.org, 
+	u.kleine-koenig@pengutronix.de, yasin.lee.x@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-MTRRs have a obsolete fixed variant for fine grained
-caching control of the 640K-1MB region. This fixed variant has a
-separate capability bit in the MTRR capability MSR. Most of the MTRR code
-checks this capability bit before trying to access the fixed MTRR MSRs,
-except in one place. This patch fixes this place to also
-check the capability.
+On Fri, Jun 7, 2024 at 10:40=E2=80=AFPM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> On Fri, Jun 7, 2024 at 2:42=E2=80=AFPM Yasin Lee <yasin.lee.x@outlook.com=
+> wrote:
 
-Otherwise there will be a WARN_ON due to the #GP when the respective MSRs
-are accessed to save them.
+...
+.
+> > +static const struct acpi_device_id hx9023s_acpi_match[] =3D {
+> > +       { "TYHX9023" },
+> > +       {}
+> > +};
+>
+> Btw, do you have a reference to any device on the market that has this ID=
+?
 
-Fixes: 2b1f6278d77c ("[PATCH] x86: Save the MTRRs of the BSP before booting an AP")
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Aaaargh!
+Jonathan, we have to have a big rule from now on on ACPI IDs, if
+anybody introduces an ID in the driver, they must provide the device
+model that is (are going to) use it and excerpt from the ACPI ID
+registry to prove the vendor ID is real.
 
----
+This is the heck fake ID!
+NAK.
 
-v2: Add Fixes tag and expand description.
-v3: Expand description
-v4: Expand description
----
- arch/x86/kernel/cpu/mtrr/mtrr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/mtrr/mtrr.c b/arch/x86/kernel/cpu/mtrr/mtrr.c
-index 767bf1c71aad..2a2fc14955cd 100644
---- a/arch/x86/kernel/cpu/mtrr/mtrr.c
-+++ b/arch/x86/kernel/cpu/mtrr/mtrr.c
-@@ -609,7 +609,7 @@ void mtrr_save_state(void)
- {
- 	int first_cpu;
- 
--	if (!mtrr_enabled())
-+	if (!mtrr_enabled() || !mtrr_state.have_fixed)
- 		return;
- 
- 	first_cpu = cpumask_first(cpu_online_mask);
--- 
-2.45.1
-
+--=20
+With Best Regards,
+Andy Shevchenko
 
