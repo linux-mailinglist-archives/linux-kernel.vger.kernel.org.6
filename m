@@ -1,129 +1,124 @@
-Return-Path: <linux-kernel+bounces-206652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3253900C59
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:15:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0ACA900C5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 873E91F235ED
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:15:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 172AA1C21DDD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41739145B1A;
-	Fri,  7 Jun 2024 19:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EEE149E1B;
+	Fri,  7 Jun 2024 19:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UckJRMl4"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L0+irMuM"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3A21CFB6
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 19:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC707345D;
+	Fri,  7 Jun 2024 19:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717787727; cv=none; b=dWuSvL4Jadlv8/eOBbwlwrUKA7cJWn9OXvt+dy8/aQ6m8xguR/EmzogvzwS+O0jvrJf3vDK5Bdzsa3b7lRYxoNVyVbbQcIum4NIqvJaKk1rgiDOjxJSWMAQpTEVvHdyAH+lwMDPWHDuMqRFUzQ4JrbSr/eZkMA5uYIjKAOunojg=
+	t=1717787864; cv=none; b=p5NvO4ozFV9nufUuRHSnwwLVaJu1sPnDxliatfawyjMaXx/by1QLGt7sQstaicjiojeLMn44hGxaOnKWVOn81NpjU6ZTWzVgvn1/w3xZL0gZnX40l/PL+aNkuny2KIGg+w05gFQ1hwKK6Sg8FJnYBkgW/9DJY1m3tzJFZd+nnUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717787727; c=relaxed/simple;
-	bh=8J+L70WS9pQVno8l6jjMVOPIu8b2mz0nvOS2cR+vTOQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P5pawue0DUwuOr3JpAuWcvlnB6cpMLF8eFyB4TMsYxqHllpEdWLEUW8D+zRjH9zskLR5xPx5pi6kXhAluC4DujK458YZBYI5a0mzzIFDU2q6y66DlszpT7tb4AZSlIaJjIhgZIvRzN1jZuygGKjRgSNg6OoWhWjhoja/oOYrGKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UckJRMl4; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52c4b92c09bso221696e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 12:15:25 -0700 (PDT)
+	s=arc-20240116; t=1717787864; c=relaxed/simple;
+	bh=d7pNxXN7ZZ7n1TjEK8X8kD9o37/7SEp9NufTqHRsRe0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RvuhDWqwYLYpZcCSaJahWBI9nqR60jXBCgjP9M9g5/9axl9ni5x1Dx/nHY+ELpPhuvY4IiuQy91At8ziA92levp6bGRf5TdgWzIZUuxcZmapMIYRyr6Sze06UI3yv1GXGEcMaB7Ak5WY/Muf9Urk6dGrKzmosLzoMJb+mN2RvZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L0+irMuM; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7025c5e6b94so2066729b3a.0;
+        Fri, 07 Jun 2024 12:17:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1717787723; x=1718392523; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=U201HRecfdZEzANWudyljVSKPR1fHN57t8e+wgR4NiM=;
-        b=UckJRMl497TiAaESh5KATMj7jW++fKKe3ces6CHXRd4NNc4/hqMkUomz3RjywOnuMn
-         1rZzzvILqYRxHnUenJf6CfRUpEP1ozzSkUN/6AoJt4wSbu1O8t1m/ghAStbRbzQcqRrs
-         cccVkS2g9boFUBvWfjQ2crncsQgTr2wfqv6lM=
+        d=gmail.com; s=20230601; t=1717787862; x=1718392662; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NMwKu+pMCkNLk3fA7XHYBTAbLNx7GuEVog7Bj2JBALk=;
+        b=L0+irMuM/spDerwIer58QP0RIQnvjANafe+rGwWBs/rdicxBkfhhcAJ6OFG5isNTRe
+         q6l1hSe1odfzEuZOEYYz4wz14LIIq1cGjC9+dSpoJJsaQLRNY9OYKe9WD/ZpDNNCMS6n
+         tXwIKnhrWmBBWt9b3EqAA7mOYlPw3zc/ACs24p7RAkts5rchWsv0kYd9pqs8AD92uK1x
+         iMaKWz2CWwOpgdgniuKBPQ3PMho9l5iEy1CEqrDwhXXYkuHpbAuJoYk5YH2/dkYI2q6q
+         Rp4DCg0xttd7sH9mmanoU0YC+revsDvt7EtbUO+AU+okQdjXse2BR5WmfI7VkvHFK/7A
+         RolA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717787723; x=1718392523;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U201HRecfdZEzANWudyljVSKPR1fHN57t8e+wgR4NiM=;
-        b=Zb8YK2k2tD48MKlHUF0M+wWiJPG0UkvVlQ69Sw666IoPPmAtwvbDNoqdvbal0Pf85m
-         hoNL90HGoyOQu0Up3CU3dzVeokLqMMKzQ1/STYnnQSKDpAiHSOgP5Y3vTXLkVicpYLaH
-         Tx9sSLQ7eXMbAWgEDzt63HLwFCqVXTNvBrN4HZ/x+cTcrCys3jOThvo8oNEp8Q6K3Bvx
-         gKxJeHI6DHW2McJG5WO/T6/0qAaFApC52jgU6y5ATQ83HTqByxVK9ZFqRwek/b4QidHo
-         5J1kdWX264wsEc9kl09UHnb7puA7zZuRqGPJLL/3AP4M0UPaf6bJSV01EdTXn6tDdrQJ
-         EtjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXG6Zl79pZIp1etgPLyuNT2Z5z/V7Ycxa6Yugk7RcYueer7pmjv94fYImCKx1vcVwDxxMH+a8LL1CXDWbwgC/SBRJ55/giC3If7byPv
-X-Gm-Message-State: AOJu0YwLtBNWiSTk25r+l2v07/X26Vxaf6fqZ2FYpQS3lrT9yNCQo3Un
-	aclUjZRXbrkOyFj1ytUS9bSuFV6lVO6N7GMG3RckmJtQW/vOvfrYUWHqhBsDNO3N25+He1mL9TX
-	2oy0=
-X-Google-Smtp-Source: AGHT+IE1ycd8r9X+wusTZeqlo0TVnA+s0GohgSnvPclCFcGU0gXDkdv9wOpj0Zg4HkMrdPEzO0kNRA==
-X-Received: by 2002:a2e:8086:0:b0:2ea:ad2c:45bb with SMTP id 38308e7fff4ca-2eadce9ac4cmr27230461fa.46.1717787723146;
-        Fri, 07 Jun 2024 12:15:23 -0700 (PDT)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae12ce21sm3195630a12.49.2024.06.07.12.15.22
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jun 2024 12:15:22 -0700 (PDT)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a68c8b90c85so312388666b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 12:15:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVsFaiHiVgEuEohyyTffk82Y6Q5A6AQ2jFrQZoYMT7IzbtOP/jW3rzM5j+Ev8VVM0emN39dZhpqH6rrgb1XCE6NRzpe4DXfJF6CxFI+
-X-Received: by 2002:a17:906:c18a:b0:a67:7649:3c3c with SMTP id
- a640c23a62f3a-a6cdaa04d47mr278592666b.56.1717787722057; Fri, 07 Jun 2024
- 12:15:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717787862; x=1718392662;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NMwKu+pMCkNLk3fA7XHYBTAbLNx7GuEVog7Bj2JBALk=;
+        b=gMNYQxP5Ovt+BsrlEzNt850YLxzhf5mWFHT4Ju0yY5Q8kpVBTBXOUhABiqdLynB/po
+         /cLjE0nJLei4MUpbNzlCcYOOcYNHQ9hefNEW7mhp54X+ADvVgJnXSj+OXydnDq5O/9Qx
+         cLMOasxgIBAu0cmFAOz4eE9tRuDbOJ0P3U5iJodeZzTv5GnOqH17ypjUaRjztnaCBV/5
+         7MHn0qu0aa07Ua2Fpa5Bbqi6MxcPBYoLp8iqGRwS2x5bOgaF2r9XuQQDnJIOMLjkgTBI
+         ZkXoRbY5Z935o59AbGy2qvvblw9eRmlgm8TFnTORIOrm6OP3kakPmdVLQdITHHyuADcU
+         KghQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXq5RZG2iRMRBJQECrvPurrCRw82XjJjlBD8C8BG8v+zArh+i+B0iinOPiKvNmcVXOskug6qBmrTxZ2Bm+MsJMK4bM6uj0RBPnFUgHhpfS/t4diU4ISLAv3i6hwuat8RIZWLar9fxkvg1F7diiUQtKgxLJ2pzd6vJj9xM2hxUtaeApU7A0dqxVRg+PtZN9NxPSSZTRmy7EBwCfCOpEYSkEEwxbHX6+csnhUj/QgB5Y1acow7o+TgacQlm4ewaslYiaeyHp/8I=
+X-Gm-Message-State: AOJu0YwLG6n81JuMMrZTcz15Q/B0Vy+3GYaqgr2o254Kgk5o5JPoa/ZB
+	0hVsA+Slj5T3hN0nBQbwbIi221xhfqgzS8ssDCDAGn1c2E2HpIdU
+X-Google-Smtp-Source: AGHT+IHYSV0KCIG3qxQOTEBKKcc1mjWK4+6fwEeVHg+i4ItkqLKlvKzlGZXukzqLa21WlkEglyJVUg==
+X-Received: by 2002:a05:6a20:918f:b0:1af:cf63:3742 with SMTP id adf61e73a8af0-1b2f9cb14e6mr3810470637.42.1717787861751;
+        Fri, 07 Jun 2024 12:17:41 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:b8e9:3447:a54a:310b])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6de200848bfsm2600379a12.1.2024.06.07.12.17.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 12:17:41 -0700 (PDT)
+Date: Fri, 7 Jun 2024 12:17:37 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Erick Archer <erick.archer@outlook.com>
+Cc: Russell King <linux@armlinux.org.uk>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Stephen Chandler Paul <thatslyude@gmail.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Ruan Jinjie <ruanjinjie@huawei.com>,
+	"Ricardo B. Marliere" <ricardo@marliere.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Yang Li <yang.lee@linux.alibaba.com>,
+	Kees Cook <keescook@chromium.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Justin Stitt <justinstitt@google.com>, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+	linux-hyperv@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] Input: serio - use sizeof(*pointer) instead of
+ sizeof(type)
+Message-ID: <ZmNc0cwc6yzl3_7H@google.com>
+References: <AS8PR02MB7237D3D898CCC9C50C18DE078BFB2@AS8PR02MB7237.eurprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wjHf6C_74VQPxmge-sMmu5yuhmNor1TaO0Uq--zrA13HA@mail.gmail.com>
- <28c74739-e775-4813-b2f1-b588e14b3674@rasmusvillemoes.dk>
-In-Reply-To: <28c74739-e775-4813-b2f1-b588e14b3674@rasmusvillemoes.dk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 7 Jun 2024 12:15:05 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjf-8ko=w7SyGWRLZ5bL_iwgw8mky8cxvYzF3xHDHoCMQ@mail.gmail.com>
-Message-ID: <CAHk-=wjf-8ko=w7SyGWRLZ5bL_iwgw8mky8cxvYzF3xHDHoCMQ@mail.gmail.com>
-Subject: Re: objtool query: section start/end symbols?
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AS8PR02MB7237D3D898CCC9C50C18DE078BFB2@AS8PR02MB7237.eurprd02.prod.outlook.com>
 
-On Fri, 7 Jun 2024 at 02:52, Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
->
-> FWIW, I did a POC some years ago but either never managed to send it, or
-> never got a response. It did boot in virtme and I managed to get gdb to
-> do disassembly to show that the dentry hash lookup did become a 'shift
-> immediate'.
->
-> https://github.com/Villemoes/linux/tree/rai
+On Fri, Jun 07, 2024 at 07:04:23PM +0200, Erick Archer wrote:
+> It is preferred to use sizeof(*pointer) instead of sizeof(type)
+> due to the type of the variable can change and one needs not
+> change the former (unlike the latter). This patch has no effect
+> on runtime behavior.
+> 
+> Signed-off-by: Erick Archer <erick.archer@outlook.com>
 
-Looks conceptually very similar to what I do, except I literally
-_only_ rewrite the constant itself in the instruction stream.
+Applied, thank you.
 
-You end up using these replacement sequences, which certainly works,
-but limits your instruction scheduling a bit (ie the minimal size ends
-up being a full branch to the thunk.
-
-I started out wanting to literally replace a single 8-bit constant in
-a shift-instruction that might be smaller than the jump.
-
-That said, you then made your approach work just fine by just
-combining the shift with the address load, so it's not a single small
-instruction that gets replaced any more.
-
-And honestly, I think your approach may be better than mine.
-
-The "replace constant in one instruction" approach works fine in my
-tests, and gcc in particular seems to actually take advantage of the
-instruction scheduling freedom (clang less so).
-
-But your thunking approach would probably be much easier on
-architectures like arm64 where the "load a constant" thing can be a
-lot less convenient than one single contiguous value in memory.
-
-Would you be willing to resurrect your thing for a modern kernel? I'll
-certainly try it out next to mine?
-
-                    Linus
+-- 
+Dmitry
 
