@@ -1,133 +1,144 @@
-Return-Path: <linux-kernel+bounces-206710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 108D5900CF2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:31:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D95C6900CF6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:32:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F0271F2375A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:31:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CA8228816E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68DC154C0D;
-	Fri,  7 Jun 2024 20:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C91614F9CE;
+	Fri,  7 Jun 2024 20:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="fByf2Gpr"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0S21Kci"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D4514E2FF;
-	Fri,  7 Jun 2024 20:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B026819;
+	Fri,  7 Jun 2024 20:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717792239; cv=none; b=gnM5yfokh5xi4+kGhS+kkZRln2cgJGNAO/hiXRUd55qWNoiegIve0ixnJKNrb4wIuwlIyPSYiJN7eBnA+shXF62q9ybGD6G+4MI68BQ1af6YaqfDj3POtq9VWjkFYQB2RC2HbL6/Lepr/Hp/YDrW+dhE/YAdGhzF556W4h7BeMM=
+	t=1717792323; cv=none; b=KnsleeFEiVjW72vZHRFg3V2yiLkkpkSL4AAEP8PsB8FwC4zqSMtgDwKix7z8D/MCDcYa3jY1OjpdpYCj05yhpVH+pFsRBr16opqjdruiuK7saeL/4TkFui7BHUiexnN8DHOVG/xONoLsb7pRxgLQ2MptquHvUVytIX4/EXFcjM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717792239; c=relaxed/simple;
-	bh=qTB7GJxp/BAurCOzmcWyP5VlAdBqLtL22rzuMxd5mic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ACLlc1gk1gU+R7/7TB8v60ajlTXwtAhLinAMmtjHVJXy+FDV3BRgmtuvmndimBWrXrP5XntobtZJA4APFSJp700EtdKCwgqRJYxzEDauk49rHb2EwUVMQyjH18Pj5vZLWlUZ3AzHFGCTGY7B0EdHSyXiyMdv/52dA79RkzZhgxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=fByf2Gpr; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4VwtB06wNcz9sjn;
-	Fri,  7 Jun 2024 22:30:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1717792233;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zayrHH/z5RIcd0P8fXfRYa45JHnjwR22LFwlmddRB1I=;
-	b=fByf2GprKvSs9RDKyKm8QidRaXMK/eMvdvXxEJgsugRtXHziRyz7h1fpXuOJF08fQFThPU
-	VYKrDF8P/uUWJ/IkwJyGDQAPcE7I5dE/vKK6VToCwmy5gEW59Ly1setDhG6tHesTY99V+2
-	ZCFtAAcvM0sbIQ3GmwTuw7g+jegI+VRHhG3147VOjBsZTKWR9cQR3PffAd7M3zAhDsjrIf
-	vXZQYhEIUx7V2foDlryJPwA2vbXkicc0z5poVHJu4pZdiHTmZC/TOicmvU/u8uoQOqQGNU
-	xMIk0wR0n/9aXVxymhi6ixRI26bcZB9FlUCwrjn5gL5004atn+lqv6c913eFDw==
-Date: Fri, 7 Jun 2024 20:30:26 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
-	brauner@kernel.org, akpm@linux-foundation.org, willy@infradead.org,
-	mcgrof@kernel.org, linux-mm@kvack.org, hare@suse.de,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
-	linux-fsdevel@vger.kernel.org, hch@lst.de, gost.dev@samsung.com,
-	cl@os.amperecomputing.com, john.g.garry@oracle.com
-Subject: Re: [PATCH v7 05/11] mm: split a folio in minimum folio order chunks
-Message-ID: <20240607203026.zj3akxdjeykchnnf@quentin>
-References: <20240607145902.1137853-1-kernel@pankajraghav.com>
- <20240607145902.1137853-6-kernel@pankajraghav.com>
- <75CCE180-EC90-4BDC-B5D8-0ED1B710BE49@nvidia.com>
+	s=arc-20240116; t=1717792323; c=relaxed/simple;
+	bh=X4B1La1z1pxjkZPYe8MXZt4HnbUKOeGUnGDR7svXFnY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZdONmihoFc7Q/Tt3kJNlhhG6UFLXwsK+a/naKSC9TALg1ipGNUL4dmrZOuklxptNsPdrlOxS6DNJsAK7E0rEtkosEO6hqa8ZFy+aXbWM2v/ROfGw7f89eN+Ak6oZS0T1/qPLAgTU5A0gCsOEgMguVFQuoUSCK7Q5UVQFWRTYeWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0S21Kci; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9ACFC2BBFC;
+	Fri,  7 Jun 2024 20:32:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717792323;
+	bh=X4B1La1z1pxjkZPYe8MXZt4HnbUKOeGUnGDR7svXFnY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=i0S21KciwE9FHfuVZmGF6pWg2iaggajBlMr1gDX7jHhHbqi61mw6qJcRclL5w3U4K
+	 tAiWVDL9hgNZ8/Wz9/M7BJq4rZimfXFUYF48bC33grP4XEjUeOf/E2VIEa4YjaP3Zi
+	 gj7bVQE/F6uiqdYJ0MqatakrSQODbpxtMty4PPvaFh8CpGqvBC2DHuNK1NR4dSEQvc
+	 ynm6cSIbdI72F3E3o7C4sO6eoFXPyKAda9GbbsMYc6NLdVCW3B0uO+PM8cqD4lnrXf
+	 iTSqGMr9a8wNwaHCrb563J57HcqWeRTx5dGe2SdWOqZVh04HPnbDLlJxDgmgf1aW6h
+	 gW4RfM6XmkDng==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Subject: [PATCH 0/9] arm64: Add support for Armv9.4 PMU fixed instruction
+ counter
+Date: Fri, 07 Jun 2024 14:31:25 -0600
+Message-Id: <20240607-arm-pmu-3-9-icntr-v1-0-c7bd2dceff3b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <75CCE180-EC90-4BDC-B5D8-0ED1B710BE49@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAB1uY2YC/x3MPQqAMAxA4atIZgOx9f8q4iA2agarpCqCeHeL4
+ ze890BgFQ7QJg8oXxJk8xFZmsC4DH5mFBcNhkxOJVU46Ir7eqLFBmX0hyLltiqcc0S1gdjtypP
+ c/7Pr3/cDRyd5VGMAAAA=
+To: Russell King <linux@armlinux.org.uk>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, Will Deacon <will@kernel.org>, 
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ James Morse <james.morse@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Zenghui Yu <yuzenghui@huawei.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-perf-users@vger.kernel.org, kvmarm@lists.linux.dev
+X-Mailer: b4 0.14-dev
 
-On Fri, Jun 07, 2024 at 12:58:33PM -0400, Zi Yan wrote:
-> Hi Pankaj,
-> 
-> Can you use ziy@nvidia.com instead of zi.yan@sent.com? Since I just use the latter
-> to send patches. Thanks.
+This series adds support for the optional fixed instruction counter 
+added in Armv9.4 PMU. Most of the series is a refactoring to remove the 
+index to counter number conversion which dates back to the Armv7 PMU 
+driver. Removing it is necessary in order to support more than 32 
+counters without a bunch of conditional code further complicating the 
+conversion.
 
-Got it!
+Patches 1-2 move the 32-bit Arm PMU drivers into drivers/perf/ and drop 
+non-DT probe support. These can be taken first if there's no comments on 
+them.
 
-> 
-> On 7 Jun 2024, at 10:58, Pankaj Raghav (Samsung) wrote:
-> 
-> > From: Luis Chamberlain <mcgrof@kernel.org>
-> >
-> > split_folio() and split_folio_to_list() assume order 0, to support
-> > minorder for non-anonymous folios, we must expand these to check the
-> > folio mapping order and use that.
-> >
-> > Set new_order to be at least minimum folio order if it is set in
-> > split_huge_page_to_list() so that we can maintain minimum folio order
-> > requirement in the page cache.
-> >
-> > Update the debugfs write files used for testing to ensure the order
-> > is respected as well. We simply enforce the min order when a file
-> > mapping is used.
-> >
-> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> > ---
-> >  include/linux/huge_mm.h | 14 ++++++++---
-> >  mm/huge_memory.c        | 55 ++++++++++++++++++++++++++++++++++++++---
-> >  2 files changed, 61 insertions(+), 8 deletions(-)
-> >
-> 
-> <snip>
-> 
-> >
-> > +int split_folio_to_list(struct folio *folio, struct list_head *list)
-> > +{
-> > +	unsigned int min_order = 0;
-> > +
-> > +	if (!folio_test_anon(folio)) {
-> > +		if (!folio->mapping) {
-> > +			count_vm_event(THP_SPLIT_PAGE_FAILED);
-> 
-> You should only increase this counter when the input folio is a THP, namely
-> folio_test_pmd_mappable(folio) is true. For other large folios, we will
-> need a separate counter. Something like MTHP_STAT_FILE_SPLIT_FAILED.
-> See enum mthp_stat_item in include/linux/huge_mm.h.
-> 
-Hmm, but we don't have mTHP support for non-anonymous memory right? In
-that case it won't be applicable for file backed memory? 
+Patch 3 changes struct arm_pmu.num_events to a bitmap of events, and 
+updates all the users. This removes the index to counter conversion 
+on the PMUv3 and Armv7 drivers.
 
-I am not an expert there so correct me if I am wrong.
+Patch 4 updates various register accessors to use 64-bit values matching 
+the register size.
 
---
-Regards,
-Pankaj
+Patches 5-6 update KVM PMU register accesses to use shared accessors 
+from asm/arm_pmuv3.h.
+
+Patches 7-8 rework KVM and perf PMU defines for counter indexes and 
+number of counters.
+
+Patch 9 finally adds support for the fixed instruction counter.
+
+I tested this on FVP with VHE host and a guest. I tested the Armv7 PMU 
+changes with QEMU.
+
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+Rob Herring (Arm) (9):
+      perf/arm: Move 32-bit PMU drivers to drivers/perf/
+      perf: arm_v6/7_pmu: Drop non-DT probe support
+      perf: arm_pmu: Remove event index to counter remapping
+      perf: arm_pmuv3: Prepare for more than 32 counters
+      KVM: arm64: pmu: Use arm_pmuv3.h register accessors
+      KVM: arm64: pmu: Use generated define for PMSELR_EL0.SEL access
+      arm64: perf/kvm: Use a common PMU cycle counter define
+      KVM: arm64: Refine PMU defines for number of counters
+      perf: arm_pmuv3: Add support for Armv9.4 PMU instruction counter
+
+ arch/arm/include/asm/arm_pmuv3.h                   |  23 ++++
+ arch/arm/kernel/Makefile                           |   2 -
+ arch/arm64/include/asm/arm_pmuv3.h                 |  56 ++++++++-
+ arch/arm64/include/asm/kvm_host.h                  |   8 +-
+ arch/arm64/include/asm/sysreg.h                    |   1 -
+ arch/arm64/kvm/pmu-emul.c                          |  14 +--
+ arch/arm64/kvm/pmu.c                               |  88 ++++---------
+ arch/arm64/kvm/sys_regs.c                          |  11 +-
+ arch/arm64/tools/sysreg                            |  30 +++++
+ drivers/perf/Kconfig                               |  12 ++
+ drivers/perf/Makefile                              |   3 +
+ drivers/perf/arm_pmu.c                             |  11 +-
+ drivers/perf/arm_pmuv3.c                           | 138 ++++++++++-----------
+ .../perf_event_v6.c => drivers/perf/arm_v6_pmu.c   |  26 +---
+ .../perf_event_v7.c => drivers/perf/arm_v7_pmu.c   |  90 +++++---------
+ .../perf/arm_xscale_pmu.c                          |  15 +--
+ include/kvm/arm_pmu.h                              |   8 +-
+ include/linux/perf/arm_pmu.h                       |  10 +-
+ include/linux/perf/arm_pmuv3.h                     |   7 +-
+ 19 files changed, 289 insertions(+), 264 deletions(-)
+---
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+change-id: 20240607-arm-pmu-3-9-icntr-04375ddd0082
+
+Best regards,
+-- 
+Rob Herring (Arm) <robh@kernel.org>
 
 
