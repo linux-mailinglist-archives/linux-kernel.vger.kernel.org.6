@@ -1,376 +1,142 @@
-Return-Path: <linux-kernel+bounces-205586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4590D8FFDD0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:07:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EA618FFDD8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:11:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB80F1F23908
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:07:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5757C1C232B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523DA15ADA6;
-	Fri,  7 Jun 2024 08:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBB915ADB4;
+	Fri,  7 Jun 2024 08:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JAntBXKK"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eftwMiAl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2001C2AF
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 08:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58F115ADA3;
+	Fri,  7 Jun 2024 08:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717747664; cv=none; b=HxYEKTaqrkxAnTn9zijvjEnVi2ZLowJEPPabE1liJ29i5Fvq1IHw4Lni1Nn2pHiXKXi/Lh4kH41soxPPiCaZEtJHtUznET0juCdbLqylN1fgVd9Dl+lZr2HnhIoyLb4zm1737if2k2qmsDp+m8FT1rs+3Sf83NvsNDkAz90qsHU=
+	t=1717747877; cv=none; b=P1YzF1ZBsoTcvhDWiiqzYLI79Scu97Xok+z38pN2HE/3JH6P+ks+qJffk2usgjoMwtcxZsF/X6DN5vfUown/x8Kmq+mj04MkIdCmVYGlHgQHLgoWbqYzBoTAao/iW9lWEiK6DgFer+Nxe+5TYxlQNWw7VOiF3vSS2dnypqnYBUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717747664; c=relaxed/simple;
-	bh=LMQ7fv6urpsT3xy9HS+IKJC5KLVk8cZam5BdjG0e64k=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
-	 In-Reply-To:Content-Type; b=cFWTNrELhe+vBO0Yz+u6PbIspTmhkH9iEaexpAsFso7tvBx4fFpswBwxj0tlQOhEiDXlhlfB05SW71lZWEmufqWPV//oNt34kfHNOzSnbrSGQtuI0WcqwLN7FZt/iLMlS1WEvnSLERUncXR5CZsgvHmlh4n+adPQ+aBaBsO1Ho4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JAntBXKK; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-35dbfe31905so1731571f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 01:07:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717747661; x=1718352461; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zm7TFPva0bErQOP/68vGfRmjP0R/5JymFuac9fbRPVw=;
-        b=JAntBXKKs/CBvI8SmaoqTO1COL9sQYlEJfUGgNGAJp0CYeYIiO5s3uQittPoeYxpy0
-         7dN4/yrV+/SWikAE46/5TVFup7XGxO754NNUBEdi08O2RDlxS/edMNyEUU9n/NlkILR3
-         dnqyPjVoBAWK6brqVf0tn97iIEyECLBb1dqXdB6LSuqT/KYs9kGzoDrssatAOT3sJJqt
-         9ERgDsl6B5DkbGCuFHVN80XOtMvg77zmMtsHF+8sVzRUqbtypCzLc2zwqKt2Rl/g5+u2
-         XE2BQcKN3X4zoJhWkNVuHysf30yZHoBRhZ4j7ZTKlQ3fee3y9fsTxoGkNGEMS0C+soPw
-         h3WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717747661; x=1718352461;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=zm7TFPva0bErQOP/68vGfRmjP0R/5JymFuac9fbRPVw=;
-        b=YmbaGeCByjLJu8aFChozbwLoS9tc7Cne/PHR5pNFPAweDNa7R/JQg/fDataEez7ayF
-         qMWPHEysCWoRPJ5/9od9uQyzQTEzlr9/gLsqSY+DCLiXJiYxlUHyuGGqdAta8fppSOtJ
-         prEjdqEOTCkEsoGeR/dCk+eTCiYLKGz0hUkicu5TWpTgSpW1Q8wbTolKcMYwvE7BHL+c
-         lcoNLAFcuPx7lDya5AYUcZKzlVaLsb7AHDNKTMBFK2gM5R8Qyqa7cQULxFg2wTqWPImb
-         UHXPvH3n8gPDZrXzWyYjfTzXn5ttG7ysVbdxxePncM58sVefupx31mEDLDMmPAhD0aW8
-         nSMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXimAW9wwratvx+4ICgUUys17uFwyWnSvazZyz7n3cA2NP5oknSxR2khIFMscUzIMLyKuSsK1O6L5rhkvapwBRewNLa3Z0wmBinIboK
-X-Gm-Message-State: AOJu0YxZAMny/g5jQMKTG2KzEFvgGOZw3Yw2g3bgGrgSo3iPTThqse2D
-	DKOEd9/GavSks6lla0E3ATm6+skisThhd0o3UCgPBZABBDAzyV4p5kCrPqYVvh4=
-X-Google-Smtp-Source: AGHT+IHqhz5k04ZzyFG1CkhZU4vWzmotulML28MoByYGhj8GH+MxqZaO0+We9+uAJfWY61IYXCGEKQ==
-X-Received: by 2002:a5d:6483:0:b0:354:df59:c9a4 with SMTP id ffacd0b85a97d-35efed08bd4mr1647456f8f.9.1717747660655;
-        Fri, 07 Jun 2024 01:07:40 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:7e4b:b0d3:6a34:6404? ([2a01:e0a:982:cbb0:7e4b:b0d3:6a34:6404])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d297b3sm3443187f8f.11.2024.06.07.01.07.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jun 2024 01:07:40 -0700 (PDT)
-Message-ID: <7b877bc6-9e26-4bae-934a-ceb9663d751d@linaro.org>
-Date: Fri, 7 Jun 2024 10:07:38 +0200
+	s=arc-20240116; t=1717747877; c=relaxed/simple;
+	bh=BjHvlPpsf1JuNh8voewB5kjC1cJt74iMWbnPuF3HdpY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZNwWXm3Fad7B9kZ+VjjIZ3ZiCT4QTrcnWxzdeDTLw1WOCYGli4i3hRIWXnntn3W58jNy2p1KfhbW2sUtGjbGUcJgayW81SliEY9+l6ojTvIUjIQ39pKyZJgfLlINYAT8Wl9KbNUrhDnJ9EZGi/sfvc7q9MPQhatLE3YAfkTZuQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eftwMiAl; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717747874; x=1749283874;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BjHvlPpsf1JuNh8voewB5kjC1cJt74iMWbnPuF3HdpY=;
+  b=eftwMiAlE+t6gMWr6LCZsJiwTgLfU99ZMiuh/QzkOpdB4lyJF+cId7SI
+   FCyKjM3bMIUtcxxRCXyU3i6kx5fNxZqOuB/Jfb+kMJv+2iFwkAT4FS56x
+   X8gwbOfOy+dhBj9klOAg2baEArDOIdNtIFh4h3FQe01/XkC7SzgbgWFoe
+   HodiXj/B/qfivtQ4SrvweRB023rxVMFON6W1cIcVqU7OZYIOEn/5cv5A2
+   vYy/u2GN+Yli5Dp1decumSy/P4Wse+RSl6HBo7yc2eflKv2P7OLmRWece
+   pPZ688i0T67npMmskJIAQz3kJ/ShKemaYdFwfCPRgCNMs0jjqCoE1MSOj
+   A==;
+X-CSE-ConnectionGUID: Rzx1xobmROq98wE6FKfg1w==
+X-CSE-MsgGUID: 5jZMsFoSQE65Zj7mqp/Rlg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="14614616"
+X-IronPort-AV: E=Sophos;i="6.08,220,1712646000"; 
+   d="scan'208";a="14614616"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 01:11:14 -0700
+X-CSE-ConnectionGUID: Yo/IX92zTnuTcmNSHjv5bA==
+X-CSE-MsgGUID: frMbXn5QSte5GkD02fumGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,220,1712646000"; 
+   d="scan'208";a="43185517"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 07 Jun 2024 01:11:10 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sFUgm-0004F4-08;
+	Fri, 07 Jun 2024 08:11:08 +0000
+Date: Fri, 7 Jun 2024 16:10:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian Hewitt <christianshewitt@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Christian Hewitt <christianshewitt@gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: meson: add initial support for Dreambox
+ One/Two
+Message-ID: <202406071527.fnfhnkUL-lkp@intel.com>
+References: <20240606094513.3949323-3-christianshewitt@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 2/2] arm64: dts: meson: add support for OSMC Vero 4K
-To: Christian Hewitt <christianshewitt@gmail.com>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240606095419.3950015-1-christianshewitt@gmail.com>
- <20240606095419.3950015-2-christianshewitt@gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240606095419.3950015-2-christianshewitt@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606094513.3949323-3-christianshewitt@gmail.com>
 
-On 06/06/2024 11:54, Christian Hewitt wrote:
-> The OSMC Vero 4K device is based on the Amlogic S905X (P212)
-> reference design with the following specifications:
-> 
-> - 2GB DDR4 RAM
-> - 16GB eMMC
-> - HDMI 2.1 video
-> - S/PDIF optical output
-> - AV output
-> - 10/100 Ethernet
-> - AP6255 Wireless (802.11 a/b/g/n/ac, BT 4.2)
-> - 2x USB 2.0 ports (1x OTG)
-> - IR receiver (internal)
-> - IR extender port (external)
-> - 1x micro SD card slot
-> - 1x Power LED (red)
-> - 1x Reset button (in AV jack)
-> 
-> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-> ---
->   arch/arm64/boot/dts/amlogic/Makefile          |   7 +
->   .../dts/amlogic/meson-gxl-s905x-vero4k.dts    | 202 ++++++++++++++++++
->   2 files changed, 209 insertions(+)
->   create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-s905x-vero4k.dts
-> 
-> diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-> index 4addcae2c54e..78941ddd3136 100644
-> --- a/arch/arm64/boot/dts/amlogic/Makefile
-> +++ b/arch/arm64/boot/dts/amlogic/Makefile
-> @@ -55,6 +55,13 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-p231.dtb
->   dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-phicomm-n1.dtb
->   dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-sml5442tw.dtb
->   dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-vero4k-plus.dtb
-> +dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-hwacom-amazetv.dtb
-> +dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-khadas-vim.dtb
-> +dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-libretech-cc.dtb
-> +dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-libretech-cc-v2.dtb
-> +dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-nexbox-a95x.dtb
-> +dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-p212.dtb
-> +dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-vero4k.dtb
->   dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-jethome-jethub-j80.dtb
->   dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-p281.dtb
->   dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-tx3-mini.dtb
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-vero4k.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-vero4k.dts
-> new file mode 100644
-> index 000000000000..b325cd75a792
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-vero4k.dts
-> @@ -0,0 +1,202 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2024 Christian Hewitt <christianshewitt@gmail.com>
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "meson-gxl-s905x-p212.dtsi"
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/leds/common.h>
-> +#include <dt-bindings/sound/meson-aiu.h>
-> +
-> +/ {
-> +	compatible = "osmc,vero4k", "amlogic,s905x", "amlogic,meson-gxl";
-> +	model = "OSMC Vero 4K";
-> +
-> +	reserved-memory {
-> +		/* 32 MiB reserved for ARM Trusted Firmware (BL32) */
-> +		secmon_reserved_bl32: secmon@5300000 {
-> +			reg = <0x0 0x05300000 0x0 0x2000000>;
-> +			no-map;
-> +		};
-> +	};
-> +
-> +	gpio-keys-polled {
-> +		compatible = "gpio-keys-polled";
-> +		poll-interval = <20>;
-> +
-> +		button {
-> +			label = "power";
-> +			linux,code = <KEY_POWER>;
-> +			gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_HIGH>;
-> +		};
-> +	};
-> +
-> +	leds {
-> +		compatible = "gpio-leds";
-> +
-> +		led-standby {
-> +			color = <LED_COLOR_ID_RED>;
-> +			function = LED_FUNCTION_POWER;
-> +			gpios = <&gpio GPIODV_24 GPIO_ACTIVE_LOW>;
-> +			default-state = "off";
-> +			panic-indicator;
-> +		};
-> +	};
-> +
-> +	dio2133: analog-amplifier {
-> +		compatible = "simple-audio-amplifier";
-> +		sound-name-prefix = "AU2";
-> +		VCC-supply = <&hdmi_5v>;
-> +		enable-gpios = <&gpio GPIOH_5 GPIO_ACTIVE_HIGH>;
-> +	};
-> +
-> +	spdif_dit: audio-codec-0 {
-> +		#sound-dai-cells = <0>;
-> +		compatible = "linux,spdif-dit";
-> +		sound-name-prefix = "DIT";
-> +	};
-> +
-> +	cvbs-connector {
-> +		compatible = "composite-video-connector";
-> +
-> +		port {
-> +			cvbs_connector_in: endpoint {
-> +				remote-endpoint = <&cvbs_vdac_out>;
-> +			};
-> +		};
-> +	};
-> +
-> +	hdmi-connector {
-> +		compatible = "hdmi-connector";
-> +		type = "a";
-> +
-> +		port {
-> +			hdmi_connector_in: endpoint {
-> +				remote-endpoint = <&hdmi_tx_tmds_out>;
-> +			};
-> +		};
-> +	};
-> +
-> +	sound {
-> +		compatible = "amlogic,gx-sound-card";
-> +		model = "VERO4K";
-> +		audio-aux-devs = <&dio2133>;
-> +		audio-widgets = "Line", "Lineout";
-> +		audio-routing = "AU2 INL", "ACODEC LOLP",
-> +				"AU2 INR", "ACODEC LORP",
-> +				"AU2 INL", "ACODEC LOLN",
-> +				"AU2 INR", "ACODEC LORN",
-> +				"Lineout", "AU2 OUTL",
-> +				"Lineout", "AU2 OUTR";
-> +
-> +		dai-link-0 {
-> +			sound-dai = <&aiu AIU_CPU CPU_I2S_FIFO>;
-> +		};
-> +
-> +		dai-link-1 {
-> +			sound-dai = <&aiu AIU_CPU CPU_SPDIF_FIFO>;
-> +		};
-> +
-> +		dai-link-2 {
-> +			sound-dai = <&aiu AIU_CPU CPU_I2S_ENCODER>;
-> +			dai-format = "i2s";
-> +			mclk-fs = <256>;
-> +
-> +			codec-0 {
-> +				sound-dai = <&aiu AIU_HDMI CTRL_I2S>;
-> +			};
-> +
-> +			codec-1 {
-> +				sound-dai = <&aiu AIU_ACODEC CTRL_I2S>;
-> +			};
-> +		};
-> +
-> +		dai-link-3 {
-> +			sound-dai = <&aiu AIU_CPU CPU_SPDIF_ENCODER>;
-> +
-> +			codec-0 {
-> +				sound-dai = <&spdif_dit>;
-> +			};
-> +		};
-> +
-> +		dai-link-4 {
-> +			sound-dai = <&aiu AIU_HDMI CTRL_OUT>;
-> +
-> +			codec-0 {
-> +				sound-dai = <&hdmi_tx>;
-> +			};
-> +		};
-> +
-> +		dai-link-5 {
-> +			sound-dai = <&aiu AIU_ACODEC CTRL_OUT>;
-> +
-> +			codec-0 {
-> +				sound-dai = <&acodec>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&acodec {
-> +	AVDD-supply = <&vddio_ao18>;
-> +	status = "okay";
-> +};
-> +
-> +&aiu {
-> +	status = "okay";
-> +	pinctrl-0 = <&spdif_out_h_pins>;
-> +	pinctrl-names = "default";
-> +};
-> +
-> +&cec_AO {
-> +	status = "okay";
-> +	pinctrl-0 = <&ao_cec_pins>;
-> +	pinctrl-names = "default";
-> +	hdmi-phandle = <&hdmi_tx>;
-> +};
-> +
-> +&clkc {
-> +	assigned-clocks = <&clkc CLKID_MPLL0>,
-> +			  <&clkc CLKID_MPLL1>,
-> +			  <&clkc CLKID_MPLL2>;
-> +	assigned-clock-parents = <0>, <0>, <0>;
-> +	assigned-clock-rates = <294912000>,
-> +			       <270950400>,
-> +			       <393216000>;
-> +};
-> +
-> +&cvbs_vdac_port {
-> +	cvbs_vdac_out: endpoint {
-> +		remote-endpoint = <&cvbs_connector_in>;
-> +	};
-> +};
-> +
-> +&ethmac {
-> +	phy-mode = "rmii";
-> +	phy-handle = <&internal_phy>;
-> +};
-> +
-> +&hdmi_tx {
-> +	status = "okay";
-> +	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
-> +	pinctrl-names = "default";
-> +	hdmi-supply = <&hdmi_5v>;
-> +};
-> +
-> +&hdmi_tx_tmds_port {
-> +	hdmi_tx_tmds_out: endpoint {
-> +		remote-endpoint = <&hdmi_connector_in>;
-> +	};
-> +};
-> +
-> +&internal_phy {
-> +	pinctrl-0 = <&eth_link_led_pins>, <&eth_act_led_pins>;
-> +	pinctrl-names = "default";
-> +};
-> +
-> +/* This UART is brought out to the DB9 connector */
-> +&uart_AO {
-> +	status = "okay";
-> +};
+Hi Christian,
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on krzk/for-next linus/master v6.10-rc2 next-20240606]
+[cannot apply to krzk-dt/for-next krzk-mem-ctrl/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Hewitt/dt-bindings-arm-amlogic-add-support-for-Dreambox-One-Two/20240606-175427
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20240606094513.3949323-3-christianshewitt%40gmail.com
+patch subject: [PATCH 3/3] arm64: dts: meson: add initial support for Dreambox One/Two
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
+dtschema version: 2024.6.dev1+g833054f
+reproduce: (https://download.01.org/0day-ci/archive/20240607/202406071527.fnfhnkUL-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406071527.fnfhnkUL-lkp@intel.com/
+
+dtcheck warnings: (new ones prefixed by >>)
+   arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:266.33-1540.7: Warning (unit_address_vs_reg): /soc/bus@ff600000/bus@34400/pinctrl@40: node has a unit name, but no reg or ranges property
+     also defined at arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:266.33-1540.7
+   arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:266.33-1540.7: Warning (simple_bus_reg): /soc/bus@ff600000/bus@34400/pinctrl@40: missing or empty reg/ranges property
+     also defined at arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:266.33-1540.7
+   arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:2220.23-2260.6: Warning (avoid_unnecessary_addr_size): /soc/bus@ffd00000/dsi@7000: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+     also defined at arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:2220.23-2260.6
+>> arch/arm64/boot/dts/amlogic/meson-g12b-dreambox-one.dtb: /soc/bus@ff600000/bus@42000/clock-controller@0: failed to match any schema with compatible: ['amlogic,g12a-audio-clkc']
+   arch/arm64/boot/dts/amlogic/meson-g12b-dreambox-one.dtb: /soc/bus@ff600000/bus@42000/audio-controller@744: failed to match any schema with compatible: ['amlogic,g12a-tohdmitx']
+>> arch/arm64/boot/dts/amlogic/meson-g12b-dreambox-one.dtb: sys-ctrl@0: '#address-cells', '#size-cells', 'ranges' do not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml#
+--
+   arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:266.33-1540.7: Warning (unit_address_vs_reg): /soc/bus@ff600000/bus@34400/pinctrl@40: node has a unit name, but no reg or ranges property
+     also defined at arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:266.33-1540.7
+   arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:266.33-1540.7: Warning (simple_bus_reg): /soc/bus@ff600000/bus@34400/pinctrl@40: missing or empty reg/ranges property
+     also defined at arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:266.33-1540.7
+   arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:2220.23-2260.6: Warning (avoid_unnecessary_addr_size): /soc/bus@ffd00000/dsi@7000: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+     also defined at arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:2220.23-2260.6
+>> arch/arm64/boot/dts/amlogic/meson-g12b-dreambox-two.dtb: /soc/bus@ff600000/bus@42000/clock-controller@0: failed to match any schema with compatible: ['amlogic,g12a-audio-clkc']
+   arch/arm64/boot/dts/amlogic/meson-g12b-dreambox-two.dtb: /soc/bus@ff600000/bus@42000/audio-controller@744: failed to match any schema with compatible: ['amlogic,g12a-tohdmitx']
+>> arch/arm64/boot/dts/amlogic/meson-g12b-dreambox-two.dtb: sys-ctrl@0: '#address-cells', '#size-cells', 'ranges' do not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml#
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
