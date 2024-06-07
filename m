@@ -1,116 +1,147 @@
-Return-Path: <linux-kernel+bounces-206683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A11AF900CA9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:56:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D74C4900CA4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52A7A1F22995
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:56:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B262B1C21BAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403CB14EC5C;
-	Fri,  7 Jun 2024 19:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CAC14F127;
+	Fri,  7 Jun 2024 19:55:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="ZIBnH1r7"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="R44bug6F"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6203D50263;
-	Fri,  7 Jun 2024 19:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EB9D27A;
+	Fri,  7 Jun 2024 19:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717790169; cv=none; b=FPz6cEvfFvVj2ldWUTxVkQ/DVXVSWpiAEZGBTw4nAdwYNykQT/BttKZhkAiFzXR1r7X5LogAUuJSOrOpVLSQXok+FowOd4pGp+i8wYR/pQvBcSq6XeHsDycOV/CdmMYgWx5ABaECj2zcq+j4x6UbaW4FtwgwACHF2vfYlvb168A=
+	t=1717790104; cv=none; b=f425aOW5R6PVgxbVlOosCe3l/+mT69aoN6tqcBYT6SC8T7dVZHvVVXOwx7Odv8zfkb/V8M+hku1T99I5ugmOs9RBsNNSJlY4PkTKuXCv74PJXszOfFF93KVTzg8hNwiHIBgRz015O66FmZo5+q+rztVuqsX/0+2CZNrRG/dQL7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717790169; c=relaxed/simple;
-	bh=/Q1flr7dswNeFYnTGX4Jad+BBlVofWzXVfjrUHO+k9I=;
+	s=arc-20240116; t=1717790104; c=relaxed/simple;
+	bh=CSYTB2dVOTn1wxVQwAkOMx1O39MevSRp/szfd1u8ONI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VKIumdELzPOVYpBQox4f0hYzVFXpQpPP3Hsbvwudj+UULkIffCM7YBPnJ0zm6YDtT6tFQ4qwrH9nsSlWTH4qfIfvaCSYxf0YigkkDY32UCfF1slDQ5OUZVgkZGs5JtLG4H6Obwy8FqZI2O/RSHrQOE7X17pLSnObpoqebOfAJWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=ZIBnH1r7; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id C4C2A88495;
-	Fri,  7 Jun 2024 21:56:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1717790165;
-	bh=fcZUQQypZFORhc7qwo/JAaFB/BTgCpG8ND7fMIEShJ8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZIBnH1r7UGj/1c2aR6Ncyb7LZofhdrqOjYfLniiVescmnvmglFwIS7p/f2d+D/HFd
-	 Czqdd3YaX9quFL3YM0z7/PQL+TIYC16wgR8H6Ykyvnh/OCRkW0Oj+wA4ADrxhTwIO+
-	 4HivpYevvRLxlffePldFv0VTazeQeUftkazfs0UO9s7M2z2wACBuHcMXkF3CZa79aD
-	 Mbek8ciDILkweF+jGqeqUq1yUlVSxI9649daiKtmzNSA61d9GE+X++5Ye5XdPiTZOO
-	 Wu4Fnrdk+wVuEu2Zu3L7N7ZvFQrM214cc9UrhTZAJAFePsmpGCO/oO4xGx77UEnQlc
-	 qlRqjxRJuU+zg==
-Message-ID: <329fb476-405e-458e-98a8-883ecd9cf15a@denx.de>
-Date: Fri, 7 Jun 2024 21:54:16 +0200
+	 In-Reply-To:Content-Type; b=iSWWuYGh7YGv124ZS5TAjVnJ2BsP987oN6qxk9P5gFYLx+jAVV6eBQZBCC/bWlI+gaFSJ0O3MxkwW95jtU1mruVAxpJByu8wGlZnfqcIbmlEySSL4DZuHkTN/gzKk+Pi67JCGsB1Q7V1JSQSGLWHhYNMtOpGNBLamJCvVBdSHrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=R44bug6F; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=BTOKnMT5T2ZhEPykgSzSOI+vQfKzqcBhRm9xKY95hq0=; b=R44bug6FEwA67verN95KlbS9di
+	Fb8CAXgDV9V6Fo/fnNRkOHDlmWl+/SlxbIJARzGMbsqbqEk5f2xW5Jtp3qWZBBEzokNzzrXzz19qv
+	/WE4/VrRKejOXXQjCeYydUF4AJM86CtbacqxXsVq9zkEo/zX0yahufFC3j8avIi7xiRoCCmIe1Y4f
+	GNnHt8ZCEBxwrDWv+OmP8c2uLcuFGHUwQEKAbenoum408yBPqLakeLwpm1cJPQ6twJIhJeAGCrX6D
+	vd8ce+A19emKZNv1UETrYjdVp9du7jZkI66AmYgnp6sZgQeEWGv/gwnr/BSMxtywxUbqpZMDs1SxU
+	i3D7ZbGw==;
+Received: from [191.205.188.103] (helo=[192.168.1.60])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1sFffp-000eQE-AD; Fri, 07 Jun 2024 21:54:53 +0200
+Message-ID: <aa8c49d5-1a51-9256-6327-d47036b343fe@igalia.com>
+Date: Fri, 7 Jun 2024 16:54:41 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 08/12] net: stmmac: dwmac-stm32: add management of
- stm32mp13 for stm32
-To: Christophe ROULLIER <christophe.roullier@foss.st.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Richard Cochran <richardcochran@gmail.com>, Jose Abreu
- <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240607095754.265105-1-christophe.roullier@foss.st.com>
- <20240607095754.265105-9-christophe.roullier@foss.st.com>
- <6f44537a-3d60-46f5-a159-919cc2a144ec@denx.de>
- <c3e21cbf-bf9e-45d5-b6eb-f1f4d50e39a3@foss.st.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2 0/2] mm/memblock: Add "reserve_mem" to reserved named
+ memory at boot up
 Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <c3e21cbf-bf9e-45d5-b6eb-f1f4d50e39a3@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Peter Zijlstra <peterz@infradead.org>, Kees Cook <keescook@chromium.org>,
+ Tony Luck <tony.luck@intel.com>, linux-hardening@vger.kernel.org,
+ Guenter Roeck <linux@roeck-us.net>, Ross Zwisler <zwisler@google.com>,
+ wklin@google.com, Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Suleiman Souhlal <suleiman@google.com>,
+ Linus Torvalds <torvalds@linuxfoundation.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Ard Biesheuvel <ardb@kernel.org>
+References: <20240606150143.876469296@goodmis.org>
+From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <20240606150143.876469296@goodmis.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 6/7/24 2:59 PM, Christophe ROULLIER wrote:
+On 06/06/2024 12:01, Steven Rostedt wrote:
+> Reserve unspecified location of physical memory from kernel command line
+> [...]
+> Solution:
 > 
-> On 6/7/24 14:48, Marek Vasut wrote:
->> On 6/7/24 11:57 AM, Christophe Roullier wrote:
->>
->> [...]
->>
->>> @@ -224,11 +225,18 @@ static int stm32mp1_configure_pmcr(struct 
->>> plat_stmmacenet_data *plat_dat)
->>>   {
->>>       struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
->>>       u32 reg = dwmac->mode_reg;
->>> -    int val;
->>> +    int val = 0;
->>
->> Is the initialization really needed ? It seems the switch-case below 
->> does always initialize $val .
+> The solution I have come up with is to introduce a new "reserve_mem=" kernel
+> command line. This parameter takes the following format:
 > 
-> Yes it is needed otherwise:
+>   reserve_mem=nn:align:label
 > 
->>> drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c:239:4: warning: 
->>> variable 'val' is uninitialized when used here [-Wuninitialized]
+> Where nn is the size of memory to reserve, the align is the alignment of
+> that memory, and label is the way for other sub-systems to find that memory.
+> This way the kernel command line could have:
 > 
-> val |= SYSCFG_PMCR_ETH_SEL_MII;
->                             ^~~
->     drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c:228:9: note: 
-> initialize the variable 'val' to silence this warning
->             int val;
+>   reserve_mem=12M:4096:oops   ramoops.mem_name=oops
+> 
+> At boot up, the kernel will search for 12 megabytes in usable memory regions
+> with an alignment of 4096. It will start at the highest regions and work its
+> way down (for those old devices that want access to lower address DMA). When
+> it finds a region, it will save it off in a small table and mark it with the
+> "oops" label. Then the pstore ramoops sub-system could ask for that memory
+> and location, and it will map itself there.
+> 
+> This prototype allows for 8 different mappings (which may be overkill, 4 is
+> probably plenty) with 16 byte size to store the label.
+> 
+> I have tested this and it works for us to solve the above problem. We can
+> update the kernel and command line and increase the size of pstore without
+> needing to update the firmware, or knowing every memory layout of each
+> board. I only tested this locally, it has not been tested in the field.
+> 
 
-OK, thanks for checking.
+Hi Steve, first of all, thanks for this work! This is much appreciated.
+The kdumpst tooling (Arch Linux) makes use of pstore when available, and
+the recommendation so far was to reserve memory somehow, like "mem=" or
+use kdump instead, if no free RAM area was available.
+
+With your solution, things get way more "elegant". Also, I think we all
+know pstore is not 100% reliable, specially the RAM backend due to
+already mentioned reasons (like FW memory retraining, ECC memory, etc),
+but it's great we have a mechanism to **try it**. If it works, awesome -
+for statistical analysis, this is very useful; pstore has been used with
+success in the Steam Deck, for example.
+
+With all that said, I've tested your patches on top of 6.10-rc2 in 2
+qemu VMs (one running legacy BIOS - seabios - and the other UEFI - using
+ovmf) and on Steam Deck, and it's working flawlessly. I've tested only
+using ramoops as module.
+
+Some code review in the patches themselves (like a missing
+EXPORT_SYMBOL_GPL), but all in all, that's a great addition! Feel free
+to add my:
+
+Tested-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+
+Thanks,
+
+
+Guilherme
 
