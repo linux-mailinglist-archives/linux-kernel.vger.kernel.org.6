@@ -1,81 +1,63 @@
-Return-Path: <linux-kernel+bounces-205734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA85F8FFF90
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:31:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C648C8FFF95
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:33:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 754791F2560C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:31:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A572B27739
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7A112E1C1;
-	Fri,  7 Jun 2024 09:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E0615B122;
+	Fri,  7 Jun 2024 09:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvgS8d5/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AvRW6NBs"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9AD15A4B0;
-	Fri,  7 Jun 2024 09:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3765578C9A;
+	Fri,  7 Jun 2024 09:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717752700; cv=none; b=lLarsrHcOLWLmwWRq64AlF2TfTuqL/HCNeVw2UsunZvwq+JNP8NvME9y+RFrZ0rBvSWJoYXiL7LxrhHDLj+NgzrA5vt/2St343yNB33WaZoOKQE+GTN67foB1zgmCB35WiR+AZvIGRlq4jagIoFa733UBo/G3kjQj9uYclSPhzQ=
+	t=1717752782; cv=none; b=OvP4AfralGXGrI0dRhZwkEbhGGDo3SGwM12Uy+duvH36K0zbfjaozlkJM+iMXYNEhZU56v/9blLBpJnmTRy+tKn1eGcG7/1mxcRskG9lKuY9ptlKlshAQBk6Hpmp193D1VM3ZAHLE6OVreW1PyA/Rva/Y9ICqZCrUUgQag1xiYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717752700; c=relaxed/simple;
-	bh=rhqvtgLdAjJDetwu1HLnQ9oLmOzc4vfXBUwHh6e/WhU=;
+	s=arc-20240116; t=1717752782; c=relaxed/simple;
+	bh=YwZQL96Sr6Wg4n/MXoBB/SdxflmBRDM7A6rSw2lWBfQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qCkfezev8K4nGA56N6RvcrL9PaDLDYaXKcsRUB172F/rGQY/CeK4TQOu3JWuDPyjaW7K8ccUMxhFc1AKNtB3WGg58XUBpwbhBjigjsHc327PEwPVTLx43KPFZqHPpkU3VNO4UXKeTLBCqCrFBMBRegC1Z8xZG2WqdhAG/cuoEkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YvgS8d5/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D64AC2BBFC;
-	Fri,  7 Jun 2024 09:31:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717752699;
-	bh=rhqvtgLdAjJDetwu1HLnQ9oLmOzc4vfXBUwHh6e/WhU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YvgS8d5/r8o92wmID2/l03gbU9QAWi7CUT0IEKy/7vK4blclQl++O0siD+W1pPIRG
-	 /s9Z0+oaUX8bOt6GmBL5GhYuGexbsFKFZsuXnRguzAumckCsBKgglkzab0VySUz0tP
-	 4/EqJQD5Z6OVOQeETexIJPP/WkAcfu8yg30yYDDU1xFm6BvPkQ4Oud+e5SIiJw4jTd
-	 0lD1ADHlCHs7c04IQZIMzrXLNniJTMxbSR4JO+3aL4oTsTCsP9fT1TOfYQrPANoAUL
-	 fPprirrsaqFRhHwkKVzNeVkm1xgc/DvgYPVHJ77wqpDhdnaLG0j0wSLMv3CnTJ7yfb
-	 ZRogfCZ0zHcWA==
-Date: Fri, 7 Jun 2024 11:31:28 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Minghuan Lian <minghuan.Lian@nxp.com>,
-	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Srikanth Thokala <srikanth.thokala@intel.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-	mhi@lists.linux.dev, Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH 0/5] PCI: endpoint: Add EPC 'deinit' event and
- dw_pcie_ep_linkdown() API
-Message-ID: <ZmLTcNz0FxAWRYcd@ryzen.lan>
-References: <20240606-pci-deinit-v1-0-4395534520dc@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B6cIoal/C97yj3+YxvLtFdiA/mm2Z8XQTibIDCgWV5lT+HAaeW20oqq2nMB4r7GwQfcwUCh7p/OKb4U8mtEeLkggLxZ6M4oEN5WhsoBZLaNicxQjdHaMTK1uLOcWTpZJkFqHf3Z8PK4agt3sX/8DNNncNqSmHxAW8ZQkm+z5xhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AvRW6NBs; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gWnrC7NDDktySlmiwzkRSDu8snwjoIIvcpKg/dauVxw=; b=AvRW6NBswRQlMvSZORf258DJSA
+	TF7SutfyxKVrrkm7N7gJDKgs9JGCVm6xj9QhNcTJMwl1Uq09l5iAhEeItmifKVx5jd0TUy8RIjWaf
+	TTS2dorjk/0lWWG1Npp8e/A6lQnyHIDwsWS3gQIrtUfHl6qmABXA8/LB0mJB7BZSzwmWFzNiZcAr1
+	95slUe9f9ooB775eW78RDLmiG+8BktmaQ+NAqy7NS8UiUeYW5zsqfFy59PRgfPR6uir5nIqzb9Pyu
+	7Q7kZi9hNN/xcA8T6Rs+5G3V1ZKGDxXirIpeGaV3dsy3sdghoFCtzlQbt3JPp5+Av15OlHZkyH45i
+	80726C/w==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sFVxv-00000004gtr-1KVQ;
+	Fri, 07 Jun 2024 09:32:55 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id EC32D30047C; Fri,  7 Jun 2024 11:32:54 +0200 (CEST)
+Date: Fri, 7 Jun 2024 11:32:54 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ben Gainey <ben.gainey@arm.com>
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+	james.clark@arm.com, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/4] perf: Support PERF_SAMPLE_READ with inherit
+Message-ID: <20240607093254.GN8774@noisy.programming.kicks-ass.net>
+References: <20240606144059.365633-1-ben.gainey@arm.com>
+ <20240606144059.365633-2-ben.gainey@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,84 +66,120 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240606-pci-deinit-v1-0-4395534520dc@linaro.org>
+In-Reply-To: <20240606144059.365633-2-ben.gainey@arm.com>
 
-On Thu, Jun 06, 2024 at 12:56:33PM +0530, Manivannan Sadhasivam wrote:
-> Hi,
+On Thu, Jun 06, 2024 at 03:40:56PM +0100, Ben Gainey wrote:
+> This change allows events to use PERF_SAMPLE READ with inherit
+> so long as PERF_SAMPLE_TID is also set.
 > 
-> This series includes patches that were left over from previous series [1] for
-> making the host reboot handling robust in endpoint framework.
-> 
-> When the above mentioned series got merged to pci/endpoint, we got a bug report
-> from LKP bot [2] and due to that the offending patches were dropped.
-> 
-> This series addressed the issue reported by the bot by adding the stub APIs in
-> include/pci/pci-epc.h and also removed the unused dwc wrapper as concluded in
-> [3].
-> 
-> Testing
-> =======
-> 
-> This series is tested on Qcom SM8450 based development board with 2 SM8450 SoCs
-> connected over PCIe.
-> 
-> - Mani
-> 
-> [1] https://lore.kernel.org/linux-pci/20240430-pci-epf-rework-v4-0-22832d0d456f@linaro.org/
-> [2] https://lore.kernel.org/linux-pci/202405130815.BwBrIepL-lkp@intel.com/
-> [3] https://lore.kernel.org/linux-pci/20240529141614.GA3293@thinkpad/
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
-> Manivannan Sadhasivam (5):
->       PCI: dwc: ep: Remove dw_pcie_ep_init_notify() wrapper
->       PCI: endpoint: Introduce 'epc_deinit' event and notify the EPF drivers
->       PCI: dwc: ep: Add a generic dw_pcie_ep_linkdown() API to handle Link Down event
->       PCI: qcom-ep: Use the generic dw_pcie_ep_linkdown() API to handle Link Down event
->       PCI: layerscape-ep: Use the generic dw_pcie_ep_linkdown() API to handle Link Down event
-> 
->  drivers/pci/controller/dwc/pci-dra7xx.c           |   2 +-
->  drivers/pci/controller/dwc/pci-imx6.c             |   2 +-
->  drivers/pci/controller/dwc/pci-keystone.c         |   2 +-
->  drivers/pci/controller/dwc/pci-layerscape-ep.c    |   4 +-
->  drivers/pci/controller/dwc/pcie-artpec6.c         |   2 +-
->  drivers/pci/controller/dwc/pcie-designware-ep.c   | 116 +++++++++++++---------
->  drivers/pci/controller/dwc/pcie-designware-plat.c |   2 +-
->  drivers/pci/controller/dwc/pcie-designware.h      |  10 +-
->  drivers/pci/controller/dwc/pcie-keembay.c         |   2 +-
->  drivers/pci/controller/dwc/pcie-qcom-ep.c         |   5 +-
->  drivers/pci/controller/dwc/pcie-rcar-gen4.c       |   2 +-
->  drivers/pci/controller/dwc/pcie-tegra194.c        |   3 +-
->  drivers/pci/controller/dwc/pcie-uniphier-ep.c     |   2 +-
->  drivers/pci/endpoint/functions/pci-epf-mhi.c      |  19 ++++
->  drivers/pci/endpoint/functions/pci-epf-test.c     |  17 +++-
->  drivers/pci/endpoint/pci-epc-core.c               |  25 +++++
->  include/linux/pci-epc.h                           |  13 +++
->  include/linux/pci-epf.h                           |   2 +
->  18 files changed, 162 insertions(+), 68 deletions(-)
-> ---
-> base-commit: 7d96527bc16e46545739c6fe0ab6e4c915e9910e
-> change-id: 20240606-pci-deinit-2e6cdf1bd69f
-> 
-> Best regards,
-> -- 
-> Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
+> In this configuration, an event will be inherited into any
+> child processes / threads, allowing convenient profiling of a
+> multiprocess or multithreaded application, whilst allowing
+> profiling tools to collect per-thread samples, in particular
+> of groups of counters.
 
-Considering certain dependency patches have been merged to
-pci/endpoint and other dependency patches have been merged to
-pci/controller/dwc, perhaps it is best if you split this series:
+Perhaps a few words on *WHY* this is important.
 
-Series 1 based on pci/endpoint: with patch 1/5 and 2/5.
-Series 2 based on pci/controller/dwc: with patch 5/5.
+> The read_format field of both PERF_RECORD_READ and PERF_RECORD_SAMPLE
+> are changed by this new configuration, but calls to `read()` on the same
+> event file descriptor are unaffected and continue to return the
+> cumulative total.
 
-Just a friendly suggestion to make Bjorn's life easier
-(and grease the path of your patch) ;) [0]
+This is unfortunate. Up to this point they were the same. Also, I see no
+change to the uapi file. So were you trying to say that only
+read_format::value is changed to be the thread local value as opposed to
+the hierarchy total?
 
+Please fix the wording to be unambiguous as to what is actually meant.
+Also try and justify why it is okay to break this symmetry.
 
-Kind regards,
-Niklas
+> @@ -3532,11 +3544,18 @@ perf_event_context_sched_out(struct task_struct *task, struct task_struct *next)
+>  			perf_ctx_disable(ctx, false);
+>  
+>  			/* PMIs are disabled; ctx->nr_pending is stable. */
+> -			if (local_read(&ctx->nr_pending) ||
+> +			if (ctx->nr_inherit_read ||
+> +			    next_ctx->nr_inherit_read ||
+> +			    local_read(&ctx->nr_pending) ||
+>  			    local_read(&next_ctx->nr_pending)) {
 
-[0]: https://lore.kernel.org/linux-pci/20171026223701.GA25649@bhelgaas-glaptop.roam.corp.google.com/
-(I still have this in my bookmarks :P)
+This seems unfortunate, nr_pending and nr_inherit_read are both used
+exclusively to inhibit this context switch optimization. Surely they can
+share the exact same counter.
+
+That is, rename nr_pending and use it for both?
+
+>  				/*
+>  				 * Must not swap out ctx when there's pending
+>  				 * events that rely on the ctx->task relation.
+> +				 *
+> +				 * Likewise, when a context contains inherit +
+> +				 * SAMPLE_READ events they should be switched
+> +				 * out using the slow path so that they are
+> +				 * treated as if they were distinct contexts.
+>  				 */
+>  				raw_spin_unlock(&next_ctx->lock);
+>  				rcu_read_unlock();
+> @@ -4552,11 +4571,19 @@ static void __perf_event_read(void *info)
+>  	raw_spin_unlock(&ctx->lock);
+>  }
+>  
+> -static inline u64 perf_event_count(struct perf_event *event)
+> +static inline u64 perf_event_count_cumulative(struct perf_event *event)
+
+I don't think you need this -- overly long and hard to type function
+name...
+
+>  {
+>  	return local64_read(&event->count) + atomic64_read(&event->child_count);
+>  }
+>  
+> +static inline u64 perf_event_count(struct perf_event *event, bool self_value_only)
+> +{
+> +	if (self_value_only && has_inherit_and_sample_read(&event->attr))
+> +		return local64_read(&event->count);
+
+... if this @self_value_only argument was actually used as such -- it
+isn't, see how you use 'from_sample' which is something else entirely.
+Which then also caused to you fix it up and make a mess with that &&
+has_inherit_and_sample_read() nonsense. (also, shorter function names,
+more good)
+
+> +
+> +	return perf_event_count_cumulative(event);
+> +}
+
+That is, I would really rather you had:
+
+static inline u64 perf_event_count(struct perf_event *event, bool self)
+{
+	if (self)
+		return local64_read(&event->count);
+
+	return local64_read(&event->count) + local64_read(&event->child_count);
+}
+
+And then actually use that argument as intended.
+
+> @@ -7205,13 +7232,14 @@ void perf_event__output_id_sample(struct perf_event *event,
+>  
+>  static void perf_output_read_one(struct perf_output_handle *handle,
+>  				 struct perf_event *event,
+> -				 u64 enabled, u64 running)
+> +				 u64 enabled, u64 running,
+> +				 bool from_sample)
+>  {
+>  	u64 read_format = event->attr.read_format;
+>  	u64 values[5];
+>  	int n = 0;
+>  
+> -	values[n++] = perf_event_count(event);
+> +	values[n++] = perf_event_count(event, from_sample);
+
+...observe the fail... from_sample != self-value-only
+
+>  	if (read_format & PERF_FORMAT_TOTAL_TIME_ENABLED) {
+>  		values[n++] = enabled +
+>  			atomic64_read(&event->child_total_time_enabled);
+
 
