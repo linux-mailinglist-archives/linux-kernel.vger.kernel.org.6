@@ -1,242 +1,183 @@
-Return-Path: <linux-kernel+bounces-206354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66A3590084A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:08:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B951A90084E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC4C21F26CD4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:08:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B29C71C206A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92A41946A9;
-	Fri,  7 Jun 2024 15:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FE81922FD;
+	Fri,  7 Jun 2024 15:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uuzBmzq2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mRfVgsn0";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uuzBmzq2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mRfVgsn0";
-	dkim=neutral (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LNlg/biH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kK7KAn+b";
-	dkim=neutral (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LNlg/biH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kK7KAn+b"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SvCJ05FJ"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490F919ADA8;
-	Fri,  7 Jun 2024 15:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A2054660
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 15:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717772811; cv=none; b=J3kEZ1AtINtgQy1KaBdJO+xr+4l2XV2Dhx6+8G+V42vr2zR89NmvBGLvo4nazmEuY5G77q9q2I75HAlfgmEjO+hka6DkXsWl2t1f/lGswm83CHmA89bX6vHeUYhoG1i1/jVveWWzBSh3YAss8vNo5dDXQwt+VlS5E0h1jWTzm+E=
+	t=1717773091; cv=none; b=uazboqiVjpGCTZGNczpmM5BNwao+Zn70XBnhUxfBMH5uDyhEAFdItZ8ICL+/72zcVxbjf2PiQGanFKCn22GnSHEa1vRtPVCgM24YS6lPs/XKPygkbxiZYxfwdl5OJpt3AVRYgZg1Y6INdqMrglaXNL5XL8VbZqfjrTRUqkcy728=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717772811; c=relaxed/simple;
-	bh=5q5KeN3nK8kY1P0pg+KQs5FbftLLFK48Ksbvdd3ZAT4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S47aYbaClNQeENYJAFaPHCTHhQAIszW83Or1VOeAfwfIciL9aFZFGd063kpUNZPg2FkvA1CEiZU9EIJK7sHOEBRbkT7fpqZWWokbQthx8QDRVMAmfT8KkOmf3KSsrUbzAZQYwtwa0JQrJkLaenKcQtKnCQS5nmdsohu7MxtxDUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uuzBmzq2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mRfVgsn0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uuzBmzq2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mRfVgsn0; dkim=neutral (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LNlg/biH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kK7KAn+b; dkim=neutral (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LNlg/biH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kK7KAn+b; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 126A12197B;
-	Fri,  7 Jun 2024 15:06:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717772807; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:list-id:
-	 list-unsubscribe:list-subscribe;
-	bh=ECn9IKY+8fmiPsaMpieYBYYu2CDiL7Pa8kNvznWWzJ8=;
-	b=uuzBmzq2JB3Nxay4Y6jCN/LYm+Cj/z9mgHJhhEJifQ/mYZ7oADGstUI7v/zz7OZayTIWua
-	jF2IFjTb8yldWH6GuaBP2aWsP7fpTVwiT1TOozevMgx1rts3Ji2CK2tXwxF0HLcRX+h8tf
-	2IeYXQfc7/m3lBHRefQTJOeHsUYBYY0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717772807;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:list-id:
-	 list-unsubscribe:list-subscribe;
-	bh=ECn9IKY+8fmiPsaMpieYBYYu2CDiL7Pa8kNvznWWzJ8=;
-	b=mRfVgsn031h1LCcbdEc3JAOGw+3O6cJ9I44ExV1C7YrB+jYtqJCiHDoXIpHL5TQxT+y+Fl
-	wegLZQ35vcL+voAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717772807; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:list-id:
-	 list-unsubscribe:list-subscribe;
-	bh=ECn9IKY+8fmiPsaMpieYBYYu2CDiL7Pa8kNvznWWzJ8=;
-	b=uuzBmzq2JB3Nxay4Y6jCN/LYm+Cj/z9mgHJhhEJifQ/mYZ7oADGstUI7v/zz7OZayTIWua
-	jF2IFjTb8yldWH6GuaBP2aWsP7fpTVwiT1TOozevMgx1rts3Ji2CK2tXwxF0HLcRX+h8tf
-	2IeYXQfc7/m3lBHRefQTJOeHsUYBYY0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717772807;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:list-id:
-	 list-unsubscribe:list-subscribe;
-	bh=ECn9IKY+8fmiPsaMpieYBYYu2CDiL7Pa8kNvznWWzJ8=;
-	b=mRfVgsn031h1LCcbdEc3JAOGw+3O6cJ9I44ExV1C7YrB+jYtqJCiHDoXIpHL5TQxT+y+Fl
-	wegLZQ35vcL+voAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D1A0D134C7;
-	Fri,  7 Jun 2024 15:06:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id u4VyMQYiY2YsFwAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Fri, 07 Jun 2024 15:06:46 +0000
-From: Petr Vorel <pvorel@suse.cz>
-To: chrubis@suse.cz,
-	Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: jack@suse.cz,
-	Dave Chinner <david@fromorbit.com>
-Subject: [PATCH] loop: Disable fallocate() zero and discard if not supported
-Date: Fri,  7 Jun 2024 17:06:44 +0200
-Message-ID: <20240607091555.2504-1-chrubis@suse.cz>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240607091555.2504-1-chrubis@suse.cz>
-References: <20240607091555.2504-1-chrubis@suse.cz>
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130]) (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits)) (No client certificate requested) by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4571405F8; Fri,  7 Jun 2024 09:16:27 +0000 (UTC)
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97]) (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits) key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256) (No client certificate requested) by smtp-out1.suse.de (Postfix) with ESMTPS id A52CC21991; Fri,  7 Jun 2024 09:16:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa; t=1717751785; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc: mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding; bh=yvfvtJ2vwLjq4w/MiB+bS7Kf8HpDDJ7m58lQDYUYOx0=; b=LNlg/biHGPum4Bc4R1OrKDL9eSYMepFT1pXWpUzrN76bDqQzhgmGdvOlLJOfhgOXX2/27y KBDW+uJ4pIq7ITXlS6f/cAWT3juzQjfWdE+ZQ/82pBhKrb3rV7juQBjzltJ5OcG+VPUL7L iw7EyloetoN347RpdJ84PWDJtsl14rQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_ed25519; t=1717751785; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc: mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding; bh=yvfvtJ2vwLjq4w/MiB+bS7Kf8HpDDJ7m58lQDYUYOx0=; b=kK7KAn+bBIHtsosPc98UNh1lRiQxt05qFsr2PkDnQgCOCxLMKJ7n6lbi+HP97WQYr6MryR d0KwLRox+kHE0dBw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa; t=1717751785; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc: mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding; bh=yvfvtJ2vwLjq4w/MiB+bS7Kf8HpDDJ7m58lQDYUYOx0=; b=LNlg/biHGPum4Bc4R1OrKDL9eSYMepFT1pXWpUzrN76bDqQzhgmGdvOlLJOfhgOXX2/27y KBDW+uJ4pIq7ITXlS6f/cAWT3juzQjfWdE+ZQ/82pBhKrb3rV7juQBjzltJ5OcG+VPUL7L iw7EyloetoN347RpdJ84PWDJtsl14rQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_ed25519; t=1717751785; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc: mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding; bh=yvfvtJ2vwLjq4w/MiB+bS7Kf8HpDDJ7m58lQDYUYOx0=; b=kK7KAn+bBIHtsosPc98UNh1lRiQxt05qFsr2PkDnQgCOCxLMKJ7n6lbi+HP97WQYr6MryR d0KwLRox+kHE0dBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1]) (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits) key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256) (No client certificate requested) by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 94AFB13A42; Fri,  7 Jun 2024 09:16:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167]) by imap1.dmz-prg2.suse.org with ESMTPSA id 6nsrI+nPYmZZHQAAD6G6ig (envelope-from <chrubis@suse.cz>); Fri, 07 Jun 2024 09:16:25 +0000
-X-Mailer: git-send-email 2.44.2
-Precedence: bulk
+	s=arc-20240116; t=1717773091; c=relaxed/simple;
+	bh=t9H8jpD3p11qwd7sytuCB98EQ9NueIlYwx4Tt8/psKA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=qfg2wXNfyBLRI4dgmIlZAkCz2RRMYdE9v7081yE6fMws/T8+5wblmE0WcWi0WKnUDJvrhLtTXWjSFlFUIA50sqqyo7JZRLymjK1bHGx294FAubtoL2IKb/VnQjryOeOiQACjI7Nkc80kXeW41lx1aj0+OJBWJn8DgcPBFFusCXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SvCJ05FJ; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-627e4afa326so35975327b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 08:11:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717773089; x=1718377889; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ex2nZHRLv3gtg4nC8Gp/3+MSsGZYhmqvJ3bWYCD2SdY=;
+        b=SvCJ05FJlC8gyIyJJNlEX750hi5r1vsRvgrDDw31bITazF6vK0fo7PjcaZ3ku3SwmA
+         Yxd8rf/lBiYwO/p0p736gt/Csz7Xs5l/WKV6hTMR4yhpDgmihJCvuWxFNGdC45oQPK7Y
+         LkGbrsmxpUSCD7yJlwMMuQE+4GPRKtUTnwLQM8PnbHty6LsFuE+r2c3BmxzY8lbQpxlc
+         oBlVVefERlCzuVaEWYQRrzShud77IBPFjBiW3famyoCoC4kqIMz8C88IanotOeM6orqL
+         ODeCekp2AHV17f4yp2HsBHJnynxVsK1ed7zR0TDYsTRQofzdfRVwYDPkODHw3i9Uc3e5
+         GdUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717773089; x=1718377889;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ex2nZHRLv3gtg4nC8Gp/3+MSsGZYhmqvJ3bWYCD2SdY=;
+        b=mt2m9FgDY6SmAwPyn1j/ECfcIBnmZeGiKKf+xbqo0zh0O45MtEQ6WoFehHh12A72N9
+         2VqHUfd+gqoPMNQcjDRQANDzuIHBKLkYhOxd3Wqq8KgG+i5zkeicm3QIx1RyinWq7x35
+         7cLmfsUJPEO+Vn1DBVQP++VjNb40zCcEeDZ7G9i69/kwiVNF8rYXcpX3TwL82h7Uf0rA
+         AI5yfZJXHZCRCziT+Cz+EqrFHQHIIF76pFlXvuqfl+M5gQMmysQblmly7eY/B3Kotajx
+         9EDnWAQKR4Cus2IPLlBq24GUqWukVLalrhCaMvl/l5D61DVpDdj1FtaY1UpIfxu7tEzE
+         rZfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLu9Qjh6sCDf0U+RTyJ3dZcyXHzMkb27Jq3DMt+R7bM2+FF4siQd/iPbjHfPuOd7rMcpm1pB8tjT9OdSfW/bWxW801N2R7rSfL7Jto
+X-Gm-Message-State: AOJu0Yyf1L6QMFFOsqxmoVE3ljRI9/wfAhb93NO665oBw+XIvDc1YgpZ
+	yFSbhm7AjJcLuEUmKC2JYHkOI9CWCBASQj3zcbXSazhXO0KmEFuGksxAOnh7A6dahnmPSU2xCVC
+	xtA==
+X-Google-Smtp-Source: AGHT+IHhAdfZH4OI2iNJh44mDt2T7ugxfQWP/zFMFnsGk76Nup/Du4ZDAUM5QiFXi8YCO8DJ1unaelYyyBI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:1248:b0:df4:a393:8769 with SMTP id
+ 3f1490d57ef6-dfaf65ba959mr237734276.9.1717773088585; Fri, 07 Jun 2024
+ 08:11:28 -0700 (PDT)
+Date: Fri, 7 Jun 2024 08:11:27 -0700
+In-Reply-To: <06e6b7c6-ba5d-4fb0-9a77-30ac44f6935a@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: A52CC21991
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.06 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MAILLIST(-0.15)[generic];
-	SUSE_ML_WHITELIST_VGER(-0.10)[];
-	MIME_GOOD(-0.10)[text/plain];
-	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Score: -4.06
-X-Spam-Flag: NO
+Mime-Version: 1.0
+References: <20240429155738.990025-1-alejandro.j.jimenez@oracle.com>
+ <20240429155738.990025-5-alejandro.j.jimenez@oracle.com> <Zl5cUwGiMrng2zcc@google.com>
+ <06e6b7c6-ba5d-4fb0-9a77-30ac44f6935a@oracle.com>
+Message-ID: <ZmMjHwavCLk0lRd7@google.com>
+Subject: Re: [PATCH 4/4] KVM: x86: Add vCPU stat for APICv interrupt
+ injections causing #VMEXIT
+From: Sean Christopherson <seanjc@google.com>
+To: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
+Cc: kvm@vger.kernel.org, pbonzini@redhat.com, linux-kernel@vger.kernel.org, 
+	suravee.suthikulpanit@amd.com, vashegde@amd.com, mlevitsk@redhat.com, 
+	joao.m.martins@oracle.com, boris.ostrovsky@oracle.com, mark.kanda@oracle.com
+Content-Type: text/plain; charset="us-ascii"
 
-From: Cyril Hrubis <chrubis@suse.cz>
+On Thu, Jun 06, 2024, Alejandro Jimenez wrote:
+> On 6/3/24 20:14, Sean Christopherson wrote:
+> > On Mon, Apr 29, 2024, Alejandro Jimenez wrote:
+> > > Even when APICv/AVIC is active, certain guest accesses to its local APIC(s)
+> > > cannot be fully accelerated, and cause a #VMEXIT to allow the VMM to
+> > > emulate the behavior and side effects. Expose a counter stat for these
+> > > specific #VMEXIT types.
+> > > 
+> > > Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+> > > Signed-off-by: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
+> > > ---
+> > >   arch/x86/include/asm/kvm_host.h | 1 +
+> > >   arch/x86/kvm/svm/avic.c         | 7 +++++++
+> > >   arch/x86/kvm/vmx/vmx.c          | 2 ++
+> > >   arch/x86/kvm/x86.c              | 1 +
+> > >   4 files changed, 11 insertions(+)
+> > > 
+> > > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> > > index e7e3213cefae..388979dfe9f3 100644
+> > > --- a/arch/x86/include/asm/kvm_host.h
+> > > +++ b/arch/x86/include/asm/kvm_host.h
+> > > @@ -1576,6 +1576,7 @@ struct kvm_vcpu_stat {
+> > >   	u64 guest_mode;
+> > >   	u64 notify_window_exits;
+> > >   	u64 apicv_active;
+> > > +	u64 apicv_unaccelerated_inj;
+> > 
+> > The stat name doesn't match the changelog or the code.  The AVIC updates in
+> > avic_incomplete_ipi_interception() are unaccelerated _injection_, they're
+> > unaccelarated _delivery_.  And in those cases, the fact that delivery wasn't
+> > accelerated is relatively uninteresting in most cases.
+> > 
+> 
+> Yeah, this was my flawed attempt to interpret/implement Paolo's comment in
+> the RFC thread:
+> 
+> "... for example I'd add an interrupt_injections stat for unaccelerated
+> injections causing a vmexit or otherwise hitting lapic.c"
 
-Hi Cyril, all,
+KVM essentially already has this stat, irq_injections.  Sort of.  The problem is
+that the stat isn't bumped when APICv is enabled because the IRQ isn't *directly*
+injected.  KVM does "inject" the IRQ into the IRR (and RVI on Intel), but KVM
+doesn't go through .inject_irq().
 
+For APICv, KVM could bump the stat when manually moving the IRQ from the IRR to
+RVI, but that'd be more than a bit misleading with respect to AVIC.  With AVIC,
+the CPU itself processes the IRR on VMRUN, i.e. there's no software intervention
+needed to get the CPU to inject the IRQ.  But practically speaking, there's no
+meaningful difference between the two flows; in both cases an IRQ arrived while
+the target vCPU wasn't actively running the guest.  And that means KVM would need
+to parse the IRR on AMD just to bump a stat.
 
-> If fallcate is implemented but zero and discard operations are not
-nit: s/fallocate/fallcate/
+It'd also be misleading to some extent in general, because when the target vCPU
+is in its inner run loop, but not actually post-VM-Enter, KVM doesn't kick the
+vCPU because either KVM or the CPU will automatically process the pending IRQ.
+I.e. KVM would bump the stat cases where the injection isn't fully accelerated,
+but that's somewhat disingenuous because KVM didn't need to slow down the vCPU
+in order to deliver the interrupt.
 
-> supported by the filesystem the backing file is on we continue to fill
-> dmesg with errors from the blk_mq_end_request() since each time we call
-> fallocate() on the loop device the EOPNOTSUPP error from lo_fallocate()
-> ends up propagated into the block layer. In the end syscall succeeds
-> since the blkdev_issue_zeroout() falls back to writing zeroes which
-> makes the errors even more misleading and confusing.
+And KVM already has an irq_exits stat, which can be used to get a rough feel for
+how often KVM is kicking a vCPU (though timer ticks likely dominate the stat).
 
-Thanks for looking into this!
+> > And avic_unaccelerated_access_interception() and handle_apic_write() don't
+> > necessarily have anything to do with injection.
+> 
+> apicv_unaccelerated_acccess is perhaps a better name (assuming stat is
+> updated in handle_apic_access() as well)?
 
-FYI this has been in mainline for some time: mentioned for 4.16.0-rc7 [1], later
-in v5.19 [2]. Cc also Dave, who back then suggested to remove the warning as not
-being useful for users [3].
+This is again not super interesting.  If we were to add this stat, I would lobby
+hard for turning "exits" into an array that accounts each individual VM-Exit,
+though with some massaging to reconcile differences between VMX and SVM.
 
-> How to reproduce:
+Unaccelerated APIC exits aren't completely uninteresting, but they suffer similar
+issues to the "exits" stat: a few flavors of APIC exits would dominate the stats,
+and _those_ exits aren't very interesting.
 
-> 1. make sure /tmp is mounted as tmpfs
-> 2. dd if=/dev/zero of=/tmp/disk.img bs=1M count=100
-> 3. losetup /dev/loop0 /tmp/disk.img
-> 4. mkfs.ext2 /dev/loop0
-> 5. dmesg |tail
+> > On the flip side, the slow paths for {svm,vmx}_deliver_interrupt() are very
+> > explicitly unnaccelerated injection.
+> 
+> Now that you highlight this, I think it might be closer to Paolo's idea. i.e.
+> a stat for the slow path on these can be contrasted/compared with the
+> kvm_apicv_accept_irq tracepoint that is hit on the fast path.  My initial
+> reaction would be to update a stat for the fast path, as a confirmation that
+> apicv is active which is how/why I typically use the kvm_apicv_accept_irq
+> tracepoint, but that becomes redundant by having the apicv_active stat on
+> PATCH 1.
+> 
+> So, if you don't think it is useful to have a general
+> apicv_unaccelerated_acccess counter, I can drop this patch.
 
-> [710690.898214] operation not supported error, dev loop0, sector 204672 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-> [710690.898279] operation not supported error, dev loop0, sector 522 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-> [710690.898603] operation not supported error, dev loop0, sector 16906 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-> [710690.898917] operation not supported error, dev loop0, sector 32774 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-> [710690.899218] operation not supported error, dev loop0, sector 49674 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-> [710690.899484] operation not supported error, dev loop0, sector 65542 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-> [710690.899743] operation not supported error, dev loop0, sector 82442 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-> [710690.900015] operation not supported error, dev loop0, sector 98310 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-> [710690.900276] operation not supported error, dev loop0, sector 115210 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-> [710690.900546] operation not supported error, dev loop0, sector 131078 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-
-Kind regards,
-Petr
-
-[1] https://lore.kernel.org/all/10632862.17524551.1522402353418.JavaMail.zimbra@redhat.com/
-[2] https://lore.kernel.org/all/YvZUfq+3HYwXEncw@pevik/
-[3] https://lore.kernel.org/all/20220814224440.GR3600936@dread.disaster.area/
-
-> This patch changes the lo_fallocate() to clear the flags for zero and
-> discard operations if we get EOPNOTSUPP from the backing file fallocate
-> callback, that way we at least stop spewing errors after the first
-> unsuccessful try.
-
-> CC: Jan Kara <jack@suse.cz>
-> Signed-off-by: Cyril Hrubis <chrubis@suse.cz>
-> ---
->  drivers/block/loop.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-
-> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> index 93780f41646b..315c76e3ef4a 100644
-> --- a/drivers/block/loop.c
-> +++ b/drivers/block/loop.c
-> @@ -320,6 +320,21 @@ static int lo_fallocate(struct loop_device *lo, struct request *rq, loff_t pos,
->  	ret = file->f_op->fallocate(file, mode, pos, blk_rq_bytes(rq));
->  	if (unlikely(ret && ret != -EINVAL && ret != -EOPNOTSUPP))
->  		return -EIO;
-> +
-> +	if (ret == -EOPNOTSUPP) {
-> +		struct queue_limits lim = queue_limits_start_update(lo->lo_queue);
-> +
-> +		if (mode & FALLOC_FL_ZERO_RANGE)
-> +			lim.max_write_zeroes_sectors = 0;
-> +
-> +		if (mode & FALLOC_FL_PUNCH_HOLE) {
-> +			lim.max_hw_discard_sectors = 0;
-> +			lim.discard_granularity = 0;
-> +		}
-> +
-> +		queue_limits_commit_update(lo->lo_queue, &lim);
-> +	}
-> +
->  	return ret;
->  }
+The one thing I can think of that might be somewhat interesting is when
+kvm_apic_send_ipi() is invoked to deliver an IPI.  If KVM manually sends the IPI,
+and IPI virtualization is enabled (on-by-default in AVIC, and an add-on feature
+for APICv), then it means IPI virtualization isn't doing it's job for whatever
+reason.  But even then, I'm doubt it's worth a stat, because it likely just means
+the guest is doing something weird, not that there's a problem in KVM.
 
