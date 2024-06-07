@@ -1,349 +1,184 @@
-Return-Path: <linux-kernel+bounces-205939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51F2190026E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:42:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6274900278
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9D4F288319
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:42:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2759D1F22D6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF77A19067A;
-	Fri,  7 Jun 2024 11:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04376190664;
+	Fri,  7 Jun 2024 11:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cup/PNym"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=moxa.com header.i=@moxa.com header.b="b4ULLkKc"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2116.outbound.protection.outlook.com [40.107.215.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4EDD18F2C6
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717760512; cv=none; b=uIZ6MgufhfCl3FT+yo2LpJUiNXU8krE7HenzxoZMad/YddAYbA9YAULTe+jtVEYjCpN3RJhtvOifMUFqSZISu2b+q5x/oSRkhdVngV1EuVwilDJlUmNp7OZcKE+adpgx2SajjN7AGZkTHI7h6EdK70jPR1ZgYRd9l4b7azoTgGQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717760512; c=relaxed/simple;
-	bh=zZfi4B/3xlwRwJ5Ae5BptjUYE+Mbt9SK7pYyryo1ftI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s/47zJ/RwS2+PErKOEdeh/scKzwuxIyvSJmA+5YLOfCFMG+e1Hb6kKyvG6cJTx4vGHzrRo6dREZovkxlyDZGwK6dMn7kzwxpop7ftF9Nu9aYBegY90KQjDmb1VjDpo+rKpcH1sipTFzWpYQHpKsA8U/C/k3RYIlmZ0hC7fPyqcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cup/PNym; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52962423ed8so2388063e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 04:41:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717760509; x=1718365309; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=d3TWoGizEobT5QO5GTHAzDYLdCFbSYQPW14yvUV/BPk=;
-        b=cup/PNymZPx1a8lQeeaRArbVxz3I2sKIURDu60GGqGYAa3ALWeSycmJH8WxwhQPWVi
-         3mR/dptXlehpB9kmPteYPdsvvgqnhN5hUwjnfjpfWEVDyfjHsh2zKsQlfpsYU6r3xj9x
-         t/7k68wMKbR+c9hWFAlh9cqF0AhNjiTN+1HiDXUkbmzFv8PYJGRjFUG+pLaZ7O4aDXk4
-         4kXBUvNumzGdm4c5/yhE40n5mmkNT19UWp/U2p2AmBZsZgoJEf0c6UdgrNfKhpMsK8E2
-         TxPyye3yiLn/x6JIpzTdGBaCCBTMslzSEHOv5+9PyMvyXtaA75y7B7nkwRITMARNatu6
-         R3MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717760509; x=1718365309;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d3TWoGizEobT5QO5GTHAzDYLdCFbSYQPW14yvUV/BPk=;
-        b=neIgvl9irDVL0Z43P4ZtnryzmW2vzE5oSOxKidJaxnRGHwLJoPzC26kIigQ3Q1EPYo
-         92WslDAPGRn1TRx5M6GNomFPkl3qtDzQhe8PDcm4NyJTH0s1YFeqgfcfnHAAYLRcs1Gf
-         C2gTxWD0uBXSEeZkH81E0Uexp4WdMmEyh8n4dEH+zw3OWRLcArCk21O/ocZpXb5BXYff
-         CUecb4LMZVEoc+Zfpq4z5SfRN1zRuDfk4wlhPUpz7wsd3i0EgfVMSMBr2FNfryHRAyXR
-         iwX803LdL36DEkyxmYEKTA5CIcznztfKEi+5DtStqESDSuEwq8I2j3HHlDPQlfyqxKxt
-         sauw==
-X-Forwarded-Encrypted: i=1; AJvYcCWezD4X+BMCqh3P7+bI7L+qRUlMLU4GwEl7p3Q/RFqlLZQakAAVZU64qyw0MkfZTdqIA70OKS78Vl8xnPXiOsJXKNMsv12+0UINdnPm
-X-Gm-Message-State: AOJu0YxFtYBEJYcJrmkIWLQK7LodbWL5KNRoTpR+yOWNGrWArimxj2wi
-	NSSKT5wC4sWK/lXk85j7XtLyEqgV2S0yV8msizqt2IMviQzOCGNElRQfpceuymg=
-X-Google-Smtp-Source: AGHT+IELWjx7Y8HIxG6WyFhnBSr1BKM5sU+vXt+klI+TtVjCaf6vuxsuQwKEGym2wy6qsQGEN59ayw==
-X-Received: by 2002:a05:6512:1391:b0:51d:68fb:5d73 with SMTP id 2adb3069b0e04-52bb9f6897cmr1958075e87.8.1717760508853;
-        Fri, 07 Jun 2024 04:41:48 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb41e20f7sm502386e87.41.2024.06.07.04.41.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 04:41:47 -0700 (PDT)
-Date: Fri, 7 Jun 2024 14:41:46 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
-	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
-	quic_chennak@quicinc.com, stable <stable@kernel.org>
-Subject: Re: [PATCH v4 09/11] misc: fastrpc: Fix remote heap alloc and free
- user request
-Message-ID: <4vwahy5pb74an2nebp643s2doacbrslrsitolzksmmjnv4lxxu@vub4gpex5fcs>
-References: <20240606165939.12950-1-quic_ekangupt@quicinc.com>
- <20240606165939.12950-10-quic_ekangupt@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A255187336;
+	Fri,  7 Jun 2024 11:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.116
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717760635; cv=fail; b=gBk4qPjK7LfY3KmPg4/6wjbbuIc9SmNXxcBj5AUSSPnXlAh7z4hzYav4HuL8K4/ickyS+MHtOzXUyZXvwoyhuDgZ/mo3XA069QP+RV5HH0HN1AvYZUuOQtaf3g70d+HJfZrHr2caXunp6rt06EECZUPZ4sPH1sDkHGAR9pSyxBM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717760635; c=relaxed/simple;
+	bh=AomXrG9TdvRvi9FYFoQ5Qdff26AXigP3E5ONNe75qB0=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=tabqFFr0I/Ul48jp5VFjZ6uJ39IURJLGQJCrY/1bIHMkBNdX5fY+M7z4C48zH11wWQk1Gu/iD5Ea9S6EXr+QJB84AKhqaxF3vXNSzjcqpMqOvT2af2ndqJzzRpU2WmkQHBJEshMiyErOHpV5/Tdgks/Ir4pMteRHFwofgXXaJno=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=moxa.com; spf=pass smtp.mailfrom=moxa.com; dkim=pass (1024-bit key) header.d=moxa.com header.i=@moxa.com header.b=b4ULLkKc; arc=fail smtp.client-ip=40.107.215.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=moxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=moxa.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=H+d4RvmllGMNXps5nlj70zHnNJXQIrDA61gQsLhUR+PizUtz5FLOORZ+hHIJ8PC5Cz2ua4KHGaRBMwklbNjM9n4acqNUcgX/KmxlP4WO4ebltBuKRN/31l48JRSFrae/wjv6HkurxFA7tD3Whefth85uWQUkGIpkh0cOkUknqclUFkWyYoBogBvz0rGa0jiVie0MjhX/9NfauEHSXnFOBuolEaGGoKHe0PK4NAPmST6dwCTNiR3bXg4AYWEgIl70PPCZh4RwreneDmVYZkJwPUykMvJT8wzgk57JFu1rzNmJO1BYrU5y2WhfQ3NRfqjU1CRrJAabve3/XeFxtByqsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KYw3sJu+k8WzxJfraNNDUApRpv74Slo0lQjEK3yGwe4=;
+ b=OYK8xj9LOzJvm8RMbSrmyze2J2R9njx3owSCQvfUaRtuwj23TH37CEW4KIf+bQvo4kDtTBwmkIUVPUZrnFGjT7xVtYfVn7AKtzFFbTuwVnYFWnJ0A+HoGuUc4hmH2LF1sauSnMeK+o+q9bQ8mB5ZrDh5cl7DML0zQ2iLty3RFFcdKmJ6XA80FH8Hd3X9tMyBwM3KBXkg74a/o+qZ/WrqVuI3Ribkx9BczpyTCMxybcxP93/74zdj7DFUJGarjWVv14AGHtdo/xJpfzCSMJ3gauOmr7X1OCPa52OvpwxtNCEfKW0cNxueFvrZVUUEUxo6hr74rogcgUYTufeZ/eMoiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=moxa.com; dmarc=pass action=none header.from=moxa.com;
+ dkim=pass header.d=moxa.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=moxa.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KYw3sJu+k8WzxJfraNNDUApRpv74Slo0lQjEK3yGwe4=;
+ b=b4ULLkKchHdaUEBczWXJVkjmXORuXPuaTxBkuhS37QBDSdkAk68zOBtGpnRfZw1xkWPW+7FblfbWPbiPSi4J/cAf6Nqcwfs/xr62Q1nhE3YC1iNL20yStQ5EnJxKAD14JEqFSZmEh4RrVxQh48YPOomKN+ayVYx+EJTgpQwoGys=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=moxa.com;
+Received: from PUZPR01MB5405.apcprd01.prod.exchangelabs.com
+ (2603:1096:301:115::14) by SEZPR01MB5588.apcprd01.prod.exchangelabs.com
+ (2603:1096:101:12f::6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.34; Fri, 7 Jun
+ 2024 11:43:46 +0000
+Received: from PUZPR01MB5405.apcprd01.prod.exchangelabs.com
+ ([fe80::60ab:8615:ab67:8817]) by PUZPR01MB5405.apcprd01.prod.exchangelabs.com
+ ([fe80::60ab:8615:ab67:8817%5]) with mapi id 15.20.7633.033; Fri, 7 Jun 2024
+ 11:43:46 +0000
+From: Crescent Hsieh <crescentcy.hsieh@moxa.com>
+To: Jiri Slaby <jirislaby@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Crescent Hsieh <crescentcy.hsieh@moxa.com>
+Subject: [PATCH 0/6] Adjustments and Enhancements for MOXA PCI Serial Boards
+Date: Fri,  7 Jun 2024 19:43:30 +0800
+Message-Id: <20240607114336.4496-1-crescentcy.hsieh@moxa.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0020.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:263::12) To PUZPR01MB5405.apcprd01.prod.exchangelabs.com
+ (2603:1096:301:115::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606165939.12950-10-quic_ekangupt@quicinc.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR01MB5405:EE_|SEZPR01MB5588:EE_
+X-MS-Office365-Filtering-Correlation-Id: bb980c86-d018-4338-3dfe-08dc86e716e7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|52116005|1800799015|376005|366007|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ty4/gi3jMv2B2VBwHRDdbID6dfw+q4YatjDpCGtHpucWom41P9udX+tUwPrN?=
+ =?us-ascii?Q?A+ZfMTuYRZ2dfXYSBXw5D8ZEY7tkoufeWIX69A9QdmDixB8XhjiW9RZBljhb?=
+ =?us-ascii?Q?zfZqgqUr3ORq+QgbvNHQ1xHj7tIcR8QozQutqmtWo6mYsyJ+zAkyDy8TsbIN?=
+ =?us-ascii?Q?6bVI59cSNzqAFnoYXYcDrC/WY2cIl1rsPpfTBPOvNIDQM8NSpNFnsG4Ndb9E?=
+ =?us-ascii?Q?afM3LKgNgnZfG+3EoJsrvDerTFRkqdAxV5FnyuPwEsXUaw0VSlj9MzdZmgB7?=
+ =?us-ascii?Q?WnEt169oAQmWsHxdp4iOFla246qzYR9wpMa+EjODadzU+RlFOEinsNZlNtYV?=
+ =?us-ascii?Q?54dr6t0byWzHXo2q8pHiDB6nQviqw/tfkOdydVkWhhDxj2DK3gfBFHZdH7ft?=
+ =?us-ascii?Q?ZFveM8yVV+B+Ft7rDLY5KUcVWT8IUfM1aYIsBdPUb0Q4007MTcUITZQGp/nF?=
+ =?us-ascii?Q?Gm3237xOJSYLKgD01Ka/qj83xN3qZ1C03TABflGZ8+2j6WWji8+HmrG5PiZc?=
+ =?us-ascii?Q?1mOTOTzpBKhJPoyvBqiLOs51E9R0BFV6pKSgE7eGWfMTCg5t4Mr+EYhM47NJ?=
+ =?us-ascii?Q?CvWPSx6WVHVUd5W5W890aOSYpK36l2ED7hT2rEa1SQeuWm1HEFuEm7cQChiX?=
+ =?us-ascii?Q?OZsJ80pIudEgO7Cskj/IY4LIT2fzNWRLhPCRp1vwU5/Thcn9+3woE14BJQTY?=
+ =?us-ascii?Q?X5Tv0VfwIL+JeySbbqT3eIzD/OolzK+Ud8JnnTMLRib5IA1fQHOqCZsWDuKX?=
+ =?us-ascii?Q?FMSmvkbjOrXs2Lht17dwbH+ss0deJ0q7It2MFvAU9S1scw0krB1Zi2di6H51?=
+ =?us-ascii?Q?gVgma/rW07Mqm+y3Hs8HAiZXB+f6o0ND4PrX/FtOc+9X+HqvBONsYCIhwtMs?=
+ =?us-ascii?Q?ZueI8K9zsWCX3UrODrwl51q1fmOQgU3QuKxTKyHID27mKKjjmJRwWVH89Mrt?=
+ =?us-ascii?Q?7J/q596BkFJsepx1VO/cY8fluA73hjOfdVPiN4OJGPUFJtgEKq4lpFjN9ImC?=
+ =?us-ascii?Q?ztJmyMrcCBZD0znZdW4h21he/vb/NFKUPwERBMOIQDqxieqMvugN/Ez16l+e?=
+ =?us-ascii?Q?3VKujUHmjoQu7XGdYPHvzuC0ASN12wq7GR1rR3CE18KsnCSS4hpykf2t9r4B?=
+ =?us-ascii?Q?j+TobHbuRhWLR17gUCDRCs+Gswv3+U710G2GogJKn5ZYblU4eDh7jjeZoYXt?=
+ =?us-ascii?Q?GRBNqGPKSjCYOo8lEnxNbhTfSFGySIPCUKwNn7Fcqm/m7JXxUSz3oucfgeXx?=
+ =?us-ascii?Q?9SYyiiR5PYw0krB5z6pCpV1O8IqIxpgcI3L5LflujTsTL2NX72HL5JcANTQQ?=
+ =?us-ascii?Q?Spgiqf1gmtwY0d9rJJvUx03GOhLDSFlaQ92mnZ+KD3nVUm95L+yha1avW1Ka?=
+ =?us-ascii?Q?Uud/F70=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR01MB5405.apcprd01.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230031)(52116005)(1800799015)(376005)(366007)(38350700005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Ko5yT1P5qBqWr4fMGkR/VaCmbYwKYKl5pHWMWUi6a/enBXMGE8aLTz5BIb8x?=
+ =?us-ascii?Q?pHJmvEuUTtdUIpHKsVPWWVZsNdQ0ROHzO6b8m16r7+ypl3QfMP33PMZ47FcI?=
+ =?us-ascii?Q?WDkUioBuhp4Jhnw36xjiele/2077sikGPst+UXeIbioNDlYYTRc8sSiVMlCX?=
+ =?us-ascii?Q?1sSMQNXa4bs19mGfZpCjckJej6zjZuqhHHWGK+BC+bk3X2jtalI3k/TePh2c?=
+ =?us-ascii?Q?ekUsWBgYu2anF30NGKXFSbO9AIcH0l+2xh3W2pICs6nftRUbpdCUjSHyUBpS?=
+ =?us-ascii?Q?B0ExJuJyzF20ZKxt07j75scTkePkOD3w9rAYFuD4EYbHLAAIxWYiOkpK72EH?=
+ =?us-ascii?Q?lJ7jwRLPvTfJOP3uUMRzXCrsUW3fIjW/OQBK/WpzV17j4Y5PvQpSBBRc3uwL?=
+ =?us-ascii?Q?peZMer0xRqK52R/kFeAOwziJctt4dYQhOfAx/+7g/TS1PDFCmoufJY4sGwJU?=
+ =?us-ascii?Q?VfIsFHiMPDHkE3K8N1OGZJ3e0TLwjuIHkU4KHulSjDs5j4UbST+1zG3RJ8Zj?=
+ =?us-ascii?Q?JyzkvhisUjXX0nUJSFE719ISZ3RVrKcCmb2n11VgCVBuSKd3ye6ym2sJ3rOd?=
+ =?us-ascii?Q?2Mf/CQkGb5AoFsY0mgvWNM3bZq33mEwn3LyamMwsGLPLlqBcRVEXRg25McyW?=
+ =?us-ascii?Q?48040nmLUv4zLTjCaq9mfTbNWrBOBbRsndatUhUyGkBjwFCONlfhw8JR55uJ?=
+ =?us-ascii?Q?gCcoxUUg2wZF2yDQrTmKo2mAHqAZ8e+5Aj2pVDl6E7AlpnDXL24PyWAJ3GXb?=
+ =?us-ascii?Q?czFaIW5MwB4+Lw2fa/ObB5eLbeN0dzcqpoXX0C1cdVAtZMM10zXAcAB/NFe6?=
+ =?us-ascii?Q?HQMJXifVjoWYypntglbIivDpTUC2vnyAJ/wp+7LIYb6D+OV+PgV1Kaj3im1+?=
+ =?us-ascii?Q?FyRnggLb6bgOUZxk8tgAmFfomtWfeDCmUU23kxOmpE+6vqu+TGXH2kew6IE5?=
+ =?us-ascii?Q?bj930+Z6LM/OA7lK5B4HS50jdZ65M5RwPrWv/k8vxc34rdrDSOUeEiVYzxtk?=
+ =?us-ascii?Q?ev7lejoYTeMvxFXfZmw9qf5WwdsjWr0UALW7HXnAx8bg5VVEQOrLlbDXmVZQ?=
+ =?us-ascii?Q?9MsePEmTgQPppsyYkbgTaXy1EmOmkH3f4jwRKaWgPXHHMg798ysM88iLk0NR?=
+ =?us-ascii?Q?ljI9Uazp0RWM4DPrlB1o7N8DO1F5qY/0eMImRCb7u4Z0XFQ1il6vnZxh8Tpk?=
+ =?us-ascii?Q?wqWvl8ipK9ymN+GEx/wAhbTBe9/jQNGcpqaUJyeNBQpPAlqm/6vlNlH1Di+5?=
+ =?us-ascii?Q?5cva/sbU/IscVodNttSlhd6d5ER5It/6JecXkzUGNnQ8GMLXr/na/CsrBmwu?=
+ =?us-ascii?Q?kBgXF2iqlfE/dSeh9cv8nUM6qNVVNT8FGo6WJEnBk6Cn3Z2+rNd3a9ssmZaa?=
+ =?us-ascii?Q?xxiztH/N7Qio0jg3fP3Tq6sGortcmjXqMLabTpDFskvEmfqc4dfpuqgGjrtM?=
+ =?us-ascii?Q?SotsW6ltaICI3iezYN7v+QVxbC+UBcK3vLXjxeKWg1/8JyAh1R+KQsujoLzH?=
+ =?us-ascii?Q?IvPlR+9YBg/I3PNztmbCK5pCIC8cCcXo0f9OAcda8VcMY2zEqNXAbZaReWfy?=
+ =?us-ascii?Q?qQ92ESsfl3XfhKduQNbKXgwmoXWaVlzgKkAFbiziRv3j3eL6rwYA1pez6in8?=
+ =?us-ascii?Q?dw=3D=3D?=
+X-OriginatorOrg: moxa.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb980c86-d018-4338-3dfe-08dc86e716e7
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR01MB5405.apcprd01.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2024 11:43:46.1768
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5571c7d4-286b-47f6-9dd5-0aa688773c8e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ub6iVXMBSfVt+2voBFSdTE9ltLkbT4/4KVAHO67TxNMkijIwMUciOOJJtuyTAlQO6Y5RJaBntPEmj227NNCaFu70YZrlMDAeeco4prRYNug=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR01MB5588
 
-On Thu, Jun 06, 2024 at 10:29:29PM +0530, Ekansh Gupta wrote:
-> A static PD daemon process can request for remote heap allocation
-> which will allocate memory and change the ownership if the VMID
-> information were defined. This allocations are currently getting
-> added to fl mmaps list which could get freed when there is any
-> daemon kill. There is no way to request for freeing of this memory
-> also. Add changes to maintain the remote heap allocation in the
+There are 6 patches within this patch series to make some adjustments
+and enhancements for MOXA PCI serial boards, a briefly description is
+written below:
 
-Simpler. 'Maintain foo'
+- The first patch is an independent bug fix patch.
+- The second and third patches migrate some MOXA PCI devices from
+  `mxser.c` to `8250_pci.c`.
+- The fourth and fifth patches address improvements and adjustments in
+  handling the serial interface.
+- The sixth patch adds a UART configuration that aligns with the
+  hardware capabilities of MOXA PCI serial boards.
 
-> static PD specific structure and add method to free the memory
-> on user request.
+Crescent Hsieh (6):
+  tty: serial: 8250: Fix the amount of ports doesn't match the device
+  tty: serial: 8250: Add 2 ports PCI configuration for 921600 BAR 2
+  tty: mxser: serial: 8250: Relocate device IDs from mxser to 8250_pci
+  tty: serial: 8250: Add check for setting default serial interface
+  tty: serial: 8250: Add support for Moxa PCIe boards to switch
+    interface
+  tty: serial: 8250: Add support for MUEX50 UART
 
-Should this be split into two patches? 'foo and bar' suggests that.
-
-> 
-> Fixes: 532ad70c6d44 ("misc: fastrpc: Add mmap request assigning for static PD pool")
-> Cc: stable <stable@kernel.org>
-> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> ---
->  drivers/misc/fastrpc.c | 129 +++++++++++++++++++++++++++++++----------
->  1 file changed, 98 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> index 68c1595446d5..32f2e6f625ed 100644
-> --- a/drivers/misc/fastrpc.c
-> +++ b/drivers/misc/fastrpc.c
-> @@ -210,6 +210,7 @@ struct fastrpc_buf {
->  	struct dma_buf *dmabuf;
->  	struct device *dev;
->  	void *virt;
-> +	u32 flag;
->  	u64 phys;
->  	u64 size;
->  	/* Lock for dma buf attachments */
-> @@ -1924,29 +1925,54 @@ static int fastrpc_get_dsp_info(struct fastrpc_user *fl, char __user *argp)
->  	return 0;
->  }
->  
-> -static int fastrpc_req_munmap_impl(struct fastrpc_user *fl, struct fastrpc_buf *buf)
-> +static int fastrpc_req_munmap_dsp(struct fastrpc_user *fl, uintptr_t raddr, u64 size)
->  {
->  	struct fastrpc_invoke_args args[1] = { [0] = { 0 } };
->  	struct fastrpc_munmap_req_msg req_msg;
-> -	struct device *dev = fl->sctx->dev;
->  	int err;
->  	u32 sc;
->  
->  	req_msg.pgid = fl->tgid;
-> -	req_msg.size = buf->size;
-> -	req_msg.vaddr = buf->raddr;
-> +	req_msg.size = size;
-> +	req_msg.vaddr = raddr;
->  
->  	args[0].ptr = (u64) (uintptr_t) &req_msg;
->  	args[0].length = sizeof(req_msg);
-> -
->  	sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_MUNMAP, 1, 0);
->  	err = fastrpc_internal_invoke(fl, true, FASTRPC_INIT_HANDLE, sc,
->  				      &args[0]);
-> +
-> +	return err;
-> +}
-> +
-> +static int fastrpc_req_munmap_impl(struct fastrpc_user *fl, struct fastrpc_buf *buf)
-> +{
-> +	struct device *dev = fl->sctx->dev;
-> +	int err;
-> +
-> +	err = fastrpc_req_munmap_dsp(fl, buf->raddr, buf->size);
->  	if (!err) {
-> +		if (buf->flag == ADSP_MMAP_REMOTE_HEAP_ADDR) {
-> +			if (fl->cctx->vmcount) {
-> +				u64 src_perms = 0;
-> +				struct qcom_scm_vmperm dst_perms;
-> +				u32 i;
-> +
-> +				for (i = 0; i < fl->cctx->vmcount; i++)
-> +					src_perms |= BIT(fl->cctx->vmperms[i].vmid);
-> +
-> +				dst_perms.vmid = QCOM_SCM_VMID_HLOS;
-> +				dst_perms.perm = QCOM_SCM_PERM_RWX;
-> +				err = qcom_scm_assign_mem(buf->phys, (u64)buf->size,
-> +								&src_perms, &dst_perms, 1);
-> +				if (err) {
-> +					dev_err(dev, "Failed to assign memory phys 0x%llx size 0x%llx err %d\n",
-> +						buf->phys, buf->size, err);
-> +					return err;
-> +				}
-
-It looks like this is too nested. Consider refactoring this code. For
-example, extract the function that you have c&p'ed.
-
-> +			}
-> +		}
->  		dev_dbg(dev, "unmmap\tpt 0x%09lx OK\n", buf->raddr);
-> -		spin_lock(&fl->lock);
-> -		list_del(&buf->node);
-> -		spin_unlock(&fl->lock);
->  		fastrpc_buf_free(buf);
->  	} else {
->  		dev_err(dev, "unmmap\tpt 0x%09lx ERROR\n", buf->raddr);
-> @@ -1960,6 +1986,7 @@ static int fastrpc_req_munmap(struct fastrpc_user *fl, char __user *argp)
->  	struct fastrpc_buf *buf = NULL, *iter, *b;
->  	struct fastrpc_req_munmap req;
->  	struct device *dev = fl->sctx->dev;
-> +	int err = 0;
-
-Why =0 is necessary?
-
->  
->  	if (copy_from_user(&req, argp, sizeof(req)))
->  		return -EFAULT;
-> @@ -1968,18 +1995,45 @@ static int fastrpc_req_munmap(struct fastrpc_user *fl, char __user *argp)
->  	list_for_each_entry_safe(iter, b, &fl->mmaps, node) {
->  		if ((iter->raddr == req.vaddrout) && (iter->size == req.size)) {
->  			buf = iter;
-> +			list_del(&buf->node);
->  			break;
->  		}
->  	}
->  	spin_unlock(&fl->lock);
->  
-> -	if (!buf) {
-> -		dev_err(dev, "mmap\t\tpt 0x%09llx [len 0x%08llx] not in list\n",
-> -			req.vaddrout, req.size);
-> -		return -EINVAL;
-> +	if (buf) {
-> +		err = fastrpc_req_munmap_impl(fl, buf);
-> +		if (err) {
-> +			spin_lock(&fl->lock);
-> +			list_add_tail(&buf->node, &fl->mmaps);
-> +			spin_unlock(&fl->lock);
-> +		}
-> +		return err;
->  	}
->  
-> -	return fastrpc_req_munmap_impl(fl, buf);
-> +	spin_lock(&fl->lock);
-> +	if (fl->spd) {
-> +		list_for_each_entry_safe(iter, b, &fl->spd->rmaps, node) {
-> +			if ((iter->raddr == req.vaddrout) && (iter->size == req.size)) {
-> +				buf = iter;
-> +				list_del(&buf->node);
-> +				break;
-> +			}
-> +		}
-> +	}
-> +	spin_unlock(&fl->lock);
-> +	if (buf) {
-> +		err = fastrpc_req_munmap_impl(fl, buf);
-> +		if (err) {
-> +			spin_lock(&fl->lock);
-> +			list_add_tail(&buf->node, &fl->spd->rmaps);
-> +			spin_unlock(&fl->lock);
-> +		}
-> +		return err;
-> +	}
-> +	dev_err(dev, "buffer not found addr 0x%09lx, len 0x%08llx\n",
-> +			req.vaddrout, req.size);
-
-Can this be triggered by the user? If so, it's dev_dbg() at best.
-
-> +	return -EINVAL;
->  }
->  
->  static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
-> @@ -2008,15 +2062,34 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
->  		return -EINVAL;
->  	}
->  
-> -	if (req.flags == ADSP_MMAP_REMOTE_HEAP_ADDR)
-> +	if (req.flags == ADSP_MMAP_REMOTE_HEAP_ADDR) {
-> +		if (!fl->spd || !fl->spd->ispdup) {
-> +			dev_err(dev, "remote heap request supported only for active static PD\n");
-> +			return -EINVAL;
-> +		}
->  		err = fastrpc_remote_heap_alloc(fl, dev, req.size, &buf);
-> -	else
-> +	} else {
->  		err = fastrpc_buf_alloc(fl, dev, req.size, &buf);
-> +	}
->  
->  	if (err) {
->  		dev_err(dev, "failed to allocate buffer\n");
->  		return err;
->  	}
-> +	buf->flag = req.flags;
-> +
-> +	/* Add memory to static PD pool, protection through hypervisor */
-> +	if ((req.flags == ADSP_MMAP_REMOTE_HEAP_ADDR) && fl->cctx->vmcount) {
-> +		u64 src_perms = BIT(QCOM_SCM_VMID_HLOS);
-> +
-> +		err = qcom_scm_assign_mem(buf->phys, (u64)buf->size,
-> +			&src_perms, fl->cctx->vmperms, fl->cctx->vmcount);
-> +		if (err) {
-> +			dev_err(fl->sctx->dev, "Failed to assign memory phys 0x%llx size 0x%llx err %d\n",
-> +					buf->phys, buf->size, err);
-
-misaligned
-
-> +			goto err_invoke;
-> +		}
-> +	}
->  
->  	req_msg.pgid = fl->tgid;
->  	req_msg.flags = req.flags;
-> @@ -2049,26 +2122,16 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
->  	/* let the client know the address to use */
->  	req.vaddrout = rsp_msg.vaddr;
->  
-> -	/* Add memory to static PD pool, protection thru hypervisor */
-> -	if (req.flags == ADSP_MMAP_REMOTE_HEAP_ADDR && fl->cctx->vmcount) {
-> -		u64 src_perms = BIT(QCOM_SCM_VMID_HLOS);
-> -
-> -		err = qcom_scm_assign_mem(buf->phys, (u64)buf->size,
-> -			&src_perms, fl->cctx->vmperms, fl->cctx->vmcount);
-> -		if (err) {
-> -			dev_err(fl->sctx->dev, "Failed to assign memory phys 0x%llx size 0x%llx err %d",
-> -					buf->phys, buf->size, err);
-> -			goto err_assign;
-> -		}
-> -	}
-> -
->  	spin_lock(&fl->lock);
-> -	list_add_tail(&buf->node, &fl->mmaps);
-> +	if (req.flags == ADSP_MMAP_REMOTE_HEAP_ADDR)
-> +		list_add_tail(&buf->node, &fl->spd->rmaps);
-> +	else
-> +		list_add_tail(&buf->node, &fl->mmaps);
->  	spin_unlock(&fl->lock);
->  
->  	if (copy_to_user((void __user *)argp, &req, sizeof(req))) {
->  		err = -EFAULT;
-> -		goto err_assign;
-> +		goto err_copy;
->  	}
->  
->  	dev_dbg(dev, "mmap\t\tpt 0x%09lx OK [len 0x%08llx]\n",
-> @@ -2076,8 +2139,12 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
->  
->  	return 0;
->  
-> -err_assign:
-> +err_copy:
-> +	spin_lock(&fl->lock);
-> +	list_del(&buf->node);
-> +	spin_unlock(&fl->lock);
->  	fastrpc_req_munmap_impl(fl, buf);
-> +	buf = NULL;
->  err_invoke:
->  	fastrpc_buf_free(buf);
->  
-> -- 
-> 2.43.0
-> 
+ drivers/tty/mxser.c                 |  50 ----------
+ drivers/tty/serial/8250/8250_pci.c  | 139 +++++++++++++++++++++++++++-
+ drivers/tty/serial/8250/8250_port.c |   8 ++
+ include/uapi/linux/serial_core.h    |   3 +
+ 4 files changed, 146 insertions(+), 54 deletions(-)
 
 -- 
-With best wishes
-Dmitry
+2.34.1
+
 
