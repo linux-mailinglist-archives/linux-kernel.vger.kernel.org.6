@@ -1,116 +1,141 @@
-Return-Path: <linux-kernel+bounces-206014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E70F190035E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:23:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 913F9900371
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBF1C1C22325
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:23:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D86328A348
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53921922D3;
-	Fri,  7 Jun 2024 12:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ga6RQ8cN"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B45186E56;
-	Fri,  7 Jun 2024 12:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C04194C65;
+	Fri,  7 Jun 2024 12:24:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A1319413F;
+	Fri,  7 Jun 2024 12:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717763025; cv=none; b=We/yBCmA758qJTJb86ZWX1+9dAaCvDFc7bQu4FnQ7q+GkoWROFlHvqT8zBfDGjj92ttonRMzZyggduAu6mRFKRShDkHxX+wwnrM/OR0B1RqyIrMlW6ggUkX5jp5dULAAC+cCimgJyPtYUKL9wPyy4peeAlbnv3AfkSwzKeAzsTo=
+	t=1717763055; cv=none; b=cH5BnirD5AMOAxNcAP2hW7ps5TZQFPhYTipkC4mf2zrisnwzAvOX1acDEbQNg6T2fcggWI0Qm6sjBdwqYiQyS8b8NHkBIPy/4gQcCLwIawTixKAS5JxvN3yywaQnxxZLBkX7+Z9GdZh0v0CJM1OaHUNZC8OT4fHEkuQTunZ9Ycg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717763025; c=relaxed/simple;
-	bh=KXaT31eEGTd1QHcbggRukrvi8jLZCohTrUf9ufQF3Io=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tbwUFFEmeelO7CVoyIvbZwBZrsNnIdZJzbhPye5O8u2VA3CCZEgZTknXLqxF7wLMvwBPm8bVow9+htmkys/tvGGrzDqT7t0seDRgJf71oM6cZdMgrRXfk7g+85sZkdeWb0OPLBVel2RlS9BvjBSGfx89jdXtj4VHRsJL78VBOUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ga6RQ8cN; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1717762993; x=1718367793; i=markus.elfring@web.de;
-	bh=xnbflH3Wg1z5GvtBOo9DAO3UHstyphUXTt3DOwd9w58=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ga6RQ8cNFDFq+7yR7zmw2wthREsvMJqzpr6gjIuF89FPKOhjFnFh7QcmoGqG3oOu
-	 DUgf5+V/BIppxa3tC82IY/bX4cOypmtzSuqlRFCI/T80NA2eQfzBgB+D04aqYOBnp
-	 WEsa1C02wS5Xk6I9YhxrP3euU2VJZriBlS0XktTuUMxl5T8gERXU0f4cSniVSFKmx
-	 sY5jFoCcC0FV0RoiLIR3ikXI/F7DQwG8HrvZzW/aeBQTo7hIW1st/HERWAtJbp7Gr
-	 czAfWj7K69QIKKCuMlx2rTONYLLZeJ7hwRfNakmeJEjwcKqkknXh6OXuIZqaoFmcI
-	 KKsxCUviv1cKxbocQQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MbTH3-1sr5AW1Zrl-00im4v; Fri, 07
- Jun 2024 14:23:13 +0200
-Message-ID: <5bd85dce-13a8-4558-a574-726626ecbc5c@web.de>
-Date: Fri, 7 Jun 2024 14:23:10 +0200
+	s=arc-20240116; t=1717763055; c=relaxed/simple;
+	bh=7HSjd2l1CjzZySTcEULEOBYUlMeZ80EC0xjCH/SAcJw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=upeQaUIO82EU6iuvN+vDNkwkq/Tl8/pDa37jGINEezQteKFnGaSX8M5N50tzOfOmMwJByFH4uuVUH7+qIxHdNEqN8Gb4fQtTKjM7LHsovHUO1caosAk+BAcyETYJeYD6ZW4pCaRUZkC4FvqbpDUENkV1j4cTTf1QOt8QOeAf678=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9DBF02F4;
+	Fri,  7 Jun 2024 05:24:36 -0700 (PDT)
+Received: from e116581.blr.arm.com (e116581.arm.com [10.162.42.8])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3FE6D3F64C;
+	Fri,  7 Jun 2024 05:24:07 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: shuah@kernel.org,
+	oleg@redhat.com,
+	stsp2@yandex.ru
+Cc: mingo@kernel.org,
+	tglx@linutronix.de,
+	mark.rutland@arm.com,
+	ryan.roberts@arm.com,
+	broonie@kernel.org,
+	suzuki.poulose@arm.com,
+	Anshuman.Khandual@arm.com,
+	DeepakKumar.Mishra@arm.com,
+	AneeshKumar.KizhakeVeetil@arm.com,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH 0/2] Add test to distinguish between thread's signal mask and ucontext_t
+Date: Fri,  7 Jun 2024 17:53:17 +0530
+Message-Id: <20240607122319.768640-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dmaengine: xilinx: xdma: Fix data synchronisation in
- xdma_channel_isr()
-To: Louis Chauvet <louis.chauvet@bootlin.com>, Lizhi Hou <lizhi.hou@amd.com>,
- Brian Xu <brian.xu@amd.com>, Raj Kumar Rampelli
- <raj.kumar.rampelli@amd.com>, Vinod Koul <vkoul@kernel.org>,
- Michal Simek <michal.simek@amd.com>, dmaengine@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20240607-xdma-fixes-v2-1-0282319ce345@bootlin.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240607-xdma-fixes-v2-1-0282319ce345@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Rq71xYcv7AE6RT6snxQ/7L88lxsSpvjLIAAaV4rGhD5tibDU584
- 1LWrBOqL29y9nPpWAn/JgJSLhNtW4eDFr0O1eQj218dpPrjTDHu9zGDTR8fez75LcXyUq4S
- u6fajeEzdtMNsaylUW4Jya1qLHXgNLoPOJpLUShnTucCcukiU7UIlkBhE1E1mK6yr3o1oBW
- COJ5G9AUsu+8e2I5vVSjw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:2ZuDCsg8jSw=;FL/XvPK9CgStER9vsTkVwtyJ/nA
- sGzNB0h8wq0C3Z379vJ4IsFOQ6Z52BqnhKu/D8C4APJTwcW8jAIAr6DoCoBBu33yCDSm7jykm
- tqQsbfJTHBiO5vHUnIM56Kq2ZJfx4lx//v4autdr9SBK4pCmNTEi02bzcgGnC6epqLFvJIovZ
- rzx9k+PW1ZgMhpibsYmg7eU8j+QianriZu2Jcfz/T8TH+2VPQRCUnc5Uvv3LAB1H7j/27VGqM
- uar1o8rNEfDk338wpx1eO/0FfZfZWGADkALr+gl2FXePQw4rRkrsmtTVHnAXMoNLRhc845MMe
- maY9hLrkVUjsMfwU9ClsrSFjNo+ZV2703nyVp5tSWiqlmi0y34Bb1c/70D1oVm7W9JWWSCgD8
- IZuYg51yJjb5OS+KUrx8BoV7+eTwW2Vfm3d89w84CcNOMkEWBQkWXGuUNDmrrQ/j/pBpe5W2j
- zuTO3YL8T+LMV9TZwIFUve+TRcpgLIa4La+/jxYm0VgMBrKCuyOwuUU+gNwrW6/wt5N5W8TAH
- elCNMyDMXio49MDI3rooDULUgiwkWPHuYKpKwmXiMRUYZ1U3wRmby0xLfxMdsnH5oniAlZ33o
- HZuLxwh6jgNcjbuIiJRFvE1xO4SF0z1+3dvHquzwPt+sXpE5CSnOej3cIgZsOquNmxImYgFqT
- 1cl08dS3M8VOmYzdIk6Mjwn7JQtWapFOFSrHu8oO3Ykhnc/dEaCsO6vlMYZtOj/EPy5mr8PqV
- cX7FUCNBgVMpNzCHbFOiiR2mKpcSaFD+YqlB7OQEm+cb9B9X/NACa4mhIuqRFEPk81/1COZWg
- FLmOoSJ0QXNA/wl/oMtosV82mSus3qSny6vQhA2HJ5AUA=
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> +++ b/drivers/dma/xilinx/xdma.c
-> @@ -885,11 +885,11 @@ static irqreturn_t xdma_channel_isr(int irq, void =
-*dev_id)
->  	u32 st;
->  	bool repeat_tx;
->
-> +	spin_lock(&xchan->vchan.lock);
-> +
->  	if (xchan->stop_requested)
->  		complete(&xchan->last_interrupt);
-=E2=80=A6
+This patch series is motivated by the following observation:
 
-Can any lock scope adjustments matter also for another variable definition=
-?
-https://elixir.bootlin.com/linux/v6.10-rc2/source/drivers/dma/xilinx/xdma.=
-c#L873
+Raise a signal, jump to signal handler. The ucontext_t structure dumped
+by kernel to userspace has a uc_sigmask field having the mask of blocked
+signals. If you run a fresh minimalistic program doing this, this field
+is empty, even if you block some signals while registering the handler
+with sigaction().
 
-	struct xdma_device *xdev =3D xchan->xdev_hdl;
+Here is what the man-pages have to say:
 
+sigaction(2): "sa_mask specifies a mask of signals which should be blocked
+(i.e., added to the signal mask of the thread in which the signal handler
+is invoked) during execution of the signal handler. In addition, the
+signal which triggered the handler will be blocked, unless the SA_NODEFER
+flag is used."
 
-Regards,
-Markus
+signal(7): Under "Execution of signal handlers", (1.3) implies:
+
+"The thread's current signal mask is accessible via the ucontext_t
+object that is pointed to by the third argument of the signal handler."
+
+But, (1.4) states:
+
+"Any signals specified in act->sa_mask when registering the handler with
+sigprocmask(2) are added to the thread's signal mask.  The signal being
+delivered is also added to the signal mask, unless SA_NODEFER was
+specified when registering the handler.  These signals are thus blocked
+while the handler executes."
+
+There clearly is no distinction being made in the man pages between
+"Thread's signal mask" and ucontext_t; this logically should imply
+that a signal blocked by populating struct sigaction should be visible
+in ucontext_t.
+
+Here is what the kernel code does (for Aarch64):
+
+do_signal() -> handle_signal() -> sigmask_to_save(), which returns
+&current->blocked, is passed to setup_rt_frame() -> setup_sigframe() ->
+__copy_to_user(). Hence, &current->blocked is copied to ucontext_t
+exposed to userspace. Returning back to handle_signal(),
+signal_setup_done() -> signal_delivered() -> sigorsets() and
+set_current_blocked() are responsible for using information from
+struct ksignal ksig, which was populated through the sigaction()
+system call in kernel/signal.c:
+copy_from_user(&new_sa.sa, act, sizeof(new_sa.sa)),
+to update &current->blocked; hence, the set of blocked signals for the
+current thread is updated AFTER the kernel dumps ucontext_t to
+userspace.
+
+Assuming that the above is indeed the intended behaviour, because it
+semantically makes sense, since the signals blocked using sigaction()
+remain blocked only till the execution of the handler, and not in the
+context present before jumping to the handler (but nothing can be
+confirmed from the man-pages), the series introduces a test for
+mangling with uc_sigmask. I will send a separate series to fix the
+man-pages.
+
+The proposed selftest has been tested out on Aarch32, Aarch64 and x86_64.
+
+Dev Jain (2):
+  selftests: Rename sigaltstack to generic signal
+  selftests: Add a test mangling with uc_sigmask
+
+ tools/testing/selftests/Makefile              |   2 +-
+ .../{sigaltstack => signal}/.gitignore        |   3 +-
+ .../{sigaltstack => signal}/Makefile          |   3 +-
+ .../current_stack_pointer.h                   |   0
+ .../selftests/signal/mangle_uc_sigmask.c      | 141 ++++++++++++++++++
+ .../sas.c => signal/sigaltstack.c}            |   0
+ 6 files changed, 146 insertions(+), 3 deletions(-)
+ rename tools/testing/selftests/{sigaltstack => signal}/.gitignore (57%)
+ rename tools/testing/selftests/{sigaltstack => signal}/Makefile (53%)
+ rename tools/testing/selftests/{sigaltstack => signal}/current_stack_pointer.h (100%)
+ create mode 100644 tools/testing/selftests/signal/mangle_uc_sigmask.c
+ rename tools/testing/selftests/{sigaltstack/sas.c => signal/sigaltstack.c} (100%)
+
+-- 
+2.34.1
+
 
