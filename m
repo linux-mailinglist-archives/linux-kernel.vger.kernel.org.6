@@ -1,105 +1,155 @@
-Return-Path: <linux-kernel+bounces-205592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B60D28FFDEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:19:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A62D68FFDF0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:21:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B334D1C23370
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:19:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5958E1F23F92
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125C315B0E1;
-	Fri,  7 Jun 2024 08:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A14315ADAC;
+	Fri,  7 Jun 2024 08:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="V+hZ8qVS"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VX0RgseQ"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE9C15381F;
-	Fri,  7 Jun 2024 08:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9DE1154441
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 08:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717748384; cv=none; b=HVfDJrUvxpyQZlhQEYJTxsKCVE5K7chdbqSmxT4qwW7TyssmA9Sr5km6xYaWTJw5kxHUpsiMj5m2PoXWVF/ia8TAsFr9AcItZa4egcmpF/sZKnPKTM5Uw48P2MQYSO4XIkf9qJSA+aB2yEgaiBC6M5rQN2XNOrdv2szZx/Boj5I=
+	t=1717748463; cv=none; b=oMftKfXYJu4SZEl8MHCGYQV1ORgwJBFTCcTTAP/2d/STPy9isqsCEzcq2jqDm8WtVfAXwWSC8XqTB5m3ANte57YNPgcubrZ08W1rYJN+cVgBf505CTzTAyaTB1Sh4ZqfBSPNFk4ltqURCkNTvsb+422UIN9sqqIcSvRNu4l3j/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717748384; c=relaxed/simple;
-	bh=8ylq6lTmAICvJ78ovAeFFxwYjpztjGrZBRXCN4JMfuw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JgN3eTQfLcnxJVrcmpvyJLO52XC9zVEfHjCDwVeDayXoNr7Qlp+SiC1vEwQRY9Ih10SYj6iSbj/Bo1ciO4fE5HrTiRTb83oSum39yQPX+NoSvijMnv9/m6ywsiBl49uS1GSJ3WPr/pqWuWuH0fgEIweemuV8sD96z/RbyyXLp0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=V+hZ8qVS; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 1EC07A041E;
-	Fri,  7 Jun 2024 10:19:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=wg6qi7CwlG9mPI6UdwwMmwNTJpAiHxal7cH+O7K8jiE=; b=
-	V+hZ8qVSziVHanXhxnf5+l5T8lhFnPf3WbTtMhh9mIwqxde3ceKpv8MK1K464NGC
-	dgQlb3gp1+EEH1B7w1tqVS2HX5KlfRPniKxD9pOJWYtSfE0VfPJnbBOydx7Mwmz0
-	kXQV30RTeh2T3WiRkgwY/EH+2unCA5bZF7yYLJOHyT3KLEMhBGA/cS44mwp+gLIr
-	OpxTXh8ZpGzZJFv9KPfFi9FQE0+dYjnIbch2INK35TvXITGLKYk7sO6IRFNmmSfv
-	SXe0BCmV5mlO/Ljeg8k3U/4IOASRVAi98NnVO0cna3FlabHT9kZmBlGXw+LSM3cU
-	kgvbYs5fhMx3ANzBDFYQa/FmsNeV9hgHo/xQUHSmtIPddNVJBs3WNP0Yze1Zd7lF
-	Nqs9TUCDXCi2zdXYAiWn6z8Eh9Xffg6if5ItsQAdu5i4WmGvTwYCN6ydcGLP08KB
-	8ffNCf3d202CNMQUUpDXfw2HOdonumwbtZ1bX7xdVfPep0BJAG8BriuttgXmW9I2
-	y9MsalHyN/aT6Z/mm0XACJu1gBjVzQFtIr2CV2NrKI0Twv2Mpl5NXx48nJW5t4ef
-	zFPz6FbooLpQTgKhbyGA5XgJNRbEvpErbndO7ML2iB1yTz3mTH3AoZiEbJJ9iRA8
-	BozzBl0+EEVyMvn9YHzoamYq4dOgbaxxV03oT2dpJ4A=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: <imx@lists.linux.dev>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, Wei Fang
-	<wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, Clark Wang
-	<xiaoning.wang@nxp.com>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>
-Subject: [PATCH v2] net: fec: Add ECR bit macros, fix FEC_ECR_EN1588 being cleared on link-down
-Date: Fri, 7 Jun 2024 10:18:55 +0200
-Message-ID: <20240607081855.132741-1-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717748463; c=relaxed/simple;
+	bh=7YKnOk6Dd9DTUtg8MNU0MccPJPY3Th2j2qHyK0v5T5c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r2xeYhVJTZKI2gtqJFI1DFBsG4pGA3z56H5cJ8VRMPSrDKITyL0W6DBzSByC7lig2LBkYZGakl/pYf62QBjHCDynTi7FAkvgiMdCzPNT+LoOI+8LCcVVoUZZaB0YG3p9uY3vNd6InrTagZ+IsYQ56Md5UMOMmqjMKe/w0h0v5U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VX0RgseQ; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3d2062325fbso1114656b6e.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 01:21:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717748461; x=1718353261; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dIRi7p8AxnKST2wIWmYIffowe3bT/Gjz3uWH4Z5QtKA=;
+        b=VX0RgseQAi1xiUlqFonr+62XGZuYzHb0G5TGbcRWTD8YgOS8POfS8e338u7iPlespw
+         IviUfZoyDp9VstniBF47PBDOZcURhn6VlFt/fDwRzJjxYHqw5eVNpRNVH0UFFw5b9Eo+
+         zOk8aYIAkxtz5FMx/UHb/kF6Ot6RC6bmMYDWAqhj5sXtImYHfMaaMo+Jy6cNcrY4XHQN
+         UknhmF0ukPZRP/HibSRXvFuYjLvoCurtUwSc5m8PeZaQ0D5dIM9Knh1U9kCSGgXk7Qnv
+         wkzg5EFUqNTYKdMupkWhuMoSN2/vd+y6lnt2Bx8uCmD9XOEyPLsGt7iBc2ScceesvDA2
+         ZFHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717748461; x=1718353261;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dIRi7p8AxnKST2wIWmYIffowe3bT/Gjz3uWH4Z5QtKA=;
+        b=VJAoaB7fEPwuRlT5J/hihdoegqixPbETKOJmQdQq6rgnLJIRd8xdTwuUD2ogQNVGMX
+         rNf2rl88i7g9MuVDEf694npKQPKtdWABOuIq89fC+81ap8Y/P7LoKM2eF4BEbqY6lW50
+         7lyzDnkUAGQ9bhRiMguF2mBLn5H9lzdej6mTxDfftLiFghjqvzyF1DBOJrsP+29V5qnv
+         nR94eiiwkEVpxFOhUZgCo1LaupcKbI2dWhkQ3RXECHmuq6KD2P226QEkQlm5FXKE8E/O
+         yNyEoHmozH1UxmH1H6kWJhG8qyT8551JJIiOlGjNu1+QbCR1BJlzi51OQ4IoQnkfHQ7u
+         +6xA==
+X-Forwarded-Encrypted: i=1; AJvYcCVruXuACO96AA9QNcyyh0Z555YcambrTFhVybqAczRm4Sfy8zbSPxZQLnPtTes+PseRwt0YNQirJrRt0tifhSwN96K5rWfvxYKTNFry
+X-Gm-Message-State: AOJu0YxeLWyWiT57rOKBjbKUDF3CMSL2gAJTS/hIRDw/M8WwcphrLCwp
+	UVi0qPTKaPSR212qbjhaG7ZstiumY2z0/mRBBukD/XHKWGBIPGi4nxIFy14ayvdH+bFgM0mMWXY
+	TYPHZlP1ukXDzeoXJ0IDn9zPrEIY=
+X-Google-Smtp-Source: AGHT+IF5gwhB1qXYVcJrC0tYeUuMxsp4wRAa8PowppUPXs9wYHraxiaHKK+B1vjvBRy620QwZtcjraXzUsLQzwNJrg4=
+X-Received: by 2002:a05:6870:32d0:b0:23d:a1d0:7334 with SMTP id
+ 586e51a60fabf-254644db892mr1912516fac.17.1717748460840; Fri, 07 Jun 2024
+ 01:21:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240606070645.3295-1-xuewen.yan@unisoc.com> <0763f870-e30c-46cf-aefa-b879f2ebdba4@arm.com>
+In-Reply-To: <0763f870-e30c-46cf-aefa-b879f2ebdba4@arm.com>
+From: Xuewen Yan <xuewen.yan94@gmail.com>
+Date: Fri, 7 Jun 2024 16:20:49 +0800
+Message-ID: <CAB8ipk_TjqoNetBZ7dbjRxuBHAP=nz9=ZNomnjnaCEikLQSK2A@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: Prevent cpu_busy_time from exceeding actual_cpu_capacity
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, vincent.guittot@linaro.org, mingo@redhat.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, 
+	vincent.donnefort@arm.com, qyousef@layalina.io, ke.wang@unisoc.com, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1717748379;VERSION=7972;MC=3391927748;ID=131151;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2945A12957627061
+Content-Transfer-Encoding: quoted-printable
 
-FEC_ECR_EN1588 bit gets cleared after MAC reset in `fec_stop()`, which
-makes all 1588 functionality shut down on link-down. However, some
-functionality needs to be retained (e.g. PPS) even without link.
+Hi Dietmar
 
-Signed-off-by: "Csókás, Bence" <csokas.bence@prolan.hu>
----
- drivers/net/ethernet/freescale/fec_main.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+On Fri, Jun 7, 2024 at 3:19=E2=80=AFPM Dietmar Eggemann
+<dietmar.eggemann@arm.com> wrote:
+>
+> On 06/06/2024 09:06, Xuewen Yan wrote:
+> > Because the effective_cpu_util() would return a util which
+> > maybe bigger than the actual_cpu_capacity, this could cause
+> > the pd_busy_time calculation errors.
+>
+> Doesn't return effective_cpu_util() either scale or min(scale, util)
+> with scale =3D arch_scale_cpu_capacity(cpu)? So the util sum over the PD
+> cannot exceed eenv->cpu_cap?
 
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index 881ece735dcf..fb19295529a2 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -1361,6 +1361,12 @@ fec_stop(struct net_device *ndev)
- 		writel(FEC_ECR_ETHEREN, fep->hwp + FEC_ECNTRL);
- 		writel(rmii_mode, fep->hwp + FEC_R_CNTRL);
- 	}
-+
-+	if (fep->bufdesc_ex) {
-+		val = readl(fep->hwp + FEC_ECNTRL);
-+		val |= FEC_ECR_EN1588;
-+		writel(val, fep->hwp + FEC_ECNTRL);
-+	}
- }
- 
- static void
--- 
-2.34.1
+In effective_cpu_util, the scale =3D arch_scale_cpu_capacity(cpu);
+ Although there is the clamp of eenv->pd_cap, but let us consider the
+following simple scenario:
+The pd cpus are 4-7, and the arch_scale_capacity is 1024, and because
+of cpufreq-limit,
+the cpu_actual_cap =3D 512. Then the eenv->cpu_cap =3D 512, the eenv->pd_ca=
+p =3D 2048;
+effective_cpu_util(4) =3D 1024;
+effective_cpu_util(5) =3D 1024;
+effective_cpu_util(6) =3D 256;
+effective_cpu_util(7) =3D 0;
 
+Without this patch, the eenv->pd_busy_time =3D 2048, because the clamp
+of eenv->pd_cap.
+However, indeed, the cpu4 and cpu5's util would not exceed the actual_cap(5=
+12),
+so the cpu_util4/5 =3D 512, instead of 1024.
+And with this patch, the eenv->pd_busy_time =3D 512+512+256 =3D 1280.
+And the 1280 should be more reasonable.
 
+BR
+--
+xuewen
+
+> Looks like this was the case with 3e8c6c9aac42 already.
+>
+> > So clamp the cpu_busy_time with the eenv->cpu_cap, which is
+> > the actual_cpu_capacity.
+> >
+> > Fixes: 3e8c6c9aac42 ("sched/fair: Remove task_util from effective utili=
+zation in feec()")
+> > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+> > ---
+> >  kernel/sched/fair.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index 8a5b1ae0aa55..8939d725023a 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -7870,7 +7870,9 @@ static inline void eenv_pd_busy_time(struct energ=
+y_env *eenv,
+> >       for_each_cpu(cpu, pd_cpus) {
+> >               unsigned long util =3D cpu_util(cpu, p, -1, 0);
+> >
+> > -             busy_time +=3D effective_cpu_util(cpu, util, NULL, NULL);
+> > +             util =3D effective_cpu_util(cpu, util, NULL, NULL);
+> > +             util =3D min(eenv->cpu_cap, util);
+> > +             busy_time +=3D util;
+> >       }
+> >
+> >       eenv->pd_busy_time =3D min(eenv->pd_cap, busy_time);
+>
 
