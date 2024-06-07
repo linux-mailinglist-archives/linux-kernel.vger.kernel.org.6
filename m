@@ -1,103 +1,221 @@
-Return-Path: <linux-kernel+bounces-206799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BCAF900DE8
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:09:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3386C900DE9
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:09:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31BD51C2131F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:09:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D795B22C2A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C4C15530B;
-	Fri,  7 Jun 2024 22:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B097115530B;
+	Fri,  7 Jun 2024 22:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PWiKj5BL"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="feWgTppC"
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21FE13E05F;
-	Fri,  7 Jun 2024 22:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3787D13E05F
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 22:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717798170; cv=none; b=Q23WP9ku/zGe3raSdWjWrkGmSTVIfe7T9lBjaRkek9dVd/C11R8vs8qB4moNSintgusXyNf8nr4ltvA9h2OmOZcjsSKAgS5uxmwQjTwQiakvrDqhEQSj1oFPtRw1HTKD0Kh5VrMpQ+1bH/2NU53v5hr3IjyaDOBb9qlJ9UdOZEM=
+	t=1717798181; cv=none; b=C6PKAfSs4VjhTRMNLTpajVo2+0bwHpbdMDRoj5rv/7C5huY6mu63PFX8rWztAPVpe6QAUEyQIZ/UoZDtYqOrwRjKZERxTmZ3OBiecteU399V+3QtuKA7ofMFLSwnoZLDg0xbB0lmvVn4kXsmEGHFkP0nfTl8MObGa6BXQpi9+Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717798170; c=relaxed/simple;
-	bh=NaIqsQV5khhaGBAWLoEU5vUGfHwgW3Ssi9LjXCgBnvE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FtpVHnW1iI6lx/91M34YsAIBQ6mPZcy05YQkNdSVFrFiX6Vits1I0rLW0MmtI+wABikozw2ZQURpgpVPzWMvBuLOzVN/FJ1IIu7KEbqCR0YaaARHUB01aCOQN0DtyjoA5NouSXa2nCLFWIcQa9ZNaHEAjdy2d6YZoarVUBk1CRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PWiKj5BL; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1717798181; c=relaxed/simple;
+	bh=diwB0l0UAVo8+Gt138de5hrciVGS337EObgtm0FDCE8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RZkbGJetVnNgoTC+gTbTveZCwBg7lkN4EX3SgirWQBKo5QZISrshILAtn+UwQX8T6L+QQuWwpMLUG4QtC2YkwOiKHvXAZXs2Z6QvYbwMSxgyEXM3VecxSAiLNMBuwn7YwB7Ii8aYmR8X55zkCQ4y8KnMW3pzEgMEqaKQs1XWAPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=feWgTppC; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70413de08c7so806731b3a.0;
-        Fri, 07 Jun 2024 15:09:28 -0700 (PDT)
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-4eb007a9f6fso788350e0c.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 15:09:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717798168; x=1718402968; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ssaf2eFhFezya16VHLNge+5Vjv9cJhIjY2z41FaXrm8=;
-        b=PWiKj5BLCjPDaTQV2f35x2mylEyoj050LlzG8C436/27hkfvdzqZiki9hp2FvqgCJH
-         LREVgl2Sqc/NL4MlwCBHjoLvhPZUHzrIfCXVeLI29eTq+TFW1LxtbkZxMLtsAs7LguYS
-         Skqw+9eW2p0BP6CpnH4lHIOt/+cPLFXXBKP8VpQl1kAJelQvQE+gY8wjrx5nmwE/OtBM
-         8vKBE9Jw2AycQn8LjkdcPS55nYEorpPeqbhVzTrFehv52S0Wf6Kqjm29xwt0wx7WNtmg
-         wqgJeXpthmBFOjhj+Ff0U1aIhkXq5qal6hGaGmuFWK/QWjbMFgGv5vjC81iDTjTR1o62
-         DrDA==
+        d=gmail.com; s=20230601; t=1717798179; x=1718402979; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B3UbizO+Gka3HudQXSONmDJzYnn656T2JMJbmkmqGFQ=;
+        b=feWgTppCrmtQ7/QLzS2ayf3JFY6XFQmEovhm0zY33LbcfQ18iNnChcpfkloGCGfTwu
+         7184U3qgH8y11Xp0lQI3I1yI/2M4QiOIvvwJP+7SaLP9qNFKl6qR0dV/NWg5a8EfaDCW
+         Ih5ERDy0BiDMD97L6ywrCysefpN0Sxnca7TERfGbDlB5hqsCJQYX9pIyvku7MlUskAta
+         2RNFpj6IVOWKHGVFiaKAL/XUk+LtannJbe+6leeNpsm3gV/RNc9vO9gTJRpheZKJXzCN
+         pa1SwZRnVzLH1fnT1gDVhm764ssx8XRMUlJ0I11k8YMfX6elW0K7UGPfTpmTBeX7DEM0
+         zk6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717798168; x=1718402968;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1717798179; x=1718402979;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ssaf2eFhFezya16VHLNge+5Vjv9cJhIjY2z41FaXrm8=;
-        b=fEV8b5BAu8q74ZHlg1BJKs/jjqDhstUFbDbjUx9ID4xx2fLRrUU5B9D0k906TzFZIH
-         xhaS3JFKh52SRPz0nCYBGLuqnOPiLN0l3qRrSo88Rlf2vPYnBR0NZMEnYScF7v3ukZN/
-         fCEkY4BzSEg8hkO6Xvg+3frWWnD637dqvi/rxgelFu7wUjOdBV8Q6sP5tkRmn8FVXYeS
-         0Z9KAxUNrl3w5rcX4BtKU8gm/f/4kalWqzueMI6qsfkf8nRO1H3S5T6HnrM7qjJf45ZN
-         ggSYQz/qUs+pFUaeLdzrnAWprTVxLPynFG4hvsPc6m8J3OaMdejxYCwrRaMp0wvSzdFr
-         7wIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWiwm1olzEY5KF5j48H7dur2eHYnp8yppm/ecswRGfjTEXG+TGeViG2Nu+vb2ioJM3izIwrjeidOM/Ui00MAO3WMiwVOOR8bRSww+TKz4YJyQ7FDoLw49ejR1KDmlu4Nl3zsySzHJap8i0=
-X-Gm-Message-State: AOJu0Ywj0QflHWf3ak3WyG9eddmDWrwInNmH8xRZeCxUyAfxE8dj4pl9
-	kBvMw56c2HEzRrpiOUyLtCesKPLuLTMubIMA4NUJb05D9HswXfdL
-X-Google-Smtp-Source: AGHT+IE3D60iD846Qs1strsLAPZ50t9iiUgvEGK6jJUBN+88yr9Fq9dUKQP9UH3BaX3V6imKC0rkgA==
-X-Received: by 2002:a05:6a00:10c3:b0:703:fe0a:c230 with SMTP id d2e1a72fcca58-7040c72e7e4mr4247472b3a.27.1717798168106;
-        Fri, 07 Jun 2024 15:09:28 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70419a36c16sm1100270b3a.175.2024.06.07.15.09.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 15:09:26 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 7 Jun 2024 15:09:25 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Tim Harvey <tharvey@gateworks.com>, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] hwmon: (gsc-hwmon) use
- device_for_each_child_node_scoped()
-Message-ID: <8855b1a5-f1ef-4bb8-af66-2efec060ba87@roeck-us.net>
-References: <20240404-hwmon_device_for_each_child_node_scoped-v1-0-53997abde43c@gmail.com>
- <20240404-hwmon_device_for_each_child_node_scoped-v1-2-53997abde43c@gmail.com>
+        bh=B3UbizO+Gka3HudQXSONmDJzYnn656T2JMJbmkmqGFQ=;
+        b=EgjFC3yeksdKshBpA7oplSvfmLROiHW/6ii8tIv2cwcl81b9VfhJvQpuSGKSUPIKzC
+         PjhRigFVTGn1F3OPvimvABh8E6f43T0bNrtASrInfU+wuwoNaozlSAfwq2zt7ZJabgN6
+         Klf3bA7wONmzaul76pOq7WEcU+mnhjxjIsf/ppb37DsrADLJvB5+huNbrLiK4W3waoIM
+         RkAJN/oinQE8SZq5BLfYPhZhyw/zzR1a2sSbzpxZFarC5sd8BxQdgnSmMhbJaZc1nRJ2
+         9xX1+Q/Dw739lEIUEB+RX1hnpV3m/XtW3RmQtH0SlULYQX8+UqPBji3Fgt05iDMI9q5b
+         heTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWYFSmFl4+z8cBSwerzfKflJ4W4Mz+I17VjY+wroIjOZRK3jExwlgy2RFZiou+23FaSErrUNri9wj4R9t9hNVGPn0m2ywcYqUjAlxjC
+X-Gm-Message-State: AOJu0YykAFu+YggonP33bzDX5d6VAeoJDnYbepGGY9cre94FOazxgFZU
+	5q0fE6WlpcAACrV+T5QKT4oiTZy1V/RME/6GdCSpFz522m1QV2pFX4pSuaMH6zFGZNiqt8AgS/r
+	d83nBI3IptWF/uV04NX2pSWseK9I=
+X-Google-Smtp-Source: AGHT+IFKrtWS09VgM/qMfXBfJEQoPRoU+YRBIX3AA7tPQagWmM7DHPio9ht6ifiOJyc2Nl1EJMrnq9cktV8Y3B5JB3c=
+X-Received: by 2002:ac5:c5ab:0:b0:4d8:4a7f:c166 with SMTP id
+ 71dfb90a1353d-4eb562b291dmr3904888e0c.12.1717798178947; Fri, 07 Jun 2024
+ 15:09:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240404-hwmon_device_for_each_child_node_scoped-v1-2-53997abde43c@gmail.com>
+References: <20240606184818.1566920-1-yosryahmed@google.com>
+ <84d78362-e75c-40c8-b6c2-56d5d5292aa7@redhat.com> <CAJD7tkZH9C21nx75W9Erun=oUvmad5ujmDyGYWRRHEwPCCizUw@mail.gmail.com>
+ <7507d075-9f4d-4a9b-836c-1fbb2fbd2257@redhat.com> <CAGsJ_4w_dEyLsPhdJCtRMReXDD116p+U979Yk-8EBu=zx5FWgQ@mail.gmail.com>
+ <CAJD7tkYnZCvwUSTAx-N-08b+mVF4yHEdDTbp9oqYrVQXX8M1Cw@mail.gmail.com>
+ <CAGsJ_4wAYbofjg99iEr7cEAptH9Ve9WcrSXho8A-Sw54vb8Msw@mail.gmail.com>
+ <9374758d-9f81-4e4f-8405-1f972234173e@redhat.com> <CAJD7tkZBzSB_6pAZP0n0nq+W=J1XKQGFzZZLzPmSH0apwaqTNg@mail.gmail.com>
+ <424c6430-e40d-4a60-8297-438fc33056c9@redhat.com> <CAJD7tkbaX-8OQm0JispxWWbuzX+PJrH=HN6yqEjqL2yxRcu=Aw@mail.gmail.com>
+In-Reply-To: <CAJD7tkbaX-8OQm0JispxWWbuzX+PJrH=HN6yqEjqL2yxRcu=Aw@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Sat, 8 Jun 2024 10:09:27 +1200
+Message-ID: <CAGsJ_4zu1_oMsskrndfpk0gaaHGDrTRnMKkQxF05jwCabxtfDQ@mail.gmail.com>
+Subject: Re: [PATCH] mm: zswap: add VM_BUG_ON() if large folio swapin is attempted
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: David Hildenbrand <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chris Li <chrisl@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 04, 2024 at 01:13:28PM +0200, Javier Carrasco wrote:
-> Switch to the _scoped() version introduced in commit 365130fd47af
-> ("device property: Introduce device_for_each_child_node_scoped()")
-> to remove the need for manual calling of fwnode_handle_put() in the
-> paths where the code exits the loop early.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+On Sat, Jun 8, 2024 at 6:58=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com> =
+wrote:
+>
+> On Fri, Jun 7, 2024 at 11:52=E2=80=AFAM David Hildenbrand <david@redhat.c=
+om> wrote:
+> >
+> > >> I have no strong opinion on this one, but likely a VM_WARN_ON would =
+also
+> > >> be sufficient to find such issues early during testing. No need to c=
+rash
+> > >> the machine.
+> > >
+> > > I thought VM_BUG_ON() was less frowned-upon than BUG_ON(), but after
+> > > some digging I found your patches to checkpatch and Linus clearly
+> > > stating that it isn't.
+> >
+> > :) yes.
+> >
+> > VM_BUG_ON is not particularly helpful IMHO. If you want something to be
+> > found early during testing, VM_WARN_ON is good enough.
+> >
+> > Ever since Fedora stopped enabling CONFIG_DEBUG_VM, VM_* friends are
+> > primarily reported during early/development testing only. But maybe som=
+e
+> > distro out there still sets it.
+> >
+> > >
+> > > How about something like the following (untested), it is the minimal
+> > > recovery we can do but should work for a lot of cases, and does
+> > > nothing beyond a warning if we can swapin the large folio from disk:
+> > >
+> > > diff --git a/mm/page_io.c b/mm/page_io.c
+> > > index f1a9cfab6e748..8f441dd8e109f 100644
+> > > --- a/mm/page_io.c
+> > > +++ b/mm/page_io.c
+> > > @@ -517,7 +517,6 @@ void swap_read_folio(struct folio *folio, struct
+> > > swap_iocb **plug)
+> > >          delayacct_swapin_start();
+> > >
+> > >          if (zswap_load(folio)) {
+> > > -               folio_mark_uptodate(folio);
+> > >                  folio_unlock(folio);
+> > >          } else if (data_race(sis->flags & SWP_FS_OPS)) {
+> > >                  swap_read_folio_fs(folio, plug);
+> > > diff --git a/mm/zswap.c b/mm/zswap.c
+> > > index 6007252429bb2..cc04db6bb217e 100644
+> > > --- a/mm/zswap.c
+> > > +++ b/mm/zswap.c
+> > > @@ -1557,6 +1557,22 @@ bool zswap_load(struct folio *folio)
+> > >
+> > >          VM_WARN_ON_ONCE(!folio_test_locked(folio));
+> > >
+> > > +       /*
+> > > +        * Large folios should not be swapped in while zswap is being=
+ used, as
+> > > +        * they are not properly handled.
+> > > +        *
+> > > +        * If any of the subpages are in zswap, reading from disk wou=
+ld result
+> > > +        * in data corruption, so return true without marking the fol=
+io uptodate
+> > > +        * so that an IO error is emitted (e.g. do_swap_page() will s=
+igfault).
+> > > +        *
+> > > +        * Otherwise, return false and read the folio from disk.
+> > > +        */
+> > > +       if (WARN_ON_ONCE(folio_test_large(folio))) {
+> > > +               if (xa_find(tree, &offset, offset +
+> > > folio_nr_pages(folio) - 1, 0))
+> > > +                       return true;
+> > > +               return false;
+> > > +       }
+> > > +
+> > >          /*
+> > >           * When reading into the swapcache, invalidate our entry. Th=
+e
+> > >           * swapcache can be the authoritative owner of the page and
+> > > @@ -1593,7 +1609,7 @@ bool zswap_load(struct folio *folio)
+> > >                  zswap_entry_free(entry);
+> > >                  folio_mark_dirty(folio);
+> > >          }
+> > > -
+> > > +       folio_mark_uptodate(folio);
+> > >          return true;
+> > >   }
+> > >
+> > > One problem is that even if zswap was never enabled, the warning will
+> > > be emitted just if CONFIG_ZSWAP is on. Perhaps we need a variable or
+> > > static key if zswap was "ever" enabled.
+> >
+> > We should use WARN_ON_ONCE() only for things that cannot happen. So if
+> > there are cases where this could be triggered today, it would be
+> > problematic -- especially if it can be triggered from unprivileged user
+> > space. But if we're concerned of other code messing up our invariant in
+> > the future (e.g., enabling large folios without taking proper care abou=
+t
+> > zswap etc), we're good to add it.
+>
+> Right now I can't see any paths allocating large folios for swapin, so
+> I think it cannot happen. Once someone tries adding it, the warning
+> will fire if CONFIG_ZSWAP is used, even if zswap is disabled.
+>
+> At this point we will have several options:
+> - Make large folios swapin depend on !CONFIG_ZSWAP for now.
 
-Applied.
+It appears quite problematic. We lack control over whether the kernel build
+will enable CONFIG_ZSWAP, particularly when aiming for a common
+defconfig across all platforms to streamline configurations. For instance,
+in the case of ARM, this was once a significant goal.
 
-Guenter
+Simply trigger a single WARN or BUG if an attempt is made to load
+large folios in zswap_load, while ensuring that zswap_is_enabled()
+remains unaffected. In the mainline code, large folio swap-in support
+is absent, so this warning is intended for debugging purposes and
+targets a very small audience=E2=80=94perhaps fewer than five individuals
+worldwide. Real users won=E2=80=99t encounter this warning, as it remains
+hidden from their view.
+
+> - Keep track if zswap was ever enabled and make the warning
+> conditional on it. We should also always fallback to order-0 if zswap
+> was ever enabled.
+> - Properly handle large folio swapin with zswap.
+>
+> Does this sound reasonable to you?
+
+Thanks
+Barry
 
