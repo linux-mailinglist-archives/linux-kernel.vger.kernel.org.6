@@ -1,76 +1,144 @@
-Return-Path: <linux-kernel+bounces-205868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB22900197
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:05:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D0290019A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:08:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8EBF288633
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:05:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E9E81C21D71
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095FB186E55;
-	Fri,  7 Jun 2024 11:05:17 +0000 (UTC)
-Received: from mail78-36.sinamail.sina.com.cn (mail78-36.sinamail.sina.com.cn [219.142.78.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB09187322;
+	Fri,  7 Jun 2024 11:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VDEkQSEF"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606C715E5A3
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B433C15DBA3;
+	Fri,  7 Jun 2024 11:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717758316; cv=none; b=GlCgP4lpMkFok2zsN0duMINgKt465igFt9XFRvkiaVf7xTDdmQ0U/sMhnWQIFPM6pOnwQOv0NR4tpRoSqR3LCVzq+8WmzXdxSyxwZo2lqM3Ez1JMyTIUebn0bAKh/HFbIo6YviBFeb45Va1D34bp1MWGASaeOIaZdIewcfDuxWU=
+	t=1717758474; cv=none; b=FRSylwzh8CJgL8EzYmFSCH8/eNfluOqj/nGRWvwDmzV7g3uT+Lvi7HGdy5X0v5mipgM8WKqAzRDDcNx7q3RTX+jQetbtIXWrF0ciE/kOjI3AqZN1/6SuJqm6dDw1ROJWaiU/CeuXaIcmgIIWm6BnydmGsxUTbsUH13thoNOd234=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717758316; c=relaxed/simple;
-	bh=2hIGzyAM/ydipJ0a6gCRQYGh6EjForkYrE3iRYGhVM4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UV6pHOi5ejfk/0dyp0mbwkGng+Zc2WVHpkPi/PmraOGIXXs0AZvKB7W7AoyOqfNLb6+R0AJ4mae113IZ3caBqAMVsxfvjUOBxbWSsfLVgNmAItKrqkTqCmw3xbTnoI8Uc4m+h3ZdvBwNnSkjFB4/n4DaIePlIb4Foz9s/qNplB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.25.117.214])
-	by sina.com (172.16.235.25) with ESMTP
-	id 6662E937000036D1; Fri, 7 Jun 2024 19:04:26 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 27571434210352
-X-SMAIL-UIID: 7075AAB57E174405BDF22D17F8609E62-20240607-190426-1
-From: Hillf Danton <hdanton@sina.com>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	RDMA mailing list <linux-rdma@vger.kernel.org>
-Subject: Re: [PATCH -rc] workqueue: Reimplement UAF fix to avoid lockdep worning
-Date: Fri,  7 Jun 2024 19:04:14 +0800
-Message-Id: <20240607110414.1953-1-hdanton@sina.com>
-In-Reply-To: <20240606102921.GE13732@unreal>
-References: <4c4f1fb769a609a61010cb6d884ab2841ef716d3.1716885172.git.leon@kernel.org> <ZljyqODpCD0_5-YD@slm.duckdns.org> <20240531034851.GF3884@unreal> <Zl4jPImmEeRuYQjz@slm.duckdns.org> <20240604105456.1668-1-hdanton@sina.com> <20240604113834.GO3884@unreal> <Zl9BOaPDsQBc8hSL@slm.duckdns.org> <20240605111055.1843-1-hdanton@sina.com> <20240606073801.GA13732@unreal>
+	s=arc-20240116; t=1717758474; c=relaxed/simple;
+	bh=yaJzSUIG1L7vHjglq5LBpdfym6nOV4qXdvbcEwWsOyo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L2SgDZh/HD/BQWaoxssKMU4O2wRvrSDd8v01tyhIweabZ30oqHxeuyvocbrMcSCDOw/WaVkPnn+yWM8+88TAKiMc27fNDh8Wo7vtQwJwQu9LwtlT/4Vm9+9PDvrT8F8AqXwkPwXKXr6Jfhwb3WKlYo+OFtrxZ/ywiozhF11JwSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VDEkQSEF; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57a2ed9af7dso2853610a12.1;
+        Fri, 07 Jun 2024 04:07:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717758471; x=1718363271; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QwoB1I2CoqSrADBSqDpZDueAN3lp7krkHSyqi5h/Lrg=;
+        b=VDEkQSEF8hG4nOeTPlL3Wnv0iEU5qKWEjWMWYxUeu//cGmu5O9Iny68T0CSIMWVFRt
+         AngASh3m55t587XbMv9UKrJyMEPs6hO9e87IchI1gG5gKuT/lgyN5DwHiS1z2UhR0wtA
+         k3D9YDfMhShoJDUVoKd22zbdMbsvkCiaVzrEopajpui8V9URfWZpRzske1BF883g4IWu
+         Coh1sieAjhIKlbg+R6oA0JbZ3hyssCdhGrOrT2N1i9d2KRPZyPVnK5+aJnwN+GVrsK1J
+         PbgF7vZKYcw8OsFuBHjRKxOhpYSYeS2bRYxdgeIZ5KLtA0SohfygNYE+e6KF86NN1FfM
+         hAXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717758471; x=1718363271;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QwoB1I2CoqSrADBSqDpZDueAN3lp7krkHSyqi5h/Lrg=;
+        b=tuQeHeGPpjOAcHDaV9iYjZ5Uu0Ln8d5/pngmj54T0LqHfuP9fYWcObaFwJG416XgBv
+         uGi8I1jLdlJFHdFTU5qjHYTj21c+tx8dAI22Jj3I2/RJmgD5ayjLM7fPX92s20Ufs4GG
+         QRdLwDhiwkX3yRXry+bdDqAnD8xy+zjhjcB+35AOnyPt1OMDTqoo6s1YGPmH6BnK0MKO
+         wC3abFHfqK++BZKdr39YBKnThsInuAc0n7IaMCdD39G+g/REwSREvwYLvwDSdPQAc5Z6
+         AyFTTQEaNK8wZxdB54UP9Y3J2ugTF8yaXxDo7DOn2CBnOGtNgqfkvsEcXFgDRvTnaoeL
+         C5nw==
+X-Forwarded-Encrypted: i=1; AJvYcCXjm+rgaKmKSKYaXYpxraYYjZO8b2AHBosQ7/A8r2LDNJyrBFIkmKxJUfBdV99ugSbSaavM86hOc/gEXBWdedW2A8gGJzBWfuYxhMociwo5+0Zvzq2UOHIfNBX/1TlRSEZkN4Z1KIRdag5tcU2dgkfRaLoPdrBxPbnmYPbZRyNL7g==
+X-Gm-Message-State: AOJu0YxQxPtkjKcr4+vxYvqQIu+SaWe2M6xw4MvhNtVaSALrUAbjKkMV
+	2rV4gvMX0z23lZts96rtX8R+Eot9wM0Ox+D321TBHVv3aq/mTtZ2
+X-Google-Smtp-Source: AGHT+IH6rZ9zLdc8fiE9PfrZZyWV332mnTZ/6+FIHUz//Qahy67ncSDhq+u1qaDIyiqhJKGU1Z/udw==
+X-Received: by 2002:a17:906:eece:b0:a68:ecd5:6083 with SMTP id a640c23a62f3a-a6cd637e1f0mr205666366b.27.1717758470759;
+        Fri, 07 Jun 2024 04:07:50 -0700 (PDT)
+Received: from skbuf ([188.25.55.166])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c8072a46asm230426466b.206.2024.06.07.04.07.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 04:07:50 -0700 (PDT)
+Date: Fri, 7 Jun 2024 14:07:47 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Martin Schiller <ms@dev.tdt.de>
+Cc: martin.blumenstingl@googlemail.com, hauke@hauke-m.de, andrew@lunn.ch,
+	f.fainelli@gmail.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 03/13] net: dsa: lantiq_gswip: Use dev_err_probe
+ where appropriate
+Message-ID: <20240607110747.zsiahnzge2bvxd4l@skbuf>
+References: <20240606085234.565551-1-ms@dev.tdt.de>
+ <20240606085234.565551-1-ms@dev.tdt.de>
+ <20240606085234.565551-4-ms@dev.tdt.de>
+ <20240606085234.565551-4-ms@dev.tdt.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606085234.565551-4-ms@dev.tdt.de>
+ <20240606085234.565551-4-ms@dev.tdt.de>
 
-On Thu, 6 Jun 2024 13:29:21 +0300 Leon Romanovsky wrote:
-> On Thu, Jun 06, 2024 at 10:38:01AM +0300, Leon Romanovsky wrote:
-> > 
-> > Thanks, I started to run our tests with Dan's revert.
-> > https://lore.kernel.org/all/171711745834.1628941.5259278474013108507.stgit@dwillia2-xfh.jf.intel.com/
-> > 
-> > As premature results, it fixed my lockdep warnings, but it will take time till I get full confidence.
-> 
-> Don't series fixed reported issue.
-> 
-I am happy to nominate you for the 2024 Kidding Lore Award ($2) if the
-uaf in the subject line got fixed with Dan's revert.
+On Thu, Jun 06, 2024 at 10:52:24AM +0200, Martin Schiller wrote:
+> @@ -2050,8 +2048,9 @@ static int gswip_gphy_fw_list(struct gswip_priv *priv,
+>  			priv->gphy_fw_name_cfg = &xrx200a2x_gphy_data;
+>  			break;
+>  		default:
+> -			dev_err(dev, "unknown GSWIP version: 0x%x", version);
+> -			return -ENOENT;
+> +			return dev_err_probe(dev, -ENOENT,
+> +					     "unknown GSWIP version: 0x%x",
+> +					     version);
+>  		}
+>  	}
+>  
+> @@ -2059,10 +2058,9 @@ static int gswip_gphy_fw_list(struct gswip_priv *priv,
+>  	if (match && match->data)
+>  		priv->gphy_fw_name_cfg = match->data;
+>  
+> -	if (!priv->gphy_fw_name_cfg) {
+> -		dev_err(dev, "GPHY compatible type not supported");
+> -		return -ENOENT;
+> -	}
+> +	if (!priv->gphy_fw_name_cfg)
+> +		return dev_err_probe(dev, -ENOENT,
+> +				     "GPHY compatible type not supported");
+>  
+>  	priv->num_gphy_fw = of_get_available_child_count(gphy_fw_list_np);
+>  	if (!priv->num_gphy_fw)
+> @@ -2163,8 +2161,8 @@ static int gswip_probe(struct platform_device *pdev)
+>  			return -EINVAL;
+>  		break;
+>  	default:
+> -		dev_err(dev, "unknown GSWIP version: 0x%x", version);
+> -		return -ENOENT;
+> +		return dev_err_probe(dev, -ENOENT,
+> +				     "unknown GSWIP version: 0x%x", version);
+>  	}
+>  
+>  	/* bring up the mdio bus */
+> @@ -2172,28 +2170,27 @@ static int gswip_probe(struct platform_device *pdev)
+>  	if (!dsa_is_cpu_port(priv->ds, priv->hw_info->cpu_port)) {
+> -		dev_err(dev, "wrong CPU port defined, HW only supports port: %i",
+> -			priv->hw_info->cpu_port);
+> -		err = -EINVAL;
+> +		err = dev_err_probe(dev, -EINVAL,
+> +				    "wrong CPU port defined, HW only supports port: %i",
+> +				    priv->hw_info->cpu_port);
+>  		goto disable_switch;
+>  	}
+
+Nitpick: there is no terminating \n here.
 
