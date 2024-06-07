@@ -1,266 +1,221 @@
-Return-Path: <linux-kernel+bounces-205955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44242900297
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:48:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F9F690029A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 317481C2272D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:48:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B87CE1F246C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A249A18FC6D;
-	Fri,  7 Jun 2024 11:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE9018FC8E;
+	Fri,  7 Jun 2024 11:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ENpRDrjN"
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oHKUKYSz"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CE3187358
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDDB18C328
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717760920; cv=none; b=P0tXsnu/ofO3/kvk2PFwNFlwuYx3zbP7t47sU2Kadr1MJqKjGzV3mavDuOvPkXwZg8mPQ9sHDaQ2kgwy5bsGYGv3IQAS6uA4AZP8H304R3NSUp6Lw4dd5JI0M+XKZx17u682oiskipTBpmTaiAjzWvDe2m+0PsGxrSZrYXjWvQk=
+	t=1717760943; cv=none; b=srcrVpU5M7m7yoo0+8kOUjrkXIg36kS8UjSxPvZvDvW6boqabcXRdULwkdr4chqj16CGqV8VeD70T0q2+r2mMwpUGsloeX0+UF4dLCuOSvXj2WWN/HA4WeJnSW+tPiIeAswmUjuHURpNluD2te2zq/M/EmxnBdBLIZTGmbjNMb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717760920; c=relaxed/simple;
-	bh=PeHkH+NfrrKJoMuN2ygAp9EcFcYtXM/K53hPDtU04fM=;
+	s=arc-20240116; t=1717760943; c=relaxed/simple;
+	bh=9RBdun848oyGcaKII1pvPRbUGsBtrYjKBBsCinPoZw8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ho2KzSiIpLarPjvszV1BZNzpAwJYlgPsGdG96dytVqv6PY8FoywAJQdspCIb8d8rSv2gbq7+dQdYwVHZD2FaMYH+OOJh1UgsI/SPJkRZgDaAeFDShD4vC2GZDCmnkA6csM6Y8fRFjLm0ORnv1f9oWP+/COvIEu7wSxeNTdv25EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ENpRDrjN; arc=none smtp.client-ip=209.85.222.52
+	 To:Cc:Content-Type; b=LCxJKGUa1C7un/uagionjhLb5OnCYE+2cIclOpb6LRUSsiJVKe04abZNAxB/aRhRln1K0s2JrqIN946Lih+yXcQ5jg/ATbpEStISouI7Iti4bleBd57JXY7eVczX7BvsCoCeooMcTRmVoy7gXAkjmjQpMVH9wnHCKtMoLRCWUPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oHKUKYSz; arc=none smtp.client-ip=209.85.219.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-80acf1bca86so628650241.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 04:48:38 -0700 (PDT)
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dfa67a3e702so2112241276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 04:49:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717760917; x=1718365717; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1717760941; x=1718365741; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=V/5wtcce17x6OATn8wPdogmtY0ka7nDOqTZMDuD4ISs=;
-        b=ENpRDrjN3MmvHTMOmuod19wZITAjdpAPzbDd+dGRdWRs5bg46EDSHLCECtoREulQet
-         idGwJMVvO4h5wl7Nq+mJL4REX43IeGy4JaiPj+ami8TlXcqe9yfh9TXhF4BONANqb28K
-         TcIxRpsyUjeKSCC+pBJaP5rQtBFR4m3TjnyMteWg2yuvE+8wfZ2ssmfUtPPw30aKDo/R
-         C/E2BQOqEZYHG+2hAmWaVp35lMY3aUV4r5eah3v0OPcpElNYuk6Jf0jgDcyKwOJF7pyQ
-         zSrfsLveEI/MoAM68flcMnjCsUqFR/I7F2j7F7BZ6IkMy8X3dNkI976161aT2RQ/e7W+
-         y97g==
+        bh=aaxauWMNivX2Xh96RfVBzt0WPh7okmPnKiLgSACVt0o=;
+        b=oHKUKYSzjMck6aSSnYbg+mwHDVzlENejPoIFx7zkvcBgmSSm/0X0NdcHF8TCTg4cMR
+         43d6FC3LUUY0lMJn+ZzOeUJ2ua3yqS+lN8o1IUCUvQ0zyQuXPDmnZZIR7Xs1hZpRaCpH
+         GAHsREap8PMid8xvr5ed0QcW6nReMHWnNhdYrLKXZqRlYRoxwEAMb7SSroNKtJhIjEo4
+         mxTiEhUQMiLueOgqKw1685hmH5Om8fjsyQ/GmUhIJ8T/wPj6Ix6Xl+JEYqmHhWBZzqM4
+         i9Z+zfldwpS49MxVtUbzZoAG+9jH1fS/F69r/+vsUV+TnjwsLF6vsT2+LOSYAbpzlXhE
+         7ylA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717760917; x=1718365717;
+        d=1e100.net; s=20230601; t=1717760941; x=1718365741;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=V/5wtcce17x6OATn8wPdogmtY0ka7nDOqTZMDuD4ISs=;
-        b=uEr5rO2Ll41XNI4HBLw74FCu/hWPiaId9dU5XIxAVGM549+aCTF2JArb+IK6Qt5Z1g
-         dBxyM3QIOG/g09gR/IykMIt6t7Hx8pxxagEj63Q9O3Eb6CO5HZyk7kpYZqion+ejJrRP
-         rJ1IEzcfSIUKG4J80bnrZZwdr+rgT0a14I3Dw6M4jTQgilMge6yz9Df4gIvWSe1UHCcP
-         gLksBsyOxKeWutxu+vZ2qOtfDNI1PEThnZvTAIrWmOCRNw1L4qo2gMl2CrVSUd31ZKwE
-         9n2uhe8IZvC4l0aixombq04RfN+nNi4GdEoTYR6Z4wnF44xf4IqP8Ns9qE9m5HQtQyf5
-         2d6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWDjc6bbz4lrPbAFT2qesQijXVlzxJ8bOqdGxORlVuP9YrbYxGsPCKJFUrEc4NvBeuD1UM3oUTgySck0HE9VU79dshHlEqpjLa+FDfz
-X-Gm-Message-State: AOJu0Yxbljgjz6qw9GSx9p91x8F08/0U9dUFkxpfOonuSLBAC5Q/C1AK
-	RADKdGx8NvnbzFx5J5TxoVkcQRe/RmNf+FY0TFDtYCG3KabpylPC53cRRKlVN8DFgqW8FBloODG
-	vCqR039pvtB50wcE7kOzA2SY87azv93pBajf+ww==
-X-Google-Smtp-Source: AGHT+IEdwmO0c+MBu1y4ofqEbQghy0qcz8uztrknpjZTw/IJT0CA0vI0J7TGrTqdcGE88Tlz0cCpiu60YEjDyFoXYrs=
-X-Received: by 2002:a05:6102:4a57:b0:48a:3fa5:b832 with SMTP id
- ada2fe7eead31-48c27538f02mr1869372137.33.1717760917249; Fri, 07 Jun 2024
- 04:48:37 -0700 (PDT)
+        bh=aaxauWMNivX2Xh96RfVBzt0WPh7okmPnKiLgSACVt0o=;
+        b=RN9GjpeYblKyUQjAAL7vc2Iw1CdYc1K+hn7VRdmOYK5c2fxBVmby9rIZgGWZ2ZgvUW
+         H/TmVB092v0ofb+mUsbRiGqSLav61DF0Yktngwrp0VhcYlzpqlq8Unj/7hM6mYwVzX8q
+         fB/FHxLowmHR3si5S/2CcbwPHvMvVHdDST2jO+9Lz7+qKX6MyRqDPdf+MbXo0Bj21nAD
+         Q0w8i+YMMRH1zeGI3IWJLA+zKRUPCT6m3N1TqASJxraloc8Fi6JzqZTgqICAUknbuFH2
+         sruJJaKebTfzMWT31rvEsEz8PfOfS/X8wOrVuPkfwN6RMWC8AZm5SX/lf5Lo2w07c+1p
+         W/Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCXyL+IwI0zsZrQfYnJ1gsZUJcvZ5nvyk65F798spzlxAx+5e3t1xze0lWfMyFDqNl8F55Y+GedvMWTfX06SaoSCNV9OgiRgnrt0rnt+
+X-Gm-Message-State: AOJu0Yxux4ZTW/i7qSQphkeMf/Ekn2933Mv83rOYXsFaeEJeBQPGRJeN
+	uG/aaqK0n0Ux6Nw2oTOgR/5c/iMBoTGYqho/RjAkT8eCwwqEjicaIDMEUokr1z+fGUWE6PeKIyK
+	+NOyGs2yMOHzCDI2IX75P/oJrUfqIRGQMTZEn8w==
+X-Google-Smtp-Source: AGHT+IEvLOEOxMW8QOmpMJOUqm62o8XRyN7BdmXOZVOMDNpN7DmrTQqwPsmrngbZSGqsWg4DDlh5AFn7ma7MoM98/qc=
+X-Received: by 2002:a25:d648:0:b0:dfa:7ac9:fad1 with SMTP id
+ 3f1490d57ef6-dfaf663d8a9mr2327430276.24.1717760941376; Fri, 07 Jun 2024
+ 04:49:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606131651.683718371@linuxfoundation.org>
-In-Reply-To: <20240606131651.683718371@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 7 Jun 2024 17:18:26 +0530
-Message-ID: <CA+G9fYvOP-FL7w55vPig3p1iva_MAO+sqWnh3ZwPEopd_y-jow@mail.gmail.com>
-Subject: Re: [PATCH 6.9 000/374] 6.9.4-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
+References: <20240601084528.22502-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+ <20240601084528.22502-2-lvzhaoxiong@huaqin.corp-partner.google.com>
+ <oo6gggt2kpufvbwg6emoblg4opj2izdfjad4hzojbe7ddp57rp@a5vf23zrk22o> <CA+6=WdTPJxtGUt6pSanmwdYKz2wqCFv73K=BPb+9oDHrQcW=Sw@mail.gmail.com>
+In-Reply-To: <CA+6=WdTPJxtGUt6pSanmwdYKz2wqCFv73K=BPb+9oDHrQcW=Sw@mail.gmail.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 7 Jun 2024 14:48:50 +0300
+Message-ID: <CAA8EJpqOZ2zXQo5F01Q208Bk-KM-awfhNtuq4iM8=FEkLqfkpA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: display: panel: Add KD101NE3-40TI support
+To: zhaoxiong lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+Cc: dmitry.torokhov@gmail.com, robh@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, jikos@kernel.org, 
+	benjamin.tissoires@redhat.co, dianders@google.com, hsinyi@google.com, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 6 Jun 2024 at 19:38, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Fri, 7 Jun 2024 at 14:38, zhaoxiong lv
+<lvzhaoxiong@huaqin.corp-partner.google.com> wrote:
 >
-> This is the start of the stable review cycle for the 6.9.4 release.
-> There are 374 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> hi Dmitry Baryshkov
 >
-> Responses should be made by Sat, 08 Jun 2024 13:15:55 +0000.
-> Anything received after that time might be too late.
+> Because this is a separate mipi dsi driver, I did not put it in
+> panel-sample-dsi.yaml.
+
+Driver and bindings are two separate things. Bindings describe the
+hardware. If there is no other reason to have a separate bindings
+document, please use panel-simple-dsi.yaml.
+
+Also please don't top-post in public mailing lists.
+
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.9.4-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.9.y
-> and the diffstat can be found below.
 >
-> thanks,
->
-> greg k-h
+> On Sun, Jun 2, 2024 at 12:28=E2=80=AFAM Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+> >
+> > On Sat, Jun 01, 2024 at 04:45:25PM +0800, Zhaoxiong Lv wrote:
+> > > Create a new dt-scheam for the kd101ne3-40ti.
+> > > The bias IC of this kindisplay-kd101ne3 panel is placed
+> > > on the panel side, so when the panel is powered on,
+> > > there is no need to control AVDD and AVEE in the driver.
+> > >
+> > > Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.c=
+om>
+> > > ---
+> > >
+> > > Chage since V2:
+> > >
+> > > -  Drop some properties that have already been defined in panel-commo=
+n.
+> > > -  The header file 'dt-bindings/gpio/gpio.h' is not used, delete it
+> > >
+> > > V1: https://lore.kernel.org/all/20240418081548.12160-2-lvzhaoxiong@hu=
+aqin.corp-partner.google.com/
+> > >
+> > > ---
+> > >  .../panel/kingdisplay,kd101ne3-40ti.yaml      | 59 +++++++++++++++++=
+++
+> > >  1 file changed, 59 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/display/panel/k=
+ingdisplay,kd101ne3-40ti.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/display/panel/kingdisp=
+lay,kd101ne3-40ti.yaml b/Documentation/devicetree/bindings/display/panel/ki=
+ngdisplay,kd101ne3-40ti.yaml
+> > > new file mode 100644
+> > > index 000000000000..b0cf12bb727d
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/display/panel/kingdisplay,kd1=
+01ne3-40ti.yaml
+> > > @@ -0,0 +1,59 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/display/panel/kingdisplay,kd101ne=
+3-40ti.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Kingdisplay KD101NE3-40TI based MIPI-DSI panels
+> > > +
+> > > +maintainers:
+> > > +  - Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+> >
+> > Any reason for using a separate bindings instead of extending
+> > panel-simple-dsi.yaml ?
+> >
+> > > +
+> > > +allOf:
+> > > +  - $ref: panel-common.yaml#
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    items:
+> > > +      - enum:
+> > > +          - kingdisplay,kd101ne3-40ti
+> > > +
+> > > +  reg:
+> > > +    description: the virtual channel number of a DSI peripheral
+> > > +
+> > > +  pp3300-supply:
+> > > +    description: core voltage supply
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +  - pp3300-supply
+> > > +  - enable-gpios
+> > > +  - backlight
+> > > +  - port
+> > > +
+> > > +unevaluatedProperties: false
+> > > +
+> > > +examples:
+> > > +  - |
+> > > +    dsi {
+> > > +        #address-cells =3D <1>;
+> > > +        #size-cells =3D <0>;
+> > > +        panel: panel@0 {
+> > > +            compatible =3D "kingdisplay,kd101ne3-40ti";
+> > > +            reg =3D <0>;
+> > > +            enable-gpios =3D <&pio 98 0>;
+> > > +            pinctrl-names =3D "default";
+> > > +            pinctrl-0 =3D <&panel_pins_default>;
+> > > +            pp3300-supply =3D <&en_pp6000_mipi_disp>;
+> > > +            backlight =3D <&backlight_lcd0>;
+> > > +            rotation =3D <90>;
+> > > +            port {
+> > > +                panel_in: endpoint {
+> > > +                    remote-endpoint =3D <&dsi_out>;
+> > > +                };
+> > > +            };
+> > > +        };
+> > > +    };
+> > > +
+> > > +...
+> > > --
+> > > 2.17.1
+> > >
+> >
+> > --
+> > With best wishes
+> > Dmitry
 
 
-Results from Linaro=E2=80=99s test farm.
-Build regressions on Powerpc.
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build
-* kernel: 6.9.4-rc1
-* git: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
-* git branch: linux-6.9.y
-* git commit: fcbdac56b0ae848d2259d6b9825f289688a77e0b
-* git describe: v6.9.2-803-gfcbdac56b0ae
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.9.y/build/v6.9.2=
--803-gfcbdac56b0ae
-
-## Test Regressions (compared to v6.9.2)
-* powerpc, build
-  - clang-18-cell_defconfig
-  - clang-18-defconfig
-  - clang-18-maple_defconfig
-  - clang-18-ppc64e_defconfig
-  - clang-nightly-cell_defconfig
-  - clang-nightly-defconfig
-  - clang-nightly-maple_defconfig
-  - clang-nightly-ppc64e_defconfig
-  - gcc-13-cell_defconfig
-  - gcc-13-defconfig
-  - gcc-13-maple_defconfig
-  - gcc-13-ppc64e_defconfig
-
-## Metric Regressions (compared to v6.9.2)
-
-## Test Fixes (compared to v6.9.2)
-
-## Metric Fixes (compared to v6.9.2)
-
-## Test result summary
-total: 139061, pass: 121356, fail: 1981, skip: 15724, xfail: 0
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 126 total, 126 passed, 0 failed
-* arm64: 38 total, 38 passed, 0 failed
-* i386: 28 total, 28 passed, 0 failed
-* mips: 24 total, 24 passed, 0 failed
-* parisc: 3 total, 3 passed, 0 failed
-* powerpc: 34 total, 22 passed, 12 failed
-* riscv: 17 total, 17 passed, 0 failed
-* s390: 12 total, 12 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 33 total, 33 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-android
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-drivers-dma-buf
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-ir
-* kselftest-kcmp
-* kselftest-kexec
-* kselftest-kvm
-* kselftest-lib
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-memory-hotplug
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mount
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-forwarding
-* kselftest-net-mptcp
-* kselftest-netfilter
-* kselftest-nsfs
-* kselftest-openat2
-* kselftest-pid_namespace
-* kselftest-pidfd
-* kselftest-proc
-* kselftest-pstore
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-splice
-* kselftest-static_keys
-* kselftest-sync
-* kselftest-sysctl
-* kselftest-tc-testing
-* kselftest-timens
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kselftest-zram
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-smoketest
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+--=20
+With best wishes
+Dmitry
 
