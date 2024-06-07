@@ -1,96 +1,128 @@
-Return-Path: <linux-kernel+bounces-206427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E79690099A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:51:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB15390099D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0D9528643D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:51:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBA9CB22682
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD30199E87;
-	Fri,  7 Jun 2024 15:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B375199E85;
+	Fri,  7 Jun 2024 15:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X1pHSXOl"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="c1GvCtqY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9864E199234;
-	Fri,  7 Jun 2024 15:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21B8DDD9;
+	Fri,  7 Jun 2024 15:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717775489; cv=none; b=YYB73SR1Rc1NGV3eea7zBPGXn2jUVVjHW6J3l3iNI8liLwBDp00UlVTeVYX6C1MtrPUmGJ7pWxBoZ9TmpPs++kobs4hkpWik3r1z3YMGsOYW/s/kIefRVtVxaUQxMXuQunKEq5mOe3K7QuB9OSG9m9fKV6y/+mT56SF2T2/KCUM=
+	t=1717775541; cv=none; b=ZTV14BMwwo2wWe4bbKbBIEFX1D6JwetU1bCfm1j62oxi0/TdH3eFMIHjk59S3Nnd+ITp/UCo+6sT21YujzPqnWPW5gEO6U6gSq7m64R1FX22gjNht4n2sliEeO3AJey7Went8pUzh+SctXWLLPPrTVOmiEu8rCu1Nmf5tt0dRQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717775489; c=relaxed/simple;
-	bh=7CfxE2zPOgwLZD4RS4XeCHs98ZsI8QWw0qrMPFJk9XE=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=CbUoFr/fqqHRhLt2eN2zA3U9fZEZGW2Fv1jyfXUaRl03AddgLMcNFOTbjSLyaHQ9z7LFvjqVHls2pEGOA09nXZRbVpttLtg9fvTZz7aes3AePIBZiJQbntufvETfbB5qpFuGrOFybCoY0hUFf2kJzfldiEo2CynNDVG85MLQmak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X1pHSXOl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2523EC32786;
-	Fri,  7 Jun 2024 15:51:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717775489;
-	bh=7CfxE2zPOgwLZD4RS4XeCHs98ZsI8QWw0qrMPFJk9XE=;
-	h=From:Date:Subject:To:Cc:From;
-	b=X1pHSXOlLvUovKKuGd+e73Yaep71DTi1SvHlNDPKiHZInEL0KZRDmQwM79UO8meFF
-	 0D1WInJgXHeE/2XNqqkkQ/c/mrXr3NHouIS07oeX8Mmi+EnF1+tOnXetbtGoG1fHmw
-	 HsTuCFDd4p+4cld3PpO6LxIFOe0NcbIaV/O/SFY9MVe9cjaUuJccsu+I47X2b7X0zi
-	 V1dX9L0DI6gECrSVnlxgVmEe/+UOpIY5XGLNoOETSW13vOWbzuMq0icGckbyEa3FaI
-	 n/sGDiRg8GWIV6uJM5a5U6GDMoKW8kpHzUnDYnfzw4zozMgzkw5QhiQTx7fMPclJU9
-	 7ZEQLfmUaMjSA==
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5b3364995b4so349430eaf.0;
-        Fri, 07 Jun 2024 08:51:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWF1kXr8amUXkq/WTE3FFz7nVYE2St+HD8MtsiUSesQlhqLuzU7Ti+dX8VxY5plPR5+OV0tMwN/kGsT2wzXkJs+rQMDE86ihL/ALlZ8
-X-Gm-Message-State: AOJu0Yz9yOdecrgeTfXsvTuY/GQdQ22+FEcr+E1J8cqvRcETtFWbiNv8
-	7u97yJOg/E7Kacpz25xtaUvQwYBpbldXnFNqCna3ADsrqr6wWk2He0Fc08zgX2Hlv4vld7t5K6F
-	Uuxd7r36GtcAEGal0dVQ9wGgvkq8=
-X-Google-Smtp-Source: AGHT+IGX2GslOkgjanphDIumzam9KcMFNYxw4Ton5+xmCXwc3C7USV+vxgYtequ5ol/JVixRwey8RP6wDGklC1mM3dY=
-X-Received: by 2002:a4a:ac08:0:b0:5aa:3e4f:f01e with SMTP id
- 006d021491bc7-5baae73b688mr2760820eaf.1.1717775488041; Fri, 07 Jun 2024
- 08:51:28 -0700 (PDT)
+	s=arc-20240116; t=1717775541; c=relaxed/simple;
+	bh=H+jEhDsTeSoJa3PREo5ewf9PlBRNnWWXpO7tjlti/rE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dbjymKmtuc5gIWF91jY2xpwyaOrcClYP14lWlGEDdBub+/c0tRkK5XDZvXGLo7Zb5uUEYy5Tr8ZrxnH5fMfesF5x2cOUtfiLNgx3lfXnHPSVZ903tHTyaBCSXkiGNLuXrXe2LaNZaz9p0AprX4TArlEaPaLCp8Hjs/yDWK6cKMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=c1GvCtqY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9568C2BBFC;
+	Fri,  7 Jun 2024 15:52:19 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="c1GvCtqY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1717775537;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OqZentEsHB+VTIXa72lmbuScoE7+wMZ7RejT1HxIpTo=;
+	b=c1GvCtqYeLorT7klYXeKUhlD0Sb4HPPmHB605U7lEehIJJfJEY3gwQ2C1mJ7EeTR0pr6xX
+	xO3fDf1X4/xOJMDsK+z6VDFrn6rXq2hcV7xkYUWdNJC9mBR+ZE64xPYmrqtiGgnc+QeBXP
+	5lLbyq5T4fZSnwl2GPyaceaCXqFj5f4=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 253ee02d (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Fri, 7 Jun 2024 15:52:17 +0000 (UTC)
+Date: Fri, 7 Jun 2024 17:52:12 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	tglx@linutronix.de, linux-crypto@vger.kernel.org,
+	linux-api@vger.kernel.org, x86@kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Carlos O'Donell <carlos@redhat.com>,
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	Jann Horn <jannh@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <dhildenb@redhat.com>
+Subject: Re: [PATCH v16 4/5] random: introduce generic vDSO getrandom()
+ implementation
+Message-ID: <ZmMsrHWTLMS4W08w@zx2c4.com>
+References: <20240528122352.2485958-1-Jason@zx2c4.com>
+ <20240528122352.2485958-5-Jason@zx2c4.com>
+ <CALCETrUgPwVsMwkxkCyuqBKyqouyejikxxyGuBDxnWWKskYG8A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 7 Jun 2024 17:51:16 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hV6ruOVOO7GFP42vFYj70G=q=bhEOOG4vawyih5hiKFg@mail.gmail.com>
-Message-ID: <CAJZ5v0hV6ruOVOO7GFP42vFYj70G=q=bhEOOG4vawyih5hiKFg@mail.gmail.com>
-Subject: [CfP] LPC 2024: Power Management and Thermal Control Micro-Conference
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Viresh Kumar <viresh.kumar@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALCETrUgPwVsMwkxkCyuqBKyqouyejikxxyGuBDxnWWKskYG8A@mail.gmail.com>
 
-Hi Everyone,
+On Fri, May 31, 2024 at 04:06:37PM -0700, Andy Lutomirski wrote:
+> > On May 28, 2024, at 5:25 AM, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> >
+> > Provide a generic C vDSO getrandom() implementation, which operates on
+> > an opaque state returned by vgetrandom_alloc() and produces random bytes
+> > the same way as getrandom(). This has a the API signature:
+> >
+> >  ssize_t vgetrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state);
+> 
+> > +/**
+> > + * type vdso_kernel_ulong - unsigned long type that matches kernel's unsigned long
+> > + *
+> > + * Data shared between userspace and the kernel must operate the same way in both 64-bit code and in
+> > + * 32-bit compat code, over the same potentially 64-bit kernel. This type represents the size of an
+> > + * unsigned long as used by kernel code. This isn't necessarily the same as an unsigned long as used
+> > + * by userspace, however.
+> 
+> Why is this better than using plain u64?  It’s certainly more
+> complicated. It also rather fundamentally breaks CRIU on 32-bit
+> userspace (although CRIU may well be unable to keep vgetrandom working
+> after a restore onto a different kernel anyway).  Admittedly 32-bit
+> userspace is a slowly dying breed, but still.
 
-A Power Management and Thermal Control session will be held during the
-LPC this year, as it has been the case for a few years now, and it is
-now open for topic submissions.
+That came out of this conversation: https://lore.kernel.org/all/878rjs7mcx.fsf@oldenburg.str.redhat.com/
+(And I'd like single instruction increments, which means long, not u64
+on 32-bit machines.)
 
-The Power Management and Thermal Control microconference is about all
-things related to saving energy and managing heat. Among other things,
-we care about thermal control infrastructure, CPU and device
-power-management mechanisms, energy models, and power capping. In
-particular, we are interested in improving and extending thermal
-control support in the Linux kernel and utilizing energy-saving
-features of modern hardware.
+> > +{
+> > +    ssize_t ret = min_t(size_t, INT_MAX & PAGE_MASK /* = MAX_RW_COUNT */, len);
+> > +    struct vgetrandom_state *state = opaque_state;
+> > +    size_t batch_len, nblocks, orig_len = len;
+> > +    unsigned long current_generation;
+> > +    void *orig_buffer = buffer;
+> > +    u32 counter[2] = { 0 };
+> > +    bool in_use, have_retried = false;
+> > +
+> > +    /* The state must not straddle a page, since pages can be zeroed at any time. */
+> > +    if (unlikely(((unsigned long)opaque_state & ~PAGE_MASK) + sizeof(*state) > PAGE_SIZE))
+> > +        goto fallback_syscall;
+> 
+> This is weird. Either the provided pointer is valid or it isn’t.
+> Reasonable outcomes are a segfault if the pointer is bad or success
+> (or fallback if needed for some reason) if the pointer is good.  Why
+> is there specific code to catch a specific sort of pointer screwup
+> here?
 
-The general goal is to facilitate cross-framework and cross-platform
-discussions that can help improve energy-awareness and thermal control
-in Linux.
+I guess I could make it return -EFAULT in this case, rather than
+silently succeeding.
 
-If you have a topic to discuss in this session (please note that the
-topics should not be about work that has already been completed, as it
-is the case for the LPC in general), please go to
-
-https://lpc.events/login/?next=/event/18/abstracts/%23submit-abstract
-
-and select "Power Management and Thermal Control MC" in the Track field.
-
-Thank you!
+Jason
 
