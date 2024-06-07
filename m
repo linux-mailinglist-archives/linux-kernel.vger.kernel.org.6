@@ -1,137 +1,171 @@
-Return-Path: <linux-kernel+bounces-206390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D00F19008D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:28:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F6149008DA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 850531F222D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:28:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 616C3B247F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D287197544;
-	Fri,  7 Jun 2024 15:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0C1198E9D;
+	Fri,  7 Jun 2024 15:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="JchN3m4z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rP16TPHT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2BFE1847;
-	Fri,  7 Jun 2024 15:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503F81847;
+	Fri,  7 Jun 2024 15:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717774078; cv=none; b=LKIYP4eHIuS4he5qL+GTJGoSe1/jGl1YNvBTLnJrdNEWhuUCOa41UOhXklesDw37BhsEFY3juFAwEgj2WvyNfhAjMsD95xV5rtaFFY8pdaL9r4DecxaUnABhM2MrMH4NAHeoIylSozndYet7NQoPTAst40fR4rLozNZWfwPH/w0=
+	t=1717774112; cv=none; b=LG9MuQ8Lmk1U8Rb+9jXg/iq5f8ap5xPtf3UU9LH14u+/blk7wXuLSBrnL/oo4vb1boZpBgMa+S7YoXYv9Y3zYgAD71wom2oWMCjsjDsoygyMJrE3appUnWjXnDJm6oDjfv4dSZfpd5Ucu3dSqUUE6ee4EDw+WsxyWMRxn4KeQUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717774078; c=relaxed/simple;
-	bh=P/YbumUPM+t2AaDNeert9K+Jx7rn/xxprrOoW3WsZ9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qCf9vTwo5SkeX11NvP7CxRJZkaKMK5JRkf7yZ0h5iTRMZqvCerrAbR1OjocVkHyJAsE8MhBxnv7aWfMV339BTsTcy+mC39Uo8HX4SSkLOVCosbhWZNr1NC9ecsdum7kRqc3lhmwYhx2gS6P/QG7kLSrQQ/KnEo5mFbr8kCxyxbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=JchN3m4z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7859C2BBFC;
-	Fri,  7 Jun 2024 15:27:56 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="JchN3m4z"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1717774074;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YsYZysmZOz+rjz2UIAQvDP7KIxMgRdVS/iAMlBqzJ08=;
-	b=JchN3m4zH+7QZAb2BrkMCsdVzZfGZTRkcqyh0YZcXQMo/VAqNIDqF6RrDQZl2XWvK5VzaF
-	UuM5uJKJD3YE910OtDWhyNav7RwWGU22R4hyiqU3Ar2XayG3Cpqo2jMnJglWcEFMlozuj7
-	IflCKKS4ulWI0sSSTbHIK4TjvWEIkXM=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 48f525ff (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 7 Jun 2024 15:27:53 +0000 (UTC)
-Date: Fri, 7 Jun 2024 17:27:45 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-	tglx@linutronix.de, linux-crypto@vger.kernel.org,
-	linux-api@vger.kernel.org, x86@kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Carlos O'Donell <carlos@redhat.com>,
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	Jann Horn <jannh@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <dhildenb@redhat.com>,
-	Samuel Neves <sneves@dei.uc.pt>
-Subject: Re: [PATCH v16 5/5] x86: vdso: Wire up getrandom() vDSO
- implementation
-Message-ID: <ZmMm8Z5vx5HvME5M@zx2c4.com>
-References: <20240528122352.2485958-1-Jason@zx2c4.com>
- <20240528122352.2485958-6-Jason@zx2c4.com>
- <20240531033816.GC6505@sol.localdomain>
+	s=arc-20240116; t=1717774112; c=relaxed/simple;
+	bh=GElVRuD+0p0S/IMmlhrZvU2cPAkDJYLHz+KKSQ3Dzv4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=slZMkeBjsAOkiWNxKTXf7E650Vshh1vslyafeCDIbxjzsjlzZlj2mDNnEcwN3A3aFW+rWh38504FbJFHHR4qwDibbp2k/z1DLqCVVFzhbgcjM3ZpiCLlbwiBvL/Xr9/yktLGYx/pBk+1eYlyQDI6aOaRpqLBA2QvrbqvwTKPQb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rP16TPHT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13DF6C2BBFC;
+	Fri,  7 Jun 2024 15:28:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717774112;
+	bh=GElVRuD+0p0S/IMmlhrZvU2cPAkDJYLHz+KKSQ3Dzv4=;
+	h=From:Subject:Date:To:Cc:From;
+	b=rP16TPHTVxqovblcXgQTiDn0IIH+OjnKf/W+Efu2JDFro3i68rGeG7Z+t7JbHHJc0
+	 R7Y9NKoknXHhUJ6KWwElFe9CFNopQ+WGyFAHinsF63R0hKZ75TSVhwsNzECEzFWcft
+	 O47Pyp1ngRp3eqSuDBf0ITcnat3RG/Ah8RIQmk9R3M5ZA5Z/wp3PzBMrcHrkkVOGpy
+	 AFGqe61z3YYc0612lKQPHXvy7szocWqP4D4Bwr0ONfKAbb5pfShOxmO8Ah6ajf1zel
+	 z1TyRCDOj/TrEjpnOXZ+7pEp+nsiRuGngxwisL070ZEqnWBtBn/0caMzffqxC/M1JG
+	 OoJthb0392hLQ==
+From: Benjamin Tissoires <bentiss@kernel.org>
+Subject: [PATCH HID v2 00/16] HID: convert HID-BPF into using
+ bpf_struct_ops
+Date: Fri, 07 Jun 2024 17:28:20 +0200
+Message-Id: <20240607-hid_bpf_struct_ops-v2-0-3f95f4d02292@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240531033816.GC6505@sol.localdomain>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABUnY2YC/22NwQ6CMBBEf4Xs2Rq6UCSePHjQbzCkQbrARkPJF
+ omG8O82ePX4ZjJvFggkTAGOyQJCMwf2QwTcJdD09dCRYhcZMMU8NTpTPTt7H1sbJnk1k/VjUJS
+ hxhoxN8ZAHI5CLb836Q0u1zNUMew5TF4+29Gst+rnxPKfc9YqVWVTFEXmWjy48vQgGei599JBt
+ a7rF2CaTHW6AAAA
+To: Shuah Khan <shuah@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+ Jonathan Corbet <corbet@lwn.net>, Alexei Starovoitov <ast@kernel.org>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-input@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Benjamin Tissoires <bentiss@kernel.org>, 
+ Peter Hutterer <peter.hutterer@who-t.net>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717774109; l=4712;
+ i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
+ bh=GElVRuD+0p0S/IMmlhrZvU2cPAkDJYLHz+KKSQ3Dzv4=;
+ b=+q4XRskmsyQrQvBA78fRG6/EkIyhBx/TqVZc7ewoZNwkh4THHjSeSpeWEJK6gSUx/KnrC53Ay
+ +57w6VtRzsFAtEqO40xt2nkrrc8idtf7sGA2xY0fujmG2zSS1OwvKFr
+X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
+ pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
 
-On Thu, May 30, 2024 at 08:38:16PM -0700, Eric Biggers wrote:
-> On Tue, May 28, 2024 at 02:19:54PM +0200, Jason A. Donenfeld wrote:
-> > diff --git a/arch/x86/entry/vdso/vgetrandom-chacha.S b/arch/x86/entry/vdso/vgetrandom-chacha.S
-> > new file mode 100644
-> > index 000000000000..d79e2bd97598
-> > --- /dev/null
-> > +++ b/arch/x86/entry/vdso/vgetrandom-chacha.S
-> > @@ -0,0 +1,178 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (C) 2022 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-> > + */
-> > +
-> > +#include <linux/linkage.h>
-> > +#include <asm/frame.h>
-> > +
-> > +.section	.rodata, "a"
-> > +.align 16
-> > +CONSTANTS:	.octa 0x6b20657479622d323320646e61707865
-> > +.text
-> > +
-> > +/*
-> > + * Very basic SSE2 implementation of ChaCha20. Produces a given positive number
-> > + * of blocks of output with a nonce of 0, taking an input key and 8-byte
-> > + * counter. Importantly does not spill to the stack. Its arguments are:
-> > + *
-> > + *	rdi: output bytes
-> > + *	rsi: 32-byte key input
-> > + *	rdx: 8-byte counter input/output
-> > + *	rcx: number of 64-byte blocks to write to output
-> > + */
-> > +SYM_FUNC_START(__arch_chacha20_blocks_nostack)
-> > +
-> > +.set	output,		%rdi
-> > +.set	key,		%rsi
-> > +.set	counter,	%rdx
-> > +.set	nblocks,	%rcx
-> > +.set	i,		%al
-> > +/* xmm registers are *not* callee-save. */
-> > +.set	state0,		%xmm0
-> > +.set	state1,		%xmm1
-> > +.set	state2,		%xmm2
-> > +.set	state3,		%xmm3
-> > +.set	copy0,		%xmm4
-> > +.set	copy1,		%xmm5
-> > +.set	copy2,		%xmm6
-> > +.set	copy3,		%xmm7
-> > +.set	temp,		%xmm8
-> > +.set	one,		%xmm9
-> 
-> An "interesting" x86_64 quirk: in SSE instructions, registers xmm0-xmm7 take
-> fewer bytes to encode than xmm8-xmm15.
-> 
-> Since 'temp' is used frequently, moving it into the lower range (and moving one
-> of the 'copy' registers, which isn't used as frequently, into the higher range)
-> decreases the code size of __arch_chacha20_blocks_nostack() by 5%.
+The purpose of this series is to rethink how HID-BPF is invoked.
+Currently it implies a jmp table, a prog fd bpf_map, a preloaded tracing
+bpf program and a lot of manual work for handling the bpf program
+lifetime and addition/removal.
 
-That's a nice trick. Thank you very much for it.
+OTOH, bpf_struct_ops take care of most of the bpf handling leaving us
+with a simple list of ops pointers, and we can directly call the
+struct_ops program from the kernel as a regular function.
 
-Jason
+The net gain right now is in term of code simplicity and lines of code
+removal (though is an API breakage), but udev-hid-bpf is able to handle
+such breakages.
+
+In the near future, we will be able to extend the HID-BPF struct_ops
+with entrypoints for hid_hw_raw_request() and hid_hw_output_report(),
+allowing for covering all of the initial use cases:
+- firewalling a HID device
+- fixing all of the HID device interactions (not just device events as
+  it is right now).
+
+The matching user-space loader (udev-hid-bpf) MR is at
+https://gitlab.freedesktop.org/libevdev/udev-hid-bpf/-/merge_requests/86
+
+I'll put it out of draft once this is merged.
+
+Cheers,
+Benjamin
+
+Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+---
+Changes in v2:
+- drop HID_BPF_FLAGS enum and use BPF_F_BEFORE instead
+- fix .init_members to not open code member->offset
+- allow struct hid_device to be writeable from HID-BPF for its name,
+  uniq and phys
+- Link to v1: https://lore.kernel.org/r/20240528-hid_bpf_struct_ops-v1-0-8c6663df27d8@kernel.org
+
+---
+Benjamin Tissoires (16):
+      HID: rename struct hid_bpf_ops into hid_ops
+      HID: bpf: add hid_get/put_device() helpers
+      HID: bpf: implement HID-BPF through bpf_struct_ops
+      selftests/hid: convert the hid_bpf selftests with struct_ops
+      HID: samples: convert the 2 HID-BPF samples into struct_ops
+      HID: bpf: add defines for HID-BPF SEC in in-tree bpf fixes
+      HID: bpf: convert in-tree fixes into struct_ops
+      HID: bpf: remove tracing HID-BPF capability
+      selftests/hid: add subprog call test
+      Documentation: HID: amend HID-BPF for struct_ops
+      Documentation: HID: add a small blurb on udev-hid-bpf
+      HID: bpf: Artist24: remove unused variable
+      HID: bpf: error on warnings when compiling bpf objects
+      bpf: allow bpf helpers to be used into HID-BPF struct_ops
+      HID: bpf: rework hid_bpf_ops_btf_struct_access
+      HID: bpf: make part of struct hid_device writable
+
+ Documentation/hid/hid-bpf.rst                      | 173 ++++---
+ drivers/hid/bpf/Makefile                           |   2 +-
+ drivers/hid/bpf/entrypoints/Makefile               |  93 ----
+ drivers/hid/bpf/entrypoints/README                 |   4 -
+ drivers/hid/bpf/entrypoints/entrypoints.bpf.c      |  25 -
+ drivers/hid/bpf/entrypoints/entrypoints.lskel.h    | 248 ---------
+ drivers/hid/bpf/hid_bpf_dispatch.c                 | 266 +++-------
+ drivers/hid/bpf/hid_bpf_dispatch.h                 |  12 +-
+ drivers/hid/bpf/hid_bpf_jmp_table.c                | 565 ---------------------
+ drivers/hid/bpf/hid_bpf_struct_ops.c               | 298 +++++++++++
+ drivers/hid/bpf/progs/FR-TEC__Raptor-Mach-2.bpf.c  |   9 +-
+ drivers/hid/bpf/progs/HP__Elite-Presenter.bpf.c    |   6 +-
+ drivers/hid/bpf/progs/Huion__Kamvas-Pro-19.bpf.c   |   9 +-
+ .../hid/bpf/progs/IOGEAR__Kaliber-MMOmentum.bpf.c  |   6 +-
+ drivers/hid/bpf/progs/Makefile                     |   2 +-
+ .../hid/bpf/progs/Microsoft__XBox-Elite-2.bpf.c    |   6 +-
+ drivers/hid/bpf/progs/Wacom__ArtPen.bpf.c          |   6 +-
+ drivers/hid/bpf/progs/XPPen__Artist24.bpf.c        |  10 +-
+ drivers/hid/bpf/progs/XPPen__ArtistPro16Gen2.bpf.c |  24 +-
+ drivers/hid/bpf/progs/hid_bpf.h                    |   5 +
+ drivers/hid/hid-core.c                             |   6 +-
+ include/linux/hid_bpf.h                            | 125 ++---
+ samples/hid/Makefile                               |   5 +-
+ samples/hid/hid_bpf_attach.bpf.c                   |  18 -
+ samples/hid/hid_bpf_attach.h                       |  14 -
+ samples/hid/hid_mouse.bpf.c                        |  26 +-
+ samples/hid/hid_mouse.c                            |  39 +-
+ samples/hid/hid_surface_dial.bpf.c                 |  10 +-
+ samples/hid/hid_surface_dial.c                     |  53 +-
+ tools/testing/selftests/hid/hid_bpf.c              | 100 +++-
+ tools/testing/selftests/hid/progs/hid.c            | 100 +++-
+ .../testing/selftests/hid/progs/hid_bpf_helpers.h  |  19 +-
+ 32 files changed, 805 insertions(+), 1479 deletions(-)
+---
+base-commit: 70ec81c2e2b4005465ad0d042e90b36087c36104
+change-id: 20240513-hid_bpf_struct_ops-e3212a224555
+
+Best regards,
+-- 
+Benjamin Tissoires <bentiss@kernel.org>
+
 
