@@ -1,139 +1,113 @@
-Return-Path: <linux-kernel+bounces-206254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B8690065B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:23:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE84390065D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D908C1F22AA2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:23:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB8441C2286D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A255C1974E3;
-	Fri,  7 Jun 2024 14:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52EB71990D9;
+	Fri,  7 Jun 2024 14:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QI+p1fRr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="aZn8PRZE"
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB791D530;
-	Fri,  7 Jun 2024 14:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E04197A9D
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 14:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717770203; cv=none; b=eIqVp7e1muHJUhspfRdJSwIH+rsgTPz8bPxrMU1rhcI9M3BAovDXl27zaRgEEdTbDyW24TLW7vSoChLdchTv1kMqrjPvh9uRWs4qyiiwKflKdhsk+Lxb7PWT2cDIU15w05waNmu6eXbrQnzwt0eZNE8j4xUxRQrVGt80FzTvT7Y=
+	t=1717770206; cv=none; b=MhbVekCFIjcoouTJEicbgXXaJrqu4dhN3C4A440Q+Sm0VIrfCyT0QU258bTkSIBXN4zAgabeUxba2bIGCREpV/8cFZnIeaCDXYkjKmPreF2PGMRXg4s1zihmEanYqXkch/BxRpSdl//UOZGOwsa5+uGxxAD8paFxRfQdGtiYSjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717770203; c=relaxed/simple;
-	bh=IsjGFL0NwnhIQdxK6PsEqSI1jgzkHzKCixEGCzLgbNg=;
-	h=Content-Type:To:Cc:Subject:References:Date:MIME-Version:From:
-	 Message-ID:In-Reply-To; b=kl2oik2S65LbLhIVDaPhKftoE0Qj7g90hJR9B8D7c1Y6MnUaZ0SBhf0n+I1zfQzyh+uhAfpsgSkkRSH7gfS5FL9x92OwxxAAruNGlJ1hAlBL0tB4ykMK/WWcnSNSwPjKF2zdItypu7xqqsVo4qTG3V54qbYdyOpdVr4XyOmTm20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QI+p1fRr; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717770201; x=1749306201;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=IsjGFL0NwnhIQdxK6PsEqSI1jgzkHzKCixEGCzLgbNg=;
-  b=QI+p1fRrobP31ISeu/5fZh1i3yZi/FfFBc/AhYCuIva3Ku3N3JHkUOkG
-   /ZZvAys296dafKw5OBi6BJWtSqo9OeDU5JLIzcEQ2yuq76qH9XY4eiEFY
-   ZdKOy3rO4N02zQDXNMfI83LqKNy8C/mXOvECP7h66ltH3VvIWDy/gBUWk
-   ++kZ5HKsQ+cgv+Vu2dDQy3VqwDhn+q0SeYCgQuG3gt8dMDiTdqj7wn2W2
-   sM4RsNbukRwxlutQ2vUpR7o8MtenZlhuIcdZ4f2Fh0q6xOovpP+KNcST0
-   b3OwxofIpft5Ba0fM2dLET2KKte/HNKTVSyDoLdLexDw5jpeHezSTBLjf
-   g==;
-X-CSE-ConnectionGUID: XfykR/32StCLPXFpgLo4bg==
-X-CSE-MsgGUID: KpEzoOMcRHO9EOSJPeW+aQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="14233600"
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="14233600"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 07:23:20 -0700
-X-CSE-ConnectionGUID: oDdqg0zxRXauu0ZecMGFfw==
-X-CSE-MsgGUID: AWEyKtx7QjyhVFI7OqlLYA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="38449259"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.17.168])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/AES256-SHA; 07 Jun 2024 07:23:17 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To: jarkko@kernel.org, dave.hansen@linux.intel.com, kai.huang@intel.com,
- tj@kernel.org, mkoutny@suse.com, linux-kernel@vger.kernel.org,
- linux-sgx@vger.kernel.org, x86@kernel.org, cgroups@vger.kernel.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
- sohil.mehta@intel.com, tim.c.chen@linux.intel.com, chenridong
- <chenridong@huawei.com>
-Cc: zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com,
- zhanb@microsoft.com, anakrish@microsoft.com, mikko.ylinen@linux.intel.com,
- yangjie@microsoft.com, chrisyan@microsoft.com
-Subject: Re: [PATCH v14 02/14] cgroup/misc: Add per resource callbacks for CSS
- events
-References: <20240531222630.4634-1-haitao.huang@linux.intel.com>
- <20240531222630.4634-3-haitao.huang@linux.intel.com>
- <eeb1f936-2989-4de0-8353-b2373ce47474@huawei.com>
- <op.2ox8wt11wjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <683e88d8-aa34-40c0-a8d5-d7f8f9d4deee@huawei.com>
-Date: Fri, 07 Jun 2024 09:23:16 -0500
+	s=arc-20240116; t=1717770206; c=relaxed/simple;
+	bh=9uSFqKq6A5tx4EDxZg0A4Ok2ttHiSrOW7pHu+dwRWsk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ppM9jrG735rng2BzGV8ADQkI4TSqG8EbK9BbUwbMdthQT0/tzi8IwBYy+utouYm/5zs5BJ0vBhXGUBbYo3OWPiSHljWpRL6f5NJjKBGF1PfcDHbw7qVnZ1teLyRSklx7G3/yfHGwzwKrX06uC1645cgXTvu+jj6F45H9lH6aQSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=aZn8PRZE; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5b97a9a9b4bso966775eaf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 07:23:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1717770204; x=1718375004; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9uSFqKq6A5tx4EDxZg0A4Ok2ttHiSrOW7pHu+dwRWsk=;
+        b=aZn8PRZEzvYw3OPX9L4kAqiZtk11JC8r3iHMh0KQMaIsIvBupuLfNZaXR1OnUslM5j
+         L1pNLrz7fw8JOCIy9jWPEHcSJzcvyIm+e8scGVT1kYgCbKqsKTwWQk9ILtX1RPLoyqyP
+         I4mVPIBaEq5e+oUJ5YbwI8rNc2wRWHeLI9Tue6zLraUvZKdrTWZxpcvPlI+D8YlBzgU1
+         kws4reb8Edq+nrjua5ERdHSCgGs8F2c0+Jlm08OoMWAh0bzYA2WcoR8v4f1eZ0pXL4Kr
+         HKO+Gzyeq1k3HDfiWWPjaQ3HjzhBab5GY0jr+KFMYNcFDmgQB9rrhilFL8Vbm7IpysgD
+         IqWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717770204; x=1718375004;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9uSFqKq6A5tx4EDxZg0A4Ok2ttHiSrOW7pHu+dwRWsk=;
+        b=auJChN20tXH/HsCbORSooA6qMNX60gfMSj0ugs+FOFL0BiX8ZBdYyjGuOWbzqARGgz
+         9qLQtIDJn12NdyRsA/m6qmBgW++d9yhaTYJMQtajPgvKwffwwNIpnSvJQ696eATg3caJ
+         Er/8IyVvIqcw/SiYmFLrt5tTnbLg+yvFjSNPT64x8GwgMjkj27dgcx649oNjQzEnXI3N
+         9QRkmmgl7O7AdbBTH96fZQ/jTaVWzlfiXGLYim33s30rNH2RguH7jljQNfsWq020hb8s
+         u8QgVa39JJD00J5v38fFwHoPvXupHsS4sbgQ8LBwWy6e5mvVd3fyIFZ7go9GnZwY16TN
+         Kmzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLxkgRhHSCKMlcS2+abp1iKiLeLoc91kmC66Ro/S0bHBZsK2hueuFvFlk9OyzhNexahJVECV1iZexyg2p9cLF6y0OssJqFzLNtii9J
+X-Gm-Message-State: AOJu0Yw/sGKbUPHiZ/UELQunM0rFGiHkIOQuloGhaOtPicNVAIoweOp2
+	QvJJiLcNHA5DTeuDL0ziFqec0Y7PN7yinOTeOUN0fzf6/AWnQQc0EZbJoqVe4iM4zV/+4Bz+UW4
+	8IuI=
+X-Google-Smtp-Source: AGHT+IEYBH3CtxDu4dbsDzAN1DWtvB+cuRNa24JGoVi0WdJUEcHjRF5hyvMCPysCTXu63T9/KKN+VQ==
+X-Received: by 2002:a05:6358:5e13:b0:186:1abe:611e with SMTP id e5c5f4694b2df-19f1ffa7eb0mr279382855d.30.1717770203833;
+        Fri, 07 Jun 2024 07:23:23 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b04f655121sm17491526d6.30.2024.06.07.07.23.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 07:23:22 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sFaV0-00H9uo-5V;
+	Fri, 07 Jun 2024 11:23:22 -0300
+Date: Fri, 7 Jun 2024 11:23:22 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Gerd Bayer <gbayer@linux.ibm.com>,
+	Matthew Rosato <mjrosato@linux.ibm.com>, linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] vfio/pci: s390: Fix issues preventing
+ VFIO_PCI_MMAP=y for s390 and enable it
+Message-ID: <20240607142322.GF791043@ziepe.ca>
+References: <20240529-vfio_pci_mmap-v3-0-cd217d019218@linux.ibm.com>
+ <0a4622ce-3826-4b08-ab81-375887ab6a46@linux.ibm.com>
+ <20240606112718.0171f5b3.alex.williamson@redhat.com>
+ <e15ead25812a34e62367422bfd88e5b82bbd85fe.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From: "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2oz17kjnwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <683e88d8-aa34-40c0-a8d5-d7f8f9d4deee@huawei.com>
-User-Agent: Opera Mail/1.0 (Win32)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e15ead25812a34e62367422bfd88e5b82bbd85fe.camel@linux.ibm.com>
 
-On Thu, 06 Jun 2024 20:53:11 -0500, chenridong <chenridong@huawei.com>  
-wrote:
+On Fri, Jun 07, 2024 at 09:47:08AM +0200, Niklas Schnelle wrote:
+> I trust your judgement and was unsure too. I think for the
+> s390_mmio_read/write syscalls the only existing users out there are via
+> rdma-core, so unless Jason tells us that he thinks they could also be
+> affected by the lack of page fault handling I see no problem in going
+> upstream only.
 
-> I think it is better when _misc_cg_res_alloc fails, it just calls  
-> _misc_cg_res_free(cg, index)(add index parameter, it means ending of  
-> iterator), so it can avoid calling ->free() that do not call ->alloc().
->
-> And in misc_cg_free, just call _misc_cg_res_free(cg, MISC_CG_RES_TYPES)   
-> to free all.
->
-That makes sense now, Will do that.
-(BTW you need comment inline :-)
-Thanks
-Haitao
+rdma doesn't use the fault path for the doorbell mmio.
 
->
-> On 2024/6/6 22:51, Haitao Huang wrote:
->> On Thu, 06 Jun 2024 08:37:31 -0500, chenridong <chenridong@huawei.com>  
->> wrote:
->>
->>>
->>>   If _misc_cg_res_alloc fails, maybe some types do not call ->alloc(),  
->>> but all types ->free() callback >will be called, is that ok?
->>>
->> Not sure I understand. Are you suggesting we ignore failures from  
->> ->alloc() callback in _misc_cg_res_alloc() as it is per-resource, and  
->> have ->free() callback and resource provider of the failing type to  
->> handle the failure internally?
->>
->> IIUC, this failure only happens when a specific subcgroup is created  
->> (memory running out for allocation) so failing that subcgroup as a  
->> whole seems fine to me. Note the root node is static and no  
->> pre-resource callbacks invoked by misc. And resource provider handles  
->> its own allocations for root. In SGX case we too declare a static  
->> object for corresponding root sgx_cgroup struct.
->>
->> Note also misc cgroup (except for setting capacity[res] = 0 at root) is  
->> all or nothing so no mechanism to tell user "this resource does not  
->> work but others are fine in this particular cgroup."
->>
->> Thanks
->> Haitao
->>
->
-
-
--- 
-Using Opera's mail client: http://www.opera.com/mail/
+Jason
 
