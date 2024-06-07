@@ -1,154 +1,164 @@
-Return-Path: <linux-kernel+bounces-205861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AECF190016B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:01:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CF5690016C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FA931F25DCA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:01:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E26B1C21A3A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C521862AD;
-	Fri,  7 Jun 2024 11:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A407E1862A6;
+	Fri,  7 Jun 2024 11:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="ifdgd5ra"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WI2MUsWC"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CBC15D5A5
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CA215B560;
+	Fri,  7 Jun 2024 11:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717758097; cv=none; b=seUQjYEUYl0QMwqML7uyrT2jk+qHpkoAB4jKKQOoutcvonaGWM3xA33xsWEFPD+Y8YCgj5HMcC1g27okrKd4UFu9spzDEwAz6jej1mMkawPruG8u6uDxeTaOsS5jkhkjvMjNjeOBBYih3uRl6ZXQ8IvvPnk79+WBTuLChKFaOr0=
+	t=1717758149; cv=none; b=uoWqMgLET+b8W/b/NZCrXIMcOb9BSHRnayuGgKhGsZm5XTfxFfYxMgQZmvWjXJzPA+Sf7VUB1U0XgPtDaNSjtRBknjBxfGRg5UE+5vyLuydnj+JYwTdJ9iKmBBUlXcE8Db3YJQoNUb1l9GCOn5uy+P4s8DC9kuaurlck2+8dKHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717758097; c=relaxed/simple;
-	bh=N7sOJlTNoiRhSTfc25d+b3OOEAnwL2reEju+8B7R8vA=;
+	s=arc-20240116; t=1717758149; c=relaxed/simple;
+	bh=31GgexcteAy46BdiICGggudKV8D+FokS7DSvMVT7yok=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nf9ww+TlkFTNJYFjbCa9A5lBGf34TnH6L5CH+dNupWv1pzRAQVVzbxBxcp212vo8L5HyQMfiKrX+q8DdO/GYC89vaE+FIcBVnxpz9YCgXyPE6xtbWGONW81chutCB+6aTEDBMSh0RBryEhtC77jcsCb7SnLly1nDBJ71Luhokhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=ifdgd5ra; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7041082a80aso363723b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 04:01:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1717758095; x=1718362895; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=DI5Qf78GNH3tyySodkUT6XiaCdZX8TQYwnH9rITzZzQ=;
-        b=ifdgd5raf7Y912BX468ZFTA9UgFhullNAB7QxTNGY82fvV5yyk7kYIYuJencvdEWVg
-         bpSVt3dgbZbmPZVSIwZEdQKl9+Jl9ofAvh6YWV1AiPwwKLd6OE4FOgM6D/tpXLYEBG/i
-         urGUcUckN0q1mDnxUBd30osMv6FQYyLkF8+oG/gKBT8ckTnUCj5HeqtcZGDd9x3+9ecR
-         TbPrC2TWvBKT6DVQr6vrQIg68m8ya2nyLpIxnN4ruGUexu+SjXHRsmrLZslhkkIlx/6P
-         /ixXMUVnQr30gA1txCwfcOYxV9Y4LxT6EqYKr0VzXF+xZIotZWFmWa7d9ZZCDCEachb1
-         OArQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717758095; x=1718362895;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DI5Qf78GNH3tyySodkUT6XiaCdZX8TQYwnH9rITzZzQ=;
-        b=ZUlat5SxrBSTR/eBI1g4T2SBah/ZcPW57rAXOKNKK2DKeUptI5I0vFPvbTXAtj+dDx
-         Gcy/ZXXUEFQiTFONmjsoQUcoX0WM23Fsso2b9GpFzMe/shsWDZ1j0iTb8W78eIs7fn2O
-         dmR3NucRwXfN/wVC5GtHcXNF7IZfK5ZD9+6hCjgfjLjVpEuinAeFB/Gh/7uNWZabQ3XO
-         DYa4X/LgFSqJC+aNtKbicGn+RljZjgYdpBbYG9hlqNSOHCYH2G6q7uDlNov4Hg9Ctxs6
-         DF9Ngms1Khc8bsDizoz/3BJrewOFDHG0ETLsB+O7VxYswmGhqlzhq+eQk0rdmbZQAURT
-         8lnw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhibYSsTGx/y527a4YmErYsLZVEFZ/nTfREFOTLtiU7CcRLWDzegzBmg5XDLSq0Qk6+6jP00YIafpJo4xYsXIflc2F71+SZOIYgOlY
-X-Gm-Message-State: AOJu0Ywn6eHLDdgjuHrYTGsvweGz/JgaYZTG7YZV+gDL17CIoSnCFazY
-	fRxLBnz8Emk4zk99HX34p6LUn0YlQ8DHL31F52nFUW9PWrmy5lIQQZd55iTZCRU=
-X-Google-Smtp-Source: AGHT+IEb2Nma4FnB/zziymAMKluh4Fz3EE1abFeJCDOUaSefKlw97fNpT7MhuwmeNDFnkSZNMABPCw==
-X-Received: by 2002:a05:6a00:982:b0:6f0:f54a:4e7a with SMTP id d2e1a72fcca58-7040c61952bmr2257589b3a.2.1717758095122;
-        Fri, 07 Jun 2024 04:01:35 -0700 (PDT)
-Received: from sunil-laptop ([106.51.187.237])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd4951ffsm2371289b3a.131.2024.06.07.04.01.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 04:01:34 -0700 (PDT)
-Date: Fri, 7 Jun 2024 16:31:25 +0530
-From: Sunil V L <sunilvl@ventanamicro.com>
-To: yunhui cui <cuiyunhui@bytedance.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	linux-riscv@lists.infradead.org, bhelgaas@google.com,
-	james.morse@arm.com, jeremy.linton@arm.com,
-	Jonathan.Cameron@huawei.com, pierre.gondois@arm.com,
-	sudeep.holla@arm.com, tiantao6@huawei.com
-Subject: Re: [PATCH RESEND v5 3/3] RISC-V: Select ACPI PPTT drivers
-Message-ID: <ZmLohXMgGrIvL7s7@sunil-laptop>
-References: <20240523111322.19243-1-cuiyunhui@bytedance.com>
- <20240523111322.19243-3-cuiyunhui@bytedance.com>
- <CAEEQ3wnE+8FXXf76zapqNnC5vruoR9C-y0qjjFw47cHYP57MmQ@mail.gmail.com>
- <CAEEQ3w==wueTSDvEtJe+t7jamH2ERxta4uPLUFVwX2ueRLJ3Bw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XuwPutMR6i4Ye5vxjnpXEJuXRs2i83m5XcntAwPEfqFNcO8SG4u+zgjo9HpKxk5G7l0uJRpFeixxMofjgouaankwJW0AeNmCQ5r50hl8hSOLBJvzfuHp7fBMAoItjm2FmIBtN2T8cKkbH5WWAJ03q1TY/UTwp0xKgZN7O3y6/hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WI2MUsWC; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=ZzObR5/1jE9DdcDpWjXbNWcgdEcBTpXaM/gqNaC7VGg=; b=WI2MUsWCJkZGHu+Q33zOJ1mGPG
+	4MIV0wLr7AmDzyLxLfgUcACeHawlsvhMn93b4qzygEFaSOdvwU3qr0AAS0aYepybmoIi9qe/eGAUN
+	dXnAOM1FcBs0YvX4KqTFwdYDPq1yKBoLdtululSnYmBLP7XwgTnnzeq7OiwWw81rBJ1b1ih46OOmE
+	wF/zstvost3Spxsuhrzkx66D4phT7r04/ZI8khoIBDCLlWvp7QGPC90tYWfLsh163QsSeuxqWlKWh
+	gYilPwJRusNvM+ZleWwmxEZWvcPUHtvBIi7JGqYaMfhGVCX1Upq6SXg0Yfr1y+CssEeQQ7OiVVVXP
+	ClDSTRZw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sFXMP-0000000613W-1ZoM;
+	Fri, 07 Jun 2024 11:02:17 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8DFAD30047C; Fri,  7 Jun 2024 13:02:14 +0200 (CEST)
+Date: Fri, 7 Jun 2024 13:02:14 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ben Gainey <Ben.Gainey@arm.com>
+Cc: "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Mark Rutland <Mark.Rutland@arm.com>,
+	"acme@kernel.org" <acme@kernel.org>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	James Clark <James.Clark@arm.com>,
+	"adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+	"namhyung@kernel.org" <namhyung@kernel.org>,
+	"irogers@google.com" <irogers@google.com>,
+	"jolsa@kernel.org" <jolsa@kernel.org>,
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>
+Subject: Re: [PATCH v7 1/4] perf: Support PERF_SAMPLE_READ with inherit
+Message-ID: <20240607110214.GQ8774@noisy.programming.kicks-ass.net>
+References: <20240606144059.365633-1-ben.gainey@arm.com>
+ <20240606144059.365633-2-ben.gainey@arm.com>
+ <20240607093254.GN8774@noisy.programming.kicks-ass.net>
+ <451afb8eb03f1519c482a84a6c1cbd1e62222988.camel@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEEQ3w==wueTSDvEtJe+t7jamH2ERxta4uPLUFVwX2ueRLJ3Bw@mail.gmail.com>
+In-Reply-To: <451afb8eb03f1519c482a84a6c1cbd1e62222988.camel@arm.com>
 
-Hi Yunhui,
+On Fri, Jun 07, 2024 at 10:16:15AM +0000, Ben Gainey wrote:
 
-On Fri, Jun 07, 2024 at 04:44:36PM +0800, yunhui cui wrote:
-> Hi Sunilvl,
+> > > @@ -3532,11 +3544,18 @@ perf_event_context_sched_out(struct
+> > > task_struct *task, struct task_struct *next)
+> > >   perf_ctx_disable(ctx, false);
+> > >  
+> > >   /* PMIs are disabled; ctx->nr_pending is stable. */
+> > > - if (local_read(&ctx->nr_pending) ||
+> > > + if (ctx->nr_inherit_read ||
+> > > +     next_ctx->nr_inherit_read ||
+> > > +     local_read(&ctx->nr_pending) ||
+> > >       local_read(&next_ctx->nr_pending)) {
+> > 
+> > This seems unfortunate, nr_pending and nr_inherit_read are both used
+> > exclusively to inhibit this context switch optimization. Surely they
+> > can
+> > share the exact same counter.
+> > 
+> > That is, rename nr_pending and use it for both?
+> 
+> Sure, how about "nr_no_switch_fast" ?
+
+Yeah, I suppose.
+
+
+> Sure, presumably you are happy with just calling
+> "perf_event_count(event, false)" everywhere it is currently used,
+> rather than renaming it to something shorter and keeping the two
+> functions?
+
+Yeah, there aren't *that* many instances. Your current patch already
+touches them all anyway.
+
+> > That is, I would really rather you had:
+> > 
+> > static inline u64 perf_event_count(struct perf_event *event, bool
+> > self)
+> > {
+> >  if (self)
+> >  return local64_read(&event->count);
+> > 
+> >  return local64_read(&event->count) + local64_read(&event-
+> > >child_count);
+> > }
+> > 
+> > And then actually use that argument as intended.
 > 
 > 
-> On Mon, May 27, 2024 at 8:51â€¯PM yunhui cui <cuiyunhui@bytedance.com> wrote:
-> >
-> > Hi Palmer,
-> >
-> > Gentle ping ...
-> >
-> > On Thu, May 23, 2024 at 7:13â€¯PM Yunhui Cui <cuiyunhui@bytedance.com> wrote:
-> > >
-> > > After adding ACPI support to populate_cache_leaves(), RISC-V can build
-> > > cacheinfo through the ACPI PPTT table, thus enabling the ACPI_PPTT
-> > > configuration.
-> > >
-> > > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> > > Reviewed-by: Jeremy Linton <jeremy.linton@arm.com>
-> > > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> > > ---
-> > >  arch/riscv/Kconfig | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >
-> > > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> > > index f961449ca077..a9ebecd72052 100644
-> > > --- a/arch/riscv/Kconfig
-> > > +++ b/arch/riscv/Kconfig
-> > > @@ -14,6 +14,7 @@ config RISCV
-> > >         def_bool y
-> > >         select ACPI_GENERIC_GSI if ACPI
-> > >         select ACPI_REDUCED_HARDWARE_ONLY if ACPI
-> > > +       select ACPI_PPTT if ACPI
-NIT: I would add this prior to ACPI_REDUCED_HARDWARE_ONLY.
-
-> > >         select ARCH_DMA_DEFAULT_COHERENT
-> > >         select ARCH_ENABLE_HUGEPAGE_MIGRATION if HUGETLB_PAGE && MIGRATION
-> > >         select ARCH_ENABLE_SPLIT_PMD_PTLOCK if PGTABLE_LEVELS > 2
-> > > --
-> > > 2.20.1
-> > >
-> >
-> > Thanks,
-> > Yunhui
+> Fair point.
 > 
-> Could you please review or ack this patchset again? Palmer did not respond.
+> I was trying to avoid the 3 subsequent uses all having to repeat
+> "from_sample && has_inherit_and_sample_read(&event->attr)", which feels
+> a bit of a pit-trappy. 
 > 
-> Link:
-> https://lore.kernel.org/linux-riscv/20240523111322.19243-3-cuiyunhui@bytedance.com/T/
+> I suppose I could pull that into a "use_self_value(from_sample,event)"?
+
+IIRC they all originate in a single location around perf_output_read(),
+that already has the event and could easily 'correct' the semantic
+meaning by doing the above once or so.
+
+> > 
+> > > @@ -7205,13 +7232,14 @@ void perf_event__output_id_sample(struct
+> > > perf_event *event,
+> > >  
+> > >  static void perf_output_read_one(struct perf_output_handle
+> > > *handle,
+> > >   struct perf_event *event,
+> > > - u64 enabled, u64 running)
+> > > + u64 enabled, u64 running,
+> > > + bool from_sample)
+> > >  {
+> > >   u64 read_format = event->attr.read_format;
+> > >   u64 values[5];
+> > >   int n = 0;
+> > >  
+> > > - values[n++] = perf_event_count(event);
+> > > + values[n++] = perf_event_count(event, from_sample);
+> > 
+> > ...observe the fail... from_sample != self-value-only
 > 
-My bad, I was under the impression that I had Acked already. The series
-looks good to me except the nit above.
+> By fail you are referring to the difference in names?
 
-Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
-
-Thanks,
-Sunil
+The difference in meaning, one is from-sample, the other is self-value.
+Per the extra condition squirrelled away they are not equivalent.
 
