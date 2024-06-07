@@ -1,114 +1,207 @@
-Return-Path: <linux-kernel+bounces-205237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07BE38FF9C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 03:53:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D5208FF9DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:01:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B1A31F22A20
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:53:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2463284F1C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D445A12B82;
-	Fri,  7 Jun 2024 01:53:25 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087F212E7E;
+	Fri,  7 Jun 2024 02:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJL37RP4"
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF78B4C76;
-	Fri,  7 Jun 2024 01:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A031C4C70
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 02:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717725205; cv=none; b=JM/ZBMtZQGx4XGdVOFV7Yf9SHYFlEE4NZcovbJR0vpyjj/Un1v6GehamESmHoKgvMdttBAAG3+z5f9hzofBEaTnhmZ5/w0tz7FJ5h8Chxv24KvNeQi1W4uQnqZifcB9jDMDXw18X6IX9BOBn81ybae50dQX4W+OXgVmKtx0rsAc=
+	t=1717725662; cv=none; b=BzLjlvCjOyBusGR1j1PcVaoUYdzKZ9KgEYPbbieDkOD74nEUL9HZ/egWcwBoJuCw5i3/dG+RrEE/48yUzkABUE/6DbzF+DzphgraJ7DF0tyuvo+H1EWMwpuIn5mzjA9cpTRjUY442O8ZSQp+zlBBn7FXWrEZptcAqTr/s85uHZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717725205; c=relaxed/simple;
-	bh=7vGIMh1HNy8AvtODTNNL5y8KTBjmNAZW3NpHkolT8OY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=F5h+BFRAnIWcxbjzDZ4yUGVxpsGBsY5utv9LNlitzJCrurLIa3xTvlhpLFccuKwdtolvNaX+mKE5eBy6fP4FQmXTCF0LlVXAcPTxGBwwZN75IfeSnj8BWW5pDELzIZI3T/CM2d3FLj46bvu3tXf0CTv3g009og5G/IXUcOPbBCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4VwPMD1B90z1xsND;
-	Fri,  7 Jun 2024 09:51:52 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0E31B1A0188;
-	Fri,  7 Jun 2024 09:53:13 +0800 (CST)
-Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Fri, 7 Jun
- 2024 09:53:12 +0800
-Message-ID: <683e88d8-aa34-40c0-a8d5-d7f8f9d4deee@huawei.com>
-Date: Fri, 7 Jun 2024 09:53:11 +0800
+	s=arc-20240116; t=1717725662; c=relaxed/simple;
+	bh=/xcGYKkMrmyvxXdQr0zjgzN8XMOZABCsWQiVdP7zNCw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Te43iEuldU/U+aZYKFKguFdqPpnrEZTSbFHHhNx3Jm7rYRmYyIna+VB//kCcdER635Ttpaf4DgvXiDU72sSAr1su2zzFDOihz72jJ+uTjNJGTvpzhasXuIREVdPPUjwLt6xSQ69OiKxFVGIJwY/fbSyX16K1oal3paw5hnXFYpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dJL37RP4; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-4e1c721c040so598829e0c.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 19:01:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717725659; x=1718330459; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Peut3ZHW0CaxiZSEBfz/De33tzBSHWA6rV+eq1ptdg4=;
+        b=dJL37RP4K/UuAFCrznfqqWJP4+30dWaIT+HP3qxWSIlWK+Y8ANBdZmb1RnsjNLW8+R
+         hWGSAZS2W8Dl+A0ERCkTQQbzk3f/dhb264wwpOspwlefVkF4+H+CppwWrRaQQpJP5dCh
+         bgdlRxCtYgGcUT9DZ/Q+78rMAe5wfFJDHC0yKHDaXoojl7fZqIp8QJC6JOVcrqghGCQB
+         vjLdzRbb9epsPbJ6zeZYJe3c+GU2CBSlsb0hMfHjW1YNcyWRlZpl28RsN9Z6fB/fgO+l
+         Yg3mi3jC8QadO0HZZ+xTPrbX+WHnAsVNdxxJ6L5glCwUcYyIR8COgdgZuFvSOXU6bGZe
+         fOTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717725659; x=1718330459;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Peut3ZHW0CaxiZSEBfz/De33tzBSHWA6rV+eq1ptdg4=;
+        b=ZzyJqTWWPQrZGJew18AtoOWq7nmVKO8pHpnzAt+XHSmbsL/6GrfWD4VZFadlZhViVg
+         hJgqjSVMxh6+v8x6Zuq8G5YELCqJE+f7fO76yO/YApefXQJEWI4DVPjw/d9HUPDWAW4u
+         8APMlGossNMkxMe+FNCbxOhKyCz2HoGoFNJftiQdOJLImZnCZbPIHN7TvwRb/q6Bsnf3
+         fkba83o9pa5aXKKVGylc7igzuoeghzk0+TSRQxegNgWJ19fTTo21Z3ja6fJXcjARBxaK
+         dGkJ4AXEWyh0dSQNLW9R4o5DmyWP3LkQa3soYQHygyBy7h1xjpb2cPAyTuTSzROtasd9
+         78Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDrQDAGcBDRKh5VGXfsl2aSL5JJ1ak8pGwVjeXNN2eFGIA7TpqhYziJa9OxuouPrEJN/d7i8OrLJUqPiaHlpAxXXRYMBJXZv7WQ+kz
+X-Gm-Message-State: AOJu0Yy3XfFG5IPkFvnquTp0vomEBISf9An4lB88Cy9/HZOGc8X8IYNS
+	NhAyu0HJNdzGSZFORSNXmjY2z42+uth3RMvHbSHnlBHnB1alpQ2INpVRvOZJtoA1+aWbFEujeP9
+	9paJaV7LbYqIMi0DZUJKY4sUu4ko=
+X-Google-Smtp-Source: AGHT+IFUxc/68yDjHSucpnbaL0dK7Iasec77dpQWlMEcXErUMAq18HXUUuZT1TlHReP7TBShY1UOOeoHrxoNh11v39A=
+X-Received: by 2002:a1f:7d4e:0:b0:4ea:ede1:ab15 with SMTP id
+ 71dfb90a1353d-4eb562cd389mr1343760e0c.15.1717725659274; Thu, 06 Jun 2024
+ 19:00:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 02/14] cgroup/misc: Add per resource callbacks for CSS
- events
-To: Haitao Huang <haitao.huang@linux.intel.com>, <jarkko@kernel.org>,
-	<dave.hansen@linux.intel.com>, <kai.huang@intel.com>, <tj@kernel.org>,
-	<mkoutny@suse.com>, <linux-kernel@vger.kernel.org>,
-	<linux-sgx@vger.kernel.org>, <x86@kernel.org>, <cgroups@vger.kernel.org>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
-	<sohil.mehta@intel.com>, <tim.c.chen@linux.intel.com>
-CC: <zhiquan1.li@intel.com>, <kristen@linux.intel.com>, <seanjc@google.com>,
-	<zhanb@microsoft.com>, <anakrish@microsoft.com>,
-	<mikko.ylinen@linux.intel.com>, <yangjie@microsoft.com>,
-	<chrisyan@microsoft.com>
-References: <20240531222630.4634-1-haitao.huang@linux.intel.com>
- <20240531222630.4634-3-haitao.huang@linux.intel.com>
- <eeb1f936-2989-4de0-8353-b2373ce47474@huawei.com>
- <op.2ox8wt11wjvjmi@hhuan26-mobl.amr.corp.intel.com>
-Content-Language: en-US
-From: chenridong <chenridong@huawei.com>
-In-Reply-To: <op.2ox8wt11wjvjmi@hhuan26-mobl.amr.corp.intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+References: <CAGsJ_4x=v0fDN_QVjdHSGVykH2+o_f81NnN_0-SUL+iwe+v84g@mail.gmail.com>
+ <20240607013617.913054-1-ranxiaokai627@163.com>
+In-Reply-To: <20240607013617.913054-1-ranxiaokai627@163.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 7 Jun 2024 14:00:47 +1200
+Message-ID: <CAGsJ_4yt2eegrB5fDsGMZiirzhqNtnRGOOnhvrvv-0V=x_WG=A@mail.gmail.com>
+Subject: Re: [PATCH linux-next v2] mm: huge_memory: fix misused
+ mapping_large_folio_support() for anon folios
+To: ran xiaokai <ranxiaokai627@163.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, mhocko@kernel.org, ran.xiaokai@zte.com.cn, 
+	v-songbaohua@oppo.com, si.hao@zte.com.cn, xu.xin16@zte.com.cn, 
+	yang.yang29@zte.com.cn, ziy@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I think it is better when _misc_cg_res_alloc fails, it just calls 
-_misc_cg_res_free(cg, index)(add index parameter, it means ending of 
-iterator), so it can avoid calling ->free() that do not call ->alloc().
+On Fri, Jun 7, 2024 at 1:37=E2=80=AFPM ran xiaokai <ranxiaokai627@163.com> =
+wrote:
+>
+> > > From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+> > >
+> > > When I did a large folios split test, a WARNING
+> > > "[ 5059.122759][  T166] Cannot split file folio to non-0 order"
+> > > was triggered. But the test cases are only for anonmous folios.
+> > > while mapping_large_folio_support() is only reasonable for page
+> > > cache folios.
+> > >
+> > > In split_huge_page_to_list_to_order(), the folio passed to
+> > > mapping_large_folio_support() maybe anonmous folio. The
+> > > folio_test_anon() check is missing. So the split of the anonmous THP
+> > > is failed. This is also the same for shmem_mapping(). We'd better add
+> > > a check for both. But the shmem_mapping() in __split_huge_page() is
+> > > not involved, as for anonmous folios, the end parameter is set to -1,=
+ so
+> > > (head[i].index >=3D end) is always false. shmem_mapping() is not call=
+ed.
+> > >
+> > > Also add a VM_WARN_ON_ONCE() in mapping_large_folio_support()
+> > > for anon mapping, So we can detect the wrong use more easily.
+> > >
+> > > THP folios maybe exist in the pagecache even the file system doesn't
+> > > support large folio, it is because when CONFIG_TRANSPARENT_HUGEPAGE
+> > > is enabled, khugepaged will try to collapse read-only file-backed pag=
+es
+> > > to THP. But the mapping does not actually support multi order
+> > > large folios properly.
+> > >
+> > > Using /sys/kernel/debug/split_huge_pages to verify this, with this
+> > > patch, large anon THP is successfully split and the warning is ceased=
+.
+> > >
+> > > Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+> > > ---
+> > >  include/linux/pagemap.h |  4 ++++
+> > >  mm/huge_memory.c        | 27 ++++++++++++++++-----------
+> > >  2 files changed, 20 insertions(+), 11 deletions(-)
+> > >
+> > > diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> > > index ee633712bba0..59f1df0cde5a 100644
+> > > --- a/include/linux/pagemap.h
+> > > +++ b/include/linux/pagemap.h
+> > > @@ -381,6 +381,10 @@ static inline void mapping_set_large_folios(stru=
+ct address_space *mapping)
+> > >   */
+> > >  static inline bool mapping_large_folio_support(struct address_space =
+*mapping)
+> > >  {
+> > > +       /* AS_LARGE_FOLIO_SUPPORT is only reasonable for pagecache fo=
+lios */
+> > > +       VM_WARN_ONCE((unsigned long)mapping & PAGE_MAPPING_ANON,
+> > > +                       "Anonymous mapping always supports large foli=
+o");
+> > > +
+> > >         return IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
+> > >                 test_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
+> > >  }
+> > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > > index 317de2afd371..62d57270b08e 100644
+> > > --- a/mm/huge_memory.c
+> > > +++ b/mm/huge_memory.c
+> > > @@ -3009,30 +3009,35 @@ int split_huge_page_to_list_to_order(struct p=
+age *page, struct list_head *list,
+> > >         if (new_order >=3D folio_order(folio))
+> > >                 return -EINVAL;
+> > >
+> > > -       /* Cannot split anonymous THP to order-1 */
+> > > -       if (new_order =3D=3D 1 && folio_test_anon(folio)) {
+> > > -               VM_WARN_ONCE(1, "Cannot split to order-1 folio");
+> > > -               return -EINVAL;
+> > > -       }
+> > > -
+> > > -       if (new_order) {
+> > > -               /* Only swapping a whole PMD-mapped folio is supporte=
+d */
+> > > -               if (folio_test_swapcache(folio))
+> > > +       if (folio_test_anon(folio)) {
+> > > +               /* Cannot split anonymous THP to order-1 */
+> >
+> > This is simply what the code is indicating. Shouldn't we phrase
+> > it differently to explain "why" but not "how"? for example, anon
+> > order-1 mTHP is not supported?
+>
+> Hi, Barry,
+> Good comments, thanks.
+> Is "order-1 is not a anonymouns mTHP suitable order." better?
 
-And in misc_cg_free, just call _misc_cg_res_free(cg, MISC_CG_RES_TYPES)  
-to free all.
+could pick up some words from include/linux/huge_mm.h, particularly
+those words regarding "a limitation of the THP implementation".
 
+/*
+ * Mask of all large folio orders supported for anonymous THP; all orders u=
+p to
+ * and including PMD_ORDER, except order-0 (which is not "huge") and order-=
+1
+ * (which is a limitation of the THP implementation).
+ */
+#define THP_ORDERS_ALL_ANON     ((BIT(PMD_ORDER + 1) - 1) & ~(BIT(0) | BIT(=
+1)))
+
+perhaps, you can even do
+
+if (order > 0 && !(bit(order) & THP_ORDERS_ALL_ANON))
+      return -EINVAL;
+
+This is self-commented. Either way is fine.
+
+>
+> > Otherwise, it looks good to me.
+> >
+> > Reviewed-by: Barry Song <baohua@kernel.org>
+>
 
 Thanks
-
-Ridong
-
-
-On 2024/6/6 22:51, Haitao Huang wrote:
-> On Thu, 06 Jun 2024 08:37:31 -0500, chenridong <chenridong@huawei.com> 
-> wrote:
->
->>
->>   If _misc_cg_res_alloc fails, maybe some types do not call 
->> ->alloc(), but all types ->free() callback >will be called, is that ok?
->>
-> Not sure I understand. Are you suggesting we ignore failures from 
-> ->alloc() callback in _misc_cg_res_alloc() as it is per-resource, and 
-> have ->free() callback and resource provider of the failing type to 
-> handle the failure internally?
->
-> IIUC, this failure only happens when a specific subcgroup is created 
-> (memory running out for allocation) so failing that subcgroup as a 
-> whole seems fine to me. Note the root node is static and no 
-> pre-resource callbacks invoked by misc. And resource provider handles 
-> its own allocations for root. In SGX case we too declare a static 
-> object for corresponding root sgx_cgroup struct.
->
-> Note also misc cgroup (except for setting capacity[res] = 0 at root) 
-> is all or nothing so no mechanism to tell user "this resource does not 
-> work but others are fine in this particular cgroup."
->
-> Thanks
-> Haitao
->
+Barry
 
