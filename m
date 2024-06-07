@@ -1,163 +1,169 @@
-Return-Path: <linux-kernel+bounces-205528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5D2E8FFD1A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:30:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C9B18FFD18
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 010CAB232EA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:30:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BC912823C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8413B1552E4;
-	Fri,  7 Jun 2024 07:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A2A154454;
+	Fri,  7 Jun 2024 07:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nfPp2I2u"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQ+G+hwu"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19AEC154436
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 07:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CAA19D89B;
+	Fri,  7 Jun 2024 07:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717745383; cv=none; b=pZFC3EORRqlEWaCM+saawRe4kBA82yT+4U2Q+/Gm8Oy+Q8tksVJdox5a0Suu6oWUA2hvYUpa5J5qjJZQN0VcinL9XfgHzFavWEHQezTs7LulSrnrmcOfMJCAqazH5e1mDrHTKuClz23qkCtzETOFuG3PgDxgY+ffMWAl/2ognGM=
+	t=1717745381; cv=none; b=ZwdgsyPdIT0y/WQsKcFUpMcVrisp6ilvIkL0UGEiR9PXo6usp228hXpMXsfT21NQ+RPmoJ5HBuCKosdhuSmD+RJn0Vq1LYjBu7zL6bEIXm+SZYwde6XqhBzzr/EGxWh6GSzg37SvzYxv3Fivgbp4SBK7KiJBGUTL9SIBtJYca/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717745383; c=relaxed/simple;
-	bh=2zqhKlVxrz3mbaDx+3zFhoMg3wKeoW+Xa3Fjl4ex1ps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bcPn7+W0E7FszlihnNnBlg7z0sG5c8OAfacpazT+vDzBxaxO3hI7oqiOsU8lKeGIApZNQwn0BFNCd4Q8PxfBF721ODiwHFwl/XRdemzOmtJ6zzDGHTDu86OMnreEsnrk4xFCP1FN3iJiRv4pJaJl0JNYYkfo1nyke6fBKLJ3Ik8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nfPp2I2u; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717745382; x=1749281382;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2zqhKlVxrz3mbaDx+3zFhoMg3wKeoW+Xa3Fjl4ex1ps=;
-  b=nfPp2I2u6TUT7NSxDfHSOkiiaMgG+qyaypLBfKaOlzQeW8d03dI2m5Zc
-   vVmo9p9embdvHvpudaBQB9ou5O3yeTh30FcUCEDi/WWPOOkRpV9JtUkdt
-   A9w0KTKV4Zlx5WPmFEaanuuZLzYICqKR6W9sQ/mVHXe8Ya8Aj52S+uZXn
-   MZd2PtAbTNUHwdFkMEtVFWxTwUUgP+aYMu0wjQg7QSZCmCyuyElcG6pFJ
-   m2P0ZcHJgkQ8t8nLS13vXgiEHYsSvmmvk+exreNWmlMxGM1791VV6/C10
-   rUMrFeqjC24FDQG3O/3redtULvCEyMXGNedLq+9wbdfQOQrSj5z29tPaX
-   w==;
-X-CSE-ConnectionGUID: ULU+m2AdT4+E5Wz2a1qZaw==
-X-CSE-MsgGUID: 6dH3JEKpQE6WGNgSB2KgtQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="14634925"
-X-IronPort-AV: E=Sophos;i="6.08,220,1712646000"; 
-   d="scan'208";a="14634925"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 00:29:41 -0700
-X-CSE-ConnectionGUID: dhQ+h4aLSba7BzGhhFJOzQ==
-X-CSE-MsgGUID: LkN6+gQpQWOYS9MWDiSS/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,220,1712646000"; 
-   d="scan'208";a="75713087"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 07 Jun 2024 00:29:37 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sFU2X-0004D9-2b;
-	Fri, 07 Jun 2024 07:29:33 +0000
-Date: Fri, 7 Jun 2024 15:29:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tao Zeng via B4 Relay <devnull+tao.zeng.amlogic.com@kernel.org>,
-	Gao Xiang <xiang@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-	Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
-	Jeffle Xu <jefflexu@linux.alibaba.com>,
-	Sandeep Dhavale <dhavale@google.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-	Tao Zeng <tao.zeng@amlogic.com>
-Subject: Re: [PATCH] erofs: support external crypto for decompression
-Message-ID: <202406071506.XHwo54ej-lkp@intel.com>
-References: <20240606-erofs-decompression-v1-1-ec5f31396e04@amlogic.com>
+	s=arc-20240116; t=1717745381; c=relaxed/simple;
+	bh=weMbjAVuFoMzFfr3Po8iOhGCl5HlwO1kTE9xRh9mM/E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kd8M4h5BDm3L8j5/+Xvq/TltoG+DSuPfAmEYeDMfkVQ2vWBmdGNFzcDcEkInhNMACeB2fHxq6165i/Q510nLkkNipFN3KaSMS29Ehy7fkXzrhIVY1EnQCT19XCNzo1nIWp7Q6DGHRIQNiRksPwDdVo7ywe2mLkG0fXXsHSJmeXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CQ+G+hwu; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57864327f6eso1880743a12.1;
+        Fri, 07 Jun 2024 00:29:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717745378; x=1718350178; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=i+bAYHtIw7hxjN1lHvR/lj9vmLxgOwdTTQ4DZlhtZa8=;
+        b=CQ+G+hwuFr9kj8wPTFR2UMapC+L9SYh55B7GxxcvqiGkZAK2mkVn/VKeclA60aRRmC
+         Pdq42375V1z4Xd3GZ7hiC4W9G81orbu9AHUcBrEJzPVuuDZ95kH/EsGZV4ee+JCY7l1q
+         WlRR4K40sLODZ+V4rtNA7ArhUsyCd4UwoSWCiWUFL4RxbRgjX6WG2YeMPPRYbalDcGdx
+         mK5S72WT3+EQxhnKR2OEOJP0qTZ4FvBU8wtG/e54CooWCo4I3PJsfQg57itv2dVEdPh0
+         UQWSqukVn3wgyHiJG5ZcmN16urM4Q26GXLQUOu8yKe3HX0UAg3cilG38AXNkL2tPSHx8
+         SXpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717745378; x=1718350178;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i+bAYHtIw7hxjN1lHvR/lj9vmLxgOwdTTQ4DZlhtZa8=;
+        b=J6ChZlPBWEdIQMVvnjIYyAkTcyn6hoqP1QFY1oFEQfAkyCPScCDa4knbQ6AogzaFgw
+         uFobe/c+0xMykCjvoWFY10X6yn3/2jqXaSm3Hq5kb8QOU3auiEL70UebFCT9v6bLlEpa
+         CFFajyoaW/cI2/DJTDlisanD+sLNvaBrv5ERfNYQbZtDxnwBusR6MVXKptMo4JEbUvTQ
+         oWLnKVR99BrsIW5nfgS3Xedf29Uc+W6Uikpn3qOO1lfnH6vgbtW+Bia79KOndeWLCihL
+         gywSr2Eo9F/OUAjYOB747GVnevrB+OLz1KtW90XoKQ+004FUm+7Y/8dA7I2ji1/s8mN5
+         e55w==
+X-Forwarded-Encrypted: i=1; AJvYcCXlJhvzo1jFCXxmclXEM1OuepCMjzYJNS/4kr/pxcRLxZlN7adxCLMdT7cVZfnYMx0sPdZmXDapoAtwFmr5h8G3ttEJafCHjHmcX/Yf6x9VFpufwsyuylcppO7xR2Sql7M7NpcMJBuva0wz/xK2mdFYng9NVEnko1YoZ0qdbf045b6c+A==
+X-Gm-Message-State: AOJu0Yw4RkC2RE22ZFHkrAq4Gb8PwhzpnUCvPWoCeshatTvveyUqqaDm
+	K1tBnqOmWgu3NPnvJVtSPvsKTCgnJNA4TWqbNm+9yEUNBmnIOHQU
+X-Google-Smtp-Source: AGHT+IGj9GVj1bzF6WZinGCaDqFfjWPTnkAOfM5Lrw3tDB+/eO+m8Klx0LNd/lyxzbqfwxRcV2x7Sw==
+X-Received: by 2002:aa7:c443:0:b0:57c:5ed0:ca65 with SMTP id 4fb4d7f45d1cf-57c5ed0ccd0mr346811a12.21.1717745377909;
+        Fri, 07 Jun 2024 00:29:37 -0700 (PDT)
+Received: from [192.168.0.220] ([83.103.132.21])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae13faccsm2315697a12.54.2024.06.07.00.29.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jun 2024 00:29:37 -0700 (PDT)
+Message-ID: <29dfa7b1-8bf9-4996-b331-5de25bcbaa8c@gmail.com>
+Date: Fri, 7 Jun 2024 10:29:24 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606-erofs-decompression-v1-1-ec5f31396e04@amlogic.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/6] dt-bindings: adc: ad7173: add support for ad411x
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Dumitru Ceclan via B4 Relay
+ <devnull+dumitru.ceclan.analog.com@kernel.org>, dumitru.ceclan@analog.com,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240531-ad4111-v4-0-64607301c057@analog.com>
+ <20240531-ad4111-v4-1-64607301c057@analog.com>
+ <20240601193512.0e17992b@jic23-huawei>
+ <efa10caa-5e78-4f3f-8cca-c61d7a01e6fd@gmail.com>
+ <20240603210014.6258134d@jic23-huawei>
+ <0f0c0b92-af0d-4e68-9880-bacfd53d726f@gmail.com>
+ <20240606205813.65b342c4@jic23-huawei>
+Content-Language: en-US
+From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
+In-Reply-To: <20240606205813.65b342c4@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Tao,
+On 06/06/2024 22:58, Jonathan Cameron wrote:
+> On Wed, 5 Jun 2024 09:54:31 +0300
+> "Ceclan, Dumitru" <mitrutzceclan@gmail.com> wrote:
+> 
+>> On 03/06/2024 23:00, Jonathan Cameron wrote:
+>>> On Mon, 3 Jun 2024 12:46:10 +0300
+>>> "Ceclan, Dumitru" <mitrutzceclan@gmail.com> wrote:
+>>>   
+>>>> On 01/06/2024 21:35, Jonathan Cameron wrote:  
+>>>>> On Fri, 31 May 2024 22:42:27 +0300
+>>>>> Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
+>>>>>     
+>>>>>> From: Dumitru Ceclan <dumitru.ceclan@analog.com>  
+>>
+>> ...
+>>
+>>>>>> +          Supported only by AD7172-2, AD7172-4, AD7175-2, AD7175-8, AD7177-2:
+>>>>>> +            19: ((AVDD1 − AVSS)/5)+
+>>>>>> +            20: ((AVDD1 − AVSS)/5)−    
+>>>>>
+>>>>> That's what it says on the datasheet (so fine to copy that here) but I'm curious, what does
+>>>>> that mean in practice?  How can we have negative and postive signals of the difference
+>>>>> between two power supply voltages where I'm fairly sure AVDD1 always greater than AVSS.
+>>>>>    
+>>>>
+>>>> I have not tested that as I do not have a model that supports this wired up.
+>>>> If I had to guess they are the same signal but one should be connected to the
+>>>> positive input, one to the negative input...but I could be wrong.  
+>>>
+>>> If they are, then as far as I we are concerned is this one channel with two
+>>> representations depending on whether it is 1st or 2nd in the list?
+>>> Can we use one number and hide that detail in the driver?
+>>>
+>>> Seems odd though if that is the case.
+>>>
+>>> I guess if we find out later this is the case we can tighten the binding to
+>>> enforce the right one instead of squashing them to one value, but that
+>>> is a bit ugly.  Any chance of digging out the info?  If not we can go ahead
+>>> but ideally answering things like this make a our life easier in the long run.
+>>>
+>>> Jonathan
+>>>   
+>>
+>> "(Avdd1/Avss)/5+ as positive input and (Avdd/Avss)/5- as negative
+>>   this is used for monitoring power supplies, the inputs must be selected in pair"
+>> Perhaps it's an internal voltage divider...? I dunno
+>>
+>> So it seems like this cannot be used as a common mode voltage input.
+>> I'll restrict the driver to only allow these inputs paired together
+>> and rename the define for these selections.
+> Most mysterious :)  I'd be interested to know what value it reads
+> back if you ever get the part.
+>
 
-kernel test robot noticed the following build errors:
+My best guess now is that the reason for /5 is so that you can measure
+the AVDD AVSS difference using the internal 2.5V reference.
+So for AVDD 5V, AVSS 0V using the internal ref it would read 1V
 
-[auto build test ERROR on ee78a17615ad0cfdbbc27182b1047cd36c9d4d5f]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Tao-Zeng-via-B4-Relay/erofs-support-external-crypto-for-decompression/20240606-155702
-base:   ee78a17615ad0cfdbbc27182b1047cd36c9d4d5f
-patch link:    https://lore.kernel.org/r/20240606-erofs-decompression-v1-1-ec5f31396e04%40amlogic.com
-patch subject: [PATCH] erofs: support external crypto for decompression
-config: arm64-randconfig-004-20240607 (https://download.01.org/0day-ci/archive/20240607/202406071506.XHwo54ej-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240607/202406071506.XHwo54ej-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406071506.XHwo54ej-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from fs/erofs/zdata.c:7:
-   In file included from fs/erofs/compress.h:9:
-   In file included from fs/erofs/internal.h:11:
-   In file included from include/linux/dax.h:6:
-   In file included from include/linux/mm.h:2241:
-   include/linux/vmstat.h:484:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     484 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     485 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:491:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     491 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     492 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:498:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     498 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:503:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     503 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     504 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:512:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     512 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     513 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   In file included from fs/erofs/zdata.c:7:
->> fs/erofs/compress.h:120:1: error: expected identifier or '('
-     120 | {
-         | ^
-   5 warnings and 1 error generated.
+I'll let you know if I test this
+ 
+> Ah well, great to have gotten that extra detail even if it leaves
+> more questions!
+> 
+> Jonathan
+> 
 
 
-vim +120 fs/erofs/compress.h
-
-   115	
-   116	static inline int z_erofs_load_crypto_config(struct super_block *sb,
-   117						     struct erofs_super_block *dsb,
-   118						     void *data,
-   119						     int size);
- > 120	{
-   121		if (crypto) {
-   122			erofs_err(sb, "crypto algorithm isn't enabled");
-   123			return -EINVAL;
-   124		}
-   125		return 0;
-   126	}
-   127	#endif
-   128	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
