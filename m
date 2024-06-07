@@ -1,142 +1,244 @@
-Return-Path: <linux-kernel+bounces-205467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 585218FFC7D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:51:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B5868FFC98
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C38331F21EAF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:51:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A37F6B227AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9FE153804;
-	Fri,  7 Jun 2024 06:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC311552FA;
+	Fri,  7 Jun 2024 07:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BXcsw8sK"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="axQCC1c6";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UnZIEtqU"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0EF5336A;
-	Fri,  7 Jun 2024 06:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980CB153565;
+	Fri,  7 Jun 2024 07:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717743107; cv=none; b=VoycggGTejDVsrr//+7NKCBQ9TGUMtPN1tbz8f4vWLhWI/cwYu054uuEd8L1G3I+AfcURHt5/S8y1svZ1V73jJA+sbAQiKV6PdSPl0gcinE2e5kTvnyfwSi/Ymycy/ZVQ33EGIkVbrIsmQe7vAo64p0+FbpviuYZ2LSrvDfxUgA=
+	t=1717743875; cv=none; b=Tjxq2uKhgDMiEPuFqeAdOZ09L+2Gkjtjyr7R0TQjzvJGDRA0sPGn2DFXsvxtfbwhAiS8yfP9KXioSZ81RpJKetp07mseB4Kbsh/w+m1F0hUOaoo8X2DeVXSYS1pR0zSe5aqjGPVkuNAzyEWgdp4h5O/aAW9JBOpki1t4p+U+Zdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717743107; c=relaxed/simple;
-	bh=ApvfQgtq23tfdbbfL4earCVKBRWM4vSoJHJ/Wgkzuk4=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=T7415JfKzJbLcRTgyJS1d7rKn2VTcNnfURwG/Vm1KjVmEJTdkPuMxOOo6rpUANvdrZGyE+0jmbPlNVKuP/naJN6yN9NwhY1U5e69JpUiRx1AVQOV8sa3Qp67Jm/xuD//U/VcS2Dy0kZkHEsm3FpDVhyg/Isnchjdrcy/CclrWws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BXcsw8sK; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 456IKQY9013971;
-	Fri, 7 Jun 2024 06:51:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KPsji9VDaiIc4QBTtWsUNU07pLzwRJlb2lTmicfrLVA=; b=BXcsw8sKw9C0sLip
-	dHo9n2YAVWbW+NWPJDAUd6c8hiZu1SYbSJOoQo02oPk2XtBNwz1Zxl4qkQFf+Jca
-	pbLy4GC7muJeR5wm4l222W2aO63fZ2S5C2Xvr3dNk7ZK4lZFoFKwN6yAAlC0pEp5
-	YDWktR6MQxiWEp8RpRMXjm6ozlc6c2yTbPQK+ewibwE6UYh2EskF87NyJb7amQRM
-	hPQmB+kXRNPlYniqcor/kho8HEW6ZbpcDhkzvJ1+FiVFaUVQbXfDpBM+19QCRzIw
-	DbgWlWhza5MjhizO9a9dc85qXzQNv1XPVaJNDG8KSdM2i/MVVxXS1fR5IltlzTQ0
-	aqPKjw==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjvxyc1ny-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 06:51:35 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4576pZoY004642
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 7 Jun 2024 06:51:35 GMT
-Received: from [10.214.66.219] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 6 Jun 2024
- 23:51:31 -0700
-Subject: Re: [PATCH 3/5] arm64: dts: qcom: sdx75: add missing qlink_logging
- reserved memory for mpss
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <konrad.dybcio@linaro.org>,
-        <manivannan.sadhasivam@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240606143858.4026-1-quic_nainmeht@quicinc.com>
- <20240606143858.4026-4-quic_nainmeht@quicinc.com>
- <c22e20f5-5ca9-485c-991f-9b45e35cd75a@kernel.org>
-From: Naina Mehta <quic_nainmeht@quicinc.com>
-Message-ID: <da06a758-5239-42d6-e4f8-c78418d9529d@quicinc.com>
-Date: Fri, 7 Jun 2024 12:21:06 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1717743875; c=relaxed/simple;
+	bh=pIvd/UG8cEx2HD52dn68NoQT1ixfLIkF0bK/EZDoj4M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bdbrEMcSZbJqHxKDq8GBZ7Gz7ABZMCNzWHqrFsA5NJluuWNBkXkAaIAt6sR3cvsr4ZbGuDXzglyS2Yka49zSx8tAR8CVIlMpEGxjq1JwIzvBwNjg7fem6KJC2+fluKLwSC9mgTeceYSQl9VMh1tOtHoAOuBKs4I8PXpSxpymzhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=axQCC1c6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UnZIEtqU; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717743870;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=GIMJk0s+/GdtxaQIdOpgGsRKBn/6OfM/tdOLMaoEkBA=;
+	b=axQCC1c6FeaMEPS7gfnFgQdsue4cQZs7uBZYVKXOeVeFWMxRp9im0/QcsMP+HeWiPQw2do
+	eAkO2B64eczhw43QRcrRX+vYVkEGmlDML5iJpIAU65IC0SE0JBMxFhXj23bxZB2OY5CzgY
+	yXUqNNDoVNpIzlm0rZP2ZP7DNXKYbo9qR3OFDBMTYmKB5sfEi21epUdYvtqjwoyNz1SF7l
+	4dmUyul4xQRJ3tFqlWrPcfFzMNE2o20je9rW3dVXJ1sGmaQSXFYjY77EtsckoPYB5m+3yn
+	Vs8JiS09MNRuotAA1I1VHu5kvW0SJ02AbHaK+LPkZqRo6jowbdVn3gN3qQdieg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717743870;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=GIMJk0s+/GdtxaQIdOpgGsRKBn/6OfM/tdOLMaoEkBA=;
+	b=UnZIEtqUWz/CSSyOqnd61ksRl37f4H0rcbfvijQ4gIvwUgsjYvLGPJBjf8s4O0Plzs+opC
+	QMI3an4VcQssgKAQ==
+To: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Daniel Bristot de Oliveira <bristot@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>,
+	Will Deacon <will@kernel.org>
+Subject: [PATCH v5 net-next 00/15] locking: Introduce nested-BH locking.
+Date: Fri,  7 Jun 2024 08:53:03 +0200
+Message-ID: <20240607070427.1379327-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <c22e20f5-5ca9-485c-991f-9b45e35cd75a@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: NdYHxGU6YDPDWTxK0HVJpnfeLYvgIPNe
-X-Proofpoint-GUID: NdYHxGU6YDPDWTxK0HVJpnfeLYvgIPNe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-07_01,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
- mlxscore=0 adultscore=0 bulkscore=0 phishscore=0 priorityscore=1501
- lowpriorityscore=0 mlxlogscore=999 impostorscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406070047
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 6/6/2024 8:20 PM, Krzysztof Kozlowski wrote:
-> On 06/06/2024 16:38, Naina Mehta wrote:
->> The qlink_logging memory region is also used by the modem firmware,
->> add it to reserved memory regions.
->> Also split MPSS DSM region into 2 separate regions.
->>
->> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/sdx75.dtsi | 17 +++++++++++++----
->>   1 file changed, 13 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sdx75.dtsi b/arch/arm64/boot/dts/qcom/sdx75.dtsi
->> index 9b93f6501d55..9349b1c4e196 100644
->> --- a/arch/arm64/boot/dts/qcom/sdx75.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sdx75.dtsi
->> @@ -366,7 +366,12 @@
->>   			no-map;
->>   		};
->>   
->> -		qdss_mem: qdss@88800000 {
->> +		qdss_mem: qdss@88500000 {
->> +			reg = <0x0 0x88500000 0x0 0x300000>;
->> +			no-map;
->> +		};
->> +
->> +		qlink_logging_mem: qlink_logging@88800000 {
-> 
-> Sorry, no downstream code.
-> 
-> Please follow DTS coding style - no underscores in node names. This
-> applies to all work sent upstream.
-> 
+Disabling bottoms halves acts as per-CPU BKL. On PREEMPT_RT code within
+local_bh_disable() section remains preemtible. As a result high prior
+tasks (or threaded interrupts) will be blocked by lower-prio task (or
+threaded interrupts) which are long running which includes softirq
+sections.
 
-Thanks for pointing this out. I will update in next revision.
+The proposed way out is to introduce explicit per-CPU locks for
+resources which are protected by local_bh_disable() and use those only
+on PREEMPT_RT so there is no additional overhead for !PREEMPT_RT builds.
 
-Regards,
-Naina
+The series introduces the infrastructure and converts large parts of
+networking which is largest stake holder here. Once this done the
+per-CPU lock from local_bh_disable() on PREEMPT_RT can be lifted.
 
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
+Performance testing. Baseline is net-next as of commit 93bda33046e7a
+("Merge branch'net-constify-ctl_table-arguments-of-utility-functions'")
+plus v6.10-rc1. A 10GiG link is used between two hosts. The command
+   xdp-bench redirect-cpu --cpu 3 --remote-action drop eth1 -e
+
+was invoked on the receiving side with a ixgbe. The sending side uses
+pktgen_sample03_burst_single_flow.sh on i40e.
+
+Baseline:
+| eth1->?                 9,018,604 rx/s                  0 err,drop/s
+|   receive total         9,018,604 pkt/s                 0 drop/s         =
+       0 error/s
+|     cpu:7               9,018,604 pkt/s                 0 drop/s         =
+       0 error/s
+|   enqueue to cpu 3      9,018,602 pkt/s                 0 drop/s         =
+    7.00 bulk-avg
+|     cpu:7->3            9,018,602 pkt/s                 0 drop/s         =
+    7.00 bulk-avg
+|   kthread total         9,018,606 pkt/s                 0 drop/s         =
+ 214,698 sched
+|     cpu:3               9,018,606 pkt/s                 0 drop/s         =
+ 214,698 sched
+|     xdp_stats                   0 pass/s        9,018,606 drop/s         =
+       0 redir/s
+|       cpu:3                     0 pass/s        9,018,606 drop/s         =
+       0 redir/s
+|   redirect_err                  0 error/s
+|   xdp_exception                 0 hit/s
+
+perf top --sort cpu,symbol --no-children:
+|   18.14%  007  [k] bpf_prog_4f0ffbb35139c187_cpumap_l4_hash
+|   13.29%  007  [k] ixgbe_poll
+|   12.66%  003  [k] cpu_map_kthread_run
+|    7.23%  003  [k] page_frag_free
+|    6.76%  007  [k] xdp_do_redirect
+|    3.76%  007  [k] cpu_map_redirect
+|    3.13%  007  [k] bq_flush_to_queue
+|    2.51%  003  [k] xdp_return_frame
+|    1.93%  007  [k] try_to_wake_up
+|    1.78%  007  [k] _raw_spin_lock
+|    1.74%  007  [k] cpu_map_enqueue
+|    1.56%  003  [k] bpf_prog_57cd311f2e27366b_cpumap_drop
+
+With this series applied:
+| eth1->?                10,329,340 rx/s                  0 err,drop/s
+|   receive total        10,329,340 pkt/s                 0 drop/s         =
+       0 error/s
+|     cpu:6              10,329,340 pkt/s                 0 drop/s         =
+       0 error/s
+|   enqueue to cpu 3     10,329,338 pkt/s                 0 drop/s         =
+    8.00 bulk-avg
+|     cpu:6->3           10,329,338 pkt/s                 0 drop/s         =
+    8.00 bulk-avg
+|   kthread total        10,329,321 pkt/s                 0 drop/s         =
+  96,297 sched
+|     cpu:3              10,329,321 pkt/s                 0 drop/s         =
+  96,297 sched
+|     xdp_stats                   0 pass/s       10,329,321 drop/s         =
+       0 redir/s
+|       cpu:3                     0 pass/s       10,329,321 drop/s         =
+       0 redir/s
+|   redirect_err                  0 error/s
+|   xdp_exception                 0 hit/s
+
+perf top --sort cpu,symbol --no-children:
+|   20.90%  006  [k] bpf_prog_4f0ffbb35139c187_cpumap_l4_hash
+|   12.62%  006  [k] ixgbe_poll
+|    9.82%  003  [k] page_frag_free
+|    8.73%  003  [k] cpu_map_bpf_prog_run_xdp
+|    6.63%  006  [k] xdp_do_redirect
+|    4.94%  003  [k] cpu_map_kthread_run
+|    4.28%  006  [k] cpu_map_redirect
+|    4.03%  006  [k] bq_flush_to_queue
+|    3.01%  003  [k] xdp_return_frame
+|    1.95%  006  [k] _raw_spin_lock
+|    1.94%  003  [k] bpf_prog_57cd311f2e27366b_cpumap_drop
+
+This diff appears to be noise.
+
+v4=E2=80=A6v5 https://lore.kernel.org/all/20240604154425.878636-1-bigeasy@l=
+inutronix.de/:
+- Remove the guard() notation as well as __free() within the patches.
+  Patch #1 and #2 add the guard definition for local_lock_nested_bh()
+  but it remains unused with the series.
+  The __free() notation for bpf_net_ctx_clear has been removed entirely.
+
+- Collect Toke's Reviewed-by.
+
+v3=E2=80=A6v4 https://lore.kernel.org/all/20240529162927.403425-1-bigeasy@l=
+inutronix.de/:
+- Removed bpf_clear_redirect_map(), moved the comment to the caller.
+  Suggested by Toke.
+
+- The bpf_redirect_info structure is memset() each time it is assigned.
+  Suggested by Toke.
+
+- The bpf_net_ctx_set() in __napi_busy_loop() has been moved from the
+  top of the function to begin/ end of the BH-disabled section. This has
+  been done to remain in sync with other call sites.
+  After adding the memset() I've been looking at the perf-numbers in my
+  test-case and I haven't noticed an impact, the numbers are in the same
+  range with and without the change. Therefore I kept the numbers from
+  previous posting.
+
+- Collected Alexei's Acked-by.
+
+v2=E2=80=A6v3 https://lore.kernel.org/all/20240503182957.1042122-1-bigeasy@=
+linutronix.de/:
+- WARN checks checks for bpf_net_ctx_get() have been dropped and all
+  NULL checks around it. This means bpf_net_ctx_get_ri() assumes the
+  context has been set and will segfault if it is not the case.
+  Suggested by Alexei and Jesper. This should always work or always
+  segfault.
+
+- It has been suggested by Toke to embed struct bpf_net_context into
+  task_struct instead just a pointer to it. This would increase the size
+  of task_struct by 112 bytes instead just eight and Alexei didn't like
+  it due to the size impact with 1m threads. It is a pointer again.
+
+v1=E2=80=A6v2 https://lore.kernel.org/all/20231215171020.687342-1-bigeasy@l=
+inutronix.de/:
+- Jakub complained about touching networking drivers to make the
+  additional locking work. Alexei complained about the additional
+  locking within the XDP/eBFP case.
+  This led to a change in how the per-CPU variables are accessed for the
+  XDP/eBPF case. On PREEMPT_RT the variables are now stored on stack and
+  the task pointer to the structure is saved in the task_struct while
+  keeping every for !RT unchanged. This was proposed as a RFC in
+  	v1: https://lore.kernel.org/all/20240213145923.2552753-1-bigeasy@linutro=
+nix.de/
+
+  and then updated
+
+        v2: https://lore.kernel.org/all/20240229183109.646865-1-bigeasy@lin=
+utronix.de/
+	  - Renamed the container struct from xdp_storage to bpf_net_context.
+            Suggested by Toke H=C3=B8iland-J=C3=B8rgensen.
+	  - Use the container struct also on !PREEMPT_RT builds. Store the
+	    pointer to the on-stack struct in a per-CPU variable. Suggested by
+            Toke H=C3=B8iland-J=C3=B8rgensen.
+
+  This reduces the initial queue from 24 to 15 patches.
+
+- There were complains about the scoped_guard() which shifts the whole
+  block and makes it harder to review because the whole gets removed and
+  added again. The usage has been replaced with local_lock_nested_bh()+
+  its unlock counterpart.
+
+Sebastian
+
 
