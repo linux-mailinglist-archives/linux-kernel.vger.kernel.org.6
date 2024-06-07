@@ -1,416 +1,855 @@
-Return-Path: <linux-kernel+bounces-206824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E49900E47
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 01:02:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C9ED900E49
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 01:03:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBCF61F214BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 23:02:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF0711C21EC9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 23:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8D973453;
-	Fri,  7 Jun 2024 23:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8B64E1D6;
+	Fri,  7 Jun 2024 23:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="dLYh1s7T"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lrWG+FGP"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A559C1AAC4
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 23:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95F149646
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 23:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717801347; cv=none; b=Zlm61VL2XoXE1HelVWr1TH4MJ47uGtlJT5FyLTzvBFwQF/7EBpBVKT3G2icE030CwFvHvZLpUOFYvzmrVkSGYkh3YLHeU7NJvg2my4luvAu3E2BGwNVWJk7QNbg9uMBkU+nHK7Z5vZAhImB4/o1FNk6wALPH2tI+CO9fyozYkAM=
+	t=1717801389; cv=none; b=TgrQgBfMlSnsv4kL5ci2T6SZnRY3RaSU0aXl0esaHlHSlB/1GEHEV8aSp0fAZnrXhbKdAI+XsJX8Spke57m/Nadk1wssc63PsaqHmdbRBNJHwTh4VToHFlCp5Cw9/buTMy+Nb0+LfgWgc/kvbagWr+QmCfDI9inwQaPJ+0UnwMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717801347; c=relaxed/simple;
-	bh=EsyqwKht6iI88gjk9LlG7t+qWQ8HgqRNU4avcg0nzr0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Pf8NAG7jgCuBosw96UTzm1sfAOoh9F5k0OYxh/tFLGlQsz7FUjXna7+ZBzenunYT0p2mN8m2+ebCyMEnYY8S5OSgJBJ0PLHpB90IqqI4a+jSEQ8J0m5EIS+j+ZSrL2HnsQamraBv/EwpigAarAwmidEWJ8DC9Em5sOzPLc8yVbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=dLYh1s7T; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-25487d915b8so433965fac.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 16:02:24 -0700 (PDT)
+	s=arc-20240116; t=1717801389; c=relaxed/simple;
+	bh=o2gJCcXbZIFDU/Pn23PKi5Y7AiJ5QtuoScOAu9247LA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=OZoFsivb2BbhJLQfKz05Ft4Mpdd4aiRQakuHW+zSC73pGsMuBtMY6vSYqbJqJnYSp2DBPT0KvgvBs+d4R/B/VMhQIryllxIseixIEaJCnRCtyhK1iPtxhTOlLVK25Dx6DeJGeIRv0KXg4jdl+ZBOuwefFHuZOhBWaoBNDhgr/iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lrWG+FGP; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62a23864df0so42532157b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 16:03:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1717801344; x=1718406144; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zlL/JZl1XZV1cOjn9hrGLfruPuOqI8kDA4KtcPFCazY=;
-        b=dLYh1s7TEXgt8GdgzXJVEZFOgELN9MFRTVzmGLy2MMNiJ4A61UDsg+V5Gxw3wyTKym
-         0n7yssX4AO1EaICCTQ00HiBMACU7HERECqGHwj2llCs07OUWJjXtwtJQdgSJFDsN94eu
-         WlyzPiueSTdZptMpOvk+d2BRfbI3vQKGR3WlM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717801344; x=1718406144;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=google.com; s=20230601; t=1717801387; x=1718406187; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zlL/JZl1XZV1cOjn9hrGLfruPuOqI8kDA4KtcPFCazY=;
-        b=aOs1pWtZiR1BTxYaso2cuMs6KprowQ8twEgtZoZCBqBBRrMKWGrXa6UttucS4pKFcq
-         /GxM6yFIhlFb2Rh5II6OA20kvLdA7sTfkUkAA2CMChVweLYoVqlMDq+TicZBaXBrsDTZ
-         jiTwe/bytDqPi7j1QUTHGbhns9ICqhl8FQsha+Xldj1dhD6aqEGp6CbIHvMJIHGY52gu
-         mJbD8IdFbMgTpXFyGW+bWdD9B9/qxsIlUexiAv2LvoKbME5kY1hoErmHXjuaMe7NJsJ5
-         csOK9NXga7gLvSNhb/aTJguxSGUEzP53WafDK/Hh6uoOuPuq1iBie0KweCgrGr6zJ442
-         uBLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTFNsvvD5oWKpZUHNg76ZpDg/jR3uaqZrbQN9aMuQ8ZUS58yoIsT2E8VrMe+N78irfTTwpFizOaF2ujYcTgpMfsaSelu/j2yioeICy
-X-Gm-Message-State: AOJu0Yy6VF4RtSzlpO3OQz43s/bAKNt1niAofhCjCK0V+an5kHkbbP6v
-	K/M9zN3xCYgWPAoFl7Y98CSoVxHQnUCzId7sp/8v11HeVah5hD1AO+VXpbkTgw==
-X-Google-Smtp-Source: AGHT+IFWt2YLSPWsPUebr6RomLvWokqGO6a/Lt/RkscjauOQhia9gK7XfpQg64YGSj31ye6JVD504A==
-X-Received: by 2002:a05:6870:a104:b0:22e:de2d:8c00 with SMTP id 586e51a60fabf-254644f1e6cmr4342089fac.24.1717801343386;
-        Fri, 07 Jun 2024 16:02:23 -0700 (PDT)
-Received: from ubuntu-vm.dhcp.broadcom.net ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-795330b7607sm209267185a.85.2024.06.07.16.02.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 16:02:22 -0700 (PDT)
-From: Kuntal Nayak <kuntal.nayak@broadcom.com>
-To: stable@vger.kernel.org,
-	gregkh@linuxfoundation.org
-Cc: ajay.kaher@broadcom.com,
-	alexey.makhalov@broadcom.com,
-	vasavi.sirnapalli@broadcom.com,
-	pablo@netfilter.org,
-	kadlec@netfilter.org,
-	fw@strlen.de,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kuntal Nayak <kuntal.nayak@broadcom.com>
-Subject: [PATCH v6.1] netfilter: nf_tables: use timestamp to check for set element timeout
-Date: Fri,  7 Jun 2024 16:01:46 -0700
-Message-Id: <20240607230146.47222-1-kuntal.nayak@broadcom.com>
-X-Mailer: git-send-email 2.25.1
+        bh=TR0IJhcabYaLQGUNZQNcyvbbvDb3gg0ARiJP/W8JIxw=;
+        b=lrWG+FGPFRUnaqqSRRByzbn07gbzZbxbSeRuTzkJO+gz9iCrzdYa64O82iOsrAhAeC
+         b/cBXfDc4OrU353wZDYw26nL/cD12KdhcC/YBOdMc0OLrRwVrXs8PX1bG4KKIJfReGys
+         J41vAVpSFtISpy+heE0DOEBN47LD4DXm9+VEjUYUus0KMdXMyZoESoCJpytB+g/bpEyE
+         jvWcCWHNpHVeSy/K/3Ydh/0HoZQDW1frqG5bnpfopFT1aVgTXXVYyIECqdmruSAovnwj
+         w6ycYzhihligK90Yy2tLQGVbitr0RUe/m2vWHxmr04IDq9w1UGlYvsh2Zt3QmKSB8+Yv
+         PS7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717801387; x=1718406187;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=TR0IJhcabYaLQGUNZQNcyvbbvDb3gg0ARiJP/W8JIxw=;
+        b=HBAxuPxfIvekRimJnoQQYwwLaqDRML91on1RIUxPIVC81WNHQWVPwrb7NOE+8ibZnX
+         wD/LJL7TCQQPGRdQMBLPCZsh7/DgEh626oaZ0JBCzBzo67otr749biYn6aBBAEin7Lb4
+         lAtFHrVTz25JI/Ng9C620sk2qnyyjCTvXKt54d1tMXL7aLzj8okML/owtEiurtVDpJ7Z
+         xdIBUZ+yXqXdU0gMcSJLB6LVRsJmE+GpTxc3UVr7Gh91bpXYOs/YDjKwTj2UDJq89Bbo
+         3ELwS/iMjAr23hBzv/+ZDNaa6Ij1dqnTjtoIV4F/MMDzu5sA4ziLTQY2yDI1grD5oL9j
+         mTqA==
+X-Forwarded-Encrypted: i=1; AJvYcCWviBo/svYkk+U7chl1UG+IJUhpyOoNeZhnj0AKVmsyyCFe80JV0TtY78aX90JgKXQ96tRDmeAe13T3HrqJmMh2ufNi9K47zOYWM/1f
+X-Gm-Message-State: AOJu0YyQIJKlmDmb21J4pmLPPSSts2LbsL36ReWpFwJ5K3iOG6BDURnh
+	LMo6qE6VguBw2bJk/D0Jq0Idqik2dlIUN04C4GJlGPYS8OVdOnj45o2yXoYPTuqN8tL3RxQHwwW
+	Ndw==
+X-Google-Smtp-Source: AGHT+IEfRmXioWzalYBbvEIt9xOUJAJSrGbruV6HouoW2mX8epfzGlPf5wUE0KbC+sTyDh/qVhCwmGDhXa0=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:f14:b0:62c:67f4:4c4 with SMTP id
+ 00721157ae682-62cd56afc26mr10582417b3.7.1717801386729; Fri, 07 Jun 2024
+ 16:03:06 -0700 (PDT)
+Date: Fri, 7 Jun 2024 16:03:05 -0700
+In-Reply-To: <ZivFbu0WI4qx8zre@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240404185034.3184582-1-pbonzini@redhat.com> <20240404185034.3184582-10-pbonzini@redhat.com>
+ <20240423235013.GO3596705@ls.amr.corp.intel.com> <ZimGulY6qyxt6ylO@google.com>
+ <20240425011248.GP3596705@ls.amr.corp.intel.com> <CABgObfY2TOb6cJnFkpxWjkAmbYSRGkXGx=+-241tRx=OG-yAZQ@mail.gmail.com>
+ <Zip-JsAB5TIRDJVl@google.com> <CABgObfaxAd_J5ufr+rOcND=-NWrOzVsvavoaXuFw_cwDd+e9aA@mail.gmail.com>
+ <ZivFbu0WI4qx8zre@google.com>
+Message-ID: <ZmORqYFhE73AdQB6@google.com>
+Subject: Re: [PATCH 09/11] KVM: guest_memfd: Add interface for populating gmem
+ pages with user data
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Isaku Yamahata <isaku.yamahata@intel.com>, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, michael.roth@amd.com, isaku.yamahata@linux.intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Pablo Neira Ayuso <pablo@netfilter.org>
+SNP folks and/or Paolo, what's the plan for this?  I don't see how what's s=
+itting
+in kvm/next can possibly be correct without conditioning population on the =
+folio
+being !uptodate.
 
-commit 7395dfacfff65e9938ac0889dafa1ab01e987d15 upstream
-
-Add a timestamp field at the beginning of the transaction, store it
-in the nftables per-netns area.
-
-Update set backend .insert, .deactivate and sync gc path to use the
-timestamp, this avoids that an element expires while control plane
-transaction is still unfinished.
-
-.lookup and .update, which are used from packet path, still use the
-current time to check if the element has expired. And .get path and dump
-also since this runs lockless under rcu read size lock. Then, there is
-async gc which also needs to check the current time since it runs
-asynchronously from a workqueue.
-
-Fixes: c3e1b005ed1c ("netfilter: nf_tables: add set element timeout support")
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-[ KN: Backport patch according to v6.1.x source. 'tstamp' retrieved 
-      after reading 'net' in nft_rbtree_gc() unlike master where 'net' 
-      is being set twice. This would not change logical behavior 
-      of the function. ]
-Signed-off-by: Kuntal Nayak <kuntal.nayak@broadcom.com>
----
- include/net/netfilter/nf_tables.h | 16 ++++++++++++++--
- net/netfilter/nf_tables_api.c     |  4 +++-
- net/netfilter/nft_set_hash.c      |  8 +++++++-
- net/netfilter/nft_set_pipapo.c    | 18 +++++++++++-------
- net/netfilter/nft_set_rbtree.c    | 10 +++++++---
- 5 files changed, 42 insertions(+), 14 deletions(-)
-
-diff --git a/include/net/netfilter/nf_tables.h b/include/net/netfilter/nf_tables.h
-index 2fa344cb6..964cf7578 100644
---- a/include/net/netfilter/nf_tables.h
-+++ b/include/net/netfilter/nf_tables.h
-@@ -784,10 +784,16 @@ static inline struct nft_set_elem_expr *nft_set_ext_expr(const struct nft_set_ex
- 	return nft_set_ext(ext, NFT_SET_EXT_EXPRESSIONS);
- }
- 
--static inline bool nft_set_elem_expired(const struct nft_set_ext *ext)
-+static inline bool __nft_set_elem_expired(const struct nft_set_ext *ext,
-+					  u64 tstamp)
- {
- 	return nft_set_ext_exists(ext, NFT_SET_EXT_EXPIRATION) &&
--	       time_is_before_eq_jiffies64(*nft_set_ext_expiration(ext));
-+	       time_after_eq64(tstamp, *nft_set_ext_expiration(ext));
-+}
-+
-+static inline bool nft_set_elem_expired(const struct nft_set_ext *ext)
-+{
-+	return __nft_set_elem_expired(ext, get_jiffies_64());
- }
- 
- static inline struct nft_set_ext *nft_set_elem_ext(const struct nft_set *set,
-@@ -1711,6 +1717,7 @@ struct nftables_pernet {
- 	struct list_head	notify_list;
- 	struct mutex		commit_mutex;
- 	u64			table_handle;
-+	u64			tstamp;
- 	unsigned int		base_seq;
- 	u8			validate_state;
- 	unsigned int		gc_seq;
-@@ -1723,6 +1730,11 @@ static inline struct nftables_pernet *nft_pernet(const struct net *net)
- 	return net_generic(net, nf_tables_net_id);
- }
- 
-+static inline u64 nft_net_tstamp(const struct net *net)
-+{
-+	return nft_pernet(net)->tstamp;
-+}
-+
- #define __NFT_REDUCE_READONLY	1UL
- #define NFT_REDUCE_READONLY	(void *)__NFT_REDUCE_READONLY
- 
-diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
-index 1c4b7a8ec..e838a6617 100644
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -9377,6 +9377,7 @@ struct nft_trans_gc *nft_trans_gc_catchall_async(struct nft_trans_gc *gc,
- struct nft_trans_gc *nft_trans_gc_catchall_sync(struct nft_trans_gc *gc)
- {
- 	struct nft_set_elem_catchall *catchall, *next;
-+	u64 tstamp = nft_net_tstamp(gc->net);
- 	const struct nft_set *set = gc->set;
- 	struct nft_set_elem elem;
- 	struct nft_set_ext *ext;
-@@ -9386,7 +9387,7 @@ struct nft_trans_gc *nft_trans_gc_catchall_sync(struct nft_trans_gc *gc)
- 	list_for_each_entry_safe(catchall, next, &set->catchall_list, list) {
- 		ext = nft_set_elem_ext(set, catchall->elem);
- 
--		if (!nft_set_elem_expired(ext))
-+		if (!__nft_set_elem_expired(ext, tstamp))
- 			continue;
- 
- 		gc = nft_trans_gc_queue_sync(gc, GFP_KERNEL);
-@@ -10138,6 +10139,7 @@ static bool nf_tables_valid_genid(struct net *net, u32 genid)
- 	bool genid_ok;
- 
- 	mutex_lock(&nft_net->commit_mutex);
-+	nft_net->tstamp = get_jiffies_64();
- 
- 	genid_ok = genid == 0 || nft_net->base_seq == genid;
- 	if (!genid_ok)
-diff --git a/net/netfilter/nft_set_hash.c b/net/netfilter/nft_set_hash.c
-index 2013de934..1fd3b4133 100644
---- a/net/netfilter/nft_set_hash.c
-+++ b/net/netfilter/nft_set_hash.c
-@@ -35,6 +35,7 @@ struct nft_rhash_cmp_arg {
- 	const struct nft_set		*set;
- 	const u32			*key;
- 	u8				genmask;
-+	u64				tstamp;
- };
- 
- static inline u32 nft_rhash_key(const void *data, u32 len, u32 seed)
-@@ -61,7 +62,7 @@ static inline int nft_rhash_cmp(struct rhashtable_compare_arg *arg,
- 		return 1;
- 	if (nft_set_elem_is_dead(&he->ext))
- 		return 1;
--	if (nft_set_elem_expired(&he->ext))
-+	if (__nft_set_elem_expired(&he->ext, x->tstamp))
- 		return 1;
- 	if (!nft_set_elem_active(&he->ext, x->genmask))
- 		return 1;
-@@ -86,6 +87,7 @@ bool nft_rhash_lookup(const struct net *net, const struct nft_set *set,
- 		.genmask = nft_genmask_cur(net),
- 		.set	 = set,
- 		.key	 = key,
-+		.tstamp  = get_jiffies_64(),
- 	};
- 
- 	he = rhashtable_lookup(&priv->ht, &arg, nft_rhash_params);
-@@ -104,6 +106,7 @@ static void *nft_rhash_get(const struct net *net, const struct nft_set *set,
- 		.genmask = nft_genmask_cur(net),
- 		.set	 = set,
- 		.key	 = elem->key.val.data,
-+		.tstamp  = get_jiffies_64(),
- 	};
- 
- 	he = rhashtable_lookup(&priv->ht, &arg, nft_rhash_params);
-@@ -127,6 +130,7 @@ static bool nft_rhash_update(struct nft_set *set, const u32 *key,
- 		.genmask = NFT_GENMASK_ANY,
- 		.set	 = set,
- 		.key	 = key,
-+		.tstamp  = get_jiffies_64(),
- 	};
- 
- 	he = rhashtable_lookup(&priv->ht, &arg, nft_rhash_params);
-@@ -170,6 +174,7 @@ static int nft_rhash_insert(const struct net *net, const struct nft_set *set,
- 		.genmask = nft_genmask_next(net),
- 		.set	 = set,
- 		.key	 = elem->key.val.data,
-+		.tstamp	 = nft_net_tstamp(net),
- 	};
- 	struct nft_rhash_elem *prev;
- 
-@@ -212,6 +217,7 @@ static void *nft_rhash_deactivate(const struct net *net,
- 		.genmask = nft_genmask_next(net),
- 		.set	 = set,
- 		.key	 = elem->key.val.data,
-+		.tstamp	 = nft_net_tstamp(net),
- 	};
- 
- 	rcu_read_lock();
-diff --git a/net/netfilter/nft_set_pipapo.c b/net/netfilter/nft_set_pipapo.c
-index 2299ced93..a56ed216c 100644
---- a/net/netfilter/nft_set_pipapo.c
-+++ b/net/netfilter/nft_set_pipapo.c
-@@ -504,6 +504,7 @@ bool nft_pipapo_lookup(const struct net *net, const struct nft_set *set,
-  * @set:	nftables API set representation
-  * @data:	Key data to be matched against existing elements
-  * @genmask:	If set, check that element is active in given genmask
-+ * @tstamp:	timestamp to check for expired elements
-  *
-  * This is essentially the same as the lookup function, except that it matches
-  * key data against the uncommitted copy and doesn't use preallocated maps for
-@@ -513,7 +514,8 @@ bool nft_pipapo_lookup(const struct net *net, const struct nft_set *set,
-  */
- static struct nft_pipapo_elem *pipapo_get(const struct net *net,
- 					  const struct nft_set *set,
--					  const u8 *data, u8 genmask)
-+					  const u8 *data, u8 genmask,
-+					  u64 tstamp)
- {
- 	struct nft_pipapo_elem *ret = ERR_PTR(-ENOENT);
- 	struct nft_pipapo *priv = nft_set_priv(set);
-@@ -566,7 +568,7 @@ static struct nft_pipapo_elem *pipapo_get(const struct net *net,
- 			goto out;
- 
- 		if (last) {
--			if (nft_set_elem_expired(&f->mt[b].e->ext))
-+			if (__nft_set_elem_expired(&f->mt[b].e->ext, tstamp))
- 				goto next_match;
- 			if ((genmask &&
- 			     !nft_set_elem_active(&f->mt[b].e->ext, genmask)))
-@@ -603,7 +605,7 @@ static void *nft_pipapo_get(const struct net *net, const struct nft_set *set,
- 			    const struct nft_set_elem *elem, unsigned int flags)
- {
- 	return pipapo_get(net, set, (const u8 *)elem->key.val.data,
--			 nft_genmask_cur(net));
-+			 nft_genmask_cur(net), get_jiffies_64());
- }
- 
- /**
-@@ -1197,6 +1199,7 @@ static int nft_pipapo_insert(const struct net *net, const struct nft_set *set,
- 	struct nft_pipapo *priv = nft_set_priv(set);
- 	struct nft_pipapo_match *m = priv->clone;
- 	u8 genmask = nft_genmask_next(net);
-+	u64 tstamp = nft_net_tstamp(net);
- 	struct nft_pipapo_field *f;
- 	const u8 *start_p, *end_p;
- 	int i, bsize_max, err = 0;
-@@ -1206,7 +1209,7 @@ static int nft_pipapo_insert(const struct net *net, const struct nft_set *set,
- 	else
- 		end = start;
- 
--	dup = pipapo_get(net, set, start, genmask);
-+	dup = pipapo_get(net, set, start, genmask, tstamp);
- 	if (!IS_ERR(dup)) {
- 		/* Check if we already have the same exact entry */
- 		const struct nft_data *dup_key, *dup_end;
-@@ -1228,7 +1231,7 @@ static int nft_pipapo_insert(const struct net *net, const struct nft_set *set,
- 
- 	if (PTR_ERR(dup) == -ENOENT) {
- 		/* Look for partially overlapping entries */
--		dup = pipapo_get(net, set, end, nft_genmask_next(net));
-+		dup = pipapo_get(net, set, end, nft_genmask_next(net), tstamp);
- 	}
- 
- 	if (PTR_ERR(dup) != -ENOENT) {
-@@ -1581,6 +1584,7 @@ static void pipapo_gc(const struct nft_set *_set, struct nft_pipapo_match *m)
- 	struct nft_set *set = (struct nft_set *) _set;
- 	struct nft_pipapo *priv = nft_set_priv(set);
- 	struct net *net = read_pnet(&set->net);
-+	u64 tstamp = nft_net_tstamp(net);
- 	int rules_f0, first_rule = 0;
- 	struct nft_pipapo_elem *e;
- 	struct nft_trans_gc *gc;
-@@ -1615,7 +1619,7 @@ static void pipapo_gc(const struct nft_set *_set, struct nft_pipapo_match *m)
- 		/* synchronous gc never fails, there is no need to set on
- 		 * NFT_SET_ELEM_DEAD_BIT.
- 		 */
--		if (nft_set_elem_expired(&e->ext)) {
-+		if (__nft_set_elem_expired(&e->ext, tstamp)) {
- 			priv->dirty = true;
- 
- 			gc = nft_trans_gc_queue_sync(gc, GFP_ATOMIC);
-@@ -1786,7 +1790,7 @@ static void *pipapo_deactivate(const struct net *net, const struct nft_set *set,
- {
- 	struct nft_pipapo_elem *e;
- 
--	e = pipapo_get(net, set, data, nft_genmask_next(net));
-+	e = pipapo_get(net, set, data, nft_genmask_next(net), nft_net_tstamp(net));
- 	if (IS_ERR(e))
- 		return NULL;
- 
-diff --git a/net/netfilter/nft_set_rbtree.c b/net/netfilter/nft_set_rbtree.c
-index 5bf5572e9..c4c92192c 100644
---- a/net/netfilter/nft_set_rbtree.c
-+++ b/net/netfilter/nft_set_rbtree.c
-@@ -314,6 +314,7 @@ static int __nft_rbtree_insert(const struct net *net, const struct nft_set *set,
- 	struct nft_rbtree *priv = nft_set_priv(set);
- 	u8 cur_genmask = nft_genmask_cur(net);
- 	u8 genmask = nft_genmask_next(net);
-+	u64 tstamp = nft_net_tstamp(net);
- 	int d;
- 
- 	/* Descend the tree to search for an existing element greater than the
-@@ -361,7 +362,7 @@ static int __nft_rbtree_insert(const struct net *net, const struct nft_set *set,
- 		/* perform garbage collection to avoid bogus overlap reports
- 		 * but skip new elements in this transaction.
- 		 */
--		if (nft_set_elem_expired(&rbe->ext) &&
-+		if (__nft_set_elem_expired(&rbe->ext, tstamp) &&
- 		    nft_set_elem_active(&rbe->ext, cur_genmask)) {
- 			const struct nft_rbtree_elem *removed_end;
- 
-@@ -548,6 +549,7 @@ static void *nft_rbtree_deactivate(const struct net *net,
- 	const struct rb_node *parent = priv->root.rb_node;
- 	struct nft_rbtree_elem *rbe, *this = elem->priv;
- 	u8 genmask = nft_genmask_next(net);
-+	u64 tstamp = nft_net_tstamp(net);
- 	int d;
- 
- 	while (parent != NULL) {
-@@ -568,7 +570,7 @@ static void *nft_rbtree_deactivate(const struct net *net,
- 				   nft_rbtree_interval_end(this)) {
- 				parent = parent->rb_right;
- 				continue;
--			} else if (nft_set_elem_expired(&rbe->ext)) {
-+			} else if (__nft_set_elem_expired(&rbe->ext, tstamp)) {
- 				break;
- 			} else if (!nft_set_elem_active(&rbe->ext, genmask)) {
- 				parent = parent->rb_left;
-@@ -622,12 +624,14 @@ static void nft_rbtree_gc(struct work_struct *work)
- 	struct nft_set *set;
- 	unsigned int gc_seq;
- 	struct net *net;
-+	u64 tstamp;
- 
- 	priv = container_of(work, struct nft_rbtree, gc_work.work);
- 	set  = nft_set_container_of(priv);
- 	net  = read_pnet(&set->net);
- 	nft_net = nft_pernet(net);
- 	gc_seq  = READ_ONCE(nft_net->gc_seq);
-+	tstamp = nft_net_tstamp(net);
- 
- 	if (nft_set_gc_is_pending(set))
- 		goto done;
-@@ -659,7 +663,7 @@ static void nft_rbtree_gc(struct work_struct *work)
- 			rbe_end = rbe;
- 			continue;
- 		}
--		if (!nft_set_elem_expired(&rbe->ext))
-+		if (!__nft_set_elem_expired(&rbe->ext, tstamp))
- 			continue;
- 
- 		nft_set_elem_dead(&rbe->ext);
--- 
-2.39.3
-
+On Fri, Apr 26, 2024, Sean Christopherson wrote:
+> On Fri, Apr 26, 2024, Paolo Bonzini wrote:
+> > On Thu, Apr 25, 2024 at 6:00=E2=80=AFPM Sean Christopherson <seanjc@goo=
+gle.com> wrote:
+> > >
+> > > On Thu, Apr 25, 2024, Paolo Bonzini wrote:
+> > > > On Thu, Apr 25, 2024 at 3:12=E2=80=AFAM Isaku Yamahata <isaku.yamah=
+ata@intel.com> wrote:
+> > > > > > >   get_user_pages_fast(source addr)
+> > > > > > >   read_lock(mmu_lock)
+> > > > > > >   kvm_tdp_mmu_get_walk_private_pfn(vcpu, gpa, &pfn);
+> > > > > > >   if the page table doesn't map gpa, error.
+> > > > > > >   TDH.MEM.PAGE.ADD()
+> > > > > > >   TDH.MR.EXTEND()
+> > > > > > >   read_unlock(mmu_lock)
+> > > > > > >   put_page()
+> > > > > >
+> > > > > > Hmm, KVM doesn't _need_ to use invalidate_lock to protect again=
+st guest_memfd
+> > > > > > invalidation, but I also don't see why it would cause problems.
+> > > >
+> > > > The invalidate_lock is only needed to operate on the guest_memfd, b=
+ut
+> > > > it's a rwsem so there are no risks of lock inversion.
+> > > >
+> > > > > > I.e. why not
+> > > > > > take mmu_lock() in TDX's post_populate() implementation?
+> > > > >
+> > > > > We can take the lock.  Because we have already populated the GFN =
+of guest_memfd,
+> > > > > we need to make kvm_gmem_populate() not pass FGP_CREAT_ONLY.  Oth=
+erwise we'll
+> > > > > get -EEXIST.
+> > > >
+> > > > I don't understand why TDH.MEM.PAGE.ADD() cannot be called from the
+> > > > post-populate hook. Can the code for TDH.MEM.PAGE.ADD be shared
+> > > > between the memory initialization ioctl and the page fault hook in
+> > > > kvm_x86_ops?
+> > >
+> > > Ah, because TDX is required to pre-fault the memory to establish the =
+S-EPT walk,
+> > > and pre-faulting means guest_memfd()
+> > >
+> > > Requiring that guest_memfd not have a page when initializing the gues=
+t image
+> > > seems wrong, i.e. I don't think we want FGP_CREAT_ONLY.  And not just=
+ because I
+> > > am a fan of pre-faulting, I think the semantics are bad.
+> >=20
+> > Ok, fair enough. I wanted to do the once-only test in common code but s=
+ince
+> > SEV code checks for the RMP I can remove that. One less headache.
+>=20
+> I definitely don't object to having a check in common code, and I'd be in=
+ favor
+> of removing the RMP checks if possible, but tracking needs to be somethin=
+g more
+> explicit in guest_memfd.
+>=20
+> *sigh*
+>=20
+> I even left behind a TODO for this exact thing, and y'all didn't even wav=
+e at it
+> as you flew by :-)
+>=20
+>         /*
+>          * Use the up-to-date flag to track whether or not the memory has=
+ been
+>          * zeroed before being handed off to the guest.  There is no back=
+ing
+>          * storage for the memory, so the folio will remain up-to-date un=
+til
+>          * it's removed.
+>          *
+>          * TODO: Skip clearing pages when trusted firmware will do it whe=
+n  <=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+>          * assigning memory to the guest.
+>          */
+>         if (!folio_test_uptodate(folio)) {
+>                 unsigned long nr_pages =3D folio_nr_pages(folio);
+>                 unsigned long i;
+>=20
+>                 for (i =3D 0; i < nr_pages; i++)
+>                         clear_highpage(folio_page(folio, i));
+>=20
+>                 folio_mark_uptodate(folio);
+>         }
+>=20
+>         if (prepare) {
+>                 int r =3D kvm_gmem_prepare_folio(inode, index, folio);
+>                 if (r < 0) {
+>                         folio_unlock(folio);
+>                         folio_put(folio);
+>                         return ERR_PTR(r);
+>                 }
+>         }
+>=20
+> Compile tested only (and not even fully as I didn't bother defining
+> CONFIG_HAVE_KVM_GMEM_INITIALIZE), but I think this is the basic gist.
+>=20
+> 8< --------------------------------
+>=20
+> // SPDX-License-Identifier: GPL-2.0
+> #include <linux/backing-dev.h>
+> #include <linux/falloc.h>
+> #include <linux/kvm_host.h>
+> #include <linux/pagemap.h>
+> #include <linux/anon_inodes.h>
+>=20
+> #include "kvm_mm.h"
+>=20
+> struct kvm_gmem {
+> 	struct kvm *kvm;
+> 	struct xarray bindings;
+> 	struct list_head entry;
+> };
+>=20
+> static int kvm_gmem_initialize_folio(struct kvm *kvm, struct folio *folio=
+,
+> 				     pgoff_t index, void __user *src,
+> 				     void *opaque)
+> {
+> #ifdef CONFIG_HAVE_KVM_GMEM_INITIALIZE
+> 	return kvm_arch_gmem_initialize(kvm, folio, index, src, opaque);
+> #else
+> 	unsigned long nr_pages =3D folio_nr_pages(folio);
+> 	unsigned long i;
+>=20
+> 	if (WARN_ON_ONCE(src))
+> 		return -EIO;
+>=20
+> 	for (i =3D 0; i < nr_pages; i++)
+> 		clear_highpage(folio_file_page(folio, index + i));
+> #endif
+> 	return 0;
+> }
+>=20
+>=20
+> static pgoff_t kvm_gmem_get_index(struct kvm_memory_slot *slot, gfn_t gfn=
+)
+> {
+> 	return gfn - slot->base_gfn + slot->gmem.pgoff;
+> }
+>=20
+>=20
+> static inline struct file *kvm_gmem_get_file(struct kvm_memory_slot *slot=
+)
+> {
+> 	/*
+> 	 * Do not return slot->gmem.file if it has already been closed;
+> 	 * there might be some time between the last fput() and when
+> 	 * kvm_gmem_release() clears slot->gmem.file, and you do not
+> 	 * want to spin in the meanwhile.
+> 	 */
+> 	return get_file_active(&slot->gmem.file);
+> }
+>=20
+> static struct folio *__kvm_gmem_get_folio(struct inode *inode, pgoff_t in=
+dex)
+> {
+> 	fgf_t fgp_flags =3D FGP_LOCK | FGP_ACCESSED | FGP_CREAT;
+> 	struct folio *folio;
+>=20
+> 	/*
+> 	 * The caller is responsible for managing the up-to-date flag (or not),
+> 	 * as the memory doesn't need to be initialized until it's actually
+> 	 * mapped into the guest.  Waiting to initialize memory is necessary
+> 	 * for VM types where the memory can be initialized exactly once.
+> 	 *
+> 	 * Ignore accessed, referenced, and dirty flags.  The memory is
+> 	 * unevictable and there is no storage to write back to.
+> 	 *
+> 	 * TODO: Support huge pages.
+> 	 */
+> 	folio =3D __filemap_get_folio(inode->i_mapping, index, fgp_flags,
+> 				    mapping_gfp_mask(inode->i_mapping));
+>=20
+> 	if (folio_test_hwpoison(folio)) {
+> 		folio_unlock(folio);
+> 		return ERR_PTR(-EHWPOISON);
+> 	}
+> 	return folio;
+> }
+>=20
+> static struct folio *kvm_gmem_get_folio(struct file *file,
+> 					struct kvm_memory_slot *slot,
+> 					gfn_t gfn)
+> {
+> 	pgoff_t index =3D kvm_gmem_get_index(slot, gfn);
+> 	struct kvm_gmem *gmem =3D file->private_data;
+> 	struct inode *inode;
+>=20
+> 	if (file !=3D slot->gmem.file) {
+> 		WARN_ON_ONCE(slot->gmem.file);
+> 		return ERR_PTR(-EFAULT);
+> 	}
+>=20
+> 	gmem =3D file->private_data;
+> 	if (xa_load(&gmem->bindings, index) !=3D slot) {
+> 		WARN_ON_ONCE(xa_load(&gmem->bindings, index));
+> 		return ERR_PTR(-EIO);
+> 	}
+>=20
+> 	inode =3D file_inode(file);
+>=20
+> 	/*
+> 	 * The caller is responsible for managing the up-to-date flag (or not),
+> 	 * as the memory doesn't need to be initialized until it's actually
+> 	 * mapped into the guest.  Waiting to initialize memory is necessary
+> 	 * for VM types where the memory can be initialized exactly once.
+> 	 *
+> 	 * Ignore accessed, referenced, and dirty flags.  The memory is
+> 	 * unevictable and there is no storage to write back to.
+> 	 *
+> 	 * TODO: Support huge pages.
+> 	 */
+> 	return __kvm_gmem_get_folio(inode, index);
+> }
+>=20
+> int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
+> 		     gfn_t gfn, kvm_pfn_t *pfn, int *max_order)
+> {
+> 	pgoff_t index =3D kvm_gmem_get_index(slot, gfn);
+> 	struct file *file =3D kvm_gmem_get_file(slot);
+> 	struct folio *folio;
+> 	struct page *page;
+>=20
+> 	if (!file)
+> 		return -EFAULT;
+>=20
+> 	folio =3D kvm_gmem_get_folio(file, slot, gfn);
+> 	if (IS_ERR(folio))
+> 		goto out;
+>=20
+> 	if (!folio_test_uptodate(folio)) {
+> 		kvm_gmem_initialize_folio(kvm, folio, index, NULL, NULL);
+> 		folio_mark_uptodate(folio);
+> 	}
+>=20
+> 	page =3D folio_file_page(folio, index);
+>=20
+> 	*pfn =3D page_to_pfn(page);
+> 	if (max_order)
+> 		*max_order =3D 0;
+>=20
+> out:
+> 	fput(file);
+> 	return IS_ERR(folio) ? PTR_ERR(folio) : 0;
+> }
+> EXPORT_SYMBOL_GPL(kvm_gmem_get_pfn);
+>=20
+> long kvm_gmem_populate(struct kvm *kvm, gfn_t base_gfn, void __user *base=
+_src,
+> 		       long npages, void *opaque)
+> {
+> 	struct kvm_memory_slot *slot;
+> 	struct file *file;
+> 	int ret =3D 0, max_order;
+> 	long i;
+>=20
+> 	lockdep_assert_held(&kvm->slots_lock);
+> 	if (npages < 0)
+> 		return -EINVAL;
+>=20
+> 	slot =3D gfn_to_memslot(kvm, base_gfn);
+> 	if (!kvm_slot_can_be_private(slot))
+> 		return -EINVAL;
+>=20
+> 	file =3D kvm_gmem_get_file(slot);
+> 	if (!file)
+> 		return -EFAULT;
+>=20
+> 	filemap_invalidate_lock(file->f_mapping);
+>=20
+> 	npages =3D min_t(ulong, slot->npages - (base_gfn - slot->base_gfn), npag=
+es);
+> 	for (i =3D 0; i < npages; i +=3D (1 << max_order)) {
+> 		void __user *src =3D base_src + i * PAGE_SIZE;
+> 		gfn_t gfn =3D base_gfn + i;
+> 		pgoff_t index =3D kvm_gmem_get_index(slot, gfn);
+> 		struct folio *folio;
+>=20
+> 		folio =3D kvm_gmem_get_folio(file, slot, gfn);
+> 		if (IS_ERR(folio)) {
+> 			ret =3D PTR_ERR(folio);
+> 			break;
+> 		}
+>=20
+> 		if (folio_test_uptodate(folio)) {
+> 			folio_put(folio);
+> 			ret =3D -EEXIST;
+> 			break;
+> 		}
+>=20
+> 		kvm_gmem_initialize_folio(kvm, folio, index, src, opaque);
+> 		folio_unlock(folio);
+> 		folio_put(folio);
+> 	}
+>=20
+> 	filemap_invalidate_unlock(file->f_mapping);
+>=20
+> 	fput(file);
+> 	return ret && !i ? ret : i;
+> }
+> EXPORT_SYMBOL_GPL(kvm_gmem_populate);
+>=20
+> static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t star=
+t,
+> 				      pgoff_t end)
+> {
+> 	bool flush =3D false, found_memslot =3D false;
+> 	struct kvm_memory_slot *slot;
+> 	struct kvm *kvm =3D gmem->kvm;
+> 	unsigned long index;
+>=20
+> 	xa_for_each_range(&gmem->bindings, index, slot, start, end - 1) {
+> 		pgoff_t pgoff =3D slot->gmem.pgoff;
+>=20
+> 		struct kvm_gfn_range gfn_range =3D {
+> 			.start =3D slot->base_gfn + max(pgoff, start) - pgoff,
+> 			.end =3D slot->base_gfn + min(pgoff + slot->npages, end) - pgoff,
+> 			.slot =3D slot,
+> 			.may_block =3D true,
+> 		};
+>=20
+> 		if (!found_memslot) {
+> 			found_memslot =3D true;
+>=20
+> 			KVM_MMU_LOCK(kvm);
+> 			kvm_mmu_invalidate_begin(kvm);
+> 		}
+>=20
+> 		flush |=3D kvm_mmu_unmap_gfn_range(kvm, &gfn_range);
+> 	}
+>=20
+> 	if (flush)
+> 		kvm_flush_remote_tlbs(kvm);
+>=20
+> 	if (found_memslot)
+> 		KVM_MMU_UNLOCK(kvm);
+> }
+>=20
+> static void kvm_gmem_invalidate_end(struct kvm_gmem *gmem, pgoff_t start,
+> 				    pgoff_t end)
+> {
+> 	struct kvm *kvm =3D gmem->kvm;
+>=20
+> 	if (xa_find(&gmem->bindings, &start, end - 1, XA_PRESENT)) {
+> 		KVM_MMU_LOCK(kvm);
+> 		kvm_mmu_invalidate_end(kvm);
+> 		KVM_MMU_UNLOCK(kvm);
+> 	}
+> }
+>=20
+> static long __kvm_gmem_punch_hole(struct inode *inode, loff_t offset, lof=
+f_t len)
+> {
+> 	struct list_head *gmem_list =3D &inode->i_mapping->i_private_list;
+> 	pgoff_t start =3D offset >> PAGE_SHIFT;
+> 	pgoff_t end =3D (offset + len) >> PAGE_SHIFT;
+> 	struct kvm_gmem *gmem;
+> 	list_for_each_entry(gmem, gmem_list, entry)
+> 		kvm_gmem_invalidate_begin(gmem, start, end);
+>=20
+> 	truncate_inode_pages_range(inode->i_mapping, offset, offset + len - 1);
+>=20
+> 	list_for_each_entry(gmem, gmem_list, entry)
+> 		kvm_gmem_invalidate_end(gmem, start, end);
+>=20
+> 	return 0;
+> }
+>=20
+> static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_=
+t len)
+> {
+> 	int r;
+>=20
+> 	/*
+> 	 * Bindings must be stable across invalidation to ensure the start+end
+> 	 * are balanced.
+> 	 */
+> 	filemap_invalidate_lock(inode->i_mapping);
+> 	r =3D __kvm_gmem_punch_hole(inode, offset, len);
+> 	filemap_invalidate_unlock(inode->i_mapping);
+> 	return r;
+> }
+>=20
+> static long kvm_gmem_allocate(struct inode *inode, loff_t offset, loff_t =
+len)
+> {
+> 	struct address_space *mapping =3D inode->i_mapping;
+> 	pgoff_t start, index, end;
+> 	int r;
+>=20
+> 	/* Dedicated guest is immutable by default. */
+> 	if (offset + len > i_size_read(inode))
+> 		return -EINVAL;
+>=20
+> 	filemap_invalidate_lock_shared(mapping);
+>=20
+> 	start =3D offset >> PAGE_SHIFT;
+> 	end =3D (offset + len) >> PAGE_SHIFT;
+>=20
+> 	r =3D 0;
+> 	for (index =3D start; index < end; ) {
+> 		struct folio *folio;
+>=20
+> 		if (signal_pending(current)) {
+> 			r =3D -EINTR;
+> 			break;
+> 		}
+>=20
+> 		folio =3D __kvm_gmem_get_folio(inode, index);
+> 		if (IS_ERR(folio)) {
+> 			r =3D PTR_ERR(folio);
+> 			break;
+> 		}
+>=20
+> 		index =3D folio_next_index(folio);
+>=20
+> 		folio_unlock(folio);
+> 		folio_put(folio);
+>=20
+> 		/* 64-bit only, wrapping the index should be impossible. */
+> 		if (WARN_ON_ONCE(!index))
+> 			break;
+>=20
+> 		cond_resched();
+> 	}
+>=20
+> 	filemap_invalidate_unlock_shared(mapping);
+>=20
+> 	return r;
+> }
+>=20
+> static long kvm_gmem_fallocate(struct file *file, int mode, loff_t offset=
+,
+> 			       loff_t len)
+> {
+> 	int ret;
+>=20
+> 	if (!(mode & FALLOC_FL_KEEP_SIZE))
+> 		return -EOPNOTSUPP;
+>=20
+> 	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE))
+> 		return -EOPNOTSUPP;
+>=20
+> 	if (!PAGE_ALIGNED(offset) || !PAGE_ALIGNED(len))
+> 		return -EINVAL;
+>=20
+> 	if (mode & FALLOC_FL_PUNCH_HOLE)
+> 		ret =3D kvm_gmem_punch_hole(file_inode(file), offset, len);
+> 	else
+> 		ret =3D kvm_gmem_allocate(file_inode(file), offset, len);
+>=20
+> 	if (!ret)
+> 		file_modified(file);
+> 	return ret;
+> }
+>=20
+> static int kvm_gmem_release(struct inode *inode, struct file *file)
+> {
+> 	struct kvm_gmem *gmem =3D file->private_data;
+> 	struct kvm_memory_slot *slot;
+> 	struct kvm *kvm =3D gmem->kvm;
+> 	unsigned long index;
+>=20
+> 	/*
+> 	 * Prevent concurrent attempts to *unbind* a memslot.  This is the last
+> 	 * reference to the file and thus no new bindings can be created, but
+> 	 * dereferencing the slot for existing bindings needs to be protected
+> 	 * against memslot updates, specifically so that unbind doesn't race
+> 	 * and free the memslot (kvm_gmem_get_file() will return NULL).
+> 	 */
+> 	mutex_lock(&kvm->slots_lock);
+>=20
+> 	filemap_invalidate_lock(inode->i_mapping);
+>=20
+> 	xa_for_each(&gmem->bindings, index, slot)
+> 		rcu_assign_pointer(slot->gmem.file, NULL);
+>=20
+> 	synchronize_rcu();
+>=20
+> 	/*
+> 	 * All in-flight operations are gone and new bindings can be created.
+> 	 * Zap all SPTEs pointed at by this file.  Do not free the backing
+> 	 * memory, as its lifetime is associated with the inode, not the file.
+> 	 */
+> 	kvm_gmem_invalidate_begin(gmem, 0, -1ul);
+> 	kvm_gmem_invalidate_end(gmem, 0, -1ul);
+>=20
+> 	list_del(&gmem->entry);
+>=20
+> 	filemap_invalidate_unlock(inode->i_mapping);
+>=20
+> 	mutex_unlock(&kvm->slots_lock);
+>=20
+> 	xa_destroy(&gmem->bindings);
+> 	kfree(gmem);
+>=20
+> 	kvm_put_kvm(kvm);
+>=20
+> 	return 0;
+> }
+>=20
+> static struct file_operations kvm_gmem_fops =3D {
+> 	.open		=3D generic_file_open,
+> 	.release	=3D kvm_gmem_release,
+> 	.fallocate	=3D kvm_gmem_fallocate,
+> };
+>=20
+> void kvm_gmem_init(struct module *module)
+> {
+> 	kvm_gmem_fops.owner =3D module;
+> }
+>=20
+> static int kvm_gmem_migrate_folio(struct address_space *mapping,
+> 				  struct folio *dst, struct folio *src,
+> 				  enum migrate_mode mode)
+> {
+> 	WARN_ON_ONCE(1);
+> 	return -EINVAL;
+> }
+>=20
+> static int kvm_gmem_error_folio(struct address_space *mapping, struct fol=
+io *folio)
+> {
+> 	struct list_head *gmem_list =3D &mapping->i_private_list;
+> 	struct kvm_gmem *gmem;
+> 	pgoff_t start, end;
+>=20
+> 	filemap_invalidate_lock_shared(mapping);
+>=20
+> 	start =3D folio->index;
+> 	end =3D start + folio_nr_pages(folio);
+>=20
+> 	list_for_each_entry(gmem, gmem_list, entry)
+> 		kvm_gmem_invalidate_begin(gmem, start, end);
+>=20
+> 	/*
+> 	 * Do not truncate the range, what action is taken in response to the
+> 	 * error is userspace's decision (assuming the architecture supports
+> 	 * gracefully handling memory errors).  If/when the guest attempts to
+> 	 * access a poisoned page, kvm_gmem_get_pfn() will return -EHWPOISON,
+> 	 * at which point KVM can either terminate the VM or propagate the
+> 	 * error to userspace.
+> 	 */
+>=20
+> 	list_for_each_entry(gmem, gmem_list, entry)
+> 		kvm_gmem_invalidate_end(gmem, start, end);
+>=20
+> 	filemap_invalidate_unlock_shared(mapping);
+>=20
+> 	return MF_DELAYED;
+> }
+>=20
+> #ifdef CONFIG_HAVE_KVM_GMEM_INVALIDATE
+> static void kvm_gmem_free_folio(struct folio *folio)
+> {
+> 	struct page *page =3D folio_page(folio, 0);
+> 	kvm_pfn_t pfn =3D page_to_pfn(page);
+> 	int order =3D folio_order(folio);
+>=20
+> 	kvm_arch_gmem_invalidate(pfn, pfn + (1ul << order));
+> }
+> #endif
+>=20
+> static const struct address_space_operations kvm_gmem_aops =3D {
+> 	.dirty_folio =3D noop_dirty_folio,
+> 	.migrate_folio	=3D kvm_gmem_migrate_folio,
+> 	.error_remove_folio =3D kvm_gmem_error_folio,
+> #ifdef CONFIG_HAVE_KVM_GMEM_INVALIDATE
+> 	.free_folio =3D kvm_gmem_free_folio,
+> #endif
+> };
+>=20
+> static int kvm_gmem_getattr(struct mnt_idmap *idmap, const struct path *p=
+ath,
+> 			    struct kstat *stat, u32 request_mask,
+> 			    unsigned int query_flags)
+> {
+> 	struct inode *inode =3D path->dentry->d_inode;
+>=20
+> 	generic_fillattr(idmap, request_mask, inode, stat);
+> 	return 0;
+> }
+>=20
+> static int kvm_gmem_setattr(struct mnt_idmap *idmap, struct dentry *dentr=
+y,
+> 			    struct iattr *attr)
+> {
+> 	return -EINVAL;
+> }
+> static const struct inode_operations kvm_gmem_iops =3D {
+> 	.getattr	=3D kvm_gmem_getattr,
+> 	.setattr	=3D kvm_gmem_setattr,
+> };
+>=20
+> static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+> {
+> 	const char *anon_name =3D "[kvm-gmem]";
+> 	struct kvm_gmem *gmem;
+> 	struct inode *inode;
+> 	struct file *file;
+> 	int fd, err;
+>=20
+> 	fd =3D get_unused_fd_flags(0);
+> 	if (fd < 0)
+> 		return fd;
+>=20
+> 	gmem =3D kzalloc(sizeof(*gmem), GFP_KERNEL);
+> 	if (!gmem) {
+> 		err =3D -ENOMEM;
+> 		goto err_fd;
+> 	}
+>=20
+> 	file =3D anon_inode_create_getfile(anon_name, &kvm_gmem_fops, gmem,
+> 					 O_RDWR, NULL);
+> 	if (IS_ERR(file)) {
+> 		err =3D PTR_ERR(file);
+> 		goto err_gmem;
+> 	}
+>=20
+> 	file->f_flags |=3D O_LARGEFILE;
+>=20
+> 	inode =3D file->f_inode;
+> 	WARN_ON(file->f_mapping !=3D inode->i_mapping);
+>=20
+> 	inode->i_private =3D (void *)(unsigned long)flags;
+> 	inode->i_op =3D &kvm_gmem_iops;
+> 	inode->i_mapping->a_ops =3D &kvm_gmem_aops;
+> 	inode->i_mapping->flags |=3D AS_INACCESSIBLE;
+> 	inode->i_mode |=3D S_IFREG;
+> 	inode->i_size =3D size;
+> 	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
+> 	mapping_set_unmovable(inode->i_mapping);
+> 	/* Unmovable mappings are supposed to be marked unevictable as well. */
+> 	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
+>=20
+> 	kvm_get_kvm(kvm);
+> 	gmem->kvm =3D kvm;
+> 	xa_init(&gmem->bindings);
+> 	list_add(&gmem->entry, &inode->i_mapping->i_private_list);
+>=20
+> 	fd_install(fd, file);
+> 	return fd;
+>=20
+> err_gmem:
+> 	kfree(gmem);
+> err_fd:
+> 	put_unused_fd(fd);
+> 	return err;
+> }
+>=20
+> int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args)
+> {
+> 	loff_t size =3D args->size;
+> 	u64 flags =3D args->flags;
+> 	u64 valid_flags =3D 0;
+>=20
+> 	if (flags & ~valid_flags)
+> 		return -EINVAL;
+>=20
+> 	if (size <=3D 0 || !PAGE_ALIGNED(size))
+> 		return -EINVAL;
+>=20
+> 	return __kvm_gmem_create(kvm, size, flags);
+> }
+>=20
+> int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
+> 		  unsigned int fd, loff_t offset)
+> {
+> 	loff_t size =3D slot->npages << PAGE_SHIFT;
+> 	unsigned long start, end;
+> 	struct kvm_gmem *gmem;
+> 	struct inode *inode;
+> 	struct file *file;
+> 	int r =3D -EINVAL;
+>=20
+> 	BUILD_BUG_ON(sizeof(gfn_t) !=3D sizeof(slot->gmem.pgoff));
+>=20
+> 	file =3D fget(fd);
+> 	if (!file)
+> 		return -EBADF;
+>=20
+> 	if (file->f_op !=3D &kvm_gmem_fops)
+> 		goto err;
+>=20
+> 	gmem =3D file->private_data;
+> 	if (gmem->kvm !=3D kvm)
+> 		goto err;
+>=20
+> 	inode =3D file_inode(file);
+>=20
+> 	if (offset < 0 || !PAGE_ALIGNED(offset) ||
+> 	    offset + size > i_size_read(inode))
+> 		goto err;
+>=20
+> 	filemap_invalidate_lock(inode->i_mapping);
+>=20
+> 	start =3D offset >> PAGE_SHIFT;
+> 	end =3D start + slot->npages;
+>=20
+> 	if (!xa_empty(&gmem->bindings) &&
+> 	    xa_find(&gmem->bindings, &start, end - 1, XA_PRESENT)) {
+> 		filemap_invalidate_unlock(inode->i_mapping);
+> 		goto err;
+> 	}
+>=20
+> 	/*
+> 	 * No synchronize_rcu() needed, any in-flight readers are guaranteed to
+> 	 * be see either a NULL file or this new file, no need for them to go
+> 	 * away.
+> 	 */
+> 	rcu_assign_pointer(slot->gmem.file, file);
+> 	slot->gmem.pgoff =3D start;
+>=20
+> 	xa_store_range(&gmem->bindings, start, end - 1, slot, GFP_KERNEL);
+> 	filemap_invalidate_unlock(inode->i_mapping);
+>=20
+> 	/*
+> 	 * Drop the reference to the file, even on success.  The file pins KVM,
+> 	 * not the other way 'round.  Active bindings are invalidated if the
+> 	 * file is closed before memslots are destroyed.
+> 	 */
+> 	r =3D 0;
+> err:
+> 	fput(file);
+> 	return r;
+> }
+>=20
+> void kvm_gmem_unbind(struct kvm_memory_slot *slot)
+> {
+> 	unsigned long start =3D slot->gmem.pgoff;
+> 	unsigned long end =3D start + slot->npages;
+> 	struct kvm_gmem *gmem;
+> 	struct file *file;
+>=20
+> 	/*
+> 	 * Nothing to do if the underlying file was already closed (or is being
+> 	 * closed right now), kvm_gmem_release() invalidates all bindings.
+> 	 */
+> 	file =3D kvm_gmem_get_file(slot);
+> 	if (!file)
+> 		return;
+>=20
+> 	gmem =3D file->private_data;
+>=20
+> 	filemap_invalidate_lock(file->f_mapping);
+> 	xa_store_range(&gmem->bindings, start, end - 1, NULL, GFP_KERNEL);
+> 	rcu_assign_pointer(slot->gmem.file, NULL);
+> 	synchronize_rcu();
+> 	filemap_invalidate_unlock(file->f_mapping);
+>=20
+> 	fput(file);
+> }
+>=20
 
