@@ -1,220 +1,160 @@
-Return-Path: <linux-kernel+bounces-206137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C319004BD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:26:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1DDC9004E1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:30:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB88D2898D7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:26:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67B091F24518
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6053196DA7;
-	Fri,  7 Jun 2024 13:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41806195985;
+	Fri,  7 Jun 2024 13:28:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qkvwqt6+"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RPYHJWZB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2171B194125;
-	Fri,  7 Jun 2024 13:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2E81940B5;
+	Fri,  7 Jun 2024 13:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717766706; cv=none; b=jdNOHF5eg4S7A3dZhS4LXIb5WZipTL5zeNy9piiPotZYZ39PEjWLzDNZWe9lLoicG9G7GPU4oBdwaSGeXAaqUydVCFrY2OX+W2zj2KP0ot8+0oJ3PXIVcHLccIsWrJYL/0A785mjcB0jM3CZwPBsPqpOON4+FU5DklsfHvzrCfA=
+	t=1717766881; cv=none; b=N/cjyc7SJ9CxIJd0UwFN7Wu9faRTBMMOlkcSQlU8K/+YXHvz2fz5QQ+ABC81KjMPkzXZgbrtYE1kTzhKNBk+7tyf++16g1JSGi+TA5HVxkgizPSWM5t4dweUw6MjvKpfBrpqFcrkecfFYzmquljhZaDvGqfVEc+jjyO9xoo00Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717766706; c=relaxed/simple;
-	bh=XCkeTdmb5UlSYGoXVQyM1mXHb7Pmwzz3LJ95NLN5jaw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q8BEEI7a0e3r5jYNYAX1Q5AYW7hiFlFUJRZZVioPheWx9xEdU4OIuQJRX8jxQbEGa5eRP0V/47qmHX2eKI2vmlx1trgtrxOy6Z0DOL4fgV7w7eDWR8PRcH8eLrfj2o+2aKa48LQnhtMFHRnvRD3laTZTa6o5DNBJU3pZAp+P+nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qkvwqt6+; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 457DOiYc087159;
-	Fri, 7 Jun 2024 08:24:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717766684;
-	bh=2HowkdMKmfe/bA4sdX1zRcikYqQHIjGaVwnlm56Dfgs=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=qkvwqt6+pnCujOAF6Wv/4v2m58yk3eER3Z5Jvci3873Kw3bRczkKGhRF6Pp9E9Bv2
-	 Tqx8BNH4xEEF7Lbc1cbgNCqgoxht/F0F5EAlBJdqpPg+LE7rE1NUSfSO/UymEwDFN7
-	 udaGMdwHL5Tn8nY/nDpTlDs5yLFT3ho1tJG/BdN4=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 457DOiKf094642
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 7 Jun 2024 08:24:44 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 7
- Jun 2024 08:24:44 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 7 Jun 2024 08:24:44 -0500
-Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 457DOhOi033596;
-	Fri, 7 Jun 2024 08:24:44 -0500
-From: Devarsh Thakkar <devarsht@ti.com>
-To: <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <hverkuil-cisco@xs4all.nl>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>
-CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
-        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
-        <vijayp@ti.com>, <andrzej.p@collabora.com>, <nicolas@ndufresne.ca>
-Subject: [PATCH v13 01/13] media: dt-bindings: Add Imagination E5010 JPEG Encoder
-Date: Fri, 7 Jun 2024 18:54:43 +0530
-Message-ID: <20240607132443.3544826-1-devarsht@ti.com>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20240607131900.3535250-1-devarsht@ti.com>
-References: <20240607131900.3535250-1-devarsht@ti.com>
+	s=arc-20240116; t=1717766881; c=relaxed/simple;
+	bh=lLS9fQ8kfF3shs/Rg28crtMFJ5S+9vbd4oQ5jIQTZxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IyGlBakrmf+zNbsEz9MKZaZlmJFez2iSyQYxfN6v3IjuERZD8O9ZWO+dPJ8C3/7Tvv5FkeU26domxVOOFrSTMCwob2OuNp3Jv40/+hsu0azySth/9oCI50vRuxr8Fsc6rkhX0EEI5JVDu0cYha1Lt7iuHzqmiLkiE9d0Ek49A1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RPYHJWZB; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717766879; x=1749302879;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lLS9fQ8kfF3shs/Rg28crtMFJ5S+9vbd4oQ5jIQTZxg=;
+  b=RPYHJWZBV5RdiJENI/IPndy3ZTWOOYyM9cUZAAQv1hCNGjLNfeBJD+UL
+   YqBaXJjICuzaOcTiBEEymroblKYshu8+qFZaA3qRlIoFEk+q/v8bS4sVg
+   mz085mgre5jXmV0FdKcR0uvf4NVyjsL3evWFYoMKGph/AAnrguERNUd8L
+   AKi/PyHMyGqp+xTtGQgdfUh7sKHascDoBbdUbZSxEJe3aAGcY9mXmtuBP
+   FYoaTzJeP9N45X0zophadFfBMjNnqtPGHfXJ3C+UdvzZR7Qmx+ZLpFXRz
+   MCjBmOTZ7uqrGTSwja0f4PUphV7O4J3bVwMY65uQLLmuNud02yEbN8pWr
+   Q==;
+X-CSE-ConnectionGUID: /4Lj486YS7m9GsbMTC2OvA==
+X-CSE-MsgGUID: AubbwCOfTEq5ePjHlcgEWQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="14320996"
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="14320996"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 06:27:59 -0700
+X-CSE-ConnectionGUID: 3xJGotWVR1+A10Jmx2cynw==
+X-CSE-MsgGUID: FkvqHdazRBSdIH4lEToSQA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="38901974"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 07 Jun 2024 06:27:57 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sFZdL-0004ps-0R;
+	Fri, 07 Jun 2024 13:27:55 +0000
+Date: Fri, 7 Jun 2024 21:27:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Johannes Berg <johannes@sipsolutions.net>, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-trace-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+	Johannes Berg <johannes.berg@intel.com>
+Subject: Re: [PATCH v3 1/4] tracing: add __print_sym() to replace
+ __print_symbolic()
+Message-ID: <202406072129.3ZzFDOlC-lkp@intel.com>
+References: <20240606203255.49433-7-johannes@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606203255.49433-7-johannes@sipsolutions.net>
 
-Add dt-bindings for Imagination E5010 JPEG Encoder [1] which is implemented
-as stateful V4L2 M2M driver.
+Hi Johannes,
 
-The device supports baseline encoding with two different quantization
-tables and compression ratio as demanded.
+kernel test robot noticed the following build errors:
 
-Minimum resolution supported is 64x64 and Maximum resolution supported is
-8192x8192.
+[auto build test ERROR on mcgrof/modules-next]
+[also build test ERROR on arnd-asm-generic/master tip/timers/core net/main net-next/main linus/master horms-ipvs/master v6.10-rc2 next-20240607]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Link: https://www.ti.com/lit/pdf/spruj16 [1] (Section 7.6 JPEG Encoder)
-Co-developed-by: David Huang <d-huang@ti.com>
-Signed-off-by: David Huang <d-huang@ti.com>
-Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-V13: Update commit message to use Link: syntax
-V6->V12: No change
-V5:
- - Add Reviewed-By tag
-V4:
- - Use ti-specific compatible ti,am62a-jpeg-enc as secondary one
- - Update commit message and title
- - Remove clock-names as only single clock
-V3:
-- Add vendor specific compatible
-- Update reg names
-- Update clocks to 1
-- Fix dts example with proper naming
-V2: No change
----
+url:    https://github.com/intel-lab-lkp/linux/commits/Johannes-Berg/tracing-add-__print_sym-to-replace-__print_symbolic/20240607-043503
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git modules-next
+patch link:    https://lore.kernel.org/r/20240606203255.49433-7-johannes%40sipsolutions.net
+patch subject: [PATCH v3 1/4] tracing: add __print_sym() to replace __print_symbolic()
+config: arc-randconfig-002-20240607 (https://download.01.org/0day-ci/archive/20240607/202406072129.3ZzFDOlC-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240607/202406072129.3ZzFDOlC-lkp@intel.com/reproduce)
 
- .../bindings/media/img,e5010-jpeg-enc.yaml    | 75 +++++++++++++++++++
- MAINTAINERS                                   |  5 ++
- 2 files changed, 80 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406072129.3ZzFDOlC-lkp@intel.com/
 
-diff --git a/Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml b/Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
-new file mode 100644
-index 000000000000..085020cb9e61
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
-@@ -0,0 +1,75 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/media/img,e5010-jpeg-enc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Imagination E5010 JPEG Encoder
-+
-+maintainers:
-+  - Devarsh Thakkar <devarsht@ti.com>
-+
-+description: |
-+  The E5010 is a JPEG encoder from Imagination Technologies implemented on
-+  TI's AM62A SoC. It is capable of real time encoding of YUV420 and YUV422
-+  inputs to JPEG and M-JPEG. It supports baseline JPEG Encoding up to
-+  8Kx8K resolution.
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - const: ti,am62a-jpeg-enc
-+          - const: img,e5010-jpeg-enc
-+      - const: img,e5010-jpeg-enc
-+
-+  reg:
-+    items:
-+      - description: The E5010 core register region
-+      - description: The E5010 mmu register region
-+
-+  reg-names:
-+    items:
-+      - const: core
-+      - const: mmu
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - interrupts
-+  - clocks
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/soc/ti,sci_pm_domain.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    soc {
-+      #address-cells = <2>;
-+      #size-cells = <2>;
-+      jpeg-encoder@fd20000 {
-+          compatible = "img,e5010-jpeg-enc";
-+          reg = <0x00 0xfd20000 0x00 0x100>,
-+                <0x00 0xfd20200 0x00 0x200>;
-+          reg-names = "core", "mmu";
-+          clocks = <&k3_clks 201 0>;
-+          power-domains = <&k3_pds 201 TI_SCI_PD_EXCLUSIVE>;
-+          interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-+      };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index bb9f8077b37d..f2dcab7af2d1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10781,6 +10781,11 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/auxdisplay/img,ascii-lcd.yaml
- F:	drivers/auxdisplay/img-ascii-lcd.c
- 
-+IMGTEC JPEG ENCODER DRIVER
-+M:	Devarsh Thakkar <devarsht@ti.com>
-+S:	Supported
-+F:	Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
-+
- IMGTEC IR DECODER DRIVER
- S:	Orphan
- F:	drivers/media/rc/img-ir/
+All errors (new ones prefixed by >>):
+
+   kernel/trace/trace_events.c: In function 'show_sym_list':
+>> kernel/trace/trace_events.c:1586:31: error: invalid use of undefined type 'struct module'
+    1586 |                 sym_defs = mod->trace_sym_defs;
+         |                               ^~
+   kernel/trace/trace_events.c:1587:33: error: invalid use of undefined type 'struct module'
+    1587 |                 n_sym_defs = mod->num_trace_sym_defs;
+         |                                 ^~
+
+
+vim +1586 kernel/trace/trace_events.c
+
+  1575	
+  1576	/* note: @name is not NUL-terminated */
+  1577	static void show_sym_list(struct seq_file *m, struct trace_event_call *call,
+  1578				  const char *name, unsigned int name_len)
+  1579	{
+  1580		struct trace_sym_def **sym_defs;
+  1581		unsigned int n_sym_defs, i;
+  1582	
+  1583		if (call->module) {
+  1584			struct module *mod = call->module;
+  1585	
+> 1586			sym_defs = mod->trace_sym_defs;
+  1587			n_sym_defs = mod->num_trace_sym_defs;
+  1588		} else {
+  1589			sym_defs = __start_ftrace_sym_defs;
+  1590			n_sym_defs = __stop_ftrace_sym_defs - __start_ftrace_sym_defs;
+  1591		}
+  1592	
+  1593		for (i = 0; i < n_sym_defs; i++) {
+  1594			unsigned int sym_len;
+  1595	
+  1596			if (!sym_defs[i])
+  1597				continue;
+  1598			if (sym_defs[i]->system != call->class->system)
+  1599				continue;
+  1600			sym_len = strlen(sym_defs[i]->symbol_id);
+  1601			if (name_len != sym_len)
+  1602				continue;
+  1603			if (strncmp(sym_defs[i]->symbol_id, name, sym_len))
+  1604				continue;
+  1605			if (sym_defs[i]->show)
+  1606				sym_defs[i]->show(m);
+  1607			break;
+  1608		}
+  1609	}
+  1610	
+
 -- 
-2.39.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
