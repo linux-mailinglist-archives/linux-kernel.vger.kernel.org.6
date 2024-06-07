@@ -1,105 +1,133 @@
-Return-Path: <linux-kernel+bounces-205858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A0D5900162
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:00:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE167900164
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:01:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53E551C23269
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:00:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D553F1C23587
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF43187326;
-	Fri,  7 Jun 2024 11:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F4D1862AC;
+	Fri,  7 Jun 2024 11:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jj5xyic4"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="voYI5waC"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111AA1862AB;
-	Fri,  7 Jun 2024 11:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8214152530;
+	Fri,  7 Jun 2024 11:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717758004; cv=none; b=SkbDEYuc04LF/cVo8xI0YH3n9mwjyAUNAwqp7UD6bB1n0rgfolflSP3ZWc9o+KyoHf1wmn351X8SuATEAbnrAFXHR8Kz3yFYu1LbFHYPSu0S4aDJK24xivMGQ+AyPFdPSW2vpCTuOsH1x3QhosPpGU3VPCzLpfN9htNeA65HZ2c=
+	t=1717758061; cv=none; b=nOE8tp52pUm0A/BbEqEfknUxU/gJ+cGfyfJET27NuNe+kLVvLc+ETP/Kyck83rxquMrbX+meEhpFLaY160KXZHbsxlVlU36Fb83bidSZsxgo4u0M/yWlBOPVgpaIAm0OsnTe1fvYTAXTmxJm7e78ELcdQUCbnNUfT+ecaN+xmzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717758004; c=relaxed/simple;
-	bh=QBrdfx1/XX/UOfc71j27Wb5CzWJX1323VEZ9MweCRx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FXiI5XZ6NSa1PqbVyOx0kIafQesi+CUYNJrQRWA+WSPJHQDdLHNODHRJN/NRRXZE1EI1AaoQU1XZTkzMuEpfY1JIF4X6bJRq+1PltPJXbSVqPHQshTEuFWXFn1of2To0jvl75BGWM6Uc9qwhq1qJPpvBOM28c6797CfQXMvUY9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jj5xyic4; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57a4d7ba501so2385858a12.2;
-        Fri, 07 Jun 2024 04:00:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717758001; x=1718362801; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GJpv+qEzMSn0QFirqNpPSLDGgqavfET+JJwd5C1YxY0=;
-        b=Jj5xyic4x7Y69PTU9ElbXkRGN1yt9xxpQx7nNU5oyE1wAdezjF9VQzS5Ol/HvYFRNE
-         zRaYLrBav8/hMVOUBbZHcSqjNTJujSeUHj6e5C5M+iowpxRyqzctyi37pTXeJOHzxUbJ
-         ue5fiR1FW8NDp5pwwllaLB/OdmNndPkGl4HuuXF1EGc6uJSpjEFHvFThngXE5djkS+Qb
-         Hv2Ux9qybboS33NkiHZaMnsvxp17E/Wk08ErZzfqcz5R4usKs3c7EmsElcu4odrQtjL2
-         36+O0T3OYHJdhVsJkA418DRi4BByP4x1nRJO/w1hn5nc5edrtFW9znUmrFa9mdsN0VVq
-         Ef6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717758001; x=1718362801;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GJpv+qEzMSn0QFirqNpPSLDGgqavfET+JJwd5C1YxY0=;
-        b=FH3IeQ/LgFFRYcJj9KpXILYz88XHJNjQvzAuTud4tXSGw5bWh4rJ8MxQ82ZIni1Ozv
-         6sYdr3C0GEtGZPqKyTtfGl+QwLpXzjak9i/mFQ3U6RVpGZFjvMPbG71X3Fc1qRo8QdSp
-         xl/JbqjCJvkdA6AWEpPJuQ1GooQ1DlksfGC6PVRT0yb0qvv81LfBheeVUwsTK0imr1aW
-         pnXF+RxuZoUCOyhFKxRXQFK3PZHMA2UctY8Y5qyh32/ed2K0fEnKjn2qy0LqOp9UTRqX
-         8yRyJY8UNpXObRvvpU8nZk90yroI9wCfiLGiVaWW86s1fqwk91xLulKbZbBBPoWE0rjc
-         OjYw==
-X-Forwarded-Encrypted: i=1; AJvYcCW47rwpCctO4G5z46h0k0GBVVpvnQvxOGLKqlqPESVW8x/xKpPBL03M8GuA2ffN9o/G6hPcsxwgIHXBFT/9WKGRkn0F+S0tRC4GRV+4NJxctzOBWmbxNbSI6Nd+NChw6qIZeF8uUaII384T3eU6YkmAp6iqBTRthFfCoP0QGp3y9w==
-X-Gm-Message-State: AOJu0Ywxx3Il1cBrezf8fL14ZjPhxUD1qXBMMtym+2E8mziJnpTEMuVR
-	mwq+ilnggQYElH3t02KwRjlaUM4gK5yjxsr2zhEcRzAiY+aBg4Hd
-X-Google-Smtp-Source: AGHT+IHO6rkhgH9s/+C5yI70NODrziwqjP/bhKa9RIxJJzcxAr79hJNFYlsokOE6jD6G7Tq+btlYGA==
-X-Received: by 2002:a17:907:1704:b0:a68:a2e7:118b with SMTP id a640c23a62f3a-a6cd665e4demr164857666b.19.1717758000854;
-        Fri, 07 Jun 2024 04:00:00 -0700 (PDT)
-Received: from skbuf ([188.25.55.166])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c806eb101sm229827566b.121.2024.06.07.03.59.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 04:00:00 -0700 (PDT)
-Date: Fri, 7 Jun 2024 13:59:57 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Martin Schiller <ms@dev.tdt.de>
-Cc: martin.blumenstingl@googlemail.com, hauke@hauke-m.de, andrew@lunn.ch,
-	f.fainelli@gmail.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 01/13] dt-bindings: net: dsa: lantiq_gswip: Add
- missing phy-mode and fixed-link
-Message-ID: <20240607105957.kkcogto7wtn35mlb@skbuf>
-References: <20240606085234.565551-1-ms@dev.tdt.de>
- <20240606085234.565551-2-ms@dev.tdt.de>
+	s=arc-20240116; t=1717758061; c=relaxed/simple;
+	bh=PYBDXW1bgAq8z8hyPZRjTK33dIFpn/74BViS5VSNeIo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ey9yvf1tV6WRQdFEm1tVTEvE1GyYpylHgPIy+brqoiQNxioMiiXiepSwS/+krH7B/wqNnsrUCENQWR14B7e1yt10f4sDIQNue2iLNWrNigcrHfKqadGhJuFoPqBWnMP78ms3KFT/gLqm4+IOSn+3f9yxo1Wg+apMeUUU/spGaZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=voYI5waC; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1717758021; x=1718362821; i=markus.elfring@web.de;
+	bh=IhW5vpsMEF6oM47c6btwxu3Ln8LJNCv3Ogz2x3bYGGY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=voYI5waCAWK90Hkf6VsiDMqz3Q79jVJp46bqwaP7vzBhthOmcVdsR1tJv/fpxZqp
+	 7nCIIm4xYZTUmhoQ+1cNoEL1dTOIvDcHhTAAXUVAi9bDxfQm29k1oEqHRWg8jY+Vl
+	 zzUkgba45soV3mH9iSTr1CMR54gT0ZbmkyqkwCNVuhNFNC8arHi/XHZvMBsIPTM8I
+	 dow8SWx86aFHp5dfH3jUZKrxaGAzNvi1DqW3ibumgmDAq7kJrKXnTtqFyP2dKxwnx
+	 fkqb5lduq9kjV198HN2/7OJoDlwFXULysMr+ANiTy+dDXc/S8Dm2l9n0mC7DEk7dd
+	 NPt0NbWiT28uLZdJnQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mft7t-1svTvY2naj-00n9hn; Fri, 07
+ Jun 2024 13:00:21 +0200
+Message-ID: <dd01cc26-5af5-45f6-a5b0-b5d29da3f01e@web.de>
+Date: Fri, 7 Jun 2024 13:00:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606085234.565551-2-ms@dev.tdt.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dmaengine: xilinx: xdma: Fix data synchronisation in
+ xdma_channel_isr()
+To: Louis Chauvet <louis.chauvet@bootlin.com>, Lizhi Hou <lizhi.hou@amd.com>,
+ Brian Xu <brian.xu@amd.com>, Raj Kumar Rampelli
+ <raj.kumar.rampelli@amd.com>, Vinod Koul <vkoul@kernel.org>,
+ Michal Simek <michal.simek@amd.com>, dmaengine@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240607-xdma-fixes-v2-1-0282319ce345@bootlin.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240607-xdma-fixes-v2-1-0282319ce345@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:qMKv+pscBjHW9lTpGPCxoG4AtlhN/1w5uQrP4IcHwLCdyT9LaAF
+ pxnwHOZ3kovQB+gMDFK1SPxvxAZOQV5KR3R3dZYB4U4+kYRQKcrR9y8xfBWl27pDf0Lv+Jh
+ +lj2y835hfBopQGcVC81yHAErCkizTODlGzkGolloRlE3Lew1V72XG9ucswdxcIyBVV93Rj
+ mvxIk/GKwUJNK5XuKDhJQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ZGEkmf+aAVU=;Z3Ng3uPnW/ZXnqCjf23PD3CLyqQ
+ Nw+YuHt0WkNK5QE+6h41+qD1gzH5KKWUxhmRNGOLPC5WzgUC8XXObf0Hllu4gsI8M1lUsCiyJ
+ nveY7fGVDJXU3rENekbrIYjVBf+YS2QaOvK9ZwnMCYw9TvLBRnGPVK0ZZxs7SSvinTm7unOba
+ qSe/y/U2Vilx20HNKFEa9iah90/xG3WWIPk1jdEnsfOvJ4J0oScibrxmOnpZ5BfaNpNMf7iVQ
+ 1pMYrBpKjemvK4/5zyv37lZOMnCcxRedXkWtY7DCOxkrucLWyIRDwwXOHueAx92NpUG6eWC4w
+ 6raqQpB9h0WUO2PL5Uqv7/aJkyob3aulBNXDLwjQrpBJb8FC076YIXA04w1LyZ8imZVcqyJqc
+ je0cJ/1n4K6y5Hcx76KcMF7YRONDQYm37TRjejiLwVcRZ8ZlSd6j9JP7sVQr0yXFLtw7ZIP8h
+ AsO0pgdM8qMYrHKNyHkgolIP++6daz/C3G9VT6LhFF1e/8U2IorS/IJykshYZgiRSidjucf8A
+ 2f1jq9JtYCTynNPbWvlhpSmli0eBpES9ec13jcRHVcQWQMAhBBdIiTLpaPRAoNkNqYHRFjcps
+ CnzPxfoo8lN/qCIdPQ6CRS02AdolWAznZhcDBUS+F/PBSrm6GDLnSbnd7GyZ7y3TSX7VW4uNR
+ Ti1mzu9Ivsefr6XDg8s3yu0LoR9APmGSMhRpM1I5TfAo4xzFsK9/4ppeM54GqCrfrH1vm+6bj
+ k9O0ApTQGjC+eaJ7E5dpHQp0w71OSG9DQrBL3w89U4jV3tK4sKUlmRHGy5YBKvrW6oPCsYIeX
+ U4dMQikVc7aKkIXzuMgbO0yOpWJpKl4+hSEjmy7ZunTIc=
 
-On Thu, Jun 06, 2024 at 10:52:22AM +0200, Martin Schiller wrote:
-> From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> 
-> The CPU port has to specify a phy-mode and either a phy or a fixed-link.
-> Since GSWIP is connected using a SoC internal protocol there's no PHY
-> involved. Add phy-mode = "internal" and a fixed-link to describe the
-> communication between the PMAC (Ethernet controller) and GSWIP switch.
-> 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Requests the vchan lock before using xdma->stop_request.
+
+Better wording alternative?:
+  A data synchronisation construct was missing in this function implementa=
+tion.
+  Thus apply the vchan lock before checking the data structure
+  member =E2=80=9Cxchan->stop_requested=E2=80=9D.
+
+
 > ---
+>  drivers/dma/xilinx/xdma.c | 4 ++--
 
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+How do think about to avoid a duplicate marker line?
 
-Long-term it would be good to also see a dt-schema conversion.
+
+=E2=80=A6
+> +++ b/drivers/dma/xilinx/xdma.c
+> @@ -885,11 +885,11 @@ static irqreturn_t xdma_channel_isr(int irq, void =
+*dev_id)
+>  	u32 st;
+>  	bool repeat_tx;
+>
+> +	spin_lock(&xchan->vchan.lock);
+> +
+>  	if (xchan->stop_requested)
+>  		complete(&xchan->last_interrupt);
+>
+> -	spin_lock(&xchan->vchan.lock);
+> -
+>  	/* get submitted request */
+=E2=80=A6
+
+Under which circumstances will development interests grow for the usage of
+a statement like =E2=80=9Cguard(raw_spinlock)(&xchan->vchan.lock);=E2=80=
+=9D?
+https://elixir.bootlin.com/linux/v6.10-rc2/source/include/linux/cleanup.h#=
+L124
+
+Regards,
+Markus
 
