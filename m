@@ -1,290 +1,196 @@
-Return-Path: <linux-kernel+bounces-205660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F7208FFE93
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:02:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8913E8FFE96
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A61731F218A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:02:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FCA91C2189A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8F615B556;
-	Fri,  7 Jun 2024 09:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB5C15B147;
+	Fri,  7 Jun 2024 09:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="x92Cqnkw"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="L4lhslcO"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2055.outbound.protection.outlook.com [40.107.244.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9654217C6C;
-	Fri,  7 Jun 2024 09:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717750905; cv=none; b=QWdxdKWnBaY4xYJbLo0Zrijhm6X05VmDb37aMArqiYoak5Y7OR26Vts4HIgJN6+fRIQGXDczr3OxB4odQNf4pFbLM/R3MgktAL/M26j9tqm1fUimW3IHfqFAbmImjaWKdB6/M1Qyc6j1etn14xSETG5BdcZdAbqR7BlUQKmcShc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717750905; c=relaxed/simple;
-	bh=EjTsCi6jwm2prkoLiQgRPgr43kd0Bd7Ce+YdKLkZ1Lk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RPrchR/UeoE6nbVKBZtTxVThU2qw4QQqcUBysq6d8ogMX8+w5/eordgh0fU+fWNfJdvN2LjMmo/69B3U6Otqj1y9IKgwiXCW3+lJh9wKp5cFE0bP3PEuou9ttQJanRXJqle3lQZlCANzb9IkCPNm58j2tY2Mh7vRxgpNy9mke9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=x92Cqnkw; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717750901;
-	bh=EjTsCi6jwm2prkoLiQgRPgr43kd0Bd7Ce+YdKLkZ1Lk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=x92Cqnkw3Sp3kGMbmV+uk5ry8Xm3qZURdzYVczJRxEMRfs7SU2QzQsGK200EwyD28
-	 3CkDER4n6kNHZVzsWWT7/zRSnQznxr9RiP6uXj0Bip6lbxmCnUyBzNT238vPNvkYMJ
-	 fqjlEtRb1fgZ4ZMr6uUVOqzYZpaU3R7uDlphmJ/li81sIWZMN+pWLLc5CcDf24sQOD
-	 unzjLtb04YEO6eU/w4QFsoUEOb6NBObvhx/sjxq/7GEYgsKB1Sx2tdUl27NeHjcFYe
-	 H/9EaXl34oxfuIVZg8YUXTMORF2DMOGpmeKXnsWH9B/Mmhnsp4s2CdAXoewltvN+H5
-	 Dc3htIznPYDqw==
-Received: from [100.74.67.65] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2C1433781022;
-	Fri,  7 Jun 2024 09:01:41 +0000 (UTC)
-Message-ID: <8231caaa-463f-4afb-b9af-8aaab48dcc4f@collabora.com>
-Date: Fri, 7 Jun 2024 11:01:40 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B04717C6C;
+	Fri,  7 Jun 2024 09:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717750938; cv=fail; b=N6L6m+BtaU7rGET+oBN9R6f7iaun7BIG/t1Bv/WcJORmDam3j3uUjduKCMcDd6NRluKeo8fjf1DaReNHiI3IdaM6mlej7TIFGScJe6sHyDdpUxR8/HfvpmvMrdUbRsrVn8DZWrvVT6zkcQtZ4ZbxlXjeyqUllJDeOEDo+H5eFZs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717750938; c=relaxed/simple;
+	bh=uipOWUvAJm5iiIJYHejUG9NqbuKc7/wfFq8KMHGDzcY=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=XJ5XFFobaukU7rdguqanfgMhVN8NO7bOMpn/k6i6Zmu1FIUWNeGUV3FCpPc4+7xbj0xflL7GVrhmSXlakyLXm0KcQT4MQrdfhBDhZAXPh/CrDrZVo0iSjtM21okicbga50bucevqPbhFrb2JLTIXNONhqEg8Yd2szMKHVnrerLY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=L4lhslcO; arc=fail smtp.client-ip=40.107.244.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QNfCfTbhgAVCgxTfyJj/ziWxH/mC+FB3yqSGGIG3ZDZ2qbQK6tYCMDkkNMAnOyRXznpruZ+iXPC+hJCp6XPm2fr8KgtPsIdR5FHdxaGgVKcbo1DSh7pj1wslM4+KM/2nl9U0Cg3qQqEuVFDM+XoEyATDEYnIcBOnPapoq0P4qc9YEHPGW9MUQt6YdnvrGISLebrXundLRj7ab9y6ix7QDqAelXc68yk5K122iopy14cOTizGcOUesTyws1Y9H2x8aCPn5JW7vhCfr6XWt+RcJI9x0tGfWIOE4j3HPvlpsXYRXtVfDGF0AzmUckWfuTF+miDvRwvR9yG9S+8JOEqQVQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OVsiLSxSp6tJ1WZ680pm4SWu2UQR0VZeFFDKhUV7SQ4=;
+ b=mRxm65F5KVNyBgAroGByTzhaD0RK8NnBKOIdTeeN3mE06y3RrY+Pcluh/KQDI3BzAXWnIfhoZzqo3fRi2cervv9jx+VTEgEdbwnRNs7qkCkJTLFxnxduLQp/2gT1wLeppfH5TwU/wOUrzxEx2OqCXYNCJHKY4NTfKcA3iu0DVjIsar3PsTIKZkCfqp3DwgGYPLCm/hvinFbvH37A7/bPABlQTmzfpMH/IsSrMCLNdR9s/Iw9G7cmEm1rB9ApiimwjsczYTooKNdnLkgJeoq3OiHOdwBRJkoF56E4dcqEzFenDA+VoD5f3XWq6W18dM+N2q8EBy/uXU5pJCrn8MRA0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OVsiLSxSp6tJ1WZ680pm4SWu2UQR0VZeFFDKhUV7SQ4=;
+ b=L4lhslcOKe8Ryi74xMWmiPXaRQubl4/e8CrYP+XFH1/fnefsik/JzdJfLhqfltxCp5mfXzzhgo7gqHd2hC/eEqEgRKDiFcjfMu3QpJyGIU7ydrCYpFGpZKVgWAkicG+BqHGkguAFadqrwKAWKIuDEBX4iu5JMrmz/zrJ3yYhNiWLW4tRVyD/Siggw/Du89vjtvVKvCaZdY0w0gwK2ceSKSKn7zrUYuYQaH2wi7zQL/FhxG60LMEpSBTdKkBKIldatWPyYfQbEgDLQwOo0xeKrQpwkU5RjfUQLfpDzA3B2SBTDK4rJtSRMK7G4ukxBmQCtksxCGeav5eRW9q3YDBlbQ==
+Received: from PH7P222CA0001.NAMP222.PROD.OUTLOOK.COM (2603:10b6:510:33a::14)
+ by IA0PR12MB8278.namprd12.prod.outlook.com (2603:10b6:208:3dc::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.33; Fri, 7 Jun
+ 2024 09:02:08 +0000
+Received: from CY4PEPF0000EE36.namprd05.prod.outlook.com
+ (2603:10b6:510:33a:cafe::a6) by PH7P222CA0001.outlook.office365.com
+ (2603:10b6:510:33a::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7656.21 via Frontend
+ Transport; Fri, 7 Jun 2024 09:02:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CY4PEPF0000EE36.mail.protection.outlook.com (10.167.242.42) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.15 via Frontend Transport; Fri, 7 Jun 2024 09:02:07 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 7 Jun 2024
+ 02:01:53 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 7 Jun 2024
+ 02:01:53 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Fri, 7 Jun 2024 02:01:52 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.1 000/473] 6.1.93-rc1 review
+In-Reply-To: <20240606131659.786180261@linuxfoundation.org>
+References: <20240606131659.786180261@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/5] Add support for MAX96714/F and MAX96717/F GMSL2
- ser/des
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, sakari.ailus@iki.fi,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: devicetree@vger.kernel.org, kernel@collabora.com,
- linux-kernel@vger.kernel.org, mchehab@kernel.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, linux-media@vger.kernel.org,
- conor+dt@kernel.org
-References: <20240430131931.166012-1-julien.massot@collabora.com>
- <8d67c3b3-a3a6-4733-ac0d-ddd2c244d790@ideasonboard.com>
-Content-Language: en-US
-From: Julien Massot <julien.massot@collabora.com>
-In-Reply-To: <8d67c3b3-a3a6-4733-ac0d-ddd2c244d790@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <9310e83e-1301-494c-bd1e-2cf9321f99ab@rnnvmail204.nvidia.com>
+Date: Fri, 7 Jun 2024 02:01:52 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE36:EE_|IA0PR12MB8278:EE_
+X-MS-Office365-Filtering-Correlation-Id: aaf3eb54-a3a0-44f8-457e-08dc86d08288
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|36860700004|7416005|1800799015|376005|82310400017;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Q3dPTHd1b0JTWTdIaXVBcDNaV1NZWXFNaktKM1RSL2ZxUVkrOHZIL2JJSWN5?=
+ =?utf-8?B?dVlUZ2UvbkZ3cXA1N3NGL3Q1STlYa0VyTXlOclF2MmZaUktIdm02ZHNhcnNC?=
+ =?utf-8?B?TDlzZU9MV3UrV1FTNUgrVUtVUy9xcnF2TXRDOEJhMzF4MS9qYVF3d1p6dEx1?=
+ =?utf-8?B?OG5ZMkJ6YWFhUXRubFZ4NWs3SEJqVkVJOHRjbjIwTUN0a1l1QnFxaEc4UlJq?=
+ =?utf-8?B?NzcweVRXaVZpdG5BTTBwNTczTnZsYXdpOFVzNk10NWdzdGZ4Sk40TlYwaGFE?=
+ =?utf-8?B?dTM2bytuc2tucE1uNlBsYjhpMG5sTFBEcElvakR3ZXpoU3crWjZudDVUK3lp?=
+ =?utf-8?B?MVBsaVYzL2JiYml1OFZ0c0VrRnRCV1NmOHdsY0JoSHRIemMrV1dBRi85L081?=
+ =?utf-8?B?ODZ6OWlFdHA1VDVVdGlxTW1XV0lPWVd2bUQvTkRnSnUzRzdtQ0NUeXN1bnE4?=
+ =?utf-8?B?Sm5HcU5HeGIvaUtUNWpBNlRKd1RsM3c0aTNYcXZmeS9McTRYaFE0TEt2ZlZJ?=
+ =?utf-8?B?ajQ0dGgrMk9lVCtuVHFiS0Zad3lEcWdQUzl4eUhPQUZ5UjFSNURzNlh5UjRD?=
+ =?utf-8?B?aWw2Y1hsc015SklCa0d4RTJhNk5IUi90K3hyWEpzMFlzcEFBWktZUndhQUlD?=
+ =?utf-8?B?eTFnaHBPUS9ablExeUsxU3loNFdPQlZXOHZBTGlsMFF3R1RXNFY4OUVIbldr?=
+ =?utf-8?B?Zm1uVjlpZHM4T2hOcVJiU1BnclNLWHZvU3M0OUFNMWFrOUdDN1B3N2trZm8y?=
+ =?utf-8?B?dzYvNXlPc3hRQjFaWjBpck9GalZZVVVwR3cwYlZocVJzazdCeUlxN1hRNGpn?=
+ =?utf-8?B?RTlCeHNpbzNxZmo4SzZtU3I5ZkxoTGloOGRLa1k0SGFRUXdnaDVHQXN6bzhF?=
+ =?utf-8?B?RU9WcktnZFF1S0greFdvTU1sUFRNeFQwQjlpTVBUUFo2aXdFZmJKOVlWak83?=
+ =?utf-8?B?TXhCSGNwdjZLVWR2dFEyWXpDTUsyY0VVMXdSb29LSWk4ck9wTmx6TGdyNDZX?=
+ =?utf-8?B?cXVxMnV2OXFzeWtNNWtyUXZEVVlSZW80NkdWQzVlMVRWNmhhdW5mcXZVWnI0?=
+ =?utf-8?B?ZHRDTmRiU0NHeXE5cWN0TDVNaXZ0SFlqU0EyUHZ6eXlVSHE4bUludlRSU2w3?=
+ =?utf-8?B?R0xXWHd4S1Vka05GZWNlSE8xeDJoQ1daMmhGYXdPQ3pyRlZ4R296NnByYVp5?=
+ =?utf-8?B?ZlQvbXIrYlY3UHBici9JMlFqK3ZBcEpCWkJUZTNlMTFNSjRTcE9wYitWOXRl?=
+ =?utf-8?B?Mm05V0dKMTRYVmtaQzBJQkQvdndYamNHZllxZmVqbHV2eWpCbzBWSkdPaEIv?=
+ =?utf-8?B?eTdWRUQxUW9DUkxRNSt0Z3JzVExtZTU4ZlBSUDdLR0E1VmpRVVZnbk82eW9P?=
+ =?utf-8?B?aXhsTnZLcFN0RmJWSE9CaXRXRnI2N1JMdURlVTF0elRTUmF6clFyRjFmVzEr?=
+ =?utf-8?B?TUtBQW1FWkZESlpBVXFUZVI0QUwzTnNOVHB5SU16RkV6MkEzTzNtOWg4MTRG?=
+ =?utf-8?B?NnBFWUZtd2tUQ1IrSTNoRVV3YmwrRGl1RjZvdG9FcHZtTC9ycVh6NnhwWU51?=
+ =?utf-8?B?SzhhQXpuWGRPVDhXYitoVjMrV29TczREL2ZKbVhYdjd0Q2FxNFJmNEZ6UzFh?=
+ =?utf-8?B?b2NKeWV2Y0V3WmNvWkhhd2ZkWFJ3d2FuSVlscjhleWRNQXlJWCtoUmkyeEhC?=
+ =?utf-8?B?LytHbzZpR05kWVJvOVBac1JxZGlGTFgvbUR4cHNnQ29jMk1INVJYVTFtN1Ni?=
+ =?utf-8?B?KzRUeThxRHhwQmQ3N1pBclFhcU5ZdmxpZkgxU3M3bXVFTW1yeWx5VTNCNDdW?=
+ =?utf-8?B?SmFTREdwSS84N0krOG1zMWdMS0gyK0FIRVZoaDVybXNBOWNjblBQVzMvV21M?=
+ =?utf-8?B?QXJzNkNHL1NRTjZmcGZzWFJXbG5PK3JwSDhwY3BGd1hFN1E9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(36860700004)(7416005)(1800799015)(376005)(82310400017);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2024 09:02:07.9649
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: aaf3eb54-a3a0-44f8-457e-08dc86d08288
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE36.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8278
 
-Hi Tomi,
+On Thu, 06 Jun 2024 15:58:49 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.93 release.
+> There are 473 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 08 Jun 2024 13:15:55 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.93-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-On 6/6/24 3:34 PM, Tomi Valkeinen wrote:
-> Hi,
-> 
-> On 30/04/2024 16:19, Julien Massot wrote:
->> Change since v6:
->>    - Remove mention of C-PHY for MAX96717, this serializer is D-PHY only
->>    - Remove bus-type requirement for MAX96717
->>    - Minor changes requested by Sakari
->>    - Workaround a MAX96717 issue, which occurs when stopping
->>      the CSI source before stopping the MAX96717 CSI receiver.
->>
->> Power management is not included in this patchset. The GMSL link is
->> not always resuming when the deserializer is suspended without
->> suspending the serializer.
->>
->> Change since v5:
->>   - Reverse fallback logic: max9671{4,7} can fallback to max9671{4,7}F
->>   - use const instead of enum for max9671{4,7}f compatible as suggested
->>
->> Change since v4:
->>   - Add support for MAX96717 and MAX96714 and use them as a fallback for
->>     MAX96717F and MAX96714F respectively
->>   - The drivers are now compatible with MAX96717 and MAX96714 since no 
->> change in
->>     the logic is needed
->>   - Reference 'i2c-gate' instead of 'i2c-controller' in the bindings
->>
->> Change since v3:
->> - bindings
->>    - Renamed bindings to drop the 'f' suffix
->>    - Add bus type to MAX96717 and remove from MAX9674
->>    - Add lane-polarities to both bindings
->>
->> - drivers
->>    - Address changes requested by Sakari in v3
->>    - use v4l2_subdev_s_stream_helper for MAX96714
->>    - do not init regmap twice in the MAX96714 driver
->>    - Fix compilations on 32 bits platforms
->>
->> Change since v2:
->> - Convert drivers to use CCI helpers
->> - Use generic node name
->> - Use 'powerdown' as gpio name instead of 'enable'
->> - Add pattern generator support for MAX96714
->>
->> These patches add support for Maxim MAX96714F deserializer and
->> MAX96717F serializer.
->>
->> MAX96714F has one GMSL2 input port and one CSI2 4 lanes output port,
->> MAX96717F has one CSI2 input port and one GMSL2 output port.
->>
->> The drivers support the tunnel mode where all the
->> CSI2 traffic coming from an imager is replicated through the deserializer
->> output port.
->>
->> Both MAX96714F and MAX96717F are limited to a 3Gbps forward link rate
->> leaving a maximum of 2.6Gbps for the video payload.
-> 
-> (I see this mail turned out to be a collection of thoughts rather than 
-> clear questions... Bear with me =))
-> 
-> I know I'm very late to this party, and perhaps these topics have 
-> already been discussed, but as I will most likely be doing some GMSL 
-> work in the future I wanted to ask these questions. My main 
-> questions/concerns are related to the i2c and the representation of the 
-> links in the DT.
-> 
-> First, I know these particular devices are one input, one output 
-> serializer and deserializer, so there's not much to do wrt. i2c 
-> translation/gating. But even here I wonder how does one support a case 
-> where a single local i2c bus would have two deserializer devices (with 
-> different i2c addresses), connected to two identical camera modules?
-> 
-> Controlling the deserializers would work fine, but as the serializers 
-> and the remote peripherals (sensor) would answer to identical i2c 
-> addresses, it would conflict and not work.
-> 
-> If I understand the HW docs right, a way (maybe there are others?) to 
-> handle this would be:
-> - deser probes, but keeps the link disabled by default
-> - deser reads the initial serializer i2c address from the DT, but also a 
-> new address which we want the serializer to have (which doesn't conflict 
-> with the other serializer)
-> - deser enables the link and immediately (how to be sure the other deser 
-> driver doesn't do this at the same time?) sends a write to the 
-> serializer's DEV_ADDR, changing the serializer's i2c address.
-> - deser can now add the serializer linux i2c device, so that the 
-> serializer can probe
-> - the serializer should prevent any remote i2c transactions until it has 
-> written the SRC_A/B and DST_A/B registers, to get translation for the 
-> remote peripherals (or maybe the deser driver should do this part too).
-> 
-> Am I on the right track with the above?
-Yes this is the recommended way, and at least the only one I know from 
-Analog device
-https://www.analog.com/media/en/technical-documentation/user-guides/gmsl2-general-user-guide.pdf
-6.2.3.1.4.1Camera Setup – Two Serializers to One Deserializer
-If we faced a scenario where we need to rewrite the serializers 
-addresses, then we will need
-a way to synchronize the link startup and probing the serializers one by 
-one to rewrite the
-I2C address.
+All tests passing for Tegra ...
 
-> 
-> Now, maybe having such a HW config, two deserializers on a single i2c 
-> bus, doesn't happen in real life, but this issue comes up with 
-> multi-port deserializers. And while those deserializers are different 
-> devices than what's added in this series, the serializers used may be 
-> the same as here. This means the serializer drivers and DT bindings 
-> should be such that multi-port deserializers can be supported.
+Test results for stable-v6.1:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    116 tests:	116 pass, 0 fail
 
-The serializer is supporting i2c-atr as well so the dt-binding can be
-improved to handle this scenario perhaps in an exclusive way.
-(not using i2c-gate and i2c-atr at the same time)
+Linux version:	6.1.93-rc1-gd2106b62e226
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-> 
-> As I said, I'm late (and new) to this party, and struggling to consume 
-> and understand all the related specs and drivers, so I hope you can give 
-> some insight into how all this might be implemented in the future =).
-> 
-> Have you looked at the FPD-Link drivers (ds90ub9xx)? The i2c management 
-> is a bit different with those (with my current understanding, a bit 
-> saner...), but I wonder if similar style would help here, or if the 
-> i2c-atr could be utilized. It would be nice (but I guess not really 
-> mandatory in any way) to have similar style in DT bindings for all 
-> ser-des solutions.
-> 
-> To summarize the i2c management on both FPD-Link and GMSL (if I have 
-> understood it right):
-> 
-> In FPD-Link the deserializer does it all: it has registers for the 
-> serializer i2c aliases, and for i2c address translation (per port). So 
-> when the deser probes, it can program suitable i2c addresses (based on 
-> data from DT), which will be the addresses visible on the main i2c bus, 
-> and thus there are never any conflicts.
-> 
-> In addition to that, the drivers utilize i2c-atr, which means that new 
-> linux i2c busses are created for each serializer. E.g. the deser might 
-> be, say, on i2c bus 4, and also the serializers, via their i2c aliases, 
-> would be accessible bus 4. When the serializer drivers probe they will 
-> create new i2c busses with i2c-atr. So with a 4 port deserializer we 
-> might get i2c busses 5, 6, 7 and 8. The linux i2c devices for remote 
-> peripherals (sensors mainly) would be created on these busses with their 
-> real i2c addresses. When a sensor driver does an i2c write to its 
-> device, the i2c-atr will catch the write, change the address according 
-> to the translation table, and do an actual write on the i2c bus 4. This 
-> would result in the deser HW to catch this write, switch the address 
-> back to the "real" one, and send it to the appropriate serializer, which 
-> would then send the i2c transaction on its i2c bus.
-> 
-> In GMSL the deser just forwards everything it sees on the i2c bus, if a 
-> port is enabled. The deser has no other support related to i2c. The 
-> serializers have DEV_ADDR register which can be used to change the 
-> address the serializers respond to, and the serializers also have i2c 
-> translation for two remote peripherals.
-That's correct, the deser also have the DIS_REM_CC configuration, to not
-propagate the I2C requests on a particular link. As I understand from the
-datasheet this settings require a link reset to be applied, so we can't
-use it as a select/unselect method for an I2C mux.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-> 
-> But if the i2c translation is used, it would mean that, say, the sensor 
-> driver would need to use the "virtual" address, not the real one to 
-> communicate with the sensor device, which doesn't sound right...
-> 
-> You have used i2c-gate for both the deser and the ser. I don't have 
-> experience with i2c-gate, but how can we manage the serializer i2c 
-> address and the i2c address translation with it?
-If we want to add support for I2C ATR on the serializer side then we
-may want to declare the device on another node than 'i2c-gate', 'i2c-atr'
-for example.
-
-> 
-> One difference with the FPD-Link and this series' DT bindings is that I 
-> have a "links" node in the deser, instead of just adding the serializers 
-> under an i2c node. In FPD-Link case this allowed me to better represent 
-> the hardware and the configuration needed.
-> 
-> So... Perhaps my bottom line question is: do we need something similar 
-> to what the FPD-Link uses (links, i2c-atr) to fully support GMSL 
-> devices? And also, if we merge the DT bindings in this series, will we 
-> have gone into a corner wrt. how we can manage the i2c?
-
-Fully supporting the GMSL2 devices is an ambitious task that this
-patchset doesn't address.
-
-I wanted to first tackle a simple scenario, where we don't need links nodes.
-Dual and Quad GMSL devices will probably deserve their own
-bindings and drivers, and at this point we can discuss if there is a 
-requirement
-to increase the complexity of the binding.
-
-We can of course add an i2c-atr node to the MAX96717 binding,
-without breaking the dt-binding compatibility.
-
-About the links node, as you know the GMSL2 deserializer doesn't allow 
-to write and
-i2c-alias or a per link I2C control.
-
-We can add later a per link configuration e.g:
-- GMSL1 backward compatibility
-- Pixel/tunnel mode
-- Forward channel rate 6/3 Gbps
-
-We can choose to add those configurations either in a link node, similar 
-to FPD Link devices
-or directly as a port properties, no strong opinion on that.
-> 
->   Tomi
-> 
-
--- 
-Julien
+Jon
 
