@@ -1,97 +1,133 @@
-Return-Path: <linux-kernel+bounces-206272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E729006D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:40:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F36E9006CE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04BAE289A11
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:40:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4585C1C2283F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40D3197A65;
-	Fri,  7 Jun 2024 14:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D8B21990AA;
+	Fri,  7 Jun 2024 14:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CwSdjwlX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NKV1tgZ3"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF66619309E;
-	Fri,  7 Jun 2024 14:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846D9194AC9;
+	Fri,  7 Jun 2024 14:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717771205; cv=none; b=Y97B2Nx8GGaOrnN/wW/AmtkAL2gZdwy4wt+1fZedwef/MB/L86AxRBjyGDEkpB9AyuBG7BX9vWqI6bmvweHhWmP5HyxbIH7Lv1e3jbrPIRb46SFguQOUVTDlrU8Hrs08zmpx/glvIlO3NIzJ0zBuzHnnlRDjNG/AIxsnVUkBLq8=
+	t=1717771151; cv=none; b=oXBA7DMvTO7LsEcbmbo7qlmW926i+yl/VKBDAwmmpgobtwCvqxkTbWnAHntdwZxBOQ5u7DRKiMj5q4yW7fXU+5uQoWqOAkuyiXol1zZzBHSnXPLEuHzCbIeaUaZToC2yAaaX3I/bX65QlqkFWt1NQrUbg4pypBNykSQna65xOTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717771205; c=relaxed/simple;
-	bh=I6gDSg7VhqM9/5mk6lCNJ/fsbvIDwjgfk9iO0qxF0lg=;
+	s=arc-20240116; t=1717771151; c=relaxed/simple;
+	bh=W3wrYHtqo+bJ8K0enZqOAavHpM96oX/oFjtjuQWi+g4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V7Y6Y9VEAIQOX0EB9DvBLbfV8JkScPc5f49gIvapTPJ1ymPp/AqIGuuZQ3BUS5ZH4SCNKkr/1X3okTIwm5UAooMBpLWZHCmeu1C32lap6f4a2TVzT9E8DW2Pv8YUOejRRIszm/pH+1nvOwazTUUO+D0KTHsP/UsopdLi/Lz6fj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CwSdjwlX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10870C2BBFC;
-	Fri,  7 Jun 2024 14:40:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717771204;
-	bh=I6gDSg7VhqM9/5mk6lCNJ/fsbvIDwjgfk9iO0qxF0lg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CwSdjwlXSkOw7OEdLjP8/jJKkzIHgodn6+dTidEMo51evGFWGs4RTIhGOhOnZDkYX
-	 Aq3LV7RRCQVF/gc2q8Gk1kKxnTAuPfGJUuATgAeszWmh9od3o5LUYzYRamPCFpKjOc
-	 cxK8MjhoJVTUQRFyWf3T0OziPyQq93Sf1uCNlbPtQr4asB+rg/rXONnxb20dQoe+ir
-	 EKWnYDcumFMXWvSSt82/RTMLIedJxuL4kVkoVlmQWl0Y5x3eMur6jU4SrIUDg7oeE+
-	 Er6d4Av8gd1HVva/D9gVChOH26nfrpqLJSR3rS+lFjC6eraov9Ktvtv9pw2ZOulJkO
-	 E6EOaLr13QTdg==
-Date: Fri, 7 Jun 2024 15:39:59 +0100
-From: Simon Horman <horms@kernel.org>
-To: =?utf-8?B?Q3PDs2vDoXM=?= Bence <csokas.bence@prolan.hu>
-Cc: Hariprasad Kelam <hkelam@marvell.com>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH v2] net: fec: Add ECR bit macros, fix FEC_ECR_EN1588
- being cleared on link-down
-Message-ID: <20240607143959.GE27689@kernel.org>
-References: <20240607081855.132741-1-csokas.bence@prolan.hu>
- <PH0PR18MB4474DC325887DE80C1A2D7F0DEFB2@PH0PR18MB4474.namprd18.prod.outlook.com>
- <8be22ec7-0d91-46ba-b45e-4499b547a8d3@prolan.hu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rdCOUwXWlFyLoxh1EsZu52/A0c2yDVGtpaXuslZv7kvy3DfGbfvqj9Dplbx4L4O84RF6GjyPvqeOvI4XSkVg1pcIbOGlPXN67pVMHg7HTUyr2VPJIl9bdOaYo1rfwP7Dsj17j1wxoRpiP5kLdX2a9TmBpNkM2sUBTgVbepmNTBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NKV1tgZ3; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-6e5fd488d9fso92463a12.3;
+        Fri, 07 Jun 2024 07:39:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717771150; x=1718375950; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=a/f/Oi5XluXEWQ1D4hzwtOzeMatJYwD5RcCHoIy1Hvk=;
+        b=NKV1tgZ3kwwkKcbhEhgGSLxQUb7TfmoZTdyeE5sog3zktIBnOw4Dj0ifjuglRRneFs
+         BFb/e/fNlm50JsnkZWMpEsLMs6490PoQ33YyVR61QAPRhsWfI9SjUbiXnlLUGNyg2k1J
+         IpXUYhoqRDi5/lf7tN3KDwiy6szxsb5RdZ3CNLMYu6qHBjB/CEq+aUQ0sXGANhxgtwic
+         mfkDk3FkjkhpsEBSCZg1D2f4Hq2pwNwSjkGosmmxL4nPauac+cpaWEuzFKuu8YaeKygM
+         2UIDLnShTb4i5rFbFRpp5cf5+HUXjc3PZvWBv/hK9O0vQJc0BliMTQYXJPJJSzEm3nz6
+         uPrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717771150; x=1718375950;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a/f/Oi5XluXEWQ1D4hzwtOzeMatJYwD5RcCHoIy1Hvk=;
+        b=N3wwe4U4Y5FSSCAS6E5imP3JYqYRc/WiLg/QwHZxboGkmEF4humt+C0xcLWUJOUcXg
+         /xA8+SK0nPu7q49thClWUbxOk7kFdVPVG4xtWCxDk7Cr80KHLsoeL/W6ig+yZbpaP5at
+         gj5FQKjwMBSBbfqL6tZfnlAW6lFCJ8uB2GPZbQ5Y2+OsO6XGoPs04P984/VH/05sMNVN
+         toG8jqu3WgIiZRm9np9VA45N5RkL91Lir23CK9manzHTYsxUYeiVNuxhxvABwFtUsevW
+         eYcCtMqGOhdm9qTocbuPr1syXrH2seldWe2G+sVFKWKSOaB0O5AU18ApJDMsVeVe60Tv
+         jUMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXg3cU2DIe2MTXj+cvnipbIy7TqaXp4WHQHR/AnsH+pfTRSrH6zmFZ77p5VZUSQnPWO40ufc7XueY3NVePhEC12W/btTL4f6oLIx9eyCnKHCDyUPwLfpFDMHYzRFF2VtR14mBuY+mQKJTPxD+cdAsX7gJpJ0XOmHjzGuW4bHcZX/KBsl7H/VQtXUenpcq3lNXkhZzP64w7TqwINfu/5zw==
+X-Gm-Message-State: AOJu0YxLXi91CfNBU94Pbm93X2TfrdVzyPxLvJWlkj4XIC6wCf4/0Ss3
+	4alh41g3o2EjYOgFA/9geBHj8lOtZ+lwyRd4BfKqO+4ZgHH7pFmL
+X-Google-Smtp-Source: AGHT+IG0opAjrQ5yl44/E2vjkow+VRkTP/Cu+hf29SVzv/sfXcq1o8LP+aBY8D5Ig61A82XXqIWqRA==
+X-Received: by 2002:a17:90a:5b14:b0:2bd:744a:1131 with SMTP id 98e67ed59e1d1-2c2bcc65362mr2705930a91.30.1717771149616;
+        Fri, 07 Jun 2024 07:39:09 -0700 (PDT)
+Received: from localhost ([2804:30c:167a:4100:8407:a7e5:9b87:8081])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c2806399c5sm5682717a91.9.2024.06.07.07.39.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 07:39:08 -0700 (PDT)
+Date: Fri, 7 Jun 2024 11:40:23 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
+	lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, nuno.sa@analog.com, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/6] spi: spi-axi-spi-engine: Add support for MOSI
+ idle configuration
+Message-ID: <ZmMb10S0ewIwouXJ@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1717539384.git.marcelo.schmitt@analog.com>
+ <a6b00e84325bbe44919cc49509e837f2555367d0.1717539384.git.marcelo.schmitt@analog.com>
+ <ed4fe3de-726b-4eba-a12a-d2f7b1da26d1@baylibre.com>
+ <0e18b3aa83a62103b0f06ee516193c03f80abae9.camel@gmail.com>
+ <f8ce5dc8-ed68-4f04-af3a-187bf0e4a3b3@baylibre.com>
+ <ZmIqxS-xUVMNH_lJ@debian-BULLSEYE-live-builder-AMD64>
+ <04b1296ff98a0accbf962a4a4bafc2e85a9869ae.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8be22ec7-0d91-46ba-b45e-4499b547a8d3@prolan.hu>
+In-Reply-To: <04b1296ff98a0accbf962a4a4bafc2e85a9869ae.camel@gmail.com>
 
-On Fri, Jun 07, 2024 at 11:12:56AM +0200, Csókás Bence wrote:
-> Hi!
+On 06/07, Nuno S� wrote:
+> On Thu, 2024-06-06 at 18:31 -0300, Marcelo Schmitt wrote:
 > 
-> On 6/7/24 10:32, Hariprasad Kelam wrote:
-> > > FEC_ECR_EN1588 bit gets cleared after MAC reset in `fec_stop()`, which makes
-> > > all 1588 functionality shut down on link-down. However, some functionality
-> > > needs to be retained (e.g. PPS) even without link.
-> > > 
+> ...
+> 
 > > 
 > > 
-> >      Since this patch is targeted for net, please add fixes tag.
+> > 
+> > When is a driver version check needed?
+> > Yes, older versions of SPI-Engine won't support this, but the patch set should
+> > cause no regression. Even if loading the current ad4000 driver with
+> > older SPI-Engine HDL and driver, the ADC driver would get a warn (or error?)
+> > and do what's possible without MOSI idle feature (probably only be able to do
+> > reg access) or fail probing.
+> > 
 > 
-> This issue has existed for "practically all time". I guess if I had to pick
-> one commit, it would be:
-> 
-> Fixes: 6605b730c061 FEC: Add time stamping code and a PTP hardware clock
-> 
-> I don't know if it makes sense to add this ancient commit from 22 years ago,
-> but if so, then so be it.
+> Maybe I'm missing something but with the patchset we unconditionally set
+> SPI_MOSI_IDLE_HIGH. So if we load an hdl which does not support it things will
+> apparently be ok but it won't actually work, right? If I'm right we should have
+Yes, that's correct.
 
-Thanks Csókás,
+> a bit in a RO config_register telling us that the feature is being supported or
+> not. That way we only set the mode bit if we do support it...
 
-The practice is to use use even ancient commits in Fixes tags,
-as it indicates how far back backports should go in theory,
-even if backports don't go that far back in practice.
+Ok, understood. Will do it for v4.
+
+Thanks,
+Marcelo
+
+> 
+> - Nuno S�
+> 
+> 
 
