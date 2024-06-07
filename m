@@ -1,100 +1,107 @@
-Return-Path: <linux-kernel+bounces-205758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7966A8FFFE1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:50:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 574EC8FFFE2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:53:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 771211C22653
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:50:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E28CB283E22
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8B113D528;
-	Fri,  7 Jun 2024 09:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37EB61411E4;
+	Fri,  7 Jun 2024 09:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XPoo60FQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="FjgWhu+o"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24095200A0
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D51438F86
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717753825; cv=none; b=nMKHyaixbEVGWpo5vD8/ZfXPkdyrOcFG4rvAwvXc1hlqKhL+3Y77Zw5CZx+uez9Z5YzXmS/GIcDDCzQsoqrFY1/v99EFKkwrqD9sW9hQYfO3UpZiW+U+IxwpN+nTRFZOdgIsZP9ELszn8GdxVLa+UdbN40RToDbNimLnwvXIoHU=
+	t=1717753972; cv=none; b=NQX/5yqQp/TiULbcOw2xwRHB4RQlQLqjVmVf7WClfFGr6slwX8J6j5zV2VTEZYFzVd4haZTj7exf/K4ZF/KlxyJJiyUHYDatOC0R2+fOkvAp/F84MD2QadxDO2sDaS+dZEgwaN4+nOuzkn1r89Y4oXFug6odSM+vEn4wKxnGuKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717753825; c=relaxed/simple;
-	bh=GfdrNxIto9LrX3291I/Ir5iCj0FFVWGDbt2Rv7uvcXQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fm37qwVTTOTIkaITo/N96GS0EafHPPvJoHH0GO/kKt/b0iF3jS9MMUDOB7aXlzg5ElI3711JR+jrS2GmjYKcLaAa81NjOvjng0VPkVjkSiQrp7Iu5abJttMrrqKV2N7yKxZ0Prz7YB45PO0znRXhCwf+5mLDWi2KDr/jvvGZiac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XPoo60FQ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717753823;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TgUcKDXwW/3wItiPJn/Z+o3EMy54AtmFeCxWRvfH4ZE=;
-	b=XPoo60FQZ6OqbLg22iZEQdzqzWpr8g69PZhAcQ7tH6zq76G4dbGO9G3FnW03hFE2dfROlA
-	521rEJDf7kg1/5LyLcVk3dpChXrc4YweFjdWqSpqVmLXCSqJ4EJWaGLMes6Ez++80Zud70
-	SFWarj8WCrUaA2the/qxe4FTwdqIdxY=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-632-XIAT92ayN7-n_AW4BioL7w-1; Fri, 07 Jun 2024 05:50:21 -0400
-X-MC-Unique: XIAT92ayN7-n_AW4BioL7w-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1A10685A5B5;
-	Fri,  7 Jun 2024 09:50:20 +0000 (UTC)
-Received: from localhost (unknown [10.72.113.124])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 65F2140C6EB7;
-	Fri,  7 Jun 2024 09:50:18 +0000 (UTC)
-Date: Fri, 7 Jun 2024 17:50:15 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Coiby Xu <coxu@redhat.com>
-Cc: kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>,
-	Milan Broz <gmazyland@gmail.com>,
-	Thomas Staudt <tstaudt@de.ibm.com>,
-	Daniel P =?iso-8859-1?Q?=2E_Berrang=E9?= <berrange@redhat.com>,
-	Kairui Song <ryncsn@gmail.com>,
-	Jan Pazdziora <jpazdziora@redhat.com>,
-	Pingfan Liu <kernelfans@gmail.com>, Dave Young <dyoung@redhat.com>,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Dave Hansen <dave.hansen@intel.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [PATCH v4 5/7] crash_dump: retrieve dm crypt keys in kdump kernel
-Message-ID: <ZmLX15YJIhUG/XP3@MiWiFi-R3L-srv>
-References: <20240523050451.788754-1-coxu@redhat.com>
- <20240523050451.788754-6-coxu@redhat.com>
+	s=arc-20240116; t=1717753972; c=relaxed/simple;
+	bh=Y9XbEQz5UTpkOCExIuDqh+9S+D4sPrRZ3b+gwDoM7OQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=id5fJhb6POk6ZnCVc21gH21xhb67iBpQdb8d5w3pd71im9P5lux3IuALUkwNFMTGIVEShakZT7pxupJpflhbQwV0TbGcN/q4CvFoSLeVk+W+pSAC6DC/jtre0Par7LuZl+4SxH9PvnN538H12bippK7KnR2sEnn7o+50KwfWazs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk; spf=pass smtp.mailfrom=rasmusvillemoes.dk; dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=FjgWhu+o; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasmusvillemoes.dk
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2eabd22d3f4so22384401fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 02:52:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google; t=1717753969; x=1718358769; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qR4Iz/w8T5QunVswvB0VhLhJEnk9aSsxgQy1fVCW6zY=;
+        b=FjgWhu+ogqZi2e9J2ClBf7BYUZmzhSdO8dz98QAbAmjI7SwLbSh2SGaMjnCWxZhC25
+         nLxd7AiXvhia2y5tb9gdcZH/WxEzESV6V0yBWWpf8rGvtxQv93Fhfm1hzRGwbIZtKb7a
+         NDDccmsYE4LKVg9HMZabdKsxXsMGekbkXVvIs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717753969; x=1718358769;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qR4Iz/w8T5QunVswvB0VhLhJEnk9aSsxgQy1fVCW6zY=;
+        b=NUIQt16bWClY6NPdTUVSjGL9765tt79Iv98/XZErLf4BK0jUeRGLff3/zCm8q6URbq
+         LBr3vN4/z75aHp/7KPwZRoKw8HedLmzckCmi4Q/0EKQJ2ZfGmKIQOwj43fCHYJB53Qb+
+         T/QwJjixOVPfILPL9uJIq69Ts1imrfRWFSGhOJ5RWZriA3gUb3UAqRXxCQ2VA1yDkTkF
+         tIq9d4kSZugeeq6Uu0HjblCXE7xbkCurWjGQkI5xI3/7CMInP5CLMKJTLvqRVVqZs3/4
+         2K0HcImR/BIMo3Irux0NJ6W35d7U9eYkd3ajLjVb1Tl1As9dBSiD9ZkCDb0GKiq43+TM
+         moiA==
+X-Gm-Message-State: AOJu0YxPVFhS3hM/pYQ9zFngDThf/clFu43rNo4WnB1F+1v6raCcmr+F
+	CkKfx2KpXwgMikL8F+iB8XnN5VNp0lmhQBRXbr9J9DNIqR4fZ9v0SwL9pFfKaOiXGOcP3n0QhZE
+	lG/M=
+X-Google-Smtp-Source: AGHT+IERs6KSgT7z06uEjPl8AgzdUOOKwkk2FvYV+EFXZSVDeRUsuOrDBm2bg2qysEVl83IcDe8hqg==
+X-Received: by 2002:a2e:880e:0:b0:2ea:e2d2:61ff with SMTP id 38308e7fff4ca-2eae2d26485mr6110301fa.23.1717753968678;
+        Fri, 07 Jun 2024 02:52:48 -0700 (PDT)
+Received: from [172.16.11.116] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ead41b095fsm4822041fa.93.2024.06.07.02.52.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jun 2024 02:52:48 -0700 (PDT)
+Message-ID: <28c74739-e775-4813-b2f1-b588e14b3674@rasmusvillemoes.dk>
+Date: Fri, 7 Jun 2024 11:52:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523050451.788754-6-coxu@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: objtool query: section start/end symbols?
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CAHk-=wjHf6C_74VQPxmge-sMmu5yuhmNor1TaO0Uq--zrA13HA@mail.gmail.com>
+Content-Language: en-US, da
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+In-Reply-To: <CAHk-=wjHf6C_74VQPxmge-sMmu5yuhmNor1TaO0Uq--zrA13HA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 05/23/24 at 01:04pm, Coiby Xu wrote:
-......
-> +ssize_t __weak dm_crypt_keys_read(char *buf, size_t count, u64 *ppos)
-> +{
-> +	struct kvec kvec = { .iov_base = buf, .iov_len = count };
-> +	struct iov_iter iter;
-> +
-> +	iov_iter_kvec(&iter, READ, &kvec, 1, count);
-> +	return read_from_oldmem(&iter, count, ppos, false);
-Do we need create a x86 specific version to cope with the confidential
-computing thing, e.g sme/tdx?
+On 06/06/2024 20.42, Linus Torvalds wrote:
+> So this is related to my currently very ugly hack at
+> 
+>    https://lore.kernel.org/all/CAHk-=whFSz=usMPHHGAQBnJRVAFfuH4gFHtgyLe0YET75zYRzA@mail.gmail.com/
+> 
+> where I'm trying to do "runtime constants". 
 
-> +}
-> +
+FWIW, I did a POC some years ago but either never managed to send it, or
+never got a response. It did boot in virtme and I managed to get gdb to
+do disassembly to show that the dentry hash lookup did become a 'shift
+immediate'.
+
+https://github.com/Villemoes/linux/tree/rai
+
+IIRC, I didn't bother with updating users when the boottime value was
+settled, but just had a single at-the-end-of-init call to update all
+sites; in the meantime, use sites were implemented as a jump to a piece
+of code that did the dynamic load of the constants.
+
+Rasmus
 
 
