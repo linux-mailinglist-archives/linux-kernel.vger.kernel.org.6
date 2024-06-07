@@ -1,49 +1,56 @@
-Return-Path: <linux-kernel+bounces-205211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67D978FF980
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 03:10:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BF878FF981
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 03:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A9A61C221B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:10:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEAE91C21F96
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19908FBFC;
-	Fri,  7 Jun 2024 01:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C588ADDC3;
+	Fri,  7 Jun 2024 01:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q36cn4kf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B6RUjqGp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F91748D;
-	Fri,  7 Jun 2024 01:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A556FC6;
+	Fri,  7 Jun 2024 01:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717722628; cv=none; b=T1Btk/MwXiLQ3EapMAiz1cOamUqYbYMSsmro3jQ/dFVMvyMEcvRz3AccCsRxoAMfS/3iIoy9TQrb+73z1fUxjH1w/8HIEBkGm6zwc5e4uS06tzknv9/2oo+a6//HHZ+WZ6F3EFmbq9PK5dm8GyTbaJSL1T1WI2YrOf6itJDF0Lc=
+	t=1717722766; cv=none; b=J/xcHASvgJeW44cjD8dvpIgpMW+rsuIi2mfJel3lwQylt12fxruOsyaXfWnAsd0nDZbTUnKn/YJ9F/eiAeji9ETow+AthYS+1ydBjuc6zeN2B6aKwpQpxA/Sx+th0DQFpIlVjBVE9/xD2xRI8eZInQtCiMJ398VPBovlCon6CRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717722628; c=relaxed/simple;
-	bh=+SA/XZGJxt1q4mpqLZLD9MrkyATNY6ZwcG5N3n0oO2Q=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Rh5WVTKMWDnTaI0DYGAbHJylFtYijMN1/+xg5yzLFnCSie7+kkPjUN8cNtYURO2zKa18mdZ+bIhceubFbvPS8db8y2r5mzbp13Su5u/mGQrZZSgROUHUALAtwXBkqSEUeMpSXLYbJ3zQW+abgr2wvzqw4dqKnuPFMck1EjDDDbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q36cn4kf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id AE991C32786;
-	Fri,  7 Jun 2024 01:10:27 +0000 (UTC)
+	s=arc-20240116; t=1717722766; c=relaxed/simple;
+	bh=XPOYOcI/jkb4WsiKptpzNp3hFHwQDejsMNU9oEnBh2I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CYBFnnVv20yS/KEKy8rK2ImxfNPc8pPLom9MRFm44S55cPXXLKpLzbVtCkb+5wYz8mXg7DVrl45u1mCNqgC5Om4Pn+DeP8V8wvP3t0LolxiUEDD4pr/CPiG38A4TxOmV/7dxBk5UV0czyK/G2AdPTnqCn+Fv0LRiK3ic3uelP3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B6RUjqGp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5762C2BD10;
+	Fri,  7 Jun 2024 01:12:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717722627;
-	bh=+SA/XZGJxt1q4mpqLZLD9MrkyATNY6ZwcG5N3n0oO2Q=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Q36cn4kfYbpzN726bC9sx0oQ/PqrnjCm50ZpEcOeNGljJaD0ZAx7VaYz7chG9GacG
-	 Tf6JzF2g+kT6T0mqGeXpz2nJHofLLREajVZpVO23pogRBsjtqOt/drtywLIF3Kx7JF
-	 eGITafgVVgrm49pGIx4F+6B7Xvex/qS5svYu8fUC7DgaJoaD3xf3u5ZuY/6NG0Q98G
-	 dFfH5nGjo5XNn4YlFARz8ynrKx/DluSD2UL0fMoXVfDvuqhXjt9rxOgzpVm3b8uXXx
-	 NIWLAkEsK50mJI6QBhe36Yqk7c0l+Y+Y3qEijji5AT2H66Rw+S614k2hjQtN3QXHNS
-	 KQmlZxKQ3De1g==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 86178D20380;
-	Fri,  7 Jun 2024 01:10:27 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1717722765;
+	bh=XPOYOcI/jkb4WsiKptpzNp3hFHwQDejsMNU9oEnBh2I=;
+	h=From:To:Cc:Subject:Date:From;
+	b=B6RUjqGp14o1q+EAIu1WudbyK+OxfNZStmmgDx+M8j9JyFX4R9ERRxVKez+IZTQ/j
+	 Jwv5ZwHZrhHbJvkgMZhY39nIGgujq5MaGh7u3fcpNCTAzcseql/XDDnbUd9xPp+bJw
+	 SrwzBM31qsmw1WQTQ1g+K/ubYO3FFaquGLus5n4Jbhxkd98NH9HjJ2+o04YqtSVg0q
+	 qenclr7a77BufpzGe8qOOs5bG73pMT+jtqTrAep9fuZbTXPZcyT+SajU37x1ci6qIl
+	 Ldac0S/N28f3im7l6UqhD+yMFATKFj6by4H/3GT0dJY70lv3w4oV59M8qqSE5BkzkG
+	 +0+pjo7cls2Pw==
+From: Geliang Tang <geliang@kernel.org>
+To: Andy Whitcroft <apw@canonical.com>,
+	Joe Perches <joe@perches.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Geliang Tang <tanggeliang@kylinos.cn>,
+	linux-kernel@vger.kernel.org,
+	mptcp@lists.linux.dev
+Subject: [RESEND PATCH v2] checkpatch: skip warnings for symbol links
+Date: Fri,  7 Jun 2024 09:12:37 +0800
+Message-ID: <dc502b1b45cb27fda48d72d73e3267a32db023d8.1717722648.git.tanggeliang@kylinos.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,42 +58,124 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: sfp: Always call `sfp_sm_mod_remove()` on remove
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171772262752.19610.14331926871757735956.git-patchwork-notify@kernel.org>
-Date: Fri, 07 Jun 2024 01:10:27 +0000
-References: <20240605084251.63502-1-csokas.bence@prolan.hu>
-In-Reply-To: <20240605084251.63502-1-csokas.bence@prolan.hu>
-To: =?utf-8?b?Q3PDs2vDoXMsIEJlbmNlIDxjc29rYXMuYmVuY2VAcHJvbGFuLmh1Pg==?=@codeaurora.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux@armlinux.org.uk, andrew@lunn.ch, hkallweit1@gmail.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
 
-Hello:
+From: Geliang Tang <tanggeliang@kylinos.cn>
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+If there is a symbol link in the given patch, like the following one:
 
-On Wed, 5 Jun 2024 10:42:51 +0200 you wrote:
-> If the module is in SFP_MOD_ERROR, `sfp_sm_mod_remove()` will
-> not be run. As a consequence, `sfp_hwmon_remove()` is not getting
-> run either, leaving a stale `hwmon` device behind. `sfp_sm_mod_remove()`
-> itself checks `sfp->sm_mod_state` anyways, so this check was not
-> really needed in the first place.
-> 
-> Signed-off-by: "Csókás, Bence" <csokas.bence@prolan.hu>
-> 
-> [...]
+$ cat 0001-selftests-bpf-Add-mptcp-pm_nl_ctl-link.patch
 
-Here is the summary with links:
-  - net: sfp: Always call `sfp_sm_mod_remove()` on remove
-    https://git.kernel.org/netdev/net/c/e96b2933152f
+ '''
+ # diff --git a/tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c \
+ #            b/tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c
+ # new file mode 120000
+ # index 000000000000..5a08c255b278
+ # --- /dev/null
+ # +++ b/tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c
+ # @@ -0,0 +1 @@
+ # +../net/mptcp/pm_nl_ctl.c
+ # \ No newline at end of file
+ '''
 
-You are awesome, thank you!
+checkpatch.pl reports two inaccurate warnings:
+
+ '''
+ WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
+ #65: FILE: tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c:1:
+ +../net/mptcp/pm_nl_ctl.c
+
+ WARNING: adding a line without newline at end of file
+ #65: FILE: tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c:1:
+ +../net/mptcp/pm_nl_ctl.c
+ '''
+
+And three checks if run it with strict option:
+
+ '''
+ CHECK: spaces preferred around that '/' (ctx:VxV)
+ #65: FILE: tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c:1:
+ +../net/mptcp/pm_nl_ctl.c
+   ^
+
+ CHECK: spaces preferred around that '/' (ctx:VxV)
+ #65: FILE: tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c:1:
+ +../net/mptcp/pm_nl_ctl.c
+       ^
+
+ CHECK: spaces preferred around that '/' (ctx:VxV)
+ #65: FILE: tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c:1:
+ +../net/mptcp/pm_nl_ctl.c
+ '''
+
+This patch fixes this by adding a new variable $symbol_link in checkpatch
+script, set it if the new file mode is 120000. Skip "missing or malformed
+SPDX-License-Identifier tag", "adding a line without newline at end of
+file" and "spaces preferred around that '/'" checks if this variable is
+set.
+
+Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
+---
+v2:
+ - fix warnings with strict option too.
+---
+ scripts/checkpatch.pl | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 2b812210b412..1f3ce5ffe914 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2694,6 +2694,8 @@ sub process {
+ 
+ 	my $checklicenseline = 1;
+ 
++	my $symbol_link = 0;
++
+ 	sanitise_line_reset();
+ 	my $line;
+ 	foreach my $rawline (@rawlines) {
+@@ -3564,6 +3566,11 @@ sub process {
+ # ignore non-hunk lines and lines being removed
+ 		next if (!$hunk_line || $line =~ /^-/);
+ 
++# Check for symbol links
++		if ($line =~ /^new file mode 120000$/) {
++			$symbol_link = 1;
++		}
++
+ #trailing whitespace
+ 		if ($line =~ /^\+.*\015/) {
+ 			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
+@@ -3756,7 +3763,8 @@ sub process {
+ 				}
+ 
+ 				if ($comment !~ /^$/ &&
+-				    $rawline !~ m@^\+\Q$comment\E SPDX-License-Identifier: @) {
++				    $rawline !~ m@^\+\Q$comment\E SPDX-License-Identifier: @ &&
++				    $symbol_link =~ 1) {
+ 					WARN("SPDX_LICENSE_TAG",
+ 					     "Missing or malformed SPDX-License-Identifier tag in line $checklicenseline\n" . $herecurr);
+ 				} elsif ($rawline =~ /(SPDX-License-Identifier: .*)/) {
+@@ -3867,7 +3875,8 @@ sub process {
+ 		}
+ 
+ # check for adding lines without a newline.
+-		if ($line =~ /^\+/ && defined $lines[$linenr] && $lines[$linenr] =~ /^\\ No newline at end of file/) {
++		if ($line =~ /^\+/ && defined $lines[$linenr] && $lines[$linenr] =~ /^\\ No newline at end of file/ &&
++		    $symbol_link =~ 1) {
+ 			if (WARN("MISSING_EOF_NEWLINE",
+ 			         "adding a line without newline at end of file\n" . $herecurr) &&
+ 			    $fix) {
+@@ -5293,7 +5302,7 @@ sub process {
+ 					 $op eq '*' or $op eq '/' or
+ 					 $op eq '%')
+ 				{
+-					if ($check) {
++					if ($check && $symbol_link =~ 1) {
+ 						if (defined $fix_elements[$n + 2] && $ctx !~ /[EW]x[EW]/) {
+ 							if (CHK("SPACING",
+ 								"spaces preferred around that '$op' $at\n" . $hereptr)) {
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.43.0
 
 
