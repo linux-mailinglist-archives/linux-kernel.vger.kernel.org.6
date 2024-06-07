@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-205370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DD358FFAD1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:48:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30CC58FFACF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:48:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC8F4B26D5A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:48:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9967F1F21A68
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069CB16A361;
-	Fri,  7 Jun 2024 04:27:56 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1D5169AEE;
+	Fri,  7 Jun 2024 04:27:55 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5F515F418
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A47215F417
 	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 04:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717734471; cv=none; b=DRjyafI/iT1bJK47B/hSJfIfXlq0tf7W3gVgUm2MLd4/vjHJBoo3vDdZtFgw12zSc++qfYwQnzYIbgGPOhyJptpi0SUuSleG99CKmqb2nSmgly598HOIeEPGbNoHBKBNqPnGNRFYWGCdxBKfBbzyLiKHnH8i/mtEFY4M5Z5u9nM=
+	t=1717734470; cv=none; b=HcLdFTF30CBGIZCIZIbzu++rRTQCZUv8CUR2+G60A2yRdQngdBE9ccls3MMhUlmlBshN9vAFKODM/6z9q4GpxmIQRnk8KbD3YuAoTLP/bryYGqd+0t0ofSeamllH0agSpinaaBPwog0Mbe4ZwB2n8kSzHIDHfL3FOPLFOBFqtRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717734471; c=relaxed/simple;
-	bh=CGpPvfp0wBjaqA9ZIFrErurTRv9Kv1BjN3GnsL9SXm8=;
+	s=arc-20240116; t=1717734470; c=relaxed/simple;
+	bh=WUPkSwQWfo+RydasXwp/GJOEpzZF7NGREfJXigaFHjM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tL7lTLl8IJbKK64HA6QDxSFzpvnkNeLnoee0d3+qCYMEsP7caVSVGcbJJt/EnbDpfJF13RJghsFsF89ApTh2xqojzzYwdjZtYcZShnZfVOW72RpjaVmkHBKwazT/AqnP2B0miyFRHuw8jraGeIhRzvtbV1GQXxwQHhkr5r46GIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+	 MIME-Version:Content-Type; b=fUFMyo9t2IGo33Auk37dP31OZLYeddOeQYsPmwtkl7wixTfOWVpC0eHwTcREpUxXPMEv6wrWwUCtt5qiz+hTByJKIMZGkY4yM2TAHuebMlJWZANLIRZXxxqzerZIOgrOLQthsxneOw/0tpAHMyKs5ZhyQbCIp8gV55tbJDBKphA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VwSkQ2Q3kzsRgt;
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4VwSkQ2HNYz1SB5B;
 	Fri,  7 Jun 2024 12:23:42 +0800 (CST)
 Received: from kwepemm600013.china.huawei.com (unknown [7.193.23.68])
-	by mail.maildlp.com (Postfix) with ESMTPS id 027ED180085;
+	by mail.maildlp.com (Postfix) with ESMTPS id 125F0180AA6;
 	Fri,  7 Jun 2024 12:27:41 +0800 (CST)
 Received: from huawei.com (10.175.104.67) by kwepemm600013.china.huawei.com
  (7.193.23.68) with Microsoft SMTP Server (version=TLS1_2,
@@ -43,9 +43,9 @@ To: <richard@nod.at>, <david.oberhollenzer@sigma-star.at>,
 	<miquel.raynal@bootlin.com>, <yi.zhang@huawei.com>, <xiangyang3@huawei.com>,
 	<huangxiaojia2@huawei.com>
 CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH mtd-utils 083/110] fsck.ubifs: Ensure that TNC LEB can be scanned successful
-Date: Fri, 7 Jun 2024 12:25:48 +0800
-Message-ID: <20240607042615.2069840-84-chengzhihao1@huawei.com>
+Subject: [RFC PATCH mtd-utils 084/110] fsck.ubifs: Update files' size for check mode
+Date: Fri, 7 Jun 2024 12:25:49 +0800
+Message-ID: <20240607042615.2069840-85-chengzhihao1@huawei.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240607042615.2069840-1-chengzhihao1@huawei.com>
 References: <20240607042615.2069840-1-chengzhihao1@huawei.com>
@@ -60,277 +60,157 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  kwepemm600013.china.huawei.com (7.193.23.68)
 
-This is the second part of 6/18 step in fsck. Add an extra checking for
-non-check mode while traversing TNC, make sure that all LEBs(contains TNC)
-can be scanned successful. There could be following steps and possible
-errors:
- Step 2. Scan all LEBs(contain TNC), remove TNC branch which points to
- corrupted LEB.
-  a. corrupted node is found by scanning: If current node is index node,
-     danger mode with rebuild_fs and normal mode with 'yes' answer will
-     turn to rebuild filesystem, other modes will exit; If current node
-     is non-index node, danger mode and normal mode with 'yes' answer
-     will remove all TNC branches which point to the corrupted LEB,
-     other modes will exit.
-  b. LEB contains both index and non-index nodes: danger mode with
-     rebuild_fs and normal mode with 'yes' answer will turn to rebuild
-     filesystem, other modes will exit.
-This is a preparation for space checking, which means that ubifs_scan
-will always succeed when check properties for any TNC LEBs. We do this
-before checking files(step 7) & extracting dentry tree(step 8), nodes
-cannot be dropped(which may corrupted file and make file inconsistent
-again) when scanning corrupted as long as the dentry tree is extracted.
+This is the 7/18 step of fsck. Update files' size according to size
+tree for check mode, now all files are updated after replaying journal.
 
 Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
 ---
- ubifs-utils/fsck.ubifs/check_files.c | 122 +++++++++++++++++++++++++++++++++--
- ubifs-utils/fsck.ubifs/fsck.ubifs.c  |   1 +
- ubifs-utils/fsck.ubifs/fsck.ubifs.h  |   2 +-
- ubifs-utils/fsck.ubifs/problem.c     |  10 +++
- 4 files changed, 128 insertions(+), 7 deletions(-)
+ ubifs-utils/fsck.ubifs/check_files.c | 45 ++++++++++++++++++++++++++++++++++++
+ ubifs-utils/fsck.ubifs/fsck.ubifs.c  |  3 +++
+ ubifs-utils/fsck.ubifs/fsck.ubifs.h  |  1 +
+ ubifs-utils/libubifs/recovery.c      | 16 -------------
+ ubifs-utils/libubifs/ubifs.h         | 16 +++++++++++++
+ 5 files changed, 65 insertions(+), 16 deletions(-)
 
 diff --git a/ubifs-utils/fsck.ubifs/check_files.c b/ubifs-utils/fsck.ubifs/check_files.c
-index 982c05b7..29848c4e 100644
+index 29848c4e..0fd6b32a 100644
 --- a/ubifs-utils/fsck.ubifs/check_files.c
 +++ b/ubifs-utils/fsck.ubifs/check_files.c
-@@ -8,6 +8,7 @@
- #include <stdio.h>
- #include <stdlib.h>
- 
-+#include "linux_err.h"
- #include "bitops.h"
- #include "kmem.h"
- #include "ubifs.h"
-@@ -25,6 +26,7 @@ struct invalid_node {
- 
- struct iteration_info {
- 	struct list_head invalid_nodes;
-+	unsigned long *corrupted_lebs;
- };
- 
- static int add_invalid_node(struct ubifs_info *c, union ubifs_key *key,
-@@ -103,6 +105,49 @@ static int construct_file(struct ubifs_info *c, union ubifs_key *key,
- 	return insert_or_update_file(c, tree, sn, key_type(c, key), inum);
+@@ -309,3 +309,48 @@ out:
+ 	}
+ 	return err;
  }
- 
-+static int scan_check_leb(struct ubifs_info *c, int lnum, bool is_idx)
++
++/**
++ * update_files_size - Update files' size.
++ * @c: UBIFS file-system description object
++ *
++ * This function updates files' size according to @c->size_tree for check mode.
++ */
++void update_files_size(struct ubifs_info *c)
 +{
-+	int err = 0;
-+	struct ubifs_scan_leb *sleb;
-+	struct ubifs_scan_node *snod;
++	struct rb_node *this;
 +
-+	if (FSCK(c)->mode == CHECK_MODE)
-+		/* Skip check mode. */
-+		return 0;
-+
-+	ubifs_assert(c, lnum >= c->main_first);
-+	if (test_bit(lnum - c->main_first, FSCK(c)->used_lebs))
-+		return 0;
-+
-+	sleb = ubifs_scan(c, lnum, 0, c->sbuf, 0);
-+	if (IS_ERR(sleb)) {
-+		err = PTR_ERR(sleb);
-+		if (test_and_clear_failure_reason_callback(c, FR_DATA_CORRUPTED))
-+			err = 1;
-+		return err;
++	if (FSCK(c)->mode != CHECK_MODE) {
++		/* Other modes(rw) have updated inode size in place. */
++		dbg_fsck("skip updating files' size%s, in %s",
++			 mode_name(c), c->dev_name);
++		return;
 +	}
 +
-+	list_for_each_entry(snod, &sleb->nodes, list) {
-+		if (is_idx) {
-+			if (snod->type != UBIFS_IDX_NODE) {
-+				err = 1;
-+				goto out;
-+			}
-+		} else {
-+			if (snod->type == UBIFS_IDX_NODE) {
-+				err = 1;
-+				goto out;
++	log_out(c, "Update files' size");
++
++	this = rb_first(&c->size_tree);
++	while (this) {
++		struct size_entry *e;
++
++		e = rb_entry(this, struct size_entry, rb);
++		this = rb_next(this);
++
++		if (e->exists && e->i_size < e->d_size) {
++			struct scanned_file *file;
++
++			file = lookup_file(&FSCK(c)->scanned_files, e->inum);
++			if (file && file->ino.header.exist &&
++			    file->ino.size < e->d_size) {
++				dbg_fsck("update file(%lu) size %llu->%llu, in %s",
++					 e->inum, file->ino.size,
++					 (unsigned long long)e->d_size,
++					 c->dev_name);
++				file->ino.size = e->d_size;
 +			}
 +		}
++
++		rb_erase(&e->rb, &c->size_tree);
++		kfree(e);
 +	}
-+
-+	set_bit(lnum - c->main_first, FSCK(c)->used_lebs);
-+
-+out:
-+	ubifs_scan_destroy(sleb);
-+	return err;
 +}
-+
- static int check_leaf(struct ubifs_info *c, struct ubifs_zbranch *zbr,
- 		      void *priv)
- {
-@@ -127,6 +172,23 @@ static int check_leaf(struct ubifs_info *c, struct ubifs_zbranch *zbr,
- 		return -EINVAL;
- 	}
- 
-+	if (test_bit(lnum - c->main_first, iter->corrupted_lebs)) {
-+		if (fix_problem(c, SCAN_CORRUPTED, zbr))
-+			/* All nodes in corrupted LEB should be removed. */
-+			return add_invalid_node(c, key, lnum, offs, iter);
-+		return 0;
-+	}
-+
-+	err = scan_check_leb(c, lnum, false);
-+	if (err < 0) {
-+		return err;
-+	} else if (err) {
-+		set_bit(lnum - c->main_first, iter->corrupted_lebs);
-+		if (fix_problem(c, SCAN_CORRUPTED, zbr))
-+			return add_invalid_node(c, key, lnum, offs, iter);
-+		return 0;
-+	}
-+
- 	node = kmalloc(len, GFP_NOFS);
- 	if (!node)
- 		return -ENOMEM;
-@@ -147,6 +209,34 @@ out:
- 	return err;
- }
- 
-+static int check_znode(struct ubifs_info *c, struct ubifs_znode *znode,
-+		       __unused void *priv)
-+{
-+	int err;
-+	const struct ubifs_zbranch *zbr;
-+
-+	if (znode->parent)
-+		zbr = &znode->parent->zbranch[znode->iip];
-+	else
-+		zbr = &c->zroot;
-+
-+	if (zbr->lnum == 0) {
-+		/* The znode has been split up. */
-+		ubifs_assert(c, zbr->offs == 0 && zbr->len == 0);
-+		return 0;
-+	}
-+
-+	err = scan_check_leb(c, zbr->lnum, true);
-+	if (err < 0) {
-+		return err;
-+	} else if (err) {
-+		set_failure_reason_callback(c, FR_TNC_CORRUPTED);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- static int remove_invalid_nodes(struct ubifs_info *c,
- 				struct list_head *invalid_nodes, int error)
- {
-@@ -176,10 +266,12 @@ static int remove_invalid_nodes(struct ubifs_info *c,
-  * traverse_tnc_and_construct_files - traverse TNC and construct all files.
-  * @c: UBIFS file-system description object
-  *
-- * This function checks all index nodes and non-index nodes by traversing TNC,
-- * then construct file according to scanned non-index nodes and insert file
-- * into file tree. Returns zero in case of success, a negative error code in
-- * case of failure.
-+ * This function does two things by traversing TNC:
-+ * 1. Check all index nodes and non-index nodes, then construct file according
-+ *    to scanned non-index nodes and insert file into file tree.
-+ * 2. Make sure that LEB(contains any nodes from TNC) can be scanned by
-+ *    ubifs_scan, and the LEB only contains index nodes or non-index nodes.
-+ * Returns zero in case of success, a negative error code in case of failure.
-  */
- int traverse_tnc_and_construct_files(struct ubifs_info *c)
- {
-@@ -187,15 +279,33 @@ int traverse_tnc_and_construct_files(struct ubifs_info *c)
- 	struct iteration_info iter;
- 
- 	FSCK(c)->scanned_files = RB_ROOT;
-+	FSCK(c)->used_lebs = kcalloc(BITS_TO_LONGS(c->main_lebs),
-+				     sizeof(unsigned long), GFP_KERNEL);
-+	if (!FSCK(c)->used_lebs) {
-+		err = -ENOMEM;
-+		log_err(c, errno, "can not allocate bitmap of used lebs");
-+		return err;
-+	}
- 	INIT_LIST_HEAD(&iter.invalid_nodes);
-+	iter.corrupted_lebs = kcalloc(BITS_TO_LONGS(c->main_lebs),
-+				      sizeof(unsigned long), GFP_KERNEL);
-+	if (!iter.corrupted_lebs) {
-+		err = -ENOMEM;
-+		log_err(c, errno, "can not allocate bitmap of corrupted lebs");
-+		goto out;
-+	}
- 
--	err = dbg_walk_index(c, check_leaf, NULL, &iter);
-+	err = dbg_walk_index(c, check_leaf, check_znode, &iter);
- 
- 	ret = remove_invalid_nodes(c, &iter.invalid_nodes, err);
- 	if (!err)
- 		err = ret;
- 
--	if (err)
-+	kfree(iter.corrupted_lebs);
-+out:
-+	if (err) {
-+		kfree(FSCK(c)->used_lebs);
- 		destroy_file_tree(c, &FSCK(c)->scanned_files);
-+	}
- 	return err;
- }
 diff --git a/ubifs-utils/fsck.ubifs/fsck.ubifs.c b/ubifs-utils/fsck.ubifs/fsck.ubifs.c
-index c85e9147..1486ab4d 100644
+index 1486ab4d..79b0babc 100644
 --- a/ubifs-utils/fsck.ubifs/fsck.ubifs.c
 +++ b/ubifs-utils/fsck.ubifs/fsck.ubifs.c
-@@ -443,6 +443,7 @@ static int do_fsck(void)
+@@ -443,6 +443,8 @@ static int do_fsck(void)
  		return err;
  	}
  
-+	kfree(FSCK(c)->used_lebs);
++	update_files_size(c);
++
+ 	kfree(FSCK(c)->used_lebs);
  	destroy_file_tree(c, &FSCK(c)->scanned_files);
  	return err;
- }
+@@ -481,6 +483,7 @@ int main(int argc, char *argv[])
+ 
+ 	/*
+ 	 * Step 6: Traverse tnc and construct files
++	 * Step 7: Update files' size
+ 	 */
+ 	err = do_fsck();
+ 	if (err && FSCK(c)->try_rebuild) {
 diff --git a/ubifs-utils/fsck.ubifs/fsck.ubifs.h b/ubifs-utils/fsck.ubifs/fsck.ubifs.h
-index fe6070ac..0d4a0d63 100644
+index 0d4a0d63..6c93eb6b 100644
 --- a/ubifs-utils/fsck.ubifs/fsck.ubifs.h
 +++ b/ubifs-utils/fsck.ubifs/fsck.ubifs.h
-@@ -39,7 +39,7 @@ enum { NORMAL_MODE = 0, SAFE_MODE, DANGER_MODE0,
- /* Types of inconsistent problems */
- enum { SB_CORRUPTED = 0, MST_CORRUPTED, LOG_CORRUPTED, BUD_CORRUPTED,
-        TNC_CORRUPTED, TNC_DATA_CORRUPTED, ORPHAN_CORRUPTED, INVALID_INO_NODE,
--       INVALID_DENT_NODE, INVALID_DATA_NODE };
-+       INVALID_DENT_NODE, INVALID_DATA_NODE, SCAN_CORRUPTED };
+@@ -298,5 +298,6 @@ int ubifs_rebuild_filesystem(struct ubifs_info *c);
  
- enum { HAS_DATA_CORRUPTED = 1, HAS_TNC_CORRUPTED = 2 };
+ /* check_files.c */
+ int traverse_tnc_and_construct_files(struct ubifs_info *c);
++void update_files_size(struct ubifs_info *c);
  
-diff --git a/ubifs-utils/fsck.ubifs/problem.c b/ubifs-utils/fsck.ubifs/problem.c
-index f99fd90e..c5ecd109 100644
---- a/ubifs-utils/fsck.ubifs/problem.c
-+++ b/ubifs-utils/fsck.ubifs/problem.c
-@@ -45,6 +45,7 @@ static const struct fsck_problem problem_table[] = {
- 	{PROBLEM_FIXABLE | PROBLEM_MUST_FIX | PROBLEM_DROP_DATA, "Invalid inode node"},	// INVALID_INO_NODE
- 	{PROBLEM_FIXABLE | PROBLEM_MUST_FIX | PROBLEM_DROP_DATA, "Invalid dentry node"},	// INVALID_DENT_NODE
- 	{PROBLEM_FIXABLE | PROBLEM_MUST_FIX | PROBLEM_DROP_DATA, "Invalid data node"},	// INVALID_DATA_NODE
-+	{PROBLEM_FIXABLE | PROBLEM_MUST_FIX | PROBLEM_DROP_DATA, "Corrupted data is scanned"},	// SCAN_CORRUPTED
- };
+ #endif
+diff --git a/ubifs-utils/libubifs/recovery.c b/ubifs-utils/libubifs/recovery.c
+index a5133a0f..905e1645 100644
+--- a/ubifs-utils/libubifs/recovery.c
++++ b/ubifs-utils/libubifs/recovery.c
+@@ -1082,22 +1082,6 @@ int ubifs_rcvry_gc_commit(struct ubifs_info *c)
+ }
  
- static const char *get_question(const struct fsck_problem *problem,
-@@ -60,6 +61,7 @@ static const char *get_question(const struct fsck_problem *problem,
- 	case INVALID_INO_NODE:
- 	case INVALID_DENT_NODE:
- 	case INVALID_DATA_NODE:
-+	case SCAN_CORRUPTED:
- 		return "Drop it?";
- 	case ORPHAN_CORRUPTED:
- 		return "Drop orphans on the LEB?";
-@@ -88,6 +90,14 @@ static void print_problem(const struct ubifs_info *c,
- 		log_out(c, "problem: %s %d", problem->desc, *lnum);
- 		break;
- 	}
-+	case SCAN_CORRUPTED:
-+	{
-+		const struct ubifs_zbranch *zbr = (const struct ubifs_zbranch *)priv;
+ /**
+- * struct size_entry - inode size information for recovery.
+- * @rb: link in the RB-tree of sizes
+- * @inum: inode number
+- * @i_size: size on inode
+- * @d_size: maximum size based on data nodes
+- * @exists: indicates whether the inode exists
+- */
+-struct size_entry {
+-	struct rb_node rb;
+-	ino_t inum;
+-	loff_t i_size;
+-	loff_t d_size;
+-	int exists;
+-};
+-
+-/**
+  * add_ino - add an entry to the size tree.
+  * @c: UBIFS file-system description object
+  * @inum: inode number
+diff --git a/ubifs-utils/libubifs/ubifs.h b/ubifs-utils/libubifs/ubifs.h
+index 03150cdb..72497cd9 100644
+--- a/ubifs-utils/libubifs/ubifs.h
++++ b/ubifs-utils/libubifs/ubifs.h
+@@ -1297,6 +1297,22 @@ static inline int ubifs_authenticated(const struct ubifs_info *c)
+ 	return c->authenticated;
+ }
+ 
++/**
++ * struct size_entry - inode size information for recovery.
++ * @rb: link in the RB-tree of sizes
++ * @inum: inode number
++ * @i_size: size on inode
++ * @d_size: maximum size based on data nodes
++ * @exists: indicates whether the inode exists
++ */
++struct size_entry {
++	struct rb_node rb;
++	ino_t inum;
++	loff_t i_size;
++	loff_t d_size;
++	int exists;
++};
 +
-+		log_out(c, "problem: %s in LEB %d, node in %d:%d becomes invalid",
-+			problem->desc, zbr->lnum, zbr->lnum, zbr->offs);
-+		break;
-+	}
- 	default:
- 		log_out(c, "problem: %s", problem->desc);
- 		break;
+ #ifdef WITH_CRYPTO
+ int ubifs_init_authentication(struct ubifs_info *c);
+ int ubifs_shash_init(const struct ubifs_info *c, struct shash_desc *desc);
 -- 
 2.13.6
 
