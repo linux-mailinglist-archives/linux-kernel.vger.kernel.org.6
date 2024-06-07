@@ -1,428 +1,252 @@
-Return-Path: <linux-kernel+bounces-205460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 455868FFC5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:42:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C9D8FFC73
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7C731F28216
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:42:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AC201C27B4E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7251527BC;
-	Fri,  7 Jun 2024 06:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C67153583;
+	Fri,  7 Jun 2024 06:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="BDsWbsM4";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="RxZ88pIN"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="S1RHHZDm"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A074CB36;
-	Fri,  7 Jun 2024 06:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B296429410;
+	Fri,  7 Jun 2024 06:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717742515; cv=none; b=Nn38ACX6rGyG5MmgWYedDd8gW9IaXXAPuZcq3yQLFKwSnxU/G7Jy4o3mFc3H84MSISNqcK025UEC8z7IZwXTiaFTuvIL/PyOKUJOp6jXTeiXcKBS9u3BIknKQQiFojrjZfAtkVv/UV7gjlw1EMZr0XNSiRueemShGFhS4ELe9O0=
+	t=1717742970; cv=none; b=V5GB0ZT0Z1TDUK79JKzS4eKNlr5IO9yu40pTsokfOjHTztW0OgSyFZbKdVTekNBwSjVNbRoDFZzDZjxRQ6YpYkAdgU8D0Sav4gswsUD7vKWTHK1efhieNUe4gzLwn75elEudhGORsBNLJy5HBgNaMrt9jlViGFmjRQho/gocZnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717742515; c=relaxed/simple;
-	bh=LqwZ1bRhi1S9fntGwGFdpafnrTl4n75QKDz4c8K5wQY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nJ6pT/GeESWkEjzEKHfFUJqADbyivSFQ23UcvUSVrdkq2fT+RoBS0A5UEyuDhMDc7/Sfdf9AYkOLP6fu4ELzKVSzMnw+0ypZKhEzpJyH06qf/WGmhkpxZkcvxmMGd37lKsn6HSm/7lYJ3chMIfApGPsJ5d5NeSwAq5TMxCxSTTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=BDsWbsM4; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=RxZ88pIN reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1717742511; x=1749278511;
+	s=arc-20240116; t=1717742970; c=relaxed/simple;
+	bh=Gpc+AIIuwGC+HGzIiUUwG+cNgFkKLIjwSmVZyoACLbQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IxN+i0oVn1Dbx/2Q7VjneOzGWYcxlB5W937mP0Rlp/TcOl5EoShA6P/FezYTpX9O+8s1itLC2LyPO5IIJvEpNcNx0wpO/Ocs+bGeFiEzKKN1PIQOZFm6rwCAOn7etU1l3fxydhsGYZY54uK68fd098yLL4b4fB6VGYU5AtbHWow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=S1RHHZDm; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1717742967; x=1749278967;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=oDWXk9Ip84mUFg4/ADwA1LpVB7/h3jEawVahgnt2/Uc=;
-  b=BDsWbsM4Vl+aoU3JjjVxxGFTA9Ck3IPcvXqHS6OhhgXlz1lXZbsTFU+T
-   ElhtUdsiZwXo9kYgXtYuGw9dkYh8+k3tt1lZdaBID8gnSNHTMOj6v7omj
-   yflWdg5bvZHHFV7Hv7lYJRC7vUUrbsMfcP+YoSnkGR7WFZSrdCqgAxK0J
-   5hoeweGkGyTjAUZNtM+S1wevLftPGrLaQ9z45IV362EwWl/GIyfyHq6sd
-   rIGqhDNECGGxet4w0MshSGkYNZeX2btktqLG5chNK3JJz6CPtj69J4Qn1
-   QOI98z1zor2uv6YLBac/naV65cdeb61/7hEn508EPWebVSHtOQbx41HBQ
-   A==;
-X-CSE-ConnectionGUID: 5Kjk5ea1S1+33Ri51/5AbQ==
-X-CSE-MsgGUID: aZeO6HILRgmYG2mb3kahhQ==
-X-IronPort-AV: E=Sophos;i="6.08,220,1712613600"; 
-   d="scan'208";a="37274501"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 07 Jun 2024 08:41:49 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4795E170735;
-	Fri,  7 Jun 2024 08:41:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1717742505;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=oDWXk9Ip84mUFg4/ADwA1LpVB7/h3jEawVahgnt2/Uc=;
-	b=RxZ88pIN1B/ayw7taFUeqJxc5cTZM3sOiQj3SMST85ctsblSS+DjPwe46dFLcbrKMLdVlb
-	HieWJHLTUu0M4ceY19Cmr+tFGXMObSWtDA7fBCS/trj5613nQbAffpVQqa50jLzn6IZC+8
-	DXAl4rcjnSe9+cxwEF8OWDCon8pxgQu6ugiN1S4qStOwgqxHoSnS9f/M1Y2uQBPlQdpUll
-	qQhuMVUMXOctQnlmiemriQ2VmA0L6ekvaHb3wOl1IDW29ialDhv0dWuKmGxsXJlsiFC0oB
-	WCT9QfsQKt+9uh9AXAc6rsqcOrhlTxH0zoZ6O0rInT7rnAVn6c8HrWxyYyeD7w==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Dong Aisheng <aisheng.dong@nxp.com>, linux-arm-kernel@lists.infradead.org, Frank Li <Frank.Li@nxp.com>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH 2/7] arm64: dts: imx8qm: add mipi subsystem
-Date: Fri, 07 Jun 2024 08:41:44 +0200
-Message-ID: <6638616.G0QQBjFxQf@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20240606-imx8qm-dts-usb-v1-2-565721b64f25@nxp.com>
-References: <20240606-imx8qm-dts-usb-v1-0-565721b64f25@nxp.com> <20240606-imx8qm-dts-usb-v1-2-565721b64f25@nxp.com>
+  bh=Gpc+AIIuwGC+HGzIiUUwG+cNgFkKLIjwSmVZyoACLbQ=;
+  b=S1RHHZDmDbKn2TwEdDPzrYBW90Cf3Cdxa46P/2JB7eAy3dMjh4dGhBVC
+   U5zPljbkrUdruC2pK0bzUCEm0ztLvOhqnVi64RxldQGWI7lGqHbwPP8hI
+   FZElu8WLcV5IHn8PksW7jhZ1DG3G7yKGz5gq1Uy1E2BlTaoMgW2AwDWLo
+   jgKL1LPwAUSdbftouJteD5sJfw3swd00eEXvcDmgv/aawWuzsgiqupWRg
+   P8slQsEK4Wsb6JtUJLctvCq1m+shGG+EfyHgqu3qX1hJf2DrNb7B1Rw7N
+   Oio540Qmn10+XswYSa/lFOa3JDU4U+0gAm43Ic7RZXd42PEHDo3sQ1flh
+   g==;
+X-CSE-ConnectionGUID: pjF5WmmEQUOOQw4oHGaFTw==
+X-CSE-MsgGUID: RFM2ace7T0i1GQH4WQgpuQ==
+X-IronPort-AV: E=Sophos;i="6.08,220,1712646000"; 
+   d="scan'208";a="194515033"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Jun 2024 23:49:20 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 6 Jun 2024 23:49:04 -0700
+Received: from HYD-DK-UNGSW21.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Thu, 6 Jun 2024 23:48:59 -0700
+From: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+To: <lkp@intel.com>
+CC: <Raju.Lakkaraju@microchip.com>, <UNGLinuxDriver@microchip.com>,
+	<andrew@lunn.ch>, <bryan.whitehead@microchip.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <hkallweit1@gmail.com>, <hmehrtens@maxlinear.com>,
+	<kuba@kernel.org>, <linux-kernel@vger.kernel.org>, <linux@armlinux.org.uk>,
+	<lxu@maxlinear.com>, <netdev@vger.kernel.org>,
+	<oe-kbuild-all@lists.linux.dev>, <pabeni@redhat.com>, <sbauer@blackbox.su>,
+	Wojciech Drewek <wojciech.drewek@intel.com>
+Subject: [PATCH net V3 2/3] net: lan743x: Support WOL at both the PHY and MAC appropriately
+Date: Fri, 7 Jun 2024 12:16:06 +0530
+Message-ID: <20240607064606.26189-1-Raju.Lakkaraju@microchip.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <202406052200.w3zuc32H-lkp@intel.com>
+References: <202406052200.w3zuc32H-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi,
+Prevent options not supported by the PHY from being requested to it by the MAC
+Whenever a WOL option is supported by both, the PHY is given priority
+since that usually leads to better power savings.
 
-thanks for the patch.
-What are your plans regarding imx8xqp? This memory region
-has dual use on imx8qxp mipi/lvds0. I would prefer
-imx8-ss-mipi.dtsi with common parts and a imx8qm-ss-mipi.dtsi
-adding/modifying imx8qm specific things. I'll send my current WIP
-as a response to this.
+Fixes: e9e13b6adc338 ("lan743x: fix for potential NULL pointer dereference with bare card")
+Signed-off-by: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202406052200.w3zuc32H-lkp@intel.com/
+---
+Change List:
+------------
+V2 -> V3:
+  - Remove the "phy does not support WOL" debug message which is not required
+  - Remove WAKE_PHY support option from Ethernet MAC (LAN743x/PCI11x1x) driver
+  - Add "phy_wol_supported" and "phy_wolopts" variables to hold PHY's WOL config
+V1 -> V2:
+  - Repost - No change
+V0 -> V1:
+  - Change the "phy does not support WOL" print from netif_info() to
+    netif_dbg()
 
-Best regards,
-Alexander
+ .../net/ethernet/microchip/lan743x_ethtool.c  | 44 +++++++++++++++++--
+ drivers/net/ethernet/microchip/lan743x_main.c | 18 ++++++--
+ drivers/net/ethernet/microchip/lan743x_main.h |  4 ++
+ 3 files changed, 58 insertions(+), 8 deletions(-)
 
-Am Donnerstag, 6. Juni 2024, 20:46:56 CEST schrieb Frank Li:
-> Add irqstear, pwm and i2c in mipi subsystem.
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  arch/arm64/boot/dts/freescale/imx8qm-ss-mipi.dtsi | 286 ++++++++++++++++=
-++++++
->  arch/arm64/boot/dts/freescale/imx8qm.dtsi         |   1 +
->  2 files changed, 287 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/freescale/imx8qm-ss-mipi.dtsi b/arch/arm=
-64/boot/dts/freescale/imx8qm-ss-mipi.dtsi
-> new file mode 100644
-> index 0000000000000..bd18468923e52
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8qm-ss-mipi.dtsi
-> @@ -0,0 +1,286 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +
-> +/*
-> + * Copyright 2024 NXP
-> + */
-> +
-> +/ {
-> +	dsi_ipg_clk: clock-dsi-ipg {
-> +		compatible =3D "fixed-clock";
-> +		#clock-cells =3D <0>;
-> +		clock-frequency =3D <120000000>;
-> +		clock-output-names =3D "dsi_ipg_clk";
-> +	};
-> +
-> +	mipi_pll_div2_clk: clock-mipi-div2-pll {
-> +		compatible =3D "fixed-clock";
-> +		#clock-cells =3D <0>;
-> +		clock-frequency =3D <432000000>;
-> +		clock-output-names =3D "mipi_pll_div2_clk";
-> +	};
-> +
-> +	mipi0_subsys: bus@56220000 {
-> +		compatible =3D "simple-bus";
-> +		interrupt-parent =3D <&irqsteer_mipi0>;
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <1>;
-> +		ranges =3D <0x56220000 0x0 0x56220000 0x10000>;
-> +
-> +		irqsteer_mipi0: interrupt-controller@56220000 {
-> +			compatible =3D "fsl,imx-irqsteer";
-
-compatible =3D "fsl,imx8qxp-irqsteer", "fsl,imx-irqsteer" or even
-compatible =3D "fsl,imx8qm-irqsteer", "fsl,imx-irqsteer". Please refer to [=
-1].
-
-[1] https://lore.kernel.org/all/20240528071141.92003-1-alexander.stein@ew.t=
-q-group.com/
-
-> +			reg =3D <0x56220000 0x1000>;
-> +			interrupts =3D <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-controller;
-> +			interrupt-parent =3D <&gic>;
-> +			#interrupt-cells =3D <1>;
-> +			clocks =3D <&mipi0_lis_lpcg IMX_LPCG_CLK_0>;
-> +			clock-names =3D "ipg";
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_0>;
-> +			fsl,channel =3D <0>;
-> +			fsl,num-irqs =3D <32>;
-> +		};
-> +
-> +		mipi0_lis_lpcg: clock-controller@56223000 {
-> +			compatible =3D "fsl,imx8qxp-lpcg";
-> +			reg =3D <0x56223000 0x4>;
-> +			#clock-cells =3D <1>;
-> +			clocks =3D <&dsi_ipg_clk>;
-> +			clock-indices =3D <IMX_LPCG_CLK_0>;
-> +			clock-output-names =3D "mipi0_lis_lpcg_ipg_clk";
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_0>;
-> +		};
-> +
-> +		mipi0_pwm_lpcg: clock-controller@5622300c {
-> +			compatible =3D "fsl,imx8qxp-lpcg";
-> +			reg =3D <0x5622300c 0x4>;
-> +			#clock-cells =3D <1>;
-> +			clocks =3D <&clk IMX_SC_R_MIPI_0_PWM_0 IMX_SC_PM_CLK_PER>,
-> +				 <&dsi_ipg_clk>;
-> +			clock-indices =3D <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
-> +			clock-output-names =3D "mipi0_pwm_lpcg_clk",
-> +					     "mipi0_pwm_lpcg_ipg_clk";
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_0_PWM_0>;
-> +		};
-> +
-> +		mipi0_i2c0_lpcg_ipg_clk: clock-controller@56223014 {
-> +			compatible =3D "fsl,imx8qxp-lpcg";
-> +			reg =3D <0x56223014 0x4>;
-> +			#clock-cells =3D <1>;
-> +			clocks =3D <&mipi0_i2c0_lpcg_ipg_s_clk IMX_LPCG_CLK_0>;
-> +			clock-indices =3D <IMX_LPCG_CLK_0>;
-> +			clock-output-names =3D "mipi0_i2c0_lpcg_ipg_clk";
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_0>;
-> +		};
-> +
-> +		mipi0_i2c0_lpcg_ipg_s_clk: clock-controller@56223018 {
-> +			compatible =3D "fsl,imx8qxp-lpcg";
-> +			reg =3D <0x56223018 0x4>;
-> +			#clock-cells =3D <1>;
-> +			clocks =3D <&dsi_ipg_clk>;
-> +			clock-indices =3D <IMX_LPCG_CLK_0>;
-> +			clock-output-names =3D "mipi0_i2c0_lpcg_ipg_s_clk";
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_0>;
-> +		};
-> +
-> +		mipi0_i2c0_lpcg_clk: clock-controller@5622301c {
-> +			compatible =3D "fsl,imx8qxp-lpcg";
-> +			reg =3D <0x5622301c 0x4>;
-> +			#clock-cells =3D <1>;
-> +			clocks =3D <&clk IMX_SC_R_MIPI_0_I2C_0 IMX_SC_PM_CLK_MISC2>;
-> +			clock-indices =3D <IMX_LPCG_CLK_0>;
-> +			clock-output-names =3D "mipi0_i2c0_lpcg_clk";
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_0>;
-> +		};
-> +
-> +		mipi0_i2c1_lpcg_ipg_clk: clock-controller@56223024 {
-> +			compatible =3D "fsl,imx8qxp-lpcg";
-> +			reg =3D <0x56223024 0x4>;
-> +			#clock-cells =3D <1>;
-> +			clocks =3D <&mipi0_i2c1_lpcg_ipg_s_clk IMX_LPCG_CLK_0>;
-> +			clock-indices =3D <IMX_LPCG_CLK_0>;
-> +			clock-output-names =3D "mipi0_i2c1_lpcg_ipg_clk";
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_1>;
-> +		};
-> +
-> +		mipi0_i2c1_lpcg_clk: clock-controller@5622302c {
-> +			compatible =3D "fsl,imx8qxp-lpcg";
-> +			reg =3D <0x5622302c 0x4>;
-> +			#clock-cells =3D <1>;
-> +			clocks =3D <&clk IMX_SC_R_MIPI_0_I2C_1 IMX_SC_PM_CLK_MISC2>;
-> +			clock-indices =3D <IMX_LPCG_CLK_0>;
-> +			clock-output-names =3D "mipi0_i2c1_lpcg_clk";
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_1>;
-> +		};
-> +
-> +		mipi0_i2c1_lpcg_ipg_s_clk: clock-controller@56223028 {
-> +			compatible =3D "fsl,imx8qxp-lpcg";
-> +			reg =3D <0x56223028 0x4>;
-> +			#clock-cells =3D <1>;
-> +			clocks =3D <&dsi_ipg_clk>;
-> +			clock-indices =3D <IMX_LPCG_CLK_0>;
-> +			clock-output-names =3D "mipi0_i2c1_lpcg_ipg_s_clk";
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_1>;
-> +		};
-> +
-> +		pwm_mipi0: pwm@56224000 {
-> +			compatible =3D "fsl,imx8qxp-pwm", "fsl,imx27-pwm";
-> +			reg =3D <0x56224000 0x1000>;
-> +			clocks =3D <&mipi0_pwm_lpcg IMX_LPCG_CLK_4>,
-> +				 <&mipi0_pwm_lpcg IMX_LPCG_CLK_0>;
-> +			clock-names =3D "ipg", "per";
-> +			assigned-clocks =3D <&clk IMX_SC_R_MIPI_0_PWM_0 IMX_SC_PM_CLK_PER>;
-> +			assigned-clock-rates =3D <24000000>;
-> +			#pwm-cells =3D <3>;
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_0_PWM_0>;
-> +			status =3D "disabled";
-> +		};
-> +
-> +		i2c0_mipi0: i2c@56226000 {
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +			compatible =3D "fsl,imx8qm-lpi2c", "fsl,imx7ulp-lpi2c";
-> +			reg =3D <0x56226000 0x1000>;
-> +			interrupts =3D <8>;
-> +			clocks =3D <&mipi0_i2c0_lpcg_clk IMX_LPCG_CLK_0>,
-> +				 <&mipi0_i2c0_lpcg_ipg_clk IMX_LPCG_CLK_0>;
-> +			clock-names =3D "per", "ipg";
-> +			assigned-clocks =3D <&mipi0_i2c0_lpcg_clk IMX_LPCG_CLK_0>;
-> +			assigned-clock-rates =3D <24000000>;
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_0>;
-> +			status =3D "disabled";
-> +		};
-> +	};
-> +
-> +	mipi1_subsys: bus@57220000 {
-> +		compatible =3D "simple-bus";
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <1>;
-> +		ranges =3D <0x57220000 0x0 0x57220000 0x10000>;
-> +
-> +		irqsteer_mipi1: interrupt-controller@57220000 {
-> +			compatible =3D "fsl,imx-irqsteer";
-> +			reg =3D <0x57220000 0x1000>;
-> +			interrupts =3D <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-controller;
-> +			interrupt-parent =3D <&gic>;
-> +			#interrupt-cells =3D <1>;
-> +			clocks =3D <&mipi1_lis_lpcg IMX_LPCG_CLK_0>;
-> +			clock-names =3D "ipg";
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_1>;
-> +			fsl,channel =3D <0>;
-> +			fsl,num-irqs =3D <32>;
-> +		};
-> +
-> +		mipi1_lis_lpcg: clock-controller@57223000 {
-> +			compatible =3D "fsl,imx8qxp-lpcg";
-> +			reg =3D <0x57223000 0x4>;
-> +			#clock-cells =3D <1>;
-> +			clocks =3D <&dsi_ipg_clk>;
-> +			clock-indices =3D <IMX_LPCG_CLK_0>;
-> +			clock-output-names =3D "mipi1_lis_lpcg_ipg_clk";
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_1>;
-> +		};
-> +
-> +		mipi1_pwm_lpcg: clock-controller@5722300c {
-> +			compatible =3D "fsl,imx8qxp-lpcg";
-> +			reg =3D <0x5722300c 0x4>;
-> +			#clock-cells =3D <1>;
-> +			clocks =3D <&clk IMX_SC_R_MIPI_1_PWM_0 IMX_SC_PM_CLK_PER>,
-> +				 <&dsi_ipg_clk>;
-> +			clock-indices =3D <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
-> +			clock-output-names =3D "mipi1_pwm_lpcg_clk",
-> +					     "mipi1_pwm_lpcg_ipg_clk";
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_1_PWM_0>;
-> +		};
-> +
-> +		mipi1_i2c0_lpcg_clk: clock-controller@5722301c {
-> +			compatible =3D "fsl,imx8qxp-lpcg";
-> +			reg =3D <0x5722301c 0x4>;
-> +			#clock-cells =3D <1>;
-> +			clocks =3D <&clk IMX_SC_R_MIPI_1_I2C_0 IMX_SC_PM_CLK_MISC2>;
-> +			clock-indices =3D <IMX_LPCG_CLK_0>;
-> +			clock-output-names =3D "mipi1_i2c0_lpcg_clk";
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_0>;
-> +		};
-> +
-> +		mipi1_i2c0_lpcg_ipg_clk: clock-controller@57223014 {
-> +			compatible =3D "fsl,imx8qxp-lpcg";
-> +			reg =3D <0x57223014 0x4>;
-> +			#clock-cells =3D <1>;
-> +			clocks =3D <&mipi1_i2c0_lpcg_ipg_s_clk IMX_LPCG_CLK_0>;
-> +			clock-indices =3D <IMX_LPCG_CLK_0>;
-> +			clock-output-names =3D "mipi1_i2c0_lpcg_ipg_clk";
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_0>;
-> +		};
-> +
-> +		mipi1_i2c0_lpcg_ipg_s_clk: clock-controller@57223018 {
-> +			compatible =3D "fsl,imx8qxp-lpcg";
-> +			reg =3D <0x57223018 0x4>;
-> +			#clock-cells =3D <1>;
-> +			clocks =3D <&dsi_ipg_clk>;
-> +			clock-indices =3D <IMX_LPCG_CLK_0>;
-> +			clock-output-names =3D "mipi1_i2c0_lpcg_ipg_s_clk";
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_0>;
-> +		};
-> +
-> +		mipi1_i2c1_lpcg_ipg_clk: clock-controller@57223024 {
-> +			compatible =3D "fsl,imx8qxp-lpcg";
-> +			reg =3D <0x57223024 0x4>;
-> +			#clock-cells =3D <1>;
-> +			clocks =3D <&mipi1_i2c1_lpcg_ipg_s_clk IMX_LPCG_CLK_0>;
-> +			clock-indices =3D <IMX_LPCG_CLK_0>;
-> +			clock-output-names =3D "mipi1_i2c1_lpcg_ipg_clk";
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_1>;
-> +		};
-> +
-> +		mipi1_i2c1_lpcg_ipg_s_clk: clock-controller@57223028 {
-> +			compatible =3D "fsl,imx8qxp-lpcg";
-> +			reg =3D <0x57223028 0x4>;
-> +			#clock-cells =3D <1>;
-> +			clocks =3D <&dsi_ipg_clk>;
-> +			clock-indices =3D <IMX_LPCG_CLK_0>;
-> +			clock-output-names =3D "mipi1_i2c1_lpcg_ipg_s_clk";
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_1>;
-> +		};
-> +
-> +		mipi1_i2c1_lpcg_clk: clock-controller@5722302c {
-> +			compatible =3D "fsl,imx8qxp-lpcg";
-> +			reg =3D <0x5722302c 0x4>;
-> +			#clock-cells =3D <1>;
-> +			clocks =3D <&clk IMX_SC_R_MIPI_1_I2C_1 IMX_SC_PM_CLK_MISC2>;
-> +			clock-indices =3D <IMX_LPCG_CLK_0>;
-> +			clock-output-names =3D "mipi1_i2c1_lpcg_clk";
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_1>;
-> +		};
-> +
-> +		pwm_mipi1: pwm@57224000 {
-> +			compatible =3D "fsl,imx8qxp-pwm", "fsl,imx27-pwm";
-> +			reg =3D <0x57224000 0x1000>;
-> +			clocks =3D <&mipi1_pwm_lpcg IMX_LPCG_CLK_4>,
-> +				 <&mipi1_pwm_lpcg IMX_LPCG_CLK_0>;
-> +			clock-names =3D "ipg", "per";
-> +			assigned-clocks =3D <&clk IMX_SC_R_MIPI_1_PWM_0 IMX_SC_PM_CLK_PER>;
-> +			assigned-clock-rates =3D <24000000>;
-> +			#pwm-cells =3D <3>;
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_1_PWM_0>;
-> +			status =3D "disabled";
-> +		};
-> +
-> +		i2c0_mipi1: i2c@57226000 {
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +			compatible =3D "fsl,imx8qm-lpi2c", "fsl,imx7ulp-lpi2c";
-> +			reg =3D <0x57226000 0x1000>;
-> +			interrupts =3D <8>;
-> +			interrupt-parent =3D <&irqsteer_mipi1>;
-> +			clocks =3D <&mipi1_i2c0_lpcg_clk IMX_LPCG_CLK_0>,
-> +				 <&mipi1_i2c0_lpcg_ipg_clk IMX_LPCG_CLK_0>;
-> +			clock-names =3D "per", "ipg";
-> +			assigned-clocks =3D <&mipi1_i2c0_lpcg_clk IMX_LPCG_CLK_0>;
-> +			assigned-clock-rates =3D <24000000>;
-> +			power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_0>;
-> +			status =3D "disabled";
-> +		};
-> +	};
-> +};
-> +
-> diff --git a/arch/arm64/boot/dts/freescale/imx8qm.dtsi b/arch/arm64/boot/=
-dts/freescale/imx8qm.dtsi
-> index 9f29fe4589668..846b95be22bbe 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8qm.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
-> @@ -577,3 +577,4 @@ clk_spdif1_rx: clock-spdif1-rx {
->  #include "imx8qm-ss-lsio.dtsi"
->  #include "imx8qm-ss-audio.dtsi"
->  #include "imx8qm-ss-lvds.dtsi"
-> +#include "imx8qm-ss-mipi.dtsi"
->=20
->=20
-
-
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
+diff --git a/drivers/net/ethernet/microchip/lan743x_ethtool.c b/drivers/net/ethernet/microchip/lan743x_ethtool.c
+index d0f4ff4ee075..0d1740d64676 100644
+--- a/drivers/net/ethernet/microchip/lan743x_ethtool.c
++++ b/drivers/net/ethernet/microchip/lan743x_ethtool.c
+@@ -1127,8 +1127,12 @@ static void lan743x_ethtool_get_wol(struct net_device *netdev,
+ 	if (netdev->phydev)
+ 		phy_ethtool_get_wol(netdev->phydev, wol);
+ 
+-	wol->supported |= WAKE_BCAST | WAKE_UCAST | WAKE_MCAST |
+-		WAKE_MAGIC | WAKE_PHY | WAKE_ARP;
++	if (wol->supported != adapter->phy_wol_supported)
++		netif_warn(adapter, drv, adapter->netdev,
++			   "PHY changed its supported WOL! old=%x, new=%x\n",
++			   adapter->phy_wol_supported, wol->supported);
++
++	wol->supported |= MAC_SUPPORTED_WAKES;
+ 
+ 	if (adapter->is_pci11x1x)
+ 		wol->supported |= WAKE_MAGICSECURE;
+@@ -1143,7 +1147,39 @@ static int lan743x_ethtool_set_wol(struct net_device *netdev,
+ {
+ 	struct lan743x_adapter *adapter = netdev_priv(netdev);
+ 
++	/* WAKE_MAGICSEGURE is a modifier of and only valid together with
++	 * WAKE_MAGIC
++	 */
++	if ((wol->wolopts & WAKE_MAGICSECURE) && !(wol->wolopts & WAKE_MAGIC))
++		return -EINVAL;
++
++	if (netdev->phydev) {
++		struct ethtool_wolinfo phy_wol;
++		int ret;
++
++		phy_wol.wolopts = wol->wolopts & adapter->phy_wol_supported;
++
++		/* If WAKE_MAGICSECURE was requested, filter out WAKE_MAGIC
++		 * for PHYs that do not support WAKE_MAGICSECURE
++		 */
++		if (wol->wolopts & WAKE_MAGICSECURE &&
++		    !(adapter->phy_wol_supported & WAKE_MAGICSECURE))
++			phy_wol.wolopts &= ~WAKE_MAGIC;
++
++		ret = phy_ethtool_set_wol(netdev->phydev, &phy_wol);
++		if (ret && (ret != -EOPNOTSUPP))
++			return ret;
++
++		if (ret == -EOPNOTSUPP)
++			adapter->phy_wolopts = 0;
++		else
++			adapter->phy_wolopts = phy_wol.wolopts;
++	} else {
++		adapter->phy_wolopts = 0;
++	}
++
+ 	adapter->wolopts = 0;
++	wol->wolopts &= ~adapter->phy_wolopts;
+ 	if (wol->wolopts & WAKE_UCAST)
+ 		adapter->wolopts |= WAKE_UCAST;
+ 	if (wol->wolopts & WAKE_MCAST)
+@@ -1164,10 +1200,10 @@ static int lan743x_ethtool_set_wol(struct net_device *netdev,
+ 		memset(adapter->sopass, 0, sizeof(u8) * SOPASS_MAX);
+ 	}
+ 
++	wol->wolopts = adapter->wolopts | adapter->phy_wolopts;
+ 	device_set_wakeup_enable(&adapter->pdev->dev, (bool)wol->wolopts);
+ 
+-	return netdev->phydev ? phy_ethtool_set_wol(netdev->phydev, wol)
+-			: -ENETDOWN;
++	return 0;
+ }
+ #endif /* CONFIG_PM */
+ 
+diff --git a/drivers/net/ethernet/microchip/lan743x_main.c b/drivers/net/ethernet/microchip/lan743x_main.c
+index 6a40b961fafb..90572e780d9f 100644
+--- a/drivers/net/ethernet/microchip/lan743x_main.c
++++ b/drivers/net/ethernet/microchip/lan743x_main.c
+@@ -3118,6 +3118,17 @@ static int lan743x_netdev_open(struct net_device *netdev)
+ 		if (ret)
+ 			goto close_tx;
+ 	}
++
++#ifdef CONFIG_PM
++	if (adapter->netdev->phydev) {
++		struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
++
++		phy_ethtool_get_wol(netdev->phydev, &wol);
++		adapter->phy_wol_supported = wol.supported;
++		adapter->phy_wolopts = wol.wolopts;
++	}
++#endif
++
+ 	return 0;
+ 
+ close_tx:
+@@ -3587,10 +3598,9 @@ static void lan743x_pm_set_wol(struct lan743x_adapter *adapter)
+ 
+ 	pmtctl |= PMT_CTL_ETH_PHY_D3_COLD_OVR_ | PMT_CTL_ETH_PHY_D3_OVR_;
+ 
+-	if (adapter->wolopts & WAKE_PHY) {
+-		pmtctl |= PMT_CTL_ETH_PHY_EDPD_PLL_CTL_;
++	if (adapter->phy_wolopts)
+ 		pmtctl |= PMT_CTL_ETH_PHY_WAKE_EN_;
+-	}
++
+ 	if (adapter->wolopts & WAKE_MAGIC) {
+ 		wucsr |= MAC_WUCSR_MPEN_;
+ 		macrx |= MAC_RX_RXEN_;
+@@ -3686,7 +3696,7 @@ static int lan743x_pm_suspend(struct device *dev)
+ 	lan743x_csr_write(adapter, MAC_WUCSR2, 0);
+ 	lan743x_csr_write(adapter, MAC_WK_SRC, 0xFFFFFFFF);
+ 
+-	if (adapter->wolopts)
++	if (adapter->wolopts || adapter->phy_wolopts)
+ 		lan743x_pm_set_wol(adapter);
+ 
+ 	if (adapter->is_pci11x1x) {
+diff --git a/drivers/net/ethernet/microchip/lan743x_main.h b/drivers/net/ethernet/microchip/lan743x_main.h
+index fac0f33d10b2..3b2585a384e2 100644
+--- a/drivers/net/ethernet/microchip/lan743x_main.h
++++ b/drivers/net/ethernet/microchip/lan743x_main.h
+@@ -1042,6 +1042,8 @@ enum lan743x_sgmii_lsd {
+ 	LINK_2500_SLAVE
+ };
+ 
++#define MAC_SUPPORTED_WAKES  (WAKE_BCAST | WAKE_UCAST | WAKE_MCAST | \
++			      WAKE_MAGIC | WAKE_ARP)
+ struct lan743x_adapter {
+ 	struct net_device       *netdev;
+ 	struct mii_bus		*mdiobus;
+@@ -1049,6 +1051,8 @@ struct lan743x_adapter {
+ #ifdef CONFIG_PM
+ 	u32			wolopts;
+ 	u8			sopass[SOPASS_MAX];
++	u32			phy_wolopts;
++	u32			phy_wol_supported;
+ #endif
+ 	struct pci_dev		*pdev;
+ 	struct lan743x_csr      csr;
+-- 
+2.34.1
 
 
