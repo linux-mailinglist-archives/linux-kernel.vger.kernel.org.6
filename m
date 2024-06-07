@@ -1,157 +1,134 @@
-Return-Path: <linux-kernel+bounces-205523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E65ED8FFD0C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:25:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD7C8FFD0F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86A691F21B20
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:25:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D6C11C20C3E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F228115380D;
-	Fri,  7 Jun 2024 07:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BDE1552F0;
+	Fri,  7 Jun 2024 07:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cLOvVjG/"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hz6u8Af0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A54153BF6;
-	Fri,  7 Jun 2024 07:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC3C14F10E;
+	Fri,  7 Jun 2024 07:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717745021; cv=none; b=GOhJmxaYJW0zSx5/gwoqYj6gV22kwDnyxrVQuLfo+1XmOdHr6dFo0aeJ+D8KDMWrB5Pkwfiv5BrqCg+WUTPROhRsLnzikU2X8VhdvnzKcKojCWwlWQi4hPT7CUeDOiYf98VECtc8wiMH29oSZpct2Ns1YVHboiJbveTXLY/UESA=
+	t=1717745051; cv=none; b=BmSO9+ArrzS58KWIbT6w4kqMRG/H5PKI9FNt+lSBbYCyL+stNI17AktLjH3XTF/+m4KVGiu+HkQcVHBcoPkj8ug7A5gnh09OnD+Wv8BUX78Eur1/zfZqb2jwX3mK0bbOmEtcqk3ZNj7tzDaZonFW5VbBM2I+gmLBe3Gv7wDuTm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717745021; c=relaxed/simple;
-	bh=6AjstlSgvqy5Myga4SE3f4mOcGOy21gQsyvN4ZBIWe0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=W9kyaZSAzJMuYHiw1y1L1SAHKznUkCepUroKWLVntCszkB0sxz4pPo+3e5uhairHXkrVBsFI2p/klrQ8bHnXoJyBcrTMbFQtQNde6Z3fuMXR2F22MGiEqL92Z1YanK9NaWIS3FZnkK0B/vYeiYI/g+l3eDAjOHIYBSd9k6fEIFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cLOvVjG/; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CA9C41BF204;
-	Fri,  7 Jun 2024 07:23:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1717745017;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I6tMAb+dn3fe7Mnc885F0j2M5rYeGbZyeUY/YOGiMQ4=;
-	b=cLOvVjG/AGwEYg9ropFA8ur+BGiRrnLmuSl/vLSQgHkj1UB7y1577VXzoiE2NsjoWTBU1d
-	4Pm3o6+BcL18ql7j5+tM2Tjp5kQFN7XFQJJA5h8rBW4weCEkNSYqnBcyNmUjlpyk/QKXAI
-	8J4+8k8efAgaoRYKYme5R2ePqfNCeQDX6CYXTtnKfV83kg1TBHuPpbA+9QvzcgJItzCMlJ
-	AxqI0Ryuop8xRqDo+yb4i0+w7I38cBnr8yWxmm60GTIJpQLR4mGmcmdPGRHyqR8OVWj5w2
-	VGBRHXEX7+2ZR2WyDhv5V+Bhu7lYhBb51pbOokVs93fEbXwQ2RmuWSulFdwOJg==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kamel BOUHARA
- <kamel.bouhara@bootlin.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Marco Felsch
- <m.felsch@pengutronix.de>, Jeff LaBundy <jeff@labundy.com>,
- catalin.popescu@leica-geosystems.com, mark.satterthwaite@touchnetix.com,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- bsp-development.geo@leica-geosystems.com
-Subject: Re: [PATCH v13 3/3] Input: Add TouchNetix axiom i2c touchscreen driver
-In-Reply-To: <ZmIq9jmkZtEaGw19@google.com>
-References: <20240603153929.29218-1-kamel.bouhara@bootlin.com>
- <20240603153929.29218-4-kamel.bouhara@bootlin.com>
- <Zl5ZmYyntq7OJOvZ@google.com> <20240605124746.GA57733@tpx1.home>
- <7ca4a22f903313128de5c0f65a49b319@bootlin.com>
- <ZmIq9jmkZtEaGw19@google.com>
-Date: Fri, 07 Jun 2024 09:23:36 +0200
-Message-ID: <87bk4dfc7b.fsf@BLaptop.bootlin.com>
+	s=arc-20240116; t=1717745051; c=relaxed/simple;
+	bh=cg0sM5EZC/m878FCyRqOFVz/GtgaFzoKprs6r3BA7OQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RETTfX0qrI/zW4f8Jaexct57WLxmvgvRFFWE9tavkZS17VDrH+oA6mN8lvOyyDigYBkrioYcHOu+RJo7qnE7Pme6ggT4FmRmUckO8ZawxLTjwHbxpkeRLHYqC+5qn0+mqHreQHTLuL8qO0wHsPpYjve9ON9PgzqCI5MJmu7dU2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hz6u8Af0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C75F4C2BBFC;
+	Fri,  7 Jun 2024 07:24:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717745051;
+	bh=cg0sM5EZC/m878FCyRqOFVz/GtgaFzoKprs6r3BA7OQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hz6u8Af06qm36k5d8dU/Q5jT2KjWf9wD/a4Q2Nvq9jjpy1hCQ/BSzal4uzLml+ruH
+	 xXaiNsXD6Tv3dh6qFgeSiFRU7aPP4jUEyqLmkqfBc5L5p9Nv4fmS325dBBa060/0H/
+	 oaZarKgi+u8AJMovv6FMEn8BQG1ozsMjmUztbv1nExdaC9dHWxpxKB61f/n07SKytA
+	 ny4VXKJj1vVhq58a7yCLdehGmrdklTYcE5jmscCTyLNX9rzdSNerzm6CZK18ZoHVYw
+	 dHue5PDrVTBooNvkzdxXjUZmBfCZcQxgQa6/10qcu5pCSFrMmUgrR+tzgbCfLv+xhw
+	 7ccr2YB59zd3A==
+Message-ID: <4b532e7f-5fba-440c-82ba-915309b6b502@kernel.org>
+Date: Fri, 7 Jun 2024 09:24:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: gregory.clement@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: soc: qcom,smsm: Allow specifying
+ mboxes instead of qcom,ipc
+To: Luca Weiss <luca@z3ntu.xyz>, ~postmarketos/upstreaming@lists.sr.ht,
+ phone-devel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240606-smsm-mbox-v2-0-8abe6b5f01da@z3ntu.xyz>
+ <20240606-smsm-mbox-v2-1-8abe6b5f01da@z3ntu.xyz>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240606-smsm-mbox-v2-1-8abe6b5f01da@z3ntu.xyz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Dmitry,
+On 06/06/2024 21:18, Luca Weiss wrote:
+> The qcom,ipc-N properties are essentially providing a reference to a
+> mailbox, so allow using the mboxes property to do the same in a more
+> structured way.
+> 
+> Since multiple SMSM hosts are supported, we need to be able to provide
+> the correct mailbox for each host. The old qcom,ipc-N properties map to
+> the mboxes property by index, starting at 0 since that's a valid SMSM
+> host also.
+> 
+> Mark the older qcom,ipc-N as deprecated and update the example with
+> mboxes.
+> 
+> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+> ---
 
-> On Wed, Jun 05, 2024 at 03:48:20PM +0200, Kamel BOUHARA wrote:
->> [...]
->>=20
->> > > > +
->> > > > +	error =3D devm_request_threaded_irq(dev, client->irq, NULL,
->> > > > +					  axiom_irq, IRQF_ONESHOT, dev_name(dev), ts);
->> > > > +	if (error) {
->> > > > +		dev_info(dev, "Request irq failed, falling back to polling mode=
-");
->> > >=20
->> > > I do not think you should fall back to polling mode if you fail to g=
-et
->> > > interrupt. If it was not specified (client->irq) then I can see that
->> > > we
->> > > might want to fall back, but if the system configured for using
->> > > interrupt and you can not get it you should bail out.
->> > >=20
->> >=20
->> > Yes, clear, the polling mode can be decorrelated to the irq not provid=
-ed
->> > case.
->>=20
->> Just to make sure I understood, is this what you propose ?
->>=20
->> if (client->irq) {
->>         error =3D devm_request_threaded_irq(...)
->>         if (error) {
->> 		dev_warn(dev, "failed to request IRQ\n");
->> 		client->irq =3D 0;
->>          }
->> }
->>=20
->> if(!client->irq)=C2=A0{
->>     // setup polling stuff
->>     ...
->> }
->
-> No, if you fail to acquire interrupt that was described in ACPI/DT it
-> should be treated as an error, like this:
->
-> 	if (client->irq) {
-> 		error =3D devm_request_threaded_irq(...)
-> 		if (error)
-> 			return dev_err_probe(...);
-> 	} else {
-> 		.. set up polling ..
-> 	}
->
-> This also makes sure that if interrupt controller is not ready and
-> requests probe deferral we will not end up with device in polling
-> mode.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-In the case of probe deferral, I see the benefit of treating it as an
-error. However, in the other case, I find it better to fall back to
-polling mode with a big error message than just exiting in error. As a
-user, I think we prefer having a degraded feature over not having the
-feature at all.
+Best regards,
+Krzysztof
 
-So what about something like:
-
-	if (client->irq) {
-		error =3D devm_request_threaded_irq(...)
-		if (error =3D=3D -EPROBE_DEFER)
-			return dev_err_probe(...);
-		dev_warn("Big error message");
-                client->irq =3D 0;
-	}
-	if (!client->irq) {
-		.. set up polling ..
-	}
-
-Gregory
-
->
-> Thanks.
->
-> --=20
-> Dmitry
 
