@@ -1,104 +1,69 @@
-Return-Path: <linux-kernel+bounces-206653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0ACA900C5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:17:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55305900C60
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:18:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 172AA1C21DDD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:17:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52E461C22187
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EEE149E1B;
-	Fri,  7 Jun 2024 19:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8111314D2B5;
+	Fri,  7 Jun 2024 19:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L0+irMuM"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DZIc7YXZ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VRe6PZMR"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC707345D;
-	Fri,  7 Jun 2024 19:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BE47345D
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 19:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717787864; cv=none; b=p5NvO4ozFV9nufUuRHSnwwLVaJu1sPnDxliatfawyjMaXx/by1QLGt7sQstaicjiojeLMn44hGxaOnKWVOn81NpjU6ZTWzVgvn1/w3xZL0gZnX40l/PL+aNkuny2KIGg+w05gFQ1hwKK6Sg8FJnYBkgW/9DJY1m3tzJFZd+nnUM=
+	t=1717787868; cv=none; b=X5UK3RKyf8NsS3ymoPGNnUFqPxPtibm7tL8PamjjpY08ICtws3IrRg+D86gEfKp0vPeirA3PwXhSmvUb+ZpLV2dAd4fsyon6pZaxMkNVnm6oAkuWW6Q3BQtS9OJm5J8mHBsQAyYwEX5cq5iahmuyp1x4c8sVz9qJNxw3neVKwcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717787864; c=relaxed/simple;
-	bh=d7pNxXN7ZZ7n1TjEK8X8kD9o37/7SEp9NufTqHRsRe0=;
+	s=arc-20240116; t=1717787868; c=relaxed/simple;
+	bh=5NiEdg4JDL4wu6MDStxWmcNbtxLlrtUQR2/dFbPhZ8E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RvuhDWqwYLYpZcCSaJahWBI9nqR60jXBCgjP9M9g5/9axl9ni5x1Dx/nHY+ELpPhuvY4IiuQy91At8ziA92levp6bGRf5TdgWzIZUuxcZmapMIYRyr6Sze06UI3yv1GXGEcMaB7Ak5WY/Muf9Urk6dGrKzmosLzoMJb+mN2RvZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L0+irMuM; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7025c5e6b94so2066729b3a.0;
-        Fri, 07 Jun 2024 12:17:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717787862; x=1718392662; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NMwKu+pMCkNLk3fA7XHYBTAbLNx7GuEVog7Bj2JBALk=;
-        b=L0+irMuM/spDerwIer58QP0RIQnvjANafe+rGwWBs/rdicxBkfhhcAJ6OFG5isNTRe
-         q6l1hSe1odfzEuZOEYYz4wz14LIIq1cGjC9+dSpoJJsaQLRNY9OYKe9WD/ZpDNNCMS6n
-         tXwIKnhrWmBBWt9b3EqAA7mOYlPw3zc/ACs24p7RAkts5rchWsv0kYd9pqs8AD92uK1x
-         iMaKWz2CWwOpgdgniuKBPQ3PMho9l5iEy1CEqrDwhXXYkuHpbAuJoYk5YH2/dkYI2q6q
-         Rp4DCg0xttd7sH9mmanoU0YC+revsDvt7EtbUO+AU+okQdjXse2BR5WmfI7VkvHFK/7A
-         RolA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717787862; x=1718392662;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NMwKu+pMCkNLk3fA7XHYBTAbLNx7GuEVog7Bj2JBALk=;
-        b=gMNYQxP5Ovt+BsrlEzNt850YLxzhf5mWFHT4Ju0yY5Q8kpVBTBXOUhABiqdLynB/po
-         /cLjE0nJLei4MUpbNzlCcYOOcYNHQ9hefNEW7mhp54X+ADvVgJnXSj+OXydnDq5O/9Qx
-         cLMOasxgIBAu0cmFAOz4eE9tRuDbOJ0P3U5iJodeZzTv5GnOqH17ypjUaRjztnaCBV/5
-         7MHn0qu0aa07Ua2Fpa5Bbqi6MxcPBYoLp8iqGRwS2x5bOgaF2r9XuQQDnJIOMLjkgTBI
-         ZkXoRbY5Z935o59AbGy2qvvblw9eRmlgm8TFnTORIOrm6OP3kakPmdVLQdITHHyuADcU
-         KghQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXq5RZG2iRMRBJQECrvPurrCRw82XjJjlBD8C8BG8v+zArh+i+B0iinOPiKvNmcVXOskug6qBmrTxZ2Bm+MsJMK4bM6uj0RBPnFUgHhpfS/t4diU4ISLAv3i6hwuat8RIZWLar9fxkvg1F7diiUQtKgxLJ2pzd6vJj9xM2hxUtaeApU7A0dqxVRg+PtZN9NxPSSZTRmy7EBwCfCOpEYSkEEwxbHX6+csnhUj/QgB5Y1acow7o+TgacQlm4ewaslYiaeyHp/8I=
-X-Gm-Message-State: AOJu0YwLG6n81JuMMrZTcz15Q/B0Vy+3GYaqgr2o254Kgk5o5JPoa/ZB
-	0hVsA+Slj5T3hN0nBQbwbIi221xhfqgzS8ssDCDAGn1c2E2HpIdU
-X-Google-Smtp-Source: AGHT+IHYSV0KCIG3qxQOTEBKKcc1mjWK4+6fwEeVHg+i4ItkqLKlvKzlGZXukzqLa21WlkEglyJVUg==
-X-Received: by 2002:a05:6a20:918f:b0:1af:cf63:3742 with SMTP id adf61e73a8af0-1b2f9cb14e6mr3810470637.42.1717787861751;
-        Fri, 07 Jun 2024 12:17:41 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:b8e9:3447:a54a:310b])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6de200848bfsm2600379a12.1.2024.06.07.12.17.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 12:17:41 -0700 (PDT)
-Date: Fri, 7 Jun 2024 12:17:37 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Erick Archer <erick.archer@outlook.com>
-Cc: Russell King <linux@armlinux.org.uk>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Stephen Chandler Paul <thatslyude@gmail.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>, Ruan Jinjie <ruanjinjie@huawei.com>,
-	"Ricardo B. Marliere" <ricardo@marliere.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Yang Li <yang.lee@linux.alibaba.com>,
-	Kees Cook <keescook@chromium.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Justin Stitt <justinstitt@google.com>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
-	linux-hyperv@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] Input: serio - use sizeof(*pointer) instead of
- sizeof(type)
-Message-ID: <ZmNc0cwc6yzl3_7H@google.com>
-References: <AS8PR02MB7237D3D898CCC9C50C18DE078BFB2@AS8PR02MB7237.eurprd02.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mxLZVtGWxomv9VXiBH2lqt8b22IvqjysObdW0t6M7TnpSWjKOt/XNjNzrJv+BehjX7VhTqwvUS4JUTvp4NhFBx6fz22nbegmnD4ZRcFA2n/BRfSwfq8bJ4+qKANGOPIpceqIZPS+HK4Mp54R19CUPL1/okdbDntLwBpQ8GZfYDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DZIc7YXZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VRe6PZMR; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 7 Jun 2024 21:17:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717787865;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6Pz+8KfKB8d44sqvZtkfrnb/HJ1I20+yDp6ymk4PGT8=;
+	b=DZIc7YXZ/AdKaxx1yuYGNs8uX1drg+VVYSuqZ3k2bGqveKbsJNhFAsZ/MdIAB8NLknpZX1
+	Ry8Bcy84pcctmvkMY79lSnvgyhEElHmd3PtQ7OH3eXWLaBTqq+wESvgGPOt10PiUZ/VR89
+	0Iu2YSjFW+bivje0agik23uS5nwX2lvqkFNoQM62qVig1F6M52FsmXPBzQ6wkho6RydmhT
+	pehKVy4qvJkFDO5cuqiwbFsQD8PCmCYW3t9MXXmxvwxrQCz4H8AwBCR4YfwnDyUoE9VQ6R
+	zjkCEZCmrYaCAmICub5LxbzkR1ziCeIBP8sV9cRJotLMyQ9wLjVRUBgbq1C2rg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717787865;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6Pz+8KfKB8d44sqvZtkfrnb/HJ1I20+yDp6ymk4PGT8=;
+	b=VRe6PZMRpAy5DcvMCaWNwCwE6SUWcvfl0HwjzfM1J5+WbgThqJyZWzE7wIubH3bBkZjvig
+	riaMVbuaprDMpCBg==
+From: Nam Cao <namcao@linutronix.de>
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH 7/7] riscv: remove limit on the size of read-only section
+ for XIP kernel
+Message-ID: <20240607191738.YUFQKt3U@linutronix.de>
+References: <cover.1715286093.git.namcao@linutronix.de>
+ <9eea4b61f7b6300def3b6582d8e465ef4207501e.1715286093.git.namcao@linutronix.de>
+ <2e092f39-0716-4b73-9268-da9211a4b600@ghiti.fr>
+ <20240602073210.w0CKrGlj@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,18 +72,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <AS8PR02MB7237D3D898CCC9C50C18DE078BFB2@AS8PR02MB7237.eurprd02.prod.outlook.com>
+In-Reply-To: <20240602073210.w0CKrGlj@linutronix.de>
 
-On Fri, Jun 07, 2024 at 07:04:23PM +0200, Erick Archer wrote:
-> It is preferred to use sizeof(*pointer) instead of sizeof(type)
-> due to the type of the variable can change and one needs not
-> change the former (unlike the latter). This patch has no effect
-> on runtime behavior.
+On Sun, Jun 02, 2024 at 09:32:17AM +0200, Nam Cao wrote:
+> On Mon, May 27, 2024 at 02:58:14PM +0200, Alexandre Ghiti wrote:
+> > > diff --git a/arch/riscv/kernel/vmlinux-xip.lds.S b/arch/riscv/kernel/vmlinux-xip.lds.S
+> > > index 8c3daa1b0531..01f73f2ffecc 100644
+> > > --- a/arch/riscv/kernel/vmlinux-xip.lds.S
+> > > +++ b/arch/riscv/kernel/vmlinux-xip.lds.S
+> > > @@ -65,10 +65,10 @@ SECTIONS
+> > >    * From this point, stuff is considered writable and will be copied to RAM
+> > >    */
+> > >   	__data_loc = ALIGN(PAGE_SIZE);		/* location in file */
+> > > -	. = KERNEL_LINK_ADDR + XIP_OFFSET;	/* location in memory */
+> > > +	. = ALIGN(SZ_2M);			/* location in memory */
+> > 
+> > You can't use SZ_2M here since it corresponds to PMD_SIZE for rv64 but on
+> > rv32 (which is allowed to use xip kernels), it's 4MB. Use SECTION_ALIGN
+> > instead.
 > 
-> Signed-off-by: Erick Archer <erick.archer@outlook.com>
+> SECTION_ALIGN doesn't work unfortunately. For XIP, SECTION_ALIGN is
+> L1_CACHE_BYTES which is 64 bytes, but we need at least PMD_SIZE alignment
+> to setup virtual mapping.
 
-Applied, thank you.
+Sorry, I think I had tunnel vision. The solution is so obvious.
 
--- 
-Dmitry
+I will send v2 shortly. Thanks so much for spending time reviewing.
+
+Best regards,
+Nam
+> 
+> Ideally we use PMD_SIZE here, but I can't #include that header file.
+> Probably we can refactor the header files so that we can #include the
+> header file that PMD_SIZE is in. But I am not sure if it's worth it.
+> 
+> I'm thinking just go for:
+> ifdef CONFIG_64_BIT
+> 	. = ALIGN(SZ_2M);
+> #else
+> 	. = ALIGN(SZ_4M);
+> #endif
+> 
+> Or even simpler, just:
+> 	. = ALIGN(SZ_4M);
+> 
+> As much as I hate magic numbers, I think we can give linker script some
+> leeway. Perhaps with an explanation why this alignment is chosen?
+> 
+> Or do you have a better idea?
+> 
+> Best regards,
+> Nam
 
