@@ -1,131 +1,198 @@
-Return-Path: <linux-kernel+bounces-206305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87B51900799
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:54:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0AB590079E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:54:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2422029126C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:54:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 052961C2474C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F3D19B58F;
-	Fri,  7 Jun 2024 14:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A77619CCFF;
+	Fri,  7 Jun 2024 14:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="EVyk/tlt"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (1024-bit key) header.d=eh5.me header.i=@eh5.me header.b="P3P6vckA"
+Received: from mail.eh5.me (mail.eh5.me [45.76.111.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63A713F42E;
-	Fri,  7 Jun 2024 14:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE87919752F;
+	Fri,  7 Jun 2024 14:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.76.111.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717771547; cv=none; b=h84qou6TDzZg877QMAw9Rpxqo1VqIwlIDoj/x3H0tsy+qrNFK+PJjmIMUwejnkFKblPlPasTjZa7ivX9TwQx7mkHFd9X4MSwfAif8OMpvBghvLR6kt+mvYXqbXRP9feSIYZBBUePZNpjgRcfJGFlaHgwQOlFpBP/EHeBZ6hvzzc=
+	t=1717771604; cv=none; b=Ooj05DezlXFCAhXZyZOBik8TT1Gn52X7jVuFUWWi5TGRXJ6HJXae/UtOONG56iPJwlK5Sq4U+0mnSg8GNR0LLGauP3zTKKXq+jVmFSeye4UTAlFVd+CM7Te0/nWX8121d7Ci6dPyCjnqkz1D/IFoSj0V5c67c9JCJxpFj3PENE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717771547; c=relaxed/simple;
-	bh=+26zE7pepphgrDVsnqvGEVAq//JALxnWLBjwBy3WjA8=;
+	s=arc-20240116; t=1717771604; c=relaxed/simple;
+	bh=Gt0HkIEfUxbCWkwENOJ1j6PQBdm4XvC9znlgCeBcdyw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CeYcH3w03SGdSTT7RZUckqCSnqf/79dIwly3YJnNmxaKNrlAw6S8iUVKzfDjrkfLqmOCLGcSDyPc89xDxv/F5ELceEFsW5M5wSXqKnui+sS8WtqZFB1dt7blT5yfnNy2Jn1m+8LZUCyHb8os93HyjcaLZY3ZvCHG4yhBcgfVhsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tronnes.org; spf=pass smtp.mailfrom=tronnes.org; dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b=EVyk/tlt; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tronnes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tronnes.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org
-	; s=ds202312; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:Sender:Reply-To:
-	Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
-	References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
-	List-Owner:List-Archive; bh=0pBBebWaKItSZZvGMg+oo04bl3J9t4F+/w8mYuUg+g8=; b=E
-	Vyk/tlt0i/iV9mQcEq11i6SevJJysuk7swmpFjcu8RhPQkRNmczBLfrk8FrjPzuQUzM0dFIphbid4
-	HTUyIn0ivC+RYyvkR/DUMzLyYE8tJATa2TN2YPPrzHYPji3zO33H3YMBVE6wboJh3RF310ZpKZf3b
-	ZQy2iPGBVe8fwhT5BninUVixCYGJxU9WkxdVsAZDiC+vPkoSvfCH265bKar765G63F0sYSGfXWWHj
-	MOg7AR010IIYjXIZNikYdjpko6auijngGej5WjtJ51qttMsYCMCRjuxnLcMs7Pfj8AvCWMkoU1dVY
-	oCl7gR84/C0WZWvIvhW+/lQVKGBgpSoHw==;
-Received: from [2a01:799:962:4900:815f:3dd0:60d8:6458] (port=56414)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <noralf@tronnes.org>)
-	id 1sFaqc-009Va2-0S;
-	Fri, 07 Jun 2024 16:45:42 +0200
-Message-ID: <6537508e-8a67-42d0-911a-45e14852f818@tronnes.org>
-Date: Fri, 7 Jun 2024 16:45:36 +0200
+	 In-Reply-To:Content-Type; b=QLH9AXn07y8vERh7BeTh4ugCDP1wi4K2soYWZ4nRPf+DhOuSCU7UFI3jFDHDj9mz3Z9qScTmAQGz7Qo4/dMUmworffmika24jBRPvz8cpr/hyCN4yrFa7bdUGOK8hIdoKTriMnELJQeiY+tPMR7tj3gQedj/tlXDLwUlzCaOZbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=eh5.me; spf=pass smtp.mailfrom=eh5.me; dkim=pass (1024-bit key) header.d=eh5.me header.i=@eh5.me header.b=P3P6vckA; arc=none smtp.client-ip=45.76.111.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=eh5.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eh5.me
+Message-ID: <3dab2269-a048-4750-bea8-cce245df075a@eh5.me>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=eh5.me; s=dkim;
+	t=1717771593;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=706MONW8kwoOXWqy8lP/xTe9KGJQQ7km3fno9upjptk=;
+	b=P3P6vckAe+9O51qpHIr+vhuqx+or43Mdi2J3KmjjDmpZdnZ5GpVvg0ejQr1GkPyGv9t9sz
+	uv0N/Q/MYxWm8fBGq0HkyUT5HN1lGOE5xQHeJa23B1/QS5p1EdRK3+ckhKGVQkvNWGlzjT
+	LD0u9azQVehcATSjJhF8ueFykN0P8ps=
+Date: Fri, 7 Jun 2024 22:46:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/5] drm/tiny: panel-mipi-dbi: Support 18 bits per
- color RGB666
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, David Lechner <david@lechnology.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>,
- Tommaso Merciai <tommaso.merciai@amarulasolutions.com>
-References: <20240604-panel-mipi-dbi-rgb666-v4-0-d7c2bcb9b78d@tronnes.org>
+Subject: Re: [PATCH v2 2/4] pinctrl: rockchip: fix pinmux bits for RK3328
+ GPIO3-B pins
+To: Heiko Stuebner <heiko@sntech.de>, Linus Walleij
+ <linus.walleij@linaro.org>, kever.yang@rock-chips.com
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240606125755.53778-1-i@eh5.me>
+ <20240606125755.53778-3-i@eh5.me> <4786379.ElGaqSPkdT@phil>
 Content-Language: en-US
-From: =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>
-In-Reply-To: <20240604-panel-mipi-dbi-rgb666-v4-0-d7c2bcb9b78d@tronnes.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Huang-Huang Bao <i@eh5.me>
+In-Reply-To: <4786379.ElGaqSPkdT@phil>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
-On 6/4/24 15:20, Noralf Trønnes via B4 Relay wrote:
-> Hi,
+On 6/7/24 20:32, Heiko Stuebner wrote:
+> Am Donnerstag, 6. Juni 2024, 14:57:53 CEST schrieb Huang-Huang Bao:
+>> The pinmux bits for GPIO3-B1 to GPIO3-B6 pins are not explicitly
+>> specified in RK3328 TRM, however we can get hint from pad name and its
+>> correspinding IOMUX setting for pins in interface descriptions. The
+>> correspinding IOMIX settings for these pins can be found in the same
+>> row next to occurrences of following pad names in RK3328 TRM.
+>>
+>> GPIO3-B1:  IO_TSPd5m0_CIFdata5m0_GPIO3B1vccio6
+>> GPIO3-B2: IO_TSPd6m0_CIFdata6m0_GPIO3B2vccio6
+>> GPIO3-B3: IO_TSPd7m0_CIFdata7m0_GPIO3B3vccio6
+>> GPIO3-B4: IO_CARDclkm0_GPIO3B4vccio6
+>> GPIO3-B5: IO_CARDrstm0_GPIO3B5vccio6
+>> GPIO3-B6: IO_CARDdetm0_GPIO3B6vccio6
+>>
+>> Add pinmux data to rk3328_mux_recalced_data as mux register offset for
+>> these pins does not follow rockchip convention.
+>>
+>> Signed-off-by: Huang-Huang Bao <i@eh5.me>
 > 
-> In this version I've fixed up a commit message that I had forgotten to 
-> write before sending and improved a struct member name.
+> This matches the information that I found in my TRM, thanks to your
+> detailed explanation.
 > 
-> See version 1 of the patchset for the full cover letter.
+> Though I of course can't say if the TRM is just wrong or the hardware
+> changed after the pads-description was written.
 > 
-> Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
-> ---
+> Did you test the usage of these pins on your board?
+> 
 
-Thanks a lot for reviewing the patches, applied to drm-misc-next.
+My board(NanoPi R2S) is kinda integrated and does not have GPIO3 pins so
+I can't test these pins directly.
 
-Noralf.
+ From DTS for RK3328(arch/arm64/boot/dts/rockchip/rk3328*.dts*), there is
+pinctrl/cif-0/dvp_d2d9_m0 referencing part of GPIO3-B1+ pins(GPIO3-B1 to
+GPIO3-B4) that indeed matches "Table 15-1 TSP interface description"
+which contains hint pad names. And this DTS node exists from
+initial commit to add RK3328 dtsi
+(52e02d377a72 "arm64: dts: rockchip: add core dtsi file for RK3328 SoCs").
 
-> Changes in v4:
-> - Expand the commit message (Dmitry)
-> - s/emulation_format/pixel_format/ (Dmitry)
-> - Link to v3: https://lore.kernel.org/r/20240603-panel-mipi-dbi-rgb666-v3-0-59ed53ca73da@tronnes.org
+Though this node is not actually used in any RK3328 DTSs. So I can't
+test indirectly either.
+
+Huang-Huang
+
 > 
-> Changes in v3:
-> - Added r-b's to patch 1 and 5
-> - Link to v2: https://lore.kernel.org/r/20240512-panel-mipi-dbi-rgb666-v2-0-49dd266328a0@tronnes.org
+> Heiko
 > 
-> Changes in v2:
-> - binding: Use 'default: r5g6b5' (Rob)
-> - Link to v1: https://lore.kernel.org/r/20240507-panel-mipi-dbi-rgb666-v1-0-6799234afa3e@tronnes.org
 > 
-> ---
-> Noralf Trønnes (5):
->       dt-bindings: display: panel: mipi-dbi-spi: Add a pixel format property
->       drm/mipi-dbi: Remove mipi_dbi_machine_little_endian()
->       drm/mipi-dbi: Make bits per word configurable for pixel transfers
->       drm/mipi-dbi: Add support for DRM_FORMAT_RGB888
->       drm/tiny: panel-mipi-dbi: Support the pixel format property
 > 
->  .../bindings/display/panel/panel-mipi-dbi-spi.yaml | 30 +++++++++
->  drivers/gpu/drm/drm_mipi_dbi.c                     | 76 +++++++++++++++-------
->  drivers/gpu/drm/tiny/panel-mipi-dbi.c              | 55 +++++++++++++++-
->  include/drm/drm_mipi_dbi.h                         | 10 +++
->  4 files changed, 147 insertions(+), 24 deletions(-)
-> ---
-> base-commit: 0209df3b4731516fe77638bfc52ba2e9629c67cd
-> change-id: 20240405-panel-mipi-dbi-rgb666-4e033787d6c9
+>> ---
+>>   drivers/pinctrl/pinctrl-rockchip.c | 51 ++++++++++++++++++++++++++++++
+>>   1 file changed, 51 insertions(+)
+>>
+>> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+>> index 78dcf4daccde..23531ea0d088 100644
+>> --- a/drivers/pinctrl/pinctrl-rockchip.c
+>> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+>> @@ -634,17 +634,68 @@ static struct rockchip_mux_recalced_data rk3308_mux_recalced_data[] = {
+>>   
+>>   static struct rockchip_mux_recalced_data rk3328_mux_recalced_data[] = {
+>>   	{
+>> +		/* gpio2_b7_sel */
+>>   		.num = 2,
+>>   		.pin = 15,
+>>   		.reg = 0x28,
+>>   		.bit = 0,
+>>   		.mask = 0x7
+>>   	}, {
+>> +		/* gpio2_c7_sel */
+>>   		.num = 2,
+>>   		.pin = 23,
+>>   		.reg = 0x30,
+>>   		.bit = 14,
+>>   		.mask = 0x3
+>> +	}, {
+>> +		/* gpio3_b1_sel */
+>> +		.num = 3,
+>> +		.pin = 9,
+>> +		.reg = 0x44,
+>> +		.bit = 2,
+>> +		.mask = 0x3
+>> +	}, {
+>> +		/* gpio3_b2_sel */
+>> +		.num = 3,
+>> +		.pin = 10,
+>> +		.reg = 0x44,
+>> +		.bit = 4,
+>> +		.mask = 0x3
+>> +	}, {
+>> +		/* gpio3_b3_sel */
+>> +		.num = 3,
+>> +		.pin = 11,
+>> +		.reg = 0x44,
+>> +		.bit = 6,
+>> +		.mask = 0x3
+>> +	}, {
+>> +		/* gpio3_b4_sel */
+>> +		.num = 3,
+>> +		.pin = 12,
+>> +		.reg = 0x44,
+>> +		.bit = 8,
+>> +		.mask = 0x3
+>> +	}, {
+>> +		/* gpio3_b5_sel */
+>> +		.num = 3,
+>> +		.pin = 13,
+>> +		.reg = 0x44,
+>> +		.bit = 10,
+>> +		.mask = 0x3
+>> +	}, {
+>> +		/* gpio3_b6_sel */
+>> +		.num = 3,
+>> +		.pin = 14,
+>> +		.reg = 0x44,
+>> +		.bit = 12,
+>> +		.mask = 0x3
+>> +	}, {
+>> +		/* gpio3_b7_sel */
+>> +		.num = 3,
+>> +		.pin = 15,
+>> +		.reg = 0x44,
+>> +		.bit = 14,
+>> +		.mask = 0x3
+>>   	},
+>>   };
+>>   
+>>
 > 
-> Best regards,
+> 
+> 
+> 
 
