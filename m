@@ -1,73 +1,39 @@
-Return-Path: <linux-kernel+bounces-205749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA7B8FFFC5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:41:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E93358FFFC9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E06B28303E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:41:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 742B5281B28
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B9B15B990;
-	Fri,  7 Jun 2024 09:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hDd3z6yk"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF3F746E;
-	Fri,  7 Jun 2024 09:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4445215B969;
+	Fri,  7 Jun 2024 09:43:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3C013790B
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717753308; cv=none; b=k51hDmGFng+6ZfklI4z/kKMfBqvhcsuDwZGya56G31PAbjbg9CYP66XdhE0SeTbwDB3HiK7kDGfbA9Ssn6fz6+lAFBZrRteOMgIbeMk5Fr72HhYE5FmIipMXKPr42S+ogpVcKjXqNJJUR7VHv4FFyNEGkxt/dGjuhRK6LBQdK5o=
+	t=1717753400; cv=none; b=Uj7NV4DPlNgwSHOFNochnhP4VxPWYcLbA++mb4HjT4fj0amrB+A4EibdkFCCALqjzkqIhdSAgGadunacVCM9JIZHRPSxAu6pm8cWUtsNJuKIbnQ8h7uStWbYiZAKOQCusWWOP7c2rrF3+Hp/dvPbtiEO1pG6G4rFPRXq6H/Tetc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717753308; c=relaxed/simple;
-	bh=ynvlvVbo/tWkOIken/yYFOvDfSVzxKWB8fQuH4Z+Q54=;
+	s=arc-20240116; t=1717753400; c=relaxed/simple;
+	bh=aYxAMbiC9GFuHLeU5OXRDfs9gVY0Lm4yjtRm2oC83Qk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OsC1OjDh4ZV2U6vHZS54FDamQGqljpIOeKlsSb7URrEVTPA7kGS7Z4fX58QKNzsyk943Ka4Ve08QHRYSiYfdeiO128BBbsyKPdwMxgSKXcNR7n+uG1BPDWb9r8llYZQajge0k6TEqNOKFqzMlYchMAM3PsEOWHXSjgNbDoHxYz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hDd3z6yk; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a626919d19dso551960666b.0;
-        Fri, 07 Jun 2024 02:41:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717753305; x=1718358105; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iHthyJxfQWG9RW2oiS/t6zGoou7lw4UFn78RRn4Kbbo=;
-        b=hDd3z6ykQ7ewoMES4zYloy15EVnXfP3OsvSYJYESsk2cfn4u+TJBYVR0/FISWp77lA
-         +q6ouGRDEJCAe3xFjCGipilVMVPSPtTQO23++aNuNhOUh4qI10Roi7LqDcVjj9T3pfz9
-         sSgi0caqBxz+yeVCDoMXmAi1kHuR2jvR0JqeF4V3ovFokszJV2n1ZrsLqr9z+NwSgDES
-         bw0+ky6HaOMLgXZgyepArkZlyu4NxTH13WBH49gkeSeMXDq8d6iubEInaluKXwMPNbFe
-         k2GzkJe4LvTre0Pfg8V4dhtTLSl76//R/1Z+7yz07CVtZMxbLfDzIiPHwb/EVWbsVST1
-         3XuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717753305; x=1718358105;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iHthyJxfQWG9RW2oiS/t6zGoou7lw4UFn78RRn4Kbbo=;
-        b=oC2NbdUbIfvSohsqe+LRkyq/oMd0P2TLNnBUZ8fcikMetBGrX9Sd+Wl7j0uD3OozH0
-         6Mwnz39/szG+pvKeqeqe320cBUERWCp+OqIMZnxIrodMHeaB7zFCuUt0b2Pz5lCVBdLJ
-         2w9Zek5GtdHGE1prM3aosHYKgvgNYlSxspzahibdQz4zBQE8AKbffzdFSSxezi3XTGLS
-         tVSrwfJ5aMEm49lHwKpCM602/W7m4xC+eYR8PErmLVbCp+65yGrsQ5ZJSFBedZGXiYbE
-         vQCIkrOfMTgCqskMC15bmGJL6sOQ5zDiQbUFi6BDmNeudwqZSpZ8JoQg1zgq7a3SZQiK
-         Dl3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXbTs7zq+pr1w/V0DZC1scWxEhbo1R2+hjQVM+SH+QdAC6EYAWhvRNSGZzoZU/2j/8kcsbpUCTZEg9rlwTlQVmtDie8dCAvdMhlhjArXbEkkNgbdXC3WFD/Q8wY2ITUP77VwGxvduxGYz6Ti3iOtFZpjGKQeJvj4cjtabajaTC+ROPQXA==
-X-Gm-Message-State: AOJu0YyIo5sN2E6ULwx91REJo7BnVdyY2CNvpTUm8u9ES1+Facne262U
-	mbg8vMnszD1dkx6KwUrOTx2Ggu0q23tS8wKw2bHFPyJJDXPm/Ung
-X-Google-Smtp-Source: AGHT+IF3iq8j3f7Ft+xnRNqD2FMzh7+5wrp83qD5WemFIuZYfqTXJxrAZ5OB7zdPhvJmFFEuZnHiAQ==
-X-Received: by 2002:a17:906:e56:b0:a6e:372f:5783 with SMTP id a640c23a62f3a-a6e372f5b4dmr59107566b.4.1717753304658;
-        Fri, 07 Jun 2024 02:41:44 -0700 (PDT)
-Received: from [192.168.0.220] ([83.103.132.21])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c80727e1esm218698066b.190.2024.06.07.02.41.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jun 2024 02:41:44 -0700 (PDT)
-Message-ID: <1c6d409b-ba9e-4a19-a6cb-e06209a24154@gmail.com>
-Date: Fri, 7 Jun 2024 12:41:42 +0300
+	 In-Reply-To:Content-Type; b=Wa55gcHvDJbfNg6ZzvjZg9I9Uv3ihcXxAQOuiN88MkBcvq7gCKziSC7okfigyu6J0iECzUgaFFk9rFzZht6Lsb8oWwHEPWWpi+frtiZwiZyKmhftNBCk60AeIrMT06UZIHRgFpunNd8pYMuUUH1HxSvhdGDgf+RVgBoUi6Xt4o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 96B9F2F4;
+	Fri,  7 Jun 2024 02:43:42 -0700 (PDT)
+Received: from [10.57.70.246] (unknown [10.57.70.246])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30C913F762;
+	Fri,  7 Jun 2024 02:43:17 -0700 (PDT)
+Message-ID: <968fec1a-9a54-4b2d-a54c-653d84393c82@arm.com>
+Date: Fri, 7 Jun 2024 10:43:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,103 +41,155 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 9/9] iio: adc: ad7173: Add support for AD411x devices
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- dumitru.ceclan@analog.com
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240606-ad4111-v6-0-573981fb3e2e@analog.com>
- <20240606-ad4111-v6-9-573981fb3e2e@analog.com>
- <389546877ae11b18928b432e86710acf83974f67.camel@gmail.com>
-Content-Language: en-US
-From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
-In-Reply-To: <389546877ae11b18928b432e86710acf83974f67.camel@gmail.com>
+Subject: Re: [PATCH 0/2] mm: swap: mTHP swap allocator base on swap cluster
+ order
+Content-Language: en-GB
+To: Chris Li <chrisl@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Kairui Song <kasong@tencent.com>, "Huang, Ying" <ying.huang@intel.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Barry Song <baohua@kernel.org>
+References: <20240524-swap-allocator-v1-0-47861b423b26@kernel.org>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20240524-swap-allocator-v1-0-47861b423b26@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 07/06/2024 12:20, Nuno Sá wrote:
-> On Thu, 2024-06-06 at 19:07 +0300, Dumitru Ceclan via B4 Relay wrote:
->> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
->>
->> Add support for AD4111/AD4112/AD4114/AD4115/AD4116.
->>
->> The AD411X family encompasses a series of low power, low noise, 24-bit,
->> sigma-delta analog-to-digital converters that offer a versatile range of
->> specifications.
->>
->> This family of ADCs integrates an analog front end suitable for processing
->> both fully differential and single-ended, bipolar voltage inputs
->> addressing a wide array of industrial and instrumentation requirements.
->>
->> - All ADCs have inputs with a precision voltage divider with a division
->>   ratio of 10.
->> - AD4116 has 5 low level inputs without a voltage divider.
->> - AD4111 and AD4112 support current inputs (0 mA to 20 mA) using a 50ohm
->>   shunt resistor.
->>
->> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
->> ---
->>  drivers/iio/adc/ad7173.c | 317 ++++++++++++++++++++++++++++++++++++++++++----
->> -
->>  1 file changed, 285 insertions(+), 32 deletions(-)
->>
->> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
->> index 58da5717fd36..cfcd12447e24 100644
->> --- a/drivers/iio/adc/ad7173.c
->> +++ b/drivers/iio/adc/ad7173.c
->>
-> ...
-> 
->>  static const struct ad7173_device_info ad7172_2_device_info = {
->>  	.name = "ad7172-2",
->>  	.id = AD7172_2_ID,
->> -	.num_inputs = 5,
->> +	.num_voltage_in = 5,
->>  	.num_channels = 4,
->>  	.num_configs = 4,
->>  	.num_gpios = 2,
->> +	.higher_gpio_bits = false,
-> 
-> No need to explicitly set to 'false'. Ditto for the other places...
-> 
-> ...
-> 
->>
->>  static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
->>  					      unsigned int ain0, unsigned int
->> ain1)
->>  {
->> @@ -946,15 +1145,30 @@ static int ad7173_validate_voltage_ain_inputs(struct
->> ad7173_state *st,
->>  	    st->info->has_pow_supply_monitoring)
->>  		return 0;
->>  
->> -	special_input0 = AD7173_IS_REF_INPUT(ain0);
->> -	special_input1 = AD7173_IS_REF_INPUT(ain1);
->> +	special_input0 = AD7173_IS_REF_INPUT(ain0) ||
->> +			 (ain0 == AD4111_VINCOM_INPUT && st->info-
->>> has_vincom_input);
->> +	special_input1 = AD7173_IS_REF_INPUT(ain1) ||
->> +			 (ain1 == AD4111_VINCOM_INPUT && st->info-
->>> has_vincom_input);
->> +
-> 
-> Wondering... can ain1 (or ain0) be AD4111_VINCOM_INPUT and !st->info-
->> has_vincom_input? Would that actually be acceptable? It would assume it's not
-> so we should check that right? Or am I missing something?
-> 
-> - Nuno Sá
-> 
+Sorry I'm late to the discussion - I've been out for the last 3.5 weeks and just
+getting through my mail now...
 
-It will fail when we check for the number of voltage inputs:
-(ain0 >= st->info->num_voltage_in && !special_input0) 
-as special_input will not be true if has_vincom_input is false
 
-Indeed this check is a bit hidden, should it be more explicit?
+On 24/05/2024 18:17, Chris Li wrote:
+> This is the short term solutiolns "swap cluster order" listed
+> in my "Swap Abstraction" discussion slice 8 in the recent
+> LSF/MM conference.
+
+I've read the article on lwn and look forward to watching the video once
+available. The longer term plans look interesting.
+
+> 
+> When commit 845982eb264bc "mm: swap: allow storage of all mTHP
+> orders" is introduced, it only allocates the mTHP swap entries
+> from new empty cluster list. That works well for PMD size THP,
+> but it has a serius fragmentation issue reported by Barry.
+
+Yes, that was a deliberate initial approach to be conservative, just like the
+original PMD-size THP support. I'm glad to see work to improve the situation!
+
+> 
+> https://lore.kernel.org/all/CAGsJ_4zAcJkuW016Cfi6wicRr8N9X+GJJhgMQdSMp+Ah+NSgNQ@mail.gmail.com/
+> 
+> The mTHP allocation failure rate raises to almost 100% after a few
+> hours in Barry's test run.
+> 
+> The reason is that all the empty cluster has been exhausted while
+> there are planty of free swap entries to in the cluster that is
+> not 100% free.
+> 
+> Address this by remember the swap allocation order in the cluster.
+> Keep track of the per order non full cluster list for later allocation.
+
+I don't immediately see how this helps because memory is swapped back in
+per-page (currently), so just because a given cluster was initially filled with
+entries of a given order, doesn't mean that those entries are freed in atomic
+units; only specific pages could have been swapped back in, meaning the holes
+are not of the required order. Additionally, scanning could lead to order-0
+pages being populated in random places.
+
+My naive assumption was that the obvious way to solve this problem in the short
+term would be to extend the scanning logic to be able to scan for an arbitrary
+order. That way you could find an allocation of the required order in any of the
+clusters, even a cluster that was not originally allocated for the required order.
+
+I guess I should read your patches to understand exactly what you are doing
+rather than making assumptions...
+
+Thanks,
+Ryan
+
+> 
+> This greatly improve the sucess rate of the mTHP swap allocation.
+> While I am still waiting for Barry's test result. I paste Kairui's test
+> result here:
+> 
+> I'm able to reproduce such an issue with a simple script (enabling all order of mthp):
+> 
+> modprobe brd rd_nr=1 rd_size=$(( 10 * 1024 * 1024))
+> swapoff -a
+> mkswap /dev/ram0
+> swapon /dev/ram0
+> 
+> rmdir /sys/fs/cgroup/benchmark
+> mkdir -p /sys/fs/cgroup/benchmark
+> cd /sys/fs/cgroup/benchmark
+> echo 8G > memory.max
+> echo $$ > cgroup.procs
+> 
+> memcached -u nobody -m 16384 -s /tmp/memcached.socket -a 0766 -t 32 -B binary &
+> 
+> /usr/local/bin/memtier_benchmark -S /tmp/memcached.socket \
+>         -P memcache_binary -n allkeys --key-minimum=1 \
+>         --key-maximum=18000000 --key-pattern=P:P -c 1 -t 32 \
+>         --ratio 1:0 --pipeline 8 -d 1024
+> 
+> Before:
+> Totals      48805.63         0.00         0.00         5.26045         1.19100        38.91100        59.64700     51063.98
+> After:
+> Totals      71098.84         0.00         0.00         3.60585         0.71100        26.36700        39.16700     74388.74
+> 
+> And the fallback ratio dropped by a lot:
+> Before:
+> hugepages-32kB/stats/anon_swpout_fallback:15997
+> hugepages-32kB/stats/anon_swpout:18712
+> hugepages-512kB/stats/anon_swpout_fallback:192
+> hugepages-512kB/stats/anon_swpout:0
+> hugepages-2048kB/stats/anon_swpout_fallback:2
+> hugepages-2048kB/stats/anon_swpout:0
+> hugepages-1024kB/stats/anon_swpout_fallback:0
+> hugepages-1024kB/stats/anon_swpout:0
+> hugepages-64kB/stats/anon_swpout_fallback:18246
+> hugepages-64kB/stats/anon_swpout:17644
+> hugepages-16kB/stats/anon_swpout_fallback:13701
+> hugepages-16kB/stats/anon_swpout:18234
+> hugepages-256kB/stats/anon_swpout_fallback:8642
+> hugepages-256kB/stats/anon_swpout:93
+> hugepages-128kB/stats/anon_swpout_fallback:21497
+> hugepages-128kB/stats/anon_swpout:7596
+> 
+> (Still collecting more data, the success swpout was mostly done early, then the fallback began to increase, nearly 100% failure rate)
+> 
+> After:
+> hugepages-32kB/stats/swpout:34445
+> hugepages-32kB/stats/swpout_fallback:0
+> hugepages-512kB/stats/swpout:1
+> hugepages-512kB/stats/swpout_fallback:134
+> hugepages-2048kB/stats/swpout:1
+> hugepages-2048kB/stats/swpout_fallback:1
+> hugepages-1024kB/stats/swpout:6
+> hugepages-1024kB/stats/swpout_fallback:0
+> hugepages-64kB/stats/swpout:35495
+> hugepages-64kB/stats/swpout_fallback:0
+> hugepages-16kB/stats/swpout:32441
+> hugepages-16kB/stats/swpout_fallback:0
+> hugepages-256kB/stats/swpout:2223
+> hugepages-256kB/stats/swpout_fallback:6278
+> hugepages-128kB/stats/swpout:29136
+> hugepages-128kB/stats/swpout_fallback:52
+> 
+> Reported-by: Barry Song <21cnbao@gmail.com>
+> Tested-by: Kairui Song <kasong@tencent.com>
+> Signed-off-by: Chris Li <chrisl@kernel.org>
+> ---
+> Chris Li (2):
+>       mm: swap: swap cluster switch to double link list
+>       mm: swap: mTHP allocate swap entries from nonfull list
+> 
+>  include/linux/swap.h |  18 ++--
+>  mm/swapfile.c        | 252 +++++++++++++++++----------------------------------
+>  2 files changed, 93 insertions(+), 177 deletions(-)
+> ---
+> base-commit: c65920c76a977c2b73c3a8b03b4c0c00cc1285ed
+> change-id: 20240523-swap-allocator-1534c480ece4
+> 
+> Best regards,
 
 
