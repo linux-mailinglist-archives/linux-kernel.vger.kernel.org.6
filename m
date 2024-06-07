@@ -1,164 +1,266 @@
-Return-Path: <linux-kernel+bounces-206664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C051900C7A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:31:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A034900C7C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2876DB2199C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:31:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C61A7284EA3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB6314D2A6;
-	Fri,  7 Jun 2024 19:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89F014B958;
+	Fri,  7 Jun 2024 19:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nt8k8nv/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a8Et7FOS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED32DDC9;
-	Fri,  7 Jun 2024 19:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBFA1DFEB
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 19:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717788659; cv=none; b=jI+3SQg7yHfWQDJwcAA52/JDN1kZaeNsV4NffZDZ8mQ3QhUypaK2NCvfk/6w5bOey7AofzR+SwZ9NgT5FtozYPIpggwXwRsSXA1Y34ccW6iHoBgdlH3AswmmwOrJg38rJc/hkaHpR8IPxra8KG5R8DyV7J54D+o9zBSVX3JWKKE=
+	t=1717788752; cv=none; b=H55jnxmtaMaCgx0VD7Ms59fV8In7XD8nezu/ExUjaDvj+3MOC7CKqI8xehvsCORrBC8HEr6yqhl8wPjJ4kw1tt4ZuLKbGwmrf/PXOlLAGmnSIx3taaUoLeya9tyXcmPvXFC1rDBfF2zu2FZ2J7ly3UGShgcFMS26kG75W5ybJRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717788659; c=relaxed/simple;
-	bh=D3j+/yjnNIGv7J2RoQZW6oh/+NmHkvPnpEUbKX+xt1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Q7MLo0EDRgC+PhM95geJzIb0LKDUYg/WeuJxoLfviHFywdsFEmUuwmm4uY4M96VZXB9LVXdVtU2/SR92GQctVd1pBRI6WAoKhxgRkwwzKeEZriPfuKrcxyrsF9ZQpBd3pleCzdRcKiODtxFBm/If/RF36gD5BXofYYa+vM74uWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nt8k8nv/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B38BC2BBFC;
-	Fri,  7 Jun 2024 19:30:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717788658;
-	bh=D3j+/yjnNIGv7J2RoQZW6oh/+NmHkvPnpEUbKX+xt1I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=nt8k8nv/j9c0E53eFscg2s+72y2p8Z1M1saOXCrq5RBsOHkjTDdtObZlW5ALXU/Gt
-	 4ShFkTj4ji1MM06yyw3B2Sn2lUlfsVi5VxNXKJLPv1pKO9t/IwPUZh1Q4OPq4gWlw2
-	 TJQb9KxS1YrQwhBzH0GfcjYiNWH5N1rDv9mxqEa9YrLZyphVdtFEP7M95b3b6BEIbM
-	 cVy4tFEVCOfyKRFRR6/8WxTVkK8zc4aYgL/9eJutTEuv0U2wXj3R7N9MA/F7M1kvGV
-	 gL6xkER04J7inUbibhVa87LWNucBGnRkGIB4a4mgx7PhdiDJlZ+SPrVKgKxSWDtlJf
-	 xjve7Ue/M7LCQ==
-Date: Fri, 7 Jun 2024 14:30:55 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Vidya Sagar <vidyas@nvidia.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, "corbet@lwn.net" <corbet@lwn.net>,
-	"bhelgaas@google.com" <bhelgaas@google.com>,
-	Gal Shalom <galshalom@nvidia.com>,
-	Leon Romanovsky <leonro@nvidia.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Masoud Moshref Javadi <mmoshrefjava@nvidia.com>,
-	Shahaf Shuler <shahafs@nvidia.com>,
-	Vikram Sethi <vsethi@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Jiandi An <jan@nvidia.com>, Tushar Dave <tdave@nvidia.com>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Krishna Thota <kthota@nvidia.com>,
-	Manikanta Maddireddy <mmaddireddy@nvidia.com>,
-	"sagar.tv@gmail.com" <sagar.tv@gmail.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>
-Subject: Re: [PATCH V3] PCI: Extend ACS configurability
-Message-ID: <20240607193055.GA855605@bhelgaas>
+	s=arc-20240116; t=1717788752; c=relaxed/simple;
+	bh=vZq87tyZokTAER8/mH6NnAwxzfu+Sg7w14ZgjqEZJEY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gW88/QhH+pdaN4s3NdlCTn44fKq9TZUiDVQNLglU6d+/GlxsHFQS4oJvzk5nO/Co3aw7lHDL2419rOV+Tn+fn6icVkgYT3X/7GAKFipHlvJo5XUar/nvtOl5zUMkaNRUc5lrjwomZ42hqeqTbtJ38Q0BRHreR8pSu7i+mfQ09bE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a8Et7FOS; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717788751; x=1749324751;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=vZq87tyZokTAER8/mH6NnAwxzfu+Sg7w14ZgjqEZJEY=;
+  b=a8Et7FOS4YFGN/AAdPVeQOaDYespFvhR/W0aofm2WGxf6B/TNQAI9tLc
+   OpLFmCu7dX/4Yo25LUpirAhDDEodIb9KdOmCO4UTnY93maFuESsLuIy0i
+   e0SFG/0r5r/F0xRCSF+ePVMX0jNGm4UkZLg37URMNOY2AoL4dFcL39Mao
+   OXN7OsTOaauxmjDgpQMt0XTMaTp8i2R9wA8Qb1Q515olc6aUHI636AJzD
+   BzX6s2C6XCQ2jZ7Cs2tFqnfweNI3N3IvURVv4G5NCF1ha3AwqB3Zp/fA3
+   mquGHkdoTFReMP4rilWpp+moj4BBL3jp0BAjY2KMvtBrmqTJJH174jxVL
+   A==;
+X-CSE-ConnectionGUID: rOmFHngMSQmDy64u+Nh31g==
+X-CSE-MsgGUID: 8cda2Cq0T9CPnknd5/9u5w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="14407259"
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="14407259"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 12:32:30 -0700
+X-CSE-ConnectionGUID: 9dxoUBGVQPKGnmz1n82nIA==
+X-CSE-MsgGUID: y+uAv6mhSFWgfEIWFpgBwA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="39089268"
+Received: from josouza-mobl2.bz.intel.com ([10.87.243.88])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 12:32:28 -0700
+From: =?UTF-8?q?Jos=C3=A9=20Roberto=20de=20Souza?= <jose.souza@intel.com>
+To: linux-kernel@vger.kernel.org,
+	intel-xe@lists.freedesktop.org
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Mukesh Ojha <quic_mojha@quicinc.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jonathan Cavitt <jonathan.cavitt@intel.com>,
+	=?UTF-8?q?Jos=C3=A9=20Roberto=20de=20Souza?= <jose.souza@intel.com>
+Subject: [PATCH v4 1/2] devcoredump: Add dev_coredumpm_timeout()
+Date: Fri,  7 Jun 2024 12:32:19 -0700
+Message-ID: <20240607193220.229760-1-jose.souza@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PH8PR12MB667431B8552D271F906F8F4BB8FF2@PH8PR12MB6674.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 03, 2024 at 07:50:59AM +0000, Vidya Sagar wrote:
-> Hi Bjorn,
-> Could you let me know if Jason's reply answers your question?
-> Please let me know if you are looking for any more information.
+Add function to set a custom coredump timeout.
 
-I think we should add some of that content to the commit log.  It
-needs:
+For Xe driver usage, current 5 minutes timeout may be too short for
+users to search and understand what needs to be done to capture
+coredump to report bugs.
 
-  - Subject line that advertises some good thing.
+We have plans to automate(distribute a udev script) it but at the end
+will be up to distros and users to pack it so having a option to
+increase the timeout is a safer option.
 
-  - A description of why users want this.  I have no idea what the
-    actual benefit is, but I'm looking for something at the level of
-    "The default ACS settings put A and B in different IOMMU groups,
-    preventing P2PDMA between them.  If we disable ACS X, A and B will
-    be put in the same group and P2PDMA will work".
+v2:
+- replace dev_coredump_timeout_set() by dev_coredumpm_timeout() (Mukesh)
 
-  - A primer on how users can affect IOMMU groups by enabling/
-    disabling ACS settings so they can use this without just blind
-    trial and error.  A note that this is immutable except at boot
-    time.
+v3:
+- make dev_coredumpm() static inline (Johannes)
 
-  - A pointer to the code that determines IOMMU groups based on the
-    ACS settings.  Similar to the above, but more useful for
-    developers.
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Mukesh Ojha <quic_mojha@quicinc.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>
+Cc: Jonathan Cavitt <jonathan.cavitt@intel.com>
+Acked-by: Jonathan Cavitt <jonathan.cavitt@intel.com>
+Signed-off-by: José Roberto de Souza <jose.souza@intel.com>
+---
+ drivers/base/devcoredump.c  | 23 ++++++++--------
+ include/linux/devcoredump.h | 54 ++++++++++++++++++++++++++++---------
+ 2 files changed, 54 insertions(+), 23 deletions(-)
 
-If we assert "for iommu_groups to form correctly ...", a hint about
-why/where this is so would be helpful.
+diff --git a/drivers/base/devcoredump.c b/drivers/base/devcoredump.c
+index 82aeb09b3d1b5..c795edad1b969 100644
+--- a/drivers/base/devcoredump.c
++++ b/drivers/base/devcoredump.c
+@@ -18,9 +18,6 @@ static struct class devcd_class;
+ /* global disable flag, for security purposes */
+ static bool devcd_disabled;
+ 
+-/* if data isn't read by userspace after 5 minutes then delete it */
+-#define DEVCD_TIMEOUT	(HZ * 60 * 5)
+-
+ struct devcd_entry {
+ 	struct device devcd_dev;
+ 	void *data;
+@@ -328,7 +325,8 @@ void dev_coredump_put(struct device *dev)
+ EXPORT_SYMBOL_GPL(dev_coredump_put);
+ 
+ /**
+- * dev_coredumpm - create device coredump with read/free methods
++ * dev_coredumpm_timeout - create device coredump with read/free methods with a
++ * custom timeout.
+  * @dev: the struct device for the crashed device
+  * @owner: the module that contains the read/free functions, use %THIS_MODULE
+  * @data: data cookie for the @read/@free functions
+@@ -336,17 +334,20 @@ EXPORT_SYMBOL_GPL(dev_coredump_put);
+  * @gfp: allocation flags
+  * @read: function to read from the given buffer
+  * @free: function to free the given buffer
++ * @timeout: time in jiffies to remove coredump
+  *
+  * Creates a new device coredump for the given device. If a previous one hasn't
+  * been read yet, the new coredump is discarded. The data lifetime is determined
+  * by the device coredump framework and when it is no longer needed the @free
+  * function will be called to free the data.
+  */
+-void dev_coredumpm(struct device *dev, struct module *owner,
+-		   void *data, size_t datalen, gfp_t gfp,
+-		   ssize_t (*read)(char *buffer, loff_t offset, size_t count,
+-				   void *data, size_t datalen),
+-		   void (*free)(void *data))
++void dev_coredumpm_timeout(struct device *dev, struct module *owner,
++			   void *data, size_t datalen, gfp_t gfp,
++			   ssize_t (*read)(char *buffer, loff_t offset,
++					   size_t count, void *data,
++					   size_t datalen),
++			   void (*free)(void *data),
++			   unsigned long timeout)
+ {
+ 	static atomic_t devcd_count = ATOMIC_INIT(0);
+ 	struct devcd_entry *devcd;
+@@ -403,7 +404,7 @@ void dev_coredumpm(struct device *dev, struct module *owner,
+ 	dev_set_uevent_suppress(&devcd->devcd_dev, false);
+ 	kobject_uevent(&devcd->devcd_dev.kobj, KOBJ_ADD);
+ 	INIT_DELAYED_WORK(&devcd->del_wk, devcd_del);
+-	schedule_delayed_work(&devcd->del_wk, DEVCD_TIMEOUT);
++	schedule_delayed_work(&devcd->del_wk, timeout);
+ 	mutex_unlock(&devcd->mutex);
+ 	return;
+  put_device:
+@@ -414,7 +415,7 @@ void dev_coredumpm(struct device *dev, struct module *owner,
+  free:
+ 	free(data);
+ }
+-EXPORT_SYMBOL_GPL(dev_coredumpm);
++EXPORT_SYMBOL_GPL(dev_coredumpm_timeout);
+ 
+ /**
+  * dev_coredumpsg - create device coredump that uses scatterlist as data
+diff --git a/include/linux/devcoredump.h b/include/linux/devcoredump.h
+index c8f7eb6cc1915..56e606eb4640b 100644
+--- a/include/linux/devcoredump.h
++++ b/include/linux/devcoredump.h
+@@ -12,6 +12,9 @@
+ #include <linux/scatterlist.h>
+ #include <linux/slab.h>
+ 
++/* if data isn't read by userspace after 5 minutes then delete it */
++#define DEVCOREDUMP_TIMEOUT	(HZ * 60 * 5)
++
+ /*
+  * _devcd_free_sgtable - free all the memory of the given scatterlist table
+  * (i.e. both pages and scatterlist instances)
+@@ -50,16 +53,17 @@ static inline void _devcd_free_sgtable(struct scatterlist *table)
+ 	kfree(delete_iter);
+ }
+ 
+-
+ #ifdef CONFIG_DEV_COREDUMP
+ void dev_coredumpv(struct device *dev, void *data, size_t datalen,
+ 		   gfp_t gfp);
+ 
+-void dev_coredumpm(struct device *dev, struct module *owner,
+-		   void *data, size_t datalen, gfp_t gfp,
+-		   ssize_t (*read)(char *buffer, loff_t offset, size_t count,
+-				   void *data, size_t datalen),
+-		   void (*free)(void *data));
++void dev_coredumpm_timeout(struct device *dev, struct module *owner,
++			   void *data, size_t datalen, gfp_t gfp,
++			   ssize_t (*read)(char *buffer, loff_t offset,
++					   size_t count, void *data,
++					   size_t datalen),
++			   void (*free)(void *data),
++			   unsigned long timeout);
+ 
+ void dev_coredumpsg(struct device *dev, struct scatterlist *table,
+ 		    size_t datalen, gfp_t gfp);
+@@ -72,12 +76,13 @@ static inline void dev_coredumpv(struct device *dev, void *data,
+ 	vfree(data);
+ }
+ 
+-static inline void
+-dev_coredumpm(struct device *dev, struct module *owner,
+-	      void *data, size_t datalen, gfp_t gfp,
+-	      ssize_t (*read)(char *buffer, loff_t offset, size_t count,
+-			      void *data, size_t datalen),
+-	      void (*free)(void *data))
++void dev_coredumpm_timeout(struct device *dev, struct module *owner,
++			   void *data, size_t datalen, gfp_t gfp,
++			   ssize_t (*read)(char *buffer, loff_t offset,
++					   size_t count, void *data,
++					   size_t datalen),
++			   void (*free)(void *data),
++			   unsigned long timeout)
+ {
+ 	free(data);
+ }
+@@ -92,4 +97,29 @@ static inline void dev_coredump_put(struct device *dev)
+ }
+ #endif /* CONFIG_DEV_COREDUMP */
+ 
++/**
++ * dev_coredumpm - create device coredump with read/free methods
++ * @dev: the struct device for the crashed device
++ * @owner: the module that contains the read/free functions, use %THIS_MODULE
++ * @data: data cookie for the @read/@free functions
++ * @datalen: length of the data
++ * @gfp: allocation flags
++ * @read: function to read from the given buffer
++ * @free: function to free the given buffer
++ *
++ * Creates a new device coredump for the given device. If a previous one hasn't
++ * been read yet, the new coredump is discarded. The data lifetime is determined
++ * by the device coredump framework and when it is no longer needed the @free
++ * function will be called to free the data.
++ */
++static inline void dev_coredumpm(struct device *dev, struct module *owner,
++				 void *data, size_t datalen, gfp_t gfp,
++				 ssize_t (*read)(char *buffer, loff_t offset, size_t count,
++						 void *data, size_t datalen),
++				void (*free)(void *data))
++{
++	dev_coredumpm_timeout(dev, owner, data, datalen, gfp, read, free,
++			      DEVCOREDUMP_TIMEOUT);
++}
++
+ #endif /* __DEVCOREDUMP_H */
+-- 
+2.45.2
 
-"Correctly" is not quite the right word here; it's just a fact that
-the ACS settings determined at boot time result in certain IOMMU
-groups.  If the user desires different groups, it's not that something
-is "incorrect"; it's just that the user may have to accept less
-isolation to get the desired IOMMU groups.
-
-> > -----Original Message-----
-> > From: Jason Gunthorpe <jgg@nvidia.com>
-> > ...
-> > 
-> > On Thu, May 23, 2024 at 09:59:36AM -0500, Bjorn Helgaas wrote:
-> > > [+cc iommu folks]
-> > >
-> > > On Thu, May 23, 2024 at 12:05:28PM +0530, Vidya Sagar wrote:
-> > > > For iommu_groups to form correctly, the ACS settings in the PCIe
-> > > > fabric need to be setup early in the boot process, either via the
-> > > > BIOS or via the kernel disable_acs_redir parameter.
-> > >
-> > > Can you point to the iommu code that is involved here?  It sounds like
-> > > the iommu_groups are built at boot time and are immutable after that?
-> > 
-> > They are created when the struct device is plugged in. pci_device_group() does the
-> > logic.
-> > 
-> > Notably groups can't/don't change if details like ACS change after the groups are
-> > setup.
-> > 
-> > There are alot of instructions out there telling people to boot their servers and then
-> > manually change the ACS flags with set_pci or something, and these are not good
-> > instructions since it defeats the VFIO group based security mechanisms.
-> > 
-> > > If we need per-device ACS config that depends on the workload, it
-> > > seems kind of problematic to only be able to specify this at boot
-> > > time.  I guess we would need to reboot if we want to run a workload
-> > > that needs a different config?
-> > 
-> > Basically. The main difference I'd see is if the server is a VM host or running bare
-> > metal apps. You can get more efficicenty if you change things for the bare metal case,
-> > and often bare metal will want to turn the iommu off while a VM host often wants
-> > more of it turned on.
-> > 
-> > > Is this the iommu usage model we want in the long term?
-> > 
-> > There is some path to more dynamic behavior here, but it would require separating
-> > groups into two components - devices that are together because they are physically
-> > sharing translation (aliases and things) from devices that are together because they
-> > share a security boundary (ACS).
-> > 
-> > It is more believable we could dynamically change security group assigments for VFIO
-> > than translation group assignment. I don't know anyone interested in this right now -
-> > Alex and I have only talked about it as a possibility a while back.
-> > 
-> > FWIW I don't view patch as excluding more dynamisism in the future, but it is the best
-> > way to work with the current state of affairs, and definitely better than set_pci
-> > instructions.
-> > 
-> > Thanks,
-> > Jason
 
