@@ -1,268 +1,105 @@
-Return-Path: <linux-kernel+bounces-206643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94777900C3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:06:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54B6F900C41
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:07:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 089B01F2371E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:06:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 619651C21D34
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19AF8145353;
-	Fri,  7 Jun 2024 19:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BC314386F;
+	Fri,  7 Jun 2024 19:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="T0YJQbpI"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fLztfg+p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6952161FF6;
-	Fri,  7 Jun 2024 19:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31A361FF6
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 19:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717787184; cv=none; b=hnYCEqSyCV2FHGYPsf0HXz3jB9EPNPK3+tXs9bNwBcq+LXcHD9HkEkg6zHFbRlzf8qSu5MhHDj630keaUGVm4kCuCXgGF1ocB0x9KPYX2h4nxxX0VPIAUYqyf1R8gqWhWgzydIdaWI+iq60k9vR1y3/+aWAVqtOI/2XzTA+Pp5g=
+	t=1717787270; cv=none; b=buG98K9X7+u5c5Nxhw7aQi4gVmE0pDJt+sbtCIGRTka/9jFbA9bRhDQfaNbX73+2FtsKOrQsAmrfJui+vgRHCisNrp/jhruk095bcKdxlARUGB2H52EjzKzGINBnjd4gLmTjq6dAk/rS3B7of8mzeqS6YOWG1e4AOHtAMGe7qvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717787184; c=relaxed/simple;
-	bh=POh3YrHn4q54h+Qa6SohM8DHib0BNm73vJtFcOXO9c4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BjnuYvu0KsQcIccVNIRhI/DSIv/MoqTmtjYIH9DdxvcC0NMsvvWX5H9Gcd3BGBl2sH0ITT+N7deQ6vG3DXcomd/3wrqVaeO0VyuJNjvYkJaXT6DUfXRlUVX7IBX706hXbajyO9ie/QsYANbZsH+rXdj8Ol5MkqATWMTXga2ZTUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=T0YJQbpI; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 457CuVjQ023604;
-	Fri, 7 Jun 2024 19:06:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc :
- content-transfer-encoding : date : from : message-id : mime-version :
- subject : to; s=corp-2023-11-20;
- bh=bavZSgWNlH5AnIMvg1whudm4Kfg9OnMmT+mI9SLCa5U=;
- b=T0YJQbpI7dYm0rus9Kl4t81q/Czx64VkApsS40l/bzqlw+3wW5vuERSxQnzZKcnfQ/kl
- H+aXxMekGknuj6wlKJUu69KiU/FxQQGZ0E+DrRPVlEqeQP4GHtB+obpp3JEm9XbmHs4u
- kdL/z5xchvIBa4/X6bZ2SNw4risilVg6yvB0fAys8XnIhkfq8Xp5VJglFbyX9mRQ+b/l
- Kb8RJPeK0Ii/4kbAUE/MBCkLVqK6I+6NkqLzXuAzw6nNY7kn0DLX4rbPoKWNjSoITsPk
- cSGz//EXKijq6HM3A2QcolxP5Y54+uoxUqWvBrvVnftnLR+eVyQuGePVyzarQxB5zR2l Tg== 
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yjbrse68b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 07 Jun 2024 19:06:09 +0000
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 457HVcLm015675;
-	Fri, 7 Jun 2024 19:06:08 GMT
-Received: from gms-ol9-loop-1.osdevelopmeniad.oraclevcn.com (gms-ol9-loop-1.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.252.182])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3ygrjh0we9-1;
-	Fri, 07 Jun 2024 19:06:08 +0000
-From: Gulam Mohamed <gulam.mohamed@oracle.com>
-To: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: yukuai1@huaweicloud.com, hch@lst.de, axboe@kernel.dk
-Subject: [PATCH V4 for-6.10/block] loop: Fix a race between loop detach and loop open
-Date: Fri,  7 Jun 2024 19:06:07 +0000
-Message-ID: <20240607190607.17705-1-gulam.mohamed@oracle.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1717787270; c=relaxed/simple;
+	bh=x7XM9AKxegOved0kWZyZbA/FkAuSLgNHE5FU05haFTM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D0s6oI7m9wMwlpyNe7fuK5KywkbiTO5Db3OaxWbAC9AAUv5y0Kk385TTbba0HME1GW1n/2G/lW+MQ8HT9TGailQ+n4+3EnKietvlqlDdu6uoAb8IitYFZ6xbLSWLR5xpLXgqz6ZOISlzZZW8hF5OmBLPgXIOZ8De1Zb8GlaPL7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fLztfg+p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DE22C4AF08;
+	Fri,  7 Jun 2024 19:07:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1717787270;
+	bh=x7XM9AKxegOved0kWZyZbA/FkAuSLgNHE5FU05haFTM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fLztfg+pfnTV4FQDKbrj+QZ0c2Nf9Vybu4mTptGNEImIu6jC1/7kM3/m28U1W8GAM
+	 0DV+imoLqYO5hIej3tgqDhtjqZAbhgqpq/Q+HWs3kGiuPZEtTLN4JMCVug/UCnQ7Go
+	 hsusHCyvUSRSrkji0ZsoFJZ22mRDyV4xwLMtWRJ4=
+Date: Fri, 7 Jun 2024 21:07:48 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>,
+	David Gow <davidgow@google.com>, linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de, Philipp Zabel <p.zabel@pengutronix.de>,
+	Nishanth Menon <nm@ti.com>, Jeremy Kerr <jk@ozlabs.org>,
+	Rodolfo Giometti <giometti@enneenne.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Matt Coster <matt.coster@imgtec.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Bjorn Andersson <andersson@kernel.org>
+Subject: Re: [GIT PULL] platform: Make platform_driver::remove() return void
+Message-ID: <2024060739-snide-overstep-87f2@gregkh>
+References: <20240527083416.1177106-2-u.kleine-koenig@pengutronix.de>
+ <2024060432-relieving-yonder-85ae@gregkh>
+ <acwqbvhf3h5z4shzwdwwwfkvxvmchlpbh5k6kwcubhpe3ncvdf@v5gai33oolhn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-07_12,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
- adultscore=0 bulkscore=0 spamscore=0 malwarescore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2406070139
-X-Proofpoint-ORIG-GUID: -zGvZEA1eWq0U0JukinkUsG3FlJmG7VZ
-X-Proofpoint-GUID: -zGvZEA1eWq0U0JukinkUsG3FlJmG7VZ
+In-Reply-To: <acwqbvhf3h5z4shzwdwwwfkvxvmchlpbh5k6kwcubhpe3ncvdf@v5gai33oolhn>
 
-1. Userspace sends the command "losetup -d" which uses the open() call
-   to open the device
-2. Kernel receives the ioctl command "LOOP_CLR_FD" which calls the
-   function loop_clr_fd()
-3. If LOOP_CLR_FD is the first command received at the time, then the
-   AUTOCLEAR flag is not set and deletion of the
-   loop device proceeds ahead and scans the partitions (drop/add
-   partitions)
+On Wed, Jun 05, 2024 at 12:33:11PM +0200, Uwe Kleine-König wrote:
+> Hello Greg
+> 
+> On Tue, Jun 04, 2024 at 06:13:54PM +0200, Greg Kroah-Hartman wrote:
+> > On Mon, May 27, 2024 at 10:34:15AM +0200, Uwe Kleine-König wrote:
+> > > there are only very little platform drivers left in v6.10-rc1 that need
+> > > to be changed to .remove_new() before this patch can be applied. They
+> > > were all sent out to the respective maintainers, most of them suggested
+> > > to apply the patches together with this one.
+> > > 
+> > > You can fetch this patch together with all necessary commits from:
+> > > 
+> > > 	https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git platform-remove-void
+> > > 
+> > > If you have no concerns, I can also provide you a signed tag for
+> > > pulling. I think that's easier than indiviually applying them, but I can
+> > > also send out the complete series if you prefer.
+> > 
+> > A signed tag is good, I can just pull from that, thanks!
+> 
+> here it comes:
+> 
+> The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+> 
+>   Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git tags/platform-remove-void-step-b
 
-        if (disk_openers(lo->lo_disk) > 1) {
-                lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
-                loop_global_unlock(lo, true);
-                return 0;
-        }
+Pulled and pushed out, thanks!
 
- 4. Before scanning partitions, it will check to see if any partition of
-    the loop device is currently opened
- 5. If any partition is opened, then it will return EBUSY:
-
-    if (disk->open_partitions)
-                return -EBUSY;
- 6. So, after receiving the "LOOP_CLR_FD" command and just before the above
-    check for open_partitions, if any other command
-    (like blkid) opens any partition of the loop device, then the partition
-    scan will not proceed and EBUSY is returned as shown in above code
- 7. But in "__loop_clr_fd()", this EBUSY error is not propagated
- 8. We have noticed that this is causing the partitions of the loop to
-    remain stale even after the loop device is detached resulting in the
-    IO errors on the partitions
-Fix:
-Defer the detach of loop device to release function, which is called
-when the last close happens, by setting the lo_flags to LO_FLAGS_AUTOCLEAR
-at the time of detach i.e in loop_clr_fd() function.
-
-Test case involves the following two scripts:
-
-script1.sh:
-
-while [ 1 ];
-do
-        losetup -P -f /home/opt/looptest/test10.img
-        blkid /dev/loop0p1
-done
-
-script2.sh:
-
-while [ 1 ];
-do
-        losetup -d /dev/loop0
-done
-
-Without fix, the following IO errors have been observed:
-
-kernel: __loop_clr_fd: partition scan of loop0 failed (rc=-16)
-kernel: I/O error, dev loop0, sector 20971392 op 0x0:(READ) flags 0x80700
-        phys_seg 1 prio class 0
-kernel: I/O error, dev loop0, sector 108868 op 0x0:(READ) flags 0x0
-        phys_seg 1 prio class 0
-kernel: Buffer I/O error on dev loop0p1, logical block 27201, async page
-        read
-
-Signed-off-by: Gulam Mohamed <gulam.mohamed@oracle.com>
----
-v4<-v3:
-1. Defer the loop detach to last close of loop device
-2. Removed the use of lo_open due to following reasons:
-
-Setting the lo_state to Lo_rundown in loop_clr_fd() may not help in
-stopping the incoming open(), when the loop is being detached, as the
-open() could invoke the lo_open() before the lo_state is set to Lo_rundown
-and increment the disk_openers refcnt later.
-As the actual cleanup is deferred to last close, in release, there is no
-chance for the open() to kick in to take the reference. Because both open()
-and release() are protected by open_mutex and hence they cannot run in
-parallel.
-So, lo_open() and setting lo_state to Lo_rundown is not needed. Removing
-the loop state Lo_rundown as its not used anymore.
-
- drivers/block/loop.c | 44 ++++++++------------------------------------
- 1 file changed, 8 insertions(+), 36 deletions(-)
-
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 28a95fd366fe..4936cadc1a63 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -41,7 +41,6 @@
- enum {
- 	Lo_unbound,
- 	Lo_bound,
--	Lo_rundown,
- 	Lo_deleting,
- };
- 
-@@ -1131,7 +1130,7 @@ static int loop_configure(struct loop_device *lo, blk_mode_t mode,
- 	return error;
- }
- 
--static void __loop_clr_fd(struct loop_device *lo, bool release)
-+static void __loop_clr_fd(struct loop_device *lo)
- {
- 	struct file *filp;
- 	gfp_t gfp = lo->old_gfp_mask;
-@@ -1139,14 +1138,6 @@ static void __loop_clr_fd(struct loop_device *lo, bool release)
- 	if (test_bit(QUEUE_FLAG_WC, &lo->lo_queue->queue_flags))
- 		blk_queue_write_cache(lo->lo_queue, false, false);
- 
--	/*
--	 * Freeze the request queue when unbinding on a live file descriptor and
--	 * thus an open device.  When called from ->release we are guaranteed
--	 * that there is no I/O in progress already.
--	 */
--	if (!release)
--		blk_mq_freeze_queue(lo->lo_queue);
--
- 	spin_lock_irq(&lo->lo_lock);
- 	filp = lo->lo_backing_file;
- 	lo->lo_backing_file = NULL;
-@@ -1164,8 +1155,6 @@ static void __loop_clr_fd(struct loop_device *lo, bool release)
- 	mapping_set_gfp_mask(filp->f_mapping, gfp);
- 	/* This is safe: open() is still holding a reference. */
- 	module_put(THIS_MODULE);
--	if (!release)
--		blk_mq_unfreeze_queue(lo->lo_queue);
- 
- 	disk_force_media_change(lo->lo_disk);
- 
-@@ -1180,11 +1169,7 @@ static void __loop_clr_fd(struct loop_device *lo, bool release)
- 		 * must be at least one and it can only become zero when the
- 		 * current holder is released.
- 		 */
--		if (!release)
--			mutex_lock(&lo->lo_disk->open_mutex);
- 		err = bdev_disk_changed(lo->lo_disk, false);
--		if (!release)
--			mutex_unlock(&lo->lo_disk->open_mutex);
- 		if (err)
- 			pr_warn("%s: partition scan of loop%d failed (rc=%d)\n",
- 				__func__, lo->lo_number, err);
-@@ -1232,25 +1217,8 @@ static int loop_clr_fd(struct loop_device *lo)
- 		loop_global_unlock(lo, true);
- 		return -ENXIO;
- 	}
--	/*
--	 * If we've explicitly asked to tear down the loop device,
--	 * and it has an elevated reference count, set it for auto-teardown when
--	 * the last reference goes away. This stops $!~#$@ udev from
--	 * preventing teardown because it decided that it needs to run blkid on
--	 * the loopback device whenever they appear. xfstests is notorious for
--	 * failing tests because blkid via udev races with a losetup
--	 * <dev>/do something like mkfs/losetup -d <dev> causing the losetup -d
--	 * command to fail with EBUSY.
--	 */
--	if (disk_openers(lo->lo_disk) > 1) {
--		lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
--		loop_global_unlock(lo, true);
--		return 0;
--	}
--	lo->lo_state = Lo_rundown;
-+	lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
- 	loop_global_unlock(lo, true);
--
--	__loop_clr_fd(lo, false);
- 	return 0;
- }
- 
-@@ -1724,15 +1692,19 @@ static void lo_release(struct gendisk *disk)
- 	if (disk_openers(disk) > 0)
- 		return;
- 
-+	/*
-+	 * Clear the backing device information if this is the last close of
-+	 * a device that's been marked for auto clear, or on which LOOP_CLR_FD
-+	 * has been called.
-+	 */
- 	mutex_lock(&lo->lo_mutex);
- 	if (lo->lo_state == Lo_bound && (lo->lo_flags & LO_FLAGS_AUTOCLEAR)) {
--		lo->lo_state = Lo_rundown;
- 		mutex_unlock(&lo->lo_mutex);
- 		/*
- 		 * In autoclear mode, stop the loop thread
- 		 * and remove configuration after last close.
- 		 */
--		__loop_clr_fd(lo, true);
-+		__loop_clr_fd(lo);
- 		return;
- 	}
- 	mutex_unlock(&lo->lo_mutex);
--- 
-2.43.0
-
+greg k-h
 
