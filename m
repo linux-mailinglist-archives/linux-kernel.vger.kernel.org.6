@@ -1,82 +1,55 @@
-Return-Path: <linux-kernel+bounces-206189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3519A90056F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:47:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F580900574
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C4BF1C20C65
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:47:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B38BB2859FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BD6194AD1;
-	Fri,  7 Jun 2024 13:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D296194ACD;
+	Fri,  7 Jun 2024 13:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EEkpLLv1"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="DFmbfU1i"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3141CA85;
-	Fri,  7 Jun 2024 13:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6CD192B89
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 13:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717768049; cv=none; b=Lyyf2FrH5wYtll19EJvEdbw4J2JQKSdd/uWbRugYDOTg65vQi3VXQprwjd9/XJWjg6WehSjSqKHPHv0pdCT6V0xFh9C193pJOhq6ZR5rnuFehc7N17oUBydBscQYj4HE3H385UX1rqv/kjNjLu3ChyqmkRVCWEQ7kgiw9T7HvLE=
+	t=1717768109; cv=none; b=Vc0Z3CAKkzHQ0HPM1WTHjXFKbxP2ZADPFAamYUPPPXAEfvdKLbF8Od0YUU6PQgXbGopDsUVCeCVm4Dz6PYbNQDD3AeEeMVMi1dFnbN3jCp5t/MoFlHnAJVmYcLOK5mBIY3NhVlB4aEIteKyEYlH5MZMCgGvv4DXUc90gBsE7WHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717768049; c=relaxed/simple;
-	bh=q8GCB4TXSIqeMhG+CRclgf0UKbJmwPTvZO4PRwJnmYA=;
+	s=arc-20240116; t=1717768109; c=relaxed/simple;
+	bh=flRN4f0GUMAs2oVcEL67vF6IZujwClDcBgizdMQWYyg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cJZjcaoWL/PPlshKkkGWZJUcrLNq7ssS5vmiSm9EV/fSre+UTQ9Pp4dcZmOufBaPcb+BPpklazFBuffZYl2/EAya4OlJ8+QQ7gbmxuCZbuj089UY3gMQ37+81BbnYK9P0cFC+kpz0BGUlwq07++6WcPFMQottOdl70Tsh+GL6UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EEkpLLv1; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57a4ea8058bso2426690a12.1;
-        Fri, 07 Jun 2024 06:47:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717768046; x=1718372846; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KmgBm9ThJPNKXmPz1Y3oHMiCl5cXiVptHJkrXtuToGI=;
-        b=EEkpLLv1udx+zJ9bZza0CR0hnepGgAkIpF/XJIho6HDmdGpHLSkFi0BsZpEHktbTiQ
-         MMMoYXqQwbtlzC2skmo4mLZa9tjNjsd+3htWzPCwo3G1KzBGxfERcuFqMQNUIa5oDhnp
-         KoNCJwEua/uYJ1dRRaXHgYQ47eb61we9UkdNyartQ7aGmKwOvgNTje+7hY4KnrTSR+Bw
-         dlNh8n3W63TT9GM5IesjIFeT4ilcqUX694dY3aG4dr7y878+HUySBZSd75fEu0Sz3kCO
-         IOdn+/xZiOZypexu36dMA8RX8bNpNOOCq2zvq0+emG/trTERm6VN98XfBLCdanJdQECa
-         CIOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717768046; x=1718372846;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KmgBm9ThJPNKXmPz1Y3oHMiCl5cXiVptHJkrXtuToGI=;
-        b=OYfkom3AkqDGv51Stei3ikAEatID48RNuFbdqptJq4EJVWfoRod32XlvBTfJqnbbdZ
-         ioTBkrSuSjV2PLRotcu6pusXV7reno7bF/f7KSriGUntvYcvBPDJvtnjgwK3PPuNsKbK
-         Y8hq5QHkpjFxQgl6o/iKULJyOerJacOamHeagLLsqiqoEJV55cJiB5/OsNaQmixFpejX
-         zBlaRqOTZJD/3MGJ+wfFMugyVnYvZJIszTETC/I41dB23HZhdj8bHEbFllrTvJDMzZjG
-         o2OB2NbSJV9HpIrISP+GaFpTG+tAuGYRoJUuwGXs5Ozxfyga2ckEX1WCao9kONIlwjg4
-         Fkzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVn1vnLzmbYewbxqNIqKeKdZ7BUsm0lQPc34keJneM75JmKAYwGoAMx/qVoBAzGf/7UZo9I7Py+842Y5eb8Zl1FV9yujSAHPFn2VXVqrwmWI5Z5wJBMtVDmq0B1sflcwL5T7Bq5
-X-Gm-Message-State: AOJu0Yy0UFdftT2xq87jzc00yczZG4KxioNtIHY7gW+AStPwRXpoV7Y3
-	4szlFFxMX7zaIqRPQFQX4DMbLGCK91zxgeWeIf8Ad+aTV8lkBISq
-X-Google-Smtp-Source: AGHT+IGxJly2Ygnl7BBvSpHo2MzTbd4GTMItTxW3Hu6qDDGLINsRJ6cxScLTVygUaG+CuvUghmikPg==
-X-Received: by 2002:a50:d799:0:b0:57a:2fc1:e838 with SMTP id 4fb4d7f45d1cf-57c50928dd9mr1603090a12.22.1717768045293;
-        Fri, 07 Jun 2024 06:47:25 -0700 (PDT)
-Received: from skbuf ([188.25.55.166])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae1412a0sm2779581a12.56.2024.06.07.06.47.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 06:47:24 -0700 (PDT)
-Date: Fri, 7 Jun 2024 16:47:21 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Xiaolei Wang <xiaolei.wang@windriver.com>
-Cc: linux@armlinux.org.uk, andrew@lunn.ch, alexandre.torgue@foss.st.com,
-	joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=KtYHvsgCyIadX/MQyZhXeY80S0ZkWhCJvO3HCrpzGwBb8+siIfJ/eRGLLjBNM9CwiAukSN4elUj6UFn8HDiOAKPgoI2VVh4maO0Cf3VURoip/zjvEoAm3qDOtFiCu/m9GBZU9f5W2qd1v/uVKa2Losjqyr4jbTcHXUTDOcCRJKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=DFmbfU1i; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1717768100;
+	bh=flRN4f0GUMAs2oVcEL67vF6IZujwClDcBgizdMQWYyg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DFmbfU1iw3Zphmxi3+Lr+gl5uNpaCfP7J5ADHYUrx7yWq6CrnVCjGRPg2jjlVPKKZ
+	 se3REKn9ko7gyYaBrCete4eUy25cElcWnQc5V21yKnOVuy0ENZ/GvUKC7x8u3xtG9X
+	 jUJLY8qXHibmG4NvDMalFeDXFRyHhFgq4LxWAZlk=
+Date: Fri, 7 Jun 2024 15:48:20 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Joel Granados <j.granados@samsung.com>
+Cc: Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [net PATCH] net: stmmac: replace priv->speed with the
- portTransmitRate from the tc-cbs parameters
-Message-ID: <20240607134721.qxwyp63p5dlxw7ui@skbuf>
-References: <20240607103327.438455-1-xiaolei.wang@windriver.com>
+Subject: Re: Current state of the sysctl constification effort
+Message-ID: <a872f104-32ed-4479-9480-0cc01c31e998@t-8ch.de>
+References: <7823ff95-1490-4c1b-b489-a9c05adad645@t-8ch.de>
+ <CGME20240531163128eucas1p20976d08e829373bfa8aa04fda1c7bec4@eucas1p2.samsung.com>
+ <202405310930.5E2728A@keescook>
+ <20240605082625.6hwdc3haim66rr7v@joelS2.panther.com>
+ <202406061143.27C12F44A3@keescook>
+ <20240607093053.ig6cqrr3xdxhbbt5@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,110 +58,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240607103327.438455-1-xiaolei.wang@windriver.com>
+In-Reply-To: <20240607093053.ig6cqrr3xdxhbbt5@joelS2.panther.com>
 
-On Fri, Jun 07, 2024 at 06:33:27PM +0800, Xiaolei Wang wrote:
-> Since the given offload->sendslope only applies to the
-> current link speed, and userspace may reprogram it when
-> the link speed changes, don't even bother tracking the
-> port's link speed, and deduce the port transmit rate
-> from idleslope - sentslope instead.
+On 2024-06-07 11:30:53+0000, Joel Granados wrote:
+> On Thu, Jun 06, 2024 at 11:52:25AM -0700, Kees Cook wrote:
+> > On Wed, Jun 05, 2024 at 10:26:25AM +0200, Joel Granados wrote:
+> > > On Fri, May 31, 2024 at 09:31:24AM -0700, Kees Cook wrote:
+> ...
+> > > @kees: Since you have probably done these before, I'll ask you the
+> > > questions:
+> > > 
+> > > 1. The idea is to send Linus the treewide-constify patch on its own at
+> > >    the end of the merge window for 6.11. Right?
+> > 
+> > Right. The best time is likely around Wed on the second week of the merge
+> > window, assuming all dependencies have landed. And it could be sent
+> > earlier if all the dependencies land sooner than that.
+> That makes sense. I have added a reminder to myself to do this when the
+> time comes. Feel free (@kees and @thomas) to scream at me if you see
+> that I might be forgetting :)
 > 
-> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+> > 
+> > > 2. Is there a special way to send these treewide patches? Or is it just
+> > >    a regular PR with an explanation on why it is being done?
+> > 
+> > I would do a regular PR with all the details for Linus to do the change
+> > himself, but many times people send these as an explicit patch. For
+> > example, include the full Coccinelle script, or the "sed" command
+> > line, etc, and then detail any "by hand" changes that were needed on
+> > top of that.
+> @Thomas: have you sent the 11/11 patch on its own to the lists? I cant
+> find it in my history. Please send it as a stand-alone patch, so It can
+> go into sysctl just like the others.
 
-Patches to the "net" tree usually need a Fixes: tag pointing to the
-first commit introducing an issue. They also need an explanation of the
-problem being addressed and how it can negatively affect an user.
+No, I didn't send it to the list on its own yet.
+Do you want some changes or can I send it as-is?
+(Plus the new motivational blurb)
 
-Still on the process topic, please increment the patch version from the
-previous submissions, and post a change log under the "---" sign below,
-as well as links on patchwork or lore to previous versions.
-
-> ---
->  drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
 > 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-> index 222540b55480..48500864017b 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-> @@ -348,6 +348,7 @@ static int tc_setup_cbs(struct stmmac_priv *priv,
->  	u32 mode_to_use;
->  	u64 value;
->  	int ret;
-> +	s64 port_transmit_rate_kbps;
->  
->  	/* Queue 0 is not AVB capable */
->  	if (queue <= 0 || queue >= tx_queues_count)
-> @@ -355,27 +356,24 @@ static int tc_setup_cbs(struct stmmac_priv *priv,
->  	if (!priv->dma_cap.av)
->  		return -EOPNOTSUPP;
->  
-> +	port_transmit_rate_kbps = qopt->idleslope - qopt->sendslope;
-> +
->  	/* Port Transmit Rate and Speed Divider */
-> -	switch (priv->speed) {
-> +	switch (div_s64(port_transmit_rate_kbps, 1000)) {
->  	case SPEED_10000:
->  		ptr = 32;
-> -		speed_div = 10000000;
->  		break;
->  	case SPEED_5000:
->  		ptr = 32;
-> -		speed_div = 5000000;
->  		break;
->  	case SPEED_2500:
->  		ptr = 8;
-> -		speed_div = 2500000;
->  		break;
->  	case SPEED_1000:
->  		ptr = 8;
-> -		speed_div = 1000000;
->  		break;
->  	case SPEED_100:
->  		ptr = 4;
-> -		speed_div = 100000;
->  		break;
->  	default:
->  		return -EOPNOTSUPP;
-
-This can be further compressed after the elimination of speed_div:
-
-	switch (div_s64(port_transmit_rate_kbps, 1000)) {
-	case SPEED_10000:
-	case SPEED_5000:
-		ptr = 32;
-	case SPEED_2500:
-	case SPEED_1000:
-		ptr = 8;
-		break;
-	case SPEED_100:
-		ptr = 4;
-		break;
-	default:
-		return -EOPNOTSUPP;
-	}
-
-> @@ -397,11 +395,13 @@ static int tc_setup_cbs(struct stmmac_priv *priv,
->  		priv->plat->tx_queues_cfg[queue].mode_to_use = MTL_QUEUE_DCB;
->  	}
->  
-> +	port_transmit_rate_kbps = qopt->idleslope - qopt->sendslope;
-> +
-
-You don't need to calculate it twice in the same function.
-
->  	/* Final adjustments for HW */
-> -	value = div_s64(qopt->idleslope * 1024ll * ptr, speed_div);
-> +	value = div_s64(qopt->idleslope * 1024ll * ptr, port_transmit_rate_kbps);
->  	priv->plat->tx_queues_cfg[queue].idle_slope = value & GENMASK(31, 0);
->  
-> -	value = div_s64(-qopt->sendslope * 1024ll * ptr, speed_div);
-> +	value = div_s64(-qopt->sendslope * 1024ll * ptr, port_transmit_rate_kbps);
->  	priv->plat->tx_queues_cfg[queue].send_slope = value & GENMASK(31, 0);
->  
->  	value = qopt->hicredit * 1024ll * 8;
-> -- 
-> 2.25.1
-> 
+> > 
+> > > 3. Can you please send (if there are any) me any examples where this has
+> > >    been done in the past. Maybe some lore.kernel.org links?
+> > 
+> > I found this one that is a good example, though it's a PATCH not a GIT PULL:
+> > 
+> > https://lore.kernel.org/lkml/20221220134519.3dd1318b@gandalf.local.home/
+> > became
+> > https://git.kernel.org/linus/292a089d78d3e2f7944e60bb897c977785a321e3
 
