@@ -1,174 +1,277 @@
-Return-Path: <linux-kernel+bounces-205952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 550F890028A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:46:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A161E900290
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C967B1F25062
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:46:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18E961F2566C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A094C18FDB2;
-	Fri,  7 Jun 2024 11:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD07190684;
+	Fri,  7 Jun 2024 11:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hWAuWg/v"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CoZhXKKH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E7E187358;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC581527A4;
 	Fri,  7 Jun 2024 11:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717760791; cv=none; b=RtFltLRBznglxpQTKm0zYKEG/bVkhRFZg6vTyB/14z6MhryMZ3ogEPbK01BPcuMBBadTWNvQC6MAnmv2m+mG0xpKxRht3W6DgZBRcbIMoEdcC/TeAvhiicTj7a+KvdHgD7L4dBwqJpIVEODE3MLuStjPkJJ4Hl4faBZv9KkwTOs=
+	t=1717760792; cv=none; b=ltlV5a4+wwxC3vdbJhvdQmtwHHR2Klytb9LvWMlwfwAI6KJSlW+MDWg6k6xJaQ5AuFVwo1gbNHOqzMvpcvFicGkZaouaL4hQcUJKUPgrFTayvl/HNmYP1vv/tB54nsoT/DhG2jBojcMowHz02oK3RcwnkDNlmnAFpa5dqPsvDuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717760791; c=relaxed/simple;
-	bh=MksdrsbJ5svjzf6jDBrszTDyTVTa0+EnUEUUE1OZVxI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lMvmjVzp0LMTgQFU8v1A/hheYxs7lTLx73uIAKDENhZVaYAx1NkOKLCisSGOT75tsSQ51Nq0CHpllIEbXskfIukONFRIFyEvV4cxCPYnJIRmLo/l4G5mgZHdZy65oUXgAaP5tuFi92bjvrRd6Gd0Dt3s17EDO8rWdoGs9ADHD5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hWAuWg/v; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c28d50f16aso1442021a91.0;
-        Fri, 07 Jun 2024 04:46:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717760790; x=1718365590; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FAkUIoGQHtxZMPQO45fRmdhKtMVjNeA1ZhO0yG7ZitE=;
-        b=hWAuWg/v2CX35DmdlG0GSWFmJGZCOVsp021pgw6ESucr3PUd9gKh+Ty5MGli4STDxI
-         CI3qrInjN5f/LDdaqPW+36XVhw32qusjsO6GvixcVX7G1tNkWZJvOE07jnl2fJdhwq+y
-         82fJMGgU1RBc2icGZLNFzBMG7W+0buhIt1L7V1WBwWV/UjRMNg/JyyAmi0WbJKR4s/cN
-         HLc6wmxovcEf6TXsURBPjEXsk2GFHWccRrAp2PVeap+JVzWk56iGw31WorfR7PQMcRBO
-         Gm1CXzEcURztJ5OfERVshPP6oDpzyxyO8yeOT3uo+YOsrDXjVYyxFp2l7b7F0CpqVd9u
-         ixMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717760790; x=1718365590;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FAkUIoGQHtxZMPQO45fRmdhKtMVjNeA1ZhO0yG7ZitE=;
-        b=cTeoLUtKN5j0+tRWrgd+LFWXegIIKsWIaQIbBi9zsmbJVZc4ybJuOOcDcn+8pLaDz8
-         chxyYZzG7Xexg+hpNHdtYNYQ7LD2+Rt5bH4P2NIALUMvvwvzRQwTQbSwvf6X0xOBBBeE
-         Y7V59QGb0EObiFn4kG+CbvZU9pL7JXqAlMcQuaN15ZSlm76BMjq8gQKYFCwO9m2BOdPq
-         liYjDhyWfC+HANUBxfftTJb1UdqLgE2zCZesa16vchJ9A2KqnWje/YlotKPQSvwz8wSg
-         jHMwZGUGumHX17LyeRqWy7+KEmmtxvpbSduTdNMwXkfD17hPugBZmsrfJXXzzeZGqGm7
-         WVGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKGnNV0OCYBiDPn9IG0TmSuZRCkRlB6be2W5CxWKTMOCJmT6+2zl3s0jRLmuHho6Z3jPSoNwYyWhttDp2PsFUAO/OYCynpgbqs5Ex9czjkVVgKU/k7UgP6SU414L70rQhzWP8V657EOJ1u5e0NWZDpM5KmpYxKGtH98I01LXN4tkZErWQpz1gxdJG4ow5dbn0=
-X-Gm-Message-State: AOJu0YwP3fdXGi1UYcBA2cYBEz+6yLYuBR9yC0E65zi3ne0dVLkDQVh3
-	KZab/9xp8Y90tpg42fBQMlSzlGXHLqNbgFAOXlbAoD+BBRgXAz5cL1KHQNLRUR/qd+GDMxeHam/
-	ZRsvpA9/c3uKnI5yEuqPQaGxM0Hs=
-X-Google-Smtp-Source: AGHT+IF6/OJhB7sayOU4uVkxQbEc9EJA8bdBUJ3pZJ8OjFRI0rIXJFvSLeMQYgIiS1t0pohJABV53TlTzJelBVh0v7o=
-X-Received: by 2002:a17:90b:b07:b0:2c2:4107:4cb1 with SMTP id
- 98e67ed59e1d1-2c299a4764cmr6660301a91.24.1717760788894; Fri, 07 Jun 2024
- 04:46:28 -0700 (PDT)
+	s=arc-20240116; t=1717760792; c=relaxed/simple;
+	bh=WgoPOvpJBrjFRzJkMr0lOsjcrFohGFp24YpP2tSK04c=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=fAjEXV3hixdSBKzJkqa97qOXDyWT5bHWZ2E04lma6Z3Fu0KFvPSweYgbB9iLHDPLfoppEuzLyCYif82MRWCxlIuvnC70ojIbSopw92XdxqWCeA6C4/j++8Ecps/zBT35tUrEaKLqaT+M2qjjgnXN6PJn3L0x5GJArXMm4v6K860=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CoZhXKKH; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717760791; x=1749296791;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=WgoPOvpJBrjFRzJkMr0lOsjcrFohGFp24YpP2tSK04c=;
+  b=CoZhXKKHANDuPBh6mFhQQ+Nm+6+uKzTjsT5V6kGS8bwoGm/AJcXeVOLm
+   A7JcjEu4peb+RSg3ifgezvZb3KlWEhNcYoJjHD7Ze+DO/OgAgPgrPtpMx
+   ExcDq3vaKlvWK+eh4SPngIk0Q3IlaQ11McSEof4vB/Ii8NQCzpX6Ir+oI
+   fzC1Vzg+MWUC6BA3N2p+r/kYQIA7JZAKQ67P8cT6hDCB3JP/9+4Zf88rF
+   0oRVa2wF7n16mUq6xwTWz4j1e+lWh00Ly9UeMwYtkYmM/JZX31WWxa9GX
+   Z113+3Otk4/DTVnEWCTRcxk0wJIu5FrWoDiR6+EfbP740LBjQEZSFHC0p
+   w==;
+X-CSE-ConnectionGUID: lLWB/BQ/SMq5f4D/w/WuGg==
+X-CSE-MsgGUID: F/M4WIOqSWCs6hs8Nkno4w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="14321039"
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="14321039"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 04:46:30 -0700
+X-CSE-ConnectionGUID: 4lKNgLrKSGCxUy3it4FE/Q==
+X-CSE-MsgGUID: +x08uut2TuWWc9SfCar14w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="38400831"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.184])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 04:46:24 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 7 Jun 2024 14:46:20 +0300 (EEST)
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+    Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+    Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+    Hans de Goede <hdegoede@redhat.com>, 
+    =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+    Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+    Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Konrad Dybcio <konrad.dybcio@linaro.org>, linux-pm@vger.kernel.org, 
+    devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    platform-driver-x86@vger.kernel.org, linux-usb@vger.kernel.org, 
+    linux-arm-msm@vger.kernel.org, Nikita Travkin <nikita@trvn.ru>
+Subject: Re: [PATCH v5 2/6] platform: arm64: add Lenovo Yoga C630 WOS EC
+ driver
+In-Reply-To: <20240607-yoga-ec-driver-v5-2-1ac91a0b4326@linaro.org>
+Message-ID: <3a9cb5b3-92a0-640d-baac-0429a91a669b@linux.intel.com>
+References: <20240607-yoga-ec-driver-v5-0-1ac91a0b4326@linaro.org> <20240607-yoga-ec-driver-v5-2-1ac91a0b4326@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606193318.GK8774@noisy.programming.kicks-ass.net>
- <20240607094329.3878781-1-aliceryhl@google.com> <20240607105232.GP8774@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240607105232.GP8774@noisy.programming.kicks-ass.net>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 7 Jun 2024 13:46:16 +0200
-Message-ID: <CANiq72=4y84CrmkP-QsrW7YYNbpNJRim3oFK=kfEE8oin38pMQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] rust: add static_call support
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, a.hindborg@samsung.com, alex.gaynor@gmail.com, 
-	ardb@kernel.org, benno.lossin@proton.me, bjorn3_gh@protonmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, jbaron@akamai.com, 
-	jpoimboe@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com, 
-	mhiramat@kernel.org, ojeda@kernel.org, rostedt@goodmis.org, 
-	rust-for-linux@vger.kernel.org, wedsonaf@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, Jun 7, 2024 at 12:52=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> I'm sorry, but 30+ years of reading ! as NOT (or factorial) isn't going
-> to go away. So I'm reading your macros do NOT rule.
+On Fri, 7 Jun 2024, Dmitry Baryshkov wrote:
 
-It makes it clear what is macro call or not. They could have gone for
-UPPERCASE names (for instance), yes. On the other hand, they do not
-work like C macros and are ~hygienic, so it also makes sense to avoid
-confusion here.
+> Lenovo Yoga C630 WOS is a laptop using Snapdragon 850 SoC. Like many
+> laptops it uses an embedded controller (EC) to perform various platform
+> operations, including, but not limited, to Type-C port control or power
+> supply handlng.
+> 
+> Add the driver for the EC, that creates devices for UCSI and power
+> supply devices.
+> 
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/platform/arm64/Kconfig                 |  14 ++
+>  drivers/platform/arm64/Makefile                |   1 +
+>  drivers/platform/arm64/lenovo-yoga-c630.c      | 283 +++++++++++++++++++++++++
+>  include/linux/platform_data/lenovo-yoga-c630.h |  43 ++++
+>  4 files changed, 341 insertions(+)
+> 
+> diff --git a/drivers/platform/arm64/Kconfig b/drivers/platform/arm64/Kconfig
+> index 8fdca0f8e909..8c103b3150d1 100644
+> --- a/drivers/platform/arm64/Kconfig
+> +++ b/drivers/platform/arm64/Kconfig
+> @@ -32,4 +32,18 @@ config EC_ACER_ASPIRE1
+>  	  laptop where this information is not properly exposed via the
+>  	  standard ACPI devices.
+>  
+> +config EC_LENOVO_YOGA_C630
+> +	tristate "Lenovo Yoga C630 Embedded Controller driver"
+> +	depends on I2C
+> +	help
+> +	  Driver for the Embedded Controller in the Qualcomm Snapdragon-based
+> +	  Lenovo Yoga C630, which provides battery and power adapter
+> +	  information.
+> +
+> +	  This driver provides battery and AC status support for the mentioned
+> +	  laptop where this information is not properly exposed via the
+> +	  standard ACPI devices.
+> +
+> +	  Say M or Y here to include this support.
+> +
+>  endif # ARM64_PLATFORM_DEVICES
+> diff --git a/drivers/platform/arm64/Makefile b/drivers/platform/arm64/Makefile
+> index 4fcc9855579b..b2ae9114fdd8 100644
+> --- a/drivers/platform/arm64/Makefile
+> +++ b/drivers/platform/arm64/Makefile
+> @@ -6,3 +6,4 @@
+>  #
+>  
+>  obj-$(CONFIG_EC_ACER_ASPIRE1)	+= acer-aspire1-ec.o
+> +obj-$(CONFIG_EC_LENOVO_YOGA_C630) += lenovo-yoga-c630.o
+> diff --git a/drivers/platform/arm64/lenovo-yoga-c630.c b/drivers/platform/arm64/lenovo-yoga-c630.c
+> new file mode 100644
+> index 000000000000..ffad8c443a13
+> --- /dev/null
+> +++ b/drivers/platform/arm64/lenovo-yoga-c630.c
 
-I mean, I am not suggesting to do a CPP-pass to Rust files, but if
-someone really, really wanted to mix them in a single file, it would
-be nice to not confuse the two kinds. :)
+> +int yoga_c630_ec_read8(struct yoga_c630_ec *ec, u8 addr)
+> +{
+> +	u8 req[2] = { LENOVO_EC_READ_REG, };
+> +	int ret;
+> +	u8 val;
+> +
+> +	scoped_guard(mutex, &ec->lock) {
+> +		req[1] = addr;
+> +		ret = yoga_c630_ec_request(ec, req, sizeof(req), &val, 1);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+> +	return val;
 
-Generally they feel "closer" to the language (given what they
-do/support) compared to the CPP ones, so it also makes sense they
-don't "shout" so much compared to UPPERCASE, if that makes sense.
+For simple cases like this which don't do logic after the unlock, guard() 
+would be enough (I don't mind scoped_guard() myself though).
 
-> The above exaple fails, because the next token is :ident, whatever the
-> heck that might be. Also, extra points for line-noise due to lack of
-> whitespace.
+> +}
+> +EXPORT_SYMBOL_GPL(yoga_c630_ec_read8);
+> +
+> +int yoga_c630_ec_read16(struct yoga_c630_ec *ec, u8 addr)
+> +{
+> +	u8 req[2] = { LENOVO_EC_READ_REG, };
+> +	int ret;
+> +	u8 msb;
+> +	u8 lsb;
 
-$name:ident means "match what Rust would consider an identifier here
-and call it $name for the purposes of this macro".
+addr + 1 could overflow below so it would be good the return -EINVAL if 
+0xff addr is given as a parameter.
 
-So, for instance, $x:ident matches:
+> +	scoped_guard(mutex, &ec->lock) {
+> +		req[1] = addr;
+> +		ret = yoga_c630_ec_request(ec, req, sizeof(req), &lsb, 1);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		req[1] = addr + 1;
+> +		ret = yoga_c630_ec_request(ec, req, sizeof(req), &msb, 1);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+> +	return msb << 8 | lsb;
+> +}
+> +EXPORT_SYMBOL_GPL(yoga_c630_ec_read16);
 
-    a
-    a2
-    a_b
 
-But it would not match:
+> +
+> +u16 yoga_c630_ec_ucsi_get_version(struct yoga_c630_ec *ec)
+> +{
+> +	u8 req[3] = { 0xb3, 0xf2, 0x20};
+> +	int ret;
+> +	u8 msb;
+> +	u8 lsb;
+> +
+> +	scoped_guard(mutex, &ec->lock) {
+> +		ret = yoga_c630_ec_request(ec, req, sizeof(req), &lsb, 1);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		req[2] = 0x21;
 
-    2a
-    a-b
-    a _b
+Could you name 0x20 with a define and use it above and with + 1 here?
 
-For the usual reasons why those are not identifiers.
+> +		ret = yoga_c630_ec_request(ec, req, sizeof(req), &msb, 1);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+> +	return msb << 8 | lsb;
+> +}
+> +EXPORT_SYMBOL_GPL(yoga_c630_ec_ucsi_get_version);
 
-https://godbolt.org/z/G7v4j67dc
+> diff --git a/include/linux/platform_data/lenovo-yoga-c630.h b/include/linux/platform_data/lenovo-yoga-c630.h
+> new file mode 100644
+> index 000000000000..5571dd65ce08
+> --- /dev/null
+> +++ b/include/linux/platform_data/lenovo-yoga-c630.h
+> @@ -0,0 +1,43 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2022-2024, Linaro Ltd
+> + * Authors:
+> + *    Bjorn Andersson
+> + *    Dmitry Baryshkov
+> + */
+> +
+> +#ifndef _LENOVO_YOGA_C630_DATA_H
+> +#define _LENOVO_YOGA_C630_DATA_H
+> +
+> +struct yoga_c630_ec;
+> +struct notifier_block;
+> +
+> +#define YOGA_C630_MOD_NAME	"lenovo_yoga_c630"
+> +
+> +#define YOGA_C630_DEV_UCSI	"ucsi"
+> +#define YOGA_C630_DEV_PSY	"psy"
+> +
+> +int yoga_c630_ec_read8(struct yoga_c630_ec *ec, u8 addr);
+> +int yoga_c630_ec_read16(struct yoga_c630_ec *ec, u8 addr);
+> +
+> +int yoga_c630_ec_register_notify(struct yoga_c630_ec *ec, struct notifier_block *nb);
+> +void yoga_c630_ec_unregister_notify(struct yoga_c630_ec *ec, struct notifier_block *nb);
+> +
+> +#define YOGA_C630_UCSI_WRITE_SIZE	8
+> +#define YOGA_C630_UCSI_CCI_SIZE		4
+> +#define YOGA_C630_UCSI_DATA_SIZE	16
+> +#define YOGA_C630_UCSI_READ_SIZE	(YOGA_C630_UCSI_CCI_SIZE + YOGA_C630_UCSI_DATA_SIZE)
 
-    fn f(x: i32) -> i32 {
-        x * 2
-    }
+Add newline here.
 
-    macro_rules! f {
-        ($x:ident) =3D> { $x * 2 }
-    }
+> +u16 yoga_c630_ec_ucsi_get_version(struct yoga_c630_ec *ec);
+> +int yoga_c630_ec_ucsi_write(struct yoga_c630_ec *ec,
+> +			    const u8 req[YOGA_C630_UCSI_WRITE_SIZE]);
+> +int yoga_c630_ec_ucsi_read(struct yoga_c630_ec *ec,
+> +			   u8 resp[YOGA_C630_UCSI_READ_SIZE]);
+> +
+> +#define LENOVO_EC_EVENT_USB		0x20
+> +#define LENOVO_EC_EVENT_UCSI		0x21
+> +#define LENOVO_EC_EVENT_HPD		0x22
+> +#define LENOVO_EC_EVENT_BAT_STATUS	0x24
+> +#define LENOVO_EC_EVENT_BAT_INFO	0x25
+> +#define LENOVO_EC_EVENT_BAT_ADPT_STATUS	0x37
+> +
+> +#endif
+> 
+> 
 
-    fn main() {
-        let a =3D 42;
+-- 
+ i.
 
-        let b =3D f(a);       // Function.
-        let c =3D f!(a);      // Macro.
-
-        //let c =3D f!(a2);   // Works, but the variable does not exist.
-        //let c =3D f!(2a);   // Error: no rules expected the token `2a`.
-
-        //let c =3D f!(a_b);  // Works, but the variable does not exist.
-        //let c =3D f!(a-b);  // Error: no rules expected the token `-`.
-        //let c =3D f!(a_ b); // Error: no rules expected the token `b`.
-
-        println!("{a} {b} {c}");
-    }
-
-I hope this makes it clearer.
-
-> You just need to extend the rust thing to be able to consume C header
-> files.
-
-I agree, because in practice it is quite useful for a language like
-Rust that consuming C header files is "natively" supported.
-
-Though it also has downsides and is a big decision, which is why, like
-Alice mentioned, some people agree, and some people don't.
-Nevertheless, we have been doing our best for a long time to get the
-best we can for the kernel -- just 2 days ago we told the Rust project
-in one of our meetings that it would be nice to see that particular
-"project goal" from that document realized (among others).
-
-Cheers,
-Miguel
 
