@@ -1,306 +1,148 @@
-Return-Path: <linux-kernel+bounces-206496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23675900A8F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:36:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AA3E900A91
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0045284665
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:36:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BF451C21BF3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41AB719B5BB;
-	Fri,  7 Jun 2024 16:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7537319D077;
+	Fri,  7 Jun 2024 16:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NbVK9Q/t"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Vz1LTUe9"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8564F19B3F6
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 16:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4B519CD09
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 16:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717778040; cv=none; b=q9uFdwEALrO29lna/8UP6BWbxRfZMLKSihbsIIZfXEQmy0zaJvpycAz+6EzodLS05M6CF4IjHdif+Z/AQax2jnABqNgblkzbK0Vg51qiwGPpZViztNEgh+SVJdgQdSz3iDr0RlbYI+CrPR71eQUnt3I8NDM4MlvWbpJk6FpXXww=
+	t=1717778099; cv=none; b=TaCOiI2U3O+cWkZsGMkzl9UOcRKyi/p79Z2CIM8DVwapNQiAsyo9naCqZsErjgXDmYoQkVvc/hkkXhw2qYmYvoZGT4YYSigUNkUne9albJ1M9IL4XkujrN7IDOs2iXB/F+5d88IbESWE+iCNGrx5lhYnytWqPBllB2grsH/BOUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717778040; c=relaxed/simple;
-	bh=Rw/yQU4SQECgSFkVagrrG+DKRyohNhv3ZOmdBmgXr5U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NiPLrItnNskZYjeDlfep9xhhuR44yYyoVTox5IVyBrZ4F+5K3iOcijSkJNBW4X/FJxpe38jbf/RqvxXziHV8JygpyB869x+FJfC5Ib2Q1q9WPwcRFGIXEG2knnEy6rFtSzAgFZg9TpwT6ZWVFp9s03raMS2cMmBcaAFHpvl2KHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NbVK9Q/t; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57a2f032007so2967699a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 09:33:58 -0700 (PDT)
+	s=arc-20240116; t=1717778099; c=relaxed/simple;
+	bh=JSjugDn364e1bR2NBfOIb6HAziv7A8jZrYbuA88Eh+4=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CgcsMfJTbY2D5AzTH7KwoVF+wmoU//aALjElPPAm5JHTkyJTDNEuuDqNzjQpFsuYkm/FT+txn+jhzk1896qHFD3mYPuxQ/lXQ5/EkmdMNxC9SlbeXPUFFXCtQoAO49UiBd7u6dmbUvEQOY2fIVaBNEVxapzgehOhiYMOCV0+qwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Vz1LTUe9; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4215ac379fdso21562745e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 09:34:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717778037; x=1718382837; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UUlrcyXqHPisdOR1gYbfhNfAfonQ36aa9TUXeHIP7cM=;
-        b=NbVK9Q/txkqfBV24f582PRvun2A+9OLUKzY9lFF57KVYplWbin0+NwuG7EcdAvAxYZ
-         XJyIYjiGITMg2XVvAa3U5G9PDBsfAt+0EcR/3KxlAi6FRBg5bdDNc74YvC5CqkvATs/s
-         aoaJkudOjp+uC1p/X41dgaw53ZH+VB24p2hbWf4rbQe6TLC71m3DpjxcQlzwlHNEnU7p
-         hK7vKHhpht7oI/kk5SV9lJnMjc7sdSVWmhcc0RJGqpM04FDMD4Euhbpf4+jjI7Sa20Bj
-         f2UmrtD1pwDCD4SjNaJhQwwOyRfWcZbgAQzfDdIPVYZUEr1f974xhHSGZSYH/RH1if1D
-         NK9w==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717778096; x=1718382896; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JSjugDn364e1bR2NBfOIb6HAziv7A8jZrYbuA88Eh+4=;
+        b=Vz1LTUe9I471TI69Ynuiuhq9MswC4g5uooJcYJjaMDtAqCc6UddtnVD25Egc9n9Idq
+         7nufaQ/AnSE1/FanmqWl4vpHz3M9+8rQtAGTIkfehR+dthNkMG59dMXz/lRgwTcrgwhV
+         BZ1mlpPYYYAu8Gqx666X+SwcpOJkC+DMYY9nQPIwylAgzj//b1bTGho5pHWXBrXcn72t
+         SSKHCnqYgEmsnvxZaca733bYXntpu0UFRn4XIx8wmU5qkvyXMuOBzVBtRROo669ovwYC
+         5zq1uGrBmSi5NtQv0M9dsY9IlskcwlPpFpT5VXxd+zQE0zBtpX07S9HzKBYbHyFQm2Ju
+         bNqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717778037; x=1718382837;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UUlrcyXqHPisdOR1gYbfhNfAfonQ36aa9TUXeHIP7cM=;
-        b=i5EFEjGSKbZSNbCb2TQi9FpLSuvxaxTgDoR10ylC1nocsUm0+/DAr9Bf/8mEKzykw+
-         zxWxHNep+/sQbLw2LK+W7daEgimzeMhb9Wi+pg6n3DLhGZUx/xFKyWVXJv7rAU9NPjzG
-         ZtrPvzxXLU5Gr+Gl7Heyk6ouM4RxtlmCQ0zRQVrsN8ePgsN/idNQalllBUyLG/904DhG
-         rM9ZJqmZF8Oergkzlo3+MN/pjEVtht78nq64IKgguyscC+yc5SepaY0d3K5hZP3Ccj7h
-         jVHD6/ce+7aH4ph0G30CWQI1FjOiB7guwWyRhqI1IwGHK3WIRNDwwPybtPDiTGzly1Yc
-         eYtA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPTDsfBPtdSaa+dsSA+KwsZClG/i3/t1SUrau6q/YklgiwWJy9YwFRLBYfP+TLI8rw/eL+5jv0BkObkS8cDDxlIv21W35Qrucs+oaE
-X-Gm-Message-State: AOJu0YzcvyS/NMrnWBLB/VTY+ienlRW5A37YfOnQ2Ofv+8abpZSn1yfR
-	4mb5GORKLn3ZwYL3CdZe0nJytb7MNCGJ2m17XqFwCA6SxPffNALt
-X-Google-Smtp-Source: AGHT+IGR9NKO5efJ0RzKvH1rbvh2TMToeq9ABS5xgp1TI7WnqoMrkOMUR2oOQc3zd8Ub4Qy47Q+OZQ==
-X-Received: by 2002:a50:bb49:0:b0:57a:2f68:fe7b with SMTP id 4fb4d7f45d1cf-57c509898c8mr1935409a12.31.1717778036833;
-        Fri, 07 Jun 2024 09:33:56 -0700 (PDT)
-Received: from localhost.localdomain ([2001:b07:ac9:e686:17a2:25c2:1b0c:3c07])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae0cc355sm3032715a12.33.2024.06.07.09.33.56
+        d=1e100.net; s=20230601; t=1717778096; x=1718382896;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JSjugDn364e1bR2NBfOIb6HAziv7A8jZrYbuA88Eh+4=;
+        b=HQ9rhoy1VnRrXZ4qiWzIH+lrtbU3KKAwKxPuA6pzz3UehxLvf2D5zGhK0FpdFMuwKl
+         oZY9HhOAQXO8wOtAxFzfT2CC4HIBj+ruXblobd3UQLgbaUSWAKFE/ajBFEfPJQXw8tcI
+         85iQYp0sbvSromaxecvuuA2EoGexsgeMPgPDQPoCpqF3xjn5a/mflFAzG9epkyRHDg2l
+         b5/S7Gtr06rEFCk3orynovNhtIar39zIFDLpnELbBj4HRBkz/vhVLG7aRB4FgrMtql2J
+         BoJxCKxJJJXqTz5iEEmUvSIYsxKPs4iqcWdoXvMQ2uM7vKwuYR/7FVAVWWtzAK4L1TPS
+         C38g==
+X-Forwarded-Encrypted: i=1; AJvYcCWAb2pJC5IQJVmvPvNV6pCtX6rWSn5jE2dwhQPkM1175napx+F8JWGcbtWibR+fXn5kMes1nJGzgOuPSFkoapk4r/Kj/jeSiE1VSsfX
+X-Gm-Message-State: AOJu0Yy4ypd8P6KiXJYfBEO0aogmz4dfml/2FByVnobaYRy9Da7FMk3A
+	/uIK0mnf9t1Zyh8A6SsF4rfpPdoTnHX05zHPrja8APidYOpRD7fsN+5IB+rQrr8=
+X-Google-Smtp-Source: AGHT+IGpGEuV4DVZ1kdf6ue+dBm6Ke4RvEdYp3g9xEjXsaFgOxYEd6wAXfkcbKsCsHOsq8Dy8bGbhw==
+X-Received: by 2002:a05:600c:3c83:b0:41c:13f6:206d with SMTP id 5b1f17b1804b1-42164a2e9d4mr30060715e9.25.1717778096151;
+        Fri, 07 Jun 2024 09:34:56 -0700 (PDT)
+Received: from localhost (p200300f65f283b0017c92b05fa289d44.dip0.t-ipconnect.de. [2003:f6:5f28:3b00:17c9:2b05:fa28:9d44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c19e719sm58262335e9.3.2024.06.07.09.34.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 09:33:56 -0700 (PDT)
-From: Vincenzo Mezzela <vincenzo.mezzela@gmail.com>
-To: gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	sudeep.holla@arm.com
-Cc: vincenzo.mezzela@gmail.com,
-	javier.carrasco.cruz@gmail.com,
-	julia.lawall@inria.fr,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org
-Subject: [PATCH 2/2 v4 RESEND] drivers: arch_topology: use __free attribute instead of of_node_put()
-Date: Fri,  7 Jun 2024 18:33:50 +0200
-Message-Id: <20240607163350.392971-3-vincenzo.mezzela@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240607163350.392971-1-vincenzo.mezzela@gmail.com>
-References: <20240607163350.392971-1-vincenzo.mezzela@gmail.com>
+        Fri, 07 Jun 2024 09:34:55 -0700 (PDT)
+From: "Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=" <ukleinek@baylibre.com>
+X-Google-Original-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Date: Fri, 7 Jun 2024 18:34:54 +0200
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-pwm@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] pwm: add missing MODULE_DESCRIPTION() macros
+Message-ID: <vunkvcpe7omv5tbsyw237hhauzyrhf6nujwvyv6vq5zd33udee@5b36qxbz5mjx>
+References: <20240607-md-drivers-pwm-v1-1-27237a2bec6a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uegcep6av77uozx5"
+Content-Disposition: inline
+In-Reply-To: <20240607-md-drivers-pwm-v1-1-27237a2bec6a@quicinc.com>
 
-Introduce the __free attribute for scope-based resource management.
-Resources allocated with __free are automatically released at the end of
-the scope. This enhancement aims to mitigate memory management issues
-associated with forgetting to release resources by utilizing __free
-instead of of_node_put().
 
-The declaration of the device_node used within the do-while loops is
-moved directly within the loop so that the resource is automatically
-freed at the end of each iteration.
+--uegcep6av77uozx5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-Suggested-by: Julia Lawall <julia.lawall@inria.fr>
-Signed-off-by: Vincenzo Mezzela <vincenzo.mezzela@gmail.com>
----
- drivers/base/arch_topology.c | 56 +++++++++++++++++-------------------
- 1 file changed, 26 insertions(+), 30 deletions(-)
+Hello,
 
-diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-index 583f11bd4d2e..75fcb75d5515 100644
---- a/drivers/base/arch_topology.c
-+++ b/drivers/base/arch_topology.c
-@@ -8,6 +8,7 @@
- 
- #include <linux/acpi.h>
- #include <linux/cacheinfo.h>
-+#include <linux/cleanup.h>
- #include <linux/cpu.h>
- #include <linux/cpufreq.h>
- #include <linux/device.h>
-@@ -513,10 +514,10 @@ core_initcall(free_raw_capacity);
-  */
- static int __init get_cpu_for_node(struct device_node *node)
- {
--	struct device_node *cpu_node;
- 	int cpu;
-+	struct device_node *cpu_node __free(device_node) =
-+		of_parse_phandle(node, "cpu", 0);
- 
--	cpu_node = of_parse_phandle(node, "cpu", 0);
- 	if (!cpu_node)
- 		return -1;
- 
-@@ -527,7 +528,6 @@ static int __init get_cpu_for_node(struct device_node *node)
- 		pr_info("CPU node for %pOF exist but the possible cpu range is :%*pbl\n",
- 			cpu_node, cpumask_pr_args(cpu_possible_mask));
- 
--	of_node_put(cpu_node);
- 	return cpu;
- }
- 
-@@ -538,11 +538,12 @@ static int __init parse_core(struct device_node *core, int package_id,
- 	bool leaf = true;
- 	int i = 0;
- 	int cpu;
--	struct device_node *t;
- 
- 	do {
- 		snprintf(name, sizeof(name), "thread%d", i);
--		t = of_get_child_by_name(core, name);
-+		struct device_node *t __free(device_node) =
-+			of_get_child_by_name(core, name);
-+
- 		if (!t)
- 			break;
- 
-@@ -555,10 +556,8 @@ static int __init parse_core(struct device_node *core, int package_id,
- 			cpu_topology[cpu].thread_id = i;
- 		} else if (cpu != -ENODEV) {
- 			pr_err("%pOF: Can't get CPU for thread\n", t);
--			of_node_put(t);
- 			return -EINVAL;
- 		}
--		of_node_put(t);
- 		i++;
- 	} while (1);
- 
-@@ -587,7 +586,6 @@ static int __init parse_cluster(struct device_node *cluster, int package_id,
- 	char name[20];
- 	bool leaf = true;
- 	bool has_cores = false;
--	struct device_node *c;
- 	int core_id = 0;
- 	int i, ret;
- 
-@@ -599,7 +597,9 @@ static int __init parse_cluster(struct device_node *cluster, int package_id,
- 	i = 0;
- 	do {
- 		snprintf(name, sizeof(name), "cluster%d", i);
--		c = of_get_child_by_name(cluster, name);
-+		struct device_node *c __free(device_node) =
-+			of_get_child_by_name(cluster, name);
-+
- 		if (!c)
- 			break;
- 
-@@ -607,7 +607,6 @@ static int __init parse_cluster(struct device_node *cluster, int package_id,
- 		ret = parse_cluster(c, package_id, i, depth + 1);
- 		if (depth > 0)
- 			pr_warn("Topology for clusters of clusters not yet supported\n");
--		of_node_put(c);
- 		if (ret != 0)
- 			return ret;
- 		i++;
-@@ -617,7 +616,9 @@ static int __init parse_cluster(struct device_node *cluster, int package_id,
- 	i = 0;
- 	do {
- 		snprintf(name, sizeof(name), "core%d", i);
--		c = of_get_child_by_name(cluster, name);
-+		struct device_node *c __free(device_node) =
-+			of_get_child_by_name(cluster, name);
-+
- 		if (!c)
- 			break;
- 
-@@ -625,21 +626,19 @@ static int __init parse_cluster(struct device_node *cluster, int package_id,
- 
- 		if (depth == 0) {
- 			pr_err("%pOF: cpu-map children should be clusters\n", c);
--			of_node_put(c);
- 			return -EINVAL;
- 		}
- 
- 		if (leaf) {
- 			ret = parse_core(c, package_id, cluster_id, core_id++);
-+			if (ret != 0)
-+				return ret;
- 		} else {
- 			pr_err("%pOF: Non-leaf cluster with core %s\n",
- 			       cluster, name);
--			ret = -EINVAL;
-+			return -EINVAL;
- 		}
- 
--		of_node_put(c);
--		if (ret != 0)
--			return ret;
- 		i++;
- 	} while (1);
- 
-@@ -652,19 +651,19 @@ static int __init parse_cluster(struct device_node *cluster, int package_id,
- static int __init parse_socket(struct device_node *socket)
- {
- 	char name[20];
--	struct device_node *c;
- 	bool has_socket = false;
- 	int package_id = 0, ret;
- 
- 	do {
- 		snprintf(name, sizeof(name), "socket%d", package_id);
--		c = of_get_child_by_name(socket, name);
-+		struct device_node *c __free(device_node) =
-+			of_get_child_by_name(socket, name);
-+
- 		if (!c)
- 			break;
- 
- 		has_socket = true;
- 		ret = parse_cluster(c, package_id, -1, 0);
--		of_node_put(c);
- 		if (ret != 0)
- 			return ret;
- 
-@@ -679,11 +678,11 @@ static int __init parse_socket(struct device_node *socket)
- 
- static int __init parse_dt_topology(void)
- {
--	struct device_node *cn, *map;
- 	int ret = 0;
- 	int cpu;
-+	struct device_node *cn __free(device_node) =
-+		of_find_node_by_path("/cpus");
- 
--	cn = of_find_node_by_path("/cpus");
- 	if (!cn) {
- 		pr_err("No CPU information found in DT\n");
- 		return 0;
-@@ -693,13 +692,15 @@ static int __init parse_dt_topology(void)
- 	 * When topology is provided cpu-map is essentially a root
- 	 * cluster with restricted subnodes.
- 	 */
--	map = of_get_child_by_name(cn, "cpu-map");
-+	struct device_node *map __free(device_node) =
-+		of_get_child_by_name(cn, "cpu-map");
-+
- 	if (!map)
--		goto out;
-+		return ret;
- 
- 	ret = parse_socket(map);
- 	if (ret != 0)
--		goto out_map;
-+		return ret;
- 
- 	topology_normalize_cpu_scale();
- 
-@@ -709,14 +710,9 @@ static int __init parse_dt_topology(void)
- 	 */
- 	for_each_possible_cpu(cpu)
- 		if (cpu_topology[cpu].package_id < 0) {
--			ret = -EINVAL;
--			break;
-+			return -EINVAL;
- 		}
- 
--out_map:
--	of_node_put(map);
--out:
--	of_node_put(cn);
- 	return ret;
- }
- #endif
--- 
-2.34.1
+On Fri, Jun 07, 2024 at 09:02:33AM -0700, Jeff Johnson wrote:
+> make allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx1.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx27.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-intel-l=
+gm.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-mediate=
+k.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-pxa.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-samsung=
+=2Eo
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-spear.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-viscont=
+i.o
+>=20
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+>=20
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> This addresses all of the issues in driver/pwm
+>=20
+> Let me know if you want any of the individual module changes
+> segregated into separate patches.
 
+Looks good to me, I applied it to
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
+next
+
+Thanks
+Uwe
+
+--uegcep6av77uozx5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZjNqkACgkQj4D7WH0S
+/k4LyAf+MocX0RpPC44cCBO/dFFZlEnU4+NMAXx+vRXpg0ASWbWuBgbMvXujfpeo
+YRQZYgDgLp/7/FndOQIPT59C9fFbWz0UdLPSiT/MkN+cbRAoiaMXD5JqiTrORPFq
+RFbNwOtXzQoRAEceczkKFb65oV7rwmyNyIBN9Vv3Ce/o+avvmlqdAziFU/smNwKz
+en3MhIonz85eSOessjikio9bmBGGFzT8US8WiD8Ya8zcQUZ/i9aXH/verkoyfsb/
+9hIlW/QY+mBn61RQeVHuF6O5W5Trnq4/sPf2TtnicRafEYBtwNFJRZmDviEqVp3g
+UVN+CF/yOMS6eo/89WixvZXyYMNuEQ==
+=bpJ1
+-----END PGP SIGNATURE-----
+
+--uegcep6av77uozx5--
 
