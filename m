@@ -1,142 +1,98 @@
-Return-Path: <linux-kernel+bounces-205823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C309E9000D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:31:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A93C90010F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 485DD2879B6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:31:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B9F41F25612
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F219915B12A;
-	Fri,  7 Jun 2024 10:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E220315EFAF;
+	Fri,  7 Jun 2024 10:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k6K3EGki"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tnaCFC+S"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F00B2F2B
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 10:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B9115D5D6
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 10:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717756262; cv=none; b=p4OsNZjWBlEpmBuCDilYtvARO9DQ3ZuaMQWWzLIviWFjHcJyuPREIsIugh1xWb8m/mTHmXMvrgcZcFLYrSMQo5WSerJkUfcunghzHCj/h8nyhzUkN1Rzm8gyg3qL5IM3pYTpepOrP/Jm7UwMRyjd+tWMAlU6GdufaSobvBTF9aI=
+	t=1717756689; cv=none; b=muOKsRp38Kep/teieDppAYIz0Ffssbj7MPQ27alSeOT0qp1qZ1LbAStGEZdPkk3mumpoDUHCpDfk9Rgm8N1XnzolOCkSJPw6Z4RiXSwh3rYc1ikEbB1UpINAKHIRQSOoZ2RipnDlDLlH0MPD/r7ZVrxTJnLCTMSuYOVH8dgnOSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717756262; c=relaxed/simple;
-	bh=TH4cscibZLSNy4YsDvEPmdXH2rRNMmDbYIaDLwboVUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BArEq6yKmxkjm6FqxWT17qWsRdDFgjIJ+CxBUk8YOL69M9WNO70cTME5i7dL0dqdfi36RXa8RMB2eoE45+IR3vpGs22DFf8noNfuxMqGZQURZbCv7XJh5ErkUS+tdC9N6fcye34Lxwr0YhVaESeCzHppGHdvlihrfUth7N4Z1lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=k6K3EGki; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=uyoBt0JfhrDyTzN3Vspe+/CrH6yaV6pDIoW5yTEXKos=; b=k6K3EGkiBF4XVnPjzFLdokzTJv
-	ebb7u0invf9NHAcVPNjyfvZAjYjzyquHcuwO6ixuUQL24xR7iSMTXigMypLm3h5f54/q+NuiRhnnt
-	xdeIZrT0Mh0KXGaeL1rPLIJXP3+3SE2SNZ3GOC06WOJnvmQQGTuc9FBWswRXk8AJ/al3v9V9cr6/E
-	R29g+tPKXTqmYBvYNSxksz0Wu/0Sx6pMmH/YS/wO5NvWv/YZh9b6zq0hNbG+4cVfK7Okx03OO9U4P
-	7PJYWIU4plys4X0v5DrvOLXCwWmNxoFTZVMoBNgTY82eUvTW0bOvtqAvCIy10wuL3mf46oMraPgOP
-	xCSSyjVw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sFWru-00000005IK2-0Ewb;
-	Fri, 07 Jun 2024 10:30:46 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E470D30047C; Fri,  7 Jun 2024 12:30:43 +0200 (CEST)
-Date: Fri, 7 Jun 2024 12:30:43 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Zhang Qiao <zhangqiao22@huawei.com>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched: Initialize the vruntime of a new task when it is
- first enqueued
-Message-ID: <20240607103043.GO8774@noisy.programming.kicks-ass.net>
-References: <20240606121133.2218723-1-zhangqiao22@huawei.com>
+	s=arc-20240116; t=1717756689; c=relaxed/simple;
+	bh=Dfhm+Ao2OctkWzCPUlbZo2WPxOBCaMO/F20ozOPjqus=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=RwB0JubgeDP2i9Z2uvLRk/3ji5MYoFJEA77bQa+Zz6yco+EzD298CPGLbbJUdFEDKyLcEtoNKXa18lIGnbUIsQGjy1U0shWHYKNGf1yHlvALzOfB+G3vaqRIyT+pGFqe2LR+Xqo8LSpwZhEP+nM3X3OVkzB9JGynGS6Gt16nFA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tnaCFC+S; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-35dc0472b7eso1800538f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 03:38:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717756686; x=1718361486; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to
+         :references:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Dfhm+Ao2OctkWzCPUlbZo2WPxOBCaMO/F20ozOPjqus=;
+        b=tnaCFC+SfWcqaMHB00quB4nInAKRiCZ3/LOVjc287R7qxnZjZpN5e3BPN+ZzlW3moj
+         ggk+LgOorn0Q5iL2g/rIOfCT1w16yAeXwxMkozo0R4e/n0J6mkoIanKKU8LSUONCzPdM
+         qQzreCyjRcpQhrPlIkhEPo0yzRe8WX2VF4QMHPVmTQa752KibDwCyHufFR8U0j7HDniI
+         HSqKGj4GZNiN4/K3d0BTnbzGsyxEZo0K/xEnIMd/gjtqK9Q+RJB3j/2GC+fTuKX5ltsR
+         xPytFClmybpR9z/J6wygzscxN6n8s5WuUuL0xUX22m+cfpfTnzwHIz6lesjdetA6VXKI
+         MIGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717756686; x=1718361486;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to
+         :references:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Dfhm+Ao2OctkWzCPUlbZo2WPxOBCaMO/F20ozOPjqus=;
+        b=F0/yvju41jg3Lsgrs5TAfkZu8ntUg0vvH6H8dJqVRMpCK1sliAwM/8TCX5dB2LAqel
+         b9So5bdbdnPO1nLlaRfQPe81leuM0xenAmZ9mFk3dd5RzeYegn3QT7m/g2MB0E8ORb5T
+         tjNzmDCUZpb/TBkt5uhoRJ79g8gSdHMUP9iw0AvdWJ1MwRIMTS/WDJ/jIO/UPVkOQHCL
+         nEftBM4RjGxumY44HhoF+9gtk0ZnM9UJ0APj7UXNwmkm9UUv0Y+UipveNW8R5bb7Jdwo
+         JYLN46WzTP8XEJacACr23+kZpZwy46JcytlwAiIH/GVH7ecFnr7S2n+FhUJ6uzYJWeKL
+         jgOg==
+X-Forwarded-Encrypted: i=1; AJvYcCW27vey5Rx118b7+rX1WGg/j/+xcBhXc9Ke+sVEijwNtA9o+PAP6LeNVhgKR6j9d82oAjnYeVOVi/PimnOkV7WlNhghftf4CdR19owp
+X-Gm-Message-State: AOJu0YytCLcPIU5H/0b29kmCSPMPqkDAO+Hz3b2l6ZBRPKezh0OAOPwh
+	uIRLSgrAYAFvkExS+SSwzUQUXs/aJqubdbmnTEKDQPMoyjGuZ/MNlg+McAuVdeY=
+X-Google-Smtp-Source: AGHT+IEalbWRcpQcRyHzFdufx8s7rTDBgqplrK6U7baTcerM2u8XIM+miaw2LC/2FNTBgh129sR4nQ==
+X-Received: by 2002:a05:6000:1755:b0:34b:1a4f:23fc with SMTP id ffacd0b85a97d-35efed1cfeemr1613166f8f.1.1717756686002;
+        Fri, 07 Jun 2024 03:38:06 -0700 (PDT)
+Received: from meli-email.org (adsl-105.37.6.1.tellas.gr. [37.6.1.105])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5e96d7dsm3675615f8f.67.2024.06.07.03.38.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 03:38:05 -0700 (PDT)
+Date: Fri, 07 Jun 2024 13:32:22 +0300
+From: Manos Pitsidianakis <manos.pitsidianakis@linaro.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, Bj=?UTF-8?B?w7Y=?= rn Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>, rust-for-linux@vger.kernel.org, Manos Pitsidianakis <manos.pitsidianakis@linaro.org>, Erik Schilling <erik.schilling@linaro.org>, Alex Benn=?UTF-8?B?w6k=?= e <alex.bennee@linaro.org>, Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH V2 1/8] rust: Add initial bindings for OPP framework
+User-Agent: meli 0.8.5
+References: <cover.1717750631.git.viresh.kumar@linaro.org> <e74e3a14e6da3f920cee90d32a023ba4805328a0.1717750631.git.viresh.kumar@linaro.org>
+In-Reply-To: <e74e3a14e6da3f920cee90d32a023ba4805328a0.1717750631.git.viresh.kumar@linaro.org>
+Message-ID: <ephjf.9236xxczfzy@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606121133.2218723-1-zhangqiao22@huawei.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
 
-On Thu, Jun 06, 2024 at 08:11:33PM +0800, Zhang Qiao wrote:
-> When create a new task, we initialize vruntime of the new task
-> at sched_cgroup_fork(). However, the timing of executing this
-> action is too early and may not be accurate.
-> 
-> Because it use current cpu to init the vruntime, but the new
-> task actually runs on the cpu which be assigned at wake_up_new_task().
-> 
-> To optimize this case, we pass ENQUEUE_INITIAL flag to
-> activate_task() in wake_up_new_task(), in this way,
-> when place_entity is called in enqueue_entity(), the
-> vruntime of the new task will be initialized. At the same
-> time, place_entity in task_fork_fair() is useless, remove it.
+On Fri, 07 Jun 2024 12:12, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>This commit adds initial Rust bindings for the Operating performance
+>points (OPP) core. This adds bindings for `struct dev_pm_opp` and
+>`struct dev_pm_opp_data` to begin with.
+>
+>Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+>---
 
-The better argument would've looked at history to see why the code was
-the way it is and then verify those reasons are no longer valid.
+On the Rust side of things,
 
-Specifically, I think these are remains of child_runs_first, and that is
-now gone.
-
-Can you verify and update accordingly?
-
-> Signed-off-by: Zhang Qiao <zhangqiao22@huawei.com>
-> ---
->  kernel/sched/core.c |  2 +-
->  kernel/sched/fair.c | 16 ----------------
->  2 files changed, 1 insertion(+), 17 deletions(-)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index bcf2c4cc0522..b4ff595a2dc8 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -4897,7 +4897,7 @@ void wake_up_new_task(struct task_struct *p)
->  	update_rq_clock(rq);
->  	post_init_entity_util_avg(p);
->  
-> -	activate_task(rq, p, ENQUEUE_NOCLOCK);
-> +	activate_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_INITIAL);
->  	trace_sched_wakeup_new(p);
->  	wakeup_preempt(rq, p, WF_FORK);
->  #ifdef CONFIG_SMP
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index efce2d36a783..bb5f376fd51e 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -12702,23 +12702,7 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
->   */
->  static void task_fork_fair(struct task_struct *p)
->  {
-> -	struct sched_entity *se = &p->se, *curr;
-> -	struct cfs_rq *cfs_rq;
-> -	struct rq *rq = this_rq();
-> -	struct rq_flags rf;
-> -
-> -	rq_lock(rq, &rf);
-> -
->  	set_task_max_allowed_capacity(p);
-> -
-> -	cfs_rq = task_cfs_rq(current);
-> -	curr = cfs_rq->curr;
-> -	if (curr) {
-> -		update_rq_clock(rq);
-> -		update_curr(cfs_rq);
-> -	}
-> -	place_entity(cfs_rq, se, ENQUEUE_INITIAL);
-> -	rq_unlock(rq, &rf);
->  }
->  
->  /*
-> -- 
-> 2.18.0.huawei.25
-> 
+Reviewed-by: Manos Pitsidianakis <manos.pitsidianakis@linaro.org>
 
