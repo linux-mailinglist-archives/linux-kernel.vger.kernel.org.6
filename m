@@ -1,552 +1,194 @@
-Return-Path: <linux-kernel+bounces-206546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7C6A900B40
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:29:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D28F900B41
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25D36B22B35
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:29:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7C381F22EA8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA0019B3D2;
-	Fri,  7 Jun 2024 17:29:39 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5B319AA61;
+	Fri,  7 Jun 2024 17:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="IEhWmlGB"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DDD15ACB;
-	Fri,  7 Jun 2024 17:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F03F1C33
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 17:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717781378; cv=none; b=U+4BnQmoXc4z3kY7R4bFh9Q0Nwwetq6ktOy1ElVFCbaBCbEp5H/np+0YZ4egMXB7bnNO2su22uvqoEAKwJdScMANY+vDLRwTerl1T0AcGIPZ6Kvxl/g6CcHWRINXye7bnvFV9nHpr4ou66Ai9R/rTB7y4xEcv5DgGl0VNoBEfzM=
+	t=1717781407; cv=none; b=RGk/R4yNQT53mPsbc+q21veBb1lQgnPdPkbGxVuUNzepnwiswtURdRMgpn9Ic2Y+gewRmcMgBnqhxzxlbfzMq+LsNH04QBgxYKc8umrYRBZpJK9/TAbBN3EFlih+WM0JhGqa61olWPZB3QOXdklAyKzb9Dvce+eKed4C74P09QE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717781378; c=relaxed/simple;
-	bh=b7LvUnYdln3xPJ+gz3I73XCAq+I5Eq6pfoEuPF+Ty1c=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e12LKIKvw20v5wNu+VpNIpw0QxN6fvQ9q/GRMS0ooP8T/Cs1eWkJODv9QH+t887/uTra9+x777TzxL2uZyB8DqxHcHO5SduSG9JgqvUSX1cr1tn9Its2sVScphBGtYjCjxXpYma7nOCpGIrdB2lGYCBN7MJUo2Fnl7AkhRxkdbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Vwp43239Hz6JB9C;
-	Sat,  8 Jun 2024 01:25:07 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id DFD4F140CB1;
-	Sat,  8 Jun 2024 01:29:31 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 7 Jun
- 2024 18:29:31 +0100
-Date: Fri, 7 Jun 2024 18:29:30 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Wei Huang <wei.huang2@amd.com>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <netdev@vger.kernel.org>, <bhelgaas@google.com>,
-	<corbet@lwn.net>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <alex.williamson@redhat.com>,
-	<gospo@broadcom.com>, <michael.chan@broadcom.com>,
-	<ajit.khaparde@broadcom.com>, <somnath.kotur@broadcom.com>,
-	<andrew.gospodarek@broadcom.com>, <manoj.panicker2@amd.com>,
-	<Eric.VanTassell@amd.com>, <vadim.fedorenko@linux.dev>, <horms@kernel.org>,
-	<bagasdotme@gmail.com>
-Subject: Re: [PATCH V2 5/9] PCI/TPH: Introduce API functions to manage
- steering tags
-Message-ID: <20240607182930.000045d9@Huawei.com>
-In-Reply-To: <20240531213841.3246055-6-wei.huang2@amd.com>
-References: <20240531213841.3246055-1-wei.huang2@amd.com>
-	<20240531213841.3246055-6-wei.huang2@amd.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1717781407; c=relaxed/simple;
+	bh=e0AY1UZVACJQd1xtViB6DdfImOxuE/XRpLuic76lORg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B5l3G6CH3LT9R44TyqJ13WVhmkDf8PmjWKh+oriz9DwwxbTZIVdXWWtEpmQ3PSzAEFHf+lNPbaGcxWMAOFlD++B0qIX12i5kd40O6QxVckhNnBMILEjxgnU0ip1Rit9QcxCQsLt6oZuw17/dndyq3dblUqXDLLz85lM3n21z3t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=IEhWmlGB; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dfaff6bee06so732435276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 10:30:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1717781405; x=1718386205; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nfgbbC++t7lQwnyAlEgbOEhZ3OHimWGA3FY8Pt1QloU=;
+        b=IEhWmlGBeHl1TIJrNTfFfoy5Bb+iflHJf9jEhuYg5J4ChbMU99fETVxjUO3SEJGeYI
+         DHApk1oCdMH3xlDSrjyzFii7tkCxZxjsTpRkcR/PbClR2g7/8dQ0kTfCPJCw0h8BdC9G
+         9LAzaEnkkgRj7a0JLoSk3Y7XFRupUYMeim4Z7ZevnO/WDR1ygy/N908lf8NfKho9I0xp
+         zBvFvxLkQIWs1xXoQ8eeLyChdJeFJvBSa8ttbuT2qrGBss1puA5YFYfJegrfPZVeyNHW
+         ao0ALa8mj1J2bgc9AsVqvgwLN4Ye8vN1xjempHEdSPRrpYE31Aouj4TpHpYd8zSEVOH9
+         lVcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717781405; x=1718386205;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nfgbbC++t7lQwnyAlEgbOEhZ3OHimWGA3FY8Pt1QloU=;
+        b=gmLiUcKqleboY1/xYYlaV3LsoBmb2cJvHXfwFR+dpsuILHPKO0++np2OgwyNz+juok
+         alGlS02WbgSpWBVyi/ysydpQdSmnQhDz5pYpmWXJF0tCUAFw7MLuSLKWxDVUuecnfLjY
+         Juty8pbKKn8LC9KZuRS1yQ2+MwkHBJn2lycTdCXm453u8gQuB8jpy5sigIYELftWacSw
+         1tFDLaF3lLY6tSrMSQnKRBxY/M/yqHBWw0kYFTJ5c688IZdnENHPsVjgqANV+mIqaUc/
+         PYAOMsNY5pz9BigBYKqICO1ovNYv6ztsnXK19v7XNvtGqXHHF0k6AeWWd2PfWCw0xcqK
+         PFGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbnCKFPKriTSrHI+B7a8eySIyVnaPrnsZt90Gfh4Ge1S5qOFEYy/FTeTEdulxcaHTLnYQ/ysR18x61aTSNqmuylAaGkSle3QrhNd6A
+X-Gm-Message-State: AOJu0YzIrZiuPu6PZs0nIau/qawNHq5hLQ7RAnTUGQG6UIVpM2dphlbo
+	zoNiz4tFc3Jd6j4MiSI5uE9JAwfVGkCXaVDWztCESOYiktM9811w/DgwaCO1DOi/eFO0RtIC1kb
+	UI8QeR/3SM+aDD3x6dA3bgliHf5vjBaYyOua81Q==
+X-Google-Smtp-Source: AGHT+IFROFUKI0sxohaL1XWzrCoSNjL5yAeFP8N4BKV2FeWOpDa9kAY7vqeiyaLF0Gf0qs98IHaiGlLSKSLX4TB58WE=
+X-Received: by 2002:a25:848d:0:b0:deb:a5bd:b5e9 with SMTP id
+ 3f1490d57ef6-dfaf65c62aemr2844352276.64.1717781405009; Fri, 07 Jun 2024
+ 10:30:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+References: <20240607-trimmer-pummel-b452ed15e103@spud> <20240607155704.GB1242@pendragon.ideasonboard.com>
+In-Reply-To: <20240607155704.GB1242@pendragon.ideasonboard.com>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Fri, 7 Jun 2024 18:29:49 +0100
+Message-ID: <CAPY8ntBNNOFR1nn05g4Y-SOv_tN0YJv9wygO=+S80-zA1oq7mg@mail.gmail.com>
+Subject: Re: [PATCH v1] media: i2c: imx219: fix msr access command sequence
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Conor Dooley <conor@kernel.org>, linux-media@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Adam Ford <aford173@gmail.com>, 
+	Andrey Konovalov <andrey.konovalov@linaro.org>, linux-kernel@vger.kernel.org, 
+	Naushir Patuck <naush@raspberrypi.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 31 May 2024 16:38:37 -0500
-Wei Huang <wei.huang2@amd.com> wrote:
+Hi Conor and Laurent
 
-> This patch introduces three API functions, pcie_tph_intr_vec_supported(),
-> pcie_tph_get_st() and pcie_tph_set_st(), for a driver to query, retrieve
-> or configure device's steering tags. There are two possible locations for
-> steering tag table and the code automatically figure out the right
-> location to set the tags if pcie_tph_set_st() is called. Note the tag
-> value is always zero currently and will be extended in the follow-up
-> patches.
-> 
-> Co-developed-by: Eric Van Tassell <Eric.VanTassell@amd.com>
-> Signed-off-by: Eric Van Tassell <Eric.VanTassell@amd.com>
-> Signed-off-by: Wei Huang <wei.huang2@amd.com>
-> Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
-> Reviewed-by: Somnath Kotur <somnath.kotur@broadcom.com> 
-> Reviewed-by: Andy Gospodarek <andrew.gospodarek@broadcom.com>
-Hi. 
+On Fri, 7 Jun 2024 at 16:57, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Conor,
+>
+> Thank you for the patch.
+>
+> On Fri, Jun 07, 2024 at 04:50:23PM +0100, Conor Dooley wrote:
+> > From: Conor Dooley <conor.dooley@microchip.com>
+> >
+> > It was reported to me that the imx219 didn't work on one of our
+> > development kits partly because the access sequence is incorrect.
+> > The datasheet I could find [1] for this camera has the access sequence:
+> > Seq. No. Address (Hex) data
+> > 1        30EB          05
+> > 2        30EB          0C
+> > 3        300A          FF
+> > 4        300B          FF
+> > 5        30EB          05
+> > 6        30EB          09
+> >
+> > but the driver swaps the first two elements. Laurent pointed out on IRC
+> > that the original code used the correct sequence for 1920x1080 but the
+> > current sequence for 3280x2464 and 1640x1232. During refactoring of the
+> > init sequence the current order was used for all formats.
+> >
+> > Switch to using the documented sequence.
+> >
+> > Link: https://www.opensourceinstruments.com/Electronics/Data/IMX219PQ.pdf [1]
+> > Fixes: 8508455961d5 ("media: i2c: imx219: Split common registers from mode tables")
+> > Fixes: 1283b3b8f82b ("media: i2c: Add driver for Sony IMX219 sensor")
+> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+>
+> This looks reasonable, based on the above link.
+>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>
+> Dave, could you check the impact on the Raspberry Pi kernel ? It seems
+> to be shipping the incorrect sequence unconditionally.
 
-There are a lot of small functions in here.  I'd look at just calling
-the things they are wrapping more directly as with the register
-and field names inline it's pretty obvious what is going on.
-Wrapping that in a helper function doesn't necessarily help readablity
-and perhaps doubles the length of the code.
+I've compared the values against the old firmware driver. There we
+have the cropped 1080p and VGA high framerate modes had 0x05 0x0c, and
+the full res 3280x2464 and 2x2 binned 1640x1232 modes had 0x0c 0x05,
+so the same as the original kernel driver. Not totally unsurprising as
+the kernel driver register sets were copied from the firmware.
+So the Pi has used imx219 in this manner since launch of the sensor in
+2014! Whether that was a transcription typo or an error in the
+register sets from Sony I couldn't say (Naush may still have the
+original register set information).
 
-Various other comments inline.
+I don't have an imx219 to hand right now to test with, but will check
+it out on Monday. I'll agree that the patch looks valid based on the
+datasheet.
 
-Jonathan
+> Any information about what the 12 undocumented MSRs that are programmed
+> by the driver do would be appreciated too ;-)
 
+Sadly I have no extra information on those.
 
-> ---
->  drivers/pci/pcie/tph.c  | 402 ++++++++++++++++++++++++++++++++++++++++
->  include/linux/pci-tph.h |  22 +++
->  2 files changed, 424 insertions(+)
-> 
-> diff --git a/drivers/pci/pcie/tph.c b/drivers/pci/pcie/tph.c
-> index d5f7309fdf52..320b99c60365 100644
-> --- a/drivers/pci/pcie/tph.c
-> +++ b/drivers/pci/pcie/tph.c
-> @@ -43,6 +43,336 @@ static int tph_set_reg_field_u32(struct pci_dev *dev, u8 offset, u32 mask,
->  	return ret;
->  }
->  
-> +static int tph_get_reg_field_u32(struct pci_dev *dev, u8 offset, u32 mask,
-> +				 u8 shift, u32 *field)
-> +{
-> +	u32 reg_val;
-> +	int ret;
-> +
-> +	if (!dev->tph_cap)
-> +		return -EINVAL;
-> +
-> +	ret = pci_read_config_dword(dev, dev->tph_cap + offset, &reg_val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	*field = (reg_val & mask) >> shift;
-> +
-> +	return 0;
-> +}
+> > ---
+> > I got the report of this third hand, I don't have a device and can't
+> > test this. I do wonder why the RPis get away with the sequence that
+> > seemingly doesn't work for the guy that reported this to me. My theory
+> > is either that they noticed the sequence was wrong while adding some
+> > other MSR access that is needed on this board while either cross
+> > checking the values written or because the other MSR accesses didn't
+> > take effect.
 
-Similar to earlier, I'm not seeing as strong reason for this.
-Just do the tph_cap check at the external interface points rather than
-in register read paths.
+Did the change fix it for the reporter? We're using the driver with no
+changes to the register settings cf mainline.
+Why it works on the Pi but not on a Microchip board is likely to be
+something quite subtle.
 
-Mind you, if you do keep this a lot of the other helpers
-could be flattened as they are simply passing particular parameters
-to this and that could be done inline where the results are needed.
+  Dave
 
-
-> +
-> +static int tph_get_table_size(struct pci_dev *dev, u16 *size_out)
-> +{
-> +	int ret;
-> +	u32 tmp;
-> +
-> +	ret = tph_get_reg_field_u32(dev, PCI_TPH_CAP,
-> +				    PCI_TPH_CAP_ST_MASK,
-> +				    PCI_TPH_CAP_ST_SHIFT, &tmp);
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	*size_out = (u16)tmp;
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * For a given device, return a pointer to the MSI table entry at msi_index.
-> + */
-> +static void __iomem *tph_msix_table_entry(struct pci_dev *dev,
-> +					  u16 msi_index)
-> +{
-> +	void __iomem *entry;
-> +	u16 tbl_sz;
-> +	int ret;
-> +
-> +	ret = tph_get_table_size(dev, &tbl_sz);
-> +	if (ret || msi_index > tbl_sz)
-> +		return NULL;
-Nice to return the error code via ERR_PTR() etc so ultimate caller gets
-some information.
-> +
-> +	entry = dev->msix_base + msi_index * PCI_MSIX_ENTRY_SIZE;
-
-return dev->msix_base + msi_index * PCI_MSIX_ENTRY_SIZE;
-
-> +
-> +	return entry;
-> +}
-> +
-> +/*
-> + * For a given device, return a pointer to the vector control register at
-> + * offset 0xc of MSI table entry at msi_index.
-> + */
-> +static void __iomem *tph_msix_vector_control(struct pci_dev *dev,
-> +					     u16 msi_index)
-> +{
-> +	void __iomem *vec_ctrl_addr = tph_msix_table_entry(dev, msi_index);
-> +
-> +	if (vec_ctrl_addr)
-> +		vec_ctrl_addr += PCI_MSIX_ENTRY_VECTOR_CTRL;
-
-I'd do this addition at the caller.  Then don't need this function.
-
-> +
-> +	return vec_ctrl_addr;
-> +}
-> +
-> +/*
-> + * Translate from MSI-X interrupt index to struct msi_desc *
-> + */
-> +static struct msi_desc *tph_msix_index_to_desc(struct pci_dev *dev, int index)
-> +{
-> +	struct msi_desc *entry;
-> +
-> +	msi_lock_descs(&dev->dev);
-
-I'd take the lock at the caller as not obvious this is going to keep holding it
-from the name.
-
-If you call it tph_msix_get_desc_from_index() that would help.
-
-> +	msi_for_each_desc(entry, &dev->dev, MSI_DESC_ASSOCIATED) {
-> +		if (entry->msi_index == index)
-> +			return entry;
-> +	}
-> +	msi_unlock_descs(&dev->dev);
-> +
-> +	return NULL;
-> +}
-
-> +
-> +static bool msix_nr_in_bounds(struct pci_dev *dev, int msix_nr)
-> +{
-> +	u16 tbl_sz;
-> +
-> +	if (tph_get_table_size(dev, &tbl_sz))
-> +		return false;
-> +
-> +	return msix_nr <= tbl_sz;
-
-Use the table entry request and just check reutrn for NULL.
-
-So instead of calling this function,
-
-if (!tph_msix_table_entry(dev, msix_nr));
-
-and drop this function.
-
-> +}
-> +
-> +/* Return root port capability - 0 means none */
-> +static int get_root_port_completer_cap(struct pci_dev *dev)
-
-I'd expect anything ending in _cap in PCI code to be giving
-me the offset of a capability. 
-
-static int root_port_tph_support() maybe?
-
-> +{
-> +	struct pci_dev *rp;
-> +	int ret;
-> +	int val;
-> +
-> +	rp = pcie_find_root_port(dev);
-> +	if (!rp) {
-> +		pr_err("cannot find root port of %s\n", dev_name(&dev->dev));
-> +		return 0;
-> +	}
-> +
-> +	ret = pcie_capability_read_dword(rp, PCI_EXP_DEVCAP2, &val);
-> +	if (ret) {
-> +		pr_err("cannot read device capabilities 2 of %s\n",
-> +		       dev_name(&dev->dev));
-> +		return 0;
-> +	}
-> +
-> +	val &= PCI_EXP_DEVCAP2_TPH_COMP;
-> +
-> +	return val >> PCI_EXP_DEVCAP2_TPH_COMP_SHIFT;
-> +}
-> +
-> +/*
-> + * TPH device needs to be below a rootport with the TPH Completer and
-> + * the completer must offer a compatible level of completer support to that
-> + * requested by the device driver.
-> + */
-> +static bool completer_support_ok(struct pci_dev *dev, u8 req)
-> +{
-> +	int rp_cap;
-> +
-> +	rp_cap = get_root_port_completer_cap(dev);
-> +
-> +	if (req > rp_cap) {
-> +		pr_err("root port lacks proper TPH completer capability\n");
-
-Assumption is that any driver getting to here should really have checked
-if this was fine before enabling TPH?  a pr_err() seems overly noisy
-otherwise.
-
-> +		return false;
-> +	}
-> +
-> +	return true;
-> +}
-> +
-> +/*
-> + * The PCI Specification version 5.0 requires the "No ST Mode" mode
-> + * be supported by any compatible device.
-
-Why do we need to check something that 'must' be set to 1?
-Are there known buggy devices?  If not, just don't check it
-as we can assume this is true and save 20 lines of code.
-
-> + */
-> +static bool no_st_mode_supported(struct pci_dev *dev)
-> +{
-> +	bool no_st;
-> +	int ret;
-> +	u32 tmp;
-> +
-> +	ret = tph_get_reg_field_u32(dev, PCI_TPH_CAP, PCI_TPH_CAP_NO_ST,
-> +				    PCI_TPH_CAP_NO_ST_SHIFT, &tmp);
-> +	if (ret)
-> +		return false;
-> +
-> +	no_st = !!tmp;
-> +
-> +	if (!no_st) {
-> +		pr_err("TPH devices must support no ST mode\n");
-> +		return false;
-> +	}
-> +
-> +	return true;
-> +}
-> +
-> +static int tph_write_ctrl_reg(struct pci_dev *dev, u32 value)
-> +{
-> +	int ret;
-> +
-> +	ret = tph_set_reg_field_u32(dev, PCI_TPH_CTRL, ~0L, 0, value);
-> +
-> +	if (ret)
-> +		goto err_out;
-> +
-> +	return 0;
-> +
-> +err_out:
-> +	/* minimizing possible harm by disabling TPH */
-> +	pcie_tph_disable(dev);
-
-If the write failed, something is horribly wrong. Do we need
-to defend against that case?  It complicates the code a fair bit so
-it needs a strong reasoning.  Preferably why can this fail other
-than in bug cases or surprise removal or similar.
-
-> +	return ret;
-> +}
-> +
-> +/* Update the ST Mode Select field of the TPH Control Register */
-> +static int tph_set_ctrl_reg_mode_sel(struct pci_dev *dev, u8 st_mode)
-> +{
-> +	int ret;
-> +	u32 ctrl_reg;
-> +
-> +	ret = tph_get_reg_field_u32(dev, PCI_TPH_CTRL, ~0L, 0, &ctrl_reg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* clear the mode select and enable fields */
-> +	ctrl_reg &= ~(PCI_TPH_CTRL_MODE_SEL_MASK);
-> +	ctrl_reg |= ((u32)(st_mode << PCI_TPH_CTRL_MODE_SEL_SHIFT) &
-> +		     PCI_TPH_CTRL_MODE_SEL_MASK);
-> +
-> +	ret = tph_write_ctrl_reg(dev, ctrl_reg);
-
-return tph_write_ctrl_reg()
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +/* Write the steering tag to MSI-X vector control register */
-> +static void tph_write_tag_to_msix(struct pci_dev *dev, int msix_nr, u16 tag)
-> +{
-> +	u32 val;
-> +	void __iomem *vec_ctrl;
-> +	struct msi_desc *msi_desc;
-> +
-> +	msi_desc = tph_msix_index_to_desc(dev, msix_nr);
-> +	if (!msi_desc) {
-> +		pr_err("MSI-X descriptor for #%d not found\n", msix_nr);
-> +		return;
-return an error so we can handle it at caller.
-
-> +	}
-> +
-> +	vec_ctrl = tph_msix_vector_control(dev, msi_desc->msi_index);
-
-Whilst this would have already failed, I'd still check for vec_ctrl == NULL
-as easier to read.
-
-> +
-> +	val = readl(vec_ctrl);
-> +	val &= 0xffff;
-> +	val |= (tag << 16);
-> +	writel(val, vec_ctrl);
-> +
-> +	/* read back to flush the update */
-> +	val = readl(vec_ctrl);
-> +	msi_unlock_descs(&dev->dev);
-Who took the lock? Not obvious from function naming - see above
-
-> +}
-> +
-
-> +static bool pcie_tph_write_st(struct pci_dev *dev, unsigned int msix_nr,
-> +			      u8 req_type, u16 tag)
-
-Why bool for error or not?  Better to return an error code.
-
-> +{
-> +	int offset;
-> +	u8  loc;
-
-Unusual to align the local variables like this. I'd just have a single space before
-loc..
-
-> +	int ret;
-> +
-> +	/* setting ST isn't needed - not an error, just return true */
-> +	if (!dev->tph_cap || pci_tph_disabled() || pci_tph_nostmode() ||
-> +	    !dev->msix_enabled || !tph_int_vec_mode_supported(dev))
-> +		return true;
-> +
-> +	/* setting ST is incorrect in the following cases - return error */
-> +	if (!no_st_mode_supported(dev) || !msix_nr_in_bounds(dev, msix_nr) ||
-> +	    !completer_support_ok(dev, req_type))
-> +		return false;
-> +
-> +	/*
-> +	 * disable TPH before updating the tag to avoid potential instability
-> +	 * as cautioned about in the "ST Table Programming" of PCI-E spec
-> +	 */
-> +	pcie_tph_disable(dev);
-> +
-> +	ret = tph_get_table_location(dev, &loc);
-> +	if (ret)
-> +		return false;
-> +
-> +	switch (loc) {
-> +	case PCI_TPH_LOC_MSIX:
-> +		tph_write_tag_to_msix(dev, msix_nr, tag);
-handle errors.
-> +		break;
-> +	case PCI_TPH_LOC_CAP:
-> +		offset = dev->tph_cap + PCI_TPH_ST_TABLE
-> +			  + msix_nr * sizeof(u16);
-> +		pci_write_config_word(dev, offset, tag);
-handle errors.
-> +		break;
-> +	default:
-> +		pr_err("unable to write steering tag for device %s\n",
-> +		       dev_name(&dev->dev));
-> +		return false;
-> +	}
-> +
-> +	/* select interrupt vector mode */
-> +	tph_set_ctrl_reg_mode_sel(dev, PCI_TPH_INT_VEC_MODE);
-handle errors
-> +	tph_set_ctrl_reg_en(dev, req_type);
-etc.
-
-> +
-> +	return true;
-> +}
-> +
-
-> +
-> +/**
-> + * pcie_tph_get_st() - Retrieve steering tag for a specific CPU
-> + * @dev: pci device
-> + * @cpu: the acpi cpu_uid.
-> + * @mem_type: memory type (vram, nvram)
-> + * @req_type: request type (disable, tph, extended tph)
-> + * @tag: steering tag return value
-> + *
-> + * Return:
-> + *        true : success
-> + *        false: failed
-> + */
-> +bool pcie_tph_get_st(struct pci_dev *dev, unsigned int cpu,
-
-Rename so that it's obvious this isn't just reading back the st
-previously set to the device (i.e. it isn't the opposite of
-pci_tph_set_st())
-
-pci_tph_get_st_to_use() or something like that.
-
-int so we can have some error information once implemented.
-I'm not keen on introducing a stub like this though that doesn't
-yet do anything. Bring it in when useful.
-
-
-
-
-> +		    enum tph_mem_type mem_type, u8 req_type,
-> +		    u16 *tag)
-> +{
-> +	*tag = 0;
-> +
-> +	return true;
-> +}
-> +EXPORT_SYMBOL(pcie_tph_get_st);
-> +
-> +/**
-> + * pcie_tph_set_st() - Set steering tag in ST table entry
-> + * @dev: pci device
-> + * @msix_nr: ordinal number of msix interrupt.
-> + * @cpu: the acpi cpu_uid.
-
-Given most linux CPU numbers are not necessarily the ACPI CPU ID
-I'd call it that.  e.g. cpu_acpi_uid.
-
-
-> + * @mem_type: memory type (vram, nvram)
-> + * @req_type: request type (disable, tph, extended tph)
-> + *
-> + * Return:
-> + *        true : success
-> + *        false: failed
-> + */
-> +bool pcie_tph_set_st(struct pci_dev *dev, unsigned int msix_nr,
-> +		     unsigned int cpu, enum tph_mem_type mem_type,
-> +		     u8 req_type)
-> +{
-> +	u16 tag;
-> +	bool ret = true;
-> +
-> +	ret = pcie_tph_get_st(dev, cpu, mem_type, req_type, &tag);
-> +
-> +	if (!ret)
-> +		return false;
-> +
-> +	pr_debug("%s: writing tag %d for msi-x intr %d (cpu: %d)\n",
-> +		 __func__, tag, msix_nr, cpu);
-> +
-> +	ret = pcie_tph_write_st(dev, msix_nr, req_type, tag);
-> +
-> +	return ret;
-return pcie_tph_write_st() but make it return an integer so caller
-gets some information on what when wrong.
-
-> +}
-> +EXPORT_SYMBOL(pcie_tph_set_st);
-
+> > CC: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> > CC: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > CC: Mauro Carvalho Chehab <mchehab@kernel.org>
+> > CC: Adam Ford <aford173@gmail.com>
+> > CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > CC: Andrey Konovalov <andrey.konovalov@linaro.org>
+> > CC: linux-media@vger.kernel.org
+> > CC: linux-kernel@vger.kernel.org
+> > ---
+> >  drivers/media/i2c/imx219.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
+> > index 51ebf5453fce..e78a80b2bb2e 100644
+> > --- a/drivers/media/i2c/imx219.c
+> > +++ b/drivers/media/i2c/imx219.c
+> > @@ -162,8 +162,8 @@ static const struct cci_reg_sequence imx219_common_regs[] = {
+> >       { IMX219_REG_MODE_SELECT, 0x00 },       /* Mode Select */
+> >
+> >       /* To Access Addresses 3000-5fff, send the following commands */
+> > -     { CCI_REG8(0x30eb), 0x0c },
+> >       { CCI_REG8(0x30eb), 0x05 },
+> > +     { CCI_REG8(0x30eb), 0x0c },
+> >       { CCI_REG8(0x300a), 0xff },
+> >       { CCI_REG8(0x300b), 0xff },
+> >       { CCI_REG8(0x30eb), 0x05 },
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
