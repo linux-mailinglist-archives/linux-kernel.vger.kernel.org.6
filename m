@@ -1,70 +1,65 @@
-Return-Path: <linux-kernel+bounces-206531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 126A2900B12
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:15:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A0B900B19
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:16:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4D85B21973
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:15:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6B7D1C210CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE7119AD9E;
-	Fri,  7 Jun 2024 17:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F1319CCEE;
+	Fri,  7 Jun 2024 17:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fM8NZo7Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L0xc0I85"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7FD199EBB;
-	Fri,  7 Jun 2024 17:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0245219AA66;
+	Fri,  7 Jun 2024 17:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717780537; cv=none; b=g0K7xWJSP9VKUOPNRZ/2X60TZBLEFnbg3Ly8/60pXRhWLIiGCklJewcMEnFsqOlWI5OEzsZbFXvyKGmdDgGnGV+191pauyWE69dQ82H882DIK5SK29ZyMb5CWSy14jucKB9i9xyCodV75Uvd253JfmEE/SL5N3j13TlguRz0VK4=
+	t=1717780554; cv=none; b=CtMjvZJpJDoGBqU5ck/F2/2bnPxcOBhNQfowejQ4wh4KLieNXoO4WToeZzrZ1F+r/RvvVreefXlmOQINBQjevsnh0kWq8Qm7RZILiMR5N0S6HO/RUwAxTyQd1Bs53YMXz+kUSpOzk6U5femqceoZN7NL7xVaALLFZ6mKMRpfWpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717780537; c=relaxed/simple;
-	bh=+1C+CfkaqQH+43CNlS0hRJijJsoUJkiaCU9L0PzDf6Y=;
+	s=arc-20240116; t=1717780554; c=relaxed/simple;
+	bh=3XYeD6IP8Z0vF8HLIMKW0yAmSge/3jtKexVmbtdSwsg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RCHwS0EOFcmY7gm/PTIN974tuGbsCG4c4+S9F2/WRZ6X+6E6ZftpKYVaVcBSnsXzCZGL7LriFKBYMgYAA/ppTo4q2xU4f7LKJlwb8rIpINgmISb5sORKv5NCLomgrHGOshIxry43MDj4ypkm+ihiTcBOGJuMDx1hE88kks/swHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fM8NZo7Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95CA0C2BBFC;
-	Fri,  7 Jun 2024 17:15:35 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=C7hBOb365SZo/CCENZIC2HUeQC2fEVqsHxNp9/c8kASa3Uvfoe/C4Aj1HPL+/AOpjdJpWkmY8mCMPo8E+tu7PxNWxiDm45a9sVlWfw/odxPSwCJ72CpcsmebkC8cRvd80FbAHvqvdIIPw26F8WU+TmsmxwVi8MPZhTmlEOem2Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L0xc0I85; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C70CDC2BBFC;
+	Fri,  7 Jun 2024 17:15:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717780536;
-	bh=+1C+CfkaqQH+43CNlS0hRJijJsoUJkiaCU9L0PzDf6Y=;
+	s=k20201202; t=1717780553;
+	bh=3XYeD6IP8Z0vF8HLIMKW0yAmSge/3jtKexVmbtdSwsg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fM8NZo7QiMbiOjncaSHQmkLJcdUUvEjs7fAgxeEAEARDTOCBwcXIckBlzncP7EjUx
-	 UZ+Bbz06enLZ/mz/hq3naYTZsM/3p45Sec3xumZ+RCS7O4ZIxE0l5Exglb9+K/JFCZ
-	 TJhmBS+xUrpvhQMMxa2Au/rTd1im+oYbDZxLohejJbj53UBEs1wFhpMZMhDIKtvCH+
-	 iM5RvUOD8s0UjbH/LU/TJrebaFV9fUpf3F2GFm5NysD7+6zQzc0qWL+dXpvOInnM4G
-	 9mnMhpeVCTayhdwqPnTIqxzA7XY3W7pwR/fJkuphGrzWukf34BXjshkq2AQ2idH26p
-	 xbLQK98LGFaKg==
-Date: Fri, 7 Jun 2024 10:15:33 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: John Hubbard <jhubbard@nvidia.com>, Mark Brown <broonie@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Bill Wendling <morbo@google.com>, sunliming <sunliming@kylinos.cn>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kselftest@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev
-Subject: Re: [PATCH v2 1/2] selftests/lib.mk: handle both LLVM=1 and CC=clang
- builds
-Message-ID: <20240607171533.GA2636750@thelio-3990X>
-References: <20240531183751.100541-1-jhubbard@nvidia.com>
- <20240531183751.100541-2-jhubbard@nvidia.com>
- <306eebf8-bb5d-4e1a-9fa3-ad3f4ea11b9c@sirena.org.uk>
- <20240603224706.GA245774@thelio-3990X>
- <2c57be33-77b8-419b-a708-e99aa9b44395@nvidia.com>
- <0d3fd536-5036-40e7-9783-80533914e32d@arm.com>
+	b=L0xc0I85TuSJ95cq4edqPXW9BPSXEG4M6aY7VreDWcRbE5R0JL/EtVBL8WlLwdj8Y
+	 DrzI/soOlN/jYH8CS7R/6giJ5yc6TKvMAEehrhflTHJ3zol2D0QNVfqXjYd0+Q859i
+	 17m74fg1luA9t/OtIyOJPOUerI+ugiF6aP6fEdLCKOJu0rbuhnSn9C1WIlBJu8npf0
+	 umUwoqbGdnLOazgSyUGeeIhOsA7zYAiQ5q1xxIxHrLRrHlRFwqe73j1bFxBr/IMVZN
+	 RpocuNtWHywOGCFwR8nkxbvkE3jC83RepqAM1SV7wKa0mERe8rEAlU/4hv5jATp6Gg
+	 iitwqYuJ39Bcw==
+Date: Fri, 7 Jun 2024 22:45:49 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	MD Danish Anwar <danishanwar@ti.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	Julien Panis <jpanis@baylibre.com>,
+	Chintan Vankar <c-vankar@ti.com>, Diogo Ivo <diogo.ivo@siemens.com>,
+	Simon Horman <horms@kernel.org>, dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] dmaengine: ti: k3-udma-glue: clean up return in
+ k3_udma_glue_rx_get_irq()
+Message-ID: <ZmNARRlVwU6hLelB@matsya>
+References: <2f28f769-6929-4fc2-b875-00bf1d8bf3c4@kili.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,54 +68,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0d3fd536-5036-40e7-9783-80533914e32d@arm.com>
+In-Reply-To: <2f28f769-6929-4fc2-b875-00bf1d8bf3c4@kili.mountain>
 
-On Fri, Jun 07, 2024 at 12:12:19PM +0100, Ryan Roberts wrote:
-> On 04/06/2024 05:55, John Hubbard wrote:
-> > On 6/3/24 3:47 PM, Nathan Chancellor wrote:
-> >> Does CC=clang even work for the selftests? lib.mk here uses 'CC :=' so
-> >> won't CC=clang get overridden to CC=$(CROSS_COMPILE)gcc?
-> >>
-> > 
-> > I received a report that someone (I forget who or what) was definitely
-> > attempting to just set CC=clang. But yes, it definitely doesn't work
-> > properly for CROSS_COMPILE.
+On 06-06-24, 17:23, Dan Carpenter wrote:
+> Currently the k3_udma_glue_rx_get_irq() function returns either negative
+> error codes or zero on error.  Generally, in the kernel, zero means
+> success so this be confusing and has caused bugs in the past.  Also the
+> "tx" version of this function only returns negative error codes.  Let's
+> clean this "rx" function so both functions match.
 > 
-> This history as I recall, is that I got a bug report [1] stating that:
-> 
-> # tools/testing/selftests/fchmodat2$ make CC=clang
-> 
-> and
-> 
-> # tools/testing/selftests/openat2$ make CC=clang
-> 
-> were both failing due to the -static-libsan / -static-libasan difference between
-> gcc and clang. I attempted to fix that with [2], which used cc-option to
-> determine which variant to use. That never got picked up, and John
-> coincidentally did a similar fix, but relying on LLVM=1 instead.
-> 
-> If we are concluding that CC=clang is an invalid way to do this, then I guess we
-> should report that back to [1]?
-> 
-> [1] https://lore.kernel.org/all/202404141807.LgsqXPY5-lkp@intel.com/
-> [2]
-> https://lore.kernel.org/linux-kselftest/20240417160740.2019530-1-ryan.roberts@arm.com/
+> This patch has no effect on runtime.
 
-I can only speak from the perspective of the main kernel build, as I
-don't really know much if anything about the selftests, but I think
-CC=clang and LLVM=1 should both be valid. Ideally, they would behave as
-they do for the main kernel build (i.e., CC=clang just uses clang for
-the compiler and LLVM=1 uses the entire LLVM tools). I realize that for
-the selftests, there is probably little use for tools other than the
-compiler, assembler, and linker but I think consistency is desirable
-here.
+Acked-by: Vinod Koul <vkoul@kernel.org>
 
-I am not at all familiar with the selftests build system, which is
-completely different from Kbuild, but I would ack a patch that does
-that. Otherwise, I think having a different meaning or handling of
-CC=clang or LLVM=1 is the end of the world, but I do think that it
-should be documented.
-
-Cheers,
-Nathan
+-- 
+~Vinod
 
