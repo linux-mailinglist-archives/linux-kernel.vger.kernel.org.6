@@ -1,138 +1,238 @@
-Return-Path: <linux-kernel+bounces-206811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CC77900E11
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:29:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 948BB900E12
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0F96287548
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:29:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A2BE1F22958
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7995B155724;
-	Fri,  7 Jun 2024 22:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE7E15572C;
+	Fri,  7 Jun 2024 22:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VRmpg5sz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j99fshAa"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BFD13DDDE;
-	Fri,  7 Jun 2024 22:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E5D13DDCA;
+	Fri,  7 Jun 2024 22:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717799385; cv=none; b=maLrYit1MHOuCdhQFLPkFIsiU4/hY/H82efpcgK9rpvfBDW3XkWbpclb2SgZ3VUeNQPmDFLM1lWjq1SeozxCD6vQNpdWbcua6MPM11GDm52P81iaczRTOuODslE07pRAf55dvxaIYbdi7+ByqQ55VgDaK4z9/36mjzp94ulptCs=
+	t=1717799418; cv=none; b=gi2VvEF9y80hFM69cZ21VxlqWCsNsp17WIJ73euMxYgcSLWYowJCvAPybp099hWSBQWhXEYCrulMDuGVURz/a8rOyWzta0eXiZmHoOQ7YNHVZAzeT3ZEFBgxLe65XCljR6My0r1smN5GEIPmj/SU9b4k9TcFZGUkFmJkWROY0oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717799385; c=relaxed/simple;
-	bh=v2UKkW6fQa0poQx5QJNWEOedTwnRsNr2lgrl9pVMRMI=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=VD52MMUdccJSvx/ukJC9iiaBlJaV/m4hlZ1V2JZ8rcZ4fuAUI6Rq2CZImX94cXORauWRpfyONFGkMsW0/YnuZfUlDDEJvrJQ7gyqeKBcOx1JLxW7QXdmlRM47q9A+TySlASkVurvMITLhXxFwg4skqwm33aCuU95H0bDr2Lzi+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VRmpg5sz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E6CEC2BBFC;
-	Fri,  7 Jun 2024 22:29:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1717799385;
-	bh=v2UKkW6fQa0poQx5QJNWEOedTwnRsNr2lgrl9pVMRMI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=VRmpg5szHAmkA8WhgqWJykHUohf9FW4nUzIg8p2ZY0yaTi2gWJN9CwOW9dvmo6b36
-	 S3gZu3YEa74m9+BU1rx7bY2oR9CEBRDwV0CwBfWO3Mcmnzo9bHft9tI+K2NKPqx5bY
-	 R1dL3p3nLCNAjJuVJ1TKOPfPqKP5aJlJr+ZYh+ac=
-Date: Fri, 7 Jun 2024 15:29:44 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: mm-commits@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hotfixes for 6.10-rc3
-Message-Id: <20240607152944.60722ce87f5a4b1a74d1145d@linux-foundation.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717799418; c=relaxed/simple;
+	bh=Rzz2lr5jDDCxd19LGs+cCednwI0D/qvvd4uXfAbNrMk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=V1LFJV//YDeKqD3axZ7xbuUCClh8n0Aez3YFPcxAkmVINGUX9JVETQrg10le7VcLjbzpli9yPNtkuRzwI5AB2WoaSNYRGAa7kTFo6nqlWmoKQ7HV1cSF7a6rgC9V7ZwaaNjTu9FvKApxsvCNOfWEsWDH9DrbHBan+9qFBNf5lsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j99fshAa; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57c6d3e6606so61191a12.0;
+        Fri, 07 Jun 2024 15:30:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717799414; x=1718404214; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:from:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+CN4Fagcr9kw1yaYPk5eRmX9Rl/PBb8fEu5udOKhfOY=;
+        b=j99fshAaSa2ej10wNxuYTFSIZvLVymZd80QjhGmMbSk8gDdy4g2cjrV7nUwEY0zj5u
+         wfmNnRQ2Hn6Gv8gKMTzwPLz8diNmeEq2Y6ZIX4wHKuRjvHAwcWGDoiDDspZS7Z5ekw3O
+         qyMXpeLfm081yODb4CdKBjn3+QmlWEiSMfkZdTKmAI7BOYkfnh3hlf0O+4JCNEC1UjI1
+         mxsRj35vR0hTVXOkClvy3sFf+UQ3kJGJ1bx3edrZHYZNHRKyERU7rjTd57gOlDLcMtb0
+         kX2omymLKr/d6f59WxJyDf7WhnxsnwXJ1i79glFVOVRKeGqG869hgNwP0yXz+BIxr4So
+         NnAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717799414; x=1718404214;
+        h=content-transfer-encoding:cc:to:subject:from:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+CN4Fagcr9kw1yaYPk5eRmX9Rl/PBb8fEu5udOKhfOY=;
+        b=nVX3kxrZhjF7GfyHV+MqSr5IcTDLMzMhW4kIj7koG9W7lq2CaYMK/2Tc5kWvtfpaJC
+         66//FWHu8GMRtyUX4zbWzLYIbIT5NTRNfC4UMd0g0L+fjLIumeZIhFjSRdG0rO4HkVyE
+         klImwwYil70ioVM6DrPHkiH3tGcCX/XRefoQDzBk9OviOzeSvj7R8nO8gbKjXZDNZGJT
+         qZqdKN9Akeg1ltJ98EUJwv+B3w7dpLhHPTQykCXpLTJ0IaaLUjXcS407q/oMbH52uygi
+         Rd1dgjspWl5EtVBUDgVkNK916mpQ1mBimbtq9GMJsoBTvXLzJwWykpflQF/Wr703vx/t
+         A1bw==
+X-Forwarded-Encrypted: i=1; AJvYcCWRhga3JXGzC+SdPKP6ll1f3t61/98AJBwvSnH8mMEzxfUsLQXM8BEJLdHwF2MiDF988PhyDIl8EDe74oRJZuqYfMTz7sPyesxY3Zdyd4w=
+X-Gm-Message-State: AOJu0Yw4H+GksoE4CyiIO6ORjyA60tizSuyIvh4Ky4NfE0GBIV1yXvng
+	CCULOIc+z+2mjykY8+++TBeztgUncg1ag0G2zY9BweClLzcmkrNDQYPiZYQQ
+X-Google-Smtp-Source: AGHT+IHPgEwmpOZ+rHjWFDdF79iPXCV9lwQCFpy9QbdOdMW+rl+644y2eM/xOb5ilZlXNNr/KU/z4w==
+X-Received: by 2002:a17:906:c8c1:b0:a6d:fbed:7953 with SMTP id a640c23a62f3a-a6dfbed7a3cmr238081466b.27.1717799414057;
+        Fri, 07 Jun 2024 15:30:14 -0700 (PDT)
+Received: from [10.5.1.156] (188-22-218-164.adsl.highway.telekom.at. [188.22.218.164])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c8070bfcbsm305295866b.145.2024.06.07.15.30.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jun 2024 15:30:13 -0700 (PDT)
+Message-ID: <4e0f5932-c7bc-4878-862c-1186cbecd71d@gmail.com>
+Date: Sat, 8 Jun 2024 00:30:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: Christian Schrefl <chrisi.schrefl@gmail.com>
+Subject: [PATCH 1/1] arm: rust: Enable Rust support for ARMv7
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ rust-for-linux@vger.kernel.org
+Cc: Miguel Ojeda <ojeda@kernel.org>, Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
+ Sven Van Asbroeck <thesven73@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+This commit allows building ARMv7 kernels with Rust support.
 
-Linus, please merge this batch of hotfixes, thanks.
+The rust core library expects some __eabi_... functions
+that are not implemented in the kernel.
+Those functions are some float operations and __aeabi_uldivmod.
 
+This is based on the code by Sven Van Asbroeck from the original
+rust branch and inspired by the AArch version by Jamie Cunliffe.
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+I have tested the rust samples and a custom simple MMIO module
+on on hardware (De1SoC FPGA + Arm A9 CPU).
 
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+Signed-off-by: Christian Schrefl <chrisi.schrefl@gmail.com>
+---
+ Documentation/rust/arch-support.rst |  1 +
+ arch/arm/Kconfig                    |  1 +
+ arch/arm/Makefile                   |  1 +
+ rust/Makefile                       | 10 +++++++++-
+ rust/bindgen_parameters             |  4 ++++
+ rust/compiler_builtins.rs           | 24 ++++++++++++++++++++++++
+ scripts/generate_rust_target.rs     |  4 +++-
+ 7 files changed, 43 insertions(+), 2 deletions(-)
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-06-07-15-24
-
-for you to fetch changes up to 7373a51e7998b508af7136530f3a997b286ce81c:
-
-  nilfs2: fix nilfs_empty_dir() misjudgment and long loop on I/O errors (2024-06-05 19:19:27 -0700)
-
-----------------------------------------------------------------
-14 hotfixes, 6 of which are cc:stable.
-
-All except the nilfs2 fix affect MM and all are singletons - see the
-chagelogs for details.
-
-----------------------------------------------------------------
-Alexander Potapenko (1):
-      kmsan: do not wipe out origin when doing partial unpoisoning
-
-Baolin Wang (1):
-      mm: drop the 'anon_' prefix for swap-out mTHP counters
-
-Barry Song (2):
-      mm: huge_mm: fix undefined reference to `mthp_stats' for CONFIG_SYSFS=n
-      mm: arm64: fix the out-of-bounds issue in contpte_clear_young_dirty_ptes
-
-Chengming Zhou (2):
-      mm/ksm: fix ksm_pages_scanned accounting
-      mm/ksm: fix ksm_zero_pages accounting
-
-Cong Wang (1):
-      vmalloc: check CONFIG_EXECMEM in is_vmalloc_or_module_addr()
-
-Johannes Weiner (1):
-      mm: page_alloc: fix highatomic typing in multi-block buddies
-
-Oscar Salvador (1):
-      mm/hugetlb: do not call vma_add_reservation upon ENOMEM
-
-Ryusuke Konishi (2):
-      nilfs2: fix potential kernel bug due to lack of writeback flag waiting
-      nilfs2: fix nilfs_empty_dir() misjudgment and long loop on I/O errors
-
-Sebastian Andrzej Siewior (1):
-      memcg: remove the lockdep assert from __mod_objcg_mlstate()
-
-Suren Baghdasaryan (1):
-      mm: fix xyz_noprof functions calling profiled functions
-
-Thadeu Lima de Souza Cascardo (1):
-      codetag: avoid race at alloc_slab_obj_exts
-
- Documentation/admin-guide/mm/transhuge.rst |  4 +--
- arch/arm64/mm/contpte.c                    |  4 +--
- fs/nilfs2/dir.c                            |  2 +-
- fs/nilfs2/segment.c                        |  3 ++
- fs/proc/base.c                             |  2 +-
- include/linux/huge_mm.h                    | 10 ++++--
- include/linux/ksm.h                        | 17 ++++++++--
- include/linux/mm_types.h                   |  2 +-
- mm/filemap.c                               |  2 +-
- mm/huge_memory.c                           |  8 ++---
- mm/hugetlb.c                               | 16 ++++++++--
- mm/kmsan/core.c                            | 15 ++++++---
- mm/ksm.c                                   | 17 +++++-----
- mm/memcontrol.c                            |  2 --
- mm/mempool.c                               |  2 +-
- mm/page_alloc.c                            | 50 ++++++++++++++++++++----------
- mm/page_io.c                               |  2 +-
- mm/slub.c                                  |  5 +--
- mm/util.c                                  | 10 +++---
- mm/vmalloc.c                               |  2 +-
- mm/vmscan.c                                |  2 +-
- 21 files changed, 115 insertions(+), 62 deletions(-)
+diff --git a/Documentation/rust/arch-support.rst b/Documentation/rust/arch-support.rst
+index b13e19d84744..4bf5205f526d 100644
+--- a/Documentation/rust/arch-support.rst
++++ b/Documentation/rust/arch-support.rst
+@@ -15,6 +15,7 @@ support corresponds to ``S`` values in the ``MAINTAINERS`` file.
+ =============  ================  ==============================================
+ Architecture   Level of support  Constraints
+ =============  ================  ==============================================
++``arm``        Maintained        ARMv7 Little Endian only.
+ ``arm64``      Maintained        Little Endian only.
+ ``loongarch``  Maintained        \-
+ ``riscv``      Maintained        ``riscv64`` only.
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index ee5115252aac..f07149fe078b 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -126,6 +126,7 @@ config ARM
+ 	select MMU_GATHER_RCU_TABLE_FREE if SMP && ARM_LPAE
+ 	select HAVE_REGS_AND_STACK_ACCESS_API
+ 	select HAVE_RSEQ
++	select HAVE_RUST if CPU_LITTLE_ENDIAN && CPU_32v7
+ 	select HAVE_STACKPROTECTOR
+ 	select HAVE_SYSCALL_TRACEPOINTS
+ 	select HAVE_UID16
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index 71afdd98ddf2..9cc10e32e8be 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -150,6 +150,7 @@ endif
+ KBUILD_CPPFLAGS	+=$(cpp-y)
+ KBUILD_CFLAGS	+=$(CFLAGS_ABI) $(CFLAGS_ISA) $(arch-y) $(tune-y) $(call cc-option,-mshort-load-bytes,$(call cc-option,-malignment-traps,)) -msoft-float -Uarm
+ KBUILD_AFLAGS	+=$(CFLAGS_ABI) $(AFLAGS_ISA) -Wa,$(arch-y) $(tune-y) -include asm/unified.h -msoft-float
++KBUILD_RUSTFLAGS += --target=arm-unknown-linux-gnueabi
+ 
+ CHECKFLAGS	+= -D__arm__
+ 
+diff --git a/rust/Makefile b/rust/Makefile
+index f70d5e244fee..ef177ffb68a8 100644
+--- a/rust/Makefile
++++ b/rust/Makefile
+@@ -286,7 +286,8 @@ bindgen_skip_c_flags := -mno-fp-ret-in-387 -mpreferred-stack-boundary=% \
+ 
+ # Derived from `scripts/Makefile.clang`.
+ BINDGEN_TARGET_x86	:= x86_64-linux-gnu
+-BINDGEN_TARGET_arm64	:= aarch64-linux-gnu
++BINDGEN_TARGET_arm64:= aarch64-linux-gnu
++BINDGEN_TARGET_arm	:= arm-linux-gnueabi
+ BINDGEN_TARGET		:= $(BINDGEN_TARGET_$(SRCARCH))
+ 
+ # All warnings are inhibited since GCC builds are very experimental,
+@@ -413,6 +414,13 @@ redirect-intrinsics = \
+ 	__muloti4 __multi3 \
+ 	__udivmodti4 __udivti3 __umodti3
+ 
++ifdef CONFIG_ARM
++	# Add eabi initrinsics for ARM 32-bit
++	redirect-intrinsics += \
++		__aeabi_fadd __aeabi_fmul __aeabi_fcmpeq __aeabi_fcmple __aeabi_fcmplt __aeabi_fcmpun \
++		__aeabi_dadd __aeabi_dmul __aeabi_dcmple __aeabi_dcmplt __aeabi_dcmpun \
++		__aeabi_uldivmod
++endif
+ ifneq ($(or $(CONFIG_ARM64),$(and $(CONFIG_RISCV),$(CONFIG_64BIT))),)
+ 	# These intrinsics are defined for ARM64 and RISCV64
+ 	redirect-intrinsics += \
+diff --git a/rust/bindgen_parameters b/rust/bindgen_parameters
+index a721d466bee4..bf0148b3019e 100644
+--- a/rust/bindgen_parameters
++++ b/rust/bindgen_parameters
+@@ -24,3 +24,7 @@
+ # These functions use the `__preserve_most` calling convention, which neither bindgen
+ # nor Rust currently understand, and which Clang currently declares to be unstable.
+ --blocklist-function __list_.*_report
++
++# Depending on how the architecute defines ARCH_SLAB_MINALIGN, bindgen might generate a binding.
++# Disable this here as there is a const that will always be generated in bindings_helper.c
++--blocklist-item ARCH_SLAB_MINALIGN
+diff --git a/rust/compiler_builtins.rs b/rust/compiler_builtins.rs
+index bba2922c6ef7..c37142b16a45 100644
+--- a/rust/compiler_builtins.rs
++++ b/rust/compiler_builtins.rs
+@@ -70,5 +70,29 @@ pub extern "C" fn $ident() {
+     __umodti3,
+ });
+ 
++#[cfg(target_arch = "arm")]
++define_panicking_intrinsics!("`f32` should not be used", {
++    __aeabi_fadd,
++    __aeabi_fmul,
++    __aeabi_fcmpeq,
++    __aeabi_fcmple,
++    __aeabi_fcmplt,
++    __aeabi_fcmpun,
++});
++
++#[cfg(target_arch = "arm")]
++define_panicking_intrinsics!("`f64` should not be used", {
++    __aeabi_dadd,
++    __aeabi_dmul,
++    __aeabi_dcmple,
++    __aeabi_dcmplt,
++    __aeabi_dcmpun,
++});
++
++#[cfg(target_arch = "arm")]
++define_panicking_intrinsics!("`u64` division/modulo should not be used", {
++    __aeabi_uldivmod,
++});
++
+ // NOTE: if you are adding a new intrinsic here, you should also add it to
+ // `redirect-intrinsics` in `rust/Makefile`.
+diff --git a/scripts/generate_rust_target.rs b/scripts/generate_rust_target.rs
+index 641b713a033a..acfcf2e22e28 100644
+--- a/scripts/generate_rust_target.rs
++++ b/scripts/generate_rust_target.rs
+@@ -148,7 +148,9 @@ fn main() {
+     let mut ts = TargetSpec::new();
+ 
+     // `llvm-target`s are taken from `scripts/Makefile.clang`.
+-    if cfg.has("ARM64") {
++    if cfg.has("ARM") {
++        panic!("arm uses the builtin rustc target");
++    } else if cfg.has("ARM64") {
+         panic!("arm64 uses the builtin rustc aarch64-unknown-none target");
+     } else if cfg.has("RISCV") {
+         if cfg.has("64BIT") {
+-- 
+2.45.2
 
 
