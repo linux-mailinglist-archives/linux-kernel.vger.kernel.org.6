@@ -1,188 +1,288 @@
-Return-Path: <linux-kernel+bounces-205790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1DAD900051
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:07:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A84E900053
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62A5B1F2168D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:07:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A761F1F21C9C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9882115B98E;
-	Fri,  7 Jun 2024 10:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E229C15B968;
+	Fri,  7 Jun 2024 10:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="J17X6lNh"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8531CA85;
-	Fri,  7 Jun 2024 10:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="dRIzQ2Kl"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97DED1CA85;
+	Fri,  7 Jun 2024 10:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717754868; cv=none; b=G67YcPXEAq0p99gbZW4TUg7OFqOq7GU2Klhvfqyb4u/l7JNVewrHmFbdogfNR/V7wc7Jt8q8VxOTN1T6Dm8oQmultsmFVpe2BeB5U6xByaoi+ZNbzMC1AoLoJrhdjeDMZDiz1vM/NKzyHxVLwb08Tet4ajel6SCIPkGVjpl98w8=
+	t=1717754913; cv=none; b=EH9vnRbwbRGUOqY17wL/OPC3SRcBWMq4Z3pPEMRDI8zfpgAo5zIctJrSu54URzw6xF4Cdkh1M2qgKdK/K3oYFlYjc7qa38k/QkKs0JWV9iamn7ZYN1o88mpX53OEfBMLEYhTFrrvMwQnLae7TA6IRWZ3WEZ0f8HETyFsq9xxBmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717754868; c=relaxed/simple;
-	bh=/GIw8ahA38bUcm722/R6YcFYIDZrCeeA/ZikbJOO3FQ=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=AdR5qazC+3cNhGy5vkJ8yGb+evtPbu1mySM/lybxT6Yii8gPMjL+6sE7B6fLAfHVYs254T722M5BXDI0xBNDpEWJmn4M72Ov0AXs/T7FHSPvyCQteT+07nl7KrnIcd5XtlQOfpi0l71ryOA1u8Y31VxltzVQyeJrlO41EzNqA1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=J17X6lNh; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4579pW0w010897;
-	Fri, 7 Jun 2024 10:07:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=w/K8iHCPgKYH
-	40cQaI+c/K8OCvvyQGKDTZokVkkzy8U=; b=J17X6lNhyyV7C205EAtUhfHaLgsx
-	Pkg0uApj1vuFf1oh6hVvXalom9WE4xuXDzdtgUsq6JMv5+vhO9VpNa9jSVvNlT78
-	oxbFod77mPcMIiDzNaQL6tlMSchv0heejiZKWe1Sewaef/SrvM3NdH5oLtnB+KD0
-	PeYSOWOsP3BxWaLF2hv6XOTgZKSP3L5ozgyDUze8qyJIpOf+ao2JtzrVo+eqF+K3
-	z+WAk2XqvQkwwrjgVCNEmMEJw7G0pUgbDISPSGiZavto84/6ih5Id0jM0EQuyXxO
-	wHsx1lHB9n3erHnGafqZ9s14OlN96v9mrY59tZwMnCvltQ9Fn3evLjJpdg==
-Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjhw0x7re-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 10:07:30 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 457A7Rgk023476;
-	Fri, 7 Jun 2024 10:07:27 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTP id 3yfvqm2f7u-1;
-	Fri, 07 Jun 2024 10:07:27 +0000
-Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 457A7Rpa023471;
-	Fri, 7 Jun 2024 10:07:27 GMT
-Received: from cbsp-sh-gv.qualcomm.com (CBSP-SH-gv.ap.qualcomm.com [10.231.249.68])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTP id 457A7Q4l023470;
-	Fri, 07 Jun 2024 10:07:27 +0000
-Received: by cbsp-sh-gv.qualcomm.com (Postfix, from userid 393357)
-	id 075AE11D9; Fri,  7 Jun 2024 18:07:25 +0800 (CST)
-From: Ziqi Chen <quic_ziqichen@quicinc.com>
-To: quic_cang@quicinc.com, bvanassche@acm.org, mani@kernel.org,
-        beanhuo@micron.com, avri.altman@wdc.com, junwoo80.lee@samsung.com,
-        martin.petersen@oracle.com, quic_ziqichen@quicinc.com,
-        quic_nguyenb@quicinc.com, quic_nitirawa@quicinc.com,
-        quic_rampraka@quicinc.com
-Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Peter Wang <peter.wang@mediatek.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Maramaina Naresh <quic_mnaresh@quicinc.com>,
-        Asutosh Das <quic_asutoshd@quicinc.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] scsi: ufs: core: quiesce request queues before check pending cmds
-Date: Fri,  7 Jun 2024 18:06:23 +0800
-Message-Id: <1717754818-39863-1-git-send-email-quic_ziqichen@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: vcCb_e2R3oYvQyBfTJu8rAIhtvn70LZW
-X-Proofpoint-GUID: vcCb_e2R3oYvQyBfTJu8rAIhtvn70LZW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-07_04,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
- phishscore=0 impostorscore=0 priorityscore=1501 mlxscore=0 mlxlogscore=999
- lowpriorityscore=0 suspectscore=0 malwarescore=0 spamscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406070073
+	s=arc-20240116; t=1717754913; c=relaxed/simple;
+	bh=qld2R9srsXV/Hg8uPR+5FlrI6C210MwPh5xClF7AnVE=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=QRv8I/pI0TPstVia0wb1EnXDRN6pA2Bxo2ziUheKXgKH9i5jjFh0VeGbaBHDALhM3F4wtWW52rqeMel8ojCfOcI7CtAmpNKVKdH7CZmVfAgKZgHRnU/Iw4QFsi1c11HX9Y6AQuc6v6REJrw/kCL9iyoxC4zmR3n0OiSzBwHdmEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=dRIzQ2Kl; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 4982720B9260;
+	Fri,  7 Jun 2024 03:08:30 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4982720B9260
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1717754910;
+	bh=Kc8PvZsPZKdp9dT96TN8x5FjLAArIFyjP+l/uaalYdo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dRIzQ2KlmVvrdEMgU9De54nSncVDRV9/PaQ4GSVWm73t/3cNFVL4pZK+s9EeHlXwQ
+	 sYvv5N7m+WCW1+IEmnjpmF/v3oBXflM2DlZyr0/o7pR7uBxgoNta8oxDP8SPKAhyJj
+	 y30lEd+pgxNDsvYpvzWc5xSc8NZ2IGhj32HxRVY4=
+From: Konstantin Taranov <kotaranov@linux.microsoft.com>
+To: kotaranov@microsoft.com,
+	weh@microsoft.com,
+	sharmaajay@microsoft.com,
+	longli@microsoft.com,
+	jgg@ziepe.ca,
+	leon@kernel.org
+Cc: linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH rdma-next v2 1/1] RDMA/mana_ib: process QP error events in mana_ib
+Date: Fri,  7 Jun 2024 03:08:17 -0700
+Message-Id: <1717754897-19858-1-git-send-email-kotaranov@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-In ufshcd_clock_scaling_prepare(), after scsi layer is blocked,
-ufshcd_pending_cmds() is called to tell whether there are pending
-transactions or not. And only if there is no pending transaction,
-can we proceed to kick start clock scaling sequence.
+From: Konstantin Taranov <kotaranov@microsoft.com>
 
-ufshcd_pending_cmds() traverses over all scsi devices and calls
-sbitmap_weight() on their budget_map. The sbitmap_weight() can break
-down to three steps -
-1. Calculates the nr outstanding bits set in the 'word' bitmap.
-2. Calculates the nr outstanding bits set in the 'cleared' bitmap.
-3. Minus the result from step 1 by the result from step 2.
+Process QP fatal events from the error event queue.
+For that, find the QP, using QPN from the event, and then call its
+event_handler. To find the QPs, store created RC QPs in an xarray.
 
-There can be a race condition in below scenario -
-
-Assume there is one pending transaction in the request queue of one scsi
-device, say sda, and the budget token of this request is 0, the 'word'
-is 0x1 and the 'cleared' is 0x0.
-
-1. When step 1 executes, it gets the result as 1.
-2. Before step 2 executes, block layer tries to dispatch a new request
-   to sda. Since scsi layer is blocked, the request cannot pass through
-   scsi layer, but the block layer would anyways do budget_get() and
-   budget_put() to sda's budget map, so the 'word' has become 0x3 and
-   'cleared' has become 0x2 (assume the new request got budget token 1).
-3. When step 2 executes, it gets the result as 1.
-4. When step 3 executes, it gets the result as 0, meaning there is no
-   pending transactions, which is wrong.
-
-Thread A                        Thread B
-ufshcd_pending_cmds()           __blk_mq_sched_dispatch_requests()
-|                               |
-sbitmap_weight(word)            |
-|                               scsi_mq_get_budget()
-|                               |
-|                               scsi_mq_put_budget()
-|                               |
-sbitmap_weight(cleared)
-...
-
-When this race condition happens, clock scaling sequence is kicked start
-with transactions still in flight, leading to subsequent hibernate enter
-failure, broken link, task abort and back to back error recovery.
-
-Fix this race condition by quiescing the request queues before calling
-ufshcd_pending_cmds() so that block layer won't touch the budget map
-when ufshcd_pending_cmds() is working on it. In addition, remove the
-scsi layer blocking/unblocking to reduce redundancies and latencies.
-
-Fixes: 8d077ede48c1 ("scsi: ufs: Optimize the command queueing code")
-Co-developed-by: Can Guo <quic_cang@quicinc.com>
-Signed-off-by: Can Guo <quic_cang@quicinc.com>
-Signed-off-by: Ziqi Chen <quic_ziqichen@quicinc.com>
+Signed-off-by: Konstantin Taranov <kotaranov@microsoft.com>
+Reviewed-by: Wei Hu <weh@microsoft.com>
 ---
- drivers/ufs/core/ufshcd.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 21429ee..1afa862 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -1392,7 +1392,7 @@ static int ufshcd_clock_scaling_prepare(struct ufs_hba *hba, u64 timeout_us)
- 	 * make sure that there are no outstanding requests when
- 	 * clock scaling is in progress
- 	 */
--	ufshcd_scsi_block_requests(hba);
-+	blk_mq_quiesce_tagset(&hba->host->tag_set);
- 	mutex_lock(&hba->wb_mutex);
- 	down_write(&hba->clk_scaling_lock);
+v2 is the same code, but some code is moved into helper functions
+
+v1->v2
+* Introduced helpers to add and remove QPs to/from the table
+* Introduced helpers to get and put QP references
+
+ drivers/infiniband/hw/mana/device.c           |  3 ++
+ drivers/infiniband/hw/mana/main.c             | 31 +++++++++++++++++--
+ drivers/infiniband/hw/mana/mana_ib.h          | 23 ++++++++++++++
+ drivers/infiniband/hw/mana/qp.c               | 20 ++++++++++++
+ .../net/ethernet/microsoft/mana/gdma_main.c   |  1 +
+ include/net/mana/gdma.h                       |  1 +
+ 6 files changed, 77 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/hw/mana/device.c b/drivers/infiniband/hw/mana/device.c
+index 9a7da2e..b07a8e2 100644
+--- a/drivers/infiniband/hw/mana/device.c
++++ b/drivers/infiniband/hw/mana/device.c
+@@ -126,6 +126,7 @@ static int mana_ib_probe(struct auxiliary_device *adev,
+ 	if (ret)
+ 		goto destroy_eqs;
  
-@@ -1401,7 +1401,7 @@ static int ufshcd_clock_scaling_prepare(struct ufs_hba *hba, u64 timeout_us)
- 		ret = -EBUSY;
- 		up_write(&hba->clk_scaling_lock);
- 		mutex_unlock(&hba->wb_mutex);
--		ufshcd_scsi_unblock_requests(hba);
-+		blk_mq_unquiesce_tagset(&hba->host->tag_set);
- 		goto out;
- 	}
++	xa_init_flags(&dev->qp_table_wq, XA_FLAGS_LOCK_IRQ);
+ 	ret = mana_ib_gd_config_mac(dev, ADDR_OP_ADD, mac_addr);
+ 	if (ret) {
+ 		ibdev_err(&dev->ib_dev, "Failed to add Mac address, ret %d",
+@@ -143,6 +144,7 @@ static int mana_ib_probe(struct auxiliary_device *adev,
+ 	return 0;
  
-@@ -1422,7 +1422,7 @@ static void ufshcd_clock_scaling_unprepare(struct ufs_hba *hba, int err, bool sc
+ destroy_rnic:
++	xa_destroy(&dev->qp_table_wq);
+ 	mana_ib_gd_destroy_rnic_adapter(dev);
+ destroy_eqs:
+ 	mana_ib_destroy_eqs(dev);
+@@ -158,6 +160,7 @@ static void mana_ib_remove(struct auxiliary_device *adev)
+ 	struct mana_ib_dev *dev = dev_get_drvdata(&adev->dev);
  
- 	mutex_unlock(&hba->wb_mutex);
- 
--	ufshcd_scsi_unblock_requests(hba);
-+	blk_mq_unquiesce_tagset(&hba->host->tag_set);
- 	ufshcd_release(hba);
+ 	ib_unregister_device(&dev->ib_dev);
++	xa_destroy(&dev->qp_table_wq);
+ 	mana_ib_gd_destroy_rnic_adapter(dev);
+ 	mana_ib_destroy_eqs(dev);
+ 	mana_gd_deregister_device(dev->gdma_dev);
+diff --git a/drivers/infiniband/hw/mana/main.c b/drivers/infiniband/hw/mana/main.c
+index 365b4f1..d13abc9 100644
+--- a/drivers/infiniband/hw/mana/main.c
++++ b/drivers/infiniband/hw/mana/main.c
+@@ -667,6 +667,33 @@ int mana_ib_gd_query_adapter_caps(struct mana_ib_dev *dev)
+ 	return 0;
  }
  
++static void
++mana_ib_event_handler(void *ctx, struct gdma_queue *q, struct gdma_event *event)
++{
++	struct mana_ib_dev *mdev = (struct mana_ib_dev *)ctx;
++	struct mana_ib_qp *qp;
++	struct ib_event ev;
++	u32 qpn;
++
++	switch (event->type) {
++	case GDMA_EQE_RNIC_QP_FATAL:
++		qpn = event->details[0];
++		qp = mana_get_qp_ref(mdev, qpn);
++		if (!qp)
++			break;
++		if (qp->ibqp.event_handler) {
++			ev.device = qp->ibqp.device;
++			ev.element.qp = &qp->ibqp;
++			ev.event = IB_EVENT_QP_FATAL;
++			qp->ibqp.event_handler(&ev, qp->ibqp.qp_context);
++		}
++		mana_put_qp_ref(qp);
++		break;
++	default:
++		break;
++	}
++}
++
+ int mana_ib_create_eqs(struct mana_ib_dev *mdev)
+ {
+ 	struct gdma_context *gc = mdev_to_gc(mdev);
+@@ -676,7 +703,7 @@ int mana_ib_create_eqs(struct mana_ib_dev *mdev)
+ 	spec.type = GDMA_EQ;
+ 	spec.monitor_avl_buf = false;
+ 	spec.queue_size = EQ_SIZE;
+-	spec.eq.callback = NULL;
++	spec.eq.callback = mana_ib_event_handler;
+ 	spec.eq.context = mdev;
+ 	spec.eq.log2_throttle_limit = LOG2_EQ_THROTTLE;
+ 	spec.eq.msix_index = 0;
+@@ -691,7 +718,7 @@ int mana_ib_create_eqs(struct mana_ib_dev *mdev)
+ 		err = -ENOMEM;
+ 		goto destroy_fatal_eq;
+ 	}
+-
++	spec.eq.callback = NULL;
+ 	for (i = 0; i < mdev->ib_dev.num_comp_vectors; i++) {
+ 		spec.eq.msix_index = (i + 1) % gc->num_msix_usable;
+ 		err = mana_gd_create_mana_eq(mdev->gdma_dev, &spec, &mdev->eqs[i]);
+diff --git a/drivers/infiniband/hw/mana/mana_ib.h b/drivers/infiniband/hw/mana/mana_ib.h
+index 60bc548..6bd2edf 100644
+--- a/drivers/infiniband/hw/mana/mana_ib.h
++++ b/drivers/infiniband/hw/mana/mana_ib.h
+@@ -62,6 +62,7 @@ struct mana_ib_dev {
+ 	mana_handle_t adapter_handle;
+ 	struct gdma_queue *fatal_err_eq;
+ 	struct gdma_queue **eqs;
++	struct xarray qp_table_wq;
+ 	struct mana_ib_adapter_caps adapter_caps;
+ };
+ 
+@@ -124,6 +125,9 @@ struct mana_ib_qp {
+ 
+ 	/* The port on the IB device, starting with 1 */
+ 	u32 port;
++
++	refcount_t		refcount;
++	struct completion	free;
+ };
+ 
+ struct mana_ib_ucontext {
+@@ -333,6 +337,25 @@ static inline struct gdma_context *mdev_to_gc(struct mana_ib_dev *mdev)
+ 	return mdev->gdma_dev->gdma_context;
+ }
+ 
++static inline struct mana_ib_qp *mana_get_qp_ref(struct mana_ib_dev *mdev, uint32_t qid)
++{
++	struct mana_ib_qp *qp;
++	unsigned long flag;
++
++	xa_lock_irqsave(&mdev->qp_table_wq, flag);
++	qp = xa_load(&mdev->qp_table_wq, qid);
++	if (qp)
++		refcount_inc(&qp->refcount);
++	xa_unlock_irqrestore(&mdev->qp_table_wq, flag);
++	return qp;
++}
++
++static inline void mana_put_qp_ref(struct mana_ib_qp *qp)
++{
++	if (refcount_dec_and_test(&qp->refcount))
++		complete(&qp->free);
++}
++
+ static inline struct net_device *mana_ib_get_netdev(struct ib_device *ibdev, u32 port)
+ {
+ 	struct mana_ib_dev *mdev = container_of(ibdev, struct mana_ib_dev, ib_dev);
+diff --git a/drivers/infiniband/hw/mana/qp.c b/drivers/infiniband/hw/mana/qp.c
+index 34a9372..b1afc75 100644
+--- a/drivers/infiniband/hw/mana/qp.c
++++ b/drivers/infiniband/hw/mana/qp.c
+@@ -398,6 +398,20 @@ err_free_vport:
+ 	return err;
+ }
+ 
++static int mana_table_store_qp(struct mana_ib_dev *mdev, struct mana_ib_qp *qp)
++{
++	refcount_set(&qp->refcount, 1);
++	init_completion(&qp->free);
++	return xa_insert_irq(&mdev->qp_table_wq, qp->ibqp.qp_num, qp, GFP_KERNEL);
++}
++
++static void mana_table_remove_qp(struct mana_ib_dev *mdev, struct mana_ib_qp *qp)
++{
++	xa_erase_irq(&mdev->qp_table_wq, qp->ibqp.qp_num);
++	mana_put_qp_ref(qp);
++	wait_for_completion(&qp->free);
++}
++
+ static int mana_ib_create_rc_qp(struct ib_qp *ibqp, struct ib_pd *ibpd,
+ 				struct ib_qp_init_attr *attr, struct ib_udata *udata)
+ {
+@@ -460,6 +474,10 @@ static int mana_ib_create_rc_qp(struct ib_qp *ibqp, struct ib_pd *ibpd,
+ 		}
+ 	}
+ 
++	err = mana_table_store_qp(mdev, qp);
++	if (err)
++		goto destroy_qp;
++
+ 	return 0;
+ 
+ destroy_qp:
+@@ -620,6 +638,8 @@ static int mana_ib_destroy_rc_qp(struct mana_ib_qp *qp, struct ib_udata *udata)
+ 		container_of(qp->ibqp.device, struct mana_ib_dev, ib_dev);
+ 	int i;
+ 
++	mana_table_remove_qp(mdev, qp);
++
+ 	/* Ignore return code as there is not much we can do about it.
+ 	 * The error message is printed inside.
+ 	 */
+diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
+index d33b272..ab8adac 100644
+--- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
++++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
+@@ -380,6 +380,7 @@ static void mana_gd_process_eqe(struct gdma_queue *eq)
+ 	case GDMA_EQE_HWC_INIT_EQ_ID_DB:
+ 	case GDMA_EQE_HWC_INIT_DATA:
+ 	case GDMA_EQE_HWC_INIT_DONE:
++	case GDMA_EQE_RNIC_QP_FATAL:
+ 		if (!eq->eq.callback)
+ 			break;
+ 
+diff --git a/include/net/mana/gdma.h b/include/net/mana/gdma.h
+index 2768413..44c797d 100644
+--- a/include/net/mana/gdma.h
++++ b/include/net/mana/gdma.h
+@@ -60,6 +60,7 @@ enum gdma_eqe_type {
+ 	GDMA_EQE_HWC_INIT_DONE		= 131,
+ 	GDMA_EQE_HWC_SOC_RECONFIG	= 132,
+ 	GDMA_EQE_HWC_SOC_RECONFIG_DATA	= 133,
++	GDMA_EQE_RNIC_QP_FATAL		= 176,
+ };
+ 
+ enum {
 -- 
-2.7.4
+2.43.0
 
 
