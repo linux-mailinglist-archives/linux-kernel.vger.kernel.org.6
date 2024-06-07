@@ -1,413 +1,266 @@
-Return-Path: <linux-kernel+bounces-205954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2732F900292
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:47:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44242900297
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:48:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A23AC1F26293
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:47:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 317481C2272D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF755190051;
-	Fri,  7 Jun 2024 11:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A249A18FC6D;
+	Fri,  7 Jun 2024 11:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sRwZOdMS"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ENpRDrjN"
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C85B1862B5
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CE3187358
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717760805; cv=none; b=roCxd6coqp5dcNwNRsXWXc9Cf1Kq5e6plPPgi6YVKmcz4IAUj6h/sarw9aR2lF/ucm4YMFEFnl4dNAzciqNeViXHdHktojRg85i8aPiHgVDebGIoC+boUQnhSyaXeDvN8JXaYm3D8gVkaTCwpU2mjbTOmK1Vj5BMJOSom+S6g3g=
+	t=1717760920; cv=none; b=P0tXsnu/ofO3/kvk2PFwNFlwuYx3zbP7t47sU2Kadr1MJqKjGzV3mavDuOvPkXwZg8mPQ9sHDaQ2kgwy5bsGYGv3IQAS6uA4AZP8H304R3NSUp6Lw4dd5JI0M+XKZx17u682oiskipTBpmTaiAjzWvDe2m+0PsGxrSZrYXjWvQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717760805; c=relaxed/simple;
-	bh=vGYxCl8GhEjo7aBFCGoMrrcVy9k+50wGJU2FCIWlVKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n39g8/qOEF2BDHkRfdHnVLABmUCCUVbqcAOHi6ipfx9OFghjN1KZPMelza5rib1zAW3udS3jSbbvcHjwuf98cW/mra61sL3XfuUxHOy/ISLnUxRXAQSlvpqvkvCVPDjX1n61IBxn4bRfPPxOw5t/1U3GO7pFszVqIY/lQvE01Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sRwZOdMS; arc=none smtp.client-ip=209.85.167.47
+	s=arc-20240116; t=1717760920; c=relaxed/simple;
+	bh=PeHkH+NfrrKJoMuN2ygAp9EcFcYtXM/K53hPDtU04fM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ho2KzSiIpLarPjvszV1BZNzpAwJYlgPsGdG96dytVqv6PY8FoywAJQdspCIb8d8rSv2gbq7+dQdYwVHZD2FaMYH+OOJh1UgsI/SPJkRZgDaAeFDShD4vC2GZDCmnkA6csM6Y8fRFjLm0ORnv1f9oWP+/COvIEu7wSxeNTdv25EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ENpRDrjN; arc=none smtp.client-ip=209.85.222.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52b87e8ba1eso2755784e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 04:46:43 -0700 (PDT)
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-80acf1bca86so628650241.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 04:48:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717760802; x=1718365602; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CUo/YSczk2Nyul9jpd4YNh6gCc1zxDtFM6huYK5JuxA=;
-        b=sRwZOdMS8iKtLslt69viwEBkBCHECjUKVv2hcwEVDylhlU6nET8OS7gwqjzkYuXCDf
-         WJvGaRZyv8WhfWmpCLt8R5LgHM6gqLTvU4tDnkgLmn5YaM7n5pUo/QeHk02XSa+GYbm2
-         jRfrAeck4BAsFChe0evVJJA9og/s3lx0Ilye0WrUA+y7R2HB8GuaEqdTFp0zEZXF8zqD
-         oO+qnpyv5CQOah0EtCr+bezfCpq7/wXUOlt+mi33r563mG1VkiHLVbLTAhOL+plX/aSx
-         yLwpkdjN/ecB4116/SU6HUNC3Tyq361mvGdMsu9pVTlywMoULS7OPfXjWC4TkCn0091V
-         sonA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717760802; x=1718365602;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1717760917; x=1718365717; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CUo/YSczk2Nyul9jpd4YNh6gCc1zxDtFM6huYK5JuxA=;
-        b=OvL1bblRfWB06peSLLcxZBilWNWL+hiQFzrZmIDi7CEK9n3Z3tPf9Ek+B07N1mdEvX
-         tCFkn754m/6sPsg9jAVIOS8UQ+8k+5BY3zpTw8GS6IYxkRKUq+XSI82y6J4dgW0LleuC
-         PZBUe0XpVCXrmL1dXImpluyfNGZCs9QnoQwBNZRz6BIk3P+LFcByPCz1TpxphVaS4AXW
-         EF69GznJBNX1TFo6pbGEoLfg4n2HrWpWDuySUsZ3zPi5uSpyzPc8rDHa5UfCbvM7YKGJ
-         P8NcmD41vrSS/vtWrCHSQF5KXUgnESuXS9VwGsKHCkCCbhLZa4upyT49CLMWp2zwNSG3
-         cRyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVsLAaCyHHNfUFuosTjNmQMCO2uswnnACWL5HDlpZuYJcjVzGvdPzNNyoUaf9DAaFgtGz1VlXXG9ahqjJz0qpBhmqa+zJ7qb2PqXkMA
-X-Gm-Message-State: AOJu0YyLjNsrr+BrGkyhJ0jEmaBU/2cWGphMpDtnyHe8ZG51UQYHrL3n
-	SvifgMIjcTZ7ySjAUIeS28MjRe1beDEG6p5lTbUomf8QAqttsjFkAuJxHahpCVAmXN0ukZjQdbU
-	p
-X-Google-Smtp-Source: AGHT+IFYOXxG2sZJjkRufHuz/UALTmdhRiqiszeoU2cb1WTHtJFP6AB08E691SvhcBZCJbn4dsefuw==
-X-Received: by 2002:a05:6512:3ae:b0:52b:8c88:2d73 with SMTP id 2adb3069b0e04-52bb9fc944amr1779886e87.52.1717760801702;
-        Fri, 07 Jun 2024 04:46:41 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb41ee260sm510066e87.68.2024.06.07.04.46.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 04:46:41 -0700 (PDT)
-Date: Fri, 7 Jun 2024 14:46:39 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
-	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
-	quic_chennak@quicinc.com, stable <stable@kernel.org>
-Subject: Re: [PATCH v4 10/11] misc: fastrpc: Fix unsigned PD support
-Message-ID: <rqnxu5ga5bauwmyrsncy5fxkrjduvhavtjqcxvy6bzb565ci35@32pvlalsuij2>
-References: <20240606165939.12950-1-quic_ekangupt@quicinc.com>
- <20240606165939.12950-11-quic_ekangupt@quicinc.com>
+        bh=V/5wtcce17x6OATn8wPdogmtY0ka7nDOqTZMDuD4ISs=;
+        b=ENpRDrjN3MmvHTMOmuod19wZITAjdpAPzbDd+dGRdWRs5bg46EDSHLCECtoREulQet
+         idGwJMVvO4h5wl7Nq+mJL4REX43IeGy4JaiPj+ami8TlXcqe9yfh9TXhF4BONANqb28K
+         TcIxRpsyUjeKSCC+pBJaP5rQtBFR4m3TjnyMteWg2yuvE+8wfZ2ssmfUtPPw30aKDo/R
+         C/E2BQOqEZYHG+2hAmWaVp35lMY3aUV4r5eah3v0OPcpElNYuk6Jf0jgDcyKwOJF7pyQ
+         zSrfsLveEI/MoAM68flcMnjCsUqFR/I7F2j7F7BZ6IkMy8X3dNkI976161aT2RQ/e7W+
+         y97g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717760917; x=1718365717;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V/5wtcce17x6OATn8wPdogmtY0ka7nDOqTZMDuD4ISs=;
+        b=uEr5rO2Ll41XNI4HBLw74FCu/hWPiaId9dU5XIxAVGM549+aCTF2JArb+IK6Qt5Z1g
+         dBxyM3QIOG/g09gR/IykMIt6t7Hx8pxxagEj63Q9O3Eb6CO5HZyk7kpYZqion+ejJrRP
+         rJ1IEzcfSIUKG4J80bnrZZwdr+rgT0a14I3Dw6M4jTQgilMge6yz9Df4gIvWSe1UHCcP
+         gLksBsyOxKeWutxu+vZ2qOtfDNI1PEThnZvTAIrWmOCRNw1L4qo2gMl2CrVSUd31ZKwE
+         9n2uhe8IZvC4l0aixombq04RfN+nNi4GdEoTYR6Z4wnF44xf4IqP8Ns9qE9m5HQtQyf5
+         2d6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWDjc6bbz4lrPbAFT2qesQijXVlzxJ8bOqdGxORlVuP9YrbYxGsPCKJFUrEc4NvBeuD1UM3oUTgySck0HE9VU79dshHlEqpjLa+FDfz
+X-Gm-Message-State: AOJu0Yxbljgjz6qw9GSx9p91x8F08/0U9dUFkxpfOonuSLBAC5Q/C1AK
+	RADKdGx8NvnbzFx5J5TxoVkcQRe/RmNf+FY0TFDtYCG3KabpylPC53cRRKlVN8DFgqW8FBloODG
+	vCqR039pvtB50wcE7kOzA2SY87azv93pBajf+ww==
+X-Google-Smtp-Source: AGHT+IEdwmO0c+MBu1y4ofqEbQghy0qcz8uztrknpjZTw/IJT0CA0vI0J7TGrTqdcGE88Tlz0cCpiu60YEjDyFoXYrs=
+X-Received: by 2002:a05:6102:4a57:b0:48a:3fa5:b832 with SMTP id
+ ada2fe7eead31-48c27538f02mr1869372137.33.1717760917249; Fri, 07 Jun 2024
+ 04:48:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606165939.12950-11-quic_ekangupt@quicinc.com>
+References: <20240606131651.683718371@linuxfoundation.org>
+In-Reply-To: <20240606131651.683718371@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 7 Jun 2024 17:18:26 +0530
+Message-ID: <CA+G9fYvOP-FL7w55vPig3p1iva_MAO+sqWnh3ZwPEopd_y-jow@mail.gmail.com>
+Subject: Re: [PATCH 6.9 000/374] 6.9.4-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 06, 2024 at 10:29:30PM +0530, Ekansh Gupta wrote:
-> Unsigned PDs are sandboxed DSP processes used to offload computation
-> workloads to the DSP. Unsigned PD have less privileges in terms of
-> DSP resource access as compared to Signed PD.
-> 
-> Unsigned PD requires more initial memory to spawn. Also most of the
-> memory request are allocated from user space. Current initial memory
-> size is not sufficient and mapping request for user space allocated
-> buffer is not supported. This results in failure of unsigned PD offload
-> request. Add changes to fix initial memory size and user space allocated
-> buffer mapping support.
+On Thu, 6 Jun 2024 at 19:38, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.9.4 release.
+> There are 374 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 08 Jun 2024 13:15:55 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.9.4-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-You can guess my comment here.
 
-> 
-> Fixes: 7f1f481263c3 ("misc: fastrpc: check before loading process to the DSP")
+Results from Linaro=E2=80=99s test farm.
+Build regressions on Powerpc.
 
-And here.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-> Cc: stable <stable@kernel.org>
-> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> ---
->  drivers/misc/fastrpc.c | 180 ++++++++++++++++++++++++++++++-----------
->  1 file changed, 133 insertions(+), 47 deletions(-)
-> 
-> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> index 32f2e6f625ed..5ffb6098ac38 100644
-> --- a/drivers/misc/fastrpc.c
-> +++ b/drivers/misc/fastrpc.c
-> @@ -40,7 +40,7 @@
->  #define FASTRPC_INIT_HANDLE	1
->  #define FASTRPC_DSP_UTILITIES_HANDLE	2
->  #define FASTRPC_CTXID_MASK (0xFF0)
-> -#define INIT_FILELEN_MAX (2 * 1024 * 1024)
-> +#define INIT_FILELEN_MAX (5 * 1024 * 1024)
+## Build
+* kernel: 6.9.4-rc1
+* git: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
+* git branch: linux-6.9.y
+* git commit: fcbdac56b0ae848d2259d6b9825f289688a77e0b
+* git describe: v6.9.2-803-gfcbdac56b0ae
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.9.y/build/v6.9.2=
+-803-gfcbdac56b0ae
 
-So, there are two things being fixed here. One is the insufficient
-memory size, another one is the mmap request. Separate commits, please.
+## Test Regressions (compared to v6.9.2)
+* powerpc, build
+  - clang-18-cell_defconfig
+  - clang-18-defconfig
+  - clang-18-maple_defconfig
+  - clang-18-ppc64e_defconfig
+  - clang-nightly-cell_defconfig
+  - clang-nightly-defconfig
+  - clang-nightly-maple_defconfig
+  - clang-nightly-ppc64e_defconfig
+  - gcc-13-cell_defconfig
+  - gcc-13-defconfig
+  - gcc-13-maple_defconfig
+  - gcc-13-ppc64e_defconfig
 
->  #define INIT_FILE_NAMELEN_MAX (128)
->  #define FASTRPC_DEVICE_NAME	"fastrpc"
->  
-> @@ -327,6 +327,7 @@ struct fastrpc_user {
->  	int tgid;
->  	int pd;
->  	bool is_secure_dev;
-> +	bool is_unsigned_pd;
->  	char *servloc_name;
->  	/* Lock for lists */
->  	spinlock_t lock;
-> @@ -1488,7 +1489,6 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
->  		u32 siglen;
->  	} inbuf;
->  	u32 sc;
-> -	bool unsigned_module = false;
->  
->  	args = kcalloc(FASTRPC_CREATE_PROCESS_NARGS, sizeof(*args), GFP_KERNEL);
->  	if (!args)
-> @@ -1500,9 +1500,9 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
->  	}
->  
->  	if (init.attrs & FASTRPC_MODE_UNSIGNED_MODULE)
-> -		unsigned_module = true;
-> +		fl->is_unsigned_pd = true;
->  
-> -	if (is_session_rejected(fl, unsigned_module)) {
-> +	if (is_session_rejected(fl, fl->is_unsigned_pd)) {
->  		err = -ECONNREFUSED;
->  		goto err;
->  	}
-> @@ -1985,6 +1985,7 @@ static int fastrpc_req_munmap(struct fastrpc_user *fl, char __user *argp)
->  {
->  	struct fastrpc_buf *buf = NULL, *iter, *b;
->  	struct fastrpc_req_munmap req;
-> +	struct fastrpc_map *map = NULL, *iterm, *m;
->  	struct device *dev = fl->sctx->dev;
->  	int err = 0;
->  
-> @@ -2031,34 +2032,75 @@ static int fastrpc_req_munmap(struct fastrpc_user *fl, char __user *argp)
->  		}
->  		return err;
->  	}
-> -	dev_err(dev, "buffer not found addr 0x%09lx, len 0x%08llx\n",
-> +	spin_lock(&fl->lock);
-> +	list_for_each_entry_safe(iterm, m, &fl->maps, node) {
-> +		if (iterm->raddr == req.vaddrout) {
-> +			map = iterm;
-> +			break;
-> +		}
-> +	}
-> +	spin_unlock(&fl->lock);
-> +	if (!map) {
-> +		dev_dbg(dev, "buffer not found addr 0x%09llx, len 0x%08llx\n",
->  			req.vaddrout, req.size);
-> -	return -EINVAL;
-> +		return -EINVAL;
-> +	}
-> +
-> +	err = fastrpc_req_munmap_dsp(fl, map->raddr, map->size);
-> +	if (err)
-> +		dev_dbg(dev, "unmmap\tpt fd = %d, 0x%09llx error\n",  map->fd, map->raddr);
+## Metric Regressions (compared to v6.9.2)
 
-Which error? The message is useless.
+## Test Fixes (compared to v6.9.2)
 
-> +	else
-> +		fastrpc_map_put(map);
+## Metric Fixes (compared to v6.9.2)
 
-Should the fl->lock be still held here? Can the map be modified
-concurrently?
+## Test result summary
+total: 139061, pass: 121356, fail: 1981, skip: 15724, xfail: 0
 
-> +
-> +	return err;
->  }
->  
-> -static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
-> +static int fastrpc_req_map_dsp(struct fastrpc_user *fl, u64 phys,
-> +			u64 size, u32 flag, uintptr_t vaddrin, u64 *raddr)
->  {
->  	struct fastrpc_invoke_args args[3] = { [0 ... 2] = { 0 } };
-> -	struct fastrpc_buf *buf = NULL;
->  	struct fastrpc_mmap_req_msg req_msg;
->  	struct fastrpc_mmap_rsp_msg rsp_msg;
->  	struct fastrpc_phy_page pages;
-> -	struct fastrpc_req_mmap req;
-> -	struct device *dev = fl->sctx->dev;
->  	int err;
->  	u32 sc;
->  
-> -	if (copy_from_user(&req, argp, sizeof(req)))
-> -		return -EFAULT;
-> +	req_msg.pgid = fl->tgid;
-> +	req_msg.flags = flag;
-> +	req_msg.vaddr = vaddrin;
-> +	req_msg.num = sizeof(pages);
->  
-> -	if (req.flags != ADSP_MMAP_ADD_PAGES && req.flags != ADSP_MMAP_REMOTE_HEAP_ADDR) {
-> -		dev_err(dev, "flag not supported 0x%x\n", req.flags);
-> +	args[0].ptr = (u64) (uintptr_t) &req_msg;
-> +	args[0].length = sizeof(req_msg);
->  
-> -		return -EINVAL;
-> +	pages.addr = phys;
-> +	pages.size = size;
-> +
-> +	args[1].ptr = (u64) (uintptr_t) &pages;
-> +	args[1].length = sizeof(pages);
-> +	sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_MMAP, 2, 1);
-> +	err = fastrpc_internal_invoke(fl, true, FASTRPC_INIT_HANDLE, sc,
-> +					  &args[0]);
-> +
-> +	if (err) {
-> +		dev_err(fl->sctx->dev, "mmap error (len 0x%08llx)\n", size);
-> +		return err;
->  	}
-> +	*raddr = rsp_msg.vaddr;
-> +
-> +	return err;
-> +}
-> +
-> +static int fastrpc_req_buf_alloc(struct fastrpc_user *fl,
-> +			struct fastrpc_req_mmap req, char __user *argp)
-> +{
-> +	struct device *dev = fl->sctx->dev;
-> +	struct fastrpc_buf *buf = NULL;
-> +	u64 raddr = 0;
-> +	int err;
->  
->  	if (req.vaddrin) {
-> -		dev_err(dev, "adding user allocated pages is not supported\n");
-> +		dev_err(dev, "adding user allocated pages is not supported for signed PD\n");
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 126 total, 126 passed, 0 failed
+* arm64: 38 total, 38 passed, 0 failed
+* i386: 28 total, 28 passed, 0 failed
+* mips: 24 total, 24 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 34 total, 22 passed, 12 failed
+* riscv: 17 total, 17 passed, 0 failed
+* s390: 12 total, 12 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 33 total, 33 passed, 0 failed
 
-Drop, less chance of users spamming the dmesg.
+## Test suites summary
+* boot
+* kselftest-android
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-drivers-dma-buf
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-ir
+* kselftest-kcmp
+* kselftest-kexec
+* kselftest-kvm
+* kselftest-lib
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-memory-hotplug
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mount
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-forwarding
+* kselftest-net-mptcp
+* kselftest-netfilter
+* kselftest-nsfs
+* kselftest-openat2
+* kselftest-pid_namespace
+* kselftest-pidfd
+* kselftest-proc
+* kselftest-pstore
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-splice
+* kselftest-static_keys
+* kselftest-sync
+* kselftest-sysctl
+* kselftest-tc-testing
+* kselftest-timens
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kselftest-zram
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-smoketest
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
 
->  		return -EINVAL;
->  	}
->  
-> @@ -2091,36 +2133,16 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
->  		}
->  	}
->  
-> -	req_msg.pgid = fl->tgid;
-> -	req_msg.flags = req.flags;
-> -	req_msg.vaddr = req.vaddrin;
-> -	req_msg.num = sizeof(pages);
-> -
-> -	args[0].ptr = (u64) (uintptr_t) &req_msg;
-> -	args[0].length = sizeof(req_msg);
-> -
-> -	pages.addr = buf->phys;
-> -	pages.size = buf->size;
-> -
-> -	args[1].ptr = (u64) (uintptr_t) &pages;
-> -	args[1].length = sizeof(pages);
-> -
-> -	args[2].ptr = (u64) (uintptr_t) &rsp_msg;
-> -	args[2].length = sizeof(rsp_msg);
-> -
-> -	sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_MMAP, 2, 1);
-> -	err = fastrpc_internal_invoke(fl, true, FASTRPC_INIT_HANDLE, sc,
-> -				      &args[0]);
-> -	if (err) {
-> -		dev_err(dev, "mmap error (len 0x%08llx)\n", buf->size);
-> +	err = fastrpc_req_map_dsp(fl, buf->phys, buf->size, buf->flag,
-> +				req.vaddrin, &raddr);
-> +	if (err)
->  		goto err_invoke;
-> -	}
->  
->  	/* update the buffer to be able to deallocate the memory on the DSP */
-> -	buf->raddr = (uintptr_t) rsp_msg.vaddr;
-> +	buf->raddr = (uintptr_t) raddr;
->  
->  	/* let the client know the address to use */
-> -	req.vaddrout = rsp_msg.vaddr;
-> +	req.vaddrout = raddr;
->  
->  	spin_lock(&fl->lock);
->  	if (req.flags == ADSP_MMAP_REMOTE_HEAP_ADDR)
-> @@ -2129,16 +2151,14 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
->  		list_add_tail(&buf->node, &fl->mmaps);
->  	spin_unlock(&fl->lock);
->  
-> +	dev_dbg(dev, "mmap\t\tpt 0x%09lx OK [len 0x%08llx]\n",
-> +		buf->raddr, buf->size);
-> +
->  	if (copy_to_user((void __user *)argp, &req, sizeof(req))) {
->  		err = -EFAULT;
->  		goto err_copy;
->  	}
-> -
-> -	dev_dbg(dev, "mmap\t\tpt 0x%09lx OK [len 0x%08llx]\n",
-> -		buf->raddr, buf->size);
-> -
->  	return 0;
-> -
->  err_copy:
->  	spin_lock(&fl->lock);
->  	list_del(&buf->node);
-> @@ -2146,11 +2166,77 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
->  	fastrpc_req_munmap_impl(fl, buf);
->  	buf = NULL;
->  err_invoke:
-> -	fastrpc_buf_free(buf);
-> +	if (buf)
-> +		fastrpc_buf_free(buf);
-> +
-> +	return err;
-> +}
-> +
-> +static int fastrpc_req_map_create(struct fastrpc_user *fl,
-> +			struct fastrpc_req_mmap req, char __user *argp)
-> +{
-> +	struct fastrpc_map *map = NULL;
-> +	struct device *dev = fl->sctx->dev;
-> +	u64 raddr = 0;
-> +	int err;
-> +
-> +	if ((req.flags == ADSP_MMAP_REMOTE_HEAP_ADDR) && fl->is_unsigned_pd) {
-> +		dev_err(dev, "secure memory allocation is not supported in unsigned PD\n");
-> +		return -EINVAL;
-> +	}
-> +	err = fastrpc_map_create(fl, req.fd, req.size, 0, &map);
-> +	if (err) {
-> +		dev_err(dev, "failed to map buffer, fd = %d\n", req.fd);
-> +		return err;
-> +	}
-> +
-> +	err = fastrpc_req_map_dsp(fl, map->phys, map->size, req.flags,
-> +				req.vaddrin, &raddr);
-> +	if (err)
-> +		goto err_invoke;
-> +
-> +	/* update the buffer to be able to deallocate the memory on the DSP */
-> +	map->raddr = (uintptr_t) raddr;
-> +
-> +	/* let the client know the address to use */
-> +	req.vaddrout = raddr;
-> +	dev_dbg(dev, "mmap\t\tpt 0x%09llx OK [len 0x%08llx]\n",
-> +		map->raddr, map->size);
-> +
-> +	if (copy_to_user((void __user *)argp, &req, sizeof(req))) {
-> +		err = -EFAULT;
-> +		goto err_copy;
-> +	}
-> +	return 0;
-> +err_copy:
-> +	fastrpc_req_munmap_dsp(fl, map->raddr, map->size);
-> +err_invoke:
-> +	fastrpc_map_put(map);
->  
->  	return err;
->  }
->  
-> +static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
-> +{
-> +	struct fastrpc_req_mmap req;
-> +	int err;
-> +
-> +	if (copy_from_user(&req, argp, sizeof(req)))
-> +		return -EFAULT;
-> +
-> +	if ((req.flags == ADSP_MMAP_ADD_PAGES ||
-> +	     req.flags == ADSP_MMAP_REMOTE_HEAP_ADDR) && !fl->is_unsigned_pd) {
-> +		err = fastrpc_req_buf_alloc(fl, req, argp);
-> +		if (err)
-> +			return err;
-> +	} else {
-> +		err = fastrpc_req_map_create(fl, req, argp);
-> +		if (err)
-> +			return err;
-> +	}
-> +	return 0;
-> +}
-> +
->  static int fastrpc_req_mem_unmap_impl(struct fastrpc_user *fl, struct fastrpc_mem_unmap *req)
->  {
->  	struct fastrpc_invoke_args args[1] = { [0] = { 0 } };
-> -- 
-> 2.43.0
-> 
-
--- 
-With best wishes
-Dmitry
+--
+Linaro LKFT
+https://lkft.linaro.org
 
