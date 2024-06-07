@@ -1,156 +1,154 @@
-Return-Path: <linux-kernel+bounces-205659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BCAC8FFE90
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:01:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83A598FFE8E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:01:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22518B20ED4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:01:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BA0C1C21902
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3183915B0FC;
-	Fri,  7 Jun 2024 09:01:39 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D42915B0FC;
+	Fri,  7 Jun 2024 09:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QdoCsf54"
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438E417C6C
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7C31BC23
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717750898; cv=none; b=MdkrdSYnF5hN5GtOVyGg9Gykz57QmUpzgKKTXS9+wf0DsLDp+NBby6JyGLHSETB4Vh7VUoY4mGE8hCgMmpVqhjX3VGkFOXvP36CdsPY7o629Y+FFFb/ElA3tbIljhfrr0oalIPCQ/hZ9N7Q0bEwtXQohNQpw8rJtZQIf7RhaFfw=
+	t=1717750853; cv=none; b=J3V06grvIr/WSPF83klBXJaPjqzvzNiCEAjYUYcmsMzxEM1LIUDpyjtW+VQCM6UHYHqm0Jb3sQf9QC7QSc3JPKqiLkPdxeDa/oLSxg5uiqUro9jJSaU7Y+o/IAs4NI3IKx/x5wWwGT8VJsJ+W+1y20RoSK3hhUynM/0SrbWkAtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717750898; c=relaxed/simple;
-	bh=WKtUVRZ3BEvjG0aZ2Mn4jkpRzDVrYF1ttd++DRwKSJc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fJE47djvvSGiCdsuF/cWj9zarX8CxYmQryOv5kuzIWn37WSS5clCyVRJMMg69Ks5eXvXPrdDnrzYYnZJUIfB1oBTYbTBFOUt0gCwPbm706eV920drFhinTcOzAt4HL9oeTRyklX7NAocJULLyXEaRtFXX7j/0wAAStD4wHvSsXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 45790osD077378;
-	Fri, 7 Jun 2024 17:00:50 +0800 (+08)
-	(envelope-from Zhiguo.Niu@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4VwZnV1WLkz2QcKjm;
-	Fri,  7 Jun 2024 16:56:46 +0800 (CST)
-Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Fri, 7 Jun 2024 17:00:48 +0800
-From: Zhiguo Niu <zhiguo.niu@unisoc.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-        <niuzhiguo84@gmail.com>, <zhiguo.niu@unisoc.com>, <ke.wang@unisoc.com>,
-        <Hao_hao.Wang@unisoc.com>
-Subject: [PATCH V2] f2fs: enable atgc dynamically if conditions are met
-Date: Fri, 7 Jun 2024 17:00:30 +0800
-Message-ID: <1717750830-15423-1-git-send-email-zhiguo.niu@unisoc.com>
-X-Mailer: git-send-email 1.9.1
+	s=arc-20240116; t=1717750853; c=relaxed/simple;
+	bh=hbH9FscCbenKyJOliecIL8HXiCKJO1fhxhChk9cPvPQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rAZ+JrSqn2cqBOFoQf7WEPMFpe59Q+PW5kDlx2V9iN0jdtolHJJgRYiWyGjirt5huG4M3Re/TnKbC+cjLpO8HRfvvkLb4Yu4FIATcEYDZtYR7iuQoFm6rlKiuAGGuT4ANwn0UrD7YQz5bwoH6rehUDi3vQoJwvUj9q2r9rt9r5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QdoCsf54; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-4eb007a9f6fso585857e0c.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 02:00:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717750851; x=1718355651; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DBcoLUrX2L9eb2fV5NkylUMV+gvpxQM/JqT0hm0OtKQ=;
+        b=QdoCsf54zCcbgQ9pL2my7TNT0/jHAqdn6hkGE8x+yG3dzr6TngdKF8Go/1LIToUAzk
+         yz9rMHhkvwZm+7MH5cb7HZMavYqMpGfrR4ZkCHOwiL/Ya0/jECPFq0o3XhSgkrFir1hE
+         C2IEQO2m22GNGNMNB3q415OK6HfUQE7sahL4XIBi6Gq4g71fyRMP9TL1Io9vpHndZZz7
+         iE5LWaElmULQgOnGQ1+6/WmermRB6GdODZrZHKioU/N3t1n+NVSqq0urs/UyR5fV6Y6Q
+         WtvPkbUdKmi5Ck7L/SUlnD+zbWXRwUifEi2mRYg14ieY8RwuZYa5JvkpyrWnqrUuMtTK
+         QqAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717750851; x=1718355651;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DBcoLUrX2L9eb2fV5NkylUMV+gvpxQM/JqT0hm0OtKQ=;
+        b=AaXs38fEjf9TUvaDbqGLYwwnry8ePOQcCfcev+Vf+7W5d5lx1YMctH9HjA28W1bB4P
+         zbqRKN2MBJeZE3hV6oeVnWy/HYJ29OLd7RLhCNp/QWAw2aZW5Uf9OFVQXwXGtklqnA1t
+         ZlCWDIwATlzFabHWr73v6++EQvRq9k+kh18yYMY05Sot3nWjdGMd93tUhLbTUoabj0e0
+         8Wu8Y1K8K4G1FYOgLSpsXmUXoaOCBBuedl05GUDtPoPQM6z3sfuvpMvLPRAlLCokgMlH
+         zckjjhk1mw9wZmW4nsGQue3fav6tBOCq5P8MfHzRPZZ1Df/KiwnrODx/xnVVxydzeTia
+         ztqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVMc2xiZ9wMdRaudZi1GKn/ACnoUCXMopgzk+tAyhctwkkvajJ7eQfOvXyfippvp1b9f4JwEw3XFLQFsDQFzURM09cGpsJAVcsXGa9p
+X-Gm-Message-State: AOJu0YwMDYjH8nyld5k+UDR4D8wZNkyCmi36LLAk48FTOObcTL+mbeQp
+	irzs7LhMk/fDvMYCIW9QySkC2cNMpqCGyqcquD/eqsVEjX+ZahgBLVYUg4+3fj3kYiC9Xk9MWCp
+	WxuraFDrFfZEcCOyMOsxfBUteups=
+X-Google-Smtp-Source: AGHT+IGLUmk2eI7NKtebudys+AdNxQPrEw0y6t74Brmd9i82lSeOm4DST94C+ok3UcTEGRrcETFb4Cjpiqg67slKY/4=
+X-Received: by 2002:ac5:ccad:0:b0:4e4:eb50:fd57 with SMTP id
+ 71dfb90a1353d-4eb562543bdmr2166514e0c.9.1717750850115; Fri, 07 Jun 2024
+ 02:00:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL:SHSQR01.spreadtrum.com 45790osD077378
+References: <20240606034016.82559-1-21cnbao@gmail.com> <a04dd2d6-8526-488f-b46a-80c530891415@redhat.com>
+In-Reply-To: <a04dd2d6-8526-488f-b46a-80c530891415@redhat.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 7 Jun 2024 21:00:38 +1200
+Message-ID: <CAGsJ_4wSFWMpgd38XqZNNdfDT9PHp+xNjfFYY46yHvjqwJ5QkA@mail.gmail.com>
+Subject: Re: [PATCH] mm: introduce pmd|pte_need_soft_dirty_wp helpers for
+ softdirty write-protect
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, chrisl@kernel.org, 
+	kasong@tencent.com, linux-kernel@vger.kernel.org, minchan@kernel.org, 
+	ryan.roberts@arm.com, surenb@google.com, v-songbaohua@oppo.com, 
+	willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now atgc can only be enabled when umounted->mounted device
-even related conditions have reached. If the device has not
-be umounted->mounted for a long time, atgc can not work.
+On Fri, Jun 7, 2024 at 8:46=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
+>
+> On 06.06.24 05:40, Barry Song wrote:
+> > From: Barry Song <v-songbaohua@oppo.com>
+> >
+> > This patch introduces the pte_need_soft_dirty_wp and
+> > pmd_need_soft_dirty_wp helpers to determine if write protection is
+> > required for softdirty tracking. This can enhance code readability
+> > and improve its overall appearance.
+> >
+> > These new helpers are utilized in gup, huge_memory, and protect,
+> > and are particularly applied in do_swap_page() to optimize a
+> > softdirty scenario where mkwrite can still be performed.
+>
+> [...]
+>
+> > +static inline bool pmd_need_soft_dirty_wp(struct vm_area_struct *vma, =
+pmd_t pmd)
+> > +{
+> > +     return vma_soft_dirty_enabled(vma) && !pmd_soft_dirty(pmd);
+> > +}
+> > +
+> > +static inline bool pte_need_soft_dirty_wp(struct vm_area_struct *vma, =
+pte_t pte)
+> > +{
+> > +     return vma_soft_dirty_enabled(vma) && !pte_soft_dirty(pte);
+> > +}
+> > +
+>
+> Should these be "needs" ? I tend to like these names/semantics.
 
-So enable atgc dynamically when atgc_age_threshold is less than
-elapsed_time and ATGC mount option is on.
+yes. "needs" is better. Glad to know you have the common liking
+for these names.
 
-Signed-off-by: Chao Yu <chao@kernel.org>
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
----
-v2: try to enabe atgc in cp to avoid some race cases
----
----
- fs/f2fs/checkpoint.c |  1 +
- fs/f2fs/f2fs.h       |  1 +
- fs/f2fs/segment.c    | 27 ++++++++++++++++++++++++---
- 3 files changed, 26 insertions(+), 3 deletions(-)
+>
+>
+> >   static inline void vma_iter_config(struct vma_iterator *vmi,
+> >               unsigned long index, unsigned long last)
+> >   {
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index db9130488231..6307c43796aa 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -4322,7 +4322,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >       if (!folio_test_ksm(folio) &&
+> >           (exclusive || folio_ref_count(folio) =3D=3D 1)) {
+> >               if ((vma->vm_flags & VM_WRITE) && !userfaultfd_pte_wp(vma=
+, pte) &&
+> > -                 !vma_soft_dirty_enabled(vma)) {
+> > +                 !pte_need_soft_dirty_wp(vma, pte)) {
+> >                       pte =3D pte_mkwrite(pte, vma);
+>
+> I would move that into a separate patch, as it's not a simple conversion.
+>
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 55d444be..7cfe4e0 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1718,6 +1718,7 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	}
- 
- 	f2fs_restore_inmem_curseg(sbi);
-+	f2fs_reinit_atgc_curseg(sbi);
- 	stat_inc_cp_count(sbi);
- stop:
- 	unblock_operations(sbi);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9688df3..8d385a1 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3693,6 +3693,7 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
- int f2fs_npages_for_summary_flush(struct f2fs_sb_info *sbi, bool for_ra);
- bool f2fs_segment_has_free_slot(struct f2fs_sb_info *sbi, int segno);
- int f2fs_init_inmem_curseg(struct f2fs_sb_info *sbi);
-+int f2fs_reinit_atgc_curseg(struct f2fs_sb_info *sbi);
- void f2fs_save_inmem_curseg(struct f2fs_sb_info *sbi);
- void f2fs_restore_inmem_curseg(struct f2fs_sb_info *sbi);
- int f2fs_allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type,
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 6e8a4b3..362cfb5 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2931,12 +2931,12 @@ static int get_atssr_segment(struct f2fs_sb_info *sbi, int type,
- 	return ret;
- }
- 
--static int __f2fs_init_atgc_curseg(struct f2fs_sb_info *sbi)
-+static int __f2fs_init_atgc_curseg(struct f2fs_sb_info *sbi, bool force)
- {
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_ALL_DATA_ATGC);
- 	int ret = 0;
- 
--	if (!sbi->am.atgc_enabled)
-+	if (!sbi->am.atgc_enabled && !force)
- 		return 0;
- 
- 	f2fs_down_read(&SM_I(sbi)->curseg_lock);
-@@ -2953,9 +2953,30 @@ static int __f2fs_init_atgc_curseg(struct f2fs_sb_info *sbi)
- 	f2fs_up_read(&SM_I(sbi)->curseg_lock);
- 	return ret;
- }
-+
- int f2fs_init_inmem_curseg(struct f2fs_sb_info *sbi)
- {
--	return __f2fs_init_atgc_curseg(sbi);
-+	return __f2fs_init_atgc_curseg(sbi, false);
-+}
-+
-+int f2fs_reinit_atgc_curseg(struct f2fs_sb_info *sbi)
-+{
-+	int ret;
-+
-+	if (!test_opt(sbi, ATGC))
-+		return 0;
-+	if (sbi->am.atgc_enabled)
-+		return 0;
-+	if (le64_to_cpu(F2FS_CKPT(sbi)->elapsed_time) <
-+			sbi->am.age_threshold)
-+		return 0;
-+
-+	ret = __f2fs_init_atgc_curseg(sbi, true);
-+	if (!ret) {
-+		sbi->am.atgc_enabled = true;
-+		f2fs_info(sbi, "reenabled age threshold GC");
-+	}
-+	return ret;
- }
- 
- static void __f2fs_save_inmem_curseg(struct f2fs_sb_info *sbi, int type)
--- 
-1.9.1
+cool. will separate it in v2.
 
+> --
+> Cheers,
+>
+> David / dhildenb
+>
+
+Thanks
+Barry
 
