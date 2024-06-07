@@ -1,218 +1,188 @@
-Return-Path: <linux-kernel+bounces-205218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FAD48FF994
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 03:32:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0D6A8FF996
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 03:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F27061F23CB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:32:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6990B28316B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7713101E6;
-	Fri,  7 Jun 2024 01:32:39 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4148D14006;
+	Fri,  7 Jun 2024 01:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="hf6T67po"
+Received: from EUR01-DB5-obe.outbound.protection.outlook.com (mail-db5eur01on2084.outbound.protection.outlook.com [40.107.15.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEA7320E;
-	Fri,  7 Jun 2024 01:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717723959; cv=none; b=pEhgYj6zXB/rFxAHJq19eI0OIAg8cP5q3ahLj5x8Jt8D4P6DFDhL5N4UPzzLZ020DlK7EVP4bXN7L7R3eRDuR2D8j8HwmcprvX6VzsfI1isye3xXnojjPiU+G+pECzX/h2mG8U4FFklNOu+eBUMHKkcyfYYuFBrNojYfGED0Q5E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717723959; c=relaxed/simple;
-	bh=tJJ8w700Y5azze14mZ9VNXAQIMtjQyGHpE2yUrduT7A=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=uOi03is8cwlL5lFh/3JYEQWNRG1ctIERFBURjpwmwX9HZw3BsZkN+b1TQ+DL6ug7ebNmrJM1Y8eLlwcK2e8RiwqaaJPK3Wu/tqvkKI+koOBQKo8BrIDLaoDn+/+xhwzK+iBEjLxfLD4MTDcYJeEZeHH65BxY9PhNhnwLDo3x9Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VwNwj3CHBz4f3jsP;
-	Fri,  7 Jun 2024 09:32:21 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 357A21A0BD4;
-	Fri,  7 Jun 2024 09:32:31 +0800 (CST)
-Received: from [10.174.178.185] (unknown [10.174.178.185])
-	by APP2 (Coremail) with SMTP id Syh0CgCnyw4tY2JmAauZPA--.64625S3;
-	Fri, 07 Jun 2024 09:32:31 +0800 (CST)
-Subject: Re: [PATCH] block: bio-integrity: fix potential null-ptr-deref in
- bio_integrity_free
-To: Ming Lei <ming.lei@redhat.com>
-References: <20240606062655.2185006-1-yebin@huaweicloud.com>
- <ZmJQwvBXfm3zw+Xs@fedora>
-Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ye Bin <yebin10@huawei.com>
-From: yebin <yebin@huaweicloud.com>
-Message-ID: <6662632D.7020000@huaweicloud.com>
-Date: Fri, 7 Jun 2024 09:32:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.1.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF6012E5B;
+	Fri,  7 Jun 2024 01:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.15.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717723965; cv=fail; b=XNMU9YE9QCw0OYsrh+wE+TCNrLFgZ7AV8nP1sV581F4FbdT3kEc8K84RgYt6+P5KlM9xYO8PZ5XBqSRHFHazIHsz2nymCBJEPLttNsTjOpKvxFuvmICiOFzPEAjzeK40MrGRlgF6PslyYbz0J14Dx03zxr8o+tWxVcEBHOrmSrU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717723965; c=relaxed/simple;
+	bh=E+yQ7MVe9nKOrkAgc8Br1lEsJ/M25oVSOQUd3BAff2s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RryCxDAw52k2IbVv8oUHqsvSNGLMTJFNWDEbXhpaRzkPDDFXnrgzlDnw1c322cfpND6mqFsWhdsMyoPvlF5s6xwWstqC7x604iPlb8ip0KaIWFewrtp4yI2TflKto2sB8AP93CZTg4Wzi5WTA21uF+fe6xtZ/zKKSdOaKMvpp3w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=hf6T67po; arc=fail smtp.client-ip=40.107.15.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hqa0vdJx8Y+fvrQZnrwJzcNDMM2gnQCUfnykD/xgDiruHhd+d4ylaSYlT7oQo/MJQlcFOqh3nqB4ISELLMf0MSDAkoBjOmsCPlg7oIRyNtfjuztfsAYvc7q8NpJN6alM0X32r0uY4l+uEVaBZtgFhQYtFyvr88c38FXUXfig39lsjV9hcK22dbKtxTnQTi79yzJ1WzPXpdI6lbvTpxBYdX5AylAlDiO79jSlTVcLWg322kl40ACSaTapVk8QG+JbyaPTzCU1l8aaqIlQ4h/z5zIaicfCM2GG7o3sohTqoD+gZNAlZF3OYTXPDPcNZnLzk+n99wiwEF+TWNVgiyzGuQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=E+yQ7MVe9nKOrkAgc8Br1lEsJ/M25oVSOQUd3BAff2s=;
+ b=oGtxdClIB2AllJ4k4SzwaH4xGUgMOoA74T7MGRPBbC6ObRXg2KK2a5OPEm5EKIYimrewRGEggUSzaetS7qVAVYkJQUxuTtxyEbvHSuavTYRKOXFFuar1jl2f1drPI9bYq+WupSQ3+rIHS5uKCyr9mDtoc6MwGBNa+2/V0ZFaGdC4VPmgtrOP9XVIiie6N6TESPdUR5FUdgAW6xU1lEhEbXbH5iZkrCGyikDLMgCNgm69Ecc3rlXuqg1Jhh6A3i1Yjmtaosop77pwIkzrCCr4JC+Nrjkto1t4kGzE9EG7mJGJxMgmlVrneYkWEaQ0qQa8CvQRSdFF5L41A+Fgj2Gl7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E+yQ7MVe9nKOrkAgc8Br1lEsJ/M25oVSOQUd3BAff2s=;
+ b=hf6T67pozU9aDowYzONUxApnd5+lsorDFcDJpas9TzTXmC1ltaKs/1I6GEH5i+C8kXaJ/Qqw5ZUYW4iGVRqzA9n6ilnDpmOY6oiBp8s/va4zjcmCFJWHpirfZM5O9xy+VSr0SSqjnhck0s4zXo7Rrc0mg9us7i1Tk8UfSgx9Ojo=
+Received: from AM6PR04MB5941.eurprd04.prod.outlook.com (2603:10a6:20b:9e::16)
+ by GVXPR04MB10451.eurprd04.prod.outlook.com (2603:10a6:150:1ea::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.33; Fri, 7 Jun
+ 2024 01:32:39 +0000
+Received: from AM6PR04MB5941.eurprd04.prod.outlook.com
+ ([fe80::9f4e:b695:f5f0:5256]) by AM6PR04MB5941.eurprd04.prod.outlook.com
+ ([fe80::9f4e:b695:f5f0:5256%5]) with mapi id 15.20.7611.030; Fri, 7 Jun 2024
+ 01:32:38 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Frank Li <frank.li@nxp.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo
+	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+	Aisheng Dong <aisheng.dong@nxp.com>
+CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Frank Li <frank.li@nxp.com>
+Subject: RE: [PATCH 3/7] arm64: dts: imx8qm-mek: add cm4 remote-proc and
+ related memory region
+Thread-Topic: [PATCH 3/7] arm64: dts: imx8qm-mek: add cm4 remote-proc and
+ related memory region
+Thread-Index: AQHauEIRYji/itJrVEq1SGk8UC2EnLG7hHug
+Date: Fri, 7 Jun 2024 01:32:38 +0000
+Message-ID:
+ <AM6PR04MB59414E4A20006F08758492F688FB2@AM6PR04MB5941.eurprd04.prod.outlook.com>
+References: <20240606-imx8qm-dts-usb-v1-0-565721b64f25@nxp.com>
+ <20240606-imx8qm-dts-usb-v1-3-565721b64f25@nxp.com>
+In-Reply-To: <20240606-imx8qm-dts-usb-v1-3-565721b64f25@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM6PR04MB5941:EE_|GVXPR04MB10451:EE_
+x-ms-office365-filtering-correlation-id: b0e9f13d-7724-4aa5-6272-08dc8691b7ab
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230031|1800799015|376005|7416005|366007|38070700009;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?UngwZDdqZUZMYXp3TzI2Uzh6cEY4Q2Vya2JqREx1NWoxMzhpM3JmYjR4Zlh1?=
+ =?utf-8?B?cnlZaTZVUjZ5bnpqWUxpRVFDQjFnbE1nMWVnYk94R3loYTUzaERUMVFEbk93?=
+ =?utf-8?B?SWxYeDBVUm9Nd0lmanFmNTVMVmhraFJ5U3dPVy8xR1ZHdENRTlFqaGJCNTFi?=
+ =?utf-8?B?LytVTUJxZ1BnMjdXOFdhN0w4S2ptaEI5b1YvOVd1TVU2WHFVdHBxVGpWeExS?=
+ =?utf-8?B?Zk9lUTgxcFRBNHhoa3ErSUJPWVBuQ1dMSjNrWEJmZDJ4SWJnZy8wOUc3M1g0?=
+ =?utf-8?B?b1VobDFIbG04ZXZwUmVSVC9qN0lua0hta3docTR4SEpIK3hUdzcybHgvWDFp?=
+ =?utf-8?B?bVdZaXc4dGx0WlFvOE5OMWJLRk9Ec0p3NWNEd3pJTUV4aTduZ1dQbWIrMHgw?=
+ =?utf-8?B?Zzl1NktXOW5SeDZXRnhMNXlUbFlyWWZocWkyTFdqek5DYjQrdzg5d0kzSDFn?=
+ =?utf-8?B?Sm1Ma3VNeHYwb1FnOGdvT1hJTGJWejJXQzgwZjlMWWFPUWFqOER1bU1YQ1VZ?=
+ =?utf-8?B?ajJOTXBBRDVGdGhLVkh4b2FhbG5vZE8waXZsall0cDBEZVNCUGNOanVJN1JU?=
+ =?utf-8?B?alhYOTFHWCtGZ1QycUhWcnBzbHBmdDZ2TnNTaVR4V1YwWnhpMjFnZDZuZm1y?=
+ =?utf-8?B?QWxCTzlxK0R1VVozWXZrWXBHUXRmWnN2NU56eFVLN25NL24yd2NQSVJKUGhS?=
+ =?utf-8?B?VmgyQjJtait6aThaMDd6eThwcjd5MUFUQmRlZ2E0Ri9FbDNRSHYrZURLMXl6?=
+ =?utf-8?B?VldDaDJ5WVNuNlQ0L1pFaXlLU2hqYVh5VjhRWU9aTUQ1ZGVXUGczTmVybUFM?=
+ =?utf-8?B?UENPWUlOVm1wZzJqQnVzY0t2dm9UOW5TVjJqeWhEWjBkUUhlMFBGRmRmNksy?=
+ =?utf-8?B?VlZZK1NzRXRvRW93RWx2TnRHeFcwUTlrdFhwYndrb2NkbTRoZzBaajZxd29y?=
+ =?utf-8?B?bDBsa3NXWEF3bnZLNG9TR3FzM3gyQW9WcERObjd4bE1DRHlQbmNMQWhJWVpI?=
+ =?utf-8?B?Z0hZdnVlQi9RTmFXcXlGT2JvWlEyVlpkOStIanFBNGZ1TjJNa1R4b3ZqV1pk?=
+ =?utf-8?B?Wkg1RWZGYWo0aHFySXFIOXlkNjZzS0FBUXRBemtCYVB5SWVKa1FlRmUvUHhL?=
+ =?utf-8?B?YWc3WDRCMUo2RW1jYUZTSzZlcURVa0ROc0VwbVFDUytLNCsvaW4rdCtBRjY5?=
+ =?utf-8?B?dmMwYXZjMFByNm9GMTA4YUtTVUR0M2Z5NU5DdFhvTmgxTEVHdHdXNHo0TDZG?=
+ =?utf-8?B?V3czL1JML25QR3VuSUNRRjlSM01KYlZ3Q2dkY0xjZUo2Z0l0MHVrYnJCcWFh?=
+ =?utf-8?B?c1JHcDFUcHlCOFdZZTUrRHFiSGhUcXJLZHptMk1EN0Y0RytTa0dESnRxKzVu?=
+ =?utf-8?B?NlAyUnR5aXVvcVpsWEQzUWY2cWFTTU5pdDR6ODZIb0E5V2lydTFiS0pmMVlW?=
+ =?utf-8?B?YU04RndTWkJ0ek5jRlJaNmh4YWNJL1JJNlJnNndiZllweDVVeTA2NXp3M0Y5?=
+ =?utf-8?B?VzB6Q2lmWnUwcXRNaGRpbkxOeTlPOHRKZ29mazBlQ2g3OVdVNy9qQmZvT1lM?=
+ =?utf-8?B?NVZOdHZuNTdBdVl6L3ZaODA5OXdyZGVBdkNoV1d3SFRoS0FUaHlqM05NckRN?=
+ =?utf-8?B?NStXNWZkS1RVZm1zZjZZQmxJeldjMGlsODBzTGZsS2JMd1dFZHg1djB3UjV2?=
+ =?utf-8?B?Y3NJM0ljTWdQNEp1OE00MjYvQTR2NkNhZHpQcE9rWWIyT3NmSTY1Z2MvNjhk?=
+ =?utf-8?B?emhKYkZucmZRVUVjQ2RBeDFrWjB6WldqSjlYZ0JUcVQxUkppWjc4R3dzNjdK?=
+ =?utf-8?Q?MEowUuAj83jGX4ROycZrJ3BB+6tlDkzX/Aks8=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(7416005)(366007)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?ZGQySTZYTTlLRXZRV3U4UEpCUlVtVDQ1alg0VWF2bkc0MmlBMEdKSTMvQnhJ?=
+ =?utf-8?B?bGl2OUw5NTJsUVI4WURHTVpMMURrYmRWczhnb2EyME9HWHk0K3R5R0RwWXN5?=
+ =?utf-8?B?SVZ3WXV6VHVZY1MzRGM0NVB0VUx4RUlEYllMUkZYY2xHTkg0akRMdVRnd0RU?=
+ =?utf-8?B?RDN4ZDZJWTR3RVpicVZVNTVyQWczRmZYUWc5QXJiMnR2OXFCK3RseE5kbjVw?=
+ =?utf-8?B?N1BHR1dwOFIyWml0SDNTVUQzNlFmcVFySlBSbXRLbEhqZHM1Zjd1Ums3Q09z?=
+ =?utf-8?B?bWZGSXNIODdMa3BsZENUNmhNYVoxazdzRTYrREJEaE0wbkRCZHkwY2RXZFNR?=
+ =?utf-8?B?RGdYTUkvbVp1RnJDUnM0Y04ydmg5UVZ2RE9BSEFHMTJoc3pmTWhtR09RL1JM?=
+ =?utf-8?B?OFlMcitQZXpyN0dhWXovMTNXZTg0QTJRTDZMbzh0SEtPK0krZldLQ3czcUNZ?=
+ =?utf-8?B?Y2s5aWp4aHI5TFRGbVR3NmxkNjNwWlhvUy9DOTBNd1VyMTFobU1sSi9rbFF2?=
+ =?utf-8?B?RWszcEIzZXBQOVFSdU1NZEYxWlVSblZHODFXUjh5Q2pzbEJIcEdzTkhqY3k0?=
+ =?utf-8?B?czRFdGVzTVBEZ2Z5d0J4R2VnM0NVYmhiYWNvQkhPV1l5RDNoc0VIemo1WjFM?=
+ =?utf-8?B?aUIraVpObmxOOGl3MDhYRXRQSkZkc1hpZGpuRDY0OGZLSXBudUc2dDY2blV1?=
+ =?utf-8?B?S0VtVUZwUTVjRnplVCthYkF1QWZ0SkVqZSswZk5aUHo5UGRzYkJJNzJLeEsr?=
+ =?utf-8?B?LzNXR2tMZngxTDk5WDBCbHdZNVlISGZqKzllWjhwUmJIQUs3Q3RhMDVYdTFo?=
+ =?utf-8?B?MTNZcTROSWZKTngycnJTZlR5d01rbmVnMjZtY2lpR1dVdlNlK2ZER0ZrbHAv?=
+ =?utf-8?B?WjJxVDIwbWdUOGtVYUV1aXM4SlRYb1l2ODZsK3JjQ29MT0RySnlWY0QxamJn?=
+ =?utf-8?B?OXVqSWQveWdzakFMbFlKYk15U3Njc2F2Ymt0V2duamJjaVpuZkQ4M0xrYmcw?=
+ =?utf-8?B?OXpFQnN2TytKQm5mZ0xESE9OVHhZTFh6YzhrQzVFM3dCUkxqaTBTNllnZzhD?=
+ =?utf-8?B?TmhxOWxBUitwSTJlSEFiMUJLeXplV25kWlh5Q05MbGkxWmlCVXBkeEtRNitJ?=
+ =?utf-8?B?TEYyM3dIQk5Ec0k1QUlkKzBUYk5QMkRzU1o0c3J2VkFTU2UrZlZ3TVNRYjJv?=
+ =?utf-8?B?Z3lUalNhMXUzWUZBbEdWY2pBSzl1SnlRSzcwTTM4YlV0ZjBzVFNQWkQrUDB3?=
+ =?utf-8?B?cmdSek43NGNrSm92QWNsY2NOQklPK2pjM2FWUTZIM253aWxra1FpNmg1c3B3?=
+ =?utf-8?B?QndoOFBGMXRKZXFkeFN2aHhydStuM1hVT3JqcjR3UVhpbW56YTNLaXFIRllD?=
+ =?utf-8?B?WjlKOE5GNTVYMUVuVWR3bTdUUEZ5YUlCREJHR1g0bTFIVjB1Mlh6OXBrbnR5?=
+ =?utf-8?B?MzJJVE9rbXg1RTdVRHNWdGdZMTZvQ3ZwOEpCNHFmcDZ1VHFkTzVVL24ycFRq?=
+ =?utf-8?B?ZTVDUGtkOWRiV1FPRnVKNmZCRVR6elRrdExEM3ZVZVBuVmkrVU9UN3l1bjQ2?=
+ =?utf-8?B?a3NGYnhQVUlzNmJGY3ZlQVFudlZleVh2Q3JrbzVQa1ovQjlZVEoxamJma21B?=
+ =?utf-8?B?ckFlajMyamxNQjhPYWRrMlhMcWladWpadnExMzRQdVBSN3BQNTAzTWpNMUh4?=
+ =?utf-8?B?OFJqQ1ZDeTB3VFpDNkVtVm5wWERFNVVXS2JrTlRqNmpNS0hvT2JnNCtUWFlB?=
+ =?utf-8?B?ZDZFWlc2T1p6NFhtYW04dTlVZ0h5ZW11QjkwdktDOUx6ZFpKdXJWb1dyVmtK?=
+ =?utf-8?B?Z1FZbmc4TkxocDFRcC9ucFpoSW1Ib0JnL0h3RmJGb2hUZHowdSs5aUNHNVFU?=
+ =?utf-8?B?RDBGMGFDV3ZzMGxUc1lXdnF6b2RFbkVJVUt3V3ZRTFpyVmlqTW5tQ2d3RHhp?=
+ =?utf-8?B?QUlHU1ozVU50dkROaDVBdDNKaEp4WlB4RmZpVW5WRUdxNXhoSWFCQ2xnR1BF?=
+ =?utf-8?B?MGFFT3RhbUNtT2cwaVRiWnFhRGRIS0lzVUVybE1OaXZIN01McVRndHBDQXQw?=
+ =?utf-8?B?b29sUUFiM21DenFtTnRwZVZuNkZORE9mZmFqYWpKaFdsdlo1UzE2MWErVVZq?=
+ =?utf-8?Q?DzW0=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZmJQwvBXfm3zw+Xs@fedora>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgCnyw4tY2JmAauZPA--.64625S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxtw1kurW3tr47Wr4xGrWUtwb_yoW7Ar1rpr
-	W8tF1jkr48Xr47XF47XF17Jr4Ika1UAF1UGr4xZryrXF98Zwn0qr1UGryUX3WrCrs5uryI
-	qr1qq34vqrn8GaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1CPfJUUUUU==
-X-CM-SenderInfo: p1hex046kxt4xhlfz01xgou0bp/
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB5941.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b0e9f13d-7724-4aa5-6272-08dc8691b7ab
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jun 2024 01:32:38.9415
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: pcrgNq/AiSC3D94aVRXZDBzBl0E6dBS7AjbJx52eG6g6WMjc2ttYv6xy8DaJt3OlbAJly3EEYHs2I6qPidPoQQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10451
 
-
-
-On 2024/6/7 8:13, Ming Lei wrote:
-> On Thu, Jun 06, 2024 at 02:26:55PM +0800, Ye Bin wrote:
->> From: Ye Bin <yebin10@huawei.com>
->>
->> There's a issue as follows when do format NVME with IO:
->> BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
->> PGD 101727f067 P4D 1011fae067 PUD fbed78067 PMD 0
->> Oops: 0000 [#1] SMP NOPTI
->> RIP: 0010:kfree+0x4f/0x160
->> RSP: 0018:ff705a800912b910 EFLAGS: 00010247
->> RAX: 0000000000000000 RBX: 0d06d30000000000 RCX: ff4fb320260ad990
->> RDX: ff4fb30ee7acba40 RSI: 0000000000000000 RDI: 00b04cff80000000
->> RBP: ff4fb30ee7acba40 R08: 0000000000000200 R09: ff705a800912bb60
->> R10: 0000000000000000 R11: ff4fb3103b67c750 R12: ffffffff9a62d566
->> R13: ff4fb30aa0530000 R14: 0000000000000000 R15: 000000000000000a
->> FS:  00007f4399b6b700(0000) GS:ff4fb31040140000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 0000000000000008 CR3: 0000001014cd4002 CR4: 0000000000761ee0
->> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 0000000000000400
->> PKRU: 55555554
->> Call Trace:
->>   bio_integrity_free+0xa6/0xb0
->>   __bio_integrity_endio+0x8c/0xa0
->>   bio_endio+0x2b/0x130
->>   blk_update_request+0x78/0x2b0
->>   blk_mq_end_request+0x1a/0x140
->>   blk_mq_try_issue_directly+0x5d/0xc0
->>   blk_mq_make_request+0x46b/0x540
->>   generic_make_request+0x121/0x300
->>   submit_bio+0x6c/0x140
->>   __blkdev_direct_IO_simple+0x1ca/0x3a0
->>   blkdev_direct_IO+0x3d9/0x460
->>   generic_file_read_iter+0xb4/0xc60
->>   new_sync_read+0x121/0x170
->>   vfs_read+0x89/0x130
->>   ksys_read+0x52/0xc0
->>   do_syscall_64+0x5d/0x1d0
->>   entry_SYSCALL_64_after_hwframe+0x65/0xca
->>
->> Assuming a 512 byte directIO is issued, the initial logical block size of
->> the state block device is 512 bytes, and then modified to 4096 bytes.
->> Above issue may happen as follows:
->>           Direct read                    format NVME
->> __blkdev_direct_IO_simple(iocb, iter, nr_pages);
->>    if ((pos | iov_iter_alignment(iter)) & (bdev_logical_block_size(bdev) - 1))
->> 	-->The logical block size is 512, and the IO issued is 512 bytes,
->> 	   which can be checked
->>      return -EINVAL;
->>    submit_bio(&bio);
->>                                        nvme_dev_ioctl
->>                                          case NVME_IOCTL_RESCAN:
->>                                            nvme_queue_scan(ctrl);
->>                                               ...
->>                                              nvme_update_disk_info(disk, ns, id);
->>                                                blk_queue_logical_block_size(disk->queue, bs);
->>                                                  --> 512->4096
->>       blk_queue_enter(q, flags)
->>       blk_mq_make_request(q, bio)
->>         bio_integrity_prep(bio)
->> 	 len = bio_integrity_bytes(bi, bio_sectors(bio));
->> 	   -->At this point, because the logical block size has increased to
->> 	      4096 bytes, the calculated 'len' here is 0
->>           buf = kmalloc(len, GFP_NOIO | q->bounce_gfp);
->> 	   -->Passed in len=0 and returned buf=16
->>           end = (((unsigned long) buf) + len + PAGE_SIZE - 1) >> PAGE_SHIFT;
->>           start = ((unsigned long) buf) >> PAGE_SHIFT;
->>           nr_pages = end - start;  -->nr_pages == 1
->>           bip->bip_flags |= BIP_BLOCK_INTEGRITY;
->>           for (i = 0 ; i < nr_pages ; i++) {
->>             if (len <= 0)
->>                -->Not initializing the bip_vec of bio_integrity, will result
->> 		 in null pointer access during subsequent releases. Even if
->> 		 initialized, it will still cause subsequent releases access
->> 		 null pointer because the buffer address is incorrect.
->>               break;
->>
->> Firstly, it is unreasonable to format NVME in the presence of IO. It is also
->> possible to see IO smaller than the logical block size in the block layer for
->> this type of concurrency. It is expected that this type of IO device will
->> return an error, so exception handling should also be done for this type of
->> IO to prevent null pointer access from causing system crashes.
-> Actually unaligned IO handling is one mess for nvme hardware. Yes, IO may fail,
-> but it is observed that meta buffer is overwrite by DMA in read IO.
->
-> Ye and Yi, can you test the following patch in your 'nvme format' & IO workload?
->
->
-> diff --git a/block/blk-core.c b/block/blk-core.c
-> index 82c3ae22d76d..a41ab4a3a398 100644
-> --- a/block/blk-core.c
-> +++ b/block/blk-core.c
-> @@ -336,6 +336,19 @@ int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
->   	return 0;
->   }
->   
-> +static bool bio_unaligned(struct bio *bio)
-> +{
-> +	unsigned int bs = bdev_logical_block_size(bio->bi_bdev);
-> +
-> +	if (bio->bi_iter.bi_size & (bs - 1))
-> +	        return true;
-> +
-> +	if ((bio->bi_iter.bi_sector << SECTOR_SHIFT) & (bs - 1))
-> +	        return true;
-> +
-> +	return false;
-> +}
-I think this judgment is a bit incorrect. It should not be sufficient to 
-only determine whether
-the length and starting sector are logically block aligned.
-> +
->   int __bio_queue_enter(struct request_queue *q, struct bio *bio)
->   {
->   	while (!blk_try_enter_queue(q, false)) {
-> @@ -362,6 +375,15 @@ int __bio_queue_enter(struct request_queue *q, struct bio *bio)
->   			   test_bit(GD_DEAD, &disk->state));
->   		if (test_bit(GD_DEAD, &disk->state))
->   			goto dead;
-> +		/*
-> +		 * Not like other queue limits, logical block size is one
-> +		 * fundamental limit which can't be covered by bio split.
-> +		 *
-> +		 * Device reconfiguration may happen and logical block size
-> +		 * is changed, so fail the IO if that is true.
-> +		 */
-> +		if (bio_unaligned(bio))
-> +			goto dead;
->   	}
->   
->   	return 0;
->
-> Thanks,
-> Ming
->
->
-
+PiBTdWJqZWN0OiBbUEFUQ0ggMy83XSBhcm02NDogZHRzOiBpbXg4cW0tbWVrOiBhZGQgY200IHJl
+bW90ZS1wcm9jIGFuZA0KPiByZWxhdGVkIG1lbW9yeSByZWdpb24NCj4gDQo+IEFkZCB0d28gY200
+IHJlbW90ZS1wcm9jIGFuZCByZWxhdGVkIG1lbW9yeSByZWdpb25zLg0KPiANCj4gU2lnbmVkLW9m
+Zi1ieTogRnJhbmsgTGkgPEZyYW5rLkxpQG54cC5jb20+DQo+IC0tLQ0KUmV2aWV3ZWQtYnk6IFBl
+bmcgRmFuIDxwZW5nLmZhbkBueHAuY29tPg0K
 
