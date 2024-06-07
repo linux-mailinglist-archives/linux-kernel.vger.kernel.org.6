@@ -1,208 +1,138 @@
-Return-Path: <linux-kernel+bounces-205843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B16AC900119
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:40:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E232E90010C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2000DB22285
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:40:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF6F11C22BF7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA8C15ECE0;
-	Fri,  7 Jun 2024 10:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A78F15E5D7;
+	Fri,  7 Jun 2024 10:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P2RRvYNI"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a0CZUZWG"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79FA1158214
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 10:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D432815D5A5;
+	Fri,  7 Jun 2024 10:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717756844; cv=none; b=jfXV8diGCZ8EmnULwOg2NUEAtQfaPNcK+1F8Z3g4J387R0uNabGyI2OlQbNKRhlKVSzOvJ9P8h/MQqoNR7LEmXI8KSWwyNCfR2SW8zhhq/nSsXHYYzjQksNl3Nv1seZkIGw+lGm6PZ99eABS5Ryrusc8WE+NQX0k9YvDCxO3yV0=
+	t=1717756673; cv=none; b=cof1jt5+W7UJRdEepWXWLCh31XEmiMGNRJ6suwZv/To/7Hl4w+bg7NTEVpY2J9eFrreobRoTA6KvArLqe5oln3Yo6fUhZtVFBDcyJS2g2vSm+t36NtSQ99Rn/q97epvu6XVMaA3we10Z2jeZWVej/k7/3c+3ga7xPWHAHlm4eRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717756844; c=relaxed/simple;
-	bh=eAWRovgC+VzdKEpU+1G33Mn91o9lCr3uIPYDWufULu8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Se94DUaUVKvywmJLxd8h8A7c0vUK/SEWT5KXKSLI+APudjWYF9yNvZA2TBt5Lh1ULm5SjWwR/P7tmuLPY8XHBmvNebRFB/NS1ntub+Py/YS5WYrBtYk9XFEco1BDSLsKxhvi5D2ia5SGGx2YTpPEYGkdL142vXxNT6K3Lr6lFZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P2RRvYNI; arc=none smtp.client-ip=209.85.208.51
+	s=arc-20240116; t=1717756673; c=relaxed/simple;
+	bh=AI2ieUO/6av7s9ZXod25pYy+JFppaxhrF6e/NoXP2Ws=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dPmfCWV4xXh+19qE4JdY5R/byvRxWIu2FkJYBCtZHAKPpKofpYEu0WqAV/HKsoZriJOtFg3pdCtjYyRQCoOyIK7+K9IxupVzGNXpCyW3VcFLIEf53HzZ8Al5uenyXW5BCqf8j/nWv7A7njcxL+CD+fUF++yTabOAKBKaPLXXrAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a0CZUZWG; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57864327f6eso2198299a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 03:40:42 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a68ee841138so252765166b.1;
+        Fri, 07 Jun 2024 03:37:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717756841; x=1718361641; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=U4jK93kf7r9hryn5ss3PeYfJYkjhZA2vuicyJegK6VI=;
-        b=P2RRvYNIJsoaNHXXPTJOpPXlAndHxlHCW648p7U+lOffaabx1PaOHZcDeMS7XxWQXl
-         BXCjl8dLLkMmagPvyfnpjgwspDL+O7vgL5P0ZoiORj53xrVR4GAGxFimA2aJNIfwcwqI
-         P4NQVP8xk98n8c0ML5rIXaIUCDqMeBIvl1BiVdsleaxsWyuuumR2PX70HaFDfB4woXdE
-         JL0zsXIxoCjnNBAGdZeroGwNCjrii+WCbR6j1fADsRQRGiy/SdUSsflbxpPOFNs3TsYY
-         VZy+YNB3AHsFY6Go5IxalLnlsnY3hJQyzrPsV3AufYv/kU9/sTYJJiXTFgiuij6e+7fd
-         rKEg==
+        d=gmail.com; s=20230601; t=1717756670; x=1718361470; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=cYd5bpwy4meymqvJV+NAOZHVbo2MmJICLvFAiNGTisQ=;
+        b=a0CZUZWGNsUHaTmqBd5ASKEct25BJ4H59gXABj3EK8s0gtBsbiNwKlRlKYyd+FrPTv
+         JtWrCSB3uGIW1lqnpsbr7ksX9WWqmYBRKaqDMHrBU+O4j4bekeU6x1cmaZ/hnOGM3pTE
+         jk8k7fHGswNI7/obxkriZbKpK2hr6NjrT5Vu60sMryXJt0Pc341G1GEl2/PE8EFHw4sX
+         kvGOJSFEcJLdGQaDo575QIQp0aYGyIQvaNrEtwub+0BVFPH0Fni0xWhG3htiCDwv0mma
+         kU1RkCSp8+IcICfk4Xo0+t9605UrnJAsOn3/UUrBvAo/i5qxQFJDk63j6EtrkRWf4hmi
+         yjcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717756841; x=1718361641;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U4jK93kf7r9hryn5ss3PeYfJYkjhZA2vuicyJegK6VI=;
-        b=rlHc4COeLQnMiyRfVL87OVHXgAW9nRgEJpFXJtOQUFqjr88MWc9bEwnI3fproNqPWs
-         zMJTvQRMQykRD0GhXEnZS+W+UlLczm/WEIiueR9c6+41AYU4wiWobxWIjtMI6x7h8Wqu
-         CebNV1GJlO+J5+tVcJrZca9VpIEnru259trLL95aB1Eg3QCOxUIXFyoExMMd2o+W0FeT
-         e7CKg2xPB+qd0ESxFQsl1UdjPdI//8fMSZ0xvvA6IS6aLZ3qmrV2Bcm2uNXVEN80vGCD
-         3PxTy2rLpx7RvK/15w0htJj+4nAeQodGCa/17+LqB2DKH1s3X++XDkXO6h4O7adydvNT
-         Leww==
-X-Forwarded-Encrypted: i=1; AJvYcCU1bm7QyTzOlHiR9td7OVhcsBWR4tUE1Cc5I/ra9HA2whMjXkDP6Cgox4cOtFL5kQdNQqJlvLj+qGZjx1tlNDemjhdooB+8K7hlq1/j
-X-Gm-Message-State: AOJu0YzHbFvtYWvtwxougUS8SNaIRGTy18dxnJ3n1qOyzu8UuuNtHVPF
-	FW0R3oFMrT8L6nSRJNAqXuvDHdGX+ThvUhBFBhjidpMRPJ8qlh9S
-X-Google-Smtp-Source: AGHT+IGbojGw0dNMmhCKeu+pjC1rlkUV0eLTpHGyjYEpDdn3YpUEO7RRTrVPBAz0VGFBs+D9DgXctg==
-X-Received: by 2002:a50:8aca:0:b0:57a:27e8:deb with SMTP id 4fb4d7f45d1cf-57c4dee2ccamr2206942a12.12.1717756840503;
-        Fri, 07 Jun 2024 03:40:40 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::7:fe7a])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae2340f6sm2542658a12.90.2024.06.07.03.40.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jun 2024 03:40:40 -0700 (PDT)
-Message-ID: <e695bf8e-9745-41ba-9986-fc888df71d3f@gmail.com>
-Date: Fri, 7 Jun 2024 11:40:39 +0100
+        d=1e100.net; s=20230601; t=1717756670; x=1718361470;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cYd5bpwy4meymqvJV+NAOZHVbo2MmJICLvFAiNGTisQ=;
+        b=BsZs00YfXRUwvr53JmSVIF7J/rX7n7mvVJVe8++4wrNdQpC0o+COrU6TPND+aP1oYX
+         xF6vdZm6S9dNdjn2dwac8L90Y/A4iesmNpWJClrIHlO0H8XP7AuzW4zZt9ZGHS3HoGsE
+         33W+9WMRP7SLw3JADv6MmOQufdb5GI8yvMI7i4EQORwCjvHIFoqPYW7pVSCsWTkQYb5t
+         zp8FSGYHeS9doX4UgDmwONW7RApJZ/Qn9+Dup4OvgbBH646TPHkIV0YlDg63Yfa3ytzN
+         Smk80BKejKFqwuHXYYXEQHjqAL8/zMMe9NgQDd6LQpAdVQKRw2s8T/MVM94uhK9RF+Y7
+         Y4EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+XZDstqwbB1umnhGhTAqwQ/SElrxNobpeX42PhsdWkRhalzqEDBN18FzWjmMJqPUb/FMmqx8meJ0iPbl/8clN7FYd+A0oOF4892ft+HakthMyLeBRhbI+x1mB2wBpu09Sud8uHClp
+X-Gm-Message-State: AOJu0YzYo56jVyTwizHe2Y919b/bEO5S37wWb3j9DYQyTArqiRuM7uFq
+	bPHYRJ4MlvljcAj61aNagCng1aXHEb73B8aKs9C4mJbv2sXgJ6Z+
+X-Google-Smtp-Source: AGHT+IEot8u6Kx2dBaaFTnk43HtFN61gLaNoiPmigTk6/4aDOSDBPYQkxaKir0bIj5Yf+9nCU8EZUQ==
+X-Received: by 2002:a17:906:e2c7:b0:a66:7666:fc62 with SMTP id a640c23a62f3a-a6cd6664187mr148202666b.22.1717756669944;
+        Fri, 07 Jun 2024 03:37:49 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c80728867sm226290366b.192.2024.06.07.03.37.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 03:37:49 -0700 (PDT)
+Message-ID: <3f1a6ccf23cb901473bd490b1ca7330db51a1313.camel@gmail.com>
+Subject: Re: [PATCH v3 2/4] iio: temperature: ltc2983: convert to
+ dev_err_probe()
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Nuno Sa <nuno.sa@analog.com>, Petr Mladek <pmladek@suse.com>, Jonathan
+ Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Olivier
+ Moysan <olivier.moysan@foss.st.com>, Jyoti Bhayana <jbhayana@google.com>,
+ Chris Down <chris@chrisdown.name>, John Ogness <john.ogness@linutronix.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andi Shyti
+ <andi.shyti@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-iio@vger.kernel.org
+Date: Fri, 07 Jun 2024 12:41:37 +0200
+In-Reply-To: <ZmHD63_tvC75To8r@smile.fi.intel.com>
+References: <20240606-dev-add_dev_errp_probe-v3-0-51bb229edd79@analog.com>
+	 <20240606-dev-add_dev_errp_probe-v3-2-51bb229edd79@analog.com>
+	 <ZmGMwwglUlS6_NI_@smile.fi.intel.com>
+	 <da57a64e4f5cdda7ee6b794c448995eee648c436.camel@gmail.com>
+	 <ZmHD63_tvC75To8r@smile.fi.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] mm: clear pte for folios that are zero filled
-To: Shakeel Butt <shakeel.butt@linux.dev>, yosryahmed@google.com
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, willy@infradead.org,
- nphamcs@gmail.com, chengming.zhou@linux.dev, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, kernel-team@meta.com
-References: <20240604105950.1134192-1-usamaarif642@gmail.com>
- <20240604105950.1134192-2-usamaarif642@gmail.com>
- <nes73bwc5p6yhwt5tw3upxcqrn5kenn6lvqb6exrf4yppmz6jx@ywhuevpkxlvh>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <nes73bwc5p6yhwt5tw3upxcqrn5kenn6lvqb6exrf4yppmz6jx@ywhuevpkxlvh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
+On Thu, 2024-06-06 at 17:12 +0300, Andy Shevchenko wrote:
+> On Thu, Jun 06, 2024 at 02:27:03PM +0200, Nuno S=C3=A1 wrote:
+> > On Thu, 2024-06-06 at 13:17 +0300, Andy Shevchenko wrote:
+> > > On Thu, Jun 06, 2024 at 09:22:38AM +0200, Nuno Sa wrote:
+>=20
+> ...
+>=20
+> > > > +			return dev_err_ptr_probe(&st->spi->dev, -
+> > > > EINVAL,
+> > >=20
+> > > You can make all these lines shorter by using
+> > >=20
+> > > 	struct device *dev =3D &st->spi->dev; // or analogue
+> > >=20
+> > > at the top of the function.
+> > >=20
+> >=20
+> > Well, I had that in v2 (making the whole driver coherent with the local
+> > struct
+> > device helper but you kind of "complained" for a precursor patch (on a
+> > devm_kzalloc() call). So basically I deferred that change for a follow =
+up
+> > patch.
+>=20
+> Hmm... I don't remember the story behind this, but probably it's good to =
+have
+> this done one (precursor) or the other way (follow up). Just check how ma=
+ny
+> changes will be done, whichever diff is shorter, choose that one.
+>=20
 
-On 05/06/2024 09:55, Shakeel Butt wrote:
-> On Tue, Jun 04, 2024 at 11:58:24AM GMT, Usama Arif wrote:
-> [...]
->>   
->> +static bool is_folio_page_zero_filled(struct folio *folio, int i)
->> +{
->> +	unsigned long *data;
->> +	unsigned int pos, last_pos = PAGE_SIZE / sizeof(*data) - 1;
->> +	bool ret = false;
->> +
->> +	data = kmap_local_folio(folio, i * PAGE_SIZE);
->> +
->> +	if (data[last_pos])
->> +		goto out;
->> +
-> Use memchr_inv() instead of the following.
+Well that has not much to do with the current series. I would prefer to hav=
+e a
+follow up when we're done with the current changes. Right now I would reall=
+y
+prefer to focus on the new dev_err_* APIs and see if anything else is neede=
+d for
+this to be acceptable.
 
-I had done some benchmarking before sending v1 and this version is 35% 
-faster than using memchr_inv(). Its likely because this does long 
-comparison, while memchr_inv does a byte comparison using check_bytes8 
-[1]. I will stick with the current version for my next revision. I have 
-added the kernel module I used for benchmarking below:
-
-[308797.975269] Time taken for orig: 2850 ms
-[308801.911439] Time taken for memchr_inv: 3936 ms
-
-[1] https://elixir.bootlin.com/linux/v6.9.3/source/lib/string.c#L800
-
-
-#include <linux/time.h>
-#include <linux/init.h>
-#include <linux/kernel.h>
-#include <linux/module.h>
-#include <linux/slab.h>
-#include <linux/string.h>
-
-#define ITERATIONS 10000000
-static int is_page_zero_filled(void *ptr, unsigned long *value)
-{
-     unsigned long *page;
-     unsigned long val;
-     unsigned int pos, last_pos = PAGE_SIZE / sizeof(*page) - 1;
-
-     page = (unsigned long *)ptr;
-     val = page[0];
-
-     if (page[last_pos] != 0)
-         return 0;
-
-     for (pos = 1; pos < last_pos; pos++) {
-         if (page[pos] != 0)
-             return 0;
-     }
-
-     *value = val;
-
-     return 1;
-}
-
-static int is_page_zero_filled_memchr_inv(void *ptr, unsigned long *value)
-{
-     unsigned long *page;
-     unsigned long val;
-     unsigned long *ret;
-     page = (unsigned long *)ptr;
-
-     val = page[0];
-     *value = val;
-
-     ret = memchr_inv(ptr, 0, PAGE_SIZE);
-
-     return ret == NULL ? 1: 0;
-}
-
-static int __init zsmalloc_test_init(void)
-{
-     unsigned long *src;
-     unsigned long value;
-     ktime_t start_time, end_time;
-     volatile int res = 0;
-     unsigned long milliseconds;
-
-     src = kmalloc(PAGE_SIZE, GFP_KERNEL);
-     if (!src)
-         return -ENOMEM;
-
-     for (unsigned int pos = 0; pos <= PAGE_SIZE / sizeof(*src) - 1; 
-pos++) {
-         src[pos] = 0x0;
-     }
-
-     start_time = ktime_get();
-     for (int i = 0; i < ITERATIONS; i++)
-         res = is_page_zero_filled(src, &value);
-     end_time = ktime_get();
-     milliseconds = ktime_ms_delta(end_time, start_time);
-     // printk(KERN_INFO "Result: %d, Value: %lu\n", res, value);
-     printk(KERN_INFO "Time taken for orig: %lu ms\n", milliseconds);
-
-     start_time = ktime_get();
-     for (int i = 0; i < ITERATIONS; i++)
-         res = is_page_zero_filled_memchr_inv(src, &value);
-     end_time = ktime_get();
-     milliseconds = ktime_ms_delta(end_time, start_time);
-     // printk(KERN_INFO "Result: %d, Value: %lu\n", res, value);
-     printk(KERN_INFO "Time taken for memchr_inv: %lu ms\n", milliseconds);
-
-     kfree(src);
-     // Dont insmod so that you can re-run
-     return -1;
-}
-
-module_init(zsmalloc_test_init);
-MODULE_LICENSE("GPL");
-
+- Nuno S=C3=A1
 
