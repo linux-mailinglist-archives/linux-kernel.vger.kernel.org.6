@@ -1,193 +1,157 @@
-Return-Path: <linux-kernel+bounces-206801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9ECF900DEB
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:11:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0B73900DF2
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:12:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 208831F23E27
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:11:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3758B28428E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8874515531C;
-	Fri,  7 Jun 2024 22:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4195E155390;
+	Fri,  7 Jun 2024 22:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jNCTEW0B"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YH0KEAic"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445A413E05F;
-	Fri,  7 Jun 2024 22:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7ED4E1DD;
+	Fri,  7 Jun 2024 22:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717798269; cv=none; b=cHXIKv5Y/UNCBvLUCEnBhbF7wHKOuSkf23UfdRMTBW39yoEWEJD8hpqox6ExhIJVFUhvY32Ntz5n3MlkR5nOPqptuaXlFA5GhbVdsxbOS5sl+z2SWND0xePhwbM+bGY219udoBzm+HdC2m4S3Wy2vKX1EvOwBim/pkmTJfN+rkQ=
+	t=1717798372; cv=none; b=BE6fM8zLKVNw+GAwgluTJBn2U2E8i6SExWFXtFAMAeRo5KKAp7Ls0tM6xd1nC/nVskL6E2jsZ3dVhj37SoPtq6vQsqiPb1XWbWYhY+SxPXL8C0j56kAZxOl7Xo7lfmZfM+RUQaKaWXz9WhN4OOrYdHl3YtmsiYuY2ep2ocWA1GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717798269; c=relaxed/simple;
-	bh=xXQD812e0rrbLJLSVwjBuwd5GZVf1+ITwmT/FKpZNPo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GdUr2swwwV2JBOHD8/H2P+A5A4Q4u0r8hCHufqUYlAfpYVoTIO3U7TX5oou96/gXga8i0YnqMHimT0E/tdPbb7N0+WiCExO5+E4SFPokkeR+8UH0wWD9wnIt2LeG/XIqQl9sJr38FYlw7Mr8QjktOANnGXSBc1ZwXZiV2C/8xCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jNCTEW0B; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f6342c5faaso22677525ad.2;
-        Fri, 07 Jun 2024 15:11:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717798268; x=1718403068; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=NmpeYjQIxS6BadEqp5Kz1zTj/W5Ob73rrO2utvvpa1I=;
-        b=jNCTEW0Boh0+sdgRmSzz5lihCoHSAQHBuMytHcnq4OsFwvKX4zqEB2Ab/mF5MogDpJ
-         pCXpMicI9MyRP3PMmD1Yh2hN//92JMs+6ECmhFh38xXYq52aNxFBWFC6Gw4ckTNlNr3g
-         fiHYbOuw22LWCnn5Gs59STkzUhaCs/AzM32GFmSsGx7Z+WXSj00RwklT9jtuK98aWyBc
-         f98+XiY8UoAAdOzBTQhssr4GXpcwPfWrcKxRl59WsBxzRAtTIDaGkgO9UdWj644Jnc/j
-         LTvDlkkIYEnkkFsdPDRELmkLUMLjOXYakHfb0n5QzsOisN+UEAkQ0AzvZNbp/4OU8afj
-         hejg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717798268; x=1718403068;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NmpeYjQIxS6BadEqp5Kz1zTj/W5Ob73rrO2utvvpa1I=;
-        b=qy1q8Fkmonmo4+RipmnhOdRP764u9f0xe2uvE5FfXLNdSVaTQMy8m+C+VJGqpyktjF
-         xd9JY4443xm/hMJwhwROZZUdCYkpekTu0nHs4Il1AeHUDbZrc9t88rfAy86GrapHo54j
-         rGqIYrMwnA5N6zWRuo5P1d/H+WOR8yFYsL//Dano2dBb6G+1irEmQfsXpP5PADk+V9JT
-         uh8KWDPa9zT769Mw3Le9p8vGpsGaNT5DF2T5pNmFXpR7u29do0wGM6aCwEJsrQ1JctCY
-         3BjPrrByMzt+d8q9v1JFAClWompyqP4NuWqOckw5biBSx0jOEU96DsP90QVA0/S9FfhX
-         SwdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUY0mnl5QUfz5qslhb1PHfc+CAczWcA9zn/7nLZj4zCfDq8AQyYkjAP/bGErbzWHJOLwQQr/7vzhzrYfbUFHto2vF4UpRl5VZGhNayk
-X-Gm-Message-State: AOJu0Yw/zp3wddxpooUfUhgOOkgYI/CpPi7LRxDz+DwO0BmIBzQC8kiu
-	NiuZLEQzueH+zlPiZn6iZWVbGQ+hqijQ4g6BXkT6GKPHkQoZDedX
-X-Google-Smtp-Source: AGHT+IEpxpW/kctd4G38XvR/ZsboJUJWoWbFMp/cXYx7kHjwyCBrf+JVrt8WXIMu744y8dJfjoFl0Q==
-X-Received: by 2002:a17:902:dac9:b0:1f2:fb89:1d3e with SMTP id d9443c01a7336-1f6d02d206bmr41370465ad.7.1717798267551;
-        Fri, 07 Jun 2024 15:11:07 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd76b206sm39322885ad.65.2024.06.07.15.11.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jun 2024 15:11:06 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <ce8bb150-0a16-4e16-ac1f-b2e793355e06@roeck-us.net>
-Date: Fri, 7 Jun 2024 15:11:05 -0700
+	s=arc-20240116; t=1717798372; c=relaxed/simple;
+	bh=212IO9K4Rw0UQcxRjjjO+P6wB5hoCNlztTIYL6Jg6Qk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f7b4HTPrcbHKR4sJZzX/osN1z8/N4ahL4fLkGXDeLwVIVWCuvSnzPgbffRds8IcEMIFGAUSB2rJ6s3qfGfAvMUTUxU+p9lUjcrMyJ/6NcPjaQYSO3ajKBWm/zJAD2JnwqzEPaihf5Z/dW/t21rl3TitlRQgJ1StV51QfQkTe5O4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YH0KEAic; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717798371; x=1749334371;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=212IO9K4Rw0UQcxRjjjO+P6wB5hoCNlztTIYL6Jg6Qk=;
+  b=YH0KEAicugAwMmKlYIBOFmJoU6Ko2D94dU5VcSFqV817NJwIZqlfDqwW
+   rimxqoM8WMxMnJLSpSU5QaD7q1oohYGaoPD42zfFUmgIfoAJxRDzLbpc0
+   MreirxkxgWsLB7iCPEnGq/bzIoxDs2vMHZ7xr71qwP52eDckflcHHxWTq
+   XBItwVcXhcZCvTzVFuL/cxI/yonbjqHO3z3x7EDhAQ7PtkOIrw9aM9XrU
+   8ez1WnV8gxiwoRxvNHIZZF/U0LgZZF4jhGfODi69o0hbmDlkGIYEkZVGo
+   DoDGpKcmLO/2by6o5F0CkRWYX7ojQksbqZs1hOra579LtS0b0mnf1AMp5
+   g==;
+X-CSE-ConnectionGUID: qwnsjjsNSumTlywkx38Mog==
+X-CSE-MsgGUID: EYHR/3O9Q7Smi9vgKhwB8Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="25944780"
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="25944780"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 15:12:50 -0700
+X-CSE-ConnectionGUID: +tx0Ix/uRCyxIsxvayaFLA==
+X-CSE-MsgGUID: YND4BhLMQ2eKBI3TTh6p0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="38554876"
+Received: from lkp-server01.sh.intel.com (HELO 472b94a103a1) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 07 Jun 2024 15:12:47 -0700
+Received: from kbuild by 472b94a103a1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sFhpF-0000c7-15;
+	Fri, 07 Jun 2024 22:12:45 +0000
+Date: Sat, 8 Jun 2024 06:12:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: srinivas.kandagatla@linaro.org, andersson@kernel.org,
+	linus.walleij@linaro.org
+Cc: oe-kbuild-all@lists.linux.dev, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, srinivas.kandagatla@linaro.org,
+	linux-arm-msm@vger.kernel.org, inux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] pinctrl: qcom: Introduce SM4250 LPI pinctrl driver
+Message-ID: <202406080514.8Yq3kzQr-lkp@intel.com>
+References: <20240606130323.138970-3-srinivas.kandagatla@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] hwmon: use device_for_each_child_node_scoped()
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Antoniu Miclaus <antoniu.miclaus@analog.com>,
- Jean Delvare <jdelvare@suse.com>, Tim Harvey <tharvey@gateworks.com>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240404-hwmon_device_for_each_child_node_scoped-v1-0-53997abde43c@gmail.com>
- <0e0d9d44-d7f2-4dc0-9851-06b1f7290976@gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <0e0d9d44-d7f2-4dc0-9851-06b1f7290976@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606130323.138970-3-srinivas.kandagatla@linaro.org>
 
-On 6/7/24 14:00, Javier Carrasco wrote:
-> On 04/04/2024 13:13, Javier Carrasco wrote:
->> Switch to the _scoped() version introduced in commit 365130fd47af
->> ("device property: Introduce device_for_each_child_node_scoped()")
->> to remove the need for manual calling of fwnode_handle_put() in the
->> paths where the code exits the loop early.
->>
->> There are only two users of the non scoped version in the hwmon
->> subsystem:
->>
->> - ltc2991
->> - gsc-hwmon
->>
->> All calls of fwnode_handle_put() were in error paths.
->>
->> This series is based on the master branch of linux-next (next-20240404)
->> to profif from the scoped version of device_for_each_child_node().
->>
->> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
->> ---
->> Javier Carrasco (2):
->>        hwmon: (ltc2991) use device_for_each_child_node_scoped()
->>        hwmon: (gsc-hwmon) use device_for_each_child_node_scoped()
->>
->>   drivers/hwmon/gsc-hwmon.c |  7 +------
->>   drivers/hwmon/ltc2991.c   | 11 +++--------
->>   2 files changed, 4 insertions(+), 14 deletions(-)
->> ---
->> base-commit: 2b3d5988ae2cb5cd945ddbc653f0a71706231fdd
->> change-id: 20240404-hwmon_device_for_each_child_node_scoped-6e581c1d8a31
->>
->> Best regards,
-> 
-> 
-> Hi, this patch appears as "superseded" in the patchwork, but I could not
-> find what series actually superseded it.
-> 
-> I just noticed that the cleanup in ltc2991.c turns out to be a bug fix
-> as well because there is an error path if "shunt-resistor-micro-ohms" is
-> zero that misses the required fwnode_handle_put().
-> 
-> This is something similar like the recently applied fix for the ltc2992
-> [1], but in this case the _scoped() macro already exists and is in use
-> in the mainline kernel, and no explicit call to fwnode_handle_put() is
-> required unless the fix is to be ported to old kernels that don't have
-> the device_for_each_child_node_scoped() macro.
-> 
-> Link:
-> https://lore.kernel.org/linux-hwmon/20240523-fwnode_for_each_available_child_node_scoped-v2-0-701f3a03f2fb@gmail.com/
-> [1]
-> 
+Hi,
 
-I strongly suspect I confused it with the other series introducing
-fwnode_for_each_available_child_node_scoped(). Sorry for the confusion.
+kernel test robot noticed the following build warnings:
 
-Guenter
+[auto build test WARNING on linusw-pinctrl/devel]
+[also build test WARNING on linusw-pinctrl/for-next linus/master v6.10-rc2 next-20240607]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/srinivas-kandagatla-linaro-org/dt-bindings-pinctrl-qcom-Add-SM4250-pinctrl/20240606-210728
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+patch link:    https://lore.kernel.org/r/20240606130323.138970-3-srinivas.kandagatla%40linaro.org
+patch subject: [PATCH 2/2] pinctrl: qcom: Introduce SM4250 LPI pinctrl driver
+config: sh-randconfig-r131-20240608 (https://download.01.org/0day-ci/archive/20240608/202406080514.8Yq3kzQr-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20240608/202406080514.8Yq3kzQr-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406080514.8Yq3kzQr-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/pinctrl/qcom/pinctrl-sm4250-lpass-lpi.c:135:9: sparse: sparse: Initializer entry defined twice
+   drivers/pinctrl/qcom/pinctrl-sm4250-lpass-lpi.c:158:9: sparse:   also defined here
+
+vim +135 drivers/pinctrl/qcom/pinctrl-sm4250-lpass-lpi.c
+
+   125	
+   126	static const struct lpi_function sm4250_functions[] = {
+   127		LPI_FUNCTION(dmic01_clk),
+   128		LPI_FUNCTION(dmic01_data),
+   129		LPI_FUNCTION(dmic23_clk),
+   130		LPI_FUNCTION(dmic23_data),
+   131		LPI_FUNCTION(dmic4_clk),
+   132		LPI_FUNCTION(dmic4_data),
+   133		LPI_FUNCTION(ext_mclk0_a),
+   134		LPI_FUNCTION(ext_mclk0_b),
+ > 135		LPI_FUNCTION(ext_mclk1_a),
+   136		LPI_FUNCTION(ext_mclk1_b),
+   137		LPI_FUNCTION(ext_mclk1_c),
+   138		LPI_FUNCTION(i2s1_clk),
+   139		LPI_FUNCTION(i2s1_data),
+   140		LPI_FUNCTION(i2s1_ws),
+   141		LPI_FUNCTION(i2s2_clk),
+   142		LPI_FUNCTION(i2s2_data),
+   143		LPI_FUNCTION(i2s2_ws),
+   144		LPI_FUNCTION(i2s3_clk),
+   145		LPI_FUNCTION(i2s3_data),
+   146		LPI_FUNCTION(i2s3_ws),
+   147		LPI_FUNCTION(qua_mi2s_data),
+   148		LPI_FUNCTION(qua_mi2s_sclk),
+   149		LPI_FUNCTION(slim_clk),
+   150		LPI_FUNCTION(slim_data),
+   151		LPI_FUNCTION(qua_mi2s_ws),
+   152		LPI_FUNCTION(swr_rx_clk),
+   153		LPI_FUNCTION(swr_rx_data),
+   154		LPI_FUNCTION(swr_tx_clk),
+   155		LPI_FUNCTION(swr_tx_data),
+   156		LPI_FUNCTION(swr_wsa_clk),
+   157		LPI_FUNCTION(swr_wsa_data),
+   158		LPI_FUNCTION(ext_mclk1_a),
+   159		LPI_FUNCTION(ext_mclk1_a),
+   160		LPI_FUNCTION(ext_mclk1_a),
+   161		LPI_FUNCTION(ext_mclk1_a),
+   162	};
+   163	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
