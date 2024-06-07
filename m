@@ -1,114 +1,113 @@
-Return-Path: <linux-kernel+bounces-206431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7799009A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:54:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DD809009A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:54:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DEAF1F2435F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:54:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28F0E1C22B18
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE991199EB4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400F2199E88;
 	Fri,  7 Jun 2024 15:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="eA0aPNPg"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l54PWuxe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26F4199234;
-	Fri,  7 Jun 2024 15:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A1C1991D5;
+	Fri,  7 Jun 2024 15:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717775683; cv=none; b=stOlsSx37E7sje1pHQKWVBfLvW9+q6isMUtPbXf6Ta3eJjO3dLxy8hRVjWlQ+/L2HZIhluBmE4AIjX4MLuliWNBaMRHsDfmDAQ58gKlrqO3mCTfWEkQ6YSwj9bHff9wEFJX/YicMqkliBkaiSYsv/6sQvO4qCJfcZ6n/Cv8LVRA=
+	t=1717775682; cv=none; b=OAdxn0aU6KsCOxJZNfc8yPEDhzsq3Lw8ckln8zW0Sq8V+S7oAmo1417e2oajdW97V/ovErkPQGxn5me7WaJOkes7AsrV1oEbdj1F5cGf5Iq9574KN9no13d6rSf49b12WcsKV/zd+dhdNZYHSytIDsaOeoP6gnJ5AFsYPaYKgU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717775683; c=relaxed/simple;
-	bh=xmd67umfymHcJ44Kt4eIRJxEDJGDef0iHkNvcUkjnTo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=isrHyysfpM8IqBz3w/3JgE3Hj8duscV9ceehm8xKjcTDzcPyi3MPWpY3kDkJyipegdUdFno79FLaF9ePCBjZLq197cpa1HZzY6ODfLnKEVTVyDczVypZOLQwiee2C5TdG6uiTnKOEdk65jrbWeOKjZUNGrYetIv0+DEM3WYWANc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=eA0aPNPg; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45798tGw026974;
-	Fri, 7 Jun 2024 08:54:26 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=756gArjuo2v/8U2A0jAbflCts
-	ep0ltO8YlA9qtCTL1w=; b=eA0aPNPgFgSiUxyUhjmZ2kYr5Z/t6npNpunDn+fjE
-	DfMI0KdyDAihJ1c6eAf6w/OGOmbk5pFrJSC5YFFdNZov2RCLuHAVC9qNAwzYba8c
-	DAA3HiWbmuKX3CkJ41j7pPsPC+gPVWvGE1z2atti3dwI17uWXPcdlzLxNfg8YIYb
-	d+FzvOiz/Axwy21oxErfqO26XXsadJ+kaEHbXHANutKoIy2cQSgT1nhU3Pmk2Fqj
-	jUGK2k9wIJWh+9uXli1mlOckOB12L8jYM+zYeREZwx1z31+nVw6qVT1bdEok0uvX
-	LkzN3++HJoVUS7/Ff5cB7WJR1W9KKAEz4nuoTYvEF1HcA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3ykuu21qjt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 08:54:26 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 7 Jun 2024 08:54:25 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 7 Jun 2024 08:54:25 -0700
-Received: from maili.marvell.com (unknown [10.28.36.165])
-	by maili.marvell.com (Postfix) with SMTP id 7C71E3F708F;
-	Fri,  7 Jun 2024 08:54:21 -0700 (PDT)
-Date: Fri, 7 Jun 2024 21:24:20 +0530
-From: Ratheesh Kannoth <rkannoth@marvell.com>
-To: Justin Lai <justinlai0215@realtek.com>
-CC: <kuba@kernel.org>, <davem@davemloft.net>, <edumazet@google.com>,
-        <pabeni@redhat.com>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <andrew@lunn.ch>, <jiri@resnulli.us>,
-        <horms@kernel.org>, <pkshih@realtek.com>, <larry.chiu@realtek.com>
-Subject: Re: [PATCH net-next v20 06/13] rtase: Implement .ndo_start_xmit
- function
-Message-ID: <20240607155420.GA3743392@maili.marvell.com>
-References: <20240607084321.7254-1-justinlai0215@realtek.com>
- <20240607084321.7254-7-justinlai0215@realtek.com>
+	s=arc-20240116; t=1717775682; c=relaxed/simple;
+	bh=MFaeXmhix5eaxxS4d1BjhVv8v5zdiL95TNv1+Je9cn4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nYUYkqXu7rahYFj+MbERJ/FtWF11Lrkmskgo9o7GnVDcVWu1sSi6kQNpJjyqeAjPns02Q3Umb9ddNCBF434k3LN7oWMQpaBNbQwIxP07mhnGoHZH05CZq1LTeiCSwB/5jW/H1O5vaWCCxhraFFPggdHppS0fPiypLgpSwkjgMro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l54PWuxe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 985CEC2BBFC;
+	Fri,  7 Jun 2024 15:54:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717775682;
+	bh=MFaeXmhix5eaxxS4d1BjhVv8v5zdiL95TNv1+Je9cn4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l54PWuxehpgFnT9UPaGHcmB0kb63C+AdVndkCbdEVJy3mLN9SZtc0OBWr/Jfpl0Q0
+	 xaejw/vJVkDcKbVyQ6SvomkpQa5FkMY0xyuTjN+rmuCtLWPkTibOusiFn2kZf7QVZE
+	 j4fiwbcSIPZwr/LsI5w2jzPuHJPJQw8P+7g8uDCAmqx0PATU1MX3aKPN2HCCUhzILg
+	 cMGtVHoIXFrKPVVq2s6k80JLOOj8FPsLp5BnSqsdjsQjOElWUVAEyKZ2QXeWoj9i57
+	 KdXHkVD+Hqaa9WrisppkN6YnBeD8hfeVAGjxFJx+GJRFtWi3U2plZNIca7RlEhhsFn
+	 itQB4hCdjk7ZA==
+Date: Fri, 7 Jun 2024 16:54:36 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.6 000/744] 6.6.33-rc1 review
+Message-ID: <20240607-verdict-distract-2e220fbfe2a2@spud>
+References: <20240606131732.440653204@linuxfoundation.org>
+ <20240607-footnote-script-3a1537265b4a@spud>
+ <2024060756-graveyard-shifter-ba74@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Zyl/1zyiKCZKMLx+"
 Content-Disposition: inline
-In-Reply-To: <20240607084321.7254-7-justinlai0215@realtek.com>
-X-Proofpoint-ORIG-GUID: Rrqbr78-72hns9XLeDN7k4VOZYSi2O56
-X-Proofpoint-GUID: Rrqbr78-72hns9XLeDN7k4VOZYSi2O56
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-07_09,2024-06-06_02,2024-05-17_01
+In-Reply-To: <2024060756-graveyard-shifter-ba74@gregkh>
 
-On 2024-06-07 at 14:13:14, Justin Lai (justinlai0215@realtek.com) wrote:
-> Implement .ndo_start_xmit function to fill the information of the packet
-> to be transmitted into the tx descriptor, and then the hardware will
-> transmit the packet using the information in the tx descriptor.
-> In addition, we also implemented the tx_handler function to enable the
-> tx descriptor to be reused.
->
-> Signed-off-by: Justin Lai <justinlai0215@realtek.com>
-> ---
->  .../net/ethernet/realtek/rtase/rtase_main.c   | 285 ++++++++++++++++++
->  1 file changed, 285 insertions(+)
->
-> diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> index 23406c195cff..6bdb4edbfbc1 100644
-> --- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> +++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> @@ -256,6 +256,68 @@ static void rtase_mark_to_asic(union rtase_rx_desc *desc, u32 rx_buf_sz)
->  		   cpu_to_le32(RTASE_DESC_OWN | eor | rx_buf_sz));
->  }
->
-> +static u32 rtase_tx_avail(struct rtase_ring *ring)
-> +{
-> +	return READ_ONCE(ring->dirty_idx) + RTASE_NUM_DESC -
-> +	       READ_ONCE(ring->cur_idx);
-> +}
-dirty_idx and cur_idx wont wrap ? its 32bit in size.
 
->
+--Zyl/1zyiKCZKMLx+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Jun 07, 2024 at 05:26:40PM +0200, Greg Kroah-Hartman wrote:
+> On Fri, Jun 07, 2024 at 04:23:47PM +0100, Conor Dooley wrote:
+> > On Thu, Jun 06, 2024 at 03:54:32PM +0200, Greg Kroah-Hartman wrote:
+> > > This is the start of the stable review cycle for the 6.6.33 release.
+> > > There are 744 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, plea=
+se
+> > > let me know.
+> >=20
+> > Tested-by: Conor Dooley <conor.dooley@microchip.com>
+> >=20
+> > btw, I requested a backport of a riscv patch to fix some userspace
+> > tools, but I didn't see it here.
+> > https://lore.kernel.org/stable/20240530-disparity-deafening-dcbb9e2f164=
+7@spud/
+> > Were you just too busy travelling etc?
+>=20
+> Yes, I have been on the road for the past 2 weeks in meetings and
+> training full-time with almost no time to catch up with requests like
+> this.  You aren't alone, my backlog is big :(
+>=20
+> I'll catch up on it next week as I will be home then.
+
+That's fine, it's been broken for a long time, one release more release
+isn't gonna kill us :) Safe travels home.
+
+--Zyl/1zyiKCZKMLx+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmMtPAAKCRB4tDGHoIJi
+0njIAQDer0G3btmJzBsMGa42YqKNc+WHM783APSPwrq+flOhwAEAu6l3+gLlIquA
+ja2MoxBLFca/KeDvnHzIPBzWLCTM+gA=
+=LlYP
+-----END PGP SIGNATURE-----
+
+--Zyl/1zyiKCZKMLx+--
 
