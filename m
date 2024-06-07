@@ -1,300 +1,182 @@
-Return-Path: <linux-kernel+bounces-206104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB66F900441
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:58:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DAAD900445
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEB1F1C24682
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:58:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B68B6285CEF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0B419413D;
-	Fri,  7 Jun 2024 12:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1091719408C;
+	Fri,  7 Jun 2024 12:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g3VxNZFG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Co5j6d96"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BEE190696;
-	Fri,  7 Jun 2024 12:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED8C18C330;
+	Fri,  7 Jun 2024 12:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717764951; cv=none; b=OQmpcrvbSvhjatdHZVfshqt7wxt0E2Vn2WSo9uTC3XgY7KMd/gaQ4Y66UdH9KAGM97ermpsdN5ibg2xw+c5zipvudYzaKlQIKBR/fZlq46i1375l/9PKukxuFNtBOThlqGHNQscr34K9Jyxr1JWxw4xa/QvnJL/YQ3mKRnle43o=
+	t=1717765148; cv=none; b=qgrpI8Cjli93yjxf7pSj3OpXqchTPALH1EvqH0GLlDBNPyZz0e2IAxb9X+rasnBdlHXBvHV1R3djOSqYJtSLzhR9vFXMnL7zhlKHKiUC7Iij2XZxUWcK0uHazRgB6J1yfIx53vAxlUt8YZFww4WFDpDbooOF1Gtov/WKNkq7Pbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717764951; c=relaxed/simple;
-	bh=xSGNkb1hqEICPIp1Eph/wVUyrtHZsffJhIarXrEdQpU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=scQvluuC0S4jFRj9w+09Zo8Vx2Yugo0HtSaok5Wj+oJolXjjDfXRVTkP1h8owre8TXG92tFWSZ8ON3o0U1JA9/RulDLyGGx4WeMWIKv1OvnKCFQpRhGlfyXYCjOZvER8+Xc6Pjd1p7vFTrNXeq/4P0hJZRw8+Pw7lMOy7bxWZOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g3VxNZFG; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717764950; x=1749300950;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=xSGNkb1hqEICPIp1Eph/wVUyrtHZsffJhIarXrEdQpU=;
-  b=g3VxNZFGg8diD4HXs4VRVja4l9o5WpsYLlAGvAKA4oL84dFPbgmqspov
-   XGrwjEOVJI+Ln9hPAiRrkMwVUj76yCjfZ/DrSvBSLbIF3YHM2UJBzljN/
-   Loj4lbqVxwSYqVcpRNiL/MRm4ekLV9H5vMKSNY/L5wFGsP+zKbZgmh3eP
-   M9PjlqXHaT6IoSqZkhhkIw7sq8mUv6CsGy/xw9pvcizzUtSbAaushVq5j
-   TWVmh7LDA77C1c+J8JSQz6QwfbqVkxipg4o2ombLpvvssM8PeM0FauYvs
-   okAwkFv+wgX8/K3MVfNfPk5ZURfbWHQQqGFFOQQbJ/td3OGFUT2YbyLB8
-   Q==;
-X-CSE-ConnectionGUID: E1GLMiOfTUO8CBh6OmEUfw==
-X-CSE-MsgGUID: H+HDhsjyTLqZsT7hBKMOLw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="25138906"
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="25138906"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 05:55:49 -0700
-X-CSE-ConnectionGUID: CvRnG1MeQQuq8o/k1+KTzQ==
-X-CSE-MsgGUID: o9RzYcpxQpKgE+fB+Xq1dg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="38437667"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.184])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 05:55:45 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: linux-kselftest@vger.kernel.org,
-	Shuah Khan <shuah@kernel.org>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	=?UTF-8?q?Maciej=20Wiecz=C3=B3r-Retman?= <maciej.wieczor-retman@intel.com>,
-	Babu Moger <babu.moger@amd.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>,
-	linux-kernel@vger.kernel.org,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH v6 16/16] selftests/resctrl: Remove test name comparing from write_bm_pid_to_resctrl()
-Date: Fri,  7 Jun 2024 15:53:16 +0300
-Message-Id: <20240607125316.7089-17-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240607125316.7089-1-ilpo.jarvinen@linux.intel.com>
-References: <20240607125316.7089-1-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1717765148; c=relaxed/simple;
+	bh=vjt1+QeSp5Sb/mevIOfvfW6Aev/mE5JAlBBwzVe8frA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h4Ea+kqRqIu4oep/KvsBXfyxNZ+pwrWeyYG2Cpultwt0VHJYzYLyVm84pJXQQeB2tbfAUzRIQv49yoCzgbKkDw23KE9VUMhceaDk2cMtkuetGUI+nJLldQqzQuzbOSVr8MMYsmxC008eySqUmZf18OxD19olFPiCdOrqhmAcKJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Co5j6d96; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57864327f6eso2460604a12.1;
+        Fri, 07 Jun 2024 05:59:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717765145; x=1718369945; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fwNu32j4Qgs9o4RZx2A4i2wz9FLKQtp05joxe1btFUA=;
+        b=Co5j6d96t47/fcPM5PsIf0vPJelgRLIcDkgwGgqW+tE0M8C0OcR1sM7phA7QSbXPa+
+         PuhSgwQZKTcnMWEHesMso8IElm+D1nTuwHvsj8vgaAqmZ9/cNpSLwR35avqqT4aOCJrR
+         ZfbT4cBfEd1rw1cH/qyK2ZHfSjZMygTJn2OIK5OK7pSTX9gXGSbjxsaEGiYbiP0D+nJL
+         G662WKWILaPYQQTSqkIVQftYSvVFPiGPFuPFllEihQedSc1aXdH4U5dV/4DyM7K7fjUa
+         0RdKkRhoP+8QCjn9PSROBWboKwXcNKQSAowhGCxL5FDWDHesj6R1LsNuWpje22hkW1tG
+         0z0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717765145; x=1718369945;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fwNu32j4Qgs9o4RZx2A4i2wz9FLKQtp05joxe1btFUA=;
+        b=WfmHUb6hNIczdB2arpSpMMV6JvQYMMGgtxv/0FBfjRSiQ88rrv9mS9F9ZqwuL7lONF
+         uJYf4ntiJSB9fv6kCmPu6Mo+H0MRIqAeWXNEm7is3d0RP73rqRnwD7FcwpNihrlqZfCx
+         c11ltShrX5wCy7vwfOKe12H9RuJ4tVTTJcmmbcXp875qje3unMZp4mlE9XpS4RS/ozz+
+         UsoJNafDn1kNWH+7YA8Od3OC78AeVAkDt2MyGlZ2arw2zSpbEpDV34dHoOyj2yC8WSDy
+         QVBhN4nZMfuMgBialARyX9YKp4DIa6y/96TIvBW6V2vImzyeg3z1KMI8Azex/UdnxQCO
+         jMQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWYuZRdM2lyuwmqke4dPlBeMrIfHceAX5ZlZJn0ql9GRqnmGzqF4KeqPmQyhgjmAIcgcSUaWdRtS+DjEUPdF5Zz5DfGlya+16jt27xWxIEgFvHkDktXkVx/rULi3//viBqgHNYo6vsyo/s=
+X-Gm-Message-State: AOJu0YzNutazsNI2ucExzTeXzbbU+3fWUpEz04sD+vtD3cgRtLbL8cLu
+	8aHnay1/EWMGB111DkAY7FpV45L0iVzUEZdYpdJUauqsp5oAFKJQ
+X-Google-Smtp-Source: AGHT+IERA8GW/ndoCYphHW5kfMnR0SWWaANqPC3SnpUYwkOtyDcZn7YAFq06omRL5dyJc8UdYz6Sgg==
+X-Received: by 2002:a50:cdc2:0:b0:574:ebf4:f786 with SMTP id 4fb4d7f45d1cf-57c4e3f5be7mr2219873a12.16.1717765144630;
+        Fri, 07 Jun 2024 05:59:04 -0700 (PDT)
+Received: from [192.168.42.79] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae229712sm2726504a12.81.2024.06.07.05.59.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jun 2024 05:59:04 -0700 (PDT)
+Message-ID: <cf8bb1db-b601-4f54-bafc-d6c58f6ce946@gmail.com>
+Date: Fri, 7 Jun 2024 13:59:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] sbitmap: fix io hung due to race on
+ sbitmap_word::cleared
+To: YangYang <yang.yang@vivo.com>, Yu Kuai <yukuai1@huaweicloud.com>,
+ Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20240604031124.2261-1-yang.yang@vivo.com>
+ <CAFj5m9KV7OJ4_KjbSkpdtfrKamoLzV6EH-mJP3=y+VvoYOzC3w@mail.gmail.com>
+ <aa7246f9-f7df-3054-077e-eb21c7f423ac@huaweicloud.com>
+ <e1cdf579-007b-415f-9e4d-3fadd6f97b36@vivo.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <e1cdf579-007b-415f-9e4d-3fadd6f97b36@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-write_bm_pid_to_resctrl() uses resctrl_val to check test name which is
-not a good interface generic resctrl FS functions should provide.
+On 6/4/24 08:03, YangYang wrote:
+> On 2024/6/4 14:12, Yu Kuai wrote:
+>> Hi,
+>>
+>> 在 2024/06/04 11:25, Ming Lei 写道:
+>>> On Tue, Jun 4, 2024 at 11:12 AM Yang Yang <yang.yang@vivo.com> wrote:
+>>>>
+>>>> Configuration for sbq:
+>>>>    depth=64, wake_batch=6, shift=6, map_nr=1
+>>>>
+>>>> 1. There are 64 requests in progress:
+>>>>    map->word = 0xFFFFFFFFFFFFFFFF
+>>>> 2. After all the 64 requests complete, and no more requests come:
+>>>>    map->word = 0xFFFFFFFFFFFFFFFF, map->cleared = 0xFFFFFFFFFFFFFFFF
+>>>> 3. Now two tasks try to allocate requests:
+>>>>    T1:                                       T2:
+>>>>    __blk_mq_get_tag                          .
+>>>>    __sbitmap_queue_get                       .
+>>>>    sbitmap_get                               .
+>>>>    sbitmap_find_bit                          .
+>>>>    sbitmap_find_bit_in_word                  .
+>>>>    __sbitmap_get_word  -> nr=-1              __blk_mq_get_tag
+>>>>    sbitmap_deferred_clear                    __sbitmap_queue_get
+>>>>    /* map->cleared=0xFFFFFFFFFFFFFFFF */     sbitmap_find_bit
+>>>>      if (!READ_ONCE(map->cleared))           sbitmap_find_bit_in_word
+>>>>        return false;                         __sbitmap_get_word -> nr=-1
+>>>>      mask = xchg(&map->cleared, 0)           sbitmap_deferred_clear
+>>>>      atomic_long_andnot()                    /* map->cleared=0 */
+>>>>                                                if (!(map->cleared))
+>>>>                                                  return false;
+>>>>                                       /*
+>>>>                                        * map->cleared is cleared by T1
+>>>>                                        * T2 fail to acquire the tag
+>>>>                                        */
+>>>>
+>>>> 4. T2 is the sole tag waiter. When T1 puts the tag, T2 cannot be woken
+>>>> up due to the wake_batch being set at 6. If no more requests come, T1
+>>>> will wait here indefinitely.
+>>>>
+>>>> To fix this issue, simply revert commit 661d4f55a794 ("sbitmap:
+>>>> remove swap_lock"), which causes this issue.
+>>>
+>>> I'd suggest to add the following words in commit log:
+>>>
+>>> Check on ->cleared and update on both ->cleared and ->word need to be
+>>> done atomically, and using spinlock could be the simplest solution.
+>>>
+>>> Otherwise, the patch looks fine for me.
+>>
+>> Maybe I'm noob, but I'm confused how can this fix the problem, looks
+>> like the race condition doesn't change.
+>>
+>> In sbitmap_find_bit_in_word:
+>>
+>> 1) __sbitmap_get_word read word;
+>> 2) sbitmap_deferred_clear clear cleared;
+>> 3) sbitmap_deferred_clear update word;
+>>
+>> 2) and 3) are done atomically while 1) can still concurrent with 3):
+>>
+>> t1:
+>> sbitmap_find_bit_in_word
+>>   __sbitmap_get_word
+>>   -> read old word, return -1 >          t2:
+>>          sbitmap_find_bit_in_word
+>>           __sbitmap_get_word
+>>           -> read old word, return -1
+>>   sbitmap_deferred_clear
+>>   -> clear cleared and update word
+>>          sbitmap_deferred_clear
+>>          -> cleared is cleared, fail
+> 
+> Yes, you are right, this patch cannot fix this issue.
 
-Tests define mongrp when needed. Remove the test name check in
-write_bm_pid_to_resctrl() to only rely on the mongrp parameter being
-non-NULL.
+One other alternative is to kill ->cleared. It's not
+immediately clear how important it is. Do we have any
+numbers?
 
-Remove write_bm_pid_to_resctrl() resctrl_val parameter and resctrl_val
-member from the struct resctrl_val_param that are not used anymore.
-Similarly, remove the test name constants that are no longer used.
 
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Tested-by: Babu Moger <babu.moger@amd.com>
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
----
- tools/testing/selftests/resctrl/cat_test.c    |  5 +--
- tools/testing/selftests/resctrl/cmt_test.c    |  1 -
- tools/testing/selftests/resctrl/mba_test.c    |  1 -
- tools/testing/selftests/resctrl/mbm_test.c    |  1 -
- tools/testing/selftests/resctrl/resctrl.h     | 10 +-----
- tools/testing/selftests/resctrl/resctrl_val.c |  4 +--
- tools/testing/selftests/resctrl/resctrlfs.c   | 33 ++++++++-----------
- 7 files changed, 17 insertions(+), 38 deletions(-)
+>> BYW, I still think it's fine to fix this problem by trying the
+>> __sbitmap_get_word() at least one more time if __sbitmap_get_word()
+>> failed.
+> 
+> Err, after trying one more time __sbitmap_get_word() may still fail.
 
-diff --git a/tools/testing/selftests/resctrl/cat_test.c b/tools/testing/selftests/resctrl/cat_test.c
-index c7686fb6641a..d4dffc934bc3 100644
---- a/tools/testing/selftests/resctrl/cat_test.c
-+++ b/tools/testing/selftests/resctrl/cat_test.c
-@@ -158,7 +158,6 @@ static int cat_test(const struct resctrl_test *test,
- 		    struct resctrl_val_param *param,
- 		    size_t span, unsigned long current_mask)
- {
--	char *resctrl_val = param->resctrl_val;
- 	struct perf_event_read pe_read;
- 	struct perf_event_attr pea;
- 	cpu_set_t old_affinity;
-@@ -178,8 +177,7 @@ static int cat_test(const struct resctrl_test *test,
- 		return ret;
- 
- 	/* Write benchmark to specified con_mon grp, mon_grp in resctrl FS*/
--	ret = write_bm_pid_to_resctrl(bm_pid, param->ctrlgrp, param->mongrp,
--				      resctrl_val);
-+	ret = write_bm_pid_to_resctrl(bm_pid, param->ctrlgrp, param->mongrp);
- 	if (ret)
- 		goto reset_affinity;
- 
-@@ -272,7 +270,6 @@ static int cat_run_test(const struct resctrl_test *test, const struct user_param
- 	start_mask = create_bit_mask(start, n);
- 
- 	struct resctrl_val_param param = {
--		.resctrl_val	= CAT_STR,
- 		.ctrlgrp	= "c1",
- 		.filename	= RESULT_FILE_NAME,
- 		.num_of_runs	= 0,
-diff --git a/tools/testing/selftests/resctrl/cmt_test.c b/tools/testing/selftests/resctrl/cmt_test.c
-index b63fa1e93307..d1c272743eb2 100644
---- a/tools/testing/selftests/resctrl/cmt_test.c
-+++ b/tools/testing/selftests/resctrl/cmt_test.c
-@@ -144,7 +144,6 @@ static int cmt_run_test(const struct resctrl_test *test, const struct user_param
- 	}
- 
- 	struct resctrl_val_param param = {
--		.resctrl_val	= CMT_STR,
- 		.ctrlgrp	= "c1",
- 		.filename	= RESULT_FILE_NAME,
- 		.mask		= ~(long_mask << n) & long_mask,
-diff --git a/tools/testing/selftests/resctrl/mba_test.c b/tools/testing/selftests/resctrl/mba_test.c
-index 5e0b1e794295..1f2a7dc73b62 100644
---- a/tools/testing/selftests/resctrl/mba_test.c
-+++ b/tools/testing/selftests/resctrl/mba_test.c
-@@ -164,7 +164,6 @@ static void mba_test_cleanup(void)
- static int mba_run_test(const struct resctrl_test *test, const struct user_params *uparams)
- {
- 	struct resctrl_val_param param = {
--		.resctrl_val	= MBA_STR,
- 		.ctrlgrp	= "c1",
- 		.filename	= RESULT_FILE_NAME,
- 		.init		= mba_init,
-diff --git a/tools/testing/selftests/resctrl/mbm_test.c b/tools/testing/selftests/resctrl/mbm_test.c
-index 27b936fe60bc..39aa70374154 100644
---- a/tools/testing/selftests/resctrl/mbm_test.c
-+++ b/tools/testing/selftests/resctrl/mbm_test.c
-@@ -132,7 +132,6 @@ static void mbm_test_cleanup(void)
- static int mbm_run_test(const struct resctrl_test *test, const struct user_params *uparams)
- {
- 	struct resctrl_val_param param = {
--		.resctrl_val	= MBM_STR,
- 		.ctrlgrp	= "c1",
- 		.filename	= RESULT_FILE_NAME,
- 		.init		= mbm_init,
-diff --git a/tools/testing/selftests/resctrl/resctrl.h b/tools/testing/selftests/resctrl/resctrl.h
-index a999fbc13fd3..2dda56084588 100644
---- a/tools/testing/selftests/resctrl/resctrl.h
-+++ b/tools/testing/selftests/resctrl/resctrl.h
-@@ -81,7 +81,6 @@ struct resctrl_test {
- 
- /*
-  * resctrl_val_param:	resctrl test parameters
-- * @resctrl_val:	Resctrl feature (Eg: mbm, mba.. etc)
-  * @ctrlgrp:		Name of the control monitor group (con_mon grp)
-  * @mongrp:		Name of the monitor group (mon grp)
-  * @filename:		Name of file to which the o/p should be written
-@@ -90,7 +89,6 @@ struct resctrl_test {
-  * @measure:		Callback that performs the measurement (a single test)
-  */
- struct resctrl_val_param {
--	char		*resctrl_val;
- 	const char	*ctrlgrp;
- 	const char	*mongrp;
- 	char		filename[64];
-@@ -113,11 +111,6 @@ struct perf_event_read {
- 	} values[2];
- };
- 
--#define MBM_STR			"mbm"
--#define MBA_STR			"mba"
--#define CMT_STR			"cmt"
--#define CAT_STR			"cat"
--
- /*
-  * Memory location that consumes values compiler must not optimize away.
-  * Volatile ensures writes to this location cannot be optimized away by
-@@ -143,8 +136,7 @@ int taskset_benchmark(pid_t bm_pid, int cpu_no, cpu_set_t *old_affinity);
- int taskset_restore(pid_t bm_pid, cpu_set_t *old_affinity);
- int write_schemata(const char *ctrlgrp, char *schemata, int cpu_no,
- 		   const char *resource);
--int write_bm_pid_to_resctrl(pid_t bm_pid, const char *ctrlgrp,
--			    const char *mongrp, const char *resctrl_val);
-+int write_bm_pid_to_resctrl(pid_t bm_pid, const char *ctrlgrp, const char *mongrp);
- int perf_event_open(struct perf_event_attr *hw_event, pid_t pid, int cpu,
- 		    int group_fd, unsigned long flags);
- unsigned char *alloc_buffer(size_t buf_size, int memflush);
-diff --git a/tools/testing/selftests/resctrl/resctrl_val.c b/tools/testing/selftests/resctrl/resctrl_val.c
-index 2e85badd6d6b..5cf9d8e88100 100644
---- a/tools/testing/selftests/resctrl/resctrl_val.c
-+++ b/tools/testing/selftests/resctrl/resctrl_val.c
-@@ -684,7 +684,6 @@ int resctrl_val(const struct resctrl_test *test,
- 		const char * const *benchmark_cmd,
- 		struct resctrl_val_param *param)
- {
--	char *resctrl_val = param->resctrl_val;
- 	struct sigaction sigact;
- 	int ret = 0, pipefd[2];
- 	char pipe_message = 0;
-@@ -775,8 +774,7 @@ int resctrl_val(const struct resctrl_test *test,
- 		goto out;
- 
- 	/* Write benchmark to specified control&monitoring grp in resctrl FS */
--	ret = write_bm_pid_to_resctrl(bm_pid, param->ctrlgrp, param->mongrp,
--				      resctrl_val);
-+	ret = write_bm_pid_to_resctrl(bm_pid, param->ctrlgrp, param->mongrp);
- 	if (ret)
- 		goto out;
- 
-diff --git a/tools/testing/selftests/resctrl/resctrlfs.c b/tools/testing/selftests/resctrl/resctrlfs.c
-index e2d1ecb55d51..250c320349a7 100644
---- a/tools/testing/selftests/resctrl/resctrlfs.c
-+++ b/tools/testing/selftests/resctrl/resctrlfs.c
-@@ -522,7 +522,6 @@ static int write_pid_to_tasks(char *tasks, pid_t pid)
-  * @bm_pid:		PID that should be written
-  * @ctrlgrp:		Name of the control monitor group (con_mon grp)
-  * @mongrp:		Name of the monitor group (mon grp)
-- * @resctrl_val:	Resctrl feature (Eg: mbm, mba.. etc)
-  *
-  * If a con_mon grp is requested, create it and write pid to it, otherwise
-  * write pid to root con_mon grp.
-@@ -532,8 +531,7 @@ static int write_pid_to_tasks(char *tasks, pid_t pid)
-  *
-  * Return: 0 on success, < 0 on error.
-  */
--int write_bm_pid_to_resctrl(pid_t bm_pid, const char *ctrlgrp,
--			    const char *mongrp, const char *resctrl_val)
-+int write_bm_pid_to_resctrl(pid_t bm_pid, const char *ctrlgrp, const char *mongrp)
- {
- 	char controlgroup[128], monitorgroup[512], monitorgroup_p[256];
- 	char tasks[1024];
-@@ -553,22 +551,19 @@ int write_bm_pid_to_resctrl(pid_t bm_pid, const char *ctrlgrp,
- 	if (ret)
- 		goto out;
- 
--	/* Create mon grp and write pid into it for "mbm" and "cmt" test */
--	if (!strncmp(resctrl_val, CMT_STR, sizeof(CMT_STR)) ||
--	    !strncmp(resctrl_val, MBM_STR, sizeof(MBM_STR))) {
--		if (mongrp) {
--			sprintf(monitorgroup_p, "%s/mon_groups", controlgroup);
--			sprintf(monitorgroup, "%s/%s", monitorgroup_p, mongrp);
--			ret = create_grp(mongrp, monitorgroup, monitorgroup_p);
--			if (ret)
--				goto out;
--
--			sprintf(tasks, "%s/mon_groups/%s/tasks",
--				controlgroup, mongrp);
--			ret = write_pid_to_tasks(tasks, bm_pid);
--			if (ret)
--				goto out;
--		}
-+	/* Create monitor group and write pid into if it is used */
-+	if (mongrp) {
-+		sprintf(monitorgroup_p, "%s/mon_groups", controlgroup);
-+		sprintf(monitorgroup, "%s/%s", monitorgroup_p, mongrp);
-+		ret = create_grp(mongrp, monitorgroup, monitorgroup_p);
-+		if (ret)
-+			goto out;
-+
-+		sprintf(tasks, "%s/mon_groups/%s/tasks",
-+			controlgroup, mongrp);
-+		ret = write_pid_to_tasks(tasks, bm_pid);
-+		if (ret)
-+			goto out;
- 	}
- 
- out:
 -- 
-2.39.2
-
+Pavel Begunkov
 
