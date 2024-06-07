@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-205928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E395900245
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:36:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33E88900248
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:36:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C732A1F27D5C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:36:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA14D1F27D85
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3089818C35E;
-	Fri,  7 Jun 2024 11:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7060418733D;
+	Fri,  7 Jun 2024 11:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dSa5D7Id"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R1jDKiWt"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239702837F
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1701B188CC0
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717760161; cv=none; b=HDoGQaBcaPt8wSFFkUCIJ6oCGP64rC89cuqWH/KW3pTlvqWPA1/Ga0vV2rKFAf1s/bjfyhzB21XmCCaVTD6aBvyvoRa9nAvFO+twUBN6p4r1Z4SYg9JqnRJT5nyCtVlaccjkV9uX+8PfBywWXBQUN7rc2JauLQEUF1hryVBJgss=
+	t=1717760188; cv=none; b=ty36KcUWTubd45LAnjs/kOeg+88CVvssPd1ZVwLHko48p8tY10a2PrQhxzcKmWQvx53LsiYpO13c9YWNw8mqrQ7Wnxg2DdLdpnRNewrbdm3xEr4sj77YVoIFlKaS0mGj3lzyWKFPrTZaNIks+HjurjWnhsErrJdreW1Fvx0acdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717760161; c=relaxed/simple;
-	bh=eBEctrNUyEClxD2W6RimZTw78rdqoYyFacmBE5J+XHs=;
+	s=arc-20240116; t=1717760188; c=relaxed/simple;
+	bh=1igZTYjDPXjCcCgy+nI5U257Gn4g4WLUSFaInx/hv2Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mKvHM/O1oYXA3WLyP2n3posEu0OkKtDNDinuEVn+6aGS63DQ1e72KYBv/GAzlvsT1WgBGPDzZonvh++Pj6LwH4f7R/WqWwUduQq/W9YOnXQgnA9+tvTM1ZCVWSd3Lmhf9RD71RN8iyGMg1UNHbcqCWlr7DI4rUIKigzhu6ZZFyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dSa5D7Id; arc=none smtp.client-ip=209.85.167.51
+	 Content-Type:Content-Disposition:In-Reply-To; b=GGyXA0MJHuWZalzU5ZWJTLmYij3Og6Q8pBXJg7mzLFcupTPDTFULGbfQQCF2TRM5VVeQk6ZUZ/eIH0EQxcfM+KSVgWa5GfxuQmXyegdrqPkz3LoHQQoliEfVCBotJp2iwNVxPVnCE9iCitjvsahv5yDdtSCR3TMoEXQ3uuP0ImU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R1jDKiWt; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52bc3130ae6so82891e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 04:35:58 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52b93370ad0so2762637e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 04:36:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717760157; x=1718364957; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1717760185; x=1718364985; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TVtD+zV7wnja7KGiO0Z7oOp05pY2Z3I36kzwWL8xPYo=;
-        b=dSa5D7IdF/L8OUqGQ+IbTHljaPHi6Bv6CVyLb9DK9ipxhRBfGHwq23WR8PuVSSk8YU
-         lI5i1GYephqgHd4HBJgzn6BD/+SNEjeUwOBwOFFCGPOCqU4HZ4hbwBbXoDyBuCqSPRm4
-         po6966bHtOgEFoPIjHyhDQXyoYLf6ysr0LzPeak+EJIZdyO80gax1I/9eBjw+pePkw6B
-         BpmBNW+16zn9bJIMz14t54fFGkxdN28iWHLeO9xQpl1a9jM61V1XlVxoBdVuCbKk1xw5
-         YZ51yqL1oxtt5kWj8UKB5WjHWtHrn0wFT0K+SoSR04jXTBelrRj5opIIiebb9vIwMar/
-         gwzA==
+        bh=H1mui+HBDxQUFLppGRIOuzCMTBMXzF+PVJZ3OkaVODY=;
+        b=R1jDKiWtU+lV54BMnt1Zcuivxy8lZEWiYbJ3kGCl1zjVP0y/YxHNd0479hzQ8IOkEM
+         WrQVGMKKBYGI8XrB4TwfgSTpXfdu0BHHJr/FyB99YLK1Swr3i1MKBcFI4eF6am3eCC33
+         zzs7kXHXiQplThCVR4m0RManiE1NuzDBPx+Vp+HtZExGITKaI++RlpskRHZBdeHEV+/o
+         VLTaoIilJgPH4tiIsjQ7uyP1LYCboJUOD1eYCPhoMAwKDLVwEBw6U08kXgsEBsrzyE/A
+         4+95MAVbi7RQvS2fLV4gfLSYCqrLQYvs7n2WRMnU103ATMFOdhj9OnxIQk7k8OlbKgw9
+         AFrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717760157; x=1718364957;
+        d=1e100.net; s=20230601; t=1717760185; x=1718364985;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TVtD+zV7wnja7KGiO0Z7oOp05pY2Z3I36kzwWL8xPYo=;
-        b=tGWH15GpybOJuTONU7uRqBpIIHcXFv35UDAPvJTAABZRCtt5wrfJKfkMBr72DWF2SY
-         /a+ReLN7OiLEJYwzmFGNqtfbKKwogYZfYEm1KVhZ5WkqeYqjjoQKmwakC5KlRJvZ942o
-         g3GTTU1H9ehVNawGktrCtTanjC0MGA7GwyS7cGMKY7TIG28dao+zsfrg40nZyJcHJhfy
-         85yOBQS0cZjoDsqgkShyNAItpmPDepdUVRApaktAqVN4uKljn7sTrscCcKa+PsGjfSct
-         j/RZ6/eHuefo/0TPRHCkwten5qu/ivOCIq+KzGkZmsglSFQ5jqqsENCEr40BA4YdQaCD
-         Kc3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWNJe46wBOWi3+6eAx9g6k1+8b+9F7GFS/S3Q9rrksKoCg25uYpiyadXIaJBMOvXN+aqlRe5jFoyIXuFraJIF6taZUVBJsOai7PkyEI
-X-Gm-Message-State: AOJu0YwIj3VuLGOR8VknZfcOz77Hlipmfg8Fmk+cpViRX+NmhTz5o4AE
-	zHmgxqqFt5Ls36fG0PB4vBfDPYz5zAHSdlzBlMm9zv7mff86Qxo9rSbNX1/SvdQ=
-X-Google-Smtp-Source: AGHT+IFay9IRU13Xph94NG/GDPSxNsa55Pz5Mda/K1oTl0miD68iqz/9fkFC83ciGPGzpfoDwIe63g==
-X-Received: by 2002:a05:6512:34d4:b0:52b:8843:b084 with SMTP id 2adb3069b0e04-52bb9fc95a6mr1306467e87.47.1717760157125;
-        Fri, 07 Jun 2024 04:35:57 -0700 (PDT)
+        bh=H1mui+HBDxQUFLppGRIOuzCMTBMXzF+PVJZ3OkaVODY=;
+        b=df0gImo5Q+ZVttj82Ze22AjTKcwkXTfkIjkHj3vJ46Is1SZHU75Y3SiNWPWJLOQfab
+         k3hBHUCoh/twbZZxY9wMXU03h0NDVBhXHoXC68Y84WjmnT28vG22QzXL6WgVK/iEFJNm
+         3KFHb5uIxL2iOZYAUbi9s0xBuo5cgYeHgC9a0MwKwlNfKR460rX9G9xnR5LMZfaTfIM6
+         BcwvjpuifuMVBL/8D4QTT68PT0vFDyCP4BmgZCZXaTu6uw19U94HGloulHw5Xf9CsrYQ
+         f+Sg5J99JFUXSf8lq0sNkwcnXzL73QYfAleTZWuak4DpMo4m5DIDKVMbpeeW2L9/h8F7
+         hGkw==
+X-Forwarded-Encrypted: i=1; AJvYcCV88dG2T7eLZOGitlzRGerb0iojW+JdK7uLfCmHLrTs6sd3BWfsfdNVAr7i6p37L+BWekXXE5ee+DTO9TCZtrSkg6JqU3G4VHmjI1lN
+X-Gm-Message-State: AOJu0YzgX3wS43FDLsWIR/QOLIMlezbx7NzLn+hYDgPgZGXO+buXECKf
+	ZuK5+dXThkjP77fd4R1bFD6mv4ac0l41G/G64/Yr+6uDLvgfkZCXmb6KAQbb2Ok=
+X-Google-Smtp-Source: AGHT+IGM/8XZd+a4grzjTEledb54wxf8n6pUQ5sZVQn1MV8kXi0PBuKaZ5LPBD39hh9yVO3xSnEBEw==
+X-Received: by 2002:a05:6512:1308:b0:521:cc8a:46dd with SMTP id 2adb3069b0e04-52bb9f6275fmr2450550e87.11.1717760185284;
+        Fri, 07 Jun 2024 04:36:25 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb423e1c0sm508994e87.230.2024.06.07.04.35.56
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb41ee3eesm502556e87.74.2024.06.07.04.36.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 04:35:56 -0700 (PDT)
-Date: Fri, 7 Jun 2024 14:35:54 +0300
+        Fri, 07 Jun 2024 04:36:24 -0700 (PDT)
+Date: Fri, 7 Jun 2024 14:36:22 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Ekansh Gupta <quic_ekangupt@quicinc.com>
 Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
 	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
-	quic_chennak@quicinc.com
-Subject: Re: [PATCH v4 07/11] misc: fastrpc: Redesign remote heap management
-Message-ID: <vwnjuqjdworjbjd2ys5sohaurl3ag3jtf4qert6l2hdg3gsjyu@nv62f6tdv2mz>
+	quic_chennak@quicinc.com, stable <stable@kernel.org>
+Subject: Re: [PATCH v4 08/11] misc: fastrpc: Fix ownership reassignment of
+ remote heap
+Message-ID: <7yogq6uxespor2vjzwu5fdw33aahhkep4dmpmjzkinke6deg4j@x6gmcyuotsex>
 References: <20240606165939.12950-1-quic_ekangupt@quicinc.com>
- <20240606165939.12950-8-quic_ekangupt@quicinc.com>
+ <20240606165939.12950-9-quic_ekangupt@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,250 +84,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240606165939.12950-8-quic_ekangupt@quicinc.com>
+In-Reply-To: <20240606165939.12950-9-quic_ekangupt@quicinc.com>
 
-On Thu, Jun 06, 2024 at 10:29:27PM +0530, Ekansh Gupta wrote:
-> Current remote heap design is adding the memory to channel context
-> but here is also a possibility of audio daemon requesting new remote
-> heap memory using map ioctl. For this purpose, it's much easier to
-> maintain these types of static PD specific remote heap allocations
-> as a list. This remote heap memory is only getting freed during
-> rpmsg remove but it is also needed to be freed when static PD is
-> shutting down as this memory will no longed be used by static PDs.
-
-> For daemon kill cases where audio PD is still alive, the init IOCTL
-> will again take the same address and size to DSP which DSP would try
-> to map again which would result in mapping failure the PD might
-> already be using the memory. In Daemon kill cases, the address and
-> size is needed to be sent as zero and DSP will skip mapping in this
-> case.
-
-Are these two sentences describing the same usecase or two different
-cases?
-
-> Add changes to manage remote heap in a way that it can be added
-> and removed as per needed and the information is sent as zero in daemon
-> kill cases.
+On Thu, Jun 06, 2024 at 10:29:28PM +0530, Ekansh Gupta wrote:
+> Audio PD daemon will allocate memory for audio PD dynamic loading
+> usage when it is attaching for the first time to audio PD. As
+> part of this, the memory ownership is moved to the VM where
+> audio PD can use it. In case daemon process is killed without any
+> impact to DSP audio PD, the daemon process will retry to attach to
+> audio PD and in this case memory won't be reallocated. If the invoke
+> fails due to any reason, as part of err_invoke, the memory ownership
+> is getting reassigned to HLOS even when the memory was not allocated.
+> At this time the audio PD might still be using the memory and an
+> attemp of ownership reassignment would result in memory issue.
 > 
+> Fixes: 0871561055e6 ("misc: fastrpc: Add support for audiopd")
+
+Fixes before functional changes.
+
+> Cc: stable <stable@kernel.org>
 > Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
 > ---
->  drivers/misc/fastrpc.c | 94 +++++++++++++++++++++++++++++++++---------
->  1 file changed, 75 insertions(+), 19 deletions(-)
+>  drivers/misc/fastrpc.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
 > diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> index 7ee8bb3a9a6f..3686b2d34741 100644
+> index 3686b2d34741..68c1595446d5 100644
 > --- a/drivers/misc/fastrpc.c
 > +++ b/drivers/misc/fastrpc.c
-> @@ -274,6 +274,7 @@ struct fastrpc_session_ctx {
->  };
->  
->  struct fastrpc_static_pd {
-> +	struct list_head rmaps;
->  	char *servloc_name;
->  	char *spdname;
->  	void *pdrhandle;
-> @@ -299,7 +300,6 @@ struct fastrpc_channel_ctx {
->  	u32 dsp_attributes[FASTRPC_MAX_DSP_ATTRIBUTES];
->  	struct fastrpc_device *secure_fdevice;
->  	struct fastrpc_device *fdevice;
-> -	struct fastrpc_buf *remote_heap;
->  	struct list_head invoke_interrupted_mmaps;
->  	bool secure;
->  	bool unsigned_support;
-> @@ -1256,6 +1256,53 @@ static bool is_session_rejected(struct fastrpc_user *fl, bool unsigned_pd_reques
->  	return false;
->  }
->  
-> +static void fastrpc_mmap_remove_pdr(struct fastrpc_static_pd *spd)
-
-This isn't removing pdr.
-
-> +{
-> +	struct fastrpc_buf *buf, *b;
-> +	struct fastrpc_channel_ctx *cctx;
-> +	int err;
-> +
-> +	if (!spd || !spd->fl)
-> +		return;
-
-Any protection against concurrent spd->fl modification?
-
-> +
-> +	cctx = spd->cctx;
-> +
-> +	spin_lock(&spd->fl->lock);
-> +	list_for_each_entry_safe(buf, b, &spd->rmaps, node) {
-> +		list_del(&buf->node);
-> +		spin_unlock(&spd->fl->lock);
-> +		if (cctx->vmcount) {
-> +			u64 src_perms = 0;
-> +			struct qcom_scm_vmperm dst_perms;
-> +			u32 i;
-> +
-> +			for (i = 0; i < cctx->vmcount; i++)
-> +				src_perms |= BIT(cctx->vmperms[i].vmid);
-> +
-> +			dst_perms.vmid = QCOM_SCM_VMID_HLOS;
-> +			dst_perms.perm = QCOM_SCM_PERM_RWX;
-> +			err = qcom_scm_assign_mem(buf->phys, (u64)buf->size,
-> +				&src_perms, &dst_perms, 1);
-> +			if (err) {
-> +				pr_err("%s: Failed to assign memory phys 0x%llx size 0x%llx err %d\n",
-> +					__func__, buf->phys, buf->size, err);
-
-dev_err, no __func__
-
-> +				return;
-> +			}
-> +		}
-> +		fastrpc_buf_free(buf);
-> +		spin_lock(&spd->fl->lock);
-> +	}
-> +	spin_unlock(&spd->fl->lock);
-> +}
-> +
-> +static void fastrpc_mmap_remove_ssr(struct fastrpc_channel_ctx *cctx)
-
-SSR?
-
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < FASTRPC_MAX_SPD; i++)
-> +		fastrpc_mmap_remove_pdr(&cctx->spd[i]);
-> +}
-> +
->  static struct fastrpc_static_pd *fastrpc_get_spd_session(
->  				struct fastrpc_user *fl)
->  {
-> @@ -1282,7 +1329,9 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
->  	struct fastrpc_init_create_static init;
->  	struct fastrpc_invoke_args *args;
->  	struct fastrpc_phy_page pages[1];
-> +	struct fastrpc_buf *buf = NULL;
->  	struct fastrpc_static_pd *spd = NULL;
-> +	u64 phys = 0, size = 0;
+> @@ -1334,6 +1334,7 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
+>  	u64 phys = 0, size = 0;
 >  	char *name;
 >  	int err;
+> +	bool scm_done = false;
 >  	struct {
-> @@ -1330,23 +1379,23 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
->  		goto err_name;
->  	}
->  	fl->spd = spd;
-> -	if (!fl->cctx->remote_heap) {
-> -		err = fastrpc_remote_heap_alloc(fl, fl->sctx->dev, init.memlen,
-> -						&fl->cctx->remote_heap);
-> +	if (list_empty(&spd->rmaps)) {
-> +		err = fastrpc_remote_heap_alloc(fl, fl->sctx->dev, init.memlen, &buf);
->  		if (err)
->  			goto err_name;
->  
-> +		phys = buf->phys;
-> +		size = buf->size;
->  		/* Map if we have any heap VMIDs associated with this ADSP Static Process. */
->  		if (fl->cctx->vmcount) {
->  			u64 src_perms = BIT(QCOM_SCM_VMID_HLOS);
->  
-> -			err = qcom_scm_assign_mem(fl->cctx->remote_heap->phys,
-> -							(u64)fl->cctx->remote_heap->size,
-> -							&src_perms,
-> -							fl->cctx->vmperms, fl->cctx->vmcount);
-> +			err = qcom_scm_assign_mem(phys, (u64)size,
-> +						&src_perms,
-> +						fl->cctx->vmperms, fl->cctx->vmcount);
->  			if (err) {
->  				dev_err(fl->sctx->dev, "Failed to assign memory with phys 0x%llx size 0x%llx err %d\n",
-> -					fl->cctx->remote_heap->phys, fl->cctx->remote_heap->size, err);
-> +					phys, size, err);
+>  		int pgid;
+>  		u32 namelen;
+> @@ -1398,6 +1399,7 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
+>  					phys, size, err);
 >  				goto err_map;
 >  			}
+> +			scm_done = true;
 >  		}
-> @@ -1365,8 +1414,8 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
->  	args[1].length = inbuf.namelen;
->  	args[1].fd = -1;
+>  	}
 >  
-> -	pages[0].addr = fl->cctx->remote_heap->phys;
-> -	pages[0].size = fl->cctx->remote_heap->size;
-> +	pages[0].addr = phys;
-> +	pages[0].size = size;
+> @@ -1439,7 +1441,7 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
 >  
->  	args[2].ptr = (u64)(uintptr_t) pages;
->  	args[2].length = sizeof(*pages);
-> @@ -1382,6 +1431,12 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
->  	kfree(args);
->  	kfree(name);
->  
-> +	if (buf) {
-> +		spin_lock(&fl->lock);
-> +		list_add_tail(&buf->node, &spd->rmaps);
-> +		spin_unlock(&fl->lock);
-> +	}
-> +
 >  	return 0;
 >  err_invoke:
->  	if (fl->cctx->vmcount) {
-> @@ -1394,15 +1449,15 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
->  
->  		dst_perms.vmid = QCOM_SCM_VMID_HLOS;
->  		dst_perms.perm = QCOM_SCM_PERM_RWX;
-> -		err = qcom_scm_assign_mem(fl->cctx->remote_heap->phys,
-> -						(u64)fl->cctx->remote_heap->size,
-> -						&src_perms, &dst_perms, 1);
-> +		err = qcom_scm_assign_mem(phys, (u64)size,
-
-Why do you need to convert to u64?
-
-> +					&src_perms, &dst_perms, 1);
-
-Maybe it can fit into a single line?
-
->  		if (err)
->  			dev_err(fl->sctx->dev, "Failed to assign memory phys 0x%llx size 0x%llx err %d\n",
-> -				fl->cctx->remote_heap->phys, fl->cctx->remote_heap->size, err);
-> +				phys, size, err);
->  	}
->  err_map:
-> -	fastrpc_buf_free(fl->cctx->remote_heap);
-> +	if (buf)
-> +		fastrpc_buf_free(buf);
->  err_name:
->  	kfree(name);
->  err:
-> @@ -2250,6 +2305,7 @@ static void fastrpc_pdr_cb(int state, char *service_path, void *priv)
->  			spd->servloc_name,
->  			domains[cctx->domain_id]);
->  		spd->ispdup = false;
-> +		fastrpc_mmap_remove_pdr(spd);
->  		fastrpc_notify_pdr_drivers(cctx, spd->servloc_name);
->  		break;
->  	case SERVREG_SERVICE_STATE_UP:
-> @@ -2401,6 +2457,7 @@ static int fastrpc_setup_service_locator(struct fastrpc_channel_ctx *cctx, char
->  	cctx->spd[spd_session].servloc_name = client_name;
->  	cctx->spd[spd_session].spdname = service_path;
->  	cctx->spd[spd_session].cctx = cctx;
-> +	INIT_LIST_HEAD(&cctx->spd[spd_session].rmaps);
->  	service = pdr_add_lookup(handle, service_name, service_path);
->  	if (IS_ERR(service)) {
->  		err = PTR_ERR(service);
-> @@ -2567,9 +2624,6 @@ static void fastrpc_rpmsg_remove(struct rpmsg_device *rpdev)
->  	list_for_each_entry_safe(buf, b, &cctx->invoke_interrupted_mmaps, node)
->  		list_del(&buf->node);
->  
-> -	if (cctx->remote_heap)
-> -		fastrpc_buf_free(cctx->remote_heap);
-> -
->  	for (i = 0; i < FASTRPC_MAX_SPD; i++) {
->  		if (cctx->spd[i].pdrhandle)
->  			pdr_handle_release(cctx->spd[i].pdrhandle);
-> @@ -2577,6 +2631,8 @@ static void fastrpc_rpmsg_remove(struct rpmsg_device *rpdev)
->  
->  	of_platform_depopulate(&rpdev->dev);
->  
-> +	fastrpc_mmap_remove_ssr(cctx);
-> +
->  	fastrpc_channel_ctx_put(cctx);
->  }
->  
+> -	if (fl->cctx->vmcount) {
+> +	if (fl->cctx->vmcount && scm_done) {
+>  		u64 src_perms = 0;
+>  		struct qcom_scm_vmperm dst_perms;
+>  		u32 i;
 > -- 
 > 2.43.0
 > 
