@@ -1,180 +1,149 @@
-Return-Path: <linux-kernel+bounces-205748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A06C98FFFC0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:41:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEAF68FFFBF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:41:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F758287523
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:41:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4192AB264D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4322C15CD79;
-	Fri,  7 Jun 2024 09:41:10 +0000 (UTC)
-Received: from mxde.zte.com.cn (mxde.zte.com.cn [209.9.37.143])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6232D15B969;
+	Fri,  7 Jun 2024 09:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aD4Or4dx"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44FB15CD5C
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.9.37.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFB915B552
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717753269; cv=none; b=qIk7Wsa+JeduYPm6Fj8BuCbTJ1gByxAKTO/6/p3kLFBhAY+qhs4gSNVwtDyktfUpAX2UpDrjRDsr0NRh1WmihReT3aDWzsnm4144IIoJhAi2iCwngjGSqas3S8NXeOEEF0ZBgEA6/+F6EFLP9CzRtIZeh147I7OXkkQHXcw5ArM=
+	t=1717753266; cv=none; b=k/UD0/l1j4XBMuRy3Fa03VSEA1MXSVctTwvKvJ1o1bkNcMC4rolR4WTn5NNpuEh0AGpZC3F5zwvQNk0T94ss1iR2VqfdbxabJPmqQrinG+ozBigQX8wQzfTBHLQ7jojM9ZWzYA5B3nwlr2ZqbEEKvakiGxqlWPVtTyVVJOT7NJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717753269; c=relaxed/simple;
-	bh=x9fp+gWVJGtIzJ6GcT0SwqoJs5luw78VAYq6ovnD3x4=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=u8BMOiDrRaTZUMDYYCiYiffp2CCEkdppnq6iA7guQlu53ijTCwTpfFwsf7Y4n8Yf56W/pS03FSkkpuERy3dwRutbWXJ9ZHlrWA+l97m0gWOWl2o1wuYvXDyhrGlwzDwoj0RyqxuHcHpt6bCnklLpUg0zK7nwRur63RaeqYyCkng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=209.9.37.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mxhk.zte.com.cn (unknown [192.168.250.137])
-	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by mxde.zte.com.cn (FangMail) with ESMTPS id 4VwbmW6Wx7z5TCGC
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 17:40:59 +0800 (CST)
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4VwbmJ0Sy0z8XrS1;
-	Fri,  7 Jun 2024 17:40:48 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl1.zte.com.cn with SMTP id 4579ejtn002111;
-	Fri, 7 Jun 2024 17:40:45 +0800 (+08)
-	(envelope-from xu.xin16@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Fri, 7 Jun 2024 17:40:48 +0800 (CST)
-Date: Fri, 7 Jun 2024 17:40:48 +0800 (CST)
-X-Zmail-TransId: 2afa6662d5a0ffffffffa1b-000d9
-X-Mailer: Zmail v1.0
-Message-ID: <202406071740485174hcFl7jRxncsHDtI-Pz-o@zte.com.cn>
+	s=arc-20240116; t=1717753266; c=relaxed/simple;
+	bh=npvEOU5cyF70vE44vDzXkaPj0XAa/Rf93Ec8FtjtAEg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J1BHtMepdFnrb3ONR3/psugABQRTyekNEtG+c3EAyGo4Mme/aP/An+kl1cvLmfI3oE60qIhcnynBoxyhObn5KfguEIwDdjlmZPeU/E2uOob2jZGlbbUoSz76cF3mBqxhoXLdyeNRG3e29WD7iPznVTfywYEA/HCgsPAOsGKluwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aD4Or4dx; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6ae1b32752aso10112526d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 02:41:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717753264; x=1718358064; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k/oSqpRfe691rKkuHYiQBq4OSn10B5HpGWWM65PH/D8=;
+        b=aD4Or4dxJEun99ib2N1e/imo03mKC9zISluKYMHoUjxHcNUxyq81pf+7z0OGIL2eFE
+         dw+vDdkZzbVBIPFkRfx1NGPefPSYYIKETIsM2rXao6W3lkhsPhUI30QDHYqYAlwuVg76
+         bgOgwCjQ88VNwPzvjUcN2AkViVZO25vvjoGidItGD+GwoK8iDr5qbIGRfBsNFSn6YzFE
+         cNcfjUcuj9YbBYVLkE9zyeqzLQdnKB4+CTZ7naehcAvEeDq18HD8yKdBS2hTIKsQp8ZR
+         X6Gc7IheqQfsvO1D9NpF3eYYyjukv7mP0kBU86ZQGiqlX89lZcvZl21Rjvhmv0ANBS1v
+         igaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717753264; x=1718358064;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k/oSqpRfe691rKkuHYiQBq4OSn10B5HpGWWM65PH/D8=;
+        b=sW27Fy5W8uC2YyB/k2D5qZckuQ+7bw02x/YZIBz4gIJk9s33sOnyOvXzI5y3J2eMQi
+         /3X2tjnMrYkBrVGbEcqyQ8Vd4i6jiJIAXzUxJoNCfALyg9akY2CTKZ+sY7jY+b9rILI6
+         n7ArSVV5+1IWHT2MSIZVBFRY+sf++pK2QLNIKumfGWGy0/p8cUgx56UQ4RFT79g4YCQ0
+         R6t71Tr9Ipo0V2unv72e3Tdm1tXzH3Afiy7j5ruQ6/+V7agyYbzSC57ovJfp0BxymLEN
+         YcFmSQQfi6ctrCiYbFET9JQYQI5O0pm+waY+mhdIjtaEtRvOWEdXY/SOSXSIq5oIgg/o
+         Ma5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVLVXtuPqs5LvdTC8ZmmO+7j1d2x2CC3RyUUqd6XtlyIPO9ZlCvXgDjlL5TJIjZG7ZOoElzxtfRxUFAS3TGBVcp+Jd6TJ5CvxWB/+vF
+X-Gm-Message-State: AOJu0YweBbkK0BeeIHrGDLQJw0LKsSvPTTSy4sSC1ptPtvDCOpZEXziS
+	dCQ7EjpVH704Zi5RHOIkeKE0f8mSLsgz7YkgQCGa4+OsROhDZzR1qTmzNJwMEecN+YJ9O9wwt3O
+	7wM4dv69pJHCvIe/xa+QJi3zG78M=
+X-Google-Smtp-Source: AGHT+IHn0b6EwReH7VI6F17pOZO2Pe20rM3RuA+jzTt8WWs3Xl1Tg5kPGQ/pBjjGZKYKADka1oStpZieFokTq4hFc6k=
+X-Received: by 2002:a05:6214:534a:b0:6b0:5933:3a8a with SMTP id
+ 6a1803df08f44-6b059b851a8mr20938446d6.15.1717753263959; Fri, 07 Jun 2024
+ 02:41:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xu.xin16@zte.com.cn>
-To: <david@redhat.com>, <ziy@nvidia.com>, <v-songbaohua@oppo.com>,
-        <akpm@linux-foundation.org>
-Cc: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <mhocko@kernel.org>,
-        <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>,
-        <ran.xiaokai@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHQgdjNdIG1tOiBodWdlX21lbW9yeTogZml4IG1pc3VzZWQgbWFwcGluZ19sYXJnZV9mb2xpb19zdXBwb3J0KCnCoCBmb3IgYW5vbiBmb2xpb3M=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 4579ejtn002111
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6662D5AA.000/4VwbmW6Wx7z5TCGC
+MIME-Version: 1.0
+References: <CAJD7tkb=5GJ9SNUwDsu1Zy3Tus4rjsNo60Hg9N7=gGth409Diw@mail.gmail.com>
+ <CAOUHufb6zXr14Wm3T-4-OJh7iAq+vzDKwVYfHLhMMt96SpiZXg@mail.gmail.com>
+ <CAJD7tkZ+QY55GTzW9A7ZCm=rxAEfrW76cWXf8o5nwiKSXp8z=w@mail.gmail.com>
+ <20240604231019.18e2f373@yea> <CAJD7tkYq5u7B+0UH2XKpeWJnUxoO2kJ1_XZ2JOgYpyNEVR7u0g@mail.gmail.com>
+ <20240606010431.2b33318c@yea> <CAJD7tkbhWYzx=6YmzAh0F+cK-_Bn8mPOH7gMbQS7YVXmaFSgFg@mail.gmail.com>
+ <e68bcc6a-25b1-42aa-83b3-5d457b254cbe@linux.dev> <20240606043156.GC11718@google.com>
+ <6335c05d-9493-4b03-85a7-f2dd91db9451@linux.dev> <20240606054334.GD11718@google.com>
+In-Reply-To: <20240606054334.GD11718@google.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Fri, 7 Jun 2024 10:40:52 +0100
+Message-ID: <CAKEwX=OAEzKW9zO9pn41V71A8Ua2dJjD3DY6RsDMNdSd-4ts5w@mail.gmail.com>
+Subject: Re: kswapd0: page allocation failure: order:0, mode:0x820(GFP_ATOMIC),
+ nodemask=(null),cpuset=/,mems_allowed=0 (Kernel v6.5.9, 32bit ppc)
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Chengming Zhou <chengming.zhou@linux.dev>, Yosry Ahmed <yosryahmed@google.com>, 
+	Erhard Furtner <erhard_f@mailbox.org>, Yu Zhao <yuzhao@google.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	Johannes Weiner <hannes@cmpxchg.org>, Minchan Kim <minchan@kernel.org>, 
+	"Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+On Thu, Jun 6, 2024 at 6:43=E2=80=AFAM Sergey Senozhatsky
+<senozhatsky@chromium.org> wrote:
+>
+> On (24/06/06 12:46), Chengming Zhou wrote:
+> > >> Agree, I think we should try to improve locking scalability of zsmal=
+loc.
+> > >> I have some thoughts to share, no code or test data yet:
+> > >>
+> > >> 1. First, we can change the pool global lock to per-class lock, whic=
+h
+> > >>    is more fine-grained.
+> > >
+> > > Commit c0547d0b6a4b6 "zsmalloc: consolidate zs_pool's migrate_lock
+> > > and size_class's locks" [1] claimed no significant difference
+> > > between class->lock and pool->lock.
+> >
+> > Ok, I haven't looked into the history much, that seems preparation of t=
+rying
+> > to introduce reclaim in the zsmalloc? Not sure. But now with the reclai=
+m code
+> > in zsmalloc has gone, should we change back to the per-class lock? Whic=
+h is
+>
+> Well, the point that commit made was that Nhat (and Johannes?) were
+> unable to detect any impact of pool->lock on a variety of cases.  So
+> we went on with code simplification.
 
-When I did a large folios split test, a WARNING
-"[ 5059.122759][  T166] Cannot split file folio to non-0 order"
-was triggered. But the test cases are only for anonmous folios.
-while mapping_large_folio_support() is only reasonable for page
-cache folios.
+Yeah, we benchmarked it before zsmalloc writeback was introduced (the
+patch to remove class lock was a prep patch of the series). We weren't
+able to detect any regression at the time with just using a global
+pool lock.
 
-In split_huge_page_to_list_to_order(), the folio passed to
-mapping_large_folio_support() maybe anonmous folio. The
-folio_test_anon() check is missing. So the split of the anonmous THP
-is failed. This is also the same for shmem_mapping(). We'd better add
-a check for both. But the shmem_mapping() in __split_huge_page() is
-not involved, as for anonmous folios, the end parameter is set to -1, so
-(head[i].index >= end) is always false. shmem_mapping() is not called.
+>
+> > obviously more fine-grained than the pool lock. Actually, I have just d=
+one it,
+> > will test to get some data later.
+>
+> Thanks, we'll need data on this.  I'm happy to take the patch, but
+> jumping back and forth between class->lock and pool->lock merely
+> "for obvious reasons" is not what I'm extremely excited about.
 
-Also add a VM_WARN_ON_ONCE() in mapping_large_folio_support()
-for anon mapping, So we can detect the wrong use more easily.
+FWIW, I do think it'd be nice if we can make the locking more granular
+- the pool lock now is essentially a global lock, and we're just
+getting around that by replicating the (z)pools themselves.
 
-THP folios maybe exist in the pagecache even the file system doesn't
-support large folio, it is because when CONFIG_TRANSPARENT_HUGEPAGE
-is enabled, khugepaged will try to collapse read-only file-backed pages
-to THP. But the mapping does not actually support multi order
-large folios properly.
+Personally, I'm not super convinced about class locks. We're
+essentially relying on the post-compression size of the data to
+load-balance the queries - I can imagine a scenario where a workload
+has a concentrated distribution of post-compression data (i.e its
+pages are compressed to similar-ish sizes), and we're once again
+contending for a (few) lock(s) again.
 
-Using /sys/kernel/debug/split_huge_pages to verify this, with this
-patch, large anon THP is successfully split and the warning is ceased.
-
-Changes since v2:
- - fix two coding style problems suggested by David
- - update the comments of the order-1 case suggested by Barry
-
-Reviewed-by: Barry Song <baohua@kernel.org>
-Reviewed-by: Zi Yan <ziy@nvidia.com>
-Acked-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
----
- include/linux/pagemap.h |  4 ++++
- mm/huge_memory.c        | 28 +++++++++++++++++-----------
- 2 files changed, 21 insertions(+), 11 deletions(-)
-
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index ee633712bba0..59f1df0cde5a 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -381,6 +381,10 @@ static inline void mapping_set_large_folios(struct address_space *mapping)
-  */
- static inline bool mapping_large_folio_support(struct address_space *mapping)
- {
-+	/* AS_LARGE_FOLIO_SUPPORT is only reasonable for pagecache folios */
-+	VM_WARN_ONCE((unsigned long)mapping & PAGE_MAPPING_ANON,
-+			"Anonymous mapping always supports large folio");
-+
- 	return IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
- 		test_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
- }
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 317de2afd371..155d6a9f73be 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -3009,30 +3009,36 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 	if (new_order >= folio_order(folio))
- 		return -EINVAL;
-
--	/* Cannot split anonymous THP to order-1 */
--	if (new_order == 1 && folio_test_anon(folio)) {
--		VM_WARN_ONCE(1, "Cannot split to order-1 folio");
--		return -EINVAL;
--	}
--
--	if (new_order) {
--		/* Only swapping a whole PMD-mapped folio is supported */
--		if (folio_test_swapcache(folio))
-+	if (folio_test_anon(folio)) {
-+		/* order-1 is not supported for anonymous THP. */
-+		if (new_order == 1) {
-+			VM_WARN_ONCE(1, "Cannot split to order-1 folio");
- 			return -EINVAL;
-+		}
-+	} else if (new_order) {
- 		/* Split shmem folio to non-zero order not supported */
- 		if (shmem_mapping(folio->mapping)) {
- 			VM_WARN_ONCE(1,
- 				"Cannot split shmem folio to non-0 order");
- 			return -EINVAL;
- 		}
--		/* No split if the file system does not support large folio */
--		if (!mapping_large_folio_support(folio->mapping)) {
-+		/*
-+		 * No split if the file system does not support large folio.
-+		 * Note that we might still have THPs in such mappings due to
-+		 * CONFIG_READ_ONLY_THP_FOR_FS. But in that case, the mapping
-+		 * does not actually support large folios properly.
-+		 */
-+		if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) &&
-+		    !mapping_large_folio_support(folio->mapping)) {
- 			VM_WARN_ONCE(1,
- 				"Cannot split file folio to non-0 order");
- 			return -EINVAL;
- 		}
- 	}
-
-+	/* Only swapping a whole PMD-mapped folio is supported */
-+	if (folio_test_swapcache(folio) && new_order)
-+		return -EINVAL;
-
- 	is_hzp = is_huge_zero_folio(folio);
- 	if (is_hzp) {
--- 
-2.15.2
+That said, I'll let the data tell the story :) We don't need a perfect
+solution, just a good enough solution for now.
 
