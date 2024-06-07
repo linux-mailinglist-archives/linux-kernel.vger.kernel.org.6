@@ -1,90 +1,105 @@
-Return-Path: <linux-kernel+bounces-205591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE8928FFDEA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:14:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B60D28FFDEF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A79D28C327
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:14:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B334D1C23370
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEEB315ADB5;
-	Fri,  7 Jun 2024 08:14:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A1C13E043;
-	Fri,  7 Jun 2024 08:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125C315B0E1;
+	Fri,  7 Jun 2024 08:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="V+hZ8qVS"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE9C15381F;
+	Fri,  7 Jun 2024 08:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717748084; cv=none; b=nt0M1QwO+PvDT+cMopxLCwpD2Uk/9wSalzpIvtIdA+opTuGnH4rXoBWJFgj7mBtp5k/wqIuNwqnW6U4JMP7IWSRYmBvXKkxLcuxHhGUylak3INPW7h8j8yCqTCN2cd+eDBNwPMRHbSXz0YGhEWWdgGNTgL9llwbgZS6vnA8ozRQ=
+	t=1717748384; cv=none; b=HVfDJrUvxpyQZlhQEYJTxsKCVE5K7chdbqSmxT4qwW7TyssmA9Sr5km6xYaWTJw5kxHUpsiMj5m2PoXWVF/ia8TAsFr9AcItZa4egcmpF/sZKnPKTM5Uw48P2MQYSO4XIkf9qJSA+aB2yEgaiBC6M5rQN2XNOrdv2szZx/Boj5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717748084; c=relaxed/simple;
-	bh=Lrv2JMUnu8KtktRB5CsvxnRHmeg5518CYUsd9b4ohQM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tWkqOGnb1qQVU3R3oxJeSKNVE8Y7j8I4CZibW8piwQlnA4L7lkJlvFZce72HrWUd618HJ6mLC0DyOQwUW9N//xXjKHyOqVWSF40c6xeXbVh8H+/V2LP3yU7gjgGqPpYg0ExFpYunh7+0Jw9DFv390MDfPjFt0sOa5SrKcZJqY2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3A3862F4;
-	Fri,  7 Jun 2024 01:15:06 -0700 (PDT)
-Received: from [192.168.2.88] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 151483F64C;
-	Fri,  7 Jun 2024 01:14:39 -0700 (PDT)
-Message-ID: <c11acac7-085a-4041-a1f3-8b4f46e4b691@arm.com>
-Date: Fri, 7 Jun 2024 10:14:38 +0200
+	s=arc-20240116; t=1717748384; c=relaxed/simple;
+	bh=8ylq6lTmAICvJ78ovAeFFxwYjpztjGrZBRXCN4JMfuw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JgN3eTQfLcnxJVrcmpvyJLO52XC9zVEfHjCDwVeDayXoNr7Qlp+SiC1vEwQRY9Ih10SYj6iSbj/Bo1ciO4fE5HrTiRTb83oSum39yQPX+NoSvijMnv9/m6ywsiBl49uS1GSJ3WPr/pqWuWuH0fgEIweemuV8sD96z/RbyyXLp0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=V+hZ8qVS; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 1EC07A041E;
+	Fri,  7 Jun 2024 10:19:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=wg6qi7CwlG9mPI6UdwwMmwNTJpAiHxal7cH+O7K8jiE=; b=
+	V+hZ8qVSziVHanXhxnf5+l5T8lhFnPf3WbTtMhh9mIwqxde3ceKpv8MK1K464NGC
+	dgQlb3gp1+EEH1B7w1tqVS2HX5KlfRPniKxD9pOJWYtSfE0VfPJnbBOydx7Mwmz0
+	kXQV30RTeh2T3WiRkgwY/EH+2unCA5bZF7yYLJOHyT3KLEMhBGA/cS44mwp+gLIr
+	OpxTXh8ZpGzZJFv9KPfFi9FQE0+dYjnIbch2INK35TvXITGLKYk7sO6IRFNmmSfv
+	SXe0BCmV5mlO/Ljeg8k3U/4IOASRVAi98NnVO0cna3FlabHT9kZmBlGXw+LSM3cU
+	kgvbYs5fhMx3ANzBDFYQa/FmsNeV9hgHo/xQUHSmtIPddNVJBs3WNP0Yze1Zd7lF
+	Nqs9TUCDXCi2zdXYAiWn6z8Eh9Xffg6if5ItsQAdu5i4WmGvTwYCN6ydcGLP08KB
+	8ffNCf3d202CNMQUUpDXfw2HOdonumwbtZ1bX7xdVfPep0BJAG8BriuttgXmW9I2
+	y9MsalHyN/aT6Z/mm0XACJu1gBjVzQFtIr2CV2NrKI0Twv2Mpl5NXx48nJW5t4ef
+	zFPz6FbooLpQTgKhbyGA5XgJNRbEvpErbndO7ML2iB1yTz3mTH3AoZiEbJJ9iRA8
+	BozzBl0+EEVyMvn9YHzoamYq4dOgbaxxV03oT2dpJ4A=
+From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
+To: <imx@lists.linux.dev>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, Wei Fang
+	<wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, Clark Wang
+	<xiaoning.wang@nxp.com>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>
+Subject: [PATCH v2] net: fec: Add ECR bit macros, fix FEC_ECR_EN1588 being cleared on link-down
+Date: Fri, 7 Jun 2024 10:18:55 +0200
+Message-ID: <20240607081855.132741-1-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] cpuidle: teo: Increase minimum time to stop tick
-To: Christian Loehle <christian.loehle@arm.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, rafael@kernel.org
-Cc: vincent.guittot@linaro.org, qyousef@layalina.io, peterz@infradead.org,
- daniel.lezcano@linaro.org, anna-maria@linutronix.de,
- kajetan.puchalski@arm.com, lukasz.luba@arm.com
-References: <20240606090050.327614-1-christian.loehle@arm.com>
- <20240606090050.327614-5-christian.loehle@arm.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <20240606090050.327614-5-christian.loehle@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1717748379;VERSION=7972;MC=3391927748;ID=131151;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2945A12957627061
 
-On 06/06/2024 11:00, Christian Loehle wrote:
-> Since stopping the tick isn't free, add at least some minor constant
-> (1ms) for the threshold to stop the tick.
+FEC_ECR_EN1588 bit gets cleared after MAC reset in `fec_stop()`, which
+makes all 1588 functionality shut down on link-down. However, some
+functionality needs to be retained (e.g. PPS) even without link.
 
-Sounds pretty arbitrary to me? 'duration_ns' is either based on
-target_residency_ns or tick_nohz_get_sleep_length() or even set to
-TICK_NSEC/2. Does adding 1ms makes sense to all these cases? But then
-why 1ms?
+Signed-off-by: "Csókás, Bence" <csokas.bence@prolan.hu>
+---
+ drivers/net/ethernet/freescale/fec_main.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
-> ---
->  drivers/cpuidle/governors/teo.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/teo.c
-> index 216d34747e3b..ca9422bbd8db 100644
-> --- a/drivers/cpuidle/governors/teo.c
-> +++ b/drivers/cpuidle/governors/teo.c
-> @@ -622,10 +622,10 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
->  	/*
->  	 * Allow the tick to be stopped unless the selected state is a polling
->  	 * one or the expected idle duration is shorter than the tick period
-> -	 * length.
-> +	 * length plus some constant (1ms) to account for stopping it.
->  	 */
->  	if ((!(drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
-> -	    duration_ns >= TICK_NSEC) || tick_nohz_tick_stopped())
-> +	    duration_ns > NSEC_PER_MSEC + TICK_NSEC) || tick_nohz_tick_stopped())
->  		return idx;
->  
->  out_tick_state:
+diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+index 881ece735dcf..fb19295529a2 100644
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -1361,6 +1361,12 @@ fec_stop(struct net_device *ndev)
+ 		writel(FEC_ECR_ETHEREN, fep->hwp + FEC_ECNTRL);
+ 		writel(rmii_mode, fep->hwp + FEC_R_CNTRL);
+ 	}
++
++	if (fep->bufdesc_ex) {
++		val = readl(fep->hwp + FEC_ECNTRL);
++		val |= FEC_ECR_EN1588;
++		writel(val, fep->hwp + FEC_ECNTRL);
++	}
+ }
+ 
+ static void
+-- 
+2.34.1
+
 
 
