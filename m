@@ -1,131 +1,199 @@
-Return-Path: <linux-kernel+bounces-205184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B8908FF8A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:24:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDAFC8FF8A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BB45286491
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 00:24:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E39E8B21A3E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 00:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8BC23DE;
-	Fri,  7 Jun 2024 00:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3600D19D8B9;
+	Fri,  7 Jun 2024 00:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="K5pena32"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GB0D2AzW"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2055.outbound.protection.outlook.com [40.107.93.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855A11843;
-	Fri,  7 Jun 2024 00:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717719863; cv=none; b=RTY6jLRtv9RMWda0f+cDfKoLJ3fUbealLqZVFmNG7xPTc9WAxPFSaCz5wQFEe/AfE5ys6y39YtYK64YW8zWPuCH53d8PKl85tiyyQiMbeZfg6Q17gayQTrv3y6kdq/xCnZBNmismeOdz8XTwb2yXkOy9uUHMcNpBkeX4Bshlkg0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717719863; c=relaxed/simple;
-	bh=tIEKOl+rAfm6uj58kakA2+qTEeRPlwjJrJ3/KAFdyIE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=r3BMmXScFSo7JS5E9F2Xatttc/CWNvHv4QLCSWjist/WxjIgaTb1IkUEXinsK08XPecz4QtsvIhc38F8iCxcHXK2L+4DHsgIC0siCWgNsxgoQV80ff0IWMX5ClfD0yI7gib3OIWyWDdsnFxQ/7ZfMew8thZXzRsYpPy2ctIHPmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=K5pena32; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1717719858;
-	bh=uFaoVtQWOBDLTyF1e/D12sXO9+fnF0aN0aa5g5cu+Ow=;
-	h=Date:From:To:Cc:Subject:From;
-	b=K5pena32tCF+iJZ0E5ZE9sRQbtpRORmNHUUfYSdF+HIkhpAwhrXUhwaEKAn8WhifO
-	 zNJoGa2oddEgg/LS/u1wJD9TsLaO6fQlw/qdOaSwctnq2JTnKT8i60lfMggyqdbTlM
-	 R6blweYuLc3ZX0OO1eWicTFCxpALsiL+G+apVW5Fx5CHY4+0yPOYS9K70JtzaagidZ
-	 EyygfpMHJX5DEnNy4E2q31jQs+gLDjR3JqF4i3S33EzFcugou3YFurtd+2kVk3yWeZ
-	 dHR1fouHOomCH6WEn2w8X8fwexgZJHgtDpzS+wJRsqMJn0d/hmoa28STMtTtMTPnHz
-	 QgU2DHp99X8eg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VwMQB2wvkz4wbh;
-	Fri,  7 Jun 2024 10:24:18 +1000 (AEST)
-Date: Fri, 7 Jun 2024 10:24:17 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Yury Norov
- <yury.norov@gmail.com>
-Subject: linux-next: manual merge of the input tree with the mm tree
-Message-ID: <20240607102417.2cc20b04@canb.auug.org.au>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6FDA48;
+	Fri,  7 Jun 2024 00:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717720033; cv=fail; b=BbWNY1AzUj+83JjzbELYlPHFqSp0srPHMlTL3e4odd9uv+xiDlxbezzTX7R+mJyOPyCqfnBeWlU2DgGCciVNaxUxIfFc4GSvae0BwGshNGjLzdPG16NW4t0vHX8Xip86plRDOCEQZ9YwUhSN0ew3mlopdG93mA6J+BDJ9uGrHJc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717720033; c=relaxed/simple;
+	bh=Xm4g2VrLbdZucedad+rLR4uWbL4Wcbpu55WZtkQOaAc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=u/Pxt4rth89fNdIuhsqAb76IspJzqhYnf7Ycq8NEjlFlShfBkGx+jZiqb+QphmWuvMrFo8NMsJPEeE2jaiNxQNbuMYMMWt1DyUGIqzkEybr4xs/BiDPK/DLnfUqxEAO9cezzTZJJ9gt8Zlk1Vg1GfPCH340bZeU59yRWt6Yfc90=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GB0D2AzW; arc=fail smtp.client-ip=40.107.93.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GLlGuCZKDdHFfsa+Re1Uo2XLv9iLrQlN7cYYQj1z4w9a/vCrVjPmWyLO448BczrUlNnYd+vDtbeaIZJ314ITl2rLkjnd75a3U4r8ZmkraV3XXM7w0I82XnkOWeLMtztqprfAanCDZJBKIPXTV7CdAO/R0czxRqxBlwAfsH8XhgFFeezTS+cXYsFC5cU+HT3GFaKfyAKiSPTetqYRAso8d1Tt7ckLDIlkJNebkqozaGvYFeGS7aZkhfjNEswx/9sxmlIK3WDXHgldXbJ6ZzaYwB4xMwD5G91Y7rDFtDM8knW+O84EAvZErKk1HHgZVtITeUXMgxoSVInvcMA0/fFL/A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2Jgvqix4kViqoOF+wETPfboyRGmtCnuuRQm3YAaUabw=;
+ b=gGXyU1mb6rkDoewvKDYAFek5IOQYfdDjJU2IWJQWaDMXWmGieyAX+OONVNg4vpR3N/MEO/EWlzG+8v/YjoRKSeFrST9deYo+/fPhPkFQs1IZ5wWH69UhVube7Hb9yrI7fY5LvORm/CvohB1In5BWBBbSVB+qp63f3Ql4HyWfR6JzCOrwcZwyHKyo4BO4RRalqqk6e+Yia++vzTJ9qWsr8Wp+7ZiIBzYA/MRy/T276IXC6ANXW3ecZcPss+uQe+mxwCm/v6+DFLvJtNmNumSquuahjBmUMR8Uv4ZcGtcHSoIbuR24U7fHiueQ1ZjcQZBR0kMi9CM73ltmS9e2Krh06A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2Jgvqix4kViqoOF+wETPfboyRGmtCnuuRQm3YAaUabw=;
+ b=GB0D2AzWGO9VVhyqNbQVCnzkBOvmJL3HhuB+ACh3I5KU2VaD6foXmuH4dXCl5yH4vAzp6ROmdT5VakyprOmLeR3JxxXnJ6QtG6wfj7ypBiS5I9utA7KoowxiQnzlmG+e/+oMT6VBkEvCgo48Wqiv0+dOLidh7WbOfMjVmnwNrXNYGzl7kTv1wrrTNgSTmQldKOQGFm6jGsLW1Ka0sBQETBOYy9eOdhaK42u7xy5gfUNIFbZZVltOJyPkxpbpw9bdSAffBiOiwiw+mSBGiJBpo7TGdZdqKSHvXU6fefiK3acRulLoWb3p7vNWdJ2SUTBN/r4E0BvSyqcvcNkvJ9uRlA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
+ by DM4PR12MB5769.namprd12.prod.outlook.com (2603:10b6:8:60::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.34; Fri, 7 Jun 2024 00:27:08 +0000
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7633.033; Fri, 7 Jun 2024
+ 00:27:08 +0000
+Date: Thu, 6 Jun 2024 21:27:07 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: "Tian, Kevin" <kevin.tian@intel.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
+	"joro@8bytes.org" <joro@8bytes.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"Liu, Yi L" <yi.l.liu@intel.com>,
+	"eric.auger@redhat.com" <eric.auger@redhat.com>,
+	"vasant.hegde@amd.com" <vasant.hegde@amd.com>,
+	"jon.grimm@amd.com" <jon.grimm@amd.com>,
+	"santosh.shukla@amd.com" <santosh.shukla@amd.com>,
+	"Dhaval.Giani@amd.com" <Dhaval.Giani@amd.com>,
+	"shameerali.kolothum.thodi@huawei.com" <shameerali.kolothum.thodi@huawei.com>
+Subject: Re: [PATCH RFCv1 08/14] iommufd: Add IOMMU_VIOMMU_SET_DEV_ID ioctl
+Message-ID: <20240607002707.GJ19897@nvidia.com>
+References: <BN9PR11MB5276BBD592021507C3A0EBB38CF02@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <ZlY886FT3HHLC8Cf@nvidia.com>
+ <BN9PR11MB52762EA9B444DA71F551C3868CF22@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <ZlafEktUu5znDsNt@Asurada-Nvidia>
+ <BN9PR11MB5276AC43120376A2502D3D148CF32@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <ZlfPPwsnY6P4SoGF@Asurada-Nvidia>
+ <ZluWXYQjroz0fqqn@nvidia.com>
+ <Zl03rsgZl/msa3I+@nvidia.com>
+ <20240606182423.GF19897@nvidia.com>
+ <ZmIDqgfINXfB0i3L@Asurada-Nvidia>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmIDqgfINXfB0i3L@Asurada-Nvidia>
+X-ClientProxiedBy: MN2PR16CA0028.namprd16.prod.outlook.com
+ (2603:10b6:208:134::41) To DM6PR12MB3849.namprd12.prod.outlook.com
+ (2603:10b6:5:1c7::26)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/9z_3V_ee2UclbIre0+ebrm6";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|DM4PR12MB5769:EE_
+X-MS-Office365-Filtering-Correlation-Id: 11415b31-74f4-4cd5-2138-08dc868890aa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|366007|376005|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?TL1ZeejcWNnmPx2csz12P7QQger/snY+YToTSM0moQJ3upont0YbUEVW0TQ0?=
+ =?us-ascii?Q?OCROqmTI6fBRnJkKU4AoGxGlJIcSK1ezZyL5a5F4fHLCid4expx29m/xfWnZ?=
+ =?us-ascii?Q?80Fz644M8TN5wSwsId2bWPnMNqalvy3tpqHKlG5tjo/03AfyomllaUl2S7M/?=
+ =?us-ascii?Q?V0EJ0f9ojPwqvVk8IXc1Njghjz7a3ORY0U4CSDOMisrOuzm3unXIKACw52Di?=
+ =?us-ascii?Q?JXBAXTYqtvJ4tQ4MgQOfYBUnuzYqbp9/Il3P6SroOwb0q/xICOmG3alMqeFx?=
+ =?us-ascii?Q?FYFyPfcf00X2kK+N4gTdLqSlXSUnlofwBApI2LNp0RqyOwtXyOQl0flm1OnU?=
+ =?us-ascii?Q?sCsVYvbcQ6sAimtD7pp7XzCaZ5Pe3pK93UGRYnlREddbMIovQX3G76tJN2DE?=
+ =?us-ascii?Q?xfJXIU4sGLLWhZSku6RMDNS8DZVokYsVFV34TJbC+8azFT5m9oEKGhhAOQ9b?=
+ =?us-ascii?Q?XNn4EYrkthMUw2OgKYLFIxxBELnrheH+GQ3xxKcDL5S5AgFRakO+0xoXwmHp?=
+ =?us-ascii?Q?97H204readqXu8DiKIyl8tGWExgsspnVYayr4HPDB4lMDN8oV9N3r1JOsu7T?=
+ =?us-ascii?Q?qmeR0fwVlZFCX9VgaQDeL+b3yVYIZVJrF2RdRdLTgnf8hxasjrjSXq9kYrs/?=
+ =?us-ascii?Q?8cuPm4+2f2lSjVGz/bjE+xp9jqxzYWUINMWTUTU4qdLImvuBSm2Ov0Z0tUSc?=
+ =?us-ascii?Q?eVJl9olOlTIy+7JNoztqYJN88psBBN24m4Ek7lDzsGE8V83rd3IHZUbaRIk5?=
+ =?us-ascii?Q?rhXYctFJCzsDu3Yieo2yHdyT5kCAHlH9Mk5HbpwOeqtmlsWoX44k8mTfIIew?=
+ =?us-ascii?Q?L9j6cbrjCsHcHJQGRthQpY6y6QoFWyftkXdGN8OayPkun5F4LxAb8mfhpq5b?=
+ =?us-ascii?Q?jpSYkaoTLKPZjepKoJirzwzWV65AhTP+q8QsCjx353mgr7jwxgjHgLJHmIu8?=
+ =?us-ascii?Q?Hthg4o1PkdJ0jji8trw8FNZ6tolzF11Wo685gC1gNw0oVlkGh64kxLHPNyHx?=
+ =?us-ascii?Q?b2Y+SY9DIlBSc5J2dp4TRz2OWw0QdbrpW6MJI+GK4yqjoRlT2Nub043qI1Pa?=
+ =?us-ascii?Q?kk7209y6/LU+CdaKzZbAUgQHxxkqns8eNZQf1ubFPv4x+mWZBtW+eW3z7PAQ?=
+ =?us-ascii?Q?HrDW4TD5OFLtUKBGz8ucGipbdcfnHGQTSs7XHeizsJlvYX0XZH+gx6bFDIlv?=
+ =?us-ascii?Q?Ew+Kb/VcZ2GLf0FzPzIlTe6SsKS9nwc+a7KxJhD7xjg4WMDF1vZ32sF5eiNp?=
+ =?us-ascii?Q?4JSExiteZmfdlVWa3OzO1bZkG4KFci+zOTw6E+uScGZM8U3MGSd+qLcpLYHZ?=
+ =?us-ascii?Q?zrSgCfaSm2aNqLsrCw4s9NxV?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?tETB4IHJUhAZ+2Oe0L57BPcXoE5vbGJzGcA03t/gzBvA+QVAMwmbvIwOVAE6?=
+ =?us-ascii?Q?PS+oui4hRWdV/99tfMIjUavXq6Kzai9bRsGBvEIVGxHNyu4iLhCS/GthM7Ex?=
+ =?us-ascii?Q?FTzQ8n0PS8uBoxCwIjEYbgdf9qeaJzEIm5uRC1UHdV838+lYWb2YTdTCgcvk?=
+ =?us-ascii?Q?r8W7nLGDR+v8OJ2DUqgW35MQ2JRn09+RKk0pDhtRsK6rVWH1LJO7uyhmwt4R?=
+ =?us-ascii?Q?ieByr9gEHx5B8RmllkZ3MiZKglyjCTvJp/jr22f3z/UaENMUoCYXaLYUOZae?=
+ =?us-ascii?Q?9MqPK0sf8y+tWfTDSOcFZ0f6XWxna/IgUU5xx+kdjQv3t+ZU3TlBZaPzCa8b?=
+ =?us-ascii?Q?Xz6cY7uF1PsCsWbrSGObWkJrJl4lnz9rpAsrAPFQy0o9d4E5b0JXnJqH9zap?=
+ =?us-ascii?Q?/E/f8eqw9m9SS40kK6imI3Bw6zYkSMOk99x2tNQO1R9ha9J4EOYsnkDcPc/n?=
+ =?us-ascii?Q?+BgTBfBwEdHzUWMZeV/gk1BWGNTrKkG3Xq6ttoAcaDj8rS95JFSE5Mh/7zCL?=
+ =?us-ascii?Q?U4BFcUNdzFhJexgot1VS2PcnV2Y1xgmitu1N4Se8feplxL98130b9NMXxLyw?=
+ =?us-ascii?Q?K1ZN+T2mlRok03n9oEArrAbd8I3RQ7uiBa7o2fcFwpPuq5lZ5YkbC+eDHlRQ?=
+ =?us-ascii?Q?Q1QOXyJYg/H2YhuuyZ/oK6XjZ3+8JKhat49JbKkHuognOFCQK8oKONf4lYw7?=
+ =?us-ascii?Q?G+RnieTGE+5CWkj4hNLBLrY9t9KRQoOwU3X49LpKdm96W7eqdgRER+jk60ng?=
+ =?us-ascii?Q?hdr+ElEHsZxVkCqxh77q4lEkpM7zfZrfLOLPr0fUy/asR11zc95PnOmKPap2?=
+ =?us-ascii?Q?ggVWRpAHh/W2Oq1lgDb9tl7YCNekudCq/tUONCfkElVcDeClMYbwJa6CCN/A?=
+ =?us-ascii?Q?3cEwjatG/R0D2XKy+Jv3sy0/JoNUH/NqD55BlxZZJ/pA3GVXHxDUSCE0rFux?=
+ =?us-ascii?Q?mAKQRmaowIuDfgXQImiQfH5VW39sO9Mrsuj2gKPf2q/nqHJBdFu6FGi4MABc?=
+ =?us-ascii?Q?nKWwuyE6UkxdbjnLgaH/y5UJkyreF/lu9GimUw5Tom31L7AL9Ycz9UYmT8M3?=
+ =?us-ascii?Q?Am5BN7mkeJ9lYHUvRhwDbJP3sn1L9V7nEvPNiuP8N/+SXGStRv6iKfbbVBdW?=
+ =?us-ascii?Q?ToJd32UCHndT4rGMo0zFEPTHfybom2o33hP9QikLt5ZeGUwVdAnFHKTWVT9Z?=
+ =?us-ascii?Q?1bSIzNEeoEloypx5Ieq7s8VwaJua8nZOD4ujziyyxKo1yBKUW61FrJA31uFV?=
+ =?us-ascii?Q?wYbq6wELD2x2jupY+SVwI5d9ydcxCS3JbnVZrmOmHUVsI7I+O7zg8qdESMkj?=
+ =?us-ascii?Q?nXx7k1GhvM/zojvAZaB4To0ukAtNqimsMalcS19APIS/ddYpsi04ySVL6VeB?=
+ =?us-ascii?Q?Kt/MgJ9k+7xG5EiL9oCoyWL4ww6IaT6D+b7+n4pfes+6qbvkUfoOZf11av7W?=
+ =?us-ascii?Q?ot7njvXho8K3A7s8BFmujjCcH+3YujdkS6j3zsP5asNG05JASzs9/g4JMDXX?=
+ =?us-ascii?Q?4WcyoYvkWsZ2cg29D61aDJyls1Ex16xPLLH3N2pFFyG9adewpw/Th23pLNoc?=
+ =?us-ascii?Q?upZC9/96arzCwwVdvZ+CiyHiZNfW1P+E+1bzSd2v?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 11415b31-74f4-4cd5-2138-08dc868890aa
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2024 00:27:08.2779
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fkiM9s2C+oKh2xSWM7WtjRyInNQwGObVOWaQjh06Eom2B8WR7Fonb7TH6d5gQV8Q
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5769
 
---Sig_/9z_3V_ee2UclbIre0+ebrm6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jun 06, 2024 at 11:44:58AM -0700, Nicolin Chen wrote:
+> On Thu, Jun 06, 2024 at 03:24:23PM -0300, Jason Gunthorpe wrote:
+> > On Sun, Jun 02, 2024 at 08:25:34PM -0700, Nicolin Chen wrote:
+> > 
+> > > > I understand the appeal of doing this has been to minimize qemu
+> > > > changes in its ACPI parts if we tackle that instead maybe we should
+> > > > just not implement viommu to multiple piommu. It is somewhat
+> > > > complicated.
+> > > 
+> > > Would you please clarify that suggestion "not implement viommu
+> > > to multiple piommu"?
+> > > 
+> > > For regular nesting (SMMU), we are still doing one vSMMU in the
+> > > VMM, though VCMDQ case would be an exception....
+> > 
+> > This is what I mean, always do multiple vSMMU if there are multiple
+> > physical pSMMUs. Don't replicate any virtual commands across pSMMUs.
+> 
+> Thanks for clarifying. That also means you'd prefer putting the
+> command dispatcher in VMM, which is what we have at this moment.
 
-Hi all,
+Unless someone knows a reason why we should strive hard to have only a
+single vSMMU and accept some invalidation inefficiency?
 
-Today's linux-next merge of the input tree got a conflict in:
-
-  include/linux/interrupt.h
-
-between commit:
-
-  2156d61a07d9 ("cpumask: make core headers including cpumask_types.h where=
- possible")
-
-from the mm-noonmm-unstable branch of the mm tree and commit:
-
-  c76494768761 ("linux/interrupt.h: allow "guard" notation to disable and r=
-eenable IRQ")
-
-from the input tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/interrupt.h
-index da88261f4748,3a36e64119c8..000000000000
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@@ -5,7 -5,8 +5,8 @@@
- =20
-  #include <linux/kernel.h>
-  #include <linux/bitops.h>
-+ #include <linux/cleanup.h>
- -#include <linux/cpumask.h>
- +#include <linux/cpumask_types.h>
-  #include <linux/irqreturn.h>
-  #include <linux/irqnr.h>
-  #include <linux/hardirq.h>
-
---Sig_/9z_3V_ee2UclbIre0+ebrm6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZiUzEACgkQAVBC80lX
-0Gwmmwf/bY8ABZl0TAPgj9oqHCH6v7HQYKy/A21ntSkFeHPj4IIJ1YGa0Z8JaL3h
-FiYVV/qh8pD182KB4Py8TlV1ItvC9Ig2aulLf4DroDbkga5T5PYCyilOQ7YsX55n
-y/rf3tnw+wWrnuxjD7QALGM+b95Ple9E2UCVaUdqiyMvtBFyYK8GgFYKHO/a5i4M
-UZ7BCZrR0HKIj/G7PmZrqQK58fCzOI0jfPTOc2w3tkNsoqQwGz3c8F5ahsl8L/EK
-VvlIyoFCuSo+2kSj0pz1nmkNgT+f77XU67/uhftOs79/MjGZY8jqc25A6dx5Db0L
-9n8dwQGMIFCpCfcDtFa/X8sRRfslGg==
-=ASyF
------END PGP SIGNATURE-----
-
---Sig_/9z_3V_ee2UclbIre0+ebrm6--
+Jason
 
