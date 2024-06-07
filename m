@@ -1,175 +1,201 @@
-Return-Path: <linux-kernel+bounces-206221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C59429005EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:11:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D39D9005F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:12:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6584E1F22AF0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:11:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E37B01F22D77
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3224E19645E;
-	Fri,  7 Jun 2024 14:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99DF195B2E;
+	Fri,  7 Jun 2024 14:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dNuikrl0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="YyrtcjUX";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YRsTiXvq"
+Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67009195978;
-	Fri,  7 Jun 2024 14:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7D514F11B;
+	Fri,  7 Jun 2024 14:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717769477; cv=none; b=DU2L6ueW3FiO/LjfUE/lc3uvCO3NAeRilMp0Pfr9MYrurIlMl5i/xsMpgsSv7LL/wrOayAa/xp2eV17TySEHFWH/6JGSqNeRSdeW0kCOd/ieDUwPxft38HC1kUjAZdW3l0IQIzkOAGiVqJN5Myh+DpouYXf7uPVBUqvm900mN8M=
+	t=1717769533; cv=none; b=MguXsrUj3ztjjWm3c/zA4jQvciv5hc0Qh7ZIQdE+vhez/1gVuSSzUJ0Wd2HGzU3cojZrLj1/VTlUog+hzFrfTGxI6sqnhTe7Uj7w/+8D4ohWl700+0fhQMkRfhGC2XPtsliQuhthCu3MNQ4rJoO4anrmltrqbzdACU1AjFbQ1Yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717769477; c=relaxed/simple;
-	bh=suuNusIzkzRsJ1dnHfTnPwZzMdarY3ER9yTq8osWV3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OpZ3qlBswuMsz8bFSRPRIuhxvODxL9JB95FKu94L3AKYGFCtj4bcRXh65Np1VNb8L7X9fq/pypTxeGp7RdwAkM9pyMBZgHEd9R5B014unKHlijQ+6QhcSSMX8HiY/5IErhTYh8JykMwyx02GK1C9o3hqiyzfhz63Aggnob+CZO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dNuikrl0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ACD7C2BBFC;
-	Fri,  7 Jun 2024 14:11:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717769477;
-	bh=suuNusIzkzRsJ1dnHfTnPwZzMdarY3ER9yTq8osWV3k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dNuikrl0L49lh26A7q6bYFusU2zK/gBbXIAAxc9e3jAgrGu8PBouoIfK58Lv8EzE+
-	 8zgwQNEezTP+5QI/lSU0FsxOnHN88MRFR7swLuJhSWZKXBQ02/+kRfPN4vZ82qf7pG
-	 qvg6sYyd3XpH3VxmSvkKLtQMq0RGPMuPZ9AIc79rXZ9ROgnxKH4RRXADGQmHIscBid
-	 5j8aQ6AajfIxKwFoRv9jQgoAZG/ax5Z9ZgQTlo9K6iJkPVuhy5MP6KeZ8NjYzytYHz
-	 toPLdgMJymseoMp+SYasQsAYoK05Us9s1f7XzqqLF9FW5zn00azXXoUv9fuH6+Vwme
-	 g3Enrgf+EoaZg==
-Date: Fri, 7 Jun 2024 15:11:12 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Kanak Shilledar <kanakshilledar@gmail.com>
-Cc: Kanak Shilledar <kanakshilledar111@protonmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [RESEND v3 2/2] dt-bindings: riscv: cpus: add ref to
- interrupt-controller
-Message-ID: <20240607-essay-rink-a74d82d3c56a@spud>
-References: <20240523154748.22670-1-kanakshilledar111@protonmail.com>
- <20240523154748.22670-3-kanakshilledar111@protonmail.com>
+	s=arc-20240116; t=1717769533; c=relaxed/simple;
+	bh=s3Z3gwcM2mExYmHr73HG/w9dhoTKFqZX8pMjtLuupXI=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=KayM546S2KCcRn7+QDF8MylspQp/uRO6F72vEcN6knBzfXLe9IrNHPznwjN+bs8DoE8LHoA44eBqr1omCMOI8oBuWW1nlJ13mYaV/zcfI4c0SItTsmFLqyJ8mOHUXrnWFmzC5OHJrBSD0Lle/X3ukGbILMMTU8UjnOkSx9JY+iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=YyrtcjUX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YRsTiXvq; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 6B36B13800D4;
+	Fri,  7 Jun 2024 10:12:10 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Fri, 07 Jun 2024 10:12:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1717769530; x=1717855930; bh=INQDVUt3zv
+	kdBbSzkPvyjoHwhwcMzQA7bETzh/itaN8=; b=YyrtcjUXNNnFS59RukiM2VgRDV
+	7NzuuzQnmtFqKzlZoI6yOs7QLxWYq2iwRhw3mKKxvCRKa6LCMqRN+dOZ/jYOYr2S
+	xaBy781VNVw7/8PnWD8dewvpQ0iUoILS8HKhAF4zLrRH+7HQ6Zlqayda9oTtPSZt
+	Rfy6raVdB55pVAiLBue3tpVWZ4wS26pkYUix6nfmaUse0LUUOGUCh2dgSTqCY9RW
+	4sLsc/ftzjC1NqnRty68kISenbb0/hKXvO6GQnGIRdTCT28p2IdGtErcJBX9hu7s
+	Ia7FWIVrU+AG4Y0e5ezduYoTM8x8fcIcPeRSMFZvpjtGy3C8HHw9bF+xgLbg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1717769530; x=1717855930; bh=INQDVUt3zvkdBbSzkPvyjoHwhwcM
+	zQA7bETzh/itaN8=; b=YRsTiXvqVEiSCF5FjBDzt4UspukrE6jRNuQrOQTL+zfd
+	QX0qERkqzp/UV11ZVEf+88FyR0D52HKgakrg6nhnQFDP5wWPGhUEHYqvQ2z9XyAc
+	SBfE5S9XsHMeGzfU6VfBaRL38/SiU1Z04zjgQ0vTOU8fN97eS5+TW0ZtDKsRy717
+	XPpSi1siN1eifuIRbYRnEVcGLmHVOB2IGuGjsAKQruRWbi8vEOLaQPszzGivVY52
+	uU26p6Fc2fPN8kJ/JJRUuUrLVrkRdTeRJOwNNFHNQbdD+H26IuJHuehEPsxVffOH
+	u93XYskDZa6gfqupgxuiluS+vk+Xu75w4xpXcl+sWw==
+X-ME-Sender: <xms:ORVjZv3zJ0YztQZcHJsy_txTMcc4h7eyPzJ51gQAIgNgNRDSgmOffg>
+    <xme:ORVjZuFMal_-XCJFWzUMS-ZaEPu4s0H0YB-ukvHK5pR8Olo5WQjW6wmaMTd3m3U4t
+    x_JE-7JF9pDHnRlkEA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedtuddggeelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:ORVjZv45IRbbg0GLh6zoKd-Bz1XyjfNc5JYAiV8W9hT5AemWrLC39g>
+    <xmx:ORVjZk1RS0UkNN5y33fPqqrTeB-k3ND6cn7QuycKjfgOBJHFQufp1w>
+    <xmx:ORVjZiGQXCFqb5tGyNOPm7ZRcTRDIGtjORriP1hGK8h2hEUHhCiGQg>
+    <xmx:ORVjZl-gOVsrm3-xW_11CdcRTMRpdIveiHbh9xscMlrqoro8VCe31w>
+    <xmx:OhVjZq9s-3CG3GOJlRiOBjDMpI9Z5a5d2QKyYdbwZi5urMECgoMurNzn>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 31CB8B6008D; Fri,  7 Jun 2024 10:12:09 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-497-g97f96844c-fm-20240526.001-g97f96844
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="WO/yTYhFE1ojeZ+A"
-Content-Disposition: inline
-In-Reply-To: <20240523154748.22670-3-kanakshilledar111@protonmail.com>
+Message-Id: <23ddf649-f70b-47b0-90df-af572fd50504@app.fastmail.com>
+In-Reply-To: <87frtoq5yz.fsf@mail.lhotse>
+References: <20240607061629.530301-1-arnd@kernel.org>
+ <87frtoq5yz.fsf@mail.lhotse>
+Date: Fri, 07 Jun 2024 16:11:25 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Michael Ellerman" <mpe@ellerman.id.au>, "Arnd Bergmann" <arnd@kernel.org>
+Cc: "Masahiro Yamada" <masahiroy@kernel.org>,
+ "Nathan Chancellor" <nathan@kernel.org>,
+ "Nicolas Schier" <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org,
+ "Nicholas Piggin" <npiggin@gmail.com>,
+ "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc: vdso: fix building with wrong-endian toolchain
+Content-Type: text/plain
 
+On Fri, Jun 7, 2024, at 14:42, Michael Ellerman wrote:
+> Arnd Bergmann <arnd@kernel.org> writes:
+>>
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>> I'm fairly sure this worked in the past, but I did not try to bisect the
+>> issue.
+>
+> It still works for me.
+>
+> I use the korg toolchains every day, and kisskb uses them too.
+>
+> What commit / defconfig are you seeing the errors with?
+>
+> Is it just the 12.3.0 toolchain or all of them? I just tested 12.3.0
+> here and it built OK.
+>
+> I guess you're building on x86 or arm64? I build on ppc64le, I wonder if
+> that makes a difference.
+>
+> The patch is probably OK regardless, but I'd rather understand what the
+> actual problem is.
 
---WO/yTYhFE1ojeZ+A
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I tested again and found that the problem is actually part of my
+local build setup, which overrides the 'CPP' variable in the
+top-level makefile that I use for building multiple kernels
+concurrently.
 
-On Thu, May 23, 2024 at 09:17:50PM +0530, Kanak Shilledar wrote:
-> removed the redundant properties for interrupt-controller
-> and provide reference to the riscv,cpu-intc.yaml which defines
-> the interrupt-controller. making the properties for riscv
-> interrupt-controller at a central place.
->=20
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Kanak Shilledar <kanakshilledar111@protonmail.com>
-> ---
-> Changes in v3:
-> - No change.
-> - Rolling out as RESEND.
-> Changes in v2:
-> - Fix warning of `type` is a required property during `make
-> dt_bindings_check`.
-> ---
->  .../interrupt-controller/riscv,cpu-intc.yaml  |  2 +-
->  .../devicetree/bindings/riscv/cpus.yaml       | 21 +------------------
->  2 files changed, 2 insertions(+), 21 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/riscv=
-,cpu-intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/ris=
-cv,cpu-intc.yaml
-> index c9c79e0870ff..6c229f3c6735 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-in=
-tc.yaml
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-in=
-tc.yaml
-> @@ -61,7 +61,7 @@ required:
->    - compatible
->    - '#interrupt-cells'
->    - interrupt-controller
-> - =20
-> +
+This ends up clashing with this other line that only
+powerpc sets:
 
-I tried to get Palmer to apply this the other day, but the series
-somehow conflicts with itself, due to this hunk. When I apply patch 1/2
-locally, this whitespace never appears in the file and so patch 2/2 has
-a conflict:
-	b4 shazam 20240523154748.22670-2-kanakshilledar111@protonmail.com
-	Grabbing thread from lore.kernel.org/all/20240523154748.22670-2-kanakshill=
-edar111@protonmail.com/t.mbox.gz
-	Checking for newer revisions
-	Grabbing search results from lore.kernel.org
-	Analyzing 3 messages in the thread
-	Looking for additional code-review trailers on lore.kernel.org
-	Checking attestation on all messages, may take a moment...
-	---
-	  =E2=9C=97 [PATCH v3 1/2] dt-bindings: interrupt-controller: riscv,cpu-in=
-tc: convert to dtschema
-	    + Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-	  =E2=9C=97 [PATCH v3 2/2] dt-bindings: riscv: cpus: add ref to interrupt-=
-controller
-	    + Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-	  ---
-	  =E2=9C=97 BADSIG: DKIM/gmail.com
-	---
-	Total patches: 2
-	---
-	 Base: using specified base-commit 20cb38a7af88dc40095da7c2c9094da3873fea23
-	Applying: dt-bindings: interrupt-controller: riscv,cpu-intc: convert to dt=
-schema
-	Applying: dt-bindings: riscv: cpus: add ref to interrupt-controller
-	Patch failed at 0002 dt-bindings: riscv: cpus: add ref to interrupt-contro=
-ller
-	When you have resolved this problem, run "git am --continue".
-	If you prefer to skip this patch, run "git am --skip" instead.
-	To restore the original branch and stop patching, run "git am --abort".
-	error: patch failed: Documentation/devicetree/bindings/interrupt-controlle=
-r/riscv,cpu-intc.yaml:61
-	error: Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-in=
-tc.yaml: patch does not apply
-	hint: Use 'git am --show-current-patch=3Ddiff' to see the failed patch
+arch/powerpc/Makefile:CPP               = $(CC) -E $(KBUILD_CFLAGS)
 
-He also pointed out that there's a from address mismatch in this patch,
-given it was sent from gmail but the signoff is proton. Usually git
-send-email will sort this out, provided you've set the protonmail
-address as the author for the patch. I think usually this sort of issue
-comes about when your signoff email isn't the same as user.email in your
-gitconfig, but 100% on that.
+It's rare that someone overrides CPP, so quite possibly I'm
+the only one that has seen this so far, but it also seems like
+it should be possible to do that.
 
-Thanks,
-Conor.
+This patch seems to work as well for me, and is a little
+more logical, but it's also more invasive and has a
+higher regression risk:
 
---WO/yTYhFE1ojeZ+A
-Content-Type: application/pgp-signature; name="signature.asc"
+8<---------
+diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+index 65261cbe5bfd..9ad4ca318e34 100644
+--- a/arch/powerpc/Makefile
++++ b/arch/powerpc/Makefile
+@@ -62,14 +62,14 @@ KBUILD_LDFLAGS_MODULE += arch/powerpc/lib/crtsavres.o
+ endif
+ 
+ ifdef CONFIG_CPU_LITTLE_ENDIAN
+-KBUILD_CFLAGS  += -mlittle-endian
++KBUILD_CPPFLAGS        += -mlittle-endian
+ KBUILD_LDFLAGS += -EL
+ LDEMULATION    := lppc
+ GNUTARGET      := powerpcle
+ MULTIPLEWORD   := -mno-multiple
+ KBUILD_CFLAGS_MODULE += $(call cc-option,-mno-save-toc-indirect)
+ else
+-KBUILD_CFLAGS += $(call cc-option,-mbig-endian)
++KBUILD_CPPFLAGS += $(call cc-option,-mbig-endian)
+ KBUILD_LDFLAGS += -EB
+ LDEMULATION    := ppc
+ GNUTARGET      := powerpc
+@@ -95,7 +95,7 @@ aflags-$(CONFIG_CPU_BIG_ENDIAN)               += $(call cc-option,-mbig-endian)
+ aflags-$(CONFIG_CPU_LITTLE_ENDIAN)     += -mlittle-endian
+ 
+ ifeq ($(HAS_BIARCH),y)
+-KBUILD_CFLAGS  += -m$(BITS)
++KBUILD_CPPFLAGS        += -m$(BITS)
+ KBUILD_AFLAGS  += -m$(BITS)
+ KBUILD_LDFLAGS += -m elf$(BITS)$(LDEMULATION)
+ endif
+@@ -176,7 +176,6 @@ KBUILD_CPPFLAGS     += -I $(srctree)/arch/powerpc $(asinstr)
+ KBUILD_AFLAGS  += $(AFLAGS-y)
+ KBUILD_CFLAGS  += $(call cc-option,-msoft-float)
+ KBUILD_CFLAGS  += $(CFLAGS-y)
+-CPP            = $(CC) -E $(KBUILD_CFLAGS)
+ 
+ CHECKFLAGS     += -m$(BITS) -D__powerpc__ -D__powerpc$(BITS)__
+ ifdef CONFIG_CPU_BIG_ENDIAN
+diff --git a/arch/powerpc/kernel/vdso/Makefile b/arch/powerpc/kernel/vdso/Makefile
+index 1b93655c2857..3516e71926e5 100644
+--- a/arch/powerpc/kernel/vdso/Makefile
++++ b/arch/powerpc/kernel/vdso/Makefile
+@@ -59,7 +59,7 @@ ldflags-$(CONFIG_LD_IS_LLD) += $(call cc-option,--ld-path=$(LD),-fuse-ld=lld)
+ ldflags-$(CONFIG_LD_ORPHAN_WARN) += -Wl,--orphan-handling=$(CONFIG_LD_ORPHAN_WARN_LEVEL)
+ 
+ # Filter flags that clang will warn are unused for linking
+-ldflags-y += $(filter-out $(CC_AUTO_VAR_INIT_ZERO_ENABLER) $(CC_FLAGS_FTRACE) -Wa$(comma)%, $(KBUILD_CFLAGS))
++ldflags-y += $(filter-out $(CC_AUTO_VAR_INIT_ZERO_ENABLER) $(CC_FLAGS_FTRACE) -Wa$(comma)%, $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
+ 
+ CC32FLAGS := -m32
+ LD32FLAGS := -Wl,-soname=linux-vdso32.so.1
+--------->8
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmMVAAAKCRB4tDGHoIJi
-0ugyAP4gQBplTF+cj/i8WB1UnZhdAF9LfvVfGT0azEcfiURn/QEA+TUOI0QHbcCD
-tZ7GD/a/3/pBOdWW3msepg1B8iHeagQ=
-=wl4+
------END PGP SIGNATURE-----
-
---WO/yTYhFE1ojeZ+A--
+     Arnd
 
