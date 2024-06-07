@@ -1,88 +1,126 @@
-Return-Path: <linux-kernel+bounces-206410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D9490093C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:34:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36C31900947
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:37:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CB0A1F21FBE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:34:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C759428463D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8713719AA61;
-	Fri,  7 Jun 2024 15:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92482199234;
+	Fri,  7 Jun 2024 15:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Rx09CVtk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="juK0y2aV"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B025D19923C;
-	Fri,  7 Jun 2024 15:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0535C4C65
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 15:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717774384; cv=none; b=LX1Icovnn/+eJJUzxHPFbFBvRWVCqlZRuLZc1IGeuEluCNGVPu/ZGq7ECqJwKwT2cBLvbr6mjNSvFpKxMCr4+3/uHB8fIfdE+u+JnJTUjMRO9LYR3MmzIqrfTmOq8QzKWr0Suqv0x2ZfMQhHIXd5OGQxKAZ1WW1fDB8wie727AM=
+	t=1717774620; cv=none; b=d7uByPGKHLeyYrXDQVDCH4DvqNOswdrP+nXjy9jPIfaz/181PamHf7osFK3Lf6p2fzreX6uVJHG1XSnxyXCS3Jo19tvYXC05eTT4x9kz1hXiHEKLu3kF9JTNd29qDY/LlMpTK5BUWO7FJAjP/WK1FjUW4Z+ojLa6vq4LDZ0h81k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717774384; c=relaxed/simple;
-	bh=iA2i+g2wTu86Q04x1/Mccg6UPGiul5W8OAQcSTpjQzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p544TZ542Xw5TuNq4OnBlpsgdZWft/eMZGVIXS7MBv9tA9zKm3aDQAoNnS77McXJz621GihY2KGoSmdVzpznFOlW7vAwYKpmGbyt4LZSvd5eq3Z1wRlvR6xm425ILQDvN7f+hldBMn7CyBbF8wlSHIFldc2vkMARvQtVrETFa6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Rx09CVtk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2282C2BBFC;
-	Fri,  7 Jun 2024 15:33:02 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Rx09CVtk"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1717774381;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rHq94GHF3GdMXYFHCpfZbCia8tYe6XNuXS1o9WgDhFs=;
-	b=Rx09CVtkP5YBlCzr0H2yCq3zMqkznBCz5bK2ar/0TvFxWsx4WQisGmz0Un/b2cTVW25+QA
-	ZlbHngD90FrDqM4qy6PHUytJY828sCQv9aLnXv1qFelY52eqFf5eX9j4I3ElcZeAimPg4D
-	I7sWmwI93l47KhhDmpPFMgWUDaoKih0=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id c03b755c (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 7 Jun 2024 15:33:00 +0000 (UTC)
-Date: Fri, 7 Jun 2024 17:32:54 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-	linux-crypto@vger.kernel.org, linux-api@vger.kernel.org,
-	x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Carlos O'Donell <carlos@redhat.com>,
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	Jann Horn <jannh@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <dhildenb@redhat.com>,
-	Samuel Neves <sneves@dei.uc.pt>
-Subject: Re: [PATCH v16 5/5] x86: vdso: Wire up getrandom() vDSO
- implementation
-Message-ID: <ZmMoJkqIygnUziXv@zx2c4.com>
-References: <20240528122352.2485958-1-Jason@zx2c4.com>
- <20240528122352.2485958-6-Jason@zx2c4.com>
- <87y17j2hk7.ffs@tglx>
+	s=arc-20240116; t=1717774620; c=relaxed/simple;
+	bh=njFwS84yyP3Xwr02JnamX7Dhu6AzJdZO+TJ88+ClOI0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wp7CyNpwBrqGbJOarxoliUG8MZxXqSpg2h655/4kHfcl1hx+CRhaMh48QGWnkgBUUBlPUUWHCLpW16nmkhIBSRoly/CI5Tw1jLXr+aD2Bu5sFro7lHXASFxocdvwgZ6A1W0a+bDIFHjaFTfbIOrYSB+0hadwxYjtQubCSDMGQ6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=juK0y2aV; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42121d27861so21297375e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 08:36:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717774617; x=1718379417; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4WFHGyOf2WCg/AHCXQoRe0OOLDlNcvfZjAFHn1msRSw=;
+        b=juK0y2aV4TYboAh8nEXjMFk5fN3uC3FwvkzbSNZxHs6DWC3/Q+8c7UQRkyGOGg0GbQ
+         1DN58wUt79ajkREwHVoLA4TCG38OF5JSoywS9PmoYSjra8jY1jLLFq5MCIuxJYnpgZPX
+         6lTfweu+Crph9x5sCOcF+AwY4TgZFdyzgT7Mp3JEmbseYqmNz9HURCFLyVYhZ9FGdCbm
+         6ISPzY+0I2OfOHfXuOTmn0dGWCDcp+DaKcZR6jxWYDugYn1epGEbvCW1mkz8XJiIcYpH
+         u0ZE7wPmp/bTjc6xjt1S9dhsXb2/OFfG27ReP+LcejxTkFg0TA0x2EhDrVgnSTj+KuGo
+         Hl5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717774617; x=1718379417;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4WFHGyOf2WCg/AHCXQoRe0OOLDlNcvfZjAFHn1msRSw=;
+        b=jo9bZ7SeZUlH8qFM1vvfZj5YQI/IsyROWGhA1kKDK5fb70G1IyE1tnCqkbJBVcOJx/
+         sim3PjD+av0PyvkHr2ezFqkeDdon66etQhPdahs93QDbk2cN5LIMXZSTN1fabTBHGcIE
+         oJ7HeHGn7ERjrTJbJ3uvbze8hvvnfm4eSoRwgGTZGHG9G2tcxRWx32FWhh9zn85AHzng
+         pHLjS0yUT3bDV3PFJjdl7Je7e3+oDR4KmmShRigejFw6kueXNUJcrnt8Bt8AI8k4CigF
+         1dS2sLXQHew1mtNOnKXGXcwe8aCjEcMw4mX22JKE/GaJPo0ZIYN3d+qnJUEu8q3v82hW
+         WLag==
+X-Forwarded-Encrypted: i=1; AJvYcCW5FKVC+fuRsZP9DxEwSkOLcn5cbKc4MBFT234pKXK/OWdYlYVldaNnLYJa09Pp+rNGNxfT7WoH0O/2H5pAjQOyGFtU3RVaOWI2SejJ
+X-Gm-Message-State: AOJu0YxUJjwNbYH/i24DzmH/t45bZbIiDm+D3APCaafWGoCMDPt6Y/p0
+	FFJ7A7ZOEvW6tObWDj3xNFjj/T+tP/berJpyDaCz6dmwl4DjW1DBOQuT0F341Ns=
+X-Google-Smtp-Source: AGHT+IEDldfKJ9oi/vJP0wgtmawveExjpCYHaZ1+MQjCvlUC+KOjWN7/r5DIQyvHKU1HK5ctc+JgNw==
+X-Received: by 2002:a05:600c:444b:b0:420:29a8:ff5e with SMTP id 5b1f17b1804b1-42164a0c1c9mr25925175e9.19.1717774617356;
+        Fri, 07 Jun 2024 08:36:57 -0700 (PDT)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4215f89aacfsm48862905e9.42.2024.06.07.08.36.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jun 2024 08:36:56 -0700 (PDT)
+Message-ID: <7cc32596-8af0-43ff-91fd-59264d0a29ac@linaro.org>
+Date: Fri, 7 Jun 2024 16:36:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87y17j2hk7.ffs@tglx>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 07/17] misc: eeprom: at25: Change nvmem reg_read/write
+ return type
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Joy Chakraborty <joychakr@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Bingbu Cao <bingbu.cao@intel.com>, Zhihao Cheng <chengzhihao1@huawei.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-rtc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+ linux-usb@vger.kernel.org, manugautam@google.com
+References: <20240605175953.2613260-1-joychakr@google.com>
+ <20240605175953.2613260-8-joychakr@google.com>
+ <f98a1d8f-e936-4798-8447-c642e8fe11d5@moroto.mountain>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <f98a1d8f-e936-4798-8447-c642e8fe11d5@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 05, 2024 at 11:41:44PM +0200, Thomas Gleixner wrote:
-> On Tue, May 28 2024 at 14:19, Jason A. Donenfeld wrote:
-> > +
-> > +static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(void)
-> > +{
-> > +	if (__vdso_data->clock_mode == VDSO_CLOCKMODE_TIMENS)
+
+
+On 06/06/2024 09:41, Dan Carpenter wrote:
+> So the original bug was that rmem_read() is returning positive values
+> on success instead of zero[1].  That started a discussion about partial
+> reads which resulted in changing the API to support partial reads[2].
+> That patchset broke the build.  This patchset is trying to fix the
+> build breakage.
 > 
-> Lacks an IS_ENABLED(CONFIG_TIMENS)
+> [1]https://lore.kernel.org/all/20240206042408.224138-1-joychakr@google.com/
+> [2]https://lore.kernel.org/all/20240510082929.3792559-2-joychakr@google.com/
+> 
+> The bug in rmem_read() is still not fixed.  That needs to be fixed as
+> a stand alone patch.  We can discuss re-writing the API separately.
+I agree with Dan, Lets fix the rmem_read and start working on the API 
+rework in parallel.
 
-Thanks, will fix for v+1.
+Am happy to pick the [1].
 
-Jason
+
+--srini
 
