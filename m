@@ -1,157 +1,263 @@
-Return-Path: <linux-kernel+bounces-206820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 265CD900E33
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:46:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AE17900E35
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF122285FF6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:46:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC668B21AA2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C461552E4;
-	Fri,  7 Jun 2024 22:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CN1sNR/h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4891CAB5;
+	Fri,  7 Jun 2024 22:46:27 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BB51CAB5
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 22:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1300155390
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 22:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717800384; cv=none; b=R57KQK8GEBR6nruNsED4NRL3QQgOoIDKwYS6e2hO5s6qG5Wb1CTfvqudfY4/mA0dyTmoPCmPZ/VXg7UEgoWFQdUEq7p6toZFiTADk5INq/Eh4pa7H5umDb5/jvX79Fwfh5S+hduB9jiiVjN1ypesMZzr/RjZ5PCqaMAjcwTCvVA=
+	t=1717800387; cv=none; b=e0pXXCl3wD/RUHnaYgadiow5pkYqBvCeT7MGd92wDdGupwQiGR4zRLW99+x8D8niCKoPVx/v0+ME2ghzPwfpU3pzm1tWEOgZVawVllyVgd5EXPnKz168f5kg8hNTXIg0EOrVP91y0sU8zPgX/JMzvw2a5/GEPkkzv7wAek/Nm/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717800384; c=relaxed/simple;
-	bh=GjJb35OraHi0SzFdMQYu8ta0vOZOofLfX73CdwH1hRg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QHpl89pPzAjBOZIZMqNp1fiDeM9ltdUCHLmX5Gh5157PGBPPLn4pzG5CEEa8Y0EcRFdFyN0s6dIYNlcS6uLVenpe6LFhamIKWX2T2CzzR3wyKQEGwAyjSRwv1OORm6CPhUiKuJKtAVkbh3/EYygCOE/L+vgvmc8KOTJhqDb42I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CN1sNR/h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C39B2C2BBFC;
-	Fri,  7 Jun 2024 22:46:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717800384;
-	bh=GjJb35OraHi0SzFdMQYu8ta0vOZOofLfX73CdwH1hRg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CN1sNR/hK2tkp1kTtzSZFm4lO60PkEXYuV/Z+2Fn3XGcJXpeznutuCCoR/8K+1hm3
-	 0aZo0qUVG1FvY6xwNSfLA19KtLc4ZbBC0lD4c6E4bTWfxj4D6S4ynwYm3GRqALQUXS
-	 zXpRLx0HvAcA75f0OtYeDBGPCPBNtqxyqMB8Bg8mz9HahqyLPWQGq7KtsZUedTYtsY
-	 0wVQrrwjH2qCZFWluTe+r1MTVq5g0wT8W2FQ7FJH8gZtGo5wP/Ymh863GLI18Q9uwR
-	 gFQlhbsPRkc9xxjvW6t7sSH4JmpLbWLth4Hd94PnziORQurGfFQV4mvyK1uJZIx9gH
-	 ESqnBBLa3Na3w==
-Date: Sat, 8 Jun 2024 00:46:21 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Ze Gao <zegao2021@gmail.com>
-Cc: Joel Fernandes <joel@joelfernandes.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@elte.hu>,
-	Cruz Zhao <CruzZhao@linux.alibaba.com>,
-	linux-kernel@vger.kernel.org, Ze Gao <zegao@tencent.com>
-Subject: Re: [RFC PATCH 1/2] timer: Use is_idle_task() check instead of
- idle_cpu() on irq exit
-Message-ID: <ZmONvY8q_lVOdjvu@pavilion.home>
-References: <20240530122401.3826022-1-zegao@tencent.com>
- <20240530122401.3826022-2-zegao@tencent.com>
+	s=arc-20240116; t=1717800387; c=relaxed/simple;
+	bh=Hg2aXzMkEDNkIG+fuJLdIaAQvRfVQxQaaw4wIhvnkRQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nLHrqOs4dUDWToleo/4OuhJEjzm0zCsNfm5bTuQGe6dd36Kjw4HLFw0PlFN2SWcaVr0v+GsaB5GoPXrEj4XKV38O6fpVY5yGjUVTO/itW4p9Y491TpVTVjTrPFGY6tFUB3nhbOuRPMJ6AJDbeRgVreneJ8qOyX9n+37rQWYQEbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7eb3db8593cso316410039f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 15:46:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717800385; x=1718405185;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8nu/HJFTDdg5B4W4eMaBSQujn0ZePmg/9rHnE1JagnM=;
+        b=rTmN3+FYwzNBVnjMXwvaisj0snEMHfaRhp6nfqCX7gVfrSbAwp6VmVYD/KdAE3kBFb
+         4ztUF2lD5jUQqsme6vv9FB+qCrBC61CYPmI1Z+tHuOCfy92+uTN1V1Kx36/WNel8Elfb
+         Lj2xKG89UoEY6xthwXViO+OAB/Sylqx5S0CnY4o7sd4UvP//y3mcGL4MYVqNhR9tTHab
+         KvcziLbqsVYcg1QicpK0YZmhr0TM1iuWc+1ADaGjgY7Q8wNAz3kmB31s60bHc1c4yhzN
+         Q282VTPVtOmo0/MRI4GLzwrbyK/PvjZ7DboCuitjr87og5IAsv8J7adNIvxKCWtnBK2o
+         w49g==
+X-Forwarded-Encrypted: i=1; AJvYcCVlBHoFHg6zoOGlqCop2PqJ+x6Ndi+ThvCdUn7HYngyWA/SdCZbQfQd6yIkzX73PE/wX0TR6zCMTsIEr2P7JC6LFOlPciXURwsKytPC
+X-Gm-Message-State: AOJu0YxEy84CWkCOjYujhxvUuB1/dZI8fSjJS8g9uNnXTMoYcxdw/aaV
+	ZyrW9jeIsc7M2boX3R10cEEH55flJlImm0Trq/Nc32Ss4Mzo7rkWJW6EHtdiNfqo6QxfUTh6KtT
+	ApxPnUCZex5F7+Tj0Myfd63U2DCbYrRRQYXfGJnRvVKB3E3RdG+u6ZkY=
+X-Google-Smtp-Source: AGHT+IHJ7+d7g6tWVRrf4fUgCnwJOjb5//CUUtGdwokdWx5q0bJb79ffKJYmJEK+frPM6VrGbDoWufBaoVlOR9VgkoGxSAuNtd0C
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240530122401.3826022-2-zegao@tencent.com>
+X-Received: by 2002:a05:6602:6416:b0:7e2:b00:2264 with SMTP id
+ ca18e2360f4ac-7eb5725411fmr11942139f.2.1717800384596; Fri, 07 Jun 2024
+ 15:46:24 -0700 (PDT)
+Date: Fri, 07 Jun 2024 15:46:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b81ce0061a54910a@google.com>
+Subject: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in hci_req_sync_complete
+From: syzbot <syzbot+275d418cae2e1a853717@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Le Thu, May 30, 2024 at 08:24:00AM -0400, Ze Gao a écrit :
-> idle_cpu() was initially introduced in irq_enter()/exit() to check
-> whether an irq interrupts an idle cpu or not since commit
-> 79bf2bb335b8 ("[PATCH] tick-management: dyntick / highres functionality")
-> and at that time, it's implemented via a simple check if the curr
-> of task of that rq is idle or not. And then commit 6378ddb59215 ("time:
-> track accurate idle time with tick_sched.idle_sleeptime") uses the same
-> check to do accurate idle time accounting.
-> 
-> But since commit 908a3283728d ("sched: Fix idle_cpu()"), idle_cpu()
-> takes scheduler stats into consideration and becomes more constrained,
-> and therefore it tells more than if we have interrupted an idle
-> process but also whether a cpu is going to be idle or not since it
-> takes queued tasks and queued to be woken tasks into account.
-> 
-> However for tick user, it is too much as now we only rely on this check
-> to do nohz idle time accounting in tick_nohz_start_idle() just in case
-> that tick_nohz_stop_idle() is called upon irq_enter() if we actually
-> rupture an idle cpu(process). The use of idle_cpu() simply complicates
-> things here, and the introduction of sched_core_idle_cpu() in
-> commit 548796e2e70b ("sched/core: introduce sched_core_idle_cpu()")
-> proves this.
-> 
-> The use of is_idle_task() just like in commit 0a8a2e78b7ee ("timer: Fix
-> bad idle check on irq entry") helps to save one unnecessary fix for idle
-> time accounting for the newly force idle state. Note this also preps for
-> the remove of sched_core_idle_cpu() in the following patch.
-> 
-> Signed-off-by: Ze Gao <zegao@tencent.com>
-> ---
->  kernel/softirq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/softirq.c b/kernel/softirq.c
-> index 02582017759a..24c7bf3c3f6c 100644
-> --- a/kernel/softirq.c
-> +++ b/kernel/softirq.c
-> @@ -617,7 +617,7 @@ static inline void tick_irq_exit(void)
->  	int cpu = smp_processor_id();
->  
->  	/* Make sure that timer wheel updates are propagated */
-> -	if ((sched_core_idle_cpu(cpu) && !need_resched()) || tick_nohz_full_cpu(cpu)) {
-> +	if ((is_idle_task(current) && !need_resched()) || tick_nohz_full_cpu(cpu)) {
+Hello,
 
-The reason why there is a check here for idle_cpu() (or sched_core_idle_cpu())
-is to avoid calling again tick_nohz_start_idle() and then again
-tick_nohz_stop_idle() later from tick_nohz_idle_exit(). This can save two costly
-calls to ktime_get() when a real task is waiting for the CPU. So any quick clue to
-know if a task is going to be scheduled is good to get. And idle_cpu() gives
-them all:
+syzbot found the following issue on:
 
-int idle_cpu(int cpu)
-{
-	struct rq *rq = cpu_rq(cpu);
+HEAD commit:    32f88d65f01b Merge tag 'linux_kselftest-fixes-6.10-rc3' of..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=101f8474980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=eb72437243175f22
+dashboard link: https://syzkaller.appspot.com/bug?extid=275d418cae2e1a853717
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-	if (rq->curr != rq->idle)
-		return 0;
+Unfortunately, I don't have any reproducer for this issue yet.
 
-// This is the necessary is_idle_task() check
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/04303d59486c/disk-32f88d65.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3a4ffbd5434e/vmlinux-32f88d65.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3fd6a8ce84ec/bzImage-32f88d65.xz
 
-	if (rq->nr_running)
-		return 0;
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+275d418cae2e1a853717@syzkaller.appspotmail.com
 
-// This tells if there is a real task pending. Ok that check
-// is perhaps a bit redundant with need_resched()...
+Bluetooth: hci4: unexpected cc 0x1001 length: 249 > 9
+Bluetooth: hci4: unexpected cc 0x0c23 length: 249 > 4
+Bluetooth: hci4: unexpected cc 0x0c25 length: 249 > 3
+Bluetooth: hci4: unexpected cc 0x0c38 length: 249 > 2
+==================================================================
+BUG: KASAN: slab-use-after-free in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+BUG: KASAN: slab-use-after-free in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+BUG: KASAN: slab-use-after-free in refcount_read include/linux/refcount.h:136 [inline]
+BUG: KASAN: slab-use-after-free in skb_unref include/linux/skbuff.h:1222 [inline]
+BUG: KASAN: slab-use-after-free in __kfree_skb_reason net/core/skbuff.c:1195 [inline]
+BUG: KASAN: slab-use-after-free in kfree_skb_reason+0x41/0x3b0 net/core/skbuff.c:1222
+Read of size 4 at addr ffff888069060724 by task kworker/u9:2/5099
 
-#ifdef CONFIG_SMP
-	if (rq->ttwu_pending)
-		return 0;
-#endif
+CPU: 0 PID: 5099 Comm: kworker/u9:2 Not tainted 6.10.0-rc2-syzkaller-00022-g32f88d65f01b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+Workqueue: hci4 hci_rx_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ instrument_atomic_read include/linux/instrumented.h:68 [inline]
+ atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+ refcount_read include/linux/refcount.h:136 [inline]
+ skb_unref include/linux/skbuff.h:1222 [inline]
+ __kfree_skb_reason net/core/skbuff.c:1195 [inline]
+ kfree_skb_reason+0x41/0x3b0 net/core/skbuff.c:1222
+ kfree_skb include/linux/skbuff.h:1257 [inline]
+ hci_req_sync_complete+0xe7/0x290 net/bluetooth/hci_request.c:109
+ hci_event_packet+0xc71/0x1540 net/bluetooth/hci_event.c:7479
+ hci_rx_work+0x3e8/0xca0 net/bluetooth/hci_core.c:4074
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-// This one tells if there is a remote wakeup pending for this CPU.
-// And need_resched() doesn't tell about that yet...
+Allocated by task 5099:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:312 [inline]
+ __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3940 [inline]
+ slab_alloc_node mm/slub.c:4000 [inline]
+ kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4007
+ skb_clone+0x20c/0x390 net/core/skbuff.c:2052
+ hci_send_cmd_sync net/bluetooth/hci_core.c:4123 [inline]
+ hci_cmd_work+0x29e/0x670 net/bluetooth/hci_core.c:4143
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-	return 1;
-}
+Freed by task 12074:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
+ __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2195 [inline]
+ slab_free mm/slub.c:4436 [inline]
+ kmem_cache_free+0x145/0x350 mm/slub.c:4511
+ kfree_skb include/linux/skbuff.h:1257 [inline]
+ __hci_req_sync+0x62f/0x950 net/bluetooth/hci_request.c:184
+ hci_req_sync+0xa9/0xd0 net/bluetooth/hci_request.c:206
+ hci_dev_cmd+0x4c5/0xa50 net/bluetooth/hci_core.c:787
+ sock_do_ioctl+0x158/0x460 net/socket.c:1222
+ sock_ioctl+0x629/0x8e0 net/socket.c:1341
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-So it looks to me that idle_cpu() is still a good fit at this place.
-And sched_core_idle_cpu() doesn't bring more overhead since the static
-key in sched_core_enabled() is rarely active (I guess...). And if it is,
-then the check is even more simple.
+The buggy address belongs to the object at ffff888069060640
+ which belongs to the cache skbuff_head_cache of size 240
+The buggy address is located 228 bytes inside of
+ freed 240-byte region [ffff888069060640, ffff888069060730)
 
-Thanks.
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x69060
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xffffefff(slab)
+raw: 00fff00000000000 ffff888018ae6780 dead000000000122 0000000000000000
+raw: 0000000000000000 00000000000c000c 00000001ffffefff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x152cc0(GFP_USER|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 4479, tgid 4479 (kworker/u9:1), ts 498722212871, free_ts 498178479206
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1468
+ prep_new_page mm/page_alloc.c:1476 [inline]
+ get_page_from_freelist+0x2e2d/0x2ee0 mm/page_alloc.c:3402
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4660
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x5f/0x120 mm/slub.c:2264
+ allocate_slab+0x5a/0x2e0 mm/slub.c:2427
+ new_slab mm/slub.c:2480 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3666
+ __slab_alloc+0x58/0xa0 mm/slub.c:3756
+ __slab_alloc_node mm/slub.c:3809 [inline]
+ slab_alloc_node mm/slub.c:3988 [inline]
+ kmem_cache_alloc_node_noprof+0x1fe/0x320 mm/slub.c:4043
+ __alloc_skb+0x1c3/0x440 net/core/skbuff.c:656
+ alloc_skb include/linux/skbuff.h:1308 [inline]
+ mgmt_alloc_skb net/bluetooth/mgmt_util.c:64 [inline]
+ mgmt_send_event+0x46/0x1a0 net/bluetooth/mgmt_util.c:116
+ mgmt_index_event net/bluetooth/mgmt.c:326 [inline]
+ mgmt_index_added+0x117/0x260 net/bluetooth/mgmt.c:9327
+ hci_power_on+0x4a2/0x6b0
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+page last free pid 5150 tgid 5150 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1088 [inline]
+ free_unref_page+0xd19/0xea0 mm/page_alloc.c:2565
+ rcu_do_batch kernel/rcu/tree.c:2535 [inline]
+ rcu_core+0xafd/0x1830 kernel/rcu/tree.c:2809
+ handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
+ do_softirq+0x11b/0x1e0 kernel/softirq.c:455
+ __local_bh_enable_ip+0x1bb/0x200 kernel/softirq.c:382
+ spin_unlock_bh include/linux/spinlock.h:396 [inline]
+ nsim_dev_trap_report drivers/net/netdevsim/dev.c:820 [inline]
+ nsim_dev_trap_report_work+0x75d/0xaa0 drivers/net/netdevsim/dev.c:850
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
->  		if (!in_hardirq())
->  			tick_nohz_irq_exit();
->  	}
-> -- 
-> 2.41.0
-> 
+Memory state around the buggy address:
+ ffff888069060600: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
+ ffff888069060680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888069060700: fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc
+                               ^
+ ffff888069060780: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff888069060800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fc fc
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
