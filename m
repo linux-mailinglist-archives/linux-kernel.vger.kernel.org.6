@@ -1,159 +1,133 @@
-Return-Path: <linux-kernel+bounces-206784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA530900DA6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 23:42:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B584D900DAB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 23:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 672D01F23CB2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:42:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CA18288331
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2467A155724;
-	Fri,  7 Jun 2024 21:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE490155382;
+	Fri,  7 Jun 2024 21:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="R5iMop9D"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mn2G88TS"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35D4155355
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 21:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39AA1552F9;
+	Fri,  7 Jun 2024 21:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717796518; cv=none; b=g7a9n9rKNjWtv3/N/dQlORFVcWCBzZUk+WWPpHAzV9L2lkc7VYwu3KHP9r3oKJrjIvtVM3DnsCvwxoZfe7ssSBBAopLogSfEWpbelcg0pN3djhpWLKDMEhLFUULZOgJl8DIfDMCx4pB4T01obbg4MXQRkLMgC/WD7OWo03WS0BE=
+	t=1717796578; cv=none; b=VgQ7OK3vQGXb9IZRmNeBpEhMnkc3ZM3Pb4YIEA9GahVfvDh/xfMJZZNYy/+c6fLj9PK82yEe5kpltdfPdIEDstjubBOhwanPi7mDKRQW9paYNksDLMpe4CYee3b4QML720AkN8a+zubIL77JlDcGHMsACCYvsERbWV4sXDp7D1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717796518; c=relaxed/simple;
-	bh=OuA/cNeJGIxEaUjitR2IhUcrlBfny5ZFFd/ayhWbT8I=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Uq7rIQEVDnaqnVUhkqFEi/rTD5WQFAJK++pquWyBw01Z0MjHkPpXPpNuI0i2UmNLEeqPawDFls6Ne+K7QiLELXlM8XMAQoFIPd+2hKsKGFuxgkaN4BNAyVowNeoJLxK171tT0GC3HVthLo+OPYw1yhwHjAj9EW/xf6G8cAMsgvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=R5iMop9D; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1717796514; x=1718055714;
-	bh=XyoIRaw4nzp+JTQlueWeFgCFHVypWtZ2IYQLlnxgLXo=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=R5iMop9DHW7Ownvb2JoktckLjiBLCA+aAtm4fsxpZ/bO/K0f4OjumvLQl1n7EcoA7
-	 ahhxO88lOIOqQRJMNnTomfsxxCQs7R+d3PpyGLUF01TgylAOyCgGTvB7IR6vt+RBrW
-	 brbknFztOOOPYRR0xxkoO+TUCtodh3Bf0MCk3NO+h5Y/ULlrPYV7vjJHmQKNPBhIrt
-	 U+l9HYibXjl0t5ZOPqlPDq46CHUIwtW2aHU5/CoksPmJ1aiLZJ/BbomOkZHMu0h8yi
-	 PtViuhLrX0jxnhvvdFW8nfIk49z2RrLIlbb/WFfn8h2DPHK+PZ3f/Qnk/bddQG2mtL
-	 U819ZdQNvzspg==
-Date: Fri, 07 Jun 2024 21:41:51 +0000
-To: jeffxu@chromium.org
-From: =?utf-8?Q?Barnab=C3=A1s_P=C5=91cze?= <pobrn@protonmail.com>
-Cc: akpm@linux-foundation.org, cyphar@cyphar.com, david@readahead.eu, dmitry.torokhov@gmail.com, dverkamp@chromium.org, hughd@google.com, jeffxu@google.com, jorgelo@chromium.org, keescook@chromium.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-mm@kvack.org, skhan@linuxfoundation.org, stable@vger.kernel.org
-Subject: Re: [PATCH v1 0/1] mm/memfd: add documentation for MFD_NOEXEC_SEAL
-Message-ID: <ERhTlU0qgh7_BDdbPy2XWV0pYgJkVYImFQZVPIfvx9F9uyhfaopo8FMZa8WZ9Txx1bzq8qEez4QQ8sOQIwKeQEdn1rym1JgDmvG3zOKdpeQ=@protonmail.com>
-In-Reply-To: <20240607203543.2151433-1-jeffxu@google.com>
-References: <20240607203543.2151433-1-jeffxu@google.com>
-Feedback-ID: 20568564:user:proton
-X-Pm-Message-ID: 7824bcd3ec0219abcc9292ba531faca6c127f3cf
+	s=arc-20240116; t=1717796578; c=relaxed/simple;
+	bh=RB8GBLa09FNKHnCn8Vj4cDIs5G+EZwnXVBse7JCWfCw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=q/o5hhu2Ia0bSyrOtV2m/EvUjoCSPswD3LojrbhhH1z2kxfjpPe0yOjcOJJAvC7GjrV9vKHHhYyQ1rEKM2nthQ1rWD3yBWT/8PRfUm87543B7/j+/8U47N2Ce/DmGjPyRuw7qEiFAok2I7XlJR8Hgcc7BtExfkBYISnEzQ2Vxns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mn2G88TS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 457HZsgJ021561;
+	Fri, 7 Jun 2024 21:42:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=+8GU/M5AD7kWb/svYR2W8/
+	PjPrUCESnALS1ZvO/wzbI=; b=mn2G88TSh5q8Q7g8blnGN6yjbeJMeWbH1dXjRk
+	7XQOcwVYsNOwjuRzMnr7k+NctMxBLYds0I7+wSq2iIzFA67dp/Z2OGBsvmYCiiDk
+	VKTD9YZDXVg3KYd13Ya4JQfd2ZTyk2iPsAFrP4AkjnqkMggMvH41xYZoBgAT00++
+	bbnYs9rG7VCrqQNXUuPia+XqIz+pcWjXoblcIWMpCgKK2d0hUgT3uLFwRxhMvBnv
+	oDdQExfd7CX9hlISfbO4WzV8FqkA7/9uF1DeqGFe50B7wcFKoY1lJ4LFc2J3uqap
+	sdUxFvtViDyNbd4KD6TeoWUi6/qYMWaMzY1TOY1qqUC1wTYA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ym0sf1mte-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 21:42:46 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 457LgjVs020625
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 7 Jun 2024 21:42:45 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 7 Jun 2024
+ 14:42:43 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Fri, 7 Jun 2024 14:42:43 -0700
+Subject: [PATCH] modpost: bypass module description test on vmlinux.o
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240607-md-scripts-mod-v1-1-d3cd5a024f05@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIANJ+Y2YC/x3MTQrCQAxA4auUrA2kgzjoVcTF/GRswJmWpEqh9
+ O6OLr/FezsYq7DBbdhB+SMmc+sYTwOkKbQno+RucOTOdCGPNaMllWU1rHNGX3wpdB2ZXIQeLcp
+ Ftv/w/uiOwRijhpam3+Yl7b1hDbaywnF8Ab5BLJB/AAAA
+To: Masahiro Yamada <masahiroy@kernel.org>,
+        Nathan Chancellor
+	<nathan@kernel.org>,
+        Nicolas Schier <nicolas@fjasle.eu>,
+        Vincenzo Palazzo
+	<vincenzopalazzodev@gmail.com>
+CC: <linux-kbuild@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: -5g0ean99e-hNJo417IMauExIjobsCPQ
+X-Proofpoint-ORIG-GUID: -5g0ean99e-hNJo417IMauExIjobsCPQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-07_13,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ lowpriorityscore=0 impostorscore=0 adultscore=0 suspectscore=0 mlxscore=0
+ mlxlogscore=816 clxscore=1011 bulkscore=0 phishscore=0 priorityscore=1501
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406070159
 
-Hi
+When building modules with W=1, modpost will warn if a module is
+missing a MODULE_DESCRIPTION. Unfortunately, it also performs this
+test on vmlinux.o:
 
+WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
 
-2024. j=C3=BAnius 7., p=C3=A9ntek 22:35 keltez=C3=A9ssel, jeffxu@chromium.o=
-rg <jeffxu@chromium.org> =C3=ADrta:
+Relocate the logic so that the test is not performed on vmlinux.o.
 
-> From: Jeff Xu <jeffxu@chromium.org>
->=20
-> When MFD_NOEXEC_SEAL was introduced, there was one big mistake: it
-> didn't have proper documentation. This led to a lot of confusion,
-> especially about whether or not memfd created with the MFD_NOEXEC_SEAL
-> flag is sealable. Before MFD_NOEXEC_SEAL, memfd had to explicitly set
-> MFD_ALLOW_SEALING to be sealable, so it's a fair question.
->=20
-> As one might have noticed, unlike other flags in memfd_create,
-> MFD_NOEXEC_SEAL is actually a combination of multiple flags. The idea
-> is to make it easier to use memfd in the most common way, which is
-> NOEXEC + F_SEAL_EXEC + MFD_ALLOW_SEALING. This works with sysctl
-> vm.noexec to help existing applications move to a more secure way of
-> using memfd.
->=20
-> Proposals have been made to put MFD_NOEXEC_SEAL non-sealable, unless
-> MFD_ALLOW_SEALING is set, to be consistent with other flags [1] [2],
-> Those are based on the viewpoint that each flag is an atomic unit,
-> which is a reasonable assumption. However, MFD_NOEXEC_SEAL was
-> designed with the intent of promoting the most secure method of using
-> memfd, therefore a combination of multiple functionalities into one
-> bit.
->=20
-> Furthermore, the MFD_NOEXEC_SEAL has been added for more than one
-> year, and multiple applications and distributions have backported and
-> utilized it. Altering ABI now presents a degree of risk and may lead
-> to disruption.
+Fixes: 1fffe7a34c89 ("script: modpost: emit a warning when the description is missing")
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ scripts/mod/modpost.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-I feel compelled to mention again that based on my investigation the risk i=
-s
-minimal. Not to mention that it can easily be reverted if need be.
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 937294ff164f..f48d72d22dc2 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -1647,10 +1647,11 @@ static void read_symbols(const char *modname)
+ 			namespace = get_next_modinfo(&info, "import_ns",
+ 						     namespace);
+ 		}
++
++		if (extra_warn && !get_modinfo(&info, "description"))
++			warn("missing MODULE_DESCRIPTION() in %s\n", modname);
+ 	}
+ 
+-	if (extra_warn && !get_modinfo(&info, "description"))
+-		warn("missing MODULE_DESCRIPTION() in %s\n", modname);
+ 	for (sym = info.symtab_start; sym < info.symtab_stop; sym++) {
+ 		symname = remove_dot(info.strtab + sym->st_name);
+ 
 
-In my view, it is better to fix the inconsistency than to document it. I wo=
-uld
-argue that "`MFD_ALLOW_SEALING` is needed to enable sealing except that XYZ=
-"
-is unintuitive and confusing for a non-significant amount of people.
+---
+base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
+change-id: 20240607-md-scripts-mod-7f7ff091e02b
 
-In conclusion, I think it would be unfortunate if the inconsistency was not=
- fixed and
-the problem was considered "solved" by a passing mention in the documentati=
-on.
-
-
-Regards,
-Barnab=C3=A1s P=C5=91cze
-
->=20
-> MFD_NOEXEC_SEAL is a new flag, and applications must change their code
-> to use it. There is no backward compatibility problem.
->=20
-> When sysctl vm.noexec =3D=3D 1 or 2, applications that don't set
-> MFD_NOEXEC_SEAL or MFD_EXEC will get MFD_NOEXEC_SEAL memfd. And
-> old-application might break, that is by-design, in such a system
-> vm.noexec =3D 0 shall be used. Also no backward compatibility problem.
->=20
-> I propose to include this documentation patch to assist in clarifying
-> the semantics of MFD_NOEXEC_SEAL, thereby preventing any potential
-> future confusion.
->=20
-> This patch supersede previous patch which is trying different
-> direction [3], and please remove [2] from mm-unstable branch when
-> applying this patch.
->=20
-> Finally, I would like to express my gratitude to David Rheinsberg and
-> Barnab=C3=A1s P=C5=91cze for initiating the discussion on the topic of se=
-alability.
->=20
-> [1]
-> https://lore.kernel.org/lkml/20230714114753.170814-1-david@readahead.eu/
->=20
-> [2]
-> https://lore.kernel.org/lkml/20240513191544.94754-1-pobrn@protonmail.com/
->=20
-> [3]
-> https://lore.kernel.org/lkml/20240524033933.135049-1-jeffxu@google.com/
->=20
-> Jeff Xu (1):
->   mm/memfd: add documentation for MFD_NOEXEC_SEAL MFD_EXEC
->=20
->  Documentation/userspace-api/index.rst      |  1 +
->  Documentation/userspace-api/mfd_noexec.rst | 86 ++++++++++++++++++++++
->  2 files changed, 87 insertions(+)
->  create mode 100644 Documentation/userspace-api/mfd_noexec.rst
->=20
-> --
-> 2.45.2.505.gda0bf45e8d-goog
->=20
-> 
 
