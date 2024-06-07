@@ -1,194 +1,162 @@
-Return-Path: <linux-kernel+bounces-206547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D28F900B41
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:30:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B10C900B4B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7C381F22EA8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:30:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48ECC1C21D7B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5B319AA61;
-	Fri,  7 Jun 2024 17:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087EC1991CC;
+	Fri,  7 Jun 2024 17:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="IEhWmlGB"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j4o2G5EA"
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F03F1C33
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 17:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E5333C0
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 17:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717781407; cv=none; b=RGk/R4yNQT53mPsbc+q21veBb1lQgnPdPkbGxVuUNzepnwiswtURdRMgpn9Ic2Y+gewRmcMgBnqhxzxlbfzMq+LsNH04QBgxYKc8umrYRBZpJK9/TAbBN3EFlih+WM0JhGqa61olWPZB3QOXdklAyKzb9Dvce+eKed4C74P09QE=
+	t=1717781636; cv=none; b=T46db1V10B99ybZIzw7utTWb3Ulkr/N/5l6wbUQgpCArzCYZvJBMf4gjRTcqFhJLBfT6mP8128QhT2zFafshRfQQj51Y2sAmZwDNMnn6X2wcsfwRQtQVs4VE7twg04Cx/Z3LXRPjC2j83SZymcfRKXerjcjBeIaBNvNycjvIPY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717781407; c=relaxed/simple;
-	bh=e0AY1UZVACJQd1xtViB6DdfImOxuE/XRpLuic76lORg=;
+	s=arc-20240116; t=1717781636; c=relaxed/simple;
+	bh=fvlMr8NeemR0mya1UxHN05eadBJSCH9MiFHjNa9gUZ4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B5l3G6CH3LT9R44TyqJ13WVhmkDf8PmjWKh+oriz9DwwxbTZIVdXWWtEpmQ3PSzAEFHf+lNPbaGcxWMAOFlD++B0qIX12i5kd40O6QxVckhNnBMILEjxgnU0ip1Rit9QcxCQsLt6oZuw17/dndyq3dblUqXDLLz85lM3n21z3t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=IEhWmlGB; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dfaff6bee06so732435276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 10:30:05 -0700 (PDT)
+	 To:Cc:Content-Type; b=DSBxMxWDMvD8/oIlvqUzIuaoGWwPseMmlw/4wrZyE4p+EW7DFz5IPXmkrnTD7n85QR0W+XdvgphoHvfpOv+cQChOTNZKaEAXQ06QoGSaBHTWtC7hgZdFqILGJ/aOV8EYK5DCZLtFwLmE556q61o6yDVnhLR2/IdeCdZ4GCYQ1WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=j4o2G5EA; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-4eb1d56fcadso841375e0c.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 10:33:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1717781405; x=1718386205; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nfgbbC++t7lQwnyAlEgbOEhZ3OHimWGA3FY8Pt1QloU=;
-        b=IEhWmlGBeHl1TIJrNTfFfoy5Bb+iflHJf9jEhuYg5J4ChbMU99fETVxjUO3SEJGeYI
-         DHApk1oCdMH3xlDSrjyzFii7tkCxZxjsTpRkcR/PbClR2g7/8dQ0kTfCPJCw0h8BdC9G
-         9LAzaEnkkgRj7a0JLoSk3Y7XFRupUYMeim4Z7ZevnO/WDR1ygy/N908lf8NfKho9I0xp
-         zBvFvxLkQIWs1xXoQ8eeLyChdJeFJvBSa8ttbuT2qrGBss1puA5YFYfJegrfPZVeyNHW
-         ao0ALa8mj1J2bgc9AsVqvgwLN4Ye8vN1xjempHEdSPRrpYE31Aouj4TpHpYd8zSEVOH9
-         lVcw==
+        d=chromium.org; s=google; t=1717781633; x=1718386433; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dybcnIiLVi5/bVqftpS2lnH30sLAWeA2EDG07SaudOE=;
+        b=j4o2G5EA5BRzjzovCWSP/xGzfKsgx8xc4euKcl/hkHIMZPbs+8ZX0PB+NSKHYtQFhi
+         W1n2IAChwPml/GWR+I0wftlMAB/ZrLoL8x3v6EwxrNoLHtF49qCLoyI6G+KGYQnKXbvw
+         xZ69pIhGmu47LFLNmWZxxarswuBxxNRVZYvQg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717781405; x=1718386205;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nfgbbC++t7lQwnyAlEgbOEhZ3OHimWGA3FY8Pt1QloU=;
-        b=gmLiUcKqleboY1/xYYlaV3LsoBmb2cJvHXfwFR+dpsuILHPKO0++np2OgwyNz+juok
-         alGlS02WbgSpWBVyi/ysydpQdSmnQhDz5pYpmWXJF0tCUAFw7MLuSLKWxDVUuecnfLjY
-         Juty8pbKKn8LC9KZuRS1yQ2+MwkHBJn2lycTdCXm453u8gQuB8jpy5sigIYELftWacSw
-         1tFDLaF3lLY6tSrMSQnKRBxY/M/yqHBWw0kYFTJ5c688IZdnENHPsVjgqANV+mIqaUc/
-         PYAOMsNY5pz9BigBYKqICO1ovNYv6ztsnXK19v7XNvtGqXHHF0k6AeWWd2PfWCw0xcqK
-         PFGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbnCKFPKriTSrHI+B7a8eySIyVnaPrnsZt90Gfh4Ge1S5qOFEYy/FTeTEdulxcaHTLnYQ/ysR18x61aTSNqmuylAaGkSle3QrhNd6A
-X-Gm-Message-State: AOJu0YzIrZiuPu6PZs0nIau/qawNHq5hLQ7RAnTUGQG6UIVpM2dphlbo
-	zoNiz4tFc3Jd6j4MiSI5uE9JAwfVGkCXaVDWztCESOYiktM9811w/DgwaCO1DOi/eFO0RtIC1kb
-	UI8QeR/3SM+aDD3x6dA3bgliHf5vjBaYyOua81Q==
-X-Google-Smtp-Source: AGHT+IFROFUKI0sxohaL1XWzrCoSNjL5yAeFP8N4BKV2FeWOpDa9kAY7vqeiyaLF0Gf0qs98IHaiGlLSKSLX4TB58WE=
-X-Received: by 2002:a25:848d:0:b0:deb:a5bd:b5e9 with SMTP id
- 3f1490d57ef6-dfaf65c62aemr2844352276.64.1717781405009; Fri, 07 Jun 2024
- 10:30:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717781634; x=1718386434;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dybcnIiLVi5/bVqftpS2lnH30sLAWeA2EDG07SaudOE=;
+        b=BwOTTvnUeYaoZyQ3+Jna5haHN4jomTr+khZKxKvVinxhXM8rjiUQF1X7GCESKgVWmH
+         acxzKqtn0hao4P9VPbXFD3cmHW84g6llF/Gk5Cc+VDYj70Zj0fHZ2Y6Q6APbtt4YyJj3
+         +9i3ggag9STJ8qoqihiarq6XYo/FNhoDJGbAlFmEwY1CYgkv7kGebWpfmQZfYVV/m9Jf
+         dHZTQNMB3wVFWBG3OAues1WQJ04C70tnIJI7magXVX1kMh7FPdlkbCQroEYDgNKwyiUM
+         mmDitKpvUUPkOkqVchKLMPsrSbpAxKgzV2oFnTSDa5b1lwnqBDO5Z2JjH7RmdkhmOfJ6
+         WsmQ==
+X-Gm-Message-State: AOJu0YwxkQFyfQ8i1TGnR6IsO1/qzYBGH9icNjdIOdjgsUJfQ8TTn59i
+	+TJJH2ciQBBa94rKOgVjq2gu29aBLRASvOZfm91GELzDCuq/7M1VeSJPPVnxGCVI+6trnM21E57
+	b3GXQgiKS4CsuivpM49s39zGyxurxnglfrgUJ
+X-Google-Smtp-Source: AGHT+IFXvpc6qNSMXpgwDcPE9pPWUm6/R43F2u116dAsDRczp5uVABR22bdJUvEkX30wyp4qaveyKrbcSrZB1NVmaN4=
+X-Received: by 2002:a1f:4f05:0:b0:4d4:b89:bd2a with SMTP id
+ 71dfb90a1353d-4eb5621bd52mr3231900e0c.3.1717781633654; Fri, 07 Jun 2024
+ 10:33:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240607-trimmer-pummel-b452ed15e103@spud> <20240607155704.GB1242@pendragon.ideasonboard.com>
-In-Reply-To: <20240607155704.GB1242@pendragon.ideasonboard.com>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Fri, 7 Jun 2024 18:29:49 +0100
-Message-ID: <CAPY8ntBNNOFR1nn05g4Y-SOv_tN0YJv9wygO=+S80-zA1oq7mg@mail.gmail.com>
-Subject: Re: [PATCH v1] media: i2c: imx219: fix msr access command sequence
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Conor Dooley <conor@kernel.org>, linux-media@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Adam Ford <aford173@gmail.com>, 
-	Andrey Konovalov <andrey.konovalov@linaro.org>, linux-kernel@vger.kernel.org, 
-	Naushir Patuck <naush@raspberrypi.com>
+References: <20240607104610.1.I6c23f4fdb786f7200f6f1255af57b4e9621bcc66@changeid>
+ <ZmM7FovMyez71TcC@slm.duckdns.org>
+In-Reply-To: <ZmM7FovMyez71TcC@slm.duckdns.org>
+From: Tim Van Patten <timvp@chromium.org>
+Date: Fri, 7 Jun 2024 11:33:43 -0600
+Message-ID: <CAMaBtwHrprN1Ev8kJPggggVcVZCxsxMQJ=NBQ2AC_Tr1jqHoCw@mail.gmail.com>
+Subject: Re: [PATCH] workqueue: Prevent delayed work UAF kernel panic
+To: Tejun Heo <tj@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, druth@chromium.org, 
+	Tim Van Patten <timvp@google.com>, Lai Jiangshan <jiangshanlai@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Conor and Laurent
+Hi,
 
-On Fri, 7 Jun 2024 at 16:57, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
+On Fri, Jun 7, 2024 at 10:53=E2=80=AFAM Tejun Heo <tj@kernel.org> wrote:
+ > To prevent kernel panics, check if the pwq and pwq->pool pointers are
+> > valid before derefencing them, and discard the work if they're not.
 >
-> Hi Conor,
+> Nothing guarantees that they'd stay NULL after wq destruction, right?
+
+It doesn't appear it's possible to re-use a wq once it's been
+destroyed, so I don't
+think they can be re-initialized once they're NULL (nor the __WQ_DESTROYING
+flag cleared). I could certainly be wrong here though.
+
+> > Discarding all work once __WQ_DESTROYING has been set (including from
+> > the same workqueue) causes breakage, so we must check the pointers
+> > directly.
 >
-> Thank you for the patch.
->
-> On Fri, Jun 07, 2024 at 04:50:23PM +0100, Conor Dooley wrote:
-> > From: Conor Dooley <conor.dooley@microchip.com>
-> >
-> > It was reported to me that the imx219 didn't work on one of our
-> > development kits partly because the access sequence is incorrect.
-> > The datasheet I could find [1] for this camera has the access sequence:
-> > Seq. No. Address (Hex) data
-> > 1        30EB          05
-> > 2        30EB          0C
-> > 3        300A          FF
-> > 4        300B          FF
-> > 5        30EB          05
-> > 6        30EB          09
-> >
-> > but the driver swaps the first two elements. Laurent pointed out on IRC
-> > that the original code used the correct sequence for 1920x1080 but the
-> > current sequence for 3280x2464 and 1640x1232. During refactoring of the
-> > init sequence the current order was used for all formats.
-> >
-> > Switch to using the documented sequence.
-> >
-> > Link: https://www.opensourceinstruments.com/Electronics/Data/IMX219PQ.pdf [1]
-> > Fixes: 8508455961d5 ("media: i2c: imx219: Split common registers from mode tables")
-> > Fixes: 1283b3b8f82b ("media: i2c: Add driver for Sony IMX219 sensor")
-> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
->
-> This looks reasonable, based on the above link.
->
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->
-> Dave, could you check the impact on the Raspberry Pi kernel ? It seems
-> to be shipping the incorrect sequence unconditionally.
+> There's only so much protection we can offer for buggy code and I'd much
+> prefer an approach where the overhead is in the destruction path rather t=
+han
+> the queueing path.
 
-I've compared the values against the old firmware driver. There we
-have the cropped 1080p and VGA high framerate modes had 0x05 0x0c, and
-the full res 3280x2464 and 2x2 binned 1640x1232 modes had 0x0c 0x05,
-so the same as the original kernel driver. Not totally unsurprising as
-the kernel driver register sets were copied from the firmware.
-So the Pi has used imx219 in this manner since launch of the sensor in
-2014! Whether that was a transcription typo or an error in the
-register sets from Sony I couldn't say (Naush may still have the
-original register set information).
+That's a good point about avoiding the overhead I hadn't given enough
+consideration.
 
-I don't have an imx219 to hand right now to test with, but will check
-it out on Monday. I'll agree that the patch looks valid based on the
-datasheet.
+A fix in the destruction path would presumably require draining the work in
+drain_workqueue()  or discarding it in destroy_workqueue(). My naive
+interpretation of
+things would be to discard it, so the work isn't executed
+preemptively, but I don't know
+what the expectations are for delayed work regarding which is better:
+do it early or don't
+do it at all. As you've pointed out, since this is buggy code to begin
+with, I don't think
+there's any contract that needs to be adhered to super-closely, which
+is why I'm leaning
+towards the discard path.
 
-> Any information about what the 12 undocumented MSRs that are programmed
-> by the driver do would be appreciated too ;-)
+Regardless, it doesn't appear we have a list of those delayed work
+items available today.
+Adding one should be possible, but that would include removing the work in
+delayed_work_timer_fn() in the normal path, which would also add
+overhead (and likely
+more than the pointer checks, due to searching the list, etc.).
 
-Sadly I have no extra information on those.
+I think a better approach here would be to update
+delayed_work_timer_fn() to check
+__WQ_DESTROYING and discard all attempts to queue to a destroyed wq. I have=
+n't
+given this as much testing (I just kicked off a round of testing), but
+it should help
+reduce the overhead impact.
 
-> > ---
-> > I got the report of this third hand, I don't have a device and can't
-> > test this. I do wonder why the RPis get away with the sequence that
-> > seemingly doesn't work for the guy that reported this to me. My theory
-> > is either that they noticed the sequence was wrong while adding some
-> > other MSR access that is needed on this board while either cross
-> > checking the values written or because the other MSR accesses didn't
-> > take effect.
+I'm far from an expert here, so any input is appreciated. Any thoughts
+on this approach
+instead?
 
-Did the change fix it for the reporter? We're using the driver with no
-changes to the register settings cf mainline.
-Why it works on the Pi but not on a Microchip board is likely to be
-something quite subtle.
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+--- a/kernel/workqueue.c (revision 4bd3ef41540b950cf63179be1967aac6d0937766=
+)
++++ b/kernel/workqueue.c (date 1717780157589)
+@@ -1925,6 +1925,17 @@
+ {
+  struct delayed_work *dwork =3D from_timer(dwork, t, timer);
 
-  Dave
-
-> > CC: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> > CC: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > CC: Mauro Carvalho Chehab <mchehab@kernel.org>
-> > CC: Adam Ford <aford173@gmail.com>
-> > CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > CC: Andrey Konovalov <andrey.konovalov@linaro.org>
-> > CC: linux-media@vger.kernel.org
-> > CC: linux-kernel@vger.kernel.org
-> > ---
-> >  drivers/media/i2c/imx219.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> > index 51ebf5453fce..e78a80b2bb2e 100644
-> > --- a/drivers/media/i2c/imx219.c
-> > +++ b/drivers/media/i2c/imx219.c
-> > @@ -162,8 +162,8 @@ static const struct cci_reg_sequence imx219_common_regs[] = {
-> >       { IMX219_REG_MODE_SELECT, 0x00 },       /* Mode Select */
-> >
-> >       /* To Access Addresses 3000-5fff, send the following commands */
-> > -     { CCI_REG8(0x30eb), 0x0c },
-> >       { CCI_REG8(0x30eb), 0x05 },
-> > +     { CCI_REG8(0x30eb), 0x0c },
-> >       { CCI_REG8(0x300a), 0xff },
-> >       { CCI_REG8(0x300b), 0xff },
-> >       { CCI_REG8(0x30eb), 0x05 },
->
-> --
-> Regards,
->
-> Laurent Pinchart
++ /*
++ * Prevent a kernel panic by discarding work queued to a destroyed wq.
++ * This must be checked while the rcu_read_lock() is
++ * held, so destroy_workqueue() cannot nullify wq->cpu_pwq while it's
++ * being accessed here.
++ */
++ if (WARN_ON_ONCE(dwork->wq->flags & __WQ_DESTROYING)) {
++ pr_warn("workqueue %s: discarding work for destroyed wq\n", dwork->wq->na=
+me);
++ return;
++ }
++
+  /* should have been called from irqsafe timer with irq already off */
+  __queue_work(dwork->cpu, dwork->wq, &dwork->work);
+ }
 
