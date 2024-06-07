@@ -1,408 +1,214 @@
-Return-Path: <linux-kernel+bounces-206722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16F3900CFF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:34:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E0D6900D02
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:34:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB0571C203E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:34:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F062B2204B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A403156C49;
-	Fri,  7 Jun 2024 20:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B25154440;
+	Fri,  7 Jun 2024 20:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SfEFfAJa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PJI8GNub"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2FC15667D;
-	Fri,  7 Jun 2024 20:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F354E45C06;
+	Fri,  7 Jun 2024 20:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717792336; cv=none; b=gOLIXooCsUgT7nZ+cst0QRCxi/KtSMimq/rc4VObyU/ToKJvH2crcdmuH+GQgG2oUmk4VXzMTqqSncUc0R6TEh+5g2tzM3eqQ1BHZNbjYs9uV83F79YJoUBMbJZ6TW7OnWd+PByV78wLm6N6tLK205tIiuExQMk8fxSdL71NN4A=
+	t=1717792358; cv=none; b=mhVSHNvoNLocVEc/ejkI0Y3ciAZmxWHo1+WDEiIsyiYHOWrgJPsY29qWvRjngHt6+v8jTVd+AOLBe0O8e83kqNjglDUvvNQ7mIePW9lt0h6XI/NYYY/uRwETrnA3jb4HeFYgIc4XkmqAVbEwb3w7WJ00ZFI847D4SMAOrz9eY8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717792336; c=relaxed/simple;
-	bh=KgRp/liFFW85v8ZYPjrAlhpw4VYmeoKaJTUjzgMXSH8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PQG4qWI+DoAwjQDlzIWfwFM5g3K9nfbkxdRqnKDXm3AaqTzumZFJkerst1M+XH8x9zQt+8tJpC8hfYQeGTvkh9MUKUcwgTVKQAxTLZTl9CBWxz1eWOvs87HiYpYyNurqa5kvew0UU71wWRTKhKqqIcoRyE1XtzlgfVJ+LyNvrMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SfEFfAJa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63D92C4AF08;
-	Fri,  7 Jun 2024 20:32:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717792335;
-	bh=KgRp/liFFW85v8ZYPjrAlhpw4VYmeoKaJTUjzgMXSH8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=SfEFfAJakAM6y716aMbuLsXQ7hiXrXoRRlhuEJzKbSlZ+h/7iR0bxUl85iriTPTVf
-	 x34WZPWhQsUVyIylyXWZCIOTLTBsao46V3fJkG2vuoqgF/XAcpvduTqdaRgbyVpGfm
-	 kgziXenKnVLm0dX1XvZPR+jcJ69/G+/GdhTCycADrMxldsTSB5juejkkcsuoqFX1YR
-	 jI44DspO9vyxgizA1pfpmem3MgeRFS2G2+r1dItJ/qGNTmXbIeTEmuSkBtV/1Cv8xL
-	 IKIA3jXWvxjYA7pRLDQtU+N6HC3p/2PFljYLJ8qDFs6VTR/MfUePvaCJgHf81pSTPV
-	 pNHZJWU3pW/oA==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Date: Fri, 07 Jun 2024 14:31:34 -0600
-Subject: [PATCH 9/9] perf: arm_pmuv3: Add support for Armv9.4 PMU
- instruction counter
+	s=arc-20240116; t=1717792358; c=relaxed/simple;
+	bh=aD6y1F3VSS5CEJ0w5Jd1S8KIHod5Ks8bdj5s9Qths8I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AE6/yoVRbJL3fBDd3Z1Bb2W8mR43nZxWRTPXuMFSWDBGm7R2bXUfXoVWT+2SssNp1lPm5dFN1AXRMm959EdtkuijiE2STeIoVVOSs2sILS5sapaW3e5i/U/3gQBUPU3bukQQYkTdnz/lZ+bCRkIAns+oGNCNvx5zx/1AZfGMclg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PJI8GNub; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a68c8b90c85so319704966b.2;
+        Fri, 07 Jun 2024 13:32:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717792355; x=1718397155; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zbN2NOWcjbRapD6qd1t3MtztGq2eBL26rOq0Qw9qaDM=;
+        b=PJI8GNubzUrax9jOBdHOrtlH3+vkkZip5M3ofZgNQVORRFEJirI0WatGsY7fY7OJq+
+         zEMCc3NkvANpijbWNPcZ9lz4UUfM73W5XtXssPUSJn3XK15rThJEQCMJnAeLG2v3bQ4b
+         whBn4/0sulhOcSl7Y9+yQb+EyCtIb1tvFqS0LYzDODS885vrok/xy+Quq6R374osLdwz
+         XQxK3/t7oyS9qGu8vVUBHQKLBNKob6yfvmL63vHyZ0MqgSnItXzRjXKUHsv5lIRNXS+v
+         SwydYcduttMDJ/p5l4K+hlspU7fBgH436dMSoKHWP96vbCEPas1sGhFbl8J05kDxHwxc
+         5lBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717792355; x=1718397155;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zbN2NOWcjbRapD6qd1t3MtztGq2eBL26rOq0Qw9qaDM=;
+        b=ttmNWFcTh+RUKIc2nRQSmh9VYxYGID0l30gKJdZAQZXFPdxiTVHJx203fx1Lsg/mtW
+         fr0wuJYeFlwMY01PmGax44fLYVU0W/PZ10Ryt1c4P5roXBaE7fqpi561GTYXW5CLJ8wU
+         muadVOQzgJRErLqNhvkkFEMBixDx8Gn4Et1aAsSQPfHxuZxZ2cWNPYt1rxv+qpvNxSJh
+         DGaBMCAh+0Mo3LTBwo3nr2xQWJ3zSJn2pA2zWTxOJ3HiZ+SEdSFmYnyNgmUFkkl6XmTb
+         +iR3tCAGdihIbI/cz7A9a8mVtqZa3sjc3GpB/4YfeKFfn8pfT/UrvrOEbDkLCJGplAbP
+         ZlWg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmzZFr+by9SI7sUh2KRO11mU3m6cD3WE8KAwYQKbH6OI5AIHkHqcJUT2LqAaz0ZH5WZhfBMD1pXcyxyCRJER5/vKP/rm6M9tnab3N8xjVEjhd/BC/5pewBet66uWsxzjObQ0OM9jpkWlIMBQ==
+X-Gm-Message-State: AOJu0Yw4eg2WSOdtLLUiyYNTLYV/MjtXPqmURhPZiJjrxIWLGveqmqiB
+	pQyndXi8BQ7ftjCwW75NMKnhYLacJAHuRPgk647ScbM6rzGp7S2O
+X-Google-Smtp-Source: AGHT+IHFgsFB/gzesC3tXnn4puyao28oEqZrG8vMENeNC+mawQnpnhwNC0WA2HNzCbpIRoU1Bbj2uA==
+X-Received: by 2002:a17:906:25cb:b0:a6e:fdc8:ae45 with SMTP id a640c23a62f3a-a6efdc8b4b0mr13273166b.1.1717792354737;
+        Fri, 07 Jun 2024 13:32:34 -0700 (PDT)
+Received: from ?IPV6:2a02:a466:68ed:1:b5d2:cd90:17cf:ee79? (2a02-a466-68ed-1-b5d2-cd90-17cf-ee79.fixed6.kpn.net. [2a02:a466:68ed:1:b5d2:cd90:17cf:ee79])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6e2e1d4cb8sm120597966b.5.2024.06.07.13.32.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jun 2024 13:32:34 -0700 (PDT)
+Message-ID: <f42ef4a3-4bfe-4354-9220-ed742e093c86@gmail.com>
+Date: Fri, 7 Jun 2024 22:32:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240607-arm-pmu-3-9-icntr-v1-9-c7bd2dceff3b@kernel.org>
-References: <20240607-arm-pmu-3-9-icntr-v1-0-c7bd2dceff3b@kernel.org>
-In-Reply-To: <20240607-arm-pmu-3-9-icntr-v1-0-c7bd2dceff3b@kernel.org>
-To: Russell King <linux@armlinux.org.uk>, 
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>, Will Deacon <will@kernel.org>, 
- Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- James Morse <james.morse@arm.com>, 
- Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Zenghui Yu <yuzenghui@huawei.com>, 
- Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-perf-users@vger.kernel.org, kvmarm@lists.linux.dev
-X-Mailer: b4 0.14-dev
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/15] tty: serial: switch from circ_buf to kfifo
+To: Jiri Slaby <jirislaby@kernel.org>, neil.armstrong@linaro.org,
+ gregkh@linuxfoundation.org
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Al Cooper <alcooperx@gmail.com>, Alexander Shiyan <shc_work@mail.ru>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Baruch Siach
+ <baruch@tkos.co.il>, Bjorn Andersson <andersson@kernel.org>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ "David S. Miller" <davem@davemloft.net>, Fabio Estevam <festevam@gmail.com>,
+ Hammer Hsieh <hammerh0314@gmail.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Chunyan Zhang <zhang.lyra@gmail.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Kevin Hilman <khilman@baylibre.com>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
+ Laxman Dewangan <ldewangan@nvidia.com>,
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ "Maciej W. Rozycki" <macro@orcam.me.uk>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Simek <michal.simek@amd.com>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Nicholas Piggin <npiggin@gmail.com>, Orson Zhai <orsonzhai@gmail.com>,
+ =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
+ Patrice Chotard <patrice.chotard@foss.st.com>,
+ Peter Korsgaard <jacmet@sunsite.dk>,
+ Richard Genoud <richard.genoud@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Shawn Guo <shawnguo@kernel.org>, Stefani Seibold <stefani@seibold.net>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Taichi Sugaya <sugaya.taichi@socionext.com>,
+ Takao Orito <orito.takao@socionext.com>,
+ Tharun Kumar P <tharunkumar.pasumarthi@microchip.com>,
+ Thierry Reding <thierry.reding@gmail.com>, Timur Tabi <timur@kernel.org>,
+ Vineet Gupta <vgupta@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+References: <20240405060826.2521-1-jirislaby@kernel.org>
+ <daf06969-15fd-470e-88b8-a717066fe312@linaro.org>
+ <cebad7f8-3f47-4e6a-93b7-32fcf2367874@kernel.org>
+Content-Language: en-US
+From: Ferry Toth <fntoth@gmail.com>
+In-Reply-To: <cebad7f8-3f47-4e6a-93b7-32fcf2367874@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Armv9.4/8.9 PMU adds optional support for a fixed instruction counter
-similar to the fixed cycle counter. Support for the feature is indicated
-in the ID_AA64DFR1_EL1 register PMICNTR field. The counter is not
-accessible in AArch32.
+Hi,
 
-Existing userspace using direct counter access won't know how to handle
-the fixed instruction counter, so we have to avoid using the counter
-when user access is requested.
+Op 22-04-2024 om 07:51 schreef Jiri Slaby:
+> Hi,
+> 
+> On 19. 04. 24, 17:12, Neil Armstrong wrote:
+>> On 05/04/2024 08:08, Jiri Slaby (SUSE) wrote:
+>>> This series switches tty serial layer to use kfifo instead of circ_buf.
+>>>
+>>> The reasoning can be found in the switching patch in this series:
+>>> """
+>>> Switch from struct circ_buf to proper kfifo. kfifo provides much better
+>>> API, esp. when wrap-around of the buffer needs to be taken into account.
+>>> Look at pl011_dma_tx_refill() or cpm_uart_tx_pump() changes for example.
+>>>
+>>> Kfifo API can also fill in scatter-gather DMA structures, so it easier
+>>> for that use case too. Look at lpuart_dma_tx() for example. Note that
+>>> not all drivers can be converted to that (like atmel_serial), they
+>>> handle DMA specially.
+>>>
+>>> Note that usb-serial uses kfifo for TX for ages.
+>>> """
+> ...
+>> This patchset has at least broken all Amlogic and Qualcomm boards so 
+>> far, only part of them were fixed in next-
+> 
+> So are there still not fixed problems yet?
+> 
+>> but this serie has been merged in v1
+> 
+> Ugh, are you saying that v1 patches are not worth taking? That doesn't 
+> fit with my experience.
+> 
+>> with no serious testing
+> 
+> Sadly, everyone had a chance to test the series:
+>    https://lore.kernel.org/all/20240319095315.27624-1-jirislaby@kernel.org/
+> for more than two weeks before I sent this version for inclusion. And 
+> then it took another 5 days till this series appeared in -next. But 
+> noone with this HW apparently cared enough back then. I'd wish they 
+> (you) didn't. Maybe next time, people will listen more carefully:
+> ===
+> This is Request for Testing as I cannot test all the changes
+> (obviously). So please test your HW's serial properly.
+> ===
+> 
+>> and should've been dropped immediately when the first regressions were 
+>> reported.
+> 
+> Provided the RFT was mostly ignored (anyone who tested that here, or I 
+> only wasted my time?), how exactly would dropping help me finding 
+> potential issues in the series? In the end, noone is running -next in 
+> production, so glitches are sort of expected, right? And I believe I 
+> smashed them quickly enough (despite I was sidetracked to handle the 
+> n_gsm issue). But I might be wrong, as usual.
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- arch/arm/include/asm/arm_pmuv3.h   | 21 +++++++++++++++++++++
- arch/arm64/include/asm/arm_pmuv3.h | 29 +++++++++++++++++++++++++++++
- arch/arm64/kvm/pmu.c               |  8 ++++++--
- arch/arm64/tools/sysreg            | 25 +++++++++++++++++++++++++
- drivers/perf/arm_pmuv3.c           | 28 ++++++++++++++++++++++++++--
- include/linux/perf/arm_pmu.h       |  8 ++++++--
- include/linux/perf/arm_pmuv3.h     |  4 +++-
- 7 files changed, 116 insertions(+), 7 deletions(-)
+I arrived at this party a bit late, sorry about that. No good excuses.
 
-diff --git a/arch/arm/include/asm/arm_pmuv3.h b/arch/arm/include/asm/arm_pmuv3.h
-index ac2cf37b57e3..b836537ddfbf 100644
---- a/arch/arm/include/asm/arm_pmuv3.h
-+++ b/arch/arm/include/asm/arm_pmuv3.h
-@@ -10,6 +10,7 @@
- #include <asm/cputype.h>
- 
- #define ARMV8_PMU_CYCLE_IDX		31
-+#define ARMV8_PMU_INSTR_IDX		32 /* Not accessible from AArch32 */
- 
- #define PMCCNTR			__ACCESS_CP15_64(0, c9)
- 
-@@ -129,6 +130,12 @@ static inline u32 read_pmuver(void)
- 	return (dfr0 >> 24) & 0xf;
- }
- 
-+static inline bool pmuv3_has_icntr(void)
-+{
-+	/* FEAT_PMUv3_ICNTR not accessible for 32-bit */
-+	return false;
-+}
-+
- static inline void write_pmcr(u32 val)
- {
- 	write_sysreg(val, PMCR);
-@@ -154,6 +161,13 @@ static inline u64 read_pmccntr(void)
- 	return read_sysreg(PMCCNTR);
- }
- 
-+static inline void write_pmicntr(u64 val) {}
-+
-+static inline u64 read_pmicntr(void)
-+{
-+	return 0;
-+}
-+
- static inline void write_pmcntenset(u32 val)
- {
- 	write_sysreg(val, PMCNTENSET);
-@@ -179,6 +193,13 @@ static inline void write_pmccfiltr(u32 val)
- 	write_sysreg(val, PMCCFILTR);
- }
- 
-+static inline void write_pmicfiltr(u64 val) {}
-+
-+static inline u64 read_pmicfiltr(void)
-+{
-+	return 0;
-+}
-+
- static inline void write_pmovsclr(u32 val)
- {
- 	write_sysreg(val, PMOVSR);
-diff --git a/arch/arm64/include/asm/arm_pmuv3.h b/arch/arm64/include/asm/arm_pmuv3.h
-index 46930729fb3f..a13a10e97c01 100644
---- a/arch/arm64/include/asm/arm_pmuv3.h
-+++ b/arch/arm64/include/asm/arm_pmuv3.h
-@@ -12,6 +12,7 @@
- #include <asm/sysreg.h>
- 
- #define ARMV8_PMU_CYCLE_IDX		31
-+#define ARMV8_PMU_INSTR_IDX		32
- 
- #define RETURN_READ_PMEVCNTRN(n) \
- 	return read_sysreg(pmevcntr##n##_el0)
-@@ -56,6 +57,14 @@ static inline u32 read_pmuver(void)
- 			ID_AA64DFR0_EL1_PMUVer_SHIFT);
- }
- 
-+static inline bool pmuv3_has_icntr(void)
-+{
-+	u64 dfr1 = read_sysreg(id_aa64dfr1_el1);
-+
-+	return !!cpuid_feature_extract_unsigned_field(dfr1,
-+			ID_AA64DFR1_EL1_PMICNTR_SHIFT);
-+}
-+
- static inline void write_pmcr(u64 val)
- {
- 	write_sysreg(val, pmcr_el0);
-@@ -81,6 +90,16 @@ static inline u64 read_pmccntr(void)
- 	return read_sysreg(pmccntr_el0);
- }
- 
-+static inline void write_pmicntr(u64 val)
-+{
-+	write_sysreg_s(val, SYS_PMICNTR_EL0);
-+}
-+
-+static inline u64 read_pmicntr(void)
-+{
-+	return read_sysreg_s(SYS_PMICNTR_EL0);
-+}
-+
- static inline void write_pmcntenset(u64 val)
- {
- 	write_sysreg(val, pmcntenset_el0);
-@@ -111,6 +130,16 @@ static inline u64 read_pmccfiltr(void)
- 	return read_sysreg(pmccfiltr_el0);
- }
- 
-+static inline void write_pmicfiltr(u64 val)
-+{
-+	write_sysreg_s(val, SYS_PMICFILTR_EL0);
-+}
-+
-+static inline u64 read_pmicfiltr(void)
-+{
-+	return read_sysreg_s(SYS_PMICFILTR_EL0);
-+}
-+
- static inline void write_pmovsclr(u64 val)
- {
- 	write_sysreg(val, pmovsclr_el0);
-diff --git a/arch/arm64/kvm/pmu.c b/arch/arm64/kvm/pmu.c
-index 7eaf5f7aeae9..9420835cce91 100644
---- a/arch/arm64/kvm/pmu.c
-+++ b/arch/arm64/kvm/pmu.c
-@@ -67,24 +67,28 @@ void kvm_clr_pmu_events(u64 clr)
- 
- /*
-  * Read a value direct from PMEVTYPER<idx> where idx is 0-30
-- * or PMCCFILTR_EL0 where idx is ARMV8_PMU_CYCLE_IDX (31).
-+ * or PMxCFILTR_EL0 where idx is 31-32.
-  */
- static u64 kvm_vcpu_pmu_read_evtype_direct(int idx)
- {
- 	if (idx == ARMV8_PMU_CYCLE_IDX)
- 		return read_pmccfiltr();
-+	else if (idx == ARMV8_PMU_INSTR_IDX)
-+		return read_pmicfiltr();
- 
- 	return read_pmevtypern(idx);
- }
- 
- /*
-  * Write a value direct to PMEVTYPER<idx> where idx is 0-30
-- * or PMCCFILTR_EL0 where idx is ARMV8_PMU_CYCLE_IDX (31).
-+ * or PMxCFILTR_EL0 where idx is 31-32.
-  */
- static void kvm_vcpu_pmu_write_evtype_direct(int idx, u32 val)
- {
- 	if (idx == ARMV8_PMU_CYCLE_IDX)
- 		write_pmccfiltr(val);
-+	else if (idx == ARMV8_PMU_INSTR_IDX)
-+		write_pmicfiltr(val);
- 	else
- 		write_pmevtypern(idx, val);
- }
-diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
-index 231817a379b5..8ab6e09871de 100644
---- a/arch/arm64/tools/sysreg
-+++ b/arch/arm64/tools/sysreg
-@@ -2029,6 +2029,31 @@ Sysreg	FAR_EL1	3	0	6	0	0
- Field	63:0	ADDR
- EndSysreg
- 
-+Sysreg	PMICNTR_EL0	3	3	9	4	0
-+Field	63:0	ICNT
-+EndSysreg
-+
-+Sysreg	PMICFILTR_EL0	3	3	9	6	0
-+Res0	63:59
-+Field	58	SYNC
-+Field	57:56	VS
-+Res0	55:32
-+Field	31	P
-+Field	30	U
-+Field	29	NSK
-+Field	28	NSU
-+Field	27	NSH
-+Field	26	M
-+Res0	25
-+Field	24	SH
-+Field	23	T
-+Field	22	RLK
-+Field	21	RLU
-+Field	20	RLH
-+Res0	19:16
-+Field	15:0	evtCount
-+EndSysreg
-+
- Sysreg	PMSCR_EL1	3	0	9	9	0
- Res0	63:8
- Field	7:6	PCT
-diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
-index 468a0a3bbd5a..890efc686e11 100644
---- a/drivers/perf/arm_pmuv3.c
-+++ b/drivers/perf/arm_pmuv3.c
-@@ -479,7 +479,7 @@ static bool armv8pmu_event_is_chained(struct perf_event *event)
- 	return !armv8pmu_event_has_user_read(event) &&
- 	       armv8pmu_event_is_64bit(event) &&
- 	       !armv8pmu_has_long_event(cpu_pmu) &&
--	       (idx != ARMV8_PMU_CYCLE_IDX);
-+	       (idx < ARMV8_PMU_CYCLE_IDX);
- }
- 
- /*
-@@ -538,7 +538,7 @@ static bool armv8pmu_event_needs_bias(struct perf_event *event)
- 		return false;
- 
- 	if (armv8pmu_has_long_event(cpu_pmu) ||
--	    idx == ARMV8_PMU_CYCLE_IDX)
-+	    idx >= ARMV8_PMU_CYCLE_IDX)
- 		return true;
- 
- 	return false;
-@@ -568,6 +568,8 @@ static u64 armv8pmu_read_counter(struct perf_event *event)
- 
- 	if (idx == ARMV8_PMU_CYCLE_IDX)
- 		value = read_pmccntr();
-+	else if (idx == ARMV8_PMU_INSTR_IDX)
-+		value = read_pmicntr();
- 	else
- 		value = armv8pmu_read_hw_counter(event);
- 
-@@ -601,6 +603,8 @@ static void armv8pmu_write_counter(struct perf_event *event, u64 value)
- 
- 	if (idx == ARMV8_PMU_CYCLE_IDX)
- 		write_pmccntr(value);
-+	else if (idx == ARMV8_PMU_INSTR_IDX)
-+		write_pmicntr(value);
- 	else
- 		armv8pmu_write_hw_counter(event, value);
- }
-@@ -638,6 +642,8 @@ static void armv8pmu_write_event_type(struct perf_event *event)
- 	} else {
- 		if (idx == ARMV8_PMU_CYCLE_IDX)
- 			write_pmccfiltr(hwc->config_base);
-+		else if (idx == ARMV8_PMU_INSTR_IDX)
-+			write_pmicfiltr(hwc->config_base);
- 		else
- 			armv8pmu_write_evtype(idx, hwc->config_base);
- 	}
-@@ -765,6 +771,8 @@ static void armv8pmu_enable_user_access(struct arm_pmu *cpu_pmu)
- 	for_each_clear_bit(i, cpuc->used_mask, ARMPMU_MAX_HWEVENTS) {
- 		if (i == ARMV8_PMU_CYCLE_IDX)
- 			write_pmccntr(0);
-+		else if (i == ARMV8_PMU_INSTR_IDX)
-+			write_pmicntr(0);
- 		else
- 			armv8pmu_write_evcntr(i, 0);
- 	}
-@@ -931,6 +939,18 @@ static int armv8pmu_get_event_idx(struct pmu_hw_events *cpuc,
- 				return -EAGAIN;
- 	}
- 
-+	/*
-+	 * Always prefer to place a instruction counter into the instruction counter,
-+	 * but don't expose the instruction counter to userspace access as userspace
-+	 * may not know how to handle it.
-+	 */
-+	if (test_bit(ARMV8_PMU_INSTR_IDX, cpu_pmu->cntr_mask) &&
-+	    (evtype == ARMV8_PMUV3_PERFCTR_INST_RETIRED) &&
-+	    !armv8pmu_event_want_user_access(event)) {
-+		if (!test_and_set_bit(ARMV8_PMU_INSTR_IDX, cpuc->used_mask))
-+			return ARMV8_PMU_INSTR_IDX;
-+	}
-+
- 	/*
- 	 * Otherwise use events counters
- 	 */
-@@ -1188,6 +1208,10 @@ static void __armv8pmu_probe_pmu(void *info)
- 	/* Add the CPU cycles counter */
- 	bitmap_set(cpu_pmu->cntr_mask, ARMV8_PMU_CYCLE_IDX, 1);
- 
-+	/* Add the CPU instructions counter */
-+	if (pmuv3_has_icntr())
-+		bitmap_set(cpu_pmu->cntr_mask, ARMV8_PMU_INSTR_IDX, 1);
-+
- 	pmceid[0] = pmceid_raw[0] = read_pmceid0();
- 	pmceid[1] = pmceid_raw[1] = read_pmceid1();
- 
-diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
-index e5d6d204beab..4b5b83677e3f 100644
---- a/include/linux/perf/arm_pmu.h
-+++ b/include/linux/perf/arm_pmu.h
-@@ -17,10 +17,14 @@
- #ifdef CONFIG_ARM_PMU
- 
- /*
-- * The ARMv7 CPU PMU supports up to 32 event counters.
-+ * The Armv7 and Armv8.8 or less CPU PMU supports up to 32 event counters.
-+ * The Armv8.9/9.4 CPU PMU supports up to 33 event counters.
-  */
-+#ifdef CONFIG_ARM
- #define ARMPMU_MAX_HWEVENTS		32
--
-+#else
-+#define ARMPMU_MAX_HWEVENTS		33
-+#endif
- /*
-  * ARM PMU hw_event flags
-  */
-diff --git a/include/linux/perf/arm_pmuv3.h b/include/linux/perf/arm_pmuv3.h
-index c902fe64f070..0472c4270d66 100644
---- a/include/linux/perf/arm_pmuv3.h
-+++ b/include/linux/perf/arm_pmuv3.h
-@@ -224,8 +224,10 @@
-  */
- #define ARMV8_PMU_OVSR_P		GENMASK(30, 0)
- #define ARMV8_PMU_OVSR_C		BIT(31)
-+#define ARMV8_PMU_OVSR_F		BIT_ULL(32) /* arm64 only */
- /* Mask for writable bits is both P and C fields */
--#define ARMV8_PMU_OVERFLOWED_MASK	(ARMV8_PMU_OVSR_P | ARMV8_PMU_OVSR_C)
-+#define ARMV8_PMU_OVERFLOWED_MASK	(ARMV8_PMU_OVSR_P | ARMV8_PMU_OVSR_C | \
-+					ARMV8_PMU_OVSR_F)
- 
- /*
-  * PMXEVTYPER: Event selection reg
+> So no, dropping is not helping moving forward, actions taken by e.g. 
+> Marek Szyprowski <m.szyprowski@samsung.com> do, IMNSHO.
 
--- 
-2.43.0
+Good news is I tested on Merrifield (Intel Edison) which is slow 
+(500MHz) and has a HSU that can transmit up to 3.5Mb/s. It really 
+normally needs DMA and just a single interrupt at the end of transmit 
+and receive for which I my own patches locally. The bounce buffer I was 
+using on transmit broke due to this patch, so I dropped that. Still, 
+with the extra interrupts caused by the circ buffer wrapping around it 
+seems to work well. Too late to add my Tested-by.
+
+One question though: in 8250_dma.c serial8250_tx_dma() you mention "/* 
+kfifo can do more than one sg, we don't (quite yet) */".
+
+I see the opportunity to use 2 sg entries to get all the data out in one 
+dma transfer, but there doesn't seem to be much documentation or 
+examples on how to do that. It seems just increasing nents to 2 would do 
+the trick?
+
+So, what was the reason to "don't (quite yet)"?
+
+> thanks,
 
 
