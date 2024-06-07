@@ -1,273 +1,155 @@
-Return-Path: <linux-kernel+bounces-205987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A7EB900311
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:12:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C0FB900321
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:13:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CE85284EF5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:12:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DC4CB242B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C91190680;
-	Fri,  7 Jun 2024 12:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87525192B68;
+	Fri,  7 Jun 2024 12:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="wXtWNkOY"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AwrRI8y2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A38113C67B;
-	Fri,  7 Jun 2024 12:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B5B187323;
+	Fri,  7 Jun 2024 12:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717762343; cv=none; b=eVpa7iACy/jdfBWC4FvGqfM4wuc7z0W6KXswzVHs7aSdaHAsXxH4RHQnrA+T2SB/gVmxKADCYCi5Uuxk7kq0YRTuYzq+jEfFwc6d+o6MNQploDmGgNLF152dkcFj5aYtCxoRmW6DznglD+Kuf55SlwV7ZZ0oqOs2AFEqycli5a4=
+	t=1717762388; cv=none; b=aJ+3EZpd2zJkC/Ct7oBHnozauqDn1/ZQsXb5WGc2IH/cMoUTAMpwOzcmJJdhmh4LlY6NUVB2bzAmvuATpkkDOxx+RilR2mHRxlvfqS+9XTX89Eaa5lYkTarNfZedtycKsELM1EVgq2+yW4cUY08C0dKGMdQRE9+pkXAyy2YoUN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717762343; c=relaxed/simple;
-	bh=Isge6V258XwD9EF6btjCGSr5yWwlPbgSwWmwYb2m9WY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HcEpdwN0o3x2rNhx6Qt3DLWRcMMv6y0wfEjq0cjxFqsmGrKVdytXf0PYoYTmRFEBSppHvnk+4qhFBiEi6ttLDixoqPrBwMAevXcqprzIyOWOJ7PDOGakBgSZI2DpcV6pDZE9dj94wbbj9a5XkCjlmkopavSpGLsb1195oEqtDHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=wXtWNkOY; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717762339;
-	bh=Isge6V258XwD9EF6btjCGSr5yWwlPbgSwWmwYb2m9WY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wXtWNkOY1BZxiAsxX4Y0ZP2WX+kUA0XHgMI2Z8wPXRIDRVlWmn5SlVKpfA055Q6Wf
-	 1etGHm8S4TU9lFowTTTfHOwSF4bB6eGUfStZ55wmdRQLG2P7V/9AAkhwGWk7XuR6jP
-	 dfgtB3u+crSQebBMcRdkO19lio/+IUxiZzuhYJ5+DPfdp/bJRmFXXoBKAu6Hcn3CfY
-	 V5povZvcmbnizgSpNUKqrIkztwWcBaQDul5PJL2i4ZBZR2nEl5+6kjBVIhBNl6CquH
-	 5XiH26EbsBe5hZPnoBTQQsrxn3WcTgtwn3UY0ileYBz0ksH8Cw89l32epsZvc2LmVP
-	 hP7th7SKrwjOQ==
-Received: from localhost (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sebastianfricke)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 5BC923782158;
-	Fri,  7 Jun 2024 12:12:19 +0000 (UTC)
-Date: Fri, 7 Jun 2024 14:12:18 +0200
-From: "sebastian.fricke@collabora.com" <sebastian.fricke@collabora.com>
-To: "jackson.lee" <jackson.lee@chipsnmedia.com>
-Cc: "mchehab@kernel.org" <mchehab@kernel.org>,
-	"nicolas@ndufresne.ca" <nicolas@ndufresne.ca>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
-	Nas Chung <nas.chung@chipsnmedia.com>,
-	"lafley.kim" <lafley.kim@chipsnmedia.com>,
-	"b-brnich@ti.com" <b-brnich@ti.com>
-Subject: Re: [RESEND PATCH v4 0/4] Add features to an existing driver
-Message-ID: <20240607121218.47rvzrgkxftkv7ws@basti-XPS-13-9310>
-References: <20240510112252.800-1-jackson.lee@chipsnmedia.com>
- <SE1P216MB13031A560625CE8C7614D5F6EDE92@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
- <20240606124339.i5l25wwo6fca2ne2@basti-XPS-13-9310>
- <SE1P216MB130381665976C2B194FEB553EDFB2@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1717762388; c=relaxed/simple;
+	bh=gF5n+zRaU3uzxOxtiMM2LdGmFoHvX4eM2/oevn8fkbA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JOtM1ay82FwtcASJ4nQQZciL5bacYED16mbGLnNElyO2A4VRMR80menS0VC3zssUKiOV7nLCPFMIUxDL0AgNT9hcKsI4BhGMxNijolH7SVIxsQztI3J4XnRakZtYIi9Pi2epc1DL9bMRancWMyYzlsonRm6cwCjrEBF+vRkiDfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AwrRI8y2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3F4C5C2BBFC;
+	Fri,  7 Jun 2024 12:13:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717762388;
+	bh=gF5n+zRaU3uzxOxtiMM2LdGmFoHvX4eM2/oevn8fkbA=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=AwrRI8y2rLlk70qtMvL0YNffuEVQsM70xtvUu7fwILFhRUaEHT3kPyhRwLqGJWTQq
+	 DLc86kxEfQBaTwcc+s9rcshNa3OP3MawgKl1Wbjenh2zFrFqg5Acmyem89amPieSbK
+	 eCBlgIhbuDvyRx4PSLZ9Bj4ReavD/jua4urMRie+u2xx6CttVoOO1OLnwhBXGlE522
+	 riH2NwzxRJY9kaVXP2nUAEz6meIBw6XNqUfTY84DMZPHiSzgTcrasxsa7XR+LFu8nj
+	 KiBzvfKAUBVJ/q0tGmE6BbBiifehmgK5tiDBjJTQNJxMf3Mcz0M1DED/WBTg6ycDD9
+	 rqhkTw3rSitEw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28096C27C55;
+	Fri,  7 Jun 2024 12:13:08 +0000 (UTC)
+From: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>
+Subject: [PATCH v8 0/2] Add support for Loongson1 APB DMA
+Date: Fri, 07 Jun 2024 20:12:22 +0800
+Message-Id: <20240607-loongson1-dma-v8-0-f9992d257250@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <SE1P216MB130381665976C2B194FEB553EDFB2@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACb5YmYC/12OzY7CIBRGX8WwntvwIxRczXsYFxRuWzK2TEAbt
+ em7D7iYNC6/xTnfWUnGFDCT02ElCZeQQ5zL0F8H4kY7DwjBl0045YIxTuEa4zzkODPwkwWmhO1
+ RtlR3hhTmN2EfHm/f+VJ2n+IEtzGh/bdQwzXjzEjRSH5UVAODHxzu5ax51cvvYbLh2rg4VeMY8
+ i2m5ztwUdVbLUcqmPpoWRRQMNQjd8K58rIT1Zal3dHcfNJtoUXrO6lLk0e5p7dt+wNv2zmPKgE
+ AAA==
+To: Keguang Zhang <keguang.zhang@gmail.com>, Vinod Koul <vkoul@kernel.org>, 
+ Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-mips@vger.kernel.org, dmaengine@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Jiaxun Yang <jiaxun.yang@flygoat.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717762386; l=2538;
+ i=keguang.zhang@gmail.com; s=20231129; h=from:subject:message-id;
+ bh=gF5n+zRaU3uzxOxtiMM2LdGmFoHvX4eM2/oevn8fkbA=;
+ b=jhRwfB+vpFFBOmYUzSKsBu7OoBFlD0dWV9a6WDqY9cVvwsGut+NtK4HH/lnWannivrsr60YEF
+ EEilt2pYzBFBsDacigUIn5g+pbjy1zwbxhOtweHvvZLG6VWJcV4NRUu
+X-Developer-Key: i=keguang.zhang@gmail.com; a=ed25519;
+ pk=FMKGj/JgKll/MgClpNZ3frIIogsh5e5r8CeW2mr+WLs=
+X-Endpoint-Received: by B4 Relay for keguang.zhang@gmail.com/20231129 with
+ auth_id=102
+X-Original-From: Keguang Zhang <keguang.zhang@gmail.com>
+Reply-To: keguang.zhang@gmail.com
 
-Hey Jackson,
+Add the driver and dt-binding document for Loongson1 APB DMA.
 
-On 07.06.2024 11:01, jackson.lee wrote:
->Hi Sebastian
->
->Should we send the v5 patch after fixing the warning messages?
+Changes in v8:
+- Change 'interrupts' property to an items list
+- Link to v7: https://lore.kernel.org/r/20240329-loongson1-dma-v7-0-37db58608de5@gmail.com
 
-Yes please that would be great :).
+Changes in v7:
+- Change the comptible to 'loongson,ls1*-apbdma' (suggested by Huacai Chen)
+- Update the title and description part accordingly
+- Rename the file to loongson,ls1b-apbdma.yaml
+- Add a compatible string for LS1A
+- Delete minItems of 'interrupts'
+- Change patterns of 'interrupt-names' to const
+- Rename the file to loongson1-apb-dma.c to keep the consistency
+- Update Kconfig and Makefile accordingly
+- Link to v6: https://lore.kernel.org/r/20240316-loongson1-dma-v6-0-90de2c3cc928@gmail.com
 
->
->Thanks
->Jackson
+Changes in v6:
+- Change the compatible to the fallback
+- Implement .device_prep_dma_cyclic for Loongson1 sound driver,
+- as well as .device_pause and .device_resume.
+- Set the limitation LS1X_DMA_MAX_DESC and put all descriptors
+- into one page to save memory
+- Move dma_pool_zalloc() into ls1x_dma_alloc_desc()
+- Drop dma_slave_config structure
+- Use .remove_new instead of .remove
+- Use KBUILD_MODNAME for the driver name
+- Improve the debug information
+- Some minor fixes
 
-Regards,
-Sebastian
+Changes in v5:
+- Add the dt-binding document
+- Add DT support
+- Use DT information instead of platform data
+- Use chan_id of struct dma_chan instead of own id
+- Use of_dma_xlate_by_chan_id() instead of ls1x_dma_filter()
+- Update the author information to my official name
 
->
->
->> -----Original Message-----
->> From: sebastian.fricke@collabora.com <sebastian.fricke@collabora.com>
->> Sent: Thursday, June 6, 2024 9:44 PM
->> To: jackson.lee <jackson.lee@chipsnmedia.com>
->> Cc: mchehab@kernel.org; nicolas@ndufresne.ca; linux-media@vger.kernel.org;
->> linux-kernel@vger.kernel.org; hverkuil@xs4all.nl; Nas Chung
->> <nas.chung@chipsnmedia.com>; lafley.kim <lafley.kim@chipsnmedia.com>; b-
->> brnich@ti.com
->> Subject: Re: [RESEND PATCH v4 0/4] Add features to an existing driver
->>
->> Hey Jackson,
->>
->> On 20.05.2024 01:45, jackson.lee wrote:
->> >Hi sebastian and Nicolas
->> >
->> >I sent the v4 patch. Can you please review them ?
->>
->> so overall this looks good now, but there are still a few warnings:
->> https://linux-media.pages.freedesktop.org/-/users/sebastianfricke/-
->> /jobs/59559963/artifacts/report.htm
->>
->> Could you please look into those? (Please tell me if you can't access the
->> link)
->>
->> >
->> >https://lore.kernel.org/linux-media/20240510112252.800-1-jackson.lee@ch
->> >ipsnmedia.com/
->> >
->> >
->> >thanks
->> >Jackson
->>
->> Regards,
->> Sebastian
->>
->> >
->> >> -----Original Message-----
->> >> From: jackson.lee <jackson.lee@chipsnmedia.com>
->> >> Sent: Friday, May 10, 2024 8:23 PM
->> >> To: mchehab@kernel.org; nicolas@ndufresne.ca;
->> >> sebastian.fricke@collabora.com
->> >> Cc: linux-media@vger.kernel.org; linux-kernel@vger.kernel.org;
->> >> hverkuil@xs4all.nl; Nas Chung <nas.chung@chipsnmedia.com>; lafley.kim
->> >> <lafley.kim@chipsnmedia.com>; b-brnich@ti.com; jackson.lee
->> >> <jackson.lee@chipsnmedia.com>
->> >> Subject: [RESEND PATCH v4 0/4] Add features to an existing driver
->> >>
->> >> From: "Jackson.lee" <jackson.lee@chipsnmedia.com>
->> >>
->> >> The wave5 codec driver is a stateful encoder/decoder.
->> >> The following patches is for supporting yuv422 inpuy format,
->> >> supporting runtime suspend/resume feature and extra things.
->> >>
->> >> v4l2-compliance results:
->> >> ========================
->> >>
->> >> v4l2-compliance 1.24.1, 64 bits, 64-bit time_t
->> >>
->> >> Buffer ioctls:
->> >>             warn: v4l2-test-buffers.cpp(693): VIDIOC_CREATE_BUFS not
->> supported
->> >>             warn: v4l2-test-buffers.cpp(693): VIDIOC_CREATE_BUFS not
->> supported
->> >>     test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
->> >>     test VIDIOC_EXPBUF: OK
->> >>     test Requests: OK (Not Supported)
->> >>
->> >> Total for wave5-dec device /dev/video0: 45, Succeeded: 45, Failed: 0,
->> >> Warnings: 2 Total for wave5-enc device /dev/video1: 45, Succeeded: 45,
->> Failed:
->> >> 0, Warnings: 0
->> >>
->> >> Fluster test results:
->> >> =====================
->> >>
->> >> Running test suite JCT-VC-HEVC_V1 with decoder
->> >> GStreamer-H.265-V4L2-Gst1.0 Using 1 parallel job(s)
->> >> Ran 132/147 tests successfully               in 97.421 secs
->> >>
->> >> (1 test fails because of not supporting to parse multi frames, 1 test
->> >> fails because of a missing frame and slight corruption,
->> >>  2 tests fail because of sizes which are incompatible with the IP, 11
->> >> tests fail because of unsupported 10 bit format)
->> >>
->> >> Running test suite JVT-AVC_V1 with decoder
->> >> GStreamer-H.264-V4L2-Gst1.0 Using
->> >> 1 parallel job(s)
->> >> Ran 77/135 tests successfully               in 37.233 secs
->> >>
->> >> (58 fail because the hardware is unable to decode  MBAFF / FMO /
->> >> Field / Extended profile streams.)
->> >>
->> >> Change since v3:
->> >> =================
->> >>
->> >> * For [PATCH v4 1/4] media: chips-media: wave5: Support SPS/PPS
->> >> generation for each IDR
->> >>  - add Reviewed-By tag
->> >>
->> >> * For [PATCH v4 2/4] media: chips-media: wave5: Support runtime
->> >> suspend/resume
->> >>  - add Reviewed-By tag
->> >>
->> >> * For [PATCH v4 3/4] media: chips-media: wave5: Use helpers to
->> >> calculate bytesperline and sizeimage.
->> >>  - modify the commit message
->> >>  - define three framesize structures for decoder
->> >>
->> >> * For [PATCH v4 4/4] media: chips-media: wave5: Support YUV422 raw
->> >> pixel- formats on the encoder
->> >>  - modify the commit message
->> >>  - use the v4l2_format_info to calculate luma, chroma size
->> >>
->> >> Change since v2:
->> >> =================
->> >>
->> >> * For [PATCH v3 0/4] media: chips-media: wave5: Support SPS/PPS
->> >> generation for each IDR
->> >>  - add the suggested _SHIFT suffix
->> >>
->> >> * For [PATCH v3 1/4] media: chips-media: wave5: Support runtime
->> >> suspend/resume
->> >>  - change a commit message
->> >>
->> >> * For [PATCH v3 2/4] media: chips-media: wave5: Use helpers to
->> >> calculate bytesperline and sizeimage
->> >>  - add pix_fmt_type parameter into wave5_update_pix_fmt function
->> >>  - add min/max width/height values into dec_fmt_list
->> >>
->> >> Change since v1:
->> >> =================
->> >>
->> >> * For [PATCH v2 0/4] media: chips-media: wave5: Support SPS/PPS
->> >> generation for each IDR
->> >>  - define a macro for register addresses
->> >>
->> >> * For [PATCH v2 1/4] media: chips-media: wave5: Support runtime
->> >> suspend/resume
->> >>  - add auto suspend/resume
->> >>
->> >> * For [PATCH v2 2/4] media: chips-media: wave5: Use helpers to
->> >> calculate bytesperline and sizeimage
->> >>  - use helper functions to calculate bytesperline and sizeimage
->> >>
->> >> * For [PATCH v2 3/4] media: chips-media: wave5: Support YUV422 raw
->> >> pixel- formats on the encoder
->> >>  - remove unnecessary codes
->> >>
->> >> Change since v0:
->> >> =================
->> >> The DEFAULT_SRC_SIZE macro was defined using multiple lines, To make
->> >> a simple define, tab and multiple lines has been removed, The macro
->> >> is defined using one line.
->> >>
->> >> Jackson.lee (4):
->> >>   media: chips-media: wave5: Support SPS/PPS generation for each IDR
->> >>   media: chips-media: wave5: Support runtime suspend/resume
->> >>   media: chips-media: wave5: Use helpers to calculate bytesperline and
->> >>     sizeimage.
->> >>   media: chips-media: wave5: Support YUV422 raw pixel-formats on the
->> >>     encoder.
->> >>
->> >>  .../platform/chips-media/wave5/wave5-helper.c |  24 ++
->> >>  .../platform/chips-media/wave5/wave5-helper.h |   5 +
->> >>  .../platform/chips-media/wave5/wave5-hw.c     |  23 +-
->> >>  .../chips-media/wave5/wave5-vpu-dec.c         | 312 +++++++-----------
->> >>  .../chips-media/wave5/wave5-vpu-enc.c         | 300 +++++++++--------
->> >>  .../platform/chips-media/wave5/wave5-vpu.c    |  43 +++
->> >>  .../platform/chips-media/wave5/wave5-vpu.h    |   5 +-
->> >>  .../platform/chips-media/wave5/wave5-vpuapi.c |  14 +-
->> >>  .../platform/chips-media/wave5/wave5-vpuapi.h |   1 +
->> >>  .../chips-media/wave5/wave5-vpuconfig.h       |  27 +-
->> >>  .../media/platform/chips-media/wave5/wave5.h  |   3 +
->> >>  11 files changed, 414 insertions(+), 343 deletions(-)
->> >>
->> >> --
->> >> 2.43.0
->> >
+Changes in v4:
+- Use dma_slave_map to find the proper channel.
+- Explicitly call devm_request_irq() and tasklet_kill().
+- Fix namespace issue.
+- Some minor fixes and cleanups.
+
+Changes in v3:
+- Rename ls1x_dma_filter_fn to ls1x_dma_filter.
+
+Changes in v2:
+- Change the config from 'DMA_LOONGSON1' to 'LOONGSON1_DMA',
+- and rearrange it in alphabetical order in Kconfig and Makefile.
+- Fix comment style.
+
+---
+Keguang Zhang (2):
+      dt-bindings: dma: Add Loongson-1 APB DMA
+      dmaengine: Loongson1: Add Loongson-1 APB DMA driver
+
+ .../bindings/dma/loongson,ls1b-apbdma.yaml         |  67 +++
+ drivers/dma/Kconfig                                |   9 +
+ drivers/dma/Makefile                               |   1 +
+ drivers/dma/loongson1-apb-dma.c                    | 665 +++++++++++++++++++++
+ 4 files changed, 742 insertions(+)
+---
+base-commit: d35b2284e966c0bef3e2182a5c5ea02177dd32e4
+change-id: 20231120-loongson1-dma-163afe5708b9
+
+Best regards,
+-- 
+Keguang Zhang <keguang.zhang@gmail.com>
+
+
 
