@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-206131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28FE49004AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:24:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CE899004AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:25:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90F9A28E68D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:24:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6A241F22D8C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:25:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07E7197521;
-	Fri,  7 Jun 2024 13:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA2C198E7F;
+	Fri,  7 Jun 2024 13:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eV2kWYIp"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cyOR3OF+"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A251953B8
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 13:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5871E195999
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 13:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717766594; cv=none; b=Sz7HwY3xrlJ8VRfZceXoqQIAxeLTJyyuRApTyQcwPnBXaD53NWUZ3vKklSDwpGREYCghEQAEPYroyr65E/mnl5T1GGhKNVQeTZqpqO6fFCDe67tjYAM83IOOzADdHA9/jn3Y612TfEQ9odqoylxCyVZyjoYP3xk6dZFIQJhLGyQ=
+	t=1717766596; cv=none; b=n+gC746imVHs5VcC2UJ4/N1rd2QdltrwFy7meiVmO5sgW+iZJJlG/t0oZS5bdcoxCsKdOThkUxcXV2KoYdtdvg+W+Dsk8fM0YItVvU3/YRFUDZYcdCYtdZSyW2C3U61gyTnBO7mQ40mbpb5FlqpgfHfl6x6/drbaRYIFuynlmt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717766594; c=relaxed/simple;
-	bh=JXbaAkUfXwOLePC7VJ3jRbdq5WguoXJxRCdZfMDCGD0=;
+	s=arc-20240116; t=1717766596; c=relaxed/simple;
+	bh=OmtXhjZ3Qtpb8oKDdME4LcvLFljKS2x7aDOlRaG8IZU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=S+eaB5xwglN6Xz32i6QKa89TjJQkhYL784YoEFEE5otx4ipyGDSNEzEAK2t+OfYrI7gaqnvjXpFWZjuswggpSZs3J9X/fSouUbonlo8XHk5HygD2VLu01SOL9S6qN9o8yPiOrCCsBJbmGk2wJwCZVWYgbK76mTcHGPHex1jvY8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eV2kWYIp; arc=none smtp.client-ip=209.85.167.49
+	 In-Reply-To:To:Cc; b=l1/2kE1+T4IePEXEdQtBUlpjn0WGgeGNvI29ayj9xziZiKjTVaAVcnkfhcLx/cPJuN4Z7YZrgFm7XVBVynEU6smWhFphzbV/26cGDMz38ajosBS41FrCnZEmmENY8Ha446Fwe2vMKOeuvN0As4WwJd6l6bu2XBzXLfVaT28ppSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cyOR3OF+; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52b7c82e39eso2385538e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 06:23:13 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52961b77655so2425370e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 06:23:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717766591; x=1718371391; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1717766592; x=1718371392; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TkMzRYwH0rVG++I7PNZai1lbvWhZpzJwskrcS26a0W8=;
-        b=eV2kWYIp9LNN48YjuIkJ8WjmguHJrMwXyBSznQ6D0xDY1oxyK6W8Q9R3zTF4ok4+Zh
-         5m6DjlFjPIbHFuWWuNj8cCYw0cb2oWDp805h0g5aQKOM+kbyTZlZwzcC85to+cpidcNh
-         VwO6Kq9BQqfK92vHwHp7AMaG+6NjHCCJzQpQs5OBqDS48VlfqC9e/Sp5eNt5exgkAebe
-         6W7eXiyWh/Lt4f6dUa9i48jztVItYxIY1UIOR0L6WNH7AUJfX5awlzIwPknJPJPOhCKT
-         Z7NZyUZF3iDRbno19qeK8nfj5BW01PjQEalE22kLnMRySVVEd85CHWL58ZihprXt0NNM
-         oa9A==
+        bh=Xk2JZtrRtwrwL4+NkRD4qshhppX0yY2US+tv9P72R1s=;
+        b=cyOR3OF+89f+zwLi9VV6yiY92v2F8UzdGNpl5B+K8JvQ+c9YhOw0U1L+kPFYDL9Hi7
+         D6O8ByEtqnQBdrLc0tB3gZtjv+kl+RVGIfKX+15dJBYZDJ7nAw/hWT6JOHTGuZhkqDsC
+         WC6/J4WwUTR/y6C+bWwOooieVDY91ucq7o2gOHNJvVHzMEwSR/l7tVunWO/Smc0MyCeZ
+         9O1SN1fWE1hwUR6dm0jBrdfk4oFmlT6qQciAZWn7vS6Mw7SMyPsKEm48cXipPrko7Fhp
+         rxIre9KZNr0hphiH2IoJo9hF9b/xsEa1sjrPLbIRNBeADFWLv+CGqtxf+NhewdWjBFHh
+         RPVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717766591; x=1718371391;
+        d=1e100.net; s=20230601; t=1717766592; x=1718371392;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TkMzRYwH0rVG++I7PNZai1lbvWhZpzJwskrcS26a0W8=;
-        b=pPfUb8wB52l9gqir9J5HO3aNfp4MJunQOzqyq+xRnnJ4UAW3aObR212axye7OdzEPb
-         0CCgZvrRSIVd4dDQw4GwdWMvUmE7x9nhKZvaOtAjH8MYJG8Hda5JUev3mtSRYKJwnf5+
-         nBd1414FaP4fQFBCs4AnAPhExBxBxIBuETHp7WxnjzDojE0llIgmn/24cX8jLUqM0ugZ
-         TvqqckkWGb4yMpwKWVN/dcsBlpbkTwwUOf/+LfAEC42W75pnIHF5IykBfEu7nh7AdYYm
-         iEzIzVldvRgEEmKv7Zr9rylG2OfXxUFZTNTvCOG428Et+DeABpJxoQW7XD6j0q33fXiZ
-         i4Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDTjgCV3WZWg7b0xIkLYn/TvqZxZ+YxUoJ/D+Go0CZQhR3zBVPXQ/dk4NrDk7t+5aJBxrmaCOrCELwcOBS/Qe/4nzZ+68uaCf6uroB
-X-Gm-Message-State: AOJu0YwTPVMVH2Tp47wZ//QIasFYOe5e9VAaYeXpklhNJgrDfqH5Eq1j
-	sWv3Z57iyTUCx+QVnZmIKuhRwMSU6Gr1IMZQYYz/ut6qzLas2FsOZpoBP3+cUg4=
-X-Google-Smtp-Source: AGHT+IEqVYzspyMjFA7VM7X1Pabg5rRSRUot0NNv54KwjdMq6vbtyxYVWWj0h/mV51xuhgFiU9PQ7g==
-X-Received: by 2002:a19:e043:0:b0:52a:5fa8:d565 with SMTP id 2adb3069b0e04-52bb9fde009mr1923547e87.68.1717766591565;
-        Fri, 07 Jun 2024 06:23:11 -0700 (PDT)
+        bh=Xk2JZtrRtwrwL4+NkRD4qshhppX0yY2US+tv9P72R1s=;
+        b=VuQf53Ew0HSpf2x58aaVaE2xXhGRtZEYDf0WHkFLXDiNYjTrvuslKJwAaYi8xMsQqR
+         OxEj2EDO3MZqqlzcS/wEvHhw8RghFkXGKvSDb5BWzUbgpyl1dCqrN1pVWL5uxY1EBFyf
+         ZlFwiW7uy5bsG/FvP9O4vIleJRIBDijTlVLYMfXpx6AWqEKB2DWsd7pWseSZO8gdLXuY
+         MpN3W44kL0J36tL3/t1CJR3Y/w+0l5ebqsidDA/Eya9CapUc1iRPC5Js+U9pMAcXhOyJ
+         Qw8Zx8qhaJzpKsBTE1ftY4gNIbQ+zH8KvkrCHmcc6M+07C5d/1H3wwx89NvVgt3+psKl
+         dY1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXAyUMa0K+xSV2QLsLPZ41wOmxv7wpgvZx374AcugZd5PRfhpBEIBsmyfs70h++j36bhi8fg2SbW/+ZSbbInJlJQrGxA1L7JMi3c+iU
+X-Gm-Message-State: AOJu0Yzkiac7+RTiZu9h9hulGj4bh59YY+50uF40RD9fFqvgI/ngL+OZ
+	6xMCATM9hGsZXMpJsS08s9ycsDTrF+CAc4ZaTiVjjaPeWMmdyFnzW1dDu1lJ6b8=
+X-Google-Smtp-Source: AGHT+IEtVSc28/MM7GrtUCOZP0ECjv9PS5r8QH3dphese9FTqeAHNA05vy8pF9hv1GQpjHfasTAzRQ==
+X-Received: by 2002:a05:6512:2109:b0:529:b712:e6d5 with SMTP id 2adb3069b0e04-52bb9f805d9mr1439643e87.31.1717766592471;
+        Fri, 07 Jun 2024 06:23:12 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bc27640easm80944e87.104.2024.06.07.06.23.10
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bc27640easm80944e87.104.2024.06.07.06.23.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 07 Jun 2024 06:23:11 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 07 Jun 2024 16:23:05 +0300
-Subject: [PATCH v5 8/9] drm/msm/hdmi: update
- HDMI_GEN_PKT_CTRL_GENERIC0_UPDATE definition
+Date: Fri, 07 Jun 2024 16:23:06 +0300
+Subject: [PATCH v5 9/9] drm/msm/hdmi: also send the SPD and HDMI Vendor
+ Specific InfoFrames
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240607-bridge-hdmi-connector-v5-8-ab384e6021af@linaro.org>
+Message-Id: <20240607-bridge-hdmi-connector-v5-9-ab384e6021af@linaro.org>
 References: <20240607-bridge-hdmi-connector-v5-0-ab384e6021af@linaro.org>
 In-Reply-To: <20240607-bridge-hdmi-connector-v5-0-ab384e6021af@linaro.org>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -94,40 +94,157 @@ Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
  freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1113;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4619;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=JXbaAkUfXwOLePC7VJ3jRbdq5WguoXJxRCdZfMDCGD0=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmYwm23kjoKoowWNnnGfRUNcWsRsEBx014LiQpL
- K5kGF2+H5yJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZmMJtgAKCRCLPIo+Aiko
- 1QpCB/986W06+rStv5lrhzZaOvIKCcFCaFIJSIWQQDpppibPurGZ3ZYo0jReEMU14k2BZ8ExxpU
- UP+3rylqKQwPmrOlEvThIiloVTP5GvoH7ofajOZ3Q+gbKBqJX6GXDz8o0pEbwxmnPbkE1P+YhZk
- AOTyaAGdmMT0nu03qIaUOTgfWWrZGtLpC1H/foGLe/CYBDcp2p+7nBLzJ2TTkYyKkEjZFjBisEH
- 6C0KhtI84IU4BXhfXjv0jYBJusFYuuVgzRdM7MniL2HRcaQ25jKY/TzLB92YNFjH6nSmFO6Fit8
- KCqjY9mRBwlRLa4PMAhKGC15tF0GjQWOJ6YmsPESUZSPCHnR
+ bh=OmtXhjZ3Qtpb8oKDdME4LcvLFljKS2x7aDOlRaG8IZU=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmYwm3Vv0fiW83ykL6I4HH01Ryv7CLLl50kocSo
+ jWFjuZQyqiJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZmMJtwAKCRCLPIo+Aiko
+ 1XLsB/9eGSmRclfirO4LoI0+ATKayXjmJcJIO5Gn3p36eE3zrzi0SB5aNCO4stXsOEtA3RqZpC6
+ 5bPGbabD3hiuR2tdCGgRAIXXG80uey+UFdmoLhvfQEM3aC8js7VGKuBIdwzr1pr2TjkgrDxDbVo
+ 19ZkVX9C9BON4Iscb7HeE9SPqiVE0q2Iy7bB7Q49YqsueQqTkUarstlbPvXu1vRvZBOCgLNPrjp
+ hRcSRfYYrj8CGgURiGsZ5BG6qpBTuxkIdMSbaIX1IkyaQMb+PqrUYauz9r97+klYM65QPCIJSjY
+ 0tYraAr7rvIQ5uhsTszRdNLEQcxz0b1uxXjAOKwdzhFdsA1a
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-The GENERIC0_UPDATE field is a single bit. Redefine it as boolean to
-simplify its usage in the driver.
+Extend the driver to send SPD and HDMI Vendor Specific InfoFrames.
+
+While the HDMI block has special block to send HVS InfoFrame, use
+GENERIC0 block instead. VENSPEC_INFO registers pack frame data in a way
+that requires manual repacking in the driver, while GENERIC0 doesn't
+have such format requirements. The msm-4.4 kernel uses GENERIC0 to send
+HDR InfoFrame which we do not at this point anyway.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/msm/registers/display/hdmi.xml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/msm/hdmi/hdmi_bridge.c | 93 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 93 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/registers/display/hdmi.xml b/drivers/gpu/drm/msm/registers/display/hdmi.xml
-index 6c81581016c7..fc711a842363 100644
---- a/drivers/gpu/drm/msm/registers/display/hdmi.xml
-+++ b/drivers/gpu/drm/msm/registers/display/hdmi.xml
-@@ -131,7 +131,7 @@ xsi:schemaLocation="https://gitlab.freedesktop.org/freedreno/ rules-fd.xsd">
- 		 -->
- 		<bitfield name="GENERIC0_SEND" pos="0" type="boolean"/>
- 		<bitfield name="GENERIC0_CONT" pos="1" type="boolean"/>
--		<bitfield name="GENERIC0_UPDATE" low="2" high="3" type="uint"/> <!-- ??? -->
-+		<bitfield name="GENERIC0_UPDATE" pos="2" type="boolean"/>
- 		<bitfield name="GENERIC1_SEND" pos="4" type="boolean"/>
- 		<bitfield name="GENERIC1_CONT" pos="5" type="boolean"/>
- 		<bitfield name="GENERIC0_LINE" low="16" high="21" type="uint"/>
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+index 9258d3100042..ad6258a2017a 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
++++ b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+@@ -69,6 +69,8 @@ static void power_off(struct drm_bridge *bridge)
+ }
+ 
+ #define AVI_IFRAME_LINE_NUMBER 1
++#define SPD_IFRAME_LINE_NUMBER 1
++#define VENSPEC_IFRAME_LINE_NUMBER 3
+ 
+ static int msm_hdmi_config_avi_infoframe(struct hdmi *hdmi,
+ 					 const u8 *buffer, size_t len)
+@@ -142,6 +144,74 @@ static int msm_hdmi_config_audio_infoframe(struct hdmi *hdmi,
+ 	return 0;
+ }
+ 
++static int msm_hdmi_config_spd_infoframe(struct hdmi *hdmi,
++					 const u8 *buffer, size_t len)
++{
++	u32 buf[7] = {};
++	u32 val;
++	int i;
++
++	if (len != HDMI_INFOFRAME_SIZE(SPD) || len - 3 > sizeof(buf)) {
++		DRM_DEV_ERROR(&hdmi->pdev->dev,
++			"failed to configure SPD infoframe\n");
++		return -EINVAL;
++	}
++
++	/* checksum gets written together with the body of the frame */
++	hdmi_write(hdmi, REG_HDMI_GENERIC1_HDR,
++		   buffer[0] |
++		   buffer[1] << 8 |
++		   buffer[2] << 16);
++
++	memcpy(buf, &buffer[3], len - 3);
++
++	for (i = 0; i < ARRAY_SIZE(buf); i++)
++		hdmi_write(hdmi, REG_HDMI_GENERIC1(i), buf[i]);
++
++	val = hdmi_read(hdmi, REG_HDMI_GEN_PKT_CTRL);
++	val |= HDMI_GEN_PKT_CTRL_GENERIC1_SEND |
++		 HDMI_GEN_PKT_CTRL_GENERIC1_CONT |
++		 HDMI_GEN_PKT_CTRL_GENERIC1_LINE(SPD_IFRAME_LINE_NUMBER);
++	hdmi_write(hdmi, REG_HDMI_GEN_PKT_CTRL, val);
++
++	return 0;
++}
++
++static int msm_hdmi_config_hdmi_infoframe(struct hdmi *hdmi,
++					  const u8 *buffer, size_t len)
++{
++	u32 buf[7] = {};
++	u32 val;
++	int i;
++
++	if (len < HDMI_INFOFRAME_HEADER_SIZE + HDMI_VENDOR_INFOFRAME_SIZE ||
++	    len - 3 > sizeof(buf)) {
++		DRM_DEV_ERROR(&hdmi->pdev->dev,
++			"failed to configure HDMI infoframe\n");
++		return -EINVAL;
++	}
++
++	/* checksum gets written together with the body of the frame */
++	hdmi_write(hdmi, REG_HDMI_GENERIC0_HDR,
++		   buffer[0] |
++		   buffer[1] << 8 |
++		   buffer[2] << 16);
++
++	memcpy(buf, &buffer[3], len - 3);
++
++	for (i = 0; i < ARRAY_SIZE(buf); i++)
++		hdmi_write(hdmi, REG_HDMI_GENERIC0(i), buf[i]);
++
++	val = hdmi_read(hdmi, REG_HDMI_GEN_PKT_CTRL);
++	val |= HDMI_GEN_PKT_CTRL_GENERIC0_SEND |
++		 HDMI_GEN_PKT_CTRL_GENERIC0_CONT |
++		 HDMI_GEN_PKT_CTRL_GENERIC0_UPDATE |
++		 HDMI_GEN_PKT_CTRL_GENERIC0_LINE(VENSPEC_IFRAME_LINE_NUMBER);
++	hdmi_write(hdmi, REG_HDMI_GEN_PKT_CTRL, val);
++
++	return 0;
++}
++
+ static int msm_hdmi_bridge_clear_infoframe(struct drm_bridge *bridge,
+ 					   enum hdmi_infoframe_type type)
+ {
+@@ -176,6 +246,25 @@ static int msm_hdmi_bridge_clear_infoframe(struct drm_bridge *bridge,
+ 
+ 		break;
+ 
++	case HDMI_INFOFRAME_TYPE_SPD:
++		val = hdmi_read(hdmi, REG_HDMI_GEN_PKT_CTRL);
++		val &= ~(HDMI_GEN_PKT_CTRL_GENERIC1_SEND |
++			 HDMI_GEN_PKT_CTRL_GENERIC1_CONT |
++			 HDMI_GEN_PKT_CTRL_GENERIC1_LINE__MASK);
++		hdmi_write(hdmi, REG_HDMI_GEN_PKT_CTRL, val);
++
++		break;
++
++	case HDMI_INFOFRAME_TYPE_VENDOR:
++		val = hdmi_read(hdmi, REG_HDMI_GEN_PKT_CTRL);
++		val &= ~(HDMI_GEN_PKT_CTRL_GENERIC0_SEND |
++			 HDMI_GEN_PKT_CTRL_GENERIC0_CONT |
++			 HDMI_GEN_PKT_CTRL_GENERIC0_UPDATE |
++			 HDMI_GEN_PKT_CTRL_GENERIC0_LINE__MASK);
++		hdmi_write(hdmi, REG_HDMI_GEN_PKT_CTRL, val);
++
++		break;
++
+ 	default:
+ 		drm_dbg_driver(hdmi_bridge->base.dev, "Unsupported infoframe type %x\n", type);
+ 	}
+@@ -197,6 +286,10 @@ static int msm_hdmi_bridge_write_infoframe(struct drm_bridge *bridge,
+ 		return msm_hdmi_config_avi_infoframe(hdmi, buffer, len);
+ 	case HDMI_INFOFRAME_TYPE_AUDIO:
+ 		return msm_hdmi_config_audio_infoframe(hdmi, buffer, len);
++	case HDMI_INFOFRAME_TYPE_SPD:
++		return msm_hdmi_config_spd_infoframe(hdmi, buffer, len);
++	case HDMI_INFOFRAME_TYPE_VENDOR:
++		return msm_hdmi_config_hdmi_infoframe(hdmi, buffer, len);
+ 	default:
+ 		drm_dbg_driver(hdmi_bridge->base.dev, "Unsupported infoframe type %x\n", type);
+ 		return 0;
 
 -- 
 2.39.2
