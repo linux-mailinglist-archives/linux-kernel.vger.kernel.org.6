@@ -1,59 +1,68 @@
-Return-Path: <linux-kernel+bounces-206027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41A7E90037E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:27:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74ECE900363
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C88EF285AC5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:27:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A09A1C22848
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D421990D0;
-	Fri,  7 Jun 2024 12:24:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E5F19308B;
-	Fri,  7 Jun 2024 12:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8749A194081;
+	Fri,  7 Jun 2024 12:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VMxmt5f1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D95F193063
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 12:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717763066; cv=none; b=p/NHRX1hDGdAbC9EI/nVFji2k9ttEFywtHHHr4XWLtlc0R0WBrYViWzD1rFxWlohY4ei8egxKJG34qDMwJoao0YMYUzQnSFnSrdWl6OqYrtNlYjdyRh8/rmTJE6gPtNG8TTCb49r2dfo2a1pcJeXltLwhgKN3/WnbsC/3a/GvYY=
+	t=1717763047; cv=none; b=FYog+ZcuSp3nL2PiXemp1nHjTG4dXzv5I7r8VqIfEqE+2ZmmzmfTp9A+Zke+9h1ZQ3LEX0afvHD62Xe7ggpLs1s6OgSlNhMfOZBFULoUTVgucA1yvJNxjr9WlTbeV/7xi1opKNmx/TaNqsKGMa03/KCbrWzXbH5jMXMNg5vBFfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717763066; c=relaxed/simple;
-	bh=8mATx8ljEnNckwsyZDussvV/iVh+BnTFcanWppCv5+U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ddvNy43m4Z9sFu6LCSm8GOzOk5Ma0OQpe56FSQ41Z7+FsPGy47X33G0sXDFwCXEy5xqdW+KXiXP5Kdt+sXGqW3ErVzjGdAu/yLi9C/XxZDeLs31umc8RdUB21c8DKAcMcwLNzCc3IQxhk3G9BiPZtpjWiX9nlC1cFjCVTxmiKqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C4877DA7;
-	Fri,  7 Jun 2024 05:24:47 -0700 (PDT)
-Received: from e116581.blr.arm.com (e116581.arm.com [10.162.42.8])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8BC473F64C;
-	Fri,  7 Jun 2024 05:24:18 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: shuah@kernel.org,
-	oleg@redhat.com,
-	stsp2@yandex.ru
-Cc: mingo@kernel.org,
-	tglx@linutronix.de,
-	mark.rutland@arm.com,
-	ryan.roberts@arm.com,
-	broonie@kernel.org,
-	suzuki.poulose@arm.com,
-	Anshuman.Khandual@arm.com,
-	DeepakKumar.Mishra@arm.com,
-	AneeshKumar.KizhakeVeetil@arm.com,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH 2/2] selftests: Add a test mangling with uc_sigmask
-Date: Fri,  7 Jun 2024 17:53:19 +0530
-Message-Id: <20240607122319.768640-3-dev.jain@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240607122319.768640-1-dev.jain@arm.com>
-References: <20240607122319.768640-1-dev.jain@arm.com>
+	s=arc-20240116; t=1717763047; c=relaxed/simple;
+	bh=/bdAnkh7wfSQqgRm3N2lVEQ4ZUNBEI5xmqLPD3ox538=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M2BCMZewcoOFEM80tOEGyJVpfavPManSvD8I6anqIP1AFxaWsBQNO+FaDF0VyvXl7Nhf+x1wrkh8z+ErJtlLuPvlbRS7OBv6AlLQQAfYcqTP3r/aq9VaLf12RMbys1sCWekjuf5JC0/jHz2Kf6wv3m1PNZ9ih5HH3smAFEN0qi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VMxmt5f1; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717763044;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mojzlgdpLrUHGcctTDkSw39VJjaquUXWuvUjF8zPifU=;
+	b=VMxmt5f1fvEeE086F6O0DqLRtExmX3wsHS0rqTEO7GY5kjDkrd3euvWqywpmR0FEFrqRoJ
+	4M3BheUEeEeiQkxiT8aL/uBfx1UmythQZ5FFiROgGbt7b4LfIytWwFFdNpNbmS/DfkAtXX
+	b35mBbUz3eaidMv1mtaSla0V6IjT3zY=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-297-qO0f5XSMMt2qQwX-QnqWqQ-1; Fri, 07 Jun 2024 08:24:01 -0400
+X-MC-Unique: qO0f5XSMMt2qQwX-QnqWqQ-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id EBC63185A780;
+	Fri,  7 Jun 2024 12:24:00 +0000 (UTC)
+Received: from t14s.fritz.box (unknown [10.39.192.109])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id ABF24492BCD;
+	Fri,  7 Jun 2024 12:23:58 +0000 (UTC)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH v1 0/6] fs/proc: move page_mapcount() to fs/proc/internal.h
+Date: Fri,  7 Jun 2024 14:23:51 +0200
+Message-ID: <20240607122357.115423-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,188 +70,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
 
-This test asserts the relation between blocked signal, delivered signal,
-and ucontext. The ucontext is mangled with, by adding a signal mask to
-it; on return from the handler, the thread must block the corresponding
-signal.
+With all other page_mapcount() users in the tree gone, move
+page_mapcount() to fs/proc/internal.h, rename it and extend the
+documentation to prevent future (ab)use.
 
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
- tools/testing/selftests/signal/.gitignore     |   1 +
- tools/testing/selftests/signal/Makefile       |   1 +
- .../selftests/signal/mangle_uc_sigmask.c      | 141 ++++++++++++++++++
- 3 files changed, 143 insertions(+)
- create mode 100644 tools/testing/selftests/signal/mangle_uc_sigmask.c
+... of course, I find some issues while working on that code that I sort
+first ;)
 
-diff --git a/tools/testing/selftests/signal/.gitignore b/tools/testing/selftests/signal/.gitignore
-index 98a7bbc4f325..ccba56247942 100644
---- a/tools/testing/selftests/signal/.gitignore
-+++ b/tools/testing/selftests/signal/.gitignore
-@@ -1,2 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0-only
- sigaltstack
-+mangle_uc_sigmask
-diff --git a/tools/testing/selftests/signal/Makefile b/tools/testing/selftests/signal/Makefile
-index dd6be992fd81..4ebf6ac2e303 100644
---- a/tools/testing/selftests/signal/Makefile
-+++ b/tools/testing/selftests/signal/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- CFLAGS = -Wall
- TEST_GEN_PROGS = sigaltstack
-+TEST_GEN_PROGS += mangle_uc_sigmask
- 
- include ../lib.mk
- 
-diff --git a/tools/testing/selftests/signal/mangle_uc_sigmask.c b/tools/testing/selftests/signal/mangle_uc_sigmask.c
-new file mode 100644
-index 000000000000..0803aeb248a0
---- /dev/null
-+++ b/tools/testing/selftests/signal/mangle_uc_sigmask.c
-@@ -0,0 +1,141 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2024 ARM Ltd.
-+ *
-+ * Author: Dev Jain <dev.jain@arm.com>
-+ *
-+ * Test describing a clear distinction between signal states - delivered and
-+ * blocked, and their relation with ucontext.
-+ */
-+
-+#include <signal.h>
-+#include <unistd.h>
-+#include <stdlib.h>
-+#include <stdio.h>
-+#include <ucontext.h>
-+#include <assert.h>
-+
-+#include "../kselftest.h"
-+
-+void handler_verify_ucontext(int signo, siginfo_t *info, void *uc)
-+{
-+	int ret;
-+
-+	/* Kernel dumps ucontext with USR2 blocked */
-+	ret = sigismember(&(((ucontext_t *)uc)->uc_sigmask), SIGUSR2);
-+	ksft_test_result(ret == 1, "USR2 in ucontext\n");
-+
-+	raise(SIGUSR2);
-+}
-+
-+void handler_segv(int signo, siginfo_t *info, void *uc)
-+{
-+	/*
-+	 * Three cases possible:
-+	 * 1. Program already terminated due to segmentation fault.
-+	 * 2. SEGV was blocked even after returning from handler_usr.
-+	 * 3. SEGV was delivered on returning from handler_usr.
-+	 * The last option must happen.
-+	 */
-+	ksft_test_result_pass("SEGV delivered\n");
-+}
-+
-+static int cnt;
-+
-+void handler_usr(int signo, siginfo_t *info, void *uc)
-+{
-+	int ret;
-+
-+	/*
-+	 * Break out of infinite recursion caused by raise(SIGUSR1) invoked
-+	 * from inside the handler
-+	 */
-+	++cnt;
-+	if (cnt > 1)
-+		return;
-+
-+	ksft_print_msg("In handler_usr\n");
-+
-+	/* SEGV blocked during handler execution, delivered on return */
-+	raise(SIGPIPE);
-+	ksft_print_msg("SEGV bypassed successfully\n");
-+
-+	/*
-+	 * Signal responsible for handler invocation is blocked by default;
-+	 * delivered on return, leading to an infinite recursion
-+	 */
-+	raise(SIGUSR1);
-+	ksft_test_result(cnt == 1,
-+			 "USR1 is blocked, cannot invoke handler again\n");
-+
-+	/* SIGPIPE has been blocked in sa_mask, but ucontext is invariant */
-+	ret = sigismember(&(((ucontext_t *)uc)->uc_sigmask), SIGPIPE);
-+	ksft_test_result(ret == 0, "USR1 not in ucontext\n");
-+
-+	/* SIGUSR1 has been blocked, but ucontext is invariant */
-+	ret = sigismember(&(((ucontext_t *)uc)->uc_sigmask), SIGUSR1);
-+	ksft_test_result(ret == 0, "SEGV not in ucontext\n");
-+
-+	/*
-+	 * Mangle ucontext; this will be copied back into &current->blocked
-+	 * on return from the handler.
-+	 */
-+	if (sigaddset(&((ucontext_t *)uc)->uc_sigmask, SIGUSR2))
-+		ksft_exit_fail_perror("Cannot add into uc_sigmask");
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	struct sigaction act, act2;
-+	sigset_t *set, *oldset;
-+
-+	ksft_print_header();
-+	ksft_set_plan(6);
-+
-+	act.sa_flags = SA_SIGINFO;
-+	act.sa_sigaction = &handler_usr;
-+
-+	/* add SEGV to blocked mask */
-+	if (sigemptyset(&act.sa_mask) || sigaddset(&act.sa_mask, SIGPIPE)
-+	    || (sigismember(&act.sa_mask, SIGPIPE) != 1))
-+		ksft_exit_fail_msg("Cannot add SEGV to blocked mask\n");
-+
-+	if (sigaction(SIGUSR1, &act, NULL))
-+		ksft_exit_fail_perror("Cannot install handler");
-+
-+	act2.sa_flags = SA_SIGINFO;
-+	act2.sa_sigaction = &handler_segv;
-+
-+	if (sigaction(SIGPIPE, &act2, NULL))
-+		ksft_exit_fail_perror("Cannot install handler");
-+
-+	/* invoke handler */
-+	raise(SIGUSR1);
-+
-+	/* Mangled ucontext implies USR2 is blocked for current thread */
-+	raise(SIGUSR2);
-+	ksft_print_msg("USR2 bypassed successfully\n");
-+
-+	act.sa_sigaction = &handler_verify_ucontext;
-+	if (sigaction(SIGUSR1, &act, NULL))
-+		ksft_exit_fail_perror("Cannot install handler");
-+
-+	raise(SIGUSR1);
-+
-+	ksft_print_msg("USR2 still blocked on return from handler\n");
-+
-+	/* Confirm USR2 blockage by sigprocmask() too */
-+	set = malloc(sizeof(sigset_t *));
-+	oldset = malloc(sizeof(sigset_t *));
-+
-+	if (sigemptyset(set))
-+		ksft_exit_fail_perror("Cannot empty set");
-+
-+	if (sigprocmask(SIG_BLOCK, set, oldset))
-+		ksft_exit_fail_perror("sigprocmask()");
-+
-+	ksft_test_result(sigismember(oldset, SIGUSR2) == 1,
-+			 "USR2 present in &current->blocked\n");
-+
-+	ksft_finished();
-+}
+We'll now only end up calling page_mapcount()
+[now folio_precise_page_mapcount()] on pages mapped via present page table
+entries. Except for /proc/kpagecount, that still does questionable things,
+but we'll leave that legacy interface as is for now.
+
+Did a quick sanity check. Likely we would want some better selfestest
+for /proc/$/pagemap + smaps. I'll see if I can find some time to write
+some more.
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>
+
+David Hildenbrand (6):
+  fs/proc/task_mmu: indicate PM_FILE for PMD-mapped file THP
+  fs/proc/task_mmu: don't indicate PM_MMAP_EXCLUSIVE without PM_PRESENT
+  fs/proc/task_mmu: properly detect PM_MMAP_EXCLUSIVE per page of
+    PMD-mapped THPs
+  fs/proc/task_mmu: account non-present entries as "maybe shared, but no
+    idea how often"
+  fs/proc: move page_mapcount() to fs/proc/internal.h
+  Documentation/admin-guide/mm/pagemap.rst: drop "Using pagemap to do
+    something useful"
+
+ Documentation/admin-guide/mm/pagemap.rst |  21 -----
+ fs/proc/internal.h                       |  33 ++++++++
+ fs/proc/page.c                           |  21 +++--
+ fs/proc/task_mmu.c                       | 102 +++++++++++++----------
+ include/linux/mm.h                       |  27 +-----
+ 5 files changed, 104 insertions(+), 100 deletions(-)
+
+
+base-commit: 19b8422c5bd56fb5e7085995801c6543a98bda1f
 -- 
-2.34.1
+2.45.2
 
 
