@@ -1,348 +1,307 @@
-Return-Path: <linux-kernel+bounces-206742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B741E900D37
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:53:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC143900D36
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC15D1C21203
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:53:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F26A71C21A5A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA2B14E2FF;
-	Fri,  7 Jun 2024 20:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4715F1552EF;
+	Fri,  7 Jun 2024 20:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqYHaafS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GOWp7o7y"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED06155306
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 20:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717793562; cv=none; b=RBjNr4b+V80HYTZQlhoWnGmBbLEqW2TodGLAQ6Y9E0M2lVo0Nu8qohLssoAzuMkqXtlVNFm3ey8iMFi3lxiqbsqH2LJDt9CjaTc0WrRoNG8iL7w1wxM0tsDtS8D6CaDwO1KcImsIxQ2iCGMLAcfKD+GqR4Z2anupSZacVULb28E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717793562; c=relaxed/simple;
-	bh=BQd8RqE6IZSOpkmclld0hJT5agAAj8nejebKe2Iu0Hg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m8D3FO1bLZbpFcUJEFSKTmNVfwrKWKlmREk22uOpDLM+PXqnIWldVFw1JCztALAmCn0nzzQRry3HC/QzkiVZdPi5GZyq6osdBFxOS8dv4+gBPXzB8JcCGIEkOPJv9ZI4MbVj9SbFmHiI0WmXT2BYsGMaVrTmjqaLofoMqs7MHps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WqYHaafS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0293C4AF09
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 20:52:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717793560;
-	bh=BQd8RqE6IZSOpkmclld0hJT5agAAj8nejebKe2Iu0Hg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WqYHaafSIYyUEg8cm3l1pzPcWlSAobp4YW9v78voQeKR/oYrnys0E4d4Jj45VxqiI
-	 aoftDLxoQy76oouU6fzaVS3fXeq0bBX8IeUNGdF1FkMhKAj+3WPMRK50d9+SKcd6Xb
-	 okTQ0H75VnYLSMxlnRT3qwE0y8ii75DelnJwgrF4KYX0wz/hQFWyRvaKntSKarYAsy
-	 D0yEWN4VXmKtD4BWKjCuJoNBDi7EcXvtPtDaSEwfcjNFUutH48X2iq6i/cji1LHyhs
-	 ZMaUXF0zIZ6zAQ7VTXR/uzTYsw2CmDKRjRguiQ2bk+9T57S/Wa7SKKnnR2H3gFmpPz
-	 00X0VrDUNGpIA==
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2e73441edf7so27498301fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 13:52:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUgo58F1VCBQqqrkvTqgNr4ACOOVWvZKNOOCzxWoSYv3Ii/itJBTw9hwEaasv9CoVLHF6lnBByOQ/wH5KN48QYMkgNnpyt4Z62NThgo
-X-Gm-Message-State: AOJu0YyrPxpYhIKtqYF9P8Zs/Frcn2NwfYcnVSTKH4iTBez2lIxO0q+o
-	63iIU5v+i/syGUqSBHfnHmHJ46V1D0WzDnX8nZro451vByHXvi6Uwzw0QKgItcqJBJn11qNERc8
-	3sXXcvxp0alCOB2OjfeiA9gViFQ==
-X-Google-Smtp-Source: AGHT+IFFJg+gfdfADcrhnvLq8SOfK65V/VQUrBajLwy3wF5T77NloRFZYLbXzty6dFfPasKEaqjIRaHFEEJD5mddRq4=
-X-Received: by 2002:a2e:93d6:0:b0:2ea:f719:318b with SMTP id
- 38308e7fff4ca-2eaf7287cb8mr7198351fa.7.1717793559536; Fri, 07 Jun 2024
- 13:52:39 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9BD154BF7;
+	Fri,  7 Jun 2024 20:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717793557; cv=fail; b=lALJJQthB4XtVScnLWwEOXXWabtNn0sxexVTJQrVL8y6jk6u1Wtsefs2KeRCGdAN1AMM4jTL6QypMRydbriOyrtrC041v1X3GwkYIPJzUkUBrOlamR9Jw2glenL9+szf3uvyPea7QsCNABrzoaomIV6hTqSUNzwrpAR0VCxLUD8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717793557; c=relaxed/simple;
+	bh=wZUcveo/IH/80SfqQoAp0y64OkqTwJzheqlBU0w2prI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=dXCJsV+QE9DANsV1tUZmyPYZK+c+TuxnLVSuEPL4pDfwnZr4dujetD+jJDPzn8dsNDfKMEuOUMDcPO9DilVGy41KYUv4o8keInP/ooTfK/kFLVr4Aqoxrle+11ZwPYvW9t5s5Av90nnqTzRVnYgaRwwIiDfiR6PbOP7hp6sFq/w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GOWp7o7y; arc=fail smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717793556; x=1749329556;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=wZUcveo/IH/80SfqQoAp0y64OkqTwJzheqlBU0w2prI=;
+  b=GOWp7o7ypPh8wxrowVYYBnCiFkpea3ZXlsoVNnN8YaA6v0jcnxEA3/BO
+   AqBmFlHe8F9Kses+HMUQty+5MDDJeFSZxuVhQzy7TDG7mOnbT7s3KR30U
+   nvMfN4nUoGuCgNJZ6zeViEsp6WKZwuEme6rv6YRCJAktruuS836gBcFLD
+   wEa2X1Bk7XmD6o3NPyQJQrUpt2c9cBcIImnt1IFUpou80A0EiYQZ/ZgR7
+   N5U6+1k7+CJKpTr1ggA1GiE0jUdGpI8T8hurq1JqYiyL3wrgHZ5LmnTu8
+   E69JG3dERRT684vmjVeIHyGhD/ey2XoFG6fiHnmLZEPyxpEpADHL1FpWx
+   g==;
+X-CSE-ConnectionGUID: 2iBLUoifSTaRHJW2zBR7kQ==
+X-CSE-MsgGUID: /fXIHBT6SHa9vZTxkXESTQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="14767432"
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="14767432"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 13:52:35 -0700
+X-CSE-ConnectionGUID: AujzFFY0RGiGuRnsAHmmMg==
+X-CSE-MsgGUID: 9XHLyceFRHSzidzSIAAetw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="38433684"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Jun 2024 13:52:35 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 7 Jun 2024 13:52:34 -0700
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 7 Jun 2024 13:52:34 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 7 Jun 2024 13:52:34 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.101)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 7 Jun 2024 13:52:33 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fDsfWQFzDnn0NH4Kt5KY8aYy3K7aRgekT+87dAjM2YeNh4Ja6dJ57ogymWOgoeph0pXwlqdmLp0O7bJjGKcFjA1xnbidGJgz9LnE4qde+Z1ywccfGdF1jL0NI3l/rR1HW1VYeo0Por752Kpu+EL8CJSwflWdTksoJYeeY0n3UtNLY/fFxB+blVJV631+zwxysb9uZ5oB9QMZqwDN64k7T9SLcgTDTad053jl0uYwhrJXL3+/VlnevEJ+HQGfrVXk3F/ZMzofnUga+cKt7X0dTVBSqhKFSrOl7kvWFy1563xHFMozSyofseofcb6OyLKgrY4/vlPtXvBMo6440xcpLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wZUcveo/IH/80SfqQoAp0y64OkqTwJzheqlBU0w2prI=;
+ b=XGZsZhBNVDvbdlgAH9SqS3Tli775Aa+JHge/MOmm0d82XihZXnEds982dut8YywbUbxD7wX+0vXw0olQ66RN1HB1cLTDbKA73OSrDes1lxPny0WQyE0iIV25Y7FAaGq789R0XaC2gBa5IxwFgdGpKN3OqoFNLylO4W5WBJXtDuLKMapC0pZZNUDsq+a/WR3EFw0+C8DLTbgRbMKHIxLLKzl0ZgiXSkJLDesePW8B2r8s+oZNsQLEkALqXOjWn+aVrugQhCbpkhcY9aHMWB9HdECZgpXE3teYUpO2EJFVJ1XqMniIxcxHH6uXkfcYTLEC9B79m9zbgu3mhoLTXbV0kA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
+ by IA0PR11MB8354.namprd11.prod.outlook.com (2603:10b6:208:48c::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.33; Fri, 7 Jun
+ 2024 20:52:29 +0000
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9%3]) with mapi id 15.20.7633.021; Fri, 7 Jun 2024
+ 20:52:29 +0000
+From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To: "pbonzini@redhat.com" <pbonzini@redhat.com>
+CC: "seanjc@google.com" <seanjc@google.com>, "Huang, Kai"
+	<kai.huang@intel.com>, "sagis@google.com" <sagis@google.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Aktas, Erdem"
+	<erdemaktas@google.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>,
+	"dmatlack@google.com" <dmatlack@google.com>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>
+Subject: Re: [PATCH v2 10/15] KVM: x86/tdp_mmu: Reflect building mirror page
+ tables
+Thread-Topic: [PATCH v2 10/15] KVM: x86/tdp_mmu: Reflect building mirror page
+ tables
+Thread-Index: AQHastVs1q2hkoirN0SkbNQdRgcKZ7G8IDKAgACzW4A=
+Date: Fri, 7 Jun 2024 20:52:29 +0000
+Message-ID: <44fed65b5b7f180e912f265209269a0a2b2f8846.camel@intel.com>
+References: <20240530210714.364118-1-rick.p.edgecombe@intel.com>
+	 <20240530210714.364118-11-rick.p.edgecombe@intel.com>
+	 <CABgObfYhKmBkqGP-d12o6W2TfiaqwP-c8pcae9-pnkaYJt6K-w@mail.gmail.com>
+In-Reply-To: <CABgObfYhKmBkqGP-d12o6W2TfiaqwP-c8pcae9-pnkaYJt6K-w@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.44.4-0ubuntu2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|IA0PR11MB8354:EE_
+x-ms-office365-filtering-correlation-id: 07664418-e93a-447c-ceab-08dc8733bf0b
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|366007|376005|1800799015|38070700009;
+x-microsoft-antispam-message-info: =?utf-8?B?cjdQSkNoSHFnTDlYUnVuUi9FMGZ2eHhIcWE1WldWK25SKytMaGZraG5oN01S?=
+ =?utf-8?B?bkJOOGRreGt2Q3hCSVMrQ3QxUE5FOVFWVGtTZE13ODM5dzBvRWFnSC9lU1BB?=
+ =?utf-8?B?ekNUdm1scEc3MVRLdDFmZ2gxY2FyaFZRTVlXdEhqSm56V1VXK2ZGOERETEJp?=
+ =?utf-8?B?OUM3bFltZE5IMGRXcVJqSE9DUytWalIzT2dnbHhVc0kwZy8yQ0FFZ0c5V253?=
+ =?utf-8?B?dDRDd0FNOUdKN295alk2SFBnWS94eGNSWFhFekhIN243ZmVoNUV4c2t3OUF3?=
+ =?utf-8?B?eDZkcEZhakpEVHF6TEI1eVFjMzM2bzVWTllDVTAwMFpCZHJNb3dKQmZtc3I1?=
+ =?utf-8?B?WHlKVjU2dDI2bFVydzlEa280eTRybDJZaDNwekhzVWZ3NzN3eHpJcHVzMmJO?=
+ =?utf-8?B?TGV0ckt6WUROTlZFQVFRbkl1WTVGS2tROHhUMm9TeDlRa2E5cVp3eDBlSFhG?=
+ =?utf-8?B?TjV4bHNCbmlzajRNczFrdmZNY1JMRzJpeFdsMTJ2SEE1OEhsRXRQRmpNcmFx?=
+ =?utf-8?B?RHk3azhFYlNnb0tkNVBZQmtkS1JDYTRZQnVyb2NEZEdpKzY0R1BDeTlOcXd5?=
+ =?utf-8?B?aGJtRm1XTkJwZ29mTy8zWEdudmVpbCtTNTl3RWV3amlWdzB5SW13VkN3S2dO?=
+ =?utf-8?B?K0ZFN3BFQWNZTE9VdzNQYTFmd003S0t6Skx4K0Y4MHlDY1NaZ1VlSFlYVGhz?=
+ =?utf-8?B?T1RDaDVxeXJhUElvdVN4c0FOeUIzRU01clJvVmNaNXQzOUVGSUxSTkMxcVoz?=
+ =?utf-8?B?REZJcERBVVhMQUFHczVKeTVyczIzRlpzV01Xck5VMkNacVluTVVpMHRuaU5Z?=
+ =?utf-8?B?a1RZd1ZpU1NqQnNiUHRZUFVGVkxwcHNhMVdBMWRmeC9pMlI4Wm9qN0FmYkhu?=
+ =?utf-8?B?dnVaMUtqcmtLNEFVYmNWVTRWTHBPKzRlb2tGM1pTRWtwN1dKVzFmdFBvcmE5?=
+ =?utf-8?B?dW9HVzhwdUlVVzUrVVNIQkx1WTZvYVN0UW9oQktNcVNOemlmNXVnUlk4b0t3?=
+ =?utf-8?B?WUtydy80UHgwS1Q0UDdHZ2tnZkRBYzhqOHBJL1RvTFdYcTBDRkRRSlBrakRF?=
+ =?utf-8?B?NmJqV2lmNzJ4TlhLLy9YSmMrS09PT3o0OFV2bGtJejhUUXFxRHZrbW5rWFAw?=
+ =?utf-8?B?U2JsdEQrc2dWVEU4YnpSWCtLRjF4eWFORGxBUDNKalFMMG85T2RLTlhoc004?=
+ =?utf-8?B?SmVYTlIwajgxTTB6bTFWS1IwWS9qQ1J1d0psNHl2Ulo2Yk42K3N4d3Uxd0RD?=
+ =?utf-8?B?aW1JeVp5TUdaTVBpOFRRWVdWUE9OSS9ydCtxTlN3OGJxOTN1Unh2eldKbXZU?=
+ =?utf-8?B?TXgzRzI3bmN5K0FvUVI5R2FPcklRRlpWUUs3QkFXd1hiVjNJeXZ4Z0VtNzc1?=
+ =?utf-8?B?WE5Da2xIdXZLOVluWUU1ZzdsNk5MMWJrQTBvWFdXNFJ0Tk55QnRuSlZDbUxK?=
+ =?utf-8?B?Q1BZWlZSR052WThzQURmMXVoZ3gzZm44c3ltL21PQndEN1lMRDVnalh1S0tO?=
+ =?utf-8?B?MlpGT2lHQ1M0OVQwclEzbU1wTE9udzlUTEMxNmlxM2g2MmYweFQ2VTRKbHJZ?=
+ =?utf-8?B?YTBWeDdvZXFCZi9rVHVRN1dLOTU4NlZaWWEwVGUxU3RkcWh2ZHFmTW1renhM?=
+ =?utf-8?B?OFpaTVJWNUxOck11NGFPZ3hKMjlVMzF2NUxxVzdabnBwb0ppRU9JeHdkRTln?=
+ =?utf-8?B?Qy96VURNNUlMVDF6K0xIbm8wcjE0Q0dnWmNmcmtFTXp6YmFLcUZEZnNkK2lq?=
+ =?utf-8?B?Rm4xZmhCV0lDRFAzdS9STEMzdGd0NFVPK0FHUUxscHdWcUVqV2dseUt0UDFw?=
+ =?utf-8?Q?ixzojpERnkPpwq/3LcseomPh2HyWlq09ABsT8=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?U0RaN2RFR0lvZGgwazZDSS9MdzJjWnZqUmxGaWVIamFRaEJrKzJkMkRheUFn?=
+ =?utf-8?B?cmxNSkVKU1IzaE93SXFqMExKYU41TWs4VWt6VnVLVXVHbXNFeE5TUi9TaGJw?=
+ =?utf-8?B?NFZHdFUrU3BKTFd6cjRTUTU5TDAwNGQ3QU0zMithL1ErbjFQODN4U1NMcExR?=
+ =?utf-8?B?S0tLWDBTRUNWSjRjT2x2ZFhjVFJLM3RjMHdCcTRYUWNaNHFtakg0Y1NUMEZp?=
+ =?utf-8?B?R3BjU00wRmFwMmtVYlZXbHpqWHBxQjltVktEK1hRWEhxcDU2V2NYbVlhMEpG?=
+ =?utf-8?B?RzVGcjE0b0MzdFlhMXVBdkdIWWorSVpvUHFsUmhlVVlyZ05wNWM3cFNEWHls?=
+ =?utf-8?B?dzkxeUxEVm1rWnY2cWN1Q1d0K1J1WE1sVnFVRHVZaDArQVdPemxCRjZTczl6?=
+ =?utf-8?B?M1lUc3VXOXBvanQzTW9GN0N0T25DQU5EaGdEOHRJY1BvTlJUVnJ0VmkzdG9L?=
+ =?utf-8?B?NVVMS2pGS3ZkcS9Ha3hzMEhWWkhiWUF2L0NlaEh0UVRTbTlrVGhSVGROMStU?=
+ =?utf-8?B?M2NiRHVYWkxlRFh6WGwwZ1RVNnAyVy9nT0lDTi9WQ1ZrdFgyVERraXJ4WjVy?=
+ =?utf-8?B?Z1A0cVVxNFRoL0ErWDhZbHRUS2xSREhOalI2em1UVXBHL1JscnoxYldGV0w4?=
+ =?utf-8?B?VjRGRWthS0RUS29ueFQwbXNUaU00MFFLTExjbmUxV1RERGdQM09YYW9rZDlR?=
+ =?utf-8?B?YU11dm0wellYdytrc1ZVamJBL1Z3aFVNWmZ6SXhZS0tRRFIzM0JveVFZc2Vj?=
+ =?utf-8?B?bXRUeUVPc0YzV2tSanhGbUFXaytKVThrV05zcXFpaGVFQ1RKWSt1Rmh3Z2E2?=
+ =?utf-8?B?N2NrQWovc0NnTk4yVFNZV2tNeWs5VEpsTURtUUZRK2ZMazQ5eEdpcGoxdUtV?=
+ =?utf-8?B?WWhycmNiMVVHZmwyNjZzYjdscjVzbDFuclV3TXRDMXRFYWhJbVRxTnBodm91?=
+ =?utf-8?B?RHRGcFRpQk5XeExYMys3OHdCMnp0WjUwWUFCNmRGanordzd2V2dCR2lBQ1Vt?=
+ =?utf-8?B?MkUxNnNQQkdUaGFGOUxKVmd1czR1bkhibm5vUDg2SVdwaGV3NjdtT1dSZ2Ux?=
+ =?utf-8?B?cVZpbWRSMjdwRlF6T1lqK0pSTVRMRGJUOTZVRHJBZFhDbUZPZ2gyT2dSakRD?=
+ =?utf-8?B?SmFWT3VKYkgyZmRyWnpBYWlVc1VtaXIyTU1vdDNVQzFkZ0ZidVpDWUsxbVVm?=
+ =?utf-8?B?dE81SXh5ZXZ3TmthdlM0NC83NnhSVDdVQWtvQlQ5RmU5R3FvVXFCY3U3OENn?=
+ =?utf-8?B?Tk43VmlGeExwQlZMUFQvMGV6Vk1BaU9McFhycFFOT2VpSDFOOWpRTTkwQW54?=
+ =?utf-8?B?ckVUMjdJWGNqc0k2eXpEdGUyTC82MUROZ3VDaXhzSDM5QXJTL1VqaTB1Y1FE?=
+ =?utf-8?B?dnc4RjdlVTFCYmxvYm5kRmMwam01ZlJuYjV1Yllnd0ZjS3VyYWkxd2JDditC?=
+ =?utf-8?B?b0ZZcnV5V2o4RzJKVFZuNiszSzJ5dVh3TUg4cnBUSFNJVWxSQnE4U0pyUnhR?=
+ =?utf-8?B?d2dHTzNMMmI2R2xiRUQyZWRqVWY1U2RFMG4zRnpwcXRLbWN5ZXJDSm05aEJt?=
+ =?utf-8?B?bHZxbjhGbjNyRmdMbXdOSkJzOVJyVVhaaStrVmtmbzBVSSt5VjBsT2ovT1Bz?=
+ =?utf-8?B?WEpoUG9qdG90enA4N3dyWjNIM2hOMFNDOEJDUndTSjVjbWwrN3o2bWFsRDRq?=
+ =?utf-8?B?TGtkNDI4V2x1Tm5JRWFnaEhPcXdVN1pRSiszdGZrZDRKdzhQSGgrSm5QREkx?=
+ =?utf-8?B?NlBnSlhheTFSa3N3emZqcnE1Vm5EYkRZRWM0bU5WcWk4ZHdsTjFUd05rNFJV?=
+ =?utf-8?B?VlFxcjRmSE1BUURhVWVZRXYyM3d0c2dWOXpFOTdFRHp0V0tXWXRtVTJLMW5v?=
+ =?utf-8?B?eE56anVkdGJhMEplUXN0d05lWHVjOGQ1UjBPVFBBRFd6Q09rcmZBaDc3dTk1?=
+ =?utf-8?B?Q3dCM25vZ0RjaVduMXk0cnhNWElpZll1bTFmRGZwTzhIamF5dWk2Q0JzNUV5?=
+ =?utf-8?B?bDVzRTZ2aml1MlVjdVF3eXdNOFZMSUpWb21VUEgrQVdIRFZITC9rTWpVUlln?=
+ =?utf-8?B?M1UzOW5zTTFDNC8wa2U2ZHZRb2RNTUVObkxFdSt0YWdCTm9BUUpVMGs4S0NW?=
+ =?utf-8?B?UnVhZ2s0THJONnBTTFVnMlExRk0xbmY0YnJjdlJpWmpSYXlGQnBzZXBTMDRu?=
+ =?utf-8?Q?GHNqmlbeN6EEQ4rXOT12Rjk=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <5C4CFB1C803D47478D01AA129FB6ABF3@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524-swap-allocator-v1-0-47861b423b26@kernel.org>
- <20240524-swap-allocator-v1-2-47861b423b26@kernel.org> <edb439ea-4754-4d63-8d5f-edc116465d7b@arm.com>
-In-Reply-To: <edb439ea-4754-4d63-8d5f-edc116465d7b@arm.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Fri, 7 Jun 2024 13:52:27 -0700
-X-Gmail-Original-Message-ID: <CANeU7Q=uT-sZjwvcL4EJUbkZ8dbhnVpQEfNndMXvhBwZOSyr0Q@mail.gmail.com>
-Message-ID: <CANeU7Q=uT-sZjwvcL4EJUbkZ8dbhnVpQEfNndMXvhBwZOSyr0Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm: swap: mTHP allocate swap entries from nonfull list
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Kairui Song <kasong@tencent.com>, 
-	"Huang, Ying" <ying.huang@intel.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Barry Song <baohua@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07664418-e93a-447c-ceab-08dc8733bf0b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jun 2024 20:52:29.8042
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vsaSXurjfWi+jUwHewn2mOYELR5OQq3vKuiVAOIFW3PzuW7M9rcFqtFTjAZjYWjl2p2mncIewNiC6e5Q3WdknJ5cKrJhbzy4OeTm6z8elgg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB8354
+X-OriginatorOrg: intel.com
 
-On Fri, Jun 7, 2024 at 3:35=E2=80=AFAM Ryan Roberts <ryan.roberts@arm.com> =
-wrote:
->
-> On 24/05/2024 18:17, Chris Li wrote:
-> > Track the nonfull cluster as well as the empty cluster
-> > on lists. Each order has one nonfull cluster list.
-> >
-> > The cluster will remember which order it was used during
-> > new cluster allocation.
-> >
-> > When the cluster has free entry, add to the nonfull[order]
-> > list.  When the free cluster list is empty, also allocate
-> > from the nonempty list of that order.
-> >
-> > This improves the mTHP swap allocation success rate.
->
-> If I've understood correctly, the aim here is to link all the current per=
--cpu
-> clusters for a given order together so that if a cpu can't allocate a new
-> cluster for a given order, then it can steal another CPU's current cluste=
-r for
-> that order?
-
-Stealing other CPU's *current* cluster is not the intent. The intent
-is after all current per-cpu done with this cluster(full), those full
-clusters are not tracked by any per-cpu struct. When those full
-clusters become non-full. Track it in the global nonfull cluster list.
-The per-cpu allocation can take a cluster from that nonfull cluster
-list and start allocating from it.
-
-The V1 code does not specifically check for the stealing behavior, the
-V2 code will prevent that from happening. Basically each cluster has 4
-states and owners:
-1) empty, owned by a global free cluster list.
-2) per cpu allocating. owned by per CPU current.
-3) nonfull (also non empty). own global nonfull list.
-4) full, currently not tracked, we can track it under global full list.
-
-When the per cpu runs out of free cluster, it can take a cluster from
-3) and move it to 2).
-
->
-> If that's the intent, couldn't that be done just by iterating over the pe=
-r-cpu,
-> per-order cluster pointers? Then you don't need all the linked list churn
-
-Again, that is not the intent.
-
-> (althogh I like the linked list changes as a nice cleanup, I'm not sure t=
-he
-> churn is neccessary for this change?). There would likely need to be some
-> locking considerations, but it would also allow you to get access to the =
-next
-> entry within the cluster for allocation.
->
-> However, fundamentally, I don't think this change solves the problem; it =
-just
-> takes a bit longer before the allocation fails. The real problem is
-> fragmentation due to freeing individual pages from swap entries at differ=
-ent times.
-
-It definitely helps to find nonfull clusters quicker. Please take a
-look at my above comment and read the patch again.
-
->
-> Wouldn't it be better to just extend scanning to support high order alloc=
-ations?
-> Then we can steal a high order block from any cluster, even clusters that=
- were
-
-Steal from higher order causes the higher order harder to allocate,
-that is downside.
-In my mind, ideally have some high order cluster reservation scheme so
-the high order one doesn't mix with the low order one.
-
-> previously full, just like we currently do for order-0. Given we are alre=
-ady
-> falling back to this path for order-0, I don't think it would be any more
-> expensive; infact its less expensive because we only scan once for the hi=
-gh
-> order block, rather than scan for every split order-0 page.
->
-> Of course that still doesn't solve the proplem entirely; if swap is so
-> fragmented that there is no contiguous block of the required order then y=
-ou
-> still have to fall back to splitting. As an extra optimization, you could=
- store
-
-Exactly. That is why I think some high order cluster reservation
-scheme is needed for a short term solution.
-The change itself is not too complicated if we can agree on this approach.
-
-> the largest contiguous free space available in each cluster to avoid scan=
-ning in
-> case its too small?
-
-Avoid scanning does just get to the non available high order result quicker=
-.
-Does not seem to help increase the high order allocation success rate.
-
->
->
-> >
-> > There are limitations if the distribution of numbers of
-> > different orders of mTHP changes a lot. e.g. there are a lot
-> > of nonfull cluster assign to order A while later time there
-> > are a lot of order B allocation while very little allocation
-> > in order A. Currently the cluster used by order A will not
-> > reused by order B unless the cluster is 100% empty.
-> >
-> > This situation is best addressed by the longer term "swap
-> > buddy allocator", in future patches.
-> > ---
-> >  include/linux/swap.h |  4 ++++
-> >  mm/swapfile.c        | 25 +++++++++++++++++++++++--
-> >  2 files changed, 27 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/include/linux/swap.h b/include/linux/swap.h
-> > index 0d3906eff3c9..1b7f0794b9bf 100644
-> > --- a/include/linux/swap.h
-> > +++ b/include/linux/swap.h
-> > @@ -255,10 +255,12 @@ struct swap_cluster_info {
-> >                                * cluster
-> >                                */
-> >       unsigned int count:16;
-> > +     unsigned int order:8;
-> >       unsigned int flags:8;
-> >       struct list_head next;
-> >  };
-> >  #define CLUSTER_FLAG_FREE 1 /* This cluster is free */
-> > +#define CLUSTER_FLAG_NONFULL 2 /* This cluster is on nonfull list */
-> >
-> >
-> >  /*
-> > @@ -297,6 +299,8 @@ struct swap_info_struct {
-> >       unsigned char *swap_map;        /* vmalloc'ed array of usage coun=
-ts */
-> >       struct swap_cluster_info *cluster_info; /* cluster info. Only for=
- SSD */
-> >       struct list_head free_clusters; /* free clusters list */
-> > +     struct list_head nonfull_clusters[SWAP_NR_ORDERS];
-> > +                                     /* list of cluster that contains =
-at least one free slot */
-> >       unsigned int lowest_bit;        /* index of first free in swap_ma=
-p */
-> >       unsigned int highest_bit;       /* index of last free in swap_map=
- */
-> >       unsigned int pages;             /* total of usable pages of swap =
-*/
-> > diff --git a/mm/swapfile.c b/mm/swapfile.c
-> > index 205a60c5f9cb..51923aba500e 100644
-> > --- a/mm/swapfile.c
-> > +++ b/mm/swapfile.c
-> > @@ -363,8 +363,11 @@ static void swap_cluster_schedule_discard(struct s=
-wap_info_struct *si,
-> >
-> >  static void __free_cluster(struct swap_info_struct *si, struct swap_cl=
-uster_info *ci)
-> >  {
-> > +     if (ci->flags & CLUSTER_FLAG_NONFULL)
-> > +             list_move_tail(&ci->next, &si->free_clusters);
-> > +     else
-> > +             list_add_tail(&ci->next, &si->free_clusters);
-> >       ci->flags =3D CLUSTER_FLAG_FREE;
-> > -     list_add_tail(&ci->next, &si->free_clusters);
-> >  }
-> >
-> >  /*
-> > @@ -486,7 +489,12 @@ static void dec_cluster_info_page(struct swap_info=
-_struct *p, struct swap_cluste
-> >       ci->count--;
-> >
-> >       if (!ci->count)
-> > -             free_cluster(p, ci);
-> > +             return free_cluster(p, ci);
-> > +
-> > +     if (!(ci->flags & CLUSTER_FLAG_NONFULL)) {
-> > +             list_add_tail(&ci->next, &p->nonfull_clusters[ci->order])=
-;
-> > +             ci->flags |=3D CLUSTER_FLAG_NONFULL;
-> > +     }
-> >  }
-> >
-> >  /*
-> > @@ -547,6 +555,14 @@ static bool scan_swap_map_try_ssd_cluster(struct s=
-wap_info_struct *si,
-> >                       ci =3D list_first_entry(&si->free_clusters, struc=
-t swap_cluster_info, next);
-> >                       list_del(&ci->next);
-> >                       spin_lock(&ci->lock);
-> > +                     ci->order =3D order;
-> > +                     ci->flags =3D 0;
-> > +                     spin_unlock(&ci->lock);
-> > +                     tmp =3D (ci - si->cluster_info) * SWAPFILE_CLUSTE=
-R;
-> > +             } else if (!list_empty(&si->nonfull_clusters[order])) {
-> > +                     ci =3D list_first_entry(&si->nonfull_clusters[ord=
-er], struct swap_cluster_info, next);
-> > +                     list_del(&ci->next);
-> > +                     spin_lock(&ci->lock);
-> >                       ci->flags =3D 0;
-> >                       spin_unlock(&ci->lock);
-> >                       tmp =3D (ci - si->cluster_info) * SWAPFILE_CLUSTE=
-R;
->
-> This looks wrong to me; if the cluster is on the nonfull list then it wil=
-l have
-> had some entries already allocated (by another cpu). So pointing tmp to t=
-he
-> first block in the cluster will never yield a free block. The cpu from wh=
-ich you
-
-I believe it will scan until it finds a free block with alignment down
-in the offset < max loop.
-
-while (offset < max) {
-    if (swap_range_empty(si->swap_map, offset, nr_pages))
-        break;
-    offset +=3D nr_pages;
-}
-
-> are stealing the cluster stores the next free block location in its per-c=
-pu
-> structure. So perhaps iterating over the other cpu's `struct percpu_clust=
-er`s is
-> a better approach than the nonfull list?
-
-No, stealing is not the intent. The intent is  quickly finding the non
-full cluster NOT in other per cpu allocation.
-
->
-> Additionally, this cluster will be stored back to this cpu's current clus=
-ter at
-> the bottom of the function. That may or may not be what you intended.
-
-That is what I intended. It remembers the current allocating cluster,
-in case this cluster has more than one high order swap entries.
-
-Chris
-
->
-> > @@ -578,6 +594,7 @@ static bool scan_swap_map_try_ssd_cluster(struct sw=
-ap_info_struct *si,
-> >                               break;
-> >                       tmp +=3D nr_pages;
-> >               }
-> > +             WARN_ONCE(ci->order !=3D order, "expecting order %d got %=
-d", order, ci->order);
-> >               unlock_cluster(ci);
-> >       }
-> >       if (tmp >=3D max) {
-> > @@ -956,6 +973,7 @@ static void swap_free_cluster(struct swap_info_stru=
-ct *si, unsigned long idx)
-> >       ci =3D lock_cluster(si, offset);
-> >       memset(si->swap_map + offset, 0, SWAPFILE_CLUSTER);
-> >       ci->count =3D 0;
-> > +     ci->order =3D 0;
-> >       ci->flags =3D 0;
-> >       free_cluster(si, ci);
-> >       unlock_cluster(ci);
-> > @@ -2882,6 +2900,9 @@ static int setup_swap_map_and_extents(struct swap=
-_info_struct *p,
-> >       INIT_LIST_HEAD(&p->free_clusters);
-> >       INIT_LIST_HEAD(&p->discard_clusters);
-> >
-> > +     for (i =3D 0; i < SWAP_NR_ORDERS; i++)
-> > +             INIT_LIST_HEAD(&p->nonfull_clusters[i]);
-> > +
-> >       for (i =3D 0; i < swap_header->info.nr_badpages; i++) {
-> >               unsigned int page_nr =3D swap_header->info.badpages[i];
-> >               if (page_nr =3D=3D 0 || page_nr > swap_header->info.last_=
-page)
-> >
->
+T24gRnJpLCAyMDI0LTA2LTA3IGF0IDEyOjEwICswMjAwLCBQYW9sbyBCb256aW5pIHdyb3RlOgo+
+IE9uIFRodSwgTWF5IDMwLCAyMDI0IGF0IDExOjA34oCvUE0gUmljayBFZGdlY29tYmUKPiA8cmlj
+ay5wLmVkZ2Vjb21iZUBpbnRlbC5jb20+IHdyb3RlOgo+ID4gK8KgwqDCoMKgwqDCoCAvKiBVcGRh
+dGUgbWlycm9yZWQgbWFwcGluZyB3aXRoIHBhZ2UgdGFibGUgbGluayAqLwo+ID4gK8KgwqDCoMKg
+wqDCoCBpbnQgKCpyZWZsZWN0X2xpbmtfc3B0KShzdHJ1Y3Qga3ZtICprdm0sIGdmbl90IGdmbiwg
+ZW51bSBwZ19sZXZlbAo+ID4gbGV2ZWwsCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHZvaWQgKm1pcnJvcmVkX3NwdCk7Cj4g
+PiArwqDCoMKgwqDCoMKgIC8qIFVwZGF0ZSB0aGUgbWlycm9yZWQgcGFnZSB0YWJsZSBmcm9tIHNw
+dGUgZ2V0dGluZyBzZXQgKi8KPiA+ICvCoMKgwqDCoMKgwqAgaW50ICgqcmVmbGVjdF9zZXRfc3B0
+ZSkoc3RydWN0IGt2bSAqa3ZtLCBnZm5fdCBnZm4sIGVudW0gcGdfbGV2ZWwKPiA+IGxldmVsLAo+
+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCBrdm1fcGZuX3QgcGZuKTsKPiAKPiBQb3NzaWJseSBsaW5rX2V4dGVybmFsX3NwdCBh
+bmQgc2V0X2V4dGVybmFsX3NwdGUsIHNpbmNlIHlvdSdsbCBoYXZlIHRvCj4gcy9taXJyb3JlZC9l
+eHRlcm5hbC8gaW4gdGhlIGNvbW1lbnQuIEJ1dCBub3QgYSBoYXJkIHJlcXVlc3QuCgpEZWZpbml0
+ZWx5IHNlZW1zIGJldHRlciBub3cgdGhhdCB3ZSBoYXZlIHRoZSAiZXh0ZXJuYWwiIG5vbWVuY2xh
+dHVyZS4KCj4gCj4gPiArc3RhdGljIHZvaWQgKmdldF9taXJyb3JlZF9zcHQoZ2ZuX3QgZ2ZuLCB1
+NjQgbmV3X3NwdGUsIGludCBsZXZlbCkKPiA+ICt7Cj4gPiArwqDCoMKgwqDCoMKgIGlmIChpc19z
+aGFkb3dfcHJlc2VudF9wdGUobmV3X3NwdGUpICYmICFpc19sYXN0X3NwdGUobmV3X3NwdGUsCj4g
+PiBsZXZlbCkpIHsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHN0cnVjdCBrdm1f
+bW11X3BhZ2UgKnNwID0KPiA+IHRvX3NoYWRvd19wYWdlKHBmbl90b19ocGEoc3B0ZV90b19wZm4o
+bmV3X3NwdGUpKSk7Cj4gCj4gSSB0aGluayB0aGlzIGlzIHNwdGVfdG9fY2hpbGRfc3AobmV3X3Nw
+dGUpPwoKWWVzLCB0aGF0IHNlZW1zIG11Y2ggZWFzaWVyIHRoYW4gYWxsIHRoaXMuCgoKW3NuaXBd
+Cgo+IAo+ID4gK3N0YXRpYyBpbnQgX19tdXN0X2NoZWNrIHJlZmxlY3Rfc2V0X3NwdGVfcHJlc2Vu
+dChzdHJ1Y3Qga3ZtICprdm0sCj4gPiB0ZHBfcHRlcF90IHNwdGVwLAo+IAo+IHRkcF9tbXVfc2V0
+X21pcnJvcl9zcHRlX2F0b21pYz8KPiAKPiA+ICvCoMKgwqDCoMKgwqAgLyoKPiA+ICvCoMKgwqDC
+oMKgwqDCoCAqIEZvciBtaXJyb3JlZCBwYWdlIHRhYmxlLCBjYWxsYmFja3MgYXJlIG5lZWRlZCB0
+byBwcm9wYWdhdGUgU1BURQo+ID4gK8KgwqDCoMKgwqDCoMKgICogY2hhbmdlIGludG8gdGhlIG1p
+cnJvcmVkIHBhZ2UgdGFibGUuIEluIG9yZGVyIHRvIGF0b21pY2FsbHkKPiA+IHVwZGF0ZQo+ID4g
+K8KgwqDCoMKgwqDCoMKgICogYm90aCB0aGUgU1BURSBhbmQgdGhlIG1pcnJvcmVkIHBhZ2UgdGFi
+bGVzIHdpdGggY2FsbGJhY2tzLAo+ID4gdXRpbGl6ZQo+ID4gK8KgwqDCoMKgwqDCoMKgICogZnJl
+ZXppbmcgU1BURS4KPiA+ICvCoMKgwqDCoMKgwqDCoCAqIC0gRnJlZXplIHRoZSBTUFRFLiBTZXQg
+ZW50cnkgdG8gUkVNT1ZFRF9TUFRFLgo+ID4gK8KgwqDCoMKgwqDCoMKgICogLSBUcmlnZ2VyIGNh
+bGxiYWNrcyBmb3IgbWlycm9yZWQgcGFnZSB0YWJsZXMuCj4gPiArwqDCoMKgwqDCoMKgwqAgKiAt
+IFVuZnJlZXplIHRoZSBTUFRFLsKgIFNldCB0aGUgZW50cnkgdG8gbmV3X3NwdGUuCj4gPiArwqDC
+oMKgwqDCoMKgwqAgKi8KPiAKPiAvKgo+IMKgKiBXZSBuZWVkIHRvIGxvY2sgb3V0IG90aGVyIHVw
+ZGF0ZXMgdG8gdGhlIFNQVEUgdW50aWwgdGhlIGV4dGVybmFsCj4gwqAqIHBhZ2UgdGFibGUgaGFz
+IGJlZW4gbW9kaWZpZWQuIFVzZSBSRU1PVkVEX1NQVEUgc2ltaWxhciB0bwo+IMKgKiB0aGUgemFw
+cGluZyBjYXNlLgo+IMKgKi8KPiAKPiBFYXN5IHBlYXN5LiA6KSBXZSBtYXkgd2FudCB0byByZW5h
+bWUgUkVNT1ZFRF9TUFRFIHRvIEZST1pFTl9TUFRFOyBmZWVsCj4gZnJlZSB0byBkbyBpdCBhdCB0
+aGUgaGVhZCBvZiB0aGlzIHNlcmllcywgdGhlbiBpdCBjYW4gYmUgcGlja2VkIGZvcgo+IDYuMTEu
+CgpPay4KCj4gCj4gPiAtc3RhdGljIGlubGluZSBpbnQgX190ZHBfbW11X3NldF9zcHRlX2F0b21p
+YyhzdHJ1Y3QgdGRwX2l0ZXIgKml0ZXIsIHU2NAo+ID4gbmV3X3NwdGUpCj4gPiArc3RhdGljIGlu
+bGluZSBpbnQgX190ZHBfbW11X3NldF9zcHRlX2F0b21pYyhzdHJ1Y3Qga3ZtICprdm0sIHN0cnVj
+dAo+ID4gdGRwX2l0ZXIgKml0ZXIsIHU2NCBuZXdfc3B0ZSkKPiA+IMKgewo+ID4gwqDCoMKgwqDC
+oMKgwqAgdTY0ICpzcHRlcCA9IHJjdV9kZXJlZmVyZW5jZShpdGVyLT5zcHRlcCk7Cj4gPiAKPiA+
+IEBAIC01NzEsMTUgKzYyOSwzNiBAQCBzdGF0aWMgaW5saW5lIGludCBfX3RkcF9tbXVfc2V0X3Nw
+dGVfYXRvbWljKHN0cnVjdAo+ID4gdGRwX2l0ZXIgKml0ZXIsIHU2NCBuZXdfc3B0ZSkKPiA+IMKg
+wqDCoMKgwqDCoMKgwqAgKi8KPiA+IMKgwqDCoMKgwqDCoMKgIFdBUk5fT05fT05DRShpdGVyLT55
+aWVsZGVkIHx8IGlzX3JlbW92ZWRfc3B0ZShpdGVyLT5vbGRfc3B0ZSkpOwo+ID4gCj4gPiAtwqDC
+oMKgwqDCoMKgIC8qCj4gPiAtwqDCoMKgwqDCoMKgwqAgKiBOb3RlLCBmYXN0X3BmX2ZpeF9kaXJl
+Y3Rfc3B0ZSgpIGNhbiBhbHNvIG1vZGlmeSBURFAgTU1VIFNQVEVzIGFuZAo+ID4gLcKgwqDCoMKg
+wqDCoMKgICogZG9lcyBub3QgaG9sZCB0aGUgbW11X2xvY2suwqAgT24gZmFpbHVyZSwgaS5lLiBp
+ZiBhIGRpZmZlcmVudAo+ID4gbG9naWNhbAo+ID4gLcKgwqDCoMKgwqDCoMKgICogQ1BVIG1vZGlm
+aWVkIHRoZSBTUFRFLCB0cnlfY21weGNoZzY0KCkgdXBkYXRlcyBpdGVyLT5vbGRfc3B0ZQo+ID4g
+d2l0aAo+ID4gLcKgwqDCoMKgwqDCoMKgICogdGhlIGN1cnJlbnQgdmFsdWUsIHNvIHRoZSBjYWxs
+ZXIgb3BlcmF0ZXMgb24gZnJlc2ggZGF0YSwgZS5nLiBpZgo+ID4gaXQKPiA+IC3CoMKgwqDCoMKg
+wqDCoCAqIHJldHJpZXMgdGRwX21tdV9zZXRfc3B0ZV9hdG9taWMoKQo+ID4gLcKgwqDCoMKgwqDC
+oMKgICovCj4gPiAtwqDCoMKgwqDCoMKgIGlmICghdHJ5X2NtcHhjaGc2NChzcHRlcCwgJml0ZXIt
+Pm9sZF9zcHRlLCBuZXdfc3B0ZSkpCj4gPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBy
+ZXR1cm4gLUVCVVNZOwo+ID4gK8KgwqDCoMKgwqDCoCBpZiAoaXNfbWlycm9yX3NwdGVwKGl0ZXIt
+PnNwdGVwKSAmJiAhaXNfcmVtb3ZlZF9zcHRlKG5ld19zcHRlKSkgewo+ID4gK8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgaW50IHJldDsKPiA+ICsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIC8qIERvbid0IHN1cHBvcnQgYXRvbWljIHphcHBpbmcgZm9yIG1pcnJvcmVkIHJv
+b3RzICovCj4gCj4gVGhlIHdoeSBpcyBoaWRkZW4gaW4gdGhlIGNvbW1pdCBtZXNzYWdlIHRvIHBh
+dGNoIDExLiBJIHdvbmRlciBpZiBpdAo+IGlzbid0IGNsZWFyZXIgdG8gc2ltcGx5IHNxdWFzaCB0
+b2dldGhlciBwYXRjaGVzIDEwIGFuZCAxMSAoeW91ciBjYWxsKSwKPiBhbmQgaW5zdGVhZCBzcGxp
+dCBvdXQgdGhlIGFkZGl0aW9uIG9mIHRoZSBuZXcgc3RydWN0IGt2bSBwYXJhbWV0ZXJzLgoKSSBh
+Y3R1YWxseSBzcGxpdCB0aGVtIGluIHR3byBmb3IgdGhpcyB2Mi4gSSB0aG91Z2h0IHRoZSBjb21i
+aW5lZCBwYXRjaCB3YXMgdG9vCmJpZy4gTWF5YmUgSSBjb3VsZCBqdXN0IG1vdmUgdGhpcyB3aG9s
+ZSBodW5rIHRvIHRoZSBuZXh0IHBhdGNoLiBJJ2xsIGdpdmUgaXQgYQp0cnkuCgo+IAo+IEFueXdh
+eSwgdGhpcyBjb21tZW50IG5lZWRzIGEgYml0IG1vcmUgaW5mbzoKPiAKPiAvKgo+IMKgKiBVc2Vy
+cyBvZiBhdG9taWMgemFwcGluZyBkb24ndCBvcGVyYXRlIG9uIG1pcnJvciByb290cywKPiDCoCog
+c28gb25seSBuZWVkIHRvIGhhbmRsZSBwcmVzZW50IG5ld19zcHRlLgo+IMKgKi8KCk9rLgoKPiAK
+PiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChLVk1fQlVHX09OKCFpc19zaGFk
+b3dfcHJlc2VudF9wdGUobmV3X3NwdGUpLCBrdm0pKQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiAtRUJVU1k7Cj4gPiArwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCAvKgo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAq
+IFBvcHVsYXRpbmcgY2FzZS4KPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKiAt
+IHJlZmxlY3Rfc2V0X3NwdGVfcHJlc2VudCgpIGltcGxlbWVudHMKPiA+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgKsKgwqAgMSkgRnJlZXplIFNQVEUKPiA+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgKsKgwqAgMikgY2FsbCBob29rcyB0byB1cGRhdGUgbWlycm9yZWQg
+cGFnZSB0YWJsZSwKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKsKgwqAgMykg
+dXBkYXRlIFNQVEUgdG8gbmV3X3NwdGUKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgKiAtIGhhbmRsZV9jaGFuZ2VkX3NwdGUoKSBvbmx5IHVwZGF0ZXMgc3RhdHMuCj4gPiArwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICovCj4gCj4gQ29tbWVudCBub3QgbmVlZGVkICh3
+ZWlyZCBJIGtub3cpLgoKU3VyZS4KCgoK
 
