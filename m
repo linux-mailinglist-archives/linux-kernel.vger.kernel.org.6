@@ -1,162 +1,139 @@
-Return-Path: <linux-kernel+bounces-206038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2748B90038C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:29:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D45490038D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D68E1F27BB7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:29:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6A4F1F2803E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B84F19750B;
-	Fri,  7 Jun 2024 12:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE637192B6A;
+	Fri,  7 Jun 2024 12:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FVFo9jbD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y0atu5z6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E542F194C79
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 12:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D487518F2E8
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 12:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717763230; cv=none; b=rD0qTuY4VI921ffjOS8UQkHpwM+yaomNUAjSwpP16pFpYGyqr3Exs1ofSkhRGxrevfJoULURmrWmJHGBX46RvdHENVO3N5tmW+tzUb32dESugxeEYUMw7qAe2TDcpZKBX0Mmv1aUGVQtkc6hm6jUjjvDorW9NNsi+fo2UBNNsSE=
+	t=1717763281; cv=none; b=mEu3sV7lwk9F4Foin7qnb9ZI141GZh0Mi/rhTJVHAOwwULU4EXnNrMfYUWRdjlCVlpMKxP41VtXJ7auTmkQPTSySRrcA0QqT6Re5TIWVJIcQG3E2fieLmDCd2b0idhfS99oQkfr28AFJNqLM3nmfEBHJaukZcHkpY3Ur8UHRoHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717763230; c=relaxed/simple;
-	bh=P6k/4n5U39byFzD6jzSNBEigVT6mMplCDkSAxVn4NZg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ijmnHBfDYL0prZqJpTmTznVfBY4RJj12phKFmupIBRvxujWBlsuu+pVPgSphpGV6rhgz46yiQDllTREemsp0iNAlu8b5f0dEy+Dievddx5SmqITdyZITQGL8iD0e5OC4OULaPqE0LnJj1IbfeLTVY7iAzHYcxxzky0HiFkHCOAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FVFo9jbD; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1717763281; c=relaxed/simple;
+	bh=5ga61JYu4QS3wCZ+Ofmmy+SHrQ3UEzZ4Yu/0S9Z7di8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QreaT2wE7Kks3ojehfpft7EnIWpQhqx+QKOH/dqBGAcS85F78/NTExA57cv4OSHnx1HF/BEgbYTUf7b0APz94prcCCjqAT2cVoemKNEqtnTAWVjjnzw3CDLVnluyphuKSnPAFizsiWchZ3NLBw2/EhmFOByXZpmB5IFe/fZnRRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y0atu5z6; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717763228;
+	s=mimecast20190719; t=1717763278;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=W4ZPJMKNqAKs+WSkD3sNi4S4EfGxm9XkiKd+CksFrl0=;
-	b=FVFo9jbDx8/SWQ6vlzNnHE3LK80SPqRjSlSYEvgbfuWh6q2wtAXtQofFIVxEySEgOPdL6q
-	dzlI5L8oVpXxxEzt5Lfts2wFk/P+FbMoxeZOJ5BaJ2dfNREnMiZ6Pb9FJZi9rTfJChd6CI
-	AYkQfqmDNPIhXZVO2e4W54rfN1G38d0=
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
- [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=C2Z+9D3XMToghs4HAhDCgGVwTyyKde4buT3Zr7Fkmi4=;
+	b=Y0atu5z65vtDd8L6KIgdJubuxKP0OwDoEdvi2g+CPkaL+zYuiD8H1f+FXdCPzFh+Y3XbCY
+	k0LF2FITLKxSjm0jbabCGeVpo0c7UCjaTMGag31qG2UUosHlCjKFk/a1OCjaXboshhtexo
+	6wdfM4koLYnwmBi9Xe2lCr0fbv25OEU=
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
+ [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-568-1TUaR7ivODeX6ebTvadgkA-1; Fri, 07 Jun 2024 08:27:06 -0400
-X-MC-Unique: 1TUaR7ivODeX6ebTvadgkA-1
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3738732f988so19796875ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 05:27:06 -0700 (PDT)
+ us-mta-5-iDGHa7-HNseN4L3uDINzJw-1; Fri, 07 Jun 2024 08:27:57 -0400
+X-MC-Unique: iDGHa7-HNseN4L3uDINzJw-1
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7eb50e42c6aso170485339f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 05:27:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717763226; x=1718368026;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W4ZPJMKNqAKs+WSkD3sNi4S4EfGxm9XkiKd+CksFrl0=;
-        b=HAbmTCMnWxx3/dq+bd9IjPyTJuKy/S7MS23xvyVfVGIeM3iaaGNyw86r5sp6J4J28v
-         zoqM23ZkkREMuWxy9P/TvxDjIy/w3XUUpmOkBJMThed8jIwIfwf68W/Xkty43ZvQUQiA
-         R1HXGxRXlIWvEhmnCexEaSqjY8yvHyo9Qnl2Cviw4M4dk5fsqzZE2kKxL5KI3YXwGQ35
-         N9U69hvZD5IzrNz+zDg+7jyMAO0jCWODseHcjUfGE1UXK1QkBDZDT47AGVatlbtgbg3c
-         HkHSw/xuEsKNRKv9xuhTmVCQFRTzSxIbbUDAc4AGeP2yz3igaLi7uaspe2XsE1W6fTLJ
-         2VeA==
-X-Forwarded-Encrypted: i=1; AJvYcCWWlRxLSWIGTWGHpLykE3UvklZRsZd58ISEht+KICTJVrztmYAPRaikLAPRpmWknNsdPz5Geb0XbB2C/bajLanJjdqiI9UxB7udBPlY
-X-Gm-Message-State: AOJu0YykJ/t1T1ECYfos/zIxzE5ckPxDfRZOvMLqSyAfsHYCGOYiFr8i
-	WwJo473ARyirSkIJz3MyLbmKQaSjcX/TeYoHM6BQd/x1THHAF5Xp+sI9MlszTWrIKXfDtz+Tli+
-	iI2PAFpOkFtjh3ycznOGqNto1qM8/VPWDasL8yWRZXvuH9UeUiepEGL2yEHdU7g==
-X-Received: by 2002:a05:6e02:1b0f:b0:374:a738:818c with SMTP id e9e14a558f8ab-3758030b7a4mr31967565ab.12.1717763225500;
-        Fri, 07 Jun 2024 05:27:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG8pU+tOy6cV80EfkDwgc4VbW/L5pJTETaDXD3l4vJiIFc665Y5KIiucld1brAK/XJ5qcivgQ==
-X-Received: by 2002:a05:6e02:1b0f:b0:374:a738:818c with SMTP id e9e14a558f8ab-3758030b7a4mr31967195ab.12.1717763224612;
-        Fri, 07 Jun 2024 05:27:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717763277; x=1718368077;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C2Z+9D3XMToghs4HAhDCgGVwTyyKde4buT3Zr7Fkmi4=;
+        b=md2XQQIICBdD0Eoz+64Fg+EPgsW0U8A939Hbu6qwl3yu7ZS1wgAxriOaF0Hc7nCGpZ
+         JKHgKZ9QR9aEyWvMdKAZkKIV5oamTxkc3Tk/8zXzvacgLTx8dwLiyK+yNu8EG37OlcFm
+         lxmd96Lg9BUpTMc8okysvFLkcw/QFXG6ytlLmwSZ2nv/sN1seVucMaGpGb1ntO2ntks+
+         zlfF96gfc6/RrfMZptfZj1Jm47iY3hnZfUWRc9260m9vwscZiB0hiqsWavDH8eq0lzu8
+         JyJAnFOcH3EhU6coT2h+cD+aNJhxrytqKnPSegEAfvt1iFKFoOBIotrwEDQ7+sh+Qw2z
+         TN9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWCrGUKl525zmUEGQyHM+B/2vcpZk3OR75Hf91sfqLSXbtkHYV1lfWhysY1Vin/J3OzVzysF7+ebU4Q4H7XQmWWgmgnoqWZeWZ70Xl4
+X-Gm-Message-State: AOJu0Yx63YvTCMf2Oml2/TG+wXPpf+gTdudrrGOqzdV6Lw3Kx039J7LX
+	6mom7wgPbyQuGmQd5RWaQlfZA6MrbWysW28v5GAQQdIOJ9Zbfoa1T0y0EHmEm3jmNJOwcPxfGdd
+	zzDQn7335QejSzaYL7VnllJyK3ArBMLIWVjF3yyv7frIyNti8ZLuDbR0fq+g4Hg==
+X-Received: by 2002:a05:6602:6411:b0:7e1:7a0b:309e with SMTP id ca18e2360f4ac-7eb571d8a89mr308503939f.4.1717763276384;
+        Fri, 07 Jun 2024 05:27:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGgIRlC0cojMP2aKUvU9Fr7ZztffoFIYMR/czaqcAI94Cnx2B/sfklXmqiLidBDJ3FGj6JBqw==
+X-Received: by 2002:a05:6602:6411:b0:7e1:7a0b:309e with SMTP id ca18e2360f4ac-7eb571d8a89mr308500239f.4.1717763275781;
+        Fri, 07 Jun 2024 05:27:55 -0700 (PDT)
 Received: from localhost ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6e4d8db18c2sm397294a12.29.2024.06.07.05.27.03
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b7a225cecfsm829578173.64.2024.06.07.05.27.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 05:27:04 -0700 (PDT)
+        Fri, 07 Jun 2024 05:27:55 -0700 (PDT)
+Date: Fri, 7 Jun 2024 20:26:22 +0800
 From: Coiby Xu <coxu@redhat.com>
-To: kexec@lists.infradead.org
-Cc: Ondrej Kozina <okozina@redhat.com>,
-	Milan Broz <gmazyland@gmail.com>,
-	Thomas Staudt <tstaudt@de.ibm.com>,
-	=?UTF-8?q?Daniel=20P=20=2E=20Berrang=C3=A9?= <berrange@redhat.com>,
-	Kairui Song <ryncsn@gmail.com>,
-	Jan Pazdziora <jpazdziora@redhat.com>,
-	Pingfan Liu <kernelfans@gmail.com>,
-	Baoquan He <bhe@redhat.com>,
-	Dave Young <dyoung@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	Dave Hansen <dave.hansen@intel.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH v5 7/7] x86/crash: make the page that stores the dm crypt keys inaccessible
-Date: Fri,  7 Jun 2024 20:26:17 +0800
-Message-ID: <20240607122622.167228-8-coxu@redhat.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240607122622.167228-1-coxu@redhat.com>
-References: <20240607122622.167228-1-coxu@redhat.com>
+To: Baoquan He <bhe@redhat.com>
+Cc: kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>, 
+	Milan Broz <gmazyland@gmail.com>, Thomas Staudt <tstaudt@de.ibm.com>, 
+	Daniel P =?utf-8?B?LiBCZXJyYW5nw6k=?= <berrange@redhat.com>, Kairui Song <ryncsn@gmail.com>, 
+	Jan Pazdziora <jpazdziora@redhat.com>, Pingfan Liu <kernelfans@gmail.com>, 
+	Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Dave Hansen <dave.hansen@intel.com>, Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: Re: [PATCH v4 0/7] Support kdump with LUKS encryption by reusing
+ LUKS volume keys
+Message-ID: <qe3bdssg2zw4r4rzwhdiklcrp24on4r66f2og5brkhulguph2t@jrjrpldght65>
+References: <20240523050451.788754-1-coxu@redhat.com>
+ <ZmLbmriQYol2JHKe@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <ZmLbmriQYol2JHKe@MiWiFi-R3L-srv>
 
-This adds an addition layer of protection for the saved copy of dm
-crypt key. Trying to access the saved copy will cause page fault.
+Hi Baoquan,
 
-Suggested-by: Pingfan Liu <kernelfans@gmail.com>
-Signed-off-by: Coiby Xu <coxu@redhat.com>
----
- arch/x86/kernel/machine_kexec_64.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+On Fri, Jun 07, 2024 at 06:06:18PM +0800, Baoquan He wrote:
+>Hi Coiby,
+>
+>On 05/23/24 at 01:04pm, Coiby Xu wrote:
+>> LUKS is the standard for Linux disk encryption. Many users choose LUKS
+>> and in some use cases like Confidential VM it's mandated. With kdump
+>> enabled, when the 1st kernel crashes, the system could boot into the
+>> kdump/crash kernel and dump the memory image i.e. /proc/vmcore to a
+>> specified target. Currently, when dumping vmcore to a LUKS
+>> encrypted device, there are two problems,
+>
+>I am done with this round of reviewing. The overall approach looks good
+>to me, while there are places to improve or fix. I have added comment on
+>all things I am concerned about, please check. Thanks for the effort.
 
-diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-index b180d8e497c3..aba50ec641e6 100644
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -545,13 +545,35 @@ static void kexec_mark_crashkres(bool protect)
- 	kexec_mark_range(control, crashk_res.end, protect);
- }
- 
-+/* make the memory storing dm crypt keys in/accessible */
-+static void kexec_mark_dm_crypt_keys(bool protect)
-+{
-+	unsigned long start_paddr, end_paddr;
-+	unsigned int nr_pages;
-+
-+	if (kexec_crash_image->dm_crypt_keys_addr) {
-+		start_paddr = kexec_crash_image->dm_crypt_keys_addr;
-+		end_paddr = start_paddr + kexec_crash_image->dm_crypt_keys_sz - 1;
-+		nr_pages = (PAGE_ALIGN(end_paddr) - PAGE_ALIGN_DOWN(start_paddr))/PAGE_SIZE;
-+		if (protect)
-+			set_memory_np((unsigned long)phys_to_virt(start_paddr), nr_pages);
-+		else
-+			__set_memory_prot(
-+				(unsigned long)phys_to_virt(start_paddr),
-+				nr_pages,
-+				__pgprot(_PAGE_PRESENT | _PAGE_NX | _PAGE_RW));
-+	}
-+}
-+
- void arch_kexec_protect_crashkres(void)
- {
- 	kexec_mark_crashkres(true);
-+	kexec_mark_dm_crypt_keys(true);
- }
- 
- void arch_kexec_unprotect_crashkres(void)
- {
-+	kexec_mark_dm_crypt_keys(false);
- 	kexec_mark_crashkres(false);
- }
- #endif
+Thanks for taking time on thoroughly reviewing the patches and
+suggesting various improvements! I believe all comments have been
+addressed now except for testing sme/tdx:)
+
+>
+>By the way, do you get confirmation on the solution from encryption/keys
+>developer of redhat internally or upstream? With my understanding, it
+>looks good. It may need their confirmation or approval in some ways.
+
+Yes, actually cryptsetup's maintainer Milan pointed me to
+libcryptsetup's new API and suggested me to reach out to Ondrej for
+help. And Ondrej has already finished the major work in upstream
+cryptsetup and systemd. But it will be good for them to have further
+confirmation and I'll ask for their help. Thanks for the reminder!
+
+>
+>Thanks
+>Baoquan
+>
+
 -- 
-2.45.1
+Best regards,
+Coiby
 
 
