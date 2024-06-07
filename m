@@ -1,105 +1,198 @@
-Return-Path: <linux-kernel+bounces-205542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB8038FFD43
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:35:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83D2A8FFD4B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F38D1F21440
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:35:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09AFDB20F59
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0150F153565;
-	Fri,  7 Jun 2024 07:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28843153BC3;
+	Fri,  7 Jun 2024 07:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Bc/l3OYE"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AD69LnGT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C31B64E
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 07:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C05B64E;
+	Fri,  7 Jun 2024 07:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717745700; cv=none; b=OBmo66eX6sKHkcYg3t9hFnE4m2LpbIAbre0mrn2MUSSEYdyFqZarXFUpAq8jaaTHpw09THKKyFmAld+z3X7tkq9WQK4NgYD586xIooJezm5Kbw9V1IHvScSnQhBkYpTpZfcy//ZaZlB4ZuLWLIGE43YrML56sT/+Fb0tN3imH6s=
+	t=1717745807; cv=none; b=Rr7R/su6jljq60Ek0/STfco69uYCy8xr1AJRtwpjYAsxEdt2ipMHZhI5o99Z3VdxYK48oYVMr8FPsQY+EphaY0tUKAcFEo04jXw8JUg1m5fHF4QivaRWrGbgN3hjWafSE8FaUaZA9IDt+Od6AFhNQosKJyVeJjACdmKaLkh/34o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717745700; c=relaxed/simple;
-	bh=DVWG9qFM30HDo5aJtCWa3lf5yd2di/TP/BqBIIr1kTc=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xg/f5gn66g0E4MfNcnntTc+cWJGS9SP2/M9PjlHub2HvFNrumT0qq0jlPloOK5Su5ZbN7oMuXnqjW/CALhNU20gVidwwtOHa71JYVCqyuyqNKMJpnrG1Y4KrZEWadKuJzZKvEEws5USQNMQVXiaDVdHFHqsvXTHQZQuklOc+44k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Bc/l3OYE; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52b992fd796so1889204e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 00:34:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1717745696; x=1718350496; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=a0hiqs37/YYfDkPbEWIHD+E1YcNVxWsv4TZUXhjiyX8=;
-        b=Bc/l3OYEVA3tqPgjnayaXO/CQEsXk5wvX8y9pDmCg6vw/8F9k1kuhF3Q4KQVSrtijJ
-         ZxS3bnHuOAm4ehWo/+NIwKtA4YW6oz/BQpo285cTBXgs0Jn3arsrysDhFejvwG32KzGp
-         srcGhpgaFwBSQkgQsK28gRPeX13JMgLS58sUglP41buN5YLYBqbm9ioMQKmPckeDVKrF
-         BYN8VbhhJmeyNf/yBeQXOWKsJZZSmOSg4Y6wrIKQXdbh9sRlw6bQxVTxi1JC2ixdH+5w
-         XnDv/B4iimNv7K2KOtEzb9w4G8XTTudMrBpX65uO4BM5edQOn1ocKotNBKmHHRGlW+mc
-         aNUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717745696; x=1718350496;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a0hiqs37/YYfDkPbEWIHD+E1YcNVxWsv4TZUXhjiyX8=;
-        b=PLSW9aec/Ca6dS4remUKuetixCbIO/yr1krig72PUsOMZ4RXMH0AQ2qlDtacDGl4ts
-         0FuOvOl5ydFPgyoEUIS27wSYUKoFk/LBLugtEysSGA5STvyt1633jFDVD8LdgKAjcR4/
-         guCOG6n+pDGH1BCklL1FFjn576y6mRchfgeZ64Sbdw/6IC+bNy4VY6Z5m7oynseuvFnY
-         /1NI3DfuNcvp384Fh8uAy2ttR/h3mWo5+1pDJSHoHUjahO+LkvhR8s6jpXKw85fDdWse
-         gK0PXfNMPLdJcDYcgriJhzO3uf6VLyvcWgv6v8/ky6o0/qade+lNQD08ac0f/ftSIuQr
-         YBZA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4o/ZZPK5Z2gXXwDUIgTLR+Un0GA/gwk5nN8qb5Al9UxblyjOl+sR/TMi7eIKybnVlaNP1x8ePiX8KPIYbYkp/rRaBTkTyy8+2/Mfb
-X-Gm-Message-State: AOJu0YyP+1CRkO03VsAuy+5aDIGWDjGhftX/e90ommHWRgf8geIsgN3c
-	zmv7rfwtl9qVp9EyJv1dvigQHAz001pidMRgnrPVuIRET7HsdueumlmI6dvOfoQ=
-X-Google-Smtp-Source: AGHT+IETPBZvvper/s0wnn4VSTIAEUU1vgglXMpyNGhfA/TTDOotwLa9A093Rv3iH6oKFyhOBGAS1w==
-X-Received: by 2002:a05:6512:690:b0:52a:f859:fe4 with SMTP id 2adb3069b0e04-52bb9f5d0d5mr1357170e87.7.1717745695875;
-        Fri, 07 Jun 2024 00:34:55 -0700 (PDT)
-Received: from localhost.localdomain (62.83.84.125.dyn.user.ono.com. [62.83.84.125])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c364bcdsm43774355e9.19.2024.06.07.00.34.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 00:34:55 -0700 (PDT)
-From: Oscar Salvador <osalvador@suse.com>
-X-Google-Original-From: Oscar Salvador <osalvador@suse.de>
-Date: Fri, 7 Jun 2024 09:34:53 +0200
-To: Anastasia Belova <abelova@astralinux.ru>
-Cc: David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH v2] mm/memory_hotplug: prevent accessing by index=-1
-Message-ID: <ZmK4HcX_mLwTW6hU@localhost.localdomain>
-References: <01d90f6c-64a1-4d25-a760-0d8865f6de95@redhat.com>
- <20240606080659.18525-1-abelova@astralinux.ru>
+	s=arc-20240116; t=1717745807; c=relaxed/simple;
+	bh=dNfJZqLy5bPjeiFjUXNb4v8s2dIB9ZYJCxWbAm+lNMw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=edn5GZ0c2IIG+FRQlFrKVygCf5kySTtMTxwhz1jzkUmMZuT904qlN3BZeltyrLII2CTX+4xVzZUDt/FKvRwCMKwOfL3ShgkDykRLRUmWlL3dOt5KJErMPBfIq5YQFMTjgnCzsot9XP1MipB5oxh0MaKawv3hI1XIY1tjvDepcPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AD69LnGT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96B7DC32786;
+	Fri,  7 Jun 2024 07:36:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717745807;
+	bh=dNfJZqLy5bPjeiFjUXNb4v8s2dIB9ZYJCxWbAm+lNMw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AD69LnGT1NlhgQcTlCiRhUl1BoYzYMox2EX1VQtCEQIxI5Eu3/pUU8jbLgnimnVMj
+	 ViyV0CSF3rC8Y7I6UlIwPnLLQ2FLRRRzNzSeVBgHOch9YdRuCwKYhjy+itmHoIJ5GO
+	 0HhNxQwoA5Yqvd+k70s300y3etxgWM+nqEhEELAQpDtYI4WpKKMg2VlATQZmdaaMmS
+	 HV7IYCtPEE/SKT29Ly1XEwUDuxBKtkFd3h16sPNA2UYRqBeWiZqAQWETRn0Z4BBQ5U
+	 bDhoo+PyQQj+FWJSu0Uj993Sihb7zULmEcAvN6SM3VQoAmK1lQxQDlKaQyElbueOZB
+	 5ogDf3gmzSWKw==
+Message-ID: <12e2bbec-7aa9-4893-9f6d-54051f18f6d5@kernel.org>
+Date: Fri, 7 Jun 2024 09:36:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606080659.18525-1-abelova@astralinux.ru>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: qcom: Add SM4250 pinctrl
+To: srinivas.kandagatla@linaro.org, andersson@kernel.org,
+ linus.walleij@linaro.org
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-arm-msm@vger.kernel.org, inux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240606130323.138970-1-srinivas.kandagatla@linaro.org>
+ <20240606130323.138970-2-srinivas.kandagatla@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240606130323.138970-2-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 06, 2024 at 11:06:59AM +0300, Anastasia Belova wrote:
-> nid may be equal to NUMA_NO_NODE=-1. Prevent accessing node_data
-> array by invalid index with check for nid.
+On 06/06/2024 15:03, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Fixes: e83a437faa62 ("mm/memory_hotplug: introduce "auto-movable" online policy")
-> Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+> Add device tree binding Documentation details for Qualcomm SM4250 LPASS
+> LPI(Low power Island) pinctrl device.
 
-Acked-by: Oscar Salvador <osalvador@suse.de>
+...
 
-Thanks! 
+> +
+> +description:
+> +  Top Level Mode Multiplexer pin controller in the Low Power Audio SubSystem
+> +  (LPASS) Low Power Island (LPI) of Qualcomm SM4250 SoC.
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,sm4250-lpass-lpi-pinctrl
+> +
+> +  reg:
+> +    maxItems: 2
 
--- 
-Oscar Salvador
-SUSE Labs
+Please use recent bindings as starting work or template, e.g. sm8550 or
+sm8650. IOW, you need to list the items.
+
+> +
+> +  clocks:
+> +    items:
+> +      - description: LPASS Audio voting clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: audio
+> +
+> +patternProperties:
+> +  "-state$":
+> +    oneOf:
+> +      - $ref: "#/$defs/qcom-sm4250-lpass-state"
+> +      - patternProperties:
+> +          "-pins$":
+> +            $ref: "#/$defs/qcom-sm4250-lpass-state"
+> +        additionalProperties: false
+> +
+> +$defs:
+> +  qcom-sm4250-lpass-state:
+> +    type: object
+> +    description:
+> +      Pinctrl node's client devices use subnodes for desired pin configuration.
+> +      Client device subnodes use below standard properties.
+> +    $ref: qcom,lpass-lpi-common.yaml#/$defs/qcom-tlmm-state
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      pins:
+> +        description:
+> +          List of gpio pins affected by the properties specified in this
+> +          subnode.
+> +        items:
+> +          oneOf:
+
+No need for oneOf. And then directly "pattern" without leading hyphen.
+
+> +            - pattern: "^gpio([0-9]|1[0-8])$"
+> +        minItems: 1
+> +        maxItems: 19
+> +
+> +      function:
+> +        enum: [ gpio, dmic01_clk, dmic01_data, dmic23_clk, dmic23_data,
+> +                dmic4_clk, dmic4_data, ext_mclk0_a, ext_mclk0_b, ext_mclk1_a,
+> +                ext_mclk1_b, ext_mclk1_c, i2s1_clk, i2s1_data, i2s1_ws,
+> +                i2s2_clk, i2s2_data, i2s2_ws, i2s3_clk, i2s3_data, i2s3_ws,
+> +                qua_mi2s_data, qua_mi2s_sclk, qua_mi2s_ws, slim_clk, slim_data,
+> +                swr_rx_clk, swr_rx_data, swr_tx_clk, swr_tx_data, swr_wsa_clk,
+> +                swr_wsa_data ]
+> +        description:
+> +          Specify the alternative function to be configured for the specified
+> +          pins.
+> +
+> +allOf:
+> +  - $ref: qcom,lpass-lpi-common.yaml#
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +
+
+Best regards,
+Krzysztof
+
 
