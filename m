@@ -1,233 +1,103 @@
-Return-Path: <linux-kernel+bounces-205854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EBE990014F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:58:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5C2190015D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:59:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1CB1B21C71
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:58:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3ACA1C2342E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5803E18629B;
-	Fri,  7 Jun 2024 10:57:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3072615748C
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 10:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C9418732B;
+	Fri,  7 Jun 2024 10:58:49 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FAE8186E26;
+	Fri,  7 Jun 2024 10:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717757876; cv=none; b=Joeann91ohWaB23CbmlJS2rMuqzHfdlz79THx0tZg7ovP/pC6HsFxl6fr4mBe9AudgBLNINbpCXYeEn7IEZvNtyStOF/apbavg36FbmVzUJ/Owy072ZwgCiWc5EPC0g/e6CYAkLmb50IvBn00I0p5Msv/UfitmGFQVmmdB9Oxtk=
+	t=1717757928; cv=none; b=k5MFWZFiDgf51ezNUTPW5TwTUfCgjZL6w16YARQQGY16XUkfMwFOJIKuZWYojopxi+09q/hZ1x8jyKwLlN7C+Vq41CZx4tqF+Y72oVBABy3TO7dxBPBS9bCgwwFea9CHP057oj9QAooLWvF1HCRSqTZWBDxsHy+8ajvep0bjBcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717757876; c=relaxed/simple;
-	bh=6TUUxsJL4s+r/TKwLWJXF8dqzSDy/1wGhpnvu/WKfWQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Qgf+Z6p4LLzzZG2HX1XlXquuugooaDni6D4diV6viHXk/ko9tGQZOBS35O7YyjIIVoQZm6Dzql9c5irnM6ZxPMCQZNTxyTSmmZGCvYftIDtaxYp38WO5IKKzNZb6dgG5f2xjAqQBxUjNBHWwZN8DD6ZT1Sa/5wLbQpeMlzG0Pdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 002C22F4;
-	Fri,  7 Jun 2024 03:58:19 -0700 (PDT)
-Received: from [10.57.70.246] (unknown [10.57.70.246])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7FACD3F762;
-	Fri,  7 Jun 2024 03:57:53 -0700 (PDT)
-Message-ID: <7553070e-630e-4e86-b64e-66cfce1ee125@arm.com>
-Date: Fri, 7 Jun 2024 11:57:52 +0100
+	s=arc-20240116; t=1717757928; c=relaxed/simple;
+	bh=gj9rHGiqEtVhgMyKf1T0aWkSra6juadP60PhESLNEog=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Coovq8uTJOM+wj5yb3A8P1kfRzSEjOtt96yRcOYOqWnnVVQoDpN40w0WTwely4/x8w63epX9cUkcvuADOSU9dya656r/R94Irs0xN4SMDVHYDOv9kByfiGUGNeNxMK8gpdjaAjgq7m838VnOOdgU5/y/ShHb6lbJGGFf2IWEIzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sFXIW-006npX-0e;
+	Fri, 07 Jun 2024 18:58:17 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 07 Jun 2024 18:58:18 +0800
+Date: Fri, 7 Jun 2024 18:58:18 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+	Andreas.Fuchs@infineon.com, James Prestwood <prestwoj@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	linux-crypto@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>,
+	Lennart Poettering <lennart@poettering.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	open list <linux-kernel@vger.kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v7 4/5] keys: asymmetric: Add tpm2_key_rsa
+Message-ID: <ZmLnyp9j_QoPgj7W@gondor.apana.org.au>
+References: <20240528210823.28798-1-jarkko@kernel.org>
+ <20240528210823.28798-5-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] mm: swap: mTHP allocate swap entries from nonfull
- list
-Content-Language: en-GB
-From: Ryan Roberts <ryan.roberts@arm.com>
-To: Chris Li <chrisl@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Kairui Song <kasong@tencent.com>, "Huang, Ying" <ying.huang@intel.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Barry Song <baohua@kernel.org>
-References: <20240524-swap-allocator-v1-0-47861b423b26@kernel.org>
- <20240524-swap-allocator-v1-2-47861b423b26@kernel.org>
- <edb439ea-4754-4d63-8d5f-edc116465d7b@arm.com>
-In-Reply-To: <edb439ea-4754-4d63-8d5f-edc116465d7b@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528210823.28798-5-jarkko@kernel.org>
 
-On 07/06/2024 11:35, Ryan Roberts wrote:
-> On 24/05/2024 18:17, Chris Li wrote:
->> Track the nonfull cluster as well as the empty cluster
->> on lists. Each order has one nonfull cluster list.
->>
->> The cluster will remember which order it was used during
->> new cluster allocation.
->>
->> When the cluster has free entry, add to the nonfull[order]
->> list.  When the free cluster list is empty, also allocate
->> from the nonempty list of that order.
->>
->> This improves the mTHP swap allocation success rate.
-> 
-> If I've understood correctly, the aim here is to link all the current per-cpu
-> clusters for a given order together so that if a cpu can't allocate a new
-> cluster for a given order, then it can steal another CPU's current cluster for
-> that order?
-> 
-> If that's the intent, couldn't that be done just by iterating over the per-cpu,
-> per-order cluster pointers? Then you don't need all the linked list churn
-> (althogh I like the linked list changes as a nice cleanup, I'm not sure the
-> churn is neccessary for this change?). There would likely need to be some
-> locking considerations, but it would also allow you to get access to the next
-> entry within the cluster for allocation.
-> 
-> However, fundamentally, I don't think this change solves the problem; it just
-> takes a bit longer before the allocation fails. The real problem is
-> fragmentation due to freeing individual pages from swap entries at different times.
-> 
-> Wouldn't it be better to just extend scanning to support high order allocations?
-> Then we can steal a high order block from any cluster, even clusters that were
-> previously full, just like we currently do for order-0. Given we are already
-> falling back to this path for order-0, I don't think it would be any more
-> expensive; infact its less expensive because we only scan once for the high
-> order block, rather than scan for every split order-0 page.
-> 
-> Of course that still doesn't solve the proplem entirely; if swap is so
-> fragmented that there is no contiguous block of the required order then you
-> still have to fall back to splitting. As an extra optimization, you could store
-> the largest contiguous free space available in each cluster to avoid scanning in
-> case its too small?
-> 
-> 
->>
->> There are limitations if the distribution of numbers of
->> different orders of mTHP changes a lot. e.g. there are a lot
->> of nonfull cluster assign to order A while later time there
->> are a lot of order B allocation while very little allocation
->> in order A. Currently the cluster used by order A will not
->> reused by order B unless the cluster is 100% empty.
->>
->> This situation is best addressed by the longer term "swap
->> buddy allocator", in future patches.
->> ---
->>  include/linux/swap.h |  4 ++++
->>  mm/swapfile.c        | 25 +++++++++++++++++++++++--
->>  2 files changed, 27 insertions(+), 2 deletions(-)
->>
->> diff --git a/include/linux/swap.h b/include/linux/swap.h
->> index 0d3906eff3c9..1b7f0794b9bf 100644
->> --- a/include/linux/swap.h
->> +++ b/include/linux/swap.h
->> @@ -255,10 +255,12 @@ struct swap_cluster_info {
->>  				 * cluster
->>  				 */
->>  	unsigned int count:16;
->> +	unsigned int order:8;
->>  	unsigned int flags:8;
->>  	struct list_head next;
->>  };
->>  #define CLUSTER_FLAG_FREE 1 /* This cluster is free */
->> +#define CLUSTER_FLAG_NONFULL 2 /* This cluster is on nonfull list */
->>  
->>  
->>  /*
->> @@ -297,6 +299,8 @@ struct swap_info_struct {
->>  	unsigned char *swap_map;	/* vmalloc'ed array of usage counts */
->>  	struct swap_cluster_info *cluster_info; /* cluster info. Only for SSD */
->>  	struct list_head free_clusters; /* free clusters list */
->> +	struct list_head nonfull_clusters[SWAP_NR_ORDERS];
->> +					/* list of cluster that contains at least one free slot */
->>  	unsigned int lowest_bit;	/* index of first free in swap_map */
->>  	unsigned int highest_bit;	/* index of last free in swap_map */
->>  	unsigned int pages;		/* total of usable pages of swap */
->> diff --git a/mm/swapfile.c b/mm/swapfile.c
->> index 205a60c5f9cb..51923aba500e 100644
->> --- a/mm/swapfile.c
->> +++ b/mm/swapfile.c
->> @@ -363,8 +363,11 @@ static void swap_cluster_schedule_discard(struct swap_info_struct *si,
->>  
->>  static void __free_cluster(struct swap_info_struct *si, struct swap_cluster_info *ci)
->>  {
->> +	if (ci->flags & CLUSTER_FLAG_NONFULL)
->> +		list_move_tail(&ci->next, &si->free_clusters);
->> +	else
->> +		list_add_tail(&ci->next, &si->free_clusters);
->>  	ci->flags = CLUSTER_FLAG_FREE;
->> -	list_add_tail(&ci->next, &si->free_clusters);
->>  }
->>  
->>  /*
->> @@ -486,7 +489,12 @@ static void dec_cluster_info_page(struct swap_info_struct *p, struct swap_cluste
->>  	ci->count--;
->>  
->>  	if (!ci->count)
->> -		free_cluster(p, ci);
->> +		return free_cluster(p, ci);
->> +
->> +	if (!(ci->flags & CLUSTER_FLAG_NONFULL)) {
->> +		list_add_tail(&ci->next, &p->nonfull_clusters[ci->order]);
->> +		ci->flags |= CLUSTER_FLAG_NONFULL;
->> +	}
->>  }
->>  
->>  /*
->> @@ -547,6 +555,14 @@ static bool scan_swap_map_try_ssd_cluster(struct swap_info_struct *si,
->>  			ci = list_first_entry(&si->free_clusters, struct swap_cluster_info, next);
->>  			list_del(&ci->next);
->>  			spin_lock(&ci->lock);
->> +			ci->order = order;
->> +			ci->flags = 0;
->> +			spin_unlock(&ci->lock);
->> +			tmp = (ci - si->cluster_info) * SWAPFILE_CLUSTER;
->> +		} else if (!list_empty(&si->nonfull_clusters[order])) {
->> +			ci = list_first_entry(&si->nonfull_clusters[order], struct swap_cluster_info, next);
->> +			list_del(&ci->next);
->> +			spin_lock(&ci->lock);
->>  			ci->flags = 0;
->>  			spin_unlock(&ci->lock);
->>  			tmp = (ci - si->cluster_info) * SWAPFILE_CLUSTER;
-> 
-> This looks wrong to me; if the cluster is on the nonfull list then it will have
-> had some entries already allocated (by another cpu). So pointing tmp to the
-> first block in the cluster will never yield a free block. The cpu from which you
-> are stealing the cluster stores the next free block location in its per-cpu
-> structure. So perhaps iterating over the other cpu's `struct percpu_cluster`s is
-> a better approach than the nonfull list?
+On Wed, May 29, 2024 at 12:08:09AM +0300, Jarkko Sakkinen wrote:
+>
+> +/*
+> + * Sign operation is an encryption using the TPM's private key. With RSA the
+> + * only difference between encryption and decryption is where the padding goes.
+> + * Since own padding can be used, TPM2_RSA_Decrypt can be repurposed to do
+> + * encryption.
+> + */
+> +static int tpm2_key_rsa_sign(struct tpm_chip *chip, struct tpm2_key *key,
+> +			     struct kernel_pkey_params *params,
+> +			     const void *in, void *out)
+> +{
+> +	const off_t o = key->priv_len + 2 + sizeof(*key->desc);
+> +	const struct tpm2_rsa_parms *p =
+> +		(const struct tpm2_rsa_parms *)&key->data[o];
+> +	const u16 mod_size = be16_to_cpu(p->modulus_size);
+> +	const struct rsa_asn1_template *asn1;
+> +	u32 in_len = params->in_len;
+> +	void *asn1_wrapped = NULL;
+> +	u8 *padded;
+> +	int ret;
+> +
+> +	if (strcmp(params->encoding, "pkcs1") != 0) {
+> +		ret = -ENOPKG;
+> +		goto err;
+> +	}
+> +
+> +	if (params->hash_algo) {
+> +		asn1 = rsa_lookup_asn1(params->hash_algo);
 
-Ahh; of course the cluster scan below will move this along to a free block.
+Could you please explain why this can't be done through pkcs1pad
+instead of going to raw RSA?
 
-> 
-> Additionally, this cluster will be stored back to this cpu's current cluster at
-> the bottom of the function. That may or may not be what you intended.
-> 
->> @@ -578,6 +594,7 @@ static bool scan_swap_map_try_ssd_cluster(struct swap_info_struct *si,
->>  				break;
->>  			tmp += nr_pages;
->>  		}
->> +		WARN_ONCE(ci->order != order, "expecting order %d got %d", order, ci->order);
->>  		unlock_cluster(ci);
->>  	}
->>  	if (tmp >= max) {
->> @@ -956,6 +973,7 @@ static void swap_free_cluster(struct swap_info_struct *si, unsigned long idx)
->>  	ci = lock_cluster(si, offset);
->>  	memset(si->swap_map + offset, 0, SWAPFILE_CLUSTER);
->>  	ci->count = 0;
->> +	ci->order = 0;
->>  	ci->flags = 0;
->>  	free_cluster(si, ci);
->>  	unlock_cluster(ci);
->> @@ -2882,6 +2900,9 @@ static int setup_swap_map_and_extents(struct swap_info_struct *p,
->>  	INIT_LIST_HEAD(&p->free_clusters);
->>  	INIT_LIST_HEAD(&p->discard_clusters);
->>  
->> +	for (i = 0; i < SWAP_NR_ORDERS; i++)
->> +		INIT_LIST_HEAD(&p->nonfull_clusters[i]);
->> +
->>  	for (i = 0; i < swap_header->info.nr_badpages; i++) {
->>  		unsigned int page_nr = swap_header->info.badpages[i];
->>  		if (page_nr == 0 || page_nr > swap_header->info.last_page)
->>
-> 
-
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
