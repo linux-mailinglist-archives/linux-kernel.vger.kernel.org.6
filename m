@@ -1,290 +1,260 @@
-Return-Path: <linux-kernel+bounces-206252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DF7A900656
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:22:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6907890065A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:23:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E58671F22B1E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:22:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFBBAB218DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269B5194AD3;
-	Fri,  7 Jun 2024 14:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F71195990;
+	Fri,  7 Jun 2024 14:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ni87Lu/1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YVQipCbX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F9513F436;
-	Fri,  7 Jun 2024 14:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321251DFC5;
+	Fri,  7 Jun 2024 14:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717770124; cv=none; b=uVtKH91qxEerQU+q4WIGFK/LOQiPwjDmgbzA9SyyjK8s6SJX1IJXWKbonFX+3arDt42eCy5nyPCxIEPgIbqZppyUCfhFaVfBntwGK45ot5ZgX9ZS+gp9Has+gUqvFura9qHx6clCbjRToUJn1o1nvavc/94d4tOtPyIl/bM/OSE=
+	t=1717770202; cv=none; b=lzMowhnOa4pSLMbhKOeuX8qs6B/naL0MfDHJmYUuG8sr5rH2kUhLwjcYBz/i2u68XsgGp/x3SEoCh9aeuAZlp3zdP6/S2NvPQ4G12tJcKf9zWz5DAzmXPOJGc6wY9iQ6zT1JSbLmPHSkmwNvrXTM/FhK/fvS2l8yBky3UW0Wph0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717770124; c=relaxed/simple;
-	bh=lN9LGnrgukjSjfQdaXfz6zoh1opVnc8Kbq0knfFwjw4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uSql0RloPVEb5SDM2v0Y1yCynVh+pZYidHkKAPcLGZJexgIegCJ9eR7prRvJauVMgtWUIf5K2ecdUZ+Bv2dn147r7+Z3ydds5F6d9DV/AshsOcPRSrQnvE9AbGozhUN+hnKZdsYVuDlcVHDax66hxeFkbe+ViwgxpFcSaFjxFMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ni87Lu/1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94912C4AF09;
-	Fri,  7 Jun 2024 14:22:03 +0000 (UTC)
+	s=arc-20240116; t=1717770202; c=relaxed/simple;
+	bh=jC5KdN3iR66YvPbVE6j7MiDgwoUQwI/b2jmyTOxWUZM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=C3vVZ4o8s7LZwSjIX3kBvQ/gVcMaOAIYobk78LtKpCcSF24diBjlS5toP8LA7tEpD2I4THgReRSvEuOCFBs+I4h1V+2povW9tNMPvsAf5TTnI6AgaNM+GyWsO67Vy08zR8vtNqv1qtzMWVm07QpTsG49KQ9xMklXowxePhWcDvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YVQipCbX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1D01C3277B;
+	Fri,  7 Jun 2024 14:23:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717770123;
-	bh=lN9LGnrgukjSjfQdaXfz6zoh1opVnc8Kbq0knfFwjw4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Ni87Lu/1s8fiBFXiewQHZBjZuWU0h4ZRzUgqvYVPBs74xJk03T4u3R51nIN7hsPU5
-	 11Ac35LQK5xSx9u4GKn33t2vYRArPw0xPDRKzk7jUm27VjFMzteZwmC2Aj4nodnVV1
-	 RsJ+B9GOESPVazKgDToSOJsCAdoFf88EkzKyUfn9oLC+2ZWIq01KjtyBQte4diylQz
-	 vTbzr+AHY6+FFMTgW8cj73aCAzw4+V3rmAa7HB4B1sSbHn5byldjGSPscp22hM9O+R
-	 rlLI+sP+TFOim3uEjIh02jvuUhArBO32G0ZVhqHBCxiwlrTNKDB19UfepT9F8qf4B6
-	 kYvAFZloGMwzg==
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5ba77a212adso107594eaf.3;
-        Fri, 07 Jun 2024 07:22:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXzpgVZmu6flofI75ma5PMqJHQS5nbYdkiUsjxpxCVGzaLrU0tXroesLFoK5eK60o6VwLOKgpSxzu8PU+h51cyNzeNP1q9fvUzWOq475VQtNyTgkRiHR+5wIXCywgfnbC78RsFJ784=
-X-Gm-Message-State: AOJu0YwO4rPDJHxZ8WXI4D7olHiLJpM3uwPTCm7axp49K42nqipJEAk3
-	QDxY2WIkBxccCf3FrHUQB4ybinppvQ4bhwIM20hBdRaAdfAV6YkpCs+j9EAG/7GbiEK1ag3Iwy3
-	Mq2EFnAW2LPy4W8c+jHzb0OrFaxg=
-X-Google-Smtp-Source: AGHT+IHrM4ProVsLq7TgVqRCERzD299+z5L7cTWF4rF+2zQvdtv5DTX/4oA2KtO7uwrtYe1Vz2O5sTGbf/mom2XM5ac=
-X-Received: by 2002:a05:6820:708:b0:5ba:6669:ba6e with SMTP id
- 006d021491bc7-5baaed4f14dmr2423032eaf.1.1717770122391; Fri, 07 Jun 2024
- 07:22:02 -0700 (PDT)
+	s=k20201202; t=1717770201;
+	bh=jC5KdN3iR66YvPbVE6j7MiDgwoUQwI/b2jmyTOxWUZM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YVQipCbXj8ZWfuh9XDXy4PtL2n3Pwamllb20cQCA4OqNqNu/oeYyuYuHLVcvtk7hf
+	 uHeNa9Evpd1XlA6IoPmKE+Ne7SwYP18IeJsYM2/0O9wSsoQU15xK/BmCM0+b0/K4T2
+	 O6xK0wu51raZEzWmmWJySk1VIbdSN2rBMdBWfDKnaKKkVR0gGp9/WplYKZkmMThFBi
+	 MT3w9tOSeJI+eS/ZnAZ3OoRXRF5SfuHTg0e15IPGi3j2tsWenpDMjJYaWvAAc3tJzM
+	 nrShddaLoJ8yt39DTgrwbEbU4hUx1pIQy6fc2oBCDWleHgCAfI/0hOZQYs6wd+tqcp
+	 P0I5X6H3uuOfQ==
+From: Chao Yu <chao@kernel.org>
+To: akpm@linux-foundation.org,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	syzbot+6030b3b1b9bf70e538c4@syzkaller.appspotmail.com,
+	=?UTF-8?q?Ernesto=20A=20=2E=20Fern=C3=A1ndez?= <ernesto.mnd.fernandez@gmail.com>
+Subject: [PATCH] hfsplus: fix to avoid false alarm of circular locking
+Date: Fri,  7 Jun 2024 22:23:04 +0800
+Message-Id: <20240607142304.455441-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240603081331.3829278-1-beata.michalska@arm.com>
- <20240603081331.3829278-2-beata.michalska@arm.com> <20240603114811.oio3uemniib5uaa2@vireshk-i7>
- <CAJZ5v0j1bqhmKrJirw+WgEVDdszZ9xQSgmfazVKMVa8H6_5TSw@mail.gmail.com> <20240606085513.pptx5dtjcvvg3zo4@vireshk-i7>
-In-Reply-To: <20240606085513.pptx5dtjcvvg3zo4@vireshk-i7>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 7 Jun 2024 16:21:51 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0it5vZvzkbErkGOVruPbkxgr8VMTgQzsncpdQmvCOfBng@mail.gmail.com>
-Message-ID: <CAJZ5v0it5vZvzkbErkGOVruPbkxgr8VMTgQzsncpdQmvCOfBng@mail.gmail.com>
-Subject: Re: [PATCH 1/1] cpufreq: Rewire arch specific feedback for cpuinfo/scaling_cur_freq
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Beata Michalska <beata.michalska@arm.com>, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, len.brown@intel.com, 
-	ionela.voinescu@arm.com, vanshikonda@os.amperecomputing.com, 
-	sumitg@nvidia.com, vincent.guittot@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 6, 2024 at 10:55=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
-rg> wrote:
->
-> On 03-06-24, 15:43, Rafael J. Wysocki wrote:
-> > On Mon, Jun 3, 2024 at 1:48=E2=80=AFPM Viresh Kumar <viresh.kumar@linar=
-o.org> wrote:
-> > > Rafael,
-> > >
-> > > We probably need to decide on a policy for these two files, it is
-> > > getting a bit confusing.
-> > >
-> > > cpuinfo_cur_freq:
-> > >
-> > > The purpose of this file is abundantly clear. This returns the best
-> > > possible guess of the current hardware frequency. It should rely on
-> > > arch_freq_get_on_cpu() or ->get() to get the value.
-> >
-> > Let me quote the documentation:
-> >
-> > "This is expected to be the frequency the hardware actually runs at.
-> > If that frequency cannot be determined, this attribute should not be
-> > present."
-> >
-> > In my reading, this has nothing to do with arch_freq_get_on_cpu(), at
-> > least on x86.
-> >
-> > > Perhaps we can
-> > > make this available all the time, instead of conditionally on ->get()
-> > > callback (which isn't present for intel-pstate for example).
-> >
-> > We could, but then on x86 there is no expectation that this file will
-> > be present and changing this may introduce significant confusion
-> > because of the way it is documented (which would need to be changed,
-> > but people might be forgiven for failing to notice the change of
-> > interpretation of this file).
->
-> > > scaling_cur_freq:
-> > >
-> > > This should better reflect the last requested frequency, but since a
-> > > significant time now it is trying to show what cpuinfo_cur_freq shows=
-.
-> >
-> > Well, not really.
-> >
-> > > commit c034b02e213d ("cpufreq: expose scaling_cur_freq sysfs file for=
- set_policy() drivers")
-> > > commit f8475cef9008 ("x86: use common aperfmperf_khz_on_cpu() to calc=
-ulate KHz using APERF/MPERF")
-> >
-> > "In the majority of cases, this is the frequency of the last P-state
-> > requested by the scaling driver from the hardware using the scaling
-> > interface provided by it, which may or may not reflect the frequency
-> > the CPU is actually running at (due to hardware design and other
-> > limitations).
-> >
-> > Some architectures (e.g. x86) may attempt to provide information more
-> > precisely reflecting the current CPU frequency through this attribute,
-> > but that still may not be the exact current CPU frequency as seen by
-> > the hardware at the moment."
->
-> Right, with time the documentation is updated and now it has mixed
-> the purpose of both these files IMO.
->
-> > So the problem is that on Intel x86 with HWP and intel_pstate in the
-> > active mode, say, "the frequency of the last P-state requested by the
-> > scaling driver from the hardware" is actually never known, so exposing
-> > it via scaling_cur_freq is not possible.
-> >
-> > Moreover, because cpuinfo_cur_freq is not present at all in that case,
-> > scaling_cur_freq is the only way to allow user space to get an idea
-> > about the CPU current frequency.  I don't think it can be changed now
-> > without confusing users.
->
-> Yes, this is a valid concern. The changes in documentation have been
-> there for many years and changing the behavior now is not going to be
-> an easy / right thing to do.
->
-> > > What should we do ? I wonder if we will break some userspace tools
-> > > (which may have started relying on these changes).
-> >
-> > We will.
-> >
-> > IIUC, it is desirable to expose "the frequency of the last P-state
-> > requested by the scaling driver from the hardware" via
-> > scaling_cur_freq on ARM, but it is also desirable to expose an
-> > approximation of the actual current CPU frequency, so the only way to
-> > do that without confusing the heck out of everybody downstream would
-> > be to introduce a new attribute for this purpose and document it
-> > precisely.
->
-> Hmm, having 3 files would confuse people even more I guess. I wanted
-> to get this sorted to have the same behavior for all platforms, but it
-> seems somewhat difficult to achieve now.
->
-> What about this, hopefully this doesn't break any existing platforms
-> and fix the problems for ARM (and others):
->
-> - scaling_cur_freq:
->
->   Returns the frequency of the last P-state requested by the scaling
->   driver from the hardware.
+Syzbot report potential ABBA deadlock as below:
 
-This would change the behavior for intel_pstate in the passive mode AFAICS.
+loop0: detected capacity change from 0 to 1024
+======================================================
+WARNING: possible circular locking dependency detected
+6.9.0-syzkaller-10323-g8f6a15f095a6 #0 Not tainted
+------------------------------------------------------
+syz-executor171/5344 is trying to acquire lock:
+ffff88807cb980b0 (&tree->tree_lock){+.+.}-{3:3}, at: hfsplus_file_truncate+0x811/0xb50 fs/hfsplus/extents.c:595
 
-ATM it calls arch_freq_get_on_cpu(), after the change it would return
-policy->cur which would not be the same value most of the time.  And
-in the ->adjust_perf() case policy->cur is not updated by it even.
+but task is already holding lock:
+ffff88807a930108 (&HFSPLUS_I(inode)->extents_lock){+.+.}-{3:3}, at: hfsplus_file_truncate+0x2da/0xb50 fs/hfsplus/extents.c:576
 
->  For set_policy() drivers, use the ->get()
->   callback to get a value that can provide the best estimate to user.
->
->   To make this work, we can add get() callback to intel and amd pstate
->   drivers, and use arch_freq_get_on_cpu().
->
->   This will keep the current behavior intact for such drivers.
+which lock already depends on the new lock.
 
-Well, the passive mode thing would need to be addressed then.
+the existing dependency chain (in reverse order) is:
 
-> - cpuinfo_cur_freq:
->
->   Currently this file is available only if the get() callback is
->   available. Maybe we can keep this behavior as is, and expose this
->   now for both the pstate drivers (once above change is added). We
->   will be left with only one driver that doesn't provide the get()
->   callback: pasemi-cpufreq.c
+-> #1 (&HFSPLUS_I(inode)->extents_lock){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       hfsplus_file_extend+0x21b/0x1b70 fs/hfsplus/extents.c:457
+       hfsplus_bmap_reserve+0x105/0x4e0 fs/hfsplus/btree.c:358
+       hfsplus_rename_cat+0x1d0/0x1050 fs/hfsplus/catalog.c:456
+       hfsplus_rename+0x12e/0x1c0 fs/hfsplus/dir.c:552
+       vfs_rename+0xbdb/0xf00 fs/namei.c:4887
+       do_renameat2+0xd94/0x13f0 fs/namei.c:5044
+       __do_sys_rename fs/namei.c:5091 [inline]
+       __se_sys_rename fs/namei.c:5089 [inline]
+       __x64_sys_rename+0x86/0xa0 fs/namei.c:5089
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-I would rather get rid of it completely.
+-> #0 (&tree->tree_lock){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain+0x18cb/0x58e0 kernel/locking/lockdep.c:3869
+       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       hfsplus_file_truncate+0x811/0xb50 fs/hfsplus/extents.c:595
+       hfsplus_setattr+0x1ce/0x280 fs/hfsplus/inode.c:265
+       notify_change+0xb9d/0xe70 fs/attr.c:497
+       do_truncate+0x220/0x310 fs/open.c:65
+       handle_truncate fs/namei.c:3308 [inline]
+       do_open fs/namei.c:3654 [inline]
+       path_openat+0x2a3d/0x3280 fs/namei.c:3807
+       do_filp_open+0x235/0x490 fs/namei.c:3834
+       do_sys_openat2+0x13e/0x1d0 fs/open.c:1406
+       do_sys_open fs/open.c:1421 [inline]
+       __do_sys_creat fs/open.c:1497 [inline]
+       __se_sys_creat fs/open.c:1491 [inline]
+       __x64_sys_creat+0x123/0x170 fs/open.c:1491
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
->   Coming back to the implementation of the file read operation, I
->   think the whole purpose of arch_freq_get_on_cpu() was to get a
->   better estimate (which may not be perfect) of the frequency the
->   hardware is really running at (in the last window) and if a platform
->   provides this, then it can be given priority over the ->get()
->   callback in order to show the value to userspace.
+other info that might help us debug this:
 
-There was a reason to add it and it was related to policy->cur being
-meaningless on x86 in general (even in the acpi-cpufreq case), but
-let's not go there.
+ Possible unsafe locking scenario:
 
-Hooking this up to cpuinfo_cur_freq on x86 wouldn't make much sense
-IMV because at times it is not even close to the frequency the
-hardware is running at.  It comes from the previous tick period,
-basically, and the hardware can adjust the frequency with a resolution
-that is orders of magnitude higher than the tick rate.
+       CPU0                    CPU1
+       ----                    ----
+  lock(&HFSPLUS_I(inode)->extents_lock);
+                               lock(&tree->tree_lock);
+                               lock(&HFSPLUS_I(inode)->extents_lock);
+  lock(&tree->tree_lock);
 
->   And so, if the platform provides, we can use arch_freq_get_on_cpu()
->   first and then the get() callback.
->
-> That would leave us to this change for the core, and yes a get()
-> callback for intel-pstate and amd-pstate:
->
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index 7c6879efe9ef..e265f8450160 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -756,12 +756,8 @@ __weak unsigned int arch_freq_get_on_cpu(int cpu)
->  static ssize_t show_scaling_cur_freq(struct cpufreq_policy *policy, char=
- *buf)
->  {
->         ssize_t ret;
-> -       unsigned int freq;
->
-> -       freq =3D arch_freq_get_on_cpu(policy->cpu);
-> -       if (freq)
-> -               ret =3D sprintf(buf, "%u\n", freq);
-> -       else if (cpufreq_driver->setpolicy && cpufreq_driver->get)
-> +       if (cpufreq_driver->setpolicy && cpufreq_driver->get)
->                 ret =3D sprintf(buf, "%u\n", cpufreq_driver->get(policy->=
-cpu));
->         else
->                 ret =3D sprintf(buf, "%u\n", policy->cur);
-> @@ -795,7 +791,10 @@ store_one(scaling_max_freq, max);
->  static ssize_t show_cpuinfo_cur_freq(struct cpufreq_policy *policy,
->                                         char *buf)
->  {
-> -       unsigned int cur_freq =3D __cpufreq_get(policy);
-> +       unsigned int cur_freq =3D arch_freq_get_on_cpu(policy->cpu);
-> +
-> +       if (!cur_freq)
-> +               cur_freq =3D __cpufreq_get(policy);
->
->         if (cur_freq)
->                 return sprintf(buf, "%u\n", cur_freq);
->
->
-> I think this will also make more sense from documentation's
-> perspective, which says that:
->
-> "In the majority of cases, this is the frequency of the last P-state
-> requested by the scaling driver from the hardware using the scaling
-> interface provided by it, which may or may not reflect the frequency
-> the CPU is actually running at (due to hardware design and other
-> limitations)."
->
-> -- we do this at the core level.
->
-> "Some architectures (e.g. x86) may attempt to provide information more
-> precisely reflecting the current CPU frequency through this attribute,
-> but that still may not be the exact current CPU frequency as seen by
-> the hardware at the moment."
->
-> -- and this at driver level, as a special case.
+This is a false alarm as tree_lock mutex are different, one is
+from sbi->cat_tree, and another is from sbi->ext_tree:
 
-Well, this sounds nice, but the changes are a bit problematic.
+Thread A			Thread B
+- hfsplus_rename
+ - hfsplus_rename_cat
+  - hfs_find_init
+   - mutext_lock(cat_tree->tree_lock)
+				- hfsplus_setattr
+				 - hfsplus_file_truncate
+				  - mutex_lock(hip->extents_lock)
+				  - hfs_find_init
+				   - mutext_lock(ext_tree->tree_lock)
+  - hfs_bmap_reserve
+   - hfsplus_file_extend
+    - mutex_lock(hip->extents_lock)
 
-If you don't want 3 files, I'd drop cpuinfo_cur_freq and introduce
-something else to replace it which will expose the
-arch_freq_get_on_cpu() return value and will be documented
-accordingly.
+So, let's call mutex_lock_nested for tree_lock mutex lock, and pass
+correct lock class for it.
 
-Then scaling_cur_freq can be (over time) switched over to returning
-policy->cur in the cases when it is meaningful and -ENODATA otherwise.
+Fixes: 31651c607151 ("hfsplus: avoid deadlock on file truncation")
+Reported-by: syzbot+6030b3b1b9bf70e538c4@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/linux-fsdevel/000000000000e37a4005ef129563@google.com
+Cc: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/hfsplus/bfind.c      | 15 ++-------------
+ fs/hfsplus/extents.c    |  9 ++++++---
+ fs/hfsplus/hfsplus_fs.h | 21 +++++++++++++++++++++
+ 3 files changed, 29 insertions(+), 16 deletions(-)
 
-This would at least allow us to stop making up stuff.
+diff --git a/fs/hfsplus/bfind.c b/fs/hfsplus/bfind.c
+index ca2ba8c9f82e..901e83d65d20 100644
+--- a/fs/hfsplus/bfind.c
++++ b/fs/hfsplus/bfind.c
+@@ -25,19 +25,8 @@ int hfs_find_init(struct hfs_btree *tree, struct hfs_find_data *fd)
+ 	fd->key = ptr + tree->max_key_len + 2;
+ 	hfs_dbg(BNODE_REFS, "find_init: %d (%p)\n",
+ 		tree->cnid, __builtin_return_address(0));
+-	switch (tree->cnid) {
+-	case HFSPLUS_CAT_CNID:
+-		mutex_lock_nested(&tree->tree_lock, CATALOG_BTREE_MUTEX);
+-		break;
+-	case HFSPLUS_EXT_CNID:
+-		mutex_lock_nested(&tree->tree_lock, EXTENTS_BTREE_MUTEX);
+-		break;
+-	case HFSPLUS_ATTR_CNID:
+-		mutex_lock_nested(&tree->tree_lock, ATTR_BTREE_MUTEX);
+-		break;
+-	default:
+-		BUG();
+-	}
++	mutex_lock_nested(&tree->tree_lock,
++			hfsplus_btree_lock_class(tree));
+ 	return 0;
+ }
+ 
+diff --git a/fs/hfsplus/extents.c b/fs/hfsplus/extents.c
+index 3c572e44f2ad..9c51867dddc5 100644
+--- a/fs/hfsplus/extents.c
++++ b/fs/hfsplus/extents.c
+@@ -430,7 +430,8 @@ int hfsplus_free_fork(struct super_block *sb, u32 cnid,
+ 		hfsplus_free_extents(sb, ext_entry, total_blocks - start,
+ 				     total_blocks);
+ 		total_blocks = start;
+-		mutex_lock(&fd.tree->tree_lock);
++		mutex_lock_nested(&fd.tree->tree_lock,
++			hfsplus_btree_lock_class(fd.tree));
+ 	} while (total_blocks > blocks);
+ 	hfs_find_exit(&fd);
+ 
+@@ -592,7 +593,8 @@ void hfsplus_file_truncate(struct inode *inode)
+ 					     alloc_cnt, alloc_cnt - blk_cnt);
+ 			hfsplus_dump_extent(hip->first_extents);
+ 			hip->first_blocks = blk_cnt;
+-			mutex_lock(&fd.tree->tree_lock);
++			mutex_lock_nested(&fd.tree->tree_lock,
++				hfsplus_btree_lock_class(fd.tree));
+ 			break;
+ 		}
+ 		res = __hfsplus_ext_cache_extent(&fd, inode, alloc_cnt);
+@@ -606,7 +608,8 @@ void hfsplus_file_truncate(struct inode *inode)
+ 		hfsplus_free_extents(sb, hip->cached_extents,
+ 				     alloc_cnt - start, alloc_cnt - blk_cnt);
+ 		hfsplus_dump_extent(hip->cached_extents);
+-		mutex_lock(&fd.tree->tree_lock);
++		mutex_lock_nested(&fd.tree->tree_lock,
++				hfsplus_btree_lock_class(fd.tree));
+ 		if (blk_cnt > start) {
+ 			hip->extent_state |= HFSPLUS_EXT_DIRTY;
+ 			break;
+diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
+index 012a3d003fbe..9e78f181c24f 100644
+--- a/fs/hfsplus/hfsplus_fs.h
++++ b/fs/hfsplus/hfsplus_fs.h
+@@ -553,6 +553,27 @@ static inline __be32 __hfsp_ut2mt(time64_t ut)
+ 	return cpu_to_be32(lower_32_bits(ut) + HFSPLUS_UTC_OFFSET);
+ }
+ 
++static inline enum hfsplus_btree_mutex_classes
++hfsplus_btree_lock_class(struct hfs_btree *tree)
++{
++	enum hfsplus_btree_mutex_classes class;
++
++	switch (tree->cnid) {
++	case HFSPLUS_CAT_CNID:
++		class = CATALOG_BTREE_MUTEX;
++		break;
++	case HFSPLUS_EXT_CNID:
++		class = EXTENTS_BTREE_MUTEX;
++		break;
++	case HFSPLUS_ATTR_CNID:
++		class = ATTR_BTREE_MUTEX;
++		break;
++	default:
++		BUG();
++	}
++	return class;
++}
++
+ /* compatibility */
+ #define hfsp_mt2ut(t)		(struct timespec64){ .tv_sec = __hfsp_mt2ut(t) }
+ #define hfsp_ut2mt(t)		__hfsp_ut2mt((t).tv_sec)
+-- 
+2.40.1
+
 
