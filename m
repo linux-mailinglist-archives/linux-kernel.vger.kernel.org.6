@@ -1,96 +1,104 @@
-Return-Path: <linux-kernel+bounces-206121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EA69900481
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:21:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B52900484
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:23:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EFF41F26E40
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:21:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3759C1F22534
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693341940BD;
-	Fri,  7 Jun 2024 13:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37AFF194098;
+	Fri,  7 Jun 2024 13:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PAjbR0st"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IbNHu0uU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B0B15DBC1;
-	Fri,  7 Jun 2024 13:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F2E15DBC1;
+	Fri,  7 Jun 2024 13:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717766504; cv=none; b=i+sUnnEfyj2G2p/lKZfKzsGwaIMXjDlcySS6ZTccsuS643Jz8Z3y1TETndDfMwJyCqyfQDWKNzSpaWdKlhi/XrCtcD0MGeSblQT1xpQ+Qx/l+isxn9tELCzytiFIxMtzZLipjzK7z1qWSbFF1yKyrohwwZvcm1ge3k+5v+/gKj8=
+	t=1717766574; cv=none; b=pmuskYLnt14vC8+wQlVwGPeePiN/ypd3kh1NIAca2gHtSmJyDmeFHGP1ta50qQNIQiZuPjzmc/KirioBYc1t+/XsqAzl6O6JL8oIOLQ5i5t/bxMK698/JhXieCxjtvgd5881Z6ko7vYngszohFKFYwe6VuIkZ6R3pWhNgVGewqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717766504; c=relaxed/simple;
-	bh=66ItDEBV4jS+09dfkkkWnz77ZbxcDPYfcnQncpt+GIE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nggFYaGunk3kUmLCrFIQYq05BHJlNEcoZ7lsfzHUFCe8cfv48C8PUIp3EMZjSMp92zB4cnQROz4QRfE/iD6VE7R/5o/t/0Nn/0bgQTH0/GMIoFvrkCI2fwOUJfQZ7PLs+IXGqa00BdMVPvehkacc+v9ZvOgM2/qW+zK9pLeLvfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PAjbR0st; arc=none smtp.client-ip=192.198.163.17
+	s=arc-20240116; t=1717766574; c=relaxed/simple;
+	bh=HA7k21McxCzM1Wd5tina4b9xJX2yCPad3KU7yAY27LI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=TRL1l4YR09UnyfNQtnG2it70wL8fFVJcryq61HCIzOIMSMZhjsa9W5sL7g5cpJV3GIqF22BvreyV54NQCjBTSGJvEONTUuQ9Ncu+4YFgvO+D2dWBCxyhe2q0/6xn5RojsA+BzWGsU212U1/QnJnbfl+rqcVbVtm/Vwi4bbdrxgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IbNHu0uU; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717766503; x=1749302503;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=66ItDEBV4jS+09dfkkkWnz77ZbxcDPYfcnQncpt+GIE=;
-  b=PAjbR0stFs8SX9OiAEOoEAnCi7pkRO9TA6lex9QF5oClWdu8sPpdjEHo
-   qqDJUPpLgMngPs69ChT3OBp2EnMZ1FrEz4/Tubq3H2BWt4L8nBbT+7/n4
-   WFQyuGg7nVWOxinkCNRrj3jqH4V9JYlLkPoL3/gT52x7r/4fzsEGka/tT
-   5rX+S7YhuvYtddHsJbFwZ1NyOaaF0CvFf5PDmyoSiC3OFvS8bpDGXUbV5
-   D9cECvcNLbFQfhzx5mGp+zFSR4WZa+sn1Y2Ra3IFMzPnfJOcbOhQdOo80
-   kIUUkqN2DMx4wDjuO9CmSKA15Sed3gSrw1VnzxJIw7ndBBajYcZpKHHNH
+  t=1717766572; x=1749302572;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=HA7k21McxCzM1Wd5tina4b9xJX2yCPad3KU7yAY27LI=;
+  b=IbNHu0uU4aStn8jEiJQK9gVfngAuBh3xBF7JMLc6fWHySlBmBLC0tSDY
+   sT2jeLV9NyY8ZoCYGkZ6Ql8+XMI/2HrOqYG5DWsziA9FmG2BhJ/UPRrme
+   oHBI+Bl5KC7slVICRJEKVfPqXML7lTexlWxSaGjEJ9jPEh6e7hz5iq1lD
+   8gHY7UlmiZeq0dNlYxg0jguTn7+VfNQx/Zbo7jZ4E50QNa2yYN8+CNCOA
+   vIeaIJp5RCGZUdw7GHByXU8FK5Zbau+r464IrIS79xwtQp360qtgg21B2
+   /+ccr2YL896LVuB6QXYUPppZK726eVjGKTEdraKKZk4+DmxjFWlAGUFLp
    g==;
-X-CSE-ConnectionGUID: 25esuFVkR3yPYOGmySotGw==
-X-CSE-MsgGUID: o9J+CiKOQ566fLdkxurvBA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="14369585"
+X-CSE-ConnectionGUID: G4NkuM9IT4u/Ni/22LDVgA==
+X-CSE-MsgGUID: /MwOVzQbR7eZW+FJwnEi2Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="14290983"
 X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="14369585"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 06:21:42 -0700
-X-CSE-ConnectionGUID: kYFj0mAATZCn0eBj1lGUlQ==
-X-CSE-MsgGUID: 9i1iPm6sS7W8Et5Qjdg4Ig==
+   d="scan'208";a="14290983"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 06:22:52 -0700
+X-CSE-ConnectionGUID: KIY+D643RKSGlC9J2katxA==
+X-CSE-MsgGUID: qkTb7GKBRJqJFt9ioBHCtg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="38995491"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP; 07 Jun 2024 06:21:40 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 8EAA1389; Fri, 07 Jun 2024 16:21:39 +0300 (EEST)
-Date: Fri, 7 Jun 2024 16:21:39 +0300
-From: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH v1 1/6] fs/proc/task_mmu: indicate PM_FILE for PMD-mapped
- file THP
-Message-ID: <6rzt76g3qhznxhw3iftgbgskyukrsvklq5xhsacopgugb2wzzr@ycpxby6zzuzg>
-References: <20240607122357.115423-1-david@redhat.com>
- <20240607122357.115423-2-david@redhat.com>
+   d="scan'208";a="42741001"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.184])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 06:22:50 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Lyndon Sanche <lsanche@lyndeno.ca>, Hans de Goede <hdegoede@redhat.com>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240604-dell-pc-double-free-v1-1-6d81255b2a44@weissschuh.net>
+References: <20240604-dell-pc-double-free-v1-1-6d81255b2a44@weissschuh.net>
+Subject: Re: [PATCH] platform/x86: dell-pc: avoid double free and invalid
+ unregistration
+Message-Id: <171776656561.2612.17760986388744096307.b4-ty@linux.intel.com>
+Date: Fri, 07 Jun 2024 16:22:45 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240607122357.115423-2-david@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Fri, Jun 07, 2024 at 02:23:52PM +0200, David Hildenbrand wrote:
-> Looks like we never taught pagemap_pmd_range() about the existence of
-> PMD-mapped file THPs. Seems to date back to the times when we first added
-> support for non-anon THPs in the form of shmem THP.
+On Tue, 04 Jun 2024 23:41:24 +0200, Thomas Weißschuh wrote:
+
+> If platform_profile_register() fails it does kfree(thermal_handler) and
+> leaves the pointer value around.
+> Any call to thermal_cleanup() will try to kfree(thermal_handler) again.
+> This will happen right away in dell_init().
+> In addition, platform_profile_remove() will be called although no
+> profile is registered.
 > 
-> Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
-> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+> [...]
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Thank you for your contribution, it has been applied to my local
+review-ilpo branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo branch only once I've pushed my
+local branch there, which might take a while.
+
+The list of commits applied:
+[1/1] platform/x86: dell-pc: avoid double free and invalid unregistration
+      commit: dd637f5cd5f334d2d014872544470031415cec3b
+
+--
+ i.
+
 
