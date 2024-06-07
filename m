@@ -1,90 +1,85 @@
-Return-Path: <linux-kernel+bounces-205771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 800F090001C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:02:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 362708FFFF2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE4E61F223D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:02:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C5A21C22518
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F9415D5B4;
-	Fri,  7 Jun 2024 10:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCFE15AD9A;
+	Fri,  7 Jun 2024 09:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="WJ7M78dp"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="STmvo/D7"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D3115749A;
-	Fri,  7 Jun 2024 10:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10C8152511;
+	Fri,  7 Jun 2024 09:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717754459; cv=none; b=k0c3z+v5//iTh8JdUMevEsE+LGGxwunqtxfn3v4JYxoCUTBuoWzVqaiMFGFKrQMlBh5ta6NSCA2Pj4a8PWmtg06LFsQ5iixfRHnA9d6u0baoSclY3OVmOb9QVxcdOo7tbotW1sKUgCyVZ958utJtIZoW7LwUwTMNuv5ilJb1QLg=
+	t=1717754352; cv=none; b=i634h7trSAeCJvE13M3Q5L9SexdzTwFXCGwlyzDYc6BIcLi/aepPXL4HYiFyJ67zFS9cDbPEW33bRlGNKCwBc6Y/K+zDXZV0OWaz9aDF0sZjCSIC36PG0+4I47pvPfFfxwvSoAZaPcbwuXmAbLwR2cP/uoS6t7mocSvh8A80+lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717754459; c=relaxed/simple;
-	bh=LxdLgGqPLf3s+kJUNXVv8BMrS7yHp/8IVNCuj2Iw0i4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ePDcY86tBiWU6Cq9f3rPL5hYBo9eJj4UesuJ6Qbb8e/Iks7JXM3Id72iUdBvGHCKozEydvPGLqq2YUthdp4cWV4znzZG5c4uPF371QDu2yC1fRm5JddQUpni+Pv/j4b/OB/cv7oYeHZagYxBeXibaOBa4wMr1oVNK3Mm0XTLPlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=WJ7M78dp; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45791dBJ002305;
-	Fri, 7 Jun 2024 12:00:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	I5eX1MiABAjtTHnD8DpDo4CymvKlEhXxzp8S24yq7DA=; b=WJ7M78dp/FboYY7x
-	k+ktG3Zxr1+h2Rb89+cuENHIKhWeCbpsz/3fmHL2LdyyZ8dcocNOygIYhc7iB7CF
-	730ysypsoRx1TnDv1VCSGqS4/bWVJqeR8NI/atQjU2jayD2GIT6cdvZ+KLwetRnq
-	9No1oAyDbKKvQ8e5PBt19VVh0iLSQsyas2TGTUDPvEXQOBBSFuSGjxP80wXuASfk
-	znGaKzmI8Tb0i6guNCDcMXipdsau1mcnJcv6EbdJlSAY+RLAQOH8DvIjSSYjFBVh
-	rQ10wN9sERMXn30Bexrvgkm8V9iuu3T/ATZMhjxPmCdp2Jgdh6aDM+Fkr5ZNSKj8
-	pzTe1Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ygekj86cu-1
+	s=arc-20240116; t=1717754352; c=relaxed/simple;
+	bh=5J3JJRK29K0dslcOj1N/uvs/sgKzOFZ3FxanzmMPRuI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YTgnpiJcArjCy8OkEllYHsbnTPz+S+PIbFhhQSmPQWsz6g9C9Jj/SoF0XKBBdti8z2vW69KdEv/9+F9ak63xHsUMoNI42j0lxmJo7s21piZ8XAMbTxLCWrg1t62HBKKCn3pQlx9nvwzdV3oUiUeVVgiTMjWroFa2A2T1AEIRv1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=STmvo/D7; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4579D4kG017159;
+	Fri, 7 Jun 2024 05:58:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=ufSo6bdOJ6uT4RpytdbYtfLYN8w
+	u61Y4PO8S41m6gds=; b=STmvo/D79lD00rE4NgzXdEyxVJXeARbHEJayMOulJTJ
+	uz5O9yPOz/klP/ng6PnmDZP0tPwzQWWSVfcuX5+MVwe7IilTjJcRKE46MT9VN5Vf
+	G8cDwGC5Y6n0zBpLQwg9H0OUQdJsyCdy9ulQvaonCpT9gD0Ix2VMqRa+SL6vd4k1
+	XKMFwpaeBEmePtGqMoAGH3XS9Fw3z1xwEibSJ1+2xKSDmopj+nnmca0oXXOmIbs7
+	xRsdCPkLP+NhzGDpmmfynjnDzkW5IlZ4jo14yJw4u6/FqhwJ+RW/AecHB3bQHfUE
+	5+g2mT3Ok+7iSwZBAIyAzUdkh+YE6Vnx6nYnprAOFVw==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 3ykycjrc78-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 12:00:35 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id F0E5140045;
-	Fri,  7 Jun 2024 12:00:30 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 24D76214D14;
-	Fri,  7 Jun 2024 11:59:18 +0200 (CEST)
-Received: from localhost (10.252.19.205) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 7 Jun
- 2024 11:59:17 +0200
-From: Christophe Roullier <christophe.roullier@foss.st.com>
-To: "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Jose Abreu <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark
- Brown <broonie@kernel.org>,
-        Christophe Roullier
-	<christophe.roullier@foss.st.com>,
-        Marek Vasut <marex@denx.de>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 09/12] ARM: dts: stm32: add ethernet1 and ethernet2 support on stm32mp13
-Date: Fri, 7 Jun 2024 11:57:51 +0200
-Message-ID: <20240607095754.265105-10-christophe.roullier@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240607095754.265105-1-christophe.roullier@foss.st.com>
-References: <20240607095754.265105-1-christophe.roullier@foss.st.com>
+	Fri, 07 Jun 2024 05:58:43 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 4579wbou021240
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 7 Jun 2024 05:58:37 -0400
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Fri, 7 Jun 2024 05:58:36 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Fri, 7 Jun 2024 05:58:36 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Fri, 7 Jun 2024 05:58:36 -0400
+Received: from amiclaus-VirtualBox.ad.analog.com ([10.65.36.213])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4579wOa7031809;
+	Fri, 7 Jun 2024 05:58:27 -0400
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich
+	<Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>, "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Antoniu Miclaus <antoniu.miclaus@analog.com>,
+        Conor Dooley
+	<conor.dooley@microchip.com>
+Subject: [PATCH v2 1/2] dt-bindings: iio: adf4350: add clk provider prop
+Date: Fri, 7 Jun 2024 12:57:52 +0300
+Message-ID: <20240607095806.3299-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,118 +88,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: bOuMrbvj05h3egNp_Vtsu_LtNENpzZQZ
+X-Proofpoint-ORIG-GUID: bOuMrbvj05h3egNp_Vtsu_LtNENpzZQZ
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-07_04,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ suspectscore=0 adultscore=0 spamscore=0 bulkscore=0 clxscore=1011
+ impostorscore=0 mlxlogscore=999 priorityscore=1501 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406070072
 
-Both instances ethernet based on GMAC SNPS IP on stm32mp13.
-GMAC IP version is SNPS 4.20.
+Add properties required for providing clock to other consumers.
 
-Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
+Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- arch/arm/boot/dts/st/stm32mp131.dtsi | 38 ++++++++++++++++++++++++++++
- arch/arm/boot/dts/st/stm32mp133.dtsi | 31 +++++++++++++++++++++++
- 2 files changed, 69 insertions(+)
+changes in v2:
+  - rework commit title and body
+ .../devicetree/bindings/iio/frequency/adi,adf4350.yaml      | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/st/stm32mp131.dtsi b/arch/arm/boot/dts/st/stm32mp131.dtsi
-index 6704ceef284d3..e1a764d269d27 100644
---- a/arch/arm/boot/dts/st/stm32mp131.dtsi
-+++ b/arch/arm/boot/dts/st/stm32mp131.dtsi
-@@ -979,6 +979,12 @@ ts_cal1: calib@5c {
- 			ts_cal2: calib@5e {
- 				reg = <0x5e 0x2>;
- 			};
-+			ethernet_mac1_address: mac1@e4 {
-+				reg = <0xe4 0x6>;
-+			};
-+			ethernet_mac2_address: mac2@ea {
-+				reg = <0xea 0x6>;
-+			};
- 		};
+diff --git a/Documentation/devicetree/bindings/iio/frequency/adi,adf4350.yaml b/Documentation/devicetree/bindings/iio/frequency/adi,adf4350.yaml
+index 43cbf27114c7..d1d1311332f8 100644
+--- a/Documentation/devicetree/bindings/iio/frequency/adi,adf4350.yaml
++++ b/Documentation/devicetree/bindings/iio/frequency/adi,adf4350.yaml
+@@ -28,6 +28,12 @@ properties:
+   clock-names:
+     const: clkin
  
- 		etzpc: bus@5c007000 {
-@@ -1505,6 +1511,38 @@ sdmmc2: mmc@58007000 {
- 				status = "disabled";
- 			};
- 
-+			ethernet1: ethernet@5800a000 {
-+				compatible = "st,stm32mp13-dwmac", "snps,dwmac-4.20a";
-+				reg = <0x5800a000 0x2000>;
-+				reg-names = "stmmaceth";
-+				interrupts-extended = <&intc GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
-+						      <&exti 68 1>;
-+				interrupt-names = "macirq", "eth_wake_irq";
-+				clock-names = "stmmaceth",
-+					      "mac-clk-tx",
-+					      "mac-clk-rx",
-+					      "ethstp",
-+					      "eth-ck";
-+				clocks = <&rcc ETH1MAC>,
-+					 <&rcc ETH1TX>,
-+					 <&rcc ETH1RX>,
-+					 <&rcc ETH1STP>,
-+					 <&rcc ETH1CK_K>;
-+				st,syscon = <&syscfg 0x4 0xff0000>;
-+				snps,mixed-burst;
-+				snps,pbl = <2>;
-+				snps,axi-config = <&stmmac_axi_config_1>;
-+				snps,tso;
-+				access-controllers = <&etzpc 48>;
-+				status = "disabled";
++  '#clock-cells':
++    const: 0
 +
-+				stmmac_axi_config_1: stmmac-axi-config {
-+					snps,blen = <0 0 0 0 16 8 4>;
-+					snps,rd_osr_lmt = <0x7>;
-+					snps,wr_osr_lmt = <0x7>;
-+				};
-+			};
++  clock-output-names:
++    maxItems: 1
 +
- 			usbphyc: usbphyc@5a006000 {
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-diff --git a/arch/arm/boot/dts/st/stm32mp133.dtsi b/arch/arm/boot/dts/st/stm32mp133.dtsi
-index 3e394c8e58b92..73e470019ce42 100644
---- a/arch/arm/boot/dts/st/stm32mp133.dtsi
-+++ b/arch/arm/boot/dts/st/stm32mp133.dtsi
-@@ -68,4 +68,35 @@ channel@18 {
- 			};
- 		};
- 	};
-+
-+	ethernet2: ethernet@5800e000 {
-+		compatible = "st,stm32mp13-dwmac", "snps,dwmac-4.20a";
-+		reg = <0x5800e000 0x2000>;
-+		reg-names = "stmmaceth";
-+		interrupts-extended = <&intc GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "macirq";
-+		clock-names = "stmmaceth",
-+			      "mac-clk-tx",
-+			      "mac-clk-rx",
-+			      "ethstp",
-+			      "eth-ck";
-+		clocks = <&rcc ETH2MAC>,
-+			 <&rcc ETH2TX>,
-+			 <&rcc ETH2RX>,
-+			 <&rcc ETH2STP>,
-+			 <&rcc ETH2CK_K>;
-+		st,syscon = <&syscfg 0x4 0xff000000>;
-+		snps,mixed-burst;
-+		snps,pbl = <2>;
-+		snps,axi-config = <&stmmac_axi_config_2>;
-+		snps,tso;
-+		access-controllers = <&etzpc 49>;
-+		status = "disabled";
-+
-+		stmmac_axi_config_2: stmmac-axi-config {
-+			snps,blen = <0 0 0 0 16 8 4>;
-+			snps,rd_osr_lmt = <0x7>;
-+			snps,wr_osr_lmt = <0x7>;
-+		};
-+	};
- };
+   gpios:
+     maxItems: 1
+     description: Lock detect GPIO.
 -- 
-2.25.1
+2.45.1
 
 
