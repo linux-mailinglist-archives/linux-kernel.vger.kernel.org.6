@@ -1,98 +1,277 @@
-Return-Path: <linux-kernel+bounces-206420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D12900975
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:43:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9544790097B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74410B24FAB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:43:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71E841C214A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D761991D2;
-	Fri,  7 Jun 2024 15:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KswXNit0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FBE197A9E;
-	Fri,  7 Jun 2024 15:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1C4199398;
+	Fri,  7 Jun 2024 15:45:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7E142069;
+	Fri,  7 Jun 2024 15:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717775012; cv=none; b=EgCOAg8ELhyTJy2G4raHzKr81mZKtO3yQ99T0/bYie9X3uTsbrl+qRFbjHhq+yviP3CSqcRJ/JM0I2rnbbfoUfHnN30drbc7GyiUqQmA3dQEhJQ3m0NpuqUt0svbRSsGi8qAOYjTN8ijLWC+Dfvf+82OA84kzwqbh4OZ+rNckro=
+	t=1717775123; cv=none; b=BdNTgxPRCf2FWTIxGIy5VT5Z42DX2i2g2fwQeTAVenz3plz5R4R2JsnPSEe/sNInaL++qscjgyGNds364BF2kvAg/DfrLqeEOC6QF9JIdBaxDImjon1zAE3XbWwf6cCRqAQwBAngu2vookQ6XnaGMiw2+ujP2wAgrMZjXPb5Ud4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717775012; c=relaxed/simple;
-	bh=Oak7/RY7bDtE/YffJGOhtWBTzO+b3JvmAbgh9CNNL7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Glnv3R78ao3cY9Zf9RRYMt74fEYqhTtM/GpF2+lQ3PrJIgXIwP2z+bKgcsHIh8v+/HbXDRum5BgDHrdAlU30Tn8Dkf5qTypiOawlSZRF1cKBYUuccBtSib0Jx8mOcgKVI18GeqPp0wxxIefY03RaV3RjmqTuc89B8S8dLXZDKG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KswXNit0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69EF2C2BBFC;
-	Fri,  7 Jun 2024 15:43:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717775011;
-	bh=Oak7/RY7bDtE/YffJGOhtWBTzO+b3JvmAbgh9CNNL7U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KswXNit0c+KzUCH64bi5nQnmphSXrUOvAZmYXkidLEAMmcZQZrGHZ9mkL/CaV1DRY
-	 Yd+MZeCZRdEkqnzOHaZt697IySBQxQDCCKfUdk/IJRpwWbq0W7QBMhfXqhnclhY6wZ
-	 ee1f3+CzYq7h8LJ1tterkxhX1MRNtFfmTq90IpTf+RI0coPB/5BkUB0W8G16s+Qndh
-	 9ljjAnCzetjixTcNDHuBn1fjPE/jEjCSV4TFSocFZTE8+/tRVfsjy5sHc65QCGa4Co
-	 H+qTZo0BQNibIWPAs2sMh0SecbRZct0H80wVPiil1EZI6zCCJugakAheoXMuKwTDHl
-	 KLf/z7U0gSohg==
-Date: Fri, 7 Jun 2024 16:43:28 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Primoz Fiser <primoz.fiser@norik.com>
-Cc: =?iso-8859-1?Q?P=E9ter?= Ujfalusi <peter.ujfalusi@gmail.com>,
-	Jarkko Nikula <jarkko.nikula@bitmer.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@lists.phytec.de
-Subject: Re: [PATCH] ASoC: ti: omap-hdmi: Fix too long driver name
-Message-ID: <ZmMqoA9nsEDh2jK5@finisterre.sirena.org.uk>
-References: <20240606070645.3519459-1-primoz.fiser@norik.com>
- <dac7fba4-c7e3-4be9-8072-625d723e6cf5@gmail.com>
- <71d7754e-f72c-4a04-b03e-a0ee0e24c9e0@sirena.org.uk>
- <fe0ec57b-dad3-4666-abe3-75bcb65fa7df@norik.com>
+	s=arc-20240116; t=1717775123; c=relaxed/simple;
+	bh=SdgeWxAowhAFLP9MPioaHEfNQKZwAXqR0IToCOG0RTw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uTSz0EZPl7pzARSte9kNKjGJ0Eh39a7afoSZD1OHy6qZP9dEkO7x7n+rmi6YFkenKxeh+OIXMfe+2bzw/XALbw7ABj48UiAZxGOMPhXkFB2pJgFQRiSn9ozuRVfP86DLrGMWdqE9PmqNsYoe1lUqhiaMgCWqWq1AiMlrFFfw2KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6378715A1;
+	Fri,  7 Jun 2024 08:45:44 -0700 (PDT)
+Received: from [10.1.39.15] (e122027.cambridge.arm.com [10.1.39.15])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A83143F792;
+	Fri,  7 Jun 2024 08:45:16 -0700 (PDT)
+Message-ID: <0ea597d3-6520-4ab3-8050-d967c173bc23@arm.com>
+Date: Fri, 7 Jun 2024 16:45:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="E3iFsJivvgUV/9q+"
-Content-Disposition: inline
-In-Reply-To: <fe0ec57b-dad3-4666-abe3-75bcb65fa7df@norik.com>
-X-Cookie: Your love life will be... interesting.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 12/14] arm64: realm: Support nonsecure ITS emulation
+ shared
+To: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev, Will Deacon
+ <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+References: <20240605093006.145492-1-steven.price@arm.com>
+ <20240605093006.145492-13-steven.price@arm.com>
+ <86a5jzld9g.wl-maz@kernel.org> <4c363476-e5b5-42ff-9f30-a02a92b6751b@arm.com>
+ <867cf2l6in.wl-maz@kernel.org> <ZmICEN8JvWM7M9Ch@arm.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <ZmICEN8JvWM7M9Ch@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 06/06/2024 19:38, Catalin Marinas wrote:
+> On Thu, Jun 06, 2024 at 11:17:36AM +0100, Marc Zyngier wrote:
+>> On Wed, 05 Jun 2024 16:08:49 +0100,
+>> Steven Price <steven.price@arm.com> wrote:
+>>> 2. Use a special (global) memory allocator that does the
+>>> set_memory_decrypted() dance on the pages that it allocates but allows
+>>> packing the allocations. I'm not aware of an existing kernel API for
+>>> this, so it's potentially quite a bit of code. The benefit is that it
+>>> reduces memory consumption in a realm guest, although fragmentation
+>>> still means we're likely to see a (small) growth.
+>>>
+>>> Any thoughts on what you think would be best?
+>>
+>> I would expect that something similar to kmem_cache could be of help,
+>> only with the ability to deal with variable object sizes (in this
+>> case: minimum of 256 bytes, in increments defined by the
+>> implementation, and with a 256 byte alignment).
+> 
+> Hmm, that's doable but not that easy to make generic. We'd need a new
+> class of kmalloc-* caches (e.g. kmalloc-decrypted-*) which use only
+> decrypted pages together with a GFP_DECRYPTED flag or something to get
+> the slab allocator to go for these pages and avoid merging with other
+> caches. It would actually be the page allocator parsing this gfp flag,
+> probably in post_alloc_hook() to set the page decrypted and re-encrypt
+> it in free_pages_prepare(). A slight problem here is that free_pages()
+> doesn't get the gfp flag, so we'd need to store some bit in the page
+> flags. Maybe the flag is not that bad, do we have something like for
+> page_to_phys() to give us the high IPA address for decrypted pages?
+> 
+> Similarly if we go for a kmem_cache (or a few for multiple sizes). One
+> can specify a constructor which could set the memory decrypted but
+> there's no destructor (and also the constructor is per object, not per
+> page, so we'd need some refcounting).
+> 
+> Another approach contained within the driver is to use mempool_create()
+> with our own _alloc_fn/_free_fn that sets the memory decrypted/encrypted
+> accordingly, though sub-page allocations need additional tracking. Also
+> that's fairly similar to kmem_cache, fixed size.
+> 
+> Yet another option would be to wire it somehow in the DMA API but the
+> minimum allocation is already a page size, so we don't gain anything.
+> 
+> What gets somewhat closer to what we need is gen_pool. It can track
+> different sizes, we just need to populate the chunks as needed. I don't
+> think this would work as a generic allocator but may be good enough
+> within the ITS code.
+> 
+> If there's a need for such generic allocations in other parts of the
+> kernel, my preference would be something around kmalloc caches and a new
+> GFP flag (first option; subject to the selling it to the mm folk). But
+> that's more of a separate prototyping effort that may or may not
+> succeed.
+> 
+> Anyway, we could do some hacking around gen_pool as a temporary solution
+> (maybe as a set of patches on top of this series to be easier to revert)
+> and start investigating a proper decrypted page allocator in parallel.
+> We just need to find a victim that has the page allocator fresh in mind
+> (Ryan or Alexandru ;)).
 
---E3iFsJivvgUV/9q+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks for the suggestions Catalin. I had a go at implementing something
+with gen_pool - the below (very lightly tested) hack seems to work. This
+is on top of the current series.
 
-On Fri, Jun 07, 2024 at 08:14:40AM +0200, Primoz Fiser wrote:
+I *think* it should also be safe to drop the whole alignment part with
+this custom allocator, which could actually save memory. But I haven't
+quite got my head around that yet.
 
-> So card->name = "HDMI" for v2?
+Steve
 
-Yes, please.
+----8<-----
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index ca72f830f4cc..e78634d4d22c 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -12,6 +12,7 @@
+ #include <linux/crash_dump.h>
+ #include <linux/delay.h>
+ #include <linux/efi.h>
++#include <linux/genalloc.h>
+ #include <linux/interrupt.h>
+ #include <linux/iommu.h>
+ #include <linux/iopoll.h>
+@@ -165,7 +166,7 @@ struct its_device {
+ 	struct its_node		*its;
+ 	struct event_lpi_map	event_map;
+ 	void			*itt;
+-	u32			itt_order;
++	u32			itt_sz;
+ 	u32			nr_ites;
+ 	u32			device_id;
+ 	bool			shared;
+@@ -225,6 +226,50 @@ static void its_free_pages(void *addr, unsigned int order)
+ 	free_pages((unsigned long)addr, order);
+ }
+ 
++static struct gen_pool *itt_pool;
++
++static void *itt_alloc_pool(int node, int size)
++{
++	unsigned long addr;
++	struct page *page;
++
++	if (size >= PAGE_SIZE) {
++		page = its_alloc_pages_node(node,
++					    GFP_KERNEL | __GFP_ZERO,
++					    get_order(size));
++
++		return page_address(page);
++	}
++
++	do {
++		addr = gen_pool_alloc(itt_pool, size);
++		if (addr)
++			break;
++
++		page = its_alloc_pages_node(node, GFP_KERNEL | __GFP_ZERO, 1);
++		if (!page)
++			break;
++
++		gen_pool_add(itt_pool, (unsigned long)page_address(page),
++			     PAGE_SIZE, node);
++	} while (!addr);
++
++	return (void*)addr;
++}
++
++static void itt_free_pool(void *addr, int size)
++{
++	if (!addr)
++		return;
++
++	if (size >= PAGE_SIZE) {
++		its_free_pages(addr, get_order(size));
++		return;
++	}
++
++	gen_pool_free(itt_pool, (unsigned long)addr, size);
++}
++
+ /*
+  * Skip ITSs that have no vLPIs mapped, unless we're on GICv4.1, as we
+  * always have vSGIs mapped.
+@@ -3450,9 +3495,7 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+ 	unsigned long *lpi_map = NULL;
+ 	unsigned long flags;
+ 	u16 *col_map = NULL;
+-	struct page *page;
+ 	void *itt;
+-	int itt_order;
+ 	int lpi_base;
+ 	int nr_lpis;
+ 	int nr_ites;
+@@ -3471,13 +3514,8 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+ 	nr_ites = max(2, nvecs);
+ 	sz = nr_ites * (FIELD_GET(GITS_TYPER_ITT_ENTRY_SIZE, its->typer) + 1);
+ 	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
+-	itt_order = get_order(sz);
+-	page = its_alloc_pages_node(its->numa_node,
+-				    GFP_KERNEL | __GFP_ZERO,
+-				    itt_order);
+-	if (!page)
+-		return NULL;
+-	itt = page_address(page);
++
++	itt = itt_alloc_pool(its->numa_node, sz);
+ 
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+ 
+@@ -3492,9 +3530,9 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+ 		lpi_base = 0;
+ 	}
+ 
+-	if (!dev || !col_map || (!lpi_map && alloc_lpis)) {
++	if (!dev || !itt || !col_map || (!lpi_map && alloc_lpis)) {
+ 		kfree(dev);
+-		its_free_pages(itt, itt_order);
++		itt_free_pool(itt, sz);
+ 		bitmap_free(lpi_map);
+ 		kfree(col_map);
+ 		return NULL;
+@@ -3504,7 +3542,7 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+ 
+ 	dev->its = its;
+ 	dev->itt = itt;
+-	dev->itt_order = itt_order;
++	dev->itt_sz = sz;
+ 	dev->nr_ites = nr_ites;
+ 	dev->event_map.lpi_map = lpi_map;
+ 	dev->event_map.col_map = col_map;
+@@ -3532,7 +3570,7 @@ static void its_free_device(struct its_device *its_dev)
+ 	list_del(&its_dev->entry);
+ 	raw_spin_unlock_irqrestore(&its_dev->its->lock, flags);
+ 	kfree(its_dev->event_map.col_map);
+-	its_free_pages(its_dev->itt, its_dev->itt_order);
++	itt_free_pool(its_dev->itt, its_dev->itt_sz);
+ 	kfree(its_dev);
+ }
+ 
+@@ -5722,6 +5760,10 @@ int __init its_init(struct fwnode_handle *handle, struct rdists *rdists,
+ 	bool has_v4_1 = false;
+ 	int err;
+ 
++	itt_pool = gen_pool_create(get_order(ITS_ITT_ALIGN), -1);
++	if (!itt_pool)
++		return -ENOMEM;
++
+ 	gic_rdists = rdists;
+ 
+ 	its_parent = parent_domain;
 
---E3iFsJivvgUV/9q+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZjKp8ACgkQJNaLcl1U
-h9BIcQf+LZpGbmqKcuAK05OwRDTh/tjjeSbQCs1/T/tGLfIz1M1M8fJGpjcIYdnA
-0MZdFPYqPs/dBjNMjhCVCYp1X3U8jKDL01dVSLfR35ZZ3cGv9mMxi/+V2S1qELIV
-8Da+8IA7JrqutzC+7cmFkmMrz7xGzp/jNWaBMet2upvkcXKAXBahSP6ICD9P0Qus
-xritGwfbPQ1xVfSU6Yd4pPngP8Ak6sYTGsV9AuHyX9bk3UHtLxUu4Za2rwiT5mJy
-e79W34zajligov/lRXgM8FdEjiFo/7yaZv5EWq9LZYc0A0VXRSlPAMtrd5aUawFz
-7kCm7CHFW9FvxWn2oFVA6vqaLHqJcw==
-=Wz2C
------END PGP SIGNATURE-----
-
---E3iFsJivvgUV/9q+--
 
