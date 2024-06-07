@@ -1,139 +1,150 @@
-Return-Path: <linux-kernel+bounces-205671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B88B8FFEB2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:05:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC7AA8FFE8D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2609E1F21C7D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:05:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 934AA1C216A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DF915B98F;
-	Fri,  7 Jun 2024 09:05:04 +0000 (UTC)
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [91.198.224.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1928515B143;
+	Fri,  7 Jun 2024 09:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CHxEbv4p"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6217515B540;
-	Fri,  7 Jun 2024 09:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.224.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBE61BC23;
+	Fri,  7 Jun 2024 09:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717751104; cv=none; b=eXTwYpA9nuZVfqjQvJDCjMT1nRsp6vCOXWCzs4A7oJItRnBuGaQIpXr+PKjoamf5D/LsEm3vhrqihOkQIcs8VsxCLWBivdtU1z0YdyOrG9bKdtacRlN9Lq6Y63WS28VjenJrcVjTmXEcKmlvP/iJ3l2QK0YBMe0KgnbIQ3sfwfs=
+	t=1717750847; cv=none; b=C1RJbRWKSmAOJ5SPa3WJTjsZl4lfQ9qJXJhAmXgLc2kIAskKPPcVTLQ+i4VzRZZfM8IPJnAiFYz1vlp9B6F9CilRBYlv/tWr7hnBv6WhlbeUDCXcOt8Ir+SAsiAY41EfONFoJM/jmwGtp84HZVvsoD+cjd+I9ZIK9t3F7ZrPhgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717751104; c=relaxed/simple;
-	bh=yuFpd84XtrdmCusaDJjTM3sZmJosXeobQizTdbECW0o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JW8DpczgyJ1knDCEZi6AZbx63H0zJICaEfaBIXWwPce7YyR8ry6F+uA81Aop3U7YelXATR5u0qZ6X8/xCx0JJLHL17FbIThsvANCpMNZcXXj1s/03WFVwQ+c93fOH1IcbWIre7gpwUpCRi49CF0FEfYeaGDrt6vYTqxx/8IsRFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; arc=none smtp.client-ip=91.198.224.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
-Received: from [127.0.0.1] (helo=localhost)
-	by relay.expurgate.net with smtp (Exim 4.92)
-	(envelope-from <prvs=990276a841=ms@dev.tdt.de>)
-	id 1sFVWX-006OZD-Le; Fri, 07 Jun 2024 11:04:37 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ms@dev.tdt.de>)
-	id 1sFVWW-00CQZP-Lf; Fri, 07 Jun 2024 11:04:36 +0200
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-	by securemail.tdt.de (Postfix) with ESMTP id 46AD5240053;
-	Fri,  7 Jun 2024 11:04:36 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-	by securemail.tdt.de (Postfix) with ESMTP id 9DC06240050;
-	Fri,  7 Jun 2024 11:04:35 +0200 (CEST)
-Received: from mschiller1.dev.tdt.de (unknown [10.2.3.20])
-	by mail.dev.tdt.de (Postfix) with ESMTPSA id 25EAB37521;
-	Fri,  7 Jun 2024 11:04:35 +0200 (CEST)
-From: Martin Schiller <ms@dev.tdt.de>
-To: hauke@hauke-m.de,
-	dmitry.torokhov@gmail.com,
-	tsbogend@alpha.franken.de,
-	rdunlap@infradead.org,
-	robh@kernel.org,
-	bhelgaas@google.com
-Cc: linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Martin Schiller <ms@dev.tdt.de>,
-	stable@vger.kernel.org
-Subject: [PATCH] MIPS: pci: lantiq: restore reset gpio polarity
-Date: Fri,  7 Jun 2024 11:04:00 +0200
-Message-ID: <20240607090400.1816612-1-ms@dev.tdt.de>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1717750847; c=relaxed/simple;
+	bh=6d2oyaveoYD51b3+do73Byor0bMXDI/B0IVfCP0qQpk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Q4ZwkdVuI1wZXHmWcC7cUeQRPzj56m2hIUgecMUkYzxUgRPBc62CXMOgG4KiUBbY81tYP88bYV177Aurn4Hh6bUmvTnu2LYrJLeCNT/hMiw0SFC69lpwdWsQTLB9W1Dy9i6Gr6azTv69kxk6hjVg/X7A8GFcvIZaEI+1c/WtpNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CHxEbv4p; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a626919d19dso545368366b.0;
+        Fri, 07 Jun 2024 02:00:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717750844; x=1718355644; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=njCJhsy2MgojMs7qfkzrTmxM/SuOjJ6hLPnSqBOXbMI=;
+        b=CHxEbv4p1k1FHzTi9/AIzCicyZql11dX2HvOnMAEUxG1s7ouaouCwQB7VfN3nRByBQ
+         UV76HqKAlE0sXIaMwxtdsV6tkmreumawWcZoZjj/og8D5VnNHiLU79IJ12sEiERfVQvm
+         +cihiP+WFTawSAbTdcscl5YiF+hlwClblVqdamfyLYemJYpum4/UQPaocIceNW2KyPxb
+         Elhol7kvDUISs2a2i/z8UFN3kEnvxHx4J4erTNkH1pSCfPDE8xleKJ028HyeVTOQ4VMI
+         IP0opcZg3UoURej+UC1PgtDAeomZ1FnHgEAflTaIGOGagSXihSZTyWk7GECFJxSVkcOl
+         bfkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717750844; x=1718355644;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=njCJhsy2MgojMs7qfkzrTmxM/SuOjJ6hLPnSqBOXbMI=;
+        b=DOyKzr1fBmIFlygdODy/RWdsdXbc22Xjp6nvKagonTMyojKKX8AXzR7SKKKwPzabJC
+         MPD1wGXkbZ1GI+8txYNoBbVC8f6UrqlzaSvQOTXs072XkbjdL5ZokJ5XXixKtuGxHbKM
+         CNek/uPbRUA/lx13VwwN/+ggWN453ILw1bNLyz7buMkWKD1du/+6RadWziRI75FMRiHL
+         clmxThaJ/y+PPSwjfloakqFjEc3yrAGBR6cvvzrMZjIEvP0avCIE2l7eU+MK9N/pdK+b
+         xN5WxRXPiWnQfyKkFMd+EqIMVg6T5cbAvXMlVVNuDHdz0dQY3g/bCBpXJwa1O1KqLH52
+         wXBw==
+X-Forwarded-Encrypted: i=1; AJvYcCWseqVRnDY65YPa5xfi7NEARvZgk74ogP+J2VCVuuxglJIZukc8fnanozZ8vQTLfAiZVG2SPqhPBPCyrxSm9nGNeXEG1RFYK2cNQqvsv+7Kn4kPUYN5mXKm47fA5nyDFIkqNWEGjgJJrtXjO+0/fpdXx4AIA1GAlPTDQ3rtwmeBbut2WQ==
+X-Gm-Message-State: AOJu0Yx8PJuwtBYnlbhH1k4Z4mLZhfj3Yeqn1da3qJmgjM1v8yLNOwKk
+	ifC78p5KR0Ouf7pgYRuT2sarCvWWE/GvLC478JsEto6EomD6tBGE
+X-Google-Smtp-Source: AGHT+IHLiLFheQj+yJQdq9hnRsDDDu9iBd3tmzAObK/st+kKWoHSHuDiy/xJciPfciWurAnMG9pnsA==
+X-Received: by 2002:a17:906:c254:b0:a6c:70f3:de0f with SMTP id a640c23a62f3a-a6cbc6ca035mr174610166b.28.1717750843414;
+        Fri, 07 Jun 2024 02:00:43 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c805ce1a4sm215208066b.75.2024.06.07.02.00.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 02:00:43 -0700 (PDT)
+Message-ID: <8f74bb906951f56c753081af1462560fe98bc822.camel@gmail.com>
+Subject: Re: [PATCH v6 5/9] iio: adc: ad7173: refactor ain and vref selection
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: dumitru.ceclan@analog.com
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ David Lechner <dlechner@baylibre.com>,  linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org, Dumitru Ceclan
+ <mitrutzceclan@gmail.com>
+Date: Fri, 07 Jun 2024 11:04:30 +0200
+In-Reply-To: <20240606-ad4111-v6-5-573981fb3e2e@analog.com>
+References: <20240606-ad4111-v6-0-573981fb3e2e@analog.com>
+	 <20240606-ad4111-v6-5-573981fb3e2e@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-purgate-ID: 151534::1717751077-B9ADCD95-D17CD154/0/0
-X-purgate: clean
-X-purgate-type: clean
 
-Commit 90c2d2eb7ab5 ("MIPS: pci: lantiq: switch to using gpiod API") not
-only switched to the gpiod API, but also inverted / changed the polarity
-of the GPIO.
+On Thu, 2024-06-06 at 19:07 +0300, Dumitru Ceclan via B4 Relay wrote:
+> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>=20
+> Move validation of analog inputs and reference voltage selection to
+> separate functions to reduce the size of the channel config parsing
+> function and improve readability.
+> Add defines for the number of analog inputs in a channel.
+>=20
+> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> ---
+> =C2=A0drivers/iio/adc/ad7173.c | 68 +++++++++++++++++++++++++++++++++----=
+----------
+> -
+> =C2=A01 file changed, 47 insertions(+), 21 deletions(-)
+>=20
+> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+> index 8631f218b69e..4040edbd1c32 100644
+> --- a/drivers/iio/adc/ad7173.c
+> +++ b/drivers/iio/adc/ad7173.c
+> @@ -60,6 +60,7 @@
+> =C2=A0#define AD7173_CH_SETUP_AINPOS_MASK	GENMASK(9, 5)
+> =C2=A0#define AD7173_CH_SETUP_AINNEG_MASK	GENMASK(4, 0)
+> =C2=A0
+> +#define AD7173_NO_AINS_PER_CHANNEL	2
+> =C2=A0#define AD7173_CH_ADDRESS(pos, neg) \
+> =C2=A0	(FIELD_PREP(AD7173_CH_SETUP_AINPOS_MASK, pos) | \
+> =C2=A0	 FIELD_PREP(AD7173_CH_SETUP_AINNEG_MASK, neg))
+> @@ -629,6 +630,7 @@ static int ad7173_setup(struct iio_dev *indio_dev)
+> =C2=A0static unsigned int ad7173_get_ref_voltage_milli(struct ad7173_stat=
+e *st,
+> =C2=A0						 u8 reference_select)
+> =C2=A0{
+> +	struct device *dev =3D &st->sd.spi->dev;
+> =C2=A0	int vref;
+> =C2=A0
+> =C2=A0	switch (reference_select) {
+> @@ -652,9 +654,11 @@ static unsigned int ad7173_get_ref_voltage_milli(str=
+uct
+> ad7173_state *st,
+> =C2=A0		return -EINVAL;
+> =C2=A0	}
+> =C2=A0
+> -	if (vref < 0)
+> +	if (vref < 0) {
+> +		dev_err(dev, "Cannot use reference %u. Error:%d\n",
+> +			reference_select, vref);
+> =C2=A0		return vref;
+> -
+> +	}
+> =C2=A0	return vref / (MICRO / MILLI);
+> =C2=A0}
 
-According to the PCI specification, the RST# pin is an active-low
-signal. However, most of the device trees that have been widely used for
-a long time (mainly in the openWrt project) define this GPIO as
-active-high and the old driver code inverted the signal internally.
+unrelated?
 
-Apparently there are actually boards where the reset gpio must be
-operated inverted. For this reason, we cannot use the GPIOD_OUT_LOW/HIGH
-flag for initialization. Instead, we must explicitly set the gpio to
-value 1 in order to take into account any "GPIO_ACTIVE_LOW" flag that
-may have been set.
-
-In order to remain compatible with all these existing device trees, we
-should therefore keep the logic as it was before the commit.
-
-Fixes: 90c2d2eb7ab5 ("MIPS: pci: lantiq: switch to using gpiod API")
-Cc: stable@vger.kernel.org
-Signed-off-by: Martin Schiller <ms@dev.tdt.de>
----
- arch/mips/pci/pci-lantiq.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/mips/pci/pci-lantiq.c b/arch/mips/pci/pci-lantiq.c
-index 68a8cefed420..0844db34022e 100644
---- a/arch/mips/pci/pci-lantiq.c
-+++ b/arch/mips/pci/pci-lantiq.c
-@@ -124,14 +124,14 @@ static int ltq_pci_startup(struct platform_device *=
-pdev)
- 		clk_disable(clk_external);
-=20
- 	/* setup reset gpio used by pci */
--	reset_gpio =3D devm_gpiod_get_optional(&pdev->dev, "reset",
--					     GPIOD_OUT_LOW);
-+	reset_gpio =3D devm_gpiod_get_optional(&pdev->dev, "reset", GPIOD_ASIS)=
-;
- 	error =3D PTR_ERR_OR_ZERO(reset_gpio);
- 	if (error) {
- 		dev_err(&pdev->dev, "failed to request gpio: %d\n", error);
- 		return error;
- 	}
- 	gpiod_set_consumer_name(reset_gpio, "pci_reset");
-+	gpiod_direction_output(reset_gpio, 1);
-=20
- 	/* enable auto-switching between PCI and EBU */
- 	ltq_pci_w32(0xa, PCI_CR_CLK_CTRL);
-@@ -194,10 +194,10 @@ static int ltq_pci_startup(struct platform_device *=
-pdev)
-=20
- 	/* toggle reset pin */
- 	if (reset_gpio) {
--		gpiod_set_value_cansleep(reset_gpio, 1);
-+		gpiod_set_value_cansleep(reset_gpio, 0);
- 		wmb();
- 		mdelay(1);
--		gpiod_set_value_cansleep(reset_gpio, 0);
-+		gpiod_set_value_cansleep(reset_gpio, 1);
- 	}
- 	return 0;
- }
---=20
-2.39.2
+- Nuno S=C3=A1
 
 
