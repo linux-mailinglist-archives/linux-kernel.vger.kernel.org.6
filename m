@@ -1,144 +1,130 @@
-Return-Path: <linux-kernel+bounces-205614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96C458FFE27
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:38:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13AA48FFE29
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFDCE1C2320D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:38:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 905C4283327
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0BD15B127;
-	Fri,  7 Jun 2024 08:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8CEE15B124;
+	Fri,  7 Jun 2024 08:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=readahead.eu header.i=@readahead.eu header.b="eWbpZLV3";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RBnpFRu+"
-Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fHn93sf5"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAAA15443A;
-	Fri,  7 Jun 2024 08:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9758D15443A
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 08:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717749523; cv=none; b=b29vmt4L5gsrkiPO+4qd9LknjNkmGgCDTXBSBkqZldx7uOmhP0pPTgMW8fxkp++eHOFuBoePbwtILZH7u1BimdSHKO9dIKPMr3nwjjj1ESgavpiE6wzedF+Khqxdn+CBti2cboTJ0fXmQfjlEdjlecEqO+FwScxJoHtqnCqaGE8=
+	t=1717749650; cv=none; b=GpVpXc1Hux1TN+VYz6plfgJMqVhBD9ZwjjANtuR2QzYnAFoyPK+BXm0GDS3HTF7YzvnpUhWG6TWTL5mWeZ+qgujE8i6CEJrBjDqjDXfiStFNSqLaLP9K4a/Z5tP7uUxdg+KoVPMmMhR3f2FkMJ9mTj1QTZNzA5qvaBa6Dr4AYTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717749523; c=relaxed/simple;
-	bh=pm63gUhDzxzIyHRn1R0ROHMn5/pMUkbkCFlsiwV774c=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=X3Fc2r6bhF9/uyinKkFmyWhNxjSHXqD7q+ER7V82nEKYlCXEvQOr6XISh1YclWSEEVHyrCVBSVJP7/cnCPD9SQKvrMLTjD8jNGauy0vU1ybgkraPegGTWQPeqiIhKMUMaxSzako/Oq2AEv1wD3yQ3BqcL5T8lSnrrffr4Ve8u/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readahead.eu; spf=pass smtp.mailfrom=readahead.eu; dkim=pass (2048-bit key) header.d=readahead.eu header.i=@readahead.eu header.b=eWbpZLV3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RBnpFRu+; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readahead.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=readahead.eu
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 05E3313801CE;
-	Fri,  7 Jun 2024 04:38:39 -0400 (EDT)
-Received: from imap50 ([10.202.2.100])
-  by compute6.internal (MEProxy); Fri, 07 Jun 2024 04:38:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=readahead.eu; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1717749519; x=1717835919; bh=lUYVYpbofo
-	M+ovYwmbpHaBkHewk/bAEUDSaoJenkC3c=; b=eWbpZLV3ZB2DziJnbmicxBo1Fn
-	JZrGpgbnIrtm6knLo/2K95aw7sfWvJvQgGP+iaSQEBvunGNlUFid+x/+XC27eBw7
-	KVzBHwzmpl6Re+pC12mGEHfHV67fgQdMI6xpWsy6uTafJMCUdFqdkpoj/Z7vZTnO
-	n69ztEXXTflrkhtm1rCxG68hoZn7n8hD/lRpfarPR6yrp5GQEKFIL8STPXfZAxqq
-	dwvrWHBVzqo6NmAXKcPjcmk3DwvG2ZSdpyrtS1tWW63QSZDvd4B8F6Ez2cFQNYDt
-	Pa/iSjsFkBM3+Zk0PAuqQatt3WyHDgiQuz1OfiSSIsmEuDdTN3F0oeNtJRwg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1717749519; x=1717835919; bh=lUYVYpbofoM+ovYwmbpHaBkHewk/
-	bAEUDSaoJenkC3c=; b=RBnpFRu+ihHlemOYuCsaIVAoRXtslx3w/Xv1Rb2b7ygk
-	H9noCMD/IPpKWYSDaIhpMuvHqvXJp54Ej150F2uduU9nojT+PevNV2Mo23cL55y3
-	Ww+1AUwe76f9uTAqrQMRJJxkN+zg4NaGKogzON8FdP+O9RAfPJ/t4BeKH2t70+Xo
-	x54OKvvLkz4MJwBOpeGlxsolf5TV5zDys8ln431v6DL04fXExbhlg9ysIOvozdTe
-	wv+ZV8App3v+1GHxNHIUmRUKPrYnXc3CBx4cAfmNoOkiwOsCL8CIPE8FMhCrV6BT
-	LoRqJ0NWSVBu/AnssZTDgmD53mTs7P0bKfK2OD7Blw==
-X-ME-Sender: <xms:DsdiZttVXFoTlZ1nHJQgxM_ICRg4jQg3mZ_gKeVCUsEwn3-UwGN1vg>
-    <xme:DsdiZmdsTcbEtxZblPCm7afmIsGyOC_WkocogOU-bOz3gbpxVIwTBVMdXlFxTKDNZ
-    xtug58PWY7RsdldOm0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedttddgtdeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedfffgr
-    vhhiugcutfhhvghinhhssggvrhhgfdcuoegurghvihgusehrvggruggrhhgvrggurdgvuh
-    eqnecuggftrfgrthhtvghrnhepfeelgeeuheeihfeuleefleehtdektdeihffguddvheef
-    iefhveelhedvvdfhueeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepuggrvhhiugesrhgvrggurghhvggrugdrvghu
-X-ME-Proxy: <xmx:DsdiZgwKsDbh1x8XK_0B9u2LyfVh-T6P3WAIZtEIYkN0mmMpshSDWw>
-    <xmx:DsdiZkN77mGDL2DIj9qHkdEwcTr37Q9AptUhbQ-xxwnZy4mvKj2F6A>
-    <xmx:DsdiZt9xUO3DWVzIvoBCKMZS2tnsmKkF1cdik9fQrdDpzEIkjPQXOg>
-    <xmx:DsdiZkVyCS55Jdpvfx1uw47BW59mcwWpW8npNymmU5mrf5yu0QcWog>
-    <xmx:DsdiZrdOOXrgHKBmqjQaS0rZJJ5WtZ_s85SteCwhdQOcSNX4k4zkAsg0>
-Feedback-ID: id2994666:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 30DF01700093; Fri,  7 Jun 2024 04:38:38 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-497-g97f96844c-fm-20240526.001-g97f96844
+	s=arc-20240116; t=1717749650; c=relaxed/simple;
+	bh=xWj3wmt4wC1BQQNrhlB+vjoPdlDajm1Atq0xhzF45H8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=omPPhfetJz9ViFeJNG/DGgtlTeH2VhQGJfSUILCZSu6dFcKipSnzV0Il/+O/p3K6tpSeGbFRuMP43Xb2Tb+O85wkiHGxCTwoTK6eyem3yI2FPU84XEgghkom1s94anuEzmtXXoG0bVFJpueKoLqnSdIqYMlFM8XtFupTeECgiRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fHn93sf5; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: akpm@linux-foundation.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1717749645;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vvdtkhjCpRCbJoKZAWyq//G6mKukcuJ4c3ZSKqdPLsM=;
+	b=fHn93sf5GqLoAwhaQmi3ZyFiRgs2vOD59ms2wlrCGkXR1EJZ8El4heOvKuU3Bzf0YPHmOX
+	KUQkPhUgbd+NyII6q559tw7ncKHk15hNCpCmWxquFPhslAshgsmBVlBUSk0e9IDjQRcD+o
+	WxYIwjEOuMd9Q3B/pDjgbw7moaR6lHc=
+X-Envelope-To: cl@linux.com
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: penberg@kernel.org
+X-Envelope-To: vbabka@suse.cz
+X-Envelope-To: roman.gushchin@linux.dev
+X-Envelope-To: iamjoonsoo.kim@lge.com
+X-Envelope-To: 42.hyeyoo@gmail.com
+X-Envelope-To: rientjes@google.com
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: zhouchengming@bytedance.com
+X-Envelope-To: feng.tang@intel.com
+X-Envelope-To: chengming.zhou@linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+Subject: [PATCH v3 0/3] slab: fix and cleanup of slub_debug
+Date: Fri, 07 Jun 2024 16:40:11 +0800
+Message-Id: <20240607-b4-slab-debug-v3-0-bb2a326c4ceb@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <1e1edbdc-f91f-4106-baa6-b765b78e6abc@app.fastmail.com>
-In-Reply-To: 
- <CALmYWFuPBEM2DE97mQvB2eEgSO9Dvt=uO9OewMhGfhGCY66Hbw@mail.gmail.com>
-References: <20240513191544.94754-1-pobrn@protonmail.com>
- <CALmYWFt7MYbWrCDVEKH4DrMQGxaXA2kK8qth-JVxzkvMd6Ohtg@mail.gmail.com>
- <20240522162324.0aeba086228eddd8aff4f628@linux-foundation.org>
- <1KDsEBw8g7ymBVpGJZp9NRH1HmCBsQ_jjQ_jKOg90gLUFhW5W6lcG-bI4-5OPkrD24RiG7G83VoZL4SXPQjfldsNFDg7bFnFFgrVZWwSWXQ=@protonmail.com>
- <08450f80-4c33-40db-886f-fee18e531545@app.fastmail.com>
- <CALmYWFv9dK5ZPzwx3WCLMXzuuDadvFxh84+8rrT7aL105+ZZAQ@mail.gmail.com>
- <CALmYWFtedtEnfGFp5DYacHYOE7+GB8yoQC-iyw7JAxySmgQ7vw@mail.gmail.com>
- <f880562e-9521-4270-82e2-c6fb14dc853a@app.fastmail.com>
- <CALmYWFuPBEM2DE97mQvB2eEgSO9Dvt=uO9OewMhGfhGCY66Hbw@mail.gmail.com>
-Date: Fri, 07 Jun 2024 10:38:16 +0200
-From: "David Rheinsberg" <david@readahead.eu>
-To: "Jeff Xu" <jeffxu@google.com>, "Jeff Xu" <jeffxu@chromium.org>
-Cc: "Aleksa Sarai" <cyphar@cyphar.com>,
- =?UTF-8?Q?Barnab=C3=A1s_P=C5=91cze?= <pobrn@protonmail.com>,
- "Andrew Morton" <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- dmitry.torokhov@gmail.com, "Daniel Verkamp" <dverkamp@chromium.org>,
- hughd@google.com, jorgelo@chromium.org, skhan@linuxfoundation.org,
- "Kees Cook" <keescook@chromium.org>
-Subject: Re: [PATCH v1] memfd: `MFD_NOEXEC_SEAL` should not imply `MFD_ALLOW_SEALING`
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGzHYmYC/3XM0QqDIBiG4VsJj+dQU6c72n2MHaT+lhAVuqQR3
+ fusk43BDr8PnndFCWKAhK7ViiLkkMI4lFGfKmS7ZmgBB1c2YoRxIpjChuPUNwY7MHOLqVP0or3
+ VWjaomCmCD8vRuz/K7kJ6jvF15DPd33+lTDHBSmoOnivCnL/1YZiXs4OM9lJmHy2J+NWsaCtqY
+ bR1taT2W2/b9gbRUTSR6AAAAA==
+To: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, 
+ David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
+ Roman Gushchin <roman.gushchin@linux.dev>, 
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Feng Tang <feng.tang@intel.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ zhouchengming@bytedance.com, Chengming Zhou <chengming.zhou@linux.dev>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717749639; l=1733;
+ i=chengming.zhou@linux.dev; s=20240508; h=from:subject:message-id;
+ bh=xWj3wmt4wC1BQQNrhlB+vjoPdlDajm1Atq0xhzF45H8=;
+ b=g40ViXDwcKmFj50AEuLOydGhbvCTB3Ri3LoiPVXTy00kTH+EHsdreEApGB1DMpDnpQqUid2+8
+ xPvCamkkoShBlvaVYQ1cwGh+K/CVthSAzYA+9xMQs3r10aE1LouCTMS
+X-Developer-Key: i=chengming.zhou@linux.dev; a=ed25519;
+ pk=kx40VUetZeR6MuiqrM7kPCcGakk1md0Az5qHwb6gBdU=
+X-Migadu-Flow: FLOW_OUT
 
-Hi
+Changes in v3:
+- Fix slub_kunit tests failures by using new introduced
+  slab_in_kunit_test(), which doesn't increase slab_errors.
+- Fix the condition of whether to check free pointer and
+  set "ret" correctly.
+- Collect Reviewed-by tags from Vlastimil Babka.
+- Link to v2: https://lore.kernel.org/r/20240605-b4-slab-debug-v2-0-c535b9cd361c@linux.dev
 
-On Tue, May 28, 2024, at 7:13 PM, Jeff Xu wrote:
->> > Another solution is to change memfd to be by-default sealable,
->> > although that will be an api change, but what side effect  will it be
->> > ?
->> > If we are worried about the memfd being sealed by an attacker, the
->> > malicious code could also overwrite the content since memfd is not
->> > sealed.
->>
->> You cannot change the default-seals retrospectively. There are existing shmem-users that share file-descriptors and *expect* the other party to be able to override data, but do *not* expect the other party to be able to apply seals. Note that these models explicitly *want* shared, writable access to the buffer (e.g., render-client shares a buffer with the display server for scanout), so just because you can *write* to a shmem-file does not mean that sharing is unsafe (e.g., using SIGBUS+mmap can safely deal with page-faults).
->>
-> If the other party is controlled by an attacker, the attacker can
-> write garbage to the shm-file/memfd, that is already the end of the
-> game, at that point, sealing is no longer a concern, right?
+Changes in v2:
+- Change check_object() to do all the checks without skipping, report
+  their specific error findings in check_bytes_and_report() but not
+  print_trailer(). Once all checks were done, if any found an error,
+  print the trailer once from check_object(), suggested by Vlastimil.
+- Consolidate the two cases with flags & SLAB_RED_ZONE and make the
+  complex conditional expressions a little prettier and add comments
+  about extending right redzone, per Vlastimil.
+- Add Reviewed-by from Feng Tang.
+- Link to v1: https://lore.kernel.org/r/20240528-b4-slab-debug-v1-0-8694ef4802df@linux.dev
 
-No. If a graphics client shares a buffer with a graphics server, the client is free to write garbage into the buffer. This is not unsafe. The graphics server will display whatever the client writes into the buffer. This is completely safe, without sealing and with a writable buffer.
+Hello,
 
-> If the threat-model is preventing attacker on the other side to write
-> the garbage data, then F_SEAL_WRITE|F_SEAL_SHRINK|F_SEAL_GROW can be
-> applied, in that case, default-sealable seems preferable because of
-> less code change.
+This series includes minor fix and cleanup of slub_debug, please see
+the commits for details.
 
-Again, the threat-model is *NOT* concerned with writes.
+Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
+---
+Chengming Zhou (3):
+      slab: make check_object() more consistent
+      slab: don't put freepointer outside of object if only orig_size
+      slab: delete useless RED_INACTIVE and RED_ACTIVE
 
-Graphics clients/servers are a good example where *ANY* data is valid and can be processed by the privileged server. Hence, *ANY* writes are allowed and safe. No need for any seals. Those setups existed way before `memfd_create` was added (including seals).
+ include/linux/poison.h       |  7 ++--
+ mm/slub.c                    | 77 ++++++++++++++++++++++++++++----------------
+ tools/include/linux/poison.h |  7 ++--
+ 3 files changed, 53 insertions(+), 38 deletions(-)
+---
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+change-id: 20240528-b4-slab-debug-1d8179fc996a
 
-However, when windows are resized, graphic buffers need to be resized as well. In those setups, the graphics server might call `ftruncate(2)`. If you suddenly make shmem-files sealable by default, a client can set `F_SEAL_SHRINK/GROW` and the privileged graphics server will get an error from `ftruncate(2)`, which it might not be able to handle, as it correctly never expected this to happen.
+Best regards,
+-- 
+Chengming Zhou <chengming.zhou@linux.dev>
 
-Thanks
-David
 
