@@ -1,69 +1,85 @@
-Return-Path: <linux-kernel+bounces-206654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55305900C60
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:18:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FF89900C62
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52E461C22187
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:18:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F583B24601
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8111314D2B5;
-	Fri,  7 Jun 2024 19:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F20814EC4C;
+	Fri,  7 Jun 2024 19:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DZIc7YXZ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VRe6PZMR"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLQ0LTbk"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BE47345D
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 19:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF06C1474D6;
+	Fri,  7 Jun 2024 19:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717787868; cv=none; b=X5UK3RKyf8NsS3ymoPGNnUFqPxPtibm7tL8PamjjpY08ICtws3IrRg+D86gEfKp0vPeirA3PwXhSmvUb+ZpLV2dAd4fsyon6pZaxMkNVnm6oAkuWW6Q3BQtS9OJm5J8mHBsQAyYwEX5cq5iahmuyp1x4c8sVz9qJNxw3neVKwcY=
+	t=1717787875; cv=none; b=Vz07yO1wRZu3BppeQBgpTf3w9DcBc+bl8zVxssWtEeytX2qXQDaIAvWXLzK3xgrhNCEOOczkKco0kr/EEWJGg9cnUMnsSoIiZoRAH2Es633hCYjko2BRqgI2NdQOqpp4GXhz92WHE2aXcZphdayhmtCwyQkfBqjmqQhrXpYOokY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717787868; c=relaxed/simple;
-	bh=5NiEdg4JDL4wu6MDStxWmcNbtxLlrtUQR2/dFbPhZ8E=;
+	s=arc-20240116; t=1717787875; c=relaxed/simple;
+	bh=lE+hbzleT40pRbQC9hUhbSV33FyjJxrobady59a7HFc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mxLZVtGWxomv9VXiBH2lqt8b22IvqjysObdW0t6M7TnpSWjKOt/XNjNzrJv+BehjX7VhTqwvUS4JUTvp4NhFBx6fz22nbegmnD4ZRcFA2n/BRfSwfq8bJ4+qKANGOPIpceqIZPS+HK4Mp54R19CUPL1/okdbDntLwBpQ8GZfYDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DZIc7YXZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VRe6PZMR; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 7 Jun 2024 21:17:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717787865;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6Pz+8KfKB8d44sqvZtkfrnb/HJ1I20+yDp6ymk4PGT8=;
-	b=DZIc7YXZ/AdKaxx1yuYGNs8uX1drg+VVYSuqZ3k2bGqveKbsJNhFAsZ/MdIAB8NLknpZX1
-	Ry8Bcy84pcctmvkMY79lSnvgyhEElHmd3PtQ7OH3eXWLaBTqq+wESvgGPOt10PiUZ/VR89
-	0Iu2YSjFW+bivje0agik23uS5nwX2lvqkFNoQM62qVig1F6M52FsmXPBzQ6wkho6RydmhT
-	pehKVy4qvJkFDO5cuqiwbFsQD8PCmCYW3t9MXXmxvwxrQCz4H8AwBCR4YfwnDyUoE9VQ6R
-	zjkCEZCmrYaCAmICub5LxbzkR1ziCeIBP8sV9cRJotLMyQ9wLjVRUBgbq1C2rg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717787865;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6Pz+8KfKB8d44sqvZtkfrnb/HJ1I20+yDp6ymk4PGT8=;
-	b=VRe6PZMRpAy5DcvMCaWNwCwE6SUWcvfl0HwjzfM1J5+WbgThqJyZWzE7wIubH3bBkZjvig
-	riaMVbuaprDMpCBg==
-From: Nam Cao <namcao@linutronix.de>
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH 7/7] riscv: remove limit on the size of read-only section
- for XIP kernel
-Message-ID: <20240607191738.YUFQKt3U@linutronix.de>
-References: <cover.1715286093.git.namcao@linutronix.de>
- <9eea4b61f7b6300def3b6582d8e465ef4207501e.1715286093.git.namcao@linutronix.de>
- <2e092f39-0716-4b73-9268-da9211a4b600@ghiti.fr>
- <20240602073210.w0CKrGlj@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SJUQqw6kHj+x3ixeBINTyIB2cdggtIsvQwTDCnino2q31Nx35SrOEEsYI87zxb3kDSWRUD3I2PHthGqbYtKMg6oaEgCq6p4nFOL25KcpslgKGuk98vU+U0ARc/7riEXlHFPzvEpuq/JL7XjR2GJVSC+Gb8Q5uHsGkcVN7Vwlkv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLQ0LTbk; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7041cda5dcfso417785b3a.2;
+        Fri, 07 Jun 2024 12:17:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717787873; x=1718392673; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TuFWZ4xdFKT1wd42DIq0bkyJqXHcrP0kLkzse0qhyyo=;
+        b=kLQ0LTbko1G0YAxSQEtr5QGUGR7ExOns+pD38MSg/afJGq1A/GcWRSkLHxyDRq7jQO
+         3qb51wgSmV7CSfF1GBfZPF8Jtst3rj/gMUL+LrFuVKUkriKydlP2+X9IkWazvKuJWMoN
+         uo1RkNCF/M9p04XJbWDV2WA2/d329+w2rlrZcD6BCaxbLDF7H+2j4sS2Mq3PK3bfLow0
+         d/06oP+ZUltgNMsbywbLr+B8tf6I17Sw3v6cA84jqo0e6d/TMRbQqFPF4RqVq7d5XXzE
+         hoPKwdt4kqEl9jbFBOgNPQaLJYg5d2VI98aKELl8G90T7PxvlPPGeKeq0Dg5LuPRX6gi
+         Lekg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717787873; x=1718392673;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TuFWZ4xdFKT1wd42DIq0bkyJqXHcrP0kLkzse0qhyyo=;
+        b=Lw1gTCHQIivGCfSZNJsFOV1lIs9KFVEtk6P8LbjQLDLlQ1xRcxWpqcVH+etpj+of2E
+         u5xdaxSOwWZw7BuNd9nq/Z2P3cM26/6ho4WsmVKol0ku5zzRWIxvUa4EnPAS22kYUQRU
+         +q5TnHh3VWfEWN0i9c0bCido3u7clV83zd4qyr69Tj4faPKJtYAA8g/+nqrkzqKUG2++
+         vncNrp73ryHGSBq55BKNoVbBzJ1GiivabPRX2VEhonO+xY6+2SI4KqxHuUfDe/Vdr2rr
+         Z46Lz3I+GmHthPv4H5K7DdEq1tVAhFEDLiFsOck1PgzXopTP3qmhHlY/c4tzMk2M0H3B
+         qLNw==
+X-Forwarded-Encrypted: i=1; AJvYcCXo84IZpWRJvo+oWWYkDKe9EcZLe6Ck4VLiFhezhxOzc1yYFno9DMirRy6TzBH0VX4XkOAj5Fnk33n5blOz4rem20Np2SkTsUsqABylJzo6HOmvz5ROJ7qIBJwaRSivhQ5L9z7oC4rlWPPjsG7A4/Z0s1JDBdjaBIxEeMUgGHN33xe6yGEcHS+EX5k=
+X-Gm-Message-State: AOJu0Yw3SSWRHmRqpoRd/PHALcpDlIfMCY4JkUQrcZh6JVZDnWNK2St1
+	/AS2pNN0HNukaxSIsUoHXf7YfGpFGLOk0L7VAK0fucjJ1PhqyFna
+X-Google-Smtp-Source: AGHT+IGvnCd1ZhEC7tWgZoWLPhwhcjJXrVRrP0pRcwhh1RNUz6vR+7plk7CLlZ2BtQ7FGZukUyOjaQ==
+X-Received: by 2002:a05:6a00:1791:b0:702:824a:2a33 with SMTP id d2e1a72fcca58-7040c619520mr4036005b3a.7.1717787872874;
+        Fri, 07 Jun 2024 12:17:52 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:b8e9:3447:a54a:310b])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd4dba2bsm2900679b3a.156.2024.06.07.12.17.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 12:17:52 -0700 (PDT)
+Date: Fri, 7 Jun 2024 12:17:50 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Erick Archer <erick.archer@outlook.com>
+Cc: Niklas Schnelle <schnelle@linux.ibm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@kernel.org>,
+	"Ricardo B. Marliere" <ricardo@marliere.net>,
+	Kees Cook <keescook@chromium.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Justin Stitt <justinstitt@google.com>, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] Input: gameport - use sizeof(*pointer) instead of
+ sizeof(type)
+Message-ID: <ZmNc3oBiVhl2m2XU@google.com>
+References: <PAXPR02MB72483F512F863C74A4AECA2B8BFB2@PAXPR02MB7248.eurprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,55 +88,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240602073210.w0CKrGlj@linutronix.de>
+In-Reply-To: <PAXPR02MB72483F512F863C74A4AECA2B8BFB2@PAXPR02MB7248.eurprd02.prod.outlook.com>
 
-On Sun, Jun 02, 2024 at 09:32:17AM +0200, Nam Cao wrote:
-> On Mon, May 27, 2024 at 02:58:14PM +0200, Alexandre Ghiti wrote:
-> > > diff --git a/arch/riscv/kernel/vmlinux-xip.lds.S b/arch/riscv/kernel/vmlinux-xip.lds.S
-> > > index 8c3daa1b0531..01f73f2ffecc 100644
-> > > --- a/arch/riscv/kernel/vmlinux-xip.lds.S
-> > > +++ b/arch/riscv/kernel/vmlinux-xip.lds.S
-> > > @@ -65,10 +65,10 @@ SECTIONS
-> > >    * From this point, stuff is considered writable and will be copied to RAM
-> > >    */
-> > >   	__data_loc = ALIGN(PAGE_SIZE);		/* location in file */
-> > > -	. = KERNEL_LINK_ADDR + XIP_OFFSET;	/* location in memory */
-> > > +	. = ALIGN(SZ_2M);			/* location in memory */
-> > 
-> > You can't use SZ_2M here since it corresponds to PMD_SIZE for rv64 but on
-> > rv32 (which is allowed to use xip kernels), it's 4MB. Use SECTION_ALIGN
-> > instead.
+On Fri, Jun 07, 2024 at 07:17:55PM +0200, Erick Archer wrote:
+> It is preferred to use sizeof(*pointer) instead of sizeof(type)
+> due to the type of the variable can change and one needs not
+> change the former (unlike the latter). This patch has no effect
+> on runtime behavior.
 > 
-> SECTION_ALIGN doesn't work unfortunately. For XIP, SECTION_ALIGN is
-> L1_CACHE_BYTES which is 64 bytes, but we need at least PMD_SIZE alignment
-> to setup virtual mapping.
+> Signed-off-by: Erick Archer <erick.archer@outlook.com>
 
-Sorry, I think I had tunnel vision. The solution is so obvious.
+Applied, thank you.
 
-I will send v2 shortly. Thanks so much for spending time reviewing.
-
-Best regards,
-Nam
-> 
-> Ideally we use PMD_SIZE here, but I can't #include that header file.
-> Probably we can refactor the header files so that we can #include the
-> header file that PMD_SIZE is in. But I am not sure if it's worth it.
-> 
-> I'm thinking just go for:
-> ifdef CONFIG_64_BIT
-> 	. = ALIGN(SZ_2M);
-> #else
-> 	. = ALIGN(SZ_4M);
-> #endif
-> 
-> Or even simpler, just:
-> 	. = ALIGN(SZ_4M);
-> 
-> As much as I hate magic numbers, I think we can give linker script some
-> leeway. Perhaps with an explanation why this alignment is chosen?
-> 
-> Or do you have a better idea?
-> 
-> Best regards,
-> Nam
+-- 
+Dmitry
 
