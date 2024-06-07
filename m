@@ -1,397 +1,268 @@
-Return-Path: <linux-kernel+bounces-205850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE19900146
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:52:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE964900143
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECB161C22E39
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:52:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F6E31F24BBC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2756186E3F;
-	Fri,  7 Jun 2024 10:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F83A18629E;
+	Fri,  7 Jun 2024 10:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="jMYHG8YL"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tIq8bJrR"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84A7186283;
-	Fri,  7 Jun 2024 10:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3CC71850BE
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 10:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717757555; cv=none; b=A2jJjv8SoyvJa7qpiI9ipt5qGgNK4iGi+zLHDUvvWMRfiLi6ldaY55KS7rYKZvAqH5eLGcGd49ldG6d62CxivyFXURS1kFV3gsy/MrrCqIiBXuKiP2JHtDY6napHKpNwcbZ3AfH+W6bFxs9aNiVLqTIRSseeTd9kqCD0yJsMuiE=
+	t=1717757546; cv=none; b=HigtAh/mOlVyEKFHPWompRv+rVBaSpPFniXPN2+NZEsn63vL0HlMarqJngEXbMcieZBdyhCQsOvAKMb2SBLTazt7ywkvalUP3WcAkspIEBIgR4+tmjAMfatVQb3+edjUJh7qKe10TAHu1t/rgINJsom8fc11sNvjUpJRa+G0NJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717757555; c=relaxed/simple;
-	bh=hXl4LMLocK0lUK+Rw1zCvsbDJBkZeTIKQWnxybKLBh4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kC6fKwg/gnNxoo1bKS8DW6i1wo9H5o6l4cY5E+MDz2SywGOs6/cylXd8XlDPexq0VYAFkdHshLnIRRpXex2L9edza8HOYltxJ1BNAVX/7X0z62uWEDwHqMPG1ApGStOoRf06Ye4jregXzN+0cP0chJs4hLZxkUEOXIy7pRsDJzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=jMYHG8YL; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=BGexUC91qDlLn4DNCtZ/q4Mm7WeDD5yxFXfsPG4b8Hs=; b=jMYHG8YLARSbC0lBJ4b5MK6OxK
-	esrZqKKhg7iD3KGefeokn9bhX9T3Stclmp5hlZovY02HUguD44YNoUBzfqKQHnmrmdgJVQS9dHhm2
-	uF68yqne8M/GcOSD/J1FjB6cI2GSEuXzCC6DiKzgSaSssTTE6GGyke6HLcsoXDIYx3WqXdyC8FTcn
-	KGWCZZ2qFp0c/iRVE/SnumoZknCY0s3PqwRYLUmaGrunDoNFvB0lAgzmnQb5ao+/nP74oUbx/PhnT
-	03tcEZeYMmsBSrL+S8MZewvr9xOzVo/jN159xeE7UgXlKhnx5s5l6+co3OIFlMmy6cvN5E9xdfVus
-	/AZiHugg==;
-Received: from sslproxy07.your-server.de ([78.47.199.104])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <martin@geanix.com>)
-	id 1sFXCr-00014Z-4E; Fri, 07 Jun 2024 12:52:21 +0200
-Received: from [185.17.218.86] (helo=zen..)
-	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <martin@geanix.com>)
-	id 1sFXCn-0007ti-0v;
-	Fri, 07 Jun 2024 12:52:20 +0200
-From: =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>
-To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Markus Schneider-Pargmann <msp@baylibre.com>,
-	=?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>,
-	linux-can@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] can: m_can: don't enable transceiver when probing
-Date: Fri,  7 Jun 2024 12:52:08 +0200
-Message-ID: <20240607105210.155435-1-martin@geanix.com>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1717757546; c=relaxed/simple;
+	bh=gSWSP+7C8UOKUu7+vq+El/x9kf+z97qTlQ+ZsMnmONo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SIEAbSsEF6RWLnFO2vXgonnsCUzMSXzz063xuXYaVUhoIAF6wed9L51UMvj2aeMP8QKBVRiQCxeN3yOCgd/oCLzlc+SMpWz5YojrVcDFL4VgGXIrXeAR8DLREtVR3fJOqbTSA2Xf84zhvR2p3e+Ucevw4paJcme2i9DsNbxDJTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tIq8bJrR; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4eb0089b4a2so684640e0c.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 03:52:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717757543; x=1718362343; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mPbSPneHT7Jvjy5REyHR38Uuhd6bNow/3VWxu5TPx5Y=;
+        b=tIq8bJrRHvaLq2zc+PpaXwrjpXJ+G9pHfTizLsRXZroHEm4mxHNKhaN9Ioj/Hjeouu
+         ymGmlJpL6kxThdVxj0XWOOb0+OyIPOpg0q1NOR2uy2z6BMXzHz3pZi4IAYoZ3sBVeGz0
+         /x5I9lt8CxIPoLOxtEzFkXaxZT36dCUR1a1BCZgFvr3nOyBUdPCfRsmdQctPX5ypRW3B
+         xNDNOa4uCHbt/t7Q6KMVQ1R0AcL5u6g+zpOL9bN0gyN81tOGtwm+C1QsDdx8MKdN3DLh
+         IHqU6+1fDB0qOWTbSaZrhyzUYH/68r/0DHRm5rmD72ZVw1N+WeoNE5zqmCxiQGCOyxxE
+         LkYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717757543; x=1718362343;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mPbSPneHT7Jvjy5REyHR38Uuhd6bNow/3VWxu5TPx5Y=;
+        b=UoXQqifjNtQyo9Mq7dL1hIhBVGTZHyaQU4xBXnJ3bV6gORFIOx8CRtXsUsDblPYWzL
+         2Ol7ZXiG5LLPTYNZt1Rn9/YxuT8W5OeRTeTKDi6WKXItEmnXu2K8/vYTmGdDgM93xng0
+         8lmr7PWXN8MoHXqtZvooHoHuuv9wy1/jW8Wti9YE7yNRfKPWK/fEj2zLDH2c7u6FeGQ7
+         hAPE8aIg+p+TuG7Icbv+GOiZAzKEvdmPZeK5zTPtuU/2dGoI8IJByKBCaWYcweO9Ledd
+         F3aTRNP3wFKWUPQRFczZBCDIiFPw/a5fPcdSY/RATO5X1tYVf4yel88oY9G2YofkJXES
+         Wh4A==
+X-Forwarded-Encrypted: i=1; AJvYcCXSKSu+foIsxOrRxV5OQJpAst6oNWOck0781v9SvaEN9oTMGhN83Uwb/f66Vv5xapy0mN+7SCchOf/cMs/sElh+dUTfrYM6dHf0h+aI
+X-Gm-Message-State: AOJu0YzFBUfq+Zvc9cCaaoDdtFXjjx8d+FfajAMC9KRHlWS25YCNP3rJ
+	H+XqF9Dk9Hmc6rmxjTdxcqlOb49w+oAawMOvCzzmQtnXxUw7lr5w6x4i2AbQMlcOm7CWSAKaJJg
+	vhoxDjq0Fbj7Ucrqu7rPRwEaFITfZvHjYNO+h1Q==
+X-Google-Smtp-Source: AGHT+IGZgoJBNxvF0IqzZ76RjN/3DL1M26P/4+jxT3RGwhtV8AOnkj8ddXuo2lmlwYIZDVnndDCRiLv2h7nduOcdfRM=
+X-Received: by 2002:a1f:7c05:0:b0:4e4:ec86:4240 with SMTP id
+ 71dfb90a1353d-4eb562a4b69mr2327968e0c.12.1717757542953; Fri, 07 Jun 2024
+ 03:52:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: martin@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27299/Fri Jun  7 10:27:20 2024)
+References: <20240606131732.440653204@linuxfoundation.org>
+In-Reply-To: <20240606131732.440653204@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 7 Jun 2024 16:22:11 +0530
+Message-ID: <CA+G9fYsnQh6ydxf3asaEvoOE8a1oabcoUp91m3MJRyR6caKJ0A@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/744] 6.6.33-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The m_can driver sets and clears the CCCR.INIT bit during probe (both
-when testing the NON-ISO bit, and when configuring the chip). After
-clearing the CCCR.INIT bit, the transceiver enters normal mode, where it
-affects the CAN bus (i.e. it ACKs frames). This can cause troubles when
-the m_can node is only used for monitoring the bus, as one cannot setup
-listen-only mode before the device is probed.
+On Thu, 6 Jun 2024 at 19:41, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.33 release.
+> There are 744 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 08 Jun 2024 13:15:55 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.6.33-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Rework the probe flow, so that the CCCR.INIT bit is only cleared when
-upping the device. First, the tcan4x5x driver is changed to stay in
-standby mode during/after probe. This in turn requires changes when
-setting bits in the CCCR register, as its CSR and CSA bits are always
-high in standby mode.
+Results from Linaro=E2=80=99s test farm.
+Build regressions on Powerpc.
 
-Signed-off-by: Martin Hundebøll <martin@geanix.com>
----
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Changes since v3:
- * Return 'niso' instead of 'err' in case of failure to detect niso
-   support in m_can_dev_setup()
- * Fix typo: redunant -> redundant
+## Build
+* kernel: 6.6.33-rc1
+* git: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
+* git branch: linux-6.6.y
+* git commit: 39dd7d80cd65769389563028553e9ec89a8f88d1
+* git describe: v6.6.32-745-g39dd7d80cd65
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.3=
+2-745-g39dd7d80cd65
 
-Changes since v2:
- * Return and propagate error(s) from m_can_cccr_update_bits()
+## Test Regressions (compared to v6.6.32)
 
-Changes since v1:
- * Implement Markus review comments:
-   - Rename m_can_cccr_wait_bits() to m_can_cccr_update_bits()
-   - Explicitly set CCCR_INIT bit in m_can_dev_setup()
-   - Revert to 5 timeouts/tries to 10
-   - Use m_can_config_{en|dis}able() in m_can_niso_supported()
-   - Revert move of call to m_can_enable_all_interrupts()
-   - Return -EBUSY on failure to enter normal mode
-   - Use tcan4x5x_clear_interrupts() in tcan4x5x_can_probe()
+* powerpc, build
+  - clang-18-cell_defconfig
+  - clang-18-defconfig
+  - clang-18-maple_defconfig
+  - clang-18-ppc64e_defconfig
+  - clang-nightly-cell_defconfig
+  - clang-nightly-defconfig
+  - clang-nightly-maple_defconfig
+  - gcc-13-cell_defconfig
+  - gcc-13-defconfig
+  - gcc-13-maple_defconfig
+  - gcc-13-ppc64e_defconfig
 
- drivers/net/can/m_can/m_can.c         | 169 ++++++++++++++++----------
- drivers/net/can/m_can/tcan4x5x-core.c |  13 +-
- 2 files changed, 116 insertions(+), 66 deletions(-)
+## Metric Regressions (compared to v6.6.32)
 
-diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-index 14b231c4d7ec..7f63f866083e 100644
---- a/drivers/net/can/m_can/m_can.c
-+++ b/drivers/net/can/m_can/m_can.c
-@@ -379,38 +379,72 @@ m_can_txe_fifo_read(struct m_can_classdev *cdev, u32 fgi, u32 offset, u32 *val)
- 	return cdev->ops->read_fifo(cdev, addr_offset, val, 1);
- }
- 
--static void m_can_config_endisable(struct m_can_classdev *cdev, bool enable)
-+static int m_can_cccr_update_bits(struct m_can_classdev *cdev, u32 mask, u32 val)
- {
--	u32 cccr = m_can_read(cdev, M_CAN_CCCR);
--	u32 timeout = 10;
--	u32 val = 0;
--
--	/* Clear the Clock stop request if it was set */
--	if (cccr & CCCR_CSR)
--		cccr &= ~CCCR_CSR;
--
--	if (enable) {
--		/* enable m_can configuration */
--		m_can_write(cdev, M_CAN_CCCR, cccr | CCCR_INIT);
--		udelay(5);
--		/* CCCR.CCE can only be set/reset while CCCR.INIT = '1' */
--		m_can_write(cdev, M_CAN_CCCR, cccr | CCCR_INIT | CCCR_CCE);
--	} else {
--		m_can_write(cdev, M_CAN_CCCR, cccr & ~(CCCR_INIT | CCCR_CCE));
-+	u32 val_before = m_can_read(cdev, M_CAN_CCCR);
-+	u32 val_after = (val_before & ~mask) | val;
-+	size_t tries = 10;
-+
-+	if (!(mask & CCCR_INIT) && !(val_before & CCCR_INIT)) {
-+		dev_err(cdev->dev,
-+			"refusing to configure device when in normal mode\n");
-+		return -EBUSY;
- 	}
- 
--	/* there's a delay for module initialization */
--	if (enable)
--		val = CCCR_INIT | CCCR_CCE;
--
--	while ((m_can_read(cdev, M_CAN_CCCR) & (CCCR_INIT | CCCR_CCE)) != val) {
--		if (timeout == 0) {
--			netdev_warn(cdev->net, "Failed to init module\n");
--			return;
--		}
--		timeout--;
--		udelay(1);
-+	/* The chip should be in standby mode when changing the CCCR register,
-+	 * and some chips set the CSR and CSA bits when in standby. Furthermore,
-+	 * the CSR and CSA bits should be written as zeros, even when they read
-+	 * ones.
-+	 */
-+	val_after &= ~(CCCR_CSR | CCCR_CSA);
-+
-+	while (tries--) {
-+		u32 val_read;
-+
-+		/* Write the desired value in each try, as setting some bits in
-+		 * the CCCR register require other bits to be set first. E.g.
-+		 * setting the NISO bit requires setting the CCE bit first.
-+		 */
-+		m_can_write(cdev, M_CAN_CCCR, val_after);
-+
-+		val_read = m_can_read(cdev, M_CAN_CCCR) & ~(CCCR_CSR | CCCR_CSA);
-+
-+		if (val_read == val_after)
-+			return 0;
-+
-+		usleep_range(1, 5);
- 	}
-+
-+	return -ETIMEDOUT;
-+}
-+
-+static int m_can_config_enable(struct m_can_classdev *cdev)
-+{
-+	int err;
-+
-+	/* CCCR_INIT must be set in order to set CCCR_CCE, but access to
-+	 * configuration registers should only be enabled when in standby mode,
-+	 * where CCCR_INIT is always set.
-+	 */
-+	err = m_can_cccr_update_bits(cdev, CCCR_CCE, CCCR_CCE);
-+	if (err)
-+		netdev_err(cdev->net, "failed to enable configuration mode\n");
-+
-+	return err;
-+}
-+
-+static int m_can_config_disable(struct m_can_classdev *cdev)
-+{
-+	int err;
-+
-+	/* Only clear CCCR_CCE, since CCCR_INIT cannot be cleared while in
-+	 * standby mode
-+	 */
-+	err = m_can_cccr_update_bits(cdev, CCCR_CCE, 0);
-+	if (err)
-+		netdev_err(cdev->net, "failed to disable configuration registers\n");
-+
-+	return err;
- }
- 
- static void m_can_interrupt_enable(struct m_can_classdev *cdev, u32 interrupts)
-@@ -1403,7 +1437,9 @@ static int m_can_chip_config(struct net_device *dev)
- 	interrupts &= ~(IR_ARA | IR_ELO | IR_DRX | IR_TEFF | IR_TFE | IR_TCF |
- 			IR_HPM | IR_RF1F | IR_RF1W | IR_RF1N | IR_RF0F);
- 
--	m_can_config_endisable(cdev, true);
-+	err = m_can_config_enable(cdev);
-+	if (err)
-+		return err;
- 
- 	/* RX Buffer/FIFO Element Size 64 bytes data field */
- 	m_can_write(cdev, M_CAN_RXESC,
-@@ -1521,7 +1557,9 @@ static int m_can_chip_config(struct net_device *dev)
- 		    FIELD_PREP(TSCC_TCP_MASK, 0xf) |
- 		    FIELD_PREP(TSCC_TSS_MASK, TSCC_TSS_INTERNAL));
- 
--	m_can_config_endisable(cdev, false);
-+	err = m_can_config_disable(cdev);
-+	if (err)
-+		return err;
- 
- 	if (cdev->ops->init)
- 		cdev->ops->init(cdev);
-@@ -1550,7 +1588,11 @@ static int m_can_start(struct net_device *dev)
- 		cdev->tx_fifo_putidx = FIELD_GET(TXFQS_TFQPI_MASK,
- 						 m_can_read(cdev, M_CAN_TXFQS));
- 
--	return 0;
-+	ret = m_can_cccr_update_bits(cdev, CCCR_INIT, 0);
-+	if (ret)
-+		netdev_err(dev, "failed to enter normal mode\n");
-+
-+	return ret;
- }
- 
- static int m_can_set_mode(struct net_device *dev, enum can_mode mode)
-@@ -1599,43 +1641,37 @@ static int m_can_check_core_release(struct m_can_classdev *cdev)
- }
- 
- /* Selectable Non ISO support only in version 3.2.x
-- * This function checks if the bit is writable.
-+ * Return 1 if the bit is writable, 0 if it is not, or negative on error.
-  */
--static bool m_can_niso_supported(struct m_can_classdev *cdev)
-+static int m_can_niso_supported(struct m_can_classdev *cdev)
- {
--	u32 cccr_reg, cccr_poll = 0;
--	int niso_timeout = -ETIMEDOUT;
--	int i;
-+	int ret, niso;
- 
--	m_can_config_endisable(cdev, true);
--	cccr_reg = m_can_read(cdev, M_CAN_CCCR);
--	cccr_reg |= CCCR_NISO;
--	m_can_write(cdev, M_CAN_CCCR, cccr_reg);
-+	ret = m_can_config_enable(cdev);
-+	if (ret)
-+		return ret;
- 
--	for (i = 0; i <= 10; i++) {
--		cccr_poll = m_can_read(cdev, M_CAN_CCCR);
--		if (cccr_poll == cccr_reg) {
--			niso_timeout = 0;
--			break;
--		}
-+	/* First try to set the NISO bit. */
-+	niso = m_can_cccr_update_bits(cdev, CCCR_NISO, CCCR_NISO);
- 
--		usleep_range(1, 5);
-+	/* Then clear the it again. */
-+	ret = m_can_cccr_update_bits(cdev, CCCR_NISO, 0);
-+	if (ret) {
-+		dev_err(cdev->dev, "failed to revert the NON-ISO bit in CCCR\n");
-+		return ret;
- 	}
- 
--	/* Clear NISO */
--	cccr_reg &= ~(CCCR_NISO);
--	m_can_write(cdev, M_CAN_CCCR, cccr_reg);
-+	ret = m_can_config_disable(cdev);
-+	if (ret)
-+		return ret;
- 
--	m_can_config_endisable(cdev, false);
--
--	/* return false if time out (-ETIMEDOUT), else return true */
--	return !niso_timeout;
-+	return niso == 0;
- }
- 
- static int m_can_dev_setup(struct m_can_classdev *cdev)
- {
- 	struct net_device *dev = cdev->net;
--	int m_can_version, err;
-+	int m_can_version, err, niso;
- 
- 	m_can_version = m_can_check_core_release(cdev);
- 	/* return if unsupported version */
-@@ -1684,9 +1720,11 @@ static int m_can_dev_setup(struct m_can_classdev *cdev)
- 		cdev->can.bittiming_const = &m_can_bittiming_const_31X;
- 		cdev->can.data_bittiming_const = &m_can_data_bittiming_const_31X;
- 
--		cdev->can.ctrlmode_supported |=
--			(m_can_niso_supported(cdev) ?
--			 CAN_CTRLMODE_FD_NON_ISO : 0);
-+		niso = m_can_niso_supported(cdev);
-+		if (niso < 0)
-+			return niso;
-+		if (niso)
-+			cdev->can.ctrlmode_supported |= CAN_CTRLMODE_FD_NON_ISO;
- 		break;
- 	default:
- 		dev_err(cdev->dev, "Unsupported version number: %2d",
-@@ -1694,21 +1732,26 @@ static int m_can_dev_setup(struct m_can_classdev *cdev)
- 		return -EINVAL;
- 	}
- 
--	if (cdev->ops->init)
--		cdev->ops->init(cdev);
--
--	return 0;
-+	/* Forcing standby mode should be redundant, as the chip should be in
-+	 * standby after a reset. Write the INIT bit anyways, should the chip
-+	 * be configured by previous stage.
-+	 */
-+	return m_can_cccr_update_bits(cdev, CCCR_INIT, CCCR_INIT);
- }
- 
- static void m_can_stop(struct net_device *dev)
- {
- 	struct m_can_classdev *cdev = netdev_priv(dev);
-+	int ret;
- 
- 	/* disable all interrupts */
- 	m_can_disable_all_interrupts(cdev);
- 
- 	/* Set init mode to disengage from the network */
--	m_can_config_endisable(cdev, true);
-+	ret = m_can_cccr_update_bits(cdev, CCCR_INIT, CCCR_INIT);
-+	if (ret)
-+		netdev_err(dev, "failed to enter standby mode: %pe\n",
-+			   ERR_PTR(ret));
- 
- 	/* set the state as STOPPED */
- 	cdev->can.state = CAN_STATE_STOPPED;
-diff --git a/drivers/net/can/m_can/tcan4x5x-core.c b/drivers/net/can/m_can/tcan4x5x-core.c
-index a42600dac70d..d723206ac7c9 100644
---- a/drivers/net/can/m_can/tcan4x5x-core.c
-+++ b/drivers/net/can/m_can/tcan4x5x-core.c
-@@ -453,10 +453,17 @@ static int tcan4x5x_can_probe(struct spi_device *spi)
- 		goto out_power;
- 	}
- 
--	ret = tcan4x5x_init(mcan_class);
-+	tcan4x5x_check_wake(priv);
-+
-+	ret = tcan4x5x_write_tcan_reg(mcan_class, TCAN4X5X_INT_EN, 0);
- 	if (ret) {
--		dev_err(&spi->dev, "tcan initialization failed %pe\n",
--			ERR_PTR(ret));
-+		dev_err(&spi->dev, "Disabling interrupts failed %pe\n", ERR_PTR(ret));
-+		goto out_power;
-+	}
-+
-+	ret = tcan4x5x_clear_interrupts(mcan_class);
-+	if (ret) {
-+		dev_err(&spi->dev, "Clearing interrupts failed %pe\n", ERR_PTR(ret));
- 		goto out_power;
- 	}
- 
--- 
-2.44.0
+## Test Fixes (compared to v6.6.32)
 
+## Metric Fixes (compared to v6.6.32)
+
+## Test result summary
+total: 193993, pass: 148173, fail: 25962, skip: 18882, xfail: 976
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 129 total, 129 passed, 0 failed
+* arm64: 38 total, 38 passed, 0 failed
+* i386: 29 total, 29 passed, 0 failed
+* mips: 24 total, 24 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 33 total, 22 passed, 11 failed
+* riscv: 17 total, 17 passed, 0 failed
+* s390: 12 total, 12 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 33 total, 33 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-android
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-drivers-dma-buf
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-ir
+* kselftest-kcmp
+* kselftest-kexec
+* kselftest-kvm
+* kselftest-lib
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-memory-hotplug
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mount
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-forwarding
+* kselftest-net-mptcp
+* kselftest-netfilter
+* kselftest-nsfs
+* kselftest-openat2
+* kselftest-pid_namespace
+* kselftest-pidfd
+* kselftest-proc
+* kselftest-pstore
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-splice
+* kselftest-static_keys
+* kselftest-sync
+* kselftest-sysctl
+* kselftest-tc-testing
+* kselftest-timens
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kselftest-zram
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-smoketest
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
