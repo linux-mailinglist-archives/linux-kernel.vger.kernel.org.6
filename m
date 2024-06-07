@@ -1,121 +1,198 @@
-Return-Path: <linux-kernel+bounces-206268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C91CB9006C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:35:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 544A19006C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDDE01C22173
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:35:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E828C2895CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F1B197544;
-	Fri,  7 Jun 2024 14:35:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00EFD19753E;
+	Fri,  7 Jun 2024 14:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="BBV00V0r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N1RNTIOB"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFB619643F;
-	Fri,  7 Jun 2024 14:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE92D200A3;
+	Fri,  7 Jun 2024 14:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717770915; cv=none; b=Z4fcXb8nDXaAoTVw3nYINDJj9vwKc0pikrna9+I2Py+RNj87mJLAexOncaM7V8DmGfQ+nY+AO6wgyVmaHKULPG/7BquNwQdWHR0Ri/xfVzs0RvWm+9Cvd+443p0JIXGlLTm2hqnSnLIjyXu355QWWpFXPL4pSWwlupIu7Btbbt8=
+	t=1717770873; cv=none; b=Y/15B7/b9CgmNScgLz5li0ZHjhr6+lhTk06L5p1JJWdEkGq5cPA8v3HIQtqiOKVHvbES/h/5xt6iH/Fq1n5FxRhzZtsD57eVJ5T4NMkopdv1fQLt7NhG8Tn18unXE+VjzFjjf9F7vLy6bokwG8LeXHtOxOJ6NYOg/+A0UiF6BIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717770915; c=relaxed/simple;
-	bh=mVgfio4EymRsdXfQ08fuEVop3EuHqiClvYLIu828s4Q=;
+	s=arc-20240116; t=1717770873; c=relaxed/simple;
+	bh=cnnYd5m2ArsCycTJj1DxblykVYo1VC6wdp6i45nmPTk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KLiEmw8JLrWjVDJS0GlGUs+sSEJBBIwxYjqH2bMnfqLGAM42M6W51IIdrU1+IAWcm35Hki+na8und6/VNIopUYthXY95Lee5USUr0qZT6gesxh8cZs4oa0sFOS0vETXaCqiiB0xdgQRCOhzf2qJP59CLJk5YfC1xjTdTSH3eG4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=BBV00V0r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53995C3277B;
-	Fri,  7 Jun 2024 14:35:13 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="BBV00V0r"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1717770911;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ajPZqckOBJFHBstUW7T2O0UQJC/naoL0j9njP215Xzs=;
-	b=BBV00V0rOVi6HrMqRiRVMBCf116AxoPzpLtxDhj5y+tsyMd3Ym3ffI3cnLv8dHVT5N405b
-	VvhpMa4UmoOiBZt/mGdrFWTc2f3MuBriCR9lDODxjJx4qa7Kzoi9sOnhwxM3+615q3OZXt
-	qRoQv2RdtEaMVDJt1qoRdCuTADRmaYM=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 26266bc1 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 7 Jun 2024 14:35:11 +0000 (UTC)
-Date: Fri, 7 Jun 2024 16:35:06 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Jann Horn <jannh@google.com>
-Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-	tglx@linutronix.de, linux-crypto@vger.kernel.org,
-	linux-api@vger.kernel.org, x86@kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Carlos O'Donell <carlos@redhat.com>,
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
-Subject: Re: [PATCH v16 1/5] mm: add VM_DROPPABLE for designating always
- lazily freeable mappings
-Message-ID: <ZmMamtll1Yq1yfxc@zx2c4.com>
-References: <20240528122352.2485958-1-Jason@zx2c4.com>
- <20240528122352.2485958-2-Jason@zx2c4.com>
- <CAG48ez0P3EDXC0uLLPjSjx3i6qB3fcdZbL2kYyuK6fZ_nJeN5w@mail.gmail.com>
- <Zlm-26QuqOSpXQg7@zx2c4.com>
- <CAG48ez3VhWpJnzHHn4NAJdrsd1Ts9hs0zvHa6Pqwatu4wV63Kw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QaWab3DnjVvzilmbDd0BDe4j8rdy+EhD3nzXsQEdngzaJuUMSFPoQVzJdENzBW7Hosa46J8t+uR6m5FUlmFEcojf+p2TZZjea6rTB5a6zTxLXxaogwLbFObU8arj4VJcylqNsmx29kdDt6cm3pyZyRcPbxp8rQXH37+77YOUkqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N1RNTIOB; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f6342c5fa8so20599035ad.1;
+        Fri, 07 Jun 2024 07:34:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717770871; x=1718375671; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6FwXL8/J+tP0wrT7WvCf0jeJwdoVKz2SX/NBpyyFkrY=;
+        b=N1RNTIOB7vBLpqW8dCMkYba+abB8uyQbUTWJbZ2wOuqrG8/rUe4ONRuUns21WGV/iA
+         SMrawYVibVWj6EPSKJTAid5a0BwUNor2poJgmK5kK1k0mBmjG0mre07irr5pxo5BskLM
+         rAzjpYZ5Y3mFe58UFXvhuFSsiF6LnK+Ihxwl/oVdbnS584LuFuG6P9pu+m8Z3V1PwC3+
+         jcn4XuhMVxH5sPtyKLJy6UgQdrxidNbKzrbXELI1BYoVtVD7tuIOqHszHE2C3SxpHWeG
+         V42FK73kdN4r5BJe9wi7adSqSbFMQa1uflrD6a+2hkAktVXKcrIjTnVyC/O0UUbK7k/Y
+         xIFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717770871; x=1718375671;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6FwXL8/J+tP0wrT7WvCf0jeJwdoVKz2SX/NBpyyFkrY=;
+        b=Zqi1J3aO3I3taqfOAU+cbqV9Mi4kKxyLw9jsJ2mvKRbKdM7YbFYkpelN0vfDbhYp6Y
+         Yn4QyA9LRza84rCG7TPXACQvI1ToXPW6V8NeZg4hlH93AoQynZN4W1yiuuOJ9qA7cjYw
+         7pCT5oTzLcykmT0o/tqCZa7PPOQZhejv7hSeSoyA0KZnLkiRJoPS/HUGYvnzcE3OJiox
+         3e6CUkRs0tPz20H/p05/t9SFaf8WycpU1a0ZyUh1vt/oYXIMd2HicO7EgN8W/27p/Bkj
+         ravztiltL94QML8RfoiXFdQvhcfsoutrONblDhkBLvvJ4C0u3PtndmQxBEeWcjGNhjwD
+         d1Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWWEGSyexxqbnNuJtBmNquT+wKKXR+iGobNaqyQ+DKFuSmeAl1XwPoLwQ05e8sBr0f72A3AVJ4JHl6988tqXCAENcee/tjrl2Mnr/m7a1u7eBkhS+39oDHVutD/jLffSWptZsJ6LELYcGgHaeru4T757SKT9rfTS5wcpOWnrqAuwHaXPUg9cLxzFKBzV1MlrpnAkxNmycVvE+B4Mb8fQ==
+X-Gm-Message-State: AOJu0Yzq4T4XoOWLp+2/Ayyy68e/LEgARWNI5UtamTngsbYNdAttG5ub
+	k+G0PT4WJbkbYoeXv9OkrUGlH2wqSKBRnk7sq9z6jXmxC/RJ8hrE
+X-Google-Smtp-Source: AGHT+IFBuFNnNoOg5VXkoWL5DDNAFWfRM3PNY/nvnUz6ORM/wkDrb0Pq2N4YdoRWhkN4w/Iufs79Qw==
+X-Received: by 2002:a17:903:32cc:b0:1f3:50e7:36db with SMTP id d9443c01a7336-1f6d039d409mr29686475ad.48.1717770870875;
+        Fri, 07 Jun 2024 07:34:30 -0700 (PDT)
+Received: from localhost ([2804:30c:167a:4100:8407:a7e5:9b87:8081])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd75f466sm35044735ad.57.2024.06.07.07.34.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 07:34:30 -0700 (PDT)
+Date: Fri, 7 Jun 2024 11:35:44 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
+	lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] dt-bindings: iio: adc: Add AD4000
+Message-ID: <ZmMawAukzpOcdJqy@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1717539384.git.marcelo.schmitt@analog.com>
+ <b8a211e09c17f5a9f0a6aa6e11d6375ff398c918.1717539384.git.marcelo.schmitt@analog.com>
+ <20240605-tables-pectin-66d4d4dd12b5@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez3VhWpJnzHHn4NAJdrsd1Ts9hs0zvHa6Pqwatu4wV63Kw@mail.gmail.com>
+In-Reply-To: <20240605-tables-pectin-66d4d4dd12b5@spud>
 
-On Fri, May 31, 2024 at 03:00:26PM +0200, Jann Horn wrote:
-> On Fri, May 31, 2024 at 2:13 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> > On Fri, May 31, 2024 at 12:48:58PM +0200, Jann Horn wrote:
-> > > On Tue, May 28, 2024 at 2:24 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> > > > c) If there's not enough memory to service a page fault, it's not fatal.
-> > > [...]
-> > > > @@ -5689,6 +5689,10 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
-> > > >
-> > > >         lru_gen_exit_fault();
-> > > >
-> > > > +       /* If the mapping is droppable, then errors due to OOM aren't fatal. */
-> > > > +       if (vma->vm_flags & VM_DROPPABLE)
-> > > > +               ret &= ~VM_FAULT_OOM;
-> > >
-> > > Can you remind me how this is supposed to work? If we get an OOM
-> > > error, and the error is not fatal, does that mean we'll just keep
-> > > hitting the same fault handler over and over again (until we happen to
-> > > have memory available again I guess)?
-> >
-> > Right, it'll just keep retrying. I agree this isn't great, which is why
-> > in the 2023 patchset, I had additional code to simply skip the faulting
-> > instruction, and then the userspace code would notice the inconsistency
-> > and fallback to the syscall. This worked pretty well. But it meant
-> > decoding the instruction and in general skipping instructions is weird,
-> > and that made this patchset very very contentious. Since the skipping
-> > behavior isn't actually required by the /security goals/ of this, I
-> > figured I'd just drop that. And maybe we can all revisit it together
-> > sometime down the line. But for now I'm hoping for something a little
-> > easier to swallow.
+On 06/05, Conor Dooley wrote:
+> On Tue, Jun 04, 2024 at 07:43:53PM -0300, Marcelo Schmitt wrote:
+> > Add device tree documentation for AD4000 series of ADC devices.
+> > 
+> > Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ad4000-4004-4008.pdf
+> > Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ad4001-4005.pdf
+> > Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ad4002-4006-4010.pdf
+> > Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ad4003-4007-4011.pdf
+> > Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ad4020-4021-4022.pdf
+> > Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4001.pdf
+> > Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4003.pdf
+> > 
+> > Suggested-by: David Lechner <dlechner@baylibre.com>
 > 
-> In that case, since we need to be able to populate this memory to make
-> forward progress, would it make sense to remove the parts of the patch
-> that treat the allocation as if it was allowed to silently fail (the
-> "__GFP_NOWARN | __GFP_NORETRY" and the "ret &= ~VM_FAULT_OOM")? I
-> think that would also simplify this a bit by making this type of
-> memory a little less special.
+> A suggested-by on a binding? That's unusual...
+> 
+> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> > ---
+> > Even though didn't pick all suggestions to the dt-bindings, I did pick most them
+> > so kept David's Suggested-by tag.
+> > 
+> >  .../bindings/iio/adc/adi,ad4000.yaml          | 207 ++++++++++++++++++
+> >  MAINTAINERS                                   |   7 +
+> >  2 files changed, 214 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+> > new file mode 100644
+> > index 000000000000..7470d386906b
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+> > @@ -0,0 +1,207 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/iio/adc/adi,ad4000.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Analog Devices AD4000 and similar Analog to Digital Converters
+> > +
+> > +maintainers:
+> > +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
+> > +
+> > +description: |
+> > +  Analog Devices AD4000 family of Analog to Digital Converters with SPI support.
+> > +  Specifications can be found at:
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad4000-4004-4008.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad4001-4005.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad4002-4006-4010.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad4003-4007-4011.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad4020-4021-4022.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4001.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4003.pdf
+> > +
+> > +$ref: /schemas/spi/spi-peripheral-props.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - adi,ad4000
+> > +      - adi,ad4001
+> > +      - adi,ad4002
+> > +      - adi,ad4003
+> > +      - adi,ad4004
+> > +      - adi,ad4005
+> > +      - adi,ad4006
+> > +      - adi,ad4007
+> > +      - adi,ad4008
+> > +      - adi,ad4010
+> > +      - adi,ad4011
+> > +      - adi,ad4020
+> > +      - adi,ad4021
+> > +      - adi,ad4022
+> > +      - adi,adaq4001
+> > +      - adi,adaq4003
+> 
+> Are all these actually incompatible? I'd like a note in the commit
+> message as to why that's the case. A quick look at the driver showed
+> that the differences in the driver between the ad402{0,1,2} are limited
+> to the "dev_name". Same went for some other devices, like the
+> ad40{02,06,10}.
 
-The whole point, though, is that it needs to not fail or warn. It's
-memory that can be dropped/zeroed at any moment, and the code is
-deliberately robust to that.
+Yes, that's correct. Some chips only vary by name and max sample rate which
+boils down to only having a different dev_name in the driver.
+Can those have grouped compatible strings?
+dt_binding_check fails if curly brackets are used.
+properties:
+  compatible:
+    enum:
+      - adi,ad402{0,1,2}
 
-Jason
+The groups of similar chips are:
+AD4020/AD4021/AD4022
+AD4003/AD4007/AD4011
+AD4002/AD4006/AD4010
+AD4001/AD4005
+AD4000/AD4004/AD4008
+
+Thanks,
+Marcelo
+
+> 
+> Thanks,
+> Conor.
+
+
 
