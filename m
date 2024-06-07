@@ -1,110 +1,125 @@
-Return-Path: <linux-kernel+bounces-206792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C1D3900DCB
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:00:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B42D5900DD6
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2326286A1B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:00:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AC46283B70
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:01:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1885544C8C;
-	Fri,  7 Jun 2024 21:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716DC154BFC;
+	Fri,  7 Jun 2024 22:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJT8mVM7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="b/Gbsc5z"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556511553B5;
-	Fri,  7 Jun 2024 21:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7530412B93
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 22:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717797598; cv=none; b=rhMV5Jo9pP9lC5Yc3FJyhAh1KBgLrmJod+6ZewHLe0Zx2YvkS2p9Ag2TQ4CNGalIQzsbyEeaiJ/2PzkBMbGhtxDZxaMX3OYYlp3iXQeScFl3Nm1lA1XZFQV1PPU1tEtZVw2AcYlhlxoIzhn3onCAw9CQywwyzSQns9RWYQ3O78A=
+	t=1717797707; cv=none; b=iKbujcvd9zACMduiCoIbFTvn/hLW1BGl1Cow8RJaF2VDUr6rN0ax60DQcmjBkg9bejxTATIcBR+VGA1j4dAKy08yPAQWIVyZXGoJFz2SPMcnXDvdQbnpE7ZVCPFt8p9jtoEvDsUHURv7zv1e/TqWWxa31oWG1xPQm5g/aN81c14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717797598; c=relaxed/simple;
-	bh=y150U5xq5qY1Ynt2HAmIdz9hMVvuRo0oKK6kNH1FLjg=;
+	s=arc-20240116; t=1717797707; c=relaxed/simple;
+	bh=HgG8kVkEglgLX7MJcyxmuum1YvnKnUkJuJ2Cm/ZTSnw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PrCBbQ7dN6Mo515j4I8NJuGwkevVK9evmVK5dEaWPJipC9c+vCDfD7SON97ogjXBQNevg0HpF+HtSWgPDz4zrS2T42dRe9mLmZCvHUXDObiIi3R8+lz5kA5/a6A4d22xEFCmfzN+mknDvcMUQQnl7KLKD2XN56oTSzF3kteUPnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJT8mVM7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D350C32782;
-	Fri,  7 Jun 2024 21:59:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717797598;
-	bh=y150U5xq5qY1Ynt2HAmIdz9hMVvuRo0oKK6kNH1FLjg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JJT8mVM71YBv1FMI9RzlTppOqjMlJND79eJH8cwlad6KFykXM53wN05xBPj1mli8F
-	 u3d3Ps2qyZDKDaj7uVHV84F+6OFx7d0L3Ozz0ZE4xwaIH/KYVefkKGJl41RvaSffD2
-	 XkiYcix09suVmd6Jx//BjrT26l6eFVp9ybyxzWmC3Tw1XS5zOioGI6sy1daRgZkUyx
-	 whhj2bWZLMQaXpvRcNqpRPV8JA/gRm+ECx1P98aMLxNUH8A7kblS1Q2MGLJrZEx/pe
-	 Ytz3c5oiKl74UpDhW1T4h6CgECPecukhdJjvqioxVnBU1QZNlnmM8/DnPI03/UBi+3
-	 P/zsBdr3ODQYg==
-Date: Fri, 7 Jun 2024 22:59:54 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-sound@vger.kernel.org,
-	alsa-devel@alsa-project.org, tiwai@suse.de, vkoul@kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	=?iso-8859-1?Q?P=E9ter?= Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Len Brown <lenb@kernel.org>,
-	"open list:ACPI" <linux-acpi@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] ACPI: utils: introduce acpi_get_local_u64_address()
-Message-ID: <ZmOC2rDhOmxBQ9VI@finisterre.sirena.org.uk>
-References: <20240528192936.16180-1-pierre-louis.bossart@linux.intel.com>
- <20240528192936.16180-2-pierre-louis.bossart@linux.intel.com>
- <CAJZ5v0g8aW5FBbceYJDvDrMHRxT6i71O_LTWKALb=qr+m1BJ7w@mail.gmail.com>
- <998d53cf-c22b-4706-93af-ab38802dc531@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qnOYlBPvk8TSKTMF0yo6ayeqEsKtx55agWdpro4iNy6IKbzlaMq/1X5CYUO17fsTDSspB9Gx7SS/4B0KUV978eyHa79sH4IdVxtEjiNKk4ISPmcg8fMvAB3RHH2mEp3ssFmP6lwMa9PKcaHrY7ATzoDmvbFbg3ttM9xzDrihLnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=b/Gbsc5z; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-702492172e3so2269546b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 15:01:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717797706; x=1718402506; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=75kpnasqev5JD+W3tO0sE6ARWTXSJTS2/9u8O9IAZK8=;
+        b=b/Gbsc5zfMFzMBfTCMbCRQY26niSCIOj2Y3wz0DUZBJvIG2tAH0N9tvqOS33qrrjrT
+         jJFuEpXw8/Ljm4mUOeDaZIBgiwhrS3ga1cr9CPLBsPPfKzwJrN3z+ZMen7BiizOVbtMc
+         mkxB+ufcRHM590aPFvySMvPS7CMgh2fuoOhUfZhZg/V6O/F/PObRzCe/pw9Gzd4+FO6m
+         GA7JYwHUG4FZHyS41DOdzLkR0Ow+BQigQmdn+CcUKLQNgaMWavyifcLRAys2ZJooFx5q
+         Obv1dygt+/Zenv+GerMHP2rS2CP6HtBSpQsVAiXySb9AVu+UcX9Qh1KWJK4oBkWLHzxF
+         I8uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717797706; x=1718402506;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=75kpnasqev5JD+W3tO0sE6ARWTXSJTS2/9u8O9IAZK8=;
+        b=TOi9jUhY3vXhaPKxlQf4BpOoOjjslRM9TQxLvUUnrunGJLS/O3Jcq54ntSHvfzDwSb
+         yQT1D/RLAC3HbVfZM4lf63J9ghcnO0hxTF/e5Vu14iNLU8Dc/L1lY6rB+M8o0o9i3Olz
+         czG9vfeEozS8bq0ABBVzTpZthPpjqRa1fOc/w44jqt53Oa7i+IcjH+O2sKje3/MUjrlt
+         1gdbMNy2zyKNp9rnUH13ttRTm96WFAmizpEy3qO+E1MGvVfBmwokN10++cH21J+3FgTw
+         7AXIpsAKdCCGPBGfC0r8YEpf5ZfSTInGYGI7F5bHjrMDs9lcY3J683uUCdTTNCIY7kNr
+         CWMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV8bajKsHcK2h/mjE8ttr717Z5+c/YfWZChBwKN7IVuNbZWkAAPeqFXLwx1Bb6/oiNigksJWSngcJOFLIi5vcVLJSM2vuIClAMiyzNm
+X-Gm-Message-State: AOJu0YxgHh/RGzmI+Xk64y841BpF+4E7OGUHzxB9V87tkAZvP340KBno
+	ahccSvbRtPobueeh1ckQM6mBNaBu6I6s2XAtbBI43ngfdrUdMbmc/BOtEZXRKp7mehoIqD1bxwC
+	l
+X-Google-Smtp-Source: AGHT+IFChtu4tG/SxDzBPzFrzoSYJnwGMc+HGLFVJlSWYwIe/rm/MSoAbdLGq//B/YyTZI5ubiDiXA==
+X-Received: by 2002:a05:6a00:4649:b0:702:6f45:effc with SMTP id d2e1a72fcca58-7040c690d1emr4038399b3a.20.1717797705590;
+        Fri, 07 Jun 2024 15:01:45 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7041fef8548sm394640b3a.113.2024.06.07.15.01.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 15:01:45 -0700 (PDT)
+Date: Fri, 7 Jun 2024 15:01:43 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: linux-riscv@lists.infradead.org, Palmer Dabbelt <palmer@dabbelt.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Conor Dooley <conor@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] riscv: Per-thread envcfg CSR support
+Message-ID: <ZmODR+EMn5zW2Iu1@debug.ba.rivosinc.com>
+References: <20240605205658.184399-1-samuel.holland@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LB93vw5p49CVxXfi"
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <998d53cf-c22b-4706-93af-ab38802dc531@linux.intel.com>
-X-Cookie: Your love life will be... interesting.
+In-Reply-To: <20240605205658.184399-1-samuel.holland@sifive.com>
 
+Hi Samuel,
 
---LB93vw5p49CVxXfi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks for working on these.
+Patches looks good to me. I've given some suggestion for patch organization
+and squashing. You can take it or leave it.
 
-On Fri, Jun 07, 2024 at 10:33:00PM +0200, Pierre-Louis Bossart wrote:
-> On 6/7/24 20:51, Rafael J. Wysocki wrote:
+Other than that.
 
-> > Do you want me to apply this or do you want me to route it along with
-> > the rest of the series?
+Reviewed-By: Deepak Gupta <debug@rivosinc.com>
 
-> > In the latter case feel free to add
-
-> > Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-> Thanks Rafael. I think it's easier if Mark Brown takes the series in
-> ASoC, I have additional ASoC patches that use the u64 helper.
-
-> Mark?
-
-Sure, no problem taking it via ASoC.
-
---LB93vw5p49CVxXfi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZjgtkACgkQJNaLcl1U
-h9CzQgf/bzAA0c9gFMT6UUp49/iI3Ki58T1R6v9d85wC7P6o2x7ZxcqY+VTfrGnk
-DPCDNhIxHvWMXWlRrl9J1UVSQUt5FatD8+HyD5wRMUsOIbt9Llyow4Inds6vCjhT
-eerz25yq4Dp3eNU3xGZLnatDScFONvNVQbKZ6lSkpSojlRIJMipglXmSn9yVAwk8
-/p6kY3CbVA/sa98u6DqQQxqH05GkADSTNOSPUXzsXB65yl8wy8wn3nTEAH0thiZc
-Fh8ffR/J/k7jKok+h02cIxbTOd6WZ1S7qK783GKhAYrDynLW92KlrajAsFqXxa8B
-lihr6cHLXz8kOSWrwD+x6Ff4za8GRQ==
-=UueQ
------END PGP SIGNATURE-----
-
---LB93vw5p49CVxXfi--
+On Wed, Jun 05, 2024 at 01:56:44PM -0700, Samuel Holland wrote:
+>This series (or equivalent) is a prerequisite for both user-mode pointer
+>masking and CFI support, as those are per-thread features are controlled
+>by fields in the envcfg CSR. These patches are based on v1 of the
+>pointer masking series[1], with significant input from both Deepak and
+>Andrew. By sending this as a separate series, hopefully we can converge
+>on a single implementation of this functionality.
+>
+>[1]: https://lore.kernel.org/linux-riscv/20240319215915.832127-6-samuel.holland@sifive.com/
+>
+>
+>Samuel Holland (3):
+>  riscv: Enable cbo.zero only when all harts support Zicboz
+>  riscv: Add support for per-thread envcfg CSR values
+>  riscv: Call riscv_user_isa_enable() only on the boot hart
+>
+> arch/riscv/include/asm/cpufeature.h |  2 +-
+> arch/riscv/include/asm/processor.h  |  1 +
+> arch/riscv/include/asm/switch_to.h  |  8 ++++++++
+> arch/riscv/kernel/cpufeature.c      | 13 +++++++++----
+> arch/riscv/kernel/smpboot.c         |  2 --
+> arch/riscv/kernel/suspend.c         |  4 ++--
+> 6 files changed, 21 insertions(+), 9 deletions(-)
+>
+>-- 
+>2.44.1
+>
 
