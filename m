@@ -1,156 +1,119 @@
-Return-Path: <linux-kernel+bounces-206108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 134EE900458
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:12:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB2EB90046D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC2A2287E7B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:12:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D7FC1F24D08
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575DE1940B5;
-	Fri,  7 Jun 2024 13:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E523C194157;
+	Fri,  7 Jun 2024 13:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQoZzbT0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PgHxPZt2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9652513F42E;
-	Fri,  7 Jun 2024 13:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674BD1940AA;
+	Fri,  7 Jun 2024 13:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717765945; cv=none; b=GG8YcddI8ptIAvZDUnel2pfMkfbST/WAMoI6+K+hn9eUWBrHoBEG4LXORpPEeFq0FEPpRUErR5rs8DWcQNjouzGQefxjYIG+MZYhPHfpyIbnwNxrL1030w+wmkiuvmndZkryyq+yT1pHd2o8ymPQdrCh4uM/mQGWu3mwawe0e5k=
+	t=1717766081; cv=none; b=JJIJpdZSYsM1oO5kLuHDP0sa0ybjCiPnMRqTSS2LhEKssKb2yffv8zno/sRaRROz7AV2mDuQKtlTEMqDbZUspCR+oVKnntxZX+09lTmNPoH+P+ILV2GpxXEgIOUQth8SuR6kvxVImMY70nNE1y277BQtSwIdnLYkYs2svn/kNDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717765945; c=relaxed/simple;
-	bh=NLJDJqeei4H3x1qQRMaUa1qgNu65ZOEg2TMUdlzO8+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bF7ka6QVwY8JeesbAbNGuM2wXY2rkHGCMK/I8gn2KByRq38Nf80UdeBp14K8W3Ba9qqfprERjFLFM+2Y2F+xgVRQdh08hGOM+uPEUGjyJXHs5iX38wo1dJUnsg3Ng0KFC6g3dzoCuKWpIMDZBvBkCa8HKhUWm58R7b2AjSnTVjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQoZzbT0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A5F6C2BBFC;
-	Fri,  7 Jun 2024 13:12:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717765945;
-	bh=NLJDJqeei4H3x1qQRMaUa1qgNu65ZOEg2TMUdlzO8+0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kQoZzbT0Pz9KM8oFv+st+iDpHTfHJPIfc7aOYOq0PlWV0opXrNlUv2gCkKq+Y3qrA
-	 O4+nMTkfFNea6bQRRKGlI9777nQdXUekBp7MNsR49XJ7RIkdPPUJXqrUygm7gMINMm
-	 0yEguDK6KdbiclzTeSszYqi4eVcyP7lFc6hNVPkbj+Ov9QrohabLlXA/z5lW2n7XGD
-	 zAbv205mlz03weHF4xODVvkbKjpqD0AJmaz82lPOQ/Vi3IxgpWKpuht/UWit2RFntJ
-	 IqNzZb/lh5qPb1o/BDt2TTIyhI+Lar2X7ILORXDbjo7eh1F1VISCOottLrSf6fT43N
-	 d6wQZUky5byPA==
-Date: Fri, 7 Jun 2024 14:12:21 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dev Jain <dev.jain@arm.com>
-Cc: shuah@kernel.org, oleg@redhat.com, stsp2@yandex.ru, mingo@kernel.org,
-	tglx@linutronix.de, mark.rutland@arm.com, ryan.roberts@arm.com,
-	suzuki.poulose@arm.com, Anshuman.Khandual@arm.com,
-	DeepakKumar.Mishra@arm.com, AneeshKumar.KizhakeVeetil@arm.com,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] selftests: Add a test mangling with uc_sigmask
-Message-ID: <ZmMHNZcYfNMW1Ft7@finisterre.sirena.org.uk>
-References: <20240607122319.768640-1-dev.jain@arm.com>
- <20240607122319.768640-3-dev.jain@arm.com>
+	s=arc-20240116; t=1717766081; c=relaxed/simple;
+	bh=ABua8CX7aHFShIRy1tF0NN3EsSEVeFn4ti8y8bQ86LI=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=DT472yQ/NxTuez/fguHtBt/JkkLBlFKD1kDXap+6XZLRBdLgfqI3ppCdoB5ocsKtWQ4xKtIOXFYYHo3GnZ9vEbJ2j+M6HEiq+HKtSHCrrsIaHqxyFLdGxWqChWGo7sCCpoS/sqZzuCodmYCPeiENJFCyolMAGDiqZCqWl4KHAuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PgHxPZt2; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717766080; x=1749302080;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=ABua8CX7aHFShIRy1tF0NN3EsSEVeFn4ti8y8bQ86LI=;
+  b=PgHxPZt22JXZugfVwlbzaIYTId4dCKy3xecpLaqRw5fiY8o3nYzjHu9c
+   rwndPRfsuk2DZ6RlH179VPouCOHPe77rm7tBpoNEAc7D1NWD5b6eSE5Sz
+   jIRigo7OV/yA1gHs4V5j6GvwP3vxsz8u6ztve/1IZ9+NeWd4vd6CP9Iao
+   BZqDUw8ULjEm0rfTdzgeZsSk3v2j9xAisET8jDYW1urkjxuCBGqtu08zV
+   7+J3Zhqr2dPhgrZJkTsqOs83uiTmsZD3f/vQbYs9+g5DIRIVE2jW7Mxs+
+   +36KI7w6jPvMGl68FK0DaP1SqlKeBs5FE4VEUKX1Q453qPo3FgsnC2MJO
+   Q==;
+X-CSE-ConnectionGUID: uFKubQRRSYW8kvT8L38SLQ==
+X-CSE-MsgGUID: c5hfHB+ST1WXu42ZT1Lleg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="14439371"
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="14439371"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 06:14:39 -0700
+X-CSE-ConnectionGUID: bZNr/o6LQJeUN3T2eDzpfA==
+X-CSE-MsgGUID: i+N3Z6ggQ2+Wz4+Q7tsZkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
+   d="scan'208";a="38440144"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.184])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 06:14:36 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 7 Jun 2024 16:14:33 +0300 (EEST)
+To: "David E. Box" <david.e.box@linux.intel.com>
+cc: linux-doc@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, 
+    LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH V3 1/3] platform/x86/intel/sdsi: Add ioctl SPDM
+ transport
+In-Reply-To: <20240606011617.557264-1-david.e.box@linux.intel.com>
+Message-ID: <b32cd809-7aed-62ed-1b6e-550221a3acbb@linux.intel.com>
+References: <20240606011617.557264-1-david.e.box@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cF6vW8T0ysx4GnzU"
-Content-Disposition: inline
-In-Reply-To: <20240607122319.768640-3-dev.jain@arm.com>
-X-Cookie: Your love life will be... interesting.
+Content-Type: text/plain; charset=US-ASCII
 
+On Wed, 5 Jun 2024, David E. Box wrote:
 
---cF6vW8T0ysx4GnzU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Intel On Demand adds attestation and firmware measurement retrieval
+> services through use of the protocols defined the Security Protocols and
+> Data Measurement (SPDM) specification. SPDM messages exchanges are used to
+> authenticate On Demand hardware and to retrieve signed measurements of the
+> NVRAM state used to track feature provisioning and the NVRAM state used for
+> metering services. These allow software to verify the authenticity of the
+> On Demand hardware as well as the integrity of the reported silicon
+> configuration.
+> 
+> Add an ioctl interface for sending SPDM messages through the On Demand
+> mailbox. Provides commands to get a list of SPDM enabled devices, get the
+> message size limits for SPDM Requesters and Responders, and perform an SPDM
+> message exchange.
+> 
+> Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+> Link: https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.0.1.pdf [1]
+> ---
 
-On Fri, Jun 07, 2024 at 05:53:19PM +0530, Dev Jain wrote:
-> This test asserts the relation between blocked signal, delivered signal,
-> and ucontext. The ucontext is mangled with, by adding a signal mask to
-> it; on return from the handler, the thread must block the corresponding
-> signal.
-
-> @@ -1,2 +1,3 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  sigaltstack
-> +mangle_uc_sigmask
-
-Please keep these build files sorted alphabetically, this reduces
-spurioius conflicts between serieses.
-
-> + * Author: Dev Jain <dev.jain@arm.com>
-> + *
-> + * Test describing a clear distinction between signal states - delivered and
-> + * blocked, and their relation with ucontext.
-
-This would be clearer if it said more positiviely what the relationship
-between these things is actually expected to be and how they're tested.
-Right now it's a bit hard to tell what the test is actually verifying.
-
-> +void handler_verify_ucontext(int signo, siginfo_t *info, void *uc)
+> +static int sdsi_spdm_do_command(struct sdsi_priv *priv,
+> +				struct sdsi_spdm_command __user *argp)
 > +{
-> +	int ret;
+> +	u32 req_size, rsp_size;
 > +
-> +	/* Kernel dumps ucontext with USR2 blocked */
-> +	ret = sigismember(&(((ucontext_t *)uc)->uc_sigmask), SIGUSR2);
-> +	ksft_test_result(ret == 1, "USR2 in ucontext\n");
-
-"USR2 blocked in ucontext".
-
+> +	if (get_user(req_size, &argp->size))
+> +		return -EFAULT;
 > +
-> +	raise(SIGUSR2);
-> +}
+> +	if (req_size < 4 || req_size > sizeof(struct sdsi_spdm_message))
 
-A comment explaining that we're verifying that the signal is blocked
-might be good (I think that's what this is doing?).  We're also not
-checking the return value of raise() anywhere in the program, this would
-be a useful diagnostic.
+Hi David,
 
-> +	/* SEGV blocked during handler execution, delivered on return */
-> +	raise(SIGPIPE);
-> +	ksft_print_msg("SEGV bypassed successfully\n");
+Is that 4 actually SPDM_HEADER_SIZE?
 
-SIGPIPE or SIGEGV?
+If my guess is correct, no need to send an updated version, I'll just fix 
+it while applying.
 
-> +	/* SIGPIPE has been blocked in sa_mask, but ucontext is invariant */
-> +	ret = sigismember(&(((ucontext_t *)uc)->uc_sigmask), SIGPIPE);
-> +	ksft_test_result(ret == 0, "USR1 not in ucontext\n");
 
-The relationship between the comment and test are not clear here, nor is
-that between the sigismembber() call and the test name we print?
+-- 
+ i.
 
-> +	/* SIGUSR1 has been blocked, but ucontext is invariant */
-> +	ret = sigismember(&(((ucontext_t *)uc)->uc_sigmask), SIGUSR1);
-> +	ksft_test_result(ret == 0, "SEGV not in ucontext\n");
-
-Similarly here.
-
-> +	/* add SEGV to blocked mask */
-> +	if (sigemptyset(&act.sa_mask) || sigaddset(&act.sa_mask, SIGPIPE)
-> +	    || (sigismember(&act.sa_mask, SIGPIPE) != 1))
-> +		ksft_exit_fail_msg("Cannot add SEGV to blocked mask\n");
-
-SIGPIPE vs SIGSEGV.
-
---cF6vW8T0ysx4GnzU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZjBzIACgkQJNaLcl1U
-h9BGwAf+NAq/bq240V4/kOR1sft3cqiATc7NHxEpjjk0MCkAsSzcxKDaMbPujgVx
-i8iNT1QYF43Rip16x/x0NKxttjm1X/EWoytGmOjXHSN8J4xl68LZX97wCfqwlTUB
-gW+L4K8T8i68m/bAnr31VkTAP/tBoX60r2KsuV8YgPA1+yHsUkA75KS9GmDfT5Bi
-R/Rwe7gVzCezAQF7A1pX5O3RoFq4dBpDxiAc/rSuTR9pqlWdn4VY1VCdWGRZse5B
-YAXYthSgs7DnYHHLT8uyLq/qtYLrsWZJlWWtvTGgegM3aQoGklL/0XmiX2OfVNJG
-DxntSU9FL/FD5tKdhHGqL13yXE3GCQ==
-=ZvFX
------END PGP SIGNATURE-----
-
---cF6vW8T0ysx4GnzU--
 
