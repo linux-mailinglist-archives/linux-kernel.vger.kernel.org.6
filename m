@@ -1,111 +1,119 @@
-Return-Path: <linux-kernel+bounces-205416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D926D8FFB3D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:11:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7F448FFB42
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:13:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D92A01C255F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 05:11:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 117AB1C2587F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 05:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D16E1BC4E;
-	Fri,  7 Jun 2024 05:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE1E14AA0;
+	Fri,  7 Jun 2024 05:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="ORj/CHAN"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IlY3FdFt"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D8D2572
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 05:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC1F33EE;
+	Fri,  7 Jun 2024 05:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717737083; cv=none; b=W5JWKb8jNjw+YsosS6CqaIbQwTs6/QvUXErOcp6FNUabnh0oc/qIR6YsO2SHKoj5ZhUD5WT+ASDcYGs71II/LyEs9DWhfk2fen/uXAxSldJWsVU/bEe8bSGV4Hlrz+xvH7hO7EUDaz1hrADRTJeVAfH7hJb18O2q29V4RGhcThE=
+	t=1717737178; cv=none; b=NpoQXKAj64IsxIGrT/6mnwi1DhlsxfO4UsrjejOxJpzzJyc0D5Tilu4w0QwlSMYfRhKPAkKBaF7+QTETxBU8XBR9LFXsQsk5mUWZihrDOSBGX9UQJ9NxuNp6/8Zo1sE9UobTOyrgrYXVV+yqt8DOVyyOM2+k8VEa9onE24TaWIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717737083; c=relaxed/simple;
-	bh=nuB7asa+gkGnMxAOLDQ2n99jDEu/mUcO2pRRdiaoPXk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cWTgWflLNoD5l5+GCqcPMBMRMJ+ldcauCSGCIXSe1I3fv1WWWo9m24qirXFKSFcceG47CCHCa3aEyC5C/BTOkDj1RPT17ZLOvu6WAGf2tFWNdFzQ7C1TEURIgHMIIwpAFfRWdOUaPz1aWvPBAObiOQhRoEMFOwUnKRJj2ZrpyFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=ORj/CHAN; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-Received: from pecola.lan (unknown [159.196.93.152])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 207D620075;
-	Fri,  7 Jun 2024 13:11:17 +0800 (AWST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1717737078;
-	bh=pmFxTJwyxuLxhl3FWXaWxR15Gy9I8J8ELzbL7Dosd7s=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=ORj/CHANTj6LVHMbmVPFkoCJDPADQuuzkKTuy8WDc1sLBYFZczYrGNk5zMzvjUDfR
-	 hEzzKBO6DGbt/bFXcMbu+kjeskzDwdttS4ctRizjrfD6/6v0HAqEB1H5RNEUdARtf8
-	 LYQC8J3xUrHYH+gPswyYomkSPkvC4odehsENPRKQytpJ6MpCm34g7P/7xAYwHya4Cc
-	 3LOkELAPzAdHgi8nyBdhM1Olswg2c15HMzV2sg4B4rVG1mSr8tdhu0CemB6uDvqsw3
-	 vrk5YG9VHh9CVEtmZIGSK3SdjkkN8BEnicG2Y312tlmylJBUaYgm8ihhERFgu0VtvL
-	 tQ4vvEWi4PYeg==
-Message-ID: <3decb5293cb8fb2e8725600a8c5c930c32178602.camel@codeconstruct.com.au>
-Subject: Re: [PATCH] i3c: dw: Fix IBI intr signal programming
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: "Aniket ." <aniketmaurya@google.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Joel Stanley
-	 <joel@jms.id.au>, Billy Tsai <billy_tsai@aspeedtech.com>, 
-	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Fri, 07 Jun 2024 13:11:16 +0800
-In-Reply-To: <CAMmmMt3u=DB5onXdayMN5ZHvCmdnam4wOo0hKizve4K0LnZLZQ@mail.gmail.com>
-References: <20240606124816.723630-1-aniketmaurya@google.com>
-	 <3c6c319f3aaa60428fd28f4d95c71dc9a8150081.camel@codeconstruct.com.au>
-	 <CAMmmMt3u=DB5onXdayMN5ZHvCmdnam4wOo0hKizve4K0LnZLZQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1717737178; c=relaxed/simple;
+	bh=RkotelhWjTD2k2lsgxVcHTqdGY836x20N5IvObQvdEI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hpfLcefD4q75HBYtjky2Jw26/LAHz/hlAsqhz2KMxs5BlzfXaygQSvqkfW585hIAVIopVSHw8n5SQdT3ugJjJaf0cuXs60bwrdED55iBWs/3q0w7s6vt0GSYiNrKPyJi2V0zvddO6zgnxhnWo0DyKYzD2E73DgsIaKC53vzrV2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IlY3FdFt; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 456MDmV4010577;
+	Fri, 7 Jun 2024 05:12:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tfjvvW3xmrzZdZyB9B+jdVwpmtCN2vmJZx/p+yFKNEU=; b=IlY3FdFteKZhyP1b
+	vfFg0TY9jy0hwyWoKf+k4AlcPRZ0utxYL7Dw/kqk5bD16x8q0Cu138yDB5isT9uz
+	J5eQaPY1oGE+KA17msAFQmslspiezorCIKN97Rowm6VxJ2pz5Ef4BSinExV+AaRc
+	aXQqDopBl6BbKcdV1zopjGF8Efa58WMXDF/FHUVuo+yBN3ookrCReUK4NdOOViUj
+	enGVdri1stbjIA0BVPSQLOo2PbOzr8HhZIrjkxNebuQVPKFonCIybRd1n+XrZ5AQ
+	LbPFX2ZdKdDNzxMNdDDmO83oyYn7QpI2Wd+zqKBeqnuL9m0FI8YUW26k3/an0Wrz
+	fKzILg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjh3tw8rt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 05:12:53 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4575Cpjt028358
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 7 Jun 2024 05:12:51 GMT
+Received: from [10.48.242.185] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 6 Jun 2024
+ 22:12:51 -0700
+Message-ID: <c777aad9-3b0a-43d3-9e6b-1e1807df61a8@quicinc.com>
+Date: Thu, 6 Jun 2024 22:12:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] HID: add missing MODULE_DESCRIPTION() macros
+Content-Language: en-US
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
+CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240606-md-drivers-hid-v1-1-d6a5120b94cb@quicinc.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240606-md-drivers-hid-v1-1-d6a5120b94cb@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: DzToce_MFXPLrL-Ro0Ysk3tpcAHOVoaC
+X-Proofpoint-ORIG-GUID: DzToce_MFXPLrL-Ro0Ysk3tpcAHOVoaC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-06_20,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ adultscore=0 bulkscore=0 malwarescore=0 phishscore=0 priorityscore=1501
+ suspectscore=0 spamscore=0 clxscore=1015 mlxlogscore=798
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406070035
 
-Hi Aniket,
+On 6/6/2024 10:09 PM, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-holtek-mouse.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-ite.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-kensington.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-keytouch.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-kye.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-lcpower.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-lenovo.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-winwing.o
+> 
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  drivers/hid/hid-holtek-mouse.c | 1 +
+>  drivers/hid/hid-ite.c          | 1 +
+>  drivers/hid/hid-kensington.c   | 1 +
+>  drivers/hid/hid-keytouch.c     | 1 +
+>  drivers/hid/hid-kye.c          | 1 +
+>  drivers/hid/hid-lcpower.c      | 1 +
+>  drivers/hid/hid-lenovo.c       | 1 +
+>  drivers/hid/hid-winwing.c      | 1 +
+>  8 files changed, 8 insertions(+)
 
-> > I think we're OK in this case (just not reading the value out of the
-> > SIR_REQ_REJECT register), but any thoughts on adding corresponding
-> > switches in the driver so we can support those configurations? These
-> > would be represented as DT config of the specific hardware instance - a=
-t
-> > the most granular, just by the specific compatible string.
->=20
-> We can go with some DT quirk, but I don't see the strong need to do this
-> here.
+please ignore this patch -- this is a duplicate
 
-Oh definitely - the behaviour here doesn't need any special handling
-that would warrant a quirk/etc.
-
-This is more for handling IP configuration options we may see in future.
-For example, I believe support for target/secondary mode is entirely
-optional too.
-
-> > Could we use the SIR mask for this, but just read it from a field in th=
-e
-> > struct dw_i3c_master, instead of IBI_SIR_REQ_REJECT?
-> >=20
-> > This would mean that there's no possibility of the counter going out of
-> > sync from the SIR settings - say, on underflow if we get a spurious
-> > disable.
->=20
-> Yes, we can keep a SW SIR mask instead of a counter. It would replace
-> all the places where we read IBI_SIR_REQ_REJECT.
-> Both methods are okay, but if you think the mask might come in handy in
-> some situations rather than just the count, we can go with that.
-> Let me know your thoughts on this.
-
-I think keeping the mask value locally would be best. this means we
-
- 1) cannot get the counter and mask out of sync; and
- 2) don't need to do a read-modify-write on a register that is only
-    updated by the driver.
-
-Cheers,
-
-
-Jeremy
 
