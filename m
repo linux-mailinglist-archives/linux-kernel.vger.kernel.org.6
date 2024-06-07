@@ -1,114 +1,116 @@
-Return-Path: <linux-kernel+bounces-206691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74FDD900CC8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:16:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 496B4900CD3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E66BCB2343D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:16:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC8011F211F9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EF56E61B;
-	Fri,  7 Jun 2024 20:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB25154BF9;
+	Fri,  7 Jun 2024 20:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gLN5hlVU"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KDmLcRrD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kkEBxDTw"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0847E1CABF
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 20:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDF16D1AB
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 20:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717791398; cv=none; b=tGRX42iJByLxAyBkiFRKmcKQEUGhVDFZjayPulU3LpZ8VZMkUwB9N7JeRLV/0P7/jedRdtEswgPxfqvJ4CfFjonmbzREFf9jZ/8FY3IxCflGBJQEvuPDcVWYjv+1jNDW4Jz83/LEyNPvtgaJHCHFMrQ14IeoakAja4A2tX9pN8A=
+	t=1717791738; cv=none; b=TeU4ZFpOExiVNVaQIVNE97kya/nkV7SHzM0xi2hZiqLxYn0F4wOD+ZpPTs4iN/yXdeHf4kQxTCT2vNKWObK0hT+c5+WK3jdsCikaoych0Q6M4SnLlHJN9IoFn5QjHr6lPQhKJN0I+u0W/hfQEKtFCuSFsIRnJ+dKcH9zq0wFK+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717791398; c=relaxed/simple;
-	bh=94dQIEaXbShYcCUD2VZwQZfWzDfpId6SaEJtAerUUDs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iqw4MpPLqzz13sMKArXiyYKp8n/hL406KTDIU1I+KBrHGaqK/KKLW4IoNzxfHm9xSOnn3vOv63FLs+aL3nM380tpnFOKTHBNFMrb6T0UksBnFUMzZjldtjwrSlatcmghfibqjtug/27rjNAoXVyIdFi+fEZ2V0SrzdXTWW1cuWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gLN5hlVU; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3737b3c6411so1575865ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 13:16:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1717791396; x=1718396196; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=96rEQbBFraOtroPGskwQv9wJ6BgYJkFe+xf7ykDOFvM=;
-        b=gLN5hlVUsLfYAhKpEQyKwtcsjfdR5CSgnOYfNG7hZ6HC1QEwJwcWQGlXI0fgPYaKSU
-         4g0RPRvkyFavddKUYdAYm/yp4FXfyj5Y0YoHWwvj7TRqA6xA9hPhnt1VKj2i0SphXvZi
-         3mRgcsTRo/wlIe5BlEdvxtRsXVXUMjXeI/wMU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717791396; x=1718396196;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=96rEQbBFraOtroPGskwQv9wJ6BgYJkFe+xf7ykDOFvM=;
-        b=MdukM5io5WlEE0+J7TW/XVHZD2yhSNVixKwa4Eo14y5j+IjVMUkibkU4tNgfvJDzjs
-         LNV2RWIAqILrW+8ZhkUPksWJcSqqoryEOz/z/W07ofmJYTNkwrMtYdMmLdklsB29NIav
-         PyZPnJiIMDzeB67Vtd3gbXj2JU/8T72ZzCEvwq3WwJ+49K2NCFkDJ367eaK9uYoBDVOU
-         wVYVvuwTA+4zr+ExIOBpeZXrp2jDTwjntCHVw0P+GWG9w9rv53j1jVvxqFwwzLDY0cCl
-         w+8/K8ov05hNuDxOmRbTqaOxheEOETBUtFu8yoeE9IWKd9PkBNesj3+I/xq+bfo3eNjK
-         yHnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0fUk7GtCrO2Hpd+99dYWdmRZAON2U/ikE+JGes5GZwwm2+ojcRyAe7drPXAkh3BFCSmookb+ijTxxUPx7XcHpKm16ahXVEukGBmTF
-X-Gm-Message-State: AOJu0YyLfdNG40UbNzRxT3D5YJ1USkDy0aY58nTxYV+Z564OZKJa/+gL
-	ZbJyg+4ocUprOLqjRpYRdy9zJPSWillb+r3eDLKM88EkTeJgvuxD0lfWEqCwwdY=
-X-Google-Smtp-Source: AGHT+IGWuRP8uOeTBdfHQ4EtimpCODHyKWkg57vDi+SJtc+P1tHb2l9ZmD9GDO5yRdRZlSt99OBjFQ==
-X-Received: by 2002:a05:6602:256c:b0:7eb:6a6e:c830 with SMTP id ca18e2360f4ac-7eb6a6ec94dmr106967639f.2.1717791396021;
-        Fri, 07 Jun 2024 13:16:36 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b7a224cdd2sm1001756173.57.2024.06.07.13.16.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jun 2024 13:16:35 -0700 (PDT)
-Message-ID: <62de4c57-1296-4fd3-8072-ebbb939bee47@linuxfoundation.org>
-Date: Fri, 7 Jun 2024 14:16:34 -0600
+	s=arc-20240116; t=1717791738; c=relaxed/simple;
+	bh=GRVB1JZor8DNIf+EA76uz1CDrc9HGTu45kFvmt1Bnko=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=iWw51HnPYIuNTLXKUWG5flumNbPXxI7lN3dEpGk6Puu4GYer8nv2xpFu+XfhA6eweo9hJpFgf5zLXTgmKmyhvsAEMXaUWH15ARYo76C0QHoHIRhK3OyfiRUnnt5bI8J4ltNRKuqG79MGtEwMztcm4gf5f2AMHHU7IyLTae0hlHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KDmLcRrD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kkEBxDTw; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717791734;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=95PpUWaV62SsrnL0BPckok51h7bQ1MXWT68WtYsi6ZU=;
+	b=KDmLcRrDD/geGDzKxZ7XAY0NSrzjB5ssHpXsodTzg2B5lqPgH3Degn0hcmblSkD3yt9twq
+	Owlh9AEmDQexYrtRhMyfuhQW7gQ6is3I67r7OFRndJfA9vB18ko1kUdJxXS4n9dXJJ1pE3
+	S4SVaJtWc00v2nNxE2SIHnCD0roOtHB9vuEdRw0P7alD4srihU8ai6H2fimZzUgBkh9E/P
+	iP7sfYbk5xCORBxjGIXwTDHVBs6SYud0sp9cgaJ+4vGVQB/PhlsniDV6FfOWzUJeBmJrl5
+	u79H9dsry7buSvCifWTC3y38x7+Ix0vcy7XOAnCOAaOPjutzER9OBMNaEGWAyA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717791734;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=95PpUWaV62SsrnL0BPckok51h7bQ1MXWT68WtYsi6ZU=;
+	b=kkEBxDTwLGDhUmHWmppMYOcw4k9zSfrUSiHwbrf3F4PLLWFPVNOD1g7RNXufuykyhtquEx
+	rCgxUBbJC/+m0pBw==
+To: Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/8] remove size limit on XIP kernel
+Date: Fri,  7 Jun 2024 22:22:05 +0200
+Message-Id: <cover.1717789719.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] kselftests: vdso: conform tests to TAP output
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Shuah Khan <shuah@kernel.org>, Vincenzo Frascino
- <vincenzo.frascino@arm.com>, Colin Ian King <colin.i.king@gmail.com>,
- Tiezhu Yang <yangtiezhu@loongson.cn>,
- Andrew Morton <akpm@linux-foundation.org>, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: kernel@collabora.com, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240529072454.2522495-1-usama.anjum@collabora.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240529072454.2522495-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/29/24 01:24, Muhammad Usama Anjum wrote:
-> Conform individual tests to TAP output. One patch conform one test. With
-> this series, all vDSO tests become TAP conformant.
-> 
-> Muhammad Usama Anjum (4):
->    kselftests: vdso: vdso_test_clock_getres: conform test to TAP output
->    kselftests: vdso: vdso_test_correctness: conform test to TAP output
->    kselftests: vdso: vdso_test_getcpu: conform test to TAP output
->    kselftests: vdso: vdso_test_gettimeofday: conform test to TAP output
-> 
->   .../selftests/vDSO/vdso_test_clock_getres.c   |  68 ++++----
->   .../selftests/vDSO/vdso_test_correctness.c    | 146 +++++++++---------
->   .../testing/selftests/vDSO/vdso_test_getcpu.c |  16 +-
->   .../selftests/vDSO/vdso_test_gettimeofday.c   |  23 +--
->   4 files changed, 126 insertions(+), 127 deletions(-)
-> 
+Hi,
 
-Sounds like this series is converting the test to kselftest_harness
-and the commit message doesn't mention that.
+For XIP kernel, the writable data section is always at offset specified in
+XIP_OFFSET, which is hard-coded to 32MB.
 
-I like to see the commit message match the change being made.
+Unfortunately, this means the read-only section (placed before the
+writable section) is restricted in size. This causes build failure if the
+kernel gets too large.
 
-thanks,
--- Shuah
+This series remove the use of XIP_OFFSET one by one, then remove this
+macro entirely at the end, with the goal of lifting this size restriction.
+
+Also some cleanup and documentation along the way.
+
+This series depends on
+https://lore.kernel.org/linux-riscv/20240508191917.2892064-1-namcao@linutronix.de/
+
+v2: address all Alex's comments (thanks Alex!). This includes the addition of a
+new patch (riscv: don't export va_kernel_pa_offset in vmcoreinfo for XIP kernel),
+which fix a build failure if CONFIG_VMCORE_INFO=y
+
+Best regards,
+Nam
+
+Nam Cao (8):
+  riscv: cleanup XIP_FIXUP macro
+  riscv: don't export va_kernel_pa_offset in vmcoreinfo for XIP kernel
+  riscv: replace misleading va_kernel_pa_offset on XIP kernel
+  riscv: drop the use of XIP_OFFSET in XIP_FIXUP_OFFSET
+  riscv: drop the use of XIP_OFFSET in XIP_FIXUP_FLASH_OFFSET
+  riscv: drop the use of XIP_OFFSET in kernel_mapping_va_to_pa()
+  riscv: drop the use of XIP_OFFSET in create_kernel_page_table()
+  riscv: remove limit on the size of read-only section for XIP kernel
+
+ arch/riscv/include/asm/page.h       | 29 ++++++++++++++++++++--------
+ arch/riscv/include/asm/pgtable.h    | 18 +++++++----------
+ arch/riscv/include/asm/set_memory.h |  2 +-
+ arch/riscv/include/asm/xip_fixup.h  | 30 +++++++++++++++++++++++------
+ arch/riscv/kernel/vmcore_info.c     |  7 +++++++
+ arch/riscv/kernel/vmlinux-xip.lds.S |  5 +++--
+ arch/riscv/mm/init.c                | 13 ++++++++-----
+ 7 files changed, 71 insertions(+), 33 deletions(-)
+
+-- 
+2.39.2
+
 
