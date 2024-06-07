@@ -1,151 +1,153 @@
-Return-Path: <linux-kernel+bounces-206369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF1A900881
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:18:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F25BD900891
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59E461F22C8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:18:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3B101F23735
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8B0190672;
-	Fri,  7 Jun 2024 15:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECCB1991BE;
+	Fri,  7 Jun 2024 15:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="F1MyOKgi";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="odq7ZnV7"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="JKQTg3nD"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B958D54660;
-	Fri,  7 Jun 2024 15:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4CF1922FD;
+	Fri,  7 Jun 2024 15:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717773491; cv=none; b=aDxPHsI50nXz5ilenZ875D3ort2DIkwwCTTmE7YIOZ8UhA4X3KyMMy6u6wY+F6AOxSZOgLcAk0PQ5cxFAV/7bd6keZoG2remwrEZcbKUHUfCRsl5yOsZdIQ9RcjUCwuV3FvG/uOkCjqcYCePH73rL8W3d0oSfYbfPx5NRJWZTZE=
+	t=1717773524; cv=none; b=LOllzED+bMmCj4KZxrLjJNRin5mftZ/RRqLxSY0ogwaSYxVh5zljT0XCSLr1URWBvlnmc5NrMQu3wdJXPQ7wjls8GT5SceXDSOE4tcfhrfxLuSil0+KV4n9rsFihfSnMMUsXU9cNPo9g1OYRKR0EKSmy4RJJMyEBiOw6xl9ZuRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717773491; c=relaxed/simple;
-	bh=46eiL3n7740sy9h8YQoi5Nr9j6AlZg3ptAj7G+nRV4Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y7oRqfxOgpXsF2sKGoAmAJ6ny4VFNBnQfj2riP9I/vWysJtE7YZ+ylhe8BUXiH5PFtV9D5PL9eKJCBoKtG3H/TgNDUjFQUIgSaeP4GndkUdJSLFG0TEz5zBia5oRuCy3fGbQL12GafZnXnF7wbnad2tFzI6ZItWiWRDTdm3+IE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=F1MyOKgi; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=odq7ZnV7; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EFF1821B6B;
-	Fri,  7 Jun 2024 15:18:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1717773487; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=kwjqxJMZL83q8d52d/Qaewk3aeVcuPuXb72BXcqc4Ww=;
-	b=F1MyOKgiUYhsORqpvUkkI/L+oBHM4sMLqhMsjMB0OQr3Kl5bGqTXvPQTWG0IQxA8HHujzU
-	j53eZn361+BWmRzLtOFojXwYB68hZJr3Mws29pYpf+CnX59a3+DKA0KVLmaXkz6DJBu4Od
-	vUSkTtCAis8OQotOgrr1FGVgfsw10ZA=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1717773486; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=kwjqxJMZL83q8d52d/Qaewk3aeVcuPuXb72BXcqc4Ww=;
-	b=odq7ZnV7Cl/DOhQdNjPG3oZBNrns2QgLwgG6lyUSyfP72pXAifO+2gUb51eUCtFd2448QG
-	qAla5wm9vxbIiKTQShR0YWUCqUBU99sOahz3S/V91wnQqteRE3lc7J2qUaLimOGU6n9X5k
-	+nTguBTDRs9ymLQtqKcuya/OQ2eb5AA=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E8D9F134C7;
-	Fri,  7 Jun 2024 15:18:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id nFjXOK4kY2bsGgAAD6G6ig
-	(envelope-from <dsterba@suse.com>); Fri, 07 Jun 2024 15:18:06 +0000
-From: David Sterba <dsterba@suse.com>
-To: torvalds@linux-foundation.org
-Cc: David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Btrfs fixes for 6.10-rc3, part 2
-Date: Fri,  7 Jun 2024 17:18:02 +0200
-Message-ID: <cover.1717771196.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1717773524; c=relaxed/simple;
+	bh=KoDPDozy9evErMPAUWLxm84r9sZ2z9AbSjfQVeXcjmo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VdqEbNIuLh0itLvJnpNG68GaVE4pkx6sQ1cShzkpEtVE4fESeoXmQpreefl2yC1sPw5Z/8kR95w0ftOFK5ZcYlv6+RcXHw2EX8QJx2QNH5e4QZuGXSrjHGc0YbTb6qyYGMSD+h3gAfX4RCzYCSka3P1wvX3o5wmYFfyCdGxAlXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=JKQTg3nD; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 457AEqoM014883;
+	Fri, 7 Jun 2024 08:18:37 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=Jj/FpZ4qEw41Rz5TmoR61vp
+	31Vn5uSKlVlaQjgzfc90=; b=JKQTg3nD0iAMQiHhv3W+Rsw2SsBqRWyTt/Qhs7q
+	56jyisE370gRugNiz3IvxTuwZLZAmSfzhKKmBWvYMc/QJZM0SxsWNNV6l5QjIiQ8
+	ji0zgpeyJsMPb1DYF/KedINQ1tILai6B/26BnrwLclD3nYXy80N5Hx16t69AztIO
+	YsKJLw5jjuORuNntl13YHqAMJIqnm1zXHxR5jXNHLXShxQDoZ37w/GzwSw+FmK5h
+	z+9YRyaAtfcQnveAfG6pJI73YD2SYyCrw9A6/4dtFWQVfy00g0zklIDL/kqhQoJb
+	ojggwaDaXSBQMScGHcn0cAg6Y3+/tumgbWQKqm1eWo+T7Rw==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3ym09ngx2u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 08:18:36 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 7 Jun 2024 08:18:35 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 7 Jun 2024 08:18:35 -0700
+Received: from Dell2s-9.sclab.marvell.com (unknown [10.110.150.250])
+	by maili.marvell.com (Postfix) with ESMTP id 3B1305B6922;
+	Fri,  7 Jun 2024 08:18:35 -0700 (PDT)
+From: Witold Sadowski <wsadowski@marvell.com>
+To: <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: <broonie@kernel.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <pthombar@cadence.com>, Witold Sadowski <wsadowski@marvell.com>
+Subject: [PATCH v8 0/4] Marvell HW overlay support for Cadence xSPI
+Date: Fri, 7 Jun 2024 08:18:27 -0700
+Message-ID: <20240607151831.3858304-1-wsadowski@marvell.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+Content-Type: text/plain
+X-Proofpoint-GUID: SVm8_Sv8f12TRrq57BywvqJouMAiC6FK
+X-Proofpoint-ORIG-GUID: SVm8_Sv8f12TRrq57BywvqJouMAiC6FK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-07_09,2024-06-06_02,2024-05-17_01
 
-Hi,
+This patch series adds support for the second version of the Marvell
+hardware overlay for the Cadence xSPI IP block. The overlay is a hardware
+change made around the original xSPI block. It extends xSPI features with
+clock configuration, interrupt masking, and full-duplex, variable-length SPI
+operations.
 
-a few more fixes, two are for serious problems which are hard to hit,
-details in the changelogs. Please pull, thanks.
+These functionalities allow the xSPI block to operate not only with memory
+devices but also with simple SPI devices and TPM devices.
 
-- fix handling of folio private changes, the private value holds pointer
-  to our extent buffer structure representing a metadata range, release
-  and create of the range was not properly synchronized when updating
-  the private bit which ended up in double folio_put, leading to all
-  sorts of breakage
+Changes:
+v8:
+  Rename xferbase to xfer
+  Rework DLL reset, to return non inverted boolean value
+  Rework STIG and SDMA status check, to return non inverted boolean value
 
-- fix a crash, reported as duplicate key in metadata, but caused by a
-  race of fsync and size extending write, requires prealloc target
-  range + fsync and other conditions (log tree state, timing)
+v7:
+  Rebase patches to latest sources, changes in "Allow to read basic xSPI configuration
+ from ACPI"
+  Removed bugfix, as it was integrated to next tree from v6
 
-- fix leak of qgroup extent records after transaction abort
+v6:
+  Fix item order in cdns,xspi.yaml
 
-----------------------------------------------------------------
-The following changes since commit f13e01b89daf42330a4a722f451e48c3e2edfc8d:
+v5:
+  Rework cdns,xspi.yaml file
+  Reword commit messages
+  Move mamory mapping to ACPI patch
+  Use devm_platform_ioremap_resource instead of two step mapping
 
-  btrfs: ensure fast fsync waits for ordered extents after a write failure (2024-05-28 16:35:12 +0200)
+v4:
+  Rename new Marvell registers to keep naming conventions
+  Rename mrvl,xspi-nor to marvell,cnxx,xspi-nor
+  Various fixed for cdns,xspi.yaml file:
+    - Remove unnecesary parameters
+    - Link register xferbase with marvell,cn10-xspi-nor
+    - Move default values to .c file from device-tree
+  Clock configuration optimization
+  ACPI fixes:
+    - Remove incorrect ACPI match table
+  Added .data field to device_id, fixes for matching in ACPI and dtb case
+  Minor style comment changes
 
-are available in the Git repository at:
+v3:
+  Removed all kconfig changes
+  Added device-tree mrvl,xspi-nor tag
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.10-rc2-tag
+v2:
+  Support for second overlay iteration
 
-for you to fetch changes up to f3a5367c679d31473d3fbb391675055b4792c309:
+v1:
+  -
 
-  btrfs: protect folio::private when attaching extent buffer folios (2024-06-06 21:42:22 +0200)
+v0:
+  Initial support for v1 overlay
 
-----------------------------------------------------------------
-Filipe Manana (1):
-      btrfs: fix leak of qgroup extent records after transaction abort
+Piyush Malgujar (1):
+  spi: cadence: Allow to read basic xSPI configuration from ACPI
 
-Omar Sandoval (1):
-      btrfs: fix crash on racing fsync and size-extending write into prealloc
+Witold Sadowski (3):
+  spi: dt-bindings: cadence: Add Marvell overlay bindings documentation
+    for Cadence XSPI
+  spi: cadence: Add Marvell xSPI IP overlay changes
+  spi: cadence: Add MRVL overlay xfer operation support
 
-Qu Wenruo (1):
-      btrfs: protect folio::private when attaching extent buffer folios
+ .../devicetree/bindings/spi/cdns,xspi.yaml    |  32 +-
+ drivers/spi/spi-cadence-xspi.c                | 603 +++++++++++++++++-
+ 2 files changed, 620 insertions(+), 15 deletions(-)
 
- fs/btrfs/disk-io.c   | 10 +--------
- fs/btrfs/extent_io.c | 60 +++++++++++++++++++++++++++-------------------------
- fs/btrfs/tree-log.c  | 17 +++++++++------
- 3 files changed, 43 insertions(+), 44 deletions(-)
+-- 
+2.43.0
+
 
