@@ -1,207 +1,116 @@
-Return-Path: <linux-kernel+bounces-205238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D5208FF9DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:01:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79FCF8FF9DE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2463284F1C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:01:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15F0DB21BA4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087F212E7E;
-	Fri,  7 Jun 2024 02:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F27F12B77;
+	Fri,  7 Jun 2024 02:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJL37RP4"
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="robFGF0U"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A031C4C70
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 02:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2DFB64E
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 02:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717725662; cv=none; b=BzLjlvCjOyBusGR1j1PcVaoUYdzKZ9KgEYPbbieDkOD74nEUL9HZ/egWcwBoJuCw5i3/dG+RrEE/48yUzkABUE/6DbzF+DzphgraJ7DF0tyuvo+H1EWMwpuIn5mzjA9cpTRjUY442O8ZSQp+zlBBn7FXWrEZptcAqTr/s85uHZ0=
+	t=1717725904; cv=none; b=B0azSX17KrYZ6IKOis8jiWLP+EQDr+ABmovhe6+VTIHD5ZsexQJG/m9LdJ+ZHyV4Bf9P/Vkqm07MU+LhSTD+qbg/DsfTJtQ+O3gV61LF6bX+GWdNnle2oGqbqvkyubAcUPagiwsYFpG1qqApgLTxJ8yRvEgzNvtlHlvIcaoOEmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717725662; c=relaxed/simple;
-	bh=/xcGYKkMrmyvxXdQr0zjgzN8XMOZABCsWQiVdP7zNCw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Te43iEuldU/U+aZYKFKguFdqPpnrEZTSbFHHhNx3Jm7rYRmYyIna+VB//kCcdER635Ttpaf4DgvXiDU72sSAr1su2zzFDOihz72jJ+uTjNJGTvpzhasXuIREVdPPUjwLt6xSQ69OiKxFVGIJwY/fbSyX16K1oal3paw5hnXFYpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dJL37RP4; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-4e1c721c040so598829e0c.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 19:01:00 -0700 (PDT)
+	s=arc-20240116; t=1717725904; c=relaxed/simple;
+	bh=zWikLDUbPHzpkyuMa9SvJfhr99C0pRruMAI38ekM2cs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NQU8kPz70koOgjq2m73UcmyESdzCnoPs/GV/QI+Dy6NT1+93hkcsypGurXSYRHv2Y1kHLJk1+FCVIaTAfoej0sq6ktNzGk8txDu2IoMsg9RX14CxkTayOzlSC6/Evd9ElCoO/Mcl2vGpNjvtjpK43MpUhCeYjCoKk7WZSXmwcEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=robFGF0U; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2508320e62dso811928fac.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 19:05:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717725659; x=1718330459; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Peut3ZHW0CaxiZSEBfz/De33tzBSHWA6rV+eq1ptdg4=;
-        b=dJL37RP4K/UuAFCrznfqqWJP4+30dWaIT+HP3qxWSIlWK+Y8ANBdZmb1RnsjNLW8+R
-         hWGSAZS2W8Dl+A0ERCkTQQbzk3f/dhb264wwpOspwlefVkF4+H+CppwWrRaQQpJP5dCh
-         bgdlRxCtYgGcUT9DZ/Q+78rMAe5wfFJDHC0yKHDaXoojl7fZqIp8QJC6JOVcrqghGCQB
-         vjLdzRbb9epsPbJ6zeZYJe3c+GU2CBSlsb0hMfHjW1YNcyWRlZpl28RsN9Z6fB/fgO+l
-         Yg3mi3jC8QadO0HZZ+xTPrbX+WHnAsVNdxxJ6L5glCwUcYyIR8COgdgZuFvSOXU6bGZe
-         fOTA==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1717725902; x=1718330702; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HKuuaXk4YNdRbMNXNWT/TcuUhZ1SuAkFriq95pCZdUs=;
+        b=robFGF0UW7hpXvpys9yc0fpSd1xUkDYMAWmRxVUvpe8dKxtOzxflIC9sxnD3fUKQbt
+         QdraQkBgdwY5NQqtm4TW+vXv26p+JFU/s+0YqtqKGbPMC54ggKEUdCquIZRcKkNL75q6
+         iG8P8I4tNToh/GKO86BPnodiQTZ86b6OoNMFg1Z4/bkEBzLiHRtLCvdFr9CH4rX3NM4O
+         xU0Kldy2k3K/EqRc+ML9BtbH6nn6rrcZloW91Gi8KzJ1ZAeMnr6z3MnmBMsK8/2TEbUA
+         9AbygJfucBr7El+fkzvw1P/RXlLG4teq/AYyiNEvR04UoRnB4cEyG0qWBnff8S21mopR
+         VEtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717725659; x=1718330459;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Peut3ZHW0CaxiZSEBfz/De33tzBSHWA6rV+eq1ptdg4=;
-        b=ZzyJqTWWPQrZGJew18AtoOWq7nmVKO8pHpnzAt+XHSmbsL/6GrfWD4VZFadlZhViVg
-         hJgqjSVMxh6+v8x6Zuq8G5YELCqJE+f7fO76yO/YApefXQJEWI4DVPjw/d9HUPDWAW4u
-         8APMlGossNMkxMe+FNCbxOhKyCz2HoGoFNJftiQdOJLImZnCZbPIHN7TvwRb/q6Bsnf3
-         fkba83o9pa5aXKKVGylc7igzuoeghzk0+TSRQxegNgWJ19fTTo21Z3ja6fJXcjARBxaK
-         dGkJ4AXEWyh0dSQNLW9R4o5DmyWP3LkQa3soYQHygyBy7h1xjpb2cPAyTuTSzROtasd9
-         78Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDrQDAGcBDRKh5VGXfsl2aSL5JJ1ak8pGwVjeXNN2eFGIA7TpqhYziJa9OxuouPrEJN/d7i8OrLJUqPiaHlpAxXXRYMBJXZv7WQ+kz
-X-Gm-Message-State: AOJu0Yy3XfFG5IPkFvnquTp0vomEBISf9An4lB88Cy9/HZOGc8X8IYNS
-	NhAyu0HJNdzGSZFORSNXmjY2z42+uth3RMvHbSHnlBHnB1alpQ2INpVRvOZJtoA1+aWbFEujeP9
-	9paJaV7LbYqIMi0DZUJKY4sUu4ko=
-X-Google-Smtp-Source: AGHT+IFUxc/68yDjHSucpnbaL0dK7Iasec77dpQWlMEcXErUMAq18HXUUuZT1TlHReP7TBShY1UOOeoHrxoNh11v39A=
-X-Received: by 2002:a1f:7d4e:0:b0:4ea:ede1:ab15 with SMTP id
- 71dfb90a1353d-4eb562cd389mr1343760e0c.15.1717725659274; Thu, 06 Jun 2024
- 19:00:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717725902; x=1718330702;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HKuuaXk4YNdRbMNXNWT/TcuUhZ1SuAkFriq95pCZdUs=;
+        b=jRQpSHuSP3I5gxGsEuJi1BuFNzdttD9QtUaGSiscyOvJARG3H+rV0nGS7eNnmqbHwR
+         T1uBxLaR6YDe0+co7502PlW4n+7buDY91KH/q5P/6bTVoIGCDJf2rtyEKLEGAG1+NEl2
+         sil6sZml4eLJn0rX7b9hCieVo4xPFaHGZGL1qM0eQe71KtIpE2IazRERd3cSd9nsWIrq
+         PxvctUubVC+j8auWB2H9XZX/jExq/JodxyJzXtYm+3E1i7gTyFiFh68sFXKoIE/ernt/
+         gS2UIdbTM5BLFcAISUePxDmtrhAbzUXVK+30nWXn/Lflnca9AZLae4LUMLntYBmAL2IQ
+         CgUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWEX0ULUX18W3iYpMadbtQrtt08KIkocL7TYrLR88WYa9cjo6TREJtyJX9WaOHV4I1gq3JcdhOvXC1DhN4SarBn3vzNKk/V1n6EQfHQ
+X-Gm-Message-State: AOJu0YxNTBFo/IzajS1YYo35SBhfkWI+raHstk4ZUVFeeOt72CVZ3CWb
+	zWY4CVHlN2wL0zJ1RJ15naPrgTXYK+LuI05Zzw2ERkuFxXktmeEeimAsqcXath4=
+X-Google-Smtp-Source: AGHT+IG0TPOxnGysWka2PW7vDNgAiA6BVNC6fKtQ+0c898BXoBu9nsrqdblxPQrgncIqEfCUsLuOCQ==
+X-Received: by 2002:a05:6870:548c:b0:24f:ebcd:6aa9 with SMTP id 586e51a60fabf-25464384754mr1399622fac.1.1717725901930;
+        Thu, 06 Jun 2024 19:05:01 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd495083sm1682576b3a.136.2024.06.06.19.05.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 19:05:01 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sFOyQ-0070gF-0J;
+	Fri, 07 Jun 2024 12:04:58 +1000
+Date: Fri, 7 Jun 2024 12:04:58 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH] vfs: add rcu-based find_inode variants for iget ops
+Message-ID: <ZmJqyrgPXXjY2Iem@dread.disaster.area>
+References: <20240606140515.216424-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGsJ_4x=v0fDN_QVjdHSGVykH2+o_f81NnN_0-SUL+iwe+v84g@mail.gmail.com>
- <20240607013617.913054-1-ranxiaokai627@163.com>
-In-Reply-To: <20240607013617.913054-1-ranxiaokai627@163.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 7 Jun 2024 14:00:47 +1200
-Message-ID: <CAGsJ_4yt2eegrB5fDsGMZiirzhqNtnRGOOnhvrvv-0V=x_WG=A@mail.gmail.com>
-Subject: Re: [PATCH linux-next v2] mm: huge_memory: fix misused
- mapping_large_folio_support() for anon folios
-To: ran xiaokai <ranxiaokai627@163.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, mhocko@kernel.org, ran.xiaokai@zte.com.cn, 
-	v-songbaohua@oppo.com, si.hao@zte.com.cn, xu.xin16@zte.com.cn, 
-	yang.yang29@zte.com.cn, ziy@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606140515.216424-1-mjguzik@gmail.com>
 
-On Fri, Jun 7, 2024 at 1:37=E2=80=AFPM ran xiaokai <ranxiaokai627@163.com> =
-wrote:
->
-> > > From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> > >
-> > > When I did a large folios split test, a WARNING
-> > > "[ 5059.122759][  T166] Cannot split file folio to non-0 order"
-> > > was triggered. But the test cases are only for anonmous folios.
-> > > while mapping_large_folio_support() is only reasonable for page
-> > > cache folios.
-> > >
-> > > In split_huge_page_to_list_to_order(), the folio passed to
-> > > mapping_large_folio_support() maybe anonmous folio. The
-> > > folio_test_anon() check is missing. So the split of the anonmous THP
-> > > is failed. This is also the same for shmem_mapping(). We'd better add
-> > > a check for both. But the shmem_mapping() in __split_huge_page() is
-> > > not involved, as for anonmous folios, the end parameter is set to -1,=
- so
-> > > (head[i].index >=3D end) is always false. shmem_mapping() is not call=
-ed.
-> > >
-> > > Also add a VM_WARN_ON_ONCE() in mapping_large_folio_support()
-> > > for anon mapping, So we can detect the wrong use more easily.
-> > >
-> > > THP folios maybe exist in the pagecache even the file system doesn't
-> > > support large folio, it is because when CONFIG_TRANSPARENT_HUGEPAGE
-> > > is enabled, khugepaged will try to collapse read-only file-backed pag=
-es
-> > > to THP. But the mapping does not actually support multi order
-> > > large folios properly.
-> > >
-> > > Using /sys/kernel/debug/split_huge_pages to verify this, with this
-> > > patch, large anon THP is successfully split and the warning is ceased=
-.
-> > >
-> > > Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> > > ---
-> > >  include/linux/pagemap.h |  4 ++++
-> > >  mm/huge_memory.c        | 27 ++++++++++++++++-----------
-> > >  2 files changed, 20 insertions(+), 11 deletions(-)
-> > >
-> > > diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> > > index ee633712bba0..59f1df0cde5a 100644
-> > > --- a/include/linux/pagemap.h
-> > > +++ b/include/linux/pagemap.h
-> > > @@ -381,6 +381,10 @@ static inline void mapping_set_large_folios(stru=
-ct address_space *mapping)
-> > >   */
-> > >  static inline bool mapping_large_folio_support(struct address_space =
-*mapping)
-> > >  {
-> > > +       /* AS_LARGE_FOLIO_SUPPORT is only reasonable for pagecache fo=
-lios */
-> > > +       VM_WARN_ONCE((unsigned long)mapping & PAGE_MAPPING_ANON,
-> > > +                       "Anonymous mapping always supports large foli=
-o");
-> > > +
-> > >         return IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
-> > >                 test_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
-> > >  }
-> > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > > index 317de2afd371..62d57270b08e 100644
-> > > --- a/mm/huge_memory.c
-> > > +++ b/mm/huge_memory.c
-> > > @@ -3009,30 +3009,35 @@ int split_huge_page_to_list_to_order(struct p=
-age *page, struct list_head *list,
-> > >         if (new_order >=3D folio_order(folio))
-> > >                 return -EINVAL;
-> > >
-> > > -       /* Cannot split anonymous THP to order-1 */
-> > > -       if (new_order =3D=3D 1 && folio_test_anon(folio)) {
-> > > -               VM_WARN_ONCE(1, "Cannot split to order-1 folio");
-> > > -               return -EINVAL;
-> > > -       }
-> > > -
-> > > -       if (new_order) {
-> > > -               /* Only swapping a whole PMD-mapped folio is supporte=
-d */
-> > > -               if (folio_test_swapcache(folio))
-> > > +       if (folio_test_anon(folio)) {
-> > > +               /* Cannot split anonymous THP to order-1 */
-> >
-> > This is simply what the code is indicating. Shouldn't we phrase
-> > it differently to explain "why" but not "how"? for example, anon
-> > order-1 mTHP is not supported?
->
-> Hi, Barry,
-> Good comments, thanks.
-> Is "order-1 is not a anonymouns mTHP suitable order." better?
+On Thu, Jun 06, 2024 at 04:05:15PM +0200, Mateusz Guzik wrote:
+> Instantiating a new inode normally takes the global inode hash lock
+> twice:
+> 1. once to check if it happens to already be present
+> 2. once to add it to the hash
+> 
+> The back-to-back lock/unlock pattern is known to degrade performance
+> significantly, which is further exacerbated if the hash is heavily
+> populated (long chains to walk, extending hold time). Arguably hash
+> sizing and hashing algo need to be revisited, but that's beyond the
+> scope of this patch.
+> 
+> A long term fix would introduce fine-grained locking, this was attempted
+> in [1], but that patchset was already posted several times and appears
+> stalled.
 
-could pick up some words from include/linux/huge_mm.h, particularly
-those words regarding "a limitation of the THP implementation".
+Why not just pick up those patches and drive them to completion?
 
-/*
- * Mask of all large folio orders supported for anonymous THP; all orders u=
-p to
- * and including PMD_ORDER, except order-0 (which is not "huge") and order-=
-1
- * (which is a limitation of the THP implementation).
- */
-#define THP_ORDERS_ALL_ANON     ((BIT(PMD_ORDER + 1) - 1) & ~(BIT(0) | BIT(=
-1)))
+I have no issues with somebody else doing the finishing work for
+that code; several of the patches in that series were originally
+written by other people in the first place...
 
-perhaps, you can even do
-
-if (order > 0 && !(bit(order) & THP_ORDERS_ALL_ANON))
-      return -EINVAL;
-
-This is self-commented. Either way is fine.
-
->
-> > Otherwise, it looks good to me.
-> >
-> > Reviewed-by: Barry Song <baohua@kernel.org>
->
-
-Thanks
-Barry
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
