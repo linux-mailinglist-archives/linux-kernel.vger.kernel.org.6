@@ -1,94 +1,272 @@
-Return-Path: <linux-kernel+bounces-205796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C585D900063
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:10:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6086C900067
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:11:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6879328DE27
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:10:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C352E287324
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C071B15DBB5;
-	Fri,  7 Jun 2024 10:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1404C15CD5C;
+	Fri,  7 Jun 2024 10:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KFGFUZI7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ODiAS7do"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E271D15B0FB;
-	Fri,  7 Jun 2024 10:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883A813F016
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 10:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717755030; cv=none; b=gjEdtqgUBY4G1Y6LRABSAfbQnL7MKkb2FLF/hrtM0qKG9dEwPRvwuWjqlKZjGI1EcxKesx7wyxQUBZFcS4XmUolWm53BibxrdHnhi+9pwOih5OkjjRhqnOEDuRp4LGwdkCYRzLmEqY/r6jBKmFYRCaU46uG5PfYRFUsIkWtZ+a0=
+	t=1717755051; cv=none; b=dl5x2JkQJP4256UhfQLYthlgXG5Z30hvBxJZ6gqHo/erLFuGo0y9YBjRamhHb+3hIOpmruswmsmOz1iL1ufdQn05ApDpx5K+d6eLtANvbfY7puv/DHy2dFEtr0AA5wejYVLQfyAj91qz+ti8faJAwBRCYF9BXzwoLb+dP/pw5HI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717755030; c=relaxed/simple;
-	bh=3q+16WX6b8x4qD8IG0VF1CV7m3QLtG8soxVfGdyTrsw=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=mO1FvWYCh3KBzp+U1xap2jSNjjEbQToMFfU3D6lLUQ6Zc10KukIfps8WfXmSUq830OyGBI2VZSarP2TPv6+lw8mbcd1Q/QnMnG2nd+8T08cwlMDY7/MfTjZRnmLJMsqfDR3J0SxMVSLYRzWA5PPn8E82wTAZS8Qnd0pbYWuIr9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KFGFUZI7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C2472C2BBFC;
-	Fri,  7 Jun 2024 10:10:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717755029;
-	bh=3q+16WX6b8x4qD8IG0VF1CV7m3QLtG8soxVfGdyTrsw=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=KFGFUZI7zlKn8NPLtzDlgL+0PX8p2y976S9t6o8wXqN898f9E7J4xMSTsSohZQ79C
-	 Z8s/1aqbIiWKWiQw6gYeyIm/fq7bqJcJwpWxtBbNy3HaawmPONk9uDy8l9bEr0/nW3
-	 Zc1FYCSqYzjFjFRddYQVFlWbJLACVWVYFGYQVAlRL0EqfT2V+G2LJrFnVRDib8w7z6
-	 CY/zWXs7e7y77YqIBbHaAegzIDo1JV1Rn/JL/xRtofIuAG4fE1NCSuXfUnlBEjTyu7
-	 c0WpgBGaAYhgqVhrctacD0FsFKUR4kOgoeAXsTQXqE89EXCuzOfRtDrE0Wf48uO4of
-	 y3TXW1trcLNAw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B70B5CF3BA6;
-	Fri,  7 Jun 2024 10:10:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1717755051; c=relaxed/simple;
+	bh=QW+p0LE+OA0sFKpEDoQlNfo/8sXx7142FTJZGgXwPxA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ft4EOA6yn73lB3Atx+nx79mclJNgD+TLnZ1qJ/ziCdl8LaL0eqr2qPhfXtP+xaiPR8/vdWqlZz7S/4x4R8OYK1vdsRuFqzf+6NnEbca/MsBbHjEMEXH6e2kIogGgNBn1wEKdxVCo1WRlSK4ShmsKtI+VeEZQay8m7Zhnu70ovWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ODiAS7do; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717755048;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V1PfJJ2X6kfxVeld9qIvWb5WqYVs7ksNnwyBTZFTZh4=;
+	b=ODiAS7dojKLCdPKPxHHlOz2Sece/Y4b8ZhKutb3vm688iEMx9OoijQhAAEKvBTj7EIYgMQ
+	qlyBK44tRE7dNFu9gy1OHCEqF4YlB2yp5JgLsY4fGh1EUrn+Q2+hGOs/bfmIwXeQ9rsrzx
+	91B72nA7iSQOWthY1exaFvs4jGZxfN4=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-450-LQvbI_4iPoiz85H-v2ySIA-1; Fri, 07 Jun 2024 06:10:47 -0400
+X-MC-Unique: LQvbI_4iPoiz85H-v2ySIA-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-35dcd39c6ebso1939957f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 03:10:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717755046; x=1718359846;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V1PfJJ2X6kfxVeld9qIvWb5WqYVs7ksNnwyBTZFTZh4=;
+        b=hTqmBuYI4luRaN49xuQOiaoevL9xqjz1FHhhen8Z4ABgO8JpH6njlLi+SEaHcNqiHN
+         +ROta6HUAzjhhy1aXXYc1uPxwr74IfREVIqfxC1CQOXmyt8wrlJHFWWv+SUIlh0n+Bw7
+         XiWSCnqF5AYlDceMTUDeEr0ANTVc8ku5htZ3qAKFcfD/qDU6pUixRA6aiLBTKbDHfsVx
+         A0O9dz3l1jQFaj/91cPOibPMgNeBiLMBmNzP7RMBalXkej+GEzvVaWB/vVS7PHnSUKPK
+         PBaioQufRrFdq6/9bOo1Yuqa+u/AM2KkxK4JMTeiewgb/PEgKwHwbP+pV77Q2uli/o6e
+         rEnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3SRTeQfqYih0MVu5ePIhNpGo/XIxLkdd5/lzGuQGmxVpiYexDzYuOAT93oH0m3M4gZALeiE3VLdSnIgi5KiDP8sh+bkOU3fkxWjq4
+X-Gm-Message-State: AOJu0Yzpi+AXdZv8SsII/H6Jmce750aVJIGm04Uk4Jdc5+avKKGl/WWs
+	GNN9rax4PS8cF5oq5op4TIsYaSN8YtzcdlykbyqihvM0CHLERlpVNR1OCtE8C57GNV53uuUqBV9
+	eseHhMVL4BWnmUSvRzI5aPCfPzpSA4etb6BsO5X6DDtLRKBJTf/zCpeaI4AjTVtm4krz0FQWDvs
+	4YlfrH2HK3XaXwH7ae6SFnrSPvgNNyQ41+p5Ur
+X-Received: by 2002:a5d:4e08:0:b0:34c:fd92:3359 with SMTP id ffacd0b85a97d-35efea29070mr2152890f8f.21.1717755046092;
+        Fri, 07 Jun 2024 03:10:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFtI7a6+AdMZCJmgOoWoZZH9VEawBdUDuuktV7O8VTbiwlVP+AmaIQlQPw9D70k9nVauCb1+/x3VAnFyKs8qdI=
+X-Received: by 2002:a5d:4e08:0:b0:34c:fd92:3359 with SMTP id
+ ffacd0b85a97d-35efea29070mr2152844f8f.21.1717755045636; Fri, 07 Jun 2024
+ 03:10:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] hwmon: (cros_ec) Prevent read overflow in probe()
-From: patchwork-bot+chrome-platform@kernel.org
-Message-Id: 
- <171775502974.9691.860373891404266889.git-patchwork-notify@kernel.org>
-Date: Fri, 07 Jun 2024 10:10:29 +0000
-References: <42331b70-bd3c-496c-8c79-3ec4faad40b8@moroto.mountain>
-In-Reply-To: <42331b70-bd3c-496c-8c79-3ec4faad40b8@moroto.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: linux@weissschuh.net, thomas@weissschuh.net, jdelvare@suse.com,
- linux@roeck-us.net, bleung@chromium.org, tzungbi@kernel.org,
- chrome-platform@lists.linux.dev, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20240530210714.364118-1-rick.p.edgecombe@intel.com> <20240530210714.364118-11-rick.p.edgecombe@intel.com>
+In-Reply-To: <20240530210714.364118-11-rick.p.edgecombe@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Fri, 7 Jun 2024 12:10:33 +0200
+Message-ID: <CABgObfYhKmBkqGP-d12o6W2TfiaqwP-c8pcae9-pnkaYJt6K-w@mail.gmail.com>
+Subject: Re: [PATCH v2 10/15] KVM: x86/tdp_mmu: Reflect building mirror page tables
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: seanjc@google.com, kvm@vger.kernel.org, kai.huang@intel.com, 
+	dmatlack@google.com, erdemaktas@google.com, isaku.yamahata@gmail.com, 
+	linux-kernel@vger.kernel.org, sagis@google.com, yan.y.zhao@intel.com, 
+	Isaku Yamahata <isaku.yamahata@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Thu, May 30, 2024 at 11:07=E2=80=AFPM Rick Edgecombe
+<rick.p.edgecombe@intel.com> wrote:
+> +       /* Update mirrored mapping with page table link */
+> +       int (*reflect_link_spt)(struct kvm *kvm, gfn_t gfn, enum pg_level=
+ level,
+> +                               void *mirrored_spt);
+> +       /* Update the mirrored page table from spte getting set */
+> +       int (*reflect_set_spte)(struct kvm *kvm, gfn_t gfn, enum pg_level=
+ level,
+> +                               kvm_pfn_t pfn);
 
-This patch was applied to chrome-platform/linux.git (for-next)
-by Tzung-Bi Shih <tzungbi@kernel.org>:
+Possibly link_external_spt and set_external_spte, since you'll have to
+s/mirrored/external/ in the comment. But not a hard request.
 
-On Thu, 6 Jun 2024 16:12:11 +0300 you wrote:
-> The "resp.sensor_name" comes from cros_ec_cmd() and it hasn't necessarily
-> been NUL terminated.  We had not intended to read past "sensor_name_size"
-> bytes, however, there is a width vs precision bug in the format string.
-> The format needs to be precision '%.*s' instead of width '%*s'.
-> Precision prevents an out of bounds read, but width is a no-op.
-> 
-> Fixes: bc3e45258096 ("hwmon: add ChromeOS EC driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> 
-> [...]
+> +static void *get_mirrored_spt(gfn_t gfn, u64 new_spte, int level)
+> +{
+> +       if (is_shadow_present_pte(new_spte) && !is_last_spte(new_spte, le=
+vel)) {
+> +               struct kvm_mmu_page *sp =3D to_shadow_page(pfn_to_hpa(spt=
+e_to_pfn(new_spte)));
 
-Here is the summary with links:
-  - hwmon: (cros_ec) Prevent read overflow in probe()
-    https://git.kernel.org/chrome-platform/c/1f72dd046270
+I think this is spte_to_child_sp(new_spte)?
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> +               void *mirrored_spt =3D kvm_mmu_mirrored_spt(sp);
+> +
+> +               WARN_ON_ONCE(sp->role.level + 1 !=3D level);
+> +               WARN_ON_ONCE(sp->gfn !=3D gfn);
+> +               return mirrored_spt;
 
+Based on previous reviews this can be just "return sp->external_spt",
+removing the not-particularly-interesting kvm_mmu_mirrored_spt()
+helper.
+
+> +static int __must_check reflect_set_spte_present(struct kvm *kvm, tdp_pt=
+ep_t sptep,
+
+tdp_mmu_set_mirror_spte_atomic?
+
+> +       /*
+> +        * For mirrored page table, callbacks are needed to propagate SPT=
+E
+> +        * change into the mirrored page table. In order to atomically up=
+date
+> +        * both the SPTE and the mirrored page tables with callbacks, uti=
+lize
+> +        * freezing SPTE.
+> +        * - Freeze the SPTE. Set entry to REMOVED_SPTE.
+> +        * - Trigger callbacks for mirrored page tables.
+> +        * - Unfreeze the SPTE.  Set the entry to new_spte.
+> +        */
+
+/*
+ * We need to lock out other updates to the SPTE until the external
+ * page table has been modified. Use REMOVED_SPTE similar to
+ * the zapping case.
+ */
+
+Easy peasy. :) We may want to rename REMOVED_SPTE to FROZEN_SPTE; feel
+free to do it at the head of this series, then it can be picked for
+6.11.
+
+> -static inline int __tdp_mmu_set_spte_atomic(struct tdp_iter *iter, u64 n=
+ew_spte)
+> +static inline int __tdp_mmu_set_spte_atomic(struct kvm *kvm, struct tdp_=
+iter *iter, u64 new_spte)
+>  {
+>         u64 *sptep =3D rcu_dereference(iter->sptep);
+>
+> @@ -571,15 +629,36 @@ static inline int __tdp_mmu_set_spte_atomic(struct =
+tdp_iter *iter, u64 new_spte)
+>          */
+>         WARN_ON_ONCE(iter->yielded || is_removed_spte(iter->old_spte));
+>
+> -       /*
+> -        * Note, fast_pf_fix_direct_spte() can also modify TDP MMU SPTEs =
+and
+> -        * does not hold the mmu_lock.  On failure, i.e. if a different l=
+ogical
+> -        * CPU modified the SPTE, try_cmpxchg64() updates iter->old_spte =
+with
+> -        * the current value, so the caller operates on fresh data, e.g. =
+if it
+> -        * retries tdp_mmu_set_spte_atomic()
+> -        */
+> -       if (!try_cmpxchg64(sptep, &iter->old_spte, new_spte))
+> -               return -EBUSY;
+> +       if (is_mirror_sptep(iter->sptep) && !is_removed_spte(new_spte)) {
+> +               int ret;
+> +
+> +               /* Don't support atomic zapping for mirrored roots */
+
+The why is hidden in the commit message to patch 11. I wonder if it
+isn't clearer to simply squash together patches 10 and 11 (your call),
+and instead split out the addition of the new struct kvm parameters.
+
+Anyway, this comment needs a bit more info:
+
+/*
+ * Users of atomic zapping don't operate on mirror roots,
+ * so only need to handle present new_spte.
+ */
+
+> +               if (KVM_BUG_ON(!is_shadow_present_pte(new_spte), kvm))
+> +                       return -EBUSY;
+> +               /*
+> +                * Populating case.
+> +                * - reflect_set_spte_present() implements
+> +                *   1) Freeze SPTE
+> +                *   2) call hooks to update mirrored page table,
+> +                *   3) update SPTE to new_spte
+> +                * - handle_changed_spte() only updates stats.
+> +                */
+
+Comment not needed (weird I know).
+
+
+> +               ret =3D reflect_set_spte_present(kvm, iter->sptep, iter->=
+gfn,
+> +                                              iter->old_spte, new_spte, =
+iter->level);
+> +               if (ret)
+> +                       return ret;
+> +       } else {
+> +               /*
+> +                * Note, fast_pf_fix_direct_spte() can also modify TDP MM=
+U SPTEs
+> +                * and does not hold the mmu_lock.  On failure, i.e. if a
+> +                * different logical CPU modified the SPTE, try_cmpxchg64=
+()
+> +                * updates iter->old_spte with the current value, so the =
+caller
+> +                * operates on fresh data, e.g. if it retries
+> +                * tdp_mmu_set_spte_atomic()
+> +                */
+> +               if (!try_cmpxchg64(sptep, &iter->old_spte, new_spte))
+> +                       return -EBUSY;
+> +       }
+>
+>         return 0;
+>  }
+> @@ -610,7 +689,7 @@ static inline int tdp_mmu_set_spte_atomic(struct kvm =
+*kvm,
+>
+>         lockdep_assert_held_read(&kvm->mmu_lock);
+>
+> -       ret =3D __tdp_mmu_set_spte_atomic(iter, new_spte);
+> +       ret =3D __tdp_mmu_set_spte_atomic(kvm, iter, new_spte);
+>         if (ret)
+>                 return ret;
+>
+> @@ -636,7 +715,7 @@ static inline int tdp_mmu_zap_spte_atomic(struct kvm =
+*kvm,
+>          * Delay processing of the zapped SPTE until after TLBs are flush=
+ed and
+>          * the REMOVED_SPTE is replaced (see below).
+>          */
+> -       ret =3D __tdp_mmu_set_spte_atomic(iter, REMOVED_SPTE);
+> +       ret =3D __tdp_mmu_set_spte_atomic(kvm, iter, REMOVED_SPTE);
+>         if (ret)
+>                 return ret;
+>
+> @@ -698,6 +777,11 @@ static u64 tdp_mmu_set_spte(struct kvm *kvm, int as_=
+id, tdp_ptep_t sptep,
+>         role =3D sptep_to_sp(sptep)->role;
+>         role.level =3D level;
+>         handle_changed_spte(kvm, as_id, gfn, old_spte, new_spte, role, fa=
+lse);
+> +
+> +       /* Don't support setting for the non-atomic case */
+> +       if (is_mirror_sptep(sptep))
+> +               KVM_BUG_ON(is_shadow_present_pte(new_spte), kvm);
+> +
+>         return old_spte;
+>  }
+>
+> --
+> 2.34.1
+>
 
 
