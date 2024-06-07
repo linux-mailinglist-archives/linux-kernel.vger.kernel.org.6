@@ -1,122 +1,232 @@
-Return-Path: <linux-kernel+bounces-205752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A2138FFFCE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:44:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27B188FFFD4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAAE2282E73
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:44:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 710CF2830CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3617215CD42;
-	Fri,  7 Jun 2024 09:44:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6759115CD56;
+	Fri,  7 Jun 2024 09:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OaLd97R7"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HN/8nxLH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CCF15B122;
-	Fri,  7 Jun 2024 09:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E681815B13C
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717753456; cv=none; b=M0ivTEHfnGcNKHsqSzYSUOck07MiYB8b+DYbLq1wPSygzYvev3nM2k5Evbu1ejXzoiIr6DTzWMTVt5bLIWO9KlQjCzRBai9CR35BTyTK9iydLt3OxHWRN7t9to0UzFM2uTuGvT+vgvQbMXHa2fdwf6KOT2gpa0BUxVfdDtRTvPI=
+	t=1717753492; cv=none; b=jpU2FcgR1oyRQFnyysuPzhJ+sEh9jSEINHZlE9P8hITJRAJopNoHxIECJbZwIvIdkXQfKzuUfs7tVtCqWGlos2rr7aC28WYsLU3Dxpu8XNsGpgrVXMRL2AAkQ3CXuk1rYfu53+3rKfp1My6lmzj1Csvqp9yLAeZZ+WNEmadwSKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717753456; c=relaxed/simple;
-	bh=2mT2I/1Q77Tiqay8xStHbcCX37B0aHQ26qx1zUhRLnY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LgrswDZbigoTsKEpFxat7wpEGLBDKDDR9p84aM3lJCkYWX2pjKzG4TVTY7KTabUoDhBS4lHFD9ZyLcpEIOdf3mp8djDOi3y4OGr22/7j+HXoMmPevouYsP5DpMC1eRPAVQ09TfFy7y4q8RgwbBo65pdn/gzIz6Bk8nmarOfWhIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OaLd97R7; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0CAE1240005;
-	Fri,  7 Jun 2024 09:44:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1717753452;
+	s=arc-20240116; t=1717753492; c=relaxed/simple;
+	bh=58yEbjyoqnb2b3XrlYBfqGyYUzJ4olbXtGEu7sBa9Yo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HFprx/qmCBqm5PhLDxbYWnWJ/r9sy0AgCS23kQnX50H98FMPTdA7hufBeyF+XpbogOBhmeC57qW3FycZPFTlYtzhSB2AM+unfshXAvn3ZDxiICVzyVpd749/CGzYTthEi3GUwTcXZPG3IhJaVN2NsvoM4YQEAdnzalptSggQ7FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HN/8nxLH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717753489;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4yyx5zM1CvYIUAqANuHPAr8M/UeGqJG8eIhKlHzJByE=;
-	b=OaLd97R7bAj+5dDAGZ0DA7B5AI83++gIwTNxZ35ji2PxPmQ+uy0ZIRhrQPSfG0iU/dIpDN
-	c55Y8dpJ/CrvVILOQjB2ESfubylzjQROq0hiP13wCK4NnMfOqht6FmDslMtpCdJ1ZNxsYb
-	y+sdrORNm8kemd2gjnPCrImy5Kj9H+0pbiLn5Do//h8QVHnOHw+HHJSjPoxi6ZaZMSucXL
-	0HnZuv+vfhIxp1Z2NIwnDHkN0OgfRgdZvl1AbpQXEt0pVgOzpPxYkJ3F1PkDgCDzL2exFF
-	1E+jbHmm97apf7REVsGzXv+ypf6N0oibjJdUlTmrsmok0n8IbmoLRcFApjPuWQ==
-Message-ID: <317b515f-30fb-4b18-bb99-b65091449ec4@bootlin.com>
-Date: Fri, 7 Jun 2024 11:44:10 +0200
+	bh=NUY6PITGoFsRA8MAuBzmvx9AqHKWQlE4VIksKJma7kQ=;
+	b=HN/8nxLHReJICeeE879SChOVsoF34DvtepA6LzodfClyATQJAqdzmSriOQzRccw9rUxw84
+	jhkc8NFNEbKBOWuGgm7nmiO4uC0cmYmJuIyfLdIaema01WBW3W4zd4V9gowePnAVJ5q0rR
+	+2Ooiw2Jv1WgnZ8HH4XhtER3NyPH+OU=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-427-QuFkBLRKPLiPv6ApzWgYWw-1; Fri,
+ 07 Jun 2024 05:44:46 -0400
+X-MC-Unique: QuFkBLRKPLiPv6ApzWgYWw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8A8E61955E7F;
+	Fri,  7 Jun 2024 09:44:44 +0000 (UTC)
+Received: from fedora (unknown [10.72.112.50])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5295B19560B4;
+	Fri,  7 Jun 2024 09:44:33 +0000 (UTC)
+Date: Fri, 7 Jun 2024 17:44:28 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Yang Yang <yang.yang@vivo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	ming.lei@redhat.com
+Subject: Re: [PATCH v3] sbitmap: fix io hung due to race on
+ sbitmap_word::cleared
+Message-ID: <ZmLWfJ7OFgj+yoxV@fedora>
+References: <20240606135723.2794-1-yang.yang@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: manual merge of the wireless-next tree with the
- wireless tree
-To: Kalle Valo <kvalo@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Johannes Berg <johannes@sipsolutions.net>,
- Wireless <linux-wireless@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20240603110023.23572803@canb.auug.org.au>
- <875xuquyyb.fsf@kernel.org> <87tti6qt5o.fsf@kernel.org>
-From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <87tti6qt5o.fsf@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alexis.lothore@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606135723.2794-1-yang.yang@vivo.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Hello Kalle, Stephen,
-
-On 6/6/24 12:09, Kalle Valo wrote:
-> Kalle Valo <kvalo@kernel.org> writes:
+On Thu, Jun 06, 2024 at 09:57:21PM +0800, Yang Yang wrote:
+> Configuration for sbq:
+>   depth=64, wake_batch=6, shift=6, map_nr=1
 > 
->> Stephen Rothwell <sfr@canb.auug.org.au> writes:
->>
->>> Hi all,
->>>
->>> Today's linux-next merge of the wireless-next tree got a conflict in:
->>>
->>>   drivers/net/wireless/microchip/wilc1000/netdev.c
->>>
->>> between commit:
->>>
->>>   ebfb5e8fc8b4 ("Revert "wifi: wilc1000: convert list management to RCU"")
->>>
->>> from the wireless tree and commit:
->>>
->>>   6fe46d5c0a84 ("wifi: wilc1000: set net device registration as last
->>> step during interface creation")
->>>
->>> from the wireless-next tree.
->>>
->>> I fixed it up (see below) and can carry the fix as necessary. This
->>> is now fixed as far as linux-next is concerned, but any non trivial
->>> conflicts should be mentioned to your upstream maintainer when your tree
->>> is submitted for merging.  You may also want to consider cooperating
->>> with the maintainer of the conflicting tree to minimise any particularly
->>> complex conflicts.
->>
->> Thanks. We need to figure out how we solve this conflict, most probably
->> we'll ask network maintainers to fix it when they pull wireless-next.
+> 1. There are 64 requests in progress:
+>   map->word = 0xFFFFFFFFFFFFFFFF
+> 2. After all the 64 requests complete, and no more requests come:
+>   map->word = 0xFFFFFFFFFFFFFFFF, map->cleared = 0xFFFFFFFFFFFFFFFF
+> 3. Now two tasks try to allocate requests:
+>   T1:                                       T2:
+>   __blk_mq_get_tag                          .
+>   __sbitmap_queue_get                       .
+>   sbitmap_get                               .
+>   sbitmap_find_bit                          .
+>   sbitmap_find_bit_in_word                  .
+>   __sbitmap_get_word  -> nr=-1              __blk_mq_get_tag
+>   sbitmap_deferred_clear                    __sbitmap_queue_get
+>   /* map->cleared=0xFFFFFFFFFFFFFFFF */     sbitmap_find_bit
+>     if (!READ_ONCE(map->cleared))           sbitmap_find_bit_in_word
+>       return false;                         __sbitmap_get_word -> nr=-1
+>     mask = xchg(&map->cleared, 0)           sbitmap_deferred_clear
+>     atomic_long_andnot()                    /* map->cleared=0 */
+>                                               if (!(map->cleared))
+>                                                 return false;
+>                                      /*
+>                                       * map->cleared is cleared by T1
+>                                       * T2 fail to acquire the tag
+>                                       */
 > 
-> Alexis, you know wilc1000 the best. Could you double check the conflict
-> resolution, it somewhat complicated:>
-> https://lore.kernel.org/all/20240603110023.23572803@canb.auug.org.au/
+> 4. T2 is the sole tag waiter. When T1 puts the tag, T2 cannot be woken
+> up due to the wake_batch being set at 6. If no more requests come, T1
+> will wait here indefinitely.
 > 
+> This patch achieves two purposes:
+> First:
+> Check on ->cleared and update on both ->cleared and ->word need to be
+> done atomically, and using spinlock could be the simplest solution.
+> So revert commit 661d4f55a794 ("sbitmap: remove swap_lock"), which
+> may cause potential race.
+> 
+> Second:
+> Add extra check in sbitmap_deferred_clear(), to identify whether
+> map->cleared is cleared by another task after failing to get a tag.
+> 
+> Fixes: 661d4f55a794 ("sbitmap: remove swap_lock")
+> Signed-off-by: Yang Yang <yang.yang@vivo.com>
+> 
+> ---
+> Changes from v2:
+>   - Modify commit message by suggestion
+>   - Add extra check in sbitmap_deferred_clear() by suggestion
+> Changes from v1:
+>   - simply revert commit 661d4f55a794 ("sbitmap: remove swap_lock")
+> ---
+>  include/linux/sbitmap.h |  5 +++++
+>  lib/sbitmap.c           | 28 +++++++++++++++++++++-------
+>  2 files changed, 26 insertions(+), 7 deletions(-)
+> 
+> diff --git a/include/linux/sbitmap.h b/include/linux/sbitmap.h
+> index d662cf136021..ec0b0e73c906 100644
+> --- a/include/linux/sbitmap.h
+> +++ b/include/linux/sbitmap.h
+> @@ -36,6 +36,11 @@ struct sbitmap_word {
+>  	 * @cleared: word holding cleared bits
+>  	 */
+>  	unsigned long cleared ____cacheline_aligned_in_smp;
+> +
+> +	/**
+> +	 * @swap_lock: Held while swapping word <-> cleared
+> +	 */
+> +	spinlock_t swap_lock;
+>  } ____cacheline_aligned_in_smp;
+>  
+>  /**
+> diff --git a/lib/sbitmap.c b/lib/sbitmap.c
+> index 1e453f825c05..06b837311e03 100644
+> --- a/lib/sbitmap.c
+> +++ b/lib/sbitmap.c
+> @@ -60,12 +60,19 @@ static inline void update_alloc_hint_after_get(struct sbitmap *sb,
+>  /*
+>   * See if we have deferred clears that we can batch move
+>   */
+> -static inline bool sbitmap_deferred_clear(struct sbitmap_word *map)
+> +static inline bool sbitmap_deferred_clear(struct sbitmap_word *map,
+> +		unsigned int depth)
+>  {
+>  	unsigned long mask;
+> +	unsigned long flags;
+> +	bool ret;
+>  
+> -	if (!READ_ONCE(map->cleared))
+> -		return false;
+> +	spin_lock_irqsave(&map->swap_lock, flags);
+> +
+> +	if (!map->cleared) {
+> +		ret = find_first_zero_bit(&map->word, depth) >= depth ? false : true;
+> +		goto out_unlock;
+> +	}
 
-LGTM, and some quick testing on the linux-next tree with the corresponding merge
-commit showed no issue (no RCU warning, and mac address loading fix behaving
-properly)
+Direct check over map->word should be more efficient than find_first_zero_bit():
 
-Alexis
+  		if (READ_ONCE(map->word) == (1UL << depth) - 1)
+			ret = false;
+		else
+			ret = true;
 
--- 
-Alexis Lothoré, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>  
+>  	/*
+>  	 * First get a stable cleared mask, setting the old mask to 0.
+> @@ -77,7 +84,10 @@ static inline bool sbitmap_deferred_clear(struct sbitmap_word *map)
+>  	 */
+>  	atomic_long_andnot(mask, (atomic_long_t *)&map->word);
+>  	BUILD_BUG_ON(sizeof(atomic_long_t) != sizeof(map->word));
+> -	return true;
+> +	ret = true;
+> +out_unlock:
+> +	spin_unlock_irqrestore(&map->swap_lock, flags);
+> +	return ret;
+>  }
+>  
+>  int sbitmap_init_node(struct sbitmap *sb, unsigned int depth, int shift,
+> @@ -85,6 +95,7 @@ int sbitmap_init_node(struct sbitmap *sb, unsigned int depth, int shift,
+>  		      bool alloc_hint)
+>  {
+>  	unsigned int bits_per_word;
+> +	int i;
+>  
+>  	if (shift < 0)
+>  		shift = sbitmap_calculate_shift(depth);
+> @@ -116,6 +127,9 @@ int sbitmap_init_node(struct sbitmap *sb, unsigned int depth, int shift,
+>  		return -ENOMEM;
+>  	}
+>  
+> +	for (i = 0; i < sb->map_nr; i++)
+> +		spin_lock_init(&sb->map[i].swap_lock);
+> +
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(sbitmap_init_node);
+> @@ -126,7 +140,7 @@ void sbitmap_resize(struct sbitmap *sb, unsigned int depth)
+>  	unsigned int i;
+>  
+>  	for (i = 0; i < sb->map_nr; i++)
+> -		sbitmap_deferred_clear(&sb->map[i]);
+> +		sbitmap_deferred_clear(&sb->map[i], depth);
+
+The above 'depth' is whole sbitmap depth, and you need to figure out
+word depth from __map_depth().
+
+
+Thanks, 
+Ming
 
 
