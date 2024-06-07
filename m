@@ -1,247 +1,422 @@
-Return-Path: <linux-kernel+bounces-206179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFEDB900531
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:40:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BC40900534
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60C141F258DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:40:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CF1EB232B4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C9D194157;
-	Fri,  7 Jun 2024 13:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xa9wyYUe"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3198193099
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 13:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B9C194158;
+	Fri,  7 Jun 2024 13:40:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 245F91922F2;
+	Fri,  7 Jun 2024 13:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717767589; cv=none; b=PTsNyhrC1Bggz3BhroEraz13hOsG7WEuqvfCDeWr6d46Bhm/7v0RQUYofL51jrIhSbU1/GGWbrWdU5zz5e3TGV5/yrrperV3Ckzv/kC8PC8TA5XRfMVt4PVv6nEaXqWtfJCMKXOSVrUUQ7p7a9azR6JlpDvj4JAf3dnW7Verg4Y=
+	t=1717767625; cv=none; b=VmIOXIDa54mNA0Xl/vIYlAEsdaqXJ3tzeLQsuTkbU/5b8DW+3QK+6Wi3d12UeJkD6PB+ZD4tU/3ySE5cTswUucYGji8Hxn+49u2AKNQVQgGGVo3ER2oJRLKVjA72KQATugZChPLuw2b/3NU8WIIy7GzWA/MYd/STROW5ZlCfVDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717767589; c=relaxed/simple;
-	bh=zRUjkuu13UY0xr7996+cq6aTZrIiH+S+h1lee8kxEdQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gZ2Q15Q+He/KPDmZmSbKdgxvUnCtLNu/9CDE22sopxX+tvA2D/wHf5NIREY6XRGQNuNLcP1uXhWL9q3RYBtN2ceFVyCPxPp5rIrB3yErJZAPh0HgjEoG/gVAtclwe/mejA33emceY5gwADJcLjM6EEkJlB8vxv5JFIulwMyVm+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xa9wyYUe; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f62a628b4cso19558955ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 06:39:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717767587; x=1718372387; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lGjvaDk+KW6xnTzTcwYndsM82Fj+VUn371ofht0gpOk=;
-        b=Xa9wyYUesWwdPtLjING9Nbne+m6SBoBMtGibvz0I5vq5v2S763i0UUkE7FwZ/JViwg
-         1bxcreQ9Me0sjWbYRaaZObxVoY8dq+hTQ1t2Rk6FVfWoMcZNPCI9gG1eyZcBebXZ+oBU
-         EL7uvghjpaPJjMhunu0YU+9AQg6twbUmlkBWlPQ+tnJDVg2NHCyExmeuDOfoQAlLlR7a
-         3XTS86nwdawcn/pdOQgugoKfDOwKTE8c8L7ZQupuQrA9AGg7mPVgYu43JhEY1rXrFEjO
-         YRYZptDl4B5XIfeQZ5hfeysy6fwG0FD5dT+oAFoAhNOyWnmoYXKHfn+1MfwToQe2Xbk/
-         JkhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717767587; x=1718372387;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lGjvaDk+KW6xnTzTcwYndsM82Fj+VUn371ofht0gpOk=;
-        b=L/vog6qDVaMoRK2Le69O1qHffltbbdnIAdlFT81BheMwP1w3KJ2LPp3KJ2bnyiMOY1
-         7kIGOthL8/jwF5224COFgBclrJI2ZJN+84ZbwOAAVUk0UtBzJDP4MI7vMhNudQ1WW5XU
-         ytFOOZILpyCkP2LsV8NyTO/RJJm4a/mm1LgRJvqIzkzkY3AkWg/E/km+COJKtQ8xBX6/
-         JKRxexoewi1Z6xdlQ2y6e/QF1JefdNkrsHPCpBvoT+E7INg715zUWUxuzLGjwPJ+l5HA
-         VJzxVIrLtPTWHQSlRX/6xJl4WjhOZZanULqyeCrHlVVz5Fyouox17bAHq3H7oY0dFQfe
-         KGsA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvWadxG+hsjipIbCDGyDNHNURnbM5L5vyKVfuX1dfCdlK83qby7mnbiDM7pLfE0OSKhEHnhkFfHgcz77cMT8WyW9pFWI9t37xPO2xu
-X-Gm-Message-State: AOJu0YwIAk7lzLd1uEAPlssk/X7LCx6ilbTxR6aSCONdWmYs+4hoL2RU
-	XRGFNUkh+GoNjwqrb7hCFAm1Nd2Wd2zqx39DWsopyhg0I7T8VzW1IKbDptqbhZ632/DA9C+WGFh
-	mLuybcNbNAL9g2E/VKlQbD3ciL20=
-X-Google-Smtp-Source: AGHT+IHFeYv7N9rqcrTihxXkCB6iPbA0K4xnxCMnAQk6mBUZGTI1GpzTXBWWItwFP1ZhHdtfaoxyrtoLT7oPMuSTUgc=
-X-Received: by 2002:a17:902:d4c1:b0:1f6:7212:760a with SMTP id
- d9443c01a7336-1f6d021805amr29662965ad.0.1717767587019; Fri, 07 Jun 2024
- 06:39:47 -0700 (PDT)
+	s=arc-20240116; t=1717767625; c=relaxed/simple;
+	bh=obSgizG1NDDfvuV+r6uo0LV0gIsPk3Y+l9rFm405wzI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LcbesUDBZIgueRjJWEdNI+wYiGcJoro4aXDDzwhl/520rzegy83ckIawqE40m2gAdKr3ALkzR7OLXizR11mnyDxF5L2vasRpBo8Ps1p6ZacgT7CUYmh4vLYU57ifHxosa0w02ViLs4fqzveEzXp4ppuM8Vk06ywxZGEejvt60sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC130153B;
+	Fri,  7 Jun 2024 06:40:46 -0700 (PDT)
+Received: from [10.57.5.199] (unknown [10.57.5.199])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BA4663F792;
+	Fri,  7 Jun 2024 06:40:18 -0700 (PDT)
+Message-ID: <89337894-91b6-4c67-a5a9-7cfc5b902f76@arm.com>
+Date: Fri, 7 Jun 2024 14:40:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsNptxsQO=5=qi-JYiFX=rX8Ok5inK80Gn0qrUFWbtBGng@mail.gmail.com>
-In-Reply-To: <CABXGCsNptxsQO=5=qi-JYiFX=rX8Ok5inK80Gn0qrUFWbtBGng@mail.gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 7 Jun 2024 09:39:35 -0400
-Message-ID: <CADnq5_PDxJ8O1JUQ9RBYRFB9G1WZJos05ZAM4jUKuPBwPxjNkA@mail.gmail.com>
-Subject: Re: 6.10/bisected/regression - commits bc87d666c05 and 6d4279cb99ac
- cause appearing green flashing bar on top of screen on Radeon 6900XT and 120Hz
-To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Cc: Hamza Mahfooz <hamza.mahfooz@amd.com>, Rodrigo.Siqueira@amd.com, 
-	"Deucher, Alexander" <alexander.deucher@amd.com>, amd-gfx list <amd-gfx@lists.freedesktop.org>, 
-	dri-devel <dri-devel@lists.freedesktop.org>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, May 26, 2024 at 10:12=E2=80=AFAM Mikhail Gavrilov
-<mikhail.v.gavrilov@gmail.com> wrote:
->
-> Hi,
-> Day before yesterday I replaced 7900XTX to 6900XT for got clear in
-> which kernel first time appeared warning message "DMA-API: amdgpu
-> 0000:0f:00.0: cacheline tracking EEXIST, overlapping mappings aren't
-> supported".
-> The kernel 6.3 and older won't boot on a computer with Radeon 7900XTX.
-> When I booted the system with 6900XT I saw a green flashing bar on top
-> of the screen when I typed commands in the gnome terminal which was
-> maximized on full screen.
-> Demonstration: https://youtu.be/tTvwQ_5pRkk
-> For reproduction you need Radeon 6900XT GPU connected to 120Hz OLED TV by=
- HDMI.
->
-> I bisected the issue and the first commit which I found was 6d4279cb99ac.
-> commit 6d4279cb99ac4f51d10409501d29969f687ac8dc (HEAD)
-> Author: Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>
-> Date:   Tue Mar 26 10:42:05 2024 -0600
->
->     drm/amd/display: Drop legacy code
->
->     This commit removes code that are not used by display anymore.
->
->     Acked-by: Hamza Mahfooz <hamza.mahfooz@amd.com>
->     Signed-off-by: Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>
->     Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
->
->  drivers/gpu/drm/amd/display/dc/inc/hw/stream_encoder.h         |  4 ----
->  drivers/gpu/drm/amd/display/dc/inc/resource.h                  |  7 ----=
----
->  drivers/gpu/drm/amd/display/dc/optc/dcn20/dcn20_optc.c         | 10 ----=
-------
->  drivers/gpu/drm/amd/display/dc/resource/dcn21/dcn21_resource.c | 33
-> +--------------------------------
->  4 files changed, 1 insertion(+), 53 deletions(-)
->
-> Every time after bisecting I usually make sure that I found the right
-> commit and build the kernel with revert of the bad commit.
-> But this time I again observed an issue after running a kernel builded
-> without commit 6d4279cb99ac.
-> And I decided to find a second bad commit.
-> The second bad commit has been bc87d666c05.
-> commit bc87d666c05a13e6d4ae1ddce41fc43d2567b9a2 (HEAD)
-> Author: Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>
-> Date:   Tue Mar 26 11:55:19 2024 -0600
->
->     drm/amd/display: Add fallback configuration for set DRR in DCN10
->
->     Set OTG/OPTC parameters to 0 if something goes wrong on DCN10.
->
->     Acked-by: Hamza Mahfooz <hamza.mahfooz@amd.com>
->     Signed-off-by: Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>
->     Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
->
->  drivers/gpu/drm/amd/display/dc/optc/dcn10/dcn10_optc.c | 15 ++++++++++++=
----
->  1 file changed, 12 insertions(+), 3 deletions(-)
->
-> After reverting both these commits on top of 54f71b0369c9 the issue is go=
-ne.
->
-> I also attach the build config.
->
-> My hardware specs: https://linux-hardware.org/?probe=3Df25a873c5e
->
-> Rodrigo or anyone else from the AMD team can you look please.
-
-@Siqueira, Rodrigo can you take a look?  The two patches change the
-programming of OTG_V_TOTAL_CONTROL.  The first patch removes this
-code:
-
-diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn20/dcn20_optc.c
-b/drivers/gpu/drm/amd/display/dc/optc/dcn20/dcn20_optc.c
-index 58bdbd859bf9..d6f095b4555d 100644
---- a/drivers/gpu/drm/amd/display/dc/optc/dcn20/dcn20_optc.c
-+++ b/drivers/gpu/drm/amd/display/dc/optc/dcn20/dcn20_optc.c
-@@ -462,16 +462,6 @@ void optc2_setup_manual_trigger(struct
-timing_generator *optc)
- {
-        struct optc *optc1 =3D DCN10TG_FROM_TG(optc);
-
--       /* Set the min/max selectors unconditionally so that
--        * DMCUB fw may change OTG timings when necessary
--        * TODO: Remove the w/a after fixing the issue in DMCUB firmware
--        */
--       REG_UPDATE_4(OTG_V_TOTAL_CONTROL,
--                                OTG_V_TOTAL_MIN_SEL, 1,
--                                OTG_V_TOTAL_MAX_SEL, 1,
--                                OTG_FORCE_LOCK_ON_EVENT, 0,
--                                OTG_SET_V_TOTAL_MIN_MASK, (1 << 1));
-/* TRIGA */
--
-        REG_SET_8(OTG_TRIGA_CNTL, 0,
-                        OTG_TRIGA_SOURCE_SELECT, 21,
-                        OTG_TRIGA_SOURCE_PIPE_SELECT, optc->inst,
-
-and the second patch adds this hunk:
-
-diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn10/dcn10_optc.c
-b/drivers/gpu/drm/amd/display/dc/optc/dcn10/dcn10_optc.c
-index f109a101d84f..5574bc628053 100644
---- a/drivers/gpu/drm/amd/display/dc/optc/dcn10/dcn10_optc.c
-+++ b/drivers/gpu/drm/amd/display/dc/optc/dcn10/dcn10_optc.c
-@@ -945,10 +945,19 @@ void optc1_set_drr(
-                                OTG_FORCE_LOCK_ON_EVENT, 0,
-                                OTG_SET_V_TOTAL_MIN_MASK_EN, 0,
-                                OTG_SET_V_TOTAL_MIN_MASK, 0);
--       }
-
--       // Setup manual flow control for EOF via TRIG_A
--       optc->funcs->setup_manual_trigger(optc);
-+               // Setup manual flow control for EOF via TRIG_A
-+               optc->funcs->setup_manual_trigger(optc);
-+
-+       } else {
-+               REG_UPDATE_4(OTG_V_TOTAL_CONTROL,
-+                               OTG_SET_V_TOTAL_MIN_MASK, 0,
-+                               OTG_V_TOTAL_MIN_SEL, 0,
-+                               OTG_V_TOTAL_MAX_SEL, 0,
-+                               OTG_FORCE_LOCK_ON_EVENT, 0);
-+
-+               optc->funcs->set_vtotal_min_max(optc, 0, 0);
-+       }
- }
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 13/16] coresight: Use per-sink trace ID maps for Perf
+ sessions
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, John Garry
+ <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org,
+ coresight@lists.linaro.org, gankulkarni@os.amperecomputing.com,
+ mike.leach@linaro.org, leo.yan@linux.dev, anshuman.khandual@arm.com
+References: <20240604143030.519906-1-james.clark@arm.com>
+ <20240604143030.519906-14-james.clark@arm.com>
+ <b236da36-0730-4284-98df-581d47bc612e@arm.com>
+Content-Language: en-US
+From: James Clark <james.clark@arm.com>
+In-Reply-To: <b236da36-0730-4284-98df-581d47bc612e@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
-Looks like both the if and the else side paths end up programming
-OTG_V_TOTAL_CONTROL differently after the change.  Perhaps
-OTG_SET_V_TOTAL_MIN_MASK needs to be set differently depending on the
-DMCUB firmware version? @Mikhail Gavrilov does this patch fix it?
 
-diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn10/dcn10_optc.c
-b/drivers/gpu/drm/amd/display/dc/optc/dcn10/dcn10_optc.c
-index 336488c0574e..933c7a342936 100644
---- a/drivers/gpu/drm/amd/display/dc/optc/dcn10/dcn10_optc.c
-+++ b/drivers/gpu/drm/amd/display/dc/optc/dcn10/dcn10_optc.c
-@@ -944,7 +944,7 @@ void optc1_set_drr(
-                                OTG_V_TOTAL_MAX_SEL, 1,
-                                OTG_FORCE_LOCK_ON_EVENT, 0,
-                                OTG_SET_V_TOTAL_MIN_MASK_EN, 0,
--                               OTG_SET_V_TOTAL_MIN_MASK, 0);
-+                               OTG_SET_V_TOTAL_MIN_MASK, (1 << 1)); /* TRI=
-GA */
+On 07/06/2024 14:18, Suzuki K Poulose wrote:
+> Hi James
+> 
+> On 04/06/2024 15:30, James Clark wrote:
+>> This will allow sessions with more than CORESIGHT_TRACE_IDS_MAX ETMs
+>> as long as there are fewer than that many ETMs connected to each sink.
+>>
+>> Each sink owns its own trace ID map, and any Perf session connecting to
+>> that sink will allocate from it, even if the sink is currently in use by
+>> other users. This is similar to the existing behavior where the dynamic
+>> trace IDs are constant as long as there is any concurrent Perf session
+>> active. It's not completely optimal because slightly more IDs will be
+>> used than necessary, but the optimal solution involves tracking the PIDs
+>> of each session and allocating ID maps based on the session owner. This
+>> is difficult to do with the combination of per-thread and per-cpu modes
+>> and some scheduling issues. The complexity of this isn't likely to worth
+>> it because even with multiple users they'd just see a difference in the
+>> ordering of ID allocations rather than hitting any limits (unless the
+>> hardware does have too many ETMs connected to one sink).
+> 
+> Please find my comments below.
+> 
+> 
+>>
+>> Signed-off-by: James Clark <james.clark@arm.com>
+>> ---
+>>   drivers/hwtracing/coresight/coresight-core.c      | 10 ++++++++++
+>>   drivers/hwtracing/coresight/coresight-dummy.c     |  3 ++-
+>>   drivers/hwtracing/coresight/coresight-etm-perf.c  | 15 ++++++++++-----
+>>   .../hwtracing/coresight/coresight-etm3x-core.c    |  9 +++++----
+>>   .../hwtracing/coresight/coresight-etm4x-core.c    |  9 +++++----
+>>   drivers/hwtracing/coresight/coresight-stm.c       |  3 ++-
+>>   drivers/hwtracing/coresight/coresight-sysfs.c     |  3 ++-
+>>   drivers/hwtracing/coresight/coresight-tpdm.c      |  3 ++-
+>>   include/linux/coresight.h                         |  3 ++-
+>>   9 files changed, 40 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-core.c
+>> b/drivers/hwtracing/coresight/coresight-core.c
+>> index 9fc6f6b863e0..d5aaeafe5c7d 100644
+>> --- a/drivers/hwtracing/coresight/coresight-core.c
+>> +++ b/drivers/hwtracing/coresight/coresight-core.c
+>> @@ -902,6 +902,7 @@ static void coresight_device_release(struct device
+>> *dev)
+>>       struct coresight_device *csdev = to_coresight_device(dev);
+>>         fwnode_handle_put(csdev->dev.fwnode);
+>> +    free_percpu(csdev->perf_sink_id_map.cpu_map);
+>>       kfree(csdev);
+>>   }
+>>   @@ -1159,6 +1160,14 @@ struct coresight_device
+>> *coresight_register(struct coresight_desc *desc)
+>>       csdev->dev.fwnode = fwnode_handle_get(dev_fwnode(desc->dev));
+>>       dev_set_name(&csdev->dev, "%s", desc->name);
+>>   +    if (csdev->type == CORESIGHT_DEV_TYPE_SINK ||
+>> +        csdev->type == CORESIGHT_DEV_TYPE_LINKSINK) {
+>> +        csdev->perf_sink_id_map.cpu_map = alloc_percpu(atomic_t);
+>> +        if (!csdev->perf_sink_id_map.cpu_map) {
+>> +            ret = -ENOMEM;
+>> +            goto err_out;
+>> +        }
+>> +    }
+>>       /*
+>>        * Make sure the device registration and the connection fixup
+>>        * are synchronised, so that we don't see uninitialised devices
+>> @@ -1216,6 +1225,7 @@ struct coresight_device
+>> *coresight_register(struct coresight_desc *desc)
+>>   err_out:
+>>       /* Cleanup the connection information */
+>>       coresight_release_platform_data(NULL, desc->dev, desc->pdata);
+>> +    kfree(csdev);
+> 
+> This hunk looked suspicious to me and is problematic. If we fail to
+> register the device with "device_register()", we already free the
+> csdev, via coresight_device_release() triggered via the device_put(),
+> (See comments in that case) and we could trigger a double free of the
+> csdev with this change.
+> 
+> I would recommend, you free the "csdev" in the above case, if we fail to
+> allocate the percpu storage and fall through.
+> 
+>>       return ERR_PTR(ret);
+>>   }
+>>   EXPORT_SYMBOL_GPL(coresight_register);
+>> diff --git a/drivers/hwtracing/coresight/coresight-dummy.c
+>> b/drivers/hwtracing/coresight/coresight-dummy.c
+>> index ac70c0b491be..1f1b9ad160f6 100644
+>> --- a/drivers/hwtracing/coresight/coresight-dummy.c
+>> +++ b/drivers/hwtracing/coresight/coresight-dummy.c
+>> @@ -21,7 +21,8 @@ DEFINE_CORESIGHT_DEVLIST(source_devs, "dummy_source");
+>>   DEFINE_CORESIGHT_DEVLIST(sink_devs, "dummy_sink");
+>>     static int dummy_source_enable(struct coresight_device *csdev,
+>> -                   struct perf_event *event, enum cs_mode mode)
+>> +                   struct perf_event *event, enum cs_mode mode,
+>> +                   __maybe_unused struct coresight_trace_id_map *id_map)
+>>   {
+>>       dev_dbg(csdev->dev.parent, "Dummy source enabled\n");
+>>   diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> b/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> index c0c60e6a1703..7fb55dafb639 100644
+>> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> @@ -229,10 +229,13 @@ static void free_event_data(struct work_struct
+>> *work)
+>>           struct list_head **ppath;
+>>             ppath = etm_event_cpu_path_ptr(event_data, cpu);
+>> -        if (!(IS_ERR_OR_NULL(*ppath)))
+>> +        if (!(IS_ERR_OR_NULL(*ppath))) {
+>> +            struct coresight_device *sink = coresight_get_sink(*ppath);
+>> +
+>> +            coresight_trace_id_put_cpu_id_map(cpu,
+>> &sink->perf_sink_id_map);
+>>               coresight_release_path(*ppath);
+>> +        }
+>>           *ppath = NULL;
+>> -        coresight_trace_id_put_cpu_id(cpu);
+>>       }
+>>         /* mark perf event as done for trace id allocator */
+>> @@ -401,7 +404,7 @@ static void *etm_setup_aux(struct perf_event
+>> *event, void **pages,
+>>           }
+>>             /* ensure we can allocate a trace ID for this CPU */
+>> -        trace_id = coresight_trace_id_get_cpu_id(cpu);
+>> +        trace_id = coresight_trace_id_get_cpu_id_map(cpu,
+>> &sink->perf_sink_id_map);
+>>           if (!IS_VALID_CS_TRACE_ID(trace_id)) {
+>>               cpumask_clear_cpu(cpu, mask);
+>>               coresight_release_path(path);
+>> @@ -495,7 +498,8 @@ static void etm_event_start(struct perf_event
+>> *event, int flags)
+>>           goto fail_end_stop;
+>>         /* Finally enable the tracer */
+>> -    if (source_ops(csdev)->enable(csdev, event, CS_MODE_PERF))
+>> +    if (source_ops(csdev)->enable(csdev, event, CS_MODE_PERF,
+>> +                      &sink->perf_sink_id_map))
+>>           goto fail_disable_path;
+>>         /*
+>> @@ -507,7 +511,8 @@ static void etm_event_start(struct perf_event
+>> *event, int flags)
+>>           hw_id = FIELD_PREP(CS_AUX_HW_ID_VERSION_MASK,
+>>                      CS_AUX_HW_ID_CURR_VERSION);
+>>           hw_id |= FIELD_PREP(CS_AUX_HW_ID_TRACE_ID_MASK,
+>> -                    coresight_trace_id_read_cpu_id(cpu));
+>> +                    coresight_trace_id_read_cpu_id_map(cpu,
+>> +                                       &sink->perf_sink_id_map));
+>>           perf_report_aux_output_id(event, hw_id);
+>>       }
+>>   diff --git a/drivers/hwtracing/coresight/coresight-etm3x-core.c
+>> b/drivers/hwtracing/coresight/coresight-etm3x-core.c
+>> index 9d5c1391ffb1..65cf7456426a 100644
+>> --- a/drivers/hwtracing/coresight/coresight-etm3x-core.c
+>> +++ b/drivers/hwtracing/coresight/coresight-etm3x-core.c
+>> @@ -481,7 +481,8 @@ void etm_release_trace_id(struct etm_drvdata
+>> *drvdata)
+>>   }
+>>     static int etm_enable_perf(struct coresight_device *csdev,
+>> -               struct perf_event *event)
+>> +               struct perf_event *event,
+>> +               struct coresight_trace_id_map *id_map)
+>>   {
+>>       struct etm_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+>>       int trace_id;
+>> @@ -500,7 +501,7 @@ static int etm_enable_perf(struct coresight_device
+>> *csdev,
+>>        * with perf locks - we know the ID cannot change until perf
+>> shuts down
+>>        * the session
+>>        */
+>> -    trace_id = coresight_trace_id_read_cpu_id(drvdata->cpu);
+>> +    trace_id = coresight_trace_id_read_cpu_id_map(drvdata->cpu, id_map);
+>>       if (!IS_VALID_CS_TRACE_ID(trace_id)) {
+>>           dev_err(&drvdata->csdev->dev, "Failed to set trace ID for %s
+>> on CPU%d\n",
+>>               dev_name(&drvdata->csdev->dev), drvdata->cpu);
+>> @@ -553,7 +554,7 @@ static int etm_enable_sysfs(struct
+>> coresight_device *csdev)
+>>   }
+>>     static int etm_enable(struct coresight_device *csdev, struct
+>> perf_event *event,
+>> -              enum cs_mode mode)
+>> +              enum cs_mode mode, struct coresight_trace_id_map *id_map)
+>>   {
+>>       int ret;
+>>       struct etm_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+>> @@ -568,7 +569,7 @@ static int etm_enable(struct coresight_device
+>> *csdev, struct perf_event *event,
+>>           ret = etm_enable_sysfs(csdev);
+>>           break;
+>>       case CS_MODE_PERF:
+>> -        ret = etm_enable_perf(csdev, event);
+>> +        ret = etm_enable_perf(csdev, event, id_map);
+>>           break;
+>>       default:
+>>           ret = -EINVAL;
+>> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+>> b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+>> index a0bdfabddbc6..fcd0f9ba562d 100644
+>> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+>> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+>> @@ -752,7 +752,8 @@ static int etm4_parse_event_config(struct
+>> coresight_device *csdev,
+>>   }
+>>     static int etm4_enable_perf(struct coresight_device *csdev,
+>> -                struct perf_event *event)
+>> +                struct perf_event *event,
+>> +                struct coresight_trace_id_map *id_map)
+>>   {
+>>       int ret = 0, trace_id;
+>>       struct etmv4_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+>> @@ -775,7 +776,7 @@ static int etm4_enable_perf(struct
+>> coresight_device *csdev,
+>>        * with perf locks - we know the ID cannot change until perf
+>> shuts down
+>>        * the session
+>>        */
+>> -    trace_id = coresight_trace_id_read_cpu_id(drvdata->cpu);
+>> +    trace_id = coresight_trace_id_read_cpu_id_map(drvdata->cpu, id_map);
+>>       if (!IS_VALID_CS_TRACE_ID(trace_id)) {
+>>           dev_err(&drvdata->csdev->dev, "Failed to set trace ID for %s
+>> on CPU%d\n",
+>>               dev_name(&drvdata->csdev->dev), drvdata->cpu);
+>> @@ -837,7 +838,7 @@ static int etm4_enable_sysfs(struct
+>> coresight_device *csdev)
+>>   }
+>>     static int etm4_enable(struct coresight_device *csdev, struct
+>> perf_event *event,
+>> -               enum cs_mode mode)
+>> +               enum cs_mode mode, struct coresight_trace_id_map *id_map)
+>>   {
+>>       int ret;
+>>   @@ -851,7 +852,7 @@ static int etm4_enable(struct coresight_device
+>> *csdev, struct perf_event *event,
+>>           ret = etm4_enable_sysfs(csdev);
+>>           break;
+>>       case CS_MODE_PERF:
+>> -        ret = etm4_enable_perf(csdev, event);
+>> +        ret = etm4_enable_perf(csdev, event, id_map);
+>>           break;
+>>       default:
+>>           ret = -EINVAL;
+>> diff --git a/drivers/hwtracing/coresight/coresight-stm.c
+>> b/drivers/hwtracing/coresight/coresight-stm.c
+>> index e1c62820dfda..a80ad1de4c23 100644
+>> --- a/drivers/hwtracing/coresight/coresight-stm.c
+>> +++ b/drivers/hwtracing/coresight/coresight-stm.c
+>> @@ -194,7 +194,8 @@ static void stm_enable_hw(struct stm_drvdata
+>> *drvdata)
+>>   }
+>>     static int stm_enable(struct coresight_device *csdev, struct
+>> perf_event *event,
+>> -              enum cs_mode mode)
+>> +              enum cs_mode mode,
+>> +              __maybe_unused struct coresight_trace_id_map *trace_id)
+>>   {
+>>       struct stm_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+>>   diff --git a/drivers/hwtracing/coresight/coresight-sysfs.c
+>> b/drivers/hwtracing/coresight/coresight-sysfs.c
+>> index 1e67cc7758d7..a01c9e54e2ed 100644
+>> --- a/drivers/hwtracing/coresight/coresight-sysfs.c
+>> +++ b/drivers/hwtracing/coresight/coresight-sysfs.c
+>> @@ -9,6 +9,7 @@
+>>   #include <linux/kernel.h>
+>>     #include "coresight-priv.h"
+>> +#include "coresight-trace-id.h"
+>>     /*
+>>    * Use IDR to map the hash of the source's device name
+>> @@ -63,7 +64,7 @@ static int coresight_enable_source_sysfs(struct
+>> coresight_device *csdev,
+>>        */
+>>       lockdep_assert_held(&coresight_mutex);
+>>       if (coresight_get_mode(csdev) != CS_MODE_SYSFS) {
+>> -        ret = source_ops(csdev)->enable(csdev, data, mode);
+>> +        ret = source_ops(csdev)->enable(csdev, data, mode, NULL);
+>>           if (ret)
+>>               return ret;
+>>       }
+>> diff --git a/drivers/hwtracing/coresight/coresight-tpdm.c
+>> b/drivers/hwtracing/coresight/coresight-tpdm.c
+>> index a9708ab0d488..0376ad326a2f 100644
+>> --- a/drivers/hwtracing/coresight/coresight-tpdm.c
+>> +++ b/drivers/hwtracing/coresight/coresight-tpdm.c
+>> @@ -439,7 +439,8 @@ static void __tpdm_enable(struct tpdm_drvdata
+>> *drvdata)
+>>   }
+>>     static int tpdm_enable(struct coresight_device *csdev, struct
+>> perf_event *event,
+>> -               enum cs_mode mode)
+>> +               enum cs_mode mode,
+>> +               __maybe_unused struct coresight_trace_id_map *id_map)
+>>   {
+>>       struct tpdm_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+>>   diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+>> index 7d62b88bfb5c..9c3067e2e38b 100644
+>> --- a/include/linux/coresight.h
+>> +++ b/include/linux/coresight.h
+>> @@ -290,6 +290,7 @@ struct coresight_device {
+>>       bool sysfs_sink_activated;
+>>       struct dev_ext_attribute *ea;
+>>       struct coresight_device *def_sink;
+>> +    struct coresight_trace_id_map perf_sink_id_map;
+>>       /* sysfs links between components */
+>>       int nr_links;
+>>       bool has_conns_grp;
+>> @@ -384,7 +385,7 @@ struct coresight_ops_link {
+>>   struct coresight_ops_source {
+>>       int (*cpu_id)(struct coresight_device *csdev);
+>>       int (*enable)(struct coresight_device *csdev, struct perf_event
+>> *event,
+>> -              enum cs_mode mode);
+>> +              enum cs_mode mode, struct coresight_trace_id_map *id_map);
+> 
+> I am slightly concerned by this change. We already pass down "event" for
+> a generic "enable" call back which serves both SYSFS & PERF. Now we are
+> adding one more, just for the PERF usage. Ideally, it is possible to
+> pass a single argument, e.g. perf_aux_output_handle which can fetch you
+> all the required infor for "enable".
+> 
+>  i.e, hanlde->event, perf_get_aux(handle) -> event_data. We could even
+> add a helper to find the trace_id map from the handle, which could hide
+> the implementation details from the backend drivers.
+> 
+> e.g.,
+> 
+> etm_perf_get_trace_id_map(handle) -> {
+>   event_data = perf_get_aux()
+>   path = per_cpu(event_data->path)
+>   sink = sink_from_path(path)
+>   return trace_id of the sink;
+> }
+> 
+> 
+> That said, we if we intend to extend the usage of trace_id_map for
+> sysfs, this may be fine as is.
+> 
+> Suzuki
 
-                // Setup manual flow control for EOF via TRIG_A
-                optc->funcs->setup_manual_trigger(optc);
+Yeah, that's what I was getting at here [1]. I added it so that sysfs
+can use the same argument if we add per-sink IDs for sysfs (which seems
+inevitable because of the core count limitation). Adding it to the
+perf_event doesn't help for sysfs. And having a common argument will be
+more obvious and straightforward than having to dig it out of different
+places.
 
+[1]:
+https://lore.kernel.org/linux-perf-users/97c57424-6242-4ba1-8b46-6405c084645c@arm.com/
 
-Thanks,
-
-Alex
-
->
-> --
-> Best Regards,
-> Mike Gavrilov.
+> 
+> 
+>>       void (*disable)(struct coresight_device *csdev,
+>>               struct perf_event *event);
+>>   };
+> 
 
