@@ -1,104 +1,90 @@
-Return-Path: <linux-kernel+bounces-205590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 425578FFDE7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:14:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE8928FFDEA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C59BA1F239BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:14:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A79D28C327
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF1B15ADB3;
-	Fri,  7 Jun 2024 08:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FRGdCAEJ"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A8213E043;
-	Fri,  7 Jun 2024 08:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEEB315ADB5;
+	Fri,  7 Jun 2024 08:14:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A1C13E043;
+	Fri,  7 Jun 2024 08:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717748043; cv=none; b=MtOJCT7JZwDApkt9vnwlaW+f4W4Pef2Qt7/EDLYOivjDPLcbqY1VAcDeAxEjXFcy6dcsSdeqCDEKb8pNrSGWVOjdGeZI/mrKE3Sg0h9NDhuK0TKPPnffD28JqD/jCk4qDqi1t3SEoG2B/y85eZ4aMR/S20FlnTV5w3WGgYgLpRc=
+	t=1717748084; cv=none; b=nt0M1QwO+PvDT+cMopxLCwpD2Uk/9wSalzpIvtIdA+opTuGnH4rXoBWJFgj7mBtp5k/wqIuNwqnW6U4JMP7IWSRYmBvXKkxLcuxHhGUylak3INPW7h8j8yCqTCN2cd+eDBNwPMRHbSXz0YGhEWWdgGNTgL9llwbgZS6vnA8ozRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717748043; c=relaxed/simple;
-	bh=kra66mxB0q4iY/DDpaAHpvNHtIpyAm2YT0Vp97A28w4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=db7IZ/exXC5ccR9JUAf2md4RdUvQf49aGci0LeIxsfHjKPC18khKhDmCU5LIkRPiaoLZrJmoGTqByJQiEcAwqS2hlhR92huX7oMWavnCf4evqnHePIdQNhgxPS3pLokqoCPJNPS9oZbW8cJzBw4Vkh9EyKeSHjh6SndHDGly4oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FRGdCAEJ; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D2DFC20005;
-	Fri,  7 Jun 2024 08:13:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1717748039;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZXKmOZS+PQZzg5AMCG0XJBn+K8xjGx6LJU8WQ9B0p50=;
-	b=FRGdCAEJSyXTggHVMudoJ28SRqrGunmHCbwlR06soLlU/wTAqeQnCh2Rgnfpe9pu3jt7qi
-	4ezZQ+fYHwEAqIwDmqL46BxyOlSu2bsbnw7yLdQFK6uU/EuGU8nXxV2jvfzl3ikn9sCzsS
-	4hAiDv8ckBC3NvSgxiq+s8ks73bDuES1NKNM2aZyH3Dy38OFlQ2vNIxPierDbmm9F3J48G
-	Z9tVZT6PNGCxbYdgrkftJsO6gbamPWB1VbpMFew1e7mm07HWZRT65ViOuPdtgXGLMIEB9Y
-	m/T5rvIsDCA9cJjRohhf5hrlAe8nZt+S7fG/If/5sSDHOnPiY/IV9lLPt7sY3A==
-Date: Fri, 7 Jun 2024 10:13:56 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Matti Vaittinen
- <matti.vaittinen@fi.rohmeurope.com>, Lee Jones <lee@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter
- Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v3 07/10] irqdomain: Allow giving name suffix for domain
-Message-ID: <20240607101356.3ede2a17@bootlin.com>
-In-Reply-To: <045828bd-4aeb-4d8d-b152-44a816a07221@gmail.com>
-References: <cover.1717486682.git.mazziesaccount@gmail.com>
-	<bbd219c95f4fe88752aee5f21232480fe9b949fb.1717486682.git.mazziesaccount@gmail.com>
-	<87plst28yk.ffs@tglx>
-	<045828bd-4aeb-4d8d-b152-44a816a07221@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1717748084; c=relaxed/simple;
+	bh=Lrv2JMUnu8KtktRB5CsvxnRHmeg5518CYUsd9b4ohQM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tWkqOGnb1qQVU3R3oxJeSKNVE8Y7j8I4CZibW8piwQlnA4L7lkJlvFZce72HrWUd618HJ6mLC0DyOQwUW9N//xXjKHyOqVWSF40c6xeXbVh8H+/V2LP3yU7gjgGqPpYg0ExFpYunh7+0Jw9DFv390MDfPjFt0sOa5SrKcZJqY2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3A3862F4;
+	Fri,  7 Jun 2024 01:15:06 -0700 (PDT)
+Received: from [192.168.2.88] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 151483F64C;
+	Fri,  7 Jun 2024 01:14:39 -0700 (PDT)
+Message-ID: <c11acac7-085a-4041-a1f3-8b4f46e4b691@arm.com>
+Date: Fri, 7 Jun 2024 10:14:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] cpuidle: teo: Increase minimum time to stop tick
+To: Christian Loehle <christian.loehle@arm.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, rafael@kernel.org
+Cc: vincent.guittot@linaro.org, qyousef@layalina.io, peterz@infradead.org,
+ daniel.lezcano@linaro.org, anna-maria@linutronix.de,
+ kajetan.puchalski@arm.com, lukasz.luba@arm.com
+References: <20240606090050.327614-1-christian.loehle@arm.com>
+ <20240606090050.327614-5-christian.loehle@arm.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <20240606090050.327614-5-christian.loehle@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Transfer-Encoding: 7bit
 
-Hi Matti,
+On 06/06/2024 11:00, Christian Loehle wrote:
+> Since stopping the tick isn't free, add at least some minor constant
+> (1ms) for the threshold to stop the tick.
 
-On Fri, 7 Jun 2024 09:38:31 +0300
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+Sounds pretty arbitrary to me? 'duration_ns' is either based on
+target_residency_ns or tick_nohz_get_sleep_length() or even set to
+TICK_NSEC/2. Does adding 1ms makes sense to all these cases? But then
+why 1ms?
 
-...
-
-> Herve, do you have any idea when you plan to do further sketching on 
-> this? Do you want me to try seeing if I can add the struct 
-> irq_domain_info and maybe use that in the __irq_domain_add() to get the 
-> name-suffix added? I might be able to send one version out during next 
-> week - but then I plan to be offline for couple of weeks ... so it may 
-> be I am not much of a help here.
+> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+> ---
+>  drivers/cpuidle/governors/teo.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
+> diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/teo.c
+> index 216d34747e3b..ca9422bbd8db 100644
+> --- a/drivers/cpuidle/governors/teo.c
+> +++ b/drivers/cpuidle/governors/teo.c
+> @@ -622,10 +622,10 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+>  	/*
+>  	 * Allow the tick to be stopped unless the selected state is a polling
+>  	 * one or the expected idle duration is shorter than the tick period
+> -	 * length.
+> +	 * length plus some constant (1ms) to account for stopping it.
+>  	 */
+>  	if ((!(drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
+> -	    duration_ns >= TICK_NSEC) || tick_nohz_tick_stopped())
+> +	    duration_ns > NSEC_PER_MSEC + TICK_NSEC) || tick_nohz_tick_stopped())
+>  		return idx;
+>  
+>  out_tick_state:
 
-On my side, I plan to work on it next week too.
-If you are off a couple of weeks after, I think I can start and move forward
-on this topic.
-
-Best regards,
-Hervé
-
--- 
-Hervé Codina, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
