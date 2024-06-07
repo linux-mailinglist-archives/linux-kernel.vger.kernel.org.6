@@ -1,163 +1,140 @@
-Return-Path: <linux-kernel+bounces-206519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E61A900ADF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:59:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF37E900AE5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B99F1C213F4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:59:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B529B24FCA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE51A19ADA2;
-	Fri,  7 Jun 2024 16:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53BB19AD64;
+	Fri,  7 Jun 2024 17:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G2AVTqpi"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VRfH1x2m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2694619AD56
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 16:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0104818059;
+	Fri,  7 Jun 2024 16:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717779572; cv=none; b=aBoOKsVTzFlkv/55ApwwMh4yxSLK2gjce09PjVDWVoumtFd/uEbXfsJf8hzFAU7YaehHFaJVUilEGjbFjY/0TcE+EkoDobEiTfNCHP+WQUq6oSdp0AOk2rFhTq50hmQ4b0HUTrqUqbtyn6zEXYQs6W0OblJ9pTWkz4UjwNpaNqA=
+	t=1717779600; cv=none; b=JiKjm0NQ6z8JKbeH/N9XbD3DKlv6XyYJWwISolPTfnwrvFguxE0dk8ktfx4+ZYQqUkssExecXaHJEND6sCVuWtQ1LAYTrULcHBEFMDF4kX+1O7gsbYbGabXtzwvhQFVTc48Qg+ieIFDgCbjhdjU44QrnSrZrcBczBjXv+ZcLybg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717779572; c=relaxed/simple;
-	bh=b716fHLqA+q2jVEnF0wQCq5rwwcoiNDI2tYRdVxGBJ8=;
+	s=arc-20240116; t=1717779600; c=relaxed/simple;
+	bh=GBvNsXIMHdMRNwV+HaKNpklwhxJlqMuEiP54hYEuB8Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hVokE2Is4C4mJvpJ+Dzxt7LR+YP53pEb33TIovoGqtWcRppIGsd0TzwKdTU2JQQHofA4HlLzfxqzWltF2ozI4RcCBdRKG+g/xyjehBpamAkQttZdANVveG3o7WJd1bMEunViK/s5rSpOgF/TV9Xbt1a3F2eSl2MlG0s95Pf6J04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G2AVTqpi; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57a1fe63947so3011989a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 09:59:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717779569; x=1718384369; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b716fHLqA+q2jVEnF0wQCq5rwwcoiNDI2tYRdVxGBJ8=;
-        b=G2AVTqpij2cJhN5HRQo3ptWXB/TQ9YDh9RGrpGeXVnp1CnL9i2DHQgrabHfRJ+vI4v
-         6rj8PhKQhbrqw08lFKhBQBeW3OEzxZgvZ0sM8DqYOCgzynh/TqX8zhUpecpLeveUgZe/
-         4WO2raT386olPe7+CqYN3aB+/KVKBRO+MtAq0XGvPQZgecLr0Yv0La164s3HFQRW75Oj
-         zZN4yPFMx3bgrVJwSDOEuMmEHfxotBiwl6JuetdpyYQLp0Ofu9L4f3YRHWKNySwxc9/Q
-         JR8ZXjlMx3qbDJacaMfkf8ysfsu1jvPB+cyZ9tvZ8GL8kf1mEaJBMzprr6qo856Q0ny6
-         yaFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717779569; x=1718384369;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b716fHLqA+q2jVEnF0wQCq5rwwcoiNDI2tYRdVxGBJ8=;
-        b=FAOV6RvhehQUFY3EsgFV7PyyS5FzN/UL7I8YXkvVkb1OybqadHSXa03NSlfgiZqBc2
-         sGTtNcHHEgGukAXdvFwOeTN9jvuje+QmR7eWhDhOJHpWss+zPfqR+tyGd2ExqH5rLK6I
-         UfN38lEKgAs+Ak+34TlkkFi6Ygno6RkhKkCkztVMy3JDP+d7EGRthvQhKVelU5nM8ldr
-         D8Zs8Sv5zWdzFosRO0t3gW5T24icDlLG++wdFi3UE1cHzloibNuQNnlXDmILz08kgOlf
-         cexlkt8u8UnHrLNY7xt+jibhaywvLXHKICabbTuM8ZafdC9AexRhP/v5h1/Nw3+qNgsS
-         vNJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUP0+CZDDOe6z6ToSjRgrOKoIG6CalBTnB3G20SQ0HdXK8jU4sECujwMVsW4H0UYbEbxFaCTsfjGoAoS5LgIbWq7wIkJECvDa4unLOR
-X-Gm-Message-State: AOJu0YziBf/FO9r0YT1wInhZ9dv5du2lfyuzEUIq30meoZZGAMDNvx7E
-	MNIMyTPkdGLchcCSHe54MdqR+lt8B62fjch+GyUgecbVigDZLmqer90RCMlgWtJCPTahx4voBsP
-	b+amMRytfmawRxj4SqBoYBImBLMNXp5A/cVqk
-X-Google-Smtp-Source: AGHT+IFO8pnZEEr0e5+OyIy57985L/vijoXMBq19GG2GOaDteqsHQMVykhBCrf2eEzDSRbH9iO1UMt7DJvGo0PZ4Mj4=
-X-Received: by 2002:a17:906:12c1:b0:a63:3cd4:97d2 with SMTP id
- a640c23a62f3a-a6cdbd0d2e5mr206803066b.63.1717779569136; Fri, 07 Jun 2024
- 09:59:29 -0700 (PDT)
+	 To:Cc:Content-Type; b=FPDw69SVNByo8nc48xyqIlSfaEcss6uBn23HJK3pskYdL3XlhCdhJB3i6YHI8cbTDjvtKSzUENLce7bl4clru3XfDIf6a/rRibosNoJ1yLmK0WXv3Qji8/8vhsTLgJSHDZl4o1RMNUWNaEGU57PShHWtrPMCDbphTe31fe5vx6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VRfH1x2m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87FFCC32786;
+	Fri,  7 Jun 2024 16:59:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717779599;
+	bh=GBvNsXIMHdMRNwV+HaKNpklwhxJlqMuEiP54hYEuB8Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VRfH1x2mAxUen8RyH8MQt6alQ2N21U7F4vG8LddvHQwPG4abxZ90Gk49s72eDKLMf
+	 B+coli3INqSjbofZmQ4NZiVmLcIEyxLCnRHrExZuGFwEIBqmkKaHn6DGaghTtMtalW
+	 EnkM4W3PfsV6QMW4CH7HpLV4Hn0ppgkfvuM/oZevlwbgfyykUVX+uiRCWJ1R8hIeNP
+	 nzan6Q8F7xpiHiikXFk0lkpwQed3Z3BNfyvxt4bBVi8uWjPHUTqrF2Jf9O2h9XubY5
+	 dUPbFydqVtoxzEuaLsUZRwuBnimeBSnsk8rfCRIa8NNNdOjIeyFldZYm0c5pJOSMdA
+	 XT3zXFRSa3ocQ==
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e72b8931caso24304521fa.0;
+        Fri, 07 Jun 2024 09:59:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXU3qsk4bKWukmre2VyOmQ/YWPlUsnrArAJwFBhIZJlFMUAw0Nr5Kg9FKVpCSAlGVyPYgbrikprjhmq5LVzLVEtcOQAkFEcq+48dv/H0IjL5ttFFIZQ4n1zIajq95xEa9RNNgdQd/2OqPeDig==
+X-Gm-Message-State: AOJu0YyKnFlLEQq/rp/Co6Afb/AGGBg8PuYMnVrPw/6tSFY1X4o1g0KL
+	MkrlgVEccd8TTTYorHiIbViZf4TqSx1IphM3uAId9VvfIVTq9SO91F0k4Re1NQciVKUSwPv+bka
+	8pH7QuAi8QzAj4xMd89c9Vfnwk3s=
+X-Google-Smtp-Source: AGHT+IG2T51+ixhr6bv9P3DrRoGrciEtqNw7O+SKp06UW/mt1PawrvQmhDXMidxCaCvcH9neI9hpjHW3HfTIO5vY0uY=
+X-Received: by 2002:a2e:780b:0:b0:2ea:e9f9:6ac2 with SMTP id
+ 38308e7fff4ca-2eae9f96be4mr11807711fa.8.1717779597931; Fri, 07 Jun 2024
+ 09:59:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530201616.1316526-1-almasrymina@google.com>
- <20240530201616.1316526-3-almasrymina@google.com> <ZlqzER_ufrhlB28v@infradead.org>
- <CAHS8izMU_nMEr04J9kXiX6rJqK4nQKA+W-enKLhNxvK7=H2pgA@mail.gmail.com>
- <5aee4bba-ca65-443c-bd78-e5599b814a13@gmail.com> <CAHS8izNmT_NzgCu1pY1RKgJh+kP2rCL_90Gqau2Pkd3-48Q1_w@mail.gmail.com>
- <eb237e6e-3626-4435-8af5-11ed3931b0ac@gmail.com> <be2d140f-db0f-4d15-967c-972ea6586b5c@kernel.org>
- <8f44ca2a-8910-418f-b4a6-ca1e051484ba@gmail.com> <a8df4459-30bf-4414-aeca-2f67c461adc4@gmail.com>
-In-Reply-To: <a8df4459-30bf-4414-aeca-2f67c461adc4@gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Fri, 7 Jun 2024 09:59:16 -0700
-Message-ID: <CAHS8izNcYMsSpTNVSGRJHK6u+kDxnFab5Km1rYy8b++0FeUNgA@mail.gmail.com>
-Subject: Re: [PATCH net-next v10 02/14] net: page_pool: create hooks for
- custom page providers
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: David Ahern <dsahern@kernel.org>, Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
-	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
-	Praveen Kaligineedi <pkaligineedi@google.com>
+References: <20240520005826.17281-1-zhangwarden@gmail.com> <alpine.LSU.2.21.2405200845130.11413@pobox.suse.cz>
+ <BBD2A553-6D44-4CD5-94DD-D8B2D5536F94@gmail.com> <alpine.LSU.2.21.2405210823590.4805@pobox.suse.cz>
+ <ZkxVlIPj9VZ9NJC4@pathway.suse.cz> <CAPhsuW7bjyLvfQ-ysKE+S8x26Zv5b7jbJoyW8UiBaUfaRncKfg@mail.gmail.com>
+ <alpine.LSU.2.21.2406071102420.29080@pobox.suse.cz>
+In-Reply-To: <alpine.LSU.2.21.2406071102420.29080@pobox.suse.cz>
+From: Song Liu <song@kernel.org>
+Date: Fri, 7 Jun 2024 09:59:46 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW4MZ7-UopzbsqhEGzH8FLTK_rTOd05heGOQXm+H7a4a0A@mail.gmail.com>
+Message-ID: <CAPhsuW4MZ7-UopzbsqhEGzH8FLTK_rTOd05heGOQXm+H7a4a0A@mail.gmail.com>
+Subject: Re: [PATCH] livepatch: introduce klp_func called interface
+To: Miroslav Benes <mbenes@suse.cz>
+Cc: Petr Mladek <pmladek@suse.com>, zhang warden <zhangwarden@gmail.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+	Joe Lawrence <joe.lawrence@redhat.com>, live-patching@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 7, 2024 at 8:47=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.c=
-om> wrote:
+Hi Miroslav,
+
+On Fri, Jun 7, 2024 at 2:07=E2=80=AFAM Miroslav Benes <mbenes@suse.cz> wrot=
+e:
 >
-> On 6/7/24 16:42, Pavel Begunkov wrote:
-> > On 6/7/24 15:27, David Ahern wrote:
-> >> On 6/7/24 7:42 AM, Pavel Begunkov wrote:
-> >>> I haven't seen any arguments against from the (net) maintainers so
-> >>> far. Nor I see any objection against callbacks from them (considering
-> >>> that either option adds an if).
-> >>
-> >> I have said before I do not understand why the dmabuf paradigm is not
-> >> sufficient for both device memory and host memory. A less than ideal
-> >> control path to put hostmem in a dmabuf wrapper vs extra checks and
-> >> changes in the datapath. The former should always be preferred.
+> Hi,
+>
+> On Tue, 4 Jun 2024, Song Liu wrote:
+>
+> > On Tue, May 21, 2024 at 1:04=E2=80=AFAM Petr Mladek <pmladek@suse.com> =
+wrote:
+> > [...]
+> > > >
+> > > > Yes, but the information you get is limited compared to what is ava=
+ilable
+> > > > now. You would obtain the information that a patched function was c=
+alled
+> > > > but ftrace could also give you the context and more.
+> > >
+> > > Another motivation to use ftrace for testing is that it does not
+> > > affect the performance in production.
+> > >
+> > > We should keep klp_ftrace_handler() as fast as possible so that we
+> > > could livepatch also performance sensitive functions.
 > >
-> > If we're talking about types of memory specifically, I'm not strictly
-> > against wrapping into dmabuf in kernel, but that just doesn't give
-> > anything.
+> > At LPC last year, we discussed about adding a counter to each
+> > klp_func, like:
+> >
+> > struct klp_func {
+> >     ...
+> >     u64 __percpu counter;
+> >     ...
+> > };
+> >
+> > With some static_key (+ sysctl), this should give us a way to estimate
+> > the overhead of livepatch. If we have the counter, this patch is not
+> > needed any more. Does this (adding the counter) sound like
+> > something we still want to pursue?
 >
-> And the reason I don't have too strong of an opinion on that is
-> mainly because it's just setup/cleanup path.
->
+> It would be better than this patch but given what was mentioned in the
+> thread I wonder if it is possible to use ftrace even for this. See
+> /sys/kernel/tracing/trace_stat/function*. It already gathers the number o=
+f
+> hits.
 
-I agree wrapping io uring in dmabuf seems to be an unnecessary detour.
-I never understood the need or upside to do that, but it could be a
-lack of understanding on my part.
+I didn't know about the trace_stat API until today. :) It somehow doesn't
+exist on some older kernels. (I haven't debugged it.)
 
-However, the concern that David brings up may materialize. I've had to
-spend a lot of time minimizing or justifying checks to the code with
-page pool benchmarks that detect even 1 cycle regressions. You may be
-asked to run the same benchmarks and minimize similar overhead.
+> Would it be sufficient for you? I guess it depends on what the intention
+> is. If there is no time limit, klp_func.counter might be better to provid=
+e
+> some kind of overall statistics (but I am not sure if it has any value)
+> and to avoid having ftrace registered on a live patched function for
+> infinite period of time. If the intention is to gather data for some
+> limited period, trace_stat sounds like much better approach to me.
 
-The benchmark in question is Jesper's bench_page_pool_simple. I've
-forked it and applied it on top of net-next here:
-https://github.com/mina/linux/commit/927596f87ab5791a8a6ba8597ba2189747396e=
-54
+We don't have very urgent use for this. As we discussed, various tracing
+tools are sufficient in most cases. I brought this up in the context of the
+"called" entry: if we are really adding a new entry, let's do "counter"
+instead of "called".
 
-As io_uring ZC comes close to merging, I suspect it would be good to
-run this to understand the regression in the fast path, if any. If
-there are no to little regressions, I have no concerns over io uring
-memory not being wrapped in dmabufs, and David may agree as well.
-
---
 Thanks,
-Mina
+Song
 
