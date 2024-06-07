@@ -1,107 +1,288 @@
-Return-Path: <linux-kernel+bounces-205424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79AE68FFB6B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:49:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A9388FFB6C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03C712840F5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 05:49:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB2B5284AB8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 05:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70DB014EC72;
-	Fri,  7 Jun 2024 05:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBFE14F107;
+	Fri,  7 Jun 2024 05:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hFIz5l6d"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nZdam5Vg"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CB014EC73
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 05:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E0117BB4;
+	Fri,  7 Jun 2024 05:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717739342; cv=none; b=pasHGZX0/nnKuTyVURjLWcyZ2N/C5fOeDBOEqe66Fz4BBlM30MWgRWtFDSBdZe7ju3ETH180G4m5pF36shX+GBzuJaRRKFOCXGM1u+rimH3JM2QnfdL3MFFQ00TZ4A33Idj99B1ogbd6mJL6MSE9y+zb9i0phwiBLH/50x01YUw=
+	t=1717739390; cv=none; b=tvmfcqZK69LNMMxfVPwlXIGKlf26jebHq3aJ1f7GGwBG9oihNNnimBmOEYxYfxL/wPSQJheu8pJvy514A3DHmsfg24c8eUI7XD2pEQZkug3akXHfY4+qwk1CMGgEutvIZY1OG0KU3RMC4vsDmcrhEU3x/OstSNkZzL/QVHw13Kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717739342; c=relaxed/simple;
-	bh=utoyZmJ3ad8EAeZqrHVGF5rFBfilwKGnsN7FpZP8jxc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q05K8dJawqrGXvkHfuim1qm3mlQC6kV6IZem0mu5Dat2QsdE0V9rwYfqD0vb2ulIkFgbr7Ix8TFlINIICB/T7Sibp3eXF/84pFx32PG6bC95lVcMGF/MK5sNZcCQr8DhJXyBmP7DHp30HKed5jL5PQ2POy8fiIFKaF3uoLIacLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hFIz5l6d; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52bc1261f45so21577e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 22:49:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717739338; x=1718344138; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MPpS30B8oQddbNIA4e5SgwQLluo/cGUrwr2ygS5Damc=;
-        b=hFIz5l6d+MEMEVcgMdzBtM7tePyuW+t27q6n7ZRauwsN3qcybSZZvwKMyiA8clTs3G
-         mbU6k09lS68uGhnDGMGe0w7kxLA7PobSsA/cBP5QBVY+x0nlrhlgcZMHEfDny7qWoPtm
-         0FoUkAEQsOKEQ1YxN4Gd7sotpLDGptvzXQtd5+fZ4DkFs3HW5UlRDgn0mnBUnwtYwA6A
-         E/7MlhTSjADJDJ4lTyXJXJ+9VgqZMdr3BmkKD9UnWjzT3I9XwofBuTl3g+PL8Fjy/CGL
-         Oo8n1ubmS//QL/cJcJbbOMNxNZ8ydozDpssq+0u0gU/6O9QzueMaReoXOX6wz9Fc3osw
-         FAIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717739338; x=1718344138;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MPpS30B8oQddbNIA4e5SgwQLluo/cGUrwr2ygS5Damc=;
-        b=VFK4yXHvaxVgXUR0flSBKV/mgUlpOPx6OU87X4tudve7Fvdja0aksZ4UvMaeJpqA3Y
-         ykBeKjmjbpTMaOLic0RZSeho4WNCE5Yk4DjfxjIFw1ummo79hGaHiNA8dn3h2oGqYj64
-         Dypzc8A4MT26oFJzfdyxRL1qUbJOP21yXYchkD9R6Bo281tWE5edDoXmKtk8wcHs3lFC
-         QlOyfRtY0Jihig8H9nLkKgQPtA70XJvIuVOJD9i3ZaxaL4sINhh916Zu6+O8wFyH44uX
-         vQVRIc5vusKkkntCRQOtXZhiwuLoTP8Te+VFW10nIdb0n3kPK2Hqd9rHCDkzmekESixh
-         argg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsjY6Bm0dzUMt9/4u+GR+PyhX7t8LAXResk+93wlNJ/4Np2Bgyv0XoI6trP0hW8xnW4ZQPpH/WHOSrekQ/SjQExgQ1CHwKtgqAC6Yf
-X-Gm-Message-State: AOJu0YxOF8cj7uiyLWQVIH8g2MLpd/c8zXEjCIy2p+avHeh/MXIA+dmi
-	z7SKQCiBjDb6TVn8OUrusJsskilL9fHmPZcguNRlTXE4wPCgbnSkvAduVePAT5g=
-X-Google-Smtp-Source: AGHT+IGw0dCYsbVAMVTQVSr/Efue3frMR7uLAH7tvS6pOQ8ict7VhL1BeU2I9MYTimaWhuBQHujsnA==
-X-Received: by 2002:a05:6512:39d0:b0:52b:74c4:2731 with SMTP id 2adb3069b0e04-52bb9f17605mr1374676e87.0.1717739338307;
-        Thu, 06 Jun 2024 22:48:58 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bbe91a731sm55425e87.82.2024.06.06.22.48.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 22:48:57 -0700 (PDT)
-Date: Fri, 7 Jun 2024 08:48:55 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Luca Weiss <luca.weiss@fairphone.com>, linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] usb: typec-mux: ptn36502: unregister typec switch
- on probe error and remove
-Message-ID: <ywpdbvubmgmqebekpj7vzgwicptineathd55725qkrda45sa6n@6zil2klvoj4p>
-References: <20240606-topic-sm8x50-upstream-retimer-broadcast-mode-v2-0-c6f6eae479c3@linaro.org>
- <20240606-topic-sm8x50-upstream-retimer-broadcast-mode-v2-1-c6f6eae479c3@linaro.org>
+	s=arc-20240116; t=1717739390; c=relaxed/simple;
+	bh=XiBtJnLVeyxhEzPOeggSEQxEAMUe2TXzU0ZdbBv5fdo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XPfErEN8F+jkq457mwPJxXsqL7aKG+9zWqeZJobUrx1q14/FWYwZrkHDEC4S3TjKVQ/jLWA26fURCKLXV83ELVZrmesU8jKIc0aivV7qJWnbPsmb9OWHklfWEhHbTSALoW7nmLFa1f4DJoxWP2TQ8zZh4Kp0pklN9x2YiNXQSJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nZdam5Vg; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4575jUbm018926;
+	Fri, 7 Jun 2024 05:49:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=pp1;
+ bh=4HOwn+XtHSMKKOd7gC4pg45pnsFw7RcpkPDFG6rOuzM=;
+ b=nZdam5Vg8btDQolpTYC/fxb9JCXdSL0JNb4RqsNV9VmEXTsen1ZnPLSFGrYrc+lmkk0D
+ PXd5VthnZuzUQ0zQZis6+bprh9Eexc/AsqXk9SsETa+J8l2MANhIiej4aZKkY+4FFH27
+ XaVhBwnwxZscvs7GFHw7QkrGEeV96W1yrNKIhoreB9a585MJFqhbUPlKvJSYuh2uc3MK
+ wbUXNmF0AwdTRHAn266saM6GRTqREGaiL/C09lNckRgCLsKzBxJ9r+qbtiX4s61DDbOg
+ yyPNai89Hy49NlZjiuPoTpQ9SZ+8d/nDzltY92+02Bf275Pm1qZBXqNr1+ERZpZW2qO6 tA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ykv2k019j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 05:49:35 +0000
+Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4575nZHH025973;
+	Fri, 7 Jun 2024 05:49:35 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ykv2k019f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 05:49:35 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4573Ng32022794;
+	Fri, 7 Jun 2024 05:49:34 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ygg6mpn7m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 05:49:34 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4575nUKu56426946
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 7 Jun 2024 05:49:32 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 68AB258066;
+	Fri,  7 Jun 2024 05:49:30 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1495758057;
+	Fri,  7 Jun 2024 05:49:22 +0000 (GMT)
+Received: from [9.43.92.107] (unknown [9.43.92.107])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  7 Jun 2024 05:49:21 +0000 (GMT)
+Message-ID: <648c5622-1636-4878-83ce-d33c20ee790a@linux.ibm.com>
+Date: Fri, 7 Jun 2024 11:19:19 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606-topic-sm8x50-upstream-retimer-broadcast-mode-v2-1-c6f6eae479c3@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf sched map: Add command-name option to filter the
+ output map
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: acme@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+        kan.liang@linux.intel.com, acme@redhat.com,
+        atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com,
+        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+References: <20240417152521.80340-1-vineethr@linux.ibm.com>
+ <ZmJZULPzy0C4aPiO@google.com>
+Content-Language: en-US
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+In-Reply-To: <ZmJZULPzy0C4aPiO@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: eOno0oySyIiwayYyQxZe3CwYElIbzrRW
+X-Proofpoint-GUID: ugJ4a11YyYtaeinM16BNqHHqACc7XnMy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-06_20,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 adultscore=0 clxscore=1011 bulkscore=0 spamscore=0
+ mlxlogscore=999 mlxscore=0 lowpriorityscore=0 priorityscore=1501
+ phishscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2405010000 definitions=main-2406070039
 
-On Thu, Jun 06, 2024 at 03:11:13PM +0200, Neil Armstrong wrote:
-> Add the missing call to typec_switch_put() when probe fails and
-> the ptn36502_remove() call is called.
+Hi Namhyung,
+
+On 07/06/24 06:20, Namhyung Kim wrote:
+> Hello,
 > 
-> Fixes: 8e99dc783648 ("usb: typec: add support for PTN36502 redriver")
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  drivers/usb/typec/mux/ptn36502.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
+> Sorry for the late reply.
+> 
+> On Wed, Apr 17, 2024 at 08:55:21PM +0530, Madadi Vineeth Reddy wrote:
+>> By default, perf sched map prints sched-in events for all the tasks
+>> which may not be required all the time as it prints lot of symbols
+>> and rows to the terminal.
+>>
+>> With --command-name option, one could specify the specific command
+>> for which the map has to be shown. This would help in analyzing the
+>> CPU usage patterns easier for that specific command. Since multiple
+>> PID's might have the same command name, using command-name filter
+>> would be more useful for debugging.
+>>
+>> For other tasks, instead of printing the symbol, ** is printed and
+>> the same . is used to represent idle. ** is used instead of symbol
+>> for other tasks because it helps in clear visualization of command
+>> of interest and secondly the symbol itself doesn't mean anything
+>> because the sched-in of that symbol will not be printed(first sched-in
+>> contains pid and the corresponding symbol).
+>>
+>> 6.8.0
+>> ======
+>>   *A0                   213864.670142 secs A0 => migration/0:18
+>>   *.                    213864.670148 secs .  => swapper:0
+>>    .  *B0               213864.670217 secs B0 => migration/1:21
+>>    .  *.                213864.670223 secs
+>>    .   .  *C0           213864.670247 secs C0 => migration/2:26
+>>    .   .  *.            213864.670252 secs
+>>
+>> 6.8.0 + patch (--command-name = schbench)
+>> =============
+>>    **  .   ** *A0       213864.671055 secs A0 => schbench:104834
+>>   *B0  .   .   A0       213864.671156 secs B0 => schbench:104835
+>>   *C0  .   .   A0       213864.671187 secs C0 => schbench:104836
+>>   *D0  .   .   A0       213864.671219 secs D0 => schbench:104837
+>>   *E0  .   .   A0       213864.671250 secs E0 => schbench:104838
+>>    E0  .  *D0  A0
+>>
+>> This helps in visualizing how a benchmark like schbench is spread over
+>> the available cpus while also knowing which cpus are idle(.) and which
+>> are not(**). This will be more useful as number of CPUs increase.
+> 
+> Yeah I think this is good!  Thanks for working on this.
+> 
+> But I guess people want to see when the tasks were sched out as well.
+> Can you please add that too?
 > 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In the current implementation, we will know when a task is scheduled out
+implicitly.
 
+For instance, from the above example,
 
--- 
-With best wishes
-Dmitry
+ **  .   ** *A0       213864.671055 secs A0 => schbench:104834
+*B0  .   .   A0       213864.671156 secs B0 => schbench:104835
+*C0  .   .   A0       213864.671187 secs C0 => schbench:104836
+
+In CPU0 (first column), the sched-in of C0 in last line indicates that
+B0 is scheduled out. Similarly down the line if A0 is scheduled out,
+we will know it by some other task being scheduled-in.
+
+I hope this is fine. Let me know if you have any ideas or suggestions.
+
+>>
+>> Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+>> ---
+>>  tools/perf/Documentation/perf-sched.txt |  4 ++++
+>>  tools/perf/builtin-sched.c              | 17 ++++++++++++++---
+>>  2 files changed, 18 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
+>> index 5fbe42bd599b..b04a37560935 100644
+>> --- a/tools/perf/Documentation/perf-sched.txt
+>> +++ b/tools/perf/Documentation/perf-sched.txt
+>> @@ -94,6 +94,10 @@ OPTIONS for 'perf sched map'
+>>  --color-pids::
+>>  	Highlight the given pids.
+>>  
+>> +--command-name::
+>> +	Map output only for the given command name.
+>> +	(** indicates other tasks while . is idle).
+> 
+> Probably we can support multiple names in CSV.
+> 
+
+Yes, that's a good idea. I will implement it in v2. Thank you for taking a look.
+
+Thanks and Regards
+Madadi Vineeth Reddy
+
+> Thanks,
+> Namhyung
+> 
+> 
+>> +
+>>  OPTIONS for 'perf sched timehist'
+>>  ---------------------------------
+>>  -k::
+>> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+>> index 0fce7d8986c0..e60836da53e5 100644
+>> --- a/tools/perf/builtin-sched.c
+>> +++ b/tools/perf/builtin-sched.c
+>> @@ -156,6 +156,7 @@ struct perf_sched_map {
+>>  	const char		*color_pids_str;
+>>  	struct perf_cpu_map	*color_cpus;
+>>  	const char		*color_cpus_str;
+>> +	const char		*command;
+>>  	struct perf_cpu_map	*cpus;
+>>  	const char		*cpus_str;
+>>  };
+>> @@ -1594,8 +1595,6 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
+>>  
+>>  	sched->curr_thread[this_cpu.cpu] = thread__get(sched_in);
+>>  
+>> -	printf("  ");
+>> -
+>>  	new_shortname = 0;
+>>  	if (!tr->shortname[0]) {
+>>  		if (!strcmp(thread__comm_str(sched_in), "swapper")) {
+>> @@ -1605,7 +1604,8 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
+>>  			 */
+>>  			tr->shortname[0] = '.';
+>>  			tr->shortname[1] = ' ';
+>> -		} else {
+>> +		} else if (!sched->map.command || !strcmp(thread__comm_str(sched_in),
+>> +								sched->map.command)) {
+>>  			tr->shortname[0] = sched->next_shortname1;
+>>  			tr->shortname[1] = sched->next_shortname2;
+>>  
+>> @@ -1618,10 +1618,18 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
+>>  				else
+>>  					sched->next_shortname2 = '0';
+>>  			}
+>> +		} else {
+>> +			tr->shortname[0] = '*';
+>> +			tr->shortname[1] = '*';
+>>  		}
+>>  		new_shortname = 1;
+>>  	}
+>>  
+>> +	if (sched->map.command && strcmp(thread__comm_str(sched_in), sched->map.command))
+>> +		goto skip;
+>> +
+>> +	printf("  ");
+>> +
+>>  	for (i = 0; i < cpus_nr; i++) {
+>>  		struct perf_cpu cpu = {
+>>  			.cpu = sched->map.comp ? sched->map.comp_cpus[i].cpu : i,
+>> @@ -1678,6 +1686,7 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
+>>  out:
+>>  	color_fprintf(stdout, color, "\n");
+>>  
+>> +skip:
+>>  	thread__put(sched_in);
+>>  
+>>  	return 0;
+>> @@ -3560,6 +3569,8 @@ int cmd_sched(int argc, const char **argv)
+>>                      "highlight given CPUs in map"),
+>>  	OPT_STRING(0, "cpus", &sched.map.cpus_str, "cpus",
+>>                      "display given CPUs in map"),
+>> +	OPT_STRING(0, "command-name", &sched.map.command, "command",
+>> +		"map output only for the given command name"),
+>>  	OPT_PARENT(sched_options)
+>>  	};
+>>  	const struct option timehist_options[] = {
+>> -- 
+>> 2.39.1
+>>
+
 
