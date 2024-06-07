@@ -1,374 +1,233 @@
-Return-Path: <linux-kernel+bounces-205777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E3F590002A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:04:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 069BE90004A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:07:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6463B1C20341
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:04:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F71D1F24D7B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEAEE15FD19;
-	Fri,  7 Jun 2024 10:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F35A1411E4;
+	Fri,  7 Jun 2024 10:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="roTqp7YB"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2047.outbound.protection.outlook.com [40.107.105.47])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="4QTD4tOM"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B453515F30D;
-	Fri,  7 Jun 2024 10:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717754464; cv=fail; b=CjZmgMMY3E8/9KUIkJNkmxpqph2H3PbUK+AMX5no5tB5T9fs7VFvBfTsxyBK1B/qu6AldMr/VB/VuBnN5PQ7Iagr9rudrafx2RtbWvkzzq+vzhI+AH3DaS5CjissIeK2BTEz3J5rRWFN9KX2Sq4wKA1/DJ08/OjkfD7I6CpH5cg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717754464; c=relaxed/simple;
-	bh=2ETKfb8VK13PTpYLFe3lnJNuwIXowCxaZWOea5Pv7io=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=ZS1pjL1uDpSthBwjY3wCmFOnAFjnw7E0tf5/L/C85KVzUMSJjs/3x4QYcNF5wEEe9rguw002cLwnEVNsFNHWoigaNRiGnbKNhu6oSVN2LwyJSRhkTYLjKB/MNhVeWo/i49M0MuywZ6qzA2ihHLx8zdNxvkOIfD7pJl72D8cx/z8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=roTqp7YB; arc=fail smtp.client-ip=40.107.105.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KW4s/o1dK9+1Sply5NjHK8/xNHLSQXxzioB1DyXN23aBRoCkEQp/UWVYI0R0x3+9G6+DcUgsSFoH5kWSUnfa5obji1T8KmYe/lkXE6O3RFfg9AyTJaxB89YxYSy3ZY6GDFL5Ldot76Idb7ko08hayPbJ0AI+bXkH7qTZ+ck0XvYn0K98RZ8IRSlxMWPMDE7+6F0yLOIpZ7Z9+NB8QSPmDhC6tu8HAte25e0FFG9hjGCZhaNu25K0LdLAjuCMrDh4kbqXD7L/QKV6S7zeLusmCHhJFULZYJEPveGV5+Mpl6ONBZljeNCmTp6A5gGyOj9CU9XnFXrKif2XOTG4XnPmhw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g1ZWXcyDO3jwG8kkAMerrUqvg4yIbozd2NQHtmO25kY=;
- b=BpAYKNLMHBeFZzGtdeO5klOne34KpMacY9A7GQvCWNR7YFnNE+4zJRUFzqZ1mAzmAnIm5Ije4+K1M6Cpo7woR7PnlmWaAvcQ3MP9FpFxo/aPjWZiwUN9aWGC5wXK1W0QvOV6st0YuYFUub/ZegW0phInNxq+nPNufJevnDOIWB1NFyTxud6Y01izzdk8WKWkT+uf9VVvbimztc1tVbPUcadHacyijsWaQHWrxiYGyhh51ZFzKdgLkDbJbApx0o1wG/P9Z+BxlkBYHOC+JfJfyXOa2w+jaLnfthxUYXsXj9QAxqr5mrY4aCGvRv2o0JQQJ1sqabjc78N3p5Wf7MxgNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 195.60.68.100) smtp.rcpttodomain=alsa-project.org smtp.mailfrom=axis.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g1ZWXcyDO3jwG8kkAMerrUqvg4yIbozd2NQHtmO25kY=;
- b=roTqp7YB2Jz+2DUX+vlnRMdqasHyLnrz4yeaS8gl37mbrKT5IEQFcHubTsB5qcVZltEf6LMmJg25enhhVn6A5MrZwTWPAAlZqgRDjiM0Rg0tYWPUjbjshHmB6mH1baDOdZV/b/d55WEifHE2PPFidfN1Ka0b5O88xA45jtIUy3Y=
-Received: from AS9PR06CA0147.eurprd06.prod.outlook.com (2603:10a6:20b:467::19)
- by DBAPR02MB6152.eurprd02.prod.outlook.com (2603:10a6:10:18b::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.34; Fri, 7 Jun
- 2024 10:00:56 +0000
-Received: from AMS0EPF00000195.eurprd05.prod.outlook.com
- (2603:10a6:20b:467:cafe::ab) by AS9PR06CA0147.outlook.office365.com
- (2603:10a6:20b:467::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7656.18 via Frontend
- Transport; Fri, 7 Jun 2024 10:00:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
- smtp.mailfrom=axis.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=axis.com;
-Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
- 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=195.60.68.100; helo=mail.axis.com; pr=C
-Received: from mail.axis.com (195.60.68.100) by
- AMS0EPF00000195.mail.protection.outlook.com (10.167.16.215) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7633.15 via Frontend Transport; Fri, 7 Jun 2024 10:00:56 +0000
-Received: from se-mail02w.axis.com (10.20.40.8) by se-mail01w.axis.com
- (10.20.40.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 7 Jun
- 2024 12:00:55 +0200
-Received: from se-intmail01x.se.axis.com (10.0.5.60) by se-mail02w.axis.com
- (10.20.40.8) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 7 Jun 2024 12:00:55 +0200
-Received: from pc49102-2217.se.axis.com (pc49102-2217.se.axis.com [10.88.7.5])
-	by se-intmail01x.se.axis.com (Postfix) with ESMTP id DD2A93349;
-	Fri,  7 Jun 2024 12:00:55 +0200 (CEST)
-Received: by pc49102-2217.se.axis.com (Postfix, from userid 9470)
-	id D74706476FDE; Fri,  7 Jun 2024 12:00:55 +0200 (CEST)
-From: Ricard Wanderlof <ricard.wanderlof@axis.com>
-Date: Fri, 7 Jun 2024 12:00:46 +0200
-Subject: [PATCH v2 2/2] tlv320adc3xxx: Add support for using MICBIAS pins
- as GPO
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42684136658;
+	Fri,  7 Jun 2024 10:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717754832; cv=none; b=JW+oan3ctrndGHjvA4RIXVxeQBJTxvyhtsOesnGUifnPrK0SudrRsru298gR7l800z9Kjmw9H/43P+AL0apjfls2fDlA066qS2JcE9xTw6SKBjhSaLoBPu6OjSzru0hO/epRCoopqfrX90o8MO39tfgh1v+YKOJkOZ5gKOf3es0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717754832; c=relaxed/simple;
+	bh=MRLL0gcUoODV40kamoiQom/Yzkvwc9RUb3Ca/hkbUR0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nhw2hHYBhIVVpoH1PipeJ8mJEaDN/wZkyeXNzPGQ2Xu4JVY1bR6h1Ms1iS38XXbavtj2ap1rgLHPBJiHgnzw1cvmuYjEDfr8qN5ZsAvgnD4zB9Ko9HXoQMMg81hMIVXjhg9ECiM78rNCUo7nUzQfmZ8CYvQt/JKAELQIS8Ff848=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=4QTD4tOM; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45791LuJ011026;
+	Fri, 7 Jun 2024 11:34:59 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	ChbXnFWWu+u71+W2Y6I7Tnz1fwZROFht66rIs40Kmac=; b=4QTD4tOMLiAjTdvB
+	sklT5tD2qxuNC7cpQ3rMghZiz3APDzByEy1nwuPVwdOWgk/9zZaQw1wJ9fqbOUXq
+	RBTkKVhqw4fuJb5pZUzDvqQreuVRrJsBI2b3GJKqbOYEj5oRrmRxUKfb1HCy2OKH
+	yTKLzAqezqJzp2HM+tFbelpR2F0dEp25Oa4mzl3rifQrImxjI0+9EqNNzJ4/wrrd
+	KtwY7nn3R6WedGcEadDrX3oEcBy2LHTvOFdxIIEd1kRzOjzUqMzCfw9vlLCO6jtr
+	rdO5Qk0waPDTtLoilRJKKzEozr3EXXukg4XG04BY85KlgtLp1j+RRQVz1cBO+D7j
+	iameBw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yg7r0gts5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 11:34:58 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1D9BB40047;
+	Fri,  7 Jun 2024 11:34:54 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 527BB21452A;
+	Fri,  7 Jun 2024 11:34:06 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 7 Jun
+ 2024 11:34:06 +0200
+Received: from localhost (10.252.5.235) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 7 Jun
+ 2024 11:34:05 +0200
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v6 1/5] remoteproc: core: Introduce rproc_pa_to_va helper
+Date: Fri, 7 Jun 2024 11:33:22 +0200
+Message-ID: <20240607093326.369090-2-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240607093326.369090-1-arnaud.pouliquen@foss.st.com>
+References: <20240607093326.369090-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240607-tlv320adc3xxx-micbias-gpo-v2-2-b140a45ffffe@axis.com>
-References: <20240607-tlv320adc3xxx-micbias-gpo-v2-0-b140a45ffffe@axis.com>
-In-Reply-To: <20240607-tlv320adc3xxx-micbias-gpo-v2-0-b140a45ffffe@axis.com>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, Baojun Xu
-	<baojun.xu@ti.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Ricard Wanderlof
-	<ricardw@axis.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
-	<tiwai@suse.com>
-CC: <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Ricard
- Wanderlof" <ricard.wanderlof@axis.com>, <kernel@axis.com>
-X-Mailer: b4 0.13.0
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS0EPF00000195:EE_|DBAPR02MB6152:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4cac7c60-98e5-44a9-d4d1-08dc86d8b986
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|36860700004|376005|82310400017|7416005|1800799015|921011;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Y0k4WWVDMndpd0xGV1hGeFlHRUhmdE1MZ1ptY2JUM2pqZ0VxNjJrQUpPTVgy?=
- =?utf-8?B?bk1HZk1OaC9lV05HMEFzaDdiQlFzdVlGRHdzOVFaRnRGU1dXWnlsY2hnMkZ1?=
- =?utf-8?B?aVc0VlhaWnNWT1ZoMThwWDZWYno3NktGejlDTWZBMDc1RFF2dW5vNG1rQ2kz?=
- =?utf-8?B?bGNQRmV2UjA1azNsdDlpZ1RoZzIvZXJFWEwvUm4rbm9TejVvRndqdWp4c0VC?=
- =?utf-8?B?VHo0QkxpR3lrKzJ0T05Da1NWWmpuRHJHRkVmcmdIUmZiTkNFSlMrcFU4aFFm?=
- =?utf-8?B?bDE2N2wvd1lVMXFzSW5jbDZXdW4vbDJMcVpsUWVETXM0cFJjMGd2NWNpcCts?=
- =?utf-8?B?VGpPSEVHOHhLNlV6WGRlc0xWdEk5TjFZbzhjVGZBU3YyWVJjSFlyN0FPaTg2?=
- =?utf-8?B?bkpXTm1WL2JyWnh3S1FLY2lnYWdzKzR0c3hNSjEweWRWS0IydjcxdGtCbjZt?=
- =?utf-8?B?UkhIVzRWQ2FZeUVsd2V0WDA0SDl3T1ozaFloemgyZUgyZzBySDNEVmIxbE5U?=
- =?utf-8?B?Q1hxU0t6YUNVOTdFaUgrYjB2MllLVTVsQ3BHZlBWVzJhWldmUU9JTUpNUlhR?=
- =?utf-8?B?UUN4dHVoR2htWmR5OTVnN3FRdGN3aDVZeTgxNUlIYWg0TUZwMnpyRVhjUStn?=
- =?utf-8?B?WXJIUHlRR1FMekdsWmdIWFU4RHZSQ29uckwzelkrUzR6UWtNNkZBeU1RNFdD?=
- =?utf-8?B?MlpMai96NlFGUGlqMEt2dkx3dXFnUnhDOFBGZmlTL0NYWGRTV1Z4RTNFS2ta?=
- =?utf-8?B?T2JkOXJoMHVYYSt1d2ZZbXFna3QzVFc3djBJL0Fhd2NjbzBpcURENi9pblZK?=
- =?utf-8?B?SzlCZ3grSWd4eXd6OUx0MTFSVDczUVI4STYybElOUVljUWtSN3NXbWZXVVIx?=
- =?utf-8?B?b2E5MXdVUE02b3M4WTdZdG91QUZxbXJrckpzQUhxQ0RQZEdlRjZWNnpOV1FU?=
- =?utf-8?B?cWZhODA3VzY2Vm03Y2NDUmExNWYwaTVtY21PTXJnNSttbUw0Qm05aEwrSUJ3?=
- =?utf-8?B?L3VzRWdEWVpkVWJ1V0VORHpmSG5lQVI2TmlIT2RuYVZTSG83Ny9Ld25aOTNu?=
- =?utf-8?B?aU9OdUdoVUVDL3VoWXMxTzdpYlRLSkJCMG14RHJWdWpCdG5idkVPenhSK29r?=
- =?utf-8?B?bVNVZVhFL2xmZGlpZUxXV3JhRmFZSll6eTZqVFI3clRXa1huQ3BnSzRTZFlO?=
- =?utf-8?B?dFJMOWlpUFM0QllIQXFkY0JKd3dpbzNJSnFoSEE2dC81SE1HemxjaXhyZE8r?=
- =?utf-8?B?cjZkTmpNcGltYWxNRmVhZTI2dytYci9rZ0lpL0txRHd5dnQ0dTUydFdlYitQ?=
- =?utf-8?B?WWNrNi94NkRwVUF0akEyWnIxTXlTMUM4eXNRYldvRVp5RERhS0xMaExycHZV?=
- =?utf-8?B?NXVMdERqcWdVRWVuaExYZ3hsZGp4VUg5OG1QSXF6S0U2NUN1ZWErc1U5ZFFE?=
- =?utf-8?B?VGIrMWJRUERYbzkwNlJqOGhBYkVaZkQrbXVOcWw1c1l2dzdvYmh4NURrOSsy?=
- =?utf-8?B?a0RrRmZzbXNWKzdGMFpmZk00WjBEK2ppTW9jTzhndEEyTEVHRFVDbTVEdnZX?=
- =?utf-8?B?RW8zQytVd0VaVU5CekwwL25XQkduNlgvTXNwZWR6RkZxZHQvMlFOTHBlaHh4?=
- =?utf-8?B?MXM4N0o5eDZFdjhNcElUTDRmd0JWckZhUHIyQkRKZzY0WUlqNjUxQ2ZIQUtU?=
- =?utf-8?B?aEUrQXNVVk9XU29ZSFBqb2o1RFVucllHY3o5Qm4xS3hwNUhwUG8zUDM0QXhE?=
- =?utf-8?B?MVlNZmNtdEdSNVQwcFNIRnJ0N2k1eCtkMlBSdmxFL3I2WHU5Yi9YT21iaWsz?=
- =?utf-8?B?UXpGUWJmQUE1dWlXOHUzRGtHaGs4cEE0Q3dEUy90V3JucDVnbHVrTjJPbzVq?=
- =?utf-8?B?cC91UnZDRGh1TDBBUVpoVERPR0hGK1Q2dElpZEZRaWVtSWtQRWV0ODQrR3R2?=
- =?utf-8?Q?lJ6X8zcGceM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(36860700004)(376005)(82310400017)(7416005)(1800799015)(921011);DIR:OUT;SFP:1101;
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2024 10:00:56.3134
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4cac7c60-98e5-44a9-d4d1-08dc86d8b986
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS0EPF00000195.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR02MB6152
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SAFCAS1NODE2.st.com (10.75.90.13) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-07_04,2024-06-06_02,2024-05-17_01
 
-Add boolean ti,micbias1-gpo and ti,micbias2-gpo devicetree properties.
+When a resource table is loaded by an external entity such as U-boot or
+OP-TEE, We not necessary get the device address(da) but the physical
+address(pa).
+This helper performs similar translation than the rproc_da_to_va()
+but based on a physical address.
 
-When set, the respective MICBIAS pins can be used as general purpose
-outputs controlled via the GPIO framework, in addition to the two
-configurable GPIO pins.
-
-This is useful in applications where the MICBIAS functionality is
-not required, but it is useful to have a couple of extra GPIO pins.
-
-The voltage on the respective MICBIAS pin in the active state is
-governed by the ti,micbias1-vg and ti,micbias2-vg properties,
-respectively (same properties as when the pins are used as
-MICBIAS pins).
-
-Signed-off-by: Ricard Wanderlof <ricard.wanderlof@axis.com>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 ---
- sound/soc/codecs/tlv320adc3xxx.c | 105 +++++++++++++++++++++++++++++++--------
- 1 file changed, 84 insertions(+), 21 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 74 +++++++++++++++++++++++++++-
+ include/linux/remoteproc.h           |  3 ++
+ 2 files changed, 75 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/tlv320adc3xxx.c b/sound/soc/codecs/tlv320adc3xxx.c
-index e100cc9f5c19..182955bccebc 100644
---- a/sound/soc/codecs/tlv320adc3xxx.c
-+++ b/sound/soc/codecs/tlv320adc3xxx.c
-@@ -40,9 +40,10 @@
-  */
- 
- #define ADC3XXX_MICBIAS_PINS		2
-+#define ADC3XXX_GPIO_PINS		2
- 
- /* Number of GPIO pins exposed via the gpiolib interface */
--#define ADC3XXX_GPIOS_MAX		2
-+#define ADC3XXX_GPIOS_MAX		(ADC3XXX_MICBIAS_PINS + ADC3XXX_GPIO_PINS)
- 
- #define ADC3XXX_RATES		SNDRV_PCM_RATE_8000_96000
- #define ADC3XXX_FORMATS		(SNDRV_PCM_FMTBIT_S16_LE | \
-@@ -321,7 +322,8 @@ struct adc3xxx {
- 	struct gpio_desc *rst_pin;
- 	unsigned int pll_mode;
- 	unsigned int sysclk;
--	unsigned int gpio_cfg[ADC3XXX_GPIOS_MAX]; /* value+1 (0 => not set)  */
-+	unsigned int gpio_cfg[ADC3XXX_GPIO_PINS]; /* value+1 (0 => not set)  */
-+	unsigned int micbias_gpo[ADC3XXX_MICBIAS_PINS]; /* 1 => pin is GPO */
- 	unsigned int micbias_vg[ADC3XXX_MICBIAS_PINS];
- 	int master;
- 	u8 page_no;
-@@ -329,7 +331,7 @@ struct adc3xxx {
- 	struct gpio_chip gpio_chip;
- };
- 
--static const unsigned int adc3xxx_gpio_ctrl_reg[ADC3XXX_GPIOS_MAX] = {
-+static const unsigned int adc3xxx_gpio_ctrl_reg[ADC3XXX_GPIO_PINS] = {
- 	ADC3XXX_GPIO1_CTRL,
- 	ADC3XXX_GPIO2_CTRL
- };
-@@ -960,14 +962,23 @@ static int adc3xxx_gpio_request(struct gpio_chip *chip, unsigned int offset)
- 	if (offset >= ADC3XXX_GPIOS_MAX)
- 		return -EINVAL;
- 
--	/* GPIO1 is offset 0, GPIO2 is offset 1 */
--	/* We check here that the GPIO pins are either not configured in the
--	 * DT, or that they purposely are set as outputs.
--	 * (Input mode not yet implemented).
--	 */
--	if (adc3xxx->gpio_cfg[offset] != 0 &&
--	    adc3xxx->gpio_cfg[offset] != ADC3XXX_GPIO_GPO + 1)
--		return -EINVAL;
-+	if (offset >= 0 && offset < ADC3XXX_GPIO_PINS) {
-+		/* GPIO1 is offset 0, GPIO2 is offset 1 */
-+		/* We check here that the GPIO pins are either not configured
-+		 * in the DT, or that they purposely are set as outputs.
-+		 * (Input mode not yet implemented).
-+		 */
-+		if (adc3xxx->gpio_cfg[offset] != 0 &&
-+		    adc3xxx->gpio_cfg[offset] != ADC3XXX_GPIO_GPO + 1)
-+			return -EINVAL;
-+	} else if (offset >= ADC3XXX_GPIO_PINS && offset < ADC3XXX_GPIOS_MAX) {
-+		/* MICBIAS1 is offset 2, MICBIAS2 is offset 3 */
-+		/* We check here if the MICBIAS pins are in fact configured
-+		 * as GPOs.
-+		 */
-+		if (!adc3xxx->micbias_gpo[offset - ADC3XXX_GPIO_PINS])
-+			return -EINVAL;
-+	}
- 
- 	return 0;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index f276956f2c5c..3fdec0336fd6 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -230,6 +230,77 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
  }
-@@ -977,6 +988,21 @@ static int adc3xxx_gpio_direction_out(struct gpio_chip *chip,
- {
- 	struct adc3xxx *adc3xxx = gpiochip_get_data(chip);
+ EXPORT_SYMBOL(rproc_da_to_va);
  
-+	/* For the MICBIAS pins, they are by definition outputs. */
-+	if (offset >= ADC3XXX_GPIO_PINS) {
-+		unsigned int vg;
-+		unsigned int micbias = offset - ADC3XXX_GPIO_PINS;
-+
-+		if (value)
-+			vg = adc3xxx->micbias_vg[micbias];
-+		else
-+			vg = ADC3XXX_MICBIAS_OFF;
-+		return regmap_update_bits(adc3xxx->regmap,
-+					   ADC3XXX_MICBIAS_CTRL,
-+					   ADC3XXX_MICBIAS_MASK << adc3xxx_micbias_shift[micbias],
-+					   vg << adc3xxx_micbias_shift[micbias]);
-+	}
-+
- 	/* Set GPIO output function. */
- 	return regmap_update_bits(adc3xxx->regmap,
- 				  adc3xxx_gpio_ctrl_reg[offset],
-@@ -1005,9 +1031,17 @@ static int adc3xxx_gpio_get(struct gpio_chip *chip, unsigned int offset)
- 	unsigned int regval;
- 	int ret;
- 
--	/* We only allow output pins, so just read the value set in the output
--	 * pin register field.
--	 */
-+	/* We only allow output pins, so just read the value prevously set. */
-+	if (offset >= ADC3XXX_GPIO_PINS) {
-+		/* MICBIAS pins */
-+		unsigned int micbias = offset - ADC3XXX_GPIO_PINS;
-+
-+		ret = regmap_read(adc3xxx->regmap, ADC3XXX_MICBIAS_CTRL, &regval);
-+		if (ret)
-+			return ret;
-+		return ((regval >> adc3xxx_micbias_shift[micbias]) & ADC3XXX_MICBIAS_MASK) !=
-+		       ADC3XXX_MICBIAS_OFF;
-+	}
- 	ret = regmap_read(adc3xxx->regmap, adc3xxx_gpio_ctrl_reg[offset], &regval);
- 	if (ret)
- 		return ret;
-@@ -1049,7 +1083,7 @@ static void adc3xxx_init_gpio(struct adc3xxx *adc3xxx)
- 	 * This allows us to set up things which are not software
- 	 * controllable GPIOs, such as PDM microphone I/O,
- 	 */
--	for (gpio = 0; gpio < ADC3XXX_GPIOS_MAX; gpio++) {
-+	for (gpio = 0; gpio < ADC3XXX_GPIO_PINS; gpio++) {
- 		unsigned int cfg = adc3xxx->gpio_cfg[gpio];
- 
- 		if (cfg) {
-@@ -1061,9 +1095,15 @@ static void adc3xxx_init_gpio(struct adc3xxx *adc3xxx)
- 		}
- 	}
- 
--	/* Set up micbias voltage */
-+	/* Set up micbias voltage. */
-+	/* If pin is configured as GPO, set off initially. */
- 	for (micbias = 0; micbias < ADC3XXX_MICBIAS_PINS; micbias++) {
--		unsigned int vg = adc3xxx->micbias_vg[micbias];
-+		unsigned int vg;
-+
-+		if (adc3xxx->micbias_gpo[micbias])
-+			vg = ADC3XXX_MICBIAS_OFF;
-+		else
-+			vg = adc3xxx->micbias_vg[micbias];
- 
- 		regmap_update_bits(adc3xxx->regmap,
- 				   ADC3XXX_MICBIAS_CTRL,
-@@ -1091,8 +1131,19 @@ static int adc3xxx_parse_dt_gpio(struct adc3xxx *adc3xxx,
- 	return 0;
- }
- 
--static int adc3xxx_parse_dt_micbias(struct adc3xxx *adc3xxx,
--				    const char *propname, unsigned int *vg)
-+static int adc3xxx_parse_dt_micbias_gpo(struct adc3xxx *adc3xxx,
-+					const char *propname,
-+					unsigned int *cfg)
++/**
++ * rproc_pa_to_va() - lookup the kernel virtual address for a physical address of a remoteproc
++ * memory
++ *
++ * @rproc: handle of a remote processor
++ * @pa: remoteproc physical address
++ * @len: length of the memory region @pa is pointing to
++ * @is_iomem: optional pointer filled in to indicate if @da is iomapped memory
++ *
++ * Some remote processors will ask us to allocate them physically contiguous
++ * memory regions (which we call "carveouts"), and map them to specific
++ * device addresses (which are hardcoded in the firmware). They may also have
++ * dedicated memory regions internal to the processors, and use them either
++ * exclusively or alongside carveouts.
++ *
++ * They may then ask us to copy objects into specific addresses (e.g.
++ * code/data sections) or expose us certain symbols in other device address
++ * (e.g. their trace buffer).
++ *
++ * This function is a helper function with which we can go over the allocated
++ * carveouts and translate specific physical addresses to kernel virtual addresses
++ * so we can access the referenced memory. This function also allows to perform
++ * translations on the internal remoteproc memory regions through a platform
++ * implementation specific pa_to_va ops, if present.
++ *
++ * Note: phys_to_virt(iommu_iova_to_phys(rproc->domain, da)) will work too,
++ * but only on kernel direct mapped RAM memory. Instead, we're just using
++ * here the output of the DMA API for the carveouts, which should be more
++ * correct.
++ *
++ * Return: a valid kernel address on success or NULL on failure
++ */
++void *rproc_pa_to_va(struct rproc *rproc, phys_addr_t pa, size_t len, bool *is_iomem)
 +{
-+	struct device *dev = adc3xxx->dev;
-+	struct device_node *np = dev->of_node;
++	struct rproc_mem_entry *carveout;
++	void *ptr = NULL;
 +
-+	*cfg = of_property_read_bool(np, propname);
-+	return 0;
++	if (rproc->ops->da_to_va) {
++		ptr = rproc->ops->pa_to_va(rproc, pa, len);
++		if (ptr)
++			goto out;
++	}
++
++	list_for_each_entry(carveout, &rproc->carveouts, node) {
++		int offset = pa - carveout->dma;
++
++		/*  Verify that carveout is allocated */
++		if (!carveout->va)
++			continue;
++
++		/* try next carveout if da is too small */
++		if (offset < 0)
++			continue;
++
++		/* try next carveout if da is too large */
++		if (offset + len > carveout->len)
++			continue;
++
++		ptr = carveout->va + offset;
++
++		if (is_iomem)
++			*is_iomem = carveout->is_iomem;
++
++		break;
++	}
++
++out:
++	return ptr;
 +}
++EXPORT_SYMBOL(rproc_pa_to_va);
 +
-+static int adc3xxx_parse_dt_micbias_vg(struct adc3xxx *adc3xxx,
-+				       const char *propname, unsigned int *vg)
- {
- 	struct device *dev = adc3xxx->dev;
- 	struct device_node *np = dev->of_node;
-@@ -1383,16 +1434,28 @@ static int adc3xxx_i2c_probe(struct i2c_client *i2c)
- 		dev_dbg(dev, "Enabled MCLK, freq %lu Hz\n", clk_get_rate(adc3xxx->mclk));
- 	}
+ /**
+  * rproc_find_carveout_by_name() - lookup the carveout region by a name
+  * @rproc: handle of a remote processor
+@@ -724,8 +795,7 @@ static int rproc_alloc_carveout(struct rproc *rproc,
+ 	 * firmware was compiled with.
+ 	 *
+ 	 * In this case, we must use the IOMMU API directly and map
+-	 * the memory to the device address as expected by the remote
+-	 * processor.
++	 * the memory to the device address as etable
+ 	 *
+ 	 * Obviously such remote processor devices should not be configured
+ 	 * to use the iommu-based DMA API: we expect 'dma' to contain the
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index b4795698d8c2..28aa62a3b505 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -367,6 +367,7 @@ enum rsc_handling_status {
+  * @detach:	detach from a device, leaving it powered up
+  * @kick:	kick a virtqueue (virtqueue id given as a parameter)
+  * @da_to_va:	optional platform hook to perform address translations
++ * @pa_to_va:	optional platform hook to perform address translations
+  * @parse_fw:	parse firmware to extract information (e.g. resource table)
+  * @handle_rsc:	optional platform hook to handle vendor resources. Should return
+  *		RSC_HANDLED if resource was handled, RSC_IGNORED if not handled
+@@ -391,6 +392,7 @@ struct rproc_ops {
+ 	int (*detach)(struct rproc *rproc);
+ 	void (*kick)(struct rproc *rproc, int vqid);
+ 	void * (*da_to_va)(struct rproc *rproc, u64 da, size_t len, bool *is_iomem);
++	void * (*pa_to_va)(struct rproc *rproc, phys_addr_t da, size_t len);
+ 	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
+ 	int (*handle_rsc)(struct rproc *rproc, u32 rsc_type, void *rsc,
+ 			  int offset, int avail);
+@@ -690,6 +692,7 @@ int rproc_detach(struct rproc *rproc);
+ int rproc_set_firmware(struct rproc *rproc, const char *fw_name);
+ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
+ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem);
++void *rproc_pa_to_va(struct rproc *rproc, phys_addr_t pa, size_t len, bool *is_iomem);
  
-+	/* Configure mode for DMDIN/GPIO1 pin */
- 	ret = adc3xxx_parse_dt_gpio(adc3xxx, "ti,dmdin-gpio1", &adc3xxx->gpio_cfg[0]);
- 	if (ret < 0)
- 		goto err_unprepare_mclk;
-+	/* Configure mode for DMCLK/GPIO2 pin */
- 	ret = adc3xxx_parse_dt_gpio(adc3xxx, "ti,dmclk-gpio2", &adc3xxx->gpio_cfg[1]);
- 	if (ret < 0)
- 		goto err_unprepare_mclk;
--	ret = adc3xxx_parse_dt_micbias(adc3xxx, "ti,micbias1-vg", &adc3xxx->micbias_vg[0]);
-+	/* Configure mode for MICBIAS1: as Mic Bias output or GPO */
-+	ret = adc3xxx_parse_dt_micbias_gpo(adc3xxx, "ti,micbias1-gpo", &adc3xxx->micbias_gpo[0]);
-+	if (ret < 0)
-+		goto err_unprepare_mclk;
-+	/* Configure mode for MICBIAS2: as Mic Bias output or GPO */
-+	ret = adc3xxx_parse_dt_micbias_gpo(adc3xxx, "ti,micbias2-gpo", &adc3xxx->micbias_gpo[1]);
-+	if (ret < 0)
-+		goto err_unprepare_mclk;
-+	/* Configure voltage for MICBIAS1 pin (ON voltage when used as GPO) */
-+	ret = adc3xxx_parse_dt_micbias_vg(adc3xxx, "ti,micbias1-vg", &adc3xxx->micbias_vg[0]);
- 	if (ret < 0)
- 		goto err_unprepare_mclk;
--	ret = adc3xxx_parse_dt_micbias(adc3xxx, "ti,micbias2-vg", &adc3xxx->micbias_vg[1]);
-+	/* Configure voltage for MICBIAS2 pin (ON voltage when used as GPO) */
-+	ret = adc3xxx_parse_dt_micbias_vg(adc3xxx, "ti,micbias2-vg", &adc3xxx->micbias_vg[1]);
- 	if (ret < 0)
- 		goto err_unprepare_mclk;
- 
-
+ /* from remoteproc_coredump.c */
+ void rproc_coredump_cleanup(struct rproc *rproc);
 -- 
-2.30.2
+2.25.1
 
 
