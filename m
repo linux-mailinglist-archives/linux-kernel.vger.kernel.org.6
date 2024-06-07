@@ -1,106 +1,139 @@
-Return-Path: <linux-kernel+bounces-205245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70B9B8FF9EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:26:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 870CC8FF9EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7F1D28292C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:26:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDDDFB21F86
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F4A1172C;
-	Fri,  7 Jun 2024 02:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB12612B77;
+	Fri,  7 Jun 2024 02:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="uIFYUYCk"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Afh4I9jx"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C528819
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 02:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DCCDDAB;
+	Fri,  7 Jun 2024 02:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717727185; cv=none; b=LU3T1pkhuzpDZHIlPWZLE6oQO9yywM0OJeE+SX1FEs8QeZjGeG9GlehHK3Bld01AKmrqYD34yR1CHD23YySYAynbEHknzFbTi8H/Qi1gZmffzeWGBctD0x7QJ6cl0fWpElmTuIOD+hHW4Dmsp8fAIUWp+Zuyx8ciofP0wkbPx/w=
+	t=1717727228; cv=none; b=TkUt855CLqE9VlUY2tu5C0AztTII1O+85skTsnrjAhPyjiakQCb3fv4N+T20sfTbgzzYespMnuTEhonqS6kYu4sZPTEGS+vrVK5KqrIkU9o7n+TFoRqVlsYLp30OqhcUuA85ukHkSOoOKIcAogFMxEXhyMKLcrQJhrkUm6rN/LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717727185; c=relaxed/simple;
-	bh=d3kPG/il1q6KCc+6zs88T4ul/hnCiaV64YoLO/tMf/M=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U0aoZ0ZC0Pva9rLVDMXf0NIkwF+Ui2GWzYJBagZ7ns0tW8hApsiKdIkDc3rWbEfBjrxkve3XlUETmVHanKJZuU0U2UUl3hSHEbCl1//S64fnz2lqlr0JyMGOvhrxouLCvVRP197uwn+K3seMt1xumec5+3EhDsUjJX2cOPC9DY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=uIFYUYCk; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 52114ffe247511efa22eafcdcd04c131-20240607
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=BLEU828uCInFLuwTYCQ33Lcs5sdd10hyJlrloS9Xaw4=;
-	b=uIFYUYCkFdwmPziXHOc7czH/inm67R50e4fF2fUNvafml+9YY4gfb0fpfhHVRg1bnQUMGSgUWNjqdp1wlDQBx++vJgZ7mj/tvwKw8qPqTEvSHUp/DJaiCEtCBtFeXH/XiolcO0kSeUVCI7QJgXK7uVX2LXtIAvXUt+Mc8IS3bdo=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.39,REQID:3b63d2a0-caf0-4ac8-a844-eba207ac19b1,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:393d96e,CLOUDID:169ad084-4f93-4875-95e7-8c66ea833d57,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 52114ffe247511efa22eafcdcd04c131-20240607
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
-	(envelope-from <phil.chang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1791235917; Fri, 07 Jun 2024 10:26:17 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 7 Jun 2024 10:26:16 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Fri, 7 Jun 2024 10:26:16 +0800
-From: Phil Chang <phil.chang@mediatek.com>
-To: <anna-maria@linutronix.de>
-CC: <alix.wu@mediatek.com>, <angelogioacchino.delregno@collabora.com>,
-	<frederic@kernel.org>, <jy.ho@mediatek.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<matthias.bgg@gmail.com>, <phil.chang@mediatek.com>, <tglx@linutronix.de>
-Subject: [PATCH v2] hrtimer: check hrtimer with a NULL function
-Date: Fri, 7 Jun 2024 10:26:14 +0800
-Message-ID: <20240607022614.22902-1-phil.chang@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <877cf2i56q.fsf@somnus>
-References: <877cf2i56q.fsf@somnus>
+	s=arc-20240116; t=1717727228; c=relaxed/simple;
+	bh=FMviLWiM9TAuVnien3DOdHoozNOjUgtoS3TQejc5Dsw=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=k5nr7x2rxRijUoCqP5lW4LJe4qlqfeXWQz1qylb5QRdLss71XpbRN36dd/+PGXHithYolzXGyu+E4xuhw0IX6Oo2yVunwUy+hVDZyWZxkJlf74MQvpmE3iqlzQWczxlVgcMERxdHdvD18xquU/1AH6BrQetcSO/GQM4UPryfqag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Afh4I9jx; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2c2bab8d69cso439431a91.0;
+        Thu, 06 Jun 2024 19:27:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717727226; x=1718332026; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0PRTAWrhjr+QRdN9ZBsFIxqJeIplqLVctoeE5yPLMKA=;
+        b=Afh4I9jxNnEqCbp47P43mQ+JCNYok5cqTNlxHnNHDyXqlwPBd2kEtaXdUga+uec8Xd
+         fibr1kBL05LK6jgDb8FNWM3blQt0nq0NhoSmxmwvvpvDKUp93OVSB415hPnMwYVeDPSt
+         NJ2k3HqLbP02cDCZefoHCZzFNiQozGD1lXT8a25+SEOd0YPb7EOnYTZUhs7g5nnyfgw7
+         7eww/nrIBr2kdVBDsUvSxgeW6NLD/CH/KhCYmAUA+5vWD6XZ6OX+P+Hsu1hK5nihgjB3
+         /qUUI4HThCVJym1vD0+ZeUfI6KETAvvjX6aqOxrdxKqlGFAcQZM3dihkBbdBOH1LcFdY
+         mWLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717727226; x=1718332026;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0PRTAWrhjr+QRdN9ZBsFIxqJeIplqLVctoeE5yPLMKA=;
+        b=bN7msbrloLvjg8kU9cfuH/ft+H5mHBigtw3k3MoD5+ZtYf+7ex79gIxuTq1//x66t9
+         OlKlcoj32c9bSrXwgKF+mCNXVQiM4JpxT/bmqG5JdANQXSizfZnxuuv0hxSgcHY07LZK
+         p+cjt1O6HD9/Fyc+e4qumie8fiX9YD5j/Iuthw4ZcYgwOTlgUteqhRcCRbwipV9Hcvqh
+         v3h2zxfBRMqovGyG1Be1BoVoNuMMqIF748pVlI9tmRTvdArT8yoTi5lM9QxYN7pDpcn3
+         1CPCnXBEp33bwzuULmGPNobdQQjvuKfz8PLeaUk7SKU7GTQ5+ZhxI9OT2aLME8l/1OFi
+         SZHg==
+X-Forwarded-Encrypted: i=1; AJvYcCX2Z35T48VVDMe7wSQpP+VjM3I2DyBQUxh87evjX5FF3DAx9VW/S9yfKgnMTZyXPC8yiCpWAQd/x6fuPf9GrPpBaWEUIbB/BLFHS3ibz+lkRYhXo/qJ54h/0PKCGAlt8KbRVz8HGS0ODqjovQ==
+X-Gm-Message-State: AOJu0YxUrAMyfADdOm7BbRLjmsID1bC2Wtcty5g36/ZGQtftqv3wSpen
+	fyaXQq8Ed6TuS1B+dCnftqMsyTCDsFKu3TZVVIOF5llNIiWIrBxH
+X-Google-Smtp-Source: AGHT+IFrzSv1SVs70dIStUa/t69Z7VUyPkuWZwNdij5/ygL0LC3+cC6DXCNw5z9wTu9xTAXSiKO42Q==
+X-Received: by 2002:a17:90a:1157:b0:2c1:9e9e:a751 with SMTP id 98e67ed59e1d1-2c2bcc0b514mr1242592a91.22.1717727225818;
+        Thu, 06 Jun 2024 19:27:05 -0700 (PDT)
+Received: from smtpclient.apple ([47.89.225.180])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c2806398afsm4344667a91.1.2024.06.06.19.27.02
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Jun 2024 19:27:05 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH] livepatch: introduce klp_func called interface
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <930d7361-64e9-a0fc-eb04-79d9bf9267fa@redhat.com>
+Date: Fri, 7 Jun 2024 10:26:49 +0800
+Cc: Miroslav Benes <mbenes@suse.cz>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>,
+ Petr Mladek <pmladek@suse.com>,
+ live-patching@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E4079557-7518-44E3-8C43-3DB055D541A4@gmail.com>
+References: <20240520005826.17281-1-zhangwarden@gmail.com>
+ <alpine.LSU.2.21.2405200845130.11413@pobox.suse.cz>
+ <BBD2A553-6D44-4CD5-94DD-D8B2D5536F94@gmail.com>
+ <alpine.LSU.2.21.2405210823590.4805@pobox.suse.cz>
+ <Zloh/TbRFIX6UtA+@redhat.com>
+ <4DE98E35-2D1F-4A4E-8689-35FD246606EF@gmail.com>
+ <Zl8mqq6nFlZL+6sb@redhat.com>
+ <92FCCE66-8CE5-47B4-A20C-31DC16EE3DE0@gmail.com>
+ <930d7361-64e9-a0fc-eb04-79d9bf9267fa@redhat.com>
+To: Joe Lawrence <joe.lawrence@redhat.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-Since hrtimers do not allow a NULL function to be passed,
-to prevent a kernel crash, return before adding the timer to a queue.
 
-Signed-off-by: Phil Chang <phil.chang@mediatek.com>
----
- kernel/time/hrtimer.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 492c14aac642..d32c1afe59b3 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1285,6 +1285,9 @@ void hrtimer_start_range_ns(struct hrtimer *timer, ktime_t tim,
- 	struct hrtimer_clock_base *base;
- 	unsigned long flags;
- 
-+	if (WARN_ON(!timer->function))
-+		return;
-+
- 	/*
- 	 * Check whether the HRTIMER_MODE_SOFT bit and hrtimer.is_soft
- 	 * match on CONFIG_PREEMPT_RT = n. With PREEMPT_RT check the hard
--- 
-2.18.0
+> On Jun 6, 2024, at 23:01, Joe Lawrence <joe.lawrence@redhat.com> =
+wrote:
+>=20
+> Hi Wardenjohn,
+>=20
+> To follow up, Red Hat kpatch QE pointed me toward this test:
+>=20
+> =
+https://gitlab.com/redhat/centos-stream/tests/kernel/kernel-tests/-/tree/m=
+ain/general/kpatch/kpatch-trace?ref_type=3Dheads
+>=20
+> which reports a few interesting things via systemd service and ftrace:
+>=20
+> - Patched functions
+> - Traced functions
+> - Code that was modified, but didn't run
+> - Other code that ftrace saw, but is not listed in the sysfs directory
+>=20
+> The code looks to be built on top of the same basic ftrace commands =
+that
+> I sent the other day.  You may be able to reuse/copy/etc bits from the
+> scripts if they are handy.
+>=20
+> --
+> Joe
+>=20
+
+Thank you so much, you really helped me, Joe!
+
+I will try to learn the script and make it suitable for our system.
+
+Again, thank you, Joe!
+
+Regards,
+Wardenjohn
 
 
