@@ -1,100 +1,185 @@
-Return-Path: <linux-kernel+bounces-205181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 588D18FF895
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:15:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77ED18FF898
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:17:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6FBBB21E2F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 00:15:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AE07287A5E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 00:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3D0468E;
-	Fri,  7 Jun 2024 00:15:23 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD72A3232;
+	Fri,  7 Jun 2024 00:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L5v1hJaM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C19823BB
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 00:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5705802;
+	Fri,  7 Jun 2024 00:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717719323; cv=none; b=OTslPb4rPg3u3l90s0LZYFlagM5xEV5whJh0sj/YrE60Om5tV7SBfSDg4bYazqQWIODas7Xjjn7uU/955g9J3WF7ilEWq2eYv6kN0uf8CbJHMoyKvg1qYCLbduQhoFDv0IE6siUCq6yncSuLPg/6QJW81gnIm2ILQE9HN/wUN78=
+	t=1717719432; cv=none; b=qS59/2zvDRMwj1k3b+DX/rxsFdtJhkSsD4TARkLYtE48hhz2xdPczwMlXg9kmk3JpRZnomuZnTbe3Z7n0F5VIzdnubYKdtfhe69OjTajY/heMpQne48xuFZwU1EapIpU7A4VsQUtsslm7eO3bHruG6zm81NUae5qGUAOXDkULwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717719323; c=relaxed/simple;
-	bh=CPKlspD/ZSfWixUM8SglUnOrdGxitKBWwWP9lEY6reA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Nq0bU6F4uck78tuPVJlI/nwyDUhGbC43pjc4yGKgdlEMK2XbVf4go8wcqLE7qWCY/2CWtUvqRirrplSH+hc8r6GZpSZRGJpjT7ecQYjVPRfDVTr/5K5po2AcPCiF/p1+iTMaXcyrScnIP06xGsHfDmImQfc/GbiFGzx6V3rCM1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7e212ee8008so154117639f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 17:15:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717719320; x=1718324120;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CPKlspD/ZSfWixUM8SglUnOrdGxitKBWwWP9lEY6reA=;
-        b=G/mK4vxe8s+N1QzunEaF4+RU/kyk1TDuos0lWkYKB+Ftvnv4JUly6cBlivjf9cdfLC
-         21iFdCLI4yIvhAfaPulmhSF/LTwoUsCkVmFtJeTVC+JBLnni+WLnBXKFoI+G5sfiUCKM
-         LAtwKZv/t4mGV5Gd6Y94EVcgJ0STNGTeO/uQPQfrgdG7ilULTdmvNl+LI/dAr3XK8f+Y
-         wa0DwAR4/4dH6slIZJZz2dTZsd7u0HQpPEXl8Xrmz2L0okQLyQzcJJwQ40lD6gMbk71C
-         fS0Y3OxozL8tM1SvniNW8OUYANuR678k3HaNqpI6Ev+HjHnfvGKT63JlteSo5scpvQaM
-         p/1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWHYpXQRCiC1tdP+Xn0Y1RFy2QEER9iKg96/s/L3zqf/YCUaqwPcybflZrZTjm+VE+qOthZbJd9A7wJqNeFh6LAdz2Za7Jrd38/eWkp
-X-Gm-Message-State: AOJu0Yx73ZpoCa7sMs8hPxSFEFN3cd7pbBgMY9FF0qRHIjihQdL1NW24
-	aGgSMpmpJAv84JMbx2ZFTv65/GNZLTTPrUjUtxNPHxQKuk4rVuMQ7qL0biL4+XaUcgixmORM549
-	lsE2IsEaNe7l4KAJMAoxyQI0jm31bUZb6XWdsIgk2R1DRsPfHLHc8j/Y=
-X-Google-Smtp-Source: AGHT+IG5Thx0BiwdKnBqeBFBtnMlWjsuCgPzW/VGb2soX7R1sfkuz/vVj6zDBFaPEs1yVLrdiIW4qaqG5nConq5H20oCXlHKnp90
+	s=arc-20240116; t=1717719432; c=relaxed/simple;
+	bh=zQyKFE7i3cSnb1OcKCL8pH1n8i1hiqh2qkfclisckRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hJI1M+p0opmEtxkzpmmWEmLWLmrXm2EdyhlkSWl/tQMDDg7w2pMXLwmhMQLJMQpyKzpFgkD8it9BJBxJ+OiI6bHnQi0mb3DISf/hnXmyK4uBcohpHwWlR5/09aoa6quDuUuYVHx1YcZjcxZ0S2bRRmYUIm51pjRQvg16Akxtnho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L5v1hJaM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB558C32781;
+	Fri,  7 Jun 2024 00:17:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717719431;
+	bh=zQyKFE7i3cSnb1OcKCL8pH1n8i1hiqh2qkfclisckRQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L5v1hJaMVcxxJxKaKAhyIdyWRWgcXppCMx72DrHAE3ph3cyX8WUj8TG5fi21RfNnV
+	 nqlcuOaYbrDA73MFi3+j+MgwgYVAmxT8wjhTfj4iyfuIfxcH0AaXkntfrW/Bew2GpS
+	 L94Rl9iBv4DdxuLC4WilcJNjAwZ+667u9PuHXW+OTKV+WnbR6sWu811PDE7vaJ/+aN
+	 e3ay6Cdd+Z9+zbYm9N8pAeIUW/t58m0xZk3Y/uEbND+AiWCXMAO4uZDv0/ZtGm2qZ1
+	 pNYYY5DwNZyX+bO2M/yYpMJxYlU+8JiTtFFXVfBrB2lKUfZQM6I0w3UHk7CZg9qOH/
+	 gWZAqvlRLTQXw==
+Date: Thu, 6 Jun 2024 17:17:09 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Yicong Yang <yangyicong@huawei.com>
+Cc: Ian Rogers <irogers@google.com>, yangyicong@hisilicon.com,
+	will@kernel.org, mark.rutland@arm.com, acme@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	peterz@infradead.org, mingo@redhat.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	james.clark@arm.com, dongli.zhang@oracle.com,
+	jonathan.cameron@huawei.com, prime.zeng@hisilicon.com,
+	linuxarm@huawei.com
+Subject: Re: [PATCH 2/3] perf: arm_pmu: Only show online CPUs in device's
+ "cpus" attribute
+Message-ID: <ZmJRhSWYxb-zLAhD@google.com>
+References: <20240603092812.46616-1-yangyicong@huawei.com>
+ <20240603092812.46616-3-yangyicong@huawei.com>
+ <CAP-5=fXDPor-WsO-TGB3z6QpSWZOFJC31GJpuwZUA3qz_3WsYQ@mail.gmail.com>
+ <b348d9dd-75cb-6b83-a4be-cfd29e15eb99@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fed:b0:373:fed2:d92b with SMTP id
- e9e14a558f8ab-3758030a0e1mr876255ab.2.1717719320681; Thu, 06 Jun 2024
- 17:15:20 -0700 (PDT)
-Date: Thu, 06 Jun 2024 17:15:20 -0700
-In-Reply-To: <0000000000006fd14305f00bdc84@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000eeed79061a41b140@google.com>
-Subject: Re: [syzbot] kernel BUG in ext4_do_writepages
-From: syzbot <syzbot+d1da16f03614058fdc48@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b348d9dd-75cb-6b83-a4be-cfd29e15eb99@huawei.com>
 
-This bug is marked as fixed by commit:
-ext4: fix race condition between buffer write and page_mkwrite
+On Tue, Jun 04, 2024 at 03:43:35PM +0800, Yicong Yang wrote:
+> Hi Ian,
+> 
+> On 2024/6/4 0:20, Ian Rogers wrote:
+> > On Mon, Jun 3, 2024 at 2:33 AM Yicong Yang <yangyicong@huawei.com> wrote:
+> >>
+> >> From: Yicong Yang <yangyicong@hisilicon.com>
+> >>
+> >> When there're CPUs offline after system booting, perf will failed:
+> >> [root@localhost ~]# /home/yang/perf stat -a -e armv8_pmuv3_0/cycles/
+> >> Error:
+> >> The sys_perf_event_open() syscall returned with 19 (No such device) for event (cpu-clock).
+> >> /bin/dmesg | grep -i perf may provide additional information.
+> > 
+> > Thanks for debugging this Yicong! The fact cycles is falling back on
+> > cpu-clock I'm confused by, on ARM the PMU type generally isn't
+> > PERF_TYPE_HARDWARE and so this fallback shouldn't happen:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/evsel.c?h=perf-tools-next#n2900
+> > I note your command line is for system wide event opening rather than
+> > for a process. It is more strange the fallback is giving "No such
+> > device".
+> > 
+> >> This is due to PMU's "cpus" is not updated and still contains offline
+> >> CPUs and perf will try to open perf event on the offlined CPUs.
+> > 
+> > The perf tool will try to only open online CPUs. Unfortunately the
+> > naming around this is confusing:
+> > 
+> > - any - an event may follow a task and schedule on "any" CPU. We
+> > encode this with -1.
+> > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/include/perf/cpumap.h?h=perf-tools-next#n24
+> > - online - the set of online CPU.
+> > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/include/perf/cpumap.h?h=perf-tools-next#n33
+> > - all - I try to avoid this but it may still be in the code, "all"
+> > usually is another name for online. Hopefully when we use this name it
+> > is clearly defined:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/include/internal/evlist.h?h=perf-tools-next#n23
+> > 
+> >> Make "cpus" attribute only shows online CPUs and introduced a new
+> >> "supported_cpus" where users can get the range of the CPUs this
+> >> PMU supported monitoring.
+> > 
+> > I don't think this should be necessary as by default the CPUs the perf
+> > tool will use will be the "online" CPUs:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/evlist.c?h=perf-tools-next#n40
+> > 
+> > Could you create a reproduction of the problem you are encountering?
+> > My expectation is for a core PMU to advertise the online and offline
+> > CPUs it is valid for, and for perf to intersect:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/include/perf/cpumap.h?h=perf-tools-next#n44
+> > those CPUs with the online CPUs so the perf_event_open doesn't fail.
+> > 
+> 
+> Thanks for the comments and detailed illustration!
+> 
+> Actually it can be reproduced easily using the armv8_pmuv3's events. Tested on 6.10-rc1 with
+> perf version 6.10.rc1.g1613e604df0c:
+> # offline any CPU
+> [root@localhost tmp]# echo 0 > /sys//devices/system/cpu/cpu1/online
+> # try any event of armv8_pmuv3, with -a or without
+> [root@localhost tmp]# ./perf stat -e armv8_pmuv3_0/ll_cache/ -vvv
+> Control descriptor is not initialized
+> Opening: armv8_pmuv3_0/ll_cache/
+> ------------------------------------------------------------
+> perf_event_attr:
+>   type                             10 (armv8_pmuv3_0)
+>   size                             136
+>   config                           0x32 (ll_cache)
+>   sample_type                      IDENTIFIER
+>   read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
+>   disabled                         1
+>   inherit                          1
+>   exclude_guest                    1
+> ------------------------------------------------------------
+> sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 3
+> Opening: armv8_pmuv3_0/ll_cache/
+> ------------------------------------------------------------
+> perf_event_attr:
+>   type                             10 (armv8_pmuv3_0)
+>   size                             136
+>   config                           0x32 (ll_cache)
+>   sample_type                      IDENTIFIER
+>   read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
+>   disabled                         1
+>   inherit                          1
+>   exclude_guest                    1
+> ------------------------------------------------------------
+> sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0x8
+> sys_perf_event_open failed, error -19
+> Error:
+> The sys_perf_event_open() syscall returned with 19 (No such device) for event (armv8_pmuv3_0/ll_cache/).
+> /bin/dmesg | grep -i perf may provide additional information.
+> 
+> As you can see, we're trying to open event on CPU 0 first (succeed) and then CPU 1 but
+> failed on CPU1. Actually we don't enter any branch which handle the evsel->cpus in
+> __perf_evlist__propagate_maps() so the evsel->cpus keeps as is which should be initialized
+> from the pmu->cpumask. You referenced to [1] but in this case perf_evsel->system_wide == false
+> as I checked. perf_evsel->system_wide will set to true in perf_evlist__go_system_wide() and it
+> maybe only set for dummy events. Please correct me if I misread here.
 
-But I can't find it in the tested trees[1] for more than 90 days.
-Is it a correct commit? Please update it by replying:
+Yes, this is confusing.  IIRC evsel->system_wide is for tracking (dummy)
+events to collect side band events (like for Intel-PT) regardless of
+command line options (like -a or -C).
 
-#syz fix: exact-commit-title
+Thanks,
+Namhyung
 
-Until then the bug is still considered open and new crashes with
-the same signature are ignored.
-
-Kernel: Linux
-Dashboard link: https://syzkaller.appspot.com/bug?extid=d1da16f03614058fdc48
-
----
-[1] I expect the commit to be present in:
-
-1. for-kernelci branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
-
-2. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
-
-3. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
-
-4. main branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
-
-The full list of 9 trees can be found at
-https://syzkaller.appspot.com/upstream/repos
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/evlist.c?h=perf-tools-next#n40
+> 
+> Thanks.
+> 
 
