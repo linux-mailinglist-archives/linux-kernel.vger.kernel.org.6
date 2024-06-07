@@ -1,112 +1,107 @@
-Return-Path: <linux-kernel+bounces-206579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74976900BA4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:00:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90856900BA9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2808F1F22290
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:00:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68D911C20DB6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D12E19AD90;
-	Fri,  7 Jun 2024 18:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2138919AD68;
+	Fri,  7 Jun 2024 18:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XQQLR5ec"
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="YbU/IO9s"
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD541957F6;
-	Fri,  7 Jun 2024 18:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F181BDCD
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 18:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717783206; cv=none; b=DAUbbzXDhqb52MAsKWJdpzfvX6Kc/l1Cy+IrUlZPo6sasF1rfP0jEnZ6MTmZNLRJS+caXCvPtyZXgqmHoWsW3j0X3WZRPG3OKJC1V4wYGTH9SNcDQZaZlQocvfrKngHOBZcPLtqDvohFlYSJUvZdaygDmUErnruAi0yLFPMNuHA=
+	t=1717783230; cv=none; b=auCEZIkdhtxfvyjmfU/y96/VNNDy3dvqkJof69VNEi9BIX0wnIKVcTnx9IUlLS+tmxrh9wD7STxKNV+MWlgD7hFPCDVrylG90Vx4d3d4ho43udF9Lw/bsMroZbK4bba8FGNHTHxMb5FHXCHkLmz1oSFBdtGcQ/+XQdqF5q9YDLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717783206; c=relaxed/simple;
-	bh=ORACpY/+WSqScKc7lPlj87lP6hmkqvGD8jTFglZratU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qq6biTIqxDQsPcuo+9kmfm0t8JSA98FSHiVEXWlF7sYw0P+0ikXbDI5zKA5PRAD/sOw2omz0cWmbKNK0VZCffkr/ZkCgEnV1QgxaQChIY3yu2Mg3ZX5XM+4wD8yZnDbgODghDf8LON2Mce+KAHwyDjCuFbN1cc9WhnyaBVsLCNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XQQLR5ec; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-48bd2a9fc5fso823363137.1;
-        Fri, 07 Jun 2024 11:00:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717783204; x=1718388004; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7EhH6vaIBQdb1uBEieNVOyydAgoIsiXtNo78juieCB4=;
-        b=XQQLR5ecpgpH4Lhru3Qe9nA6uLZb/zEfLes3EGIPxkebVdXdoeeHDja5SMQt4Bq6hM
-         aCUbvJS+zaD3Nrq1a7fuABZbwsRd4pDHPTBZpJQ9OO/Jc7mLfWBScCkXoGOVB1cSLlqg
-         UrEnqq1jTeh81oOw5sXT9hJmcyy+KK1doLisUYlnE6XTIhxCYcsXBBmVtWuVTeRY8Ef4
-         zX7CnxaIq3Um4Bo2M3cZ7+e5px40DgwfYlIKT/foQ8VpST5lsvDIHB/jctQwsoLE8YPL
-         vJC1CE36zOopJfStk3Jt+HVXfWxE6ug2NTDl/vycN7asx7DCR3l8CIAJMp+XomHyaxas
-         5q6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717783204; x=1718388004;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7EhH6vaIBQdb1uBEieNVOyydAgoIsiXtNo78juieCB4=;
-        b=G+JSTZ0izTkjrJsZWv9NPdnDhK8+6T4VcgcrJ0qT5dhHZNIZY5F4So7tL7mpzBzXao
-         AIMAac/VKJ7eaaXfh3n9KfsI+7G+FunhKhNWRGYKnDRNyQTOwTwSKTP67BqO3oMOWFq7
-         bcz4FCOqGACqTXBKDJcrehKH7UUiHwe6pVBBv+nR8liMMtD3eqJJVDIiX8OMAyMgx7WE
-         JDCMQBXL3W956avLZ9opL9jIiR403BRczvgUy0IvS4Si8CfmxudSJkCupdtK90QFwKQn
-         6YOhACVYl/vR3646r+BqarKKg0dzy9BaKmjxcz/J1gsEgDspct8S39xQUj0pUjeYlHLh
-         BxMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWP+hEvftI0btVXtanPNVBtWEddunJFq27C4sAMIOrXX38nnoD2RPF+hwOVqqAYwJACB+qBlO7UN+b1D2vuZkxamiFIdH22BUlfGv+A
-X-Gm-Message-State: AOJu0Yysgs8a4gpYXByQkaIYUiYuwBKPdHzgVPetH4sBZgQHosYzcrHj
-	XU6uc/BsyxNlv3NoIsA2g4mQUVquESe/SFryZK1I0hIWDIADYEeXCXkCx/ZOGhBlHc1pdaxmEjL
-	+ABB9168zr4+WcUk29rgLcU9UDO8=
-X-Google-Smtp-Source: AGHT+IFzsGF2lOI5dkNOTbgZy3wS2GYlGMxr6RI9Dk3Ib3eUM9JzBK4G12uxWeICPfFuZsnSc6JqNCaMN+P4/LgMyf4=
-X-Received: by 2002:a67:e351:0:b0:48c:1d7a:bdb6 with SMTP id
- ada2fe7eead31-48c275dde03mr2856429137.18.1717783204330; Fri, 07 Jun 2024
- 11:00:04 -0700 (PDT)
+	s=arc-20240116; t=1717783230; c=relaxed/simple;
+	bh=0NRGuS2YrkWBCFcj/9uHh/nwyQi8ilhdgYK4XspWfA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FV6zSxVEAi1UX/Z/AIgJIVV7gNmTcKwSQpM/PsLUAONJB1K1TfDVLRSUyQsfZugfnC1HRVFUFcKA+rAY/hTfetzl8lCs92lfujyJjFCprlF4/PDcIJIgNoCl6rK8kb5FKT0N36PKAhBLs6MRzjJdpfXR3RzHtx/yQG7z5Wp/73k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=YbU/IO9s; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=0NRG
+	uS2YrkWBCFcj/9uHh/nwyQi8ilhdgYK4XspWfA0=; b=YbU/IO9sX3jfXvqlFN/B
+	cpDFyFS+gIkhlS3iwPWzsRnHRBe3vNTqv/Riknz25fD24OQaoo+288/sk277osOA
+	IlK9xRMb0mab9SbpllMkDwwIZblfE1TPoLeNAKsBHiFA3OlPbvyGU6dgkdE+DSKm
+	IpcSeBQY2g2stZlCx38VotzStqSD6xfz/WaIXYPqD/eQVOj2y9BIc0IWGmaa7CPt
+	3eR3cynz4g+Y3AdKSQs4AxWL7VHio6TPyTCv/lcMmTIjA2TX+SXWnlvmSOrkIDni
+	oPhw5Z2uhdNoRX9IpdDQYu3kMyfG1PPXp2S1uoiU4DHyDdJW+D7Nw/SW2lCHPkkk
+	4A==
+Received: (qmail 3413723 invoked from network); 7 Jun 2024 20:00:20 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Jun 2024 20:00:20 +0200
+X-UD-Smtp-Session: l3s3148p1@mbWaklAalMhehhrL
+Date: Fri, 7 Jun 2024 20:00:17 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, =?utf-8?B?UmVuw6k=?= Rebe <rene@exactcode.de>, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Stephen Horvath <s.horvath@outlook.com.au>
+Subject: Re: [PATCH v4 5/6] i2c: smbus: Support DDR5 SPD EEPROMs
+Message-ID: <txliuvufu6muqucno2uex2q6xvnveozpjzahx7zryqlvvvzrs7@flv2zztine6r>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Armin Wolf <W_Armin@gmx.de>, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, =?utf-8?B?UmVuw6k=?= Rebe <rene@exactcode.de>, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Stephen Horvath <s.horvath@outlook.com.au>
+References: <20240604040237.1064024-1-linux@roeck-us.net>
+ <20240604040237.1064024-6-linux@roeck-us.net>
+ <c939b0c7-2c8c-4cf1-8d5c-9309ce0b371a@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606131659.786180261@linuxfoundation.org>
-In-Reply-To: <20240606131659.786180261@linuxfoundation.org>
-From: Allen <allen.lkml@gmail.com>
-Date: Fri, 7 Jun 2024 10:59:53 -0700
-Message-ID: <CAOMdWSJL+=cZnNKbpxbo9L51CXkmAp1MOynNpREv5CrB4OfUZQ@mail.gmail.com>
-Subject: Re: [PATCH 6.1 000/473] 6.1.93-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="44kjmhkbol2rnepo"
+Content-Disposition: inline
+In-Reply-To: <c939b0c7-2c8c-4cf1-8d5c-9309ce0b371a@gmx.de>
 
-> This is the start of the stable review cycle for the 6.1.93 release.
-> There are 473 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 08 Jun 2024 13:15:55 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.93-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
 
-Compiled and booted on my x86_64 and ARM64 test systems. No errors or
-regressions.
+--44kjmhkbol2rnepo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Tested-by: Allen Pais <apais@linux.microsoft.com>
 
-Thanks.
+> the text "Only works for DDR, DDR2, DDR3 and DDR4 for now" should be updated too.
+> With this fixed:
+
+Yes, maybe this could be simplified to "(LP)DDR memory types"
+
+
+--44kjmhkbol2rnepo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZjSq4ACgkQFA3kzBSg
+KbbTbg//cD7sOcvnAnkIomuxZCVkBx0taLNZrNBPEfiUHTdGQ3zontEQMXJ0moHe
+acWUAt/sy6sxemTyRojO0FWsDCGOZ9hPO95F8Tpt921gdDOFF3mSMXv7V4eLVbzV
+H7jI+QIn7hvjUBpCTCgZ0DjDY5ku36tAxcpxbr/7aYsoXPz31lqk9Tb8lthum4+j
+8AfgziLgAaNqvd0tDO5CoVmAiy0d8gs2OvqXfwP5XOOzhGA78CzfxG2GSCqqO73c
+qXxrR3Rhu82NMej7FUUd+eThQvcmgo3eqV7AOHlr0eaT1338DBk3ZIEGFlswn5ae
+LsoeVUtequuqUVbsf5XM0QHaCO8uB/Z9lvgwa1FIHdMvbWT/lUebhtjwlH61WjZk
+aZam6j+Av84nmp9XdPWNm5itz1Yk8YcekN1Eq/rjlDqu8VF9fFofH5caKrtnojEk
++1tlAyjdoRudnf15D59pcrD/S1NMYxWb94rw0BekOaQYOHAo51dnPMsOS+YW5/H7
+DqSuo2PjSMobSv8GHuUq0Sd/Ghvrc3jxSlEtgUk4jUWv6QJSBIMzrA5wWrPiYjVk
+YHxgS1VSNMApKGgHGcvhzyLSWJllAiZWs3POngn0wVRiTNQwqTLkyypF8fkzOe1Q
+T9IaM1Fjx/+bn2IHZRQaRNhBYfGy7tZVgodo8x5mXaOsjDmP41E=
+=qngC
+-----END PGP SIGNATURE-----
+
+--44kjmhkbol2rnepo--
 
