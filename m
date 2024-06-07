@@ -1,79 +1,49 @@
-Return-Path: <linux-kernel+bounces-206167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDA5190050C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:35:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D74590050E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E7E61F217F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:35:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 055D628D7E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCB81991CC;
-	Fri,  7 Jun 2024 13:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37191993AB;
+	Fri,  7 Jun 2024 13:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mdu1SN37"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F2JAi9iz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E241922F9;
-	Fri,  7 Jun 2024 13:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316261922F9;
+	Fri,  7 Jun 2024 13:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717767158; cv=none; b=MOdAr4il4jlcKqf8DrnIQNCzd7h5+8z2ZblZvZLv1AVkbbC2YDv9AOL3g/9SwgAjMvv8lCvq0xCFSedfKwy88DyjMwb2vEMcU4k2aMgbw3pcRkHKW3tIsn67isbnGfPQeqcuQ0u1K25naAajfmYmuHNWB0vFEfTzE8ai4q8xkw8=
+	t=1717767164; cv=none; b=Bmmm1A7GbmOye5UVLIKf+Ocyb+KWTsp3Xk2rGcQ4CAGf5m4MQ2liF8oPBhuJ03ENpp+my1pX6BJcBTJOTz6/DhF4uSFSEckqX1paAZiEXDpgjBDRFivtb+qQJy2B4bZdy8p6LhX7UmuZJOC0LktFHnBjMH4B7DkRCHhEasa9d0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717767158; c=relaxed/simple;
-	bh=OB9nuMUaz2RJ7fDsZfmD6NlU0tEuo2P3GDvpOX39uHs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Fh9mZEHtJrh5hJ/aeZy8oDTewI7C2JeMywzjtsmSLjxGdZaB4l1Fl71rq3zm5ClVgDNHgKD6b1b4QdBCR0Xus/xHbDoWkFR/fvXZJwjkW+bLEu5Gw65DJQvtThnju3IeXiUiZ88mNnGtyfLeLVMzA03RC+Tp1GlsRsNOoR1/nic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=mdu1SN37; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 457DWKYH086877;
-	Fri, 7 Jun 2024 08:32:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717767140;
-	bh=cxjK4DYOMf+01WJ2Qh8aciagA8IuXgOO5npXQIszqls=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=mdu1SN37oY8CfEk05w2niFM7d5+o3Hn11jSxwb9H44ylAIKMBoLCzB4RTHjVKyXxF
-	 qCMIK5RuWkgWvZFY13d41lf48NzXPBUXyo3xyP82CZ13G415F9+wrdphcH3X9Fo6uy
-	 FVYjm0VKlrOFhugL0gnyxe7QfZpRo/SHyHEpxSIU=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 457DWKt4099910
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 7 Jun 2024 08:32:20 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 7
- Jun 2024 08:32:20 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 7 Jun 2024 08:32:20 -0500
-Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 457DWJ85046487;
-	Fri, 7 Jun 2024 08:32:20 -0500
-From: Devarsh Thakkar <devarsht@ti.com>
-To: <devarsht@ti.com>, <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>,
-        <akpm@linux-foundation.org>, <gregkh@linuxfoundation.org>,
-        <andriy.shevchenko@linux.intel.com>, <adobriyan@gmail.com>,
-        <jani.nikula@intel.com>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
-        <daniel@ffwll.ch>, <dri-devel@lists.freedesktop.org>
-CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
-        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
-        <vijayp@ti.com>, <andrzej.p@collabora.com>, <nicolas@ndufresne.ca>,
-        <davidgow@google.com>, <dlatypov@google.com>
-Subject: [PATCH v13 11/13] lib: math_kunit: Add tests for new macros related to rounding to nearest value
-Date: Fri, 7 Jun 2024 19:02:19 +0530
-Message-ID: <20240607133219.3558319-1-devarsht@ti.com>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20240607131900.3535250-1-devarsht@ti.com>
-References: <20240607131900.3535250-1-devarsht@ti.com>
+	s=arc-20240116; t=1717767164; c=relaxed/simple;
+	bh=6bVomJeklHfwq6dyxfuwrhU6D4+V79v408gXjcqI/WE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=i25ZV5a1OiNNZ7x8VfGKiuTCvTrw6Rvbx03pHpfyk/CTkvPE5BdhUlJiiwEG5ePWDEt5yzQ+gKUB0qmd8UOlVS3ux45PSLKCjkwvxOL2kYUZFkyVpciGfh7B7LfSjA/eCs9ABPhW2xR5dfHZi/cQQgS31h8aT7fuZVbFK6wCOD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F2JAi9iz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A041CC32782;
+	Fri,  7 Jun 2024 13:32:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717767163;
+	bh=6bVomJeklHfwq6dyxfuwrhU6D4+V79v408gXjcqI/WE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=F2JAi9izIP49nv1hbYQBXEoeMzNjjpvKLhmSMs9KWcvRREQUNWZBw4UDuNjdWftY7
+	 5RKwLxI1/f62DRJc2KFRg//tdnWsd8ip7Dihro57bf8WhaE4Re4cdNuKySnDP4Cllb
+	 baErUghfMyZggdOTf13cBzHOMytklcnR3Ok066BKNNvUChK90y6Ev0bPIzy4+i5gQy
+	 2hyYBH6F3+5aTyKbxACGzWAHpDz/Yxccy5IWELock/0J14xw3Zn+AQkdnPkJyqD98R
+	 +zYojWURTbDePkIbq+lLsUPnjBfn4zoFzlnQtRF2YvY7MGbEh40EcjMtCfTsyD0HX3
+	 /Bqjt88w+Watg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9178DCF3BA3;
+	Fri,  7 Jun 2024 13:32:43 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,84 +51,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Subject: Re: [PATCH net v3] liquidio: Adjust a NULL pointer handling path in
+ lio_vf_rep_copy_packet
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171776716359.27999.7521949706547651629.git-patchwork-notify@kernel.org>
+Date: Fri, 07 Jun 2024 13:32:43 +0000
+References: <20240605101135.11199-1-amishin@t-argos.ru>
+In-Reply-To: <20240605101135.11199-1-amishin@t-argos.ru>
+To: Aleksandr Mishin <amishin@t-argos.ru>
+Cc: davem@davemloft.net, horms@kernel.org, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, keescook@chromium.org,
+ justinstitt@google.com, felix.manlunas@cavium.com,
+ satananda.burla@cavium.com, raghu.vatsavayi@cavium.com,
+ vijaya.guvva@cavium.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
 
-Add tests for round_closest_up/down and roundclosest macros which round
-to nearest multiple of specified argument. These are tested with kunit
-tool as shared here [1] :
+Hello:
 
-Link: https://gist.github.com/devarsht/3f9042825be3da4e133b8f4eda067876 [1]
-Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-V1->V13 (No change, patch introduced in V8)
- lib/math/math_kunit.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+This patch was applied to netdev/net.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-diff --git a/lib/math/math_kunit.c b/lib/math/math_kunit.c
-index be27f2afb8e4..05022f010be6 100644
---- a/lib/math/math_kunit.c
-+++ b/lib/math/math_kunit.c
-@@ -70,6 +70,26 @@ static void round_down_test(struct kunit *test)
- 	KUNIT_EXPECT_EQ(test, round_down((1 << 30) - 1, 1 << 29), 1 << 29);
- }
- 
-+static void round_closest_up_test(struct kunit *test)
-+{
-+	KUNIT_EXPECT_EQ(test, round_closest_up(17, 4), 16);
-+	KUNIT_EXPECT_EQ(test, round_closest_up(15, 4), 16);
-+	KUNIT_EXPECT_EQ(test, round_closest_up(14, 4), 16);
-+	KUNIT_EXPECT_EQ(test, round_closest_up((1 << 30) - 1, 1 << 30), 1 << 30);
-+	KUNIT_EXPECT_EQ(test, round_closest_up((1 << 30) + 1, 1 << 30), 1 << 30);
-+	KUNIT_EXPECT_EQ(test, round_closest_up((1 << 30) - 1, 2), 1 << 30);
-+}
-+
-+static void round_closest_down_test(struct kunit *test)
-+{
-+	KUNIT_EXPECT_EQ(test, round_closest_down(17, 4), 16);
-+	KUNIT_EXPECT_EQ(test, round_closest_down(15, 4), 16);
-+	KUNIT_EXPECT_EQ(test, round_closest_down(14, 4), 12);
-+	KUNIT_EXPECT_EQ(test, round_closest_down((1 << 30) - 1, 1 << 30), 1 << 30);
-+	KUNIT_EXPECT_EQ(test, round_closest_down((1 << 30) + 1, 1 << 30), 1 << 30);
-+	KUNIT_EXPECT_EQ(test, round_closest_down((1 << 30) - 1, 2), (1 << 30) - 2);
-+}
-+
- /* These versions can round to numbers that aren't a power of two */
- static void roundup_test(struct kunit *test)
- {
-@@ -95,6 +115,18 @@ static void rounddown_test(struct kunit *test)
- 	KUNIT_EXPECT_EQ(test, rounddown(4, 3), 3);
- }
- 
-+static void roundclosest_test(struct kunit *test)
-+{
-+	KUNIT_EXPECT_EQ(test, roundclosest(21, 5), 20);
-+	KUNIT_EXPECT_EQ(test, roundclosest(19, 5), 20);
-+	KUNIT_EXPECT_EQ(test, roundclosest(17, 5), 15);
-+	KUNIT_EXPECT_EQ(test, roundclosest((1 << 30), 3), (1 << 30) - 1);
-+	KUNIT_EXPECT_EQ(test, roundclosest((1 << 30) - 1, 1 << 29), 1 << 30);
-+
-+	KUNIT_EXPECT_EQ(test, roundclosest(4, 3), 3);
-+	KUNIT_EXPECT_EQ(test, roundclosest(5, 3), 6);
-+}
-+
- static void div_round_up_test(struct kunit *test)
- {
- 	KUNIT_EXPECT_EQ(test, DIV_ROUND_UP(0, 1), 0);
-@@ -272,8 +304,11 @@ static struct kunit_case math_test_cases[] = {
- 	KUNIT_CASE(int_sqrt_test),
- 	KUNIT_CASE(round_up_test),
- 	KUNIT_CASE(round_down_test),
-+	KUNIT_CASE(round_closest_up_test),
-+	KUNIT_CASE(round_closest_down_test),
- 	KUNIT_CASE(roundup_test),
- 	KUNIT_CASE(rounddown_test),
-+	KUNIT_CASE(roundclosest_test),
- 	KUNIT_CASE(div_round_up_test),
- 	KUNIT_CASE(div_round_closest_test),
- 	KUNIT_CASE_PARAM(gcd_test, gcd_gen_params),
+On Wed, 5 Jun 2024 13:11:35 +0300 you wrote:
+> In lio_vf_rep_copy_packet() pg_info->page is compared to a NULL value,
+> but then it is unconditionally passed to skb_add_rx_frag() which looks
+> strange and could lead to null pointer dereference.
+> 
+> lio_vf_rep_copy_packet() call trace looks like:
+> 	octeon_droq_process_packets
+> 	 octeon_droq_fast_process_packets
+> 	  octeon_droq_dispatch_pkt
+> 	   octeon_create_recv_info
+> 	    ...search in the dispatch_list...
+> 	     ->disp_fn(rdisp->rinfo, ...)
+> 	      lio_vf_rep_pkt_recv(struct octeon_recv_info *recv_info, ...)
+> In this path there is no code which sets pg_info->page to NULL.
+> So this check looks unneeded and doesn't solve potential problem.
+> But I guess the author had reason to add a check and I have no such card
+> and can't do real test.
+> In addition, the code in the function liquidio_push_packet() in
+> liquidio/lio_core.c does exactly the same.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net,v3] liquidio: Adjust a NULL pointer handling path in lio_vf_rep_copy_packet
+    https://git.kernel.org/netdev/net/c/c44711b78608
+
+You are awesome, thank you!
 -- 
-2.39.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
