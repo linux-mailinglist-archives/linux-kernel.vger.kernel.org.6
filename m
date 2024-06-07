@@ -1,318 +1,211 @@
-Return-Path: <linux-kernel+bounces-206119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 126A990047B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:19:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B8B8900477
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:19:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8453928806D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:19:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 719D4287F9C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7F5188CD1;
-	Fri,  7 Jun 2024 13:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200D01940B2;
+	Fri,  7 Jun 2024 13:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kPT86xCD"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Chzag32U";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="E3F1MMIy"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB95A78C96;
-	Fri,  7 Jun 2024 13:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717766373; cv=none; b=RLf0Y5KJqBXZu1+P+lb+CVHzN9PP++EbTKmyTqBa/p1zvZyB2ruRUxcLcrFKRmaDpa8c81bQMQMDdFI26Fm8Lh2C3PoCMwmXdbWCpXhF52dyUPP+bj731s1ZfgvyxQmeRO2RLd8ZhvbCxLvRR2NxlYwRjaJjahOo/BVAUAHSsAo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717766373; c=relaxed/simple;
-	bh=5Xt6obCgPelAKtz+Zb43GC+lp2ON0FN4HGDQrtwemB4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lPN80LC/3tsD/COoKv4rL+ka+pqkRzfr6R7X2Q/fZaEVNjgojkH2p4ivm7KFdQNXqIdRcrG+hn9wNGs10G1c2eiHJNUM0KrjOkE20K8+O6i9UV1RHE+ZA50w5KRWIn0oX+v0MyEyG9v+VapKckwM/mwNv6uGYu2doHePqddXi8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kPT86xCD; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 457DJ3Uq110775;
-	Fri, 7 Jun 2024 08:19:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717766343;
-	bh=TZKJcvnP97l2agNRo8jIlGe+t10ELgbL9S/DCOKGQ/Q=;
-	h=From:To:CC:Subject:Date;
-	b=kPT86xCDu6oqE4W8YVbTj9AiyMsViJVDCPSfAPDCgXF68J0LUKt6XHH5Losx8cXO7
-	 /kraR7eBnluHYMdyC9WnFrxqJWY3ojItN2FnwlpiLkfQDYIAdOWBTWdFXwlza0DiSS
-	 eU654dHsEUPaArpb4U/U3FGcg77NtQSq5v42cmt0=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 457DJ3Ui091235
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 7 Jun 2024 08:19:03 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 7
- Jun 2024 08:19:02 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 7 Jun 2024 08:19:02 -0500
-Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 457DJ1id097282;
-	Fri, 7 Jun 2024 08:19:02 -0500
-From: Devarsh Thakkar <devarsht@ti.com>
-To: <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <hverkuil-cisco@xs4all.nl>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>,
-        <p.zabel@pengutronix.de>
-CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
-        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
-        <vijayp@ti.com>, <devarsht@ti.com>, <andrzej.p@collabora.com>,
-        <nicolas@ndufresne.ca>, <akpm@linux-foundation.org>,
-        <gregkh@linuxfoundation.org>, <andriy.shevchenko@linux.intel.com>,
-        <adobriyan@gmail.com>, <andi.shyti@linux.intel.com>,
-        <airlied@gmail.com>, <daniel@ffwll.ch>, <jani.nikula@intel.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-rockchip@lists.infradead.org>, <davidgow@google.com>,
-        <dlatypov@google.com>
-Subject: [PATCH v13 00/13] Add V4L2 M2M Driver for E5010 JPEG Encoder
-Date: Fri, 7 Jun 2024 18:49:00 +0530
-Message-ID: <20240607131900.3535250-1-devarsht@ti.com>
-X-Mailer: git-send-email 2.39.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609121922EF;
+	Fri,  7 Jun 2024 13:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717766354; cv=fail; b=c8kJ1TEzjawzxo6yUp1KIo3cY/9VG+IJskCClCtMCjqBu0eFDD+4wLceefoCvHocqP17cfUSLDcOnvbdqNguJtzun6PHENwatXhh7iH9JxhoG9UtXoZdWnzB+3ONog2rKOv+NJBLIrDb/56WoloFX1bS+0rAANsh8XzwaJfiS0Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717766354; c=relaxed/simple;
+	bh=+KCtvUHwmMfxetBziQPUXX/FZz7uVMYnKZhV1kJtMs0=;
+	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=VG4QH2YSuzBV0QfqyKd7XmKSE6RoPGY8zgYpj6/WesyKrBqYexJPhysP1htwK8lqhsR6tpJ/S2dnnfS87xytSNrZZ7rTjbCgn4yGj3JZrR/Z+NIDHbi1eLnztYCvgrhHVEW4tbjuKLlw3klFl0PA8PD2BoTmCTIrg81C1jrmEfc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Chzag32U; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=E3F1MMIy; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 457CuUn9025407;
+	Fri, 7 Jun 2024 13:19:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc : content-type :
+ date : from : message-id : mime-version : subject : to; s=corp-2023-11-20;
+ bh=EaPb+JnNMFtp0l7uoHUyXE4T1nT01OBmZ+jPjw2iOmM=;
+ b=Chzag32URU2sqIpn+iIUSVp1x2TbcF/02HIFg7nCQ/B8V1Z7FrAm+2AWUtYaOEapu7pS
+ 1vRM2tsL8W1rPhsLdSXbFwG6E6BJKh5EyYE/EffGUDANSR7d8t+Di8usygXSJo0THLgz
+ HwfthKtu68H+SXOraKALj4n3+ysQrukk6geazqSPd/GBCEpIxRkKc+ZT7ellWdx5CUvv
+ iOrcwy/YP7Eo8PePS0y0usERSewj2oyl0FdSrmUax08HGrD65EYAIgNz1Yms15QauC87
+ K5pVgdC5UYXizSUn/8Kb8RpwrpQHcPBoKQgPhRBd5mSNKMbp1aeZZZK+D440okfewLBI /Q== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ykrtb0x55-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 07 Jun 2024 13:19:06 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 457C5BTZ016157;
+	Fri, 7 Jun 2024 13:19:06 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2044.outbound.protection.outlook.com [104.47.66.44])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3ygrsefn0q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 07 Jun 2024 13:19:06 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IWdUCj0Cs5UOBi/w/H9dufh4JynfwuCOXwfYEoOXsxozjh8Zc9Y16P5lZGfB1cjRUCVCG4RFYTYRCRpgkmlvBjS4NMIIQ3slQFVNewDWl/HObwh4gNxnPQsQIsmVSgjzcdysVItzlDbMeHYtimNsdN4mSky6SxR8mVRMPSMCR2EPwYGHr5Pc7ZMpC2hwaIauHrf5CMP041OiZwM6MvyV9B+PNdPSREWwvL2UH29jyn2V/hS1gRwqi6p15n9X4qWy2dX0Q8oYMeaSq5dJSBEH+fyjIOYIsTZfSt5XVXpk27c1m3ZAXlkFw0Lhag1u10aOMqXgvpL2nvnoKFeOsyIJ8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EaPb+JnNMFtp0l7uoHUyXE4T1nT01OBmZ+jPjw2iOmM=;
+ b=Wo6EDwFyvYDmubfu3317ueBtNb5KKvvwzDlHaNTbue5pBuhsJLhURPj4FjSzGpTsxDO/xK0O/IMQr6z7qDgpiVRkfMU5EIckADMcfCl+T61PRUzmVEDTELN05pNKTqXKDu7agoXI5VEsMcXJXW8E/+M7rVl3WmoyZ6ep/GpKu45uVb0wmoDYJdxOIrOgxE7O7+Ws650qbHJ6J7Ij6F7Im6Un7zqqtZtRMAl6ps77ZPR2hEEUNowZsMPyKbFNhDnjb4lqnU95SN8TNf7muw8jkycq0zMzE0ymiydy7e2F9xzDNl4P1qQ3A7+/sj+wnZc2GK37NRp+gDFzmPXI+4kO2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EaPb+JnNMFtp0l7uoHUyXE4T1nT01OBmZ+jPjw2iOmM=;
+ b=E3F1MMIysmglbYKag5PteeKclKaQcxk3Ol3Kn3w5lMSRBOKSSpATGc32+07JsbobD4fHClSTmf9a2VM1quskuNrzzgTUI9xR8yOeKa9otzLB7pb5FDIjlTnB5N7/LmNSy2qt/7m2J2GEzxRh3SuwPh6yAf4zFIPFQYpm02DWsiA=
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
+ by BL3PR10MB6210.namprd10.prod.outlook.com (2603:10b6:208:3be::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Fri, 7 Jun
+ 2024 13:19:03 +0000
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90%4]) with mapi id 15.20.7633.033; Fri, 7 Jun 2024
+ 13:19:03 +0000
+Date: Fri, 7 Jun 2024 09:19:00 -0400
+From: Chuck Lever <chuck.lever@oracle.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeff Layton <jlayton@kernel.org>
+Subject: [GIT PULL] first NFSD fix for v6.10-rc
+Message-ID: <ZmMIxOjoqzW8auo6@tissot.1015granger.net>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-ClientProxiedBy: CH2PR11CA0022.namprd11.prod.outlook.com
+ (2603:10b6:610:54::32) To BN0PR10MB5128.namprd10.prod.outlook.com
+ (2603:10b6:408:117::24)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|BL3PR10MB6210:EE_
+X-MS-Office365-Filtering-Correlation-Id: f25dc116-a4bf-45ee-d553-08dc86f466cd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|1800799015;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?aDMfwd7/VL695YjA/2/Cy5BFTa0dA7uICuGQMOP3h1veh0D5JPNr39my0GAj?=
+ =?us-ascii?Q?9OsSBWllVfl8JWrn2T/TRtjfV6y1f+jNVo+ml7Xd7sDTovkQcLlOLDdN3cI2?=
+ =?us-ascii?Q?GBRnTQeU9rQ8MzQ2hPLJdQRuv9AL/BkS6yPdCaKTySMOQhtqwGy5NfKVZSCh?=
+ =?us-ascii?Q?2Qi6TXKObnhsLm5Y6uiV6KCjLj4JY3lKaK6ehfU2GkFRxL33JbloTBXC4taR?=
+ =?us-ascii?Q?CIiSowAhHcpmrYW2zwZm6U/+kMcODIE2rbPWEWVkd03WzKztMi28qzu1Ad3f?=
+ =?us-ascii?Q?S/huFd6rKbsWyLNtBkMbFEL0FEtn4h53f2znbxPsrzJsV9jVtc1Yz8/8RssH?=
+ =?us-ascii?Q?LR4jb4S7YvHRPFQ9qLq7D+qw2PdZT4W0GZ4Hgh4FNOHbhPg6+iohxxwhyrZ5?=
+ =?us-ascii?Q?+reO5CfvQP4fc0JAFQglZz4JxgRYOcQ/aJHQBPyEgQVjbYe/o/4o1/twr2S0?=
+ =?us-ascii?Q?0huGLyHhlqSJx6PfVjW81G9AlqIEvMQvAvsYdrZJfw60nitOyuTEvrszqr+C?=
+ =?us-ascii?Q?dPNOuwJxqghDsFeaqGJjtMjya/oxymgcL0WOUSkuui+TGUY/7wmdt7xV+Rxy?=
+ =?us-ascii?Q?KhhcJRD6P4kH4Bvy5Oo9Q05JLWqv65E76I+2dHlQKzxhEpITfu2QgXM+5RXh?=
+ =?us-ascii?Q?1du8C8F8jv4PxN/4pkbrn/soE0Gbm0ZLpXmfvI218l2Qk/dpN4PBvZxM7qqN?=
+ =?us-ascii?Q?CcVdxa8fuJCzgowfYPIiIHvGxAfZd/m0Wnvgkq45aU3+CBNj1EZOQagm2MX5?=
+ =?us-ascii?Q?R5qJhugsWZUT3m/AQWAY1Hs1hXx2jtTvNMR+QQd0uCBCig4qyhs+1v/IRF6V?=
+ =?us-ascii?Q?GawZ0MOIT5f/IojBYJJ2PAWpH7/Y/b0SsGuo6ealfFuqpwj0wSLOn6KJ27DY?=
+ =?us-ascii?Q?D03ib6gXPd1FlhAmQJb8dca8eL1stD2obabaFzsDz3MHAUsSnxrzrr/5EYV9?=
+ =?us-ascii?Q?RkvGRl14J/8e537cxuwB9bRu0OMZ2VOZwTInux5E64Hznw8/VJ7eL0PUXvfx?=
+ =?us-ascii?Q?1Y+nQfjVo3okeHalBBjC/RREIxTsFcf2spSs5Ev82UeR8jrbu8g/KaJyAqvz?=
+ =?us-ascii?Q?nmIp7Xcn4UYyHfqYL2wrxMrzXGoUfGCpWWl7kep3JarAKJov9pUcc8oF3knB?=
+ =?us-ascii?Q?oQrkluMNuj5gJtoaDS3KWkyc9QU/jSM0qu9LYzUoMfktx5DTA7teJx2KrsEP?=
+ =?us-ascii?Q?e7xDqiSIge0LgFMR8vkrlx3W+X4CE1AVK73jauPBt0cHx7/+03fkXdVhnudp?=
+ =?us-ascii?Q?GB5aR0mdRMuUgtik8fI5tqQPJejaD4z/K4kQd/9gDO4ipXBpQXM38HlWVHYO?=
+ =?us-ascii?Q?393Nu9okBDHyBVGumbRYil2y?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?CmZ0DGZkw63n9Dq9uwW2aj1vgNj/95rnwqi2Iyobev90I93M5Iy/dylDsqtl?=
+ =?us-ascii?Q?zCmj/SY58ivro0zFuSDTKapdBRDjb2FrBKlcEFzjuxBL2GZAKvDpkICQEasi?=
+ =?us-ascii?Q?GFh28UJPQuKzDPZp4qqV9+je+qFjst+y6NqRN1ntk5hClTpCJBRKHif3E8Q1?=
+ =?us-ascii?Q?3JA1qrKOeFrJjqLlREV/1r/R2IEram3PTyBpIKsild7XK272OfozhrNDbMW7?=
+ =?us-ascii?Q?fx0TAdwR/IaaY2VVqNVG0LtKlBDL5ZY84BL6ZqRUlP4uBe3NJqQzUDkSboa3?=
+ =?us-ascii?Q?gY/poNvHew8H9k6cRwxOCkHgucCrb6WiM1H0r9+P4jy6A58nIBrtxVMYAFsu?=
+ =?us-ascii?Q?+opuLsSLZmOOKG/fWRqYdtqdtJg3jeL80cgsI8fjiAcWu23/mGqcvCCziVSe?=
+ =?us-ascii?Q?iQ2ENexUtyypB0b3yGS9Wkf0D0aMg7iqPgJKdfSjLTSUFT+TY1KnsduutILW?=
+ =?us-ascii?Q?6Ora5JzjagQoXVXXrK128nb1zpBhZlMymqBKxvoVzYfAlz8ofdmEtRCCSEJT?=
+ =?us-ascii?Q?QOWkUe70D+F5Ix2FVYCV2n57+gSGYt0Cn0aiR6+1bkB1eKTBIlxbx3BCNu8p?=
+ =?us-ascii?Q?BZghfMX/K7lEEqaz3qZWgWoaXmEjKMv1ZWNloA3o2SNEGHLlD0JTk+Znzlby?=
+ =?us-ascii?Q?rfGvvNjzgiwoKBcZhXIJ3Ubo/BiHo19qOpWn23oJaPZDwTFXo80n5KFfkl3i?=
+ =?us-ascii?Q?1MKNVc5a6BC4FDj3fD8iDzufcQWU6MZCoslGKIXphvOilZpbKTx/I6OFnet2?=
+ =?us-ascii?Q?fyyYlXPRmzFv676oXhXGhxcWBb9GaYL2blznkGW+HKImvHqI/eQmMFOk+voQ?=
+ =?us-ascii?Q?XtE5K1Z1JUv/Q3vipTuk4X7/z5bJyqo40Tzj7MSpig+VaWvwPNz3C4HBqLV+?=
+ =?us-ascii?Q?X+v091Lor5PwZM0hq2AD79WguknlADnNOKfBlkVIdEGbnLWQLQio0Q/0JVbW?=
+ =?us-ascii?Q?ilA+b/bR1rAUpilZcegWxXKfElZYi9XGqwYmjbYMkUw2chP2jewIQ7/7TBlF?=
+ =?us-ascii?Q?XcfUgYVDEPmP+QUdJAj1Le1WSGJI1Mr6DBDUuPbkTe0S8rRBXM73bnDGkncN?=
+ =?us-ascii?Q?CN5gYW5Il+03EfCG0n+j8EE+98jrh4hfNsjei4zbWa4Sl+bRPBS9x7GhIAQy?=
+ =?us-ascii?Q?fUXa82tlBgz5MV5WVkqm9y6J6A4u1vVxFvkpa6hdFE/Qa6F/jH7xmGrboCnb?=
+ =?us-ascii?Q?0eKjAWW6KptldoHuzPu/pZERH+/HL6e/PBmR1AVfxZVo4vFxRv5mamKIVeKc?=
+ =?us-ascii?Q?llRTQseC0SYKvV5LHk+tM09rPCWtTP9nYgM+IDhQ3/eUWGUm+xNRJz5NF357?=
+ =?us-ascii?Q?kRL+cFd+7N1Vglj4ZomJRZLcOy76JGK694r1k1/5lqSR1EoXgbgJstdbcWpp?=
+ =?us-ascii?Q?AzuKdHZ6Zv+j5dv/BAnGvUSMc/Llh4PdIjKL2UKi7z3zEU4KJwcrdubCsci+?=
+ =?us-ascii?Q?+9J2oRZMbDfxZWyq86LmIc8l4eS0GPXkEVZe58Xg7VDCUHAuiNfmGARYO+fw?=
+ =?us-ascii?Q?s3ah/mKB/OJ4KkZ0XgagNYfMqW40z8yGnKZEXWhX5x8pp2WYJ98A2iZuHb4w?=
+ =?us-ascii?Q?qrBBB75CRbqph5WNgRE0P41dhm1Jxc32udZ/4hgEX1rYoUL72L5sBkRZcJyw?=
+ =?us-ascii?Q?XA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	NNhxXhekEPydcH9ZGoDTfxZe7xaTIUY7vtDjP897C2eKxVOJ+i/7ghyMmJlTF8N0GKClvjc3ttbTuirON5Ca18IBAZ5TxA67IEq0A566AE28JyNcQ+ZxB+SHCO7zPp2PxXXhX5DCIdNsk76FWutwcsRcATBFuRT+ZjZa4EPElLyx99aDGc4LV5xNC62AwrOcUVjFj/gXytrq3FDwlyfi3uTQY7Z5tf+gIDWJqRnfjthQ30dcQXzn4ZKysMSfuPqf49S1WZoru1cLWaIMFTTFPDn6tcAiEZy4lYa+86Y3P/lTmTwHattdyQYWdbLvNdLJDbTxe/yXZJNsx+kf3HkFOH//h+rWkVIwpvhBV/KRQljZ6y48RtKwBWJsQW2S86WJ7Y8/feCl7Uw5ypWCyCKKDquFWD9KGrAu+yKPJ0P2y2UxgvUdSOR8+y8Mz3V8fQhkL6AHrMSVflFnlJN8nyuWUAO/4yjYTzmDixA9uHvy5RDYaWd7SSmxoEuhan1wArACAqmyHA8N8PaIfwwcLTjzt8Y4rkS4lObtZQTWJHy57P+DWHAARM8t1PbU4Ak4GWl/NsYR+h+VHG5U5OzagYyoI2DXFCzIqpnbzymnacTqM1E=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f25dc116-a4bf-45ee-d553-08dc86f466cd
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2024 13:19:03.5731
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nkh9Yd3qXz0lRBtG8v/RmJhf0G7/XTgvEzgx8Ir/W88A6OZs4kfBWmvc9z/bSsUHj+2svl8sjY+1i24Wc3C9PA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR10MB6210
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-07_07,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 mlxlogscore=866 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2406070097
+X-Proofpoint-ORIG-GUID: avMbqCYNwOoV7BJ8sts7jXz3SayURr7q
+X-Proofpoint-GUID: avMbqCYNwOoV7BJ8sts7jXz3SayURr7q
 
-This adds support for V4L2 M2M based driver for E5010 JPEG Encoder
-which is a stateful JPEG encoder from Imagination technologies
-and is present in TI AM62A SoC.
+Hi Linus-
 
-While adding support for it, following additional framework changes were
-made:
- - Moved reference quantization and huffman tables provided in
-   ITU-T-REC-T.81 to v4l2-jpeg.c as suggested in mailing list [1].
- - Add macros to round to closest integer (either higher or lower) while
-   rounding in order of 2.
- - Add KUnit tests for math functions.
+The following changes since commit 8d915bbf39266bb66082c1e4980e123883f19830:
 
-v4l2-compliance test :
-Link: https://gist.github.com/devarsht/1f039c631ca953a57f405cfce1b69e49
+  NFSD: Force all NFSv4.2 COPY requests to be synchronous (2024-05-09 09:10:48 -0400)
 
-E5010 JPEG Encoder Manual tests :
+are available in the Git repository at:
 
-Performance:
-Link: https://gist.github.com/devarsht/c40672944fd71c9a53ab55adbfd9e28b
+  https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git tags/nfsd-6.10-1
 
-Functionality:
-Link: https://gist.github.com/devarsht/8e88fcaabff016bb2bac83d89c9d23ce
+for you to fetch changes up to 4a77c3dead97339478c7422eb07bf4bf63577008:
 
-Compression Quality:
-Link: https://gist.github.com/devarsht/cbcc7cd97e8c48ba1486caa2b7884655
+  SUNRPC: Fix loop termination condition in gss_free_in_token_pages() (2024-06-03 09:07:55 -0400)
 
-Multi Instance:
-Link: https://gist.github.com/devarsht/22c2fca08cd3441fb40f2c7a4cebc95a
+----------------------------------------------------------------
+nfsd-6.10 fixes:
+- Fix an occasional memory overwrite caused by a fix added in 6.10
 
-Crop support:
-Link: https://gist.github.com/devarsht/de6f5142f678bb1a5338abfd9f814abd
+----------------------------------------------------------------
+Chuck Lever (1):
+      SUNRPC: Fix loop termination condition in gss_free_in_token_pages()
 
-Runtime PM:
-Link: https://gist.github.com/devarsht/70cd95d4440ddc678489d93885ddd4dd
-
-Math lib KUnit tests:
-Link: https://gist.github.com/devarsht/3f9042825be3da4e133b8f4eda067876
-
-[1]: 
-https://lore.kernel.org/all/de46aefe-36da-4e1a-b4fa-b375b2749181@xs4all.nl/
-
-Changelog:
-V13:
- - Fix smatch/sparse related warnings
-
-V12:
- - Fix documentation and enable kernel-doc rendering for math.h and jpeg helpers
- - Add Reviewed-by and Acked-by tags
-  
-V10->V11:
- - Fix commenting for math.h, include headers per IWYU principle in
-   math_kunit, update title for math.h kernel-doc
-
-V9->V10:
- - Update commenting style in math.h and add notes for new jpeg header
-   macros
- - Add KUnit dependency for math_kunit
-
-V8->V9:
- - Remove kernel.h header file
- - Remove stale filler data on jpeg header in E5010 jpeg driver
-
-V7->V8:
- - Add KUnit tests for math functions
- - Add roundclosest() for supporting rounding for non-multiple of 2
- - Update commit message as suggested
- - Add Reviewed-by and Acked-by tags to patches as received
-
-V6->V7:
- - Fix cropping support
- - Move reference huffman and quantization tables to v4l2-jpeg.c
- - Fix suspend/resume use-case
- - Add Reviewed-by
-
-V5->V6:
- - Fix sparse warnings
-
-V4->V5:
- - Sort the #includes in driver file alphabetically
- - Rename huffman and quantization tables to not use '_'
- - Add Reviewed-by tag
-
-V3->V4:
-- Use ti-specific compatible ti,am62a-jpeg-enc as secondary one in
-  dt-binding
-- Remove clock-names as only single clock in dt-binding
-- Fix issue with default params setting
-- Correct v4l2 error prints
-- Simplify register write functions with single statement return values
-- Remove unrequired error checks from get_queue()
-- Drop explicit device_caps setting as it is already taken care by v4l2
-  core
-- Remove unrequired multiplanar checks and memset from s_fmt, g_fmt
-  callback functions
-- Fix try_fmt callback to not update the queues
-- Remove unrequired contiguous format attribute from queue_init
-- Use dynamic allocation for video_device and remove unrequired
-  assignments in probe()
-- Remove unrequired checks from queue_setup function
-- Return queued buffers back if start_streaming fails
-- Use ARRAY_SIZE in place of hard-coding
-- Use huffman and quantization tables from reference header file
-
-V2->V3:
-- Add DONOTMERGE patches for dts and defconfig
-- Update driver with below changes :
-  - Correct license headers
-  - Use more generic name core instead of jasper for base registers
-  - Add Comment for forward declarations
-  - Simplify quantization table calculations
-  - Use v4l2_apply_frmsize_constraints for updating framesize and remove
-    unrequired functions
-  - Place TODO at top of file and in commit message too
-  - Use dev_err_probe helper in probe function
-  - Fix return value checking for failure scenarios in probe function
-  - Use v4l2_err/info/warn helpers instead of dev_err/info/warn helpers
-  - Fix unexpected indentation
-  - Correct commit message
-- Update dt-bindings with below changes :
-  - Add vendor specific compatible 
-  - Fix commit title and message
-  - Update reg names
-  - Update clocks to 1
-  - Fix dts example with proper naming
-
-V1->V2:
- - Send dt-bindings and driver together
-
-Patch-Diff between the series :
-V12->V13 Range diff :
-https://gist.github.com/devarsht/0bd2e90b7352ed4831252a7962fff65d
-
-V11->V12 Range diff :
-https://gist.github.com/devarsht/18455f1744b6b6b8f33dd505a4ca2651
-
-V10->V11 Range diff :
-https://gist.github.com/devarsht/cd76372bff7c125f75d06ba009264b75
-
-V9->V10 Range diff :
-https://gist.github.com/devarsht/b446acee460b8c65fb577d06b7bbc1da
-
-V8->V9 Range diff :
-https://gist.github.com/devarsht/3fd6c4e8031ab114248f93d01c8dfc74
-
-V6->V7 Range diff :
-https://gist.github.com/devarsht/1db185b1e187eaf397e9e4c37066777e
-
-V5->V6 Range diff :
-https://gist.github.com/devarsht/c89180ac2b0d2814614f2b59d0705c19
-
-V4->V5 Range diff :
-https://gist.github.com/devarsht/298790af819f299a0a05fec89371097b
-
-V3->V4 Range diff :
-https://gist.github.com/devarsht/22a744d999080de6e813bcfb5a596272
-
-Previous patch series:
-V12: https://lore.kernel.org/all/20240604104001.2235082-1-devarsht@ti.com/
-V11: https://lore.kernel.org/all/20240531170229.1270828-1-devarsht@ti.com/
-V10: https://lore.kernel.org/all/20240530165925.2715837-1-devarsht@ti.com/
-V9: https://lore.kernel.org/all/20240526175655.1093707-1-devarsht@ti.com/
-V8: https://lore.kernel.org/all/20240517171532.748684-1-devarsht@ti.com/
-V7: https://lore.kernel.org/all/20240510082603.1263256-1-devarsht@ti.com/
-V6: https://lore.kernel.org/all/20240228141140.3530612-1-devarsht@ti.com/
-V5: https://lore.kernel.org/all/20240215134641.3381478-1-devarsht@ti.com/
-V4: https://lore.kernel.org/all/20240205114239.924697-1-devarsht@ti.com/
-V3: https://lore.kernel.org/all/20230816152210.4080779-1-devarsht@ti.com/
-V2: https://lore.kernel.org/all/20230727112546.2201995-1-devarsht@ti.com/
-
-
-Daniel Latypov (1):
-  lib: add basic KUnit test for lib/math
-
-Devarsh Thakkar (12):
-  media: dt-bindings: Add Imagination E5010 JPEG Encoder
-  media: imagination: Add E5010 JPEG Encoder driver
-  media: v4l2-jpeg: Export reference quantization and huffman tables
-  media: Documentation: Document v4l2-jpeg helper functions
-  media: imagination: Use exported tables from v4l2-jpeg core
-  media: verisilicon : Use exported tables from v4l2-jpeg for hantro
-    codec
-  math.h: Add macros for rounding to closest value
-  math.h: Use kernel-doc syntax for divison macros
-  Documentation: core-api: Add math.h macros and functions
-  lib: math_kunit: Add tests for new macros related to rounding to
-    nearest value
-  media: imagination: Round to closest multiple for cropping region
-  gpu: ipu-v3: Use generic macro for rounding closest to specified value
-
- Documentation/core-api/kernel-api.rst         |    6 +
- .../bindings/media/img,e5010-jpeg-enc.yaml    |   75 +
- Documentation/driver-api/media/v4l2-core.rst  |    1 +
- Documentation/driver-api/media/v4l2-jpeg.rst  |   10 +
- MAINTAINERS                                   |    7 +
- drivers/gpu/ipu-v3/ipu-image-convert.c        |    4 +-
- drivers/media/platform/Kconfig                |    1 +
- drivers/media/platform/Makefile               |    1 +
- drivers/media/platform/imagination/Kconfig    |   13 +
- drivers/media/platform/imagination/Makefile   |    3 +
- .../platform/imagination/e5010-core-regs.h    |  585 ++++++
- .../platform/imagination/e5010-jpeg-enc-hw.c  |  267 +++
- .../platform/imagination/e5010-jpeg-enc-hw.h  |   42 +
- .../platform/imagination/e5010-jpeg-enc.c     | 1641 +++++++++++++++++
- .../platform/imagination/e5010-jpeg-enc.h     |  168 ++
- .../platform/imagination/e5010-mmu-regs.h     |  311 ++++
- drivers/media/platform/verisilicon/Kconfig    |    1 +
- .../media/platform/verisilicon/hantro_jpeg.c  |  128 +-
- drivers/media/v4l2-core/v4l2-jpeg.c           |  162 +-
- include/linux/math.h                          |   86 +-
- include/media/v4l2-jpeg.h                     |   28 +
- lib/math/Kconfig                              |   14 +
- lib/math/Makefile                             |    1 +
- lib/math/math_kunit.c                         |  329 ++++
- 24 files changed, 3760 insertions(+), 124 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
- create mode 100644 Documentation/driver-api/media/v4l2-jpeg.rst
- create mode 100644 drivers/media/platform/imagination/Kconfig
- create mode 100644 drivers/media/platform/imagination/Makefile
- create mode 100644 drivers/media/platform/imagination/e5010-core-regs.h
- create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc-hw.c
- create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc-hw.h
- create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc.c
- create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc.h
- create mode 100644 drivers/media/platform/imagination/e5010-mmu-regs.h
- create mode 100644 lib/math/math_kunit.c
+ net/sunrpc/auth_gss/svcauth_gss.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 -- 
-2.39.1
-
+Chuck Lever
 
