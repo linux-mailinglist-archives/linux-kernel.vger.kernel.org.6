@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-205380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B9F08FFAE3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:52:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA0878FFAE4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93E68289FFD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:52:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08BD328A452
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA33413F43E;
-	Fri,  7 Jun 2024 04:29:24 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CDC1411F3;
+	Fri,  7 Jun 2024 04:29:38 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B48C13E8BD
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 04:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF58140389
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 04:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717734563; cv=none; b=Fy5GNJgEeAukwxNfy4983TojW0t0ivZFmhqUqe4F2kFAODxnPx/RwbeJZ8NgRAqP5Ej6sChQj5U/xMgaoaXkF0aCDH2CLxsd9V68C4Ik1l3nHtgxnmnHukGP3A/IXclf+C8IBZDq1U/qOBzt+HCjJ2aqnwpdKdgir0+f2CcB2U0=
+	t=1717734577; cv=none; b=UCCoR6mIh9uX+O71qgLh/RVGhp5UIm8VGb1fosHwGwNEICtODHZye2Hu6K8skEY/nVnM7ciyp2zRm4SS9gyc07hdjgE5M8HaQkS4ygLYjlytyXCASAoja54V0NG1bDOcuv2uHyyFVsv1f+jg5+5S4Iy5FgvcdHY4l2zNC+8SrhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717734563; c=relaxed/simple;
-	bh=XaHHnn2BmADtVuRCM50HTMTARh4wvX0PKd2u2NMrupM=;
+	s=arc-20240116; t=1717734577; c=relaxed/simple;
+	bh=3gNVX/tR3WL/3TAimSewXAuyfUleqp1YDP5iJLC54Hw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qwMvdlmmPRFpK1++iVDqxVjKr45jqyxqWTSdVgzWO+bOvDdZVy3BS3tlvlNs1ovSJqetQB5nzdzYUVbkEb6mCamdaGEUhdxhBgdo5KVaiz9YQUfS6WcO5t+zikyDozL8M0DJuX4VGuPhpGn3HSs/q8CJfymZ5Gf68DgNOG/oJ/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+	 MIME-Version:Content-Type; b=grdKZGyWtcnkBZUZDEosc8kkMu5oaX0+RIw6IgOhCEEABvkl7+Eyrmce5J609ovbyxHmbaz5q11QkaK6qYg0OmhlZBBfKFrv4R2rx/mS3LDB48ZW2H4Z2aZQbZUNHW4oMf1qM4/xSwLNfrDqvd2diq9608fE5Wp662eTWR9WgBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4VwSn36p8qzPpnC;
-	Fri,  7 Jun 2024 12:25:59 +0800 (CST)
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VwSmb2nLdzwPFT;
+	Fri,  7 Jun 2024 12:25:35 +0800 (CST)
 Received: from kwepemm600013.china.huawei.com (unknown [7.193.23.68])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3D91F140413;
-	Fri,  7 Jun 2024 12:29:04 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 4FA79140203;
+	Fri,  7 Jun 2024 12:29:19 +0800 (CST)
 Received: from huawei.com (10.175.104.67) by kwepemm600013.china.huawei.com
  (7.193.23.68) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 7 Jun
@@ -43,9 +43,9 @@ To: <richard@nod.at>, <david.oberhollenzer@sigma-star.at>,
 	<miquel.raynal@bootlin.com>, <yi.zhang@huawei.com>, <xiangyang3@huawei.com>,
 	<huangxiaojia2@huawei.com>
 CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH mtd-utils 098/110] fsck.ubifs: Add README to describe fsck
-Date: Fri, 7 Jun 2024 12:26:03 +0800
-Message-ID: <20240607042615.2069840-99-chengzhihao1@huawei.com>
+Subject: [RFC PATCH mtd-utils 099/110] tests: Add common libs for testing fsck.ubifs/mkfs.ubifs
+Date: Fri, 7 Jun 2024 12:26:04 +0800
+Message-ID: <20240607042615.2069840-100-chengzhihao1@huawei.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240607042615.2069840-1-chengzhihao1@huawei.com>
 References: <20240607042615.2069840-1-chengzhihao1@huawei.com>
@@ -60,410 +60,423 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  kwepemm600013.china.huawei.com (7.193.23.68)
 
-Add documents to describe fsck, which includes introductions, designment,
-advantage and limitations.
+This is a preparation for adding testcases for fsck.ubifs and
+mkfs.ubifs. Add some common functions, for example: powercut,
+load_mtdram, mount_ubifs, encryption operations, etc.
 
 Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- ubifs-utils/fsck.ubifs/README.txt | 388 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 388 insertions(+)
- create mode 100644 ubifs-utils/fsck.ubifs/README.txt
+ .gitignore                               |   1 +
+ Makefile.am                              |   1 +
+ configure.ac                             |   3 +-
+ tests/ubifs_tools-tests/Makemodule.am    |   2 +
+ tests/ubifs_tools-tests/lib/common.sh.in | 350 +++++++++++++++++++++++++++++++
+ 5 files changed, 356 insertions(+), 1 deletion(-)
+ create mode 100644 tests/ubifs_tools-tests/Makemodule.am
+ create mode 100755 tests/ubifs_tools-tests/lib/common.sh.in
 
-diff --git a/ubifs-utils/fsck.ubifs/README.txt b/ubifs-utils/fsck.ubifs/README.txt
+diff --git a/.gitignore b/.gitignore
+index 3eb66c14..de0fce1f 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -113,6 +113,7 @@ tests/fs-tests/stress/fs_stress00.sh
+ tests/fs-tests/stress/fs_stress01.sh
+ tests/ubi-tests/runubitests.sh
+ tests/ubi-tests/ubi-stress-test.sh
++tests/ubifs_tools-tests/lib/common.sh
+ 
+ #
+ # Files generated by autotools
+diff --git a/Makefile.am b/Makefile.am
+index 887ce938..0ebd45bb 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -63,6 +63,7 @@ include tests/jittertest/Makemodule.am
+ include tests/checkfs/Makemodule.am
+ include tests/fs-tests/Makemodule.am
+ include tests/mtd-tests/Makemodule.am
++include tests/ubifs_tools-tests/Makemodule.am
+ endif
+ 
+ if UNIT_TESTS
+diff --git a/configure.ac b/configure.ac
+index cf3a959e..d32541a1 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -289,7 +289,8 @@ AC_CONFIG_FILES([tests/fs-tests/fs_help_all.sh
+ 	tests/fs-tests/stress/fs_stress00.sh
+ 	tests/fs-tests/stress/fs_stress01.sh
+ 	tests/ubi-tests/runubitests.sh
+-	tests/ubi-tests/ubi-stress-test.sh])
++	tests/ubi-tests/ubi-stress-test.sh
++	tests/ubifs_tools-tests/lib/common.sh])
+ 
+ AC_OUTPUT([Makefile])
+ 
+diff --git a/tests/ubifs_tools-tests/Makemodule.am b/tests/ubifs_tools-tests/Makemodule.am
 new file mode 100644
-index 00000000..99ad7c7c
+index 00000000..265c9cc7
 --- /dev/null
-+++ b/ubifs-utils/fsck.ubifs/README.txt
-@@ -0,0 +1,388 @@
-+ fsck.ubifs
-+ ==========
-+ The fsck.ubifs can check and repair the UBIFS image on a given UBI volume, it
-+ could fix inconsistent UBIFS image(which is corrupted by hardware exceptions
-+ or UBIFS realization bugs) and makes filesystem become consistent.
++++ b/tests/ubifs_tools-tests/Makemodule.am
+@@ -0,0 +1,2 @@
++test_SCRIPTS += \
++	tests/ubifs_tools-tests/lib/common.sh
+diff --git a/tests/ubifs_tools-tests/lib/common.sh.in b/tests/ubifs_tools-tests/lib/common.sh.in
+new file mode 100755
+index 00000000..5a07ebcd
+--- /dev/null
++++ b/tests/ubifs_tools-tests/lib/common.sh.in
+@@ -0,0 +1,350 @@
++#!/bin/sh
++# Copyright (c), 2024, Huawei Technologies Co, Ltd.
++# Author: Zhihao Cheng <chengzhihao1@huawei.com>
++#
++# Provide basic functions.
 +
++UBI_NUM=0
++DEV=/dev/ubi0_0
++MNT=/mnt/test_file_system
++TMP_FILE=/tmp/ubifs_test_file
++LOG_FILE=/tmp/ubifs_log
++KEY_FILE=/tmp/key
++nandsim_patt="NAND simulator"
++mtdram_patt="mtdram test device"
 +
-+ Manuals
-+ -------
-+ There are four modes for fsck.ubifs:
-+ 1. normal mode(no options): Check the filesystem, ask user whether to fix the
-+    problem as long as inconsistent data is found during fs checking.
-+ 2. safe mode(-a option): Check and automatic safely repair the filesystem, if
-+    there are any data dropping operations needed by fixing, fsck will fail.
-+ 3. danger mode(-y option): Answer 'yes' to all questions. There are two sub
-+    modes:
-+    a) Default submode(no options): Check and automatic repair the filesystem
-+       according to TNC, data dropping will be reported. If TNC/master/log is
-+       corrupted, fsck will fail.
-+    b) rebuild submode(-b option): Check and automatic forcibly repair the
-+       filesystem, turns to rebuild filesystem if TNC/master/log is corrupted.
-+       Always make fsck successful.
-+ 4. check mode(-n option): Make no changes to the filesystem, only check the
-+    filesystem. This mode doesn't check space, because unclean LEBs cannot be
-+    rewritten in read-only mode.
++# fsck returning code
++FSCK_OK=0		# No errors
++FSCK_NONDESTRUCT=1	# File system errors corrected
++FSCK_REBOOT=2		# System should be rebooted
++FSCK_UNCORRECTED=4	# File system errors left uncorrected
++FSCK_ERROR=8		# Operational error
++FSCK_USAGE=16		# Usage or syntax error
++FSCK_CANCELED=32	# Aborted with a signal or ^
++FSCK_LIBRARY=128	# Shared library error
 +
-+ The exit code returned by fsck.ubifs is compatible with FSCK(8), which is the
-+ sum of the following conditions:
-+ 0	- No errors
-+ 1	- File system errors corrected
-+ 2	- System should be rebooted
-+ 4	- File system errors left uncorrected
-+ 8	- Operational error
-+ 16	- Usage or syntax error
-+ 32	- Fsck canceled by user request
-+ 128	- Shared library error
++function fatal()
++{
++	echo "Error: $1" 1>&2
++	exit 1
++}
 +
++# All loaded modules(mtdram/nandsim/ubi/ubifs) won't be removed if errors
++# happen, it is useful to debug based on the UBIFS image.
++function cleanup_handler()
++{
++	local ret="$1"
 +
-+ Designment
-+ ----------
-+ There are 2 working modes for fsck: rebuild mode and non-rebuild mode. The main
-+ idea is that construct all files by scanning the entire filesystem, then check
-+ the consistency of metadata(file meta information, space statistics, etc.)
-+ according to the files. The file(xattr is treated as a file) is organized as:
-+   file tree(rbtree, inum indexed)
-+            /      \
-+         file1   file2
-+         /   \
-+      file3 file4
-+ file {
-+     inode node // each file has 1 inode node
-+     dentry (sub rb_tree, sqnum indexed)
-+     // '/' has no dentries, otherwise at least 1 dentry is required.
-+     trun node // the newest one truncation node
-+     data (sub rb_tree, block number indexed)
-+     // Each file may have 0 or many data nodes
-+     xattrs (sub rb_tree, inum indexed)
-+     // Each file may have 0 or many xattr files
-+ }
++	if [ "$ret" == "0" ]; then
++		umount $MNT >/dev/null 2>&1 ||:
++		modprobe -r ubifs >/dev/null 2>&1 ||:
++		modprobe -r ubi >/dev/null 2>&1 ||:
++		modprobe -r nandsim >/dev/null 2>&1 ||:
++		modprobe -r mtdram >/dev/null 2>&1  ||:
++		rm -rf $MNT >/dev/null 2>&1 ||:
++		rm -f $TMP_FILE >/dev/null 2>&1 ||:
++		rm -f $KEY_FILE >/dev/null 2>&1 ||:
++		rm -f $LOG_FILE >/dev/null 2>&1 ||:
++		exit 0
++	else
++		exit 1
++	fi
++}
++trap 'cleanup_handler $?' EXIT
++trap 'cleanup_handler 1' HUP PIPE INT QUIT TERM
 +
-+ Step 0. Both two modes need to read the superblock firstly, fsck fails if
-+         superblock is corrupted, because fsck has no idea about the location
-+         of each area(master, log, main, etc.) when the layout is lost.
++function find_mtd_device()
++{
++	printf "%s" "$(grep "$1" /proc/mtd | sed -e "s/^mtd\([0-9]\+\):.*$/\1/")"
++}
 +
-+ A. Rebuild mode:
-+ Step 1. Scan nodes(inode node/dentry node/data node/truncation node) from all
-+         LEBs.
-+         a) Corrupted LEBs(eg. garbage data, corrupted empty space) are dropped
-+            during scanning.
-+         b) Corrupted nodes(eg. incorrect crc, bad inode size, bad dentry name
-+            length, etc.) are dropped during scanning.
-+         c) Valid inode nodes(nlink > 0) and dentry nodes(inum != 0) are put
-+            into two valid trees(valid_inos & valid_dents) separately.
-+         d) Deleted inode nodes (nlink is 0) and deleted dentry nodes(inum is 0)
-+            are put into two deleted trees(del_inos & del_dents) separately.
-+         e) Other nodes(data nodes/truncation node) are put into corresponding
-+            file, if the file doesn't exist, insert a new file into the file
-+            tree.
-+ Step 2. Traverse nodes from deleted trees, remove inode nodes and dentry nodes
-+         with smaller sqnum from valid trees. valid_inos - del_inos = left_inos,
-+         valid_dents - del_dents = left_dents.
-+         This step handles the deleting case, for example, file A is deleted,
-+         deleted inode node and deleted dentry node are written, if we ignore
-+         the deleted nodes, file A can be recovered after rebuilding because
-+         undeleted inode node and undeleted dentry node can be scanned. There's
-+         an exception, if deleted inode node and deleted dentry node are
-+         reclaimed(by gc) after deletion, file A is recovered. So deleted data
-+         or files could be recovered by rebuild mode.
-+ Step 3. Traverse left_inos and left_dents, insert inode node and dentry nodes
-+         into the corresponding file.
-+ Step 4. Traverse all files, drop invalid files, move xattr files into the
-+         corresponding host file's subtree. Invalid files such as:
-+         a) File has no inode node or inode nlink is zero
-+         b) Non-consistent file types between inode node and dentry nodes
-+         c) File has no dentry nodes(excepts '/')
-+         d) Encrypted file has no xattr information
-+         e) Non regular file has data nodes
-+         f) Directory/xattr file has more than one dentries
-+         g) Xattr file has no host inode, or the host inode is a xattr
-+         h) Non-xattr file's parent is not a directory
-+         i) etc.
-+ Step 5. Extract reachable directory entries tree. Make sure that all files can
-+         be searched from '/', unreachable file is deleted. Since all xattr
-+         files are attached to the corresponding host file, only non-xattr
-+         files should be checked. Luckily, directory file only has one dentry,
-+         the reachable checking of a dentry becomes easy. Traverse all
-+         dentries for each file, check whether the dentry is reachable, if not,
-+         remove dentry from the file. If the file has no dentries, the file is
-+         unreachable.
-+ Step 6. Correct the file information. Traverse all files and calculate
-+         information(nlink, size, xattr_cnt, etc.) for each file just like
-+         check_leaf(in linux kernel) does, correct the inode node based on the
-+         calculated information.
-+ Step 7. Record used LEBs. Traverse all files'(including effective nodes from
-+         deletion trees in step 2) position, after this step fsck knows which
-+         LEB is empty.
-+ Step 8. Re-write data. Read data from LEB and write back data, make sure that
-+         all LEB is ended with empty data(0xFF). It will prevent failed gc
-+         scanning in the next mounting.
-+ Step 9. Build TNC. Construct TNC according to all files' nodes, just like mkfs
-+         does(refer to add_to_index in mkfs), then write TNC(refer to
-+         write_index in mkfs) on flash. (If there are no files, create a new
-+         root dir file.)
-+ Step 10.Build LPT. Construct LPT according to all nodes' position and length,
-+         just like mkfs does, then write LPT(refer to write_lpt) on flash.
-+ Step 11.Clean up log area and orphan area. Log area and orphan area can be
-+         erased.
-+ Step 12.Write master node. Since all meta areas are ready, master node can be
-+         updated.
++function powercut()
++{
++	dmesg -c > /dev/null
++	echo 1 > /sys/kernel/debug/ubifs/tst_recovery;
++	while true;
++	do
++		msg=`dmesg -c | grep "Power cut emulated"`;
++		if [[ "$msg" != "" ]];
++		then
++			break;
++		fi
++		ro_error=`cat /sys/kernel/debug/ubifs/ubi${UBI_NUM}_0/ro_error`
++		if [[ $ro_error != 0 ]]; then
++			break;
++		fi
++	done
++	echo 0 > /sys/kernel/debug/ubifs/tst_recovery
++}
 +
-+ B. Non-rebuild mode:
-+ Step 1. Read master & init lpt.
-+         a) Scan master nodes failed or master node is invalid (which is not
-+            caused by invalid space statistics), danger mode with rebuild_fs and
-+            normal mode with 'yes' answer will turn to rebuild mode, other modes
-+            will exit. Fsck cannot find the right TNC/LPT if the master node is
-+            invalid, which affects subsequent steps, so this problem must be
-+            fixed.
-+         b) Invalid space statistics in master node, set %FR_LPT_INCORRECT for
-+            for lpt status and ignore the error.
-+         c) LPT node is corrupted, set %FR_LPT_CORRUPTED for lpt status and
-+            ignore the error.
-+ Step 2. Replay journal.
-+         I. Scan log LEBs to get all buds.
-+            a) Nodes in log LEBs are invalid/corrupted, danger mode with
-+               rebuild_fs and normal mode with 'yes' answer will turn to rebuild
-+               mode, other modes will exit. Corrupted log LEB could fail
-+               ubifs_consolidate_log, which may lead to commit failure by out of
-+	       space in the log area, so this problem must be fixed.
-+         II. Scan bud LEBs to get all nodes.
-+             a) Nodes in bud LEBs are invalid/corrupted, danger mode and normal
-+                mode with 'yes' answer will drop bud LEB and set
-+                %FR_LPT_INCORRECT for lpt status, other modes will exit.
-+                Corrupted LEB will make gc failed, so this problem must be
-+                fixed.
-+	 III. Record isize into size tree according to data/truncation/inode
-+              nodes.
-+         IV. Apply nodes to TNC & LPT, update property for bud LEBs.
-+             a) Corrupted/Invalid node searched from TNC, skip node and set
-+                %FR_LPT_INCORRECT in lpt status for danger mode and normal mode
-+                with 'yes' answer, other modes will exit. The space statistics
-+                depend on a valid TNC, so this problem must be fixed.
-+             b) Corrupted/Invalid index node read from TNC, danger mode with
-+                rebuild_fs and normal mode with 'yes' answer will turn to
-+                rebuild filesystem, other modes will exit. The space statistics
-+                depend on a valid TNC, so this problem must be fixed.
-+             c) Corrupted/Invalid lpt node, Set %FR_LPT_CORRUPTED for lpt status
-+                and ignore the error.
-+             d) Incorrect LEB property: Set %FR_LPT_INCORRECT for lpt status and
-+                ignore the error.
-+             e) If lpt status is not empty, skip updating lpt, because incorrect
-+                LEB property could trigger assertion failure in ubifs_change_lp.
-+ Step 3. Handle orphan nodes.
-+         I. Scan orphan LEB to get all orphan nodes.
-+            a) Corrupted/Invalid orphan node: danger mode and normal mode with
-+               'yes' answer will drop orphan LEB, other modes will exit.
-+               Corrupted orphan area could lead to mounting/committing failure,
-+               so this problem must be fixed.
-+         II. Parse orphan node, find the original inode for each inum.
-+             a) Corrupted/Invalid node searched from TNC, skip node for danger
-+                mode and normal mode with 'yes' answer, other modes will exit.
-+             b) Corrupted/Invalid index node read from TNC, danger mode with
-+                rebuild_fs and normal mode with 'yes' answer will turn to
-+                rebuild filesystem, other modes will exit. The space statistics
-+                depend on a valid TNC, so this problem must be fixed.
-+         III. Remove inode for each inum, update TNC & LPT.
-+              a) Corrupted/Invalid node searched from TNC, skip node for danger
-+                 mode and normal mode with 'yes' answer, other modes will exit.
-+              b) Corrupted/Invalid index node read from TNC, danger mode with
-+                 rebuild_fs and normal mode with 'yes' answer will turn to
-+                 rebuild filesystem, other modes will exit. The space statistics
-+                 depend on a valid TNC, so this problem must be fixed.
-+              c) Corrupted/Invalid lpt node, Set %FR_LPT_CORRUPTED for lpt
-+                 status and ignore the error.
-+              d) Incorrect LEB property: Set %FR_LPT_INCORRECT for lpt status
-+                 and ignore the error.
-+              e) If lpt status is not empty, skip updating lpt, because
-+                 incorrect LEB property could trigger assertion failure in
-+                 ubifs_change_lp.
-+ Step 4. Consolidate log area.
-+         a) Corrupted data in log LEBs, danger mode with rebuild_fs and normal
-+            mode with 'yes' answer will turn to rebuild filesystem, other modes
-+            will exit. It could make commit failed by out of space in log area,
-+            so this problem must be fixed.
-+ Step 5. Recover isize.
-+         I. Traverse size tree, lookup corresponding inode from TNC.
-+            a) Corrupted/Invalid node searched from TNC, skip node for danger
-+               mode and normal mode with 'yes' answer, other modes will exit.
-+            b) Corrupted/Invalid index node read from TNC, danger mode with
-+               rebuild_fs and normal mode with 'yes' answer will turn to
-+               rebuild filesystem, other modes will exit. The space statistics
-+               depend on a valid TNC, so this problem must be fixed.
-+         II. Update isize for inode. Keep <inum, isize> in size tree for check
-+             mode, remove <inum, isize> from the size tree and update inode
-+             node in place for other modes.
-+ Step 6. Traverse TNC and construct files.
-+         I. Traverse TNC, check whether the leaf node is valid, remove invalid
-+            nodes, construct file for valid node and insert the file into the
-+            file tree.
-+            a) Corrupted/Invalid node searched from TNC, remove corresponding
-+               TNC branch for danger mode and normal mode with 'yes' answer,
-+               other modes will exit. The space statistics depend on a valid
-+               TNC, so this problem must be fixed.
-+            b) Corrupted/Invalid index node read from TNC, danger mode with
-+               rebuild_fs and normal mode with 'yes' answer will turn to
-+               rebuild filesystem, other modes will exit. The space statistics
-+               depend on a valid TNC, so this problem must be fixed.
-+         II. Scan all LEBs(contain TNC) for non check mode(unclean LEBs cannot
-+             be fixed in read-only mode, so scanning may fail in check mode,
-+             then space statistics won't be checked in check mode), remove TNC
-+             branch which points to corrupted LEB.
-+             a) Corrupted data is found by scanning. If the current node is
-+                index node, danger mode with rebuild_fs and normal mode with
-+                'yes' answer will turn to rebuild filesystem, other modes will
-+                exit; If the current node is non-index node, danger mode and
-+                normal mode with 'yes' answer will remove all TNC branches which
-+                point to the corrupted LEB, other modes will exit. The space
-+                statistics depend on valid LEB scanning, so this problem must
-+                be fixed.
-+             b) LEB contains both index and non-index nodes, danger mode with
-+                rebuild_fs and normal mode with 'yes' answer will turn to
-+                rebuild filesystem, other modes will exit. Invalid LEB will make
-+                gc failed, so this problem must be fixed.
-+ Step 7. Update files' size for check mode. Update files' size according to the
-+          size tree for check mode.
-+ Step 8. Check and handle invalid files. Similar to rebuild mode, but the
-+         methods of handling are different:
-+         a) Move unattached(file has no dentries) regular file into disconnected
-+            list for safe mode, danger mode and normal mode with 'yes' answer,
-+            let subsequent steps to handle them with lost+found. Other modes
-+            will exit. Disconnected file affects the result of calculated
-+            information(which will be used in subsequent steps) for its' parent
-+            file(eg. nlink, size), so this problem must be fixed.
-+         b) Make file type be consistent between inode, detries and data nodes
-+            by deleting dentries or data nodes, for danger mode and normal mode
-+            with 'yes' answer, other modes will exit.
-+         c) Delete file for other invalid cases(eg. file has no inode) in
-+            danger mode and normal mode with 'yes' answer, other modes will
-+            exit.
-+ Step 9. Extract reachable directory entries tree. Similar to rebuild mode, but
-+         the methods of handling are different:
-+         a) Remove unreachable dentry for danger mode and normal mode with 'yes'
-+            answer, other modes will exit. Unreachable dentry affects the
-+            calculated information(which will be used in subsequent steps) for
-+            its' file(eg. nlink), so this problem must be fixed.
-+         b) Delete unreachable non-regular file for danger mode and normal mode
-+            with 'yes' answer, other modes will exit. Unreachable file affects
-+            the calculated information(which will be used in subsequent steps)
-+            for its' parent file(eg. nlink, size), so this problem must be
-+            fixed.
-+         c) Move unreachable regular file into disconnected list for safe mode,
-+            danger mode and normal mode with 'yes' answer, let subsequent steps
-+            to handle them with lost+found. Other modes will exit. Disconnected
-+            file affects the calculated information(which will be used in
-+            subsequent steps) for its' parent file(eg. nlink, size), so this
-+            problem must be fixed.
-+ Step 10.Correct the file information. Similar to rebuild mode, but the methods
-+         of handling are different:
-+         a) Correct the file information for safe mode, danger mode and normal
-+            mode with 'yes' answer, other modes will exit. Incorrect file
-+            information affects the new creations(which will be used in handling
-+            lost+found), so this problem must be fixed.
-+ Step 11.Check whether the TNC is empty. Empty TNC is equal to corrupted TNC,
-+         which means that zero child count for root znode. If TNC is empty(All
-+         nodes are invalid and are deleted from TNC), turn to rebuild mode for
-+         danger mode with rebuild_fs and normal mode with 'yes' answer, other
-+         modes will exit.
-+ Step 12.Check and correct the space statistics.
-+         I. Exit for check mode, if %FR_LPT_CORRUPTED or %FR_LPT_INCORRECT is
-+            set in lpt status, the exit code should have %FSCK_UNCORRECTED.
-+         II. Check lpt status, if %FR_LPT_CORRUPTED is set in lpt status, normal
-+             mode with 'no' answer will exit, other modes will rebuild lpt. New
-+             creations could be done in subsequent steps, which depends on
-+             correct space statistics, so this problem must be fixed.
-+         III. Traverse LPT nodes, check the correctness of nnode and pnode,
-+              compare LEB scanning result with LEB properties.
-+              a) LPT node is corrupted, normal mode with 'no' answer will exit,
-+                 rebuild lpt for other modes. New creations could be done in
-+                 subsequent steps, which depends on the correct space
-+                 statistics, so this problem must be fixed.
-+              b) Incorrect nnode/pnode, normal mode with 'no' answer will exit,
-+                 other other modes will correct the nnode/pnode. New creations
-+                 could be done in subsequent steps, which depends on correct
-+                 space statistics, so this problem must be fixed.
-+              c) Inconsistent comparing result, normal mode with 'no' answer
-+                 will exit, other modes will correct the space statistics. New
-+                 creations could be done in subsequent steps, which depends on
-+                 correct space statistics, so this problem must be fixed.
-+         IV. Compare LPT area scanning result with lprops table information.
-+             a) LPT area is corrupted, normal mode with 'no' answer will exit,
-+                rebuild lpt for other modes. Commit could fail in doing LPT gc
-+                caused by scanning corrupted data, so this problem must be
-+                fixed.
-+             b) Inconsistent comparing result, normal mode with 'no' answer
-+                will exit, other modes will correct the lprops table
-+                information. Commit could fail in writing LPT with %ENOSPC
-+                return code caused by incorrect space statistics in the LPT
-+                area, so this problem must be fixed.
-+ Step 13.Do commit, commit problem fixing modifications to disk. The index size
-+         checking depends on this step.
-+ Step 14.Check and correct the index size. Check and correct the index size by
-+         traversing TNC just like dbg_check_idx_size does. This step should be
-+         executed after first committing, because 'c->calc_idx_sz' can be
-+         changed in 'ubifs_tnc_start_commit' and the initial value of
-+         'c->calc_idx_sz' read from the disk is untrusted. Correct the index
-+         size for safe mode, danger mode and normal mode with 'yes' answer,
-+         other modes will exit. New creations could be done in subsequent steps,
-+         which depends on the correct index size, so this problem must be fixed.
-+ Step 15.Check and create the root dir. Check whether the root dir exists,
-+         create a new one if it is not found, for safe mode, danger mode and
-+         normal mode with 'yes' answer, other modes will exit. Mounting depends
-+         on the root dir, so this problem must be fixed.
-+ Step 16.Check and create the lost+found.
-+         I. If the root dir is encrypted, set lost+found as invalid. Because it
-+            is impossible to check whether the lost+found exists in an encrypted
-+            directory.
-+         II. Search the lost+found under root dir.
-+             a) Found a lost+found, lost+found is a non-encrypted directory, set
-+                lost+found as valid, otherwise set lost+found as invalid.
-+             b) Not found the lost+found, create a new one. If creation is
-+                failed by %ENOSPC, set lost+found as invalid.
-+ Step 17.Handle each file from the disconnected list.
-+         I. If lost+found is invalid, delete file for danger mode and normal
-+            mode with 'yes' answer, other modes will skip and set the exit code
-+            with %FSCK_UNCORRECTED.
-+        II. If lost+found is valid, link disconnected file under lost+found
-+            directory with the name of the corresponding inode number
-+            (INO_<inum>_<index>, index(starts from 0) is used to handle the
-+             conflicted names).
-+             a) Fails in handling conflicted file names, delete file for danger
-+                mode and normal mode with 'yes' answer, other modes will skip
-+                and set the exit code with %FSCK_UNCORRECTED.
-+             b) Fails in linking caused by %ENOSPC, delete file for danger mode
-+                and normal mode with 'yes' answer, other modes will skip and set
-+                the exit code with %FSCK_UNCORRECTED.
-+ Step 18.Do final commit, commit problem fixing modifications to disk and clear
-+         %UBIFS_MST_DIRTY flag for master node.
++# Load mtdram with specified size and PEB size
++# Usage: load_mtdram <flash size> <PEB size>
++# 1. Flash size is specified in MiB
++# 2. PEB size is specified in KiB
++function load_mtdram()
++{
++	local size="$1";     shift
++	local peb_size="$1"; shift
 +
++	size="$(($size * 1024))"
++	modprobe mtdram total_size="$size" erase_size="$peb_size"
++}
 +
-+ Advantage
-+ ---------
-+ 1. Can be used for any UBIFS image, fsck has nothing to do with kernel version.
-+ 2. Fsck is tolerant with power-cut, fsck will always succeed in a certain mode
-+    without changing mode even power-cut happens in checking and repairing. In
-+    other words, fsck won't let UBIFS image become worse in abnormal situations.
-+ 3. It is compatible with FSCK(8), the exit code returned by fsck.ubifs is same
-+    as FSCK, the command options used by fsck are supported in fsck.ubifs too.
-+ 4. The UBIFS image can be fixed as long as the super block is not corrupted.
-+ 5. Encrypted UBIFS image is supported, because dentry name and data content of
-+    file are not necessary for fsck.
++function check_fsstress()
++{
++	cmd=`fsstress | grep "op_name"`
++	if ! [[ "$cmd" =~ "op_name" ]]; then
++		fatal "fsstress is not found"
++	fi
++}
 +
++# Check error messages
++function check_err_msg()
++{
++	msg=`dmesg | grep -E "dump_stack|UBIFS error|switched to read-only mode"`;
++	if [[ "$msg" != "" ]]
++	then
++		dmesg
++		fatal "error message detected!"
++	fi
++	dmesg -c > /dev/null
++}
 +
-+ Limitations
-+ -----------
-+ 1. UBIFS image file is not supported(Not like ext4). The UBIFS image file is
-+    not equal to UBI volume, empty LEBs are not included in image file, so UBIFS
-+    cannot allocate empty space when file recovering is needed. Another reason
-+    is that atomic LEB changing is not supported by image file.
-+ 2. Authenticated UBIFS image is not supported, UBIFS metadata(TNC/LPT) parsing
-+    depends on the authentication key which is not supported in fsck options.
++# Iterate all files under certain dir
++# $1: dir
++# $2: "md5sum" means that need record md5 for regular file, otherwise don't record md5 for regular file
++function read_dir() {
++	for file in `ls -a $1`
++	do
++		cur_f=$1"/"$file
++		if [ -b $cur_f ]
++		then
++			major=`stat -c %t $cur_f`
++			minor=`stat -c %T $cur_f`
++			echo "block $cur_f $major $minor" >> $TMP_FILE
++		elif [ -c $cur_f ]
++		then
++			major=`stat -c %t $cur_f`
++			minor=`stat -c %T $cur_f`
++			echo "char $cur_f $major $minor" >> $TMP_FILE
++		elif [ -L $cur_f ]
++		then
++			link=`stat -c %N $cur_f`
++			echo "symlink $cur_f $link" >> $TMP_FILE
++		elif [ -S $cur_f ]
++		then
++			echo "sock $cur_f" >> $TMP_FILE
++		elif [ -p $cur_f ]
++		then
++			echo "fifo $cur_f" >> $TMP_FILE
++		elif [ -f $cur_f ]
++		then
++			sz=`stat -c %s $cur_f`
++			if [[ "$2" != "md5sum" ]]; then
++				echo "reg $cur_f $sz" >> $TMP_FILE
++			else
++				md5=`md5sum $cur_f | awk '{print $1}'`
++				echo "reg $cur_f $md5 $sz" >> $TMP_FILE
++			fi
++		elif [ -d $cur_f ]
++		then
++			if [[ $file != '.' && $file != '..' ]]
++			then
++				echo "dir $cur_f" >> $TMP_FILE
++				read_dir $1"/"$file $2
++			fi
++		else
++			fatal "record unknown file type $cur_f"
++		fi
++	done
++}
 +
++# Check whether there are files lost after fsck/mkfs
++# $1: "md5sum" means need record md5 for regular file, otherwise don't check md5 for regular file
++function parse_dir()
++{
++	while read line
++	do
++		array=(${line//\ / });
++		f_type=${array[0]};
++		cur_f=${array[1]};
++		cur_info=""
++		if [[ "$f_type" =~ "block" ]]
++		then
++			major=`stat -c %t $cur_f`
++			minor=`stat -c %T $cur_f`
++			cur_info="block $cur_f $major $minor"
++		elif [[ "$f_type" =~ "char" ]]
++		then
++			major=`stat -c %t $cur_f`
++			minor=`stat -c %T $cur_f`
++			cur_info="char $cur_f $major $minor"
++		elif [[ "$f_type" =~ "symlink" ]]
++		then
++			link=`stat -c %N $cur_f`
++			cur_info="symlink $cur_f $link"
++		elif [[ "$f_type" =~ "sock" ]]
++		then
++			cur_info="sock $cur_f"
++		elif [[ "$f_type" =~ "fifo" ]]
++		then
++			cur_info="fifo $cur_f"
++		elif [[ "$f_type" =~ "reg" ]]
++		then
++			sz=`stat -c %s $cur_f`
++			if [[ "$1" != "md5sum" ]]; then
++				cur_info="reg $cur_f $sz"
++			else
++				md5=`md5sum $cur_f | awk '{print $1}'`
++				cur_info="reg $cur_f $md5 $sz"
++			fi
++		elif [[ "$f_type" =~ "dir" ]]
++		then
++			cur_info="dir $cur_f"
++		else
++			fatal "parse unknown file type $cur_f"
++		fi
++		if [[ "$cur_info" != "$line" ]]
++		then
++			fatal "current info $cur_info, but expect $line"
++		fi
++	done < $TMP_FILE
++}
 +
-+ Authors
-+ -------
-+ Zhihao Cheng <chengzhihao1@huawei.com>
-+ Zhang Yi <yi.zhang@huawei.com>
-+ Xiang Yang <xiangyang3@huawei.com>
-+ Huang Xiaojia <huangxiaojia2@huawei.com>
++function authentication()
++{
++	keyctl clear @s
++	res=$?
++	if [[ $res != 0 ]]; then
++		fatal "keyctl is not found"
++	fi
++	keyctl add logon ubifs:foo 12345678901234567890123456789012 @s
++}
++
++function encryption_gen_key()
++{
++	# CONFIG_FS_ENCRYPTION=y
++	head -c 64 /dev/urandom > $KEY_FILE
++	cmd=`fscryptctl -h | grep "set_policy"`
++	if ! [[ "$cmd" =~ "set_policy" ]]; then
++		fatal "fscryptctl is not found"
++	fi
++}
++
++function encryption_set_key()
++{
++	mnt=$1
++	# https://github.com/google/fscryptctl
++	key=$(fscryptctl add_key $mnt < $KEY_FILE)
++	fscryptctl set_policy $key $mnt
++	#fscryptctl get_policy $mnt
++	ret=$?
++	if [[ $ret != 0 ]]; then
++		fatal "set encryption policy failed"
++	fi
++}
++
++function mount_ubifs()
++{
++	local dev=$1;
++	local mnt=$2;
++	local auth=$3;
++	local noatime=$4;
++	local option="";
++	if [[ "$noatime" == "noatime" ]]; then
++		option="-o noatime"
++	fi
++	if [[ "$auth" == "authentication" ]]; then
++		authentication
++		if [[ "$option" == "" ]]; then
++			option="-o auth_key=ubifs:foo,auth_hash_name=sha256"
++		else
++			option="$option,auth_key=ubifs:foo,auth_hash_name=sha256"
++		fi
++	fi
++	mount -t ubifs $option $dev $mnt
++}
++
++function enable_chkfs()
++{
++	echo 1 > /sys/kernel/debug/ubifs/chk_fs
++	echo 1 > /sys/kernel/debug/ubifs/chk_general
++	echo 1 > /sys/kernel/debug/ubifs/chk_index
++	echo 1 > /sys/kernel/debug/ubifs/chk_lprops
++	echo 1 > /sys/kernel/debug/ubifs/chk_orphans
++}
++
++function disable_chkfs()
++{
++	echo 0 > /sys/kernel/debug/ubifs/chk_fs
++	echo 0 > /sys/kernel/debug/ubifs/chk_general
++	echo 0 > /sys/kernel/debug/ubifs/chk_index
++	echo 0 > /sys/kernel/debug/ubifs/chk_lprops
++	echo 0 > /sys/kernel/debug/ubifs/chk_orphans
++}
++
++function inject_mem_err()
++{
++	# CONFIG_FAILSLAB=y
++	# CONFIG_FAIL_PAGE_ALLOC=y
++	local pid=$1;
++
++	if ! [ -f /sys/kernel/debug/failslab/probability ]; then
++		fatal "failslab is not enabled, injection failed"
++	fi
++	if ! [ -f /sys/kernel/debug/fail_page_alloc/probability ]; then
++		fatal "fail_page_alloc is not enabled, injection failed"
++	fi
++
++	echo 1 > /proc/$pid/make-it-fail
++
++	echo Y > /sys/kernel/debug/failslab/task-filter
++	echo 1 > /sys/kernel/debug/failslab/probability # 1% failure
++	echo 10000 > /sys/kernel/debug/failslab/times
++	echo 1 > /sys/kernel/debug/failslab/verbose
++	echo N > /sys/kernel/debug/failslab/ignore-gfp-wait
++
++	echo Y > /sys/kernel/debug/fail_page_alloc/task-filter
++	echo 1 > /sys/kernel/debug/fail_page_alloc/probability
++	echo 10000 > /sys/kernel/debug/fail_page_alloc/times
++	echo 0 > /sys/kernel/debug/fail_page_alloc/verbose
++	echo N > /sys/kernel/debug/fail_page_alloc/ignore-gfp-wait
++}
++
++function cancel_mem_err()
++{
++	echo 0 > /sys/kernel/debug/failslab/probability
++	echo 0 > /sys/kernel/debug/failslab/times
++	echo 0 > /sys/kernel/debug/failslab/verbose
++	echo N > /sys/kernel/debug/failslab/task-filter
++	echo Y > /sys/kernel/debug/failslab/ignore-gfp-wait
++
++	echo 0 > /sys/kernel/debug/fail_page_alloc/probability
++	echo 0 > /sys/kernel/debug/fail_page_alloc/times
++	echo 1 > /sys/kernel/debug/fail_page_alloc/verbose
++	echo N > /sys/kernel/debug/fail_page_alloc/task-filter
++	echo Y > /sys/kernel/debug/fail_page_alloc/ignore-gfp-wait
++}
++
++function inject_io_err()
++{
++	if ! [ -f /sys/kernel/debug/ubi/ubi$UBI_NUM/tst_emulate_io_failures ]; then
++		fatal "tst_emulate_io_failures is not enabled, skip injection"
++	fi
++
++	echo 1 > /sys/kernel/debug/ubi/ubi$UBI_NUM/tst_emulate_io_failures
++}
++
++function cancel_io_err()
++{
++	echo 0 > /sys/kernel/debug/ubi/ubi$UBI_NUM/tst_emulate_io_failures
++}
++
++if ! [ -d $MNT ]; then
++	mkdir -p $MNT
++fi
++
++modprobe ubi || fatal "common.sh: cannot load ubi"
++modprobe ubifs || fatal "common.sh: cannot load ubifs"
++modprobe -r ubifs
++modprobe -r ubi
 -- 
 2.13.6
 
