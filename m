@@ -1,102 +1,138 @@
-Return-Path: <linux-kernel+bounces-206356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 246D1900852
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:12:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6EB7900857
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D5651C20937
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:12:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75D6C1F21F7F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55014193085;
-	Fri,  7 Jun 2024 15:12:49 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEAF5198846;
+	Fri,  7 Jun 2024 15:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QkCWOoNt"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D441825740;
-	Fri,  7 Jun 2024 15:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7261F25740;
+	Fri,  7 Jun 2024 15:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717773168; cv=none; b=emYSv6F/OLdBQui1NKGdl7mvvoFO8on3QseSDszFSBgyZG8jRV3tk3TrTlzcoLhPCNCBTznYYp9TpQJxM2qNsvg5iX8zxZ4yC+q88qFphZQn7T6Ax37RkgVBZtTp58qqYpW5fASYxYAsKq85IYM34A82CmaEg5TSijEOS7OCaRU=
+	t=1717773176; cv=none; b=VzBFBIPi8gcmMWreVFlQ1PwfhAxagXGACXvmFGETBkxmJTw6ZckZx5vOa9bOMeNoRD5nRw4F5asAXVB2mtIo0m1BsU0IOpdq2PIxYVWW/SxmynEYTFRCOl/z2wi6DgCg2W3y6pxvQYDBvZk+mHjqc6GczDJGjEwsNZO2UzAJ95I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717773168; c=relaxed/simple;
-	bh=cAI7qnCyUWL53klNBARNIYIAmGI2f8rwVGyKdWH1ehE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nqApd+zv50x0SsgwQAk3HjCHt9IRFEM0AoaylidxJbHXoUy2k2LQEN5oZ342Hh0oF3orXbRBXdncbQuhu3xhW2BWaIZD+6dfwkV3acZBl1ealmsLnzyjBPIrYvHZAJ85NCMiwiol6UpyypXIaWdB7WnqY1hPLkoIUqwm8V9v4nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37809C2BBFC;
-	Fri,  7 Jun 2024 15:12:45 +0000 (UTC)
-Date: Fri, 7 Jun 2024 16:12:42 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: Steven Price <steven.price@arm.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Subject: Re: [PATCH v3 00/14] arm64: Support for running as a guest in Arm CCA
-Message-ID: <ZmMjam3-L807AFR-@arm.com>
-References: <20240605093006.145492-1-steven.price@arm.com>
- <SN6PR02MB415739D48B10C26D2673F3FED4FB2@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1717773176; c=relaxed/simple;
+	bh=RRbnxR6kVfJ9fmXvviuMCAtU+DY4kjQrDHnTVVNV/ck=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=jjE6uacyBKc9MdMoRYQiyXan9iihFrjmT8VLr2gj8INxabOwpcsI4ylHmmlaSf+i29JpWzVMA2NOsTuLOTXL4Qgm6BgB0qIVqcZ/Qqqo+Y8yRxhf8U85a9Sq4XA0DUhflv/H5WXM1KhIZw2XTCz1hkxJmUwWsmGJE+IiTYcKufg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QkCWOoNt; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42163fed884so11577605e9.1;
+        Fri, 07 Jun 2024 08:12:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717773173; x=1718377973; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:cc:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=DYxh+g5f5O4azupPwLnK1YGn9F+3wPD8Hs0+Ru70dLI=;
+        b=QkCWOoNtM+1tVCUnsg6jZGdyx3Z2SBedJPyGWErpNfLws+CaJfcYGbeJ5nzNLlSov1
+         roXii2D4NAGhezDVmqupNqlgkooj1+ATf8r0AgjD5MWlTRoGWtjr00IQ8siw+cwWj1Tm
+         v+Ay9MixsrS2mb1vT9YgoOlTraxj4ZtyTfiUPZQ8026yhraDmWQGnzASoxKlzbKer2gL
+         6T7zhEx9tNYW5u0goNhrMVE8UH8wuGRKa1t0TmKgNRO6RoNONOm7SWGOc3LqxoBoYQBr
+         LisiwWyOElcehc0VOzxTjmhh4fWRAEZ9wdhe/k1h5lLPRxQzpzL1hyFC8S0RrJ4POEWk
+         Mo6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717773173; x=1718377973;
+        h=content-transfer-encoding:in-reply-to:cc:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DYxh+g5f5O4azupPwLnK1YGn9F+3wPD8Hs0+Ru70dLI=;
+        b=gCqpa6NEotshKJ+B8UkY2QAEvYOepD709YuvaN6kwrfTN+fPzaQpnnnLEtQ4ot99qz
+         EoWnXAYYw1Bsybnl36s1h5jaSENVXv9DTzT8/tsd6nzQj/deg9qAxzcAYenCmgeO+rHP
+         7bIp++4Q1drQJUO0imCdjobuvFAGcTmEcaZmbYl2SeMaWQSZrOeAlmdlAxY5VNUkVTnV
+         jm1jvI0nAESANtbzbkFms79Hx2Aub/WSRMEharrBGSnF9BZUGGnumYqI9NYn4MeF/ttS
+         PDZ6SeX3yH/qDZYcaFSw3Sy+MMeUbTpEMO2RvlIxYeE1h8G8hX8owRN8tajXNFmU3xjM
+         qFuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUst1POenQIMW6OoDnNIXOtJ2anrDInHmeqvrskVYrwvOQi9TpBKXp8S3abyytH2BjTrZFP5cHdRdQmKW5aXP7EZ3n7vl0A3aaUFG3L0xEXYYEMAmTJf8tV0w7oJhuMNJZnXanc4UIYZ1KqBVps29avDeAzspVDIexkuFGM6Mu7rwtF9KJGQlAYqisiZ+zdQGSoyWyKeKS6KmgYM2hr
+X-Gm-Message-State: AOJu0YyG/235pH0W1kOV+bXO3jQs8vgX2iAcSNDrYi5goLJv8EgiT0Mw
+	KfjE5Q6WNInYx80ayE6DTecMc7j9VckCEfXw2l+77I/hy/i6aRA=
+X-Google-Smtp-Source: AGHT+IFLp2nndxaMppnuETVfMi7bIa8z06pB2kDGICrguP3x31uN5dp+Y1PVLgrZrVZPJppD++VRYw==
+X-Received: by 2002:a05:600c:3542:b0:421:494c:9e92 with SMTP id 5b1f17b1804b1-421649f4f8amr23759575e9.14.1717773172505;
+        Fri, 07 Jun 2024 08:12:52 -0700 (PDT)
+Received: from ?IPV6:2a02:810b:f40:4600:7a2c:14dd:f1d8:f717? ([2a02:810b:f40:4600:7a2c:14dd:f1d8:f717])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4214bf59f60sm102292345e9.1.2024.06.07.08.12.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jun 2024 08:12:52 -0700 (PDT)
+Message-ID: <1535049f-1e4c-446b-8070-6f51877b2649@gmail.com>
+Date: Fri, 7 Jun 2024 17:12:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB415739D48B10C26D2673F3FED4FB2@SN6PR02MB4157.namprd02.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/13] Add support for AXP192 PMIC
+To: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+References: <20221016234335.904212-1-aidanmacdonald.0x0@gmail.com>
+Content-Language: en-US
+From: Alex Bee <knaerzche@gmail.com>
+Cc: jic23@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ wens@csie.org, ee.jones@linaro.org, sre@kernel.org, lgirdwood@gmail.com,
+ broonie@kernel.org, lars@metafoo.de, andy.shevchenko@gmail.com,
+ linus.walleij@linaro.org, brgl@bgdev.pl, michael@walle.cc,
+ samuel@sholland.org, linux-iio@vger.kernel.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20221016234335.904212-1-aidanmacdonald.0x0@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 07, 2024 at 01:38:15AM +0000, Michael Kelley wrote:
-> From: Steven Price <steven.price@arm.com> Sent: Wednesday, June 5, 2024 2:30 AM
-> > This series adds support for running Linux in a protected VM under the
-> > Arm Confidential Compute Architecture (CCA). This has been updated
-> > following the feedback from the v2 posting[1]. Thanks for the feedback!
-> > Individual patches have a change log for v3.
-> > 
-> > The biggest change from v2 is fixing set_memory_{en,de}crypted() to
-> > perform a break-before-make sequence. Note that only the virtual address
-> > supplied is flipped between shared and protected, so if e.g. a vmalloc()
-> > address is passed the linear map will still point to the (now invalid)
-> > previous IPA. Attempts to access the wrong address may trigger a
-> > Synchronous External Abort. However any code which attempts to access
-> > the 'encrypted' alias after set_memory_decrypted() is already likely to
-> > be broken on platforms that implement memory encryption, so I don't
-> > expect problems.
-> 
-> In the case of a vmalloc() address, load_unaligned_zeropad() could still
-> make an access to the underlying pages through the linear address. In
-> CoCo guests on x86, both the vmalloc PTE and the linear map PTE are
-> flipped, so the load_unaligned_zeropad() problem can occur only during
-> the transition between decrypted and encrypted. But even then, the
-> exception handlers have code to fixup this case and allow everything to
-> proceed normally.
-> 
-> I haven't looked at the code in your patches, but do you handle that case,
-> or somehow prevent it?
+Hi Aidan,
 
-If we can guarantee that only full a vm_struct area is changed at a
-time, the vmap guard page would prevent this issue (not sure we can
-though). Otherwise I think we either change the set_memory_*() code to
-deal with the other mappings or we handle the exception.
+Am 17.10.22 um 01:43 schrieb Aidan MacDonald:
+> This series adds support for the AXP192 PMIC to the AXP20x MFD driver
+> framework, including support for regulators, ADCs, and AC/USB/battery
+> power supplies.
+>
+> v6 is a resend of v5 from July -- the patches haven't changed at all
+> but I've rebased them on the latest git master branch.
+I'm not entirely sure if I've found the latest version of the patches - at
+least b4 didn't find a newer. It looks a lot like only mfd and usb-power
+patches have been applied for some reason. Are you planing to resend the
+other ones?
 
-We also have potential user mappings, do we need to do anything about
-them?
+Regards,
+Alex
 
--- 
-Catalin
+> Aidan MacDonald (13):
+>    dt-bindings: mfd: add bindings for AXP192 MFD device
+>    dt-bindings: iio: adc: axp209: Add AXP192 compatible
+>    dt-bindings: power: supply: axp20x: Add AXP192 compatible
+>    dt-bindings: power: axp20x-battery: Add AXP192 compatible
+>    mfd: axp20x: Add support for AXP192
+>    regulator: axp20x: Add support for AXP192
+>    iio: adc: axp20x_adc: Minor code cleanups
+>    iio: adc: axp20x_adc: Replace adc_en2 flag with adc_en2_mask field
+>    iio: adc: axp20x_adc: Add support for AXP192
+>    power: supply: axp20x_usb_power: Add support for AXP192
+>    power: axp20x_battery: Add constant charge current table
+>    power: axp20x_battery: Support battery status without fuel gauge
+>    power: axp20x_battery: Add support for AXP192
+>
+>   .../bindings/iio/adc/x-powers,axp209-adc.yaml |  18 +
+>   .../bindings/mfd/x-powers,axp152.yaml         |   1 +
+>   .../x-powers,axp20x-battery-power-supply.yaml |   1 +
+>   .../x-powers,axp20x-usb-power-supply.yaml     |   1 +
+>   drivers/iio/adc/axp20x_adc.c                  | 356 ++++++++++++++++--
+>   drivers/mfd/axp20x-i2c.c                      |   2 +
+>   drivers/mfd/axp20x.c                          | 141 +++++++
+>   drivers/power/supply/axp20x_battery.c         | 142 ++++++-
+>   drivers/power/supply/axp20x_usb_power.c       |  84 ++++-
+>   drivers/regulator/axp20x-regulator.c          | 100 ++++-
+>   include/linux/mfd/axp20x.h                    |  84 +++++
+>   11 files changed, 856 insertions(+), 74 deletions(-)
+>
 
