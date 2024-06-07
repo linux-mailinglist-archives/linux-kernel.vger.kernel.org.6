@@ -1,243 +1,205 @@
-Return-Path: <linux-kernel+bounces-205234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BBEC8FF9BD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 03:50:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EDBC8FF9BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 03:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2E031C21CD0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:50:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B8D61F2429B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E061E12B93;
-	Fri,  7 Jun 2024 01:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06D611CBD;
+	Fri,  7 Jun 2024 01:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gfWnCPgO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HKeP1E21"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9EC10799
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 01:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880334C76
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 01:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717725007; cv=none; b=AH+k3PfidB9g7I4VJ8z8WIFGqFAXbVmwbe+IhUyEUxSvplB15SzSil2fJ7emfqjRArkDpeoGqTQ6xht9dfptPmxuMQKPzXpF+zR8Plnr36mymVdM/SQWF2qP8GPLOcVs/IowvoICXRJYgo+dQ0q5y9yTnv5e0cP3+jlJ62NRK7M=
+	t=1717725064; cv=none; b=hmjHezhobntzCmoJnwX583sWqqFsJTycevQQFfS08Ht5a9NyhdAvJRt2FIRaCmlLfmLkV0lXBQpncNnK6/tFpMo9IcZS28gDvyH0R/FGkHDcfa91u1dX3r8JTBXHbj/EXmSaVdPouApQYHNqDdzc5SJ7CY6RkPcLVwjl72Y2HE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717725007; c=relaxed/simple;
-	bh=yHu4MIT8ArMtnYCHIPL7t66IA1H1cKrrnc6xNtyy9/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cy5pdK33V4AQCltrO65Fj7WEZ43dBpJgFhACzA+IUXf0phTTtF25mXEEM0O5sS3jSI3OyOC2gHJuOmPv0pXAPm434lQur0seMSiEiRSSY7y4fwuOyPVLKK70BKzW8O4Q5aamth/AjV1V0ehbaLJBmuITymHCG7hQd7HGM0FKcmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gfWnCPgO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717725002;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZkAPm8DbDW67h9USLeOSVGxamhmKQHZK3DhyTSz3PxI=;
-	b=gfWnCPgOwwogQL2iOqB3tkjOJFanA0hxU1ayhlhS/wRJvuzHlXC6lKNNE0MeGnM7TxkeQM
-	t8xwRj9a9zSY9dbB7Fxe0huJcjy5DR9PE2imANtIv7es/WfiOz1S/1JieiThftbfAuuXjo
-	zCzh0oAhv/5vm3lxMtvVeHdGIvRXUAw=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-228-91H9ln_-Nae7KsgSWjADwQ-1; Thu, 06 Jun 2024 21:49:58 -0400
-X-MC-Unique: 91H9ln_-Nae7KsgSWjADwQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BBF6685A588;
-	Fri,  7 Jun 2024 01:49:57 +0000 (UTC)
-Received: from localhost (unknown [10.39.192.6])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 9F461408A402;
-	Fri,  7 Jun 2024 01:49:56 +0000 (UTC)
-Date: Thu, 6 Jun 2024 21:49:54 -0400
-From: Stefan Hajnoczi <stefanha@redhat.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>, brauner@kernel.org,
-	viro@zeniv.linux.org.uk,
-	Bernd Schubert <bernd.schubert@fastmail.fm>, linux-mm@kvack.org,
-	Josef Bacik <josef@toxicpanda.com>, Ming Lei <ming.lei@redhat.com>,
-	kwolf@redhat.com
-Subject: Re: [PATCH 0/5] sys_ringbuffer
-Message-ID: <20240607014954.GA219708@fedora.redhat.com>
-References: <20240603003306.2030491-1-kent.overstreet@linux.dev>
+	s=arc-20240116; t=1717725064; c=relaxed/simple;
+	bh=Dr3s28YKkK4NkE1XnCpVsZ9voy/Ar7EnjhVk8e4B8is=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uHiZTDLx/Xm1+Kx7TJWLktTj55OfBsocgN3OlZHbuSX4af4mSn6yN+8CCGAjtAV5dk7HBHoaLyeawxhuMOdcoBeIiAbPuGydSR3hSoUR8XsKGwIWEKfBCune3NJgNBw8BS8SQrAEAOPAUTLgU2vxPCMnUrSJC/L758jGWmIwcKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HKeP1E21; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-578517c7ae9so1698480a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 18:51:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717725061; x=1718329861; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5jgyEjE44lnwVIp+Vzkq3Lwb3VBd6jriok/nTPf4IRI=;
+        b=HKeP1E21LYLFBGAQv8cVJIIcNPRl0hkDL/O6qCcPoDJLvJwSDFjYUeUpMl2FQU4oO3
+         wXQ9KxdEHL3bE2zHzrEwXXVyxr4PoGTlfeYZSBYdNEFoI8TLQohB+l0JuymJ1fEaEcJ0
+         bmV0vSy4VDveu2aleQ5H5dY3NP7tnDSzp+zXyLf/xfJK1XtWRNXtv4+2V8Hb3hXpprLr
+         B4GvhZeDHmtQdtv4Cc4WL6lX/6FTGFIiDIMGpN0zUnCtFhWaAaXcxr9n5iH7iJq1XSPQ
+         iZOiXzSIy0lBrTNl7W3/F9YS+50anfOOXyKo2Hhnb+GiuY4viKg0yj+XoMzuw9npKLpb
+         XXmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717725061; x=1718329861;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5jgyEjE44lnwVIp+Vzkq3Lwb3VBd6jriok/nTPf4IRI=;
+        b=cGYi+UHwKDUdGq1Zo8oUHHcu1Zapr04KVSsGaRDmjHSg8LT5A/hPsgStuaO7L4AC8A
+         2xjnwNbGE60x5BjIszsFfDo5+SUzoz8JCL+yAxDcPCqqdWFZgBW0axybZtKIWpwGgIN7
+         8H1/hMzhdREEuaZ5nlWFPoHAkQTGG/cVehHdqG0/OQ1Gm8SSZbxV+SRN7pmzH4LOjmYm
+         S+VwSk+ShG78jFgSBuVB6ppFkkfBF53phMI6CMVZIAl2lLAOJ/qAvFtvrJOICuWieaeg
+         boCTxaz3kmfiC2iRs3pXLtq0yF/tQrKD0x+ZTsuM6AUMej/YISGRQwMv1F/2VdjxNZW6
+         pX2g==
+X-Forwarded-Encrypted: i=1; AJvYcCU2Z7Wze2tR4gdgWHa8z4dzaFGxGpuoB6irF2V13lrRCGS/0e1NrD6XxS5hB+50LEgsgpSIK9WJVZoIh01dpiHAKWfPH7JMYALcjLYt
+X-Gm-Message-State: AOJu0YxGPUZpDeiSC4EmNGWpr8DXim7pHT1/5fNTwtrPNNNTZCDyE7XI
+	rWs7AGq0IYacdGbGni+aREQzsrg66jpE469fwruze34HsP90mnIDJy+/qQailPNbI45JJaTldEp
+	ed4Gl8XeSUv7gQqu6y88B7nPkwTY=
+X-Google-Smtp-Source: AGHT+IHI75h04SIf4Rmmtl46mN7kSxQnN/OGrsFpteG6StVtG1VO6ZHry9J2NeT6hJcXAn65twmP+sjd9qdh36qj3Hc=
+X-Received: by 2002:a50:99c9:0:b0:578:6901:7454 with SMTP id
+ 4fb4d7f45d1cf-57c5089a10amr487540a12.15.1717725060550; Thu, 06 Jun 2024
+ 18:51:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="j/CfATJu0W0vRWqP"
-Content-Disposition: inline
-In-Reply-To: <20240603003306.2030491-1-kent.overstreet@linux.dev>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
-
-
---j/CfATJu0W0vRWqP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240521040244.48760-1-ioworker0@gmail.com> <20240521040244.48760-3-ioworker0@gmail.com>
+ <fd16b219-bc46-484a-8581-a21240440fa6@redhat.com> <CAK1f24kwf4gDwK=8X4z1bM9-H6_M9QKy6-ko9pTUZij-W=40wg@mail.gmail.com>
+ <d319f00e-9dfb-43b1-ae81-a2e2afdf36c4@redhat.com> <CAK1f24kKra71RSQdFOpQecU6+yMELC748irKUt54Kg64-P=4-A@mail.gmail.com>
+ <758f7be7-c17e-46d1-879f-83340ec85749@redhat.com> <5a728148-ed93-4d68-a86f-9be3612dedbb@redhat.com>
+ <CAK1f24nMbW_UvCTq=K0aFu9=7psYZ9wmHq47J=AK7VYmpCpC4Q@mail.gmail.com> <2a6a1b50-e711-42c2-91f4-42881a6057e9@redhat.com>
+In-Reply-To: <2a6a1b50-e711-42c2-91f4-42881a6057e9@redhat.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Fri, 7 Jun 2024 09:50:49 +0800
+Message-ID: <CAK1f24nT429ZdEcFUv0r0Sbihjum-Z8ghoYxML=tzaDpVWZk-w@mail.gmail.com>
+Subject: Re: [PATCH v6 2/3] mm/rmap: integrate PMD-mapped folio splitting into
+ pagewalk loop
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org, 
+	baolin.wang@linux.alibaba.com, maskray@google.com, ziy@nvidia.com, 
+	ryan.roberts@arm.com, 21cnbao@gmail.com, mhocko@suse.com, 
+	fengwei.yin@intel.com, zokeefe@google.com, shy828301@gmail.com, 
+	xiehuan09@gmail.com, libang.li@antgroup.com, wangkefeng.wang@huawei.com, 
+	songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 02, 2024 at 08:32:57PM -0400, Kent Overstreet wrote:
-> New syscall for mapping generic ringbuffers for arbitary (supported)
-> file descriptors.
->=20
-> Ringbuffers can be created either when requested or at file open time,
-> and can be mapped into multiple address spaces (naturally, since files
-> can be shared as well).
->=20
-> Initial motivation is for fuse, but I plan on adding support to pipes
-> and possibly sockets as well - pipes are a particularly interesting use
-> case, because if both the sender and receiver of a pipe opt in to the
-> new ringbuffer interface, we can make them the _same_ ringbuffer for
-> true zero copy IO, while being backwards compatible with existing pipes.
+On Thu, Jun 6, 2024 at 5:41=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
+>
+> On 06.06.24 11:38, Lance Yang wrote:
+> > On Thu, Jun 6, 2024 at 4:06=E2=80=AFPM David Hildenbrand <david@redhat.=
+com> wrote:
+> >>
+> >> On 06.06.24 10:01, David Hildenbrand wrote:
+> >>> On 06.06.24 05:55, Lance Yang wrote:
+> >>>> On Wed, Jun 5, 2024 at 10:28=E2=80=AFPM David Hildenbrand <david@red=
+hat.com> wrote:
+> >>>>>
+> >>>>> On 05.06.24 16:20, Lance Yang wrote:
+> >>>>>> Hi David,
+> >>>>>>
+> >>>>>> On Wed, Jun 5, 2024 at 8:46=E2=80=AFPM David Hildenbrand <david@re=
+dhat.com> wrote:
+> >>>>>>>
+> >>>>>>> On 21.05.24 06:02, Lance Yang wrote:
+> >>>>>>>> In preparation for supporting try_to_unmap_one() to unmap PMD-ma=
+pped
+> >>>>>>>> folios, start the pagewalk first, then call split_huge_pmd_addre=
+ss() to
+> >>>>>>>> split the folio.
+> >>>>>>>>
+> >>>>>>>> Since TTU_SPLIT_HUGE_PMD will no longer perform immediately, we =
+might
+> >>>>>>>> encounter a PMD-mapped THP missing the mlock in the VM_LOCKED ra=
+nge during
+> >>>>>>>> the page walk. It=E2=80=99s probably necessary to mlock this THP=
+ to prevent it from
+> >>>>>>>> being picked up during page reclaim.
+> >>>>>>>>
+> >>>>>>>> Suggested-by: David Hildenbrand <david@redhat.com>
+> >>>>>>>> Suggested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> >>>>>>>> Signed-off-by: Lance Yang <ioworker0@gmail.com>
+> >>>>>>>> ---
+> >>>>>>>
+> >>>>>>> [...] again, sorry for the late review.
+> >>>>>>
+> >>>>>> No worries at all, thanks for taking time to review!
+> >>>>>>
+> >>>>>>>
+> >>>>>>>> diff --git a/mm/rmap.c b/mm/rmap.c
+> >>>>>>>> index ddffa30c79fb..08a93347f283 100644
+> >>>>>>>> --- a/mm/rmap.c
+> >>>>>>>> +++ b/mm/rmap.c
+> >>>>>>>> @@ -1640,9 +1640,6 @@ static bool try_to_unmap_one(struct folio =
+*folio, struct vm_area_struct *vma,
+> >>>>>>>>           if (flags & TTU_SYNC)
+> >>>>>>>>                   pvmw.flags =3D PVMW_SYNC;
+> >>>>>>>>
+> >>>>>>>> -     if (flags & TTU_SPLIT_HUGE_PMD)
+> >>>>>>>> -             split_huge_pmd_address(vma, address, false, folio)=
+;
+> >>>>>>>> -
+> >>>>>>>>           /*
+> >>>>>>>>            * For THP, we have to assume the worse case ie pmd fo=
+r invalidation.
+> >>>>>>>>            * For hugetlb, it could be much worse if we need to d=
+o pud
+> >>>>>>>> @@ -1668,20 +1665,35 @@ static bool try_to_unmap_one(struct foli=
+o *folio, struct vm_area_struct *vma,
+> >>>>>>>>           mmu_notifier_invalidate_range_start(&range);
+> >>>>>>>>
+> >>>>>>>>           while (page_vma_mapped_walk(&pvmw)) {
+> >>>>>>>> -             /* Unexpected PMD-mapped THP? */
+> >>>>>>>> -             VM_BUG_ON_FOLIO(!pvmw.pte, folio);
+> >>>>>>>> -
+> >>>>>>>>                   /*
+> >>>>>>>>                    * If the folio is in an mlock()d vma, we must=
+ not swap it out.
+> >>>>>>>>                    */
+> >>>>>>>>                   if (!(flags & TTU_IGNORE_MLOCK) &&
+> >>>>>>>>                       (vma->vm_flags & VM_LOCKED)) {
+> >>>>>>>>                           /* Restore the mlock which got missed =
+*/
+> >>>>>>>> -                     if (!folio_test_large(folio))
+> >>>>>>>> +                     if (!folio_test_large(folio) ||
+> >>>>>>>> +                         (!pvmw.pte && (flags & TTU_SPLIT_HUGE_=
+PMD)))
+> >>>>>>>>                                   mlock_vma_folio(folio, vma);
+> >
+> > Should we still keep the '!pvmw.pte' here? Something like:
+> >
+> > if (!folio_test_large(folio) || !pvmw.pte)
+> >      mlock_vma_folio(folio, vma);
+>
+> I was wondering the same the whole time ...
+>
+> >
+> > We can mlock the THP to prevent it from being picked up during page rec=
+laim.
+> >
+> > David, I=E2=80=99d like to hear your thoughts on this ;)
+>
+> but I think there is no need to for now, in the context of your patchset.=
+ :)
 
-Hi Kent,
-I recently came across a similar use case where the ability to "upgrade"
-an fd into a more efficient interface would be useful like in this pipe
-scenario you are describing.
+Agreed. Let's drop it for now :)
 
-My use case is when you have a block device using the ublk driver. ublk
-lets userspace servers implement block devices. ublk is great when
-compatibility is required with applications that expect block device
-fds, but when an application is willing to implement a shared memory
-interface to communicate directly with the ublk server then going
-through a block device is inefficient.
+Thanks a lot for your thoughts!
+Lance
 
-In my case the application is QEMU, where the virtual machine runs a
-virtio-blk driver that could talk directly to the ublk server via
-vhost-user-blk. vhost-user-blk is a protocol that allows the virtual
-machine to talk directly to the ublk server via shared memory without
-going through QEMU or the host kernel block layer.
-
-QEMU would need a way to upgrade from a ublk block device file to a
-vhost-user socket. Just like in your pipe example, this approach relies
-on being able to go from a "compatibility" fd to a more efficient
-interface gracefully when both sides support this feature.
-
-The generic ringbuffer approach in this series would not work for
-the vhost-user protocol because the client must be able to provide its
-own memory and file descriptor passing is needed in general. The
-protocol spec is here:
-https://gitlab.com/qemu-project/qemu/-/blob/master/docs/interop/vhost-user.=
-rst
-
-A different way to approach the fd upgrading problem is to treat this as
-an AF_UNIX connectivity feature rather than a new ring buffer API.
-Imagine adding a new address type to AF_UNIX for looking up connections
-in a struct file (e.g. the pipe fd) instead of on the file system (or
-the other AF_UNIX address types).
-
-The first program creates the pipe and also an AF_UNIX socket. It calls
-bind(2) on the socket with the sockaddr_un path
-"/dev/self/fd/<fd>/<discriminator>" where fd is a pipe fd and
-discriminator is a string like "ring-buffer" that describes the
-service/protocol. The AF_UNIX kernel code parses this special path and
-stores an association with the pipe file for future connect(2) calls.
-The program listens on the AF_UNIX socket and then continues doing its
-stuff.
-
-The second program runs and inherits the pipe fd on stdin. It creates an
-AF_UNIX socket and attempts to connect(2) to
-"/dev/self/fd/0/ring-buffer". The AF_UNIX kernel code parses this
-special path and establishes a connection between the connecting and
-listening sockets inside the pipe fd's struct file. If connect(2) fails
-then the second program knows that this is an ordinary pipe that does
-not support upgrading to ring buffer operation.
-
-Now the AF_UNIX socket can be used to pass shared memory for the ring
-buffer and futexes. This AF_UNIX approach also works for my ublk block
-device to vhost-user-blk upgrade use case. It does not require a new
-ring buffer API but instead involves extending AF_UNIX.
-
-You have more use cases than just the pipe scenario, maybe my half-baked
-idea won't cover all of them, but I wanted to see what you think.
-
-Stefan
-
-> the ringbuffer_wait and ringbuffer_wakeup syscalls are probably going
-> away in a future iteration, in favor of just using futexes.
->=20
-> In my testing, reading/writing from the ringbuffer 16 bytes at a time is
-> ~7x faster than using read/write syscalls - and I was testing with
-> mitigations off, real world benefit will be even higher.
->=20
-> Kent Overstreet (5):
->   darray: lift from bcachefs
->   darray: Fix darray_for_each_reverse() when darray is empty
->   fs: sys_ringbuffer
->   ringbuffer: Test device
->   ringbuffer: Userspace test helper
->=20
->  MAINTAINERS                             |   7 +
->  arch/x86/entry/syscalls/syscall_32.tbl  |   3 +
->  arch/x86/entry/syscalls/syscall_64.tbl  |   3 +
->  fs/Makefile                             |   2 +
->  fs/bcachefs/Makefile                    |   1 -
->  fs/bcachefs/btree_types.h               |   2 +-
->  fs/bcachefs/btree_update.c              |   2 +
->  fs/bcachefs/btree_write_buffer_types.h  |   2 +-
->  fs/bcachefs/fsck.c                      |   2 +-
->  fs/bcachefs/journal_io.h                |   2 +-
->  fs/bcachefs/journal_sb.c                |   2 +-
->  fs/bcachefs/sb-downgrade.c              |   3 +-
->  fs/bcachefs/sb-errors_types.h           |   2 +-
->  fs/bcachefs/sb-members.h                |   3 +-
->  fs/bcachefs/subvolume.h                 |   1 -
->  fs/bcachefs/subvolume_types.h           |   2 +-
->  fs/bcachefs/thread_with_file_types.h    |   2 +-
->  fs/bcachefs/util.h                      |  28 +-
->  fs/ringbuffer.c                         | 474 ++++++++++++++++++++++++
->  fs/ringbuffer_test.c                    | 209 +++++++++++
->  {fs/bcachefs =3D> include/linux}/darray.h |  61 +--
->  include/linux/darray_types.h            |  22 ++
->  include/linux/fs.h                      |   2 +
->  include/linux/mm_types.h                |   4 +
->  include/linux/ringbuffer_sys.h          |  18 +
->  include/uapi/linux/futex.h              |   1 +
->  include/uapi/linux/ringbuffer_sys.h     |  40 ++
->  init/Kconfig                            |   9 +
->  kernel/fork.c                           |   2 +
->  lib/Kconfig.debug                       |   5 +
->  lib/Makefile                            |   2 +-
->  {fs/bcachefs =3D> lib}/darray.c           |  12 +-
->  tools/ringbuffer/Makefile               |   3 +
->  tools/ringbuffer/ringbuffer-test.c      | 254 +++++++++++++
->  34 files changed, 1125 insertions(+), 62 deletions(-)
->  create mode 100644 fs/ringbuffer.c
->  create mode 100644 fs/ringbuffer_test.c
->  rename {fs/bcachefs =3D> include/linux}/darray.h (63%)
->  create mode 100644 include/linux/darray_types.h
->  create mode 100644 include/linux/ringbuffer_sys.h
->  create mode 100644 include/uapi/linux/ringbuffer_sys.h
->  rename {fs/bcachefs =3D> lib}/darray.c (56%)
->  create mode 100644 tools/ringbuffer/Makefile
->  create mode 100644 tools/ringbuffer/ringbuffer-test.c
->=20
-> --=20
-> 2.45.1
->=20
-
---j/CfATJu0W0vRWqP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmZiZ0IACgkQnKSrs4Gr
-c8jpagf7BxpNTX4pblcntzL0Y5rs9POU3DQY+Y6yg1MYsv0HdaYISgxeBqbwr4UG
-L4MrIpCbkGUJN4L4DJr+qdfv94JjiaGw7ULUjHF9U8e5rhqTiGXC6aOZAbjnIa1e
-OXHdQI/V35WkpEbynu7v//5H/be/dkw+6qy7wwyVupAsLm2Uk76QTl6ngvcoOaNv
-Z2sc6qWEXaAKIyPrB1PZPMPX7kSKiZtrdCy2y4OhFSfjD3A2kQApkhPk80UP6Z9f
-YftM/cNg154DPnItqD4vCH/PDGESy+ITBW9EEQ1PQz8Ydvi2ho31ZX43tSgCxppe
-EzRiR6Ano16JtNGo4usvXl+13k+2AA==
-=z2cS
------END PGP SIGNATURE-----
-
---j/CfATJu0W0vRWqP--
-
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
