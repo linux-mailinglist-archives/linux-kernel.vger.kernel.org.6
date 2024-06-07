@@ -1,81 +1,83 @@
-Return-Path: <linux-kernel+bounces-205929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33E88900248
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:36:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2C2490024B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA14D1F27D85
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:36:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4678F2876E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7060418733D;
-	Fri,  7 Jun 2024 11:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BAA18FC84;
+	Fri,  7 Jun 2024 11:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R1jDKiWt"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c6SBTTTb"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1701B188CC0
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EB518733D;
+	Fri,  7 Jun 2024 11:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717760188; cv=none; b=ty36KcUWTubd45LAnjs/kOeg+88CVvssPd1ZVwLHko48p8tY10a2PrQhxzcKmWQvx53LsiYpO13c9YWNw8mqrQ7Wnxg2DdLdpnRNewrbdm3xEr4sj77YVoIFlKaS0mGj3lzyWKFPrTZaNIks+HjurjWnhsErrJdreW1Fvx0acdU=
+	t=1717760218; cv=none; b=F82eOKgm/kS1LvsfvgswjfcKhL2wFmYVPR+KT4aIEDZpOrpHJmvAC61/QiHYJkFQPePJ1QZ2xkfPZjjW1K7wQhsf2CRgv7XJ2dY6K2dWsiSBsZmTt600noY3vwArB02NqYMDGuLCWSQ/ltzfWPP2JOcwmQahWj5oRN5Z6di74NM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717760188; c=relaxed/simple;
-	bh=1igZTYjDPXjCcCgy+nI5U257Gn4g4WLUSFaInx/hv2Y=;
+	s=arc-20240116; t=1717760218; c=relaxed/simple;
+	bh=rpzWODU2bT7sGpuoqGOokFp3uXQbFOAgqULxwSJrvh8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GGyXA0MJHuWZalzU5ZWJTLmYij3Og6Q8pBXJg7mzLFcupTPDTFULGbfQQCF2TRM5VVeQk6ZUZ/eIH0EQxcfM+KSVgWa5GfxuQmXyegdrqPkz3LoHQQoliEfVCBotJp2iwNVxPVnCE9iCitjvsahv5yDdtSCR3TMoEXQ3uuP0ImU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R1jDKiWt; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52b93370ad0so2762637e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 04:36:26 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=OvZe0+tJn3jW9WRqrUtFTzAP411wL5bzbMQj96ZajzE9cidCvV85KnIWGPailrknj6EEKRuyQV6Fgz1l+a+S1SvZPQs4O++ItOSNvdEheu86NVJNRGZftYGFMRDlCMxGF7SEBWJmL9BOXAtpRJ2WNl0N207IzXexfZr9gHUH0UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c6SBTTTb; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a68a9a4e9a6so189499966b.3;
+        Fri, 07 Jun 2024 04:36:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717760185; x=1718364985; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1717760215; x=1718365015; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=H1mui+HBDxQUFLppGRIOuzCMTBMXzF+PVJZ3OkaVODY=;
-        b=R1jDKiWtU+lV54BMnt1Zcuivxy8lZEWiYbJ3kGCl1zjVP0y/YxHNd0479hzQ8IOkEM
-         WrQVGMKKBYGI8XrB4TwfgSTpXfdu0BHHJr/FyB99YLK1Swr3i1MKBcFI4eF6am3eCC33
-         zzs7kXHXiQplThCVR4m0RManiE1NuzDBPx+Vp+HtZExGITKaI++RlpskRHZBdeHEV+/o
-         VLTaoIilJgPH4tiIsjQ7uyP1LYCboJUOD1eYCPhoMAwKDLVwEBw6U08kXgsEBsrzyE/A
-         4+95MAVbi7RQvS2fLV4gfLSYCqrLQYvs7n2WRMnU103ATMFOdhj9OnxIQk7k8OlbKgw9
-         AFrw==
+        bh=GY/6FiPfv14GcfT0b89l65ZFho8Kww/IYVCcpvAJrKA=;
+        b=c6SBTTTb/FIsaqeHZas2u/GyHFySVHO1oeDtkJxp06LDzXrElMmUo26qhKURgYOfOk
+         zXK1B089cYGlNkkqeNHiK8hrb34a1VE5LFLTg4GAqAWxjtS+fJUNZKsq47GAoUnzF1MK
+         FmXGx0i6urO+vGcnSrj+Y6G14jXtzrePuYc1aZZEesdMfnFsK6Bob+VjxHE7hxQAwcpo
+         eyMa53FmTSx5bUCooaO90QdKPpPbaUnDx4FUakUnSSGY/9ndPtdNkj95j6RCm2HrExpX
+         bI6kZDzpXXH7n+sZY41gZ3LZtXufS0scDEBxeLGSLTU0h1FekmjoBDj0xKKm0nSFEQzL
+         i8gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717760185; x=1718364985;
+        d=1e100.net; s=20230601; t=1717760216; x=1718365016;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=H1mui+HBDxQUFLppGRIOuzCMTBMXzF+PVJZ3OkaVODY=;
-        b=df0gImo5Q+ZVttj82Ze22AjTKcwkXTfkIjkHj3vJ46Is1SZHU75Y3SiNWPWJLOQfab
-         k3hBHUCoh/twbZZxY9wMXU03h0NDVBhXHoXC68Y84WjmnT28vG22QzXL6WgVK/iEFJNm
-         3KFHb5uIxL2iOZYAUbi9s0xBuo5cgYeHgC9a0MwKwlNfKR460rX9G9xnR5LMZfaTfIM6
-         BcwvjpuifuMVBL/8D4QTT68PT0vFDyCP4BmgZCZXaTu6uw19U94HGloulHw5Xf9CsrYQ
-         f+Sg5J99JFUXSf8lq0sNkwcnXzL73QYfAleTZWuak4DpMo4m5DIDKVMbpeeW2L9/h8F7
-         hGkw==
-X-Forwarded-Encrypted: i=1; AJvYcCV88dG2T7eLZOGitlzRGerb0iojW+JdK7uLfCmHLrTs6sd3BWfsfdNVAr7i6p37L+BWekXXE5ee+DTO9TCZtrSkg6JqU3G4VHmjI1lN
-X-Gm-Message-State: AOJu0YzgX3wS43FDLsWIR/QOLIMlezbx7NzLn+hYDgPgZGXO+buXECKf
-	ZuK5+dXThkjP77fd4R1bFD6mv4ac0l41G/G64/Yr+6uDLvgfkZCXmb6KAQbb2Ok=
-X-Google-Smtp-Source: AGHT+IGM/8XZd+a4grzjTEledb54wxf8n6pUQ5sZVQn1MV8kXi0PBuKaZ5LPBD39hh9yVO3xSnEBEw==
-X-Received: by 2002:a05:6512:1308:b0:521:cc8a:46dd with SMTP id 2adb3069b0e04-52bb9f6275fmr2450550e87.11.1717760185284;
-        Fri, 07 Jun 2024 04:36:25 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb41ee3eesm502556e87.74.2024.06.07.04.36.24
+        bh=GY/6FiPfv14GcfT0b89l65ZFho8Kww/IYVCcpvAJrKA=;
+        b=i986Rs/bK5zKjgjXSRFhLz+6y2j81SM+MasDARgsLjUsQnGPKNGOK7K7UM6wL9O41j
+         M8NDO76peXDDGVOs07Fn2R9V4cZ3fONnleu1kNOGHV/tc6hLWjIkm6VGiIqDNEnWDqTs
+         66YrT+xjcpiSRw1h4eO9g8iYfeGcqWarDVnz0VcQX04/ueoK8ngrNVdQ0zZePNk6YthT
+         OLXd5zZwd/k08vHHkAJBd5H5sV1lNK4ugcSOCTbPh5qfFKWrfcB8NeYWV5xcfwgDbxnf
+         9jCzf69ey6FiqzbkMlv4eQuHnlhdff7wI7q8AxQKs+MgXL96rKo0QBQsGN1XH0G1okq7
+         T6/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU9ANa4BhPpyknXtlvIw32fyCZNeri7o+LiT2/2FE1b0ugQr3NaFQOK3PX3cDpBkbF00f73ZShr/68nTrmQnTcj/ovF3HsAGyLb86AFhNhIpADt/Jc443QQqdchbpHMyY3zxlXH1bF9uQOpU568ybmjNQRtmD3WG/hJd4S+J0P3rA==
+X-Gm-Message-State: AOJu0YxxSGWdLICMrlQ+cavbFZEX4jnx5HQl5Q8wF1RtNuV+86qA5UM6
+	B3TvQ973SqxeNh7zz4vvIbo9ofkDslt1RSbHuOTH3S4xVu36oF3G
+X-Google-Smtp-Source: AGHT+IEJ3QmW0Edfs+b86Z0zcgNfTh5o9Uuil8Nf9vIR8GRiQGZa0MYGATF+Eo0GdsJnYFZz7qh6OA==
+X-Received: by 2002:a17:907:20ed:b0:a6c:8076:1a5e with SMTP id a640c23a62f3a-a6cd7a7e9b6mr191770566b.43.1717760215247;
+        Fri, 07 Jun 2024 04:36:55 -0700 (PDT)
+Received: from skbuf ([188.25.55.166])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c8070e1c1sm230574666b.168.2024.06.07.04.36.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 04:36:24 -0700 (PDT)
-Date: Fri, 7 Jun 2024 14:36:22 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
-	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
-	quic_chennak@quicinc.com, stable <stable@kernel.org>
-Subject: Re: [PATCH v4 08/11] misc: fastrpc: Fix ownership reassignment of
- remote heap
-Message-ID: <7yogq6uxespor2vjzwu5fdw33aahhkep4dmpmjzkinke6deg4j@x6gmcyuotsex>
-References: <20240606165939.12950-1-quic_ekangupt@quicinc.com>
- <20240606165939.12950-9-quic_ekangupt@quicinc.com>
+        Fri, 07 Jun 2024 04:36:54 -0700 (PDT)
+Date: Fri, 7 Jun 2024 14:36:52 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Martin Schiller <ms@dev.tdt.de>
+Cc: martin.blumenstingl@googlemail.com, hauke@hauke-m.de, andrew@lunn.ch,
+	f.fainelli@gmail.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 12/13] net: dsa: lantiq_gswip: Add and use a
+ GSWIP_TABLE_MAC_BRIDGE_FID macro
+Message-ID: <20240607113652.6ryt5gg72he2madn@skbuf>
+References: <20240606085234.565551-1-ms@dev.tdt.de>
+ <20240606085234.565551-13-ms@dev.tdt.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,64 +86,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240606165939.12950-9-quic_ekangupt@quicinc.com>
+In-Reply-To: <20240606085234.565551-13-ms@dev.tdt.de>
 
-On Thu, Jun 06, 2024 at 10:29:28PM +0530, Ekansh Gupta wrote:
-> Audio PD daemon will allocate memory for audio PD dynamic loading
-> usage when it is attaching for the first time to audio PD. As
-> part of this, the memory ownership is moved to the VM where
-> audio PD can use it. In case daemon process is killed without any
-> impact to DSP audio PD, the daemon process will retry to attach to
-> audio PD and in this case memory won't be reallocated. If the invoke
-> fails due to any reason, as part of err_invoke, the memory ownership
-> is getting reassigned to HLOS even when the memory was not allocated.
-> At this time the audio PD might still be using the memory and an
-> attemp of ownership reassignment would result in memory issue.
+On Thu, Jun 06, 2024 at 10:52:33AM +0200, Martin Schiller wrote:
+> From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 > 
-> Fixes: 0871561055e6 ("misc: fastrpc: Add support for audiopd")
-
-Fixes before functional changes.
-
-> Cc: stable <stable@kernel.org>
-> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+> Only bits [5:0] in mac_bridge.key[3] are reserved for the FID. Add a
+> macro so this becomes obvious when reading the driver code.
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 > ---
->  drivers/misc/fastrpc.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  drivers/net/dsa/lantiq_gswip.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> index 3686b2d34741..68c1595446d5 100644
-> --- a/drivers/misc/fastrpc.c
-> +++ b/drivers/misc/fastrpc.c
-> @@ -1334,6 +1334,7 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
->  	u64 phys = 0, size = 0;
->  	char *name;
->  	int err;
-> +	bool scm_done = false;
->  	struct {
->  		int pgid;
->  		u32 namelen;
-> @@ -1398,6 +1399,7 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
->  					phys, size, err);
->  				goto err_map;
->  			}
-> +			scm_done = true;
->  		}
->  	}
+> diff --git a/drivers/net/dsa/lantiq_gswip.c b/drivers/net/dsa/lantiq_gswip.c
+> index f2faee112e33..4bb894e75b81 100644
+> --- a/drivers/net/dsa/lantiq_gswip.c
+> +++ b/drivers/net/dsa/lantiq_gswip.c
+> @@ -238,6 +238,7 @@
+>  #define GSWIP_TABLE_MAC_BRIDGE		0x0b
+>  #define  GSWIP_TABLE_MAC_BRIDGE_STATIC	BIT(0)		/* Static not, aging entry */
+>  #define  GSWIP_TABLE_MAC_BRIDGE_PORT	GENMASK(7, 4)	/* Port on learned entries */
+> +#define  GSWIP_TABLE_MAC_BRIDGE_FID	GENMASK(5, 0)	/* Filtering identifier */
 >  
-> @@ -1439,7 +1441,7 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
+>  #define XRX200_GPHY_FW_ALIGN	(16 * 1024)
 >  
->  	return 0;
->  err_invoke:
-> -	if (fl->cctx->vmcount) {
-> +	if (fl->cctx->vmcount && scm_done) {
->  		u64 src_perms = 0;
->  		struct qcom_scm_vmperm dst_perms;
->  		u32 i;
+> @@ -1385,7 +1386,7 @@ static int gswip_port_fdb(struct dsa_switch *ds, int port,
+>  	mac_bridge.key[0] = addr[5] | (addr[4] << 8);
+>  	mac_bridge.key[1] = addr[3] | (addr[2] << 8);
+>  	mac_bridge.key[2] = addr[1] | (addr[0] << 8);
+> -	mac_bridge.key[3] = fid;
+> +	mac_bridge.key[3] = FIELD_PREP(GSWIP_TABLE_MAC_BRIDGE_FID, fid);
+>  	mac_bridge.val[0] = add ? BIT(port) : 0; /* port map */
+>  	mac_bridge.val[1] = GSWIP_TABLE_MAC_BRIDGE_STATIC;
+>  	mac_bridge.valid = add;
 > -- 
-> 2.43.0
-> 
+> 2.39.2
 
--- 
-With best wishes
-Dmitry
+On second thought, I disagree with the naming scheme of the
+GSWIP_TABLE_MAC_BRIDGE_* macros. It is completely non obvious that they
+are non-overlapping, because they have the same name prefix, but:
+_STATIC applies to gswip_pce_table_entry :: val[1]
+_PORT applies to gswip_pce_table_entry :: val[0]
+_FID applies to gswip_pce_table_entry :: key[3]
+
+I think it's all too easy to use the wrong macro on the wrong register field.
+If the macros incorporated names like VAL1, KEY3 etc, it would be much
+more obvious. Could you please do that?
 
