@@ -1,112 +1,179 @@
-Return-Path: <linux-kernel+bounces-206584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1DB7900BB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:03:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86841900BB6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3FD21C2197F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:03:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84D211C21F60
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E68219AD90;
-	Fri,  7 Jun 2024 18:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7819E19ADAD;
+	Fri,  7 Jun 2024 18:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K4yGcMz3"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kbkb/yRk"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB221957F6;
-	Fri,  7 Jun 2024 18:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A6417582;
+	Fri,  7 Jun 2024 18:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717783385; cv=none; b=Gqh5d1/az8jdB+nrvV8N9DgBIshY39ORQdSwnpJHWQ83Q4RdTiVIL4BDEFKP8cIsVT+fr5rkDt/V+aMGay7PdGInD+pY1coF5J6KiZxpogIY88bHu/ebaF5E2bQZBTY5gB5bFw0bWeRops2zaOj8418JdjRJVlnt309P/q9JnzY=
+	t=1717783505; cv=none; b=U5WtIT9IMs62c+0h4MQpblzxQBWZQofiED+Q8CCuuEmqFpmXH7K/Jw5/w9LEyPcOceTepJoE13j44CsCM/XMMv8v/y96TVUbrsmDUjQSw7HVvixKZOfoLS6RjzCFRAe3yFd2gAgyNy0lxAxHtD1NVtbyz4ejvCfzwp3Wyw4PEEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717783385; c=relaxed/simple;
-	bh=S9vlXymCuw8y2soXFtQEl6vKMBGohi8Chq1vzxf6eaU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gk96M0CtrpqlT1HvlJS3k/LrLwg6XfQ0vjjBbZoPGV4UVJSIwdtxGhQlszQEUsg1CcrqqxqWCzOWXIBJ1yLSYN5S9st6Q5Aneyg5SddKqMY2qZ3pUn3T7QmYqTu/xU58KjBAmxymnxHu3e+t2qWGe40MClbsm6iLCCCqsOcbFnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K4yGcMz3; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a68ca4d6545so435222766b.0;
-        Fri, 07 Jun 2024 11:03:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717783382; x=1718388182; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=M4JhFWYIaba6S7NZfwQpR1LZP1nrX/OWl8a4IvQCyvQ=;
-        b=K4yGcMz3YzBU7Sa83NjKsXRY4aADN4Gm88wTConYfsGmkkiGB/ZVFO727DigXotuWJ
-         Lm1JBu8FyVHCFkYzGBBkn8l+gCNbhE+kfKvmNB37CsP7ZtpMOVCc0GM40V1ziBzhcN5G
-         txOr5PMZcQwf6hDJgDnJv8LqwWItd9BQ/Zhf4l2gJBENSTyGhkjXmeiJHwPEj6MW+rEp
-         RfnW+tFzc+F1MR7nJONLFkI6KB+fM/LbitjkWXGIgQ62t+EP3nQCwZcuPO0MY99V6pu6
-         yvemboh3dfunUOE2LAln57TSlmbAR2bixjjzmoj8ZWM6hyhnh58jjEx41DzgKxScQtiO
-         ScSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717783382; x=1718388182;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M4JhFWYIaba6S7NZfwQpR1LZP1nrX/OWl8a4IvQCyvQ=;
-        b=hlpNi69JX5rYG2x1pj+YXkvJFs0q0TrLHfPevT4/jlniMA97ccUUkNJwqHxzMaXxSZ
-         GW9Tp6OK9boXoW4qREfT4lENFHcgekuQS5Op+j69S2nIjZJ7ZXYyIEqLKtr88CGxiBBs
-         bwGzwhAhoosmxxZkLQpvmr+UipoSV1uB1zihbyWZgtH9tXfmfrMqAkgdCNm5gtgULsM/
-         X79/qBiIvuYt2dL+uJbUk1OdjVzo11qm3ujugYhX7gapdDGRcGl/Ge5gRk4A4jN/2Ewe
-         3l8Sdo0UzE5csjCnAulRRDu6g8Rxo5V1+WnwM1LZLL2SJtNsFeDjKFG7J1M23LsSH8wD
-         K9YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIn7UkUxMZZbVe0oSwBnoP0JsyBe9tPqA242cAYLAt5KU48vITNfsLLCWK/5KkBUBeC5KI5kCrwP3/H9DLh1+bj45vgY6toqZB8K+U
-X-Gm-Message-State: AOJu0YymVdoPXBUcS++LYiQ9ZqLQhlFCgim1H6PKHwHyDevEXvtnMMWi
-	SMNyl2fU6VpN1yZXvh68aSaXfl4ddyUesUQn83JW8luoIE+NA1hxEtixv6B53/okPwecKaET5t1
-	ZNvxDGQpgCOkjjpS2Sv6+A8iU4Jw=
-X-Google-Smtp-Source: AGHT+IGnj2ysUfh7SOHLkJc3CGDkP6SwlsXhwVpEmOYlNR31bDcHXd9kiuPue/wzF/0qSpCM7o3lXDUckdPju300slU=
-X-Received: by 2002:a17:906:4154:b0:a68:e268:fa30 with SMTP id
- a640c23a62f3a-a6c7651ad4emr448512966b.38.1717783382081; Fri, 07 Jun 2024
- 11:03:02 -0700 (PDT)
+	s=arc-20240116; t=1717783505; c=relaxed/simple;
+	bh=QERQ/4hLMbGS0Y3kWZiJAbgV8efCp/OW+am7ixwBny8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=E3QkRW5m5vLB2zImjjkJSBaBbbIl2LZcWvhLrw782Fo3rR0NgWDQXB5rgatn2d46/NqsgbG/Y/V4UcfzKFC2O2unQVAFzWovFlPSSXYEemX7gSi8Phok6SNfWGO6DSq6o3AgQYD2bXhGB4B87FesVoQVX6sIF88MjKXjtZvUqrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kbkb/yRk; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 457HZXWp001309;
+	Fri, 7 Jun 2024 18:04:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=898bf9MlOZb7l0W+LIWVdf
+	B4dr99OYG2aJIrRxbb+BY=; b=kbkb/yRkX5yQE+ztpdxvw/LWwVrEuNkUea3szU
+	jwWXLC1At3vgEsOvPt0ZxnpjXJilqXVQ2DgPl0a910MBBb/2p+3HHUa4IfFNc+Vv
+	3zHZZTkRtHHYCYfFearlQEHzxqdN59onxn0DkFSWJfBfeixDlhAPIyqS9K8q5xJk
+	4FfWZd/mGT2QYjMIiVgiWZcd3L/QdWCRPq8DU07ENzxjUMcsBwv9PbdzwgGtusDw
+	ce9kQl9x6tQxgxDqXcE6jAz8WGvA4Xn4P66KmkVZiQauUU/lAVzKa4YwxF72qUGG
+	HU920TJBEL+3zw895I7zbpdVXqfnimWh8+JMWoR2TAaRpCSA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjq2tpp5t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 18:04:43 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 457I4g4j003257
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 7 Jun 2024 18:04:42 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 7 Jun 2024
+ 11:04:41 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Fri, 7 Jun 2024 11:04:40 -0700
+Subject: [PATCH] watchdog: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606131732.440653204@linuxfoundation.org>
-In-Reply-To: <20240606131732.440653204@linuxfoundation.org>
-From: Allen <allen.lkml@gmail.com>
-Date: Fri, 7 Jun 2024 11:02:49 -0700
-Message-ID: <CAOMdWSJr-KSGgWrv0zG+nBu=NzQVpw-z7ef5+ykoKXO1uczLzw@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/744] 6.6.33-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240607-md-drivers-watchdog-v1-1-485c1c58301f@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIALdLY2YC/x3MwQrCMAyA4VcZORvoqlj0VcRD2sY14DpJ5hyMv
+ bvV43f4/w2MVdjg2m2gvIjJVBv6QwepUB0YJTeDd/7kzi7gmDGrLKyGH5pTydOA4dIfPYWUXHT
+ QypfyQ9b/9XZvjmSMUamm8ns9pb5XHMlmVtj3LweXa4+EAAAA
+To: Johannes Thumshirn <jth@kernel.org>,
+        Wim Van Sebroeck
+	<wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Gerd Haeussler
+	<gerd.haeussler.ext@siemens.com>,
+        Xing Tong Wu <xingtong.wu@siemens.com>,
+        Tobias Schaffner <tobias.schaffner@siemens.com>
+CC: <linux-watchdog@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: sgguRbeA-_y-jEwe_Y83JBgt0iAj1LY-
+X-Proofpoint-ORIG-GUID: sgguRbeA-_y-jEwe_Y83JBgt0iAj1LY-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-07_10,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 impostorscore=0 clxscore=1011 spamscore=0 malwarescore=0
+ mlxlogscore=892 mlxscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406070133
 
-> This is the start of the stable review cycle for the 6.6.33 release.
-> There are 744 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 08 Jun 2024 13:15:55 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.33-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/watchdog/omap_wdt.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/watchdog/twl4030_wdt.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/watchdog/ts4800_wdt.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/watchdog/simatic-ipc-wdt.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/watchdog/menz69_wdt.o
 
-Compiled and booted on my x86_64 and ARM64 test systems. No errors or
-regressions.
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-Tested-by: Allen Pais <apais@linux.microsoft.com>
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/watchdog/menz69_wdt.c      | 1 +
+ drivers/watchdog/omap_wdt.c        | 1 +
+ drivers/watchdog/simatic-ipc-wdt.c | 1 +
+ drivers/watchdog/ts4800_wdt.c      | 1 +
+ drivers/watchdog/twl4030_wdt.c     | 1 +
+ 5 files changed, 5 insertions(+)
 
-Thanks.
+diff --git a/drivers/watchdog/menz69_wdt.c b/drivers/watchdog/menz69_wdt.c
+index c7de30270043..0508a65acfa6 100644
+--- a/drivers/watchdog/menz69_wdt.c
++++ b/drivers/watchdog/menz69_wdt.c
+@@ -161,6 +161,7 @@ static struct mcb_driver men_z069_driver = {
+ module_mcb_driver(men_z069_driver);
+ 
+ MODULE_AUTHOR("Johannes Thumshirn <jth@kernel.org>");
++MODULE_DESCRIPTION("Watchdog driver for the MEN z069 IP-Core");
+ MODULE_LICENSE("GPL v2");
+ MODULE_ALIAS("mcb:16z069");
+ MODULE_IMPORT_NS(MCB);
+diff --git a/drivers/watchdog/omap_wdt.c b/drivers/watchdog/omap_wdt.c
+index a7a12f2fe9de..b6e0236509bb 100644
+--- a/drivers/watchdog/omap_wdt.c
++++ b/drivers/watchdog/omap_wdt.c
+@@ -370,5 +370,6 @@ static struct platform_driver omap_wdt_driver = {
+ module_platform_driver(omap_wdt_driver);
+ 
+ MODULE_AUTHOR("George G. Davis");
++MODULE_DESCRIPTION("Driver for the TI OMAP 16xx/24xx/34xx 32KHz (non-secure) watchdog");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS("platform:omap_wdt");
+diff --git a/drivers/watchdog/simatic-ipc-wdt.c b/drivers/watchdog/simatic-ipc-wdt.c
+index cdc1a2e15180..1e91f0a560ff 100644
+--- a/drivers/watchdog/simatic-ipc-wdt.c
++++ b/drivers/watchdog/simatic-ipc-wdt.c
+@@ -227,6 +227,7 @@ static struct platform_driver simatic_ipc_wdt_driver = {
+ 
+ module_platform_driver(simatic_ipc_wdt_driver);
+ 
++MODULE_DESCRIPTION("Siemens SIMATIC IPC driver for Watchdogs");
+ MODULE_LICENSE("GPL v2");
+ MODULE_ALIAS("platform:" KBUILD_MODNAME);
+ MODULE_AUTHOR("Gerd Haeussler <gerd.haeussler.ext@siemens.com>");
+diff --git a/drivers/watchdog/ts4800_wdt.c b/drivers/watchdog/ts4800_wdt.c
+index 0099403f4992..24b1ad52102e 100644
+--- a/drivers/watchdog/ts4800_wdt.c
++++ b/drivers/watchdog/ts4800_wdt.c
+@@ -200,5 +200,6 @@ static struct platform_driver ts4800_wdt_driver = {
+ module_platform_driver(ts4800_wdt_driver);
+ 
+ MODULE_AUTHOR("Damien Riegel <damien.riegel@savoirfairelinux.com>");
++MODULE_DESCRIPTION("Watchdog driver for TS-4800 based boards");
+ MODULE_LICENSE("GPL v2");
+ MODULE_ALIAS("platform:ts4800_wdt");
+diff --git a/drivers/watchdog/twl4030_wdt.c b/drivers/watchdog/twl4030_wdt.c
+index 09d17e20f4a7..8c80d04811e4 100644
+--- a/drivers/watchdog/twl4030_wdt.c
++++ b/drivers/watchdog/twl4030_wdt.c
+@@ -118,6 +118,7 @@ static struct platform_driver twl4030_wdt_driver = {
+ module_platform_driver(twl4030_wdt_driver);
+ 
+ MODULE_AUTHOR("Nokia Corporation");
++MODULE_DESCRIPTION("TWL4030 Watchdog");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS("platform:twl4030_wdt");
+ 
+
+---
+base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
+change-id: 20240607-md-drivers-watchdog-79132a7cc0b0
+
 
