@@ -1,91 +1,128 @@
-Return-Path: <linux-kernel+bounces-205640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C4FA8FFE5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:50:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DD6A8FFE64
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B74051C20B93
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:50:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C67A1F28811
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A61A15B14B;
-	Fri,  7 Jun 2024 08:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A258615B97E;
+	Fri,  7 Jun 2024 08:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Luh6PVZh"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="k7oFaJcq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Oh1S/sbw";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="k7oFaJcq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Oh1S/sbw"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDCB15B125;
-	Fri,  7 Jun 2024 08:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59ADC15B96F;
+	Fri,  7 Jun 2024 08:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717750211; cv=none; b=n2OBYAyEqF5k5MFkXmuPWTeEnswHxrzvTSJCCgApIOVek7xhBqF+wLdnSyhOqqaJo0N4U3YFe6gLwv/k9a9p0F1jTN3zyZQB+/sCAmFGspbLF/juvYPat+cK8nuQ6PpAYU1ogI3xF2aM8CzI4f2OBkWJv6/wZHI1DGnki0rIfe8=
+	t=1717750216; cv=none; b=do/nAl0hUtr1mcMVWuWLSM80Zbb1d+A5tkkqwNCs27YRosCCxc4kKo+7sUao+g11rwqQjcRMRlAv+xD61OIUkAWt/zKGrE39M+S0BhwzBoyFxBu14NgNNNUw0850i6PhIxDD7QnNF1HuwLeKrPQbJoh6r7qxhoCN7lFngD6d80M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717750211; c=relaxed/simple;
-	bh=415rIulzfGFkRHln3IbWpy7fZk79beQPt8R9hFxAnvg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=N2nrQecL/Gj0zn2pYm/ChlIl7F/Zo2Qv4usB2qs4V24wlXiGS7SxJdw4QteFH1AZkhHgC37eTkVPM0iVwXsoP/O+hZzdEhCFNI94VNix5BtYZRHKyM5wghZwPSjn6PPgva7uklDlbSlgzcWbIvnuQtZ6CuvFmoQ6IKoR+fVZQtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Luh6PVZh; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1717750201; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=oB8ZdPWvAcaB5cF+sGsaHK1RrmQp4ShYTfx88jKD8Fw=;
-	b=Luh6PVZhxmIRffv3AWca/txoPbfboOJ958kONZ5KjYRUhNfhLgMMG2/AJ6b1UedS9Htl3owcOopVl0s6fumEKzbOs4Ili+xLIqjl1bXdnPkmzo0qT1paFWxqkAordE4PS8wkM2/5/Fe7OBk6AnlR3YLga8q6JW5+1csAhbXAGIk=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033022160150;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0W8-WBWg_1717750200;
-Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0W8-WBWg_1717750200)
-          by smtp.aliyun-inc.com;
-          Fri, 07 Jun 2024 16:50:00 +0800
-From: Yang Li <yang.lee@linux.alibaba.com>
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org
-Cc: mark.rutland@arm.com,
-	mathieu.desnoyers@efficios.com,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Yang Li <yang.lee@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next 2/2] ftrace: Add kernel-doc comments for unregister_ftrace_direct() function
-Date: Fri,  7 Jun 2024 16:49:57 +0800
-Message-Id: <20240607084957.64715-2-yang.lee@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
-In-Reply-To: <20240607084957.64715-1-yang.lee@linux.alibaba.com>
-References: <20240607084957.64715-1-yang.lee@linux.alibaba.com>
+	s=arc-20240116; t=1717750216; c=relaxed/simple;
+	bh=xXWAMq1TN1qL0sjXz2pm6pfBpLz5T6IDYD3I5lZGAPs=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=JDZ1LDcxOp2If4p6IODMr7BwOsG36X9N+45Nez4s/6zLU87xmJuZE7XhMKbu9U2PPyZyXiHJtAaYFWiFC73VsU/IOwbsWXOrVfjCucpn80NAOBghsNW8NbbRREAYYz7jk61tsGOZLn/v3UvB3QTv2F0J0Rcv1T1F1LCLQHcSrIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=k7oFaJcq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Oh1S/sbw; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=k7oFaJcq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Oh1S/sbw; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 312D721B37;
+	Fri,  7 Jun 2024 08:50:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717750207; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WySfIkrdFUzVMysnegvmaTbNgtbzTvDeDSIeqhgNmJA=;
+	b=k7oFaJcqrcGnLJlXjHd7r7UNx2NgIFUvVtA8YU9kMpBx2xeLAM5MEn/C/ynUFrGE6zrZUe
+	lkOvsUg//sBwrZbQKElZsxCHH2zqZIXts8hz6FBB8yvxFo/4OyPyh2UQiLZnXoeAEgC4R7
+	+saiQqxaaW0e273s4d8IyR45XlELNqs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717750207;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WySfIkrdFUzVMysnegvmaTbNgtbzTvDeDSIeqhgNmJA=;
+	b=Oh1S/sbwhNpahTZVO7Nl3fozPDeFH9Xi5OpiNVysSQxPkRyUcoX8w1r+Egpsr7jCMMltIA
+	rl5rXcsJbnvNqABA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717750207; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WySfIkrdFUzVMysnegvmaTbNgtbzTvDeDSIeqhgNmJA=;
+	b=k7oFaJcqrcGnLJlXjHd7r7UNx2NgIFUvVtA8YU9kMpBx2xeLAM5MEn/C/ynUFrGE6zrZUe
+	lkOvsUg//sBwrZbQKElZsxCHH2zqZIXts8hz6FBB8yvxFo/4OyPyh2UQiLZnXoeAEgC4R7
+	+saiQqxaaW0e273s4d8IyR45XlELNqs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717750207;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WySfIkrdFUzVMysnegvmaTbNgtbzTvDeDSIeqhgNmJA=;
+	b=Oh1S/sbwhNpahTZVO7Nl3fozPDeFH9Xi5OpiNVysSQxPkRyUcoX8w1r+Egpsr7jCMMltIA
+	rl5rXcsJbnvNqABA==
+Date: Fri, 7 Jun 2024 10:50:06 +0200 (CEST)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Ryan Sullivan <rysulliv@redhat.com>
+cc: live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, mpdesouza@suse.com, jpoimboe@kernel.org, 
+    jikos@kernel.org, pmladek@suse.com, joe.lawrence@redhat.com, 
+    shuah@kernel.org
+Subject: Re: [PATCH] selftests/livepatch: define max test-syscall processes
+In-Reply-To: <20240606135348.4708-1-rysulliv@redhat.com>
+Message-ID: <alpine.LSU.2.21.2406071049570.29080@pobox.suse.cz>
+References: <alpine.LSU.2.21.2405311304250.8344@pobox.suse.cz> <20240606135348.4708-1-rysulliv@redhat.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_COUNT_ZERO(0.00)[0];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[]
 
-Added kernel-doc comments for the unregister_ftrace_direct() function to
-improve code documentation and readability.
+On Thu, 6 Jun 2024, Ryan Sullivan wrote:
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9300
-Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
----
- kernel/trace/ftrace.c | 2 ++
- 1 file changed, 2 insertions(+)
+> Define a maximum allowable number of pids that can be livepatched in
+> test-syscall.sh as with extremely large machines the output from a
+> large number of processes overflows the dev/kmsg "expect" buffer in
+> the "check_result" function and causes a false error.
+> 
+> Reported-by: CKI Project <cki-project@redhat.com>
+> Signed-off-by: Ryan Sullivan <rysulliv@redhat.com>
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 4aeb1183ea9f..3b0dbd55cc05 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -5988,6 +5988,8 @@ EXPORT_SYMBOL_GPL(register_ftrace_direct);
-  * unregister_ftrace_direct - Remove calls to custom trampoline
-  * previously registered by register_ftrace_direct for @ops object.
-  * @ops: The address of the struct ftrace_ops object
-+ * @addr: The address of the direct call to remove
-+ * @free_filters: Boolean indicating whether to free the filters
-  *
-  * This is used to remove a direct calls to @addr from the nop locations
-  * of the functions registered in @ops (with by ftrace_set_filter_ip
--- 
-2.20.1.7.g153144c
+Acked-by: Miroslav Benes <mbenes@suse.cz>
+
+M
 
 
