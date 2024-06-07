@@ -1,199 +1,249 @@
-Return-Path: <linux-kernel+bounces-205185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDAFC8FF8A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:27:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 986F78FF8A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E39E8B21A3E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 00:27:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BBC11F2391D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 00:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3600D19D8B9;
-	Fri,  7 Jun 2024 00:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B722C4C76;
+	Fri,  7 Jun 2024 00:27:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GB0D2AzW"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2055.outbound.protection.outlook.com [40.107.93.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A+r1MyX3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6FDA48;
-	Fri,  7 Jun 2024 00:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717720033; cv=fail; b=BbWNY1AzUj+83JjzbELYlPHFqSp0srPHMlTL3e4odd9uv+xiDlxbezzTX7R+mJyOPyCqfnBeWlU2DgGCciVNaxUxIfFc4GSvae0BwGshNGjLzdPG16NW4t0vHX8Xip86plRDOCEQZ9YwUhSN0ew3mlopdG93mA6J+BDJ9uGrHJc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717720033; c=relaxed/simple;
-	bh=Xm4g2VrLbdZucedad+rLR4uWbL4Wcbpu55WZtkQOaAc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=u/Pxt4rth89fNdIuhsqAb76IspJzqhYnf7Ycq8NEjlFlShfBkGx+jZiqb+QphmWuvMrFo8NMsJPEeE2jaiNxQNbuMYMMWt1DyUGIqzkEybr4xs/BiDPK/DLnfUqxEAO9cezzTZJJ9gt8Zlk1Vg1GfPCH340bZeU59yRWt6Yfc90=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GB0D2AzW; arc=fail smtp.client-ip=40.107.93.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GLlGuCZKDdHFfsa+Re1Uo2XLv9iLrQlN7cYYQj1z4w9a/vCrVjPmWyLO448BczrUlNnYd+vDtbeaIZJ314ITl2rLkjnd75a3U4r8ZmkraV3XXM7w0I82XnkOWeLMtztqprfAanCDZJBKIPXTV7CdAO/R0czxRqxBlwAfsH8XhgFFeezTS+cXYsFC5cU+HT3GFaKfyAKiSPTetqYRAso8d1Tt7ckLDIlkJNebkqozaGvYFeGS7aZkhfjNEswx/9sxmlIK3WDXHgldXbJ6ZzaYwB4xMwD5G91Y7rDFtDM8knW+O84EAvZErKk1HHgZVtITeUXMgxoSVInvcMA0/fFL/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2Jgvqix4kViqoOF+wETPfboyRGmtCnuuRQm3YAaUabw=;
- b=gGXyU1mb6rkDoewvKDYAFek5IOQYfdDjJU2IWJQWaDMXWmGieyAX+OONVNg4vpR3N/MEO/EWlzG+8v/YjoRKSeFrST9deYo+/fPhPkFQs1IZ5wWH69UhVube7Hb9yrI7fY5LvORm/CvohB1In5BWBBbSVB+qp63f3Ql4HyWfR6JzCOrwcZwyHKyo4BO4RRalqqk6e+Yia++vzTJ9qWsr8Wp+7ZiIBzYA/MRy/T276IXC6ANXW3ecZcPss+uQe+mxwCm/v6+DFLvJtNmNumSquuahjBmUMR8Uv4ZcGtcHSoIbuR24U7fHiueQ1ZjcQZBR0kMi9CM73ltmS9e2Krh06A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2Jgvqix4kViqoOF+wETPfboyRGmtCnuuRQm3YAaUabw=;
- b=GB0D2AzWGO9VVhyqNbQVCnzkBOvmJL3HhuB+ACh3I5KU2VaD6foXmuH4dXCl5yH4vAzp6ROmdT5VakyprOmLeR3JxxXnJ6QtG6wfj7ypBiS5I9utA7KoowxiQnzlmG+e/+oMT6VBkEvCgo48Wqiv0+dOLidh7WbOfMjVmnwNrXNYGzl7kTv1wrrTNgSTmQldKOQGFm6jGsLW1Ka0sBQETBOYy9eOdhaK42u7xy5gfUNIFbZZVltOJyPkxpbpw9bdSAffBiOiwiw+mSBGiJBpo7TGdZdqKSHvXU6fefiK3acRulLoWb3p7vNWdJ2SUTBN/r4E0BvSyqcvcNkvJ9uRlA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by DM4PR12MB5769.namprd12.prod.outlook.com (2603:10b6:8:60::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.34; Fri, 7 Jun 2024 00:27:08 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7633.033; Fri, 7 Jun 2024
- 00:27:08 +0000
-Date: Thu, 6 Jun 2024 21:27:07 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: "Tian, Kevin" <kevin.tian@intel.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"Liu, Yi L" <yi.l.liu@intel.com>,
-	"eric.auger@redhat.com" <eric.auger@redhat.com>,
-	"vasant.hegde@amd.com" <vasant.hegde@amd.com>,
-	"jon.grimm@amd.com" <jon.grimm@amd.com>,
-	"santosh.shukla@amd.com" <santosh.shukla@amd.com>,
-	"Dhaval.Giani@amd.com" <Dhaval.Giani@amd.com>,
-	"shameerali.kolothum.thodi@huawei.com" <shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [PATCH RFCv1 08/14] iommufd: Add IOMMU_VIOMMU_SET_DEV_ID ioctl
-Message-ID: <20240607002707.GJ19897@nvidia.com>
-References: <BN9PR11MB5276BBD592021507C3A0EBB38CF02@BN9PR11MB5276.namprd11.prod.outlook.com>
- <ZlY886FT3HHLC8Cf@nvidia.com>
- <BN9PR11MB52762EA9B444DA71F551C3868CF22@BN9PR11MB5276.namprd11.prod.outlook.com>
- <ZlafEktUu5znDsNt@Asurada-Nvidia>
- <BN9PR11MB5276AC43120376A2502D3D148CF32@BN9PR11MB5276.namprd11.prod.outlook.com>
- <ZlfPPwsnY6P4SoGF@Asurada-Nvidia>
- <ZluWXYQjroz0fqqn@nvidia.com>
- <Zl03rsgZl/msa3I+@nvidia.com>
- <20240606182423.GF19897@nvidia.com>
- <ZmIDqgfINXfB0i3L@Asurada-Nvidia>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmIDqgfINXfB0i3L@Asurada-Nvidia>
-X-ClientProxiedBy: MN2PR16CA0028.namprd16.prod.outlook.com
- (2603:10b6:208:134::41) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA32C4C83;
+	Fri,  7 Jun 2024 00:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717720075; cv=none; b=lttYQID9tq9oOIlc1VYcBf79+kX2vu3RK25JYItHQoITQt/P3KGOclB8AtmWpSdxS9vc/jVgcev9nT4XW6zNKzsiNzqc2iKK6rYIzaJJ1IoIBnjQsGuJ89xGXgO/AF6idQnUpYcY10YMLK5RenHPHrPWbTYWWOjofq2VryVGA34=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717720075; c=relaxed/simple;
+	bh=FQTqwYknv8JIZqJzJar6YMQ0/CLZjse4O5WXBBaPRL0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nLyq69rdJcbKPeqXQwt5aP3A440Ue0uWmue++VUQqusmTWUsDgWQXyoXDlpAySf8p+XdSyxK0MjraT1RZT+giv1fwfLxHaZpgoZU7dbSvwWXH11UTjrH1tgNmp6zE88rHtxSSDdb7BWRCtFVhGJOjK6XF9MYKveOr4qJ5PjCbjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A+r1MyX3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9061C2BD10;
+	Fri,  7 Jun 2024 00:27:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717720074;
+	bh=FQTqwYknv8JIZqJzJar6YMQ0/CLZjse4O5WXBBaPRL0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A+r1MyX3DI9NOoncuFmLLFlvelMwJ4dRnFUGBcft7113VpTMnbRXrbRugLD+xjLoQ
+	 hVlly304fyXaMWlsk+r4AuIvuwNpnGDuB2cWQSLiQL1MvivwUEBKxN9lylgEB8j/U4
+	 PQOSnpZN+7+p/EB+SCem3gdr74mPo3NWVYi4/Jj9ooLP7jxdQ8K5sHPfULU41fG3cQ
+	 1u5yKMADsLAsBvb/oUdYBWAvsnolCGhhFqenE8o5ewWeTOv9QdbjoLtPv1V5K1jRUS
+	 s72yzQemjiN9VlcyrQgWsXRAhEdo8M+G1aHVz+LI1O/Q1l9S8P2KiAuyelH2UMnaTZ
+	 yzUr6Z3I7giKg==
+Date: Thu, 6 Jun 2024 17:27:52 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Shenlin Liang <liangshenlin@eswincomputing.com>
+Cc: anup@brainfault.org, atishp@atishpatra.org, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, peterz@infradead.org,
+	mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] perf kvm/riscv: Port perf kvm stat to RISC-V
+Message-ID: <ZmJUCJwavWXsesKn@google.com>
+References: <20240422080833.8745-1-liangshenlin@eswincomputing.com>
+ <20240422080833.8745-3-liangshenlin@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|DM4PR12MB5769:EE_
-X-MS-Office365-Filtering-Correlation-Id: 11415b31-74f4-4cd5-2138-08dc868890aa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|366007|376005|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?TL1ZeejcWNnmPx2csz12P7QQger/snY+YToTSM0moQJ3upont0YbUEVW0TQ0?=
- =?us-ascii?Q?OCROqmTI6fBRnJkKU4AoGxGlJIcSK1ezZyL5a5F4fHLCid4expx29m/xfWnZ?=
- =?us-ascii?Q?80Fz644M8TN5wSwsId2bWPnMNqalvy3tpqHKlG5tjo/03AfyomllaUl2S7M/?=
- =?us-ascii?Q?V0EJ0f9ojPwqvVk8IXc1Njghjz7a3ORY0U4CSDOMisrOuzm3unXIKACw52Di?=
- =?us-ascii?Q?JXBAXTYqtvJ4tQ4MgQOfYBUnuzYqbp9/Il3P6SroOwb0q/xICOmG3alMqeFx?=
- =?us-ascii?Q?FYFyPfcf00X2kK+N4gTdLqSlXSUnlofwBApI2LNp0RqyOwtXyOQl0flm1OnU?=
- =?us-ascii?Q?sCsVYvbcQ6sAimtD7pp7XzCaZ5Pe3pK93UGRYnlREddbMIovQX3G76tJN2DE?=
- =?us-ascii?Q?xfJXIU4sGLLWhZSku6RMDNS8DZVokYsVFV34TJbC+8azFT5m9oEKGhhAOQ9b?=
- =?us-ascii?Q?XNn4EYrkthMUw2OgKYLFIxxBELnrheH+GQ3xxKcDL5S5AgFRakO+0xoXwmHp?=
- =?us-ascii?Q?97H204readqXu8DiKIyl8tGWExgsspnVYayr4HPDB4lMDN8oV9N3r1JOsu7T?=
- =?us-ascii?Q?qmeR0fwVlZFCX9VgaQDeL+b3yVYIZVJrF2RdRdLTgnf8hxasjrjSXq9kYrs/?=
- =?us-ascii?Q?8cuPm4+2f2lSjVGz/bjE+xp9jqxzYWUINMWTUTU4qdLImvuBSm2Ov0Z0tUSc?=
- =?us-ascii?Q?eVJl9olOlTIy+7JNoztqYJN88psBBN24m4Ek7lDzsGE8V83rd3IHZUbaRIk5?=
- =?us-ascii?Q?rhXYctFJCzsDu3Yieo2yHdyT5kCAHlH9Mk5HbpwOeqtmlsWoX44k8mTfIIew?=
- =?us-ascii?Q?L9j6cbrjCsHcHJQGRthQpY6y6QoFWyftkXdGN8OayPkun5F4LxAb8mfhpq5b?=
- =?us-ascii?Q?jpSYkaoTLKPZjepKoJirzwzWV65AhTP+q8QsCjx353mgr7jwxgjHgLJHmIu8?=
- =?us-ascii?Q?Hthg4o1PkdJ0jji8trw8FNZ6tolzF11Wo685gC1gNw0oVlkGh64kxLHPNyHx?=
- =?us-ascii?Q?b2Y+SY9DIlBSc5J2dp4TRz2OWw0QdbrpW6MJI+GK4yqjoRlT2Nub043qI1Pa?=
- =?us-ascii?Q?kk7209y6/LU+CdaKzZbAUgQHxxkqns8eNZQf1ubFPv4x+mWZBtW+eW3z7PAQ?=
- =?us-ascii?Q?HrDW4TD5OFLtUKBGz8ucGipbdcfnHGQTSs7XHeizsJlvYX0XZH+gx6bFDIlv?=
- =?us-ascii?Q?Ew+Kb/VcZ2GLf0FzPzIlTe6SsKS9nwc+a7KxJhD7xjg4WMDF1vZ32sF5eiNp?=
- =?us-ascii?Q?4JSExiteZmfdlVWa3OzO1bZkG4KFci+zOTw6E+uScGZM8U3MGSd+qLcpLYHZ?=
- =?us-ascii?Q?zrSgCfaSm2aNqLsrCw4s9NxV?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?tETB4IHJUhAZ+2Oe0L57BPcXoE5vbGJzGcA03t/gzBvA+QVAMwmbvIwOVAE6?=
- =?us-ascii?Q?PS+oui4hRWdV/99tfMIjUavXq6Kzai9bRsGBvEIVGxHNyu4iLhCS/GthM7Ex?=
- =?us-ascii?Q?FTzQ8n0PS8uBoxCwIjEYbgdf9qeaJzEIm5uRC1UHdV838+lYWb2YTdTCgcvk?=
- =?us-ascii?Q?r8W7nLGDR+v8OJ2DUqgW35MQ2JRn09+RKk0pDhtRsK6rVWH1LJO7uyhmwt4R?=
- =?us-ascii?Q?ieByr9gEHx5B8RmllkZ3MiZKglyjCTvJp/jr22f3z/UaENMUoCYXaLYUOZae?=
- =?us-ascii?Q?9MqPK0sf8y+tWfTDSOcFZ0f6XWxna/IgUU5xx+kdjQv3t+ZU3TlBZaPzCa8b?=
- =?us-ascii?Q?Xz6cY7uF1PsCsWbrSGObWkJrJl4lnz9rpAsrAPFQy0o9d4E5b0JXnJqH9zap?=
- =?us-ascii?Q?/E/f8eqw9m9SS40kK6imI3Bw6zYkSMOk99x2tNQO1R9ha9J4EOYsnkDcPc/n?=
- =?us-ascii?Q?+BgTBfBwEdHzUWMZeV/gk1BWGNTrKkG3Xq6ttoAcaDj8rS95JFSE5Mh/7zCL?=
- =?us-ascii?Q?U4BFcUNdzFhJexgot1VS2PcnV2Y1xgmitu1N4Se8feplxL98130b9NMXxLyw?=
- =?us-ascii?Q?K1ZN+T2mlRok03n9oEArrAbd8I3RQ7uiBa7o2fcFwpPuq5lZ5YkbC+eDHlRQ?=
- =?us-ascii?Q?Q1QOXyJYg/H2YhuuyZ/oK6XjZ3+8JKhat49JbKkHuognOFCQK8oKONf4lYw7?=
- =?us-ascii?Q?G+RnieTGE+5CWkj4hNLBLrY9t9KRQoOwU3X49LpKdm96W7eqdgRER+jk60ng?=
- =?us-ascii?Q?hdr+ElEHsZxVkCqxh77q4lEkpM7zfZrfLOLPr0fUy/asR11zc95PnOmKPap2?=
- =?us-ascii?Q?ggVWRpAHh/W2Oq1lgDb9tl7YCNekudCq/tUONCfkElVcDeClMYbwJa6CCN/A?=
- =?us-ascii?Q?3cEwjatG/R0D2XKy+Jv3sy0/JoNUH/NqD55BlxZZJ/pA3GVXHxDUSCE0rFux?=
- =?us-ascii?Q?mAKQRmaowIuDfgXQImiQfH5VW39sO9Mrsuj2gKPf2q/nqHJBdFu6FGi4MABc?=
- =?us-ascii?Q?nKWwuyE6UkxdbjnLgaH/y5UJkyreF/lu9GimUw5Tom31L7AL9Ycz9UYmT8M3?=
- =?us-ascii?Q?Am5BN7mkeJ9lYHUvRhwDbJP3sn1L9V7nEvPNiuP8N/+SXGStRv6iKfbbVBdW?=
- =?us-ascii?Q?ToJd32UCHndT4rGMo0zFEPTHfybom2o33hP9QikLt5ZeGUwVdAnFHKTWVT9Z?=
- =?us-ascii?Q?1bSIzNEeoEloypx5Ieq7s8VwaJua8nZOD4ujziyyxKo1yBKUW61FrJA31uFV?=
- =?us-ascii?Q?wYbq6wELD2x2jupY+SVwI5d9ydcxCS3JbnVZrmOmHUVsI7I+O7zg8qdESMkj?=
- =?us-ascii?Q?nXx7k1GhvM/zojvAZaB4To0ukAtNqimsMalcS19APIS/ddYpsi04ySVL6VeB?=
- =?us-ascii?Q?Kt/MgJ9k+7xG5EiL9oCoyWL4ww6IaT6D+b7+n4pfes+6qbvkUfoOZf11av7W?=
- =?us-ascii?Q?ot7njvXho8K3A7s8BFmujjCcH+3YujdkS6j3zsP5asNG05JASzs9/g4JMDXX?=
- =?us-ascii?Q?4WcyoYvkWsZ2cg29D61aDJyls1Ex16xPLLH3N2pFFyG9adewpw/Th23pLNoc?=
- =?us-ascii?Q?upZC9/96arzCwwVdvZ+CiyHiZNfW1P+E+1bzSd2v?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11415b31-74f4-4cd5-2138-08dc868890aa
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2024 00:27:08.2779
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fkiM9s2C+oKh2xSWM7WtjRyInNQwGObVOWaQjh06Eom2B8WR7Fonb7TH6d5gQV8Q
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5769
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240422080833.8745-3-liangshenlin@eswincomputing.com>
 
-On Thu, Jun 06, 2024 at 11:44:58AM -0700, Nicolin Chen wrote:
-> On Thu, Jun 06, 2024 at 03:24:23PM -0300, Jason Gunthorpe wrote:
-> > On Sun, Jun 02, 2024 at 08:25:34PM -0700, Nicolin Chen wrote:
-> > 
-> > > > I understand the appeal of doing this has been to minimize qemu
-> > > > changes in its ACPI parts if we tackle that instead maybe we should
-> > > > just not implement viommu to multiple piommu. It is somewhat
-> > > > complicated.
-> > > 
-> > > Would you please clarify that suggestion "not implement viommu
-> > > to multiple piommu"?
-> > > 
-> > > For regular nesting (SMMU), we are still doing one vSMMU in the
-> > > VMM, though VCMDQ case would be an exception....
-> > 
-> > This is what I mean, always do multiple vSMMU if there are multiple
-> > physical pSMMUs. Don't replicate any virtual commands across pSMMUs.
+Hello,
+
+On Mon, Apr 22, 2024 at 08:08:33AM +0000, Shenlin Liang wrote:
+> 'perf kvm stat report/record' generates a statistical analysis of KVM
+> events and can be used to analyze guest exit reasons.
 > 
-> Thanks for clarifying. That also means you'd prefer putting the
-> command dispatcher in VMM, which is what we have at this moment.
+> "report" reports statistical analysis of guest exit events.
+> 
+> To record kvm events on the host:
+>  # perf kvm stat record -a
+> 
+> To report kvm VM EXIT events:
+>  # perf kvm stat report --event=vmexit
+> 
+> Signed-off-by: Shenlin Liang <liangshenlin@eswincomputing.com>
+> ---
+>  tools/perf/arch/riscv/Makefile                |  1 +
+>  tools/perf/arch/riscv/util/Build              |  1 +
+>  tools/perf/arch/riscv/util/kvm-stat.c         | 79 +++++++++++++++++++
+>  .../arch/riscv/util/riscv_exception_types.h   | 35 ++++++++
+>  4 files changed, 116 insertions(+)
+>  create mode 100644 tools/perf/arch/riscv/util/kvm-stat.c
+>  create mode 100644 tools/perf/arch/riscv/util/riscv_exception_types.h
+> 
+> diff --git a/tools/perf/arch/riscv/Makefile b/tools/perf/arch/riscv/Makefile
+> index a8d25d005207..e1e445615536 100644
+> --- a/tools/perf/arch/riscv/Makefile
+> +++ b/tools/perf/arch/riscv/Makefile
+> @@ -3,3 +3,4 @@ PERF_HAVE_DWARF_REGS := 1
+>  endif
+>  PERF_HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET := 1
+>  PERF_HAVE_JITDUMP := 1
+> +HAVE_KVM_STAT_SUPPORT := 1
+> \ No newline at end of file
+> diff --git a/tools/perf/arch/riscv/util/Build b/tools/perf/arch/riscv/util/Build
+> index 603dbb5ae4dc..d72b04f8d32b 100644
+> --- a/tools/perf/arch/riscv/util/Build
+> +++ b/tools/perf/arch/riscv/util/Build
+> @@ -1,5 +1,6 @@
+>  perf-y += perf_regs.o
+>  perf-y += header.o
+>  
+> +perf-$(CONFIG_LIBTRACEEVENT) += kvm-stat.o
+>  perf-$(CONFIG_DWARF) += dwarf-regs.o
+>  perf-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
+> diff --git a/tools/perf/arch/riscv/util/kvm-stat.c b/tools/perf/arch/riscv/util/kvm-stat.c
+> new file mode 100644
+> index 000000000000..58813049fc45
+> --- /dev/null
+> +++ b/tools/perf/arch/riscv/util/kvm-stat.c
+> @@ -0,0 +1,79 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Arch specific functions for perf kvm stat.
+> + *
+> + * Copyright 2024 Beijing ESWIN Computing Technology Co., Ltd.
+> + *
+> + */
+> +#include <errno.h>
+> +#include <memory.h>
+> +#include "../../../util/evsel.h"
+> +#include "../../../util/kvm-stat.h"
+> +#include "riscv_exception_types.h"
+> +#include "debug.h"
+> +
+> +define_exit_reasons_table(riscv_exit_reasons, kvm_riscv_exception_class);
+> +
+> +const char *vcpu_id_str = "id";
+> +const char *kvm_exit_reason = "scause";
+> +const char *kvm_entry_trace = "kvm:kvm_entry";
+> +const char *kvm_exit_trace = "kvm:kvm_exit";
+> +
+> +const char *kvm_events_tp[] = {
+> +	"kvm:kvm_entry",
+> +	"kvm:kvm_exit",
+> +	NULL,
+> +};
+> +
+> +static void event_get_key(struct evsel *evsel,
+> +			  struct perf_sample *sample,
+> +			  struct event_key *key)
+> +{
+> +	key->info = 0;
+> +	key->key = evsel__intval(evsel, sample, kvm_exit_reason);
+> +	key->key = (int)key->key;
 
-Unless someone knows a reason why we should strive hard to have only a
-single vSMMU and accept some invalidation inefficiency?
+Looks unnecessary..
 
-Jason
+Thanks,
+Namhyung
+
+
+> +	key->exit_reasons = riscv_exit_reasons;
+> +}
+> +
+> +static bool event_begin(struct evsel *evsel,
+> +			struct perf_sample *sample __maybe_unused,
+> +			struct event_key *key __maybe_unused)
+> +{
+> +	return evsel__name_is(evsel, kvm_entry_trace);
+> +}
+> +
+> +static bool event_end(struct evsel *evsel,
+> +		      struct perf_sample *sample,
+> +		      struct event_key *key)
+> +{
+> +	if (evsel__name_is(evsel, kvm_exit_trace)) {
+> +		event_get_key(evsel, sample, key);
+> +		return true;
+> +	}
+> +	return false;
+> +}
+> +
+> +static struct kvm_events_ops exit_events = {
+> +	.is_begin_event = event_begin,
+> +	.is_end_event	= event_end,
+> +	.decode_key	= exit_event_decode_key,
+> +	.name		= "VM-EXIT"
+> +};
+> +
+> +struct kvm_reg_events_ops kvm_reg_events_ops[] = {
+> +	{
+> +		.name	= "vmexit",
+> +		.ops	= &exit_events,
+> +	},
+> +	{ NULL, NULL },
+> +};
+> +
+> +const char * const kvm_skip_events[] = {
+> +	NULL,
+> +};
+> +
+> +int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid __maybe_unused)
+> +{
+> +	kvm->exit_reasons_isa = "riscv64";
+> +	return 0;
+> +}
+> diff --git a/tools/perf/arch/riscv/util/riscv_exception_types.h b/tools/perf/arch/riscv/util/riscv_exception_types.h
+> new file mode 100644
+> index 000000000000..c49b8fa5e847
+> --- /dev/null
+> +++ b/tools/perf/arch/riscv/util/riscv_exception_types.h
+> @@ -0,0 +1,35 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#ifndef ARCH_PERF_RISCV_EXCEPTION_TYPES_H
+> +#define ARCH_PERF_RISCV_EXCEPTION_TYPES_H
+> +
+> +#define EXC_INST_MISALIGNED 0
+> +#define EXC_INST_ACCESS 1
+> +#define EXC_INST_ILLEGAL 2
+> +#define EXC_BREAKPOINT 3
+> +#define EXC_LOAD_MISALIGNED 4
+> +#define EXC_LOAD_ACCESS 5
+> +#define EXC_STORE_MISALIGNED 6
+> +#define EXC_STORE_ACCESS 7
+> +#define EXC_SYSCALL 8
+> +#define EXC_HYPERVISOR_SYSCALL 9
+> +#define EXC_SUPERVISOR_SYSCALL 10
+> +#define EXC_INST_PAGE_FAULT 12
+> +#define EXC_LOAD_PAGE_FAULT 13
+> +#define EXC_STORE_PAGE_FAULT 15
+> +#define EXC_INST_GUEST_PAGE_FAULT 20
+> +#define EXC_LOAD_GUEST_PAGE_FAULT 21
+> +#define EXC_VIRTUAL_INST_FAULT 22
+> +#define EXC_STORE_GUEST_PAGE_FAULT 23
+> +
+> +#define EXC(x) {EXC_##x, #x }
+> +
+> +#define kvm_riscv_exception_class                                         \
+> +	EXC(INST_MISALIGNED), EXC(INST_ACCESS), EXC(INST_ILLEGAL),         \
+> +	EXC(BREAKPOINT), EXC(LOAD_MISALIGNED), EXC(LOAD_ACCESS),           \
+> +	EXC(STORE_MISALIGNED), EXC(STORE_ACCESS), EXC(SYSCALL),            \
+> +	EXC(HYPERVISOR_SYSCALL), EXC(SUPERVISOR_SYSCALL),                  \
+> +	EXC(INST_PAGE_FAULT), EXC(LOAD_PAGE_FAULT), EXC(STORE_PAGE_FAULT), \
+> +	EXC(INST_GUEST_PAGE_FAULT), EXC(LOAD_GUEST_PAGE_FAULT),            \
+> +	EXC(VIRTUAL_INST_FAULT), EXC(STORE_GUEST_PAGE_FAULT)
+> +
+> +#endif /* ARCH_PERF_RISCV_EXCEPTION_TYPES_H */
+> -- 
+> 2.37.2
+> 
 
