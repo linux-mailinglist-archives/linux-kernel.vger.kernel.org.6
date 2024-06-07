@@ -1,129 +1,110 @@
-Return-Path: <linux-kernel+bounces-206200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87BB49005A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:52:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB5F09005A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0562C2913DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:52:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D3F6291751
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52C01953B9;
-	Fri,  7 Jun 2024 13:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF62C1957F6;
+	Fri,  7 Jun 2024 13:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hYqi5qr1"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8ixaMzu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB031946A9;
-	Fri,  7 Jun 2024 13:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0570A1946A9;
+	Fri,  7 Jun 2024 13:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717768360; cv=none; b=qyK+N/cVCUTp2Q0bZfL5KYxD0YBhRw81QC74Bc6V0KIhjGLsu/zKn9HFYlJ/xZndNIgFHxhh7bWGgcTo6It13Kuimmc4H3VanphvRyl2BlisGlHflIEbMaxVqNIU0LtCR2ILyMJbsb7DJVoL6mEXySlYM0eitRCCbY9a8Nuy2tQ=
+	t=1717768373; cv=none; b=lrBmAC15Y2H3Vsk170PNn61xIuI4qwzZGYYWHYFkrQE3l7eMpW6lATGNjflTBrXPttHZj06nYc9hflJdc/7LkMHhnondfnzVgc0qEFEXFwDqFSvH2XNLR71sTwvFCYqFmurkAjqUld8Pe/IWPsfWMm+XQyBjlLVdWYNtFwBkGlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717768360; c=relaxed/simple;
-	bh=YdbiWQLFSfZ4aefGBrSfOpGfYhdSOQbMyq5GE+HoCbM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=UiYmjpNNKLHYZdrdX3Xo5eIeien2fvNpu9OSHh0n1L5bLWDJxyf4Ya7NRe3NtF/y2iVI9b+hH11q3/VzUCG2ptHQCcmeiQa/X5E+3N09i9sryN4pj+tnj1vKMP6PycpSMzpaeUnH7T25dFHmJOyVEK0t5rtCrV9fgpWeLpWsyoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hYqi5qr1; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 457Bl6qT032112;
-	Fri, 7 Jun 2024 13:52:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8kYjMNDIxkguLCClYGmhHljB0VMgZSPFP4RO5gTBld8=; b=hYqi5qr18XKB/wWG
-	NFvc2BXe/wststjmSnRlB0RPbhvSAqtF2CP32BrNOXyfeIITV4hHNltVqtwQrAst
-	TrcsSW02lXzE2Bn7WQ9PaeCl/vzpdRPzeQLvkE12dnCF/cwCsCRkMxDfszevuA4W
-	JWuLS+vXokUHC8YgU2lFtaR0MfIErlK1z3R4UFMmJzOQgeHaf0Ye5DiKCV9t1UgO
-	mR8PcI7T6OfUCKOfUVrdJXktWfDzIKMIcgvVS3exhCX8og9c/lgzyo8TF7GZt5G4
-	ZKL/VTk30L3BQOu6Tb3r+zQLsT9wTOg97a3sLkwsKx6D8dDfMX/Y4Vs6Mct0DmZt
-	b7QdwA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjk89emd1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 13:52:35 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 457DqXQ1020793
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 7 Jun 2024 13:52:33 GMT
-Received: from [10.48.242.185] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 7 Jun 2024
- 06:52:32 -0700
-Message-ID: <50c97718-b304-4eb5-9bb0-53ff32ccf185@quicinc.com>
-Date: Fri, 7 Jun 2024 06:52:32 -0700
+	s=arc-20240116; t=1717768373; c=relaxed/simple;
+	bh=XGVX7AZuoXtC4aHwOBmnRoGcJiF2HZ1EWEecnKPuTHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WFNQdQlMXQBqg5RQEySf9qeQvTxxkFuRyVNiwkJRNwaXjWiFNMZe29LDMh8wrdr8aXk9+w9gdPXzKc5C/ZU7AD7dGOZ7EzGpEhpBjZwF2nKqj4LCogHFsPSBAkKXgpXvSAyUHY4k829qI7h3XC9GhOLqTQDozUxq0oCUDZdx3IQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8ixaMzu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BFB0C2BBFC;
+	Fri,  7 Jun 2024 13:52:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717768372;
+	bh=XGVX7AZuoXtC4aHwOBmnRoGcJiF2HZ1EWEecnKPuTHQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L8ixaMzufss7LKTZZeC7c9zLvHE5YFqtgNWtJ/a3u2PmaUGqb8r9/jgCnVW7mNdT6
+	 8+3gyYTYGz3pIMkG2RN9IyDO4Q29wG4f2kys/jXSAJF6B3wRjimZCqSDA0ecCDudCe
+	 DI1GF+JzP+TrejWY+2iCuaHXyGiGdH7STvEzdKSo2bjj2e/IJBUe95Q/NXr3gm44y+
+	 P4EG1DQjqD+ZN4Td6NAkK4TwWXF3H1oZjERh3z0KOz1oYxgCKI8QNXW9XmSVE8IGKV
+	 8sxLryzrveWMoo6yAImOU7N3lKgwi8kKZmDHUuC+LHb3LD06C0NQ1znllOJZdCUkob
+	 XOksEcf1JuQ4Q==
+Date: Fri, 7 Jun 2024 14:52:49 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
+	Michael.Hennerich@analog.com, jic23@kernel.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	nuno.sa@analog.com, dlechner@baylibre.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/6] spi: Add SPI mode bit for MOSI idle state
+ configuration
+Message-ID: <ZmMQseQUm05ctRWM@finisterre.sirena.org.uk>
+References: <cover.1717539384.git.marcelo.schmitt@analog.com>
+ <e1d5d57f7a7481c84f64a764f9898122e278739b.1717539384.git.marcelo.schmitt@analog.com>
+ <21d3314355b43ecd6acc42f9dfedec501418332d.camel@gmail.com>
+ <67f94cfb-6a33-4390-8032-a942f5f7b944@sirena.org.uk>
+ <ZmIXnBSk7nlviIZ3@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] HID: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
-CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240606-md-drivers-hid-v1-1-d6a5120b94cb@quicinc.com>
- <c777aad9-3b0a-43d3-9e6b-1e1807df61a8@quicinc.com>
-In-Reply-To: <c777aad9-3b0a-43d3-9e6b-1e1807df61a8@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Hu2AWRbB0Of7gW69UmBGkCAgAwy-dpXF
-X-Proofpoint-ORIG-GUID: Hu2AWRbB0Of7gW69UmBGkCAgAwy-dpXF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-07_07,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 impostorscore=0 phishscore=0 mlxscore=0 bulkscore=0
- adultscore=0 malwarescore=0 priorityscore=1501 clxscore=1015
- suspectscore=0 mlxlogscore=965 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2405170001 definitions=main-2406070100
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zsC/K195XhebRJpD"
+Content-Disposition: inline
+In-Reply-To: <ZmIXnBSk7nlviIZ3@debian-BULLSEYE-live-builder-AMD64>
+X-Cookie: Your love life will be... interesting.
 
-On 6/6/2024 10:12 PM, Jeff Johnson wrote:
-> On 6/6/2024 10:09 PM, Jeff Johnson wrote:
->> make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-holtek-mouse.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-ite.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-kensington.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-keytouch.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-kye.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-lcpower.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-lenovo.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-winwing.o
->>
->> Add the missing invocations of the MODULE_DESCRIPTION() macro.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> ---
->>  drivers/hid/hid-holtek-mouse.c | 1 +
->>  drivers/hid/hid-ite.c          | 1 +
->>  drivers/hid/hid-kensington.c   | 1 +
->>  drivers/hid/hid-keytouch.c     | 1 +
->>  drivers/hid/hid-kye.c          | 1 +
->>  drivers/hid/hid-lcpower.c      | 1 +
->>  drivers/hid/hid-lenovo.c       | 1 +
->>  drivers/hid/hid-winwing.c      | 1 +
->>  8 files changed, 8 insertions(+)
-> 
-> please ignore this patch -- this is a duplicate
-> 
-Well, according to my spreadsheet these were duplicates since they were
-supposed to have been in:
-https://lore.kernel.org/all/20240604-md-hid-misc-v1-1-4f9560796f3c@quicinc.com/
 
-But I somehow forgot to add them to that patch, so this is a valid patch after
-all.  Please pick it up.
+--zsC/K195XhebRJpD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-/jeff
+On Thu, Jun 06, 2024 at 05:10:04PM -0300, Marcelo Schmitt wrote:
+> On 06/05, Mark Brown wrote:
+
+> > > Should we assume such a thing? IOW, should this be treated as a warning or a
+> > > real error? I would assume this should be a configuration error and return -
+> > > EINVAL but...
+
+> > Right, and the error message isn't very clear.
+
+> Yeah, the message is not all that clear. I'll think of something better.
+> I'm biased towards having this as a warning because I don't see this as a
+> feature of usual SPI protocol but not really sure about either ...
+
+The less usual it is the more likely it is that it won't be supported
+and we should actually check that to try to avoid data corruption.
+
+--zsC/K195XhebRJpD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZjELAACgkQJNaLcl1U
+h9BmlQf+JUslqI9U0mKHytkvvRL0JDpLxIk4U4QG9t0LRiQCyBhlDYh0HWJPuYpr
+ArpMHl9BEFliiK59gU9RiIQ+FOE4MrGBq/oRmYIYmRqFB/h0RseDcx6kr/2LB0CY
+jvWxpmAKSyLIR3+xJ6JAlZiL6TXxew2t/Orj3AR/RRkmkQ2ZqM8MckIirrCUZHng
+wq1NYg9EVNzn+9EuMwh4z+n7401QdpkvqUrsRcd6NLaMdvSruhxna2bLHwtnxdid
+++fT/i6NKtGGtq0mnGW6TAtBqua2Ao9armQrstBqrpYwPu1vCuFzlRDhSgvHIzKK
+FxMBVjRAWeecDUBC0+VITFnCoIPLpg==
+=TXlA
+-----END PGP SIGNATURE-----
+
+--zsC/K195XhebRJpD--
 
