@@ -1,153 +1,166 @@
-Return-Path: <linux-kernel+bounces-206697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 264B6900CD5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:23:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ED9F900CF4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:31:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBC4C1F210CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:23:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B8491C21823
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7B2155399;
-	Fri,  7 Jun 2024 20:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B3915533D;
+	Fri,  7 Jun 2024 20:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0npk3eVU";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pAOWJZp1"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=o2.pl header.i=@o2.pl header.b="TkYWGmeZ"
+Received: from mx-out.tlen.pl (mx-out.tlen.pl [193.222.135.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDEF1527BC
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 20:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46DA155333
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 20:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.222.135.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717791740; cv=none; b=N3ogryFuRRBwCr5jYAh6nAGHqB9fOEMbBBCpfL1dBBsCtJYP7PyTL1sB/4JHlSY5LES0vW6ePvrpV/AnL+p9qMFSdTk8DFNWSWwRaQklpkI63yEhQrC3dQzTmjOptr0SvwXr9FA1wg/CcXNIBQHLzD0o+IDQvpBv2otjujUtQkM=
+	t=1717792250; cv=none; b=WgJu8035G6euJbiFQ1CaJ+f3jcWVc+ArOVT7tfkkAM/ZN6c1HNjzO/D/bnYIPDRqHKO0bCEWCim7qsrrPTFbj+9MGQ2+LXGypx+JoCSWBQxWywOFhshRkp4XtlFBh1VZw6tgZ/PwIiC8IzSwjtuZsK2SlY5a786OMu74hTqx8ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717791740; c=relaxed/simple;
-	bh=b3kfaE3B5DqZl7RCPFsX8KN1jUPY+NVq9KI1mO6MnV8=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WCK3f0py09WEzGocR3R68zfHckPQdYvHQJ5MfSzpFmfi7Y8fK/xS0sKHkIRd2vMJaWXPTmWsmHIkiCaheOxHs7ytE08ROll7STybeYi49g9RT5GNui/5tB7m9Zyd3iOjUPUhjy8rGJFCmZ5BSndPOl+l9iODRkkTnmZe7e6C0BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0npk3eVU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pAOWJZp1; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717791734;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QlQGR+tGoioFd255pa4F2M3do0QPDjAAVJR0Ox/2Zbw=;
-	b=0npk3eVUOmUI1nJgJEXVN/ccbreM702IcCn9WYf4K/Oxj9tGeMxddKkJDGTLsUd6jU2Hld
-	86Xue89Ax+FDFdr9bi4qq0TZILDFEK4O0vrkSSqjw0jrpsUrochYd1ry6G8v8Lp3515Rpi
-	9Cn3A2N9JjNeldDor7FOPGDDYDVkBHeClap9PF2sTvYFqwn/F7PxWsn+/8ABx8JEdvzbGE
-	PX6YLMMZVGxgy+nAhy0qy6DK607Dm1xO0FXBnf5odNFkK+MwvNBSvHhaM36oP+IVSTu7R0
-	rgtqlU1JZaXDFC4dQJbF6bx8ZEJ21UxJuL5aMpyOjGfOAkB7alyW5ynRxbMVXQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717791734;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QlQGR+tGoioFd255pa4F2M3do0QPDjAAVJR0Ox/2Zbw=;
-	b=pAOWJZp1PU/dlsrZNLVkbeFP89DsN/O4sOSeJ+S3UZsBgLwdnT58Oc5YLEFIvS5di+cZG4
-	vW6wJ5f0wxgfC1Cg==
-To: Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 8/8] riscv: remove limit on the size of read-only section for XIP kernel
-Date: Fri,  7 Jun 2024 22:22:13 +0200
-Message-Id: <3bf3a77be10ebb0d8086c028500baa16e7a8e648.1717789719.git.namcao@linutronix.de>
-In-Reply-To: <cover.1717789719.git.namcao@linutronix.de>
-References: <cover.1717789719.git.namcao@linutronix.de>
+	s=arc-20240116; t=1717792250; c=relaxed/simple;
+	bh=jnQBql2ebklj12WbunLVK7zOYfC+5A1yy52l9muwlCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U7xLqwEpMvYvu9ZtTiMbWfbXVg/kWoA48eHbKN3bGyZxz0QHF8hi2tzQoGH+gLgWRVqDqhbkfFrgxogOavLtvN8HREtb2t0e0cik04Ea3wWqxClcA2SnsbXERdPg9S2GkypLC6VoPA2O5gmVXSfCbnLdWlDmINzi8UYFzs9Q0Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl; spf=pass smtp.mailfrom=o2.pl; dkim=pass (1024-bit key) header.d=o2.pl header.i=@o2.pl header.b=TkYWGmeZ; arc=none smtp.client-ip=193.222.135.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=o2.pl
+Received: (wp-smtpd smtp.tlen.pl 45518 invoked from network); 7 Jun 2024 22:24:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=o2.pl; s=1024a;
+          t=1717791846; bh=TEDtKXi4CQ1V6M1s1aRyN40k0ZvVC5QsRQd1yKW6L9Q=;
+          h=Subject:To:Cc:From;
+          b=TkYWGmeZ593bq3fOD7zF7U5DRznRKslFgvHrc26ZOTO8EqOce/kfUiXen2GKuXi0V
+           089GFG3MH1OVA4eWiXczdlCdR0UDjqDPArWXafzSpaPukr2UBt/OcGU7ds5nEc6P/W
+           q5Q0OeFGRSoJfJYcWEtDsJhIAj4L4xW6NDaavqRU=
+Received: from aafb246.neoplus.adsl.tpnet.pl (HELO [192.168.1.22]) (mat.jonczyk@o2.pl@[83.4.131.246])
+          (envelope-sender <mat.jonczyk@o2.pl>)
+          by smtp.tlen.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <gregkh@linuxfoundation.org>; 7 Jun 2024 22:24:06 +0200
+Message-ID: <6962a67f-5548-4a61-833f-7753b26cc80d@o2.pl>
+Date: Fri, 7 Jun 2024 22:24:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/473] 6.1.93-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240606131659.786180261@linuxfoundation.org>
+Content-Language: en-GB
+From: =?UTF-8?Q?Mateusz_Jo=C5=84czyk?= <mat.jonczyk@o2.pl>
+Autocrypt: addr=mat.jonczyk@o2.pl; keydata=
+ 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
+ TANkZ3QqXNX2
+In-Reply-To: <20240606131659.786180261@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-WP-MailID: 9e21d5f11d4cbfe1fe4d8521b61c2f8e
+X-WP-AV: skaner antywirusowy Poczty o2
+X-WP-SPAM: NO 0000000 [ETOk]                               
 
-XIP_OFFSET is the hard-coded offset of writable data section within the
-kernel.
+W dniu 6.06.2024 o 15:58, Greg Kroah-Hartman pisze:
+> This is the start of the stable review cycle for the 6.1.93 release.
+> There are 473 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 08 Jun 2024 13:15:55 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.93-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-By hard-coding this value, the read-only section of the kernel (which is
-placed before the writable data section) is restricted in size. This causes
-build failures if the kernel gets too big [1].
+Hello,
 
-Remove this limit.
+Tested-by: Mateusz Jończyk <mat.jonczyk@o2.pl>
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202404211031.J6l2AfJk-lkp@intel.com [1]
-Signed-off-by: Nam Cao <namcao@linutronix.de>
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
----
- arch/riscv/include/asm/pgtable.h    | 7 -------
- arch/riscv/include/asm/set_memory.h | 2 +-
- arch/riscv/kernel/vmlinux-xip.lds.S | 5 +++--
- 3 files changed, 4 insertions(+), 10 deletions(-)
+Tested on a HP 17-by0001nw laptop with an Intel Kaby Lake CPU and Ubuntu 20.04.
 
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 1bc103aa9b74..bf4afffe0c53 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -107,13 +107,6 @@
- 
- #endif
- 
--#ifdef CONFIG_XIP_KERNEL
--#define XIP_OFFSET		SZ_32M
--#define XIP_OFFSET_MASK		(SZ_32M - 1)
--#else
--#define XIP_OFFSET		0
--#endif
--
- #ifndef __ASSEMBLY__
- 
- #include <asm/page.h>
-diff --git a/arch/riscv/include/asm/set_memory.h b/arch/riscv/include/asm/set_memory.h
-index ec11001c3fe0..ab92fc84e1fc 100644
---- a/arch/riscv/include/asm/set_memory.h
-+++ b/arch/riscv/include/asm/set_memory.h
-@@ -46,7 +46,7 @@ bool kernel_page_present(struct page *page);
- 
- #endif /* __ASSEMBLY__ */
- 
--#ifdef CONFIG_STRICT_KERNEL_RWX
-+#if defined(CONFIG_STRICT_KERNEL_RWX) || defined(CONFIG_XIP_KERNEL)
- #ifdef CONFIG_64BIT
- #define SECTION_ALIGN (1 << 21)
- #else
-diff --git a/arch/riscv/kernel/vmlinux-xip.lds.S b/arch/riscv/kernel/vmlinux-xip.lds.S
-index 8c3daa1b0531..a7611789bad5 100644
---- a/arch/riscv/kernel/vmlinux-xip.lds.S
-+++ b/arch/riscv/kernel/vmlinux-xip.lds.S
-@@ -14,6 +14,7 @@
- #include <asm/page.h>
- #include <asm/cache.h>
- #include <asm/thread_info.h>
-+#include <asm/set_memory.h>
- 
- OUTPUT_ARCH(riscv)
- ENTRY(_start)
-@@ -65,10 +66,10 @@ SECTIONS
-  * From this point, stuff is considered writable and will be copied to RAM
-  */
- 	__data_loc = ALIGN(PAGE_SIZE);		/* location in file */
--	. = KERNEL_LINK_ADDR + XIP_OFFSET;	/* location in memory */
-+	. = ALIGN(SECTION_ALIGN);		/* location in memory */
- 
- #undef LOAD_OFFSET
--#define LOAD_OFFSET (KERNEL_LINK_ADDR + XIP_OFFSET - (__data_loc & XIP_OFFSET_MASK))
-+#define LOAD_OFFSET (KERNEL_LINK_ADDR + _sdata - __data_loc)
- 
- 	_sdata = .;			/* Start of data section */
- 	_data = .;
--- 
-2.39.2
+Stack:
+- amd64,
+- ext4 on top of LVM on top of LUKS on top of mdraid on top of
+  NVMe and SATA drives (the SATA drive in a write-mostly mode).
+
+Tested (lightly):
+- suspend to RAM,
+- suspend to disk,
+- virtual machines in QEMU (both i386 and amd64 guests),
+
+- GPU (Intel HD Graphics 620, tested with two Unigine benchmarks)
+- WiFi (Realtek RTL8822BE),
+- PCI soundcard (Intel HD Audio),
+- USB soundcard (Logitech Pro X),
+- Bluetooth (Realtek RTL8822BE),
+- webcam.
+
+Filesystems tested very lightly (mounting, listing and opening files):
+- NFS,
+- exFAT
+- NTFS via FUSE
+
+Greetings,
+
+Mateusz
 
 
