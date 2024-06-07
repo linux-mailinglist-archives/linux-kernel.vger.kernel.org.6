@@ -1,268 +1,165 @@
-Return-Path: <linux-kernel+bounces-205849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE964900143
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:52:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A00A900147
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F6E31F24BBC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:52:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1D26B22073
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F83A18629E;
-	Fri,  7 Jun 2024 10:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27A018732C;
+	Fri,  7 Jun 2024 10:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tIq8bJrR"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Zk8JR6ka"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3CC71850BE
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 10:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCC41862B7;
+	Fri,  7 Jun 2024 10:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717757546; cv=none; b=HigtAh/mOlVyEKFHPWompRv+rVBaSpPFniXPN2+NZEsn63vL0HlMarqJngEXbMcieZBdyhCQsOvAKMb2SBLTazt7ywkvalUP3WcAkspIEBIgR4+tmjAMfatVQb3+edjUJh7qKe10TAHu1t/rgINJsom8fc11sNvjUpJRa+G0NJo=
+	t=1717757568; cv=none; b=SvIOtYnMl1Qj6S+iqv3ySb1ku0N6nTpqzN8ghHYaknUrQd3+Pcr/R3XUv2q5i0dPuPjd+qk3Y3GwzgSdWMS6LLbE7gZ2IXQZzfghLYicuAqHzRLW7ZiiA6ovOSHO7e2fY80Dmr6iEaIbgAmplYZVhnhkpNzIBDKhDzurJUkCRXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717757546; c=relaxed/simple;
-	bh=gSWSP+7C8UOKUu7+vq+El/x9kf+z97qTlQ+ZsMnmONo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SIEAbSsEF6RWLnFO2vXgonnsCUzMSXzz063xuXYaVUhoIAF6wed9L51UMvj2aeMP8QKBVRiQCxeN3yOCgd/oCLzlc+SMpWz5YojrVcDFL4VgGXIrXeAR8DLREtVR3fJOqbTSA2Xf84zhvR2p3e+Ucevw4paJcme2i9DsNbxDJTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tIq8bJrR; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4eb0089b4a2so684640e0c.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 03:52:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717757543; x=1718362343; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mPbSPneHT7Jvjy5REyHR38Uuhd6bNow/3VWxu5TPx5Y=;
-        b=tIq8bJrRHvaLq2zc+PpaXwrjpXJ+G9pHfTizLsRXZroHEm4mxHNKhaN9Ioj/Hjeouu
-         ymGmlJpL6kxThdVxj0XWOOb0+OyIPOpg0q1NOR2uy2z6BMXzHz3pZi4IAYoZ3sBVeGz0
-         /x5I9lt8CxIPoLOxtEzFkXaxZT36dCUR1a1BCZgFvr3nOyBUdPCfRsmdQctPX5ypRW3B
-         xNDNOa4uCHbt/t7Q6KMVQ1R0AcL5u6g+zpOL9bN0gyN81tOGtwm+C1QsDdx8MKdN3DLh
-         IHqU6+1fDB0qOWTbSaZrhyzUYH/68r/0DHRm5rmD72ZVw1N+WeoNE5zqmCxiQGCOyxxE
-         LkYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717757543; x=1718362343;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mPbSPneHT7Jvjy5REyHR38Uuhd6bNow/3VWxu5TPx5Y=;
-        b=UoXQqifjNtQyo9Mq7dL1hIhBVGTZHyaQU4xBXnJ3bV6gORFIOx8CRtXsUsDblPYWzL
-         2Ol7ZXiG5LLPTYNZt1Rn9/YxuT8W5OeRTeTKDi6WKXItEmnXu2K8/vYTmGdDgM93xng0
-         8lmr7PWXN8MoHXqtZvooHoHuuv9wy1/jW8Wti9YE7yNRfKPWK/fEj2zLDH2c7u6FeGQ7
-         hAPE8aIg+p+TuG7Icbv+GOiZAzKEvdmPZeK5zTPtuU/2dGoI8IJByKBCaWYcweO9Ledd
-         F3aTRNP3wFKWUPQRFczZBCDIiFPw/a5fPcdSY/RATO5X1tYVf4yel88oY9G2YofkJXES
-         Wh4A==
-X-Forwarded-Encrypted: i=1; AJvYcCXSKSu+foIsxOrRxV5OQJpAst6oNWOck0781v9SvaEN9oTMGhN83Uwb/f66Vv5xapy0mN+7SCchOf/cMs/sElh+dUTfrYM6dHf0h+aI
-X-Gm-Message-State: AOJu0YzFBUfq+Zvc9cCaaoDdtFXjjx8d+FfajAMC9KRHlWS25YCNP3rJ
-	H+XqF9Dk9Hmc6rmxjTdxcqlOb49w+oAawMOvCzzmQtnXxUw7lr5w6x4i2AbQMlcOm7CWSAKaJJg
-	vhoxDjq0Fbj7Ucrqu7rPRwEaFITfZvHjYNO+h1Q==
-X-Google-Smtp-Source: AGHT+IGZgoJBNxvF0IqzZ76RjN/3DL1M26P/4+jxT3RGwhtV8AOnkj8ddXuo2lmlwYIZDVnndDCRiLv2h7nduOcdfRM=
-X-Received: by 2002:a1f:7c05:0:b0:4e4:ec86:4240 with SMTP id
- 71dfb90a1353d-4eb562a4b69mr2327968e0c.12.1717757542953; Fri, 07 Jun 2024
- 03:52:22 -0700 (PDT)
+	s=arc-20240116; t=1717757568; c=relaxed/simple;
+	bh=3SY741i1aIiLsGZWztwjlZpBTWd8uktQ6DwDmA39LP0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rHOTcUur9KlqJQPTnOfN+74eR+eVSfjqvfGx6Q9iwnonFND3iXec1MCQiLnrBIoIhAdwKUaPsULkmXG6UXMzM4tH+uDUx+i8oPOj9fbqw2F9729+XxdYJGbRWRSeaUDdaO/rcYYdEhbmYbvKO+8A8qPZn85sX8Dw12z0zsKJ6GI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Zk8JR6ka; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=juY0wWEQb5LaFKacVEjtLjtoEwuz5HfLcwyYZHOCQWo=; b=Zk8JR6kakPe/gsurlaGxk40xu0
+	mkoAdiKJY9k7PVZIAOGadi7BlR8R0zYEcA9+/4pVqJEwkQbJMTKmwP0aWbDqBJrGYVz4BSRWSr5Do
+	6OOCTKY5AaVy0AnKtxVulTb5sI3lx8PC0gfQXIONNmopaSsrPt9rs762eRIwMiTYyKL/ZedL5fk03
+	o2hLpGSlRRTs6IlzJWQqEIUJIAe0asxns/fuWJZYAYrFSv093wSFk9NXz9r4vsN0cTN64P/KObQNE
+	TqMqcducmFtsrch9WxIbBUGy3U/q48AnY3aYdCKhUL/XWtP23N08Y+HQuPHU4kTqFaK3cgg/WnQvu
+	woHRPJxQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sFXCy-00000005mUb-430Q;
+	Fri, 07 Jun 2024 10:52:33 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 947B530047C; Fri,  7 Jun 2024 12:52:32 +0200 (CEST)
+Date: Fri, 7 Jun 2024 12:52:32 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, ardb@kernel.org,
+	benno.lossin@proton.me, bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, jbaron@akamai.com,
+	jpoimboe@kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com,
+	mhiramat@kernel.org, miguel.ojeda.sandonis@gmail.com,
+	ojeda@kernel.org, rostedt@goodmis.org,
+	rust-for-linux@vger.kernel.org, wedsonaf@gmail.com
+Subject: Re: [PATCH 1/3] rust: add static_call support
+Message-ID: <20240607105232.GP8774@noisy.programming.kicks-ass.net>
+References: <20240606193318.GK8774@noisy.programming.kicks-ass.net>
+ <20240607094329.3878781-1-aliceryhl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606131732.440653204@linuxfoundation.org>
-In-Reply-To: <20240606131732.440653204@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 7 Jun 2024 16:22:11 +0530
-Message-ID: <CA+G9fYsnQh6ydxf3asaEvoOE8a1oabcoUp91m3MJRyR6caKJ0A@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/744] 6.6.33-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240607094329.3878781-1-aliceryhl@google.com>
 
-On Thu, 6 Jun 2024 at 19:41, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.33 release.
-> There are 744 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 08 Jun 2024 13:15:55 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.33-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Fri, Jun 07, 2024 at 09:43:29AM +0000, Alice Ryhl wrote:
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> > On Thu, Jun 06, 2024 at 09:09:00PM +0200, Miguel Ojeda wrote:
+> > > On Thu, Jun 6, 2024 at 7:19 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> > > >
+> > > > This is absolutely unreadable gibberish -- how am I supposed to keep
+> > > > this in sync with the rest of the static_call infrastructure?
+> > > 
+> > > Yeah, they are macros, which look different from "normal" Rust code.
+> > 
+> > Macros like CPP ?
+> 
+> Yes, this patch series uses declarative macros, which are the closest
+> that Rust has to the C preprocessor. They are powerful, but just like
+> CPP, they can become pretty complicated and hard to read if you are
+> doing something non-trivial.
+> 
+> The macro_rules! block is how you define a new declarative macro.
 
-Results from Linaro=E2=80=99s test farm.
-Build regressions on Powerpc.
+I'm sorry, but 30+ years of reading ! as NOT (or factorial) isn't going
+to go away. So I'm reading your macros do NOT rule.
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> The ($name:ident($($args:expr),* $(,)?)) part defines the arguments to
+> the declarative macro. This syntax means:
+> 
+> 1. The input starts with any identifier, which we call $name.
+> 2. Then there must be a ( token.
 
-## Build
-* kernel: 6.6.33-rc1
-* git: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
-* git branch: linux-6.6.y
-* git commit: 39dd7d80cd65769389563028553e9ec89a8f88d1
-* git describe: v6.6.32-745-g39dd7d80cd65
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.3=
-2-745-g39dd7d80cd65
+The above exaple fails, because the next token is :ident, whatever the
+heck that might be. Also, extra points for line-noise due to lack of
+whitespace.
 
-## Test Regressions (compared to v6.6.32)
+> So for example, you might invoke the macro like this:
+> 
+> static_call!(tp_func_my_tracepoint(__data, &mut my_task_struct));
 
-* powerpc, build
-  - clang-18-cell_defconfig
-  - clang-18-defconfig
-  - clang-18-maple_defconfig
-  - clang-18-ppc64e_defconfig
-  - clang-nightly-cell_defconfig
-  - clang-nightly-defconfig
-  - clang-nightly-maple_defconfig
-  - gcc-13-cell_defconfig
-  - gcc-13-defconfig
-  - gcc-13-maple_defconfig
-  - gcc-13-ppc64e_defconfig
+static_call NOT (blah dog blah);
 
-## Metric Regressions (compared to v6.6.32)
+> Inside the macro, you will see things such as:
+> $crate::macros::paste! { $crate::bindings:: [<__SCK__ $name >]; }
+> 
+> The Rust syntax for invoking a macro has an exclamation mark after the
 
-## Test Fixes (compared to v6.6.32)
+Like I said before, the creator of Rust must've been an esoteric
+language freak and must've wanted to make this unreadable on purpose :/
 
-## Metric Fixes (compared to v6.6.32)
+Also, why the white space beteen the :: scope operator and the [< thing?
+that's just weird. I would then expect the output to be:
 
-## Test result summary
-total: 193993, pass: 148173, fail: 25962, skip: 18882, xfail: 976
+  ...::bindings:: __SCK__my_static_key
 
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 129 total, 129 passed, 0 failed
-* arm64: 38 total, 38 passed, 0 failed
-* i386: 29 total, 29 passed, 0 failed
-* mips: 24 total, 24 passed, 0 failed
-* parisc: 3 total, 3 passed, 0 failed
-* powerpc: 33 total, 22 passed, 11 failed
-* riscv: 17 total, 17 passed, 0 failed
-* s390: 12 total, 12 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 33 total, 33 passed, 0 failed
+> name, so you know that $crate::macros::paste is a macro. The `paste`
+> macro just emits its input unchanged, except that any identifiers
+> between [< and >] are concatenated into a single identifier. So if $name
+> is my_static_key, then the above invocation of paste! emits:
+> 
+> 	$crate::bindings::__SCK__my_static_key;
 
-## Test suites summary
-* boot
-* kselftest-android
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-drivers-dma-buf
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-ir
-* kselftest-kcmp
-* kselftest-kexec
-* kselftest-kvm
-* kselftest-lib
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-memory-hotplug
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mount
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-forwarding
-* kselftest-net-mptcp
-* kselftest-netfilter
-* kselftest-nsfs
-* kselftest-openat2
-* kselftest-pid_namespace
-* kselftest-pidfd
-* kselftest-proc
-* kselftest-pstore
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-splice
-* kselftest-static_keys
-* kselftest-sync
-* kselftest-sysctl
-* kselftest-tc-testing
-* kselftest-timens
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kselftest-zram
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-smoketest
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
+But it doesn't, so it isn't unmodified, it seems to strip whitespace.
 
---
-Linaro LKFT
-https://lkft.linaro.org
+> The $crate::bindings module is where the output of bindgen goes, so this
+> should correspond to the C symbol called __SCK__my_static_key.
+> 
+> > > Is there something we could do to help here? I think Alice and others
+> > > would be happy to explain how it works and/or help maintain it in the
+> > > future if you prefer.
+> > 
+> > Write a new language that looks more like C -- pretty please ? :-)
+> > 
+> > Mostly I would just really like you to just use arm/jump_label.h,
+> > they're inline functions and should be doable with IR, no weirdo CPP
+> > involved in this case.
+> 
+> I assume that you're referring to static_key_false here? I don't think
+> that function can be exposed using IR because it passes the function
+> argument called key as an "i" argument to an inline assembly block. Any
+> attempt to compile static_key_false without knowing the value of key at
+> compile time will surely fail to compile with the
+> 
+> 	invalid operand for inline asm constraint 'i'
+> 
+> error.
+
+You can have clang read the header files and compile them into
+Intermediate-Representation, and have it splice the lot into the Rust
+crap's IR and voila, compile time.
+
+You just need to extend the rust thing to be able to consume C header
+files.
+
 
