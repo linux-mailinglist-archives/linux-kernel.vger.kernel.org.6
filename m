@@ -1,80 +1,147 @@
-Return-Path: <linux-kernel+bounces-206684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE962900CAE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:59:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75E1C900CB4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:06:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67F62B22908
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:59:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0995B22CC5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C16014F11A;
-	Fri,  7 Jun 2024 19:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20D714534D;
+	Fri,  7 Jun 2024 20:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PpZz0Fk1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CdTI4eBi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C509E39FFB;
-	Fri,  7 Jun 2024 19:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E29033EE;
+	Fri,  7 Jun 2024 20:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717790358; cv=none; b=B3kzl9Psu6qoc73EqLoMVTgAx2tHnsytqROVtSYagM1L+k5phy9qMIqXvgVnKxeJ+jOvTjtPm57El6xLlF/kuFwuP03jMfTExAEVQGnu76si+WgF0SZMt/gN6NG/T5n9BKSFtlZdRiRbSZIXbGNvgif8jKc54R2ts8S0NMDRb2g=
+	t=1717790753; cv=none; b=SQVD6/o/tvc9xR8HrfPQQ3/o4Lbv010TOM5/8hxwzTtcjzCkMp4Zjps0KPEaeQRxadvDtFanFAqDAv82G/0D+PlfRSURlbEUqsuu5yiZ5TecbyXpYp1iuFiWFGp44V5uVPmpSAIcn8UHvAdw34dFnkEhuln76EqrbJ5qCAV/scU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717790358; c=relaxed/simple;
-	bh=CoZ61dwjEkp8sx38CmXzgu042Gq6Y2RZI+poqBTGNRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=JaQdw26TyXHYs9Fo/WDYBRupof8wXebjv3g1Ar0ptE6CmWJGMhFLOkwuJN4lxhbfnqQemWOWndrN+5g0QVSKi6cDE0fxBi1P5IAfxnzHDxHqaqK+2mKJ7mPWyCtaFyj1wHyLS2AEAU6Z6z+cqP9UrITkRIOxAmCnflomKcVKOu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PpZz0Fk1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 040A9C2BBFC;
-	Fri,  7 Jun 2024 19:59:17 +0000 (UTC)
+	s=arc-20240116; t=1717790753; c=relaxed/simple;
+	bh=HYe1s44uoKtDjU2ht8FvQtcve8B+M4pKuiV3mHZO+dw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l0hfE2vdqKRzyc5stUNg5I+iNY8zEQT/O2ldFtiXAxvqM2ObKp0VXYjvOoNLwN6A5TTQQjWIzcu0rPsc+Il6NjKFa4RUJhiN8ZDkZXeXy9ojexHTUZWee7Bk9u2Q/KSQSfqikZtt0P1MRiE7xQe/SejQM/XgyqlZ9BGH+w3+FGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CdTI4eBi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 881F1C2BBFC;
+	Fri,  7 Jun 2024 20:05:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717790358;
-	bh=CoZ61dwjEkp8sx38CmXzgu042Gq6Y2RZI+poqBTGNRY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=PpZz0Fk1qd29Dq/97R1hu02THlUUYJ1NFRfiFtIqZIf+WH3jdCae/0A+Fse0qdb2j
-	 eRLYBBDV3j9426bCf0RU+tpU7PffIXNJmkbdpiZV6JxkiHyJ+ZKaNmvEDeu+JHKzCf
-	 FvcLfAwdeau4erACKx4GOBy+wH+EElJmTzuqrd/Aw3KqT5+cFC/o7hiActdTMTWrb7
-	 IEsTcusAgUicK7B7Q6VDyddEs7BM9mPGXHeH65t68T9MnX4G7hqyNMpy6RkE10ajiF
-	 gJoGhVDPUju3jZabZSWNMXt60KLJ4rqsF8EckGHBADnE/SA2UpgUbLItAkkAE73VGl
-	 mL3kKpxofY6Cg==
-Date: Fri, 7 Jun 2024 14:59:15 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Wei Huang <wei.huang2@amd.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
-	bhelgaas@google.com, corbet@lwn.net, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	alex.williamson@redhat.com, gospo@broadcom.com,
-	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
-	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
-	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
-	vadim.fedorenko@linux.dev, horms@kernel.org, bagasdotme@gmail.com
-Subject: Re: [PATCH V2 3/9] PCI/TPH: Implement a command line option to
- disable TPH
-Message-ID: <20240607195915.GA852179@bhelgaas>
+	s=k20201202; t=1717790752;
+	bh=HYe1s44uoKtDjU2ht8FvQtcve8B+M4pKuiV3mHZO+dw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CdTI4eBi5NppaDAceI9lRHsdRe9lyWjV8NlepVU5OqQAJSSdB3cRH4UuovZC0IEwJ
+	 hDJgmo+BlAXjZNdk+ntPE722bvcGYpWwpBiz4iWIja4F72sNeBv0zB/cxGkM/v9k1q
+	 ujH0bLTs3CDT5Nf15u2GkBzHTv8Z03P1c9t2GvRkQyAQOBxzOsMxV5AONA9gvYHChF
+	 /+oR8kYjgtBdZSGdhWuHLBnlJjpX8nWSmmGuyXgbSWu3sG2R03C2TqZCNArfjgCnB2
+	 017lSfFU5POLdTrvYUb8KTAE7U7Gc7qOI352otd+kpKIVFdgl7VMcBQH4laZoG9jm1
+	 2OjAIM04Ts3Mw==
+Date: Fri, 7 Jun 2024 13:05:51 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Thomas Richter <tmricht@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	acme@kernel.org, svens@linux.ibm.com, gor@linux.ibm.com,
+	sumanthk@linux.ibm.com, hca@linux.ibm.com
+Subject: Re: [PATCH] perf test: Speed up test case 70 annotate basic tests
+Message-ID: <ZmNoH-RoIXwVPJt5@google.com>
+References: <20240607054352.2774936-1-tmricht@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240531213841.3246055-4-wei.huang2@amd.com>
+In-Reply-To: <20240607054352.2774936-1-tmricht@linux.ibm.com>
 
-On Fri, May 31, 2024 at 04:38:35PM -0500, Wei Huang wrote:
-> Provide a kernel option, with related helper functions, to completely
-> disable TPH so that no TPH headers are generated.
+On Fri, Jun 07, 2024 at 07:43:52AM +0200, Thomas Richter wrote:
+> On some s390 linux machine (mostly older models) and with debug
+> packages installed, the test case 'perf annotate basic tests' runs
+> for some longer time.
+> Speed up the test and save the output of command perf annotate
+> in a temporary file. This is used to perform pattern matching via
+> grep command. This saves on invocation of perf annotate which
+> runs for some time.
+> 
+> Output before:
+>  # time bash -x tests/shell/annotate.sh >/dev/null 2>&1; echo EXIT CODE $?
+> 
+>  real   4m35.543s
+>  user   3m19.442s
+>  sys    1m14.322s
+>  EXIT CODE 0
+>  #
+> Output after:
+>  # time bash -x tests/shell/annotate.sh >/dev/null 2>&1; echo EXIT CODE $?
+> 
+>  real   2m2.881s
+>  user   1m30.980s
+>  sys    0m30.684s
+>  EXIT CODE 0
+>  #
 
-If we need this option, say what the option is, why we need it, and
-include an example of how to use it in the commit log.
+Oh.. it takes too long.  I think we should limit the output from
+perf annotate in some way.  Anyway, the patch looks ok.
 
-Include the option in the subject line, too, e.g., "Add pci=notph
-option to disable TPH".  Or maybe "prevent use of TPH"?  "Disable TPH"
-hints that BIOS might have enabled it, and this option would turn that
-off.  I haven't looked hard enough to know exactly what you intend or
-whether there's a difference.
+> 
+> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+
+Thanks,
+Namhyung
+
+> ---
+>  tools/perf/tests/shell/annotate.sh | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/perf/tests/shell/annotate.sh b/tools/perf/tests/shell/annotate.sh
+> index 1db1e8113d99..b072d9b97387 100755
+> --- a/tools/perf/tests/shell/annotate.sh
+> +++ b/tools/perf/tests/shell/annotate.sh
+> @@ -15,12 +15,13 @@ skip_test_missing_symbol ${testsym}
+>  
+>  err=0
+>  perfdata=$(mktemp /tmp/__perf_test.perf.data.XXXXX)
+> +perfout=$(mktemp /tmp/__perf_test.perf.out.XXXXX)
+>  testprog="perf test -w noploop"
+>  # disassembly format: "percent : offset: instruction (operands ...)"
+>  disasm_regex="[0-9]*\.[0-9]* *: *\w*: *\w*"
+>  
+>  cleanup() {
+> -  rm -rf "${perfdata}"
+> +  rm -rf "${perfdata}" "${perfout}"
+>    rm -rf "${perfdata}".old
+>  
+>    trap - EXIT TERM INT
+> @@ -41,8 +42,11 @@ test_basic() {
+>      return
+>    fi
+>  
+> +  # Generate the annotated output file
+> +  perf annotate -i "${perfdata}" --stdio 2> /dev/null > "${perfout}"
+> +
+>    # check if it has the target symbol
+> -  if ! perf annotate -i "${perfdata}" 2> /dev/null | grep "${testsym}"
+> +  if ! grep "${testsym}" "${perfout}"
+>    then
+>      echo "Basic annotate [Failed: missing target symbol]"
+>      err=1
+> @@ -50,7 +54,7 @@ test_basic() {
+>    fi
+>  
+>    # check if it has the disassembly lines
+> -  if ! perf annotate -i "${perfdata}" 2> /dev/null | grep "${disasm_regex}"
+> +  if ! grep "${disasm_regex}" "${perfout}"
+>    then
+>      echo "Basic annotate [Failed: missing disasm output from default disassembler]"
+>      err=1
+> -- 
+> 2.45.1
+> 
 
