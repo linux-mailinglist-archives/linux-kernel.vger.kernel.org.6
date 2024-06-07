@@ -1,96 +1,173 @@
-Return-Path: <linux-kernel+bounces-205247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D0178FF9EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:29:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72FBA8FF9F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E171A28661B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:29:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1DD42862BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0380112B77;
-	Fri,  7 Jun 2024 02:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="cWqA0PGA"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9647612B95;
+	Fri,  7 Jun 2024 02:31:44 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926CC33C0
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 02:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9EF2F37
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 02:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717727336; cv=none; b=bVvw4ZUFNkymag0Z5+VzQUOR+9fTsrOpq8rsEDn42VFeviJJZgR7cssnfbsuE/uDgR44mV2bVVM/WhxPhFz+IzboqPBI3qSDqwhexdZZaTI2Jv5x9cMOk5tLTaphd60RU6vMfLubV9s4utTT+Xuo3KDDN2cW67NLHlMQ5XljaLM=
+	t=1717727504; cv=none; b=AnAmbtfa4GajkXI9VmxAUqAEQiFISoxixZSWxzMkiUtEgB+epHGpXxiCIZv4CKePz0LiV15cyfhPw27h/dyrRySpLhks/m4Oqt2qS30XIU4hUx+VsV0AOse2enZ0xXNNjOKUSGHB4YXu3x7VjZZ0MmB028o7qJQD6UOpKkS8bWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717727336; c=relaxed/simple;
-	bh=NR2BjMyojSNVzVA3wiNKVKPivX6F/0FiMK6KwEP4tQk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uI0TjeYzQhTh8YtYFgHahzLj5ZPAsglujnx30mkBQYyg2cwS7sR5TuYi4u5hJxz+t7xCEiA6+BkmlGUWmE+1xkYOn3sIcfjaVzCFp2KXohUGurJ4085qCE7vf8PLy968d9d8B9Bu3SPvO1e43oQvv3FiJLf6nf/ByYOpqQ4vAcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=cWqA0PGA; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-Received: from pecola.lan (unknown [159.196.93.152])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 350C320075;
-	Fri,  7 Jun 2024 10:28:37 +0800 (AWST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1717727319;
-	bh=NR2BjMyojSNVzVA3wiNKVKPivX6F/0FiMK6KwEP4tQk=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=cWqA0PGAUe9qogFTf92p1oVZmk3M3KWt/YqFP1tdjnrTYq6jOfOdCO/E9lMKnGeEo
-	 nDH0uKjE1yDtGg4z7TCjPeODlO0Goy3esRjN1sp0IH/c1Rry1mXBh4fZI9SkLHAB+P
-	 cWu5/8Ve1EeiiC9nApqJIKJtqxJCkWgaEzAn5ptIA/yoD2P0/vtKympeAScFDJq8wJ
-	 +4OD3qfGntNYUIyFkV6mnAo4QsQ8qzDQ5jTolyAeOUQmi7qtFUSW7F32arbckTMewR
-	 sJiN6a6TafVyoW5jWwYPvZuOXS3xXru/KBpq3T78BICSozOmdZwxbe4U2J1yiEKEbM
-	 MCMiGnRfreOxQ==
-Message-ID: <3c6c319f3aaa60428fd28f4d95c71dc9a8150081.camel@codeconstruct.com.au>
-Subject: Re: [PATCH] i3c: dw: Fix IBI intr signal programming
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: Aniket <aniketmaurya@google.com>, Alexandre Belloni
-	 <alexandre.belloni@bootlin.com>, Joel Stanley <joel@jms.id.au>, Billy Tsai
-	 <billy_tsai@aspeedtech.com>
-Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Fri, 07 Jun 2024 10:28:42 +0800
-In-Reply-To: <20240606124816.723630-1-aniketmaurya@google.com>
-References: <20240606124816.723630-1-aniketmaurya@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1717727504; c=relaxed/simple;
+	bh=j7SmNnf2IJ7HtGtXQrqOdQgWBu66WrwLsS5J2Vr5gCE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U6HwYKbptDiSItr+CKWqSUtnYzKBAGstiM1kHT3jvxLzNs7tpC57pK41gS0+bwpJsAqpxv1/Bt78y7I5US2ZUs5+76ZT47fZtRZoSNFU5F706tmn4jctKT0I1No2e0gQrvxYwOxBRIOISujHk7CGaPRkl6zzrRHAl1V239lbHxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 4572VNQe079441;
+	Fri, 7 Jun 2024 10:31:23 +0800 (+08)
+	(envelope-from zhaoyang.huang@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4VwQ870Jdyz2QNRs5;
+	Fri,  7 Jun 2024 10:27:19 +0800 (CST)
+Received: from bj03382pcu01.spreadtrum.com (10.0.73.40) by
+ BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Fri, 7 Jun 2024 10:31:20 +0800
+From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Uladzislau Rezki
+	<urezki@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Lorenzo Stoakes
+	<lstoakes@gmail.com>, Baoquan He <bhe@redhat.com>,
+        Thomas Gleixner
+	<tglx@linutronix.de>,
+        hailong liu <hailong.liu@oppo.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        Zhaoyang Huang <huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
+Subject: [Resend PATCHv4 1/1] mm: fix incorrect vbq reference in purge_fragmented_block
+Date: Fri, 7 Jun 2024 10:31:16 +0800
+Message-ID: <20240607023116.1720640-1-zhaoyang.huang@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL:SHSQR01.spreadtrum.com 4572VNQe079441
 
-SGkgQW5pa2V0LAoKPiBJQklfU0lSX1JFUV9SRUpFQ1QgcmVnaXN0ZXIgaXMgbm90IHByZXNlbnQg
-aWYgdGhlIElQCj4gaGFzIElDX0hBU19JQklfREFUQSA9IDEgc2V0LgoKSSBkb24ndCBoYXZlIGFu
-eSBhY2Nlc3MgdG8gdGhlIElQIGl0c2VsZiwgYnV0IEkgdW5kZXJzdGFuZCB0aGVyZSBhcmUgYQpm
-ZXcgZGlmZmVyZW50IGNvbmZpZ3VyYXRpb24gc2V0dGluZ3MgaW4gdGhlIElQIHRoYXQgbWF5IGFm
-ZmVjdCB0aGUKcmVnaXN0ZXIgaW50ZXJmYWNlLgoKSSB0aGluayB3ZSdyZSBPSyBpbiB0aGlzIGNh
-c2UgKGp1c3Qgbm90IHJlYWRpbmcgdGhlIHZhbHVlIG91dCBvZiB0aGUKU0lSX1JFUV9SRUpFQ1Qg
-cmVnaXN0ZXIpLCBidXQgYW55IHRob3VnaHRzIG9uIGFkZGluZyBjb3JyZXNwb25kaW5nCnN3aXRj
-aGVzIGluIHRoZSBkcml2ZXIgc28gd2UgY2FuIHN1cHBvcnQgdGhvc2UgY29uZmlndXJhdGlvbnM/
-IFRoZXNlCndvdWxkIGJlIHJlcHJlc2VudGVkIGFzIERUIGNvbmZpZyBvZiB0aGUgc3BlY2lmaWMg
-aGFyZHdhcmUgaW5zdGFuY2UgLSBhdAp0aGUgbW9zdCBncmFudWxhciwganVzdCBieSB0aGUgc3Bl
-Y2lmaWMgY29tcGF0aWJsZSBzdHJpbmcuCgo+IGR3X2kzY19tYXN0ZXJfc2V0X3Npcl9lbmFibGVk
-KHN0cnVjdCBkd19pM2NfbWFzdGVyICptYXN0ZXIsCj4gwqAKPiDCoMKgwqDCoMKgwqDCoMKgcmVn
-ID0gcmVhZGwobWFzdGVyLT5yZWdzICsgSUJJX1NJUl9SRVFfUkVKRUNUKTsKPiDCoMKgwqDCoMKg
-wqDCoMKgaWYgKGVuYWJsZSkgewo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBnbG9i
-YWwgPSByZWcgPT0gMHhmZmZmZmZmZjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-Z2xvYmFsID0gIW1hc3Rlci0+c2lyX2VuX2NudCsrOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgcmVnICY9IH5CSVQoaWR4KTsKPiDCoMKgwqDCoMKgwqDCoMKgfSBlbHNlIHsKPiDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGJvb2wgaGpfcmVqZWN0ZWQgPSAhIShyZWFk
-bChtYXN0ZXItPnJlZ3MgKyBERVZJQ0VfQ1RSTCkgJiBERVZfQ1RSTF9IT1RfSk9JTl9OQUNLKTsK
-PiDCoAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmVnIHw9IEJJVChpZHgpOwo+
-IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBnbG9iYWwgPSAocmVnID09IDB4ZmZmZmZm
-ZmYpICYmIGhqX3JlamVjdGVkOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBnbG9i
-YWwgPSAoIS0tbWFzdGVyLT5zaXJfZW5fY250KSAmJiBoal9yZWplY3RlZDsKPiDCoMKgwqDCoMKg
-wqDCoMKgfQoKQ291bGQgd2UgdXNlIHRoZSBTSVIgbWFzayBmb3IgdGhpcywgYnV0IGp1c3QgcmVh
-ZCBpdCBmcm9tIGEgZmllbGQgaW4gdGhlCnN0cnVjdCBkd19pM2NfbWFzdGVyLCBpbnN0ZWFkIG9m
-IElCSV9TSVJfUkVRX1JFSkVDVD8KClRoaXMgd291bGQgbWVhbiB0aGF0IHRoZXJlJ3Mgbm8gcG9z
-c2liaWxpdHkgb2YgdGhlIGNvdW50ZXIgZ29pbmcgb3V0IG9mCnN5bmMgZnJvbSB0aGUgU0lSIHNl
-dHRpbmdzIC0gc2F5LCBvbiB1bmRlcmZsb3cgaWYgd2UgZ2V0IGEgc3B1cmlvdXMKZGlzYWJsZS4K
-CkNoZWVycywKCgpKZXJlbXkK
+From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+
+vmalloc area runs out in our ARM64 system during an erofs test as
+vm_map_ram failed[1]. By following the debug log, we find that
+vm_map_ram()->vb_alloc() will allocate new vb->va which corresponding
+to 4MB vmalloc area as list_for_each_entry_rcu returns immediately
+when vbq->free->next points to vbq->free. That is to say, 65536 times
+of page fault after the list's broken will run out of the whole
+vmalloc area. This should be introduced by one vbq->free->next point to
+vbq->free which makes list_for_each_entry_rcu can not iterate the list
+and find the BUG.
+
+[1]
+PID: 1        TASK: ffffff80802b4e00  CPU: 6    COMMAND: "init"
+ #0 [ffffffc08006afe0] __switch_to at ffffffc08111d5cc
+ #1 [ffffffc08006b040] __schedule at ffffffc08111dde0
+ #2 [ffffffc08006b0a0] schedule at ffffffc08111e294
+ #3 [ffffffc08006b0d0] schedule_preempt_disabled at ffffffc08111e3f0
+ #4 [ffffffc08006b140] __mutex_lock at ffffffc08112068c
+ #5 [ffffffc08006b180] __mutex_lock_slowpath at ffffffc08111f8f8
+ #6 [ffffffc08006b1a0] mutex_lock at ffffffc08111f834
+ #7 [ffffffc08006b1d0] reclaim_and_purge_vmap_areas at ffffffc0803ebc3c
+ #8 [ffffffc08006b290] alloc_vmap_area at ffffffc0803e83fc
+ #9 [ffffffc08006b300] vm_map_ram at ffffffc0803e78c0
+
+Fixes: fc1e0d980037 ("mm/vmalloc: prevent stale TLBs in fully utilized blocks")
+
+For detailed reason of broken list, please refer to below URL
+https://lore.kernel.org/all/20240531024820.5507-1-hailong.liu@oppo.com/
+
+Suggested-by: Hailong.Liu <hailong.liu@oppo.com>
+Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+---
+v2: introduce cpu in vmap_block to record the right CPU number
+v3: use get_cpu/put_cpu to prevent schedule between core
+v4: replace get_cpu/put_cpu by another API to avoid disabling preemption
+---
+---
+ mm/vmalloc.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
+
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 22aa63f4ef63..89eb034f4ac6 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -2458,6 +2458,7 @@ struct vmap_block {
+ 	struct list_head free_list;
+ 	struct rcu_head rcu_head;
+ 	struct list_head purge;
++	unsigned int cpu;
+ };
+ 
+ /* Queue of free and dirty vmap blocks, for allocation and flushing purposes */
+@@ -2585,8 +2586,15 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
+ 		free_vmap_area(va);
+ 		return ERR_PTR(err);
+ 	}
+-
+-	vbq = raw_cpu_ptr(&vmap_block_queue);
++	/*
++	 * list_add_tail_rcu could happened in another core
++	 * rather than vb->cpu due to task migration, which
++	 * is safe as list_add_tail_rcu will ensure the list's
++	 * integrity together with list_for_each_rcu from read
++	 * side.
++	 */
++	vb->cpu = raw_smp_processor_id();
++	vbq = per_cpu_ptr(&vmap_block_queue, vb->cpu);
+ 	spin_lock(&vbq->lock);
+ 	list_add_tail_rcu(&vb->free_list, &vbq->free);
+ 	spin_unlock(&vbq->lock);
+@@ -2614,9 +2622,10 @@ static void free_vmap_block(struct vmap_block *vb)
+ }
+ 
+ static bool purge_fragmented_block(struct vmap_block *vb,
+-		struct vmap_block_queue *vbq, struct list_head *purge_list,
+-		bool force_purge)
++		struct list_head *purge_list, bool force_purge)
+ {
++	struct vmap_block_queue *vbq = &per_cpu(vmap_block_queue, vb->cpu);
++
+ 	if (vb->free + vb->dirty != VMAP_BBMAP_BITS ||
+ 	    vb->dirty == VMAP_BBMAP_BITS)
+ 		return false;
+@@ -2664,7 +2673,7 @@ static void purge_fragmented_blocks(int cpu)
+ 			continue;
+ 
+ 		spin_lock(&vb->lock);
+-		purge_fragmented_block(vb, vbq, &purge, true);
++		purge_fragmented_block(vb, &purge, true);
+ 		spin_unlock(&vb->lock);
+ 	}
+ 	rcu_read_unlock();
+@@ -2801,7 +2810,7 @@ static void _vm_unmap_aliases(unsigned long start, unsigned long end, int flush)
+ 			 * not purgeable, check whether there is dirty
+ 			 * space to be flushed.
+ 			 */
+-			if (!purge_fragmented_block(vb, vbq, &purge_list, false) &&
++			if (!purge_fragmented_block(vb, &purge_list, false) &&
+ 			    vb->dirty_max && vb->dirty != VMAP_BBMAP_BITS) {
+ 				unsigned long va_start = vb->va->va_start;
+ 				unsigned long s, e;
+-- 
+2.25.1
 
 
